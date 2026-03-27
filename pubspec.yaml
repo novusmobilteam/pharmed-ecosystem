@@ -1,0 +1,17 @@
+﻿name: pharmed
+description: Pharmed monorepo workspace
+version: 0.0.1
+
+environment:
+  sdk: '^3.10.7'
+
+workspace:
+  - apps/pharmed-client
+  - apps/pharmed-manager
+  - packages/pharmed_core
+  - packages/pharmed_data
+  - packages/pharmed_ui
+  - packages/pharmed_utils
+
+dev_dependencies:
+  melos: ^7.5.0

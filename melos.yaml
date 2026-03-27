@@ -1,0 +1,4 @@
+﻿name: pharmed
+
+packages:
+  - packages/pharmed_core

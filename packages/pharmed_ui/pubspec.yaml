@@ -1,0 +1,14 @@
+name: pharmed_ui
+description: Shared widgets, theme, design tokens
+version: 0.0.1
+
+environment:
+  sdk: ^3.10.7
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  pharmed_core:
+    path: ../pharmed_core
+resolution: workspace

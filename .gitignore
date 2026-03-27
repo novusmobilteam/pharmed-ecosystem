@@ -1,0 +1,11 @@
+﻿.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+*.g.dart
+*.freezed.dart
+.melos/
+melos_bootstrap.sh
+.idea/
+.vscode/
+*.iml
