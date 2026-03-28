@@ -1,6 +1,7 @@
 name: pharmed_data
 description: API client, repository implementations
 version: 0.0.1
+publish_to: none
 
 environment:
   sdk: ^3.10.7
@@ -10,6 +11,14 @@ dependencies:
     path: ../pharmed_core
   pharmed_utils:
     path: ../pharmed_utils
+  pharmed_ui:
+    path: ../pharmed_ui
   dio: ^5.4.0
-  shared_preferences: ^2.2.0
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  build_runner: ^2.4.0
+  freezed: ^3.2.4
+  json_serializable: ^6.7.0
 resolution: workspace

@@ -6,6 +6,7 @@
 // Sınıf: Class A (görsel navigasyon, iş kararı vermez)
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import '../../../features/dashboard/domain/model/app_model.dart';
 import '../atoms/atoms.dart';
 
@@ -387,7 +388,7 @@ class _UserArea extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      user.initials,
+                      user.fullName,
                       style: const TextStyle(
                         fontFamily: MedFonts.title,
                         fontSize: 10,

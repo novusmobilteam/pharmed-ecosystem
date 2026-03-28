@@ -149,7 +149,8 @@ class DashboardScreen extends ConsumerWidget {
       barrierDismissible: false,
       builder: (_) => LoginModal(
         cabinCode: 'CB-304',
-        onLogin: (username, password) => ref.read(authNotifierProvider.notifier).login(username, password),
+        onLogin: (username, password) {},
+        // onLogin: (username, password) => ref.read(authNotifierProvider.notifier).login(username, password),
         onCancel: () => Navigator.of(context).pop(),
       ),
     );

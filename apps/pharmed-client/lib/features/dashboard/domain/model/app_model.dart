@@ -7,24 +7,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 // ─────────────────────────────────────────────────────────────────
-// AppUser — oturum açmış kullanıcı
-// ─────────────────────────────────────────────────────────────────
-
-class AppUser extends Equatable {
-  const AppUser({required this.username, required this.fullName, required this.role});
-
-  final String username;
-  final String fullName;
-  final String role;
-
-  /// "Ayşe Kara" → "AK"
-  String get initials => fullName.split(' ').where((w) => w.isNotEmpty).take(2).map((w) => w[0].toUpperCase()).join();
-
-  @override
-  List<Object?> get props => [username];
-}
-
-// ─────────────────────────────────────────────────────────────────
 // MenuItem — alt navigasyon çubuğu öğesi
 // Şimdilik statik — ileride MenuDataSource'tan beslenecek
 // ─────────────────────────────────────────────────────────────────

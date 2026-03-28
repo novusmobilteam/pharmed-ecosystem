@@ -4,7 +4,7 @@
 // Mock flavor için anasayfa veri kaynağı.
 // Tüm UI state'lerini test edebilmek için yeterli veri içerir.
 
-import 'package:result_dart/result_dart.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../shared/widgets/molecules/molecules.dart';
 import '../../../cabin_stock/domain/model/cabin_stock.dart';
@@ -15,7 +15,7 @@ class DashboardMockRepository {
 
   Future<Result<DashboardData>> getDashboardData() async {
     await Future.delayed(_delay);
-    return Success(_buildMockData());
+    return Result.ok(_buildMockData());
   }
 
   static DashboardData _buildMockData() {

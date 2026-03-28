@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/src/result/result.dart';
 
 import '../../core.dart';
 import 'form_field_metadata.dart';
@@ -52,10 +53,7 @@ class GenericFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: _buildFieldWidgets(context),
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildFieldWidgets(context));
   }
 
   List<Widget> _buildFieldWidgets(BuildContext context) {
@@ -172,12 +170,7 @@ class GenericFormWidget extends StatelessWidget {
           title: Text(field.label),
           value: currentValue is bool ? currentValue : false,
           onChanged: isFieldEnabled ? (value) => onFieldChanged(field.key, value) : null,
-          subtitle: error != null
-              ? Text(
-                  error,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                )
-              : null,
+          subtitle: error != null ? Text(error, style: TextStyle(color: Theme.of(context).colorScheme.error)) : null,
         );
 
       default:
@@ -208,10 +201,7 @@ class SimpleFormHelper {
   }
 
   /// Boş alanları kontrol eder
-  static List<String> findEmptyFields(
-    List<FormFieldMetadata> fields,
-    Map<String, dynamic> formValues,
-  ) {
+  static List<String> findEmptyFields(List<FormFieldMetadata> fields, Map<String, dynamic> formValues) {
     final emptyFields = <String>[];
 
     for (final field in fields) {

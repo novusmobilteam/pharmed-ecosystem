@@ -5,7 +5,7 @@
 // Repository'yi çağırır, başarı/hata sonucunu döner.
 // Sınıf: Class B
 
-import 'package:result_dart/result_dart.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import '../model/cabin_setup_config.dart';
 import '../../data/repository/setup_wizard_repository_impl.dart';
 

@@ -4,7 +4,6 @@ import '../../../../core/core.dart';
 import '../../../../core/storage/auth/auth.dart';
 import '../../../../core/utils/device_info.dart';
 import '../../../user/user.dart';
-import '../../domain/usecase/login_usecase.dart';
 
 class LoginNotifier extends ChangeNotifier with ApiRequestMixin {
   final LoginUseCase _loginUseCase;

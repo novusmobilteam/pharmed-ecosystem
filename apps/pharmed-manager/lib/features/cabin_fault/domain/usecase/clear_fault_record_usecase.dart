@@ -1,5 +1,4 @@
-import 'package:pharmed_core/pharmed_core.dart';
-
+import '../../../../core/core.dart';
 import '../entity/cabin_fault.dart';
 import '../repository/i_cabin_fault_repository.dart';
 

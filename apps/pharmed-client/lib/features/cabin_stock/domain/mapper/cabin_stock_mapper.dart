@@ -5,9 +5,9 @@
 // Her alan açıkça işlenir. Eksik/bozuk veri burada yakalanır.
 // Sınıf: Class B
 
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/exception/app_exceptions.dart';
 import '../../data/dto/cabin_stock_dto.dart';
 import '../model/cabin_stock.dart';
 

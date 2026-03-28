@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../di/datasource_injector.dart';
-import '../../exception/app_exceptions.dart';
 import 'i_serial_communication_service.dart';
 
 final serialServiceProvider = Provider<ISerialCommunicationService>((ref) {

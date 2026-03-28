@@ -111,8 +111,8 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
     final result = await _scanUseCase(ip);
 
-    result.fold(
-      (config) {
+    result.when(
+      ok: (config) {
         MedLogger.info(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UI-007',
@@ -126,7 +126,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
           scanState: DrawerScanState.found,
         );
       },
-      (error) {
+      error: (error) {
         MedLogger.error(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UI-007',
@@ -191,8 +191,8 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
     final result = await _saveUseCase(config);
 
-    result.fold(
-      (cabinId) {
+    result.when(
+      ok: (cabinId) {
         MedLogger.info(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UC-001',
@@ -207,7 +207,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
         state = WizardSaved(cabinId: cabinId, cabinName: config.basicInfo.cabinName);
       },
-      (error) {
+      error: (error) {
         MedLogger.error(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UC-001',

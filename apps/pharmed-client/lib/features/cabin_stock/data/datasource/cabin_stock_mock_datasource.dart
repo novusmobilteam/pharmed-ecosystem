@@ -11,16 +11,14 @@
 // 3. Hem başarı hem hata senaryoları test edilebilsin
 // 4. Gerçekçi hastane verisi (ilaç adları, lot numaraları)
 
-import 'package:result_dart/result_dart.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../core/exception/app_exceptions.dart';
 import '../../domain/model/cabin_stock.dart';
 import '../dto/cabin_stock_dto.dart';
 import '../dto/station_stock_dto.dart';
 import 'cabin_stock_datasource.dart';
 
 class CabinStockMockDataSource implements CabinStockDataSource {
-  // Simüle edilecek gecikme — UI geliştirmede gerçekçi hissi verir
   static const _delay = Duration(milliseconds: 600);
 
   // ── Mock veri bankası ─────────────────────────────────────────
@@ -75,7 +73,7 @@ class CabinStockMockDataSource implements CabinStockDataSource {
       quantity: 3,
       criticalLevel: 5,
       lotNumber: 'HEP2024D',
-      expiryDate: DateTime(2026, 4, 10), // 15 gün kaldı → warning
+      expiryDate: DateTime(2026, 4, 10),
       stockStatus: StockStatus.low.toString(),
     ),
     CabinStockDTO(
@@ -88,7 +86,7 @@ class CabinStockMockDataSource implements CabinStockDataSource {
       quantity: 2,
       criticalLevel: 3,
       lotNumber: 'INS2024E',
-      expiryDate: DateTime(2026, 3, 29), // 3 gün kaldı → critical
+      expiryDate: DateTime(2026, 3, 29),
       stockStatus: StockStatus.critical.toString(),
     ),
     CabinStockDTO(
@@ -101,7 +99,7 @@ class CabinStockMockDataSource implements CabinStockDataSource {
       quantity: 6,
       criticalLevel: 4,
       lotNumber: 'SF22A',
-      expiryDate: DateTime(2026, 3, 20), // geçmiş SKT → expired
+      expiryDate: DateTime(2026, 3, 20),
       stockStatus: StockStatus.full.toString(),
     ),
     CabinStockDTO(
@@ -109,7 +107,7 @@ class CabinStockMockDataSource implements CabinStockDataSource {
       cabinId: 304,
       drawerId: 7,
       drawerCode: 'C-01',
-      medicineName: null, // boş çekmece
+      medicineName: null,
       medicineId: null,
       quantity: 0,
       criticalLevel: 0,
@@ -127,7 +125,7 @@ class CabinStockMockDataSource implements CabinStockDataSource {
       quantity: 12,
       criticalLevel: 5,
       lotNumber: 'MTR2024H',
-      expiryDate: DateTime(2026, 4, 2), // 7 gün kaldı → critical
+      expiryDate: DateTime(2026, 4, 2),
       stockStatus: StockStatus.full.toString(),
     ),
   ];
@@ -145,110 +143,109 @@ class CabinStockMockDataSource implements CabinStockDataSource {
       .where((s) => s.expiryDate != null && s.expiryDate!.isBefore(DateTime.now()))
       .toList();
 
-  // ── Interface implementasyonu ────────────────────────────────
+  // ── Interface implementasyonu ─────────────────────────────────
 
   @override
   Future<Result<List<CabinStockDTO>>> getStocks(int cabinId) async {
     await Future.delayed(_delay);
-    final filtered = _mockStocks.where((s) => s.cabinId == cabinId).toList();
-    return Success(filtered);
+    return Result.ok(_mockStocks.where((s) => s.cabinId == cabinId).toList());
   }
 
   @override
   Future<Result<List<CabinStockDTO>>> getCurrentCabinStock() async {
     await Future.delayed(_delay);
-    return Success(_mockStocks);
+    return Result.ok(_mockStocks);
   }
 
   @override
   Future<Result<CabinStockDTO>> getMedicineInfo(int medicineId) async {
     await Future.delayed(_delay);
     final found = _mockStocks.where((s) => s.medicineId == medicineId).firstOrNull;
-
     if (found == null) {
-      return Failure(NotFoundException(message: 'İlaç kabine atanmamış', id: medicineId, resourceType: 'Medicine'));
+      return Result.error(
+        NotFoundException(message: 'İlaç kabine atanmamış', id: medicineId, resourceType: 'Medicine'),
+      );
     }
-
-    return Success(found);
+    return Result.ok(found);
   }
 
   @override
   Future<Result<List<CabinStockDTO>>> getExpiringStocks() async {
     await Future.delayed(_delay);
-    return Success(_mockExpiringStocks);
+    return Result.ok(_mockExpiringStocks);
   }
 
   @override
   Future<Result<List<CabinStockDTO>>> getExpiredStocks() async {
     await Future.delayed(_delay);
-    return Success(_mockExpiredStocks);
+    return Result.ok(_mockExpiredStocks);
   }
 
   @override
   Future<Result<void>> count(List<dynamic> data) async {
     await Future.delayed(_delay);
-    // Mock'ta sayım sessizce başarılı döner
-    return const Success(unit);
+    return const Result.ok(null);
   }
 
   @override
   Future<Result<void>> fill(List<dynamic> data) async {
     await Future.delayed(_delay);
-    return const Success(unit);
+    return const Result.ok(null);
   }
 
   @override
   Future<Result<void>> unload(List<Map<String, dynamic>> data) async {
     await Future.delayed(_delay);
-    return const Success(unit);
+    return const Result.ok(null);
   }
 
   @override
   Future<Result<List<StationStockDTO>>> getStationStocks(int stationId) async {
     await Future.delayed(_delay);
-    return Success(<StationStockDTO>[]);
+    return Result.ok(<StationStockDTO>[]);
   }
 }
 
 // ─────────────────────────────────────────────────────────────────
 // CabinStockMockErrorDataSource — hata senaryolarını test etmek için
-// Mock flavor'da error state'leri görmek gerektiğinde inject edilir.
 // ─────────────────────────────────────────────────────────────────
 
 class CabinStockMockErrorDataSource implements CabinStockDataSource {
   @override
   Future<Result<List<CabinStockDTO>>> getStocks(int cabinId) async {
     await Future.delayed(const Duration(milliseconds: 800));
-    return Failure(NetworkUnavailableException(message: 'Mock: Ağ bağlantısı yok'));
+    return Result.error(NetworkUnavailableException(message: 'Mock: Ağ bağlantısı yok'));
   }
 
   @override
   Future<Result<List<CabinStockDTO>>> getCurrentCabinStock() async =>
-      Failure(NetworkUnavailableException(message: 'Mock: Sunucuya ulaşılamıyor'));
+      Result.error(NetworkUnavailableException(message: 'Mock: Sunucuya ulaşılamıyor'));
 
   @override
   Future<Result<CabinStockDTO>> getMedicineInfo(int medicineId) async =>
-      Failure(NetworkUnavailableException(message: 'Mock error'));
+      Result.error(NetworkUnavailableException(message: 'Mock error'));
 
   @override
   Future<Result<List<CabinStockDTO>>> getExpiringStocks() async =>
-      Failure(NetworkUnavailableException(message: 'Mock error'));
+      Result.error(NetworkUnavailableException(message: 'Mock error'));
 
   @override
   Future<Result<List<CabinStockDTO>>> getExpiredStocks() async =>
-      Failure(NetworkUnavailableException(message: 'Mock error'));
+      Result.error(NetworkUnavailableException(message: 'Mock error'));
 
   @override
-  Future<Result<void>> count(List<dynamic> data) async => Failure(NetworkUnavailableException(message: 'Mock error'));
+  Future<Result<void>> count(List<dynamic> data) async =>
+      Result.error(NetworkUnavailableException(message: 'Mock error'));
 
   @override
-  Future<Result<void>> fill(List<dynamic> data) async => Failure(NetworkUnavailableException(message: 'Mock error'));
+  Future<Result<void>> fill(List<dynamic> data) async =>
+      Result.error(NetworkUnavailableException(message: 'Mock error'));
 
   @override
   Future<Result<void>> unload(List<Map<String, dynamic>> data) async =>
-      Failure(NetworkUnavailableException(message: 'Mock error'));
+      Result.error(NetworkUnavailableException(message: 'Mock error'));
 
   @override
   Future<Result<List<StationStockDTO>>> getStationStocks(int stationId) async =>
-      Failure(NetworkUnavailableException(message: 'Mock error'));
+      Result.error(NetworkUnavailableException(message: 'Mock error'));
 }

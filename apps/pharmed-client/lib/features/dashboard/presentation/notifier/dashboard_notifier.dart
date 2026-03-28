@@ -7,11 +7,11 @@
 // Sınıf: Class B
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../domain/model/dasboard_data.dart';
 import '../state/dashboard_ui_state.dart';
 import '../../data/mock/dashboard_mock_repository.dart';
-import '../../../../core/exception/app_exceptions.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // Provider tanımı
@@ -45,8 +45,8 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
 
     final result = await _repository.getDashboardData();
 
-    result.fold(
-      (data) {
+    result.when(
+      ok: (data) {
         MedLogger.info(
           unit: 'SW-UNIT-UI',
           swreq: 'SWREQ-UI-DASH-003',
@@ -55,18 +55,20 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
         );
         state = DashboardLoaded(data);
       },
-      (error) {
-        MedLogger.error(
-          unit: 'SW-UNIT-UI',
-          swreq: 'SWREQ-UI-DASH-003',
-          message: 'Dashboard yükleme hatası',
-          error: error,
-        );
-        final appError = error is AppException ? error : null;
-        state = DashboardError(
-          message: appError?.userMessage ?? 'Veriler yüklenemedi.',
-          isRetryable: appError?.isRetryable ?? true,
-        );
+      error: (error) {
+        (error) {
+          MedLogger.error(
+            unit: 'SW-UNIT-UI',
+            swreq: 'SWREQ-UI-DASH-003',
+            message: 'Dashboard yükleme hatası',
+            error: error,
+          );
+          final appError = error is AppException ? error : null;
+          state = DashboardError(
+            message: appError?.userMessage ?? 'Veriler yüklenemedi.',
+            isRetryable: appError?.isRetryable ?? true,
+          );
+        };
       },
     );
   }

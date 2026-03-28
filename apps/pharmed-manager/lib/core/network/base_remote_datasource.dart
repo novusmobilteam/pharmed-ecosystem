@@ -332,7 +332,7 @@ abstract class BaseRemoteDataSource with Logging {
       }
 
       logOp(operation: operation, status: LogStatus.exception, message: message, statusCode: code);
-      return Result.error(CustomException(message: message, statusCode: code));
+      return Result.error(CustomException(message: message.toString()));
     } catch (e) {
       logOp(operation: operation, status: LogStatus.exception, message: e.toString());
       return Result.error(CustomException(message: e.toString()));

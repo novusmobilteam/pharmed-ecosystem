@@ -4,7 +4,8 @@
 // DataSource arayüzü — mock ve remote implementasyonlar bu kontratı uygular.
 // Sınıf: Class B
 
-import 'package:result_dart/result_dart.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+
 import '../dto/cabin_config_dto.dart';
 
 abstract interface class SetupWizardDataSource {

@@ -1,6 +1,7 @@
 name: pharmed_ui
 description: Shared widgets, theme, design tokens
 version: 0.0.1
+publish_to: none
 
 environment:
   sdk: ^3.10.7
@@ -9,6 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  mask_text_input_formatter: ^2.9.0
+  phosphor_flutter: ^2.1.0
+  intl: ^0.20.2
+  
   pharmed_core:
     path: ../pharmed_core
+
 resolution: workspace

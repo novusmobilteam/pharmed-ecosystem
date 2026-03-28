@@ -4,7 +4,8 @@
 // Repository implementasyonu — domain modeli ↔ DTO dönüşümü burada.
 // Sınıf: Class B
 
-import 'package:result_dart/result_dart.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+
 import '../../domain/model/cabin_setup_config.dart';
 import '../../domain/model/wizard_draft.dart';
 import '../datasource/setup_wizard_datasource.dart';
@@ -20,14 +21,21 @@ class SetupWizardRepositoryImpl {
   Future<Result<int>> saveCabinConfig(CabinSetupConfig config) async {
     final dto = _toDto(config);
     final result = await dataSource.saveCabinConfig(dto);
-    return result.fold((saved) => Success(saved.id ?? 0), Failure.new);
+    return result.when(
+      ok: (CabinConfigDto value) {
+        return Result.ok(value.id ?? 0);
+      },
+      error: (AppException error) {
+        return Result.error(error);
+      },
+    );
   }
 
   // ── Cihaz tarama ────────────────────────────────────────────────
 
   Future<Result<StandardDrawerConfig>> scanDeviceDrawerConfig(String ipAddress) async {
     final result = await dataSource.scanDeviceDrawerConfig(ipAddress);
-    return result.fold((dto) => Success(_toStandardDrawerConfig(dto)), Failure.new);
+    return result.when(ok: (dto) => Result.ok(_toStandardDrawerConfig(dto)), error: (error) => Result.error(error));
   }
 
   // ── DTO dönüştürücüler ───────────────────────────────────────────

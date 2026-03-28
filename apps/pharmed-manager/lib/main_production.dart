@@ -10,7 +10,6 @@ import 'core/storage/auth/auth.dart';
 import 'core/storage/storage_dependency_injection.dart';
 
 import 'features/active_ingredient/di/active_ingredient_di.dart';
-import 'features/auth/di/auth_dependency_injection.dart';
 import 'features/authentication/di/authentication_dependency_injection.dart';
 import 'features/branch/di/branch_dependency_injection.dart';
 import 'features/cabin/di/cabin_dependency_injection.dart';
@@ -69,10 +68,7 @@ Future<void> start(SharedPreferences prefs) async {
         // Network
         Provider<Dio>(create: (_) => Dio()),
         Provider<APIManager>(
-          create: (context) => APIManager(
-            dio: context.read<Dio>(),
-            authNotifier: context.read<AuthStorageNotifier>(),
-          ),
+          create: (context) => APIManager(dio: context.read<Dio>(), authNotifier: context.read<AuthStorageNotifier>()),
         ),
 
         // Settings
@@ -80,7 +76,7 @@ Future<void> start(SharedPreferences prefs) async {
 
         // Common
         ...FavoriteProviders.providers,
-        ...AuthProviders.providers,
+        //...AuthProviders.providers,
 
         // Features
         ...MenuProviders.providers(isDev: isDev),
@@ -123,10 +119,8 @@ Future<void> start(SharedPreferences prefs) async {
         ...DirectedOrderProviders.providers(isDev: true),
 
         ChangeNotifierProvider(
-          create: (context) => HomeNotifier(
-            getFilteredMenusUseCase: context.read(),
-            authStorageNotifier: context.read(),
-          ),
+          create: (context) =>
+              HomeNotifier(getFilteredMenusUseCase: context.read(), authStorageNotifier: context.read()),
         ),
       ],
       child: MyApp(),

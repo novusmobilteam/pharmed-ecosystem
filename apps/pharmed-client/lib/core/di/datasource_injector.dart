@@ -18,7 +18,6 @@ import '../flavor/app_flavor.dart';
 import '../hardware/serial_communication/i_serial_communication_service.dart';
 import '../hardware/serial_communication/mock_serial_communication_service.dart';
 import '../hardware/serial_communication/serial_communication_service.dart';
-import '../network/network_manager.dart';
 
 abstract final class DI {
   static ISerialCommunicationService serialCommunicationService() {
@@ -32,34 +31,34 @@ abstract final class DI {
 
   // ── CabinStock ──────────────────────────────────────────────
 
-  static CabinStockDataSource cabinStockDataSource({
-    bool forceError = false, // Test: error state görmek için
-  }) {
-    final config = FlavorConfig.instance;
+  // static CabinStockDataSource cabinStockDataSource({
+  //   bool forceError = false, // Test: error state görmek için
+  // }) {
+  //   final config = FlavorConfig.instance;
 
-    return switch (config.flavor) {
-      // mock → sahte veri, forceError ile hata senaryosu
-      AppFlavor.mock => forceError ? CabinStockMockErrorDataSource() : CabinStockMockDataSource(),
+  //   return switch (config.flavor) {
+  //     // mock → sahte veri, forceError ile hata senaryosu
+  //     AppFlavor.mock => forceError ? CabinStockMockErrorDataSource() : CabinStockMockDataSource(),
 
-      // dev / prod → gerçek servis
-      AppFlavor.dev || AppFlavor.prod => CabinStockRemoteDataSource(
-        networkManager: NetworkManager(
-          baseUrl: config.baseUrl,
-          connectTimeout: Duration(milliseconds: config.connectTimeoutMs),
-          receiveTimeout: Duration(milliseconds: config.receiveTimeoutMs),
-        ),
-      ),
-    };
-  }
+  //     // dev / prod → gerçek servis
+  //     AppFlavor.dev || AppFlavor.prod => CabinStockRemoteDataSource(
+  //       networkManager: NetworkManager(
+  //         baseUrl: config.baseUrl,
+  //         connectTimeout: Duration(milliseconds: config.connectTimeoutMs),
+  //         receiveTimeout: Duration(milliseconds: config.receiveTimeoutMs),
+  //       ),
+  //     ),
+  //   };
+  // }
 
-  static CabinStockRepositoryImpl cabinStockRepository({bool forceError = false}) {
-    return CabinStockRepositoryImpl(
-      dataSource: cabinStockDataSource(forceError: forceError),
-      listCache: CabinStockListCache(),
-      singleCache: CabinStockSingleCache(),
-      mapper: const CabinStockMapper(),
-    );
-  }
+  // static CabinStockRepositoryImpl cabinStockRepository({bool forceError = false}) {
+  //   return CabinStockRepositoryImpl(
+  //     dataSource: cabinStockDataSource(forceError: forceError),
+  //     listCache: CabinStockListCache(),
+  //     singleCache: CabinStockSingleCache(),
+  //     mapper: const CabinStockMapper(),
+  //   );
+  // }
 
   // ── SetupWizard ─────────────────────────────────────────────
 
