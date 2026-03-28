@@ -1,0 +1,270 @@
+{
+  "@@locale": "ar",
+
+  "appName": "MediCab",
+  "btnBack": "رجوع",
+  "btnContinue": "متابعة",
+  "btnCancel": "إلغاء",
+  "btnRetry": "إعادة المحاولة",
+  "stateEnabled": "مفعّل",
+  "stateDisabled": "معطّل",
+
+  "topBarTagline": "إدارة خزانة الأدوية",
+  "topBarLocation": "{location} · الخزانة #{cabinCode}",
+  "@topBarLocation": {
+    "placeholders": {
+      "location": { "type": "String" },
+      "cabinCode": { "type": "String" }
+    }
+  },
+  "topBarOnline": "النظام متصل",
+  "topBarOffline": "لا يوجد اتصال",
+  "topBarAlertCount": "{count} تنبيهات",
+  "@topBarAlertCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "topBarLogin": "تسجيل الدخول",
+  "topBarLogout": "تسجيل الخروج",
+
+  "navShift": "الوردية: ",
+  "navLockedBannerPre": "تم إغلاق جلستك بسبب ",
+  "navLockedBannerHighlight": "انتهاء المهلة",
+  "navLockedBannerPost": ". يرجى تسجيل الدخول للمتابعة.",
+  "navSessionExpiringTitle": "جلستك على وشك الانتهاء.",
+  "navSessionTimeoutPre": "ستُغلق جلستك خلال ",
+  "navSessionTimeoutPost": " ثانية.",
+  "navLoginTitle": "تسجيل الدخول للنظام",
+  "navLoginSubtitle": "MediCab HMI · الخزانة #{cabinCode}",
+  "@navLoginSubtitle": {
+    "placeholders": {
+      "cabinCode": { "type": "String" }
+    }
+  },
+  "navLoginUsername": "اسم المستخدم",
+  "navLoginUsernamePlaceholder": "اسم.المستخدم",
+  "navLoginPassword": "كلمة المرور",
+  "navLoginPasswordPlaceholder": "••••••••",
+  "navQuickActions": "الإجراءات السريعة",
+  "navAlerts": "التنبيهات",
+  "navAlertsCritical": "{count} حرج",
+  "@navAlertsCritical": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "navRecentActivities": "الأنشطة الأخيرة",
+  "navLive": "مباشر",
+
+  "staleJustNow": "الآن",
+  "staleMinutesAgo": "منذ {minutes} دقيقة",
+  "@staleMinutesAgo": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "staleHoursAgo": "منذ {hours} ساعة",
+  "@staleHoursAgo": {
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
+  },
+  "staleDataOutdated": "البيانات غير محدّثة. ",
+  "staleCannotProceed": "البيانات الحالية غير متاحة. لا يمكن المتابعة. ",
+  "staleLastUpdated": "آخر تحديث: {time}",
+  "@staleLastUpdated": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "staleBadgeCanProceed": "متابعة",
+  "staleBadgeBlocked": "محظور",
+
+  "wizardFirstSetup": "الإعداد الأولي",
+  "wizardPhases": "مراحل الإعداد",
+  "wizardSaving": "جارٍ حفظ الخزانة…",
+  "wizardSuccessTitle": "اكتمل الإعداد!",
+  "wizardSuccessMsg": "تمت إضافة {cabinName} إلى النظام بنجاح.",
+  "@wizardSuccessMsg": {
+    "placeholders": {
+      "cabinName": { "type": "String" }
+    }
+  },
+  "wizardCabinId": "معرّف الخزانة: #{cabinId}",
+  "@wizardCabinId": {
+    "placeholders": {
+      "cabinId": { "type": "int" }
+    }
+  },
+  "wizardGoToDashboard": "الانتقال إلى لوحة التحكم",
+  "wizardErrorTitle": "فشل التسجيل",
+  "wizardErrorRetry": "العودة وإعادة المحاولة",
+
+  "wizardStep1Title": "نوع الخزانة",
+  "wizardStep1Desc": "قياسية أو متنقلة",
+  "wizardStep2Title": "المعلومات الأساسية",
+  "wizardStep2Desc": "الاسم، الموقع، الاتصال",
+  "wizardStep3Title": "نطاق الخدمة",
+  "wizardStep3Desc": "قسم أو قائمة غرف",
+  "wizardStep4Title": "هيكل الأدراج",
+  "wizardStep4Desc": "مسح أو إدخال يدوي",
+  "wizardStep5Title": "الملخص",
+  "wizardStep5Desc": "مراجعة وإنهاء",
+  "wizardStepBadge": "الخطوة {step} / {total}",
+  "@wizardStepBadge": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "step1Title": "اختر نوع الخزانة",
+  "step1Subtitle": "حدد نوع الخزانة التي تريد إدارتها. سيؤثر هذا الاختيار على الخطوات التالية.",
+  "step1Spec1Standard": "5 أقسام",
+  "step1Spec2Standard": "مكعبي / جرعة فردية",
+  "step1Spec3Standard": "قائم على القسم",
+  "step1DescStandard": "خزانة ثابتة على الحائط أو قائمة بذاتها تحتوي على أدراج مكعبية وجرعة فردية.",
+  "step1Spec1Mobile": "4 صفوف",
+  "step1Spec2Mobile": "بعجلات",
+  "step1Spec3Mobile": "قائم على الغرف",
+  "step1DescMobile": "وحدة أدوية متنقلة بعجلات مكونة من 4 صفوف، مصممة للتجول في الأجنحة.",
+  "step1Warning": "لا يمكن تغيير نوع الخزانة لاحقاً.",
+
+  "step2Title": "المعلومات الأساسية",
+  "step2Subtitle": "أدخل اسم الخزانة والموقع وإعدادات اتصال الجهاز.",
+  "step2SectionCabinId": "هوية الخزانة",
+  "step2CabinName": "اسم الخزانة",
+  "step2CabinNameHint": "مثال: CB-304",
+  "step2Location": "الموقع",
+  "step2LocationHint": "مثال: الطابق 3 الممر ب",
+  "step2SectionConnection": "إعدادات الاتصال",
+  "step2IpAddress": "عنوان IP",
+  "step2Port": "المنفذ",
+  "step2PortHint": "8080",
+  "step2SectionAdvanced": "الإعدادات المتقدمة",
+  "step2Timeout": "المهلة الزمنية (ثانية)",
+  "step2Ssl": "SSL / TLS",
+
+  "step3Title": "نطاق الخدمة",
+  "step3SubtitleStandard": "اختر العيادة التي ستخدمها هذه الخزانة.",
+  "step3SubtitleMobile": "حدد الغرف التي ستتجول فيها الخزانة المتنقلة.",
+  "step3InfoStandard": "سيُستخدم القسم المختار كمعيار تصفية رئيسي في التقارير وتتبع المخزون.",
+  "step3SectionClinic": "العيادة / القسم",
+  "step3SelectService": "اختر القسم",
+  "step3SectionRooms": "قائمة الغرف",
+  "step3InfoRooms": "اكتب رقم كل غرفة وأضفها بالضغط على Enter أو الفاصلة. مثال: 301، 302، 303",
+  "step3AddRoom": "إضافة رقم غرفة",
+  "step3AddRoomHint": "مثال: 301",
+  "step3RoomsCount": "تم تحديد {count} غرفة",
+  "@step3RoomsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "svcCardiology": "أمراض القلب",
+  "svcNeurology": "طب الأعصاب",
+  "svcInternal": "الطب الباطني",
+  "svcOrthopedics": "جراحة العظام",
+  "svcGeneralSurgery": "الجراحة العامة",
+  "svcEmergency": "الطوارئ",
+  "svcICU": "العناية المركزة",
+  "svcChestDiseases": "أمراض الصدر",
+  "svcInfectious": "الأمراض المعدية",
+  "svcUrology": "المسالك البولية",
+
+  "step4Title": "هيكل الأدراج",
+  "step4SubtitleStandard": "اكتشف هيكل الأدراج تلقائياً بمسح الجهاز أو أدخله يدوياً.",
+  "step4SubtitleMobile": "اضبط عدد صفوف الخزانة المتنقلة ونوع درج كل صف.",
+  "step4ScanHeading": "مسح الجهاز",
+  "step4ScanDesc": "يتصل بعنوان IP للجهاز ويقرأ هيكل الأدراج تلقائياً.",
+  "step4BtnScan": "مسح الجهاز",
+  "step4Scanning": "جارٍ المسح…",
+  "step4ScanWaiting": "محاولة الاتصال بالجهاز، يرجى الانتظار.",
+  "step4ScanFoundTitle": "تم العثور على الجهاز",
+  "step4ScanFoundMsg": "تمت قراءة هيكل الأدراج بنجاح.",
+  "step4ScanErrorTitle": "فشل المسح",
+  "step4ScanErrorMsg": "تعذّر الاتصال بالجهاز. تحقق من عنوان IP أو أدخل البيانات يدوياً.",
+  "step4ShowManual": "إدخال يدوي",
+  "step4HideManual": "إخفاء الإدخال اليدوي",
+  "step4ManualSection": "الإعداد اليدوي",
+  "step4SectionCount": "عدد الأقسام",
+  "step4DrawerType": "نوع الدرج",
+  "step4Depth": "العمق (1–12)",
+  "step4MobileRowCount": "إجمالي عدد الصفوف",
+  "step4MobileRowDesc": "يحتوي كل صف على درجين جنباً إلى جنب.",
+  "step4Row": "الصف {index}",
+  "@step4Row": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "step4ScannedLayout": "الهيكل المُقروء",
+  "step4ScannedResult": "{sections} أقسام · {type} · العمق {depth}",
+  "@step4ScannedResult": {
+    "placeholders": {
+      "sections": { "type": "int" },
+      "type": { "type": "String" },
+      "depth": { "type": "int" }
+    }
+  },
+
+  "step5Title": "ملخص الإعداد",
+  "step5Subtitle": "راجع جميع الإعدادات. بعد التأكيد، سيُحفظ الخزانة في النظام.",
+  "step5CardCabinInfo": "معلومات الخزانة",
+  "step5CardDrawer": "هيكل الأدراج",
+  "step5CardScope": "نطاق الخدمة",
+  "step5CardPreview": "معاينة الخزانة",
+  "step5LabelCabinName": "اسم الخزانة",
+  "step5LabelType": "النوع",
+  "step5LabelLocation": "الموقع",
+  "step5LabelIp": "عنوان IP",
+  "step5LabelPort": "المنفذ",
+  "step5LabelSsl": "SSL",
+  "step5LabelSections": "الأقسام",
+  "step5LabelDepth": "العمق",
+  "step5LabelSource": "المصدر",
+  "step5SourceScanned": "مُقروء من الجهاز",
+  "step5SourceManual": "مُدخل يدوياً",
+  "step5LabelRowCount": "عدد الصفوف",
+  "step5Row": "الصف {index}",
+  "@step5Row": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "step5LabelScope": "النطاق",
+  "step5ScopeService": "قائم على القسم",
+  "step5LabelService": "القسم",
+  "step5ScopeRoom": "قائم على الغرف",
+  "step5LabelRooms": "الغرف",
+  "step5LabelRoomCount": "عدد الغرف",
+  "step5NoData": "لا توجد بيانات",
+  "step5BtnSaving": "جارٍ الحفظ…",
+  "step5BtnFinish": "إتمام الإعداد",
+  "step5StandardPreviewName": "خزانة قياسية",
+  "step5MobilePreviewName": "خزانة متنقلة",
+
+  "cabinetTypeStandard": "خزانة قياسية",
+  "cabinetTypeMobile": "خزانة متنقلة",
+
+  "drawerTypeCubic4x4": "مكعبي (4×4)",
+  "drawerTypeCubic4x5": "مكعبي (4×5)",
+  "drawerTypeUnitDose": "جرعة فردية",
+
+  "dashKpiActivePatients": "المرضى النشطون",
+  "dashKpiCompletedOps": "العمليات المكتملة",
+  "dashKpiPendingRx": "الوصفات المعلّقة",
+  "dashKpiCriticalAlert": "التنبيهات الحرجة",
+  "dashCabinStatusTitle": "حالة الخزانة",
+  "dashCabinLocked": "مغلقة",
+  "dashCabinOpen": "مفتوحة",
+  "dashCabinStatusRow": "حالة الخزانة",
+  "dashNewTreatmentTitle": "تعيين علاج جديد",
+  "dashNewTreatmentDesc": "الانتقال إلى شاشة تعيين العلاج الجديد.",
+  "dashErrorKpi": "تعذّر تحميل بيانات KPI",
+  "dashErrorCabin": "تعذّر تحميل بيانات الخزانة",
+  "dashErrorTreatments": "تعذّر تحميل قائمة العلاجات",
+  "dashErrorSkt": "تعذّر تحميل بيانات انتهاء الصلاحية"
+}

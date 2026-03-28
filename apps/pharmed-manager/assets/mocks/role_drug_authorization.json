@@ -1,0 +1,246 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "roleId": 1,
+      "drugId": 1,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 2,
+      "roleId": 2,
+      "drugId": 2,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 3,
+      "roleId": 3,
+      "drugId": 3,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 4,
+      "roleId": 4,
+      "drugId": 4,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 5,
+      "roleId": 5,
+      "drugId": 5,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 6,
+      "roleId": 6,
+      "drugId": 6,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 7,
+      "roleId": 1,
+      "drugId": 7,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 8,
+      "roleId": 2,
+      "drugId": 8,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 9,
+      "roleId": 3,
+      "drugId": 9,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 10,
+      "roleId": 4,
+      "drugId": 10,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 11,
+      "roleId": 5,
+      "drugId": 11,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 12,
+      "roleId": 6,
+      "drugId": 12,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 13,
+      "roleId": 1,
+      "drugId": 13,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 14,
+      "roleId": 2,
+      "drugId": 14,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 15,
+      "roleId": 3,
+      "drugId": 15,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 16,
+      "roleId": 4,
+      "drugId": 16,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 17,
+      "roleId": 5,
+      "drugId": 17,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 18,
+      "roleId": 6,
+      "drugId": 18,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 19,
+      "roleId": 1,
+      "drugId": 19,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 20,
+      "roleId": 2,
+      "drugId": 20,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 21,
+      "roleId": 3,
+      "drugId": 1,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 22,
+      "roleId": 4,
+      "drugId": 2,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 23,
+      "roleId": 5,
+      "drugId": 3,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 24,
+      "roleId": 6,
+      "drugId": 4,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 25,
+      "roleId": 1,
+      "drugId": 5,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 26,
+      "roleId": 2,
+      "drugId": 6,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 27,
+      "roleId": 3,
+      "drugId": 7,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 28,
+      "roleId": 4,
+      "drugId": 8,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 29,
+      "roleId": 5,
+      "drugId": 9,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 30,
+      "roleId": 6,
+      "drugId": 10,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    }
+  ]
+}

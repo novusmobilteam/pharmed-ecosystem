@@ -1,0 +1,506 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "cabinId": 1,
+      "no": 1,
+      "name": "Çekmece 1",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 6
+    },
+    {
+      "id": 2,
+      "cabinId": 1,
+      "no": 2,
+      "name": "Çekmece 2",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 6
+    },
+    {
+      "id": 3,
+      "cabinId": 1,
+      "no": 3,
+      "name": "Çekmece 3",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 7
+    },
+    {
+      "id": 4,
+      "cabinId": 1,
+      "no": 4,
+      "name": "Çekmece 4",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 5
+    },
+    {
+      "id": 5,
+      "cabinId": 1,
+      "no": 5,
+      "name": "Çekmece 5",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 6
+    },
+    {
+      "id": 6,
+      "cabinId": 1,
+      "no": 6,
+      "name": "Çekmece 6",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 5
+    },
+    {
+      "id": 7,
+      "cabinId": 1,
+      "no": 7,
+      "name": "Çekmece 7",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 5
+    },
+    {
+      "id": 8,
+      "cabinId": 1,
+      "no": 8,
+      "name": "Çekmece 8",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 6
+    },
+    {
+      "id": 9,
+      "cabinId": 1,
+      "no": 9,
+      "name": "Çekmece 9",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 5
+    },
+    {
+      "id": 10,
+      "cabinId": 1,
+      "no": 10,
+      "name": "Çekmece 10",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 4
+    },
+    {
+      "id": 11,
+      "cabinId": 2,
+      "no": 11,
+      "name": "Çekmece 11",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 4
+    },
+    {
+      "id": 12,
+      "cabinId": 2,
+      "no": 12,
+      "name": "Çekmece 12",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 5
+    },
+    {
+      "id": 13,
+      "cabinId": 2,
+      "no": 13,
+      "name": "Çekmece 13",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 5
+    },
+    {
+      "id": 14,
+      "cabinId": 2,
+      "no": 14,
+      "name": "Çekmece 14",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 4
+    },
+    {
+      "id": 15,
+      "cabinId": 2,
+      "no": 15,
+      "name": "Çekmece 15",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 4
+    },
+    {
+      "id": 16,
+      "cabinId": 2,
+      "no": 16,
+      "name": "Çekmece 16",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 5
+    },
+    {
+      "id": 17,
+      "cabinId": 2,
+      "no": 17,
+      "name": "Çekmece 17",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 5
+    },
+    {
+      "id": 18,
+      "cabinId": 2,
+      "no": 18,
+      "name": "Çekmece 18",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 5
+    },
+    {
+      "id": 19,
+      "cabinId": 2,
+      "no": 19,
+      "name": "Çekmece 19",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 4
+    },
+    {
+      "id": 20,
+      "cabinId": 2,
+      "no": 20,
+      "name": "Çekmece 20",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 7
+    },
+    {
+      "id": 21,
+      "cabinId": 3,
+      "no": 21,
+      "name": "Çekmece 21",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 7
+    },
+    {
+      "id": 22,
+      "cabinId": 3,
+      "no": 22,
+      "name": "Çekmece 22",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 7
+    },
+    {
+      "id": 23,
+      "cabinId": 3,
+      "no": 23,
+      "name": "Çekmece 23",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 6
+    },
+    {
+      "id": 24,
+      "cabinId": 3,
+      "no": 24,
+      "name": "Çekmece 24",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 4
+    },
+    {
+      "id": 25,
+      "cabinId": 3,
+      "no": 25,
+      "name": "Çekmece 25",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 5
+    },
+    {
+      "id": 26,
+      "cabinId": 3,
+      "no": 26,
+      "name": "Çekmece 26",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 4
+    },
+    {
+      "id": 27,
+      "cabinId": 3,
+      "no": 27,
+      "name": "Çekmece 27",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 5
+    },
+    {
+      "id": 28,
+      "cabinId": 3,
+      "no": 28,
+      "name": "Çekmece 28",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 5
+    },
+    {
+      "id": 29,
+      "cabinId": 3,
+      "no": 29,
+      "name": "Çekmece 29",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 5
+    },
+    {
+      "id": 30,
+      "cabinId": 3,
+      "no": 30,
+      "name": "Çekmece 30",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 4
+    },
+    {
+      "id": 31,
+      "cabinId": 4,
+      "no": 31,
+      "name": "Çekmece 31",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 5
+    },
+    {
+      "id": 32,
+      "cabinId": 4,
+      "no": 32,
+      "name": "Çekmece 32",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 6
+    },
+    {
+      "id": 33,
+      "cabinId": 4,
+      "no": 33,
+      "name": "Çekmece 33",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 5
+    },
+    {
+      "id": 34,
+      "cabinId": 4,
+      "no": 34,
+      "name": "Çekmece 34",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 6
+    },
+    {
+      "id": 35,
+      "cabinId": 4,
+      "no": 35,
+      "name": "Çekmece 35",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 4
+    },
+    {
+      "id": 36,
+      "cabinId": 4,
+      "no": 36,
+      "name": "Çekmece 36",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 4
+    },
+    {
+      "id": 37,
+      "cabinId": 4,
+      "no": 37,
+      "name": "Çekmece 37",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 6
+    },
+    {
+      "id": 38,
+      "cabinId": 4,
+      "no": 38,
+      "name": "Çekmece 38",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 7
+    },
+    {
+      "id": 39,
+      "cabinId": 4,
+      "no": 39,
+      "name": "Çekmece 39",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 6
+    },
+    {
+      "id": 40,
+      "cabinId": 4,
+      "no": 40,
+      "name": "Çekmece 40",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 6
+    },
+    {
+      "id": 41,
+      "cabinId": 5,
+      "no": 41,
+      "name": "Çekmece 41",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 6
+    },
+    {
+      "id": 42,
+      "cabinId": 5,
+      "no": 42,
+      "name": "Çekmece 42",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 4
+    },
+    {
+      "id": 43,
+      "cabinId": 5,
+      "no": 43,
+      "name": "Çekmece 43",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 4
+    },
+    {
+      "id": 44,
+      "cabinId": 5,
+      "no": 44,
+      "name": "Çekmece 44",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 6
+    },
+    {
+      "id": 45,
+      "cabinId": 5,
+      "no": 45,
+      "name": "Çekmece 45",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 4
+    },
+    {
+      "id": 46,
+      "cabinId": 5,
+      "no": 46,
+      "name": "Çekmece 46",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 2,
+      "columnCount": 5
+    },
+    {
+      "id": 47,
+      "cabinId": 5,
+      "no": 47,
+      "name": "Çekmece 47",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 4
+    },
+    {
+      "id": 48,
+      "cabinId": 5,
+      "no": 48,
+      "name": "Çekmece 48",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 6
+    },
+    {
+      "id": 49,
+      "cabinId": 5,
+      "no": 49,
+      "name": "Çekmece 49",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 3,
+      "columnCount": 5
+    },
+    {
+      "id": 50,
+      "cabinId": 5,
+      "no": 50,
+      "name": "Çekmece 50",
+      "orderNo": 1,
+      "compartmentNo": 12,
+      "rowCount": 4,
+      "columnCount": 6
+    }
+  ]
+}

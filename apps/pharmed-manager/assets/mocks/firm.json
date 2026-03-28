@@ -1,0 +1,108 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Abdi İbrahim",
+      "code": "FRM001",
+      "status": true
+    },
+    {
+      "id": 2,
+      "name": "Eczacıbaşı",
+      "code": "FRM002",
+      "status": true
+    },
+    {
+      "id": 3,
+      "name": "Sanofi",
+      "code": "FRM003",
+      "status": true
+    },
+    {
+      "id": 4,
+      "name": "Bayer",
+      "code": "FRM004",
+      "status": true
+    },
+    {
+      "id": 5,
+      "name": "Pfizer",
+      "code": "FRM005",
+      "status": true
+    },
+    {
+      "id": 6,
+      "name": "Novartis",
+      "code": "FRM006",
+      "status": true
+    },
+    {
+      "id": 7,
+      "name": "Roche",
+      "code": "FRM007",
+      "status": true
+    },
+    {
+      "id": 8,
+      "name": "GSK",
+      "code": "FRM008",
+      "status": true
+    },
+    {
+      "id": 9,
+      "name": "AstraZeneca",
+      "code": "FRM009",
+      "status": true
+    },
+    {
+      "id": 10,
+      "name": "Johnson & Johnson",
+      "code": "FRM010",
+      "status": true
+    },
+    {
+      "id": 11,
+      "name": "Bilim İlaç",
+      "code": "FRM011",
+      "status": true
+    },
+    {
+      "id": 12,
+      "name": "Deva Holding",
+      "code": "FRM012",
+      "status": true
+    },
+    {
+      "id": 13,
+      "name": "Nobel İlaç",
+      "code": "FRM013",
+      "status": true
+    },
+    {
+      "id": 14,
+      "name": "Koçak Farma",
+      "code": "FRM014",
+      "status": true
+    },
+    {
+      "id": 15,
+      "name": "Santa Farma",
+      "code": "FRM015",
+      "status": true
+    },
+    {
+      "id": 16,
+      "name": "Mustafa Nevzat",
+      "code": "FRM016",
+      "status": true
+    },
+    {
+      "id": 17,
+      "name": "İE Ulagay",
+      "code": "FRM017",
+      "status": true
+    }
+  ]
+}

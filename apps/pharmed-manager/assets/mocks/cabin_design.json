@@ -1,0 +1,66 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "cabinId": 1,
+      "rowCount": 4,
+      "columnCount": 4
+    },
+    {
+      "id": 2,
+      "cabinId": 2,
+      "rowCount": 2,
+      "columnCount": 7
+    },
+    {
+      "id": 3,
+      "cabinId": 3,
+      "rowCount": 4,
+      "columnCount": 5
+    },
+    {
+      "id": 4,
+      "cabinId": 4,
+      "rowCount": 3,
+      "columnCount": 4
+    },
+    {
+      "id": 5,
+      "cabinId": 5,
+      "rowCount": 2,
+      "columnCount": 4
+    },
+    {
+      "id": 6,
+      "cabinId": 6,
+      "rowCount": 3,
+      "columnCount": 5
+    },
+    {
+      "id": 7,
+      "cabinId": 7,
+      "rowCount": 3,
+      "columnCount": 7
+    },
+    {
+      "id": 8,
+      "cabinId": 8,
+      "rowCount": 3,
+      "columnCount": 4
+    },
+    {
+      "id": 9,
+      "cabinId": 9,
+      "rowCount": 2,
+      "columnCount": 5
+    },
+    {
+      "id": 10,
+      "cabinId": 10,
+      "rowCount": 3,
+      "columnCount": 5
+    }
+  ]
+}

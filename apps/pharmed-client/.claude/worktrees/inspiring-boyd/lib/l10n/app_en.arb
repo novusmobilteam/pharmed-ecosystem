@@ -1,0 +1,270 @@
+{
+  "@@locale": "en",
+
+  "appName": "MediCab",
+  "btnBack": "Back",
+  "btnContinue": "Continue",
+  "btnCancel": "Cancel",
+  "btnRetry": "Retry",
+  "stateEnabled": "Enabled",
+  "stateDisabled": "Disabled",
+
+  "topBarTagline": "MEDICATION CABINET MANAGEMENT",
+  "topBarLocation": "{location} · Cabinet #{cabinCode}",
+  "@topBarLocation": {
+    "placeholders": {
+      "location": { "type": "String" },
+      "cabinCode": { "type": "String" }
+    }
+  },
+  "topBarOnline": "System Online",
+  "topBarOffline": "No Connection",
+  "topBarAlertCount": "{count} Alerts",
+  "@topBarAlertCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "topBarLogin": "Log In",
+  "topBarLogout": "Log Out",
+
+  "navShift": "Shift: ",
+  "navLockedBannerPre": "Your session was closed due to ",
+  "navLockedBannerHighlight": "timeout",
+  "navLockedBannerPost": ". Please log in to continue.",
+  "navSessionExpiringTitle": "Your session is about to expire.",
+  "navSessionTimeoutPre": "Your session will close in ",
+  "navSessionTimeoutPost": " seconds.",
+  "navLoginTitle": "System Login",
+  "navLoginSubtitle": "MediCab HMI · Cabinet #{cabinCode}",
+  "@navLoginSubtitle": {
+    "placeholders": {
+      "cabinCode": { "type": "String" }
+    }
+  },
+  "navLoginUsername": "Username",
+  "navLoginUsernamePlaceholder": "username",
+  "navLoginPassword": "Password",
+  "navLoginPasswordPlaceholder": "••••••••",
+  "navQuickActions": "QUICK ACTIONS",
+  "navAlerts": "ALERTS",
+  "navAlertsCritical": "{count} critical",
+  "@navAlertsCritical": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "navRecentActivities": "RECENT ACTIVITIES",
+  "navLive": "Live",
+
+  "staleJustNow": "just now",
+  "staleMinutesAgo": "{minutes} min ago",
+  "@staleMinutesAgo": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "staleHoursAgo": "{hours} hr ago",
+  "@staleHoursAgo": {
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
+  },
+  "staleDataOutdated": "Data is outdated. ",
+  "staleCannotProceed": "Current data unavailable. Cannot proceed. ",
+  "staleLastUpdated": "Last updated: {time}",
+  "@staleLastUpdated": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "staleBadgeCanProceed": "Continue",
+  "staleBadgeBlocked": "Blocked",
+
+  "wizardFirstSetup": "INITIAL SETUP",
+  "wizardPhases": "SETUP PHASES",
+  "wizardSaving": "Saving cabinet…",
+  "wizardSuccessTitle": "Setup Complete!",
+  "wizardSuccessMsg": "{cabinName} was successfully added to the system.",
+  "@wizardSuccessMsg": {
+    "placeholders": {
+      "cabinName": { "type": "String" }
+    }
+  },
+  "wizardCabinId": "Cabinet ID: #{cabinId}",
+  "@wizardCabinId": {
+    "placeholders": {
+      "cabinId": { "type": "int" }
+    }
+  },
+  "wizardGoToDashboard": "Go to Dashboard",
+  "wizardErrorTitle": "Registration Failed",
+  "wizardErrorRetry": "Go Back and Retry",
+
+  "wizardStep1Title": "Cabinet Type",
+  "wizardStep1Desc": "Standard or Mobile",
+  "wizardStep2Title": "Basic Info",
+  "wizardStep2Desc": "Name, location, connection",
+  "wizardStep3Title": "Service Scope",
+  "wizardStep3Desc": "Ward or room list",
+  "wizardStep4Title": "Drawer Layout",
+  "wizardStep4Desc": "Scan or manual entry",
+  "wizardStep5Title": "Summary",
+  "wizardStep5Desc": "Review and finish",
+  "wizardStepBadge": "Step {step} / {total}",
+  "@wizardStepBadge": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "step1Title": "Select Cabinet Type",
+  "step1Subtitle": "Choose the type of cabinet you want to manage. This selection will shape the following steps.",
+  "step1Spec1Standard": "5 Sections",
+  "step1Spec2Standard": "Cubic / Unit Dose",
+  "step1Spec3Standard": "Ward-Based",
+  "step1DescStandard": "Fixed wall-mounted or freestanding cabinet with a combination of cubic and unit dose drawers.",
+  "step1Spec1Mobile": "4 Rows",
+  "step1Spec2Mobile": "Wheeled",
+  "step1Spec3Mobile": "Room-Based",
+  "step1DescMobile": "Wheeled portable medication unit with 4 rows, designed for ward rounds.",
+  "step1Warning": "Cabinet type cannot be changed later.",
+
+  "step2Title": "Basic Information",
+  "step2Subtitle": "Enter the cabinet name, location, and device connection settings.",
+  "step2SectionCabinId": "CABINET IDENTITY",
+  "step2CabinName": "Cabinet Name",
+  "step2CabinNameHint": "e.g. CB-304",
+  "step2Location": "Location",
+  "step2LocationHint": "e.g. Floor 3 Corridor B",
+  "step2SectionConnection": "CONNECTION SETTINGS",
+  "step2IpAddress": "IP Address",
+  "step2Port": "Port",
+  "step2PortHint": "8080",
+  "step2SectionAdvanced": "ADVANCED SETTINGS",
+  "step2Timeout": "Timeout (sec)",
+  "step2Ssl": "SSL / TLS",
+
+  "step3Title": "Service Scope",
+  "step3SubtitleStandard": "Select the clinic this cabinet will serve.",
+  "step3SubtitleMobile": "Define the rooms the mobile cabinet will visit.",
+  "step3InfoStandard": "The selected ward will be used as the primary filter for reporting and inventory tracking.",
+  "step3SectionClinic": "CLINIC / WARD",
+  "step3SelectService": "Select Ward",
+  "step3SectionRooms": "ROOM LIST",
+  "step3InfoRooms": "Type each room number and add it with Enter or a comma. E.g.: 301, 302, 303",
+  "step3AddRoom": "Add Room Number",
+  "step3AddRoomHint": "e.g. 301",
+  "step3RoomsCount": "{count} rooms defined",
+  "@step3RoomsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "svcCardiology": "Cardiology",
+  "svcNeurology": "Neurology",
+  "svcInternal": "Internal Medicine",
+  "svcOrthopedics": "Orthopedics",
+  "svcGeneralSurgery": "General Surgery",
+  "svcEmergency": "Emergency",
+  "svcICU": "Intensive Care",
+  "svcChestDiseases": "Chest Diseases",
+  "svcInfectious": "Infectious Diseases",
+  "svcUrology": "Urology",
+
+  "step4Title": "Drawer Layout",
+  "step4SubtitleStandard": "Auto-detect the drawer layout by scanning the device, or enter it manually.",
+  "step4SubtitleMobile": "Set the number of rows and drawer type for each row of the mobile cabinet.",
+  "step4ScanHeading": "Device Scan",
+  "step4ScanDesc": "Connects to the device's IP address and reads the drawer layout automatically.",
+  "step4BtnScan": "Scan Device",
+  "step4Scanning": "Scanning…",
+  "step4ScanWaiting": "Attempting to connect to device, please wait.",
+  "step4ScanFoundTitle": "Device Found",
+  "step4ScanFoundMsg": "Drawer layout read successfully.",
+  "step4ScanErrorTitle": "Scan Failed",
+  "step4ScanErrorMsg": "Could not connect to the device. Check the IP address or enter manually.",
+  "step4ShowManual": "Enter manually",
+  "step4HideManual": "Hide manual entry",
+  "step4ManualSection": "MANUAL CONFIGURATION",
+  "step4SectionCount": "Section Count",
+  "step4DrawerType": "Drawer Type",
+  "step4Depth": "Depth (1–12)",
+  "step4MobileRowCount": "TOTAL ROW COUNT",
+  "step4MobileRowDesc": "Each row holds 2 drawers side by side.",
+  "step4Row": "Row {index}",
+  "@step4Row": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "step4ScannedLayout": "Scanned Layout",
+  "step4ScannedResult": "{sections} sections · {type} · Depth {depth}",
+  "@step4ScannedResult": {
+    "placeholders": {
+      "sections": { "type": "int" },
+      "type": { "type": "String" },
+      "depth": { "type": "int" }
+    }
+  },
+
+  "step5Title": "Setup Summary",
+  "step5Subtitle": "Review all settings. Once confirmed, the cabinet will be saved to the system.",
+  "step5CardCabinInfo": "CABINET INFORMATION",
+  "step5CardDrawer": "DRAWER LAYOUT",
+  "step5CardScope": "SERVICE SCOPE",
+  "step5CardPreview": "CABINET PREVIEW",
+  "step5LabelCabinName": "Cabinet Name",
+  "step5LabelType": "Type",
+  "step5LabelLocation": "Location",
+  "step5LabelIp": "IP Address",
+  "step5LabelPort": "Port",
+  "step5LabelSsl": "SSL",
+  "step5LabelSections": "Sections",
+  "step5LabelDepth": "Depth",
+  "step5LabelSource": "Source",
+  "step5SourceScanned": "Scanned from Device",
+  "step5SourceManual": "Entered Manually",
+  "step5LabelRowCount": "Row Count",
+  "step5Row": "Row {index}",
+  "@step5Row": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "step5LabelScope": "Scope",
+  "step5ScopeService": "Ward-Based",
+  "step5LabelService": "Ward",
+  "step5ScopeRoom": "Room-Based",
+  "step5LabelRooms": "Rooms",
+  "step5LabelRoomCount": "Room Count",
+  "step5NoData": "No data",
+  "step5BtnSaving": "Saving…",
+  "step5BtnFinish": "Complete Setup",
+  "step5StandardPreviewName": "Standard Cabinet",
+  "step5MobilePreviewName": "Mobile Cabinet",
+
+  "cabinetTypeStandard": "Standard Cabinet",
+  "cabinetTypeMobile": "Mobile Cabinet",
+
+  "drawerTypeCubic4x4": "Cubic (4×4)",
+  "drawerTypeCubic4x5": "Cubic (4×5)",
+  "drawerTypeUnitDose": "Unit Dose",
+
+  "dashKpiActivePatients": "Active Patients",
+  "dashKpiCompletedOps": "Completed Operations",
+  "dashKpiPendingRx": "Pending Prescriptions",
+  "dashKpiCriticalAlert": "Critical Alerts",
+  "dashCabinStatusTitle": "CABINET STATUS",
+  "dashCabinLocked": "Locked",
+  "dashCabinOpen": "Open",
+  "dashCabinStatusRow": "Cabinet Status",
+  "dashNewTreatmentTitle": "Assign New Treatment",
+  "dashNewTreatmentDesc": "Proceeding to the new treatment assignment screen.",
+  "dashErrorKpi": "Could not load KPI data",
+  "dashErrorCabin": "Could not load cabinet data",
+  "dashErrorTreatments": "Could not load treatment list",
+  "dashErrorSkt": "Could not load expiry data"
+}

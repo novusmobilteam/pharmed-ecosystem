@@ -1,0 +1,81 @@
+name: pharmed_client
+description: >
+  PharMed — Hastane ilaç kabin yönetim sistemi.
+  Kabin stok takibi, ilaç dolum/sayım/boşaltma işlemleri,
+  SKT yönetimi ve yaklaşan tedavi planlamasını kapsar.
+  IEC 62304 Class B uyumlu Flutter uygulaması.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  pharmed_core:
+    path: ../../packages/pharmed_core
+  pharmed_data:
+    path: ../../packages/pharmed_data
+  pharmed_ui:
+    path: ../../packages/pharmed_ui
+  pharmed_utils:
+    path: ../../packages/pharmed_utils
+
+  # Network
+  dio: ^5.4.0
+
+  # Result type
+  result_dart: ^2.2.0
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # Equatable — domain model karşılaştırması
+  equatable: ^2.0.5
+
+  # Fonts
+  flutter_libserialport: ^0.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.8
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Sora-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Sora-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Sora-ExtraBold.ttf
+          weight: 800
+
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DMSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/DMSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/DMSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans-SemiBold.ttf
+          weight: 600
+
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/JetBrainsMono-Medium.ttf
+          weight: 500
+
+resolution: workspace

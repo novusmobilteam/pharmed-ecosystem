@@ -1,0 +1,76 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "cabinId": 1,
+      "temperature": "6.7",
+      "humidity": 41,
+      "date": "2025-11-21T00:00:00"
+    },
+    {
+      "id": 2,
+      "cabinId": 2,
+      "temperature": "7.1",
+      "humidity": 48,
+      "date": "2025-11-24T00:00:00"
+    },
+    {
+      "id": 3,
+      "cabinId": 3,
+      "temperature": "10.8",
+      "humidity": 44,
+      "date": "2025-12-06T00:00:00"
+    },
+    {
+      "id": 4,
+      "cabinId": 4,
+      "temperature": "8.7",
+      "humidity": 57,
+      "date": "2025-12-01T00:00:00"
+    },
+    {
+      "id": 5,
+      "cabinId": 5,
+      "temperature": "8.2",
+      "humidity": 46,
+      "date": "2025-11-19T00:00:00"
+    },
+    {
+      "id": 6,
+      "cabinId": 6,
+      "temperature": "2.2",
+      "humidity": 76,
+      "date": "2025-11-29T00:00:00"
+    },
+    {
+      "id": 7,
+      "cabinId": 7,
+      "temperature": "11.3",
+      "humidity": 76,
+      "date": "2025-11-23T00:00:00"
+    },
+    {
+      "id": 8,
+      "cabinId": 8,
+      "temperature": "7.9",
+      "humidity": 66,
+      "date": "2025-12-08T00:00:00"
+    },
+    {
+      "id": 9,
+      "cabinId": 9,
+      "temperature": "2.2",
+      "humidity": 75,
+      "date": "2025-12-10T00:00:00"
+    },
+    {
+      "id": 10,
+      "cabinId": 10,
+      "temperature": "5.7",
+      "humidity": 76,
+      "date": "2025-12-02T00:00:00"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "prescriptionId": 1,
+      "requestType": 1,
+      "note": "Ek talep notu 1",
+      "status": 1
+    },
+    {
+      "id": 2,
+      "prescriptionId": 2,
+      "requestType": 2,
+      "note": "Ek talep notu 2",
+      "status": 2
+    },
+    {
+      "id": 3,
+      "prescriptionId": 3,
+      "requestType": 1,
+      "note": "Ek talep notu 3",
+      "status": 1
+    },
+    {
+      "id": 4,
+      "prescriptionId": 4,
+      "requestType": 1,
+      "note": "Ek talep notu 4",
+      "status": 1
+    },
+    {
+      "id": 5,
+      "prescriptionId": 5,
+      "requestType": 2,
+      "note": "Ek talep notu 5",
+      "status": 2
+    },
+    {
+      "id": 6,
+      "prescriptionId": 6,
+      "requestType": 2,
+      "note": "Ek talep notu 6",
+      "status": 1
+    },
+    {
+      "id": 7,
+      "prescriptionId": 7,
+      "requestType": 1,
+      "note": "Ek talep notu 7",
+      "status": 1
+    },
+    {
+      "id": 8,
+      "prescriptionId": 8,
+      "requestType": 1,
+      "note": "Ek talep notu 8",
+      "status": 0
+    },
+    {
+      "id": 9,
+      "prescriptionId": 9,
+      "requestType": 2,
+      "note": "Ek talep notu 9",
+      "status": 2
+    },
+    {
+      "id": 10,
+      "prescriptionId": 10,
+      "requestType": 2,
+      "note": "Ek talep notu 10",
+      "status": 1
+    }
+  ]
+}

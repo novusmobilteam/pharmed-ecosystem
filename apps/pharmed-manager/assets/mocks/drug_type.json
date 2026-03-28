@@ -1,0 +1,41 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Analjezik",
+      "status": true
+    },
+    {
+      "id": 2,
+      "name": "Antibiyotik",
+      "status": true
+    },
+    {
+      "id": 3,
+      "name": "Antidepressan",
+      "status": true
+    },
+    {
+      "id": 4,
+      "name": "Antihistamin",
+      "status": true
+    },
+    {
+      "id": 5,
+      "name": "NSAID",
+      "status": true
+    },
+    {
+      "id": 6,
+      "name": "Antipsikotik",
+      "status": true
+    },
+    {
+      "id": 7,
+      "name": "Antihipertansif",
+      "status": true
+    }
+  ]
+}

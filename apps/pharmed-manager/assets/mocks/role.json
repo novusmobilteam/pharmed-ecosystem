@@ -1,0 +1,36 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "status": true
+    },
+    {
+      "id": 2,
+      "name": "Eczacı",
+      "status": true
+    },
+    {
+      "id": 3,
+      "name": "Hemşire",
+      "status": true
+    },
+    {
+      "id": 4,
+      "name": "Doktor",
+      "status": true
+    },
+    {
+      "id": 5,
+      "name": "Depo Sorumlusu",
+      "status": true
+    },
+    {
+      "id": 6,
+      "name": "Teknisyen",
+      "status": true
+    }
+  ]
+}

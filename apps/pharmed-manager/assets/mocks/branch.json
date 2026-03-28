@@ -1,0 +1,31 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Şube 1",
+      "code": "BR001"
+    },
+    {
+      "id": 2,
+      "name": "Şube 2",
+      "code": "BR002"
+    },
+    {
+      "id": 3,
+      "name": "Şube 3",
+      "code": "BR003"
+    },
+    {
+      "id": 4,
+      "name": "Şube 4",
+      "code": "BR004"
+    },
+    {
+      "id": 5,
+      "name": "Şube 5",
+      "code": "BR005"
+    }
+  ]
+}

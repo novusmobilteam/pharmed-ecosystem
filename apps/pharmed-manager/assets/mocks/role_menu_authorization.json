@@ -1,0 +1,186 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "roleId": 1,
+      "menuId": 1,
+      "canView": true
+    },
+    {
+      "id": 2,
+      "roleId": 2,
+      "menuId": 2,
+      "canView": true
+    },
+    {
+      "id": 3,
+      "roleId": 3,
+      "menuId": 3,
+      "canView": true
+    },
+    {
+      "id": 4,
+      "roleId": 4,
+      "menuId": 4,
+      "canView": true
+    },
+    {
+      "id": 5,
+      "roleId": 5,
+      "menuId": 5,
+      "canView": true
+    },
+    {
+      "id": 6,
+      "roleId": 6,
+      "menuId": 6,
+      "canView": true
+    },
+    {
+      "id": 7,
+      "roleId": 1,
+      "menuId": 7,
+      "canView": true
+    },
+    {
+      "id": 8,
+      "roleId": 2,
+      "menuId": 8,
+      "canView": true
+    },
+    {
+      "id": 9,
+      "roleId": 3,
+      "menuId": 1,
+      "canView": true
+    },
+    {
+      "id": 10,
+      "roleId": 4,
+      "menuId": 2,
+      "canView": true
+    },
+    {
+      "id": 11,
+      "roleId": 5,
+      "menuId": 3,
+      "canView": true
+    },
+    {
+      "id": 12,
+      "roleId": 6,
+      "menuId": 4,
+      "canView": true
+    },
+    {
+      "id": 13,
+      "roleId": 1,
+      "menuId": 5,
+      "canView": true
+    },
+    {
+      "id": 14,
+      "roleId": 2,
+      "menuId": 6,
+      "canView": true
+    },
+    {
+      "id": 15,
+      "roleId": 3,
+      "menuId": 7,
+      "canView": true
+    },
+    {
+      "id": 16,
+      "roleId": 4,
+      "menuId": 8,
+      "canView": true
+    },
+    {
+      "id": 17,
+      "roleId": 5,
+      "menuId": 1,
+      "canView": true
+    },
+    {
+      "id": 18,
+      "roleId": 6,
+      "menuId": 2,
+      "canView": true
+    },
+    {
+      "id": 19,
+      "roleId": 1,
+      "menuId": 3,
+      "canView": true
+    },
+    {
+      "id": 20,
+      "roleId": 2,
+      "menuId": 4,
+      "canView": true
+    },
+    {
+      "id": 21,
+      "roleId": 3,
+      "menuId": 5,
+      "canView": true
+    },
+    {
+      "id": 22,
+      "roleId": 4,
+      "menuId": 6,
+      "canView": true
+    },
+    {
+      "id": 23,
+      "roleId": 5,
+      "menuId": 7,
+      "canView": true
+    },
+    {
+      "id": 24,
+      "roleId": 6,
+      "menuId": 8,
+      "canView": true
+    },
+    {
+      "id": 25,
+      "roleId": 1,
+      "menuId": 1,
+      "canView": true
+    },
+    {
+      "id": 26,
+      "roleId": 2,
+      "menuId": 2,
+      "canView": true
+    },
+    {
+      "id": 27,
+      "roleId": 3,
+      "menuId": 3,
+      "canView": true
+    },
+    {
+      "id": 28,
+      "roleId": 4,
+      "menuId": 4,
+      "canView": true
+    },
+    {
+      "id": 29,
+      "roleId": 5,
+      "menuId": 5,
+      "canView": true
+    },
+    {
+      "id": 30,
+      "roleId": 6,
+      "menuId": 6,
+      "canView": true
+    }
+  ]
+}

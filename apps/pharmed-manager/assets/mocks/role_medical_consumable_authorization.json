@@ -1,0 +1,166 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "roleId": 1,
+      "medicalConsumableId": 101,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 2,
+      "roleId": 2,
+      "medicalConsumableId": 102,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 3,
+      "roleId": 3,
+      "medicalConsumableId": 103,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 4,
+      "roleId": 4,
+      "medicalConsumableId": 104,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 5,
+      "roleId": 5,
+      "medicalConsumableId": 105,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 6,
+      "roleId": 6,
+      "medicalConsumableId": 106,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 7,
+      "roleId": 1,
+      "medicalConsumableId": 107,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 8,
+      "roleId": 2,
+      "medicalConsumableId": 108,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 9,
+      "roleId": 3,
+      "medicalConsumableId": 109,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 10,
+      "roleId": 4,
+      "medicalConsumableId": 110,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 11,
+      "roleId": 5,
+      "medicalConsumableId": 101,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 12,
+      "roleId": 6,
+      "medicalConsumableId": 102,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 13,
+      "roleId": 1,
+      "medicalConsumableId": 103,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": false
+    },
+    {
+      "id": 14,
+      "roleId": 2,
+      "medicalConsumableId": 104,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 15,
+      "roleId": 3,
+      "medicalConsumableId": 105,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 16,
+      "roleId": 4,
+      "medicalConsumableId": 106,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 17,
+      "roleId": 5,
+      "medicalConsumableId": 107,
+      "canView": true,
+      "canEdit": false,
+      "canDelete": true
+    },
+    {
+      "id": 18,
+      "roleId": 6,
+      "medicalConsumableId": 108,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": true
+    },
+    {
+      "id": 19,
+      "roleId": 1,
+      "medicalConsumableId": 109,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    },
+    {
+      "id": 20,
+      "roleId": 2,
+      "medicalConsumableId": 110,
+      "canView": true,
+      "canEdit": true,
+      "canDelete": false
+    }
+  ]
+}

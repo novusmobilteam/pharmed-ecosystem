@@ -1,0 +1,306 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Hemşire İstasyonu B",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:01",
+      "service": {
+        "id": 2,
+        "name": "Kardiyoloji",
+        "branchId": 3,
+        "userId": 2,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 2,
+        "code": 1002,
+        "name": "Narkotik Depo",
+        "userId": 2,
+        "warehouseKindId": 1,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 3,
+        "code": 1003,
+        "name": "Acil Depo",
+        "userId": 3,
+        "warehouseKindId": 2,
+        "isActive": true
+      }
+    },
+    {
+      "id": 2,
+      "name": "Hemşire İstasyonu C",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:02",
+      "service": {
+        "id": 3,
+        "name": "Nöroloji",
+        "branchId": 4,
+        "userId": 3,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 3,
+        "code": 1003,
+        "name": "Acil Depo",
+        "userId": 3,
+        "warehouseKindId": 2,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 4,
+        "code": 1004,
+        "name": "Yedek Depo",
+        "userId": 4,
+        "warehouseKindId": 1,
+        "isActive": true
+      }
+    },
+    {
+      "id": 3,
+      "name": "Acil İstasyonu",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:03",
+      "service": {
+        "id": 4,
+        "name": "Ortopedi",
+        "branchId": 5,
+        "userId": 4,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 4,
+        "code": 1004,
+        "name": "Yedek Depo",
+        "userId": 4,
+        "warehouseKindId": 1,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 5,
+        "code": 1005,
+        "name": "Cerrahi Malzeme",
+        "userId": 5,
+        "warehouseKindId": 2,
+        "isActive": true
+      }
+    },
+    {
+      "id": 4,
+      "name": "Yoğun Bakım İstasyonu",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:04",
+      "service": {
+        "id": 5,
+        "name": "Göz Hastalıkları",
+        "branchId": 1,
+        "userId": 5,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 5,
+        "code": 1005,
+        "name": "Cerrahi Malzeme",
+        "userId": 5,
+        "warehouseKindId": 1,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 6,
+        "code": 1006,
+        "name": "Tıbbi Sarf",
+        "userId": 6,
+        "warehouseKindId": 1,
+        "isActive": true
+      }
+    },
+    {
+      "id": 5,
+      "name": "Ameliyathane İstasyonu",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:05",
+      "service": {
+        "id": 6,
+        "name": "KBB",
+        "branchId": 2,
+        "userId": 6,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 6,
+        "code": 1006,
+        "name": "Tıbbi Sarf",
+        "userId": 6,
+        "warehouseKindId": 2,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 7,
+        "code": 1007,
+        "name": "İlaç Deposu A",
+        "userId": 7,
+        "warehouseKindId": 1,
+        "isActive": true
+      }
+    },
+    {
+      "id": 6,
+      "name": "Poliklinik İstasyonu",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:06",
+      "service": {
+        "id": 7,
+        "name": "Üroloji",
+        "branchId": 3,
+        "userId": 7,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 7,
+        "code": 1007,
+        "name": "İlaç Deposu A",
+        "userId": 7,
+        "warehouseKindId": 2,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 8,
+        "code": 1008,
+        "name": "İlaç Deposu B",
+        "userId": 8,
+        "warehouseKindId": 2,
+        "isActive": true
+      }
+    },
+    {
+      "id": 7,
+      "name": "Kat 1 İstasyonu",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:07",
+      "service": {
+        "id": 8,
+        "name": "Kadın Doğum",
+        "branchId": 4,
+        "userId": 8,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 8,
+        "code": 1008,
+        "name": "İlaç Deposu B",
+        "userId": 8,
+        "warehouseKindId": 1,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 9,
+        "code": 1009,
+        "name": "Karantina",
+        "userId": 9,
+        "warehouseKindId": 2,
+        "isActive": true
+      }
+    },
+    {
+      "id": 8,
+      "name": "Kat 2 İstasyonu",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:08",
+      "service": {
+        "id": 9,
+        "name": "Çocuk Hastalıkları",
+        "branchId": 5,
+        "userId": 9,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 9,
+        "code": 1009,
+        "name": "Karantina",
+        "userId": 9,
+        "warehouseKindId": 1,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 10,
+        "code": 1010,
+        "name": "Ana Depo",
+        "userId": 10,
+        "warehouseKindId": 1,
+        "isActive": true
+      }
+    },
+    {
+      "id": 9,
+      "name": "Kat 3 İstasyonu",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:09",
+      "service": {
+        "id": 10,
+        "name": "Dermatoloji",
+        "branchId": 1,
+        "userId": 10,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 10,
+        "code": 1010,
+        "name": "Ana Depo",
+        "userId": 10,
+        "warehouseKindId": 1,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 11,
+        "code": 1011,
+        "name": "Soğuk Depo",
+        "userId": 11,
+        "warehouseKindId": 1,
+        "isActive": true
+      }
+    },
+    {
+      "id": 10,
+      "name": "Hemşire İstasyonu A",
+      "stationDrug": true,
+      "stationMedicalConsumables": true,
+      "macAddress": "AA:BB:CC:DD:EE:10",
+      "service": {
+        "id": 11,
+        "name": "Psikiyatri",
+        "branchId": 2,
+        "userId": 11,
+        "isActive": true
+      },
+      "materialWarehouse": {
+        "id": 1,
+        "code": 1001,
+        "name": "Soğuk Depo",
+        "userId": 1,
+        "warehouseKindId": 1,
+        "isActive": true
+      },
+      "medicalConsumableWarehouse": {
+        "id": 2,
+        "code": 1002,
+        "name": "Narkotik Depo",
+        "userId": 2,
+        "warehouseKindId": 1,
+        "isActive": true
+      }
+    }
+  ]
+}

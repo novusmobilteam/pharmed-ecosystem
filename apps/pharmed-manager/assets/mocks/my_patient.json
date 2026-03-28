@@ -1,0 +1,1406 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "userId": 1,
+      "user": {
+        "id": 1,
+        "name": "Kemal",
+        "surname": "Kurt",
+        "registrationNumber": 10001,
+        "roleId": 4,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici1@hastane.com",
+        "userName": "kullanici1"
+      },
+      "patientHospitalization": {
+        "id": 1,
+        "code": 100000,
+        "patientId": 1,
+        "patient": {
+          "id": 1,
+          "tcNo": 82173582192,
+          "weigh": 70,
+          "name": "Zeynep",
+          "surname": "Güneş",
+          "birtDate": "1993-02-15T00:00:00",
+          "genderType": 1,
+          "motherName": "Murat",
+          "fatherName": "Gamze",
+          "phone": 5302093808,
+          "address": "Örnek Mahallesi, No: 1",
+          "description": null,
+          "protocolNo": "P000001"
+        },
+        "physicalServiceId": 1,
+        "physicalService": {
+          "id": 1,
+          "name": "Cerrahi",
+          "branchId": 2,
+          "userId": 1,
+          "isActive": true
+        },
+        "inpatientServiceId": 1,
+        "inpatientService": {
+          "id": 1,
+          "name": "Cerrahi",
+          "branchId": 2,
+          "userId": 1,
+          "isActive": true
+        },
+        "doctorId": 1,
+        "doctor": {
+          "id": 1,
+          "name": "Murat",
+          "surname": "Erdoğan",
+          "registrationNumber": 10001,
+          "roleId": 5,
+          "role": "Depo Sorumlusu",
+          "isActive": true,
+          "usageKind": 2,
+          "email": "kullanici1@hastane.com",
+          "userName": "kullanici1"
+        },
+        "roomNo": "3",
+        "bedNo": "1",
+        "admissionDate": "2025-12-12T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 1
+      }
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "user": {
+        "id": 2,
+        "name": "Elif",
+        "surname": "Güneş",
+        "registrationNumber": 10002,
+        "roleId": 2,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici2@hastane.com",
+        "userName": "kullanici2"
+      },
+      "patientHospitalization": {
+        "id": 2,
+        "code": 100001,
+        "patientId": 2,
+        "patient": {
+          "id": 2,
+          "tcNo": 88186232986,
+          "weigh": 94,
+          "name": "Emre",
+          "surname": "Güneş",
+          "birtDate": "1950-02-04T00:00:00",
+          "genderType": 0,
+          "motherName": "Burak",
+          "fatherName": "Emre",
+          "phone": 5303947426,
+          "address": "Örnek Mahallesi, No: 2",
+          "description": null,
+          "protocolNo": "P000002"
+        },
+        "physicalServiceId": 2,
+        "physicalService": {
+          "id": 2,
+          "name": "Kardiyoloji",
+          "branchId": 3,
+          "userId": 2,
+          "isActive": true
+        },
+        "inpatientServiceId": 2,
+        "inpatientService": {
+          "id": 2,
+          "name": "Kardiyoloji",
+          "branchId": 3,
+          "userId": 2,
+          "isActive": true
+        },
+        "doctorId": 2,
+        "doctor": {
+          "id": 2,
+          "name": "Burak",
+          "surname": "Korkmaz",
+          "registrationNumber": 10002,
+          "roleId": 1,
+          "role": "Hemşire",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici2@hastane.com",
+          "userName": "kullanici2"
+        },
+        "roomNo": "7",
+        "bedNo": "3",
+        "admissionDate": "2025-11-21T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 4
+      }
+    },
+    {
+      "id": 3,
+      "userId": 3,
+      "user": {
+        "id": 3,
+        "name": "Kemal",
+        "surname": "Kılıç",
+        "registrationNumber": 10003,
+        "roleId": 1,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici3@hastane.com",
+        "userName": "kullanici3"
+      },
+      "patientHospitalization": {
+        "id": 3,
+        "code": 100002,
+        "patientId": 3,
+        "patient": {
+          "id": 3,
+          "tcNo": 44393061905,
+          "weigh": 72,
+          "name": "Ömer",
+          "surname": "Kılıç",
+          "birtDate": "1989-05-16T00:00:00",
+          "genderType": 1,
+          "motherName": "Deniz",
+          "fatherName": "Ahmet",
+          "phone": 5302967527,
+          "address": "Örnek Mahallesi, No: 3",
+          "description": null,
+          "protocolNo": "P000003"
+        },
+        "physicalServiceId": 3,
+        "physicalService": {
+          "id": 3,
+          "name": "Nöroloji",
+          "branchId": 4,
+          "userId": 3,
+          "isActive": true
+        },
+        "inpatientServiceId": 3,
+        "inpatientService": {
+          "id": 3,
+          "name": "Nöroloji",
+          "branchId": 4,
+          "userId": 3,
+          "isActive": true
+        },
+        "doctorId": 3,
+        "doctor": {
+          "id": 3,
+          "name": "Ahmet",
+          "surname": "Öztürk",
+          "registrationNumber": 10003,
+          "roleId": 2,
+          "role": "Hemşire",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici3@hastane.com",
+          "userName": "kullanici3"
+        },
+        "roomNo": "6",
+        "bedNo": "3",
+        "admissionDate": "2025-11-22T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 0
+      }
+    },
+    {
+      "id": 4,
+      "userId": 4,
+      "user": {
+        "id": 4,
+        "name": "Fatma",
+        "surname": "Kaya",
+        "registrationNumber": 10004,
+        "roleId": 5,
+        "role": "Doktor",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici4@hastane.com",
+        "userName": "kullanici4"
+      },
+      "patientHospitalization": {
+        "id": 4,
+        "code": 100003,
+        "patientId": 4,
+        "patient": {
+          "id": 4,
+          "tcNo": 70115505646,
+          "weigh": 61,
+          "name": "Emine",
+          "surname": "Erdoğan",
+          "birtDate": "1963-05-23T00:00:00",
+          "genderType": 1,
+          "motherName": "Yusuf",
+          "fatherName": "Burak",
+          "phone": 5301376192,
+          "address": "Örnek Mahallesi, No: 4",
+          "description": null,
+          "protocolNo": "P000004"
+        },
+        "physicalServiceId": 4,
+        "physicalService": {
+          "id": 4,
+          "name": "Ortopedi",
+          "branchId": 5,
+          "userId": 4,
+          "isActive": true
+        },
+        "inpatientServiceId": 4,
+        "inpatientService": {
+          "id": 4,
+          "name": "Ortopedi",
+          "branchId": 5,
+          "userId": 4,
+          "isActive": true
+        },
+        "doctorId": 4,
+        "doctor": {
+          "id": 4,
+          "name": "Selin",
+          "surname": "Öztürk",
+          "registrationNumber": 10004,
+          "roleId": 5,
+          "role": "Depo Sorumlusu",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici4@hastane.com",
+          "userName": "kullanici4"
+        },
+        "roomNo": "5",
+        "bedNo": "2",
+        "admissionDate": "2025-11-29T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 0
+      }
+    },
+    {
+      "id": 5,
+      "userId": 5,
+      "user": {
+        "id": 5,
+        "name": "Can",
+        "surname": "Yıldırım",
+        "registrationNumber": 10005,
+        "roleId": 5,
+        "role": "Teknisyen",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici5@hastane.com",
+        "userName": "kullanici5"
+      },
+      "patientHospitalization": {
+        "id": 5,
+        "code": 100004,
+        "patientId": 5,
+        "patient": {
+          "id": 5,
+          "tcNo": 79155165588,
+          "weigh": 66,
+          "name": "İbrahim",
+          "surname": "Şimşek",
+          "birtDate": "1995-04-03T00:00:00",
+          "genderType": 0,
+          "motherName": "Selin",
+          "fatherName": "Mehmet",
+          "phone": 5309674155,
+          "address": "Örnek Mahallesi, No: 5",
+          "description": null,
+          "protocolNo": "P000005"
+        },
+        "physicalServiceId": 5,
+        "physicalService": {
+          "id": 5,
+          "name": "Göz Hastalıkları",
+          "branchId": 1,
+          "userId": 5,
+          "isActive": true
+        },
+        "inpatientServiceId": 5,
+        "inpatientService": {
+          "id": 5,
+          "name": "Göz Hastalıkları",
+          "branchId": 1,
+          "userId": 5,
+          "isActive": true
+        },
+        "doctorId": 5,
+        "doctor": {
+          "id": 5,
+          "name": "Selin",
+          "surname": "Aslan",
+          "registrationNumber": 10005,
+          "roleId": 2,
+          "role": "Doktor",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici5@hastane.com",
+          "userName": "kullanici5"
+        },
+        "roomNo": "6",
+        "bedNo": "2",
+        "admissionDate": "2025-11-25T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 2
+      }
+    },
+    {
+      "id": 6,
+      "userId": 6,
+      "user": {
+        "id": 6,
+        "name": "Merve",
+        "surname": "Öztürk",
+        "registrationNumber": 10006,
+        "roleId": 3,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici6@hastane.com",
+        "userName": "kullanici6"
+      },
+      "patientHospitalization": {
+        "id": 6,
+        "code": 100005,
+        "patientId": 6,
+        "patient": {
+          "id": 6,
+          "tcNo": 32993285274,
+          "weigh": 85,
+          "name": "İbrahim",
+          "surname": "Kaya",
+          "birtDate": "1994-05-14T00:00:00",
+          "genderType": 1,
+          "motherName": "Hatice",
+          "fatherName": "Fatma",
+          "phone": 5301781782,
+          "address": "Örnek Mahallesi, No: 6",
+          "description": null,
+          "protocolNo": "P000006"
+        },
+        "physicalServiceId": 6,
+        "physicalService": {
+          "id": 6,
+          "name": "KBB",
+          "branchId": 2,
+          "userId": 6,
+          "isActive": true
+        },
+        "inpatientServiceId": 6,
+        "inpatientService": {
+          "id": 6,
+          "name": "KBB",
+          "branchId": 2,
+          "userId": 6,
+          "isActive": true
+        },
+        "doctorId": 6,
+        "doctor": {
+          "id": 6,
+          "name": "Fatma",
+          "surname": "Polat",
+          "registrationNumber": 10006,
+          "roleId": 1,
+          "role": "Teknisyen",
+          "isActive": true,
+          "usageKind": 2,
+          "email": "kullanici6@hastane.com",
+          "userName": "kullanici6"
+        },
+        "roomNo": "7",
+        "bedNo": "1",
+        "admissionDate": "2025-11-14T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 2
+      }
+    },
+    {
+      "id": 7,
+      "userId": 7,
+      "user": {
+        "id": 7,
+        "name": "Ali",
+        "surname": "Özdemir",
+        "registrationNumber": 10007,
+        "roleId": 2,
+        "role": "Teknisyen",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici7@hastane.com",
+        "userName": "kullanici7"
+      },
+      "patientHospitalization": {
+        "id": 7,
+        "code": 100006,
+        "patientId": 7,
+        "patient": {
+          "id": 7,
+          "tcNo": 17275413735,
+          "weigh": 90,
+          "name": "Fatma",
+          "surname": "Aydın",
+          "birtDate": "1997-06-27T00:00:00",
+          "genderType": 0,
+          "motherName": "Özlem",
+          "fatherName": "Zeynep",
+          "phone": 5301517549,
+          "address": "Örnek Mahallesi, No: 7",
+          "description": null,
+          "protocolNo": "P000007"
+        },
+        "physicalServiceId": 7,
+        "physicalService": {
+          "id": 7,
+          "name": "Üroloji",
+          "branchId": 3,
+          "userId": 7,
+          "isActive": true
+        },
+        "inpatientServiceId": 7,
+        "inpatientService": {
+          "id": 7,
+          "name": "Üroloji",
+          "branchId": 3,
+          "userId": 7,
+          "isActive": true
+        },
+        "doctorId": 7,
+        "doctor": {
+          "id": 7,
+          "name": "Kemal",
+          "surname": "Doğan",
+          "registrationNumber": 10007,
+          "roleId": 2,
+          "role": "Teknisyen",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici7@hastane.com",
+          "userName": "kullanici7"
+        },
+        "roomNo": "9",
+        "bedNo": "1",
+        "admissionDate": "2025-12-11T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 4
+      }
+    },
+    {
+      "id": 8,
+      "userId": 8,
+      "user": {
+        "id": 8,
+        "name": "Hüseyin",
+        "surname": "Yıldırım",
+        "registrationNumber": 10008,
+        "roleId": 3,
+        "role": "Doktor",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici8@hastane.com",
+        "userName": "kullanici8"
+      },
+      "patientHospitalization": {
+        "id": 8,
+        "code": 100007,
+        "patientId": 8,
+        "patient": {
+          "id": 8,
+          "tcNo": 85952243540,
+          "weigh": 55,
+          "name": "Yusuf",
+          "surname": "Erdoğan",
+          "birtDate": "1960-03-16T00:00:00",
+          "genderType": 0,
+          "motherName": "Murat",
+          "fatherName": "Kemal",
+          "phone": 5304957212,
+          "address": "Örnek Mahallesi, No: 8",
+          "description": null,
+          "protocolNo": "P000008"
+        },
+        "physicalServiceId": 8,
+        "physicalService": {
+          "id": 8,
+          "name": "Kadın Doğum",
+          "branchId": 4,
+          "userId": 8,
+          "isActive": true
+        },
+        "inpatientServiceId": 8,
+        "inpatientService": {
+          "id": 8,
+          "name": "Kadın Doğum",
+          "branchId": 4,
+          "userId": 8,
+          "isActive": true
+        },
+        "doctorId": 8,
+        "doctor": {
+          "id": 8,
+          "name": "Zeynep",
+          "surname": "Çelik",
+          "registrationNumber": 10008,
+          "roleId": 1,
+          "role": "Eczacı",
+          "isActive": true,
+          "usageKind": 2,
+          "email": "kullanici8@hastane.com",
+          "userName": "kullanici8"
+        },
+        "roomNo": "7",
+        "bedNo": "1",
+        "admissionDate": "2025-12-05T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 1
+      }
+    },
+    {
+      "id": 9,
+      "userId": 9,
+      "user": {
+        "id": 9,
+        "name": "Yusuf",
+        "surname": "Şimşek",
+        "registrationNumber": 10009,
+        "roleId": 3,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici9@hastane.com",
+        "userName": "kullanici9"
+      },
+      "patientHospitalization": {
+        "id": 9,
+        "code": 100008,
+        "patientId": 9,
+        "patient": {
+          "id": 9,
+          "tcNo": 53410999712,
+          "weigh": 88,
+          "name": "Ahmet",
+          "surname": "Kurt",
+          "birtDate": "1990-04-17T00:00:00",
+          "genderType": 0,
+          "motherName": "Ayşe",
+          "fatherName": "Emine",
+          "phone": 5307230096,
+          "address": "Örnek Mahallesi, No: 9",
+          "description": null,
+          "protocolNo": "P000009"
+        },
+        "physicalServiceId": 9,
+        "physicalService": {
+          "id": 9,
+          "name": "Çocuk Hastalıkları",
+          "branchId": 5,
+          "userId": 9,
+          "isActive": true
+        },
+        "inpatientServiceId": 9,
+        "inpatientService": {
+          "id": 9,
+          "name": "Çocuk Hastalıkları",
+          "branchId": 5,
+          "userId": 9,
+          "isActive": true
+        },
+        "doctorId": 9,
+        "doctor": {
+          "id": 9,
+          "name": "Özlem",
+          "surname": "Yılmaz",
+          "registrationNumber": 10009,
+          "roleId": 3,
+          "role": "Depo Sorumlusu",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici9@hastane.com",
+          "userName": "kullanici9"
+        },
+        "roomNo": "5",
+        "bedNo": "2",
+        "admissionDate": "2025-12-13T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 4
+      }
+    },
+    {
+      "id": 10,
+      "userId": 10,
+      "user": {
+        "id": 10,
+        "name": "Hatice",
+        "surname": "Erdoğan",
+        "registrationNumber": 10010,
+        "roleId": 5,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici10@hastane.com",
+        "userName": "kullanici10"
+      },
+      "patientHospitalization": {
+        "id": 10,
+        "code": 100009,
+        "patientId": 10,
+        "patient": {
+          "id": 10,
+          "tcNo": 63364925810,
+          "weigh": 64,
+          "name": "Emine",
+          "surname": "Kurt",
+          "birtDate": "1977-10-25T00:00:00",
+          "genderType": 0,
+          "motherName": "Gamze",
+          "fatherName": "Murat",
+          "phone": 5303056535,
+          "address": "Örnek Mahallesi, No: 10",
+          "description": null,
+          "protocolNo": "P000010"
+        },
+        "physicalServiceId": 10,
+        "physicalService": {
+          "id": 10,
+          "name": "Dermatoloji",
+          "branchId": 1,
+          "userId": 10,
+          "isActive": true
+        },
+        "inpatientServiceId": 10,
+        "inpatientService": {
+          "id": 10,
+          "name": "Dermatoloji",
+          "branchId": 1,
+          "userId": 10,
+          "isActive": true
+        },
+        "doctorId": 10,
+        "doctor": {
+          "id": 10,
+          "name": "Hüseyin",
+          "surname": "Arslan",
+          "registrationNumber": 10010,
+          "roleId": 2,
+          "role": "Doktor",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici10@hastane.com",
+          "userName": "kullanici10"
+        },
+        "roomNo": "8",
+        "bedNo": "3",
+        "admissionDate": "2025-12-06T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 0
+      }
+    },
+    {
+      "id": 11,
+      "userId": 11,
+      "user": {
+        "id": 11,
+        "name": "Deniz",
+        "surname": "Çelik",
+        "registrationNumber": 10011,
+        "roleId": 1,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici11@hastane.com",
+        "userName": "kullanici11"
+      },
+      "patientHospitalization": {
+        "id": 11,
+        "code": 100010,
+        "patientId": 11,
+        "patient": {
+          "id": 11,
+          "tcNo": 90568650410,
+          "weigh": 74,
+          "name": "Gamze",
+          "surname": "Güneş",
+          "birtDate": "1956-09-17T00:00:00",
+          "genderType": 1,
+          "motherName": "Can",
+          "fatherName": "Emine",
+          "phone": 5308608375,
+          "address": "Örnek Mahallesi, No: 11",
+          "description": null,
+          "protocolNo": "P000011"
+        },
+        "physicalServiceId": 11,
+        "physicalService": {
+          "id": 11,
+          "name": "Psikiyatri",
+          "branchId": 2,
+          "userId": 11,
+          "isActive": true
+        },
+        "inpatientServiceId": 11,
+        "inpatientService": {
+          "id": 11,
+          "name": "Psikiyatri",
+          "branchId": 2,
+          "userId": 11,
+          "isActive": true
+        },
+        "doctorId": 11,
+        "doctor": {
+          "id": 11,
+          "name": "Emine",
+          "surname": "Çetin",
+          "registrationNumber": 10011,
+          "roleId": 2,
+          "role": "Teknisyen",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici11@hastane.com",
+          "userName": "kullanici11"
+        },
+        "roomNo": "9",
+        "bedNo": "1",
+        "admissionDate": "2025-12-12T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 3
+      }
+    },
+    {
+      "id": 12,
+      "userId": 12,
+      "user": {
+        "id": 12,
+        "name": "Gamze",
+        "surname": "Aslan",
+        "registrationNumber": 10012,
+        "roleId": 1,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici12@hastane.com",
+        "userName": "kullanici12"
+      },
+      "patientHospitalization": {
+        "id": 12,
+        "code": 100011,
+        "patientId": 12,
+        "patient": {
+          "id": 12,
+          "tcNo": 18885971780,
+          "weigh": 94,
+          "name": "Kemal",
+          "surname": "Koç",
+          "birtDate": "1986-05-21T00:00:00",
+          "genderType": 1,
+          "motherName": "Emine",
+          "fatherName": "Hasan",
+          "phone": 5307798059,
+          "address": "Örnek Mahallesi, No: 12",
+          "description": null,
+          "protocolNo": "P000012"
+        },
+        "physicalServiceId": 12,
+        "physicalService": {
+          "id": 12,
+          "name": "Fizik Tedavi",
+          "branchId": 3,
+          "userId": 12,
+          "isActive": true
+        },
+        "inpatientServiceId": 12,
+        "inpatientService": {
+          "id": 12,
+          "name": "Fizik Tedavi",
+          "branchId": 3,
+          "userId": 12,
+          "isActive": true
+        },
+        "doctorId": 12,
+        "doctor": {
+          "id": 12,
+          "name": "Emine",
+          "surname": "Arslan",
+          "registrationNumber": 10012,
+          "roleId": 5,
+          "role": "Eczacı",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici12@hastane.com",
+          "userName": "kullanici12"
+        },
+        "roomNo": "4",
+        "bedNo": "1",
+        "admissionDate": "2025-12-06T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 0
+      }
+    },
+    {
+      "id": 13,
+      "userId": 13,
+      "user": {
+        "id": 13,
+        "name": "Deniz",
+        "surname": "Koç",
+        "registrationNumber": 10013,
+        "roleId": 4,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici13@hastane.com",
+        "userName": "kullanici13"
+      },
+      "patientHospitalization": {
+        "id": 13,
+        "code": 100012,
+        "patientId": 13,
+        "patient": {
+          "id": 13,
+          "tcNo": 27466308907,
+          "weigh": 64,
+          "name": "Hüseyin",
+          "surname": "Şahin",
+          "birtDate": "1983-09-03T00:00:00",
+          "genderType": 0,
+          "motherName": "Ayşe",
+          "fatherName": "Burak",
+          "phone": 5308093072,
+          "address": "Örnek Mahallesi, No: 13",
+          "description": null,
+          "protocolNo": "P000013"
+        },
+        "physicalServiceId": 13,
+        "physicalService": {
+          "id": 13,
+          "name": "Anestezi",
+          "branchId": 4,
+          "userId": 13,
+          "isActive": true
+        },
+        "inpatientServiceId": 13,
+        "inpatientService": {
+          "id": 13,
+          "name": "Anestezi",
+          "branchId": 4,
+          "userId": 13,
+          "isActive": true
+        },
+        "doctorId": 13,
+        "doctor": {
+          "id": 13,
+          "name": "Zeynep",
+          "surname": "Aydın",
+          "registrationNumber": 10013,
+          "roleId": 3,
+          "role": "Eczacı",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici13@hastane.com",
+          "userName": "kullanici13"
+        },
+        "roomNo": "4",
+        "bedNo": "2",
+        "admissionDate": "2025-11-20T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 4
+      }
+    },
+    {
+      "id": 14,
+      "userId": 14,
+      "user": {
+        "id": 14,
+        "name": "Emre",
+        "surname": "Polat",
+        "registrationNumber": 10014,
+        "roleId": 1,
+        "role": "Doktor",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici14@hastane.com",
+        "userName": "kullanici14"
+      },
+      "patientHospitalization": {
+        "id": 14,
+        "code": 100013,
+        "patientId": 14,
+        "patient": {
+          "id": 14,
+          "tcNo": 71758694649,
+          "weigh": 94,
+          "name": "Mustafa",
+          "surname": "Özdemir",
+          "birtDate": "1964-11-11T00:00:00",
+          "genderType": 0,
+          "motherName": "Hatice",
+          "fatherName": "Can",
+          "phone": 5303347145,
+          "address": "Örnek Mahallesi, No: 14",
+          "description": null,
+          "protocolNo": "P000014"
+        },
+        "physicalServiceId": 14,
+        "physicalService": {
+          "id": 14,
+          "name": "Radyoloji",
+          "branchId": 5,
+          "userId": 14,
+          "isActive": true
+        },
+        "inpatientServiceId": 14,
+        "inpatientService": {
+          "id": 14,
+          "name": "Radyoloji",
+          "branchId": 5,
+          "userId": 14,
+          "isActive": true
+        },
+        "doctorId": 14,
+        "doctor": {
+          "id": 14,
+          "name": "Can",
+          "surname": "Şahin",
+          "registrationNumber": 10014,
+          "roleId": 2,
+          "role": "Hemşire",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici14@hastane.com",
+          "userName": "kullanici14"
+        },
+        "roomNo": "6",
+        "bedNo": "3",
+        "admissionDate": "2025-12-01T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 2
+      }
+    },
+    {
+      "id": 15,
+      "userId": 15,
+      "user": {
+        "id": 15,
+        "name": "Ayşe",
+        "surname": "Özdemir",
+        "registrationNumber": 10015,
+        "roleId": 2,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici15@hastane.com",
+        "userName": "kullanici15"
+      },
+      "patientHospitalization": {
+        "id": 15,
+        "code": 100014,
+        "patientId": 15,
+        "patient": {
+          "id": 15,
+          "tcNo": 89833375976,
+          "weigh": 67,
+          "name": "Zeynep",
+          "surname": "Korkmaz",
+          "birtDate": "1996-06-22T00:00:00",
+          "genderType": 1,
+          "motherName": "Emine",
+          "fatherName": "Ali",
+          "phone": 5301915509,
+          "address": "Örnek Mahallesi, No: 15",
+          "description": null,
+          "protocolNo": "P000015"
+        },
+        "physicalServiceId": 15,
+        "physicalService": {
+          "id": 15,
+          "name": "Acil Servis",
+          "branchId": 1,
+          "userId": 15,
+          "isActive": true
+        },
+        "inpatientServiceId": 15,
+        "inpatientService": {
+          "id": 15,
+          "name": "Acil Servis",
+          "branchId": 1,
+          "userId": 15,
+          "isActive": true
+        },
+        "doctorId": 15,
+        "doctor": {
+          "id": 15,
+          "name": "Gamze",
+          "surname": "Özdemir",
+          "registrationNumber": 10015,
+          "roleId": 5,
+          "role": "Eczacı",
+          "isActive": true,
+          "usageKind": 2,
+          "email": "kullanici15@hastane.com",
+          "userName": "kullanici15"
+        },
+        "roomNo": "9",
+        "bedNo": "2",
+        "admissionDate": "2025-11-30T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 3
+      }
+    },
+    {
+      "id": 16,
+      "userId": 16,
+      "user": {
+        "id": 16,
+        "name": "Can",
+        "surname": "Aslan",
+        "registrationNumber": 10016,
+        "roleId": 4,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici16@hastane.com",
+        "userName": "kullanici16"
+      },
+      "patientHospitalization": {
+        "id": 16,
+        "code": 100015,
+        "patientId": 16,
+        "patient": {
+          "id": 16,
+          "tcNo": 82991886637,
+          "weigh": 94,
+          "name": "Ömer",
+          "surname": "Şimşek",
+          "birtDate": "1984-03-17T00:00:00",
+          "genderType": 0,
+          "motherName": "İbrahim",
+          "fatherName": "Ayşe",
+          "phone": 5302533509,
+          "address": "Örnek Mahallesi, No: 16",
+          "description": null,
+          "protocolNo": "P000016"
+        },
+        "physicalServiceId": 16,
+        "physicalService": {
+          "id": 16,
+          "name": "Yoğun Bakım",
+          "branchId": 2,
+          "userId": 16,
+          "isActive": true
+        },
+        "inpatientServiceId": 16,
+        "inpatientService": {
+          "id": 16,
+          "name": "Yoğun Bakım",
+          "branchId": 2,
+          "userId": 16,
+          "isActive": true
+        },
+        "doctorId": 16,
+        "doctor": {
+          "id": 16,
+          "name": "Gamze",
+          "surname": "Doğan",
+          "registrationNumber": 10016,
+          "roleId": 4,
+          "role": "Eczacı",
+          "isActive": true,
+          "usageKind": 2,
+          "email": "kullanici16@hastane.com",
+          "userName": "kullanici16"
+        },
+        "roomNo": "5",
+        "bedNo": "1",
+        "admissionDate": "2025-12-08T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 4
+      }
+    },
+    {
+      "id": 17,
+      "userId": 17,
+      "user": {
+        "id": 17,
+        "name": "Hasan",
+        "surname": "Doğan",
+        "registrationNumber": 10017,
+        "roleId": 5,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici17@hastane.com",
+        "userName": "kullanici17"
+      },
+      "patientHospitalization": {
+        "id": 17,
+        "code": 100016,
+        "patientId": 17,
+        "patient": {
+          "id": 17,
+          "tcNo": 78793717205,
+          "weigh": 65,
+          "name": "Yusuf",
+          "surname": "Yıldırım",
+          "birtDate": "1955-05-17T00:00:00",
+          "genderType": 0,
+          "motherName": "Fatma",
+          "fatherName": "Hasan",
+          "phone": 5309926803,
+          "address": "Örnek Mahallesi, No: 17",
+          "description": null,
+          "protocolNo": "P000017"
+        },
+        "physicalServiceId": 17,
+        "physicalService": {
+          "id": 17,
+          "name": "Onkoloji",
+          "branchId": 3,
+          "userId": 17,
+          "isActive": true
+        },
+        "inpatientServiceId": 17,
+        "inpatientService": {
+          "id": 17,
+          "name": "Onkoloji",
+          "branchId": 3,
+          "userId": 17,
+          "isActive": true
+        },
+        "doctorId": 17,
+        "doctor": {
+          "id": 17,
+          "name": "Hüseyin",
+          "surname": "Öztürk",
+          "registrationNumber": 10017,
+          "roleId": 5,
+          "role": "Teknisyen",
+          "isActive": true,
+          "usageKind": 2,
+          "email": "kullanici17@hastane.com",
+          "userName": "kullanici17"
+        },
+        "roomNo": "1",
+        "bedNo": "2",
+        "admissionDate": "2025-11-17T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 4
+      }
+    },
+    {
+      "id": 18,
+      "userId": 18,
+      "user": {
+        "id": 18,
+        "name": "Hüseyin",
+        "surname": "Güneş",
+        "registrationNumber": 10018,
+        "roleId": 1,
+        "role": "Teknisyen",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici18@hastane.com",
+        "userName": "kullanici18"
+      },
+      "patientHospitalization": {
+        "id": 18,
+        "code": 100017,
+        "patientId": 18,
+        "patient": {
+          "id": 18,
+          "tcNo": 47021493843,
+          "weigh": 90,
+          "name": "Hatice",
+          "surname": "Aydın",
+          "birtDate": "1979-06-15T00:00:00",
+          "genderType": 0,
+          "motherName": "Gamze",
+          "fatherName": "Kemal",
+          "phone": 5305425001,
+          "address": "Örnek Mahallesi, No: 18",
+          "description": null,
+          "protocolNo": "P000018"
+        },
+        "physicalServiceId": 18,
+        "physicalService": {
+          "id": 18,
+          "name": "Gastroenteroloji",
+          "branchId": 4,
+          "userId": 18,
+          "isActive": true
+        },
+        "inpatientServiceId": 18,
+        "inpatientService": {
+          "id": 18,
+          "name": "Gastroenteroloji",
+          "branchId": 4,
+          "userId": 18,
+          "isActive": true
+        },
+        "doctorId": 18,
+        "doctor": {
+          "id": 18,
+          "name": "Hatice",
+          "surname": "Yıldırım",
+          "registrationNumber": 10018,
+          "roleId": 3,
+          "role": "Teknisyen",
+          "isActive": true,
+          "usageKind": 2,
+          "email": "kullanici18@hastane.com",
+          "userName": "kullanici18"
+        },
+        "roomNo": "9",
+        "bedNo": "2",
+        "admissionDate": "2025-11-30T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 1
+      }
+    },
+    {
+      "id": 19,
+      "userId": 19,
+      "user": {
+        "id": 19,
+        "name": "Merve",
+        "surname": "Özkan",
+        "registrationNumber": 10019,
+        "roleId": 2,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici19@hastane.com",
+        "userName": "kullanici19"
+      },
+      "patientHospitalization": {
+        "id": 19,
+        "code": 100018,
+        "patientId": 19,
+        "patient": {
+          "id": 19,
+          "tcNo": 81562203361,
+          "weigh": 58,
+          "name": "Emre",
+          "surname": "Yıldırım",
+          "birtDate": "1979-11-01T00:00:00",
+          "genderType": 1,
+          "motherName": "Can",
+          "fatherName": "Ahmet",
+          "phone": 5308579246,
+          "address": "Örnek Mahallesi, No: 19",
+          "description": null,
+          "protocolNo": "P000019"
+        },
+        "physicalServiceId": 19,
+        "physicalService": {
+          "id": 19,
+          "name": "Endokrinoloji",
+          "branchId": 5,
+          "userId": 19,
+          "isActive": true
+        },
+        "inpatientServiceId": 19,
+        "inpatientService": {
+          "id": 19,
+          "name": "Endokrinoloji",
+          "branchId": 5,
+          "userId": 19,
+          "isActive": true
+        },
+        "doctorId": 19,
+        "doctor": {
+          "id": 19,
+          "name": "Fatma",
+          "surname": "Arslan",
+          "registrationNumber": 10019,
+          "roleId": 3,
+          "role": "Teknisyen",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici19@hastane.com",
+          "userName": "kullanici19"
+        },
+        "roomNo": "6",
+        "bedNo": "2",
+        "admissionDate": "2025-11-23T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 1
+      }
+    },
+    {
+      "id": 20,
+      "userId": 20,
+      "user": {
+        "id": 20,
+        "name": "Mustafa",
+        "surname": "Yıldız",
+        "registrationNumber": 10020,
+        "roleId": 4,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici20@hastane.com",
+        "userName": "kullanici20"
+      },
+      "patientHospitalization": {
+        "id": 20,
+        "code": 100019,
+        "patientId": 20,
+        "patient": {
+          "id": 20,
+          "tcNo": 78462040894,
+          "weigh": 99,
+          "name": "Burak",
+          "surname": "Arslan",
+          "birtDate": "1983-01-01T00:00:00",
+          "genderType": 0,
+          "motherName": "Zeynep",
+          "fatherName": "Kemal",
+          "phone": 5302686384,
+          "address": "Örnek Mahallesi, No: 20",
+          "description": null,
+          "protocolNo": "P000020"
+        },
+        "physicalServiceId": 20,
+        "physicalService": {
+          "id": 20,
+          "name": "Dahiliye",
+          "branchId": 1,
+          "userId": 20,
+          "isActive": true
+        },
+        "inpatientServiceId": 20,
+        "inpatientService": {
+          "id": 20,
+          "name": "Dahiliye",
+          "branchId": 1,
+          "userId": 20,
+          "isActive": true
+        },
+        "doctorId": 20,
+        "doctor": {
+          "id": 20,
+          "name": "Merve",
+          "surname": "Güneş",
+          "registrationNumber": 10020,
+          "roleId": 5,
+          "role": "Hemşire",
+          "isActive": true,
+          "usageKind": 1,
+          "email": "kullanici20@hastane.com",
+          "userName": "kullanici20"
+        },
+        "roomNo": "5",
+        "bedNo": "1",
+        "admissionDate": "2025-12-12T00:00:00",
+        "exitDate": null,
+        "waitingQuantity": 2
+      }
+    }
+  ]
+}

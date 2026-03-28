@@ -1,0 +1,506 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "stationId": 2,
+      "no": 1,
+      "name": "Kabin 1",
+      "isActive": true,
+      "type": 2,
+      "comPortsId": 7,
+      "baudRatesId": 1,
+      "paritiesId": 1,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#a59003",
+      "sequenceNo": 1,
+      "cardTypesIds": [
+        1
+      ],
+      "cameraNo": 1,
+      "dvrIp": "192.168.1.101",
+      "station": {
+        "id": 2,
+        "name": "Hemşire İstasyonu C",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:02",
+        "service": {
+          "id": 3,
+          "name": "Nöroloji",
+          "branchId": 4,
+          "userId": 3,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 3,
+          "code": 1003,
+          "name": "Acil Depo",
+          "userId": 3,
+          "warehouseKindId": 2,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 4,
+          "code": 1004,
+          "name": "Yedek Depo",
+          "userId": 4,
+          "warehouseKindId": 2,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 2,
+      "stationId": 3,
+      "no": 2,
+      "name": "Kabin 2",
+      "isActive": true,
+      "type": 0,
+      "comPortsId": 5,
+      "baudRatesId": 4,
+      "paritiesId": 0,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#a56f6c",
+      "sequenceNo": 2,
+      "cardTypesIds": [
+        4
+      ],
+      "cameraNo": 2,
+      "dvrIp": "192.168.1.102",
+      "station": {
+        "id": 3,
+        "name": "Acil İstasyonu",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:03",
+        "service": {
+          "id": 4,
+          "name": "Ortopedi",
+          "branchId": 5,
+          "userId": 4,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 4,
+          "code": 1004,
+          "name": "Yedek Depo",
+          "userId": 4,
+          "warehouseKindId": 2,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 5,
+          "code": 1005,
+          "name": "Cerrahi Malzeme",
+          "userId": 5,
+          "warehouseKindId": 1,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 3,
+      "stationId": 4,
+      "no": 3,
+      "name": "Kabin 3",
+      "isActive": true,
+      "type": 2,
+      "comPortsId": 9,
+      "baudRatesId": 4,
+      "paritiesId": 2,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#4ced0b",
+      "sequenceNo": 3,
+      "cardTypesIds": [
+        3
+      ],
+      "cameraNo": 3,
+      "dvrIp": "192.168.1.103",
+      "station": {
+        "id": 4,
+        "name": "Yoğun Bakım İstasyonu",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:04",
+        "service": {
+          "id": 5,
+          "name": "Göz Hastalıkları",
+          "branchId": 1,
+          "userId": 5,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 5,
+          "code": 1005,
+          "name": "Cerrahi Malzeme",
+          "userId": 5,
+          "warehouseKindId": 2,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 6,
+          "code": 1006,
+          "name": "Tıbbi Sarf",
+          "userId": 6,
+          "warehouseKindId": 1,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 4,
+      "stationId": 5,
+      "no": 4,
+      "name": "Kabin 4",
+      "isActive": true,
+      "type": 3,
+      "comPortsId": 3,
+      "baudRatesId": 3,
+      "paritiesId": 0,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#2fe26e",
+      "sequenceNo": 4,
+      "cardTypesIds": [
+        2
+      ],
+      "cameraNo": 4,
+      "dvrIp": "192.168.1.104",
+      "station": {
+        "id": 5,
+        "name": "Ameliyathane İstasyonu",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:05",
+        "service": {
+          "id": 6,
+          "name": "KBB",
+          "branchId": 2,
+          "userId": 6,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 6,
+          "code": 1006,
+          "name": "Tıbbi Sarf",
+          "userId": 6,
+          "warehouseKindId": 1,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 7,
+          "code": 1007,
+          "name": "İlaç Deposu A",
+          "userId": 7,
+          "warehouseKindId": 1,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 5,
+      "stationId": 6,
+      "no": 5,
+      "name": "Kabin 5",
+      "isActive": true,
+      "type": 3,
+      "comPortsId": 4,
+      "baudRatesId": 3,
+      "paritiesId": 1,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#b6ca0b",
+      "sequenceNo": 5,
+      "cardTypesIds": [
+        4
+      ],
+      "cameraNo": 5,
+      "dvrIp": "192.168.1.105",
+      "station": {
+        "id": 6,
+        "name": "Poliklinik İstasyonu",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:06",
+        "service": {
+          "id": 7,
+          "name": "Üroloji",
+          "branchId": 3,
+          "userId": 7,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 7,
+          "code": 1007,
+          "name": "İlaç Deposu A",
+          "userId": 7,
+          "warehouseKindId": 1,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 8,
+          "code": 1008,
+          "name": "İlaç Deposu B",
+          "userId": 8,
+          "warehouseKindId": 2,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 6,
+      "stationId": 7,
+      "no": 6,
+      "name": "Kabin 6",
+      "isActive": true,
+      "type": 2,
+      "comPortsId": 2,
+      "baudRatesId": 3,
+      "paritiesId": 0,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#cdf823",
+      "sequenceNo": 6,
+      "cardTypesIds": [
+        2
+      ],
+      "cameraNo": 6,
+      "dvrIp": "192.168.1.106",
+      "station": {
+        "id": 7,
+        "name": "Kat 1 İstasyonu",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:07",
+        "service": {
+          "id": 8,
+          "name": "Kadın Doğum",
+          "branchId": 4,
+          "userId": 8,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 8,
+          "code": 1008,
+          "name": "İlaç Deposu B",
+          "userId": 8,
+          "warehouseKindId": 1,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 9,
+          "code": 1009,
+          "name": "Karantina",
+          "userId": 9,
+          "warehouseKindId": 1,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 7,
+      "stationId": 8,
+      "no": 7,
+      "name": "Kabin 7",
+      "isActive": true,
+      "type": 4,
+      "comPortsId": 3,
+      "baudRatesId": 1,
+      "paritiesId": 1,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#7b3c10",
+      "sequenceNo": 7,
+      "cardTypesIds": [
+        4
+      ],
+      "cameraNo": 7,
+      "dvrIp": "192.168.1.107",
+      "station": {
+        "id": 8,
+        "name": "Kat 2 İstasyonu",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:08",
+        "service": {
+          "id": 9,
+          "name": "Çocuk Hastalıkları",
+          "branchId": 5,
+          "userId": 9,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 9,
+          "code": 1009,
+          "name": "Karantina",
+          "userId": 9,
+          "warehouseKindId": 2,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 10,
+          "code": 1010,
+          "name": "Ana Depo",
+          "userId": 10,
+          "warehouseKindId": 2,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 8,
+      "stationId": 9,
+      "no": 8,
+      "name": "Kabin 8",
+      "isActive": true,
+      "type": 1,
+      "comPortsId": 6,
+      "baudRatesId": 4,
+      "paritiesId": 2,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#749ec9",
+      "sequenceNo": 8,
+      "cardTypesIds": [
+        3
+      ],
+      "cameraNo": 8,
+      "dvrIp": "192.168.1.108",
+      "station": {
+        "id": 9,
+        "name": "Kat 3 İstasyonu",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:09",
+        "service": {
+          "id": 10,
+          "name": "Dermatoloji",
+          "branchId": 1,
+          "userId": 10,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 10,
+          "code": 1010,
+          "name": "Ana Depo",
+          "userId": 10,
+          "warehouseKindId": 2,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 11,
+          "code": 1011,
+          "name": "Soğuk Depo",
+          "userId": 11,
+          "warehouseKindId": 2,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 9,
+      "stationId": 10,
+      "no": 9,
+      "name": "Kabin 9",
+      "isActive": true,
+      "type": 1,
+      "comPortsId": 3,
+      "baudRatesId": 3,
+      "paritiesId": 0,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#abf5fa",
+      "sequenceNo": 9,
+      "cardTypesIds": [
+        3
+      ],
+      "cameraNo": 9,
+      "dvrIp": "192.168.1.109",
+      "station": {
+        "id": 10,
+        "name": "Hemşire İstasyonu A",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:10",
+        "service": {
+          "id": 11,
+          "name": "Psikiyatri",
+          "branchId": 2,
+          "userId": 11,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 1,
+          "code": 1001,
+          "name": "Soğuk Depo",
+          "userId": 1,
+          "warehouseKindId": 1,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 2,
+          "code": 1002,
+          "name": "Narkotik Depo",
+          "userId": 2,
+          "warehouseKindId": 2,
+          "isActive": true
+        }
+      }
+    },
+    {
+      "id": 10,
+      "stationId": 1,
+      "no": 10,
+      "name": "Kabin 10",
+      "isActive": true,
+      "type": 4,
+      "comPortsId": 8,
+      "baudRatesId": 2,
+      "paritiesId": 2,
+      "dataBits": 8,
+      "stopBits": 1,
+      "colorHexCode": "#9d4fde",
+      "sequenceNo": 10,
+      "cardTypesIds": [
+        4
+      ],
+      "cameraNo": 10,
+      "dvrIp": "192.168.1.110",
+      "station": {
+        "id": 1,
+        "name": "Hemşire İstasyonu B",
+        "stationDrug": true,
+        "stationMedicalConsumables": true,
+        "macAddress": "AA:BB:CC:DD:EE:01",
+        "service": {
+          "id": 2,
+          "name": "Kardiyoloji",
+          "branchId": 3,
+          "userId": 2,
+          "isActive": true
+        },
+        "materialWarehouse": {
+          "id": 2,
+          "code": 1002,
+          "name": "Narkotik Depo",
+          "userId": 2,
+          "warehouseKindId": 1,
+          "isActive": true
+        },
+        "medicalConsumableWarehouse": {
+          "id": 3,
+          "code": 1003,
+          "name": "Acil Depo",
+          "userId": 3,
+          "warehouseKindId": 1,
+          "isActive": true
+        }
+      }
+    }
+  ]
+}

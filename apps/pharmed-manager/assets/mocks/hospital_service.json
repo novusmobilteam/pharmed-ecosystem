@@ -1,0 +1,486 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Cerrahi",
+      "branchId": 2,
+      "branch": {
+        "id": 2,
+        "name": "Şube 2",
+        "code": "BR002"
+      },
+      "userId": 1,
+      "user": {
+        "id": 1,
+        "name": "Hatice",
+        "surname": "Kaya",
+        "registrationNumber": "10001",
+        "roleId": 3,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici1@hastane.com",
+        "userName": "kullanici1"
+      },
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "name": "Kardiyoloji",
+      "branchId": 3,
+      "branch": {
+        "id": 3,
+        "name": "Şube 3",
+        "code": "BR003"
+      },
+      "userId": 2,
+      "user": {
+        "id": 2,
+        "name": "Gamze",
+        "surname": "Doğan",
+        "registrationNumber": "10002",
+        "roleId": 4,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici2@hastane.com",
+        "userName": "kullanici2"
+      },
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "name": "Nöroloji",
+      "branchId": 4,
+      "branch": {
+        "id": 4,
+        "name": "Şube 4",
+        "code": "BR004"
+      },
+      "userId": 3,
+      "user": {
+        "id": 3,
+        "name": "Zeynep",
+        "surname": "Kaya",
+        "registrationNumber": "10003",
+        "roleId": 4,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici3@hastane.com",
+        "userName": "kullanici3"
+      },
+      "isActive": true
+    },
+    {
+      "id": 4,
+      "name": "Ortopedi",
+      "branchId": 5,
+      "branch": {
+        "id": 5,
+        "name": "Şube 5",
+        "code": "BR005"
+      },
+      "userId": 4,
+      "user": {
+        "id": 4,
+        "name": "Özlem",
+        "surname": "Yılmaz",
+        "registrationNumber": "10004",
+        "roleId": 3,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici4@hastane.com",
+        "userName": "kullanici4"
+      },
+      "isActive": true
+    },
+    {
+      "id": 5,
+      "name": "Göz Hastalıkları",
+      "branchId": 1,
+      "branch": {
+        "id": 1,
+        "name": "Şube 1",
+        "code": "BR001"
+      },
+      "userId": 5,
+      "user": {
+        "id": 5,
+        "name": "Selin",
+        "surname": "Güneş",
+        "registrationNumber": "10005",
+        "roleId": 2,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici5@hastane.com",
+        "userName": "kullanici5"
+      },
+      "isActive": true
+    },
+    {
+      "id": 6,
+      "name": "KBB",
+      "branchId": 2,
+      "branch": {
+        "id": 2,
+        "name": "Şube 2",
+        "code": "BR002"
+      },
+      "userId": 6,
+      "user": {
+        "id": 6,
+        "name": "Merve",
+        "surname": "Güneş",
+        "registrationNumber": "10006",
+        "roleId": 1,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici6@hastane.com",
+        "userName": "kullanici6"
+      },
+      "isActive": true
+    },
+    {
+      "id": 7,
+      "name": "Üroloji",
+      "branchId": 3,
+      "branch": {
+        "id": 3,
+        "name": "Şube 3",
+        "code": "BR003"
+      },
+      "userId": 7,
+      "user": {
+        "id": 7,
+        "name": "Ayşe",
+        "surname": "Kurt",
+        "registrationNumber": "10007",
+        "roleId": 2,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici7@hastane.com",
+        "userName": "kullanici7"
+      },
+      "isActive": true
+    },
+    {
+      "id": 8,
+      "name": "Kadın Doğum",
+      "branchId": 4,
+      "branch": {
+        "id": 4,
+        "name": "Şube 4",
+        "code": "BR004"
+      },
+      "userId": 8,
+      "user": {
+        "id": 8,
+        "name": "İbrahim",
+        "surname": "Aydın",
+        "registrationNumber": "10008",
+        "roleId": 2,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici8@hastane.com",
+        "userName": "kullanici8"
+      },
+      "isActive": true
+    },
+    {
+      "id": 9,
+      "name": "Çocuk Hastalıkları",
+      "branchId": 5,
+      "branch": {
+        "id": 5,
+        "name": "Şube 5",
+        "code": "BR005"
+      },
+      "userId": 9,
+      "user": {
+        "id": 9,
+        "name": "Burak",
+        "surname": "Öztürk",
+        "registrationNumber": "10009",
+        "roleId": 2,
+        "role": "Teknisyen",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici9@hastane.com",
+        "userName": "kullanici9"
+      },
+      "isActive": true
+    },
+    {
+      "id": 10,
+      "name": "Dermatoloji",
+      "branchId": 1,
+      "branch": {
+        "id": 1,
+        "name": "Şube 1",
+        "code": "BR001"
+      },
+      "userId": 10,
+      "user": {
+        "id": 10,
+        "name": "Hüseyin",
+        "surname": "Aslan",
+        "registrationNumber": "10010",
+        "roleId": 3,
+        "role": "Teknisyen",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici10@hastane.com",
+        "userName": "kullanici10"
+      },
+      "isActive": true
+    },
+    {
+      "id": 11,
+      "name": "Psikiyatri",
+      "branchId": 2,
+      "branch": {
+        "id": 2,
+        "name": "Şube 2",
+        "code": "BR002"
+      },
+      "userId": 11,
+      "user": {
+        "id": 11,
+        "name": "Fatma",
+        "surname": "Yılmaz",
+        "registrationNumber": "10011",
+        "roleId": 4,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici11@hastane.com",
+        "userName": "kullanici11"
+      },
+      "isActive": true
+    },
+    {
+      "id": 12,
+      "name": "Fizik Tedavi",
+      "branchId": 3,
+      "branch": {
+        "id": 3,
+        "name": "Şube 3",
+        "code": "BR003"
+      },
+      "userId": 12,
+      "user": {
+        "id": 12,
+        "name": "Ali",
+        "surname": "Yıldız",
+        "registrationNumber": "10012",
+        "roleId": 3,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici12@hastane.com",
+        "userName": "kullanici12"
+      },
+      "isActive": true
+    },
+    {
+      "id": 13,
+      "name": "Anestezi",
+      "branchId": 4,
+      "branch": {
+        "id": 4,
+        "name": "Şube 4",
+        "code": "BR004"
+      },
+      "userId": 13,
+      "user": {
+        "id": 13,
+        "name": "Fatma",
+        "surname": "Aslan",
+        "registrationNumber": "10013",
+        "roleId": 4,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici13@hastane.com",
+        "userName": "kullanici13"
+      },
+      "isActive": true
+    },
+    {
+      "id": 14,
+      "name": "Radyoloji",
+      "branchId": 5,
+      "branch": {
+        "id": 5,
+        "name": "Şube 5",
+        "code": "BR005"
+      },
+      "userId": 14,
+      "user": {
+        "id": 14,
+        "name": "Deniz",
+        "surname": "Kurt",
+        "registrationNumber": "10014",
+        "roleId": 5,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici14@hastane.com",
+        "userName": "kullanici14"
+      },
+      "isActive": true
+    },
+    {
+      "id": 15,
+      "name": "Acil Servis",
+      "branchId": 1,
+      "branch": {
+        "id": 1,
+        "name": "Şube 1",
+        "code": "BR001"
+      },
+      "userId": 15,
+      "user": {
+        "id": 15,
+        "name": "Elif",
+        "surname": "Özdemir",
+        "registrationNumber": "10015",
+        "roleId": 1,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici15@hastane.com",
+        "userName": "kullanici15"
+      },
+      "isActive": true
+    },
+    {
+      "id": 16,
+      "name": "Yoğun Bakım",
+      "branchId": 2,
+      "branch": {
+        "id": 2,
+        "name": "Şube 2",
+        "code": "BR002"
+      },
+      "userId": 16,
+      "user": {
+        "id": 16,
+        "name": "Emine",
+        "surname": "Şahin",
+        "registrationNumber": "10016",
+        "roleId": 1,
+        "role": "Doktor",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici16@hastane.com",
+        "userName": "kullanici16"
+      },
+      "isActive": true
+    },
+    {
+      "id": 17,
+      "name": "Onkoloji",
+      "branchId": 3,
+      "branch": {
+        "id": 3,
+        "name": "Şube 3",
+        "code": "BR003"
+      },
+      "userId": 17,
+      "user": {
+        "id": 17,
+        "name": "Ali",
+        "surname": "Demir",
+        "registrationNumber": "10017",
+        "roleId": 1,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici17@hastane.com",
+        "userName": "kullanici17"
+      },
+      "isActive": true
+    },
+    {
+      "id": 18,
+      "name": "Gastroenteroloji",
+      "branchId": 4,
+      "branch": {
+        "id": 4,
+        "name": "Şube 4",
+        "code": "BR004"
+      },
+      "userId": 18,
+      "user": {
+        "id": 18,
+        "name": "Merve",
+        "surname": "Yılmaz",
+        "registrationNumber": "10018",
+        "roleId": 4,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici18@hastane.com",
+        "userName": "kullanici18"
+      },
+      "isActive": true
+    },
+    {
+      "id": 19,
+      "name": "Endokrinoloji",
+      "branchId": 5,
+      "branch": {
+        "id": 5,
+        "name": "Şube 5",
+        "code": "BR005"
+      },
+      "userId": 19,
+      "user": {
+        "id": 19,
+        "name": "Hatice",
+        "surname": "Erdoğan",
+        "registrationNumber": "10019",
+        "roleId": 4,
+        "role": "Teknisyen",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici19@hastane.com",
+        "userName": "kullanici19"
+      },
+      "isActive": true
+    },
+    {
+      "id": 20,
+      "name": "Dahiliye",
+      "branchId": 1,
+      "branch": {
+        "id": 1,
+        "name": "Şube 1",
+        "code": "BR001"
+      },
+      "userId": 20,
+      "user": {
+        "id": 20,
+        "name": "Can",
+        "surname": "Arslan",
+        "registrationNumber": "10020",
+        "roleId": 3,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici20@hastane.com",
+        "userName": "kullanici20"
+      },
+      "isActive": true
+    }
+  ]
+}

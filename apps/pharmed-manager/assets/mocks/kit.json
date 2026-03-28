@@ -1,0 +1,36 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Acil Kit",
+      "code": "KIT001",
+      "status": true
+    },
+    {
+      "id": 2,
+      "name": "Ameliyat Seti",
+      "code": "KIT002",
+      "status": true
+    },
+    {
+      "id": 3,
+      "name": "Pansuman Seti",
+      "code": "KIT003",
+      "status": true
+    },
+    {
+      "id": 4,
+      "name": "IV Set",
+      "code": "KIT004",
+      "status": true
+    },
+    {
+      "id": 5,
+      "name": "Sütür Seti",
+      "code": "KIT005",
+      "status": true
+    }
+  ]
+}

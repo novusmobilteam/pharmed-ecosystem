@@ -1,0 +1,132 @@
+2 tip kart var. Biri yönetim kartı diğeri isi çekmecelerde bulunan kontrol kartı. 
+Kontrol kartlarının adres ayarı yok. Hangi kontrol kartının çalışacağını yönetim kartı belirler. 
+Bu sebeple hangi sıradaki kontrol kartı kumanda edilecekse önce yönetim kartına komut yollayarak
+seçim işlemi yapılır. Sonra kontrol kartına komut gönderilir.
+
+** Yönetim Kartı Komutları **
+
+    - PC -> Cihaz
+
+    :Yattc;
+    ----------
+    Y:  Sabit "Y" karakteri.
+    a:  Yönetici kart adresi. a'dan p'ye kadar olmak üzere 16 adet adres bulunmaktadır.
+    tt: Satır adresi. 00'dan 26'e olmak üzere 27 tane satır bulunmaktadır. 00 yollanırsa hiçbir adres seçilmemiş olur.
+    c:  Checksum değeri, 1 karakter. 
+    
+    Chekcsum Hesaplama: c = (Y ascii + a ascii + tt) % 10
+
+    - Cihaz -> PC
+
+    +TT-
+    ----------
+    no: Anlamsız komut veya chekcsum yanlış.
+    ok: Komut anlaşıldı.
+
+** Kontrol Kartı Komutları **
+
+    1. Çekmece Komutları
+
+    - PC -> Cihaz
+
+    :Tkattc;
+    ----------
+    T:  Sabit "T" karakteri.
+    k:  Komut. O: Aç / C: Kapat / S: Durum / M: Orada mısın? / V: Tip (Not: 1-5 nolu portlar sadece aç kapat şeklinde çalışıyor?)
+    a:  Port no. 1'den 8'e olmak üzere 8 adet port bulunmaktadır.
+    tt: Çekmece kademe/göz sayısı. 01'den 16'ya olmak üzere 16 adet bulunmaktadır. 00 -> Dolap, 20 -> Döner Motorlu Çekmece
+    c:  Checksum değeri, 1 karakter.
+
+    Chekcsum Hesaplama: c = (T ascii + k ascii + a + tt) % 10
+
+    - Cihaz -> PC
+
+    .TT,
+    ----------
+    no: Anlamsız komut veya checksum yanlış.
+
+    O, C, M komutlarına cevap -> ok: Komut anlaşıldı.
+
+    S komutlarına cevap:
+    h0: Çekmece kilitlendi.
+    h1: Çekmece kilidi açık fakat çekmece çekilmedi.
+    h2: Çekmece kilidi açık, çekmece kilidi çekildi fakat istenen göz sayısı kadar açılmadı.
+    h3: Çekmece açıldı, istenen konuma(göze) gelindi. Kapatılması bekleniyor. (Yanıp sönme).
+    h4: Çekmece kapatıldı.
+    h5: Çekmece/dolap kapalı.
+    h6: Çekmece/dolap açık.
+    h7: Döner motorlu çekmeceye sinyal gönderildi, dönmesi bekleniyor.
+    h8: Döner motorlu çekmece 1 turunu başarılı şekilde tamamladı.
+    h9: Döner motrlu çekmece 5 saniyede turu tamamlayamadı. Hata var.
+
+    V komutlarına cevap -> .v01,: 01 rakamı tipe göre değişiyor. 01-16 arası değer alabilir.
+    
+    2. Kübik Komutları
+
+    Yönetim kartı ile hangi sıradaki çekmece ile iletişim kurulacak ise seçilecek, sonrasında kübik çekmeceyle iletişim kurulacak.
+
+    - PC -> Cihaz
+
+    :Zkattc;
+    ----------
+    Z:  Sabit "Z" karakteri.
+    k:  Komut. O: Aç / S: Durum / M: Orada mısın? / V: Tip 
+    a:  Port no. 1'den 4'e olmak üzere 4 adet port bulunmaktadır. 
+    tt: Kübik sıra no. 00'dan 04' olmak üzere 4 adet sıra no bulunmaktadır.
+    c:  Checksum değeri, 1 karakter.
+
+    Chekcsum Hesaplama: c = (T ascii + k ascii + a + tt) % 10
+
+    - Cihaz -> PC
+    
+    TT
+    ----------
+    nc: Checksum yanlış.
+    no: Anlamsız veya hatalı komut.
+    ht: Çekmecek açık değil iken kübik aç komutu gelir ise kübik açılamaz.
+    hz: Master kart slave karta komut gönderir ve bu sorgu 250 ms içinde gelmezse bu hata gelir. Slave kartta bir problem olabilir.
+
+    O, C, M komutlarına cevap -> ok: Komut anlaşıldı.
+
+    S komutlarına cevap:
+    ac: Kübik açık.
+    kp: Kübik kapalı.
+
+    V komutlarına cevap -> 01. Tek tip olduğu için sadece 01 gelecek.
+
+    Not: Kübik yapısında tek çekmece içinde 2 ayrı kart olduğu düşünülmeli. Birinci kart çekmecenin çekilmesini ve kilitlenmesini kontrol ediyor.
+    Bu işlem ilk haberleşme ile denetlenecek. İkinci kart ise kübik çekmeceleri kontrol ediyor. Bunun haberleşmesi ile de kübikler kontrol edilecek. 
+    Burada birinci kartı master ikinci kart slave gibi düşünülebilir. 1 mastera 5 adete kadar slave bağlanabiliyor ve her slavede maks 4 göz olabiliyor. 
+    Kübik yakaladığı zaman slave var mı yok mu kontrol ediliyor. Slave varsa oradaki gözler aktif demektir. 
+    Bu gözler tek tek ayrılmış olabilir, 1-2 birleşik, 3,4,5 ayrı vb. olabilir. 
+
+    Not2: Sisteme yollanan sorgular en erken 10 ms, en geç 250 ms sonra cevaplanır.
+    
+    Not3: Bilgisayardan karta sorgu yollandıktan sonra gelecek cevap için bekleme koyulmamalıdır. Gelen veriler sürekli dinlenmelidir.
+
+    CRC hesap hatası nedeniyle aşağıdaki komutlar geçersiz: 
+
+    :TO1308; -> Çekmece Aç
+    :TC1306; -> Çekmece Kapat
+    :TR1301; -> Çekmece H2 Reset
+    :TS1301; -> Durum Sorgulama
+    :Z01019; -> TER1 Aç
+    :ZM1017; -> TER1 Orada mısın?
+    :ZS1013; -> TER1 Durum
+    :ZO2010; -> TER2 Aç
+    :ZM2018; -> TER2 Orada mısın?
+    :ZS2014; -> TER2 Durum
+    :ZO3011; -> TER3 Aç
+    :ZS3015; -> TER3 Durum
+    :ZO4012; -> TER4 Aç
+    :ZS4016; -> TER4 Durum
+
+
+
+
+
+
+
+
+
+

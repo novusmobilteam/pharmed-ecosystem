@@ -1,0 +1,356 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "cabinTemperatureId": 1,
+      "temperature": "7.7",
+      "humidity": 57,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 2,
+      "cabinTemperatureId": 1,
+      "temperature": "10.6",
+      "humidity": 76,
+      "recordTime": "2025-12-10T00:00:00"
+    },
+    {
+      "id": 3,
+      "cabinTemperatureId": 1,
+      "temperature": "10.8",
+      "humidity": 74,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 4,
+      "cabinTemperatureId": 1,
+      "temperature": "7.4",
+      "humidity": 74,
+      "recordTime": "2025-12-10T00:00:00"
+    },
+    {
+      "id": 5,
+      "cabinTemperatureId": 1,
+      "temperature": "9.0",
+      "humidity": 42,
+      "recordTime": "2025-12-10T00:00:00"
+    },
+    {
+      "id": 6,
+      "cabinTemperatureId": 2,
+      "temperature": "10.0",
+      "humidity": 78,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 7,
+      "cabinTemperatureId": 2,
+      "temperature": "5.7",
+      "humidity": 56,
+      "recordTime": "2025-12-08T00:00:00"
+    },
+    {
+      "id": 8,
+      "cabinTemperatureId": 2,
+      "temperature": "6.5",
+      "humidity": 63,
+      "recordTime": "2025-12-13T00:00:00"
+    },
+    {
+      "id": 9,
+      "cabinTemperatureId": 2,
+      "temperature": "10.3",
+      "humidity": 65,
+      "recordTime": "2025-12-13T00:00:00"
+    },
+    {
+      "id": 10,
+      "cabinTemperatureId": 2,
+      "temperature": "4.0",
+      "humidity": 78,
+      "recordTime": "2025-12-10T00:00:00"
+    },
+    {
+      "id": 11,
+      "cabinTemperatureId": 3,
+      "temperature": "9.2",
+      "humidity": 48,
+      "recordTime": "2025-12-07T00:00:00"
+    },
+    {
+      "id": 12,
+      "cabinTemperatureId": 3,
+      "temperature": "9.5",
+      "humidity": 73,
+      "recordTime": "2025-12-10T00:00:00"
+    },
+    {
+      "id": 13,
+      "cabinTemperatureId": 3,
+      "temperature": "4.8",
+      "humidity": 40,
+      "recordTime": "2025-12-12T00:00:00"
+    },
+    {
+      "id": 14,
+      "cabinTemperatureId": 3,
+      "temperature": "7.4",
+      "humidity": 79,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 15,
+      "cabinTemperatureId": 3,
+      "temperature": "4.9",
+      "humidity": 67,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 16,
+      "cabinTemperatureId": 4,
+      "temperature": "9.1",
+      "humidity": 56,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 17,
+      "cabinTemperatureId": 4,
+      "temperature": "11.8",
+      "humidity": 48,
+      "recordTime": "2025-12-13T00:00:00"
+    },
+    {
+      "id": 18,
+      "cabinTemperatureId": 4,
+      "temperature": "6.8",
+      "humidity": 50,
+      "recordTime": "2025-12-12T00:00:00"
+    },
+    {
+      "id": 19,
+      "cabinTemperatureId": 4,
+      "temperature": "8.7",
+      "humidity": 41,
+      "recordTime": "2025-12-07T00:00:00"
+    },
+    {
+      "id": 20,
+      "cabinTemperatureId": 4,
+      "temperature": "7.6",
+      "humidity": 69,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 21,
+      "cabinTemperatureId": 5,
+      "temperature": "2.3",
+      "humidity": 62,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 22,
+      "cabinTemperatureId": 5,
+      "temperature": "2.6",
+      "humidity": 43,
+      "recordTime": "2025-12-07T00:00:00"
+    },
+    {
+      "id": 23,
+      "cabinTemperatureId": 5,
+      "temperature": "6.9",
+      "humidity": 74,
+      "recordTime": "2025-12-13T00:00:00"
+    },
+    {
+      "id": 24,
+      "cabinTemperatureId": 5,
+      "temperature": "3.4",
+      "humidity": 67,
+      "recordTime": "2025-12-12T00:00:00"
+    },
+    {
+      "id": 25,
+      "cabinTemperatureId": 5,
+      "temperature": "5.9",
+      "humidity": 64,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 26,
+      "cabinTemperatureId": 6,
+      "temperature": "6.5",
+      "humidity": 67,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 27,
+      "cabinTemperatureId": 6,
+      "temperature": "10.3",
+      "humidity": 47,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 28,
+      "cabinTemperatureId": 6,
+      "temperature": "2.4",
+      "humidity": 53,
+      "recordTime": "2025-12-13T00:00:00"
+    },
+    {
+      "id": 29,
+      "cabinTemperatureId": 6,
+      "temperature": "6.1",
+      "humidity": 40,
+      "recordTime": "2025-12-13T00:00:00"
+    },
+    {
+      "id": 30,
+      "cabinTemperatureId": 6,
+      "temperature": "9.2",
+      "humidity": 69,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 31,
+      "cabinTemperatureId": 7,
+      "temperature": "4.8",
+      "humidity": 57,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 32,
+      "cabinTemperatureId": 7,
+      "temperature": "3.8",
+      "humidity": 65,
+      "recordTime": "2025-12-07T00:00:00"
+    },
+    {
+      "id": 33,
+      "cabinTemperatureId": 7,
+      "temperature": "4.5",
+      "humidity": 73,
+      "recordTime": "2025-12-13T00:00:00"
+    },
+    {
+      "id": 34,
+      "cabinTemperatureId": 7,
+      "temperature": "6.0",
+      "humidity": 43,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 35,
+      "cabinTemperatureId": 7,
+      "temperature": "2.2",
+      "humidity": 51,
+      "recordTime": "2025-12-13T00:00:00"
+    },
+    {
+      "id": 36,
+      "cabinTemperatureId": 8,
+      "temperature": "10.2",
+      "humidity": 78,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 37,
+      "cabinTemperatureId": 8,
+      "temperature": "3.5",
+      "humidity": 77,
+      "recordTime": "2025-12-07T00:00:00"
+    },
+    {
+      "id": 38,
+      "cabinTemperatureId": 8,
+      "temperature": "8.4",
+      "humidity": 52,
+      "recordTime": "2025-12-07T00:00:00"
+    },
+    {
+      "id": 39,
+      "cabinTemperatureId": 8,
+      "temperature": "2.6",
+      "humidity": 64,
+      "recordTime": "2025-12-08T00:00:00"
+    },
+    {
+      "id": 40,
+      "cabinTemperatureId": 8,
+      "temperature": "4.4",
+      "humidity": 77,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 41,
+      "cabinTemperatureId": 9,
+      "temperature": "4.4",
+      "humidity": 75,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 42,
+      "cabinTemperatureId": 9,
+      "temperature": "10.5",
+      "humidity": 70,
+      "recordTime": "2025-12-07T00:00:00"
+    },
+    {
+      "id": 43,
+      "cabinTemperatureId": 9,
+      "temperature": "8.4",
+      "humidity": 57,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 44,
+      "cabinTemperatureId": 9,
+      "temperature": "2.3",
+      "humidity": 69,
+      "recordTime": "2025-12-08T00:00:00"
+    },
+    {
+      "id": 45,
+      "cabinTemperatureId": 9,
+      "temperature": "6.0",
+      "humidity": 47,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 46,
+      "cabinTemperatureId": 10,
+      "temperature": "9.3",
+      "humidity": 41,
+      "recordTime": "2025-12-10T00:00:00"
+    },
+    {
+      "id": 47,
+      "cabinTemperatureId": 10,
+      "temperature": "9.4",
+      "humidity": 67,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 48,
+      "cabinTemperatureId": 10,
+      "temperature": "7.8",
+      "humidity": 60,
+      "recordTime": "2025-12-11T00:00:00"
+    },
+    {
+      "id": 49,
+      "cabinTemperatureId": 10,
+      "temperature": "5.8",
+      "humidity": 75,
+      "recordTime": "2025-12-09T00:00:00"
+    },
+    {
+      "id": 50,
+      "cabinTemperatureId": 10,
+      "temperature": "8.2",
+      "humidity": 50,
+      "recordTime": "2025-12-10T00:00:00"
+    }
+  ]
+}

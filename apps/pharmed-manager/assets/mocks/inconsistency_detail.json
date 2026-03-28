@@ -1,0 +1,286 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "inconsistencyId": 1,
+      "drawerId": 1,
+      "expectedQuantity": 5,
+      "actualQuantity": 9
+    },
+    {
+      "id": 2,
+      "inconsistencyId": 1,
+      "drawerId": 2,
+      "expectedQuantity": 6,
+      "actualQuantity": 15
+    },
+    {
+      "id": 3,
+      "inconsistencyId": 1,
+      "drawerId": 3,
+      "expectedQuantity": 12,
+      "actualQuantity": 11
+    },
+    {
+      "id": 4,
+      "inconsistencyId": 2,
+      "drawerId": 4,
+      "expectedQuantity": 17,
+      "actualQuantity": 2
+    },
+    {
+      "id": 5,
+      "inconsistencyId": 2,
+      "drawerId": 5,
+      "expectedQuantity": 19,
+      "actualQuantity": 13
+    },
+    {
+      "id": 6,
+      "inconsistencyId": 2,
+      "drawerId": 6,
+      "expectedQuantity": 8,
+      "actualQuantity": 16
+    },
+    {
+      "id": 7,
+      "inconsistencyId": 3,
+      "drawerId": 7,
+      "expectedQuantity": 6,
+      "actualQuantity": 1
+    },
+    {
+      "id": 8,
+      "inconsistencyId": 3,
+      "drawerId": 8,
+      "expectedQuantity": 8,
+      "actualQuantity": 2
+    },
+    {
+      "id": 9,
+      "inconsistencyId": 3,
+      "drawerId": 9,
+      "expectedQuantity": 17,
+      "actualQuantity": 16
+    },
+    {
+      "id": 10,
+      "inconsistencyId": 4,
+      "drawerId": 10,
+      "expectedQuantity": 6,
+      "actualQuantity": 1
+    },
+    {
+      "id": 11,
+      "inconsistencyId": 4,
+      "drawerId": 11,
+      "expectedQuantity": 6,
+      "actualQuantity": 14
+    },
+    {
+      "id": 12,
+      "inconsistencyId": 4,
+      "drawerId": 12,
+      "expectedQuantity": 6,
+      "actualQuantity": 12
+    },
+    {
+      "id": 13,
+      "inconsistencyId": 5,
+      "drawerId": 13,
+      "expectedQuantity": 12,
+      "actualQuantity": 5
+    },
+    {
+      "id": 14,
+      "inconsistencyId": 5,
+      "drawerId": 14,
+      "expectedQuantity": 13,
+      "actualQuantity": 2
+    },
+    {
+      "id": 15,
+      "inconsistencyId": 5,
+      "drawerId": 15,
+      "expectedQuantity": 18,
+      "actualQuantity": 17
+    },
+    {
+      "id": 16,
+      "inconsistencyId": 6,
+      "drawerId": 16,
+      "expectedQuantity": 18,
+      "actualQuantity": 4
+    },
+    {
+      "id": 17,
+      "inconsistencyId": 6,
+      "drawerId": 17,
+      "expectedQuantity": 11,
+      "actualQuantity": 2
+    },
+    {
+      "id": 18,
+      "inconsistencyId": 6,
+      "drawerId": 18,
+      "expectedQuantity": 13,
+      "actualQuantity": 2
+    },
+    {
+      "id": 19,
+      "inconsistencyId": 7,
+      "drawerId": 19,
+      "expectedQuantity": 14,
+      "actualQuantity": 5
+    },
+    {
+      "id": 20,
+      "inconsistencyId": 7,
+      "drawerId": 20,
+      "expectedQuantity": 12,
+      "actualQuantity": 5
+    },
+    {
+      "id": 21,
+      "inconsistencyId": 7,
+      "drawerId": 21,
+      "expectedQuantity": 9,
+      "actualQuantity": 19
+    },
+    {
+      "id": 22,
+      "inconsistencyId": 8,
+      "drawerId": 22,
+      "expectedQuantity": 5,
+      "actualQuantity": 14
+    },
+    {
+      "id": 23,
+      "inconsistencyId": 8,
+      "drawerId": 23,
+      "expectedQuantity": 12,
+      "actualQuantity": 0
+    },
+    {
+      "id": 24,
+      "inconsistencyId": 8,
+      "drawerId": 24,
+      "expectedQuantity": 5,
+      "actualQuantity": 5
+    },
+    {
+      "id": 25,
+      "inconsistencyId": 9,
+      "drawerId": 25,
+      "expectedQuantity": 7,
+      "actualQuantity": 9
+    },
+    {
+      "id": 26,
+      "inconsistencyId": 9,
+      "drawerId": 26,
+      "expectedQuantity": 9,
+      "actualQuantity": 11
+    },
+    {
+      "id": 27,
+      "inconsistencyId": 9,
+      "drawerId": 27,
+      "expectedQuantity": 6,
+      "actualQuantity": 15
+    },
+    {
+      "id": 28,
+      "inconsistencyId": 10,
+      "drawerId": 28,
+      "expectedQuantity": 7,
+      "actualQuantity": 14
+    },
+    {
+      "id": 29,
+      "inconsistencyId": 10,
+      "drawerId": 29,
+      "expectedQuantity": 17,
+      "actualQuantity": 0
+    },
+    {
+      "id": 30,
+      "inconsistencyId": 10,
+      "drawerId": 30,
+      "expectedQuantity": 9,
+      "actualQuantity": 17
+    },
+    {
+      "id": 31,
+      "inconsistencyId": 11,
+      "drawerId": 31,
+      "expectedQuantity": 14,
+      "actualQuantity": 12
+    },
+    {
+      "id": 32,
+      "inconsistencyId": 11,
+      "drawerId": 32,
+      "expectedQuantity": 8,
+      "actualQuantity": 5
+    },
+    {
+      "id": 33,
+      "inconsistencyId": 11,
+      "drawerId": 33,
+      "expectedQuantity": 15,
+      "actualQuantity": 8
+    },
+    {
+      "id": 34,
+      "inconsistencyId": 12,
+      "drawerId": 34,
+      "expectedQuantity": 5,
+      "actualQuantity": 15
+    },
+    {
+      "id": 35,
+      "inconsistencyId": 12,
+      "drawerId": 35,
+      "expectedQuantity": 8,
+      "actualQuantity": 15
+    },
+    {
+      "id": 36,
+      "inconsistencyId": 12,
+      "drawerId": 36,
+      "expectedQuantity": 17,
+      "actualQuantity": 11
+    },
+    {
+      "id": 37,
+      "inconsistencyId": 13,
+      "drawerId": 37,
+      "expectedQuantity": 13,
+      "actualQuantity": 10
+    },
+    {
+      "id": 38,
+      "inconsistencyId": 13,
+      "drawerId": 38,
+      "expectedQuantity": 16,
+      "actualQuantity": 2
+    },
+    {
+      "id": 39,
+      "inconsistencyId": 13,
+      "drawerId": 39,
+      "expectedQuantity": 8,
+      "actualQuantity": 18
+    },
+    {
+      "id": 40,
+      "inconsistencyId": 14,
+      "drawerId": 40,
+      "expectedQuantity": 11,
+      "actualQuantity": 16
+    }
+  ]
+}

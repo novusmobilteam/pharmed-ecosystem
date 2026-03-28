@@ -1,0 +1,386 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "userId": 1,
+      "user": {
+        "id": 1,
+        "name": "Özlem",
+        "surname": "Aksoy",
+        "registrationNumber": 10001,
+        "roleId": 4,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici1@hastane.com",
+        "userName": "kullanici1"
+      },
+      "email": "kullanici1@hastane.com",
+      "notificationType": 4,
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "user": {
+        "id": 2,
+        "name": "Gamze",
+        "surname": "Kılıç",
+        "registrationNumber": 10002,
+        "roleId": 2,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici2@hastane.com",
+        "userName": "kullanici2"
+      },
+      "email": "kullanici2@hastane.com",
+      "notificationType": 2,
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "userId": 3,
+      "user": {
+        "id": 3,
+        "name": "Murat",
+        "surname": "Özkan",
+        "registrationNumber": 10003,
+        "roleId": 2,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici3@hastane.com",
+        "userName": "kullanici3"
+      },
+      "email": "kullanici3@hastane.com",
+      "notificationType": 1,
+      "isActive": true
+    },
+    {
+      "id": 4,
+      "userId": 4,
+      "user": {
+        "id": 4,
+        "name": "Selin",
+        "surname": "Güneş",
+        "registrationNumber": 10004,
+        "roleId": 3,
+        "role": "Teknisyen",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici4@hastane.com",
+        "userName": "kullanici4"
+      },
+      "email": "kullanici4@hastane.com",
+      "notificationType": 1,
+      "isActive": true
+    },
+    {
+      "id": 5,
+      "userId": 5,
+      "user": {
+        "id": 5,
+        "name": "Deniz",
+        "surname": "Yılmaz",
+        "registrationNumber": 10005,
+        "roleId": 3,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici5@hastane.com",
+        "userName": "kullanici5"
+      },
+      "email": "kullanici5@hastane.com",
+      "notificationType": 3,
+      "isActive": true
+    },
+    {
+      "id": 6,
+      "userId": 6,
+      "user": {
+        "id": 6,
+        "name": "Emine",
+        "surname": "Çelik",
+        "registrationNumber": 10006,
+        "roleId": 4,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici6@hastane.com",
+        "userName": "kullanici6"
+      },
+      "email": "kullanici6@hastane.com",
+      "notificationType": 2,
+      "isActive": true
+    },
+    {
+      "id": 7,
+      "userId": 7,
+      "user": {
+        "id": 7,
+        "name": "Emre",
+        "surname": "Aslan",
+        "registrationNumber": 10007,
+        "roleId": 3,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici7@hastane.com",
+        "userName": "kullanici7"
+      },
+      "email": "kullanici7@hastane.com",
+      "notificationType": 3,
+      "isActive": true
+    },
+    {
+      "id": 8,
+      "userId": 8,
+      "user": {
+        "id": 8,
+        "name": "Fatma",
+        "surname": "Özdemir",
+        "registrationNumber": 10008,
+        "roleId": 4,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici8@hastane.com",
+        "userName": "kullanici8"
+      },
+      "email": "kullanici8@hastane.com",
+      "notificationType": 4,
+      "isActive": true
+    },
+    {
+      "id": 9,
+      "userId": 9,
+      "user": {
+        "id": 9,
+        "name": "Hasan",
+        "surname": "Polat",
+        "registrationNumber": 10009,
+        "roleId": 3,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici9@hastane.com",
+        "userName": "kullanici9"
+      },
+      "email": "kullanici9@hastane.com",
+      "notificationType": 3,
+      "isActive": true
+    },
+    {
+      "id": 10,
+      "userId": 10,
+      "user": {
+        "id": 10,
+        "name": "İbrahim",
+        "surname": "Doğan",
+        "registrationNumber": 10010,
+        "roleId": 1,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici10@hastane.com",
+        "userName": "kullanici10"
+      },
+      "email": "kullanici10@hastane.com",
+      "notificationType": 4,
+      "isActive": true
+    },
+    {
+      "id": 11,
+      "userId": 11,
+      "user": {
+        "id": 11,
+        "name": "Emre",
+        "surname": "Öztürk",
+        "registrationNumber": 10011,
+        "roleId": 4,
+        "role": "Doktor",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici11@hastane.com",
+        "userName": "kullanici11"
+      },
+      "email": "kullanici11@hastane.com",
+      "notificationType": 1,
+      "isActive": true
+    },
+    {
+      "id": 12,
+      "userId": 12,
+      "user": {
+        "id": 12,
+        "name": "Özlem",
+        "surname": "Özdemir",
+        "registrationNumber": 10012,
+        "roleId": 2,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici12@hastane.com",
+        "userName": "kullanici12"
+      },
+      "email": "kullanici12@hastane.com",
+      "notificationType": 4,
+      "isActive": true
+    },
+    {
+      "id": 13,
+      "userId": 13,
+      "user": {
+        "id": 13,
+        "name": "Merve",
+        "surname": "Yılmaz",
+        "registrationNumber": 10013,
+        "roleId": 5,
+        "role": "Hemşire",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici13@hastane.com",
+        "userName": "kullanici13"
+      },
+      "email": "kullanici13@hastane.com",
+      "notificationType": 2,
+      "isActive": true
+    },
+    {
+      "id": 14,
+      "userId": 14,
+      "user": {
+        "id": 14,
+        "name": "Yusuf",
+        "surname": "Koç",
+        "registrationNumber": 10014,
+        "roleId": 3,
+        "role": "Depo Sorumlusu",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici14@hastane.com",
+        "userName": "kullanici14"
+      },
+      "email": "kullanici14@hastane.com",
+      "notificationType": 4,
+      "isActive": true
+    },
+    {
+      "id": 15,
+      "userId": 15,
+      "user": {
+        "id": 15,
+        "name": "Mustafa",
+        "surname": "Doğan",
+        "registrationNumber": 10015,
+        "roleId": 3,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici15@hastane.com",
+        "userName": "kullanici15"
+      },
+      "email": "kullanici15@hastane.com",
+      "notificationType": 2,
+      "isActive": true
+    },
+    {
+      "id": 16,
+      "userId": 16,
+      "user": {
+        "id": 16,
+        "name": "Hüseyin",
+        "surname": "Şahin",
+        "registrationNumber": 10016,
+        "roleId": 3,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici16@hastane.com",
+        "userName": "kullanici16"
+      },
+      "email": "kullanici16@hastane.com",
+      "notificationType": 3,
+      "isActive": true
+    },
+    {
+      "id": 17,
+      "userId": 17,
+      "user": {
+        "id": 17,
+        "name": "Can",
+        "surname": "Güneş",
+        "registrationNumber": 10017,
+        "roleId": 5,
+        "role": "Admin",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici17@hastane.com",
+        "userName": "kullanici17"
+      },
+      "email": "kullanici17@hastane.com",
+      "notificationType": 4,
+      "isActive": true
+    },
+    {
+      "id": 18,
+      "userId": 18,
+      "user": {
+        "id": 18,
+        "name": "İbrahim",
+        "surname": "Yıldırım",
+        "registrationNumber": 10018,
+        "roleId": 3,
+        "role": "Doktor",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici18@hastane.com",
+        "userName": "kullanici18"
+      },
+      "email": "kullanici18@hastane.com",
+      "notificationType": 3,
+      "isActive": true
+    },
+    {
+      "id": 19,
+      "userId": 19,
+      "user": {
+        "id": 19,
+        "name": "Deniz",
+        "surname": "Aydın",
+        "registrationNumber": 10019,
+        "roleId": 3,
+        "role": "Doktor",
+        "isActive": true,
+        "usageKind": 1,
+        "email": "kullanici19@hastane.com",
+        "userName": "kullanici19"
+      },
+      "email": "kullanici19@hastane.com",
+      "notificationType": 3,
+      "isActive": true
+    },
+    {
+      "id": 20,
+      "userId": 20,
+      "user": {
+        "id": 20,
+        "name": "Hatice",
+        "surname": "Öztürk",
+        "registrationNumber": 10020,
+        "roleId": 3,
+        "role": "Eczacı",
+        "isActive": true,
+        "usageKind": 2,
+        "email": "kullanici20@hastane.com",
+        "userName": "kullanici20"
+      },
+      "email": "kullanici20@hastane.com",
+      "notificationType": 1,
+      "isActive": true
+    }
+  ]
+}

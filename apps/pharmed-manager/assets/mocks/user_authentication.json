@@ -1,0 +1,146 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "userId": 1,
+      "userName": "kullanici1",
+      "token": "mock_token_1",
+      "refreshToken": "mock_refresh_token_1"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "userName": "kullanici2",
+      "token": "mock_token_2",
+      "refreshToken": "mock_refresh_token_2"
+    },
+    {
+      "id": 3,
+      "userId": 3,
+      "userName": "kullanici3",
+      "token": "mock_token_3",
+      "refreshToken": "mock_refresh_token_3"
+    },
+    {
+      "id": 4,
+      "userId": 4,
+      "userName": "kullanici4",
+      "token": "mock_token_4",
+      "refreshToken": "mock_refresh_token_4"
+    },
+    {
+      "id": 5,
+      "userId": 5,
+      "userName": "kullanici5",
+      "token": "mock_token_5",
+      "refreshToken": "mock_refresh_token_5"
+    },
+    {
+      "id": 6,
+      "userId": 6,
+      "userName": "kullanici6",
+      "token": "mock_token_6",
+      "refreshToken": "mock_refresh_token_6"
+    },
+    {
+      "id": 7,
+      "userId": 7,
+      "userName": "kullanici7",
+      "token": "mock_token_7",
+      "refreshToken": "mock_refresh_token_7"
+    },
+    {
+      "id": 8,
+      "userId": 8,
+      "userName": "kullanici8",
+      "token": "mock_token_8",
+      "refreshToken": "mock_refresh_token_8"
+    },
+    {
+      "id": 9,
+      "userId": 9,
+      "userName": "kullanici9",
+      "token": "mock_token_9",
+      "refreshToken": "mock_refresh_token_9"
+    },
+    {
+      "id": 10,
+      "userId": 10,
+      "userName": "kullanici10",
+      "token": "mock_token_10",
+      "refreshToken": "mock_refresh_token_10"
+    },
+    {
+      "id": 11,
+      "userId": 11,
+      "userName": "kullanici11",
+      "token": "mock_token_11",
+      "refreshToken": "mock_refresh_token_11"
+    },
+    {
+      "id": 12,
+      "userId": 12,
+      "userName": "kullanici12",
+      "token": "mock_token_12",
+      "refreshToken": "mock_refresh_token_12"
+    },
+    {
+      "id": 13,
+      "userId": 13,
+      "userName": "kullanici13",
+      "token": "mock_token_13",
+      "refreshToken": "mock_refresh_token_13"
+    },
+    {
+      "id": 14,
+      "userId": 14,
+      "userName": "kullanici14",
+      "token": "mock_token_14",
+      "refreshToken": "mock_refresh_token_14"
+    },
+    {
+      "id": 15,
+      "userId": 15,
+      "userName": "kullanici15",
+      "token": "mock_token_15",
+      "refreshToken": "mock_refresh_token_15"
+    },
+    {
+      "id": 16,
+      "userId": 16,
+      "userName": "kullanici16",
+      "token": "mock_token_16",
+      "refreshToken": "mock_refresh_token_16"
+    },
+    {
+      "id": 17,
+      "userId": 17,
+      "userName": "kullanici17",
+      "token": "mock_token_17",
+      "refreshToken": "mock_refresh_token_17"
+    },
+    {
+      "id": 18,
+      "userId": 18,
+      "userName": "kullanici18",
+      "token": "mock_token_18",
+      "refreshToken": "mock_refresh_token_18"
+    },
+    {
+      "id": 19,
+      "userId": 19,
+      "userName": "kullanici19",
+      "token": "mock_token_19",
+      "refreshToken": "mock_refresh_token_19"
+    },
+    {
+      "id": 20,
+      "userId": 20,
+      "userName": "kullanici20",
+      "token": "mock_token_20",
+      "refreshToken": "mock_refresh_token_20"
+    }
+  ]
+}

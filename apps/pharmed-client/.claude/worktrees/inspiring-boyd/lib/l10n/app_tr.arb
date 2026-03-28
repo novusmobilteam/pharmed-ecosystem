@@ -1,0 +1,270 @@
+{
+  "@@locale": "tr",
+
+  "appName": "MediCab",
+  "btnBack": "Geri",
+  "btnContinue": "Devam Et",
+  "btnCancel": "İptal",
+  "btnRetry": "Tekrar Dene",
+  "stateEnabled": "Etkin",
+  "stateDisabled": "Devre Dışı",
+
+  "topBarTagline": "İLAÇ KABİNİ YÖNETİMİ",
+  "topBarLocation": "{location} · Kabin #{cabinCode}",
+  "@topBarLocation": {
+    "placeholders": {
+      "location": { "type": "String" },
+      "cabinCode": { "type": "String" }
+    }
+  },
+  "topBarOnline": "Sistem Çevrimiçi",
+  "topBarOffline": "Bağlantı Yok",
+  "topBarAlertCount": "{count} Uyarı",
+  "@topBarAlertCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "topBarLogin": "Giriş Yap",
+  "topBarLogout": "Çıkış",
+
+  "navShift": "Vardiya: ",
+  "navLockedBannerPre": "Oturumunuz ",
+  "navLockedBannerHighlight": "zaman aşımı",
+  "navLockedBannerPost": " nedeniyle kapatıldı. İşlem yapmak için giriş yapın.",
+  "navSessionExpiringTitle": "Oturum süreniz dolmak üzere.",
+  "navSessionTimeoutPre": "Oturumunuz ",
+  "navSessionTimeoutPost": " saniye içinde kapanacak.",
+  "navLoginTitle": "Sisteme Giriş",
+  "navLoginSubtitle": "MediCab HMI · Kabin #{cabinCode}",
+  "@navLoginSubtitle": {
+    "placeholders": {
+      "cabinCode": { "type": "String" }
+    }
+  },
+  "navLoginUsername": "Kullanıcı Adı",
+  "navLoginUsernamePlaceholder": "kullanici.adi",
+  "navLoginPassword": "Şifre",
+  "navLoginPasswordPlaceholder": "••••••••",
+  "navQuickActions": "HIZLI İŞLEMLER",
+  "navAlerts": "UYARILAR",
+  "navAlertsCritical": "{count} kritik",
+  "@navAlertsCritical": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "navRecentActivities": "SON AKTİVİTELER",
+  "navLive": "Canlı",
+
+  "staleJustNow": "az önce",
+  "staleMinutesAgo": "{minutes} dk önce",
+  "@staleMinutesAgo": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "staleHoursAgo": "{hours} sa önce",
+  "@staleHoursAgo": {
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
+  },
+  "staleDataOutdated": "Veriler güncel değil. ",
+  "staleCannotProceed": "Güncel veriye ulaşılamıyor. İşlem yapılamaz. ",
+  "staleLastUpdated": "Son güncelleme: {time}",
+  "@staleLastUpdated": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "staleBadgeCanProceed": "Devam Et",
+  "staleBadgeBlocked": "Engelli",
+
+  "wizardFirstSetup": "İLK KURULUM",
+  "wizardPhases": "KURULUM AŞAMALARI",
+  "wizardSaving": "Kabin kaydediliyor…",
+  "wizardSuccessTitle": "Kurulum Tamamlandı!",
+  "wizardSuccessMsg": "{cabinName} başarıyla sisteme eklendi.",
+  "@wizardSuccessMsg": {
+    "placeholders": {
+      "cabinName": { "type": "String" }
+    }
+  },
+  "wizardCabinId": "Kabin ID: #{cabinId}",
+  "@wizardCabinId": {
+    "placeholders": {
+      "cabinId": { "type": "int" }
+    }
+  },
+  "wizardGoToDashboard": "Dashboard'a Git",
+  "wizardErrorTitle": "Kayıt Başarısız",
+  "wizardErrorRetry": "Geri Dön ve Tekrar Dene",
+
+  "wizardStep1Title": "Kabin Tipi",
+  "wizardStep1Desc": "Standart veya Mobil",
+  "wizardStep2Title": "Temel Bilgiler",
+  "wizardStep2Desc": "Ad, konum, bağlantı",
+  "wizardStep3Title": "Hizmet Kapsamı",
+  "wizardStep3Desc": "Servis veya oda listesi",
+  "wizardStep4Title": "Çekmece Yapısı",
+  "wizardStep4Desc": "Tarama veya manuel giriş",
+  "wizardStep5Title": "Özet",
+  "wizardStep5Desc": "Gözden geçir ve tamamla",
+  "wizardStepBadge": "Adım {step} / {total}",
+  "@wizardStepBadge": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "step1Title": "Kabin Tipini Seçin",
+  "step1Subtitle": "Yönetmek istediğiniz kabin türünü belirleyin. Bu seçim sonraki adımları şekillendirecektir.",
+  "step1Spec1Standard": "5 Bölüm",
+  "step1Spec2Standard": "Kübik / Birim Doz",
+  "step1Spec3Standard": "Servis Bazlı",
+  "step1DescStandard": "Sabit duvara monte veya bağımsız duran, kübik ve birim doz çekmece kombinasyonuna sahip kabin.",
+  "step1Spec1Mobile": "4 Sıra",
+  "step1Spec2Mobile": "Tekerlekli",
+  "step1Spec3Mobile": "Oda Bazlı",
+  "step1DescMobile": "Tekerlekli, koğuş dolaşımı için tasarlanmış 4 sıralı taşınabilir ilaç ünitesi.",
+  "step1Warning": "Kabin tipi sonradan değiştirilemez.",
+
+  "step2Title": "Temel Bilgiler",
+  "step2Subtitle": "Kabin adı, konum ve cihaz bağlantı ayarlarını girin.",
+  "step2SectionCabinId": "KABİN KİMLİĞİ",
+  "step2CabinName": "Kabin Adı",
+  "step2CabinNameHint": "örn. CB-304",
+  "step2Location": "Konum",
+  "step2LocationHint": "örn. Kat 3 Koridor B",
+  "step2SectionConnection": "BAĞLANTI AYARLARI",
+  "step2IpAddress": "IP Adresi",
+  "step2Port": "Port",
+  "step2PortHint": "8080",
+  "step2SectionAdvanced": "GELİŞMİŞ AYARLAR",
+  "step2Timeout": "Zaman Aşımı (sn)",
+  "step2Ssl": "SSL / TLS",
+
+  "step3Title": "Hizmet Kapsamı",
+  "step3SubtitleStandard": "Bu kabinin hizmet vereceği kliniği seçin.",
+  "step3SubtitleMobile": "Mobil kabinin dolaşacağı odaları tanımlayın.",
+  "step3InfoStandard": "Seçilen servis, raporlama ve stok takibinde ana filtreleme kriteri olarak kullanılacaktır.",
+  "step3SectionClinic": "KLİNİK / SERVİS",
+  "step3SelectService": "Servis Seçin",
+  "step3SectionRooms": "ODA LİSTESİ",
+  "step3InfoRooms": "Her oda numarasını yazıp Enter veya virgül ile ekleyin. Örn: 301, 302, 303",
+  "step3AddRoom": "Oda Numarası Ekle",
+  "step3AddRoomHint": "örn. 301",
+  "step3RoomsCount": "{count} oda tanımlandı",
+  "@step3RoomsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "svcCardiology": "Kardiyoloji",
+  "svcNeurology": "Nöroloji",
+  "svcInternal": "Dahiliye",
+  "svcOrthopedics": "Ortopedi",
+  "svcGeneralSurgery": "Genel Cerrahi",
+  "svcEmergency": "Acil Servis",
+  "svcICU": "Yoğun Bakım",
+  "svcChestDiseases": "Göğüs Hastalıkları",
+  "svcInfectious": "Enfeksiyon Hastalıkları",
+  "svcUrology": "Üroloji",
+
+  "step4Title": "Çekmece Yapısı",
+  "step4SubtitleStandard": "Cihazı tarayarak çekmece yapısını otomatik algılayın veya manuel girin.",
+  "step4SubtitleMobile": "Mobil kabinin sıra sayısını ve her sıranın çekmece tipini ayarlayın.",
+  "step4ScanHeading": "Cihaz Taraması",
+  "step4ScanDesc": "Cihazın IP adresine bağlanarak çekmece yapısını otomatik okur.",
+  "step4BtnScan": "Cihazı Tara",
+  "step4Scanning": "Taranıyor…",
+  "step4ScanWaiting": "Cihaz bağlantısı kurulmaya çalışılıyor, lütfen bekleyin.",
+  "step4ScanFoundTitle": "Cihaz Bulundu",
+  "step4ScanFoundMsg": "Çekmece yapısı başarıyla okundu.",
+  "step4ScanErrorTitle": "Tarama Başarısız",
+  "step4ScanErrorMsg": "Cihaza bağlanılamadı. IP adresini kontrol edin veya manuel giriş yapın.",
+  "step4ShowManual": "Manuel olarak gir",
+  "step4HideManual": "Manuel girişi gizle",
+  "step4ManualSection": "MANUEL YAPILANDIRMA",
+  "step4SectionCount": "Bölüm Sayısı",
+  "step4DrawerType": "Çekmece Tipi",
+  "step4Depth": "Derinlik (1–12)",
+  "step4MobileRowCount": "TOPLAM SIRA SAYISI",
+  "step4MobileRowDesc": "Her sırada 2 çekmece yan yana yer alır.",
+  "step4Row": "Sıra {index}",
+  "@step4Row": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "step4ScannedLayout": "Okunan Yapı",
+  "step4ScannedResult": "{sections} bölüm · {type} · Derinlik {depth}",
+  "@step4ScannedResult": {
+    "placeholders": {
+      "sections": { "type": "int" },
+      "type": { "type": "String" },
+      "depth": { "type": "int" }
+    }
+  },
+
+  "step5Title": "Kurulum Özeti",
+  "step5Subtitle": "Tüm ayarları gözden geçirin. Onayladıktan sonra kabin sisteme kaydedilir.",
+  "step5CardCabinInfo": "KABİN BİLGİLERİ",
+  "step5CardDrawer": "ÇEKMECE YAPISI",
+  "step5CardScope": "HİZMET KAPSAMI",
+  "step5CardPreview": "KABİN ÖNİZLEME",
+  "step5LabelCabinName": "Kabin Adı",
+  "step5LabelType": "Tip",
+  "step5LabelLocation": "Konum",
+  "step5LabelIp": "IP Adresi",
+  "step5LabelPort": "Port",
+  "step5LabelSsl": "SSL",
+  "step5LabelSections": "Bölüm",
+  "step5LabelDepth": "Derinlik",
+  "step5LabelSource": "Kaynak",
+  "step5SourceScanned": "Cihazdan Okundu",
+  "step5SourceManual": "Manuel Girildi",
+  "step5LabelRowCount": "Sıra Sayısı",
+  "step5Row": "Sıra {index}",
+  "@step5Row": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "step5LabelScope": "Kapsam",
+  "step5ScopeService": "Servis Bazlı",
+  "step5LabelService": "Servis",
+  "step5ScopeRoom": "Oda Bazlı",
+  "step5LabelRooms": "Odalar",
+  "step5LabelRoomCount": "Oda Sayısı",
+  "step5NoData": "Bilgi yok",
+  "step5BtnSaving": "Kaydediliyor…",
+  "step5BtnFinish": "Kurulumu Tamamla",
+  "step5StandardPreviewName": "Standart Kabin",
+  "step5MobilePreviewName": "Mobil Kabin",
+
+  "cabinetTypeStandard": "Standart Kabin",
+  "cabinetTypeMobile": "Mobil Kabin",
+
+  "drawerTypeCubic4x4": "Kübik (4×4)",
+  "drawerTypeCubic4x5": "Kübik (4×5)",
+  "drawerTypeUnitDose": "Birim Doz",
+
+  "dashKpiActivePatients": "Aktif Hasta",
+  "dashKpiCompletedOps": "Tamamlanan İşlem",
+  "dashKpiPendingRx": "Bekleyen Reçete",
+  "dashKpiCriticalAlert": "Kritik Uyarı",
+  "dashCabinStatusTitle": "KABİN DURUMU",
+  "dashCabinLocked": "Kilitli",
+  "dashCabinOpen": "Açık",
+  "dashCabinStatusRow": "Kabin Durumu",
+  "dashNewTreatmentTitle": "Yeni Tedavi Ata",
+  "dashNewTreatmentDesc": "Yeni tedavi atama ekranına geçilecek.",
+  "dashErrorKpi": "KPI verileri yüklenemedi",
+  "dashErrorCabin": "Kabin verisi yüklenemedi",
+  "dashErrorTreatments": "Tedavi listesi yüklenemedi",
+  "dashErrorSkt": "SKT verisi yüklenemedi"
+}

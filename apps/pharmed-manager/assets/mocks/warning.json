@@ -1,0 +1,48 @@
+{
+  "statusCode": 200,
+  "isSuccess": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Minimum stok altında",
+      "type": 1,
+      "priority": 1,
+      "status": true
+    },
+    {
+      "id": 2,
+      "name": "Son kullanma tarihi yaklaşıyor",
+      "type": 2,
+      "priority": 1,
+      "status": true
+    },
+    {
+      "id": 3,
+      "name": "Kritik stok",
+      "type": 3,
+      "priority": 2,
+      "status": true
+    },
+    {
+      "id": 4,
+      "name": "Narkotik kontrol gerekli",
+      "type": 4,
+      "priority": 1,
+      "status": true
+    },
+    {
+      "id": 5,
+      "name": "Soğuk zincir uyarısı",
+      "type": 5,
+      "priority": 2,
+      "status": true
+    },
+    {
+      "id": 6,
+      "name": "Bekleyen sipariş",
+      "type": 6,
+      "priority": 2,
+      "status": true
+    }
+  ]
+}
