@@ -6,7 +6,7 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../di/datasource_injector.dart';
+import '../../providers/datasource_injector.dart';
 import 'i_serial_communication_service.dart';
 
 final serialServiceProvider = Provider<ISerialCommunicationService>((ref) {

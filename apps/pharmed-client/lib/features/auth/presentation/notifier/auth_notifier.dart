@@ -1,43 +1,57 @@
-// lib/feature/auth/presentation/notifier/auth_notifier.dart
+// lib/features/auth/presentation/notifier/auth_notifier.dart
 //
 // [SWREQ-UI-AUTH-001] [HAZ-009]
 // Oturum yönetimi.
 // Giriş, çıkış, oturum zaman aşımı sayacı.
-// Menü lock/unlock kararı buradan beslenir.
 // Sınıf: Class B
 
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/config/auth_config.dart';
+import 'package:pharmed_client/core/providers/auth_providers.dart';
+import 'package:pharmed_client/core/providers/network_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
+
 import '../state/auth_state.dart';
 
 final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
 
 class AuthNotifier extends Notifier<AuthState> {
-  late AuthConfig _config;
-  late LoginUseCase _loginUseCase;
-  late LogoutUseCase _logoutUseCase;
-
   Timer? _sessionTimer;
   Timer? _countdownTimer;
   int _countdown = 0;
 
-  /// DI tarafından çağrılır — provider oluşturulurken inject edilir.
-  void initialize({
-    required AuthConfig config,
-    required LoginUseCase loginUseCase,
-    required LogoutUseCase logoutUseCase,
-  }) {
-    _config = config;
-    _loginUseCase = loginUseCase;
-    _logoutUseCase = logoutUseCase;
-  }
+  // Lazy getter'lar — ref üzerinden alınır
+  AuthConfig get _config => ref.read(authConfigProvider);
+  LoginUseCase get _loginUseCase => ref.read(loginUseCaseProvider);
+  LogoutUseCase get _logoutUseCase => ref.read(logoutUseCaseProvider);
+  AuthCacheDataSource get _cache => ref.read(authCacheProvider);
+  TokenHolder get _tokenHolder => ref.read(tokenHolderProvider);
+
+  // ── Build — cache'den oturumu geri yükle ─────────────────────
 
   @override
-  AuthState build() => const AuthLoggedOut();
+  AuthState build() {
+    _restoreSession();
+    return const AuthLoggedOut();
+  }
 
-  // ── Login ─────────────────────────────────────────────────────────────────
+  Future<void> _restoreSession() async {
+    final token = await _cache.readToken();
+    final user = await _cache.readUser();
+
+    if (token != null && user != null) {
+      _tokenHolder.setToken(token);
+      state = AuthLoggedIn(
+        user: user,
+        sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+      );
+      _startSessionTimer();
+    }
+  }
+
+  // ── Login ─────────────────────────────────────────────────────
 
   Future<void> login({required String email, required String password, String? macAddress}) async {
     state = const AuthLoading();
@@ -46,6 +60,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
     result.when(
       ok: (authToken) {
+        _tokenHolder.setToken(authToken.accessToken);
         state = AuthLoggedIn(
           user: authToken.user,
           sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
@@ -58,23 +73,24 @@ class AuthNotifier extends Notifier<AuthState> {
     );
   }
 
-  // ── Logout ───────────────────────────────────────────────────
+  // ── Logout ────────────────────────────────────────────────────
 
   Future<void> logout() async {
     _cancelTimers();
+    _tokenHolder.setToken(null);
     await _logoutUseCase();
     state = const AuthLoggedOut();
   }
 
   /// AuthInterceptor 401 aldığında çağırır.
-  /// async logout'u beklemez — UI hemen güncellenir.
   void onUnauthorized() {
     _cancelTimers();
-    _logoutUseCase(); // fire-and-forget: cache temizlenir
+    _tokenHolder.setToken(null);
+    _logoutUseCase(); // fire-and-forget
     state = const AuthLoggedOut();
   }
 
-  // ── Oturumu uzat ─────────────────────────────────────────────
+  // ── Oturumu uzat ──────────────────────────────────────────────
 
   void extendSession() {
     final user = currentUser;
@@ -87,9 +103,8 @@ class AuthNotifier extends Notifier<AuthState> {
     _startSessionTimer();
   }
 
-  // ── Kullanıcı aktivitesi — sayacı sıfırla ────────────────────
+  // ── Kullanıcı aktivitesi ──────────────────────────────────────
 
-  /// Her ekranın GestureDetector.onTap'inde çağrılır.
   void onUserActivity() {
     if (state is AuthLoggedIn) {
       _startSessionTimer();
@@ -106,7 +121,7 @@ class AuthNotifier extends Notifier<AuthState> {
     _ => null,
   };
 
-  // ── İç timer yönetimi ─────────────────────────────────────────
+  // ── Timer yönetimi ────────────────────────────────────────────
 
   void _startSessionTimer() {
     _cancelTimers();
@@ -144,9 +159,5 @@ class AuthNotifier extends Notifier<AuthState> {
     _countdownTimer?.cancel();
     _sessionTimer = null;
     _countdownTimer = null;
-  }
-
-  void dispose() {
-    _cancelTimers();
   }
 }

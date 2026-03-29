@@ -14,7 +14,7 @@ import '../../domain/model/cabin_setup_config.dart';
 import '../../domain/model/wizard_draft.dart';
 import '../../domain/usecase/save_cabin_config_usecase.dart';
 import '../state/setup_wizard_ui_state.dart';
-import '../../../../core/di/datasource_injector.dart';
+import '../../../../core/providers/datasource_injector.dart';
 import '../../../../core/cache/app_settings_cache.dart';
 
 final setupWizardNotifierProvider = NotifierProvider<SetupWizardNotifier, SetupWizardUiState>(SetupWizardNotifier.new);

@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/setup/app_setup_notifier.dart';
 import '../../../../core/enums/cabinet_type.dart';
 import '../../../../shared/widgets/atoms/med_tokens.dart';
 import '../../../../shared/widgets/atoms/med_button.dart';
