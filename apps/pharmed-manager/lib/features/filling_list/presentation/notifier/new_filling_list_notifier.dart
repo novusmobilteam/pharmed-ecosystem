@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../../core/storage/auth/auth.dart';
 import '../../../medicine/domain/entity/medicine.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../../station/domain/entity/station.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/filling_object.dart';
 import '../../domain/useacase/create_filling_list_usecase.dart';
 import '../../domain/useacase/get_filling_list_detail_usecase.dart';
@@ -15,7 +13,7 @@ import '../../domain/useacase/get_refill_candidates_usecase.dart';
 import '../../domain/useacase/update_filling_list_usecase.dart';
 
 class NewFillingListNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<FillingObject> {
-  final AuthPersistence _authPersistence;
+  final AuthManagerNotifier _auth;
   final GetRefillCandidatesUseCase _getRefillCandidatesUseCase;
   final CreateFillingListUseCase _createFillingListUseCase;
   final GetFillingListDetailUseCase _getFillingListDetailUseCase;
@@ -26,7 +24,7 @@ class NewFillingListNotifier extends ChangeNotifier with ApiRequestMixin, Search
     required CreateFillingListUseCase createFillingListUseCase,
     required GetFillingListDetailUseCase getFillingListDetailUseCase,
     required UpdateFillingListUseCase updateFillingListUseCase,
-    required AuthPersistence authPersistence,
+    required AuthManagerNotifier auth,
     required Station station,
     User? user,
     FillingList? initial,
@@ -34,13 +32,10 @@ class NewFillingListNotifier extends ChangeNotifier with ApiRequestMixin, Search
        _createFillingListUseCase = createFillingListUseCase,
        _getFillingListDetailUseCase = getFillingListDetailUseCase,
        _updateFillingListUseCase = updateFillingListUseCase,
-       _authPersistence = authPersistence {
-    _user = user ?? _authPersistence.user;
+       _auth = auth {
+    _user = user ?? UserMapper().fromAppUserOrNull(_auth.user);
     _selectedStation = station;
     _initial = initial;
-
-    print(user?.fullName);
-    print(_user?.fullName);
   }
 
   FillingList? _initial;

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../../role/domain/entity/role.dart';
-import '../../../../role/domain/usecase/get_roles_usecase.dart';
-
 class RoleTableNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Role> {
   final GetRolesUseCase _getRolesUseCase;
 

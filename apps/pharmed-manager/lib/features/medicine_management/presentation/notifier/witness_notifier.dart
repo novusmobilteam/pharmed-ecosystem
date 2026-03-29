@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../../core/storage/auth/auth.dart';
-import '../../../medicine_withdraw/domain/usecase/witness_user_login_usecase.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/cabin_operation_item.dart';
 
 /// Şahit doğrulama işlemlerini yöneten notifier.
@@ -12,12 +9,12 @@ import '../../domain/entity/cabin_operation_item.dart';
 class WitnessNotifier extends ChangeNotifier with ApiRequestMixin {
   final CabinOperationItem item;
   final WitnessUserLoginUseCase _loginUseCase;
-  final AuthPersistence _authPersistence;
+  final AuthManagerNotifier _authPersistence;
 
   WitnessNotifier({
     required this.item,
     required WitnessUserLoginUseCase loginUseCase,
-    required AuthPersistence authPersistence,
+    required AuthManagerNotifier authPersistence,
   }) : _loginUseCase = loginUseCase,
        _authPersistence = authPersistence;
 
@@ -37,7 +34,7 @@ class WitnessNotifier extends ChangeNotifier with ApiRequestMixin {
   }) async {
     await execute(
       loginOp,
-      operation: () => _loginUseCase.call(WitnessUserLoginParams(username: username, password: password)),
+      operation: () => _loginUseCase.call(WitnessUserLoginParams(email: username, password: password, macAddress: '')),
       onData: (user) {
         if (user == null) {
           onFailed?.call('Kullanıcı bilgilerine ulaşılamıyor. Lütfen tekrar deneyiniz.');

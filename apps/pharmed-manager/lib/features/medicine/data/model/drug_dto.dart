@@ -204,26 +204,26 @@ class DrugDTO extends MedicineDTO {
           : null,
       witnessedPurchaseStations: json['witnessedPurchaseStation'] != null
           ? (json['witnessedPurchaseStation'] as List)
-              .map((e) => StationDTO.fromJson(e as Map<String, dynamic>))
-              .toList()
+                .map((e) => StationDTO.fromJson(e as Map<String, dynamic>))
+                .toList()
           : null,
       wastageWitnessedPurchaseUsers: json['wastageWitnessedPurchaseUser'] != null
           ? (json['wastageWitnessedPurchaseUser'] as List)
-              .map((e) => UserDTO.fromJson(e as Map<String, dynamic>))
-              .toList()
+                .map((e) => UserDTO.fromJson(e as Map<String, dynamic>))
+                .toList()
           : null,
       wastageWitnessedPurchaseStations: json['wastageWitnessedPurchaseStation'] != null
           ? (json['wastageWitnessedPurchaseStation'] as List)
-              .map((e) => StationDTO.fromJson(e as Map<String, dynamic>))
-              .toList()
+                .map((e) => StationDTO.fromJson(e as Map<String, dynamic>))
+                .toList()
           : null,
       destroyableUsers: json['destroyableUser'] != null
           ? (json['destroyableUser'] as List).map((e) => UserDTO.fromJson(e as Map<String, dynamic>)).toList()
           : null,
       materialOrderlessTakingUsers: json['materialOrderlessTakingUser'] != null
           ? (json['materialOrderlessTakingUser'] as List)
-              .map((e) => UserDTO.fromJson(e as Map<String, dynamic>))
-              .toList()
+                .map((e) => UserDTO.fromJson(e as Map<String, dynamic>))
+                .toList()
           : null,
     );
   }
@@ -272,10 +272,12 @@ class DrugDTO extends MedicineDTO {
       'witnessedPurchaseUserIds': isWitnessedPurchase ? witnessedPurchaseUsers?.map((u) => u.id).toList() : null,
       'witnessedPurchaseStationIds': isWitnessedPurchase ? witnessedPurchaseStations?.map((s) => s.id).toList() : null,
       'isWastageWitnessedPurchase': isWastageWitnessedPurchase,
-      'wastageWitnessedPurchaseUserIds':
-          isWastageWitnessedPurchase ? wastageWitnessedPurchaseUsers?.map((u) => u.id).toList() : null,
-      'wastageWitnessedPurchaseStationIds':
-          isWastageWitnessedPurchase ? wastageWitnessedPurchaseStations?.map((s) => s.id).toList() : null,
+      'wastageWitnessedPurchaseUserIds': isWastageWitnessedPurchase
+          ? wastageWitnessedPurchaseUsers?.map((u) => u.id).toList()
+          : null,
+      'wastageWitnessedPurchaseStationIds': isWastageWitnessedPurchase
+          ? wastageWitnessedPurchaseStations?.map((s) => s.id).toList()
+          : null,
       'isDestroyable': isDestroyable,
       'destroyableUserIds': isDestroyable ? destroyableUsers?.map((u) => u.id).toList() : null,
       'materialOrderlessTakingUserIds': materialOrderlessTakingUsers?.map((u) => u.id).toList(),
@@ -335,16 +337,24 @@ class DrugDTO extends MedicineDTO {
       collectNote: collectNote,
       returnNote: returnNote,
       destructionNote: destructionNote,
-      witnessedPurchaseUsers: witnessedPurchaseUsers?.map((u) => u.toEntity()).toList() ?? [],
+      witnessedPurchaseUsers: witnessedPurchaseUsers != null
+          ? const UserMapper().toEntityList(witnessedPurchaseUsers!)
+          : [],
+      destroyableUsers: destroyableUsers != null ? const UserMapper().toEntityList(destroyableUsers!) : [],
+      wastageWitnessedPurchaseUsers: wastageWitnessedPurchaseUsers != null
+          ? const UserMapper().toEntityList(wastageWitnessedPurchaseUsers!)
+          : [],
+      materialOrderlessTakingUsers: materialOrderlessTakingUsers != null
+          ? const UserMapper().toEntityList(materialOrderlessTakingUsers!)
+          : [],
       witnessedPurchaseStations: witnessedPurchaseStations?.map((s) => s.toEntity()).toList() ?? [],
-      wastageWitnessedPurchaseUsers: wastageWitnessedPurchaseUsers?.map((u) => u.toEntity()).toList() ?? [],
+
       wastageWitnessedPurchaseStations: wastageWitnessedPurchaseStations?.map((s) => s.toEntity()).toList() ?? [],
-      destroyableUsers: destroyableUsers?.map((u) => u.toEntity()).toList() ?? [],
+
       activeIngredientIds: activeIngredientIds,
       equivalentCode: equivalentCode,
       isNotSerumCabinetMaxValue: isNotSerumCabinetMaxValue,
       isNotCubicDrawrMaxValue: isNotCubicDrawrMaxValue,
-      materialOrderlessTakingUsers: materialOrderlessTakingUsers?.map((u) => u.toEntity()).toList() ?? [],
     );
   }
 }

@@ -118,23 +118,4 @@ class DrawerSlotDTO {
       cabin: cabin?.toEntity(),
     );
   }
-
-  /// Mock factory for test data generation
-  static DrawerSlotDTO mockFactory(int id, {int? cabinId, int? drawerDetailId, bool withNested = true}) {
-    final effectiveCabinId = cabinId ?? ((id - 1) ~/ 10) + 1;
-    final effectiveDrawerDetailId = drawerDetailId ?? id;
-    return DrawerSlotDTO(
-      id: id,
-      drawerConfigId: effectiveDrawerDetailId,
-      cabinId: effectiveCabinId,
-      orderNumber: id,
-      address: '${((id - 1) % 10) + 1}-${((id - 1) ~/ 10) + 1}',
-      compartmentNo: ((id - 1) % 6) + 1,
-      drawrOrderNumber: ((id - 1) % 5) + 1,
-      drawerConfig: withNested ? DrawerConfigDTO.mockFactory(effectiveDrawerDetailId) : null,
-      cabin: withNested ? CabinDTO.mockFactory(effectiveCabinId, withNested: false) : null,
-      isDeleted: false,
-      createdDate: DateTime.now().subtract(Duration(days: 15)),
-    );
-  }
 }

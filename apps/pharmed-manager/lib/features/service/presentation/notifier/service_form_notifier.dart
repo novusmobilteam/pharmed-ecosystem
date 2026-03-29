@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../user/user.dart';
 import '../../../branch/domain/entity/branch.dart';
 import '../../domain/entity/service.dart';
 import '../../domain/usecase/create_service_usecase.dart';

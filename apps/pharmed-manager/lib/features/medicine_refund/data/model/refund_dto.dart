@@ -1,7 +1,8 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../../medicine/data/model/medicine_dto.dart';
 import '../../../prescription/data/model/prescription_item_dto.dart';
 import '../../../station/data/model/station_dto.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/refund.dart';
 
 class RefundDTO {
@@ -81,8 +82,9 @@ class RefundDTO {
       quantity: json['quantity'] as double?,
       returnFormId: json['returnFormId'] as int?,
       prescriptionDetailId: json['prescriptionDetailId'] as int?,
-      prescriptionDetail:
-          json['prescriptionDetail'] != null ? PrescriptionItemDTO.fromJson(json['prescriptionDetail']) : null,
+      prescriptionDetail: json['prescriptionDetail'] != null
+          ? PrescriptionItemDTO.fromJson(json['prescriptionDetail'])
+          : null,
       medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
       station: json['station'] != null ? StationDTO.fromJson(json['station']) : null,
       userId: json['userId'] as int?,
@@ -124,40 +126,13 @@ class RefundDTO {
       prescriptionDetailId: prescriptionDetailId,
       prescriptionDetail: prescriptionDetail?.toEntity(),
       receiveDate: createdDate,
-      receiveUser: receiveUser?.toEntity(),
+      receiveUser: const UserMapper().toEntityOrNull(receiveUser),
       isCancel: isCancel,
-      cancelUser: cancelUser?.toEntity(),
+      cancelUser: const UserMapper().toEntityOrNull(cancelUser),
       medicine: medicine?.toEntity(),
       description: description,
       station: station?.toEntity(),
       user: user,
-    );
-  }
-
-  /// Mock factory for test data generation
-  static RefundDTO mockFactory(int id, {bool withNested = true}) {
-    final prescriptionDetailId = 1000 + id;
-    final stationId = ((id - 1) % 10) + 1;
-    final userId = ((id - 1) % 10) + 1;
-    final date = DateTime.now().subtract(Duration(days: id % 30));
-
-    return RefundDTO(
-      id: id,
-      type: 1,
-      quantity: (id * 3) % 10 + 1,
-      returnFormId: 1,
-      prescriptionDetailId: prescriptionDetailId,
-      prescriptionDetail: withNested ? PrescriptionItemDTO.mockFactory(prescriptionDetailId, withNested: false) : null,
-      station: withNested ? StationDTO.mockFactory(stationId, withNested: false) : null,
-      userId: userId,
-      user: 'User $userId',
-      receiveDate: date,
-      receiveUser: withNested ? UserDTO.mockFactory(userId) : null,
-      isCancel: false,
-      cancelUser: null,
-      description: 'İade açıklaması $id',
-      isDeleted: false,
-      createdDate: date,
     );
   }
 }

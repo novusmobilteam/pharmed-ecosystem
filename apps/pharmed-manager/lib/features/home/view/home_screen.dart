@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/dashboard_status_view.dart';
-import '../../../core/storage/auth/auth.dart';
 import '../../../core/widgets/navigation_sidebar.dart';
 import '../../favorite/presentation/view/favorite_quick_access.dart';
 import '../notifier/home_notifier.dart';
@@ -51,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 200,
                     child: PharmedButton(
                       onPressed: () {
-                        context.read<AuthStorageNotifier>().clearAuth();
+                        context.read<AuthManagerNotifier>().logout();
                       },
                       label: 'Çıkış Yap',
                       backgroundColor: Colors.black,
@@ -61,10 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }
 
-            return Padding(
-              padding: AppDimensions.pagePadding,
-              child: _HomeView(),
-            );
+            return Padding(padding: AppDimensions.pagePadding, child: _HomeView());
           },
         ),
       ),
@@ -82,9 +78,7 @@ class _HomeView extends StatelessWidget {
     return Consumer<HomeNotifier>(
       builder: (context, notifier, _) {
         if (notifier.parentMenuItems.isEmpty || notifier.isFetching) {
-          return Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
+          return Center(child: CircularProgressIndicator.adaptive());
         }
 
         if (notifier.parentMenuItems.isEmpty) {
@@ -102,7 +96,7 @@ class _HomeView extends StatelessWidget {
                 width: 200,
                 child: PharmedButton(
                   onPressed: () {
-                    context.read<AuthStorageNotifier>().clearAuth();
+                    context.read<AuthManagerNotifier>().logout();
                   },
                   label: 'Çıkış Yap',
                   backgroundColor: Colors.black,
@@ -140,12 +134,10 @@ class _HomeView extends StatelessWidget {
               child: Column(
                 children: [
                   DashboardStatusView(width: kRightColumnWidth),
-                  Expanded(
-                    child: FavoriteQuickAccess(allMenuItems: notifier.menuItems),
-                  ),
+                  Expanded(child: FavoriteQuickAccess(allMenuItems: notifier.menuItems)),
                 ],
               ),
-            )
+            ),
           ],
         );
       },

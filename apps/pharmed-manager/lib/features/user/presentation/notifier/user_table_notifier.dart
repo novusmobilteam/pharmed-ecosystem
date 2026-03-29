@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/core.dart';
 
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../user.dart';
 
 class UserTableNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<User> {
   final GetUsersUseCase _getUsersUseCase;
@@ -104,7 +103,7 @@ class UserTableNotifier extends ChangeNotifier with ApiRequestMixin, PaginationM
   Future<void> deleteUser(User user) async {
     await executeVoid(
       deleteOp,
-      operation: () => _deleteUserUseCase.call(user),
+      operation: () => _deleteUserUseCase.call(user.id ?? 0),
       onSuccess: () => _fetchAllTypes(), // tüm count + listeleri tazele
       successMessage: 'Kullanıcı başarıyla silindi',
     );

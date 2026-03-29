@@ -56,16 +56,8 @@ class InconsistencyDTO {
     };
   }
 
-  InconsistencyDTO copyWith({
-    int? id,
-    int? stationId,
-    String? station,
-    List<int>? cabinIds,
-    List<String>? cabins,
-  }) {
-    return InconsistencyDTO(
-      id: id ?? this.id,
-    );
+  InconsistencyDTO copyWith({int? id, int? stationId, String? station, List<int>? cabinIds, List<String>? cabins}) {
+    return InconsistencyDTO(id: id ?? this.id);
   }
 
   Inconsistency toEntity() {
@@ -81,25 +73,6 @@ class InconsistencyDTO {
       shelfNo: shelfNo,
       corpartmentNo: corpartmentNo,
       activeIngredients: activeIngredients,
-    );
-  }
-
-  /// Mock factory for test data generation
-  static InconsistencyDTO mockFactory(int id, {bool withNested = true}) {
-    final drawerDetailId = ((id - 1) % 50) + 1;
-    final miadDate = DateTime.now().add(Duration(days: 365 + (id * 10)));
-
-    return InconsistencyDTO(
-      id: id,
-      cabinDrawerDetail: withNested ? DrawerCellDTO.mockFactory(drawerDetailId, withNested: false) : null,
-      quantity: (id * 7) % 20,
-      stockEntryQuantity: 100,
-      stockExitQuantity: 80,
-      requiredQuantity: 20,
-      miadDate: miadDate,
-      shelfNo: ((id - 1) % 5) + 1,
-      corpartmentNo: ((id - 1) % 10) + 1,
-      activeIngredients: ['Etken Madde 1', 'Etken Madde 2'],
     );
   }
 }

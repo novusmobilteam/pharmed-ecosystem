@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 
 import '../../../../core/widgets/form/form_inputs/base_display_field.dart';
-import '../../../user/user.dart';
 
 import '../notifier/service_form_notifier.dart';
 
@@ -111,7 +110,7 @@ class _UserField extends StatelessWidget {
           initialValue: notifier.service.user,
           labelBuilder: (user) => user?.fullName,
           onSelected: notifier.updateUser,
-          future: () => context.read<IUserRepository>().getUsers(),
+          future: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
         );
       },
     );

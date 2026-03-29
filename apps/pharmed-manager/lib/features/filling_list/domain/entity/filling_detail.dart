@@ -5,7 +5,6 @@ import '../../../cabin/domain/entity/drawer_unit.dart';
 import '../../../cabin/domain/entity/drawer_cell.dart';
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../medicine/domain/entity/medicine.dart';
-import '../../../user/user.dart';
 
 // Dolum listesi oluşturulduktan sonra oluşturulan dolum listesinin detayı
 // görüntülenmek istendiğinde kullanılan model.
@@ -54,7 +53,7 @@ class FillingDetail implements TableData {
       fillingQuantity: fillingQuantity,
       fillingDate: fillingDate,
       fillingUserId: fillingUserId,
-      fillingUser: fillingUser?.toDTO(),
+      fillingUser: const UserMapper().toDtoOrNull(fillingUser),
       isEdit: isEdit,
     );
   }
@@ -76,18 +75,10 @@ class FillingDetail implements TableData {
   bool get isFilled => (quantity ?? 0) == (fillingQuantity ?? 0);
 
   @override
-  List get content => [
-        medicineId,
-        medicine?.name,
-        medicine?.barcode,
-      ];
+  List get content => [medicineId, medicine?.name, medicine?.barcode];
 
   @override
-  List get rawContent => [
-        medicineId,
-        medicine?.name,
-        medicine?.barcode,
-      ];
+  List get rawContent => [medicineId, medicine?.name, medicine?.barcode];
 
   @override
   List<String?> get titles => [];

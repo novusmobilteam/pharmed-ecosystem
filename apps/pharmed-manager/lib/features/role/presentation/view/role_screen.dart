@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../domain/entity/role.dart';
 import '../notifier/role_form_notifier.dart';
 import '../notifier/role_table_notifier.dart';
 
@@ -18,10 +17,8 @@ class RoleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => RoleTableNotifier(
-        getRolesUseCase: context.read(),
-        deleteRoleUseCase: context.read(),
-      )..getRoles(),
+      create: (context) =>
+          RoleTableNotifier(getRolesUseCase: context.read(), deleteRoleUseCase: context.read())..getRoles(),
       child: Consumer<RoleTableNotifier>(
         builder: (context, vm, _) {
           return ResponsiveLayout(
@@ -70,11 +67,7 @@ class RoleScreen extends StatelessWidget {
       },
       onSearchChanged: vm.search,
       actions: [
-        TableActionItem(
-          icon: PhosphorIcons.trash(),
-          tooltip: 'Sil',
-          onPressed: vm.deleteRole,
-        ),
+        TableActionItem(icon: PhosphorIcons.trash(), tooltip: 'Sil', onPressed: vm.deleteRole),
         TableActionItem(
           icon: PhosphorIcons.pen(),
           tooltip: 'Düzenle',
@@ -89,11 +82,7 @@ Future<void> _showRoleRegisrationDialog(BuildContext context, RoleTableNotifier 
   final result = await showDialog<bool>(
     context: context,
     builder: (_) => ChangeNotifierProvider(
-      create: (_) => RoleFormNotifier(
-        role: role,
-        createRoleUseCase: context.read(),
-        updateRoleUseCase: context.read(),
-      ),
+      create: (_) => RoleFormNotifier(role: role, createRoleUseCase: context.read(), updateRoleUseCase: context.read()),
       child: const RoleRegistrationDialog(),
     ),
   );

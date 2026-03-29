@@ -19,7 +19,6 @@ import '../../../station/domain/entity/station.dart';
 import '../../../station/domain/usecase/get_stations_usecase.dart';
 import '../../../unit/domain/entity/unit.dart';
 import '../../../unit/presentation/view/unit_view.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/medicine.dart';
 import '../notifier/drug_form_notifier.dart';
 
@@ -80,10 +79,7 @@ class _DrugFormViewState extends State<DrugFormView> {
               );
             }
           },
-          child: Form(
-            key: formKey,
-            child: _dialogBody(notifier),
-          ),
+          child: Form(key: formKey, child: _dialogBody(notifier)),
         );
       },
     );
@@ -175,7 +171,7 @@ class _DrugFormViewState extends State<DrugFormView> {
               Expanded(child: _buildReturnNoteField()),
               Expanded(child: _buildDestructionNoteField()),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -376,7 +372,7 @@ Widget _returnTypeField() {
                   onTap: vm.toggleCubicMaxValue,
                 ),
               ],
-            )
+            ),
         ],
       );
     },
@@ -390,11 +386,7 @@ Widget _qrCodeField() {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: CustomCheckboxTile(
-              label: 'Karekodlu',
-              value: vm.drug.isQrCode,
-              onTap: () => vm.toggleQr(),
-            ),
+            child: CustomCheckboxTile(label: 'Karekodlu', value: vm.drug.isQrCode, onTap: () => vm.toggleQr()),
           ),
           Expanded(
             child: DropdownInputField(
@@ -469,11 +461,7 @@ Widget _measurementUnitField() {
       return Row(
         children: [
           Expanded(
-            child: CustomCheckboxTile(
-              label: label,
-              value: vm.drug.isMeasureUnit,
-              onTap: vm.toggleMeasurement,
-            ),
+            child: CustomCheckboxTile(label: label, value: vm.drug.isMeasureUnit, onTap: vm.toggleMeasurement),
           ),
           Expanded(
             child: Row(
@@ -503,7 +491,7 @@ Widget _measurementUnitField() {
                 ),
               ],
             ),
-          )
+          ),
         ],
       );
     },
@@ -551,11 +539,7 @@ Widget _dosageFormField() {
         label: label,
         validator: (value) => Validators.cannotBlankValidator(value),
         readOnly: true,
-        suffix: Icon(
-          PhosphorIcons.magnifyingGlass(),
-          size: 16,
-          color: context.colorScheme.onSurfaceVariant,
-        ),
+        suffix: Icon(PhosphorIcons.magnifyingGlass(), size: 16, color: context.colorScheme.onSurfaceVariant),
         initialValue: vm.drug.dosageForm?.name,
         onTap: () async {
           final df = await showDosageFormView(context);
@@ -620,11 +604,7 @@ Widget _equivalentCodeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
-        label: label,
-        onChanged: vm.updateEquivalentCode,
-        initialValue: vm.drug.equivalentCode,
-      );
+      return TextInputField(label: label, onChanged: vm.updateEquivalentCode, initialValue: vm.drug.equivalentCode);
     },
   );
 }
@@ -730,11 +710,7 @@ Widget _buildDestroyableField() {
       return Row(
         children: [
           Expanded(
-            child: CustomCheckboxTile(
-              label: label,
-              value: vm.drug.isDestroyable,
-              onTap: vm.toggleIsDestroyable,
-            ),
+            child: CustomCheckboxTile(label: label, value: vm.drug.isDestroyable, onTap: vm.toggleIsDestroyable),
           ),
           Expanded(
             flex: 3,
@@ -744,7 +720,7 @@ Widget _buildDestroyableField() {
               initialValue: vm.drug.destroyableUsers,
               onChanged: vm.updateDestroyableUsers,
             ),
-          )
+          ),
         ],
       );
     },
@@ -780,11 +756,7 @@ Widget _buildCollectNoteField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
-        label: label,
-        initialValue: vm.drug.collectNote,
-        onChanged: vm.updateCollectNote,
-      );
+      return TextInputField(label: label, initialValue: vm.drug.collectNote, onChanged: vm.updateCollectNote);
     },
   );
 }
@@ -794,11 +766,7 @@ Widget _buildReturnNoteField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
-        label: label,
-        initialValue: vm.drug.collectNote,
-        onChanged: vm.updateReturnNote,
-      );
+      return TextInputField(label: label, initialValue: vm.drug.collectNote, onChanged: vm.updateReturnNote);
     },
   );
 }
@@ -808,11 +776,7 @@ Widget _buildDestructionNoteField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
-        label: label,
-        initialValue: vm.drug.destructionNote,
-        onChanged: vm.updateDestructionNote,
-      );
+      return TextInputField(label: label, initialValue: vm.drug.destructionNote, onChanged: vm.updateDestructionNote);
     },
   );
 }

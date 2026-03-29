@@ -7,7 +7,7 @@ import '../../../../core/core.dart';
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../cabin_assignment/domain/repository/i_cabin_assignment_repository.dart';
 import '../../../station/domain/entity/station.dart';
-import '../../../user/user.dart';
+
 import '../entity/medicine_withdraw_item.dart';
 import '../entity/withdraw_item.dart';
 import '../repository/i_medicine_withdraw_repository.dart';

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
 import '../../../../medicine/domain/entity/medicine.dart';
-import '../../../../role/domain/entity/role.dart';
 import '../notifier/role_drug_auth_notifier.dart';
 
 class RoleDrugAuthenticationView extends StatelessWidget {
@@ -20,9 +19,7 @@ class RoleDrugAuthenticationView extends StatelessWidget {
         }
 
         if (notifier.isEmpty) {
-          return Center(
-            child: CommonEmptyStates.noData(),
-          );
+          return Center(child: CommonEmptyStates.noData());
         }
 
         return _DrugTable(notifier: notifier);
@@ -56,10 +53,7 @@ class _DrugTable extends StatelessWidget {
           columns: [
             DataColumn(
               columnWidth: IntrinsicColumnWidth(flex: 2),
-              label: Text(
-                '',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              label: Text('', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             DataColumn(
               columnWidth: IntrinsicColumnWidth(flex: 1),
@@ -110,23 +104,15 @@ class _DrugTable extends StatelessWidget {
           rows: [
             DataRow(
               cells: [
-                const DataCell(Text(
-                  'Tüm İlaçlar',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )),
-                ...DrugOp.values.map((op) => DataCell(
-                      Center(
-                        child: _HeaderCheckbox(
-                          notifier: notifier,
-                          operation: op,
-                        ),
-                      ),
-                    )),
-                DataCell(
-                  Center(
-                    child: _HeaderAllCheckbox(notifier: notifier),
+                const DataCell(Text('Tüm İlaçlar', style: TextStyle(fontWeight: FontWeight.bold))),
+                ...DrugOp.values.map(
+                  (op) => DataCell(
+                    Center(
+                      child: _HeaderCheckbox(notifier: notifier, operation: op),
+                    ),
                   ),
                 ),
+                DataCell(Center(child: _HeaderAllCheckbox(notifier: notifier))),
               ],
             ),
             // İlaç rows
@@ -142,24 +128,17 @@ class _DrugTable extends StatelessWidget {
   DataRow _buildDrugRow(RoleDrugAuthNotifier notifier, Medicine? medicine) {
     return DataRow(
       cells: [
-        DataCell(
-          Text(medicine?.name ?? 'Bilinmeyen İlaç'),
+        DataCell(Text(medicine?.name ?? 'Bilinmeyen İlaç')),
+        ...DrugOp.values.map(
+          (operation) => DataCell(
+            Center(
+              child: _DrugOperationCheckbox(notifier: notifier, drugId: medicine?.id ?? 0, operation: operation),
+            ),
+          ),
         ),
-        ...DrugOp.values.map((operation) => DataCell(
-              Center(
-                child: _DrugOperationCheckbox(
-                  notifier: notifier,
-                  drugId: medicine?.id ?? 0,
-                  operation: operation,
-                ),
-              ),
-            )),
         DataCell(
           Center(
-            child: _DrugAllOperationsCheckbox(
-              notifier: notifier,
-              drugId: medicine?.id ?? 0,
-            ),
+            child: _DrugAllOperationsCheckbox(notifier: notifier, drugId: medicine?.id ?? 0),
           ),
         ),
       ],
@@ -169,19 +148,14 @@ class _DrugTable extends StatelessWidget {
 
 /// Header - Operasyon bazlı tümünü seç/kaldır
 class _HeaderCheckbox extends StatelessWidget {
-  const _HeaderCheckbox({
-    required this.notifier,
-    required this.operation,
-  });
+  const _HeaderCheckbox({required this.notifier, required this.operation});
 
   final RoleDrugAuthNotifier notifier;
   final DrugOp operation;
 
   @override
   Widget build(BuildContext context) {
-    final allSelected = notifier.allItems.every(
-      (auth) => auth.pendingOps.contains(operation),
-    );
+    final allSelected = notifier.allItems.every((auth) => auth.pendingOps.contains(operation));
 
     return Checkbox(
       value: allSelected,
@@ -201,9 +175,7 @@ class _HeaderAllCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allSelected = notifier.allItems.every(
-      (auth) => auth.pendingOps.length == DrugOp.values.length,
-    );
+    final allSelected = notifier.allItems.every((auth) => auth.pendingOps.length == DrugOp.values.length);
 
     return Checkbox(
       value: allSelected,
@@ -221,11 +193,7 @@ class _HeaderAllCheckbox extends StatelessWidget {
 
 /// İlaç-operasyon checkbox'ı
 class _DrugOperationCheckbox extends StatelessWidget {
-  const _DrugOperationCheckbox({
-    required this.notifier,
-    required this.drugId,
-    required this.operation,
-  });
+  const _DrugOperationCheckbox({required this.notifier, required this.drugId, required this.operation});
 
   final RoleDrugAuthNotifier notifier;
   final int drugId;
@@ -246,19 +214,14 @@ class _DrugOperationCheckbox extends StatelessWidget {
 
 /// İlaç için tüm operasyonları seç/kaldır
 class _DrugAllOperationsCheckbox extends StatelessWidget {
-  const _DrugAllOperationsCheckbox({
-    required this.notifier,
-    required this.drugId,
-  });
+  const _DrugAllOperationsCheckbox({required this.notifier, required this.drugId});
 
   final RoleDrugAuthNotifier notifier;
   final int drugId;
 
   @override
   Widget build(BuildContext context) {
-    final allSelected = DrugOp.values.every(
-      (op) => notifier.isOperationSelected(drugId, op),
-    );
+    final allSelected = DrugOp.values.every((op) => notifier.isOperationSelected(drugId, op));
 
     return Checkbox(
       value: allSelected,

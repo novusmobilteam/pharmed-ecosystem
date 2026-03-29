@@ -1,10 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/role.dart';
-import '../../domain/usecase/delete_role_usecase.dart';
-import '../../domain/usecase/get_roles_usecase.dart';
-
 class RoleTableNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Role> {
   final GetRolesUseCase _getRolesUseCase;
   final DeleteRoleUseCase _deleteRoleUseCase;

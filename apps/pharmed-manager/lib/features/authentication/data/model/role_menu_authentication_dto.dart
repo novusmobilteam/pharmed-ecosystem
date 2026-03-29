@@ -1,4 +1,5 @@
-import '../../../role/domain/entity/role.dart';
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../domain/entity/role_menu_authentication.dart';
 
 class RoleMenuAuthenticationDTO {
@@ -8,11 +9,7 @@ class RoleMenuAuthenticationDTO {
 
   RoleMenuAuthenticationDTO({this.id, this.roleId, this.menuIds});
 
-  RoleMenuAuthenticationDTO copyWith({
-    int? id,
-    int? roleId,
-    List<int>? menuIds,
-  }) {
+  RoleMenuAuthenticationDTO copyWith({int? id, int? roleId, List<int>? menuIds}) {
     return RoleMenuAuthenticationDTO(
       id: id ?? this.id,
       roleId: roleId ?? this.roleId,
@@ -48,10 +45,6 @@ class RoleMenuAuthenticationDTO {
 
   /// Mock factory for test data generation
   static RoleMenuAuthenticationDTO mockFactory(int id) {
-    return RoleMenuAuthenticationDTO(
-      id: id,
-      roleId: ((id - 1) % 6) + 1,
-      menuIds: [1, 2, 3, 4, 5],
-    );
+    return RoleMenuAuthenticationDTO(id: id, roleId: ((id - 1) % 6) + 1, menuIds: [1, 2, 3, 4, 5]);
   }
 }

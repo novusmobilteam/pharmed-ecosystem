@@ -1,13 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/features/user/user_dependency_injection.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'core/network/api_manager.dart';
 import 'core/services/serial_communication/i_serial_communication_service.dart';
 import 'core/services/serial_communication/serial_communication_service.dart';
-import 'core/storage/auth/auth.dart';
-import 'core/storage/storage_dependency_injection.dart';
 
 import 'features/active_ingredient/di/active_ingredient_di.dart';
 import 'features/authentication/di/authentication_dependency_injection.dart';
@@ -47,7 +45,6 @@ import 'features/settings/di/settings_di.dart';
 import 'features/station/di/station_dependency_injection.dart';
 import 'features/stock_transaction/di/stock_transaction_di.dart';
 import 'features/unit/di/unit_di.dart';
-import 'features/user/user.dart';
 import 'features/warehouse/di/warehouse_dependency_injection.dart';
 import 'features/warning/di/warning_di.dart';
 import 'main.dart';
@@ -62,14 +59,8 @@ Future<void> start(SharedPreferences prefs) async {
           dispose: (context, service) => service.disconnect(),
         ),
 
-        // Storage
-        ...StorageProviders.providers(prefs),
-
         // Network
         Provider<Dio>(create: (_) => Dio()),
-        Provider<APIManager>(
-          create: (context) => APIManager(dio: context.read<Dio>(), authNotifier: context.read<AuthStorageNotifier>()),
-        ),
 
         // Settings
         ...SettingsProviders.providers(prefs),
@@ -80,7 +71,7 @@ Future<void> start(SharedPreferences prefs) async {
 
         // Features
         ...MenuProviders.providers(isDev: isDev),
-        ...UserProviders.providers(isDev: isDev),
+        ...UserProviders.providers,
         ...StationProviders.providers(prefs, isDev: isDev),
         ...CabinFaultProviders.providers(isDev: isDev),
         ...CabinProviders.providers(isDev: isDev),
@@ -88,7 +79,7 @@ Future<void> start(SharedPreferences prefs) async {
         ...DashboardProviders.providers(isDev: isDev),
         ...FirmProviders.providers(isDev: isDev),
         ...MedicineProviders.providers(isDev: isDev),
-        ...RoleProviders.providers(isDev: isDev),
+        ...RoleProviders.providers,
         ...ServiceProviders.providers(isDev: isDev),
         ...WarehouseProviders.providers(isDev: isDev),
         ...HospitalizationProviders.providers(isDev: isDev),

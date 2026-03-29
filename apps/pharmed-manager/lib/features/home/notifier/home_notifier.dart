@@ -2,17 +2,16 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
-import '../../../core/storage/auth/auth.dart';
 import '../../menu/domain/usecase/get_filtered_menus_usecase.dart';
 import '../../menu/menu.dart';
 
 class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetFilteredMenusUseCase _getFilteredMenusUseCase;
-  final AuthStorageNotifier _authStorageNotifier;
+  final AuthManagerNotifier _authStorageNotifier;
 
   HomeNotifier({
     required GetFilteredMenusUseCase getFilteredMenusUseCase,
-    required AuthStorageNotifier authStorageNotifier,
+    required AuthManagerNotifier authStorageNotifier,
   }) : _getFilteredMenusUseCase = getFilteredMenusUseCase,
        _authStorageNotifier = authStorageNotifier;
 

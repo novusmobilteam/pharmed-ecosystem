@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
-import '../../user/user.dart';
 
 class ChangePasswordNotifier extends ChangeNotifier with ApiRequestMixin {
   final ChangePasswordUseCase _changePasswordUseCase;

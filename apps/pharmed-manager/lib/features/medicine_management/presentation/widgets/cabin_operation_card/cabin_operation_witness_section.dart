@@ -3,7 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/core.dart';
 import '../../../../station/domain/entity/station.dart';
-import '../../../../user/user.dart';
 import '../../../domain/entity/cabin_operation_item.dart';
 
 /// Alım ve fire/imha kartlarında ortak kullanılan şahit bölümü.
@@ -64,9 +63,7 @@ class CabinOperationWitnessSection extends StatelessWidget {
                   if (isApproved)
                     Text(
                       item.witness?.fullName ?? '-',
-                      style: context.textTheme.labelSmall?.copyWith(
-                        color: Colors.green[700],
-                      ),
+                      style: context.textTheme.labelSmall?.copyWith(color: Colors.green[700]),
                     ),
                 ],
               ),

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/role.dart';
-import '../../domain/usecase/create_role_usecase.dart';
-import '../../domain/usecase/update_role_usecase.dart';
 
 class RoleFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateRoleUseCase _createRoleUseCase;

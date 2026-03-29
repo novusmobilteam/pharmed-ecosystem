@@ -3,6 +3,7 @@ export 'package:pharmed_core/pharmed_core.dart';
 export 'package:pharmed_data/pharmed_data.dart';
 export 'package:pharmed_ui/pharmed_ui.dart';
 
+export 'auth/auth_manager_notifier.dart';
 // UseCase
 export 'usecase/use_case.dart';
 // Mixins
@@ -14,7 +15,7 @@ export 'mixins/search_mixin.dart';
 // Network
 export 'network/base_locale_datasource.dart';
 export 'network/base_remote_datasource.dart';
-export 'network/token_interceptor.dart';
+
 // Routing
 export 'routing/app_router.dart';
 export 'routing/app_routes.dart';

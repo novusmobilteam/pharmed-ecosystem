@@ -3,7 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../core.dart';
-import '../storage/auth/auth.dart';
 
 class LogoutButton extends StatelessWidget {
   const LogoutButton({super.key});
@@ -17,7 +16,7 @@ class LogoutButton extends StatelessWidget {
           MessageUtils.showConfirmLogoutDialog(
             context: context,
             onConfirm: () {
-              context.read<AuthStorageNotifier>().clearAuth();
+              context.read<AuthManagerNotifier>().logout();
             },
           );
         },

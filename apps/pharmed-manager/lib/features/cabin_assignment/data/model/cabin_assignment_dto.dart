@@ -103,29 +103,4 @@ class CabinAssignmentDTO {
       stocks: stocks?.map((c) => c.toEntity()).toList(),
     );
   }
-
-  /// Mock factory for test data generation
-  static CabinAssignmentDTO mockFactory(
-    int id, {
-    int? cabinId,
-    int? cabinDrawerId,
-    int? materialId,
-    bool withNested = true,
-  }) {
-    final effectiveCabinId = cabinId ?? ((id - 1) ~/ 10) + 1;
-    final effectiveCabinDrawerId = cabinDrawerId ?? id;
-
-    return CabinAssignmentDTO(
-      id: id,
-      cabinId: effectiveCabinId,
-      cabinDrawerId: effectiveCabinDrawerId,
-      minQuantity: 5,
-      criticalQuantity: 2,
-      maxQuantity: 50,
-      cabin: withNested ? CabinDTO.mockFactory(effectiveCabinId, withNested: false) : null,
-      cabinDrawer: withNested ? DrawerUnitDTO.mockFactory(effectiveCabinDrawerId, withNested: false) : null,
-      cabinDrawerDetail:
-          withNested ? [DrawerCellDTO.mockFactory(id, cabinDrawerId: effectiveCabinDrawerId, withNested: false)] : null,
-    );
-  }
 }

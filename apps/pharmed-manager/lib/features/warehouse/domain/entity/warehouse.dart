@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../user/user.dart';
 import '../../data/model/warehouse_dto.dart';
 
 class Warehouse extends Selectable implements TableData {
@@ -9,28 +8,19 @@ class Warehouse extends Selectable implements TableData {
   final WarehouseType? type;
   final bool isActive;
 
-  Warehouse({
-    super.id,
-    this.code,
-    this.name,
-    this.user,
-    this.type,
-    this.isActive = true,
-  }) : super(
-          title: name ?? '',
-          subtitle: type?.label,
-        );
+  Warehouse({super.id, this.code, this.name, this.user, this.type, this.isActive = true})
+    : super(title: name ?? '', subtitle: type?.label);
 
   Status get status => isActive ? Status.active : Status.passive;
 
   @override
   List<String?> get content => [
-        id?.toCustomString(),
-        code?.toString() ?? "-",
-        name ?? "-",
-        user?.fullName.toString() ?? "-",
-        status.label,
-      ];
+    id?.toCustomString(),
+    code?.toString() ?? "-",
+    name ?? "-",
+    user?.fullName.toString() ?? "-",
+    status.label,
+  ];
 
   @override
   List get rawContent => content;
@@ -68,22 +58,9 @@ class Warehouse extends Selectable implements TableData {
   }
 
   @override
-  List<String> get titles => const [
-        'Depo ID',
-        "Depo Kodu",
-        "Depo Adı",
-        "Depo Sorumlusu",
-        "Durum",
-      ];
+  List<String> get titles => const ['Depo ID', "Depo Kodu", "Depo Adı", "Depo Sorumlusu", "Durum"];
 
-  Warehouse copyWith({
-    int? id,
-    int? code,
-    String? name,
-    User? user,
-    bool? isActive,
-    WarehouseType? type,
-  }) {
+  Warehouse copyWith({int? id, int? code, String? name, User? user, bool? isActive, WarehouseType? type}) {
     return Warehouse(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -95,12 +72,12 @@ class Warehouse extends Selectable implements TableData {
   }
 
   WarehouseDTO toDTO() => WarehouseDTO(
-        id: id,
-        code: code,
-        name: name,
-        userId: user?.id,
-        user: user?.toDTO(),
-        isActive: isActive,
-        warehouseKindId: type?.id,
-      );
+    id: id,
+    code: code,
+    name: name,
+    userId: user?.id,
+    user: UserMapper().toDtoOrNull(user),
+    isActive: isActive,
+    warehouseKindId: type?.id,
+  );
 }

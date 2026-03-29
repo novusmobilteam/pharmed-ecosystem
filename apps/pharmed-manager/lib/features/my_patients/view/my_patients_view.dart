@@ -4,7 +4,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../core/storage/auth/auth.dart';
 import '../../../core/widgets/hospitalization_card.dart';
 import '../../hospitalization/domain/entity/hospitalization.dart';
 import '../notifier/add_patient_notifier.dart';
@@ -18,10 +17,9 @@ class MyPatientsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MyPatientsNotifier(
-        getMyPatientsUseCase: context.read(),
-        removePatientUseCase: context.read(),
-      )..fetchMyPatients(),
+      create: (context) =>
+          MyPatientsNotifier(getMyPatientsUseCase: context.read(), removePatientUseCase: context.read())
+            ..fetchMyPatients(),
       builder: (context, child) {
         return Consumer<MyPatientsNotifier>(
           builder: (context, notifier, child) {
@@ -36,10 +34,7 @@ class MyPatientsView extends StatelessWidget {
                 if (notifier.selectedItems.isNotEmpty)
                   IconButton(
                     onPressed: () => _onDelete(context, notifier),
-                    icon: Icon(
-                      PhosphorIcons.trash(),
-                      color: Colors.red,
-                    ),
+                    icon: Icon(PhosphorIcons.trash(), color: Colors.red),
                   ),
               ],
               isLoading: notifier.isLoading(notifier.removeOp),
@@ -84,7 +79,7 @@ class MyPatientsView extends StatelessWidget {
 }
 
 void _onAdd(BuildContext context, MyPatientsNotifier notifier) async {
-  final userId = context.read<AuthStorageNotifier>().user?.id ?? 0;
+  final userId = context.read<AuthManagerNotifier>().user?.id ?? 0;
   final result = await showAddPatientDialog(
     context,
     userId,

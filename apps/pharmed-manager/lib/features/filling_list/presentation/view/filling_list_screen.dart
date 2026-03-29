@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../../station/domain/entity/station.dart';
 import '../../domain/entity/filling_object.dart';
@@ -42,11 +41,7 @@ class _FillingListScreenState extends State<FillingListScreen> {
             desktop: DesktopLayout(
               title: 'Dolum Listesi',
               showAddButton: true,
-              onAddPressed: () => _onAddPressed(
-                context,
-                notifier,
-                station: notifier.selectedStation!,
-              ),
+              onAddPressed: () => _onAddPressed(context, notifier, station: notifier.selectedStation!),
               child: _TableView(notifier),
             ),
           );
@@ -71,9 +66,7 @@ class _TableView extends StatelessWidget {
       categories: notifier.tableCategories,
       onSearchChanged: notifier.search,
       categoryTitle: 'İstasyonlar',
-      onCategoryChanged: (id) => notifier.selectStation(
-        notifier.stations.firstWhere((s) => s.id.toString() == id),
-      ),
+      onCategoryChanged: (id) => notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
       selectedCategoryId: notifier.selectedStationId,
       cellBuilder: (item, colIndex, value) {
         if (colIndex == 3) {
@@ -84,13 +77,8 @@ class _TableView extends StatelessWidget {
       },
       actions: [
         TableActionItem.edit(
-          onPressed: (data) => _onAddPressed(
-            context,
-            notifier,
-            fillingList: data,
-            user: data.user,
-            station: notifier.selectedStation!,
-          ),
+          onPressed: (data) =>
+              _onAddPressed(context, notifier, fillingList: data, user: data.user, station: notifier.selectedStation!),
         ),
         TableActionItem(
           icon: PhosphorIcons.arrowClockwise(),
@@ -124,11 +112,7 @@ Future<void> _onAddPressed(
 }) async {
   final result = await showDialog(
     context: context,
-    builder: (context) => NewFillingListView(
-      station: station,
-      user: user,
-      fillingList: fillingList,
-    ),
+    builder: (context) => NewFillingListView(station: station, user: user, fillingList: fillingList),
   );
   if (result == true && context.mounted) {
     notifier.getFillingLists();

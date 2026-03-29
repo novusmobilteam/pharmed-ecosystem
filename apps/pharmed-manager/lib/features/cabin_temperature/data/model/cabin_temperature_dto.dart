@@ -6,11 +6,7 @@ class CabinTemperatureDTO {
   final int? stationId;
   final StationDTO? station;
 
-  CabinTemperatureDTO({
-    this.stationId,
-    this.station,
-    this.id,
-  });
+  CabinTemperatureDTO({this.stationId, this.station, this.id});
 
   factory CabinTemperatureDTO.fromJson(Map<String, dynamic> json) {
     return CabinTemperatureDTO(
@@ -29,20 +25,6 @@ class CabinTemperatureDTO {
   }
 
   CabinTemperature toEntity() {
-    return CabinTemperature(
-      id: id,
-      station: station?.toEntity(),
-    );
-  }
-
-  /// Mock factory for test data generation
-  static CabinTemperatureDTO mockFactory(int id, {bool withNested = true}) {
-    final stationId = ((id - 1) % 10) + 1;
-
-    return CabinTemperatureDTO(
-      id: id,
-      stationId: stationId,
-      station: withNested ? StationDTO.mockFactory(stationId, withNested: false) : null,
-    );
+    return CabinTemperature(id: id, station: station?.toEntity());
   }
 }

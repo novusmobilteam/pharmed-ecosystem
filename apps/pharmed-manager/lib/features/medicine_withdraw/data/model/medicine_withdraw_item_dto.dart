@@ -1,3 +1,5 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 
 import '../../../cabin_assignment/data/model/cabin_assignment_dto.dart';
@@ -5,7 +7,6 @@ import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
 import '../../../hospitalization/data/model/hospitalization_dto.dart';
 import '../../../medicine/data/model/medicine_dto.dart';
 import '../../../prescription/data/model/prescription_dto.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/medicine_withdraw_item.dart';
 
 class MedicineWithdrawItemDTO {
@@ -72,14 +73,16 @@ class MedicineWithdrawItemDTO {
       askDoctor: json['askDoctor'],
       inCaseOfNecessity: json['inCaseOfNecessity'],
       applicationDate: json['applicationDate'] != null ? DateTime.parse(json['applicationDate'] as String) : null,
-      hospitalization:
-          json['patientHospitalization'] != null ? HospitalizationDTO.fromJson(json['patientHospitalization']) : null,
+      hospitalization: json['patientHospitalization'] != null
+          ? HospitalizationDTO.fromJson(json['patientHospitalization'])
+          : null,
       medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
       approvalUser: json['approvalUser'] != null ? UserDTO.fromJson(json['approvalUser']) : null,
       applicationUser: json['applicationUser'] != null ? UserDTO.fromJson(json['applicationUser']) : null,
       prescription: json['prescription'] != null ? PrescriptionDTO.fromJson(json['prescription']) : null,
-      cabinAssignment:
-          json['cabinDrawrQuantity'] != null ? CabinAssignmentDTO.fromJson(json['cabinDrawrQuantity']) : null,
+      cabinAssignment: json['cabinDrawrQuantity'] != null
+          ? CabinAssignmentDTO.fromJson(json['cabinDrawrQuantity'])
+          : null,
       cabinDrawerStock: json['cabinDrawrStock'] != null ? CabinStockDTO.fromJson(json['cabinDrawrStock']) : null,
     );
   }
@@ -103,9 +106,7 @@ class MedicineWithdrawItemDTO {
   }
 
   MedicineWithdrawItemDTO copyWith({int? id}) {
-    return MedicineWithdrawItemDTO(
-      id: id ?? this.id,
-    );
+    return MedicineWithdrawItemDTO(id: id ?? this.id);
   }
 
   MedicineWithdrawItem toEntity() {
@@ -116,17 +117,13 @@ class MedicineWithdrawItemDTO {
       medicineBarcode: medicine?.toEntity().barcode ?? "",
       dosePiece: dosePiece ?? 0,
       medicine: medicine?.toEntity(),
-      cabinAssignment: cabinAssignment?.toEntity() ??
-          CabinAssignment.empty(
-            cabinId: 0,
-            cabinDrawerId: 0,
-          ),
+      cabinAssignment: cabinAssignment?.toEntity() ?? CabinAssignment.empty(cabinId: 0, cabinDrawerId: 0),
       time: DateTime.tryParse(time ?? ''),
       firstDoseEmergency: firstDoseEmergency ?? false,
       askDoctor: askDoctor ?? false,
       inCaseOfNecessity: inCaseOfNecessity ?? false,
-      approvalUser: approvalUser?.toEntity(),
-      applicationUser: applicationUser?.toEntity(),
+      approvalUser: const UserMapper().toEntityOrNull(approvalUser),
+      applicationUser: const UserMapper().toEntityOrNull(applicationUser),
       hospitalization: hospitalization?.toEntity(),
       applicationDate: applicationDate,
       stock: cabinDrawerStock?.toEntity(),

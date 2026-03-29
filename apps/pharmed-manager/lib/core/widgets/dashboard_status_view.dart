@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../features/settings/presentation/view/settings_view.dart';
-import '../storage/auth/auth.dart';
 import 'clock_view.dart';
 
 class DashboardStatusView extends StatelessWidget {
@@ -25,15 +25,9 @@ class DashboardStatusView extends StatelessWidget {
         decoration: BoxDecoration(
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-          ),
+          border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         child: Row(
@@ -41,17 +35,10 @@ class DashboardStatusView extends StatelessWidget {
             ClockView.mini(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: VerticalDivider(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                indent: 8,
-                endIndent: 8,
-              ),
+              child: VerticalDivider(color: colorScheme.outlineVariant.withValues(alpha: 0.5), indent: 8, endIndent: 8),
             ),
             Expanded(child: const _InitialsProfileWidget()),
-            IconButton(
-              onPressed: () => showSettingsView(context),
-              icon: Icon(PhosphorIcons.gear()),
-            ),
+            IconButton(onPressed: () => showSettingsView(context), icon: Icon(PhosphorIcons.gear())),
           ],
         ),
       ),
@@ -64,7 +51,7 @@ class _InitialsProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authStorage = context.read<AuthStorageNotifier>();
+    final authStorage = context.read<AuthManagerNotifier>();
     final theme = Theme.of(context);
 
     final String fullName = authStorage.user?.fullName.toString() ?? 'Kullanıcı';
@@ -79,16 +66,17 @@ class _InitialsProfileWidget extends StatelessWidget {
           children: [
             Text(
               fullName,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
               maxLines: 1,
               overflow: TextOverflow.ellipsis, // İsim uzunsa ... koy
             ),
             Text(
               role,
-              style: theme.textTheme.labelSmall
-                  ?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 10),
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w600,
+                fontSize: 10,
+              ),
             ),
           ],
         ),

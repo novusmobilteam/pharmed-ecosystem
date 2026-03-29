@@ -14,7 +14,6 @@ import '../../../hospitalization/domain/repository/i_hospitalization_repository.
 import '../../../medicine/domain/entity/medicine.dart';
 import '../../../medicine/domain/repository/i_medicine_repository.dart';
 
-import '../../../user/user.dart';
 import '../notifier/new_prescription_notifier.dart';
 import '../widgets/prescription_item_card.dart';
 
@@ -110,10 +109,7 @@ class _NewPrescriptionViewState extends State<NewPrescriptionView> {
                     ],
                   ),
                 ),
-                Expanded(
-                  flex: 3,
-                  child: _prescriptionListView(notifier),
-                ),
+                Expanded(flex: 3, child: _prescriptionListView(notifier)),
               ],
             ),
           ),
@@ -138,11 +134,7 @@ class _NewPrescriptionViewState extends State<NewPrescriptionView> {
         itemCount: notifier.prescriptionItems.length,
         itemBuilder: (BuildContext context, int index) {
           final item = notifier.prescriptionItems.elementAt(index);
-          return PrescriptionItemCard(
-            item: item,
-            index: index,
-            onDelete: (index) => notifier.removeItemAt(index),
-          );
+          return PrescriptionItemCard(item: item, index: index, onDelete: (index) => notifier.removeItemAt(index));
         },
       );
     }
@@ -150,10 +142,7 @@ class _NewPrescriptionViewState extends State<NewPrescriptionView> {
 
   void _onClose(BuildContext context, NewPrescriptionNotifier notifier) {
     if (notifier.prescriptionItems.isNotEmpty) {
-      MessageUtils.showConfirmExitDialog(
-        context: context,
-        onConfirm: context.pop,
-      );
+      MessageUtils.showConfirmExitDialog(context: context, onConfirm: context.pop);
     } else {
       context.pop();
     }
@@ -210,7 +199,7 @@ class _DoctorField extends StatelessWidget {
           labelBuilder: (u) => u?.fullName,
           onSelected: (u) => vm.updateDoctor(u),
           validator: (u) => Validators.cannotBlankValidator(u?.fullName),
-          future: () => context.read<IUserRepository>().getUsers(),
+          future: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
         );
       },
     );
@@ -287,17 +276,14 @@ class _TimesRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       spacing: AppDimensions.registrationDialogSpacing / 3,
-      children: List.generate(
-        6,
-        (index) {
-          return Expanded(
-            child: _TimeBox(
-              index: index,
-              controller: controllers[index], // İlgili controller'ı gönder
-            ),
-          );
-        },
-      ),
+      children: List.generate(6, (index) {
+        return Expanded(
+          child: _TimeBox(
+            index: index,
+            controller: controllers[index], // İlgili controller'ı gönder
+          ),
+        );
+      }),
     );
   }
 }

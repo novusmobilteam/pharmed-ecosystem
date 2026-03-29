@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../role/domain/entity/role.dart';
 import '../entity/role_drug_authentication.dart';
 import '../entity/role_medical_consumable_authentication.dart';
 import '../entity/role_menu_authentication.dart';

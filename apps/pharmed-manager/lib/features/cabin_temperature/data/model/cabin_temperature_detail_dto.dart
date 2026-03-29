@@ -70,22 +70,4 @@ class CabinTemperatureDetailDTO {
       topLimitHumidity: topLimitHumidity,
     );
   }
-
-  /// Mock factory for test data generation
-  static CabinTemperatureDetailDTO mockFactory(int id, {bool withNested = true}) {
-    final stationId = ((id - 1) % 10) + 1;
-    final cabinId = ((id - 1) % 20) + 1;
-
-    return CabinTemperatureDetailDTO(
-      id: id,
-      station: withNested ? StationDTO.mockFactory(stationId, withNested: false) : null,
-      cabin: withNested ? CabinDTO.mockFactory(cabinId, withNested: false) : null,
-      bottomTemperatureInside: 20 + (id % 5),
-      topTemperatureInside: 25 + (id % 5),
-      bottomTemperatureOutside: 15 + (id % 5),
-      topTemperatureOutside: 30 + (id % 5),
-      bottomLimitHumidity: 30,
-      topLimitHumidity: 60,
-    );
-  }
 }

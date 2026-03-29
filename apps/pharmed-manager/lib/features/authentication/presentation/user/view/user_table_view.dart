@@ -7,7 +7,7 @@ import '../../../../../core/core.dart';
 import '../../../../../core/widgets/menu_browser_dialog.dart';
 import '../../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../../../user/user.dart';
+
 import '../notifier/user_authentication_notifier.dart';
 import '../notifier/user_table_notifier.dart';
 

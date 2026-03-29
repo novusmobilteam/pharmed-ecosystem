@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../role/domain/entity/role.dart';
 import '../../domain/entity/role_drug_authentication.dart';
 import '../../domain/entity/role_medical_consumable_authentication.dart';
 import '../../domain/entity/role_menu_authentication.dart';
@@ -60,10 +59,7 @@ class RoleAuthenticationRepository implements IRoleAuthenticationRepository {
 
     final res = await _ds.updateDrugAuthentication(payload);
 
-    return res.when(
-      ok: (_) => const Result.ok(null),
-      error: (e) => Result.error(e),
-    );
+    return res.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
   }
 
   @override

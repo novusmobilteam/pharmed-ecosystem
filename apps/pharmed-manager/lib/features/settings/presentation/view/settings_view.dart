@@ -5,7 +5,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/storage/auth/auth.dart';
 import '../../../home/notifier/home_notifier.dart';
 import '../notifier/settings_notifier.dart';
 
@@ -17,10 +16,7 @@ part 'general_settings_view.dart';
 part 'prescription_settings_view.dart';
 
 void showSettingsView(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) => SettingsView(),
-  );
+  showDialog(context: context, builder: (context) => SettingsView());
 }
 
 class SettingsView extends StatefulWidget {
@@ -36,7 +32,7 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsNotifier>();
-    final auth = context.watch<AuthStorageNotifier>();
+    final auth = context.watch<AuthManagerNotifier>();
     final isAdmin = auth.user?.isAdmin ?? false;
 
     final List<String> currentTitles = [];
@@ -86,11 +82,7 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Text('Yetkileri Yenile'),
                   ),
                   Spacer(),
-                  PharmedButton(
-                    onPressed: () {},
-                    label: 'İptal',
-                    backgroundColor: context.colorScheme.secondary,
-                  ),
+                  PharmedButton(onPressed: () {}, label: 'İptal', backgroundColor: context.colorScheme.secondary),
                   PharmedButton(
                     label: 'Kaydet',
                     onPressed: () {
@@ -101,7 +93,7 @@ class _SettingsViewState extends State<SettingsView> {
                     },
                   ),
                 ],
-              )
+              ),
             ],
           ),
         );

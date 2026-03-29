@@ -145,28 +145,4 @@ class CabinDTO {
       station: station?.toEntity(),
     );
   }
-
-  /// Mock factory for test data generation
-  static CabinDTO mockFactory(int id, {bool withNested = true}) {
-    final stationId = ((id - 1) % 10) + 1;
-    return CabinDTO(
-      id: id,
-      stationId: stationId,
-      no: id,
-      name: 'Kabin $id',
-      isActive: true,
-      type: 2,
-      comPortsId: 3,
-      baudRatesId: 2,
-      paritiesId: 0,
-      dataBits: 8,
-      stopBits: 1,
-      colorHexCode: '#${(id * 123456).toRadixString(16).padLeft(6, '0').substring(0, 6)}',
-      sequenceNo: id,
-      cardTypesIds: [1, 2],
-      cameraNo: id,
-      dvrIp: '192.168.1.${100 + id}',
-      station: withNested ? StationDTO.mockFactory(stationId, withNested: false) : null,
-    );
-  }
 }

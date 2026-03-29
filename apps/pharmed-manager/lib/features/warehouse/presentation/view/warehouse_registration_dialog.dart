@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../user/user.dart';
 import '../notifier/warehouse_form_notifier.dart';
 
 class WarehouseRegistrationDialog extends StatelessWidget {
@@ -40,13 +39,7 @@ class WarehouseRegistrationDialog extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               spacing: AppDimensions.registrationDialogSpacing,
-              children: const [
-                _NameField(),
-                _CodeField(),
-                _WarehouseTypeField(),
-                _UserField(),
-                _StatusField(),
-              ],
+              children: const [_NameField(), _CodeField(), _WarehouseTypeField(), _UserField(), _StatusField()],
             ),
           ),
         );
@@ -129,7 +122,7 @@ class _UserField extends StatelessWidget {
           label: 'Depo Sorumlusu',
           initialValue: vm.warehouse.user,
           labelBuilder: (u) => u?.surname == null ? u?.name : u?.fullName,
-          future: () => context.read<IUserRepository>().getUsers(),
+          future: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
           validator: (value) => Validators.cannotBlankValidator(value?.fullName),
           onSelected: vm.updateUser,
         );

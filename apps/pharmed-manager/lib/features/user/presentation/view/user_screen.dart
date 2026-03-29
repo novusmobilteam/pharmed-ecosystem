@@ -9,11 +9,9 @@ import '../../../../core/core.dart';
 import '../../../../core/widgets/remaining_day_badge.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../user.dart';
 import '../../../station/domain/entity/station.dart';
 import '../../../station/domain/repository/i_station_repository.dart';
-import '../../../role/domain/entity/role.dart';
-import '../../../role/domain/repository/i_role_repository.dart';
+
 import '../notifier/user_form_notifier.dart';
 import '../notifier/user_table_notifier.dart';
 
@@ -91,8 +89,9 @@ void _showUserRegistrationDialog(BuildContext context, UserTableNotifier notifie
     builder: (context) => ChangeNotifierProvider(
       create: (context) => UserFormNotifier(
         user: user,
-        saveUserUseCase: context.read(),
         stationRepository: context.read(),
+        createUserUseCase: context.read(),
+        updateUserUseCase: context.read(),
       ),
       child: const UserRegistrationDialog(),
     ),

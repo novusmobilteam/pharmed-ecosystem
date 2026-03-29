@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../role/domain/entity/role.dart';
 import '../../../domain/entity/role_medical_consumable_authentication.dart';
 import '../../../domain/usecase/get_role_mc_authentication_usecase.dart';
 import '../../../domain/usecase/save_role_mc_authentication_usecase.dart';

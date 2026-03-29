@@ -1,7 +1,6 @@
 import '../../../../core/core.dart';
 import '../../../medicine/data/model/medicine_dto.dart';
 import '../../../service/data/model/service_dto.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/prescription_item.dart';
 import 'prescription_dto.dart';
 
@@ -329,10 +328,10 @@ class PrescriptionItemDTO {
       prescriptionId: prescriptionId,
       patientRegistrationId: patientRegistrationId,
       doctor: User.fromIdAndFullName(id: doctorId, fullName: doctor),
-      approvalUser: approvalUser?.toEntity(),
-      cancelUser: cancelUser?.toEntity(),
-      applicationUser: applicationUser?.toEntity(),
-      returnUser: returnUser?.toEntity(),
+      approvalUser: const UserMapper().toEntityOrNull(approvalUser),
+      cancelUser: const UserMapper().toEntityOrNull(cancelUser),
+      applicationUser: const UserMapper().toEntityOrNull(applicationUser),
+      returnUser: const UserMapper().toEntityOrNull(returnUser),
       dosePiece: dosePiece,
       requestType: RequestType.fromId(requestType),
       description: description,
@@ -343,7 +342,8 @@ class PrescriptionItemDTO {
       returnQuantity: returnQuantity,
       protocolNo: protocolNo,
       time: time,
-      patientName: patientName ??
+      patientName:
+          patientName ??
           ([name, surname].whereType<String>().join(' ').trim().isEmpty
               ? null
               : [name, surname].whereType<String>().join(' ')),
@@ -358,64 +358,6 @@ class PrescriptionItemDTO {
       medicine: medicine?.toEntity(),
       status: PrescriptionStatus.fromId(statusId),
       createdDate: createdDate,
-    );
-  }
-
-  /// Mock factory for test data generation
-  static PrescriptionItemDTO mockFactory(int id, {bool withNested = true}) {
-    final prescriptionId = ((id - 1) ~/ 5) + 1;
-    final materialId = ((id - 1) % 20) + 1;
-    final doctorId = ((id - 1) % 10) + 1;
-    final serviceId = ((id - 1) % 5) + 1;
-    final date = DateTime.now().subtract(Duration(hours: id * 2));
-
-    return PrescriptionItemDTO(
-      id: id,
-      prescriptionId: prescriptionId,
-      patientRegistrationId: 1000 + id,
-      physicalServiceId: serviceId,
-      physicalService: withNested ? ServiceDTO.mockFactory(serviceId, withNested: false) : null,
-      inpatientServiceId: serviceId,
-      inpatientService: withNested ? ServiceDTO.mockFactory(serviceId, withNested: false) : null,
-      doctorId: doctorId,
-      doctor: 'Doktor $doctorId',
-      medicineId: materialId,
-      dosePiece: 1,
-      requestType: 1,
-      requestTypeName: 'Normal',
-      firstDoseEmergency: false,
-      askDoctor: false,
-      inCaseOfNecessity: false,
-      times: [date, date.add(Duration(hours: 8)), date.add(Duration(hours: 16))],
-      time: date,
-      description: 'Günde 3x1',
-      deleteDescription: null,
-      approvalDate: date.subtract(Duration(minutes: 30)),
-      approvalUserId: 1,
-      approvalUser: withNested ? UserDTO.mockFactory(1) : null,
-      cancelDate: null,
-      cancelUserId: null,
-      cancelUser: null,
-      applicationDate: null,
-      applicationUserId: null,
-      applicationUser: null,
-      returnDate: null,
-      returnUserId: null,
-      returnUser: null,
-      returnQuantity: 0,
-      barcode: 1000000000 + materialId,
-      sutCode: 900000 + materialId,
-      ubbCode: 800000 + materialId,
-      atcCode: 700000 + materialId,
-      isQrCode: false,
-      qrCode: null,
-      prescriptionDate: date.subtract(Duration(days: 1)),
-      prescription: withNested ? PrescriptionDTO.mockFactory(prescriptionId, withNested: false) : null,
-      removed: false,
-      name: 'Hasta Adı $id',
-      surname: 'Hasta Soyadı $id',
-      patientName: 'Hasta Adı $id Hasta Soyadı $id',
-      protocolNo: 'P${id.toString().padLeft(7, '0')}',
     );
   }
 }

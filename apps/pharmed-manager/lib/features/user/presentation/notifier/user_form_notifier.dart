@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../domain/usecase/save_user_usecase.dart';
-import '../../user.dart';
 import '../../../station/domain/entity/station.dart';
 import '../../../station/domain/repository/i_station_repository.dart';
-import '../../../role/domain/entity/role.dart';
 
 class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
-  final SaveUserUseCase _saveUserUseCase;
+  final CreateUserUseCase _createUserUseCase;
+  final UpdateUserUseCase _updateUserUseCase;
   final IStationRepository _stationRepository;
   User _user;
 
   UserFormNotifier({
-    required SaveUserUseCase saveUserUseCase,
+    required CreateUserUseCase createUserUseCase,
+    required UpdateUserUseCase updateUserUseCase,
     required IStationRepository stationRepository,
     User? user,
-  }) : _saveUserUseCase = saveUserUseCase,
+  }) : _createUserUseCase = createUserUseCase,
+       _updateUserUseCase = updateUserUseCase,
        _stationRepository = stationRepository,
        _user =
            user ??
@@ -46,7 +46,7 @@ class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
   Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
     await executeVoid(
       submitOp,
-      operation: () => _saveUserUseCase.call(_user),
+      operation: () => isCreate ? _createUserUseCase.call(_user) : _updateUserUseCase.call(user),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
     );

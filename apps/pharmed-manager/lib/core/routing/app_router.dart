@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pharmed_manager/core/auth/auth_manager_notifier.dart';
 import '../../features/cabin_assignment/presentation/view/station_cabin_assignment_screen.dart';
 import '../../features/cabin_stock/presentation/view/expired_stocks_screen.dart';
 import '../../features/cabin_stock/presentation/view/station_stock_screen.dart';
@@ -38,13 +39,12 @@ import '../../features/settings/presentation/notifier/settings_notifier.dart';
 import '../../features/stock_transaction/presentation/screens/stock_transaction_report_screen.dart';
 import '../../main.dart';
 import '../core.dart';
-import '../storage/auth/auth.dart';
 import 'router_notifier.dart';
 
 class AppRouter {
   static GoRouter createRouter(BuildContext context) {
     final settings = context.read<SettingsNotifier>();
-    final auth = context.read<AuthStorageNotifier>();
+    final auth = context.read<AuthManagerNotifier>();
 
     return GoRouter(
       initialLocation: '/',
@@ -97,16 +97,10 @@ class AppRouter {
         GoRoute(
           path: '/',
           name: 'root',
-          builder: (context, state) => const Scaffold(
-            body: Center(child: CircularProgressIndicator.adaptive()),
-          ),
+          builder: (context, state) => const Scaffold(body: Center(child: CircularProgressIndicator.adaptive())),
         ),
         // Kurulum Ekranı (PlatformSelection)
-        GoRoute(
-          path: AppRoute.home.path,
-          name: AppRoute.home.name,
-          builder: (context, state) => HomeScreen(),
-        ),
+        GoRoute(path: AppRoute.home.path, name: AppRoute.home.name, builder: (context, state) => HomeScreen()),
         GoRoute(
           path: AppRoute.platformSelection.path,
           name: AppRoute.platformSelection.name,
@@ -128,11 +122,7 @@ class AppRouter {
           builder: (context, state) => ManagerDashboardScreen(),
         ),
 
-        GoRoute(
-          path: AppRoute.firm.path,
-          name: AppRoute.firm.name,
-          builder: (context, state) => FirmScreen(),
-        ),
+        GoRoute(path: AppRoute.firm.path, name: AppRoute.firm.name, builder: (context, state) => FirmScreen()),
 
         GoRoute(
           path: AppRoute.station.path,
@@ -145,11 +135,7 @@ class AppRouter {
           name: AppRoute.heatControl.name,
           builder: (context, state) => CabinTemperatureScreen(),
         ),
-        GoRoute(
-          path: AppRoute.warning.path,
-          name: AppRoute.warning.name,
-          builder: (context, state) => WarningScreen(),
-        ),
+        GoRoute(path: AppRoute.warning.path, name: AppRoute.warning.name, builder: (context, state) => WarningScreen()),
         GoRoute(
           path: AppRoute.medicine.path,
           name: AppRoute.medicine.name,
@@ -157,16 +143,8 @@ class AppRouter {
         ),
 
         /// Kullanıcı İşlemleri
-        GoRoute(
-          path: AppRoute.role.path,
-          name: AppRoute.role.name,
-          builder: (context, state) => RoleScreen(),
-        ),
-        GoRoute(
-          path: AppRoute.user.path,
-          name: AppRoute.user.name,
-          builder: (context, state) => UserScreen(),
-        ),
+        GoRoute(path: AppRoute.role.path, name: AppRoute.role.name, builder: (context, state) => RoleScreen()),
+        GoRoute(path: AppRoute.user.path, name: AppRoute.user.name, builder: (context, state) => UserScreen()),
 
         GoRoute(
           path: AppRoute.authorization.path,
@@ -242,7 +220,6 @@ class AppRouter {
         ),
 
         /// Tedavi
-
         GoRoute(
           path: AppRoute.directedOrders.path,
           name: AppRoute.directedOrders.name,
@@ -254,11 +231,7 @@ class AppRouter {
           name: AppRoute.expiringStocks.name,
           builder: (context, state) => ExpiringStocksScreen(),
         ),
-        GoRoute(
-          path: AppRoute.jobList.path,
-          name: AppRoute.jobList.name,
-          builder: (context, state) => JobListScreen(),
-        ),
+        GoRoute(path: AppRoute.jobList.path, name: AppRoute.jobList.name, builder: (context, state) => JobListScreen()),
 
         GoRoute(
           path: AppRoute.stationInventory.path,
@@ -278,7 +251,6 @@ class AppRouter {
         ),
 
         /// Raporlar
-
         GoRoute(
           path: AppRoute.expiredStocks.path,
           name: AppRoute.expiredStocks.name,

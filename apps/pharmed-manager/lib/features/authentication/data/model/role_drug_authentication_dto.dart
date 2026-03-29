@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 import '../../../medicine/domain/entity/medicine.dart';
-import '../../../role/domain/entity/role.dart';
 import '../../domain/entity/role_drug_authentication.dart';
 
 class RoleDrugAuthenticationDTO {

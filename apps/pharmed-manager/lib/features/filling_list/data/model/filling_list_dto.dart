@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../../station/data/model/station_dto.dart';
 
@@ -82,31 +81,10 @@ class FillingListDTO {
     return FillingList(
       id: id,
       station: station?.toEntity(),
-      user: user?.toEntity(),
+      user: const UserMapper().toEntityOrNull(user),
       status: FillingRecordStatus.fromId(statusId),
       isCancel: isCancel,
       isFilled: isFilled,
-      date: date,
-    );
-  }
-
-  /// Mock factory for test data generation
-  static FillingListDTO mockFactory(int id, {bool withNested = true}) {
-    final stationId = ((id - 1) % 10) + 1;
-    final userId = ((id - 1) % 20) + 1;
-    final date = DateTime.now().subtract(Duration(days: id % 30));
-    final statusId = ((id - 1) % 3) + 1;
-    final statuses = ['Bekliyor', 'Tamamlandı', 'İptal'];
-
-    return FillingListDTO(
-      id: id,
-      stationId: stationId,
-      station: withNested ? StationDTO.mockFactory(stationId, withNested: false) : null,
-      user: withNested ? UserDTO.mockFactory(userId) : null,
-      status: statuses[statusId - 1],
-      statusId: statusId,
-      isCancel: statusId == 3,
-      isFilled: statusId == 2,
       date: date,
     );
   }

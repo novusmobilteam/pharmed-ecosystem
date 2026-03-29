@@ -1,5 +1,5 @@
-import '../../../../core/core.dart';
-import '../../../user/user.dart';
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../domain/entity/user_menu_authentication.dart';
 import '../../domain/repository/i_user_authentication_repository.dart';
 import '../datasource/user_authentication_data_source.dart';
@@ -13,9 +13,7 @@ class UserAuthenticationRepository implements IUserAuthenticationRepository {
   Future<Result<UserMenuAuthentication>> getAuthentication(User user) async {
     final res = await _ds.getAuthentication(user.id!);
     return res.when(
-      ok: (dto) => Result.ok(
-        UserMenuAuthentication.fromDTO(dto: dto, user: user),
-      ),
+      ok: (dto) => Result.ok(UserMenuAuthentication.fromDTO(dto: dto, user: user)),
       error: (e) => Result.error(e),
     );
   }

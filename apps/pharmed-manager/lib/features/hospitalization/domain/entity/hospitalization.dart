@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/core.dart';
 import '../../../patient/domain/entity/patient.dart';
 import '../../../service/domain/entity/service.dart';
-import '../../../user/user.dart';
 import '../../data/model/hospitalization_dto.dart';
 
 class Hospitalization extends Selectable implements TableData {
@@ -40,10 +39,7 @@ class Hospitalization extends Selectable implements TableData {
     this.isBaby,
     this.colorId,
     this.isUrgent = false,
-  }) : super(
-          title: patient?.fullName ?? '',
-          subtitle: patient?.tcNo ?? '',
-        );
+  }) : super(title: patient?.fullName ?? '', subtitle: patient?.tcNo ?? '');
 
   Hospitalization copyWith({
     int? id,
@@ -88,7 +84,7 @@ class Hospitalization extends Selectable implements TableData {
       physicalServiceId: physicalService?.id,
       inpatientService: inpatientService?.toDTO(),
       inpatientServiceId: inpatientService?.id,
-      doctor: doctor?.toDTO(),
+      doctor: const UserMapper().toDtoOrNull(doctor),
       doctorId: doctor?.id,
       patient: patient?.toDTO(),
       patientId: patient?.id,
@@ -98,36 +94,36 @@ class Hospitalization extends Selectable implements TableData {
 
   @override
   List get content => [
-        physicalService?.name,
-        patient?.protocolNo,
-        patient?.tcNo,
-        patient?.fullName,
-        admissionDate?.formattedDate,
-        waitingQuantity,
-        lastApproveDate?.formattedDate,
-      ];
+    physicalService?.name,
+    patient?.protocolNo,
+    patient?.tcNo,
+    patient?.fullName,
+    admissionDate?.formattedDate,
+    waitingQuantity,
+    lastApproveDate?.formattedDate,
+  ];
 
   @override
   List get rawContent => [
-        physicalService?.name,
-        patient?.protocolNo,
-        patient?.tcNo,
-        patient?.fullName,
-        admissionDate?.formattedDate,
-        waitingQuantity,
-        lastApproveDate?.formattedDate,
-      ];
+    physicalService?.name,
+    patient?.protocolNo,
+    patient?.tcNo,
+    patient?.fullName,
+    admissionDate?.formattedDate,
+    waitingQuantity,
+    lastApproveDate?.formattedDate,
+  ];
 
   @override
   List<String?> get titles => [
-        'Servis',
-        'Protokol No',
-        'T.C No',
-        'Hasta',
-        'Yatış Tarihi',
-        'Bekleyen Adet',
-        'Son Onay Tarihi',
-      ];
+    'Servis',
+    'Protokol No',
+    'T.C No',
+    'Hasta',
+    'Yatış Tarihi',
+    'Bekleyen Adet',
+    'Son Onay Tarihi',
+  ];
 
   Color get statusColor {
     switch (colorId) {

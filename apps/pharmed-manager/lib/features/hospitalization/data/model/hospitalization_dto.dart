@@ -1,6 +1,7 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../../service/data/model/service_dto.dart';
 import '../../../patient/data/model/patient_dto.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/hospitalization.dart';
 
 class HospitalizationDTO {
@@ -103,7 +104,7 @@ class HospitalizationDTO {
       exitDate: exitDate,
       physicalService: physicalService?.toEntity(),
       inpatientService: inpatientService?.toEntity(),
-      doctor: doctor?.toEntity(),
+      doctor: const UserMapper().toEntityOrNull(doctor),
       patient: patient?.toEntity(),
       waitingQuantity: waitingQuantity,
       lastApproveDate: lastApproveDate,
@@ -145,36 +146,6 @@ class HospitalizationDTO {
       description: description ?? this.description,
       admissionDate: admissionDate ?? this.admissionDate,
       exitDate: exitDate ?? this.exitDate,
-    );
-  }
-
-  /// Mock factory for test data generation
-  static HospitalizationDTO mockFactory(int id, {bool withNested = true}) {
-    final patientId = ((id - 1) % 100) + 1;
-    final serviceId = ((id - 1) % 20) + 1;
-    final doctorId = ((id - 1) % 20) + 1;
-
-    final admissionDate = DateTime.now().subtract(Duration(days: 60 - (id % 60)));
-
-    return HospitalizationDTO(
-      id: id,
-      code: 100000 + id,
-      patientId: patientId,
-      patient: withNested ? PatientDTO.mockFactory(patientId) : null,
-      physicalServiceId: serviceId,
-      physicalService: withNested ? ServiceDTO.mockFactory(serviceId, withNested: false) : null,
-      inpatientServiceId: serviceId,
-      inpatientService: withNested ? ServiceDTO.mockFactory(serviceId, withNested: false) : null,
-      doctorId: doctorId,
-      doctor: withNested ? UserDTO.mockFactory(doctorId) : null,
-      roomNo: '${((id - 1) % 10) + 1}',
-      bedNo: '${((id - 1) % 4) + 1}',
-      description: 'Yatış açıklaması $id',
-      admissionDate: admissionDate,
-      exitDate: (id % 3 == 0) ? admissionDate.add(Duration(days: 10)) : null,
-      waitingQuantity: (id * 3) % 10,
-      lastApproveDate: admissionDate.add(Duration(days: 1)),
-      isBaby: (id % 10 == 0),
     );
   }
 }

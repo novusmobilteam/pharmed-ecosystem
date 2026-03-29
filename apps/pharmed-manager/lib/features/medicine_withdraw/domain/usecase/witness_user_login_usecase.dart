@@ -1,8 +1,6 @@
 import '../../../../core/core.dart';
 import '../../../../core/utils/device_info.dart';
 
-import '../../../user/user.dart';
-
 class WitnessUserLoginParams {
   final String username;
   final String password;
@@ -11,7 +9,7 @@ class WitnessUserLoginParams {
 }
 
 class WitnessUserLoginUseCase implements UseCase<User?, WitnessUserLoginParams> {
-  final IUserRepository _repository;
+  final IUserManager _repository;
 
   WitnessUserLoginUseCase(this._repository);
 

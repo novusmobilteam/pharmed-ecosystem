@@ -23,13 +23,7 @@ class DrawerCellDTO {
   final bool? isDeleted;
   final DateTime? createdDate;
 
-  DrawerCellDTO({
-    this.id,
-    this.stepNo,
-    this.drawerUnit,
-    this.isDeleted,
-    this.createdDate,
-  });
+  DrawerCellDTO({this.id, this.stepNo, this.drawerUnit, this.isDeleted, this.createdDate});
 
   factory DrawerCellDTO.fromJson(Map<String, dynamic> json) {
     return DrawerCellDTO(
@@ -58,18 +52,6 @@ class DrawerCellDTO {
       cabinDrawer: drawerUnit?.toEntity(),
       isDeleted: isDeleted,
       createdDate: createdDate,
-    );
-  }
-
-  /// Mock factory for test data generation
-  static DrawerCellDTO mockFactory(int id, {int? cabinDrawerId, bool withNested = true}) {
-    final effectiveCabinDrawerId = cabinDrawerId ?? id;
-    return DrawerCellDTO(
-      id: id,
-      stepNo: ((id - 1) % 6) + 1,
-      drawerUnit: withNested ? DrawerUnitDTO.mockFactory(effectiveCabinDrawerId, withNested: false) : null,
-      isDeleted: false,
-      createdDate: DateTime.now().subtract(Duration(days: 5)),
     );
   }
 }

@@ -6,7 +6,6 @@ import '../../../firm/domain/entity/firm.dart';
 import '../../../material_type/domain/entity/material_type.dart';
 import '../../../station/data/model/station_dto.dart';
 import '../../../unit/data/model/unit_dto.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/medicine.dart';
 
 part 'drug_dto.dart';
@@ -31,10 +30,7 @@ sealed class MedicineDTO {
     return data.whereType<Map<String, dynamic>>().map(MedicineDTO.fromJson).toList();
   }
 
-  T when<T>({
-    required T Function(DrugDTO drug) drug,
-    required T Function(MedicalConsumableDTO consumable) consumable,
-  }) {
+  T when<T>({required T Function(DrugDTO drug) drug, required T Function(MedicalConsumableDTO consumable) consumable}) {
     final self = this;
     if (self is DrugDTO) return drug(self);
     if (self is MedicalConsumableDTO) return consumable(self);

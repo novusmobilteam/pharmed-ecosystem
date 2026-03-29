@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/core.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../../../medicine/domain/entity/medicine.dart';
-import '../../../user/user.dart';
+
 import '../../domain/entity/prescription.dart';
 import '../../domain/entity/prescription_item.dart';
 import '../../domain/usecase/create_prescription_with_products.dart';

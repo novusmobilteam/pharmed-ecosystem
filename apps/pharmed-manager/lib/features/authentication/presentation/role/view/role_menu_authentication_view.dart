@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/widgets/menu_browser_dialog.dart';
-import '../../../../role/domain/entity/role.dart';
 import '../notifier/role_menu_auth_notifier.dart';
 
 class RoleMenuAuthenticationView extends StatelessWidget {
@@ -15,9 +15,7 @@ class RoleMenuAuthenticationView extends StatelessWidget {
     return Consumer<RoleMenuAuthNotifier>(
       builder: (context, notifier, child) {
         if (notifier.isFetching) {
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
+          return const Center(child: CircularProgressIndicator.adaptive());
         }
 
         return MenuBrowserDialog(

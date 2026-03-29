@@ -30,11 +30,13 @@ class PrescriptionDTO {
       code: json['code'] as int?,
       name: json['name'] as String?,
       hospitalizationId: json['patientHospitalizationId'] as int?,
-      hospitalization:
-          json['patientHospitalization'] != null ? HospitalizationDTO.fromJson(json['patientHospitalization']) : null,
+      hospitalization: json['patientHospitalization'] != null
+          ? HospitalizationDTO.fromJson(json['patientHospitalization'])
+          : null,
       prescriptionDate: json['prescriptionDate'] != null ? DateTime.parse(json['prescriptionDate'] as String) : null,
-      hospitalizationDate:
-          json['hospitalizationDate'] != null ? DateTime.parse(json['hospitalizationDate'] as String) : null,
+      hospitalizationDate: json['hospitalizationDate'] != null
+          ? DateTime.parse(json['hospitalizationDate'] as String)
+          : null,
       isPrescribed: json['isPrescribed'] as bool?,
       remainingCount: json['remainingCount'] as int?,
     );
@@ -50,13 +52,7 @@ class PrescriptionDTO {
     };
   }
 
-  PrescriptionDTO copyWith({
-    int? id,
-    int? code,
-    int? hospitalizationId,
-    String? name,
-    DateTime? prescriptionDate,
-  }) {
+  PrescriptionDTO copyWith({int? id, int? code, int? hospitalizationId, String? name, DateTime? prescriptionDate}) {
     return PrescriptionDTO(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -77,24 +73,6 @@ class PrescriptionDTO {
       isPrescribed: isPrescribed,
       remainingCount: remainingCount,
       hospitalization: hospitalization?.toEntity(),
-    );
-  }
-
-  /// Mock factory for test data generation
-  static PrescriptionDTO mockFactory(int id, {bool withNested = true}) {
-    final hospitalizationId = 1000 + id;
-    final date = DateTime.now().subtract(Duration(days: id % 30));
-
-    return PrescriptionDTO(
-      id: id,
-      code: 200000 + id,
-      name: 'Reçete $id',
-      hospitalizationId: hospitalizationId,
-      prescriptionDate: date,
-      hospitalizationDate: date.subtract(Duration(days: 2)),
-      isPrescribed: true,
-      remainingCount: (id * 2) % 10,
-      hospitalization: withNested ? HospitalizationDTO.mockFactory(hospitalizationId, withNested: false) : null,
     );
   }
 }

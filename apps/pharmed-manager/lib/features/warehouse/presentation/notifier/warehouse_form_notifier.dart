@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../user/user.dart';
 import '../../domain/entity/warehouse.dart';
 import '../../domain/usecase/create_warehouse_usecase.dart';
 import '../../domain/usecase/update_warehouse_usecase.dart';

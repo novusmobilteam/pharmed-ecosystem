@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'main_production.dart' as production;
-import 'session_timeout_manager.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -69,21 +68,12 @@ class _MyAppState extends State<MyApp> {
       theme: MaterialTheme().light(),
       routerConfig: _router,
       debugShowCheckedModeBanner: false,
-      builder: (context, child) {
-        return SessionTimeoutManager(
-          duration: const Duration(minutes: 150),
-          child: child!,
-        );
-      },
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('tr', 'TR'),
-        const Locale('en', 'US'),
-      ],
+      supportedLocales: [const Locale('tr', 'TR'), const Locale('en', 'US')],
     );
   }
 }

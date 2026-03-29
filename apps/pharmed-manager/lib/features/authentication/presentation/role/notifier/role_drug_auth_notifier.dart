@@ -4,7 +4,6 @@ import '../../../domain/usecase/get_role_drug_authentication_usecase.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../../../role/domain/entity/role.dart';
 import '../../../domain/entity/role_drug_authentication.dart';
 import '../../../domain/usecase/save_role_drug_authentication_usecase.dart';
 

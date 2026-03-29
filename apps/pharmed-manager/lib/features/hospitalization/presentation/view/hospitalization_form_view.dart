@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../domain/entity/hospitalization.dart';
 import '../../../patient/domain/entity/patient.dart';
-import '../../../user/user.dart';
 import '../../../service/domain/entity/service.dart';
 import '../../../service/domain/repository/i_service_repository.dart';
 import '../notifier/hospitalization_form_notifier.dart';
@@ -80,9 +79,7 @@ class _HospitalizationFormViewState extends State<HospitalizationFormView> {
             }
           },
           isLoading: notifier.isLoading(notifier.submitOp),
-          actions: [
-            _PatientButton(),
-          ],
+          actions: [_PatientButton()],
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -93,24 +90,12 @@ class _HospitalizationFormViewState extends State<HospitalizationFormView> {
                   _DoctorField(),
                   Row(
                     spacing: AppDimensions.registrationDialogSpacing,
-                    children: [
-                      _PhysicalServiceField(),
-                      _InpatientServiceField(),
-                    ],
+                    children: [_PhysicalServiceField(), _InpatientServiceField()],
                   ),
+                  Row(spacing: AppDimensions.registrationDialogSpacing, children: [_RoomField(), _BedField()]),
                   Row(
                     spacing: AppDimensions.registrationDialogSpacing,
-                    children: [
-                      _RoomField(),
-                      _BedField(),
-                    ],
-                  ),
-                  Row(
-                    spacing: AppDimensions.registrationDialogSpacing,
-                    children: [
-                      _AdmissionDateField(_admissionDateController),
-                      _ExitDateField(_exitDateController),
-                    ],
+                    children: [_AdmissionDateField(_admissionDateController), _ExitDateField(_exitDateController)],
                   ),
                   _DescriptionField(),
                   _BabyToggle(),
@@ -156,7 +141,7 @@ class _DoctorField extends StatelessWidget {
           initialValue: notifier.doctor,
           labelBuilder: (value) => value?.fullName,
           validator: (value) => Validators.cannotBlankValidator(value?.fullName),
-          future: () => context.read<IUserRepository>().getUsers(),
+          future: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
           onSelected: (value) => notifier.selectDoctor(value),
         );
       },
@@ -283,11 +268,7 @@ class _ExitDateField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return DateInputField(
-            label: 'Çıkış Tarihi',
-            controller: controller,
-            onDateSelected: notifier.updateExitDate,
-          );
+          return DateInputField(label: 'Çıkış Tarihi', controller: controller, onDateSelected: notifier.updateExitDate);
         },
       ),
     );

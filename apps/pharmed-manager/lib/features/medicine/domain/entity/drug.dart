@@ -76,11 +76,7 @@ class Drug extends Medicine {
     final hasName = name != null && name.trim().isNotEmpty;
     if (!hasId && !hasName) return null;
 
-    return Drug(
-      id: id,
-      name: name,
-      barcode: barcode,
-    );
+    return Drug(id: id, name: name, barcode: barcode);
   }
 
   Drug({
@@ -134,10 +130,7 @@ class Drug extends Medicine {
     this.destroyableUsers = const [],
     this.materialOrderlessTakingUsers = const [],
     this.equivalentCode,
-  }) : super(
-          title: name?.toString() ?? "-",
-          subtitle: barcode,
-        );
+  }) : super(title: name?.toString() ?? "-", subtitle: barcode);
 
   Drug copyWith({
     int? id,
@@ -286,15 +279,18 @@ class Drug extends Medicine {
       returnNote: returnNote,
       destructionNote: destructionNote,
       activeIngredientIds: activeIngredientIds,
-      witnessedPurchaseUsers: witnessedPurchaseUsers.map((user) => user.toDTO()).toList(),
+      witnessedPurchaseUsers: witnessedPurchaseUsers.map((u) => const UserMapper().toDto(u)).toList(),
+      destroyableUsers: destroyableUsers.map((u) => const UserMapper().toDto(u)).toList(),
+      wastageWitnessedPurchaseUsers: wastageWitnessedPurchaseUsers.map((u) => const UserMapper().toDto(u)).toList(),
+      materialOrderlessTakingUsers: materialOrderlessTakingUsers.map((u) => const UserMapper().toDto(u)).toList(),
       witnessedPurchaseStations: witnessedPurchaseStations.map((station) => station.toDTO()).toList(),
-      wastageWitnessedPurchaseUsers: wastageWitnessedPurchaseUsers.map((user) => user.toDTO()).toList(),
+
       wastageWitnessedPurchaseStations: wastageWitnessedPurchaseStations.map((station) => station.toDTO()).toList(),
-      destroyableUsers: destroyableUsers.map((user) => user.toDTO()).toList(),
+
       equivalentCode: equivalentCode,
       isNotSerumCabinetMaxValue: isNotSerumCabinetMaxValue,
       isNotCubicDrawrMaxValue: isNotCubicDrawrMaxValue,
-      materialOrderlessTakingUsers: materialOrderlessTakingUsers.map((user) => user.toDTO()).toList(),
+
       isCanLowerDose: isCanLowerDose,
       isIndependentMaterial: isIndependentMaterial,
     );
@@ -302,13 +298,13 @@ class Drug extends Medicine {
 
   @override
   List get rawContent => [
-        barcode,
-        atcCode?.toCustomString(),
-        name,
-        drugType?.name,
-        prescriptionType.label,
-        countType.label,
-        purchaseType.label,
-        returnType?.label,
-      ];
+    barcode,
+    atcCode?.toCustomString(),
+    name,
+    drugType?.name,
+    prescriptionType.label,
+    countType.label,
+    purchaseType.label,
+    returnType?.label,
+  ];
 }

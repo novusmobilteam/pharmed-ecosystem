@@ -11,7 +11,7 @@ class NewFillingListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => NewFillingListNotifier(
-        authPersistence: context.read(),
+        auth: context.read(),
         station: station,
         user: user,
         initial: fillingList,
@@ -59,22 +59,17 @@ class NewFillingListView extends StatelessWidget {
         children: [
           Row(
             spacing: 15,
-            children: List.generate(
-              FillingType.values.length,
-              (index) {
-                FillingType type = FillingType.values.elementAt(index);
-                return CustomCheckboxTile(
-                  label: type.label,
-                  value: type == notifier.fillingType,
-                  onTap: () => notifier.selectFillingType(type),
-                );
-              },
-            ),
+            children: List.generate(FillingType.values.length, (index) {
+              FillingType type = FillingType.values.elementAt(index);
+              return CustomCheckboxTile(
+                label: type.label,
+                value: type == notifier.fillingType,
+                onTap: () => notifier.selectFillingType(type),
+              );
+            }),
           ),
           _UserField(),
-          Expanded(
-            child: _FillingListView(notifier: notifier),
-          ),
+          Expanded(child: _FillingListView(notifier: notifier)),
         ],
       ),
     );
@@ -82,10 +77,7 @@ class NewFillingListView extends StatelessWidget {
 
   void _onClose(BuildContext context, NewFillingListNotifier notifier) {
     if (notifier.objects.isNotEmpty) {
-      MessageUtils.showConfirmExitDialog(
-        context: context,
-        onConfirm: () => context.pop(false),
-      );
+      MessageUtils.showConfirmExitDialog(context: context, onConfirm: () => context.pop(false));
     } else {
       context.pop(false);
     }
@@ -101,7 +93,7 @@ class _UserField extends StatelessWidget {
 
     return DialogInputField<User>(
       label: 'Dolum Yapacak Kullanıcı',
-      future: () => context.read<IUserRepository>().getUsers(),
+      future: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
       initialValue: notifier.user,
       labelBuilder: (value) => value?.fullName,
       onSelected: (value) => notifier.selectUser(value),
@@ -117,9 +109,7 @@ class _FillingListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (notifier.isLoading(notifier.fetchOp)) {
-      return const Center(
-        child: CircularProgressIndicator.adaptive(),
-      );
+      return const Center(child: CircularProgressIndicator.adaptive());
     }
 
     if (notifier.allItems.isEmpty) {

@@ -2,7 +2,7 @@ import '../../../../core/core.dart';
 import '../../../service/domain/entity/service.dart';
 import '../../../warehouse/domain/entity/warehouse.dart';
 import '../../../medicine/domain/entity/medicine.dart';
-import '../../../user/user.dart';
+
 import '../../data/model/stock_transaction_dto.dart';
 
 class StockTransaction implements TableData {
@@ -60,21 +60,15 @@ class StockTransaction implements TableData {
 
   @override
   List get content => [
-        sendDate?.formattedDate,
-        medicine?.name.toString(),
-        expirationDate?.formattedDate,
-        quantity?.toCustomString(),
-        service?.name,
-      ];
+    sendDate?.formattedDate,
+    medicine?.name.toString(),
+    expirationDate?.formattedDate,
+    quantity?.toCustomString(),
+    service?.name,
+  ];
 
   @override
-  List<String?> get titles => [
-        'Tarih',
-        'Malzeme',
-        'Son Kullanma Tarihi',
-        'Miktar',
-        'Servis',
-      ];
+  List<String?> get titles => ['Tarih', 'Malzeme', 'Son Kullanma Tarihi', 'Miktar', 'Servis'];
 
   @override
   List get rawContent => [sendDate, medicine?.name.toString(), expirationDate, quantity];

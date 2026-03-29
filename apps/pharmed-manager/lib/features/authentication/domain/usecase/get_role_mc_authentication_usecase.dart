@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 
-import '../../../role/domain/entity/role.dart';
 import '../entity/role_medical_consumable_authentication.dart';
 import '../repository/i_role_authentication_repository.dart';
 

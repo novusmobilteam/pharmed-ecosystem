@@ -1,6 +1,7 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../../cabin/data/model/drawer_cell_dto.dart';
 import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
-import '../../../user/user.dart';
 import '../../domain/entity/filling_detail.dart';
 import '../../../cabin/data/model/drawer_unit_dto.dart';
 import '../../../cabin_assignment/data/model/cabin_assignment_dto.dart';
@@ -48,8 +49,9 @@ class FillingDetailDTO {
       medicineId: json['materialId'] as int?,
       medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
       cabinDrawer: json['cabinDrawr'] != null ? DrawerUnitDTO.fromJson(json['cabinDrawr']) : null,
-      cabinAssignment:
-          json['cabinDrawrQuantity'] != null ? CabinAssignmentDTO.fromJson(json['cabinDrawrQuantity']) : null,
+      cabinAssignment: json['cabinDrawrQuantity'] != null
+          ? CabinAssignmentDTO.fromJson(json['cabinDrawrQuantity'])
+          : null,
       quantity: json['quantity'] as num?,
       fillingQuantity: json['fiilingQuantity'] as num?,
       fillingDate: json['fiilingDate'] != null ? DateTime.parse(json['fiilingDate'] as String) : null,
@@ -94,7 +96,7 @@ class FillingDetailDTO {
       fillingQuantity: fillingQuantity,
       fillingDate: fillingDate,
       fillingUserId: fillingUserId,
-      fillingUser: fillingUser?.toEntity(),
+      fillingUser: const UserMapper().toEntityOrNull(fillingUser),
       isEdit: isEdit,
       cabinDrawerDetail: cabinDrawerDetail?.map((c) => c.toEntity()).toList(),
       stocks: stocks?.map((c) => c.toEntity()).toList(),
@@ -120,29 +122,6 @@ class FillingDetailDTO {
       medicineId: medicineId ?? this.medicineId,
       quantity: quantity ?? this.quantity,
       fillingQuantity: fillingQuantity ?? this.fillingQuantity,
-    );
-  }
-
-  /// Mock factory for test data generation
-  static FillingDetailDTO mockFactory(int id, {bool withNested = true}) {
-    final fillingListId = ((id - 1) ~/ 10) + 1;
-    final materialId = ((id - 1) % 20) + 1;
-    final drawerId = ((id - 1) % 50) + 1;
-    final userId = ((id - 1) % 10) + 1;
-    final date = DateTime.now().subtract(Duration(hours: id));
-
-    return FillingDetailDTO(
-      id: id,
-      fillingListId: fillingListId,
-      medicineId: materialId,
-      cabinDrawer: withNested ? DrawerUnitDTO.mockFactory(drawerId, withNested: false) : null,
-      cabinAssignment: withNested ? CabinAssignmentDTO.mockFactory(id, withNested: false) : null,
-      quantity: (id * 5) % 50,
-      fillingQuantity: (id * 5) % 50,
-      fillingDate: date,
-      fillingUserId: userId,
-      fillingUser: withNested ? UserDTO.mockFactory(userId) : null,
-      isEdit: false,
     );
   }
 }

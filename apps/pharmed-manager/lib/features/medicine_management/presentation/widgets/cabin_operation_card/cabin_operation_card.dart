@@ -4,7 +4,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../core/core.dart';
 import '../../../../../core/widgets/info_chip.dart';
 import '../../../../station/domain/entity/station.dart';
-import '../../../../user/user.dart';
 import '../../../domain/entity/cabin_operation_item.dart';
 import 'cabin_operation_dose_badge.dart';
 import 'cabin_operation_witness_section.dart';
@@ -49,14 +48,14 @@ class CabinOperationCard extends StatelessWidget {
     final Color cardColor = isCompleted
         ? Colors.green.withValues(alpha: 0.07)
         : isSelected
-            ? colorScheme.primaryContainer.withValues(alpha: 0.25)
-            : colorScheme.surface;
+        ? colorScheme.primaryContainer.withValues(alpha: 0.25)
+        : colorScheme.surface;
 
     final Color borderColor = isCompleted
         ? Colors.green.withValues(alpha: 0.35)
         : isSelected
-            ? colorScheme.primary
-            : colorScheme.outlineVariant.withValues(alpha: 0.4);
+        ? colorScheme.primary
+        : colorScheme.outlineVariant.withValues(alpha: 0.4);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -79,18 +78,11 @@ class CabinOperationCard extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 2.0),
-                    child: _SelectionIcon(
-                      isCompleted: isCompleted,
-                      isSelected: isSelected,
-                    ),
+                    child: _SelectionIcon(isCompleted: isCompleted, isSelected: isSelected),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _MedicineHeader(
-                      item: item,
-                      isSelected: isSelected,
-                      isCompleted: isCompleted,
-                    ),
+                    child: _MedicineHeader(item: item, isSelected: isSelected, isCompleted: isCompleted),
                   ),
                   const SizedBox(width: 8),
                   CabinOperationDoseBadge(item: item),
@@ -136,11 +128,7 @@ class _SelectionIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isCompleted) {
-      return Icon(
-        PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
-        color: Colors.green,
-        size: 28,
-      );
+      return Icon(PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), color: Colors.green, size: 28);
     }
     return Icon(
       isSelected ? PhosphorIcons.checkCircle(PhosphorIconsStyle.fill) : PhosphorIcons.circle(),
@@ -155,11 +143,7 @@ class _MedicineHeader extends StatelessWidget {
   final bool isSelected;
   final bool isCompleted;
 
-  const _MedicineHeader({
-    required this.item,
-    required this.isSelected,
-    required this.isCompleted,
-  });
+  const _MedicineHeader({required this.item, required this.isSelected, required this.isCompleted});
 
   @override
   Widget build(BuildContext context) {
@@ -179,19 +163,13 @@ class _MedicineHeader extends StatelessWidget {
                 ),
               ),
             ),
-            if (item.status != null) ...[
-              const SizedBox(width: 8),
-              PrescriptionStatusBadge(status: item.status!),
-            ],
+            if (item.status != null) ...[const SizedBox(width: 8), PrescriptionStatusBadge(status: item.status!)],
           ],
         ),
         const SizedBox(height: 2),
         Text(
           'Barkod: ${item.medicine?.barcode ?? '-'}',
-          style: context.textTheme.bodySmall?.copyWith(
-            color: context.theme.hintColor,
-            letterSpacing: 0.5,
-          ),
+          style: context.textTheme.bodySmall?.copyWith(color: context.theme.hintColor, letterSpacing: 0.5),
         ),
         // Reçete uyarı chip'leri
         if (item.hasWarnings) ...[
@@ -236,18 +214,12 @@ class _MetaInfoSection extends StatelessWidget {
               value: displayDate != null ? '${displayDate.formattedDate} ${displayDate.formattedTime}' : '--',
             ),
             const SizedBox(height: 2),
-            CabinOperationInfoChip(
-              title: 'Alan Kişi',
-              value: appUser?.fullName ?? '-',
-            ),
+            CabinOperationInfoChip(title: 'Alan Kişi', value: appUser?.fullName ?? '-'),
           ],
         ),
         // İade tipini sadece refund'da göster
         if (item.operationType == CabinOperationType.refund && item.medicine?.returnType != null)
-          CabinOperationInfoChip(
-            title: 'İade Tipi',
-            value: item.medicine!.returnType!.label,
-          ),
+          CabinOperationInfoChip(title: 'İade Tipi', value: item.medicine!.returnType!.label),
       ],
     );
   }
@@ -259,10 +231,10 @@ class _CompletedSection extends StatelessWidget {
   const _CompletedSection({required this.operationType});
 
   String get _label => switch (operationType) {
-        CabinOperationType.refund => 'İade Tamamlandı',
-        CabinOperationType.disposal => 'Fire/İmha Tamamlandı',
-        CabinOperationType.withdraw => 'Alım Tamamlandı',
-      };
+    CabinOperationType.refund => 'İade Tamamlandı',
+    CabinOperationType.disposal => 'Fire/İmha Tamamlandı',
+    CabinOperationType.withdraw => 'Alım Tamamlandı',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -277,18 +249,11 @@ class _CompletedSection extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
-              color: Colors.green,
-              size: 16,
-            ),
+            Icon(PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), color: Colors.green, size: 16),
             const SizedBox(width: 8),
             Text(
               _label,
-              style: context.textTheme.labelSmall?.copyWith(
-                color: Colors.green[800],
-                fontWeight: FontWeight.w600,
-              ),
+              style: context.textTheme.labelSmall?.copyWith(color: Colors.green[800], fontWeight: FontWeight.w600),
             ),
           ],
         ),

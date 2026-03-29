@@ -1,7 +1,9 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../../cabin/domain/entity/drawer_slot.dart';
 import '../../../cabin/domain/entity/drawer_unit.dart';
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../user/user.dart';
+
 import '../../../cabin/domain/entity/drawer_type.dart';
 import '../../../cabin/domain/entity/drawer_config.dart';
 import '../../data/model/patient_medicine_withdraw_item_dto.dart';
@@ -53,7 +55,7 @@ extension MedicineWithdrawMapper on PatientMedicineWithdrawItemDTO {
       dosePiece: dosePiece ?? 0,
       assignment: _buildLegacyDrawerObject(),
       applicationDate: applicationDate,
-      applicationUser: applicationUser?.toEntity(),
+      applicationUser: const UserMapper().toEntityOrNull(applicationUser),
     );
   }
 
@@ -75,11 +77,7 @@ extension MedicineWithdrawMapper on PatientMedicineWithdrawItemDTO {
     final int capacity = rawDetail?.numberOfSteps ?? 1; // Standart için adım sayısı
 
     // En dipteki 'Drawr' (Tip tanımı)
-    final drawerType = DrawerType(
-      id: rawRootDrawer?.id ?? 0,
-      name: rawRootDrawer?.name ?? "",
-      isKubik: isKubik,
-    );
+    final drawerType = DrawerType(id: rawRootDrawer?.id ?? 0, name: rawRootDrawer?.name ?? "", isKubik: isKubik);
 
     // Detay (Kapasite bilgisi)
     final drawerDetail = DrawerConfig(
@@ -90,11 +88,7 @@ extension MedicineWithdrawMapper on PatientMedicineWithdrawItemDTO {
     );
 
     // Tasarım (Adres/Row bilgisi)
-    final cabinDesign = DrawerSlot(
-      id: rawDesign?.id ?? 0,
-      address: addressRow,
-      drawerConfig: drawerDetail,
-    );
+    final cabinDesign = DrawerSlot(id: rawDesign?.id ?? 0, address: addressRow, drawerConfig: drawerDetail);
 
     // Çekmece/Göz (Port ve OrderNo bilgisi)
     final newCabinDrawer = DrawerUnit(
@@ -104,9 +98,6 @@ extension MedicineWithdrawMapper on PatientMedicineWithdrawItemDTO {
       drawerSlot: cabinDesign,
     );
 
-    return CabinAssignment(
-      id: id ?? 0,
-      drawerUnit: newCabinDrawer,
-    );
+    return CabinAssignment(id: id ?? 0, drawerUnit: newCabinDrawer);
   }
 }

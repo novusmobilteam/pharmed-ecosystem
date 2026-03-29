@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../../user/user.dart';
-
 class UserTableNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<User> {
   final GetUsersUseCase _getUsersUseCase;
 

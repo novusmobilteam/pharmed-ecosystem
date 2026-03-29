@@ -1,7 +1,6 @@
 import '../../../../core/core.dart';
 import '../../../service/domain/entity/service.dart';
 import '../../../medicine/domain/entity/medicine.dart';
-import '../../../user/user.dart';
 import '../../data/model/prescription_item_dto.dart';
 import 'prescription.dart';
 
@@ -305,17 +304,17 @@ class PrescriptionItem implements TableData, Selectable {
       deleteDescription: deleteDescription,
       approvalDate: approvalDate,
       approvalUserId: approvalUserId,
-      approvalUser: approvalUser?.toDTO(),
+      approvalUser: const UserMapper().toDtoOrNull(approvalUser),
       cancelDate: cancelDate,
       cancelUserId: cancelUserId,
-      cancelUser: cancelUser?.toDTO(),
+      cancelUser: const UserMapper().toDtoOrNull(cancelUser),
       removed: removed,
       applicationDate: applicationDate,
       applicationUserId: applicationUserId,
-      applicationUser: applicationUser?.toDTO(),
+      applicationUser: const UserMapper().toDtoOrNull(applicationUser),
       returnDate: returnDate,
       returnUserId: returnUserId,
-      returnUser: returnUser?.toDTO(),
+      returnUser: const UserMapper().toDtoOrNull(returnUser),
       returnQuantity: returnQuantity,
       barcode: barcode,
       sutCode: sutCode,
@@ -332,66 +331,66 @@ class PrescriptionItem implements TableData, Selectable {
 
   @override
   List<dynamic> get content => [
-        barcode?.toCustomString(),
-        medicine?.name,
-        (firstDoseEmergency ?? false) ? 'Evet' : 'Hayır',
-        (askDoctor ?? false) ? 'Evet' : 'Hayır',
-        (inCaseOfNecessity ?? false) ? 'Evet' : 'Hayır',
-        prescriptionDate?.formattedDate ?? '',
-        time?.formattedTime ?? times?.map((t) => t.formattedTime).join(', ') ?? '',
-        dosePiece?.toCustomString() ?? '',
-        approvalDate?.formattedDate ?? '',
-        approvalUser?.fullName ?? '',
-        cancelDate?.formattedDate ?? '',
-        cancelUser?.fullName ?? '',
-        applicationDate?.formattedDate ?? '',
-        applicationUser?.fullName ?? '',
-        returnUser?.fullName ?? '',
-        returnQuantity?.toCustomString() ?? '',
-        returnDate?.formattedDate ?? '',
-      ];
+    barcode?.toCustomString(),
+    medicine?.name,
+    (firstDoseEmergency ?? false) ? 'Evet' : 'Hayır',
+    (askDoctor ?? false) ? 'Evet' : 'Hayır',
+    (inCaseOfNecessity ?? false) ? 'Evet' : 'Hayır',
+    prescriptionDate?.formattedDate ?? '',
+    time?.formattedTime ?? times?.map((t) => t.formattedTime).join(', ') ?? '',
+    dosePiece?.toCustomString() ?? '',
+    approvalDate?.formattedDate ?? '',
+    approvalUser?.fullName ?? '',
+    cancelDate?.formattedDate ?? '',
+    cancelUser?.fullName ?? '',
+    applicationDate?.formattedDate ?? '',
+    applicationUser?.fullName ?? '',
+    returnUser?.fullName ?? '',
+    returnQuantity?.toCustomString() ?? '',
+    returnDate?.formattedDate ?? '',
+  ];
 
   @override
   List get rawContent => [
-        medicine?.barcode,
-        medicine?.name,
-        firstDoseEmergency,
-        askDoctor,
-        inCaseOfNecessity,
-        prescriptionDate,
-        time ?? times,
-        dosePiece,
-        approvalDate,
-        approvalUser,
-        cancelDate,
-        cancelUser,
-        applicationDate,
-        applicationUser,
-        returnUser,
-        returnQuantity,
-        returnDate,
-      ];
+    medicine?.barcode,
+    medicine?.name,
+    firstDoseEmergency,
+    askDoctor,
+    inCaseOfNecessity,
+    prescriptionDate,
+    time ?? times,
+    dosePiece,
+    approvalDate,
+    approvalUser,
+    cancelDate,
+    cancelUser,
+    applicationDate,
+    applicationUser,
+    returnUser,
+    returnQuantity,
+    returnDate,
+  ];
 
   @override
   List<String> get titles => [
-        'Barkod/SUT',
-        'Malzeme',
-        'İlk Doz Acil',
-        'Doktora Sor',
-        'Lüzumu Halinde',
-        'Tarih',
-        'Saat',
-        'Miktar',
-        'Onay Tarihi',
-        'Onaylayan',
-        'İptal Tarihi',
-        'İptal Eden',
-        'Uygulama Tarihi',
-        'Uygulayan',
-        'İade Eden',
-        'İade Miktar',
-        'İade Tarihi',
-      ];
+    'Barkod/SUT',
+    'Malzeme',
+    'İlk Doz Acil',
+    'Doktora Sor',
+    'Lüzumu Halinde',
+    'Tarih',
+    'Saat',
+    'Miktar',
+    'Onay Tarihi',
+    'Onaylayan',
+    'İptal Tarihi',
+    'İptal Eden',
+    'Uygulama Tarihi',
+    'Uygulayan',
+    'İade Eden',
+    'İade Miktar',
+    'İade Tarihi',
+  ];
 
   @override
   String? get subtitle => medicine?.barcode ?? '-';
@@ -418,24 +417,24 @@ enum PrescriptionColumn {
 
 extension PrescriptionColumnX on PrescriptionColumn {
   String get label => switch (this) {
-        PrescriptionColumn.medicine => 'İlaç',
-        PrescriptionColumn.dose => 'Doz',
-        PrescriptionColumn.applicationUser => 'Uygulayan',
-        PrescriptionColumn.appliedQuantity => 'Uygulanan Miktar',
-        PrescriptionColumn.applicationDate => 'Uygulama Tarihi',
-        PrescriptionColumn.returnUser => 'İade Eden',
-        PrescriptionColumn.returnQuantity => 'İade Edilen Miktar',
-        PrescriptionColumn.returnDate => 'İade Tarihi',
-        PrescriptionColumn.wastageUser => 'Fire Eden',
-        PrescriptionColumn.wastageDate => 'Fire Tarihi',
-        PrescriptionColumn.destructionUser => 'İmha Eden',
-        PrescriptionColumn.destructionDate => 'İmha Tarihi',
-        PrescriptionColumn.status => 'Durum',
-      };
+    PrescriptionColumn.medicine => 'İlaç',
+    PrescriptionColumn.dose => 'Doz',
+    PrescriptionColumn.applicationUser => 'Uygulayan',
+    PrescriptionColumn.appliedQuantity => 'Uygulanan Miktar',
+    PrescriptionColumn.applicationDate => 'Uygulama Tarihi',
+    PrescriptionColumn.returnUser => 'İade Eden',
+    PrescriptionColumn.returnQuantity => 'İade Edilen Miktar',
+    PrescriptionColumn.returnDate => 'İade Tarihi',
+    PrescriptionColumn.wastageUser => 'Fire Eden',
+    PrescriptionColumn.wastageDate => 'Fire Tarihi',
+    PrescriptionColumn.destructionUser => 'İmha Eden',
+    PrescriptionColumn.destructionDate => 'İmha Tarihi',
+    PrescriptionColumn.status => 'Durum',
+  };
 
   int get flex => switch (this) {
-        PrescriptionColumn.medicine => 4,
-        PrescriptionColumn.status => 2,
-        _ => 2,
-      };
+    PrescriptionColumn.medicine => 4,
+    PrescriptionColumn.status => 2,
+    _ => 2,
+  };
 }

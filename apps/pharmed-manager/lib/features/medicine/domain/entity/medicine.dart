@@ -3,7 +3,6 @@ import '../../../drug_type/domain/entity/drug_type.dart';
 import '../../../material_type/domain/entity/material_type.dart';
 import '../../../station/domain/entity/station.dart';
 import '../../../unit/domain/entity/unit.dart';
-import '../../../user/domain/entity/user.dart';
 
 import '../../../../core/core.dart';
 import '../../../dosage_form/domain/entity/dosage_form.dart';
@@ -16,11 +15,7 @@ part 'medical_consumable.dart';
 /// Tek üst entity: ilaç da olabilir sarf da.
 /// UI ve iş kuralları katmanında union gibi kullanman için 'when' sağlıyor.
 sealed class Medicine extends Selectable implements TableData {
-  Medicine({
-    required super.title,
-    super.subtitle,
-    super.id,
-  });
+  Medicine({required super.title, super.subtitle, super.id});
 
   bool get isDrug {
     final self = this;
@@ -85,70 +80,53 @@ sealed class Medicine extends Selectable implements TableData {
 
   @override
   List<String?> get titles => const [
-        'Barkod',
-        'ATC Kodu',
-        'Adı',
-        'Malzeme Türü',
-        'Reçete Tipi',
-        'Sayım Tipi',
-        'Alım Şekli',
-        'İade Şekli',
-        'Aktif',
-      ];
+    'Barkod',
+    'ATC Kodu',
+    'Adı',
+    'Malzeme Türü',
+    'Reçete Tipi',
+    'Sayım Tipi',
+    'Alım Şekli',
+    'İade Şekli',
+    'Aktif',
+  ];
 
   @override
   List<String?> get content => when(
-        drug: (d) => [
-          d.barcode,
-          d.atcCode?.toCustomString(),
-          d.name,
-          'İlaç',
-          d.prescriptionType.label,
-          d.countType.label,
-          d.purchaseType.label,
-          d.returnType?.label,
-          d.status.label,
-        ],
-        consumable: (m) => [
-          m.barcode,
-          '',
-          m.name,
-          'Tıbbi Sarf',
-          '',
-          m.countType?.label,
-          m.purchaseType?.label,
-          m.returnType?.label,
-          m.status.label,
-        ],
-      );
+    drug: (d) => [
+      d.barcode,
+      d.atcCode?.toCustomString(),
+      d.name,
+      'İlaç',
+      d.prescriptionType.label,
+      d.countType.label,
+      d.purchaseType.label,
+      d.returnType?.label,
+      d.status.label,
+    ],
+    consumable: (m) => [
+      m.barcode,
+      '',
+      m.name,
+      'Tıbbi Sarf',
+      '',
+      m.countType?.label,
+      m.purchaseType?.label,
+      m.returnType?.label,
+      m.status.label,
+    ],
+  );
 
-  static Medicine? fromIdAndName({
-    int? id,
-    String? name,
-    required bool isMaterial,
-    String? barcode,
-  }) {
+  static Medicine? fromIdAndName({int? id, String? name, required bool isMaterial, String? barcode}) {
     // Eğer entity_barrel.dart'tan kaçınmak istiyorsak:
     if (isMaterial) {
-      return Drug(
-        id: id,
-        name: name,
-        barcode: barcode,
-      );
+      return Drug(id: id, name: name, barcode: barcode);
     } else {
-      return MedicalConsumable(
-        id: id,
-        name: name,
-        status: Status.active,
-        barcode: barcode,
-      );
+      return MedicalConsumable(id: id, name: name, status: Status.active, barcode: barcode);
     }
   }
 
-  T when<T>({
-    required T Function(Drug drug) drug,
-    required T Function(MedicalConsumable consumable) consumable,
-  }) {
+  T when<T>({required T Function(Drug drug) drug, required T Function(MedicalConsumable consumable) consumable}) {
     final self = this;
 
     if (self.runtimeType == Drug) {
@@ -165,10 +143,7 @@ sealed class Medicine extends Selectable implements TableData {
   }
 
   MedicineDTO toDTO() {
-    return when(
-      drug: (drug) => drug.toDto(),
-      consumable: (consumable) => consumable.toDto(),
-    );
+    return when(drug: (drug) => drug.toDto(), consumable: (consumable) => consumable.toDto());
   }
 }
 

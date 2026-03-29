@@ -17,7 +17,6 @@
 import 'package:dio/dio.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../user/datasource/user_datasource.dart';
 import '../datasource/auth_cache_datasource.dart';
 import '../datasource/auth_remote_datasource.dart';
 
@@ -25,14 +24,14 @@ class AuthRepositoryImpl implements IAuthRepository {
   const AuthRepositoryImpl({
     required IAuthRemoteDataSource remoteDataSource,
     required IAuthCacheDataSource cacheDataSource,
-    required IUserDataSource userDataSource,
+    required IUserReader userReader,
   }) : _remote = remoteDataSource,
        _cache = cacheDataSource,
-       _user = userDataSource;
+       _user = userReader;
 
   final IAuthRemoteDataSource _remote;
   final IAuthCacheDataSource _cache;
-  final IUserDataSource _user;
+  final IUserReader _user;
 
   @override
   Future<Result<AuthToken>> login({required String email, required String password, String? macAddress}) async {
@@ -64,7 +63,9 @@ class AuthRepositoryImpl implements IAuthRepository {
         id: userDto.id ?? 0,
         email: userDto.email ?? email,
         fullName: [userDto.name, userDto.surname].whereType<String>().join(' ').trim(),
-        role: userDto.role ?? '',
+        role: userDto.role?.name ?? '',
+        isAdmin: userDto.isAdmin ?? false,
+        isNotOrdered: userDto.isNotOrdered,
       );
 
       // 5. User'ı cache'e yaz

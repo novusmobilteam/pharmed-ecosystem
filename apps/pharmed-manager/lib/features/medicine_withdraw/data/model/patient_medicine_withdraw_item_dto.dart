@@ -1,7 +1,8 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../../cabin/data/model/drawer_unit_dto.dart';
 import '../../../hospitalization/data/model/hospitalization_dto.dart';
 import '../../../patient/data/model/patient_dto.dart';
-import '../../../user/user.dart';
 
 class PatientMedicineWithdrawItemDTO {
   final int? id;

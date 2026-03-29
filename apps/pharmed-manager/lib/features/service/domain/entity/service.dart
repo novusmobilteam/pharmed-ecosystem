@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../user/user.dart';
 import '../../../branch/domain/entity/branch.dart';
 import '../../data/model/service_dto.dart';
 
@@ -9,13 +8,7 @@ class HospitalService extends Selectable implements TableData {
   final User? user;
   final bool isActive;
 
-  HospitalService({
-    super.id,
-    this.name,
-    this.branch,
-    this.user,
-    this.isActive = true,
-  }) : super(title: name.toString());
+  HospitalService({super.id, this.name, this.branch, this.user, this.isActive = true}) : super(title: name.toString());
 
   Status get status => isActive ? Status.active : Status.passive;
 
@@ -24,12 +17,12 @@ class HospitalService extends Selectable implements TableData {
 
   @override
   List<String?> get content => [
-        id?.toCustomString(),
-        name ?? '-',
-        branch?.name ?? '-',
-        user?.name ?? "-",
-        status.label,
-      ];
+    id?.toCustomString(),
+    name ?? '-',
+    branch?.name ?? '-',
+    user?.name ?? "-",
+    status.label,
+  ];
 
   @override
   List get rawContent => content;
@@ -42,19 +35,10 @@ class HospitalService extends Selectable implements TableData {
     final hasName = name != null && name.trim().isNotEmpty;
     if (!hasId && !hasName) return null;
 
-    return HospitalService(
-      id: id,
-      name: name,
-    );
+    return HospitalService(id: id, name: name);
   }
 
-  HospitalService copyWith({
-    int? id,
-    String? name,
-    Branch? branch,
-    User? user,
-    bool? isActive,
-  }) {
+  HospitalService copyWith({int? id, String? name, Branch? branch, User? user, bool? isActive}) {
     return HospitalService(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -65,12 +49,12 @@ class HospitalService extends Selectable implements TableData {
   }
 
   ServiceDTO toDTO() => ServiceDTO(
-        id: id,
-        name: name,
-        branchId: branch?.id,
-        branch: branch?.toDTO(),
-        userId: user?.id,
-        user: user?.toDTO(),
-        isActive: isActive,
-      );
+    id: id,
+    name: name,
+    branchId: branch?.id,
+    branch: branch?.toDTO(),
+    userId: user?.id,
+    user: const UserMapper().toDtoOrNull(user),
+    isActive: isActive,
+  );
 }

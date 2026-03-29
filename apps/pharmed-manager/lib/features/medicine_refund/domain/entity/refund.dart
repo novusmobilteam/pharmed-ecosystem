@@ -3,7 +3,6 @@ import '../../../medicine/domain/entity/medicine.dart';
 import '../../../patient/domain/entity/patient.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
 import '../../../station/domain/entity/station.dart';
-import '../../../user/user.dart';
 
 class Refund implements TableData {
   final int? id;
@@ -27,36 +26,28 @@ class Refund implements TableData {
 
   @override
   List<String?> get content => [
-        patient?.id?.toCustomString(),
-        patient?.fullName,
-        user,
-        medicine?.name,
-        quantity?.formatFractional,
-        receiveDate?.formattedDate,
-        description,
-      ];
+    patient?.id?.toCustomString(),
+    patient?.fullName,
+    user,
+    medicine?.name,
+    quantity?.formatFractional,
+    receiveDate?.formattedDate,
+    description,
+  ];
 
   @override
-  List<String?> get titles => [
-        'Hasta Kodu',
-        'Hasta',
-        'Kullanıcı',
-        'Malzeme',
-        'Miktar',
-        'Tarih',
-        'Açıklama',
-      ];
+  List<String?> get titles => ['Hasta Kodu', 'Hasta', 'Kullanıcı', 'Malzeme', 'Miktar', 'Tarih', 'Açıklama'];
 
   @override
   List get rawContent => [
-        patient?.id?.toCustomString(),
-        patient?.fullName,
-        user,
-        medicine?.name,
-        quantity?.formatFractional,
-        receiveDate?.formattedDate,
-        description,
-      ];
+    patient?.id?.toCustomString(),
+    patient?.fullName,
+    user,
+    medicine?.name,
+    quantity?.formatFractional,
+    receiveDate?.formattedDate,
+    description,
+  ];
 
   Refund({
     this.id,

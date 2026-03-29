@@ -1,4 +1,5 @@
-import '../../../user/user.dart';
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../data/model/user_menu_authentication_dto.dart';
 
 class UserMenuAuthentication {
@@ -11,13 +12,9 @@ class UserMenuAuthentication {
   /// UI’da geçici olarak değiştirilen yetki ID’leri
   final Set<int> menuIdsPending;
 
-  const UserMenuAuthentication({
-    this.id,
-    this.user,
-    Set<int>? menuIdsOriginal,
-    Set<int>? menuIdsPending,
-  })  : menuIdsOriginal = menuIdsOriginal ?? const <int>{},
-        menuIdsPending = menuIdsPending ?? const <int>{};
+  const UserMenuAuthentication({this.id, this.user, Set<int>? menuIdsOriginal, Set<int>? menuIdsPending})
+    : menuIdsOriginal = menuIdsOriginal ?? const <int>{},
+      menuIdsPending = menuIdsPending ?? const <int>{};
 
   /// Değişiklik var mı?
   bool get isDirty => menuIdsOriginal.length != menuIdsPending.length || !menuIdsOriginal.containsAll(menuIdsPending);
@@ -35,33 +32,16 @@ class UserMenuAuthentication {
 
   UserMenuAuthentication commit() => copyWith(menuIdsOriginal: {...menuIdsPending});
 
-  factory UserMenuAuthentication.fromDTO({
-    required UserMenuAuthenticationDTO? dto,
-    required User user,
-  }) {
+  factory UserMenuAuthentication.fromDTO({required UserMenuAuthenticationDTO? dto, required User user}) {
     final ids = (dto?.menuIds ?? const <int>[]).whereType<int>().toSet();
-    return UserMenuAuthentication(
-      id: dto?.id,
-      user: user,
-      menuIdsOriginal: ids,
-      menuIdsPending: {...ids},
-    );
+    return UserMenuAuthentication(id: dto?.id, user: user, menuIdsOriginal: ids, menuIdsPending: {...ids});
   }
 
   UserMenuAuthenticationDTO toDTO() {
-    return UserMenuAuthenticationDTO(
-      id: id,
-      userId: user?.id,
-      menuIds: menuIdsPending.toList(),
-    );
+    return UserMenuAuthenticationDTO(id: id, userId: user?.id, menuIds: menuIdsPending.toList());
   }
 
-  UserMenuAuthentication copyWith({
-    int? id,
-    User? user,
-    Set<int>? menuIdsOriginal,
-    Set<int>? menuIdsPending,
-  }) {
+  UserMenuAuthentication copyWith({int? id, User? user, Set<int>? menuIdsOriginal, Set<int>? menuIdsPending}) {
     return UserMenuAuthentication(
       id: id ?? this.id,
       user: user ?? this.user,

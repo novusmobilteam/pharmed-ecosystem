@@ -1,8 +1,9 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../../../medicine/domain/entity/medicine.dart';
-import '../../../user/user.dart';
 
 // İlaç Alım İşleminde hastaya reçete edilmiş ilaçlar için kullanılan model
 class MedicineWithdrawItem {
@@ -49,11 +50,7 @@ class MedicineWithdrawItem {
       medicineName: "Bilinmeyen İlaç",
       medicineBarcode: "",
       dosePiece: 0,
-      cabinAssignment: assignment ??
-          CabinAssignment.empty(
-            cabinId: 0,
-            cabinDrawerId: 0,
-          ),
+      cabinAssignment: assignment ?? CabinAssignment.empty(cabinId: 0, cabinDrawerId: 0),
     );
   }
 }

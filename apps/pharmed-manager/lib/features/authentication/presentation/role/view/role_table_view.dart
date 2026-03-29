@@ -7,7 +7,6 @@ import '../notifier/role_table_notifier.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../role/domain/entity/role.dart';
 import 'role_drug_authentication_view.dart';
 import '../notifier/role_drug_auth_notifier.dart';
 import 'role_mc_authentication_view.dart';
@@ -82,18 +81,14 @@ void showRoleMenuAuthenticationView(BuildContext context, Role role) {
           )..initialize(),
         ),
         ChangeNotifierProvider(
-          create: (context) => RoleDrugAuthNotifier(
-            role: role,
-            getAuthUseCase: context.read(),
-            saveAuthUseCase: context.read(),
-          )..initialize(),
+          create: (context) =>
+              RoleDrugAuthNotifier(role: role, getAuthUseCase: context.read(), saveAuthUseCase: context.read())
+                ..initialize(),
         ),
         ChangeNotifierProvider(
-          create: (context) => RoleMcAuthNotifier(
-            role: role,
-            getAuthUseCase: context.read(),
-            saveAuthUseCase: context.read(),
-          )..initialize(),
+          create: (context) =>
+              RoleMcAuthNotifier(role: role, getAuthUseCase: context.read(), saveAuthUseCase: context.read())
+                ..initialize(),
         ),
       ],
       child: RoleAuthenticationView(role: role),

@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../../user/user.dart';
 
 class MyPatient implements TableData {
   final int? id;
@@ -8,19 +7,9 @@ class MyPatient implements TableData {
   final User? user;
   final Hospitalization? hospitalization;
 
-  MyPatient({
-    this.id,
-    this.userId,
-    this.user,
-    this.hospitalization,
-  });
+  MyPatient({this.id, this.userId, this.user, this.hospitalization});
 
-  MyPatient copyWith({
-    int? id,
-    int? userId,
-    User? user,
-    Hospitalization? hospitalization,
-  }) {
+  MyPatient copyWith({int? id, int? userId, User? user, Hospitalization? hospitalization}) {
     return MyPatient(
       id: id ?? this.id,
       userId: userId ?? this.userId,

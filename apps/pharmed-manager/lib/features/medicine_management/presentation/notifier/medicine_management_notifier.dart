@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/storage/auth/auth.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../../../hospitalization/domain/usecase/get_filtered_hospitalizations_usecase.dart';
 import '../../../hospitalization/domain/usecase/get_hospitalizations_by_service_usecase.dart';
@@ -14,7 +13,7 @@ import '../../../urgent_patient/domain/usecase/create_urgent_patient_usecase.dar
 enum MedicineManagementType { allPatients, myPatients }
 
 class MedicineManagementNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Hospitalization> {
-  final AuthPersistence _authPersistence;
+  final AuthManagerNotifier _authPersistence;
   final GetCurrentStationUseCase _getCurrentStationUseCase;
   final CreateUrgentPatientUseCase _createUrgentPatientUseCase;
   final GetHospitalizationsByServiceUseCase _getHospitalizationsUseCase;
@@ -22,7 +21,7 @@ class MedicineManagementNotifier extends ChangeNotifier with ApiRequestMixin, Se
   final GetMyPatientsUseCase _getMyPatientsUseCase;
 
   MedicineManagementNotifier({
-    required AuthPersistence authPersistence,
+    required AuthManagerNotifier authPersistence,
     required GetCurrentStationUseCase getCurrentStationUseCase,
     required GetHospitalizationsByServiceUseCase getHospitalizationsUseCase,
     required GetFilteredHospitalizationsUseCase filteredHospitalizationsUseCase,

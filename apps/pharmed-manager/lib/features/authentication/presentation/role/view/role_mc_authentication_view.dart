@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../role/domain/entity/role.dart';
 import '../notifier/role_mc_auth_notifier.dart';
 
 class RoleMcAuthenticationView extends StatelessWidget {
@@ -15,9 +14,7 @@ class RoleMcAuthenticationView extends StatelessWidget {
     return Consumer<RoleMcAuthNotifier>(
       builder: (context, notifier, child) {
         if (notifier.isFetching) {
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
+          return const Center(child: CircularProgressIndicator.adaptive());
         }
 
         return ListView(

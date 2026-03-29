@@ -1,7 +1,7 @@
 import '../../../../core/core.dart';
 import '../../../service/domain/entity/service.dart';
 import '../../../patient/domain/entity/patient.dart';
-import '../../../user/user.dart';
+
 import 'hospitalization.dart';
 
 /// Patient ve (opsiyonel) PatientHospitalization birleşmiş satır modeli
@@ -20,19 +20,10 @@ class PatientHospitalizationRow extends Selectable implements TableData {
     this.physicalService,
     this.inpatientService,
     this.doctor,
-  }) : super(
-          title: patient.fullName,
-          subtitle: physicalService?.name,
-        );
+  }) : super(title: patient.fullName, subtitle: physicalService?.name);
 
   @override
-  List<String> get titles => const [
-        'Servis',
-        'Hasta T.C',
-        'Ad Soyad',
-        'Yatış Tarihi',
-        'Çıkış Tarihi',
-      ];
+  List<String> get titles => const ['Servis', 'Hasta T.C', 'Ad Soyad', 'Yatış Tarihi', 'Çıkış Tarihi'];
 
   @override
   List<String?> get content {
@@ -43,23 +34,17 @@ class PatientHospitalizationRow extends Selectable implements TableData {
     final admissionDate = h?.admissionDate != null ? Formatter.dateFormatter.format(h!.admissionDate!) : '-';
     final exitDate = h?.exitDate != null ? Formatter.dateFormatter.format(h!.exitDate!) : '-';
 
-    return [
-      service,
-      identity,
-      patient.fullName,
-      admissionDate,
-      exitDate,
-    ];
+    return [service, identity, patient.fullName, admissionDate, exitDate];
   }
 
   @override
   List get rawContent => [
-        inpatientService?.name,
-        patient.tcNo,
-        patient.fullName,
-        hospitalization?.admissionDate,
-        hospitalization?.exitDate
-      ];
+    inpatientService?.name,
+    patient.tcNo,
+    patient.fullName,
+    hospitalization?.admissionDate,
+    hospitalization?.exitDate,
+  ];
 
   PatientHospitalizationRow copyWith({
     Patient? patient,

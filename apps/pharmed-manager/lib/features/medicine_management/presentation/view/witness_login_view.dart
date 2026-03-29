@@ -4,7 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../user/user.dart';
+
 import '../../domain/entity/cabin_operation_item.dart';
 import '../notifier/witness_notifier.dart';
 
@@ -12,11 +12,7 @@ import '../notifier/witness_notifier.dart';
 /// Alım ve fire/imha işlemlerinde ortak kullanılır.
 /// medicine_management/presentation/view/ altında yaşar.
 class WitnessLoginView extends StatefulWidget {
-  const WitnessLoginView({
-    super.key,
-    required this.item,
-    required this.onWitnessLoggedIn,
-  });
+  const WitnessLoginView({super.key, required this.item, required this.onWitnessLoggedIn});
 
   final CabinOperationItem item;
   final Function(User user) onWitnessLoggedIn;
@@ -40,11 +36,8 @@ class _WitnessLoginViewState extends State<WitnessLoginView> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => WitnessNotifier(
-        item: widget.item,
-        loginUseCase: context.read(),
-        authPersistence: context.read(),
-      ),
+      create: (context) =>
+          WitnessNotifier(item: widget.item, loginUseCase: context.read(), authPersistence: context.read()),
       child: Consumer<WitnessNotifier>(
         builder: (context, notifier, _) {
           return CustomDialog(
@@ -62,15 +55,9 @@ class _WitnessLoginViewState extends State<WitnessLoginView> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _WitnessListSection(
-                      item: widget.item,
-                      witnesses: widget.item.witnesses,
-                    ),
+                    _WitnessListSection(item: widget.item, witnesses: widget.item.witnesses),
                     const SizedBox(height: 20),
-                    _WitnessLoginForm(
-                      usernameController: _usernameController,
-                      passwordController: _passwordController,
-                    ),
+                    _WitnessLoginForm(usernameController: _usernameController, passwordController: _passwordController),
                     const SizedBox(height: 24),
                     _ConfirmButton(
                       isLoading: notifier.isLoading(notifier.loginOp),
@@ -94,10 +81,7 @@ class _WitnessLoginViewState extends State<WitnessLoginView> {
       password: _passwordController.text,
       onSuccess: (user) {
         widget.onWitnessLoggedIn(user);
-        MessageUtils.showSuccessSnackbar(
-          context,
-          '${user.fullName} şahit olarak onaylandı.',
-        );
+        MessageUtils.showSuccessSnackbar(context, '${user.fullName} şahit olarak onaylandı.');
         context.pop(true);
       },
       onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
@@ -110,10 +94,7 @@ class _WitnessLoginViewState extends State<WitnessLoginView> {
 // =============================================================================
 
 class _WitnessListSection extends StatelessWidget {
-  const _WitnessListSection({
-    required this.item,
-    required this.witnesses,
-  });
+  const _WitnessListSection({required this.item, required this.witnesses});
 
   final CabinOperationItem item;
   final List<User> witnesses;
@@ -163,15 +144,8 @@ class _WitnessListHeader extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(7),
-          decoration: BoxDecoration(
-            color: const Color(0xFFE8F5E9),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            PhosphorIcons.shieldCheck(),
-            size: 17,
-            color: const Color(0xFF2E7D32),
-          ),
+          decoration: BoxDecoration(color: const Color(0xFFE8F5E9), borderRadius: BorderRadius.circular(10)),
+          child: Icon(PhosphorIcons.shieldCheck(), size: 17, color: const Color(0xFF2E7D32)),
         ),
         const SizedBox(width: 10),
         Text(
@@ -185,17 +159,10 @@ class _WitnessListHeader extends StatelessWidget {
         const Spacer(),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-          decoration: BoxDecoration(
-            color: const Color(0xFFE8F5E9),
-            borderRadius: BorderRadius.circular(20),
-          ),
+          decoration: BoxDecoration(color: const Color(0xFFE8F5E9), borderRadius: BorderRadius.circular(20)),
           child: Text(
             '$count kişi',
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF2E7D32),
-            ),
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF2E7D32)),
           ),
         ),
       ],
@@ -208,11 +175,7 @@ class _WitnessListHeader extends StatelessWidget {
 // =============================================================================
 
 class _WitnessCard extends StatelessWidget {
-  const _WitnessCard({
-    required this.user,
-    required this.colorIndex,
-    required this.isSelected,
-  });
+  const _WitnessCard({required this.user, required this.colorIndex, required this.isSelected});
 
   final User user;
   final int colorIndex;
@@ -258,11 +221,7 @@ class _WitnessCard extends StatelessWidget {
                 backgroundColor: colorPair[0],
                 child: Text(
                   user.fullName.substring(0, 1).toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: colorPair[1],
-                  ),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: colorPair[1]),
                 ),
               ),
               if (isSelected)
@@ -313,11 +272,7 @@ class _WitnessCard extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 3),
                     child: Text(
                       'Seçili Şahit',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: colorPair[1],
-                      ),
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: colorPair[1]),
                     ),
                   ),
               ],
@@ -350,24 +305,14 @@ class _AnyoneCanWitnessInfo extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0F4FF),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              PhosphorIcons.users(),
-              size: 16,
-              color: const Color(0xFF4B6CB7),
-            ),
+            decoration: BoxDecoration(color: const Color(0xFFF0F4FF), borderRadius: BorderRadius.circular(8)),
+            child: Icon(PhosphorIcons.users(), size: 16, color: const Color(0xFF4B6CB7)),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               'Bu işlem için herhangi bir personel şahitlik yapabilir.',
-              style: context.theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF6B7280),
-                height: 1.4,
-              ),
+              style: context.theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF6B7280), height: 1.4),
             ),
           ),
         ],
@@ -381,10 +326,7 @@ class _AnyoneCanWitnessInfo extends StatelessWidget {
 // =============================================================================
 
 class _WitnessLoginForm extends StatelessWidget {
-  const _WitnessLoginForm({
-    required this.usernameController,
-    required this.passwordController,
-  });
+  const _WitnessLoginForm({required this.usernameController, required this.passwordController});
 
   final TextEditingController usernameController;
   final TextEditingController passwordController;
@@ -423,10 +365,7 @@ class _WitnessLoginForm extends StatelessWidget {
 // =============================================================================
 
 class _ConfirmButton extends StatelessWidget {
-  const _ConfirmButton({
-    required this.isLoading,
-    required this.onPressed,
-  });
+  const _ConfirmButton({required this.isLoading, required this.onPressed});
 
   final bool isLoading;
   final VoidCallback onPressed;
@@ -438,10 +377,7 @@ class _ConfirmButton extends StatelessWidget {
       height: 54,
       child: isLoading
           ? const Center(child: CircularProgressIndicator.adaptive())
-          : PharmedButton(
-              onPressed: onPressed,
-              label: 'Şahitliği Onayla',
-            ),
+          : PharmedButton(onPressed: onPressed, label: 'Şahitliği Onayla'),
     );
   }
 }

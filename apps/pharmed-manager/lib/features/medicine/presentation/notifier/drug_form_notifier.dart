@@ -10,7 +10,6 @@ import '../../../drug_type/domain/entity/drug_type.dart';
 import '../../../station/domain/entity/station.dart';
 import '../../../firm/domain/entity/firm.dart';
 import '../../../unit/domain/entity/unit.dart';
-import '../../../user/user.dart';
 import '../../../station/domain/repository/i_station_repository.dart';
 import '../../domain/entity/medicine.dart';
 import '../../domain/usecase/create_medicine_usecase.dart';
@@ -28,7 +27,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
     required UpdateMedicineUseCase updateMedicineUseCase,
     required GetDrugUseCase getDrugUseCase,
     required GetActiveIngredientsUseCase getActiveIngredientsUseCase,
-    required IUserRepository userRepository,
+    required IUserManager userRepository,
     required IStationRepository stationRepository,
     Drug? drug,
   }) : _createMedicineUseCase = createMedicineUseCase,

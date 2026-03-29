@@ -6,7 +6,6 @@ import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 import '../../../medicine_management/domain/repository/i_medicine_management_repository.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
 import '../../../station/domain/entity/station.dart';
-import '../../../user/user.dart';
 import '../mapper/prescription_item_mapper.dart';
 
 class GetDisposablesUseCase implements UseCase<List<CabinOperationItem>, int> {

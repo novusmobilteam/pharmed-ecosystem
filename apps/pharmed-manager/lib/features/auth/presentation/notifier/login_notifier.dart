@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/storage/auth/auth.dart';
 import '../../../../core/utils/device_info.dart';
-import '../../../user/user.dart';
 
 class LoginNotifier extends ChangeNotifier with ApiRequestMixin {
   final LoginUseCase _loginUseCase;
   final GetCurrentUserUseCase _getCurrentUserUseCase;
-  final AuthStorageNotifier _authStorage;
+  final AuthManagerNotifier _authStorage;
 
   // Operation Keys
   static const loginOperation = OperationKey.custom('login');
@@ -26,7 +24,7 @@ class LoginNotifier extends ChangeNotifier with ApiRequestMixin {
   LoginNotifier({
     required LoginUseCase loginUseCase,
     required GetCurrentUserUseCase getCurrentUserUseCase,
-    required AuthStorageNotifier authStorageNotifier,
+    required AuthManagerNotifier authStorageNotifier,
   }) : _loginUseCase = loginUseCase,
        _getCurrentUserUseCase = getCurrentUserUseCase,
        _authStorage = authStorageNotifier;
@@ -59,7 +57,7 @@ class LoginNotifier extends ChangeNotifier with ApiRequestMixin {
         final loginResult = await _loginUseCase(params);
         return await loginResult.when(
           error: (error) async {
-            await _authStorage.clearAuth();
+            await _authStorage.logout();
 
             return Result.error(error);
           },
@@ -70,7 +68,7 @@ class LoginNotifier extends ChangeNotifier with ApiRequestMixin {
             return userResult.when(
               ok: (userData) => const Result.ok(null),
               error: (error) {
-                _authStorage.clearAuth();
+                _authStorage.logout();
                 return Result.error(error);
               },
             );

@@ -41,8 +41,9 @@ class CabinStockDTO {
       shelfNo: json['shelfNo'],
       miadDate: json['miadDate'] != null ? DateTime.tryParse(json['miadDate']) : null,
       medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
-      cabinDrawerQuantity:
-          json['cabinDrawrQuantity'] != null ? CabinAssignmentDTO.fromJson(json['cabinDrawrQuantity']) : null,
+      cabinDrawerQuantity: json['cabinDrawrQuantity'] != null
+          ? CabinAssignmentDTO.fromJson(json['cabinDrawrQuantity'])
+          : null,
       cabinDrawerDetail: json['cabinDrawrDetail'] != null ? DrawerCellDTO.fromJson(json['cabinDrawrDetail']) : null,
     );
   }
@@ -98,40 +99,6 @@ class CabinStockDTO {
       medicine: medicine ?? this.medicine,
       cabinDrawerQuantity: cabinDrawerQuantity ?? this.cabinDrawerQuantity,
       cabinDrawerDetail: cabinDrawerDetail ?? this.cabinDrawerDetail,
-    );
-  }
-
-  /// Mock factory for test data generation
-  static CabinStockDTO mockFactory(
-    int id, {
-    int? cabinId,
-    int? cabinDrawerId,
-    int? materialId,
-    bool withNested = true,
-  }) {
-    final effectiveCabinId = cabinId ?? ((id - 1) ~/ 10) + 1;
-    final effectiveCabinDrawerId = cabinDrawerId ?? id;
-    final effectiveMaterialId = materialId ?? ((id - 1) % 20) + 1;
-
-    return CabinStockDTO(
-      id: id,
-      cabinId: effectiveCabinId,
-      cabinDrawerId: effectiveCabinDrawerId,
-      corpartmentNo: ((id - 1) % 6) + 1,
-      shelfNo: ((id - 1) % 3) + 1,
-      quantity: 25,
-      miadDate: DateTime.now().add(Duration(days: 365)),
-      cabinDrawerQuantity: withNested
-          ? CabinAssignmentDTO.mockFactory(
-              id,
-              cabinId: effectiveCabinId,
-              cabinDrawerId: effectiveCabinDrawerId,
-              materialId: effectiveMaterialId,
-              withNested: false,
-            )
-          : null,
-      cabinDrawerDetail:
-          withNested ? DrawerCellDTO.mockFactory(id, cabinDrawerId: effectiveCabinDrawerId, withNested: false) : null,
     );
   }
 }

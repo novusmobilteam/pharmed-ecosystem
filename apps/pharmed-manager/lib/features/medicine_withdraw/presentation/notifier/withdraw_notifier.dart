@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
-import '../../../../core/storage/auth/auth.dart';
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 import '../../../station/domain/entity/station.dart';
 import '../../../station/domain/usecase/get_current_station_usecase.dart';
@@ -10,7 +9,7 @@ import '../../domain/entity/withdraw_params.dart';
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../../../medicine/domain/entity/medicine.dart';
-import '../../../user/user.dart';
+
 import '../../domain/mapper/withdraw_item_mapper.dart';
 import '../../domain/usecase/check_withdraw_usecase.dart';
 import '../../domain/usecase/complete_withdraw_usecase.dart';
@@ -19,7 +18,7 @@ import '../../domain/utils/withdraw_check_status.dart';
 
 class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   late WithdrawType _type;
-  final AuthPersistence _authPersistence;
+  final AuthManagerNotifier _authPersistence;
   final Hospitalization? _hospitalization;
   final GetWithdrawItemsUseCase _getWithdrawItemsUseCase;
   final CheckWithdrawUseCase _checkWithdrawUseCase;
@@ -38,7 +37,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     required CheckWithdrawUseCase checkWithdrawUseCase,
     required CompleteWithdrawUseCase completeWithdrawUseCase,
     required GetCurrentStationUseCase getCurrentStationUseCase,
-    required AuthPersistence authPersistence,
+    required AuthManagerNotifier authPersistence,
   }) : _checkWithdrawUseCase = checkWithdrawUseCase,
        _getWithdrawItemsUseCase = getWithdrawItemsUseCase,
        _completeWithdrawUseCase = completeWithdrawUseCase,

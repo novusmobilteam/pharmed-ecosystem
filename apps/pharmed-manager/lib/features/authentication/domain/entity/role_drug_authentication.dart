@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 import '../../../medicine/domain/entity/medicine.dart';
-import '../../../role/domain/entity/role.dart';
 import '../../data/model/role_drug_authentication_dto.dart';
 
 class RoleDrugAuthentication implements TableData {
@@ -14,14 +13,9 @@ class RoleDrugAuthentication implements TableData {
   /// Pending hücreler (UI’da geçici değişiklikler)
   final Set<DrugOp> pendingOps;
 
-  const RoleDrugAuthentication({
-    this.id,
-    this.role,
-    this.medicine,
-    Set<DrugOp>? originalOps,
-    Set<DrugOp>? pendingOps,
-  })  : originalOps = originalOps ?? const <DrugOp>{},
-        pendingOps = pendingOps ?? const <DrugOp>{};
+  const RoleDrugAuthentication({this.id, this.role, this.medicine, Set<DrugOp>? originalOps, Set<DrugOp>? pendingOps})
+    : originalOps = originalOps ?? const <DrugOp>{},
+      pendingOps = pendingOps ?? const <DrugOp>{};
 
   bool get isDirty => originalOps.length != pendingOps.length || !originalOps.containsAll(pendingOps);
 
