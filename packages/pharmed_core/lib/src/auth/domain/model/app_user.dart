@@ -10,13 +10,22 @@
 import 'package:equatable/equatable.dart';
 
 class AppUser extends Equatable {
-  const AppUser({required this.id, required this.email, required this.fullName, required this.role});
+  const AppUser({
+    required this.id,
+    required this.email,
+    required this.fullName,
+    required this.role,
+    this.isNotOrdered = false,
+    this.isAdmin = false,
+  });
 
   final int id;
   final String email;
-  final String fullName; // name + surname birleşimi
-  final String role; // role string — "Eczacı", "Hemşire" vb.
+  final String fullName;
+  final String role;
+  final bool isNotOrdered;
+  final bool isAdmin;
 
   @override
-  List<Object?> get props => [id, email, fullName, role];
+  List<Object?> get props => [id, email, fullName, role, isNotOrdered, isAdmin];
 }

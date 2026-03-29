@@ -5,8 +5,12 @@ export 'src/auth/domain/model/app_user.dart';
 export 'src/auth/domain/model/auth_token.dart';
 export 'src/auth/domain/usecase/login_use_case.dart';
 export 'src/auth/domain/usecase/logout_use_case.dart';
-export 'src/auth/repository/i_auth_repository.dart';
+export 'src/auth/domain/repository/i_auth_repository.dart';
 
+export 'src/user/user.dart';
+export 'src/role/role.dart';
+
+// Constants
 export 'src/constants/device_constants.dart';
 // Enums
 export 'src/enums/api_request_status.dart';
