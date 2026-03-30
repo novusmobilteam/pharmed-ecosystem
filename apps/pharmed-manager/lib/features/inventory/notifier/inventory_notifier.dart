@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../cabin_stock/domain/entity/cabin_stock.dart';
-import '../../cabin_stock/domain/usecase/get_current_cabin_stock_usecase.dart';
-
 class InventoryNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinStock> {
   final GetCurrentCabinStockUseCase _getCurrentCabinStockUseCase;
 

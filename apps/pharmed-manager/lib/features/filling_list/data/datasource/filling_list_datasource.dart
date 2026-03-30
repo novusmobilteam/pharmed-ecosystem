@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 import '../../../cabin/domain/entity/cabin_filling_request.dart';
-import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
 import '../model/filling_list_dto.dart';
 import '../model/filling_detail_dto.dart';
 
@@ -16,10 +15,7 @@ abstract class FillingListDataSource {
   Future<Result<void>> cancelFillingList(int fillingListId, int stationId);
 
   /// Dolum listesi oluşturan servis
-  Future<Result<void>> createFillingList(
-    List<Map<String, dynamic>> data, {
-    required int stationId,
-  });
+  Future<Result<void>> createFillingList(List<Map<String, dynamic>> data, {required int stationId});
 
   /// Dolum listesini güncelleyen servis
   Future<Result<void>> updateFillingList(
@@ -29,10 +25,7 @@ abstract class FillingListDataSource {
   });
 
   /// Dolum listesi oluşturulabilecek malzemeleri getirir
-  Future<Result<List<CabinStockDTO>>> getRefillCandidates({
-    required FillingType type,
-    required int stationId,
-  });
+  Future<Result<List<CabinStockDTO>>> getRefillCandidates({required FillingType type, required int stationId});
 
   /// Oluşturulan dolum kaydının detayını getiren istek.
   Future<Result<List<FillingDetailDTO>>> getFillingListDetail(int fillingListId);

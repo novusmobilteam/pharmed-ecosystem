@@ -1,9 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/core.dart';
-
-import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-
 import '../../../domain/entity/cabin_input_data.dart';
 
 typedef CabinOperationCallback = Future<Result> Function(List<CabinInputData> inputs);

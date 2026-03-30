@@ -1,9 +1,5 @@
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-
-import '../../../cabin_assignment/data/model/cabin_assignment_dto.dart';
-import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
 import '../../../hospitalization/data/model/hospitalization_dto.dart';
 
 import '../../../prescription/data/model/prescription_dto.dart';
@@ -110,6 +106,9 @@ class MedicineWithdrawItemDTO {
   }
 
   MedicineWithdrawItem toEntity() {
+    final ass = cabinAssignment != null
+        ? CabinAssignmentMapper().toEntity(cabinAssignment!)
+        : CabinAssignment.empty(cabinId: 0, cabinDrawerId: 0);
     return MedicineWithdrawItem(
       id: id ?? 0,
       prescriptionId: prescriptionId ?? 0,
@@ -117,7 +116,7 @@ class MedicineWithdrawItemDTO {
       medicineBarcode: medicine?.toEntity().barcode ?? "",
       dosePiece: dosePiece ?? 0,
       medicine: medicine?.toEntity(),
-      cabinAssignment: cabinAssignment?.toEntity() ?? CabinAssignment.empty(cabinId: 0, cabinDrawerId: 0),
+      cabinAssignment: ass,
       time: DateTime.tryParse(time ?? ''),
       firstDoseEmergency: firstDoseEmergency ?? false,
       askDoctor: askDoctor ?? false,
@@ -126,7 +125,7 @@ class MedicineWithdrawItemDTO {
       applicationUser: const UserMapper().toEntityOrNull(applicationUser),
       hospitalization: hospitalization?.toEntity(),
       applicationDate: applicationDate,
-      stock: cabinDrawerStock?.toEntity(),
+      stock: const CabinStockMapper().toEntityOrNull(cabinDrawerStock),
     );
   }
 }

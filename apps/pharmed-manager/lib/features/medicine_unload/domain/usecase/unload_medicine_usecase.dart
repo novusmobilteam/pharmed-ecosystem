@@ -1,7 +1,5 @@
 import '../../../../core/core.dart';
 
-import '../../../cabin_stock/domain/repository/i_cabin_stock_repository.dart';
-
 class UnloadMedicineParams {
   final int materialId;
   final int cabinDrawerDetailId;

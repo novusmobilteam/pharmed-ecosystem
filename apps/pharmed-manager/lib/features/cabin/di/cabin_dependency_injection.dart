@@ -3,19 +3,16 @@ import 'package:provider/single_child_widget.dart';
 
 import '../../../core/core.dart';
 
-import '../data/repository/mock_cabin_operation_service.dart';
-import '../domain/repository/i_cabin_operation_service.dart';
-
 import '../shared/cabin_process/notifier/cabin_status_notifier.dart';
 
 class CabinProviders {
   static List<SingleChildWidget> providers({bool isDev = false}) {
     return [
-      Provider<ICabinOperationService>(
-        create: (context) {
-          return MockCabinOperationService();
-        },
-      ),
+      // Provider<ICabinOperationService>(
+      //   create: (context) {
+      //     return MockCabinOperationService();
+      //   },
+      // ),
 
       // TODO : Versiyon gönderirken düzelt..
       // Provider<ICabinOperationService>(
@@ -47,14 +44,13 @@ class CabinProviders {
 
       Provider<GetSerumSlotsUseCase>(create: (context) => GetSerumSlotsUseCase(context.read())),
 
-      Provider<ScanCabinUseCase>(
-        create: (context) => ScanCabinUseCase(
-          cabinOperationService: context.read(),
-          serialService: context.read(),
-          cabinRepository: context.read(),
-        ),
-      ),
-
+      // Provider<ScanCabinUseCase>(
+      //   create: (context) => ScanCabinUseCase(
+      //     cabinOperationService: context.read(),
+      //     serialService: context.read(),
+      //     cabinRepository: context.read(),
+      //   ),
+      // ),
       ChangeNotifierProvider<CabinStatusNotifier>(
         create: (context) => CabinStatusNotifier(
           cabinOperationService: context.read(),

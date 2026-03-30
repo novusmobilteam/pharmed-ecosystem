@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../../medicine_refund/domain/entity/refund.dart';
 import '../../../prescription/domain/entity/prescription.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';

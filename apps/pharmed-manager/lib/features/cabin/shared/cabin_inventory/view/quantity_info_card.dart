@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 
 class QuantityInfoCard extends StatelessWidget {
   final CabinAssignment data;

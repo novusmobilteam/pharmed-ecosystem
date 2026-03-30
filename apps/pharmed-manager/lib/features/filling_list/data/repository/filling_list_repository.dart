@@ -2,7 +2,6 @@ import '../../../../core/core.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../domain/entity/filling_detail.dart';
 import '../../../cabin/domain/entity/cabin_filling_request.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../domain/repository/i_filling_list_repository.dart';
 import '../datasource/filling_list_datasource.dart';
 
@@ -24,20 +23,9 @@ class FillingListRepository implements IFillingListRepository {
   }
 
   @override
-  Future<Result<List<CabinStock>>> getRefillCandidates({
-    required FillingType type,
-    required int stationId,
-  }) async {
+  Future<Result<List<CabinStock>>> getRefillCandidates({required FillingType type, required int stationId}) async {
     final r = await _ds.getRefillCandidates(type: type, stationId: stationId);
-    return r.when(
-      ok: (list) {
-        final entities = list.map((e) => e.toEntity()).toList();
-        return Result.ok(entities);
-      },
-      error: (e) {
-        return Result.error(e);
-      },
-    );
+    return r.when(ok: (dtos) => Result.ok(CabinStockMapper().toEntityList(dtos)), error: (e) => Result.error(e));
   }
 
   @override
@@ -51,16 +39,10 @@ class FillingListRepository implements IFillingListRepository {
   }
 
   @override
-  Future<Result<void>> createFillingList(
-    List<Map<String, dynamic>> data, {
-    required int stationId,
-  }) async {
+  Future<Result<void>> createFillingList(List<Map<String, dynamic>> data, {required int stationId}) async {
     final res = await _ds.createFillingList(data, stationId: stationId);
 
-    return res.when(
-      ok: (_) => Result.ok(null),
-      error: (e) => Result.error(e),
-    );
+    return res.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
   }
 
   @override
@@ -71,10 +53,7 @@ class FillingListRepository implements IFillingListRepository {
   }) async {
     final res = await _ds.updateFillingList(data, stationId: stationId, fillingListId: fillingListId);
 
-    return res.when(
-      ok: (_) => Result.ok(null),
-      error: (e) => Result.error(e),
-    );
+    return res.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
   }
 
   @override

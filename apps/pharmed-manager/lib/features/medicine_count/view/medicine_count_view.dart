@@ -9,7 +9,6 @@ import '../../cabin/shared/cabin_assignment_picker/view/cabin_assignment_picker_
 
 import '../../cabin/shared/cabin_inventory/view/cabin_inventory_view.dart';
 import '../../cabin/shared/cabin_process/notifier/cabin_status_notifier.dart';
-import '../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../notifier/medicine_count_notifier.dart';
 
 class MedicineCountView extends StatefulWidget {

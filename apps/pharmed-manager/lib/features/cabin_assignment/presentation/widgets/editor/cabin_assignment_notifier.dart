@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../../core/core.dart';
 
 import '../../../../cabin/shared/widgets/cabin_editor/cabin_editor_mixin.dart';
-import '../../../domain/entity/cabin_assignment.dart';
-import '../../../domain/usecase/delete_assignment_usecase.dart';
-import '../../../domain/usecase/get_assignments_usecase.dart';
-import '../../../domain/usecase/update_assignment_usecase.dart';
 
 class CabinAssignmentNotifier extends ChangeNotifier with ApiRequestMixin, CabinEditorMixin {
   @override

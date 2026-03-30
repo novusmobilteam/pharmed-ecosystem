@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
 import '../../../cabin/domain/entity/cabin_input_data.dart';
-import '../../../cabin_assignment/domain/usecase/delete_assignment_usecase.dart';
 import '../../domain/usecase/unload_medicine_usecase.dart';
 
 enum UnloadType { basic, deleteAssignment, changeAssignment }

@@ -1,8 +1,5 @@
 import '../../../../core/core.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../data/model/filling_detail_dto.dart';
-
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 
 // Dolum listesi oluşturulduktan sonra oluşturulan dolum listesinin detayı
 // görüntülenmek istendiğinde kullanılan model.

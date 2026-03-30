@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';

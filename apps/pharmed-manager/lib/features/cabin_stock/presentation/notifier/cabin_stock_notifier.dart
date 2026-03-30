@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../cabin_assignment/domain/usecase/get_cabin_assignments_usecase.dart';
 import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_mixin.dart';
 
 class CabinStockNotifier extends ChangeNotifier with ApiRequestMixin, CabinEditorMixin {

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../core/core.dart';
 import '../../../core/widgets/remaining_day_badge.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../notifier/inventory_notifier.dart';
 
 class InventoryScreen extends StatelessWidget {
@@ -13,16 +12,11 @@ class InventoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => InventoryNotifier(
-        getCurrentCabinStockUseCase: context.read(),
-      )..getInventory(),
+      create: (context) => InventoryNotifier(getCurrentCabinStockUseCase: context.read())..getInventory(),
       child: ResponsiveLayout(
         mobile: const SizedBox(),
         tablet: const SizedBox(),
-        desktop: DesktopLayout(
-          title: 'İlaç Envanter',
-          child: _buildChild(),
-        ),
+        desktop: DesktopLayout(title: 'İlaç Envanter', child: _buildChild()),
       ),
     );
   }
@@ -31,9 +25,7 @@ class InventoryScreen extends StatelessWidget {
     return Consumer<InventoryNotifier>(
       builder: (context, vm, _) {
         if (vm.isFetching && vm.inventory.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
+          return const Center(child: CircularProgressIndicator.adaptive());
         }
 
         if (vm.isEmpty) {

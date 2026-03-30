@@ -1,6 +1,4 @@
 import '../../../../core/core.dart';
-
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../entity/withdraw_params.dart';
 import '../repository/i_medicine_withdraw_repository.dart';
 

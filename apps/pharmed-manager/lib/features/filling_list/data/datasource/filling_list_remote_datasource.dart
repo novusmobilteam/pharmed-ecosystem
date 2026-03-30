@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 import '../../../cabin/domain/entity/cabin_filling_request.dart';
-import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
 import '../model/filling_list_dto.dart';
 import '../model/filling_detail_dto.dart';
 import 'filling_list_datasource.dart';
@@ -19,31 +18,20 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
       emptyLog: 'No refill records',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? []),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);
   }
 
   @override
-  Future<Result<List<CabinStockDTO>>> getRefillCandidates({
-    required FillingType type,
-    required int stationId,
-  }) async {
+  Future<Result<List<CabinStockDTO>>> getRefillCandidates({required FillingType type, required int stationId}) async {
     final res = await fetchRequest<List<CabinStockDTO>>(
-        path: '$_basePath/decreasingQuantityMaterial/',
-        parser: listParser(CabinStockDTO.fromJson),
-        successLog: 'Refill record detail fetched',
-        emptyLog: 'No refill record detail',
-        query: {
-          "typeId": type.id,
-          "stationId": stationId,
-        });
-
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <CabinStockDTO>[]),
-      error: Result.error,
+      path: '$_basePath/decreasingQuantityMaterial/',
+      parser: listParser(CabinStockDTO.fromJson),
+      successLog: 'Refill record detail fetched',
+      emptyLog: 'No refill record detail',
+      query: {"typeId": type.id, "stationId": stationId},
     );
+
+    return res.when(ok: (data) => Result.ok(data ?? const <CabinStockDTO>[]), error: Result.error);
   }
 
   @override
@@ -51,10 +39,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
     return createRequest(
       path: '$_basePath/cancel/$fillingListId',
       parser: voidParser(),
-      body: {
-        "stationId": stationId,
-        "id": fillingListId,
-      },
+      body: {"stationId": stationId, "id": fillingListId},
     );
   }
 
@@ -63,23 +48,13 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
     return updateRequest(
       path: '$_basePath/status/$fillingListId',
       parser: voidParser(),
-      body: {
-        "stationId": stationId,
-        "id": fillingListId,
-      },
+      body: {"stationId": stationId, "id": fillingListId},
     );
   }
 
   @override
-  Future<Result<void>> createFillingList(
-    List<Map<String, dynamic>> data, {
-    required int stationId,
-  }) {
-    return createRequest(
-      path: '$_basePath/detail/create/$stationId',
-      body: data,
-      parser: voidParser(),
-    );
+  Future<Result<void>> createFillingList(List<Map<String, dynamic>> data, {required int stationId}) {
+    return createRequest(path: '$_basePath/detail/create/$stationId', body: data, parser: voidParser());
   }
 
   @override
@@ -88,11 +63,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
     required int stationId,
     required int fillingListId,
   }) {
-    return updateRequest(
-      path: '$_basePath/$fillingListId/detail/edit/$stationId',
-      body: data,
-      parser: voidParser(),
-    );
+    return updateRequest(path: '$_basePath/$fillingListId/detail/edit/$stationId', body: data, parser: voidParser());
   }
 
   @override
@@ -102,10 +73,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
       parser: listParser(FillingDetailDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <FillingDetailDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <FillingDetailDTO>[]), error: Result.error);
   }
 
   @override
@@ -115,10 +83,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
       parser: listParser(FillingListDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <FillingListDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <FillingListDTO>[]), error: Result.error);
   }
 
   @override

@@ -1,6 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 
 class FillingObject extends TableData {
   // Birden fazla göz kaydını taşımak için liste

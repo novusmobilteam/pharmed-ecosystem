@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
 import '../../../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
-import '../../../domain/entity/cabin_assignment.dart';
 import '../assignment_cell.dart';
 import '../form/cabin_assignment_form_view.dart';
 import 'cabin_assignment_notifier.dart';

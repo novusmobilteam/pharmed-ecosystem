@@ -1,7 +1,5 @@
 import '../../../../core/utils/device_info.dart';
 
-import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
-
 import '../../../../core/core.dart';
 import '../../../medicine_refund/data/model/refund_dto.dart';
 import '../../../prescription/data/model/prescription_dto.dart';
@@ -15,11 +13,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource implements Dashboar
 
   @override
   Future<Result<List<CabinStockDTO>>> getCriticalStocks({bool isClient = false}) async {
-    Map<String, dynamic>? query = isClient
-        ? {
-            "mac": DeviceInfo.getMacAddress(),
-          }
-        : null;
+    Map<String, dynamic>? query = isClient ? {"mac": DeviceInfo.getMacAddress()} : null;
     final path = isClient ? "clientCriticalStock" : "criticalStock";
     final res = await fetchRequest<List<CabinStockDTO>>(
       path: '$_basePath/$path',
@@ -27,10 +21,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource implements Dashboar
       query: query,
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <CabinStockDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <CabinStockDTO>[]), error: Result.error);
   }
 
   @override
@@ -40,10 +31,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource implements Dashboar
       parser: listParser(CabinStockDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <CabinStockDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <CabinStockDTO>[]), error: Result.error);
   }
 
   @override
@@ -53,10 +41,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource implements Dashboar
       parser: listParser(CabinStockDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <CabinStockDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <CabinStockDTO>[]), error: Result.error);
   }
 
   @override
@@ -66,10 +51,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource implements Dashboar
       parser: listParser(RefundDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <RefundDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <RefundDTO>[]), error: Result.error);
   }
 
   @override
@@ -79,10 +61,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource implements Dashboar
       parser: listParser(PrescriptionDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionDTO>[]), error: Result.error);
   }
 
   @override
@@ -92,10 +71,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource implements Dashboar
       parser: listParser(PrescriptionItemDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
   }
 
   @override
@@ -103,14 +79,9 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource implements Dashboar
     final res = await fetchRequest<List<PrescriptionItemDTO>>(
       path: '$_basePath/clientPrescriptionCollect',
       parser: listParser(PrescriptionItemDTO.fromJson),
-      query: {
-        "mac": DeviceInfo.getMacAddress(),
-      },
+      query: {"mac": DeviceInfo.getMacAddress()},
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
   }
 }

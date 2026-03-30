@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
 import '../../domain/repository/i_medicine_management_repository.dart';
 import '../datasource/medicine_management_datasource.dart';
@@ -41,14 +40,6 @@ class MedicineManagementRepository implements IMedicineManagementRepository {
   @override
   Future<Result<List<CabinAssignment>>> getDisposableMaterials() async {
     final res = await _ds.getDisposableMaterials();
-    return res.when(
-      ok: (list) {
-        final entities = list.map((d) => d.toEntity()).toList();
-        return Result.ok(entities);
-      },
-      error: (e) {
-        return Result.error(e);
-      },
-    );
+    return res.when(ok: (dtos) => Result.ok(CabinAssignmentMapper().toEntityList(dtos)), error: (e) => Result.error(e));
   }
 }

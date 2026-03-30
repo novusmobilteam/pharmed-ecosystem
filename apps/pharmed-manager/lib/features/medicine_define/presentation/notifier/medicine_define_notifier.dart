@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 
 import '../../../medicine_withdraw/domain/usecase/define_patient_medicine_usecase.dart';

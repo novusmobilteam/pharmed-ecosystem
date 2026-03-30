@@ -5,7 +5,6 @@ import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 
 import '../../domain/entity/withdraw_params.dart';
 
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 
 import '../../domain/mapper/withdraw_item_mapper.dart';

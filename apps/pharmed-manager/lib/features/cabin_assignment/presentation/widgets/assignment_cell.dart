@@ -3,7 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
 import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
-import '../../domain/entity/cabin_assignment.dart';
 
 class AssignmentCell extends StatelessWidget {
   const AssignmentCell({super.key, required this.assignment, this.onTap, this.onIconTap, required this.unit});

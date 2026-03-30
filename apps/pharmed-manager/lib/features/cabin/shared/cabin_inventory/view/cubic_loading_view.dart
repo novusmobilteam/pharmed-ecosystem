@@ -4,7 +4,6 @@ import '../notifier/cabin_inventory_notifier.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import 'cabin_input_quantity_field.dart';
 import 'expired_banner_view.dart';
 import 'quantity_info_card.dart';

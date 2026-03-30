@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/cabin_stock.dart';
-import '../../domain/usecase/get_expiring_stocks_usecase.dart';
-
 class ExpiringStocksNotifier extends ChangeNotifier with SearchMixin<CabinStock>, ApiRequestMixin {
   final GetExpiringStocksUseCase _expiringStocksUsecase;
 

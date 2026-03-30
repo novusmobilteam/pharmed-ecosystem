@@ -1,7 +1,4 @@
 import 'package:pharmed_manager/core/core.dart';
-
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-
 import '../../data/model/patient_medicine_withdraw_item_dto.dart';
 
 // İlaç alım işleminde hastanın kendi getirmiş olduğu ve sisteme sonradan tanımlanan ilaçlar

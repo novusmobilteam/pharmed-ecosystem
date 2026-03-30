@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../core/core.dart';
 
-import '../../../domain/entity/cabin_assignment.dart';
 import 'cabin_assignment_form_notifier.dart';
 
 Future<bool> showCabinAssignmentFormView(BuildContext context, CabinAssignment? data) async {

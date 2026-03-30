@@ -3,9 +3,6 @@ import 'package:pharmed_manager/core/core.dart';
 
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 
-import '../../domain/entity/station_stock.dart';
-import '../../domain/usecase/get_station_stocks_usecase.dart';
-
 class StationStockNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<StationStock> {
   final GetStationsUseCase _getStationsUseCase;
   final GetStationStocksUseCase _getStationStocksUseCase;

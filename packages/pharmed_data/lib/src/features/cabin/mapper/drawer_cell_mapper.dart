@@ -26,5 +26,7 @@ class DrawerCellMapper {
     );
   }
 
+  List<DrawerCellDTO> toDtoList(List<DrawerCell> entities) => entities.map(toDto).toList();
+
   DrawerCellDTO? toDtoOrNull(DrawerCell? entity) => entity == null ? null : toDto(entity);
 }

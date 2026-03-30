@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../entity/filling_detail.dart';
 import '../entity/filling_object.dart';
 import '../repository/i_filling_list_repository.dart';

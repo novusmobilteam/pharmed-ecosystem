@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../cabin_assignment/data/model/cabin_assignment_dto.dart';
 import '../../../prescription/data/model/prescription_item_dto.dart';
 
 // Hasta İlaç İşlemleri ekranı altında yapılan Alım, Fire/İmha vb. gibi

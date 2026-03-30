@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/core.dart';
-import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../notifier/cabin_status_notifier.dart';
 import 'cabin_status_dialog.dart';
 
@@ -30,20 +29,11 @@ class CabinProcessWrapper extends StatelessWidget {
   /// İşlem tamamen bittiğinde (completed) çalışacak fonksiyon.
   final Function(CabinAssignment? assignment, bool isSuccess)? onProcessCompleted;
 
-  const CabinProcessWrapper({
-    super.key,
-    required this.child,
-    required this.onDrawerReady,
-    this.onProcessCompleted,
-  });
+  const CabinProcessWrapper({super.key, required this.child, required this.onDrawerReady, this.onProcessCompleted});
 
   @override
   Widget build(BuildContext context) {
-    return _CabinProcessListener(
-      onDrawerReady: onDrawerReady,
-      onProcessCompleted: onProcessCompleted,
-      child: child,
-    );
+    return _CabinProcessListener(onDrawerReady: onDrawerReady, onProcessCompleted: onProcessCompleted, child: child);
   }
 }
 
@@ -52,11 +42,7 @@ class _CabinProcessListener extends StatefulWidget {
   final Future<bool> Function(BuildContext context, CabinAssignment activeDrawer) onDrawerReady;
   final Function(CabinAssignment? assignment, bool isSuccess)? onProcessCompleted;
 
-  const _CabinProcessListener({
-    required this.child,
-    required this.onDrawerReady,
-    this.onProcessCompleted,
-  });
+  const _CabinProcessListener({required this.child, required this.onDrawerReady, this.onProcessCompleted});
 
   @override
   State<_CabinProcessListener> createState() => _CabinProcessListenerState();
@@ -151,10 +137,7 @@ class _CabinProcessListenerState extends State<_CabinProcessListener> {
     showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (_) => ChangeNotifierProvider.value(
-        value: _notifier!,
-        child: const CabinStatusDialog(),
-      ),
+      builder: (_) => ChangeNotifierProvider.value(value: _notifier!, child: const CabinStatusDialog()),
     ).whenComplete(() {
       // Dialog kapandığında (exception dahil) flag sıfırlanır
       _isDialogOpen = false;
