@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 import '../../domain/entity/filling_list.dart';
-import '../../../station/data/model/station_dto.dart';
 
 class FillingListDTO {
   final int? id;
@@ -80,7 +79,7 @@ class FillingListDTO {
   FillingList toEntity() {
     return FillingList(
       id: id,
-      station: station?.toEntity(),
+      station: StationMapper().toEntityOrNull(station),
       user: const UserMapper().toEntityOrNull(user),
       status: FillingRecordStatus.fromId(statusId),
       isCancel: isCancel,

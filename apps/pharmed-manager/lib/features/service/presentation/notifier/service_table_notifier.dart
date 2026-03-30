@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/service.dart';
-import '../../domain/usecase/delete_service_usecase.dart';
-import '../../domain/usecase/get_services_usecase.dart';
-
 class ServiceTableNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<HospitalService> {
   final GetServicesUseCase _getServicesUseCase;
   final DeleteServiceUseCase _deleteServiceUseCase;

@@ -2,12 +2,6 @@ import 'package:flutter/material.dart' hide MaterialType;
 
 import '../../../../core/core.dart';
 
-import '../../../material_type/domain/entity/material_type.dart';
-import '../../domain/entity/medicine.dart';
-import '../../../firm/domain/entity/firm.dart';
-import '../../domain/usecase/create_medicine_usecase.dart';
-import '../../domain/usecase/update_medicine_usecase.dart';
-
 class MedicalConsumableFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateMedicineUseCase _createMedicineUseCase;
   final UpdateMedicineUseCase _updateMedicineUseCase;

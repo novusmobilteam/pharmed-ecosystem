@@ -2,18 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
-import '../../../cabin/domain/entity/drawer_unit.dart';
 import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
 import '../../domain/entity/cabin_assignment.dart';
 
 class AssignmentCell extends StatelessWidget {
-  const AssignmentCell({
-    super.key,
-    required this.assignment,
-    this.onTap,
-    this.onIconTap,
-    required this.unit,
-  });
+  const AssignmentCell({super.key, required this.assignment, this.onTap, this.onIconTap, required this.unit});
 
   final CabinAssignment assignment;
   final DrawerUnit unit;
@@ -38,20 +31,11 @@ class AssignmentCell extends StatelessWidget {
             _DrawerCellContent(assignment)
           else
             Center(
-              child: Icon(
-                PhosphorIcons.plus(),
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                size: 28,
-              ),
+              child: Icon(PhosphorIcons.plus(), color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4), size: 28),
             ),
 
           // 4. Silme Butonu (X)
-          if (hasMaterial)
-            Positioned(
-              top: 6,
-              right: 6,
-              child: _DeleteButton(onTap: onIconTap),
-            )
+          if (hasMaterial) Positioned(top: 6, right: 6, child: _DeleteButton(onTap: onIconTap)),
         ],
       ),
     );
@@ -76,10 +60,7 @@ class _DrawerCellContent extends StatelessWidget {
       children: [
         Text(
           medicine.name.toString(),
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-          ),
+          style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
           maxLines: 2,
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
@@ -89,27 +70,14 @@ class _DrawerCellContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              QuantityBadge(
-                label: 'Min',
-                value: quantity.minQuantityFromBackend.toInt(),
-                unit: 'Adet',
-              ),
+              QuantityBadge(label: 'Min', value: quantity.minQuantityFromBackend.toInt(), unit: 'Adet'),
               const SizedBox(width: 4),
-              QuantityBadge(
-                label: 'Max',
-                value: quantity.maxQuantityFromBackend.toInt(),
-                unit: 'Adet',
-              ),
+              QuantityBadge(label: 'Max', value: quantity.maxQuantityFromBackend.toInt(), unit: 'Adet'),
             ],
           ),
         ),
         SizedBox(height: 4),
-        QuantityBadge(
-          label: 'Krt',
-          value: quantity.critQuantityFromBackend.toInt(),
-          isCritical: true,
-          unit: 'Adet',
-        ),
+        QuantityBadge(label: 'Krt', value: quantity.critQuantityFromBackend.toInt(), isCritical: true, unit: 'Adet'),
       ],
     );
   }
@@ -139,9 +107,7 @@ class QuantityBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: isCritical ? colorScheme.errorContainer : colorScheme.surface,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color: isCritical ? Colors.transparent : colorScheme.outlineVariant.withValues(alpha: 0.5),
-        ),
+        border: Border.all(color: isCritical ? Colors.transparent : colorScheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: Text(
         '$label: ${value ?? 0} $unit',
@@ -165,15 +131,8 @@ class _DeleteButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: colorScheme.error.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          PhosphorIcons.x(),
-          size: 14,
-          color: colorScheme.error,
-        ),
+        decoration: BoxDecoration(color: colorScheme.error.withValues(alpha: 0.1), shape: BoxShape.circle),
+        child: Icon(PhosphorIcons.x(), size: 14, color: colorScheme.error),
       ),
     );
   }

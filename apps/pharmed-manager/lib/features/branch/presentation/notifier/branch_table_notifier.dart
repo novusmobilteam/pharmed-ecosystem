@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/branch.dart';
-import '../../domain/usecase/delete_branch_usecase.dart';
-import '../../domain/usecase/get_branches_usecase.dart';
-
 class BranchTableNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Branch> {
   final GetBranchesUseCase _getBranchesUseCase;
   final DeleteBranchUseCase _deleteBranchUseCase;
@@ -32,8 +28,8 @@ class BranchTableNotifier extends ChangeNotifier with ApiRequestMixin, Paginatio
     );
   }
 
-  Future<void> deleteBranch(int id) async {
-    await executeVoid(deleteOp, operation: () => _deleteBranchUseCase.call(id), onSuccess: () => getBranches());
+  Future<void> deleteBranch(Branch branch) async {
+    await executeVoid(deleteOp, operation: () => _deleteBranchUseCase.call(branch), onSuccess: () => getBranches());
   }
 
   void search(String query) {

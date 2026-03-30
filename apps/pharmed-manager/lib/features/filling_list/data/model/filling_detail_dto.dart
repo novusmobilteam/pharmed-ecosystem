@@ -1,11 +1,8 @@
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../cabin/data/model/drawer_cell_dto.dart';
 import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
 import '../../domain/entity/filling_detail.dart';
-import '../../../cabin/data/model/drawer_unit_dto.dart';
 import '../../../cabin_assignment/data/model/cabin_assignment_dto.dart';
-import '../../../medicine/data/model/medicine_dto.dart';
 
 // Dolum listesi oluşturulduktan sonra oluşturulan dolum listesinin detayı
 // görüntülenmek istendiğinde kullanılan model.
@@ -90,7 +87,7 @@ class FillingDetailDTO {
       fillingListId: fillingListId,
       medicineId: medicineId,
       medicine: medicine?.toEntity(),
-      cabinDrawer: cabinDrawer?.toEntity(),
+      cabinDrawer: DrawerUnitMapper().toEntityOrNull(cabinDrawer),
       cabinAssignment: cabinAssignment?.toEntity(),
       quantity: quantity,
       fillingQuantity: fillingQuantity,
@@ -98,7 +95,7 @@ class FillingDetailDTO {
       fillingUserId: fillingUserId,
       fillingUser: const UserMapper().toEntityOrNull(fillingUser),
       isEdit: isEdit,
-      cabinDrawerDetail: cabinDrawerDetail?.map((c) => c.toEntity()).toList(),
+      cabinDrawerDetail: DrawerCellMapper().toEntityList(cabinDrawerDetail ?? []),
       stocks: stocks?.map((c) => c.toEntity()).toList(),
     );
   }

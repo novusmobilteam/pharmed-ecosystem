@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/dosage_form.dart';
-import '../../domain/usecase/delete_dosage_form_usecase.dart';
-import '../../domain/usecase/get_dosage_forms_usecase.dart';
-
 class DosageFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<DosageForm> {
   final GetDosageFormsUseCase _getDosageFormsUseCase;
   final DeleteDosageFormUseCase _deleteDosageFormUseCase;

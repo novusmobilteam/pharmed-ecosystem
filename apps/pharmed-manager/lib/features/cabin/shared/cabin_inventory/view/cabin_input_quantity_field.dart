@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../../core/core.dart';
 import '../../../../../core/widgets/form/form_inputs/touch_numpad_field.dart';
 import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../../medicine/domain/entity/medicine.dart';
 
 /// Kabin stok işlemlerinde kullanılan miktar giriş alanı.
 ///

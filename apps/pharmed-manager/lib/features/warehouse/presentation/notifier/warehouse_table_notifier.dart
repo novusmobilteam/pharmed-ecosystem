@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/warehouse.dart';
-import '../../domain/usecase/delete_warehouse_usecase.dart';
-import '../../domain/usecase/get_warehouses_usecase.dart';
-
 class WarehouseTableNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Warehouse> {
   final GetWarehousesUseCase _getWarehousesUseCase;
   final DeleteWarehouseUseCase _deleteWarehouseUseCase;

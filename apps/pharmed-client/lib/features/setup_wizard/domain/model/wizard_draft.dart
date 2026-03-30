@@ -6,7 +6,7 @@
 // Sınıf: Class B
 
 import 'package:equatable/equatable.dart';
-import '../../../../core/enums/cabinet_type.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'cabin_setup_config.dart';
 
 class WizardDraft extends Equatable {
@@ -14,7 +14,7 @@ class WizardDraft extends Equatable {
 
   const WizardDraft.empty() : this();
 
-  final CabinetType? cabinetType;
+  final CabinType? cabinetType;
   final WizardBasicInfo? basicInfo;
   final ServiceScope? serviceScope;
   final DrawerConfig? drawerConfig;
@@ -22,13 +22,9 @@ class WizardDraft extends Equatable {
   // ── Adım doğrulama ──────────────────────────────────────────────
 
   bool get step1Complete => cabinetType != null;
-
   bool get step2Complete => basicInfo != null && basicInfo!.cabinName.isNotEmpty && basicInfo!.ipAddress.isNotEmpty;
-
   bool get step3Complete => serviceScope != null;
-
   bool get step4Complete => drawerConfig != null;
-
   bool get isComplete => step1Complete && step2Complete && step3Complete && step4Complete;
 
   // ── CabinSetupConfig'e dönüştür ─────────────────────────────────
@@ -47,7 +43,7 @@ class WizardDraft extends Equatable {
   // ── copyWith ─────────────────────────────────────────────────────
 
   WizardDraft copyWith({
-    CabinetType? cabinetType,
+    CabinType? cabinetType,
     WizardBasicInfo? basicInfo,
     ServiceScope? serviceScope,
     DrawerConfig? drawerConfig,

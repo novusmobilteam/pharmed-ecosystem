@@ -6,7 +6,7 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
-import '../../../../../core/enums/cabinet_type.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import '../../../../../shared/widgets/atoms/med_tokens.dart';
 import 'step_shared.dart';
 
@@ -14,8 +14,8 @@ class Step1CabinetType extends StatelessWidget {
   const Step1CabinetType({super.key, required this.selectedType, required this.onTypeSelected, required this.onNext});
 
   final VoidCallback onNext;
-  final CabinetType? selectedType;
-  final ValueChanged<CabinetType> onTypeSelected;
+  final CabinType? selectedType;
+  final ValueChanged<CabinType> onTypeSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +38,9 @@ class Step1CabinetType extends StatelessWidget {
                 // Standart Kabin
                 Expanded(
                   child: _CabinetTypeCard(
-                    type: CabinetType.standard,
-                    isSelected: selectedType == CabinetType.standard,
-                    onTap: () => onTypeSelected(CabinetType.standard),
+                    type: CabinType.master,
+                    isSelected: selectedType == CabinType.master,
+                    onTap: () => onTypeSelected(CabinType.master),
                     visual: const _StandardCabinVisual(),
                     specs: const ['Kübik / Birim Doz', 'Servis Bazlı'],
                     description:
@@ -51,9 +51,9 @@ class Step1CabinetType extends StatelessWidget {
                 // Mobil Kabin
                 Expanded(
                   child: _CabinetTypeCard(
-                    type: CabinetType.mobile,
-                    isSelected: selectedType == CabinetType.mobile,
-                    onTap: () => onTypeSelected(CabinetType.mobile),
+                    type: CabinType.mobile,
+                    isSelected: selectedType == CabinType.mobile,
+                    onTap: () => onTypeSelected(CabinType.mobile),
                     visual: const _MobileCabinVisual(),
                     specs: const ['4 Sıra', 'Tekerlekli', 'Oda Bazlı'],
                     description: 'Tekerlekli, koğuş dolaşımı için tasarlanmış 4 sıralı taşınabilir ilaç ünitesi.',
@@ -83,7 +83,7 @@ class _CabinetTypeCard extends StatelessWidget {
     required this.description,
   });
 
-  final CabinetType type;
+  final CabinType type;
   final bool isSelected;
   final VoidCallback onTap;
   final Widget visual;

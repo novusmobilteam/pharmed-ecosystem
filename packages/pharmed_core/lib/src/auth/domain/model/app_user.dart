@@ -1,11 +1,7 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// packages/pharmed_core/lib/src/auth/domain/model/app_user.dart
-//
 // [SWREQ-CORE-AUTH-001]
 // Oturum açmış kullanıcının slim temsili.
 // Ekranlarda role kontrolü, TopBar gösterimi ve cache için yeterlidir.
 // Sınıf: Class B
-// ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:equatable/equatable.dart';
 

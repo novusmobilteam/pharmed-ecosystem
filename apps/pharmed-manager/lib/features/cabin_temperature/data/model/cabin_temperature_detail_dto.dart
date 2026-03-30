@@ -1,6 +1,6 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../domain/entity/cabin_temperature_detail.dart';
-import '../../../station/data/model/station_dto.dart';
-import '../../../cabin/data/model/cabin_dto.dart';
 
 class CabinTemperatureDetailDTO {
   final int? id;
@@ -60,8 +60,8 @@ class CabinTemperatureDetailDTO {
   CabinTemperatureDetail toEntity() {
     return CabinTemperatureDetail(
       id: id,
-      station: station?.toEntity(),
-      cabin: cabin?.toEntity(),
+      station: StationMapper().toEntityOrNull(station),
+      cabin: CabinMapper().toEntityOrNull(cabin),
       bottomTemperatureInside: bottomTemperatureInside,
       topTemperatureInside: topTemperatureInside,
       bottomTemperatureOutside: bottomTemperatureOutside,

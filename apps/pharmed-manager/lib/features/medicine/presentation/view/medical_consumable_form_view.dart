@@ -5,11 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../firm/data/repository/firm_repository.dart';
-import '../../../firm/domain/entity/firm.dart';
-import '../../../material_type/domain/entity/material_type.dart';
-import '../../../material_type/domain/repository/i_material_type_repository.dart';
-import '../../domain/entity/medicine.dart';
 import '../notifier/medical_consumable_form_notifier.dart';
 
 Future<bool> showMedicalConsumableFormView(BuildContext context, {MedicalConsumable? initial}) async {
@@ -222,7 +217,7 @@ Widget _buildFirmField() {
         initialValue: vm.mc.firm,
         labelBuilder: (value) => value?.name,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
-        future: () => context.read<FirmRepository>().getFirms(),
+        future: () => context.read<GetFirmsUseCase>().call(GetFirmsParams()),
         onSelected: vm.updateFirm,
       );
     },

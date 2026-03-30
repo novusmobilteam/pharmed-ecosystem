@@ -1,6 +1,5 @@
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../service/data/model/service_dto.dart';
 import '../../../patient/data/model/patient_dto.dart';
 import '../../domain/entity/hospitalization.dart';
 
@@ -102,8 +101,8 @@ class HospitalizationDTO {
       description: description,
       admissionDate: admissionDate,
       exitDate: exitDate,
-      physicalService: physicalService?.toEntity(),
-      inpatientService: inpatientService?.toEntity(),
+      physicalService: ServiceMapper().toEntityOrNull(physicalService),
+      inpatientService: ServiceMapper().toEntityOrNull(inpatientService),
       doctor: const UserMapper().toEntityOrNull(doctor),
       patient: patient?.toEntity(),
       waitingQuantity: waitingQuantity,

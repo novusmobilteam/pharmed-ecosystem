@@ -4,9 +4,6 @@ import '../../domain/usecase/create_stock_transaction_usecase.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../../service/domain/entity/service.dart';
-import '../../../warehouse/domain/entity/warehouse.dart';
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../domain/entity/stock_transaction.dart';
 
 /// Stok işlem formu ViewModel'i.

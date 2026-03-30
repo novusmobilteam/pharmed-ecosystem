@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../domain/entity/branch.dart';
-import '../../domain/usecase/create_branch_usecase.dart';
-import '../../domain/usecase/update_branch_usecase.dart';
-
 class BranchFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateBranchUseCase _createBranchUseCase;
   final UpdateBranchUseCase _updateBranchUseCase;

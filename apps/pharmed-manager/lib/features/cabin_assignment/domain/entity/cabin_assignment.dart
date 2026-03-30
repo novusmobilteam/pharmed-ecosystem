@@ -1,10 +1,6 @@
 import '../../../../core/core.dart';
 import '../../../cabin_stock/domain/entity/cabin_stock.dart';
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../data/model/cabin_assignment_dto.dart';
-import '../../../cabin/domain/entity/cabin.dart';
-import '../../../cabin/domain/entity/drawer_unit.dart';
-import '../../../cabin/domain/entity/drawer_cell.dart';
 
 class CabinAssignment implements TableData {
   final int? id;
@@ -159,9 +155,9 @@ class CabinAssignment implements TableData {
       maxQuantity: maxQuantity,
       minQuantity: minQuantity,
       criticalQuantity: criticalQuantity,
-      cabin: cabin?.toDTO(),
-      medicine: medicine?.toDTO(),
-      cabinDrawer: drawerUnit?.toDTO(),
+      cabin: CabinMapper().toDtoOrNull(cabin),
+      medicine: MedicineMapper().toDtoOrNull(medicine),
+      cabinDrawer: DrawerUnitMapper().toDtoOrNull(drawerUnit),
     );
   }
 

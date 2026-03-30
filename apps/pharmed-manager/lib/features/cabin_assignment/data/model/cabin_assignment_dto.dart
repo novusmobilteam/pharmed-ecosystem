@@ -1,9 +1,7 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
-import '../../../medicine/data/model/medicine_dto.dart';
 import '../../domain/entity/cabin_assignment.dart';
-import '../../../cabin/data/model/drawer_cell_dto.dart';
-import '../../../cabin/data/model/drawer_unit_dto.dart';
-import '../../../cabin/data/model/cabin_dto.dart';
 
 /// Eski Adı: CabinDrawerQuantityDTO
 class CabinAssignmentDTO {
@@ -96,10 +94,10 @@ class CabinAssignmentDTO {
       maxQuantity: maxQuantity,
       minQuantity: minQuantity,
       criticalQuantity: criticalQuantity,
-      cabin: cabin?.toEntity(),
+      cabin: CabinMapper().toEntityOrNull(cabin),
       medicine: medicine?.toEntity(),
-      drawerUnit: cabinDrawer?.toEntity(),
-      cabinDrawerDetail: cabinDrawerDetail?.map((c) => c.toEntity()).toList(),
+      drawerUnit: DrawerUnitMapper().toEntityOrNull(cabinDrawer),
+      cabinDrawerDetail: DrawerCellMapper().toEntityList(cabinDrawerDetail ?? []),
       stocks: stocks?.map((c) => c.toEntity()).toList(),
     );
   }

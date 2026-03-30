@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/drug_class.dart';
 import '../notifier/drug_class_form_notifier.dart';
 
 Future<bool> showDrugClassFormDialog(BuildContext context, {DrugClass? initial}) async {
@@ -57,10 +56,7 @@ class _DrugClassFormDialogState extends State<DrugClassFormDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               spacing: AppDimensions.registrationDialogSpacing,
-              children: const [
-                _NameField(),
-                _StatusField(),
-              ],
+              children: const [_NameField(), _StatusField()],
             ),
           ),
         );

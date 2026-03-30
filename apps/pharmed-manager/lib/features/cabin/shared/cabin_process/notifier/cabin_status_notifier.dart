@@ -3,11 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../core/core.dart';
 import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../domain/entity/drawer_address.dart';
-import '../../../domain/entity/management_card.dart';
-import '../../../domain/repository/i_cabin_operation_service.dart';
-import '../../../domain/usecase/handle_sensor_status_usecase.dart';
-import '../../../domain/usecase/open_drawer_usecase.dart';
 
 class CabinStatusNotifier extends ChangeNotifier {
   final ICabinOperationService _cabinOperationService;
@@ -18,9 +13,9 @@ class CabinStatusNotifier extends ChangeNotifier {
     required ICabinOperationService cabinOperationService,
     required OpenDrawerUseCase openDrawerUseCase,
     required HandleSensorStatusUseCase handleSensorStatusUseCase,
-  })  : _cabinOperationService = cabinOperationService,
-        _openDrawerUseCase = openDrawerUseCase,
-        _handleSensorStatusUseCase = handleSensorStatusUseCase;
+  }) : _cabinOperationService = cabinOperationService,
+       _openDrawerUseCase = openDrawerUseCase,
+       _handleSensorStatusUseCase = handleSensorStatusUseCase;
 
   // Çekmece Durumu
   DrawerStage _stage = DrawerStage.idle;
@@ -52,12 +47,7 @@ class CabinStatusNotifier extends ChangeNotifier {
         onUpdate: (stage, message) => _updateStage(stage, message),
         openCubicLid: openCubicLid,
         onReadyToMonitor: (manager, address) {
-          _startSensorSubscription(
-            item,
-            manager,
-            address,
-            openCubicLid: openCubicLid,
-          );
+          _startSensorSubscription(item, manager, address, openCubicLid: openCubicLid);
         },
       );
     } catch (e) {
@@ -65,8 +55,12 @@ class CabinStatusNotifier extends ChangeNotifier {
     }
   }
 
-  void _startSensorSubscription(CabinAssignment item, ManagementCard manager, DrawerAddress address,
-      {bool openCubicLid = true}) {
+  void _startSensorSubscription(
+    CabinAssignment item,
+    ManagementCard manager,
+    DrawerAddress address, {
+    bool openCubicLid = true,
+  }) {
     _sensorSubscription?.cancel();
 
     final isSerum = item.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false;

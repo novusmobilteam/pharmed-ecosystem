@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/medicine.dart';
-import '../../domain/usecase/delete_medicine_usecase.dart';
-import '../../domain/usecase/get_medicines_usecase.dart';
-
 class MedicineTableNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Medicine> {
   final GetMedicinesUseCase _getMedicinesUseCase;
   final DeleteMedicineUseCase _deleteMedicineUseCase;

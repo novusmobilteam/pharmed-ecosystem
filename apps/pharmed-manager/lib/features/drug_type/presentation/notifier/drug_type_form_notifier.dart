@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../domain/entity/drug_type.dart';
-import '../../domain/usecase/create_drug_type_usecase.dart';
-import '../../domain/usecase/update_drug_type_usecase.dart';
-
 class DrugTypeFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<DrugType> {
   final CreateDrugTypeUseCase _createDrugTypeUseCase;
   final UpdateDrugTypeUseCase _updateDrugTypeUseCase;

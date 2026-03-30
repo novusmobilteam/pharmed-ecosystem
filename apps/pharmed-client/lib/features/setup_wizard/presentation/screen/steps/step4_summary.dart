@@ -6,7 +6,7 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
-import '../../../../../core/enums/cabinet_type.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import '../../../../../shared/widgets/atoms/med_tokens.dart';
 import '../../../../../shared/widgets/atoms/med_button.dart';
 import '../../../domain/model/cabin_setup_config.dart';
@@ -303,7 +303,7 @@ class _CabinetPreviewCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(20),
             child: Center(
-              child: draft.cabinetType == CabinetType.standard
+              child: draft.cabinetType == CabinType.master
                   ? _StandardPreview(draft: draft)
                   : _MobilePreview(draft: draft),
             ),

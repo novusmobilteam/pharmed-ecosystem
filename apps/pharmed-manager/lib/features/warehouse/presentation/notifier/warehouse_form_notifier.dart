@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../domain/entity/warehouse.dart';
-import '../../domain/usecase/create_warehouse_usecase.dart';
-import '../../domain/usecase/update_warehouse_usecase.dart';
-
 class WarehouseFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateWarehouseUseCase _createWarehouseUseCase;
   final UpdateWarehouseUseCase _updateWarehouseUseCase;

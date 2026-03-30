@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../../medicine_management/presentation/widgets/cabin_operation_card/cabin_operation_card.dart';
 import '../notifier/medicine_refund_notifier.dart';
 
@@ -36,10 +35,7 @@ class _MedicineRefundViewState extends State<MedicineRefundView> {
         completeRefundUseCase: context.read(),
         onCheckCompleted: (notifier, assignment) async {
           final bool shouldOpenLid = notifier.type == ReturnType.toOrigin; // Yerine iade ise kapak açılır
-          context.read<CabinStatusNotifier>().startOperation(
-                assignment,
-                openCubicLid: shouldOpenLid,
-              );
+          context.read<CabinStatusNotifier>().startOperation(assignment, openCubicLid: shouldOpenLid);
         },
       )..getRefundables(),
       child: Consumer<MedicineRefundNotifier>(
@@ -52,10 +48,7 @@ class _MedicineRefundViewState extends State<MedicineRefundView> {
               final bool? result = await showDialog<bool>(
                 context: context,
                 barrierDismissible: false,
-                builder: (context) => ChangeNotifierProvider.value(
-                  value: notifier,
-                  child: RefundConfirmationView(),
-                ),
+                builder: (context) => ChangeNotifierProvider.value(value: notifier, child: RefundConfirmationView()),
               );
 
               if (result == true) {
@@ -80,10 +73,7 @@ class _MedicineRefundViewState extends State<MedicineRefundView> {
               width: context.width * 0.5,
               actions: [
                 if (notifier.selectedItem != null)
-                  TextButton(
-                    onPressed: () => _showRefundInputView(context, notifier),
-                    child: Text('İade Et'),
-                  ),
+                  TextButton(onPressed: () => _showRefundInputView(context, notifier), child: Text('İade Et')),
               ],
               child: _buildChild(),
             ),
@@ -110,11 +100,7 @@ class _MedicineRefundViewState extends State<MedicineRefundView> {
             final isSelected = notifier.selectedItem?.id == item.id;
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: CabinOperationCard(
-                item: item,
-                isSelected: isSelected,
-                onTap: () => notifier.selectItem(item),
-              ),
+              child: CabinOperationCard(item: item, isSelected: isSelected, onTap: () => notifier.selectItem(item)),
             );
           },
         );
@@ -127,9 +113,6 @@ void _showRefundInputView(BuildContext context, MedicineRefundNotifier notifier)
   await showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (context) => ChangeNotifierProvider.value(
-      value: notifier,
-      child: ReturnInputView(),
-    ),
+    builder: (context) => ChangeNotifierProvider.value(value: notifier, child: ReturnInputView()),
   );
 }

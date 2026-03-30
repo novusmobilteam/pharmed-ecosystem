@@ -3,7 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../cabin/domain/entity/drawer_unit.dart';
 import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../cabin_assignment/presentation/widgets/assignment_cell.dart';

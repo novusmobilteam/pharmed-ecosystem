@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
-import '../../../station/domain/entity/station.dart';
 import '../../../stock_transaction/presentation/widgets/stations_list_view.dart';
 import '../widgets/editor/cabin_assignment_view.dart';
 
@@ -31,17 +30,11 @@ class _StationCabinAssignmentScreenState extends State<StationCabinAssignmentScr
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 1,
-              child: StationsSideListView(onStationSelected: _selectStation),
-            ),
+            Expanded(flex: 1, child: StationsSideListView(onStationSelected: _selectStation)),
             const SizedBox(width: 24),
             Expanded(
               flex: 5,
-              child: CabinAssignmentView(
-                key: ValueKey(_station?.id),
-                stationId: _station?.id,
-              ),
+              child: CabinAssignmentView(key: ValueKey(_station?.id), stationId: _station?.id),
             ),
           ],
         ),

@@ -6,11 +6,7 @@
 // Sınıf: Class B
 
 import 'package:equatable/equatable.dart';
-import '../../../../core/enums/cabinet_type.dart';
-
-// ─────────────────────────────────────────────────────────────────
-// Çekmece tipi (Standart kabin için)
-// ─────────────────────────────────────────────────────────────────
+import 'package:pharmed_core/pharmed_core.dart';
 
 enum DrawerType {
   cubic4x4, // Kübik 4×4
@@ -188,7 +184,7 @@ class CabinSetupConfig extends Equatable {
     required this.drawerConfig,
   });
 
-  final CabinetType cabinetType;
+  final CabinType cabinetType;
   final WizardBasicInfo basicInfo;
   final ServiceScope serviceScope;
   final DrawerConfig drawerConfig;

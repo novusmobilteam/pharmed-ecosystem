@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
-import '../../cabin/domain/usecase/create_cabin_usecase.dart';
-import '../../cabin/domain/usecase/update_cabin_usecase.dart';
-import '../../station/domain/entity/station.dart';
-import '../../cabin/domain/entity/cabin.dart';
 
 class CabinDesignFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateCabinUseCase _createCabinUseCase;

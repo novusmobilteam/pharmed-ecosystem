@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../../../medicine/domain/entity/medicine.dart';
 import '../../../domain/entity/cabin_operation_item.dart';
 
 /// İşlem tipinden bağımsız doz rozetini gösterir.
@@ -30,10 +29,7 @@ class CabinOperationDoseBadge extends StatelessWidget {
               color: context.colorScheme.primary,
             ),
           ),
-          Text(
-            item.medicine?.operationUnit ?? 'Adet',
-            style: context.textTheme.labelSmall?.copyWith(fontSize: 9),
-          ),
+          Text(item.medicine?.operationUnit ?? 'Adet', style: context.textTheme.labelSmall?.copyWith(fontSize: 9)),
         ],
       ),
     );
@@ -44,11 +40,7 @@ class CabinOperationInfoChip extends StatelessWidget {
   final String title;
   final String value;
 
-  const CabinOperationInfoChip({
-    super.key,
-    required this.title,
-    required this.value,
-  });
+  const CabinOperationInfoChip({super.key, required this.title, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +52,7 @@ class CabinOperationInfoChip extends StatelessWidget {
           child: Text(
             '$title : $value',
             overflow: TextOverflow.ellipsis,
-            style: context.textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
       ],

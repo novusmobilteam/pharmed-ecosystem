@@ -2,8 +2,6 @@ import 'package:collection/collection.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../cabin/domain/entity/drawer_unit.dart';
-import '../../../cabin/domain/repository/i_cabin_repository.dart';
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 
 import '../../../medicine_withdraw/domain/entity/medicine_withdraw_item.dart';

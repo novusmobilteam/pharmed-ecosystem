@@ -13,16 +13,13 @@ enum CabinType {
   const CabinType(this.id);
 
   static CabinType? fromId(int? id) {
-    return CabinType.values.firstWhere(
-      (e) => e.id == id,
-      orElse: () => CabinType.master,
-    );
+    return CabinType.values.firstWhere((e) => e.id == id, orElse: () => CabinType.master);
   }
 
   String get label {
     switch (this) {
       case CabinType.master:
-        return 'Master';
+        return 'Standart Kabin';
       case CabinType.cabinet:
         return 'Dolap';
       case CabinType.freezer:
@@ -30,7 +27,7 @@ enum CabinType {
       case CabinType.openCabinet:
         return 'Açık Dolap';
       case CabinType.mobile:
-        return 'Mobil';
+        return 'Mobil Kabin';
       case CabinType.returnCabin:
         return 'Harici İade Kabini';
       case CabinType.openCabin:

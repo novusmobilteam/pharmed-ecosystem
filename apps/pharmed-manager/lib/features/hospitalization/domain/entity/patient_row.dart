@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../service/domain/entity/service.dart';
 import '../../../patient/domain/entity/patient.dart';
 
 import 'hospitalization.dart';

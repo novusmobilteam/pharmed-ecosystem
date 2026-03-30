@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../branch/domain/entity/branch.dart';
-import '../../domain/entity/service.dart';
-import '../../domain/usecase/create_service_usecase.dart';
-import '../../domain/usecase/update_service_usecase.dart';
-
 class ServiceFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateServiceUseCase _createServiceUseCase;
   final UpdateServiceUseCase _updateServiceUseCase;

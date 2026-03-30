@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/core.dart';
 
-import '../../../../cabin/domain/entity/drawer_group.dart';
-import '../../../../cabin/domain/usecase/get_cabin_layout_usecase.dart';
-import '../../../../cabin/domain/usecase/get_cabins_usecase.dart';
 import '../../../../cabin/shared/widgets/cabin_editor/cabin_editor_mixin.dart';
 import '../../../domain/entity/cabin_assignment.dart';
 import '../../../domain/usecase/delete_assignment_usecase.dart';

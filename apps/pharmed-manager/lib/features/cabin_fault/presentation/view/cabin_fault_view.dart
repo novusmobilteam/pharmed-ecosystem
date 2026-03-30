@@ -4,7 +4,6 @@ import '../../../../core/core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../cabin/domain/entity/drawer_unit.dart';
 import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
 import '../../domain/entity/cabin_fault.dart';
 import '../notifier/cabin_fault_form_notifier.dart';

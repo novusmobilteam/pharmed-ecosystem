@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../domain/entity/filling_list.dart';
-import '../../../station/domain/entity/station.dart';
 import '../../domain/entity/filling_object.dart';
 import '../../domain/useacase/create_filling_list_usecase.dart';
 import '../../domain/useacase/get_filling_list_detail_usecase.dart';

@@ -1,7 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../service/domain/entity/service.dart';
-import '../../../warehouse/domain/entity/warehouse.dart';
-import '../../../medicine/domain/entity/medicine.dart';
 
 import '../../data/model/stock_transaction_dto.dart';
 

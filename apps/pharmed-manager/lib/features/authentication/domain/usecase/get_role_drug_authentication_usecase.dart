@@ -1,7 +1,5 @@
 import '../../../../core/core.dart';
 
-import '../../../medicine/domain/entity/medicine.dart';
-import '../../../medicine/domain/repository/i_medicine_repository.dart';
 import '../entity/role_drug_authentication.dart';
 import '../repository/i_role_authentication_repository.dart';
 

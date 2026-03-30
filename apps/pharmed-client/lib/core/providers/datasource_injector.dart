@@ -9,9 +9,9 @@ import '../../features/setup_wizard/data/datasource/setup_wizard_datasource.dart
 import '../../features/setup_wizard/data/datasource/setup_wizard_mock_datasource.dart';
 import '../../features/setup_wizard/data/repository/setup_wizard_repository_impl.dart';
 import '../flavor/app_flavor.dart';
-import '../hardware/serial_communication/i_serial_communication_service.dart';
-import '../hardware/serial_communication/mock_serial_communication_service.dart';
-import '../hardware/serial_communication/serial_communication_service.dart';
+import '../hardware/service/serial_communication/i_serial_communication_service.dart';
+import '../hardware/service/serial_communication/mock_serial_communication_service.dart';
+import '../hardware/service/serial_communication/serial_communication_service.dart';
 
 abstract final class DI {
   static ISerialCommunicationService serialCommunicationService() {

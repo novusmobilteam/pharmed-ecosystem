@@ -1,7 +1,5 @@
 import '../../../../core/core.dart';
 import '../../data/model/cabin_temperature_detail_dto.dart';
-import '../../../cabin/domain/entity/cabin.dart';
-import '../../../station/domain/entity/station.dart';
 
 class CabinTemperatureDetail implements TableData {
   final int? id;
@@ -16,36 +14,36 @@ class CabinTemperatureDetail implements TableData {
 
   @override
   List get content => [
-        cabin?.name,
-        bottomTemperatureInside?.toCustomString(),
-        topTemperatureInside?.toCustomString(),
-        bottomTemperatureOutside?.toCustomString(),
-        topTemperatureOutside?.toCustomString(),
-        bottomLimitHumidity?.toCustomString(),
-        topLimitHumidity?.toCustomString(),
-      ];
+    cabin?.name,
+    bottomTemperatureInside?.toCustomString(),
+    topTemperatureInside?.toCustomString(),
+    bottomTemperatureOutside?.toCustomString(),
+    topTemperatureOutside?.toCustomString(),
+    bottomLimitHumidity?.toCustomString(),
+    topLimitHumidity?.toCustomString(),
+  ];
 
   @override
   List get rawContent => [
-        cabin?.name,
-        bottomTemperatureInside,
-        topTemperatureInside,
-        bottomTemperatureOutside,
-        topTemperatureOutside,
-        bottomLimitHumidity,
-        topLimitHumidity,
-      ];
+    cabin?.name,
+    bottomTemperatureInside,
+    topTemperatureInside,
+    bottomTemperatureOutside,
+    topTemperatureOutside,
+    bottomLimitHumidity,
+    topLimitHumidity,
+  ];
 
   @override
   List<String?> get titles => [
-        'Kabin',
-        'İç Alt Sıcaklık',
-        'İç Üst Sıcaklık',
-        'Dış Alt Sıcaklık',
-        'Dış Üst Sıcaklık',
-        'Nem Alt Sınır',
-        'Nem Üst Sınır',
-      ];
+    'Kabin',
+    'İç Alt Sıcaklık',
+    'İç Üst Sıcaklık',
+    'Dış Alt Sıcaklık',
+    'Dış Üst Sıcaklık',
+    'Nem Alt Sınır',
+    'Nem Üst Sınır',
+  ];
 
   CabinTemperatureDetail({
     this.id,
@@ -86,8 +84,8 @@ class CabinTemperatureDetail implements TableData {
   CabinTemperatureDetailDTO toDTO() {
     return CabinTemperatureDetailDTO(
       id: id,
-      station: station?.toDTO(),
-      cabin: cabin?.toDTO(),
+      station: StationMapper().toDtoOrNull(station),
+      cabin: CabinMapper().toDtoOrNull(cabin),
       bottomTemperatureInside: bottomTemperatureInside,
       topTemperatureInside: topTemperatureInside,
       bottomTemperatureOutside: bottomTemperatureOutside,

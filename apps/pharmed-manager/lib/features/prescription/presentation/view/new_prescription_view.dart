@@ -11,8 +11,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/widgets/info_chip.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../../../hospitalization/domain/repository/i_hospitalization_repository.dart';
-import '../../../medicine/domain/entity/medicine.dart';
-import '../../../medicine/domain/repository/i_medicine_repository.dart';
 
 import '../notifier/new_prescription_notifier.dart';
 import '../widgets/prescription_item_card.dart';

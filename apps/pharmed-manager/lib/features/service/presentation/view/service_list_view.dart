@@ -5,14 +5,10 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/service.dart';
 import '../notifier/service_table_notifier.dart';
 
 Future<HospitalService?> showServiceListView(BuildContext context) async {
-  final HospitalService? result = await showDialog(
-    context: context,
-    builder: (context) => ServiceListView(),
-  );
+  final HospitalService? result = await showDialog(context: context, builder: (context) => ServiceListView());
 
   return result;
 }
@@ -38,10 +34,8 @@ class _ServiceListViewState extends State<ServiceListView> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ServiceTableNotifier(
-        getServicesUseCase: context.read(),
-        deleteServiceUseCase: context.read(),
-      )..getServices(),
+      create: (context) =>
+          ServiceTableNotifier(getServicesUseCase: context.read(), deleteServiceUseCase: context.read())..getServices(),
       child: Consumer<ServiceTableNotifier>(
         builder: (context, notifier, _) => CustomDialog(
           title: 'Servis Tanımlama',

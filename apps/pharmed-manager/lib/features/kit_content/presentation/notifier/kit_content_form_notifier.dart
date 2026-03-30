@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../domain/entity/kit_content.dart';
 import '../../domain/usecase/create_kit_content_usecase.dart';
 import '../../domain/usecase/update_kit_content_usecase.dart';

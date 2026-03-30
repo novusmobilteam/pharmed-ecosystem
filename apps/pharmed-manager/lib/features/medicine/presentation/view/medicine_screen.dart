@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../domain/entity/medicine.dart';
 import '../../../active_ingredient/presentation/view/active_ingredient_dialog.dart';
 import '../../../drug_class/presentation/view/drug_class_dialog.dart';
 import '../../../drug_type/presentation/view/drug_type_dialog.dart';
@@ -21,10 +20,9 @@ class MedicineScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MedicineTableNotifier(
-        getMedicinesUseCase: context.read(),
-        deleteMedicineUseCase: context.read(),
-      )..getMedicines(),
+      create: (context) =>
+          MedicineTableNotifier(getMedicinesUseCase: context.read(), deleteMedicineUseCase: context.read())
+            ..getMedicines(),
       child: _MedicineScreenBody(),
     );
   }
@@ -71,12 +69,8 @@ Widget _buildChild(BuildContext context, MedicineTableNotifier notifier) {
           enableSearch: true,
           onSearchChanged: notifier.search,
           actions: [
-            TableActionItem.edit(
-              onPressed: (data) => _onEdit(context, notifier, data),
-            ),
-            TableActionItem.delete(
-              onPressed: (data) => _onDelete(context, notifier, data),
-            ),
+            TableActionItem.edit(onPressed: (data) => _onEdit(context, notifier, data)),
+            TableActionItem.delete(onPressed: (data) => _onDelete(context, notifier, data)),
           ],
         ),
       ),
@@ -99,10 +93,7 @@ Future<void> _onEdit(BuildContext context, MedicineTableNotifier notifier, Medic
   if (data is Drug) {
     result = await showDrugFormView(context, initial: data);
   } else {
-    result = await showMedicalConsumableFormView(
-      context,
-      initial: data as MedicalConsumable,
-    );
+    result = await showMedicalConsumableFormView(context, initial: data as MedicalConsumable);
   }
 
   if (result && context.mounted == true) {
@@ -143,26 +134,11 @@ class _DefinitionButtonsView extends StatelessWidget {
             }
           },
         ),
-        PharmedButton(
-          label: 'Etken Madde Tanımlama',
-          onPressed: () => showActiveIngredientDialog(context),
-        ),
-        PharmedButton(
-          label: 'İlaç Sınıfı Tanımlama',
-          onPressed: () => showDrugClassDialog(context),
-        ),
-        PharmedButton(
-          label: 'İlaç Tipi Tanımlama',
-          onPressed: () => showDrugTypeDialog(context),
-        ),
-        PharmedButton(
-          label: 'İlaç Kiti Oluştur',
-          onPressed: () => showKitDialog(context),
-        ),
-        PharmedButton(
-          label: 'Malzeme Tipi Tanımlama',
-          onPressed: () => showMaterialTypeDialog(context),
-        ),
+        PharmedButton(label: 'Etken Madde Tanımlama', onPressed: () => showActiveIngredientDialog(context)),
+        PharmedButton(label: 'İlaç Sınıfı Tanımlama', onPressed: () => showDrugClassDialog(context)),
+        PharmedButton(label: 'İlaç Tipi Tanımlama', onPressed: () => showDrugTypeDialog(context)),
+        PharmedButton(label: 'İlaç Kiti Oluştur', onPressed: () => showKitDialog(context)),
+        PharmedButton(label: 'Malzeme Tipi Tanımlama', onPressed: () => showMaterialTypeDialog(context)),
       ],
     );
   }

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
-import '../../../cabin/domain/usecase/get_cabin_layout_usecase.dart';
-import '../../../cabin/domain/usecase/get_cabins_usecase.dart';
+
 import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_mixin.dart';
 
-import '../../../cabin/domain/entity/drawer_group.dart';
 import '../../domain/entity/cabin_fault.dart';
 import '../../domain/usecase/get_cabin_faults_usecase.dart';
 

@@ -1,5 +1,6 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../domain/entity/directed_order.dart';
-import '../../../station/data/model/station_dto.dart';
 import '../../../prescription/data/model/prescription_item_dto.dart';
 
 class DirectedOrderDTO {
@@ -26,6 +27,6 @@ class DirectedOrderDTO {
   }
 
   DirectedOrder toEntity() {
-    return DirectedOrder(id: id, station: station?.toEntity(), item: medicine?.toEntity());
+    return DirectedOrder(id: id, station: StationMapper().toEntityOrNull(station), item: medicine?.toEntity());
   }
 }

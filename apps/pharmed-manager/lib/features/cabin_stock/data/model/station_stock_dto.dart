@@ -1,5 +1,5 @@
-import '../../../medicine/data/model/medicine_dto.dart';
-import '../../../station/data/model/station_dto.dart';
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../domain/entity/station_stock.dart';
 
 class StationStockDTO {
@@ -49,19 +49,19 @@ class StationStockDTO {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'stationId': stationId,
-        'station': station,
-        'code': code,
-        'barcode': barcode,
-        'materialId': medicineId,
-        //'materialName': medicine?.toEntity(),
-        'maxQuantity': maxQuantity,
-        'currentQuantity': currentQuantity,
-        'reservedQuantity': reservedQuantity,
-        'remainingQuantity': remainingQuantity,
-        'fillingQuantity': fillingQuantity,
-      };
+    'id': id,
+    'stationId': stationId,
+    'station': station,
+    'code': code,
+    'barcode': barcode,
+    'materialId': medicineId,
+    //'materialName': medicine?.toEntity(),
+    'maxQuantity': maxQuantity,
+    'currentQuantity': currentQuantity,
+    'reservedQuantity': reservedQuantity,
+    'remainingQuantity': remainingQuantity,
+    'fillingQuantity': fillingQuantity,
+  };
 
   StationStockDTO copyWith({
     int? id,
@@ -94,14 +94,14 @@ class StationStockDTO {
   }
 
   StationStock toEntity() => StationStock(
-        id: id,
-        station: station?.toEntity(),
-        code: code,
-        medicine: medicine?.toEntity(),
-        maxQuantity: maxQuantity,
-        currentQuantity: currentQuantity,
-        reservedQuantity: reservedQuantity,
-        remainingQuantity: remainingQuantity,
-        fillingQuantity: fillingQuantity,
-      );
+    id: id,
+    station: StationMapper().toEntityOrNull(station),
+    code: code,
+    medicine: medicine?.toEntity(),
+    maxQuantity: maxQuantity,
+    currentQuantity: currentQuantity,
+    reservedQuantity: reservedQuantity,
+    remainingQuantity: remainingQuantity,
+    fillingQuantity: fillingQuantity,
+  );
 }

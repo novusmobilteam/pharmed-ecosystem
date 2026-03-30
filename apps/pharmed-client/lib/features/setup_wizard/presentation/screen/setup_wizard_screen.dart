@@ -8,18 +8,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/setup/app_setup_notifier.dart';
-import '../../../../core/enums/cabinet_type.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import '../../../../shared/widgets/atoms/med_tokens.dart';
 import '../../../../shared/widgets/atoms/med_button.dart';
 import '../notifier/setup_wizard_notifier.dart';
 import '../state/setup_wizard_ui_state.dart';
-import '../../../../core/router/app_router.dart';
 import 'steps/step1_cabinet_type.dart';
 import 'steps/step2_basic_info.dart';
 import 'steps/step3_drawer_config.dart';
 import 'steps/step4_summary.dart';
-
-// ─────────────────────────────────────────────────────────────────
 
 class SetupWizardScreen extends ConsumerWidget {
   const SetupWizardScreen({super.key});
@@ -113,7 +110,7 @@ class _WizardActiveView extends ConsumerWidget {
         );
       case 3:
         return Step4DrawerConfig(
-          cabinetType: draft.cabinetType ?? CabinetType.standard,
+          cabinetType: draft.cabinetType ?? CabinType.master,
           drawerConfig: draft.drawerConfig,
           scanState: state.scanState,
           onScanDevice: () => notifier.scanDevice(),

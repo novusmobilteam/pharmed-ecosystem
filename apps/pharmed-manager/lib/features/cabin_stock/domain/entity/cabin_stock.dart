@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../data/model/cabin_stock_dto.dart';
-import '../../../cabin/domain/entity/drawer_cell.dart';
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 
 class CabinStock implements TableData {
@@ -68,8 +67,8 @@ class CabinStock implements TableData {
 
   String get remainingDayText => remainingDay?.toString() ?? '-';
 
-  String get position =>
-      '${cabinDrawerDetail?.cabinDrawer?.drawerSlot?.address} / ${cabinDrawerDetail?.cabinDrawer?.orderNo} ';
+  // String get position =>
+  //     '${cabinDrawerDetail?.cabinDrawer?.drawerSlot?.address} / ${cabinDrawerDetail?.cabinDrawer?.orderNo} ';
 
   CabinStock copyWith({
     int? id,
@@ -104,62 +103,56 @@ class CabinStock implements TableData {
       shelfNo: shelfNo,
       quantity: quantity,
       miadDate: miadDate,
-      medicine: medicine?.toDTO(),
+      medicine: MedicineMapper().toDtoOrNull(medicine),
       cabinDrawerQuantity: assignment?.toDTO(),
-      cabinDrawerDetail: cabinDrawerDetail?.toDTO(),
+      cabinDrawerDetail: DrawerCellMapper().toDtoOrNull(cabinDrawerDetail),
     );
   }
 
   @override
   List get content => [
-        medicine?.barcode,
-        medicine?.name,
-        assignment?.cabin?.name,
-        '$shelfNo/$corpartmentNo',
-        ' ${assignment?.minQuantity} ${medicine?.operationUnit}',
-        ' ${assignment?.maxQuantity} ${medicine?.operationUnit}',
-        ' ${assignment?.criticalQuantity} ${medicine?.operationUnit}',
-        '${quantity?.formatFractional} ${medicine?.operationUnit}',
-        miadDate?.formattedDate,
-        remainingDay,
-      ];
+    medicine?.barcode,
+    medicine?.name,
+    assignment?.cabin?.name,
+    '$shelfNo/$corpartmentNo',
+    ' ${assignment?.minQuantity} ${medicine?.operationUnit}',
+    ' ${assignment?.maxQuantity} ${medicine?.operationUnit}',
+    ' ${assignment?.criticalQuantity} ${medicine?.operationUnit}',
+    '${quantity?.formatFractional} ${medicine?.operationUnit}',
+    miadDate?.formattedDate,
+    remainingDay,
+  ];
 
   @override
   List<String?> get titles => [
-        'Barkod',
-        'Malzeme',
-        'Kabin',
-        'Konum',
-        'Minimum',
-        'Maksimum',
-        'Kritik',
-        'Miktar',
-        'S.K.T',
-        'Kalan Gün',
-      ];
+    'Barkod',
+    'Malzeme',
+    'Kabin',
+    'Konum',
+    'Minimum',
+    'Maksimum',
+    'Kritik',
+    'Miktar',
+    'S.K.T',
+    'Kalan Gün',
+  ];
 
   @override
   List<dynamic> get rawContent => [
-        medicine?.barcode,
-        medicine?.name,
-        assignment?.cabin?.name,
-        assignment?.drawerUnit?.compartmentNo,
-        assignment?.drawerUnit?.orderNo,
-        assignment?.minQuantity,
-        assignment?.maxQuantity,
-        quantity,
-        miadDate?.formattedDate,
-        remainingDayText,
-      ];
+    medicine?.barcode,
+    medicine?.name,
+    assignment?.cabin?.name,
+    assignment?.drawerUnit?.compartmentNo,
+    assignment?.drawerUnit?.orderNo,
+    assignment?.minQuantity,
+    assignment?.maxQuantity,
+    quantity,
+    miadDate?.formattedDate,
+    remainingDayText,
+  ];
 
   factory CabinStock.empty({required int cabinId, required int unitId}) {
-    return CabinStock(
-      cabinId: cabinId,
-      cabinDrawerId: unitId,
-      medicine: null,
-      quantity: null,
-      assignment: null,
-    );
+    return CabinStock(cabinId: cabinId, cabinDrawerId: unitId, medicine: null, quantity: null, assignment: null);
   }
 }
 

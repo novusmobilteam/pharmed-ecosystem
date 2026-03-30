@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/drug_type.dart';
 import '../notifier/drug_type_form_notifier.dart';
 
 Future<bool> showDrugTypeFormDialog(BuildContext context, {DrugType? initial}) async {

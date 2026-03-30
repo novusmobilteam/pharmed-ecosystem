@@ -5,7 +5,7 @@ import '../notifier/station_form_notifier.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/station.dart';
+
 import '../notifier/station_table_notifier.dart';
 import 'station_registration_dialog.dart';
 
@@ -23,12 +23,8 @@ class StationTableView extends StatelessWidget {
           enableSearch: true,
           onSearchChanged: notifier.search,
           actions: [
-            TableActionItem.edit(
-              onPressed: (station) => showStationRegistrationDialog(context, station: station),
-            ),
-            TableActionItem.delete(
-              onPressed: (station) => _onDelete(context, notifier, station),
-            )
+            TableActionItem.edit(onPressed: (station) => showStationRegistrationDialog(context, station: station)),
+            TableActionItem.delete(onPressed: (station) => _onDelete(context, notifier, station)),
           ],
         );
       },

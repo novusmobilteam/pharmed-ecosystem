@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
-import '../../../medicine/data/model/medicine_dto.dart';
-import '../../../service/data/model/service_dto.dart';
+
 import '../../domain/entity/prescription_item.dart';
 import 'prescription_dto.dart';
 
@@ -351,8 +350,8 @@ class PrescriptionItemDTO {
       askDoctor: askDoctor,
       inCaseOfNecessity: inCaseOfNecessity,
       removed: removed,
-      inpatientService: inpatientService?.toEntity(),
-      physicalService: physicalService?.toEntity(),
+      inpatientService: ServiceMapper().toEntityOrNull(inpatientService),
+      physicalService: ServiceMapper().toEntityOrNull(physicalService),
       deleteDescription: deleteDescription,
       prescription: prescription?.toEntity(),
       medicine: medicine?.toEntity(),

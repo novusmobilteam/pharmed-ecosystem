@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../../warehouse/domain/entity/warehouse.dart';
 import '../../domain/entity/stock_transaction.dart';
 import '../../domain/usecase/delete_stock_transaction_usecase.dart';
 import '../../domain/usecase/get_stock_transactions_usecase.dart';

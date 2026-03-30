@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/unit.dart';
-import '../../domain/usecase/delete_unit_usecase.dart';
-import '../../domain/usecase/get_units_usecase.dart';
-
 class UnitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Unit> {
   final GetUnitsUseCase _getUnitsUseCase;
   final DeleteUnitUseCase _deleteUnitUseCase;

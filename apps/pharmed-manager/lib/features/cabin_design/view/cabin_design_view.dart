@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart' hide Drawer;
 import 'package:go_router/go_router.dart';
-import '../../station/domain/repository/i_station_repository.dart';
 
 import 'package:provider/provider.dart';
 import '../../../core/core.dart';
-import '../../station/domain/entity/station.dart';
 import '../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
 import '../notifier/cabin_design_form_notifier.dart';
 import '../notifier/cabin_design_notifier.dart';

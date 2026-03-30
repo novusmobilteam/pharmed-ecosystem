@@ -6,22 +6,16 @@
 // Sınıf: Class B
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import '../../../../core/enums/cabinet_type.dart';
-import '../../../../core/hardware/serial_communication/i_serial_communication_service.dart';
-import '../../../../core/hardware/serial_communication/serial_communication_service.dart';
+import '../../../../core/hardware/service/serial_communication/i_serial_communication_service.dart';
 import '../../domain/model/cabin_setup_config.dart';
 import '../../domain/model/wizard_draft.dart';
 import '../../domain/usecase/save_cabin_config_usecase.dart';
 import '../state/setup_wizard_ui_state.dart';
-import '../../../../core/providers/datasource_injector.dart';
 import '../../../../core/cache/app_settings_cache.dart';
 
 final setupWizardNotifierProvider = NotifierProvider<SetupWizardNotifier, SetupWizardUiState>(SetupWizardNotifier.new);
-
-// ─────────────────────────────────────────────────────────────────
-// SetupWizardNotifier
-// ─────────────────────────────────────────────────────────────────
 
 class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
   late final SaveCabinConfigUseCase _saveUseCase;
@@ -30,11 +24,6 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
   @override
   SetupWizardUiState build() {
-    final repo = DI.setupWizardRepository();
-    _saveUseCase = SaveCabinConfigUseCase(repository: repo);
-    _scanUseCase = ScanDeviceDrawerConfigUseCase(repository: repo);
-    _serialService = ref.watch(serialServiceProvider);
-
     final initialPorts = _serialService.getAvailablePorts();
 
     return WizardActive(currentStep: 1, draft: WizardDraft.empty(), completedSteps: {}, availablePorts: initialPorts);
@@ -43,7 +32,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
   // ── Adım 1: Kabin tipi ──────────────────────────────────────────
 
   /// [SWREQ-SETUP-UI-003]
-  void selectCabinetType(CabinetType type) {
+  void selectCabinetType(CabinType type) {
     final current = _active;
     if (current == null) return;
 

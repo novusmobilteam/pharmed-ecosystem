@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/drug_class.dart';
-import '../../domain/usecase/delete_drug_class_usecase.dart';
-import '../../domain/usecase/get_drug_classes_usecase.dart';
-
 class DrugClassNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<DrugClass> {
   final GetDrugClassUseCase _getDrugClassUseCase;
   final DeleteDrugClassUseCase _deleteDrugClassUseCase;

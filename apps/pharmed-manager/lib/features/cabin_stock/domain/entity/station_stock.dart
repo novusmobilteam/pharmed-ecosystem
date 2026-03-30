@@ -1,7 +1,5 @@
 import '../../../../core/core.dart';
 
-import '../../../station/domain/entity/station.dart';
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../data/model/station_stock_dto.dart';
 
 class StationStock implements TableData {
@@ -17,39 +15,30 @@ class StationStock implements TableData {
 
   @override
   List<String?> get content => [
-        code,
-        medicine?.barcode,
-        medicine?.name,
-        maxQuantity?.toCustomString(),
-        currentQuantity?.toCustomString(),
-        reservedQuantity?.toCustomString(),
-        remainingQuantity?.toCustomString(),
-        fillingQuantity?.toCustomString(),
-      ];
+    code,
+    medicine?.barcode,
+    medicine?.name,
+    maxQuantity?.toCustomString(),
+    currentQuantity?.toCustomString(),
+    reservedQuantity?.toCustomString(),
+    remainingQuantity?.toCustomString(),
+    fillingQuantity?.toCustomString(),
+  ];
 
   @override
   List get rawContent => [
-        code,
-        medicine?.barcode,
-        medicine?.name,
-        maxQuantity,
-        currentQuantity,
-        reservedQuantity,
-        remainingQuantity,
-        fillingQuantity,
-      ];
+    code,
+    medicine?.barcode,
+    medicine?.name,
+    maxQuantity,
+    currentQuantity,
+    reservedQuantity,
+    remainingQuantity,
+    fillingQuantity,
+  ];
 
   @override
-  List<String?> get titles => [
-        'Kod',
-        'Barkod',
-        'Malzeme',
-        'Maks.',
-        'Mevcut',
-        'Rezerve',
-        'Kalan',
-        'Dolum',
-      ];
+  List<String?> get titles => ['Kod', 'Barkod', 'Malzeme', 'Maks.', 'Mevcut', 'Rezerve', 'Kalan', 'Dolum'];
 
   const StationStock({
     this.id,
@@ -88,17 +77,17 @@ class StationStock implements TableData {
   }
 
   StationStockDTO toDTO() => StationStockDTO(
-        id: id,
-        stationId: station?.id,
-        station: station?.toDTO(),
-        code: code,
-        barcode: medicine?.barcode,
-        medicineId: medicine?.id,
-        medicine: medicine?.toDTO(),
-        maxQuantity: maxQuantity,
-        currentQuantity: currentQuantity,
-        reservedQuantity: reservedQuantity,
-        remainingQuantity: remainingQuantity,
-        fillingQuantity: fillingQuantity,
-      );
+    id: id,
+    stationId: station?.id,
+    station: StationMapper().toDtoOrNull(station),
+    code: code,
+    barcode: medicine?.barcode,
+    medicineId: medicine?.id,
+    medicine: MedicineMapper().toDtoOrNull(medicine),
+    maxQuantity: maxQuantity,
+    currentQuantity: currentQuantity,
+    reservedQuantity: reservedQuantity,
+    remainingQuantity: remainingQuantity,
+    fillingQuantity: fillingQuantity,
+  );
 }

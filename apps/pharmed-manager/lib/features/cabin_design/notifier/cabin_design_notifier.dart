@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
-import '../../cabin/domain/entity/drawer_group.dart';
-import '../../cabin/domain/usecase/get_cabins_usecase.dart';
-import '../../cabin/domain/usecase/get_cabin_layout_usecase.dart';
-import '../../cabin/domain/usecase/save_cabin_design_usecase.dart';
-import '../../cabin/domain/usecase/scan_cabin_usecase.dart';
+
 import '../../cabin/shared/widgets/cabin_editor/cabin_editor_mixin.dart';
 
 class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin, CabinEditorMixin {

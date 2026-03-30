@@ -9,17 +9,8 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../../drug_class/domain/entity/drug_class.dart';
-import '../../../drug_class/domain/repository/i_drug_class_repository.dart';
-import '../../../drug_type/domain/entity/drug_type.dart';
-import '../../../drug_type/domain/repository/i_drug_type_repository.dart';
-import '../../../firm/domain/entity/firm.dart';
-import '../../../firm/domain/repository/i_firm_repository.dart';
-import '../../../station/domain/entity/station.dart';
-import '../../../station/domain/usecase/get_stations_usecase.dart';
-import '../../../unit/domain/entity/unit.dart';
 import '../../../unit/presentation/view/unit_view.dart';
-import '../../domain/entity/medicine.dart';
+
 import '../notifier/drug_form_notifier.dart';
 
 part '../widgets/checkbox_section.dart';

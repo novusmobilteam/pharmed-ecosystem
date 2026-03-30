@@ -7,7 +7,7 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
-import '../../../../../core/enums/cabinet_type.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import '../../../../../shared/widgets/atoms/med_tokens.dart';
 import '../../../../../shared/widgets/atoms/med_button.dart';
 import '../../../../../shared/widgets/molecules/med_numeric_stepper.dart';
@@ -28,7 +28,7 @@ class Step4DrawerConfig extends StatelessWidget {
     required this.onBack,
   });
 
-  final CabinetType cabinetType;
+  final CabinType cabinetType;
   final DrawerConfig? drawerConfig;
   final DrawerScanState scanState;
   final VoidCallback onScanDevice;
@@ -44,14 +44,14 @@ class Step4DrawerConfig extends StatelessWidget {
         StepHeader(
           badge: 'Adım 4 / 5',
           title: 'Çekmece Yapısı',
-          subtitle: cabinetType == CabinetType.standard
+          subtitle: cabinetType == CabinType.master
               ? 'Cihazı tarayarak çekmece yapısını otomatik algılayın veya manuel girin.'
               : 'Mobil kabinin sıra sayısını ve her sıranın çekmece tipini ayarlayın.',
         ),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(32, 28, 32, 24),
-            child: cabinetType == CabinetType.standard
+            child: cabinetType == CabinType.master
                 ? _StandardDrawerPanel(
                     config: drawerConfig is StandardDrawerConfig ? drawerConfig as StandardDrawerConfig : null,
                     scanState: scanState,

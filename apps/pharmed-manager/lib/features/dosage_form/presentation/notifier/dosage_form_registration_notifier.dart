@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../core/core.dart';
 
-import '../../domain/entity/dosage_form.dart';
-import '../../domain/usecase/create_dosage_form_usecase.dart';
-import '../../domain/usecase/update_dosage_form_usecase.dart';
-
 class DosageFormRegistrationNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateDosageFormUseCase _createDosageFormUseCase;
   final UpdateDosageFormUseCase _updateDosageFormUseCase;

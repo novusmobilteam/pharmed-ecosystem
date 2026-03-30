@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
 import '../../../domain/entity/cabin.dart';
-import '../../../domain/entity/drawer_group.dart';
-import '../../../domain/usecase/get_cabin_layout_usecase.dart';
-import '../../../domain/usecase/get_cabins_usecase.dart';
+import '../../../../../../../../packages/pharmed_core/lib/src/cabin/domain/model/drawer_group.dart';
+import '../../../../../../../../packages/pharmed_core/lib/src/cabin/domain/usecase/get_cabin_layout_usecase.dart';
+import '../../../../../../../../packages/pharmed_core/lib/src/cabin/domain/usecase/get_cabins_usecase.dart';
 
 mixin CabinEditorMixin on ChangeNotifier, ApiRequestMixin {
   GetCabinsUseCase get cabinsUseCase;

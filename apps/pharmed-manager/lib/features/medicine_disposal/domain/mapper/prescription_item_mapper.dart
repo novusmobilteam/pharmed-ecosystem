@@ -2,7 +2,6 @@ import 'package:pharmed_manager/core/core.dart';
 
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
-import '../../../station/domain/entity/station.dart';
 
 /// PrescriptionItem → CabinOperationItem dönüşümü.
 /// Fire/imha akışında kullanılır.

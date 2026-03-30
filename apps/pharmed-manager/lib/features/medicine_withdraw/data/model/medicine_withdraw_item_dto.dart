@@ -5,7 +5,7 @@ import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../cabin_assignment/data/model/cabin_assignment_dto.dart';
 import '../../../cabin_stock/data/model/cabin_stock_dto.dart';
 import '../../../hospitalization/data/model/hospitalization_dto.dart';
-import '../../../medicine/data/model/medicine_dto.dart';
+
 import '../../../prescription/data/model/prescription_dto.dart';
 import '../../domain/entity/medicine_withdraw_item.dart';
 

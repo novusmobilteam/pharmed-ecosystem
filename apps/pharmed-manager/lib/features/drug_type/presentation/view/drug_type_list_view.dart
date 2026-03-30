@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/drug_type.dart';
 import '../notifier/drug_type_notifier.dart';
 import 'drug_type_form_dialog.dart';
 
@@ -11,11 +10,7 @@ class DrugTypeListView extends StatefulWidget {
   final bool isDialog;
   final VoidCallback? onItemSelected;
 
-  const DrugTypeListView({
-    super.key,
-    this.isDialog = false,
-    this.onItemSelected,
-  });
+  const DrugTypeListView({super.key, this.isDialog = false, this.onItemSelected});
 
   @override
   State<DrugTypeListView> createState() => _DrugTypeListViewState();

@@ -6,8 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../domain/entity/hospitalization.dart';
 import '../../../patient/domain/entity/patient.dart';
-import '../../../service/domain/entity/service.dart';
-import '../../../service/domain/repository/i_service_repository.dart';
+
 import '../notifier/hospitalization_form_notifier.dart';
 
 part 'patient_info_view.dart';

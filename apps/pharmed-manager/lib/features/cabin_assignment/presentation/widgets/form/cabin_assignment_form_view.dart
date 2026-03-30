@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../core/core.dart';
 
-import '../../../../medicine/domain/entity/medicine.dart';
-import '../../../../medicine/domain/repository/i_medicine_repository.dart';
 import '../../../domain/entity/cabin_assignment.dart';
 import 'cabin_assignment_form_notifier.dart';
 
@@ -15,11 +13,7 @@ Future<bool> showCabinAssignmentFormView(BuildContext context, CabinAssignment? 
     context: context,
     builder: (context) => ChangeNotifierProvider(
       create: (context) => CabinAssignmentFormNotifier(
-        initial: data ??
-            CabinAssignment.empty(
-              cabinId: 0,
-              cabinDrawerId: data?.cabinDrawerId ?? 0,
-            ),
+        initial: data ?? CabinAssignment.empty(cabinId: 0, cabinDrawerId: data?.cabinDrawerId ?? 0),
         createAssignmentUseCase: context.read(),
         updateAssignmentUseCase: context.read(),
       ),
@@ -90,7 +84,7 @@ class _CabinAssignmentFormViewState extends State<CabinAssignmentFormView> {
                           SizedBox(width: 16),
                           Expanded(child: _CritQuantityField()),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -164,10 +158,7 @@ class _MaterialFieldState extends State<_MaterialField> {
               onSelected: (value) => vm.setMaterial(value),
               actions: [
                 if (vm.canSelectEquivalent)
-                  TextButton(
-                    onPressed: _toggleFuture,
-                    child: Text(showEquivalent ? 'Tüm İlaçlar' : 'Eşdeğer İlaçlar'),
-                  )
+                  TextButton(onPressed: _toggleFuture, child: Text(showEquivalent ? 'Tüm İlaçlar' : 'Eşdeğer İlaçlar')),
               ],
             );
           },

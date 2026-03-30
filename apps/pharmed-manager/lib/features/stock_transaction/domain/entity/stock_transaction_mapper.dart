@@ -1,4 +1,5 @@
-import '../../../warehouse/domain/entity/warehouse.dart';
+import 'package:pharmed_manager/core/core.dart';
+
 import 'stock_transaction.dart';
 
 extension StockTransactionListX on List<StockTransaction> {

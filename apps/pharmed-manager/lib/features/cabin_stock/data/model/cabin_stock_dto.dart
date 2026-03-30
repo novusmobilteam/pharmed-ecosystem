@@ -1,6 +1,6 @@
-import '../../../medicine/data/model/medicine_dto.dart';
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../domain/entity/cabin_stock.dart';
-import '../../../cabin/data/model/drawer_cell_dto.dart';
 import '../../../cabin_assignment/data/model/cabin_assignment_dto.dart';
 
 class CabinStockDTO {
@@ -71,7 +71,7 @@ class CabinStockDTO {
       miadDate: miadDate,
       medicine: medicine?.toEntity(),
       assignment: cabinDrawerQuantity?.toEntity(),
-      cabinDrawerDetail: cabinDrawerDetail?.toEntity(),
+      cabinDrawerDetail: DrawerCellMapper().toEntityOrNull(cabinDrawerDetail),
       cabinDrawerDetailId: cabinDrawerDetailId,
     );
   }

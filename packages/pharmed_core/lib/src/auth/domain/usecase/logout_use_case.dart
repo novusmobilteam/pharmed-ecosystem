@@ -1,8 +1,5 @@
-// packages/pharmed_core/lib/src/auth/domain/usecase/logout_use_case.dart
-//
 // [SWREQ-CORE-AUTH-003]
 // Sınıf: Class B
-// ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:pharmed_core/pharmed_core.dart';
 

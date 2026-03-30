@@ -3,7 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../cabin/domain/usecase/scan_cabin_usecase.dart';
 
 class CabinSetupScreen extends StatefulWidget {
   const CabinSetupScreen({super.key});
@@ -35,10 +34,7 @@ class _CabinSetupScreenState extends State<CabinSetupScreen> {
     try {
       final scanUseCase = context.read<ScanCabinUseCase>();
 
-      final result = await scanUseCase.call(
-        portName: "COM3",
-        cabinType: CabinType.cabinet,
-      );
+      final result = await scanUseCase.call(portName: "COM3", cabinType: CabinType.cabinet);
 
       if (result is Ok) {
         setState(() {
@@ -79,13 +75,7 @@ class _CabinSetupScreenState extends State<CabinSetupScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(10),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 20, offset: const Offset(0, 10))],
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -98,18 +88,15 @@ class _CabinSetupScreenState extends State<CabinSetupScreen> {
               // 2. Başlıklar
               Text(
                 _statusMessage,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF2D3748),
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF2D3748)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
                 _detailMessage,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF718096),
-                    ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: const Color(0xFF718096)),
                 textAlign: TextAlign.center,
               ),
 
@@ -117,10 +104,7 @@ class _CabinSetupScreenState extends State<CabinSetupScreen> {
 
               // 3. İlerleme Çubuğu (Loading ise göster)
               if (_isLoading) ...[
-                const LinearProgressIndicator(
-                  minHeight: 6,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
+                const LinearProgressIndicator(minHeight: 6, borderRadius: BorderRadius.all(Radius.circular(10))),
                 const SizedBox(height: 20),
               ],
 
@@ -134,17 +118,12 @@ class _CabinSetupScreenState extends State<CabinSetupScreen> {
                     backgroundColor: const Color(0xFF3182CE),
                     foregroundColor: Colors.white,
                     disabledBackgroundColor: Colors.grey[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
                   child: Text(
                     _isLoading ? "İşlem Sürüyor..." : "Kurulumu Başlat",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -163,26 +142,12 @@ class _CabinSetupScreenState extends State<CabinSetupScreen> {
       decoration: BoxDecoration(
         color: _statusColor.withAlpha(25),
         shape: BoxShape.circle,
-        border: Border.all(
-          color: _statusColor.withAlpha(35),
-          width: 2,
-        ),
+        border: Border.all(color: _statusColor.withAlpha(35), width: 2),
       ),
       child: Center(
         child: _isLoading
-            ? SizedBox(
-                width: 60,
-                height: 60,
-                child: CircularProgressIndicator(
-                  color: _statusColor,
-                  strokeWidth: 3,
-                ),
-              )
-            : Icon(
-                _statusIcon,
-                size: 48,
-                color: _statusColor,
-              ),
+            ? SizedBox(width: 60, height: 60, child: CircularProgressIndicator(color: _statusColor, strokeWidth: 3))
+            : Icon(_statusIcon, size: 48, color: _statusColor),
       ),
     );
   }

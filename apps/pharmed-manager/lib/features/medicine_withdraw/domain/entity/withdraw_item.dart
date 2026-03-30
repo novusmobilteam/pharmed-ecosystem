@@ -1,8 +1,7 @@
 import '../../../../core/core.dart';
 import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../../prescription/domain/entity/prescription_item.dart';
-import '../../../station/domain/entity/station.dart';
 
 /// Alım işlemi sırasında kullanıcıya ilaçları göstermek için kullanılan model
 class WithdrawItem {
