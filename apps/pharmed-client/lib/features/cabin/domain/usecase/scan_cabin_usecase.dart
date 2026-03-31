@@ -1,14 +1,11 @@
-// pharmed_core/lib/src/cabin/use_case/scan_cabin_use_case.dart
-//
 // [SWREQ-SCAN-002] [IEC 62304 §5.5]
 // Fiziksel kabin tarama use case'i.
 // Seri port üzerinden bağlanır, çekmece yapısını okur ve DrawerGroup listesi döner.
 // Sınıf: Class B
 
+import 'package:pharmed_client/core/hardware/service/cabin_operation/i_cabin_operation_service.dart';
+import 'package:pharmed_client/core/hardware/service/serial_communication/i_serial_communication_service.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-
-import '../../../../core/hardware/service/cabin_operation/i_cabin_operation_service.dart';
-import '../../../../core/hardware/service/serial_communication/i_serial_communication_service.dart';
 
 class ScanCabinUseCase {
   ScanCabinUseCase({
@@ -50,18 +47,23 @@ class ScanCabinUseCase {
 
       final results = await Future.wait([_cabinRepository.getDrawerConfigs(), _cabinRepository.getDrawerTypes()]);
 
-      final configsRes = results[0] as Result<List<DrawerConfig>>;
-      final typesRes = results[1] as Result<List<DrawerType>>;
+      final configsRes = results[0] as RepoResult<List<DrawerConfig>>;
+      final typesRes = results[1] as RepoResult<List<DrawerType>>;
 
-      if (configsRes is! Ok || typesRes is! Ok) {
+      // RepoFailure → tarama durduruluyor
+      // RepoStale → cache var, taramaya devam edilebilir
+      if (configsRes is RepoFailure || typesRes is RepoFailure) {
         onStatusChanged?.call(ScanStatus.metadataFailed, detail: 'Tanımlamalar alınamadı.');
         return Result.error(CustomException(message: 'Tanımlamalar alınamadı.'));
       }
 
-      final allConfigs = (configsRes as Ok).value;
-      final allTypes = (typesRes as Ok).value;
+      final allConfigs = configsRes.dataOrNull!;
+      final allTypes = typesRes.dataOrNull!;
 
-      onStatusChanged?.call(ScanStatus.metadataReady, detail: '${allConfigs.length} konfigürasyon');
+      onStatusChanged?.call(
+        ScanStatus.metadataReady,
+        detail: '${allConfigs.length} konfigürasyon${configsRes.isStale ? ' (önbellek)' : ''}',
+      );
 
       // ── 3. Yönetim Kartı ───────────────────────────────────────
       onStatusChanged?.call(ScanStatus.searchingManager);

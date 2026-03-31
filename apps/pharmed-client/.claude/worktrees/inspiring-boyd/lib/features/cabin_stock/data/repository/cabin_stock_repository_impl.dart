@@ -32,27 +32,6 @@ import '../../domain/mapper/cabin_stock_mapper.dart';
 // Repository sonuç tipi — domain katmanına iletilir
 // ─────────────────────────────────────────────────────────────────
 
-sealed class RepoResult<T> {
-  const RepoResult();
-}
-
-final class RepoSuccess<T> extends RepoResult<T> {
-  const RepoSuccess(this.data);
-  final T data;
-}
-
-/// [HAZ-007] Servis çöktü ama geçerli cache var → göster + uyar
-final class RepoStale<T> extends RepoResult<T> {
-  const RepoStale(this.data, this.savedAt);
-  final T data;
-  final DateTime savedAt;
-}
-
-final class RepoFailure<T> extends RepoResult<T> {
-  const RepoFailure(this.error);
-  final Object error;
-}
-
 // ─────────────────────────────────────────────────────────────────
 // CabinStockRepositoryImpl
 // ─────────────────────────────────────────────────────────────────

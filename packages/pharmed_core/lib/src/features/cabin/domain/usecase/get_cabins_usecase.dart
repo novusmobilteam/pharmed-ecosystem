@@ -1,14 +1,12 @@
-// [SWREQ-CORE-CABIN-UC-005]
+// [SWREQ-CORE-CABIN-002] [IEC 62304 §5.5]
+// Tüm kabinleri listeler.
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
 
 class GetCabinsUseCase {
+  GetCabinsUseCase(this._repository);
   final ICabinRepository _repository;
 
-  GetCabinsUseCase(this._repository);
-
-  Future<Result<List<Cabin>>> call() {
-    return _repository.getCabins();
-  }
+  Future<RepoResult<List<Cabin>>> call() => _repository.getCabins();
 }

@@ -1,14 +1,17 @@
-// pharmed_data/src/cabin/repository/cabin_repository_impl.dart
+// packages/pharmed_data/lib/src/cabin/repository/cabin_repository_impl.dart
 //
-// [SWREQ-DATA-CABIN-002]
+// [SWREQ-DATA-CABIN-002] [IEC 62304 §5.5]
 // ICabinRepository implementasyonu.
-// DTO → entity dönüşümü mapper'lar üzerinden yapılır.
-// DrawerConfig ve DrawerType için in-memory cache.
+// Cache stratejisi: API → başarılı ise cache'e yaz + RepoSuccess döndür.
+//                   API → başarısız ise cache'e bak:
+//                     Cache var  → RepoStale döndür
+//                     Cache yok  → RepoFailure döndür
+// Write operasyonları (create/update/delete) cache'i invalidate eder.
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
-
 import '../datasource/cabin_remote_datasource.dart';
+import '../datasource/cabin_local_datasource.dart';
 import '../mapper/cabin_mapper.dart';
 import '../mapper/drawer_config_mapper.dart';
 import '../mapper/drawer_slot_mapper.dart';
@@ -17,61 +20,105 @@ import '../mapper/drawer_unit_mapper.dart';
 
 class CabinRepositoryImpl implements ICabinRepository {
   CabinRepositoryImpl({
-    required CabinRemoteDataSource dataSource,
+    required CabinRemoteDataSource remoteDataSource,
+    required ICabinLocalDataSource localDataSource,
     required CabinMapper cabinMapper,
     required DrawerSlotMapper drawerSlotMapper,
     required DrawerConfigMapper drawerConfigMapper,
     required DrawerUnitMapper drawerUnitMapper,
     required DrawerTypeMapper drawerTypeMapper,
-  }) : _dataSource = dataSource,
+  }) : _remote = remoteDataSource,
+       _local = localDataSource,
        _cabinMapper = cabinMapper,
        _drawerSlotMapper = drawerSlotMapper,
        _drawerConfigMapper = drawerConfigMapper,
        _drawerUnitMapper = drawerUnitMapper,
        _drawerTypeMapper = drawerTypeMapper;
 
-  final CabinRemoteDataSource _dataSource;
+  final CabinRemoteDataSource _remote;
+  final ICabinLocalDataSource _local;
   final CabinMapper _cabinMapper;
   final DrawerSlotMapper _drawerSlotMapper;
   final DrawerConfigMapper _drawerConfigMapper;
   final DrawerUnitMapper _drawerUnitMapper;
   final DrawerTypeMapper _drawerTypeMapper;
 
-  // ── In-Memory Cache ────────────────────────────────────────────
-
-  List<DrawerConfig>? _cachedConfigs;
-  List<DrawerType>? _cachedTypes;
-
-  /// Cache'i temizler. Logout veya session sonlandırmada çağrılabilir.
-  void clearCache() {
-    _cachedConfigs = null;
-    _cachedTypes = null;
-  }
-
   // ── Kabin CRUD ─────────────────────────────────────────────────
 
   @override
-  Future<Result<List<Cabin>>> getCabins() async {
-    final result = await _dataSource.getCabins();
-    return result.when(ok: (dtos) => Result.ok(_cabinMapper.toEntityList(dtos)), error: Result.error);
+  Future<RepoResult<List<Cabin>>> getCabins() async {
+    final result = await _remote.getCabins();
+
+    return result.when(
+      ok: (dtos) async {
+        await _local.saveCabins(dtos);
+        return RepoSuccess(_cabinMapper.toEntityList(dtos));
+      },
+      error: (error) async {
+        final cached = await _local.readCabins();
+        final savedAt = await _local.cabinsSavedAt();
+        if (cached != null && savedAt != null) {
+          return RepoStale(_cabinMapper.toEntityList(cached), savedAt);
+        }
+        return RepoFailure(error);
+      },
+    );
   }
 
   @override
-  Future<Result<List<Cabin>>> getCabinsByStation(int stationId) async {
-    final result = await _dataSource.getCabinsByStation(stationId);
-    return result.when(ok: (dtos) => Result.ok(_cabinMapper.toEntityList(dtos)), error: Result.error);
+  Future<RepoResult<List<Cabin>>> getCabinsByStation(int stationId) async {
+    // Belirli bir istasyona ait kabinler genel cache'den filtrelenir.
+    // API başarısız olursa cache'deki tüm kabinler içinden filtre uygulanır.
+    final result = await _remote.getCabinsByStation(stationId);
+
+    return result.when(
+      ok: (dtos) async {
+        // Gelen kabinleri genel cache'e de yaz (merge)
+        final existing = await _local.readCabins() ?? [];
+        final ids = dtos.map((d) => d.id).toSet();
+        final merged = [...existing.where((e) => !ids.contains(e.id)), ...dtos];
+        await _local.saveCabins(merged);
+        return RepoSuccess(_cabinMapper.toEntityList(dtos));
+      },
+      error: (error) async {
+        final cached = await _local.readCabins();
+        final savedAt = await _local.cabinsSavedAt();
+        if (cached != null && savedAt != null) {
+          final filtered = cached.where((c) => c.stationId == stationId).toList();
+          if (filtered.isNotEmpty) {
+            return RepoStale(_cabinMapper.toEntityList(filtered), savedAt);
+          }
+        }
+        return RepoFailure(error);
+      },
+    );
   }
 
   @override
   Future<Result<Cabin?>> createCabin(Cabin entity) async {
-    final result = await _dataSource.createCabin(_cabinMapper.toDto(entity));
-    return result.when(ok: (_) => const Result.ok(null), error: Result.error);
+    final result = await _remote.createCabin(_cabinMapper.toDto(entity));
+    return result.when(
+      ok: (dto) async {
+        // Yeni kabin eklendi — kabin cache'ini invalidate et
+        await _local.clearCabins();
+        final created = dto != null ? _cabinMapper.toEntity(dto) : null;
+        return Result.ok(created);
+      },
+      error: Result.error,
+    );
   }
 
   @override
   Future<Result<Cabin?>> updateCabin(Cabin entity) async {
-    final result = await _dataSource.updateCabin(_cabinMapper.toDto(entity));
-    return result.when(ok: (_) => const Result.ok(null), error: Result.error);
+    final result = await _remote.updateCabin(_cabinMapper.toDto(entity));
+    return result.when(
+      ok: (dto) async {
+        await _local.clearCabins();
+        final updated = dto != null ? _cabinMapper.toEntity(dto) : null;
+        return Result.ok(updated);
+      },
+      error: Result.error,
+    );
   }
 
   @override
@@ -79,82 +126,129 @@ class CabinRepositoryImpl implements ICabinRepository {
     if (entity.id == null) {
       return Result.error(ValidationException(message: "Silinecek kabinin id'si boş olamaz", field: 'id'));
     }
-    final result = await _dataSource.deleteCabin(entity.id!);
-    return result.when(ok: (_) => const Result.ok(null), error: Result.error);
-  }
-
-  // ── Yuva (Slot) & Unit İşlemleri ──────────────────────────────
-
-  @override
-  Future<Result<List<DrawerSlot>>> getCabinSlots(int cabinId) async {
-    final result = await _dataSource.getCabinSlots(cabinId);
-    return result.when(ok: (dtos) => Result.ok(_drawerSlotMapper.toEntityList(dtos)), error: Result.error);
-  }
-
-  @override
-  Future<Result<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
-    final result = await _dataSource.getDrawerUnits(slotId);
-    return result.when(ok: (dtos) => Result.ok(_drawerUnitMapper.toEntityList(dtos)), error: Result.error);
-  }
-
-  @override
-  Future<Result<void>> createDrawerSlots(List<DrawerSlot> slots) async {
-    final result = await _dataSource.createDrawerSlots(_drawerSlotMapper.toDtoList(slots));
-    return result.when(ok: (_) => const Result.ok(null), error: Result.error);
-  }
-
-  @override
-  Future<Result<void>> updateDrawerSlots(List<DrawerSlot> slots) async {
-    final result = await _dataSource.updateDrawerSlots(_drawerSlotMapper.toDtoList(slots));
-    return result.when(ok: (_) => const Result.ok(null), error: Result.error);
-  }
-
-  @override
-  Future<Result<List<DrawerSlot>>> getSerumSlots() async {
-    final result = await _dataSource.getSerumCabins();
-    return result.when(ok: (dtos) => Result.ok(_drawerSlotMapper.toEntityList(dtos)), error: Result.error);
-  }
-
-  // ── Meta Veri (In-Memory Cache) ───────────────────────────────
-
-  @override
-  Future<Result<List<DrawerConfig>>> getDrawerConfigs({bool forceRefresh = false}) async {
-    // Cache varsa ve force değilse → hemen döndür
-    if (!forceRefresh && _cachedConfigs != null) {
-      return Result.ok(_cachedConfigs!);
-    }
-
-    final result = await _dataSource.getDrawerConfigs();
+    final result = await _remote.deleteCabin(entity.id!);
     return result.when(
-      ok: (dtos) {
-        final entities = _drawerConfigMapper.toEntityList(dtos);
-        _cachedConfigs = entities; // Cache'e yaz
-        return Result.ok(entities);
+      ok: (_) async {
+        await _local.clearCabins();
+        if (entity.id != null) await _local.clearSlots(entity.id!);
+        return const Result.ok(null);
       },
-      error: (e) {
-        // API başarısız ama eski cache varsa onu döndür
-        if (_cachedConfigs != null) return Result.ok(_cachedConfigs!);
-        return Result.error(e);
+      error: Result.error,
+    );
+  }
+
+  // ── Slot & Unit ────────────────────────────────────────────────
+
+  @override
+  Future<RepoResult<List<DrawerSlot>>> getCabinSlots(int cabinId) async {
+    final result = await _remote.getCabinSlots(cabinId);
+
+    return result.when(
+      ok: (dtos) async {
+        await _local.saveSlots(cabinId, dtos);
+        return RepoSuccess(_drawerSlotMapper.toEntityList(dtos));
+      },
+      error: (error) async {
+        final cached = await _local.readSlots(cabinId);
+        final savedAt = await _local.slotsSavedAt(cabinId);
+        if (cached != null && savedAt != null) {
+          return RepoStale(_drawerSlotMapper.toEntityList(cached), savedAt);
+        }
+        return RepoFailure(error);
       },
     );
   }
 
   @override
-  Future<Result<List<DrawerType>>> getDrawerTypes({bool forceRefresh = false}) async {
-    if (!forceRefresh && _cachedTypes != null) {
-      return Result.ok(_cachedTypes!);
+  Future<Result<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
+    // DrawerUnit gerçek zamanlı veri — cache'lenmez
+    final result = await _remote.getDrawerUnits(slotId);
+    return result.when(ok: (dtos) => Result.ok(_drawerUnitMapper.toEntityList(dtos)), error: Result.error);
+  }
+
+  @override
+  Future<Result<void>> createDrawerSlots(List<DrawerSlot> slots) async {
+    final result = await _remote.createDrawerSlots(_drawerSlotMapper.toDtoList(slots));
+    return result.when(
+      ok: (_) async {
+        // Etkilenen kabin ID'lerinin slot cache'ini invalidate et
+        final cabinIds = slots.map((s) => s.cabinId).whereType<int>().toSet();
+        await Future.wait(cabinIds.map(_local.clearSlots));
+        return const Result.ok(null);
+      },
+      error: Result.error,
+    );
+  }
+
+  @override
+  Future<Result<void>> updateDrawerSlots(List<DrawerSlot> slots) async {
+    final result = await _remote.updateDrawerSlots(_drawerSlotMapper.toDtoList(slots));
+    return result.when(
+      ok: (_) async {
+        final cabinIds = slots.map((s) => s.cabinId).whereType<int>().toSet();
+        await Future.wait(cabinIds.map(_local.clearSlots));
+        return const Result.ok(null);
+      },
+      error: Result.error,
+    );
+  }
+
+  @override
+  Future<Result<List<DrawerSlot>>> getSerumSlots() async {
+    final result = await _remote.getSerumCabins();
+    return result.when(ok: (dtos) => Result.ok(_drawerSlotMapper.toEntityList(dtos)), error: Result.error);
+  }
+
+  // ── Meta (DrawerConfig + DrawerType) ──────────────────────────
+  // Bu veriler nadiren değişir — Hive cache tercih edilir.
+
+  @override
+  Future<RepoResult<List<DrawerConfig>>> getDrawerConfigs({bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      final cached = await _local.readDrawerConfigs();
+      if (cached != null) {
+        return RepoSuccess(_drawerConfigMapper.toEntityList(cached));
+      }
     }
 
-    final result = await _dataSource.getDrawerTypes();
+    final result = await _remote.getDrawerConfigs();
     return result.when(
-      ok: (dtos) {
-        final entities = _drawerTypeMapper.toEntityList(dtos);
-        _cachedTypes = entities;
-        return Result.ok(entities);
+      ok: (dtos) async {
+        await _local.saveDrawerConfigs(dtos);
+        return RepoSuccess(_drawerConfigMapper.toEntityList(dtos));
       },
-      error: (e) {
-        if (_cachedTypes != null) return Result.ok(_cachedTypes!);
-        return Result.error(e);
+      error: (error) async {
+        // forceRefresh olsa bile eski cache varsa RepoStale döndür
+        final cached = await _local.readDrawerConfigs();
+        if (cached != null) {
+          return RepoStale(_drawerConfigMapper.toEntityList(cached), DateTime.now());
+        }
+        return RepoFailure(error);
+      },
+    );
+  }
+
+  @override
+  Future<RepoResult<List<DrawerType>>> getDrawerTypes({bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      final cached = await _local.readDrawerTypes();
+      if (cached != null) {
+        return RepoSuccess(_drawerTypeMapper.toEntityList(cached));
+      }
+    }
+
+    final result = await _remote.getDrawerTypes();
+    return result.when(
+      ok: (dtos) async {
+        await _local.saveDrawerTypes(dtos);
+        return RepoSuccess(_drawerTypeMapper.toEntityList(dtos));
+      },
+      error: (error) async {
+        final cached = await _local.readDrawerTypes();
+        if (cached != null) {
+          return RepoStale(_drawerTypeMapper.toEntityList(cached), DateTime.now());
+        }
+        return RepoFailure(error);
       },
     );
   }

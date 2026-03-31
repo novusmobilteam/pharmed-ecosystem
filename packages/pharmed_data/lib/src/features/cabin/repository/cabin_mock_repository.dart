@@ -1,8 +1,9 @@
 // pharmed_data/src/cabin/repository/mock/cabin_mock_repository.dart
 //
-// [SWREQ-DATA-CABIN-003]
+// [SWREQ-DATA-CABIN-003] [IEC 62304 §5.5]
 // Mock flavor için kabin repository'si.
 // API/Hive'a çıkılmaz, sabit veriler döner.
+// Read metodları her zaman RepoSuccess döndürür.
 // Sınıf: Class A
 
 import 'package:pharmed_core/pharmed_core.dart';
@@ -43,15 +44,15 @@ class CabinMockRepository implements ICabinRepository {
   // ── Kabin CRUD ─────────────────────────────────────────────────
 
   @override
-  Future<Result<List<Cabin>>> getCabins() async {
+  Future<RepoResult<List<Cabin>>> getCabins() async {
     await Future.delayed(_delay);
-    return Result.ok(List.unmodifiable(_mockCabins));
+    return RepoSuccess(List.unmodifiable(_mockCabins));
   }
 
   @override
-  Future<Result<List<Cabin>>> getCabinsByStation(int stationId) async {
+  Future<RepoResult<List<Cabin>>> getCabinsByStation(int stationId) async {
     await Future.delayed(_delay);
-    return Result.ok(_mockCabins.where((c) => c.stationId == stationId).toList());
+    return RepoSuccess(_mockCabins.where((c) => c.stationId == stationId).toList());
   }
 
   @override
@@ -83,9 +84,9 @@ class CabinMockRepository implements ICabinRepository {
   // ── Yuva (Slot) & Unit ─────────────────────────────────────────
 
   @override
-  Future<Result<List<DrawerSlot>>> getCabinSlots(int cabinId) async {
+  Future<RepoResult<List<DrawerSlot>>> getCabinSlots(int cabinId) async {
     await Future.delayed(_delay);
-    return Result.ok(_mockSlots.where((s) => s.cabinId == cabinId).toList());
+    return RepoSuccess(_mockSlots.where((s) => s.cabinId == cabinId).toList());
   }
 
   @override
@@ -134,14 +135,14 @@ class CabinMockRepository implements ICabinRepository {
   // ── Meta Veri ──────────────────────────────────────────────────
 
   @override
-  Future<Result<List<DrawerConfig>>> getDrawerConfigs({bool forceRefresh = false}) async {
+  Future<RepoResult<List<DrawerConfig>>> getDrawerConfigs({bool forceRefresh = false}) async {
     await Future.delayed(_delay);
-    return Result.ok(List.unmodifiable(_mockConfigs));
+    return RepoSuccess(List.unmodifiable(_mockConfigs));
   }
 
   @override
-  Future<Result<List<DrawerType>>> getDrawerTypes({bool forceRefresh = false}) async {
+  Future<RepoResult<List<DrawerType>>> getDrawerTypes({bool forceRefresh = false}) async {
     await Future.delayed(_delay);
-    return Result.ok(List.unmodifiable(_mockTypes));
+    return RepoSuccess(List.unmodifiable(_mockTypes));
   }
 }

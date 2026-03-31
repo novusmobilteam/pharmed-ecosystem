@@ -32,20 +32,20 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);
   }
 
-  Future<Result<void>> createCabin(CabinDTO dto) {
+  Future<Result<CabinDTO?>> createCabin(CabinDTO dto) {
     return createRequest(
       path: _base,
       body: dto.toJson(),
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.singleParser(CabinDTO.fromJson),
       successLog: 'Kabin oluşturuldu',
     );
   }
 
-  Future<Result<void>> updateCabin(CabinDTO dto) {
+  Future<Result<CabinDTO?>> updateCabin(CabinDTO dto) {
     return updateRequest(
       path: _base,
       body: dto.toJson(),
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.singleParser(CabinDTO.fromJson),
       successLog: 'Kabin güncellendi',
     );
   }
