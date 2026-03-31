@@ -19,14 +19,15 @@ final stationRepositoryProvider = Provider<IStationRepository>((ref) {
 // CabinRepository
 final cabinRepositoryProvider = Provider<ICabinRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => MockCabinRepository(),
+    AppFlavor.mock => CabinMockRepository(),
     AppFlavor.dev || AppFlavor.prod => CabinRepositoryImpl(
-      dataSource: ref.read(cabinRemoteDataSourceProvider),
       cabinMapper: CabinMapper(),
       drawerSlotMapper: DrawerSlotMapper(),
       drawerConfigMapper: DrawerConfigMapper(),
       drawerUnitMapper: DrawerUnitMapper(),
       drawerTypeMapper: DrawerTypeMapper(),
+      remoteDataSource: ref.read(cabinRemoteDataSourceProvider),
+      localDataSource: ref.read(cabinLocaleDataSourceProvider),
     ),
   };
 });

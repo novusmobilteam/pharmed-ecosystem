@@ -31,7 +31,7 @@ mixin CabinEditorMixin on ChangeNotifier, ApiRequestMixin {
             : await cabinsUseCase.call();
 
         return res.when(
-          ok: (data) async {
+          stale: (data, savedAt) async {
             _cabins = data;
             if (cabins.isNotEmpty && selectedCabin == null) {
               _selectedCabin = cabins.first;
@@ -41,7 +41,17 @@ mixin CabinEditorMixin on ChangeNotifier, ApiRequestMixin {
             }
             return Result.ok(null);
           },
-          error: (e) => Result.error(e),
+          success: (data) async {
+            _cabins = data;
+            if (cabins.isNotEmpty && selectedCabin == null) {
+              _selectedCabin = cabins.first;
+            }
+            if (selectedCabin != null) {
+              await refreshLayout();
+            }
+            return Result.ok(null);
+          },
+          failure: (error) => Result.error(error),
         );
       },
     );

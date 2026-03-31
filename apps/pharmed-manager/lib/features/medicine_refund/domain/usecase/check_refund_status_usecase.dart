@@ -21,7 +21,6 @@ class CheckRefundStatusParams {
 
 class CheckRefundStatusUseCase implements UseCase<MedicineWithdrawItem?, CheckRefundStatusParams> {
   final IMedicineRefundRepository _refundRepository;
-
   final ICabinRepository _cabinRepository;
 
   CheckRefundStatusUseCase({
@@ -36,8 +35,7 @@ class CheckRefundStatusUseCase implements UseCase<MedicineWithdrawItem?, CheckRe
     final checkResult = await _refundRepository.checkRefundStatus(id: params.id, quantity: params.quantity);
 
     if (checkResult.isError) {
-      final errorValue = (checkResult as Error).error;
-      return Result.error(errorValue);
+      return Result.error((checkResult as Error).error);
     }
 
     switch (type) {
@@ -53,43 +51,48 @@ class CheckRefundStatusUseCase implements UseCase<MedicineWithdrawItem?, CheckRe
 
   Future<Result<MedicineWithdrawItem?>> _handleDrawer() async {
     final cabinResult = await _cabinRepository.getCabins();
+
     return cabinResult.when(
-      error: (error) => Result.error(error),
-      ok: (cabins) async {
-        if (cabins.isEmpty) {
-          return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
-        }
+      // RepoSuccess veya RepoStale — her ikisinde de veriyi kullan
+      success: (cabins) => _findCubicSlot(cabins),
+      stale: (cabins, _) => _findCubicSlot(cabins),
+      failure: (error) => Result.error(error),
+    );
+  }
 
-        for (var cabin in cabins) {
-          final cabinId = cabin.id;
-          if (cabinId == null) continue;
+  Future<Result<MedicineWithdrawItem?>> _findCubicSlot(List<Cabin> cabins) async {
+    if (cabins.isEmpty) {
+      return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
+    }
 
-          final slotsResult = await _cabinRepository.getCabinSlots(cabinId);
+    for (final cabin in cabins) {
+      final cabinId = cabin.id;
+      if (cabinId == null) continue;
 
-          final foundAssignment = slotsResult.when(
-            error: (_) => null,
-            ok: (slots) {
-              //Slotlar içinden kübik olanı bul
-              final cubicSlot = slots.firstWhereOrNull((slot) => slot.drawerConfig?.drawerType?.isKubik ?? false);
+      final slotsResult = await _cabinRepository.getCabinSlots(cabinId);
 
-              if (cubicSlot != null) {
-                return CabinAssignment(
-                  drawerUnit: DrawerUnit(drawerSlotId: cubicSlot.id, drawerSlot: cubicSlot),
-                  cabin: cabin,
-                );
-              }
+      final foundAssignment = slotsResult.when(
+        success: (slots) => _findCubicInSlots(slots, cabin),
+        stale: (slots, _) => _findCubicInSlots(slots, cabin),
+        failure: (_) => null,
+      );
 
-              return null;
-            },
-          );
+      if (foundAssignment != null) {
+        return Result.ok(MedicineWithdrawItem.empty(foundAssignment));
+      }
+    }
 
-          // Eğer bir tane bulduysak döngüden çık ve dön
-          if (foundAssignment != null) return Result.ok(MedicineWithdrawItem.empty(foundAssignment));
-        }
+    return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
+  }
 
-        // Hiçbir kabinde kübik slot bulunamadı
-        return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
-      },
+  CabinAssignment? _findCubicInSlots(List<DrawerSlot> slots, Cabin cabin) {
+    final cubicSlot = slots.firstWhereOrNull((slot) => slot.drawerConfig?.drawerType?.isKubik ?? false);
+
+    if (cubicSlot == null) return null;
+
+    return CabinAssignment(
+      drawerUnit: DrawerUnit(drawerSlotId: cubicSlot.id, drawerSlot: cubicSlot),
+      cabin: cabin,
     );
   }
 }

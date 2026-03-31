@@ -1,5 +1,3 @@
-// packages/pharmed_data/lib/src/auth/datasource/auth_cache_datasource.dart
-//
 // [SWREQ-DATA-AUTH-002]
 // Token ve AppUser bilgisini Hive'da saklar.
 // İki ayrı box — token box String, user box Map.

@@ -15,7 +15,6 @@ export 'domain/model/drawer_address.dart';
 export 'domain/model/drawer_group.dart';
 
 export 'domain/repository/i_cabin_repository.dart';
-export 'domain/repository/mock_cabin_repository.dart';
 
 export 'domain/usecase/get_cabins_by_station_usecase.dart';
 export 'domain/usecase/get_cabins_usecase.dart';
