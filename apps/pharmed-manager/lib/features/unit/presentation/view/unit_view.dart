@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/unit.dart';
 import '../notifier/unit_notifier.dart';
 import 'unit_form_dialog.dart';
 
@@ -11,10 +10,7 @@ Future<Unit?> showUnitView(BuildContext context) async {
   return await showDialog<Unit?>(
     context: context,
     builder: (context) => ChangeNotifierProvider(
-      create: (context) => UnitNotifier(
-        getUnitsUseCase: context.read(),
-        deleteUnitUseCase: context.read(),
-      )..getUnits(),
+      create: (context) => UnitNotifier(getUnitsUseCase: context.read(), deleteUnitUseCase: context.read())..getUnits(),
       child: Consumer<UnitNotifier>(
         builder: (context, notifier, Widget? child) => CustomDialog(
           title: 'Birim',
@@ -92,9 +88,9 @@ void _onDelete(BuildContext context, Unit item) {
   MessageUtils.showConfirmDeleteDialog(
     context: context,
     onConfirm: () => context.read<UnitNotifier>().deleteUnit(
-          item,
-          onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
-        ),
+      item,
+      onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+      onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+    ),
   );
 }

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/core.dart';
 
 import '../../../cabin/domain/entity/cabin_input_data.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../domain/usecase/dispose_material_usecase.dart';
 import '../../domain/usecase/get_disposable_materials_usecase.dart';
 

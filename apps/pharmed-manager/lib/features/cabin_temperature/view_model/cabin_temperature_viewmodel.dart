@@ -6,7 +6,6 @@ import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../data/repository/cabin_temperature_repository_impl.dart';
 import '../domain/entity/cabin_temperature.dart';
 import '../domain/entity/cabin_temperature_detail.dart';
-import '../../station/domain/entity/station.dart';
 
 class CabinTemperatureViewModel extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinTemperatureDetail> {
   final CabinTemperatureRepository _cabinTemperatureRepository;

@@ -28,7 +28,7 @@ class PatientMedicineDefineView extends StatelessWidget {
         hospitalization: hospitalization,
         getSerumSlotsUseCase: context.read(),
         onDefineMedicine: (notifier) {
-          context.read<CabinStatusNotifier>().startOperation(notifier.assignment);
+          //context.read<CabinStatusNotifier>().startOperation(notifier.assignment);
         },
       )..getSerumSlots(),
       child: Consumer<MedicineDefineNotifier>(
@@ -75,13 +75,7 @@ class PatientMedicineDefineView extends StatelessWidget {
           return Center(child: CommonEmptyStates.noData());
         }
 
-        return IndexedStack(
-          index: notifier.activeIndex,
-          children: [
-            SlotInfoView(),
-            MedicineInfoView(),
-          ],
-        );
+        return IndexedStack(index: notifier.activeIndex, children: [SlotInfoView(), MedicineInfoView()]);
       },
     );
   }

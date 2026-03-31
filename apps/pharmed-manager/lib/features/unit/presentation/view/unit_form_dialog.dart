@@ -4,18 +4,14 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../domain/entity/unit.dart';
 import '../notifier/unit_form_notifier.dart';
 
 Future<bool> showUnitFormDialog(BuildContext context, {Unit? initial}) async {
   final result = await showDialog<bool>(
     context: context,
     builder: (_) => ChangeNotifierProvider(
-      create: (_) => UnitFormNotifier(
-        unit: initial,
-        createUnitUseCase: context.read(),
-        updateUnitUseCase: context.read(),
-      ),
+      create: (_) =>
+          UnitFormNotifier(unit: initial, createUnitUseCase: context.read(), updateUnitUseCase: context.read()),
       child: const UnitFormDialog(),
     ),
   );
@@ -58,10 +54,7 @@ class _UnitFormDialogState extends State<UnitFormDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               spacing: AppDimensions.registrationDialogSpacing,
-              children: const [
-                _NameField(),
-                _StatusField(),
-              ],
+              children: const [_NameField(), _StatusField()],
             ),
           ),
         );

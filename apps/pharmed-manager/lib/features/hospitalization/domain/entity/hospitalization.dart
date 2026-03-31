@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 import '../../../patient/domain/entity/patient.dart';
-import '../../../service/domain/entity/service.dart';
 import '../../data/model/hospitalization_dto.dart';
 
 class Hospitalization extends Selectable implements TableData {
@@ -80,9 +79,9 @@ class Hospitalization extends Selectable implements TableData {
       description: description,
       admissionDate: admissionDate,
       exitDate: exitDate,
-      physicalService: physicalService?.toDTO(),
+      physicalService: ServiceMapper().toDtoOrNull(physicalService),
       physicalServiceId: physicalService?.id,
-      inpatientService: inpatientService?.toDTO(),
+      inpatientService: ServiceMapper().toDtoOrNull(inpatientService),
       inpatientServiceId: inpatientService?.id,
       doctor: const UserMapper().toDtoOrNull(doctor),
       doctorId: doctor?.id,

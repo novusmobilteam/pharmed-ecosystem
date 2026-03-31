@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 import '../../data/model/filling_list_dto.dart';
-import '../../../station/domain/entity/station.dart';
 
 class FillingList implements TableData {
   final int? id;
@@ -65,7 +64,7 @@ class FillingList implements TableData {
     return FillingListDTO(
       id: id,
       stationId: station?.id,
-      station: station?.toDTO(),
+      station: const StationMapper().toDtoOrNull(station),
       user: const UserMapper().toDtoOrNull(user),
       statusId: status?.id,
       isCancel: isCancel,

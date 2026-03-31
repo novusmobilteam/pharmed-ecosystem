@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
-import '../../../service/domain/entity/service.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../data/model/prescription_item_dto.dart';
 import 'prescription.dart';
 
@@ -284,14 +283,14 @@ class PrescriptionItem implements TableData, Selectable {
       id: id,
       prescriptionId: prescriptionId,
       physicalServiceId: physicalServiceId,
-      physicalService: physicalService?.toDTO(),
+      physicalService: ServiceMapper().toDtoOrNull(physicalService),
       inpatientServiceId: inpatientServiceId,
-      inpatientService: inpatientService?.toDTO(),
+      inpatientService: ServiceMapper().toDtoOrNull(inpatientService),
       patientRegistrationId: patientRegistrationId,
       doctorId: doctor?.id,
       doctor: doctor?.fullName,
       medicineId: medicineId,
-      medicine: medicine?.toDTO(),
+      medicine: MedicineMapper().toDtoOrNull(medicine),
       dosePiece: dosePiece,
       requestType: requestType?.id,
       requestTypeName: requestTypeName,

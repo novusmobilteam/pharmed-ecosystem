@@ -3,10 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../service/domain/entity/service.dart';
-import '../../../service/domain/repository/i_service_repository.dart';
-import '../../../warehouse/domain/entity/warehouse.dart';
-import '../../../warehouse/domain/repository/i_warehouse_repository.dart';
 import '../notifier/station_form_notifier.dart';
 
 class StationRegistrationDialog extends StatelessWidget {
@@ -54,20 +50,14 @@ class StationRegistrationDialog extends StatelessWidget {
           Row(
             spacing: AppDimensions.registrationDialogSpacing,
             children: [
-              Expanded(
-                flex: 2,
-                child: _MaterialWarehouseField(),
-              ),
+              Expanded(flex: 2, child: _MaterialWarehouseField()),
               Expanded(child: _DrugStatusField()),
             ],
           ),
           Row(
             spacing: AppDimensions.registrationDialogSpacing,
             children: [
-              Expanded(
-                flex: 2,
-                child: _ConsumableWarehouseField(),
-              ),
+              Expanded(flex: 2, child: _ConsumableWarehouseField()),
               Expanded(child: _ConsumablesStatusField()),
             ],
           ),

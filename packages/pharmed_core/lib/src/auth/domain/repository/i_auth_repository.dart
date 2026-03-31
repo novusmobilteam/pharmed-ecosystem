@@ -1,11 +1,8 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// packages/pharmed_core/lib/src/auth/domain/repository/i_auth_repository.dart
-//
 // [SWREQ-CORE-AUTH-001]
 // Sınıf: Class B
-// ─────────────────────────────────────────────────────────────────────────────
+
 abstract interface class IAuthRepository {
   /// Login + getCurrentUser zinciri.
   /// Başarılıysa token ve user'ı cache'e yazar, AuthToken döndürür.

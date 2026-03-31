@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../station/domain/entity/station.dart';
-import '../../../station/domain/usecase/get_stations_usecase.dart';
 part 'station_list_notifier.dart';
 
 class StationsSideListView extends StatelessWidget {

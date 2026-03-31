@@ -1,8 +1,7 @@
 import '../../../../core/core.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../../patient/domain/entity/patient.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
-import '../../../station/domain/entity/station.dart';
 
 class Refund implements TableData {
   final int? id;

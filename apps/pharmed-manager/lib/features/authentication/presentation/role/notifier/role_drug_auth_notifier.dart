@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../medicine/domain/entity/medicine.dart';
 import '../../../domain/usecase/get_role_drug_authentication_usecase.dart';
 
 import '../../../../../core/core.dart';

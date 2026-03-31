@@ -1,5 +1,3 @@
-// packages/pharmed_core/lib/src/repository/repo_result.dart
-//
 // [SWREQ-CORE-REPO-001]
 // Tüm repository'lerin döndürdüğü sonuç tipi.
 // Result<T>'den farklı olarak cache/stale senaryosunu da taşır.

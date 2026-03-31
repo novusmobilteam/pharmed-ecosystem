@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/usecase/update_assignment_usecase.dart';
 import '../../../../../core/core.dart';
-
-import '../../../../medicine/domain/entity/medicine.dart';
-import '../../../domain/entity/cabin_assignment.dart';
-import '../../../domain/usecase/create_assignment_usecase.dart';
 
 enum StockType {
   drug('İlaç Atama'),

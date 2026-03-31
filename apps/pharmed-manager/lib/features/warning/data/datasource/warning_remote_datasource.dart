@@ -3,22 +3,27 @@ import '../model/warning_dto.dart';
 import 'warning_datasource.dart';
 
 class WarningRemoteDataSource extends BaseRemoteDataSource implements WarningDataSource {
+  WarningRemoteDataSource({required super.apiManager});
+
   final String _basePath = '/Warning';
 
-  WarningRemoteDataSource({required super.apiManager});
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 
   @override
   Future<Result<List<WarningDTO>>> getWarnings() async {
     final res = await fetchRequest<List<WarningDTO>>(
       path: _basePath,
-      parser: listParser(WarningDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(WarningDTO.fromJson),
       successLog: 'Warnings fetched',
       emptyLog: 'No warnings',
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <WarningDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <WarningDTO>[]), error: Result.error);
   }
 
   @override
@@ -26,7 +31,7 @@ class WarningRemoteDataSource extends BaseRemoteDataSource implements WarningDat
     return createRequest(
       path: _basePath,
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Warning created',
     );
   }
@@ -36,7 +41,7 @@ class WarningRemoteDataSource extends BaseRemoteDataSource implements WarningDat
     return updateRequest(
       path: '$_basePath/${dto.id}',
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Warning updated',
     );
   }
@@ -45,7 +50,7 @@ class WarningRemoteDataSource extends BaseRemoteDataSource implements WarningDat
   Future<Result<void>> deleteWarning(int id) {
     return deleteRequest<void>(
       path: '$_basePath/$id',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Warning deleted',
     );
   }

@@ -4,7 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/dose_stepper.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../domain/entity/filling_object.dart';
 
 class MedicineFillingCard extends StatelessWidget {
@@ -71,11 +71,7 @@ class MedicineFillingCard extends StatelessWidget {
                     style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  _infoText(
-                    context,
-                    'Mevcut: ${current.formatFractional}',
-                    isCritical ? Colors.orange : null,
-                  ),
+                  _infoText(context, 'Mevcut: ${current.formatFractional}', isCritical ? Colors.orange : null),
                   _infoText(context, object.assignment?.quantityText ?? '-', null),
                 ],
               ),
@@ -98,9 +94,6 @@ class MedicineFillingCard extends StatelessWidget {
   }
 
   Widget _infoText(BuildContext context, String text, Color? color) {
-    return Text(
-      text,
-      style: context.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-    );
+    return Text(text, style: context.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold));
   }
 }

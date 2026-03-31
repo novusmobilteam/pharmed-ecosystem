@@ -1,6 +1,5 @@
 import '../../../../core/core.dart';
 
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
 
 import '../entity/withdraw_item.dart';

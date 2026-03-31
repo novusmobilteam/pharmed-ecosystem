@@ -1,10 +1,5 @@
 import '../../../../core/core.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../data/model/filling_detail_dto.dart';
-import '../../../cabin/domain/entity/drawer_unit.dart';
-import '../../../cabin/domain/entity/drawer_cell.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../medicine/domain/entity/medicine.dart';
 
 // Dolum listesi oluşturulduktan sonra oluşturulan dolum listesinin detayı
 // görüntülenmek istendiğinde kullanılan model.
@@ -46,8 +41,8 @@ class FillingDetail implements TableData {
       id: id,
       fillingListId: fillingListId,
       medicineId: medicineId,
-      medicine: medicine?.toDTO(),
-      cabinDrawer: cabinDrawer?.toDTO(),
+      medicine: MedicineMapper().toDtoOrNull(medicine),
+      cabinDrawer: DrawerUnitMapper().toDtoOrNull(cabinDrawer),
       cabinAssignment: cabinAssignment?.toDTO(),
       quantity: quantity,
       fillingQuantity: fillingQuantity,

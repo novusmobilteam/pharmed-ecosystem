@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
 import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
-import '../../../station/domain/entity/station.dart';
-import '../../../station/domain/usecase/get_current_station_usecase.dart';
+
 import '../../domain/usecase/dispose_medicine_usecase.dart';
 import '../../domain/usecase/get_disposables_usecase.dart';
 

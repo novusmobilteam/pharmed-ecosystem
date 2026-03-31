@@ -4,17 +4,6 @@ import '../../../../core/core.dart';
 
 import '../../../active_ingredient/domain/entity/active_ingredient.dart';
 import '../../../active_ingredient/domain/usecase/get_active_ingredients_usecase.dart';
-import '../../../dosage_form/domain/entity/dosage_form.dart';
-import '../../../drug_class/domain/entity/drug_class.dart';
-import '../../../drug_type/domain/entity/drug_type.dart';
-import '../../../station/domain/entity/station.dart';
-import '../../../firm/domain/entity/firm.dart';
-import '../../../unit/domain/entity/unit.dart';
-import '../../../station/domain/repository/i_station_repository.dart';
-import '../../domain/entity/medicine.dart';
-import '../../domain/usecase/create_medicine_usecase.dart';
-import '../../domain/usecase/get_drug_usecase.dart';
-import '../../domain/usecase/update_medicine_usecase.dart';
 
 class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateMedicineUseCase _createMedicineUseCase;

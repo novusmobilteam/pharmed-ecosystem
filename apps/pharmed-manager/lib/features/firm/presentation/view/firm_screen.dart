@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../domain/entity/firm.dart';
 import '../notifier/firm_form_notifier.dart';
 import '../notifier/firm_table_notifier.dart';
 import 'firm_registration_dialog.dart';
@@ -15,10 +14,7 @@ class FirmScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => FirmTableNotifier(
-        getFirmsUseCase: context.read(),
-        deleteFirmUseCase: context.read(),
-      )..getFirms(),
+      create: (_) => FirmTableNotifier(getFirmsUseCase: context.read(), deleteFirmUseCase: context.read())..getFirms(),
       child: Consumer<FirmTableNotifier>(
         builder: (context, notifier, _) {
           return Scaffold(
@@ -39,9 +35,7 @@ class FirmScreen extends StatelessWidget {
                     TableActionItem.edit(
                       onPressed: (firm) => _showFirmRegistrationDialog(context, notifier, initial: firm),
                     ),
-                    TableActionItem.delete(
-                      onPressed: (firm) => _onDelete(context, notifier, firm),
-                    ),
+                    TableActionItem.delete(onPressed: (firm) => _onDelete(context, notifier, firm)),
                   ],
                 ),
               ),
@@ -58,7 +52,7 @@ void _onDelete(BuildContext context, FirmTableNotifier notifier, Firm item) {
     context: context,
     onConfirm: () async {
       await notifier.deleteFirm(
-        item.id!,
+        item,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
         onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
       );
@@ -70,11 +64,8 @@ Future<void> _showFirmRegistrationDialog(BuildContext context, FirmTableNotifier
   final result = await showDialog<bool>(
     context: context,
     builder: (_) => ChangeNotifierProvider(
-      create: (_) => FirmFormNotifier(
-        firm: initial,
-        createFirmUseCase: context.read(),
-        updateFirmUseCase: context.read(),
-      ),
+      create: (_) =>
+          FirmFormNotifier(firm: initial, createFirmUseCase: context.read(), updateFirmUseCase: context.read()),
       child: const FirmRegistrationDialog(),
     ),
   );

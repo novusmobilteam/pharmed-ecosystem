@@ -4,10 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../service/domain/entity/service.dart';
-import '../../../service/domain/repository/i_service_repository.dart';
-import '../../../medicine/domain/entity/medicine.dart';
-import '../../../medicine/domain/repository/i_medicine_repository.dart';
 import '../notifier/stock_transaction_form_notifier.dart';
 
 class StockTransactionRegistrationDialog extends StatelessWidget {

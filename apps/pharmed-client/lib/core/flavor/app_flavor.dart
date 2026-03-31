@@ -72,7 +72,7 @@ class FlavorConfig {
       ),
       AppFlavor.dev => FlavorConfig._(
         flavor: AppFlavor.dev,
-        baseUrl: 'https://dev-api.hastane.local',
+        baseUrl: 'https://developer.novusyazilim.com/agena/api',
         connectTimeoutMs: 10000,
         receiveTimeoutMs: 15000,
         cacheEnabled: true,
@@ -81,7 +81,7 @@ class FlavorConfig {
       ),
       AppFlavor.prod => FlavorConfig._(
         flavor: AppFlavor.prod,
-        baseUrl: 'https://api.hastane.local',
+        baseUrl: 'https://developer.novusyazilim.com/agena/api',
         connectTimeoutMs: 8000,
         receiveTimeoutMs: 12000,
         cacheEnabled: true,

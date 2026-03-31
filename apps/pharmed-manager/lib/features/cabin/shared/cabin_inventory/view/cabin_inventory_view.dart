@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../../settings/presentation/notifier/settings_notifier.dart';
 import '../notifier/cabin_inventory_notifier.dart';
 import 'cubic_loading_view.dart';

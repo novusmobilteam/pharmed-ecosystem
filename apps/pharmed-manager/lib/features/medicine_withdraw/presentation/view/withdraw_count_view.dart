@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../domain/entity/withdraw_params.dart';
 import '../notifier/withdraw_notifier.dart';
 
@@ -59,21 +59,23 @@ class WithdrawCountView extends StatelessWidget {
                     children: plan
                         .asMap()
                         .entries
-                        .map((entry) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: _SlotCountCard(
-                                index: entry.key,
-                                detail: entry.value,
-                                doseUnit: medicine?.operationUnit ?? 'Adet',
-                                showCensus: (medicine as Drug?)?.countType != CountType.noCount,
-                                onCountTap: (index) async {
-                                  final result = await showNumpadView(context);
-                                  if (result != null) {
-                                    notifier.updateCountAmount(index, result);
-                                  }
-                                },
-                              ),
-                            ))
+                        .map(
+                          (entry) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: _SlotCountCard(
+                              index: entry.key,
+                              detail: entry.value,
+                              doseUnit: medicine?.operationUnit ?? 'Adet',
+                              showCensus: (medicine as Drug?)?.countType != CountType.noCount,
+                              onCountTap: (index) async {
+                                final result = await showNumpadView(context);
+                                if (result != null) {
+                                  notifier.updateCountAmount(index, result);
+                                }
+                              },
+                            ),
+                          ),
+                        )
                         .toList(),
                   ),
                 ),
@@ -103,11 +105,7 @@ class _MedicineHeader extends StatelessWidget {
             color: colorScheme.primaryContainer.withAlpha(80),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            Icons.medication_rounded,
-            color: colorScheme.primary,
-            size: 24,
-          ),
+          child: Icon(Icons.medication_rounded, color: colorScheme.primary, size: 24),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -116,16 +114,12 @@ class _MedicineHeader extends StatelessWidget {
             children: [
               Text(
                 medicine?.name ?? '-',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               if (medicine?.operationUnit != null)
                 Text(
                   medicine?.operationUnit ?? 'Adet',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                 ),
             ],
           ),
@@ -159,24 +153,16 @@ class _SlotCountCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withAlpha(80),
-        ),
+        border: Border.all(color: colorScheme.outlineVariant.withAlpha(80)),
       ),
       child: Row(
         children: [
           const SizedBox(width: 12),
           Expanded(
-            child: _SlotInfo(
-              detail: detail,
-              doseUnit: doseUnit,
-            ),
+            child: _SlotInfo(detail: detail, doseUnit: doseUnit),
           ),
           if (showCensus) // YENİ
-            _CountButton(
-              detail: detail,
-              onTap: () => onCountTap(index),
-            ),
+            _CountButton(detail: detail, onTap: () => onCountTap(index)),
         ],
       ),
     );
@@ -184,10 +170,7 @@ class _SlotCountCard extends StatelessWidget {
 }
 
 class _SlotInfo extends StatelessWidget {
-  const _SlotInfo({
-    required this.detail,
-    required this.doseUnit,
-  });
+  const _SlotInfo({required this.detail, required this.doseUnit});
 
   final WithdrawDetail detail;
   final String doseUnit;
@@ -201,16 +184,12 @@ class _SlotInfo extends StatelessWidget {
       children: [
         Text(
           'Alınan Miktar',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: 2),
         Text(
           '${detail.dosePiece.formatFractional} $doseUnit',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -218,10 +197,7 @@ class _SlotInfo extends StatelessWidget {
 }
 
 class _CountButton extends StatelessWidget {
-  const _CountButton({
-    required this.detail,
-    required this.onTap,
-  });
+  const _CountButton({required this.detail, required this.onTap});
 
   final WithdrawDetail detail;
   final VoidCallback onTap;
@@ -247,9 +223,9 @@ class _CountButton extends StatelessWidget {
           children: [
             Text(
               'Sayım',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: hasCensus ? colorScheme.primary : colorScheme.onSurfaceVariant,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: hasCensus ? colorScheme.primary : colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 2),
             Text(

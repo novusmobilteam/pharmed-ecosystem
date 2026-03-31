@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../station/domain/entity/station.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
 
 class DirectedOrder implements TableData {
@@ -7,30 +6,14 @@ class DirectedOrder implements TableData {
   final Station? station;
   final PrescriptionItem? item;
 
-  DirectedOrder({
-    this.id,
-    this.station,
-    this.item,
-  });
+  DirectedOrder({this.id, this.station, this.item});
 
   @override
-  List get content => [
-        station?.name,
-        item?.barcode?.toCustomString(),
-        item?.medicine?.name,
-      ];
+  List get content => [station?.name, item?.barcode?.toCustomString(), item?.medicine?.name];
 
   @override
-  List get rawContent => [
-        station?.name,
-        item?.barcode?.toCustomString(),
-        item?.medicine?.name,
-      ];
+  List get rawContent => [station?.name, item?.barcode?.toCustomString(), item?.medicine?.name];
 
   @override
-  List<String?> get titles => [
-        'İstasyon',
-        'Barkod',
-        'Malzeme',
-      ];
+  List<String?> get titles => ['İstasyon', 'Barkod', 'Malzeme'];
 }

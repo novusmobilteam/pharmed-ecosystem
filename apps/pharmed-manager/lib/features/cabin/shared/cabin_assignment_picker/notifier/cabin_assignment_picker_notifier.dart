@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../../cabin_assignment/domain/usecase/get_cabin_assignments_usecase.dart';
 import '../../cabin_inventory/notifier/cabin_inventory_notifier.dart';
 
 class CabinAssignmentPickerNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinAssignment> {

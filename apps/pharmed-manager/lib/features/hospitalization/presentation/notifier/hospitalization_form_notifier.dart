@@ -3,7 +3,6 @@ import 'package:pharmed_manager/core/core.dart';
 
 import '../../domain/entity/hospitalization.dart';
 import '../../../patient/domain/entity/patient.dart';
-import '../../../service/domain/entity/service.dart';
 import '../../domain/usecase/create_hospitalization_usecase.dart';
 import '../../domain/usecase/update_hospitalization_usecase.dart';
 

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../domain/entity/service.dart';
 import '../notifier/service_form_notifier.dart';
 import '../notifier/service_table_notifier.dart';
 import 'service_registration_dialog.dart';
@@ -24,12 +23,8 @@ class ServiceTableView extends StatelessWidget {
           enableSearch: true,
           onSearchChanged: notifier.search,
           actions: [
-            TableActionItem.edit(
-              onPressed: (service) => showServiceRegistrationDialog(context, service: service),
-            ),
-            TableActionItem.delete(
-              onPressed: (service) => _onDelete(context, notifier, service),
-            )
+            TableActionItem.edit(onPressed: (service) => showServiceRegistrationDialog(context, service: service)),
+            TableActionItem.delete(onPressed: (service) => _onDelete(context, notifier, service)),
           ],
         );
       },

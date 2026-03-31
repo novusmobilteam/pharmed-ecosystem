@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
-import '../../../domain/entity/cabin.dart';
-import '../../../domain/entity/drawer_group.dart';
-import '../../../domain/usecase/get_cabin_layout_usecase.dart';
-import '../../../domain/usecase/get_cabins_usecase.dart';
 
 mixin CabinEditorMixin on ChangeNotifier, ApiRequestMixin {
   GetCabinsUseCase get cabinsUseCase;
-  GetCabinLayoutUseCase get layoutUseCase;
+  // GetCabinLayoutUseCase get layoutUseCase;
 
   List<Cabin> _cabins = [];
   List<Cabin> get cabins => _cabins;
@@ -52,28 +48,28 @@ mixin CabinEditorMixin on ChangeNotifier, ApiRequestMixin {
   }
 
   Future<void> refreshLayout() async {
-    if (selectedCabin == null) return;
-    final res = await layoutUseCase.call(selectedCabin!.id!);
-    res.when(
-      ok: (data) {
-        _layout = data;
-        onLayoutRefreshed(data);
-        notifyListeners();
-      },
-      error: (e) => debugPrint("Layout Error: $e"),
-    );
+    // if (selectedCabin == null) return;
+    // final res = await layoutUseCase.call(selectedCabin!.id!);
+    // res.when(
+    //   ok: (data) {
+    //     _layout = data;
+    //     onLayoutRefreshed(data);
+    //     notifyListeners();
+    //   },
+    //   error: (e) => debugPrint("Layout Error: $e"),
+    // );
   }
 
   Future<void> loadLayout(int cabinId) async {
-    final res = await layoutUseCase.call(cabinId);
-    res.when(
-      ok: (data) {
-        _layout = data;
-        onLayoutRefreshed(data);
-        notifyListeners();
-      },
-      error: (_) {},
-    );
+    // final res = await layoutUseCase.call(cabinId);
+    // res.when(
+    //   ok: (data) {
+    //     _layout = data;
+    //     onLayoutRefreshed(data);
+    //     notifyListeners();
+    //   },
+    //   error: (_) {},
+    // );
   }
 
   void onCabinChanged(Cabin cabin) {

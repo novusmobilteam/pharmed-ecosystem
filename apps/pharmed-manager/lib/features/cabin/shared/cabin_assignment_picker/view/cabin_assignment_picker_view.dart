@@ -3,10 +3,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../cabin_inventory/view/cabin_inventory_view.dart';
-import '../../cabin_process/notifier/cabin_status_notifier.dart';
 import '../../cabin_process/view/cabin_process_wrapper.dart';
 import '../notifier/cabin_assignment_picker_notifier.dart';
 
@@ -56,7 +53,7 @@ class CabinAssignmentPickerView extends StatelessWidget {
       child: Consumer<CabinAssignmentPickerNotifier>(
         builder: (context, notifier, _) {
           notifier.onExecuteNext = (assignment) {
-            context.read<CabinStatusNotifier>().startOperation(assignment);
+            //context.read<CabinStatusNotifier>().startOperation(assignment);
           };
 
           return Row(

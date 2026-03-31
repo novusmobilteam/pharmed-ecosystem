@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/station.dart';
-import '../../domain/usecase/delete_station_usecase.dart';
-import '../../domain/usecase/get_stations_usecase.dart';
-
 class StationTableNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Station> {
   final GetStationsUseCase _getStationsUseCase;
   final DeleteStationUseCase _deleteStationUseCase;

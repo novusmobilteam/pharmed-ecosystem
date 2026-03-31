@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../station/domain/entity/station.dart';
 import '../../../domain/entity/cabin_operation_item.dart';
 
 /// Alım ve fire/imha kartlarında ortak kullanılan şahit bölümü.

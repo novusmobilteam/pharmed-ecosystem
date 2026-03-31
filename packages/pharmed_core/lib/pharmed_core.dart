@@ -7,8 +7,23 @@ export 'src/auth/domain/usecase/login_use_case.dart';
 export 'src/auth/domain/usecase/logout_use_case.dart';
 export 'src/auth/domain/repository/i_auth_repository.dart';
 
-export 'src/user/user.dart';
-export 'src/role/role.dart';
+// Features
+export 'src/features/user/user.dart';
+export 'src/features/role/role.dart';
+export 'src/features/cabin/cabin.dart';
+export 'src/features/branch/branch.dart';
+export 'src/features/service/service.dart';
+export 'src/features/warehouse/warehouse.dart';
+export 'src/features/station/station.dart';
+export 'src/features/unit/unit.dart';
+export 'src/features/drug_type/drug_type.dart';
+export 'src/features/drug_class/drug_class.dart';
+export 'src/features/dosage_form/dosage_form.dart';
+export 'src/features/material_type/material_type.dart';
+export 'src/features/firm/firm.dart';
+export 'src/features/medicine/medicine.dart';
+export 'src/features/cabin_assignment/cabin_assignment.dart';
+export 'src/features/cabin_stock/cabin_stock.dart';
 
 // Constants
 export 'src/constants/device_constants.dart';
@@ -25,7 +40,6 @@ export 'src/enums/com_port.dart';
 export 'src/enums/count_type.dart';
 export 'src/enums/data_bit.dart';
 export 'src/enums/drawer_stage.dart';
-export 'src/enums/drawer_status.dart';
 export 'src/enums/drug_operation.dart';
 export 'src/enums/filling_record_status.dart';
 export 'src/enums/filling_type.dart';
@@ -49,6 +63,7 @@ export 'src/enums/user_type.dart';
 export 'src/enums/warehouse_type.dart';
 export 'src/enums/warning_subject.dart';
 export 'src/enums/withdraw_type.dart';
+export 'src/enums/scan_status.dart';
 // failure
 export 'src/failure/app_exceptions.dart';
 

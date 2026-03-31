@@ -6,36 +6,23 @@
 // Sınıf: Class B
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/cache/app_settings_cache.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import '../../../../core/enums/cabinet_type.dart';
-import '../../../../core/hardware/serial_communication/i_serial_communication_service.dart';
-import '../../../../core/hardware/serial_communication/serial_communication_service.dart';
+import '../../../../core/providers/providers.dart';
 import '../../domain/model/cabin_setup_config.dart';
+import '../../domain/model/wizard_mobile_layout.dart';
 import '../../domain/model/wizard_draft.dart';
-import '../../domain/usecase/save_cabin_config_usecase.dart';
+import '../../domain/model/scan_log_entry.dart';
 import '../state/setup_wizard_ui_state.dart';
-import '../../../../core/providers/datasource_injector.dart';
-import '../../../../core/cache/app_settings_cache.dart';
 
 final setupWizardNotifierProvider = NotifierProvider<SetupWizardNotifier, SetupWizardUiState>(SetupWizardNotifier.new);
 
-// ─────────────────────────────────────────────────────────────────
-// SetupWizardNotifier
-// ─────────────────────────────────────────────────────────────────
-
 class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
-  late final SaveCabinConfigUseCase _saveUseCase;
-  late final ScanDeviceDrawerConfigUseCase _scanUseCase;
-  late final ISerialCommunicationService _serialService;
-
   @override
   SetupWizardUiState build() {
-    final repo = DI.setupWizardRepository();
-    _saveUseCase = SaveCabinConfigUseCase(repository: repo);
-    _scanUseCase = ScanDeviceDrawerConfigUseCase(repository: repo);
-    _serialService = ref.watch(serialServiceProvider);
-
-    final initialPorts = _serialService.getAvailablePorts();
+    final serialService = ref.read(serialServiceProvider);
+    final initialPorts = serialService.getAvailablePorts();
 
     return WizardActive(currentStep: 1, draft: WizardDraft.empty(), completedSteps: {}, availablePorts: initialPorts);
   }
@@ -43,7 +30,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
   // ── Adım 1: Kabin tipi ──────────────────────────────────────────
 
   /// [SWREQ-SETUP-UI-003]
-  void selectCabinetType(CabinetType type) {
+  void selectCabinetType(CabinType type) {
     final current = _active;
     if (current == null) return;
 
@@ -54,13 +41,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
       context: {'type': type.name},
     );
 
-    // Tip değişince scope ve çekmece sıfırlanır
-    final resetDraft = current.draft.copyWith(cabinetType: type);
-
-    state = current.copyWith(
-      draft: resetDraft,
-      // Scope/drawer verilerini sıfırla
-    );
+    state = current.copyWith(draft: current.draft.copyWith(cabinetType: type));
   }
 
   // ── Adım 2: Temel bilgiler ──────────────────────────────────────
@@ -75,6 +56,52 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
   // ── Adım 3: Hizmet kapsamı ──────────────────────────────────────
 
+  /// [SWREQ-SETUP-UI-008]
+  /// Adım 3'e geçildiğinde otomatik çağrılır.
+  /// Standart kabinde istasyon listesini yükler, mobil kabinde no-op.
+  Future<void> loadStations() async {
+    final current = _active;
+    if (current == null) return;
+
+    // Mobil kabinde istasyon yüklenmez
+    if (current.draft.cabinetType == CabinType.mobile) return;
+
+    // Zaten yüklendiyse tekrar istek atma
+    if (current.stationsLoadState == StationsLoadState.loaded) return;
+
+    MedLogger.info(unit: 'SW-UNIT-SETUP', swreq: 'SWREQ-SETUP-UI-008', message: 'İstasyon listesi yükleniyor');
+
+    state = current.copyWith(stationsLoadState: StationsLoadState.loading);
+
+    final useCase = ref.read(getStationsUseCaseProvider);
+    final result = await useCase.call(GetStationsParams());
+
+    final active = _active;
+    if (active == null) return;
+
+    result.when(
+      ok: (response) {
+        final stations = response.data ?? [];
+        MedLogger.info(
+          unit: 'SW-UNIT-SETUP',
+          swreq: 'SWREQ-SETUP-UI-008',
+          message: 'İstasyon listesi yüklendi',
+          context: {'count': stations.length},
+        );
+        state = active.copyWith(stationsLoadState: StationsLoadState.loaded, stations: stations);
+      },
+      error: (error) {
+        MedLogger.error(
+          unit: 'SW-UNIT-SETUP',
+          swreq: 'SWREQ-SETUP-UI-008',
+          message: 'İstasyon listesi yüklenemedi',
+          error: error,
+        );
+        state = active.copyWith(stationsLoadState: StationsLoadState.error, stationsError: error.message);
+      },
+    );
+  }
+
   /// [SWREQ-SETUP-UI-005]
   void updateServiceScope(ServiceScope scope) {
     final current = _active;
@@ -85,64 +112,162 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
   // ── Adım 4: Çekmece yapısı ──────────────────────────────────────
 
-  /// [SWREQ-SETUP-UI-006]
-  void updateDrawerConfig(DrawerConfig config) {
-    final current = _active;
-    if (current == null) return;
-
-    state = current.copyWith(draft: current.draft.copyWith(drawerConfig: config));
-  }
-
-  /// [SWREQ-SETUP-UI-007] Standart kabin cihaz taraması
+  /// [SWREQ-SETUP-UI-007] Standart kabin — adım adım cihaz taraması.
+  /// ScanCabinUseCase'den gelen ScanStatus değerleri log satırlarına dönüştürülür.
   Future<void> scanDevice() async {
     final current = _active;
     if (current == null) return;
-    final ip = current.draft.basicInfo?.ipAddress;
-    if (ip == null || ip.isEmpty) return;
+
+    final port = current.draft.basicInfo?.comPort;
+    if (port == null || port.isEmpty) return;
 
     MedLogger.info(
       unit: 'SW-UNIT-SETUP',
       swreq: 'SWREQ-SETUP-UI-007',
       message: 'Cihaz taraması başlatıldı',
-      context: {'ip': ip},
+      context: {'port': port},
     );
 
-    state = current.copyWith(scanState: DrawerScanState.scanning);
+    // Taramayı sıfırla, scanning moduna geç
+    state = current.copyWith(
+      scanState: DrawerScanState.scanning,
+      scanLogs: [],
+      draft: current.draft.copyWith(scannedLayout: null),
+    );
 
-    final result = await _scanUseCase(ip);
+    // ── Yardımcı: log satırı ekle ──────────────────────────────
+    void addLog(ScanLogEntry entry) {
+      final a = _active;
+      if (a == null) return;
+      state = a.copyWith(scanLogs: [...a.scanLogs, entry]);
+    }
+
+    void updateLastLog(ScanLogEntry Function(ScanLogEntry) updater) {
+      final a = _active;
+      if (a == null) return;
+      if (a.scanLogs.isEmpty) return;
+      final updated = [...a.scanLogs];
+      updated[updated.length - 1] = updater(updated.last);
+      state = a.copyWith(scanLogs: updated);
+    }
+
+    // ── ScanStatus → ScanLogEntry dönüşümü ─────────────────────
+    void onStatus(ScanStatus status, {String? detail}) {
+      switch (status) {
+        // Pending satırı ekle
+        case ScanStatus.connecting:
+          addLog(ScanLogEntry.pending('Seri porta bağlanılıyor…'));
+        case ScanStatus.fetchingMetadata:
+          addLog(ScanLogEntry.pending('Çekmece tanımları yükleniyor…'));
+        case ScanStatus.searchingManager:
+          addLog(ScanLogEntry.pending('Yönetim kartı aranıyor…'));
+        case ScanStatus.scanningCards:
+          addLog(ScanLogEntry.pending('Kontrol kartları taranıyor…'));
+
+        // Önceki satırı ok'a çevir
+        case ScanStatus.connected:
+          updateLastLog((e) => e.asOk(detail: detail));
+        case ScanStatus.metadataReady:
+          updateLastLog((e) => e.asOk(detail: detail));
+        case ScanStatus.managerFound:
+          updateLastLog((e) => e.asOk(detail: detail));
+
+        // Çekmece bulundu — yeni ok satırı ekle
+        case ScanStatus.drawerFound:
+          addLog(ScanLogEntry(message: detail ?? 'Çekmece bulundu', status: ScanLogStatus.ok));
+
+        // Hata — önceki satırı error'a çevir
+        case ScanStatus.connectionFailed:
+        case ScanStatus.metadataFailed:
+        case ScanStatus.managerNotFound:
+        case ScanStatus.noCardsFound:
+          updateLastLog((e) => e.asError(detail: detail));
+
+        // completed — result.when içinde hallediliyor
+        case ScanStatus.completed:
+          break;
+      }
+    }
+
+    final scanUseCase = ref.read(scanCabinUseCaseProvider);
+
+    final result = await scanUseCase(
+      portName: port,
+      cabinType: current.draft.cabinetType ?? CabinType.master,
+      onStatusChanged: onStatus,
+    );
+
+    final active = _active;
+    if (active == null) return;
 
     result.when(
-      ok: (config) {
+      ok: (layout) {
         MedLogger.info(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UI-007',
-          message: 'Cihaz taraması tamamlandı',
-          context: {'sections': config.sections, 'type': config.drawerType.name},
+          message: 'Tarama tamamlandı',
+          context: {'drawerCount': layout.length},
         );
-        final a = _active;
-        if (a == null) return;
-        state = a.copyWith(
-          draft: a.draft.copyWith(drawerConfig: config),
+        state = active.copyWith(
           scanState: DrawerScanState.found,
+          draft: active.draft.copyWith(scannedLayout: layout),
         );
       },
       error: (error) {
-        MedLogger.error(
-          unit: 'SW-UNIT-SETUP',
-          swreq: 'SWREQ-SETUP-UI-007',
-          message: 'Cihaz tarama hatası',
-          error: error,
-        );
-        final a = _active;
-        if (a == null) return;
-        state = a.copyWith(scanState: DrawerScanState.error);
+        MedLogger.error(unit: 'SW-UNIT-SETUP', swreq: 'SWREQ-SETUP-UI-007', message: 'Tarama hatası', error: error);
+        state = active.copyWith(scanState: DrawerScanState.error);
       },
     );
   }
 
+  /// Tarama sonucunu sıfırla — tekrar tara
+  void resetScan() {
+    final current = _active;
+    if (current == null) return;
+
+    state = current.copyWith(
+      scanState: DrawerScanState.idle,
+      scanLogs: [],
+      draft: current.draft.copyWith(scannedLayout: null),
+    );
+  }
+
+  /// [SWREQ-SETUP-UI-012] Mobil kabin — çekmece sayısını güncelle
+  void updateDrawerCount(int count) {
+    final current = _active;
+    if (current == null) return;
+
+    final layout = (current.draft.mobileLayout ?? WizardMobileLayout.defaultLayout()).withDrawerCount(count);
+
+    state = current.copyWith(draft: current.draft.copyWith(mobileLayout: layout));
+  }
+
+  /// [SWREQ-SETUP-UI-013] Mobil kabin — tek çekmece konfigürasyonunu güncelle
+  void updateDrawerConfig(int drawerIndex, {int? rows, int? columns}) {
+    final current = _active;
+    if (current == null) return;
+
+    final layout = (current.draft.mobileLayout ?? WizardMobileLayout.defaultLayout()).withDrawerConfig(
+      drawerIndex,
+      rows: rows,
+      columns: columns,
+    );
+
+    state = current.copyWith(draft: current.draft.copyWith(mobileLayout: layout));
+  }
+
+  /// [SWREQ-SETUP-UI-015] Mobil kabin — tüm çekmeceler aynı yapıda toggle
+  void toggleSameConfig({required bool value}) {
+    final current = _active;
+    if (current == null) return;
+
+    final layout = (current.draft.mobileLayout ?? WizardMobileLayout.defaultLayout()).withSameConfig(value);
+
+    state = current.copyWith(draft: current.draft.copyWith(mobileLayout: layout));
+  }
+
   // ── Adım geçişleri ───────────────────────────────────────────────
 
-  /// Sonraki adıma geç. Mevcut adımı tamamlandı olarak işaretle.
   void goToStep(int step) {
     final current = _active;
     if (current == null) return;
@@ -154,6 +279,9 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     }
 
     state = current.copyWith(currentStep: step, completedSteps: completed);
+
+    // Adım 3'e geçilince standart kabinde istasyonları yükle
+    if (step == 3) loadStations();
   }
 
   void nextStep() {
@@ -172,7 +300,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
   // ── Tamamlama ────────────────────────────────────────────────────
 
-  /// [SWREQ-SETUP-UC-001] Wizard tamamla → kaydet
+  /// [SWREQ-SETUP-UC-001] Wizard tamamla → kaydet.
   Future<void> finish() async {
     final current = _active;
     if (current == null) return;
@@ -189,20 +317,18 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
     state = WizardSaving(draft: current.draft);
 
-    final result = await _saveUseCase(config);
+    final result = await ref.read(finishCabinSetupUseCaseProvider)(config);
 
     result.when(
       ok: (cabinId) {
         MedLogger.info(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UC-001',
-          message: 'Kabin başarıyla kaydedildi',
+          message: 'Kabin kurulumu tamamlandı',
           context: {'cabinId': cabinId},
         );
 
-        // [SWREQ-CORE-003] Cihaz modunu cache'e yaz (fire & forget).
-        // Dashboard'a geçiş, kullanıcı "Dashboard'a Git" butonuna
-        // bastığında appSetupStatusProvider.markComplete() ile tetiklenir.
+        // [SWREQ-CORE-003] Fire & forget — await etme
         appSettingsCache.markSetupComplete(deviceMode: config.cabinetType.name);
 
         state = WizardSaved(cabinId: cabinId, cabinName: config.basicInfo.cabinName);
@@ -211,10 +337,10 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
         MedLogger.error(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UC-001',
-          message: 'Kabin kayıt hatası',
+          message: 'Kabin kurulum hatası',
           error: error,
         );
-        state = WizardSaveError(message: error.toString().replaceFirst('Exception: ', ''), draft: current.draft);
+        state = WizardSaveError(message: error.message, draft: current.draft);
       },
     );
   }
@@ -222,11 +348,9 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
   /// Kayıt hatası sonrası wizard'a geri dön
   void retryFromError() {
     if (state case WizardSaveError(:final draft)) {
-      state = WizardActive(currentStep: 5, draft: draft, completedSteps: const {1, 2, 3, 4});
+      state = WizardActive(currentStep: 5, draft: draft, completedSteps: const {1, 2, 3, 4}, availablePorts: []);
     }
   }
-
-  // ── Yardımcılar ──────────────────────────────────────────────────
 
   WizardActive? get _active => state is WizardActive ? state as WizardActive : null;
 }

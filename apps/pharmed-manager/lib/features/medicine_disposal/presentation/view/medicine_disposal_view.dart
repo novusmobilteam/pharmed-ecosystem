@@ -48,15 +48,15 @@ class MedicineDisposalView extends StatelessWidget {
             ],
             child: CabinStockView(
               key: ValueKey(notifier.allItems),
-              selectedAssignments: notifier.selectedItems,
-              onTapUnit: (assignment) {
-                notifier.selectItem(
-                  assignment,
-                  onFailed: (msg) {
-                    MessageUtils.showErrorSnackbar(context, msg);
-                  },
-                );
-              },
+              // selectedAssignments: notifier.selectedItems,
+              // onTapUnit: (assignment) {
+              //   notifier.selectItem(
+              //     assignment,
+              //     onFailed: (msg) {
+              //       MessageUtils.showErrorSnackbar(context, msg);
+              //     },
+              //   );
+              // },
             ),
           );
         },

@@ -7,18 +7,23 @@ class SettingsRemoteDataSource extends BaseRemoteDataSource implements SettingsD
   SettingsRemoteDataSource({required super.apiManager});
 
   @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
+
+  @override
   Future<Result<List<SystemParameterDTO>>> getSystemParameters() async {
     final res = await fetchRequest<List<SystemParameterDTO>>(
       path: '/SystemParameter',
-      parser: listParser(SystemParameterDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(SystemParameterDTO.fromJson),
       successLog: 'System parameters fetched',
       emptyLog: 'No System parameters',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <SystemParameterDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <SystemParameterDTO>[]), error: Result.error);
   }
 
   @override
@@ -27,7 +32,7 @@ class SettingsRemoteDataSource extends BaseRemoteDataSource implements SettingsD
     return updateRequest(
       path: '/SystemParameter/$id',
       body: parameter.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Parameter updated successfully',
     );
   }

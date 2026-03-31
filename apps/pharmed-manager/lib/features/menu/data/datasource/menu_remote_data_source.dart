@@ -9,9 +9,14 @@ class MenuRemoteDataSource extends BaseRemoteDataSource implements MenuDataSourc
   Future<Result<List<MenuDTO>?>> getMenus({int? userId}) async {
     final path = userId == null ? '/Menu' : '/Menu/user/$userId';
 
-    return await fetchRequest<List<MenuDTO>>(
-      path: path,
-      parser: listParser(MenuDTO.fromJson),
-    );
+    return await fetchRequest<List<MenuDTO>>(path: path, parser: BaseRemoteDataSource.listParser(MenuDTO.fromJson));
   }
+
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 }

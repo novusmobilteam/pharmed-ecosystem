@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../cabin/domain/entity/drawer_group.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 
 import '../../../medicine_withdraw/domain/entity/medicine_withdraw_item.dart' show MedicineWithdrawItem;

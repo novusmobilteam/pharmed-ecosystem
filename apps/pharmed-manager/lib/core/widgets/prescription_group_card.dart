@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../features/medicine/domain/entity/medicine.dart';
 import '../../features/prescription/domain/entity/prescription_item.dart';
 import '../core.dart';
 
@@ -128,9 +127,7 @@ class _PrescriptionGroupCardState extends State<PrescriptionGroupCard> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -249,11 +246,7 @@ class _Header extends StatelessWidget {
                 color: colorScheme.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                PhosphorIcons.notepad(PhosphorIconsStyle.duotone),
-                size: 18,
-                color: colorScheme.primary,
-              ),
+              child: Icon(PhosphorIcons.notepad(PhosphorIconsStyle.duotone), size: 18, color: colorScheme.primary),
             ),
             const SizedBox(width: 12),
 
@@ -266,16 +259,12 @@ class _Header extends StatelessWidget {
                     children: [
                       Text(
                         'Reçete #$prescriptionId',
-                        style: context.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
                         child: Text(
                           '$itemCount kalem',
                           style: context.textTheme.labelSmall?.copyWith(
@@ -295,10 +284,7 @@ class _Header extends StatelessWidget {
                         color: colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        prescriptionDate,
-                        style: context.textTheme.bodyMedium,
-                      ),
+                      Text(prescriptionDate, style: context.textTheme.bodyMedium),
                       const SizedBox(width: 10),
                       Icon(
                         PhosphorIcons.stethoscope(PhosphorIconsStyle.regular),
@@ -307,11 +293,7 @@ class _Header extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Flexible(
-                        child: Text(
-                          doctorName,
-                          style: context.textTheme.bodyMedium,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child: Text(doctorName, style: context.textTheme.bodyMedium, overflow: TextOverflow.ellipsis),
                       ),
                     ],
                   ),
@@ -356,19 +338,10 @@ class _TableHeader extends StatelessWidget {
     final style = context.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900);
 
     return Container(
-      padding: EdgeInsets.only(
-        left: interactive ? 8 : 16,
-        right: 16,
-        top: 8,
-        bottom: 8,
-      ),
+      padding: EdgeInsets.only(left: interactive ? 8 : 16, right: 16, top: 8, bottom: 8),
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-        border: Border(
-          bottom: BorderSide(
-            color: context.colorScheme.outlineVariant.withValues(alpha: 0.2),
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: context.colorScheme.outlineVariant.withValues(alpha: 0.2))),
       ),
       child: Row(
         children: [
@@ -419,21 +392,22 @@ class _ItemRow extends StatelessWidget {
   /// [medicine] kolonunu ayrıca handle ediyoruz (widget döndürüyor),
   /// bu yüzden o kolon burada boş string — özel widget ile render edilecek.
   String _valueFor(PrescriptionColumn col) => switch (col) {
-        PrescriptionColumn.dose => _doseText(),
-        PrescriptionColumn.applicationUser => item.applicationUser?.fullName ?? '-',
-        PrescriptionColumn.appliedQuantity => _doseText(), // TODO: gerçek applied quantity
-        PrescriptionColumn.applicationDate => item.applicationDate?.formattedDateTime ?? '-',
-        PrescriptionColumn.returnUser => item.returnUser?.fullName ?? '-',
-        PrescriptionColumn.returnQuantity => item.returnQuantity != null
-            ? '${item.returnQuantity!.formatFractional} ${item.medicine?.operationUnit ?? 'Adet'}'
-            : '-',
-        PrescriptionColumn.returnDate => item.returnDate?.formattedDateTime ?? '-',
-        PrescriptionColumn.wastageUser => item.wastageUser?.fullName ?? '-',
-        PrescriptionColumn.wastageDate => item.wastageDate?.formattedDateTime ?? '-',
-        PrescriptionColumn.destructionUser => item.destructionUser?.fullName ?? '-',
-        PrescriptionColumn.destructionDate => item.destructionDate?.formattedDateTime ?? '-',
-        _ => '',
-      };
+    PrescriptionColumn.dose => _doseText(),
+    PrescriptionColumn.applicationUser => item.applicationUser?.fullName ?? '-',
+    PrescriptionColumn.appliedQuantity => _doseText(), // TODO: gerçek applied quantity
+    PrescriptionColumn.applicationDate => item.applicationDate?.formattedDateTime ?? '-',
+    PrescriptionColumn.returnUser => item.returnUser?.fullName ?? '-',
+    PrescriptionColumn.returnQuantity =>
+      item.returnQuantity != null
+          ? '${item.returnQuantity!.formatFractional} ${item.medicine?.operationUnit ?? 'Adet'}'
+          : '-',
+    PrescriptionColumn.returnDate => item.returnDate?.formattedDateTime ?? '-',
+    PrescriptionColumn.wastageUser => item.wastageUser?.fullName ?? '-',
+    PrescriptionColumn.wastageDate => item.wastageDate?.formattedDateTime ?? '-',
+    PrescriptionColumn.destructionUser => item.destructionUser?.fullName ?? '-',
+    PrescriptionColumn.destructionDate => item.destructionDate?.formattedDateTime ?? '-',
+    _ => '',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -443,9 +417,7 @@ class _ItemRow extends StatelessWidget {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
-      decoration: BoxDecoration(
-        color: isSelected ? colorScheme.primary.withValues(alpha: 0.06) : Colors.transparent,
-      ),
+      decoration: BoxDecoration(color: isSelected ? colorScheme.primary.withValues(alpha: 0.06) : Colors.transparent),
       child: InkWell(
         onTap: () {
           if (isSelectable) {
@@ -453,12 +425,7 @@ class _ItemRow extends StatelessWidget {
           }
         },
         child: Padding(
-          padding: EdgeInsets.only(
-            left: interactive ? 8 : 13,
-            right: 16,
-            top: 10,
-            bottom: 10,
-          ),
+          padding: EdgeInsets.only(left: interactive ? 8 : 13, right: 16, top: 10, bottom: 10),
           child: Row(
             children: [
               if (interactive)
@@ -513,9 +480,7 @@ class _ItemRow extends StatelessWidget {
                   flex: col.flex,
                   child: Text(
                     _valueFor(col),
-                    style: context.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
                   ),
                 );
               }),
@@ -550,10 +515,7 @@ class _StatusBadge extends StatelessWidget {
           Flexible(
             child: Text(
               status.label,
-              style: context.textTheme.labelMedium?.copyWith(
-                color: status.color,
-                fontWeight: FontWeight.w600,
-              ),
+              style: context.textTheme.labelMedium?.copyWith(color: status.color, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -592,11 +554,7 @@ class _ActionBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerLowest,
-          border: Border(
-            top: BorderSide(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-            ),
-          ),
+          border: Border(top: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3))),
         ),
         child: Row(
           children: [
@@ -643,12 +601,7 @@ class _ActionButton extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
 
-  const _ActionButton({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
+  const _ActionButton({required this.label, required this.icon, required this.color, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -669,10 +622,7 @@ class _ActionButton extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               label,
-              style: context.textTheme.labelSmall?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w700,
-              ),
+              style: context.textTheme.labelSmall?.copyWith(color: color, fontWeight: FontWeight.w700),
             ),
           ],
         ),

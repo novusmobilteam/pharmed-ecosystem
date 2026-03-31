@@ -5,14 +5,10 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/warehouse.dart';
 import 'warehouse_table_view.dart';
 
 Future<Warehouse?> showWarehouseListView(BuildContext context) async {
-  final Warehouse? result = await showDialog(
-    context: context,
-    builder: (context) => WarehouseListView(),
-  );
+  final Warehouse? result = await showDialog(context: context, builder: (context) => WarehouseListView());
 
   return result;
 }
@@ -37,10 +33,9 @@ class _WarehouseListViewState extends State<WarehouseListView> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => WarehouseTableNotifier(
-        getWarehousesUseCase: context.read(),
-        deleteWarehouseUseCase: context.read(),
-      )..getWarehouses(),
+      create: (context) =>
+          WarehouseTableNotifier(getWarehousesUseCase: context.read(), deleteWarehouseUseCase: context.read())
+            ..getWarehouses(),
       child: Consumer<WarehouseTableNotifier>(
         builder: (context, notifier, _) => CustomDialog(
           title: 'Depo Tanımlama',

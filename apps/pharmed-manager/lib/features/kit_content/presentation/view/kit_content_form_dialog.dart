@@ -4,16 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/core.dart';
-import '../../../medicine/domain/entity/medicine.dart';
-import '../../../medicine/domain/repository/i_medicine_repository.dart';
+
 import '../../domain/entity/kit_content.dart';
 import '../notifier/kit_content_form_notifier.dart';
 
-Future<bool> showKitContentFormDialog(
-  BuildContext context, {
-  int? kitId,
-  KitContent? initial,
-}) async {
+Future<bool> showKitContentFormDialog(BuildContext context, {int? kitId, KitContent? initial}) async {
   final result = await showDialog<bool>(
     context: context,
     builder: (_) => ChangeNotifierProvider(
@@ -65,10 +60,7 @@ class _KitContentFormDialogState extends State<KitContentFormDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               spacing: AppDimensions.registrationDialogSpacing,
-              children: const [
-                _MaterialField(),
-                _PieceField(),
-              ],
+              children: const [_MaterialField(), _PieceField()],
             ),
           ),
         );

@@ -8,7 +8,6 @@ import '../../../../core/widgets/hospitalization_card.dart';
 import '../../../medicine_define/presentation/view/patient_medicine_define_view.dart';
 import '../../../medicine_withdraw/presentation/view/custom_withdraw_view.dart';
 import '../../../medicine_withdraw/presentation/view/withdraw_view.dart';
-import '../../../service/domain/entity/service.dart';
 import '../notifier/medicine_management_notifier.dart';
 import '../../../medicine_disposal/presentation/view/disposal_view.dart';
 import '../../../medicine_refund/presentation/view/medicine_refund_view.dart';

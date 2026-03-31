@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../core/core.dart';
 import '../../../core/widgets/remaining_day_badge.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../notifier/station_inventory_notifier.dart';
 
 class StationInventoryScreen extends StatelessWidget {
@@ -13,9 +12,7 @@ class StationInventoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => StationInventoryNotifier(
-        getCurrentCabinStockUseCase: context.read(),
-      )..fetchInventory(),
+      create: (context) => StationInventoryNotifier(getCurrentCabinStockUseCase: context.read())..fetchInventory(),
       child: Consumer<StationInventoryNotifier>(
         builder: (context, vm, _) {
           return ResponsiveLayout(

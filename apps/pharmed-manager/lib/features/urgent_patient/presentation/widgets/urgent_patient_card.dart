@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/core.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../../patient/domain/entity/urgent_patient.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
 
@@ -61,19 +61,13 @@ class UrgentPatientCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          'Oluşturulma Tarihi: $admissionDate',
-                          style: context.textTheme.bodySmall,
-                        ),
+                        Text('Oluşturulma Tarihi: $admissionDate', style: context.textTheme.bodySmall),
                       ],
                     ),
                   ),
                   // Seçili ilaç sayısı rozeti
                   if (isSelected && items.isNotEmpty)
-                    _SelectionBadge(
-                      selectedCount: selectedCount,
-                      totalCount: items.length,
-                    ),
+                    _SelectionBadge(selectedCount: selectedCount, totalCount: items.length),
                   const SizedBox(width: 8),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 200),
@@ -91,11 +85,7 @@ class UrgentPatientCard extends StatelessWidget {
 
           // İlaç Listesi
           if (items.isNotEmpty)
-            _MedicineSection(
-              items: items,
-              selectedItemIds: selectedItemIds,
-              onItemToggled: onItemToggled,
-            ),
+            _MedicineSection(items: items, selectedItemIds: selectedItemIds, onItemToggled: onItemToggled),
         ],
       ),
     );
@@ -106,10 +96,7 @@ class _SelectionBadge extends StatelessWidget {
   final int selectedCount;
   final int totalCount;
 
-  const _SelectionBadge({
-    required this.selectedCount,
-    required this.totalCount,
-  });
+  const _SelectionBadge({required this.selectedCount, required this.totalCount});
 
   @override
   Widget build(BuildContext context) {
@@ -145,11 +132,7 @@ class _MedicineSection extends StatelessWidget {
   final Set<int> selectedItemIds;
   final Function(PrescriptionItem) onItemToggled;
 
-  const _MedicineSection({
-    required this.items,
-    required this.selectedItemIds,
-    required this.onItemToggled,
-  });
+  const _MedicineSection({required this.items, required this.selectedItemIds, required this.onItemToggled});
 
   @override
   Widget build(BuildContext context) {
@@ -167,19 +150,19 @@ class _MedicineSection extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8.0, left: 4),
             child: Text(
               'Alınan İlaçlar (${items.length})',
-              style: context.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: context.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          ...items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: _MedicineItemCard(
+                item: item,
+                isSelected: selectedItemIds.contains(item.id),
+                onTap: () => onItemToggled(item),
               ),
             ),
           ),
-          ...items.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _MedicineItemCard(
-                  item: item,
-                  isSelected: selectedItemIds.contains(item.id),
-                  onTap: () => onItemToggled(item),
-                ),
-              )),
         ],
       ),
     );
@@ -191,11 +174,7 @@ class _MedicineItemCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _MedicineItemCard({
-    required this.item,
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _MedicineItemCard({required this.item, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

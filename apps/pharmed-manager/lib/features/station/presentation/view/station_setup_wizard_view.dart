@@ -6,8 +6,6 @@ import '../../../service/presentation/view/service_list_view.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../../service/domain/entity/service.dart';
-import '../../../service/domain/repository/i_service_repository.dart';
 import '../notifier/station_form_notifier.dart';
 import '../../../warehouse/presentation/view/warehouse_list_view.dart';
 
@@ -80,10 +78,7 @@ class _StationSetupWizardViewState extends State<StationSetupWizardView> {
                       ),
                       if (_step > 0) ...[
                         const SizedBox(width: 12),
-                        TextButton(
-                          onPressed: details.onStepCancel,
-                          child: const Text('Geri Dön'),
-                        ),
+                        TextButton(onPressed: details.onStepCancel, child: const Text('Geri Dön')),
                       ],
                     ],
                   ),
@@ -240,7 +235,7 @@ class _ThirdStep extends StatelessWidget {
               labelBuilder: (value) => value?.name,
               onSelected: notifier.updateProvidedServices,
               future: () => context.read<IServiceRepository>().getServices(),
-            )
+            ),
           ],
         );
       },

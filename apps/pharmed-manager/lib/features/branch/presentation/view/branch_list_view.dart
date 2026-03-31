@@ -4,16 +4,12 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/core.dart';
-import '../../domain/entity/branch.dart';
 import '../notifier/branch_form_notifier.dart';
 import '../notifier/branch_table_notifier.dart';
 import 'branch_registration_dialog.dart';
 
 Future<Branch?> showBranchListView(BuildContext context) async {
-  final Branch? result = await showDialog(
-    context: context,
-    builder: (context) => BranchListView(),
-  );
+  final Branch? result = await showDialog(context: context, builder: (context) => BranchListView());
 
   return result;
 }
@@ -38,10 +34,8 @@ class _BranchListViewState extends State<BranchListView> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => BranchTableNotifier(
-        getBranchesUseCase: context.read(),
-        deleteBranchUseCase: context.read(),
-      )..getBranches(),
+      create: (context) =>
+          BranchTableNotifier(getBranchesUseCase: context.read(), deleteBranchUseCase: context.read())..getBranches(),
       child: Consumer<BranchTableNotifier>(
         builder: (context, vm, _) => CustomDialog(
           title: 'Branş Tanımlama',
@@ -93,11 +87,8 @@ Future<void> _showBranchRegistrationDialog(BuildContext context, {Branch? initia
   final result = await showDialog<bool>(
     context: context,
     builder: (_) => ChangeNotifierProvider(
-      create: (_) => BranchFormNotifier(
-        branch: initial,
-        createBranchUseCase: context.read(),
-        updateBranchUseCase: context.read(),
-      ),
+      create: (_) =>
+          BranchFormNotifier(branch: initial, createBranchUseCase: context.read(), updateBranchUseCase: context.read()),
       child: BranchRegistrationDialog(),
     ),
   );

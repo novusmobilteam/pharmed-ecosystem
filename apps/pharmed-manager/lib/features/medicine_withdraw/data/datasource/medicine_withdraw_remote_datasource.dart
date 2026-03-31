@@ -11,126 +11,97 @@ class MedicineWithdrawRemoteDataSource extends BaseRemoteDataSource implements M
   Future<Result<void>> checkFreeWithdraw(Map<String, dynamic> data) async {
     final res = await createRequest(
       path: '/PatientIndependentMaterial/check',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       body: data,
     );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<void>> checkOrderedWithdraw(Map<String, dynamic> data) async {
     final res = await createRequest(
       path: '/Prescription/detail/checkCollect',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       body: data,
     );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<void>> checkOrderlessWithdraw(Map<String, dynamic> data) async {
     final res = await createRequest(
       path: '/Prescription/detail/OrderlessCollectCheck',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       body: data,
     );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<void>> completeFreeWithdraw(Map<String, dynamic> data) async {
     final res = await createRequest(
       path: '/PatientIndependentMaterial',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       body: data,
     );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<void>> completeOrderedWithdraw(Map<String, dynamic> data) async {
     final res = await createRequest(
       path: '/Prescription/detail/collect',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       body: data,
     );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<void>> completeOrderlessWithdraw(Map<String, dynamic> data) async {
     final res = await createRequest(
       path: '/Prescription/detail/OrderlessCollect',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       body: data,
     );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<void>> definePatientMedicine(Map<String, dynamic> data) async {
-    final res = await createRequest(
-      path: '/Patient/otherDrug',
-      parser: voidParser(),
-      body: data,
-    );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    final res = await createRequest(path: '/Patient/otherDrug', parser: BaseRemoteDataSource.voidParser(), body: data);
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<List<MedicineWithdrawItemDTO>>> getWithdrawItems({required int hospitalizationId}) async {
     final res = await fetchRequest<List<MedicineWithdrawItemDTO>>(
       path: '/Prescription/detail/getCollect/$hospitalizationId',
-      parser: listParser(MedicineWithdrawItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(MedicineWithdrawItemDTO.fromJson),
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <MedicineWithdrawItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <MedicineWithdrawItemDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<void>> withdrawPatientMedicine({required int id}) async {
-    final res = await createRequest(
-      path: '/Patient/otherDrugCollect/$id',
-      parser: voidParser(),
-    );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    final res = await createRequest(path: '/Patient/otherDrugCollect/$id', parser: BaseRemoteDataSource.voidParser());
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<List<PatientMedicineWithdrawItemDTO>>> getPatientMedicines({required int hospitalizationId}) async {
     final res = await fetchRequest<List<PatientMedicineWithdrawItemDTO>>(
       path: '/Patient/otherDrug/$hospitalizationId',
-      parser: listParser(PatientMedicineWithdrawItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PatientMedicineWithdrawItemDTO.fromJson),
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PatientMedicineWithdrawItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PatientMedicineWithdrawItemDTO>[]), error: Result.error);
   }
+
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 }

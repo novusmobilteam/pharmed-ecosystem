@@ -1,7 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
-import '../../../medicine/domain/entity/medicine.dart';
 
 class FillingObject extends TableData {
   // Birden fazla göz kaydını taşımak için liste
@@ -55,11 +52,7 @@ extension FillingObjectAdapter on FillingObject {
   CabinAssignment? toCabinAssignment() {
     if (assignment == null) return null;
 
-    return assignment!.copyWith(
-      medicine: medicine,
-      fillingQuantity: quantity,
-      stocks: stocks,
-    );
+    return assignment!.copyWith(medicine: medicine, fillingQuantity: quantity, stocks: stocks);
   }
 }
 

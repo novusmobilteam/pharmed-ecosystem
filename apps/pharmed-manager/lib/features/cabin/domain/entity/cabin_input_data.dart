@@ -1,4 +1,4 @@
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
 class CabinInputData {
   final int materialId;

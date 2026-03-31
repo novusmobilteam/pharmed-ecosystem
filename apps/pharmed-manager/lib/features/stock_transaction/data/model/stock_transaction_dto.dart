@@ -1,7 +1,5 @@
 import '../../../../core/core.dart';
-import '../../../service/data/model/service_dto.dart';
-import '../../../warehouse/data/model/warehouse_dto.dart';
-import '../../../medicine/data/model/medicine_dto.dart';
+
 import '../../domain/entity/stock_transaction.dart';
 
 class StockTransactionDTO {
@@ -93,8 +91,8 @@ class StockTransactionDTO {
       sendDate: sendDate,
       expirationDate: expirationDate,
       medicine: medicine?.toEntity(),
-      service: sendService?.toEntity(),
-      warehouse: warehouse?.toEntity(),
+      service: ServiceMapper().toEntityOrNull(sendService),
+      warehouse: WarehouseMapper().toEntityOrNull(warehouse),
       user: const UserMapper().toEntityOrNull(user),
       transactionKind: StockTransactionKind.fromId(transactionKind),
       transactionType: StockTransactionType.fromId(transactionType),

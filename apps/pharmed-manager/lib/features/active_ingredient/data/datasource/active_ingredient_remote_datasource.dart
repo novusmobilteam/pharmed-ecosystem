@@ -4,10 +4,17 @@ import 'active_ingredient_datasource.dart';
 
 /// Etken Madde işlemleri için uzak (API) veri kaynağı.
 class ActiveIngredientRemoteDataSource extends BaseRemoteDataSource implements ActiveIngredientDataSource {
-  // Endpoint sabitleri
+  ActiveIngredientRemoteDataSource({required super.apiManager});
+
   final String _basePath = '/ActiveIngredient';
 
-  ActiveIngredientRemoteDataSource({required super.apiManager});
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 
   @override
   Future<Result<ApiResponse<List<ActiveIngredientDTO>>>> getActiveIngredients({
@@ -20,9 +27,9 @@ class ActiveIngredientRemoteDataSource extends BaseRemoteDataSource implements A
       skip: skip,
       take: take,
       searchText: search,
-      searchField: 'name',
+      searchFields: ['name'],
       envelope: ResponseEnvelope.raw,
-      parser: apiResponseListParser(ActiveIngredientDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(ActiveIngredientDTO.fromJson),
       successLog: 'Active ingredients fetched successfully',
       emptyLog: 'No active ingredients found',
     );
@@ -38,7 +45,7 @@ class ActiveIngredientRemoteDataSource extends BaseRemoteDataSource implements A
     return createRequest(
       path: _basePath,
       body: ingredient.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Active ingredient created successfully',
     );
   }
@@ -50,7 +57,7 @@ class ActiveIngredientRemoteDataSource extends BaseRemoteDataSource implements A
     return updateRequest(
       path: '$_basePath/$id',
       body: ingredient.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Active ingredient updated successfully',
     );
   }
@@ -59,7 +66,7 @@ class ActiveIngredientRemoteDataSource extends BaseRemoteDataSource implements A
   Future<Result<void>> deleteActiveIngredient(int id) {
     return deleteRequest<void>(
       path: '$_basePath/$id',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Active ingredient deleted successfully',
     );
   }

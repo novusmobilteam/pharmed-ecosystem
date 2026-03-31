@@ -1,10 +1,7 @@
-// packages/pharmed_core/lib/src/auth/domain/usecase/login_use_case.dart
-//
 // [SWREQ-CORE-AUTH-002]
 // Token/user kaydetme sorumluluğu repository'dedir.
 // UseCase yalnızca orchestrate eder.
 // Sınıf: Class B
-// ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:pharmed_core/pharmed_core.dart';
 

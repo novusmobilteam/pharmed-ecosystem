@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-import '../../../domain/entity/station.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../service/domain/entity/service.dart';
 import 'station_persistence.dart';
 
 class LocalStorageStationPersistence implements StationPersistence {
@@ -25,12 +23,7 @@ class LocalStorageStationPersistence implements StationPersistence {
       name: map['name'],
       drugStatus: OrderStatus.values.byName(map['drugStatus']),
       medicalConsumableStatus: OrderStatus.values.byName(map['medicalConsumableStatus']),
-      services: (map['services'] as List)
-          .map((s) => HospitalService(
-                id: s['id'],
-                name: s['name'],
-              ))
-          .toList(),
+      services: (map['services'] as List).map((s) => HospitalService(id: s['id'], name: s['name'])).toList(),
     );
   }
 
@@ -44,12 +37,7 @@ class LocalStorageStationPersistence implements StationPersistence {
         'name': station.name,
         'drugStatus': station.drugStatus.name,
         'medicalConsumableStatus': station.medicalConsumableStatus.name,
-        'services': station.services
-            .map((s) => {
-                  'id': s.id,
-                  'name': s.name,
-                })
-            .toList()
+        'services': station.services.map((s) => {'id': s.id, 'name': s.name}).toList(),
       };
 
       await _prefs.setString(_keyStation, jsonEncode(mStation));

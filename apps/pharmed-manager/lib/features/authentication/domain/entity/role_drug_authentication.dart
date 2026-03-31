@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../data/model/role_drug_authentication_dto.dart';
 
 class RoleDrugAuthentication implements TableData {

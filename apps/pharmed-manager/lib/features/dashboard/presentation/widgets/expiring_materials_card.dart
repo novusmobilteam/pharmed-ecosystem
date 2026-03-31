@@ -3,7 +3,6 @@ import '../../../../core/widgets/rectangle_icon.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import 'dashboard_card.dart';
 
 class ExpiringMaterialsCard extends StatelessWidget {
@@ -24,20 +23,13 @@ class ExpiringMaterialsCard extends StatelessWidget {
               padding: EdgeInsets.zero,
               physics: const BouncingScrollPhysics(),
               itemCount: items.length,
-              separatorBuilder: (c, i) => Divider(
-                height: 24,
-                thickness: 0.5,
-                color: context.theme.dividerColor,
-              ),
+              separatorBuilder: (c, i) => Divider(height: 24, thickness: 0.5, color: context.theme.dividerColor),
               itemBuilder: (context, index) {
                 final stock = items[index];
 
                 return Row(
                   children: [
-                    RectangleIcon(
-                      icon: PhosphorIcons.pill(),
-                      color: stock.statusColor,
-                    ),
+                    RectangleIcon(icon: PhosphorIcons.pill(), color: stock.statusColor),
 
                     const SizedBox(width: 16),
 
@@ -57,17 +49,11 @@ class ExpiringMaterialsCard extends StatelessWidget {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(
-                                PhosphorIcons.clockCounterClockwise(),
-                                size: 14,
-                                color: Colors.grey[600],
-                              ),
+                              Icon(PhosphorIcons.clockCounterClockwise(), size: 14, color: Colors.grey[600]),
                               const SizedBox(width: 4),
                               Text(
                                 'S.K.T: ${stock.miadDate?.formattedDate ?? '-'}',
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: Colors.grey[600],
-                                ),
+                                style: context.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                               ),
                             ],
                           ),
@@ -81,9 +67,7 @@ class ExpiringMaterialsCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: stock.statusColor.withAlpha(24),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: stock.statusColor.withAlpha(48),
-                        ),
+                        border: Border.all(color: stock.statusColor.withAlpha(48)),
                       ),
                       child: Text(
                         stock.expirationStatusText,

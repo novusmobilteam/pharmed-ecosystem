@@ -1,11 +1,4 @@
 import 'package:pharmed_manager/core/core.dart';
-
-import '../../../cabin/domain/entity/drawer_slot.dart';
-import '../../../cabin/domain/entity/drawer_unit.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-
-import '../../../cabin/domain/entity/drawer_type.dart';
-import '../../../cabin/domain/entity/drawer_config.dart';
 import '../../data/model/patient_medicine_withdraw_item_dto.dart';
 
 // İlaç alım işleminde hastanın kendi getirmiş olduğu ve sisteme sonradan tanımlanan ilaçlar
@@ -64,7 +57,7 @@ extension MedicineWithdrawMapper on PatientMedicineWithdrawItemDTO {
     // 1. RAW MAP verilerine erişim (Deep Nesting'den kurtarma operasyonu)
     // Quantity veya Stock DTO'larının içindeki raw map'leri kullanıyoruz.
     // Genelde 'Quantity' içindeki 'cabinDrawr' daha genel tanımları içerir.
-    final rawDrawer = cabinDrawer?.toEntity();
+    final rawDrawer = DrawerUnitMapper().toEntityOrNull(cabinDrawer);
     final rawDesign = rawDrawer?.drawerSlot;
     final rawDetail = rawDesign?.drawerConfig;
     final rawRootDrawer = rawDetail?.drawerType;

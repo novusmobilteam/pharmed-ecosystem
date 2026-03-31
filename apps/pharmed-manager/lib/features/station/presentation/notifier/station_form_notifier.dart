@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../service/domain/entity/service.dart';
-import '../../../warehouse/domain/entity/warehouse.dart';
-import '../../domain/entity/station.dart';
-import '../../domain/usecase/create_station_usecase.dart';
-import '../../domain/usecase/get_station_usecase.dart';
-import '../../domain/usecase/update_station_usecase.dart';
-
 class StationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetStationUseCase _getStationUseCase;
   final CreateStationUseCase _createStationUseCase;

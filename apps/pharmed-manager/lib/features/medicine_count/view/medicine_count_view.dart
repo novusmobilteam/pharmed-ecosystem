@@ -9,7 +9,6 @@ import '../../cabin/shared/cabin_assignment_picker/view/cabin_assignment_picker_
 
 import '../../cabin/shared/cabin_inventory/view/cabin_inventory_view.dart';
 import '../../cabin/shared/cabin_process/notifier/cabin_status_notifier.dart';
-import '../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../notifier/medicine_count_notifier.dart';
 
 class MedicineCountView extends StatefulWidget {
@@ -29,7 +28,7 @@ class _MedicineCountViewState extends State<MedicineCountView> {
         ChangeNotifierProvider(
           create: (ctx) => MedicineCountNotifier(
             countMedicineUseCase: ctx.read(),
-            onOperationRequired: (assignment) => ctx.read<CabinStatusNotifier>().startOperation(assignment),
+            //onOperationRequired: (assignment) => ctx.read<CabinStatusNotifier>().startOperation(assignment),
           ),
         ),
         ChangeNotifierProvider(
@@ -111,9 +110,9 @@ class _MedicineCountViewState extends State<MedicineCountView> {
       },
       child: CabinStockView(
         key: _stockViewKey,
-        onTapUnit: isCabinMode ? null : notifier.selectAssignment,
-        selectedAssignments: isCabinMode ? [] : notifier.selectedAssignments,
-        onDataLoaded: notifier.setAllAssignments,
+        // onTapUnit: isCabinMode ? null : notifier.selectAssignment,
+        // selectedAssignments: isCabinMode ? [] : notifier.selectedAssignments,
+        // onDataLoaded: notifier.setAllAssignments,
       ),
     );
   }

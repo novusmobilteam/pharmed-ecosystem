@@ -1,6 +1,6 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../../domain/entity/inconsistency.dart';
-import '../../../cabin/data/model/drawer_cell_dto.dart';
-import '../../../medicine/data/model/medicine_dto.dart';
 
 class InconsistencyDTO {
   final int? id;
@@ -63,7 +63,7 @@ class InconsistencyDTO {
   Inconsistency toEntity() {
     return Inconsistency(
       id: id,
-      cabinDrawerDetail: cabinDrawerDetail?.toEntity(),
+      cabinDrawerDetail: DrawerCellMapper().toEntityOrNull(cabinDrawerDetail),
       medicine: medicine?.toEntity(),
       quantity: quantity,
       stockEntryQuantity: stockEntryQuantity,

@@ -11,14 +11,11 @@ class KitRemoteDataSource extends BaseRemoteDataSource implements KitDataSource 
   Future<Result<List<KitDTO>>> getKits() async {
     final res = await fetchRequest<List<KitDTO>>(
       path: _basePath,
-      parser: listParser(KitDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(KitDTO.fromJson),
       successLog: 'Kits fetched',
       emptyLog: 'No kits',
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <KitDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <KitDTO>[]), error: Result.error);
   }
 
   @override
@@ -26,7 +23,7 @@ class KitRemoteDataSource extends BaseRemoteDataSource implements KitDataSource 
     return createRequest(
       path: _basePath,
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Kit created',
     );
   }
@@ -36,7 +33,7 @@ class KitRemoteDataSource extends BaseRemoteDataSource implements KitDataSource 
     return updateRequest(
       path: '$_basePath/${dto.id}',
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Kit updated',
     );
   }
@@ -45,8 +42,16 @@ class KitRemoteDataSource extends BaseRemoteDataSource implements KitDataSource 
   Future<Result<void>> deleteKit(int id) {
     return deleteRequest<void>(
       path: '$_basePath/$id',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Kit deleted',
     );
   }
+
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 }

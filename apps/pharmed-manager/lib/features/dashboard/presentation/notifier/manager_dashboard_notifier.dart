@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 import '../../domain/usecase/get_critical_stocks_usecase.dart';
 
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../../medicine_refund/domain/entity/refund.dart';
 import '../../../prescription/domain/entity/prescription.dart';
 import '../../domain/usecase/get_expiring_materials_usecase.dart';

@@ -9,24 +9,28 @@ import 'patient_datasource.dart';
 
 /// Hasta işlemleri için uzak (API) veri kaynağı.
 class PatientRemoteDataSource extends BaseRemoteDataSource implements PatientDataSource {
-  final String _basePath = '/Patient';
-
   PatientRemoteDataSource({required super.apiManager});
 
+  final String _basePath = '/Patient';
+
   @override
-  Future<Result<ApiResponse<List<PatientDTO>>>> getPatients({
-    int? skip,
-    int? take,
-    String? search,
-  }) async {
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
+
+  @override
+  Future<Result<ApiResponse<List<PatientDTO>>>> getPatients({int? skip, int? take, String? search}) async {
     final res = await fetchRequest<ApiResponse<List<PatientDTO>>>(
       path: _basePath,
       skip: skip,
       take: take,
       searchText: search,
-      searchField: 'name', // Tahmini search field, kontrol edilmeli (örn. name, identityNumber vb.)
+      searchFields: ['name'],
       envelope: ResponseEnvelope.raw,
-      parser: apiResponseListParser(PatientDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PatientDTO.fromJson),
       successLog: 'Patients fetched',
       emptyLog: 'No patients',
     );
@@ -42,7 +46,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource implements PatientDat
     return createRequest<PatientDTO?>(
       path: _basePath,
       body: dto.toJson(),
-      parser: singleParser(PatientDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(PatientDTO.fromJson),
       successLog: 'Patient created',
     );
   }
@@ -55,7 +59,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource implements PatientDat
     return updateRequest(
       path: '$_basePath/${dto.id}',
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Patient updated',
     );
   }
@@ -64,7 +68,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource implements PatientDat
   Future<Result<void>> deletePatient(int id) {
     return deleteRequest<void>(
       path: '$_basePath/$id',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Patient deleted',
     );
   }
@@ -77,7 +81,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource implements PatientDat
   }) async {
     final res = await createRequest(
       path: '$_basePath/merge',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       body: {
         "UrgentPatientHospitalizationId": hospitalizationId.toString(),
         "PatientId": patientId,
@@ -97,107 +101,68 @@ class PatientRemoteDataSource extends BaseRemoteDataSource implements PatientDat
   Future<Result<void>> addPatient(int userId, int hospitalizationId) async {
     final res = await createRequest(
       path: '/MyPatient',
-      parser: voidParser(),
-      body: {
-        "userId": userId,
-        "patientHospitalizationId": hospitalizationId,
-      },
+      parser: BaseRemoteDataSource.voidParser(),
+      body: {"userId": userId, "patientHospitalizationId": hospitalizationId},
     );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<List<MyPatientDTO>>> getMyPatients() async {
     final res = await fetchRequest<List<MyPatientDTO>>(
       path: '/MyPatient',
-      parser: listParser(MyPatientDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(MyPatientDTO.fromJson),
       successLog: 'My patients fetched',
       emptyLog: 'No patient',
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <MyPatientDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <MyPatientDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<void>> removePatient(int id) async {
-    final res = await deleteRequest(
-      path: '/MyPatient/$id',
-      parser: voidParser(),
-    );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    final res = await deleteRequest(path: '/MyPatient/$id', parser: BaseRemoteDataSource.voidParser());
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<void>> addPatiens(List<Map<String, dynamic>> data) async {
-    final res = await createRequest(
-      path: '/MyPatient/bulk',
-      parser: voidParser(),
-      body: data,
-    );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    final res = await createRequest(path: '/MyPatient/bulk', parser: BaseRemoteDataSource.voidParser(), body: data);
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<void>> removePatients(List<int> ids) async {
-    final res = await deleteBulkRequest(
-      path: '/MyPatient/bulk',
-      body: ids,
-    );
-    return res.when(
-      ok: (data) => Result.ok(null),
-      error: Result.error,
-    );
+    final res = await deleteBulkRequest(path: '/MyPatient/bulk', body: ids);
+    return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
   @override
   Future<Result<List<PatientDTO>>> getHospitalizedAndRecentExits() async {
     final res = await fetchRequest(
       path: '$_basePath/hospitalizationForExits',
-      parser: listParser(PatientDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PatientDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? []),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);
   }
 
   @override
   Future<Result<List<UrgentPatientDTO>>> getUrgentPatients() async {
     final res = await fetchRequest(
       path: '$_basePath/urgent',
-      parser: listParser(UrgentPatientDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(UrgentPatientDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? []),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);
   }
 
   @override
   Future<Result<HospitalizationDTO?>> createUrgentPatient(int serviceId) async {
     final res = await createRequest<HospitalizationDTO>(
       path: '$_basePath/hospitalization/urgent',
-      parser: singleParser(HospitalizationDTO.fromJson),
-      body: {
-        "serviceId": serviceId,
-      },
+      parser: BaseRemoteDataSource.singleParser(HospitalizationDTO.fromJson),
+      body: {"serviceId": serviceId},
     );
-    return res.when(
-      ok: (data) => Result.ok(data),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data), error: Result.error);
   }
 }

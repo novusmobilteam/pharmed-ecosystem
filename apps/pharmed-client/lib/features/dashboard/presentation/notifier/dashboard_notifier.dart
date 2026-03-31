@@ -26,7 +26,7 @@ final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardU
 class DashboardNotifier extends Notifier<DashboardUiState> {
   // Flavor'a göre gerçek veya mock repository inject edilir
   // Şimdilik mock — DI kurulunca değişecek
-  final _repository = DashboardMockRepository();
+  // final _repository = DashboardMockRepository();
 
   @override
   DashboardUiState build() {
@@ -43,34 +43,34 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
 
     state = const DashboardLoading();
 
-    final result = await _repository.getDashboardData();
+    // final result = await _repository.getDashboardData();
 
-    result.when(
-      ok: (data) {
-        MedLogger.info(
-          unit: 'SW-UNIT-UI',
-          swreq: 'SWREQ-UI-DASH-003',
-          message: 'Dashboard yüklendi',
-          context: {'treatments': data.treatments.length, 'sktItems': data.skt.allItems.length},
-        );
-        state = DashboardLoaded(data);
-      },
-      error: (error) {
-        (error) {
-          MedLogger.error(
-            unit: 'SW-UNIT-UI',
-            swreq: 'SWREQ-UI-DASH-003',
-            message: 'Dashboard yükleme hatası',
-            error: error,
-          );
-          final appError = error is AppException ? error : null;
-          state = DashboardError(
-            message: appError?.userMessage ?? 'Veriler yüklenemedi.',
-            isRetryable: appError?.isRetryable ?? true,
-          );
-        };
-      },
-    );
+    // result.when(
+    //   ok: (data) {
+    //     MedLogger.info(
+    //       unit: 'SW-UNIT-UI',
+    //       swreq: 'SWREQ-UI-DASH-003',
+    //       message: 'Dashboard yüklendi',
+    //       context: {'treatments': data.treatments.length, 'sktItems': data.skt.allItems.length},
+    //     );
+    //     state = DashboardLoaded(data);
+    //   },
+    //   error: (error) {
+    //     (error) {
+    //       MedLogger.error(
+    //         unit: 'SW-UNIT-UI',
+    //         swreq: 'SWREQ-UI-DASH-003',
+    //         message: 'Dashboard yükleme hatası',
+    //         error: error,
+    //       );
+    //       final appError = error is AppException ? error : null;
+    //       state = DashboardError(
+    //         message: appError?.userMessage ?? 'Veriler yüklenemedi.',
+    //         isRetryable: appError?.isRetryable ?? true,
+    //       );
+    //     };
+    //   },
+    // );
   }
 
   // ── Public aksiyonlar ─────────────────────────────────────────

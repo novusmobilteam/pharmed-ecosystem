@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/core.dart';
 
-import '../../../medicine/domain/entity/medicine.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
 
 class DisposableMedicineCard extends StatelessWidget {
@@ -9,12 +8,7 @@ class DisposableMedicineCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isSelected;
 
-  const DisposableMedicineCard({
-    super.key,
-    required this.item,
-    this.onTap,
-    required this.isSelected,
-  });
+  const DisposableMedicineCard({super.key, required this.item, this.onTap, required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +50,7 @@ class DisposableMedicineCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         'Barkod: ${medicine?.barcode ?? '-'}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.hintColor,
-                          letterSpacing: 0.5,
-                        ),
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor, letterSpacing: 0.5),
                       ),
                     ],
                   ),
@@ -70,10 +61,7 @@ class DisposableMedicineCard extends StatelessWidget {
 
             Padding(
               padding: EdgeInsets.symmetric(vertical: 10.0),
-              child: Divider(
-                height: 1,
-                color: theme.dividerColor,
-              ),
+              child: Divider(height: 1, color: theme.dividerColor),
             ),
 
             Row(
@@ -84,11 +72,7 @@ class DisposableMedicineCard extends StatelessWidget {
                   'Alım Tarihi',
                   '${displayDate?.formattedDate ?? "--"} ${displayDate?.formattedTime ?? "--"}',
                 ),
-                _infoChip(
-                  context,
-                  'Alan Kişi',
-                  appUser?.fullName ?? '-',
-                )
+                _infoChip(context, 'Alan Kişi', appUser?.fullName ?? '-'),
               ],
             ),
           ],
@@ -108,15 +92,9 @@ class DisposableMedicineCard extends StatelessWidget {
         children: [
           Text(
             '${item.dosePiece?.formatFractional}',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.primary,
-            ),
+            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
           ),
-          Text(
-            medicine?.operationUnit ?? 'Adet',
-            style: theme.textTheme.labelSmall?.copyWith(fontSize: 9),
-          ),
+          Text(medicine?.operationUnit ?? 'Adet', style: theme.textTheme.labelSmall?.copyWith(fontSize: 9)),
         ],
       ),
     );
@@ -132,9 +110,7 @@ class DisposableMedicineCard extends StatelessWidget {
             child: Text(
               '$title : $label',
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ],

@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../../medicine_refund/domain/entity/refund.dart';
 import '../../../prescription/domain/entity/prescription.dart';
 import '../../../prescription/domain/entity/prescription_item.dart';
@@ -14,37 +13,19 @@ class DashboardRepository implements IDashboardRepository {
   @override
   Future<Result<List<CabinStock>>> getCriticalStocks({bool isClient = false}) async {
     final r = await _ds.getCriticalStocks(isClient: isClient);
-    return r.when(
-      ok: (list) {
-        final entities = (list).map((dto) => dto.toEntity()).toList();
-        return Result.ok(entities);
-      },
-      error: (e) => Result.error(e),
-    );
+    return r.when(ok: (dtos) => Result.ok(CabinStockMapper().toEntityList(dtos)), error: (e) => Result.error(e));
   }
 
   @override
   Future<Result<List<CabinStock>>> getExpiringMaterials() async {
     final r = await _ds.getExpiringMaterials();
-    return r.when(
-      ok: (list) {
-        final entities = (list).map((dto) => dto.toEntity()).toList();
-        return Result.ok(entities);
-      },
-      error: (e) => Result.error(e),
-    );
+    return r.when(ok: (dtos) => Result.ok(CabinStockMapper().toEntityList(dtos)), error: (e) => Result.error(e));
   }
 
   @override
   Future<Result<List<CabinStock>>> getGeneralStocks() async {
     final r = await _ds.getGeneralStocks();
-    return r.when(
-      ok: (list) {
-        final entities = (list).map((dto) => dto.toEntity()).toList();
-        return Result.ok(entities);
-      },
-      error: (e) => Result.error(e),
-    );
+    return r.when(ok: (dtos) => Result.ok(CabinStockMapper().toEntityList(dtos)), error: (e) => Result.error(e));
   }
 
   @override

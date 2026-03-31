@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/firm.dart';
-import '../../domain/usecase/delete_firm_usecase.dart';
-import '../../domain/usecase/get_firms_usecase.dart';
-
 class FirmTableNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Firm> {
   final GetFirmsUseCase _getFirmsUseCase;
   final DeleteFirmUseCase _deleteFirmUseCase;
@@ -30,10 +26,10 @@ class FirmTableNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin
     );
   }
 
-  Future<void> deleteFirm(int id, {Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
+  Future<void> deleteFirm(Firm firm, {Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
     await executeVoid(
       deleteOp,
-      operation: () => _deleteFirmUseCase.call(DeleteFirmParams(id)),
+      operation: () => _deleteFirmUseCase.call(firm),
       onSuccess: () {
         onSuccess?.call('İşleminiz başarıyla tamamlandı');
         getFirms();

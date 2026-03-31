@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../domain/entity/material_type.dart';
 import '../notifier/material_type_form_notifier.dart';
 
 Future<bool> showMaterialTypeFormDialog(BuildContext context, {MaterialType? initial}) async {
@@ -60,10 +59,7 @@ class _MaterialTypeFormDialogState extends State<MaterialTypeFormDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               spacing: AppDimensions.registrationDialogSpacing,
-              children: const [
-                _NameField(),
-                _StatusField(),
-              ],
+              children: const [_NameField(), _StatusField()],
             ),
           ),
         );

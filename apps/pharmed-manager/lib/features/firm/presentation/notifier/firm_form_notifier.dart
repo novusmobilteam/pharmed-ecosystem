@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../domain/entity/firm.dart';
-import '../../domain/usecase/create_firm_usecase.dart';
-import '../../domain/usecase/update_firm_usecase.dart';
-
 class FirmFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateFirmUseCase _createFirmUseCase;
   final UpdateFirmUseCase _updateFirmUseCase;

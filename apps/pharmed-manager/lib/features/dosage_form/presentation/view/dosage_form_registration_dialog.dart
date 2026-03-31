@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/dosage_form.dart';
 import '../notifier/dosage_form_registration_notifier.dart';
 
 Future<bool> showDosageFormRegistrationDialog(BuildContext context, {DosageForm? initial}) async {
@@ -54,10 +53,7 @@ class _DosageFormRegistrationDialogState extends State<DosageFormRegistrationDia
             child: Column(
               mainAxisSize: MainAxisSize.min,
               spacing: AppDimensions.registrationDialogSpacing,
-              children: const [
-                _NameField(),
-                _StatusField(),
-              ],
+              children: const [_NameField(), _StatusField()],
             ),
           ),
         );

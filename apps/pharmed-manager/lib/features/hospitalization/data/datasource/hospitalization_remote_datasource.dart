@@ -4,9 +4,17 @@ import 'hospitalization_datasource.dart';
 
 /// Hasta Yatış işlemleri için uzak (API) veri kaynağı.
 class HospitalizationRemoteDataSource extends BaseRemoteDataSource implements HospitalizationDataSource {
+  HospitalizationRemoteDataSource({required super.apiManager});
+
   final String _basePath = '/Patient/hospitalization';
 
-  HospitalizationRemoteDataSource({required super.apiManager});
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 
   @override
   Future<Result<ApiResponse<List<HospitalizationDTO>>>> getHospitalizations({
@@ -19,9 +27,9 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource implements Ho
       skip: skip,
       take: take,
       searchText: search,
-      searchField: 'patientName',
+      searchFields: ['patientName'],
       envelope: ResponseEnvelope.raw,
-      parser: apiResponseListParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(HospitalizationDTO.fromJson),
       successLog: 'PatientHospitalization list fetched',
       emptyLog: 'No patient hospitalizations',
     );
@@ -33,28 +41,24 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource implements Ho
   }
 
   @override
-  Future<Result<HospitalizationDTO?>> createHospitalization(
-    HospitalizationDTO dto,
-  ) {
+  Future<Result<HospitalizationDTO?>> createHospitalization(HospitalizationDTO dto) {
     return createRequest<HospitalizationDTO?>(
       path: _basePath,
       body: dto.toJson(),
-      parser: singleParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(HospitalizationDTO.fromJson),
       successLog: 'PatientHospitalization created',
     );
   }
 
   @override
-  Future<Result<void>> updateHospitalization(
-    HospitalizationDTO dto,
-  ) {
+  Future<Result<void>> updateHospitalization(HospitalizationDTO dto) {
     if (dto.id == null) {
       return Future.value(Result.error(CustomException(message: 'updatePatientHospitalization: id is null')));
     }
     return updateRequest(
       path: '$_basePath/${dto.id}',
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'PatientHospitalization updated',
     );
   }
@@ -63,7 +67,7 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource implements Ho
   Future<Result<void>> deleteHospitalization(int id) {
     return deleteRequest<void>(
       path: '$_basePath/$id',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'PatientHospitalization deleted',
     );
   }
@@ -72,47 +76,35 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource implements Ho
   Future<Result<List<HospitalizationDTO>>> getHospitalizationsWithPrescription() async {
     final res = await fetchRequest<List<HospitalizationDTO>>(
       path: '$_basePath/allDetails',
-      parser: listParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDTO.fromJson),
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<List<HospitalizationDTO>>> getPatientsWithActivePrescription() async {
     final res = await fetchRequest<List<HospitalizationDTO>>(
       path: '$_basePath/materialCollect',
-      parser: listParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDTO.fromJson),
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<List<HospitalizationDTO>>> getFilteredHospitalizations(PatientFilterType filter) async {
     final res = await fetchRequest<List<HospitalizationDTO>>(
       path: '/Patient/myHospitalization/${filter.id}',
-      parser: listParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDTO.fromJson),
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<List<HospitalizationDTO>>> getHospitalizationsByService(int serviceId) async {
     final res = await fetchRequest<List<HospitalizationDTO>>(
       path: '$_basePath/service/$serviceId',
-      parser: listParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDTO.fromJson),
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]), error: Result.error);
   }
 }

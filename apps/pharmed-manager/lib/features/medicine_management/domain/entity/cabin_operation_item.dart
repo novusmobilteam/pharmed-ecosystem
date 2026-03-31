@@ -1,8 +1,6 @@
 import '../../../../core/core.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../../prescription/domain/entity/prescription_item.dart';
-import '../../../station/domain/entity/station.dart';
 
 /// Kabin işlemlerinde (alım, iade, fire/imha) ortak kullanılan model.
 ///

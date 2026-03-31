@@ -16,7 +16,7 @@ class SlotInfoView extends StatelessWidget {
                   final slot = notifier.slots.elementAt(index);
 
                   return SelectableListTile(
-                    item: slot,
+                    item: slot as Selectable,
                     onTap: (item) => notifier.selectSlot(slot),
                     isSelected: notifier.selectedSlot == slot,
                   );

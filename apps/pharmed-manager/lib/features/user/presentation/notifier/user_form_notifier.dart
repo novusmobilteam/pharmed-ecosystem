@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../station/domain/entity/station.dart';
-import '../../../station/domain/repository/i_station_repository.dart';
-
 class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateUserUseCase _createUserUseCase;
   final UpdateUserUseCase _updateUserUseCase;

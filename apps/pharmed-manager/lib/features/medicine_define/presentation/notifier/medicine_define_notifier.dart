@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../cabin/domain/entity/drawer_unit.dart';
 
 import 'package:pharmed_manager/core/core.dart';
-import '../../../cabin/domain/entity/drawer_slot.dart';
 
-import '../../../cabin/domain/usecase/get_serum_slots_usecase.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../../medicine_withdraw/domain/usecase/define_patient_medicine_usecase.dart';
 
 class MedicineDefineNotifier extends ChangeNotifier with ApiRequestMixin {

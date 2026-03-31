@@ -1,9 +1,6 @@
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../../medicine/domain/entity/medicine.dart';
 
 // İlaç Alım İşleminde hastaya reçete edilmiş ilaçlar için kullanılan model
 class MedicineWithdrawItem {

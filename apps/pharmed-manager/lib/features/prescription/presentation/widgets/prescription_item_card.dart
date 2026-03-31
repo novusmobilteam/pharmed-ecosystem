@@ -3,16 +3,11 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/info_chip.dart';
-import '../../../medicine/domain/entity/medicine.dart';
+
 import '../../domain/entity/prescription_item.dart';
 
 class PrescriptionItemCard extends StatelessWidget {
-  const PrescriptionItemCard({
-    super.key,
-    required this.item,
-    required this.index,
-    this.onDelete,
-  });
+  const PrescriptionItemCard({super.key, required this.item, required this.index, this.onDelete});
 
   final int index;
   final PrescriptionItem item;
@@ -38,34 +33,21 @@ class PrescriptionItemCard extends StatelessWidget {
                 children: [
                   Text(
                     item.medicine?.name ?? '-',
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    item.medicine?.barcode ?? '-',
-                    style: context.textTheme.labelMedium,
-                  ),
+                  Text(item.medicine?.barcode ?? '-', style: context.textTheme.labelMedium),
                 ],
               ),
               IconButton(
                 onPressed: () => onDelete?.call(index),
                 padding: EdgeInsets.zero,
                 iconSize: 16.0,
-                icon: Icon(
-                  PhosphorIcons.trashSimple(),
-                  color: Colors.red,
-                ),
+                icon: Icon(PhosphorIcons.trashSimple(), color: Colors.red),
               ),
             ],
           ),
           SizedBox(height: 10),
-          Text(
-            timesText,
-            style: context.textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text(timesText, style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold)),
           Text(
             '${item.dosePiece.formatFractional} ${item.medicine?.operationUnit ?? 'Adet'}',
             style: context.textTheme.bodySmall?.copyWith(),
@@ -79,21 +61,9 @@ class PrescriptionItemCard extends StatelessWidget {
           Row(
             spacing: 5,
             children: [
-              if (item.firstDoseEmergency ?? false)
-                InfoChip(
-                  info: 'İlk Doz Acil',
-                  backgroundColor: Colors.red,
-                ),
-              if (item.askDoctor ?? false)
-                InfoChip(
-                  info: 'Doktora Sor',
-                  backgroundColor: Colors.deepPurple,
-                ),
-              if (item.inCaseOfNecessity ?? false)
-                InfoChip(
-                  info: 'Lüzum Halinde',
-                  backgroundColor: Colors.amber,
-                ),
+              if (item.firstDoseEmergency ?? false) InfoChip(info: 'İlk Doz Acil', backgroundColor: Colors.red),
+              if (item.askDoctor ?? false) InfoChip(info: 'Doktora Sor', backgroundColor: Colors.deepPurple),
+              if (item.inCaseOfNecessity ?? false) InfoChip(info: 'Lüzum Halinde', backgroundColor: Colors.amber),
             ],
           ),
           if (item.description != null)
@@ -103,10 +73,7 @@ class PrescriptionItemCard extends StatelessWidget {
                 SizedBox(height: 10),
                 Divider(color: context.theme.dividerColor, height: 1),
                 SizedBox(height: 10),
-                Text(
-                  item.description ?? '-',
-                  style: context.textTheme.bodySmall?.copyWith(),
-                ),
+                Text(item.description ?? '-', style: context.textTheme.bodySmall?.copyWith()),
               ],
             ),
         ],

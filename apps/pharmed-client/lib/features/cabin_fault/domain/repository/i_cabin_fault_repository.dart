@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../entity/cabin_fault.dart';
+import '../model/cabin_fault.dart';
 
 abstract class ICabinFaultRepository {
   /// Bakım/Arıza kayıtlarını getiren servis

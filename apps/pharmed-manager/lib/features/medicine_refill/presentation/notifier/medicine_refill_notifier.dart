@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import '../../../../../../../core/core.dart';
 
 import '../../../cabin/domain/entity/cabin_input_data.dart';
-import '../../../cabin_assignment/domain/entity/cabin_assignment.dart';
 import '../../domain/usecase/refill_medicine_usecase.dart';
 
 class MedicineRefillNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinAssignment> {

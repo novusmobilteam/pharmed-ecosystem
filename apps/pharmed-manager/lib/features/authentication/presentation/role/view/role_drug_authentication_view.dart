@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../medicine/domain/entity/medicine.dart';
 import '../notifier/role_drug_auth_notifier.dart';
 
 class RoleDrugAuthenticationView extends StatelessWidget {

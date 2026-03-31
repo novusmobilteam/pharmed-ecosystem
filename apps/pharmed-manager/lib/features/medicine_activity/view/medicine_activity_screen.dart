@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../medicine/domain/entity/medicine.dart';
 import '../../prescription/domain/entity/prescription_item.dart';
 import '../view_model/medicine_activity_viewmodel.dart';
 
@@ -17,9 +16,7 @@ class MedicineActivityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MedicineActivityViewModel(
-        prescriptionRepository: context.read(),
-      )..fetchActivities(),
+      create: (context) => MedicineActivityViewModel(prescriptionRepository: context.read())..fetchActivities(),
       child: Consumer<MedicineActivityViewModel>(
         builder: (context, vm, child) => ResponsiveLayout(
           mobile: const MobileLayout(),
@@ -31,11 +28,7 @@ class MedicineActivityScreen extends StatelessWidget {
   }
 
   Widget _buildDesktopLayout(BuildContext context, MedicineActivityViewModel vm) {
-    return DesktopLayout(
-      title: 'İlaç Aktivite',
-      showAddButton: false,
-      child: _buildContent(context, vm),
-    );
+    return DesktopLayout(title: 'İlaç Aktivite', showAddButton: false, child: _buildContent(context, vm));
   }
 
   Widget _buildContent(BuildContext context, MedicineActivityViewModel vm) {

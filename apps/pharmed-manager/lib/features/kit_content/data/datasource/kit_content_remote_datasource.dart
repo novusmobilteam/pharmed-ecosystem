@@ -12,7 +12,7 @@ class KitContentRemoteDataSource extends BaseRemoteDataSource implements KitCont
     return createRequest<KitContentDTO?>(
       path: _basePath,
       body: dto.toJson(),
-      parser: singleParser(KitContentDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(KitContentDTO.fromJson),
       successLog: 'Kit content created',
     );
   }
@@ -21,7 +21,7 @@ class KitContentRemoteDataSource extends BaseRemoteDataSource implements KitCont
   Future<Result<void>> deleteKitContent(int id) {
     return deleteRequest<void>(
       path: '$_basePath/$id',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Kit content deleted',
     );
   }
@@ -30,14 +30,11 @@ class KitContentRemoteDataSource extends BaseRemoteDataSource implements KitCont
   Future<Result<List<KitContentDTO>>> getKitContent(int kitId) async {
     final res = await fetchRequest<List<KitContentDTO>>(
       path: '$_basePath/byKit/$kitId',
-      parser: listParser(KitContentDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(KitContentDTO.fromJson),
       successLog: 'Kit content fetched',
       emptyLog: 'No kits',
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <KitContentDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <KitContentDTO>[]), error: Result.error);
   }
 
   @override
@@ -45,8 +42,16 @@ class KitContentRemoteDataSource extends BaseRemoteDataSource implements KitCont
     return updateRequest<void>(
       path: _basePath,
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Kit updated',
     );
   }
+
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 }

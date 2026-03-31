@@ -6,7 +6,6 @@ import '../notifier/warehouse_form_notifier.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/warehouse.dart';
 import '../notifier/warehouse_table_notifier.dart';
 import 'warehouse_registration_dialog.dart';
 
@@ -27,9 +26,7 @@ class WarehouseTableView extends StatelessWidget {
             TableActionItem.edit(
               onPressed: (warehouse) => showWarehouseRegistrationDialog(context, warehouse: warehouse),
             ),
-            TableActionItem.delete(
-              onPressed: (warehouse) => _onDelete(context, notifier, warehouse),
-            )
+            TableActionItem.delete(onPressed: (warehouse) => _onDelete(context, notifier, warehouse)),
           ],
         );
       },

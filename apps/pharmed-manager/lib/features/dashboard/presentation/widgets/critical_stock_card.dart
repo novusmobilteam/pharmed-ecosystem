@@ -3,7 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/rectangle_icon.dart';
-import '../../../cabin_stock/domain/entity/cabin_stock.dart';
 import 'dashboard_card.dart';
 
 class CriticalStockCard extends StatelessWidget {
@@ -24,11 +23,7 @@ class CriticalStockCard extends StatelessWidget {
               padding: EdgeInsets.zero,
               physics: const BouncingScrollPhysics(),
               itemCount: items.length,
-              separatorBuilder: (c, i) => Divider(
-                height: 24,
-                thickness: 0.5,
-                color: context.theme.dividerColor,
-              ),
+              separatorBuilder: (c, i) => Divider(height: 24, thickness: 0.5, color: context.theme.dividerColor),
               itemBuilder: (context, index) {
                 final stock = items[index];
 
@@ -37,10 +32,7 @@ class CriticalStockCard extends StatelessWidget {
 
                 return Row(
                   children: [
-                    RectangleIcon(
-                      icon: PhosphorIcons.package(),
-                      color: statusColor,
-                    ),
+                    RectangleIcon(icon: PhosphorIcons.package(), color: statusColor),
                     const SizedBox(width: 16),
                     Expanded(
                       flex: 3,
@@ -49,9 +41,7 @@ class CriticalStockCard extends StatelessWidget {
                         children: [
                           Text(
                             stock.medicine?.name ?? 'Bilinmeyen İlaç',
-                            style: context.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -79,20 +69,13 @@ class CriticalStockCard extends StatelessWidget {
                             children: [
                               TextSpan(
                                 text: '${stock.quantity}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  color: statusColor,
-                                  fontSize: 16,
-                                ),
+                                style: TextStyle(fontWeight: FontWeight.w900, color: statusColor, fontSize: 16),
                               ),
                               const TextSpan(text: ' Adet', style: TextStyle(fontSize: 12)),
                             ],
                           ),
                         ),
-                        Text(
-                          "Kritik: ${stock.assignment?.criticalQuantity ?? 0}",
-                          style: context.textTheme.bodySmall,
-                        ),
+                        Text("Kritik: ${stock.assignment?.criticalQuantity ?? 0}", style: context.textTheme.bodySmall),
                       ],
                     ),
                   ],

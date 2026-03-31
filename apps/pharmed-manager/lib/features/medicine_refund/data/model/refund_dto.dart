@@ -1,8 +1,6 @@
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../medicine/data/model/medicine_dto.dart';
 import '../../../prescription/data/model/prescription_item_dto.dart';
-import '../../../station/data/model/station_dto.dart';
 import '../../domain/entity/refund.dart';
 
 class RefundDTO {
@@ -131,7 +129,7 @@ class RefundDTO {
       cancelUser: const UserMapper().toEntityOrNull(cancelUser),
       medicine: medicine?.toEntity(),
       description: description,
-      station: station?.toEntity(),
+      station: StationMapper().toEntityOrNull(station),
       user: user,
     );
   }

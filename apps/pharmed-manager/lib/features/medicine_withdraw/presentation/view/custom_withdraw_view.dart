@@ -90,7 +90,7 @@ class _PatientMedicineWithdrawViewState extends State<PatientMedicineWithdrawVie
                 if (!isCompleted && item.assignment != null) {
                   vm.selectItem(item);
 
-                  context.read<CabinStatusNotifier>().startOperation(item.assignment!);
+                  //context.read<CabinStatusNotifier>().startOperation(item.assignment!);
                 }
               },
             );

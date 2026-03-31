@@ -5,9 +5,7 @@ import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../../../hospitalization/domain/usecase/get_filtered_hospitalizations_usecase.dart';
 import '../../../hospitalization/domain/usecase/get_hospitalizations_by_service_usecase.dart';
 import '../../../patient/domain/usecase/get_my_patients_usecase.dart';
-import '../../../service/domain/entity/service.dart';
-import '../../../station/domain/entity/station.dart';
-import '../../../station/domain/usecase/get_current_station_usecase.dart';
+
 import '../../../urgent_patient/domain/usecase/create_urgent_patient_usecase.dart';
 
 enum MedicineManagementType { allPatients, myPatients }

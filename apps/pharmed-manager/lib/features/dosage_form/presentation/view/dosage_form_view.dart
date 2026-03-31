@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/dosage_form.dart';
 import '../notifier/dosage_form_notifier.dart';
 import 'dosage_form_registration_dialog.dart';
 
@@ -11,10 +10,9 @@ Future<DosageForm?> showDosageFormView(BuildContext context) async {
   return await showDialog<DosageForm?>(
     context: context,
     builder: (context) => ChangeNotifierProvider(
-      create: (context) => DosageFormNotifier(
-        getDosageFormsUseCase: context.read(),
-        deleteDosageFormUseCase: context.read(),
-      )..getDosageForms(forceRefresh: true),
+      create: (context) =>
+          DosageFormNotifier(getDosageFormsUseCase: context.read(), deleteDosageFormUseCase: context.read())
+            ..getDosageForms(forceRefresh: true),
       child: Consumer<DosageFormNotifier>(
         builder: (context, vm, Widget? child) => CustomDialog(
           title: 'Dozaj Formu',

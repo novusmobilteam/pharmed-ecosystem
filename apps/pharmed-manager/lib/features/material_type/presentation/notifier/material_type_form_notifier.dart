@@ -2,10 +2,6 @@ import 'package:flutter/material.dart' hide MaterialType;
 
 import '../../../../../core/core.dart';
 
-import '../../domain/entity/material_type.dart';
-import '../../domain/usecase/create_material_type_usecase.dart';
-import '../../domain/usecase/update_material_type_usecase.dart';
-
 class MaterialTypeFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MaterialType> {
   final CreateMaterialTypeUseCase _createMaterialTypeUseCase;
   final UpdateMaterialTypeUseCase _updateMaterialTypeUseCase;

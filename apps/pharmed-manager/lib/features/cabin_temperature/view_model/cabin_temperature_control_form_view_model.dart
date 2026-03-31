@@ -4,8 +4,6 @@ import '../../../core/core.dart';
 import '../data/repository/cabin_temperature_repository_impl.dart';
 import '../domain/entity/cabin_temperature.dart';
 import '../domain/entity/cabin_temperature_detail.dart';
-import '../../cabin/domain/entity/cabin.dart';
-import '../../station/domain/entity/station.dart';
 
 class CabinTemperatureControlFormViewModel extends ChangeNotifier {
   final CabinTemperatureRepository _cabinTemperatureRepository;
@@ -105,9 +103,7 @@ class CabinTemperatureControlFormViewModel extends ChangeNotifier {
   }
 
   Future<void> _createCabinTemperature() async {
-    final cabinTemperature = CabinTemperature(
-      station: _form?.station,
-    );
+    final cabinTemperature = CabinTemperature(station: _form?.station);
 
     if (cabinTemperature.station == null) {
       _submitStatus = APIRequestStatus.failed;
@@ -120,11 +116,7 @@ class CabinTemperatureControlFormViewModel extends ChangeNotifier {
     res.when(
       ok: (data) async {
         final res = await _cabinTemperatureRepository.createCabinTemperatureDetail(
-          _form!.copyWith(
-            station: _form?.station!.copyWith(
-              id: data.id,
-            ),
-          ),
+          _form!.copyWith(station: _form?.station!.copyWith(id: data.id)),
         );
         res.when(
           ok: (_) {

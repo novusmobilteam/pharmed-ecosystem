@@ -4,21 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/material_type.dart';
 import '../notifier/material_type_notifier.dart';
 import 'material_type_form_dialog.dart';
 
-Future<T?> showMaterialTypeDialog<T>(
-  BuildContext context, {
-  bool forSelection = false,
-}) async {
+Future<T?> showMaterialTypeDialog<T>(BuildContext context, {bool forSelection = false}) async {
   return showDialog<T>(
     context: context,
     builder: (context) => ChangeNotifierProvider(
-      create: (context) => MaterialTypeNotifier(
-        getMaterialTypesUseCase: context.read(),
-        deleteMaterialTypeUseCase: context.read(),
-      )..getMaterialTypes(),
+      create: (context) =>
+          MaterialTypeNotifier(getMaterialTypesUseCase: context.read(), deleteMaterialTypeUseCase: context.read())
+            ..getMaterialTypes(),
       child: Consumer<MaterialTypeNotifier>(
         builder: (context, vm, _) => CustomDialog(
           title: forSelection ? 'Malzeme Tipi Seç' : 'Malzeme Tipi Tanımlama',
@@ -49,11 +44,7 @@ class MaterialTypeListView extends StatefulWidget {
   final bool isDialog;
   final VoidCallback? onItemSelected;
 
-  const MaterialTypeListView({
-    super.key,
-    this.isDialog = false,
-    this.onItemSelected,
-  });
+  const MaterialTypeListView({super.key, this.isDialog = false, this.onItemSelected});
 
   @override
   State<MaterialTypeListView> createState() => _MaterialTypeListViewState();
@@ -102,9 +93,6 @@ class _MaterialTypeListViewState extends State<MaterialTypeListView> {
   }
 
   void _onDelete(BuildContext context, MaterialTypeNotifier notifier, MaterialType item) {
-    MessageUtils.showConfirmDeleteDialog(
-      context: context,
-      onConfirm: () => notifier.deleteMaterialType(item),
-    );
+    MessageUtils.showConfirmDeleteDialog(context: context, onConfirm: () => notifier.deleteMaterialType(item));
   }
 }
