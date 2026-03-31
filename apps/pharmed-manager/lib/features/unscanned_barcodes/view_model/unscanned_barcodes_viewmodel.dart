@@ -1,9 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../prescription/domain/entity/prescription_item.dart';
-import '../../prescription/domain/repository/i_prescription_repository.dart';
-
 class UnscannedBarcodesViewModel extends ChangeNotifier
     with ApiRequestMixin, SearchMixin<PrescriptionItem>, DateFilterMixin<PrescriptionItem> {
   final IPrescriptionRepository _prescriptionRepository;
@@ -49,7 +46,11 @@ class UnscannedBarcodesViewModel extends ChangeNotifier
     await execute(
       fetchBarcodesOperation,
       operation: () => _prescriptionRepository.getUnscannedBarcodes(),
-      onData: (data) => allItems = data,
+      onData: (apiResponse) {
+        if (apiResponse?.data != null) {
+          allItems = apiResponse?.data ?? [];
+        }
+      },
     );
   }
 

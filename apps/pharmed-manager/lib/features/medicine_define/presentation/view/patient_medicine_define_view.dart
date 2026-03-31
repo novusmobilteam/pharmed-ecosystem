@@ -5,9 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../cabin/shared/cabin_process/notifier/cabin_status_notifier.dart';
 import '../../../cabin/shared/cabin_process/view/cabin_process_wrapper.dart';
-import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../notifier/medicine_define_notifier.dart';
 
 part 'slot_info_view.dart';

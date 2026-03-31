@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../hospitalization/domain/entity/hospitalization.dart';
-
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 
 import '../../domain/usecase/dispose_medicine_usecase.dart';

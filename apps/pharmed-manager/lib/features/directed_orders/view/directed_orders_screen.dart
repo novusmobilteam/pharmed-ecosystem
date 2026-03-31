@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../core/core.dart';
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../hospitalization/domain/entity/hospitalization.dart';
 import '../view_model/directed_orders_detail_viewmodel.dart';
 import '../view_model/directed_orders_viewmodel.dart';
 

@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../patient/domain/entity/patient.dart';
-import '../../../patient/domain/entity/urgent_patient.dart';
-import '../../../patient/domain/usecase/end_emergency_patient_usecase.dart';
-import '../../../patient/domain/usecase/get_patients_usecase.dart';
-import '../../../prescription/domain/entity/prescription_item.dart';
 import '../../domain/usecase/get_urgent_patients_usecase.dart';
 
 class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<UrgentPatient> {

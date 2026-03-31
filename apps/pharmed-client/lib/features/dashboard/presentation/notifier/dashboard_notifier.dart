@@ -7,11 +7,9 @@
 // Sınıf: Class B
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../domain/model/dasboard_data.dart';
 import '../state/dashboard_ui_state.dart';
-import '../../data/mock/dashboard_mock_repository.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // Provider tanımı

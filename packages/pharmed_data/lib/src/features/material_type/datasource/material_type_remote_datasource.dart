@@ -1,6 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 
 // [SWREQ-DATA-MATERIALTYPE-001]
 // Sınıf: Class B

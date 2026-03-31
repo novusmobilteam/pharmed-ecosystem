@@ -1,7 +1,5 @@
 import '../../../../core/core.dart';
 
-import '../../../prescription/domain/entity/prescription_item.dart';
-
 /// Kabin işlemlerinde (alım, iade, fire/imha) ortak kullanılan model.
 ///
 /// Her işlem tipi bu modele dönüştürülür ve UI katmanı yalnızca

@@ -9,8 +9,6 @@ import '../../../../core/widgets/form/form_inputs/time_input_field.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/widgets/info_chip.dart';
-import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../../hospitalization/domain/repository/i_hospitalization_repository.dart';
 
 import '../notifier/new_prescription_notifier.dart';
 import '../widgets/prescription_item_card.dart';
@@ -176,7 +174,7 @@ class _PatientField extends StatelessWidget {
             labelBuilder: (u) => u?.patient?.fullName,
             onSelected: (u) => vm.updatePatient(u),
             validator: (u) => Validators.cannotBlankValidator(u?.patient?.fullName),
-            future: () => context.read<IHospitalizationRepository>().getHospitalizations(),
+            future: () => context.read<GetHospitalizationsUseCase>().call(GetHospitalizationsParams()),
           ),
         );
       },

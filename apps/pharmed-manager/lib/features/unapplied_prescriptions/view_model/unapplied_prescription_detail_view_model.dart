@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:pharmed_manager/core/core.dart';
-import '../../prescription/domain/entity/prescription_item.dart';
-import '../../prescription/domain/repository/i_prescription_repository.dart';
 
 class UnappliedPrescriptionDetailViewModel extends ChangeNotifier with ApiRequestMixin, SearchMixin<PrescriptionItem> {
   final IPrescriptionRepository _prescriptionRepository;

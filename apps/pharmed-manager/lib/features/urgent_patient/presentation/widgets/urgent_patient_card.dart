@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/core.dart';
 
-import '../../../patient/domain/entity/urgent_patient.dart';
-import '../../../prescription/domain/entity/prescription_item.dart';
-
 class UrgentPatientCard extends StatelessWidget {
   final UrgentPatient patientData;
   final bool isSelected;

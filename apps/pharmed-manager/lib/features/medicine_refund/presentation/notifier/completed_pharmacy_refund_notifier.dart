@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/refund.dart';
-import '../../domain/usecase/get_completed_pharmacy_refunds_usecase.dart';
-
 class CompletedPharmacyRefundNotifier extends ChangeNotifier
     with ApiRequestMixin, SearchMixin<Refund>, DateFilterMixin<Refund> {
   final GetCompletedPharmacyRefundsUseCase _getCompletedPharmacyRefundsUseCase;

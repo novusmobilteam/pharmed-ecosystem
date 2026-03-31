@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/patient.dart';
-import '../../domain/repository/i_patient_repository.dart';
 
 class PatientSelectionListViewModel extends ChangeNotifier {
   final IPatientRepository _patientRepository;
@@ -15,7 +13,7 @@ class PatientSelectionListViewModel extends ChangeNotifier {
   String _searchQuery = '';
 
   PatientSelectionListViewModel({required IPatientRepository patientRepository})
-      : _patientRepository = patientRepository;
+    : _patientRepository = patientRepository;
 
   // Getters
   APIRequestStatus get getStatus => _getStatus;

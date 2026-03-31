@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
-import '../../prescription/domain/entity/prescription_item.dart';
-import '../../prescription/domain/repository/i_prescription_repository.dart';
 
 class JobListViewModel extends ChangeNotifier with SearchMixin<PrescriptionItem>, ApiRequestMixin {
   final IPrescriptionRepository _prescriptionRepository;

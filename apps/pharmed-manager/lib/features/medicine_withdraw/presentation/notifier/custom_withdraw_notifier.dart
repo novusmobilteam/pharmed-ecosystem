@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../domain/entity/withdraw_item.dart';
-import '../../domain/usecase/get_patient_medicines_usecase.dart';
-import '../../domain/usecase/withdraw_patient_medicine_usecase.dart';
-
 class CustomWithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   Hospitalization? _hospitalization;
   final GetPatientMedicinesUseCase _getPatientMedicinesUseCase;

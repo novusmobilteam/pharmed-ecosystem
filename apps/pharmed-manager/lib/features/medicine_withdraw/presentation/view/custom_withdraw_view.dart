@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../cabin/shared/cabin_process/notifier/cabin_status_notifier.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../cabin/shared/cabin_process/view/cabin_process_wrapper.dart';
-import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../domain/entity/withdraw_item.dart';
 import '../widgets/custom_withdraw_item_card.dart';
 import '../notifier/custom_withdraw_notifier.dart';
 

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../../prescription/domain/entity/prescription_item.dart';
+
 import '../view_model/unscanned_barcodes_viewmodel.dart';
 
 class UnscannedBarcodesScreen extends StatelessWidget {
@@ -13,9 +13,7 @@ class UnscannedBarcodesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => UnscannedBarcodesViewModel(
-        prescriptionRepository: context.read(),
-      )..fetch(),
+      create: (context) => UnscannedBarcodesViewModel(prescriptionRepository: context.read())..fetch(),
       child: Consumer<UnscannedBarcodesViewModel>(
         builder: (context, notifier, _) {
           return ResponsiveLayout(
@@ -38,13 +36,13 @@ class UnscannedBarcodesScreen extends StatelessWidget {
   }
 
   List<TableColumnDef> _buildColumnDefs() => const [
-        TableColumnDef(title: 'Hasta', flex: 1.5), // colIndex: 0
-        TableColumnDef(title: 'Barkod'), // colIndex: 1
-        TableColumnDef(title: 'Malzeme', flex: 1.5), // colIndex: 2
-        TableColumnDef(title: 'Tarih'), // colIndex: 3
-        TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7), // colIndex: 4
-        TableColumnDef(title: 'Uygulayan'), // colIndex: 5
-      ];
+    TableColumnDef(title: 'Hasta', flex: 1.5), // colIndex: 0
+    TableColumnDef(title: 'Barkod'), // colIndex: 1
+    TableColumnDef(title: 'Malzeme', flex: 1.5), // colIndex: 2
+    TableColumnDef(title: 'Tarih'), // colIndex: 3
+    TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7), // colIndex: 4
+    TableColumnDef(title: 'Uygulayan'), // colIndex: 5
+  ];
 
   Widget? _buildCell(PrescriptionItem item, int colIndex, dynamic _) {
     return switch (colIndex) {

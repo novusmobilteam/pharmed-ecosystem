@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../features/prescription/domain/entity/prescription_item.dart';
 import '../core.dart';
 
 /// Reçete grup kartı.

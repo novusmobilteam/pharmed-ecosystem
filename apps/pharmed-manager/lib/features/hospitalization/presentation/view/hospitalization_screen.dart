@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/core.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../../patient/domain/entity/patient.dart';
-import '../../domain/entity/hospitalization.dart';
 import 'hospitalization_form_view.dart';
 import '../../../patient/presentation/view/patient_form_view.dart';
 import '../../../patient/presentation/view/patient_list_view.dart';
@@ -29,9 +27,8 @@ class _HospitalizationScreenState extends State<HospitalizationScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => HospitalizationNotifier(
-        hospitalizationRepository: context.read(),
-      )..getHospitalizations(),
+      create: (BuildContext context) =>
+          HospitalizationNotifier(hospitalizationRepository: context.read())..getHospitalizations(),
       child: Consumer<HospitalizationNotifier>(
         builder: (context, notifier, _) {
           return ResponsiveLayout(
@@ -92,11 +89,8 @@ class _HospitalizationScreenState extends State<HospitalizationScreen> {
       // Yatış Düzenle
       if (notifier.hasPatient)
         IconButton(
-          onPressed: () => _onEditHospitalization(
-            context,
-            hospitalization: notifier.hospitalization,
-            patient: notifier.patient,
-          ),
+          onPressed: () =>
+              _onEditHospitalization(context, hospitalization: notifier.hospitalization, patient: notifier.patient),
           tooltip: 'Yatış Düzenle',
           icon: Icon(PhosphorIcons.pen()),
         ),
@@ -120,10 +114,7 @@ class _TableView extends StatelessWidget {
       enableDateFilter: true,
       selectionMode: TableSelectionMode.single,
       onSearchChanged: notifier.search,
-      initialDateRange: DateTimeRange(
-        start: DateTime.now(),
-        end: DateTime.now(),
-      ),
+      initialDateRange: DateTimeRange(start: DateTime.now(), end: DateTime.now()),
       onDateRangeChanged: (range) {
         notifier.setStartDate(range?.start);
         notifier.setEndDate(range?.end);
@@ -137,10 +128,7 @@ class _TableView extends StatelessWidget {
 
 // Dialog Fonksiyonları
 Future<void> _onNewPatient(BuildContext context) async {
-  final result = await showDialog(
-    context: context,
-    builder: (_) => PatientFormView(),
-  );
+  final result = await showDialog(context: context, builder: (_) => PatientFormView());
 
   if (result != null && context.mounted) {
     context.read<HospitalizationNotifier>().getHospitalizations();
@@ -159,19 +147,13 @@ Future<void> _onEditPatient(BuildContext context, {Patient? patient}) async {
     final hasChanges = originalPatient?.isChanged(result) ?? true;
     if (hasChanges && context.mounted) {
       context.read<HospitalizationNotifier>().getHospitalizations();
-      MessageUtils.showSuccessSnackbar(
-        context,
-        'Hasta kayıtları güncellendi',
-      );
+      MessageUtils.showSuccessSnackbar(context, 'Hasta kayıtları güncellendi');
     }
   }
 }
 
 Future<void> _onNewHospitalization(BuildContext context) async {
-  final result = await showDialog(
-    context: context,
-    builder: (_) => PatientListView(),
-  );
+  final result = await showDialog(context: context, builder: (_) => PatientListView());
 
   if (result == true && context.mounted) {
     context.read<HospitalizationNotifier>().getHospitalizations();
@@ -187,11 +169,7 @@ Future<void> _onNewHospitalizationWithSelectedUser(BuildContext context, {Patien
 }
 
 Future<void> _onEditHospitalization(BuildContext context, {Hospitalization? hospitalization, Patient? patient}) async {
-  final bool? result = await showHospitalizationFormView(
-    context,
-    hospitalization: hospitalization,
-    patient: patient,
-  );
+  final bool? result = await showHospitalizationFormView(context, hospitalization: hospitalization, patient: patient);
 
   if (result == true && context.mounted) {
     context.read<HospitalizationNotifier>().getHospitalizations();

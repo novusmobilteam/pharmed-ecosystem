@@ -3,8 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/cabin_assignment/presentation/view/station_cabin_assignment_screen.dart';
 import '../../features/cabin_stock/presentation/view/expired_stocks_screen.dart';
 import '../../features/cabin_stock/presentation/view/station_stock_screen.dart';
-import '../../features/dashboard/presentation/view/client_dashboard_screen.dart';
-import '../../features/dashboard/presentation/view/manager_dashboard_screen.dart';
+
 import '../../features/station/presentation/view/station_setup_screen.dart';
 import '../../features/stock_transaction/presentation/screens/pharmacy_transaction_screen.dart';
 import 'package:provider/provider.dart';
@@ -98,17 +97,6 @@ class AppRouter {
         ),
         // Kurulum Ekranı (PlatformSelection)
         GoRoute(path: AppRoute.home.path, name: AppRoute.home.name, builder: (context, state) => HomeScreen()),
-
-        GoRoute(
-          path: AppRoute.clientDashboard.path,
-          name: AppRoute.clientDashboard.name,
-          builder: (context, state) => ClientDashboardScreen(),
-        ),
-        GoRoute(
-          path: AppRoute.managerDashboard.path,
-          name: AppRoute.managerDashboard.name,
-          builder: (context, state) => ManagerDashboardScreen(),
-        ),
 
         GoRoute(path: AppRoute.firm.path, name: AppRoute.firm.name, builder: (context, state) => FirmScreen()),
 

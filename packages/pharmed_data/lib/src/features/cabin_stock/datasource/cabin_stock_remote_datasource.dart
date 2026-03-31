@@ -25,7 +25,6 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
   }
 
   /// Son kullanma tarihi yaklaşan (örneğin 14 gün) ürünleri sayfalı olarak getirir.
-
   Future<Result<List<CabinStockDTO>>> getExpiringStocks() async {
     final res = await fetchRequest<List<CabinStockDTO>>(
       path: '$_base/expirationDate/14',

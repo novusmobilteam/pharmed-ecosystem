@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../domain/entity/refund.dart';
 import '../notifier/completed_pharmacy_refund_notifier.dart';
 import '../notifier/pharmacy_refund_notifier.dart';
 
@@ -80,9 +79,7 @@ class _RefundTableView extends StatelessWidget {
             onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
           ),
         ),
-        TableActionItem.delete(
-          onPressed: (refund) => showDeleteDescriptionView(context, refund),
-        ),
+        TableActionItem.delete(onPressed: (refund) => showDeleteDescriptionView(context, refund)),
       ],
       emptyWidget: notifier.hasNoSearchResults ? CommonEmptyStates.searchNotFound() : CommonEmptyStates.noData(),
     );
@@ -93,9 +90,8 @@ void showCompletedRefundsView(BuildContext context) {
   showDialog(
     context: context,
     builder: (context) => ChangeNotifierProvider(
-      create: (context) => CompletedPharmacyRefundNotifier(
-        getCompletedPharmacyRefundsUseCase: context.read(),
-      )..getCompletedRefunds(),
+      create: (context) =>
+          CompletedPharmacyRefundNotifier(getCompletedPharmacyRefundsUseCase: context.read())..getCompletedRefunds(),
       child: const CompletedRefundsView(),
     ),
   );

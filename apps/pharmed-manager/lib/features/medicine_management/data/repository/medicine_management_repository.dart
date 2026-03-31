@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../prescription/domain/entity/prescription_item.dart';
 import '../../domain/repository/i_medicine_management_repository.dart';
 import '../datasource/medicine_management_datasource.dart';
 
@@ -12,10 +11,7 @@ class MedicineManagementRepository implements IMedicineManagementRepository {
   Future<Result<List<PrescriptionItem>>> getDisposables({required int hospitalizationId}) async {
     final res = await _ds.getDisposables(hospitalizationId: hospitalizationId);
     return res.when(
-      ok: (list) {
-        final entities = list.map((d) => d.toEntity()).toList();
-        return Result.ok(entities);
-      },
+      ok: (dtos) => Result.ok(PrescriptionItemMapper().toEntityList(dtos)),
       error: (e) {
         return Result.error(e);
       },

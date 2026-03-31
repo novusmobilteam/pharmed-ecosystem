@@ -7,8 +7,6 @@ import '../../../core/core.dart';
 
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../prescription/domain/entity/prescription_item.dart';
-import '../../prescription/domain/repository/i_prescription_repository.dart';
 import '../view_model/unscanned_barcodes_viewmodel.dart';
 
 part 'delete_description_view.dart';
@@ -52,9 +50,7 @@ class _UnscannedBarcodesScreenState extends State<ManagerUnscannedBarcodesScreen
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => UnscannedBarcodesViewModel(
-        prescriptionRepository: context.read(),
-      )..fetchBarcodes(),
+      create: (context) => UnscannedBarcodesViewModel(prescriptionRepository: context.read())..fetchBarcodes(),
       child: Consumer<UnscannedBarcodesViewModel>(
         builder: (context, vm, _) {
           if (_viewModel != vm) {
@@ -88,11 +84,7 @@ class _UnscannedBarcodesScreenState extends State<ManagerUnscannedBarcodesScreen
           icon: Icon(PhosphorIcons.trashSimple()),
         ),
         if (vm.canOpenWarning)
-          IconButton(
-            onPressed: vm.toggleWarning,
-            tooltip: 'Uyarı Aç/Kapa',
-            icon: Icon(PhosphorIcons.warning()),
-          ),
+          IconButton(onPressed: vm.toggleWarning, tooltip: 'Uyarı Aç/Kapa', icon: Icon(PhosphorIcons.warning())),
       ],
       child: _buildContent(context, vm),
     );
@@ -119,16 +111,16 @@ class _UnscannedBarcodesScreenState extends State<ManagerUnscannedBarcodesScreen
 }
 
 List<TableColumnDef> buildColumnDefs() => const [
-      TableColumnDef(title: 'Kullanıcı'), // colIndex: 0
-      TableColumnDef(title: 'Protokol'), // colIndex: 1
-      TableColumnDef(title: 'Hasta Adı'), // colIndex: 2
-      TableColumnDef(title: 'Tarih'), // colIndex: 3
-      TableColumnDef(title: 'Mal Kodu'), // colIndex: 4
-      TableColumnDef(title: 'Malzeme'), // colIndex: 5
-      TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7), // colIndex: 6
-      TableColumnDef(title: 'Açıklama', flex: 1.2), // colIndex: 7
-      TableColumnDef(title: 'Gerekçesi', flex: 1.2), // colIndex: 8
-    ];
+  TableColumnDef(title: 'Kullanıcı'), // colIndex: 0
+  TableColumnDef(title: 'Protokol'), // colIndex: 1
+  TableColumnDef(title: 'Hasta Adı'), // colIndex: 2
+  TableColumnDef(title: 'Tarih'), // colIndex: 3
+  TableColumnDef(title: 'Mal Kodu'), // colIndex: 4
+  TableColumnDef(title: 'Malzeme'), // colIndex: 5
+  TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7), // colIndex: 6
+  TableColumnDef(title: 'Açıklama', flex: 1.2), // colIndex: 7
+  TableColumnDef(title: 'Gerekçesi', flex: 1.2), // colIndex: 8
+];
 
 Widget? buildCell(PrescriptionItem item, int colIndex, dynamic _) {
   return switch (colIndex) {

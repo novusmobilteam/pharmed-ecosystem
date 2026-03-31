@@ -4,7 +4,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/patient.dart';
 import '../../../hospitalization/presentation/view/hospitalization_form_view.dart';
 import '../notifier/patient_form_notifier.dart';
 import '../notifier/patient_selection_list_view_model.dart';
@@ -16,9 +15,7 @@ class PatientListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => PatientSelectionListViewModel(
-        patientRepository: context.read(),
-      )..getPatients(),
+      create: (BuildContext context) => PatientSelectionListViewModel(patientRepository: context.read())..getPatients(),
       child: Consumer<PatientSelectionListViewModel>(
         builder: (context, notifier, _) {
           return RegistrationDialog(
@@ -27,14 +24,7 @@ class PatientListView extends StatelessWidget {
             saveButtonText: 'Devam Et',
             isButtonActive: notifier.selectedPatient != null,
             onSave: () => _showHospitalizationDialog(context, notifier.selectedPatient!),
-            actions: [
-              IconButton(
-                onPressed: () => _onNewPatient(context),
-                icon: Icon(
-                  PhosphorIcons.plus(),
-                ),
-              )
-            ],
+            actions: [IconButton(onPressed: () => _onNewPatient(context), icon: Icon(PhosphorIcons.plus()))],
             onSearchChanged: notifier.search,
             child: _body(context, notifier),
           );
@@ -45,9 +35,7 @@ class PatientListView extends StatelessWidget {
 
   Widget _body(BuildContext context, PatientSelectionListViewModel notifier) {
     if (notifier.getStatus.isLoading) {
-      return Center(
-        child: CircularProgressIndicator.adaptive(),
-      );
+      return Center(child: CircularProgressIndicator.adaptive());
     }
     if (notifier.patients.isEmpty) {
       return CommonEmptyStates.noData();
@@ -93,10 +81,8 @@ Future<void> _onNewPatient(BuildContext context) async {
   final result = await showDialog(
     context: context,
     builder: (_) => ChangeNotifierProvider(
-      create: (BuildContext context) => PatientFormNotifier(
-        createPatientUseCase: context.read(),
-        updatePatientUseCase: context.read(),
-      ),
+      create: (BuildContext context) =>
+          PatientFormNotifier(createPatientUseCase: context.read(), updatePatientUseCase: context.read()),
       child: PatientFormView(),
     ),
   );

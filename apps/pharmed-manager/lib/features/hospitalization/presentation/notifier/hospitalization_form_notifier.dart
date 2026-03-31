@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/hospitalization.dart';
-import '../../../patient/domain/entity/patient.dart';
-import '../../domain/usecase/create_hospitalization_usecase.dart';
-import '../../domain/usecase/update_hospitalization_usecase.dart';
-
 class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateHospitalizationUseCase _createHospitalizationUseCase;
   final UpdateHospitalizationUseCase _updateHospitalizationUseCase;

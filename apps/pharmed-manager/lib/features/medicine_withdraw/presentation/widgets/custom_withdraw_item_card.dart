@@ -3,7 +3,6 @@ import 'selection_icon.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/withdraw_item.dart';
 import 'quantity_badge.dart';
 
 class CustomWithdrawItemCard extends StatelessWidget {
@@ -28,14 +27,14 @@ class CustomWithdrawItemCard extends StatelessWidget {
     Color cardColor = isCompleted
         ? Colors.green.withAlpha(60)
         : isSelected
-            ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
-            : theme.colorScheme.surface;
+        ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
+        : theme.colorScheme.surface;
 
     Color borderColor = isCompleted
         ? Colors.green.withAlpha(120)
         : isSelected
-            ? theme.colorScheme.primary
-            : theme.dividerColor.withValues(alpha: 0.5);
+        ? theme.colorScheme.primary
+        : theme.dividerColor.withValues(alpha: 0.5);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -43,10 +42,7 @@ class CustomWithdrawItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(
-          color: borderColor,
-          width: 1,
-        ),
+        border: Border.all(color: borderColor, width: 1),
       ),
       child: InkWell(
         onTap: onTap,
@@ -55,11 +51,7 @@ class CustomWithdrawItemCard extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: Row(
             children: [
-              SelectionIcon(
-                isCompleted: isCompleted,
-                isSelected: isSelected,
-                totalAmount: item.dosePiece ?? 0.0,
-              ),
+              SelectionIcon(isCompleted: isCompleted, isSelected: isSelected, totalAmount: item.dosePiece ?? 0.0),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -98,10 +90,7 @@ class CustomWithdrawItemCard extends StatelessWidget {
                   ],
                 ),
               ),
-              QuantityBadge(
-                totalAmount: item.totalAmount,
-                totalAmountLabel: item.totalAmountLabel,
-              ),
+              QuantityBadge(totalAmount: item.totalAmount, totalAmountLabel: item.totalAmountLabel),
             ],
           ),
         ),

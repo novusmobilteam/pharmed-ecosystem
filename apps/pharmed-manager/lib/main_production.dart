@@ -15,7 +15,6 @@ import 'features/cabin_assignment/di/cabin_assignment_dependency_injection.dart'
 import 'features/cabin_fault/di/cabin_fault_dependency_injection.dart';
 import 'features/cabin_stock/di/cabin_stock_di.dart';
 import 'features/cabin_temperature/di/cabin_temperature_di.dart';
-import 'features/dashboard/di/dashboard_dependency_injection.dart';
 import 'features/directed_orders/di/directed_orders_di.dart';
 import 'features/dosage_form/di/dosage_form_di.dart';
 import 'features/drug_class/di/drug_class_di.dart';
@@ -76,7 +75,6 @@ Future<void> start(SharedPreferences prefs) async {
         ...CabinFaultProviders.providers(isDev: isDev),
         ...CabinProviders.providers(isDev: isDev),
         ...CabinAssignmentProviders.providers(isDev: isDev),
-        ...DashboardProviders.providers(isDev: isDev),
         ...FirmProviders.providers(isDev: isDev),
         ...MedicineProviders.providers(isDev: isDev),
         ...RoleProviders.providers,

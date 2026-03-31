@@ -4,8 +4,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/core.dart';
 import '../../../../core/widgets/info_chip.dart';
 
-import '../../domain/entity/prescription_item.dart';
-
 class PrescriptionItemCard extends StatelessWidget {
   const PrescriptionItemCard({super.key, required this.item, required this.index, this.onDelete});
 

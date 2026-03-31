@@ -8,8 +8,6 @@ import 'withdraw_count_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../cabin/shared/cabin_process/notifier/cabin_status_notifier.dart';
-import '../../../hospitalization/domain/entity/hospitalization.dart';
 
 import '../notifier/withdraw_notifier.dart';
 

@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../domain/entity/patient.dart';
-import '../../domain/usecase/create_patient_usecase.dart';
-import '../../domain/usecase/update_patient_usecase.dart';
-
 class PatientFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreatePatientUseCase _createPatientUseCase;
   final UpdatePatientUseCase _updatePatientUseCase;
