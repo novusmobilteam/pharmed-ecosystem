@@ -5,16 +5,22 @@ import 'stock_transaction_datasource.dart';
 class StockTransactionRemoteDataSource extends BaseRemoteDataSource implements StockTransactionDataSource {
   final String _basePath = '/StockTransaction';
 
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
+
   StockTransactionRemoteDataSource({required super.apiManager});
 
   @override
-  Future<Result<StockTransactionDTO?>> createTransaction(
-    StockTransactionDTO dto,
-  ) {
+  Future<Result<StockTransactionDTO?>> createTransaction(StockTransactionDTO dto) {
     return createRequest(
       path: _basePath,
       body: dto.toJson(),
-      parser: singleParser(StockTransactionDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(StockTransactionDTO.fromJson),
       successLog: 'Transaction created',
     );
   }
@@ -23,7 +29,7 @@ class StockTransactionRemoteDataSource extends BaseRemoteDataSource implements S
   Future<Result<void>> deleteTransaction(int id) {
     return deleteRequest<void>(
       path: '$_basePath/$id',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Transaction deleted',
     );
   }
@@ -32,24 +38,17 @@ class StockTransactionRemoteDataSource extends BaseRemoteDataSource implements S
   Future<Result<List<StockTransactionDTO>>> getStockTransactions() async {
     final r = await fetchRequest<List<StockTransactionDTO>>(
       path: _basePath,
-      //envelope: ResponseEnvelope.raw,
-      parser: listParser(StockTransactionDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(StockTransactionDTO.fromJson),
     );
-    return r.when(
-      ok: (d) => Result.ok(d ?? []),
-      error: Result.error,
-    );
+    return r.when(ok: (d) => Result.ok(d ?? []), error: Result.error);
   }
 
   @override
   Future<Result<List<StockTransactionDTO>>> getCabinStockTransactions(int stationId) async {
     final r = await fetchRequest<List<StockTransactionDTO>>(
       path: '/CabinDrawrStock/report/cabinStockTransaction/$stationId',
-      parser: listParser(StockTransactionDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(StockTransactionDTO.fromJson),
     );
-    return r.when(
-      ok: (d) => Result.ok(d ?? []),
-      error: Result.error,
-    );
+    return r.when(ok: (d) => Result.ok(d ?? []), error: Result.error);
   }
 }

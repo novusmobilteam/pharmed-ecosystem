@@ -11,14 +11,11 @@ class MailPreferenceRemoteDataSource extends BaseRemoteDataSource implements Mai
   Future<Result<List<MailPreferenceDTO>>> getPreferences() async {
     final res = await fetchRequest<List<MailPreferenceDTO>>(
       path: _basePath,
-      parser: listParser(MailPreferenceDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(MailPreferenceDTO.fromJson),
       successLog: 'Mail preferences fetched',
       emptyLog: 'No mail preferences',
     );
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <MailPreferenceDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <MailPreferenceDTO>[]), error: Result.error);
   }
 
   @override
@@ -26,7 +23,7 @@ class MailPreferenceRemoteDataSource extends BaseRemoteDataSource implements Mai
     return createRequest<MailPreferenceDTO?>(
       path: _basePath,
       body: dto.toJson(),
-      parser: singleParser(MailPreferenceDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(MailPreferenceDTO.fromJson),
       successLog: 'Mail preference created',
     );
   }
@@ -34,14 +31,12 @@ class MailPreferenceRemoteDataSource extends BaseRemoteDataSource implements Mai
   @override
   Future<Result<MailPreferenceDTO?>> updateMailPreference(MailPreferenceDTO dto) {
     if (dto.id == null || dto.id!.isEmpty) {
-      return Future.value(
-        Result.error(CustomException(message: 'updateMailPreference: id is null')),
-      );
+      return Future.value(Result.error(CustomException(message: 'updateMailPreference: id is null')));
     }
     return updateRequest<MailPreferenceDTO?>(
       path: '$_basePath/${dto.id}',
       body: dto.toJson(),
-      parser: singleParser(MailPreferenceDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(MailPreferenceDTO.fromJson),
       successLog: 'Mail preference updated',
     );
   }
@@ -50,8 +45,16 @@ class MailPreferenceRemoteDataSource extends BaseRemoteDataSource implements Mai
   Future<Result<void>> deleteMailPreference(String id) {
     return deleteRequest<void>(
       path: '$_basePath/$id',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Mail preference deleted',
     );
   }
+
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 }

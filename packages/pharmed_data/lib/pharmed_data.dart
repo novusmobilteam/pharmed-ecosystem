@@ -5,6 +5,7 @@ export 'src/models/api_response/api_error.dart';
 
 export 'src/network/api_manager.dart';
 export 'src/network/auth_token_provider.dart';
+export 'src/network/base_remote_datasource.dart';
 
 export 'src/auth/auth.dart';
 export 'src/features/user/user.dart';

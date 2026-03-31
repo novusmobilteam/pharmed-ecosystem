@@ -3,8 +3,6 @@ import 'package:provider/single_child_widget.dart';
 
 import '../../../core/core.dart';
 
-import '../shared/cabin_process/notifier/cabin_status_notifier.dart';
-
 class CabinProviders {
   static List<SingleChildWidget> providers({bool isDev = false}) {
     return [
@@ -28,19 +26,8 @@ class CabinProviders {
       // ),
 
       // 3. Use Cases
-      Provider<CreateCabinUseCase>(create: (context) => CreateCabinUseCase(context.read(), context.read())),
-      Provider<DeleteCabinUseCase>(create: (context) => DeleteCabinUseCase(context.read())),
       Provider<GetCabinsUseCase>(create: (context) => GetCabinsUseCase(context.read())),
       Provider<GetCabinsByStationUseCase>(create: (context) => GetCabinsByStationUseCase(context.read())),
-      Provider<UpdateCabinUseCase>(create: (context) => UpdateCabinUseCase(context.read())),
-
-      Provider<GetCabinLayoutUseCase>(create: (context) => GetCabinLayoutUseCase(context.read(), context.read())),
-
-      Provider<SaveCabinDesignUseCase>(create: (context) => SaveCabinDesignUseCase(cabinRepository: context.read())),
-
-      Provider<HandleSensorStatusUseCase>(create: (context) => HandleSensorStatusUseCase(context.read())),
-
-      Provider<OpenDrawerUseCase>(create: (context) => OpenDrawerUseCase(context.read())),
 
       Provider<GetSerumSlotsUseCase>(create: (context) => GetSerumSlotsUseCase(context.read())),
 
@@ -51,13 +38,13 @@ class CabinProviders {
       //     cabinRepository: context.read(),
       //   ),
       // ),
-      ChangeNotifierProvider<CabinStatusNotifier>(
-        create: (context) => CabinStatusNotifier(
-          cabinOperationService: context.read(),
-          openDrawerUseCase: context.read(),
-          handleSensorStatusUseCase: context.read(),
-        ),
-      ),
+      // ChangeNotifierProvider<CabinStatusNotifier>(
+      //   create: (context) => CabinStatusNotifier(
+      //     cabinOperationService: context.read(),
+      //     openDrawerUseCase: context.read(),
+      //     handleSensorStatusUseCase: context.read(),
+      //   ),
+      // ),
     ];
   }
 }

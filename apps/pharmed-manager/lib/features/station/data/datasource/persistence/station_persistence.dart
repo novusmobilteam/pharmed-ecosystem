@@ -1,4 +1,4 @@
-import '../../../domain/entity/station.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
 abstract class StationPersistence {
   /// Kullanıcının o an işlem yaptığı istasyon

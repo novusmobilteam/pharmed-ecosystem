@@ -1,5 +1,3 @@
-// lib/core/cache/app_settings_cache.dart
-//
 // [SWREQ-CORE-003] [IEC 62304 §5.5]
 // Kalıcı uygulama ayarları — ilk kurulum durumu ve cihaz modu.
 // HiveCache wrapper'ından bağımsız; tüm flavor'larda yazar.

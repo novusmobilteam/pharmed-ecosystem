@@ -28,7 +28,7 @@ class _MedicineCountViewState extends State<MedicineCountView> {
         ChangeNotifierProvider(
           create: (ctx) => MedicineCountNotifier(
             countMedicineUseCase: ctx.read(),
-            onOperationRequired: (assignment) => ctx.read<CabinStatusNotifier>().startOperation(assignment),
+            //onOperationRequired: (assignment) => ctx.read<CabinStatusNotifier>().startOperation(assignment),
           ),
         ),
         ChangeNotifierProvider(
@@ -110,9 +110,9 @@ class _MedicineCountViewState extends State<MedicineCountView> {
       },
       child: CabinStockView(
         key: _stockViewKey,
-        onTapUnit: isCabinMode ? null : notifier.selectAssignment,
-        selectedAssignments: isCabinMode ? [] : notifier.selectedAssignments,
-        onDataLoaded: notifier.setAllAssignments,
+        // onTapUnit: isCabinMode ? null : notifier.selectAssignment,
+        // selectedAssignments: isCabinMode ? [] : notifier.selectedAssignments,
+        // onDataLoaded: notifier.setAllAssignments,
       ),
     );
   }

@@ -1,5 +1,3 @@
-// lib/core/providers/auth_providers.dart
-//
 // [SWREQ-UI-AUTH-001]
 // Auth katmanı provider'ları.
 // Sınıf: Class B

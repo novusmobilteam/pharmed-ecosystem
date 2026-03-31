@@ -30,9 +30,13 @@ enum ComPort {
   final String label;
 
   static ComPort? fromId(int? id) {
-    return ComPort.values.firstWhere(
-      (e) => e.id == id,
-      orElse: () => ComPort.com3,
-    );
+    return ComPort.values.firstWhere((e) => e.id == id, orElse: () => ComPort.com3);
+  }
+}
+
+extension ComPortX on ComPort {
+  static ComPort? fromLabel(String? label) {
+    if (label == null) return null;
+    return ComPort.values.firstWhere((e) => e.label.toLowerCase() == label.toLowerCase());
   }
 }

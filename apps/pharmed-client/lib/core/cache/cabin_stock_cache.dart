@@ -4,8 +4,9 @@
 // CabinStock feature'ına özel HiveCache instance'ları.
 // Her endpoint için ayrı cache key kullanılır.
 
+import 'package:pharmed_core/pharmed_core.dart';
+
 import '../../../core/cache/hive_cache.dart';
-import '../../features/cabin_stock/data/dto/cabin_stock_dto.dart';
 
 abstract final class CabinStockCacheKeys {
   static String stocks(int cabinId) => 'cabin_stocks_$cabinId';

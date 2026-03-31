@@ -12,7 +12,7 @@ import 'package:pharmed_client/features/auth/presentation/screen/login_screen.da
 import '../setup/app_setup_notifier.dart';
 import '../../features/auth/presentation/notifier/auth_notifier.dart';
 import '../../features/auth/presentation/state/auth_state.dart';
-import '../../features/setup_wizard/presentation/screen/setup_wizard_screen.dart';
+import '../../features/setup_wizard/presentation/view/setup_wizard_screen.dart';
 import '../../features/dashboard/presentation/screen/dashboard_screen.dart';
 import '../../shared/widgets/atoms/med_tokens.dart';
 

@@ -32,10 +32,11 @@ class _StationCabinAssignmentScreenState extends State<StationCabinAssignmentScr
           children: [
             Expanded(flex: 1, child: StationsSideListView(onStationSelected: _selectStation)),
             const SizedBox(width: 24),
-            Expanded(
-              flex: 5,
-              child: CabinAssignmentView(key: ValueKey(_station?.id), stationId: _station?.id),
-            ),
+            Expanded(flex: 5, child: SizedBox()),
+            // Expanded(
+            //   flex: 5,
+            //   child: CabinAssignmentView(key: ValueKey(_station?.id), stationId: _station?.id),
+            // ),
           ],
         ),
       ),

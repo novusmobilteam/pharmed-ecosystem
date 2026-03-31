@@ -15,11 +15,19 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
   static String _unappliedDetail(int id) => '/Prescription/uncollectedPrescriptionDetail/$id';
 
   @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
+
+  @override
   Future<Result<PrescriptionDTO?>> createPrescription(PrescriptionDTO dto) {
     return createRequest<PrescriptionDTO?>(
       path: _base,
       body: dto.toJson(),
-      parser: singleParser(PrescriptionDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(PrescriptionDTO.fromJson),
       successLog: 'Prescription created',
       envelope: ResponseEnvelope.apiResponse,
     );
@@ -29,25 +37,20 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
   Future<Result<List<PrescriptionItemDTO>>> getPrescriptionDetail(int prescriptionId) {
     return fetchRequest<List<PrescriptionItemDTO>>(
       path: '$_base/detail/$prescriptionId/getAll',
-      parser: listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
       successLog: 'Prescription items fetched',
       emptyLog: 'No prescription items',
-    ).then((res) => res.when(
-          ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]),
-          error: Result.error,
-        ));
+    ).then((res) => res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error));
   }
 
   @override
   Future<Result<void>> createPrescriptionDetail(List<PrescriptionItemDTO> items) {
-    final body = {
-      'prescriptionDetails': items.map((e) => e.toJson()).toList(),
-    };
+    final body = {'prescriptionDetails': items.map((e) => e.toJson()).toList()};
 
     return createRequest<void>(
       path: _detail,
       body: body,
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Prescription items created',
     );
   }
@@ -63,9 +66,9 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
       skip: skip,
       take: take,
       searchText: search,
-      searchField: 'barcode', // Tahmini
+      searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
-      parser: apiResponseListParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDTO.fromJson),
     );
 
     return res.when(
@@ -85,9 +88,9 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
       skip: skip,
       take: take,
       searchText: search,
-      searchField: 'barcode',
+      searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
-      parser: apiResponseListParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDTO.fromJson),
     );
 
     return res.when(
@@ -107,9 +110,9 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
       skip: skip,
       take: take,
       searchText: search,
-      searchField: 'barcode',
+      searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
-      parser: apiResponseListParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDTO.fromJson),
     );
 
     return res.when(
@@ -122,11 +125,8 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
   Future<Result<void>> scanBarcode({required int prescriptionItemId, required String qrCode}) {
     return updateRequest<void>(
       path: '/Prescription/detail/$prescriptionItemId/qrCode',
-      body: {
-        'prescriptionDetailId ': prescriptionItemId,
-        'qrCode': qrCode,
-      },
-      parser: voidParser(),
+      body: {'prescriptionDetailId ': prescriptionItemId, 'qrCode': qrCode},
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'QR marked as scanned',
     );
   }
@@ -142,9 +142,9 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
       skip: skip,
       take: take,
       searchText: search,
-      searchField: 'prescriptionNo',
+      searchFields: ['prescriptionNo'],
       envelope: ResponseEnvelope.raw,
-      parser: apiResponseListParser(PrescriptionDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionDTO.fromJson),
       successLog: 'Unapplied prescriptions fetched',
       emptyLog: 'No unapplied prescriptions',
     );
@@ -159,15 +159,12 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
   Future<Result<List<PrescriptionItemDTO>>> getUnappliedPrescriptionDetail(int prescriptionId) async {
     final res = await fetchRequest<List<PrescriptionItemDTO>>(
       path: _unappliedDetail(prescriptionId),
-      parser: listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
       successLog: 'Unapplied prescription detail fetched',
       emptyLog: 'No unapplied prescription detail',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
   }
 
   @override
@@ -175,7 +172,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
     return createRequest<PrescriptionOtherRequestDTO?>(
       path: _other,
       body: dto.toJson(),
-      parser: singleParser(PrescriptionOtherRequestDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(PrescriptionOtherRequestDTO.fromJson),
       successLog: 'Other request created',
     );
   }
@@ -184,39 +181,27 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
   Future<Result<List<PrescriptionDTO>>> getPatientPrescriptions(int hospitalizationId) async {
     final res = await fetchRequest<List<PrescriptionDTO>>(
       path: '$_base/prescription/$hospitalizationId',
-      parser: listParser(PrescriptionDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionDTO.fromJson),
       successLog: 'Unapplied prescription detail fetched',
       emptyLog: 'No unapplied prescription detail',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<void>> approvePrescriptionRequests(int prescriptionId, List<int> ids) async {
-    return await updateBulkRequest(
-      path: '$_base/detail/$prescriptionId/approveBulk',
-      body: ids,
-    );
+    return await updateBulkRequest(path: '$_base/detail/$prescriptionId/approveBulk', body: ids);
   }
 
   @override
   Future<Result<void>> cancelPrescriptionRequests(int prescriptionId, List<int> ids) async {
-    return await updateBulkRequest(
-      path: '$_base/detail/$prescriptionId/cancelBulk',
-      body: ids,
-    );
+    return await updateBulkRequest(path: '$_base/detail/$prescriptionId/cancelBulk', body: ids);
   }
 
   @override
   Future<Result<void>> rejectPrescriptionRequests(int prescriptionId, List<int> ids) async {
-    return await updateBulkRequest(
-      path: '$_base/detail/$prescriptionId/rejectBulk',
-      body: ids,
-    );
+    return await updateBulkRequest(path: '$_base/detail/$prescriptionId/rejectBulk', body: ids);
   }
 
   @override
@@ -236,7 +221,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
     return updateRequest(
       path: '$_base/detail/${dto.prescriptionId}',
       body: body,
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Other request created',
     );
   }
@@ -245,7 +230,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
   Future<Result<void>> deletePrescription(int prescriptionId) {
     return createRequest<void>(
       path: '$_base/detail/$prescriptionId',
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Prescription deleted',
     );
   }
@@ -254,72 +239,54 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource implements Presc
   Future<Result<void>> deleteUnscannedBarcode({required int prescriptionItemId, required String description}) {
     return deleteRequest<void>(
       path: '/Prescription/detail/unreadqrcode/$prescriptionItemId',
-      body: {
-        'PrescriptionDetailId': prescriptionItemId,
-        'DeleteNote': description,
-      },
-      parser: voidParser(),
+      body: {'PrescriptionDetailId': prescriptionItemId, 'DeleteNote': description},
+      parser: BaseRemoteDataSource.voidParser(),
       envelope: ResponseEnvelope.raw,
     );
   }
 
   @override
   Future<Result<void>> toggleWarning(int id) {
-    return updateRequest(
-      path: '$_base/detail/unReadQrCodeWarning/$id',
-      parser: voidParser(),
-    );
+    return updateRequest(path: '$_base/detail/unReadQrCodeWarning/$id', parser: BaseRemoteDataSource.voidParser());
   }
 
   @override
   Future<Result<List<PrescriptionItemDTO>>> getMedicineActivities() async {
     final res = await fetchRequest<List<PrescriptionItemDTO>>(
       path: '$_base/detail/materialActivity',
-      parser: listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<List<PrescriptionItemDTO>>> getEmergencyPatientMedicines(int hospitalizationId) async {
     final res = await fetchRequest<List<PrescriptionItemDTO>>(
       path: '$_base/detail/$hospitalizationId/urgent',
-      parser: listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<List<PrescriptionItemDTO>>> getDailyJobList() async {
     final res = await fetchRequest<List<PrescriptionItemDTO>>(
       path: '/MyPatient/dailyJobList',
-      parser: listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<List<PrescriptionItemDTO>>> getPatientPrescriptionHistory(int patientId) async {
     final res = await fetchRequest<List<PrescriptionItemDTO>>(
       path: '$_base/prescriptionByPatientId/$patientId',
-      parser: listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
   }
 }

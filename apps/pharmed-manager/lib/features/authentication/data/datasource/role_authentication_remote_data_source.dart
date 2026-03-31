@@ -12,33 +12,35 @@ class RoleAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
   RoleAuthenticationRemoteDataSource({required super.apiManager});
 
   @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
+
+  @override
   Future<Result<List<RoleMenuAuthenticationDTO>>> getMenuAuthentications() async {
     final res = await fetchRequest<List<RoleMenuAuthenticationDTO>>(
       path: _menuPath,
-      parser: listParser(RoleMenuAuthenticationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(RoleMenuAuthenticationDTO.fromJson),
       successLog: 'Role menu authentications fetched',
       emptyLog: 'No role menu authentication',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <RoleMenuAuthenticationDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <RoleMenuAuthenticationDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<RoleMenuAuthenticationDTO?>> getMenuAuthentication(int roleId) async {
     final res = await fetchRequest<RoleMenuAuthenticationDTO>(
       path: '$_menuPath/$roleId',
-      parser: singleParser(RoleMenuAuthenticationDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(RoleMenuAuthenticationDTO.fromJson),
       successLog: 'Role menu authentication fetched',
       emptyLog: 'No role menu authentication',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data), error: Result.error);
   }
 
   @override
@@ -46,7 +48,7 @@ class RoleAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
     return updateRequest(
       path: '$_menuPath/${dto.id}',
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Role menu auth updated',
     );
   }
@@ -56,7 +58,7 @@ class RoleAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
     return createRequest(
       path: _menuPath,
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Role menu auth created',
     );
   }
@@ -65,15 +67,12 @@ class RoleAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
   Future<Result<List<RoleDrugAuthenticationDTO>>> getDrugAuthentications() async {
     final res = await fetchRequest<List<RoleDrugAuthenticationDTO>>(
       path: _drugPath,
-      parser: listParser(RoleDrugAuthenticationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(RoleDrugAuthenticationDTO.fromJson),
       successLog: 'Role drug authentications fetched',
       emptyLog: 'No role drug authentication',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <RoleDrugAuthenticationDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <RoleDrugAuthenticationDTO>[]), error: Result.error);
   }
 
   @override
@@ -81,7 +80,7 @@ class RoleAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
     return createRequest<void>(
       path: '$_drugPath/bulk',
       body: body,
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'RoleDrugAuth upsert',
     );
   }
@@ -90,7 +89,7 @@ class RoleAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
   Future<Result<RoleMedicalConsumableAuthenticationDTO?>> getMedicalConsumableAuthentication(int roleId) {
     return fetchRequest<RoleMedicalConsumableAuthenticationDTO>(
       path: '$_mcPath/role/$roleId',
-      parser: singleParser(RoleMedicalConsumableAuthenticationDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(RoleMedicalConsumableAuthenticationDTO.fromJson),
       successLog: 'Role mc authentications fetched',
       emptyLog: 'No role mc authentication',
     );
@@ -101,7 +100,7 @@ class RoleAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
     return updateRequest(
       path: '$_mcPath/${dto.id}',
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Role mc auth updated',
     );
   }
@@ -111,7 +110,7 @@ class RoleAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
     return createRequest(
       path: _mcPath,
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Role mc auth updated',
     );
   }

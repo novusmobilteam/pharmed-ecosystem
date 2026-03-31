@@ -6,25 +6,19 @@ import 'inconsistency_datasource.dart';
 class InconsistencyRemoteDataSource extends BaseRemoteDataSource implements InconsistencyDataSource {
   final String _basePath;
 
-  InconsistencyRemoteDataSource({
-    required super.apiManager,
-    String basePath = '/CabinDrawrStock/allInconsistency',
-  }) : _basePath = basePath;
+  InconsistencyRemoteDataSource({required super.apiManager, String basePath = '/CabinDrawrStock/allInconsistency'})
+    : _basePath = basePath;
 
   @override
-  Future<Result<ApiResponse<List<InconsistencyDTO>>>> getInconsistencies({
-    int? skip,
-    int? take,
-    String? search,
-  }) async {
+  Future<Result<ApiResponse<List<InconsistencyDTO>>>> getInconsistencies({int? skip, int? take, String? search}) async {
     final res = await fetchRequest<ApiResponse<List<InconsistencyDTO>>>(
       path: _basePath,
       skip: skip,
       take: take,
       searchText: search,
-      searchField: 'drugName', // Tahmini search field, kontrol edilmeli
+      searchFields: ['drugName'],
       envelope: ResponseEnvelope.raw,
-      parser: apiResponseListParser(InconsistencyDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(InconsistencyDTO.fromJson),
       successLog: 'Inconsistencies fetched',
       emptyLog: 'No inconsistencies',
     );
@@ -34,6 +28,14 @@ class InconsistencyRemoteDataSource extends BaseRemoteDataSource implements Inco
       error: Result.error,
     );
   }
+
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 
   // @override
   // Future<Result<InconsistencyDetailDTO?>> getInconsistencyDetail(int id) async {

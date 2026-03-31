@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pharmed_manager/core/auth/auth_manager_notifier.dart';
 import '../../features/cabin_assignment/presentation/view/station_cabin_assignment_screen.dart';
 import '../../features/cabin_stock/presentation/view/expired_stocks_screen.dart';
 import '../../features/cabin_stock/presentation/view/station_stock_screen.dart';
 import '../../features/dashboard/presentation/view/client_dashboard_screen.dart';
 import '../../features/dashboard/presentation/view/manager_dashboard_screen.dart';
 import '../../features/station/presentation/view/station_setup_screen.dart';
-import '../../features/onboarding/view/cabin_setup_screen.dart';
 import '../../features/stock_transaction/presentation/screens/pharmacy_transaction_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +19,6 @@ import '../../features/client/unscanned_barcodes/view/unscanned_barcodes_screen.
 import '../../features/home/view/home_screen.dart';
 import '../../features/medicine_refund/presentation/view/drawer_refund_screen.dart';
 import '../../features/medicine_refund/presentation/view/pharmacy_refund_screen.dart';
-import '../../features/onboarding/view/platform_selection_screen.dart';
 import '../../features/cabin_temperature/view/cabin_temperature_screen.dart';
 import '../../features/firm/presentation/view/firm_screen.dart';
 import '../../features/medicine/presentation/view/medicine_screen.dart';
@@ -101,16 +98,7 @@ class AppRouter {
         ),
         // Kurulum Ekranı (PlatformSelection)
         GoRoute(path: AppRoute.home.path, name: AppRoute.home.name, builder: (context, state) => HomeScreen()),
-        GoRoute(
-          path: AppRoute.platformSelection.path,
-          name: AppRoute.platformSelection.name,
-          builder: (context, state) => PlatformSelectionScreen(),
-        ),
-        GoRoute(
-          path: AppRoute.cabinSetup.path,
-          name: AppRoute.cabinSetup.name,
-          builder: (context, state) => CabinSetupScreen(),
-        ),
+
         GoRoute(
           path: AppRoute.clientDashboard.path,
           name: AppRoute.clientDashboard.name,

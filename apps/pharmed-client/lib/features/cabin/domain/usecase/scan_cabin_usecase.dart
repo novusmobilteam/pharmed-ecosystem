@@ -1,17 +1,16 @@
-/lib/src/cabin/domain/usecase/save_cabin_design_usecase.dart
+// pharmed_core/lib/src/cabin/use_case/scan_cabin_use_case.dart
 //
-// [SWREQ-CORE-CABIN-UC-010]
+// [SWREQ-SCAN-002] [IEC 62304 §5.5]
+// Fiziksel kabin tarama use case'i.
+// Seri port üzerinden bağlanır, çekmece yapısını okur ve DrawerGroup listesi döner.
 // Sınıf: Class B
 
-import 'package:pharmed_client/core/hardware/service/cabin_operation/i_cabin_operation_service.dart';
-import 'package:pharmed_client/core/hardware/service/serial_communication/i_serial_communication_service.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-class ScanCabinUseCase {
-  final ICabinRepository _cabinRepository;
-  final ICabinOperationService _cabinOperationService;
-  final ISerialCommunicationService _serialService;
+import '../../../../core/hardware/service/cabin_operation/i_cabin_operation_service.dart';
+import '../../../../core/hardware/service/serial_communication/i_serial_communication_service.dart';
 
+class ScanCabinUseCase {
   ScanCabinUseCase({
     required ICabinRepository cabinRepository,
     required ICabinOperationService cabinOperationService,
@@ -20,61 +19,94 @@ class ScanCabinUseCase {
        _cabinOperationService = cabinOperationService,
        _serialService = serialService;
 
+  final ICabinRepository _cabinRepository;
+  final ICabinOperationService _cabinOperationService;
+  final ISerialCommunicationService _serialService;
+
+  /// Kabini fiziksel olarak tarar ve çekmece yapısını döner.
+  ///
+  /// [portName]        : Bağlanılacak seri port (ör. "COM3"). null ise varsayılan port kullanılır.
+  /// [cabinType]       : Taranacak kabin tipi — serum kartı filtrelemesi için gerekli.
+  /// [onStatusChanged] : Her adımda tetiklenen callback.
+  ///                     [status] adımın türünü, [detail] opsiyonel ek bilgiyi taşır.
   Future<Result<List<DrawerGroup>>> call({
     String? portName,
     required CabinType cabinType,
-    Function(String)? onStatusChanged,
+    void Function(ScanStatus status, {String? detail})? onStatusChanged,
   }) async {
     try {
-      // 1. Seri Port Bağlantısı
-      await _serialService.connectToPort(portName ?? "COM3", onStatusChanged: onStatusChanged);
+      // ── 1. Seri Port Bağlantısı ────────────────────────────────
+      onStatusChanged?.call(ScanStatus.connecting, detail: portName);
 
-      // 2. Veritabanındaki Tanımları Paralel Çek
+      await _serialService.connectToPort(
+        portName ?? 'COM3',
+        onStatusChanged: (_) {}, // ScanStatus üzerinden yönetiliyor
+      );
+
+      onStatusChanged?.call(ScanStatus.connected, detail: portName);
+
+      // ── 2. Meta Veri (Paralel) ─────────────────────────────────
+      onStatusChanged?.call(ScanStatus.fetchingMetadata);
+
       final results = await Future.wait([_cabinRepository.getDrawerConfigs(), _cabinRepository.getDrawerTypes()]);
 
       final configsRes = results[0] as Result<List<DrawerConfig>>;
       final typesRes = results[1] as Result<List<DrawerType>>;
 
       if (configsRes is! Ok || typesRes is! Ok) {
-        return Result.error(CustomException(message: "Tanımlamalar alınamadı."));
+        onStatusChanged?.call(ScanStatus.metadataFailed, detail: 'Tanımlamalar alınamadı.');
+        return Result.error(CustomException(message: 'Tanımlamalar alınamadı.'));
       }
 
       final allConfigs = (configsRes as Ok).value;
       final allTypes = (typesRes as Ok).value;
 
-      // 3. Donanım Taraması
+      onStatusChanged?.call(ScanStatus.metadataReady, detail: '${allConfigs.length} konfigürasyon');
+
+      // ── 3. Yönetim Kartı ───────────────────────────────────────
+      onStatusChanged?.call(ScanStatus.searchingManager);
+
       final manager = await _cabinOperationService.findManagementCard();
-      if (manager == null) return Result.error(CustomException(message: 'Yönetim kartı bulunamadı.'));
+      if (manager == null) {
+        onStatusChanged?.call(ScanStatus.managerNotFound);
+        return Result.error(CustomException(message: 'Yönetim kartı bulunamadı.'));
+      }
+
+      onStatusChanged?.call(ScanStatus.managerFound, detail: 'Adres: ${manager.addressIndex}');
+
+      // ── 4. Kontrol Kartları ────────────────────────────────────
+      onStatusChanged?.call(ScanStatus.scanningCards);
 
       final controlCards = await _cabinOperationService.findControlCards(manager);
-      if (controlCards.isEmpty) return Result.error(CustomException(message: 'Hiçbir kart bulunamadı.'));
+      if (controlCards.isEmpty) {
+        onStatusChanged?.call(ScanStatus.noCardsFound);
+        return Result.error(CustomException(message: 'Hiçbir kart bulunamadı.'));
+      }
 
+      // ── 5. Eşleştirme ──────────────────────────────────────────
       final List<DrawerGroup> foundGroups = [];
 
       for (final card in controlCards) {
         final typeNo = card.databaseTypeId;
+        final bool isSerumHardware = typeNo == 250;
 
-        // Config bul
+        if (cabinType == CabinType.serum) {
+          if (!isSerumHardware) continue;
+        } else {
+          if (isSerumHardware) continue;
+        }
+
         final DrawerConfig? config = allConfigs.cast<DrawerConfig?>().firstWhere(
           (c) => c?.deviceTypeNo == typeNo,
           orElse: () => null,
         );
         if (config == null) continue;
 
-        // Type bul
-        final type = allTypes.cast<DrawerType?>().firstWhere((t) => t?.id == config.drawerTypeId, orElse: () => null);
+        final DrawerType? type = allTypes.cast<DrawerType?>().firstWhere(
+          (t) => t?.id == config.drawerTypeId,
+          orElse: () => null,
+        );
         if (type == null) continue;
-
-        // Serum filtrelemesi (İhtiyaç varsa)
-        final bool isSerumHardware = (typeNo == 250);
-
-        if (cabinType == CabinType.serum) {
-          // Sadece serum kartlarını (250) kabul et
-          if (!isSerumHardware) continue;
-        } else {
-          // Standart kabinlerde serum kartlarını (250) ele
-          if (isSerumHardware) continue;
-        }
 
         final slot = DrawerSlot(
           address: card.rowAddress.toString().padLeft(2, '0'),
@@ -83,15 +115,22 @@ class ScanCabinUseCase {
           drawerConfig: config.copyWith(drawerType: type),
         );
 
-        final int totalCells = type.compartmentCount ?? 0;
-
         final List<DrawerUnit> generatedUnits = List.generate(
-          totalCells,
+          type.compartmentCount ?? 0,
           (index) => DrawerUnit(id: null, compartmentNo: index + 1),
         );
 
         foundGroups.add(DrawerGroup(slot: slot, units: generatedUnits));
+
+        onStatusChanged?.call(ScanStatus.drawerFound, detail: '${foundGroups.length}. Çekmece — ${type.name ?? '—'}');
       }
+
+      if (foundGroups.isEmpty) {
+        onStatusChanged?.call(ScanStatus.noCardsFound);
+        return Result.error(CustomException(message: 'Eşleşen çekmece bulunamadı.'));
+      }
+
+      onStatusChanged?.call(ScanStatus.completed, detail: '${foundGroups.length} çekmece');
 
       return Result.ok(foundGroups);
     } catch (e) {

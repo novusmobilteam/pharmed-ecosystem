@@ -15,6 +15,7 @@ export 'med_avatar.dart';
 export 'drawer_cell.dart';
 export 'med_progress_bar.dart';
 export 'ring_chart.dart';
+export 'med_counter.dart';
 // Form atoms
 export 'med_button.dart';
 export 'med_text_field.dart';

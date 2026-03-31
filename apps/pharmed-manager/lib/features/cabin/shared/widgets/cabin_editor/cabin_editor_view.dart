@@ -4,10 +4,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../../domain/entity/cabin.dart';
-import '../../../../../../../../packages/pharmed_core/lib/src/cabin/domain/model/drawer_group.dart';
-import '../../../domain/entity/drawer_unit.dart';
-
 part '../cabin_drawer_view.dart';
 part '../cabinet_view.dart';
 part '../base_unit_cell.dart';

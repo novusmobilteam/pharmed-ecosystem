@@ -21,10 +21,8 @@ class SelectedMedicinesListView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       itemCount: selected.length,
                       itemBuilder: (context, index) => _buildProcessCard(context, notifier, selected[index]),
-                      separatorBuilder: (context, index) => Divider(
-                        height: 1,
-                        color: context.colorScheme.onSurface.withAlpha(45),
-                      ),
+                      separatorBuilder: (context, index) =>
+                          Divider(height: 1, color: context.colorScheme.onSurface.withAlpha(45)),
                     ),
             ),
             _buildHeader(context, notifier, selected.length),
@@ -57,15 +55,15 @@ class SelectedMedicinesListView extends StatelessWidget {
     final color = isCompleted
         ? Colors.green
         : isCancelled
-            ? Colors.amber
-            : context.colorScheme.onSurface;
+        ? Colors.amber
+        : context.colorScheme.onSurface;
     final iconData = isCompleted
         ? PhosphorIcons.checkCircle()
         : (isCancelled ? PhosphorIcons.warningCircle() : PhosphorIcons.arrowRight());
     final overrideQuantity = assignment.toDisplayQuantity(assignment.totalQuantity);
 
     return InkWell(
-      onTap: isCompleted ? null : () => context.read<CabinStatusNotifier>().startOperation(assignment),
+      // onTap: isCompleted ? null : () => context.read<CabinStatusNotifier>().startOperation(assignment),
       child: Container(
         margin: EdgeInsets.only(bottom: 4.0),
         child: Padding(
@@ -79,19 +77,13 @@ class SelectedMedicinesListView extends StatelessWidget {
                   Flexible(
                     child: Text(
                       assignment.medicine?.name ?? '-',
-                      style: context.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
+                      style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: color),
                     ),
                   ),
                   Icon(iconData, color: color),
                 ],
               ),
-              RatioProgressIndicator(
-                assignment: assignment,
-                overrideQuantity: overrideQuantity,
-              ),
+              RatioProgressIndicator(assignment: assignment, overrideQuantity: overrideQuantity),
             ],
           ),
         ),

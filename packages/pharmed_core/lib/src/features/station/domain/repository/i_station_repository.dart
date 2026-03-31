@@ -1,5 +1,4 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_core/src/features/station/domain/model/station.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
 abstract interface class IStationRepository {

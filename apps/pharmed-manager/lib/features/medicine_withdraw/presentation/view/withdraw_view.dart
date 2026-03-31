@@ -38,10 +38,10 @@ class _WithdrawViewState extends State<WithdrawView> {
         getCurrentStationUseCase: context.read(),
         onChecksCompleted: (notifier) async {
           if (notifier.currentAssignment == null) return;
-          context.read<CabinStatusNotifier>().startOperation(
-            notifier.currentAssignment!,
-            requestedQuantity: notifier.currentItem?.dosePiece ?? 0,
-          );
+          // context.read<CabinStatusNotifier>().startOperation(
+          //   notifier.currentAssignment!,
+          //   requestedQuantity: notifier.currentItem?.dosePiece ?? 0,
+          // );
         },
       )..initialize(),
       child: Consumer<WithdrawNotifier>(

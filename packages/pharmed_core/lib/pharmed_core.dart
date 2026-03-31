@@ -63,6 +63,7 @@ export 'src/enums/user_type.dart';
 export 'src/enums/warehouse_type.dart';
 export 'src/enums/warning_subject.dart';
 export 'src/enums/withdraw_type.dart';
+export 'src/enums/scan_status.dart';
 // failure
 export 'src/failure/app_exceptions.dart';
 

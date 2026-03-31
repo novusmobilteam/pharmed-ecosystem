@@ -3,38 +3,40 @@ import '../model/user_menu_authentication_dto.dart';
 import 'user_authentication_data_source.dart';
 
 class UserAuthenticationRemoteDataSource extends BaseRemoteDataSource implements UserAuthenticationDataSource {
+  UserAuthenticationRemoteDataSource({required super.apiManager});
+
   final String _basePath = '/UserAuthentication';
 
-  UserAuthenticationRemoteDataSource({required super.apiManager});
+  @override
+  // TODO: implement logSwreq
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  // TODO: implement logUnit
+  String get logUnit => throw UnimplementedError();
 
   @override
   Future<Result<List<UserMenuAuthenticationDTO>>> getAuthentications() async {
     final res = await fetchRequest(
       path: _basePath,
-      parser: listParser(UserMenuAuthenticationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(UserMenuAuthenticationDTO.fromJson),
       successLog: 'User authentications fetched',
       emptyLog: 'No authentication',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data ?? const <UserMenuAuthenticationDTO>[]),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data ?? const <UserMenuAuthenticationDTO>[]), error: Result.error);
   }
 
   @override
   Future<Result<UserMenuAuthenticationDTO?>> getAuthentication(int id) async {
     final res = await fetchRequest(
       path: '$_basePath/$id',
-      parser: singleParser(UserMenuAuthenticationDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(UserMenuAuthenticationDTO.fromJson),
       successLog: 'User authentications fetched',
       emptyLog: 'No authentication',
     );
 
-    return res.when(
-      ok: (data) => Result.ok(data),
-      error: Result.error,
-    );
+    return res.when(ok: (data) => Result.ok(data), error: Result.error);
   }
 
   @override
@@ -42,7 +44,7 @@ class UserAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
     return updateRequest(
       path: '$_basePath/${dto.userId}',
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'User authentication updated',
     );
   }
@@ -52,7 +54,7 @@ class UserAuthenticationRemoteDataSource extends BaseRemoteDataSource implements
     return createRequest(
       path: _basePath,
       body: dto.toJson(),
-      parser: voidParser(),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'User authentication created',
     );
   }
