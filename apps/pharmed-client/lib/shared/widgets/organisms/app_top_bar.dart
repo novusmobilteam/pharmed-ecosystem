@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import '../../../features/dashboard/domain/model/app_model.dart';
 import '../atoms/atoms.dart';
 
 class AppTopBar extends StatefulWidget implements PreferredSizeWidget {

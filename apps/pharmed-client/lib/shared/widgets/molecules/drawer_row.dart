@@ -11,8 +11,7 @@ import '../atoms/atoms.dart';
 // ─────────────────────────────────────────────────────────────────
 
 class DrawerRow extends StatelessWidget {
-  const DrawerRow({super.key, required this.cells})
-    : assert(cells.length == 3, 'DrawerRow tam olarak 3 DrawerCell içermeli');
+  const DrawerRow({super.key, required this.cells}) : assert(cells.length > 0, 'DrawerRow en az 1 DrawerCell içermeli');
 
   final List<DrawerCell> cells;
 
@@ -20,11 +19,10 @@ class DrawerRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: cells[0]),
-        const SizedBox(width: 5),
-        Expanded(child: cells[1]),
-        const SizedBox(width: 5),
-        Expanded(child: cells[2]),
+        for (int i = 0; i < cells.length; i++) ...[
+          Expanded(child: cells[i]),
+          if (i < cells.length - 1) const SizedBox(width: 5),
+        ],
       ],
     );
   }

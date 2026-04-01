@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'med_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────
@@ -8,8 +9,6 @@ import 'med_tokens.dart';
 // Stok durumu renk + alt çizgi ile görsel olarak temsil edilir.
 // Sınıf: Class B — Yanlış renk stok bilgisini yanlış gösterebilir.
 // ─────────────────────────────────────────────────────────────────
-
-enum DrawerStatus { full, low, critical, empty }
 
 class DrawerCell extends StatelessWidget {
   const DrawerCell({super.key, required this.status, this.tooltip, this.onTap});

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
@@ -90,21 +89,6 @@ class CabinStock implements TableData {
       medicine: medicine ?? this.medicine,
       assignment: assignment ?? this.assignment,
       cabinDrawerDetail: cabinDrawerDetail ?? this.cabinDrawerDetail,
-    );
-  }
-
-  CabinStockDTO toDTO() {
-    return CabinStockDTO(
-      id: id,
-      cabinId: cabinId,
-      cabinDrawerId: cabinDrawerId,
-      corpartmentNo: corpartmentNo,
-      shelfNo: shelfNo,
-      quantity: quantity,
-      miadDate: miadDate,
-      medicine: MedicineMapper().toDtoOrNull(medicine),
-      cabinDrawerQuantity: assignment?.toDTO(),
-      cabinDrawerDetail: DrawerCellMapper().toDtoOrNull(cabinDrawerDetail),
     );
   }
 

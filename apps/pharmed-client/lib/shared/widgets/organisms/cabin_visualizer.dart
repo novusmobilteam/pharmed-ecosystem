@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import '../atoms/atoms.dart';
-import '../molecules/molecules.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // CabinVisualizer
@@ -10,11 +10,22 @@ import '../molecules/molecules.dart';
 // Sınıf: Class B — Yanlış stok rengi yanlış müdahale tetikler.
 // ─────────────────────────────────────────────────────────────────
 
-class DrawerLegendItem {
-  const DrawerLegendItem({required this.status, required this.label});
-  final DrawerStatus status;
-  final String label;
+// ── Renk yardımcısı — paylaşımlı ─────────────────────────────────
+
+final class _StatusColors {
+  const _StatusColors({required this.bg, required this.border});
+  final Color bg;
+  final Color border;
+
+  static _StatusColors of(DrawerStatus status) => switch (status) {
+    DrawerStatus.full => const _StatusColors(bg: Color(0xFFEDF6FF), border: Color(0xFF90C4F5)),
+    DrawerStatus.low => const _StatusColors(bg: Color(0xFFFFFBEB), border: Color(0xFFFCD34D)),
+    DrawerStatus.critical => const _StatusColors(bg: Color(0xFFFFF5F5), border: Color(0xFFFCA5A5)),
+    DrawerStatus.empty => _StatusColors(bg: MedColors.surface3, border: MedColors.border2),
+  };
 }
+
+// ── Ana widget ────────────────────────────────────────────────────
 
 class CabinVisualizer extends StatelessWidget {
   const CabinVisualizer({
@@ -22,27 +33,13 @@ class CabinVisualizer extends StatelessWidget {
     required this.cabinId,
     required this.powerStatus,
     required this.alertStatus,
-    required this.drawerGrid,
-    this.legend = _defaultLegend,
+    required this.slots,
   });
 
-  /// Örnek: "CB-304"
   final String cabinId;
-
   final LedStatus powerStatus;
   final LedStatus alertStatus;
-
-  /// Satır × Sütun. Her iç liste 3 eleman içermeli (DrawerRow assert ile kontrol eder).
-  final List<List<DrawerStatus>> drawerGrid;
-
-  final List<DrawerLegendItem> legend;
-
-  static const List<DrawerLegendItem> _defaultLegend = [
-    DrawerLegendItem(status: DrawerStatus.full, label: 'Dolu — Normal Stok'),
-    DrawerLegendItem(status: DrawerStatus.low, label: 'Düşük Stok'),
-    DrawerLegendItem(status: DrawerStatus.critical, label: 'Kritik / Boşalmak Üzere'),
-    DrawerLegendItem(status: DrawerStatus.empty, label: 'Boş / Atanmamış'),
-  ];
+  final List<DrawerSlotVisual> slots;
 
   @override
   Widget build(BuildContext context) {
@@ -53,116 +50,224 @@ class CabinVisualizer extends StatelessWidget {
         borderRadius: MedRadius.mdAll,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Kabin header — LED + ID ──────────────────────
-          _CabinHeader(cabinId: cabinId, powerStatus: powerStatus, alertStatus: alertStatus),
-
-          // ── Çekmece grid ─────────────────────────────────
+          //_CabinHeader(cabinId: cabinId, powerStatus: powerStatus, alertStatus: alertStatus),
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                for (int i = 0; i < drawerGrid.length; i++) ...[
-                  DrawerRow(cells: drawerGrid[i].map((s) => DrawerCell(status: s)).toList()),
-                  if (i < drawerGrid.length - 1) const SizedBox(height: 5),
+                for (int i = 0; i < slots.length; i++) ...[
+                  _SlotView(slot: slots[i]),
+                  if (i < slots.length - 1) const SizedBox(height: 4),
                 ],
               ],
             ),
           ),
-
-          // ── Legend ───────────────────────────────────────
-          Container(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-            decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: MedColors.border2)),
-            ),
-            child: Column(children: legend.map((item) => _LegendRow(item: item)).toList()),
-          ),
+          const _CabinLegend(),
         ],
       ),
     );
   }
 }
 
-// ── Yardımcı widget'lar ───────────────────────────────────────────
+// ── Slot dispatcher ───────────────────────────────────────────────
 
-class _CabinHeader extends StatelessWidget {
-  const _CabinHeader({required this.cabinId, required this.powerStatus, required this.alertStatus});
+class _SlotView extends StatelessWidget {
+  const _SlotView({required this.slot});
 
-  final String cabinId;
-  final LedStatus powerStatus;
-  final LedStatus alertStatus;
+  final DrawerSlotVisual slot;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFE8EDF5), Color(0xFFDDE3EC)],
-        ),
-        border: Border(bottom: BorderSide(color: MedColors.border)),
-        borderRadius: const BorderRadius.only(topLeft: MedRadius.md, topRight: MedRadius.md),
-      ),
-      child: Row(
-        children: [
-          LedIndicator(status: powerStatus),
-          const SizedBox(width: 5),
-          LedIndicator(status: alertStatus),
-          const Spacer(),
-          Text(
-            cabinId,
-            style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3, letterSpacing: 1),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LegendRow extends StatelessWidget {
-  const _LegendRow({required this.item});
-
-  final DrawerLegendItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = _resolveColors(item.status);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        children: [
-          Container(
-            width: 14,
-            height: 14,
-            decoration: BoxDecoration(
-              color: colors.background,
-              border: Border.all(color: colors.border),
-              borderRadius: MedRadius.smAll,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(item.label, style: MedTextStyles.bodySm(color: MedColors.text2)),
-        ],
-      ),
-    );
-  }
-
-  _LegendColors _resolveColors(DrawerStatus status) {
-    return switch (status) {
-      DrawerStatus.full => const _LegendColors(Color(0xFFEDF6FF), Color(0xFF90C4F5)),
-      DrawerStatus.low => const _LegendColors(Color(0xFFFFFBEB), Color(0xFFFCD34D)),
-      DrawerStatus.critical => const _LegendColors(Color(0xFFFFF5F5), Color(0xFFFCA5A5)),
-      DrawerStatus.empty => _LegendColors(MedColors.surface3, MedColors.border2),
+    final s = slot;
+    return switch (s) {
+      KubicSlotVisual() => _KubicSlotView(slot: s),
+      UnitDoseSlotVisual() => _UnitDoseSlotView(slot: s),
+      SerumSlotVisual() => _SerumSlotView(slot: s),
     };
   }
 }
 
-final class _LegendColors {
-  const _LegendColors(this.background, this.border);
-  final Color background;
-  final Color border;
+// ── Kübik ─────────────────────────────────────────────────────────
+
+class _KubicSlotView extends StatelessWidget {
+  const _KubicSlotView({required this.slot});
+  final KubicSlotVisual slot;
+
+  @override
+  Widget build(BuildContext context) {
+    // Düz listeyi satırlara böl
+    final rows = <List<DrawerStatus>>[];
+    for (int i = 0; i < slot.cells.length; i += slot.columnCount) {
+      rows.add(slot.cells.sublist(i, (i + slot.columnCount).clamp(0, slot.cells.length)));
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: const Color(0xFFDCE8F5),
+        border: Border.all(color: const Color(0xFFA8BEDB), width: 1.5),
+        borderRadius: MedRadius.smAll,
+        boxShadow: const [BoxShadow(color: Color(0x1F1E3C64), blurRadius: 8, offset: Offset(0, 2))],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int r = 0; r < rows.length; r++) ...[
+            Row(
+              children: [
+                for (int c = 0; c < rows[r].length; c++) ...[
+                  Expanded(child: _KubicCell(status: rows[r][c])),
+                  if (c < rows[r].length - 1) const SizedBox(width: 3),
+                ],
+              ],
+            ),
+            if (r < rows.length - 1) const SizedBox(height: 3),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _KubicCell extends StatelessWidget {
+  const _KubicCell({required this.status});
+  final DrawerStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = _StatusColors.of(status);
+    return Container(
+      height: 14,
+      decoration: BoxDecoration(
+        color: colors.bg,
+        border: Border.all(color: colors.border),
+        borderRadius: BorderRadius.circular(3),
+      ),
+    );
+  }
+}
+
+// ── Birim Doz ─────────────────────────────────────────────────────
+
+class _UnitDoseSlotView extends StatelessWidget {
+  const _UnitDoseSlotView({required this.slot});
+  final UnitDoseSlotVisual slot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFD8E4F0),
+        border: Border.all(color: const Color(0xFFA0B8D0), width: 1.5),
+        borderRadius: MedRadius.smAll,
+        boxShadow: const [BoxShadow(color: Color(0x1F1E3C64), blurRadius: 8, offset: Offset(0, 2))],
+      ),
+      child: Row(
+        children: [
+          for (int i = 0; i < slot.cells.length; i++) ...[
+            Expanded(child: _UnitDoseCell(status: slot.cells[i])),
+            if (i < slot.cells.length - 1) const SizedBox(width: 2),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _UnitDoseCell extends StatelessWidget {
+  const _UnitDoseCell({required this.status});
+  final DrawerStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = _StatusColors.of(status);
+    return Container(
+      height: 24,
+      decoration: BoxDecoration(
+        color: colors.bg,
+        border: Border.all(color: colors.border, width: 1.5),
+        borderRadius: BorderRadius.circular(5),
+      ),
+    );
+  }
+}
+
+// ── Serum ─────────────────────────────────────────────────────────
+
+class _SerumSlotView extends StatelessWidget {
+  const _SerumSlotView({required this.slot});
+  final SerumSlotVisual slot;
+
+  static const _unitHeight = 24.0;
+  static const _gap = 4.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final height = slot.heightFactor * _unitHeight + (slot.heightFactor - 1) * _gap + 8;
+    final colors = _StatusColors.of(slot.status);
+
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: colors.bg,
+        border: Border.all(color: colors.border, width: 1.5),
+        borderRadius: MedRadius.smAll,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        'SRM',
+        style: TextStyle(fontFamily: MedFonts.mono, fontSize: 7, color: MedColors.text3, letterSpacing: 1),
+      ),
+    );
+  }
+}
+
+// ── Legend ────────────────────────────────────────────────────────
+
+class _CabinLegend extends StatelessWidget {
+  const _CabinLegend();
+
+  static const _items = [
+    (DrawerStatus.full, 'Dolu'),
+    (DrawerStatus.low, 'Düşük'),
+    (DrawerStatus.critical, 'Kritik'),
+    (DrawerStatus.empty, 'Boş'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: MedColors.border2)),
+      ),
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 4,
+        children: _items.map((item) {
+          final colors = _StatusColors.of(item.$1);
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: colors.bg,
+                  border: Border.all(color: colors.border),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(item.$2, style: MedTextStyles.bodySm(color: MedColors.text2)),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
 }

@@ -160,10 +160,23 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
-  Future<Result<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
-    // DrawerUnit gerçek zamanlı veri — cache'lenmez
+  Future<RepoResult<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
     final result = await _remote.getDrawerUnits(slotId);
-    return result.when(ok: (dtos) => Result.ok(_drawerUnitMapper.toEntityList(dtos)), error: Result.error);
+
+    return result.when(
+      ok: (dtos) async {
+        await _local.saveUnits(slotId, dtos);
+        return RepoSuccess(_drawerUnitMapper.toEntityList(dtos));
+      },
+      error: (error) async {
+        final cached = await _local.readUnits(slotId);
+        final savedAt = await _local.unitsSavedAt(slotId);
+        if (cached != null && savedAt != null) {
+          return RepoStale(_drawerUnitMapper.toEntityList(cached), savedAt);
+        }
+        return RepoFailure(error);
+      },
+    );
   }
 
   @override

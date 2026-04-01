@@ -2,45 +2,55 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class SaveCabinDesignUseCase {
-  final ICabinRepository _cabinRepository;
+  SaveCabinDesignUseCase({required ICabinRepository cabinRepository, required ICabinLocalDataSource localDataSource})
+    : _cabinRepository = cabinRepository,
+      _localDataSource = localDataSource;
 
-  SaveCabinDesignUseCase({required ICabinRepository cabinRepository}) : _cabinRepository = cabinRepository;
+  final ICabinRepository _cabinRepository;
+  final ICabinLocalDataSource _localDataSource;
 
   Future<Result<void>> call({
     required int cabinId,
     required List<DrawerSlot> scanResults,
     required bool isUpdate,
   }) async {
+    // Adres sıralaması
+    final sorted = [...scanResults]..sort((a, b) => (a.address ?? '').compareTo(b.address ?? ''));
+
     if (scanResults.isEmpty) {
       return Result.error(ServiceException(message: "Kaydedilecek veri bulunamadı.", statusCode: 404));
     }
 
-    try {
-      // 1. ADRES SIRALAMASI
-      // Önce fiziksel adreslere (01, 02...) göre diziyoruz ki
-      // orderNumber fiziksel dizilimle (üstten aşağıya) tam eşleşsin.
-      final List<DrawerSlot> sortedSlots = List.from(scanResults);
-      sortedSlots.sort((a, b) => (a.address ?? "").compareTo(b.address ?? ""));
+    final slots = sorted.indexed.map((entry) {
+      final (i, slot) = entry;
+      return slot.copyWith(cabinId: cabinId, orderNumber: i + 1);
+    }).toList();
 
-      // 2. VERİ HAZIRLAMA
-      // Her bir slotun kabin ID'sini ve DB için nihai sıra numarasını (index + 1) veriyoruz.
-      final List<DrawerSlot> preparedSlots = [];
-      for (int i = 0; i < sortedSlots.length; i++) {
-        preparedSlots.add(sortedSlots[i].copyWith(cabinId: cabinId, orderNumber: i + 1));
-      }
+    final result = isUpdate
+        ? await _cabinRepository.updateDrawerSlots(slots)
+        : await _cabinRepository.createDrawerSlots(slots);
 
-      // 3. REPOSITORY ÇAĞRISI
-      if (isUpdate) {
-        return await _cabinRepository.updateDrawerSlots(preparedSlots);
-      } else {
-        return await _cabinRepository.createDrawerSlots(preparedSlots);
-      }
-    } catch (e) {
-      return Result.error(
-        ServiceException(message: "Tasarım kaydedilirken hata oluştu: ${e.toString()}", statusCode: e.hashCode),
-      );
-    }
+    return result.when(
+      error: Result.error,
+      ok: (_) async {
+        // ── Cache'e yaz ──────────────────────────────────────
+        // DTO dönüşümü mapper ile
+        final dtos = slots.map((s) => const DrawerSlotMapper().toDto(s)).toList();
+        await _localDataSource.saveSlots(cabinId, dtos);
+
+        MedLogger.info(
+          unit: 'SW-UNIT-DATA',
+          swreq: 'SWREQ-DATA-CABIN-003',
+          message: 'Slot tasarımı cache\'e yazıldı',
+          context: {'cabinId': cabinId, 'slotCount': slots.length},
+        );
+
+        return const Result.ok(null);
+      },
+    );
   }
 }

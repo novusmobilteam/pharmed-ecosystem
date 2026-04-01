@@ -3,15 +3,19 @@
 // HiveCache wrapper'ından bağımsız; tüm flavor'larda yazar.
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// ─────────────────────────────────────────────────────────────────
+final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
+  return appSettingsCache; // mevcut global singleton
+});
 
 class AppSettingsCache {
   static const _boxName = 'app_settings';
   static const _keySetupDone = 'setup_done';
   static const _keyDeviceMode = 'device_mode';
+  static const _keyCurrentCabinId = 'current_cabin_id';
 
   Box? _box;
 
@@ -46,6 +50,24 @@ class AppSettingsCache {
   Future<String?> getDeviceMode() async {
     await _open();
     return _box!.get(_keyDeviceMode) as String?;
+  }
+
+  Future<void> saveCurrentCabinId(int cabinId) async {
+    await _open();
+    await _box!.put(_keyCurrentCabinId, cabinId);
+  }
+
+  Future<int?> getCurrentCabinId() async {
+    await _open();
+    return _box!.get(_keyCurrentCabinId) as int?;
+  }
+
+  Future<void> resetSetup() async {
+    await _open();
+    await _box!.delete(_keySetupDone);
+    await _box!.delete(_keyDeviceMode);
+    // currentCabinId varsa onu da sil
+    await _box!.delete(_keyCurrentCabinId);
   }
 }
 

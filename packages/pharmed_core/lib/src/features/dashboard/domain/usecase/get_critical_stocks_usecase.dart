@@ -5,7 +5,7 @@ class GetCriticalStocksUseCase {
 
   GetCriticalStocksUseCase(this._repository);
 
-  Future<RepoResult<List<CabinStock>>> call(bool isClient) {
-    return _repository.getCriticalStocks(isClient: isClient);
+  Future<RepoResult<List<CabinStock>>> call(bool isClient, {bool forceRefresh = false}) {
+    return _repository.getCriticalStocks(isClient: isClient, forceRefresh: forceRefresh);
   }
 }

@@ -16,6 +16,6 @@ class InventoryNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin
 
   // Functions
   Future<void> getInventory() async {
-    await execute(fetchOp, operation: () => _getCurrentCabinStockUseCase.call(), onData: (data) => allItems = data);
+    // await execute(fetchOp, operation: () => _getCurrentCabinStockUseCase.call(), onData: (data) => allItems = data);
   }
 }

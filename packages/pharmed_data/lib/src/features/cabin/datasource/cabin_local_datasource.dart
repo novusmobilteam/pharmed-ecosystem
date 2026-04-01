@@ -19,6 +19,12 @@ abstract interface class ICabinLocalDataSource {
   Future<List<DrawerSlotDTO>?> readSlots(int cabinId);
   Future<DateTime?> slotsSavedAt(int cabinId);
 
+  // ── Unit ───────────────────────────────────────────────────────
+  Future<void> saveUnits(int slotId, List<DrawerUnitDTO> units);
+  Future<List<DrawerUnitDTO>?> readUnits(int slotId);
+  Future<DateTime?> unitsSavedAt(int slotId);
+  Future<void> clearUnits(int slotId);
+
   // ── Meta (DrawerConfig + DrawerType) ──────────────────────────
   Future<void> saveDrawerConfigs(List<DrawerConfigDTO> configs);
   Future<List<DrawerConfigDTO>?> readDrawerConfigs();
@@ -35,6 +41,7 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   // Box isimleri
   static const _cabinBoxName = 'cabin_cache';
   static const _slotBoxName = 'drawer_slot_cache';
+  static const _unitBoxName = 'drawer_unit_cache';
   static const _metaBoxName = 'cabin_meta_cache';
 
   // Key'ler
@@ -46,12 +53,15 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   // Slot key'leri cabinId ile prefix'lenir
   static String _slotsKey(int cabinId) => 'slots_$cabinId';
   static String _slotsSavedAtKey(int cabinId) => 'slots_saved_at_$cabinId';
+  static String _unitsKey(int slotId) => 'units_$slotId';
+  static String _unitsSavedAtKey(int slotId) => 'units_saved_at_$slotId';
 
   // ── Box açma ──────────────────────────────────────────────────
 
   Future<Box> _cabinBox() => Hive.openBox(_cabinBoxName);
   Future<Box> _slotBox() => Hive.openBox(_slotBoxName);
   Future<Box> _metaBox() => Hive.openBox(_metaBoxName);
+  Future<Box> _unitBox() => Hive.openBox(_unitBoxName);
 
   // ── Kabin ──────────────────────────────────────────────────────
 
@@ -107,6 +117,39 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
     final raw = box.get(_slotsSavedAtKey(cabinId)) as String?;
     if (raw == null) return null;
     return DateTime.tryParse(raw);
+  }
+
+  // ── Unit ───────────────────────────────────────────────────────
+  @override
+  Future<void> saveUnits(int slotId, List<DrawerUnitDTO> units) async {
+    final box = await _unitBox();
+    final encoded = units.map((u) => u.toJson()).toList();
+    await box.put(_unitsKey(slotId), jsonEncode(encoded));
+    await box.put(_unitsSavedAtKey(slotId), DateTime.now().toIso8601String());
+  }
+
+  @override
+  Future<List<DrawerUnitDTO>?> readUnits(int slotId) async {
+    final box = await _unitBox();
+    final raw = box.get(_unitsKey(slotId)) as String?;
+    if (raw == null) return null;
+    final list = jsonDecode(raw) as List;
+    return list.map((e) => DrawerUnitDTO.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+  }
+
+  @override
+  Future<DateTime?> unitsSavedAt(int slotId) async {
+    final box = await _unitBox();
+    final raw = box.get(_unitsSavedAtKey(slotId)) as String?;
+    if (raw == null) return null;
+    return DateTime.tryParse(raw);
+  }
+
+  @override
+  Future<void> clearUnits(int slotId) async {
+    final box = await _unitBox();
+    await box.delete(_unitsKey(slotId));
+    await box.delete(_unitsSavedAtKey(slotId));
   }
 
   // ── Meta ───────────────────────────────────────────────────────
@@ -165,7 +208,9 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   Future<void> clearAll() async {
     final cabinBox = await _cabinBox();
     final slotBox = await _slotBox();
+    final unitBox = await _unitBox();
     final metaBox = await _metaBox();
-    await Future.wait([cabinBox.clear(), slotBox.clear(), metaBox.clear()]);
+
+    await Future.wait([cabinBox.clear(), slotBox.clear(), unitBox.clear(), metaBox.clear()]);
   }
 }

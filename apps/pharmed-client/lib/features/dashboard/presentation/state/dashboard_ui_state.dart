@@ -1,13 +1,7 @@
-// lib/feature/dashboard/presentation/state/dashboard_ui_state.dart
-//
 // [SWREQ-UI-DASH-002] [IEC 62304 §5.5]
 // Anasayfa UiState tanımı.
 // Her durum açık ve ayrıştırılmış — belirsizlik yok.
 // Sınıf: Class B
-
-// ─────────────────────────────────────────────────────────────────
-// DashboardUiState
-// ─────────────────────────────────────────────────────────────────
 
 import '../../domain/model/dasboard_data.dart';
 

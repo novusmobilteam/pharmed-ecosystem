@@ -5,7 +5,7 @@ class GetExpiringMaterialsUseCase {
 
   GetExpiringMaterialsUseCase(this._repository);
 
-  Future<RepoResult<List<CabinStock>>> call() {
-    return _repository.getExpiringMaterials();
+  Future<RepoResult<List<CabinStock>>> call({bool forceRefresh = false}) {
+    return _repository.getExpiringMaterials(forceRefresh: forceRefresh);
   }
 }
