@@ -19,6 +19,6 @@ class StationInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isEmpty => _inventory.isEmpty;
 
   Future<void> fetchInventory() async {
-    await execute(fetchOp, operation: () => _getCurrentCabinStockUseCase.call(), onData: (data) => _inventory = data);
+    // await execute(fetchOp, operation: () => _getCurrentCabinStockUseCase.call(), onData: (data) => _inventory = data);
   }
 }

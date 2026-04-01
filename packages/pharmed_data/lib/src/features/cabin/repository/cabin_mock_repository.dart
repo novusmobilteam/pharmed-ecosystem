@@ -23,6 +23,7 @@ class CabinMockRepository implements ICabinRepository {
     const DrawerType(id: 2, name: 'Kübik 4×5', compartmentCount: 20, isKubik: true),
     const DrawerType(id: 3, name: 'Birim Doz 3 Göz', compartmentCount: 3, isKubik: false),
     const DrawerType(id: 4, name: 'Birim Doz 5 Göz', compartmentCount: 5, isKubik: false),
+    const DrawerType(id: 5, name: 'Serum', compartmentCount: 1, isKubik: false), // ← serum
   ];
 
   final List<DrawerConfig> _mockConfigs = [
@@ -30,15 +31,67 @@ class CabinMockRepository implements ICabinRepository {
     const DrawerConfig(id: 2, drawerTypeId: 2, numberOfSteps: 20, deviceTypeNo: 2),
     const DrawerConfig(id: 3, drawerTypeId: 3, numberOfSteps: 3, deviceTypeNo: 33),
     const DrawerConfig(id: 4, drawerTypeId: 4, numberOfSteps: 5, deviceTypeNo: 8),
-    const DrawerConfig(id: 5, drawerTypeId: 1, numberOfSteps: 14, deviceTypeNo: 250),
+    const DrawerConfig(id: 5, drawerTypeId: 5, numberOfSteps: 1, deviceTypeNo: 250), // ← serum
   ];
 
   final List<DrawerSlot> _mockSlots = [
-    const DrawerSlot(id: 1, cabinId: 1, orderNumber: 1, address: '01', drawerConfigId: 1),
-    const DrawerSlot(id: 2, cabinId: 1, orderNumber: 2, address: '02', drawerConfigId: 1),
-    const DrawerSlot(id: 3, cabinId: 1, orderNumber: 3, address: '03', drawerConfigId: 3),
-    const DrawerSlot(id: 4, cabinId: 1, orderNumber: 4, address: '04', drawerConfigId: 3),
-    const DrawerSlot(id: 5, cabinId: 1, orderNumber: 5, address: '05', drawerConfigId: 2),
+    DrawerSlot(
+      id: 1,
+      cabinId: 1,
+      orderNumber: 1,
+      address: '01',
+      drawerConfigId: 1,
+      drawerConfig: DrawerConfig(
+        id: 1,
+        drawerTypeId: 1,
+        numberOfSteps: 16,
+        deviceTypeNo: 1,
+        drawerType: const DrawerType(id: 1, name: 'Kübik 4×4', compartmentCount: 16, isKubik: true),
+      ),
+    ),
+    DrawerSlot(
+      id: 3,
+      cabinId: 1,
+      orderNumber: 3,
+      address: '03',
+      drawerConfigId: 3,
+      drawerConfig: DrawerConfig(
+        id: 3,
+        drawerTypeId: 3,
+        numberOfSteps: 3,
+        deviceTypeNo: 33,
+        drawerType: const DrawerType(id: 3, name: 'Birim Doz 3 Göz', compartmentCount: 3, isKubik: false),
+      ),
+    ),
+    DrawerSlot(
+      id: 4,
+      cabinId: 1,
+      orderNumber: 4,
+      address: '04',
+      drawerConfigId: 3,
+      drawerConfig: DrawerConfig(
+        id: 3,
+        drawerTypeId: 3,
+        numberOfSteps: 3,
+        deviceTypeNo: 33,
+        drawerType: const DrawerType(id: 3, name: 'Birim Doz 3 Göz', compartmentCount: 3, isKubik: false),
+      ),
+    ),
+
+    DrawerSlot(
+      id: 6,
+      cabinId: 1,
+      orderNumber: 6,
+      address: '06',
+      drawerConfigId: 5,
+      drawerConfig: DrawerConfig(
+        id: 5,
+        drawerTypeId: 5,
+        numberOfSteps: 1,
+        deviceTypeNo: 250,
+        drawerType: const DrawerType(id: 5, name: 'Serum', compartmentCount: 1, isKubik: false),
+      ),
+    ),
   ];
 
   // ── Kabin CRUD ─────────────────────────────────────────────────
@@ -86,29 +139,27 @@ class CabinMockRepository implements ICabinRepository {
   @override
   Future<RepoResult<List<DrawerSlot>>> getCabinSlots(int cabinId) async {
     await Future.delayed(_delay);
-    return RepoSuccess(_mockSlots.where((s) => s.cabinId == cabinId).toList());
+    return RepoSuccess(_mockSlots);
   }
 
   @override
-  Future<Result<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
+  Future<RepoResult<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
     await Future.delayed(_delay);
     final slot = _mockSlots.cast<DrawerSlot?>().firstWhere((s) => s?.id == slotId, orElse: () => null);
-    if (slot == null) return const Result.ok([]);
+    if (slot == null) return RepoSuccess([]);
 
-    final config = _mockConfigs.cast<DrawerConfig?>().firstWhere(
-      (c) => c?.id == slot.drawerConfigId,
-      orElse: () => null,
-    );
-    final type = config != null
-        ? _mockTypes.cast<DrawerType?>().firstWhere((t) => t?.id == config.drawerTypeId, orElse: () => null)
-        : null;
-
+    final type = slot.drawerConfig?.drawerType;
     final count = type?.compartmentCount ?? 4;
+
     final units = List.generate(
       count,
-      (i) => DrawerUnit(id: slotId * 100 + i, drawerSlotId: slotId, compartmentNo: i + 1),
+      (i) => DrawerUnit(
+        id: slotId * 1000 + i, // slot 1 → 1000–1015, slot 3 → 3000–3002
+        drawerSlotId: slotId,
+        compartmentNo: i + 1,
+      ),
     );
-    return Result.ok(units);
+    return RepoSuccess(units);
   }
 
   @override

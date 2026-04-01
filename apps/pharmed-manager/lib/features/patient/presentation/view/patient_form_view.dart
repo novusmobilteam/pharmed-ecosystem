@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/patient.dart';
 import '../notifier/patient_form_notifier.dart';
 
 class PatientFormView extends StatefulWidget {
@@ -52,35 +51,19 @@ class _PatientFormViewState extends State<PatientFormView> {
                   spacing: AppDimensions.registrationDialogSpacing,
                   children: [
                     _IdentityField(),
+                    Row(spacing: AppDimensions.registrationDialogSpacing, children: [_NameField(), _SurnameField()]),
                     Row(
                       spacing: AppDimensions.registrationDialogSpacing,
-                      children: [
-                        _NameField(),
-                        _SurnameField(),
-                      ],
+                      children: [_MotherNameField(), _FatherNameField()],
                     ),
                     Row(
                       spacing: AppDimensions.registrationDialogSpacing,
-                      children: [
-                        _MotherNameField(),
-                        _FatherNameField(),
-                      ],
-                    ),
-                    Row(
-                      spacing: AppDimensions.registrationDialogSpacing,
-                      children: [
-                        _BirthDateField(),
-                        _GenderField(),
-                        _WeightField(),
-                      ],
+                      children: [_BirthDateField(), _GenderField(), _WeightField()],
                     ),
                     _PhoneField(),
                     Row(
                       spacing: AppDimensions.registrationDialogSpacing,
-                      children: [
-                        _DescriptionField(),
-                        _AddressField(),
-                      ],
+                      children: [_DescriptionField(), _AddressField()],
                     ),
                     _ProtocolField(),
                   ],

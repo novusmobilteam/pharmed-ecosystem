@@ -17,9 +17,9 @@ class CabinStatsGrid extends StatelessWidget {
     required this.fullDrawers,
     required this.emptyDrawers,
     required this.criticalCount,
-    required this.todayOperations,
-    required this.lastOpenedAt,
-    required this.lastOpenedBy,
+    // required this.todayOperations,
+    // required this.lastOpenedAt,
+    // required this.lastOpenedBy,
     this.isStale = false,
   });
 
@@ -27,13 +27,13 @@ class CabinStatsGrid extends StatelessWidget {
   final int fullDrawers;
   final int emptyDrawers;
   final int criticalCount;
-  final int todayOperations;
+  // final int todayOperations;
 
-  /// Format: "08:31"
-  final String lastOpenedAt;
+  // /// Format: "08:31"
+  // final String lastOpenedAt;
 
-  /// Format: "Ayşe Kara"
-  final String lastOpenedBy;
+  // /// Format: "Ayşe Kara"
+  // final String lastOpenedBy;
 
   /// [HAZ-007] true → tüm StatBox değerleri soluklaşır
   final bool isStale;
@@ -62,20 +62,20 @@ class CabinStatsGrid extends StatelessWidget {
           subLabel: 'yenileme gerekli',
           isStale: isStale,
         ),
-        StatBox(
-          label: 'Bugün İşlem',
-          value: '$todayOperations',
-          valueColor: MedColors.green,
-          subLabel: 'son 8 saat',
-          isStale: isStale,
-        ),
-        StatBox(
-          label: 'Son Açılış',
-          value: lastOpenedAt,
-          valueColor: MedColors.amber,
-          subLabel: lastOpenedBy,
-          isStale: isStale,
-        ),
+        // StatBox(
+        //   label: 'Bugün İşlem',
+        //   value: '$todayOperations',
+        //   valueColor: MedColors.green,
+        //   subLabel: 'son 8 saat',
+        //   isStale: isStale,
+        // ),
+        // StatBox(
+        //   label: 'Son Açılış',
+        //   value: lastOpenedAt,
+        //   valueColor: MedColors.amber,
+        //   subLabel: lastOpenedBy,
+        //   isStale: isStale,
+        // ),
       ],
     );
   }

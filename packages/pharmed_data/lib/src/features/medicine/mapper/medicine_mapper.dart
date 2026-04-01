@@ -14,6 +14,16 @@ class MedicineMapper {
     );
   }
 
+  Medicine? toEntityOrNull(MedicineDTO? dto) {
+    if (dto == null) {
+      return null;
+    }
+    return dto.when(
+      drug: (drugDto) => const DrugMapper().toEntity(drugDto),
+      consumable: (consumableDto) => const MedicalConsumableMapper().toEntity(consumableDto),
+    );
+  }
+
   MedicineDTO toDto(Medicine entity) {
     if (entity is Drug) {
       return const DrugMapper().toDto(entity);

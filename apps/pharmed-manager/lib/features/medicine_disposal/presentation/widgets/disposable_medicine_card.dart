@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/core.dart';
 
-import '../../../prescription/domain/entity/prescription_item.dart';
-
 class DisposableMedicineCard extends StatelessWidget {
   final PrescriptionItem item;
   final VoidCallback? onTap;

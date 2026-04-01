@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../features/patient/domain/entity/patient.dart';
 import '../core.dart';
 
 class PatientCard extends StatelessWidget {
@@ -36,10 +35,7 @@ class PatientCard extends StatelessWidget {
                 width: 10, // Biraz daha daraltıldı, liste için daha zarif
                 decoration: BoxDecoration(
                   color: accentColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    bottomLeft: Radius.circular(16),
-                  ),
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
                 ),
               ),
               // MARK: Content
@@ -54,11 +50,7 @@ class PatientCard extends StatelessWidget {
                         ? accentColor.withValues(alpha: 0.05) // Seçiliyken hafif arka plan
                         : context.colorScheme.surface,
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
                     ],
                     border: Border.all(
                       color: isSelected ? accentColor : accentColor.withValues(alpha: 0.2),

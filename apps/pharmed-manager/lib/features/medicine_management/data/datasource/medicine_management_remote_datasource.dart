@@ -1,5 +1,4 @@
 import '../../../../core/core.dart';
-import '../../../prescription/data/model/prescription_item_dto.dart';
 import 'medicine_management_datasource.dart';
 
 class MedicineManagementRemoteDataSource extends BaseRemoteDataSource implements MedicineManagementDataSource {

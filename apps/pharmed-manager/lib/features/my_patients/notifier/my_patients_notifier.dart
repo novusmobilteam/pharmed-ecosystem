@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../patient/domain/entity/my_patient.dart';
-import '../../patient/domain/usecase/get_my_patients_usecase.dart';
-import '../../patient/domain/usecase/remove_patient_usecase.dart';
-
 class MyPatientsNotifier extends ChangeNotifier with SearchMixin<MyPatient>, ApiRequestMixin {
   final GetMyPatientsUseCase _getMyPatientsUseCase;
   final RemovePatientsUseCase _removePatientUseCase;

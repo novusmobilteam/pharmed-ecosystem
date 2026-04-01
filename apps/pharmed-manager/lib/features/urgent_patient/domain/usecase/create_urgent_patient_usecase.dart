@@ -1,8 +1,5 @@
 import '../../../../core/core.dart';
 
-import '../../../hospitalization/domain/entity/hospitalization.dart';
-import '../../../patient/domain/repository/i_patient_repository.dart';
-
 class CreateUrgentPatientUseCase implements UseCase<Hospitalization?, int> {
   final IPatientRepository _repository;
 

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
 import '../../../core/widgets/hospitalization_card.dart';
-import '../../hospitalization/domain/entity/hospitalization.dart';
 import '../notifier/add_patient_notifier.dart';
 import '../notifier/my_patients_notifier.dart';
 

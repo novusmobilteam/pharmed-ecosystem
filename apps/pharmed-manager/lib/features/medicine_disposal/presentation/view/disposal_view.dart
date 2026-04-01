@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/form/form_inputs/numpad_input_field.dart';
-import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 import '../../../medicine_management/presentation/view/witness_login_view.dart';
 import '../../../medicine_management/presentation/widgets/cabin_operation_card/cabin_operation_card.dart';
@@ -32,10 +31,7 @@ class _DisposalViewState extends State<DisposalView> {
         onVerificationCompleted: (notifier) async {
           await showDialog(
             context: context,
-            builder: (_) => ChangeNotifierProvider.value(
-              value: notifier,
-              child: const DisposalInputView(),
-            ),
+            builder: (_) => ChangeNotifierProvider.value(value: notifier, child: const DisposalInputView()),
           );
         },
       )..initialize(),
@@ -48,9 +44,8 @@ class _DisposalViewState extends State<DisposalView> {
             actions: [
               if (notifier.selectedItem != null)
                 TextButton(
-                  onPressed: () => notifier.startOperation(
-                    onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  ),
+                  onPressed: () =>
+                      notifier.startOperation(onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg)),
                   child: const Text('Fire/İmha Et'),
                 ),
             ],
@@ -97,20 +92,14 @@ class _DisposalViewState extends State<DisposalView> {
     );
   }
 
-  void _openWitnessDialog(
-    BuildContext context,
-    DisposalNotifier notifier,
-    CabinOperationItem item,
-  ) {
+  void _openWitnessDialog(BuildContext context, DisposalNotifier notifier, CabinOperationItem item) {
     // Güncel referansı notifier'dan al
     final currentItem = notifier.items.firstWhere((i) => i.id == item.id, orElse: () => item);
 
     showDialog<bool>(
       context: context,
-      builder: (_) => WitnessLoginView(
-        item: currentItem,
-        onWitnessLoggedIn: (user) => notifier.addWitness(currentItem, user),
-      ),
+      builder: (_) =>
+          WitnessLoginView(item: currentItem, onWitnessLoggedIn: (user) => notifier.addWitness(currentItem, user)),
     );
   }
 }

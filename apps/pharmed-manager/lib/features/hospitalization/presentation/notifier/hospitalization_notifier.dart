@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/hospitalization.dart';
-import '../../domain/repository/i_hospitalization_repository.dart';
-import '../../../patient/domain/entity/patient.dart';
-
 class HospitalizationNotifier extends ChangeNotifier
     with ApiRequestMixin, SearchMixin<Hospitalization>, DateFilterMixin<Hospitalization> {
   final IHospitalizationRepository _hospitalizationRepository;
@@ -57,7 +53,7 @@ class HospitalizationNotifier extends ChangeNotifier
     await execute(
       fetch,
       operation: () => _hospitalizationRepository.getHospitalizations(),
-      onData: (response) => allItems = response.data ?? [],
+      onData: (response) => allItems = response?.data ?? [],
     );
   }
 

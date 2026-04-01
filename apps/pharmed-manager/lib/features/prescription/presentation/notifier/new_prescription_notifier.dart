@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-import '../../../hospitalization/domain/entity/hospitalization.dart';
-
-import '../../domain/entity/prescription.dart';
-import '../../domain/entity/prescription_item.dart';
-import '../../domain/usecase/create_prescription_with_products.dart';
 
 class NewPrescriptionNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreatePrescriptionWithProductsUseCase _useCase;

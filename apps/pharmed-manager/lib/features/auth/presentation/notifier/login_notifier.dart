@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/utils/device_info.dart';
 
 class LoginNotifier extends ChangeNotifier with ApiRequestMixin {
   final LoginUseCase _loginUseCase;

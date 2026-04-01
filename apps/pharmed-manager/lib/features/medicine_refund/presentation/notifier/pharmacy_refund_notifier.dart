@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../domain/entity/refund.dart';
-import '../../domain/usecase/complete_pharmacy_refund_usecase.dart';
-import '../../domain/usecase/delete_pharmacy_refund_usecase.dart';
-import '../../domain/usecase/get_pharmacy_refunds_usecase.dart';
 
 class PharmacyRefundNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Refund> {
   final GetPharmacyRefundsUseCase _getPharmacyRefundsUseCase;

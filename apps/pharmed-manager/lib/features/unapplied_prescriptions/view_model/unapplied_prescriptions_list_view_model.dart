@@ -1,8 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import 'package:pharmed_manager/core/core.dart';
-import '../../prescription/domain/entity/prescription.dart';
-import '../../prescription/domain/repository/i_prescription_repository.dart';
 
 class UnappliedPrescriptionListViewModel extends ChangeNotifier
     with ApiRequestMixin, SearchMixin<Prescription>, DateFilterMixin<Prescription> {
@@ -30,7 +28,9 @@ class UnappliedPrescriptionListViewModel extends ChangeNotifier
     await execute(
       fetch,
       operation: () => _prescriptionRepository.getUnappliedPrescriptions(),
-      onData: (data) => allItems = data,
+      onData: (apiResponse) {
+        allItems = apiResponse?.data ?? [];
+      },
     );
   }
 

@@ -7,7 +7,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../notifier/prescription_detail_notifier.dart';
 import '../notifier/prescription_table_notifier.dart';
 import 'prescription_list_view.dart';
@@ -18,9 +17,8 @@ class PrescriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => PrescriptionTableNotifier(
-        getHospitalizationsWithPrescriptionUseCase: context.read(),
-      )..getHospitalizations(),
+      create: (context) =>
+          PrescriptionTableNotifier(getHospitalizationsWithPrescriptionUseCase: context.read())..getHospitalizations(),
       child: Consumer<PrescriptionTableNotifier>(
         builder: (context, notifier, _) {
           return ResponsiveLayout(
@@ -57,10 +55,7 @@ class PrescriptionScreen extends StatelessWidget {
             isLoading: notifier.isFetching,
             onSearchChanged: notifier.search,
             enableDateFilter: true,
-            initialDateRange: DateTimeRange(
-              start: DateTime.now(),
-              end: DateTime.now(),
-            ),
+            initialDateRange: DateTimeRange(start: DateTime.now(), end: DateTime.now()),
             onDateRangeChanged: (value) {
               notifier.setDateRange(value?.start, value?.end);
             },
@@ -76,10 +71,7 @@ class PrescriptionScreen extends StatelessWidget {
               TableActionItem(
                 icon: PhosphorIcons.plus(),
                 tooltip: 'Yeni Reçete',
-                onPressed: (data) => _openFormDialog(
-                  context,
-                  hospitalization: data,
-                ),
+                onPressed: (data) => _openFormDialog(context, hospitalization: data),
               ),
             ],
           ),
@@ -108,10 +100,7 @@ Future<void> _openFormDialog(BuildContext context, {Hospitalization? hospitaliza
     context: context,
     barrierDismissible: false,
     builder: (_) => ChangeNotifierProvider(
-      create: (context) => NewPrescriptionNotifier(
-        hospitalization: hospitalization,
-        useCase: context.read(),
-      ),
+      create: (context) => NewPrescriptionNotifier(hospitalization: hospitalization, useCase: context.read()),
       child: NewPrescriptionView(),
     ),
   );

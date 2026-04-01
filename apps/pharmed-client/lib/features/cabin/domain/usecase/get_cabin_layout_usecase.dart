@@ -53,14 +53,21 @@ class GetCabinLayoutUseCase {
             final unitResult = unitResults[i];
 
             final List<DrawerUnit> units = unitResult.when(
-              ok: (uList) {
-                return uList.map((unit) {
+              success: (data) {
+                return data.map((unit) {
                   final status = faultMap[unit.id] ?? CabinWorkingStatus.working;
 
                   return unit.copyWith(workingStatus: status);
                 }).toList();
               },
-              error: (_) => [],
+              stale: (data, savedAt) {
+                return data.map((unit) {
+                  final status = faultMap[unit.id] ?? CabinWorkingStatus.working;
+
+                  return unit.copyWith(workingStatus: status);
+                }).toList();
+              },
+              failure: (error) => [],
             );
 
             units.sort((a, b) => (a.compartmentNo ?? 0).compareTo(b.compartmentNo ?? 0));

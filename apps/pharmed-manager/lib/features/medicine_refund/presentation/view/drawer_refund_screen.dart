@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../domain/entity/refund.dart';
 import '../notifier/drawer_refund_notifier.dart';
 
 class DrawerRefundScreen extends StatefulWidget {
@@ -17,9 +16,7 @@ class _DrawerRefundScreenState extends State<DrawerRefundScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => DrawerRefundNotifier(
-        getDrawerRefundsUseCase: context.read(),
-      )..getRefunds(),
+      create: (context) => DrawerRefundNotifier(getDrawerRefundsUseCase: context.read())..getRefunds(),
       child: Consumer<DrawerRefundNotifier>(
         builder: (context, notifier, _) {
           return ResponsiveLayout(

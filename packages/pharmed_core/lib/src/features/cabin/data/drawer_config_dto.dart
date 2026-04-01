@@ -52,11 +52,13 @@ class DrawerConfigDTO {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'drawerId': drawerId,
+      'drawrId': drawerId,
       'numberOfSteps': numberOfSteps,
       'no': no,
       'stepMultiplier': stepMultiplier,
-      'drawer': drawerType?.toJson(),
+      if (drawerType != null) 'drawr': drawerType!.toJson(),
+      'isDeleted': isDeleted,
+      if (createdDate != null) 'createdDate': createdDate!.toIso8601String(),
     };
   }
 

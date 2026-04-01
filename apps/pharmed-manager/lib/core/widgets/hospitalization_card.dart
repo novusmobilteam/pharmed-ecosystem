@@ -2,15 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
-import '../../features/hospitalization/domain/entity/hospitalization.dart';
 
 class HospitalizationCard extends StatelessWidget {
-  const HospitalizationCard({
-    super.key,
-    required this.hospitalization,
-    this.isBaby = false,
-    this.isSelected = false,
-  });
+  const HospitalizationCard({super.key, required this.hospitalization, this.isBaby = false, this.isSelected = false});
 
   final Hospitalization hospitalization;
   final bool isBaby;
@@ -31,27 +25,17 @@ class HospitalizationCard extends StatelessWidget {
             width: 12,
             decoration: BoxDecoration(
               color: accentColor,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                bottomLeft: Radius.circular(16),
-              ),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
             ),
           ),
           // MARK: Content
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(16.0),
-                  bottomRight: Radius.circular(16.0),
-                ),
+                borderRadius: BorderRadius.only(topRight: Radius.circular(16.0), bottomRight: Radius.circular(16.0)),
                 color: context.colorScheme.surface,
                 boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
                 ],
                 border: Border.all(color: accentColor),
               ),
@@ -119,11 +103,7 @@ class HospitalizationCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildFooterInfo(context, 'T.C No', patient?.tcNo ?? '-'),
-                        _buildFooterInfo(
-                          context,
-                          'Giriş Tarihi',
-                          hospitalization.admissionDate?.formattedDate ?? '-',
-                        ),
+                        _buildFooterInfo(context, 'Giriş Tarihi', hospitalization.admissionDate?.formattedDate ?? '-'),
                       ],
                     ),
                   ],
@@ -163,10 +143,7 @@ class HospitalizationCard extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+            style: context.textTheme.bodySmall?.copyWith(color: color, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -178,14 +155,8 @@ class HospitalizationCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: context.textTheme.labelSmall,
-        ),
-        Text(
-          value,
-          style: context.textTheme.labelMedium,
-        ),
+        Text(label, style: context.textTheme.labelSmall),
+        Text(value, style: context.textTheme.labelMedium),
       ],
     );
   }

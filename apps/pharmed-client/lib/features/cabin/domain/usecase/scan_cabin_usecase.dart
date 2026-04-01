@@ -90,13 +90,13 @@ class ScanCabinUseCase {
 
       for (final card in controlCards) {
         final typeNo = card.databaseTypeId;
-        final bool isSerumHardware = typeNo == 250;
+        //final bool isSerumHardware = typeNo == 250;
 
-        if (cabinType == CabinType.serum) {
-          if (!isSerumHardware) continue;
-        } else {
-          if (isSerumHardware) continue;
-        }
+        // if (cabinType == CabinType.serum) {
+        //   if (!isSerumHardware) continue;
+        // } else {
+        //   if (isSerumHardware) continue;
+        // }
 
         final DrawerConfig? config = allConfigs.cast<DrawerConfig?>().firstWhere(
           (c) => c?.deviceTypeNo == typeNo,

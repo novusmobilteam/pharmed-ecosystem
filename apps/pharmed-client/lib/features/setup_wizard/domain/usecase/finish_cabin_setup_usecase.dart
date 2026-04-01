@@ -3,6 +3,7 @@
 // Kabin oluşturur, standart kabinlerde çekmece slot'larını kaydeder.
 // Sınıf: Class B
 
+import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../cabin/cabin.dart';
@@ -10,13 +11,16 @@ import '../model/cabin_setup_config.dart';
 
 class FinishCabinSetupUseCase {
   FinishCabinSetupUseCase({
-    required CreateCabinUseCase createCabinUseCase,
-    required SaveCabinDesignUseCase saveCabinDesignUseCase,
-  }) : _createCabin = createCabinUseCase,
-       _saveCabinDesign = saveCabinDesignUseCase;
+    required CreateCabinUseCase createCabin,
+    required SaveCabinDesignUseCase saveCabinDesign,
+    required AppSettingsCache appSettingsCache,
+  }) : _createCabin = createCabin,
+       _saveCabinDesign = saveCabinDesign,
+       _appSettingsCache = appSettingsCache;
 
   final CreateCabinUseCase _createCabin;
   final SaveCabinDesignUseCase _saveCabinDesign;
+  final AppSettingsCache _appSettingsCache;
 
   /// Wizard konfigürasyonunu alır, kabini oluşturur ve gerekirse slot'ları kaydeder.
   ///
@@ -52,6 +56,8 @@ class FinishCabinSetupUseCase {
         if (cabinId == null) {
           return Result.error(ServiceException(message: 'Kabin oluşturuldu fakat ID alınamadı.', statusCode: 500));
         }
+
+        await _appSettingsCache.saveCurrentCabinId(cabinId);
 
         // ── 2. Standart kabin → slot'ları kaydet ──────────────
         if (config.cabinetType != CabinType.mobile) {

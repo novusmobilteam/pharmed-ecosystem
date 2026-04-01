@@ -56,6 +56,17 @@ class DrawerSlotDTO {
   }
 
   Map<String, dynamic> toJson() {
-    return {'drawrDetailId': drawerConfigId, 'cabinId': cabinId, 'orderNumber': orderNumber, 'address': address};
+    return {
+      'id': id,
+      'drawrDetailId': drawerConfigId,
+      'cabinId': cabinId,
+      'orderNumber': orderNumber,
+      'address': address,
+      'compartmentNo': compartmentNo,
+      'drawrOrderNumber': drawerOrderNumber,
+      if (drawerConfig != null) 'drawrDetail': drawerConfig!.toJson(),
+      'isDeleted': isDeleted,
+      if (createdDate != null) 'createdDate': createdDate!.toIso8601String(),
+    };
   }
 }

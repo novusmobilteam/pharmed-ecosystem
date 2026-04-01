@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../hospitalization/domain/entity/hospitalization.dart';
-import '../../hospitalization/domain/repository/i_hospitalization_repository.dart';
-
 class DirectedOrdersViewModel extends ChangeNotifier with SearchMixin<Hospitalization>, ApiRequestMixin {
   final IHospitalizationRepository _hospitalizationRepository;
 
@@ -22,7 +19,9 @@ class DirectedOrdersViewModel extends ChangeNotifier with SearchMixin<Hospitaliz
     await execute(
       fetch,
       operation: () => _hospitalizationRepository.getHospitalizations(),
-      onData: (response) => allItems = response.data ?? [],
+      onData: (response) {
+        allItems = response?.data ?? [];
+      },
     );
   }
 }

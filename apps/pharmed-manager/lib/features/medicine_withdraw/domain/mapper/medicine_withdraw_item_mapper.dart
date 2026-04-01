@@ -1,5 +1,6 @@
+import 'package:pharmed_core/pharmed_core.dart';
+
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
-import '../entity/medicine_withdraw_item.dart';
 
 /// MedicineWithdrawItem → CabinOperationItem dönüşümü.
 /// İade akışında kullanılır.

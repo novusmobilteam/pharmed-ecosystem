@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../prescription/domain/entity/prescription_item.dart';
-import '../../../prescription/domain/repository/i_prescription_repository.dart';
-
 class UnscannedBarcodesViewModel extends ChangeNotifier with ApiRequestMixin {
   final IPrescriptionRepository _prescriptionRepository;
 
@@ -26,7 +23,11 @@ class UnscannedBarcodesViewModel extends ChangeNotifier with ApiRequestMixin {
     await execute(
       fetchOperation,
       operation: () => _prescriptionRepository.getUnscannedBarcodes(),
-      onData: (data) => _items = data,
+      onData: (apiResponse) {
+        if (apiResponse?.data != null) {
+          _items = apiResponse?.data ?? [];
+        }
+      },
       loadingMessage: 'Taranmamış barkodlar yükleniyor...',
     );
   }

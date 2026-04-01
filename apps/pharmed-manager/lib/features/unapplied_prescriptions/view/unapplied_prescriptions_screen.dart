@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../core/core.dart';
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../prescription/domain/entity/prescription.dart';
-import '../../prescription/domain/entity/prescription_item.dart';
 import '../view_model/unapplied_prescription_detail_view_model.dart';
 import '../view_model/unapplied_prescriptions_list_view_model.dart';
 
@@ -23,9 +21,8 @@ class _UnappliedPrescriptionsScreenState extends State<UnappliedPrescriptionsScr
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => UnappliedPrescriptionListViewModel(
-        prescriptionRepository: context.read(),
-      )..fetchUnappliedPrescriptions(),
+      create: (context) =>
+          UnappliedPrescriptionListViewModel(prescriptionRepository: context.read())..fetchUnappliedPrescriptions(),
       builder: (context, child) {
         return Consumer<UnappliedPrescriptionListViewModel>(
           builder: (context, vm, child) {
@@ -41,11 +38,7 @@ class _UnappliedPrescriptionsScreenState extends State<UnappliedPrescriptionsScr
   }
 
   Widget _buildDesktopLayout(BuildContext context, UnappliedPrescriptionListViewModel vm) {
-    return DesktopLayout(
-      title: 'Uygulanmamış Reçeteler',
-      showAddButton: false,
-      child: _buildContent(context, vm),
-    );
+    return DesktopLayout(title: 'Uygulanmamış Reçeteler', showAddButton: false, child: _buildContent(context, vm));
   }
 
   Widget _buildContent(BuildContext context, UnappliedPrescriptionListViewModel vm) {
@@ -85,10 +78,7 @@ class _TableView extends StatelessWidget {
           icon: PhosphorIcons.qrCode(),
           tooltip: 'Detayları Görüntüle',
           color: context.colorScheme.onSurface,
-          onPressed: (item) => showPrescriptionDetailView(
-            context,
-            prescription: item,
-          ),
+          onPressed: (item) => showPrescriptionDetailView(context, prescription: item),
         ),
       ],
     );

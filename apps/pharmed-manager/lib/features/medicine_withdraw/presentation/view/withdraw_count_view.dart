@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 
-import '../../domain/entity/withdraw_params.dart';
 import '../notifier/withdraw_notifier.dart';
 
 class WithdrawCountView extends StatelessWidget {

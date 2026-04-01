@@ -4,8 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/prescription_group_card.dart';
-import '../../domain/entity/prescription_item.dart';
-import '../../domain/usecase/submit_prescription_action_usecase.dart';
+
 import '../notifier/prescription_detail_notifier.dart';
 
 // Hastaya ait reçetelerin liste olarak gösterildiği view.

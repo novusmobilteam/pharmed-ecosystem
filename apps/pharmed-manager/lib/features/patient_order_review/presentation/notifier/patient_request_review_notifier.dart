@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../patient/domain/entity/patient.dart';
-
-import '../../../prescription/domain/entity/prescription_item.dart';
-
 import '../../domain/usecase/get_hospitalized_and_recent_exits_usecase.dart';
 import '../../domain/usecase/get_patient_prescription_history_usecase.dart';
 

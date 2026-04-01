@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/prescription_item.dart';
-import '../../domain/usecase/update_prescription_item_usecase.dart';
-
 class UpdatePrescriptionItemNotifier extends ChangeNotifier with ApiRequestMixin {
   final UpdatePrescriptionItemUseCase _updatePrescriptionItemUseCase;
   PrescriptionItem _prescriptionItem;

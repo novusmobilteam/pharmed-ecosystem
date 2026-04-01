@@ -11,7 +11,6 @@ import '../../../medicine_withdraw/presentation/view/withdraw_view.dart';
 import '../notifier/medicine_management_notifier.dart';
 import '../../../medicine_disposal/presentation/view/disposal_view.dart';
 import '../../../medicine_refund/presentation/view/medicine_refund_view.dart';
-import '../../../hospitalization/domain/entity/hospitalization.dart';
 import '../../../menu/menu.dart';
 
 part 'filter_view.dart';

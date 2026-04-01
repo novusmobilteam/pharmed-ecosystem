@@ -38,7 +38,7 @@ abstract interface class ICabinRepository {
   Future<RepoResult<List<DrawerSlot>>> getCabinSlots(int cabinId);
 
   /// Seçili çekmeceye ait iç parçaları getirir. Gerçek zamanlı — cache'lenmez.
-  Future<Result<List<DrawerUnit>>> getDrawerUnits(int slotId);
+  Future<RepoResult<List<DrawerUnit>>> getDrawerUnits(int slotId);
 
   /// Kabin için yeni bir yuva dizilimi kaydeder.
   Future<Result<void>> createDrawerSlots(List<DrawerSlot> slots);

@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../hospitalization/domain/entity/hospitalization.dart';
-
-import '../../../medicine_withdraw/domain/usecase/define_patient_medicine_usecase.dart';
-
 class MedicineDefineNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetSerumSlotsUseCase _getSerumSlotsUseCase;
   final DefinePatientMedicineUseCase _definePatientMedicineUseCase;

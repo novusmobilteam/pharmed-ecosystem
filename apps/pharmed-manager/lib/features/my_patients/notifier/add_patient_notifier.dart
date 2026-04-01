@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
-import '../../hospitalization/domain/entity/hospitalization.dart';
-import '../../hospitalization/domain/usecase/get_hospitalizations_usecase.dart';
-import '../../patient/domain/usecase/add_patient_usecase.dart';
 
 class AddPatientNotifier extends ChangeNotifier with SearchMixin<Hospitalization>, ApiRequestMixin {
   final GetHospitalizationsUseCase _getHospitalizationsUseCase;
@@ -39,7 +36,7 @@ class AddPatientNotifier extends ChangeNotifier with SearchMixin<Hospitalization
     await execute(
       fetchOp,
       operation: () => _getHospitalizationsUseCase.call(GetHospitalizationsParams()),
-      onData: (response) => allItems = response.data ?? [],
+      onData: (response) => allItems = response?.data ?? [],
       loadingMessage: 'Hastalar yükleniyor...',
     );
   }

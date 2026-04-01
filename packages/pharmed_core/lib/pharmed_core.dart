@@ -24,6 +24,12 @@ export 'src/features/firm/firm.dart';
 export 'src/features/medicine/medicine.dart';
 export 'src/features/cabin_assignment/cabin_assignment.dart';
 export 'src/features/cabin_stock/cabin_stock.dart';
+export 'src/features/patient/patient.dart';
+export 'src/features/hospitalization/hospitalization.dart';
+export 'src/features/prescription/prescription.dart';
+export 'src/features/dashboard/dashboard.dart';
+export 'src/features/refund/refund.dart';
+export 'src/features/withdraw/withdraw.dart';
 
 // Constants
 export 'src/constants/device_constants.dart';
@@ -64,6 +70,7 @@ export 'src/enums/warehouse_type.dart';
 export 'src/enums/warning_subject.dart';
 export 'src/enums/withdraw_type.dart';
 export 'src/enums/scan_status.dart';
+export 'src/enums/drawer_status.dart';
 // failure
 export 'src/failure/app_exceptions.dart';
 

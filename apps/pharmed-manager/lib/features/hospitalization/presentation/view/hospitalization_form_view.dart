@@ -4,8 +4,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../domain/entity/hospitalization.dart';
-import '../../../patient/domain/entity/patient.dart';
 
 import '../notifier/hospitalization_form_notifier.dart';
 
