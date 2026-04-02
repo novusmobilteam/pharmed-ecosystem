@@ -26,7 +26,7 @@ class MenuTreeMapper {
       name: dto.name,
       label: formattedLabel,
       slug: slug,
-      //icon: _parseIcon(dto.unicode),
+      unicode: dto.unicode,
       route: routeName,
       isManager: dto.isManager ?? false,
       description: dto.description,
@@ -69,15 +69,6 @@ class MenuTreeMapper {
       _sortMenu(item.children);
     }
   }
-
-  // IconData? _parseIcon(String? unicode) {
-  //   if (unicode == null || unicode.isEmpty) return null;
-  //   try {
-  //     return IconData(int.parse(unicode, radix: 16), fontFamily: 'MaterialIcons');
-  //   } catch (_) {
-  //     return null;
-  //   }
-  // }
 }
 
 

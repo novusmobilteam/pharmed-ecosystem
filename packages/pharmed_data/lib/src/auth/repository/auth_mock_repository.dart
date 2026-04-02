@@ -46,6 +46,8 @@ class AuthMockRepository implements IAuthRepository {
         user: AppUser(
           id: u.hashCode.abs(),
           email: u,
+          name: userData.name,
+          surname: userData.name,
           fullName: userData.name,
           role: userData.role,
           isAdmin: userData.isAdmin,

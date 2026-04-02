@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../core/core.dart';
 
@@ -11,17 +10,17 @@ class StockOperationsView extends StatelessWidget {
     final operations = [
       MenuItem(
         label: 'İlaç Dolum',
-        icon: PhosphorIcons.boxArrowUp(),
+        //icon: PhosphorIcons.boxArrowUp(),
         // builder: (context) => MedicineRefillView(),
       ),
       MenuItem(
         label: 'İlaç Dolum Listesi',
-        icon: PhosphorIcons.listChecks(),
+        //icon: PhosphorIcons.listChecks(),
         // builder: (context) => FillingListView(),
       ),
       MenuItem(
         label: 'İlaç Boşaltma',
-        icon: PhosphorIcons.trayArrowDown(),
+        //icon: PhosphorIcons.trayArrowDown(),
         // builder: (context) => MedicineUnloadView(),
       ),
     ];

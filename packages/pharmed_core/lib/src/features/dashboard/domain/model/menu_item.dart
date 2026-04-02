@@ -7,7 +7,7 @@ class MenuItem {
   final String? name;
   final String? label;
   final String? slug;
-  final IconData? icon;
+  final String? unicode;
   final String? route;
   final bool? isManager;
   final String? description;
@@ -20,7 +20,7 @@ class MenuItem {
     this.name,
     this.label,
     this.slug,
-    this.icon,
+    this.unicode,
     this.route,
     this.isManager,
     this.description,
@@ -34,7 +34,7 @@ class MenuItem {
     String? name,
     String? label,
     String? slug,
-    IconData? icon,
+    String? unicode,
     String? route,
     String? description,
     List<MenuItem>? children,
@@ -46,7 +46,7 @@ class MenuItem {
       name: name ?? this.name,
       orderNo: orderNo ?? this.orderNo,
       slug: slug ?? this.slug,
-      icon: icon ?? this.icon,
+      unicode: unicode ?? this.unicode,
       route: route ?? this.route,
       children: children ?? this.children,
       description: description ?? this.description,

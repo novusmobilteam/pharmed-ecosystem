@@ -11,7 +11,7 @@ class OperationSelectionView extends StatelessWidget {
     final operations = [
       MenuItem(
         label: 'Alım',
-        icon: PhosphorIcons.trayArrowDown(),
+        // icon: PhosphorIcons.trayArrowDown(),
         // builder: (context) => WithdrawView(
         //   hospitalization: hospitalization,
         //   withdrawType: withdrawType,
@@ -19,27 +19,27 @@ class OperationSelectionView extends StatelessWidget {
       ),
       MenuItem(
         label: 'İade',
-        icon: PhosphorIcons.arrowArcLeft(),
+        //icon: PhosphorIcons.arrowArcLeft(),
         // builder: (context) => MedicineRefundView(hospitalization: hospitalization),
       ),
       MenuItem(
         label: 'Fire/İmha',
-        icon: PhosphorIcons.trash(),
+        //icon: PhosphorIcons.trash(),
         // builder: (context) => DisposalView(hospitalization: hospitalization),
       ),
       MenuItem(
         label: 'Hasta İlacı Tanımlama',
-        icon: PhosphorIcons.pill(),
+        //icon: PhosphorIcons.pill(),
         // builder: (context) => PatientMedicineDefineView(hospitalization: hospitalization),
       ),
       MenuItem(
         label: 'Hasta İlaç Alım',
-        icon: PhosphorIcons.bag(),
+        //icon: PhosphorIcons.bag(),
         // builder: (context) => PatientMedicineWithdrawView(hospitalization: hospitalization),
       ),
       MenuItem(
         label: 'Serbest İlaç Alım',
-        icon: PhosphorIcons.bag(),
+        //icon: PhosphorIcons.bag(),
         // builder: (context) => WithdrawView(
         //   hospitalization: hospitalization,
         //   withdrawType: WithdrawType.free,

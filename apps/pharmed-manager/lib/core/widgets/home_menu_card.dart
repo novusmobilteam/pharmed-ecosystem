@@ -50,7 +50,7 @@ class _HomeMenuCardState extends State<HomeMenuCard> {
               Positioned(
                 bottom: 85,
                 right: 5,
-                child: Icon(widget.item.icon, size: 100, color: colorScheme.primary.withValues(alpha: 0.05)),
+                child: Icon(widget.item.unicode.toIcon, size: 100, color: colorScheme.primary.withValues(alpha: 0.05)),
               ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -67,7 +67,7 @@ class _HomeMenuCardState extends State<HomeMenuCard> {
                             color: colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: Icon(widget.item.icon, color: colorScheme.onPrimaryContainer),
+                          child: Icon(widget.item.unicode.toIcon, color: colorScheme.onPrimaryContainer),
                         ),
                         //const Spacer(),
                         Text(

@@ -1,6 +1,7 @@
 export 'src/logging/med_logger.dart';
 export 'src/extensions/context_extension.dart';
 export 'src/extensions/date_time_extension.dart';
+export 'src/extensions/icon_unicode_extension.dart';
 export 'src/utils/message_utils.dart';
 export 'src/utils/formatters.dart';
 export 'src/utils/icon_from_unicode.dart';

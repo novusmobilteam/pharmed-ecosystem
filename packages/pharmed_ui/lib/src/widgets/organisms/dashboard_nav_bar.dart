@@ -1,8 +1,3 @@
-// lib/shared/widgets/organisms/app_nav_organisms.dart
-//
-// SubNav, LockedBanner, SessionTimeoutBanner, LoginModal,
-// QuickActionsGrid, AlertsList, ActivityFeed
-
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -14,22 +9,21 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // 'cabin' id'li menü öğesi tıklandığında KabinMegaMenu overlay açar.
 // ═════════════════════════════════════════════════════════════════
 
-class AppSubNav extends StatefulWidget {
-  const AppSubNav({
+class DashboardNavBar extends StatefulWidget {
+  const DashboardNavBar({
     super.key,
-    required this.items,
+    required this.menuTree,
+    required this.flattenedMenus,
     required this.isLoggedIn,
-    required this.shiftLabel,
+
     this.onItemTap,
     this.onKabinCardTap,
     this.onKabinQuickTap,
   });
 
-  final List<MenuItem> items;
+  final List<MenuItem> menuTree;
+  final List<MenuItem> flattenedMenus;
   final bool isLoggedIn;
-
-  /// Örn: "Gündüz · 07:00–19:00"
-  final String shiftLabel;
 
   /// Normal menü öğesi tıklandığında
   final void Function(int id)? onItemTap;
@@ -41,13 +35,13 @@ class AppSubNav extends StatefulWidget {
   final void Function(String id)? onKabinQuickTap;
 
   @override
-  State<AppSubNav> createState() => _AppSubNavState();
+  State<DashboardNavBar> createState() => _DashboardNavBarState();
 }
 
-class _AppSubNavState extends State<AppSubNav> {
-  final _kabinKey = GlobalKey();
+class _DashboardNavBarState extends State<DashboardNavBar> {
+  final Map<int, GlobalKey> _itemKeys = {};
   OverlayEntry? _overlay;
-  bool _kabinMenuOpen = false;
+  int? _openMenuId; // Hangi menünün açık olduğunu takip eder
 
   @override
   void dispose() {
@@ -55,27 +49,30 @@ class _AppSubNavState extends State<AppSubNav> {
     super.dispose();
   }
 
-  void _toggleKabinMenu() {
-    if (_kabinMenuOpen) {
+  void _toggleMenu(int id) {
+    if (_openMenuId == id) {
       _closeMenu();
     } else {
-      _openMenu();
+      // Eğer başka bir menü açıksa önce onu kapat
+      if (_openMenuId != null) _closeMenu();
+      _openMenu(id);
     }
   }
 
-  void _openMenu() {
-    final kabinCtx = _kabinKey.currentContext;
-    if (kabinCtx == null) return;
+  void _openMenu(int id) {
+    final key = _itemKeys[id];
+    final ctx = key?.currentContext;
+    if (ctx == null) return;
 
-    final kabinBox = kabinCtx.findRenderObject() as RenderBox;
-    final kabinPos = kabinBox.localToGlobal(Offset.zero);
+    final box = ctx.findRenderObject() as RenderBox;
+    final pos = box.localToGlobal(Offset.zero);
 
-    setState(() => _kabinMenuOpen = true);
+    setState(() => _openMenuId = id);
 
     _overlay = OverlayEntry(
       builder: (_) => Stack(
         children: [
-          // Şeffaf bariyer — dışarıya tıklanınca kapatır
+          // Bariyer
           Positioned.fill(
             child: GestureDetector(
               onTap: _closeMenu,
@@ -83,20 +80,11 @@ class _AppSubNavState extends State<AppSubNav> {
               child: const SizedBox.expand(),
             ),
           ),
-          // Mega menü — nav öğesinin hemen altında konumlanır
+          // Dinamik Mega Menü
           Positioned(
-            top: kabinPos.dy + kabinBox.size.height + 2,
-            left: kabinPos.dx,
-            child: KabinMegaMenu(
-              onCardTap: (id) {
-                _closeMenu();
-                widget.onKabinCardTap?.call(id);
-              },
-              onQuickTap: (id) {
-                _closeMenu();
-                widget.onKabinQuickTap?.call(id);
-              },
-            ),
+            top: pos.dy + box.size.height + 2,
+            left: pos.dx,
+            child: _buildMenuContent(id), // ID'ye göre farklı içerik dönebilir
           ),
         ],
       ),
@@ -105,63 +93,53 @@ class _AppSubNavState extends State<AppSubNav> {
     Overlay.of(context).insert(_overlay!);
   }
 
+  // ID'ye göre hangi menünün açılacağına karar veren yardımcı metod
+  Widget _buildMenuContent(int id) {
+    // Burada istersen ID'ye göre farklı widgetlar dönebilirsin
+    // Örn: if (id == 52) return KabinMegaMenu(...) else return GenericSubMenu(...)
+    return DashboardNavbarMenu(
+      parentId: id,
+      flattenedMenus: widget.flattenedMenus,
+      onCardTap: (childId) {
+        _closeMenu();
+        widget.onItemTap?.call(childId);
+      },
+    );
+  }
+
   void _closeMenu() {
     _overlay?.remove();
     _overlay = null;
-    if (mounted) setState(() => _kabinMenuOpen = false);
+    if (mounted) setState(() => _openMenuId = null);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 38,
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border(bottom: BorderSide(color: MedColors.border2)),
-      ),
+      height: 40,
+      decoration: BoxDecoration(color: MedColors.surface),
       child: Row(
         children: [
-          const SizedBox(width: 20),
-          ...widget.items.map((item) {
-            //final locked = item.requiresAuth && !widget.isLoggedIn;
+          const SizedBox(width: 10),
+          ...widget.menuTree.map((item) {
+            final id = item.id ?? 0;
+            // Eğer bu ID için key yoksa oluştur
+            final key = _itemKeys.putIfAbsent(id, () => GlobalKey());
+
             final locked = false;
 
-            if (item.id == 'cabin') {
-              return KeyedSubtree(
-                key: _kabinKey,
-                child: _NavItem(
-                  item: item,
-                  isLocked: locked,
-                  isMenuOpen: _kabinMenuOpen,
-                  showChevron: true,
-                  onTap: locked ? null : _toggleKabinMenu,
-                ),
-              );
-            }
-
-            return _NavItem(
-              item: item,
-              isLocked: locked,
-              onTap: locked ? null : () => widget.onItemTap?.call(item.id ?? 0),
+            return KeyedSubtree(
+              key: key,
+              child: _NavItem(
+                item: item,
+                isLocked: locked,
+                isMenuOpen: _openMenuId == id,
+                showChevron: true, // Artık her item chevron gösterebilir
+                onTap: () => _toggleMenu(id),
+              ),
             );
           }),
           const Spacer(),
-          // Vardiya bilgisi
-          Padding(
-            padding: const EdgeInsets.only(right: 20, bottom: 10),
-            child: RichText(
-              text: TextSpan(
-                style: TextStyle(fontFamily: MedFonts.mono, fontSize: 10, color: MedColors.text3),
-                children: [
-                  const TextSpan(text: 'Vardiya: '),
-                  TextSpan(
-                    text: widget.shiftLabel,
-                    style: const TextStyle(color: MedColors.amber),
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -190,194 +168,30 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final isActive = item.isActive || isMenuOpen;
-    final isActive = true;
-
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedOpacity(
-        opacity: isLocked ? 0.4 : 1.0,
-        duration: const Duration(milliseconds: 200),
-        child: Container(
-          height: 38,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: isActive ? MedColors.blue : Colors.transparent, width: 2)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(item.icon, size: 12, color: isActive ? MedColors.blue : MedColors.text3),
-              const SizedBox(width: 5),
-              Text(
-                item.name ?? '',
-                style: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: 12,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                  color: isActive ? MedColors.blue : MedColors.text3,
-                ),
-              ),
-              if (showChevron) ...[
-                const SizedBox(width: 4),
-                AnimatedRotation(
-                  turns: isMenuOpen ? 0.5 : 0.0,
-                  duration: const Duration(milliseconds: 150),
-                  child: Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: 14,
-                    color: isActive ? MedColors.blue : MedColors.text3,
-                  ),
-                ),
-              ],
-            ],
-          ),
+      child: Container(
+        height: 40,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        margin: EdgeInsets.only(right: 4.0),
+        decoration: BoxDecoration(
+          //color: Colors.red,
+          border: Border(bottom: BorderSide(color: isMenuOpen ? MedColors.blue : Colors.transparent, width: 2)),
         ),
-      ),
-    );
-  }
-}
-
-// ═════════════════════════════════════════════════════════════════
-// LockedBanner
-// [SWREQ-UI-NAV-002]
-// Oturum zaman aşımı sonrası gösterilir.
-// ═════════════════════════════════════════════════════════════════
-
-class LockedBanner extends StatelessWidget {
-  const LockedBanner({super.key, required this.onLoginTap});
-
-  final VoidCallback onLoginTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFFFEF9EC), Color(0xFFFFFDF7), Color(0xFFFEF9EC)]),
-        border: Border(bottom: BorderSide(color: const Color(0xFFF5D79E))),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.lock_outline_rounded, size: 14, color: MedColors.amber),
-          const SizedBox(width: 10),
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                style: MedTextStyles.bodySm(color: MedColors.text2),
-                children: [
-                  TextSpan(
-                    text: 'Oturumunuz ',
-                    style: TextStyle(color: MedColors.text2),
-                  ),
-                  const TextSpan(
-                    text: 'zaman aşımı',
-                    style: TextStyle(color: MedColors.amber, fontWeight: FontWeight.w600),
-                  ),
-                  TextSpan(
-                    text: ' nedeniyle kapatıldı. İşlem yapmak için giriş yapın.',
-                    style: TextStyle(color: MedColors.text2),
-                  ),
-                ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              item.name ?? '',
+              style: TextStyle(
+                fontFamily: MedFonts.sans,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: isMenuOpen ? MedColors.blue : MedColors.text3,
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: onLoginTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(color: MedColors.amber, borderRadius: MedRadius.smAll),
-              child: Text(
-                'Giriş Yap',
-                style: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ═════════════════════════════════════════════════════════════════
-// SessionTimeoutBanner
-// [SWREQ-UI-AUTH-002] [HAZ-009]
-// Oturum dolmak üzere — sağ alt köşede floating banner.
-// ═════════════════════════════════════════════════════════════════
-
-class SessionTimeoutBanner extends StatelessWidget {
-  const SessionTimeoutBanner({super.key, required this.secondsRemaining, required this.onExtend});
-
-  final int secondsRemaining;
-  final VoidCallback onExtend;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border.all(color: const Color(0xFFF5D79E)),
-        borderRadius: MedRadius.mdAll,
-        boxShadow: MedShadows.md,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.access_time_rounded, size: 20, color: MedColors.amber),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Oturum süreniz dolmak üzere.',
-                style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
-              ),
-              RichText(
-                text: TextSpan(
-                  style: MedTextStyles.bodySm(color: MedColors.text2),
-                  children: [
-                    const TextSpan(text: 'Oturumunuz '),
-                    TextSpan(
-                      text: '$secondsRemaining',
-                      style: TextStyle(
-                        fontFamily: MedFonts.title,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: MedColors.red,
-                      ),
-                    ),
-                    const TextSpan(text: ' saniye içinde kapanacak.'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: onExtend,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.smAll),
-              child: Text(
-                'Devam Et',
-                style: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -678,35 +492,3 @@ class SessionTimeoutBanner extends StatelessWidget {
 //     ActivityType.fill => Icons.inventory_2_outlined,
 //   };
 // }
-
-// ─────────────────────────────────────────────────────────────────
-// _WidgetHeader — paylaşılan header (bu dosya içinde)
-// ─────────────────────────────────────────────────────────────────
-
-class _WidgetHeader extends StatelessWidget {
-  const _WidgetHeader({required this.title, required this.dotColor, this.badge});
-
-  final String title;
-  final Color dotColor;
-  final Widget? badge;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      decoration: BoxDecoration(
-        color: MedColors.surface2,
-        border: Border(bottom: BorderSide(color: MedColors.border2)),
-        borderRadius: const BorderRadius.only(topLeft: MedRadius.lg, topRight: MedRadius.lg),
-      ),
-      child: Row(
-        children: [
-          StatusDot(color: dotColor, size: 7),
-          const SizedBox(width: 7),
-          Text(title, style: MedTextStyles.titleSm()),
-          if (badge != null) ...[const Spacer(), badge!],
-        ],
-      ),
-    );
-  }
-}

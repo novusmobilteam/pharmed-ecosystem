@@ -8,7 +8,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../auth/presentation/state/auth_state.dart';
-import '../../domain/model/app_model.dart';
 import '../../domain/model/dasboard_data.dart';
 
 import '../notifier/dashboard_notifier.dart';
@@ -33,11 +32,11 @@ class DashboardScreen extends ConsumerWidget {
     final currentUser = authNotif.currentUser;
     final isExpiring = authState is AuthSessionExpiring;
 
-    final List<MenuItem> menuItems = switch (dashState) {
-      DashboardLoaded(:final menuTree) => menuTree ?? [],
-      DashboardStale(:final menuTree) => menuTree ?? [],
-      DashboardPartial(:final menuTree) => menuTree ?? [],
-      _ => [], // Loading veya Error durumunda boş liste
+    final (menuTree, flattenedMenus) = switch (dashState) {
+      DashboardLoaded(:final menuTree, :final flattenedMenus) => (menuTree ?? [], flattenedMenus ?? []),
+      DashboardStale(:final menuTree, :final flattenedMenus) => (menuTree ?? [], flattenedMenus ?? []),
+      DashboardPartial(:final menuTree, :final flattenedMenus) => (menuTree ?? [], flattenedMenus ?? []),
+      _ => (const <MenuItem>[], const <MenuItem>[]),
     };
 
     return GestureDetector(
@@ -46,25 +45,23 @@ class DashboardScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: MedColors.bg,
 
-        appBar: AppTopBar(
-          cabinCode: 'd3',
+        appBar: DashboardAppBar(
           cabinLocation: 'Kat 3 · Koridor B',
-          isOnline: true,
-          alertCount: 0,
           user: currentUser,
           onLoginTap: () => _showLoginModal(context, ref),
           onLogoutTap: authNotif.logout,
+          cabinName: '',
         ),
         body: Stack(
           children: [
             Column(
               children: [
                 // ── SubNav ────────────────────────────────────
-                AppSubNav(
-                  items: menuItems,
+                DashboardNavBar(
+                  menuTree: menuTree,
                   isLoggedIn: isLoggedIn,
-                  shiftLabel: 'Gündüz · 07:00–19:00',
                   onItemTap: (id) {},
+                  flattenedMenus: flattenedMenus,
                 ),
 
                 // ── LockedBanner (oturum kapandıysa) ──────────

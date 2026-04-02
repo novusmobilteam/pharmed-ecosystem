@@ -32,7 +32,7 @@ class NavigationSidebar extends StatelessWidget {
             child: ListView.separated(
               physics: const BouncingScrollPhysics(),
               itemCount: items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 4),
+              separatorBuilder: (_, _) => const SizedBox(height: 4),
               itemBuilder: (context, index) {
                 return _NavItemTile(item: items[index], isSelected: index == selectedIndex, onTap: () => onTap(index));
               },
@@ -78,7 +78,7 @@ class _NavItemTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(item.icon, color: foregroundColor, size: 22),
+                Icon(item.unicode.toIcon, color: foregroundColor, size: 22),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(

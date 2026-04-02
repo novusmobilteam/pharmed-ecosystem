@@ -64,6 +64,8 @@ class AuthRepositoryImpl implements IAuthRepository {
       final appUser = AppUser(
         id: userDto.id ?? 0,
         email: userDto.email ?? email,
+        name: userDto.name ?? '',
+        surname: userDto.surname ?? '',
         fullName: [userDto.name, userDto.surname].whereType<String>().join(' ').trim(),
         role: userDto.role?.name ?? '',
         isAdmin: userDto.isAdmin ?? false,

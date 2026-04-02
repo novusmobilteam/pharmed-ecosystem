@@ -44,7 +44,7 @@ class SubGridMenuView extends StatelessWidget {
                     color: context.colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(item.icon, color: context.colorScheme.onPrimaryContainer, size: 20),
+                  child: Icon(item.unicode.toIcon, color: context.colorScheme.onPrimaryContainer, size: 20),
                 ),
                 const Spacer(),
                 Row(

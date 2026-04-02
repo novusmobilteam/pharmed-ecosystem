@@ -1,37 +1,27 @@
-// lib/shared/widgets/organisms/app_top_bar.dart
-//
 // [SWREQ-UI-TOP-001]
 // Sabit üst çubuk. Tüm ekranlarda kullanılır.
 // Giriş yapılmamışsa login butonu, yapılmışsa kullanıcı chip + çıkış.
 // Sınıf: Class A (görsel navigasyon, iş kararı vermez)
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/widgets/atoms/status_dot.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-class AppTopBar extends StatefulWidget implements PreferredSizeWidget {
-  const AppTopBar({
+class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const DashboardAppBar({
     super.key,
-    required this.cabinCode,
     required this.cabinLocation,
-    required this.isOnline,
-    required this.alertCount,
+    required this.cabinName,
     this.user,
     this.onLoginTap,
     this.onLogoutTap,
     this.onUserTap,
   });
 
-  final String cabinCode;
-
   /// Örn: "Kat 3 · Koridor B"
   final String cabinLocation;
+  final String cabinName;
 
-  final bool isOnline;
-  final int alertCount;
-
-  /// null → giriş yapılmamış
   final AppUser? user;
 
   final VoidCallback? onLoginTap;
@@ -39,13 +29,13 @@ class AppTopBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onUserTap;
 
   @override
-  Size get preferredSize => const Size.fromHeight(52);
+  State<DashboardAppBar> createState() => _DashboardAppBarState();
 
   @override
-  State<AppTopBar> createState() => _AppTopBarState();
+  Size get preferredSize => const Size.fromHeight(52);
 }
 
-class _AppTopBarState extends State<AppTopBar> {
+class _DashboardAppBarState extends State<DashboardAppBar> {
   late String _timeStr;
   late final Stream<String> _clockStream;
 
@@ -68,65 +58,41 @@ class _AppTopBarState extends State<AppTopBar> {
   Widget build(BuildContext context) {
     return Container(
       height: 52,
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border(bottom: BorderSide(color: MedColors.border, width: 1.5)),
-        boxShadow: MedShadows.sm,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 24.0),
+      decoration: BoxDecoration(color: MedColors.surface),
       child: Row(
         children: [
-          const SizedBox(width: 20),
-
-          // ── Brand ───────────────────────────────────────────
-          _Brand(),
-
+          // Logo
+          _AppLogo(),
           _Separator(),
 
-          // ── Lokasyon chip ────────────────────────────────────
-          _LocationChip(location: widget.cabinLocation, cabinCode: widget.cabinCode),
-
-          // ── Sistem durumu ─────────────────────────────────────
-          const SizedBox(width: 12),
-          _SystemBadge(isOnline: widget.isOnline, alertCount: widget.alertCount),
-
+          // Kabin Bilgileri
+          //_LocationChip(location: widget.cabinLocation, cabinName: widget.cabinName),
           const Spacer(),
 
-          // ── Saat ─────────────────────────────────────────────
+          // Saat
           StreamBuilder<String>(
             stream: _clockStream,
             initialData: _timeStr,
             builder: (_, snap) => _ClockChip(time: snap.data ?? _timeStr),
           ),
+          SizedBox(width: 14.0),
 
-          _Separator(),
-
-          // ── Auth alanı ────────────────────────────────────────
           if (widget.user == null)
             _LoginButton(onTap: widget.onLoginTap)
           else
             _UserArea(user: widget.user!, onUserTap: widget.onUserTap, onLogoutTap: widget.onLogoutTap),
-
-          const SizedBox(width: 20),
         ],
       ),
     );
   }
 }
 
-// ── Brand ─────────────────────────────────────────────────────────
-
-class _Brand extends StatelessWidget {
+class _AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.mdAll),
-          child: const Icon(Icons.add_box_outlined, color: Colors.white, size: 16),
-        ),
-        const SizedBox(width: 10),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,8 +116,8 @@ class _Brand extends StatelessWidget {
               ),
             ),
             Text(
-              'İLAÇ KABİNİ YÖNETİMİ',
-              style: TextStyle(fontFamily: MedFonts.mono, fontSize: 8, letterSpacing: 1.5, color: MedColors.text3),
+              'İLAÇ KABİN YÖNETİMİ',
+              style: TextStyle(fontFamily: MedFonts.mono, fontSize: 10, color: MedColors.text3),
             ),
           ],
         ),
@@ -160,20 +126,12 @@ class _Brand extends StatelessWidget {
   }
 }
 
-class _Separator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(width: 1, height: 24, color: MedColors.border, margin: const EdgeInsets.symmetric(horizontal: 16));
-  }
-}
-
-// ── Lokasyon chip ─────────────────────────────────────────────────
-
+// ignore: unused_element
 class _LocationChip extends StatelessWidget {
-  const _LocationChip({required this.location, required this.cabinCode});
+  const _LocationChip({required this.location, required this.cabinName});
 
   final String location;
-  final String cabinCode;
+  final String cabinName;
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +148,7 @@ class _LocationChip extends StatelessWidget {
           const Icon(Icons.location_on_outlined, size: 10, color: MedColors.blue),
           const SizedBox(width: 5),
           Text(
-            '$location · Kabin #$cabinCode',
+            '$location · $cabinName',
             style: TextStyle(fontFamily: MedFonts.mono, fontSize: 10, letterSpacing: 0.5, color: MedColors.blue),
           ),
         ],
@@ -198,93 +156,6 @@ class _LocationChip extends StatelessWidget {
     );
   }
 }
-
-// ── Sistem durumu ─────────────────────────────────────────────────
-
-class _SystemBadge extends StatelessWidget {
-  const _SystemBadge({required this.isOnline, required this.alertCount});
-
-  final bool isOnline;
-  final int alertCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _badge(
-          dot: StatusDot(color: isOnline ? MedColors.green : MedColors.red, size: 5),
-          label: isOnline ? 'Sistem Çevrimiçi' : 'Bağlantı Yok',
-          bg: isOnline ? MedColors.greenLight : MedColors.redLight,
-          fg: isOnline ? MedColors.green : MedColors.red,
-        ),
-        if (alertCount > 0) ...[
-          const SizedBox(width: 8),
-          _badge(
-            dot: _PulsingDot(color: MedColors.amber),
-            label: '$alertCount Uyarı',
-            bg: MedColors.amberLight,
-            fg: MedColors.amber,
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _badge({required Widget dot, required String label, required Color bg, required Color fg}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: bg, borderRadius: MedRadius.xlAll),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          dot,
-          const SizedBox(width: 5),
-          Text(
-            label.toUpperCase(),
-            style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, letterSpacing: 1, color: fg),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PulsingDot extends StatefulWidget {
-  const _PulsingDot({required this.color});
-  final Color color;
-
-  @override
-  State<_PulsingDot> createState() => _PulsingDotState();
-}
-
-class _PulsingDotState extends State<_PulsingDot> with SingleTickerProviderStateMixin {
-  late final AnimationController _c;
-
-  @override
-  void initState() {
-    super.initState();
-    _c = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _c,
-      builder: (_, __) => Opacity(
-        opacity: 0.4 + _c.value * 0.6,
-        child: StatusDot(color: widget.color, size: 5),
-      ),
-    );
-  }
-}
-
-// ── Saat ──────────────────────────────────────────────────────────
 
 class _ClockChip extends StatelessWidget {
   const _ClockChip({required this.time});
@@ -297,13 +168,13 @@ class _ClockChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: MedColors.surface2,
         border: Border.all(color: MedColors.border),
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        borderRadius: MedRadius.smAll,
       ),
       child: Text(
         time,
         style: TextStyle(
           fontFamily: MedFonts.mono,
-          fontSize: 13,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
           color: MedColors.text2,
           letterSpacing: 1,
@@ -312,8 +183,6 @@ class _ClockChip extends StatelessWidget {
     );
   }
 }
-
-// ── Auth alanı ────────────────────────────────────────────────────
 
 class _LoginButton extends StatelessWidget {
   const _LoginButton({this.onTap});
@@ -362,22 +231,22 @@ class _UserArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Kullanıcı chip
         GestureDetector(
           onTap: onUserTap,
           child: Container(
-            padding: const EdgeInsets.fromLTRB(5, 5, 12, 5),
+            height: 40,
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               color: MedColors.surface2,
               border: Border.all(color: MedColors.border, width: 1.5),
-              borderRadius: const BorderRadius.all(Radius.circular(24)),
+              borderRadius: MedRadius.mdAll,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 26,
-                  height: 26,
+                  width: 24.0,
+                  height: 24.0,
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
@@ -388,7 +257,7 @@ class _UserArea extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      user.fullName,
+                      user.initials,
                       style: const TextStyle(
                         fontFamily: MedFonts.title,
                         fontSize: 10,
@@ -398,7 +267,7 @@ class _UserArea extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 12),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,22 +290,27 @@ class _UserArea extends StatelessWidget {
         GestureDetector(
           onTap: onLogoutTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              border: Border.all(color: MedColors.border),
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-            ),
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            decoration: BoxDecoration(color: MedColors.red, borderRadius: MedRadius.mdAll),
             child: Row(
+              spacing: 5.0,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.logout_rounded, size: 11, color: MedColors.text3),
-                const SizedBox(width: 3),
-                Text('Çıkış', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                Icon(Icons.logout_rounded, size: 14, color: MedColors.surface),
+                Text('Çıkış Yap', style: MedTextStyles.bodySm(color: MedColors.surface)),
               ],
             ),
           ),
         ),
       ],
     );
+  }
+}
+
+class _Separator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(width: 1, height: 30, color: MedColors.border, margin: const EdgeInsets.symmetric(horizontal: 16));
   }
 }

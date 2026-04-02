@@ -257,7 +257,7 @@ class _MenuCard extends StatelessWidget {
                     ),
                     child: Center(
                       child: Icon(
-                        item.icon ?? PhosphorIcons.cube(PhosphorIconsStyle.duotone),
+                        item.unicode.toIcon ?? PhosphorIcons.cube(PhosphorIconsStyle.duotone),
                         size: 18,
                         color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                       ),

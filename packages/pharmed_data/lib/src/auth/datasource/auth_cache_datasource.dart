@@ -41,6 +41,8 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
     await box.put(_userKey, {
       'id': user.id,
       'email': user.email,
+      'name': user.name,
+      'surname': user.surname,
       'fullName': user.fullName,
       'role': user.role,
       'isNotOrdered': user.isNotOrdered,
@@ -59,6 +61,8 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
       id: map['id'] as int? ?? 0,
       email: map['email'] as String? ?? '',
       fullName: map['fullName'] as String? ?? '',
+      name: map['name'] as String? ?? '',
+      surname: map['surname'] as String? ?? '',
       role: map['role'] as String? ?? '',
       isNotOrdered: map['isNotOrdered'] as bool? ?? false,
       isAdmin: map['isAdmin'] as bool? ?? false,

@@ -68,6 +68,8 @@ class UserMapper {
   AppUser fromUser(User user) => AppUser(
     id: user.id ?? 0,
     email: user.email ?? '',
+    name: user.name ?? '',
+    surname: user.surname ?? '',
     fullName: [user.name, user.surname].whereType<String>().join(' ').trim(),
     role: user.role?.name ?? '',
     isNotOrdered: user.isNotOrdered,
