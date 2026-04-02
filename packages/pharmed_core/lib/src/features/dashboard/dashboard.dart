@@ -6,3 +6,6 @@ export 'domain/usecase/get_refunds_usecase.dart';
 export 'domain/usecase/get_unapplied_prescriptions_usecase.dart';
 export 'domain/usecase/get_unread_qrcodes_usecase.dart';
 export 'domain/usecase/get_upcoming_treatmens_usecase.dart';
+export 'data/menu_dto.dart';
+export 'domain/model/menu_item.dart';
+export 'domain/usecase/get_filtered_menus_usecase.dart';

@@ -12,38 +12,38 @@ class OperationSelectionView extends StatelessWidget {
       MenuItem(
         label: 'Alım',
         icon: PhosphorIcons.trayArrowDown(),
-        builder: (context) => WithdrawView(
-          hospitalization: hospitalization,
-          withdrawType: withdrawType,
-        ),
+        // builder: (context) => WithdrawView(
+        //   hospitalization: hospitalization,
+        //   withdrawType: withdrawType,
+        // ),
       ),
       MenuItem(
         label: 'İade',
         icon: PhosphorIcons.arrowArcLeft(),
-        builder: (context) => MedicineRefundView(hospitalization: hospitalization),
+        // builder: (context) => MedicineRefundView(hospitalization: hospitalization),
       ),
       MenuItem(
         label: 'Fire/İmha',
         icon: PhosphorIcons.trash(),
-        builder: (context) => DisposalView(hospitalization: hospitalization),
+        // builder: (context) => DisposalView(hospitalization: hospitalization),
       ),
       MenuItem(
         label: 'Hasta İlacı Tanımlama',
         icon: PhosphorIcons.pill(),
-        builder: (context) => PatientMedicineDefineView(hospitalization: hospitalization),
+        // builder: (context) => PatientMedicineDefineView(hospitalization: hospitalization),
       ),
       MenuItem(
         label: 'Hasta İlaç Alım',
         icon: PhosphorIcons.bag(),
-        builder: (context) => PatientMedicineWithdrawView(hospitalization: hospitalization),
+        // builder: (context) => PatientMedicineWithdrawView(hospitalization: hospitalization),
       ),
       MenuItem(
         label: 'Serbest İlaç Alım',
         icon: PhosphorIcons.bag(),
-        builder: (context) => WithdrawView(
-          hospitalization: hospitalization,
-          withdrawType: WithdrawType.free,
-        ),
+        // builder: (context) => WithdrawView(
+        //   hospitalization: hospitalization,
+        //   withdrawType: WithdrawType.free,
+        // ),
       ),
     ];
 

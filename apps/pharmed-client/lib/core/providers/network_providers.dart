@@ -26,27 +26,6 @@ final tokenHolderProvider = Provider<TokenHolder>((ref) {
   return TokenHolder();
 });
 
-class TokenHolder implements AuthTokenProvider {
-  String? _token;
-
-  void setToken(String? token) => _token = token;
-
-  @override
-  String? get accessToken => _token;
-
-  @override
-  void onUnauthorized() {
-    // AuthNotifier ref olmadan çağrılamaz — callback ile çözülür
-    _onUnauthorized?.call();
-  }
-
-  void Function()? _onUnauthorized;
-
-  void setOnUnauthorized(void Function() callback) {
-    _onUnauthorized = callback;
-  }
-}
-
 // ── APIManager ────────────────────────────────────────────────────
 
 final apiManagerProvider = Provider<APIManager>((ref) {

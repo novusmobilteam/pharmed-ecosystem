@@ -70,3 +70,8 @@ final finishCabinSetupUseCaseProvider = Provider<FinishCabinSetupUseCase>((ref) 
     appSettingsCache: ref.read(appSettingsCacheProvider),
   );
 });
+
+// GetFilteredMenusUseCase
+final getFilteredMenusUseCaseProvider = Provider<GetFilteredMenusUseCase>((ref) {
+  return GetFilteredMenusUseCase(ref.read(dashboardRepositoryProvider));
+});

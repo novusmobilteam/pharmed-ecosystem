@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../../../menu/domain/usecase/get_filtered_menus_usecase.dart';
-import '../../../../menu/menu.dart';
 import '../../../domain/entity/user_menu_authentication.dart';
 import '../../../domain/usecase/get_user_menu_authentication_usecase.dart';
 import '../../../domain/usecase/save_user_menu_authentication_usecase.dart';

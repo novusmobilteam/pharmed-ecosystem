@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../features/menu/menu.dart';
 import '../core.dart';
 
 /// Hasta İlaç İşlemleri ve Stok İşlemleri ekranlarında kullanılan
@@ -25,21 +24,16 @@ class SubGridMenuView extends StatelessWidget {
         final item = items[index];
         return GestureDetector(
           onTap: () {
-            if (item.builder != null) {
-              showDialog(
-                context: context,
-                builder: (context) => item.builder!(context),
-              );
-            }
+            // if (item.builder != null) {
+            //   showDialog(context: context, builder: (context) => item.builder!(context));
+            // }
           },
           child: Container(
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: context.colorScheme.surfaceContainerLow.withAlpha(80),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: context.colorScheme.primary.withValues(alpha: 0.2),
-              ),
+              border: Border.all(color: context.colorScheme.primary.withValues(alpha: 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,11 +44,7 @@ class SubGridMenuView extends StatelessWidget {
                     color: context.colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    item.icon,
-                    color: context.colorScheme.onPrimaryContainer,
-                    size: 20,
-                  ),
+                  child: Icon(item.icon, color: context.colorScheme.onPrimaryContainer, size: 20),
                 ),
                 const Spacer(),
                 Row(
@@ -62,15 +52,10 @@ class SubGridMenuView extends StatelessWidget {
                   children: [
                     Text(
                       item.label ?? '',
-                      style: context.theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: context.theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                       maxLines: 2,
                     ),
-                    Icon(
-                      PhosphorIcons.caretRight(),
-                      size: 16,
-                    ),
+                    Icon(PhosphorIcons.caretRight(), size: 16),
                   ],
                 ),
               ],

@@ -8,6 +8,8 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract interface class IDashboardRepository {
+  Future<RepoResult<List<MenuItem>>> getMenuItems({int? userId});
+
   /// Okunmamış QR kodlu reçete kalemlerini listeler.
   Future<RepoResult<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false});
 

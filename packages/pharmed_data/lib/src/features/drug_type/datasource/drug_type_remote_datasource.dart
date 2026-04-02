@@ -1,6 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 
 // [SWREQ-DATA-DRUGTYPE-001]
 // Sınıf: Class B
@@ -10,10 +9,10 @@ class DrugTypeRemoteDataSource extends BaseRemoteDataSource {
   static const _base = '/DrugType';
 
   @override
-  String get logSwreq => 'SWREQ-DATA-BRANCH-001';
+  String get logSwreq => 'SWREQ-DATA-DRUGTYPE-001';
 
   @override
-  String get logUnit => 'SW-UNIT-BRANCH';
+  String get logUnit => 'SW-UNIT-DRUGTYPE';
 
   Future<Result<ApiResponse<List<DrugTypeDTO>>?>> getDrugTypes({int? skip, int? take, String? search}) async {
     return fetchRequest(

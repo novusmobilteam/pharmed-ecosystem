@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/providers/usecase_providers.dart';
+import 'package:pharmed_client/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_client/features/dashboard/domain/usecase/cabin_visualizer_usecase.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -20,6 +21,7 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
   // Veriler 7 dakikada bir güncellenir.
   static const _refreshInterval = Duration(minutes: 7);
   Timer? _timer;
+  FilteredMenus? _pendingMenus;
 
   GetCriticalStocksUseCase get _getCriticalStocks => ref.read(getCriticalStocksUseCaseProvider);
   GetExpiringMaterialsUseCase get _getExpiringMaterials => ref.read(getExpiringMaterialsUseCaseProvider);
@@ -31,6 +33,7 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
     ref.onDispose(() => _timer?.cancel());
 
     Future.microtask(_load);
+    Future.microtask(_fetchMenus);
     _startPeriodicRefresh();
 
     return const DashboardLoading();
@@ -40,6 +43,51 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
   Future<void> refresh() => _load(forceRefresh: true);
 
   // ── Yükleme ──────────────────────────────────────────────────
+
+  Future<void> _fetchMenus() async {
+    final current = state;
+    final hasMenu = switch (current) {
+      DashboardLoaded(:final menuTree) => menuTree != null,
+      DashboardStale(:final menuTree) => menuTree != null,
+      DashboardPartial(:final menuTree) => menuTree != null,
+      _ => false,
+    };
+    if (hasMenu) return;
+
+    final user = ref.read(authNotifierProvider.notifier).currentUser;
+    final menuResult = await ref.read(getFilteredMenusUseCaseProvider)(userId: user?.id);
+
+    menuResult.when(
+      success: (menus) => _applyMenus(menus),
+      stale: (menus, savedAt) => _applyMenus(menus), // [HAZ-007]
+      failure: (_) {
+        // Dashboard gösterilebilir, menü bölümü hata gösterir
+        final current = state;
+        state = switch (current) {
+          DashboardLoaded() => current.copyWith(failedSections: [DashboardSection.menu]),
+          DashboardStale() => current.copyWith(failedSections: [DashboardSection.menu]),
+          DashboardPartial() => current.copyWith(failedSections: [...current.failedSections, DashboardSection.menu]),
+          _ => current, // Loading → _resolveState zaten _pendingMenus'a bakar, menu null kalır
+        };
+      },
+    );
+  }
+
+  void _applyMenus(FilteredMenus menus) {
+    final current = state;
+
+    state = switch (current) {
+      DashboardLoaded() => current.copyWith(menuTree: menus.tree, flattenedMenus: menus.flattened),
+      DashboardStale() => current.copyWith(menuTree: menus.tree, flattenedMenus: menus.flattened),
+      DashboardPartial() => current.copyWith(menuTree: menus.tree, flattenedMenus: menus.flattened),
+      _ => current,
+    };
+
+    // Periyodik fetch henüz tamamlanmadı — pending'de sakla
+    if (current is DashboardLoading) {
+      _pendingMenus = menus;
+    }
+  }
 
   // [SWREQ-UI-DASH-003]
   Future<void> _load({bool forceRefresh = false}) async {
@@ -142,7 +190,14 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
       );
       // HAZ-009: kritik stok verisi stale ise aksiyon kısıtlanır
       final canProceed = criticalResult is! RepoStale;
-      state = DashboardStale(data: data, staleSince: staleEntry.savedAt, canProceed: canProceed);
+      state = DashboardStale(
+        data: data,
+        staleSince: staleEntry.savedAt,
+        canProceed: canProceed,
+        menuTree: _pendingMenus?.tree,
+        flattenedMenus: _pendingMenus?.flattened,
+      );
+      _pendingMenus = null;
       return;
     }
 
@@ -153,13 +208,19 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
         swreq: 'SWREQ-UI-DASH-003',
         message: 'Dashboard: kısmi yükleme — başarısız: $failedSections',
       );
-      state = DashboardPartial(data: data, failedSections: failedSections);
+      state = DashboardPartial(
+        data: data,
+        failedSections: failedSections,
+        menuTree: _pendingMenus?.tree,
+        flattenedMenus: _pendingMenus?.flattened,
+      );
+      _pendingMenus = null;
       return;
     }
 
     // Tam başarı
     MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard başarıyla yüklendi');
-    state = DashboardLoaded(data);
+    state = DashboardLoaded(data).copyWith(menuTree: _pendingMenus?.tree, flattenedMenus: _pendingMenus?.flattened);
   }
 
   /// RepoSuccess veya RepoStale → data döner, RepoFailure → null

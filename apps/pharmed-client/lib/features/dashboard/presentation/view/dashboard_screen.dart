@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/features/cabin/presentation/widgets/cabin_summary_view.dart';
 import 'package:pharmed_client/features/dashboard/domain/usecase/cabin_visualizer_usecase.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
 import 'package:pharmed_client/shared/widgets/organisms/login_modal.dart';

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../../../core/widgets/dashboard_status_view.dart';
 import '../../../core/widgets/navigation_sidebar.dart';
-import '../../favorite/presentation/view/favorite_quick_access.dart';
 import '../notifier/home_notifier.dart';
 import 'grid_menu_view.dart';
 
@@ -134,7 +133,7 @@ class _HomeView extends StatelessWidget {
               child: Column(
                 children: [
                   DashboardStatusView(width: kRightColumnWidth),
-                  Expanded(child: FavoriteQuickAccess(allMenuItems: notifier.menuItems)),
+                  // Expanded(child: FavoriteQuickAccess(allMenuItems: notifier.menuItems)),
                 ],
               ),
             ),

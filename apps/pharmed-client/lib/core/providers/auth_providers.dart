@@ -53,6 +53,7 @@ final authRepositoryProvider = Provider<IAuthRepository>((ref) {
     remoteDataSource: ref.read(authRemoteDataSourceProvider),
     cacheDataSource: ref.read(authCacheProvider),
     userReader: ref.read(userRepositoryProvider),
+    tokenHolder: ref.read(tokenHolderProvider),
   );
 });
 
