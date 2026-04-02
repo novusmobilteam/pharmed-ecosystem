@@ -19,7 +19,6 @@ import 'features/directed_orders/di/directed_orders_di.dart';
 import 'features/dosage_form/di/dosage_form_di.dart';
 import 'features/drug_class/di/drug_class_di.dart';
 import 'features/drug_type/di/drug_type_di.dart';
-import 'features/favorite/favorite_dependency_injection.dart';
 import 'features/filling_list/di/filling_list_di.dart';
 import 'features/firm/di/firm_dependency_injection.dart';
 import 'features/home/notifier/home_notifier.dart';
@@ -35,7 +34,6 @@ import 'features/medicine_refill/di/medicine_refill_di.dart';
 import 'features/medicine_refund/di/medicine_refund_di.dart';
 import 'features/medicine_unload/di/medicine_unload_di.dart';
 import 'features/medicine_withdraw/domain/di/medicine_withdraw_di.dart';
-import 'features/menu/menu_dependency_injection.dart';
 import 'features/patient/di/patient_dependency_injection.dart';
 import 'features/prescription/di/prescription_dependency_injection.dart';
 import 'features/role/di/role_dependency_injection.dart';
@@ -65,11 +63,9 @@ Future<void> start(SharedPreferences prefs) async {
         ...SettingsProviders.providers(prefs),
 
         // Common
-        ...FavoriteProviders.providers,
         //...AuthProviders.providers,
 
         // Features
-        ...MenuProviders.providers(isDev: isDev),
         ...UserProviders.providers,
         ...StationProviders.providers(prefs, isDev: isDev),
         ...CabinFaultProviders.providers(isDev: isDev),

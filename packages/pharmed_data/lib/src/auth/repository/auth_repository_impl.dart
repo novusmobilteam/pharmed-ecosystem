@@ -16,22 +16,23 @@
 
 import 'package:dio/dio.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-
-import '../datasource/auth_cache_datasource.dart';
-import '../datasource/auth_remote_datasource.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 class AuthRepositoryImpl implements IAuthRepository {
   const AuthRepositoryImpl({
     required IAuthRemoteDataSource remoteDataSource,
     required IAuthCacheDataSource cacheDataSource,
     required IUserReader userReader,
+    required TokenHolder tokenHolder,
   }) : _remote = remoteDataSource,
        _cache = cacheDataSource,
-       _user = userReader;
+       _user = userReader,
+       _tokenHolder = tokenHolder;
 
   final IAuthRemoteDataSource _remote;
   final IAuthCacheDataSource _cache;
   final IUserReader _user;
+  final TokenHolder _tokenHolder;
 
   @override
   Future<Result<AuthToken>> login({required String email, required String password, String? macAddress}) async {
@@ -41,6 +42,7 @@ class AuthRepositoryImpl implements IAuthRepository {
 
       // 2. Token'ı cache'e yaz — interceptor bir sonraki istekte bunu okur
       await _cache.saveToken(token);
+      _tokenHolder.setToken(token);
 
       // 3. Kullanıcı bilgisini çek
       final userResult = await _user.getCurrentUser();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pharmed_manager/core/core.dart';
 
-import '../../menu/menu.dart';
 import 'menu_card.dart';
 
 class GridMenuView extends StatelessWidget {
@@ -10,13 +10,7 @@ class GridMenuView extends StatelessWidget {
   final int crossAxisCount;
   final double childAspectRatio;
 
-  const GridMenuView({
-    super.key,
-    required this.items,
-    this.title,
-    this.crossAxisCount = 3,
-    this.childAspectRatio = 2,
-  });
+  const GridMenuView({super.key, required this.items, this.title, this.crossAxisCount = 3, this.childAspectRatio = 2});
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +24,9 @@ class GridMenuView extends StatelessWidget {
             height: 85,
             child: Text(
               title!,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, letterSpacing: -0.5),
             ),
           ),
           SizedBox(height: 15),
@@ -55,10 +48,7 @@ class GridMenuView extends StatelessWidget {
                   ),
                   itemBuilder: (context, index) {
                     final item = items[index];
-                    return MenuCard(
-                      item: item,
-                      onTap: () => _handleMenuTap(context, item),
-                    );
+                    return MenuCard(item: item, onTap: () => _handleMenuTap(context, item));
                   },
                 ),
         ),
@@ -71,17 +61,11 @@ class GridMenuView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.category_outlined,
-            size: 64,
-            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
-          ),
+          Icon(Icons.category_outlined, size: 64, color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5)),
           const SizedBox(height: 16),
           Text(
             'Bu kategoriye ait alt menü bulunamadı.',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.outline),
           ),
         ],
       ),
@@ -90,13 +74,10 @@ class GridMenuView extends StatelessWidget {
 
   void _handleMenuTap(BuildContext context, MenuItem m) {
     debugPrint(m.slug);
-    if (m.builder != null) {
-      showDialog(
-        context: context,
-        builder: (dialogContext) => m.builder!(dialogContext),
-      );
-      return;
-    }
+    // if (m.builder != null) {
+    //   showDialog(context: context, builder: (dialogContext) => m.builder!(dialogContext));
+    //   return;
+    // }
 
     if (m.route != null && m.route!.isNotEmpty) {
       context.pushNamed(m.route!);
@@ -104,10 +85,7 @@ class GridMenuView extends StatelessWidget {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${m.label} sayfası henüz hazır değil.'),
-        behavior: SnackBarBehavior.floating,
-      ),
+      SnackBar(content: Text('${m.label} sayfası henüz hazır değil.'), behavior: SnackBarBehavior.floating),
     );
   }
 }

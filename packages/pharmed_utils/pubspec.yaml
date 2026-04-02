@@ -7,4 +7,5 @@ environment:
 
 dependencies:
   intl: ^0.20.2
+  device_info_plus: ^12.3.0
 resolution: workspace

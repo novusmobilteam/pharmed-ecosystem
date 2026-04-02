@@ -17,6 +17,7 @@ class CabinView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //return CabinSummaryView.fromData(data: cabin, powerStatus: LedStatus.on, alertStatus: LedStatus.off);
     return Container(
       decoration: BoxDecoration(
         color: MedColors.surface,

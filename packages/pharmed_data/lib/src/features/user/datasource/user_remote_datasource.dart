@@ -17,7 +17,7 @@ class UserRemoteDataSource {
 
   Future<Result<UserDTO?>> getCurrentUser() {
     return _api.get(
-      '$_base/getCurrentUser',
+      '/CurrentUser',
       parser: (data) => data != null ? UserDTO.fromJson(Map<String, dynamic>.from(data as Map)) : null,
     );
   }

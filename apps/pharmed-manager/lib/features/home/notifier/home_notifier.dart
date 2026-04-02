@@ -1,9 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
-import '../../menu/domain/usecase/get_filtered_menus_usecase.dart';
-import '../../menu/menu.dart';
 
 class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetFilteredMenusUseCase _getFilteredMenusUseCase;
@@ -49,16 +46,16 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> fetchMenus() async {
-    await execute(
-      fetchOp,
-      operation: () => _getFilteredMenusUseCase.call(userId: _authStorageNotifier.user?.id),
-      onData: (data) {
-        _activeTab = 0;
-        _menuTree = data.tree.sorted((a, b) => (b.orderNo ?? 0).compareTo(a.orderNo ?? 0)).toList();
-        _flattenedMenus = data.flattened;
-        notifyListeners();
-      },
-    );
+    // await execute(
+    //   fetchOp,
+    //   operation: () => _getFilteredMenusUseCase.call(userId: _authStorageNotifier.user?.id),
+    //   onData: (data) {
+    //     _activeTab = 0;
+    //     _menuTree = data.tree.sorted((a, b) => (b.orderNo ?? 0).compareTo(a.orderNo ?? 0)).toList();
+    //     _flattenedMenus = data.flattened;
+    //     notifyListeners();
+    //   },
+    // );
   }
 
   void changeTab(int index) {

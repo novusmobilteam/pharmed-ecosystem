@@ -8,12 +8,16 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
   final String _basePath = '/Dashboard';
 
   @override
-  // TODO: implement logSwreq
-  String get logSwreq => throw UnimplementedError();
+  String get logSwreq => 'SWREQ-DATA-DASHBOARD-001';
 
   @override
-  // TODO: implement logUnit
-  String get logUnit => throw UnimplementedError();
+  String get logUnit => 'SW-UNIT-DASHBOARD';
+
+  Future<Result<List<MenuDTO>?>> getMenus({int? userId}) async {
+    final path = userId == null ? '/Menu' : '/Menu/user/$userId';
+
+    return await fetchRequest<List<MenuDTO>>(path: path, parser: BaseRemoteDataSource.listParser(MenuDTO.fromJson));
+  }
 
   Future<Result<List<CabinStockDTO>?>> getCriticalStocks({bool isClient = false}) async {
     Map<String, dynamic>? query = isClient ? {"mac": DeviceInfo.getMacAddress()} : null;

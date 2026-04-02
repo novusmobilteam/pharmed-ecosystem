@@ -158,4 +158,10 @@ class MockDashboardRepository implements IDashboardRepository {
     await Future.delayed(_delay);
     return RepoSuccess(List.unmodifiable(_upcomingTreatments));
   }
+
+  @override
+  Future<RepoResult<List<MenuItem>>> getMenuItems({int? userId}) async {
+    await Future.delayed(_delay);
+    return RepoSuccess([]);
+  }
 }

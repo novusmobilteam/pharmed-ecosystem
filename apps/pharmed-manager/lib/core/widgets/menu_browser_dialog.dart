@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-
-import '../../features/menu/menu.dart';
 
 class MenuBrowserDialog extends StatefulWidget {
   const MenuBrowserDialog({
@@ -45,11 +44,7 @@ class _MenuBrowserDialogState extends State<MenuBrowserDialog> {
           Container(
             width: 280,
             decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-                ),
-              ),
+              border: Border(right: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3))),
             ),
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -77,27 +72,23 @@ class _MenuBrowserDialogState extends State<MenuBrowserDialog> {
             child: activeParent == null
                 ? const Center(child: Text("Kategori seçimi yok"))
                 : activeParent.children.isEmpty
-                    ? _buildEmptyState(theme)
-                    : GridView.builder(
-                        padding: const EdgeInsets.all(24),
-                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 220,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 1.2,
-                        ),
-                        itemCount: activeParent.children.length,
-                        itemBuilder: (context, index) {
-                          final item = activeParent.children[index];
-                          final isSelected = widget.selectedItems.any((i) => i.id == item.id);
+                ? _buildEmptyState(theme)
+                : GridView.builder(
+                    padding: const EdgeInsets.all(24),
+                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 220,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 1.2,
+                    ),
+                    itemCount: activeParent.children.length,
+                    itemBuilder: (context, index) {
+                      final item = activeParent.children[index];
+                      final isSelected = widget.selectedItems.any((i) => i.id == item.id);
 
-                          return _MenuCard(
-                            item: item,
-                            isSelected: isSelected,
-                            onTap: () => widget.onItemSelected(item),
-                          );
-                        },
-                      ),
+                      return _MenuCard(item: item, isSelected: isSelected, onTap: () => widget.onItemSelected(item));
+                    },
+                  ),
           ),
         ],
       ),
@@ -109,8 +100,11 @@ class _MenuBrowserDialogState extends State<MenuBrowserDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(PhosphorIcons.package(PhosphorIconsStyle.duotone),
-              size: 64, color: theme.colorScheme.outline.withValues(alpha: 0.5)),
+          Icon(
+            PhosphorIcons.package(PhosphorIconsStyle.duotone),
+            size: 64,
+            color: theme.colorScheme.outline.withValues(alpha: 0.5),
+          ),
           const SizedBox(height: 16),
           Text(
             "Bu kategoride menü bulunamadı",
@@ -198,12 +192,7 @@ class _CategoryListItem extends StatelessWidget {
                 ),
 
                 // 3. Ok İşareti (Sadece aktifse görünsün)
-                if (isActive)
-                  Icon(
-                    PhosphorIcons.caretRight(),
-                    size: 16,
-                    color: colorScheme.primary,
-                  ),
+                if (isActive) Icon(PhosphorIcons.caretRight(), size: 16, color: colorScheme.primary),
               ],
             ),
           ),
@@ -218,11 +207,7 @@ class _MenuCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _MenuCard({
-    required this.item,
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _MenuCard({required this.item, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -246,20 +231,11 @@ class _MenuCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: cardBackgroundColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: borderColor,
-            width: borderWidth,
-          ),
+          border: Border.all(color: borderColor, width: borderWidth),
           // Seçili değilse hafif bir derinlik gölgesi
           boxShadow: isSelected
               ? []
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  )
-                ],
+              : [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 3))],
         ),
         child: Stack(
           alignment: Alignment.topLeft,
@@ -313,17 +289,12 @@ class _MenuCard extends StatelessWidget {
                 right: 10,
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: colorScheme.primary, shape: BoxShape.circle, boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      blurRadius: 4,
-                    )
-                  ]),
-                  child: const Icon(
-                    PhosphorIconsRegular.check,
-                    size: 14,
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    shape: BoxShape.circle,
+                    boxShadow: [BoxShadow(color: Colors.white.withValues(alpha: 0.5), blurRadius: 4)],
                   ),
+                  child: const Icon(PhosphorIconsRegular.check, size: 14, color: Colors.white),
                 ),
               ),
           ],

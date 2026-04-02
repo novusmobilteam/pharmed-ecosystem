@@ -11,7 +11,6 @@ class MenuItem {
   final String? route;
   final bool? isManager;
   final String? description;
-  final Widget Function(BuildContext context)? builder;
   final List<MenuItem> children;
 
   MenuItem({
@@ -24,7 +23,6 @@ class MenuItem {
     this.icon,
     this.route,
     this.isManager,
-    this.builder,
     this.description,
     List<MenuItem>? children,
   }) : children = children ?? [];
@@ -39,20 +37,19 @@ class MenuItem {
     IconData? icon,
     String? route,
     String? description,
-    Widget Function(BuildContext context)? builder,
     List<MenuItem>? children,
   }) {
     return MenuItem(
-        id: id ?? this.id,
-        parentId: parentId ?? this.parentId,
-        label: label ?? this.label,
-        name: name ?? this.name,
-        orderNo: orderNo ?? this.orderNo,
-        slug: slug ?? this.slug,
-        icon: icon ?? this.icon,
-        route: route ?? this.route,
-        builder: builder ?? this.builder,
-        children: children ?? this.children,
-        description: description ?? this.description);
+      id: id ?? this.id,
+      parentId: parentId ?? this.parentId,
+      label: label ?? this.label,
+      name: name ?? this.name,
+      orderNo: orderNo ?? this.orderNo,
+      slug: slug ?? this.slug,
+      icon: icon ?? this.icon,
+      route: route ?? this.route,
+      children: children ?? this.children,
+      description: description ?? this.description,
+    );
   }
 }

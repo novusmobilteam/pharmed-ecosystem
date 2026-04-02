@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../menu/domain/usecase/get_filtered_menus_usecase.dart';
-import '../../../../menu/menu.dart';
+
 import '../../../domain/entity/role_menu_authentication.dart';
 import '../../../domain/usecase/get_role_menu_authentication_usecase.dart';
 import '../../../domain/usecase/save_role_menu_authentication_usecase.dart';
@@ -48,7 +47,7 @@ class RoleMenuAuthNotifier extends ChangeNotifier with ApiRequestMixin {
     await executeVoid(
       fetchOp,
       operation: () async {
-        final results = await Future.wait([_getMenusUseCase.call(isFiltered: false), _getAuthUseCase.call(_role)]);
+        final results = await Future.wait([_getMenusUseCase.call(), _getAuthUseCase.call(_role)]);
 
         final menuRes = results[0] as Result<FilteredMenus>;
         final authRes = results[1] as Result<RoleMenuAuthentication>;

@@ -8,33 +8,9 @@
 // Sınıf: Class B — stale data kararı [HAZ-007] ile ilişkili
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../flavor/app_flavor.dart';
-
-// ─────────────────────────────────────────────────────────────────
-// CachedEntry<T> — Hive'a yazılan sarmalayıcı model
-// ─────────────────────────────────────────────────────────────────
-
-class CachedEntry<T> {
-  const CachedEntry({required this.data, required this.savedAt});
-
-  final T data;
-  final DateTime savedAt;
-
-  /// [HAZ-007] maxAgeMinutes geçtiyse stale sayılır
-  bool isStale(int maxAgeMinutes) {
-    final age = DateTime.now().difference(savedAt).inMinutes;
-    return age > maxAgeMinutes;
-  }
-
-  Map<String, dynamic> toJson(Object? Function(T) dataSerializer) => {
-    'data': dataSerializer(data),
-    'savedAt': savedAt.toIso8601String(),
-  };
-
-  static CachedEntry<T> fromJson<T>(Map<dynamic, dynamic> json, T Function(dynamic) dataDeserializer) =>
-      CachedEntry<T>(data: dataDeserializer(json['data']), savedAt: DateTime.parse(json['savedAt'] as String));
-}
 
 // ─────────────────────────────────────────────────────────────────
 // HiveCache<T> — tip güvenli generic cache

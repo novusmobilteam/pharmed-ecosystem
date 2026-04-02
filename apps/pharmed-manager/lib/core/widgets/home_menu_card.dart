@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../features/menu/menu.dart';
-
 class HomeMenuCard extends StatefulWidget {
   final MenuItem item;
   final VoidCallback onTap;
@@ -42,11 +40,7 @@ class _HomeMenuCardState extends State<HomeMenuCard> {
               width: _isHovered ? 1.5 : 1,
             ),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
+              BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),
             ],
           ),
           child: Stack(
@@ -56,11 +50,7 @@ class _HomeMenuCardState extends State<HomeMenuCard> {
               Positioned(
                 bottom: 85,
                 right: 5,
-                child: Icon(
-                  widget.item.icon,
-                  size: 100,
-                  color: colorScheme.primary.withValues(alpha: 0.05),
-                ),
+                child: Icon(widget.item.icon, size: 100, color: colorScheme.primary.withValues(alpha: 0.05)),
               ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -82,9 +72,7 @@ class _HomeMenuCardState extends State<HomeMenuCard> {
                         //const Spacer(),
                         Text(
                           widget.item.label ?? '',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                           maxLines: 2,
                         ),
                       ],
@@ -117,11 +105,7 @@ class _HomeMenuCardState extends State<HomeMenuCard> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Icon(
-                                  PhosphorIcons.caretRight(),
-                                  size: 17,
-                                  color: context.colorScheme.onPrimary,
-                                ),
+                                Icon(PhosphorIcons.caretRight(), size: 17, color: context.colorScheme.onPrimary),
                               ],
                             ),
                           ),

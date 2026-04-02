@@ -15,6 +15,7 @@ final dashboardRepositoryProvider = Provider<IDashboardRepository>((ref) {
       prescriptionItemMapper: PrescriptionItemMapper(),
       prescriptionMapper: PrescriptionMapper(),
       refundMapper: RefundMapper(),
+      menuMapper: MenuTreeMapper(),
     ),
   };
 });
