@@ -2,7 +2,7 @@
 
 import 'dart:ui';
 
-import 'package:pharmed_client/shared/widgets/atoms/med_tokens.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// Kabin işlem ekranının aktif modunu belirler.
 ///

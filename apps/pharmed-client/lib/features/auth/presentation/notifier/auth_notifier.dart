@@ -54,16 +54,14 @@ class AuthNotifier extends Notifier<AuthState> {
   // ── Login ─────────────────────────────────────────────────────
 
   Future<void> login({required String email, required String password, String? macAddress}) async {
-    print('Loginnnn');
     state = const AuthLoading();
 
     final result = await _loginUseCase(LoginParams(email: email, password: password, macAddress: macAddress));
 
     result.when(
       ok: (authToken) {
-        print('authToken: ${authToken.accessToken}');
-        print('authToken user: ${authToken.user}');
         _tokenHolder.setToken(authToken.accessToken);
+        print('User: ${authToken.user.fullName}');
         state = AuthLoggedIn(
           user: authToken.user,
           sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
@@ -71,7 +69,6 @@ class AuthNotifier extends Notifier<AuthState> {
         _startSessionTimer();
       },
       error: (failure) {
-        print('Hataaaaa');
         state = AuthError(message: failure is ServiceException ? failure.message : 'Bir hata oluştu');
       },
     );

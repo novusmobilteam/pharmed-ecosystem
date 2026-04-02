@@ -7,7 +7,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
 abstract interface class IUserManager implements IUserReader {
-  Future<Result<ApiResponse<List<User>>>> getUsers({
+  Future<Result<ApiResponse<List<User>>?>> getUsers({
     UserType? type,
     int? skip,
     int? take,

@@ -7,51 +7,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 // ─────────────────────────────────────────────────────────────────
-// MenuItem — alt navigasyon çubuğu öğesi
-// Şimdilik statik — ileride MenuDataSource'tan beslenecek
-// ─────────────────────────────────────────────────────────────────
-
-class MenuItem extends Equatable {
-  const MenuItem({
-    required this.id,
-    required this.label,
-    required this.icon,
-    this.requiresAuth = true,
-    this.isActive = false,
-  });
-
-  final String id;
-  final String label;
-  final IconData icon;
-
-  /// true → giriş yapılmamışsa kilitli görünür
-  final bool requiresAuth;
-  final bool isActive;
-
-  MenuItem copyWith({bool? isActive}) =>
-      MenuItem(id: id, label: label, icon: icon, requiresAuth: requiresAuth, isActive: isActive ?? this.isActive);
-
-  @override
-  List<Object?> get props => [id, isActive];
-}
-
-// Varsayılan menü listesi
-// [SWREQ-UI-DASH-005] Şimdilik statik. MenuDataSource entegrasyonu
-// eklendiğinde DI üzerinden beslenecek, bu liste fallback olarak kalacak.
-final kDefaultMenuItems = [
-  const MenuItem(
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: Icons.grid_view_rounded,
-    requiresAuth: false,
-    isActive: true,
-  ),
-  const MenuItem(id: 'cabin', label: 'Kabin Yönetimi', icon: Icons.lock_outline_rounded, requiresAuth: true),
-  const MenuItem(id: 'patients', label: 'Hasta Listesi', icon: Icons.people_outline_rounded, requiresAuth: true),
-  const MenuItem(id: 'stock', label: 'Stok Takibi', icon: Icons.inventory_2_outlined, requiresAuth: true),
-];
-
-// ─────────────────────────────────────────────────────────────────
 // AlertItem — uyarı listesi öğesi
 // ─────────────────────────────────────────────────────────────────
 

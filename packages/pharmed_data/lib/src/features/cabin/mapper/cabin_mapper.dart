@@ -24,10 +24,12 @@ class CabinMapper {
     return CabinDTO(
       id: entity.id,
       name: entity.name,
+      type: entity.type?.id,
       stationId: entity.stationId,
       station: StationMapper().toDtoOrNull(entity.station),
       comPortsId: entity.comPort?.id,
       dvrIp: entity.dvrIp,
+      isActive: entity.status?.isActive,
     );
   }
 

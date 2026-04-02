@@ -6,8 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/setup/app_setup_notifier.dart';
-import '../../../../shared/widgets/atoms/med_tokens.dart';
-import '../../../../shared/widgets/atoms/med_button.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import '../notifier/setup_wizard_notifier.dart';
 import '../state/setup_wizard_ui_state.dart';
 import 'steps/step1/step1_cabin_type.dart';

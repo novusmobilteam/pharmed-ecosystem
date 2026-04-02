@@ -4,10 +4,9 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_client/shared/widgets/molecules/med_select_field.dart';
-import '../../../../../../shared/widgets/atoms/med_tokens.dart';
-import '../../../../../../shared/widgets/atoms/med_text_field.dart';
-import '../../../../../../shared/widgets/molecules/med_ip_field.dart';
+
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 import '../../../../domain/model/cabin_setup_config.dart';
 import '../../widgets/step_shared_widgets.dart';
 

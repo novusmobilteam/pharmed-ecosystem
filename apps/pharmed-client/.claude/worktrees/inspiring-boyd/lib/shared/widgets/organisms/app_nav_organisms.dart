@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/l10n/l10n.dart';
 import '../../../features/dashboard/domain/model/app_model.dart';
-import '../atoms/atoms.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ═════════════════════════════════════════════════════════════════
 // AppSubNav

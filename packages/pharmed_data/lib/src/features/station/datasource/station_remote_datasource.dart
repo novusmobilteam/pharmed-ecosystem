@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 
 class StationRemoteDataSource extends BaseRemoteDataSource {
   StationRemoteDataSource({required super.apiManager});
@@ -13,12 +14,12 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
   String get logUnit => 'SW-UNIT-STATION';
 
   Future<Result<ApiResponse<List<StationDTO>>?>> getStations({int? skip, int? take, String? search}) async {
-    return fetchRequest(
+    return await fetchRequest(
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
-      searchFields: const ['name'],
+      //searchText: search,
+      //searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(StationDTO.fromJson),
       successLog: 'İstasyonlar getirildi',
@@ -49,9 +50,8 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateStationMacAddress(int stationId) async {
-    // TODO : Düzelt
-    //final macAddress = await DeviceInfo.getMacAddress();
-    final macAddress = '';
+    final macAddress = await DeviceInfo.getMacAddress();
+
     return updateRequest(
       path: '$_base/macAddress/$stationId?macAddress=$macAddress',
       parser: BaseRemoteDataSource.voidParser(),

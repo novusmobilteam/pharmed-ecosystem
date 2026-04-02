@@ -20,8 +20,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:pharmed_client/features/cabin/presentation/state/cabin_operation_mode.dart';
-import 'package:pharmed_client/shared/widgets/atoms/med_tokens.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // DrawerDetailPanel

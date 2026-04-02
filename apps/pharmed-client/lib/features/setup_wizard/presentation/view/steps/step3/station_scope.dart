@@ -26,6 +26,7 @@ class _StationScopeBody extends StatelessWidget {
         stations: stations,
         selectedStationId: selectedStationId,
         onSelected: onStationSelected,
+        onRetry: onRetry,
       ),
     };
   }
@@ -96,21 +97,38 @@ class _StationsError extends StatelessWidget {
 }
 
 class _StationList extends StatelessWidget {
-  const _StationList({required this.stations, required this.selectedStationId, required this.onSelected});
+  const _StationList({
+    required this.stations,
+    required this.selectedStationId,
+    required this.onSelected,
+    required this.onRetry,
+  });
 
   final List<Station> stations;
   final int? selectedStationId;
   final ValueChanged<Station> onSelected;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
     if (stations.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
         height: 200,
         child: Center(
-          child: Text(
-            'Kayıtlı istasyon bulunamadı.',
-            style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
+          child: Column(
+            children: [
+              Text(
+                'Kayıtlı istasyon bulunamadı.',
+                style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
+              ),
+              MedButton(
+                label: 'Tekrar Dene',
+                variant: MedButtonVariant.secondary,
+                size: MedButtonSize.sm,
+                prefixIcon: Icon(Icons.refresh_rounded, size: 15),
+                onPressed: onRetry,
+              ),
+            ],
           ),
         ),
       );

@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pharmed_core/src/result/result.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core.dart';
 
 part 'selection_dialog.dart';
 
-typedef DialogFuture<T> = Future<Result<ApiResponse<List<T>>>> Function();
+typedef DialogFuture<T> = Future<Result<ApiResponse<List<T>>?>> Function();
 
 /// Tekli Seçim Yapan Dialog Input
 class DialogInputField<T extends Selectable> extends BaseInputField<T> {

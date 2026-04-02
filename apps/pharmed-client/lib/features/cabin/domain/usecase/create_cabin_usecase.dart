@@ -20,6 +20,9 @@ class CreateCabinUseCase {
       );
     }
     final res = await _stationRepository.updateStationMacAddress(stationId);
-    return res.when(error: Result.error, ok: (_) => _repository.createCabin(cabin));
+    return res.when(
+      error: Result.error,
+      ok: (_) => _repository.createCabin(cabin.copyWith(status: Status.active)),
+    );
   }
 }

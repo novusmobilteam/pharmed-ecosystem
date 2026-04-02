@@ -3,10 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/features/cabin/presentation/widgets/cabin_summary_view.dart';
-import 'package:pharmed_client/features/dashboard/domain/usecase/cabin_visualizer_usecase.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
-import 'package:pharmed_client/shared/widgets/organisms/login_modal.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../auth/presentation/notifier/auth_notifier.dart';
@@ -16,11 +13,6 @@ import '../../domain/model/dasboard_data.dart';
 
 import '../notifier/dashboard_notifier.dart';
 import '../state/dashboard_ui_state.dart';
-import '../../../../../shared/widgets/atoms/atoms.dart';
-import '../../../../../shared/widgets/molecules/molecules.dart';
-import '../../../../../shared/widgets/organisms/organisms.dart';
-import '../../../../../shared/widgets/organisms/app_top_bar.dart';
-import '../../../../../shared/widgets/organisms/app_nav_organisms.dart';
 
 part 'upcoming_treatments_view.dart';
 part 'kpi_view.dart';
@@ -40,6 +32,13 @@ class DashboardScreen extends ConsumerWidget {
     final isLoggedIn = authNotif.isLoggedIn;
     final currentUser = authNotif.currentUser;
     final isExpiring = authState is AuthSessionExpiring;
+
+    final List<MenuItem> menuItems = switch (dashState) {
+      DashboardLoaded(:final menuTree) => menuTree ?? [],
+      DashboardStale(:final menuTree) => menuTree ?? [],
+      DashboardPartial(:final menuTree) => menuTree ?? [],
+      _ => [], // Loading veya Error durumunda boş liste
+    };
 
     return GestureDetector(
       // Her dokunuş oturum sayacını sıfırlar
@@ -62,7 +61,7 @@ class DashboardScreen extends ConsumerWidget {
               children: [
                 // ── SubNav ────────────────────────────────────
                 AppSubNav(
-                  items: kDefaultMenuItems,
+                  items: menuItems,
                   isLoggedIn: isLoggedIn,
                   shiftLabel: 'Gündüz · 07:00–19:00',
                   onItemTap: (id) {},
@@ -224,14 +223,13 @@ class _DashboardBody extends StatelessWidget {
                       const SizedBox(height: 14),
 
                       // Hızlı İşlemler
-                      QuickActionsGrid(
-                        actions: kDefaultQuickActions,
-                        isLoggedIn: isLoggedIn,
-                        onActionTap: (id) {
-                          // TODO: action routing
-                        },
-                      ),
-
+                      // QuickActionsGrid(
+                      //   actions: kDefaultQuickActions,
+                      //   isLoggedIn: isLoggedIn,
+                      //   onActionTap: (id) {
+                      //     // TODO: action routing
+                      //   },
+                      // ),
                       const SizedBox(height: 14),
 
                       // Son Aktiviteler

@@ -8,13 +8,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/auth/presentation/screen/login_screen.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../setup/app_setup_notifier.dart';
 import '../../features/auth/presentation/notifier/auth_notifier.dart';
 import '../../features/auth/presentation/state/auth_state.dart';
 import '../../features/setup_wizard/presentation/view/setup_wizard_screen.dart';
 import '../../features/dashboard/presentation/view/dashboard_screen.dart';
-import '../../shared/widgets/atoms/med_tokens.dart';
 
 class AppRouter extends ConsumerWidget {
   const AppRouter({super.key});

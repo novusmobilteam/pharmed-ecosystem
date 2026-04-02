@@ -67,7 +67,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     if (current.draft.cabinetType == CabinType.mobile) return;
 
     // Zaten yüklendiyse tekrar istek atma
-    if (current.stationsLoadState == StationsLoadState.loaded) return;
+    //if (current.stationsLoadState == StationsLoadState.loaded) return;
 
     MedLogger.info(unit: 'SW-UNIT-SETUP', swreq: 'SWREQ-SETUP-UI-008', message: 'İstasyon listesi yükleniyor');
 
@@ -81,6 +81,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
     result.when(
       ok: (response) {
+        print('Notifier${response.data}');
         final stations = response.data ?? [];
         MedLogger.info(
           unit: 'SW-UNIT-SETUP',

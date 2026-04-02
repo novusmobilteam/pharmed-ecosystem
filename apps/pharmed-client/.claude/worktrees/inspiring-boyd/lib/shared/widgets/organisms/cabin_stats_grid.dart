@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../atoms/atoms.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import '../molecules/molecules.dart';
 
 // ─────────────────────────────────────────────────────────────────

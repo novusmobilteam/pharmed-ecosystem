@@ -20,7 +20,7 @@ class GetUsersUseCase {
 
   final IUserManager _repository;
 
-  Future<Result<ApiResponse<List<User>>>> call(GetUsersParams params) => _repository.getUsers(
+  Future<Result<ApiResponse<List<User>>?>> call(GetUsersParams params) => _repository.getUsers(
     type: params.type,
     skip: params.skip,
     take: params.take,

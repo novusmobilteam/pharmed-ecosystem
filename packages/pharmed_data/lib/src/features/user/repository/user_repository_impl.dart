@@ -9,8 +9,6 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/features/user/datasource/user_remote_datasource.dart';
-import 'package:pharmed_data/src/features/user/mapper/user_mapper.dart';
 
 class UserRepositoryImpl implements IUserManager {
   const UserRepositoryImpl({required UserRemoteDataSource dataSource, required UserMapper mapper})
@@ -25,13 +23,21 @@ class UserRepositoryImpl implements IUserManager {
   @override
   Future<Result<User?>> getCurrentUser() async {
     final result = await _dataSource.getCurrentUser();
-    return result.when(ok: (dto) => Result.ok(_mapper.toEntityOrNull(dto)), error: (e) => Result.error(e));
+
+    return result.when(
+      ok: (dto) {
+        print('inside User Repository IMp');
+        print(dto?.name);
+        return Result.ok(_mapper.toEntityOrNull(dto));
+      },
+      error: (e) => Result.error(e),
+    );
   }
 
   // ── IUserManager ─────────────────────────────────────────────
 
   @override
-  Future<Result<ApiResponse<List<User>>>> getUsers({
+  Future<Result<ApiResponse<List<User>>?>> getUsers({
     UserType? type,
     int? skip,
     int? take,
@@ -48,9 +54,9 @@ class UserRepositoryImpl implements IUserManager {
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<User>>(
-          data: apiResponse.data != null ? _mapper.toEntityList(apiResponse.data!) : null,
-          isSuccess: apiResponse.isSuccess,
-          totalCount: apiResponse.totalCount,
+          data: apiResponse?.data != null ? _mapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
         ),
       ),
       error: (e) => Result.error(e),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_client/core/providers/auth_providers.dart';
 import 'package:pharmed_client/core/providers/datasource_providers.dart';
 import 'package:pharmed_data/pharmed_data.dart';
@@ -13,7 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlavorConfig.initialize(AppFlavor.mock);
   await AppBootstrap.init();
-  MedLogger.configure(verboseLogging: true); // ← ekle
+  MedLogger.configure(verboseLogging: true);
 
   // Mock test için cache'i temizle
   final container = ProviderContainer();

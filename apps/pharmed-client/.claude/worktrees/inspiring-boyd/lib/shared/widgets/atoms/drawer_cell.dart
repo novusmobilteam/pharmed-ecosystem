@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'med_tokens.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // DrawerCell

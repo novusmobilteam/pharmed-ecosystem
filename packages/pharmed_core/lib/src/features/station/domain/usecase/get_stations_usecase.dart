@@ -17,6 +17,7 @@ class GetStationsUseCase {
 
   final IStationRepository _repository;
 
-  Future<Result<ApiResponse<List<Station>>>> call(GetStationsParams params) =>
-      _repository.getStations(skip: params.skip, take: params.take, search: params.search);
+  Future<Result<ApiResponse<List<Station>>>> call(GetStationsParams params) async {
+    return await _repository.getStations(skip: params.skip, take: params.take, search: params.search);
+  }
 }

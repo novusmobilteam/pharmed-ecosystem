@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/shared/widgets/atoms/med_tokens.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import '../notifier/auth_notifier.dart';
 import '../state/auth_state.dart';
 

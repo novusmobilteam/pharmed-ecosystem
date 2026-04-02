@@ -3,8 +3,7 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
-import '../../../../../shared/widgets/atoms/med_tokens.dart';
-import '../../../../../shared/widgets/atoms/med_button.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class StepHeader extends StatelessWidget {
   const StepHeader({super.key, required this.badge, required this.title, required this.subtitle});

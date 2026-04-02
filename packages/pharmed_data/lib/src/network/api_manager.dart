@@ -28,8 +28,6 @@ class APIManager {
            headers: {'Content-Type': 'application/json'},
          ),
        ) {
-    print('API Manager Token');
-    print(tokenProvider.accessToken);
     _dio.interceptors.addAll([TokenInterceptor(tokenProvider: tokenProvider), ...?extraInterceptors]);
   }
 

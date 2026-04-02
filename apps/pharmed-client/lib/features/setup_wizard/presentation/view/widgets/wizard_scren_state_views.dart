@@ -65,7 +65,7 @@ class WizardActiveView extends ConsumerWidget {
           stations: state.stations,
           stationsError: state.stationsError,
           onScopeChanged: notifier.updateServiceScope,
-          onRetryStations: notifier.loadStations,
+          onRetryStations: () => notifier.loadStations(),
           onNext: draft.step3Complete ? notifier.nextStep : null,
           onBack: notifier.previousStep,
         );

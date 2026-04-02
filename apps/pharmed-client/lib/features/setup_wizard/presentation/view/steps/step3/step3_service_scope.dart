@@ -7,9 +7,9 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_client/features/setup_wizard/domain/model/cabin_setup_config.dart';
 import 'package:pharmed_client/features/setup_wizard/presentation/state/setup_wizard_ui_state.dart';
-import 'package:pharmed_client/shared/widgets/atoms/med_button.dart';
-import 'package:pharmed_client/shared/widgets/atoms/med_tokens.dart';
+import 'package:pharmed_ui/src/widgets/atoms/med_button.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../widgets/step_shared_widgets.dart';
 

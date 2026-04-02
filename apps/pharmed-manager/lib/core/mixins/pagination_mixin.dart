@@ -74,17 +74,17 @@ mixin PaginationMixin<T> on ApiRequestMixin {
   // ── Veri çekme ────────────────────────────────────────────────────────────
 
   Future<void> fetchPagedData({
-    required Future<Result<ApiResponse<List<T>>>> Function(int skip, int take) fetchMethod,
+    required Future<Result<ApiResponse<List<T>>?>> Function(int skip, int take) fetchMethod,
   }) async {
     final skip = (_currentPage - 1) * _pageSize;
 
-    await execute<ApiResponse<List<T>>>(
+    await execute(
       const OperationKey.fetch(),
       operation: () => fetchMethod(skip, _pageSize),
       onData: (apiResponse) {
-        if (apiResponse.isSuccess == true) {
-          _items = apiResponse.data ?? [];
-          _totalCount = apiResponse.totalCount ?? 0;
+        if (apiResponse?.isSuccess == true) {
+          _items = apiResponse?.data ?? [];
+          _totalCount = apiResponse?.totalCount ?? 0;
         } else {
           _items = [];
           _totalCount = 0;
