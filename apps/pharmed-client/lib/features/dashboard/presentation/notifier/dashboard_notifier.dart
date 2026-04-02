@@ -5,6 +5,7 @@
 // Sınıf: Class B
 
 import 'dart:async';
+import 'package:collection/collection.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/providers/usecase_providers.dart';
@@ -237,4 +238,38 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
     }
     return null;
   }
+
+  void navigateTo(dynamic destination) {
+    final current = state;
+    String targetRoute = 'dashboard';
+
+    // 1. Gelen değer int ise (menuId), flattenedMenus içinden routePath'i bul
+    if (destination is int) {
+      final menus = _getFlattenMenus(current);
+      final targetMenu = menus?.firstWhereOrNull((m) => m.id == destination);
+      targetRoute = targetMenu?.slug ?? 'dashboard';
+    }
+    // 2. Gelen değer String ise (doğrudan path), onu kullan
+    else if (destination is String) {
+      targetRoute = destination;
+    }
+
+    // 3. Mevcut state tipine göre copyWith ile rotayı güncelle
+    state = switch (current) {
+      DashboardLoaded s => s.copyWith(activeRoute: targetRoute),
+      DashboardStale s => s.copyWith(activeRoute: targetRoute),
+      DashboardPartial s => s.copyWith(activeRoute: targetRoute),
+      _ => current, // Loading veya Error durumunda rota değişmez
+    };
+
+    MedLogger.info(unit: 'SW-UNIT-UI', message: 'Navigasyon tetiklendi: Target -> $targetRoute', swreq: '');
+  }
+
+  // Yardımcı metod: Farklı state tiplerinden listeyi güvenli al
+  List<MenuItem>? _getFlattenMenus(DashboardUiState s) => switch (s) {
+    DashboardLoaded(:final flattenedMenus) => flattenedMenus,
+    DashboardStale(:final flattenedMenus) => flattenedMenus,
+    DashboardPartial(:final flattenedMenus) => flattenedMenus,
+    _ => null,
+  };
 }

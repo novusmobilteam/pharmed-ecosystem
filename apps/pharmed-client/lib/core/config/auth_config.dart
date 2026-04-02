@@ -1,6 +1,5 @@
 class AuthConfig {
-  const AuthConfig({required this.inactivityTimeoutMinutes, this.warningSeconds = 60})
-    : assert(warningSeconds < inactivityTimeoutMinutes * 60, 'warningSeconds, timeout süresinden kısa olmalıdır');
+  const AuthConfig({required this.inactivityTimeoutMinutes, this.warningSeconds = 60});
 
   /// Ekrana dokunulmadan geçen süre (dakika).
   /// pharmed_client  → 10

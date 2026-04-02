@@ -16,6 +16,8 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onLoginTap,
     this.onLogoutTap,
     this.onUserTap,
+    this.onBackToHome,
+    this.showBackButton = false,
   });
 
   /// Örn: "Kat 3 · Koridor B"
@@ -27,6 +29,9 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onLoginTap;
   final VoidCallback? onLogoutTap;
   final VoidCallback? onUserTap;
+
+  final VoidCallback? onBackToHome;
+  final bool showBackButton;
 
   @override
   State<DashboardAppBar> createState() => _DashboardAppBarState();

@@ -17,24 +17,28 @@ class GetFilteredMenusUseCase {
 
     return result.when(
       success: (treeMenus) {
-        // 1. Veri başarıyla geldi (Tree yapısı Repo'dan geliyor)
-        final tree = List<MenuItem>.from(treeMenus);
-        final flattened = _flattenTree(tree);
-
-        return RepoSuccess(FilteredMenus(tree: tree, flattened: flattened));
+        final processed = _processMenus(treeMenus);
+        return RepoSuccess(processed);
       },
       stale: (treeMenus, savedAt) {
-        // 2. Veri cache'den geldi (Stale)
-        final tree = List<MenuItem>.from(treeMenus);
-        final flattened = _flattenTree(tree);
-
-        return RepoStale(FilteredMenus(tree: tree, flattened: flattened), savedAt);
+        final processed = _processMenus(treeMenus);
+        return RepoStale(processed, savedAt);
       },
-      failure: (error) {
-        // 3. Hata durumu
-        return RepoFailure(error);
-      },
+      failure: (error) => RepoFailure(error),
     );
+  }
+
+  FilteredMenus _processMenus(List<MenuItem> treeMenus) {
+    // 1. Dashboard öğesini oluştur
+    final dashboardItem = MenuItem(id: -1, name: 'Anasayfa', route: 'dashboard', children: []);
+
+    // 2. Orijinal listeyi bozmamak için kopyala ve Dashboard'u başa ekle
+    final updatedTree = [dashboardItem, ...treeMenus];
+
+    // 3. Yeni ağaç üzerinden düz listeyi (Flatten) oluştur
+    final flattened = _flattenTree(updatedTree);
+
+    return FilteredMenus(tree: updatedTree, flattened: flattened);
   }
 
   /// Ağaç yapısını (Tree) rekürsif olarak düz bir listeye (Flatten) dönüştürür.

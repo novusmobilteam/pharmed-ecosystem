@@ -97,11 +97,10 @@ class CabinView extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, required this.dotColor, this.badge});
+  const _SectionHeader({required this.title, required this.dotColor});
 
   final String title;
   final Color dotColor;
-  final Widget? badge;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +116,6 @@ class _SectionHeader extends StatelessWidget {
           StatusDot(color: dotColor, size: 7),
           const SizedBox(width: 7),
           Text(title, style: MedTextStyles.titleSm()),
-          if (badge != null) ...[const Spacer(), badge!],
         ],
       ),
     );

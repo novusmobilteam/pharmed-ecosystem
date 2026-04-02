@@ -24,24 +24,33 @@ final class DashboardLoading extends DashboardUiState {
 
 /// Veriler başarıyla yüklendi
 final class DashboardLoaded extends DashboardUiState {
-  const DashboardLoaded(this.data, {this.menuTree, this.flattenedMenus, this.failedSections});
+  const DashboardLoaded(
+    this.data, {
+    this.menuTree,
+    this.flattenedMenus,
+    this.failedSections,
+    this.activeRoute = 'dashboard',
+  });
 
   final DashboardData data;
   final List<MenuItem>? menuTree;
   final List<MenuItem>? flattenedMenus;
   final List<DashboardSection>? failedSections;
+  final String activeRoute;
 
   DashboardLoaded copyWith({
     DashboardData? data,
     List<MenuItem>? menuTree,
     List<MenuItem>? flattenedMenus,
     List<DashboardSection>? failedSections,
+    String? activeRoute,
   }) {
     return DashboardLoaded(
       data ?? this.data,
       menuTree: menuTree ?? this.menuTree,
       flattenedMenus: flattenedMenus ?? this.flattenedMenus,
       failedSections: failedSections ?? this.failedSections,
+      activeRoute: activeRoute ?? this.activeRoute,
     );
   }
 }
@@ -56,6 +65,7 @@ final class DashboardStale extends DashboardUiState {
     this.menuTree,
     this.flattenedMenus,
     this.failedSections,
+    this.activeRoute = 'dashboard',
   });
 
   final DashboardData data;
@@ -66,6 +76,7 @@ final class DashboardStale extends DashboardUiState {
   final List<MenuItem>? menuTree;
   final List<MenuItem>? flattenedMenus;
   final List<DashboardSection>? failedSections;
+  final String activeRoute;
 
   DashboardStale copyWith({
     DashboardData? data,
@@ -74,6 +85,7 @@ final class DashboardStale extends DashboardUiState {
     List<MenuItem>? menuTree,
     List<MenuItem>? flattenedMenus,
     List<DashboardSection>? failedSections,
+    String? activeRoute,
   }) {
     return DashboardStale(
       data: data ?? this.data,
@@ -82,6 +94,7 @@ final class DashboardStale extends DashboardUiState {
       menuTree: menuTree ?? this.menuTree,
       flattenedMenus: flattenedMenus ?? this.flattenedMenus,
       failedSections: failedSections ?? this.failedSections,
+      activeRoute: activeRoute ?? this.activeRoute,
     );
   }
 }
@@ -89,24 +102,33 @@ final class DashboardStale extends DashboardUiState {
 /// Kısmi yükleme hatası — bazı widget'lar yüklenemedi
 /// Yüklenebilen kısımlar gösterilir, hatalı kısımlar error widget ile
 final class DashboardPartial extends DashboardUiState {
-  const DashboardPartial({required this.data, required this.failedSections, this.menuTree, this.flattenedMenus});
+  const DashboardPartial({
+    required this.data,
+    required this.failedSections,
+    this.menuTree,
+    this.flattenedMenus,
+    this.activeRoute = 'dashboard',
+  });
 
   final DashboardData data;
   final List<DashboardSection> failedSections;
   final List<MenuItem>? menuTree;
   final List<MenuItem>? flattenedMenus;
+  final String activeRoute;
 
   DashboardPartial copyWith({
     DashboardData? data,
     List<DashboardSection>? failedSections,
     List<MenuItem>? menuTree,
     List<MenuItem>? flattenedMenus,
+    String? activeRoute,
   }) {
     return DashboardPartial(
       data: data ?? this.data,
       failedSections: failedSections ?? this.failedSections,
       menuTree: menuTree ?? this.menuTree,
       flattenedMenus: flattenedMenus ?? this.flattenedMenus,
+      activeRoute: activeRoute ?? this.activeRoute,
     );
   }
 }

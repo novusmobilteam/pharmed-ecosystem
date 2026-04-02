@@ -123,23 +123,6 @@ class LockedBanner extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: onLoginTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(color: MedColors.amber, borderRadius: MedRadius.smAll),
-              child: Text(
-                'Giriş Yap',
-                style: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );

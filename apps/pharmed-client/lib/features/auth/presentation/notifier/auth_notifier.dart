@@ -1,5 +1,3 @@
-// lib/features/auth/presentation/notifier/auth_notifier.dart
-//
 // [SWREQ-UI-AUTH-001] [HAZ-009]
 // Oturum yönetimi.
 // Giriş, çıkış, oturum zaman aşımı sayacı.
@@ -29,7 +27,8 @@ class AuthNotifier extends Notifier<AuthState> {
   AuthCacheDataSource get _cache => ref.read(authCacheProvider);
   TokenHolder get _tokenHolder => ref.read(tokenHolderProvider);
 
-  // ── Build — cache'den oturumu geri yükle ─────────────────────
+  bool _hasAccessedDashboard = false;
+  bool get hasAccessedDashboard => _hasAccessedDashboard;
 
   @override
   AuthState build() {
@@ -51,9 +50,7 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  // ── Login ─────────────────────────────────────────────────────
-
-  Future<void> login({required String email, required String password, String? macAddress}) async {
+  Future<String?> login({required String email, required String password, String? macAddress}) async {
     state = const AuthLoading();
 
     final result = await _loginUseCase(LoginParams(email: email, password: password, macAddress: macAddress));
@@ -61,37 +58,37 @@ class AuthNotifier extends Notifier<AuthState> {
     result.when(
       ok: (authToken) {
         _tokenHolder.setToken(authToken.accessToken);
-        print('User: ${authToken.user.fullName}');
         state = AuthLoggedIn(
           user: authToken.user,
           sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
         );
         _startSessionTimer();
+        _markDashboardAccessed();
+        return null;
       },
       error: (failure) {
-        state = AuthError(message: failure is ServiceException ? failure.message : 'Bir hata oluştu');
+        final msg = failure is ServiceException ? failure.message : 'Bir hata oluştu';
+        state = AuthError(message: msg);
+        return msg;
       },
     );
+    return null;
   }
-
-  // ── Logout ────────────────────────────────────────────────────
 
   Future<void> logout() async {
     _cancelTimers();
     _tokenHolder.setToken(null);
-    await _logoutUseCase();
+    await _cache.clear();
+
     state = const AuthLoggedOut();
   }
 
-  /// AuthInterceptor 401 aldığında çağırır.
   void onUnauthorized() {
     _cancelTimers();
     _tokenHolder.setToken(null);
     _logoutUseCase(); // fire-and-forget
     state = const AuthLoggedOut();
   }
-
-  // ── Oturumu uzat ──────────────────────────────────────────────
 
   void extendSession() {
     final user = currentUser;
@@ -104,15 +101,11 @@ class AuthNotifier extends Notifier<AuthState> {
     _startSessionTimer();
   }
 
-  // ── Kullanıcı aktivitesi ──────────────────────────────────────
-
   void onUserActivity() {
     if (state is AuthLoggedIn) {
       _startSessionTimer();
     }
   }
-
-  // ── Getter'lar ────────────────────────────────────────────────
 
   bool get isLoggedIn => state is AuthLoggedIn || state is AuthSessionExpiring;
 
@@ -121,8 +114,6 @@ class AuthNotifier extends Notifier<AuthState> {
     AuthSessionExpiring(:final user) => user,
     _ => null,
   };
-
-  // ── Timer yönetimi ────────────────────────────────────────────
 
   void _startSessionTimer() {
     _cancelTimers();
@@ -160,5 +151,9 @@ class AuthNotifier extends Notifier<AuthState> {
     _countdownTimer?.cancel();
     _sessionTimer = null;
     _countdownTimer = null;
+  }
+
+  void _markDashboardAccessed() {
+    _hasAccessedDashboard = true;
   }
 }

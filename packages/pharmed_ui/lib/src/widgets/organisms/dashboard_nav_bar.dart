@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:collection/collection.dart';
 
 // ═════════════════════════════════════════════════════════════════
 // AppSubNav
@@ -15,24 +16,15 @@ class DashboardNavBar extends StatefulWidget {
     required this.menuTree,
     required this.flattenedMenus,
     required this.isLoggedIn,
-
     this.onItemTap,
-    this.onKabinCardTap,
-    this.onKabinQuickTap,
+    required this.currentRoute,
   });
 
+  final bool isLoggedIn;
+  final String currentRoute;
   final List<MenuItem> menuTree;
   final List<MenuItem> flattenedMenus;
-  final bool isLoggedIn;
-
-  /// Normal menü öğesi tıklandığında
   final void Function(int id)? onItemTap;
-
-  /// Kabin mega menüsünde kart seçildiğinde
-  final void Function(String id)? onKabinCardTap;
-
-  /// Kabin mega menüsünde hızlı buton tıklandığında
-  final void Function(String id)? onKabinQuickTap;
 
   @override
   State<DashboardNavBar> createState() => _DashboardNavBarState();
@@ -50,10 +42,24 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
   }
 
   void _toggleMenu(int id) {
+    if (!widget.isLoggedIn) {
+      // Görsel bir geri bildirim istersen SnackBar veya Toast atabilirsin
+      return;
+    }
+    // 1. Tıklanan öğeyi bul
+    final item = widget.menuTree.firstWhereOrNull((m) => m.id == id);
+
+    // 2. Eğer alt menüsü yoksa (Anasayfa gibi) direkt yönlendir ve menü açma
+    if (item != null && item.children.isEmpty) {
+      if (_openMenuId != null) _closeMenu();
+      widget.onItemTap?.call(id); // Bu tetikleyici Notifier'daki navigateTo'ya gider
+      return;
+    }
+
+    // 3. Alt menüsü varsa eski toggle mantığı
     if (_openMenuId == id) {
       _closeMenu();
     } else {
-      // Eğer başka bir menü açıksa önce onu kapat
       if (_openMenuId != null) _closeMenu();
       _openMenu(id);
     }
@@ -113,6 +119,18 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
     if (mounted) setState(() => _openMenuId = null);
   }
 
+  bool _isMenuOrChildActive(MenuItem item, String currentRoute) {
+    // 1. Kendisi doğrudan aktif mi?
+    if (item.route == currentRoute) return true;
+
+    // 2. Çocuklarından herhangi biri aktif mi? (Recursive kontrol)
+    if (item.children.isNotEmpty) {
+      return item.children.any((child) => _isMenuOrChildActive(child, currentRoute));
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -123,19 +141,18 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
           const SizedBox(width: 10),
           ...widget.menuTree.map((item) {
             final id = item.id ?? 0;
-            // Eğer bu ID için key yoksa oluştur
             final key = _itemKeys.putIfAbsent(id, () => GlobalKey());
 
-            final locked = false;
+            final bool isSelected = _isMenuOrChildActive(item, widget.currentRoute);
 
             return KeyedSubtree(
               key: key,
               child: _NavItem(
                 item: item,
-                isLocked: locked,
                 isMenuOpen: _openMenuId == id,
-                showChevron: true, // Artık her item chevron gösterebilir
                 onTap: () => _toggleMenu(id),
+                isSelected: isSelected,
+                isLoggedIn: widget.isLoggedIn,
               ),
             );
           }),
@@ -149,48 +166,48 @@ class _DashboardNavBarState extends State<DashboardNavBar> {
 class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.item,
-    required this.isLocked,
     this.isMenuOpen = false,
-    this.showChevron = false,
     this.onTap,
+    required this.isSelected,
+    required this.isLoggedIn,
   });
 
   final MenuItem item;
-  final bool isLocked;
-
-  /// Mega menü açıkken aktif görünüm için
   final bool isMenuOpen;
-
-  /// Chevron ok ikonu göster (mega menü tetikleyicileri için)
-  final bool showChevron;
-
+  final bool isSelected;
   final VoidCallback? onTap;
+  final bool isLoggedIn;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 40,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        margin: EdgeInsets.only(right: 4.0),
-        decoration: BoxDecoration(
-          //color: Colors.red,
-          border: Border(bottom: BorderSide(color: isMenuOpen ? MedColors.blue : Colors.transparent, width: 2)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              item.name ?? '',
-              style: TextStyle(
-                fontFamily: MedFonts.sans,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: isMenuOpen ? MedColors.blue : MedColors.text3,
+    final bool highlight = isMenuOpen || isSelected;
+
+    return Opacity(
+      opacity: isLoggedIn ? 1.0 : 0.4,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          margin: EdgeInsets.only(right: 4.0),
+          decoration: BoxDecoration(
+            //color: Colors.red,
+            border: Border(bottom: BorderSide(color: highlight ? MedColors.blue : Colors.transparent, width: 2)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                item.name ?? '',
+                style: TextStyle(
+                  fontFamily: MedFonts.sans,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: highlight ? MedColors.blue : MedColors.text3,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

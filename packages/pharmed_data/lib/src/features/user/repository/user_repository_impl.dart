@@ -24,14 +24,7 @@ class UserRepositoryImpl implements IUserManager {
   Future<Result<User?>> getCurrentUser() async {
     final result = await _dataSource.getCurrentUser();
 
-    return result.when(
-      ok: (dto) {
-        print('inside User Repository IMp');
-        print(dto?.name);
-        return Result.ok(_mapper.toEntityOrNull(dto));
-      },
-      error: (e) => Result.error(e),
-    );
+    return result.when(ok: (dto) => Result.ok(_mapper.toEntityOrNull(dto)), error: (e) => Result.error(e));
   }
 
   // ── IUserManager ─────────────────────────────────────────────

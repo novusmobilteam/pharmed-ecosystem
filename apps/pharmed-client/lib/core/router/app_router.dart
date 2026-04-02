@@ -24,8 +24,15 @@ class AppRouter extends ConsumerWidget {
     final authState = ref.watch(authNotifierProvider);
     final setupState = ref.watch(appSetupStatusProvider);
 
+    // AuthNotifier içindeki bir getter yardımıyla:
+    // Eğer kullanıcı daha önce giriş yapmışsa ve biz Dashboard'daysak,
+    // logout olsa bile dashboard'da kalmaya devam etmeli.
+    final authNotif = ref.read(authNotifierProvider.notifier);
+    final hasSessionHistory = authNotif.hasAccessedDashboard;
+
     return switch ((authState, setupState)) {
       // Auth yok → direkt login
+      (AuthLoggedOut(), _) when hasSessionHistory => const DashboardScreen(),
       (AuthLoggedOut(), _) => const LoginScreen(),
       (AuthError(), _) => const LoginScreen(),
 

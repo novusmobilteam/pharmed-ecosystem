@@ -1,19 +1,15 @@
-// ═════════════════════════════════════════════════════════════════
 // LoginModal
 // [SWREQ-UI-AUTH-003]
 // Giriş formu. Dışarıya tıklayarak kapatılamaz.
-// ═════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 class LoginModal extends StatefulWidget {
-  const LoginModal({super.key, required this.cabinCode, required this.onLogin, required this.onCancel});
-
-  final String cabinCode;
+  const LoginModal({super.key, required this.onLogin, required this.onCancel});
 
   /// username, password → hata mesajı veya null (başarılı)
-  final String? Function(String username, String password) onLogin;
+  final Future<String?> Function(String username, String password) onLogin;
   final VoidCallback onCancel;
 
   @override
@@ -33,21 +29,38 @@ class _LoginModalState extends State<LoginModal> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
+    if (_userCtrl.text.isEmpty || _passCtrl.text.isEmpty) {
+      setState(() => _errorMessage = "Kullanıcı adı ve şifre gereklidir.");
+      return;
+    }
+
     setState(() {
       _loading = true;
       _errorMessage = null;
     });
 
-    final error = widget.onLogin(_userCtrl.text, _passCtrl.text);
+    try {
+      // onLogin artık Future<String?> dönüyor
+      final error = await widget.onLogin(_userCtrl.text, _passCtrl.text);
 
-    setState(() {
-      _loading = false;
-      _errorMessage = error;
-    });
+      if (!mounted) return;
 
-    if (error == null) {
-      Navigator.of(context).pop();
+      if (error == null) {
+        Navigator.of(context).pop();
+      } else {
+        setState(() {
+          _loading = false;
+          _errorMessage = error;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _errorMessage = "Beklenmedik bir hata oluştu.";
+        });
+      }
     }
   }
 
@@ -101,7 +114,6 @@ class _LoginModalState extends State<LoginModal> {
                           color: MedColors.text,
                         ),
                       ),
-                      Text('MediCab HMI · Kabin #${widget.cabinCode}', style: MedTextStyles.monoXs()),
                     ],
                   ),
                 ],

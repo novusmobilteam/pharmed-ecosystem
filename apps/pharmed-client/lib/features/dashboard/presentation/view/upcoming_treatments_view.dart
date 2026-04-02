@@ -59,19 +59,4 @@ class UpcomingTreatmentsView extends StatelessWidget {
       },
     );
   }
-
-  TreatmentPriority _mapPriority(TreatmentPriorityDomain p) => switch (p) {
-    TreatmentPriorityDomain.urgent => TreatmentPriority.urgent,
-    TreatmentPriorityDomain.normal => TreatmentPriority.normal,
-    TreatmentPriorityDomain.routine => TreatmentPriority.routine,
-  };
-
-  TreatmentStatus _mapStatus(TreatmentStatusDomain s) => switch (s) {
-    TreatmentStatusDomain.pending => TreatmentStatus.pending,
-    TreatmentStatusDomain.done => TreatmentStatus.done,
-    TreatmentStatusDomain.returned => TreatmentStatus.returned,
-  };
 }
-
-typedef TreatmentPriorityDomain = TreatmentPriority;
-typedef TreatmentStatusDomain = TreatmentStatus;

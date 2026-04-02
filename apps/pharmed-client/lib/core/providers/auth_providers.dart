@@ -13,7 +13,7 @@ import 'network_providers.dart';
 // ── Config ────────────────────────────────────────────────────────
 
 final authConfigProvider = Provider<AuthConfig>((ref) {
-  return const AuthConfig(inactivityTimeoutMinutes: 10, warningSeconds: 60);
+  return AuthConfig(inactivityTimeoutMinutes: 1, warningSeconds: 60);
 });
 
 // ── Plain Dio — login endpoint'i token gerektirmez ────────────────

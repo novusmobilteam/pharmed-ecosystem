@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class MenuItem {
   final int? id;
   final int? parentId;
