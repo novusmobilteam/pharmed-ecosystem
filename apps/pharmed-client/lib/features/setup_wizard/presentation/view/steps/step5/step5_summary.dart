@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../../../shared/widgets.dart';
 import '../../../../domain/model/cabin_setup_config.dart';
 import '../../../../domain/model/wizard_draft.dart';
 import '../../../../domain/model/wizard_mobile_layout.dart';

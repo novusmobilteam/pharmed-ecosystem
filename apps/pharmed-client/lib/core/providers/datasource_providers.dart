@@ -30,3 +30,22 @@ final cabinStockRemoteDataSourceProvider = Provider<CabinStockRemoteDataSource>(
 final cabinStockLocalDataSourceProvider = Provider<CabinStockLocalDataSource>((ref) {
   return CabinStockLocalDataSource();
 });
+
+// CabinAssignmentDataSource
+final cabinAssignmentRemoteDataSourceProvider = Provider<CabinAssignmentRemoteDataSource>((ref) {
+  return CabinAssignmentRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});
+
+// final cabinAssignmentLocalDataSourceProvider = Provider<CabinStockLocalDataSource>((ref) {
+//   return CabinStockLocalDataSource();
+// });
+
+// MedicineDataSource
+final medicineRemoteDataSourceProvider = Provider<MedicineRemoteDataSource>((ref) {
+  return MedicineRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});
+
+// FaultDataSource
+final faultRemoteDataSourceProvider = Provider<FaultRemoteDataSource>((ref) {
+  return FaultRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});

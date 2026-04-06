@@ -1,9 +1,3 @@
-import 'package:flutter/material.dart';
-
-import '../../../core/core.dart';
-
-import '../../cabin/shared/widgets/cabin_editor/cabin_editor_mixin.dart';
-
 // class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin, CabinEditorMixin {
 //   @override
 //   final GetCabinsUseCase cabinsUseCase;

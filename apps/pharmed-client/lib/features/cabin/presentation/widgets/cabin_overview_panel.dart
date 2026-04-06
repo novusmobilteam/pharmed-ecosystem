@@ -1,5 +1,3 @@
-// lib/features/cabin/presentation/widgets/cabin_overview_panel.dart
-//
 // [SWREQ-UI-CAB-002]
 // Kabin işlemleri ekranının sol paneli.
 // Kabindeki tüm çekmeceleri liste halinde gösterir,
@@ -21,7 +19,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:pharmed_client/features/cabin/presentation/state/cabin_operation_mode.dart';
-import 'package:pharmed_ui/src/widgets/atoms/led_indicator.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -49,10 +46,7 @@ class CabinOverviewPanel extends StatelessWidget {
     required this.groups,
     required this.mode,
     required this.onDrawerTap,
-    this.cabinId = 'CB-304',
     this.selectedSlotId,
-    this.powerStatus = LedStatus.on,
-    this.alertStatus = LedStatus.off,
   });
 
   /// Kabindeki tüm çekmece grupları — [DrawerGroup.slot.orderNumber]'a göre sıralı.
@@ -64,14 +58,8 @@ class CabinOverviewPanel extends StatelessWidget {
   /// Tıklanan çekmeceyi üst widget'a bildirir.
   final void Function(DrawerGroup group) onDrawerTap;
 
-  /// Kabin kimlik etiketi
-  final String cabinId;
-
   /// Seçili çekmecenin slot ID'si — highlight için
   final int? selectedSlotId;
-
-  final LedStatus powerStatus;
-  final LedStatus alertStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -82,28 +70,18 @@ class CabinOverviewPanel extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFD8E0EC),
         border: Border.all(color: MedColors.border2, width: 2),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(14),
-          topRight: Radius.circular(14),
-          bottomLeft: Radius.circular(10),
-          bottomRight: Radius.circular(10),
-        ),
-        boxShadow: const [
-          BoxShadow(color: Color(0x1F1E3C64), blurRadius: 40, offset: Offset(0, 12)),
-          BoxShadow(color: Color(0x141E3C64), blurRadius: 8, offset: Offset(0, 4)),
-        ],
+        borderRadius: MedRadius.lgAll,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _CabinPanelHeader(cabinId: cabinId, powerStatus: powerStatus, alertStatus: alertStatus),
+          _CabinPanelHeader(),
           Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (final section in sections) ...[
-                  if (section.label != null) ...[_SectionLabel(label: section.label!), const SizedBox(height: 3)],
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -132,40 +110,23 @@ class CabinOverviewPanel extends StatelessWidget {
   }
 
   /// Çekmeceleri bölümlere ayırır.
-  ///
-  /// Şu an her çekmece kendi bölümünde — ileride bölüm bilgisi
-  /// API'den geldiğinde bu metod güncellenecek.
   List<_Section> _groupBySections(List<DrawerGroup> groups) {
-    // TODO: Bölüm bilgisi API'den geldiğinde burayı güncelle
-    // Şimdilik her çekmece tek başına bir satır
     return groups.map((g) => _Section(groups: [g])).toList();
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Bölüm modeli
-// ─────────────────────────────────────────────────────────────────
-
 class _Section {
-  const _Section({required this.groups, this.label});
+  const _Section({required this.groups});
   final List<DrawerGroup> groups;
-  final String? label;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Header
-// ─────────────────────────────────────────────────────────────────
-
 class _CabinPanelHeader extends StatelessWidget {
-  const _CabinPanelHeader({required this.cabinId, required this.powerStatus, required this.alertStatus});
-
-  final String cabinId;
-  final LedStatus powerStatus;
-  final LedStatus alertStatus;
+  const _CabinPanelHeader();
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 30,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -176,37 +137,15 @@ class _CabinPanelHeader extends StatelessWidget {
         border: Border(bottom: BorderSide(color: MedColors.border2, width: 2)),
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
       ),
-      child: Row(
-        children: [
-          LedIndicator(status: powerStatus),
-          const SizedBox(width: 5),
-          LedIndicator(status: alertStatus),
-          const Spacer(),
-          Text(
-            cabinId,
-            style: TextStyle(
-              fontFamily: MedFonts.mono,
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF3A4D66),
-              letterSpacing: 1,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Footer
-// ─────────────────────────────────────────────────────────────────
 
 class _CabinPanelFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 14,
+      height: 24,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
@@ -216,52 +155,9 @@ class _CabinPanelFooter extends StatelessWidget {
         border: Border(top: BorderSide(color: MedColors.border2, width: 1.5)),
         borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [_Wheel(), const SizedBox(width: 18), _Wheel()],
-      ),
     );
   }
 }
-
-class _Wheel extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 15,
-      height: 7,
-      decoration: BoxDecoration(
-        color: const Color(0xFF6A7A90),
-        borderRadius: BorderRadius.circular(3),
-        border: Border.all(color: const Color(0xFF505E72)),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Bölüm etiketi
-// ─────────────────────────────────────────────────────────────────
-
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 2, bottom: 2),
-      child: Text(
-        label.toUpperCase(),
-        style: TextStyle(fontFamily: MedFonts.mono, fontSize: 7, letterSpacing: 1.2, color: const Color(0xFF8090A8)),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// DrawerItem — tek bir çekmece kartı
-// ─────────────────────────────────────────────────────────────────
 
 /// Sol paneldeki tek bir çekmece görseli.
 ///
@@ -302,9 +198,6 @@ class _DrawerItem extends StatelessWidget {
                 ),
           border: Border.all(color: isSelected ? MedColors.blue : MedColors.border2, width: isSelected ? 2 : 1.5),
           borderRadius: BorderRadius.circular(7),
-          boxShadow: isSelected
-              ? [const BoxShadow(color: Color(0x4D1A6FD8), blurRadius: 12, offset: Offset(0, 3))]
-              : [const BoxShadow(color: Color(0x1F1E3C64), blurRadius: 3, offset: Offset(0, 1))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -316,38 +209,29 @@ class _DrawerItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Tip etiketi
-                  Text(
-                    _typeLabel(group),
-                    style: TextStyle(
-                      fontFamily: MedFonts.mono,
-                      fontSize: 7,
-                      letterSpacing: 0.8,
-                      color: MedColors.text3,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  // Adres + durum noktası
                   Row(
                     children: [
                       Text(
-                        group.slot.address ?? '—',
+                        _typeLabel(group),
                         style: TextStyle(
-                          fontFamily: MedFonts.mono,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF4A5F78),
+                          fontFamily: MedFonts.sans,
+                          fontSize: 9,
+                          letterSpacing: 0.8,
+                          color: MedColors.text3,
                         ),
                       ),
                       const Spacer(),
                       _StatusDot(workingStatus: workingStatus, stockStatus: stockStatus),
                     ],
                   ),
+                  const SizedBox(height: 2),
                 ],
               ),
             ),
             const Spacer(),
             // Çekmece kolu
             _DrawerHandle(),
+            SizedBox(height: 5),
           ],
         ),
       ),
@@ -363,8 +247,8 @@ class _DrawerItem extends StatelessWidget {
 
   /// Çekmece yüksekliği — serum 2x, diğerleri normal
   double _resolveHeight(DrawerGroup group) {
-    if (group.isSerum) return 88;
-    return 54;
+    if (group.isSerum) return 92;
+    return 60;
   }
 
   /// Çekmeceye ait en kötü working status'u döndürür.
@@ -391,15 +275,9 @@ class _DrawerItem extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
 // Stok özet enum — sol panel nokta rengi için
-// ─────────────────────────────────────────────────────────────────
 
 enum _DrawerStockStatus { normal, low, critical, empty }
-
-// ─────────────────────────────────────────────────────────────────
-// Durum noktası
-// ─────────────────────────────────────────────────────────────────
 
 /// Çekmece kartının sağ üst köşesindeki durum göstergesi.
 ///
@@ -427,7 +305,7 @@ class _StatusDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        boxShadow: [BoxShadow(color: color.withOpacity(0.5), blurRadius: 4)],
+        boxShadow: [BoxShadow(color: color.withAlpha(50), blurRadius: 4)],
       ),
     );
 
@@ -447,10 +325,6 @@ class _StatusDot extends StatelessWidget {
     };
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Yanıp sönen widget
-// ─────────────────────────────────────────────────────────────────
 
 class _BlinkingWidget extends StatefulWidget {
   const _BlinkingWidget({required this.child});
@@ -483,27 +357,21 @@ class _BlinkingWidgetState extends State<_BlinkingWidget> with SingleTickerProvi
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Çekmece kolu
-// ─────────────────────────────────────────────────────────────────
-
 /// Çekmecelerin alt kısmındaki fiziksel kol görseli.
 class _DrawerHandle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 6,
-      margin: const EdgeInsets.symmetric(horizontal: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [Color(0xFFA0B0C4), Color(0xFF9AADC0), Color(0xFFA0B0C4)],
-          stops: [0, 0.4, 1],
         ),
         borderRadius: BorderRadius.circular(3),
         border: Border.all(color: const Color(0xFF7A90A8)),
-        boxShadow: const [BoxShadow(color: Color(0x1F000000), blurRadius: 2, offset: Offset(0, 1))],
       ),
     );
   }

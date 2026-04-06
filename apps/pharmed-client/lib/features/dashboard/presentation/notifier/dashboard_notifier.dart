@@ -163,7 +163,30 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
     final data = DashboardData(
       criticalStocks: criticalStocks ?? [],
       expiringMaterials: expiringMaterials ?? [],
-      upcomingTreatments: upcomingTreatments ?? [],
+      // upcomingTreatments: upcomingTreatments ?? [],
+      upcomingTreatments: [
+        PrescriptionItem(
+          id: 3,
+          patientName: 'Kemal Demir',
+          protocolNo: 'P-0091',
+          time: DateTime.now().add(const Duration(minutes: 30)),
+          medicine: Drug(id: 4, name: 'Amoksisilin 500mg'),
+        ),
+        PrescriptionItem(
+          id: 4,
+          patientName: 'Selma Ercan',
+          protocolNo: 'P-0033',
+          time: DateTime.now().add(const Duration(hours: 1)),
+          medicine: Drug(id: 2, name: 'Metronidazol 500mg'),
+        ),
+        PrescriptionItem(
+          id: 5,
+          patientName: 'Hasan Korkmaz',
+          protocolNo: 'P-0112',
+          time: DateTime.now().add(const Duration(hours: 2)),
+          medicine: Drug(id: 1, name: 'İnsülin Glarjin'),
+        ),
+      ],
       cabinVisualizerData: cabinVisualizer,
       kpi: KpiData(
         activePatients: 22,

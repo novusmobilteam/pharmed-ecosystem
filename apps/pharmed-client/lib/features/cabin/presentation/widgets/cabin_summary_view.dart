@@ -1,5 +1,3 @@
-// lib/features/cabin/presentation/widgets/cabin_summary_view.dart
-//
 // [SWREQ-UI-CAB-001]
 // Dashboard sol panelinde kabinin genel durumunu salt okunur olarak gösterir.
 // Stok durumuna göre renk kodlanmış çekmece grid'i sunar.
@@ -18,7 +16,6 @@
 // Sınıf: Class B — Yanlış stok rengi yanlış müdahale tetikleyebilir.
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/widgets/atoms/led_indicator.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -197,10 +194,6 @@ class _Wheel extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Slot dispatcher
-// ─────────────────────────────────────────────────────────────────
 
 /// Slot tipine göre doğru render widget'ını seçer.
 ///

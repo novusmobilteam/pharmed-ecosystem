@@ -3,7 +3,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/features/assignment/presentation/view/assignment_view.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
+import 'package:pharmed_client/features/fault/presentation/view/fault_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../auth/presentation/notifier/auth_notifier.dart';

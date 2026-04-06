@@ -10,6 +10,12 @@ class DashboardContentFactory {
       _ => 'dashboard',
     };
 
+    final cabinData = switch (state) {
+      DashboardLoaded s => s.data.cabinVisualizerData,
+      DashboardStale s => s.data.cabinVisualizerData,
+      _ => null,
+    };
+
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       child: switch (route) {
@@ -17,8 +23,8 @@ class DashboardContentFactory {
         'dashboard' => _buildMainDashboard(state, notifier, isLoggedIn),
 
         // Diğer Modüller
-        'kabin_yapisi' => const Center(child: Text('Kabin Yapısı Sayfası')),
-        'cekmece_atamalari' => const Center(child: Text('Çekmece Atamaları')),
+        'cabinDrawerStock' => Center(child: AssignmentView(data: cabinData)),
+        'drawer-malfunction' => Center(child: FaultView(data: cabinData)),
 
         // Fallback
         _ => const Center(child: Text('Sayfa bulunamadı')),
@@ -78,6 +84,8 @@ class _DashboardBody extends StatelessWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(18),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             failedSections.contains(DashboardSection.kpi)
                 ? const _SectionError(label: 'KPI verileri yüklenemedi')

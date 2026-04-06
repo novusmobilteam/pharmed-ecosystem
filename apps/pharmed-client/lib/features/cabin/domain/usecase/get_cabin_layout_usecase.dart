@@ -1,14 +1,11 @@
 // [SWREQ-CORE-CABIN-UC-003]
 // Sınıf: Class B
 
-import 'package:pharmed_client/features/cabin_fault/domain/repository/i_cabin_fault_repository.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-
-import '../../../cabin_fault/domain/model/cabin_fault.dart';
 
 class GetCabinLayoutUseCase {
   final ICabinRepository _repository;
-  final ICabinFaultRepository _faultRepository;
+  final IFaultRepository _faultRepository;
 
   GetCabinLayoutUseCase(this._repository, this._faultRepository);
 
@@ -21,7 +18,7 @@ class GetCabinLayoutUseCase {
       ]);
 
       final slotsResult = results[0] as Result<List<DrawerSlot>>;
-      final faultsResult = results[1] as Result<List<CabinFault>>;
+      final faultsResult = results[1] as Result<List<Fault>>;
 
       return slotsResult.when(
         error: Result.error,

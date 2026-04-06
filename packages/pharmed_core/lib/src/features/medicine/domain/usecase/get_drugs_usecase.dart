@@ -18,6 +18,6 @@ class GetDrugsUseCase {
   GetDrugsUseCase(this._repository);
 
   Future<Result<ApiResponse<List<Medicine>>>> call(GetDrugsParams params) {
-    return _repository.getMedicines(skip: params.skip, take: params.take, search: params.search);
+    return _repository.getDrugs(skip: params.skip, take: params.take, search: params.search);
   }
 }

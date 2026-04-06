@@ -2,15 +2,10 @@ part of 'cabin_fault_view.dart';
 
 class FaultCell extends StatelessWidget {
   final DrawerUnit unit;
-  final CabinFault? fault;
+  final Fault? fault;
   final VoidCallback onTap;
 
-  const FaultCell({
-    super.key,
-    required this.unit,
-    this.fault,
-    required this.onTap,
-  });
+  const FaultCell({super.key, required this.unit, this.fault, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +23,7 @@ class FaultCell extends StatelessWidget {
           border: Border.all(color: statusColor.withAlpha(20), width: 1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Center(
-          child: Icon(
-            statusIcon,
-            color: statusColor,
-            size: 32,
-          ),
-        ),
+        child: Center(child: Icon(statusIcon, color: statusColor, size: 32)),
       ),
     );
   }

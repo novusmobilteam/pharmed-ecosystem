@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
 import '../../../cabin_assignment/presentation/widgets/assignment_cell.dart';
-import '../notifier/cabin_stock_notifier.dart';
 
 part 'stock_cell.dart';
 

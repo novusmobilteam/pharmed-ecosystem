@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
 import '../../../stock_transaction/presentation/widgets/stations_list_view.dart';
-import '../widgets/editor/cabin_assignment_view.dart';
 
 class StationCabinAssignmentScreen extends StatefulWidget {
   const StationCabinAssignmentScreen({super.key});
