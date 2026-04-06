@@ -65,7 +65,7 @@ class GetCabinVisualizerDataUseCase {
 
     // ── 5. Grid üret ─────────────────────────────────────────
     final slot = _buildSlots(groups, stocks);
-    final data = CabinVisualizerData(cabinId: cabinId, slots: slot, isStale: isStale);
+    final data = CabinVisualizerData(cabinId: cabinId, slots: slot, isStale: isStale, groups: groups, stocks: stocks);
 
     return isStale
         ? RepoStale(data, DateTime.now()) // en erken stale zamanı idealde, şimdilik now

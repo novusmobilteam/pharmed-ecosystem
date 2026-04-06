@@ -30,6 +30,7 @@ export 'src/features/prescription/prescription.dart';
 export 'src/features/dashboard/dashboard.dart';
 export 'src/features/refund/refund.dart';
 export 'src/features/withdraw/withdraw.dart';
+export 'src/features/fault/fault.dart';
 
 // Constants
 export 'src/constants/device_constants.dart';

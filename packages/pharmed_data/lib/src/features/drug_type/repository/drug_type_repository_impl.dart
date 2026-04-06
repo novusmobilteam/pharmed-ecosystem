@@ -3,7 +3,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 
 // [SWREQ-DATA-DRUGTYPE-002]
 // IDrugTypeRepository implementasyonu.
-// DTO → entity dönüşümü BranchMapper üzerinden yapılır.
+// DTO → entity dönüşümü DrugTypeMapper üzerinden yapılır.
 // Sınıf: Class B
 class DrugTypeRepositoryImpl implements IDrugTypeRepository {
   const DrugTypeRepositoryImpl({required DrugTypeRemoteDataSource dataSource, required DrugTypeMapper mapper})

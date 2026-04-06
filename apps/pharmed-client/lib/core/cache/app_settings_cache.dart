@@ -11,6 +11,11 @@ final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
   return appSettingsCache; // mevcut global singleton
 });
 
+final deviceModeProvider = FutureProvider.autoDispose<String?>((ref) async {
+  final cache = ref.read(appSettingsCacheProvider);
+  return cache.getDeviceMode();
+});
+
 class AppSettingsCache {
   static const _boxName = 'app_settings';
   static const _keySetupDone = 'setup_done';

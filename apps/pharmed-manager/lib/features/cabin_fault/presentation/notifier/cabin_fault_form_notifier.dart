@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/cabin_fault.dart';
-import '../../domain/usecase/clear_fault_record_usecase.dart';
-import '../../domain/usecase/create_fault_record_usecase.dart';
-
 class CabinFaultFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateFaultRecordUseCase _createUseCase;
   final ClearFaultRecordUseCase _clearUseCase;
@@ -14,7 +10,7 @@ class CabinFaultFormNotifier extends ChangeNotifier with ApiRequestMixin {
     required CreateFaultRecordUseCase createUseCase,
     required ClearFaultRecordUseCase clearUseCase,
     required this.slotId,
-    CabinFault? activeFault,
+    Fault? activeFault,
   }) : _createUseCase = createUseCase,
        _clearUseCase = clearUseCase {
     if (activeFault != null && activeFault.id != null) {
@@ -24,7 +20,7 @@ class CabinFaultFormNotifier extends ChangeNotifier with ApiRequestMixin {
       _selectedStatusIndex = activeFault.workingStatus == CabinWorkingStatus.maintenance ? 1 : 0;
     } else {
       _isNewRecord = true;
-      _activeFault = CabinFault(
+      _activeFault = Fault(
         slotId: slotId,
         startDate: DateTime.now(),
         workingStatus: CabinWorkingStatus.faulty, // Default: Arıza
@@ -35,8 +31,8 @@ class CabinFaultFormNotifier extends ChangeNotifier with ApiRequestMixin {
 
   OperationKey submitOp = OperationKey.submit();
 
-  late CabinFault _activeFault;
-  CabinFault get activeFault => _activeFault;
+  late Fault _activeFault;
+  Fault get activeFault => _activeFault;
 
   late bool _isNewRecord;
   bool get isNewRecord => _isNewRecord;

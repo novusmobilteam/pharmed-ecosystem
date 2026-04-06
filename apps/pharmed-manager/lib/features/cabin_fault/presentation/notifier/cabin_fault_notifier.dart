@@ -1,11 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/core.dart';
-
-import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_mixin.dart';
-
-import '../../domain/entity/cabin_fault.dart';
-import '../../domain/usecase/get_cabin_faults_usecase.dart';
-
 // class CabinFaultNotifier extends ChangeNotifier with ApiRequestMixin, CabinEditorMixin {
 //   @override
 //   final GetCabinsUseCase cabinsUseCase;

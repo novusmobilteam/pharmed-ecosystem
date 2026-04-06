@@ -3,7 +3,7 @@ part of 'cabin_fault_view.dart';
 class FaultRegistrationDialog extends StatelessWidget {
   const FaultRegistrationDialog({super.key, required this.faultRecords});
 
-  final List<CabinFault> faultRecords;
+  final List<Fault> faultRecords;
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +56,7 @@ class FaultRegistrationDialog extends StatelessWidget {
                 maxLines: 3,
                 onChanged: (value) => notifier.updateDescription(value),
               ),
-              if (isUpdateMode) ...[
-                Spacer(),
-                _buildActiveFaultInfo(context, notifier.activeFault),
-              ],
+              if (isUpdateMode) ...[Spacer(), _buildActiveFaultInfo(context, notifier.activeFault)],
             ],
           ),
         );
@@ -67,13 +64,10 @@ class FaultRegistrationDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildActiveFaultInfo(BuildContext context, CabinFault fault) {
+  Widget _buildActiveFaultInfo(BuildContext context, Fault fault) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.amber,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(8)),
       child: Row(
         children: [
           const Icon(Icons.info_outline, color: Colors.white),
@@ -81,10 +75,7 @@ class FaultRegistrationDialog extends StatelessWidget {
           Expanded(
             child: Text(
               'Bu çekmecede aktif bir ${fault.workingStatus?.label.toLowerCase()} bulunmaktadır. Onayladığınızda bu kayıt sonlandırılacaktır.',
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              style: context.textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
         ],

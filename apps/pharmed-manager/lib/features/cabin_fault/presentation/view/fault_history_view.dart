@@ -3,7 +3,7 @@ part of 'cabin_fault_view.dart';
 class FaultHistoryView extends StatelessWidget {
   const FaultHistoryView({super.key, required this.records});
 
-  final List<CabinFault> records;
+  final List<Fault> records;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class FaultHistoryView extends StatelessWidget {
 class FaultHistoryItem extends StatelessWidget {
   const FaultHistoryItem({super.key, required this.record});
 
-  final CabinFault record;
+  final Fault record;
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +43,7 @@ class FaultHistoryItem extends StatelessWidget {
               width: 8,
               decoration: BoxDecoration(
                 color: isResolved ? Colors.green : status.color,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                ),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
               ),
             ),
             Expanded(
@@ -61,9 +58,9 @@ class FaultHistoryItem extends StatelessWidget {
                         Text(
                           status.label,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: isResolved ? Colors.green : status.color,
-                              ),
+                            fontWeight: FontWeight.bold,
+                            color: isResolved ? Colors.green : status.color,
+                          ),
                         ),
                         if (!isResolved)
                           Badge(
@@ -92,10 +89,7 @@ class FaultHistoryItem extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    _DateRow(
-                      label: 'Başlangıç Tarihi:',
-                      date: record.startDate?.formattedDate,
-                    ),
+                    _DateRow(label: 'Başlangıç Tarihi:', date: record.startDate?.formattedDate),
                     const SizedBox(height: 4),
                     if (record.endDate != null)
                       _DateRow(
@@ -105,10 +99,7 @@ class FaultHistoryItem extends StatelessWidget {
                       ),
                     if (record.description != null && record.description!.isNotEmpty) ...[
                       SizedBox(height: 5),
-                      Text(
-                        record.description!,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                      Text(record.description!, style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ],
                 ),
@@ -126,28 +117,15 @@ class _DateRow extends StatelessWidget {
   final String? date;
   final bool isResolved;
 
-  const _DateRow({
-    required this.label,
-    this.date,
-    this.isResolved = true,
-  });
+  const _DateRow({required this.label, this.date, this.isResolved = true});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
-        ),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
         const SizedBox(width: 4),
-        Text(
-          date ?? '-',
-          style: TextStyle(
-            fontSize: 13,
-            color: isResolved ? Colors.black87 : Colors.blueGrey,
-          ),
-        ),
+        Text(date ?? '-', style: TextStyle(fontSize: 13, color: isResolved ? Colors.black87 : Colors.blueGrey)),
       ],
     );
   }

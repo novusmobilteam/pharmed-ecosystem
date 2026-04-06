@@ -8,7 +8,6 @@ import 'package:pharmed_client/shared/widgets/atoms/cabin_visuals/cabin_visuals.
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../../../shared/widgets.dart';
 import '../../widgets/step_shared_widgets.dart';
 
 part 'cabin_type_card.dart';

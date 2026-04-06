@@ -17,3 +17,4 @@ export 'med_on_screen_keyboard.dart';
 export 'dashboard_app_bar.dart';
 export 'dashboard_nav_bar.dart';
 export 'login_modal.dart';
+export 'pharmed_search_dialog.dart';

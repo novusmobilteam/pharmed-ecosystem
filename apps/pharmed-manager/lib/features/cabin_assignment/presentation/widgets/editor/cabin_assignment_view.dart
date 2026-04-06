@@ -1,11 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../../../../core/core.dart';
-import '../../../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
-import '../assignment_cell.dart';
-import '../form/cabin_assignment_form_view.dart';
-import 'cabin_assignment_notifier.dart';
 
 class CabinAssignmentView extends StatelessWidget {
   const CabinAssignmentView({super.key});
