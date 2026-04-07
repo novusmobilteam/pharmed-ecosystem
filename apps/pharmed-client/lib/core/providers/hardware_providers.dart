@@ -4,6 +4,9 @@ import '../flavor/app_flavor.dart';
 import '../hardware/service/cabin_operation/cabin_operation_service.dart';
 import '../hardware/service/cabin_operation/i_cabin_operation_service.dart';
 import '../hardware/service/cabin_operation/mock_cabin_operation_service.dart';
+import '../hardware/service/rfid/i_rfid_service.dart';
+import '../hardware/service/rfid/mock_rfid_service.dart';
+import '../hardware/service/rfid/rfid_service.dart';
 import '../hardware/service/serial_communication/i_serial_communication_service.dart';
 import '../hardware/service/serial_communication/mock_serial_communication_service.dart';
 import '../hardware/service/serial_communication/serial_communication_service.dart';
@@ -19,5 +22,12 @@ final cabinOperationServiceProvider = Provider<ICabinOperationService>((ref) {
   return switch (FlavorConfig.instance.flavor) {
     AppFlavor.mock || AppFlavor.dev => MockCabinOperationService(),
     AppFlavor.prod => CabinOperationService(serialService: ref.read(serialServiceProvider)),
+  };
+});
+
+final rfidServiceProvider = Provider<IRfidService>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock || AppFlavor.dev => MockRfidService(),
+    AppFlavor.prod => RfidService(),
   };
 });

@@ -13,7 +13,7 @@ class DeviceInfo {
     final macAddressRaw = deviceInfo.data['systemGUID'] ?? deviceInfo.data['deviceId'];
     // String macResult = macAddressRaw.toString().replaceAll(RegExp(r'^\{|\}$'), '');
     // TODO : Düzelt
-    String macResult = "15514B44A-6ET586-4734-9A5C-243C321234B9AS2118E";
+    String macResult = "15514B4A-6ET586-4734-9A5C-243C321234B9AS2118E";
     return macResult;
   }
 }
