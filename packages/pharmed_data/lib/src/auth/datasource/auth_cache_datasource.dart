@@ -18,10 +18,13 @@ abstract interface class IAuthCacheDataSource {
 }
 
 class AuthCacheDataSource implements IAuthCacheDataSource {
-  static const _tokenBoxName = 'auth_token';
-  static const _userBoxName = 'auth_user';
+  final String boxPrefix;
+  String get _tokenBoxName => '${boxPrefix}auth_token';
+  String get _userBoxName => '${boxPrefix}auth_user';
   static const _tokenKey = 'access_token';
   static const _userKey = 'current_user';
+
+  AuthCacheDataSource({this.boxPrefix = ''});
 
   @override
   Future<void> saveToken(String token) async {

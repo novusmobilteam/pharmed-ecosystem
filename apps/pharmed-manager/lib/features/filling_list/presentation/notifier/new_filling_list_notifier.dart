@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
+import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../domain/entity/filling_object.dart';
 import '../../domain/useacase/create_filling_list_usecase.dart';
@@ -11,7 +12,7 @@ import '../../domain/useacase/get_refill_candidates_usecase.dart';
 import '../../domain/useacase/update_filling_list_usecase.dart';
 
 class NewFillingListNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<FillingObject> {
-  final AuthManagerNotifier _auth;
+  final AuthNotifier _auth;
   final GetRefillCandidatesUseCase _getRefillCandidatesUseCase;
   final CreateFillingListUseCase _createFillingListUseCase;
   final GetFillingListDetailUseCase _getFillingListDetailUseCase;
@@ -22,7 +23,7 @@ class NewFillingListNotifier extends ChangeNotifier with ApiRequestMixin, Search
     required CreateFillingListUseCase createFillingListUseCase,
     required GetFillingListDetailUseCase getFillingListDetailUseCase,
     required UpdateFillingListUseCase updateFillingListUseCase,
-    required AuthManagerNotifier auth,
+    required AuthNotifier auth,
     required Station station,
     User? user,
     FillingList? initial,
@@ -31,7 +32,7 @@ class NewFillingListNotifier extends ChangeNotifier with ApiRequestMixin, Search
        _getFillingListDetailUseCase = getFillingListDetailUseCase,
        _updateFillingListUseCase = updateFillingListUseCase,
        _auth = auth {
-    _user = user ?? UserMapper().fromAppUserOrNull(_auth.user);
+    _user = user ?? UserMapper().fromAppUserOrNull(_auth.currentUser);
     _selectedStation = station;
     _initial = initial;
   }

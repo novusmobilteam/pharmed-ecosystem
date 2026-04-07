@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/cache/hive_cache.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'core/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AppBootstrap.init();
+  await Hive.initFlutter();
   runApp(const ProviderScope(child: MyApp()));
 }
 

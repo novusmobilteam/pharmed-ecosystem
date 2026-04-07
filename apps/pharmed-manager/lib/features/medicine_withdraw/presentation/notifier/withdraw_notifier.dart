@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
+import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 
 import '../../domain/mapper/withdraw_item_mapper.dart';
@@ -9,7 +10,7 @@ import '../../domain/utils/withdraw_check_status.dart';
 
 class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   late WithdrawType _type;
-  final AuthManagerNotifier _authPersistence;
+  final AuthNotifier _authPersistence;
   final Hospitalization? _hospitalization;
   final GetWithdrawItemsUseCase _getWithdrawItemsUseCase;
   final CheckWithdrawUseCase _checkWithdrawUseCase;
@@ -28,7 +29,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     required CheckWithdrawUseCase checkWithdrawUseCase,
     required CompleteWithdrawUseCase completeWithdrawUseCase,
     required GetCurrentStationUseCase getCurrentStationUseCase,
-    required AuthManagerNotifier authPersistence,
+    required AuthNotifier authPersistence,
   }) : _checkWithdrawUseCase = checkWithdrawUseCase,
        _getWithdrawItemsUseCase = getWithdrawItemsUseCase,
        _completeWithdrawUseCase = completeWithdrawUseCase,
@@ -161,7 +162,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   void startWithdraw({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) {
     if (selectedItems.isEmpty) return;
 
-    final userId = _authPersistence.user?.id ?? 0;
+    final userId = _authPersistence.currentUser?.id ?? 0;
     final item = _selectedItems.first;
 
     // Şahitlik kontrolü.

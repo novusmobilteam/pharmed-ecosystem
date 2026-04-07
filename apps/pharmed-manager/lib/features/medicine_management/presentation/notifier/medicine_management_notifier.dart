@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
+import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../urgent_patient/domain/usecase/create_urgent_patient_usecase.dart';
 
 enum MedicineManagementType { allPatients, myPatients }
 
 class MedicineManagementNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Hospitalization> {
-  final AuthManagerNotifier _authPersistence;
+  final AuthNotifier _authPersistence;
   final GetCurrentStationUseCase _getCurrentStationUseCase;
   final CreateUrgentPatientUseCase _createUrgentPatientUseCase;
   final GetHospitalizationsByServiceUseCase _getHospitalizationsUseCase;
@@ -15,7 +16,7 @@ class MedicineManagementNotifier extends ChangeNotifier with ApiRequestMixin, Se
   final GetMyPatientsUseCase _getMyPatientsUseCase;
 
   MedicineManagementNotifier({
-    required AuthManagerNotifier authPersistence,
+    required AuthNotifier authPersistence,
     required GetCurrentStationUseCase getCurrentStationUseCase,
     required GetHospitalizationsByServiceUseCase getHospitalizationsUseCase,
     required GetFilteredHospitalizationsUseCase filteredHospitalizationsUseCase,
@@ -42,7 +43,8 @@ class MedicineManagementNotifier extends ChangeNotifier with ApiRequestMixin, Se
   /// Aktif kullanıcının orderlı işlem yapma durumu
   /// orderless -> Ordersız işlem yapabilir
   /// ordered -> Ordersız işlem yapamaz
-  OrderStatus get userOrderStatus => _authPersistence.orderStatus;
+  // OrderStatus get userOrderStatus => _authPersistence.orderStatus;
+  OrderStatus get userOrderStatus => OrderStatus.ordered;
 
   /// Aktif istasyonun orderlı işlem yapma durumu
   /// true -> Ordersız işlem yapabilir

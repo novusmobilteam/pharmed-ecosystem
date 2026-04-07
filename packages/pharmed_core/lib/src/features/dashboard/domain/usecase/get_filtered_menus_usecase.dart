@@ -9,8 +9,9 @@ class FilteredMenus {
 
 class GetFilteredMenusUseCase {
   final IDashboardRepository _dashboardRepository;
+  final bool isManager;
 
-  GetFilteredMenusUseCase(this._dashboardRepository);
+  GetFilteredMenusUseCase(this._dashboardRepository, {this.isManager = false});
 
   Future<RepoResult<FilteredMenus>> call({int? userId, bool forceRefresh = false}) async {
     final result = await _dashboardRepository.getMenuItems(userId: userId);
@@ -29,13 +30,13 @@ class GetFilteredMenusUseCase {
   }
 
   FilteredMenus _processMenus(List<MenuItem> treeMenus) {
-    // 1. Dashboard öğesini oluştur
+    final filtered = treeMenus
+        .map((item) => item.copyWith(children: item.children.where((child) => child.isManager == isManager).toList()))
+        .where((item) => item.isManager == isManager)
+        .toList();
+
     final dashboardItem = MenuItem(id: -1, name: 'Anasayfa', route: 'dashboard', children: []);
-
-    // 2. Orijinal listeyi bozmamak için kopyala ve Dashboard'u başa ekle
-    final updatedTree = [dashboardItem, ...treeMenus];
-
-    // 3. Yeni ağaç üzerinden düz listeyi (Flatten) oluştur
+    final updatedTree = [dashboardItem, ...filtered];
     final flattened = _flattenTree(updatedTree);
 
     return FilteredMenus(tree: updatedTree, flattened: flattened);

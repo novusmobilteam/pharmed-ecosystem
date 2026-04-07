@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../core.dart';
-import 'logout_button.dart';
 
 class NavigationSidebar extends StatelessWidget {
   final int selectedIndex;
@@ -39,7 +38,7 @@ class NavigationSidebar extends StatelessWidget {
             ),
           ),
 
-          const LogoutButton(),
+          // const LogoutButton(),
         ],
       ),
     );

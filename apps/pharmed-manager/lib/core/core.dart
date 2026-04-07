@@ -3,7 +3,6 @@ export 'package:pharmed_core/pharmed_core.dart';
 export 'package:pharmed_data/pharmed_data.dart';
 export 'package:pharmed_ui/pharmed_ui.dart';
 
-export 'auth/auth_manager_notifier.dart';
 // UseCase
 export 'usecase/use_case.dart';
 // Mixins

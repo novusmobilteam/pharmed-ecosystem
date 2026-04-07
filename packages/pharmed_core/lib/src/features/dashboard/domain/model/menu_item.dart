@@ -48,6 +48,7 @@ class MenuItem {
       route: route ?? this.route,
       children: children ?? this.children,
       description: description ?? this.description,
+      isManager: isManager ?? this.isManager,
     );
   }
 }

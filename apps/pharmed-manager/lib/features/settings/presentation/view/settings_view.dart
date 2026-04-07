@@ -5,6 +5,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
+import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../home/notifier/home_notifier.dart';
 import '../notifier/settings_notifier.dart';
 
@@ -32,8 +33,8 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsNotifier>();
-    final auth = context.watch<AuthManagerNotifier>();
-    final isAdmin = auth.user?.isAdmin ?? false;
+    final auth = context.watch<AuthNotifier>();
+    final isAdmin = auth.currentUser?.isAdmin ?? false;
 
     final List<String> currentTitles = [];
     final List<Widget> currentViews = [];

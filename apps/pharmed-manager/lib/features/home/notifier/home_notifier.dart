@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
+import '../../auth/presentation/notifier/auth_notifier.dart';
+
 class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetFilteredMenusUseCase _getFilteredMenusUseCase;
-  final AuthManagerNotifier _authStorageNotifier;
+  final AuthNotifier _authNotifier;
 
-  HomeNotifier({
-    required GetFilteredMenusUseCase getFilteredMenusUseCase,
-    required AuthManagerNotifier authStorageNotifier,
-  }) : _getFilteredMenusUseCase = getFilteredMenusUseCase,
-       _authStorageNotifier = authStorageNotifier;
+  HomeNotifier({required GetFilteredMenusUseCase getFilteredMenusUseCase, required AuthNotifier authNotifier})
+    : _getFilteredMenusUseCase = getFilteredMenusUseCase,
+      _authNotifier = authNotifier;
 
   OperationKey fetchOp = OperationKey.fetch();
 

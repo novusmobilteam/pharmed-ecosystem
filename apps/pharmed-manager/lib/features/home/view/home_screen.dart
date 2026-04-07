@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/widgets/dashboard_status_view.dart';
 import '../../../core/widgets/navigation_sidebar.dart';
 import '../notifier/home_notifier.dart';
 import 'grid_menu_view.dart';
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 200,
                     child: PharmedButton(
                       onPressed: () {
-                        context.read<AuthManagerNotifier>().logout();
+                        context.read<AuthNotifier>().logout();
                       },
                       label: 'Çıkış Yap',
                       backgroundColor: Colors.black,
@@ -95,7 +95,7 @@ class _HomeView extends StatelessWidget {
                 width: 200,
                 child: PharmedButton(
                   onPressed: () {
-                    context.read<AuthManagerNotifier>().logout();
+                    context.read<AuthNotifier>().logout();
                   },
                   label: 'Çıkış Yap',
                   backgroundColor: Colors.black,
@@ -132,7 +132,7 @@ class _HomeView extends StatelessWidget {
               width: kRightColumnWidth,
               child: Column(
                 children: [
-                  DashboardStatusView(width: kRightColumnWidth),
+                  //DashboardStatusView(width: kRightColumnWidth),
                   // Expanded(child: FavoriteQuickAccess(allMenuItems: notifier.menuItems)),
                 ],
               ),

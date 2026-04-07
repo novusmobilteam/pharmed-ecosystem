@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
+import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
 
 import '../../domain/entity/cabin_operation_item.dart';
 
@@ -9,12 +10,12 @@ import '../../domain/entity/cabin_operation_item.dart';
 class WitnessNotifier extends ChangeNotifier with ApiRequestMixin {
   final CabinOperationItem item;
   final WitnessUserLoginUseCase _loginUseCase;
-  final AuthManagerNotifier _authPersistence;
+  final AuthNotifier _authPersistence;
 
   WitnessNotifier({
     required this.item,
     required WitnessUserLoginUseCase loginUseCase,
-    required AuthManagerNotifier authPersistence,
+    required AuthNotifier authPersistence,
   }) : _loginUseCase = loginUseCase,
        _authPersistence = authPersistence;
 
@@ -42,7 +43,7 @@ class WitnessNotifier extends ChangeNotifier with ApiRequestMixin {
         }
 
         // Kendi kendine şahitlik kontrolü
-        if (user.id == _authPersistence.user?.id) {
+        if (user.id == _authPersistence.currentUser?.id) {
           onFailed?.call('İşlemi yapan personel kendisi şahit olamaz.');
           return;
         }

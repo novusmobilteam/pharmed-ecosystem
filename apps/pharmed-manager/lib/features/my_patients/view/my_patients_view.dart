@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
 import '../../../core/widgets/hospitalization_card.dart';
+import '../../auth/presentation/notifier/auth_notifier.dart';
 import '../notifier/add_patient_notifier.dart';
 import '../notifier/my_patients_notifier.dart';
 
@@ -78,7 +79,7 @@ class MyPatientsView extends StatelessWidget {
 }
 
 void _onAdd(BuildContext context, MyPatientsNotifier notifier) async {
-  final userId = context.read<AuthManagerNotifier>().user?.id ?? 0;
+  final userId = context.read<AuthNotifier>().currentUser?.id ?? 0;
   final result = await showAddPatientDialog(
     context,
     userId,

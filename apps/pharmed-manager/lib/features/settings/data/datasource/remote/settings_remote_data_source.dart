@@ -7,12 +7,10 @@ class SettingsRemoteDataSource extends BaseRemoteDataSource implements SettingsD
   SettingsRemoteDataSource({required super.apiManager});
 
   @override
-  // TODO: implement logSwreq
-  String get logSwreq => throw UnimplementedError();
+  String get logSwreq => 'SWREQ-DATA-SETTINGS-001';
 
   @override
-  // TODO: implement logUnit
-  String get logUnit => throw UnimplementedError();
+  String get logUnit => 'SW-UNIT-SETTINGS';
 
   @override
   Future<Result<List<SystemParameterDTO>>> getSystemParameters() async {

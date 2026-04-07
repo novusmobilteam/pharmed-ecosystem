@@ -5,14 +5,14 @@
 // Sınıf: Class B
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/flavor/app_flavor.dart';
-import 'package:pharmed_client/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_manager/core/flavor/app_flavor.dart';
+import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
 
 // ── AuthCacheDataSource ───────────────────────────────────────────
 
 final authCacheProvider = Provider<AuthCacheDataSource>((ref) {
-  return AuthCacheDataSource(boxPrefix: 'client_');
+  return AuthCacheDataSource(boxPrefix: 'manager_');
 });
 
 // ── TokenHolder ───────────────────────────────────────────────────
