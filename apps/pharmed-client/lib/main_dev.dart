@@ -11,6 +11,6 @@ void main() async {
   FlavorConfig.initialize(AppFlavor.dev);
   await AppBootstrap.init();
   MedLogger.configure(verboseLogging: true);
-  await appSettingsCache.resetSetup();
+  //await appSettingsCache.resetSetup();
   runApp(const ProviderScope(child: MyApp()));
 }
