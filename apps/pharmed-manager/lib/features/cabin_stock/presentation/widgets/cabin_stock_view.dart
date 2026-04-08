@@ -3,7 +3,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
 import '../../../cabin/shared/widgets/cabin_editor/cabin_editor_view.dart';
-import '../../../cabin_assignment/presentation/widgets/assignment_cell.dart';
+import '../../../medicine_withdraw/presentation/widgets/quantity_badge.dart';
 
 part 'stock_cell.dart';
 

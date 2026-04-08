@@ -284,12 +284,13 @@ Widget _manifacturerField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return DialogInputField<Firm>(
+      return SelectionField<Firm>(
         label: label,
+        title: label,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
         initialValue: vm.drug.firm,
-        labelBuilder: (value) => value?.name,
-        future: () => context.read<IFirmRepository>().getFirms(),
+        labelBuilder: (value) => value.name,
+        dataSource: (skip, take, search) => context.read<IFirmRepository>().getFirms(),
         onSelected: vm.updateFirm,
       );
     },
@@ -320,12 +321,13 @@ Widget _drugTypeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return DialogInputField<DrugType>(
+      return SelectionField<DrugType>(
         label: label,
+        title: label,
         initialValue: vm.drug.drugType,
         labelBuilder: (value) => value?.name,
         onSelected: vm.updateDrugType,
-        future: () => context.read<IDrugTypeRepository>().getDrugTypes(),
+        dataSource: (skip, take, search) => context.read<IDrugTypeRepository>().getDrugTypes(),
         validator: (value) => Validators.cannotBlankValidator(value?.name),
       );
     },
@@ -401,11 +403,12 @@ Widget _drugClassField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return DialogInputField<DrugClass>(
+      return SelectionField<DrugClass>(
         label: label,
+        title: label,
         initialValue: vm.drug.drugClass,
-        labelBuilder: (value) => value?.name,
-        future: () => context.read<IDrugClassRepository>().getDrugClasses(),
+        labelBuilder: (value) => value.name,
+        dataSource: (skip, take, search) => context.read<IDrugClassRepository>().getDrugClasses(),
         onSelected: vm.updateDrugClass,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
       );
@@ -723,11 +726,12 @@ Widget _buildActiveIngredientField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return MultiDialogInputField<ActiveIngredient>(
+      return MultiSelectionField<ActiveIngredient>(
         key: ObjectKey(vm.activeIngredients),
         label: label,
+        title: label,
         initialValue: vm.activeIngredients,
-        labelBuilder: (value) => value?.name,
+        labelBuilder: (value) => value.name,
         validator: (value) {
           if (value != null && value.isNotEmpty) {
             return Validators.cannotBlankValidator(value.first.name);
@@ -735,7 +739,7 @@ Widget _buildActiveIngredientField() {
             return Validators.cannotBlankValidator(null);
           }
         },
-        future: () => context.read<IActiveIngredientRepository>().getActiveIngredients(),
+        dataSource: (skip, take, search) => context.read<IActiveIngredientRepository>().getActiveIngredients(),
         onSelected: vm.updateActiveIngredients,
       );
     },

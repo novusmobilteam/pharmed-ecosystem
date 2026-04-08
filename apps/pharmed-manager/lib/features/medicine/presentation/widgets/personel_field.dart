@@ -18,7 +18,7 @@ class PersonelField extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = 'Personel';
 
-    return MultiDialogInputField<User>(
+    return MultiSelectionField<User>(
       label: label,
       enabled: enabled,
       validator: (users) {
@@ -29,7 +29,7 @@ class PersonelField extends StatelessWidget {
         }
       },
       initialValue: initialValue,
-      future: () => context.read<GetUsersUseCase>().call(GetUsersParams()),
+      dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(GetUsersParams()),
       labelBuilder: (user) => user?.fullName,
       onSelected: (user) => onChanged(user),
     );

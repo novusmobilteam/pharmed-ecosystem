@@ -133,12 +133,13 @@ class _DoctorField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HospitalizationFormNotifier>(
       builder: (context, notifier, _) {
-        return DialogInputField<User>(
+        return SelectionField<User>(
           label: 'Doktor',
+          title: 'Doktor',
           initialValue: notifier.doctor,
-          labelBuilder: (value) => value?.fullName,
+          labelBuilder: (value) => value.fullName,
           validator: (value) => Validators.cannotBlankValidator(value?.fullName),
-          future: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+          dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),
           onSelected: (value) => notifier.selectDoctor(value),
         );
       },
@@ -154,12 +155,13 @@ class _PhysicalServiceField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return DialogInputField<HospitalService>(
+          return SelectionField<HospitalService>(
             label: 'Fiziki Servis',
+            title: 'Fiziki Servis',
             initialValue: notifier.hospitalization?.physicalService,
             validator: (s) => Validators.cannotBlankValidator(s?.name),
-            labelBuilder: (s) => s?.name,
-            future: () => context.read<IServiceRepository>().getServices(),
+            labelBuilder: (s) => s.name ?? '-',
+            dataSource: (skip, take, search) => context.read<IServiceRepository>().getServices(),
             onSelected: (s) => notifier.selectPhysicalService(s),
           );
         },
@@ -176,12 +178,13 @@ class _InpatientServiceField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return DialogInputField<HospitalService>(
+          return SelectionField<HospitalService>(
             label: 'Yatış Servis',
-            labelBuilder: (s) => s?.name,
+            title: 'Yatış Servis',
+            labelBuilder: (s) => s.name ?? '-',
             initialValue: notifier.hospitalization?.inpatientService,
             validator: (s) => Validators.cannotBlankValidator(s?.name),
-            future: () => context.read<IServiceRepository>().getServices(),
+            dataSource: (skip, take, search) => context.read<IServiceRepository>().getServices(),
             onSelected: (s) => notifier.selectInpatientService(s),
           );
         },

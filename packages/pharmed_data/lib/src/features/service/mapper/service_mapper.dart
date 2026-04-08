@@ -25,6 +25,8 @@ class ServiceMapper {
       id: entity.id,
       name: entity.name,
       isActive: entity.isActive,
+      branchId: entity.branch?.id,
+      userId: entity.user?.id,
       branch: BranchMapper().toDtoOrNull(entity.branch),
     );
   }

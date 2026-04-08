@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import 'base_input_field.dart';
@@ -42,10 +43,7 @@ class DropdownInputField<T> extends BaseInputField<T> {
                      Expanded(
                        child: Text(
                          value != null ? (labelBuilder(value) ?? '-') : 'Seçiniz',
-                         style: TextStyle(
-                           color: value != null ? colorScheme.onSurface : colorScheme.onSurfaceVariant.withAlpha(128),
-                           fontSize: 14,
-                         ),
+                         style: MedTextStyles.bodyMd(color: MedColors.text),
                          overflow: TextOverflow.ellipsis,
                        ),
                      ),
@@ -57,13 +55,10 @@ class DropdownInputField<T> extends BaseInputField<T> {
                  itemBuilder: (context) => options.map((T item) {
                    return PopupMenuItem<T>(
                      value: item,
-                     height: 44,
+                     height: 40,
                      child: SizedBox(
                        width: constraints.maxWidth,
-                       child: Text(
-                         labelBuilder(item) ?? '-',
-                         style: TextStyle(fontSize: 14, color: colorScheme.onSurface),
-                       ),
+                       child: Text(labelBuilder(item) ?? '-', style: MedTextStyles.bodyMd(color: MedColors.text)),
                      ),
                    );
                  }).toList(),

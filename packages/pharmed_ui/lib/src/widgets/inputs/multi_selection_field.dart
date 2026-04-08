@@ -6,9 +6,9 @@ class MultiSelectionField<T extends Selectable> extends BaseInputField<List<T>> 
   MultiSelectionField({
     super.key,
     required super.label,
-    required String title,
+     String? title,
     required SearchDataSource<T> dataSource,
-    required String Function(T item) labelBuilder,
+    required String? Function(T item) labelBuilder,
     required ValueChanged<List<T>?> onSelected,
     super.initialValue,
     super.validator,
@@ -22,9 +22,9 @@ class MultiSelectionField<T extends Selectable> extends BaseInputField<List<T>> 
              behavior: HitTestBehavior.opaque,
              onTap: enabled
                  ? () async {
-                     final results = await PharmedSearchDialog.showMulti<T>(
+                     final results = await SelectionDialog.showMulti<T>(
                        context,
-                       title: title,
+                       title: title ?? label ?? '-',
                        dataSource: dataSource,
                        labelBuilder: labelBuilder,
                        initiallySelected: value,

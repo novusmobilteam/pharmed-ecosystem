@@ -1,12 +1,7 @@
 part of 'cabin_stock_view.dart';
 
 class StockCell extends StatelessWidget {
-  const StockCell({
-    super.key,
-    required this.assignment,
-    required this.unit,
-    this.isSelected = false,
-  });
+  const StockCell({super.key, required this.assignment, required this.unit, this.isSelected = false});
 
   final CabinAssignment assignment;
   final DrawerUnit unit;
@@ -47,10 +42,7 @@ class StockCell extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        dynamicColor.withValues(alpha: 0.15),
-                        dynamicColor.withValues(alpha: 0.05),
-                      ],
+                      colors: [dynamicColor.withValues(alpha: 0.15), dynamicColor.withValues(alpha: 0.05)],
                     ),
                   ),
                 ),
@@ -61,10 +53,7 @@ class StockCell extends StatelessWidget {
               Positioned(
                 top: 5,
                 right: 5,
-                child: Icon(
-                  PhosphorIconsFill.checkCircle,
-                  color: context.colorScheme.primary,
-                ),
+                child: Icon(PhosphorIconsFill.checkCircle, color: context.colorScheme.primary),
               ),
 
             // 2. İçerik Katmanı
@@ -88,42 +77,39 @@ class StockCell extends StatelessWidget {
                   FittedBox(
                     child: Text(
                       '${current.toInt().toString()} ${assignment.operationUnit}',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: dynamicColor,
-                      ),
+                      style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w900, color: dynamicColor),
                     ),
                   ),
 
-                if (min != 0 && maxQuantity != 0 && criticalQuantity != 0)
-                  Column(
-                    spacing: 2,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          QuantityBadge(
-                            label: 'Min',
-                            value: min,
-                            unit: assignment.operationUnit,
-                          ),
-                          const SizedBox(width: 4),
-                          QuantityBadge(
-                            label: 'Max',
-                            value: maxQuantity,
-                            unit: assignment.operationUnit,
-                          ),
-                          const SizedBox(width: 4),
-                        ],
-                      ),
-                      QuantityBadge(
-                        label: 'Krt',
-                        value: criticalQuantity,
-                        isCritical: true,
-                        unit: assignment.operationUnit,
-                      ),
-                    ],
-                  ),
+                // if (min != 0 && maxQuantity != 0 && criticalQuantity != 0)
+                //   Column(
+                //     spacing: 2,
+                //     children: [
+                //       Row(
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         children: [
+                //           QuantityBadge(
+                //             label: 'Min',
+                //             value: min,
+                //             unit: assignment.operationUnit,
+                //           ),
+                //           const SizedBox(width: 4),
+                //           QuantityBadge(
+                //             label: 'Max',
+                //             value: maxQuantity,
+                //             unit: assignment.operationUnit,
+                //           ),
+                //           const SizedBox(width: 4),
+                //         ],
+                //       ),
+                //       QuantityBadge(
+                //         label: 'Krt',
+                //         value: criticalQuantity,
+                //         isCritical: true,
+                //         unit: assignment.operationUnit,
+                //       ),
+                //     ],
+                //   ),
               ],
             ),
           ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
 import 'package:pharmed_manager/core/widgets/pharmed_button.dart';
 
 class SidePanelWrapper extends StatelessWidget {
@@ -199,33 +200,29 @@ class _SidePanelFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 9, 14, 9),
-      decoration: const BoxDecoration(
-        color: Color(0xFFF7F9FC),
-        border: Border(top: BorderSide(color: Color(0xFFDDE3EC))),
+      decoration: BoxDecoration(
+        color: MedColors.surface2,
+        border: Border(top: BorderSide(color: MedColors.border)),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Expanded(
-            child: PharmedButton(label: saveLabel, onPressed: isLoading ? null : onSave, isLoading: isLoading),
-          ),
-          const SizedBox(width: 6),
           PharmedButton(
             label: 'İptal',
             onPressed: onClose,
             backgroundColor: Colors.white,
             foregroundColor: const Color(0xFF3D4F66),
           ),
-          if (onDelete != null) ...[
-            const SizedBox(width: 6),
-            PharmedButton(
-              label: '',
-              //icon: Icons.delete_outline_rounded,
-              onPressed: onDelete,
-              backgroundColor: const Color(0xFFFEF2F2),
-              foregroundColor: const Color(0xFFDC2626),
-              //borderColor: const Color(0xFFFEF2F2),
+          const SizedBox(width: 6),
+          SizedBox(
+            width: 150,
+            child: MedButton(
+              label: saveLabel,
+              size: MedButtonSize.sm,
+              onPressed: isLoading ? null : onSave,
+              isLoading: isLoading,
             ),
-          ],
+          ),
         ],
       ),
     );

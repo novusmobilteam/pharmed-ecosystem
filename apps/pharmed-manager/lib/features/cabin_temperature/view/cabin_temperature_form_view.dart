@@ -8,10 +8,8 @@ class CabinTemperatureFormView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => CabinTemperatureControlFormViewModel(
-        cabinTemperatureRepository: context.read(),
-        initial: initial,
-      ),
+      create: (context) =>
+          CabinTemperatureControlFormViewModel(cabinTemperatureRepository: context.read(), initial: initial),
       child: CabinTemperatureFormDialogBody(),
     );
   }
@@ -95,32 +93,23 @@ class _CabinTemperatureFormDialogBodyState extends State<CabinTemperatureFormDia
                 Expanded(
                   child: Column(
                     spacing: AppDimensions.registrationDialogSpacing,
-                    children: [
-                      _InsideBottomTempField(),
-                      _InsideTopTempField(),
-                    ],
+                    children: [_InsideBottomTempField(), _InsideTopTempField()],
                   ),
                 ),
                 Expanded(
                   child: Column(
                     spacing: AppDimensions.registrationDialogSpacing,
-                    children: [
-                      _OutsideBottomTempField(),
-                      _OutsideTopTempField(),
-                    ],
+                    children: [_OutsideBottomTempField(), _OutsideTopTempField()],
                   ),
                 ),
                 Expanded(
                   child: Column(
                     spacing: AppDimensions.registrationDialogSpacing,
-                    children: [
-                      _BottomHumidityField(),
-                      _TopHumidityField(),
-                    ],
+                    children: [_BottomHumidityField(), _TopHumidityField()],
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -135,12 +124,13 @@ class _StationField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CabinTemperatureControlFormViewModel>(
       builder: (context, vm, _) {
-        return DialogInputField<Station>(
+        return SelectionField<Station>(
           key: key,
           label: 'İstasyon',
+          title: 'İstasyon',
           initialValue: vm.form?.station,
-          future: () => context.read<IStationRepository>().getStations(),
-          labelBuilder: (value) => value?.name,
+          dataSource: (skip, take, search) => context.read<IStationRepository>().getStations(),
+          labelBuilder: (value) => value.name ?? '',
           validator: (value) => Validators.cannotBlankValidator(value?.name),
           onSelected: (value) => context.read<CabinTemperatureControlFormViewModel>().setStation(value),
         );

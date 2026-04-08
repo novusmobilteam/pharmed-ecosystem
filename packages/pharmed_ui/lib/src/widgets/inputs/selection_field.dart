@@ -7,9 +7,9 @@ class SelectionField<T extends Selectable> extends BaseInputField<T> {
   SelectionField({
     super.key,
     required super.label,
-    required String title,
+    String? title,
     required SearchDataSource<T> dataSource,
-    required String Function(T item) labelBuilder,
+    required String? Function(T item) labelBuilder,
     required ValueChanged<T?> onSelected,
     super.initialValue,
     super.validator,
@@ -23,9 +23,9 @@ class SelectionField<T extends Selectable> extends BaseInputField<T> {
              behavior: HitTestBehavior.opaque,
              onTap: enabled
                  ? () async {
-                     final result = await PharmedSearchDialog.show<T>(
+                     final result = await SelectionDialog.show<T>(
                        context,
-                       title: title,
+                       title: title ?? label ?? '-',
                        dataSource: dataSource,
                        labelBuilder: labelBuilder,
                      );
@@ -40,7 +40,7 @@ class SelectionField<T extends Selectable> extends BaseInputField<T> {
                children: [
                  Flexible(
                    child: Text(
-                     hasValue ? labelBuilder(value as T) : 'Seçiniz',
+                     hasValue ? (labelBuilder(value as T) ?? '-') : 'Seçiniz',
                      maxLines: 1,
                      overflow: TextOverflow.ellipsis,
                      style: MedTextStyles.bodyMd(color: MedColors.text),

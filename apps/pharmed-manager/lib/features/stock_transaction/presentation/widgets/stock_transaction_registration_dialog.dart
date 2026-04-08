@@ -63,12 +63,12 @@ class _MaterialField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StockTransactionFormNotifier>(
       builder: (context, notifier, _) {
-        return DialogInputField<Medicine>(
+        return SelectionField<Medicine>(
           label: 'Malzeme',
           initialValue: notifier.transaction?.medicine,
-          future: () => context.read<IMedicineRepository>().getMedicines(),
+          dataSource: (skip, take, search) => context.read<IMedicineRepository>().getMedicines(),
           validator: (value) => Validators.cannotBlankValidator(value?.name),
-          labelBuilder: (value) => value?.name,
+          labelBuilder: (value) => value.name,
           onSelected: notifier.updateMaterial,
         );
       },
@@ -97,10 +97,10 @@ class _ServiceField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StockTransactionFormNotifier>(
       builder: (context, notifier, _) {
-        return DialogInputField<HospitalService>(
+        return SelectionField<HospitalService>(
           label: 'Gönderilen Servis',
           initialValue: notifier.transaction?.service,
-          future: () => context.read<IServiceRepository>().getServices(),
+          dataSource: (skip, take, search) => context.read<IServiceRepository>().getServices(),
           labelBuilder: (value) => value?.name,
           onSelected: notifier.updateService,
           validator: (value) => Validators.cannotBlankValidator(value?.name),

@@ -6,5 +6,5 @@ export 'numpad_input_field.dart';
 export 'selection_field.dart';
 export 'time_input_field.dart';
 export 'text_input_field.dart';
-export 'pharmed_search_dialog.dart';
+export 'selection_dialog.dart';
 export 'radio_input_field.dart';

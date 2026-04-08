@@ -167,13 +167,14 @@ class _PatientField extends StatelessWidget {
       builder: (context, vm, _) {
         return Lockable(
           locked: !vm.isPatientSelectionEnabled,
-          child: DialogInputField<Hospitalization>(
+          child: SelectionField<Hospitalization>(
             label: 'Hasta',
             initialValue: vm.hospitalization,
-            labelBuilder: (u) => u?.patient?.fullName,
+            labelBuilder: (u) => u.patient?.fullName,
             onSelected: (u) => vm.updatePatient(u),
             validator: (u) => Validators.cannotBlankValidator(u?.patient?.fullName),
-            future: () => context.read<GetHospitalizationsUseCase>().call(GetHospitalizationsParams()),
+            dataSource: (skip, take, search) =>
+                context.read<GetHospitalizationsUseCase>().call(GetHospitalizationsParams()),
           ),
         );
       },
@@ -188,13 +189,13 @@ class _DoctorField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<NewPrescriptionNotifier>(
       builder: (context, vm, _) {
-        return DialogInputField<User>(
+        return SelectionField<User>(
           label: 'Doktor',
           initialValue: vm.currentItem.doctor,
-          labelBuilder: (u) => u?.fullName,
+          labelBuilder: (u) => u.fullName,
           onSelected: (u) => vm.updateDoctor(u),
           validator: (u) => Validators.cannotBlankValidator(u?.fullName),
-          future: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+          dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),
         );
       },
     );
@@ -208,14 +209,14 @@ class _DrugField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<NewPrescriptionNotifier>(
       builder: (context, vm, _) {
-        return DialogInputField<Medicine>(
+        return SelectionField<Medicine>(
           key: ValueKey('drug_${vm.currentItem.medicine?.id}'),
           label: 'İlaç / Malzeme',
           labelBuilder: (d) => d?.name,
           initialValue: vm.currentItem.medicine,
           onSelected: (d) => vm.updateMaterial(d),
           validator: (d) => Validators.cannotBlankValidator(d?.name),
-          future: () => context.read<IMedicineRepository>().getMedicines(),
+          dataSource: (skip, take, search) => context.read<IMedicineRepository>().getMedicines(),
         );
       },
     );

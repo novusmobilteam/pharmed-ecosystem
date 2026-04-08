@@ -8,7 +8,6 @@ import '../../../cabin/domain/entity/cabin_input_data.dart';
 import '../../../cabin/shared/cabin_assignment_picker/notifier/cabin_assignment_picker_notifier.dart';
 import '../../../cabin/shared/cabin_assignment_picker/view/cabin_assignment_picker_view.dart';
 
-import '../../../cabin_assignment/presentation/widgets/form/cabin_assignment_form_view.dart';
 import '../notifier/medicine_unload_notifier.dart';
 
 part 'unload_confirmation_view.dart';

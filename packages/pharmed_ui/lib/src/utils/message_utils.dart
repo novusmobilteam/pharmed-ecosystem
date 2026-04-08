@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:pharmed_ui/pharmed_ui.dart'; // MedButton buradan gelir
 
 enum MessageType { success, error, warning, info }
 
@@ -28,95 +29,89 @@ class MessageUtils {
     IconData? iconData,
   }) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final dialogContent = _getConfirmDialogContent(action, context);
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Dialog(
+      builder: (dialogContext) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
-          constraints: const BoxConstraints(minWidth: 340, maxWidth: 420),
+          constraints: const BoxConstraints(minWidth: 320, maxWidth: 400),
           padding: const EdgeInsets.all(24.0),
           decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(24.0), // Daha yuvarlak köşeler
-            border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.4), width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-                spreadRadius: 0,
-              ),
+            color: MedColors.surface,
+            borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(color: MedColors.border, width: 1),
+            boxShadow: const [
+              BoxShadow(color: Color(0x1F1E325A), blurRadius: 32, offset: Offset(0, 12)),
+              BoxShadow(color: Color(0x0F1E325A), blurRadius: 8, offset: Offset(0, 4)),
             ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // --- ICON AREA (Modern Circle) ---
+              // --- ICON AREA ---
               Container(
-                height: 72,
-                width: 72,
+                height: 60,
+                width: 60,
                 decoration: BoxDecoration(
-                  color: (color ?? dialogContent.backgroundColor).withValues(alpha: 0.1),
+                  color: color != null ? color.withValues(alpha: 0.1) : dialogContent.iconBgColor,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: Icon(iconData ?? dialogContent.icon, color: color ?? dialogContent.backgroundColor, size: 32),
+                  child: Icon(iconData ?? dialogContent.icon, color: color ?? dialogContent.iconColor, size: 28),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // --- TITLE ---
               Text(
                 customTitle ?? dialogContent.title,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
-                  letterSpacing: -0.5, // Modern font spacing
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: MedColors.text,
+                  letterSpacing: -0.2,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // --- MESSAGE ---
               Text(
                 customMessage ?? dialogContent.message,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  height: 1.5, // Daha iyi okunabilirlik
-                ),
+                style: theme.textTheme.bodySmall?.copyWith(color: MedColors.text2, height: 1.55),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               // --- BUTTONS ---
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: PharmedButton(
-              //         onPressed: () => context.pop(),
-              //         label: cancelButtonText,
-              //         backgroundColor: colorScheme.surfaceContainer,
-              //         foregroundColor: colorScheme.onSurface,
-              //       ),
-              //     ),
-              //     const SizedBox(width: 16),
-              //     Expanded(
-              //       child: PharmedButton(
-              //         onPressed: () {
-              //           context.pop();
-              //           onConfirm();
-              //         },
-              //         label: confirmButtonText,
-              //         backgroundColor: dialogContent.buttonColor,
-              //         foregroundColor: dialogContent.buttonTextColor,
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              Row(
+                children: [
+                  Expanded(
+                    child: MedButton(
+                      label: cancelButtonText,
+                      variant: MedButtonVariant.ghost,
+                      size: MedButtonSize.sm,
+                      fullWidth: true,
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: MedButton(
+                      label: confirmButtonText,
+                      variant: dialogContent.buttonVariant,
+                      size: MedButtonSize.sm,
+                      fullWidth: true,
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        onConfirm();
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -177,7 +172,7 @@ class MessageUtils {
       customTitle: 'Çıkış Yap',
       customMessage: 'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
       iconData: PhosphorIcons.signOut(),
-      action: ConfirmAction.delete,
+      action: ConfirmAction.exit,
       onConfirm: onConfirm,
       confirmButtonText: 'Çıkış Yap',
     );
@@ -191,7 +186,7 @@ class MessageUtils {
     required MessageType type,
     Duration duration = const Duration(seconds: 4),
   }) {
-    final themeData = _getThemeDataByType(type, context);
+    final themeData = _getToastThemeData(type);
     final icon = _getIconByType(type);
 
     _showCustomToast(
@@ -201,6 +196,7 @@ class MessageUtils {
       backgroundColor: themeData.backgroundColor,
       textColor: themeData.textColor,
       iconColor: themeData.iconColor,
+      iconBgColor: themeData.iconBgColor,
       duration: duration,
     );
   }
@@ -261,42 +257,45 @@ class MessageUtils {
     required Color backgroundColor,
     required Color textColor,
     required Color iconColor,
+    required Color iconBgColor,
     required Duration duration,
   }) {
     FToast fToast = FToast();
     fToast.init(context);
 
-    Widget toast = Container(
+    final toast = Container(
       margin: const EdgeInsets.only(bottom: 50.0),
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.0), // Daha modern radius
+        borderRadius: BorderRadius.circular(10.0),
         color: backgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: backgroundColor.withValues(alpha: 0.3),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-            spreadRadius: -2,
-          ),
+        border: Border.all(color: MedColors.border, width: 1),
+        boxShadow: const [
+          BoxShadow(color: Color(0x141E325A), blurRadius: 12, offset: Offset(0, 4)),
+          BoxShadow(color: Color(0x0A1E325A), blurRadius: 4, offset: Offset(0, 2)),
         ],
-
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle),
-            child: Icon(icon, color: iconColor, size: 20),
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(color: iconBgColor, shape: BoxShape.circle),
+            child: Center(child: Icon(icon, color: iconColor, size: 16)),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 10),
           Flexible(
             child: Text(
               message,
-              style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.2),
+              style: TextStyle(
+                color: textColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.1,
+                height: 1.4,
+              ),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
@@ -309,39 +308,39 @@ class MessageUtils {
       child: toast,
       gravity: ToastGravity.BOTTOM,
       toastDuration: duration,
-      fadeDuration: const Duration(milliseconds: 300),
+      fadeDuration: const Duration(milliseconds: 250),
     );
   }
 
-  // Renkleri Temadan Türeten Helper
-  static _DialogThemeData _getThemeDataByType(MessageType type, BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
+  static _ToastThemeData _getToastThemeData(MessageType type) {
     switch (type) {
       case MessageType.success:
-        return _DialogThemeData(
-          // Koyu yeşil tonları modern UI'da daha profesyonel durur
-          backgroundColor: const Color(0xFF2E7D32), // Green 800
-          textColor: Colors.white,
-          iconColor: Colors.white,
+        return _ToastThemeData(
+          backgroundColor: MedColors.surface,
+          textColor: MedColors.text,
+          iconColor: MedColors.green,
+          iconBgColor: MedColors.greenLight,
         );
       case MessageType.error:
-        return _DialogThemeData(
-          backgroundColor: colorScheme.error,
-          textColor: colorScheme.onError,
-          iconColor: colorScheme.onError,
+        return _ToastThemeData(
+          backgroundColor: MedColors.surface,
+          textColor: MedColors.text,
+          iconColor: MedColors.red,
+          iconBgColor: MedColors.redLight,
         );
       case MessageType.warning:
-        return _DialogThemeData(
-          backgroundColor: const Color(0xFFEF6C00), // Orange 800
-          textColor: Colors.white,
-          iconColor: Colors.white,
+        return _ToastThemeData(
+          backgroundColor: MedColors.surface,
+          textColor: MedColors.text,
+          iconColor: MedColors.amber,
+          iconBgColor: MedColors.amberLight,
         );
       case MessageType.info:
-        return _DialogThemeData(
-          backgroundColor: colorScheme.primary, // Marka rengi
-          textColor: colorScheme.onPrimary,
-          iconColor: colorScheme.onPrimary,
+        return _ToastThemeData(
+          backgroundColor: MedColors.surface,
+          textColor: MedColors.text,
+          iconColor: MedColors.blue,
+          iconBgColor: MedColors.blueLight,
         );
     }
   }
@@ -360,53 +359,51 @@ class MessageUtils {
   }
 
   static _ConfirmDialogContent _getConfirmDialogContent(ConfirmAction action, BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     switch (action) {
       case ConfirmAction.delete:
         return _ConfirmDialogContent(
           title: 'Silme İşlemi',
           message: 'Bu öğeyi silmek istediğinizden emin misiniz?',
           icon: PhosphorIcons.trash(),
-          backgroundColor: colorScheme.error,
-          buttonColor: colorScheme.error,
-          buttonTextColor: colorScheme.onError,
+          iconColor: MedColors.red,
+          iconBgColor: MedColors.redLight,
+          buttonVariant: MedButtonVariant.danger,
         );
       case ConfirmAction.exit:
         return _ConfirmDialogContent(
           title: 'Çıkış',
           message: 'Kaydetmediğiniz değişiklikler kaybolabilir.',
           icon: PhosphorIcons.signOut(),
-          backgroundColor: const Color(0xFFEF6C00),
-          buttonColor: const Color(0xFFEF6C00),
-          buttonTextColor: Colors.white,
+          iconColor: MedColors.amber,
+          iconBgColor: MedColors.amberLight,
+          buttonVariant: MedButtonVariant.secondary,
         );
       case ConfirmAction.save:
         return _ConfirmDialogContent(
           title: 'Kaydet',
           message: 'Değişiklikleri kaydetmek istiyor musunuz?',
           icon: PhosphorIcons.floppyDisk(),
-          backgroundColor: const Color(0xFF1565C0), // Blue 800
-          buttonColor: const Color(0xFF1565C0),
-          buttonTextColor: Colors.white,
+          iconColor: MedColors.blue,
+          iconBgColor: MedColors.blueLight,
+          buttonVariant: MedButtonVariant.primary,
         );
       case ConfirmAction.discard:
         return _ConfirmDialogContent(
           title: 'İptal Et',
           message: 'Yapılan değişiklikler geri alınacak.',
           icon: PhosphorIcons.xCircle(),
-          backgroundColor: colorScheme.secondary,
-          buttonColor: colorScheme.secondary,
-          buttonTextColor: colorScheme.onSecondary,
+          iconColor: MedColors.amber,
+          iconBgColor: MedColors.amberLight,
+          buttonVariant: MedButtonVariant.secondary,
         );
       case ConfirmAction.custom:
         return _ConfirmDialogContent(
           title: 'Onay',
           message: 'İşlemi onaylıyor musunuz?',
           icon: PhosphorIcons.question(),
-          backgroundColor: colorScheme.primary,
-          buttonColor: colorScheme.primary,
-          buttonTextColor: colorScheme.onPrimary,
+          iconColor: MedColors.blue,
+          iconBgColor: MedColors.blueLight,
+          buttonVariant: MedButtonVariant.primary,
         );
     }
   }
@@ -414,29 +411,35 @@ class MessageUtils {
 
 // === SUPPORTING CLASSES ===
 
-class _DialogThemeData {
+class _ToastThemeData {
   final Color backgroundColor;
   final Color textColor;
   final Color iconColor;
+  final Color iconBgColor;
 
-  _DialogThemeData({required this.backgroundColor, required this.textColor, required this.iconColor});
+  _ToastThemeData({
+    required this.backgroundColor,
+    required this.textColor,
+    required this.iconColor,
+    required this.iconBgColor,
+  });
 }
 
 class _ConfirmDialogContent {
   final String title;
   final String message;
   final IconData icon;
-  final Color backgroundColor;
-  final Color buttonColor;
-  final Color buttonTextColor;
+  final Color iconColor;
+  final Color iconBgColor;
+  final MedButtonVariant buttonVariant;
 
   _ConfirmDialogContent({
     required this.title,
     required this.message,
     required this.icon,
-    required this.backgroundColor,
-    required this.buttonColor,
-    required this.buttonTextColor,
+    required this.iconColor,
+    required this.iconBgColor,
+    required this.buttonVariant,
   });
 }
 
@@ -449,59 +452,58 @@ class _CustomMessageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final themeData = MessageUtils._getThemeDataByType(type, context);
+    final themeData = MessageUtils._getToastThemeData(type);
     final icon = MessageUtils._getIconByType(type);
+
+    final MedButtonVariant buttonVariant = switch (type) {
+      MessageType.error => MedButtonVariant.danger,
+      MessageType.success => MedButtonVariant.success,
+      MessageType.warning => MedButtonVariant.secondary,
+      MessageType.info => MedButtonVariant.primary,
+    };
 
     return Dialog(
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Container(
-        constraints: const BoxConstraints(minWidth: 320, maxWidth: 380),
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+        constraints: const BoxConstraints(minWidth: 300, maxWidth: 360),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 28.0),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(24.0),
-          border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3), width: 1),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10)),
+          color: MedColors.surface,
+          borderRadius: BorderRadius.circular(16.0),
+          border: Border.all(color: MedColors.border, width: 1),
+          boxShadow: const [
+            BoxShadow(color: Color(0x1F1E325A), blurRadius: 32, offset: Offset(0, 12)),
+            BoxShadow(color: Color(0x0F1E325A), blurRadius: 8, offset: Offset(0, 4)),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Modern Icon Container
             Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: themeData.backgroundColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: themeData.backgroundColor, size: 40),
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(color: themeData.iconBgColor, shape: BoxShape.circle),
+              child: Center(child: Icon(icon, color: themeData.iconColor, size: 28)),
             ),
-            const SizedBox(height: 24),
-
-            // Message
+            const SizedBox(height: 20),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: theme.colorScheme.onSurface,
-                height: 1.5,
+                color: MedColors.text,
+                height: 1.55,
               ),
             ),
-            const SizedBox(height: 32),
-
-            // Button
-            // SizedBox(
-            //   width: double.infinity,
-            //   child: PharmedButton(
-            //     onPressed: () => context.pop(),
-            //     label: 'Tamam',
-            //     backgroundColor: themeData.backgroundColor,
-            //     foregroundColor: themeData.textColor,
-            //   ),
-            // ),
+            const SizedBox(height: 24),
+            MedButton(
+              label: 'Tamam',
+              variant: buttonVariant,
+              size: MedButtonSize.sm,
+              fullWidth: true,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ],
         ),
       ),

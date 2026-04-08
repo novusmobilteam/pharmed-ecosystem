@@ -6,11 +6,7 @@ class UnloadConfirmationView extends StatelessWidget {
   final List<CabinInputData> inputs;
   final CabinAssignment? assignment;
 
-  Future<void> _handleComplete(
-    BuildContext context,
-    MedicineUnloadNotifier notifier,
-    UnloadType type,
-  ) async {
+  Future<void> _handleComplete(BuildContext context, MedicineUnloadNotifier notifier, UnloadType type) async {
     await notifier.completeUnload(
       type,
       inputs,
@@ -26,9 +22,9 @@ class UnloadConfirmationView extends StatelessWidget {
     final completedType = notifier.completedType;
     if (completedType == null) return;
 
-    if (completedType == UnloadType.changeAssignment) {
-      await showCabinAssignmentFormView(context, assignment);
-    }
+    // if (completedType == UnloadType.changeAssignment) {
+    //   await showCabinAssignmentFormView(context, assignment);
+    // }
 
     if (context.mounted) context.pop(true);
   }
@@ -43,18 +39,12 @@ class UnloadConfirmationView extends StatelessWidget {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Container(
-            constraints: const BoxConstraints(
-              minWidth: 340,
-              maxWidth: 620,
-            ),
+            constraints: const BoxConstraints(minWidth: 340, maxWidth: 620),
             padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(24.0),
-              border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-                width: 1,
-              ),
+              border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.4), width: 1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.1),
@@ -70,17 +60,8 @@ class UnloadConfirmationView extends StatelessWidget {
                 Container(
                   height: 72,
                   width: 72,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(
-                      PhosphorIcons.arrowsLeftRight(),
-                      color: colorScheme.primary,
-                      size: 32,
-                    ),
-                  ),
+                  decoration: BoxDecoration(color: colorScheme.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
+                  child: Center(child: Icon(PhosphorIcons.arrowsLeftRight(), color: colorScheme.primary, size: 32)),
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -96,10 +77,7 @@ class UnloadConfirmationView extends StatelessWidget {
                 Text(
                   'Tüm ilaçları boşaltıyorsunuz. Atamayı silmek ya da değiştirmek istiyor musunuz?',
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    height: 1.5,
-                  ),
+                  style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant, height: 1.5),
                 ),
                 const SizedBox(height: 32),
                 SizedBox(
@@ -126,9 +104,9 @@ class UnloadConfirmationView extends StatelessWidget {
                         label: 'Tamamla ve Atamayı Değiştir',
                         backgroundColor: Colors.amber,
                       ),
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

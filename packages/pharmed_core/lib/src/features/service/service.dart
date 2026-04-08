@@ -1,6 +1,8 @@
 export 'data/service_dto.dart';
 
 export 'domain/model/hospital_service.dart';
+export 'domain/model/room.dart';
+export 'domain/model/bed.dart';
 export 'domain/repository/i_service_repository.dart';
 
 export 'domain/usecase/create_service_usecase.dart';

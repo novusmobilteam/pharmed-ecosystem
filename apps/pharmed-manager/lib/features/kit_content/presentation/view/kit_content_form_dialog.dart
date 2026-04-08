@@ -76,11 +76,12 @@ class _MaterialField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
-        return DialogInputField<Medicine>(
+        return SelectionField<Medicine>(
           label: 'Malzeme',
+          title: 'Malzeme',
           initialValue: notifier.kitContent.medicine,
-          labelBuilder: (medicine) => medicine?.name,
-          future: () => context.read<IMedicineRepository>().getMedicines(),
+          labelBuilder: (medicine) => medicine.name ?? '-',
+          dataSource: (skip, take, search) => context.read<IMedicineRepository>().getMedicines(),
           validator: (value) => Validators.cannotBlankValidator(value?.name),
           onSelected: notifier.updateMaterial,
         );

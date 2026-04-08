@@ -145,12 +145,12 @@ class _RoleField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return DialogInputField<Role>(
+        return SelectionField<Role>(
           key: key,
           label: 'Meslek Tipi',
           initialValue: notifier.user.role,
-          labelBuilder: (r) => r?.name,
-          future: () => context.read<IRoleRepository>().getRoles(),
+          labelBuilder: (r) => r.name,
+          dataSource: (skip, take, search) => context.read<IRoleRepository>().getRoles(),
           onSelected: (role) => notifier.changeRole(role),
           validator: (r) => Validators.cannotBlankValidator(r?.name),
         );
@@ -303,12 +303,12 @@ class _StationsField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return MultiDialogInputField<Station>(
+        return MultiSelectionField<Station>(
           key: ValueKey(notifier.selectedStations.length),
           label: 'Yetki İstasyonlar',
           initialValue: notifier.selectedStations,
-          future: () => context.read<IStationRepository>().getStations(),
-          labelBuilder: (s) => s?.name,
+          dataSource: (skip, take, search) => context.read<IStationRepository>().getStations(),
+          labelBuilder: (s) => s.name,
           onSelected: (stations) => notifier.changeStations(stations ?? []),
           // validator: (value) => Validators.cannotBlankValidator(
           //   (value == null || value.isEmpty) ? null : value.first.name,
@@ -343,11 +343,7 @@ class _PasswordField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
-          label: 'Şifre',
-          obscureText: true,
-          onChanged: (value) => notifier.changePassword(value),
-        );
+        return TextInputField(label: 'Şifre', obscureText: true, onChanged: (value) => notifier.changePassword(value));
       },
     );
   }

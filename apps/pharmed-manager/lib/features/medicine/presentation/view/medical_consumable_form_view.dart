@@ -195,12 +195,13 @@ Widget _buildMaterialTypeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return DialogInputField<MaterialType>(
+      return SelectionField<MaterialType>(
         label: label,
+        title: label,
         initialValue: vm.mc.materialType,
-        labelBuilder: (value) => value?.name,
+        labelBuilder: (value) => value.name,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
-        future: () => context.read<IMaterialTypeRepository>().getMaterialTypes(),
+        dataSource: (skip, take, search) => context.read<IMaterialTypeRepository>().getMaterialTypes(),
         onSelected: vm.updateMaterialType,
       );
     },
@@ -212,12 +213,12 @@ Widget _buildFirmField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return DialogInputField<Firm>(
+      return SelectionField<Firm>(
         label: label,
         initialValue: vm.mc.firm,
-        labelBuilder: (value) => value?.name,
+        labelBuilder: (value) => value.name,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
-        future: () => context.read<GetFirmsUseCase>().call(GetFirmsParams()),
+        dataSource: (skip, take, search) => context.read<GetFirmsUseCase>().call(GetFirmsParams()),
         onSelected: vm.updateFirm,
       );
     },

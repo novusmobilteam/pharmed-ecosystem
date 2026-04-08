@@ -4,7 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../station/view/station_screen.dart';
+import '../../station_setup/view/station_screen.dart';
 import '../notifier/home_notifier.dart';
 part 'sidebar.dart';
 
@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
           return Column(
             children: [
-              DashboardAppBar(cabinLocation: '', cabinName: ''),
+              //DashboardAppBar(cabinLocation: '', cabinName: ''),
               Expanded(
                 child: Row(
                   children: [
@@ -91,7 +91,7 @@ class _HomeContent extends StatelessWidget {
   Widget _buildContent(String? route) {
     return switch (route) {
       'dashboard' || null => const SizedBox(),
-      'station' => const StationScreen(),
+      'station' => const StationSetupScreen(),
       _ => const _NotFoundView(),
     };
   }

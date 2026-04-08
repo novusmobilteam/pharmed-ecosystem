@@ -18,11 +18,11 @@ class StationField extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = 'İstasyon';
 
-    return MultiDialogInputField<Station>(
+    return MultiSelectionField<Station>(
       label: label,
       enabled: enabled,
       initialValue: initialValue,
-      future: () => context.read<GetStationsUseCase>().call(GetStationsParams()),
+      dataSource: (skip, take, search) => context.read<GetStationsUseCase>().call(GetStationsParams()),
       labelBuilder: (station) => station?.name,
       onSelected: (station) => onChanged(station),
     );

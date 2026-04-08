@@ -66,7 +66,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
   Future<void> _openDrugDialog() async {
     final getDrugs = ref.read(getDrugsUseCaseProvider);
 
-    final selected = await PharmedSearchDialog.show<Medicine>(
+    final selected = await SelectionDialog.show<Medicine>(
       context,
       title: 'İlaç Seç',
       dataSource: (skip, take, search) => getDrugs.call(GetDrugsParams(skip: skip, take: take, search: search)),

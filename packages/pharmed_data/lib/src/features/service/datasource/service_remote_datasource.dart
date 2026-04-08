@@ -1,6 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 
 class ServiceRemoteDataSource extends BaseRemoteDataSource {
   ServiceRemoteDataSource({required super.apiManager});
@@ -42,8 +41,9 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateService(ServiceDTO dto) {
-    return createRequest(
-      path: _base,
+    print(dto.toJson().toString());
+    return updateRequest(
+      path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Servis güncellendi',

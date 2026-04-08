@@ -91,11 +91,12 @@ class _UserField extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = context.read<NewFillingListNotifier>();
 
-    return DialogInputField<User>(
+    return SelectionField<User>(
       label: 'Dolum Yapacak Kullanıcı',
-      future: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+      title: 'Dolum Yapacak Kullanıcı',
+      dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),
       initialValue: notifier.user,
-      labelBuilder: (value) => value?.fullName,
+      labelBuilder: (value) => value.fullName,
       onSelected: (value) => notifier.selectUser(value),
     );
   }
