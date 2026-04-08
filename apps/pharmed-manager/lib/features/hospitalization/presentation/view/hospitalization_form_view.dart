@@ -245,7 +245,7 @@ class _AdmissionDateField extends StatelessWidget {
           return DateInputField(
             label: 'Yatış Tarihi',
             initialValue: notifier.hospitalization?.admissionDate,
-            controller: controller,
+            //controller: controller,
             onDateSelected: notifier.updateAdmissionDate,
           );
         },
@@ -265,7 +265,7 @@ class _ExitDateField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return DateInputField(label: 'Çıkış Tarihi', controller: controller, onDateSelected: notifier.updateExitDate);
+          return DateInputField(label: 'Çıkış Tarihi', onDateSelected: notifier.updateExitDate);
         },
       ),
     );

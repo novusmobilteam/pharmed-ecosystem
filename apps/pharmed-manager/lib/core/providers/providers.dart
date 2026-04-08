@@ -1,5 +1,6 @@
 export 'auth_providers.dart';
-export 'datasource_providers.dart';
-export 'repository_providers.dart';
-export 'usecase_providers.dart';
-export 'network_providers.dart';
+export 'core_providers.dart';
+export 'menu_providers.dart';
+export 'station_providers.dart';
+export 'service_providers.dart';
+export 'warehouse_providers.dart';

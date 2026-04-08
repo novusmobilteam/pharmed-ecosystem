@@ -9,7 +9,7 @@ class MenuTreeMapper {
   final MenuRouteResolver? routeResolver;
 
   // routeResolver opsiyonel; verilmezse sadece slug'ı rota olarak döner.
-  MenuTreeMapper({this.routeResolver});
+  const MenuTreeMapper({this.routeResolver});
 
   MenuItem toEntity(MenuDTO dto) {
     final slug = dto.slug;

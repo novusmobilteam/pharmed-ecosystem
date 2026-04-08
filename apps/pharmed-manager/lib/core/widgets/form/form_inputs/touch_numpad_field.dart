@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-
-import '../../../../core/core.dart';
 
 /// Dokunmatik ekran için optimize edilmiş numpad giriş alanı.
 ///
@@ -42,12 +42,12 @@ class TouchNumpadField extends StatelessWidget {
 
   // ── Numpad tetikleyici ──────────────────────────────────────────────
   Future<void> _openNumpad(BuildContext context) async {
-    final String? result = await showNumpadView(
-      context,
-      title: 'Miktar',
-      initialValue: value == 0 ? '' : value.formatFractional,
-    );
-    if (result != null) onChanged(double.tryParse(result) ?? 0);
+    // final String? result = await showNumpadView(
+    //   context,
+    //   title: 'Miktar',
+    //   initialValue: value == 0 ? '' : value.formatFractional,
+    // );
+    // if (result != null) onChanged(double.tryParse(result) ?? 0);
   }
 
   // ── Step değişimi ──────────────────────────────────────────────────
@@ -79,9 +79,7 @@ class TouchNumpadField extends StatelessWidget {
       height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: context.colorScheme.outlineVariant.withValues(alpha: 0.6),
-        ),
+        border: Border.all(color: context.colorScheme.outlineVariant.withValues(alpha: 0.6)),
       ),
       child: Row(
         children: [
@@ -100,13 +98,7 @@ class TouchNumpadField extends StatelessWidget {
             child: InkWell(
               onTap: () => _openNumpad(context),
               borderRadius: BorderRadius.circular(4),
-              child: _ValueDisplay(
-                label: label,
-                value: value,
-                unit: unit,
-                hint: hint,
-                isEmpty: _isEmpty,
-              ),
+              child: _ValueDisplay(label: label, value: value, unit: unit, hint: hint, isEmpty: _isEmpty),
             ),
           ),
 
@@ -135,9 +127,7 @@ class TouchNumpadField extends StatelessWidget {
         height: 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: context.colorScheme.outlineVariant.withValues(alpha: 0.6),
-          ),
+          border: Border.all(color: context.colorScheme.outlineVariant.withValues(alpha: 0.6)),
         ),
         child: Row(
           children: [
@@ -146,11 +136,7 @@ class TouchNumpadField extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(
-                      color: context.colorScheme.outlineVariant.withValues(alpha: 0.4),
-                    ),
-                  ),
+                  border: Border(right: BorderSide(color: context.colorScheme.outlineVariant.withValues(alpha: 0.4))),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -158,19 +144,9 @@ class TouchNumpadField extends StatelessWidget {
                   spacing: 2,
                   children: [
                     if (label != null)
-                      Text(
-                        label!,
-                        style: context.textTheme.labelMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text(label!, style: context.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold)),
                     if (unit != null)
-                      Text(
-                        unit!,
-                        style: context.textTheme.labelSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text(unit!, style: context.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -189,11 +165,7 @@ class TouchNumpadField extends StatelessWidget {
             Container(
               width: 44,
               decoration: BoxDecoration(
-                border: Border(
-                  left: BorderSide(
-                    color: context.colorScheme.outlineVariant.withValues(alpha: 0.4),
-                  ),
-                ),
+                border: Border(left: BorderSide(color: context.colorScheme.outlineVariant.withValues(alpha: 0.4))),
               ),
               child: Icon(
                 PhosphorIcons.pencilSimple(),
@@ -214,12 +186,7 @@ class TouchNumpadField extends StatelessWidget {
 
 /// Stepper +/- butonu
 class _StepButton extends StatelessWidget {
-  const _StepButton({
-    required this.icon,
-    required this.enabled,
-    required this.onTap,
-    required this.isLeft,
-  });
+  const _StepButton({required this.icon, required this.enabled, required this.onTap, required this.isLeft});
 
   final IconData icon;
   final bool enabled;
@@ -249,13 +216,7 @@ class _StepButton extends StatelessWidget {
 
 /// Stepper ve simple varyantlarda ortak kullanılan değer gösterimi
 class _ValueDisplay extends StatelessWidget {
-  const _ValueDisplay({
-    required this.value,
-    required this.hint,
-    required this.isEmpty,
-    this.label,
-    this.unit,
-  });
+  const _ValueDisplay({required this.value, required this.hint, required this.isEmpty, this.label, this.unit});
 
   final double value;
   final String hint;
@@ -272,10 +233,7 @@ class _ValueDisplay extends StatelessWidget {
         if (label != null)
           Text(
             label!.toUpperCase(),
-            style: context.textTheme.labelSmall?.copyWith(
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-            ),
+            style: context.textTheme.labelSmall?.copyWith(fontSize: 9, fontWeight: FontWeight.w600),
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

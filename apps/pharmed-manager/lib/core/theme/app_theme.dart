@@ -33,7 +33,6 @@ class MaterialTheme {
       onPrimary: _onPrimary,
       primaryContainer: Color(0xFFDBEAFE), // Çok açık mavi
       onPrimaryContainer: Color(0xFF1E3A8A), // Çok koyu mavi
-
       // İKİNCİL RENKLER (Vurgular için)
       secondary: Color(0xFF64748B), // Slate Blue/Gray
       onSecondary: Colors.white,
@@ -43,12 +42,10 @@ class MaterialTheme {
       // ZEMİN VE YÜZEYLER
       surface: _surface, // Kartlar, Paneller (BEYAZ)
       onSurface: _textMain, // Kart üzerindeki yazılar
-
       // Material 3'te 'surfaceContainerLow' genellikle Scaffold background için kullanılır
       surfaceContainerLow: _background,
 
       onSurfaceVariant: _textBody, // İkincil yazılar
-
       // HATA
       error: _error,
       onError: Colors.white,
@@ -104,114 +101,122 @@ class MaterialTheme {
   }
 
   ThemeData dark() {
-    return theme(darkScheme()).copyWith(
-      scaffoldBackgroundColor: const Color(0xFF111827),
-      dividerColor: const Color(0xFF374151),
-    );
+    return theme(
+      darkScheme(),
+    ).copyWith(scaffoldBackgroundColor: const Color(0xFF111827), dividerColor: const Color(0xFF374151));
   }
 
   ThemeData theme(ColorScheme colorScheme) => ThemeData(
-        useMaterial3: true,
-        brightness: colorScheme.brightness,
-        colorScheme: colorScheme,
+    useMaterial3: true,
+    brightness: colorScheme.brightness,
+    colorScheme: colorScheme,
 
-        // Font Ailesi
-        fontFamily: GoogleFonts.quicksand().fontFamily,
+    fontFamily: 'DM Sans',
 
-        appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme.surface, // Beyaz
-          foregroundColor: colorScheme.onSurface, // Siyah Yazı/İkon
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: false,
-          shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 1)),
-          titleTextStyle: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w600,
-            color: colorScheme.onSurface,
-            fontFamily: GoogleFonts.inter().fontFamily,
-          ),
-          iconTheme: IconThemeData(size: 24, color: colorScheme.onSurfaceVariant),
-        ),
+    textTheme: TextTheme(
+      // Başlıklar — Sora
+      displayLarge: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w800),
+      displayMedium: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w800),
+      displaySmall: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w700),
+      headlineLarge: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w700),
+      headlineMedium: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w700),
+      headlineSmall: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w600),
+      titleLarge: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w600),
+      titleMedium: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w600),
+      titleSmall: TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.w600),
 
-        // --- KART TEMASI ---
-        // Kartlar beyaz, kenarlıksız ama hafif gölgeli veya ince kenarlıklı
-        cardTheme: CardThemeData(
-          color: colorScheme.surface,
-          elevation: 0, // Flat tasarım
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: colorScheme.outline), // İnce gri çizgi
-            borderRadius: BorderRadius.circular(12), // Modern köşe
-          ),
-        ),
+      // Gövde — DM Sans
+      bodyLarge: TextStyle(fontFamily: 'DM Sans', fontWeight: FontWeight.w400),
+      bodyMedium: TextStyle(fontFamily: 'DM Sans', fontWeight: FontWeight.w400),
+      bodySmall: TextStyle(fontFamily: 'DM Sans', fontWeight: FontWeight.w400),
+      labelLarge: TextStyle(fontFamily: 'DM Sans', fontWeight: FontWeight.w600),
+      labelMedium: TextStyle(fontFamily: 'DM Sans', fontWeight: FontWeight.w500),
+      labelSmall: TextStyle(fontFamily: 'JetBrains Mono', fontWeight: FontWeight.w500),
+    ),
 
-        // --- INPUT (TEXTFIELD) TEMASI ---
-        // Temiz, kutulu inputlar
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: colorScheme.surface, // İçi beyaz
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-          hintStyle: TextStyle(
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-          ),
-          // Normal Durum
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: colorScheme.outline),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: colorScheme.outline),
-          ),
-          // Odaklanınca
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: colorScheme.primary, width: 2),
-          ),
-          // Hata
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: colorScheme.error),
-          ),
-        ),
+    appBarTheme: AppBarTheme(
+      backgroundColor: colorScheme.surface, // Beyaz
+      foregroundColor: colorScheme.onSurface, // Siyah Yazı/İkon
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: false,
+      shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 1)),
 
-        // --- BUTON TEMASI ---
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.primary,
-            foregroundColor: colorScheme.onPrimary,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            textStyle: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
+      iconTheme: IconThemeData(size: 24, color: colorScheme.onSurfaceVariant),
+    ),
 
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: colorScheme.onSurface,
-            side: BorderSide(color: colorScheme.outline),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
+    // --- KART TEMASI ---
+    // Kartlar beyaz, kenarlıksız ama hafif gölgeli veya ince kenarlıklı
+    cardTheme: CardThemeData(
+      color: colorScheme.surface,
+      elevation: 0, // Flat tasarım
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: colorScheme.outline), // İnce gri çizgi
+        borderRadius: BorderRadius.circular(12), // Modern köşe
+      ),
+    ),
 
-        // --- CHECKBOX TEMASI ---
-        checkboxTheme: CheckboxThemeData(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-          side: BorderSide(color: colorScheme.outlineVariant, width: 2),
-          fillColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return colorScheme.primary;
-            }
-            return null; // Seçili değilse transparent (sadece border)
-          }),
-        ),
-      );
+    // --- INPUT (TEXTFIELD) TEMASI ---
+    // Temiz, kutulu inputlar
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: colorScheme.surface, // İçi beyaz
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+      // Normal Durum
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.outline),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.outline),
+      ),
+      // Odaklanınca
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.primary, width: 2),
+      ),
+      // Hata
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.error),
+      ),
+    ),
+
+    // --- BUTON TEMASI ---
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    ),
+
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: colorScheme.onSurface,
+        side: BorderSide(color: colorScheme.outline),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    ),
+
+    // --- CHECKBOX TEMASI ---
+    checkboxTheme: CheckboxThemeData(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      side: BorderSide(color: colorScheme.outlineVariant, width: 2),
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primary;
+        }
+        return null; // Seçili değilse transparent (sadece border)
+      }),
+    ),
+  );
 }

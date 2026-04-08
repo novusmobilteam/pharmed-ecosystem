@@ -222,4 +222,59 @@ mixin ApiRequestMixin on ChangeNotifier {
       },
     );
   }
+
+  // ── executeRepo — RepoResult<T> dönen operasyonlar ───────────────
+  // [SWREQ-UI-MIXIN-004] [HAZ-004] [HAZ-007]
+
+  Future<void> executeRepo<T>(
+    OperationKey key, {
+    required Future<RepoResult<T>> Function() operation,
+    required void Function(T data) onData,
+    void Function(T data, DateTime savedAt)? onStale,
+    void Function(AppException error)? onFailed,
+    String? loadingMessage,
+    String? successMessage,
+    String swreq = 'SWREQ-UI-MIXIN-004',
+  }) async {
+    setLoading(key, message: loadingMessage);
+
+    MedLogger.info(unit: 'SW-UNIT-UI', swreq: swreq, message: '$notifierName.$key başlatıldı');
+
+    final response = await operation();
+
+    response.when(
+      success: (data) {
+        setSuccess(key, message: successMessage);
+        onData(data);
+      },
+      stale: (data, savedAt) {
+        // [HAZ-007] Stale veri — UI gösterir, banner açılabilir
+        MedLogger.warn(
+          unit: 'SW-UNIT-UI',
+          swreq: swreq,
+          message: '$notifierName.$key stale veri',
+          context: {'savedAt': savedAt.toIso8601String()},
+        );
+        setSuccess(key, message: successMessage);
+        onData(data);
+        onStale?.call(data, savedAt);
+      },
+      failure: (error) {
+        // [HAZ-004] Hata sessiz geçmez
+        MedLogger.error(
+          unit: 'SW-UNIT-UI',
+          swreq: swreq,
+          message: '$notifierName.$key hata',
+          context: {
+            'errorType': error.runtimeType.toString(),
+            'message': error.message,
+            'isRetryable': error.isRetryable,
+          },
+          error: error,
+        );
+        setFailed(key, message: error.userMessage);
+        onFailed?.call(error);
+      },
+    );
+  }
 }

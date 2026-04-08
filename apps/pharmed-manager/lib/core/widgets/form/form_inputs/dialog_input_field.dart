@@ -23,7 +23,7 @@ class DialogInputField<T extends Selectable> extends BaseInputField<T> {
     super.initialValue,
     super.validator,
     super.enabled,
-    super.dialogTitle,
+
     List<Widget>? actions,
   }) : super(
          buildInput: (context, value, field) {
@@ -36,7 +36,7 @@ class DialogInputField<T extends Selectable> extends BaseInputField<T> {
                      final result = await showDialog<T>(
                        context: context,
                        builder: (_) => SelectionDialog.single(
-                         dialogTitle: dialogTitle ?? label ?? '',
+                         dialogTitle: label ?? '',
                          future: future,
                          futureNotifier: futureNotifier,
                          selected: value,
@@ -87,7 +87,6 @@ class MultiDialogInputField<T extends Selectable> extends BaseInputField<List<T>
     super.validator,
     super.enabled,
     bool showIcon = true,
-    super.dialogTitle,
   }) : super(
          buildInput: (context, value, field) {
            final colorScheme = Theme.of(context).colorScheme;
@@ -101,7 +100,7 @@ class MultiDialogInputField<T extends Selectable> extends BaseInputField<List<T>
                      final result = await showDialog<List<T>>(
                        context: context,
                        builder: (_) => SelectionDialog.multi(
-                         dialogTitle: dialogTitle ?? label ?? '',
+                         dialogTitle: label ?? '',
                          future: future,
                          initiallySelected: value,
                          labelBuilder: labelBuilder,

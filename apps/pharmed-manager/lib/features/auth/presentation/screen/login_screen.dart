@@ -7,38 +7,38 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:provider/provider.dart';
 import '../notifier/auth_notifier.dart';
 import '../state/auth_state.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final authNotifier = context.read<AuthNotifier>();
+    final authState = context.watch<AuthNotifier>().state;
+
     return Scaffold(
       backgroundColor: MedColors.bg,
       body: Stack(
         children: [
-          // Arka plan deseni
           const _BackgroundPattern(),
 
-          // Ortada login formu
           Center(
             child: _LoginCard(
               onLogin: (email, password) async {
-                await ref.read(authNotifierProvider.notifier).login(email: email, password: password);
+                await authNotifier.login(email: email, password: password);
               },
-              errorMessage: switch (ref.watch(authNotifierProvider)) {
+              errorMessage: switch (authState) {
                 AuthError(:final message) => message,
                 _ => null,
               },
-              isLoading: ref.watch(authNotifierProvider) is AuthLoading,
+              isLoading: authState is AuthLoading,
             ),
           ),
 
-          // Sol alt — versiyon bilgisi
           const Positioned(left: 24, bottom: 20, child: _VersionLabel()),
         ],
       ),

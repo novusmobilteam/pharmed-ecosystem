@@ -17,6 +17,7 @@ class StationMapper {
       medicalConsumableWarehouse: WarehouseMapper().toEntityOrNull(dto.medicalConsumableWarehouse),
       macAddress: dto.macAddress,
       services: ServiceMapper().toEntityList(dto.stationProvidedServices),
+      type: StationType.fromId(dto.workingMethod),
     );
   }
 
@@ -35,6 +36,7 @@ class StationMapper {
       medicalConsumableWarehouse: WarehouseMapper().toDtoOrNull(entity.medicalConsumableWarehouse),
       macAddress: entity.macAddress,
       stationProvidedServices: ServiceMapper().toDtoList(entity.services),
+      workingMethod: entity.type?.id,
     );
   }
 

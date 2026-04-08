@@ -89,22 +89,13 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
       child: Container(
         width: widget.width ?? context.width * 0.5,
         height: widget.height,
-        constraints: BoxConstraints(
-          maxHeight: widget.maxHeight ?? context.height * 0.8,
-        ),
+        constraints: BoxConstraints(maxHeight: widget.maxHeight ?? context.height * 0.8),
         decoration: BoxDecoration(
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            width: 1.0,
-          ),
+          border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5), width: 1.0),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
-            ),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 24, offset: const Offset(0, 8)),
           ],
         ),
         child: ClipRRect(
@@ -115,10 +106,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
             children: [
               _buildHeader(context, colorScheme),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: widget.child,
-                ),
+                child: Padding(padding: const EdgeInsets.all(24.0), child: widget.child),
               ),
               _buildFooter(context, colorScheme),
             ],
@@ -133,21 +121,16 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5))),
       ),
       child: Row(
         children: [
           Expanded(
             child: Text(
               widget.title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600, color: colorScheme.onSurface),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -175,7 +158,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
               if (widget.onClose != null) {
                 widget.onClose!();
               } else {
-                context.pop();
+                Navigator.of(context).pop();
               }
             },
           ),
@@ -195,15 +178,8 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
         autofocus: true,
         decoration: InputDecoration(
           hintText: 'Ara...',
-          hintStyle: TextStyle(
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(
-            PhosphorIcons.magnifyingGlass(),
-            color: colorScheme.onSurfaceVariant,
-            size: 18,
-          ),
+          hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 14),
+          prefixIcon: Icon(PhosphorIcons.magnifyingGlass(), color: colorScheme.onSurfaceVariant, size: 18),
           suffixIcon: IconButton(
             icon: Icon(PhosphorIcons.x(), size: 16),
             color: colorScheme.onSurfaceVariant,
@@ -213,10 +189,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
           filled: true,
           fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
@@ -231,11 +204,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
       padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(
-          top: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-          ),
-        ),
+        border: Border(top: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5))),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,

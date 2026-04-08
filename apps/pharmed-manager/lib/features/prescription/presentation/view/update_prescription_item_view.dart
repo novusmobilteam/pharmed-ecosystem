@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/core.dart';
-import '../../../../core/widgets/form/form_inputs/time_input_field.dart';
 import '../notifier/update_prescription_item_notifier.dart';
 
 class UpdatePrescriptionItemView extends StatelessWidget {
@@ -31,19 +30,10 @@ class UpdatePrescriptionItemView extends StatelessWidget {
             spacing: AppDimensions.registrationDialogSpacing,
             children: [
               _DrugNameField(notifier.prescriptionItem.medicine?.name),
+              Row(spacing: AppDimensions.registrationDialogSpacing, children: [_DoseField(), _TimeField()]),
               Row(
                 spacing: AppDimensions.registrationDialogSpacing,
-                children: [
-                  _DoseField(),
-                  _TimeField(),
-                ],
-              ),
-              Row(
-                spacing: AppDimensions.registrationDialogSpacing,
-                children: [
-                  _ApplicationDateField(),
-                  _ApplicationTimeField(),
-                ],
+                children: [_ApplicationDateField(), _ApplicationTimeField()],
               ),
               _DescriptionField(),
               _CheckboxSection(),
@@ -64,11 +54,7 @@ class _DrugNameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Lockable(
       locked: true,
-      child: TextInputField(
-        label: 'İlaç Adı',
-        initialValue: drugName,
-        onChanged: (_) {},
-      ),
+      child: TextInputField(label: 'İlaç Adı', initialValue: drugName, onChanged: (_) {}),
     );
   }
 }
@@ -79,13 +65,15 @@ class _DoseField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Consumer<UpdatePrescriptionItemNotifier>(builder: (context, vm, _) {
-        return TextInputField(
-          label: 'Doz',
-          initialValue: vm.prescriptionItem.dosePiece.toCustomString(),
-          onChanged: (value) => vm.updateDose(value),
-        );
-      }),
+      child: Consumer<UpdatePrescriptionItemNotifier>(
+        builder: (context, vm, _) {
+          return TextInputField(
+            label: 'Doz',
+            initialValue: vm.prescriptionItem.dosePiece.toCustomString(),
+            onChanged: (value) => vm.updateDose(value),
+          );
+        },
+      ),
     );
   }
 }
@@ -115,13 +103,15 @@ class _ApplicationDateField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Consumer<UpdatePrescriptionItemNotifier>(builder: (context, notifier, _) {
-        return DateInputField(
-          label: 'Uygulama Tarihi',
-          onDateSelected: notifier.updateDate,
-          initialValue: notifier.prescriptionItem.applicationDate,
-        );
-      }),
+      child: Consumer<UpdatePrescriptionItemNotifier>(
+        builder: (context, notifier, _) {
+          return DateInputField(
+            label: 'Uygulama Tarihi',
+            onDateSelected: notifier.updateDate,
+            initialValue: notifier.prescriptionItem.applicationDate,
+          );
+        },
+      ),
     );
   }
 }
@@ -150,14 +140,16 @@ class _DescriptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UpdatePrescriptionItemNotifier>(builder: (context, vm, _) {
-      return TextInputField(
-        label: 'Açıklama',
-        maxLines: 3,
-        initialValue: vm.prescriptionItem.dosePiece.toCustomString(),
-        onChanged: (value) => vm.updateDescription(value),
-      );
-    });
+    return Consumer<UpdatePrescriptionItemNotifier>(
+      builder: (context, vm, _) {
+        return TextInputField(
+          label: 'Açıklama',
+          maxLines: 3,
+          initialValue: vm.prescriptionItem.dosePiece.toCustomString(),
+          onChanged: (value) => vm.updateDescription(value),
+        );
+      },
+    );
   }
 }
 
@@ -166,27 +158,29 @@ class _CheckboxSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UpdatePrescriptionItemNotifier>(builder: (context, vm, _) {
-      return Row(
-        spacing: AppDimensions.registrationDialogSpacing,
-        children: [
-          CustomCheckboxTile(
-            label: 'İlk Doz Acil',
-            value: vm.prescriptionItem.firstDoseEmergency ?? false,
-            onTap: () => vm.toggleEmergency(),
-          ),
-          CustomCheckboxTile(
-            label: 'Doktora Sor',
-            value: vm.prescriptionItem.askDoctor ?? false,
-            onTap: () => vm.toggleAskDoctor(),
-          ),
-          CustomCheckboxTile(
-            label: 'Lüzumu Halinde',
-            value: vm.prescriptionItem.inCaseOfNecessity ?? false,
-            onTap: () => vm.toggleNecessity(),
-          )
-        ],
-      );
-    });
+    return Consumer<UpdatePrescriptionItemNotifier>(
+      builder: (context, vm, _) {
+        return Row(
+          spacing: AppDimensions.registrationDialogSpacing,
+          children: [
+            CustomCheckboxTile(
+              label: 'İlk Doz Acil',
+              value: vm.prescriptionItem.firstDoseEmergency ?? false,
+              onTap: () => vm.toggleEmergency(),
+            ),
+            CustomCheckboxTile(
+              label: 'Doktora Sor',
+              value: vm.prescriptionItem.askDoctor ?? false,
+              onTap: () => vm.toggleAskDoctor(),
+            ),
+            CustomCheckboxTile(
+              label: 'Lüzumu Halinde',
+              value: vm.prescriptionItem.inCaseOfNecessity ?? false,
+              onTap: () => vm.toggleNecessity(),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

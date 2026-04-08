@@ -6,33 +6,26 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/auth/presentation/screen/login_screen.dart';
 import 'package:pharmed_manager/features/auth/presentation/state/auth_state.dart';
-import 'package:pharmed_manager/features/dashboard/presentation/view/dashboard_screen.dart';
+import 'package:pharmed_manager/features/home/view/home_screen.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:provider/provider.dart';
 
-class AppRouter extends ConsumerWidget {
+class AppRouter extends StatelessWidget {
   const AppRouter({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authNotifierProvider);
+  Widget build(BuildContext context) {
+    final authState = context.watch<AuthNotifier>().state;
 
-    // AuthNotifier içindeki bir getter yardımıyla:
-    // Eğer kullanıcı daha önce giriş yapmışsa ve biz Dashboard'daysak,
-    // logout olsa bile dashboard'da kalmaya devam etmeli.
-    final authNotif = ref.read(authNotifierProvider.notifier);
-    final hasSessionHistory = authNotif.hasAccessedDashboard;
-
-    return switch ((authState)) {
-      AuthLoggedOut() when hasSessionHistory => const DashboardScreen(),
+    return switch (authState) {
       AuthLoggedOut() => const LoginScreen(),
-      AuthError() => const LoginScreen(),
       AuthLoading() => const _SplashView(),
-      AuthLoggedIn() => const DashboardScreen(),
-      AuthSessionExpiring() => DashboardScreen(),
+      AuthLoggedIn() => const HomeScreen(),
+      AuthError() => const LoginScreen(),
+      AuthSessionExpiring() => const LoginScreen(),
     };
   }
 }

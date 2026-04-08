@@ -4,7 +4,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/dose_stepper.dart';
-import '../../../../core/widgets/form/form_inputs/time_input_field.dart';
 
 import 'package:provider/provider.dart';
 
@@ -325,7 +324,7 @@ class _TimeBox extends StatelessWidget {
               TimeInputField(
                 key: ValueKey('time_${index}_${currentTime?.hashCode}'),
                 label: 'Saat',
-                controller: controller,
+                //controller: controller,
                 initialValue: currentTime,
                 //dayHint: dayLabel.isEmpty ? 'Bugün' : dayLabel,
                 onTimeSelected: (time) => vm.updateDoseHour(index, time),

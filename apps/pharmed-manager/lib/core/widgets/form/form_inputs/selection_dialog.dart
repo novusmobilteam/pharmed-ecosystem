@@ -10,9 +10,9 @@ class SelectionDialog<T extends Selectable> extends StatefulWidget {
     this.maxHeight = 650,
     this.actions,
     this.futureNotifier,
-  })  : multi = false,
-        initiallySelected = null,
-        labelBuilder = _defaultLabelBuilder;
+  }) : multi = false,
+       initiallySelected = null,
+       labelBuilder = _defaultLabelBuilder;
 
   const SelectionDialog.multi({
     super.key,
@@ -24,8 +24,8 @@ class SelectionDialog<T extends Selectable> extends StatefulWidget {
     this.maxHeight = 650,
     this.actions,
     this.futureNotifier,
-  })  : multi = true,
-        selected = null;
+  }) : multi = true,
+       selected = null;
 
   final String dialogTitle;
   final DialogFuture<T>? future;
@@ -88,10 +88,7 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
           _onConfirm(context);
         }
       },
-      actions: [
-        if (widget.multi) _selectAllButton(),
-        if (widget.actions != null) ...widget.actions!,
-      ],
+      actions: [if (widget.multi) _selectAllButton(), if (widget.actions != null) ...widget.actions!],
       child: _buildContent(context),
     );
   }
@@ -141,12 +138,7 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
           itemBuilder: (context, index) {
             final item = _items[index];
             final isSelected = _selectedIds.contains(item.id);
-            return SelectableListTile(
-              item: item,
-              onTap: _onTap,
-              onDoubleTap: _onDoubleTap,
-              isSelected: isSelected,
-            );
+            return SelectableListTile(item: item, onTap: _onTap, onDoubleTap: _onDoubleTap, isSelected: isSelected);
           },
         );
       },
@@ -154,16 +146,16 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
   }
 
   void _onTap(T item) {
+    debugPrint('onItemTap: ${item.id}, mevcut: $_selectedIds');
     setState(() {
-      if (widget.multi) {
-        if (_selectedIds.contains(item.id)) {
-          _selectedIds.remove(item.id);
-        } else {
-          _selectedIds.add(item.id);
-        }
+      final newSet = Set<Object?>.from(_selectedIds);
+      if (newSet.contains(item.id)) {
+        newSet.remove(item.id);
       } else {
-        _selectedIds = {item.id};
+        newSet.add(item.id);
       }
+      _selectedIds = newSet;
+      debugPrint('yeni set: $_selectedIds');
     });
   }
 
@@ -192,6 +184,7 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
           return;
         }
       }
+      Navigator.of(context).pop();
       context.pop(selectedItem);
     }
   }

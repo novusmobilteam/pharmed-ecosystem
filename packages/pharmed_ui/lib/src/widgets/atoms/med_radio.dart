@@ -35,7 +35,7 @@ class MedRadio<T> extends StatelessWidget {
         opacity: enabled ? 1.0 : 0.4,
         child: Container(
           constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.only(right: 12),
           decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(8)),
           child: Row(
             mainAxisSize: MainAxisSize.min,

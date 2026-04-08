@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/widgets/atoms/drawer_cell.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // DrawerRow

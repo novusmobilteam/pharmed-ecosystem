@@ -9,6 +9,7 @@ class Station extends Selectable implements TableData {
   final Warehouse? medicalConsumableWarehouse;
   final String? macAddress;
   final List<HospitalService> services;
+  final StationType? type;
 
   Station({
     super.id,
@@ -20,6 +21,7 @@ class Station extends Selectable implements TableData {
     this.medicalConsumableWarehouse,
     this.macAddress,
     this.services = const [],
+    this.type,
   }) : super(title: name.toString());
 
   static Station? fromIdAndName({int? id, String? name}) {
@@ -39,6 +41,7 @@ class Station extends Selectable implements TableData {
     drugStatus.label,
     medicalConsumableWarehouse?.name,
     medicalConsumableStatus.label,
+    type?.label,
   ];
 
   @override
@@ -53,6 +56,7 @@ class Station extends Selectable implements TableData {
     "İlaç",
     "Tıbbi Sarf Depo",
     "Tıbbi Sarf",
+    "Çalışma Tipi",
   ];
 
   Station copyWith({
@@ -64,6 +68,7 @@ class Station extends Selectable implements TableData {
     Warehouse? materialWarehouse,
     Warehouse? medicalConsumableWarehouse,
     List<HospitalService>? services,
+    StationType? type,
   }) {
     return Station(
       id: id ?? this.id,
@@ -74,6 +79,7 @@ class Station extends Selectable implements TableData {
       materialWarehouse: materialWarehouse ?? this.materialWarehouse,
       medicalConsumableWarehouse: medicalConsumableWarehouse ?? this.medicalConsumableWarehouse,
       services: services ?? this.services,
+      type: type ?? this.type,
     );
   }
 }

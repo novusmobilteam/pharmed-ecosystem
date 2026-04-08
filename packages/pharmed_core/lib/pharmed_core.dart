@@ -72,6 +72,8 @@ export 'src/enums/warning_subject.dart';
 export 'src/enums/withdraw_type.dart';
 export 'src/enums/scan_status.dart';
 export 'src/enums/drawer_status.dart';
+export 'src/enums/station_type.dart';
+
 // failure
 export 'src/failure/app_exceptions.dart';
 

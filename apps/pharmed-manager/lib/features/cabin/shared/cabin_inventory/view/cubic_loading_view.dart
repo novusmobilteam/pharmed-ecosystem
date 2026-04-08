@@ -120,7 +120,7 @@ class _CubicLoadingViewState extends State<CubicLoadingView> {
                     //   - controller=null → kilitli alanda controller bağlantısı gerekmez
                     // _shouldLock=false: normal akış, yalnızca gelecek tarih seçilebilir.
                     enabled: !_shouldLock,
-                    controller: _shouldLock ? null : _dateController,
+                    //controller: _shouldLock ? null : _dateController,
                     initialValue: safeInitialMiad,
                     firstDate: _shouldLock ? null : DateTime.now(),
                     onDateSelected: (date) {

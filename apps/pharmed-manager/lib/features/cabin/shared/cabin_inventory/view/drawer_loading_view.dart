@@ -280,7 +280,7 @@ class _DrawerLoadingViewState extends State<DrawerLoadingView> {
       label: label,
       initialValue: initialValue,
       firstDate: (isExpired || !enabled) ? null : DateTime.now(),
-      controller: controller,
+      //controller: controller,
       enabled: enabled,
       onDateSelected: onDateSelected,
     );

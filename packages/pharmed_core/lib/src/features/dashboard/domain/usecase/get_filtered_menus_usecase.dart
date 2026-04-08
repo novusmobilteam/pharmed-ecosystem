@@ -35,7 +35,15 @@ class GetFilteredMenusUseCase {
         .where((item) => item.isManager == isManager)
         .toList();
 
-    final dashboardItem = MenuItem(id: -1, name: 'Anasayfa', route: 'dashboard', children: []);
+    final dashboardItem = MenuItem(
+      id: -1,
+      name: 'Anasayfa',
+      route: 'dashboard',
+      children: [],
+      unicode: '0x0E2C2',
+      orderNo: 9999,
+    );
+
     final updatedTree = [dashboardItem, ...filtered];
     final flattened = _flattenTree(updatedTree);
 

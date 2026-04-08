@@ -149,7 +149,7 @@ class _MaterialFieldState extends State<_MaterialField> {
             return DialogInputField<Medicine>(
               key: widget.formKey,
               label: 'Malzeme',
-              dialogTitle: showEquivalent ? 'Eşdeğer İlaçlar' : 'Tüm İlaçlar',
+              //dialogTitle: showEquivalent ? 'Eşdeğer İlaçlar' : 'Tüm İlaçlar',
               futureNotifier: _futureNotifier,
               validator: (value) => Validators.cannotBlankValidator(value?.name),
               initialValue: vm.assignment.medicine,
@@ -181,7 +181,7 @@ class _MinQuantityField extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => vm.setMinQuantity(value),
           keyboardType: TextInputType.number,
-          suffix: Text('Adet'),
+          //suffix: Text('Adet'),
         );
       },
     );
@@ -202,7 +202,7 @@ class _MaxQuantityField extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => vm.setMaxQuantity(value),
           keyboardType: TextInputType.number,
-          suffix: Text('Adet'),
+          //suffix: Text('Adet'),
         );
       },
     );
@@ -223,7 +223,7 @@ class _CritQuantityField extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => vm.setCriticQuantity(value),
           keyboardType: TextInputType.number,
-          suffix: Text('Adet'),
+          //suffix: Text('Adet'),
         );
       },
     );

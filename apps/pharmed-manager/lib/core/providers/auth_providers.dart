@@ -3,67 +3,64 @@
 // Sınıf: Class B
 
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
+import '../../features/auth/presentation/notifier/auth_notifier.dart';
 import '../config/auth_config.dart';
 
-import 'network_providers.dart';
+class AuthProviders {
+  static List<SingleChildWidget> providers() => [
+    Provider<AuthConfig>(create: (_) => const AuthConfig(inactivityTimeoutMinutes: 10, warningSeconds: 60)),
 
-// ── Config ────────────────────────────────────────────────────────
-
-final authConfigProvider = Provider<AuthConfig>((ref) {
-  return AuthConfig(inactivityTimeoutMinutes: 10, warningSeconds: 60);
-});
-
-// ── Plain Dio — login endpoint'i token gerektirmez ────────────────
-
-final plainDioProvider = Provider<Dio>((ref) {
-  final config = FlavorConfig.instance;
-  return Dio(
-    BaseOptions(
-      baseUrl: config.baseUrl,
-      connectTimeout: Duration(milliseconds: config.connectTimeoutMs),
-      receiveTimeout: Duration(milliseconds: config.receiveTimeoutMs),
-      headers: {'Content-Type': 'application/json'},
+    Provider<Dio>(
+      create: (_) {
+        final config = FlavorConfig.instance;
+        return Dio(
+          BaseOptions(
+            baseUrl: config.baseUrl,
+            connectTimeout: Duration(milliseconds: config.connectTimeoutMs),
+            receiveTimeout: Duration(milliseconds: config.receiveTimeoutMs),
+            headers: {'Content-Type': 'application/json'},
+          ),
+        );
+      },
     ),
-  );
-});
 
-// ── Auth datasource'ları ──────────────────────────────────────────
+    Provider<AuthCacheDataSource>(create: (_) => AuthCacheDataSource(boxPrefix: 'manager_')),
+    Provider<AuthRemoteDataSource>(create: (ctx) => AuthRemoteDataSource(dio: ctx.read<Dio>())),
 
-final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
-  return AuthRemoteDataSource(dio: ref.read(plainDioProvider));
-});
+    Provider<UserRemoteDataSource>(create: (ctx) => UserRemoteDataSource(apiManager: ctx.read<APIManager>())),
 
-final userRemoteDataSourceProvider = Provider<UserRemoteDataSource>((ref) {
-  return UserRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
+    Provider<UserMapper>(create: (_) => const UserMapper()),
 
-final userMapperProvider = Provider<UserMapper>((ref) {
-  return const UserMapper();
-});
+    Provider<IUserReader>(
+      create: (ctx) => UserRepositoryImpl(dataSource: ctx.read<UserRemoteDataSource>(), mapper: ctx.read<UserMapper>()),
+    ),
 
-final userRepositoryProvider = Provider<IUserReader>((ref) {
-  return UserRepositoryImpl(dataSource: ref.read(userRemoteDataSourceProvider), mapper: ref.read(userMapperProvider));
-});
+    Provider<IAuthRepository>(
+      create: (ctx) => AuthRepositoryImpl(
+        remoteDataSource: ctx.read<AuthRemoteDataSource>(),
+        cacheDataSource: ctx.read<AuthCacheDataSource>(),
+        userReader: ctx.read<IUserReader>(),
+        tokenHolder: ctx.read<TokenHolder>(),
+      ),
+    ),
 
-final authRepositoryProvider = Provider<IAuthRepository>((ref) {
-  return AuthRepositoryImpl(
-    remoteDataSource: ref.read(authRemoteDataSourceProvider),
-    cacheDataSource: ref.read(authCacheProvider),
-    userReader: ref.read(userRepositoryProvider),
-    tokenHolder: ref.read(tokenHolderProvider),
-  );
-});
+    Provider<LoginUseCase>(create: (ctx) => LoginUseCase(ctx.read<IAuthRepository>())),
 
-// ── Use case'ler ──────────────────────────────────────────────────
+    Provider<LogoutUseCase>(create: (ctx) => LogoutUseCase(ctx.read<IAuthRepository>())),
 
-final loginUseCaseProvider = Provider<LoginUseCase>((ref) {
-  return LoginUseCase(ref.read(authRepositoryProvider));
-});
-
-final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
-  return LogoutUseCase(ref.read(authRepositoryProvider));
-});
+    ChangeNotifierProvider<AuthNotifier>(
+      create: (ctx) => AuthNotifier(
+        loginUseCase: ctx.read<LoginUseCase>(),
+        logoutUseCase: ctx.read<LogoutUseCase>(),
+        cache: ctx.read<AuthCacheDataSource>(),
+        tokenHolder: ctx.read<TokenHolder>(),
+        config: AuthConfig(inactivityTimeoutMinutes: 60),
+      ),
+    ),
+  ];
+}

@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
 
 class PharmedSegmentedButton extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onChanged;
   final List<String> labels;
 
-  const PharmedSegmentedButton({
-    super.key,
-    required this.selectedIndex,
-    required this.onChanged,
-    required this.labels,
-  });
+  const PharmedSegmentedButton({super.key, required this.selectedIndex, required this.onChanged, required this.labels});
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +28,7 @@ class PharmedSegmentedButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: trackColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: borderColor,
-          width: 1.5,
-        ),
+        border: Border.all(color: borderColor, width: 1.5),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -55,11 +48,7 @@ class PharmedSegmentedButton extends StatelessWidget {
                     color: activeColor,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.15),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 4, offset: const Offset(0, 2)),
                     ],
                   ),
                 ),
@@ -79,8 +68,8 @@ class PharmedSegmentedButton extends StatelessWidget {
                       child: Center(
                         child: AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 200),
-                          style: theme.textTheme.labelLarge!.copyWith(
-                            fontWeight: FontWeight.bold,
+                          style: theme.textTheme.bodySmall!.copyWith(
+                            fontFamily: MedFonts.sans,
                             color: isSelected ? activeTextColor : inactiveTextColor,
                           ),
                           child: Text(

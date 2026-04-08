@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
@@ -17,6 +18,9 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   List<MenuItem> _menuTree = [];
   List<MenuItem> get menuItems => _menuTree;
 
+  MenuItem? _activeChildMenu;
+  MenuItem? get activeChildMenu => _activeChildMenu;
+
   List<MenuItem> _flattenedMenus = [];
   List<MenuItem> get allMenuItemsFlattened => _flattenedMenus;
 
@@ -27,6 +31,12 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isEmpty => _menuTree.isEmpty;
 
   String? get statusMessage => message(fetchOp);
+
+  MenuItem? get activeMenu {
+    final parents = parentMenuItems;
+    if (parents.isEmpty || _activeTab < 0 || _activeTab >= parents.length) return null;
+    return parents[_activeTab];
+  }
 
   /// Sidebar için parentlar
   List<MenuItem> get parentMenuItems =>
@@ -46,21 +56,29 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> fetchMenus() async {
-    // await execute(
-    //   fetchOp,
-    //   operation: () => _getFilteredMenusUseCase.call(userId: _authStorageNotifier.user?.id),
-    //   onData: (data) {
-    //     _activeTab = 0;
-    //     _menuTree = data.tree.sorted((a, b) => (b.orderNo ?? 0).compareTo(a.orderNo ?? 0)).toList();
-    //     _flattenedMenus = data.flattened;
-    //     notifyListeners();
-    //   },
-    // );
+    await executeRepo(
+      fetchOp,
+      operation: () => _getFilteredMenusUseCase.call(userId: _authNotifier.currentUser?.id),
+      onData: (data) {
+        _activeTab = 0;
+        _menuTree = data.tree.sorted((a, b) => (b.orderNo ?? 0).compareTo(a.orderNo ?? 0)).toList();
+        _flattenedMenus = data.flattened;
+        notifyListeners();
+      },
+    );
   }
 
-  void changeTab(int index) {
-    if (_activeTab == index) return;
+  void changeTab(MenuItem menu) {
+    final index = parentMenuItems.indexOf(menu);
+    if (index == -1 || _activeTab == index) return;
     _activeTab = index;
+    _activeChildMenu = null; // parent değişince child sıfırlanır
+    notifyListeners();
+  }
+
+  void selectChild(MenuItem child) {
+    _activeChildMenu = child;
+    print(child.slug);
     notifyListeners();
   }
 

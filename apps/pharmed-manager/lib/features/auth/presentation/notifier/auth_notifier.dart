@@ -4,36 +4,55 @@
 // Sınıf: Class B
 
 import 'dart:async';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_manager/core/config/auth_config.dart';
-import 'package:pharmed_manager/core/providers/auth_providers.dart';
-import 'package:pharmed_manager/core/providers/network_providers.dart';
 
 import '../state/auth_state.dart';
 
-final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
-
-class AuthNotifier extends Notifier<AuthState> {
+class AuthNotifier extends ChangeNotifier {
   Timer? _sessionTimer;
   Timer? _countdownTimer;
   int _countdown = 0;
-
-  // Lazy getter'lar — ref üzerinden alınır
-  AuthConfig get _config => ref.read(authConfigProvider);
-  LoginUseCase get _loginUseCase => ref.read(loginUseCaseProvider);
-  LogoutUseCase get _logoutUseCase => ref.read(logoutUseCaseProvider);
-  AuthCacheDataSource get _cache => ref.read(authCacheProvider);
-  TokenHolder get _tokenHolder => ref.read(tokenHolderProvider);
-
   bool _hasAccessedDashboard = false;
-  bool get hasAccessedDashboard => _hasAccessedDashboard;
 
-  @override
-  AuthState build() {
+  final AuthConfig _config;
+  final LoginUseCase _loginUseCase;
+  final LogoutUseCase _logoutUseCase;
+  final AuthCacheDataSource _cache;
+  final TokenHolder _tokenHolder;
+
+  AuthNotifier({
+    required AuthConfig config,
+    required LoginUseCase loginUseCase,
+    required LogoutUseCase logoutUseCase,
+    required AuthCacheDataSource cache,
+    required TokenHolder tokenHolder,
+  }) : _config = config,
+       _loginUseCase = loginUseCase,
+       _logoutUseCase = logoutUseCase,
+       _cache = cache,
+       _tokenHolder = tokenHolder {
     _restoreSession();
-    return const AuthLoggedOut();
+    _tokenHolder.setOnUnauthorized(onUnauthorized);
+  }
+
+  AuthState _state = const AuthLoggedOut();
+  AuthState get state => _state;
+
+  bool get hasAccessedDashboard => _hasAccessedDashboard;
+  bool get isLoggedIn => _state is AuthLoggedIn || _state is AuthSessionExpiring;
+
+  AppUser? get currentUser => switch (_state) {
+    AuthLoggedIn(:final user) => user,
+    AuthSessionExpiring(:final user) => user,
+    _ => null,
+  };
+
+  void _setState(AuthState newState) {
+    _state = newState;
+    notifyListeners();
   }
 
   Future<void> _restoreSession() async {
@@ -42,78 +61,76 @@ class AuthNotifier extends Notifier<AuthState> {
 
     if (token != null && user != null) {
       _tokenHolder.setToken(token);
-      state = AuthLoggedIn(
-        user: user,
-        sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+      _setState(
+        AuthLoggedIn(
+          user: user,
+          sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+        ),
       );
       _startSessionTimer();
     }
   }
 
   Future<String?> login({required String email, required String password, String? macAddress}) async {
-    state = const AuthLoading();
+    _setState(const AuthLoading());
 
     final result = await _loginUseCase(LoginParams(email: email, password: password, macAddress: macAddress));
+
+    String? errorMsg;
 
     result.when(
       ok: (authToken) {
         _tokenHolder.setToken(authToken.accessToken);
-        state = AuthLoggedIn(
-          user: authToken.user,
-          sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+        _setState(
+          AuthLoggedIn(
+            user: authToken.user,
+            sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+          ),
         );
         _startSessionTimer();
         _markDashboardAccessed();
-        return null;
       },
       error: (failure) {
-        final msg = failure is ServiceException ? failure.message : 'Bir hata oluştu';
-        state = AuthError(message: msg);
-        return msg;
+        errorMsg = failure is ServiceException ? failure.message : 'Bir hata oluştu';
+        _setState(AuthError(message: errorMsg!));
       },
     );
-    return null;
+
+    return errorMsg;
   }
 
   Future<void> logout() async {
     _cancelTimers();
     _tokenHolder.setToken(null);
     await _cache.clear();
-
-    state = const AuthLoggedOut();
+    _setState(const AuthLoggedOut());
   }
 
   void onUnauthorized() {
     _cancelTimers();
     _tokenHolder.setToken(null);
-    _logoutUseCase(); // fire-and-forget
-    state = const AuthLoggedOut();
+    _logoutUseCase();
+    _setState(const AuthLoggedOut());
   }
 
   void extendSession() {
     final user = currentUser;
     if (user == null) return;
 
-    state = AuthLoggedIn(
-      user: user,
-      sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+    _setState(
+      AuthLoggedIn(
+        user: user,
+        sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+      ),
     );
     _startSessionTimer();
   }
 
   void onUserActivity() {
-    if (state is AuthLoggedIn) {
+    if (_state is AuthLoggedIn) {
       _startSessionTimer();
     }
   }
-
-  bool get isLoggedIn => state is AuthLoggedIn || state is AuthSessionExpiring;
-
-  AppUser? get currentUser => switch (state) {
-    AuthLoggedIn(:final user) => user,
-    AuthSessionExpiring(:final user) => user,
-    _ => null,
-  };
 
   void _startSessionTimer() {
     _cancelTimers();
@@ -128,7 +145,7 @@ class AuthNotifier extends Notifier<AuthState> {
     final user = currentUser;
     if (user == null) return;
 
-    state = AuthSessionExpiring(user: user, secondsRemaining: _countdown);
+    _setState(AuthSessionExpiring(user: user, secondsRemaining: _countdown));
 
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       _countdown--;
@@ -141,7 +158,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
       final u = currentUser;
       if (u != null) {
-        state = AuthSessionExpiring(user: u, secondsRemaining: _countdown);
+        _setState(AuthSessionExpiring(user: u, secondsRemaining: _countdown));
       }
     });
   }
@@ -155,5 +172,11 @@ class AuthNotifier extends Notifier<AuthState> {
 
   void _markDashboardAccessed() {
     _hasAccessedDashboard = true;
+  }
+
+  @override
+  void dispose() {
+    _cancelTimers();
+    super.dispose();
   }
 }

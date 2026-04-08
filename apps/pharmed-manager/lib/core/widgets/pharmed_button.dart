@@ -25,7 +25,7 @@ class PharmedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height ?? 40,
+      height: height ?? 35,
       child: ElevatedButton(
         style: ButtonStyle(
           foregroundColor: WidgetStatePropertyAll(foregroundColor ?? context.colorScheme.onPrimary),
@@ -33,12 +33,7 @@ class PharmedButton extends StatelessWidget {
               ? WidgetStatePropertyAll(Colors.grey)
               : WidgetStatePropertyAll(backgroundColor ?? context.colorScheme.primary),
           shape: WidgetStatePropertyAll<OutlinedBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
-              ),
-              side: BorderSide.none,
-            ),
+            RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)), side: BorderSide.none),
           ),
         ),
         onPressed: onPressed,
@@ -48,7 +43,13 @@ class PharmedButton extends StatelessWidget {
                   backgroundColor: foregroundColor ?? context.colorScheme.onPrimary,
                 ),
               )
-            : Text(label),
+            : Text(
+                label,
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: foregroundColor ?? context.colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ),
     );
   }

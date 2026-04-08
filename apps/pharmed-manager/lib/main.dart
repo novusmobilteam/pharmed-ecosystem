@@ -1,23 +1,48 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:pharmed_manager/core/flavor/app_flavor.dart';
+import 'package:pharmed_manager/core/theme/app_theme.dart';
 
+import 'package:pharmed_manager/features/home/notifier/home_notifier.dart';
+import 'package:provider/provider.dart';
+
+import 'core/providers/providers.dart';
 import 'core/routing/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await AppBootstrap.init();
-  HttpOverrides.global = MyHttpOverrides();
-  runApp(const ProviderScope(child: MyApp()));
+  FlavorConfig.initialize(AppFlavor.dev); // geliştirme için
+  await Hive.initFlutter();
+  runApp(const ManagerApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ManagerApp extends StatelessWidget {
+  const ManagerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Pharmed', debugShowCheckedModeBanner: false, home: AppRouter());
+    return MultiProvider(
+      providers: [
+        ...CoreProviders.providers(),
+        ...AuthProviders.providers(),
+        ...MenuProviders.providers(),
+        ...StationProviders.providers(),
+        ...ServiceProviders.providers(),
+        ...WarehouseProviders.providers(),
+
+        ChangeNotifierProvider(
+          create: (ctx) => HomeNotifier(getFilteredMenusUseCase: ctx.read(), authNotifier: ctx.read()),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Pharmed Manager',
+        theme: MaterialTheme().light(),
+        debugShowCheckedModeBanner: false,
+        home: AppRouter(),
+      ),
+    );
   }
 }
 

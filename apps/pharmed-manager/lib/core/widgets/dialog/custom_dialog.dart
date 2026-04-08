@@ -93,22 +93,13 @@ class _CustomDialogState extends State<CustomDialog> {
       child: Container(
         width: widget.width ?? context.width * 0.5,
         height: widget.height,
-        constraints: BoxConstraints(
-          maxHeight: widget.maxHeight ?? context.height * 0.8,
-        ),
+        constraints: BoxConstraints(maxHeight: widget.maxHeight ?? context.height * 0.8),
         decoration: BoxDecoration(
           color: colorScheme.surface, // Tema tabanlı zemin rengi
           borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            width: 1.0,
-          ),
+          border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5), width: 1.0),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
-            ),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 24, offset: const Offset(0, 8)),
           ],
         ),
         child: ClipRRect(
@@ -138,25 +129,17 @@ class _CustomDialogState extends State<CustomDialog> {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5))),
       ),
       child: Row(
         children: [
-          if (widget.trailingIcon != null) ...[
-            widget.trailingIcon!,
-            const SizedBox(width: 12),
-          ],
+          if (widget.trailingIcon != null) ...[widget.trailingIcon!, const SizedBox(width: 12)],
           Expanded(
             child: Text(
               widget.title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600, color: colorScheme.onSurface),
             ),
           ),
           const SizedBox(width: 16),
@@ -205,7 +188,7 @@ class _CustomDialogState extends State<CustomDialog> {
                   if (widget.onClose != null) {
                     widget.onClose!();
                   } else {
-                    context.pop();
+                    Navigator.of(context).pop();
                   }
                 },
               ),
@@ -227,15 +210,8 @@ class _CustomDialogState extends State<CustomDialog> {
         autofocus: true,
         decoration: InputDecoration(
           hintText: widget.searchHintText,
-          hintStyle: TextStyle(
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(
-            PhosphorIcons.magnifyingGlass(),
-            color: colorScheme.onSurfaceVariant,
-            size: 18,
-          ),
+          hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 14),
+          prefixIcon: Icon(PhosphorIcons.magnifyingGlass(), color: colorScheme.onSurfaceVariant, size: 18),
           suffixIcon: IconButton(
             icon: Icon(PhosphorIcons.x(), size: 16),
             color: colorScheme.onSurfaceVariant,
@@ -245,10 +221,7 @@ class _CustomDialogState extends State<CustomDialog> {
           filled: true,
           fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide.none,
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide.none),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
@@ -260,10 +233,7 @@ class _CustomDialogState extends State<CustomDialog> {
 
   Widget _buildContent(BuildContext context) {
     // İçerik kısmı
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: widget.child,
-    );
+    return Padding(padding: const EdgeInsets.all(24.0), child: widget.child);
   }
 
   Widget _buildLoadingOverlay(BuildContext context, ColorScheme colorScheme) {
@@ -274,18 +244,11 @@ class _CustomDialogState extends State<CustomDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(
-                color: colorScheme.primary,
-                strokeWidth: 3,
-              ),
+              CircularProgressIndicator(color: colorScheme.primary, strokeWidth: 3),
               const SizedBox(height: 16),
               Text(
                 widget.loadingText,
-                style: TextStyle(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500, fontSize: 14),
               ),
             ],
           ),
