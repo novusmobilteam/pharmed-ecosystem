@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
+import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -98,6 +99,7 @@ class _HomeContent extends StatelessWidget {
       'station' => StationSetupScreen(menu: menu!),
       'firm' => FirmScreen(menu: menu!),
       'drug' => MedicineScreen(menu: menu!),
+      'warning' => WarningScreen(menu: menu!),
       _ => const _NotFoundView(),
     };
   }

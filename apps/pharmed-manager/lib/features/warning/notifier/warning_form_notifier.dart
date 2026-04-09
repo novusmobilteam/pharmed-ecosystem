@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/core.dart';
-
-import '../../domain/entity/warning.dart';
-import '../../domain/usecase/create_warning_usecase.dart';
-import '../../domain/usecase/update_warning_usecase.dart';
+import '../../../../core/core.dart';
 
 class WarningFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateWarningUseCase _createWarningUseCase;
@@ -25,6 +21,9 @@ class WarningFormNotifier extends ChangeNotifier with ApiRequestMixin {
 
   bool get isCreate => _warning.id == null;
   bool get isValid => _warning.isValid;
+
+  bool get isSubmitting => isLoading(submitOp);
+  String? get statusMessage => message(submitOp);
 
   Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
     if (!isValid) return;

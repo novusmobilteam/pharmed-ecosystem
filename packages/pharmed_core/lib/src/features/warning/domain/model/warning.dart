@@ -1,5 +1,4 @@
-import '../../../../core/core.dart';
-import '../../data/model/warning_dto.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
 class Warning implements TableData {
   final int? id;
@@ -7,12 +6,7 @@ class Warning implements TableData {
   final String? text;
   final bool isActive;
 
-  const Warning({
-    this.id,
-    this.subject,
-    this.text,
-    this.isActive = true,
-  });
+  const Warning({this.id, this.subject, this.text, this.isActive = true});
 
   Status get status => isActive ? Status.active : Status.passive;
 
@@ -46,12 +40,7 @@ class Warning implements TableData {
     return null;
   }
 
-  Warning copyWith({
-    int? id,
-    WarningSubject? subject,
-    String? text,
-    bool? isActive,
-  }) {
+  Warning copyWith({int? id, WarningSubject? subject, String? text, bool? isActive}) {
     return Warning(
       id: id ?? this.id,
       subject: subject ?? this.subject,
@@ -59,11 +48,4 @@ class Warning implements TableData {
       isActive: isActive ?? this.isActive,
     );
   }
-
-  WarningDTO toDTO() => WarningDTO(
-        id: id,
-        warningSubjectId: subject?.id,
-        text: text,
-        isActive: isActive,
-      );
 }

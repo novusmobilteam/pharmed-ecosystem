@@ -17,3 +17,4 @@ export 'material_type_providers.dart';
 export 'patient_providers.dart';
 export 'kit_content_providers.dart';
 export 'kit_providers.dart';
+export 'warning_providers.dart';

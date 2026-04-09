@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/warning.dart';
-import '../../domain/usecase/delete_warning_usecase.dart';
-import '../../domain/usecase/get_warnings_usecase.dart';
-
 class WarningNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Warning> {
   final GetWarningsUseCase _getWarningsUseCase;
   final DeleteWarningUseCase _deleteWarningUseCase;
@@ -17,6 +13,24 @@ class WarningNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<W
   OperationKey deleteOp = OperationKey.delete();
 
   bool get isFetching => isLoading(fetchOp);
+
+  Warning? _selectedWarning;
+  Warning? get selectedWarning => _selectedWarning;
+
+  bool _isPanelOpen = false;
+  bool get isPanelOpen => _isPanelOpen;
+
+  void openPanel({Warning? warning}) {
+    _selectedWarning = warning;
+    _isPanelOpen = true;
+    notifyListeners();
+  }
+
+  void closePanel() {
+    _isPanelOpen = false;
+    _selectedWarning = null;
+    notifyListeners();
+  }
 
   // Functions
   Future<void> getWarnings() async {

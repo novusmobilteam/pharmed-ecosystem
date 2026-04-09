@@ -26,7 +26,7 @@ class FirmScreen extends StatelessWidget {
             desktop: DesktopLayout(
               title: menu.name ?? 'Firma Tanımlama',
               subtitle: menu.description,
-              actions: [PharmedButton(onPressed: () => notifier.openPanel(), label: 'Yeni Firma')],
+              actions: [MedButton(onPressed: () => notifier.openPanel(), size: MedButtonSize.sm, label: 'Yeni Firma')],
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
                 width: 480,

@@ -36,3 +36,4 @@ export 'src/features/branch/branch.dart';
 export 'src/features/active_ingredient/active_ingredient.dart';
 export 'src/features/kit/kit.dart';
 export 'src/features/kit_content/kit_content.dart';
+export 'src/features/warning/warning.dart';
