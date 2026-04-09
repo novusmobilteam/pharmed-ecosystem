@@ -20,9 +20,9 @@ class StockCell extends StatelessWidget {
     final double fillRatio = (current / max).clamp(0.0, 1.0);
     final Color dynamicColor = Color.lerp(Colors.red, Colors.green, fillRatio)!;
 
-    final min = assignment.minQuantity ?? 0;
-    final maxQuantity = assignment.maxQuantity ?? 0;
-    final criticalQuantity = assignment.criticalQuantity ?? 0;
+    // final min = assignment.minQuantity ?? 0;
+    // final maxQuantity = assignment.maxQuantity ?? 0;
+    // final criticalQuantity = assignment.criticalQuantity ?? 0;
 
     return BaseUnitCell(
       isSelected: isSelected,

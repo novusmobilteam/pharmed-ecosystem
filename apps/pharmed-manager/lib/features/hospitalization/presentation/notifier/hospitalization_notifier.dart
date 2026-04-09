@@ -53,7 +53,7 @@ class HospitalizationNotifier extends ChangeNotifier
     await execute(
       fetch,
       operation: () => _hospitalizationRepository.getHospitalizations(),
-      onData: (response) => allItems = response?.data ?? [],
+      onData: (response) => allItems = response.data ?? [],
     );
   }
 

@@ -32,6 +32,8 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
 
   String? get statusMessage => message(fetchOp);
 
+  AppUser? get currentUser => _authNotifier.currentUser;
+
   MenuItem? get activeMenu {
     final parents = parentMenuItems;
     if (parents.isEmpty || _activeTab < 0 || _activeTab >= parents.length) return null;

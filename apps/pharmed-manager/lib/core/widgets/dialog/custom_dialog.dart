@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../core.dart';
@@ -91,8 +90,8 @@ class _CustomDialogState extends State<CustomDialog> {
       alignment: Alignment.center,
 
       child: Container(
-        width: widget.width ?? context.width * 0.5,
-        height: widget.height,
+        width: widget.width ?? context.width * 0.4,
+        height: widget.height ?? 600,
         constraints: BoxConstraints(maxHeight: widget.maxHeight ?? context.height * 0.8),
         decoration: BoxDecoration(
           color: colorScheme.surface, // Tema tabanlı zemin rengi

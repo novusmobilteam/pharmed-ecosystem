@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
-import 'package:pharmed_manager/core/core.dart';
 
 import '../../cabin/domain/entity/cabin_input_data.dart';
 import '../../filling_list/data/repository/filling_list_repository.dart';

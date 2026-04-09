@@ -36,7 +36,7 @@ class AddPatientNotifier extends ChangeNotifier with SearchMixin<Hospitalization
     await execute(
       fetchOp,
       operation: () => _getHospitalizationsUseCase.call(GetHospitalizationsParams()),
-      onData: (response) => allItems = response?.data ?? [],
+      onData: (response) => allItems = response.data ?? [],
       loadingMessage: 'Hastalar yükleniyor...',
     );
   }

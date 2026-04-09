@@ -31,7 +31,7 @@ class _MedicineRefundViewState extends State<MedicineRefundView> {
         checkRefundStatusUseCase: context.read(),
         completeRefundUseCase: context.read(),
         onCheckCompleted: (notifier, assignment) async {
-          final bool shouldOpenLid = notifier.type == ReturnType.toOrigin; // Yerine iade ise kapak açılır
+          //final bool shouldOpenLid = notifier.type == ReturnType.toOrigin; // Yerine iade ise kapak açılır
           //context.read<CabinStatusNotifier>().startOperation(assignment, openCubicLid: shouldOpenLid);
         },
       )..getRefundables(),
@@ -55,7 +55,7 @@ class _MedicineRefundViewState extends State<MedicineRefundView> {
                   },
                   onSuccess: (message) {
                     if (context.mounted) {
-                      context.pop();
+                      Navigator.of(context).pop();
                       MessageUtils.showSuccessSnackbar(context, message);
                     }
                   },

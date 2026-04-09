@@ -31,5 +31,5 @@ void showLoading(BuildContext context, {String? message}) {
 }
 
 void hideLoading(BuildContext context) {
-  context.pop();
+  Navigator.of(context).pop();
 }

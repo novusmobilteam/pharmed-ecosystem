@@ -1,6 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 
 // [SWREQ-DATA-FIRM-001]
 // Sınıf: Class B
@@ -30,6 +29,7 @@ class FirmRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createFirm(FirmDTO dto) {
+    print(dto.toJson().toString());
     return createRequest(
       path: _base,
       body: dto.toJson(),
@@ -40,7 +40,7 @@ class FirmRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> updateFirm(FirmDTO dto) {
     return updateRequest(
-      path: _base,
+      path: '${_base}/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Firma güncellendi',

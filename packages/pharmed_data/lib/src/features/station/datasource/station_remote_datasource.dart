@@ -38,7 +38,7 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> updateStation(StationDTO dto) {
     return updateRequest(
-      path: _base,
+      path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'İstasyon güncellendi',

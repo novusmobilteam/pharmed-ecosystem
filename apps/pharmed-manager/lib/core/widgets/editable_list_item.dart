@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class EditableListItem extends StatelessWidget {
@@ -9,7 +10,6 @@ class EditableListItem extends StatelessWidget {
     required this.onEdit,
     this.onDelete,
     this.additionalActions = const [],
-    this.maxTrailingWidth = 140,
     this.onTap,
     this.isSelected = false,
   });
@@ -19,48 +19,28 @@ class EditableListItem extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback? onDelete;
   final List<Widget> additionalActions;
-  final double maxTrailingWidth;
   final VoidCallback? onTap;
   final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    // Seçili ise primaryContainer, değilse surface (veya şeffaf)
-    final backgroundColor = isSelected ? colorScheme.primaryContainer.withValues(alpha: 0.3) : colorScheme.surface;
-
-    final borderColor =
-        isSelected ? colorScheme.primary.withValues(alpha: 0.5) : colorScheme.outlineVariant.withValues(alpha: 0.5);
-
     return Container(
-      margin: const EdgeInsets.only(bottom: 8.0), // Öğeler arası boşluk
+      margin: const EdgeInsets.only(bottom: 4),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: borderColor, width: 1.0),
-        // Hafif gölge (seçili değilken)
-        boxShadow: isSelected
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        color: isSelected ? MedColors.blueLight : MedColors.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: isSelected ? MedColors.blue.withValues(alpha: 0.4) : MedColors.border),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(10),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               children: [
-                // --- Sol Taraf: Yazılar ---
+                // ── Sol: metin
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,63 +48,37 @@ class EditableListItem extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                        style: TextStyle(
+                          fontFamily: MedFonts.sans,
+                          fontSize: 13,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          color: isSelected ? MedColors.blue : MedColors.text,
                         ),
                       ),
                       if (subtitle != null) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         Text(
                           subtitle!,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                            fontSize: 13,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.text3),
                         ),
                       ],
                     ],
                   ),
                 ),
 
-                const SizedBox(width: 16),
-
-                // --- Sağ Taraf: Aksiyonlar ---
+                // ── Sağ: aksiyonlar
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Ekstra Aksiyonlar
                     ...additionalActions,
-
-                    // Düzenle Butonu
-                    IconButton(
-                      icon: Icon(PhosphorIcons.pencilSimple()), // Daha sade kalem ikonu
-                      onPressed: onEdit,
-                      iconSize: 20,
-                      color: colorScheme.onSurfaceVariant,
-                      tooltip: 'Düzenle',
-                      style: IconButton.styleFrom(
-                        padding: const EdgeInsets.all(8),
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-
-                    // Sil Butonu
+                    _ActionIcon(icon: PhosphorIcons.pencilSimple(), onPressed: onEdit, tooltip: 'Düzenle'),
                     if (onDelete != null)
-                      IconButton(
-                        icon: Icon(PhosphorIcons.trash()),
-                        onPressed: onDelete,
-                        iconSize: 20,
-                        // Tema error rengi
-                        color: colorScheme.error,
+                      _ActionIcon(
+                        icon: PhosphorIcons.trash(),
+                        onPressed: onDelete!,
                         tooltip: 'Sil',
-                        style: IconButton.styleFrom(
-                          padding: const EdgeInsets.all(8),
-                          visualDensity: VisualDensity.compact,
-                          hoverColor: colorScheme.errorContainer.withValues(alpha: 0.2),
-                        ),
+                        color: MedColors.red.withValues(alpha: 0.7),
+                        hoverColor: MedColors.redLight,
                       ),
                   ],
                 ),
@@ -137,15 +91,35 @@ class EditableListItem extends StatelessWidget {
   }
 }
 
-// Yardımcı widget: Additional action için standart ikon butonu
+// ─── _ActionIcon ──────────────────────────────────────────────────────────────
+
+class _ActionIcon extends StatelessWidget {
+  const _ActionIcon({required this.icon, required this.onPressed, this.tooltip, this.color, this.hoverColor});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+  final String? tooltip;
+  final Color? color;
+  final Color? hoverColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(icon),
+      onPressed: onPressed,
+      iconSize: 15,
+      tooltip: tooltip,
+      color: color ?? MedColors.text3,
+      hoverColor: hoverColor ?? MedColors.surface2,
+      style: IconButton.styleFrom(padding: const EdgeInsets.all(6), visualDensity: VisualDensity.compact),
+    );
+  }
+}
+
+// ─── AdditionalActionButton ───────────────────────────────────────────────────
+
 class AdditionalActionButton extends StatelessWidget {
-  const AdditionalActionButton({
-    super.key,
-    required this.icon,
-    required this.onPressed,
-    this.tooltip,
-    this.color,
-  });
+  const AdditionalActionButton({super.key, required this.icon, required this.onPressed, this.tooltip, this.color});
 
   final IconData icon;
   final VoidCallback onPressed;
@@ -154,16 +128,6 @@ class AdditionalActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return IconButton(
-      icon: Icon(icon),
-      onPressed: onPressed,
-      iconSize: 20,
-      padding: const EdgeInsets.all(8),
-      visualDensity: VisualDensity.compact, // Daha sıkı yerleşim
-      tooltip: tooltip,
-      color: color ?? colorScheme.onSurfaceVariant, // Varsayılan gri
-    );
+    return _ActionIcon(icon: icon, onPressed: onPressed, tooltip: tooltip, color: color);
   }
 }

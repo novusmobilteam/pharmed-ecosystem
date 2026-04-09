@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -26,10 +25,7 @@ class UrgentPatientView extends StatelessWidget {
             title: 'Acil Hasta Sonlandır',
             actions: [
               if (notifier.selectedUrgentPatient != null)
-                TextButton(
-                  onPressed: () => _showPatientListView(context),
-                  child: Text('Eşleştir'),
-                ),
+                TextButton(onPressed: () => _showPatientListView(context), child: Text('Eşleştir')),
             ],
             child: _buildChild(notifier),
           );
@@ -40,9 +36,7 @@ class UrgentPatientView extends StatelessWidget {
 
   Widget _buildChild(UrgentPatientNotifier notifier) {
     if (notifier.isFetching && notifier.isEmpty) {
-      return Center(
-        child: CircularProgressIndicator.adaptive(),
-      );
+      return Center(child: CircularProgressIndicator.adaptive());
     }
     if (notifier.isEmpty) {
       return Center(
@@ -74,9 +68,7 @@ void _showPatientListView(BuildContext context) {
 
   showDialog(
     context: context,
-    builder: (_) => ChangeNotifierProvider.value(
-      value: context.read<UrgentPatientNotifier>(),
-      child: PatientListView(),
-    ),
+    builder: (_) =>
+        ChangeNotifierProvider.value(value: context.read<UrgentPatientNotifier>(), child: PatientListView()),
   );
 }

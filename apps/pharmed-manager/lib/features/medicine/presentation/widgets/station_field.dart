@@ -1,4 +1,4 @@
-part of '../view/drug_form_view.dart';
+part of '../view/drug_form_panel.dart';
 
 class StationField extends StatelessWidget {
   const StationField({
@@ -23,7 +23,7 @@ class StationField extends StatelessWidget {
       enabled: enabled,
       initialValue: initialValue,
       dataSource: (skip, take, search) => context.read<GetStationsUseCase>().call(GetStationsParams()),
-      labelBuilder: (station) => station?.name,
+      labelBuilder: (station) => station.name,
       onSelected: (station) => onChanged(station),
     );
   }

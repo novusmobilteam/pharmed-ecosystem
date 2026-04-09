@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:provider/provider.dart';
 
@@ -41,7 +40,7 @@ class PatientMedicineDefineView extends StatelessWidget {
                 onFailed: (message) => MessageUtils.showErrorSnackbar(context, message),
                 onSuccess: (message) {
                   MessageUtils.showSuccessSnackbar(context, message);
-                  context.pop();
+                  Navigator.of(context).pop();
                 },
               );
             },

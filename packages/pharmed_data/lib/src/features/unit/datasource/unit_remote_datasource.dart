@@ -1,13 +1,12 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 
 // [SWREQ-DATA-UNIT-001]
 // Sınıf: Class B
 class UnitRemoteDataSource extends BaseRemoteDataSource {
   UnitRemoteDataSource({required super.apiManager});
 
-  static const _base = '/Unit';
+  static const _base = '/UnitCode';
 
   @override
   String get logSwreq => 'SWREQ-DATA-UNIT-001';
@@ -20,8 +19,8 @@ class UnitRemoteDataSource extends BaseRemoteDataSource {
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
-      searchFields: const ['name'],
+      // searchText: search,
+      // searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(UnitDTO.fromJson),
       successLog: 'Birimler getirildi',

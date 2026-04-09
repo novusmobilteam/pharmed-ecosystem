@@ -20,7 +20,7 @@ class DirectedOrdersViewModel extends ChangeNotifier with SearchMixin<Hospitaliz
       fetch,
       operation: () => _hospitalizationRepository.getHospitalizations(),
       onData: (response) {
-        allItems = response?.data ?? [];
+        allItems = response.data ?? [];
       },
     );
   }

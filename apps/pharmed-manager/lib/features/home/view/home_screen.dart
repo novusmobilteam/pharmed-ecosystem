@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
+import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
+import '../../medicine/presentation/view/medicine_screen.dart';
 import '../../station_setup/view/station_screen.dart';
 import '../notifier/home_notifier.dart';
 part 'sidebar.dart';
@@ -19,7 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<HomeNotifier>().fetchMenus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeNotifier>().fetchMenus();
+    });
   }
 
   @override
@@ -57,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
           return Column(
             children: [
-              //DashboardAppBar(cabinLocation: '', cabinName: ''),
+              DashboardAppBar(cabinLocation: '', cabinName: '', user: notifier.currentUser),
               Expanded(
                 child: Row(
                   children: [
@@ -84,14 +88,16 @@ class _HomeContent extends StatelessWidget {
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 200),
-      child: KeyedSubtree(key: ValueKey(activeMenu?.route ?? 'default'), child: _buildContent(activeMenu?.route)),
+      child: KeyedSubtree(key: ValueKey(activeMenu?.route ?? 'default'), child: _buildContent(activeMenu)),
     );
   }
 
-  Widget _buildContent(String? route) {
-    return switch (route) {
+  Widget _buildContent(MenuItem? menu) {
+    return switch (menu?.route) {
       'dashboard' || null => const SizedBox(),
-      'station' => const StationSetupScreen(),
+      'station' => StationSetupScreen(menu: menu!),
+      'firm' => FirmScreen(menu: menu!),
+      'drug' => MedicineScreen(menu: menu!),
       _ => const _NotFoundView(),
     };
   }

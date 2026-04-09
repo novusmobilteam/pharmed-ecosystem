@@ -33,7 +33,7 @@ class _ScanBarcodeViewState extends State<ScanBarcodeView> {
       onSuccess: (message) {
         hideLoading(context);
         MessageUtils.showSuccessSnackbar(context, message);
-        context.pop();
+        Navigator.of(context).pop();
       },
     );
   }
@@ -55,12 +55,7 @@ class _ScanBarcodeViewState extends State<ScanBarcodeView> {
           },
           saveButtonText: 'Karekod Gir',
           child: Column(
-            children: [
-              TextInputField(
-                label: 'Karekod',
-                onChanged: (value) => vm.barcode = value ?? '',
-              ),
-            ],
+            children: [TextInputField(label: 'Karekod', onChanged: (value) => vm.barcode = value ?? '')],
           ),
         );
       },

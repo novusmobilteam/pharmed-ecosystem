@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../active_ingredient/domain/entity/active_ingredient.dart';
-import '../../../active_ingredient/domain/usecase/get_active_ingredients_usecase.dart';
-
 class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateMedicineUseCase _createMedicineUseCase;
   final UpdateMedicineUseCase _updateMedicineUseCase;
@@ -33,12 +30,14 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   List<ActiveIngredient> _activeIngredients = [];
   List<ActiveIngredient> get activeIngredients => _activeIngredients;
 
-  static const fetchOperation = OperationKey.fetch();
-  static const submitOperation = OperationKey.custom('submit');
+  OperationKey fetchOp = OperationKey.fetch();
+  OperationKey submitOp = OperationKey.custom('submit');
 
   bool get isCreate => _drug.id == null;
-  bool get isFetching => isLoading(fetchOperation);
-  bool get isSubmitting => isLoading(submitOperation);
+  bool get isFetching => isLoading(fetchOp);
+  bool get isSubmitting => isLoading(submitOp);
+
+  String? get statusMessage => message(submitOp);
 
   // İlgili ilaca ait 'Etken Maddeler', 'Kullanıcılar' ve 'İstasyonlar' bilgilerini
   // gösterebilmek için servisten getiriyoruz ve gelen verileri ilgili
@@ -46,7 +45,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   Future<void> _initialize() async {
     if (!isCreate) {
       await execute(
-        fetchOperation,
+        fetchOp,
         operation: () => _getDrugUseCase.call(_drug.id ?? 0),
         onData: (data) async {
           if (data != null) {
@@ -74,9 +73,9 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
     );
   }
 
-  void submit({Function(String? message)? onSuccess, Function(String? message)? onFailed}) async {
+  Future<void> submit({Function(String? message)? onSuccess, Function(String? message)? onFailed}) async {
     await executeVoid(
-      submitOperation,
+      submitOp,
       operation: () async {
         final result = isCreate ? await _createMedicineUseCase.call(_drug) : await _updateMedicineUseCase.call(_drug);
         return result;

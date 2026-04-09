@@ -1,13 +1,7 @@
-part of '../view/drug_form_view.dart';
+part of '../view/drug_form_panel.dart';
 
 class UnitField extends StatelessWidget {
-  const UnitField({
-    super.key,
-    this.enabled = true,
-    required this.onChanged,
-    this.unit,
-    this.isRequired = false,
-  });
+  const UnitField({super.key, this.enabled = true, required this.onChanged, this.unit, this.isRequired = false});
 
   final bool enabled;
   final ValueChanged<Unit?> onChanged;

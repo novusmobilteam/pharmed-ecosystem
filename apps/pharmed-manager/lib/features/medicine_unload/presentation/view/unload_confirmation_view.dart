@@ -12,7 +12,7 @@ class UnloadConfirmationView extends StatelessWidget {
       inputs,
       onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
       onSuccess: (msg) {
-        context.pop();
+        Navigator.of(context).pop();
         MessageUtils.showSuccessSnackbar(context, msg);
       },
     );

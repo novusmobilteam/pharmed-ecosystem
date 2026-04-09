@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -129,7 +128,7 @@ class DeleteDescriptionView extends StatelessWidget {
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                   onSuccess: (msg) {
                     MessageUtils.showSuccessSnackbar(context, msg);
-                    context.pop();
+                    Navigator.of(context).pop();
                   },
                 );
               },

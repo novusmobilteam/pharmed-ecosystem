@@ -93,7 +93,7 @@
 //         onSave: () async {
 //           final res = await viewModel.solveInconsistency();
 //           if (res == true && context.mounted) {
-//             context.pop();
+//             Navigator.of(context).pop();
 //           }
 //         },
 //       ),

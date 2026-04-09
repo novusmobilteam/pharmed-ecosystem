@@ -1,54 +1,63 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/side_panel.dart';
 import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../../core/widgets/unified_table/unified_table_view.dart';
-import '../../../active_ingredient/presentation/view/active_ingredient_dialog.dart';
-import '../../../drug_class/presentation/view/drug_class_dialog.dart';
-import '../../../drug_type/presentation/view/drug_type_dialog.dart';
-import '../../../kit/presentation/view/kit_list_dialog.dart';
-import '../../../material_type/presentation/view/material_type_view.dart';
-import 'drug_form_view.dart';
+import '../../../active_ingredient/view/active_ingredient_dialog.dart';
+import '../../../drug_class/view/drug_class_dialog.dart';
+import '../../../drug_type/view/drug_type_dialog.dart';
+import '../../../kit/view/kit_list_dialog.dart';
+import '../../../material_type/view/material_type_view.dart';
+import 'drug_form_panel.dart';
 import 'medical_consumable_form_view.dart';
-import '../notifier/medicine_table_notifier.dart';
+import '../notifier/medicine_notifier.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 
 class MedicineScreen extends StatelessWidget {
-  const MedicineScreen({super.key});
+  const MedicineScreen({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) =>
-          MedicineTableNotifier(getMedicinesUseCase: context.read(), deleteMedicineUseCase: context.read())
-            ..getMedicines(),
-      child: _MedicineScreenBody(),
-    );
-  }
-}
-
-class _MedicineScreenBody extends StatefulWidget {
-  const _MedicineScreenBody();
-
-  @override
-  State<_MedicineScreenBody> createState() => _MedicineScreenBodyState();
-}
-
-class _MedicineScreenBodyState extends State<_MedicineScreenBody> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer<MedicineTableNotifier>(
+          MedicineNotifier(getMedicinesUseCase: context.read(), deleteMedicineUseCase: context.read())..getMedicines(),
+      child: Consumer<MedicineNotifier>(
         builder: (context, notifier, _) {
           return ResponsiveLayout(
             mobile: const SizedBox(),
             tablet: const SizedBox(),
             desktop: DesktopLayout(
-              title: 'İlaç/Tıbbi Sarf Tanımlama',
-              showAddButton: true,
-              onAddPressed: () => _onAdd(context, notifier),
-              child: _buildChild(context, notifier),
+              title: menu.name ?? 'İlaç/Tıbbi Sarf Tanımlama',
+              subtitle: menu.description,
+              actions: [PharmedButton(onPressed: () => notifier.openPanel(), label: 'Yeni İlaç')],
+              child: SidePanelWrapper(
+                isOpen: notifier.isPanelOpen,
+                width: 1000,
+                panel: DrugFormPanel(),
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    Expanded(
+                      child: UnifiedTableView<Medicine>(
+                        data: notifier.filteredItems,
+                        isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
+                        enableExcel: true,
+                        enableSearch: true,
+                        onSearchChanged: notifier.search,
+                        actions: [
+                          TableActionItem.edit(onPressed: (medicine) => notifier.openPanel(medicine: medicine)),
+                          TableActionItem.delete(onPressed: (medicine) => _onDelete(context, notifier, medicine)),
+                        ],
+                      ),
+                    ),
+                    _DefinitionButtonsView(notifier),
+                  ],
+                ),
+              ),
             ),
           );
         },
@@ -57,51 +66,7 @@ class _MedicineScreenBodyState extends State<_MedicineScreenBody> {
   }
 }
 
-Widget _buildChild(BuildContext context, MedicineTableNotifier notifier) {
-  return Column(
-    spacing: 20,
-    children: [
-      Expanded(
-        child: UnifiedTableView<Medicine>(
-          data: notifier.filteredItems,
-          isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
-          enableExcel: true,
-          enableSearch: true,
-          onSearchChanged: notifier.search,
-          actions: [
-            TableActionItem.edit(onPressed: (data) => _onEdit(context, notifier, data)),
-            TableActionItem.delete(onPressed: (data) => _onDelete(context, notifier, data)),
-          ],
-        ),
-      ),
-      _DefinitionButtonsView(notifier),
-    ],
-  );
-}
-
-Future<void> _onAdd(BuildContext context, MedicineTableNotifier notifier) async {
-  final result = await showDrugFormView(context);
-
-  if (result && context.mounted == true) {
-    notifier.getMedicines();
-  }
-}
-
-Future<void> _onEdit(BuildContext context, MedicineTableNotifier notifier, Medicine data) async {
-  bool result = false;
-
-  if (data is Drug) {
-    result = await showDrugFormView(context, initial: data);
-  } else {
-    result = await showMedicalConsumableFormView(context, initial: data as MedicalConsumable);
-  }
-
-  if (result && context.mounted == true) {
-    notifier.getMedicines();
-  }
-}
-
-Future<void> _onDelete(BuildContext context, MedicineTableNotifier notifier, Medicine data) async {
+Future<void> _onDelete(BuildContext context, MedicineNotifier notifier, Medicine data) async {
   MessageUtils.showConfirmDeleteDialog(
     context: context,
     onConfirm: () async {
@@ -117,7 +82,7 @@ Future<void> _onDelete(BuildContext context, MedicineTableNotifier notifier, Med
 class _DefinitionButtonsView extends StatelessWidget {
   const _DefinitionButtonsView(this.notifier);
 
-  final MedicineTableNotifier notifier;
+  final MedicineNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +90,9 @@ class _DefinitionButtonsView extends StatelessWidget {
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        PharmedButton(
+        MedButton(
           label: 'Tıbbi Sarf Tanımlama',
+          size: MedButtonSize.sm,
           onPressed: () async {
             final result = await showMedicalConsumableFormView(context);
             if (result) {
@@ -134,11 +100,23 @@ class _DefinitionButtonsView extends StatelessWidget {
             }
           },
         ),
-        PharmedButton(label: 'Etken Madde Tanımlama', onPressed: () => showActiveIngredientDialog(context)),
-        PharmedButton(label: 'İlaç Sınıfı Tanımlama', onPressed: () => showDrugClassDialog(context)),
-        PharmedButton(label: 'İlaç Tipi Tanımlama', onPressed: () => showDrugTypeDialog(context)),
-        PharmedButton(label: 'İlaç Kiti Oluştur', onPressed: () => showKitDialog(context)),
-        PharmedButton(label: 'Malzeme Tipi Tanımlama', onPressed: () => showMaterialTypeDialog(context)),
+        MedButton(
+          label: 'Etken Madde Tanımlama',
+          size: MedButtonSize.sm,
+          onPressed: () => showActiveIngredientDialog(context),
+        ),
+        MedButton(
+          label: 'İlaç Sınıfı Tanımlama',
+          size: MedButtonSize.sm,
+          onPressed: () => showDrugClassDialog(context),
+        ),
+        MedButton(label: 'İlaç Tipi Tanımlama', size: MedButtonSize.sm, onPressed: () => showDrugTypeDialog(context)),
+        MedButton(label: 'İlaç Kiti Oluştur', size: MedButtonSize.sm, onPressed: () => showKitDialog(context)),
+        MedButton(
+          label: 'Malzeme Tipi Tanımlama',
+          size: MedButtonSize.sm,
+          onPressed: () => showMaterialTypeDialog(context),
+        ),
       ],
     );
   }

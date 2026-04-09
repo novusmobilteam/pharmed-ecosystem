@@ -31,6 +31,9 @@ export 'src/features/dashboard/dashboard.dart';
 export 'src/features/refund/refund.dart';
 export 'src/features/withdraw/withdraw.dart';
 export 'src/features/fault/fault.dart';
+export 'src/features/active_ingredient/active_ingredient.dart';
+export 'src/features/kit/kit.dart';
+export 'src/features/kit_content/kit_content.dart';
 
 // Constants
 export 'src/constants/device_constants.dart';

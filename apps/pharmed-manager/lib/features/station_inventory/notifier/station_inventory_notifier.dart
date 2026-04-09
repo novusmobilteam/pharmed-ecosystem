@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
 class StationInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
+  // ignore: unused_field
   final GetCurrentCabinStockUseCase _getCurrentCabinStockUseCase;
 
   StationInventoryNotifier({required GetCurrentCabinStockUseCase getCurrentCabinStockUseCase})

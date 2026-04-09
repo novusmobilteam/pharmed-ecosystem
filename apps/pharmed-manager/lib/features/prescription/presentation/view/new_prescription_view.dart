@@ -139,7 +139,7 @@ class _NewPrescriptionViewState extends State<NewPrescriptionView> {
     if (notifier.prescriptionItems.isNotEmpty) {
       MessageUtils.showConfirmExitDialog(context: context, onConfirm: context.pop);
     } else {
-      context.pop();
+      Navigator.of(context).pop();
     }
   }
 
@@ -212,7 +212,7 @@ class _DrugField extends StatelessWidget {
         return SelectionField<Medicine>(
           key: ValueKey('drug_${vm.currentItem.medicine?.id}'),
           label: 'İlaç / Malzeme',
-          labelBuilder: (d) => d?.name,
+          labelBuilder: (d) => d.name,
           initialValue: vm.currentItem.medicine,
           onSelected: (d) => vm.updateMaterial(d),
           validator: (d) => Validators.cannotBlankValidator(d?.name),

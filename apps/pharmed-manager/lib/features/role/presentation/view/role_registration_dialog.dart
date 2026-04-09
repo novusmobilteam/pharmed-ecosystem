@@ -14,7 +14,7 @@ class RoleRegistrationDialog extends StatelessWidget {
         return RegistrationDialog(
           title: title,
           isLoading: vm.isLoading(vm.submitOp),
-          onClose: () => context.pop(),
+          onClose: () => Navigator.of(context).pop(),
           onSave: () async {
             if (formKey.currentState!.validate()) {
               await vm.submit();
@@ -32,10 +32,7 @@ class RoleRegistrationDialog extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               spacing: AppDimensions.registrationDialogSpacing,
-              children: const [
-                _NameField(),
-                _StatusField(),
-              ],
+              children: const [_NameField(), _StatusField()],
             ),
           ),
         );

@@ -39,7 +39,7 @@ class _MedicalConsumableFormViewState extends State<MedicalConsumableFormView> {
       builder: (context, notifier, _) {
         return RegistrationDialog(
           title: 'Tıbbi Sarf Malzemesi Ekle/Düzenle',
-          width: context.width * 0.8,
+          width: context.width * 0.5,
           maxHeight: 800,
           isLoading: notifier.isSubmitting,
           onSave: () async {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../core.dart';
@@ -216,7 +215,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
                 if (widget.onClose != null) {
                   widget.onClose!();
                 } else {
-                  context.pop();
+                  Navigator.of(context).pop();
                 }
               },
               style: OutlinedButton.styleFrom(

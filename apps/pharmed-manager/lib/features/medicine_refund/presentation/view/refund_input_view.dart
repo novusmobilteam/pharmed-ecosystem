@@ -26,10 +26,7 @@ class _ReturnInputViewState extends State<ReturnInputView> {
                 unit: notifier.selectedItem?.medicine?.operationUnit ?? 'Adet',
                 label: 'İade Miktarı',
                 onChanged: (val) {
-                  notifier.changeAmount(
-                    val,
-                    onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  );
+                  notifier.changeAmount(val, onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg));
                 },
               ),
               PharmedButton(
@@ -53,12 +50,7 @@ class _ReturnInputViewState extends State<ReturnInputView> {
               ),
               Column(
                 children: [
-                  Text(
-                    'İade Notu',
-                    style: context.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('İade Notu', style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
                   Text(notifier.refundNote ?? '-'),
                 ],
               ),
@@ -74,7 +66,7 @@ void _onConfirm(BuildContext context, MedicineRefundNotifier notifier) {
   notifier.checkRefundStatus(
     onFailed: (message) => MessageUtils.showErrorSnackbar(context, message),
     onSuccess: (message) {
-      context.pop();
+      Navigator.of(context).pop();
       MessageUtils.showSuccessSnackbar(context, message);
     },
   );

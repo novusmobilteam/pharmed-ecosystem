@@ -1,4 +1,4 @@
-part of '../view/drug_form_view.dart';
+part of '../view/drug_form_panel.dart';
 
 class CheckboxSection extends StatelessWidget {
   const CheckboxSection({super.key});
@@ -6,34 +6,22 @@ class CheckboxSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Flex(
-      spacing: AppDimensions.registrationDialogSpacing,
+      spacing: AppDimensions.registrationDialogSpacing / 2,
       crossAxisAlignment: CrossAxisAlignment.start,
       direction: Axis.horizontal,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: AppDimensions.registrationDialogSpacing,
-          children: [
-            _MultiPatientAccessTile(),
-            _SingleUseTile(),
-            _LowerDoseTile(),
-          ],
+
+          children: [_MultiPatientAccessTile(), _SingleUseTile(), _LowerDoseTile()],
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: AppDimensions.registrationDialogSpacing,
-          children: [
-            _CameraRecordingTile(),
-            _IndependentMaterialTile(),
-          ],
+          children: [_CameraRecordingTile(), _IndependentMaterialTile()],
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: AppDimensions.registrationDialogSpacing,
-          children: [
-            _RequirePharmacyApprovalForDisposalTile(),
-            _FireOrderRenewableTile(),
-          ],
+          children: [_RequirePharmacyApprovalForDisposalTile(), _FireOrderRenewableTile()],
         ),
       ],
     );
@@ -47,10 +35,10 @@ class _LowerDoseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CustomCheckboxTile(
-          label: 'Belirtilen dozdan düşük doz alınabilir',
+        return CheckboxField(
           value: vm.drug.isCanLowerDose,
-          onTap: vm.toggleLowerDose,
+          onChanged: (_) => vm.toggleLowerDose(),
+          label: 'Belirtilen dozdan düşük doz alınabilir',
         );
       },
     );
@@ -64,10 +52,10 @@ class _MultiPatientAccessTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CustomCheckboxTile(
+        return CheckboxField(
           label: 'Çoklu Hasta Erişim',
           value: vm.drug.isMultiplePatientAccess,
-          onTap: vm.toggleMultiPatientAccess,
+          onChanged: (_) => vm.toggleMultiPatientAccess(),
         );
       },
     );
@@ -81,10 +69,10 @@ class _SingleUseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CustomCheckboxTile(
+        return CheckboxField(
           label: 'Tek Kullanımlık',
           value: vm.drug.isSingleUse,
-          onTap: vm.toggleSingleUse,
+          onChanged: (_) => vm.toggleSingleUse(),
         );
       },
     );
@@ -98,10 +86,10 @@ class _CameraRecordingTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CustomCheckboxTile(
+        return CheckboxField(
           label: 'Kamera Kayıt',
           value: vm.drug.isCameraRecording,
-          onTap: vm.toggleCameraRecording,
+          onChanged: (_) => vm.toggleCameraRecording(),
         );
       },
     );
@@ -115,10 +103,10 @@ class _IndependentMaterialTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CustomCheckboxTile(
+        return CheckboxField(
           label: 'Serbest İlaç',
           value: vm.drug.isIndependentMaterial,
-          onTap: vm.toggleIndependentMaterial,
+          onChanged: (_) => vm.toggleIndependentMaterial(),
         );
       },
     );
@@ -132,10 +120,10 @@ class _RequirePharmacyApprovalForDisposalTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CustomCheckboxTile(
+        return CheckboxField(
           label: 'Fire/İmha Eczane Onayı Alınsın mı?',
           value: vm.drug.isWastagePharmacyApproval,
-          onTap: vm.toggleWastagePharmacyApproval,
+          onChanged: (_) => vm.toggleWastagePharmacyApproval(),
         );
       },
     );
@@ -149,10 +137,10 @@ class _FireOrderRenewableTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CustomCheckboxTile(
+        return CheckboxField(
           label: 'Fire Order Yenilensin mi?',
           value: vm.drug.isWastageOrderRenewed,
-          onTap: vm.toggleWastageOrderRenewed,
+          onChanged: (_) => vm.toggleWastageOrderRenewed(),
         );
       },
     );

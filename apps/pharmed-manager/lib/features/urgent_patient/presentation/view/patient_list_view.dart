@@ -15,7 +15,7 @@ class PatientListView extends StatelessWidget {
             onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
             onSuccess: (msg) {
               MessageUtils.showSuccessSnackbar(context, msg);
-              context.pop();
+              Navigator.of(context).pop();
             },
           ),
           child: _buildDialogChild(),
@@ -28,15 +28,11 @@ class PatientListView extends StatelessWidget {
     return Consumer<UrgentPatientNotifier>(
       builder: (context, notifier, _) {
         if (notifier.isLoading(notifier.fetchHospOp) && notifier.patients.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
+          return const Center(child: CircularProgressIndicator.adaptive());
         }
 
         if (notifier.patients.isEmpty) {
-          return Center(
-            child: CommonEmptyStates.noData(),
-          );
+          return Center(child: CommonEmptyStates.noData());
         }
 
         return ListView.builder(
@@ -45,11 +41,7 @@ class PatientListView extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             final hosp = notifier.patients.elementAt(index);
             bool isSelected = hosp == notifier.selectedPatient;
-            return SelectableListTile(
-              item: hosp,
-              onTap: notifier.selectPatient,
-              isSelected: isSelected,
-            );
+            return SelectableListTile(item: hosp, onTap: notifier.selectPatient, isSelected: isSelected);
           },
         );
       },

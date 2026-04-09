@@ -11,6 +11,7 @@ class StationCabinStockScreen extends StatefulWidget {
 }
 
 class _StationCabinStockScreenState extends State<StationCabinStockScreen> {
+  // ignore: unused_field
   Station? _station;
 
   void _selectStation(Station? station) {

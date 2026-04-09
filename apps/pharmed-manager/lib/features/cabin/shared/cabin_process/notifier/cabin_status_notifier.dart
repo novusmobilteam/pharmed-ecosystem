@@ -1,8 +1,3 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-
-import '../../../../../../core/core.dart';
-
 // class CabinStatusNotifier extends ChangeNotifier {
 //   final ICabinOperationService _cabinOperationService;
 //   final OpenDrawerUseCase _openDrawerUseCase;

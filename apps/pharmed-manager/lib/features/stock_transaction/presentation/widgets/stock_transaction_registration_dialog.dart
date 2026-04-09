@@ -101,7 +101,7 @@ class _ServiceField extends StatelessWidget {
           label: 'Gönderilen Servis',
           initialValue: notifier.transaction?.service,
           dataSource: (skip, take, search) => context.read<IServiceRepository>().getServices(),
-          labelBuilder: (value) => value?.name,
+          labelBuilder: (value) => value.name,
           onSelected: notifier.updateService,
           validator: (value) => Validators.cannotBlankValidator(value?.name),
         );

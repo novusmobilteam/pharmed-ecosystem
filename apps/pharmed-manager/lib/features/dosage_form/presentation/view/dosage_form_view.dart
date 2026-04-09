@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
@@ -20,7 +19,7 @@ Future<DosageForm?> showDosageFormView(BuildContext context) async {
           showAdd: true,
           onSearchChanged: (query) => vm.search(query),
           onAddPressed: () => _onEdit(context),
-          onClose: () => context.pop(),
+          onClose: () => Navigator.of(context).pop(),
           child: DosageFormView(),
         ),
       ),
@@ -72,7 +71,7 @@ class _DosageFormViewState extends State<DosageFormView> {
           subtitle: dosageForm.subtitle,
           onEdit: () => _onEdit(context, initial: dosageForm),
           onDelete: () => _onDelete(context, dosageForm),
-          onTap: () => context.pop(dosageForm),
+          onTap: () => Navigator.of(context).pop(dosageForm),
         );
       },
     );

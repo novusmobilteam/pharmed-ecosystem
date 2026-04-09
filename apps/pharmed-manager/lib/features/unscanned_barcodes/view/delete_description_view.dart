@@ -33,7 +33,7 @@ class _DeleteDescriptionViewState extends State<DeleteDescriptionView> {
       onSuccess: (message) {
         hideLoading(context);
         MessageUtils.showSuccessSnackbar(context, message);
-        context.pop();
+        Navigator.of(context).pop();
       },
     );
   }

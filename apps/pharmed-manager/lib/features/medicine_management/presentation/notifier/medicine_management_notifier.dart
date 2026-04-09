@@ -8,7 +8,6 @@ import '../../../urgent_patient/domain/usecase/create_urgent_patient_usecase.dar
 enum MedicineManagementType { allPatients, myPatients }
 
 class MedicineManagementNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Hospitalization> {
-  final AuthNotifier _authPersistence;
   final GetCurrentStationUseCase _getCurrentStationUseCase;
   final CreateUrgentPatientUseCase _createUrgentPatientUseCase;
   final GetHospitalizationsByServiceUseCase _getHospitalizationsUseCase;
@@ -22,8 +21,7 @@ class MedicineManagementNotifier extends ChangeNotifier with ApiRequestMixin, Se
     required GetFilteredHospitalizationsUseCase filteredHospitalizationsUseCase,
     required CreateUrgentPatientUseCase createUrgentPatientUseCase,
     required GetMyPatientsUseCase getMyPatientsUseCase,
-  }) : _authPersistence = authPersistence,
-       _getCurrentStationUseCase = getCurrentStationUseCase,
+  }) : _getCurrentStationUseCase = getCurrentStationUseCase,
        _getHospitalizationsUseCase = getHospitalizationsUseCase,
        _filteredHospitalizationsUseCase = filteredHospitalizationsUseCase,
        _createUrgentPatientUseCase = createUrgentPatientUseCase,

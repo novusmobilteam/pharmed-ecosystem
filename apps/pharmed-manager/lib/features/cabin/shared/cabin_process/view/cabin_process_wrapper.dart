@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../../../core/core.dart';
-import '../notifier/cabin_status_notifier.dart';
-import 'cabin_status_dialog.dart';
 
 /// Bu widget, herhangi bir ekranı sarmalayarak ona
 /// "Çekmece Açma → İşlem Yapma → Kapatma" yeteneği kazandırır.
@@ -50,19 +47,19 @@ class _CabinProcessListener extends StatefulWidget {
 
 class _CabinProcessListenerState extends State<_CabinProcessListener> {
   /// Çoklu tetiklenmeyi önlemek için kilit.
-  bool _isProcessingReadyState = false;
+  // bool _isProcessingReadyState = false;
 
   /// Dialog açık/kapalı durumu.
   /// Global flag yerine instance-level tutulur — farklı wrapper instance'ları
   /// birbirini etkilemez ve dispose sonrası flag sıfırlanır.
-  bool _isDialogOpen = false;
+  // bool _isDialogOpen = false;
 
   /// context.read yerine initState'te alınan referans.
   /// Listener tetiklendiğinde context deaktive olmuş olabilir;
   /// bu referans her zaman güvenli erişim sağlar.
   // CabinStatusNotifier? _notifier;
 
-  bool _lastProcessResult = false;
+  // bool _lastProcessResult = false;
 
   @override
   void initState() {

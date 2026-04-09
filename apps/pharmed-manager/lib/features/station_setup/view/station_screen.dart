@@ -20,7 +20,9 @@ const _titles = ['İstasyon Tanımlama', 'Servis Tanımlama', 'Depo Tanımlama']
 const _onAddLabels = ['Yeni İstasyon', 'Yeni Servis', 'Yeni Depo'];
 
 class StationSetupScreen extends StatelessWidget {
-  const StationSetupScreen({super.key});
+  const StationSetupScreen({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context) {
@@ -43,48 +45,52 @@ class StationSetupScreen extends StatelessWidget {
       ],
       child: Consumer<StationSetupNotifier>(
         builder: (context, notifier, _) {
-          return DesktopLayout(
-            title: 'İstasyon Tanımlama',
-            subtitle: 'İstasyon, Servis ve Depo tanımlamalarını yönetin.',
-            actions: [
-              PharmedButton(
-                onPressed: () => _onAdd(context, notifier.activeIndex),
-                label: _onAddLabels.elementAt(notifier.activeIndex),
-              ),
-              PharmedButton(
-                onPressed: () => _showStationSetupWizardView(context),
-                label: 'Kurulum Sihirbazı',
-                backgroundColor: MedColors.amber,
-              ),
-            ],
-            child: SidePanelWrapper(
-              isOpen: notifier.isPanelOpen,
-              width: 480,
-              panel: switch (notifier.panelType) {
-                StationPanelType.station => StationFormPanel(),
-                StationPanelType.service => ServiceFormPanel(),
-                StationPanelType.warehouse => WarehouseFormPanel(),
-                null => const SizedBox.shrink(),
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 500,
-                    child: PharmedSegmentedButton(
-                      selectedIndex: notifier.activeIndex,
-                      onChanged: (index) => notifier.activeIndex = index,
-                      labels: _titles,
+          return ResponsiveLayout(
+            mobile: const MobileLayout(),
+            tablet: const TabletLayout(),
+            desktop: DesktopLayout(
+              title: menu.name ?? 'İstasyon Tanımlama',
+              subtitle: menu.description,
+              actions: [
+                PharmedButton(
+                  onPressed: () => _onAdd(context, notifier.activeIndex),
+                  label: _onAddLabels.elementAt(notifier.activeIndex),
+                ),
+                PharmedButton(
+                  onPressed: () => _showStationSetupWizardView(context),
+                  label: 'Kurulum Sihirbazı',
+                  backgroundColor: MedColors.amber,
+                ),
+              ],
+              child: SidePanelWrapper(
+                isOpen: notifier.isPanelOpen,
+                width: 480,
+                panel: switch (notifier.panelType) {
+                  StationPanelType.station => StationFormPanel(),
+                  StationPanelType.service => ServiceFormPanel(),
+                  StationPanelType.warehouse => WarehouseFormPanel(),
+                  null => const SizedBox.shrink(),
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 500,
+                      child: PharmedSegmentedButton(
+                        selectedIndex: notifier.activeIndex,
+                        onChanged: (index) => notifier.activeIndex = index,
+                        labels: _titles,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Expanded(
-                    child: IndexedStack(
-                      index: notifier.activeIndex,
-                      children: [StationTableView(), ServiceTableView(), WarehouseTableView()],
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: IndexedStack(
+                        index: notifier.activeIndex,
+                        children: [StationTableView(), ServiceTableView(), WarehouseTableView()],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

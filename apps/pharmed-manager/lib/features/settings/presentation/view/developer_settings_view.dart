@@ -14,24 +14,17 @@ class DeveloperSettingsView extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             title: Text(
               'Admin Dashboard Aktif',
-              style: context.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             value: settings.isAdminModeActive,
             onChanged: (val) {
               context.read<HomeNotifier>().fetchMenus();
               settings.setAdminMode(val);
-              context.pop();
+              Navigator.of(context).pop();
             },
           ),
           const SizedBox(height: 10),
-          Text(
-            'Uygulama Modu',
-            style: context.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text('Uygulama Modu', style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           Row(
             children: [

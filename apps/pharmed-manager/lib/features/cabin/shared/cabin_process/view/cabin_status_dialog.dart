@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:provider/provider.dart';
-
-import '../../../../../../core/core.dart';
-import '../notifier/cabin_status_notifier.dart';
 
 class CabinStatusDialog extends StatelessWidget {
   const CabinStatusDialog({super.key});

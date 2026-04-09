@@ -38,6 +38,8 @@ class _DosageFormRegistrationDialogState extends State<DosageFormRegistrationDia
 
         return RegistrationDialog(
           title: title,
+          width: 400,
+          maxHeight: 400,
           isLoading: notifier.isSubmitting,
           onSave: () {
             notifier.submit(

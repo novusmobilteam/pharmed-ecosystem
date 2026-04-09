@@ -7,10 +7,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-// ─────────────────────────────────────────────────────────────────
-// OperationType / OperationKey
-// ─────────────────────────────────────────────────────────────────
-
 enum OperationType { fetch, create, update, delete, submit, custom }
 
 class OperationKey {

@@ -55,7 +55,7 @@ class StationRepositoryImpl implements IStationRepository {
   Future<Result<Station?>> getCurrentStation() async {
     final result = await _dataSource.getCurrentStation();
     return result.when(
-      ok: (stationDto) => Result.ok(StationMapper().toEntityOrNull(stationDto)),
+      ok: (stationDto) => Result.ok(_mapper.toEntityOrNull(stationDto)),
       error: (e) => Result.error(e),
     );
   }

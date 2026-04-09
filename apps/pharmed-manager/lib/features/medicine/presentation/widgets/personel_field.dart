@@ -1,4 +1,4 @@
-part of '../view/drug_form_view.dart';
+part of '../view/drug_form_panel.dart';
 
 class PersonelField extends StatelessWidget {
   const PersonelField({
@@ -30,7 +30,7 @@ class PersonelField extends StatelessWidget {
       },
       initialValue: initialValue,
       dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(GetUsersParams()),
-      labelBuilder: (user) => user?.fullName,
+      labelBuilder: (user) => user.fullName,
       onSelected: (user) => onChanged(user),
     );
   }
