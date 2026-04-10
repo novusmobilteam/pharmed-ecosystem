@@ -1,6 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../model/rfid_tag.dart';
+import 'model/rfid_reader_info.dart';
 
 abstract interface class IRfidService {
   /// TCP bağlantısı kurar. Uygulama başlangıcında veya
@@ -19,4 +20,6 @@ abstract interface class IRfidService {
 
   /// RF güç seviyesini ayarlar (dBm).
   Future<Result<void>> setPower(int dbm);
+
+  Future<Result<RfidReaderInfo>> testConnection({required String ip, required int port});
 }

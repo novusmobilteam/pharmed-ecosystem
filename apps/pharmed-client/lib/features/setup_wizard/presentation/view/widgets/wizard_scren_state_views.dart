@@ -56,9 +56,13 @@ class WizardActiveView extends ConsumerWidget {
           onNext: draft.step2Complete ? notifier.nextStep : null,
           onBack: notifier.previousStep,
           availablePorts: state.availablePorts,
+          onTestRfid: notifier.testRfidConnection,
+          rfidTestState: state.rfidTestState,
+          rfidReaderInfo: state.rfidReaderInfo,
+          rfidTestError: state.rfidTestError,
         );
       case 3:
-        return Step3ServiceScope(
+        return Step3StationScope(
           cabinetType: draft.cabinetType!,
           currentScope: draft.serviceScope,
           stationsLoadState: state.stationsLoadState,
@@ -68,6 +72,9 @@ class WizardActiveView extends ConsumerWidget {
           onRetryStations: () => notifier.loadStations(),
           onNext: draft.step3Complete ? notifier.nextStep : null,
           onBack: notifier.previousStep,
+          onStationSelected: (station) => notifier.onStationSelected(station),
+          servicesLoadState: state.servicesLoadState,
+          services: state.services,
         );
       case 4:
         return Step4DrawerConfig(

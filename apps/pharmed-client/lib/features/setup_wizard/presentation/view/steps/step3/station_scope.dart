@@ -1,11 +1,11 @@
-part of 'step3_service_scope.dart';
+part of 'step3_station_scope.dart';
 
 class _StationScopeBody extends StatelessWidget {
   const _StationScopeBody({
     required this.stationsLoadState,
     required this.stations,
     required this.stationsError,
-    required this.selectedStationId,
+    required this.selectedStation,
     required this.onStationSelected,
     required this.onRetry,
   });
@@ -13,7 +13,7 @@ class _StationScopeBody extends StatelessWidget {
   final StationsLoadState stationsLoadState;
   final List<Station> stations;
   final String? stationsError;
-  final int? selectedStationId;
+  final Station? selectedStation;
   final ValueChanged<Station> onStationSelected;
   final VoidCallback onRetry;
 
@@ -24,7 +24,7 @@ class _StationScopeBody extends StatelessWidget {
       StationsLoadState.error => _StationsError(message: stationsError, onRetry: onRetry),
       StationsLoadState.loaded => _StationList(
         stations: stations,
-        selectedStationId: selectedStationId,
+        selectedStation: selectedStation,
         onSelected: onStationSelected,
         onRetry: onRetry,
       ),
@@ -99,13 +99,13 @@ class _StationsError extends StatelessWidget {
 class _StationList extends StatelessWidget {
   const _StationList({
     required this.stations,
-    required this.selectedStationId,
+    required this.selectedStation,
     required this.onSelected,
     required this.onRetry,
   });
 
   final List<Station> stations;
-  final int? selectedStationId;
+  final Station? selectedStation;
   final ValueChanged<Station> onSelected;
   final VoidCallback onRetry;
 
@@ -137,7 +137,11 @@ class _StationList extends StatelessWidget {
     return Column(
       children: [
         for (final station in stations)
-          _StationTile(station: station, isSelected: station.id == selectedStationId, onTap: () => onSelected(station)),
+          _StationTile(
+            station: station,
+            isSelected: station.id == selectedStation?.id,
+            onTap: () => onSelected(station),
+          ),
       ],
     );
   }

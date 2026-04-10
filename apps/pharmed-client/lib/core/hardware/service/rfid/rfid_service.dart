@@ -1,5 +1,6 @@
 // pharmed-client/core/hardware/service/rfid/rfid_service.dart
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -8,6 +9,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../model/rfid_tag.dart';
 import 'i_rfid_service.dart';
+import 'model/rfid_reader_info.dart';
 
 /// RFID okuyucu ile TCP üzerinden haberleşen gerçek implementasyon.
 ///
@@ -212,5 +214,68 @@ class RfidService implements IRfidService {
     final antenna = resp[16];
 
     return RfidTag(epc: epc, rssi: rssi, antenna: antenna);
+  }
+
+  @override
+  Future<Result<RfidReaderInfo>> testConnection({required String ip, required int port}) async {
+    Socket? testSocket;
+    try {
+      testSocket = await Socket.connect(ip, port, timeout: const Duration(seconds: _defaultTimeoutSeconds));
+
+      final packet = _buildPacket(0x21, []); // GetReaderInformation
+      testSocket.add(packet);
+
+      final completer = Completer<Uint8List>();
+      late StreamSubscription sub;
+
+      sub = testSocket
+          .timeout(const Duration(seconds: _defaultTimeoutSeconds))
+          .listen(
+            (chunk) {
+              if (!completer.isCompleted) {
+                completer.complete(Uint8List.fromList(chunk));
+              }
+              sub.cancel();
+            },
+            onError: (e) {
+              if (!completer.isCompleted) completer.completeError(e);
+              sub.cancel();
+            },
+          );
+
+      final resp = await completer.future;
+
+      if (resp.length < 9) {
+        return Result.error(ServiceException(message: 'Geçersiz cevap alındı.', statusCode: 502));
+      }
+
+      final info = RfidReaderInfo(
+        firmwareVersion: '${resp[4]}.${resp[5]}',
+        readerType: resp[6],
+        maxPower: resp[7],
+        currentPower: resp[8],
+      );
+
+      MedLogger.info(
+        unit: 'RfidService',
+        swreq: 'SWREQ-RFID-004',
+        message: 'RFID bağlantı testi başarılı',
+        context: {'ip': ip, 'port': port, 'fw': info.firmwareVersion, 'power': info.currentPower},
+      );
+
+      return Result.ok(info);
+    } on SocketException catch (e) {
+      MedLogger.error(
+        unit: 'RfidService',
+        swreq: 'SWREQ-RFID-004',
+        message: 'RFID bağlantı testi başarısız',
+        context: {'error': e.message},
+      );
+      return Result.error(ServiceException(message: 'RFID okuyucuya ulaşılamadı: ${e.message}', statusCode: 503));
+    } on TimeoutException {
+      return Result.error(ServiceException(message: 'RFID bağlantı testi zaman aşımına uğradı.', statusCode: 408));
+    } finally {
+      await testSocket?.close();
+    }
   }
 }

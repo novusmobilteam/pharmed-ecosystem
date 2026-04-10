@@ -3,6 +3,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import '../../../../core/hardware/service/rfid/model/rfid_reader_info.dart';
 import '../../domain/model/scan_log_entry.dart';
 import '../../domain/model/wizard_draft.dart';
 
@@ -18,10 +19,17 @@ final class WizardActive extends SetupWizardUiState {
     required this.completedSteps,
     this.scanState = DrawerScanState.idle,
     this.availablePorts = const [],
+    this.rfidTestState = RfidTestState.idle,
+    this.rfidReaderInfo,
+    this.rfidTestError,
     this.stationsLoadState = StationsLoadState.idle,
     this.stations = const [],
     this.stationsError,
     this.scanLogs = const [],
+    this.rooms = const [],
+    this.servicesLoadState = ServicesLoadState.idle,
+    this.services = const [],
+    this.servicesError,
   });
 
   final int currentStep; // 1–5
@@ -30,10 +38,21 @@ final class WizardActive extends SetupWizardUiState {
   final DrawerScanState scanState; // Adım 4 tarama durumu
   final List<String> availablePorts;
 
+  // Adım 2 - RFID
+  final RfidTestState rfidTestState;
+  final RfidReaderInfo? rfidReaderInfo; // test başarılıysa dolar
+  final String? rfidTestError;
+
   // Adım 3 — istasyon/servis listesi
   final StationsLoadState stationsLoadState;
   final List<Station> stations;
   final String? stationsError;
+
+  final ServicesLoadState servicesLoadState;
+  final List<HospitalService> services;
+  final String? servicesError;
+
+  final List<Room> rooms;
 
   // Adım 4 — tarama log satırları
   final List<ScanLogEntry> scanLogs;
@@ -48,6 +67,12 @@ final class WizardActive extends SetupWizardUiState {
     List<Station>? stations,
     String? stationsError,
     List<ScanLogEntry>? scanLogs,
+    ServicesLoadState? servicesLoadState,
+    List<HospitalService>? services,
+    String? servicesError,
+    RfidTestState? rfidTestState,
+    RfidReaderInfo? rfidReaderInfo,
+    String? rfidTestError,
   }) {
     return WizardActive(
       currentStep: currentStep ?? this.currentStep,
@@ -59,6 +84,12 @@ final class WizardActive extends SetupWizardUiState {
       stations: stations ?? this.stations,
       stationsError: stationsError ?? this.stationsError,
       scanLogs: scanLogs ?? this.scanLogs,
+      servicesLoadState: servicesLoadState ?? this.servicesLoadState,
+      services: services ?? this.services,
+      servicesError: servicesError ?? this.servicesError,
+      rfidTestState: rfidTestState ?? this.rfidTestState,
+      rfidReaderInfo: rfidReaderInfo ?? this.rfidReaderInfo,
+      rfidTestError: rfidTestError ?? this.rfidTestError,
     );
   }
 }
@@ -102,3 +133,7 @@ enum StationsLoadState {
   loaded, // Liste hazır
   error, // Yükleme başarısız
 }
+
+enum ServicesLoadState { idle, loading, loaded, error }
+
+enum RfidTestState { idle, testing, success, failure }

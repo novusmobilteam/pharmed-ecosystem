@@ -33,16 +33,13 @@ class FinishCabinSetupUseCase {
   /// Mobil kabin akışı:
   ///   1. [CreateCabinUseCase] → Cabin kaydı oluştur (slot kayıt henüz desteklenmiyor)
   Future<Result<int>> call(CabinSetupConfig config) async {
-    // ── Cabin entity oluştur ───────────────────────────────────
     final cabin = Cabin(
       name: config.basicInfo.cabinName,
       type: config.cabinetType,
       comPort: ComPortX.fromLabel(config.basicInfo.comPort),
       dvrIp: config.basicInfo.dvrIp,
       status: Status.active,
-      station: config.serviceScope is ServiceBased
-          ? Station(id: int.tryParse((config.serviceScope as ServiceBased).departmentId ?? ''))
-          : null,
+      station: config.stationScope.station,
     );
 
     // ── 1. Kabini oluştur ──────────────────────────────────────

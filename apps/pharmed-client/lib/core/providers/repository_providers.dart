@@ -31,6 +31,20 @@ final stationRepositoryProvider = Provider<IStationRepository>((ref) {
   };
 });
 
+// ServiceRepository
+final serviceRepositoryProvider = Provider<IServiceRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => ServiceRepositoryImpl(
+      dataSource: ref.read(serviceRemoteDataSourceProvider),
+      mapper: ServiceMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => ServiceRepositoryImpl(
+      dataSource: ref.read(serviceRemoteDataSourceProvider),
+      mapper: ServiceMapper(),
+    ),
+  };
+});
+
 // CabinRepository
 final cabinRepositoryProvider = Provider<ICabinRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {

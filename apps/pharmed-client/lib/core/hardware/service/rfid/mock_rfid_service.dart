@@ -4,6 +4,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../model/rfid_tag.dart';
 import 'i_rfid_service.dart';
+import 'model/rfid_reader_info.dart';
 
 /// Dev/test flavor için sabit tag listesi döner.
 /// Gerçek TCP bağlantısı kurmaz.
@@ -55,5 +56,11 @@ class MockRfidService implements IRfidService {
   @override
   Future<Result<void>> setPower(int dbm) async {
     return const Result.ok(null);
+  }
+
+  @override
+  Future<Result<RfidReaderInfo>> testConnection({required String ip, required int port}) async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    return const Result.ok(RfidReaderInfo(firmwareVersion: '3.2', readerType: 1, maxPower: 30, currentPower: 22));
   }
 }

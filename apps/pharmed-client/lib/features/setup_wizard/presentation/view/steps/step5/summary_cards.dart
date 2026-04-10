@@ -16,7 +16,6 @@ class CabinInfoCard extends StatelessWidget {
         _Divider(),
         SummaryRow(label: 'İsim', value: info.cabinName),
         _Divider(),
-        SummaryRow(label: 'Konum', value: info.location.isNotEmpty ? info.location : '—'),
         if (!isMobile) ...[_Divider(), SummaryRow(label: 'COM Port', value: info.comPort ?? '—')],
         if (info.dvrIp != null && info.dvrIp!.isNotEmpty) ...[
           _Divider(),
@@ -38,10 +37,10 @@ class ServiceScopeCard extends StatelessWidget {
     return SummaryCard(
       title: 'HİZMET KAPSAMI',
       children: switch (scope) {
-        ServiceBased(:final serviceName) => [
-          SummaryRow(label: 'Servis', value: serviceName, valueColor: MedColors.blue),
+        StandartScope(:final station) => [
+          SummaryRow(label: 'İstasyon', value: station.name ?? '-', valueColor: MedColors.blue),
         ],
-        RoomBased(:final rooms) => [
+        MobileScope(:final rooms) => [
           SummaryRow(label: 'Oda sayısı', value: '${rooms.length}', valueColor: MedColors.green),
           _Divider(),
           SummaryRow(label: 'Odalar', value: rooms.join(', ')),

@@ -1,5 +1,3 @@
-// lib/features/setup_wizard/domain/model/wizard_draft.dart
-//
 // [SWREQ-SETUP-002] [IEC 62304 §5.5]
 // Wizard boyunca biriken kısmi veri.
 // Her adım kendi alanını günceller; tamamda CabinSetupConfig'e dönüşür.
@@ -17,7 +15,7 @@ class WizardDraft extends Equatable {
 
   final CabinType? cabinetType;
   final WizardBasicInfo? basicInfo;
-  final ServiceScope? serviceScope;
+  final StationScope? serviceScope;
 
   /// Standart kabin — scan sonucu
   final List<DrawerGroup>? scannedLayout;
@@ -55,7 +53,7 @@ class WizardDraft extends Equatable {
     return CabinSetupConfig(
       cabinetType: cabinetType!,
       basicInfo: basicInfo!,
-      serviceScope: serviceScope!,
+      stationScope: serviceScope!,
       scannedLayout: scannedLayout,
       mobileLayout: mobileLayout,
     );
@@ -66,7 +64,7 @@ class WizardDraft extends Equatable {
   WizardDraft copyWith({
     CabinType? cabinetType,
     WizardBasicInfo? basicInfo,
-    ServiceScope? serviceScope,
+    StationScope? serviceScope,
     List<DrawerGroup>? scannedLayout,
     WizardMobileLayout? mobileLayout,
   }) {

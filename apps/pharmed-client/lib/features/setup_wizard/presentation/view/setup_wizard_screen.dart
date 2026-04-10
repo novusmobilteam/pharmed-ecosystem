@@ -11,7 +11,7 @@ import '../notifier/setup_wizard_notifier.dart';
 import '../state/setup_wizard_ui_state.dart';
 import 'steps/step1/step1_cabin_type.dart';
 import 'steps/step2/step2_basic_info.dart';
-import 'steps/step3/step3_service_scope.dart';
+import 'steps/step3/step3_station_scope.dart';
 import 'steps/step4/step4_drawer_config.dart';
 import 'steps/step5/step5_summary.dart';
 

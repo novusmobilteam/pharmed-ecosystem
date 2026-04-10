@@ -1,5 +1,3 @@
-// lib/features/setup_wizard/domain/model/cabin_setup_config.dart
-//
 // [SWREQ-SETUP-001] [IEC 62304 §5.5]
 // İlk kurulum wizard'ı — domain modelleri.
 // Sınıf: Class B
@@ -15,19 +13,21 @@ import 'wizard_mobile_layout.dart';
 class WizardBasicInfo extends Equatable {
   const WizardBasicInfo({
     required this.cabinName,
-    required this.location,
     this.ipAddress = '',
     this.comPort,
     this.dvrIp,
-    this.timeoutSeconds = 30,
+    this.rfidEnable = false,
+    this.rfidIpAddress,
+    this.rfidPort,
   });
 
   final String cabinName;
-  final String location;
   final String ipAddress;
   final String? comPort;
   final String? dvrIp;
-  final int timeoutSeconds;
+  final bool rfidEnable;
+  final String? rfidIpAddress;
+  final String? rfidPort;
 
   WizardBasicInfo copyWith({
     String? cabinName,
@@ -36,48 +36,52 @@ class WizardBasicInfo extends Equatable {
     String? comPort,
     String? dvrIp,
     int? timeoutSeconds,
+    bool? rfidEnable,
+    String? rfidIpAddress,
+    String? rfidPort,
   }) {
     return WizardBasicInfo(
       cabinName: cabinName ?? this.cabinName,
-      location: location ?? this.location,
       ipAddress: ipAddress ?? this.ipAddress,
       comPort: comPort ?? this.comPort,
       dvrIp: dvrIp ?? this.dvrIp,
-      timeoutSeconds: timeoutSeconds ?? this.timeoutSeconds,
+      rfidEnable: rfidEnable ?? this.rfidEnable,
+      rfidIpAddress: rfidIpAddress ?? this.rfidIpAddress,
+      rfidPort: rfidPort ?? this.rfidPort,
     );
   }
 
   @override
-  List<Object?> get props => [cabinName, location, ipAddress, comPort, dvrIp, timeoutSeconds];
+  List<Object?> get props => [cabinName, ipAddress, comPort, dvrIp, rfidEnable, rfidIpAddress, rfidPort];
 }
 
 // ─────────────────────────────────────────────────────────────────
 // Hizmet kapsamı (Adım 3) — sealed
 // ─────────────────────────────────────────────────────────────────
 
-sealed class ServiceScope extends Equatable {
-  const ServiceScope();
+sealed class StationScope extends Equatable {
+  const StationScope(this.station);
+
+  final Station station;
 }
 
 /// Standart kabin → servis bazlı
-final class ServiceBased extends ServiceScope {
-  const ServiceBased({required this.serviceName, this.departmentId});
-
-  final String serviceName;
-  final String? departmentId;
+final class StandartScope extends StationScope {
+  const StandartScope(super.station);
 
   @override
-  List<Object?> get props => [serviceName, departmentId];
+  List<Object?> get props => [station];
 }
 
 /// Mobil kabin → oda listesi bazlı
-final class RoomBased extends ServiceScope {
-  const RoomBased({required this.rooms});
+final class MobileScope extends StationScope {
+  const MobileScope(super.station, {required this.rooms, required this.beds});
 
-  final List<String> rooms;
+  final List<Room> rooms;
+  final List<Bed> beds;
 
   @override
-  List<Object?> get props => [rooms];
+  List<Object?> get props => [station, rooms, beds];
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -88,14 +92,14 @@ class CabinSetupConfig extends Equatable {
   const CabinSetupConfig({
     required this.cabinetType,
     required this.basicInfo,
-    required this.serviceScope,
+    required this.stationScope,
     this.scannedLayout,
     this.mobileLayout,
   });
 
   final CabinType cabinetType;
   final WizardBasicInfo basicInfo;
-  final ServiceScope serviceScope;
+  final StationScope stationScope;
 
   /// Standart kabin scan sonucu
   final List<DrawerGroup>? scannedLayout;
@@ -104,5 +108,5 @@ class CabinSetupConfig extends Equatable {
   final WizardMobileLayout? mobileLayout;
 
   @override
-  List<Object?> get props => [cabinetType, basicInfo, serviceScope, scannedLayout, mobileLayout];
+  List<Object?> get props => [cabinetType, basicInfo, stationScope, scannedLayout, mobileLayout];
 }

@@ -40,6 +40,16 @@ final getStationsUseCaseProvider = Provider<GetStationsUseCase>((ref) {
   return GetStationsUseCase(ref.read(stationRepositoryProvider));
 });
 
+// GetStationUseCase
+final getStationUseCaseProvider = Provider<GetStationUseCase>((ref) {
+  return GetStationUseCase(ref.read(stationRepositoryProvider));
+});
+
+// GetServiceUseCase
+final getServiceUseCaseProvider = Provider<GetServiceUseCase>((ref) {
+  return GetServiceUseCase(ref.read(serviceRepositoryProvider));
+});
+
 /// ----- Cabin -----
 
 // ScanCabinUseCase

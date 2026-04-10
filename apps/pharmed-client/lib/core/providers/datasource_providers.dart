@@ -13,6 +13,11 @@ final stationRemoteDataSourceProvider = Provider<StationRemoteDataSource>((ref) 
   return StationRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
 
+// ServiceDataSource
+final serviceRemoteDataSourceProvider = Provider<ServiceRemoteDataSource>((ref) {
+  return ServiceRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});
+
 // CabinDataSource
 final cabinRemoteDataSourceProvider = Provider<CabinRemoteDataSource>((ref) {
   return CabinRemoteDataSource(apiManager: ref.read(apiManagerProvider));
