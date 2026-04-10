@@ -22,11 +22,22 @@ part 'cabin_view.dart';
 part 'section_error.dart';
 part 'dashboard_content.dart';
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(dashboardNotifierProvider.notifier).initialize());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final dashState = ref.watch(dashboardNotifierProvider);
     final authState = ref.watch(authNotifierProvider);
     final notifier = ref.read(dashboardNotifierProvider.notifier);

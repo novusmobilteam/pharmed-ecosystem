@@ -11,6 +11,7 @@ import '../hardware/service/rfid/usecase/test_rfid_connection_usecase.dart';
 import '../hardware/service/serial_communication/i_serial_communication_service.dart';
 import '../hardware/service/serial_communication/mock_serial_communication_service.dart';
 import '../hardware/service/serial_communication/serial_communication_service.dart';
+import '../hardware/service/serial_communication/usecase/test_cabin_connection_usecase.dart';
 
 final serialServiceProvider = Provider<ISerialCommunicationService>((ref) {
   return switch (FlavorConfig.instance.flavor) {
@@ -35,4 +36,8 @@ final rfidServiceProvider = Provider<IRfidService>((ref) {
 
 final testRfidConnectionUseCaseProvider = Provider<TestRfidConnectionUseCase>((ref) {
   return TestRfidConnectionUseCase(ref.read(rfidServiceProvider));
+});
+
+final testCabinConnectionUseCaseProvider = Provider<TestCabinConnectionUseCase>((ref) {
+  return TestCabinConnectionUseCase(ref.read(serialServiceProvider));
 });

@@ -70,7 +70,7 @@ class Step3StationScope extends StatelessWidget {
                   onRetry: onRetryStations,
                 ),
                 // Mobil kabin: istasyon seçildiyse oda/yatak picker'ı göster
-                if (cabinetType == CabinType.mobile && mobileScope != null) ...[
+                if (mobileScope?.station.type == StationType.patientBased && mobileScope != null) ...[
                   const SizedBox(height: 24),
                   SectionLabel(label: 'ODA & YATAK SEÇİMİ'),
                   const SizedBox(height: 12),

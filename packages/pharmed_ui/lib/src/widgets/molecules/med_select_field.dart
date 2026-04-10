@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// ─────────────────────────────────────────────────────────────────
 // MedSelectField
 // [SWREQ-UI-MOL-SEL-001]
 // Özel dropdown — native Select yerine, dokunmatik için optimize.
 // Her seçenek min 44px, açılır liste max 220px yükseklik.
 // Sınıf : Class A (görsel seçim)
-// ─────────────────────────────────────────────────────────────────
 
 class MedSelectOption<T> {
   const MedSelectOption({required this.value, required this.label, this.sublabel});
@@ -25,6 +23,7 @@ class MedSelectField<T> extends StatefulWidget {
     this.label,
     this.placeholder = 'Seçiniz...',
     this.enabled = true,
+    this.textVariant,
   });
 
   final List<MedSelectOption<T>> options;
@@ -33,6 +32,7 @@ class MedSelectField<T> extends StatefulWidget {
   final String? label;
   final String placeholder;
   final bool enabled;
+  final MedLabelVariant? textVariant;
 
   @override
   State<MedSelectField<T>> createState() => _MedSelectFieldState<T>();
@@ -45,6 +45,13 @@ class _MedSelectFieldState<T> extends State<MedSelectField<T>> with SingleTicker
   late AnimationController _anim;
   late Animation<double> _fade;
   late Animation<Offset> _slide;
+
+  TextStyle get _textStyle {
+    if (widget.textVariant != null) {
+      return MedLabel.resolveStyle(widget.textVariant!, color: MedColors.text);
+    }
+    return TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text, height: 1.4);
+  }
 
   @override
   void initState() {
@@ -132,19 +139,7 @@ class _MedSelectFieldState<T> extends State<MedSelectField<T>> with SingleTicker
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (widget.label != null) ...[
-          Text(
-            widget.label!,
-            style: const TextStyle(
-              fontFamily: MedFonts.sans,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: MedColors.text2,
-              letterSpacing: 0.2,
-            ),
-          ),
-          const SizedBox(height: 6),
-        ],
+        if (widget.label != null) ...[Text(widget.label!, style: _textStyle), const SizedBox(height: 6)],
         CompositedTransformTarget(
           link: _link,
           child: GestureDetector(

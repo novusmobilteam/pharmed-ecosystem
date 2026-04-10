@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// ─────────────────────────────────────────────────────────────────
 // MedTextField
 // [SWREQ-UI-ATOM-TF-001]
 // Dokunmatik HMI text input. Min 48px yükseklik.
 // Desteklenen durumlar: normal, focused, error, success, disabled.
 // data-keyboard özelliği yerine keyboardType kullanılır.
 // Sınıf : Class A (görsel girdi, iş mantığı dışında)
-// ─────────────────────────────────────────────────────────────────
 
 enum MedTextFieldState { normal, error, success }
 
@@ -34,6 +32,7 @@ class MedTextField extends StatefulWidget {
     this.textInputAction = TextInputAction.done,
     this.maxLength,
     this.readOnly = false,
+    this.textVariant,
   });
 
   final TextEditingController? controller;
@@ -54,6 +53,7 @@ class MedTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final int? maxLength;
   final bool readOnly;
+  final MedLabelVariant? textVariant;
 
   @override
   State<MedTextField> createState() => _MedTextFieldState();
@@ -63,6 +63,13 @@ class _MedTextFieldState extends State<MedTextField> {
   late final FocusNode _focus;
   bool _focused = false;
   bool _obscure = false;
+
+  TextStyle get _textStyle {
+    if (widget.textVariant != null) {
+      return MedLabel.resolveStyle(widget.textVariant!, color: MedColors.text);
+    }
+    return TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text, height: 1.4);
+  }
 
   @override
   void initState() {
@@ -112,19 +119,7 @@ class _MedTextFieldState extends State<MedTextField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (widget.label != null) ...[
-          Text(
-            widget.label!,
-            style: TextStyle(
-              fontFamily: MedFonts.sans,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: MedColors.text2,
-              letterSpacing: 0.2,
-            ),
-          ),
-          const SizedBox(height: 6),
-        ],
+        if (widget.label != null) ...[Text(widget.label!, style: _textStyle), const SizedBox(height: 6)],
         AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           decoration: BoxDecoration(

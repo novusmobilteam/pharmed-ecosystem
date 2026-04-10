@@ -60,6 +60,9 @@ class WizardActiveView extends ConsumerWidget {
           rfidTestState: state.rfidTestState,
           rfidReaderInfo: state.rfidReaderInfo,
           rfidTestError: state.rfidTestError,
+          onTestCabinCard: notifier.testCabinConnection,
+          cabinCardTestState: state.cabinCardTestState,
+          cabinTestError: state.cabinCardTestError,
         );
       case 3:
         return Step3StationScope(

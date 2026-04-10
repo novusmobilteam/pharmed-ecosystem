@@ -30,6 +30,8 @@ final class WizardActive extends SetupWizardUiState {
     this.servicesLoadState = ServicesLoadState.idle,
     this.services = const [],
     this.servicesError,
+    this.cabinCardTestState = CabinCardTestState.idle,
+    this.cabinCardTestError,
   });
 
   final int currentStep; // 1–5
@@ -38,10 +40,13 @@ final class WizardActive extends SetupWizardUiState {
   final DrawerScanState scanState; // Adım 4 tarama durumu
   final List<String> availablePorts;
 
-  // Adım 2 - RFID
+  // Adım 2 - RFID/Kart
   final RfidTestState rfidTestState;
   final RfidReaderInfo? rfidReaderInfo; // test başarılıysa dolar
   final String? rfidTestError;
+
+  final CabinCardTestState cabinCardTestState;
+  final String? cabinCardTestError;
 
   // Adım 3 — istasyon/servis listesi
   final StationsLoadState stationsLoadState;
@@ -73,6 +78,8 @@ final class WizardActive extends SetupWizardUiState {
     RfidTestState? rfidTestState,
     RfidReaderInfo? rfidReaderInfo,
     String? rfidTestError,
+    CabinCardTestState? cabinCardTestState,
+    String? cabinCardTestError,
   }) {
     return WizardActive(
       currentStep: currentStep ?? this.currentStep,
@@ -90,6 +97,8 @@ final class WizardActive extends SetupWizardUiState {
       rfidTestState: rfidTestState ?? this.rfidTestState,
       rfidReaderInfo: rfidReaderInfo ?? this.rfidReaderInfo,
       rfidTestError: rfidTestError ?? this.rfidTestError,
+      cabinCardTestError: cabinCardTestError ?? this.cabinCardTestError,
+      cabinCardTestState: cabinCardTestState ?? this.cabinCardTestState,
     );
   }
 }
@@ -137,3 +146,5 @@ enum StationsLoadState {
 enum ServicesLoadState { idle, loading, loaded, error }
 
 enum RfidTestState { idle, testing, success, failure }
+
+enum CabinCardTestState { idle, testing, success, failure }

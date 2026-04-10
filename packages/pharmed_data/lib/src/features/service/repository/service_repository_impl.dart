@@ -30,6 +30,15 @@ class ServiceRepositoryImpl implements IServiceRepository {
   }
 
   @override
+  Future<Result<HospitalService?>> getService(int serviceId) async {
+    final result = await _dataSource.getService(serviceId);
+    return result.when(
+      ok: (serviceDto) => Result.ok(_mapper.toEntityOrNull(serviceDto)),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
   Future<Result<void>> createService(HospitalService entity) async {
     final result = await _dataSource.createService(_mapper.toDto(entity));
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

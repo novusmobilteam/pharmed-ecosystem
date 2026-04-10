@@ -32,12 +32,13 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
   @override
   DashboardUiState build() {
     ref.onDispose(() => _timer?.cancel());
+    return const DashboardLoading();
+  }
 
+  Future<void> initialize() async {
     Future.microtask(_load);
     Future.microtask(_fetchMenus);
     _startPeriodicRefresh();
-
-    return const DashboardLoading();
   }
 
   /// Manuel yenileme — pull-to-refresh veya retry butonu

@@ -9,12 +9,20 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // ─────────────────────────────────────────────────────────────────
 
 class MedCheckbox extends StatelessWidget {
-  const MedCheckbox({super.key, required this.value, required this.onChanged, this.label, this.enabled = true});
+  const MedCheckbox({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.label,
+    this.enabled = true,
+    this.partial = false,
+  });
 
   final bool value;
   final ValueChanged<bool>? onChanged;
   final String? label;
   final bool enabled;
+  final bool partial;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +36,7 @@ class MedCheckbox extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _CheckBox(value: value),
+              _CheckBox(value: value, partial: partial),
               if (label != null) ...[
                 const SizedBox(width: 10),
                 Flexible(
@@ -52,8 +60,10 @@ class MedCheckbox extends StatelessWidget {
 }
 
 class _CheckBox extends StatelessWidget {
-  const _CheckBox({required this.value});
+  const _CheckBox({required this.value, required this.partial});
+
   final bool value;
+  final bool partial;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +79,7 @@ class _CheckBox extends StatelessWidget {
       child: AnimatedOpacity(
         opacity: value ? 1.0 : 0.0,
         duration: const Duration(milliseconds: 100),
-        child: const Icon(Icons.check, size: 14, color: Colors.white),
+        child: value ? Icon(partial ? Icons.remove_rounded : Icons.check_rounded, size: 12, color: Colors.white) : null,
       ),
     );
   }

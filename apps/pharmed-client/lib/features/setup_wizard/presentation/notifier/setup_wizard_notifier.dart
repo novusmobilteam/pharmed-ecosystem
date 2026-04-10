@@ -149,6 +149,11 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
     if (stationDetail == null) return;
 
+    if (stationDetail?.type != StationType.patientBased) {
+      state = active1.copyWith(servicesLoadState: ServicesLoadState.loaded, services: []);
+      return;
+    }
+
     // 2. Servis ID'lerini topla
     final serviceIds = [
       if (stationDetail!.service?.id != null) stationDetail!.service!.id!,
@@ -222,9 +227,6 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     final rfidIp = basicInfo?.rfidIpAddress;
     final rfidPort = int.tryParse(basicInfo?.rfidPort ?? '');
 
-    print(rfidIp);
-    print(rfidPort);
-
     if (rfidIp == null || rfidIp.isEmpty || rfidPort == null) return;
 
     state = current.copyWith(rfidTestState: RfidTestState.testing, rfidReaderInfo: null, rfidTestError: null);
@@ -247,6 +249,43 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
       error: (error) {
         MedLogger.error(unit: 'SW-UNIT-SETUP', swreq: 'SWREQ-RFID-004', message: 'RFID test başarısız', error: error);
         state = active.copyWith(rfidTestState: RfidTestState.failure, rfidTestError: error.message);
+      },
+    );
+  }
+
+  /// [SWREQ-SETUP-UI-016]
+  Future<void> testCabinConnection() async {
+    final current = _active;
+    if (current == null) return;
+
+    final port = current.draft.basicInfo?.comPort;
+    if (port == null || port.isEmpty) return;
+
+    state = current.copyWith(cabinCardTestState: CabinCardTestState.testing, cabinCardTestError: null);
+
+    final result = await ref.read(testCabinConnectionUseCaseProvider).call(port);
+
+    final active = _active;
+    if (active == null) return;
+
+    result.when(
+      ok: (_) {
+        MedLogger.info(
+          unit: 'SW-UNIT-SETUP',
+          swreq: 'SWREQ-SETUP-UI-016',
+          message: 'Kabin kartı bağlantı testi başarılı',
+          context: {'port': port},
+        );
+        state = active.copyWith(cabinCardTestState: CabinCardTestState.success);
+      },
+      error: (error) {
+        MedLogger.error(
+          unit: 'SW-UNIT-SETUP',
+          swreq: 'SWREQ-SETUP-UI-016',
+          message: 'Kabin kartı bağlantı testi başarısız',
+          error: error,
+        );
+        state = active.copyWith(cabinCardTestState: CabinCardTestState.failure, cabinCardTestError: error.message);
       },
     );
   }

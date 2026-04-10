@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// ─────────────────────────────────────────────────────────────────
 // MedLabel
 // [SWREQ-UI-ATOM-005]
 // Kullanım: Tekrarlayan küçük metin varyasyonları
@@ -10,7 +9,6 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 //   - sectionTitle→ "KABİN DURUMU" (12px, Sora, bold, uppercase)
 //   - monoValue   → teknik değer, lot no, ID
 // Sınıf: Class A
-// ─────────────────────────────────────────────────────────────────
 
 enum MedLabelVariant { cardLabel, cardSub, sectionTitle, monoValue, monoDetail }
 
@@ -24,10 +22,14 @@ class MedLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: _resolveStyle(), overflow: overflow);
+    return Text(
+      text,
+      style: resolveStyle(variant, color: color),
+      overflow: overflow,
+    );
   }
 
-  TextStyle _resolveStyle() {
+  static TextStyle resolveStyle(MedLabelVariant variant, {Color? color}) {
     return switch (variant) {
       MedLabelVariant.cardLabel => TextStyle(
         fontFamily: MedFonts.sans,

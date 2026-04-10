@@ -11,7 +11,8 @@ import '../../../../domain/model/cabin_setup_config.dart';
 import '../../../state/setup_wizard_ui_state.dart';
 import '../../widgets/step_shared_widgets.dart';
 
-part 'field_label.dart';
+part 'rfid_test_button.dart';
+part 'cabin_card_test_button.dart';
 
 class Step2BasicInfo extends StatefulWidget {
   const Step2BasicInfo({
@@ -25,17 +26,26 @@ class Step2BasicInfo extends StatefulWidget {
     required this.rfidTestState,
     this.rfidReaderInfo,
     this.rfidTestError,
+    required this.onTestCabinCard,
+    required this.cabinCardTestState,
+    this.cabinTestError,
   });
 
   final WizardBasicInfo? initial;
   final List<String> availablePorts;
   final ValueChanged<WizardBasicInfo> onChanged;
+
   final VoidCallback? onNext;
   final VoidCallback onBack;
+
   final VoidCallback onTestRfid;
   final RfidTestState rfidTestState;
   final RfidReaderInfo? rfidReaderInfo;
   final String? rfidTestError;
+
+  final VoidCallback onTestCabinCard;
+  final CabinCardTestState cabinCardTestState;
+  final String? cabinTestError;
 
   @override
   State<Step2BasicInfo> createState() => _Step2BasicInfoState();
@@ -110,6 +120,7 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
                   controller: _nameCtrl,
                   label: 'Kabin Adı',
                   hint: 'örn. CB-304',
+                  textVariant: MedLabelVariant.monoValue,
                   prefixIcon: Icon(Icons.inventory_2_outlined),
                   onChanged: (_) => _notify(),
                 ),
@@ -119,6 +130,14 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
                 SectionLabel(label: 'BAĞLANTI AYARLARI'),
                 const SizedBox(height: 12),
                 Column(children: [_ipAddressField(), SizedBox(height: 12), _dvrIpField()]),
+                const SizedBox(height: 12),
+                _CabinCardTestButton(
+                  port: _port,
+                  testState: widget.cabinCardTestState,
+                  onTestCabinCard: widget.onTestCabinCard,
+                  cabinCardTestError: widget.cabinTestError,
+                ),
+
                 if (widget.availablePorts.isEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
@@ -153,7 +172,7 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FieldLabel(text: 'IP Adresi'),
+              MedLabel(text: 'IP Adresi', variant: MedLabelVariant.monoValue),
               const SizedBox(height: 6),
               MedIpField(
                 initialValue: _ipAddress,
@@ -172,6 +191,7 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
           child: MedSelectField<String>(
             label: 'Port',
             value: _port,
+            textVariant: MedLabelVariant.monoValue,
             enabled: widget.availablePorts.isNotEmpty,
             onChanged: (val) {
               setState(() => _port = val);
@@ -188,7 +208,7 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FieldLabel(text: 'DVR IP'),
+        MedLabel(text: 'DVR IP', variant: MedLabelVariant.monoValue),
         const SizedBox(height: 6),
         MedIpField(
           initialValue: _dvrIp,
@@ -223,7 +243,7 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FieldLabel(text: 'RFID IP Adresi'),
+                        MedLabel(text: 'RFID IP Adresi', variant: MedLabelVariant.monoValue),
                         const SizedBox(height: 6),
                         MedIpField(
                           initialValue: _rfidIpAddress,
@@ -241,6 +261,7 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
                     width: 120,
                     child: MedTextField(
                       label: 'RFID Port',
+                      textVariant: MedLabelVariant.monoValue,
                       controller: _rfidPortController,
                       enabled: widget.availablePorts.isNotEmpty,
                       onChanged: (_) => _notify(),
@@ -261,111 +282,5 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
           ),
       ],
     );
-  }
-}
-
-class _RfidTestButton extends StatelessWidget {
-  const _RfidTestButton({
-    required this.ipAddress,
-    required this.port,
-    required this.testState,
-    required this.readerInfo,
-    required this.onTestRfid,
-    this.rfidTestError,
-  });
-
-  final String ipAddress;
-  final String port;
-  final RfidTestState testState;
-  final RfidReaderInfo? readerInfo;
-  final VoidCallback? onTestRfid;
-  final String? rfidTestError;
-
-  bool get _canTest => ipAddress.isNotEmpty && port.isNotEmpty;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (testState) {
-      // Test edilmedi veya hata — butonu göster
-      RfidTestState.idle => MedButton(
-        label: 'Anten Bağlantısını Test Et',
-        size: MedButtonSize.sm,
-        onPressed: _canTest ? onTestRfid : null,
-      ),
-
-      // Test devam ediyor — loading göster
-      RfidTestState.testing => const SizedBox(
-        height: 36,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: MedColors.blue)),
-            SizedBox(width: 10),
-            Text(
-              'Test ediliyor…',
-              style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
-            ),
-          ],
-        ),
-      ),
-
-      // Başarılı — bilgi satırı göster
-      RfidTestState.success => Row(
-        children: [
-          const Icon(Icons.check_circle_rounded, size: 16, color: MedColors.green),
-          const SizedBox(width: 8),
-          Text(
-            'Bağlantı başarılı',
-            style: const TextStyle(
-              fontFamily: MedFonts.sans,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: MedColors.green,
-            ),
-          ),
-          if (readerInfo != null) ...[
-            const SizedBox(width: 8),
-            Text(
-              '· FW ${readerInfo!.firmwareVersion}  ${readerInfo!.currentPower} dBm',
-              style: const TextStyle(fontFamily: MedFonts.mono, fontSize: 11, color: MedColors.text3),
-            ),
-          ],
-          const SizedBox(width: 12),
-          // Yeniden test etmek isterse
-          GestureDetector(
-            onTap: onTestRfid,
-            child: const Text(
-              'Tekrar test et',
-              style: TextStyle(
-                fontFamily: MedFonts.sans,
-                fontSize: 12,
-                color: MedColors.blue,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ),
-        ],
-      ),
-
-      RfidTestState.failure => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MedButton(label: 'Bağlantıyı Test Et', size: MedButtonSize.sm, onPressed: _canTest ? onTestRfid : null),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              const Icon(Icons.error_outline_rounded, size: 13, color: MedColors.red),
-              const SizedBox(width: 5),
-              Flexible(
-                child: Text(
-                  rfidTestError ?? 'Bağlantı kurulamadı. IP ve port bilgilerini kontrol edin.',
-                  style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.red),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    };
   }
 }

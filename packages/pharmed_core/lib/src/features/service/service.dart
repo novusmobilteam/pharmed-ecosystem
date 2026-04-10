@@ -13,3 +13,4 @@ export 'domain/usecase/get_services_usecase.dart';
 export 'domain/usecase/update_service_usecase.dart';
 export 'domain/usecase/delete_room_usecase.dart';
 export 'domain/usecase/delete_bed_usecase.dart';
+export 'domain/usecase/get_service_usecase.dart';

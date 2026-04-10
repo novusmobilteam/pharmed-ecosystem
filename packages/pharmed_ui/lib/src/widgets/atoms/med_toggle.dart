@@ -24,7 +24,7 @@ class MedToggle extends StatelessWidget {
         opacity: enabled ? 1.0 : 0.4,
         child: Container(
           constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
           child: Row(
             mainAxisSize: MainAxisSize.min,

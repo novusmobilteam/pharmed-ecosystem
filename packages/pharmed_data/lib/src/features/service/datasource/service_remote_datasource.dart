@@ -31,6 +31,17 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  Future<Result<ServiceDTO?>> getService(int serviceId) async {
+    final res = await fetchRequest(
+      path: '$_base/$serviceId',
+      parser: BaseRemoteDataSource.singleParser(ServiceDTO.fromJson),
+      successLog: 'Servis getirildi',
+      emptyLog: 'Servis bulunamadı',
+    );
+
+    return res.when(ok: (data) => Result.ok(data), error: Result.error);
+  }
+
   Future<Result<void>> createService(ServiceDTO dto) {
     print(dto.toJson());
     return createRequest(
