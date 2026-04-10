@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../core/core.dart';
+import '../../../../../core/core.dart';
 import '../notifier/update_prescription_item_notifier.dart';
 
 class UpdatePrescriptionItemView extends StatelessWidget {

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
 import 'package:pharmed_manager/core/theme/app_theme.dart';
@@ -47,6 +48,8 @@ class ManagerApp extends StatelessWidget {
         ...KitContentProviders.providers(),
         ...KitProviders.providers(),
         ...WarningProviders.providers(),
+        ...HospitalizationProviders.providers(),
+        ...PrescriptionProviders.providers(),
 
         ChangeNotifierProvider(
           create: (ctx) => HomeNotifier(getFilteredMenusUseCase: ctx.read(), authNotifier: ctx.read()),
@@ -57,6 +60,12 @@ class ManagerApp extends StatelessWidget {
         theme: MaterialTheme().light(),
         debugShowCheckedModeBanner: false,
         home: AppRouter(),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [Locale('tr', 'TR')],
       ),
     );
   }

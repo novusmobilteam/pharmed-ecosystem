@@ -18,3 +18,5 @@ export 'patient_providers.dart';
 export 'kit_content_providers.dart';
 export 'kit_providers.dart';
 export 'warning_providers.dart';
+export 'hospitalization_providers.dart';
+export 'prescription_providers.dart';

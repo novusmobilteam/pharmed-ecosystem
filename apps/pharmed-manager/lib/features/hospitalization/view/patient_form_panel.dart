@@ -1,52 +1,43 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+part of 'hospitalization_screen.dart';
 
-import '../../../../core/core.dart';
-import '../notifier/patient_form_notifier.dart';
-
-class PatientFormView extends StatefulWidget {
-  const PatientFormView({super.key, this.patient});
-
-  final Patient? patient;
-
-  @override
-  State<PatientFormView> createState() => _PatientFormViewState();
-}
-
-class _PatientFormViewState extends State<PatientFormView> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class PatientFormPanel extends StatelessWidget {
+  const PatientFormPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final hospNotifier = context.watch<HospitalizationNotifier>();
+    final formKey = GlobalKey<FormState>();
+    final selectedPatient = hospNotifier.patient;
+
     return ChangeNotifierProvider(
+      key: ValueKey(selectedPatient?.id ?? 'create'),
       create: (BuildContext context) => PatientFormNotifier(
-        initial: widget.patient,
+        initial: selectedPatient,
         createPatientUseCase: context.read(),
         updatePatientUseCase: context.read(),
       ),
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           final String title = notifier.isCreate ? 'Yeni Hasta Oluştur' : 'Hasta Düzenle';
-          return RegistrationDialog(
-            maxHeight: context.height * 0.8,
-            isLoading: notifier.isLoading(notifier.submitOp),
+          return SidePanel(
             title: title,
+            isLoading: notifier.isLoading(notifier.submitOp),
+            onClose: hospNotifier.closePanel,
             onSave: () {
-              if (_formKey.currentState!.validate()) {
+              if (formKey.currentState!.validate()) {
                 notifier.submit(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                   onSuccess: (msg) {
                     MessageUtils.showSuccessSnackbar(context, msg);
-                    context.pop(notifier.patient);
+                    hospNotifier.closePanel();
+                    hospNotifier.getHospitalizations();
                   },
                 );
               }
             },
             child: SingleChildScrollView(
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   spacing: AppDimensions.registrationDialogSpacing,
                   children: [
@@ -63,7 +54,7 @@ class _PatientFormViewState extends State<PatientFormView> {
                     _PhoneField(),
                     Row(
                       spacing: AppDimensions.registrationDialogSpacing,
-                      children: [_DescriptionField(), _AddressField()],
+                      children: [_PatientDescriptionField(), _AddressField()],
                     ),
                     _ProtocolField(),
                   ],
@@ -264,8 +255,8 @@ class _PhoneField extends StatelessWidget {
 }
 
 // * Açıklama (hospitalization.description)
-class _DescriptionField extends StatelessWidget {
-  const _DescriptionField();
+class _PatientDescriptionField extends StatelessWidget {
+  const _PatientDescriptionField();
 
   @override
   Widget build(BuildContext context) {

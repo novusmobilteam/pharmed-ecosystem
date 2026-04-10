@@ -49,6 +49,11 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
+  void selectPatient(Patient? patient) {
+    _hospitalization = _hospitalization?.copyWith(patient: patient);
+    notifyListeners();
+  }
+
   void selectPhysicalService(HospitalService? service) {
     _hospitalization = _hospitalization?.copyWith(physicalService: service);
     notifyListeners();

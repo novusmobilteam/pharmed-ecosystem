@@ -6,11 +6,11 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
 
   final String _basePath = '/Patient/hospitalization';
 
-  // TODO: implement logSwreq
-  String get logSwreq => throw UnimplementedError();
+  @override
+  String get logSwreq => 'SWREQ-DATA-HOSPITALIZATON-001';
 
-  // TODO: implement logUnit
-  String get logUnit => throw UnimplementedError();
+  @override
+  String get logUnit => 'SW-UNIT-HOSPITALIZATON';
 
   Future<Result<ApiResponse<List<HospitalizationDTO>>?>> getHospitalizations({
     int? skip,
@@ -36,6 +36,7 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<HospitalizationDTO?>> createHospitalization(HospitalizationDTO dto) {
+    print(dto.toJson().toString());
     return createRequest<HospitalizationDTO?>(
       path: _basePath,
       body: dto.toJson(),

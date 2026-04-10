@@ -9,5 +9,5 @@ class BedDto {
     return BedDto(id: json['id'] as int?, name: json['name'] as String?, roomId: json['roomId'] as int?);
   }
 
-  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'roomId': roomId};
+  Map<String, dynamic> toJson() => {'id': id, 'name': name};
 }

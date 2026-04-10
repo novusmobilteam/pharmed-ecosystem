@@ -1,105 +1,87 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:provider/provider.dart';
+part of 'hospitalization_screen.dart';
 
-import '../../../../core/core.dart';
+class HospitalizationPanel extends StatelessWidget {
+  const HospitalizationPanel({super.key});
 
-import '../notifier/hospitalization_form_notifier.dart';
+  @override
+  Widget build(BuildContext context) {
+    final hospNotifier = context.watch<HospitalizationNotifier>();
+    final formKey = GlobalKey<FormState>();
+    final selectedHospitalization = hospNotifier.selectedHospitalization;
 
-part 'patient_info_view.dart';
-
-Future<bool?> showHospitalizationFormView(
-  BuildContext context, {
-  Hospitalization? hospitalization,
-  Patient? patient,
-}) async {
-  final result = await showDialog(
-    context: context,
-    builder: (context) => ChangeNotifierProvider(
-      create: (context) => HospitalizationFormNotifier(
-        patient: patient,
-        hospitalization: hospitalization,
+    return ChangeNotifierProvider<HospitalizationFormNotifier>(
+      key: ValueKey(selectedHospitalization?.id ?? 'create'),
+      create: (BuildContext context) => HospitalizationFormNotifier(
         createHospitalizationUseCase: context.read(),
         updateHospitalizationUseCase: context.read(),
+        hospitalization: selectedHospitalization,
+        patient: selectedHospitalization?.patient ?? hospNotifier.patient,
       ),
-      child: HospitalizationFormView(),
-    ),
-  );
-
-  return result;
+      child: Consumer<HospitalizationFormNotifier>(
+        builder: (context, notifier, child) {
+          final title = notifier.isCreate ? 'Yeni Yatış Gir' : 'Yatış Düzenle';
+          return SidePanel(
+            title: title,
+            onClose: hospNotifier.closePanel,
+            onSave: () {
+              if (formKey.currentState!.validate()) {
+                notifier.submit(
+                  onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+                  onSuccess: (msg) {
+                    MessageUtils.showSuccessSnackbar(context, msg);
+                    hospNotifier.closePanel();
+                    hospNotifier.getHospitalizations();
+                  },
+                );
+              }
+            },
+            isLoading: notifier.isLoading(notifier.submitOp),
+            child: SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  spacing: AppDimensions.registrationDialogSpacing,
+                  children: [
+                    _CodeField(),
+                    _PatientField(),
+                    _DoctorField(),
+                    Row(
+                      spacing: AppDimensions.registrationDialogSpacing,
+                      children: [_PhysicalServiceField(), _InpatientServiceField()],
+                    ),
+                    Row(spacing: AppDimensions.registrationDialogSpacing, children: [_RoomField(), _BedField()]),
+                    Row(
+                      spacing: AppDimensions.registrationDialogSpacing,
+                      children: [_AdmissionDateField(), _ExitDateField()],
+                    ),
+                    _DescriptionField(),
+                    _BabyToggle(),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
-class HospitalizationFormView extends StatefulWidget {
-  const HospitalizationFormView({super.key});
-
-  @override
-  State<HospitalizationFormView> createState() => _HospitalizationFormViewState();
-}
-
-class _HospitalizationFormViewState extends State<HospitalizationFormView> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  late TextEditingController _admissionDateController;
-  late TextEditingController _exitDateController;
-
-  @override
-  void initState() {
-    super.initState();
-    _admissionDateController = TextEditingController();
-    _exitDateController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _admissionDateController.dispose();
-    _exitDateController.dispose();
-    super.dispose();
-  }
+class _PatientField extends StatelessWidget {
+  const _PatientField();
 
   @override
   Widget build(BuildContext context) {
     return Consumer<HospitalizationFormNotifier>(
-      builder: (context, notifier, child) {
-        final title = notifier.isCreate ? 'Yeni Yatış Gir' : 'Yatış Düzenle';
-        return RegistrationDialog(
-          title: title,
-          onSave: () {
-            if (_formKey.currentState!.validate()) {
-              notifier.submit(
-                onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                onSuccess: (msg) {
-                  MessageUtils.showSuccessSnackbar(context, msg);
-                  context.pop(true);
-                },
-              );
-            }
-          },
-          isLoading: notifier.isLoading(notifier.submitOp),
-          actions: [_PatientButton()],
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                spacing: AppDimensions.registrationDialogSpacing,
-                children: [
-                  _CodeField(),
-                  _DoctorField(),
-                  Row(
-                    spacing: AppDimensions.registrationDialogSpacing,
-                    children: [_PhysicalServiceField(), _InpatientServiceField()],
-                  ),
-                  Row(spacing: AppDimensions.registrationDialogSpacing, children: [_RoomField(), _BedField()]),
-                  Row(
-                    spacing: AppDimensions.registrationDialogSpacing,
-                    children: [_AdmissionDateField(_admissionDateController), _ExitDateField(_exitDateController)],
-                  ),
-                  _DescriptionField(),
-                  _BabyToggle(),
-                ],
-              ),
-            ),
-          ),
+      builder: (context, notifier, _) {
+        return SelectionField<Patient>(
+          label: 'Hasta',
+          title: 'Hasta',
+          initialValue: notifier.patient,
+          labelBuilder: (value) => value.fullName,
+          validator: (value) => Validators.cannotBlankValidator(value?.fullName),
+          dataSource: (skip, take, search) => context.read<GetPatientsUseCase>().call(GetPatientsParams()),
+          onSelected: (value) => notifier.selectPatient(value),
         );
       },
     );
@@ -236,9 +218,7 @@ class _BedField extends StatelessWidget {
 
 // * Yatış Tarihi (hospitalization.admissionDate)
 class _AdmissionDateField extends StatelessWidget {
-  const _AdmissionDateField(this.controller);
-
-  final TextEditingController controller;
+  const _AdmissionDateField();
 
   @override
   Widget build(BuildContext context) {
@@ -247,8 +227,8 @@ class _AdmissionDateField extends StatelessWidget {
         builder: (context, notifier, _) {
           return DateInputField(
             label: 'Yatış Tarihi',
+            firstDate: DateTime.now(),
             initialValue: notifier.hospitalization?.admissionDate,
-            //controller: controller,
             onDateSelected: notifier.updateAdmissionDate,
           );
         },
@@ -259,9 +239,7 @@ class _AdmissionDateField extends StatelessWidget {
 
 // * Çıkış Tarihi (hospitalization.exitDate)
 class _ExitDateField extends StatelessWidget {
-  const _ExitDateField(this.controller);
-
-  final TextEditingController controller;
+  const _ExitDateField();
 
   @override
   Widget build(BuildContext context) {

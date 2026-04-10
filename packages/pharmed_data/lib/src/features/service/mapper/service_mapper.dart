@@ -1,6 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_data/src/features/branch/branch.dart';
-import 'package:pharmed_data/src/features/user/mapper/user_mapper.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 /// Service ↔ ServiceDTO dönüşümleri.
 class ServiceMapper {
@@ -13,6 +12,7 @@ class ServiceMapper {
       isActive: dto.isActive,
       branch: BranchMapper().toEntityOrNull(dto.branch),
       user: UserMapper().toEntityOrNull(dto.user),
+      rooms: RoomMapper().toEntityList(dto.rooms ?? []),
     );
   }
 
@@ -28,6 +28,7 @@ class ServiceMapper {
       branchId: entity.branch?.id,
       userId: entity.user?.id,
       branch: BranchMapper().toDtoOrNull(entity.branch),
+      rooms: RoomMapper().toDtoList(entity.rooms),
     );
   }
 

@@ -11,12 +11,10 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   static String _unappliedDetail(int id) => '/Prescription/uncollectedPrescriptionDetail/$id';
 
   @override
-  // TODO: implement logSwreq
-  String get logSwreq => throw UnimplementedError();
+  String get logSwreq => 'SWREQ-DATA-PRESCRIPTION-001';
 
   @override
-  // TODO: implement logUnit
-  String get logUnit => throw UnimplementedError();
+  String get logUnit => 'SW-UNIT-PRESCRIPTION';
 
   Future<Result<PrescriptionDTO?>> createPrescription(PrescriptionDTO dto) {
     return createRequest<PrescriptionDTO?>(

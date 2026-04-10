@@ -32,6 +32,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createService(ServiceDTO dto) {
+    print(dto.toJson());
     return createRequest(
       path: _base,
       body: dto.toJson(),
@@ -41,6 +42,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateService(ServiceDTO dto) {
+    print(dto.toJson());
     print(dto.toJson().toString());
     return updateRequest(
       path: '$_base/${dto.id}',
@@ -52,5 +54,13 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> deleteService(int id) {
     return deleteRequest(path: '$_base/$id', parser: BaseRemoteDataSource.voidParser(), successLog: 'Servis silindi');
+  }
+
+  Future<Result<void>> deleteRoom(int roomId) {
+    return deleteRequest(path: '/Room/$roomId', parser: BaseRemoteDataSource.voidParser(), successLog: 'Oda silindi');
+  }
+
+  Future<Result<void>> deleteBed(int bedId) {
+    return deleteRequest(path: '/Bed/$bedId', parser: BaseRemoteDataSource.voidParser(), successLog: 'Yatak silindi');
   }
 }

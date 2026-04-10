@@ -5,16 +5,9 @@ import '../core.dart';
 
 enum DoseStepperType { large, compact }
 
-class DoseStepper extends StatelessWidget {
-  final double value;
-  final double step;
-  final String unit;
-  final String? title; // Numpad başlığı için
-  final ValueChanged<double> onChanged;
-  final double min;
-  final double? max;
-  final DoseStepperType type;
+enum DoseStepperPlatform { touch, desktop }
 
+class DoseStepper extends StatelessWidget {
   const DoseStepper({
     super.key,
     required this.value,
@@ -25,7 +18,18 @@ class DoseStepper extends StatelessWidget {
     this.min = 0.0,
     this.max,
     this.type = DoseStepperType.large,
+    this.platform = DoseStepperPlatform.touch,
   });
+
+  final double value;
+  final double step;
+  final String unit;
+  final String? title;
+  final ValueChanged<double> onChanged;
+  final double min;
+  final double? max;
+  final DoseStepperType type;
+  final DoseStepperPlatform platform;
 
   factory DoseStepper.compact({
     required double value,
@@ -35,6 +39,7 @@ class DoseStepper extends StatelessWidget {
     double step = 1.0,
     double min = 0.0,
     double? max,
+    DoseStepperPlatform platform = DoseStepperPlatform.touch,
   }) {
     return DoseStepper(
       value: value,
@@ -45,16 +50,44 @@ class DoseStepper extends StatelessWidget {
       min: min,
       max: max,
       type: DoseStepperType.compact,
+      platform: platform,
     );
   }
+
+  factory DoseStepper.desktop({
+    required double value,
+    required ValueChanged<double> onChanged,
+    required String unit,
+    String? title,
+    double step = 1.0,
+    double min = 0.0,
+    double? max,
+    DoseStepperType type = DoseStepperType.large,
+  }) {
+    return DoseStepper(
+      value: value,
+      onChanged: onChanged,
+      unit: unit,
+      title: title,
+      step: step,
+      min: min,
+      max: max,
+      type: type,
+      platform: DoseStepperPlatform.desktop,
+    );
+  }
+
+  bool get _canDecrement => value > min;
+  bool get _canIncrement => max == null || value < max!;
 
   @override
   Widget build(BuildContext context) {
     return type == DoseStepperType.compact ? _buildCompact(context) : _buildLarge(context);
   }
 
-  // --- Numpad Tetikleyici ---
   Future<void> _handleManualEntry(BuildContext context) async {
+    if (platform == DoseStepperPlatform.desktop) return;
+
     final String? result = await showNumpadView(
       context,
       title: title ?? '$unit Miktarı Giriniz',
@@ -63,121 +96,172 @@ class DoseStepper extends StatelessWidget {
     );
 
     if (result != null) {
-      final double? parsedVal = double.tryParse(result);
-      if (parsedVal != null) {
-        // Adım miktarına göre yuvarlama ve sınır kontrolü
-        double finalVal = (parsedVal / step).round() * step;
-
-        if (finalVal < min) finalVal = min;
-        if (max != null && finalVal > max!) finalVal = max!;
-
-        onChanged(finalVal);
+      final double? parsed = double.tryParse(result);
+      if (parsed != null) {
+        double final_ = (parsed / step).round() * step;
+        if (final_ < min) final_ = min;
+        if (max != null && final_ > max!) final_ = max!;
+        onChanged(final_);
       }
     }
   }
 
-  // --- COMPACT TASARIM ---
-  Widget _buildCompact(BuildContext context) {
+  // ── LARGE ──────────────────────────────────────────────────────
+
+  Widget _buildLarge(BuildContext context) {
+    final btnSize = platform == DoseStepperPlatform.touch ? 48.0 : 48.0;
+    final height = platform == DoseStepperPlatform.touch ? 48.0 : 48.0;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+      height: height,
       decoration: BoxDecoration(
-        color: context.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.colorScheme.outlineVariant.withValues(alpha: 0.3)),
+        color: MedColors.surface2,
+        border: Border.all(color: MedColors.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          _StepBtn(
+            icon: PhosphorIcons.minus(),
+            size: btnSize,
+            enabled: _canDecrement,
+            onTap: _canDecrement ? () => onChanged(value - step) : null,
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _handleManualEntry(context),
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  border: Border(
+                    left: BorderSide(color: MedColors.border),
+                    right: BorderSide(color: MedColors.border),
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 1,
+                  children: [
+                    Text(
+                      value.formatFractional,
+                      style: TextStyle(
+                        fontFamily: MedFonts.title,
+                        fontSize: platform == DoseStepperPlatform.touch ? 18 : 18,
+                        fontWeight: FontWeight.w800,
+                        color: MedColors.text,
+                        height: 1,
+                      ),
+                    ),
+                    Text(
+                      unit,
+                      style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          _StepBtn(
+            icon: PhosphorIcons.plus(),
+            size: btnSize,
+            enabled: _canIncrement,
+            onTap: _canIncrement ? () => onChanged(value + step) : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── COMPACT ────────────────────────────────────────────────────
+
+  Widget _buildCompact(BuildContext context) {
+    final btnSize = platform == DoseStepperPlatform.touch ? 36.0 : 36.0;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: MedColors.surface2,
+        border: Border.all(color: MedColors.border),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildCompactBtn(context, PhosphorIcons.minus(), value > min ? () => onChanged(value - step) : null),
+          _StepBtn(
+            icon: PhosphorIcons.minus(),
+            size: btnSize,
+            enabled: _canDecrement,
+            onTap: _canDecrement ? () => onChanged(value - step) : null,
+            compact: true,
+          ),
           GestureDetector(
-            onTap: () => _handleManualEntry(context), // Numpad burada tetikleniyor
+            onTap: () => _handleManualEntry(context),
             behavior: HitTestBehavior.opaque,
             child: Container(
-              constraints: const BoxConstraints(minWidth: 48),
+              constraints: const BoxConstraints(minWidth: 52),
               padding: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(color: MedColors.border),
+                  right: BorderSide(color: MedColors.border),
+                ),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 1,
                 children: [
                   Text(
                     value.formatFractional,
-                    style: context.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: context.colorScheme.primary,
-                      height: 1.1,
+                    style: TextStyle(
+                      fontFamily: MedFonts.title,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: MedColors.text,
+                      height: 1.2,
                     ),
                   ),
-                  Text(unit, style: context.textTheme.labelSmall?.copyWith(fontSize: 9)),
+                  Text(
+                    unit,
+                    style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3),
+                  ),
                 ],
               ),
             ),
           ),
-          _buildCompactBtn(
-              context, PhosphorIcons.plus(), (max == null || value < max!) ? () => onChanged(value + step) : null),
-        ],
-      ),
-    );
-  }
-
-  // --- LARGE TASARIM ---
-  Widget _buildLarge(BuildContext context) {
-    return Container(
-      height: 56,
-      decoration: BoxDecoration(
-        color: context.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.colorScheme.onSurfaceVariant.withAlpha(77)),
-      ),
-      child: Row(
-        children: [
-          _buildLargeBtn(context, PhosphorIcons.minus(PhosphorIconsStyle.bold),
-              value > min ? () => onChanged(value - step) : null),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => _handleManualEntry(context), // Numpad burada tetikleniyor
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(value.formatFractional,
-                      style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: context.colorScheme.primary,
-                      )),
-                  Text(unit, style: context.textTheme.labelSmall),
-                ],
-              ),
-            ),
+          _StepBtn(
+            icon: PhosphorIcons.plus(),
+            size: btnSize,
+            enabled: _canIncrement,
+            onTap: _canIncrement ? () => onChanged(value + step) : null,
+            compact: true,
           ),
-          _buildLargeBtn(context, PhosphorIcons.plus(PhosphorIconsStyle.bold),
-              (max == null || value < max!) ? () => onChanged(value + step) : null),
         ],
       ),
     );
   }
+}
 
-  // --- YARDIMCI BUTONLAR (Kompakt ve Large için aynı kaldı) ---
-  Widget _buildCompactBtn(BuildContext context, IconData icon, VoidCallback? onTap) {
-    return IconButton(
-      onPressed: onTap,
-      icon: Icon(icon, size: 16),
-      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-      padding: EdgeInsets.zero,
-      style: IconButton.styleFrom(
-        backgroundColor: context.colorScheme.primaryContainer.withValues(alpha: 0.5),
-        foregroundColor: context.colorScheme.primary,
-        disabledForegroundColor: context.colorScheme.onSurface.withValues(alpha: 0.3),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
-  }
+// ── Ortak step butonu ──────────────────────────────────────────────
 
-  Widget _buildLargeBtn(BuildContext context, IconData icon, VoidCallback? onTap) {
-    return InkWell(
+class _StepBtn extends StatelessWidget {
+  const _StepBtn({required this.icon, required this.size, required this.enabled, this.onTap, this.compact = false});
+
+  final IconData icon;
+  final double size;
+  final bool enabled;
+  final VoidCallback? onTap;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
       child: Container(
-        width: 60,
+        width: size,
+        height: size,
         alignment: Alignment.center,
-        child: Icon(icon, size: 22, color: onTap == null ? Colors.grey : null),
+        child: Icon(icon, size: compact ? 14 : 18, color: enabled ? MedColors.text2 : MedColors.text4),
       ),
     );
   }

@@ -25,6 +25,8 @@ class ServiceFormPanel extends StatelessWidget {
         createServiceUseCase: context.read(),
         updateServiceUseCase: context.read(),
         service: setupNotifier.editingService,
+        deleteRoomUseCase: context.read(),
+        deleteBedUseCase: context.read(),
       ),
       child: Consumer<ServiceFormNotifier>(
         builder: (context, notifier, _) {

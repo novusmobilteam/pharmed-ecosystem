@@ -1,21 +1,20 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-/// Hasta işlemleri için uzak (API) veri kaynağı.
 class PatientRemoteDataSource extends BaseRemoteDataSource {
   PatientRemoteDataSource({required super.apiManager});
 
-  final String _basePath = '/Patient';
+  final String _base = '/Patient';
 
-  // TODO: implement logSwreq
-  String get logSwreq => throw UnimplementedError();
+  @override
+  String get logSwreq => 'SWREQ-DATA-PATIENT-001';
 
-  // TODO: implement logUnit
-  String get logUnit => throw UnimplementedError();
+  @override
+  String get logUnit => 'SW-UNIT-PATIENT';
 
   Future<Result<ApiResponse<List<PatientDTO>>?>> getPatients({int? skip, int? take, String? search}) async {
     return fetchRequest(
-      path: _basePath,
+      path: _base,
       skip: skip,
       take: take,
       searchText: search,
@@ -29,7 +28,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<PatientDTO?>> createPatient(PatientDTO dto) {
     return createRequest<PatientDTO?>(
-      path: _basePath,
+      path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(PatientDTO.fromJson),
       successLog: 'Patient created',
@@ -41,7 +40,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
       return Future.value(Result.error(CustomException(message: 'updatePatient: id is null')));
     }
     return updateRequest(
-      path: '$_basePath/${dto.id}',
+      path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Patient updated',
@@ -50,7 +49,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> deletePatient(int id) {
     return deleteRequest<void>(
-      path: '$_basePath/$id',
+      path: '$_base/$id',
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Patient deleted',
     );
@@ -62,7 +61,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
     required List<int> prescriptionItemIds,
   }) async {
     return await createRequest(
-      path: '$_basePath/merge',
+      path: '$_base/merge',
       parser: BaseRemoteDataSource.voidParser(),
       body: {
         "UrgentPatientHospitalizationId": hospitalizationId.toString(),
@@ -106,21 +105,21 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<List<PatientDTO>?>> getHospitalizedAndRecentExits() async {
     return await fetchRequest(
-      path: '$_basePath/hospitalizationForExits',
+      path: '$_base/hospitalizationForExits',
       parser: BaseRemoteDataSource.listParser(PatientDTO.fromJson),
     );
   }
 
   Future<Result<List<UrgentPatientDTO>?>> getUrgentPatients() async {
     return await fetchRequest(
-      path: '$_basePath/urgent',
+      path: '$_base/urgent',
       parser: BaseRemoteDataSource.listParser(UrgentPatientDTO.fromJson),
     );
   }
 
   Future<Result<HospitalizationDTO?>> createUrgentPatient(int serviceId) async {
     return await createRequest<HospitalizationDTO>(
-      path: '$_basePath/hospitalization/urgent',
+      path: '$_base/hospitalization/urgent',
       parser: BaseRemoteDataSource.singleParser(HospitalizationDTO.fromJson),
       body: {"serviceId": serviceId},
     );

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/core.dart';
-import '../../../../core/widgets/prescription_group_card.dart';
+import '../../../core/core.dart';
+import '../../../core/widgets/prescription_group_card.dart';
 
 import '../notifier/prescription_detail_notifier.dart';
 

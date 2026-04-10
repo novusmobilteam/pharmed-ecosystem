@@ -164,7 +164,7 @@ class APIManager {
       DioExceptionType.sendTimeout => TimeoutException(message: 'İstek zaman aşımına uğradı', cause: e),
       DioExceptionType.connectionError => NetworkUnavailableException(message: 'Ağa bağlanılamadı', cause: e),
       DioExceptionType.badResponse => ServiceException(
-        message: 'Sunucu hata döndürdü',
+        message: 'Bir hatayla karşılaştık. Lütfen daha sonra tekrar deneyiniz.',
         statusCode: e.response?.statusCode ?? 0,
         traceId: e.response?.headers.value('x-trace-id'),
         cause: e,

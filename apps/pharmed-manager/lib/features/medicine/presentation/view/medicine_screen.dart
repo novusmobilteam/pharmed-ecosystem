@@ -33,7 +33,7 @@ class MedicineScreen extends StatelessWidget {
             desktop: DesktopLayout(
               title: menu.name ?? 'İlaç/Tıbbi Sarf Tanımlama',
               subtitle: menu.description,
-              actions: [PharmedButton(onPressed: () => notifier.openPanel(), label: 'Yeni İlaç')],
+              actions: [MedButton(onPressed: () => notifier.openPanel(), size: MedButtonSize.sm, label: 'Yeni İlaç')],
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
                 width: 1000,

@@ -49,4 +49,16 @@ class ServiceRepositoryImpl implements IServiceRepository {
     final result = await _dataSource.deleteService(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
   }
+
+  @override
+  Future<Result<void>> deleteBed(int bedId) async {
+    final result = await _dataSource.deleteBed(bedId);
+    return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> deleteRoom(int roomId) async {
+    final result = await _dataSource.deleteRoom(roomId);
+    return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
+  }
 }

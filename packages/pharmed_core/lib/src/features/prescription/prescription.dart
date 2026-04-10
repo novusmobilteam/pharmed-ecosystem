@@ -2,6 +2,7 @@ export 'data/prescription_dto.dart';
 export 'data/prescription_item_dto.dart';
 export 'domain/model/prescription.dart';
 export 'domain/model/prescription_item.dart';
+export 'domain/model/prescription_grouping.dart';
 export 'domain/repository/i_prescription_repository.dart';
 export 'domain/usecase/create_prescription_with_products.dart';
 export 'domain/usecase/get_patient_prescriptions_usecase.dart';

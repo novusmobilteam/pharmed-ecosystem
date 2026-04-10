@@ -6,15 +6,29 @@ import '../../../../../core/core.dart';
 class ServiceFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateServiceUseCase _createServiceUseCase;
   final UpdateServiceUseCase _updateServiceUseCase;
+  final DeleteRoomUseCase _deleteRoomUseCase;
+  final DeleteBedUseCase _deleteBedUseCase;
   HospitalService _service;
+  final List<_RoomEntry> _roomEntries;
 
   ServiceFormNotifier({
     required CreateServiceUseCase createServiceUseCase,
     required UpdateServiceUseCase updateServiceUseCase,
+    required DeleteRoomUseCase deleteRoomUseCase,
+    required DeleteBedUseCase deleteBedUseCase,
     HospitalService? service,
   }) : _createServiceUseCase = createServiceUseCase,
        _updateServiceUseCase = updateServiceUseCase,
-       _service = service ?? HospitalService(isActive: true);
+       _deleteBedUseCase = deleteBedUseCase,
+       _deleteRoomUseCase = deleteRoomUseCase,
+       _service = service ?? HospitalService(isActive: true),
+       _roomEntries = (service?.rooms ?? []).map((room) {
+         final entry = _RoomEntry(localId: const Uuid().v4(), room: room);
+         for (final bed in room.beds) {
+           entry.bedMap[const Uuid().v4()] = bed;
+         }
+         return entry;
+       }).toList();
 
   OperationKey submitOp = OperationKey.submit();
 
@@ -24,7 +38,6 @@ class ServiceFormNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isSubmitting => isLoading(submitOp);
   String? get statusMessage => message(submitOp);
 
-  final List<_RoomEntry> _roomEntries = [];
   List<({String localId, Room room})> get roomEntries =>
       _roomEntries.map((e) => (localId: e.localId, room: e.asRoom)).toList();
 
@@ -64,13 +77,31 @@ class ServiceFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
-  void removeRoom(String localId) {
-    _roomEntries.removeWhere((e) => e.localId == localId);
-    notifyListeners();
+  Future<void> removeRoom(String localId) async {
+    final entry = _entryOf(localId);
+    if (entry == null) return;
+
+    final roomId = entry.room.id;
+    if (roomId != null) {
+      await executeVoid(
+        OperationKey(OperationType.delete, customKey: 'deleteRoom_$localId'),
+        operation: () => _deleteRoomUseCase.call(roomId),
+        onSuccess: () {
+          _roomEntries.removeWhere((e) => e.localId == localId);
+          notifyListeners();
+        },
+        onFailed: (e) => notifyListeners(),
+      );
+    } else {
+      _roomEntries.removeWhere((e) => e.localId == localId);
+      notifyListeners();
+    }
   }
 
   void updateRoomName(String localId, String name) {
-    _entryOf(localId)?.room = _entryOf(localId)!.room.copyWith(name: name);
+    final entry = _entryOf(localId);
+    if (entry == null) return;
+    entry.room = entry.room.copyWith(name: name);
     notifyListeners();
   }
 
@@ -82,9 +113,25 @@ class ServiceFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
-  void removeBed(String roomLocalId, String bedLocalId) {
-    _entryOf(roomLocalId)?.bedMap.remove(bedLocalId);
-    notifyListeners();
+  Future<void> removeBed(String roomLocalId, String bedLocalId) async {
+    final entry = _entryOf(roomLocalId);
+    if (entry == null) return;
+
+    final bedId = entry.bedMap[bedLocalId]?.id;
+    if (bedId != null) {
+      await executeVoid(
+        OperationKey(OperationType.delete, customKey: 'deleteBed_$bedLocalId'),
+        operation: () => _deleteBedUseCase.call(bedId),
+        onSuccess: () {
+          entry.bedMap.remove(bedLocalId);
+          notifyListeners();
+        },
+        onFailed: (e) => notifyListeners(),
+      );
+    } else {
+      entry.bedMap.remove(bedLocalId);
+      notifyListeners();
+    }
   }
 
   void updateBedName(String roomLocalId, String bedLocalId, String name) {
@@ -97,13 +144,15 @@ class ServiceFormNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> submit() async {
+    final service = _service.copyWith(rooms: rooms);
+
     await executeVoid(
       submitOp,
-      operation: () => isCreate ? _createServiceUseCase.call(_service) : _updateServiceUseCase.call(_service),
+      operation: () => isCreate ? _createServiceUseCase.call(service) : _updateServiceUseCase.call(service),
       onSuccess: () {
         if (isCreate) resetForm();
       },
-      successMessage: 'Firma başarıyla ${isCreate ? 'oluşturuldu' : 'güncellendi'}',
+      successMessage: 'Servis başarıyla ${isCreate ? 'oluşturuldu' : 'güncellendi'}',
     );
   }
 

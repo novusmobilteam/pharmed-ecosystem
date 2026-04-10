@@ -1,8 +1,8 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-class PrescriptionRepository implements IPrescriptionRepository {
-  PrescriptionRepository({
+class PrescriptionRepositoryImpl implements IPrescriptionRepository {
+  PrescriptionRepositoryImpl({
     required PrescriptionRemoteDataSource dataSource,
     required PrescriptionMapper prescriptionMapper,
     required PrescriptionItemMapper prescriptionItemMapper,

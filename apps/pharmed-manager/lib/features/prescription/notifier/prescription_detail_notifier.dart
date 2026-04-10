@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../patient_order_review/domain/usecase/get_patient_prescription_history_usecase.dart';
-import '../../domain/prescription_grouping.dart';
+import '../../patient_order_review/domain/usecase/get_patient_prescription_history_usecase.dart';
 
 class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<PrescriptionItem> {
   final Hospitalization _hospitalization;

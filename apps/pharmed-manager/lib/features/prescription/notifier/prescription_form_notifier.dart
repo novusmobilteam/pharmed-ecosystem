@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/core.dart';
+import '../../../core/core.dart';
 
-class NewPrescriptionNotifier extends ChangeNotifier with ApiRequestMixin {
+class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreatePrescriptionWithProductsUseCase _useCase;
 
-  NewPrescriptionNotifier({required CreatePrescriptionWithProductsUseCase useCase, Hospitalization? hospitalization})
+  PrescriptionFormNotifier({required CreatePrescriptionWithProductsUseCase useCase, Hospitalization? hospitalization})
     : _useCase = useCase {
     _hospitalization = hospitalization;
     _isPatientSelectionEnabled = hospitalization == null;

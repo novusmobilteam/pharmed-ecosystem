@@ -23,6 +23,7 @@ class MedButton extends StatefulWidget {
     this.prefixIcon,
     this.fullWidth = false,
     this.isLoading = false,
+    this.isActive = true,
   });
 
   final String label;
@@ -32,6 +33,7 @@ class MedButton extends StatefulWidget {
   final Widget? prefixIcon;
   final bool fullWidth;
   final bool isLoading;
+  final bool isActive;
 
   @override
   State<MedButton> createState() => _MedButtonState();
@@ -42,7 +44,7 @@ class _MedButtonState extends State<MedButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isDisabled = widget.onPressed == null && !widget.isLoading;
+    final isDisabled = (widget.onPressed == null && !widget.isLoading) || !widget.isActive;
     final colors = _resolveColors(widget.variant);
     final sizing = _resolveSizing(widget.size);
 

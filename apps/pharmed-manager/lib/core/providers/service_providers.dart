@@ -22,6 +22,8 @@ class ServiceProviders {
       Provider<CreateServiceUseCase>(create: (context) => CreateServiceUseCase(context.read())),
       Provider<UpdateServiceUseCase>(create: (context) => UpdateServiceUseCase(context.read())),
       Provider<DeleteServiceUseCase>(create: (context) => DeleteServiceUseCase(context.read())),
+      Provider<DeleteRoomUseCase>(create: (context) => DeleteRoomUseCase(context.read())),
+      Provider<DeleteBedUseCase>(create: (context) => DeleteBedUseCase(context.read())),
     ];
   }
 }

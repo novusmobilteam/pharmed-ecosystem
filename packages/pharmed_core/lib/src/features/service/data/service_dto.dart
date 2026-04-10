@@ -8,8 +8,18 @@ class ServiceDTO {
   final int? userId;
   final UserDTO? user;
   final bool isActive;
+  final List<RoomDto>? rooms;
 
-  const ServiceDTO({this.id, this.name, this.branchId, this.branch, this.user, this.userId, this.isActive = true});
+  const ServiceDTO({
+    this.id,
+    this.name,
+    this.branchId,
+    this.branch,
+    this.user,
+    this.userId,
+    this.isActive = true,
+    this.rooms,
+  });
 
   factory ServiceDTO.fromJson(Map<String, dynamic> json) {
     return ServiceDTO(
@@ -20,6 +30,9 @@ class ServiceDTO {
       userId: json['userId'] as int?,
       user: json['user'] != null ? UserDTO.fromJson(json['user']) : null,
       isActive: (json['isActive'] as bool?) ?? false,
+      rooms: json['rooms'] != null
+          ? (json['rooms'] as List).map((e) => RoomDto.fromJson(e as Map<String, dynamic>)).toList()
+          : null,
     );
   }
 
@@ -29,5 +42,6 @@ class ServiceDTO {
     'branchId': branchId,
     'userId': userId,
     'isActive': isActive,
+    'roomModels': rooms?.map((r) => r.toJson()).toList(),
   };
 }

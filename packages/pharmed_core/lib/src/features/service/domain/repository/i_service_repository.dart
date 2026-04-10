@@ -6,4 +6,6 @@ abstract class IServiceRepository {
   Future<Result<void>> createService(HospitalService service);
   Future<Result<void>> updateService(HospitalService service);
   Future<Result<void>> deleteService(HospitalService service);
+  Future<Result<void>> deleteRoom(int roomId);
+  Future<Result<void>> deleteBed(int bedId);
 }
