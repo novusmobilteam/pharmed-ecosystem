@@ -17,6 +17,10 @@ class Cabin extends Selectable implements TableData {
   final ParityBit? parityBit;
   final CabinColor? color;
   final Station? station;
+  final bool? isRfidEnabled;
+  final String? rfidIp;
+  final String? rfidPort;
+  final List<int>? bedIds;
 
   static Cabin? fromIdAndName({int? id, String? name, int? comPortId, int? baudRateId, int? parityId}) {
     final hasId = id != null;
@@ -50,6 +54,10 @@ class Cabin extends Selectable implements TableData {
     this.dataBit,
     this.parityBit,
     this.station,
+    this.isRfidEnabled,
+    this.rfidIp,
+    this.rfidPort,
+    this.bedIds,
   }) : super(title: name.toString(), subtitle: no?.toString());
 
   Cabin copyWith({

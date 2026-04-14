@@ -23,6 +23,11 @@ class AppSettingsCache {
     }
   }
 
+  Future<void> resetSetupStatus() async {
+    await _open();
+    await _box!.put(_keySetupDone, false);
+  }
+
   /// [SWREQ-CORE-003] İlk kurulum tamamlandı mı?
   Future<bool> isSetupComplete() async {
     await _open();

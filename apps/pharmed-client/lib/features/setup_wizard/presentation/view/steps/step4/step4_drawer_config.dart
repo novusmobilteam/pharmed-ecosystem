@@ -32,9 +32,11 @@ class Step4DrawerConfig extends StatelessWidget {
     required this.onSameConfigToggled,
     required this.onNext,
     required this.onBack,
+    this.stationType,
   });
 
   final CabinType cabinetType;
+  final StationType? stationType;
 
   // Standart kabin
   final DrawerScanState scanState;
@@ -47,7 +49,7 @@ class Step4DrawerConfig extends StatelessWidget {
   final VoidCallback onScanDevice;
   final VoidCallback onResetScan;
   final ValueChanged<int> onDrawerCountChanged;
-  final void Function(int drawerIndex, {int? rows, int? columns}) onDrawerConfigChanged;
+  final void Function(int drawerIndex, List<int> rowColumns) onDrawerConfigChanged;
   final ValueChanged<bool> onSameConfigToggled;
 
   final VoidCallback? onNext;
@@ -65,7 +67,7 @@ class Step4DrawerConfig extends StatelessWidget {
 
         // ── Body ────────────────────────────────────────────────
         Expanded(
-          child: cabinetType == CabinType.mobile
+          child: cabinetType == CabinType.mobile && stationType == StationType.patientBased
               ? MobileConfigView(
                   layout: mobileLayout ?? WizardMobileLayout.defaultLayout(),
                   onDrawerCountChanged: onDrawerCountChanged,

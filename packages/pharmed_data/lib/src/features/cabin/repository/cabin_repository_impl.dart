@@ -160,6 +160,26 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
+  Future<RepoResult<List<MobileDrawerRequestDTO>>> getMobileCabinSlots(int cabinId) async {
+    final result = await _remote.getMobileCabinSlots(cabinId);
+
+    return result.when(
+      ok: (dtos) async {
+        await _local.saveMobileDrawers(cabinId, dtos);
+        return RepoSuccess(dtos);
+      },
+      error: (error) async {
+        final cached = await _local.readMobileDrawers(cabinId);
+        final savedAt = await _local.mobileDrawersSavedAt(cabinId);
+        if (cached != null && savedAt != null) {
+          return RepoStale(cached, savedAt);
+        }
+        return RepoFailure(error);
+      },
+    );
+  }
+
+  @override
   Future<RepoResult<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
     final result = await _remote.getDrawerUnits(slotId);
 
@@ -199,6 +219,32 @@ class CabinRepositoryImpl implements ICabinRepository {
     return result.when(
       ok: (_) async {
         final cabinIds = slots.map((s) => s.cabinId).whereType<int>().toSet();
+        await Future.wait(cabinIds.map(_local.clearSlots));
+        return const Result.ok(null);
+      },
+      error: Result.error,
+    );
+  }
+
+  @override
+  Future<Result<void>> createMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) async {
+    final result = await _remote.createMobileDrawerSlots(drawers);
+    return result.when(
+      ok: (_) async {
+        final cabinIds = drawers.map((d) => d.cabinId).toSet();
+        await Future.wait(cabinIds.map(_local.clearSlots));
+        return const Result.ok(null);
+      },
+      error: Result.error,
+    );
+  }
+
+  @override
+  Future<Result<void>> updateMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) async {
+    final result = await _remote.updateMobileDrawerSlots(drawers);
+    return result.when(
+      ok: (_) async {
+        final cabinIds = drawers.map((d) => d.cabinId).toSet();
         await Future.wait(cabinIds.map(_local.clearSlots));
         return const Result.ok(null);
       },

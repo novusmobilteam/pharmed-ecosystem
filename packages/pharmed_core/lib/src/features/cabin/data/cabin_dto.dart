@@ -18,6 +18,10 @@ class CabinDTO {
   final int? cameraNo;
   final String? dvrIp;
   final StationDTO? station;
+  final bool? isRfidEnabled;
+  final String? rfidIp;
+  final String? rfidPort;
+  final List<int>? bedIds;
 
   const CabinDTO({
     this.id,
@@ -37,6 +41,10 @@ class CabinDTO {
     this.cameraNo,
     this.dvrIp,
     this.station,
+    this.isRfidEnabled,
+    this.rfidIp,
+    this.rfidPort,
+    this.bedIds,
   });
 
   CabinDTO copyWith({
@@ -57,6 +65,10 @@ class CabinDTO {
     int? cameraNo,
     String? dvrIp,
     StationDTO? station,
+    bool? isRfidEnabled,
+    String? rfidIp,
+    String? rfidPort,
+    List<int>? bedIds,
   }) {
     return CabinDTO(
       id: id ?? this.id,
@@ -76,6 +88,10 @@ class CabinDTO {
       cameraNo: cameraNo ?? this.cameraNo,
       dvrIp: dvrIp ?? this.dvrIp,
       station: station ?? this.station,
+      isRfidEnabled: isRfidEnabled ?? this.isRfidEnabled,
+      rfidIp: rfidIp ?? this.rfidIp,
+      rfidPort: rfidPort ?? this.rfidPort,
+      bedIds: bedIds ?? this.bedIds,
     );
   }
 
@@ -98,6 +114,10 @@ class CabinDTO {
       cameraNo: json['cameraNo'] as int?,
       dvrIp: json['dvrIp'] as String?,
       station: json['station'] != null ? StationDTO.fromJson(json['station']) : null,
+      isRfidEnabled: json['isRfidEnabled'] as bool?,
+      rfidIp: json['rfidIp'] as String?,
+      rfidPort: json['rfidPort'] as String?,
+      bedIds: (json['bedIds'] as List?)?.map((e) => e as int).toList() ?? [],
     );
   }
 
@@ -119,6 +139,10 @@ class CabinDTO {
       'cameraNo': cameraNo,
       'dvrIp': dvrIp,
       'stationId': station?.id.toString(),
+      'isRfidEnabled': isRfidEnabled,
+      'rfidIp': rfidIp,
+      'rfidPort': rfidPort,
+      'bedIds': bedIds,
     };
   }
 }

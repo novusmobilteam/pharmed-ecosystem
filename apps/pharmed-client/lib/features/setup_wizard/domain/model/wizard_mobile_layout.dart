@@ -2,8 +2,8 @@
 //
 // [SWREQ-SETUP-UI-011] [IEC 62304 §5.5]
 // Mobil kabin wizard adım 4 — manuel çekmece tanım modeli.
-// Kullanıcı her çekmece için satır ve sütun sayısını girer.
-// Sadece wizard sürecinde kullanılır; kayıt sırasında DrawerSlot listesine dönüştürülür.
+// Her çekmece için satır listesi tutulur; her satırın sütun sayısı bağımsızdır.
+// Kayıt sırasında MobileDrawerRequestDTO listesine dönüştürülür.
 // Sınıf: Class B
 
 import 'package:equatable/equatable.dart';
@@ -15,53 +15,49 @@ class WizardMobileLayout extends Equatable {
   factory WizardMobileLayout.defaultLayout() {
     return WizardMobileLayout(
       drawerCount: 2,
-      drawers: List.generate(2, (i) => WizardDrawerConfig(drawerIndex: i, rows: 4, columns: 3)),
+      drawers: List.generate(2, (i) => WizardDrawerConfig(drawerIndex: i, rowColumns: List.filled(4, 3))),
     );
   }
 
-  final int drawerCount; // 1–8
+  final int drawerCount;
   final List<WizardDrawerConfig> drawers;
-
-  /// true → tüm çekmeceler aynı konfigürasyonu paylaşır (drawers[0] referans alınır)
   final bool sameConfig;
 
-  /// Çekmece sayısı değişince listeyi yeniden oluşturur.
-  /// sameConfig açıksa tüm çekmeceler drawers[0]'ın değerlerini alır.
-  /// Mevcut konfigürasyonlar korunur, yeni çekmeceler varsayılan değerle eklenir.
   WizardMobileLayout withDrawerCount(int newCount) {
-    final ref = drawers.isNotEmpty ? drawers[0] : WizardDrawerConfig(drawerIndex: 0, rows: 4, columns: 3);
+    final ref = drawers.isNotEmpty ? drawers[0] : WizardDrawerConfig(drawerIndex: 0, rowColumns: List.filled(4, 3));
     final updated = List.generate(newCount, (i) {
-      if (sameConfig) return WizardDrawerConfig(drawerIndex: i, rows: ref.rows, columns: ref.columns);
+      if (sameConfig) {
+        return WizardDrawerConfig(drawerIndex: i, rowColumns: List.of(ref.rowColumns));
+      }
       if (i < drawers.length) return drawers[i];
-      return WizardDrawerConfig(drawerIndex: i, rows: 4, columns: 3);
+      return WizardDrawerConfig(drawerIndex: i, rowColumns: List.filled(4, 3));
     });
     return WizardMobileLayout(drawerCount: newCount, drawers: updated, sameConfig: sameConfig);
   }
 
-  /// Belirli bir çekmecenin satır veya sütun sayısını günceller.
-  /// sameConfig açıksa tüm çekmecelere aynı değer uygulanır.
-  WizardMobileLayout withDrawerConfig(int drawerIndex, {int? rows, int? columns}) {
+  /// Belirli bir çekmecenin rowColumns listesini günceller.
+  /// sameConfig açıksa tüm çekmecelere aynı liste uygulanır.
+  WizardMobileLayout withDrawerConfig(int drawerIndex, List<int> rowColumns) {
     if (sameConfig) {
-      // Tüm çekmeceleri güncelle
-      final updated = drawers.map((d) => d.copyWith(rows: rows, columns: columns)).toList();
+      final updated = drawers
+          .map((d) => WizardDrawerConfig(drawerIndex: d.drawerIndex, rowColumns: List.of(rowColumns)))
+          .toList();
       return copyWith(drawers: updated);
     }
     final updated = drawers.map((d) {
       if (d.drawerIndex != drawerIndex) return d;
-      return d.copyWith(rows: rows, columns: columns);
+      return WizardDrawerConfig(drawerIndex: d.drawerIndex, rowColumns: List.of(rowColumns));
     }).toList();
     return copyWith(drawers: updated);
   }
 
-  /// sameConfig toggle'ı değişince:
-  /// - açılırsa → tüm çekmeceler drawers[0] değerlerini alır
-  /// - kapanırsa → mevcut drawers korunur
   WizardMobileLayout withSameConfig(bool value) {
     if (!value) return copyWith(sameConfig: false);
-    final ref = drawers.isNotEmpty ? drawers[0] : WizardDrawerConfig(drawerIndex: 0, rows: 4, columns: 3);
-    final updated = List.generate(drawerCount, (i) {
-      return WizardDrawerConfig(drawerIndex: i, rows: ref.rows, columns: ref.columns);
-    });
+    final ref = drawers.isNotEmpty ? drawers[0] : WizardDrawerConfig(drawerIndex: 0, rowColumns: List.filled(4, 3));
+    final updated = List.generate(
+      drawerCount,
+      (i) => WizardDrawerConfig(drawerIndex: i, rowColumns: List.of(ref.rowColumns)),
+    );
     return WizardMobileLayout(drawerCount: drawerCount, drawers: updated, sameConfig: true);
   }
 
@@ -78,16 +74,35 @@ class WizardMobileLayout extends Equatable {
 }
 
 class WizardDrawerConfig extends Equatable {
-  const WizardDrawerConfig({required this.drawerIndex, required this.rows, required this.columns});
+  const WizardDrawerConfig({required this.drawerIndex, required this.rowColumns});
 
   final int drawerIndex;
-  final int rows; // 1–8
-  final int columns; // 1–8
 
-  WizardDrawerConfig copyWith({int? rows, int? columns}) {
-    return WizardDrawerConfig(drawerIndex: drawerIndex, rows: rows ?? this.rows, columns: columns ?? this.columns);
+  /// Her index bir satırı, değer o satırın sütun sayısını temsil eder.
+  /// Örn: [3, 2, 4, 3] → 4 satır, sütunlar sırasıyla 3, 2, 4, 3
+  final List<int> rowColumns;
+
+  int get rowCount => rowColumns.length;
+  int get totalCells => rowColumns.fold(0, (sum, c) => sum + c);
+
+  /// Belirli bir satırın sütun sayısını günceller.
+  WizardDrawerConfig withRowColumns(int rowIndex, int columns) {
+    final updated = List.of(rowColumns);
+    updated[rowIndex] = columns;
+    return WizardDrawerConfig(drawerIndex: drawerIndex, rowColumns: updated);
+  }
+
+  /// Sona yeni satır ekler (varsayılan 3 sütun).
+  WizardDrawerConfig withRowAdded({int defaultColumns = 3}) {
+    return WizardDrawerConfig(drawerIndex: drawerIndex, rowColumns: [...rowColumns, defaultColumns]);
+  }
+
+  /// Belirli index'teki satırı kaldırır.
+  WizardDrawerConfig withRowRemoved(int rowIndex) {
+    final updated = List.of(rowColumns)..removeAt(rowIndex);
+    return WizardDrawerConfig(drawerIndex: drawerIndex, rowColumns: updated);
   }
 
   @override
-  List<Object?> get props => [drawerIndex, rows, columns];
+  List<Object?> get props => [drawerIndex, rowColumns];
 }

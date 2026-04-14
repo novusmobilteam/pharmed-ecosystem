@@ -93,6 +93,7 @@ class WizardActiveView extends ConsumerWidget {
           onSameConfigToggled: (val) => notifier.toggleSameConfig(value: val),
           scanLogs: state.scanLogs,
           scannedLayout: draft.scannedLayout ?? [],
+          stationType: draft.serviceScope?.station.type,
         );
       case 5:
         return Step5Summary(draft: draft, onFinish: notifier.finish, onBack: notifier.previousStep);

@@ -20,4 +20,8 @@ class AppSetupStatusNotifier extends AsyncNotifier<bool> {
   void markComplete() {
     state = const AsyncData(true);
   }
+
+  void markIncomplete() {
+    state = const AsyncData(false);
+  }
 }

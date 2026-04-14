@@ -1,5 +1,12 @@
 part of 'step4_drawer_config.dart';
 
+// lib/features/setup_wizard/presentation/widgets/mobile_config_view.dart
+//
+// [SWREQ-SETUP-UI-011] [IEC 62304 §5.5]
+// Mobil kabin wizard adım 4 — çekmece yapılandırma arayüzü.
+// Her çekmece için satır listesi; her satırın sütun sayısı bağımsız ayarlanır.
+// Sınıf: Class B
+
 class MobileConfigView extends StatelessWidget {
   const MobileConfigView({
     super.key,
@@ -12,7 +19,7 @@ class MobileConfigView extends StatelessWidget {
   final WizardMobileLayout layout;
   final ValueChanged<int> onDrawerCountChanged;
   final ValueChanged<bool> onSameConfigToggled;
-  final void Function(int drawerIndex, {int? rows, int? columns}) onDrawerConfigChanged;
+  final void Function(int drawerIndex, List<int> rowColumns) onDrawerConfigChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +54,20 @@ class MobileConfigView extends StatelessWidget {
           const SizedBox(height: 24),
 
           // ── Çekmece listesi ──
-          // sameConfig açıksa sadece ilk çekmece gösterilir
           for (final drawer in layout.sameConfig ? layout.drawers.take(1).toList() : layout.drawers)
             _DrawerConfigCard(
               drawer: drawer,
-              onRowsChanged: (v) => onDrawerConfigChanged(drawer.drawerIndex, rows: v),
-              onColumnsChanged: (v) => onDrawerConfigChanged(drawer.drawerIndex, columns: v),
+              onConfigChanged: (rowColumns) => onDrawerConfigChanged(drawer.drawerIndex, rowColumns),
             ),
         ],
       ),
     );
   }
 }
+
+// ─────────────────────────────────────────────
+// Toggle
+// ─────────────────────────────────────────────
 
 class _SameConfigToggle extends StatelessWidget {
   const _SameConfigToggle({required this.value, required this.onChanged});
@@ -79,7 +88,6 @@ class _SameConfigToggle extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Toggle track
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: 44,
@@ -131,12 +139,15 @@ class _SameConfigToggle extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────
+// Çekmece kartı
+// ─────────────────────────────────────────────
+
 class _DrawerConfigCard extends StatefulWidget {
-  const _DrawerConfigCard({required this.drawer, required this.onRowsChanged, required this.onColumnsChanged});
+  const _DrawerConfigCard({required this.drawer, required this.onConfigChanged});
 
   final WizardDrawerConfig drawer;
-  final ValueChanged<int> onRowsChanged;
-  final ValueChanged<int> onColumnsChanged;
+  final ValueChanged<List<int>> onConfigChanged;
 
   @override
   State<_DrawerConfigCard> createState() => _DrawerConfigCardState();
@@ -148,14 +159,29 @@ class _DrawerConfigCardState extends State<_DrawerConfigCard> {
   @override
   void initState() {
     super.initState();
-    // İlk çekmece varsayılan açık
     _expanded = widget.drawer.drawerIndex == 0;
+  }
+
+  void _updateRow(int rowIndex, int columns) {
+    final updated = widget.drawer.withRowColumns(rowIndex, columns);
+    widget.onConfigChanged(updated.rowColumns);
+  }
+
+  void _addRow() {
+    final updated = widget.drawer.withRowAdded();
+    widget.onConfigChanged(updated.rowColumns);
+  }
+
+  void _removeLastRow() {
+    if (widget.drawer.rowCount <= 1) return;
+    final updated = widget.drawer.withRowRemoved(widget.drawer.rowCount - 1);
+    widget.onConfigChanged(updated.rowColumns);
   }
 
   @override
   Widget build(BuildContext context) {
     final drawer = widget.drawer;
-    final summary = '${drawer.rows} satır × ${drawer.columns} sütun';
+    final summary = '${drawer.rowCount} satır · ${drawer.totalCells} hücre';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -220,115 +246,201 @@ class _DrawerConfigCardState extends State<_DrawerConfigCard> {
           ),
 
           // ── Detay alanı ──
-          if (_expanded)
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          if (_expanded) ...[
+            const Divider(height: 1, thickness: 1, color: MedColors.border2),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              child: Column(
                 children: [
-                  // Satır sayısı
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'SATIR SAYISI',
-                          style: TextStyle(
-                            fontFamily: MedFonts.mono,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.8,
-                            color: MedColors.text3,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        MedCounter(
-                          value: drawer.rows,
-                          min: 1,
-                          max: 8,
-                          onDecrement: () => widget.onRowsChanged(drawer.rows - 1),
-                          onIncrement: () => widget.onRowsChanged(drawer.rows + 1),
-                        ),
-                      ],
+                  // Satır listesi
+                  for (int i = 0; i < drawer.rowCount; i++)
+                    _RowConfigItem(
+                      rowIndex: i,
+                      columns: drawer.rowColumns[i],
+                      maxColumns: 8,
+                      onChanged: (v) => _updateRow(i, v),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Sütun sayısı
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'SÜTUN SAYISI',
-                          style: TextStyle(
-                            fontFamily: MedFonts.mono,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.8,
-                            color: MedColors.text3,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        MedCounter(
-                          value: drawer.columns,
-                          min: 1,
-                          max: 8,
-                          onDecrement: () => widget.onColumnsChanged(drawer.columns - 1),
-                          onIncrement: () => widget.onColumnsChanged(drawer.columns + 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Mini önizleme
-                  Column(
+
+                  const SizedBox(height: 8),
+
+                  // Alt butonlar: Satır ekle / Son satırı sil
+                  Row(
                     children: [
-                      const SizedBox(height: 17),
-                      _DrawerMiniPreview(rows: drawer.rows, columns: drawer.columns),
+                      _ActionChip(
+                        icon: Icons.add_rounded,
+                        label: 'Satır Ekle',
+                        enabled: drawer.rowCount < 8,
+                        onTap: _addRow,
+                      ),
+                      const SizedBox(width: 8),
+                      _ActionChip(
+                        icon: Icons.remove_rounded,
+                        label: 'Son Satırı Sil',
+                        enabled: drawer.rowCount > 1,
+                        danger: true,
+                        onTap: _removeLastRow,
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
+          ],
         ],
       ),
     );
   }
 }
 
-/// Çekmece grid önizlemesi
-class _DrawerMiniPreview extends StatelessWidget {
-  const _DrawerMiniPreview({required this.rows, required this.columns});
-  final int rows;
+// ─────────────────────────────────────────────
+// Tek satır yapılandırma satırı
+// ─────────────────────────────────────────────
+
+class _RowConfigItem extends StatelessWidget {
+  const _RowConfigItem({
+    required this.rowIndex,
+    required this.columns,
+    required this.maxColumns,
+    required this.onChanged,
+  });
+
+  final int rowIndex;
   final int columns;
+  final int maxColumns;
+  final ValueChanged<int> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    // Max 6x6 göster, daha fazlası küçük nokta olarak temsil edilir
-
-    return Container(
-      width: 72,
-      height: 72,
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border.all(color: MedColors.border2),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.all(6),
-      child: GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: columns,
-          mainAxisSpacing: 2,
-          crossAxisSpacing: 2,
-        ),
-        itemCount: rows * columns,
-        itemBuilder: (_, _) => Container(
-          decoration: BoxDecoration(
-            color: MedColors.surface2,
-            borderRadius: BorderRadius.circular(2),
-            border: Border.all(color: MedColors.border2),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          // Satır numarası etiketi
+          SizedBox(
+            width: 56,
+            child: Text(
+              'SATIR ${rowIndex + 1}',
+              style: TextStyle(
+                fontFamily: MedFonts.mono,
+                fontSize: 9,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.6,
+                color: MedColors.text3,
+              ),
+            ),
           ),
+          const SizedBox(width: 8),
+
+          // Counter
+          MedCounter(
+            value: columns,
+            min: 1,
+            max: maxColumns,
+            onDecrement: () => onChanged(columns - 1),
+            onIncrement: () => onChanged(columns + 1),
+          ),
+          const SizedBox(width: 12),
+
+          // Hücre bar önizleme
+          Expanded(
+            child: _RowBarPreview(columns: columns, maxColumns: maxColumns),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Satır bar önizleme
+// ─────────────────────────────────────────────
+
+class _RowBarPreview extends StatelessWidget {
+  const _RowBarPreview({required this.columns, required this.maxColumns});
+
+  final int columns;
+  final int maxColumns;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 20,
+      child: Row(
+        children: List.generate(maxColumns, (i) {
+          final active = i < columns;
+          return Expanded(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 1.5),
+              decoration: BoxDecoration(
+                color: active ? MedColors.blue.withOpacity(0.2) : MedColors.surface2,
+                border: Border.all(color: active ? MedColors.blue.withOpacity(0.4) : MedColors.border2),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Aksiyon chip (Satır ekle / sil)
+// ─────────────────────────────────────────────
+
+class _ActionChip extends StatelessWidget {
+  const _ActionChip({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.enabled = true,
+    this.danger = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool enabled;
+  final bool danger;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = !enabled
+        ? MedColors.text4
+        : danger
+        ? MedColors.red
+        : MedColors.blue;
+    final bgColor = !enabled
+        ? MedColors.surface2
+        : danger
+        ? MedColors.red.withOpacity(0.06)
+        : MedColors.blueLight;
+    final borderColor = !enabled
+        ? MedColors.border
+        : danger
+        ? MedColors.red.withOpacity(0.25)
+        : MedColors.blue.withOpacity(0.3);
+
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: bgColor,
+          border: Border.all(color: borderColor),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: TextStyle(fontFamily: MedFonts.sans, fontSize: 12, fontWeight: FontWeight.w500, color: color),
+            ),
+          ],
         ),
       ),
     );

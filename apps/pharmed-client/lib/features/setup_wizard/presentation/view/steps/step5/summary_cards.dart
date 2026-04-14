@@ -15,11 +15,17 @@ class CabinInfoCard extends StatelessWidget {
         SummaryRow(label: 'Tip', value: isMobile ? 'Mobil Kabin' : 'Standart Kabin', valueColor: MedColors.blue),
         _Divider(),
         SummaryRow(label: 'İsim', value: info.cabinName),
-        _Divider(),
+
         if (!isMobile) ...[_Divider(), SummaryRow(label: 'COM Port', value: info.comPort ?? '—')],
         if (info.dvrIp != null && info.dvrIp!.isNotEmpty) ...[
           _Divider(),
           SummaryRow(label: 'DVR IP', value: info.dvrIp!),
+        ],
+
+        if (info.rfidIpAddress != null && info.rfidPort!.isNotEmpty) ...[
+          _Divider(),
+          SummaryRow(label: 'RFID Adresi', value: info.rfidIpAddress!),
+          SummaryRow(label: 'RFID Portu', value: info.rfidPort!),
         ],
       ],
     );
@@ -43,7 +49,9 @@ class ServiceScopeCard extends StatelessWidget {
         MobileScope(:final rooms) => [
           SummaryRow(label: 'Oda sayısı', value: '${rooms.length}', valueColor: MedColors.green),
           _Divider(),
-          SummaryRow(label: 'Odalar', value: rooms.join(', ')),
+          SummaryRow(label: 'Odalar', value: rooms.map((r) => r.name).join(', ')),
+          _Divider(),
+          SummaryRow(label: 'Yataklar', value: rooms.map((r) => r.beds.map((b) => b.name)).join(', ')),
         ],
       },
     );
@@ -69,7 +77,7 @@ class DrawerStructureCard extends StatelessWidget {
           for (final drawer in layout.drawers) ...[
             SummaryRow(
               label: '${drawer.drawerIndex + 1}. Çekmece',
-              value: '${drawer.rows} satır × ${drawer.columns} sütun',
+              value: drawer.rowColumns.map((c) => '$c').join(' / '),
             ),
             if (drawer.drawerIndex < layout.drawers.length - 1) _Divider(),
           ],

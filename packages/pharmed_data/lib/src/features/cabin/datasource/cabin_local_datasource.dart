@@ -31,10 +31,16 @@ abstract interface class ICabinLocalDataSource {
   Future<void> saveDrawerTypes(List<DrawerTypeDTO> types);
   Future<List<DrawerTypeDTO>?> readDrawerTypes();
 
+  // ── Mobil Çekmece ──────────────────────────────────────────────
+  Future<void> saveMobileDrawers(int cabinId, List<MobileDrawerRequestDTO> drawers);
+  Future<List<MobileDrawerRequestDTO>?> readMobileDrawers(int cabinId);
+  Future<DateTime?> mobileDrawersSavedAt(int cabinId);
+
   // ── Temizlik ───────────────────────────────────────────────────
   Future<void> clearCabins();
   Future<void> clearSlots(int cabinId);
   Future<void> clearAll();
+  Future<void> clearMobileDrawers(int cabinId);
 }
 
 class CabinLocalDataSource implements ICabinLocalDataSource {
@@ -55,6 +61,8 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   static String _slotsSavedAtKey(int cabinId) => 'slots_saved_at_$cabinId';
   static String _unitsKey(int slotId) => 'units_$slotId';
   static String _unitsSavedAtKey(int slotId) => 'units_saved_at_$slotId';
+  static String _mobileDrawersKey(int cabinId) => 'mobile_drawers_$cabinId';
+  static String _mobileDrawersSavedAtKey(int cabinId) => 'mobile_drawers_saved_at_$cabinId';
 
   // ── Box açma ──────────────────────────────────────────────────
 
@@ -87,6 +95,31 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   Future<DateTime?> cabinsSavedAt() async {
     final box = await _cabinBox();
     final raw = box.get(_cabinsSavedAtKey) as String?;
+    if (raw == null) return null;
+    return DateTime.tryParse(raw);
+  }
+
+  @override
+  Future<void> saveMobileDrawers(int cabinId, List<MobileDrawerRequestDTO> drawers) async {
+    final box = await _slotBox();
+    final encoded = drawers.map((d) => d.toJson()).toList();
+    await box.put(_mobileDrawersKey(cabinId), jsonEncode(encoded));
+    await box.put(_mobileDrawersSavedAtKey(cabinId), DateTime.now().toIso8601String());
+  }
+
+  @override
+  Future<List<MobileDrawerRequestDTO>?> readMobileDrawers(int cabinId) async {
+    final box = await _slotBox();
+    final raw = box.get(_mobileDrawersKey(cabinId)) as String?;
+    if (raw == null) return null;
+    final list = jsonDecode(raw) as List;
+    return list.map((e) => MobileDrawerRequestDTO.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+  }
+
+  @override
+  Future<DateTime?> mobileDrawersSavedAt(int cabinId) async {
+    final box = await _slotBox();
+    final raw = box.get(_mobileDrawersSavedAtKey(cabinId)) as String?;
     if (raw == null) return null;
     return DateTime.tryParse(raw);
   }
@@ -202,6 +235,15 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
     final box = await _slotBox();
     await box.delete(_slotsKey(cabinId));
     await box.delete(_slotsSavedAtKey(cabinId));
+    await box.delete(_mobileDrawersKey(cabinId));
+    await box.delete(_mobileDrawersSavedAtKey(cabinId));
+  }
+
+  @override
+  Future<void> clearMobileDrawers(int cabinId) async {
+    final box = await _slotBox();
+    await box.delete(_mobileDrawersKey(cabinId));
+    await box.delete(_mobileDrawersSavedAtKey(cabinId));
   }
 
   @override

@@ -20,10 +20,7 @@ import '../../../../core/router/app_router.dart';
 // Provider
 // ─────────────────────────────────────────────────────────────────
 
-final setupWizardNotifierProvider =
-    NotifierProvider<SetupWizardNotifier, SetupWizardUiState>(
-  SetupWizardNotifier.new,
-);
+final setupWizardNotifierProvider = NotifierProvider<SetupWizardNotifier, SetupWizardUiState>(SetupWizardNotifier.new);
 
 // ─────────────────────────────────────────────────────────────────
 // SetupWizardNotifier
@@ -38,12 +35,10 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     final repo = DI.setupWizardRepository();
     _saveUseCase = SaveCabinConfigUseCase(repository: repo);
     _scanUseCase = ScanDeviceDrawerConfigUseCase(repository: repo);
+    ref.read(appSetupStatusProvider.notifier).markIncomplete();
+    appSettingsCache.resetSetupStatus();
 
-    return const WizardActive(
-      currentStep: 1,
-      draft: WizardDraft.empty(),
-      completedSteps: {},
-    );
+    return const WizardActive(currentStep: 1, draft: WizardDraft.empty(), completedSteps: {});
   }
 
   // ── Adım 1: Kabin tipi ──────────────────────────────────────────
@@ -61,9 +56,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     );
 
     // Tip değişince scope ve çekmece sıfırlanır
-    final resetDraft = current.draft.copyWith(
-      cabinetType: type,
-    );
+    final resetDraft = current.draft.copyWith(cabinetType: type);
 
     state = current.copyWith(
       draft: resetDraft,
@@ -78,9 +71,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     final current = _active;
     if (current == null) return;
 
-    state = current.copyWith(
-      draft: current.draft.copyWith(basicInfo: info),
-    );
+    state = current.copyWith(draft: current.draft.copyWith(basicInfo: info));
   }
 
   // ── Adım 3: Hizmet kapsamı ──────────────────────────────────────
@@ -90,9 +81,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     final current = _active;
     if (current == null) return;
 
-    state = current.copyWith(
-      draft: current.draft.copyWith(serviceScope: scope),
-    );
+    state = current.copyWith(draft: current.draft.copyWith(serviceScope: scope));
   }
 
   // ── Adım 4: Çekmece yapısı ──────────────────────────────────────
@@ -102,9 +91,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     final current = _active;
     if (current == null) return;
 
-    state = current.copyWith(
-      draft: current.draft.copyWith(drawerConfig: config),
-    );
+    state = current.copyWith(draft: current.draft.copyWith(drawerConfig: config));
   }
 
   /// [SWREQ-SETUP-UI-007] Standart kabin cihaz taraması
@@ -198,10 +185,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
       unit: 'SW-UNIT-SETUP',
       swreq: 'SWREQ-SETUP-UC-001',
       message: 'Kabin kurulumu kaydediliyor',
-      context: {
-        'cabinName': config.basicInfo.cabinName,
-        'type': config.cabinetType.name,
-      },
+      context: {'cabinName': config.basicInfo.cabinName, 'type': config.cabinetType.name},
     );
 
     state = WizardSaving(draft: current.draft);
@@ -220,14 +204,9 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
         // [SWREQ-CORE-003] Cihaz modunu cache'e yaz (fire & forget).
         // Dashboard'a geçiş, kullanıcı "Dashboard'a Git" butonuna
         // bastığında appSetupStatusProvider.markComplete() ile tetiklenir.
-        appSettingsCache.markSetupComplete(
-          deviceMode: config.cabinetType.name,
-        );
+        appSettingsCache.markSetupComplete(deviceMode: config.cabinetType.name);
 
-        state = WizardSaved(
-          cabinId: cabinId,
-          cabinName: config.basicInfo.cabinName,
-        );
+        state = WizardSaved(cabinId: cabinId, cabinName: config.basicInfo.cabinName);
       },
       (error) {
         MedLogger.error(
@@ -236,10 +215,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
           message: 'Kabin kayıt hatası',
           error: error,
         );
-        state = WizardSaveError(
-          message: error.toString().replaceFirst('Exception: ', ''),
-          draft: current.draft,
-        );
+        state = WizardSaveError(message: error.toString().replaceFirst('Exception: ', ''), draft: current.draft);
       },
     );
   }
@@ -247,16 +223,11 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
   /// Kayıt hatası sonrası wizard'a geri dön
   void retryFromError() {
     if (state case WizardSaveError(:final draft)) {
-      state = WizardActive(
-        currentStep: 5,
-        draft: draft,
-        completedSteps: const {1, 2, 3, 4},
-      );
+      state = WizardActive(currentStep: 5, draft: draft, completedSteps: const {1, 2, 3, 4});
     }
   }
 
   // ── Yardımcılar ──────────────────────────────────────────────────
 
-  WizardActive? get _active =>
-      state is WizardActive ? state as WizardActive : null;
+  WizardActive? get _active => state is WizardActive ? state as WizardActive : null;
 }

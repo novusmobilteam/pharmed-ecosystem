@@ -13,16 +13,19 @@ class FinishCabinSetupUseCase {
   FinishCabinSetupUseCase({
     required CreateCabinUseCase createCabin,
     required SaveCabinDesignUseCase saveCabinDesign,
+    required SaveMobileCabinDesignUseCase saveMobileCabinDesign,
     required AppSettingsCache appSettingsCache,
   }) : _createCabin = createCabin,
        _saveCabinDesign = saveCabinDesign,
+       _saveMobileCabinDesign = saveMobileCabinDesign,
        _appSettingsCache = appSettingsCache;
 
   final CreateCabinUseCase _createCabin;
   final SaveCabinDesignUseCase _saveCabinDesign;
+  final SaveMobileCabinDesignUseCase _saveMobileCabinDesign;
   final AppSettingsCache _appSettingsCache;
 
-  /// Wizard konfigürasyonunu alır, kabini oluşturur ve gerekirse slot'ları kaydeder.
+  /// Wizard konfigürasyonunu alır, kabini oluşturur ve tasarımı kaydeder.
   ///
   /// Dönüş: [Result<int>] — başarıda oluşturulan kabinin ID'si.
   ///
@@ -31,7 +34,8 @@ class FinishCabinSetupUseCase {
   ///   2. [SaveCabinDesignUseCase] → DrawerSlot'ları cabinId ile kaydet
   ///
   /// Mobil kabin akışı:
-  ///   1. [CreateCabinUseCase] → Cabin kaydı oluştur (slot kayıt henüz desteklenmiyor)
+  ///   1. [CreateCabinUseCase] → Cabin kaydı oluştur, cabinId al
+  ///   2. [SaveMobileCabinDesignUseCase] → MobileDrawerRequestDTO listesini kaydet
   Future<Result<int>> call(CabinSetupConfig config) async {
     final cabin = Cabin(
       name: config.basicInfo.cabinName,
@@ -40,6 +44,12 @@ class FinishCabinSetupUseCase {
       dvrIp: config.basicInfo.dvrIp,
       status: Status.active,
       station: config.stationScope.station,
+      rfidIp: config.basicInfo.rfidIpAddress,
+      rfidPort: config.basicInfo.rfidPort,
+      isRfidEnabled: config.basicInfo.rfidEnable,
+      bedIds: config.stationScope is MobileScope
+          ? (config.stationScope as MobileScope).beds.map((b) => b.id ?? 0).toList()
+          : null,
     );
 
     // ── 1. Kabini oluştur ──────────────────────────────────────
@@ -56,18 +66,26 @@ class FinishCabinSetupUseCase {
 
         await _appSettingsCache.saveCurrentCabinId(cabinId);
 
-        // ── 2. Standart kabin → slot'ları kaydet ──────────────
-        if (config.cabinetType != CabinType.mobile) {
-          final slots = config.scannedLayout?.map((g) => g.slot).toList() ?? [];
+        // ── 2. Mobil kabin → manuel çekmece yapısını kaydet ───
+        if (config.cabinetType == CabinType.mobile) {
+          final drawers = config.mobileLayout?.drawers ?? [];
 
-          if (slots.isNotEmpty) {
-            final saveResult = await _saveCabinDesign(cabinId: cabinId, scanResults: slots, isUpdate: false);
-
+          if (drawers.isNotEmpty) {
+            final saveResult = await _saveMobileCabinDesign(cabinId: cabinId, drawers: drawers);
             return saveResult.when(error: Result.error, ok: (_) => Result.ok(cabinId));
           }
+
+          return Result.ok(cabinId);
         }
 
-        // Mobil kabin veya slot listesi boş
+        // ── 3. Standart kabin → taranmış slot'ları kaydet ─────
+        final slots = config.scannedLayout?.map((g) => g.slot).toList() ?? [];
+
+        if (slots.isNotEmpty) {
+          final saveResult = await _saveCabinDesign(cabinId: cabinId, scanResults: slots, isUpdate: false);
+          return saveResult.when(error: Result.error, ok: (_) => Result.ok(cabinId));
+        }
+
         return Result.ok(cabinId);
       },
     );

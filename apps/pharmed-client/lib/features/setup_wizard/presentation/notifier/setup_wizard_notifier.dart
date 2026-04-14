@@ -408,14 +408,13 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
   }
 
   /// [SWREQ-SETUP-UI-013]
-  void updateDrawerConfig(int drawerIndex, {int? rows, int? columns}) {
+  void updateDrawerConfig(int drawerIndex, List<int> rowColumns) {
     final current = _active;
     if (current == null) return;
 
     final layout = (current.draft.mobileLayout ?? WizardMobileLayout.defaultLayout()).withDrawerConfig(
       drawerIndex,
-      rows: rows,
-      columns: columns,
+      rowColumns,
     );
 
     state = current.copyWith(draft: current.draft.copyWith(mobileLayout: layout));
@@ -479,7 +478,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
     state = WizardSaving(draft: current.draft);
 
-    final result = await ref.read(finishCabinSetupUseCaseProvider)(config);
+    final result = await ref.read(finishCabinSetupUseCaseProvider).call(config);
 
     result.when(
       ok: (cabinId) {

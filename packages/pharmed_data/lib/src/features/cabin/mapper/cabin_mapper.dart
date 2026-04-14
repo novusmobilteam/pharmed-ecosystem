@@ -13,6 +13,10 @@ class CabinMapper {
       station: StationMapper().toEntityOrNull(dto.station),
       comPort: ComPort.fromId(dto.comPortsId),
       dvrIp: dto.dvrIp,
+      isRfidEnabled: dto.isRfidEnabled,
+      rfidIp: dto.rfidIp,
+      rfidPort: dto.rfidPort,
+      bedIds: dto.bedIds,
     );
   }
 
@@ -30,6 +34,10 @@ class CabinMapper {
       comPortsId: entity.comPort?.id,
       dvrIp: entity.dvrIp,
       isActive: entity.status?.isActive,
+      isRfidEnabled: entity.isRfidEnabled,
+      rfidIp: entity.rfidIp,
+      rfidPort: entity.rfidPort,
+      bedIds: entity.bedIds,
     );
   }
 

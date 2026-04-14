@@ -37,11 +37,25 @@ abstract interface class ICabinRepository {
   /// Bir kabinin fiziksel yuva (slot) yapısını ve dizilimini getirir.
   Future<RepoResult<List<DrawerSlot>>> getCabinSlots(int cabinId);
 
+  /// Mobil kabinin çekmece yapısını getirir.
+  /// Gerçek zamanlı değil — cache desteklidir.
+  Future<RepoResult<List<MobileDrawerRequestDTO>>> getMobileCabinSlots(int cabinId);
+
   /// Seçili çekmeceye ait iç parçaları getirir. Gerçek zamanlı — cache'lenmez.
   Future<RepoResult<List<DrawerUnit>>> getDrawerUnits(int slotId);
 
   /// Kabin için yeni bir yuva dizilimi kaydeder.
   Future<Result<void>> createDrawerSlots(List<DrawerSlot> slots);
+
+  /// Mobil kabin için çekmece yapısını kaydeder.
+  /// Fiziksel tarama yapılmaz; kullanıcının manuel tanımladığı
+  /// satır/sütun konfigürasyonu [drawers] listesi olarak iletilir.
+  Future<Result<void>> createMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers);
+
+  /// Mobil kabin için çekmece yapısını günceller.
+  /// Fiziksel tarama yapılmaz; kullanıcının manuel tanımladığı
+  /// satır/sütun konfigürasyonu [drawers] listesi olarak iletilir.
+  Future<Result<void>> updateMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers);
 
   /// Mevcut yuva dizilimini günceller.
   Future<Result<void>> updateDrawerSlots(List<DrawerSlot> slots);

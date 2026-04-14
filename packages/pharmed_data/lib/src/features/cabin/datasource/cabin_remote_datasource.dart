@@ -95,6 +95,16 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (list) => Result.ok(list ?? const <DrawerSlotDTO>[]), error: Result.error);
   }
 
+  Future<Result<List<MobileDrawerRequestDTO>>> getMobileCabinSlots(int cabinId) async {
+    final res = await fetchRequest<List<MobileDrawerRequestDTO>>(
+      path: '/CabinDesign/drawCabinMobile/$cabinId',
+      parser: BaseRemoteDataSource.listParser(MobileDrawerRequestDTO.fromJson),
+      successLog: 'Mobil kabin layout getirildi',
+      emptyLog: 'Mobil kabin layout bulunamadı',
+    );
+    return res.when(ok: (list) => Result.ok(list ?? const []), error: Result.error);
+  }
+
   Future<Result<void>> updateDrawerSlots(List<DrawerSlotDTO> dtos) {
     return updateBulkRequest(path: '$_base/bulk', body: dtos.map((d) => d.toJson()).toList(), parser: null);
   }
@@ -108,6 +118,22 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
     );
 
     return res.when(ok: (list) => Result.ok(list ?? const <DrawerSlotDTO>[]), error: Result.error);
+  }
+
+  Future<Result<void>> createMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) {
+    return createBulkRequest(
+      path: '/CabinDesign/mobileBulk',
+      body: drawers.map((d) => d.toJson()).toList(),
+      parser: null,
+    );
+  }
+
+  Future<Result<void>> updateMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) {
+    return updateBulkRequest(
+      path: '/CabinDesign/mobile/bulk',
+      body: drawers.map((d) => d.toJson()).toList(),
+      parser: null,
+    );
   }
 
   Future<Result<List<DrawerUnitDTO>>> getDrawerUnits(int slotId) async {

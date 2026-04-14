@@ -143,6 +143,11 @@ class CabinMockRepository implements ICabinRepository {
   }
 
   @override
+  Future<RepoResult<List<MobileDrawerRequestDTO>>> getMobileCabinSlots(int cabinId) async {
+    return RepoSuccess(const []);
+  }
+
+  @override
   Future<RepoResult<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
     await Future.delayed(_delay);
     final slot = _mockSlots.cast<DrawerSlot?>().firstWhere((s) => s?.id == slotId, orElse: () => null);
@@ -168,6 +173,16 @@ class CabinMockRepository implements ICabinRepository {
     for (var i = 0; i < slots.length; i++) {
       _mockSlots.add(slots[i].copyWith(id: _mockSlots.length + i + 1));
     }
+    return const Result.ok(null);
+  }
+
+  @override
+  Future<Result<void>> createMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) async {
+    return const Result.ok(null);
+  }
+
+  @override
+  Future<Result<void>> updateMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) async {
     return const Result.ok(null);
   }
 
