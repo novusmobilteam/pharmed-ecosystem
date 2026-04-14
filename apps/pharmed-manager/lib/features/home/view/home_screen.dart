@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
@@ -11,7 +12,9 @@ import '../../hospitalization/view/hospitalization_screen.dart';
 import '../../medicine/presentation/view/medicine_screen.dart';
 import '../../station_setup/view/station_screen.dart';
 import '../notifier/home_notifier.dart';
-part 'sidebar.dart';
+
+part 'home_sidebar.dart';
+part 'home_appbar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -64,11 +67,17 @@ class _HomeScreenState extends State<HomeScreen> {
           }
           return Column(
             children: [
-              //DashboardAppBar(cabinLocation: '', cabinName: '', user: notifier.currentUser),
+              HomeAppBar(
+                isLoggedIn: notifier.currentUser != null,
+                user: notifier.currentUser,
+                onHomeTap: () => context.read<HomeNotifier>().navigateHome(),
+                onLogoutTap: () => context.read<AuthNotifier>().logout(),
+                onSettingsTap: () {},
+              ),
               Expanded(
                 child: Row(
                   children: [
-                    AppSidebar(),
+                    HomeSidebar(),
                     Expanded(child: _HomeContent()),
                   ],
                 ),

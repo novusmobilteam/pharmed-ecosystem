@@ -37,10 +37,14 @@ final serviceRepositoryProvider = Provider<IServiceRepository>((ref) {
     AppFlavor.mock => ServiceRepositoryImpl(
       dataSource: ref.read(serviceRemoteDataSourceProvider),
       mapper: ServiceMapper(),
+      roomMapper: RoomMapper(),
+      bedMapper: BedMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => ServiceRepositoryImpl(
       dataSource: ref.read(serviceRemoteDataSourceProvider),
       mapper: ServiceMapper(),
+      roomMapper: RoomMapper(),
+      bedMapper: BedMapper(),
     ),
   };
 });

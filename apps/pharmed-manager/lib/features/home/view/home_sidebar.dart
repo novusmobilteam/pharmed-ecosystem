@@ -1,7 +1,7 @@
 part of 'home_screen.dart';
 
-class AppSidebar extends StatelessWidget {
-  const AppSidebar({super.key});
+class HomeSidebar extends StatelessWidget {
+  const HomeSidebar({super.key});
 
   @override
   Widget build(BuildContext context) {

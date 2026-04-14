@@ -183,11 +183,20 @@ class _RoomField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
-            label: 'Oda No',
-            initialValue: notifier.hospitalization?.roomNo,
-            validator: Validators.cannotBlankValidator,
-            onChanged: (v) => notifier.updateRoom(v),
+          return SelectionField<Room>(
+            label: 'Oda',
+            title: 'Oda Seç',
+            enabled: notifier.isRoomEnabled,
+            initialValue: notifier.selectedRoom,
+            validator: (r) => Validators.cannotBlankValidator(r?.name),
+            labelBuilder: (r) => r.name ?? '-',
+            dataSource: (skip, take, search) async {
+              final filtered = search == null || search.isEmpty
+                  ? notifier.rooms
+                  : notifier.rooms.where((r) => (r.name ?? '').toLowerCase().contains(search.toLowerCase())).toList();
+              return Result.ok(ApiResponse(data: filtered, totalCount: filtered.length));
+            },
+            onSelected: (r) => notifier.selectRoom(r),
           );
         },
       ),
@@ -195,7 +204,6 @@ class _RoomField extends StatelessWidget {
   }
 }
 
-// * Yatak No (hospitalization.bedNo)
 class _BedField extends StatelessWidget {
   const _BedField();
 
@@ -204,11 +212,20 @@ class _BedField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
-            label: 'Yatak No',
-            initialValue: notifier.hospitalization?.bedNo,
-            validator: Validators.cannotBlankValidator,
-            onChanged: (v) => notifier.updateBed(v),
+          return SelectionField<Bed>(
+            label: 'Yatak',
+            title: 'Yatak Seç',
+            enabled: notifier.isBedEnabled,
+            initialValue: notifier.selectedBed,
+            validator: (b) => Validators.cannotBlankValidator(b?.name),
+            labelBuilder: (b) => b.name ?? '-',
+            dataSource: (skip, take, search) async {
+              final filtered = search == null || search.isEmpty
+                  ? notifier.beds
+                  : notifier.beds.where((b) => (b.name ?? '').toLowerCase().contains(search.toLowerCase())).toList();
+              return Result.ok(ApiResponse(data: filtered, totalCount: filtered.length));
+            },
+            onSelected: (b) => notifier.selectBed(b),
           );
         },
       ),
@@ -279,9 +296,9 @@ class _BabyToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HospitalizationFormNotifier>(
       builder: (context, notifier, _) {
-        return CustomCheckboxTile(
+        return CheckboxField(
           label: 'Bebek',
-          onTap: () => notifier.toggleIsBaby(),
+          onChanged: (_) => notifier.toggleIsBaby(),
           value: notifier.hospitalization?.isBaby ?? false,
         );
       },

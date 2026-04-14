@@ -9,8 +9,8 @@ class Hospitalization extends Selectable implements TableData {
   final HospitalService? physicalService;
   final HospitalService? inpatientService;
   final User? doctor;
-  final String? roomNo;
-  final String? bedNo;
+  final int? roomId;
+  final int? bedId;
   final String? description;
   final DateTime? admissionDate;
   final DateTime? exitDate;
@@ -27,8 +27,8 @@ class Hospitalization extends Selectable implements TableData {
     this.physicalService,
     this.inpatientService,
     this.doctor,
-    this.roomNo,
-    this.bedNo,
+    this.roomId,
+    this.bedId,
     this.description,
     this.admissionDate,
     this.exitDate,
@@ -46,8 +46,8 @@ class Hospitalization extends Selectable implements TableData {
     HospitalService? physicalService,
     HospitalService? inpatientService,
     User? doctor,
-    String? roomNo,
-    String? bedNo,
+    int? roomId,
+    int? bedId,
     String? description,
     DateTime? admissionDate,
     DateTime? exitDate,
@@ -60,8 +60,8 @@ class Hospitalization extends Selectable implements TableData {
       physicalService: physicalService ?? this.physicalService,
       inpatientService: inpatientService ?? this.inpatientService,
       doctor: doctor ?? this.doctor,
-      roomNo: roomNo ?? this.roomNo,
-      bedNo: bedNo ?? this.bedNo,
+      roomId: roomId ?? this.roomId,
+      bedId: bedId ?? this.bedId,
       description: description ?? this.description,
       admissionDate: admissionDate ?? this.admissionDate,
       exitDate: exitDate ?? this.exitDate,

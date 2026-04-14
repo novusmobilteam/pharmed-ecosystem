@@ -6,18 +6,18 @@ class _TableView extends StatelessWidget {
   final DirectedOrdersViewModel vm;
 
   List<TableColumnDef> _buildColumnDefs() => const [
-        TableColumnDef(title: 'Hasta', flex: 1.5), // colIndex: 0
-        TableColumnDef(title: 'Protokol No'), // colIndex: 1
-        TableColumnDef(title: 'Yatak', flex: 0.7), // colIndex: 2
-        TableColumnDef(title: 'Oda', flex: 0.7), // colIndex: 3
-      ];
+    TableColumnDef(title: 'Hasta', flex: 1.5), // colIndex: 0
+    TableColumnDef(title: 'Protokol No'), // colIndex: 1
+    TableColumnDef(title: 'Yatak', flex: 0.7), // colIndex: 2
+    TableColumnDef(title: 'Oda', flex: 0.7), // colIndex: 3
+  ];
 
   Widget? _buildCell(Hospitalization item, int colIndex, dynamic _) {
     return switch (colIndex) {
       0 => Text(item.patient?.fullName ?? '-'),
       1 => Text(item.patient?.protocolNo ?? '-'),
-      2 => Text(item.bedNo ?? '-'),
-      3 => Text(item.roomNo ?? '-'),
+      // 2 => Text(item.bedNo ?? '-'),
+      // 3 => Text(item.roomNo ?? '-'),
       _ => null,
     };
   }

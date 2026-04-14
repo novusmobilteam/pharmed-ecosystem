@@ -10,11 +10,23 @@ class ServiceProviders {
       Provider(create: (context) => ServiceRemoteDataSource(apiManager: context.read())),
 
       Provider<ServiceMapper>(create: (_) => const ServiceMapper()),
+      Provider<RoomMapper>(create: (_) => const RoomMapper()),
+      Provider<BedMapper>(create: (_) => const BedMapper()),
 
       Provider<IServiceRepository>(
         create: (context) => switch (FlavorConfig.instance.flavor) {
-          AppFlavor.mock => ServiceRepositoryImpl(dataSource: context.read(), mapper: context.read()),
-          AppFlavor.dev || AppFlavor.prod => ServiceRepositoryImpl(dataSource: context.read(), mapper: context.read()),
+          AppFlavor.mock => ServiceRepositoryImpl(
+            dataSource: context.read(),
+            mapper: context.read(),
+            roomMapper: context.read(),
+            bedMapper: context.read(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => ServiceRepositoryImpl(
+            dataSource: context.read(),
+            mapper: context.read(),
+            roomMapper: context.read(),
+            bedMapper: context.read(),
+          ),
         },
       ),
 
@@ -24,6 +36,8 @@ class ServiceProviders {
       Provider<DeleteServiceUseCase>(create: (context) => DeleteServiceUseCase(context.read())),
       Provider<DeleteRoomUseCase>(create: (context) => DeleteRoomUseCase(context.read())),
       Provider<DeleteBedUseCase>(create: (context) => DeleteBedUseCase(context.read())),
+      Provider<GetRoomsUseCase>(create: (context) => GetRoomsUseCase(context.read())),
+      Provider<GetBedsUseCase>(create: (context) => GetBedsUseCase(context.read())),
     ];
   }
 }

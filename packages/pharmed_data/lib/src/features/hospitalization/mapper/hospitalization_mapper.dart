@@ -9,8 +9,8 @@ class HospitalizationMapper {
     return Hospitalization(
       id: dto.id,
       code: dto.code,
-      roomNo: dto.roomNo,
-      bedNo: dto.bedNo,
+      roomId: dto.roomId,
+      bedId: dto.bedId,
       description: dto.description,
       admissionDate: dto.admissionDate,
       exitDate: dto.exitDate,
@@ -31,8 +31,8 @@ class HospitalizationMapper {
     return HospitalizationDTO(
       id: entity.id,
       code: entity.code,
-      roomNo: entity.roomNo,
-      bedNo: entity.bedNo,
+      roomId: entity.roomId,
+      bedId: entity.bedId,
       description: entity.description,
       admissionDate: entity.admissionDate,
       exitDate: entity.exitDate,

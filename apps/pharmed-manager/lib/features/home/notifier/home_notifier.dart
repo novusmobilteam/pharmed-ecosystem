@@ -80,12 +80,12 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
 
   void selectChild(MenuItem child) {
     _activeChildMenu = child;
-    print(child.slug);
     notifyListeners();
   }
 
-  void goToDashboard() {
+  void navigateHome() {
     _activeTab = -1;
+    _activeChildMenu = null;
     notifyListeners();
   }
 }

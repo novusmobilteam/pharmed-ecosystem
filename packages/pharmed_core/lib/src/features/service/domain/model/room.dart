@@ -1,6 +1,6 @@
-import 'bed.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
-class Room {
+class Room extends Selectable {
   final int? id;
   final int? serviceId;
   final String? name;
@@ -8,7 +8,7 @@ class Room {
 
   int get bedCount => beds.length;
 
-  Room({this.id, this.name, this.serviceId, this.beds = const []});
+  Room({this.id, this.name, this.serviceId, this.beds = const []}) : super(title: name.toString());
 
   Room copyWith({int? id, String? name, int? serviceId, List<Bed>? beds}) {
     return Room(

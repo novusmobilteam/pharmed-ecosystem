@@ -67,6 +67,24 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
     return deleteRequest(path: '$_base/$id', parser: BaseRemoteDataSource.voidParser(), successLog: 'Servis silindi');
   }
 
+  Future<Result<List<RoomDto>?>> getRooms(int serviceId) async {
+    return await fetchRequest(
+      path: '/Room/service/$serviceId',
+      parser: BaseRemoteDataSource.listParser(RoomDto.fromJson),
+      successLog: 'Odalar getirildi',
+      emptyLog: 'Oda bulunamadı',
+    );
+  }
+
+  Future<Result<List<BedDto>?>> getBeds(int roomId) async {
+    return await fetchRequest(
+      path: '/api/Bed/$roomId',
+      parser: BaseRemoteDataSource.listParser(BedDto.fromJson),
+      successLog: 'Yataklar getirildi',
+      emptyLog: 'Yatak bulunamadı',
+    );
+  }
+
   Future<Result<void>> deleteRoom(int roomId) {
     return deleteRequest(path: '/Room/$roomId', parser: BaseRemoteDataSource.voidParser(), successLog: 'Oda silindi');
   }

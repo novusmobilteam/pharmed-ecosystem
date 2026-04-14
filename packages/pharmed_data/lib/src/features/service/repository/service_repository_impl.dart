@@ -7,12 +7,20 @@ import 'package:pharmed_data/src/models/api_response/api_response.dart';
 // DTO → entity dönüşümü ServiceMapper üzerinden yapılır.
 // Sınıf: Class B
 class ServiceRepositoryImpl implements IServiceRepository {
-  const ServiceRepositoryImpl({required ServiceRemoteDataSource dataSource, required ServiceMapper mapper})
-    : _dataSource = dataSource,
-      _mapper = mapper;
+  const ServiceRepositoryImpl({
+    required ServiceRemoteDataSource dataSource,
+    required ServiceMapper mapper,
+    required RoomMapper roomMapper,
+    required BedMapper bedMapper,
+  }) : _dataSource = dataSource,
+       _mapper = mapper,
+       _roomMapper = roomMapper,
+       _bedMapper = bedMapper;
 
   final ServiceRemoteDataSource _dataSource;
   final ServiceMapper _mapper;
+  final RoomMapper _roomMapper;
+  final BedMapper _bedMapper;
 
   @override
   Future<Result<ApiResponse<List<HospitalService>>>> getServices({int? skip, int? take, String? search}) async {
@@ -57,6 +65,24 @@ class ServiceRepositoryImpl implements IServiceRepository {
     }
     final result = await _dataSource.deleteService(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<List<Room>?>> getRooms(int serviceId) async {
+    final result = await _dataSource.getRooms(serviceId);
+    return result.when(
+      ok: (roomDtos) => Result.ok(_roomMapper.toEntityList(roomDtos ?? [])),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<List<Bed>?>> getBeds(int roomId) async {
+    final result = await _dataSource.getBeds(roomId);
+    return result.when(
+      ok: (bedDtos) => Result.ok(_bedMapper.toEntityList(bedDtos ?? [])),
+      error: (e) => Result.error(e),
+    );
   }
 
   @override

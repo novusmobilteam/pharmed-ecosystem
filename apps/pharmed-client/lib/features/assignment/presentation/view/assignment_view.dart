@@ -41,10 +41,6 @@ class AssignmentView extends ConsumerWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Placeholder — patientBased ilerleyen sprintte eklenecek
-// ─────────────────────────────────────────────────────────────────
-
 class _PatientAssignmentPlaceholder extends StatelessWidget {
   const _PatientAssignmentPlaceholder();
 
