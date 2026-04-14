@@ -9,22 +9,62 @@ class GetCabinVisualizerDataUseCase {
   final ICabinStockRepository _stockRepository;
   final AppSettingsCache _settingsCache;
 
-  Future<RepoResult<CabinVisualizerData>> call() async {
-    // ── 1. Aktif cabinId ─────────────────────────────────────
+  Future<RepoResult<CabinVisualizerData>> call({required String? deviceMode}) async {
+    // 1. Aktif cabinId
     final cabinId = await _settingsCache.getCurrentCabinId();
 
     MedLogger.info(
       unit: 'SW-UNIT-UI',
       swreq: 'SWREQ-UI-DASH-003',
       message: 'GetCabinVisualizerData çağrıldı',
-      context: {'cabinId': cabinId},
+      context: {'cabinId': cabinId, 'deviceMode': deviceMode},
     );
 
     if (cabinId == null) {
       return RepoFailure(ServiceException(message: 'Aktif kabin bulunamadı', statusCode: 404));
     }
 
-    // ── 2. Slots + Stock paralel çek ─────────────────────────
+    // 2. Mobil kabin akışı
+    if (deviceMode == CabinType.mobile.name) {
+      return _buildMobileVisualizer(cabinId);
+    }
+
+    // 3. Standart kabin akışı
+    return _buildStandardVisualizer(cabinId);
+  }
+
+  // Mobil kabin
+  Future<RepoResult<CabinVisualizerData>> _buildMobileVisualizer(int cabinId) async {
+    final result = await _cabinRepository.getMobileCabinSlots(cabinId);
+
+    final drawers = result.when(success: (data) => data, stale: (data, _) => data, failure: (_) => null);
+
+    if (drawers == null || drawers.isEmpty) {
+      return RepoFailure(ServiceException(message: 'Mobil kabin tasarımı bulunamadı', statusCode: 404));
+    }
+
+    final isStale = result is RepoStale;
+
+    final slots = drawers.map((drawer) {
+      return MobileSlotVisual(
+        slotId: drawer.orderNumber,
+        rowColumns: drawer.details.map((d) => d.columnsCount).toList(),
+      );
+    }).toList();
+
+    final data = CabinVisualizerData(
+      cabinId: cabinId,
+      slots: slots,
+      isStale: isStale,
+      groups: const [],
+      stocks: const [],
+    );
+
+    return isStale ? RepoStale(data, DateTime.now()) : RepoSuccess(data);
+  }
+
+  // Standart kabin
+  Future<RepoResult<CabinVisualizerData>> _buildStandardVisualizer(int cabinId) async {
     final (slotResult, stockResult) = await (
       _cabinRepository.getCabinSlots(cabinId),
       _stockRepository.getCurrentCabinStock(),
@@ -36,44 +76,40 @@ class GetCabinVisualizerDataUseCase {
       return RepoFailure(ServiceException(message: 'Kabin tasarımı bulunamadı', statusCode: 404));
     }
 
-    // ── 3. Her slot için units çek ───────────────────────────
     final unitResults = await Future.wait(
       slots.where((s) => s.id != null).map((s) => _cabinRepository.getDrawerUnits(s.id!)),
     );
 
-    // isStale: herhangi bir kaynak cache'den geldiyse
     bool isStale = slotResult is RepoStale || stockResult is RepoStale || unitResults.any((r) => r is RepoStale);
 
-    // Slot → units eşleştir
     final groups = <DrawerGroup>[];
     final validSlots = slots.where((s) => s.id != null).toList();
 
     for (int i = 0; i < validSlots.length; i++) {
       final unitResult = unitResults[i];
-
       if (unitResult is RepoStale) isStale = true;
-
       final units = unitResult.when(success: (data) => data, stale: (data, _) => data, failure: (_) => <DrawerUnit>[]);
-
       groups.add(DrawerGroup(slot: validSlots[i], units: units));
     }
 
     groups.sort((a, b) => a.orderNumber.compareTo(b.orderNumber));
 
-    // ── 4. Stok lookup ───────────────────────────────────────
     final stocks = stockResult.when(success: (data) => data, stale: (data, _) => data, failure: (_) => <CabinStock>[]);
 
-    // ── 5. Grid üret ─────────────────────────────────────────
-    final slot = _buildSlots(groups, stocks);
-    final data = CabinVisualizerData(cabinId: cabinId, slots: slot, isStale: isStale, groups: groups, stocks: stocks);
+    final slotVisuals = _buildSlots(groups, stocks);
+    final data = CabinVisualizerData(
+      cabinId: cabinId,
+      slots: slotVisuals,
+      isStale: isStale,
+      groups: groups,
+      stocks: stocks,
+    );
 
-    return isStale
-        ? RepoStale(data, DateTime.now()) // en erken stale zamanı idealde, şimdilik now
-        : RepoSuccess(data);
+    return isStale ? RepoStale(data, DateTime.now()) : RepoSuccess(data);
   }
 
+  // Standart kabin slot builder
   List<DrawerSlotVisual> _buildSlots(List<DrawerGroup> groups, List<CabinStock> stocks) {
-    // Unit → stok lookup
     final stocksByUnitId = <int, List<CabinStock>>{};
     for (final stock in stocks) {
       final unitId = stock.cabinDrawerDetail?.drawerUnit?.id;
@@ -99,7 +135,7 @@ class GetCabinVisualizerDataUseCase {
       final deviceNo = config?.deviceTypeNo ?? 0;
       final isKubik = type?.isKubik ?? false;
       final isSerum = deviceNo == 250;
-      final colCount = type?.compartmentCount == 20 ? 4 : 4; // 4×4 ve 4×5 için sütun sayısı
+      final colCount = type?.compartmentCount == 20 ? 4 : 4;
 
       if (isSerum) {
         final allStocks = group.units.expand((u) => stocksByUnitId[u.id] ?? <CabinStock>[]).toList();

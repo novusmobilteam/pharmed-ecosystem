@@ -3,8 +3,12 @@
 // HiveCache wrapper'ından bağımsız; tüm flavor'larda yazar.
 // Sınıf: Class B
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:pharmed_client/features/settings/domain/model/settings_state.dart';
+import 'package:pharmed_client/features/settings/presentation/provider/settings_provider.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
@@ -12,6 +16,13 @@ final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
 });
 
 final deviceModeProvider = FutureProvider.autoDispose<String?>((ref) async {
+  if (kDebugMode) {
+    final debugMode = ref.watch(settingsNotifierProvider).debugCabinMode;
+    return switch (debugMode) {
+      DebugCabinMode.master => CabinType.master.name,
+      DebugCabinMode.mobile => CabinType.mobile.name,
+    };
+  }
   final cache = ref.read(appSettingsCacheProvider);
   return cache.getDeviceMode();
 });

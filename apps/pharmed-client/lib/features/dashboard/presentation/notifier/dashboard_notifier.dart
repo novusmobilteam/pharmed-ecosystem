@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_client/core/providers/usecase_providers.dart';
 import 'package:pharmed_client/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_client/features/dashboard/domain/usecase/cabin_visualizer_usecase.dart';
@@ -103,11 +104,13 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
       state = const DashboardLoading();
     }
 
+    final deviceMode = await ref.read(deviceModeProvider.future);
+
     final results = await Future.wait([
       _getCriticalStocks.call(true, forceRefresh: forceRefresh),
       _getExpiringMaterials.call(forceRefresh: forceRefresh),
       _getUpcomingTreatments.call(forceRefresh: forceRefresh),
-      _getCabinVisualizer.call(),
+      _getCabinVisualizer.call(deviceMode: deviceMode),
     ]);
 
     final criticalResult = results[0] as RepoResult<List<CabinStock>>;

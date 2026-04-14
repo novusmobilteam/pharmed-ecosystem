@@ -21,7 +21,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../state/cabin_operation_mode.dart';
+import '../../core/enums/cabin_operation_mode.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // OperationPanelBase

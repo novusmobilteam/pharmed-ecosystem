@@ -80,9 +80,8 @@ class _DashboardBody extends StatelessWidget {
     return RefreshIndicator(
       color: MedColors.blue,
       onRefresh: notifier.refresh,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(18),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

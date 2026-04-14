@@ -18,10 +18,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../../../shared/widgets.dart';
 import '../../../../shared/widgets/empty_state_widget.dart';
 
-import '../../../cabin/cabin.dart';
-import '../../../cabin/presentation/state/cabin_operation_mode.dart';
+import '../../../../core/enums/cabin_operation_mode.dart';
 import '../notifier/fault_notifier.dart';
 import '../state/fault_ui_state.dart';
 import 'fault_panel.dart';

@@ -6,9 +6,3 @@ export 'domain/usecase/save_cabin_design_usecase.dart';
 export 'domain/usecase/scan_cabin_usecase.dart';
 export 'domain/usecase/update_cabin_usecase.dart';
 export 'domain/usecase/save_mobile_cabin_design_usecase.dart';
-
-export 'presentation/widgets/cabin_overview_panel.dart';
-export 'presentation/widgets/cabin_summary_view.dart';
-export 'presentation/widgets/drawer_detail_panel.dart';
-export 'presentation/widgets/operation_panel_base.dart';
-export 'presentation/widgets/cell_info_card.dart';

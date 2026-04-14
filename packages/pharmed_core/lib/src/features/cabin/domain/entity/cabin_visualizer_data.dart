@@ -21,6 +21,7 @@ class CabinVisualizerData {
           KubicSlotVisual(:final cells) => cells,
           UnitDoseSlotVisual(:final cells) => cells,
           SerumSlotVisual(:final status) => [status],
+          MobileSlotVisual(:final totalCells) => List.filled(totalCells, DrawerStatus.empty),
         },
       )
       .toList();

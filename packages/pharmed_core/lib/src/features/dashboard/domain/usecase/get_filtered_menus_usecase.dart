@@ -35,19 +35,19 @@ class GetFilteredMenusUseCase {
         .where((item) => item.isManager == isManager)
         .toList();
 
-    final dashboardItem = MenuItem(
-      id: -1,
-      name: 'Anasayfa',
-      route: 'dashboard',
-      children: [],
-      unicode: '0x0E2C2',
-      orderNo: 9999,
-    );
+    // final dashboardItem = MenuItem(
+    //   id: -1,
+    //   name: 'Anasayfa',
+    //   route: 'dashboard',
+    //   children: [],
+    //   unicode: '0x0E2C2',
+    //   orderNo: 9999,
+    // );
 
-    final updatedTree = [dashboardItem, ...filtered];
-    final flattened = _flattenTree(updatedTree);
+    // final updatedTree = [dashboardItem, ...filtered];
+    final flattened = _flattenTree(filtered);
 
-    return FilteredMenus(tree: updatedTree, flattened: flattened);
+    return FilteredMenus(tree: filtered, flattened: flattened);
   }
 
   /// Ağaç yapısını (Tree) rekürsif olarak düz bir listeye (Flatten) dönüştürür.

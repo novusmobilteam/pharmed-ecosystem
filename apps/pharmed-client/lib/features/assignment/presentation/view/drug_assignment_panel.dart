@@ -28,7 +28,7 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_client/features/cabin/presentation/widgets/cell_info_card.dart';
+import 'package:pharmed_client/shared/widgets/cell_info_card.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 

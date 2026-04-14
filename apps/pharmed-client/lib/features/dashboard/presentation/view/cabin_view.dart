@@ -49,33 +49,6 @@ class CabinView extends StatelessWidget {
                       'Kabin Durumu',
                       style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w500),
                     ),
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                    //   decoration: BoxDecoration(
-                    //     color: cabin.isLocked ? MedColors.greenLight : MedColors.amberLight,
-                    //     border: Border.all(color: cabin.isLocked ? const Color(0xFFB5DDD4) : const Color(0xFFF5D79E)),
-                    //     borderRadius: MedRadius.xlAll,
-                    //   ),
-                    // child: Row(
-                    //   mainAxisSize: MainAxisSize.min,
-                    //   children: [
-                    //     Icon(
-                    //       cabin.isLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
-                    //       size: 9,
-                    //       color: cabin.isLocked ? MedColors.green : MedColors.amber,
-                    //     ),
-                    //     const SizedBox(width: 4),
-                    //     Text(
-                    //       cabin.isLocked ? 'Kilitli' : 'Açık',
-                    //       style: TextStyle(
-                    //         fontFamily: MedFonts.mono,
-                    //         fontSize: 9,
-                    //         color: cabin.isLocked ? MedColors.green : MedColors.amber,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    // ),
                   ],
                 ),
                 const SizedBox(height: 10),

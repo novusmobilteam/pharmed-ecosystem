@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/widgets/atoms/led_indicator.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// ─────────────────────────────────────────────────────────────────
 // CabinVisualizer
 // [SWREQ-UI-001] [HAZ-003]
 // Kabinin fiziksel görselini LED + çekmece grid + legend ile gösterir.
 // Kritik/düşük stok DrawerCell renk sistemiyle ayrıştırılır.
 // Sınıf: Class B — Yanlış stok rengi yanlış müdahale tetikler.
-// ─────────────────────────────────────────────────────────────────
-
-// ── Renk yardımcısı — paylaşımlı ─────────────────────────────────
 
 final class _StatusColors {
   const _StatusColors({required this.bg, required this.border});
@@ -25,8 +20,6 @@ final class _StatusColors {
     DrawerStatus.empty => _StatusColors(bg: MedColors.surface3, border: MedColors.border2),
   };
 }
-
-// ── Ana widget ────────────────────────────────────────────────────
 
 class CabinVisualizer extends StatelessWidget {
   const CabinVisualizer({
@@ -73,7 +66,7 @@ class CabinVisualizer extends StatelessWidget {
   }
 }
 
-// ── Slot dispatcher ───────────────────────────────────────────────
+// Slot dispatcher
 
 class _SlotView extends StatelessWidget {
   const _SlotView({required this.slot});
@@ -87,11 +80,10 @@ class _SlotView extends StatelessWidget {
       KubicSlotVisual() => _KubicSlotView(slot: s),
       UnitDoseSlotVisual() => _UnitDoseSlotView(slot: s),
       SerumSlotVisual() => _SerumSlotView(slot: s),
+      MobileSlotVisual() => _MobileSlotView(slot: s),
     };
   }
 }
-
-// ── Kübik ─────────────────────────────────────────────────────────
 
 class _KubicSlotView extends StatelessWidget {
   const _KubicSlotView({required this.slot});
@@ -151,8 +143,6 @@ class _KubicCell extends StatelessWidget {
   }
 }
 
-// ── Birim Doz ─────────────────────────────────────────────────────
-
 class _UnitDoseSlotView extends StatelessWidget {
   const _UnitDoseSlotView({required this.slot});
   final UnitDoseSlotVisual slot;
@@ -181,6 +171,7 @@ class _UnitDoseSlotView extends StatelessWidget {
 
 class _UnitDoseCell extends StatelessWidget {
   const _UnitDoseCell({required this.status});
+
   final DrawerStatus status;
 
   @override
@@ -196,8 +187,6 @@ class _UnitDoseCell extends StatelessWidget {
     );
   }
 }
-
-// ── Serum ─────────────────────────────────────────────────────────
 
 class _SerumSlotView extends StatelessWidget {
   const _SerumSlotView({required this.slot});
@@ -227,7 +216,24 @@ class _SerumSlotView extends StatelessWidget {
   }
 }
 
-// ── Legend ────────────────────────────────────────────────────────
+class _MobileSlotView extends StatelessWidget {
+  const _MobileSlotView({required this.slot});
+
+  final MobileSlotVisual slot;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = _StatusColors.of(DrawerStatus.empty);
+    return Container(
+      height: 24,
+      decoration: BoxDecoration(
+        color: colors.bg,
+        border: Border.all(color: colors.border, width: 1.5),
+        borderRadius: MedRadius.smAll,
+      ),
+    );
+  }
+}
 
 class _CabinLegend extends StatelessWidget {
   const _CabinLegend();

@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
           return Column(
             children: [
-              DashboardAppBar(cabinLocation: '', cabinName: '', user: notifier.currentUser),
+              //DashboardAppBar(cabinLocation: '', cabinName: '', user: notifier.currentUser),
               Expanded(
                 child: Row(
                   children: [

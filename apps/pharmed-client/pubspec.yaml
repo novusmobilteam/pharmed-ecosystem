@@ -37,6 +37,7 @@ dependencies:
   # Fonts
   flutter_libserialport: ^0.6.0
   hive_flutter: ^1.1.0
+  phosphor_flutter: ^2.1.0
   
 
 dev_dependencies:

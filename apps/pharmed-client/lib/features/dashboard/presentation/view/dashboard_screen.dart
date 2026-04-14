@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/assignment/presentation/view/assignment_view.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
 import 'package:pharmed_client/features/fault/presentation/view/fault_view.dart';
+import 'package:pharmed_client/features/settings/presentation/view/settings_modal.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import '../../../../shared/widgets.dart';
 import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../auth/presentation/state/auth_state.dart';
 import '../../domain/model/dasboard_data.dart';
@@ -61,38 +63,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       _ => 'dashboard',
     };
 
-    final isNotAtHome = currentRoute != 'dashboard';
-
     return GestureDetector(
-      // Her dokunuş oturum sayacını sıfırlar
       onTap: authNotif.onUserActivity,
       child: Scaffold(
         backgroundColor: MedColors.bg,
-
         appBar: DashboardAppBar(
-          cabinLocation: 'Kat 3 · Koridor B',
+          menuTree: menuTree,
+          flattenedMenus: flattenedMenus,
+          currentRoute: currentRoute,
+          isLoggedIn: isLoggedIn,
           user: currentUser,
+          onHomeTap: () => notifier.navigateTo('dashboard'),
           onLoginTap: () => _showLoginModal(context, ref),
           onLogoutTap: authNotif.logout,
-          cabinName: '',
-          showBackButton: isNotAtHome,
-          onBackToHome: () => notifier.navigateTo('dashboard'),
+          onSettingsTap: () => _showSettingsPopup(context),
+          onMenuItemTap: (id) => notifier.navigateTo(id),
         ),
         body: Stack(
           children: [
             Column(
               children: [
-                // Navbar
-                if (isLoggedIn)
-                  DashboardNavBar(
-                    menuTree: menuTree,
-                    isLoggedIn: isLoggedIn,
-                    onItemTap: (id) => notifier.navigateTo(id),
-                    flattenedMenus: flattenedMenus,
-                    currentRoute: currentRoute,
-                  ),
-
-                // LockedBanner (oturum kapandıysa)
+                // LockedBanner
                 if (!isLoggedIn && _wasLoggedIn(authState))
                   LockedBanner(onLoginTap: () => _showLoginModal(context, ref)),
 
@@ -105,7 +96,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ],
             ),
 
-            // Session timeout banner (floating, sağ alt) ────
+            // Session timeout banner
             if (isExpiring)
               Positioned(
                 bottom: 20,
@@ -121,7 +112,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  // Daha önce giriş yapılmış mıydı? (banner için)
   bool _wasLoggedIn(AuthState state) => state is AuthLoggedOut;
 
   void _showLoginModal(BuildContext context, WidgetRef ref) {
@@ -137,5 +127,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         onCancel: () => Navigator.of(context).pop(),
       ),
     );
+  }
+
+  void _showSettingsPopup(BuildContext context) {
+    showSettingsModal(context);
   }
 }
