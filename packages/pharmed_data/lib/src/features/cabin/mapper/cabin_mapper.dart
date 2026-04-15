@@ -17,6 +17,7 @@ class CabinMapper {
       rfidIp: dto.rfidIp,
       rfidPort: dto.rfidPort,
       bedIds: dto.bedIds,
+      type: CabinType.fromId(dto.type),
     );
   }
 

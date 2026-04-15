@@ -6,10 +6,6 @@ import 'package:equatable/equatable.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'wizard_mobile_layout.dart';
 
-// ─────────────────────────────────────────────────────────────────
-// Temel bağlantı bilgileri (Adım 2)
-// ─────────────────────────────────────────────────────────────────
-
 class WizardBasicInfo extends Equatable {
   const WizardBasicInfo({
     required this.cabinName,
@@ -55,10 +51,6 @@ class WizardBasicInfo extends Equatable {
   List<Object?> get props => [cabinName, ipAddress, comPort, dvrIp, rfidEnable, rfidIpAddress, rfidPort];
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Hizmet kapsamı (Adım 3) — sealed
-// ─────────────────────────────────────────────────────────────────
-
 sealed class StationScope extends Equatable {
   const StationScope(this.station);
 
@@ -83,10 +75,6 @@ final class MobileScope extends StationScope {
   @override
   List<Object?> get props => [station, rooms, beds];
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Tamamlanmış kurulum konfigürasyonu
-// ─────────────────────────────────────────────────────────────────
 
 class CabinSetupConfig extends Equatable {
   const CabinSetupConfig({

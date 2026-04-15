@@ -3,29 +3,36 @@
 // HiveCache wrapper'ından bağımsız; tüm flavor'larda yazar.
 // Sınıf: Class B
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pharmed_client/features/settings/domain/model/settings_state.dart';
-import 'package:pharmed_client/features/settings/presentation/provider/settings_provider.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+
+import '../../features/settings/presentation/notifier/settings_notifier.dart';
 
 final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
   return appSettingsCache; // mevcut global singleton
 });
 
-final deviceModeProvider = FutureProvider.autoDispose<String?>((ref) async {
+// Cache değeri — bir kere okunur
+final _cachedDeviceModeProvider = FutureProvider<CabinType?>((ref) async {
+  final raw = await ref.read(appSettingsCacheProvider).getDeviceMode();
+  if (raw == null) return null;
+  return CabinType.values.firstWhereOrNull((t) => t.name == raw || 'CabinType.${t.name}' == raw);
+});
+
+// Efektif mod — debug override varsa onu kullan
+final deviceModeProvider = Provider<CabinType?>((ref) {
   if (kDebugMode) {
-    final debugMode = ref.watch(settingsNotifierProvider).debugCabinMode;
-    print(debugMode.name);
-    return switch (debugMode) {
-      DebugCabinMode.master => CabinType.master.name,
-      DebugCabinMode.mobile => CabinType.mobile.name,
-    };
+    final debugCabin = ref.watch(settingsNotifierProvider).debugCabin;
+    print('deviceModeProvider rebuild — debugCabin: ${debugCabin?.type}, id: ${debugCabin?.id}');
+    if (debugCabin != null) return debugCabin.type;
   }
-  final cache = ref.read(appSettingsCacheProvider);
-  return cache.getDeviceMode();
+  final result = ref.watch(_cachedDeviceModeProvider).valueOrNull;
+  print('deviceModeProvider — cache result: $result');
+  return result;
 });
 
 class AppSettingsCache {
@@ -66,7 +73,8 @@ class AppSettingsCache {
   /// Kayıtlı cihaz modunu döndürür. null → kurulum henüz yapılmamış.
   Future<String?> getDeviceMode() async {
     await _open();
-    return _box!.get(_keyDeviceMode) as String?;
+    var type = _box!.get(_keyDeviceMode) as String?;
+    return type;
   }
 
   Future<void> saveCurrentCabinId(int cabinId) async {

@@ -40,6 +40,8 @@ class PatientAssignmentNotifier extends Notifier<PatientAssignmentUiState> {
 
   void init(CabinVisualizerData data) {
     final slots = data.slots.whereType<MobileSlotVisual>().toList();
+    print('slots: $slots');
+    print('all slot types: ${data.slots.map((s) => s.runtimeType).toList()}');
     state = PatientAssignmentIdle(slots: slots);
   }
 

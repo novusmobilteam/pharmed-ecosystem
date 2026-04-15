@@ -61,6 +61,7 @@ final saveMobileCabinDesignUseCaseProvider = Provider<SaveMobileCabinDesignUseCa
   );
 });
 
+//FinishCabinSetupUseCase
 final finishCabinSetupUseCaseProvider = Provider<FinishCabinSetupUseCase>((ref) {
   return FinishCabinSetupUseCase(
     createCabin: ref.read(createCabinUseCaseProvider),
@@ -68,4 +69,9 @@ final finishCabinSetupUseCaseProvider = Provider<FinishCabinSetupUseCase>((ref) 
     appSettingsCache: ref.read(appSettingsCacheProvider),
     saveMobileCabinDesign: ref.read(saveMobileCabinDesignUseCaseProvider),
   );
+});
+
+// GetCabinsUseCase
+final getCabinsUseCaseProvider = Provider<GetCabinsUseCase>((ref) {
+  return GetCabinsUseCase(ref.read(cabinRepositoryProvider));
 });

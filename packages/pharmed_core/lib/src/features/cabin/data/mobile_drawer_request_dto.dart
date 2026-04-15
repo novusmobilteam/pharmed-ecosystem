@@ -23,12 +23,12 @@ class MobileDrawerRequestDTO extends Equatable {
 
   factory MobileDrawerRequestDTO.fromJson(Map<String, dynamic> json) {
     return MobileDrawerRequestDTO(
-      cabinId: json['cabinId'] as int,
-      orderNumber: json['orderNumber'] as int,
-      address: json['address'] as String,
-      details: (json['details'] as List)
-          .map((e) => MobileDrawerRowDTO.fromJson(Map<String, dynamic>.from(e as Map)))
-          .toList(),
+      cabinId: json['cabinId'],
+      orderNumber: json['orderNumber'],
+      address: json['address'],
+      details: json['details'] != null
+          ? (json['details'] as List).map((e) => MobileDrawerRowDTO.fromJson(e as Map<String, dynamic>)).toList()
+          : [],
     );
   }
 
@@ -47,7 +47,7 @@ class MobileDrawerRowDTO extends Equatable {
   const MobileDrawerRowDTO({required this.orderNumber, required this.columnsCount});
 
   factory MobileDrawerRowDTO.fromJson(Map<String, dynamic> json) {
-    return MobileDrawerRowDTO(orderNumber: json['orderNumber'] as int, columnsCount: json['columnsCount'] as int);
+    return MobileDrawerRowDTO(orderNumber: json['orderNumber'], columnsCount: json['columnsCount']);
   }
 
   Map<String, dynamic> toJson() => {'orderNumber': orderNumber, 'columnsCount': columnsCount};

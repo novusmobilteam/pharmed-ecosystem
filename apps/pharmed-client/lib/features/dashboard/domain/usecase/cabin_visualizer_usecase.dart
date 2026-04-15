@@ -2,6 +2,18 @@ import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+// lib/features/cabin/domain/usecase/get_cabin_visualizer_data_use_case.dart
+//
+// [SWREQ-UI-DASH-003]
+// Kabin görselleştirme verisi use case.
+//
+// debugCabin != null ise cache'e dokunulmadan bu kabinin
+// id ve type'ı kullanılır. Cache değişmez.
+//
+// Sınıf: Class B
+
+import 'package:flutter/foundation.dart';
+
 class GetCabinVisualizerDataUseCase {
   const GetCabinVisualizerDataUseCase(this._cabinRepository, this._stockRepository, this._settingsCache);
 
@@ -9,31 +21,47 @@ class GetCabinVisualizerDataUseCase {
   final ICabinStockRepository _stockRepository;
   final AppSettingsCache _settingsCache;
 
-  Future<RepoResult<CabinVisualizerData>> call({required String? deviceMode}) async {
-    // 1. Aktif cabinId
-    final cabinId = await _settingsCache.getCurrentCabinId();
+  /// [debugCabin] sadece kDebugMode'da geçilir.
+  /// null → normal akış (cache'deki cabinId + deviceMode).
+  /// non-null → debugCabin.id ve debugCabin.type kullanılır.
+  Future<RepoResult<CabinVisualizerData>> call({required CabinType? deviceMode, Cabin? debugCabin}) async {
+    // ── Effective id ve mode ──────────────────────────────────
+    final int? cabinId;
+    final CabinType? effectiveMode;
 
-    MedLogger.info(
-      unit: 'SW-UNIT-UI',
-      swreq: 'SWREQ-UI-DASH-003',
-      message: 'GetCabinVisualizerData çağrıldı',
-      context: {'cabinId': cabinId, 'deviceMode': deviceMode},
-    );
+    if (kDebugMode && debugCabin != null) {
+      cabinId = debugCabin.id;
+      effectiveMode = debugCabin.type;
+      MedLogger.info(
+        unit: 'SW-UNIT-UI',
+        swreq: 'SWREQ-UI-DASH-003',
+        message: '[DEBUG] Kabin override aktif',
+        context: {'cabinId': cabinId, 'type': effectiveMode},
+      );
+    } else {
+      cabinId = await _settingsCache.getCurrentCabinId();
+      effectiveMode = deviceMode;
+      MedLogger.info(
+        unit: 'SW-UNIT-UI',
+        swreq: 'SWREQ-UI-DASH-003',
+        message: 'GetCabinVisualizerData çağrıldı',
+        context: {'cabinId': cabinId, 'deviceMode': deviceMode},
+      );
+    }
 
     if (cabinId == null) {
       return RepoFailure(ServiceException(message: 'Aktif kabin bulunamadı', statusCode: 404));
     }
 
-    // 2. Mobil kabin akışı
-    if (deviceMode == CabinType.mobile.name) {
+    if (effectiveMode == CabinType.mobile) {
       return _buildMobileVisualizer(cabinId);
     }
 
-    // 3. Standart kabin akışı
     return _buildStandardVisualizer(cabinId);
   }
 
-  // Mobil kabin
+  // ── Mobil kabin akışı ─────────────────────────────────────────
+
   Future<RepoResult<CabinVisualizerData>> _buildMobileVisualizer(int cabinId) async {
     final result = await _cabinRepository.getMobileCabinSlots(cabinId);
 
@@ -63,7 +91,8 @@ class GetCabinVisualizerDataUseCase {
     return isStale ? RepoStale(data, DateTime.now()) : RepoSuccess(data);
   }
 
-  // Standart kabin
+  // ── Standart kabin akışı ──────────────────────────────────────
+
   Future<RepoResult<CabinVisualizerData>> _buildStandardVisualizer(int cabinId) async {
     final (slotResult, stockResult) = await (
       _cabinRepository.getCabinSlots(cabinId),
@@ -108,7 +137,8 @@ class GetCabinVisualizerDataUseCase {
     return isStale ? RepoStale(data, DateTime.now()) : RepoSuccess(data);
   }
 
-  // Standart kabin slot builder
+  // ── Slot builder ──────────────────────────────────────────────
+
   List<DrawerSlotVisual> _buildSlots(List<DrawerGroup> groups, List<CabinStock> stocks) {
     final stocksByUnitId = <int, List<CabinStock>>{};
     for (final stock in stocks) {
@@ -135,7 +165,7 @@ class GetCabinVisualizerDataUseCase {
       final deviceNo = config?.deviceTypeNo ?? 0;
       final isKubik = type?.isKubik ?? false;
       final isSerum = deviceNo == 250;
-      final colCount = type?.compartmentCount == 20 ? 4 : 4;
+      const colCount = 4;
 
       if (isSerum) {
         final allStocks = group.units.expand((u) => stocksByUnitId[u.id] ?? <CabinStock>[]).toList();

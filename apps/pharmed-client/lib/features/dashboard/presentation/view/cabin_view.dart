@@ -17,7 +17,6 @@ class CabinView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //return CabinSummaryView.fromData(data: cabin, powerStatus: LedStatus.on, alertStatus: LedStatus.off);
     return Container(
       decoration: BoxDecoration(
         color: MedColors.surface,
@@ -27,14 +26,7 @@ class CabinView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _SectionHeader(
-            title: 'KABİN DURUMU',
-            dotColor: MedColors.blue,
-            // badge: MedBadge(
-            //   label: cabin.isLocked ? 'Kilitli' : 'Açık',
-            //   variant: cabin.isLocked ? MedBadgeVariant.green : MedBadgeVariant.amber,
-            // ),
-          ),
+          _SectionHeader(title: 'KABİN DURUMU', dotColor: MedColors.blue),
           Padding(
             padding: const EdgeInsets.all(14),
             child: Column(

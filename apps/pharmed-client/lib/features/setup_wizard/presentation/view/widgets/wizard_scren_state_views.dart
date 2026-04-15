@@ -45,7 +45,7 @@ class WizardActiveView extends ConsumerWidget {
     switch (state.currentStep) {
       case 1:
         return Step1CabinetType(
-          selectedType: draft.cabinetType,
+          selectedType: draft.cabinType,
           onTypeSelected: notifier.selectCabinetType,
           onNext: () => draft.step1Complete ? notifier.nextStep() : null,
         );
@@ -66,7 +66,7 @@ class WizardActiveView extends ConsumerWidget {
         );
       case 3:
         return Step3StationScope(
-          cabinetType: draft.cabinetType!,
+          cabinetType: draft.cabinType!,
           currentScope: draft.serviceScope,
           stationsLoadState: state.stationsLoadState,
           stations: state.stations,
@@ -81,7 +81,7 @@ class WizardActiveView extends ConsumerWidget {
         );
       case 4:
         return Step4DrawerConfig(
-          cabinetType: draft.cabinetType!,
+          cabinetType: draft.cabinType!,
           scanState: state.scanState,
           mobileLayout: draft.mobileLayout,
           onScanDevice: notifier.scanDevice,

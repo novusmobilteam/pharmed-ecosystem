@@ -23,7 +23,7 @@ class DashboardContentFactory {
         'dashboard' => _buildMainDashboard(state, notifier, isLoggedIn),
 
         // Diğer Modüller
-        'cabinDrawerStock' => Center(child: AssignmentView(data: cabinData)),
+        'cabinDrawerStock' => Center(child: AssignmentView()),
         'drawer-malfunction' => Center(child: FaultView(data: cabinData)),
 
         // Fallback

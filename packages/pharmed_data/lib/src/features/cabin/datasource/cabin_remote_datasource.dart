@@ -12,7 +12,7 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<List<CabinDTO>>> getCabins() async {
     final res = await fetchRequest<List<CabinDTO>>(
-      path: '$_base/currentStation',
+      path: '$_base',
       parser: BaseRemoteDataSource.listParser(CabinDTO.fromJson),
       successLog: 'Kabinler getirildi',
       emptyLog: 'Kabin bulunamadı',

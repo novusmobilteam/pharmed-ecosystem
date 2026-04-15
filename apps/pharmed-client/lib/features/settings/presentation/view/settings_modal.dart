@@ -8,11 +8,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/features/settings/domain/model/settings_state.dart';
-import 'package:pharmed_client/features/settings/presentation/provider/settings_provider.dart';
+import 'package:pharmed_client/features/settings/presentation/state/settings_state.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-part 'debug_settings_view.dart';
+import '../notifier/settings_notifier.dart';
+import 'debug_settings_view.dart';
+
 part 'settings_sidebar.dart';
 
 void showSettingsModal(BuildContext context) {

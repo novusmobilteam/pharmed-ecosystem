@@ -106,7 +106,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
     final stationId = station.id;
     if (stationId == null) return;
 
-    final isMobile = current.draft.cabinetType == CabinType.mobile;
+    final isMobile = current.draft.cabinType == CabinType.mobile;
 
     // Standart kabin: direkt scope kaydet, servis yüklemeye gerek yok
     if (!isMobile) {
@@ -358,7 +358,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
 
     final result = await ref.read(scanCabinUseCaseProvider)(
       portName: port,
-      cabinType: current.draft.cabinetType ?? CabinType.master,
+      cabinType: current.draft.cabinType ?? CabinType.master,
       onStatusChanged: onStatus,
     );
 
@@ -458,8 +458,6 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
       state = current.copyWith(currentStep: current.currentStep - 1);
     }
   }
-
-  // ── Tamamlama ────────────────────────────────────────────────────
 
   /// [SWREQ-SETUP-UC-001]
   Future<void> finish() async {

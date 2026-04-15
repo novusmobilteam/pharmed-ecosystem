@@ -6,6 +6,7 @@
 
 import 'dart:async';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
@@ -14,6 +15,7 @@ import 'package:pharmed_client/features/dashboard/domain/usecase/cabin_visualize
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/providers/providers.dart';
+import '../../../settings/presentation/notifier/settings_notifier.dart';
 import '../../domain/model/dasboard_data.dart';
 import '../state/dashboard_ui_state.dart';
 
@@ -33,6 +35,13 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
   @override
   DashboardUiState build() {
     ref.onDispose(() => _timer?.cancel());
+    if (kDebugMode) {
+      ref.listen(settingsNotifierProvider, (prev, next) {
+        if (prev?.debugCabin?.id != next.debugCabin?.id) {
+          _load(forceRefresh: true);
+        }
+      });
+    }
     return const DashboardLoading();
   }
 
@@ -104,13 +113,16 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
       state = const DashboardLoading();
     }
 
-    final deviceMode = await ref.read(deviceModeProvider.future);
+    final deviceMode = ref.read(deviceModeProvider);
 
     final results = await Future.wait([
       _getCriticalStocks.call(true, forceRefresh: forceRefresh),
       _getExpiringMaterials.call(forceRefresh: forceRefresh),
       _getUpcomingTreatments.call(forceRefresh: forceRefresh),
-      _getCabinVisualizer.call(deviceMode: deviceMode),
+      _getCabinVisualizer.call(
+        deviceMode: deviceMode,
+        debugCabin: kDebugMode ? ref.read(settingsNotifierProvider).debugCabin : null,
+      ),
     ]);
 
     final criticalResult = results[0] as RepoResult<List<CabinStock>>;

@@ -37,3 +37,9 @@ enum CabinType {
     }
   }
 }
+
+extension CabinTypeExt on CabinType {
+  bool get isMobile => this == CabinType.mobile;
+
+  bool get isVisualizable => this == CabinType.master || this == CabinType.mobile;
+}

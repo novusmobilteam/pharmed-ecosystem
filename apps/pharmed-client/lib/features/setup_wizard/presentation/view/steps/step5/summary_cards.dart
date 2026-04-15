@@ -7,7 +7,7 @@ class CabinInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final info = draft.basicInfo!;
-    final isMobile = draft.cabinetType == CabinType.mobile;
+    final isMobile = draft.cabinType == CabinType.mobile;
 
     return SummaryCard(
       title: 'KABİN BİLGİLERİ',
@@ -65,7 +65,7 @@ class DrawerStructureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = draft.cabinetType == CabinType.mobile;
+    final isMobile = draft.cabinType == CabinType.mobile;
 
     if (isMobile) {
       final layout = draft.mobileLayout!;
@@ -107,7 +107,7 @@ class CabinPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = draft.cabinetType == CabinType.mobile;
+    final isMobile = draft.cabinType == CabinType.mobile;
 
     return SummaryCard(
       title: 'KABİN ÖNİZLEMESİ',

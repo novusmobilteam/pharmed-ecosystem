@@ -37,8 +37,6 @@ class DrugAssignmentView extends ConsumerStatefulWidget {
 }
 
 class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
-  // ── Lifecycle ────────────────────────────────────────────────────
-
   @override
   void initState() {
     super.initState();
@@ -61,8 +59,6 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     });
   }
 
-  // ── İlaç seçim dialogu ───────────────────────────────────────────
-
   Future<void> _openDrugDialog() async {
     final getDrugs = ref.read(getDrugsUseCaseProvider);
 
@@ -79,8 +75,6 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     }
   }
 
-  // ── Hata snackbar ────────────────────────────────────────────────
-
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -92,8 +86,6 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
       ),
     );
   }
-
-  // ── Build ────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +160,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
 
           // ── Sağ panel ────────────────────────────────────────────
           SizedBox(
-            width: 280,
+            width: 320,
             child: OperationPanelBase(
               mode: CabinOperationMode.assign,
               child: DrugAssignmentPanel(

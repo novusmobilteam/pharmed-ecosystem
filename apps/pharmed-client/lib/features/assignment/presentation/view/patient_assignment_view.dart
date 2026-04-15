@@ -150,7 +150,7 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
 
           // ── Sağ panel ─────────────────────────────────────────
           SizedBox(
-            width: 280,
+            width: 320,
             child: OperationPanelBase(
               mode: CabinOperationMode.assign,
               child: PatientAssignmentPanel(
