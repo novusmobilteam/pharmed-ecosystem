@@ -18,7 +18,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/providers/providers.dart';
-import '../../../../shared/widgets.dart';
+import '../../../../widgets/widgets.dart';
 import '../notifier/patient_assignment_notifier.dart';
 import '../state/patient_assignment_ui_state.dart';
 
@@ -32,8 +32,6 @@ class PatientAssignmentView extends ConsumerStatefulWidget {
 }
 
 class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
-  // ── Lifecycle ────────────────────────────────────────────────
-
   @override
   void initState() {
     super.initState();
@@ -55,8 +53,6 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
       ref.read(patientAssignmentNotifierProvider.notifier).init(data);
     });
   }
-
-  // ── Yatış seçim dialogu ──────────────────────────────────────
 
   Future<void> _openHospitalizationDialog() async {
     final getHospitalizations = ref.read(getHospitalizationsUseCaseProvider);
@@ -80,22 +76,6 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
     }
   }
 
-  // ── Hata snackbar ────────────────────────────────────────────
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: MedColors.red,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
-  }
-
-  // ── Build ────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(patientAssignmentNotifierProvider);
@@ -103,13 +83,13 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
 
     ref.listen(patientAssignmentNotifierProvider, (_, next) {
       if (next is PatientAssignmentError) {
-        _showError(next.message);
+        MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       }
     });
 
     if (widget.data == null || state is PatientAssignmentUninitialized) {
-      return const Center(child: Text('Empty'));
+      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
     if (state is PatientAssignmentLoading) {
@@ -121,52 +101,30 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
     final selectedSlot = _extractSelectedSlot(state);
     final selectedCell = _extractSelectedCell(state);
 
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Row(
-        spacing: 16,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Sol panel ─────────────────────────────────────────
-          SizedBox(
-            width: 260,
-            child: MobileCabinOverviewPanel(
-              slots: slots,
-              selectedSlotId: selectedSlotId,
-              mode: CabinOperationMode.assign,
-              onSlotTap: notifier.onSlotTap,
-            ),
-          ),
-
-          // ── Orta panel ────────────────────────────────────────
-          Expanded(
-            child: MobileCabinDetailPanel(
-              mode: CabinOperationMode.assign,
-              slot: selectedSlot,
-              selectedCell: selectedCell,
-              onCellTap: notifier.onCellTap,
-            ),
-          ),
-
-          // ── Sağ panel ─────────────────────────────────────────
-          SizedBox(
-            width: 320,
-            child: OperationPanelBase(
-              mode: CabinOperationMode.assign,
-              child: PatientAssignmentPanel(
-                state: state,
-                onSelectHospitalization: _openHospitalizationDialog,
-                onSave: notifier.saveAssignment,
-                onDelete: notifier.deleteAssignment,
-              ),
-            ),
-          ),
-        ],
+    return CabinOperationScaffold(
+      leftPanel: MobileCabinOverviewPanel(
+        slots: slots,
+        selectedSlotId: selectedSlotId,
+        mode: CabinOperationMode.assign,
+        onSlotTap: notifier.onSlotTap,
+      ),
+      centerPanel: MobileCabinDetailPanel(
+        mode: CabinOperationMode.assign,
+        slot: selectedSlot,
+        selectedCell: selectedCell,
+        onCellTap: notifier.onCellTap,
+      ),
+      rightPanel: OperationPanelBase(
+        mode: CabinOperationMode.assign,
+        child: PatientAssignmentPanel(
+          state: state,
+          onSelectHospitalization: _openHospitalizationDialog,
+          onSave: notifier.saveAssignment,
+          onDelete: notifier.deleteAssignment,
+        ),
       ),
     );
   }
-
-  // ── State extract yardımcıları ───────────────────────────────
 
   List<MobileSlotVisual> _extractSlots(PatientAssignmentUiState s) => switch (s) {
     PatientAssignmentIdle(:final slots) => slots,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// CabinVisualizer
+// CabinSummaryView
 // [SWREQ-UI-001] [HAZ-003]
 // Kabinin fiziksel görselini LED + çekmece grid + legend ile gösterir.
 // Kritik/düşük stok DrawerCell renk sistemiyle ayrıştırılır.
@@ -21,18 +21,11 @@ final class _StatusColors {
   };
 }
 
-class CabinVisualizer extends StatelessWidget {
-  const CabinVisualizer({
-    super.key,
-    required this.cabinId,
-    required this.powerStatus,
-    required this.alertStatus,
-    required this.slots,
-  });
+class CabinSummaryView extends StatelessWidget {
+  const CabinSummaryView({super.key, required this.cabinId, required this.slots});
 
   final String cabinId;
-  final LedStatus powerStatus;
-  final LedStatus alertStatus;
+
   final List<DrawerSlotVisual> slots;
 
   @override
@@ -190,6 +183,7 @@ class _UnitDoseCell extends StatelessWidget {
 
 class _SerumSlotView extends StatelessWidget {
   const _SerumSlotView({required this.slot});
+
   final SerumSlotVisual slot;
 
   static const _unitHeight = 24.0;
@@ -223,7 +217,7 @@ class _MobileSlotView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _StatusColors.of(DrawerStatus.empty);
+    final colors = _StatusColors.of(DrawerStatus.full);
     return Container(
       height: 24,
       decoration: BoxDecoration(

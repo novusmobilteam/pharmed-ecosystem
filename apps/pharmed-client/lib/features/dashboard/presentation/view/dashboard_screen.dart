@@ -9,7 +9,7 @@ import 'package:pharmed_client/features/fault/presentation/view/fault_view.dart'
 import 'package:pharmed_client/features/settings/presentation/view/settings_modal.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import '../../../../shared/widgets.dart';
+import '../../../../widgets/widgets.dart';
 import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../auth/presentation/state/auth_state.dart';
 import '../../domain/model/dasboard_data.dart';

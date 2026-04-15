@@ -12,9 +12,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-
-import '../../../../core/providers/providers.dart';
-import '../state/fault_ui_state.dart';
+import '../../fault.dart';
 
 final faultNotifierProvider = NotifierProvider<FaultNotifier, FaultUiState>(FaultNotifier.new);
 
@@ -40,8 +38,6 @@ class FaultNotifier extends Notifier<FaultUiState> {
     );
   }
 
-  // ── Çekmece seçimi ───────────────────────────────────────────────
-
   void onDrawerTap(DrawerGroup group) {
     final current = state;
     final groups = _extractGroups(current);
@@ -62,8 +58,6 @@ class FaultNotifier extends Notifier<FaultUiState> {
 
     state = FaultDrawerSelected(groups: groups, faults: faults, cabinId: cabinId, selectedGroup: group);
   }
-
-  // ── Göz seçimi ───────────────────────────────────────────────────
 
   void onCellTap(DrawerUnit unit, int? stepNo) {
     final current = state;
@@ -107,8 +101,6 @@ class FaultNotifier extends Notifier<FaultUiState> {
     );
   }
 
-  // ── Form ─────────────────────────────────────────────────────────
-
   /// Segmented button — sadece yeni kayıt modunda çalışır.
   void onStatusChanged(int index) {
     final current = state;
@@ -146,8 +138,6 @@ class FaultNotifier extends Notifier<FaultUiState> {
       description: value.isEmpty ? null : value,
     );
   }
-
-  // ── Submit ───────────────────────────────────────────────────────
 
   Future<void> submit() async {
     final current = state;
@@ -206,15 +196,11 @@ class FaultNotifier extends Notifier<FaultUiState> {
     );
   }
 
-  // ── Hata sonrası geri dön ────────────────────────────────────────
-
   void dismissError() {
     final current = state;
     if (current is! FaultError) return;
     state = current.previous;
   }
-
-  // ── Refresh ──────────────────────────────────────────────────────
 
   Future<void> _refreshFaults({
     required List<DrawerGroup> groups,
@@ -247,8 +233,6 @@ class FaultNotifier extends Notifier<FaultUiState> {
       ),
     );
   }
-
-  // ── Yardımcılar ──────────────────────────────────────────────────
 
   Fault? _findActiveFault({required int? slotId, required List<Fault> faults}) {
     if (slotId == null) return null;

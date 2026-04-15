@@ -1,5 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
+import 'clear_fault_record_usecase.dart';
+
 class CreateFaultRecordUseCase {
   final IFaultRepository _repository;
 

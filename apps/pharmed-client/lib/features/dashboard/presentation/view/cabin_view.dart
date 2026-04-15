@@ -31,7 +31,7 @@ class CabinView extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             child: Column(
               children: [
-                CabinVisualizer(powerStatus: LedStatus.on, alertStatus: LedStatus.on, slots: cabin.slots, cabinId: ''),
+                CabinSummaryView(slots: cabin.slots, cabinId: ''),
                 const SizedBox(height: 12),
                 // Kabin durum satırı
                 Row(

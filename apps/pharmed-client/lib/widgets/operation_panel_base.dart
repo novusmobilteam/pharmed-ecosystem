@@ -1,5 +1,3 @@
-// lib/features/cabin/presentation/widgets/operation_panel_base.dart
-//
 // [SWREQ-UI-CAB-004]
 // Kabin işlemleri sağ panelinin temel iskeleti.
 //
@@ -21,11 +19,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../core/enums/cabin_operation_mode.dart';
-
-// ─────────────────────────────────────────────────────────────────
-// OperationPanelBase
-// ─────────────────────────────────────────────────────────────────
+import '../core/enums/cabin_operation_mode.dart';
 
 /// Sağ panel iskeleti — header sabit, [child] moda göre değişir.
 ///
@@ -65,10 +59,6 @@ class OperationPanelBase extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Header
-// ─────────────────────────────────────────────────────────────────
 
 class _OperationPanelHeader extends StatelessWidget {
   const _OperationPanelHeader({required this.config});

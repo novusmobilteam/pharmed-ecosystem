@@ -18,9 +18,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../shared/widgets.dart';
-import '../../../../shared/widgets/empty_state_widget.dart';
-
+import '../../../../widgets/widgets.dart';
+import '../../../../widgets/empty_state_widget.dart';
 import '../../../../core/enums/cabin_operation_mode.dart';
 import '../notifier/fault_notifier.dart';
 import '../state/fault_ui_state.dart';
@@ -38,20 +37,18 @@ class FaultView extends ConsumerStatefulWidget {
 class _FaultViewState extends ConsumerState<FaultView> {
   late final TextEditingController _descriptionController;
 
-  // ── Lifecycle ────────────────────────────────────────────────────
-
   @override
   void initState() {
     super.initState();
     _descriptionController = TextEditingController();
-    _scheduleInit(widget.data);
+    _initialize(widget.data);
   }
 
   @override
   void didUpdateWidget(FaultView old) {
     super.didUpdateWidget(old);
     if (widget.data != old.data) {
-      _scheduleInit(widget.data);
+      _initialize(widget.data);
     }
   }
 
@@ -61,7 +58,7 @@ class _FaultViewState extends ConsumerState<FaultView> {
     super.dispose();
   }
 
-  void _scheduleInit(CabinVisualizerData? data) {
+  void _initialize(CabinVisualizerData? data) {
     if (data == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -69,8 +66,7 @@ class _FaultViewState extends ConsumerState<FaultView> {
     });
   }
 
-  // ── Göz değişiminde controller temizle ──────────────────────────
-
+  // Göz değişiminde controller temizle
   void _syncDescriptionController(FaultUiState state) {
     if (state is FaultCellSelected) {
       final newText = state.description ?? '';
@@ -85,8 +81,6 @@ class _FaultViewState extends ConsumerState<FaultView> {
       }
     }
   }
-
-  // ── Build ────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +118,7 @@ class _FaultViewState extends ConsumerState<FaultView> {
     final selectedSlotId = _extractSelectedSlotId(state);
     final selectedGroup = _extractSelectedGroup(state);
     final selectedUnitId = _extractSelectedUnitId(state);
-    //final faults = _extractFaults(state);
+    final faults = _extractFaults(state);
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -132,10 +126,10 @@ class _FaultViewState extends ConsumerState<FaultView> {
         spacing: 16,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Sol panel ────────────────────────────────────────────
+          // Sol panel
           SizedBox(
             width: 260,
-            child: CabinOverviewPanel(
+            child: MasterCabinOverviewPanel(
               groups: groups,
               selectedSlotId: selectedSlotId,
               mode: CabinOperationMode.fault,
@@ -143,11 +137,12 @@ class _FaultViewState extends ConsumerState<FaultView> {
             ),
           ),
 
-          // ── Orta panel ───────────────────────────────────────────
+          // Orta panel
           Expanded(
             child: DrawerDetailPanel(
               mode: CabinOperationMode.fault,
               group: selectedGroup,
+              faults: faults,
               stocks: const [],
               assignments: const [],
               selectedUnitId: selectedUnitId,
@@ -156,9 +151,9 @@ class _FaultViewState extends ConsumerState<FaultView> {
             ),
           ),
 
-          // ── Sağ panel ────────────────────────────────────────────
+          // Sağ panel
           SizedBox(
-            width: 280,
+            width: 320,
             child: OperationPanelBase(
               mode: CabinOperationMode.fault,
               child: FaultPanel(
@@ -166,7 +161,6 @@ class _FaultViewState extends ConsumerState<FaultView> {
                 descriptionController: _descriptionController,
                 onStatusChanged: notifier.onStatusChanged,
                 onSubmit: () {
-                  // Açıklamayı notifier'a yaz, sonra submit
                   notifier.onDescriptionChanged(_descriptionController.text);
                   notifier.submit();
                 },
@@ -177,8 +171,6 @@ class _FaultViewState extends ConsumerState<FaultView> {
       ),
     );
   }
-
-  // ── Extract yardımcıları ─────────────────────────────────────────
 
   List<DrawerGroup> _extractGroups(FaultUiState s) => switch (s) {
     FaultIdle(:final groups) => groups,
@@ -208,11 +200,11 @@ class _FaultViewState extends ConsumerState<FaultView> {
     _ => null,
   };
 
-  // List<Fault> _extractFaults(FaultUiState s) => switch (s) {
-  //   FaultIdle(:final faults) => faults,
-  //   FaultDrawerSelected(:final faults) => faults,
-  //   FaultCellSelected(:final faults) => faults,
-  //   FaultSaving(:final faults) => faults,
-  //   _ => const [],
-  // };
+  List<Fault> _extractFaults(FaultUiState s) => switch (s) {
+    FaultIdle(:final faults) => faults,
+    FaultDrawerSelected(:final faults) => faults,
+    FaultCellSelected(:final faults) => faults,
+    FaultSaving(:final faults) => faults,
+    _ => const [],
+  };
 }

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// ─────────────────────────────────────────────────────────────────
 // CabinStatsGrid
 // [SWREQ-UI-002] [HAZ-007]
 // Kabin widget'ındaki 4'lü istatistik grid'i.
 // isStale → StatBox değerleri soluklaşır, veri güvenilir değil sinyali.
 // Sınıf: Class B
-// ─────────────────────────────────────────────────────────────────
 
 class CabinStatsGrid extends StatelessWidget {
   const CabinStatsGrid({

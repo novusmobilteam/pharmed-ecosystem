@@ -18,9 +18,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/assignment/presentation/view/drug_assignment_panel.dart';
 import 'package:pharmed_client/core/enums/cabin_operation_mode.dart';
-import 'package:pharmed_client/shared/widgets/cabin_visuals/cabin_overview_panel.dart';
-import 'package:pharmed_client/shared/widgets/cabin_visuals/drawer_detail_panel.dart';
-import 'package:pharmed_client/shared/widgets/operation_panel_base.dart';
+import 'package:pharmed_client/widgets/cabin_operation_scaffold.dart';
+import 'package:pharmed_client/widgets/cabin_widgets/overview_panel/overview_panel.dart';
+import 'package:pharmed_client/widgets/drawer_widgets/drawer_detail_panel.dart';
+import 'package:pharmed_client/widgets/empty_state_widget.dart';
+import 'package:pharmed_client/widgets/operation_panel_base.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/providers/providers.dart';
@@ -75,18 +77,6 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     }
   }
 
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: MedColors.red,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(drugAssignmentNotifierProvider);
@@ -95,14 +85,13 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     // Hata state'ini dinle — snackbar göster, önceki state'e dön
     ref.listen(drugAssignmentNotifierProvider, (_, next) {
       if (next is DrugAssignmentError) {
-        _showError(next.message);
+        MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       }
     });
 
     if (widget.data == null || state is DrugAssignmentUninitialized) {
-      // return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
-      return Center(child: Text('Empty'));
+      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
     // Yükleniyor — atamalar çekiliyor
@@ -115,71 +104,49 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     final selectedGroup = _extractSelectedGroup(state);
     final selectedUnitId = _extractSelectedUnitId(state);
 
-    int? extractSelectedStepNo(DrugAssignmentUiState s) => switch (s) {
-      DrugAssignmentCellSelected(:final selectedStepNo) => selectedStepNo,
-      _ => null,
-    };
-
-    List<CabinAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
-      DrugAssignmentIdle(:final assignments) => assignments,
-      DrugAssignmentDrawerSelected(:final assignments) => assignments,
-      DrugAssignmentCellSelected(:final assignments) => assignments,
-      DrugAssignmentSaving(:final assignments) => assignments,
-      _ => const [],
-    };
-
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Row(
-        spacing: 16,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Sol panel ────────────────────────────────────────────
-          SizedBox(
-            width: 260,
-            child: CabinOverviewPanel(
-              groups: groups,
-              selectedSlotId: selectedSlotId,
-              mode: CabinOperationMode.assign,
-              onDrawerTap: notifier.onDrawerTap,
-            ),
-          ),
-
-          // ── Orta panel ───────────────────────────────────────────
-          Expanded(
-            child: DrawerDetailPanel(
-              mode: CabinOperationMode.assign,
-              group: selectedGroup,
-              assignments: _extractAssignments(state),
-              stocks: const [], // assign modunda stok rengi yok
-              selectedUnitId: selectedUnitId,
-              selectedStepNo: extractSelectedStepNo(state),
-              onCellTap: notifier.onCellTap,
-            ),
-          ),
-
-          // ── Sağ panel ────────────────────────────────────────────
-          SizedBox(
-            width: 320,
-            child: OperationPanelBase(
-              mode: CabinOperationMode.assign,
-              child: DrugAssignmentPanel(
-                state: state,
-                onSelectDrug: _openDrugDialog,
-                onMinChanged: notifier.onMinQtyChanged,
-                onMaxChanged: notifier.onMaxQtyChanged,
-                onCriticalChanged: notifier.onCriticalQtyChanged,
-                onSave: notifier.saveAssignment,
-                onDelete: notifier.deleteAssignment,
-              ),
-            ),
-          ),
-        ],
+    return CabinOperationScaffold(
+      leftPanel: MasterCabinOverviewPanel(
+        groups: groups,
+        selectedSlotId: selectedSlotId,
+        mode: CabinOperationMode.assign,
+        onDrawerTap: notifier.onDrawerTap,
+      ),
+      centerPanel: DrawerDetailPanel(
+        mode: CabinOperationMode.assign,
+        group: selectedGroup,
+        assignments: _extractAssignments(state),
+        stocks: const [], // assign modunda stok rengi yok
+        selectedUnitId: selectedUnitId,
+        selectedStepNo: extractSelectedStepNo(state),
+        onCellTap: notifier.onCellTap,
+      ),
+      rightPanel: OperationPanelBase(
+        mode: CabinOperationMode.assign,
+        child: DrugAssignmentPanel(
+          state: state,
+          onSelectDrug: _openDrugDialog,
+          onMinChanged: notifier.onMinQtyChanged,
+          onMaxChanged: notifier.onMaxQtyChanged,
+          onCriticalChanged: notifier.onCriticalQtyChanged,
+          onSave: notifier.saveAssignment,
+          onDelete: notifier.deleteAssignment,
+        ),
       ),
     );
   }
 
-  // ── State extract yardımcıları ───────────────────────────────────
+  int? extractSelectedStepNo(DrugAssignmentUiState s) => switch (s) {
+    DrugAssignmentCellSelected(:final selectedStepNo) => selectedStepNo,
+    _ => null,
+  };
+
+  List<CabinAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
+    DrugAssignmentIdle(:final assignments) => assignments,
+    DrugAssignmentDrawerSelected(:final assignments) => assignments,
+    DrugAssignmentCellSelected(:final assignments) => assignments,
+    DrugAssignmentSaving(:final assignments) => assignments,
+    _ => const [],
+  };
 
   List<DrawerGroup> _extractGroups(DrugAssignmentUiState s) => switch (s) {
     DrugAssignmentIdle(:final groups) => groups,

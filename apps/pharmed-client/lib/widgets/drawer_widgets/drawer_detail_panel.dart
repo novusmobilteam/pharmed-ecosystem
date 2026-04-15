@@ -33,6 +33,7 @@ class DrawerDetailPanel extends StatelessWidget {
     this.group,
     this.stocks = const [],
     this.assignments = const [],
+    this.faults = const [],
     this.selectedUnitId,
     this.selectedStepNo,
     this.onCellTap,
@@ -42,6 +43,7 @@ class DrawerDetailPanel extends StatelessWidget {
   final DrawerGroup? group;
   final List<CabinStock> stocks;
   final List<CabinAssignment> assignments;
+  final List<Fault> faults;
   final int? selectedUnitId;
   final int? selectedStepNo;
 
@@ -73,6 +75,7 @@ class DrawerDetailPanel extends StatelessWidget {
               child: _DetailBody(
                 group: g,
                 mode: mode,
+                faults: faults,
                 stocks: stocks,
                 assignments: assignments,
                 selectedUnitId: selectedUnitId,
@@ -138,6 +141,7 @@ class _DetailHeader extends StatelessWidget {
 
 class _ModeBanner extends StatelessWidget {
   const _ModeBanner({required this.mode});
+
   final CabinOperationMode mode;
 
   @override
@@ -198,6 +202,7 @@ class _DetailBody extends StatelessWidget {
     required this.group,
     required this.mode,
     required this.stocks,
+    required this.faults,
     required this.assignments,
     this.selectedUnitId,
     this.selectedStepNo,
@@ -208,6 +213,7 @@ class _DetailBody extends StatelessWidget {
   final CabinOperationMode mode;
   final List<CabinStock> stocks;
   final List<CabinAssignment> assignments;
+  final List<Fault> faults;
   final int? selectedUnitId;
   final int? selectedStepNo;
   final void Function(DrawerUnit unit, int? stepNo)? onCellTap;
@@ -243,6 +249,16 @@ class _DetailBody extends StatelessWidget {
     return map;
   }
 
+  /// Arıza lookup: unitId → Fault
+  Map<int, Fault> get _faultByUnitId {
+    final map = <int, Fault>{};
+    for (final a in faults) {
+      final unitId = a.slotId;
+      if (unitId != null) map[unitId] = a;
+    }
+    return map;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (group.isSerum) return const _SerumDetailView();
@@ -251,6 +267,7 @@ class _DetailBody extends StatelessWidget {
       return _KubicDetailView(
         group: group,
         mode: mode,
+        faultByUnitId: _faultByUnitId,
         stockByUnitId: _stockByUnitId,
         assignmentByUnitId: _assignmentByUnitId,
         selectedUnitId: selectedUnitId,
@@ -263,6 +280,7 @@ class _DetailBody extends StatelessWidget {
       mode: mode,
       stockByUnitAndStep: _stockByUnitAndStep,
       assignmentByUnitId: _assignmentByUnitId,
+      faultByUnitId: _faultByUnitId,
       selectedUnitId: selectedUnitId,
       selectedStepNo: selectedStepNo,
       onCellTap: onCellTap,
@@ -276,6 +294,7 @@ class _KubicDetailView extends StatelessWidget {
     required this.mode,
     required this.stockByUnitId,
     required this.assignmentByUnitId,
+    required this.faultByUnitId,
     this.selectedUnitId,
     this.onCellTap,
   });
@@ -284,6 +303,7 @@ class _KubicDetailView extends StatelessWidget {
   final CabinOperationMode mode;
   final Map<int, CabinStock> stockByUnitId;
   final Map<int, CabinAssignment> assignmentByUnitId;
+  final Map<int, Fault> faultByUnitId;
   final int? selectedUnitId;
   final void Function(DrawerUnit unit)? onCellTap;
 
@@ -316,10 +336,12 @@ class _KubicDetailView extends StatelessWidget {
             itemBuilder: (context, i) {
               final unit = units[i];
               final stock = stockByUnitId[unit.id];
+              final fault = faultByUnitId[unit.id];
               final assignment = assignmentByUnitId[unit.id];
               return _CabinCell(
                 unit: unit,
                 stock: stock,
+                fault: fault,
                 assignment: assignment,
                 mode: mode,
                 code: '',
@@ -343,6 +365,7 @@ class _UnitDoseDetailView extends StatelessWidget {
     required this.mode,
     required this.stockByUnitAndStep,
     required this.assignmentByUnitId,
+    required this.faultByUnitId,
     this.selectedUnitId,
     this.selectedStepNo,
     this.onCellTap,
@@ -352,6 +375,7 @@ class _UnitDoseDetailView extends StatelessWidget {
   final CabinOperationMode mode;
   final Map<(int, int), CabinStock> stockByUnitAndStep;
   final Map<int, CabinAssignment> assignmentByUnitId;
+  final Map<int, Fault> faultByUnitId;
   final int? selectedUnitId;
   final int? selectedStepNo;
   final void Function(DrawerUnit unit, int? stepNo)? onCellTap;
@@ -394,9 +418,11 @@ class _UnitDoseDetailView extends StatelessWidget {
                                       final stepNo = step * stepMultiplier + w + 1;
                                       final stock = stockByUnitAndStep[(unit.id, stepNo)];
                                       final assignment = assignmentByUnitId[unit.id];
+                                      final fault = faultByUnitId[unit.id];
                                       return _CabinCell(
                                         unit: unit,
                                         stock: stock,
+                                        fault: fault,
                                         assignment: assignment,
                                         mode: mode,
                                         code: 'G${gi + 1}·$stepNo',
@@ -452,6 +478,7 @@ class _CabinCell extends StatelessWidget {
     required this.code,
     required this.isSelected,
     required this.isKubik,
+    this.fault,
     this.stock,
     this.assignment,
     this.onTap,
@@ -459,6 +486,7 @@ class _CabinCell extends StatelessWidget {
 
   final DrawerUnit unit;
   final CabinStock? stock;
+  final Fault? fault;
   final CabinAssignment? assignment;
   final CabinOperationMode mode;
   final String code;
@@ -609,6 +637,12 @@ class _CabinCell extends StatelessWidget {
   }
 
   _DrawerCellStatus _resolveStatus() {
+    if (fault != null) {
+      return fault!.workingStatus == CabinWorkingStatus.maintenance
+          ? _DrawerCellStatus.maintenance
+          : _DrawerCellStatus.fault;
+    }
+
     if (unit.workingStatus == CabinWorkingStatus.faulty) return _DrawerCellStatus.fault;
     if (unit.workingStatus == CabinWorkingStatus.maintenance) return _DrawerCellStatus.maintenance;
 
@@ -747,10 +781,6 @@ class _EmptyState extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Göz durum enum ve renk yardımcısı
-// ─────────────────────────────────────────────────────────────────
 
 enum _DrawerCellStatus { empty, assigned, low, critical, fault, maintenance }
 

@@ -17,7 +17,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../shared/widgets.dart';
+import '../../../../widgets/widgets.dart';
 import '../state/patient_assignment_ui_state.dart';
 
 // ─────────────────────────────────────────────────────────────────
@@ -36,12 +36,8 @@ class PatientAssignmentNotifier extends Notifier<PatientAssignmentUiState> {
   @override
   PatientAssignmentUiState build() => const PatientAssignmentUninitialized();
 
-  // ── Init ──────────────────────────────────────────────────────
-
   void init(CabinVisualizerData data) {
     final slots = data.slots.whereType<MobileSlotVisual>().toList();
-    print('slots: $slots');
-    print('all slot types: ${data.slots.map((s) => s.runtimeType).toList()}');
     state = PatientAssignmentIdle(slots: slots);
   }
 

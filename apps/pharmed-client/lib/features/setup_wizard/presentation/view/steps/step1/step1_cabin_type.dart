@@ -4,7 +4,7 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_client/shared/widgets/cabin_visuals/cabin_visuals.dart';
+import 'package:pharmed_client/widgets/cabin_widgets/wizard_cabin_preview.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -45,7 +45,7 @@ class Step1CabinetType extends StatelessWidget {
                     type: CabinType.master,
                     isSelected: selectedType == CabinType.master,
                     onTap: () => onTypeSelected(CabinType.master),
-                    visual: CabinVisual(type: CabinVisualType.standard),
+                    visual: WizardCabinPreview(type: WizardCabinPreviewType.standard),
                     specs: const ['Kübik / Birim Doz', 'Servis Bazlı'],
                     description:
                         'Sabit duvara monte veya bağımsız duran, kübik ve birim doz çekmece kombinasyonuna sahip kabin.',
@@ -57,7 +57,7 @@ class Step1CabinetType extends StatelessWidget {
                     type: CabinType.mobile,
                     isSelected: selectedType == CabinType.mobile,
                     onTap: () => onTypeSelected(CabinType.mobile),
-                    visual: CabinVisual(type: CabinVisualType.mobile),
+                    visual: WizardCabinPreview(type: WizardCabinPreviewType.mobile),
                     specs: const ['Tekerlekli', 'Oda Bazlı'],
                     description: 'Tekerlekli, koğuş dolaşımı için tasarlanmış 4 sıralı taşınabilir ilaç ünitesi.',
                   ),

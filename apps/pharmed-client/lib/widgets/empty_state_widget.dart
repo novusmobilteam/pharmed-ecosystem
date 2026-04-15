@@ -27,10 +27,6 @@ enum EmptyStateVariant {
   custom,
 }
 
-// ─────────────────────────────────────────────────────────────────
-// EmptyStateWidget
-// ─────────────────────────────────────────────────────────────────
-
 /// Veri bulunamadığında gösterilen genel boş durum bileşeni.
 ///
 /// [variant] parametresine göre varsayılan içerik üretilir.
@@ -124,10 +120,6 @@ class EmptyStateWidget extends StatelessWidget {
     ),
   };
 }
-
-// ─────────────────────────────────────────────────────────────────
-// İç model
-// ─────────────────────────────────────────────────────────────────
 
 final class _ResolvedContent {
   const _ResolvedContent({required this.icon, required this.title, required this.description});

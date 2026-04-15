@@ -31,7 +31,6 @@ final deviceModeProvider = Provider<CabinType?>((ref) {
     if (debugCabin != null) return debugCabin.type;
   }
   final result = ref.watch(_cachedDeviceModeProvider).valueOrNull;
-  print('deviceModeProvider — cache result: $result');
   return result;
 });
 

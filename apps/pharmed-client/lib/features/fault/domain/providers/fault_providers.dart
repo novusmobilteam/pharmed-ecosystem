@@ -2,8 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-import '../flavor/app_flavor.dart';
-import 'providers.dart';
+import '../../../../core/flavor/app_flavor.dart';
+import '../../../../core/providers/providers.dart';
+import '../../fault.dart';
 
 final faultRemoteDataSourceProvider = Provider<FaultRemoteDataSource>((ref) {
   return FaultRemoteDataSource(apiManager: ref.read(apiManagerProvider));

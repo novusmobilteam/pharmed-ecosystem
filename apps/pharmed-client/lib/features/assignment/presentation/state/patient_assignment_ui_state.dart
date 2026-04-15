@@ -9,7 +9,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../shared/widgets.dart';
+import '../../../../widgets/widgets.dart';
 
 sealed class PatientAssignmentUiState {
   const PatientAssignmentUiState();
