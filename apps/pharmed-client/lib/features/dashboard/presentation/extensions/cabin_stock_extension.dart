@@ -1,5 +1,5 @@
-import 'package:pharmed_ui/src/widgets/molecules/skt_row.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 extension CabinStockSktStatus on CabinStock {
   SktStatus get sktStatus {

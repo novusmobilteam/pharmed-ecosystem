@@ -124,7 +124,7 @@ class _FaultViewState extends ConsumerState<FaultView> {
     final selectedSlotId = _extractSelectedSlotId(state);
     final selectedGroup = _extractSelectedGroup(state);
     final selectedUnitId = _extractSelectedUnitId(state);
-    final faults = _extractFaults(state);
+    //final faults = _extractFaults(state);
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -208,11 +208,11 @@ class _FaultViewState extends ConsumerState<FaultView> {
     _ => null,
   };
 
-  List<Fault> _extractFaults(FaultUiState s) => switch (s) {
-    FaultIdle(:final faults) => faults,
-    FaultDrawerSelected(:final faults) => faults,
-    FaultCellSelected(:final faults) => faults,
-    FaultSaving(:final faults) => faults,
-    _ => const [],
-  };
+  // List<Fault> _extractFaults(FaultUiState s) => switch (s) {
+  //   FaultIdle(:final faults) => faults,
+  //   FaultDrawerSelected(:final faults) => faults,
+  //   FaultCellSelected(:final faults) => faults,
+  //   FaultSaving(:final faults) => faults,
+  //   _ => const [],
+  // };
 }

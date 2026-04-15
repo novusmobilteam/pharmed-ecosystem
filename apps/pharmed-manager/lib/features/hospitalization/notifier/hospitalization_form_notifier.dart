@@ -5,31 +5,40 @@ import 'package:pharmed_manager/core/core.dart';
 class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateHospitalizationUseCase _createHospitalizationUseCase;
   final UpdateHospitalizationUseCase _updateHospitalizationUseCase;
+  final GetRoomsUseCase _getRoomsUseCase;
+  final GetBedsUseCase _getBedsUseCase;
 
   HospitalizationFormNotifier({
     Patient? patient,
     Hospitalization? hospitalization,
+    required GetRoomsUseCase getRoomsUseCase,
+    required GetBedsUseCase getBedsUseCase,
     required CreateHospitalizationUseCase createHospitalizationUseCase,
     required UpdateHospitalizationUseCase updateHospitalizationUseCase,
   }) : _createHospitalizationUseCase = createHospitalizationUseCase,
-       _updateHospitalizationUseCase = updateHospitalizationUseCase {
+       _updateHospitalizationUseCase = updateHospitalizationUseCase,
+       _getRoomsUseCase = getRoomsUseCase,
+       _getBedsUseCase = getBedsUseCase {
     _patient = patient;
     if (hospitalization == null) {
       _hospitalization = Hospitalization(patient: _patient, code: createRandomText(9), admissionDate: DateTime.now());
     } else {
       _hospitalization = hospitalization;
-      // Düzenleme modu — mevcut servis/oda/yatak seçimlerini geri yükle
-      if (hospitalization.physicalService != null) {
+      // Düzenleme modu — servis seçiliyse oda/yatak listelerini yükle ve restore et
+      if (hospitalization.physicalService?.id != null) {
         _selectedService = hospitalization.physicalService;
-        _selectedRoom = hospitalization.physicalService?.rooms.firstWhereOrNull((r) => r.id == hospitalization.roomId);
-        if (_selectedRoom != null) {
-          _selectedBed = _selectedRoom!.beds.firstWhereOrNull((b) => b.id == hospitalization.bedId);
-        }
+        _loadRoomsAndRestoreBed(
+          serviceId: hospitalization.physicalService!.id!,
+          roomId: hospitalization.roomId,
+          bedId: hospitalization.bedId,
+        );
       }
     }
   }
 
-  OperationKey submitOp = OperationKey.submit();
+  final OperationKey submitOp = OperationKey.submit();
+  final OperationKey _roomsOp = OperationKey.fetch();
+  final OperationKey _bedsOp = OperationKey.fetch();
 
   Hospitalization? _hospitalization;
   Hospitalization? get hospitalization => _hospitalization;
@@ -46,18 +55,20 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   Bed? _selectedBed;
   Bed? get selectedBed => _selectedBed;
 
-  /// Seçili servise ait odalar — servis seçilmemişse boş liste
-  List<Room> get rooms => _selectedService?.rooms ?? [];
+  List<Room> _rooms = [];
+  List<Room> get rooms => _rooms;
 
-  /// Seçili odaya ait yataklar — oda seçilmemişse boş liste
-  List<Bed> get beds => _selectedRoom?.beds ?? [];
+  List<Bed> _beds = [];
+  List<Bed> get beds => _beds;
 
   User? get doctor => _hospitalization?.doctor;
   bool get hasPatient => _patient != null;
   bool get isCreate => _hospitalization?.id == null;
 
-  bool get isRoomEnabled => _selectedService != null;
-  bool get isBedEnabled => _selectedRoom != null;
+  bool get isRoomEnabled => _selectedService != null && !isLoading(_roomsOp);
+  bool get isBedEnabled => _selectedRoom != null && !isLoading(_bedsOp);
+  bool get isLoadingRooms => isLoading(_roomsOp);
+  bool get isLoadingBeds => isLoading(_bedsOp);
 
   Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
     await executeVoid(
@@ -70,12 +81,18 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
     );
   }
 
-  void selectPhysicalService(HospitalService? service) {
+  Future<void> selectPhysicalService(HospitalService? service) async {
     _selectedService = service;
     _selectedRoom = null;
     _selectedBed = null;
+    _rooms = [];
+    _beds = [];
     _hospitalization = _hospitalization?.copyWith(physicalService: service, roomId: null, bedId: null);
     notifyListeners();
+
+    if (service?.id != null) {
+      await _loadRooms(service!.id!);
+    }
   }
 
   void selectInpatientService(HospitalService? service) {
@@ -83,11 +100,16 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
-  void selectRoom(Room? room) {
+  Future<void> selectRoom(Room? room) async {
     _selectedRoom = room;
     _selectedBed = null;
+    _beds = [];
     _hospitalization = _hospitalization?.copyWith(roomId: room?.id, bedId: null);
     notifyListeners();
+
+    if (room?.id != null) {
+      await _loadBeds(room!.id!);
+    }
   }
 
   void selectBed(Bed? bed) {
@@ -124,5 +146,56 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   void toggleIsBaby() {
     _hospitalization = _hospitalization?.copyWith(isBaby: !(_hospitalization?.isBaby ?? false));
     notifyListeners();
+  }
+
+  Future<void> _loadRooms(int serviceId) async {
+    await executeVoid(
+      _roomsOp,
+      operation: () async {
+        final result = await _getRoomsUseCase.call(serviceId);
+        return result.when(
+          ok: (rooms) {
+            _rooms = rooms ?? [];
+            notifyListeners();
+            return Result.ok(null);
+          },
+          error: Result.error,
+        );
+      },
+    );
+  }
+
+  Future<void> _loadBeds(int roomId) async {
+    await executeVoid(
+      _bedsOp,
+      operation: () async {
+        final result = await _getBedsUseCase.call(roomId);
+        return result.when(
+          ok: (beds) {
+            _beds = beds ?? [];
+            notifyListeners();
+            return Result.ok(null);
+          },
+          error: Result.error,
+        );
+      },
+    );
+  }
+
+  Future<void> _loadRoomsAndRestoreBed({required int serviceId, int? roomId, int? bedId}) async {
+    await _loadRooms(serviceId);
+
+    if (roomId != null) {
+      _selectedRoom = _rooms.firstWhereOrNull((r) => r.id == roomId);
+      _hospitalization = _hospitalization?.copyWith(roomId: _selectedRoom?.id);
+      notifyListeners();
+
+      if (_selectedRoom != null && bedId != null) {
+        await _loadBeds(_selectedRoom!.id!);
+        _selectedBed = _beds.firstWhereOrNull((b) => b.id == bedId);
+        _hospitalization = _hospitalization?.copyWith(bedId: _selectedBed?.id);
+        notifyListeners();
+      }
+    }
   }
 }

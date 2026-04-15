@@ -181,7 +181,7 @@ class _LoginCardState extends State<_LoginCard> {
                     width: double.infinity,
                     height: 46,
                     decoration: BoxDecoration(
-                      color: widget.isLoading ? MedColors.blue.withOpacity(0.6) : MedColors.blue,
+                      color: widget.isLoading ? MedColors.blue.withAlpha(70) : MedColors.blue,
                       borderRadius: MedRadius.mdAll,
                       boxShadow: const [BoxShadow(color: Color(0x4D1A6BD8), blurRadius: 8, offset: Offset(0, 3))],
                     ),

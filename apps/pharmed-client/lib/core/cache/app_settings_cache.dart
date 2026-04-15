@@ -18,6 +18,7 @@ final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
 final deviceModeProvider = FutureProvider.autoDispose<String?>((ref) async {
   if (kDebugMode) {
     final debugMode = ref.watch(settingsNotifierProvider).debugCabinMode;
+    print(debugMode.name);
     return switch (debugMode) {
       DebugCabinMode.master => CabinType.master.name,
       DebugCabinMode.mobile => CabinType.mobile.name,

@@ -242,7 +242,6 @@ abstract class BaseRemoteDataSource {
         HttpMethod.POST => apiManager.post<dynamic>(path, data: body, queryParameters: query, parser: (d) => d),
         HttpMethod.PUT => apiManager.put<dynamic>(path, data: body, parser: (d) => d),
         HttpMethod.DELETE => apiManager.delete<dynamic>(path, queryParameters: query, data: body, parser: (d) => d),
-        _ => throw UnimplementedError(),
       };
 
       return result.when(

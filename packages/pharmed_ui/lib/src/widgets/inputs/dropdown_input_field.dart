@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import 'base_input_field.dart';
-
 class DropdownInputField<T> extends BaseInputField<T> {
   DropdownInputField({
     super.key,

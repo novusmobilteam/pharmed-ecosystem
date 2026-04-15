@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Dokunmatik ekran için optimize edilmiş numpad giriş alanı.

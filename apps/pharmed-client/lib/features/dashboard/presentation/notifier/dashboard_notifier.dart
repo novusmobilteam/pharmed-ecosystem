@@ -9,11 +9,11 @@ import 'package:collection/collection.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
-import 'package:pharmed_client/core/providers/usecase_providers.dart';
 import 'package:pharmed_client/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_client/features/dashboard/domain/usecase/cabin_visualizer_usecase.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import '../../../../core/providers/providers.dart';
 import '../../domain/model/dasboard_data.dart';
 import '../state/dashboard_ui_state.dart';
 

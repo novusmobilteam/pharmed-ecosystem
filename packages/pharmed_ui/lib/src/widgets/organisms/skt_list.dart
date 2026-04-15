@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/widgets/atoms/med_badge.dart';
-import 'package:pharmed_ui/src/widgets/atoms/ring_chart.dart';
-import 'package:pharmed_ui/src/widgets/atoms/status_dot.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import '../molecules/molecules.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // SktList

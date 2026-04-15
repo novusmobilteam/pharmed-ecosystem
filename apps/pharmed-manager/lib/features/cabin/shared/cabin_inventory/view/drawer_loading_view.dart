@@ -124,7 +124,7 @@ class _DrawerLoadingViewState extends State<DrawerLoadingView> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _numberOfSteps,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     Divider(height: 1, thickness: 1, color: context.colorScheme.outlineVariant.withValues(alpha: 0.3)),
                 itemBuilder: (context, index) => _buildTableRow(context, index),
               ),

@@ -11,24 +11,20 @@
 // Sınıf: Class B
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/providers/usecase_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/providers/providers.dart';
 import '../state/fault_ui_state.dart';
 
 final faultNotifierProvider = NotifierProvider<FaultNotifier, FaultUiState>(FaultNotifier.new);
 
 class FaultNotifier extends Notifier<FaultUiState> {
-  // ── DI ──────────────────────────────────────────────────────────
   GetCabinFaultsUseCase get _getFaults => ref.read(getCabinFaultsUseCaseProvider);
   CreateFaultRecordUseCase get _createFault => ref.read(createFaultRecordUseCaseProvider);
   ClearFaultRecordUseCase get _clearFault => ref.read(clearFaultRecordUseCaseProvider);
 
-  // ── build ────────────────────────────────────────────────────────
   @override
   FaultUiState build() => const FaultUninitialized();
-
-  // ── init ─────────────────────────────────────────────────────────
 
   Future<void> init(CabinVisualizerData data) async {
     state = FaultLoading(groups: data.groups, cabinId: data.cabinId);

@@ -404,7 +404,7 @@ class _FaultHistory extends StatelessWidget {
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: history.length,
-              separatorBuilder: (_, __) => Divider(height: 1, color: MedColors.border2),
+              separatorBuilder: (_, _) => Divider(height: 1, color: MedColors.border2),
               itemBuilder: (context, i) => _FaultHistoryItem(fault: history[i]),
             ),
           ),

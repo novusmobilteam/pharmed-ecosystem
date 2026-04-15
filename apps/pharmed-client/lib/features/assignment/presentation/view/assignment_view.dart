@@ -19,6 +19,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../shared/widgets/empty_state_widget.dart';
 import 'drug_assignment_view.dart';
+import 'patient_assignment_view.dart';
 
 class AssignmentView extends ConsumerWidget {
   const AssignmentView({super.key, this.data});
@@ -31,26 +32,12 @@ class AssignmentView extends ConsumerWidget {
 
     return deviceModeAsync.when(
       loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      error: (_, __) => const EmptyStateWidget(variant: EmptyStateVariant.cabinData),
+      error: (_, _) => const EmptyStateWidget(variant: EmptyStateVariant.cabinData),
       data: (deviceMode) => switch (deviceMode) {
         'master' => DrugAssignmentView(data: data),
-        'mobile' => const _PatientAssignmentPlaceholder(),
+        'mobile' => PatientAssignmentView(data: data),
         _ => const EmptyStateWidget(variant: EmptyStateVariant.cabinData),
       },
-    );
-  }
-}
-
-class _PatientAssignmentPlaceholder extends StatelessWidget {
-  const _PatientAssignmentPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const EmptyStateWidget(
-      variant: EmptyStateVariant.custom,
-      icon: Icons.person_outline_rounded,
-      title: 'Hasta bazlı atama',
-      description: 'Bu özellik yakında kullanıma açılacak.',
     );
   }
 }

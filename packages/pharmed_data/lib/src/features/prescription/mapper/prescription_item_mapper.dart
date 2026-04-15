@@ -1,6 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/features/prescription/mapper/prescription_mapper.dart';
 
 /// PrescriptionItem ↔ PrescriptionItemDTO dönüşümleri.
 class PrescriptionItemMapper {

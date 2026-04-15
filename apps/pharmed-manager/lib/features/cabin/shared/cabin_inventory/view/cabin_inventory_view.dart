@@ -77,7 +77,6 @@ class _CabinInventoryViewState extends State<CabinInventoryView> {
   }
 
   Widget _buildContent(CabinInventoryNotifier notifier) {
-    print('planned Quantiy inventory: ${widget.plannedQuantity}');
     if (notifier.isKubik) {
       return CubicLoadingView(
         data: notifier.initial,

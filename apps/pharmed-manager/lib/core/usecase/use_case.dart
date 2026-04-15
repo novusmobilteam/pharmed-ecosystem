@@ -1,4 +1,4 @@
-import 'package:pharmed_core/src/result/result.dart';
+import 'package:pharmed_manager/core/core.dart';
 
 abstract class UseCase<T, Params> {
   Future<Result<T>> call(Params params);

@@ -1,5 +1,7 @@
 // pharmed-client/core/hardware/service/rfid/rfid_service.dart
 
+// ignore_for_file: unused_field
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';

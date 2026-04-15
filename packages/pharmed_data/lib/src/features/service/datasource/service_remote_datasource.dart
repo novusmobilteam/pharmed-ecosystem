@@ -78,7 +78,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<List<BedDto>?>> getBeds(int roomId) async {
     return await fetchRequest(
-      path: '/api/Bed/$roomId',
+      path: '/Bed/room/$roomId',
       parser: BaseRemoteDataSource.listParser(BedDto.fromJson),
       successLog: 'Yataklar getirildi',
       emptyLog: 'Yatak bulunamadı',

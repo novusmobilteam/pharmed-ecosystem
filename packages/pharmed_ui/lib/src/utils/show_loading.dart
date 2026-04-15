@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 void showLoading(BuildContext context, {String? message}) {

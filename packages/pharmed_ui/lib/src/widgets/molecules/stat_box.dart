@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/widgets/atoms/med_label.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────

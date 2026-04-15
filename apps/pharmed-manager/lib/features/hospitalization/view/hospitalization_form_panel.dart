@@ -12,6 +12,8 @@ class HospitalizationPanel extends StatelessWidget {
     return ChangeNotifierProvider<HospitalizationFormNotifier>(
       key: ValueKey(selectedHospitalization?.id ?? 'create'),
       create: (BuildContext context) => HospitalizationFormNotifier(
+        getRoomsUseCase: context.read(),
+        getBedsUseCase: context.read(),
         createHospitalizationUseCase: context.read(),
         updateHospitalizationUseCase: context.read(),
         hospitalization: selectedHospitalization,
@@ -184,6 +186,7 @@ class _RoomField extends StatelessWidget {
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
           return SelectionField<Room>(
+            key: ValueKey(notifier.selectedRoom?.id ?? 'room_${notifier.selectedService?.id}'),
             label: 'Oda',
             title: 'Oda Seç',
             enabled: notifier.isRoomEnabled,
@@ -213,6 +216,7 @@ class _BedField extends StatelessWidget {
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
           return SelectionField<Bed>(
+            key: ValueKey(notifier.selectedBed?.id ?? 'bed_${notifier.selectedRoom?.id}'),
             label: 'Yatak',
             title: 'Yatak Seç',
             enabled: notifier.isBedEnabled,

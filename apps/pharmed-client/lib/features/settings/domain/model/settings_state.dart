@@ -9,7 +9,7 @@ enum SettingsSection { general, appearance, debug }
 enum DebugCabinMode { master, mobile }
 
 class SettingsState {
-  const SettingsState({this.activeSection = SettingsSection.debug, this.debugCabinMode = DebugCabinMode.master});
+  const SettingsState({this.activeSection = SettingsSection.debug, this.debugCabinMode = DebugCabinMode.mobile});
 
   final SettingsSection activeSection;
   final DebugCabinMode debugCabinMode;

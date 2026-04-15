@@ -16,14 +16,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/providers/usecase_providers.dart';
 import 'package:pharmed_client/features/assignment/presentation/view/drug_assignment_panel.dart';
 import 'package:pharmed_client/core/enums/cabin_operation_mode.dart';
-import 'package:pharmed_client/shared/widgets/cabin_overview_panel.dart';
-import 'package:pharmed_client/shared/widgets/drawer_detail_panel.dart';
+import 'package:pharmed_client/shared/widgets/cabin_visuals/cabin_overview_panel.dart';
+import 'package:pharmed_client/shared/widgets/cabin_visuals/drawer_detail_panel.dart';
 import 'package:pharmed_client/shared/widgets/operation_panel_base.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import '../../../../core/providers/providers.dart';
 import '../notifier/drug_assignment_notifier.dart';
 import '../state/drug_assignment_ui_state.dart';
 

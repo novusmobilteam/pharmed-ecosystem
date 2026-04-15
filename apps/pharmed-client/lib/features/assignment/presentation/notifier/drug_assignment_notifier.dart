@@ -13,9 +13,9 @@
 // Sınıf: Class B
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/providers/usecase_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/providers/providers.dart';
 import '../state/drug_assignment_ui_state.dart';
 
 final drugAssignmentNotifierProvider = NotifierProvider<DrugAssignmentNotifier, DrugAssignmentUiState>(

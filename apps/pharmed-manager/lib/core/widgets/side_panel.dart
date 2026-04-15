@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
-import 'package:pharmed_manager/core/widgets/pharmed_button.dart';
 
 class SidePanelWrapper extends StatelessWidget {
   const SidePanelWrapper({

@@ -1,7 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-import 'prescription_dto.dart';
-
 class PrescriptionItemDTO {
   final int? id;
   final int? prescriptionId;
