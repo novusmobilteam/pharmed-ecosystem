@@ -18,7 +18,7 @@ class CabinStockMapper {
       // Alt modeller için ilgili mapper'lar
       medicine: dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null,
       assignment: dto.cabinDrawerQuantity != null
-          ? const CabinAssignmentMapper().toEntity(dto.cabinDrawerQuantity!)
+          ? const MedicineAssignmentMapper().toEntity(dto.cabinDrawerQuantity!)
           : null,
       cabinDrawerDetail: dto.cabinDrawerDetail != null
           ? const DrawerCellMapper().toEntity(dto.cabinDrawerDetail!)
@@ -37,7 +37,7 @@ class CabinStockMapper {
       quantity: entity.quantity,
       miadDate: entity.miadDate,
       medicine: const MedicineMapper().toDtoOrNull(entity.medicine),
-      cabinDrawerQuantity: const CabinAssignmentMapper().toDtoOrNull(entity.assignment),
+      cabinDrawerQuantity: const MedicineAssignmentMapper().toDtoOrNull(entity.assignment),
       cabinDrawerDetail: const DrawerCellMapper().toDtoOrNull(entity.cabinDrawerDetail),
     );
   }

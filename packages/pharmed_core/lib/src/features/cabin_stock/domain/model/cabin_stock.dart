@@ -13,7 +13,7 @@ class CabinStock implements TableData {
   final num? quantity;
   final DateTime? miadDate;
   final Medicine? medicine;
-  final CabinAssignment? assignment;
+  final MedicineAssignment? assignment;
   final DrawerCell? cabinDrawerDetail;
 
   double get stockRatio => (quantity ?? 0.0) / (assignment?.criticalQuantity ?? 1.0);
@@ -76,7 +76,7 @@ class CabinStock implements TableData {
     double? quantity,
     DateTime? miadDate,
     Medicine? medicine,
-    CabinAssignment? assignment,
+    MedicineAssignment? assignment,
     DrawerCell? cabinDrawerDetail,
   }) {
     return CabinStock(

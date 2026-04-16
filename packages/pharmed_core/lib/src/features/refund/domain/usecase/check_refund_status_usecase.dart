@@ -73,7 +73,7 @@ class CheckRefundStatusUseCase {
       if (cubicSlot != null) {
         return Result.ok(
           MedicineWithdrawItem.empty(
-            CabinAssignment(
+            MedicineAssignment(
               drawerUnit: DrawerUnit(drawerSlotId: cubicSlot.id, drawerSlot: cubicSlot),
               cabin: cabin,
             ),

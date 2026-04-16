@@ -39,7 +39,7 @@ abstract interface class ICabinRepository {
 
   /// Mobil kabinin çekmece yapısını getirir.
   /// Gerçek zamanlı değil — cache desteklidir.
-  Future<RepoResult<List<MobileDrawerRequestDTO>>> getMobileCabinSlots(int cabinId);
+  Future<RepoResult<List<MobileDrawerSlot>>> getMobileCabinSlots(int cabinId);
 
   /// Seçili çekmeceye ait iç parçaları getirir. Gerçek zamanlı — cache'lenmez.
   Future<RepoResult<List<DrawerUnit>>> getDrawerUnits(int slotId);

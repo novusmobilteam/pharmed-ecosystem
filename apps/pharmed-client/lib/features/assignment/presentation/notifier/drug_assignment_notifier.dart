@@ -15,18 +15,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../core/providers/providers.dart';
-import '../state/drug_assignment_ui_state.dart';
+import '../../assignment.dart';
 
 final drugAssignmentNotifierProvider = NotifierProvider<DrugAssignmentNotifier, DrugAssignmentUiState>(
   DrugAssignmentNotifier.new,
 );
 
 class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
-  GetAssignmentsUseCase get _getAssignments => ref.read(getAssignmentsUseCaseProvider);
-  CreateAssignmentUseCase get _createAssignment => ref.read(createAssignmentUseCaseProvider);
-  UpdateAssignmentUseCase get _updateAssignment => ref.read(updateAssignmentUseCaseProvider);
-  DeleteAssignmentUseCase get _deleteAssignment => ref.read(deleteAssignmentUseCaseProvider);
+  GetMedicineAssignmentsUseCase get _getAssignments => ref.read(getAssignmentsUseCaseProvider);
+  CreateMedicineAssignmentUseCase get _createAssignment => ref.read(createAssignmentUseCaseProvider);
+  UpdateMedicineAssignmentUseCase get _updateAssignment => ref.read(updateAssignmentUseCaseProvider);
+  DeleteMedicineAssignmentUseCase get _deleteAssignment => ref.read(deleteAssignmentUseCaseProvider);
 
   @override
   DrugAssignmentUiState build() => const DrugAssignmentUninitialized();
@@ -288,18 +287,18 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     );
   }
 
-  CabinAssignment _findAssignment({
+  MedicineAssignment _findAssignment({
     required int? unitId,
     required int cabinId,
-    required List<CabinAssignment> assignments,
+    required List<MedicineAssignment> assignments,
   }) {
     if (unitId == null) {
-      return CabinAssignment.empty(cabinId: cabinId, cabinDrawerId: 0);
+      return MedicineAssignment.empty(cabinId: cabinId, cabinDrawerId: 0);
     }
     try {
       return assignments.firstWhere((a) => a.cabinDrawerId == unitId);
     } catch (_) {
-      return CabinAssignment.empty(cabinId: cabinId, cabinDrawerId: unitId);
+      return MedicineAssignment.empty(cabinId: cabinId, cabinDrawerId: unitId);
     }
   }
 
@@ -313,7 +312,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     _ => const [],
   };
 
-  List<CabinAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
+  List<MedicineAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
     DrugAssignmentIdle(:final assignments) => assignments,
     DrugAssignmentDrawerSelected(:final assignments) => assignments,
     DrugAssignmentCellSelected(:final assignments) => assignments,

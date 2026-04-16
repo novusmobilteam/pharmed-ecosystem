@@ -43,7 +43,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
       context: {'type': type.name},
     );
 
-    state = current.copyWith(draft: current.draft.copyWith(cabinetType: type));
+    state = current.copyWith(draft: current.draft.copyWith(cabinType: type));
   }
 
   // ── Adım 2: Temel bilgiler ──────────────────────────────────────
@@ -471,7 +471,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
       unit: 'SW-UNIT-SETUP',
       swreq: 'SWREQ-SETUP-UC-001',
       message: 'Kabin kurulumu kaydediliyor',
-      context: {'cabinName': config.basicInfo.cabinName, 'type': config.cabinetType.name},
+      context: {'cabinName': config.basicInfo.cabinName, 'type': config.cabinType.name},
     );
 
     state = WizardSaving(draft: current.draft);
@@ -487,7 +487,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardUiState> {
           context: {'cabinId': cabinId},
         );
         // [SWREQ-CORE-003] Fire & forget
-        appSettingsCache.markSetupComplete(deviceMode: config.cabinetType.name);
+        appSettingsCache.markSetupComplete(deviceMode: config.cabinType.name);
         state = WizardSaved(cabinId: cabinId, cabinName: config.basicInfo.cabinName);
       },
       error: (error) {

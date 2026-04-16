@@ -15,13 +15,13 @@ class GetWithdrawItemsParams {
 
 class GetWithdrawItemsUseCase {
   final IWithdrawRepository _withdrawRepository;
-  final ICabinAssignmentRepository _assignmentRepository;
+  final IAssignmentRepository _assignmentRepository;
   final IMedicineRepository _medicineRepository;
   List<WithdrawItem> _cachedItems = [];
 
   GetWithdrawItemsUseCase({
     required IWithdrawRepository withdrawRepository,
-    required ICabinAssignmentRepository assignmentRepository,
+    required IAssignmentRepository assignmentRepository,
     required IMedicineRepository medicineRepository,
   }) : _withdrawRepository = withdrawRepository,
        _assignmentRepository = assignmentRepository,
@@ -117,7 +117,7 @@ class GetWithdrawItemsUseCase {
       return Result.error(CustomException(message: "Bir hata oluştu."));
     }
 
-    final List<CabinAssignment> freshAssignments = (assignmentsResult as Ok).value;
+    final List<MedicineAssignment> freshAssignments = (assignmentsResult as Ok).value;
 
     // Mevcut item listesindeki assignmentları güncelle
     final updatedItems = _cachedItems.map((item) {
@@ -141,14 +141,14 @@ class GetWithdrawItemsUseCase {
     ]);
 
     final tasksResult = results[0] as Result<List<MedicineWithdrawItem>>;
-    final assignmentsResult = results[1] as Result<List<CabinAssignment>>;
+    final assignmentsResult = results[1] as Result<List<MedicineAssignment>>;
 
     if (tasksResult is! Ok || assignmentsResult is! Ok) {
       return Result.error(CustomException(message: "Bir hata oluştu."));
     }
 
     final allTasks = (tasksResult as Ok).value;
-    final List<CabinAssignment> allAssignments = (assignmentsResult as Ok).value;
+    final List<MedicineAssignment> allAssignments = (assignmentsResult as Ok).value;
 
     for (MedicineWithdrawItem task in allTasks) {
       final assignment = allAssignments.firstWhereOrNull((a) => a.cabinDrawerId == task.cabinAssignment.cabinDrawerId);

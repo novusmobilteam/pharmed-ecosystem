@@ -32,8 +32,8 @@ abstract interface class ICabinLocalDataSource {
   Future<List<DrawerTypeDTO>?> readDrawerTypes();
 
   // ── Mobil Çekmece ──────────────────────────────────────────────
-  Future<void> saveMobileDrawers(int cabinId, List<MobileDrawerRequestDTO> drawers);
-  Future<List<MobileDrawerRequestDTO>?> readMobileDrawers(int cabinId);
+  Future<void> saveMobileDrawers(int cabinId, List<MobileDrawerSlotDTO> drawers);
+  Future<List<MobileDrawerSlotDTO>?> readMobileDrawers(int cabinId);
   Future<DateTime?> mobileDrawersSavedAt(int cabinId);
 
   // ── Temizlik ───────────────────────────────────────────────────
@@ -100,7 +100,7 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   }
 
   @override
-  Future<void> saveMobileDrawers(int cabinId, List<MobileDrawerRequestDTO> drawers) async {
+  Future<void> saveMobileDrawers(int cabinId, List<MobileDrawerSlotDTO> drawers) async {
     final box = await _slotBox();
     final encoded = drawers.map((d) => d.toJson()).toList();
     await box.put(_mobileDrawersKey(cabinId), jsonEncode(encoded));
@@ -108,12 +108,12 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   }
 
   @override
-  Future<List<MobileDrawerRequestDTO>?> readMobileDrawers(int cabinId) async {
+  Future<List<MobileDrawerSlotDTO>?> readMobileDrawers(int cabinId) async {
     final box = await _slotBox();
     final raw = box.get(_mobileDrawersKey(cabinId)) as String?;
     if (raw == null) return null;
     final list = jsonDecode(raw) as List;
-    return list.map((e) => MobileDrawerRequestDTO.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+    return list.map((e) => MobileDrawerSlotDTO.fromJson(Map<String, dynamic>.from(e as Map))).toList();
   }
 
   @override

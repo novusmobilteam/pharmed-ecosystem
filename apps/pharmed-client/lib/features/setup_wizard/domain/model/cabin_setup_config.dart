@@ -78,14 +78,14 @@ final class MobileScope extends StationScope {
 
 class CabinSetupConfig extends Equatable {
   const CabinSetupConfig({
-    required this.cabinetType,
+    required this.cabinType,
     required this.basicInfo,
     required this.stationScope,
     this.scannedLayout,
     this.mobileLayout,
   });
 
-  final CabinType cabinetType;
+  final CabinType cabinType;
   final WizardBasicInfo basicInfo;
   final StationScope stationScope;
 
@@ -96,5 +96,5 @@ class CabinSetupConfig extends Equatable {
   final WizardMobileLayout? mobileLayout;
 
   @override
-  List<Object?> get props => [cabinetType, basicInfo, stationScope, scannedLayout, mobileLayout];
+  List<Object?> get props => [cabinType, basicInfo, stationScope, scannedLayout, mobileLayout];
 }

@@ -13,7 +13,7 @@ class WithdrawItem {
   final double? prescriptionDose;
 
   /// İlacın kabindeki yeri.
-  final CabinAssignment? assignment;
+  final MedicineAssignment? assignment;
 
   /// İlaç bilgileri
   final Medicine? medicine;
@@ -51,7 +51,7 @@ class WithdrawItem {
     List<User>? witnesses,
     User? witness,
     List<Station>? stations,
-    CabinAssignment? assignment,
+    MedicineAssignment? assignment,
   }) {
     return WithdrawItem(
       id: id,

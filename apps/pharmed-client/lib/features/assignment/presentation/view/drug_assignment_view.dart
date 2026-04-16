@@ -140,7 +140,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     _ => null,
   };
 
-  List<CabinAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
+  List<MedicineAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
     DrugAssignmentIdle(:final assignments) => assignments,
     DrugAssignmentDrawerSelected(:final assignments) => assignments,
     DrugAssignmentCellSelected(:final assignments) => assignments,

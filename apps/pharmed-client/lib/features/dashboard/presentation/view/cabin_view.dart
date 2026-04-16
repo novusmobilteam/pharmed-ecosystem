@@ -9,7 +9,6 @@ class CabinView extends StatelessWidget {
     required this.cabin,
   });
 
-  // final CabinSummary cabin;
   final bool isStale;
   final bool canProceed;
   final DashboardNotifier notifier;

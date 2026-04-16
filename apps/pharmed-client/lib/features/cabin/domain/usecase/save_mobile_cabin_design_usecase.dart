@@ -32,7 +32,8 @@ class SaveMobileCabinDesignUseCase {
     return result.when(
       error: Result.error,
       ok: (_) async {
-        await _localDataSource.saveMobileDrawers(cabinId, dtos);
+        // Eğer cachede kalmış veri varsa
+        await _localDataSource.clearMobileDrawers(cabinId);
 
         MedLogger.info(
           unit: 'SW-UNIT-DATA',

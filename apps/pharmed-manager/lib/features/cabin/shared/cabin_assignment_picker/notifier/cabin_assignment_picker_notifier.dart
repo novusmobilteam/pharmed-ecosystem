@@ -3,11 +3,11 @@ import 'package:pharmed_manager/core/core.dart';
 
 import '../../cabin_inventory/notifier/cabin_inventory_notifier.dart';
 
-class CabinAssignmentPickerNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinAssignment> {
+class CabinAssignmentPickerNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MedicineAssignment> {
   final GetCabinAssignmentsUseCase _getCabinAssignmetsUseCase;
   final CabinOperationCallback onSave;
-  final List<CabinAssignment>? externalAssignments;
-  Function(CabinAssignment assignment)? onExecuteNext;
+  final List<MedicineAssignment>? externalAssignments;
+  Function(MedicineAssignment assignment)? onExecuteNext;
 
   CabinAssignmentPickerNotifier({
     required GetCabinAssignmentsUseCase getCabinAssignmetsUseCase,
@@ -34,11 +34,11 @@ class CabinAssignmentPickerNotifier extends ChangeNotifier with ApiRequestMixin,
   Set<int> get completedAssignmentIds => _completedAssignmentIds;
   Set<int> get cancelledAssignmentIds => _cancelledAssignmentIds;
 
-  List<CabinAssignment> get selectedAssignments =>
+  List<MedicineAssignment> get selectedAssignments =>
       allItems.where((item) => _selectedAssignmentIds.contains(item.id)).toList();
 
   // --- Sequential Process ---
-  List<CabinAssignment> _queue = [];
+  List<MedicineAssignment> _queue = [];
   bool _isAutoProcessing = false;
   bool get isAutoProcessing => _isAutoProcessing;
 
@@ -52,7 +52,7 @@ class CabinAssignmentPickerNotifier extends ChangeNotifier with ApiRequestMixin,
 
   // --- Search ---
   @override
-  List<CabinAssignment> get filteredItems {
+  List<MedicineAssignment> get filteredItems {
     return _groupMedicines(super.filteredItems);
   }
 
@@ -90,7 +90,7 @@ class CabinAssignmentPickerNotifier extends ChangeNotifier with ApiRequestMixin,
   }
 
   /// İşlem başarılı bittiyse "Done", iptal edildiyse "Cancelled" olarak işaretle
-  void markCurrentAsDone(CabinAssignment assignment, {required bool isSuccess}) {
+  void markCurrentAsDone(MedicineAssignment assignment, {required bool isSuccess}) {
     if (assignment.id == null) return;
 
     if (isSuccess) {
@@ -128,8 +128,8 @@ class CabinAssignmentPickerNotifier extends ChangeNotifier with ApiRequestMixin,
     onExecuteNext?.call(currentTask);
   }
 
-  List<CabinAssignment> _groupMedicines(List<CabinAssignment> items) {
-    final Map<int, CabinAssignment> uniqueMedicines = {};
+  List<MedicineAssignment> _groupMedicines(List<MedicineAssignment> items) {
+    final Map<int, MedicineAssignment> uniqueMedicines = {};
     for (var item in items) {
       final mId = item.medicine?.id;
       if (mId != null && !uniqueMedicines.containsKey(mId)) {
@@ -139,7 +139,7 @@ class CabinAssignmentPickerNotifier extends ChangeNotifier with ApiRequestMixin,
     return uniqueMedicines.values.toList();
   }
 
-  List<CabinAssignment> getAssignmentsForMedicine(int medicineId) {
+  List<MedicineAssignment> getAssignmentsForMedicine(int medicineId) {
     return allItems.where((item) => item.medicine?.id == medicineId).toList();
   }
 }

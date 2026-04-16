@@ -13,7 +13,7 @@ class MedicineWithdrawItem {
   final bool inCaseOfNecessity;
   final Medicine? medicine;
   final Hospitalization? hospitalization;
-  final CabinAssignment cabinAssignment;
+  final MedicineAssignment cabinAssignment;
   final User? approvalUser;
   final DateTime? applicationDate;
   final User? applicationUser;
@@ -38,14 +38,14 @@ class MedicineWithdrawItem {
     this.stock,
   });
 
-  factory MedicineWithdrawItem.empty(CabinAssignment? assignment) {
+  factory MedicineWithdrawItem.empty(MedicineAssignment? assignment) {
     return MedicineWithdrawItem(
       id: 0,
       prescriptionId: 0,
       medicineName: "Bilinmeyen İlaç",
       medicineBarcode: "",
       dosePiece: 0,
-      cabinAssignment: assignment ?? CabinAssignment.empty(cabinId: 0, cabinDrawerId: 0),
+      cabinAssignment: assignment ?? MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0),
     );
   }
 }

@@ -8,13 +8,12 @@ enum UnloadType { basic, deleteAssignment, changeAssignment }
 
 class MedicineUnloadNotifier extends ChangeNotifier with ApiRequestMixin {
   final UnloadMedicineUseCase _unloadMedicineUseCase;
-  final DeleteAssignmentUseCase _deleteAssignmentUseCase;
+  //final DeleteAssignmentUseCase _deleteAssignmentUseCase;
 
   MedicineUnloadNotifier({
     required UnloadMedicineUseCase unloadMedicineUseCase,
-    required DeleteAssignmentUseCase deleteAssignmentUseCase,
-  }) : _unloadMedicineUseCase = unloadMedicineUseCase,
-       _deleteAssignmentUseCase = deleteAssignmentUseCase;
+    //required DeleteAssignmentUseCase deleteAssignmentUseCase,
+  }) : _unloadMedicineUseCase = unloadMedicineUseCase;
 
   OperationKey unloadOp = OperationKey.custom('unload');
   OperationKey deleteOp = OperationKey.custom('delete-assignment');
@@ -75,12 +74,12 @@ class MedicineUnloadNotifier extends ChangeNotifier with ApiRequestMixin {
     Function(String? msg)? onFailed,
     Function(String? msg)? onSuccess,
   }) async {
-    final id = inputs.first.assignment?.cabinDrawerId ?? 0;
-    await executeVoid(
-      deleteOp,
-      operation: () => _deleteAssignmentUseCase.call(id),
-      onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İlaç ataması silme işlemi başarıyla tamamlandı.'),
-    );
+    //final id = inputs.first.assignment?.cabinDrawerId ?? 0;
+    // await executeVoid(
+    //   deleteOp,
+    //   operation: () => _deleteAssignmentUseCase.call(id),
+    //   onFailed: (error) => onFailed?.call(error.message),
+    //   onSuccess: () => onSuccess?.call('İlaç ataması silme işlemi başarıyla tamamlandı.'),
+    // );
   }
 }

@@ -7,7 +7,7 @@ import '../../../cabin/domain/entity/cabin_input_data.dart';
 import '../../domain/usecase/dispose_material_usecase.dart';
 import '../../domain/usecase/get_disposable_materials_usecase.dart';
 
-class MedicineDisposalNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinAssignment> {
+class MedicineDisposalNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MedicineAssignment> {
   final GetDisposableMaterialsUseCase _getDisposableMaterialsUseCase;
   final DisposeMaterialUseCase _disposeMaterialUseCase;
 
@@ -21,8 +21,8 @@ class MedicineDisposalNotifier extends ChangeNotifier with ApiRequestMixin, Sear
   OperationKey submitOp = OperationKey.submit();
   bool get isFetching => isLoading(fetchOp);
 
-  List<CabinAssignment> _selectedItems = [];
-  List<CabinAssignment> get selectedItems => _selectedItems;
+  List<MedicineAssignment> _selectedItems = [];
+  List<MedicineAssignment> get selectedItems => _selectedItems;
 
   void getDisposableMaterials() async {
     await execute(
@@ -35,7 +35,7 @@ class MedicineDisposalNotifier extends ChangeNotifier with ApiRequestMixin, Sear
     );
   }
 
-  void selectItem(CabinAssignment item, {Function(String msg)? onFailed}) {
+  void selectItem(MedicineAssignment item, {Function(String msg)? onFailed}) {
     final drug = item.medicine as Drug?;
     if (drug == null) return;
 

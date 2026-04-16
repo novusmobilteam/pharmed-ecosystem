@@ -4,7 +4,7 @@ class RatioProgressIndicator extends StatelessWidget {
   const RatioProgressIndicator({super.key, this.stock, required this.assignment, this.overrideQuantity});
 
   final CabinStock? stock;
-  final CabinAssignment assignment;
+  final MedicineAssignment assignment;
   final double? overrideQuantity;
 
   @override

@@ -37,11 +37,14 @@ class AssignmentView extends ConsumerWidget {
         },
       ),
     );
-    final deviceMode = ref.watch(deviceModeProvider);
+    final deviceModeAsync = ref.watch(deviceModeProvider);
 
-    return switch (deviceMode) {
-      CabinType.master => DrugAssignmentView(data: cabinData),
-      CabinType.mobile => PatientAssignmentView(data: cabinData),
+    return switch (deviceModeAsync) {
+      AsyncData(:final value) => switch (value) {
+        CabinType.master => DrugAssignmentView(data: cabinData),
+        CabinType.mobile => PatientAssignmentView(data: cabinData),
+        _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      },
       _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
     };
   }

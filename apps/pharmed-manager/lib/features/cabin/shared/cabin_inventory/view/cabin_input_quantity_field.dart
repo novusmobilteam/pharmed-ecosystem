@@ -29,7 +29,7 @@ class CabinInputQuantityField extends StatelessWidget {
     this.showLabel = true,
   });
 
-  final CabinAssignment data;
+  final MedicineAssignment data;
   final CabinInventoryType type;
 
   /// true  → Sayım Miktarı alanı

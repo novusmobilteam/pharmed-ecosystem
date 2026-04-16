@@ -15,7 +15,7 @@ class PatientMedicineWithdrawItemDTO {
   final UserDTO? applicationUser;
   final DateTime? applicationDate;
   final HospitalizationDTO? hospitalization;
-  final PatientDTO? patient;
+  final PatientDto? patient;
 
   PatientMedicineWithdrawItemDTO({
     this.id,

@@ -4,7 +4,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 class PatientMapper {
   const PatientMapper();
 
-  Patient toEntity(PatientDTO dto) {
+  Patient toEntity(PatientDto dto) {
     return Patient(
       id: dto.id,
       tcNo: dto.tcNo,
@@ -25,8 +25,8 @@ class PatientMapper {
     );
   }
 
-  PatientDTO toDto(Patient entity) {
-    return PatientDTO(
+  PatientDto toDto(Patient entity) {
+    return PatientDto(
       id: entity.id,
       tcNo: entity.tcNo,
       weight: entity.weight,
@@ -43,11 +43,11 @@ class PatientMapper {
     );
   }
 
-  List<Patient> toEntityList(List<PatientDTO> dtos) => dtos.map(toEntity).toList();
+  List<Patient> toEntityList(List<PatientDto> dtos) => dtos.map(toEntity).toList();
 
-  List<PatientDTO> toDtoList(List<Patient> entities) => entities.map(toDto).toList();
+  List<PatientDto> toDtoList(List<Patient> entities) => entities.map(toDto).toList();
 
-  Patient? toEntityOrNull(PatientDTO? dto) => dto == null ? null : toEntity(dto);
+  Patient? toEntityOrNull(PatientDto? dto) => dto == null ? null : toEntity(dto);
 
-  PatientDTO? toDtoOrNull(Patient? entity) => entity == null ? null : toDto(entity);
+  PatientDto? toDtoOrNull(Patient? entity) => entity == null ? null : toDto(entity);
 }

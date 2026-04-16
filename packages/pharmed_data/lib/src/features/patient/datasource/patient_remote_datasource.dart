@@ -12,7 +12,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-PATIENT';
 
-  Future<Result<ApiResponse<List<PatientDTO>>?>> getPatients({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<PatientDto>>?>> getPatients({int? skip, int? take, String? search}) async {
     return fetchRequest(
       path: _base,
       skip: skip,
@@ -20,22 +20,22 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
       searchText: search,
       searchFields: ['name'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(PatientDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PatientDto.fromJson),
       successLog: 'Patients fetched',
       emptyLog: 'No patients',
     );
   }
 
-  Future<Result<PatientDTO?>> createPatient(PatientDTO dto) {
-    return createRequest<PatientDTO?>(
+  Future<Result<PatientDto?>> createPatient(PatientDto dto) {
+    return createRequest<PatientDto?>(
       path: _base,
       body: dto.toJson(),
-      parser: BaseRemoteDataSource.singleParser(PatientDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(PatientDto.fromJson),
       successLog: 'Patient created',
     );
   }
 
-  Future<Result<void>> updatePatient(PatientDTO dto) {
+  Future<Result<void>> updatePatient(PatientDto dto) {
     if (dto.id == null) {
       return Future.value(Result.error(CustomException(message: 'updatePatient: id is null')));
     }
@@ -103,10 +103,10 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
-  Future<Result<List<PatientDTO>?>> getHospitalizedAndRecentExits() async {
+  Future<Result<List<PatientDto>?>> getHospitalizedAndRecentExits() async {
     return await fetchRequest(
       path: '$_base/hospitalizationForExits',
-      parser: BaseRemoteDataSource.listParser(PatientDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PatientDto.fromJson),
     );
   }
 

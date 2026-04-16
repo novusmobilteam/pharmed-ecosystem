@@ -24,14 +24,12 @@ final _cachedDeviceModeProvider = FutureProvider<CabinType?>((ref) async {
 });
 
 // Efektif mod — debug override varsa onu kullan
-final deviceModeProvider = Provider<CabinType?>((ref) {
+final deviceModeProvider = FutureProvider<CabinType?>((ref) async {
   if (kDebugMode) {
     final debugCabin = ref.watch(settingsNotifierProvider).debugCabin;
-    print('deviceModeProvider rebuild — debugCabin: ${debugCabin?.type}, id: ${debugCabin?.id}');
     if (debugCabin != null) return debugCabin.type;
   }
-  final result = ref.watch(_cachedDeviceModeProvider).valueOrNull;
-  return result;
+  return await ref.read(_cachedDeviceModeProvider.future);
 });
 
 class AppSettingsCache {

@@ -5,15 +5,19 @@ export 'data/drawer_slot_dto.dart';
 export 'data/drawer_unit_dto.dart';
 export 'data/drawer_cell_dto.dart';
 export 'data/mobile_drawer_request_dto.dart';
+export 'data/mobile_drawer_slot_dto.dart';
 
-export 'domain/model/cabin.dart';
-export 'domain/model/drawer_type.dart';
-export 'domain/model/drawer_config.dart';
-export 'domain/model/drawer_slot.dart';
-export 'domain/model/drawer_unit.dart';
-export 'domain/model/drawer_cell.dart';
-export 'domain/model/drawer_address.dart';
-export 'domain/model/drawer_group.dart';
+export 'domain/entity/cabin.dart';
+export 'domain/entity/drawer_type.dart';
+export 'domain/entity/drawer_config.dart';
+export 'domain/entity/drawer_slot.dart';
+export 'domain/entity/drawer_unit.dart';
+export 'domain/entity/drawer_cell.dart';
+export 'domain/entity/drawer_address.dart';
+export 'domain/entity/drawer_group.dart';
+export 'domain/entity/mobile_drawer_cell.dart';
+export 'domain/entity/mobile_drawer_slot.dart';
+export 'domain/entity/mobile_drawer_unit.dart';
 
 export 'domain/repository/i_cabin_repository.dart';
 

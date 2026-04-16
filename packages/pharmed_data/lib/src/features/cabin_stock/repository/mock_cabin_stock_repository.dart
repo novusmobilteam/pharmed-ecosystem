@@ -11,7 +11,7 @@ class MockCabinStockRepository implements ICabinStockRepository {
       quantity: 25.0,
       miadDate: DateTime.now().add(const Duration(days: 30)),
       medicine: Drug(id: 27, name: 'PARACEROL 10 MG', barcode: '1234345'),
-      assignment: CabinAssignment(cabinDrawerId: 1, minQuantity: 10, criticalQuantity: 30, maxQuantity: 200),
+      assignment: MedicineAssignment(cabinDrawerId: 1, minQuantity: 10, criticalQuantity: 30, maxQuantity: 200),
       cabinDrawerDetail: DrawerCell(
         id: 1731,
         stepNo: 1,
@@ -24,7 +24,7 @@ class MockCabinStockRepository implements ICabinStockRepository {
       quantity: 1.0,
       miadDate: DateTime.now().add(const Duration(days: 3)),
       medicine: Drug(id: 30, name: 'Xanax', barcode: '5672824512'),
-      assignment: CabinAssignment(cabinDrawerId: 3, minQuantity: 5, criticalQuantity: 7, maxQuantity: 12),
+      assignment: MedicineAssignment(cabinDrawerId: 3, minQuantity: 5, criticalQuantity: 7, maxQuantity: 12),
       cabinDrawerDetail: DrawerCell(
         id: 1747,
         stepNo: 1,
@@ -37,7 +37,7 @@ class MockCabinStockRepository implements ICabinStockRepository {
       quantity: 1.0,
       miadDate: DateTime.now().subtract(const Duration(days: 2)),
       medicine: Drug(id: 27, name: 'PARACEROL 10 MG', barcode: '1234345'),
-      assignment: CabinAssignment(cabinDrawerId: 3, minQuantity: 1, criticalQuantity: 6, maxQuantity: 12),
+      assignment: MedicineAssignment(cabinDrawerId: 3, minQuantity: 1, criticalQuantity: 6, maxQuantity: 12),
       cabinDrawerDetail: DrawerCell(
         id: 1763,
         stepNo: 2,

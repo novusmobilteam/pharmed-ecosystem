@@ -8,7 +8,7 @@ abstract class MedicineManagementDataSource {
   Future<Result<List<PrescriptionItemDTO>>> getDisposables({required int hospitalizationId});
 
   // İmha Edilebilir ilaçları getiren servis
-  Future<Result<List<CabinAssignmentDTO>>> getDisposableMaterials();
+  Future<Result<List<MedicineAssignmentDto>>> getDisposableMaterials();
 
   // Fire/İmha Etme İşlemi
   Future<Result<void>> wastage(Map<String, dynamic> data);

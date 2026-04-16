@@ -9,7 +9,7 @@ class FillingDetail implements TableData {
   final int? medicineId;
   final Medicine? medicine;
   final DrawerUnit? cabinDrawer;
-  final CabinAssignment? cabinAssignment;
+  final MedicineAssignment? cabinAssignment;
   final num? quantity;
   final num? fillingQuantity;
   final DateTime? fillingDate;
@@ -82,8 +82,8 @@ class FillingDetail implements TableData {
 extension FillingDetailAdapter on FillingDetail {
   /// Bu fonksiyon, FillingDetail nesnesini alıp, View'ın anlayacağı
   /// eksiksiz bir CabinDrawerQuantity nesnesine dönüştürür.
-  CabinAssignment toCompatibleQuantity() {
-    final baseQuantity = cabinAssignment ?? CabinAssignment();
+  MedicineAssignment toCompatibleQuantity() {
+    final baseQuantity = cabinAssignment ?? MedicineAssignment();
 
     return baseQuantity.copyWith(
       // JSON B'de material üstteydi, onu alta indiriyoruz

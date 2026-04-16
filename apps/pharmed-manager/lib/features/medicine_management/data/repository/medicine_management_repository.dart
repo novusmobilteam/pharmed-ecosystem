@@ -34,8 +34,11 @@ class MedicineManagementRepository implements IMedicineManagementRepository {
   }
 
   @override
-  Future<Result<List<CabinAssignment>>> getDisposableMaterials() async {
+  Future<Result<List<MedicineAssignment>>> getDisposableMaterials() async {
     final res = await _ds.getDisposableMaterials();
-    return res.when(ok: (dtos) => Result.ok(CabinAssignmentMapper().toEntityList(dtos)), error: (e) => Result.error(e));
+    return res.when(
+      ok: (dtos) => Result.ok(MedicineAssignmentMapper().toEntityList(dtos)),
+      error: (e) => Result.error(e),
+    );
   }
 }

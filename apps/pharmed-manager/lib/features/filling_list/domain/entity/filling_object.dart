@@ -7,7 +7,7 @@ class FillingObject extends TableData {
   final List<int>? detailIds;
 
   final Medicine? medicine;
-  final CabinAssignment? assignment;
+  final MedicineAssignment? assignment;
   final num quantity;
   final bool canEdit;
   final List<CabinStock>? stocks;
@@ -25,7 +25,7 @@ class FillingObject extends TableData {
     List<int>? detailIds,
     num? quantity,
     bool? canEdit,
-    CabinAssignment? assignment,
+    MedicineAssignment? assignment,
     List<CabinStock>? stocks,
   }) {
     return FillingObject(
@@ -49,7 +49,7 @@ class FillingObject extends TableData {
 }
 
 extension FillingObjectAdapter on FillingObject {
-  CabinAssignment? toCabinAssignment() {
+  MedicineAssignment? toCabinAssignment() {
     if (assignment == null) return null;
 
     return assignment!.copyWith(medicine: medicine, fillingQuantity: quantity, stocks: stocks);
@@ -57,7 +57,7 @@ extension FillingObjectAdapter on FillingObject {
 }
 
 extension FillingObjectListAdapter on List<FillingObject> {
-  List<CabinAssignment> toCabinAssignments() {
+  List<MedicineAssignment> toCabinAssignments() {
     return where((o) => o.assignment != null).map((o) => o.toCabinAssignment()!).toList();
   }
 }

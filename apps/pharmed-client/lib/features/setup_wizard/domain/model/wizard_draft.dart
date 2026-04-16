@@ -49,7 +49,7 @@ class WizardDraft extends Equatable {
   CabinSetupConfig toConfig() {
     assert(isComplete, 'WizardDraft.toConfig() — eksik adımlar mevcut');
     return CabinSetupConfig(
-      cabinetType: cabinType!,
+      cabinType: cabinType!,
       basicInfo: basicInfo!,
       stationScope: serviceScope!,
       scannedLayout: scannedLayout,
@@ -58,14 +58,14 @@ class WizardDraft extends Equatable {
   }
 
   WizardDraft copyWith({
-    CabinType? cabinetType,
+    CabinType? cabinType,
     WizardBasicInfo? basicInfo,
     StationScope? serviceScope,
     List<DrawerGroup>? scannedLayout,
     WizardMobileLayout? mobileLayout,
   }) {
     return WizardDraft(
-      cabinType: cabinetType ?? this.cabinType,
+      cabinType: cabinType ?? this.cabinType,
       basicInfo: basicInfo ?? this.basicInfo,
       serviceScope: serviceScope ?? this.serviceScope,
       scannedLayout: scannedLayout ?? this.scannedLayout,

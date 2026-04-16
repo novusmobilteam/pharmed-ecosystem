@@ -135,7 +135,7 @@ class _CellSelectedContent extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Butonlar
-          _ActionButtons(canSave: state.canSave, isAssigned: state.isAssigned, onSave: onSave, onDelete: onDelete),
+          _ActionButtons(canSave: state.canSave, isAssigned: false, onSave: onSave, onDelete: onDelete),
         ],
       ),
     );

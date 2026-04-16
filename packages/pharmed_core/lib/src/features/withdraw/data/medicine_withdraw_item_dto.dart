@@ -21,7 +21,7 @@ class MedicineWithdrawItemDTO {
   final UserDTO? approvalUser;
   final UserDTO? applicationUser;
   final PrescriptionDTO? prescription;
-  final CabinAssignmentDTO? cabinAssignment;
+  final MedicineAssignmentDto? cabinAssignment;
   final CabinStockDTO? cabinDrawerStock;
 
   MedicineWithdrawItemDTO({
@@ -72,7 +72,7 @@ class MedicineWithdrawItemDTO {
       applicationUser: json['applicationUser'] != null ? UserDTO.fromJson(json['applicationUser']) : null,
       prescription: json['prescription'] != null ? PrescriptionDTO.fromJson(json['prescription']) : null,
       cabinAssignment: json['cabinDrawrQuantity'] != null
-          ? CabinAssignmentDTO.fromJson(json['cabinDrawrQuantity'])
+          ? MedicineAssignmentDto.fromJson(json['cabinDrawrQuantity'])
           : null,
       cabinDrawerStock: json['cabinDrawrStock'] != null ? CabinStockDTO.fromJson(json['cabinDrawrStock']) : null,
     );

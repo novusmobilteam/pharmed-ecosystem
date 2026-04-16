@@ -14,12 +14,12 @@ class MedicineManagementRemoteDataSource extends BaseRemoteDataSource implements
   }
 
   @override
-  Future<Result<List<CabinAssignmentDTO>>> getDisposableMaterials() async {
-    final res = await fetchRequest<List<CabinAssignmentDTO>>(
+  Future<Result<List<MedicineAssignmentDto>>> getDisposableMaterials() async {
+    final res = await fetchRequest<List<MedicineAssignmentDto>>(
       path: '/CabinDrawrQuantity/cabinInMaterialsDestroyable',
-      parser: BaseRemoteDataSource.listParser(CabinAssignmentDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(MedicineAssignmentDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <CabinAssignmentDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <MedicineAssignmentDto>[]), error: Result.error);
   }
 
   @override

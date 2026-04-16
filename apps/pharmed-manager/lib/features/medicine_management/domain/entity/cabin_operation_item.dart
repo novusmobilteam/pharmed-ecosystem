@@ -20,7 +20,7 @@ class CabinOperationItem {
   final double? dosePiece;
 
   /// İlacın kabindeki yeri. İadede de dolu gelir (hangi çekmeceden alındığı).
-  final CabinAssignment? assignment;
+  final MedicineAssignment? assignment;
 
   // ---------------------------------------------------------------------------
   // Geçmiş işlem bilgisi — iade ve fire/imha'da dolu, alımda null
@@ -134,7 +134,7 @@ class CabinOperationItem {
     User? witness,
     List<Station>? stations,
     PrescriptionStatus? status,
-    CabinAssignment? assignment,
+    MedicineAssignment? assignment,
   }) {
     return CabinOperationItem(
       id: id,

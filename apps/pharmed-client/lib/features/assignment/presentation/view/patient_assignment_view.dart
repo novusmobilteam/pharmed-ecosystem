@@ -85,6 +85,9 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
       if (next is PatientAssignmentError) {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
+      } else if (next is PatientAssignmentSuccess) {
+        MessageUtils.showSuccessSnackbar(context, next.message);
+        notifier.dismissSuccess();
       }
     });
 
@@ -131,13 +134,15 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
     PatientAssignmentSlotSelected(:final slots) => slots,
     PatientAssignmentCellSelected(:final slots) => slots,
     PatientAssignmentSaving(:final slots) => slots,
+    PatientAssignmentSuccess(:final slots) => slots,
     _ => const [],
   };
 
   int? _extractSelectedSlotId(PatientAssignmentUiState s) => switch (s) {
     PatientAssignmentSlotSelected(:final selectedSlotId) => selectedSlotId,
     PatientAssignmentCellSelected(:final selectedSlotId) => selectedSlotId,
-    PatientAssignmentSaving(:final selectedSlotId) => selectedSlotId,
+    PatientAssignmentSaving s => s.selectedSlot.slotId,
+    PatientAssignmentSuccess s => s.selectedSlot.slotId,
     _ => null,
   };
 
@@ -145,6 +150,7 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
     PatientAssignmentSlotSelected(:final selectedSlot) => selectedSlot,
     PatientAssignmentCellSelected(:final selectedSlot) => selectedSlot,
     PatientAssignmentSaving(:final selectedSlot) => selectedSlot,
+    PatientAssignmentSuccess(:final selectedSlot) => selectedSlot,
     _ => null,
   };
 

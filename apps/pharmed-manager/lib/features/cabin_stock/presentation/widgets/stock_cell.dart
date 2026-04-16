@@ -3,7 +3,7 @@ part of 'cabin_stock_view.dart';
 class StockCell extends StatelessWidget {
   const StockCell({super.key, required this.assignment, required this.unit, this.isSelected = false});
 
-  final CabinAssignment assignment;
+  final MedicineAssignment assignment;
   final DrawerUnit unit;
   final bool isSelected;
 

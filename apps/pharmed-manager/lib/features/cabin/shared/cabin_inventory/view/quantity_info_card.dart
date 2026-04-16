@@ -4,7 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../core/core.dart';
 
 class QuantityInfoCard extends StatelessWidget {
-  final CabinAssignment data;
+  final MedicineAssignment data;
   final double quantity;
   final CabinInventoryType type;
 

@@ -19,10 +19,7 @@ class MedicineUnloadView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) =>
-              MedicineUnloadNotifier(unloadMedicineUseCase: context.read(), deleteAssignmentUseCase: context.read()),
-        ),
+        ChangeNotifierProvider(create: (context) => MedicineUnloadNotifier(unloadMedicineUseCase: context.read())),
         ChangeNotifierProvider(
           create: (context) => CabinAssignmentPickerNotifier(
             getCabinAssignmetsUseCase: context.read(),

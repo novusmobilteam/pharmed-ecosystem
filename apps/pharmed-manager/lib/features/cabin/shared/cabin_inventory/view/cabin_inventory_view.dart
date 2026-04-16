@@ -10,7 +10,7 @@ import 'drawer_loading_view.dart';
 
 Future<bool> showCabinInventoryView(
   BuildContext context, {
-  required CabinAssignment initial,
+  required MedicineAssignment initial,
   required CabinOperationCallback onSave,
   required double quantity,
   // Dolum yapılması planlanan miktar. İlaç Dolum Listesi tarafında kullanılıyor

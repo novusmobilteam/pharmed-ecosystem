@@ -46,7 +46,7 @@ class MedicineDefineNotifier extends ChangeNotifier with ApiRequestMixin {
   List<DateTime?> _selectedTimes = List<DateTime?>.filled(5, null);
   List<DateTime?> get selectedTimes => _selectedTimes;
 
-  CabinAssignment get assignment => CabinAssignment(
+  MedicineAssignment get assignment => MedicineAssignment(
     drawerUnit: DrawerUnit(drawerSlot: _selectedSlot, drawerSlotId: _selectedSlot?.id),
     cabin: _selectedSlot?.cabin,
   );

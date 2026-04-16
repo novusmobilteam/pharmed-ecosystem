@@ -95,10 +95,10 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (list) => Result.ok(list ?? const <DrawerSlotDTO>[]), error: Result.error);
   }
 
-  Future<Result<List<MobileDrawerRequestDTO>>> getMobileCabinSlots(int cabinId) async {
-    final res = await fetchRequest<List<MobileDrawerRequestDTO>>(
+  Future<Result<List<MobileDrawerSlotDTO>>> getMobileCabinSlots(int cabinId) async {
+    final res = await fetchRequest<List<MobileDrawerSlotDTO>>(
       path: '/CabinDesign/drawCabinMobile/$cabinId',
-      parser: BaseRemoteDataSource.listParser(MobileDrawerRequestDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(MobileDrawerSlotDTO.fromJson),
       successLog: 'Mobil kabin layout getirildi',
       emptyLog: 'Mobil kabin layout bulunamadı',
     );

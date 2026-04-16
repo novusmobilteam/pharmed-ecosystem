@@ -11,7 +11,7 @@ class OpenDrawerUseCase {
   OpenDrawerUseCase(this._service);
 
   Future<void> call({
-    required CabinAssignment item,
+    required MedicineAssignment item,
     required Function(DrawerStage stage, String message) onUpdate,
     required Function(ManagementCard manager, DrawerAddress address) onReadyToMonitor,
     // Alım yapılırken girilecek, çekmeceden kaç adet ilaç alınacağı bilgisi.

@@ -23,7 +23,7 @@ export 'src/features/dosage_form/dosage_form.dart';
 export 'src/features/material_type/material_type.dart';
 export 'src/features/firm/firm.dart';
 export 'src/features/medicine/medicine.dart';
-export 'src/features/cabin_assignment/cabin_assignment.dart';
+export 'src/features/assignment/assignment.dart';
 export 'src/features/cabin_stock/cabin_stock.dart';
 export 'src/features/hospitalization/hospitalization.dart';
 export 'src/features/patient/patient.dart';

@@ -46,7 +46,7 @@ class MobileCabinDetailPanel extends StatelessWidget {
   /// Atama listesi — hasta bazlı assign modunda hücre rengini belirler.
   /// Şimdilik koordinat → assignment eşleştirmesi için kullanılacak
   /// (PatientCabinAssignment modeli netleşince güncellenir).
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
 
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
@@ -201,7 +201,7 @@ class _GridBody extends StatelessWidget {
 
   final MobileSlotVisual slot;
   final CabinOperationMode mode;
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
 
@@ -262,7 +262,7 @@ class _GridRow extends StatelessWidget {
   final int rowIndex;
   final int colCount;
   final CabinOperationMode mode;
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
 

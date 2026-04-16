@@ -18,99 +18,112 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../widgets/widgets.dart';
-import '../state/patient_assignment_ui_state.dart';
-
-// ─────────────────────────────────────────────────────────────────
-// Provider
-// ─────────────────────────────────────────────────────────────────
+import '../../assignment.dart';
 
 final patientAssignmentNotifierProvider = NotifierProvider<PatientAssignmentNotifier, PatientAssignmentUiState>(
   PatientAssignmentNotifier.new,
 );
 
-// ─────────────────────────────────────────────────────────────────
-// Notifier
-// ─────────────────────────────────────────────────────────────────
-
 class PatientAssignmentNotifier extends Notifier<PatientAssignmentUiState> {
   @override
   PatientAssignmentUiState build() => const PatientAssignmentUninitialized();
 
+  CreatePatientAssignmentUseCase get _createAssignment => ref.read(createPatientAssignmentUseCaseProvider);
+
+  // Init
   void init(CabinVisualizerData data) {
-    final slots = data.slots.whereType<MobileSlotVisual>().toList();
-    state = PatientAssignmentIdle(slots: slots);
+    state = PatientAssignmentIdle(
+      slots: data.slots.whereType<MobileSlotVisual>().toList(),
+      mobileSlots: data.mobileSlots,
+    );
   }
 
-  // ── Slot seçimi ───────────────────────────────────────────────
-
+  // Slot seçimi
   void onSlotTap(MobileSlotVisual slot) {
-    final slots = _extractSlots(state);
+    final slots = _slots;
+    final mobileSlots = _mobileSlots;
 
-    // Toggle — aynı slota tekrar basılırsa Idle'a dön
     final currentSlotId = switch (state) {
       PatientAssignmentSlotSelected s => s.selectedSlotId,
       PatientAssignmentCellSelected s => s.selectedSlotId,
       _ => null,
     };
 
-    if (currentSlotId != null && currentSlotId == slot.slotId) {
-      state = PatientAssignmentIdle(slots: slots);
+    if (currentSlotId == slot.slotId) {
+      state = PatientAssignmentIdle(slots: slots, mobileSlots: mobileSlots);
       return;
     }
 
-    state = PatientAssignmentSlotSelected(slots: slots, selectedSlot: slot);
+    state = PatientAssignmentSlotSelected(slots: slots, mobileSlots: mobileSlots, selectedSlot: slot);
   }
 
-  // ── Hücre seçimi ──────────────────────────────────────────────
-
+  // Hücre seçimi
   void onCellTap(MobileCellCoord coord) {
     final current = state;
-    final slots = _extractSlots(current);
-    final selectedSlot = _extractSelectedSlot(current);
+    final selectedSlot = _selectedSlot;
     if (selectedSlot == null) return;
 
-    // Aynı hücreye tekrar basılırsa slot seçili duruma dön
     if (current is PatientAssignmentCellSelected && current.selectedCell == coord) {
-      state = PatientAssignmentSlotSelected(slots: slots, selectedSlot: selectedSlot);
+      state = PatientAssignmentSlotSelected(slots: _slots, mobileSlots: _mobileSlots, selectedSlot: selectedSlot);
       return;
     }
 
-    // TODO: PatientCabinAssignment gelince mevcut atamayı
-    // coord üzerinden lookup yapıp isAssigned / selectedHospitalization
-    // alanlarını doldur.
     state = PatientAssignmentCellSelected(
-      slots: slots,
+      slots: _slots,
+      mobileSlots: _mobileSlots,
       selectedSlot: selectedSlot,
       selectedCell: coord,
-      selectedHospitalization: null,
-      isAssigned: false,
     );
   }
 
-  // ── Yatış seçimi (dialogdan) ──────────────────────────────────
-
+  // Yatış seçimi
   void onHospitalizationSelected(Hospitalization hospitalization) {
     final current = state;
     if (current is! PatientAssignmentCellSelected) return;
-
     state = current.copyWith(selectedHospitalization: hospitalization);
   }
 
-  // ── Kaydet (stub) ─────────────────────────────────────────────
-
-  /// PatientCabinAssignment modeli ve servisi netleşince implemente edilecek.
+  // Kaydet
   Future<void> saveAssignment() async {
-    // TODO: implement
-  }
+    final current = state;
+    if (current is! PatientAssignmentCellSelected) return;
+    if (!current.canSave) return;
 
-  // ── Sil (stub) ────────────────────────────────────────────────
+    // Seçili coord'dan MobileDrawerCell.id bul
+    final cellId = _resolveCellId(mobileSlots: current.mobileSlots, coord: current.selectedCell);
+
+    if (cellId == null) {
+      state = PatientAssignmentError(message: 'Seçili göz bulunamadı', previousState: current);
+      return;
+    }
+
+    state = PatientAssignmentSaving(
+      slots: current.slots,
+      mobileSlots: current.mobileSlots,
+      selectedSlot: current.selectedSlot,
+    );
+
+    final result = await _createAssignment.call(cellId: cellId, bedId: current.selectedHospitalization!.bedId!);
+
+    result.when(
+      ok: (_) {
+        state = PatientAssignmentSuccess(
+          slots: current.slots,
+          mobileSlots: current.mobileSlots,
+          selectedSlot: current.selectedSlot,
+          message: 'Hasta ataması başarıyla kaydedildi',
+        );
+      },
+      error: (e) {
+        state = PatientAssignmentError(message: e.message, previousState: current);
+      },
+    );
+  }
 
   /// PatientCabinAssignment modeli ve servisi netleşince implemente edilecek.
   Future<void> deleteAssignment() async {
     // TODO: implement
   }
-
-  // ── Hata dismiss ──────────────────────────────────────────────
 
   void dismissError() {
     if (state is PatientAssignmentError) {
@@ -118,21 +131,59 @@ class PatientAssignmentNotifier extends Notifier<PatientAssignmentUiState> {
     }
   }
 
-  // ── Extract yardımcıları ──────────────────────────────────────
+  void dismissSuccess() {
+    final current = state;
+    if (current is! PatientAssignmentSuccess) return;
+    state = PatientAssignmentSlotSelected(
+      slots: current.slots,
+      mobileSlots: current.mobileSlots,
+      selectedSlot: current.selectedSlot,
+    );
+  }
 
-  List<MobileSlotVisual> _extractSlots(PatientAssignmentUiState s) => switch (s) {
+  // MobileCellCoord → MobileDrawerCell.id çözümleyici
+  //
+  // coord.slotId → MobileDrawerSlot.id
+  // coord.rowIndex → MobileDrawerUnit sırası (orderNo - 1)
+  // coord.colIndex → MobileDrawerCell sırası (stepNo - 1)
+
+  int? _resolveCellId({required List<MobileDrawerSlot> mobileSlots, required MobileCellCoord coord}) {
+    final slot = mobileSlots.where((s) => s.id == coord.$1).firstOrNull;
+    if (slot == null) return null;
+
+    final unit = slot.units.where((u) => u.orderNo - 1 == coord.$2).firstOrNull;
+    if (unit == null) return null;
+
+    final cell = unit.cells.where((c) => c.stepNo - 1 == coord.$3).firstOrNull;
+    return cell?.id;
+  }
+
+  // Extract yardımcıları
+
+  List<MobileSlotVisual> get _slots => switch (state) {
     PatientAssignmentIdle(:final slots) => slots,
-    PatientAssignmentLoading(:final slots) => slots,
     PatientAssignmentSlotSelected(:final slots) => slots,
     PatientAssignmentCellSelected(:final slots) => slots,
     PatientAssignmentSaving(:final slots) => slots,
+    PatientAssignmentSuccess(:final slots) => slots,
     _ => const [],
   };
 
-  MobileSlotVisual? _extractSelectedSlot(PatientAssignmentUiState s) => switch (s) {
+  List<MobileDrawerSlot> get _mobileSlots => switch (state) {
+    PatientAssignmentIdle(:final mobileSlots) => mobileSlots,
+    PatientAssignmentSlotSelected(:final mobileSlots) => mobileSlots,
+    PatientAssignmentCellSelected(:final mobileSlots) => mobileSlots,
+    PatientAssignmentSaving(:final mobileSlots) => mobileSlots,
+    PatientAssignmentSuccess(:final mobileSlots) => mobileSlots,
+
+    _ => const [],
+  };
+
+  MobileSlotVisual? get _selectedSlot => switch (state) {
     PatientAssignmentSlotSelected(:final selectedSlot) => selectedSlot,
     PatientAssignmentCellSelected(:final selectedSlot) => selectedSlot,
     PatientAssignmentSaving(:final selectedSlot) => selectedSlot,
+    PatientAssignmentSuccess(:final selectedSlot) => selectedSlot,
     _ => null,
   };
 }

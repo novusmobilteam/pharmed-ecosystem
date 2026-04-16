@@ -10,7 +10,7 @@ class FillingDetailDTO {
   final int? medicineId;
   final MedicineDTO? medicine;
   final DrawerUnitDTO? cabinDrawer;
-  final CabinAssignmentDTO? cabinAssignment;
+  final MedicineAssignmentDto? cabinAssignment;
   final num? quantity;
   final num? fillingQuantity;
   final DateTime? fillingDate;
@@ -45,7 +45,7 @@ class FillingDetailDTO {
       medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
       cabinDrawer: json['cabinDrawr'] != null ? DrawerUnitDTO.fromJson(json['cabinDrawr']) : null,
       cabinAssignment: json['cabinDrawrQuantity'] != null
-          ? CabinAssignmentDTO.fromJson(json['cabinDrawrQuantity'])
+          ? MedicineAssignmentDto.fromJson(json['cabinDrawrQuantity'])
           : null,
       quantity: json['quantity'] as num?,
       fillingQuantity: json['fiilingQuantity'] as num?,
@@ -86,7 +86,7 @@ class FillingDetailDTO {
       medicineId: medicineId,
       medicine: medicine?.toEntity(),
       cabinDrawer: DrawerUnitMapper().toEntityOrNull(cabinDrawer),
-      cabinAssignment: CabinAssignmentMapper().toEntityOrNull(cabinAssignment),
+      cabinAssignment: MedicineAssignmentMapper().toEntityOrNull(cabinAssignment),
       quantity: quantity,
       fillingQuantity: fillingQuantity,
       fillingDate: fillingDate,

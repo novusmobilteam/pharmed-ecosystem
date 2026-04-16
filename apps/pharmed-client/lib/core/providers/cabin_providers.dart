@@ -25,6 +25,7 @@ final cabinRepositoryProvider = Provider<ICabinRepository>((ref) {
       drawerConfigMapper: DrawerConfigMapper(),
       drawerUnitMapper: DrawerUnitMapper(),
       drawerTypeMapper: DrawerTypeMapper(),
+      mobileDrawerSlotMapper: MobileDrawerSlotMapper(),
       remoteDataSource: ref.read(cabinRemoteDataSourceProvider),
       localDataSource: ref.read(cabinLocaleDataSourceProvider),
     ),

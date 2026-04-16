@@ -5,7 +5,7 @@ class CheckWithdrawParams {
   final int userId;
   final int? hospitalizationId;
   final int? prescriptionDetailId;
-  final CabinAssignment assignment;
+  final MedicineAssignment assignment;
   final double dosePiece;
 
   CheckWithdrawParams({
@@ -74,7 +74,7 @@ class CheckWithdrawUseCase {
     return result.when(ok: (_) => Result.ok(details), error: Result.error);
   }
 
-  List<WithdrawDetail> _prepareWithdrawDetails(CabinAssignment assignment, double amount) {
+  List<WithdrawDetail> _prepareWithdrawDetails(MedicineAssignment assignment, double amount) {
     final List<WithdrawDetail> requestList = [];
     double remainingQty = amount;
 

@@ -10,13 +10,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
-import '../datasource/cabin_remote_datasource.dart';
-import '../datasource/cabin_local_datasource.dart';
-import '../mapper/cabin_mapper.dart';
-import '../mapper/drawer_config_mapper.dart';
-import '../mapper/drawer_slot_mapper.dart';
-import '../mapper/drawer_type_mapper.dart';
-import '../mapper/drawer_unit_mapper.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 class CabinRepositoryImpl implements ICabinRepository {
   CabinRepositoryImpl({
@@ -27,13 +21,15 @@ class CabinRepositoryImpl implements ICabinRepository {
     required DrawerConfigMapper drawerConfigMapper,
     required DrawerUnitMapper drawerUnitMapper,
     required DrawerTypeMapper drawerTypeMapper,
+    required MobileDrawerSlotMapper mobileDrawerSlotMapper,
   }) : _remote = remoteDataSource,
        _local = localDataSource,
        _cabinMapper = cabinMapper,
        _drawerSlotMapper = drawerSlotMapper,
        _drawerConfigMapper = drawerConfigMapper,
        _drawerUnitMapper = drawerUnitMapper,
-       _drawerTypeMapper = drawerTypeMapper;
+       _drawerTypeMapper = drawerTypeMapper,
+       _mobileDrawerSlotMapper = mobileDrawerSlotMapper;
 
   final CabinRemoteDataSource _remote;
   final ICabinLocalDataSource _local;
@@ -42,6 +38,7 @@ class CabinRepositoryImpl implements ICabinRepository {
   final DrawerConfigMapper _drawerConfigMapper;
   final DrawerUnitMapper _drawerUnitMapper;
   final DrawerTypeMapper _drawerTypeMapper;
+  final MobileDrawerSlotMapper _mobileDrawerSlotMapper;
 
   // ── Kabin CRUD ─────────────────────────────────────────────────
 
@@ -160,19 +157,19 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
-  Future<RepoResult<List<MobileDrawerRequestDTO>>> getMobileCabinSlots(int cabinId) async {
+  Future<RepoResult<List<MobileDrawerSlot>>> getMobileCabinSlots(int cabinId) async {
     final result = await _remote.getMobileCabinSlots(cabinId);
 
     return result.when(
       ok: (dtos) async {
         await _local.saveMobileDrawers(cabinId, dtos);
-        return RepoSuccess(dtos);
+        return RepoSuccess(_mobileDrawerSlotMapper.toEntityList(dtos));
       },
       error: (error) async {
         final cached = await _local.readMobileDrawers(cabinId);
         final savedAt = await _local.mobileDrawersSavedAt(cabinId);
         if (cached != null && savedAt != null) {
-          return RepoStale(cached, savedAt);
+          return RepoStale(_mobileDrawerSlotMapper.toEntityList(cached), savedAt);
         }
         return RepoFailure(error);
       },

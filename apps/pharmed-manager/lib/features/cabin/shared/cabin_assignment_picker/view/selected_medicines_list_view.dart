@@ -49,7 +49,11 @@ class SelectedMedicinesListView extends StatelessWidget {
     }
   }
 
-  Widget _buildProcessCard(BuildContext context, CabinAssignmentPickerNotifier notifier, CabinAssignment assignment) {
+  Widget _buildProcessCard(
+    BuildContext context,
+    CabinAssignmentPickerNotifier notifier,
+    MedicineAssignment assignment,
+  ) {
     final isCompleted = notifier.completedAssignmentIds.contains(assignment.id);
     final isCancelled = notifier.cancelledAssignmentIds.contains(assignment.id);
     final color = isCompleted

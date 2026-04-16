@@ -25,7 +25,7 @@ class GetCabinVisualizerDataUseCase {
   /// null → normal akış (cache'deki cabinId + deviceMode).
   /// non-null → debugCabin.id ve debugCabin.type kullanılır.
   Future<RepoResult<CabinVisualizerData>> call({required CabinType? deviceMode, Cabin? debugCabin}) async {
-    // ── Effective id ve mode ──────────────────────────────────
+    // Effective id ve mode
     final int? cabinId;
     final CabinType? effectiveMode;
 
@@ -36,7 +36,7 @@ class GetCabinVisualizerDataUseCase {
         unit: 'SW-UNIT-UI',
         swreq: 'SWREQ-UI-DASH-003',
         message: '[DEBUG] Kabin override aktif',
-        context: {'cabinId': cabinId, 'type': effectiveMode},
+        context: {'cabinId': cabinId, 'deviceMode': effectiveMode},
       );
     } else {
       cabinId = await _settingsCache.getCurrentCabinId();
@@ -60,29 +60,26 @@ class GetCabinVisualizerDataUseCase {
     return _buildStandardVisualizer(cabinId);
   }
 
-  // ── Mobil kabin akışı ─────────────────────────────────────────
-
+  // Mobil kabin akışı
   Future<RepoResult<CabinVisualizerData>> _buildMobileVisualizer(int cabinId) async {
     final result = await _cabinRepository.getMobileCabinSlots(cabinId);
 
-    final drawers = result.when(success: (data) => data, stale: (data, _) => data, failure: (_) => null);
+    final slots = result.when(success: (data) => data, stale: (data, _) => data, failure: (_) => null);
 
-    if (drawers == null || drawers.isEmpty) {
+    if (slots == null || slots.isEmpty) {
       return RepoFailure(ServiceException(message: 'Mobil kabin tasarımı bulunamadı', statusCode: 404));
     }
 
     final isStale = result is RepoStale;
 
-    final slots = drawers.map((drawer) {
-      return MobileSlotVisual(
-        slotId: drawer.orderNumber,
-        rowColumns: drawer.details.map((d) => d.columnsCount).toList(),
-      );
+    final slotVisuals = slots.map((slot) {
+      return MobileSlotVisual(slotId: slot.id, rowColumns: slot.units.map((u) => u.columnCount).toList());
     }).toList();
 
     final data = CabinVisualizerData(
       cabinId: cabinId,
-      slots: slots,
+      slots: slotVisuals,
+      mobileSlots: slots,
       isStale: isStale,
       groups: const [],
       stocks: const [],
@@ -91,8 +88,7 @@ class GetCabinVisualizerDataUseCase {
     return isStale ? RepoStale(data, DateTime.now()) : RepoSuccess(data);
   }
 
-  // ── Standart kabin akışı ──────────────────────────────────────
-
+  // Standart kabin akışı
   Future<RepoResult<CabinVisualizerData>> _buildStandardVisualizer(int cabinId) async {
     final (slotResult, stockResult) = await (
       _cabinRepository.getCabinSlots(cabinId),
@@ -137,7 +133,7 @@ class GetCabinVisualizerDataUseCase {
     return isStale ? RepoStale(data, DateTime.now()) : RepoSuccess(data);
   }
 
-  // ── Slot builder ──────────────────────────────────────────────
+  // Slot builder
 
   List<DrawerSlotVisual> _buildSlots(List<DrawerGroup> groups, List<CabinStock> stocks) {
     final stocksByUnitId = <int, List<CabinStock>>{};

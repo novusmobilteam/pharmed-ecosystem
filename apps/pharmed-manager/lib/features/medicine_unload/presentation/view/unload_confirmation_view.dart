@@ -4,7 +4,7 @@ class UnloadConfirmationView extends StatelessWidget {
   const UnloadConfirmationView({super.key, required this.inputs, this.assignment});
 
   final List<CabinInputData> inputs;
-  final CabinAssignment? assignment;
+  final MedicineAssignment? assignment;
 
   Future<void> _handleComplete(BuildContext context, MedicineUnloadNotifier notifier, UnloadType type) async {
     await notifier.completeUnload(

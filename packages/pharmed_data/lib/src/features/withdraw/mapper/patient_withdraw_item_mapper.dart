@@ -25,12 +25,12 @@ class PatientMedicineWithdrawItemMapper {
 
   /// DTO'daki düzensiz çekmece verisinden donanımın anlayacağı
   /// hiyerarşik CabinAssignment nesnesini oluşturur.
-  CabinAssignment _mapToCabinAssignment(PatientMedicineWithdrawItemDTO dto) {
+  MedicineAssignment _mapToCabinAssignment(PatientMedicineWithdrawItemDTO dto) {
     // 1. DTO'dan ana çekmece birimini dönüştür (Alt mapper'ı kullanarak)
     final unit = const DrawerUnitMapper().toEntityOrNull(dto.cabinDrawer);
 
     if (unit == null) {
-      return CabinAssignment.empty(cabinId: 0, cabinDrawerId: 0);
+      return MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0);
     }
 
     // 2. Mevcut hiyerarşiyi (Deep Nesting) kontrollü şekilde ayağa kaldır
@@ -59,7 +59,7 @@ class PatientMedicineWithdrawItemMapper {
 
     final finalUnit = DrawerUnit(id: unit.id ?? 0, compartmentNo: portNo, orderNo: orderNo, drawerSlot: finalSlot);
 
-    return CabinAssignment(id: dto.id ?? 0, drawerUnit: finalUnit);
+    return MedicineAssignment(id: dto.id ?? 0, drawerUnit: finalUnit);
   }
 
   // List dönüşümleri her zamanki gibi...

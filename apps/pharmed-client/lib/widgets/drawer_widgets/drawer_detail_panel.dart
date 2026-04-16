@@ -42,7 +42,7 @@ class DrawerDetailPanel extends StatelessWidget {
   final CabinOperationMode mode;
   final DrawerGroup? group;
   final List<CabinStock> stocks;
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
   final List<Fault> faults;
   final int? selectedUnitId;
   final int? selectedStepNo;
@@ -212,7 +212,7 @@ class _DetailBody extends StatelessWidget {
   final DrawerGroup group;
   final CabinOperationMode mode;
   final List<CabinStock> stocks;
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
   final List<Fault> faults;
   final int? selectedUnitId;
   final int? selectedStepNo;
@@ -240,8 +240,8 @@ class _DetailBody extends StatelessWidget {
   }
 
   /// Atama lookup: unitId → CabinAssignment
-  Map<int, CabinAssignment> get _assignmentByUnitId {
-    final map = <int, CabinAssignment>{};
+  Map<int, MedicineAssignment> get _assignmentByUnitId {
+    final map = <int, MedicineAssignment>{};
     for (final a in assignments) {
       final unitId = a.cabinDrawerId;
       if (unitId != null) map[unitId] = a;
@@ -302,7 +302,7 @@ class _KubicDetailView extends StatelessWidget {
   final DrawerGroup group;
   final CabinOperationMode mode;
   final Map<int, CabinStock> stockByUnitId;
-  final Map<int, CabinAssignment> assignmentByUnitId;
+  final Map<int, MedicineAssignment> assignmentByUnitId;
   final Map<int, Fault> faultByUnitId;
   final int? selectedUnitId;
   final void Function(DrawerUnit unit)? onCellTap;
@@ -374,7 +374,7 @@ class _UnitDoseDetailView extends StatelessWidget {
   final DrawerGroup group;
   final CabinOperationMode mode;
   final Map<(int, int), CabinStock> stockByUnitAndStep;
-  final Map<int, CabinAssignment> assignmentByUnitId;
+  final Map<int, MedicineAssignment> assignmentByUnitId;
   final Map<int, Fault> faultByUnitId;
   final int? selectedUnitId;
   final int? selectedStepNo;
@@ -487,7 +487,7 @@ class _CabinCell extends StatelessWidget {
   final DrawerUnit unit;
   final CabinStock? stock;
   final Fault? fault;
-  final CabinAssignment? assignment;
+  final MedicineAssignment? assignment;
   final CabinOperationMode mode;
   final String code;
   final bool isSelected;

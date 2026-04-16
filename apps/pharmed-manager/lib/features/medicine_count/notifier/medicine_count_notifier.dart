@@ -17,9 +17,9 @@ enum MedicineCountType {
   const MedicineCountType(this.title);
 }
 
-class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinAssignment> {
+class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MedicineAssignment> {
   final CountMedicineUseCase _countMedicineUseCase;
-  final Future<void> Function(CabinAssignment assignment)? onOperationRequired;
+  final Future<void> Function(MedicineAssignment assignment)? onOperationRequired;
 
   MedicineCountNotifier({required CountMedicineUseCase countMedicineUseCase, this.onOperationRequired})
     : _countMedicineUseCase = countMedicineUseCase;
@@ -28,12 +28,12 @@ class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchM
   MedicineCountType get countType => _countType;
   int get countTypeIndex => MedicineCountType.values.indexOf(_countType);
 
-  List<CabinAssignment> _selectedAssignments = [];
-  List<CabinAssignment> get selectedAssignments => _selectedAssignments;
+  List<MedicineAssignment> _selectedAssignments = [];
+  List<MedicineAssignment> get selectedAssignments => _selectedAssignments;
 
-  List<CabinAssignment> _allAssignments = [];
-  List<CabinAssignment> get allAssignments => _allAssignments;
-  List<CabinAssignment> _currentQueue = [];
+  List<MedicineAssignment> _allAssignments = [];
+  List<MedicineAssignment> get allAssignments => _allAssignments;
+  List<MedicineAssignment> _currentQueue = [];
 
   bool _isProcessing = false;
 
@@ -57,7 +57,7 @@ class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchM
   }
 
   void startCount() {
-    List<CabinAssignment> targetList;
+    List<MedicineAssignment> targetList;
     if (_countType == MedicineCountType.drawer) {
       targetList = _selectedAssignments;
     } else if (_countType == MedicineCountType.cabin) {
@@ -94,7 +94,7 @@ class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchM
     }
   }
 
-  Future<void> _processNext(List<CabinAssignment> assignments) async {
+  Future<void> _processNext(List<MedicineAssignment> assignments) async {
     if (assignments.isEmpty || onOperationRequired == null || _isProcessing) {
       return;
     }
@@ -111,7 +111,7 @@ class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchM
 
   Future<Result<void>> drawerBasedCount(
     List<CabinInputData> inputs,
-    CabinAssignment currentAssignment, {
+    MedicineAssignment currentAssignment, {
     Function(String? message)? onSuccess,
     Function(String? message)? onFailed,
   }) async {
@@ -150,7 +150,7 @@ class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchM
 
   Future<Result<void>> cabinBasedCount(
     List<CabinInputData> inputs,
-    CabinAssignment currentAssignment, {
+    MedicineAssignment currentAssignment, {
     Function(String? message)? onSuccess,
     Function(String? message)? onFailed,
   }) async {
@@ -194,18 +194,18 @@ class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchM
     notifyListeners();
   }
 
-  void setAllAssignments(List<CabinAssignment> assignments) {
+  void setAllAssignments(List<MedicineAssignment> assignments) {
     _allAssignments = List.from(assignments);
 
     notifyListeners();
   }
 
-  void setSelectedAssignments(List<CabinAssignment> assignments) {
+  void setSelectedAssignments(List<MedicineAssignment> assignments) {
     _selectedAssignments = List.from(assignments);
     notifyListeners();
   }
 
-  void selectAssignment(CabinAssignment assignment) {
+  void selectAssignment(MedicineAssignment assignment) {
     if (_selectedAssignments.contains(assignment)) {
       _selectedAssignments.remove(assignment);
     } else {

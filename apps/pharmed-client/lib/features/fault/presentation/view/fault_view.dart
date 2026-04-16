@@ -19,7 +19,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../widgets/widgets.dart';
-import '../../../../widgets/empty_state_widget.dart';
 import '../../../../core/enums/cabin_operation_mode.dart';
 import '../notifier/fault_notifier.dart';
 import '../state/fault_ui_state.dart';

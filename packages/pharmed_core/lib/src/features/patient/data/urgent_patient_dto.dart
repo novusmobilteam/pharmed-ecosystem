@@ -4,7 +4,7 @@ class UrgentPatientDTO {
   final int? id;
   final int? code;
   final int? patientId;
-  final PatientDTO? patient;
+  final PatientDto? patient;
   final List<PrescriptionItemDTO>? prescriptionItems;
   final DateTime? admissionDate;
 
@@ -15,7 +15,7 @@ class UrgentPatientDTO {
       id: json['id'] as int?,
       code: json['code'] as int?,
       patientId: json['patientId'] as int?,
-      patient: json['patient'] != null ? PatientDTO.fromJson(json['patient']) : null,
+      patient: json['patient'] != null ? PatientDto.fromJson(json['patient']) : null,
       prescriptionItems: json['prescriptionDetailList'] != null
           ? (json['prescriptionDetailList'] as List)
                 .map((e) => PrescriptionItemDTO.fromJson(e as Map<String, dynamic>))

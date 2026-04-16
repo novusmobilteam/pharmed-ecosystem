@@ -84,7 +84,7 @@ class _MedicineCountViewState extends State<MedicineCountView> {
 
         notifier.proceedToNext();
       },
-      onDrawerReady: (context, CabinAssignment initial) async {
+      onDrawerReady: (context, MedicineAssignment initial) async {
         return await showCabinInventoryView(
           context,
           quantity: 0,

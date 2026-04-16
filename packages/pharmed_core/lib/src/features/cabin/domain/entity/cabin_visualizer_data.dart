@@ -7,12 +7,14 @@ class CabinVisualizerData {
     required this.isStale,
     required this.groups,
     required this.stocks,
+    this.mobileSlots = const [],
   });
 
   final int cabinId;
   final List<DrawerSlotVisual> slots;
   final List<DrawerGroup> groups;
   final List<CabinStock> stocks;
+  final List<MobileDrawerSlot> mobileSlots;
   final bool isStale;
 
   List<DrawerStatus> get _allCells => slots

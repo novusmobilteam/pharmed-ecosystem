@@ -39,7 +39,7 @@ class FinishCabinSetupUseCase {
   Future<Result<int>> call(CabinSetupConfig config) async {
     final cabin = Cabin(
       name: config.basicInfo.cabinName,
-      type: config.cabinetType,
+      type: config.cabinType,
       comPort: ComPortX.fromLabel(config.basicInfo.comPort),
       dvrIp: config.basicInfo.dvrIp,
       status: Status.active,
@@ -52,7 +52,7 @@ class FinishCabinSetupUseCase {
           : null,
     );
 
-    // ── 1. Kabini oluştur ──────────────────────────────────────
+    // 1. Kabini oluştur
     final createResult = await _createCabin(cabin);
 
     return createResult.when(
@@ -66,19 +66,19 @@ class FinishCabinSetupUseCase {
 
         await _appSettingsCache.saveCurrentCabinId(cabinId);
 
-        // ── 2. Mobil kabin → manuel çekmece yapısını kaydet ───
-        if (config.cabinetType == CabinType.mobile) {
+        // 2. Mobil kabin → manuel çekmece yapısını kaydet
+        if (config.cabinType == CabinType.mobile) {
           final drawers = config.mobileLayout?.drawers ?? [];
 
           if (drawers.isNotEmpty) {
-            final saveResult = await _saveMobileCabinDesign(cabinId: cabinId, drawers: drawers);
+            final saveResult = await _saveMobileCabinDesign.call(cabinId: cabinId, drawers: drawers);
             return saveResult.when(error: Result.error, ok: (_) => Result.ok(cabinId));
           }
 
           return Result.ok(cabinId);
         }
 
-        // ── 3. Standart kabin → taranmış slot'ları kaydet ─────
+        // 3. Standart kabin → taranmış slot'ları kaydet
         final slots = config.scannedLayout?.map((g) => g.slot).toList() ?? [];
 
         if (slots.isNotEmpty) {

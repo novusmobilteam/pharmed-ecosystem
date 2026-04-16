@@ -11,7 +11,7 @@ class MedicineRefundNotifier extends ChangeNotifier with ApiRequestMixin {
   final CheckRefundStatusUseCase _checkRefundStatusUseCase;
   final CompleteRefundUseCase _completeRefundUseCase;
 
-  final Future<void> Function(MedicineRefundNotifier notifier, CabinAssignment assignment) onCheckCompleted;
+  final Future<void> Function(MedicineRefundNotifier notifier, MedicineAssignment assignment) onCheckCompleted;
 
   MedicineRefundNotifier({
     required Hospitalization hospitalization,
@@ -56,8 +56,8 @@ class MedicineRefundNotifier extends ChangeNotifier with ApiRequestMixin {
   MedicineWithdrawItem? _currentItem;
   MedicineWithdrawItem? get currentItem => _currentItem;
 
-  List<CabinAssignment> _assignments = [];
-  List<CabinAssignment> get assignments => _assignments;
+  List<MedicineAssignment> _assignments = [];
+  List<MedicineAssignment> get assignments => _assignments;
 
   double? _refundAmount;
   double? get refundAmount {

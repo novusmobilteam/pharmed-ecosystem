@@ -6,7 +6,7 @@ import '../../../domain/entity/cabin_input_data.dart';
 typedef CabinOperationCallback = Future<Result> Function(List<CabinInputData> inputs);
 
 class CabinInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
-  final CabinAssignment initial;
+  final MedicineAssignment initial;
   final CabinOperationCallback onSave;
   final CabinInventoryType inventoryType;
   final bool isPerCellMiadEnabled;

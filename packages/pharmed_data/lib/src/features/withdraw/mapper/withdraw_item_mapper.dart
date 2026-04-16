@@ -26,8 +26,8 @@ class MedicineWithdrawItemMapper {
 
       // Kabinet ve Çekmece Bilgileri
       cabinAssignment: dto.cabinAssignment != null
-          ? const CabinAssignmentMapper().toEntity(dto.cabinAssignment!)
-          : CabinAssignment.empty(cabinId: 0, cabinDrawerId: 0),
+          ? const MedicineAssignmentMapper().toEntity(dto.cabinAssignment!)
+          : MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0),
 
       stock: dto.cabinDrawerStock != null ? const CabinStockMapper().toEntity(dto.cabinDrawerStock!) : null,
     );
@@ -49,7 +49,7 @@ class MedicineWithdrawItemMapper {
       medicine: const MedicineMapper().toDtoOrNull(entity.medicine),
       approvalUser: const UserMapper().toDtoOrNull(entity.approvalUser),
       applicationUser: const UserMapper().toDtoOrNull(entity.applicationUser),
-      cabinAssignment: const CabinAssignmentMapper().toDtoOrNull(entity.cabinAssignment),
+      cabinAssignment: const MedicineAssignmentMapper().toDtoOrNull(entity.cabinAssignment),
       cabinDrawerStock: const CabinStockMapper().toDtoOrNull(entity.stock),
     );
   }

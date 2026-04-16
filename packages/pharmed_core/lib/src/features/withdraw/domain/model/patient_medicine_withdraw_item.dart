@@ -15,7 +15,7 @@ class PatientMedicineWithdrawItem {
   final DateTime? applicationDate;
   final User? applicationUser;
 
-  final CabinAssignment assignment;
+  final MedicineAssignment assignment;
 
   PatientMedicineWithdrawItem({
     required this.id,

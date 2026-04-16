@@ -1,4 +1,4 @@
-class PatientDTO {
+class PatientDto {
   final int? id;
   final String? tcNo;
   final int? weight;
@@ -13,7 +13,7 @@ class PatientDTO {
   final String? description;
   final String? protocolNo;
 
-  const PatientDTO({
+  const PatientDto({
     this.id,
     this.tcNo,
     this.weight,
@@ -29,8 +29,8 @@ class PatientDTO {
     this.protocolNo,
   });
 
-  factory PatientDTO.fromJson(Map<String, dynamic> json) {
-    return PatientDTO(
+  factory PatientDto.fromJson(Map<String, dynamic> json) {
+    return PatientDto(
       id: json['id'] as int?,
       tcNo: json['tcNo']?.toString(),
       weight: json['weigh'] as int?,
@@ -63,7 +63,7 @@ class PatientDTO {
     'protocolNo': protocolNo,
   };
 
-  PatientDTO copyWith({
+  PatientDto copyWith({
     int? id,
     String? tcNo,
     int? weight,
@@ -79,7 +79,7 @@ class PatientDTO {
     String? description,
     String? protocolNo,
   }) {
-    return PatientDTO(
+    return PatientDto(
       id: id ?? this.id,
       tcNo: tcNo ?? this.tcNo,
       weight: weight ?? this.weight,

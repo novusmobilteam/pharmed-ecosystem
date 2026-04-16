@@ -81,7 +81,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   CabinOperationItem? get currentItem => _selectedItems.isNotEmpty ? _selectedItems.first : null;
 
   /// Anlık olarak işlem yapılan ilacın kabin ataması.
-  CabinAssignment? get currentAssignment => currentItem?.assignment;
+  MedicineAssignment? get currentAssignment => currentItem?.assignment;
 
   WithdrawType get type => _type;
 
@@ -212,7 +212,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
           type: _type,
           prescriptionDetailId: item.prescriptionItem?.id,
           hospitalizationId: _hospitalization?.id,
-          assignment: item.assignment ?? CabinAssignment(),
+          assignment: item.assignment ?? MedicineAssignment(),
           dosePiece: item.dosePiece ?? 0,
           userId: userId,
         ),

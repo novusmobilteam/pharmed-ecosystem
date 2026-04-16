@@ -21,10 +21,10 @@ class CabinProcessWrapper extends StatelessWidget {
 
   /// Çekmece açıldığında (readyForFilling) çalışacak fonksiyon.
   /// false veya null dönerse işlem iptal edilmiş sayılır.
-  final Future<bool> Function(BuildContext context, CabinAssignment activeDrawer) onDrawerReady;
+  final Future<bool> Function(BuildContext context, MedicineAssignment activeDrawer) onDrawerReady;
 
   /// İşlem tamamen bittiğinde (completed) çalışacak fonksiyon.
-  final Function(CabinAssignment? assignment, bool isSuccess)? onProcessCompleted;
+  final Function(MedicineAssignment? assignment, bool isSuccess)? onProcessCompleted;
 
   const CabinProcessWrapper({super.key, required this.child, required this.onDrawerReady, this.onProcessCompleted});
 
@@ -36,8 +36,8 @@ class CabinProcessWrapper extends StatelessWidget {
 
 class _CabinProcessListener extends StatefulWidget {
   final Widget child;
-  final Future<bool> Function(BuildContext context, CabinAssignment activeDrawer) onDrawerReady;
-  final Function(CabinAssignment? assignment, bool isSuccess)? onProcessCompleted;
+  final Future<bool> Function(BuildContext context, MedicineAssignment activeDrawer) onDrawerReady;
+  final Function(MedicineAssignment? assignment, bool isSuccess)? onProcessCompleted;
 
   const _CabinProcessListener({required this.child, required this.onDrawerReady, this.onProcessCompleted});
 

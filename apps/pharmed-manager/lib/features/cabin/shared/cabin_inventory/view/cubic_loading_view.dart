@@ -27,7 +27,7 @@ class CubicLoadingView extends StatefulWidget {
     this.plannedQuantity,
   });
 
-  final CabinAssignment data;
+  final MedicineAssignment data;
   final CabinInventoryType type;
 
   final Function(DateTime date) onMiadDateChanged;

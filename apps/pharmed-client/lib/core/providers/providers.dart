@@ -2,7 +2,6 @@ export 'auth_providers.dart';
 export 'hardware_providers.dart';
 export 'network_providers.dart';
 
-export 'cabin_assignment_providers.dart';
 export 'cabin_providers.dart';
 export 'cabin_stock_providers.dart';
 export 'dashboard_providers.dart';

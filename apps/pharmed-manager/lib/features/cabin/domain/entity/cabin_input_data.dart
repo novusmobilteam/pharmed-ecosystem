@@ -10,7 +10,7 @@ class CabinInputData {
   final int? shelfNo; // Raf/Sıra No (Standart çekmeceler için 1,2,3...)
   final int? compartmentNo;
   final int? stockId;
-  final CabinAssignment? assignment;
+  final MedicineAssignment? assignment;
 
   CabinInputData({
     required this.materialId,

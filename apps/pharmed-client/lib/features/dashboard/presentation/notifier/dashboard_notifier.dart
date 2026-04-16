@@ -23,7 +23,7 @@ final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardU
 
 class DashboardNotifier extends Notifier<DashboardUiState> {
   // Veriler 7 dakikada bir güncellenir.
-  static const _refreshInterval = Duration(minutes: 7);
+  static const _refreshInterval = Duration(minutes: 60);
   Timer? _timer;
   FilteredMenus? _pendingMenus;
 
@@ -46,15 +46,14 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
   }
 
   Future<void> initialize() async {
-    Future.microtask(_load);
     Future.microtask(_fetchMenus);
+    Future.microtask(_load);
+
     _startPeriodicRefresh();
   }
 
   /// Manuel yenileme — pull-to-refresh veya retry butonu
   Future<void> refresh() => _load(forceRefresh: true);
-
-  // ── Yükleme ──────────────────────────────────────────────────
 
   Future<void> _fetchMenus() async {
     final current = state;
@@ -113,22 +112,22 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
       state = const DashboardLoading();
     }
 
-    final deviceMode = ref.read(deviceModeProvider);
+    final deviceMode = await ref.read(deviceModeProvider.future);
 
     final results = await Future.wait([
-      _getCriticalStocks.call(true, forceRefresh: forceRefresh),
-      _getExpiringMaterials.call(forceRefresh: forceRefresh),
-      _getUpcomingTreatments.call(forceRefresh: forceRefresh),
       _getCabinVisualizer.call(
         deviceMode: deviceMode,
         debugCabin: kDebugMode ? ref.read(settingsNotifierProvider).debugCabin : null,
       ),
+      _getCriticalStocks.call(true, forceRefresh: forceRefresh),
+      _getExpiringMaterials.call(forceRefresh: forceRefresh),
+      _getUpcomingTreatments.call(forceRefresh: forceRefresh),
     ]);
 
-    final criticalResult = results[0] as RepoResult<List<CabinStock>>;
-    final expiringResult = results[1] as RepoResult<List<CabinStock>>;
-    final treatmentsResult = results[2] as RepoResult<List<PrescriptionItem>>;
-    final cabinResult = results[3] as RepoResult<CabinVisualizerData>;
+    final cabinResult = results[0] as RepoResult<CabinVisualizerData>;
+    final criticalResult = results[1] as RepoResult<List<CabinStock>>;
+    final expiringResult = results[2] as RepoResult<List<CabinStock>>;
+    final treatmentsResult = results[3] as RepoResult<List<PrescriptionItem>>;
 
     _resolveState(
       criticalResult: criticalResult,
@@ -156,6 +155,17 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
     required RepoResult<List<PrescriptionItem>> treatmentsResult,
     required RepoResult<CabinVisualizerData> cabinResult,
   }) {
+    // _resolveState başında mevcut menüyü al
+    final existingMenus = switch (state) {
+      DashboardLoaded(:final menuTree, :final flattenedMenus) => (menuTree, flattenedMenus),
+      DashboardStale(:final menuTree, :final flattenedMenus) => (menuTree, flattenedMenus),
+      DashboardPartial(:final menuTree, :final flattenedMenus) => (menuTree, flattenedMenus),
+      _ => (null, null),
+    };
+
+    final menuTree = _pendingMenus?.tree ?? existingMenus.$1;
+    final flattenedMenus = _pendingMenus?.flattened ?? existingMenus.$2;
+
     // Her sonucu sınıfına göre ayır
     final criticalStocks = _extractData(criticalResult);
     final expiringMaterials = _extractData(expiringResult);
@@ -234,8 +244,8 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
         data: data,
         staleSince: staleEntry.savedAt,
         canProceed: canProceed,
-        menuTree: _pendingMenus?.tree,
-        flattenedMenus: _pendingMenus?.flattened,
+        menuTree: menuTree,
+        flattenedMenus: flattenedMenus,
       );
       _pendingMenus = null;
       return;
@@ -251,8 +261,8 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
       state = DashboardPartial(
         data: data,
         failedSections: failedSections,
-        menuTree: _pendingMenus?.tree,
-        flattenedMenus: _pendingMenus?.flattened,
+        menuTree: menuTree,
+        flattenedMenus: flattenedMenus,
       );
       _pendingMenus = null;
       return;
@@ -260,7 +270,7 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
 
     // Tam başarı
     MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard başarıyla yüklendi');
-    state = DashboardLoaded(data).copyWith(menuTree: _pendingMenus?.tree, flattenedMenus: _pendingMenus?.flattened);
+    state = DashboardLoaded(data).copyWith(menuTree: menuTree, flattenedMenus: flattenedMenus);
   }
 
   /// RepoSuccess veya RepoStale → data döner, RepoFailure → null

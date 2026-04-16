@@ -143,7 +143,7 @@ class CabinMockRepository implements ICabinRepository {
   }
 
   @override
-  Future<RepoResult<List<MobileDrawerRequestDTO>>> getMobileCabinSlots(int cabinId) async {
+  Future<RepoResult<List<MobileDrawerSlot>>> getMobileCabinSlots(int cabinId) async {
     return RepoSuccess(const []);
   }
 

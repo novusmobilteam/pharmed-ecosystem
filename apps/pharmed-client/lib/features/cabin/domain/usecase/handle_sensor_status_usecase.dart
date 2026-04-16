@@ -14,7 +14,7 @@ class HandleSensorStatusUseCase {
   Future<void> call({
     required DrawerPhysicalStatus status,
     required DrawerStage currentStage,
-    required CabinAssignment assignment,
+    required MedicineAssignment assignment,
     required ManagementCard manager,
     required Function(DrawerStage stage, String message) onUpdate,
     bool openCubicLid = true,
@@ -44,7 +44,7 @@ class HandleSensorStatusUseCase {
 
   // Kübik iç kapak açma alt süreci
   Future<void> _handleCubicLidOpening(
-    CabinAssignment item,
+    MedicineAssignment item,
     ManagementCard manager,
     Function(DrawerStage, String) onUpdate,
   ) async {

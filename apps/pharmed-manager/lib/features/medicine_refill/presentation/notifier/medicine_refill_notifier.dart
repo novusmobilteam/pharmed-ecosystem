@@ -5,7 +5,7 @@ import '../../../../../../../core/core.dart';
 import '../../../cabin/domain/entity/cabin_input_data.dart';
 import '../../domain/usecase/refill_medicine_usecase.dart';
 
-class MedicineRefillNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinAssignment> {
+class MedicineRefillNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MedicineAssignment> {
   final RefillMedicineUseCase _refillMedicineUseCase;
 
   MedicineRefillNotifier({required RefillMedicineUseCase refillMedicineUseCase})

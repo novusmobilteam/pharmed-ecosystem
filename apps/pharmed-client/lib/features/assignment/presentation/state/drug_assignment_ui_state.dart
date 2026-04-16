@@ -31,7 +31,7 @@ final class DrugAssignmentIdle extends DrugAssignmentUiState {
   final List<DrawerGroup> groups;
 
   /// Kabine ait tüm atamalar — unit ID üzerinden lookup yapılır.
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
 
   final int cabinId;
 }
@@ -46,7 +46,7 @@ final class DrugAssignmentDrawerSelected extends DrugAssignmentUiState {
   });
 
   final List<DrawerGroup> groups;
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
   final int cabinId;
   final DrawerGroup selectedGroup;
 
@@ -73,13 +73,13 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
   });
 
   final List<DrawerGroup> groups;
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
   final int cabinId;
   final DrawerGroup selectedGroup;
   final int? selectedStepNo;
 
   /// Seçili göze ait atama — boş göz için [CabinAssignment.empty()].
-  final CabinAssignment assignment;
+  final MedicineAssignment assignment;
 
   /// Seçili / atanmış ilaç.
   final Medicine? selectedDrug;
@@ -115,10 +115,10 @@ final class DrugAssignmentSaving extends DrugAssignmentUiState {
   });
 
   final List<DrawerGroup> groups;
-  final List<CabinAssignment> assignments;
+  final List<MedicineAssignment> assignments;
   final int cabinId;
   final DrawerGroup selectedGroup;
-  final CabinAssignment assignment;
+  final MedicineAssignment assignment;
   final Medicine? selectedDrug;
   final int? minQty;
   final int? maxQty;
