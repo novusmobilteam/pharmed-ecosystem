@@ -1,33 +1,20 @@
+// lib/shared/widgets/cabin_widgets/drawer_panel/master_cabin_drawer_panel.dart
+//
 // [SWREQ-UI-CAB-003]
-// Kabin işlemleri ekranının orta paneli.
+// Master kabin işlemleri ekranının orta paneli.
 // Seçili çekmeceye ait gözleri tıklanabilir olarak gösterir.
 //
-// Çekmece tipine göre farklı layout üretir, görsel her zaman aynıdır:
+// Çekmece tipine göre farklı layout üretir:
 //   - Kübik      → NxM grid, her DrawerUnit bir göz
-//   - Birim Doz  → gruplar + derinlik ekseni, pozisyon tabanlı (unitId + stepNo)
+//   - Birim Doz  → kolon bazlı layout, unit seçim border'ı ile
 //   - Serum      → placeholder (TODO)
-//
-// Tıklama:
-//   - Kübik: onCellTap(unit, null)
-//   - Birim Doz: onCellTap(unit, stepNo)
-//
-// Assign modunda göz rengi ve içeriği [assignments] üzerinden gelir.
-// Diğer modlarda [stocks] üzerinden gelir.
 //
 // Sınıf: Class B
 
-import 'package:flutter/material.dart';
-import 'package:pharmed_client/core/enums/cabin_operation_mode.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
+part of 'drawer_panel.dart';
 
-/// Seçili çekmeceye ait gözleri gösterir.
-///
-/// [group] null ise boş durum gösterilir.
-/// [assignments] assign modunda göz rengi ve ilaç adı için kullanılır.
-/// [stocks] fill/count modlarında stok miktarı için kullanılır.
-class DrawerDetailPanel extends StatelessWidget {
-  const DrawerDetailPanel({
+class MasterCabinDrawerPanel extends StatelessWidget {
+  const MasterCabinDrawerPanel({
     super.key,
     required this.mode,
     this.group,
@@ -46,14 +33,12 @@ class DrawerDetailPanel extends StatelessWidget {
   final List<MasterFault> faults;
   final int? selectedUnitId;
   final int? selectedStepNo;
-
-  /// Kübik: (unit, null), Birim Doz: (unit, stepNo)
   final void Function(DrawerUnit unit, int? stepNo)? onCellTap;
 
   @override
   Widget build(BuildContext context) {
     final g = group;
-    if (g == null) return const _EmptyState();
+    if (g == null) return const CabinDrawerEmptyState(subtitle: 'Kübik · Birim Doz · Serum iç yapıları görüntülenecek');
 
     return Container(
       decoration: BoxDecoration(
@@ -68,11 +53,11 @@ class DrawerDetailPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _DetailHeader(group: g, mode: mode),
+          _MasterDrawerHeader(group: g, mode: mode),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
-              child: _DetailBody(
+              child: _MasterDrawerBody(
                 group: g,
                 mode: mode,
                 faults: faults,
@@ -90,8 +75,12 @@ class DrawerDetailPanel extends StatelessWidget {
   }
 }
 
-class _DetailHeader extends StatelessWidget {
-  const _DetailHeader({required this.group, required this.mode});
+// ─────────────────────────────────────────────────────────────────
+// _MasterDrawerHeader
+// ─────────────────────────────────────────────────────────────────
+
+class _MasterDrawerHeader extends StatelessWidget {
+  const _MasterDrawerHeader({required this.group, required this.mode});
 
   final DrawerGroup group;
   final CabinOperationMode mode;
@@ -112,7 +101,7 @@ class _DetailHeader extends StatelessWidget {
           const SizedBox(height: 3),
           Text(_subLabel(group), style: MedTextStyles.monoMd(color: MedColors.text3)),
           const SizedBox(height: 8),
-          _ModeBanner(mode: mode),
+          CabinModeBanner(mode: mode),
         ],
       ),
     );
@@ -139,66 +128,12 @@ class _DetailHeader extends StatelessWidget {
   }
 }
 
-class _ModeBanner extends StatelessWidget {
-  const _ModeBanner({required this.mode});
+// ─────────────────────────────────────────────────────────────────
+// _MasterDrawerBody
+// ─────────────────────────────────────────────────────────────────
 
-  final CabinOperationMode mode;
-
-  @override
-  Widget build(BuildContext context) {
-    final (bg, border, text, message) = _config(mode);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-      decoration: BoxDecoration(
-        color: bg,
-        border: Border.all(color: border, width: 1.5),
-        borderRadius: MedRadius.smAll,
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.info_outline_rounded, size: 14, color: text),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(fontFamily: MedFonts.sans, fontSize: 11, fontWeight: FontWeight.w500, color: text),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  (Color, Color, Color, String) _config(CabinOperationMode mode) => switch (mode) {
-    CabinOperationMode.assign => (
-      const Color(0xFFE8F1FC),
-      const Color(0xFFC4D9F5),
-      const Color(0xFF1256AA),
-      'İlaç Atama — gözlere ilaç atayın, min/maks/kritik değerleri belirleyin.',
-    ),
-    CabinOperationMode.fill => (
-      const Color(0xFFE6F7F2),
-      const Color(0xFF9ED9C4),
-      const Color(0xFF086E4A),
-      'İlaç Dolum — dolum yapılacak göze dokunun, miktarı girin.',
-    ),
-    CabinOperationMode.count => (
-      const Color(0xFFFEF3E2),
-      const Color(0xFFF5C97A),
-      const Color(0xFF92520A),
-      'Sayım — fiili miktarı girin, sistem farkı hesaplayacak.',
-    ),
-    CabinOperationMode.fault => (
-      const Color(0xFFFEF2F2),
-      const Color(0xFFF9A8A8),
-      const Color(0xFF9B1C1C),
-      'Arıza — arızalı gözü işaretleyin ve açıklama girin.',
-    ),
-  };
-}
-
-class _DetailBody extends StatelessWidget {
-  const _DetailBody({
+class _MasterDrawerBody extends StatelessWidget {
+  const _MasterDrawerBody({
     required this.group,
     required this.mode,
     required this.stocks,
@@ -218,7 +153,6 @@ class _DetailBody extends StatelessWidget {
   final int? selectedStepNo;
   final void Function(DrawerUnit unit, int? stepNo)? onCellTap;
 
-  /// Birim doz lookup: (unitId, stepNo) → CabinStock
   Map<(int, int), CabinStock> get _stockByUnitAndStep {
     final map = <(int, int), CabinStock>{};
     for (final s in stocks) {
@@ -229,7 +163,6 @@ class _DetailBody extends StatelessWidget {
     return map;
   }
 
-  /// Kübik lookup: unitId → CabinStock
   Map<int, CabinStock> get _stockByUnitId {
     final map = <int, CabinStock>{};
     for (final s in stocks) {
@@ -239,7 +172,6 @@ class _DetailBody extends StatelessWidget {
     return map;
   }
 
-  /// Atama lookup: unitId → CabinAssignment
   Map<int, MedicineAssignment> get _assignmentByUnitId {
     final map = <int, MedicineAssignment>{};
     for (final a in assignments) {
@@ -249,23 +181,21 @@ class _DetailBody extends StatelessWidget {
     return map;
   }
 
-  /// Arıza lookup: unitId → Fault
   Map<int, MasterFault> get _faultByUnitId {
     final map = <int, MasterFault>{};
-    for (final a in faults) {
-      final unitId = a.slotId;
-      // Sadece aktif (kapatılmamış) kayıtları al
-      if (unitId != null && a.endDate == null) map[unitId] = a;
+    for (final f in faults) {
+      final unitId = f.slotId;
+      if (unitId != null && f.endDate == null) map[unitId] = f;
     }
     return map;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (group.isSerum) return const _SerumDetailView();
+    if (group.isSerum) return const _MasterSerumView();
 
     if (group.isKubik) {
-      return _KubicDetailView(
+      return _MasterKubicView(
         group: group,
         mode: mode,
         faultByUnitId: _faultByUnitId,
@@ -276,7 +206,7 @@ class _DetailBody extends StatelessWidget {
       );
     }
 
-    return _UnitDoseDetailView(
+    return _MasterUnitDoseView(
       group: group,
       mode: mode,
       stockByUnitAndStep: _stockByUnitAndStep,
@@ -289,8 +219,12 @@ class _DetailBody extends StatelessWidget {
   }
 }
 
-class _KubicDetailView extends StatelessWidget {
-  const _KubicDetailView({
+// ─────────────────────────────────────────────────────────────────
+// _MasterKubicView
+// ─────────────────────────────────────────────────────────────────
+
+class _MasterKubicView extends StatelessWidget {
+  const _MasterKubicView({
     required this.group,
     required this.mode,
     required this.stockByUnitId,
@@ -336,32 +270,35 @@ class _KubicDetailView extends StatelessWidget {
             itemCount: units.length,
             itemBuilder: (context, i) {
               final unit = units[i];
-              final stock = stockByUnitId[unit.id];
-              final fault = faultByUnitId[unit.id];
-              final assignment = assignmentByUnitId[unit.id];
-              return _CabinCell(
+              return _MasterCabinCell(
                 unit: unit,
-                stock: stock,
-                fault: fault,
-                assignment: assignment,
+                stock: stockByUnitId[unit.id],
+                fault: faultByUnitId[unit.id],
+                assignment: assignmentByUnitId[unit.id],
                 mode: mode,
                 code: '',
                 isSelected: selectedUnitId == unit.id,
                 isKubik: true,
-                onTap: unit.workingStatus == CabinWorkingStatus.working ? () => onCellTap?.call(unit) : null,
+                onTap: unit.workingStatus == CabinWorkingStatus.working || mode == CabinOperationMode.fault
+                    ? () => onCellTap?.call(unit)
+                    : null,
               );
             },
           ),
         ),
         const SizedBox(height: 12),
-        _ModeLegend(mode: mode),
+        _MasterCellLegend(mode: mode),
       ],
     );
   }
 }
 
-class _UnitDoseDetailView extends StatelessWidget {
-  const _UnitDoseDetailView({
+// ─────────────────────────────────────────────────────────────────
+// _MasterUnitDoseView
+// ─────────────────────────────────────────────────────────────────
+
+class _MasterUnitDoseView extends StatelessWidget {
+  const _MasterUnitDoseView({
     required this.group,
     required this.mode,
     required this.stockByUnitAndStep,
@@ -403,7 +340,7 @@ class _UnitDoseDetailView extends StatelessWidget {
             children: [
               for (int gi = 0; gi < group.units.length; gi++) ...[
                 Expanded(
-                  child: _UnitDoseColumn(
+                  child: _MasterUnitDoseColumn(
                     unit: group.units[gi],
                     groupIndex: gi,
                     numberOfSteps: numberOfSteps,
@@ -421,8 +358,6 @@ class _UnitDoseDetailView extends StatelessWidget {
                   Container(
                     width: 3,
                     margin: const EdgeInsets.symmetric(horizontal: 4),
-                    // Tüm yüksekliği kaplasın diye AlignmentGeometry kullanmak yerine
-                    // parent Row'un stretch davranışından yararlanıyoruz
                     decoration: BoxDecoration(color: const Color(0xFFA0B8D0), borderRadius: BorderRadius.circular(2)),
                   ),
               ],
@@ -430,14 +365,18 @@ class _UnitDoseDetailView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        _ModeLegend(mode: mode),
+        _MasterCellLegend(mode: mode),
       ],
     );
   }
 }
 
-class _UnitDoseColumn extends StatelessWidget {
-  const _UnitDoseColumn({
+// ─────────────────────────────────────────────────────────────────
+// _MasterUnitDoseColumn
+// ─────────────────────────────────────────────────────────────────
+
+class _MasterUnitDoseColumn extends StatelessWidget {
+  const _MasterUnitDoseColumn({
     required this.unit,
     required this.groupIndex,
     required this.numberOfSteps,
@@ -486,7 +425,7 @@ class _UnitDoseColumn extends StatelessWidget {
                 children: [
                   for (int w = 0; w < stepMultiplier; w++) ...[
                     Expanded(
-                      child: _CabinCell(
+                      child: _MasterCabinCell(
                         unit: unit,
                         stock: stockByUnitAndStep[(unit.id, step * stepMultiplier + w + 1)],
                         fault: fault,
@@ -495,7 +434,8 @@ class _UnitDoseColumn extends StatelessWidget {
                         code: 'G${groupIndex + 1}·${step * stepMultiplier + w + 1}',
                         isSelected: _isUnitSelected && selectedStepNo == step * stepMultiplier + w + 1,
                         isKubik: false,
-                        onTap: unit.workingStatus == CabinWorkingStatus.working
+
+                        onTap: unit.workingStatus == CabinWorkingStatus.working || mode == CabinOperationMode.fault
                             ? () => onCellTap?.call(unit, step * stepMultiplier + w + 1)
                             : null,
                       ),
@@ -511,15 +451,12 @@ class _UnitDoseColumn extends StatelessWidget {
   }
 }
 
-/// Hem kübik hem birim doz'da kullanılan tek göz widget'ı.
-///
-/// Assign modunda renk ve içerik [assignment]'tan gelir.
-/// Diğer modlarda [stock]'tan gelir.
-///
-/// [isKubik] true → kare görünüm, false → sabit 24px yükseklik.
-/// [onTap] null → kilitli (arızalı/bakım).
-class _CabinCell extends StatelessWidget {
-  const _CabinCell({
+// ─────────────────────────────────────────────────────────────────
+// _MasterCabinCell
+// ─────────────────────────────────────────────────────────────────
+
+class _MasterCabinCell extends StatelessWidget {
+  const _MasterCabinCell({
     required this.unit,
     required this.mode,
     required this.code,
@@ -543,10 +480,37 @@ class _CabinCell extends StatelessWidget {
 
   bool get _isLocked => onTap == null;
 
+  CabinCellStatus get _status {
+    if (fault != null) {
+      return fault!.workingStatus == CabinWorkingStatus.maintenance
+          ? CabinCellStatus.maintenance
+          : CabinCellStatus.fault;
+    }
+    if (unit.workingStatus == CabinWorkingStatus.faulty) return CabinCellStatus.fault;
+    if (unit.workingStatus == CabinWorkingStatus.maintenance) return CabinCellStatus.maintenance;
+
+    if (mode == CabinOperationMode.assign) {
+      final a = assignment;
+      if (a != null && a.id != null) return CabinCellStatus.assigned;
+      return CabinCellStatus.empty;
+    }
+
+    final s = stock;
+    if (s == null) return CabinCellStatus.empty;
+    final qty = s.quantity?.toDouble() ?? 0;
+    final crit = s.assignment?.criticalQuantity?.toDouble() ?? 0;
+    final min = s.assignment?.minQuantity?.toDouble() ?? 0;
+    if (qty == 0) return CabinCellStatus.empty;
+    if (qty <= crit) return CabinCellStatus.critical;
+    if (qty <= min) return CabinCellStatus.low;
+    return CabinCellStatus.assigned;
+  }
+
+  bool get _hasActiveFault => _status == CabinCellStatus.fault || _status == CabinCellStatus.maintenance;
+
   @override
   Widget build(BuildContext context) {
-    final status = _resolveStatus();
-    final colors = _CellColors.of(status);
+    final colors = CabinCellColors.of(_status);
 
     return GestureDetector(
       onTap: onTap,
@@ -557,16 +521,15 @@ class _CabinCell extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: _isLocked ? [const Color(0xFFF0F0F0), const Color(0xFFE0E0E0)] : [colors.bgLight, colors.bgDark],
+            colors: _isLocked && !_hasActiveFault
+                ? [const Color(0xFFF0F0F0), const Color(0xFFE0E0E0)]
+                : [colors.bgLight, colors.bgDark],
           ),
           border: Border.all(
             color: isSelected ? MedColors.blue : (_isLocked ? const Color(0xFFCCCCCC) : colors.border),
             width: isSelected ? 2 : 1.5,
           ),
           borderRadius: BorderRadius.circular(isKubik ? 7 : 5),
-          boxShadow: isSelected
-              ? [const BoxShadow(color: Color(0x4D1A6FD8), blurRadius: 8, offset: Offset(0, 2))]
-              : null,
         ),
         child: _isLocked ? _lockedContent() : _activeContent(),
       ),
@@ -575,8 +538,8 @@ class _CabinCell extends StatelessWidget {
 
   Widget _lockedContent() => Center(
     child: Icon(
-      unit.workingStatus == CabinWorkingStatus.faulty ? Icons.error_outline : Icons.build_circle_outlined,
-      size: isKubik ? 16 : 10,
+      _status == CabinCellStatus.fault ? PhosphorIcons.warningCircle() : PhosphorIcons.wrench(),
+      size: isKubik ? 24 : 16,
       color: unit.workingStatus == CabinWorkingStatus.faulty ? MedColors.red : MedColors.amber,
     ),
   );
@@ -605,32 +568,24 @@ class _CabinCell extends StatelessWidget {
       );
     }
 
-    // Birim doz — assign modunda ilaç adı gösterilmez, sadece renk yeterli
-    if (mode == CabinOperationMode.assign) {
-      return Center(child: _cellContent());
-    }
+    if (mode == CabinOperationMode.assign) return Center(child: _cellContent());
 
     final s = stock;
     if (s == null) return const SizedBox.shrink();
     return Center(child: _stockContent(s));
   }
 
-  /// Kübik cell içeriği — moda göre farklı bilgi
   Widget _cellContent() => switch (mode) {
     CabinOperationMode.assign => _assignContent(),
     CabinOperationMode.fill || CabinOperationMode.count => _stockFillContent(),
     CabinOperationMode.fault => const SizedBox.shrink(),
   };
 
-  /// Assign modunda: ilaç adı (atanmışsa)
   Widget _assignContent() {
     final a = assignment;
     if (a == null || a.id == null) return const SizedBox.shrink();
-
-    final drugName = a.medicine?.name ?? '—';
-
     return Text(
-      drugName,
+      a.medicine?.name ?? '—',
       textAlign: TextAlign.center,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
@@ -643,11 +598,9 @@ class _CabinCell extends StatelessWidget {
     );
   }
 
-  /// Fill/Count modunda: ilaç adı + miktar
   Widget _stockFillContent() {
     final s = stock;
     if (s == null) return const SizedBox.shrink();
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -682,39 +635,76 @@ class _CabinCell extends StatelessWidget {
     if (qty <= min) return MedColors.amber;
     return MedColors.green;
   }
-
-  _DrawerCellStatus _resolveStatus() {
-    if (fault != null) {
-      return fault!.workingStatus == CabinWorkingStatus.maintenance
-          ? _DrawerCellStatus.maintenance
-          : _DrawerCellStatus.fault;
-    }
-
-    if (unit.workingStatus == CabinWorkingStatus.faulty) return _DrawerCellStatus.fault;
-    if (unit.workingStatus == CabinWorkingStatus.maintenance) return _DrawerCellStatus.maintenance;
-
-    // Assign modunda renk atama üzerinden gelir
-    if (mode == CabinOperationMode.assign) {
-      final a = assignment;
-      if (a != null && a.id != null) return _DrawerCellStatus.assigned;
-      return _DrawerCellStatus.empty;
-    }
-
-    // Diğer modlarda stok üzerinden
-    final s = stock;
-    if (s == null) return _DrawerCellStatus.empty;
-    final qty = s.quantity?.toDouble() ?? 0;
-    final crit = s.assignment?.criticalQuantity?.toDouble() ?? 0;
-    final min = s.assignment?.minQuantity?.toDouble() ?? 0;
-    if (qty == 0) return _DrawerCellStatus.empty;
-    if (qty <= crit) return _DrawerCellStatus.critical;
-    if (qty <= min) return _DrawerCellStatus.low;
-    return _DrawerCellStatus.assigned;
-  }
 }
 
-class _SerumDetailView extends StatelessWidget {
-  const _SerumDetailView();
+// ─────────────────────────────────────────────────────────────────
+// _MasterCellLegend
+// ─────────────────────────────────────────────────────────────────
+
+class _MasterCellLegend extends StatelessWidget {
+  const _MasterCellLegend({required this.mode});
+
+  final CabinOperationMode mode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 4,
+      children: _items(mode).map((item) {
+        final colors = CabinCellColors.of(item.$1);
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: colors.bgLight,
+                border: Border.all(color: colors.border, width: 1.5),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            const SizedBox(width: 5),
+            Text(item.$2, style: MedTextStyles.bodySm(color: MedColors.text2)),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  List<(CabinCellStatus, String)> _items(CabinOperationMode mode) => switch (mode) {
+    CabinOperationMode.assign => [
+      (CabinCellStatus.empty, 'Boş göz (ata)'),
+      (CabinCellStatus.assigned, 'İlaç atanmış'),
+      (CabinCellStatus.fault, 'Arızalı'),
+      (CabinCellStatus.maintenance, 'Bakımda'),
+    ],
+    CabinOperationMode.fill => [
+      (CabinCellStatus.empty, 'Boş (dolum yok)'),
+      (CabinCellStatus.assigned, 'Normal stok'),
+      (CabinCellStatus.low, 'Dolum gerekiyor'),
+      (CabinCellStatus.critical, 'Acil dolum'),
+    ],
+    CabinOperationMode.count => [
+      (CabinCellStatus.assigned, 'Sayılacak (ilaçlı)'),
+      (CabinCellStatus.low, 'Düşük stok'),
+      (CabinCellStatus.empty, 'Boş (atla)'),
+    ],
+    CabinOperationMode.fault => [
+      (CabinCellStatus.assigned, 'Normal çalışıyor'),
+      (CabinCellStatus.fault, 'Arıza bildirildi'),
+      (CabinCellStatus.empty, 'Boş göz'),
+    ],
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────
+// _MasterSerumView
+// ─────────────────────────────────────────────────────────────────
+
+class _MasterSerumView extends StatelessWidget {
+  const _MasterSerumView();
 
   @override
   Widget build(BuildContext context) {
@@ -739,135 +729,4 @@ class _SerumDetailView extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ModeLegend extends StatelessWidget {
-  const _ModeLegend({required this.mode});
-
-  final CabinOperationMode mode;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 4,
-      children: _items(mode).map((item) {
-        final colors = _CellColors.of(item.$1);
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(
-                color: colors.bgLight,
-                border: Border.all(color: colors.border, width: 1.5),
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-            const SizedBox(width: 5),
-            Text(item.$2, style: MedTextStyles.bodySm(color: MedColors.text2)),
-          ],
-        );
-      }).toList(),
-    );
-  }
-
-  List<(_DrawerCellStatus, String)> _items(CabinOperationMode mode) => switch (mode) {
-    CabinOperationMode.assign => [
-      (_DrawerCellStatus.empty, 'Boş göz (ata)'),
-      (_DrawerCellStatus.assigned, 'İlaç atanmış'),
-      (_DrawerCellStatus.fault, 'Arızalı'),
-      (_DrawerCellStatus.maintenance, 'Bakımda'),
-    ],
-    CabinOperationMode.fill => [
-      (_DrawerCellStatus.empty, 'Boş (dolum yok)'),
-      (_DrawerCellStatus.assigned, 'Normal stok'),
-      (_DrawerCellStatus.low, 'Dolum gerekiyor'),
-      (_DrawerCellStatus.critical, 'Acil dolum'),
-    ],
-    CabinOperationMode.count => [
-      (_DrawerCellStatus.assigned, 'Sayılacak (ilaçlı)'),
-      (_DrawerCellStatus.low, 'Düşük stok'),
-      (_DrawerCellStatus.empty, 'Boş (atla)'),
-    ],
-    CabinOperationMode.fault => [
-      (_DrawerCellStatus.assigned, 'Normal çalışıyor'),
-      (_DrawerCellStatus.fault, 'Arıza bildirildi'),
-      (_DrawerCellStatus.empty, 'Boş göz'),
-    ],
-  };
-}
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border.all(color: MedColors.border, width: 1.5),
-        borderRadius: MedRadius.lgAll,
-      ),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.touch_app_outlined, size: 48, color: MedColors.text4),
-            const SizedBox(height: 16),
-            Text('Bir çekmeceye dokunun', style: MedTextStyles.bodyMd(color: MedColors.text3)),
-            const SizedBox(height: 6),
-            Text(
-              'Kübik · Birim Doz · Serum iç yapıları görüntülenecek',
-              style: MedTextStyles.monoMd(color: MedColors.text4),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-enum _DrawerCellStatus { empty, assigned, low, critical, fault, maintenance }
-
-final class _CellColors {
-  const _CellColors({required this.bgLight, required this.bgDark, required this.border});
-
-  final Color bgLight;
-  final Color bgDark;
-  final Color border;
-
-  static _CellColors of(_DrawerCellStatus status) => switch (status) {
-    _DrawerCellStatus.empty => const _CellColors(
-      bgLight: Color(0xFFE8EDF5),
-      bgDark: Color(0xFFD8E2EE),
-      border: Color(0xFFA8B8CC),
-    ),
-    _DrawerCellStatus.assigned => const _CellColors(
-      bgLight: Color(0xFFDDEEFF),
-      bgDark: Color(0xFFC8D8EE),
-      border: Color(0xFF7AB0D8),
-    ),
-    _DrawerCellStatus.low => const _CellColors(
-      bgLight: Color(0xFFFFFBEB),
-      bgDark: Color(0xFFFEF3C7),
-      border: Color(0xFFF5C97A),
-    ),
-    _DrawerCellStatus.critical => const _CellColors(
-      bgLight: Color(0xFFFEF2F2),
-      bgDark: Color(0xFFFDE8E8),
-      border: Color(0xFFF9A8A8),
-    ),
-    _DrawerCellStatus.fault => const _CellColors(
-      bgLight: Color(0xFFFFF0F0),
-      bgDark: Color(0xFFFEE2E2),
-      border: Color(0xFFDC2626),
-    ),
-    _DrawerCellStatus.maintenance => const _CellColors(
-      bgLight: Color(0xFFFFFBEB),
-      bgDark: Color(0xFFFEF3C7),
-      border: Color(0xFFF59E0B),
-    ),
-  };
 }

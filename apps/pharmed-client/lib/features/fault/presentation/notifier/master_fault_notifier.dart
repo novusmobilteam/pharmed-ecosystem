@@ -12,6 +12,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../fault.dart';
 
 final masterFaultNotifierProvider = NotifierProvider<MasterFaultNotifier, MasterFaultState>(MasterFaultNotifier.new);
@@ -221,7 +222,7 @@ class MasterFaultNotifier extends Notifier<MasterFaultState> {
         );
 
         final message = isNewRecord ? 'Arıza kaydı oluşturuldu.' : 'Arıza kaydı kapatıldı.';
-
+        ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer();
         return MasterFaultSuccess(message: message, previous: nextSelected);
       },
       error: (e) => MasterFaultError(

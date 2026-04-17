@@ -22,7 +22,9 @@ class _MobileFaultViewState extends ConsumerState<MobileFaultView> {
   @override
   void didUpdateWidget(MobileFaultView old) {
     super.didUpdateWidget(old);
-    if (widget.data != old.data) _initialize(widget.data);
+    if (widget.data != old.data) {
+      _initialize(widget.data);
+    }
   }
 
   @override
@@ -72,30 +74,14 @@ class _MobileFaultViewState extends ConsumerState<MobileFaultView> {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
-    // Aktif fault varsa orta panelde tüm gözler renklenecek
-    final activeFaultBySlotId = Map.fromEntries(
-      state.faults
-          .whereType<MobileFault>() // cast ekle
-          .where((f) => f.endDate == null)
-          .map((f) => MapEntry(f.cabinDesignId, f)),
-    );
-
-    final selectedActiveFault = state.selectedSlotId != null ? activeFaultBySlotId[state.selectedSlotId] : null;
-
     return CabinOperationScaffold(
       leftPanel: MobileCabinOverviewPanel(
         slots: state.slots,
         mode: CabinOperationMode.fault,
         selectedSlotId: state.selectedSlotId,
         onSlotTap: notifier.onSlotTap,
-        activeFaultBySlotId: activeFaultBySlotId,
       ),
-      centerPanel: MobileCabinDetailPanel(
-        mode: CabinOperationMode.fault,
-        slot: state.selectedSlot,
-        activeFault: selectedActiveFault,
-        // onCellTap yok — fault modunda tıklama yok
-      ),
+      centerPanel: MobileCabinDrawerPanel(mode: CabinOperationMode.fault, slot: state.selectedSlot),
       rightPanel: OperationPanelBase(
         mode: CabinOperationMode.fault,
         child: FaultPanel(

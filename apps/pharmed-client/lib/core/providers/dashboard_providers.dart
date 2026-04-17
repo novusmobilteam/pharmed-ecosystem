@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/flavor/app_flavor.dart';
+import 'package:pharmed_client/features/fault/domain/providers/fault_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
@@ -50,5 +51,7 @@ final getCabinVisualizerDataUseCaseProvider = Provider<GetCabinVisualizerDataUse
     ref.read(cabinRepositoryProvider),
     ref.read(cabinStockRepositoryProvider),
     ref.read(appSettingsCacheProvider),
+    ref.read(getMasterCabinFaultRecordsProvider),
+    ref.read(getMobileCabinFaultRecordsProvider),
   );
 });

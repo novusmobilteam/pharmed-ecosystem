@@ -97,7 +97,7 @@ class _MasterFaultViewState extends ConsumerState<MasterFaultView> {
         mode: CabinOperationMode.fault,
         onDrawerTap: notifier.onDrawerTap,
       ),
-      centerPanel: DrawerDetailPanel(
+      centerPanel: MasterCabinDrawerPanel(
         mode: CabinOperationMode.fault,
         group: selectedGroup,
         faults: faults,

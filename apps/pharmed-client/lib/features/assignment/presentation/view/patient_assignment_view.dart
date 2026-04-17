@@ -35,18 +35,18 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
   @override
   void initState() {
     super.initState();
-    _scheduleInit(widget.data);
+    _initialize(widget.data);
   }
 
   @override
   void didUpdateWidget(PatientAssignmentView old) {
     super.didUpdateWidget(old);
-    if (widget.data != old.data) {
-      _scheduleInit(widget.data);
+    if (widget.data?.cabinId != old.data?.cabinId) {
+      _initialize(widget.data);
     }
   }
 
-  void _scheduleInit(CabinVisualizerData? data) {
+  void _initialize(CabinVisualizerData? data) {
     if (data == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -119,11 +119,11 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
         mode: CabinOperationMode.assign,
         onSlotTap: notifier.onSlotTap,
       ),
-      centerPanel: MobileCabinDetailPanel(
+      centerPanel: MobileCabinDrawerPanel(
         mode: CabinOperationMode.assign,
         slot: selectedSlot,
         selectedCell: selectedCell,
-        onCellTap: notifier.onCellTap,
+        onCellTap: selectedSlot?.workingStatus == null ? notifier.onCellTap : null,
         assignmentByCoord: state.assignmentByCoord,
       ),
       rightPanel: OperationPanelBase(

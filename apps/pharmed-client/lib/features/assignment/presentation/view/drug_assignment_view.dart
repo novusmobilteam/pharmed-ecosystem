@@ -16,16 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/features/assignment/presentation/view/drug_assignment_panel.dart';
 import 'package:pharmed_client/core/enums/cabin_operation_mode.dart';
-import 'package:pharmed_client/widgets/cabin_operation_scaffold.dart';
-import 'package:pharmed_client/widgets/cabin_widgets/overview_panel/overview_panel.dart';
-import 'package:pharmed_client/widgets/drawer_widgets/drawer_detail_panel.dart';
-import 'package:pharmed_client/widgets/empty_state_widget.dart';
-import 'package:pharmed_client/widgets/operation_panel_base.dart';
+import 'package:pharmed_client/widgets/widgets.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/providers/providers.dart';
+import '../../assignment.dart';
 import '../notifier/drug_assignment_notifier.dart';
 import '../state/drug_assignment_ui_state.dart';
 
@@ -42,18 +38,18 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
   @override
   void initState() {
     super.initState();
-    _scheduleInit(widget.data);
+    _initialize(widget.data);
   }
 
   @override
   void didUpdateWidget(DrugAssignmentView old) {
     super.didUpdateWidget(old);
-    if (widget.data != old.data) {
-      _scheduleInit(widget.data);
+    if (widget.data?.cabinId != old.data?.cabinId) {
+      _initialize(widget.data);
     }
   }
 
-  void _scheduleInit(CabinVisualizerData? data) {
+  void _initialize(CabinVisualizerData? data) {
     if (data == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -111,7 +107,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
         mode: CabinOperationMode.assign,
         onDrawerTap: notifier.onDrawerTap,
       ),
-      centerPanel: DrawerDetailPanel(
+      centerPanel: MasterCabinDrawerPanel(
         mode: CabinOperationMode.assign,
         group: selectedGroup,
         assignments: _extractAssignments(state),

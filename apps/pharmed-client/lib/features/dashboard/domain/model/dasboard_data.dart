@@ -63,4 +63,20 @@ class DashboardData extends Equatable {
 
   @override
   List<Object?> get props => [expiringMaterials, upcomingTreatments, criticalStocks];
+
+  DashboardData copyWith({
+    KpiData? kpi,
+    CabinVisualizerData? cabinVisualizerData,
+    List<CabinStock>? expiringMaterials,
+    List<PrescriptionItem>? upcomingTreatments,
+    List<CabinStock>? criticalStocks,
+  }) {
+    return DashboardData(
+      kpi: kpi ?? this.kpi,
+      cabinVisualizerData: cabinVisualizerData ?? this.cabinVisualizerData,
+      expiringMaterials: expiringMaterials ?? this.expiringMaterials,
+      upcomingTreatments: upcomingTreatments ?? this.upcomingTreatments,
+      criticalStocks: criticalStocks ?? this.criticalStocks,
+    );
+  }
 }

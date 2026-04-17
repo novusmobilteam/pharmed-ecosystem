@@ -8,6 +8,8 @@ class CabinVisualizerData {
     required this.groups,
     required this.stocks,
     this.mobileSlots = const [],
+    this.masterFaults = const [],
+    this.mobileFaults = const [],
   });
 
   final int cabinId;
@@ -16,6 +18,8 @@ class CabinVisualizerData {
   final List<CabinStock> stocks;
   final List<MobileDrawerSlot> mobileSlots;
   final bool isStale;
+  final List<MasterFault> masterFaults;
+  final List<MobileFault> mobileFaults;
 
   List<DrawerStatus> get _allCells => slots
       .expand(

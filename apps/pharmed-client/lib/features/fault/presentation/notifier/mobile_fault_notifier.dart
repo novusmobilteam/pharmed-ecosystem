@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../fault.dart';
 
 final mobileFaultNotifierProvider = NotifierProvider<MobileFaultNotifier, MobileFaultState>(MobileFaultNotifier.new);
@@ -181,6 +182,7 @@ class MobileFaultNotifier extends Notifier<MobileFaultState> {
           description: null,
         );
 
+        ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer();
         return MobileFaultSuccess(
           message: isNewRecord ? 'Arıza kaydı oluşturuldu.' : 'Arıza kaydı kapatıldı.',
           previous: nextSelected,

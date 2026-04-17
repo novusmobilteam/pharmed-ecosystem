@@ -28,11 +28,12 @@ final class SerumSlotVisual extends DrawerSlotVisual {
 }
 
 final class MobileSlotVisual extends DrawerSlotVisual {
-  const MobileSlotVisual({required super.slotId, required this.rowColumns});
+  const MobileSlotVisual({required super.slotId, required this.rowColumns, this.workingStatus});
 
   /// Her index bir satırı, değer o satırın sütun sayısını temsil eder.
   /// Örn: [3, 2, 4] → 3 satır, sütunlar sırasıyla 3, 2, 4
   final List<int> rowColumns;
+  final CabinWorkingStatus? workingStatus;
 
   int get rowCount => rowColumns.length;
   int get totalCells => rowColumns.fold(0, (sum, c) => sum + c);

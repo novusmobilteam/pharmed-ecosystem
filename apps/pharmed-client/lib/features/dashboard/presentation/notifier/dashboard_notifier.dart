@@ -144,6 +144,26 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
     );
   }
 
+  Future<void> refreshCabinVisualizer() async {
+    final deviceMode = await ref.read(deviceModeProvider.future);
+
+    final cabinResult = await _getCabinVisualizer.call(
+      deviceMode: deviceMode,
+      debugCabin: kDebugMode ? ref.read(settingsNotifierProvider).debugCabin : null,
+    );
+
+    final current = state;
+    final cabinData = _extractData(cabinResult);
+    if (cabinData == null) return; // hata varsa mevcut veriyi koru
+
+    state = switch (current) {
+      DashboardLoaded s => s.copyWith(data: s.data.copyWith(cabinVisualizerData: cabinData)),
+      DashboardStale s => s.copyWith(data: s.data.copyWith(cabinVisualizerData: cabinData)),
+      DashboardPartial s => s.copyWith(data: s.data.copyWith(cabinVisualizerData: cabinData)),
+      _ => current,
+    };
+  }
+
   void _startPeriodicRefresh() {
     _timer?.cancel();
     _timer = Timer.periodic(_refreshInterval, (_) {

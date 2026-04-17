@@ -13,14 +13,12 @@ class MobileCabinOverviewPanel extends StatelessWidget {
     required this.mode,
     required this.onSlotTap,
     this.selectedSlotId,
-    this.activeFaultBySlotId = const {}, // eklendi
   });
 
   final List<MobileSlotVisual> slots;
   final CabinOperationMode mode;
   final void Function(MobileSlotVisual slot) onSlotTap;
   final int? selectedSlotId;
-  final Map<int?, MobileFault> activeFaultBySlotId; // eklendi
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,6 @@ class MobileCabinOverviewPanel extends StatelessWidget {
                   _MobileSlotItem(
                     slot: slots[i],
                     isSelected: slots[i].slotId == selectedSlotId,
-                    activeFault: activeFaultBySlotId[slots[i].slotId], // eklendi
                     onTap: () => onSlotTap(slots[i]),
                   ),
                   if (i < slots.length - 1) const SizedBox(height: 5),
@@ -54,23 +51,16 @@ class MobileCabinOverviewPanel extends StatelessWidget {
 }
 
 class _MobileSlotItem extends StatelessWidget {
-  const _MobileSlotItem({
-    required this.slot,
-    required this.isSelected,
-    required this.onTap,
-    this.activeFault, // eklendi
-  });
+  const _MobileSlotItem({required this.slot, required this.isSelected, required this.onTap});
 
   final MobileSlotVisual slot;
   final bool isSelected;
-  final MobileFault? activeFault; // eklendi
   final VoidCallback onTap;
 
   // Fault durumuna göre renk
-  Color get _faultColor =>
-      activeFault?.workingStatus == CabinWorkingStatus.maintenance ? MedColors.amber : MedColors.red;
+  bool get _hasFault => slot.workingStatus != null && slot.workingStatus != CabinWorkingStatus.working;
 
-  bool get _hasFault => activeFault != null;
+  Color get _faultColor => slot.workingStatus == CabinWorkingStatus.maintenance ? MedColors.amber : MedColors.red;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +87,7 @@ class _MobileSlotItem extends StatelessWidget {
                   // Fault ikonu veya göz sayısı
                   if (_hasFault)
                     Icon(
-                      activeFault!.workingStatus == CabinWorkingStatus.maintenance
+                      slot.workingStatus == CabinWorkingStatus.maintenance
                           ? Icons.build_circle_outlined
                           : Icons.error_outline_rounded,
                       size: 12,
