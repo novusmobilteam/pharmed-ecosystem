@@ -1,5 +1,3 @@
-// lib/shared/widgets/mobile_cabin_detail_panel.dart
-//
 // [SWREQ-UI-CAB-007]
 // Mobil kabin işlemleri ekranının orta paneli.
 // Seçili MobileSlotVisual'ın rowColumns grid'ini gösterir.
@@ -26,16 +24,13 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // Hücre koordinatı — (slotId, rowIndex, colIndex)
 typedef MobileCellCoord = (int slotId, int rowIndex, int colIndex);
 
-// ─────────────────────────────────────────────────────────────────
-// MobileCabinDetailPanel
-// ─────────────────────────────────────────────────────────────────
-
 class MobileCabinDetailPanel extends StatelessWidget {
   const MobileCabinDetailPanel({
     super.key,
     required this.mode,
     this.slot,
     this.assignments = const [],
+    this.activeFault,
     this.selectedCell,
     this.onCellTap,
   });
@@ -47,6 +42,7 @@ class MobileCabinDetailPanel extends StatelessWidget {
   /// Şimdilik koordinat → assignment eşleştirmesi için kullanılacak
   /// (PatientCabinAssignment modeli netleşince güncellenir).
   final List<MedicineAssignment> assignments;
+  final MobileFault? activeFault;
 
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
@@ -79,6 +75,7 @@ class MobileCabinDetailPanel extends StatelessWidget {
                 assignments: assignments,
                 selectedCell: selectedCell,
                 onCellTap: onCellTap,
+                activeFault: activeFault,
               ),
             ),
           ),
@@ -87,10 +84,6 @@ class MobileCabinDetailPanel extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// _DetailHeader
-// ─────────────────────────────────────────────────────────────────
 
 class _DetailHeader extends StatelessWidget {
   const _DetailHeader({required this.slot, required this.mode});
@@ -124,10 +117,6 @@ class _DetailHeader extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// _ModeBanner — assign modunda hasta atama mesajı
-// ─────────────────────────────────────────────────────────────────
 
 class _ModeBanner extends StatelessWidget {
   const _ModeBanner({required this.mode});
@@ -186,10 +175,6 @@ class _ModeBanner extends StatelessWidget {
   };
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _GridBody — rowColumns'tan grid üretir
-// ─────────────────────────────────────────────────────────────────
-
 class _GridBody extends StatelessWidget {
   const _GridBody({
     required this.slot,
@@ -197,6 +182,7 @@ class _GridBody extends StatelessWidget {
     required this.assignments,
     this.selectedCell,
     this.onCellTap,
+    this.activeFault,
   });
 
   final MobileSlotVisual slot;
@@ -204,6 +190,7 @@ class _GridBody extends StatelessWidget {
   final List<MedicineAssignment> assignments;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
+  final MobileFault? activeFault;
 
   @override
   Widget build(BuildContext context) {
@@ -231,6 +218,7 @@ class _GridBody extends StatelessWidget {
                     assignments: assignments,
                     selectedCell: selectedCell,
                     onCellTap: onCellTap,
+                    activeFault: activeFault,
                   ),
                 ),
             ],
@@ -243,10 +231,6 @@ class _GridBody extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _GridRow — tek satır
-// ─────────────────────────────────────────────────────────────────
-
 class _GridRow extends StatelessWidget {
   const _GridRow({
     required this.slotId,
@@ -256,6 +240,7 @@ class _GridRow extends StatelessWidget {
     required this.assignments,
     this.selectedCell,
     this.onCellTap,
+    this.activeFault,
   });
 
   final int slotId;
@@ -265,6 +250,7 @@ class _GridRow extends StatelessWidget {
   final List<MedicineAssignment> assignments;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
+  final MobileFault? activeFault;
 
   @override
   Widget build(BuildContext context) {
@@ -298,6 +284,7 @@ class _GridRow extends StatelessWidget {
                   isSelected: isSelected,
                   isAssigned: isAssigned,
                   mode: mode,
+                  activeFault: activeFault,
                   onTap: () => onCellTap?.call(coord),
                 ),
               );
@@ -309,10 +296,6 @@ class _GridRow extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _MobileCell — tek göz
-// ─────────────────────────────────────────────────────────────────
-
 class _MobileCell extends StatelessWidget {
   const _MobileCell({
     required this.coord,
@@ -320,6 +303,7 @@ class _MobileCell extends StatelessWidget {
     required this.isAssigned,
     required this.mode,
     required this.onTap,
+    this.activeFault,
   });
 
   final MobileCellCoord coord;
@@ -327,11 +311,19 @@ class _MobileCell extends StatelessWidget {
   final bool isAssigned;
   final CabinOperationMode mode;
   final VoidCallback onTap;
+  final MobileFault? activeFault;
+
+  _CellStatus get _status {
+    if (activeFault != null) {
+      return activeFault!.workingStatus == CabinWorkingStatus.maintenance ? _CellStatus.maintenance : _CellStatus.fault;
+    }
+    if (isAssigned) return _CellStatus.assigned;
+    return _CellStatus.empty;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final status = isAssigned ? _CellStatus.assigned : _CellStatus.empty;
-    final colors = _cellColors(status);
+    final colors = _cellColors(_status);
 
     return GestureDetector(
       onTap: onTap,
@@ -351,27 +343,30 @@ class _MobileCell extends StatelessWidget {
               : null,
         ),
         child: Center(
-          child: Text(
-            // Satır:Sütun etiketi
-            '${coord.$2 + 1}·${coord.$3 + 1}',
-            style: TextStyle(
-              fontFamily: MedFonts.mono,
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: isAssigned ? const Color(0xCC1256AA) : MedColors.text4,
-            ),
-          ),
+          child: activeFault != null
+              ? Icon(
+                  activeFault!.workingStatus == CabinWorkingStatus.maintenance
+                      ? Icons.build_circle_outlined
+                      : Icons.error_outline_rounded,
+                  size: 14,
+                  color: activeFault!.workingStatus == CabinWorkingStatus.maintenance ? MedColors.amber : MedColors.red,
+                )
+              : Text(
+                  '${coord.$2 + 1}·${coord.$3 + 1}',
+                  style: TextStyle(
+                    fontFamily: MedFonts.mono,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: isAssigned ? const Color(0xCC1256AA) : MedColors.text4,
+                  ),
+                ),
         ),
       ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Renk sistemi
-// ─────────────────────────────────────────────────────────────────
-
-enum _CellStatus { empty, assigned }
+enum _CellStatus { empty, assigned, maintenance, fault }
 
 final class _ColorSet {
   const _ColorSet({required this.bgLight, required this.bgDark, required this.border});
@@ -392,18 +387,40 @@ _ColorSet _cellColors(_CellStatus status) => switch (status) {
     bgDark: Color(0xFFC8D8EE),
     border: Color(0xFF7AB0D8),
   ),
+  _CellStatus.fault => const _ColorSet(
+    bgLight: Color(0xFFFFF0F0),
+    bgDark: Color(0xFFFEE2E2),
+    border: Color(0xFFDC2626),
+  ),
+  _CellStatus.maintenance => const _ColorSet(
+    bgLight: Color(0xFFFFFBEB),
+    bgDark: Color(0xFFFEF3C7),
+    border: Color(0xFFF59E0B),
+  ),
 };
 
-// ─────────────────────────────────────────────────────────────────
-// _Legend
-// ─────────────────────────────────────────────────────────────────
-
 class _Legend extends StatelessWidget {
-  const _Legend({required this.mode});
+  const _Legend({required this.mode, this.activeFault});
+
   final CabinOperationMode mode;
+  final MobileFault? activeFault;
 
   @override
   Widget build(BuildContext context) {
+    if (activeFault != null) {
+      final isMaintenance = activeFault!.workingStatus == CabinWorkingStatus.maintenance;
+      return Wrap(
+        spacing: 10,
+        runSpacing: 4,
+        children: [
+          _LegendItem(
+            color: _cellColors(isMaintenance ? _CellStatus.maintenance : _CellStatus.fault),
+            label: isMaintenance ? 'Bakımda' : 'Arızalı',
+          ),
+        ],
+      );
+    }
+
     return Wrap(
       spacing: 10,
       runSpacing: 4,
@@ -444,10 +461,6 @@ class _LegendItem extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// _EmptyState
-// ─────────────────────────────────────────────────────────────────
 
 class _EmptyState extends StatelessWidget {
   const _EmptyState();

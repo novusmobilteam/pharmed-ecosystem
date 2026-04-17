@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class Fault {
+class MasterFault implements IFaultRecord {
   final int? id;
 
   /// DrawerSlot ile birleştiren id.
@@ -11,9 +11,20 @@ class Fault {
   final CabinWorkingStatus? workingStatus;
   final DateTime? createdDate;
 
-  Fault({this.id, this.slotId, this.startDate, this.endDate, this.description, this.workingStatus, this.createdDate});
+  @override
+  bool get isActive => endDate == null;
 
-  Fault copyWith({
+  MasterFault({
+    this.id,
+    this.slotId,
+    this.startDate,
+    this.endDate,
+    this.description,
+    this.workingStatus,
+    this.createdDate,
+  });
+
+  MasterFault copyWith({
     int? id,
     int? slotId,
     DateTime? startDate,
@@ -22,7 +33,7 @@ class Fault {
     CabinWorkingStatus? workingStatus,
     DateTime? createdDate,
   }) {
-    return Fault(
+    return MasterFault(
       id: id ?? this.id,
       slotId: slotId ?? this.slotId,
       startDate: startDate ?? this.startDate,

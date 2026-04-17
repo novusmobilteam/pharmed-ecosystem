@@ -43,7 +43,7 @@ class DrawerDetailPanel extends StatelessWidget {
   final DrawerGroup? group;
   final List<CabinStock> stocks;
   final List<MedicineAssignment> assignments;
-  final List<Fault> faults;
+  final List<MasterFault> faults;
   final int? selectedUnitId;
   final int? selectedStepNo;
 
@@ -213,7 +213,7 @@ class _DetailBody extends StatelessWidget {
   final CabinOperationMode mode;
   final List<CabinStock> stocks;
   final List<MedicineAssignment> assignments;
-  final List<Fault> faults;
+  final List<MasterFault> faults;
   final int? selectedUnitId;
   final int? selectedStepNo;
   final void Function(DrawerUnit unit, int? stepNo)? onCellTap;
@@ -250,11 +250,12 @@ class _DetailBody extends StatelessWidget {
   }
 
   /// Arıza lookup: unitId → Fault
-  Map<int, Fault> get _faultByUnitId {
-    final map = <int, Fault>{};
+  Map<int, MasterFault> get _faultByUnitId {
+    final map = <int, MasterFault>{};
     for (final a in faults) {
       final unitId = a.slotId;
-      if (unitId != null) map[unitId] = a;
+      // Sadece aktif (kapatılmamış) kayıtları al
+      if (unitId != null && a.endDate == null) map[unitId] = a;
     }
     return map;
   }
@@ -303,7 +304,7 @@ class _KubicDetailView extends StatelessWidget {
   final CabinOperationMode mode;
   final Map<int, CabinStock> stockByUnitId;
   final Map<int, MedicineAssignment> assignmentByUnitId;
-  final Map<int, Fault> faultByUnitId;
+  final Map<int, MasterFault> faultByUnitId;
   final int? selectedUnitId;
   final void Function(DrawerUnit unit)? onCellTap;
 
@@ -375,7 +376,7 @@ class _UnitDoseDetailView extends StatelessWidget {
   final CabinOperationMode mode;
   final Map<(int, int), CabinStock> stockByUnitAndStep;
   final Map<int, MedicineAssignment> assignmentByUnitId;
-  final Map<int, Fault> faultByUnitId;
+  final Map<int, MasterFault> faultByUnitId;
   final int? selectedUnitId;
   final int? selectedStepNo;
   final void Function(DrawerUnit unit, int? stepNo)? onCellTap;
@@ -389,77 +390,123 @@ class _UnitDoseDetailView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(9),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD8E4F0),
-                  border: Border.all(color: const Color(0xFFA0B8D0), width: 2),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [BoxShadow(color: Color(0x1F1E3C64), blurRadius: 8, offset: Offset(0, 2))],
+        Container(
+          padding: const EdgeInsets.all(9),
+          decoration: BoxDecoration(
+            color: const Color(0xFFD8E4F0),
+            border: Border.all(color: const Color(0xFFA0B8D0), width: 2),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [BoxShadow(color: Color(0x1F1E3C64), blurRadius: 8, offset: Offset(0, 2))],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (int gi = 0; gi < group.units.length; gi++) ...[
+                Expanded(
+                  child: _UnitDoseColumn(
+                    unit: group.units[gi],
+                    groupIndex: gi,
+                    numberOfSteps: numberOfSteps,
+                    stepMultiplier: stepMultiplier,
+                    mode: mode,
+                    stockByUnitAndStep: stockByUnitAndStep,
+                    assignmentByUnitId: assignmentByUnitId,
+                    faultByUnitId: faultByUnitId,
+                    selectedUnitId: selectedUnitId,
+                    selectedStepNo: selectedStepNo,
+                    onCellTap: onCellTap,
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 2),
-                    for (int step = 0; step < numberOfSteps; step++)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Row(
-                          children: [
-                            for (int gi = 0; gi < group.units.length; gi++) ...[
-                              for (int w = 0; w < stepMultiplier; w++) ...[
-                                Expanded(
-                                  child: Builder(
-                                    builder: (context) {
-                                      final unit = group.units[gi];
-                                      final stepNo = step * stepMultiplier + w + 1;
-                                      final stock = stockByUnitAndStep[(unit.id, stepNo)];
-                                      final assignment = assignmentByUnitId[unit.id];
-                                      final fault = faultByUnitId[unit.id];
-                                      return _CabinCell(
-                                        unit: unit,
-                                        stock: stock,
-                                        fault: fault,
-                                        assignment: assignment,
-                                        mode: mode,
-                                        code: 'G${gi + 1}·$stepNo',
-                                        isSelected: selectedUnitId == unit.id && selectedStepNo == stepNo,
-                                        isKubik: false,
-                                        onTap: unit.workingStatus == CabinWorkingStatus.working
-                                            ? () => onCellTap?.call(unit, stepNo)
-                                            : null,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                if (w < stepMultiplier - 1) const SizedBox(width: 2),
-                              ],
-                              if (gi < group.units.length - 1)
-                                Container(
-                                  width: 3,
-                                  height: 24,
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFA0B8D0),
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ),
-                            ],
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+                if (gi < group.units.length - 1)
+                  Container(
+                    width: 3,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    // Tüm yüksekliği kaplasın diye AlignmentGeometry kullanmak yerine
+                    // parent Row'un stretch davranışından yararlanıyoruz
+                    decoration: BoxDecoration(color: const Color(0xFFA0B8D0), borderRadius: BorderRadius.circular(2)),
+                  ),
+              ],
+            ],
+          ),
         ),
         const SizedBox(height: 12),
         _ModeLegend(mode: mode),
       ],
+    );
+  }
+}
+
+class _UnitDoseColumn extends StatelessWidget {
+  const _UnitDoseColumn({
+    required this.unit,
+    required this.groupIndex,
+    required this.numberOfSteps,
+    required this.stepMultiplier,
+    required this.mode,
+    required this.stockByUnitAndStep,
+    required this.assignmentByUnitId,
+    required this.faultByUnitId,
+    this.selectedUnitId,
+    this.selectedStepNo,
+    this.onCellTap,
+  });
+
+  final DrawerUnit unit;
+  final int groupIndex;
+  final int numberOfSteps;
+  final int stepMultiplier;
+  final CabinOperationMode mode;
+  final Map<(int, int), CabinStock> stockByUnitAndStep;
+  final Map<int, MedicineAssignment> assignmentByUnitId;
+  final Map<int, MasterFault> faultByUnitId;
+  final int? selectedUnitId;
+  final int? selectedStepNo;
+  final void Function(DrawerUnit unit, int? stepNo)? onCellTap;
+
+  bool get _isUnitSelected => selectedUnitId == unit.id;
+
+  @override
+  Widget build(BuildContext context) {
+    final fault = faultByUnitId[unit.id];
+    final assignment = assignmentByUnitId[unit.id];
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      decoration: BoxDecoration(
+        border: Border.all(color: _isUnitSelected ? MedColors.blue : Colors.transparent, width: 2),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      padding: const EdgeInsets.all(2),
+      child: Column(
+        children: [
+          for (int step = 0; step < numberOfSteps; step++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Row(
+                children: [
+                  for (int w = 0; w < stepMultiplier; w++) ...[
+                    Expanded(
+                      child: _CabinCell(
+                        unit: unit,
+                        stock: stockByUnitAndStep[(unit.id, step * stepMultiplier + w + 1)],
+                        fault: fault,
+                        assignment: assignment,
+                        mode: mode,
+                        code: 'G${groupIndex + 1}·${step * stepMultiplier + w + 1}',
+                        isSelected: _isUnitSelected && selectedStepNo == step * stepMultiplier + w + 1,
+                        isKubik: false,
+                        onTap: unit.workingStatus == CabinWorkingStatus.working
+                            ? () => onCellTap?.call(unit, step * stepMultiplier + w + 1)
+                            : null,
+                      ),
+                    ),
+                    if (w < stepMultiplier - 1) const SizedBox(width: 2),
+                  ],
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -486,7 +533,7 @@ class _CabinCell extends StatelessWidget {
 
   final DrawerUnit unit;
   final CabinStock? stock;
-  final Fault? fault;
+  final MasterFault? fault;
   final MedicineAssignment? assignment;
   final CabinOperationMode mode;
   final String code;

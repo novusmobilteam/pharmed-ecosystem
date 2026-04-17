@@ -1,4 +1,4 @@
-class FaultDto {
+class MasterFaultDto {
   final int? id;
 
   /// DrawerSlot ile birleştiren id.
@@ -9,7 +9,7 @@ class FaultDto {
   final int? workingStatusId;
   final DateTime? createdDate;
 
-  FaultDto({
+  MasterFaultDto({
     this.id,
     this.cabinDrawrId,
     this.startDate,
@@ -19,7 +19,7 @@ class FaultDto {
     this.createdDate,
   });
 
-  FaultDto copyWith({
+  MasterFaultDto copyWith({
     int? id,
     int? cabinDrawrId,
     DateTime? startDate,
@@ -28,7 +28,7 @@ class FaultDto {
     int? workingStatusId,
     DateTime? createdDate,
   }) {
-    return FaultDto(
+    return MasterFaultDto(
       id: id,
       cabinDrawrId: cabinDrawrId,
       startDate: startDate,
@@ -39,8 +39,8 @@ class FaultDto {
     );
   }
 
-  factory FaultDto.fromJson(Map<String, dynamic> json) {
-    return FaultDto(
+  factory MasterFaultDto.fromJson(Map<String, dynamic> json) {
+    return MasterFaultDto(
       id: json['id'] as int?,
       cabinDrawrId: json['cabinDrawrId'] as int?,
       startDate: json['startDate'] != null ? DateTime.parse(json['startDate'] as String) : null,

@@ -14,11 +14,11 @@ class GetCabinLayoutUseCase {
       // 1. Çekmece Yuvalarını (Slots) Çek
       final results = await Future.wait([
         _repository.getCabinSlots(cabinId),
-        _faultRepository.getCabinFaultRecords(), // Arıza kayıtları
+        _faultRepository.getMasterCabinFaultRecords(), // Arıza kayıtları
       ]);
 
       final slotsResult = results[0] as Result<List<DrawerSlot>>;
-      final faultsResult = results[1] as Result<List<Fault>>;
+      final faultsResult = results[1] as Result<List<MasterFault>>;
 
       return slotsResult.when(
         error: Result.error,

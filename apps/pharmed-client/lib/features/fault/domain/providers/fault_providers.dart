@@ -12,20 +12,39 @@ final faultRemoteDataSourceProvider = Provider<FaultRemoteDataSource>((ref) {
 
 final faultRepositoryProvider = Provider<IFaultRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => FaultRepositoryImpl(dataSource: ref.read(faultRemoteDataSourceProvider), mapper: FaultMapper()),
-    AppFlavor.dev ||
-    AppFlavor.prod => FaultRepositoryImpl(dataSource: ref.read(faultRemoteDataSourceProvider), mapper: FaultMapper()),
+    AppFlavor.mock => FaultRepositoryImpl(
+      dataSource: ref.read(faultRemoteDataSourceProvider),
+      masterFaultMapper: MasterFaultMapper(),
+      mobileFaultMapper: MobileFaultMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => FaultRepositoryImpl(
+      dataSource: ref.read(faultRemoteDataSourceProvider),
+      masterFaultMapper: MasterFaultMapper(),
+      mobileFaultMapper: MobileFaultMapper(),
+    ),
   };
 });
 
-final getCabinFaultsUseCaseProvider = Provider<GetCabinFaultsUseCase>((ref) {
-  return GetCabinFaultsUseCase(ref.read(faultRepositoryProvider));
+final clearMasterCabinFaultRecordProvider = Provider<ClearMasterCabinFaultRecordUseCase>((ref) {
+  return ClearMasterCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
 });
 
-final createFaultRecordUseCaseProvider = Provider<CreateFaultRecordUseCase>((ref) {
-  return CreateFaultRecordUseCase(ref.read(faultRepositoryProvider));
+final clearMobileCabinFaultRecordProvider = Provider<ClearMobileCabinFaultRecordUseCase>((ref) {
+  return ClearMobileCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
 });
 
-final clearFaultRecordUseCaseProvider = Provider<ClearFaultRecordUseCase>((ref) {
-  return ClearFaultRecordUseCase(ref.read(faultRepositoryProvider));
+final createMasterCabinFaultRecordProvider = Provider<CreateMasterCabinFaultRecordUseCase>((ref) {
+  return CreateMasterCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
+});
+
+final createMobileCabinFaultRecordProvider = Provider<CreateMobileCabinFaultRecordUseCase>((ref) {
+  return CreateMobileCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
+});
+
+final getMasterCabinFaultRecordsProvider = Provider<GetMasterCabinFaultRecordsUseCase>((ref) {
+  return GetMasterCabinFaultRecordsUseCase(ref.read(faultRepositoryProvider));
+});
+
+final getMobileCabinFaultRecordsProvider = Provider<GetMobileCabinFaultRecordsUseCase>((ref) {
+  return GetMobileCabinFaultRecordsUseCase(ref.read(faultRepositoryProvider));
 });

@@ -1,5 +1,3 @@
-// lib/shared/widgets/cabin_widgets/overview_panel/mobile_cabin_overview_panel.dart
-//
 // [SWREQ-UI-CAB-007]
 // Mobil kabin işlemleri ekranının sol paneli.
 // MobileSlotVisual listesini tıklanabilir çekmece kartları olarak gösterir.
@@ -15,12 +13,14 @@ class MobileCabinOverviewPanel extends StatelessWidget {
     required this.mode,
     required this.onSlotTap,
     this.selectedSlotId,
+    this.activeFaultBySlotId = const {}, // eklendi
   });
 
   final List<MobileSlotVisual> slots;
   final CabinOperationMode mode;
   final void Function(MobileSlotVisual slot) onSlotTap;
   final int? selectedSlotId;
+  final Map<int?, MobileFault> activeFaultBySlotId; // eklendi
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +38,7 @@ class MobileCabinOverviewPanel extends StatelessWidget {
                   _MobileSlotItem(
                     slot: slots[i],
                     isSelected: slots[i].slotId == selectedSlotId,
+                    activeFault: activeFaultBySlotId[slots[i].slotId], // eklendi
                     onTap: () => onSlotTap(slots[i]),
                   ),
                   if (i < slots.length - 1) const SizedBox(height: 5),
@@ -52,16 +53,24 @@ class MobileCabinOverviewPanel extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _MobileSlotItem — MobileSlotVisual bazlı çekmece kartı
-// ─────────────────────────────────────────────────────────────────
-
 class _MobileSlotItem extends StatelessWidget {
-  const _MobileSlotItem({required this.slot, required this.isSelected, required this.onTap});
+  const _MobileSlotItem({
+    required this.slot,
+    required this.isSelected,
+    required this.onTap,
+    this.activeFault, // eklendi
+  });
 
   final MobileSlotVisual slot;
   final bool isSelected;
+  final MobileFault? activeFault; // eklendi
   final VoidCallback onTap;
+
+  // Fault durumuna göre renk
+  Color get _faultColor =>
+      activeFault?.workingStatus == CabinWorkingStatus.maintenance ? MedColors.amber : MedColors.red;
+
+  bool get _hasFault => activeFault != null;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +79,12 @@ class _MobileSlotItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         height: 60,
-        decoration: _drawerCardDecoration(isSelected, 60),
+        decoration: _hasFault
+            ? _drawerCardDecoration(isSelected, 60).copyWith(
+                // fault varsa border rengi override
+                border: Border.all(color: isSelected ? MedColors.blue : _faultColor, width: isSelected ? 2 : 1.5),
+              )
+            : _drawerCardDecoration(isSelected, 60),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -80,13 +94,27 @@ class _MobileSlotItem extends StatelessWidget {
                 children: [
                   Text('MOBİL', style: _typeLabelStyle),
                   const Spacer(),
-                  Text('${slot.totalCells} göz', style: _subLabelStyle),
+                  // Fault ikonu veya göz sayısı
+                  if (_hasFault)
+                    Icon(
+                      activeFault!.workingStatus == CabinWorkingStatus.maintenance
+                          ? Icons.build_circle_outlined
+                          : Icons.error_outline_rounded,
+                      size: 12,
+                      color: _faultColor,
+                    )
+                  else
+                    Text('${slot.totalCells} göz', style: _subLabelStyle),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(7, 0, 7, 0),
-              child: _MobileRowPreview(slot: slot, isSelected: isSelected),
+              child: _MobileRowPreview(
+                slot: slot,
+                isSelected: isSelected,
+                faultColor: _hasFault ? _faultColor : null, // eklendi
+              ),
             ),
             const Spacer(),
             const _DrawerHandle(),
@@ -98,15 +126,16 @@ class _MobileSlotItem extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _MobileRowPreview — satır yapısını mini bar olarak gösterir
-// ─────────────────────────────────────────────────────────────────
-
 class _MobileRowPreview extends StatelessWidget {
-  const _MobileRowPreview({required this.slot, required this.isSelected});
+  const _MobileRowPreview({
+    required this.slot,
+    required this.isSelected,
+    this.faultColor, // eklendi
+  });
 
   final MobileSlotVisual slot;
   final bool isSelected;
+  final Color? faultColor; // eklendi
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +146,7 @@ class _MobileRowPreview extends StatelessWidget {
           child: Container(
             height: 5,
             decoration: BoxDecoration(
-              color: isSelected ? MedColors.blue.withOpacity(0.4) : MedColors.border,
+              color: faultColor?.withOpacity(0.5) ?? (isSelected ? MedColors.blue.withOpacity(0.4) : MedColors.border),
               borderRadius: BorderRadius.circular(2),
             ),
           ),

@@ -10,12 +10,6 @@ class DashboardContentFactory {
       _ => 'dashboard',
     };
 
-    final cabinData = switch (state) {
-      DashboardLoaded s => s.data.cabinVisualizerData,
-      DashboardStale s => s.data.cabinVisualizerData,
-      _ => null,
-    };
-
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       child: switch (route) {
@@ -24,7 +18,7 @@ class DashboardContentFactory {
 
         // Diğer Modüller
         'cabinDrawerStock' => Center(child: AssignmentView()),
-        'drawer-malfunction' => Center(child: FaultView(data: cabinData)),
+        'drawer-malfunction' => Center(child: FaultView()),
 
         // Fallback
         _ => const Center(child: Text('Sayfa bulunamadı')),

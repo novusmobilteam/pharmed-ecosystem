@@ -18,49 +18,37 @@
 //
 // Sınıf: Class B
 
-import 'package:flutter/material.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-
-import '../state/fault_ui_state.dart';
+part of 'fault_view.dart';
 
 class FaultPanel extends StatelessWidget {
   const FaultPanel({
     super.key,
-    required this.state,
+    required this.isSaving,
     required this.descriptionController,
     required this.onStatusChanged,
     required this.onSubmit,
+    this.panelState,
   });
 
-  final FaultUiState state;
-
-  /// Controller dışarıdan geliyor — view lifecycle'ını yönetir.
+  final bool isSaving;
+  final FaultPanelState? panelState;
   final TextEditingController descriptionController;
-
-  /// Segmented button index değişimi (0: Arıza, 1: Bakım)
   final ValueChanged<int> onStatusChanged;
-
   final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
-    return switch (state) {
-      FaultCellSelected s => _CellSelectedContent(
-        state: s,
-        descriptionController: descriptionController,
-        onStatusChanged: onStatusChanged,
-        onSubmit: onSubmit,
-      ),
-      FaultSaving() => const _SavingContent(),
-      _ => const _PlaceholderContent(),
-    };
+    if (isSaving) return const _SavingContent();
+    final s = panelState;
+    if (s == null) return const _PlaceholderContent();
+    return _CellSelectedContent(
+      state: s,
+      descriptionController: descriptionController,
+      onStatusChanged: onStatusChanged,
+      onSubmit: onSubmit,
+    );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Placeholder
-// ─────────────────────────────────────────────────────────────────
 
 class _PlaceholderContent extends StatelessWidget {
   const _PlaceholderContent();
@@ -104,10 +92,6 @@ class _PlaceholderContent extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Saving
-// ─────────────────────────────────────────────────────────────────
-
 class _SavingContent extends StatelessWidget {
   const _SavingContent();
 
@@ -120,10 +104,6 @@ class _SavingContent extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Göz seçildi — ana içerik
-// ─────────────────────────────────────────────────────────────────
-
 class _CellSelectedContent extends StatelessWidget {
   const _CellSelectedContent({
     required this.state,
@@ -132,7 +112,7 @@ class _CellSelectedContent extends StatelessWidget {
     required this.onSubmit,
   });
 
-  final FaultCellSelected state;
+  final FaultPanelState state;
   final TextEditingController descriptionController;
   final ValueChanged<int> onStatusChanged;
   final VoidCallback onSubmit;
@@ -172,14 +152,10 @@ class _CellSelectedContent extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Aktif arıza banner
-// ─────────────────────────────────────────────────────────────────
-
 class _ActiveFaultBanner extends StatelessWidget {
   const _ActiveFaultBanner({required this.fault});
 
-  final Fault fault;
+  final IFaultRecord fault;
 
   @override
   Widget build(BuildContext context) {
@@ -214,10 +190,6 @@ class _ActiveFaultBanner extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Segmented button — Arıza / Bakım
-// ─────────────────────────────────────────────────────────────────
 
 class _StatusSegmentedButton extends StatelessWidget {
   const _StatusSegmentedButton({required this.selectedStatus, required this.onChanged});
@@ -313,10 +285,6 @@ class _SegmentButton extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Açıklama alanı
-// ─────────────────────────────────────────────────────────────────
-
 class _DescriptionField extends StatelessWidget {
   const _DescriptionField({required this.controller});
 
@@ -367,14 +335,10 @@ class _DescriptionField extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Arıza geçmişi
-// ─────────────────────────────────────────────────────────────────
-
 class _FaultHistory extends StatelessWidget {
   const _FaultHistory({required this.history});
 
-  final List<Fault> history;
+  final List<IFaultRecord> history;
 
   @override
   Widget build(BuildContext context) {
@@ -417,7 +381,7 @@ class _FaultHistory extends StatelessWidget {
 class _FaultHistoryItem extends StatelessWidget {
   const _FaultHistoryItem({required this.fault});
 
-  final Fault fault;
+  final IFaultRecord fault;
 
   @override
   Widget build(BuildContext context) {
@@ -518,10 +482,6 @@ class _FaultHistoryItem extends StatelessWidget {
         '${date.minute.toString().padLeft(2, '0')}';
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Submit butonu
-// ─────────────────────────────────────────────────────────────────
 
 class _SubmitButton extends StatelessWidget {
   const _SubmitButton({required this.isNewRecord, required this.canSubmit, required this.onTap});
