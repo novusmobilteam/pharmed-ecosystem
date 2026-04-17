@@ -7,7 +7,7 @@ import 'package:pharmed_data/src/models/api_response/api_response.dart';
 // DTO → entity dönüşümü ServiceMapper üzerinden yapılır.
 // Sınıf: Class B
 class ServiceRepositoryImpl implements IServiceRepository {
-  const ServiceRepositoryImpl({
+  ServiceRepositoryImpl({
     required ServiceRemoteDataSource dataSource,
     required ServiceMapper mapper,
     required RoomMapper roomMapper,
@@ -21,6 +21,23 @@ class ServiceRepositoryImpl implements IServiceRepository {
   final ServiceMapper _mapper;
   final RoomMapper _roomMapper;
   final BedMapper _bedMapper;
+
+  List<Room>? _roomsCache;
+  List<Bed>? _bedsCache;
+  List<HospitalService>? _servicesCache;
+
+  Future<Result<List<HospitalService>?>> getAllServices() async {
+    if (_servicesCache != null) return Result.ok(_servicesCache);
+
+    final result = await _dataSource.getAllServices();
+    return result.when(
+      ok: (services) {
+        _servicesCache = services != null ? _mapper.toEntityList(services) : [];
+        return Result.ok(_servicesCache);
+      },
+      error: (e) => Result.error(e),
+    );
+  }
 
   @override
   Future<Result<ApiResponse<List<HospitalService>>>> getServices({int? skip, int? take, String? search}) async {
@@ -95,5 +112,33 @@ class ServiceRepositoryImpl implements IServiceRepository {
   Future<Result<void>> deleteRoom(int roomId) async {
     final result = await _dataSource.deleteRoom(roomId);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<List<Bed>?>> getAllBeds() async {
+    if (_bedsCache != null) return Result.ok(_bedsCache);
+
+    final result = await _dataSource.getAllBeds();
+    return result.when(
+      ok: (dtos) {
+        _bedsCache = _bedMapper.toEntityList(dtos ?? []);
+        return Result.ok(_bedsCache);
+      },
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<List<Room>?>> getAllRooms() async {
+    if (_roomsCache != null) return Result.ok(_roomsCache);
+
+    final result = await _dataSource.getAllRooms();
+    return result.when(
+      ok: (dtos) {
+        _roomsCache = _roomMapper.toEntityList(dtos ?? []);
+        return Result.ok(_roomsCache);
+      },
+      error: (e) => Result.error(e),
+    );
   }
 }

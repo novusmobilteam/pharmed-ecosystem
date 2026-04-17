@@ -20,3 +20,11 @@ class GetServicesUseCase {
   Future<Result<ApiResponse<List<HospitalService>>>> call(GetServicesParams params) =>
       _repository.getServices(skip: params.skip, take: params.take, search: params.search);
 }
+
+class GetAllServicesUseCase {
+  const GetAllServicesUseCase(this._repository);
+
+  final IServiceRepository _repository;
+
+  Future<Result<List<HospitalService>?>> call() => _repository.getAllServices();
+}

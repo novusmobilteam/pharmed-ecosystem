@@ -20,7 +20,7 @@ class PatientAssignment {
   PatientAssignment copyWith({
     int? id,
     int? cabinId,
-    int? cabinDrawrDetailId,
+    int? cellId,
     MobileDrawerCell? cabinDrawrDetail,
     int? bedId,
     Bed? bed,
@@ -29,7 +29,7 @@ class PatientAssignment {
     return PatientAssignment(
       id: id ?? this.id,
       cabinId: cabinId ?? this.cabinId,
-      cellId: cabinDrawrDetailId ?? this.cellId,
+      cellId: cellId ?? this.cellId,
       cell: cabinDrawrDetail ?? this.cell,
       bedId: bedId ?? this.bedId,
       bed: bed ?? this.bed,

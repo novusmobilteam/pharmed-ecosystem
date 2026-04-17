@@ -20,6 +20,8 @@ class HospitalizationMapper {
       colorId: dto.colorId,
       isUrgent: dto.isUrgent ?? false,
       // Alt modellerin mapper çağrıları
+      physicalServiceId: dto.physicalServiceId,
+      inpatientServiceId: dto.inpatientServiceId,
       patient: const PatientMapper().toEntityOrNull(dto.patient),
       physicalService: const ServiceMapper().toEntityOrNull(dto.physicalService),
       inpatientService: const ServiceMapper().toEntityOrNull(dto.inpatientService),

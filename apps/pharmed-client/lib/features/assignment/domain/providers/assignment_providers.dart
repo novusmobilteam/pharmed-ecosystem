@@ -50,3 +50,11 @@ final createPatientAssignmentUseCaseProvider = Provider<CreatePatientAssignmentU
 final getPatientAssignmentsUseCaseProvider = Provider<GetPatientAssignmentsUseCase>((ref) {
   return GetPatientAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
+
+final updatePatientAssignmentUseCaseProvider = Provider<UpdatePatientAssignmentUseCase>((ref) {
+  return UpdatePatientAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final deletePatientAssignmentUseCaseProvider = Provider<DeletePatientAssignmentUseCase>((ref) {
+  return DeletePatientAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});

@@ -35,4 +35,8 @@ class MobileDrawerSlotMapper {
   MobileDrawerCell _cellToEntity(MobileDrawerCellDto dto) {
     return MobileDrawerCell(id: dto.id, unitId: dto.cabinDrawrId, stepNo: dto.stepNo);
   }
+
+  MobileDrawerCellDto toDto(MobileDrawerCell? entity) {
+    return MobileDrawerCellDto(id: entity?.id ?? 0, cabinDrawrId: entity?.unitId ?? 0, stepNo: entity?.stepNo ?? 0);
+  }
 }

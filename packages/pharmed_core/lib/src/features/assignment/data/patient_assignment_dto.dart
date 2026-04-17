@@ -34,15 +34,15 @@ class PatientAssignmentDto extends Equatable {
           : null,
       bedId: json['bedId'] as int?,
       bed: json['bed'] != null ? BedDto.fromJson(json['bed'] as Map<String, dynamic>) : null,
-      hospitalization: json['hospitalization'] != null
-          ? HospitalizationDTO.fromJson(json['hospitalization'] as Map<String, dynamic>)
+      hospitalization: json['patientHospitalization'] != null
+          ? HospitalizationDTO.fromJson(json['patientHospitalization'] as Map<String, dynamic>)
           : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'cabinId': cabinId,
+    //'cabinId': cabinId,
     'cabinDrawrDetailId': cabinDrawrDetailId,
     'bedId': bedId,
   };

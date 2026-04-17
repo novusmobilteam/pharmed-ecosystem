@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../state/patient_assignment_ui_state.dart';
+import '../state/patient_assignment_state.dart';
 
 class PatientAssignmentPanel extends StatelessWidget {
   const PatientAssignmentPanel({
@@ -24,12 +24,11 @@ class PatientAssignmentPanel extends StatelessWidget {
     required this.onDelete,
   });
 
-  final PatientAssignmentUiState state;
+  final PatientAssignmentState state;
 
   /// Yatış seç butonuna basılınca çağrılır.
   /// Dialog açma sorumluluğu view'dadır.
   final VoidCallback onSelectHospitalization;
-
   final VoidCallback onSave;
   final VoidCallback onDelete;
 
@@ -118,7 +117,7 @@ class _CellSelectedContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(6),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -135,7 +134,12 @@ class _CellSelectedContent extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Butonlar
-          _ActionButtons(canSave: state.canSave, isAssigned: false, onSave: onSave, onDelete: onDelete),
+          _ActionButtons(
+            existingAssignment: state.existingAssignment,
+            selectedHospitalization: state.selectedHospitalization,
+            onSave: onSave,
+            onDelete: onDelete,
+          ),
         ],
       ),
     );
@@ -212,8 +216,8 @@ class _PatientCard extends StatelessWidget {
     final patient = hospitalization.patient;
     final name = patient?.fullName ?? '—';
     final initials = _initials(name);
-    final room = hospitalization.roomId ?? '—';
-    final bed = hospitalization.bedId ?? '—';
+    final room = hospitalization.room?.name ?? '—';
+    final bed = hospitalization.bed?.name ?? '—';
     final service = hospitalization.physicalService?.name ?? '—';
     final code = hospitalization.code ?? '—';
 
@@ -330,29 +334,56 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _ActionButtons extends StatelessWidget {
-  const _ActionButtons({required this.canSave, required this.isAssigned, required this.onSave, required this.onDelete});
+  const _ActionButtons({
+    required this.existingAssignment,
+    required this.selectedHospitalization,
+    required this.onSave,
+    required this.onDelete,
+  });
 
-  final bool canSave;
-  final bool isAssigned;
+  final PatientAssignment? existingAssignment;
+  final Hospitalization? selectedHospitalization;
   final VoidCallback onSave;
   final VoidCallback onDelete;
 
+  bool get _isAssigned => existingAssignment != null;
+  bool get _isChanged =>
+      _isAssigned &&
+      selectedHospitalization != null &&
+      selectedHospitalization!.id != existingAssignment!.hospitalization?.id;
+  bool get _canSave => !_isAssigned && selectedHospitalization != null;
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _PanelButton.primary(
-          label: 'Atamayı Kaydet',
-          icon: Icons.check_rounded,
-          enabled: canSave,
-          onTap: canSave ? onSave : null,
-        ),
-        if (isAssigned) ...[
+    if (_isAssigned && !_isChanged) {
+      // Mevcut atama var, değişiklik yok → sadece Kaldır
+      return _PanelButton.danger(label: 'Atamayı Kaldır', icon: Icons.delete_outline_rounded, onTap: onDelete);
+    }
+
+    if (_isChanged) {
+      // Farklı hasta seçildi → Değiştir + Kaldır
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _PanelButton.primary(
+            label: 'Atamayı Değiştir',
+            icon: Icons.swap_horiz_rounded,
+            color: MedColors.blue,
+            onTap: onSave,
+          ),
           const SizedBox(height: 8),
           _PanelButton.danger(label: 'Atamayı Kaldır', icon: Icons.delete_outline_rounded, onTap: onDelete),
         ],
-      ],
+      );
+    }
+
+    // Atama yok → Kaydet
+    return _PanelButton.primary(
+      label: 'Atamayı Kaydet',
+      icon: Icons.check_rounded,
+      color: MedColors.green,
+      enabled: _canSave,
+      onTap: _canSave ? onSave : null,
     );
   }
 }
@@ -365,14 +396,24 @@ class _PanelButton extends StatelessWidget {
     required this.isDanger,
     this.enabled = true,
     this.onTap,
+    this.color,
   });
 
   factory _PanelButton.primary({
     required String label,
     required IconData icon,
+    Color? color,
     bool enabled = true,
     VoidCallback? onTap,
-  }) => _PanelButton(label: label, icon: icon, isPrimary: true, isDanger: false, enabled: enabled, onTap: onTap);
+  }) => _PanelButton(
+    label: label,
+    icon: icon,
+    isPrimary: true,
+    isDanger: false,
+    color: color,
+    enabled: enabled,
+    onTap: onTap,
+  );
 
   factory _PanelButton.danger({required String label, required IconData icon, VoidCallback? onTap}) =>
       _PanelButton(label: label, icon: icon, isPrimary: false, isDanger: true, onTap: onTap);
@@ -383,6 +424,7 @@ class _PanelButton extends StatelessWidget {
   final bool isDanger;
   final bool enabled;
   final VoidCallback? onTap;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -399,11 +441,11 @@ class _PanelButton extends StatelessWidget {
       border = MedColors.red;
       fg = MedColors.red;
     } else {
-      bg = MedColors.blue;
-      border = MedColors.blue;
+      final c = color ?? MedColors.blue;
+      bg = c;
+      border = c;
       fg = Colors.white;
     }
-
     return GestureDetector(
       onTap: enabled ? onTap : null,
       child: AnimatedContainer(

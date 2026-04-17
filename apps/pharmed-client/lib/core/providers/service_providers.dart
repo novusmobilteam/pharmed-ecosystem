@@ -29,3 +29,33 @@ final serviceRepositoryProvider = Provider<IServiceRepository>((ref) {
 final getServiceUseCaseProvider = Provider<GetServiceUseCase>((ref) {
   return GetServiceUseCase(ref.read(serviceRepositoryProvider));
 });
+
+final _getAllServicesUseCaseProvider = Provider<GetAllServicesUseCase>((ref) {
+  return GetAllServicesUseCase(ref.read(serviceRepositoryProvider));
+});
+
+final _getAllRoomsUseCaseProvider = Provider<GetAllRoomsUseCase>((ref) {
+  return GetAllRoomsUseCase(ref.read(serviceRepositoryProvider));
+});
+
+final _getAllBedsUseCaseProvider = Provider<GetAllBedsUseCase>((ref) {
+  return GetAllBedsUseCase(ref.read(serviceRepositoryProvider));
+});
+
+final allServicesProvider = FutureProvider<List<HospitalService>>((ref) async {
+  final useCase = ref.read(_getAllServicesUseCaseProvider);
+  final result = await useCase.call();
+  return result.when(ok: (services) => services ?? [], error: (e) => throw e);
+});
+
+final allRoomsProvider = FutureProvider<List<Room>>((ref) async {
+  final useCase = ref.read(_getAllRoomsUseCaseProvider);
+  final result = await useCase.call();
+  return result.when(ok: (rooms) => rooms ?? [], error: (e) => throw e);
+});
+
+final allBedsProvider = FutureProvider<List<Bed>>((ref) async {
+  final useCase = ref.read(_getAllBedsUseCaseProvider);
+  final result = await useCase.call();
+  return result.when(ok: (beds) => beds ?? [], error: (e) => throw e);
+});

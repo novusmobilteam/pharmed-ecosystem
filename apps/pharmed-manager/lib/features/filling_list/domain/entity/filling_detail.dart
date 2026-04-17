@@ -43,7 +43,7 @@ class FillingDetail implements TableData {
       medicineId: medicineId,
       medicine: MedicineMapper().toDtoOrNull(medicine),
       cabinDrawer: DrawerUnitMapper().toDtoOrNull(cabinDrawer),
-      cabinAssignment: cabinAssignment?.toDTO(),
+      //cabinAssignment: cabinAssignment?.toDTO(),
       quantity: quantity,
       fillingQuantity: fillingQuantity,
       fillingDate: fillingDate,

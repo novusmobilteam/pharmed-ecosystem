@@ -36,7 +36,7 @@ class CabinInputData {
       "compartmentNo": compartmentNo,
       "stockId": stockId,
       "cabinDrawerId": cabinDrawerId,
-      "assignment": assignment?.toDTO(),
+      //"assignment": assignment?.toDTO(),
     };
   }
 }

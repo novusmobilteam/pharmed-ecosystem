@@ -16,3 +16,5 @@ export 'domain/usecase/delete_bed_usecase.dart';
 export 'domain/usecase/get_service_usecase.dart';
 export 'domain/usecase/get_rooms_usecase.dart';
 export 'domain/usecase/get_beds_usecase.dart';
+export 'domain/usecase/get_all_beds_usecase.dart';
+export 'domain/usecase/get_all_rooms_usecase.dart';

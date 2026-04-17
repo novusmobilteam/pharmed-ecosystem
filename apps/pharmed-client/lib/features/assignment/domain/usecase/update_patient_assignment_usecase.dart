@@ -1,12 +1,12 @@
 // [SWREQ-CABIN-UC-XXX]
-// Mobil kabin gözüne yatak ataması yapar.
+// Mobil kabin gözündeki yatak atamasını günceller.
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-class CreatePatientAssignmentUseCase {
-  const CreatePatientAssignmentUseCase(this._repository);
+class UpdatePatientAssignmentUseCase {
+  const UpdatePatientAssignmentUseCase(this._repository);
 
   final IAssignmentRepository _repository;
 
@@ -14,10 +14,10 @@ class CreatePatientAssignmentUseCase {
     MedLogger.info(
       unit: 'SW-UNIT-CABIN',
       swreq: 'SWREQ-CABIN-UC-XXX',
-      message: 'Mobil kabin göz ataması başlatıldı',
+      message: 'Mobil kabin göz ataması güncellendi',
       context: {'cellId': entity.cellId, 'bedId': entity.bedId},
     );
 
-    return _repository.createPatientAssignment(entity);
+    return _repository.updatePatientAssignment(entity);
   }
 }

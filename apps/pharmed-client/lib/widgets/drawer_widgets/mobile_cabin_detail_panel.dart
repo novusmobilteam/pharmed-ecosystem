@@ -29,7 +29,7 @@ class MobileCabinDetailPanel extends StatelessWidget {
     super.key,
     required this.mode,
     this.slot,
-    this.assignments = const [],
+    this.assignmentByCoord = const {},
     this.activeFault,
     this.selectedCell,
     this.onCellTap,
@@ -37,13 +37,8 @@ class MobileCabinDetailPanel extends StatelessWidget {
 
   final CabinOperationMode mode;
   final MobileSlotVisual? slot;
-
-  /// Atama listesi — hasta bazlı assign modunda hücre rengini belirler.
-  /// Şimdilik koordinat → assignment eşleştirmesi için kullanılacak
-  /// (PatientCabinAssignment modeli netleşince güncellenir).
-  final List<MedicineAssignment> assignments;
+  final Map<MobileCellCoord, PatientAssignment> assignmentByCoord;
   final MobileFault? activeFault;
-
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
 
@@ -72,7 +67,7 @@ class MobileCabinDetailPanel extends StatelessWidget {
               child: _GridBody(
                 slot: s,
                 mode: mode,
-                assignments: assignments,
+                assignmentByCoord: assignmentByCoord,
                 selectedCell: selectedCell,
                 onCellTap: onCellTap,
                 activeFault: activeFault,
@@ -179,7 +174,7 @@ class _GridBody extends StatelessWidget {
   const _GridBody({
     required this.slot,
     required this.mode,
-    required this.assignments,
+    required this.assignmentByCoord,
     this.selectedCell,
     this.onCellTap,
     this.activeFault,
@@ -187,7 +182,7 @@ class _GridBody extends StatelessWidget {
 
   final MobileSlotVisual slot;
   final CabinOperationMode mode;
-  final List<MedicineAssignment> assignments;
+  final Map<MobileCellCoord, PatientAssignment> assignmentByCoord;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
   final MobileFault? activeFault;
@@ -215,7 +210,7 @@ class _GridBody extends StatelessWidget {
                     rowIndex: rowIdx,
                     colCount: slot.rowColumns[rowIdx],
                     mode: mode,
-                    assignments: assignments,
+                    assignmentByCoord: assignmentByCoord,
                     selectedCell: selectedCell,
                     onCellTap: onCellTap,
                     activeFault: activeFault,
@@ -237,7 +232,7 @@ class _GridRow extends StatelessWidget {
     required this.rowIndex,
     required this.colCount,
     required this.mode,
-    required this.assignments,
+    required this.assignmentByCoord,
     this.selectedCell,
     this.onCellTap,
     this.activeFault,
@@ -247,7 +242,7 @@ class _GridRow extends StatelessWidget {
   final int rowIndex;
   final int colCount;
   final CabinOperationMode mode;
-  final List<MedicineAssignment> assignments;
+  final Map<MobileCellCoord, PatientAssignment> assignmentByCoord;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
   final MobileFault? activeFault;
@@ -273,16 +268,13 @@ class _GridRow extends StatelessWidget {
             children: List.generate(colCount, (colIdx) {
               final coord = (slotId, rowIndex, colIdx);
               final isSelected = selectedCell == coord;
-
-              // TODO: PatientCabinAssignment modeli gelince
-              // koordinat → assignment lookup buraya eklenecek
-              final isAssigned = false;
+              final assignment = assignmentByCoord[coord];
 
               return Expanded(
                 child: _MobileCell(
                   coord: coord,
                   isSelected: isSelected,
-                  isAssigned: isAssigned,
+                  assignment: assignment,
                   mode: mode,
                   activeFault: activeFault,
                   onTap: () => onCellTap?.call(coord),
@@ -300,24 +292,26 @@ class _MobileCell extends StatelessWidget {
   const _MobileCell({
     required this.coord,
     required this.isSelected,
-    required this.isAssigned,
     required this.mode,
-    required this.onTap,
+    this.assignment,
     this.activeFault,
+    this.onTap,
   });
 
   final MobileCellCoord coord;
   final bool isSelected;
-  final bool isAssigned;
-  final CabinOperationMode mode;
-  final VoidCallback onTap;
+  final PatientAssignment? assignment;
   final MobileFault? activeFault;
+  final CabinOperationMode mode;
+  final VoidCallback? onTap;
+
+  bool get _isAssigned => assignment != null;
 
   _CellStatus get _status {
     if (activeFault != null) {
       return activeFault!.workingStatus == CabinWorkingStatus.maintenance ? _CellStatus.maintenance : _CellStatus.fault;
     }
-    if (isAssigned) return _CellStatus.assigned;
+    if (_isAssigned) return _CellStatus.assigned;
     return _CellStatus.empty;
   }
 
@@ -342,27 +336,50 @@ class _MobileCell extends StatelessWidget {
               ? [const BoxShadow(color: Color(0x4D1A6FD8), blurRadius: 8, offset: Offset(0, 2))]
               : null,
         ),
-        child: Center(
-          child: activeFault != null
-              ? Icon(
-                  activeFault!.workingStatus == CabinWorkingStatus.maintenance
-                      ? Icons.build_circle_outlined
-                      : Icons.error_outline_rounded,
-                  size: 14,
-                  color: activeFault!.workingStatus == CabinWorkingStatus.maintenance ? MedColors.amber : MedColors.red,
-                )
-              : Text(
-                  '${coord.$2 + 1}·${coord.$3 + 1}',
-                  style: TextStyle(
-                    fontFamily: MedFonts.mono,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: isAssigned ? const Color(0xCC1256AA) : MedColors.text4,
-                  ),
-                ),
-        ),
+        child: Center(child: _cellContent()),
       ),
     );
+  }
+
+  Widget _cellContent() {
+    // Arıza/bakım ikonu
+    if (activeFault != null) {
+      return Icon(
+        activeFault!.workingStatus == CabinWorkingStatus.maintenance
+            ? Icons.build_circle_outlined
+            : Icons.error_outline_rounded,
+        size: 14,
+        color: activeFault!.workingStatus == CabinWorkingStatus.maintenance ? MedColors.amber : MedColors.red,
+      );
+    }
+
+    // Atama varsa hasta adı baş harfleri
+    if (_isAssigned) {
+      final name = assignment!.hospitalization?.patient?.fullName ?? '—';
+      final initials = _initials(name);
+      return Text(
+        initials,
+        style: const TextStyle(
+          fontFamily: MedFonts.sans,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: Color(0xCC1256AA),
+        ),
+      );
+    }
+
+    // Boş — koordinat etiketi
+    return Text(
+      '${coord.$2 + 1}·${coord.$3 + 1}',
+      style: TextStyle(fontFamily: MedFonts.mono, fontSize: 10, fontWeight: FontWeight.w500, color: MedColors.text4),
+    );
+  }
+
+  String _initials(String name) {
+    final parts = name.trim().split(' ');
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts[0][0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 }
 

@@ -31,6 +31,17 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  Future<Result<List<ServiceDTO>?>> getAllServices() async {
+    final res = await fetchRequest(
+      path: '$_base',
+      parser: BaseRemoteDataSource.listParser(ServiceDTO.fromJson),
+      successLog: 'Servis getirildi',
+      emptyLog: 'Servis bulunamadı',
+    );
+
+    return res.when(ok: (data) => Result.ok(data), error: Result.error);
+  }
+
   Future<Result<ServiceDTO?>> getService(int serviceId) async {
     final res = await fetchRequest(
       path: '$_base/$serviceId',
@@ -91,5 +102,23 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> deleteBed(int bedId) {
     return deleteRequest(path: '/Bed/$bedId', parser: BaseRemoteDataSource.voidParser(), successLog: 'Yatak silindi');
+  }
+
+  Future<Result<List<RoomDto>?>> getAllRooms() async {
+    return await fetchRequest(
+      path: '/Room',
+      parser: BaseRemoteDataSource.listParser(RoomDto.fromJson),
+      successLog: 'Tüm Odalar getirildi',
+      emptyLog: 'Oda bulunamadı',
+    );
+  }
+
+  Future<Result<List<BedDto>?>> getAllBeds() async {
+    return await fetchRequest(
+      path: '/Bed',
+      parser: BaseRemoteDataSource.listParser(BedDto.fromJson),
+      successLog: 'Tüm Yataklar getirildi',
+      emptyLog: 'Yatak bulunamadı',
+    );
   }
 }

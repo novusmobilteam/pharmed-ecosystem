@@ -20,7 +20,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../../widgets/widgets.dart';
 import '../notifier/patient_assignment_notifier.dart';
-import '../state/patient_assignment_ui_state.dart';
+import '../state/patient_assignment_state.dart';
 
 class PatientAssignmentView extends ConsumerStatefulWidget {
   const PatientAssignmentView({super.key, this.data});
@@ -57,6 +57,14 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
   Future<void> _openHospitalizationDialog() async {
     final getHospitalizations = ref.read(getHospitalizationsUseCaseProvider);
 
+    // Önceden hazırla
+    final rooms = ref.read(allRoomsProvider).valueOrNull ?? [];
+    final beds = ref.read(allBedsProvider).valueOrNull ?? [];
+    final services = ref.read(allServicesProvider).valueOrNull ?? [];
+    final roomById = {for (final r in rooms) r.id: r};
+    final bedById = {for (final b in beds) b.id: b};
+    final serviceById = {for (final s in services) s.id: s};
+
     final selected = await SelectionDialog.show<Hospitalization>(
       context,
       title: 'Yatış Seç',
@@ -64,10 +72,10 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
           getHospitalizations.call(GetHospitalizationsParams(skip: skip, take: take, search: search)),
       labelBuilder: (h) => h.patient?.fullName ?? '—',
       subtitleBuilder: (h) {
-        final room = h.roomId ?? '—';
-        final bed = h.bedId ?? '—';
-        final service = h.physicalService?.name ?? '—';
-        return '$service · Oda $room / $bed';
+        final room = roomById[h.roomId];
+        final bed = bedById[h.bedId];
+        final service = serviceById[h.physicalServiceId] ?? (room != null ? serviceById[room.serviceId] : null);
+        return '${service?.name ?? '—'} · ${room?.name ?? '—'} / ${bed?.name ?? '—'}';
       },
     );
 
@@ -99,10 +107,10 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
-    final slots = _extractSlots(state);
-    final selectedSlotId = _extractSelectedSlotId(state);
-    final selectedSlot = _extractSelectedSlot(state);
-    final selectedCell = _extractSelectedCell(state);
+    final slots = state.slots;
+    final selectedSlotId = state.selectedSlotId;
+    final selectedSlot = state.selectedSlot;
+    final selectedCell = state.selectedCell;
 
     return CabinOperationScaffold(
       leftPanel: MobileCabinOverviewPanel(
@@ -116,6 +124,7 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
         slot: selectedSlot,
         selectedCell: selectedCell,
         onCellTap: notifier.onCellTap,
+        assignmentByCoord: state.assignmentByCoord,
       ),
       rightPanel: OperationPanelBase(
         mode: CabinOperationMode.assign,
@@ -128,34 +137,4 @@ class _PatientAssignmentViewState extends ConsumerState<PatientAssignmentView> {
       ),
     );
   }
-
-  List<MobileSlotVisual> _extractSlots(PatientAssignmentUiState s) => switch (s) {
-    PatientAssignmentIdle(:final slots) => slots,
-    PatientAssignmentSlotSelected(:final slots) => slots,
-    PatientAssignmentCellSelected(:final slots) => slots,
-    PatientAssignmentSaving(:final slots) => slots,
-    PatientAssignmentSuccess(:final slots) => slots,
-    _ => const [],
-  };
-
-  int? _extractSelectedSlotId(PatientAssignmentUiState s) => switch (s) {
-    PatientAssignmentSlotSelected(:final selectedSlotId) => selectedSlotId,
-    PatientAssignmentCellSelected(:final selectedSlotId) => selectedSlotId,
-    PatientAssignmentSaving s => s.selectedSlot.slotId,
-    PatientAssignmentSuccess s => s.selectedSlot.slotId,
-    _ => null,
-  };
-
-  MobileSlotVisual? _extractSelectedSlot(PatientAssignmentUiState s) => switch (s) {
-    PatientAssignmentSlotSelected(:final selectedSlot) => selectedSlot,
-    PatientAssignmentCellSelected(:final selectedSlot) => selectedSlot,
-    PatientAssignmentSaving(:final selectedSlot) => selectedSlot,
-    PatientAssignmentSuccess(:final selectedSlot) => selectedSlot,
-    _ => null,
-  };
-
-  MobileCellCoord? _extractSelectedCell(PatientAssignmentUiState s) => switch (s) {
-    PatientAssignmentCellSelected(:final selectedCell) => selectedCell,
-    _ => null,
-  };
 }

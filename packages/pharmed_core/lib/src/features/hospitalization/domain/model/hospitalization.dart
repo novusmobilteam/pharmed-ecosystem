@@ -6,10 +6,14 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 class Hospitalization extends Selectable implements TableData {
   final int? code;
   final Patient? patient;
+  final int? physicalServiceId;
   final HospitalService? physicalService;
+  final int? inpatientServiceId;
   final HospitalService? inpatientService;
   final User? doctor;
+  final Room? room;
   final int? roomId;
+  final Bed? bed;
   final int? bedId;
   final String? description;
   final DateTime? admissionDate;
@@ -24,10 +28,15 @@ class Hospitalization extends Selectable implements TableData {
     super.id,
     this.code,
     this.patient,
+    this.physicalServiceId,
     this.physicalService,
+    this.inpatientServiceId,
+
     this.inpatientService,
     this.doctor,
+    this.room,
     this.roomId,
+    this.bed,
     this.bedId,
     this.description,
     this.admissionDate,
@@ -46,7 +55,9 @@ class Hospitalization extends Selectable implements TableData {
     HospitalService? physicalService,
     HospitalService? inpatientService,
     User? doctor,
+    Room? room,
     int? roomId,
+    Bed? bed,
     int? bedId,
     String? description,
     DateTime? admissionDate,
@@ -60,7 +71,9 @@ class Hospitalization extends Selectable implements TableData {
       physicalService: physicalService ?? this.physicalService,
       inpatientService: inpatientService ?? this.inpatientService,
       doctor: doctor ?? this.doctor,
+      room: room ?? this.room,
       roomId: roomId ?? this.roomId,
+      bed: bed ?? this.bed,
       bedId: bedId ?? this.bedId,
       description: description ?? this.description,
       admissionDate: admissionDate ?? this.admissionDate,

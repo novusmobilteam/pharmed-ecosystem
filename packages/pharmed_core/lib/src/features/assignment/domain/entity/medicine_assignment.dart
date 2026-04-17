@@ -1,5 +1,4 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 class MedicineAssignment implements TableData {
@@ -137,19 +136,6 @@ class MedicineAssignment implements TableData {
       cabinDrawerDetail: cabinDrawerDetail ?? this.cabinDrawerDetail,
       fillingQuantity: fillingQuantity ?? this.fillingQuantity,
       stocks: stocks ?? this.stocks,
-    );
-  }
-
-  MedicineAssignmentDto toDTO() {
-    return MedicineAssignmentDto(
-      id: id,
-      cabinDrawerId: cabinDrawerId,
-      maxQuantity: maxQuantity,
-      minQuantity: minQuantity,
-      criticalQuantity: criticalQuantity,
-      cabin: CabinMapper().toDtoOrNull(cabin),
-      medicine: MedicineMapper().toDtoOrNull(medicine),
-      cabinDrawer: DrawerUnitMapper().toDtoOrNull(drawerUnit),
     );
   }
 

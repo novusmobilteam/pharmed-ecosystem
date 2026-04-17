@@ -10,10 +10,10 @@ class FaultRemoteDataSource extends BaseRemoteDataSource {
   FaultRemoteDataSource({required super.apiManager});
 
   // Master kabin path
-  final String _masterBase = '/DrawrMaintenanceMalfunction';
+  static const String _masterBase = '/DrawrMaintenanceMalfunction';
 
   // Mobil kabin path
-  final String _mobileBase = '/MobileDrawrMaintenanceMalfunction';
+  static const String _mobileBase = '/MobileDrawrMaintenanceMalfunction';
 
   @override
   String get logSwreq => 'SWREQ-DATA-FAULT-001';

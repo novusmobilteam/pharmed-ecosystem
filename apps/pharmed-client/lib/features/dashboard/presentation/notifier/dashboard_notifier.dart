@@ -122,6 +122,13 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
       _getCriticalStocks.call(true, forceRefresh: forceRefresh),
       _getExpiringMaterials.call(forceRefresh: forceRefresh),
       _getUpcomingTreatments.call(forceRefresh: forceRefresh),
+
+      /// Hasta atama işlemlerinde oda/yatak/servis bilgileri Hospitalization içerisinde
+      /// yer almadığı için (sadece idleri geliyor) önden bu verileri çekip in-memory cachede
+      /// tutuyor ve bu verileri buradan gösteriyoruz.
+      ref.read(allRoomsProvider.future),
+      ref.read(allBedsProvider.future),
+      ref.read(allServicesProvider.future),
     ]);
 
     final cabinResult = results[0] as RepoResult<CabinVisualizerData>;

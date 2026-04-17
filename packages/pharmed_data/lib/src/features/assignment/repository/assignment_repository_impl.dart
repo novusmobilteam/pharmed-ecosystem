@@ -29,7 +29,7 @@ class AssignmentRepository implements IAssignmentRepository {
 
   @override
   Future<Result<void>> createMedicineAssignment(MedicineAssignment entity) async {
-    final dto = entity.toDTO();
+    final dto = _medicineAssignmentMapper.toDto(entity);
     final result = await _dataSource.createMedicineAssignment(dto);
 
     return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
@@ -43,7 +43,7 @@ class AssignmentRepository implements IAssignmentRepository {
 
   @override
   Future<Result<void>> updateMedicineAssignment(MedicineAssignment entity) async {
-    final dto = entity.toDTO();
+    final dto = _medicineAssignmentMapper.toDto(entity);
     final result = await _dataSource.updateMedicineAssignment(dto);
 
     return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
@@ -95,17 +95,31 @@ class AssignmentRepository implements IAssignmentRepository {
   }
 
   @override
-  Future<Result<void>> createPatientAssignment({required int cellId, required int bedId}) async {
-    final result = await _dataSource.createPatientAssignment(cellId: cellId, bedId: bedId);
-    return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
-  }
-
-  @override
   Future<Result<List<PatientAssignment>>> getPatientAssignments(int cabinId) async {
     final result = await _dataSource.getPatientAssignments(cabinId);
     return result.when(
       ok: (data) => Result.ok(_patientAssignmentMapper.toEntityList(data)),
       error: (e) => Result.error(e),
     );
+  }
+
+  @override
+  Future<Result<void>> createPatientAssignment(PatientAssignment entity) async {
+    final dto = _patientAssignmentMapper.toDto(entity);
+    final result = await _dataSource.createPatientAssignment(dto);
+    return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> updatePatientAssignment(PatientAssignment entity) async {
+    final dto = _patientAssignmentMapper.toDto(entity);
+    final result = await _dataSource.updatePatientAssignment(dto);
+    return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> deletePatientAssignment(int id) async {
+    final result = await _dataSource.deletePatientAssignment(id);
+    return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
   }
 }
