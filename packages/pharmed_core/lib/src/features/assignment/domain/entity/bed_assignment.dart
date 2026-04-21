@@ -6,8 +6,8 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-class PatientAssignment {
-  const PatientAssignment({this.id, this.cabinId, this.cellId, this.cell, this.bedId, this.bed, this.hospitalization});
+class BedAssignment {
+  const BedAssignment({this.id, this.cabinId, this.cellId, this.cell, this.bedId, this.bed, this.hospitalization});
 
   final int? id;
   final int? cabinId;
@@ -17,7 +17,7 @@ class PatientAssignment {
   final Bed? bed;
   final Hospitalization? hospitalization;
 
-  PatientAssignment copyWith({
+  BedAssignment copyWith({
     int? id,
     int? cabinId,
     int? cellId,
@@ -26,7 +26,7 @@ class PatientAssignment {
     Bed? bed,
     Hospitalization? hospitalization,
   }) {
-    return PatientAssignment(
+    return BedAssignment(
       id: id ?? this.id,
       cabinId: cabinId ?? this.cabinId,
       cellId: cellId ?? this.cellId,
@@ -38,7 +38,7 @@ class PatientAssignment {
   }
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is PatientAssignment && id == other.id;
+  bool operator ==(Object other) => identical(this, other) || other is BedAssignment && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

@@ -2,7 +2,7 @@ export 'data/medicine_assignment_dto.dart';
 export 'data/patient_assignment_dto.dart';
 
 export 'domain/entity/medicine_assignment.dart';
-export 'domain/entity/patient_assignment.dart';
+export 'domain/entity/bed_assignment.dart';
 
 export 'domain/repository/i_assignment_repository.dart';
 

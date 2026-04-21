@@ -211,4 +211,10 @@ class CabinMockRepository implements ICabinRepository {
     await Future.delayed(_delay);
     return RepoSuccess(List.unmodifiable(_mockTypes));
   }
+
+  @override
+  Future<RepoResult<Cabin?>> getCabin(int cabinId) async {
+    await Future.delayed(_delay);
+    return RepoSuccess(null);
+  }
 }

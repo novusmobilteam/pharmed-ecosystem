@@ -16,8 +16,8 @@ class PatientAssignmentMapper {
   final HospitalizationMapper hospitalizationMapper;
   final MobileDrawerSlotMapper slotMapper;
 
-  PatientAssignment toEntity(PatientAssignmentDto dto) {
-    return PatientAssignment(
+  BedAssignment toEntity(PatientAssignmentDto dto) {
+    return BedAssignment(
       id: dto.id,
       cabinId: dto.cabinId,
       cellId: dto.cabinDrawrDetailId,
@@ -28,7 +28,7 @@ class PatientAssignmentMapper {
     );
   }
 
-  PatientAssignmentDto toDto(PatientAssignment entity) {
+  PatientAssignmentDto toDto(BedAssignment entity) {
     return PatientAssignmentDto(
       id: entity.id,
       cabinId: entity.cabinId,
@@ -40,9 +40,9 @@ class PatientAssignmentMapper {
     );
   }
 
-  PatientAssignment? toEntityOrNull(PatientAssignmentDto? dto) => dto == null ? null : toEntity(dto);
+  BedAssignment? toEntityOrNull(PatientAssignmentDto? dto) => dto == null ? null : toEntity(dto);
 
-  List<PatientAssignment> toEntityList(List<PatientAssignmentDto> dtos) => dtos.map(toEntity).toList();
+  List<BedAssignment> toEntityList(List<PatientAssignmentDto> dtos) => dtos.map(toEntity).toList();
 
   MobileDrawerCell _cellToEntity(MobileDrawerCellDto dto) {
     return MobileDrawerCell(id: dto.id, unitId: dto.cabinDrawrId, stepNo: dto.stepNo);

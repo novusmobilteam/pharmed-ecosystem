@@ -28,15 +28,15 @@ abstract class IAssignmentRepository {
   /// Bağımsız (reçetesiz) malzemeleri getirir.
   Future<Result<List<MedicineAssignment>>> getIndependentMaterials();
 
-  /// Belirtilen kabindeki tüm hasta atamalarını getirir.
-  Future<Result<List<PatientAssignment>>> getPatientAssignments(int cabinId);
+  /// Belirtilen kabindeki tüm yatak atamalarını getirir.
+  Future<Result<List<BedAssignment>>> getBedAssignments(int cabinId);
 
   /// Mobil kabin gözüne yatak ataması yapar.
-  Future<Result<void>> createPatientAssignment(PatientAssignment entity);
+  Future<Result<void>> createBedAssignment(BedAssignment entity);
 
-  /// Mevcut bir hasta atamasını günceller.
-  Future<Result<void>> updatePatientAssignment(PatientAssignment entity);
+  /// Mevcut bir yatak atamasını günceller.
+  Future<Result<void>> updateBedAssignment(BedAssignment entity);
 
-  /// Belirtilen ID'ye sahip hasta atamasını siler.
-  Future<Result<void>> deletePatientAssignment(int id);
+  /// Belirtilen ID'ye sahip yatak atamasını siler.
+  Future<Result<void>> deleteBedAssignment(int id);
 }

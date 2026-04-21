@@ -21,6 +21,17 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);
   }
 
+  Future<Result<CabinDTO?>> getCabin(int cabinId) async {
+    final res = await fetchRequest<CabinDTO>(
+      path: '$_base/$cabinId',
+      parser: BaseRemoteDataSource.singleParser(CabinDTO.fromJson),
+      successLog: 'Kabin-$cabinId getirildi',
+      emptyLog: 'Kabin bulunamadı',
+    );
+
+    return res.when(ok: (data) => Result.ok(data), error: Result.error);
+  }
+
   Future<Result<List<CabinDTO>>> getCabinsByStation(int stationId) async {
     final res = await fetchRequest<List<CabinDTO>>(
       path: '$_base/station/$stationId',

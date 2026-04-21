@@ -20,6 +20,9 @@ abstract interface class ICabinRepository {
   /// Sistemdeki tüm kabinleri listeler.
   Future<RepoResult<List<Cabin>>> getCabins();
 
+  /// Belirli bir kabini getirir.
+  Future<RepoResult<Cabin?>> getCabin(int cabinId);
+
   /// Belirli bir istasyona bağlı kabinleri listeler.
   Future<RepoResult<List<Cabin>>> getCabinsByStation(int stationId);
 

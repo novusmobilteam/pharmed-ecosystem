@@ -63,6 +63,26 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
+  Future<RepoResult<Cabin?>> getCabin(int cabinId) async {
+    final result = await _remote.getCabin(cabinId);
+
+    return result.when(
+      ok: (dto) async {
+        if (dto != null) await _local.saveCabin(dto);
+        return RepoSuccess(dto != null ? _cabinMapper.toEntity(dto) : null);
+      },
+      error: (error) async {
+        final cached = await _local.readCabin(cabinId);
+        final savedAt = await _local.cabinSavedAt(cabinId);
+        if (cached != null && savedAt != null) {
+          return RepoStale(_cabinMapper.toEntity(cached), savedAt);
+        }
+        return RepoFailure(error);
+      },
+    );
+  }
+
+  @override
   Future<RepoResult<List<Cabin>>> getCabinsByStation(int stationId) async {
     // Belirli bir istasyona ait kabinler genel cache'den filtrelenir.
     // API başarısız olursa cache'deki tüm kabinler içinden filtre uygulanır.

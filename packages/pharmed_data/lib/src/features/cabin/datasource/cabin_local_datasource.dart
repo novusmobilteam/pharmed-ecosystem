@@ -13,6 +13,10 @@ abstract interface class ICabinLocalDataSource {
   Future<void> saveCabins(List<CabinDTO> cabins);
   Future<List<CabinDTO>?> readCabins();
   Future<DateTime?> cabinsSavedAt();
+  Future<void> saveCabin(CabinDTO cabin);
+  Future<CabinDTO?> readCabin(int cabinId);
+  Future<DateTime?> cabinSavedAt(int cabinId);
+  Future<void> clearCabin(int cabinId);
 
   // ── Slot ───────────────────────────────────────────────────────
   Future<void> saveSlots(int cabinId, List<DrawerSlotDTO> slots);
@@ -63,6 +67,8 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   static String _unitsSavedAtKey(int slotId) => 'units_saved_at_$slotId';
   static String _mobileDrawersKey(int cabinId) => 'mobile_drawers_$cabinId';
   static String _mobileDrawersSavedAtKey(int cabinId) => 'mobile_drawers_saved_at_$cabinId';
+  static String _cabinKey(int cabinId) => 'cabin_$cabinId';
+  static String _cabinSavedAtKey(int cabinId) => 'cabin_saved_at_$cabinId';
 
   // ── Box açma ──────────────────────────────────────────────────
 
@@ -97,6 +103,36 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
     final raw = box.get(_cabinsSavedAtKey) as String?;
     if (raw == null) return null;
     return DateTime.tryParse(raw);
+  }
+
+  @override
+  Future<void> saveCabin(CabinDTO cabin) async {
+    final box = await _cabinBox();
+    await box.put(_cabinKey(cabin.id!), jsonEncode(cabin.toJson()));
+    await box.put(_cabinSavedAtKey(cabin.id!), DateTime.now().toIso8601String());
+  }
+
+  @override
+  Future<CabinDTO?> readCabin(int cabinId) async {
+    final box = await _cabinBox();
+    final raw = box.get(_cabinKey(cabinId));
+    if (raw == null) return null;
+    return CabinDTO.fromJson(jsonDecode(raw));
+  }
+
+  @override
+  Future<DateTime?> cabinSavedAt(int cabinId) async {
+    final box = await _cabinBox();
+    final raw = box.get(_cabinSavedAtKey(cabinId));
+    if (raw == null) return null;
+    return DateTime.tryParse(raw);
+  }
+
+  @override
+  Future<void> clearCabin(int cabinId) async {
+    final box = await _cabinBox();
+    await box.delete(_cabinKey(cabinId));
+    await box.delete(_cabinSavedAtKey(cabinId));
   }
 
   @override

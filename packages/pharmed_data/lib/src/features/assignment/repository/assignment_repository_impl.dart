@@ -95,8 +95,8 @@ class AssignmentRepository implements IAssignmentRepository {
   }
 
   @override
-  Future<Result<List<PatientAssignment>>> getPatientAssignments(int cabinId) async {
-    final result = await _dataSource.getPatientAssignments(cabinId);
+  Future<Result<List<BedAssignment>>> getBedAssignments(int cabinId) async {
+    final result = await _dataSource.getBedAssignments(cabinId);
     return result.when(
       ok: (data) => Result.ok(_patientAssignmentMapper.toEntityList(data)),
       error: (e) => Result.error(e),
@@ -104,22 +104,22 @@ class AssignmentRepository implements IAssignmentRepository {
   }
 
   @override
-  Future<Result<void>> createPatientAssignment(PatientAssignment entity) async {
+  Future<Result<void>> createBedAssignment(BedAssignment entity) async {
     final dto = _patientAssignmentMapper.toDto(entity);
-    final result = await _dataSource.createPatientAssignment(dto);
+    final result = await _dataSource.createBedAssignment(dto);
     return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
   }
 
   @override
-  Future<Result<void>> updatePatientAssignment(PatientAssignment entity) async {
+  Future<Result<void>> updateBedAssignment(BedAssignment entity) async {
     final dto = _patientAssignmentMapper.toDto(entity);
-    final result = await _dataSource.updatePatientAssignment(dto);
+    final result = await _dataSource.updateBedAssignment(dto);
     return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
   }
 
   @override
-  Future<Result<void>> deletePatientAssignment(int id) async {
-    final result = await _dataSource.deletePatientAssignment(id);
+  Future<Result<void>> deleteBedAssignment(int id) async {
+    final result = await _dataSource.deleteBedAssignment(id);
     return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
   }
 }

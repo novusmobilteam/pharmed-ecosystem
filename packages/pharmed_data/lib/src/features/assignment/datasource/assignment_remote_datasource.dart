@@ -113,8 +113,8 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (list) => Result.ok(list ?? const <MedicineAssignmentDto>[]), error: Result.error);
   }
 
-  /// Belirtilen kabindeki tüm hasta atamalarını getirir.
-  Future<Result<List<PatientAssignmentDto>>> getPatientAssignments(int cabinId) async {
+  /// Belirtilen kabindeki tüm yatak atamalarını getirir.
+  Future<Result<List<PatientAssignmentDto>>> getBedAssignments(int cabinId) async {
     final res = await fetchRequest<List<PatientAssignmentDto>>(
       path: '$_patientBase/cabin/$cabinId',
       parser: BaseRemoteDataSource.listParser(PatientAssignmentDto.fromJson),
@@ -126,7 +126,7 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
   }
 
   /// Mobil kabin gözüne yatak ataması yapar.
-  Future<Result<void>> createPatientAssignment(PatientAssignmentDto dto) {
+  Future<Result<void>> createBedAssignment(PatientAssignmentDto dto) {
     return createRequest(
       path: '$_patientBase',
       body: dto.toJson(),
@@ -135,8 +135,8 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  /// Mevcut bir hasta atamasını günceller.
-  Future<Result<void>> updatePatientAssignment(PatientAssignmentDto dto) {
+  /// Mevcut bir yatak atamasını günceller.
+  Future<Result<void>> updateBedAssignment(PatientAssignmentDto dto) {
     return updateRequest(
       path: '$_patientBase/${dto.id}',
       body: dto.toJson(),
@@ -145,8 +145,8 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  /// Belirtilen ID'ye sahip hastanın atamasını siler.
-  Future<Result<void>> deletePatientAssignment(int id) {
+  /// Belirtilen ID'ye sahip yatağın atamasını siler.
+  Future<Result<void>> deleteBedAssignment(int id) {
     return deleteRequest<void>(
       path: '$_patientBase/$id',
       parser: BaseRemoteDataSource.voidParser(),
