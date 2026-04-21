@@ -106,8 +106,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboard_sktLoadError => 'تعذّر تحميل بيانات تواريخ الانتهاء';
 
   @override
-  String get assignment_assignPatientPlaceholder =>
-      'لتعيين مريض، اختر\nخانة من اللوحة الوسطى.';
+  String get assignment_assignBedPlaceholder =>
+      'لتعيين سرير، اختر خانةً\nمن اللوحة الوسطى.';
 
   @override
   String get assignment_assignDrugPlaceholder =>
@@ -641,4 +641,19 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get fault_selectSlotPlaceholder =>
       'لإبلاغ عن عطل، اختر\nدرجاً من اللوحة اليسرى.';
+
+  @override
+  String get assignment_bedSectionLabel => 'اختيار السرير';
+
+  @override
+  String get assignment_serviceSelectorHint => 'اختر الخدمة';
+
+  @override
+  String get assignment_roomSelectorHint => 'اختر الغرفة';
+
+  @override
+  String get assignment_bedSelectorHint => 'اختر السرير';
+
+  @override
+  String get assignment_patientLabel => 'المريض';
 }

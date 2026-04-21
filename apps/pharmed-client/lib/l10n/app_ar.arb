@@ -97,8 +97,10 @@
   "dashboard_sktLoadError": "تعذّر تحميل بيانات تواريخ الانتهاء",
   "@dashboard_sktLoadError": { "description": "Error label shown in place of the expiry-date section when loading fails" },
 
-  "assignment_assignPatientPlaceholder": "لتعيين مريض، اختر\nخانة من اللوحة الوسطى.",
-  "@assignment_assignPatientPlaceholder": { "description": "Placeholder description in patient-assignment right panel before a cell is selected" },
+  "assignment_assignBedPlaceholder": "لتعيين سرير، اختر خانةً\nمن اللوحة الوسطى.",
+"@assignment_assignBedPlaceholder": {
+  "description": "Placeholder description in patient-assignment right panel before a cell is selected"
+},
 
   "assignment_assignDrugPlaceholder": "لإجراء التعيين، اختر\nخانة من اللوحة الوسطى.",
   "@assignment_assignDrugPlaceholder": { "description": "Placeholder description in drug-assignment right panel before a cell is selected" },
@@ -641,5 +643,20 @@
   "@assignment_patientUpdatedSuccess": { "description": "Success snackbar/state message after a patient assignment is updated to a different hospitalization" },
 
   "fault_selectSlotPlaceholder": "لإبلاغ عن عطل، اختر\nدرجاً من اللوحة اليسرى.",
-  "@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" }
+  "@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" },
+
+  "assignment_bedSectionLabel": "اختيار السرير",
+"@assignment_bedSectionLabel": { "description": "Section label for bed selection dropdowns in right panel" },
+
+"assignment_serviceSelectorHint": "اختر الخدمة",
+"@assignment_serviceSelectorHint": { "description": "Hint text for service dropdown" },
+
+"assignment_roomSelectorHint": "اختر الغرفة",
+"@assignment_roomSelectorHint": { "description": "Hint text for room dropdown" },
+
+"assignment_bedSelectorHint": "اختر السرير",
+"@assignment_bedSelectorHint": { "description": "Hint text for bed dropdown" },
+
+"assignment_patientLabel": "المريض",
+"@assignment_patientLabel": { "description": "Label for patient info row in bed card" }
 }

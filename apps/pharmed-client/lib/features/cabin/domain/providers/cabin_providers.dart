@@ -3,10 +3,10 @@ import 'package:pharmed_client/core/flavor/app_flavor.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-import '../../features/cabin/cabin.dart';
-import '../../features/setup_wizard/domain/usecase/finish_cabin_setup_usecase.dart';
-import '../cache/app_settings_cache.dart';
-import 'providers.dart';
+import '../../cabin.dart';
+import '../../../setup_wizard/domain/usecase/finish_cabin_setup_usecase.dart';
+import '../../../../core/cache/app_settings_cache.dart';
+import '../../../../core/providers/providers.dart';
 
 final cabinRemoteDataSourceProvider = Provider<CabinRemoteDataSource>((ref) {
   return CabinRemoteDataSource(apiManager: ref.read(apiManagerProvider));
@@ -75,4 +75,9 @@ final finishCabinSetupUseCaseProvider = Provider<FinishCabinSetupUseCase>((ref) 
 // GetCabinsUseCase
 final getCabinsUseCaseProvider = Provider<GetCabinsUseCase>((ref) {
   return GetCabinsUseCase(ref.read(cabinRepositoryProvider));
+});
+
+// GetCabinUseCase
+final getCabinUseCaseProvider = Provider<GetCabinUseCase>((ref) {
+  return GetCabinUseCase(ref.read(cabinRepositoryProvider));
 });

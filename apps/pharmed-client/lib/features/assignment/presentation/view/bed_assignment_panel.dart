@@ -14,35 +14,38 @@ import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../state/patient_assignment_state.dart';
+import '../state/bed_assignment_state.dart';
 
-class PatientAssignmentPanel extends StatelessWidget {
-  const PatientAssignmentPanel({
+class BedAssignmentPanel extends StatelessWidget {
+  const BedAssignmentPanel({
     super.key,
     required this.state,
-    required this.onSelectHospitalization,
+    required this.onServiceSelected,
+    required this.onRoomSelected,
+    required this.onBedSelected,
     required this.onSave,
     required this.onDelete,
   });
 
-  final PatientAssignmentState state;
-
-  /// Yatış seç butonuna basılınca çağrılır.
-  /// Dialog açma sorumluluğu view'dadır.
-  final VoidCallback onSelectHospitalization;
+  final BedAssignmentState state;
+  final ValueChanged<HospitalService> onServiceSelected;
+  final ValueChanged<Room> onRoomSelected;
+  final ValueChanged<Bed> onBedSelected;
   final VoidCallback onSave;
   final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
     return switch (state) {
-      PatientAssignmentCellSelected s => _CellSelectedContent(
+      BedAssignmentCellSelected s => _CellSelectedContent(
         state: s,
-        onSelectHospitalization: onSelectHospitalization,
+        onServiceSelected: onServiceSelected,
+        onRoomSelected: onRoomSelected,
+        onBedSelected: onBedSelected,
         onSave: onSave,
         onDelete: onDelete,
       ),
-      PatientAssignmentSaving _ => const _SavingContent(),
+      BedAssignmentSaving _ => const _SavingContent(),
       _ => const _PlaceholderContent(),
     };
   }
@@ -80,7 +83,7 @@ class _PlaceholderContent extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            context.l10n.assignment_assignPatientPlaceholder,
+            context.l10n.assignment_assignBedPlaceholder,
             style: MedTextStyles.bodySm(color: MedColors.text4),
             textAlign: TextAlign.center,
           ),
@@ -105,13 +108,17 @@ class _SavingContent extends StatelessWidget {
 class _CellSelectedContent extends StatelessWidget {
   const _CellSelectedContent({
     required this.state,
-    required this.onSelectHospitalization,
+    required this.onServiceSelected,
+    required this.onRoomSelected,
+    required this.onBedSelected,
     required this.onSave,
     required this.onDelete,
   });
 
-  final PatientAssignmentCellSelected state;
-  final VoidCallback onSelectHospitalization;
+  final BedAssignmentCellSelected state;
+  final ValueChanged<HospitalService> onServiceSelected;
+  final ValueChanged<Room> onRoomSelected;
+  final ValueChanged<Bed> onBedSelected;
   final VoidCallback onSave;
   final VoidCallback onDelete;
 
@@ -123,21 +130,17 @@ class _CellSelectedContent extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Yatış seçici
-          _HospitalizationSelector(selected: state.selectedHospitalization, onTap: onSelectHospitalization),
-
-          // Atanmışsa hasta kimlik kartı
-          if (state.selectedHospitalization != null) ...[
-            const SizedBox(height: 14),
-            _PatientCard(hospitalization: state.selectedHospitalization!),
-          ],
-
+          _BedSelector(
+            state: state,
+            onServiceSelected: onServiceSelected,
+            onRoomSelected: onRoomSelected,
+            onBedSelected: onBedSelected,
+          ),
+          if (state.selectedBed != null) ...[const SizedBox(height: 14), _BedCard(state: state)],
           const SizedBox(height: 20),
-
-          // Butonlar
           _ActionButtons(
             existingAssignment: state.existingAssignment,
-            selectedHospitalization: state.selectedHospitalization,
+            selectedBed: state.selectedBed,
             onSave: onSave,
             onDelete: onDelete,
           ),
@@ -147,80 +150,76 @@ class _CellSelectedContent extends StatelessWidget {
   }
 }
 
-class _HospitalizationSelector extends StatelessWidget {
-  const _HospitalizationSelector({required this.selected, required this.onTap});
+class _BedSelector extends StatelessWidget {
+  const _BedSelector({
+    required this.state,
+    required this.onServiceSelected,
+    required this.onRoomSelected,
+    required this.onBedSelected,
+  });
 
-  final Hospitalization? selected;
-  final VoidCallback onTap;
+  final BedAssignmentCellSelected state;
+  final ValueChanged<HospitalService> onServiceSelected;
+  final ValueChanged<Room> onRoomSelected;
+  final ValueChanged<Bed> onBedSelected;
 
   @override
   Widget build(BuildContext context) {
-    final hasSelection = selected != null;
-    final patientName = selected?.patient?.fullName ?? '—';
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          context.l10n.assignment_hospitalizationSectionLabel,
-          style: TextStyle(
-            fontFamily: MedFonts.mono,
-            fontSize: 9,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 1,
-            color: MedColors.text3,
-          ),
+        _SectionLabel(context.l10n.assignment_bedSectionLabel),
+        const SizedBox(height: 6),
+
+        // Servis dropdown
+        MedDropdown<HospitalService>(
+          hint: context.l10n.assignment_serviceSelectorHint,
+          selected: state.selectedService,
+          options: state.services,
+          labelBuilder: (s) => s.name ?? '—',
+          onSelected: onServiceSelected,
         ),
         const SizedBox(height: 6),
-        GestureDetector(
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-            decoration: BoxDecoration(
-              color: hasSelection ? MedColors.blueLight : MedColors.surface2,
-              border: Border.all(color: hasSelection ? MedColors.blue : MedColors.border, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    hasSelection ? patientName : context.l10n.assignment_hospitalizationSelectorHint,
-                    style: TextStyle(
-                      fontFamily: MedFonts.sans,
-                      fontSize: 13,
-                      fontWeight: hasSelection ? FontWeight.w600 : FontWeight.w400,
-                      color: hasSelection ? MedColors.blue : MedColors.text3,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Icon(Icons.search_rounded, size: 16, color: hasSelection ? MedColors.blue : MedColors.text3),
-              ],
-            ),
-          ),
+
+        // Oda dropdown — servis seçilince aktif
+        MedDropdown<Room>(
+          hint: context.l10n.assignment_roomSelectorHint,
+          selected: state.selectedRoom,
+          options: state.rooms,
+          labelBuilder: (r) => r.name ?? '—',
+          enabled: state.selectedService != null && state.rooms.isNotEmpty,
+          onSelected: onRoomSelected,
+        ),
+        const SizedBox(height: 6),
+
+        // Yatak dropdown — oda seçilince aktif
+        MedDropdown<Bed>(
+          hint: context.l10n.assignment_bedSelectorHint,
+          selected: state.selectedBed,
+          options: state.beds,
+          labelBuilder: (b) => b.name ?? '—',
+          enabled: state.selectedRoom != null && state.beds.isNotEmpty,
+          onSelected: onBedSelected,
         ),
       ],
     );
   }
 }
 
-class _PatientCard extends StatelessWidget {
-  const _PatientCard({required this.hospitalization});
+class _BedCard extends StatelessWidget {
+  const _BedCard({required this.state});
 
-  final Hospitalization hospitalization;
+  final BedAssignmentCellSelected state;
 
   @override
   Widget build(BuildContext context) {
-    final patient = hospitalization.patient;
-    final name = patient?.fullName ?? '—';
-    final initials = _initials(name);
-    final room = hospitalization.room?.name ?? '—';
-    final bed = hospitalization.bed?.name ?? '—';
-    final service = hospitalization.physicalService?.name ?? '—';
-    final code = hospitalization.code ?? '—';
+    final bed = state.selectedBed!;
+    final room = state.selectedRoom;
+    final service = state.selectedService;
+
+    // Mevcut atamada yatış bilgisi varsa göster
+    final hospitalization = state.existingAssignment?.hospitalization;
+    final patientName = hospitalization?.patient?.fullName;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -232,23 +231,15 @@ class _PatientCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Üst satır — avatar + isim
+          // Yatak başlık satırı
           Row(
             children: [
               Container(
                 width: 36,
                 height: 36,
-                decoration: BoxDecoration(color: MedColors.blue, shape: BoxShape.circle),
+                decoration: BoxDecoration(color: MedColors.blue, borderRadius: BorderRadius.circular(8)),
                 alignment: Alignment.center,
-                child: Text(
-                  initials,
-                  style: const TextStyle(
-                    fontFamily: MedFonts.sans,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
+                child: const Icon(Icons.bed_rounded, size: 18, color: Colors.white),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -256,7 +247,7 @@ class _PatientCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      bed.name ?? '—',
                       style: TextStyle(
                         fontFamily: MedFonts.sans,
                         fontSize: 13,
@@ -265,38 +256,37 @@ class _PatientCard extends StatelessWidget {
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      code.toString(),
-                      style: TextStyle(
-                        fontFamily: MedFonts.mono,
-                        fontSize: 10,
-                        color: MedColors.text3,
-                        letterSpacing: 0.5,
+                    if (room != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        room.name ?? '—',
+                        style: TextStyle(
+                          fontFamily: MedFonts.mono,
+                          fontSize: 10,
+                          color: MedColors.text3,
+                          letterSpacing: 0.5,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          const Divider(height: 1, color: Color(0x1A1A6FD8)),
-          const SizedBox(height: 10),
-          // Detay satırları
-          _InfoRow(label: context.l10n.assignment_roomBedLabel, value: '$room / $bed'),
-          const SizedBox(height: 4),
-          _InfoRow(label: context.l10n.assignment_serviceLabel, value: service),
+
+          if (service != null || patientName != null) ...[
+            const SizedBox(height: 10),
+            const Divider(height: 1, color: Color(0x1A1A6FD8)),
+            const SizedBox(height: 10),
+            if (service != null) _InfoRow(label: context.l10n.assignment_serviceLabel, value: service.name ?? '—'),
+            if (patientName != null) ...[
+              const SizedBox(height: 4),
+              _InfoRow(label: context.l10n.assignment_patientLabel, value: patientName),
+            ],
+          ],
         ],
       ),
     );
-  }
-
-  String _initials(String name) {
-    final parts = name.trim().split(' ');
-    if (parts.isEmpty) return '?';
-    if (parts.length == 1) return parts[0][0].toUpperCase();
-    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 }
 
@@ -334,35 +324,58 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
+// ── Section Label ────────────────────────────────────────────────────────────
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontFamily: MedFonts.mono,
+        fontSize: 9,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 1,
+        color: MedColors.text3,
+      ),
+    );
+  }
+}
+
+// ── Action Buttons ───────────────────────────────────────────────────────────
+
 class _ActionButtons extends StatelessWidget {
   const _ActionButtons({
     required this.existingAssignment,
-    required this.selectedHospitalization,
+    required this.selectedBed,
     required this.onSave,
     required this.onDelete,
   });
 
-  final PatientAssignment? existingAssignment;
-  final Hospitalization? selectedHospitalization;
+  final BedAssignment? existingAssignment;
+  final Bed? selectedBed;
   final VoidCallback onSave;
   final VoidCallback onDelete;
 
   bool get _isAssigned => existingAssignment != null;
-  bool get _isChanged =>
-      _isAssigned &&
-      selectedHospitalization != null &&
-      selectedHospitalization!.id != existingAssignment!.hospitalization?.id;
-  bool get _canSave => !_isAssigned && selectedHospitalization != null;
+  bool get _isChanged => _isAssigned && selectedBed != null && selectedBed!.id != existingAssignment!.bedId;
+  bool get _canSave => !_isAssigned && selectedBed != null;
 
   @override
   Widget build(BuildContext context) {
     if (_isAssigned && !_isChanged) {
-      // Mevcut atama var, değişiklik yok → sadece Kaldır
-      return _PanelButton.danger(label: context.l10n.assignment_removeAssignmentButton, icon: Icons.delete_outline_rounded, onTap: onDelete);
+      return _PanelButton.danger(
+        label: context.l10n.assignment_removeAssignmentButton,
+        icon: Icons.delete_outline_rounded,
+        onTap: onDelete,
+      );
     }
 
     if (_isChanged) {
-      // Farklı hasta seçildi → Değiştir + Kaldır
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -373,12 +386,15 @@ class _ActionButtons extends StatelessWidget {
             onTap: onSave,
           ),
           const SizedBox(height: 8),
-          _PanelButton.danger(label: context.l10n.assignment_removeAssignmentButton, icon: Icons.delete_outline_rounded, onTap: onDelete),
+          _PanelButton.danger(
+            label: context.l10n.assignment_removeAssignmentButton,
+            icon: Icons.delete_outline_rounded,
+            onTap: onDelete,
+          ),
         ],
       );
     }
 
-    // Atama yok → Kaydet
     return _PanelButton.primary(
       label: context.l10n.assignment_saveAssignmentButton,
       icon: Icons.check_rounded,

@@ -10,6 +10,7 @@ import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/providers/providers.dart';
+import '../../../cabin/cabin.dart';
 import '../../domain/model/cabin_setup_config.dart';
 import '../../domain/model/wizard_mobile_layout.dart';
 import '../../domain/model/wizard_draft.dart';

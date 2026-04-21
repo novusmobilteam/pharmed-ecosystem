@@ -47,14 +47,14 @@ final createPatientAssignmentUseCaseProvider = Provider<CreatePatientAssignmentU
   return CreatePatientAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final getPatientAssignmentsUseCaseProvider = Provider<GetPatientAssignmentsUseCase>((ref) {
-  return GetPatientAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
+final getPatientAssignmentsUseCaseProvider = Provider<GetBedAssignmentsUseCase>((ref) {
+  return GetBedAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final updatePatientAssignmentUseCaseProvider = Provider<UpdatePatientAssignmentUseCase>((ref) {
-  return UpdatePatientAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+final updatePatientAssignmentUseCaseProvider = Provider<UpdateBedAssignmentUseCase>((ref) {
+  return UpdateBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final deletePatientAssignmentUseCaseProvider = Provider<DeletePatientAssignmentUseCase>((ref) {
-  return DeletePatientAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+final deletePatientAssignmentUseCaseProvider = Provider<DeleteBedAssignmentUseCase>((ref) {
+  return DeleteBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });

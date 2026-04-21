@@ -27,7 +27,7 @@ class MobileCabinDrawerPanel extends StatelessWidget {
 
   final CabinOperationMode mode;
   final MobileSlotVisual? slot;
-  final Map<MobileCellCoord, PatientAssignment> assignmentByCoord;
+  final Map<MobileCellCoord, BedAssignment> assignmentByCoord;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
 
@@ -122,7 +122,7 @@ class _MobileDrawerBody extends StatelessWidget {
 
   final MobileSlotVisual slot;
   final CabinOperationMode mode;
-  final Map<MobileCellCoord, PatientAssignment> assignmentByCoord;
+  final Map<MobileCellCoord, BedAssignment> assignmentByCoord;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
 
@@ -194,7 +194,7 @@ class _MobileDrawerRow extends StatelessWidget {
   final int rowIndex;
   final int colCount;
   final CabinOperationMode mode;
-  final Map<MobileCellCoord, PatientAssignment> assignmentByCoord;
+  final Map<MobileCellCoord, BedAssignment> assignmentByCoord;
   final CabinCellStatus? faultStatus;
   final MobileCellCoord? selectedCell;
   final void Function(MobileCellCoord coord)? onCellTap;
@@ -254,7 +254,7 @@ class _MobileCabinCell extends StatelessWidget {
 
   final MobileCellCoord coord;
   final bool isSelected;
-  final PatientAssignment? assignment;
+  final BedAssignment? assignment;
   final CabinCellStatus? faultStatus;
   final CabinOperationMode mode;
   final VoidCallback? onTap;
@@ -303,18 +303,68 @@ class _MobileCabinCell extends StatelessWidget {
     }
 
     if (_isAssigned) {
-      final name = assignment!.hospitalization?.patient?.fullName ?? '—';
-      //final parts = name.trim().split(' ');
-      // final initials = parts.length == 1
-      //     ? parts[0][0].toUpperCase()
-      //     : '${parts.first[0]}${parts.last[0]}'.toUpperCase();
-      return Text(
-        name,
-        style: const TextStyle(
-          fontFamily: MedFonts.sans,
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: Color(0xCC1256AA),
+      final bed = assignment!.bed;
+      final room = bed?.room;
+      final patientName = assignment!.hospitalization?.patient?.fullName;
+
+      return Padding(
+        padding: const EdgeInsets.all(6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Oda / Yatak
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    bed?.name ?? '—',
+                    style: const TextStyle(
+                      fontFamily: MedFonts.mono,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xCC1256AA),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+            if (room != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                room.name ?? '—',
+                style: const TextStyle(
+                  fontFamily: MedFonts.mono,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0x991256AA),
+                ),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ],
+            // Hasta adı — varsa
+            if (patientName != null) ...[
+              const SizedBox(height: 4),
+              const Divider(height: 1, color: Color(0x221256AA)),
+              const SizedBox(height: 4),
+              Text(
+                patientName,
+                style: const TextStyle(
+                  fontFamily: MedFonts.sans,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xBB1256AA),
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ],
         ),
       );
     }
@@ -360,10 +410,18 @@ class _MobileCellLegend extends StatelessWidget {
         _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.empty), label: context.l10n.cabin_legendFaultEmpty),
         _MobileLegendItem(
           color: CabinCellColors.of(CabinCellStatus.assigned),
-          label: mode == CabinOperationMode.assign ? context.l10n.cabin_legendPatientAssigned : context.l10n.cabin_legendFilled,
+          label: mode == CabinOperationMode.assign
+              ? context.l10n.cabin_legendPatientAssigned
+              : context.l10n.cabin_legendFilled,
         ),
-        _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.fault), label: context.l10n.cabin_legendAssignFault),
-        _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.maintenance), label: context.l10n.cabin_legendAssignMaintenance),
+        _MobileLegendItem(
+          color: CabinCellColors.of(CabinCellStatus.fault),
+          label: context.l10n.cabin_legendAssignFault,
+        ),
+        _MobileLegendItem(
+          color: CabinCellColors.of(CabinCellStatus.maintenance),
+          label: context.l10n.cabin_legendAssignMaintenance,
+        ),
       ],
     );
   }

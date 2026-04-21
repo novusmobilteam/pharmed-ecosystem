@@ -20,7 +20,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../../dashboard/presentation/state/dashboard_ui_state.dart';
 import 'drug_assignment_view.dart';
-import 'patient_assignment_view.dart';
+import 'bed_assignment_view.dart';
 
 class AssignmentView extends ConsumerWidget {
   const AssignmentView({super.key});
@@ -42,7 +42,7 @@ class AssignmentView extends ConsumerWidget {
     return switch (deviceModeAsync) {
       AsyncData(:final value) => switch (value) {
         CabinType.master => DrugAssignmentView(data: cabinData),
-        CabinType.mobile => PatientAssignmentView(data: cabinData),
+        CabinType.mobile => BedAssignmentView(data: cabinData),
         _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       },
       _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),

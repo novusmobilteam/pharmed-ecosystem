@@ -107,8 +107,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashboard_sktLoadError => 'SKT verisi yüklenemedi';
 
   @override
-  String get assignment_assignPatientPlaceholder =>
-      'Hasta atamak için orta\npanelden bir göz seçin.';
+  String get assignment_assignBedPlaceholder =>
+      'Yatak atamak için orta\npanelden bir göz seçin.';
 
   @override
   String get assignment_assignDrugPlaceholder =>
@@ -643,4 +643,19 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get fault_selectSlotPlaceholder =>
       'Arıza bildirmek için sol\npanelden bir çekmece seçin.';
+
+  @override
+  String get assignment_bedSectionLabel => 'Yatak Seçimi';
+
+  @override
+  String get assignment_serviceSelectorHint => 'Servis seçin';
+
+  @override
+  String get assignment_roomSelectorHint => 'Oda seçin';
+
+  @override
+  String get assignment_bedSelectorHint => 'Yatak seçin';
+
+  @override
+  String get assignment_patientLabel => 'HASTA';
 }

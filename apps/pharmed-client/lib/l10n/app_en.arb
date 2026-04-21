@@ -97,8 +97,8 @@
   "dashboard_sktLoadError": "Failed to load expiry data",
   "@dashboard_sktLoadError": { "description": "Error label shown in place of the expiry-date section when loading fails" },
 
-  "assignment_assignPatientPlaceholder": "Select a cell from the center\npanel to assign a patient.",
-  "@assignment_assignPatientPlaceholder": { "description": "Placeholder description in patient-assignment right panel before a cell is selected" },
+  "assignment_assignBedPlaceholder": "Select a cell from the center\npanel to assign a bed.",
+  "@assignment_assignBedPlaceholder": { "description": "Placeholder description in patient-assignment right panel before a cell is selected" },
 
   "assignment_assignDrugPlaceholder": "Select a cell from the center\npanel to make an assignment.",
   "@assignment_assignDrugPlaceholder": { "description": "Placeholder description in drug-assignment right panel before a cell is selected" },
@@ -641,5 +641,20 @@
 "@assignment_patientUpdatedSuccess": { "description": "Success snackbar/state message after a patient assignment is updated to a different hospitalization" },
 
 "fault_selectSlotPlaceholder": "Select a drawer from the\nleft panel to report a fault.",
-"@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" }
+"@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" },
+
+"assignment_bedSectionLabel": "Bed Selection",
+"@assignment_bedSectionLabel": { "description": "Section label for bed selection dropdowns in right panel" },
+
+"assignment_serviceSelectorHint": "Select a service",
+"@assignment_serviceSelectorHint": { "description": "Hint text for service dropdown" },
+
+"assignment_roomSelectorHint": "Select a room",
+"@assignment_roomSelectorHint": { "description": "Hint text for room dropdown" },
+
+"assignment_bedSelectorHint": "Select a bed",
+"@assignment_bedSelectorHint": { "description": "Hint text for bed dropdown" },
+
+"assignment_patientLabel": "PATIENT",
+"@assignment_patientLabel": { "description": "Label for patient info row in bed card" }
 }

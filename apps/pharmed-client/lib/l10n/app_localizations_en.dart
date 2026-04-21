@@ -107,8 +107,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboard_sktLoadError => 'Failed to load expiry data';
 
   @override
-  String get assignment_assignPatientPlaceholder =>
-      'Select a cell from the center\npanel to assign a patient.';
+  String get assignment_assignBedPlaceholder =>
+      'Select a cell from the center\npanel to assign a bed.';
 
   @override
   String get assignment_assignDrugPlaceholder =>
@@ -644,4 +644,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get fault_selectSlotPlaceholder =>
       'Select a drawer from the\nleft panel to report a fault.';
+
+  @override
+  String get assignment_bedSectionLabel => 'Bed Selection';
+
+  @override
+  String get assignment_serviceSelectorHint => 'Select a service';
+
+  @override
+  String get assignment_roomSelectorHint => 'Select a room';
+
+  @override
+  String get assignment_bedSelectorHint => 'Select a bed';
+
+  @override
+  String get assignment_patientLabel => 'PATIENT';
 }

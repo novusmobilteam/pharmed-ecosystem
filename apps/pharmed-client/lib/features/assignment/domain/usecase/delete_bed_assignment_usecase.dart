@@ -5,12 +5,12 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-class DeletePatientAssignmentUseCase {
-  const DeletePatientAssignmentUseCase(this._repository);
+class DeleteBedAssignmentUseCase {
+  const DeleteBedAssignmentUseCase(this._repository);
 
   final IAssignmentRepository _repository;
 
-  Future<Result<void>> call(PatientAssignment entity) async {
+  Future<Result<void>> call(BedAssignment entity) async {
     MedLogger.info(
       unit: 'SW-UNIT-CABIN',
       swreq: 'SWREQ-CABIN-UC-XXX',
@@ -18,6 +18,6 @@ class DeletePatientAssignmentUseCase {
       context: {'cellId': entity.cellId, 'bedId': entity.bedId},
     );
 
-    return _repository.deletePatientAssignment(entity.id ?? 0);
+    return _repository.deleteBedAssignment(entity.id ?? 0);
   }
 }

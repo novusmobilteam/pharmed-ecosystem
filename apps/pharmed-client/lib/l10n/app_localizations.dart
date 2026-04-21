@@ -295,8 +295,8 @@ abstract class AppLocalizations {
   /// Placeholder description in patient-assignment right panel before a cell is selected
   ///
   /// In tr, this message translates to:
-  /// **'Hasta atamak için orta\npanelden bir göz seçin.'**
-  String get assignment_assignPatientPlaceholder;
+  /// **'Yatak atamak için orta\npanelden bir göz seçin.'**
+  String get assignment_assignBedPlaceholder;
 
   /// Placeholder description in drug-assignment right panel before a cell is selected
   ///
@@ -1281,6 +1281,36 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Arıza bildirmek için sol\npanelden bir çekmece seçin.'**
   String get fault_selectSlotPlaceholder;
+
+  /// Section label for bed selection dropdowns in right panel
+  ///
+  /// In tr, this message translates to:
+  /// **'Yatak Seçimi'**
+  String get assignment_bedSectionLabel;
+
+  /// Hint text for service dropdown
+  ///
+  /// In tr, this message translates to:
+  /// **'Servis seçin'**
+  String get assignment_serviceSelectorHint;
+
+  /// Hint text for room dropdown
+  ///
+  /// In tr, this message translates to:
+  /// **'Oda seçin'**
+  String get assignment_roomSelectorHint;
+
+  /// Hint text for bed dropdown
+  ///
+  /// In tr, this message translates to:
+  /// **'Yatak seçin'**
+  String get assignment_bedSelectorHint;
+
+  /// Label for patient info row in bed card
+  ///
+  /// In tr, this message translates to:
+  /// **'HASTA'**
+  String get assignment_patientLabel;
 }
 
 class _AppLocalizationsDelegate

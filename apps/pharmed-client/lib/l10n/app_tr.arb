@@ -97,8 +97,8 @@
   "dashboard_sktLoadError": "SKT verisi yüklenemedi",
   "@dashboard_sktLoadError": { "description": "Error label shown in place of the expiry-date section when loading fails" },
 
-  "assignment_assignPatientPlaceholder": "Hasta atamak için orta\npanelden bir göz seçin.",
-  "@assignment_assignPatientPlaceholder": { "description": "Placeholder description in patient-assignment right panel before a cell is selected" },
+  "assignment_assignBedPlaceholder": "Yatak atamak için orta\npanelden bir göz seçin.",
+  "@assignment_assignBedPlaceholder": { "description": "Placeholder description in patient-assignment right panel before a cell is selected" },
 
   "assignment_assignDrugPlaceholder": "Atama yapmak için orta\npanelden bir göz seçin.",
   "@assignment_assignDrugPlaceholder": { "description": "Placeholder description in drug-assignment right panel before a cell is selected" },
@@ -641,5 +641,20 @@
   "@assignment_patientUpdatedSuccess": { "description": "Success snackbar/state message after a patient assignment is updated to a different hospitalization" },
 
   "fault_selectSlotPlaceholder": "Arıza bildirmek için sol\npanelden bir çekmece seçin.",
-  "@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" }
+  "@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" },
+
+  "assignment_bedSectionLabel": "Yatak Seçimi",
+"@assignment_bedSectionLabel": { "description": "Section label for bed selection dropdowns in right panel" },
+
+"assignment_serviceSelectorHint": "Servis seçin",
+"@assignment_serviceSelectorHint": { "description": "Hint text for service dropdown" },
+
+"assignment_roomSelectorHint": "Oda seçin",
+"@assignment_roomSelectorHint": { "description": "Hint text for room dropdown" },
+
+"assignment_bedSelectorHint": "Yatak seçin",
+"@assignment_bedSelectorHint": { "description": "Hint text for bed dropdown" },
+
+"assignment_patientLabel": "HASTA",
+"@assignment_patientLabel": { "description": "Label for patient info row in bed card" }
 }

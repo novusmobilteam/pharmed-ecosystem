@@ -4,6 +4,7 @@ import 'package:pharmed_client/features/fault/domain/providers/fault_providers.d
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
+import '../../features/cabin/cabin.dart';
 import '../../features/dashboard/domain/usecase/cabin_visualizer_usecase.dart';
 import '../cache/app_settings_cache.dart';
 import 'providers.dart';
