@@ -51,11 +51,11 @@ final allServicesProvider = FutureProvider<List<HospitalService>>((ref) async {
 final allRoomsProvider = FutureProvider<List<Room>>((ref) async {
   final useCase = ref.read(_getAllRoomsUseCaseProvider);
   final result = await useCase.call();
-  return result.when(ok: (rooms) => rooms ?? [], error: (e) => throw e);
+  return result.when(ok: (rooms) => rooms ?? [], error: (_) => []);
 });
 
 final allBedsProvider = FutureProvider<List<Bed>>((ref) async {
   final useCase = ref.read(_getAllBedsUseCaseProvider);
   final result = await useCase.call();
-  return result.when(ok: (beds) => beds ?? [], error: (e) => throw e);
+  return result.when(ok: (beds) => beds ?? [], error: (_) => []);
 });

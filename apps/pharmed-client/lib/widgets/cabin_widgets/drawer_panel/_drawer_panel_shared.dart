@@ -67,7 +67,7 @@ class CabinModeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, border, text, message) = _config(mode);
+    final (bg, border, text, message) = _config(context, mode);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
@@ -90,38 +90,38 @@ class CabinModeBanner extends StatelessWidget {
     );
   }
 
-  (Color, Color, Color, String) _config(CabinOperationMode mode) => switch (mode) {
+  (Color, Color, Color, String) _config(BuildContext context, CabinOperationMode mode) => switch (mode) {
     CabinOperationMode.assign =>
       isPatientAssignment
           ? (
               const Color(0xFFE8F1FC),
               const Color(0xFFC4D9F5),
               const Color(0xFF1256AA),
-              'Hasta Atama — gözlere hasta / yatış atayın.',
+              context.l10n.cabin_bannerPatientAssign,
             )
           : (
               const Color(0xFFE8F1FC),
               const Color(0xFFC4D9F5),
               const Color(0xFF1256AA),
-              'İlaç Atama — gözlere ilaç atayın, min/maks/kritik değerleri belirleyin.',
+              context.l10n.cabin_bannerDrugAssign,
             ),
     CabinOperationMode.fill => (
       const Color(0xFFE6F7F2),
       const Color(0xFF9ED9C4),
       const Color(0xFF086E4A),
-      'İlaç Dolum — dolum yapılacak göze dokunun, miktarı girin.',
+      context.l10n.cabin_bannerDrugFill,
     ),
     CabinOperationMode.count => (
       const Color(0xFFFEF3E2),
       const Color(0xFFF5C97A),
       const Color(0xFF92520A),
-      'Sayım — fiili miktarı girin, sistem farkı hesaplayacak.',
+      context.l10n.cabin_bannerDrugCount,
     ),
     CabinOperationMode.fault => (
       const Color(0xFFFEF2F2),
       const Color(0xFFF9A8A8),
       const Color(0xFF9B1C1C),
-      'Arıza — arızalı gözü işaretleyin ve açıklama girin.',
+      context.l10n.cabin_bannerFault,
     ),
   };
 }
@@ -149,7 +149,7 @@ class CabinDrawerEmptyState extends StatelessWidget {
           children: [
             Icon(Icons.touch_app_outlined, size: 48, color: MedColors.text4),
             const SizedBox(height: 16),
-            Text('Bir çekmeceye dokunun', style: MedTextStyles.bodyMd(color: MedColors.text3)),
+            Text(context.l10n.cabin_touchDrawerHint, style: MedTextStyles.bodyMd(color: MedColors.text3)),
             const SizedBox(height: 6),
             Text(subtitle, style: MedTextStyles.monoMd(color: MedColors.text4)),
           ],

@@ -25,7 +25,7 @@ class CabinView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _SectionHeader(title: 'KABİN DURUMU', dotColor: MedColors.blue),
+          _SectionHeader(title: context.l10n.dashboard_cabinStatusHeader, dotColor: MedColors.blue),
           Padding(
             padding: const EdgeInsets.all(14),
             child: Column(
@@ -37,7 +37,7 @@ class CabinView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Kabin Durumu',
+                      context.l10n.dashboard_cabinStatusLabel,
                       style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w500),
                     ),
                   ],

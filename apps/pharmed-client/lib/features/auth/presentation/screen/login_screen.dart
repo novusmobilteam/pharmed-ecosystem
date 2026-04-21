@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import '../../../../../l10n/l10n_ext.dart';
 import '../notifier/auth_notifier.dart';
 import '../state/auth_state.dart';
 
@@ -121,7 +122,7 @@ class _LoginCardState extends State<_LoginCard> {
                         color: MedColors.text,
                       ),
                     ),
-                    Text('Sisteme giriş yapın', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                    Text(context.l10n.auth_loginSubtitle, style: MedTextStyles.bodySm(color: MedColors.text3)),
                   ],
                 ),
               ],
@@ -135,14 +136,14 @@ class _LoginCardState extends State<_LoginCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _FormField(
-                  label: 'E-posta / Kullanıcı Adı',
+                  label: context.l10n.auth_emailLabel,
                   controller: _emailCtrl,
                   placeholder: 'kullanici@hastane.com',
                   onSubmit: _submit,
                 ),
                 const SizedBox(height: 16),
                 _FormField(
-                  label: 'Şifre',
+                  label: context.l10n.auth_passwordLabel,
                   controller: _passCtrl,
                   placeholder: '••••••••',
                   obscure: true,
@@ -198,7 +199,7 @@ class _LoginCardState extends State<_LoginCard> {
                               const Icon(Icons.login_rounded, size: 16, color: Colors.white),
                               const SizedBox(width: 8),
                               Text(
-                                'Giriş Yap',
+                                context.l10n.auth_loginButton,
                                 style: TextStyle(
                                   fontFamily: MedFonts.sans,
                                   fontSize: 14,

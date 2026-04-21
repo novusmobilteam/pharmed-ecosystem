@@ -7,13 +7,7 @@ class _StepDef {
   final String desc;
 }
 
-const _kStepDefs = [
-  _StepDef(step: 1, title: 'Kabin Tipi', desc: 'Standart veya Mobil'),
-  _StepDef(step: 2, title: 'Temel Bilgiler', desc: 'Ad, konum, bağlantı'),
-  _StepDef(step: 3, title: 'Hizmet Kapsamı', desc: 'Servis veya oda tanımları'),
-  _StepDef(step: 4, title: 'Çekmece Yapısı', desc: 'Tarama veya manuel giriş'),
-  _StepDef(step: 5, title: 'Özet', desc: 'Gözden geçir ve tamamla'),
-];
+// Step definitions are built at runtime inside StepSidebarView.build to support l10n.
 
 class StepSidebarView extends StatelessWidget {
   const StepSidebarView({super.key, required this.currentStep, required this.completedSteps});
@@ -23,6 +17,14 @@ class StepSidebarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final steps = [
+      _StepDef(step: 1, title: context.l10n.wizard_step1SidebarTitle, desc: context.l10n.wizard_step1SidebarDesc),
+      _StepDef(step: 2, title: context.l10n.wizard_step2SidebarTitle, desc: context.l10n.wizard_step2SidebarDesc),
+      _StepDef(step: 3, title: context.l10n.wizard_step3SidebarTitle, desc: context.l10n.wizard_step3SidebarDesc),
+      _StepDef(step: 4, title: context.l10n.wizard_step4SidebarTitle, desc: context.l10n.wizard_step4SidebarDesc),
+      _StepDef(step: 5, title: context.l10n.wizard_step5SidebarTitle, desc: context.l10n.wizard_step5SidebarDesc),
+    ];
+
     return SizedBox(
       width: 240,
       child: Container(
@@ -31,9 +33,9 @@ class StepSidebarView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Kabin Kurulumu',
-              style: TextStyle(
+            Text(
+              context.l10n.wizard_sidebarTitle,
+              style: const TextStyle(
                 fontFamily: MedFonts.title,
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
@@ -41,9 +43,9 @@ class StepSidebarView extends StatelessWidget {
                 height: 1.1,
               ),
             ),
-            const Text(
-              'Yeni cihaz yapılandırması',
-              style: TextStyle(
+            Text(
+              context.l10n.wizard_sidebarSubtitle,
+              style: const TextStyle(
                 fontFamily: MedFonts.sans,
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
@@ -53,13 +55,13 @@ class StepSidebarView extends StatelessWidget {
             ),
 
             const SizedBox(height: 40),
-            for (var i = 0; i < _kStepDefs.length; i++) ...[
+            for (var i = 0; i < steps.length; i++) ...[
               _StepItem(
-                def: _kStepDefs[i],
-                isActive: _kStepDefs[i].step == currentStep,
-                isDone: completedSteps.contains(_kStepDefs[i].step),
+                def: steps[i],
+                isActive: steps[i].step == currentStep,
+                isDone: completedSteps.contains(steps[i].step),
               ),
-              if (i < _kStepDefs.length - 1) _StepConnector(isDone: completedSteps.contains(_kStepDefs[i].step)),
+              if (i < steps.length - 1) _StepConnector(isDone: completedSteps.contains(steps[i].step)),
             ],
           ],
         ),

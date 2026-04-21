@@ -72,7 +72,7 @@ class _PlaceholderContent extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Bir göz seçin',
+            context.l10n.common_selectCellTitle,
             style: TextStyle(
               fontFamily: MedFonts.sans,
               fontSize: 13,
@@ -82,7 +82,7 @@ class _PlaceholderContent extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Arıza bildirmek için orta\npanelden bir göz seçin.',
+            context.l10n.fault_selectCellPlaceholder,
             style: MedTextStyles.bodySm(color: MedColors.text4),
             textAlign: TextAlign.center,
           ),
@@ -159,7 +159,9 @@ class _ActiveFaultBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = fault.workingStatus == CabinWorkingStatus.maintenance ? 'bakım' : 'arıza';
+    final label = fault.workingStatus == CabinWorkingStatus.maintenance
+        ? context.l10n.fault_historyStatusMaintenance
+        : context.l10n.fault_historyStatusFault;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -175,8 +177,7 @@ class _ActiveFaultBanner extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Bu gözdde aktif bir $label kaydı bulunmaktadır. '
-              'Onayladığınızda bu kayıt sonlandırılacaktır.',
+              context.l10n.fault_activeFaultBanner(label),
               style: TextStyle(
                 fontFamily: MedFonts.sans,
                 fontSize: 11,
@@ -211,7 +212,7 @@ class _StatusSegmentedButton extends StatelessWidget {
         children: [
           Expanded(
             child: _SegmentButton(
-              label: 'ARIZA',
+              label: context.l10n.fault_faultSegmentLabel,
               isSelected: isFaulty,
               selectedColor: MedColors.red,
               selectedBg: MedColors.redLight,
@@ -222,7 +223,7 @@ class _StatusSegmentedButton extends StatelessWidget {
           Container(width: 1.5, height: 36, color: MedColors.border),
           Expanded(
             child: _SegmentButton(
-              label: 'BAKIM',
+              label: context.l10n.fault_maintenanceSegmentLabel,
               isSelected: !isFaulty,
               selectedColor: MedColors.amber,
               selectedBg: MedColors.amberLight,
@@ -296,7 +297,7 @@ class _DescriptionField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'AÇIKLAMA',
+          context.l10n.fault_descriptionSectionLabel,
           style: TextStyle(
             fontFamily: MedFonts.mono,
             fontSize: 9,
@@ -311,7 +312,7 @@ class _DescriptionField extends StatelessWidget {
           maxLines: 3,
           style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text),
           decoration: InputDecoration(
-            hintText: 'Arıza detayını yazın...',
+            hintText: context.l10n.fault_descriptionHint,
             hintStyle: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text4),
             filled: true,
             fillColor: MedColors.surface2,
@@ -346,7 +347,7 @@ class _FaultHistory extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'GEÇMİŞ',
+          context.l10n.fault_historySectionLabel,
           style: TextStyle(
             fontFamily: MedFonts.mono,
             fontSize: 9,
@@ -394,13 +395,13 @@ class _FaultHistoryItem extends StatelessWidget {
 
     if (isResolved) {
       accentColor = MedColors.green;
-      statusLabel = 'Tamamlandı';
+      statusLabel = context.l10n.fault_historyStatusCompleted;
     } else if (isMaintenance) {
       accentColor = MedColors.amber;
-      statusLabel = 'Bakım';
+      statusLabel = context.l10n.fault_historyStatusMaintenance;
     } else {
       accentColor = MedColors.red;
-      statusLabel = 'Arıza';
+      statusLabel = context.l10n.fault_historyStatusFault;
     }
 
     return Container(
@@ -440,7 +441,7 @@ class _FaultHistoryItem extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          'Aktif',
+                          context.l10n.fault_historyActiveBadge,
                           style: TextStyle(
                             fontFamily: MedFonts.mono,
                             fontSize: 8,
@@ -492,7 +493,7 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = isNewRecord ? 'Arıza Bildir' : 'Kaydı Sonlandır';
+    final label = isNewRecord ? context.l10n.fault_reportFaultButton : context.l10n.fault_closeFaultButton;
     final icon = isNewRecord ? Icons.warning_amber_rounded : Icons.check_circle_outline_rounded;
     final color = isNewRecord ? MedColors.red : MedColors.green;
     final bg = isNewRecord ? MedColors.red : MedColors.green;

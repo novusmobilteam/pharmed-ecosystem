@@ -30,6 +30,7 @@ class PatientAssignmentNotifier extends Notifier<PatientAssignmentState> {
   GetPatientAssignmentsUseCase get _getAssignments => ref.read(getPatientAssignmentsUseCaseProvider);
   CreatePatientAssignmentUseCase get _createAssignment => ref.read(createPatientAssignmentUseCaseProvider);
   DeletePatientAssignmentUseCase get _deleteAssignment => ref.read(deletePatientAssignmentUseCaseProvider);
+  UpdatePatientAssignmentUseCase get _updateAssignment => ref.read(updatePatientAssignmentUseCaseProvider);
 
   // Init
   Future<void> init(CabinVisualizerData data) async {
@@ -167,7 +168,7 @@ class PatientAssignmentNotifier extends Notifier<PatientAssignmentState> {
 
     final cellId = _resolveCellId(mobileSlots: current.mobileSlots, coord: current.selectedCell);
     if (cellId == null) {
-      state = PatientAssignmentError(message: 'Seçili göz bulunamadı', previousState: current);
+      state = PatientAssignmentError(message: 'Seçili göz bulunamadı', previousState: current); // TODO(l10n): move to view layer or pass translated string as parameter
       return;
     }
 
@@ -179,11 +180,15 @@ class PatientAssignmentNotifier extends Notifier<PatientAssignmentState> {
       cabinId: current.cabinId,
     );
 
-    final entity = (current.existingAssignment ?? const PatientAssignment()).copyWith(
-      cellId: cellId,
-      bedId: current.selectedHospitalization!.bedId,
-    );
-    final result = await _createAssignment.call(entity);
+    final Result<void> result;
+
+    if (current.existingAssignment != null) {
+      final entity = current.existingAssignment!.copyWith(bedId: current.selectedHospitalization!.bedId);
+      result = await _updateAssignment.call(entity);
+    } else {
+      final entity = PatientAssignment(cellId: cellId, bedId: current.selectedHospitalization!.bedId);
+      result = await _createAssignment.call(entity);
+    }
 
     result.when(
       ok: (_) => _refreshAssignments(
@@ -191,7 +196,7 @@ class PatientAssignmentNotifier extends Notifier<PatientAssignmentState> {
         mobileSlots: current.mobileSlots,
         selectedSlot: current.selectedSlot,
         cabinId: current.cabinId,
-        message: 'Hasta ataması başarıyla kaydedildi',
+        message: 'Hasta ataması başarıyla kaydedildi', // TODO(l10n): move to view layer or pass translated string as parameter
       ),
       error: (e) {
         state = PatientAssignmentError(message: e.message, previousState: current);
@@ -220,7 +225,7 @@ class PatientAssignmentNotifier extends Notifier<PatientAssignmentState> {
         mobileSlots: current.mobileSlots,
         selectedSlot: current.selectedSlot,
         cabinId: current.cabinId,
-        message: 'Hasta ataması kaldırıldı',
+        message: 'Hasta ataması kaldırıldı', // TODO(l10n): move to view layer or pass translated string as parameter
       ),
       error: (e) {
         state = PatientAssignmentError(message: e.message, previousState: current);

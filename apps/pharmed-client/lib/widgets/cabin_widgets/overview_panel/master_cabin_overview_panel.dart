@@ -83,7 +83,7 @@ class _MasterDrawerItem extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(7, 5, 7, 4),
               child: Row(
                 children: [
-                  Text(_typeLabel(), style: _typeLabelStyle),
+                  Text(_typeLabel(context), style: _typeLabelStyle),
                   const Spacer(),
                   _StatusDot(workingStatus: workingStatus, stockStatus: stockStatus),
                 ],
@@ -98,9 +98,9 @@ class _MasterDrawerItem extends StatelessWidget {
     );
   }
 
-  String _typeLabel() {
+  String _typeLabel(BuildContext context) {
     if (group.isSerum) return 'SERUM';
-    if (group.isKubik) return 'KÜBİK';
+    if (group.isKubik) return context.l10n.cabin_kubikTypeLabel;
     return 'B.DOZ';
   }
 

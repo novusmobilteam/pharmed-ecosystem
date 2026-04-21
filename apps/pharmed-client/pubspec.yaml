@@ -14,7 +14,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+
   pharmed_core:
     path: ../../packages/pharmed_core
   pharmed_data:
@@ -48,6 +51,7 @@ dev_dependencies:
   build_runner: ^2.4.8
 
 flutter:
+  generate: true
   uses-material-design: true
 
   fonts:

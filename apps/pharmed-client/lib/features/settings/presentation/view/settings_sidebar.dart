@@ -19,13 +19,13 @@ class _SettingsSidebar extends StatelessWidget {
           children: [
             _SidebarItem(
               icon: Icons.home_outlined,
-              label: 'Genel',
+              label: context.l10n.settings_generalLabel,
               isActive: activeSection == SettingsSection.general,
               onTap: () => onSectionTap(SettingsSection.general),
             ),
             _SidebarItem(
               icon: Icons.monitor_outlined,
-              label: 'Görünüm',
+              label: context.l10n.settings_appearanceLabel,
               isActive: activeSection == SettingsSection.appearance,
               onTap: () => onSectionTap(SettingsSection.appearance),
             ),

@@ -19,6 +19,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cache/app_settings_cache.dart';
+import '../../../../l10n/l10n_ext.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../../core/enums/cabin_operation_mode.dart';
 import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';

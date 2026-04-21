@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 // CabinStatsGrid
@@ -46,10 +47,10 @@ class CabinStatsGrid extends StatelessWidget {
       childAspectRatio: 1.2,
       children: [
         StatBox(
-          label: 'Çekmece',
+          label: context.l10n.cabin_drawerStatsLabel,
           value: '$totalDrawers',
           valueColor: MedColors.blue,
-          subLabel: '$fullDrawers dolu · $emptyDrawers boş',
+          subLabel: context.l10n.cabin_statsFullEmpty(fullDrawers, emptyDrawers),
           isStale: isStale,
         ),
         StatBox(

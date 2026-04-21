@@ -82,7 +82,7 @@ class _MobileSlotItem extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(7, 5, 7, 4),
               child: Row(
                 children: [
-                  Text('MOBİL', style: _typeLabelStyle),
+                  Text(context.l10n.cabin_mobileTypeLabel, style: _typeLabelStyle),
                   const Spacer(),
                   // Fault ikonu veya göz sayısı
                   if (_hasFault)

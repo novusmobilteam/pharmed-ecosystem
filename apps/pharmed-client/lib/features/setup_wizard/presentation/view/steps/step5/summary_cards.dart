@@ -10,22 +10,22 @@ class CabinInfoCard extends StatelessWidget {
     final isMobile = draft.cabinType == CabinType.mobile;
 
     return SummaryCard(
-      title: 'KABİN BİLGİLERİ',
+      title: context.l10n.wizard_summaryCabinInfoTitle,
       children: [
-        SummaryRow(label: 'Tip', value: isMobile ? 'Mobil Kabin' : 'Standart Kabin', valueColor: MedColors.blue),
+        SummaryRow(label: context.l10n.wizard_summaryLabelType, value: isMobile ? context.l10n.wizard_summaryTypeMobile : context.l10n.wizard_summaryTypeStandard, valueColor: MedColors.blue),
         _Divider(),
-        SummaryRow(label: 'İsim', value: info.cabinName),
+        SummaryRow(label: context.l10n.wizard_summaryLabelName, value: info.cabinName),
 
-        if (!isMobile) ...[_Divider(), SummaryRow(label: 'COM Port', value: info.comPort ?? '—')],
+        if (!isMobile) ...[_Divider(), SummaryRow(label: context.l10n.wizard_summaryLabelComPort, value: info.comPort ?? '—')],
         if (info.dvrIp != null && info.dvrIp!.isNotEmpty) ...[
           _Divider(),
-          SummaryRow(label: 'DVR IP', value: info.dvrIp!),
+          SummaryRow(label: context.l10n.wizard_summaryLabelDvrIp, value: info.dvrIp!),
         ],
 
         if (info.rfidIpAddress != null && info.rfidPort!.isNotEmpty) ...[
           _Divider(),
-          SummaryRow(label: 'RFID Adresi', value: info.rfidIpAddress!),
-          SummaryRow(label: 'RFID Portu', value: info.rfidPort!),
+          SummaryRow(label: context.l10n.wizard_summaryLabelRfidAddress, value: info.rfidIpAddress!),
+          SummaryRow(label: context.l10n.wizard_summaryLabelRfidPort, value: info.rfidPort!),
         ],
       ],
     );
@@ -41,17 +41,17 @@ class ServiceScopeCard extends StatelessWidget {
     final scope = draft.serviceScope!;
 
     return SummaryCard(
-      title: 'HİZMET KAPSAMI',
+      title: context.l10n.wizard_summaryServiceScopeTitle,
       children: switch (scope) {
         StandartScope(:final station) => [
-          SummaryRow(label: 'İstasyon', value: station.name ?? '-', valueColor: MedColors.blue),
+          SummaryRow(label: context.l10n.wizard_summaryLabelStation, value: station.name ?? '-', valueColor: MedColors.blue),
         ],
         MobileScope(:final rooms) => [
-          SummaryRow(label: 'Oda sayısı', value: '${rooms.length}', valueColor: MedColors.green),
+          SummaryRow(label: context.l10n.wizard_summaryLabelRoomCount, value: '${rooms.length}', valueColor: MedColors.green),
           _Divider(),
-          SummaryRow(label: 'Odalar', value: rooms.map((r) => r.name).join(', ')),
+          SummaryRow(label: context.l10n.wizard_summaryLabelRooms, value: rooms.map((r) => r.name).join(', ')),
           _Divider(),
-          SummaryRow(label: 'Yataklar', value: rooms.map((r) => r.beds.map((b) => b.name)).join(', ')),
+          SummaryRow(label: context.l10n.wizard_summaryLabelBeds, value: rooms.map((r) => r.beds.map((b) => b.name)).join(', ')),
         ],
       },
     );
@@ -70,13 +70,13 @@ class DrawerStructureCard extends StatelessWidget {
     if (isMobile) {
       final layout = draft.mobileLayout!;
       return SummaryCard(
-        title: 'ÇEKMECE YAPISI',
+        title: context.l10n.wizard_summaryDrawerStructureTitle,
         children: [
-          SummaryRow(label: 'Çekmece sayısı', value: '${layout.drawerCount}', valueColor: MedColors.green),
+          SummaryRow(label: context.l10n.wizard_summaryLabelDrawerCount, value: '${layout.drawerCount}', valueColor: MedColors.green),
           _Divider(),
           for (final drawer in layout.drawers) ...[
             SummaryRow(
-              label: '${drawer.drawerIndex + 1}. Çekmece',
+              label: context.l10n.wizard_summaryLabelDrawerIndexed(drawer.drawerIndex + 1),
               value: drawer.rowColumns.map((c) => '$c').join(' / '),
             ),
             if (drawer.drawerIndex < layout.drawers.length - 1) _Divider(),
@@ -87,12 +87,12 @@ class DrawerStructureCard extends StatelessWidget {
 
     final layout = draft.scannedLayout!;
     return SummaryCard(
-      title: 'ÇEKMECE YAPISI',
+      title: context.l10n.wizard_summaryDrawerStructureTitle,
       children: [
-        SummaryRow(label: 'Toplam çekmece', value: '${layout.length}', valueColor: MedColors.green),
+        SummaryRow(label: context.l10n.wizard_summaryLabelTotalDrawers, value: '${layout.length}', valueColor: MedColors.green),
         _Divider(),
         for (int i = 0; i < layout.length; i++) ...[
-          SummaryRow(label: '${i + 1}. Çekmece', value: layout[i].slot.drawerConfig?.drawerType?.name ?? '—'),
+          SummaryRow(label: context.l10n.wizard_summaryLabelDrawerIndexed(i + 1), value: layout[i].slot.drawerConfig?.drawerType?.name ?? '—'),
           if (i < layout.length - 1) _Divider(),
         ],
       ],
@@ -110,7 +110,7 @@ class CabinPreviewCard extends StatelessWidget {
     final isMobile = draft.cabinType == CabinType.mobile;
 
     return SummaryCard(
-      title: 'KABİN ÖNİZLEMESİ',
+      title: context.l10n.wizard_summaryCabinPreviewTitle,
       children: [
         Center(
           child: Padding(

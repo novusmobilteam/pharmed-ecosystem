@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────
@@ -41,7 +42,7 @@ class CabinActionBar extends StatelessWidget {
           children: [
             Expanded(
               child: _ActionButton(
-                label: 'Aç',
+                label: context.l10n.cabin_openButton,
                 icon: Icons.lock_open_outlined,
                 variant: _ActionVariant.green,
                 isEnabled: isEnabled,
@@ -65,7 +66,7 @@ class CabinActionBar extends StatelessWidget {
 
         // İlaç Ata — tam genişlik
         _ActionButton(
-          label: 'İlaç Ata',
+          label: context.l10n.cabin_assignDrugButton,
           icon: Icons.add,
           variant: _ActionVariant.blue,
           isEnabled: isEnabled,

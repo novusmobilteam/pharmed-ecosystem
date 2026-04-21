@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:pharmed_client/l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
 
 void main() async {
@@ -14,6 +16,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Pharmed', debugShowCheckedModeBanner: false, home: AppRouter());
+    return MaterialApp(
+      title: 'Pharmed',
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('tr'), Locale('en'), Locale('ar')],
+      home: const AppRouter(),
+    );
   }
 }

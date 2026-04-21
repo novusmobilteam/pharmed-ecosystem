@@ -10,6 +10,7 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -69,7 +70,7 @@ class _PlaceholderContent extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Bir göz seçin',
+            context.l10n.common_selectCellTitle,
             style: TextStyle(
               fontFamily: MedFonts.sans,
               fontSize: 13,
@@ -79,7 +80,7 @@ class _PlaceholderContent extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Hasta atamak için orta\npanelden bir göz seçin.',
+            context.l10n.assignment_assignPatientPlaceholder,
             style: MedTextStyles.bodySm(color: MedColors.text4),
             textAlign: TextAlign.center,
           ),
@@ -161,7 +162,7 @@ class _HospitalizationSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'HASTA / YATIŞ',
+          context.l10n.assignment_hospitalizationSectionLabel,
           style: TextStyle(
             fontFamily: MedFonts.mono,
             fontSize: 9,
@@ -185,7 +186,7 @@ class _HospitalizationSelector extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    hasSelection ? patientName : 'Yatış seçin...',
+                    hasSelection ? patientName : context.l10n.assignment_hospitalizationSelectorHint,
                     style: TextStyle(
                       fontFamily: MedFonts.sans,
                       fontSize: 13,
@@ -283,9 +284,9 @@ class _PatientCard extends StatelessWidget {
           const Divider(height: 1, color: Color(0x1A1A6FD8)),
           const SizedBox(height: 10),
           // Detay satırları
-          _InfoRow(label: 'Oda / Yatak', value: '$room / $bed'),
+          _InfoRow(label: context.l10n.assignment_roomBedLabel, value: '$room / $bed'),
           const SizedBox(height: 4),
-          _InfoRow(label: 'Servis', value: service),
+          _InfoRow(label: context.l10n.assignment_serviceLabel, value: service),
         ],
       ),
     );
@@ -357,7 +358,7 @@ class _ActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     if (_isAssigned && !_isChanged) {
       // Mevcut atama var, değişiklik yok → sadece Kaldır
-      return _PanelButton.danger(label: 'Atamayı Kaldır', icon: Icons.delete_outline_rounded, onTap: onDelete);
+      return _PanelButton.danger(label: context.l10n.assignment_removeAssignmentButton, icon: Icons.delete_outline_rounded, onTap: onDelete);
     }
 
     if (_isChanged) {
@@ -366,20 +367,20 @@ class _ActionButtons extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _PanelButton.primary(
-            label: 'Atamayı Değiştir',
+            label: context.l10n.assignment_changeAssignmentButton,
             icon: Icons.swap_horiz_rounded,
             color: MedColors.blue,
             onTap: onSave,
           ),
           const SizedBox(height: 8),
-          _PanelButton.danger(label: 'Atamayı Kaldır', icon: Icons.delete_outline_rounded, onTap: onDelete),
+          _PanelButton.danger(label: context.l10n.assignment_removeAssignmentButton, icon: Icons.delete_outline_rounded, onTap: onDelete),
         ],
       );
     }
 
     // Atama yok → Kaydet
     return _PanelButton.primary(
-      label: 'Atamayı Kaydet',
+      label: context.l10n.assignment_saveAssignmentButton,
       icon: Icons.check_rounded,
       color: MedColors.green,
       enabled: _canSave,

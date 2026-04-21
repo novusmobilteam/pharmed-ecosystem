@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/FKodat/pharmed/apps/pharmed-client/lib -type f -name \"*.dart\" -exec grep -n \"Text\\\\|label:\\\\|hint:\\\\|title:\\\\|message:\\\\|content:\\\\|tooltip:\\\\|hintText:\\\\|labelText:\\\\|errorText:\\\\|subtitle:\\\\|body:\\\\|placeholder:\\\\|cancelLabel:\\\\|confirmLabel:\" {} +)",
+      "Bash(find /c/Users/FKodat/pharmed/apps/pharmed-client/lib -type f -name \"*.dart\" -exec grep -nE \"\\(Text\\\\\\(|label:|hint:|title:|message:|content:|tooltip:|hintText:|labelText:|errorText:|subtitle:|body:|placeholder:|cancelLabel:|confirmLabel:|'[^']*[ğüşıöçİĞÜŞÖÇ][^']*'\\)\" {} +)",
+      "Bash(xargs -0 grep -h \"label:\\\\|hint:\\\\|title:\\\\|message:\\\\|content:\\\\|tooltip:\\\\|hintText:\\\\|labelText:\\\\|errorText:\\\\|subtitle:\\\\|body:\\\\|placeholder:\\\\|cancelLabel:\\\\|confirmLabel:\\\\|Text\\(\")",
+      "Bash(grep -v \"^//\")",
+      "Bash(/tmp/extract_turkish.sh)",
+      "Read(//tmp/**)",
+      "Bash(grep -v \"^.*//.*[ğüşıöçİĞÜŞÖÇ]\")",
+      "Bash(node -e \"const f=require\\('fs'\\);const d=JSON.parse\\(f.readFileSync\\('app_tr.arb','utf8'\\)\\);const keys=Object.keys\\(d\\).filter\\(k=>!k.startsWith\\('@'\\)\\);console.log\\('Total keys:',keys.length\\);const groups={};keys.forEach\\(k=>{const g=k.split\\('_'\\)[0];groups[g]=\\(groups[g]||0\\)+1;}\\);console.log\\(JSON.stringify\\(groups,null,2\\)\\);\")",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('app_tr.arb','utf8'\\)\\);const keys=Object.keys\\(d\\).filter\\(k=>!k.startsWith\\('@'\\)&&k!='@@locale'\\);console.log\\('Total keys:',keys.length\\);const g={};keys.forEach\\(k=>{const p=k.split\\('_'\\)[0];g[p]=\\(g[p]||0\\)+1;}\\);Object.entries\\(g\\).sort\\(\\).forEach\\(\\([k,v]\\)=>console.log\\(' ',k+'_:',v\\)\\);\")"
+    ]
+  }
+}

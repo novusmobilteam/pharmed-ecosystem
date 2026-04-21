@@ -1,0 +1,645 @@
+{
+  "@@locale": "ar",
+
+  "common_selectCellTitle": "اختر خانة",
+  "@common_selectCellTitle": { "description": "Placeholder title shown in right panel before any cell is selected" },
+
+  "common_noAssignmentBadge": "غير مُعيَّن",
+  "@common_noAssignmentBadge": { "description": "Badge shown on a cell that has no drug or patient assignment" },
+
+  "common_drugAssignedBadge": "دواء مُعيَّن",
+  "@common_drugAssignedBadge": { "description": "Badge shown on a cell that has a drug assignment" },
+
+  "common_patientAssignedBadge": "مريض مُعيَّن",
+  "@common_patientAssignedBadge": { "description": "Badge shown on a cell that has a patient assignment" },
+
+  "common_noCabinDataTitle": "بيانات الخزانة غير متوفرة",
+  "@common_noCabinDataTitle": { "description": "Empty-state title when cabin data is unavailable" },
+
+  "common_noCabinDataDescription": "ربما لم تُهيَّأ الخزانة بعد\nأو تعذّر الاتصال بها.",
+  "@common_noCabinDataDescription": { "description": "Empty-state description when cabin data is unavailable" },
+
+  "common_noResultsTitle": "لا توجد نتائج",
+  "@common_noResultsTitle": { "description": "Empty-state title when a search or filter returns no results" },
+
+  "common_noResultsDescription": "جرّب تغيير معايير البحث.",
+  "@common_noResultsDescription": { "description": "Empty-state description when a search or filter returns no results" },
+
+  "common_retryButton": "إعادة المحاولة",
+  "@common_retryButton": { "description": "Generic retry button label used in error states" },
+
+  "common_cancelButton": "إلغاء",
+  "@common_cancelButton": { "description": "Generic cancel button label used in dialogs" },
+
+  "common_pageNotFound": "الصفحة غير موجودة",
+  "@common_pageNotFound": { "description": "Fallback message shown for unknown dashboard routes" },
+
+  "common_minLabel": "الحد الأدنى",
+  "@common_minLabel": { "description": "Minimum quantity field label in drug assignment panel" },
+
+  "common_maxLabel": "الحد الأقصى",
+  "@common_maxLabel": { "description": "Maximum quantity field label in drug assignment panel" },
+
+  "common_criticalLabel": "حرج",
+  "@common_criticalLabel": { "description": "Critical quantity field label in drug assignment panel" },
+
+  "auth_loginSubtitle": "تسجيل الدخول إلى النظام",
+  "@auth_loginSubtitle": { "description": "Subtitle below the logo on the login screen" },
+
+  "auth_emailLabel": "البريد الإلكتروني / اسم المستخدم",
+  "@auth_emailLabel": { "description": "Label for the email/username field on the login screen" },
+
+  "auth_passwordLabel": "كلمة المرور",
+  "@auth_passwordLabel": { "description": "Label for the password field on the login screen" },
+
+  "auth_loginButton": "تسجيل الدخول",
+  "@auth_loginButton": { "description": "Login button on the login screen" },
+
+  "auth_genericError": "حدث خطأ",
+  "@auth_genericError": { "description": "Generic error message shown when login fails without a specific message" },
+
+  "dashboard_appBarTitle": "إدارة خزانة الأدوية",
+  "@dashboard_appBarTitle": { "description": "Application name shown in the top app bar" },
+
+  "dashboard_logoutTooltip": "تسجيل الخروج",
+  "@dashboard_logoutTooltip": { "description": "Tooltip for the logout icon button in the top app bar" },
+
+  "dashboard_loginBarButton": "تسجيل الدخول",
+  "@dashboard_loginBarButton": { "description": "Login button shown in the app bar when no user is logged in" },
+
+  "dashboard_kpiActivePatients": "المرضى النشطون",
+  "@dashboard_kpiActivePatients": { "description": "KPI card label for active patients count" },
+
+  "dashboard_kpiCompletedOps": "العمليات المكتملة",
+  "@dashboard_kpiCompletedOps": { "description": "KPI card label for completed operations count" },
+
+  "dashboard_kpiPendingPrescriptions": "الوصفات المعلّقة",
+  "@dashboard_kpiPendingPrescriptions": { "description": "KPI card label for pending prescriptions count" },
+
+  "dashboard_kpiCriticalAlerts": "التنبيهات الحرجة",
+  "@dashboard_kpiCriticalAlerts": { "description": "KPI card label for critical alerts count" },
+
+  "dashboard_cabinStatusHeader": "حالة الخزانة",
+  "@dashboard_cabinStatusHeader": { "description": "Section header for the cabin status card on the dashboard" },
+
+  "dashboard_cabinStatusLabel": "حالة الخزانة",
+  "@dashboard_cabinStatusLabel": { "description": "Label for the cabin working-status row inside the cabin card" },
+
+  "dashboard_kpiLoadError": "تعذّر تحميل بيانات KPI",
+  "@dashboard_kpiLoadError": { "description": "Error label shown in place of the KPI section when loading fails" },
+
+  "dashboard_cabinLoadError": "تعذّر تحميل بيانات الخزانة",
+  "@dashboard_cabinLoadError": { "description": "Error label shown in place of the cabin section when loading fails" },
+
+  "dashboard_treatmentsLoadError": "تعذّر تحميل قائمة العلاجات",
+  "@dashboard_treatmentsLoadError": { "description": "Error label shown in place of the treatments section when loading fails" },
+
+  "dashboard_sktLoadError": "تعذّر تحميل بيانات تواريخ الانتهاء",
+  "@dashboard_sktLoadError": { "description": "Error label shown in place of the expiry-date section when loading fails" },
+
+  "assignment_assignPatientPlaceholder": "لتعيين مريض، اختر\nخانة من اللوحة الوسطى.",
+  "@assignment_assignPatientPlaceholder": { "description": "Placeholder description in patient-assignment right panel before a cell is selected" },
+
+  "assignment_assignDrugPlaceholder": "لإجراء التعيين، اختر\nخانة من اللوحة الوسطى.",
+  "@assignment_assignDrugPlaceholder": { "description": "Placeholder description in drug-assignment right panel before a cell is selected" },
+
+  "assignment_hospitalizationSectionLabel": "المريض / الإدخال",
+  "@assignment_hospitalizationSectionLabel": { "description": "Section label above the hospitalization selector in the patient-assignment panel" },
+
+  "assignment_hospitalizationSelectorHint": "اختر إدخالاً...",
+  "@assignment_hospitalizationSelectorHint": { "description": "Hint text in the hospitalization selector button when nothing is selected" },
+
+  "assignment_selectHospitalizationDialogTitle": "اختر إدخالاً",
+  "@assignment_selectHospitalizationDialogTitle": { "description": "Title of the dialog for selecting a hospitalization/bed" },
+
+  "assignment_drugSectionLabel": "الدواء",
+  "@assignment_drugSectionLabel": { "description": "Section label above the drug selector in the drug-assignment panel" },
+
+  "assignment_drugSelectorHint": "اختر دواءً...",
+  "@assignment_drugSelectorHint": { "description": "Hint text in the drug selector button when nothing is selected" },
+
+  "assignment_selectDrugDialogTitle": "اختر دواءً",
+  "@assignment_selectDrugDialogTitle": { "description": "Title of the dialog for selecting a drug/medicine" },
+
+  "assignment_quantitySectionLabel": "الكمية",
+  "@assignment_quantitySectionLabel": { "description": "Section label above the min/max/critical quantity input fields" },
+
+  "assignment_saveAssignmentButton": "حفظ التعيين",
+  "@assignment_saveAssignmentButton": { "description": "Primary button to save a new drug or patient assignment" },
+
+  "assignment_removeAssignmentButton": "إزالة التعيين",
+  "@assignment_removeAssignmentButton": { "description": "Danger button to remove an existing drug or patient assignment" },
+
+  "assignment_changeAssignmentButton": "تغيير التعيين",
+  "@assignment_changeAssignmentButton": { "description": "Primary button to update an existing patient assignment to a different hospitalization" },
+
+  "assignment_roomBedLabel": "الغرفة / السرير",
+  "@assignment_roomBedLabel": { "description": "Label for the room/bed info row inside the patient card" },
+
+  "assignment_serviceLabel": "الجناح",
+  "@assignment_serviceLabel": { "description": "Label for the physical service info row inside the patient card" },
+
+  "assignment_cellNotFoundError": "تعذّر العثور على الخانة المحددة",
+  "@assignment_cellNotFoundError": { "description": "Error message shown when the selected cell ID cannot be resolved before saving" },
+
+  "assignment_patientSavedSuccess": "تم حفظ تعيين المريض بنجاح",
+  "@assignment_patientSavedSuccess": { "description": "Success snackbar/state message after a patient assignment is saved" },
+
+  "assignment_patientRemovedSuccess": "تم إزالة تعيين المريض",
+  "@assignment_patientRemovedSuccess": { "description": "Success snackbar/state message after a patient assignment is removed" },
+
+  "fault_selectCellPlaceholder": "لإبلاغ عن عطل، اختر\nخانة من اللوحة الوسطى.",
+  "@fault_selectCellPlaceholder": { "description": "Placeholder description in the fault right panel before a cell/slot is selected" },
+
+  "fault_descriptionSectionLabel": "الوصف",
+  "@fault_descriptionSectionLabel": { "description": "Section label above the fault description text field" },
+
+  "fault_descriptionHint": "اكتب تفاصيل العطل...",
+  "@fault_descriptionHint": { "description": "Hint text inside the fault description multi-line text field" },
+
+  "fault_faultSegmentLabel": "عطل",
+  "@fault_faultSegmentLabel": { "description": "Left segment button label for selecting 'fault' status when reporting a new record" },
+
+  "fault_maintenanceSegmentLabel": "صيانة",
+  "@fault_maintenanceSegmentLabel": { "description": "Right segment button label for selecting 'maintenance' status when reporting a new record" },
+
+  "fault_historySectionLabel": "السجل",
+  "@fault_historySectionLabel": { "description": "Section label above the fault history list" },
+
+  "fault_historyStatusCompleted": "مُغلق",
+  "@fault_historyStatusCompleted": { "description": "Status label for a resolved/closed fault record in the history list" },
+
+  "fault_historyStatusMaintenance": "صيانة",
+  "@fault_historyStatusMaintenance": { "description": "Status label for a maintenance record in the history list" },
+
+  "fault_historyStatusFault": "عطل",
+  "@fault_historyStatusFault": { "description": "Status label for an active fault record in the history list" },
+
+  "fault_historyActiveBadge": "نشط",
+  "@fault_historyActiveBadge": { "description": "Badge shown next to active (not yet closed) fault records in the history list" },
+
+  "fault_activeFaultBanner": "تحتوي هذه الخانة على سجل {label} نشط. سيتم إنهاء هذا السجل عند التأكيد.",
+  "@fault_activeFaultBanner": {
+    "description": "Warning banner shown when the selected cell already has an active fault/maintenance record",
+    "placeholders": {
+      "label": { "type": "String", "description": "Type of the active record: 'arıza' or 'bakım'" }
+    }
+  },
+
+  "fault_reportFaultButton": "الإبلاغ عن عطل",
+  "@fault_reportFaultButton": { "description": "Submit button label when creating a new fault/maintenance record" },
+
+  "fault_closeFaultButton": "إغلاق السجل",
+  "@fault_closeFaultButton": { "description": "Submit button label when closing an existing active fault/maintenance record" },
+
+  "fault_recordCreatedSuccess": "تم إنشاء سجل العطل.",
+  "@fault_recordCreatedSuccess": { "description": "Success message shown after a fault record is successfully created" },
+
+  "fault_recordClosedSuccess": "تم إغلاق سجل العطل.",
+  "@fault_recordClosedSuccess": { "description": "Success message shown after a fault record is successfully closed" },
+
+  "cabin_mobileTypeLabel": "متنقل",
+  "@cabin_mobileTypeLabel": { "description": "Type badge label shown on the mobile cabin slot card in the left overview panel" },
+
+  "cabin_mobileDrawerTitle": "درج متنقل",
+  "@cabin_mobileDrawerTitle": { "description": "Header title of the mobile cabin drawer panel (center panel)" },
+
+  "cabin_cellCountLabel": "{count} خانة",
+  "@cabin_cellCountLabel": {
+    "description": "Cell count label on the mobile cabin slot card",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of cells in the slot" }
+    }
+  },
+
+  "cabin_drawerStatsLabel": "الأدراج",
+  "@cabin_drawerStatsLabel": { "description": "Label for the drawer count stat box in the cabin stats grid" },
+
+  "cabin_statsFullEmpty": "{full} ممتلئ · {empty} فارغ",
+  "@cabin_statsFullEmpty": {
+    "description": "Sub-label for the drawer stat box showing full and empty counts",
+    "placeholders": {
+      "full": { "type": "int", "description": "Number of full drawers" },
+      "empty": { "type": "int", "description": "Number of empty drawers" }
+    }
+  },
+
+  "cabin_touchDrawerHint": "المس أحد الأدراج",
+  "@cabin_touchDrawerHint": { "description": "Hint text shown in the center panel when no drawer/slot is selected" },
+
+  "cabin_mobileGridPlaceholder": "سيتم عرض شبكة خانات الخزانة المتنقلة",
+  "@cabin_mobileGridPlaceholder": { "description": "Subtitle of the empty-state shown in the mobile drawer panel before a slot is selected" },
+
+  "cabin_masterGridPlaceholder": "سيتم عرض محتويات أدراج التكعيب والجرعة الفردية والمصل",
+  "@cabin_masterGridPlaceholder": { "description": "Subtitle of the empty-state shown in the master drawer panel before a drawer is selected" },
+
+  "cabin_kubikTypeLabel": "تكعيبي",
+  "@cabin_kubikTypeLabel": { "description": "Uppercase drawer-type badge shown on kubik drawer cards in the master overview panel" },
+
+  "cabin_serumDrawerName": "درج المصل",
+  "@cabin_serumDrawerName": { "description": "Header name for serum-type drawers in the master drawer panel" },
+
+  "cabin_kubikDrawerName": "درج تكعيبي",
+  "@cabin_kubikDrawerName": { "description": "Header name for kubik-type drawers in the master drawer panel" },
+
+  "cabin_unitDoseDrawerName": "درج الجرعة الفردية",
+  "@cabin_unitDoseDrawerName": { "description": "Header name for unit-dose drawers in the master drawer panel" },
+
+  "cabin_serumRackView": "عرض الرف",
+  "@cabin_serumRackView": { "description": "Sub-label shown below the serum drawer header in the master panel" },
+
+  "cabin_serumViewTitle": "عرض المصل",
+  "@cabin_serumViewTitle": { "description": "Placeholder title inside the serum drawer content area (not yet implemented)" },
+
+  "cabin_serumViewTodo": "TODO: سيكتمل عند تحديد بنية درج المصل",
+  "@cabin_serumViewTodo": { "description": "Placeholder note inside the serum drawer content area shown until implementation is complete" },
+
+  "cabin_openButton": "فتح",
+  "@cabin_openButton": { "description": "Button label to open the cabin on the cabin action bar" },
+
+  "cabin_assignDrugButton": "تعيين دواء",
+  "@cabin_assignDrugButton": { "description": "Button label to enter drug-assignment mode from the cabin action bar" },
+
+  "cabin_bannerPatientAssign": "تعيين المرضى — عيّن مريضاً / إدخالاً لكل خانة.",
+  "@cabin_bannerPatientAssign": { "description": "Info banner shown at the top of the drawer panel when in patient-assignment mode" },
+
+  "cabin_bannerDrugAssign": "تعيين الأدوية — عيّن أدويةً للخانات وحدد قيم الحد الأدنى/الأقصى/الحرج.",
+  "@cabin_bannerDrugAssign": { "description": "Info banner shown at the top of the drawer panel when in drug-assignment mode" },
+
+  "cabin_bannerDrugFill": "تعبئة الأدوية — المس الخانة المراد تعبئتها وأدخل الكمية.",
+  "@cabin_bannerDrugFill": { "description": "Info banner shown at the top of the drawer panel when in drug-fill mode" },
+
+  "cabin_bannerDrugCount": "الجرد — أدخل الكمية الفعلية وسيحسب النظام الفارق.",
+  "@cabin_bannerDrugCount": { "description": "Info banner shown at the top of the drawer panel when in drug-count mode" },
+
+  "cabin_bannerFault": "العطل — ضع علامة على الخانة المعطوبة وأدخل الوصف.",
+  "@cabin_bannerFault": { "description": "Info banner shown at the top of the drawer panel when in fault-reporting mode" },
+
+  "cabin_statusWorking": "يعمل",
+  "@cabin_statusWorking": { "description": "CabinWorkingStatus display label for a normally working cabin/cell" },
+
+  "cabin_statusFaultRecord": "سجل عطل",
+  "@cabin_statusFaultRecord": { "description": "CabinWorkingStatus display label for a cabin/cell with an active fault record" },
+
+  "cabin_statusMaintenanceRecord": "سجل صيانة",
+  "@cabin_statusMaintenanceRecord": { "description": "CabinWorkingStatus display label for a cabin/cell in maintenance" },
+
+  "cabin_modeAssignLabel": "تعيين الأدوية",
+  "@cabin_modeAssignLabel": { "description": "Display name for CabinOperationMode.assign" },
+
+  "cabin_modeFillLabel": "تعبئة الأدوية",
+  "@cabin_modeFillLabel": { "description": "Display name for CabinOperationMode.fill" },
+
+  "cabin_modeCountLabel": "جرد الأدوية",
+  "@cabin_modeCountLabel": { "description": "Display name for CabinOperationMode.count" },
+
+  "cabin_modeFaultLabel": "عطل الدرج",
+  "@cabin_modeFaultLabel": { "description": "Display name for CabinOperationMode.fault" },
+
+  "cabin_operationPanelAssign": "تعيين الأدوية",
+  "@cabin_operationPanelAssign": { "description": "Header title in the right operation panel when in drug-assignment mode" },
+
+  "cabin_operationPanelFill": "تعبئة الأدوية",
+  "@cabin_operationPanelFill": { "description": "Header title in the right operation panel when in drug-fill mode" },
+
+  "cabin_operationPanelCount": "جرد الأدوية",
+  "@cabin_operationPanelCount": { "description": "Header title in the right operation panel when in drug-count mode" },
+
+  "cabin_operationPanelFault": "الإبلاغ عن عطل",
+  "@cabin_operationPanelFault": { "description": "Header title in the right operation panel when in fault-reporting mode" },
+
+  "cabin_legendAssignEmpty": "خانة فارغة (تعيين)",
+  "@cabin_legendAssignEmpty": { "description": "Legend item label for empty cells in drug-assignment mode" },
+
+  "cabin_legendAssignAssigned": "دواء مُعيَّن",
+  "@cabin_legendAssignAssigned": { "description": "Legend item label for drug-assigned cells in drug-assignment mode" },
+
+  "cabin_legendAssignFault": "معطوبة",
+  "@cabin_legendAssignFault": { "description": "Legend item label for faulty cells in assignment mode" },
+
+  "cabin_legendAssignMaintenance": "قيد الصيانة",
+  "@cabin_legendAssignMaintenance": { "description": "Legend item label for cells under maintenance in assignment mode" },
+
+  "cabin_legendPatientAssigned": "مريض مُعيَّن",
+  "@cabin_legendPatientAssigned": { "description": "Legend item label for cells with a patient assignment in patient-assignment mode" },
+
+  "cabin_legendFilled": "ممتلئة",
+  "@cabin_legendFilled": { "description": "Legend item label for filled cells in non-assignment modes" },
+
+  "cabin_legendFillEmpty": "فارغة (لا تعبئة)",
+  "@cabin_legendFillEmpty": { "description": "Legend item label for empty (no fill needed) cells in drug-fill mode" },
+
+  "cabin_legendCountAssigned": "للجرد (بها دواء)",
+  "@cabin_legendCountAssigned": { "description": "Legend item label for cells to be counted in drug-count mode" },
+
+  "cabin_legendCountLow": "مخزون منخفض",
+  "@cabin_legendCountLow": { "description": "Legend item label for cells with low stock in drug-count mode" },
+
+  "cabin_legendCountEmpty": "فارغة (تخطّ)",
+  "@cabin_legendCountEmpty": { "description": "Legend item label for empty cells to skip in drug-count mode" },
+
+  "cabin_legendFaultNormal": "تعمل بشكل طبيعي",
+  "@cabin_legendFaultNormal": { "description": "Legend item label for normally operating cells in fault mode" },
+
+  "cabin_legendFaultReported": "عطل مُبلَّغ عنه",
+  "@cabin_legendFaultReported": { "description": "Legend item label for cells with a reported fault in fault mode" },
+
+  "cabin_legendFaultEmpty": "خانة فارغة",
+  "@cabin_legendFaultEmpty": { "description": "Legend item label for empty cells in fault mode" },
+
+  "wizard_sidebarTitle": "إعداد الخزانة",
+  "@wizard_sidebarTitle": { "description": "Title shown at the top of the setup wizard sidebar" },
+
+  "wizard_sidebarSubtitle": "تهيئة جهاز جديد",
+  "@wizard_sidebarSubtitle": { "description": "Subtitle shown below the title in the setup wizard sidebar" },
+
+  "wizard_step1SidebarTitle": "نوع الخزانة",
+  "@wizard_step1SidebarTitle": { "description": "Step 1 title in the wizard sidebar step list" },
+
+  "wizard_step1SidebarDesc": "ثابتة أو متنقلة",
+  "@wizard_step1SidebarDesc": { "description": "Step 1 description in the wizard sidebar step list" },
+
+  "wizard_step2SidebarTitle": "المعلومات الأساسية",
+  "@wizard_step2SidebarTitle": { "description": "Step 2 title in the wizard sidebar step list" },
+
+  "wizard_step2SidebarDesc": "الاسم والموقع والاتصال",
+  "@wizard_step2SidebarDesc": { "description": "Step 2 description in the wizard sidebar step list" },
+
+  "wizard_step3SidebarTitle": "نطاق الخدمة",
+  "@wizard_step3SidebarTitle": { "description": "Step 3 title in the wizard sidebar step list" },
+
+  "wizard_step3SidebarDesc": "تعريف الأجنحة أو الغرف",
+  "@wizard_step3SidebarDesc": { "description": "Step 3 description in the wizard sidebar step list" },
+
+  "wizard_step4SidebarTitle": "بنية الأدراج",
+  "@wizard_step4SidebarTitle": { "description": "Step 4 title in the wizard sidebar step list" },
+
+  "wizard_step4SidebarDesc": "مسح ضوئي أو إدخال يدوي",
+  "@wizard_step4SidebarDesc": { "description": "Step 4 description in the wizard sidebar step list" },
+
+  "wizard_step5SidebarTitle": "الملخص",
+  "@wizard_step5SidebarTitle": { "description": "Step 5 title in the wizard sidebar step list" },
+
+  "wizard_step5SidebarDesc": "مراجعة وإتمام",
+  "@wizard_step5SidebarDesc": { "description": "Step 5 description in the wizard sidebar step list" },
+
+  "wizard_step1Header": "اختر نوع الخزانة",
+  "@wizard_step1Header": { "description": "Step 1 header title shown at the top of the cabin-type selection step" },
+
+  "wizard_step1Subtitle": "حدّد نوع الخزانة التي تريد إدارتها. سيؤثر هذا الاختيار على الخطوات التالية.",
+  "@wizard_step1Subtitle": { "description": "Step 1 header subtitle describing the purpose of the cabin-type selection step" },
+
+  "wizard_cabinTypeNote": "لا يمكن تغيير نوع الخزانة بعد اكتمال الإعداد.",
+  "@wizard_cabinTypeNote": { "description": "Footer note on step 1 warning that the cabin type cannot be changed after completion" },
+
+  "wizard_masterCabinSpec1": "تكعيبي / جرعة فردية",
+  "@wizard_masterCabinSpec1": { "description": "First spec pill label on the standard (master) cabin type card" },
+
+  "wizard_masterCabinSpec2": "على مستوى الجناح",
+  "@wizard_masterCabinSpec2": { "description": "Second spec pill label on the standard cabin type card" },
+
+  "wizard_masterCabinDescription": "خزانة ثابتة مثبتة على الجدار أو قائمة بذاتها، تحتوي على مجموعة من أدراج التكعيب والجرعة الفردية.",
+  "@wizard_masterCabinDescription": { "description": "Description text on the standard (master) cabin type card on step 1" },
+
+  "wizard_mobileCabinSpec1": "بعجلات",
+  "@wizard_mobileCabinSpec1": { "description": "First spec pill label on the mobile cabin type card" },
+
+  "wizard_mobileCabinSpec2": "على مستوى الغرفة",
+  "@wizard_mobileCabinSpec2": { "description": "Second spec pill label on the mobile cabin type card" },
+
+  "wizard_mobileCabinDescription": "وحدة أدوية متنقلة بعجلات مكوّنة من 4 صفوف، مصممة للتجول في الأجنحة.",
+  "@wizard_mobileCabinDescription": { "description": "Description text on the mobile cabin type card on step 1" },
+
+  "wizard_step2Header": "المعلومات الأساسية",
+  "@wizard_step2Header": { "description": "Step 2 header title for basic cabin info (name, location, connection)" },
+
+  "wizard_step2Subtitle": "أدخل اسم الخزانة وموقعها وإعدادات اتصال الجهاز.",
+  "@wizard_step2Subtitle": { "description": "Step 2 header subtitle" },
+
+  "wizard_cabinNameLabel": "اسم الخزانة",
+  "@wizard_cabinNameLabel": { "description": "Label for the cabin name text field on step 2" },
+
+  "wizard_cabinNameHint": "مثال: CB-304",
+  "@wizard_cabinNameHint": { "description": "Hint text for the cabin name text field on step 2" },
+
+  "wizard_connectionSettingsLabel": "إعدادات الاتصال",
+  "@wizard_connectionSettingsLabel": { "description": "Section label for the connection settings group on step 2" },
+
+  "wizard_noComPortWarning": "لم يتم العثور على COM Port نشط. تأكد من تثبيت برامج التشغيل.",
+  "@wizard_noComPortWarning": { "description": "Warning text shown on step 2 when no active COM port is detected" },
+
+  "wizard_antennaSettingsLabel": "إعدادات الهوائي",
+  "@wizard_antennaSettingsLabel": { "description": "Section label for the antenna/RFID settings group on step 2" },
+
+  "wizard_ipAddressLabel": "عنوان IP",
+  "@wizard_ipAddressLabel": { "description": "Label for the IP address input field on step 2" },
+
+  "wizard_testConnectionButton": "اختبار الاتصال",
+  "@wizard_testConnectionButton": { "description": "Button to test the cabin card serial connection on step 2" },
+
+  "wizard_step3Header": "نطاق الخدمة",
+  "@wizard_step3Header": { "description": "Step 3 header title for service/station scope selection" },
+
+  "wizard_step3Subtitle": "تعريف الأجنحة أو الغرف.",
+  "@wizard_step3Subtitle": { "description": "Step 3 header subtitle" },
+
+  "wizard_roomBedSelectionLabel": "اختيار الغرفة والسرير",
+  "@wizard_roomBedSelectionLabel": { "description": "Section label for the room and bed selection area on step 3 for mobile cabins" },
+
+  "wizard_scanTitle": "مسح الجهاز",
+  "@wizard_scanTitle": { "description": "Title of the idle scan state on step 4" },
+
+  "wizard_scanDescription": "سيتم قراءة بنية أدراج الخزانة المتصلة تلقائياً عبر المنفذ التسلسلي.",
+  "@wizard_scanDescription": { "description": "Description text shown in the idle scan state on step 4" },
+
+  "wizard_startScanButton": "بدء المسح",
+  "@wizard_startScanButton": { "description": "Button to start the cabinet hardware scan on step 4" },
+
+  "wizard_scanningStatus": "جارٍ مسح الخزانة...",
+  "@wizard_scanningStatus": { "description": "Header text shown while the cabinet hardware scan is in progress" },
+
+  "wizard_scanSuccessBanner": "نجح المسح — تم العثور على {count} درج",
+  "@wizard_scanSuccessBanner": {
+    "description": "Success banner title shown after a successful hardware scan on step 4",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of drawers found during the scan" }
+    }
+  },
+
+  "wizard_scanSuccessDescription": "تمت قراءة التصميم الداخلي للخزانة من الجهاز بنجاح. يرجى تأكيد البنية أدناه.",
+  "@wizard_scanSuccessDescription": { "description": "Description text in the scan success banner on step 4" },
+
+  "wizard_scanWrongStructure": "إذا كانت البنية غير صحيحة، ارجع وتحقق من معلومات الاتصال.",
+  "@wizard_scanWrongStructure": { "description": "Hint text at the bottom of the scan-found state telling the user to re-check connections if the result is wrong" },
+
+  "wizard_rescanButton": "إعادة المسح",
+  "@wizard_rescanButton": { "description": "Button to reset and re-run the hardware scan on step 4" },
+
+  "wizard_scanErrorBanner": "فشل المسح. تحقق من اتصال COM Port وأعد المحاولة.",
+  "@wizard_scanErrorBanner": { "description": "Error banner message shown when the hardware scan fails on step 4" },
+
+  "wizard_scanLogConnecting": "جارٍ الاتصال بالمنفذ التسلسلي…",
+  "@wizard_scanLogConnecting": { "description": "Scan log entry message while connecting to the serial port" },
+
+  "wizard_scanLogFetchingMetadata": "جارٍ تحميل تعريفات الأدراج…",
+  "@wizard_scanLogFetchingMetadata": { "description": "Scan log entry message while fetching drawer type metadata" },
+
+  "wizard_scanLogSearchingManager": "جارٍ البحث عن بطاقة الإدارة…",
+  "@wizard_scanLogSearchingManager": { "description": "Scan log entry message while searching for the management card" },
+
+  "wizard_scanLogScanningCards": "جارٍ مسح بطاقات التحكم…",
+  "@wizard_scanLogScanningCards": { "description": "Scan log entry message while scanning control cards" },
+
+  "wizard_scanLogDrawerFound": "تم العثور على درج",
+  "@wizard_scanLogDrawerFound": { "description": "Scan log entry message when a drawer is found during the hardware scan" },
+
+  "wizard_drawerLabel": "الدرج {index}",
+  "@wizard_drawerLabel": {
+    "description": "Label prefix for each scanned drawer row in the scan results list (1-based index)",
+    "placeholders": {
+      "index": { "type": "int", "description": "1-based index of the drawer" }
+    }
+  },
+
+  "wizard_cellCountLabel": "{count} خانة",
+  "@wizard_cellCountLabel": {
+    "description": "Cell count chip shown on scanned drawer rows for kubik drawers",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of cells/compartments in the drawer" }
+    }
+  },
+
+  "wizard_rowCountLabel": "{count} صف",
+  "@wizard_rowCountLabel": {
+    "description": "Row count chip shown on scanned drawer rows for unit-dose drawers",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of rows/units in the drawer" }
+    }
+  },
+
+  "wizard_drawerCountLabel": "عدد الأدراج",
+  "@wizard_drawerCountLabel": { "description": "Label for the drawer count input in the manual mobile cabinet configuration on step 4" },
+
+  "wizard_addRowButton": "إضافة صف",
+  "@wizard_addRowButton": { "description": "Button to add a row to the current drawer configuration in mobile manual setup" },
+
+  "wizard_removeLastRowButton": "حذف آخر صف",
+  "@wizard_removeLastRowButton": { "description": "Button to remove the last row from the current drawer configuration in mobile manual setup" },
+
+  "wizard_step5Header": "الملخص والإتمام",
+  "@wizard_step5Header": { "description": "Step 5 header title for the summary and confirmation step" },
+
+  "wizard_step5Subtitle": "أكّد المعلومات التي أدخلتها. بعد التأكيد سيكتمل الإعداد.",
+  "@wizard_step5Subtitle": { "description": "Step 5 header subtitle" },
+
+  "wizard_summaryCabinInfoTitle": "معلومات الخزانة",
+  "@wizard_summaryCabinInfoTitle": { "description": "Summary card title for the cabin basic information section on step 5" },
+
+  "wizard_summaryServiceScopeTitle": "نطاق الخدمة",
+  "@wizard_summaryServiceScopeTitle": { "description": "Summary card title for the service scope section on step 5" },
+
+  "wizard_summaryDrawerStructureTitle": "بنية الأدراج",
+  "@wizard_summaryDrawerStructureTitle": { "description": "Summary card title for the drawer structure section on step 5" },
+
+  "wizard_summaryCabinPreviewTitle": "معاينة الخزانة",
+  "@wizard_summaryCabinPreviewTitle": { "description": "Summary card title for the cabin visual preview section on step 5" },
+
+  "wizard_summaryLabelType": "النوع",
+  "@wizard_summaryLabelType": { "description": "Row label for the cabin type in the cabin info summary card" },
+
+  "wizard_summaryLabelName": "الاسم",
+  "@wizard_summaryLabelName": { "description": "Row label for the cabin name in the cabin info summary card" },
+
+  "wizard_summaryLabelStation": "المحطة",
+  "@wizard_summaryLabelStation": { "description": "Row label for the station in the service scope summary card" },
+
+  "wizard_summaryLabelRoomCount": "عدد الغرف",
+  "@wizard_summaryLabelRoomCount": { "description": "Row label for the room count in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelRooms": "الغرف",
+  "@wizard_summaryLabelRooms": { "description": "Row label for the room names list in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelBeds": "الأسرّة",
+  "@wizard_summaryLabelBeds": { "description": "Row label for the bed names list in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelDrawerCount": "عدد الأدراج",
+  "@wizard_summaryLabelDrawerCount": { "description": "Row label for the drawer count in the drawer structure summary card (mobile cabin)" },
+
+  "wizard_summaryLabelTotalDrawers": "إجمالي الأدراج",
+  "@wizard_summaryLabelTotalDrawers": { "description": "Row label for the total drawer count in the drawer structure summary card (standard cabin)" },
+
+  "wizard_summaryLabelDrawerIndexed": "الدرج {index}",
+  "@wizard_summaryLabelDrawerIndexed": {
+    "description": "Row label for an individual drawer in the drawer structure summary card",
+    "placeholders": {
+      "index": { "type": "int", "description": "1-based drawer index" }
+    }
+  },
+
+  "wizard_summaryTypeMobile": "خزانة متنقلة",
+  "@wizard_summaryTypeMobile": { "description": "Cabin type value in the summary card when the selected type is mobile" },
+
+  "wizard_summaryTypeStandard": "خزانة ثابتة",
+  "@wizard_summaryTypeStandard": { "description": "Cabin type value in the summary card when the selected type is standard/master" },
+
+  "wizard_summaryLabelComPort": "COM Port",
+  "@wizard_summaryLabelComPort": { "description": "Row label for the COM port value in the cabin info summary card" },
+
+  "wizard_summaryLabelDvrIp": "DVR IP",
+  "@wizard_summaryLabelDvrIp": { "description": "Row label for the DVR IP value in the cabin info summary card" },
+
+  "wizard_summaryLabelRfidAddress": "عنوان RFID",
+  "@wizard_summaryLabelRfidAddress": { "description": "Row label for the RFID IP address value in the cabin info summary card" },
+
+  "wizard_summaryLabelRfidPort": "منفذ RFID",
+  "@wizard_summaryLabelRfidPort": { "description": "Row label for the RFID port value in the cabin info summary card" },
+
+  "wizard_savingMessage": "جارٍ حفظ الخزانة…",
+  "@wizard_savingMessage": { "description": "Text shown below the loading spinner while the cabin is being saved to the server" },
+
+  "wizard_successTitle": "اكتمل الإعداد!",
+  "@wizard_successTitle": { "description": "Title of the wizard success screen after the cabin is saved" },
+
+  "wizard_successMessage": "تمت إضافة {cabinName} إلى النظام بنجاح.",
+  "@wizard_successMessage": {
+    "description": "Success message on the wizard completion screen",
+    "placeholders": {
+      "cabinName": { "type": "String", "description": "Name of the newly created cabin" }
+    }
+  },
+
+  "wizard_successCabinId": "معرّف الخزانة: #{id}",
+  "@wizard_successCabinId": {
+    "description": "Cabin ID badge shown on the wizard success screen",
+    "placeholders": {
+      "id": { "type": "int", "description": "Numeric ID of the newly created cabin" }
+    }
+  },
+
+  "wizard_successDashboardButton": "الانتقال إلى Dashboard",
+  "@wizard_successDashboardButton": { "description": "Button on the wizard success screen to navigate to the dashboard" },
+
+  "wizard_errorTitle": "فشل الحفظ",
+  "@wizard_errorTitle": { "description": "Title of the wizard error screen when cabin save fails" },
+
+  "wizard_retryButton": "العودة وإعادة المحاولة",
+  "@wizard_retryButton": { "description": "Button on the wizard error screen to go back and retry" },
+
+  "settings_title": "الإعدادات",
+  "@settings_title": { "description": "Title label in the settings modal header" },
+
+  "settings_systemConfigTitle": "تهيئة النظام",
+  "@settings_systemConfigTitle": { "description": "Section title for the system configuration area in the settings modal" },
+
+  "settings_appearanceLabel": "المظهر",
+  "@settings_appearanceLabel": { "description": "Label for the appearance/theme section in the settings sidebar and modal" },
+
+  "settings_generalLabel": "عام",
+  "@settings_generalLabel": { "description": "Label for the general section in the settings modal" },
+
+  "assignment_patientUpdatedSuccess": "تم تحديث تعيين المريض",
+  "@assignment_patientUpdatedSuccess": { "description": "Success snackbar/state message after a patient assignment is updated to a different hospitalization" },
+
+  "fault_selectSlotPlaceholder": "لإبلاغ عن عطل، اختر\nدرجاً من اللوحة اليسرى.",
+  "@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" }
+}

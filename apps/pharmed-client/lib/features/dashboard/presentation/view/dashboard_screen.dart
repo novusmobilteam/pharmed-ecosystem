@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_client/features/assignment/presentation/view/assignment_view.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
 import 'package:pharmed_client/features/fault/presentation/view/fault_view.dart';
@@ -92,7 +93,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   StaleBanner(lastUpdated: dashState.staleSince, canProceed: dashState.canProceed),
 
                 // İçerik
-                Expanded(child: DashboardContentFactory.buildContent(dashState, notifier, isLoggedIn)),
+                Expanded(child: DashboardContentFactory.buildContent(context, dashState, notifier, isLoggedIn)),
               ],
             ),
 

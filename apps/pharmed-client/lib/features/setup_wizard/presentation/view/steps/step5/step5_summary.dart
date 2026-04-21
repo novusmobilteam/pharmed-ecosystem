@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-
+import '../../../../../../l10n/l10n_ext.dart';
 import '../../../../domain/model/cabin_setup_config.dart';
 import '../../../../domain/model/wizard_draft.dart';
 import '../../../../domain/model/wizard_mobile_layout.dart';
@@ -29,8 +29,8 @@ class Step5Summary extends StatelessWidget {
       children: [
         StepHeader(
           badge: 'ADIM 5 / 5',
-          title: 'Özet & Tamamla',
-          subtitle: 'Girdiğiniz bilgileri onaylayın. Onayladıktan sonra kurulum tamamlanacaktır.',
+          title: context.l10n.wizard_step5Header,
+          subtitle: context.l10n.wizard_step5Subtitle,
         ),
 
         Expanded(

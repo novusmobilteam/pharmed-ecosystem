@@ -29,7 +29,7 @@ class MobileConfigView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Çekmece sayısı ──
-          SectionLabel(label: 'Çekmece Sayısı'),
+          SectionLabel(label: context.l10n.wizard_drawerCountLabel),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -268,14 +268,14 @@ class _DrawerConfigCardState extends State<_DrawerConfigCard> {
                     children: [
                       _ActionChip(
                         icon: Icons.add_rounded,
-                        label: 'Satır Ekle',
+                        label: context.l10n.wizard_addRowButton,
                         enabled: drawer.rowCount < 8,
                         onTap: _addRow,
                       ),
                       const SizedBox(width: 8),
                       _ActionChip(
                         icon: Icons.remove_rounded,
-                        label: 'Son Satırı Sil',
+                        label: context.l10n.wizard_removeLastRowButton,
                         enabled: drawer.rowCount > 1,
                         danger: true,
                         onTap: _removeLastRow,

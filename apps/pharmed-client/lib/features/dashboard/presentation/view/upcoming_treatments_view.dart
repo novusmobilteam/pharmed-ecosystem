@@ -48,7 +48,7 @@ class UpcomingTreatmentsView extends StatelessWidget {
             title: 'Yeni Tedavi Ata',
             description: 'Yeni tedavi atama ekranına geçilecek.',
             confirmLabel: 'Devam Et',
-            cancelLabel: 'İptal',
+            cancelLabel: context.l10n.common_cancelButton,
             isDangerous: false,
             onConfirm: () {
               Navigator.of(context).pop();

@@ -83,7 +83,7 @@ class _StationsError extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             MedButton(
-              label: 'Tekrar Dene',
+              label: context.l10n.common_retryButton,
               variant: MedButtonVariant.secondary,
               size: MedButtonSize.sm,
               prefixIcon: const Icon(Icons.refresh_rounded, size: 15),
@@ -122,7 +122,7 @@ class _StationList extends StatelessWidget {
                 style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
               ),
               MedButton(
-                label: 'Tekrar Dene',
+                label: context.l10n.common_retryButton,
                 variant: MedButtonVariant.secondary,
                 size: MedButtonSize.sm,
                 prefixIcon: Icon(Icons.refresh_rounded, size: 15),

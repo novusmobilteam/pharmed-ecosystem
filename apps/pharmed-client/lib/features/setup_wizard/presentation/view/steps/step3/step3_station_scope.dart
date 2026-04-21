@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_client/features/setup_wizard/domain/model/cabin_setup_config.dart';
 import 'package:pharmed_client/features/setup_wizard/presentation/state/setup_wizard_ui_state.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -53,7 +54,7 @@ class Step3StationScope extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // MARK: Header
-        StepHeader(badge: 'Adım 3 / 5', title: 'Hizmet Kapsamı', subtitle: 'Servis veya oda tanımları.'),
+        StepHeader(badge: 'Adım 3 / 5', title: context.l10n.wizard_step3Header, subtitle: context.l10n.wizard_step3Subtitle),
 
         // MARK: Content
         Expanded(
@@ -72,7 +73,7 @@ class Step3StationScope extends StatelessWidget {
                 // Mobil kabin: istasyon seçildiyse oda/yatak picker'ı göster
                 if (mobileScope?.station.type == StationType.patientBased && mobileScope != null) ...[
                   const SizedBox(height: 24),
-                  SectionLabel(label: 'ODA & YATAK SEÇİMİ'),
+                  SectionLabel(label: context.l10n.wizard_roomBedSelectionLabel),
                   const SizedBox(height: 12),
                   _RoomBedSection(
                     servicesLoadState: servicesLoadState,

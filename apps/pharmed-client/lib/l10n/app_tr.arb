@@ -1,0 +1,645 @@
+{
+  "@@locale": "tr",
+
+  "common_selectCellTitle": "Bir göz seçin",
+  "@common_selectCellTitle": { "description": "Placeholder title shown in right panel before any cell is selected" },
+
+  "common_noAssignmentBadge": "Atanmamış",
+  "@common_noAssignmentBadge": { "description": "Badge shown on a cell that has no drug or patient assignment" },
+
+  "common_drugAssignedBadge": "İlaç Atanmış",
+  "@common_drugAssignedBadge": { "description": "Badge shown on a cell that has a drug assignment" },
+
+  "common_patientAssignedBadge": "Hasta Atanmış",
+  "@common_patientAssignedBadge": { "description": "Badge shown on a cell that has a patient assignment" },
+
+  "common_noCabinDataTitle": "Kabin verisi bulunamadı",
+  "@common_noCabinDataTitle": { "description": "Empty-state title when cabin data is unavailable" },
+
+  "common_noCabinDataDescription": "Kabin henüz yapılandırılmamış olabilir\nveya bağlantı kurulamadı.",
+  "@common_noCabinDataDescription": { "description": "Empty-state description when cabin data is unavailable" },
+
+  "common_noResultsTitle": "Sonuç bulunamadı",
+  "@common_noResultsTitle": { "description": "Empty-state title when a search or filter returns no results" },
+
+  "common_noResultsDescription": "Arama kriterlerinizi değiştirmeyi deneyin.",
+  "@common_noResultsDescription": { "description": "Empty-state description when a search or filter returns no results" },
+
+  "common_retryButton": "Tekrar Dene",
+  "@common_retryButton": { "description": "Generic retry button label used in error states" },
+
+  "common_cancelButton": "İptal",
+  "@common_cancelButton": { "description": "Generic cancel button label used in dialogs" },
+
+  "common_pageNotFound": "Sayfa bulunamadı",
+  "@common_pageNotFound": { "description": "Fallback message shown for unknown dashboard routes" },
+
+  "common_minLabel": "Min",
+  "@common_minLabel": { "description": "Minimum quantity field label in drug assignment panel" },
+
+  "common_maxLabel": "Maks",
+  "@common_maxLabel": { "description": "Maximum quantity field label in drug assignment panel" },
+
+  "common_criticalLabel": "Kritik",
+  "@common_criticalLabel": { "description": "Critical quantity field label in drug assignment panel" },
+
+  "auth_loginSubtitle": "Sisteme giriş yapın",
+  "@auth_loginSubtitle": { "description": "Subtitle below the logo on the login screen" },
+
+  "auth_emailLabel": "E-posta / Kullanıcı Adı",
+  "@auth_emailLabel": { "description": "Label for the email/username field on the login screen" },
+
+  "auth_passwordLabel": "Şifre",
+  "@auth_passwordLabel": { "description": "Label for the password field on the login screen" },
+
+  "auth_loginButton": "Giriş Yap",
+  "@auth_loginButton": { "description": "Login button on the login screen" },
+
+  "auth_genericError": "Bir hata oluştu",
+  "@auth_genericError": { "description": "Generic error message shown when login fails without a specific message" },
+
+  "dashboard_appBarTitle": "İLAÇ KABİN YÖNETİMİ",
+  "@dashboard_appBarTitle": { "description": "Application name shown in the top app bar" },
+
+  "dashboard_logoutTooltip": "Çıkış Yap",
+  "@dashboard_logoutTooltip": { "description": "Tooltip for the logout icon button in the top app bar" },
+
+  "dashboard_loginBarButton": "Giriş Yap",
+  "@dashboard_loginBarButton": { "description": "Login button shown in the app bar when no user is logged in" },
+
+  "dashboard_kpiActivePatients": "Aktif Hasta",
+  "@dashboard_kpiActivePatients": { "description": "KPI card label for active patients count" },
+
+  "dashboard_kpiCompletedOps": "Tamamlanan İşlem",
+  "@dashboard_kpiCompletedOps": { "description": "KPI card label for completed operations count" },
+
+  "dashboard_kpiPendingPrescriptions": "Bekleyen Reçete",
+  "@dashboard_kpiPendingPrescriptions": { "description": "KPI card label for pending prescriptions count" },
+
+  "dashboard_kpiCriticalAlerts": "Kritik Uyarı",
+  "@dashboard_kpiCriticalAlerts": { "description": "KPI card label for critical alerts count" },
+
+  "dashboard_cabinStatusHeader": "KABİN DURUMU",
+  "@dashboard_cabinStatusHeader": { "description": "Section header for the cabin status card on the dashboard" },
+
+  "dashboard_cabinStatusLabel": "Kabin Durumu",
+  "@dashboard_cabinStatusLabel": { "description": "Label for the cabin working-status row inside the cabin card" },
+
+  "dashboard_kpiLoadError": "KPI verileri yüklenemedi",
+  "@dashboard_kpiLoadError": { "description": "Error label shown in place of the KPI section when loading fails" },
+
+  "dashboard_cabinLoadError": "Kabin verisi yüklenemedi",
+  "@dashboard_cabinLoadError": { "description": "Error label shown in place of the cabin section when loading fails" },
+
+  "dashboard_treatmentsLoadError": "Tedavi listesi yüklenemedi",
+  "@dashboard_treatmentsLoadError": { "description": "Error label shown in place of the treatments section when loading fails" },
+
+  "dashboard_sktLoadError": "SKT verisi yüklenemedi",
+  "@dashboard_sktLoadError": { "description": "Error label shown in place of the expiry-date section when loading fails" },
+
+  "assignment_assignPatientPlaceholder": "Hasta atamak için orta\npanelden bir göz seçin.",
+  "@assignment_assignPatientPlaceholder": { "description": "Placeholder description in patient-assignment right panel before a cell is selected" },
+
+  "assignment_assignDrugPlaceholder": "Atama yapmak için orta\npanelden bir göz seçin.",
+  "@assignment_assignDrugPlaceholder": { "description": "Placeholder description in drug-assignment right panel before a cell is selected" },
+
+  "assignment_hospitalizationSectionLabel": "HASTA / YATIŞ",
+  "@assignment_hospitalizationSectionLabel": { "description": "Section label above the hospitalization selector in the patient-assignment panel" },
+
+  "assignment_hospitalizationSelectorHint": "Yatış seçin...",
+  "@assignment_hospitalizationSelectorHint": { "description": "Hint text in the hospitalization selector button when nothing is selected" },
+
+  "assignment_selectHospitalizationDialogTitle": "Yatış Seç",
+  "@assignment_selectHospitalizationDialogTitle": { "description": "Title of the dialog for selecting a hospitalization/bed" },
+
+  "assignment_drugSectionLabel": "İLAÇ",
+  "@assignment_drugSectionLabel": { "description": "Section label above the drug selector in the drug-assignment panel" },
+
+  "assignment_drugSelectorHint": "İlaç seçin...",
+  "@assignment_drugSelectorHint": { "description": "Hint text in the drug selector button when nothing is selected" },
+
+  "assignment_selectDrugDialogTitle": "İlaç Seç",
+  "@assignment_selectDrugDialogTitle": { "description": "Title of the dialog for selecting a drug/medicine" },
+
+  "assignment_quantitySectionLabel": "MİKTAR",
+  "@assignment_quantitySectionLabel": { "description": "Section label above the min/max/critical quantity input fields" },
+
+  "assignment_saveAssignmentButton": "Atamayı Kaydet",
+  "@assignment_saveAssignmentButton": { "description": "Primary button to save a new drug or patient assignment" },
+
+  "assignment_removeAssignmentButton": "Atamayı Kaldır",
+  "@assignment_removeAssignmentButton": { "description": "Danger button to remove an existing drug or patient assignment" },
+
+  "assignment_changeAssignmentButton": "Atamayı Değiştir",
+  "@assignment_changeAssignmentButton": { "description": "Primary button to update an existing patient assignment to a different hospitalization" },
+
+  "assignment_roomBedLabel": "Oda / Yatak",
+  "@assignment_roomBedLabel": { "description": "Label for the room/bed info row inside the patient card" },
+
+  "assignment_serviceLabel": "Servis",
+  "@assignment_serviceLabel": { "description": "Label for the physical service info row inside the patient card" },
+
+  "assignment_cellNotFoundError": "Seçili göz bulunamadı",
+  "@assignment_cellNotFoundError": { "description": "Error message shown when the selected cell ID cannot be resolved before saving" },
+
+  "assignment_patientSavedSuccess": "Hasta ataması başarıyla kaydedildi",
+  "@assignment_patientSavedSuccess": { "description": "Success snackbar/state message after a patient assignment is saved" },
+
+  "assignment_patientRemovedSuccess": "Hasta ataması kaldırıldı",
+  "@assignment_patientRemovedSuccess": { "description": "Success snackbar/state message after a patient assignment is removed" },
+
+  "fault_selectCellPlaceholder": "Arıza bildirmek için orta\npanelden bir göz seçin.",
+  "@fault_selectCellPlaceholder": { "description": "Placeholder description in the fault right panel before a cell/slot is selected" },
+
+  "fault_descriptionSectionLabel": "AÇIKLAMA",
+  "@fault_descriptionSectionLabel": { "description": "Section label above the fault description text field" },
+
+  "fault_descriptionHint": "Arıza detayını yazın...",
+  "@fault_descriptionHint": { "description": "Hint text inside the fault description multi-line text field" },
+
+  "fault_faultSegmentLabel": "ARIZA",
+  "@fault_faultSegmentLabel": { "description": "Left segment button label for selecting 'fault' status when reporting a new record" },
+
+  "fault_maintenanceSegmentLabel": "BAKIM",
+  "@fault_maintenanceSegmentLabel": { "description": "Right segment button label for selecting 'maintenance' status when reporting a new record" },
+
+  "fault_historySectionLabel": "GEÇMİŞ",
+  "@fault_historySectionLabel": { "description": "Section label above the fault history list" },
+
+  "fault_historyStatusCompleted": "Tamamlandı",
+  "@fault_historyStatusCompleted": { "description": "Status label for a resolved/closed fault record in the history list" },
+
+  "fault_historyStatusMaintenance": "Bakım",
+  "@fault_historyStatusMaintenance": { "description": "Status label for a maintenance record in the history list" },
+
+  "fault_historyStatusFault": "Arıza",
+  "@fault_historyStatusFault": { "description": "Status label for an active fault record in the history list" },
+
+  "fault_historyActiveBadge": "Aktif",
+  "@fault_historyActiveBadge": { "description": "Badge shown next to active (not yet closed) fault records in the history list" },
+
+  "fault_activeFaultBanner": "Bu gözde aktif bir {label} kaydı bulunmaktadır. Onayladığınızda bu kayıt sonlandırılacaktır.",
+  "@fault_activeFaultBanner": {
+    "description": "Warning banner shown when the selected cell already has an active fault/maintenance record",
+    "placeholders": {
+      "label": { "type": "String", "description": "Type of the active record: 'arıza' or 'bakım'" }
+    }
+  },
+
+  "fault_reportFaultButton": "Arıza Bildir",
+  "@fault_reportFaultButton": { "description": "Submit button label when creating a new fault/maintenance record" },
+
+  "fault_closeFaultButton": "Kaydı Sonlandır",
+  "@fault_closeFaultButton": { "description": "Submit button label when closing an existing active fault/maintenance record" },
+
+  "fault_recordCreatedSuccess": "Arıza kaydı oluşturuldu.",
+  "@fault_recordCreatedSuccess": { "description": "Success message shown after a fault record is successfully created" },
+
+  "fault_recordClosedSuccess": "Arıza kaydı kapatıldı.",
+  "@fault_recordClosedSuccess": { "description": "Success message shown after a fault record is successfully closed" },
+
+  "cabin_mobileTypeLabel": "MOBİL",
+  "@cabin_mobileTypeLabel": { "description": "Type badge label shown on the mobile cabin slot card in the left overview panel" },
+
+  "cabin_mobileDrawerTitle": "Mobil Çekmece",
+  "@cabin_mobileDrawerTitle": { "description": "Header title of the mobile cabin drawer panel (center panel)" },
+
+  "cabin_cellCountLabel": "{count} göz",
+  "@cabin_cellCountLabel": {
+    "description": "Cell count label on the mobile cabin slot card",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of cells in the slot" }
+    }
+  },
+
+  "cabin_drawerStatsLabel": "Çekmece",
+  "@cabin_drawerStatsLabel": { "description": "Label for the drawer count stat box in the cabin stats grid" },
+
+  "cabin_statsFullEmpty": "{full} dolu · {empty} boş",
+  "@cabin_statsFullEmpty": {
+    "description": "Sub-label for the drawer stat box showing full and empty counts",
+    "placeholders": {
+      "full": { "type": "int", "description": "Number of full drawers" },
+      "empty": { "type": "int", "description": "Number of empty drawers" }
+    }
+  },
+
+  "cabin_touchDrawerHint": "Bir çekmeceye dokunun",
+  "@cabin_touchDrawerHint": { "description": "Hint text shown in the center panel when no drawer/slot is selected" },
+
+  "cabin_mobileGridPlaceholder": "Mobil kabin göz grid'i görüntülenecek",
+  "@cabin_mobileGridPlaceholder": { "description": "Subtitle of the empty-state shown in the mobile drawer panel before a slot is selected" },
+
+  "cabin_masterGridPlaceholder": "Kübik · Birim Doz · Serum iç yapıları görüntülenecek",
+  "@cabin_masterGridPlaceholder": { "description": "Subtitle of the empty-state shown in the master drawer panel before a drawer is selected" },
+
+  "cabin_kubikTypeLabel": "KÜBİK",
+  "@cabin_kubikTypeLabel": { "description": "Uppercase drawer-type badge shown on kubik drawer cards in the master overview panel" },
+
+  "cabin_serumDrawerName": "Serum Çekmece",
+  "@cabin_serumDrawerName": { "description": "Header name for serum-type drawers in the master drawer panel" },
+
+  "cabin_kubikDrawerName": "Kübik Çekmece",
+  "@cabin_kubikDrawerName": { "description": "Header name for kubik-type drawers in the master drawer panel" },
+
+  "cabin_unitDoseDrawerName": "Birim Doz Çekmece",
+  "@cabin_unitDoseDrawerName": { "description": "Header name for unit-dose drawers in the master drawer panel" },
+
+  "cabin_serumRackView": "Raf görünümü",
+  "@cabin_serumRackView": { "description": "Sub-label shown below the serum drawer header in the master panel" },
+
+  "cabin_serumViewTitle": "Serum görünümü",
+  "@cabin_serumViewTitle": { "description": "Placeholder title inside the serum drawer content area (not yet implemented)" },
+
+  "cabin_serumViewTodo": "TODO: Serum iç yapısı netleşince tamamlanacak",
+  "@cabin_serumViewTodo": { "description": "Placeholder note inside the serum drawer content area shown until implementation is complete" },
+
+  "cabin_openButton": "Aç",
+  "@cabin_openButton": { "description": "Button label to open the cabin on the cabin action bar" },
+
+  "cabin_assignDrugButton": "İlaç Ata",
+  "@cabin_assignDrugButton": { "description": "Button label to enter drug-assignment mode from the cabin action bar" },
+
+  "cabin_bannerPatientAssign": "Hasta Atama — gözlere hasta / yatış atayın.",
+  "@cabin_bannerPatientAssign": { "description": "Info banner shown at the top of the drawer panel when in patient-assignment mode" },
+
+  "cabin_bannerDrugAssign": "İlaç Atama — gözlere ilaç atayın, min/maks/kritik değerleri belirleyin.",
+  "@cabin_bannerDrugAssign": { "description": "Info banner shown at the top of the drawer panel when in drug-assignment mode" },
+
+  "cabin_bannerDrugFill": "İlaç Dolum — dolum yapılacak göze dokunun, miktarı girin.",
+  "@cabin_bannerDrugFill": { "description": "Info banner shown at the top of the drawer panel when in drug-fill mode" },
+
+  "cabin_bannerDrugCount": "Sayım — fiili miktarı girin, sistem farkı hesaplayacak.",
+  "@cabin_bannerDrugCount": { "description": "Info banner shown at the top of the drawer panel when in drug-count mode" },
+
+  "cabin_bannerFault": "Arıza — arızalı gözü işaretleyin ve açıklama girin.",
+  "@cabin_bannerFault": { "description": "Info banner shown at the top of the drawer panel when in fault-reporting mode" },
+
+  "cabin_statusWorking": "Çalışıyor",
+  "@cabin_statusWorking": { "description": "CabinWorkingStatus display label for a normally working cabin/cell" },
+
+  "cabin_statusFaultRecord": "Arıza Kaydı",
+  "@cabin_statusFaultRecord": { "description": "CabinWorkingStatus display label for a cabin/cell with an active fault record" },
+
+  "cabin_statusMaintenanceRecord": "Bakım Kaydı",
+  "@cabin_statusMaintenanceRecord": { "description": "CabinWorkingStatus display label for a cabin/cell in maintenance" },
+
+  "cabin_modeAssignLabel": "İlaç Atama",
+  "@cabin_modeAssignLabel": { "description": "Display name for CabinOperationMode.assign" },
+
+  "cabin_modeFillLabel": "İlaç Dolum",
+  "@cabin_modeFillLabel": { "description": "Display name for CabinOperationMode.fill" },
+
+  "cabin_modeCountLabel": "İlaç Sayım",
+  "@cabin_modeCountLabel": { "description": "Display name for CabinOperationMode.count" },
+
+  "cabin_modeFaultLabel": "Çekmece Arıza",
+  "@cabin_modeFaultLabel": { "description": "Display name for CabinOperationMode.fault" },
+
+  "cabin_operationPanelAssign": "İLAÇ ATAMA",
+  "@cabin_operationPanelAssign": { "description": "Header title in the right operation panel when in drug-assignment mode" },
+
+  "cabin_operationPanelFill": "İLAÇ DOLUM",
+  "@cabin_operationPanelFill": { "description": "Header title in the right operation panel when in drug-fill mode" },
+
+  "cabin_operationPanelCount": "İLAÇ SAYIM",
+  "@cabin_operationPanelCount": { "description": "Header title in the right operation panel when in drug-count mode" },
+
+  "cabin_operationPanelFault": "ARIZA BİLDİR",
+  "@cabin_operationPanelFault": { "description": "Header title in the right operation panel when in fault-reporting mode" },
+
+  "cabin_legendAssignEmpty": "Boş göz (ata)",
+  "@cabin_legendAssignEmpty": { "description": "Legend item label for empty cells in drug-assignment mode" },
+
+  "cabin_legendAssignAssigned": "İlaç atanmış",
+  "@cabin_legendAssignAssigned": { "description": "Legend item label for drug-assigned cells in drug-assignment mode" },
+
+  "cabin_legendAssignFault": "Arızalı",
+  "@cabin_legendAssignFault": { "description": "Legend item label for faulty cells in assignment mode" },
+
+  "cabin_legendAssignMaintenance": "Bakımda",
+  "@cabin_legendAssignMaintenance": { "description": "Legend item label for cells under maintenance in assignment mode" },
+
+  "cabin_legendPatientAssigned": "Hasta atanmış",
+  "@cabin_legendPatientAssigned": { "description": "Legend item label for cells with a patient assignment in patient-assignment mode" },
+
+  "cabin_legendFilled": "Dolu",
+  "@cabin_legendFilled": { "description": "Legend item label for filled cells in non-assignment modes" },
+
+  "cabin_legendFillEmpty": "Boş (dolum yok)",
+  "@cabin_legendFillEmpty": { "description": "Legend item label for empty (no fill needed) cells in drug-fill mode" },
+
+  "cabin_legendCountAssigned": "Sayılacak (ilaçlı)",
+  "@cabin_legendCountAssigned": { "description": "Legend item label for cells to be counted in drug-count mode" },
+
+  "cabin_legendCountLow": "Düşük stok",
+  "@cabin_legendCountLow": { "description": "Legend item label for cells with low stock in drug-count mode" },
+
+  "cabin_legendCountEmpty": "Boş (atla)",
+  "@cabin_legendCountEmpty": { "description": "Legend item label for empty cells to skip in drug-count mode" },
+
+  "cabin_legendFaultNormal": "Normal çalışıyor",
+  "@cabin_legendFaultNormal": { "description": "Legend item label for normally operating cells in fault mode" },
+
+  "cabin_legendFaultReported": "Arıza bildirildi",
+  "@cabin_legendFaultReported": { "description": "Legend item label for cells with a reported fault in fault mode" },
+
+  "cabin_legendFaultEmpty": "Boş göz",
+  "@cabin_legendFaultEmpty": { "description": "Legend item label for empty cells in fault mode" },
+
+  "wizard_sidebarTitle": "Kabin Kurulumu",
+  "@wizard_sidebarTitle": { "description": "Title shown at the top of the setup wizard sidebar" },
+
+  "wizard_sidebarSubtitle": "Yeni cihaz yapılandırması",
+  "@wizard_sidebarSubtitle": { "description": "Subtitle shown below the title in the setup wizard sidebar" },
+
+  "wizard_step1SidebarTitle": "Kabin Tipi",
+  "@wizard_step1SidebarTitle": { "description": "Step 1 title in the wizard sidebar step list" },
+
+  "wizard_step1SidebarDesc": "Standart veya Mobil",
+  "@wizard_step1SidebarDesc": { "description": "Step 1 description in the wizard sidebar step list" },
+
+  "wizard_step2SidebarTitle": "Temel Bilgiler",
+  "@wizard_step2SidebarTitle": { "description": "Step 2 title in the wizard sidebar step list" },
+
+  "wizard_step2SidebarDesc": "Ad, konum, bağlantı",
+  "@wizard_step2SidebarDesc": { "description": "Step 2 description in the wizard sidebar step list" },
+
+  "wizard_step3SidebarTitle": "Hizmet Kapsamı",
+  "@wizard_step3SidebarTitle": { "description": "Step 3 title in the wizard sidebar step list" },
+
+  "wizard_step3SidebarDesc": "Servis veya oda tanımları",
+  "@wizard_step3SidebarDesc": { "description": "Step 3 description in the wizard sidebar step list" },
+
+  "wizard_step4SidebarTitle": "Çekmece Yapısı",
+  "@wizard_step4SidebarTitle": { "description": "Step 4 title in the wizard sidebar step list" },
+
+  "wizard_step4SidebarDesc": "Tarama veya manuel giriş",
+  "@wizard_step4SidebarDesc": { "description": "Step 4 description in the wizard sidebar step list" },
+
+  "wizard_step5SidebarTitle": "Özet",
+  "@wizard_step5SidebarTitle": { "description": "Step 5 title in the wizard sidebar step list" },
+
+  "wizard_step5SidebarDesc": "Gözden geçir ve tamamla",
+  "@wizard_step5SidebarDesc": { "description": "Step 5 description in the wizard sidebar step list" },
+
+  "wizard_step1Header": "Kabin Tipini Seçin",
+  "@wizard_step1Header": { "description": "Step 1 header title shown at the top of the cabin-type selection step" },
+
+  "wizard_step1Subtitle": "Yönetmek istediğiniz kabin türünü belirleyin. Bu seçim sonraki adımları şekillendirecektir.",
+  "@wizard_step1Subtitle": { "description": "Step 1 header subtitle describing the purpose of the cabin-type selection step" },
+
+  "wizard_cabinTypeNote": "Kabin tipi sonradan değiştirilemez.",
+  "@wizard_cabinTypeNote": { "description": "Footer note on step 1 warning that the cabin type cannot be changed after completion" },
+
+  "wizard_masterCabinSpec1": "Kübik / Birim Doz",
+  "@wizard_masterCabinSpec1": { "description": "First spec pill label on the standard (master) cabin type card" },
+
+  "wizard_masterCabinSpec2": "Servis Bazlı",
+  "@wizard_masterCabinSpec2": { "description": "Second spec pill label on the standard cabin type card" },
+
+  "wizard_masterCabinDescription": "Sabit duvara monte veya bağımsız duran, kübik ve birim doz çekmece kombinasyonuna sahip kabin.",
+  "@wizard_masterCabinDescription": { "description": "Description text on the standard (master) cabin type card on step 1" },
+
+  "wizard_mobileCabinSpec1": "Tekerlekli",
+  "@wizard_mobileCabinSpec1": { "description": "First spec pill label on the mobile cabin type card" },
+
+  "wizard_mobileCabinSpec2": "Oda Bazlı",
+  "@wizard_mobileCabinSpec2": { "description": "Second spec pill label on the mobile cabin type card" },
+
+  "wizard_mobileCabinDescription": "Tekerlekli, koğuş dolaşımı için tasarlanmış 4 sıralı taşınabilir ilaç ünitesi.",
+  "@wizard_mobileCabinDescription": { "description": "Description text on the mobile cabin type card on step 1" },
+
+  "wizard_step2Header": "Temel Bilgiler",
+  "@wizard_step2Header": { "description": "Step 2 header title for basic cabin info (name, location, connection)" },
+
+  "wizard_step2Subtitle": "Kabin adı, konum ve cihaz bağlantı ayarlarını girin.",
+  "@wizard_step2Subtitle": { "description": "Step 2 header subtitle" },
+
+  "wizard_cabinNameLabel": "Kabin Adı",
+  "@wizard_cabinNameLabel": { "description": "Label for the cabin name text field on step 2" },
+
+  "wizard_cabinNameHint": "örn. CB-304",
+  "@wizard_cabinNameHint": { "description": "Hint text for the cabin name text field on step 2" },
+
+  "wizard_connectionSettingsLabel": "BAĞLANTI AYARLARI",
+  "@wizard_connectionSettingsLabel": { "description": "Section label for the connection settings group on step 2" },
+
+  "wizard_noComPortWarning": "Aktif COM Port bulunamadı. Sürücülerin yüklü olduğundan emin olun.",
+  "@wizard_noComPortWarning": { "description": "Warning text shown on step 2 when no active COM port is detected" },
+
+  "wizard_antennaSettingsLabel": "ANTEN AYARLARI",
+  "@wizard_antennaSettingsLabel": { "description": "Section label for the antenna/RFID settings group on step 2" },
+
+  "wizard_ipAddressLabel": "IP Adresi",
+  "@wizard_ipAddressLabel": { "description": "Label for the IP address input field on step 2" },
+
+  "wizard_testConnectionButton": "Bağlantıyı Test Et",
+  "@wizard_testConnectionButton": { "description": "Button to test the cabin card serial connection on step 2" },
+
+  "wizard_step3Header": "Hizmet Kapsamı",
+  "@wizard_step3Header": { "description": "Step 3 header title for service/station scope selection" },
+
+  "wizard_step3Subtitle": "Servis veya oda tanımları.",
+  "@wizard_step3Subtitle": { "description": "Step 3 header subtitle" },
+
+  "wizard_roomBedSelectionLabel": "ODA & YATAK SEÇİMİ",
+  "@wizard_roomBedSelectionLabel": { "description": "Section label for the room and bed selection area on step 3 for mobile cabins" },
+
+  "wizard_scanTitle": "Cihazı Tara",
+  "@wizard_scanTitle": { "description": "Title of the idle scan state on step 4" },
+
+  "wizard_scanDescription": "Seri port üzerinden bağlı kabinin çekmece yapısı otomatik okunacaktır.",
+  "@wizard_scanDescription": { "description": "Description text shown in the idle scan state on step 4" },
+
+  "wizard_startScanButton": "Taramayı Başlat",
+  "@wizard_startScanButton": { "description": "Button to start the cabinet hardware scan on step 4" },
+
+  "wizard_scanningStatus": "Kabin Taranıyor...",
+  "@wizard_scanningStatus": { "description": "Header text shown while the cabinet hardware scan is in progress" },
+
+  "wizard_scanSuccessBanner": "Tarama Başarılı — {count} çekmece bulundu",
+  "@wizard_scanSuccessBanner": {
+    "description": "Success banner title shown after a successful hardware scan on step 4",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of drawers found during the scan" }
+    }
+  },
+
+  "wizard_scanSuccessDescription": "Kabin iç dizaynı cihazdan başarıyla okundu. Aşağıdaki yapıyı onaylayın.",
+  "@wizard_scanSuccessDescription": { "description": "Description text in the scan success banner on step 4" },
+
+  "wizard_scanWrongStructure": "Yapı yanlışsa geri dönüp bağlantı bilgilerini kontrol edin.",
+  "@wizard_scanWrongStructure": { "description": "Hint text at the bottom of the scan-found state telling the user to re-check connections if the result is wrong" },
+
+  "wizard_rescanButton": "Yeniden Tara",
+  "@wizard_rescanButton": { "description": "Button to reset and re-run the hardware scan on step 4" },
+
+  "wizard_scanErrorBanner": "Tarama başarısız. COM port bağlantısını kontrol edip tekrar deneyin.",
+  "@wizard_scanErrorBanner": { "description": "Error banner message shown when the hardware scan fails on step 4" },
+
+  "wizard_scanLogConnecting": "Seri porta bağlanılıyor…",
+  "@wizard_scanLogConnecting": { "description": "Scan log entry message while connecting to the serial port" },
+
+  "wizard_scanLogFetchingMetadata": "Çekmece tanımları yükleniyor…",
+  "@wizard_scanLogFetchingMetadata": { "description": "Scan log entry message while fetching drawer type metadata" },
+
+  "wizard_scanLogSearchingManager": "Yönetim kartı aranıyor…",
+  "@wizard_scanLogSearchingManager": { "description": "Scan log entry message while searching for the management card" },
+
+  "wizard_scanLogScanningCards": "Kontrol kartları taranıyor…",
+  "@wizard_scanLogScanningCards": { "description": "Scan log entry message while scanning control cards" },
+
+  "wizard_scanLogDrawerFound": "Çekmece bulundu",
+  "@wizard_scanLogDrawerFound": { "description": "Scan log entry message when a drawer is found during the hardware scan" },
+
+  "wizard_drawerLabel": "ÇEKMECE {index}",
+  "@wizard_drawerLabel": {
+    "description": "Label prefix for each scanned drawer row in the scan results list (1-based index)",
+    "placeholders": {
+      "index": { "type": "int", "description": "1-based index of the drawer" }
+    }
+  },
+
+  "wizard_cellCountLabel": "{count} göz",
+  "@wizard_cellCountLabel": {
+    "description": "Cell count chip shown on scanned drawer rows for kubik drawers",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of cells/compartments in the drawer" }
+    }
+  },
+
+  "wizard_rowCountLabel": "{count} sıra",
+  "@wizard_rowCountLabel": {
+    "description": "Row count chip shown on scanned drawer rows for unit-dose drawers",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of rows/units in the drawer" }
+    }
+  },
+
+  "wizard_drawerCountLabel": "Çekmece Sayısı",
+  "@wizard_drawerCountLabel": { "description": "Label for the drawer count input in the manual mobile cabinet configuration on step 4" },
+
+  "wizard_addRowButton": "Satır Ekle",
+  "@wizard_addRowButton": { "description": "Button to add a row to the current drawer configuration in mobile manual setup" },
+
+  "wizard_removeLastRowButton": "Son Satırı Sil",
+  "@wizard_removeLastRowButton": { "description": "Button to remove the last row from the current drawer configuration in mobile manual setup" },
+
+  "wizard_step5Header": "Özet & Tamamla",
+  "@wizard_step5Header": { "description": "Step 5 header title for the summary and confirmation step" },
+
+  "wizard_step5Subtitle": "Girdiğiniz bilgileri onaylayın. Onayladıktan sonra kurulum tamamlanacaktır.",
+  "@wizard_step5Subtitle": { "description": "Step 5 header subtitle" },
+
+  "wizard_summaryCabinInfoTitle": "KABİN BİLGİLERİ",
+  "@wizard_summaryCabinInfoTitle": { "description": "Summary card title for the cabin basic information section on step 5" },
+
+  "wizard_summaryServiceScopeTitle": "HİZMET KAPSAMI",
+  "@wizard_summaryServiceScopeTitle": { "description": "Summary card title for the service scope section on step 5" },
+
+  "wizard_summaryDrawerStructureTitle": "ÇEKMECE YAPISI",
+  "@wizard_summaryDrawerStructureTitle": { "description": "Summary card title for the drawer structure section on step 5" },
+
+  "wizard_summaryCabinPreviewTitle": "KABİN ÖNİZLEMESİ",
+  "@wizard_summaryCabinPreviewTitle": { "description": "Summary card title for the cabin visual preview section on step 5" },
+
+  "wizard_summaryLabelType": "Tip",
+  "@wizard_summaryLabelType": { "description": "Row label for the cabin type in the cabin info summary card" },
+
+  "wizard_summaryLabelName": "İsim",
+  "@wizard_summaryLabelName": { "description": "Row label for the cabin name in the cabin info summary card" },
+
+  "wizard_summaryLabelStation": "İstasyon",
+  "@wizard_summaryLabelStation": { "description": "Row label for the station in the service scope summary card" },
+
+  "wizard_summaryLabelRoomCount": "Oda sayısı",
+  "@wizard_summaryLabelRoomCount": { "description": "Row label for the room count in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelRooms": "Odalar",
+  "@wizard_summaryLabelRooms": { "description": "Row label for the room names list in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelBeds": "Yataklar",
+  "@wizard_summaryLabelBeds": { "description": "Row label for the bed names list in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelDrawerCount": "Çekmece sayısı",
+  "@wizard_summaryLabelDrawerCount": { "description": "Row label for the drawer count in the drawer structure summary card (mobile cabin)" },
+
+  "wizard_summaryLabelTotalDrawers": "Toplam çekmece",
+  "@wizard_summaryLabelTotalDrawers": { "description": "Row label for the total drawer count in the drawer structure summary card (standard cabin)" },
+
+  "wizard_summaryLabelDrawerIndexed": "{index}. Çekmece",
+  "@wizard_summaryLabelDrawerIndexed": {
+    "description": "Row label for an individual drawer in the drawer structure summary card",
+    "placeholders": {
+      "index": { "type": "int", "description": "1-based drawer index" }
+    }
+  },
+
+  "wizard_summaryTypeMobile": "Mobil Kabin",
+  "@wizard_summaryTypeMobile": { "description": "Cabin type value in the summary card when the selected type is mobile" },
+
+  "wizard_summaryTypeStandard": "Standart Kabin",
+  "@wizard_summaryTypeStandard": { "description": "Cabin type value in the summary card when the selected type is standard/master" },
+
+  "wizard_summaryLabelComPort": "COM Port",
+  "@wizard_summaryLabelComPort": { "description": "Row label for the COM port value in the cabin info summary card" },
+
+  "wizard_summaryLabelDvrIp": "DVR IP",
+  "@wizard_summaryLabelDvrIp": { "description": "Row label for the DVR IP value in the cabin info summary card" },
+
+  "wizard_summaryLabelRfidAddress": "RFID Adresi",
+  "@wizard_summaryLabelRfidAddress": { "description": "Row label for the RFID IP address value in the cabin info summary card" },
+
+  "wizard_summaryLabelRfidPort": "RFID Portu",
+  "@wizard_summaryLabelRfidPort": { "description": "Row label for the RFID port value in the cabin info summary card" },
+
+  "wizard_savingMessage": "Kabin kaydediliyor…",
+  "@wizard_savingMessage": { "description": "Text shown below the loading spinner while the cabin is being saved to the server" },
+
+  "wizard_successTitle": "Kurulum Tamamlandı!",
+  "@wizard_successTitle": { "description": "Title of the wizard success screen after the cabin is saved" },
+
+  "wizard_successMessage": "{cabinName} başarıyla sisteme eklendi.",
+  "@wizard_successMessage": {
+    "description": "Success message on the wizard completion screen",
+    "placeholders": {
+      "cabinName": { "type": "String", "description": "Name of the newly created cabin" }
+    }
+  },
+
+  "wizard_successCabinId": "Kabin ID: #{id}",
+  "@wizard_successCabinId": {
+    "description": "Cabin ID badge shown on the wizard success screen",
+    "placeholders": {
+      "id": { "type": "int", "description": "Numeric ID of the newly created cabin" }
+    }
+  },
+
+  "wizard_successDashboardButton": "Dashboard'a Git",
+  "@wizard_successDashboardButton": { "description": "Button on the wizard success screen to navigate to the dashboard" },
+
+  "wizard_errorTitle": "Kayıt Başarısız",
+  "@wizard_errorTitle": { "description": "Title of the wizard error screen when cabin save fails" },
+
+  "wizard_retryButton": "Geri Dön ve Tekrar Dene",
+  "@wizard_retryButton": { "description": "Button on the wizard error screen to go back and retry" },
+
+  "settings_title": "Ayarlar",
+  "@settings_title": { "description": "Title label in the settings modal header" },
+
+  "settings_systemConfigTitle": "SİSTEM YAPILANDIRMASI",
+  "@settings_systemConfigTitle": { "description": "Section title for the system configuration area in the settings modal" },
+
+  "settings_appearanceLabel": "Görünüm",
+  "@settings_appearanceLabel": { "description": "Label for the appearance/theme section in the settings sidebar and modal" },
+
+  "settings_generalLabel": "Genel",
+  "@settings_generalLabel": { "description": "Label for the general section in the settings modal" },
+
+  "assignment_patientUpdatedSuccess": "Hasta ataması güncellendi",
+  "@assignment_patientUpdatedSuccess": { "description": "Success snackbar/state message after a patient assignment is updated to a different hospitalization" },
+
+  "fault_selectSlotPlaceholder": "Arıza bildirmek için sol\npanelden bir çekmece seçin.",
+  "@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" }
+}

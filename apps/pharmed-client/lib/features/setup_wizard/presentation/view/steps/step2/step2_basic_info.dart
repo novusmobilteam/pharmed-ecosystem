@@ -4,6 +4,7 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../../../core/hardware/service/rfid/model/rfid_reader_info.dart';
@@ -104,8 +105,8 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
         // MARK: Header
         StepHeader(
           badge: 'Adım 2 / 5',
-          title: 'Temel Bilgiler',
-          subtitle: 'Kabin adı, konum ve cihaz bağlantı ayarlarını girin.',
+          title: context.l10n.wizard_step2Header,
+          subtitle: context.l10n.wizard_step2Subtitle,
         ),
 
         // MARK: Content
@@ -118,8 +119,8 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
                 // ── Kimlik ──
                 MedTextField(
                   controller: _nameCtrl,
-                  label: 'Kabin Adı',
-                  hint: 'örn. CB-304',
+                  label: context.l10n.wizard_cabinNameLabel,
+                  hint: context.l10n.wizard_cabinNameHint,
                   textVariant: MedLabelVariant.monoValue,
                   prefixIcon: Icon(Icons.inventory_2_outlined),
                   onChanged: (_) => _notify(),
@@ -127,7 +128,7 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
                 const SizedBox(height: 24),
 
                 // ── Bağlantı ──
-                SectionLabel(label: 'BAĞLANTI AYARLARI'),
+                SectionLabel(label: context.l10n.wizard_connectionSettingsLabel),
                 const SizedBox(height: 12),
                 Column(children: [_ipAddressField(), SizedBox(height: 12), _dvrIpField()]),
                 const SizedBox(height: 12),
@@ -142,14 +143,14 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      'Aktif COM Port bulunamadı. Sürücülerin yüklü olduğundan emin olun.',
+                      context.l10n.wizard_noComPortWarning,
                       style: TextStyle(color: MedColors.ledRed, fontSize: 11),
                     ),
                   ),
 
                 // ── Anten ──
                 const SizedBox(height: 24),
-                SectionLabel(label: 'ANTEN AYARLARI'),
+                SectionLabel(label: context.l10n.wizard_antennaSettingsLabel),
                 _antennaField(),
               ],
             ),
@@ -172,7 +173,7 @@ class _Step2BasicInfoState extends State<Step2BasicInfo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MedLabel(text: 'IP Adresi', variant: MedLabelVariant.monoValue),
+              MedLabel(text: context.l10n.wizard_ipAddressLabel, variant: MedLabelVariant.monoValue),
               const SizedBox(height: 6),
               MedIpField(
                 initialValue: _ipAddress,

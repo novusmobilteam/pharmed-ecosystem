@@ -1,0 +1,645 @@
+{
+  "@@locale": "en",
+
+  "common_selectCellTitle": "Select a Cell",
+  "@common_selectCellTitle": { "description": "Placeholder title shown in right panel before any cell is selected" },
+
+  "common_noAssignmentBadge": "Unassigned",
+  "@common_noAssignmentBadge": { "description": "Badge shown on a cell that has no drug or patient assignment" },
+
+  "common_drugAssignedBadge": "Drug Assigned",
+  "@common_drugAssignedBadge": { "description": "Badge shown on a cell that has a drug assignment" },
+
+  "common_patientAssignedBadge": "Patient Assigned",
+  "@common_patientAssignedBadge": { "description": "Badge shown on a cell that has a patient assignment" },
+
+  "common_noCabinDataTitle": "No Cabinet Data Found",
+  "@common_noCabinDataTitle": { "description": "Empty-state title when cabin data is unavailable" },
+
+  "common_noCabinDataDescription": "The cabinet may not be configured yet\nor the connection could not be established.",
+  "@common_noCabinDataDescription": { "description": "Empty-state description when cabin data is unavailable" },
+
+  "common_noResultsTitle": "No Results Found",
+  "@common_noResultsTitle": { "description": "Empty-state title when a search or filter returns no results" },
+
+  "common_noResultsDescription": "Try changing your search criteria.",
+  "@common_noResultsDescription": { "description": "Empty-state description when a search or filter returns no results" },
+
+  "common_retryButton": "Retry",
+  "@common_retryButton": { "description": "Generic retry button label used in error states" },
+
+  "common_cancelButton": "Cancel",
+  "@common_cancelButton": { "description": "Generic cancel button label used in dialogs" },
+
+  "common_pageNotFound": "Page Not Found",
+  "@common_pageNotFound": { "description": "Fallback message shown for unknown dashboard routes" },
+
+  "common_minLabel": "Min",
+  "@common_minLabel": { "description": "Minimum quantity field label in drug assignment panel" },
+
+  "common_maxLabel": "Max",
+  "@common_maxLabel": { "description": "Maximum quantity field label in drug assignment panel" },
+
+  "common_criticalLabel": "Critical",
+  "@common_criticalLabel": { "description": "Critical quantity field label in drug assignment panel" },
+
+  "auth_loginSubtitle": "Sign in to the system",
+  "@auth_loginSubtitle": { "description": "Subtitle below the logo on the login screen" },
+
+  "auth_emailLabel": "Email / Username",
+  "@auth_emailLabel": { "description": "Label for the email/username field on the login screen" },
+
+  "auth_passwordLabel": "Password",
+  "@auth_passwordLabel": { "description": "Label for the password field on the login screen" },
+
+  "auth_loginButton": "Log In",
+  "@auth_loginButton": { "description": "Login button on the login screen" },
+
+  "auth_genericError": "An error occurred",
+  "@auth_genericError": { "description": "Generic error message shown when login fails without a specific message" },
+
+  "dashboard_appBarTitle": "MEDICINE CABINET MANAGEMENT",
+  "@dashboard_appBarTitle": { "description": "Application name shown in the top app bar" },
+
+  "dashboard_logoutTooltip": "Log Out",
+  "@dashboard_logoutTooltip": { "description": "Tooltip for the logout icon button in the top app bar" },
+
+  "dashboard_loginBarButton": "Log In",
+  "@dashboard_loginBarButton": { "description": "Login button shown in the app bar when no user is logged in" },
+
+  "dashboard_kpiActivePatients": "Active Patients",
+  "@dashboard_kpiActivePatients": { "description": "KPI card label for active patients count" },
+
+  "dashboard_kpiCompletedOps": "Completed Operations",
+  "@dashboard_kpiCompletedOps": { "description": "KPI card label for completed operations count" },
+
+  "dashboard_kpiPendingPrescriptions": "Pending Prescriptions",
+  "@dashboard_kpiPendingPrescriptions": { "description": "KPI card label for pending prescriptions count" },
+
+  "dashboard_kpiCriticalAlerts": "Critical Alerts",
+  "@dashboard_kpiCriticalAlerts": { "description": "KPI card label for critical alerts count" },
+
+  "dashboard_cabinStatusHeader": "CABINET STATUS",
+  "@dashboard_cabinStatusHeader": { "description": "Section header for the cabin status card on the dashboard" },
+
+  "dashboard_cabinStatusLabel": "Cabinet Status",
+  "@dashboard_cabinStatusLabel": { "description": "Label for the cabin working-status row inside the cabin card" },
+
+  "dashboard_kpiLoadError": "Failed to load KPI data",
+  "@dashboard_kpiLoadError": { "description": "Error label shown in place of the KPI section when loading fails" },
+
+  "dashboard_cabinLoadError": "Failed to load cabinet data",
+  "@dashboard_cabinLoadError": { "description": "Error label shown in place of the cabin section when loading fails" },
+
+  "dashboard_treatmentsLoadError": "Failed to load treatment list",
+  "@dashboard_treatmentsLoadError": { "description": "Error label shown in place of the treatments section when loading fails" },
+
+  "dashboard_sktLoadError": "Failed to load expiry data",
+  "@dashboard_sktLoadError": { "description": "Error label shown in place of the expiry-date section when loading fails" },
+
+  "assignment_assignPatientPlaceholder": "Select a cell from the center\npanel to assign a patient.",
+  "@assignment_assignPatientPlaceholder": { "description": "Placeholder description in patient-assignment right panel before a cell is selected" },
+
+  "assignment_assignDrugPlaceholder": "Select a cell from the center\npanel to make an assignment.",
+  "@assignment_assignDrugPlaceholder": { "description": "Placeholder description in drug-assignment right panel before a cell is selected" },
+
+  "assignment_hospitalizationSectionLabel": "PATIENT / ADMISSION",
+  "@assignment_hospitalizationSectionLabel": { "description": "Section label above the hospitalization selector in the patient-assignment panel" },
+
+  "assignment_hospitalizationSelectorHint": "Select admission...",
+  "@assignment_hospitalizationSelectorHint": { "description": "Hint text in the hospitalization selector button when nothing is selected" },
+
+  "assignment_selectHospitalizationDialogTitle": "Select Admission",
+  "@assignment_selectHospitalizationDialogTitle": { "description": "Title of the dialog for selecting a hospitalization/bed" },
+
+  "assignment_drugSectionLabel": "DRUG",
+  "@assignment_drugSectionLabel": { "description": "Section label above the drug selector in the drug-assignment panel" },
+
+  "assignment_drugSelectorHint": "Select drug...",
+  "@assignment_drugSelectorHint": { "description": "Hint text in the drug selector button when nothing is selected" },
+
+  "assignment_selectDrugDialogTitle": "Select Drug",
+  "@assignment_selectDrugDialogTitle": { "description": "Title of the dialog for selecting a drug/medicine" },
+
+  "assignment_quantitySectionLabel": "QUANTITY",
+  "@assignment_quantitySectionLabel": { "description": "Section label above the min/max/critical quantity input fields" },
+
+  "assignment_saveAssignmentButton": "Save Assignment",
+  "@assignment_saveAssignmentButton": { "description": "Primary button to save a new drug or patient assignment" },
+
+  "assignment_removeAssignmentButton": "Remove Assignment",
+  "@assignment_removeAssignmentButton": { "description": "Danger button to remove an existing drug or patient assignment" },
+
+  "assignment_changeAssignmentButton": "Change Assignment",
+  "@assignment_changeAssignmentButton": { "description": "Primary button to update an existing patient assignment to a different hospitalization" },
+
+  "assignment_roomBedLabel": "Room / Bed",
+  "@assignment_roomBedLabel": { "description": "Label for the room/bed info row inside the patient card" },
+
+  "assignment_serviceLabel": "Ward",
+  "@assignment_serviceLabel": { "description": "Label for the physical service info row inside the patient card" },
+
+  "assignment_cellNotFoundError": "Selected cell not found",
+  "@assignment_cellNotFoundError": { "description": "Error message shown when the selected cell ID cannot be resolved before saving" },
+
+  "assignment_patientSavedSuccess": "Patient assignment saved successfully",
+  "@assignment_patientSavedSuccess": { "description": "Success snackbar/state message after a patient assignment is saved" },
+
+  "assignment_patientRemovedSuccess": "Patient assignment removed",
+  "@assignment_patientRemovedSuccess": { "description": "Success snackbar/state message after a patient assignment is removed" },
+
+  "fault_selectCellPlaceholder": "Select a cell from the center\npanel to report a fault.",
+  "@fault_selectCellPlaceholder": { "description": "Placeholder description in the fault right panel before a cell/slot is selected" },
+
+  "fault_descriptionSectionLabel": "DESCRIPTION",
+  "@fault_descriptionSectionLabel": { "description": "Section label above the fault description text field" },
+
+  "fault_descriptionHint": "Describe the fault...",
+  "@fault_descriptionHint": { "description": "Hint text inside the fault description multi-line text field" },
+
+  "fault_faultSegmentLabel": "FAULT",
+  "@fault_faultSegmentLabel": { "description": "Left segment button label for selecting 'fault' status when reporting a new record" },
+
+  "fault_maintenanceSegmentLabel": "MAINTENANCE",
+  "@fault_maintenanceSegmentLabel": { "description": "Right segment button label for selecting 'maintenance' status when reporting a new record" },
+
+  "fault_historySectionLabel": "HISTORY",
+  "@fault_historySectionLabel": { "description": "Section label above the fault history list" },
+
+  "fault_historyStatusCompleted": "Resolved",
+  "@fault_historyStatusCompleted": { "description": "Status label for a resolved/closed fault record in the history list" },
+
+  "fault_historyStatusMaintenance": "Maintenance",
+  "@fault_historyStatusMaintenance": { "description": "Status label for a maintenance record in the history list" },
+
+  "fault_historyStatusFault": "Fault",
+  "@fault_historyStatusFault": { "description": "Status label for an active fault record in the history list" },
+
+  "fault_historyActiveBadge": "Active",
+  "@fault_historyActiveBadge": { "description": "Badge shown next to active (not yet closed) fault records in the history list" },
+
+  "fault_activeFaultBanner": "This cell has an active {label} record. Confirming will close this record.",
+  "@fault_activeFaultBanner": {
+    "description": "Warning banner shown when the selected cell already has an active fault/maintenance record",
+    "placeholders": {
+      "label": { "type": "String", "description": "Type of the active record: 'arıza' or 'bakım'" }
+    }
+  },
+
+  "fault_reportFaultButton": "Report Fault",
+  "@fault_reportFaultButton": { "description": "Submit button label when creating a new fault/maintenance record" },
+
+  "fault_closeFaultButton": "Close Record",
+  "@fault_closeFaultButton": { "description": "Submit button label when closing an existing active fault/maintenance record" },
+
+  "fault_recordCreatedSuccess": "Fault record created.",
+  "@fault_recordCreatedSuccess": { "description": "Success message shown after a fault record is successfully created" },
+
+  "fault_recordClosedSuccess": "Fault record closed.",
+  "@fault_recordClosedSuccess": { "description": "Success message shown after a fault record is successfully closed" },
+
+  "cabin_mobileTypeLabel": "MOBILE",
+  "@cabin_mobileTypeLabel": { "description": "Type badge label shown on the mobile cabin slot card in the left overview panel" },
+
+  "cabin_mobileDrawerTitle": "Mobile Drawer",
+  "@cabin_mobileDrawerTitle": { "description": "Header title of the mobile cabin drawer panel (center panel)" },
+
+  "cabin_cellCountLabel": "{count} cells",
+  "@cabin_cellCountLabel": {
+    "description": "Cell count label on the mobile cabin slot card",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of cells in the slot" }
+    }
+  },
+
+  "cabin_drawerStatsLabel": "Drawers",
+  "@cabin_drawerStatsLabel": { "description": "Label for the drawer count stat box in the cabin stats grid" },
+
+  "cabin_statsFullEmpty": "{full} full · {empty} empty",
+  "@cabin_statsFullEmpty": {
+    "description": "Sub-label for the drawer stat box showing full and empty counts",
+    "placeholders": {
+      "full": { "type": "int", "description": "Number of full drawers" },
+      "empty": { "type": "int", "description": "Number of empty drawers" }
+    }
+  },
+
+  "cabin_touchDrawerHint": "Tap a drawer",
+  "@cabin_touchDrawerHint": { "description": "Hint text shown in the center panel when no drawer/slot is selected" },
+
+  "cabin_mobileGridPlaceholder": "Mobile cabinet cell grid will be displayed",
+  "@cabin_mobileGridPlaceholder": { "description": "Subtitle of the empty-state shown in the mobile drawer panel before a slot is selected" },
+
+  "cabin_masterGridPlaceholder": "Cubic · Unit Dose · Serum internal structures will be displayed",
+  "@cabin_masterGridPlaceholder": { "description": "Subtitle of the empty-state shown in the master drawer panel before a drawer is selected" },
+
+  "cabin_kubikTypeLabel": "CUBIC",
+  "@cabin_kubikTypeLabel": { "description": "Uppercase drawer-type badge shown on kubik drawer cards in the master overview panel" },
+
+  "cabin_serumDrawerName": "Serum Drawer",
+  "@cabin_serumDrawerName": { "description": "Header name for serum-type drawers in the master drawer panel" },
+
+  "cabin_kubikDrawerName": "Cubic Drawer",
+  "@cabin_kubikDrawerName": { "description": "Header name for kubik-type drawers in the master drawer panel" },
+
+  "cabin_unitDoseDrawerName": "Unit Dose Drawer",
+  "@cabin_unitDoseDrawerName": { "description": "Header name for unit-dose drawers in the master drawer panel" },
+
+  "cabin_serumRackView": "Rack view",
+  "@cabin_serumRackView": { "description": "Sub-label shown below the serum drawer header in the master panel" },
+
+  "cabin_serumViewTitle": "Serum view",
+  "@cabin_serumViewTitle": { "description": "Placeholder title inside the serum drawer content area (not yet implemented)" },
+
+  "cabin_serumViewTodo": "TODO: Will be completed when serum internal structure is finalized",
+  "@cabin_serumViewTodo": { "description": "Placeholder note inside the serum drawer content area shown until implementation is complete" },
+
+  "cabin_openButton": "Open",
+  "@cabin_openButton": { "description": "Button label to open the cabin on the cabin action bar" },
+
+  "cabin_assignDrugButton": "Assign Drug",
+  "@cabin_assignDrugButton": { "description": "Button label to enter drug-assignment mode from the cabin action bar" },
+
+  "cabin_bannerPatientAssign": "Patient Assignment — assign a patient / admission to cells.",
+  "@cabin_bannerPatientAssign": { "description": "Info banner shown at the top of the drawer panel when in patient-assignment mode" },
+
+  "cabin_bannerDrugAssign": "Drug Assignment — assign drugs to cells, set min/max/critical values.",
+  "@cabin_bannerDrugAssign": { "description": "Info banner shown at the top of the drawer panel when in drug-assignment mode" },
+
+  "cabin_bannerDrugFill": "Drug Filling — tap the cell to fill, enter the quantity.",
+  "@cabin_bannerDrugFill": { "description": "Info banner shown at the top of the drawer panel when in drug-fill mode" },
+
+  "cabin_bannerDrugCount": "Stock Count — enter the actual quantity, the system will calculate the difference.",
+  "@cabin_bannerDrugCount": { "description": "Info banner shown at the top of the drawer panel when in drug-count mode" },
+
+  "cabin_bannerFault": "Fault — mark the faulty cell and enter a description.",
+  "@cabin_bannerFault": { "description": "Info banner shown at the top of the drawer panel when in fault-reporting mode" },
+
+  "cabin_statusWorking": "Operational",
+  "@cabin_statusWorking": { "description": "CabinWorkingStatus display label for a normally working cabin/cell" },
+
+  "cabin_statusFaultRecord": "Fault Record",
+  "@cabin_statusFaultRecord": { "description": "CabinWorkingStatus display label for a cabin/cell with an active fault record" },
+
+  "cabin_statusMaintenanceRecord": "Maintenance Record",
+  "@cabin_statusMaintenanceRecord": { "description": "CabinWorkingStatus display label for a cabin/cell in maintenance" },
+
+  "cabin_modeAssignLabel": "Drug Assignment",
+  "@cabin_modeAssignLabel": { "description": "Display name for CabinOperationMode.assign" },
+
+  "cabin_modeFillLabel": "Drug Filling",
+  "@cabin_modeFillLabel": { "description": "Display name for CabinOperationMode.fill" },
+
+  "cabin_modeCountLabel": "Drug Count",
+  "@cabin_modeCountLabel": { "description": "Display name for CabinOperationMode.count" },
+
+  "cabin_modeFaultLabel": "Drawer Fault",
+  "@cabin_modeFaultLabel": { "description": "Display name for CabinOperationMode.fault" },
+
+  "cabin_operationPanelAssign": "DRUG ASSIGNMENT",
+  "@cabin_operationPanelAssign": { "description": "Header title in the right operation panel when in drug-assignment mode" },
+
+  "cabin_operationPanelFill": "DRUG FILLING",
+  "@cabin_operationPanelFill": { "description": "Header title in the right operation panel when in drug-fill mode" },
+
+  "cabin_operationPanelCount": "DRUG COUNT",
+  "@cabin_operationPanelCount": { "description": "Header title in the right operation panel when in drug-count mode" },
+
+  "cabin_operationPanelFault": "REPORT FAULT",
+  "@cabin_operationPanelFault": { "description": "Header title in the right operation panel when in fault-reporting mode" },
+
+  "cabin_legendAssignEmpty": "Empty cell (assign)",
+  "@cabin_legendAssignEmpty": { "description": "Legend item label for empty cells in drug-assignment mode" },
+
+  "cabin_legendAssignAssigned": "Drug assigned",
+  "@cabin_legendAssignAssigned": { "description": "Legend item label for drug-assigned cells in drug-assignment mode" },
+
+  "cabin_legendAssignFault": "Faulty",
+  "@cabin_legendAssignFault": { "description": "Legend item label for faulty cells in assignment mode" },
+
+  "cabin_legendAssignMaintenance": "Under maintenance",
+  "@cabin_legendAssignMaintenance": { "description": "Legend item label for cells under maintenance in assignment mode" },
+
+  "cabin_legendPatientAssigned": "Patient assigned",
+  "@cabin_legendPatientAssigned": { "description": "Legend item label for cells with a patient assignment in patient-assignment mode" },
+
+  "cabin_legendFilled": "Filled",
+  "@cabin_legendFilled": { "description": "Legend item label for filled cells in non-assignment modes" },
+
+  "cabin_legendFillEmpty": "Empty (no fill needed)",
+  "@cabin_legendFillEmpty": { "description": "Legend item label for empty (no fill needed) cells in drug-fill mode" },
+
+  "cabin_legendCountAssigned": "To count (has drug)",
+  "@cabin_legendCountAssigned": { "description": "Legend item label for cells to be counted in drug-count mode" },
+
+  "cabin_legendCountLow": "Low stock",
+  "@cabin_legendCountLow": { "description": "Legend item label for cells with low stock in drug-count mode" },
+
+  "cabin_legendCountEmpty": "Empty (skip)",
+  "@cabin_legendCountEmpty": { "description": "Legend item label for empty cells to skip in drug-count mode" },
+
+  "cabin_legendFaultNormal": "Operating normally",
+  "@cabin_legendFaultNormal": { "description": "Legend item label for normally operating cells in fault mode" },
+
+  "cabin_legendFaultReported": "Fault reported",
+  "@cabin_legendFaultReported": { "description": "Legend item label for cells with a reported fault in fault mode" },
+
+  "cabin_legendFaultEmpty": "Empty cell",
+  "@cabin_legendFaultEmpty": { "description": "Legend item label for empty cells in fault mode" },
+
+  "wizard_sidebarTitle": "Cabinet Setup",
+  "@wizard_sidebarTitle": { "description": "Title shown at the top of the setup wizard sidebar" },
+
+  "wizard_sidebarSubtitle": "New device configuration",
+  "@wizard_sidebarSubtitle": { "description": "Subtitle shown below the title in the setup wizard sidebar" },
+
+  "wizard_step1SidebarTitle": "Cabinet Type",
+  "@wizard_step1SidebarTitle": { "description": "Step 1 title in the wizard sidebar step list" },
+
+  "wizard_step1SidebarDesc": "Standard or Mobile",
+  "@wizard_step1SidebarDesc": { "description": "Step 1 description in the wizard sidebar step list" },
+
+  "wizard_step2SidebarTitle": "Basic Information",
+  "@wizard_step2SidebarTitle": { "description": "Step 2 title in the wizard sidebar step list" },
+
+  "wizard_step2SidebarDesc": "Name, location, connection",
+  "@wizard_step2SidebarDesc": { "description": "Step 2 description in the wizard sidebar step list" },
+
+  "wizard_step3SidebarTitle": "Service Scope",
+  "@wizard_step3SidebarTitle": { "description": "Step 3 title in the wizard sidebar step list" },
+
+  "wizard_step3SidebarDesc": "Ward or room definitions",
+  "@wizard_step3SidebarDesc": { "description": "Step 3 description in the wizard sidebar step list" },
+
+  "wizard_step4SidebarTitle": "Drawer Structure",
+  "@wizard_step4SidebarTitle": { "description": "Step 4 title in the wizard sidebar step list" },
+
+  "wizard_step4SidebarDesc": "Scan or manual entry",
+  "@wizard_step4SidebarDesc": { "description": "Step 4 description in the wizard sidebar step list" },
+
+  "wizard_step5SidebarTitle": "Summary",
+  "@wizard_step5SidebarTitle": { "description": "Step 5 title in the wizard sidebar step list" },
+
+  "wizard_step5SidebarDesc": "Review and complete",
+  "@wizard_step5SidebarDesc": { "description": "Step 5 description in the wizard sidebar step list" },
+
+  "wizard_step1Header": "Select Cabinet Type",
+  "@wizard_step1Header": { "description": "Step 1 header title shown at the top of the cabin-type selection step" },
+
+  "wizard_step1Subtitle": "Specify the type of cabinet you want to manage. This choice will shape the subsequent steps.",
+  "@wizard_step1Subtitle": { "description": "Step 1 header subtitle describing the purpose of the cabin-type selection step" },
+
+  "wizard_cabinTypeNote": "Cabinet type cannot be changed later.",
+  "@wizard_cabinTypeNote": { "description": "Footer note on step 1 warning that the cabin type cannot be changed after completion" },
+
+  "wizard_masterCabinSpec1": "Cubic / Unit Dose",
+  "@wizard_masterCabinSpec1": { "description": "First spec pill label on the standard (master) cabin type card" },
+
+  "wizard_masterCabinSpec2": "Ward-Based",
+  "@wizard_masterCabinSpec2": { "description": "Second spec pill label on the standard cabin type card" },
+
+  "wizard_masterCabinDescription": "Wall-mounted or freestanding cabinet with a combination of cubic and unit-dose drawers.",
+  "@wizard_masterCabinDescription": { "description": "Description text on the standard (master) cabin type card on step 1" },
+
+  "wizard_mobileCabinSpec1": "On Wheels",
+  "@wizard_mobileCabinSpec1": { "description": "First spec pill label on the mobile cabin type card" },
+
+  "wizard_mobileCabinSpec2": "Room-Based",
+  "@wizard_mobileCabinSpec2": { "description": "Second spec pill label on the mobile cabin type card" },
+
+  "wizard_mobileCabinDescription": "Wheeled, portable 4-row medication unit designed for ward rounds.",
+  "@wizard_mobileCabinDescription": { "description": "Description text on the mobile cabin type card on step 1" },
+
+  "wizard_step2Header": "Basic Information",
+  "@wizard_step2Header": { "description": "Step 2 header title for basic cabin info (name, location, connection)" },
+
+  "wizard_step2Subtitle": "Enter the cabinet name, location, and device connection settings.",
+  "@wizard_step2Subtitle": { "description": "Step 2 header subtitle" },
+
+  "wizard_cabinNameLabel": "Cabinet Name",
+  "@wizard_cabinNameLabel": { "description": "Label for the cabin name text field on step 2" },
+
+  "wizard_cabinNameHint": "e.g. CB-304",
+  "@wizard_cabinNameHint": { "description": "Hint text for the cabin name text field on step 2" },
+
+  "wizard_connectionSettingsLabel": "CONNECTION SETTINGS",
+  "@wizard_connectionSettingsLabel": { "description": "Section label for the connection settings group on step 2" },
+
+  "wizard_noComPortWarning": "No active COM Port found. Make sure the drivers are installed.",
+  "@wizard_noComPortWarning": { "description": "Warning text shown on step 2 when no active COM port is detected" },
+
+  "wizard_antennaSettingsLabel": "ANTENNA SETTINGS",
+  "@wizard_antennaSettingsLabel": { "description": "Section label for the antenna/RFID settings group on step 2" },
+
+  "wizard_ipAddressLabel": "IP Address",
+  "@wizard_ipAddressLabel": { "description": "Label for the IP address input field on step 2" },
+
+  "wizard_testConnectionButton": "Test Connection",
+  "@wizard_testConnectionButton": { "description": "Button to test the cabin card serial connection on step 2" },
+
+  "wizard_step3Header": "Service Scope",
+  "@wizard_step3Header": { "description": "Step 3 header title for service/station scope selection" },
+
+  "wizard_step3Subtitle": "Ward or room definitions.",
+  "@wizard_step3Subtitle": { "description": "Step 3 header subtitle" },
+
+  "wizard_roomBedSelectionLabel": "ROOM & BED SELECTION",
+  "@wizard_roomBedSelectionLabel": { "description": "Section label for the room and bed selection area on step 3 for mobile cabins" },
+
+  "wizard_scanTitle": "Scan Device",
+  "@wizard_scanTitle": { "description": "Title of the idle scan state on step 4" },
+
+  "wizard_scanDescription": "The drawer structure of the connected cabinet will be read automatically via the serial port.",
+  "@wizard_scanDescription": { "description": "Description text shown in the idle scan state on step 4" },
+
+  "wizard_startScanButton": "Start Scan",
+  "@wizard_startScanButton": { "description": "Button to start the cabinet hardware scan on step 4" },
+
+  "wizard_scanningStatus": "Scanning Cabinet..",
+  "@wizard_scanningStatus": { "description": "Header text shown while the cabinet hardware scan is in progress" },
+
+  "wizard_scanSuccessBanner": "Scan Successful — {count} drawers found",
+  "@wizard_scanSuccessBanner": {
+    "description": "Success banner title shown after a successful hardware scan on step 4",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of drawers found during the scan" }
+    }
+  },
+
+  "wizard_scanSuccessDescription": "The cabinet's internal layout was read from the device successfully. Confirm the structure below.",
+  "@wizard_scanSuccessDescription": { "description": "Description text in the scan success banner on step 4" },
+
+  "wizard_scanWrongStructure": "If the structure is incorrect, go back and check the connection details.",
+  "@wizard_scanWrongStructure": { "description": "Hint text at the bottom of the scan-found state telling the user to re-check connections if the result is wrong" },
+
+  "wizard_rescanButton": "Re-Scan",
+  "@wizard_rescanButton": { "description": "Button to reset and re-run the hardware scan on step 4" },
+
+  "wizard_scanErrorBanner": "Scan failed. Check the COM port connection and try again.",
+  "@wizard_scanErrorBanner": { "description": "Error banner message shown when the hardware scan fails on step 4" },
+
+  "wizard_scanLogConnecting": "Connecting to serial port…",
+  "@wizard_scanLogConnecting": { "description": "Scan log entry message while connecting to the serial port" },
+
+  "wizard_scanLogFetchingMetadata": "Loading drawer definitions…",
+  "@wizard_scanLogFetchingMetadata": { "description": "Scan log entry message while fetching drawer type metadata" },
+
+  "wizard_scanLogSearchingManager": "Searching for management card…",
+  "@wizard_scanLogSearchingManager": { "description": "Scan log entry message while searching for the management card" },
+
+  "wizard_scanLogScanningCards": "Scanning control cards…",
+  "@wizard_scanLogScanningCards": { "description": "Scan log entry message while scanning control cards" },
+
+  "wizard_scanLogDrawerFound": "Drawer found",
+  "@wizard_scanLogDrawerFound": { "description": "Scan log entry message when a drawer is found during the hardware scan" },
+
+  "wizard_drawerLabel": "DRAWER {index}",
+  "@wizard_drawerLabel": {
+    "description": "Label prefix for each scanned drawer row in the scan results list (1-based index)",
+    "placeholders": {
+      "index": { "type": "int", "description": "1-based index of the drawer" }
+    }
+  },
+
+  "wizard_cellCountLabel": "{count} cells",
+  "@wizard_cellCountLabel": {
+    "description": "Cell count chip shown on scanned drawer rows for kubik drawers",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of cells/compartments in the drawer" }
+    }
+  },
+
+  "wizard_rowCountLabel": "{count} rows",
+  "@wizard_rowCountLabel": {
+    "description": "Row count chip shown on scanned drawer rows for unit-dose drawers",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of rows/units in the drawer" }
+    }
+  },
+
+  "wizard_drawerCountLabel": "Drawer Count",
+  "@wizard_drawerCountLabel": { "description": "Label for the drawer count input in the manual mobile cabinet configuration on step 4" },
+
+  "wizard_addRowButton": "Add Row",
+  "@wizard_addRowButton": { "description": "Button to add a row to the current drawer configuration in mobile manual setup" },
+
+  "wizard_removeLastRowButton": "Remove Last Row",
+  "@wizard_removeLastRowButton": { "description": "Button to remove the last row from the current drawer configuration in mobile manual setup" },
+
+  "wizard_step5Header": "Summary & Complete",
+  "@wizard_step5Header": { "description": "Step 5 header title for the summary and confirmation step" },
+
+  "wizard_step5Subtitle": "Confirm the information you have entered. The setup will be completed after confirmation.",
+  "@wizard_step5Subtitle": { "description": "Step 5 header subtitle" },
+
+  "wizard_summaryCabinInfoTitle": "CABINET INFORMATION",
+  "@wizard_summaryCabinInfoTitle": { "description": "Summary card title for the cabin basic information section on step 5" },
+
+  "wizard_summaryServiceScopeTitle": "SERVICE SCOPE",
+  "@wizard_summaryServiceScopeTitle": { "description": "Summary card title for the service scope section on step 5" },
+
+  "wizard_summaryDrawerStructureTitle": "DRAWER STRUCTURE",
+  "@wizard_summaryDrawerStructureTitle": { "description": "Summary card title for the drawer structure section on step 5" },
+
+  "wizard_summaryCabinPreviewTitle": "CABINET PREVIEW",
+  "@wizard_summaryCabinPreviewTitle": { "description": "Summary card title for the cabin visual preview section on step 5" },
+
+  "wizard_summaryLabelType": "Type",
+  "@wizard_summaryLabelType": { "description": "Row label for the cabin type in the cabin info summary card" },
+
+  "wizard_summaryLabelName": "Name",
+  "@wizard_summaryLabelName": { "description": "Row label for the cabin name in the cabin info summary card" },
+
+  "wizard_summaryLabelStation": "Station",
+  "@wizard_summaryLabelStation": { "description": "Row label for the station in the service scope summary card" },
+
+  "wizard_summaryLabelRoomCount": "Room count",
+  "@wizard_summaryLabelRoomCount": { "description": "Row label for the room count in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelRooms": "Rooms",
+  "@wizard_summaryLabelRooms": { "description": "Row label for the room names list in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelBeds": "Beds",
+  "@wizard_summaryLabelBeds": { "description": "Row label for the bed names list in the service scope summary card (mobile cabin)" },
+
+  "wizard_summaryLabelDrawerCount": "Drawer count",
+  "@wizard_summaryLabelDrawerCount": { "description": "Row label for the drawer count in the drawer structure summary card (mobile cabin)" },
+
+  "wizard_summaryLabelTotalDrawers": "Total drawers",
+  "@wizard_summaryLabelTotalDrawers": { "description": "Row label for the total drawer count in the drawer structure summary card (standard cabin)" },
+
+  "wizard_summaryLabelDrawerIndexed": "Drawer {index}",
+  "@wizard_summaryLabelDrawerIndexed": {
+    "description": "Row label for an individual drawer in the drawer structure summary card",
+    "placeholders": {
+      "index": { "type": "int", "description": "1-based drawer index" }
+    }
+  },
+
+  "wizard_summaryTypeMobile": "Mobile Cabinet",
+  "@wizard_summaryTypeMobile": { "description": "Cabin type value in the summary card when the selected type is mobile" },
+
+  "wizard_summaryTypeStandard": "Standard Cabinet",
+  "@wizard_summaryTypeStandard": { "description": "Cabin type value in the summary card when the selected type is standard/master" },
+
+  "wizard_summaryLabelComPort": "COM Port",
+  "@wizard_summaryLabelComPort": { "description": "Row label for the COM port value in the cabin info summary card" },
+
+  "wizard_summaryLabelDvrIp": "DVR IP",
+  "@wizard_summaryLabelDvrIp": { "description": "Row label for the DVR IP value in the cabin info summary card" },
+
+  "wizard_summaryLabelRfidAddress": "RFID Address",
+  "@wizard_summaryLabelRfidAddress": { "description": "Row label for the RFID IP address value in the cabin info summary card" },
+
+  "wizard_summaryLabelRfidPort": "RFID Port",
+  "@wizard_summaryLabelRfidPort": { "description": "Row label for the RFID port value in the cabin info summary card" },
+
+  "wizard_savingMessage": "Saving cabinet…",
+  "@wizard_savingMessage": { "description": "Text shown below the loading spinner while the cabinet is being saved to the server" },
+
+  "wizard_successTitle": "Setup Complete!",
+  "@wizard_successTitle": { "description": "Title of the wizard success screen after the cabin is saved" },
+
+  "wizard_successMessage": "{cabinName} has been successfully added to the system.",
+  "@wizard_successMessage": {
+    "description": "Success message on the wizard completion screen",
+    "placeholders": {
+      "cabinName": { "type": "String", "description": "Name of the newly created cabin" }
+    }
+  },
+
+  "wizard_successCabinId": "Cabinet ID: #{id}",
+  "@wizard_successCabinId": {
+    "description": "Cabin ID badge shown on the wizard success screen",
+    "placeholders": {
+      "id": { "type": "int", "description": "Numeric ID of the newly created cabin" }
+    }
+  },
+
+  "wizard_successDashboardButton": "Go to Dashboard",
+  "@wizard_successDashboardButton": { "description": "Button on the wizard success screen to navigate to the dashboard" },
+
+  "wizard_errorTitle": "Save Failed",
+  "@wizard_errorTitle": { "description": "Title of the wizard error screen when cabin save fails" },
+
+  "wizard_retryButton": "Go Back and Retry",
+  "@wizard_retryButton": { "description": "Button on the wizard error screen to go back and retry" },
+
+  "settings_title": "Settings",
+  "@settings_title": { "description": "Title label in the settings modal header" },
+
+  "settings_systemConfigTitle": "SYSTEM CONFIGURATION",
+  "@settings_systemConfigTitle": { "description": "Section title for the system configuration area in the settings modal" },
+
+  "settings_appearanceLabel": "Appearance",
+  "@settings_appearanceLabel": { "description": "Label for the appearance/theme section in the settings sidebar and modal" },
+
+  "settings_generalLabel": "General",
+  "@settings_generalLabel": { "description": "Label for the general section in the settings modal" },
+
+  "assignment_patientUpdatedSuccess": "Patient assignment updated successfully",
+"@assignment_patientUpdatedSuccess": { "description": "Success snackbar/state message after a patient assignment is updated to a different hospitalization" },
+
+"fault_selectSlotPlaceholder": "Select a drawer from the\nleft panel to report a fault.",
+"@fault_selectSlotPlaceholder": { "description": "Placeholder description in the fault right panel before a mobile slot is selected" }
+}

@@ -1,7 +1,7 @@
 part of 'dashboard_screen.dart';
 
 class DashboardContentFactory {
-  static Widget buildContent(DashboardUiState state, DashboardNotifier notifier, bool isLoggedIn) {
+  static Widget buildContent(BuildContext context, DashboardUiState state, DashboardNotifier notifier, bool isLoggedIn) {
     // Rota bilgisini güvenli bir şekilde state'den ayıklıyoruz
     final route = switch (state) {
       DashboardLoaded s => s.activeRoute,
@@ -14,19 +14,19 @@ class DashboardContentFactory {
       duration: const Duration(milliseconds: 250),
       child: switch (route) {
         // Ana Sayfa (Mevcut _DashboardBody içeriğin buraya taşındı)
-        'dashboard' => _buildMainDashboard(state, notifier, isLoggedIn),
+        'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
 
         // Diğer Modüller
         'cabinDrawerStock' => Center(child: AssignmentView()),
         'drawer-malfunction' => Center(child: FaultView()),
 
         // Fallback
-        _ => const Center(child: Text('Sayfa bulunamadı')),
+        _ => Center(child: Text(context.l10n.common_pageNotFound)),
       },
     );
   }
 
-  static Widget _buildMainDashboard(DashboardUiState state, DashboardNotifier notifier, bool isLoggedIn) {
+  static Widget _buildMainDashboard(BuildContext context, DashboardUiState state, DashboardNotifier notifier, bool isLoggedIn) {
     return switch (state) {
       DashboardLoading() => const _LoadingView(),
       DashboardLoaded(:final data) => _DashboardBody(data: data, notifier: notifier, isLoggedIn: isLoggedIn),
@@ -81,7 +81,7 @@ class _DashboardBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             failedSections.contains(DashboardSection.kpi)
-                ? const _SectionError(label: 'KPI verileri yüklenemedi')
+                ? _SectionError(label: context.l10n.dashboard_kpiLoadError)
                 : KpiView(kpi: data.kpi, isStale: isStale),
             const SizedBox(height: 14),
 
@@ -98,14 +98,14 @@ class _DashboardBody extends StatelessWidget {
                           canProceed: canProceed,
                           notifier: notifier,
                         )
-                      : const _SectionError(label: 'Kabin verisi yüklenemedi'),
+                      : _SectionError(label: context.l10n.dashboard_cabinLoadError),
                 ),
                 const SizedBox(width: 14),
 
                 // Orta kolon: Bekleyen Tedaviler
                 Expanded(
                   child: failedSections.contains(DashboardSection.treatments)
-                      ? const _SectionError(label: 'Tedavi listesi yüklenemedi')
+                      ? _SectionError(label: context.l10n.dashboard_treatmentsLoadError)
                       : UpcomingTreatmentsView(
                           treatments: data.upcomingTreatments,
                           isStale: isStale,
@@ -119,7 +119,7 @@ class _DashboardBody extends StatelessWidget {
                 SizedBox(
                   width: 256,
                   child: failedSections.contains(DashboardSection.skt)
-                      ? const _SectionError(label: 'SKT verisi yüklenemedi')
+                      ? _SectionError(label: context.l10n.dashboard_sktLoadError)
                       : SktView(skt: data.expiringMaterials, isStale: isStale),
                 ),
               ],
@@ -174,7 +174,7 @@ class _ErrorView extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.mdAll),
-                  child: Text('Tekrar Dene', style: MedTextStyles.bodyMd(color: Colors.white)),
+                  child: Text(context.l10n.common_retryButton, style: MedTextStyles.bodyMd(color: Colors.white)),
                 ),
               ),
             ],

@@ -12,7 +12,7 @@ class KpiView extends StatelessWidget {
       isStale: isStale,
       items: [
         KpiItem(
-          label: 'Aktif Hasta',
+          label: context.l10n.dashboard_kpiActivePatients,
           value: '${kpi.activePatients}',
           accentColor: MedColors.blue,
           progressValue: kpi.activePatientsProgress,
@@ -21,7 +21,7 @@ class KpiView extends StatelessWidget {
           icon: const Icon(Icons.people_outline_rounded, size: 16, color: MedColors.blue),
         ),
         KpiItem(
-          label: 'Tamamlanan İşlem',
+          label: context.l10n.dashboard_kpiCompletedOps,
           value: '${kpi.completedOperations}',
           accentColor: MedColors.green,
           progressValue: kpi.completedOperationsProgress,
@@ -30,7 +30,7 @@ class KpiView extends StatelessWidget {
           icon: const Icon(Icons.check_circle_outline_rounded, size: 16, color: MedColors.green),
         ),
         KpiItem(
-          label: 'Bekleyen Reçete',
+          label: context.l10n.dashboard_kpiPendingPrescriptions,
           value: '${kpi.pendingPrescriptions}',
           accentColor: MedColors.amber,
           progressValue: kpi.pendingPrescriptionsProgress,
@@ -39,7 +39,7 @@ class KpiView extends StatelessWidget {
           icon: const Icon(Icons.receipt_outlined, size: 16, color: MedColors.amber),
         ),
         KpiItem(
-          label: 'Kritik Uyarı',
+          label: context.l10n.dashboard_kpiCriticalAlerts,
           value: '${kpi.criticalAlerts}',
           accentColor: MedColors.red,
           progressValue: kpi.criticalAlertsProgress,

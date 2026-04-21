@@ -35,7 +35,7 @@ class MobileCabinDrawerPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = slot;
     if (s == null) {
-      return const CabinDrawerEmptyState(subtitle: 'Mobil kabin göz grid\'i görüntülenecek');
+      return CabinDrawerEmptyState(subtitle: context.l10n.cabin_mobileGridPlaceholder);
     }
 
     return Container(
@@ -92,7 +92,7 @@ class _MobileDrawerHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Mobil Çekmece', style: MedTextStyles.titleMd()),
+          Text(context.l10n.cabin_mobileDrawerTitle, style: MedTextStyles.titleMd()),
           const SizedBox(height: 3),
           Text(
             '${slot.rowCount} satır · ${slot.totalCells} göz  ·  '
@@ -345,7 +345,9 @@ class _MobileCellLegend extends StatelessWidget {
         children: [
           _MobileLegendItem(
             color: CabinCellColors.of(faultStatus!),
-            label: faultStatus == CabinCellStatus.maintenance ? 'Bakımda' : 'Arızalı',
+            label: faultStatus == CabinCellStatus.maintenance
+                ? context.l10n.cabin_legendAssignMaintenance
+                : context.l10n.cabin_legendAssignFault,
           ),
         ],
       );
@@ -355,13 +357,13 @@ class _MobileCellLegend extends StatelessWidget {
       spacing: 10,
       runSpacing: 4,
       children: [
-        _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.empty), label: 'Boş göz'),
+        _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.empty), label: context.l10n.cabin_legendFaultEmpty),
         _MobileLegendItem(
           color: CabinCellColors.of(CabinCellStatus.assigned),
-          label: mode == CabinOperationMode.assign ? 'Hasta atanmış' : 'Dolu',
+          label: mode == CabinOperationMode.assign ? context.l10n.cabin_legendPatientAssigned : context.l10n.cabin_legendFilled,
         ),
-        _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.fault), label: 'Arızalı'),
-        _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.maintenance), label: 'Bakımda'),
+        _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.fault), label: context.l10n.cabin_legendAssignFault),
+        _MobileLegendItem(color: CabinCellColors.of(CabinCellStatus.maintenance), label: context.l10n.cabin_legendAssignMaintenance),
       ],
     );
   }

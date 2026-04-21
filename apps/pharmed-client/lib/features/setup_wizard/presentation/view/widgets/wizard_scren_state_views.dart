@@ -110,14 +110,14 @@ class _WizardSavingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MedColors.blue)),
           SizedBox(height: 16),
           Text(
-            'Kabin kaydediliyor…',
+            context.l10n.wizard_savingMessage,
             style: TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text3),
           ),
         ],
@@ -180,9 +180,9 @@ class WizardSuccessViewState extends ConsumerState<WizardSuccessView> with Singl
                     child: const Icon(Icons.check_circle_rounded, size: 36, color: Color(0xFF0D9E6C)),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Kurulum Tamamlandı!',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.wizard_successTitle,
+                    style: const TextStyle(
                       fontFamily: MedFonts.title,
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
@@ -192,7 +192,7 @@ class WizardSuccessViewState extends ConsumerState<WizardSuccessView> with Singl
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${widget.cabinName} başarıyla sisteme eklendi.',
+                    context.l10n.wizard_successMessage(widget.cabinName),
                     style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text3),
                     textAlign: TextAlign.center,
                   ),
@@ -201,7 +201,7 @@ class WizardSuccessViewState extends ConsumerState<WizardSuccessView> with Singl
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: BorderRadius.circular(8)),
                     child: Text(
-                      'Kabin ID: #${widget.cabinId}',
+                      context.l10n.wizard_successCabinId(widget.cabinId),
                       style: const TextStyle(
                         fontFamily: MedFonts.mono,
                         fontSize: 12,
@@ -212,7 +212,7 @@ class WizardSuccessViewState extends ConsumerState<WizardSuccessView> with Singl
                   ),
                   const SizedBox(height: 32),
                   MedButton(
-                    label: 'Dashboard\'a Git',
+                    label: context.l10n.wizard_successDashboardButton,
                     size: MedButtonSize.lg,
                     prefixIcon: const Icon(Icons.dashboard_rounded, size: 18),
                     onPressed: () => ref.read(appSetupStatusProvider.notifier).markComplete(),
@@ -260,9 +260,9 @@ class WizardErrorView extends ConsumerWidget {
                   child: const Icon(Icons.error_outline_rounded, size: 32, color: Color(0xFFDC2626)),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Kayıt Başarısız',
-                  style: TextStyle(
+                Text(
+                  context.l10n.wizard_errorTitle,
+                  style: const TextStyle(
                     fontFamily: MedFonts.title,
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
@@ -277,7 +277,7 @@ class WizardErrorView extends ConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 MedButton(
-                  label: 'Geri Dön ve Tekrar Dene',
+                  label: context.l10n.wizard_retryButton,
                   variant: MedButtonVariant.secondary,
                   prefixIcon: const Icon(Icons.refresh_rounded, size: 16),
                   onPressed: notifier.retryFromError,

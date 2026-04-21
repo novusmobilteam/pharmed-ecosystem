@@ -28,6 +28,7 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_client/widgets/cell_info_card.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -98,7 +99,7 @@ class _PlaceholderContent extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Bir göz seçin',
+            context.l10n.common_selectCellTitle,
             style: TextStyle(
               fontFamily: MedFonts.sans,
               fontSize: 13,
@@ -108,7 +109,7 @@ class _PlaceholderContent extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Atama yapmak için orta\npanelden bir göz seçin.',
+            context.l10n.assignment_assignDrugPlaceholder,
             style: MedTextStyles.bodySm(color: MedColors.text4),
             textAlign: TextAlign.center,
           ),
@@ -203,7 +204,7 @@ class _DrugSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'İLAÇ',
+          context.l10n.assignment_drugSectionLabel,
           style: TextStyle(
             fontFamily: MedFonts.mono,
             fontSize: 9,
@@ -227,7 +228,7 @@ class _DrugSelector extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    hasSelection ? (selectedDrug!.name ?? '—') : 'İlaç seçin...',
+                    hasSelection ? (selectedDrug!.name ?? '—') : context.l10n.assignment_drugSelectorHint,
                     style: TextStyle(
                       fontFamily: MedFonts.sans,
                       fontSize: 13,
@@ -275,7 +276,7 @@ class _QtyFields extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'MİKTAR',
+          context.l10n.assignment_quantitySectionLabel,
           style: TextStyle(
             fontFamily: MedFonts.mono,
             fontSize: 9,
@@ -289,13 +290,13 @@ class _QtyFields extends StatelessWidget {
           spacing: 8,
           children: [
             Expanded(
-              child: _QtyInput(label: 'Min', value: minQty, onChanged: onMinChanged),
+              child: _QtyInput(label: context.l10n.common_minLabel, value: minQty, onChanged: onMinChanged),
             ),
             Expanded(
-              child: _QtyInput(label: 'Maks', value: maxQty, onChanged: onMaxChanged),
+              child: _QtyInput(label: context.l10n.common_maxLabel, value: maxQty, onChanged: onMaxChanged),
             ),
             Expanded(
-              child: _QtyInput(label: 'Kritik', value: criticalQty, onChanged: onCriticalChanged),
+              child: _QtyInput(label: context.l10n.common_criticalLabel, value: criticalQty, onChanged: onCriticalChanged),
             ),
           ],
         ),
@@ -400,7 +401,7 @@ class _ActionButtons extends StatelessWidget {
       children: [
         // Kaydet
         _PanelButton.primary(
-          label: 'Atamayı Kaydet',
+          label: context.l10n.assignment_saveAssignmentButton,
           icon: Icons.check_rounded,
           enabled: canSave,
           onTap: canSave ? onSave : null,
@@ -409,7 +410,7 @@ class _ActionButtons extends StatelessWidget {
         // Sil — sadece atanmış göz için
         if (isAssigned) ...[
           const SizedBox(height: 8),
-          _PanelButton.danger(label: 'Atamayı Kaldır', icon: Icons.delete_outline_rounded, onTap: onDelete),
+          _PanelButton.danger(label: context.l10n.assignment_removeAssignmentButton, icon: Icons.delete_outline_rounded, onTap: onDelete),
         ],
       ],
     );

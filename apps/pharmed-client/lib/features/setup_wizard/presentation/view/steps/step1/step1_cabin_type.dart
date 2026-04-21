@@ -4,6 +4,7 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_client/widgets/cabin_widgets/wizard_cabin_preview.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -27,8 +28,8 @@ class Step1CabinetType extends StatelessWidget {
         // MARK: Header
         StepHeader(
           badge: 'Adım 1 / 5',
-          title: 'Kabin Tipini Seçin',
-          subtitle: 'Yönetmek istediğiniz kabin türünü belirleyin. Bu seçim sonraki adımları şekillendirecektir.',
+          title: context.l10n.wizard_step1Header,
+          subtitle: context.l10n.wizard_step1Subtitle,
         ),
 
         // MARK: Content
@@ -46,9 +47,8 @@ class Step1CabinetType extends StatelessWidget {
                     isSelected: selectedType == CabinType.master,
                     onTap: () => onTypeSelected(CabinType.master),
                     visual: WizardCabinPreview(type: WizardCabinPreviewType.standard),
-                    specs: const ['Kübik / Birim Doz', 'Servis Bazlı'],
-                    description:
-                        'Sabit duvara monte veya bağımsız duran, kübik ve birim doz çekmece kombinasyonuna sahip kabin.',
+                    specs: [context.l10n.wizard_masterCabinSpec1, context.l10n.wizard_masterCabinSpec2],
+                    description: context.l10n.wizard_masterCabinDescription,
                   ),
                 ),
                 // Mobil Kabin
@@ -58,8 +58,8 @@ class Step1CabinetType extends StatelessWidget {
                     isSelected: selectedType == CabinType.mobile,
                     onTap: () => onTypeSelected(CabinType.mobile),
                     visual: WizardCabinPreview(type: WizardCabinPreviewType.mobile),
-                    specs: const ['Tekerlekli', 'Oda Bazlı'],
-                    description: 'Tekerlekli, koğuş dolaşımı için tasarlanmış 4 sıralı taşınabilir ilaç ünitesi.',
+                    specs: [context.l10n.wizard_mobileCabinSpec1, context.l10n.wizard_mobileCabinSpec2],
+                    description: context.l10n.wizard_mobileCabinDescription,
                   ),
                 ),
               ],
@@ -68,7 +68,7 @@ class Step1CabinetType extends StatelessWidget {
         ),
 
         // MARK: Footer
-        StepFooter(note: 'Kabin tipi sonradan değiştirilemez.', onNext: () => selectedType != null ? onNext() : null),
+        StepFooter(note: context.l10n.wizard_cabinTypeNote, onNext: () => selectedType != null ? onNext() : null),
       ],
     );
   }

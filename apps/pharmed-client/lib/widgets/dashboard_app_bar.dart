@@ -10,6 +10,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:collection/collection.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../l10n/l10n_ext.dart';
 
 class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   const DashboardAppBar({
@@ -200,12 +201,12 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
 
           // ── Çıkış (sadece giriş yapılmışsa) ──────────────────
           if (widget.isLoggedIn) ...[
-            _IconButton(icon: PhosphorIcons.signOut(), tooltip: 'Çıkış Yap', danger: true, onTap: widget.onLogoutTap),
+            _IconButton(icon: PhosphorIcons.signOut(), tooltip: context.l10n.dashboard_logoutTooltip, danger: true, onTap: widget.onLogoutTap),
             const SizedBox(width: 4),
           ],
 
           if (widget.isLoggedIn)
-            _IconButton(icon: PhosphorIcons.gearSix(), tooltip: 'Ayarlar', onTap: widget.onSettingsTap),
+            _IconButton(icon: PhosphorIcons.gearSix(), tooltip: context.l10n.settings_title, onTap: widget.onSettingsTap),
         ],
       ),
     );
@@ -250,7 +251,7 @@ class _AppLogo extends StatelessWidget {
               ),
             ),
             Text(
-              'İLAÇ KABİN YÖNETİMİ',
+              context.l10n.dashboard_appBarTitle,
               style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3, letterSpacing: 0.8),
             ),
           ],
@@ -408,7 +409,7 @@ class _LoginButton extends StatelessWidget {
             Icon(PhosphorIcons.signIn(), size: 14, color: Colors.white),
             const SizedBox(width: 6),
             Text(
-              'Giriş Yap',
+              context.l10n.dashboard_loginBarButton,
               style: TextStyle(
                 fontFamily: MedFonts.sans,
                 fontSize: 13,

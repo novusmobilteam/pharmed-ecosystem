@@ -51,8 +51,8 @@ class _ScanIdle extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Cihazı Tara',
-              style: TextStyle(
+              context.l10n.wizard_scanTitle,
+              style: const TextStyle(
                 fontFamily: MedFonts.title,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
@@ -61,13 +61,13 @@ class _ScanIdle extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Seri port üzerinden bağlı kabinin çekmece yapısı otomatik okunacaktır.',
+              context.l10n.wizard_scanDescription,
               style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 28),
             MedButton(
-              label: 'Taramayı Başlat',
+              label: context.l10n.wizard_startScanButton,
               size: MedButtonSize.lg,
               prefixIcon: const Icon(Icons.radar_rounded, size: 18),
               onPressed: onScan,
@@ -85,7 +85,7 @@ class _ScanInProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final headerMessage = logs.isNotEmpty ? (logs.last.headerMessage ?? 'Kabin Taranıyor..') : 'Kabin Taranıyor..';
+    final headerMessage = logs.isNotEmpty ? (logs.last.headerMessage ?? context.l10n.wizard_scanningStatus) : context.l10n.wizard_scanningStatus;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -151,7 +151,7 @@ class _ScanFound extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Tarama Başarılı — ${scannedLayout.length} çekmece bulundu',
+                        context.l10n.wizard_scanSuccessBanner(scannedLayout.length),
                         style: TextStyle(
                           fontFamily: MedFonts.sans,
                           fontSize: 13,
@@ -161,7 +161,7 @@ class _ScanFound extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Kabin iç dizaynı cihazdan başarıyla okundu. Aşağıdaki yapıyı onaylayın.',
+                        context.l10n.wizard_scanSuccessDescription,
                         style: TextStyle(
                           fontFamily: MedFonts.sans,
                           fontSize: 11,
@@ -193,13 +193,13 @@ class _ScanFound extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Yapı yanlışsa geri dönüp bağlantı bilgilerini kontrol edin.',
+                    context.l10n.wizard_scanWrongStructure,
                     style: TextStyle(fontFamily: MedFonts.sans, fontSize: 12, color: MedColors.text3),
                   ),
                 ),
                 const SizedBox(width: 12),
                 MedButton(
-                  label: 'Yeniden Tara',
+                  label: context.l10n.wizard_rescanButton,
                   variant: MedButtonVariant.ghost,
                   size: MedButtonSize.sm,
                   prefixIcon: const Icon(Icons.refresh_rounded, size: 15),
@@ -236,7 +236,7 @@ class _ScannedDrawerRow extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            'ÇEKMECE ${index + 1}',
+            context.l10n.wizard_drawerLabel(index + 1),
             style: TextStyle(
               fontFamily: MedFonts.mono,
               fontSize: 10,
@@ -276,7 +276,7 @@ class _ScannedDrawerRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: BorderRadius.circular(6)),
               child: Text(
-                isKubik ? '$compartmentCount göz' : '${group.units.length} sıra',
+                isKubik ? context.l10n.wizard_cellCountLabel(compartmentCount) : context.l10n.wizard_rowCountLabel(group.units.length),
                 style: TextStyle(
                   fontFamily: MedFonts.mono,
                   fontSize: 11,
@@ -317,7 +317,7 @@ class _ScanError extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Tarama başarısız. COM port bağlantısını kontrol edip tekrar deneyin.',
+                    context.l10n.wizard_scanErrorBanner,
                     style: TextStyle(
                       fontFamily: MedFonts.sans,
                       fontSize: 13,
@@ -336,7 +336,7 @@ class _ScanError extends StatelessWidget {
 
           const SizedBox(height: 20),
           MedButton(
-            label: 'Tekrar Dene',
+            label: context.l10n.common_retryButton,
             variant: MedButtonVariant.secondary,
             prefixIcon: const Icon(Icons.refresh_rounded, size: 16),
             onPressed: onRetry,

@@ -38,7 +38,7 @@ class MasterCabinDrawerPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final g = group;
-    if (g == null) return const CabinDrawerEmptyState(subtitle: 'Kübik · Birim Doz · Serum iç yapıları görüntülenecek');
+    if (g == null) return CabinDrawerEmptyState(subtitle: context.l10n.cabin_masterGridPlaceholder);
 
     return Container(
       decoration: BoxDecoration(
@@ -97,9 +97,9 @@ class _MasterDrawerHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_typeLabel(group), style: MedTextStyles.titleMd()),
+          Text(_typeLabel(context, group), style: MedTextStyles.titleMd()),
           const SizedBox(height: 3),
-          Text(_subLabel(group), style: MedTextStyles.monoMd(color: MedColors.text3)),
+          Text(_subLabel(context, group), style: MedTextStyles.monoMd(color: MedColors.text3)),
           const SizedBox(height: 8),
           CabinModeBanner(mode: mode),
         ],
@@ -107,20 +107,20 @@ class _MasterDrawerHeader extends StatelessWidget {
     );
   }
 
-  String _typeLabel(DrawerGroup g) {
-    if (g.isSerum) return 'Serum Çekmece';
-    if (g.isKubik) return 'Kübik Çekmece';
-    return 'Birim Doz Çekmece';
+  String _typeLabel(BuildContext context, DrawerGroup g) {
+    if (g.isSerum) return context.l10n.cabin_serumDrawerName;
+    if (g.isKubik) return context.l10n.cabin_kubikDrawerName;
+    return context.l10n.cabin_unitDoseDrawerName;
   }
 
-  String _subLabel(DrawerGroup g) {
+  String _subLabel(BuildContext context, DrawerGroup g) {
     if (g.isKubik) {
       final count = g.units.length;
       const cols = 4;
       final rows = (count / cols).ceil();
-      return '$cols×$rows ($count göz)';
+      return '$cols×$rows (${context.l10n.cabin_cellCountLabel(count)})';
     }
-    if (g.isSerum) return 'Raf görünümü';
+    if (g.isSerum) return context.l10n.cabin_serumRackView;
     final config = g.slot.drawerConfig;
     final steps = config?.numberOfSteps ?? 0;
     final mult = config?.stepMultiplier ?? 1;
@@ -651,7 +651,7 @@ class _MasterCellLegend extends StatelessWidget {
     return Wrap(
       spacing: 10,
       runSpacing: 4,
-      children: _items(mode).map((item) {
+      children: _items(context, mode).map((item) {
         final colors = CabinCellColors.of(item.$1);
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -673,28 +673,28 @@ class _MasterCellLegend extends StatelessWidget {
     );
   }
 
-  List<(CabinCellStatus, String)> _items(CabinOperationMode mode) => switch (mode) {
+  List<(CabinCellStatus, String)> _items(BuildContext context, CabinOperationMode mode) => switch (mode) {
     CabinOperationMode.assign => [
-      (CabinCellStatus.empty, 'Boş göz (ata)'),
-      (CabinCellStatus.assigned, 'İlaç atanmış'),
-      (CabinCellStatus.fault, 'Arızalı'),
-      (CabinCellStatus.maintenance, 'Bakımda'),
+      (CabinCellStatus.empty, context.l10n.cabin_legendAssignEmpty),
+      (CabinCellStatus.assigned, context.l10n.cabin_legendAssignAssigned),
+      (CabinCellStatus.fault, context.l10n.cabin_legendAssignFault),
+      (CabinCellStatus.maintenance, context.l10n.cabin_legendAssignMaintenance),
     ],
     CabinOperationMode.fill => [
-      (CabinCellStatus.empty, 'Boş (dolum yok)'),
+      (CabinCellStatus.empty, context.l10n.cabin_legendFillEmpty),
       (CabinCellStatus.assigned, 'Normal stok'),
       (CabinCellStatus.low, 'Dolum gerekiyor'),
       (CabinCellStatus.critical, 'Acil dolum'),
     ],
     CabinOperationMode.count => [
-      (CabinCellStatus.assigned, 'Sayılacak (ilaçlı)'),
-      (CabinCellStatus.low, 'Düşük stok'),
-      (CabinCellStatus.empty, 'Boş (atla)'),
+      (CabinCellStatus.assigned, context.l10n.cabin_legendCountAssigned),
+      (CabinCellStatus.low, context.l10n.cabin_legendCountLow),
+      (CabinCellStatus.empty, context.l10n.cabin_legendCountEmpty),
     ],
     CabinOperationMode.fault => [
-      (CabinCellStatus.assigned, 'Normal çalışıyor'),
-      (CabinCellStatus.fault, 'Arıza bildirildi'),
-      (CabinCellStatus.empty, 'Boş göz'),
+      (CabinCellStatus.assigned, context.l10n.cabin_legendFaultNormal),
+      (CabinCellStatus.fault, context.l10n.cabin_legendFaultReported),
+      (CabinCellStatus.empty, context.l10n.cabin_legendFaultEmpty),
     ],
   };
 }
@@ -721,9 +721,9 @@ class _MasterSerumView extends StatelessWidget {
           children: [
             Icon(Icons.water_drop_outlined, size: 32, color: MedColors.text4),
             const SizedBox(height: 8),
-            Text('Serum görünümü', style: MedTextStyles.bodySm(color: MedColors.text3)),
+            Text(context.l10n.cabin_serumViewTitle, style: MedTextStyles.bodySm(color: MedColors.text3)),
             const SizedBox(height: 4),
-            Text('TODO: Serum iç yapısı netleşince tamamlanacak', style: MedTextStyles.monoSm(color: MedColors.text4)),
+            Text(context.l10n.cabin_serumViewTodo, style: MedTextStyles.monoSm(color: MedColors.text4)),
           ],
         ),
       ),

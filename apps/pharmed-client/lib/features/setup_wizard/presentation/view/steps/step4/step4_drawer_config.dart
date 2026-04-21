@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import '../../../../../../l10n/l10n_ext.dart';
 import '../../../../domain/model/scan_log_entry.dart';
 import '../../../../domain/model/wizard_mobile_layout.dart';
 import '../../../state/setup_wizard_ui_state.dart';

@@ -8,6 +8,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_client/features/settings/presentation/state/settings_state.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -66,7 +67,7 @@ class _ModalHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Ayarlar',
+                context.l10n.settings_title,
                 style: TextStyle(
                   fontFamily: MedFonts.sans,
                   fontSize: 15,
@@ -76,7 +77,7 @@ class _ModalHeader extends StatelessWidget {
               ),
               const SizedBox(height: 1),
               Text(
-                'SİSTEM YAPILANDIRMASI',
+                context.l10n.settings_systemConfigTitle,
                 style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3, letterSpacing: 0.8),
               ),
             ],
@@ -113,16 +114,16 @@ class _ModalBody extends ConsumerWidget {
       children: [
         _SettingsSidebar(activeSection: state.activeSection, onSectionTap: notifier.setSection),
         const VerticalDivider(width: 1, thickness: 1, color: MedColors.border2),
-        Expanded(child: _buildContent(state)),
+        Expanded(child: _buildContent(context, state)),
       ],
     );
   }
 
-  Widget _buildContent(SettingsState state) {
+  Widget _buildContent(BuildContext context, SettingsState state) {
     return switch (state.activeSection) {
       SettingsSection.debug => const DebugSettingsView(),
-      SettingsSection.general => const _PlaceholderView(label: 'Genel'),
-      SettingsSection.appearance => const _PlaceholderView(label: 'Görünüm'),
+      SettingsSection.general => _PlaceholderView(label: context.l10n.settings_generalLabel),
+      SettingsSection.appearance => _PlaceholderView(label: context.l10n.settings_appearanceLabel),
     };
   }
 }
