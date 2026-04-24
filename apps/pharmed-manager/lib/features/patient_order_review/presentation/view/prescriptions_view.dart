@@ -35,9 +35,7 @@ class _PrescriptionsViewState extends State<PrescriptionsView> {
 
   Widget _buildContent(PatientOrderReviewNotifier notifier) {
     if (notifier.filteredGroupedPrescriptions.isEmpty) {
-      return Center(
-        child: CommonEmptyStates.noData(),
-      );
+      return Center(child: CommonEmptyStates.noData());
     }
 
     return ListView.separated(
@@ -46,10 +44,7 @@ class _PrescriptionsViewState extends State<PrescriptionsView> {
         final prescriptionId = notifier.groupedPrescriptions.keys.elementAt(index);
         final items = notifier.groupedPrescriptions[prescriptionId]!;
 
-        return PrescriptionGroupCard(
-          items: items,
-          prescriptionId: prescriptionId,
-        );
+        return RxGroupCard(items: items, prescriptionId: prescriptionId);
       },
       separatorBuilder: (context, index) => Padding(padding: EdgeInsets.only(bottom: 8.0)),
     );

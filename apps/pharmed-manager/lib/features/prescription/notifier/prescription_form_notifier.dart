@@ -69,7 +69,11 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   void updateMaterial(Medicine? medicine) {
-    _currentItem = _currentItem.copyWith(medicine: medicine, medicineId: medicine?.id, dosePiece: 0);
+    _currentItem = _currentItem.copyWith(
+      medicine: medicine,
+      medicineId: medicine?.id,
+      dosePiece: medicine?.operationStep ?? 1.0,
+    );
     notifyListeners();
   }
 
@@ -188,6 +192,7 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
       doctorId: currentDoctorId,
       requestType: RequestType.normal,
       description: null,
+      dosePiece: 1,
     );
   }
 

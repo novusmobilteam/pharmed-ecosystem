@@ -2,3 +2,29 @@
 
 packages:
   - packages/pharmed_core
+  - packages/pharmed_data
+  - packages/pharmed_ui
+  - packages/pharmed_utils
+  - apps/pharmed-client
+  - apps/pharmed-manager
+
+scripts:
+  get:
+    run: melos exec -- flutter pub get
+    description: Tüm paketlerde pub get
+
+  analyze:
+    run: melos exec -- flutter analyze
+    description: Tüm paketlerde analyze
+
+  test:
+    run: melos exec -- flutter test
+    description: Tüm paketlerde test
+
+  run:client:dev:
+    run: flutter run --flavor dev -t apps/pharmed-client/lib/main_dev.dart
+    description: pharmed-client dev flavor
+
+  run:manager:dev:
+    run: flutter run --flavor dev -t apps/pharmed-manager/lib/main_dev.dart
+    description: pharmed-manager dev flavor (Windows)

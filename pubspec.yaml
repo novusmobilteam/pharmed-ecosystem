@@ -15,3 +15,25 @@ workspace:
 
 dev_dependencies:
   melos: ^7.5.0
+
+melos:
+  scripts:
+    get:
+      run: melos exec -- flutter pub get
+      description: Tüm paketlerde pub get
+
+    analyze:
+      run: melos exec -- flutter analyze
+      description: Tüm paketlerde analyze
+
+    test:
+      run: melos exec -- flutter test
+      description: Tüm paketlerde test
+
+    run:client:dev:
+      run: flutter run --flavor dev -t apps/pharmed-client/lib/main_dev.dart
+      description: pharmed-client dev flavor
+
+    run:manager:dev:
+      run: cd apps/pharmed-manager && flutter run -t lib/main_dev.dart -d macos
+      description: pharmed-manager dev flavor

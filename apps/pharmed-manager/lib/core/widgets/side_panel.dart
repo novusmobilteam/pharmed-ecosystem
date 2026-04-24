@@ -28,7 +28,7 @@ class SidePanelWrapper extends StatelessWidget {
           top: 0,
           bottom: 0,
           width: width,
-          child: panel,
+          child: isOpen ? panel : const SizedBox.shrink(),
         ),
       ],
     );

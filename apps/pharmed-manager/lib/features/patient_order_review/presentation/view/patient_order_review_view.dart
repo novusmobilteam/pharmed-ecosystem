@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/patient_card.dart';
-import '../../../../core/widgets/prescription_group_card.dart';
+import '../../../../core/widgets/rx_group_card.dart';
 import '../notifier/patient_request_review_notifier.dart';
 
 part 'prescriptions_view.dart';

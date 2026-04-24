@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
+// lib/features/prescription/presentation/notifier/prescription_notifier.dart
+//
+// [SWREQ-MGR-RX-001] [IEC 62304 §5.5]
+// Reçete listesi + panel koordinasyon notifier'ı.
+// Sınıf: Class B
+
+enum PrescriptionPanelType { form, detail }
+
 class PrescriptionNotifier extends ChangeNotifier
     with ApiRequestMixin, SearchMixin<Hospitalization>, DateFilterMixin<Hospitalization> {
   final GetHospitalizationsWithPrescriptionUseCase _getHospitalizationsWithPrescriptionUseCase;
@@ -9,17 +17,31 @@ class PrescriptionNotifier extends ChangeNotifier
     : _getHospitalizationsWithPrescriptionUseCase = getHospitalizationsWithPrescriptionUseCase;
 
   OperationKey fetchOp = OperationKey.fetch();
-
   bool get isFetching => isLoading(fetchOp);
-
-  Hospitalization? _selectedHospitalization;
-  Hospitalization? get selectedHospitalization => _selectedHospitalization;
 
   bool _isPanelOpen = false;
   bool get isPanelOpen => _isPanelOpen;
 
-  void openPanel({Hospitalization? hosp}) {
+  PrescriptionPanelType _panelType = PrescriptionPanelType.form;
+  PrescriptionPanelType get panelType => _panelType;
+
+  Hospitalization? _selectedHospitalization;
+  Hospitalization? get selectedHospitalization => _selectedHospitalization;
+
+  List<Hospitalization> get dateFilteredItems => applyDateFilter(filteredItems);
+
+  /// Yeni reçete oluşturma veya düzenleme panelini açar.
+  void openFormPanel({Hospitalization? hosp}) {
     _selectedHospitalization = hosp;
+    _panelType = PrescriptionPanelType.form;
+    _isPanelOpen = true;
+    notifyListeners();
+  }
+
+  /// Seçili hastanın reçete geçmişini gösteren detay panelini açar.
+  void openDetailPanel(Hospitalization hosp) {
+    _selectedHospitalization = hosp;
+    _panelType = PrescriptionPanelType.detail;
     _isPanelOpen = true;
     notifyListeners();
   }
@@ -28,10 +50,6 @@ class PrescriptionNotifier extends ChangeNotifier
     _isPanelOpen = false;
     _selectedHospitalization = null;
     notifyListeners();
-  }
-
-  List<Hospitalization> get dateFilteredItems {
-    return applyDateFilter(filteredItems);
   }
 
   Future<void> getHospitalizations() async {
@@ -43,11 +61,6 @@ class PrescriptionNotifier extends ChangeNotifier
         notifyListeners();
       },
     );
-  }
-
-  void selectHospitalization(Hospitalization hosp) {
-    _selectedHospitalization = hosp;
-    notifyListeners();
   }
 
   @override
