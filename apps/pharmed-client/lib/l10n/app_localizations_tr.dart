@@ -658,4 +658,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get assignment_patientLabel => 'HASTA';
+
+  @override
+  String get settings_languageTitle => 'DİL';
+
+  @override
+  String get settings_languageSubtitle => 'Arayüz dili';
 }

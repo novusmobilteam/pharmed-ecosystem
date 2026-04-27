@@ -37,6 +37,7 @@ class AppSettingsCache {
   static const _keySetupDone = 'setup_done';
   static const _keyDeviceMode = 'device_mode';
   static const _keyCurrentCabinId = 'current_cabin_id';
+  static const _keyLanguage = 'language';
 
   Box? _box;
 
@@ -90,6 +91,18 @@ class AppSettingsCache {
     await _box!.delete(_keyDeviceMode);
     // currentCabinId varsa onu da sil
     await _box!.delete(_keyCurrentCabinId);
+  }
+
+  /// [SWREQ-UI-SETTINGS-002] Seçili dil kodunu kaydeder ('tr' | 'en' | 'ar').
+  Future<void> saveLanguage(String code) async {
+    await _open();
+    await _box!.put(_keyLanguage, code);
+  }
+
+  /// [SWREQ-UI-SETTINGS-002] Kayıtlı dil kodunu döndürür. null → varsayılan ('tr').
+  Future<String?> getLanguage() async {
+    await _open();
+    return _box!.get(_keyLanguage) as String?;
   }
 }
 

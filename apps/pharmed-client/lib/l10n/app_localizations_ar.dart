@@ -656,4 +656,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get assignment_patientLabel => 'المريض';
+
+  @override
+  String get settings_languageTitle => 'اللغة';
+
+  @override
+  String get settings_languageSubtitle => 'لغة الواجهة';
 }

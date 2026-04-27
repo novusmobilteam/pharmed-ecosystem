@@ -6,14 +6,36 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/cache/app_settings_cache.dart';
+import '../../../../core/enums/app_language.dart';
 import '../../../cabin/cabin.dart';
 import '../state/settings_state.dart';
 
 final settingsNotifierProvider = NotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);
 
 class SettingsNotifier extends Notifier<SettingsState> {
+  AppSettingsCache get _cache => ref.read(appSettingsCacheProvider);
+
   @override
-  SettingsState build() => const SettingsState();
+  SettingsState build() {
+    _restoreLanguage();
+    return const SettingsState();
+  }
+
+  /// Cache'den dili okuyup state'e uygular.
+  Future<void> _restoreLanguage() async {
+    final code = await _cache.getLanguage();
+    if (code == null) return; // kayıt yok → default AppLanguage.turkish
+    final language = AppLanguage.fromCode(code);
+    if (language == state.language) return;
+    state = state.copyWith(language: language);
+  }
+
+  /// [SWREQ-UI-SETTINGS-002] Dili değiştirir ve cache'e yazar.
+  Future<void> setLanguage(AppLanguage language) async {
+    await _cache.saveLanguage(language.code);
+    state = state.copyWith(language: language);
+  }
 
   void setSection(SettingsSection section) {
     state = state.copyWith(activeSection: section);

@@ -656,5 +656,14 @@
 "@assignment_bedSelectorHint": { "description": "Hint text for bed dropdown" },
 
 "assignment_patientLabel": "HASTA",
-"@assignment_patientLabel": { "description": "Label for patient info row in bed card" }
+"@assignment_patientLabel": { "description": "Label for patient info row in bed card" },
+
+"settings_languageTitle": "DİL",
+"@settings_languageTitle": {
+  "description": "Settings > General section header for language selection"
+},
+"settings_languageSubtitle": "Arayüz dili",
+"@settings_languageSubtitle": {
+  "description": "Subtitle shown under language section header"
+}
 }

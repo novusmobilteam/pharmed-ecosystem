@@ -14,6 +14,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../notifier/settings_notifier.dart';
 import 'debug_settings_view.dart';
+import 'language_selector_view.dart';
 
 part 'settings_sidebar.dart';
 
@@ -122,8 +123,9 @@ class _ModalBody extends ConsumerWidget {
   Widget _buildContent(BuildContext context, SettingsState state) {
     return switch (state.activeSection) {
       SettingsSection.debug => const DebugSettingsView(),
-      SettingsSection.general => _PlaceholderView(label: context.l10n.settings_generalLabel),
+      //SettingsSection.general => _PlaceholderView(label: context.l10n.settings_generalLabel),
       SettingsSection.appearance => _PlaceholderView(label: context.l10n.settings_appearanceLabel),
+      SettingsSection.general => const LanguageSelectorView(),
     };
   }
 }

@@ -1311,6 +1311,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'HASTA'**
   String get assignment_patientLabel;
+
+  /// Settings > General section header for language selection
+  ///
+  /// In tr, this message translates to:
+  /// **'DİL'**
+  String get settings_languageTitle;
+
+  /// Subtitle shown under language section header
+  ///
+  /// In tr, this message translates to:
+  /// **'Arayüz dili'**
+  String get settings_languageSubtitle;
 }
 
 class _AppLocalizationsDelegate

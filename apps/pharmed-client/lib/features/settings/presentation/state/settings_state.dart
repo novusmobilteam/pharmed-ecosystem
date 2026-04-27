@@ -4,6 +4,8 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/enums/app_language.dart';
+
 enum SettingsSection { general, appearance, debug }
 
 class SettingsState {
@@ -13,6 +15,7 @@ class SettingsState {
     this.cabins = const [],
     this.isLoadingCabins = false,
     this.cabinsError,
+    this.language = AppLanguage.turkish,
   });
 
   final SettingsSection activeSection;
@@ -24,9 +27,11 @@ class SettingsState {
   final List<Cabin> cabins;
   final bool isLoadingCabins;
   final String? cabinsError;
+  final AppLanguage language;
 
   SettingsState copyWith({
     SettingsSection? activeSection,
+    AppLanguage? language,
     Cabin? debugCabin,
     bool clearDebugCabin = false,
     List<Cabin>? cabins,
@@ -36,6 +41,7 @@ class SettingsState {
   }) {
     return SettingsState(
       activeSection: activeSection ?? this.activeSection,
+      language: language ?? this.language,
       debugCabin: clearDebugCabin ? null : (debugCabin ?? this.debugCabin),
       cabins: cabins ?? this.cabins,
       isLoadingCabins: isLoadingCabins ?? this.isLoadingCabins,
