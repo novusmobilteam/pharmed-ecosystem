@@ -49,7 +49,7 @@ class InconsistencyDTO {
     return {
       'id': id,
       'cabinDrawerDetail': cabinDrawerDetail,
-      'material': medicine?.toEntity(),
+      //'material': medicine?.toEntity(),
       'stockEntryQuantity': stockEntryQuantity,
       'stockExitQuantity': stockExitQuantity,
       'requiredQuantity': requiredQuantity,
@@ -64,7 +64,7 @@ class InconsistencyDTO {
     return Inconsistency(
       id: id,
       cabinDrawerDetail: DrawerCellMapper().toEntityOrNull(cabinDrawerDetail),
-      medicine: medicine?.toEntity(),
+      // medicine: medicine?.toEntity(),
       quantity: quantity,
       stockEntryQuantity: stockEntryQuantity,
       stockExitQuantity: stockExitQuantity,

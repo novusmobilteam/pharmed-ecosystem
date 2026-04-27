@@ -66,6 +66,7 @@ class DrugDTO extends MedicineDTO {
   final bool isCanLowerDose;
   final bool isNotSerumCabinetMaxValue;
   final bool isNotCubicDrawrMaxValue;
+  final bool isRfidEnable;
 
   final String? collectNote;
   final String? returnNote;
@@ -142,6 +143,7 @@ class DrugDTO extends MedicineDTO {
     this.activeIngredients,
     this.activeIngredientIds = const [],
     this.equivalentCode,
+    this.isRfidEnable = false,
   });
 
   factory DrugDTO.fromJson(Map<String, dynamic> json) {
@@ -192,6 +194,7 @@ class DrugDTO extends MedicineDTO {
       isDestroyable: json['isDestroyable'] as bool? ?? false,
       isIndependentMaterial: json['isIndependentMaterial'] as bool? ?? false,
       isCanLowerDose: json['isCanLowerDose'] as bool? ?? false,
+      isRfidEnable: json['isRfidCard'] as bool? ?? false,
       collectNote: json['collectNote'] as String?,
       returnNote: json['returnNote'] as String?,
       destructionNote: json['destructionNote'] as String?,
@@ -244,7 +247,7 @@ class DrugDTO extends MedicineDTO {
       // Ölçü Birimi
       'isMeasureUnit': isMeasureUnit,
       'doseMeasureUnit': doseMeasureUnit,
-      'unitMeasure': unitMeasure,
+      'unitMeasure': unitMeasure?.toJson(),
       'unitMeasureId': unitMeasure?.id,
       // Hacim
       'volume': volume,
@@ -288,9 +291,9 @@ class DrugDTO extends MedicineDTO {
       'equivalentCode': equivalentCode,
       'isNotSerumCabinetMaxValue': isNotSerumCabinetMaxValue,
       'isNotCubicDrawrMaxValue': isNotCubicDrawrMaxValue,
-
       'isIndependentMaterial': isIndependentMaterial,
       'isCanLowerDose': isCanLowerDose,
+      'isRfidCard': isRfidEnable,
     };
   }
 
@@ -326,6 +329,7 @@ class DrugDTO extends MedicineDTO {
       isMultiplePatientAccess: isMultiplePatientAccess,
       isSinglePatientAccess: isSinglePatientAccess,
       isSingleUse: isSingleUse,
+      isRfidEnable: isRfidEnable,
       isCameraRecording: isCameraRecording,
       isWastagePharmacyApproval: isWastagePharmacyApproval,
       isWastageOrderRenewed: isWastageOrderRenewed,

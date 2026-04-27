@@ -6,6 +6,8 @@ import '../../model/drawer_status.dart';
 import '../../model/management_card.dart';
 import 'i_cabin_operation_service.dart';
 
+// [SWREQ-HW-001]
+
 /// KABİN OPERASYON SERVİSİ — MOCK İMPLEMENTASYON
 /// -----------------------------------------------
 /// Fiziksel cihaz olmadan çekmece açma/kapama ve tarama akışını simüle eder.
@@ -15,6 +17,7 @@ import 'i_cabin_operation_service.dart';
 /// - findManagementCard: 500ms sonra adres 1'de kart bulur
 /// - findControlCards: 1s sonra 4 kart döner (kübik, 5'li, 3'lü, serum)
 /// - monitorDrawerStatus: 2s sonra fullyOpen, triggerManualClose ile kapanır
+/// - monitorSerumPortStatus: 2s sonra fullyOpen, kullanıcı kapatınca locked
 class MockCabinOperationService implements ICabinOperationService {
   int _statusPollCount = 0;
   bool _shouldFastForward = false;
@@ -70,31 +73,26 @@ class MockCabinOperationService implements ICabinOperationService {
       return '.h4,';
     }
 
-    // Kilit açma
     if (commandPayload.contains(':T') && commandPayload.contains('O')) {
       debugPrint('MOCK: Kilit açma başarılı.');
       return 'ok';
     }
 
-    // Kapak açma
     if (commandPayload.contains(':Z')) {
       debugPrint('MOCK: Kapak açma başarılı.');
       return '[ac]';
     }
 
-    // Durum sorgulama
     if (commandPayload.contains(':T') && commandPayload.contains('S')) {
       _statusPollCount++;
-      if (_statusPollCount < 3) {
-        return '.h0,'; // Henüz çekilmedi
-      }
-      return '.h3,'; // Kullanıcı çekti
+      if (_statusPollCount < 3) return '.h0,';
+      return '.h3,';
     }
 
     return 'ok';
   }
 
-  // ── Çekmece Operasyonları ──────────────────────────────────────
+  // ── Master Kabin — Standart Çekmece ───────────────────────────
 
   @override
   Future<void> unlockDrawer({
@@ -121,15 +119,6 @@ class MockCabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<void> unlockSerum({required ManagementCard manager, required int row}) async {
-    debugPrint('MOCK: Serum kabini açılıyor...');
-    await Future.delayed(const Duration(milliseconds: 500));
-    debugPrint('MOCK: Serum kabini AÇILDI 🔓');
-  }
-
-  // ── Sensör İzleme ─────────────────────────────────────────────
-
-  @override
   Stream<DrawerPhysicalStatus> monitorDrawerStatus({
     required ManagementCard manager,
     required int row,
@@ -146,7 +135,6 @@ class MockCabinOperationService implements ICabinOperationService {
     debugPrint('MOCK SENSOR: Kullanıcı çekmeceyi çekti!');
     yield DrawerPhysicalStatus.fullyOpen;
 
-    // Kapanma bekleme — 500ms parçalarla kontrol
     int elapsed = 0;
     while (elapsed < 50000) {
       await Future.delayed(const Duration(milliseconds: 500));
@@ -156,6 +144,15 @@ class MockCabinOperationService implements ICabinOperationService {
 
     debugPrint('MOCK SENSOR: Çekmece kapandı.');
     yield DrawerPhysicalStatus.locked;
+  }
+
+  // ── Master Kabin — Serum (Eski Akış) ──────────────────────────
+
+  @override
+  Future<void> unlockSerum({required ManagementCard manager, required int row}) async {
+    debugPrint('MOCK: Serum kabini açılıyor (master akış)...');
+    await Future.delayed(const Duration(milliseconds: 500));
+    debugPrint('MOCK: Serum kabini AÇILDI 🔓');
   }
 
   @override
@@ -178,6 +175,35 @@ class MockCabinOperationService implements ICabinOperationService {
     }
 
     debugPrint('MOCK SENSOR (SERUM): Kabin kapandı.');
+    yield DrawerPhysicalStatus.locked;
+  }
+
+  // ── Mobil Kabin — Bağımsız Serum Kartı (Yeni Akış) ────────────
+
+  @override
+  Future<void> unlockSerumPort({required ManagementCard manager, required int port}) async {
+    debugPrint('MOCK: Serum port $port açılıyor (mobil akış)...');
+    await Future.delayed(const Duration(milliseconds: 500));
+    debugPrint('MOCK: Serum port $port AÇILDI 🔓');
+  }
+
+  @override
+  Stream<DrawerPhysicalStatus> monitorSerumPortStatus({required ManagementCard manager, required int port}) async* {
+    _shouldFastForward = false;
+    _statusPollCount = 0;
+
+    // Başlangıç: kilit açıldı, kullanıcı henüz çekmedi
+    yield DrawerPhysicalStatus.fullyOpen;
+
+    // 3s sonra kullanıcı çekmeceyi kapattı simülasyonu
+    int elapsed = 0;
+    while (elapsed < 50000) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      elapsed += 500;
+      if (_shouldFastForward) break;
+    }
+
+    debugPrint('MOCK SENSOR (SERUM PORT $port): Çekmece kapandı.');
     yield DrawerPhysicalStatus.locked;
   }
 }

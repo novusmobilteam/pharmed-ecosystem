@@ -86,7 +86,6 @@ export 'src/models/group_item.dart';
 export 'src/models/selectable.dart';
 export 'src/models/table_data.dart';
 
-export 'src/hardware/command_builder.dart';
 // result
 export 'src/result/result.dart';
 // repository

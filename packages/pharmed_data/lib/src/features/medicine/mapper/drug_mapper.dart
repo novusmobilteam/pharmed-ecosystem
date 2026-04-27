@@ -63,6 +63,7 @@ class DrugMapper {
       equivalentCode: dto.equivalentCode,
       isNotSerumCabinetMaxValue: dto.isNotSerumCabinetMaxValue,
       isNotCubicDrawrMaxValue: dto.isNotCubicDrawrMaxValue,
+      isRfidEnable: dto.isRfidEnable,
     );
   }
 
@@ -122,6 +123,7 @@ class DrugMapper {
       isNotCubicDrawrMaxValue: entity.isNotCubicDrawrMaxValue,
       isCanLowerDose: entity.isCanLowerDose,
       isIndependentMaterial: entity.isIndependentMaterial,
+      isRfidEnable: entity.isRfidEnable,
     );
   }
 

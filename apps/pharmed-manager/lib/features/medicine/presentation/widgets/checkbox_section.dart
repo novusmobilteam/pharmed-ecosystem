@@ -13,7 +13,7 @@ class CheckboxSection extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
 
-          children: [_MultiPatientAccessTile(), _SingleUseTile(), _LowerDoseTile()],
+          children: [_MultiPatientAccessTile(), _SingleUseTile(), _LowerDoseTile(), _RfidTile()],
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,6 +39,23 @@ class _LowerDoseTile extends StatelessWidget {
           value: vm.drug.isCanLowerDose,
           onChanged: (_) => vm.toggleLowerDose(),
           label: 'Belirtilen dozdan düşük doz alınabilir',
+        );
+      },
+    );
+  }
+}
+
+class _RfidTile extends StatelessWidget {
+  const _RfidTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<DrugFormNotifier>(
+      builder: (context, vm, _) {
+        return CheckboxField(
+          value: vm.drug.isRfidEnable,
+          onChanged: (_) => vm.toggleRfid(),
+          label: 'RFID Kullanılabilir',
         );
       },
     );

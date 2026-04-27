@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 class CabinStockDTO {
   final int? id;
@@ -49,7 +50,7 @@ class CabinStockDTO {
     return {
       "id": id,
       "cabinDrawrDetailId": cabinDrawerDetailId,
-      "materialId": medicine?.toEntity().id,
+      "materialId": MedicineMapper().toEntityOrNull(medicine)?.id,
       "quantity": quantity,
       "miadDate": miadDate,
       "shelfNo": shelfNo,

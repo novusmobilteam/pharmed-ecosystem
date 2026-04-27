@@ -90,7 +90,7 @@ class StockTransactionDTO {
       isSend: isSend,
       sendDate: sendDate,
       expirationDate: expirationDate,
-      medicine: medicine?.toEntity(),
+      // medicine: medicine?.toEntity(),
       service: ServiceMapper().toEntityOrNull(sendService),
       warehouse: WarehouseMapper().toEntityOrNull(warehouse),
       user: const UserMapper().toEntityOrNull(user),

@@ -88,7 +88,13 @@ class MedicineRepositoryImpl implements IMedicineRepository {
   @override
   Future<Result<Drug?>> getDrug(int id) async {
     final result = await _dataSource.getDrug(id);
-    return result.when(ok: (dto) => Result.ok(_drugMapper.toEntityOrNull(dto)), error: (e) => Result.error(e));
+    return result.when(
+      ok: (dto) {
+        print(dto?.toJson().toString());
+        return Result.ok(_drugMapper.toEntityOrNull(dto));
+      },
+      error: (e) => Result.error(e),
+    );
   }
 
   @override
@@ -100,6 +106,7 @@ class MedicineRepositoryImpl implements IMedicineRepository {
   @override
   Future<Result<void>> updateMedicine(Medicine entity) async {
     final result = await _dataSource.updateMedicine(_mapper.toDto(entity));
+    print(_mapper.toDto(entity).toJson());
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
   }
 

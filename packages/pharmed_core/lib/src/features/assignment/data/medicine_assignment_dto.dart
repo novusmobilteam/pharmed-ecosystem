@@ -54,7 +54,7 @@ class MedicineAssignmentDto {
     return {
       'id': id,
       'cabinDrawrId': cabinDrawerId,
-      'materialId': medicine?.toEntity().id,
+      'materialId': MedicineMapper().toEntityOrNull(medicine)?.id,
       'minQuantity': minQuantity,
       'criticalQuantity': criticalQuantity,
       'maxQuantity': maxQuantity,

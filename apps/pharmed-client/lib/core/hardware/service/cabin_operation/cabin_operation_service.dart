@@ -1,32 +1,42 @@
-// apps/pharmed-client/lib/core/hardware/service/cabin_operation_service.dart
-
 import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../command/command_builder.dart';
 import '../../model/control_card.dart';
 import '../../model/drawer_status.dart';
 import '../../model/management_card.dart';
 import '../serial_communication/i_serial_communication_service.dart';
 import 'i_cabin_operation_service.dart';
 
+// [SWREQ-HW-001]
+
 /// KABİN OPERASYON SERVİSİ — GERÇEK İMPLEMENTASYON
 /// -------------------------------------------------
 /// Seri port üzerinden fiziksel kabin donanımıyla haberleşir.
-/// Yönetim kartı tarama, kontrol kartı bulma, çekmece açma/kapama
-/// ve sensör durumu izleme işlemlerini gerçekleştirir.
+///
+/// DESTEKLENEN KABİN TİPLERİ:
+///   Master kabin  →  unlockDrawer / unlockSerum / monitorSerumStatus
+///   Mobil kabin   →  unlockSerumPort / monitorSerumPortStatus
 class CabinOperationService implements ICabinOperationService {
   CabinOperationService({required ISerialCommunicationService serialService}) : _serialService = serialService;
 
   final ISerialCommunicationService _serialService;
   ManagementCard? _cachedManager;
 
+  // ── Sabitler ───────────────────────────────────────────────────
+
+  /// Mobil kabin serum kartı slave mod satır adresi.
+  /// Bu değerle yönetim kartına komut gönderildiğinde
+  /// kart slave moda geçerek T komutlarını işler.
+  static const int _serumSlaveRow = 26;
+
+  /// Serum kartı port komutlarında drawer değeri sabit 0'dır.
+  static const int _serumDrawer = 0;
+
   // ── Yaşam Döngüsü ──────────────────────────────────────────────
 
   @override
-  void triggerManualClose() {
-    // Gerçek implementasyonda sensör polling'ini durduracak bir flag
-    // veya stream controller cancel mekanizması eklenebilir.
-  }
+  void triggerManualClose() {}
 
   // ── Yönetim Kartı ──────────────────────────────────────────────
 
@@ -36,7 +46,6 @@ class CabinOperationService implements ICabinOperationService {
       final port = targetPort ?? 'COM3';
       debugPrint('🔌 Port bağlı değil. Otomatik bağlanılıyor: $port');
       await _serialService.connectToPort(port);
-      // Donanımın kendine gelmesi için safety delay
       await Future.delayed(const Duration(milliseconds: 500));
     }
 
@@ -79,7 +88,6 @@ class CabinOperationService implements ICabinOperationService {
     debugPrint('🔍 Kontrol kartları taranıyor (Yönetici: ${manager.addressChar})...');
 
     for (int row = 1; row <= 26; row++) {
-      // Satır seçimi (2 deneme)
       bool isRowSelected = false;
       for (int attempt = 0; attempt < 2; attempt++) {
         if (await _selectRow(manager.addressIndex, row)) {
@@ -94,7 +102,6 @@ class CabinOperationService implements ICabinOperationService {
         continue;
       }
 
-      // Tip sorgulama — 3 deneme
       final typeCommand = CommandBuilder.buildDrawerCommand(action: DeviceAction.type, port: 1, drawer: 1);
 
       String? typeResponse;
@@ -107,9 +114,7 @@ class CabinOperationService implements ICabinOperationService {
             foundCards.add(ControlCard(rowAddress: row, rawTypeResponse: typeResponse));
             break;
           }
-        } catch (_) {
-          // Timeout — tekrar dene
-        }
+        } catch (_) {}
 
         await Future.delayed(const Duration(milliseconds: 100));
       }
@@ -119,7 +124,7 @@ class CabinOperationService implements ICabinOperationService {
     return foundCards;
   }
 
-  // ── Çekmece Operasyonları ──────────────────────────────────────
+  // ── Komut Gönderme ─────────────────────────────────────────────
 
   @override
   Future<String?> sendCommand({
@@ -132,6 +137,8 @@ class CabinOperationService implements ICabinOperationService {
 
     return await _serialService.sendAndReceive(commandPayload);
   }
+
+  // ── Master Kabin — Standart Çekmece ───────────────────────────
 
   @override
   Future<void> unlockDrawer({
@@ -161,22 +168,6 @@ class CabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<void> unlockSerum({required ManagementCard manager, required int row}) async {
-    final command = CommandBuilder.buildDrawerCommand(action: DeviceAction.open, port: 1, drawer: 0);
-    final response = await sendCommand(manager: manager, targetRow: row, commandPayload: command);
-
-    final success =
-        response != null &&
-        (response.contains(DeviceConstants.responseOk) || response.contains('.ok') || response.contains('h3'));
-
-    if (!success) {
-      throw SerialPortException(message: 'Serum kabini açılamadı. Cevap: $response');
-    }
-  }
-
-  // ── Sensör İzleme ─────────────────────────────────────────────
-
-  @override
   Stream<DrawerPhysicalStatus> monitorDrawerStatus({
     required ManagementCard manager,
     required int row,
@@ -197,6 +188,22 @@ class CabinOperationService implements ICabinOperationService {
     }
   }
 
+  // ── Master Kabin — Serum (Eski Akış) ──────────────────────────
+
+  @override
+  Future<void> unlockSerum({required ManagementCard manager, required int row}) async {
+    final command = CommandBuilder.buildDrawerCommand(action: DeviceAction.open, port: 1, drawer: 0);
+    final response = await sendCommand(manager: manager, targetRow: row, commandPayload: command);
+
+    final success =
+        response != null &&
+        (response.contains(DeviceConstants.responseOk) || response.contains('.ok') || response.contains('h3'));
+
+    if (!success) {
+      throw SerialPortException(message: 'Serum kabini açılamadı. Cevap: $response');
+    }
+  }
+
   @override
   Stream<DrawerPhysicalStatus> monitorSerumStatus({required ManagementCard manager, required int row}) async* {
     final statusCommand = CommandBuilder.buildDrawerCommand(action: DeviceAction.status, port: 1, drawer: 0);
@@ -205,6 +212,59 @@ class CabinOperationService implements ICabinOperationService {
       try {
         final response = await sendCommand(manager: manager, targetRow: row, commandPayload: statusCommand);
         yield _parseSerumStatus(response);
+      } catch (_) {
+        yield DrawerPhysicalStatus.unknown;
+      }
+
+      await Future.delayed(DeviceConstants.statusPollingInterval);
+    }
+  }
+
+  // ── Mobil Kabin — Bağımsız Serum Kartı (Yeni Akış) ────────────
+
+  @override
+  Future<void> unlockSerumPort({required ManagementCard manager, required int port}) async {
+    // Serum kartını slave moda al (row=26)
+    final isSelected = await _selectRow(manager.addressIndex, _serumSlaveRow);
+    if (!isSelected) {
+      throw SerialPortException(message: 'Serum kartı slave moda alınamadı.');
+    }
+
+    // Port kilidini aç (drawer=0 sabit)
+    final command = CommandBuilder.buildDrawerCommand(action: DeviceAction.open, port: port, drawer: _serumDrawer);
+
+    final response = await _serialService.sendAndReceive(command);
+
+    final success = response != null && (response.contains('.ok') || response.contains(DeviceConstants.responseOk));
+
+    if (!success) {
+      throw SerialPortException(message: 'Serum port $port açılamadı. Cevap: $response');
+    }
+
+    debugPrint('✅ Serum port $port açıldı.');
+  }
+
+  @override
+  Stream<DrawerPhysicalStatus> monitorSerumPortStatus({required ManagementCard manager, required int port}) async* {
+    // drawer=0 ile status komutu
+    final statusCommand = CommandBuilder.buildDrawerCommand(
+      action: DeviceAction.status,
+      port: port,
+      drawer: _serumDrawer,
+    );
+
+    while (true) {
+      try {
+        // Her polling döngüsünde slave moda al
+        final isSelected = await _selectRow(manager.addressIndex, _serumSlaveRow);
+        if (!isSelected) {
+          yield DrawerPhysicalStatus.unknown;
+          await Future.delayed(DeviceConstants.statusPollingInterval);
+          continue;
+        }
+
+        final response = await _serialService.sendAndReceive(statusCommand);
+        yield _parseSerumPortStatus(response);
       } catch (_) {
         yield DrawerPhysicalStatus.unknown;
       }
@@ -256,6 +316,21 @@ class CabinOperationService implements ICabinOperationService {
     if (response.contains('h1')) return DrawerPhysicalStatus.waitingPull;
     if (response.contains(DeviceConstants.rawFullyOpen)) return DrawerPhysicalStatus.fullyOpen;
     if (response.contains(DeviceConstants.rawLocked)) return DrawerPhysicalStatus.locked;
+
+    return DrawerPhysicalStatus.unknown;
+  }
+
+  /// Mobil kabin serum port status parser.
+  ///
+  /// h0 → kilitlendi   (locked)
+  /// h3 → açık         (fullyOpen — kullanıcı henüz kapatmadı)
+  /// h4 → kapatıldı    (locked)
+  DrawerPhysicalStatus _parseSerumPortStatus(String? response) {
+    if (response == null) return DrawerPhysicalStatus.unknown;
+
+    if (response.contains('h3')) return DrawerPhysicalStatus.fullyOpen;
+    if (response.contains('h4')) return DrawerPhysicalStatus.locked;
+    if (response.contains('h0')) return DrawerPhysicalStatus.locked;
 
     return DrawerPhysicalStatus.unknown;
   }

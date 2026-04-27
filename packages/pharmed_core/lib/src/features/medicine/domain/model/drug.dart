@@ -55,6 +55,7 @@ class Drug extends Medicine {
   final bool isCanLowerDose;
   final bool isNotSerumCabinetMaxValue;
   final bool isNotCubicDrawrMaxValue;
+  final bool isRfidEnable;
 
   final String? collectNote;
   final String? returnNote;
@@ -119,6 +120,7 @@ class Drug extends Medicine {
     this.isCanLowerDose = false,
     this.isNotSerumCabinetMaxValue = false,
     this.isNotCubicDrawrMaxValue = false,
+    this.isRfidEnable = false,
     this.collectNote,
     this.returnNote,
     this.destructionNote,
@@ -172,6 +174,7 @@ class Drug extends Medicine {
     bool? isCanLowerDose,
     bool? isNotSerumCabinetMaxValue,
     bool? isNotCubicDrawrMaxValue,
+    bool? isRfidEnable,
     String? collectNote,
     String? returnNote,
     String? destructionNote,
@@ -215,6 +218,7 @@ class Drug extends Medicine {
       isSinglePatientAccess: isSinglePatientAccess ?? this.isSinglePatientAccess,
       isSingleUse: isSingleUse ?? this.isSingleUse,
       isCameraRecording: isCameraRecording ?? this.isCameraRecording,
+      isRfidEnable: isRfidEnable ?? this.isRfidEnable,
       isWastagePharmacyApproval: isWastagePharmacyApproval ?? this.isWastagePharmacyApproval,
       isWastageOrderRenewed: isWastageOrderRenewed ?? this.isWastageOrderRenewed,
       isWitnessedPurchase: isWitnessedPurchase ?? this.isWitnessedPurchase,

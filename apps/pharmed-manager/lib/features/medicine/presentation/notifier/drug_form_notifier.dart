@@ -329,4 +329,9 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
     _drug = _drug.copyWith(isNotCubicDrawrMaxValue: !_drug.isNotCubicDrawrMaxValue);
     notifyListeners();
   }
+
+  void toggleRfid() {
+    _drug = _drug.copyWith(isRfidEnable: !_drug.isRfidEnable);
+    notifyListeners();
+  }
 }
