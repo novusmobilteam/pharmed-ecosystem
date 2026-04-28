@@ -5,12 +5,15 @@ export 'package:pharmed_ui/pharmed_ui.dart';
 
 // UseCase
 export 'usecase/use_case.dart';
+
 // Mixins
 export 'mixins/api_request_mixin.dart';
 export 'mixins/date_filter_mixin.dart';
 export 'mixins/form_mixin.dart';
 export 'mixins/pagination_mixin.dart';
 export 'mixins/search_mixin.dart';
+export 'mixins/side_panel_mixin.dart';
+
 // Network
 export 'network/base_locale_datasource.dart';
 

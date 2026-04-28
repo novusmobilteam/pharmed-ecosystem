@@ -20,3 +20,7 @@ export 'kit_providers.dart';
 export 'warning_providers.dart';
 export 'hospitalization_providers.dart';
 export 'prescription_providers.dart';
+export 'refund_providers.dart';
+export 'station_stock_providers.dart';
+export 'role_providers.dart';
+export 'authorization_providers.dart';

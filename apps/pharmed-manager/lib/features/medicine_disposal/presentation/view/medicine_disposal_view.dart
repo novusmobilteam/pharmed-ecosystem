@@ -4,7 +4,7 @@ import '../../../../core/core.dart';
 import 'package:provider/provider.dart';
 
 import '../../../cabin/shared/cabin_inventory/view/cabin_inventory_view.dart';
-import '../../../cabin_stock/presentation/widgets/cabin_stock_view.dart';
+import '../../../station_stock/widgets/cabin_stock_view.dart';
 import '../notifier/medicine_disposal_notifier.dart';
 
 class MedicineDisposalView extends StatelessWidget {

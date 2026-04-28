@@ -5,12 +5,10 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   RefundRemoteDataSource({required super.apiManager});
 
   @override
-  // TODO: implement logSwreq
-  String get logSwreq => throw UnimplementedError();
+  String get logSwreq => 'SWREQ-DATA-REFUND-001';
 
   @override
-  // TODO: implement logUnit
-  String get logUnit => throw UnimplementedError();
+  String get logUnit => 'SW-UNIT-REFUND';
 
   Future<Result<List<MedicineWithdrawItemDTO>>> getRefundables({required int hospitalizationId}) async {
     final res = await fetchRequest<List<MedicineWithdrawItemDTO>>(

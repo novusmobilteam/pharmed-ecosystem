@@ -16,7 +16,7 @@ final cabinStockLocalDataSourceProvider = Provider<CabinStockLocalDataSource>((r
 final cabinStockRepositoryProvider = Provider<ICabinStockRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
     AppFlavor.mock => MockCabinStockRepository(),
-    AppFlavor.dev || AppFlavor.prod => CabinStockRepository(
+    AppFlavor.dev || AppFlavor.prod => CabinStockRepositoryImpl(
       dataSource: ref.read(cabinStockRemoteDataSourceProvider),
       localDataSource: ref.read(cabinStockLocalDataSourceProvider),
       cabinMapper: CabinStockMapper(),

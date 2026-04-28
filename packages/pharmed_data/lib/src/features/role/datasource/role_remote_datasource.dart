@@ -5,7 +5,6 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 
 class RoleRemoteDataSource extends BaseRemoteDataSource {
   RoleRemoteDataSource({required super.apiManager});
@@ -31,20 +30,20 @@ class RoleRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<RoleDTO?>> createRole(RoleDTO dto) {
+  Future<Result<void>> createRole(RoleDTO dto) {
     return createRequest(
       path: _base,
       body: dto.toJson(),
-      parser: BaseRemoteDataSource.singleParser(RoleDTO.fromJson),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Rol oluşturuldu',
     );
   }
 
-  Future<Result<RoleDTO?>> updateRole(RoleDTO dto) {
+  Future<Result<void>> updateRole(RoleDTO dto) {
     return updateRequest(
       path: '$_base/${dto.id}',
       body: dto.toJson(),
-      parser: BaseRemoteDataSource.singleParser(RoleDTO.fromJson),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Rol güncellendi',
     );
   }

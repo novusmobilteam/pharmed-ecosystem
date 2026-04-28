@@ -47,6 +47,7 @@ class SidePanel extends StatelessWidget {
     this.onDelete,
     this.saveLabel = 'Kaydet',
     this.isLoading = false,
+    this.disableScroll = false,
   });
 
   final String title;
@@ -58,6 +59,7 @@ class SidePanel extends StatelessWidget {
   final VoidCallback? onDelete;
   final String saveLabel;
   final bool isLoading;
+  final bool disableScroll;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +73,9 @@ class SidePanel extends StatelessWidget {
         children: [
           _SidePanelHeader(title: title, subtitle: subtitle, badge: badge, onClose: onClose),
           Expanded(
-            child: SingleChildScrollView(padding: const EdgeInsets.all(14), child: child),
+            child: disableScroll
+                ? child // scroll yok, child kendi yönetir
+                : SingleChildScrollView(padding: const EdgeInsets.all(14), child: child),
           ),
           _SidePanelFooter(
             saveLabel: saveLabel,

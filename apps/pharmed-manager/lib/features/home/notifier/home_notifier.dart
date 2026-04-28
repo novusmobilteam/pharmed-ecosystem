@@ -79,6 +79,7 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   void selectChild(MenuItem child) {
+    print(child.route);
     _activeChildMenu = child;
     notifyListeners();
   }

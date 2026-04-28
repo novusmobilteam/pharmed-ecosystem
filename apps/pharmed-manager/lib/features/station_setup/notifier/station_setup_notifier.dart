@@ -3,13 +3,7 @@ import 'package:pharmed_manager/core/core.dart';
 
 enum StationPanelType { station, service, warehouse }
 
-class StationSetupNotifier extends ChangeNotifier {
-  bool _isPanelOpen = false;
-  bool get isPanelOpen => _isPanelOpen;
-
-  StationPanelType? _panelType;
-  StationPanelType? get panelType => _panelType;
-
+class StationSetupNotifier extends ChangeNotifier with SidePanelMixin<void, StationPanelType> {
   int _activeIndex = 0;
   int get activeIndex => _activeIndex;
   set activeIndex(int value) {
@@ -19,42 +13,37 @@ class StationSetupNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Her panel tipine özgü editing entity
-  Station? _editingStation;
-  Station? get editingStation => _editingStation;
+  Station? _selectedStation;
+  Station? get selectedStation => _selectedStation;
 
-  HospitalService? _editingService;
-  HospitalService? get editingService => _editingService;
+  HospitalService? _selectedService;
+  HospitalService? get selectedService => _selectedService;
 
   Warehouse? _editingWarehouse;
   Warehouse? get editingWarehouse => _editingWarehouse;
 
   void openStationPanel({Station? station}) {
-    _editingStation = station;
-    _panelType = StationPanelType.station;
-    _isPanelOpen = true;
+    _selectedStation = station;
+    openPanel(type: StationPanelType.station);
     notifyListeners();
   }
 
   void openServicePanel({HospitalService? service}) {
-    _editingService = service;
-    _panelType = StationPanelType.service;
-    _isPanelOpen = true;
+    _selectedService = service;
+    openPanel(type: StationPanelType.service);
     notifyListeners();
   }
 
   void openWarehousePanel({Warehouse? warehouse}) {
     _editingWarehouse = warehouse;
-    _panelType = StationPanelType.warehouse;
-    _isPanelOpen = true;
+    openPanel(type: StationPanelType.warehouse);
     notifyListeners();
   }
 
+  @override
   void closePanel() {
-    _isPanelOpen = false;
-    _panelType = null;
-    _editingStation = null;
-    _editingService = null;
+    _selectedStation = null;
+    _selectedService = null;
     _editingWarehouse = null;
     notifyListeners();
   }

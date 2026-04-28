@@ -14,16 +14,16 @@ class StationFormPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final setupNotifier = context.watch<StationSetupNotifier>();
     final formKey = GlobalKey<FormState>();
-    final isNew = setupNotifier.editingStation == null;
+    final isNew = setupNotifier.selectedStation == null;
 
     return ChangeNotifierProvider(
-      key: ValueKey(setupNotifier.editingStation?.id ?? 'new'),
+      key: ValueKey(setupNotifier.selectedStation?.id ?? 'new'),
       create: (BuildContext context) => StationFormNotifier(
-        station: setupNotifier.editingStation,
+        station: setupNotifier.selectedStation,
         createStationUseCase: context.read(),
         updateStationUseCase: context.read(),
         getStationUseCase: context.read(),
-      )..initialize(station: setupNotifier.editingStation),
+      )..initialize(station: setupNotifier.selectedStation),
       child: Consumer<StationFormNotifier>(
         builder: (context, formNotifier, _) {
           return SidePanel(

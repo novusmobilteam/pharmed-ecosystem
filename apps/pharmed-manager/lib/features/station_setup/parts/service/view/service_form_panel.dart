@@ -17,14 +17,14 @@ class ServiceFormPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final setupNotifier = context.watch<StationSetupNotifier>();
     final formKey = GlobalKey<FormState>();
-    final isNew = setupNotifier.editingService == null;
+    final isNew = setupNotifier.selectedService == null;
 
     return ChangeNotifierProvider(
-      key: ValueKey(setupNotifier.editingService?.id ?? 'new'),
+      key: ValueKey(setupNotifier.selectedService?.id ?? 'new'),
       create: (BuildContext context) => ServiceFormNotifier(
         createServiceUseCase: context.read(),
         updateServiceUseCase: context.read(),
-        service: setupNotifier.editingService,
+        service: setupNotifier.selectedService,
         deleteRoomUseCase: context.read(),
         deleteBedUseCase: context.read(),
       ),

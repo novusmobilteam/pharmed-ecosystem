@@ -5,8 +5,8 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-class CabinStockRepository implements ICabinStockRepository {
-  CabinStockRepository({
+class CabinStockRepositoryImpl implements ICabinStockRepository {
+  CabinStockRepositoryImpl({
     required CabinStockRemoteDataSource dataSource,
     required CabinStockLocalDataSource localDataSource,
     required CabinStockMapper cabinMapper,

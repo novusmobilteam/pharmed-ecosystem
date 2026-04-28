@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
 import 'package:pharmed_manager/features/prescription/view/prescription_screen.dart';
+import 'package:pharmed_manager/features/role/view/role_screen.dart';
+import 'package:pharmed_manager/features/station_stock/view/station_stock_screen.dart';
 import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
+import '../../authorization/authorization_screen.dart';
 import '../../hospitalization/view/hospitalization_screen.dart';
 import '../../medicine/presentation/view/medicine_screen.dart';
+import '../../refund/view/drawer_refund_screen.dart';
+import '../../refund/view/pharmacy_refund_screen.dart';
 import '../../station_setup/view/station_screen.dart';
+import '../../user/view/user_screen.dart';
 import '../notifier/home_notifier.dart';
 
 part 'home_sidebar.dart';
@@ -113,6 +119,12 @@ class _HomeContent extends StatelessWidget {
       'warning' => WarningScreen(menu: menu!),
       'patientRegistration' => HospitalizationScreen(menu: menu!),
       'prescription' => PrescriptionScreen(menu: menu!),
+      'refund' => PharmacyRefundScreen(menu: menu!),
+      'refundDrawer' => DrawerRefundScreen(menu: menu!),
+      'stationStock' => StationStockScreen(menu: menu!),
+      'role' => RoleScreen(menu: menu!),
+      'authorization' => AuthorizationScreen(menu: menu!),
+      'user' => UserScreen(menu: menu!),
       _ => const _NotFoundView(),
     };
   }
