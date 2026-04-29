@@ -1,7 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-// [SWREQ-DATA-FAULT-001]
 // Master kabin için arıza/bakım kayıtları çekmecede yer alan en küçük göz(cell) için oluşturulur.
 // Mobil kabinde ise çekmecede yer alan gözler bağımsız çalışmadıkları için arıza/bakım kaydı
 // çekmece(slot) için oluşturulur.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -6,13 +7,12 @@ import '../../../core/core.dart';
 
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../view_model/unscanned_barcodes_viewmodel.dart';
+import '../notifier/unscanned_barcodes_notifier.dart';
 
 part 'delete_description_view.dart';
 part 'deleted_barcodes_view.dart';
-part 'readed_barcodes_view.dart';
+part 'scanned_barcodes_view.dart';
 part 'scan_barcode_view.dart';
-part 'table_view.dart';
 
 /// Eczane okutulmayan karekod listesi ekranı.
 ///
@@ -20,92 +20,93 @@ part 'table_view.dart';
 /// - Okutulamayan karekodları tablo olarak listeler
 /// - Karekod tarama ve silme işlemlerini destekler
 /// - Okutulan ve silinen karekodları görüntüleme imkanı sağlar
-class ManagerUnscannedBarcodesScreen extends StatefulWidget {
-  const ManagerUnscannedBarcodesScreen({super.key});
+class UnscannedBarcodesScreen extends StatelessWidget {
+  const UnscannedBarcodesScreen({super.key, required this.menu});
 
-  @override
-  State<ManagerUnscannedBarcodesScreen> createState() => _UnscannedBarcodesScreenState();
-}
-
-class _UnscannedBarcodesScreenState extends State<ManagerUnscannedBarcodesScreen> {
-  UnscannedBarcodesViewModel? _viewModel;
-
-  void _setupCallbacks(BuildContext context, UnscannedBarcodesViewModel vm) {
-    // Toggle Callback
-    vm.setCallbacks(
-      key: UnscannedBarcodesViewModel.toggleWarningOperation,
-      onLoading: () => showLoading(context),
-      onError: (message) {
-        hideLoading(context);
-        MessageUtils.showErrorDialog(context, message ?? 'Bir hata oluştu');
-      },
-      onSuccess: (message) {
-        hideLoading(context);
-        MessageUtils.showSuccessSnackbar(context, message);
-      },
-    );
-  }
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => UnscannedBarcodesViewModel(prescriptionRepository: context.read())..fetchBarcodes(),
-      child: Consumer<UnscannedBarcodesViewModel>(
-        builder: (context, vm, _) {
-          if (_viewModel != vm) {
-            _viewModel = vm;
-            _setupCallbacks(context, vm);
-          }
-
+      create: (context) => UnscannedBarcodesNotifier(
+        deleteUnscannedBarcodeUseCase: context.read(),
+        getUnscannedBarcodesUseCase: context.read(),
+        scanBarcodeUseCase: context.read(),
+        toggleBarcodeWarningUseCase: context.read(),
+        getScannedBarcodesUseCase: context.read(),
+        getDeletedBarcodesUseCase: context.read(),
+      )..getUnscannedBarcodes(),
+      child: Consumer<UnscannedBarcodesNotifier>(
+        builder: (context, notifier, _) {
           return ResponsiveLayout(
             mobile: const MobileLayout(),
             tablet: const TabletLayout(),
-            desktop: _buildDesktopLayout(context, vm),
+            desktop: DesktopLayout(
+              title: menu.name ?? 'Okutulmayan Karekodlar',
+              subtitle: menu.description,
+              actions: [
+                IconButton(
+                  onPressed: () => showScannedBarcodes(context),
+                  tooltip: 'Okutulan Karekodlar',
+                  icon: Icon(PhosphorIcons.qrCode()),
+                ),
+                IconButton(
+                  onPressed: () => showDeletedBarcodes(context),
+                  tooltip: 'Silinen Karekodlar',
+                  icon: Icon(PhosphorIcons.trashSimple()),
+                ),
+                if (notifier.canOpenWarning)
+                  IconButton(
+                    onPressed: notifier.toggleWarning,
+                    tooltip: 'Uyarı Aç/Kapa',
+                    icon: Icon(PhosphorIcons.warning()),
+                  ),
+              ],
+              child: _TableView(notifier: notifier),
+            ),
           );
         },
       ),
     );
   }
+}
 
-  Widget _buildDesktopLayout(BuildContext context, UnscannedBarcodesViewModel vm) {
-    return DesktopLayout(
-      title: 'Okutulmayan Karekod Listesi',
-      showAddButton: false,
+class _TableView extends StatelessWidget {
+  const _TableView({required this.notifier});
+
+  final UnscannedBarcodesNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return UnifiedTableView<PrescriptionItem>(
+      data: notifier.dateFilteredItems,
+      isLoading: notifier.isFetching,
+      enableExcel: true,
+      enableSearch: true,
+      enableDateFilter: true,
+      onSearchChanged: notifier.search,
+      onDateRangeChanged: (range) {
+        notifier.setStartDate(range?.start);
+        notifier.setEndDate(range?.end);
+      },
+      selectionMode: TableSelectionMode.single,
+      onSingleSelectionChanged: (selectedItem) => notifier.selectedItem = selectedItem,
+      columnDefs: buildColumnDefs(),
+      cellBuilder: (item, colIndex, value) => buildCell(item, colIndex, value),
       actions: [
-        IconButton(
-          onPressed: () => showReadedBarcodes(context),
-          tooltip: 'Okutulan Karekodlar',
-          icon: Icon(PhosphorIcons.qrCode()),
+        TableActionItem(
+          icon: PhosphorIcons.qrCode(),
+          tooltip: 'Karekod Gir',
+          onPressed: (data) => showScanBarcodeView(context, data),
         ),
-        IconButton(
-          onPressed: () => showDeletedBarcodes(context),
-          tooltip: 'Silinen Karekodlar',
-          icon: Icon(PhosphorIcons.trashSimple()),
-        ),
-        if (vm.canOpenWarning)
-          IconButton(onPressed: vm.toggleWarning, tooltip: 'Uyarı Aç/Kapa', icon: Icon(PhosphorIcons.warning())),
+        TableActionItem.delete(onPressed: (data) => showDeleteDescriptionView(context, data)),
       ],
-      child: _buildContent(context, vm),
-    );
-  }
-
-  /// Ekran içeriğini oluşturur.
-  Widget _buildContent(BuildContext context, UnscannedBarcodesViewModel vm) {
-    // Yükleniyor ve liste boşsa loading göster
-    if (vm.isFetchingBarcodes && vm.isEmpty) {
-      return const Center(child: CircularProgressIndicator.adaptive());
-    }
-
-    // Liste boşsa empty state göster
-    if (vm.isEmpty) {
-      return CommonEmptyStates.generic(
+      emptyWidget: CommonEmptyStates.generic(
         icon: Icons.qr_code_scanner,
         message: 'Okutulmayan karekod bulunmuyor',
         subMessage: 'Tüm karekodlar taranmış.',
-      );
-    }
-
-    return _TableView(vm: vm);
+      ),
+    );
   }
 }
 

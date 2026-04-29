@@ -38,6 +38,16 @@ class PrescriptionProviders {
       Provider<GetPatientPrescriptionHistoryUseCase>(
         create: (context) => GetPatientPrescriptionHistoryUseCase(context.read()),
       ),
+      Provider<DeleteUnscannedBarcodeUseCase>(create: (context) => DeleteUnscannedBarcodeUseCase(context.read())),
+      Provider<GetUnscannedBarcodesUseCase>(create: (context) => GetUnscannedBarcodesUseCase(context.read())),
+      Provider<ScanBarcodeUseCase>(create: (context) => ScanBarcodeUseCase(context.read())),
+      Provider<ToggleBarcodeWarningUseCase>(create: (context) => ToggleBarcodeWarningUseCase(context.read())),
+      Provider<GetScannedBarcodesUseCase>(create: (context) => GetScannedBarcodesUseCase(context.read())),
+      Provider<GetDeletedBarcodesUseCase>(create: (context) => GetDeletedBarcodesUseCase(context.read())),
+      Provider<GetUnappliedPrescriptionsUseCase>(create: (context) => GetUnappliedPrescriptionsUseCase(context.read())),
+      Provider<GetUnappliedPrescriptionDetailUseCase>(
+        create: (context) => GetUnappliedPrescriptionDetailUseCase(context.read()),
+      ),
     ];
   }
 }

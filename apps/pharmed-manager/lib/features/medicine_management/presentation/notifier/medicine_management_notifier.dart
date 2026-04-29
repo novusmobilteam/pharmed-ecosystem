@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/core.dart';
 
 import '../../../auth/presentation/notifier/auth_notifier.dart';
-import '../../../urgent_patient/domain/usecase/create_urgent_patient_usecase.dart';
 
 enum MedicineManagementType { allPatients, myPatients }
 

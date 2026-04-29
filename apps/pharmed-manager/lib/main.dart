@@ -54,6 +54,7 @@ class ManagerApp extends StatelessWidget {
         ...StationStockProviders.providers(),
         ...RoleProviders.providers(),
         ...AuthorizationProviders.providers(),
+        ...InconsistencyProviders.providers(),
 
         ChangeNotifierProvider(
           create: (ctx) => HomeNotifier(getFilteredMenusUseCase: ctx.read(), authNotifier: ctx.read()),

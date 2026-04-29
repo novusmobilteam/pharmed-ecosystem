@@ -2,8 +2,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
 import 'package:pharmed_manager/features/patient_order_review/domain/usecase/get_hospitalized_and_recent_exits_usecase.dart';
-import 'package:pharmed_manager/features/urgent_patient/domain/usecase/create_urgent_patient_usecase.dart';
-import 'package:pharmed_manager/features/urgent_patient/domain/usecase/get_urgent_patients_usecase.dart';
+
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 

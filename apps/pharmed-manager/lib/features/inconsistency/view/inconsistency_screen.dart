@@ -5,72 +5,44 @@ import 'package:provider/provider.dart';
 import '../../../core/core.dart';
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../domain/entity/inconsistency.dart';
-import '../view_model/inconsistency_list_view_model.dart';
+import '../notifier/inconsistency_notifier.dart';
 
 // part 'inconsistency_detail_view.dart';
 // part 'inconsistency_summary_view.dart';
 part 'stock_movements_table_view.dart';
 
 class InconsistencyScreen extends StatelessWidget {
-  const InconsistencyScreen({super.key});
+  const InconsistencyScreen({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => InconsistencyListViewModel(
-        inconsistencyRepository: context.read(),
-      )..fetchInconsistencies(),
-      child: Consumer<InconsistencyListViewModel>(
-        builder: (context, vm, _) {
+      create: (context) => InconsistencyNotifier(getInconsistenciesUseCase: context.read())..getInconsistencies(),
+      child: Consumer<InconsistencyNotifier>(
+        builder: (context, notifier, _) {
           return ResponsiveLayout(
-            mobile: SizedBox(),
-            tablet: SizedBox(),
-            desktop: _buildDesktopLayout(context, vm),
+            mobile: MobileLayout(),
+            tablet: TabletLayout(),
+            desktop: DesktopLayout(
+              title: menu.name ?? 'Tutarsızlık Hareketleri',
+              subtitle: menu.description,
+              showAddButton: false,
+              child: UnifiedTableView<Inconsistency>(
+                data: notifier.filteredItems,
+                enableExcel: true,
+                enableSearch: true,
+                onSearchChanged: notifier.search,
+                actions: [
+                  TableActionItem(icon: PhosphorIcons.qrCode(), tooltip: 'Görüntüle', onPressed: (data) {}),
+                  TableActionItem(icon: PhosphorIcons.camera(), tooltip: 'Fotoğraf', onPressed: (_) {}),
+                ],
+              ),
+            ),
           );
         },
       ),
-    );
-  }
-
-  Widget _buildDesktopLayout(BuildContext context, InconsistencyListViewModel vm) {
-    return DesktopLayout(
-      title: 'Tutarsızlık Hareketleri',
-      showAddButton: false,
-      child: _buildContent(context, vm),
-    );
-  }
-
-  Widget _buildContent(BuildContext context, InconsistencyListViewModel vm) {
-    if (vm.isFetching && vm.filteredItems.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator.adaptive(),
-      );
-    }
-
-    if (vm.filteredItems.isEmpty) {
-      return Center(
-        child: CommonEmptyStates.noData(),
-      );
-    }
-
-    return UnifiedTableView<Inconsistency>(
-      data: vm.filteredItems,
-      enableExcel: true,
-      enableSearch: true,
-      onSearchChanged: vm.search,
-      actions: [
-        TableActionItem(
-          icon: PhosphorIcons.qrCode(),
-          tooltip: 'Görüntüle',
-          onPressed: (data) {},
-        ),
-        TableActionItem(
-          icon: PhosphorIcons.camera(),
-          tooltip: 'Fotoğraf',
-          onPressed: (_) {},
-        ),
-      ],
     );
   }
 }

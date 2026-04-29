@@ -106,6 +106,7 @@ mixin ApiRequestMixin on ChangeNotifier {
 
   void _setOperation(OperationKey key, APIRequestStatus status, {String? message, dynamic data}) {
     _operations[key] = OperationStatus(key: key, status: status, message: message, data: data);
+    notifyListeners();
 
     switch (status) {
       case APIRequestStatus.loading:
@@ -134,8 +135,6 @@ mixin ApiRequestMixin on ChangeNotifier {
       case APIRequestStatus.initial:
         break;
     }
-
-    notifyListeners();
   }
 
   // ── execute — Result<T> dönen operasyonlar ────────────────────

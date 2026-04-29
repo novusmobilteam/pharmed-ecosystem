@@ -5,82 +5,60 @@ import 'package:provider/provider.dart';
 import '../../../core/core.dart';
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../view_model/unapplied_prescription_detail_view_model.dart';
-import '../view_model/unapplied_prescriptions_list_view_model.dart';
+import '../notifier/unapplied_prescriptions_notifier.dart';
 
 part 'prescription_detail_view.dart';
 
-class UnappliedPrescriptionsScreen extends StatefulWidget {
-  const UnappliedPrescriptionsScreen({super.key});
+class UnappliedPrescriptionsScreen extends StatelessWidget {
+  const UnappliedPrescriptionsScreen({super.key, required this.menu});
 
-  @override
-  State<UnappliedPrescriptionsScreen> createState() => _UnappliedPrescriptionsScreenState();
-}
+  final MenuItem menu;
 
-class _UnappliedPrescriptionsScreenState extends State<UnappliedPrescriptionsScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) =>
-          UnappliedPrescriptionListViewModel(prescriptionRepository: context.read())..fetchUnappliedPrescriptions(),
+      create: (context) => UnappliedPrescriptionsNotifier(
+        getUnappliedPrescriptionsUseCase: context.read(),
+        getUnappliedPrescriptionDetailUseCase: context.read(),
+      )..getUnappliedPrescriptions(),
       builder: (context, child) {
-        return Consumer<UnappliedPrescriptionListViewModel>(
-          builder: (context, vm, child) {
+        return Consumer<UnappliedPrescriptionsNotifier>(
+          builder: (context, notifier, child) {
             return ResponsiveLayout(
               mobile: const MobileLayout(),
               tablet: const TabletLayout(),
-              desktop: _buildDesktopLayout(context, vm),
+              desktop: DesktopLayout(
+                title: menu.name ?? 'Uygulanmamış Reçeteler',
+                subtitle: menu.description,
+                showAddButton: false,
+                child: UnifiedTableView<Prescription>(
+                  data: notifier.filteredItems,
+                  isLoading: notifier.isFetching,
+                  enableExcel: true,
+                  enableDateFilter: true,
+                  enableSearch: true,
+                  onSearchChanged: notifier.search,
+                  onDateRangeChanged: (value) {
+                    notifier.setStartDate(value?.start);
+                    notifier.setEndDate(value?.end);
+                  },
+
+                  // Tablo Satır Aksiyonları
+                  actions: [
+                    TableActionItem(
+                      icon: PhosphorIcons.qrCode(),
+                      tooltip: 'Detayları Görüntüle',
+                      color: context.colorScheme.onSurface,
+                      onPressed: (item) => showPrescriptionDetailView(context, prescription: item),
+                    ),
+                  ],
+                  emptyWidget: CommonEmptyStates.noData(),
+                ),
+              ),
             );
           },
         );
       },
-    );
-  }
-
-  Widget _buildDesktopLayout(BuildContext context, UnappliedPrescriptionListViewModel vm) {
-    return DesktopLayout(title: 'Uygulanmamış Reçeteler', showAddButton: false, child: _buildContent(context, vm));
-  }
-
-  Widget _buildContent(BuildContext context, UnappliedPrescriptionListViewModel vm) {
-    if (vm.isFetching && vm.isEmpty) {
-      return const Center(child: CircularProgressIndicator.adaptive());
-    }
-
-    if (vm.isEmpty) {
-      return CommonEmptyStates.noData();
-    }
-
-    return _TableView(vm: vm);
-  }
-}
-
-class _TableView extends StatelessWidget {
-  const _TableView({required this.vm});
-
-  final UnappliedPrescriptionListViewModel vm;
-
-  @override
-  Widget build(BuildContext context) {
-    return UnifiedTableView<Prescription>(
-      data: vm.filteredItems,
-      enableExcel: true,
-      enableDateFilter: true,
-      enableSearch: true,
-      onSearchChanged: vm.search,
-      onDateRangeChanged: (value) {
-        vm.setStartDate(value?.start);
-        vm.setEndDate(value?.end);
-      },
-
-      // Tablo Satır Aksiyonları
-      actions: [
-        TableActionItem(
-          icon: PhosphorIcons.qrCode(),
-          tooltip: 'Detayları Görüntüle',
-          color: context.colorScheme.onSurface,
-          onPressed: (item) => showPrescriptionDetailView(context, prescription: item),
-        ),
-      ],
     );
   }
 }

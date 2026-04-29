@@ -1,9 +1,9 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class GetUnappliedPrescriptionsUseCase {
+class GetDashboardUnappliedPrescriptionsUseCase {
   final IDashboardRepository _repository;
 
-  GetUnappliedPrescriptionsUseCase(this._repository);
+  GetDashboardUnappliedPrescriptionsUseCase(this._repository);
 
   Future<RepoResult<List<Prescription>>> call() {
     return _repository.getUnappliedPrescriptions();

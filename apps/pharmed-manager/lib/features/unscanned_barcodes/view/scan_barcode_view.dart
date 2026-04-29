@@ -4,7 +4,7 @@ void showScanBarcodeView(BuildContext context, PrescriptionItem data) {
   showDialog(
     context: context,
     builder: (_) => ChangeNotifierProvider.value(
-      value: context.read<UnscannedBarcodesViewModel>(),
+      value: context.read<UnscannedBarcodesNotifier>(),
       child: ScanBarcodeView(item: data),
     ),
   );
@@ -20,42 +20,26 @@ class ScanBarcodeView extends StatefulWidget {
 }
 
 class _ScanBarcodeViewState extends State<ScanBarcodeView> {
-  UnscannedBarcodesViewModel? _viewModel;
-
-  void _setupCallbacks(BuildContext context, UnscannedBarcodesViewModel vm) {
-    vm.setCallbacks(
-      key: UnscannedBarcodesViewModel.scanBarcodeOperation,
-      onLoading: () => showLoading(context),
-      onError: (message) {
-        hideLoading(context);
-        MessageUtils.showErrorDialog(context, message ?? 'Bir hata oluştu');
-      },
-      onSuccess: (message) {
-        hideLoading(context);
-        MessageUtils.showSuccessSnackbar(context, message);
-        Navigator.of(context).pop();
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<UnscannedBarcodesViewModel>(
-      builder: (context, vm, _) {
-        if (_viewModel != vm) {
-          _viewModel = vm;
-          _setupCallbacks(context, vm);
-        }
-
+    return Consumer<UnscannedBarcodesNotifier>(
+      builder: (context, notifier, _) {
         return RegistrationDialog(
           title: 'Karekod',
           maxHeight: 350,
           onSave: () async {
-            await vm.scanBarcode(widget.item);
+            await notifier.scanBarcode(
+              widget.item,
+              onSuccess: (msg) {
+                MessageUtils.showSuccessSnackbar(context, msg);
+                context.pop();
+              },
+              onFailed: (msg) => MessageUtils.showErrorDialog(context, msg),
+            );
           },
           saveButtonText: 'Karekod Gir',
           child: Column(
-            children: [TextInputField(label: 'Karekod', onChanged: (value) => vm.barcode = value ?? '')],
+            children: [TextInputField(label: 'Karekod', onChanged: (value) => notifier.barcode = value ?? '')],
           ),
         );
       },

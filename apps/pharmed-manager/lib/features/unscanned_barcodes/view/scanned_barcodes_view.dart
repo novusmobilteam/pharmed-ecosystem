@@ -1,6 +1,6 @@
 part of 'unscanned_barcodes_screen.dart';
 
-void showDeletedBarcodes(BuildContext context) {
+void showScannedBarcodes(BuildContext context) {
   final notifier = context.read<UnscannedBarcodesNotifier>();
 
   showDialog(
@@ -9,30 +9,30 @@ void showDeletedBarcodes(BuildContext context) {
   );
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    notifier.getDeletedBarcodes();
+    notifier.getScannedBarcodes();
   });
 }
 
-class DeletedBarcodesView extends StatelessWidget {
-  const DeletedBarcodesView({super.key});
+class ScannedBarcodesView extends StatelessWidget {
+  const ScannedBarcodesView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      width: context.width * 0.7,
-      height: 1000,
-      title: 'Silinen Karekodlar',
+      width: context.width * 0.8,
+      maxHeight: 900,
+      title: 'Okutulan Karekodlar',
       child: Consumer<UnscannedBarcodesNotifier>(
         builder: (context, notifier, _) {
-          if (notifier.isLoading(notifier.fetchDeletedOp)) {
+          if (notifier.isLoading(notifier.fetchScannedOp)) {
             return const Center(child: CircularProgressIndicator.adaptive());
           }
-          if (!notifier.isLoading(notifier.fetchDeletedOp) && notifier.deletedBarcodes.isEmpty) {
+          if (!notifier.isLoading(notifier.fetchScannedOp) && notifier.deletedBarcodes.isEmpty) {
             return CommonEmptyStates.noData();
           }
 
           return UnifiedTableView<PrescriptionItem>(
-            data: notifier.deletedBarcodes,
+            data: notifier.scannedBarcodes,
             horizontalScroll: true,
             minTableWidth: 3000,
             columnDefs: buildColumnDefs(),

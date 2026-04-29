@@ -12,10 +12,14 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../authorization/authorization_screen.dart';
 import '../../hospitalization/view/hospitalization_screen.dart';
+import '../../inconsistency/view/inconsistency_screen.dart';
 import '../../medicine/presentation/view/medicine_screen.dart';
 import '../../refund/view/drawer_refund_screen.dart';
 import '../../refund/view/pharmacy_refund_screen.dart';
 import '../../station_setup/view/station_screen.dart';
+import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
+import '../../unscanned_barcodes/view/unscanned_barcodes_screen.dart';
+import '../../urgent_patient/view/urgent_patient_screen.dart';
 import '../../user/view/user_screen.dart';
 import '../notifier/home_notifier.dart';
 
@@ -125,6 +129,10 @@ class _HomeContent extends StatelessWidget {
       'role' => RoleScreen(menu: menu!),
       'authorization' => AuthorizationScreen(menu: menu!),
       'user' => UserScreen(menu: menu!),
+      'unReadQrCode' => UnscannedBarcodesScreen(menu: menu!),
+      '-emergency-patient-end-manager' => UrgentPatientScreen(menu: menu!),
+      'unappliedPrescriptions' => UnappliedPrescriptionsScreen(menu: menu!),
+      'inconsistency' => InconsistencyScreen(menu: menu!),
       _ => const _NotFoundView(),
     };
   }

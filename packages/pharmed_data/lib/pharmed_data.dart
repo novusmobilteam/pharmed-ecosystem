@@ -38,3 +38,4 @@ export 'src/features/kit/kit.dart';
 export 'src/features/kit_content/kit_content.dart';
 export 'src/features/warning/warning.dart';
 export 'src/features/authorization/authorization.dart';
+export 'src/features/inconsistency/inconsistency.dart';

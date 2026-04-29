@@ -38,6 +38,8 @@ class Prescription extends TableData {
   @override
   List get content => [
     hospitalization?.physicalService?.name,
+    hospitalization?.room?.name,
+    hospitalization?.bed?.name,
     hospitalization?.patient?.protocolNo,
     hospitalization?.patient?.fullName,
     hospitalizationId?.toCustomString(),
@@ -48,6 +50,7 @@ class Prescription extends TableData {
   @override
   List get rawContent => [
     hospitalization?.physicalService,
+    hospitalization?.room?.name,
     hospitalization?.patient?.protocolNo,
     hospitalization?.patient?.fullName,
     hospitalizationId,
@@ -56,5 +59,14 @@ class Prescription extends TableData {
   ];
 
   @override
-  List<String?> get titles => ['Servis', 'Hasta Kodu', 'Hasta', 'Yatış Kodu', 'Yatış Tarihi', 'Bekleyen Adet'];
+  List<String?> get titles => [
+    'Servis',
+    'Oda',
+    'Yatak',
+    'Hasta Kodu',
+    'Hasta',
+    'Yatış Kodu',
+    'Yatış Tarihi',
+    'Bekleyen Adet',
+  ];
 }
