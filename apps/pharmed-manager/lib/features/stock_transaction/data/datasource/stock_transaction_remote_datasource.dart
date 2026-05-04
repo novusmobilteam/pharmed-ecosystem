@@ -17,7 +17,7 @@ class StockTransactionRemoteDataSource extends BaseRemoteDataSource implements S
 
   @override
   Future<Result<StockTransactionDTO?>> createTransaction(StockTransactionDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _basePath,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(StockTransactionDTO.fromJson),

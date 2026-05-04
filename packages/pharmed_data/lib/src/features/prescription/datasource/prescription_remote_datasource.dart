@@ -17,7 +17,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   String get logUnit => 'SW-UNIT-PRESCRIPTION';
 
   Future<Result<PrescriptionDTO?>> createPrescription(PrescriptionDTO dto) {
-    return createRequest<PrescriptionDTO?>(
+    return postRequest<PrescriptionDTO?>(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(PrescriptionDTO.fromJson),
@@ -38,7 +38,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<void>> createPrescriptionDetail(List<PrescriptionItemDTO> items) {
     final body = {'prescriptionDetails': items.map((e) => e.toJson()).toList()};
 
-    return createRequest<void>(
+    return postRequest<void>(
       path: _detail,
       body: body,
       parser: BaseRemoteDataSource.voidParser(),
@@ -95,7 +95,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> scanBarcode({required int prescriptionItemId, required String qrCode}) {
-    return updateRequest<void>(
+    return putRequest<void>(
       path: '/Prescription/detail/$prescriptionItemId/qrCode',
       body: {'prescriptionDetailId ': prescriptionItemId, 'qrCode': qrCode},
       parser: BaseRemoteDataSource.voidParser(),
@@ -139,16 +139,20 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  Future<Result<void>> checkPrescriptionRequests(int prescriptionId, List<int> ids) async {
+    return await putBulkRequest(path: '$_base/detail/$prescriptionId/approveBulkCheck', body: ids);
+  }
+
   Future<Result<void>> approvePrescriptionRequests(int prescriptionId, List<int> ids) async {
-    return await updateBulkRequest(path: '$_base/detail/$prescriptionId/approveBulk', body: ids);
+    return await putBulkRequest(path: '$_base/detail/$prescriptionId/approveBulk', body: ids);
   }
 
   Future<Result<void>> cancelPrescriptionRequests(int prescriptionId, List<int> ids) async {
-    return await updateBulkRequest(path: '$_base/detail/$prescriptionId/cancelBulk', body: ids);
+    return await putBulkRequest(path: '$_base/detail/$prescriptionId/cancelBulk', body: ids);
   }
 
   Future<Result<void>> rejectPrescriptionRequests(int prescriptionId, List<int> ids) async {
-    return await updateBulkRequest(path: '$_base/detail/$prescriptionId/rejectBulk', body: ids);
+    return await putBulkRequest(path: '$_base/detail/$prescriptionId/rejectBulk', body: ids);
   }
 
   Future<Result<void>> updatePrescriptionItem(PrescriptionItemDTO dto) {
@@ -164,7 +168,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       'applicationDate': dto.applicationDate?.toIso8601String(),
     };
 
-    return updateRequest(
+    return putRequest(
       path: '$_base/detail/${dto.prescriptionId}',
       body: body,
       parser: BaseRemoteDataSource.voidParser(),
@@ -173,7 +177,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> deletePrescription(int prescriptionId) {
-    return createRequest<void>(
+    return postRequest<void>(
       path: '$_base/detail/$prescriptionId',
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Prescription deleted',
@@ -190,7 +194,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> toggleWarning(int id) {
-    return updateRequest(path: '$_base/detail/unReadQrCodeWarning/$id', parser: BaseRemoteDataSource.voidParser());
+    return putRequest(path: '$_base/detail/unReadQrCodeWarning/$id', parser: BaseRemoteDataSource.voidParser());
   }
 
   Future<Result<List<PrescriptionItemDTO>?>> getMedicineActivities() async {
@@ -219,5 +223,15 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       path: '$_base/prescriptionByPatientId/$patientId',
       parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
     );
+  }
+
+  Future<Result<void>> assignRfidTag({required int prescriptionItemId, required String epc}) async {
+    final path = '$_base/detail/$prescriptionItemId/rfidCardTag/$epc';
+    return await putRequest(path: path, parser: BaseRemoteDataSource.voidParser());
+  }
+
+  Future<Result<void>> deleteRfidTag({required int prescriptionItemId}) async {
+    final path = '$_base/detail/$prescriptionItemId/rfidCardTag';
+    return await deleteRequest(path: path, parser: BaseRemoteDataSource.voidParser());
   }
 }

@@ -28,7 +28,7 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
 
   /// Bir çekmece gözüne yeni ilaç ataması oluşturur.
   Future<Result<void>> createMedicineAssignment(MedicineAssignmentDto dto) {
-    return createRequest(
+    return postRequest(
       path: _medicineBase,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -38,7 +38,7 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
 
   /// Mevcut bir ilaç atamasını günceller.
   Future<Result<void>> updateMedicineAssignment(MedicineAssignmentDto dto) {
-    return updateRequest(
+    return putRequest(
       path: '$_medicineBase/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -127,7 +127,7 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
 
   /// Mobil kabin gözüne yatak ataması yapar.
   Future<Result<void>> createBedAssignment(PatientAssignmentDto dto) {
-    return createRequest(
+    return postRequest(
       path: '$_patientBase',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -137,7 +137,7 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
 
   /// Mevcut bir yatak atamasını günceller.
   Future<Result<void>> updateBedAssignment(PatientAssignmentDto dto) {
-    return updateRequest(
+    return putRequest(
       path: '$_patientBase/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

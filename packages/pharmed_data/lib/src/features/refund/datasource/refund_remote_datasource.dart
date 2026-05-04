@@ -19,7 +19,7 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<MedicineWithdrawItemDTO?>> checkRefundStatus({required int id, required double quantity}) async {
-    final res = await createRequest(
+    final res = await postRequest(
       path: '/Prescription/detail/$id/refundControl',
       parser: (json) {
         final detail = (json as Map<String, dynamic>)['detail'];
@@ -37,7 +37,7 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> refundToBox({required int id, required double quantity}) async {
-    return await createRequest(
+    return await postRequest(
       path: '/Prescription/detail/$id/refundReturnBox',
       parser: BaseRemoteDataSource.voidParser(),
       query: {'id': id, 'quantity': quantity},
@@ -45,7 +45,7 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> refundToPharmacy({required int id, required double quantity}) async {
-    return await createRequest(
+    return await postRequest(
       path: '/Prescription/detail/$id/refundPharmacy',
       parser: BaseRemoteDataSource.voidParser(),
       query: {'id': id, 'quantity': quantity},
@@ -57,7 +57,7 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
     required double quantity,
     required int cabinDrawerDetailId,
   }) async {
-    return await createRequest(
+    return await postRequest(
       path: '/Prescription/detail/$id/refundInstead', // instead :D
       parser: BaseRemoteDataSource.voidParser(),
       query: {'id': id, 'quantity': quantity, 'cabinDrawrDetailId': cabinDrawerDetailId},
@@ -65,7 +65,7 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> refundToDrawer({required int id, required double quantity}) async {
-    return await createRequest(
+    return await postRequest(
       path: '/Prescription/detail/$id/refundDrawr',
       parser: BaseRemoteDataSource.voidParser(),
       query: {'id': id, 'quantity': quantity},
@@ -80,7 +80,7 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> completePharmacyRefund(int id) async {
-    return await createRequest(
+    return await postRequest(
       path: '/RefundWasteDescrutionTransaction/approve/$id',
       parser: BaseRemoteDataSource.voidParser(),
     );
@@ -101,7 +101,7 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> deletePharmacyRefund(int refundId, String? description) {
-    return createRequest(
+    return postRequest(
       path: '/RefundWasteDescrutionTransaction/delete',
       parser: BaseRemoteDataSource.voidParser(),
       body: {'refundWasteDescrutionTransactionId': refundId, 'deleteNote': description},

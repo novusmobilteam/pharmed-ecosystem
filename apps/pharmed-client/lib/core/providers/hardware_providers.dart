@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
 import '../flavor/app_flavor.dart';
 import '../hardware/service/cabin_operation/cabin_operation_service.dart';
 import '../hardware/service/cabin_operation/i_cabin_operation_service.dart';
 import '../hardware/service/cabin_operation/mock_cabin_operation_service.dart';
-import '../hardware/service/rfid/i_rfid_service.dart';
 import '../hardware/service/rfid/mock_rfid_service.dart';
 import '../hardware/service/rfid/rfid_service.dart';
 import '../hardware/service/rfid/usecase/test_rfid_connection_usecase.dart';

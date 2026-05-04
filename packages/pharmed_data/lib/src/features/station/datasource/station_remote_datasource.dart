@@ -28,7 +28,7 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createStation(StationDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -37,7 +37,7 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateStation(StationDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -52,7 +52,7 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<void>> updateStationMacAddress(int stationId) async {
     final macAddress = await DeviceInfo.getMacAddress();
 
-    return updateRequest(
+    return putRequest(
       path: '$_base/macAddress/$stationId?macAddress=$macAddress',
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'İstasyon MAC Adresi güncellendi',

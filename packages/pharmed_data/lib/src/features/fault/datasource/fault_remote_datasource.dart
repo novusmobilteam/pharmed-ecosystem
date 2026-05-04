@@ -42,41 +42,41 @@ class FaultRemoteDataSource extends BaseRemoteDataSource {
 
   // Master kabin arıza kaydı oluşturan servis
   Future<Result<void>> createMasterCabinFaultRecord(MasterFaultDto dto, int cellId) async {
-    return await updateRequest(path: '$_masterBase/faulty/$cellId', parser: BaseRemoteDataSource.voidParser());
+    return await putRequest(path: '$_masterBase/faulty/$cellId', parser: BaseRemoteDataSource.voidParser());
   }
 
   // Mobil kabin arıza kaydı oluşturan servis
   Future<Result<void>> createMobilCabinFaultRecord(MobileFaultDto dto, int slotId) async {
-    return await updateRequest(path: '$_mobileBase/faulty/$slotId', parser: BaseRemoteDataSource.voidParser());
+    return await putRequest(path: '$_mobileBase/faulty/$slotId', parser: BaseRemoteDataSource.voidParser());
   }
 
   // Master kabin arıza kaydını temizleyen servis
   Future<Result<void>> clearMasterCabinFaultRecord(MasterFaultDto dto, int cellId) async {
-    return await updateRequest(path: '$_masterBase/notFaulty/$cellId', parser: BaseRemoteDataSource.voidParser());
+    return await putRequest(path: '$_masterBase/notFaulty/$cellId', parser: BaseRemoteDataSource.voidParser());
   }
 
   // Mobil kabin arıza kaydını temizleyen servis
   Future<Result<void>> clearMobilCabinFaultRecord(MobileFaultDto dto, int slotId) async {
-    return await updateRequest(path: '$_mobileBase/notFaulty/$slotId', parser: BaseRemoteDataSource.voidParser());
+    return await putRequest(path: '$_mobileBase/notFaulty/$slotId', parser: BaseRemoteDataSource.voidParser());
   }
 
   // Master kabin bakım kaydı oluşturan servis
   Future<Result<void>> createMasterCabinMaintenanceRecord(MasterFaultDto dto, int cellId) async {
-    return await updateRequest(path: '$_masterBase/maintenance/$cellId', parser: BaseRemoteDataSource.voidParser());
+    return await putRequest(path: '$_masterBase/maintenance/$cellId', parser: BaseRemoteDataSource.voidParser());
   }
 
   // Mobil kabin bakım kaydı oluşturan servis
   Future<Result<void>> createMobilCabinMaintenanceRecord(MobileFaultDto dto, int slotId) async {
-    return await updateRequest(path: '$_mobileBase/maintenance/$slotId', parser: BaseRemoteDataSource.voidParser());
+    return await putRequest(path: '$_mobileBase/maintenance/$slotId', parser: BaseRemoteDataSource.voidParser());
   }
 
   // Master kabin bakım kaydını temizleyen servis
   Future<Result<void>> clearMasterCabinMaintenanceRecord(MasterFaultDto dto, int cellId) async {
-    return await updateRequest(path: '$_masterBase/notMaintenance/$cellId', parser: BaseRemoteDataSource.voidParser());
+    return await putRequest(path: '$_masterBase/notMaintenance/$cellId', parser: BaseRemoteDataSource.voidParser());
   }
 
   // Mobil kabin bakım kaydını temizleyen servis
   Future<Result<void>> clearMobilCabinMaintenanceRecord(MobileFaultDto dto, int slotId) async {
-    return await updateRequest(path: '$_mobileBase/notMaintenance/$slotId', parser: BaseRemoteDataSource.voidParser());
+    return await putRequest(path: '$_mobileBase/notMaintenance/$slotId', parser: BaseRemoteDataSource.voidParser());
   }
 }

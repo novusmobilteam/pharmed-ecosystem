@@ -31,7 +31,7 @@ class RoleRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createRole(RoleDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -40,7 +40,7 @@ class RoleRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateRole(RoleDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

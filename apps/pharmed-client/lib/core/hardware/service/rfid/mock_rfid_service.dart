@@ -2,10 +2,6 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../model/rfid_tag.dart';
-import 'i_rfid_service.dart';
-import 'model/rfid_reader_info.dart';
-
 /// Dev/test flavor için sabit tag listesi döner.
 /// Gerçek TCP bağlantısı kurmaz.
 class MockRfidService implements IRfidService {

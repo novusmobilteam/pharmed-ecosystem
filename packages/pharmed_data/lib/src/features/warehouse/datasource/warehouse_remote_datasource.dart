@@ -27,7 +27,7 @@ class WarehouseRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createWarehouse(WarehouseDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -36,7 +36,7 @@ class WarehouseRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateWarehouse(WarehouseDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

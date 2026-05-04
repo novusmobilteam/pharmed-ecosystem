@@ -90,5 +90,9 @@ export 'src/models/table_data.dart';
 
 // result
 export 'src/result/result.dart';
+
 // repository
 export 'src/repository/repo_result.dart';
+
+// services
+export 'src/services/rfid/rfid.dart';

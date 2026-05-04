@@ -20,7 +20,7 @@ class MailPreferenceRemoteDataSource extends BaseRemoteDataSource implements Mai
 
   @override
   Future<Result<MailPreferenceDTO?>> createMailPreference(MailPreferenceDTO dto) {
-    return createRequest<MailPreferenceDTO?>(
+    return postRequest<MailPreferenceDTO?>(
       path: _basePath,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(MailPreferenceDTO.fromJson),
@@ -33,7 +33,7 @@ class MailPreferenceRemoteDataSource extends BaseRemoteDataSource implements Mai
     if (dto.id == null || dto.id!.isEmpty) {
       return Future.value(Result.error(CustomException(message: 'updateMailPreference: id is null')));
     }
-    return updateRequest<MailPreferenceDTO?>(
+    return putRequest<MailPreferenceDTO?>(
       path: '$_basePath/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(MailPreferenceDTO.fromJson),

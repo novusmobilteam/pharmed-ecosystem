@@ -29,7 +29,7 @@ class MaterialTypeRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createMaterialType(MaterialTypeDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -38,7 +38,7 @@ class MaterialTypeRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateMaterialType(MaterialTypeDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

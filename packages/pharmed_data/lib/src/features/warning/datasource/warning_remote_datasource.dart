@@ -23,7 +23,7 @@ class WarningRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createWarning(WarningDto dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -32,7 +32,7 @@ class WarningRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateWarning(WarningDto dto) {
-    return updateRequest(
+    return putRequest(
       path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

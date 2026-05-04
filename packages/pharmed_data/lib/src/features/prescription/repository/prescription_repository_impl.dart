@@ -119,6 +119,11 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
+  Future<Result<void>> checkPrescriptionRequests(int prescriptionId, List<int> ids) async {
+    return await _dataSource.checkPrescriptionRequests(prescriptionId, ids);
+  }
+
+  @override
   Future<Result<void>> approvePrescriptionRequests(int prescriptionId, List<int> ids) async {
     return await _dataSource.approvePrescriptionRequests(prescriptionId, ids);
   }
@@ -187,5 +192,17 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
       ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])),
       error: (e) => Result.error(e),
     );
+  }
+
+  @override
+  Future<Result<String>> assignRfidTag({required int prescriptionItemId, required String epc}) async {
+    final result = await _dataSource.assignRfidTag(prescriptionItemId: prescriptionItemId, epc: epc);
+    return result.when(ok: (dtos) => Result.ok(epc), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> deleteRfidTag({required int prescriptionItemId}) async {
+    final result = await _dataSource.deleteRfidTag(prescriptionItemId: prescriptionItemId);
+    return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
   }
 }

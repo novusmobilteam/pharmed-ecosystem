@@ -90,7 +90,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<void>> createMedicine(MedicineDTO dto) {
     final path = dto.when(drug: (_) => '/Material', consumable: (_) => '/MedicalConsumables');
 
-    return createRequest(
+    return postRequest(
       path: path,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -101,7 +101,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<void>> updateMedicine(MedicineDTO dto) {
     final path = dto.when(drug: (d) => '/Material/${d.id}', consumable: (c) => '/MedicalConsumables/${c.id}');
 
-    return updateRequest(
+    return putRequest(
       path: path,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

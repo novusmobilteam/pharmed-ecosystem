@@ -9,10 +9,13 @@ import 'package:pharmed_manager/core/flavor/app_flavor.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
+import '../services/rfid/rfid_service.dart';
+
 class CoreProviders {
   static List<SingleChildWidget> providers() {
     return [
       Provider<TokenHolder>(create: (_) => TokenHolder()),
+      Provider<IRfidService>(create: (_) => RfidService()),
 
       Provider<APIManager>(
         create: (ctx) {

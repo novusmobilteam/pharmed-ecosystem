@@ -44,7 +44,7 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<CabinDTO?>> createCabin(CabinDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(CabinDTO.fromJson),
@@ -53,7 +53,7 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<CabinDTO?>> updateCabin(CabinDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(CabinDTO.fromJson),
@@ -92,7 +92,7 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createDrawerSlots(List<DrawerSlotDTO> dtos) async {
-    return createBulkRequest(path: '/CabinDesign/bulk', body: dtos.map((d) => d.toJson()).toList(), parser: null);
+    return postBulkRequest(path: '/CabinDesign/bulk', body: dtos.map((d) => d.toJson()).toList(), parser: null);
   }
 
   Future<Result<List<DrawerSlotDTO>>> getCabinSlots(int cabinId) async {
@@ -117,7 +117,7 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateDrawerSlots(List<DrawerSlotDTO> dtos) {
-    return updateBulkRequest(path: '$_base/bulk', body: dtos.map((d) => d.toJson()).toList(), parser: null);
+    return putBulkRequest(path: '$_base/bulk', body: dtos.map((d) => d.toJson()).toList(), parser: null);
   }
 
   Future<Result<List<DrawerSlotDTO>>> getSerumCabins() async {
@@ -132,7 +132,7 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) {
-    return createBulkRequest(
+    return postBulkRequest(
       path: '/CabinDesign/mobileBulk',
       body: drawers.map((d) => d.toJson()).toList(),
       parser: null,
@@ -140,7 +140,7 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) {
-    return updateBulkRequest(
+    return putBulkRequest(
       path: '/CabinDesign/mobile/bulk',
       body: drawers.map((d) => d.toJson()).toList(),
       parser: null,

@@ -39,7 +39,7 @@ class RoleAuthorizationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateMenuAuthorization(RoleMenuAuthorizationDto dto) {
-    return updateRequest(
+    return putRequest(
       path: '$_menuPath/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -48,7 +48,7 @@ class RoleAuthorizationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createMenuAuthorization(RoleMenuAuthorizationDto dto) {
-    return createRequest(
+    return postRequest(
       path: _menuPath,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -68,7 +68,7 @@ class RoleAuthorizationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateDrugAuthorizations(List<Map<String, dynamic>> body) {
-    return createRequest<void>(
+    return postRequest<void>(
       path: '$_drugPath/bulk',
       body: body,
       parser: BaseRemoteDataSource.voidParser(),
@@ -86,7 +86,7 @@ class RoleAuthorizationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateMedicalConsumableAuthorization(RoleMedicalConsumableAuthorizationDto dto) {
-    return updateRequest(
+    return putRequest(
       path: '$_mcPath/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -95,7 +95,7 @@ class RoleAuthorizationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createMedicalConsumableAuthorization(RoleMedicalConsumableAuthorizationDto dto) {
-    return createRequest(
+    return postRequest(
       path: _mcPath,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

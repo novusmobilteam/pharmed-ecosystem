@@ -54,7 +54,7 @@ class CabinTemperatureRemoteDataSource extends BaseRemoteDataSource implements C
 
   @override
   Future<Result<CabinTemperatureDTO?>> createCabinTemperature(CabinTemperatureDTO dto) {
-    return createRequest<CabinTemperatureDTO?>(
+    return postRequest<CabinTemperatureDTO?>(
       path: _basePath,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(CabinTemperatureDTO.fromJson),
@@ -64,7 +64,7 @@ class CabinTemperatureRemoteDataSource extends BaseRemoteDataSource implements C
 
   @override
   Future<Result<CabinTemperatureDetailDTO?>> createCabinTemperatureDetail(CabinTemperatureDetailDTO dto) {
-    return createRequest<CabinTemperatureDetailDTO?>(
+    return postRequest<CabinTemperatureDetailDTO?>(
       path: '$_basePath/detail',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(CabinTemperatureDetailDTO.fromJson),
@@ -77,7 +77,7 @@ class CabinTemperatureRemoteDataSource extends BaseRemoteDataSource implements C
     if (dto.id == null) {
       return Future.value(Result.error(CustomException(message: 'updateCabinTemperature: id is null')));
     }
-    return updateRequest<CabinTemperatureDetailDTO?>(
+    return putRequest<CabinTemperatureDetailDTO?>(
       path: '$_basePath/detail/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(CabinTemperatureDetailDTO.fromJson),

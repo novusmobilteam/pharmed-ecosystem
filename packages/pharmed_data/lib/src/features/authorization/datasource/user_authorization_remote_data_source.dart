@@ -37,7 +37,7 @@ class UserAuthorizationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateAuthentication(UserMenuAuthorizationDto dto) {
-    return updateRequest(
+    return putRequest(
       path: '$_basePath/${dto.userId}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -46,7 +46,7 @@ class UserAuthorizationRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createAuthentication(UserMenuAuthorizationDto dto) {
-    return createRequest(
+    return postRequest(
       path: _basePath,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

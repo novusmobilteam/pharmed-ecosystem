@@ -5,9 +5,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:pharmed_client/l10n/l10n_ext.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../../../core/hardware/service/rfid/model/rfid_reader_info.dart';
 import '../../../../domain/model/cabin_setup_config.dart';
 import '../../../state/setup_wizard_ui_state.dart';
 import '../../widgets/step_shared_widgets.dart';

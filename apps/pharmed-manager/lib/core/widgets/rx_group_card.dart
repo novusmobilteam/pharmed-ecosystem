@@ -21,6 +21,7 @@ class RxGroupCard extends StatefulWidget {
   /// RFID etiket atama/değiştirme callback'i.
   /// Akış netleşince implement edilecek — şimdilik placeholder.
   final Future<void> Function(PrescriptionItem item)? onRfidTap;
+  final Future<void> Function(PrescriptionItem item)? onRfidDelete;
 
   const RxGroupCard({
     super.key,
@@ -31,6 +32,7 @@ class RxGroupCard extends StatefulWidget {
     this.onReject,
     this.onCancel,
     this.onRfidTap,
+    this.onRfidDelete,
   });
 
   @override
@@ -41,19 +43,14 @@ class _RxGroupCardState extends State<RxGroupCard> {
   final Set<int> _selectedIds = {};
   bool _isExpanded = true;
 
-  // ── Seçim yardımcıları ───────────────────────────────────────────────────
   List<PrescriptionItem> get _selectableItems => widget.items.where((i) => i.status?.isSelectable ?? false).toList();
-
   List<PrescriptionItem> get _selectedItems => _selectableItems.where((i) => _selectedIds.contains(i.id)).toList();
 
   bool get _hasSelection => _selectedIds.isNotEmpty;
-
   bool get _approvedAll =>
       _selectableItems.isNotEmpty && _selectableItems.every((i) => i.status == PrescriptionStatus.purchasePending);
-
   bool get _rejectedAll =>
       _selectableItems.isNotEmpty && _selectableItems.every((i) => i.status == PrescriptionStatus.rejected);
-
   bool get _cancelledAll =>
       _selectableItems.isNotEmpty && _selectableItems.every((i) => i.status == PrescriptionStatus.cancelled);
 
@@ -107,6 +104,7 @@ class _RxGroupCardState extends State<RxGroupCard> {
                       interactive: widget.interactive,
                       onCheckTap: () => _toggleItem(item.id!),
                       onRfidTap: widget.onRfidTap != null ? () => widget.onRfidTap!(item) : null,
+                      onRfidDelete: widget.onRfidDelete != null ? () => widget.onRfidDelete!(item) : null,
                     ),
                   ),
                   // Action bar — seçim varsa görünür
@@ -145,8 +143,6 @@ class _RxGroupCardState extends State<RxGroupCard> {
     );
   }
 }
-
-// ── Kart başlığı ─────────────────────────────────────────────────────────────
 
 class _RxHeader extends StatelessWidget {
   final int prescriptionId;
@@ -226,14 +222,13 @@ class _RxHeader extends StatelessWidget {
   }
 }
 
-// ── Tek ilaç bloğu ────────────────────────────────────────────────────────────
-
 class _RxDrugBlock extends StatefulWidget {
   final PrescriptionItem item;
   final bool isSelected;
   final bool interactive;
   final VoidCallback onCheckTap;
-  final VoidCallback? onRfidTap;
+  final Future<void> Function()? onRfidTap;
+  final Future<void> Function()? onRfidDelete;
 
   const _RxDrugBlock({
     required this.item,
@@ -241,6 +236,7 @@ class _RxDrugBlock extends StatefulWidget {
     required this.interactive,
     required this.onCheckTap,
     this.onRfidTap,
+    this.onRfidDelete,
   });
 
   @override
@@ -249,8 +245,29 @@ class _RxDrugBlock extends StatefulWidget {
 
 class _RxDrugBlockState extends State<_RxDrugBlock> {
   bool _isAccordionOpen = false;
+  bool _isRfidLoading = false;
 
   bool get _isSelectable => widget.interactive && (widget.item.status?.isSelectable ?? false);
+
+  Future<void> _handleRfidTap() async {
+    if (_isRfidLoading || widget.onRfidTap == null) return;
+    setState(() => _isRfidLoading = true);
+    try {
+      await widget.onRfidTap!();
+    } finally {
+      if (mounted) setState(() => _isRfidLoading = false);
+    }
+  }
+
+  Future<void> _handleRfidDelete() async {
+    if (_isRfidLoading || widget.onRfidDelete == null) return;
+    setState(() => _isRfidLoading = true);
+    try {
+      await widget.onRfidDelete!();
+    } finally {
+      if (mounted) setState(() => _isRfidLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -270,24 +287,20 @@ class _RxDrugBlockState extends State<_RxDrugBlock> {
             onCheckTap: widget.onCheckTap,
             onRowTap: () => setState(() => _isAccordionOpen = !_isAccordionOpen),
           ),
-          _DrugAccordion(item: widget.item, isOpen: _isAccordionOpen, onRfidTap: widget.onRfidTap),
+          _DrugAccordion(
+            item: widget.item,
+            isOpen: _isAccordionOpen,
+            isRfidLoading: _isRfidLoading,
+            onRfidTap: widget.onRfidTap != null ? _handleRfidTap : null,
+            onRfidDelete: widget.onRfidDelete != null ? _handleRfidDelete : null,
+          ),
         ],
       ),
     );
   }
 }
 
-// ── İlaç satırı ───────────────────────────────────────────────────────────────
-
 class _DrugRow extends StatelessWidget {
-  final PrescriptionItem item;
-  final bool isSelected;
-  final bool isSelectable;
-  final bool isAccordionOpen;
-  final bool interactive;
-  final VoidCallback onCheckTap;
-  final VoidCallback onRowTap;
-
   const _DrugRow({
     required this.item,
     required this.isSelected,
@@ -297,6 +310,14 @@ class _DrugRow extends StatelessWidget {
     required this.onCheckTap,
     required this.onRowTap,
   });
+
+  final PrescriptionItem item;
+  final bool isSelected;
+  final bool isSelectable;
+  final bool isAccordionOpen;
+  final bool interactive;
+  final VoidCallback onCheckTap;
+  final VoidCallback onRowTap;
 
   @override
   Widget build(BuildContext context) {
@@ -385,14 +406,26 @@ class _DrugRow extends StatelessWidget {
   }
 }
 
-// ── Accordion panel ───────────────────────────────────────────────────────────
-
 class _DrugAccordion extends StatelessWidget {
+  const _DrugAccordion({
+    required this.item,
+    required this.isOpen,
+    required this.isRfidLoading,
+    this.onRfidTap,
+    this.onRfidDelete,
+  });
+
   final PrescriptionItem item;
   final bool isOpen;
+  final bool isRfidLoading;
   final VoidCallback? onRfidTap;
+  final VoidCallback? onRfidDelete;
 
-  const _DrugAccordion({required this.item, required this.isOpen, this.onRfidTap});
+  bool get _needRfid {
+    if (item.medicine == null) return false;
+    if (!item.medicine!.isDrug) return false;
+    return (item.medicine as Drug).isRfidEnable;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -401,7 +434,7 @@ class _DrugAccordion extends StatelessWidget {
       crossFadeState: isOpen ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       firstChild: Container(
         decoration: BoxDecoration(
-          color: MedColors.surface3,
+          //color: MedColors.surface3,
           border: Border(top: BorderSide(color: MedColors.border2)),
         ),
         padding: const EdgeInsets.fromLTRB(50, 12, 14, 14),
@@ -409,8 +442,11 @@ class _DrugAccordion extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // RFID bölümü
-            _RfidSection(item: item, onTap: onRfidTap),
-            const SizedBox(height: 12),
+            if (_needRfid) ...[
+              _RfidSection(item: item, onTap: onRfidTap, isLoading: isRfidLoading, onDelete: onRfidDelete),
+              const SizedBox(height: 12),
+            ],
+
             // Detay alanları
             _DetailGrid(item: item),
           ],
@@ -421,17 +457,16 @@ class _DrugAccordion extends StatelessWidget {
   }
 }
 
-// ── RFID bölümü ───────────────────────────────────────────────────────────────
-
 class _RfidSection extends StatelessWidget {
+  const _RfidSection({required this.item, required this.isLoading, this.onTap, this.onDelete});
+
   final PrescriptionItem item;
+  final bool isLoading;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
 
-  const _RfidSection({required this.item, this.onTap});
-
-  // TODO: item.rfidTag entity'e eklenince burası güncellenir
-  bool get _hasTag => false; // item.rfidTag != null
-  String get _tagDisplay => '—'; // item.rfidTag?.epc ?? '—'
+  bool get _hasTag => item.rfidTag != null;
+  String get _tagDisplay => item.rfidTag ?? '—';
 
   @override
   Widget build(BuildContext context) {
@@ -471,36 +506,66 @@ class _RfidSection extends StatelessWidget {
               children: [
                 Text('RFID ETİKETİ', style: MedTextStyles.monoXs(color: MedColors.text3)),
                 const SizedBox(height: 2),
-                Text(
-                  _hasTag ? _tagDisplay : 'Henüz etiket atanmadı',
-                  style: MedTextStyles.monoMd(color: _hasTag ? MedColors.green : MedColors.text4),
-                ),
+                if (isLoading)
+                  Text('Etiket bekleniyor...', style: MedTextStyles.monoMd(color: MedColors.text4))
+                else
+                  Text(
+                    _hasTag ? _tagDisplay : 'Henüz etiket atanmadı',
+                    style: MedTextStyles.monoMd(color: _hasTag ? MedColors.green : MedColors.text4),
+                  ),
               ],
             ),
           ),
 
-          // Aksiyon butonu
-          if (onTap != null)
-            _SmallButton(
-              label: _hasTag ? 'Değiştir' : 'Etiket Ata',
-              color: _hasTag ? MedColors.green : MedColors.blue,
-              bgColor: _hasTag ? MedColors.greenLight : MedColors.blueLight,
-              onTap: onTap!,
-            ),
+          // Aksiyon — loading ise spinner, değilse buton
+          if (isLoading)
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2, color: _hasTag ? MedColors.green : MedColors.blue),
+            )
+          else ...[
+            // Etiket varsa: Değiştir + Sil
+            // Etiket yoksa: Etiket Ata
+            if (_hasTag && onDelete != null) ...[
+              _SmallButton(label: 'Sil', color: MedColors.red, bgColor: MedColors.redLight, onTap: onDelete!),
+              const SizedBox(width: 6),
+            ],
+            if (onTap != null)
+              _SmallButton(
+                label: _hasTag ? 'Değiştir' : 'Etiket Ata',
+                color: _hasTag ? MedColors.green : MedColors.blue,
+                bgColor: _hasTag ? MedColors.greenLight : MedColors.blueLight,
+                onTap: onTap!,
+              ),
+          ],
         ],
       ),
     );
   }
 }
 
-// ── Detay grid ────────────────────────────────────────────────────────────────
-
 class _DetailGrid extends StatelessWidget {
-  final PrescriptionItem item;
-
   const _DetailGrid({required this.item});
 
+  final PrescriptionItem item;
+
   String _doseText() => '${item.dosePiece?.formatFractional ?? '-'} ${item.medicine?.operationUnit ?? 'Adet'}';
+
+  bool get _hasReturn => item.returnUser != null || item.returnQuantity != null || item.returnDate != null;
+  bool get _hasApproved => item.approvalUser != null || item.approvalDate != null;
+  bool get _hasCancel => item.cancelUser != null || item.cancelDate != null;
+  bool get _hasReject => item.rejectUser != null || item.rejectDate != null;
+
+  bool get _hasWastageOrDestruction =>
+      item.wastageUser != null ||
+      item.wastageDate != null ||
+      item.destructionUser != null ||
+      item.destructionDate != null;
+
+  String _returnQtyText() => item.returnQuantity != null
+      ? '${item.returnQuantity!.formatFractional} ${item.medicine?.operationUnit ?? 'Adet'}'
+      : '-';
 
   @override
   Widget build(BuildContext context) {
@@ -513,10 +578,49 @@ class _DetailGrid extends StatelessWidget {
         _DetailRow(
           fields: [
             _Field('Uygulayan', item.applicationUser?.fullName),
-            _Field('Miktar', _doseText()),
             _Field('Uygulama Tarihi', item.applicationDate?.formattedDateTime),
+            _Field('Miktar', _doseText()),
           ],
         ),
+
+        // Onay grubu — en az bir alan doluysa gösterilir
+        if (_hasApproved) ...[
+          const SizedBox(height: 10),
+          _DetailGroupTitle(label: 'ONAY'),
+          const SizedBox(height: 6),
+          _DetailRow(
+            fields: [
+              _Field('Onaylayan', item.approvalUser?.fullName),
+              _Field('Onay Tarihi', item.approvalDate?.formattedDateTime),
+            ],
+          ),
+        ],
+
+        // İptal grubu — en az bir alan doluysa gösterilir
+        if (_hasCancel) ...[
+          const SizedBox(height: 10),
+          _DetailGroupTitle(label: 'İptal'),
+          const SizedBox(height: 6),
+          _DetailRow(
+            fields: [
+              _Field('İptal Eden', item.cancelUser?.fullName),
+              _Field('İptal Tarihi', item.cancelDate?.formattedDateTime),
+            ],
+          ),
+        ],
+
+        // Red grubu — en az bir alan doluysa gösterilir
+        if (_hasReject) ...[
+          const SizedBox(height: 10),
+          _DetailGroupTitle(label: 'RED'),
+          const SizedBox(height: 6),
+          _DetailRow(
+            fields: [
+              _Field('Reddeden', item.rejectUser?.fullName),
+              _Field('Red Tarihi', item.rejectDate?.formattedDateTime),
+            ],
+          ),
+        ],
 
         // İade grubu — en az bir alan doluysa gösterilir
         if (_hasReturn) ...[
@@ -549,38 +653,27 @@ class _DetailGrid extends StatelessWidget {
       ],
     );
   }
-
-  bool get _hasReturn => item.returnUser != null || item.returnQuantity != null || item.returnDate != null;
-
-  bool get _hasWastageOrDestruction =>
-      item.wastageUser != null ||
-      item.wastageDate != null ||
-      item.destructionUser != null ||
-      item.destructionDate != null;
-
-  String _returnQtyText() => item.returnQuantity != null
-      ? '${item.returnQuantity!.formatFractional} ${item.medicine?.operationUnit ?? 'Adet'}'
-      : '-';
 }
 
 class _Field {
+  const _Field(this.label, this.value);
+
   final String label;
   final String? value;
-  const _Field(this.label, this.value);
 }
 
 class _DetailGroupTitle extends StatelessWidget {
-  final String label;
   const _DetailGroupTitle({required this.label});
+
+  final String label;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: MedColors.border2, height: 1)),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text(label.toUpperCase(), style: MedTextStyles.monoXs(color: MedColors.text4)),
+          padding: const EdgeInsets.only(right: 8),
+          child: Text(label.toUpperCase(), style: MedTextStyles.monoSm(color: MedColors.text4)),
         ),
         Expanded(child: Divider(color: MedColors.border2, height: 1)),
       ],
@@ -589,18 +682,25 @@ class _DetailGroupTitle extends StatelessWidget {
 }
 
 class _DetailRow extends StatelessWidget {
-  final List<_Field> fields;
   const _DetailRow({required this.fields});
+
+  final List<_Field> fields;
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(spacing: 12, runSpacing: 6, children: fields.map((f) => _DetailCell(field: f)).toList());
+    return Wrap(
+      spacing: 12,
+      runSpacing: 6,
+      alignment: WrapAlignment.spaceAround,
+      children: fields.map((f) => _DetailCell(field: f)).toList(),
+    );
   }
 }
 
 class _DetailCell extends StatelessWidget {
-  final _Field field;
   const _DetailCell({required this.field});
+
+  final _Field field;
 
   @override
   Widget build(BuildContext context) {
@@ -622,12 +722,11 @@ class _DetailCell extends StatelessWidget {
   }
 }
 
-// ── Küçük yardımcı widget'lar ─────────────────────────────────────────────────
-
 class _Checkbox extends StatelessWidget {
+  const _Checkbox({required this.isSelected, required this.isSelectable});
+
   final bool isSelected;
   final bool isSelectable;
-  const _Checkbox({required this.isSelected, required this.isSelectable});
 
   @override
   Widget build(BuildContext context) {
@@ -653,8 +752,9 @@ class _Checkbox extends StatelessWidget {
 }
 
 class _DoseChip extends StatelessWidget {
-  final PrescriptionItem item;
   const _DoseChip({required this.item});
+
+  final PrescriptionItem item;
 
   @override
   Widget build(BuildContext context) {
@@ -672,8 +772,9 @@ class _DoseChip extends StatelessWidget {
 }
 
 class _StatusChip extends StatelessWidget {
-  final PrescriptionStatus status;
   const _StatusChip({required this.status});
+
+  final PrescriptionStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -700,12 +801,12 @@ class _StatusChip extends StatelessWidget {
 }
 
 class _SmallButton extends StatelessWidget {
+  const _SmallButton({required this.label, required this.color, required this.bgColor, required this.onTap});
+
   final String label;
   final Color color;
   final Color bgColor;
   final VoidCallback onTap;
-
-  const _SmallButton({required this.label, required this.color, required this.bgColor, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -728,17 +829,7 @@ class _SmallButton extends StatelessWidget {
   }
 }
 
-// ── Action bar ────────────────────────────────────────────────────────────────
-
 class _RxActionBar extends StatelessWidget {
-  final int selectedCount;
-  final bool approvedAll;
-  final bool rejectedAll;
-  final bool cancelledAll;
-  final VoidCallback? onApprove;
-  final VoidCallback? onReject;
-  final VoidCallback? onCancel;
-
   const _RxActionBar({
     required this.selectedCount,
     required this.approvedAll,
@@ -748,6 +839,14 @@ class _RxActionBar extends StatelessWidget {
     this.onReject,
     this.onCancel,
   });
+
+  final int selectedCount;
+  final bool approvedAll;
+  final bool rejectedAll;
+  final bool cancelledAll;
+  final VoidCallback? onApprove;
+  final VoidCallback? onReject;
+  final VoidCallback? onCancel;
 
   @override
   Widget build(BuildContext context) {
@@ -799,12 +898,6 @@ class _RxActionBar extends StatelessWidget {
 }
 
 class _ActionChip extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final Color bgColor;
-  final VoidCallback onTap;
-
   const _ActionChip({
     required this.label,
     required this.icon,
@@ -812,6 +905,12 @@ class _ActionChip extends StatelessWidget {
     required this.bgColor,
     required this.onTap,
   });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final Color bgColor;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

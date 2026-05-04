@@ -29,7 +29,7 @@ class DosageFormRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createDosageForm(DosageFormDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -38,7 +38,7 @@ class DosageFormRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateDosageForm(DosageFormDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

@@ -41,26 +41,16 @@ class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   final VoidCallback? onHomeTap;
   final VoidCallback? onLogoutTap;
-
-  /// Ayarlar butonu — kDebugMode'da görünür (switcher popup vb.)
   final VoidCallback? onSettingsTap;
 
   @override
-  Size get preferredSize => const Size.fromHeight(52);
+  Size get preferredSize => const Size.fromHeight(62); // 52 + 10 padding üst
 
   @override
   State<HomeAppBar> createState() => _HomeAppBarState();
 }
 
 class _HomeAppBarState extends State<HomeAppBar> {
-  late String _timeStr;
-
-  @override
-  void initState() {
-    super.initState();
-    _timeStr = _formatTime(DateTime.now());
-  }
-
   String _formatTime(DateTime dt) {
     final h = dt.hour.toString().padLeft(2, '0');
     final m = dt.minute.toString().padLeft(2, '0');
@@ -71,68 +61,80 @@ class _HomeAppBarState extends State<HomeAppBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 52,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border(bottom: BorderSide(color: MedColors.border2)),
-      ),
-      child: Row(
-        children: [
-          // ── Marka ────────────────────────────────────────────
-          _AppLogo(onTap: widget.onHomeTap),
-          _Divider(),
+      color: MedColors.bg,
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+      child: Container(
+        height: 52,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: MedColors.surface,
+          borderRadius: MedRadius.lgAll,
+          border: Border.all(color: MedColors.border),
+          boxShadow: MedShadows.sm,
+        ),
+        child: Row(
+          children: [
+            // ── Marka ───────────────────────────────────────────
+            _AppLogo(onTap: widget.onHomeTap),
+            _Divider(),
 
-          // ── Uygulama etiketi ─────────────────────────────────
-          Text(
-            'YÖNETİM PANELİ',
-            style: TextStyle(
-              fontFamily: MedFonts.mono,
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: MedColors.text3,
-              letterSpacing: 1.2,
+            // ── Uygulama etiketi ─────────────────────────────────
+            Text(
+              'YÖNETİM PANELİ',
+              style: TextStyle(
+                fontFamily: MedFonts.mono,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: MedColors.text3,
+                letterSpacing: 1.2,
+              ),
             ),
-          ),
 
-          const Spacer(),
+            const Spacer(),
 
-          // ── Canlı saat ────────────────────────────────────────
-          StreamBuilder<String>(
-            stream: Stream.periodic(const Duration(seconds: 1), (_) => _formatTime(DateTime.now())),
-            initialData: _timeStr,
-            builder: (_, snap) => _ClockLabel(time: snap.data ?? _timeStr),
-          ),
+            // ── Canlı saat ───────────────────────────────────────
+            StreamBuilder<String>(
+              stream: Stream.periodic(const Duration(seconds: 1), (_) => _formatTime(DateTime.now())),
+              initialData: _formatTime(DateTime.now()),
+              builder: (_, snap) => _ClockLabel(time: snap.data!),
+            ),
 
-          _Divider(),
+            _Divider(),
 
-          // ── Kullanıcı alanı ──────────────────────────────────
-          if (!widget.isLoggedIn)
-            _LoginButton(onTap: null) // Manager'da login ayrı ekranda
-          else if (widget.user != null)
-            _UserInfo(user: widget.user!),
+            // ── Kullanıcı alanı ──────────────────────────────────
+            if (!widget.isLoggedIn)
+              _LoginButton(onTap: null)
+            else if (widget.user != null)
+              _UserInfo(user: widget.user!),
 
-          const SizedBox(width: 10),
+            const SizedBox(width: 10),
 
-          // ── Debug ayarlar butonu ─────────────────────────────
-          if (kDebugMode && widget.isLoggedIn) ...[
-            _BarIconButton(icon: PhosphorIcons.wrench(), tooltip: 'Geliştirici Ayarları', onTap: widget.onSettingsTap),
-            const SizedBox(width: 4),
+            // ── Debug ayarlar ────────────────────────────────────
+            if (kDebugMode && widget.isLoggedIn) ...[
+              _BarIconButton(
+                icon: PhosphorIcons.wrench(),
+                tooltip: 'Geliştirici Ayarları',
+                onTap: widget.onSettingsTap,
+              ),
+              const SizedBox(width: 4),
+            ],
+
+            // ── Çıkış ────────────────────────────────────────────
+            if (widget.isLoggedIn)
+              _BarIconButton(
+                icon: PhosphorIcons.signOut(),
+                tooltip: 'Çıkış Yap',
+                danger: true,
+                onTap: widget.onLogoutTap,
+              ),
           ],
-
-          // ── Çıkış ────────────────────────────────────────────
-          if (widget.isLoggedIn)
-            _BarIconButton(
-              icon: PhosphorIcons.signOut(),
-              tooltip: 'Çıkış Yap',
-              danger: true,
-              onTap: widget.onLogoutTap,
-            ),
-        ],
+        ),
       ),
     );
   }
 }
+
+// ── Alt bileşenler (değişmeyen) ───────────────────────────────────────────────
 
 class _AppLogo extends StatelessWidget {
   const _AppLogo({this.onTap});
@@ -150,7 +152,6 @@ class _AppLogo extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Logo mark
             Container(
               width: 28,
               height: 28,
@@ -158,7 +159,6 @@ class _AppLogo extends StatelessWidget {
               child: Icon(PhosphorIcons.pill(), size: 15, color: Colors.white),
             ),
             const SizedBox(width: 9),
-            // Metin
             RichText(
               text: TextSpan(
                 style: TextStyle(
@@ -214,7 +214,6 @@ class _UserInfo extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Avatar
         Container(
           width: 26,
           height: 26,
@@ -231,7 +230,6 @@ class _UserInfo extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        // İsim + rol
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -3,7 +3,6 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
-import '../../../../core/hardware/service/rfid/model/rfid_reader_info.dart';
 import '../../domain/model/scan_log_entry.dart';
 import '../../domain/model/wizard_draft.dart';
 

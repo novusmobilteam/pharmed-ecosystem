@@ -3,9 +3,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/hardware/model/rfid_tag.dart';
-import '../../../../core/hardware/service/rfid/i_rfid_service.dart';
-
 /// Kabin operasyonu öncesi ve sonrası RFID snapshot'larını karşılaştırarak
 /// kabinden çıkan (removed) ve kabine giren (added) tag'leri tespit eder.
 ///

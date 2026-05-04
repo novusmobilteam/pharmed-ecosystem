@@ -80,6 +80,7 @@ class PrescriptionItemMapper {
       destructionDate: dto.destructionDate,
       destructionUserId: dto.destructionUserId,
       destructionUser: const UserMapper().toEntityOrNull(dto.destructionUser),
+      rfidTag: dto.rfidTag,
     );
   }
 
@@ -138,6 +139,7 @@ class PrescriptionItemMapper {
       returnDate: entity.returnDate,
       returnUserId: entity.returnUserId,
       returnUser: const UserMapper().toDtoOrNull(entity.returnUser),
+      rfidTag: entity.rfidTag,
     );
   }
 

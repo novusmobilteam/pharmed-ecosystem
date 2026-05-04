@@ -44,7 +44,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
 
   @override
   Future<Result<void>> cancelFillingList(int fillingListId, int stationId) {
-    return createRequest(
+    return postRequest(
       path: '$_basePath/cancel/$fillingListId',
       parser: BaseRemoteDataSource.voidParser(),
       body: {"stationId": stationId, "id": fillingListId},
@@ -53,7 +53,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
 
   @override
   Future<Result<void>> updateFillingListStatus(int fillingListId, int stationId) {
-    return updateRequest(
+    return putRequest(
       path: '$_basePath/status/$fillingListId',
       parser: BaseRemoteDataSource.voidParser(),
       body: {"stationId": stationId, "id": fillingListId},
@@ -62,7 +62,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
 
   @override
   Future<Result<void>> createFillingList(List<Map<String, dynamic>> data, {required int stationId}) {
-    return createRequest(
+    return postRequest(
       path: '$_basePath/detail/create/$stationId',
       body: data,
       parser: BaseRemoteDataSource.voidParser(),
@@ -75,7 +75,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
     required int stationId,
     required int fillingListId,
   }) {
-    return updateRequest(
+    return putRequest(
       path: '$_basePath/$fillingListId/detail/edit/$stationId',
       body: data,
       parser: BaseRemoteDataSource.voidParser(),
@@ -104,7 +104,7 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
 
   @override
   Future<Result<void>> fill(List<CabinFillingRequest> data) async {
-    return await createRequest(
+    return await postRequest(
       path: '$_basePath/fiilingDetail/fill',
       parser: BaseRemoteDataSource.voidParser(),
       body: data.map((e) => e.toJson()).toList(),

@@ -33,7 +33,7 @@ class ActiveIngredientRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createActiveIngredient(ActiveIngredientDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -42,7 +42,7 @@ class ActiveIngredientRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateActiveIngredient(ActiveIngredientDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

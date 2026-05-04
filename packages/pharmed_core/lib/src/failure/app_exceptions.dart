@@ -145,6 +145,13 @@ final class UnexpectedException extends AppException {
   const UnexpectedException({super.message = 'Beklenmeyen bir hata oluştu', super.cause});
 }
 
+/// Servis tarafından dönen kontrol uyarısı.
+/// İşlem devam ettirilebilir niteliktedir — kullanıcıya gösterilerek
+/// onayı alındıktan sonra ilgili operasyon yeniden çalıştırılır.
+final class CheckException extends AppException {
+  const CheckException({required super.message, super.cause});
+}
+
 // ─────────────────────────────────────────────────────────────────
 // Exception'dan kullanıcıya gösterilecek mesaj türet
 // UI katmanı bu metodu kullanır, exception string'ini değil
@@ -171,6 +178,7 @@ extension AppExceptionUiMessage on AppException {
       UnexpectedException() => 'Beklenmedik bir hata oluştu. Lütfen tekrar deneyin.',
       SerialPortException() => 'Seri porta bağlanılamadı. Lütfen teknik servis ile iletişime geçiniz.',
       CustomException() => 'Bilinmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
+      CheckException(:final message) => message,
     };
   }
 

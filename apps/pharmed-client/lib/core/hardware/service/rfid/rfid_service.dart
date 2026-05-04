@@ -9,10 +9,6 @@ import 'dart:typed_data';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../model/rfid_tag.dart';
-import 'i_rfid_service.dart';
-import 'model/rfid_reader_info.dart';
-
 /// RFID okuyucu ile TCP üzerinden haberleşen gerçek implementasyon.
 ///
 /// Protokol: CRC-16/MCRF4XX (poly=0x1021, init=0xFFFF, reflected, LSB-first)

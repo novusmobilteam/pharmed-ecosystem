@@ -13,7 +13,7 @@ class WithdrawRemoteDataSource extends BaseRemoteDataSource {
   String get logUnit => throw UnimplementedError();
 
   Future<Result<void>> checkFreeWithdraw(Map<String, dynamic> data) async {
-    return await createRequest(
+    return await postRequest(
       path: '/PatientIndependentMaterial/check',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
@@ -21,7 +21,7 @@ class WithdrawRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> checkOrderedWithdraw(Map<String, dynamic> data) async {
-    return await createRequest(
+    return await postRequest(
       path: '/Prescription/detail/checkCollect',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
@@ -29,7 +29,7 @@ class WithdrawRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> checkOrderlessWithdraw(Map<String, dynamic> data) async {
-    return await createRequest(
+    return await postRequest(
       path: '/Prescription/detail/OrderlessCollectCheck',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
@@ -37,7 +37,7 @@ class WithdrawRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> completeFreeWithdraw(Map<String, dynamic> data) async {
-    return await createRequest(
+    return await postRequest(
       path: '/PatientIndependentMaterial',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
@@ -45,7 +45,7 @@ class WithdrawRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> completeOrderedWithdraw(Map<String, dynamic> data) async {
-    return await createRequest(
+    return await postRequest(
       path: '/Prescription/detail/collect',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
@@ -53,7 +53,7 @@ class WithdrawRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> completeOrderlessWithdraw(Map<String, dynamic> data) async {
-    return await createRequest(
+    return await postRequest(
       path: '/Prescription/detail/OrderlessCollect',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
@@ -61,7 +61,7 @@ class WithdrawRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> definePatientMedicine(Map<String, dynamic> data) async {
-    return await createRequest(path: '/Patient/otherDrug', parser: BaseRemoteDataSource.voidParser(), body: data);
+    return await postRequest(path: '/Patient/otherDrug', parser: BaseRemoteDataSource.voidParser(), body: data);
   }
 
   Future<Result<List<MedicineWithdrawItemDTO>?>> getWithdrawItems({required int hospitalizationId}) async {
@@ -72,7 +72,7 @@ class WithdrawRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> withdrawPatientMedicine({required int id}) async {
-    return await createRequest(path: '/Patient/otherDrugCollect/$id', parser: BaseRemoteDataSource.voidParser());
+    return await postRequest(path: '/Patient/otherDrugCollect/$id', parser: BaseRemoteDataSource.voidParser());
   }
 
   Future<Result<List<PatientMedicineWithdrawItemDTO>?>> getPatientMedicines({required int hospitalizationId}) async {

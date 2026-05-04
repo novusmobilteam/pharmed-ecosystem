@@ -27,7 +27,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<PatientDto?>> createPatient(PatientDto dto) {
-    return createRequest<PatientDto?>(
+    return postRequest<PatientDto?>(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(PatientDto.fromJson),
@@ -39,7 +39,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
     if (dto.id == null) {
       return Future.value(Result.error(CustomException(message: 'updatePatient: id is null')));
     }
-    return updateRequest(
+    return putRequest(
       path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -60,7 +60,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
     required int patientId,
     required List<int> prescriptionItemIds,
   }) async {
-    return await createRequest(
+    return await postRequest(
       path: '$_base/merge',
       parser: BaseRemoteDataSource.voidParser(),
       body: {
@@ -72,7 +72,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> addPatient(int userId, int hospitalizationId) async {
-    return await createRequest(
+    return await postRequest(
       path: '/MyPatient',
       parser: BaseRemoteDataSource.voidParser(),
       body: {"userId": userId, "patientHospitalizationId": hospitalizationId},
@@ -94,7 +94,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> addPatiens(List<Map<String, dynamic>> data) async {
-    final res = await createRequest(path: '/MyPatient/bulk', parser: BaseRemoteDataSource.voidParser(), body: data);
+    final res = await postRequest(path: '/MyPatient/bulk', parser: BaseRemoteDataSource.voidParser(), body: data);
     return res.when(ok: (data) => Result.ok(null), error: Result.error);
   }
 
@@ -118,7 +118,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<HospitalizationDTO?>> createUrgentPatient(int serviceId) async {
-    return await createRequest<HospitalizationDTO>(
+    return await postRequest<HospitalizationDTO>(
       path: '$_base/hospitalization/urgent',
       parser: BaseRemoteDataSource.singleParser(HospitalizationDTO.fromJson),
       body: {"serviceId": serviceId},

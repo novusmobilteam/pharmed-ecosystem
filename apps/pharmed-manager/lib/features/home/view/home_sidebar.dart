@@ -7,18 +7,39 @@ class HomeSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = context.watch<HomeNotifier>();
 
-    return Container(
-      width: 240,
-      height: double.infinity,
-      color: MedColors.text,
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: notifier.parentMenuItems.length,
-        itemBuilder: (context, index) {
-          final parent = notifier.parentMenuItems[index];
-          final isActive = notifier.activeTab == index;
-          return _SidebarParentItem(menu: parent, isActive: isActive, onTap: () => notifier.changeTab(parent));
-        },
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Container(
+        width: 240,
+        decoration: BoxDecoration(
+          color: MedColors.surface,
+          borderRadius: MedRadius.lgAll,
+          border: Border.all(color: MedColors.border),
+          boxShadow: MedShadows.sm,
+        ),
+        child: ClipRRect(
+          borderRadius: MedRadius.lgAll,
+          child: Column(
+            children: [
+              // Menü listesi
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  itemCount: notifier.parentMenuItems.length,
+                  itemBuilder: (context, index) {
+                    final parent = notifier.parentMenuItems[index];
+                    final isActive = notifier.activeTab == index;
+                    return _SidebarParentItem(
+                      menu: parent,
+                      isActive: isActive,
+                      onTap: () => notifier.changeTab(parent),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -41,43 +62,44 @@ class _SidebarParentItemState extends State<_SidebarParentItem> {
   @override
   Widget build(BuildContext context) {
     final hasChildren = widget.menu.children.isNotEmpty;
-    final textColor = _expanded ? Colors.white : Colors.white.withAlpha(55);
     final activeChild = context.watch<HomeNotifier>().activeChildMenu;
 
     return Column(
       children: [
         // Parent satırı
-        GestureDetector(
+        InkWell(
           onTap: () {
             widget.onTap();
             if (hasChildren) setState(() => _expanded = !_expanded);
           },
+          borderRadius: MedRadius.mdAll,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
-            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+            decoration: BoxDecoration(borderRadius: MedRadius.mdAll),
             child: Row(
               children: [
-                // Sol aktif çizgi
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  width: 3,
-                  height: 16,
-                  margin: const EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(color: textColor, borderRadius: BorderRadius.circular(2)),
-                ),
-                Icon(widget.menu.unicode.toIcon, color: textColor, size: 16),
-                const SizedBox(width: 10),
+                // İkon
+                Icon(widget.menu.unicode.toIcon, size: 17, color: MedColors.text2),
+                const SizedBox(width: 9),
+
+                // İsim
                 Expanded(
                   child: Text(
                     widget.menu.name ?? '-',
-                    style: MedTextStyles.bodySm().copyWith(
-                      color: _expanded ? Colors.white : Colors.white.withOpacity(0.55),
-                      fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w400,
-                    ),
+                    style: MedTextStyles.bodyMd(color: MedColors.text2, weight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+
+                // Chevron — child'ı varsa
+                if (hasChildren)
+                  AnimatedRotation(
+                    turns: _expanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 180),
+                    child: Icon(PhosphorIcons.caretDown(PhosphorIconsStyle.bold), size: 11, color: MedColors.text2),
+                  ),
               ],
             ),
           ),
@@ -109,24 +131,34 @@ class _SidebarChildItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () => context.read<HomeNotifier>().selectChild(child),
-      child: Container(
-        margin: const EdgeInsets.only(left: 24, right: 8, top: 4, bottom: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+      borderRadius: MedRadius.mdAll,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        margin: const EdgeInsets.only(left: 28, right: 6, top: 1, bottom: 1),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          color: isActive ? MedColors.blueLight : Colors.transparent,
+          borderRadius: MedRadius.mdAll,
+        ),
         child: Row(
           children: [
+            // Nokta göstergesi
             AnimatedContainer(
               duration: const Duration(milliseconds: 150),
               width: 5,
               height: 5,
               margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(shape: BoxShape.circle, color: isActive ? Colors.white : Colors.transparent),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: isActive ? MedColors.blue : MedColors.border),
             ),
             Expanded(
               child: Text(
                 child.name ?? '-',
-                style: MedTextStyles.bodySm().copyWith(color: isActive ? Colors.white : MedColors.text4, fontSize: 12),
+                style: MedTextStyles.bodySm(
+                  color: isActive ? MedColors.blue : MedColors.text3,
+                  weight: isActive ? FontWeight.w600 : FontWeight.w400,
+                ).copyWith(fontSize: 12),
                 overflow: TextOverflow.ellipsis,
               ),
             ),

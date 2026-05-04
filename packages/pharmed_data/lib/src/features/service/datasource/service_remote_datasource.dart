@@ -55,7 +55,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> createService(ServiceDTO dto) {
     print(dto.toJson());
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -66,7 +66,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<void>> updateService(ServiceDTO dto) {
     print(dto.toJson());
     print(dto.toJson().toString());
-    return updateRequest(
+    return putRequest(
       path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

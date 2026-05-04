@@ -27,7 +27,7 @@ class SettingsRemoteDataSource extends BaseRemoteDataSource implements SettingsD
   @override
   Future<Result<void>> updateSystemParameter(SystemParameterDTO parameter) {
     final id = parameter.id ?? 0;
-    return updateRequest(
+    return putRequest(
       path: '/SystemParameter/$id',
       body: parameter.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

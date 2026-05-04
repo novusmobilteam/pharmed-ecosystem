@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
-import 'package:pharmed_manager/features/prescription/view/prescription_screen.dart';
-import 'package:pharmed_manager/features/role/view/role_screen.dart';
+import 'package:pharmed_manager/features/prescription/presentation/view/prescription_screen.dart';
+import 'package:pharmed_manager/features/role/presentation/view/role_screen.dart';
 import 'package:pharmed_manager/features/station_stock/view/station_stock_screen.dart';
 import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -85,11 +85,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 onSettingsTap: () {},
               ),
               Expanded(
-                child: Row(
-                  children: [
-                    HomeSidebar(),
-                    Expanded(child: _HomeContent()),
-                  ],
+                child: Container(
+                  color: MedColors.bg,
+                  child: Row(
+                    children: [
+                      HomeSidebar(),
+                      Expanded(child: _HomeContent()),
+                    ],
+                  ),
                 ),
               ),
             ],

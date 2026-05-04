@@ -23,7 +23,7 @@ class KitContentRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<KitContentDto?>> createKitContent(KitContentDto dto) {
-    return createRequest<KitContentDto?>(
+    return postRequest<KitContentDto?>(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(KitContentDto.fromJson),
@@ -40,7 +40,7 @@ class KitContentRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateKitContent(KitContentDto dto) {
-    return updateRequest<void>(
+    return putRequest<void>(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

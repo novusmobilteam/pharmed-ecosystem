@@ -63,7 +63,7 @@ abstract class BaseRemoteDataSource {
   // ── İstek Metodları ────────────────────────────────────────────────────────
   // ── Create (POST) ──────────────────────────────────────────────────────────
 
-  Future<Result<T?>> createRequest<T>({
+  Future<Result<T?>> postRequest<T>({
     required String path,
     Object? body,
     Map<String, dynamic>? query,
@@ -82,7 +82,7 @@ abstract class BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<T>?>> createBulkRequest<T>({
+  Future<Result<List<T>?>> postBulkRequest<T>({
     required String path,
     required List<Object> body,
     Map<String, dynamic>? query,
@@ -103,7 +103,7 @@ abstract class BaseRemoteDataSource {
 
   // ── Update (PUT) ──────────────────────────────────────────────────────────
 
-  Future<Result<T?>> updateRequest<T>({
+  Future<Result<T?>> putRequest<T>({
     required String path,
     Object? body,
     Map<String, dynamic>? query,
@@ -122,7 +122,7 @@ abstract class BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<T>?>> updateBulkRequest<T>({
+  Future<Result<List<T>?>> putBulkRequest<T>({
     required String path,
     required List<Object> body,
     Map<String, dynamic>? query,

@@ -24,7 +24,7 @@ class MedicineManagementRemoteDataSource extends BaseRemoteDataSource implements
 
   @override
   Future<Result<void>> destruction(Map<String, dynamic> data) async {
-    final res = await createRequest(
+    final res = await postRequest(
       path: '/Prescription/detail/destruction',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
@@ -34,7 +34,7 @@ class MedicineManagementRemoteDataSource extends BaseRemoteDataSource implements
 
   @override
   Future<Result<void>> wastage(Map<String, dynamic> data) async {
-    final res = await createRequest(
+    final res = await postRequest(
       path: '/Prescription/detail/wastage',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
@@ -44,7 +44,7 @@ class MedicineManagementRemoteDataSource extends BaseRemoteDataSource implements
 
   @override
   Future<Result<void>> disposeMaterial(List<Map<String, dynamic>> data) async {
-    final res = await createRequest(
+    final res = await postRequest(
       path: '/CabinDrawrStock/destruction',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,

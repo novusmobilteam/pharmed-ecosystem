@@ -8,6 +8,7 @@ abstract interface class IPrescriptionRepository {
   Future<Result<List<PrescriptionItem>>> getPatientPrescriptionHistory(int patientId);
   Future<Result<void>> createPrescriptionDetail(List<PrescriptionItem> items);
 
+  Future<Result<void>> checkPrescriptionRequests(int prescriptionId, List<int> ids);
   Future<Result<void>> approvePrescriptionRequests(int prescriptionId, List<int> ids);
   Future<Result<void>> rejectPrescriptionRequests(int prescriptionId, List<int> ids);
   Future<Result<void>> cancelPrescriptionRequests(int prescriptionId, List<int> ids);
@@ -45,4 +46,17 @@ abstract interface class IPrescriptionRepository {
 
   /// Hastalarım'a gün içinde yazılmış olan ilaçları getiren servis(Günlük İş Listesi).
   Future<Result<List<PrescriptionItem>>> getDailyJobList();
+
+  /// Reçete kalemine RFID etiketi atar.
+  ///
+  /// [prescriptionItemId] — kalem ID'si
+  /// [epc]               — atanacak etiket EPC değeri (12 byte hex string)
+  ///
+  /// Başarılı olursa atanan [epc] değerini döner.
+  Future<Result<String>> assignRfidTag({required int prescriptionItemId, required String epc});
+
+  /// Reçete kalemine atanmış RFID etiketini siler.
+  ///
+  /// [prescriptionItemId] — kalem ID'si
+  Future<Result<void>> deleteRfidTag({required int prescriptionItemId});
 }

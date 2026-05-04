@@ -46,7 +46,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createUser(UserDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -55,7 +55,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateUser(UserDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -68,7 +68,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> bulkUpdateValidDate(DateTime date, List<int> ids) {
-    return updateRequest(
+    return putRequest(
       path: '$_base/bulkUpdateTimeBasedDate',
       body: {"dateTime": date.toIso8601String(), "userIds": ids},
       parser: BaseRemoteDataSource.voidParser(),
@@ -77,7 +77,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> changePassword({required String currentPassword, required String newPassword}) {
-    return createRequest(
+    return postRequest(
       path: '$_base/change-password',
       body: {'currentPassword': currentPassword, 'newPassword': newPassword},
       parser: BaseRemoteDataSource.voidParser(),
@@ -89,7 +89,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
     required String password,
     required String macAddress,
   }) async {
-    return createRequest(
+    return postRequest(
       path: '$_base/otherLogin',
       parser: BaseRemoteDataSource.singleParser(UserDTO.fromJson),
       body: {"email": email, "password": password, "macAddress": macAddress},

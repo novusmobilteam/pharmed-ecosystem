@@ -49,7 +49,7 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
 
   /// Dolum isteğini sunucuya iletir.
   Future<Result<void>> fill(List<dynamic> data) async {
-    return await createRequest(
+    return await postRequest(
       path: _base,
       parser: BaseRemoteDataSource.voidParser(),
       body: data.map((e) => e.toJson()).toList(),
@@ -59,7 +59,7 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
 
   /// Sayım sonucunu sunucuya iletir (Update/PATCH).
   Future<Result<void>> count(List<dynamic> data) async {
-    return await updateRequest(
+    return await putRequest(
       path: '$_base/censusQuantity',
       parser: BaseRemoteDataSource.voidParser(),
       body: data.map((e) => e.toJson()).toList(),
@@ -97,7 +97,7 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> unload(List<Map<String, dynamic>> data) async {
-    return await createRequest(
+    return await postRequest(
       path: '$_base/emptying',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,

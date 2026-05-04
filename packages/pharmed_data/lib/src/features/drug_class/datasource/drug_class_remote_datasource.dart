@@ -29,7 +29,7 @@ class DrugClassRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createDrugClass(DrugClassDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -38,7 +38,7 @@ class DrugClassRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateDrugClass(DrugClassDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

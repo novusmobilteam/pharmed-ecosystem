@@ -7,6 +7,5 @@ export 'domain/usecase/delete_hospitalization_usecase.dart';
 export 'domain/usecase/get_filtered_hospitalizations_usecase.dart';
 export 'domain/usecase/get_hospitalizations_by_service_usecase.dart';
 export 'domain/usecase/get_hospitalizations_usecase.dart';
-export 'domain/usecase/get_hospitalizations_with_prescription_usecase.dart';
 export 'domain/usecase/get_patients_with_active_prescription_usecase.dart';
 export 'domain/usecase/update_hospitalization_usecase.dart';

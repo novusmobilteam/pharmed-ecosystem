@@ -29,7 +29,7 @@ class UnitRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createUnit(UnitDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -38,7 +38,7 @@ class UnitRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateUnit(UnitDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

@@ -30,7 +30,7 @@ class FirmRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> createFirm(FirmDTO dto) {
     print(dto.toJson().toString());
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -39,7 +39,7 @@ class FirmRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateFirm(FirmDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: '${_base}/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

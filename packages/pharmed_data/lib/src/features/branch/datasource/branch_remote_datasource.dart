@@ -29,7 +29,7 @@ class BranchRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> createBranch(BranchDTO dto) {
-    return createRequest(
+    return postRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
@@ -38,7 +38,7 @@ class BranchRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateBranch(BranchDTO dto) {
-    return updateRequest(
+    return putRequest(
       path: _base,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),

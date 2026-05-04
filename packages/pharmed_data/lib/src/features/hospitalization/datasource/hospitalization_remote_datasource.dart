@@ -37,7 +37,7 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<HospitalizationDTO?>> createHospitalization(HospitalizationDTO dto) {
     print(dto.toJson().toString());
-    return createRequest<HospitalizationDTO?>(
+    return postRequest<HospitalizationDTO?>(
       path: _basePath,
       body: dto.toJson(),
       parser: BaseRemoteDataSource.singleParser(HospitalizationDTO.fromJson),
@@ -49,7 +49,7 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
     if (dto.id == null) {
       return Future.value(Result.error(CustomException(message: 'updatePatientHospitalization: id is null')));
     }
-    return updateRequest(
+    return putRequest(
       path: '$_basePath/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
