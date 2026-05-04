@@ -356,26 +356,35 @@ class _DrugRow extends StatelessWidget {
                 padding: EdgeInsets.only(left: interactive ? 0 : 0, right: 14, top: 10, bottom: 10),
                 child: Row(
                   children: [
-                    // İlaç adı + barkod
+                    // İlaç adı + barkod + saat
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            item.medicine?.name ?? 'İsimsiz',
-                            style: MedTextStyles.bodyMd(
-                              color: isSelected ? MedColors.blue : MedColors.text,
-                              weight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  item.medicine?.name ?? 'İsimsiz',
+                                  style: MedTextStyles.bodyMd(
+                                    color: isSelected ? MedColors.blue : MedColors.text,
+                                    weight: FontWeight.w600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
+
                           if (item.medicine?.barcode != null)
                             Text(item.medicine!.barcode!, style: MedTextStyles.monoXs()),
                         ],
                       ),
                     ),
                     const SizedBox(width: 10),
+
+                    if (item.time != null) ...[_TimeChip(time: item.time!), const SizedBox(width: 6)],
 
                     // Doz chip
                     _DoseChip(item: item),
@@ -747,6 +756,45 @@ class _Checkbox extends StatelessWidget {
         ),
       ),
       child: isSelected ? const Icon(Icons.check, size: 11, color: Colors.white) : null,
+    );
+  }
+}
+
+class _TimeChip extends StatelessWidget {
+  const _TimeChip({required this.time});
+
+  final DateTime time;
+
+  String get _label {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final timeDay = DateTime(time.year, time.month, time.day);
+
+    final h = time.hour.toString().padLeft(2, '0');
+    final m = time.minute.toString().padLeft(2, '0');
+    final timeStr = '$h:$m';
+
+    if (timeDay == today) return 'Bugün $timeStr';
+    if (timeDay == tomorrow) return 'Yarın $timeStr';
+
+    const days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+    return '${days[time.weekday - 1]} $timeStr';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+        color: MedColors.amberLight,
+        borderRadius: MedRadius.smAll,
+        border: Border.all(color: MedColors.amber.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [Text(_label, style: MedTextStyles.monoXs(color: MedColors.amber))],
+      ),
     );
   }
 }

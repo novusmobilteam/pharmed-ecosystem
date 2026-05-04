@@ -75,7 +75,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
           items: items,
           interactive: true,
           onRfidTap: (item) async {
-            await notifier.assignRfidTag(item);
+            await notifier.assignRfidTag(item, onFailed: (message) => MessageUtils.showErrorSnackbar(context, message));
           },
           onRfidDelete: (item) async {
             await notifier.deleteRfidTag(item);

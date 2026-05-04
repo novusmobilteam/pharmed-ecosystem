@@ -276,12 +276,12 @@ abstract class BaseRemoteDataSource with Logging {
             logOp(operation: operation, status: LogStatus.success, message: successLog, count: count);
             return Result.ok(apiRes?.data);
           }
-
           final msg = apiError.message?.trim().isNotEmpty == true
               ? apiError.message!
-              : (apiError.message?.trim().isNotEmpty == true
-                    ? apiError.message!
-                    : 'Sunucu hatası. Lütfen daha sonra tekrar deneyiniz.');
+              : apiError.error?.trim().isNotEmpty == true
+              ? apiError.error!
+              : 'Sunucu hatası. Lütfen daha sonra tekrar deneyiniz.';
+
           logOp(operation: operation, status: LogStatus.failure, message: msg, statusCode: apiError.statusCode);
           return Result.error(CustomException(message: msg));
         }

@@ -158,19 +158,25 @@ class APIManager {
   // [SWREQ-NET-005] [IEC 62304 §9.2]
 
   AppException _mapDioException(DioException e, String path) {
+    // Her durumda önce response body'den mesaj okumaya çalış
+    final msg = _extractResponseMessage(e) ?? e.message;
+
     final exception = switch (e.type) {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.receiveTimeout ||
-      DioExceptionType.sendTimeout => TimeoutException(message: 'İstek zaman aşımına uğradı', cause: e),
-      DioExceptionType.connectionError => NetworkUnavailableException(message: 'Ağa bağlanılamadı', cause: e),
+      DioExceptionType.sendTimeout => TimeoutException(message: msg ?? 'İstek zaman aşımına uğradı', cause: e),
+      DioExceptionType.connectionError => NetworkUnavailableException(message: msg ?? 'Ağa bağlanılamadı', cause: e),
       DioExceptionType.badResponse => ServiceException(
-        message: e.message ?? 'Bir hatayla karşılaştık. Lütfen daha sonra tekrar deneyiniz.',
+        message: msg ?? 'Bir hatayla karşılaştık. Lütfen daha sonra tekrar deneyiniz.',
         statusCode: e.response?.statusCode ?? 0,
         traceId: e.response?.headers.value('x-trace-id'),
         cause: e,
       ),
-      DioExceptionType.cancel => UnexpectedException(message: 'İstek iptal edildi', cause: e),
-      _ => UnexpectedException(cause: e),
+      DioExceptionType.cancel => UnexpectedException(message: msg ?? 'İstek iptal edildi', cause: e),
+      _ => UnexpectedException(
+        message: msg ?? 'Bir hatayla karşılaştık. Lütfen daha sonra tekrar deneyiniz.',
+        cause: e,
+      ),
     };
 
     MedLogger.error(
@@ -182,5 +188,18 @@ class APIManager {
     );
 
     return exception;
+  }
+
+  String? _extractResponseMessage(DioException e) {
+    final data = e.response?.data;
+    if (data is String && data.trim().isNotEmpty) return data.trim();
+    if (data is Map<String, dynamic>) {
+      const candidates = ['error', 'message', 'title', 'detail', 'errorMessage', 'description'];
+      for (final key in candidates) {
+        final val = data[key];
+        if (val is String && val.trim().isNotEmpty) return val.trim();
+      }
+    }
+    return null;
   }
 }
