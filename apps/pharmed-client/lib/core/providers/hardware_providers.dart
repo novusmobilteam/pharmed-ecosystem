@@ -15,15 +15,15 @@ import '../hardware/service/serial_communication/usecase/test_cabin_connection_u
 
 final serialServiceProvider = Provider<ISerialCommunicationService>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock || AppFlavor.dev => MockSerialCommunicationService(),
-    AppFlavor.prod => SerialCommunicationService(),
+    AppFlavor.mock => MockSerialCommunicationService(),
+    AppFlavor.prod || AppFlavor.dev => SerialCommunicationService(),
   };
 });
 
 final cabinOperationServiceProvider = Provider<ICabinOperationService>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock || AppFlavor.dev => MockCabinOperationService(),
-    AppFlavor.prod => CabinOperationService(serialService: ref.read(serialServiceProvider)),
+    AppFlavor.mock => MockCabinOperationService(),
+    AppFlavor.prod || AppFlavor.dev => CabinOperationService(serialService: ref.read(serialServiceProvider)),
   };
 });
 

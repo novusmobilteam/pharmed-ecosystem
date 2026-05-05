@@ -22,8 +22,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/providers/providers.dart';
 import '../../assignment.dart';
-import '../notifier/drug_assignment_notifier.dart';
-import '../state/drug_assignment_ui_state.dart';
 
 class DrugAssignmentView extends ConsumerStatefulWidget {
   const DrugAssignmentView({super.key, this.data});

@@ -1,4 +1,19 @@
-// apps/pharmed-client/lib/core/hardware/service/serial_communication_service.dart
+// [SWREQ-HW-SER-001] [IEC 62304 §5.5]
+// Seri port haberleşme servisi — gerçek implementasyon.
+//
+// ÖZELLİKLER:
+//   - Mutex ile eşzamanlı komut koruması
+//   - Otomatik fallback port taraması
+//   - Protokol bitiş karakteri tespiti (-, ,, ;, ])
+//   - Buffer biriktirme ile parçalı veri desteği
+//
+// HATA YÖNETİMİ:
+//   - Port handle leak koruması: dispose her zaman çalışır
+//   - Doğru temizleme sırası: subscription → reader → port → null
+//   - Hatalı işlem sonrası reconnect güvenlidir
+//   - OS handle'ı serbest bırakmak için dispose zinciri garantili
+//
+// Sınıf: Class B
 
 import 'dart:async';
 import 'dart:convert';
@@ -9,16 +24,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import 'i_serial_communication_service.dart';
 
-/// SERİ PORT HABERLEŞMESİ — GERÇEK İMPLEMENTASYON
-/// ------------------------------------------------
-/// flutter_libserialport paketini kullanarak fiziksel seri port
-/// üzerinden cihazlarla haberleşir.
-///
-/// ÖZELLİKLER:
-/// - Mutex ile eşzamanlı komut koruması
-/// - Otomatik fallback port taraması
-/// - Protokol bitiş karakteri tespiti (-, ,, ;, ])
-/// - Buffer biriktirme ile parçalı veri desteği
 class SerialCommunicationService implements ISerialCommunicationService {
   SerialPort? _port;
   SerialPortReader? _reader;
@@ -36,10 +41,11 @@ class SerialCommunicationService implements ISerialCommunicationService {
   @override
   bool get isConnected => _port?.isOpen ?? false;
 
-  /// Bağlı portun adı (debug/log amaçlı).
   String get connectedPortName => _port?.name ?? 'Bağlı Değil';
 
-  // ── Port Tarama ────────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // PORT TARAMA
+  // ════════════════════════════════════════════════════════════════
 
   @override
   List<String> getAvailablePorts() {
@@ -63,7 +69,10 @@ class SerialCommunicationService implements ISerialCommunicationService {
       }
 
       if (activePorts.isEmpty && allPorts.isNotEmpty) {
-        debugPrint('Sistem portları görüyor (${allPorts.join(', ')}), ancak erişilemiyor.');
+        debugPrint(
+          'Sistem portları görüyor (${allPorts.join(', ')}), '
+          'ancak erişilemiyor.',
+        );
       }
     } catch (e) {
       debugPrint('Port listesi alınamadı: $e');
@@ -72,7 +81,9 @@ class SerialCommunicationService implements ISerialCommunicationService {
     return activePorts;
   }
 
-  // ── Bağlantı ──────────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // BAĞLANTI
+  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<void> connectToPort(String portName, {Function(String message)? onStatusChanged}) async {
@@ -99,8 +110,8 @@ class SerialCommunicationService implements ISerialCommunicationService {
     if (availablePorts.isEmpty) {
       throw SerialPortException(
         message:
-            '$portName portuna bağlanılamadı ve başka aktif port bulunamadı. '
-            'Kablo bağlantısını ve sürücüleri kontrol edin.',
+            '$portName portuna bağlanılamadı ve başka aktif port '
+            'bulunamadı. Kablo bağlantısını ve sürücüleri kontrol edin.',
       );
     }
 
@@ -115,33 +126,29 @@ class SerialCommunicationService implements ISerialCommunicationService {
       }
     }
 
-    // 3. Hiçbiri olmazsa
     throw SerialPortException(
       message:
           'Hiçbir porta bağlanılamadı. '
-          'Kablo bağlantısını kontrol edin ve cihazın açık olduğundan emin olun.',
+          'Kablo bağlantısını kontrol edin ve cihazın açık olduğundan '
+          'emin olun.',
     );
   }
 
   Future<void> _attemptConnection(String portName) async {
-    // Mevcut bağlantıyı temizle
-    if (_port != null) {
-      await disconnect();
-      await Future.delayed(const Duration(milliseconds: 200));
-    }
+    // Mevcut bağlantıyı garantili temizle — handle leak önleme
+    await _forceCleanup();
 
     SerialPort? port;
     try {
       port = SerialPort(portName);
-      port.flush();
 
       final config = SerialPortConfig()
         ..baudRate = 9600
         ..bits = 8
         ..parity = SerialPortParity.none
         ..stopBits = 1
-        ..dtr = 1
-        ..rts = 1
+        ..dtr = 0
+        ..rts = 0
         ..xonXoff = 0;
 
       port.config = config;
@@ -162,10 +169,11 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
     _port = port;
 
+    // Input buffer'ı temizle — bağlantı öncesi birikmiş olabilir
     try {
       _port!.flush(SerialPortBuffer.both);
     } catch (_) {
-      // Flush hatası kritik değil, devam et
+      // Flush hatası kritik değil
     }
 
     _reader = SerialPortReader(_port!);
@@ -178,10 +186,13 @@ class SerialCommunicationService implements ISerialCommunicationService {
     );
 
     // Donanımın kendine gelmesi için safety delay
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 1000));
+    debugPrint('✅ Seri port bağlandı: $portName');
   }
 
-  // ── Komut Gönderme ─────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // KOMUT GÖNDERME
+  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<String?> sendAndReceive(String command, {Duration? timeout}) async {
@@ -189,7 +200,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
       throw SerialPortException(message: 'Seri port bağlantısı yok. Önce bağlantı kurulmalı.');
     }
 
-    // Mutex: port meşgulse bekle
     await _waitForAvailability();
 
     _isBusy = true;
@@ -197,7 +207,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
     _buffer.clear();
 
     try {
-      // Input buffer'ı temizle (önceki artık veriler)
       try {
         _port!.flush(SerialPortBuffer.input);
       } catch (_) {
@@ -212,7 +221,9 @@ class SerialCommunicationService implements ISerialCommunicationService {
         throw SerialPortException(message: 'Komut gönderilemedi. Port yazma hatası.');
       }
 
-      // Cevabı bekle
+      // TX → RX geçiş gecikmesi (RS485 half-duplex)
+      await Future.delayed(const Duration(milliseconds: 250));
+
       final effectiveTimeout = timeout ?? const Duration(milliseconds: 500);
       final response = await _completer!.future.timeout(effectiveTimeout);
       return response;
@@ -222,11 +233,12 @@ class SerialCommunicationService implements ISerialCommunicationService {
     } on SerialPortException {
       rethrow;
     } catch (e) {
+      // Beklenmeyen hata — port state'ini kontrol et
+      debugPrint('⚠️ Komut gönderme hatası: $e');
       throw SerialPortException(message: 'Komut gönderme hatası: $e');
     } finally {
       _completer = null;
       _isBusy = false;
-      // Cihaza nefes payı — akışı yavaşlatmayacak kadar kısa
       await Future.delayed(const Duration(milliseconds: 50));
     }
   }
@@ -250,7 +262,9 @@ class SerialCommunicationService implements ISerialCommunicationService {
     }
   }
 
-  // ── Veri Alımı ─────────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // VERİ ALIMI
+  // ════════════════════════════════════════════════════════════════
 
   void _onDataReceived(Uint8List data) {
     if (_completer == null || _completer!.isCompleted) return;
@@ -262,46 +276,91 @@ class SerialCommunicationService implements ISerialCommunicationService {
       final current = _buffer.toString().trim();
       debugPrint('<< Gelen: $current');
 
-      // Protokol bitiş karakteri kontrolü: -, ,, ;, ]
+      // Protokol bitiş karakteri: -, ,, ;, ]
       if (current.endsWith('-') || current.endsWith(',') || current.endsWith(';') || current.endsWith(']')) {
         _completer?.complete(current);
         _buffer.clear();
       }
     } catch (e) {
       debugPrint('⚠️ Veri parse hatası: $e');
-      // Parse hatası olsa bile completer'ı tamamla ki akış takılmasın
       _completer?.complete(null);
       _buffer.clear();
     }
   }
 
-  // ── Bağlantı Kapatma ──────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // BAĞLANTI KAPATMA
+  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<void> disconnect() async {
+    await _forceCleanup();
+    debugPrint('🔌 Seri port bağlantısı kapatıldı.');
+  }
+
+  /// Tüm kaynakları garantili serbest bırakan temizleme metodu.
+  ///
+  /// DOĞRU TEMİZLEME SIRASI:
+  ///   1. _isBusy sıfırla — yeni mutex bekleme girişini engelle
+  ///   2. Bekleyen completer'ı iptal et — askıdaki Future'ı çöz
+  ///   3. Stream subscription'ı iptal et — veri dinlemeyi durdur
+  ///   4. Reader'ı kapat — SerialPortReader'ı temizle
+  ///   5. Port'u kapat — OS handle'ını serbest bırak
+  ///   6. Port'u dispose et — belleği serbest bırak
+  ///   7. Tüm referansları null yap — GC'ye bırak
+  ///
+  /// Bu metod throw etmez — her adımda hata yakalanır.
+  /// Reconnect öncesi çağrılması garantili olmalıdır.
+  Future<void> _forceCleanup() async {
     _isBusy = false;
 
-    _cancelPendingCompleter('Bağlantı kapatıldı.');
+    // 1. Bekleyen completer'ı iptal et
+    _cancelPendingCompleter('Bağlantı yeniden başlatılıyor.');
 
-    await _subscription?.cancel();
+    // 2. Stream subscription — önce iptal et
+    try {
+      await _subscription?.cancel();
+    } catch (e) {
+      debugPrint('⚠️ Subscription iptal hatası: $e');
+    }
     _subscription = null;
 
-    _reader?.close();
+    // 3. Reader — subscription iptal edildikten sonra kapat
+    try {
+      _reader?.close();
+    } catch (e) {
+      debugPrint('⚠️ Reader kapatma hatası: $e');
+    }
     _reader = null;
 
+    // 4. Port — reader kapatıldıktan sonra kapat
     try {
-      _port?.close();
+      if (_port?.isOpen ?? false) {
+        _port?.close();
+      }
     } catch (e) {
-      debugPrint('Port kapatma hatası: $e');
+      debugPrint('⚠️ Port kapatma hatası: $e');
+    }
+
+    // 5. Port dispose — OS handle garantili serbest bırakma
+    // close() başarısız olsa bile dispose çalışır
+    try {
+      _port?.dispose();
+    } catch (e) {
+      debugPrint('⚠️ Port dispose hatası: $e');
     }
     _port = null;
 
     _buffer.clear();
+
+    // OS'un handle'ı tamamen serbest bırakması için kısa bekleme
+    await Future.delayed(const Duration(milliseconds: 200));
   }
 
-  // ── Yardımcı ──────────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // YARDIMCILAR
+  // ════════════════════════════════════════════════════════════════
 
-  /// Bekleyen completer varsa hata ile tamamlar.
   void _cancelPendingCompleter(String reason) {
     if (_completer != null && !_completer!.isCompleted) {
       _completer!.completeError(SerialPortException(message: reason));

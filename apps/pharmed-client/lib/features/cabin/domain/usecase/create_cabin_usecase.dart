@@ -1,7 +1,14 @@
 // [SWREQ-CORE-CABIN-UC-001]
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+
+import '../../../../core/providers/providers.dart';
+
+final createCabinUseCaseProvider = Provider<CreateCabinUseCase>((ref) {
+  return CreateCabinUseCase(ref.read(cabinRepositoryProvider), ref.read(stationRepositoryProvider));
+});
 
 class CreateCabinUseCase {
   final ICabinRepository _repository;

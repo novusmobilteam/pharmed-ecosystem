@@ -3,6 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_client/l10n/app_localizations.dart';
+import 'core/hardware/service/serial_port_lifecycle_observer.dart';
+import 'core/providers/providers.dart';
 import 'core/router/app_router.dart';
 import 'features/settings/presentation/notifier/settings_notifier.dart';
 
@@ -18,6 +20,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(settingsNotifierProvider.select((s) => s.language.locale));
+    WidgetsBinding.instance.addObserver(SerialPortLifecycleObserver(ref.read(serialServiceProvider)));
 
     return MaterialApp(
       title: 'Pharmed',

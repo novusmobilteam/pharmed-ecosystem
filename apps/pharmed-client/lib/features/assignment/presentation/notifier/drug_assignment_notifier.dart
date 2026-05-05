@@ -22,9 +22,9 @@ final drugAssignmentNotifierProvider = NotifierProvider<DrugAssignmentNotifier, 
 );
 
 class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
-  GetMedicineAssignmentsUseCase get _getAssignments => ref.read(getAssignmentsUseCaseProvider);
+  GetMedicineAssignmentsUseCase get _getAssignments => ref.read(getMedicineAssignmentsUseCaseProvider);
   CreateMedicineAssignmentUseCase get _createAssignment => ref.read(createAssignmentUseCaseProvider);
-  UpdateMedicineAssignmentUseCase get _updateAssignment => ref.read(updateAssignmentUseCaseProvider);
+  UpdateMedicineAssignmentUseCase get _updateAssignment => ref.read(updateMedicineAssignmentUseCaseProvider);
   DeleteMedicineAssignmentUseCase get _deleteAssignment => ref.read(deleteAssignmentUseCaseProvider);
 
   @override

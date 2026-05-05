@@ -662,4 +662,38 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settings_languageSubtitle => 'لغة الواجهة';
+
+  @override
+  String get emptyStateCabinDataTitle => 'لم يتم العثور على بيانات الخزانة';
+
+  @override
+  String get emptyStateCabinDataDescription =>
+      'قد لا تكون الخزانة مهيأة بعد\nأو تعذر إنشاء الاتصال.';
+
+  @override
+  String get emptyStateNoResultsTitle => 'لم يتم العثور على نتائج';
+
+  @override
+  String get emptyStateNoResultsDescription => 'حاول تغيير معايير البحث.';
+
+  @override
+  String get emptyStateNoCellSelectedTitle => 'لم يتم تحديد خانة';
+
+  @override
+  String get emptyStateNoCellSelectedDescription =>
+      'حدد خانة لبدء عملية التعبئة.';
+
+  @override
+  String get emptyStateNoPatientTitle => 'لم يتم تعيين مريض';
+
+  @override
+  String get emptyStateNoPatientDescription =>
+      'لم يتم تعيين أي مريض لهذه الخانة بعد.';
+
+  @override
+  String get emptyStateNoPrescriptionTitle => 'لم يتم العثور على وصفة طبية';
+
+  @override
+  String get emptyStateNoPrescriptionDescription =>
+      'لا توجد وصفات طبية نشطة لهذا المريض.';
 }

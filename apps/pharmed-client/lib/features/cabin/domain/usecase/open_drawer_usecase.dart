@@ -36,10 +36,10 @@ class OpenDrawerUseCase {
       // 3. Fiziksel Kilit Açma Akışları
       if (isSerum) {
         onUpdate(DrawerStage.unlockingMaster, "Serum kabini açılıyor...");
-        await _service.unlockSerum(manager: manager, row: address.row);
+        await _service.openMasterSerumDrawer(manager: manager, row: address.row);
       } else if (address.isCubic) {
         onUpdate(DrawerStage.unlockingMaster, "Ana kilit açılıyor...");
-        await _service.unlockDrawer(
+        await _service.openMasterDrawer(
           manager: manager,
           row: monitorAddress.row,
           port: monitorAddress.port,
@@ -47,7 +47,7 @@ class OpenDrawerUseCase {
         );
       } else {
         onUpdate(DrawerStage.unlockingMaster, "Çekmece kilidi açılıyor...");
-        await _service.unlockDrawer(manager: manager, row: address.row, port: address.port, drawer: address.index);
+        await _service.openMasterDrawer(manager: manager, row: address.row, port: address.port, drawer: address.index);
       }
 
       onUpdate(DrawerStage.waitingForPull, "Kilit açıldı. Lütfen çekin.");

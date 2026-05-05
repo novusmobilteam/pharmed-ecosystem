@@ -1,5 +1,3 @@
-// lib/features/assignment/presentation/notifier/patient_assignment_notifier.dart
-//
 // [SWREQ-UI-CAB-006]
 // Hasta bazlı atama ekranı state yönetimi.
 // Sadece mobil kabinde çalışır.
@@ -28,10 +26,10 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
   @override
   BedAssignmentState build() => const BedAssignmentUninitialized();
 
-  GetBedAssignmentsUseCase get _getAssignments => ref.read(getPatientAssignmentsUseCaseProvider);
-  CreatePatientAssignmentUseCase get _createAssignment => ref.read(createPatientAssignmentUseCaseProvider);
-  DeleteBedAssignmentUseCase get _deleteAssignment => ref.read(deletePatientAssignmentUseCaseProvider);
-  UpdateBedAssignmentUseCase get _updateAssignment => ref.read(updatePatientAssignmentUseCaseProvider);
+  GetBedAssignmentsUseCase get _getAssignments => ref.read(getBedAssignmentsUseCaseProvider);
+  CreateBedAssignmentUseCase get _createAssignment => ref.read(createBedAssignmentUseCaseProvider);
+  DeleteBedAssignmentUseCase get _deleteAssignment => ref.read(deleteBedAssignmentUseCaseProvider);
+  UpdateBedAssignmentUseCase get _updateAssignment => ref.read(updateBedAssignmentUseCaseProvider);
   GetCabinUseCase get _getCabin => ref.read(getCabinUseCaseProvider);
   GetStationUseCase get _getStation => ref.read(getStationUseCaseProvider);
   GetServiceUseCase get _getService => ref.read(getServiceUseCaseProvider);

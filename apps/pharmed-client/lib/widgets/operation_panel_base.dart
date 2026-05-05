@@ -49,11 +49,13 @@ class OperationPanelBase extends StatelessWidget {
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _OperationPanelHeader(config: config),
-          Padding(padding: const EdgeInsets.all(16.0), child: child),
+          Expanded(
+            child: Padding(padding: const EdgeInsets.all(16.0), child: child),
+          ),
         ],
       ),
     );
@@ -142,7 +144,7 @@ final class _ModeConfig {
       accentColor: MedColors.blue,
       badgeBg: MedColors.blueLight,
     ),
-    CabinOperationMode.fill => _ModeConfig(
+    CabinOperationMode.refill => _ModeConfig(
       title: 'İLAÇ DOLUM',
       badge: 'DOLUM',
       accentColor: MedColors.green,

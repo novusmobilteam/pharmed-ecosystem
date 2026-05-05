@@ -39,6 +39,6 @@ class RefillMedicineUseCase implements UseCase<void, List<RefillMedicineParams>>
 
   @override
   Future<Result<void>> call(List<RefillMedicineParams> params) {
-    return _cabinStockRepository.fill(params);
+    return _cabinStockRepository.refillMasterCabin(params);
   }
 }

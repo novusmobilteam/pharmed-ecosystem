@@ -47,10 +47,20 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data), error: Result.error);
   }
 
-  /// Dolum isteğini sunucuya iletir.
-  Future<Result<void>> fill(List<dynamic> data) async {
+  /// Master kabin dolum işlemi
+  Future<Result<void>> refillMasterCabin(List<dynamic> data) async {
     return await postRequest(
       path: _base,
+      parser: BaseRemoteDataSource.voidParser(),
+      body: data.map((e) => e.toJson()).toList(),
+      successLog: 'Filling process completed',
+    );
+  }
+
+  /// Mobil kabin dolum işlemi
+  Future<Result<void>> refillMobileCabin(List<dynamic> data) async {
+    return await postRequest(
+      path: '$_base/mobileCabin',
       parser: BaseRemoteDataSource.voidParser(),
       body: data.map((e) => e.toJson()).toList(),
       successLog: 'Filling process completed',

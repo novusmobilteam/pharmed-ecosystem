@@ -22,7 +22,6 @@ export 'domain/entity/mobile_drawer_unit.dart';
 export 'domain/repository/i_cabin_repository.dart';
 
 export 'domain/usecase/get_cabins_by_station_usecase.dart';
-export 'domain/usecase/get_cabins_usecase.dart';
 export 'domain/usecase/get_serum_slots_usecase.dart';
 export 'domain/usecase/get_cabin_layout_usecase.dart';
 

@@ -1,5 +1,5 @@
 export 'data/station_dto.dart';
-export 'domain/model/station.dart';
+export 'domain/entity/station.dart';
 export 'domain/repository/i_station_repository.dart';
 export 'domain/usecase/create_station_usecase.dart';
 export 'domain/usecase/delete_station_usecase.dart';

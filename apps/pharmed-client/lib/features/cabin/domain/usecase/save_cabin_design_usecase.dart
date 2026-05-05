@@ -1,9 +1,19 @@
 // [SWREQ-CORE-CABIN-UC-009]
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+
+import '../../../../core/providers/providers.dart';
+
+final saveCabinDesignUseCaseProvider = Provider<SaveCabinDesignUseCase>((ref) {
+  return SaveCabinDesignUseCase(
+    cabinRepository: ref.read(cabinRepositoryProvider),
+    localDataSource: ref.read(cabinLocaleDataSourceProvider),
+  );
+});
 
 class SaveCabinDesignUseCase {
   SaveCabinDesignUseCase({required ICabinRepository cabinRepository, required ICabinLocalDataSource localDataSource})

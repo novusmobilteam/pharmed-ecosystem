@@ -54,7 +54,7 @@ class HandleSensorStatusUseCase {
       // Notifier'daki adres hesaplama UseCase içine taşınmıştı, oradan alıyoruz
       final lidAddress = calculateAddressFromAssignment(item);
 
-      await _service.openCubic(
+      await _service.openMasterCubicDrawer(
         manager: manager,
         row: lidAddress.row,
         port: lidAddress.port,

@@ -665,4 +665,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_languageSubtitle => 'Interface language';
+
+  @override
+  String get emptyStateCabinDataTitle => 'Cabinet data not found';
+
+  @override
+  String get emptyStateCabinDataDescription =>
+      'The cabinet may not be configured yet\nor connection could not be established.';
+
+  @override
+  String get emptyStateNoResultsTitle => 'No results found';
+
+  @override
+  String get emptyStateNoResultsDescription =>
+      'Try changing your search criteria.';
+
+  @override
+  String get emptyStateNoCellSelectedTitle => 'No cell selected';
+
+  @override
+  String get emptyStateNoCellSelectedDescription =>
+      'Select a cell to start filling.';
+
+  @override
+  String get emptyStateNoPatientTitle => 'No patient assigned';
+
+  @override
+  String get emptyStateNoPatientDescription =>
+      'No patient has been assigned to this cell yet.';
+
+  @override
+  String get emptyStateNoPrescriptionTitle => 'No prescription found';
+
+  @override
+  String get emptyStateNoPrescriptionDescription =>
+      'There are no active prescriptions for this patient.';
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/core.dart';
 
 mixin CabinEditorMixin on ChangeNotifier, ApiRequestMixin {
-  GetCabinsUseCase get cabinsUseCase;
+  // GetCabinsUseCase get cabinsUseCase;
   // GetCabinLayoutUseCase get layoutUseCase;
 
   List<Cabin> _cabins = [];
@@ -23,38 +23,38 @@ mixin CabinEditorMixin on ChangeNotifier, ApiRequestMixin {
   void selectCabin(Cabin? cabin) => _selectedCabin = cabin;
 
   Future<void> initCabinContext({int? stationId, GetCabinsByStationUseCase? byStationUseCase}) async {
-    await executeVoid(
-      fetchCabinOp,
-      operation: () async {
-        final res = stationId != null && byStationUseCase != null
-            ? await byStationUseCase.call(stationId)
-            : await cabinsUseCase.call();
+    // await executeVoid(
+    //   fetchCabinOp,
+    //   operation: () async {
+    //     final res = stationId != null && byStationUseCase != null
+    //         ? await byStationUseCase.call(stationId)
+    //         : await cabinsUseCase.call();
 
-        return res.when(
-          stale: (data, savedAt) async {
-            _cabins = data;
-            if (cabins.isNotEmpty && selectedCabin == null) {
-              _selectedCabin = cabins.first;
-            }
-            if (selectedCabin != null) {
-              await refreshLayout();
-            }
-            return Result.ok(null);
-          },
-          success: (data) async {
-            _cabins = data;
-            if (cabins.isNotEmpty && selectedCabin == null) {
-              _selectedCabin = cabins.first;
-            }
-            if (selectedCabin != null) {
-              await refreshLayout();
-            }
-            return Result.ok(null);
-          },
-          failure: (error) => Result.error(error),
-        );
-      },
-    );
+    //     return res.when(
+    //       stale: (data, savedAt) async {
+    //         _cabins = data;
+    //         if (cabins.isNotEmpty && selectedCabin == null) {
+    //           _selectedCabin = cabins.first;
+    //         }
+    //         if (selectedCabin != null) {
+    //           await refreshLayout();
+    //         }
+    //         return Result.ok(null);
+    //       },
+    //       success: (data) async {
+    //         _cabins = data;
+    //         if (cabins.isNotEmpty && selectedCabin == null) {
+    //           _selectedCabin = cabins.first;
+    //         }
+    //         if (selectedCabin != null) {
+    //           await refreshLayout();
+    //         }
+    //         return Result.ok(null);
+    //       },
+    //       failure: (error) => Result.error(error),
+    //     );
+    //   },
+    // );
   }
 
   Future<void> refreshLayout() async {

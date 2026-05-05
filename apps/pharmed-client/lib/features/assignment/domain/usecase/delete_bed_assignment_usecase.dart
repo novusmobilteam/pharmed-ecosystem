@@ -2,8 +2,15 @@
 // Mobil kabin gözündeki yatak atamasını siler.
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+
+import '../../../../core/providers/providers.dart';
+
+final deleteBedAssignmentUseCaseProvider = Provider<DeleteBedAssignmentUseCase>((ref) {
+  return DeleteBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
 
 class DeleteBedAssignmentUseCase {
   const DeleteBedAssignmentUseCase(this._repository);

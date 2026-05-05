@@ -1,7 +1,14 @@
 // [SWREQ-CORE-ASSIGNMENT-UC-001]
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+
+import '../../../../core/providers/providers.dart';
+
+final createAssignmentUseCaseProvider = Provider<CreateMedicineAssignmentUseCase>((ref) {
+  return CreateMedicineAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
 
 class CreateMedicineAssignmentUseCase {
   final IAssignmentRepository _repository;

@@ -26,7 +26,7 @@ class CabinProviders {
       // ),
 
       // 3. Use Cases
-      Provider<GetCabinsUseCase>(create: (context) => GetCabinsUseCase(context.read())),
+      // Provider<GetCabinsUseCase>(create: (context) => GetCabinsUseCase(context.read())),
       Provider<GetCabinsByStationUseCase>(create: (context) => GetCabinsByStationUseCase(context.read())),
 
       Provider<GetSerumSlotsUseCase>(create: (context) => GetSerumSlotsUseCase(context.read())),

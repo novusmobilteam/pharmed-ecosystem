@@ -1,5 +1,3 @@
-// lib/features/settings/presentation/notifier/settings_notifier.dart
-//
 // Sınıf: Class A
 
 import 'package:flutter/foundation.dart';
@@ -8,7 +6,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/cache/app_settings_cache.dart';
 import '../../../../core/enums/app_language.dart';
-import '../../../cabin/cabin.dart';
+import '../../domain/usecase/get_cabins_usecase.dart';
 import '../state/settings_state.dart';
 
 final settingsNotifierProvider = NotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);

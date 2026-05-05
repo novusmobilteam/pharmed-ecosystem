@@ -2,8 +2,15 @@
 // Mobil kabin gözündeki yatak atamasını günceller.
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+
+import '../../../../core/providers/providers.dart';
+
+final updateBedAssignmentUseCaseProvider = Provider<UpdateBedAssignmentUseCase>((ref) {
+  return UpdateBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
 
 class UpdateBedAssignmentUseCase {
   const UpdateBedAssignmentUseCase(this._repository);

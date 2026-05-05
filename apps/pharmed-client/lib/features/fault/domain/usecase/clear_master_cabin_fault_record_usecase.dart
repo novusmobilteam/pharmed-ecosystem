@@ -1,4 +1,11 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+
+import '../../../../core/providers/providers.dart';
+
+final clearMasterCabinFaultRecordProvider = Provider<ClearMasterCabinFaultRecordUseCase>((ref) {
+  return ClearMasterCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
+});
 
 class ClearMasterCabinFaultRecordUseCase {
   final IFaultRepository _repository;

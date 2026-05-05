@@ -1,9 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// lib/features/cabin/domain/usecase/get_cabin_visualizer_data_use_case.dart
-//
 // [SWREQ-UI-DASH-003]
 // Kabin görselleştirme verisi use case.
 //
@@ -14,7 +13,18 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/providers/providers.dart';
 import '../../../fault/fault.dart';
+
+final getCabinVisualizerDataUseCaseProvider = Provider<GetCabinVisualizerDataUseCase>((ref) {
+  return GetCabinVisualizerDataUseCase(
+    ref.read(cabinRepositoryProvider),
+    ref.read(cabinStockRepositoryProvider),
+    ref.read(appSettingsCacheProvider),
+    ref.read(getMasterCabinFaultRecordsProvider),
+    ref.read(getMobileCabinFaultRecordsProvider),
+  );
+});
 
 class GetCabinVisualizerDataUseCase {
   const GetCabinVisualizerDataUseCase(

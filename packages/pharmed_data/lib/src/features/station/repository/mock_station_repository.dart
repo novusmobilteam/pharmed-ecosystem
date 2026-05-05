@@ -63,4 +63,10 @@ class MockStationRepository implements IStationRepository {
     await Future.delayed(const Duration(milliseconds: 400));
     return const Result.ok(null);
   }
+
+  @override
+  Future<Result<List<Station>>> getUnassignedStations() async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    return const Result.ok([]);
+  }
 }

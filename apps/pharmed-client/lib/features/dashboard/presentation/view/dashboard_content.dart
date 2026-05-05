@@ -1,7 +1,12 @@
 part of 'dashboard_screen.dart';
 
 class DashboardContentFactory {
-  static Widget buildContent(BuildContext context, DashboardUiState state, DashboardNotifier notifier, bool isLoggedIn) {
+  static Widget buildContent(
+    BuildContext context,
+    DashboardUiState state,
+    DashboardNotifier notifier,
+    bool isLoggedIn,
+  ) {
     // Rota bilgisini güvenli bir şekilde state'den ayıklıyoruz
     final route = switch (state) {
       DashboardLoaded s => s.activeRoute,
@@ -19,6 +24,7 @@ class DashboardContentFactory {
         // Diğer Modüller
         'cabinDrawerStock' => Center(child: AssignmentView()),
         'drawer-malfunction' => Center(child: FaultView()),
+        'refill' => RefillView(),
 
         // Fallback
         _ => Center(child: Text(context.l10n.common_pageNotFound)),
@@ -26,7 +32,12 @@ class DashboardContentFactory {
     );
   }
 
-  static Widget _buildMainDashboard(BuildContext context, DashboardUiState state, DashboardNotifier notifier, bool isLoggedIn) {
+  static Widget _buildMainDashboard(
+    BuildContext context,
+    DashboardUiState state,
+    DashboardNotifier notifier,
+    bool isLoggedIn,
+  ) {
     return switch (state) {
       DashboardLoading() => const _LoadingView(),
       DashboardLoaded(:final data) => _DashboardBody(data: data, notifier: notifier, isLoggedIn: isLoggedIn),

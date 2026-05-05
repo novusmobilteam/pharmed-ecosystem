@@ -8,7 +8,7 @@ import 'package:pharmed_client/core/flavor/app_flavor.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import '../config/auth_config.dart';
-import 'network_providers.dart';
+import 'providers.dart';
 
 // ── Config ────────────────────────────────────────────────────────
 
@@ -36,18 +36,6 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
   return AuthRemoteDataSource(dio: ref.read(plainDioProvider));
 });
 
-final userRemoteDataSourceProvider = Provider<UserRemoteDataSource>((ref) {
-  return UserRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final userMapperProvider = Provider<UserMapper>((ref) {
-  return const UserMapper();
-});
-
-final userRepositoryProvider = Provider<IUserReader>((ref) {
-  return UserRepositoryImpl(dataSource: ref.read(userRemoteDataSourceProvider), mapper: ref.read(userMapperProvider));
-});
-
 final authRepositoryProvider = Provider<IAuthRepository>((ref) {
   return AuthRepositoryImpl(
     remoteDataSource: ref.read(authRemoteDataSourceProvider),
@@ -55,6 +43,10 @@ final authRepositoryProvider = Provider<IAuthRepository>((ref) {
     userReader: ref.read(userRepositoryProvider),
     tokenHolder: ref.read(tokenHolderProvider),
   );
+});
+
+final userMapperProvider = Provider<UserMapper>((ref) {
+  return const UserMapper();
 });
 
 // ── Use case'ler ──────────────────────────────────────────────────

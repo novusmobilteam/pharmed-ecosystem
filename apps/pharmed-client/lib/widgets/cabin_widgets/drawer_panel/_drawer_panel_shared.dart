@@ -105,7 +105,7 @@ class CabinModeBanner extends StatelessWidget {
               const Color(0xFF1256AA),
               context.l10n.cabin_bannerDrugAssign,
             ),
-    CabinOperationMode.fill => (
+    CabinOperationMode.refill => (
       const Color(0xFFE6F7F2),
       const Color(0xFF9ED9C4),
       const Color(0xFF086E4A),

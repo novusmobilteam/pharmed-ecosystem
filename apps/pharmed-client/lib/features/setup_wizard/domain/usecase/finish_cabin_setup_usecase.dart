@@ -3,11 +3,21 @@
 // Kabin oluşturur, standart kabinlerde çekmece slot'larını kaydeder.
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../cabin/cabin.dart';
-import '../model/cabin_setup_config.dart';
+import '../entity/cabin_setup_config.dart';
+
+final finishCabinSetupUseCaseProvider = Provider<FinishCabinSetupUseCase>((ref) {
+  return FinishCabinSetupUseCase(
+    createCabin: ref.read(createCabinUseCaseProvider),
+    saveCabinDesign: ref.read(saveCabinDesignUseCaseProvider),
+    appSettingsCache: ref.read(appSettingsCacheProvider),
+    saveMobileCabinDesign: ref.read(saveMobileCabinDesignUseCaseProvider),
+  );
+});
 
 class FinishCabinSetupUseCase {
   FinishCabinSetupUseCase({

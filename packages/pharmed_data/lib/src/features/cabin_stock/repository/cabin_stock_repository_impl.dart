@@ -62,8 +62,13 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<void>> fill(List<dynamic> data) async {
-    return await _dataSource.fill(data);
+  Future<Result<void>> refillMasterCabin(List<dynamic> data) async {
+    return await _dataSource.refillMasterCabin(data);
+  }
+
+  @override
+  Future<Result<void>> refillMobileCabin(List<dynamic> data) async {
+    return await _dataSource.refillMobileCabin(data);
   }
 
   @override

@@ -13,7 +13,7 @@ enum CabinOperationMode {
   assign,
 
   /// İlaç Dolum — atanmış gözlere ilaç doldurulur, miktar + miad girilir.
-  fill,
+  refill,
 
   /// İlaç Sayım — mevcut stok sayılır ve sisteme girilir.
   count,
@@ -25,7 +25,7 @@ enum CabinOperationMode {
 extension CabinOperationModeX on CabinOperationMode {
   String get label => switch (this) {
     CabinOperationMode.assign => 'İlaç Atama',
-    CabinOperationMode.fill => 'İlaç Dolum',
+    CabinOperationMode.refill => 'İlaç Dolum',
     CabinOperationMode.count => 'İlaç Sayım',
     CabinOperationMode.fault => 'Çekmece Arıza',
   };
@@ -33,7 +33,7 @@ extension CabinOperationModeX on CabinOperationMode {
   /// Mod'a özgü vurgu rengi — hover, banner, chip rengi için
   Color get accentColor => switch (this) {
     CabinOperationMode.assign => MedColors.blue,
-    CabinOperationMode.fill => MedColors.green,
+    CabinOperationMode.refill => MedColors.green,
     CabinOperationMode.count => MedColors.amber,
     CabinOperationMode.fault => MedColors.red,
   };

@@ -667,5 +667,20 @@
 "settings_languageSubtitle": "لغة الواجهة",
 "@settings_languageSubtitle": {
   "description": "Subtitle shown under language section header"
-}
+},
+
+  "emptyStateCabinDataTitle": "لم يتم العثور على بيانات الخزانة",
+  "emptyStateCabinDataDescription": "قد لا تكون الخزانة مهيأة بعد\nأو تعذر إنشاء الاتصال.",
+ 
+  "emptyStateNoResultsTitle": "لم يتم العثور على نتائج",
+  "emptyStateNoResultsDescription": "حاول تغيير معايير البحث.",
+ 
+  "emptyStateNoCellSelectedTitle": "لم يتم تحديد خانة",
+  "emptyStateNoCellSelectedDescription": "حدد خانة لبدء عملية التعبئة.",
+ 
+  "emptyStateNoPatientTitle": "لم يتم تعيين مريض",
+  "emptyStateNoPatientDescription": "لم يتم تعيين أي مريض لهذه الخانة بعد.",
+ 
+  "emptyStateNoPrescriptionTitle": "لم يتم العثور على وصفة طبية",
+  "emptyStateNoPrescriptionDescription": "لا توجد وصفات طبية نشطة لهذا المريض."
 }

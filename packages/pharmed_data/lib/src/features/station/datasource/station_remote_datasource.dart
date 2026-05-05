@@ -27,6 +27,15 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  Future<Result<List<StationDTO>?>> getUnassignedStations() async {
+    return await fetchRequest(
+      path: '$_base/uninstalled',
+      parser: BaseRemoteDataSource.listParser(StationDTO.fromJson),
+      successLog: 'İstasyonlar getirildi',
+      emptyLog: 'İstasyon bulunamadı',
+    );
+  }
+
   Future<Result<void>> createStation(StationDTO dto) {
     return postRequest(
       path: _base,

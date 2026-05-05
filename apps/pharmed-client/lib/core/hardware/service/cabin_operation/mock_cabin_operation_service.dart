@@ -1,26 +1,33 @@
 // apps/pharmed-client/lib/core/hardware/service/mock_cabin_operation_service.dart
+//
+// [SWREQ-HW-001] [IEC 62304 §5.5]
+// Kabin operasyon servisi — mock implementasyon.
+//
+// KAPSAM:
+//   Fiziksel cihaz olmadan çekmece açma/kapama ve tarama akışını simüle eder.
+//   Mock flavor'da (main_mock.dart) kullanılır.
+//
+// SİMÜLASYON DAVRANIŞI:
+//   scanManagementCard        : 500ms sonra adres 1'de kart bulur
+//   discoverControlCards      : 1s sonra 4 kart döner (kübik, 5'li, 3'lü, serum)
+//   getMobileDrawerStatus      : fullyOpen döner, triggerManualClose ile locked
+//   openMobileDrawer          : 500ms gecikme, başarılı
+//   streamMobileDrawerStatus  : 2s fullyOpen → triggerManualClose ile locked
+//   openMasterDrawer          : 1s gecikme, başarılı
+//   streamMasterDrawerStatus  : 2s locked → fullyOpen → triggerManualClose ile locked
+//
+// Sınıf: Class B
 
 import 'package:flutter/foundation.dart';
+
 import '../../model/control_card.dart';
 import '../../model/drawer_status.dart';
 import '../../model/management_card.dart';
 import 'i_cabin_operation_service.dart';
 
-// [SWREQ-HW-001]
-
-/// KABİN OPERASYON SERVİSİ — MOCK İMPLEMENTASYON
-/// -----------------------------------------------
-/// Fiziksel cihaz olmadan çekmece açma/kapama ve tarama akışını simüle eder.
-/// Mock flavor'da (`main_mock.dart`) kullanılır.
-///
-/// SİMÜLASYON DAVRANIŞI:
-/// - findManagementCard: 500ms sonra adres 1'de kart bulur
-/// - findControlCards: 1s sonra 4 kart döner (kübik, 5'li, 3'lü, serum)
-/// - monitorDrawerStatus: 2s sonra fullyOpen, triggerManualClose ile kapanır
-/// - monitorSerumPortStatus: 2s sonra fullyOpen, kullanıcı kapatınca locked
 class MockCabinOperationService implements ICabinOperationService {
-  int _statusPollCount = 0;
   bool _shouldFastForward = false;
+  int _statusPollCount = 0;
 
   @override
   void triggerManualClose() {
@@ -28,25 +35,29 @@ class MockCabinOperationService implements ICabinOperationService {
     debugPrint('MOCK: Manuel kapatma tetiklendi.');
   }
 
-  // ── Yönetim Kartı ──────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // YÖNETİM KARTI
+  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<ManagementCard?> getOrScanManager({String? targetPort}) async {
-    return findManagementCard();
+    return scanManagementCard();
   }
 
   @override
-  Future<ManagementCard?> findManagementCard() async {
+  Future<ManagementCard?> scanManagementCard() async {
     debugPrint('MOCK: Yönetim kartı taranıyor...');
     await Future.delayed(const Duration(milliseconds: 500));
     debugPrint('MOCK: ✅ Yönetim kartı bulundu: Adres 1 (a)');
     return const ManagementCard(addressIndex: 1);
   }
 
-  // ── Kontrol Kartları ───────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // KONTROL KARTLARI (MASTER KABİN)
+  // ════════════════════════════════════════════════════════════════
 
   @override
-  Future<List<ControlCard>> findControlCards(ManagementCard manager) async {
+  Future<List<ControlCard>> discoverControlCards(ManagementCard manager) async {
     debugPrint('MOCK: Kontrol kartları taranıyor...');
     await Future.delayed(const Duration(seconds: 1));
 
@@ -58,68 +69,73 @@ class MockCabinOperationService implements ICabinOperationService {
     ];
   }
 
-  // ── Komut Gönderme ─────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════════
+  // MOBİL KABİN — ÇEKMECE OPERASYONLARI
+  // ════════════════════════════════════════════════════════════════
 
   @override
-  Future<String?> sendCommand({
-    required ManagementCard manager,
-    required int targetRow,
-    required String commandPayload,
-  }) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    if (_shouldFastForward) {
-      debugPrint('MOCK: Zorunlu kapatma algılandı, h4 dönülüyor.');
-      return '.h4,';
-    }
-
-    if (commandPayload.contains(':T') && commandPayload.contains('O')) {
-      debugPrint('MOCK: Kilit açma başarılı.');
-      return 'ok';
-    }
-
-    if (commandPayload.contains(':Z')) {
-      debugPrint('MOCK: Kapak açma başarılı.');
-      return '[ac]';
-    }
-
-    if (commandPayload.contains(':T') && commandPayload.contains('S')) {
-      _statusPollCount++;
-      if (_statusPollCount < 3) return '.h0,';
-      return '.h3,';
-    }
-
-    return 'ok';
+  Future<void> openMobileDrawer({required ManagementCard manager, required int port}) async {
+    debugPrint('MOCK: Mobil çekmece port $port açılıyor...');
+    await Future.delayed(const Duration(milliseconds: 500));
+    debugPrint('MOCK: ✅ Mobil çekmece port $port AÇILDI 🔓');
   }
 
-  // ── Master Kabin — Standart Çekmece ───────────────────────────
+  @override
+  Future<DrawerPhysicalStatus> getMobileDrawerStatus({required ManagementCard manager, required int port}) async {
+    // Mock: her zaman fullyOpen döner (dolum akışında test için)
+    await Future.delayed(const Duration(milliseconds: 100));
+    return _shouldFastForward ? DrawerPhysicalStatus.locked : DrawerPhysicalStatus.fullyOpen;
+  }
 
   @override
-  Future<void> unlockDrawer({
+  Stream<DrawerPhysicalStatus> streamMobileDrawerStatus({required ManagementCard manager, required int port}) async* {
+    _shouldFastForward = false;
+
+    // Başlangıç: kilit açıldı, kullanıcı henüz kapatmadı
+    yield DrawerPhysicalStatus.fullyOpen;
+    debugPrint('MOCK SENSOR (Mobil Port $port): Çekmece açık, kapatılması bekleniyor...');
+
+    int elapsed = 0;
+    while (elapsed < 60000) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      elapsed += 500;
+      if (_shouldFastForward) break;
+    }
+
+    debugPrint('MOCK SENSOR (Mobil Port $port): Çekmece kapandı 🔒');
+    yield DrawerPhysicalStatus.locked;
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  // MASTER KABİN — ÇEKMECE OPERASYONLARI
+  // ════════════════════════════════════════════════════════════════
+
+  @override
+  Future<void> openMasterDrawer({
     required ManagementCard manager,
     required int row,
     required int port,
     required int drawer,
   }) async {
-    debugPrint('MOCK: Kilit açılıyor (Row:$row, Port:$port)...');
+    debugPrint('MOCK: Master çekmece açılıyor (row:$row, port:$port, drawer:$drawer)...');
     await Future.delayed(const Duration(seconds: 1));
-    debugPrint('MOCK: Kilit AÇILDI ✅');
+    debugPrint('MOCK: ✅ Master çekmece AÇILDI 🔓');
   }
 
   @override
-  Future<void> openCubic({
+  Future<void> openMasterCubicDrawer({
     required ManagementCard manager,
     required int row,
     required int port,
     required int lidIndex,
   }) async {
-    debugPrint('MOCK: Kapak açılıyor...');
+    debugPrint('MOCK: Kübik kapak açılıyor (row:$row, port:$port, lid:$lidIndex)...');
     await Future.delayed(const Duration(milliseconds: 500));
-    debugPrint('MOCK: Kapak AÇILDI 🔓');
+    debugPrint('MOCK: ✅ Kübik kapak AÇILDI 🔓');
   }
 
   @override
-  Stream<DrawerPhysicalStatus> monitorDrawerStatus({
+  Stream<DrawerPhysicalStatus> streamMasterDrawerStatus({
     required ManagementCard manager,
     required int row,
     required int port,
@@ -132,78 +148,75 @@ class MockCabinOperationService implements ICabinOperationService {
     await Future.delayed(const Duration(seconds: 2));
     if (_shouldFastForward) return;
 
-    debugPrint('MOCK SENSOR: Kullanıcı çekmeceyi çekti!');
+    debugPrint('MOCK SENSOR (Master row:$row): Kullanıcı çekmeceyi çekti!');
     yield DrawerPhysicalStatus.fullyOpen;
 
     int elapsed = 0;
-    while (elapsed < 50000) {
+    while (elapsed < 60000) {
       await Future.delayed(const Duration(milliseconds: 500));
       elapsed += 500;
       if (_shouldFastForward) break;
     }
 
-    debugPrint('MOCK SENSOR: Çekmece kapandı.');
+    debugPrint('MOCK SENSOR (Master row:$row): Çekmece kapandı 🔒');
     yield DrawerPhysicalStatus.locked;
   }
 
-  // ── Master Kabin — Serum (Eski Akış) ──────────────────────────
-
   @override
-  Future<void> unlockSerum({required ManagementCard manager, required int row}) async {
-    debugPrint('MOCK: Serum kabini açılıyor (master akış)...');
+  Future<void> openMasterSerumDrawer({required ManagementCard manager, required int row}) async {
+    debugPrint('MOCK: Master serum çekmecesi açılıyor (row:$row)...');
     await Future.delayed(const Duration(milliseconds: 500));
-    debugPrint('MOCK: Serum kabini AÇILDI 🔓');
+    debugPrint('MOCK: ✅ Master serum çekmecesi AÇILDI 🔓');
   }
 
   @override
-  Stream<DrawerPhysicalStatus> monitorSerumStatus({required ManagementCard manager, required int row}) async* {
+  Stream<DrawerPhysicalStatus> streamMasterSerumDrawerStatus({
+    required ManagementCard manager,
+    required int row,
+  }) async* {
     _shouldFastForward = false;
-    _statusPollCount = 0;
 
     yield DrawerPhysicalStatus.locked;
     await Future.delayed(const Duration(seconds: 2));
     if (_shouldFastForward) return;
 
-    debugPrint('MOCK SENSOR (SERUM): Kullanıcı kabini çekti!');
+    debugPrint('MOCK SENSOR (Master Serum row:$row): Kullanıcı kabini çekti!');
     yield DrawerPhysicalStatus.fullyOpen;
 
     int elapsed = 0;
-    while (elapsed < 12000) {
+    while (elapsed < 60000) {
       await Future.delayed(const Duration(milliseconds: 500));
       elapsed += 500;
       if (_shouldFastForward) break;
     }
 
-    debugPrint('MOCK SENSOR (SERUM): Kabin kapandı.');
+    debugPrint('MOCK SENSOR (Master Serum row:$row): Kabin kapandı 🔒');
     yield DrawerPhysicalStatus.locked;
   }
 
-  // ── Mobil Kabin — Bağımsız Serum Kartı (Yeni Akış) ────────────
+  // ════════════════════════════════════════════════════════════════
+  // GENEL KOMUT GÖNDERİMİ
+  // ════════════════════════════════════════════════════════════════
 
   @override
-  Future<void> unlockSerumPort({required ManagementCard manager, required int port}) async {
-    debugPrint('MOCK: Serum port $port açılıyor (mobil akış)...');
-    await Future.delayed(const Duration(milliseconds: 500));
-    debugPrint('MOCK: Serum port $port AÇILDI 🔓');
-  }
+  Future<String?> sendRawCommand({
+    required ManagementCard manager,
+    required int targetRow,
+    required String commandPayload,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 100));
 
-  @override
-  Stream<DrawerPhysicalStatus> monitorSerumPortStatus({required ManagementCard manager, required int port}) async* {
-    _shouldFastForward = false;
-    _statusPollCount = 0;
-
-    // Başlangıç: kilit açıldı, kullanıcı henüz çekmedi
-    yield DrawerPhysicalStatus.fullyOpen;
-
-    // 3s sonra kullanıcı çekmeceyi kapattı simülasyonu
-    int elapsed = 0;
-    while (elapsed < 50000) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      elapsed += 500;
-      if (_shouldFastForward) break;
+    if (_shouldFastForward) {
+      return '.h4,';
     }
 
-    debugPrint('MOCK SENSOR (SERUM PORT $port): Çekmece kapandı.');
-    yield DrawerPhysicalStatus.locked;
+    if (commandPayload.contains('O')) return 'ok';
+    if (commandPayload.contains('S')) {
+      _statusPollCount++;
+      if (_statusPollCount < 3) return '.h0,';
+      return '.h3,';
+    }
+
+    return 'ok';
   }
 }

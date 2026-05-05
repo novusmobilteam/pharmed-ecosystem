@@ -1323,6 +1323,66 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Arayüz dili'**
   String get settings_languageSubtitle;
+
+  /// No description provided for @emptyStateCabinDataTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kabin verisi bulunamadı'**
+  String get emptyStateCabinDataTitle;
+
+  /// No description provided for @emptyStateCabinDataDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kabin henüz yapılandırılmamış olabilir\nveya bağlantı kurulamadı.'**
+  String get emptyStateCabinDataDescription;
+
+  /// No description provided for @emptyStateNoResultsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sonuç bulunamadı'**
+  String get emptyStateNoResultsTitle;
+
+  /// No description provided for @emptyStateNoResultsDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arama kriterlerinizi değiştirmeyi deneyin.'**
+  String get emptyStateNoResultsDescription;
+
+  /// No description provided for @emptyStateNoCellSelectedTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Göz seçilmedi'**
+  String get emptyStateNoCellSelectedTitle;
+
+  /// No description provided for @emptyStateNoCellSelectedDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dolum yapmak için önce bir göz seçin.'**
+  String get emptyStateNoCellSelectedDescription;
+
+  /// No description provided for @emptyStateNoPatientTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hasta atanmamış'**
+  String get emptyStateNoPatientTitle;
+
+  /// No description provided for @emptyStateNoPatientDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu göze henüz hasta ataması yapılmamış.'**
+  String get emptyStateNoPatientDescription;
+
+  /// No description provided for @emptyStateNoPrescriptionTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Reçete bulunamadı'**
+  String get emptyStateNoPrescriptionTitle;
+
+  /// No description provided for @emptyStateNoPrescriptionDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu hastaya ait aktif reçete bulunmuyor.'**
+  String get emptyStateNoPrescriptionDescription;
 }
 
 class _AppLocalizationsDelegate

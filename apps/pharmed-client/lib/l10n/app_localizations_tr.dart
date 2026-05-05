@@ -664,4 +664,39 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get settings_languageSubtitle => 'Arayüz dili';
+
+  @override
+  String get emptyStateCabinDataTitle => 'Kabin verisi bulunamadı';
+
+  @override
+  String get emptyStateCabinDataDescription =>
+      'Kabin henüz yapılandırılmamış olabilir\nveya bağlantı kurulamadı.';
+
+  @override
+  String get emptyStateNoResultsTitle => 'Sonuç bulunamadı';
+
+  @override
+  String get emptyStateNoResultsDescription =>
+      'Arama kriterlerinizi değiştirmeyi deneyin.';
+
+  @override
+  String get emptyStateNoCellSelectedTitle => 'Göz seçilmedi';
+
+  @override
+  String get emptyStateNoCellSelectedDescription =>
+      'Dolum yapmak için önce bir göz seçin.';
+
+  @override
+  String get emptyStateNoPatientTitle => 'Hasta atanmamış';
+
+  @override
+  String get emptyStateNoPatientDescription =>
+      'Bu göze henüz hasta ataması yapılmamış.';
+
+  @override
+  String get emptyStateNoPrescriptionTitle => 'Reçete bulunamadı';
+
+  @override
+  String get emptyStateNoPrescriptionDescription =>
+      'Bu hastaya ait aktif reçete bulunmuyor.';
 }

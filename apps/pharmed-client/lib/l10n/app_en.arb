@@ -665,5 +665,20 @@
 "settings_languageSubtitle": "Interface language",
 "@settings_languageSubtitle": {
   "description": "Subtitle shown under language section header"
-}
+},
+
+  "emptyStateCabinDataTitle": "Cabinet data not found",
+  "emptyStateCabinDataDescription": "The cabinet may not be configured yet\nor connection could not be established.",
+ 
+  "emptyStateNoResultsTitle": "No results found",
+  "emptyStateNoResultsDescription": "Try changing your search criteria.",
+ 
+  "emptyStateNoCellSelectedTitle": "No cell selected",
+  "emptyStateNoCellSelectedDescription": "Select a cell to start filling.",
+ 
+  "emptyStateNoPatientTitle": "No patient assigned",
+  "emptyStateNoPatientDescription": "No patient has been assigned to this cell yet.",
+ 
+  "emptyStateNoPrescriptionTitle": "No prescription found",
+  "emptyStateNoPrescriptionDescription": "There are no active prescriptions for this patient."
 }

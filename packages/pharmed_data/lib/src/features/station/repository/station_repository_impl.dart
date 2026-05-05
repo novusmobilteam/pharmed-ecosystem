@@ -31,6 +31,12 @@ class StationRepositoryImpl implements IStationRepository {
   }
 
   @override
+  Future<Result<List<Station>>> getUnassignedStations() async {
+    final result = await _dataSource.getUnassignedStations();
+    return result.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
+  }
+
+  @override
   Future<Result<void>> createStation(Station entity) async {
     final result = await _dataSource.createStation(_mapper.toDto(entity));
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

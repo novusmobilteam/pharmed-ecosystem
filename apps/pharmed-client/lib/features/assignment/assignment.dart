@@ -1,5 +1,3 @@
-export 'domain/providers/assignment_providers.dart';
-
 export 'domain/usecase/create_bed_assignment_usecase.dart';
 export 'domain/usecase/create_medicine_assignment_usecase.dart';
 export 'domain/usecase/delete_medicine_assignment_usecase.dart';

@@ -6,11 +6,20 @@
 // Fiziksel tarama yapılmaz; tüm yapı kullanıcı tanımlıdır.
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../setup_wizard/domain/model/wizard_mobile_layout.dart';
+import '../../../../core/providers/providers.dart';
+import '../../../setup_wizard/domain/entity/wizard_mobile_layout.dart';
+
+final saveMobileCabinDesignUseCaseProvider = Provider<SaveMobileCabinDesignUseCase>((ref) {
+  return SaveMobileCabinDesignUseCase(
+    cabinRepository: ref.read(cabinRepositoryProvider),
+    localDataSource: ref.read(cabinLocaleDataSourceProvider),
+  );
+});
 
 class SaveMobileCabinDesignUseCase {
   const SaveMobileCabinDesignUseCase({

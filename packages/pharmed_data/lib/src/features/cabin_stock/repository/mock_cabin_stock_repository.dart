@@ -86,7 +86,7 @@ class MockCabinStockRepository implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<void>> fill(List<dynamic> data) async {
+  Future<Result<void>> refillMasterCabin(List<dynamic> data) async {
     await Future.delayed(_delay);
     return const Result.ok(null);
   }
@@ -99,6 +99,12 @@ class MockCabinStockRepository implements ICabinStockRepository {
 
   @override
   Future<Result<List<StationStock>>> getStationStocks(int stationId) async {
+    await Future.delayed(_delay);
+    return Result.ok([]);
+  }
+
+  @override
+  Future<Result<void>> refillMobileCabin(List<dynamic> data) async {
     await Future.delayed(_delay);
     return Result.ok([]);
   }

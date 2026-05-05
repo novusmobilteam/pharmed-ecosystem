@@ -2,11 +2,18 @@
 // Mobil kabin gözüne yatak ataması yapar.
 // Sınıf: Class B
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-class CreatePatientAssignmentUseCase {
-  const CreatePatientAssignmentUseCase(this._repository);
+import '../../../../core/providers/providers.dart';
+
+final createBedAssignmentUseCaseProvider = Provider<CreateBedAssignmentUseCase>((ref) {
+  return CreateBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+class CreateBedAssignmentUseCase {
+  const CreateBedAssignmentUseCase(this._repository);
 
   final IAssignmentRepository _repository;
 
