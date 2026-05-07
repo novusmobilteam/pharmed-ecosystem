@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../auth/presentation/notifier/auth_notifier.dart';
+import '../../auth/notifier/auth_notifier.dart';
 
 class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetFilteredMenusUseCase _getFilteredMenusUseCase;

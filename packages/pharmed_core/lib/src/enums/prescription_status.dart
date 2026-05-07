@@ -23,17 +23,17 @@ enum PrescriptionStatus {
   /// İptal Edildi
   cancelled(7),
 
-  rejected(8);
+  rejected(8),
+
+  /// Dolum Bekliyor
+  filledWaiting(9);
 
   final int id;
 
   const PrescriptionStatus(this.id);
 
   static PrescriptionStatus fromId(int? id) {
-    return PrescriptionStatus.values.firstWhere(
-      (e) => e.id == id,
-      orElse: () => PrescriptionStatus.pendingApproval,
-    );
+    return PrescriptionStatus.values.firstWhere((e) => e.id == id, orElse: () => PrescriptionStatus.pendingApproval);
   }
 
   String get label {
@@ -54,6 +54,8 @@ enum PrescriptionStatus {
         return 'İptal Edildi';
       case PrescriptionStatus.rejected:
         return 'Reddedildi';
+      case PrescriptionStatus.filledWaiting:
+        return 'Dolum Bekliyor';
     }
   }
 }
@@ -61,29 +63,31 @@ enum PrescriptionStatus {
 /// PrescriptionStatus için UI renk ve ikon bilgisi.
 extension PrescriptionStatusStyle on PrescriptionStatus {
   Color get color => switch (this) {
-        PrescriptionStatus.pendingApproval => Colors.orange,
-        PrescriptionStatus.purchasePending => Colors.blue,
-        PrescriptionStatus.applied => Colors.green,
-        PrescriptionStatus.returned => Colors.teal,
-        PrescriptionStatus.wastaged => Colors.deepOrange,
-        PrescriptionStatus.destructed => Colors.red,
-        PrescriptionStatus.cancelled => Colors.amber,
-        PrescriptionStatus.rejected => Colors.red,
-      };
+    PrescriptionStatus.pendingApproval => Colors.orange,
+    PrescriptionStatus.purchasePending => Colors.blue,
+    PrescriptionStatus.applied => Colors.green,
+    PrescriptionStatus.returned => Colors.teal,
+    PrescriptionStatus.wastaged => Colors.deepOrange,
+    PrescriptionStatus.destructed => Colors.red,
+    PrescriptionStatus.cancelled => Colors.amber,
+    PrescriptionStatus.rejected => Colors.red,
+    PrescriptionStatus.filledWaiting => Colors.orange,
+  };
 
   Color get backgroundColor => color.withValues(alpha: 0.12);
   Color get borderColor => color.withValues(alpha: 0.3);
 
   IconData get icon => switch (this) {
-        PrescriptionStatus.pendingApproval => PhosphorIcons.hourglass(PhosphorIconsStyle.fill),
-        PrescriptionStatus.purchasePending => PhosphorIcons.shoppingBag(PhosphorIconsStyle.fill),
-        PrescriptionStatus.applied => PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
-        PrescriptionStatus.returned => PhosphorIcons.arrowCounterClockwise(PhosphorIconsStyle.fill),
-        PrescriptionStatus.wastaged => PhosphorIcons.warning(PhosphorIconsStyle.fill),
-        PrescriptionStatus.destructed => PhosphorIcons.trash(PhosphorIconsStyle.fill),
-        PrescriptionStatus.cancelled => PhosphorIcons.prohibit(PhosphorIconsStyle.fill),
-        PrescriptionStatus.rejected => PhosphorIcons.xCircle(PhosphorIconsStyle.fill),
-      };
+    PrescriptionStatus.pendingApproval => PhosphorIcons.hourglass(PhosphorIconsStyle.fill),
+    PrescriptionStatus.purchasePending => PhosphorIcons.shoppingBag(PhosphorIconsStyle.fill),
+    PrescriptionStatus.applied => PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
+    PrescriptionStatus.returned => PhosphorIcons.arrowCounterClockwise(PhosphorIconsStyle.fill),
+    PrescriptionStatus.wastaged => PhosphorIcons.warning(PhosphorIconsStyle.fill),
+    PrescriptionStatus.destructed => PhosphorIcons.trash(PhosphorIconsStyle.fill),
+    PrescriptionStatus.cancelled => PhosphorIcons.prohibit(PhosphorIconsStyle.fill),
+    PrescriptionStatus.rejected => PhosphorIcons.xCircle(PhosphorIconsStyle.fill),
+    PrescriptionStatus.filledWaiting => PhosphorIcons.hourglass(PhosphorIconsStyle.fill),
+  };
 
   /// Reçete onay/reddet kısmında sadece bu statuse sahip olanlarla işlem yapılabilir.
   bool get isSelectable =>

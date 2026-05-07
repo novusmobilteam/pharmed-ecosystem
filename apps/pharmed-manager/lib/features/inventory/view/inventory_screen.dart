@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/remaining_day_badge.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
 import '../notifier/inventory_notifier.dart';
 
@@ -40,7 +39,7 @@ class InventoryScreen extends StatelessWidget {
           enableExcel: true,
           isLoading: vm.isFetching,
           cellBuilder: (item, colIndex, value) {
-            if (colIndex == 9) return RemainingDayBadge(days: item.remainingDay ?? 0);
+            if (colIndex == 9) return RemainingDayChip(days: item.remainingDay ?? 0);
             return null; // varsayılan text render
           },
         );

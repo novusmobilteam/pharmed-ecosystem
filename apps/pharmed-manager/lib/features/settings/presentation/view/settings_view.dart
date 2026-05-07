@@ -4,7 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../auth/presentation/notifier/auth_notifier.dart';
+import '../../../auth/notifier/auth_notifier.dart';
 import '../../../home/notifier/home_notifier.dart';
 import '../notifier/settings_notifier.dart';
 
@@ -82,8 +82,8 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Text('Yetkileri Yenile'),
                   ),
                   Spacer(),
-                  PharmedButton(onPressed: () {}, label: 'İptal', backgroundColor: context.colorScheme.secondary),
-                  PharmedButton(
+                  MedButton(onPressed: () {}, label: 'İptal'),
+                  MedButton(
                     label: 'Kaydet',
                     onPressed: () {
                       notifier.saveAllChanges(

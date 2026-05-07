@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
-import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
+import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
 
 import '../../domain/entity/cabin_operation_item.dart';
 

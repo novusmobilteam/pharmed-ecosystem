@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../../core/widgets/info_chip.dart';
 import '../../../domain/entity/cabin_operation_item.dart';
 import 'cabin_operation_dose_badge.dart';
 import 'cabin_operation_witness_section.dart';

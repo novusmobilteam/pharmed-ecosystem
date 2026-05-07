@@ -22,25 +22,13 @@ class GeneralSettingsView extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (_) {},
         ),
-        CustomCheckboxTile(
-          label: 'HBYS Stok Kontrol',
-          value: true,
-          onTap: () {},
-        ),
-        CustomCheckboxTile(
-          label: 'Kabinlerde sadece parmak okuyucu çalışsın.',
-          value: false,
-          onTap: () {},
-        ),
-        CustomCheckboxTile(
-          label: 'Süre dışındaki orderlar alınabilir.',
-          value: true,
-          onTap: () {},
-        ),
-        CustomCheckboxTile(
+        MedCheckbox(label: 'HBYS Stok Kontrol', value: true, onChanged: (_) {}),
+        MedCheckbox(label: 'Kabinlerde sadece parmak okuyucu çalışsın.', value: false, onChanged: (_) {}),
+        MedCheckbox(label: 'Süre dışındaki orderlar alınabilir.', value: true, onChanged: (_) {}),
+        MedCheckbox(
           label: 'İlaç dolum esnasında birim doz çekmecelerde her bölme için ayrı miad tarihi girilebilsin.',
           value: settings.isPerCellMiadEnabled, // 2 ise checked
-          onTap: () => settings.togglePerCellMiad(),
+          onChanged: (_) => settings.togglePerCellMiad(),
         ),
       ],
     );

@@ -8,9 +8,7 @@ class CustomWithdrawConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         width: 450,
         padding: const EdgeInsets.all(24.0),
@@ -22,19 +20,15 @@ class CustomWithdrawConfirmDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
-            Divider(
-              height: 22,
-              color: context.colorScheme.onSurfaceVariant.withAlpha(80),
-            ),
+            Divider(height: 22, color: context.colorScheme.onSurfaceVariant.withAlpha(80)),
 
             // İlaç Bilgisi
             Text(
               item.medicine?.name ?? '-',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
             ),
             const SizedBox(height: 12),
 
@@ -42,27 +36,17 @@ class CustomWithdrawConfirmDialog extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: context.colorScheme.secondary.withAlpha(120),
-                ),
+                border: Border.all(color: context.colorScheme.secondary.withAlpha(120)),
               ),
               child: Column(
                 children: [
                   Text(
                     "Alınacak Miktar",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 12, color: context.colorScheme.secondary, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     item.dosePiece.formatFractional,
-                    style: TextStyle(
-                      fontSize: 28,
-                      color: context.colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 28, color: context.colorScheme.secondary, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -74,17 +58,17 @@ class CustomWithdrawConfirmDialog extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: PharmedButton(
+                  child: MedButton(
                     label: 'Sorun Var',
                     onPressed: () => Navigator.pop(context, false), // İptal
-                    backgroundColor: context.colorScheme.error,
+                    variant: MedButtonVariant.danger,
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: PharmedButton(
+                  child: MedButton(
                     label: 'Alım Yapıldı',
-                    backgroundColor: Colors.green,
+                    variant: MedButtonVariant.success,
                     onPressed: () => Navigator.pop(context, true),
                   ),
                 ),

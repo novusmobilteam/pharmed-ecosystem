@@ -22,12 +22,11 @@ class SubmitFillingListParams {
   }
 }
 
-class CreateFillingListUseCase implements UseCase<void, List<SubmitFillingListParams>> {
+class CreateFillingListUseCase {
   final IFillingListRepository _repository;
 
   CreateFillingListUseCase(this._repository);
 
-  @override
   Future<Result<void>> call(List<SubmitFillingListParams> params) async {
     final data = params.map((p) => p.toJson()).toList();
     final stationId = params.first.stationId;

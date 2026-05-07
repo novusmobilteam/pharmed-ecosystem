@@ -1,10 +1,7 @@
 part of 'patient_medicine_define_view.dart';
 
 Future<bool> showDefineConfirmDialog(BuildContext context) async {
-  final result = await showDialog(
-    context: context,
-    builder: (context) => DefineConfirmDialog(),
-  );
+  final result = await showDialog(context: context, builder: (context) => DefineConfirmDialog());
 
   return result;
 }
@@ -15,9 +12,7 @@ class DefineConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         width: 450,
         padding: const EdgeInsets.all(24.0),
@@ -29,10 +24,7 @@ class DefineConfirmDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
-            Divider(
-              height: 22,
-              color: context.colorScheme.onSurfaceVariant.withAlpha(80),
-            ),
+            Divider(height: 22, color: context.colorScheme.onSurfaceVariant.withAlpha(80)),
 
             const SizedBox(height: 24),
 
@@ -40,17 +32,16 @@ class DefineConfirmDialog extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: PharmedButton(
+                  child: MedButton(
                     label: 'Sorun Var',
                     onPressed: () => Navigator.pop(context, false), // İptal
-                    backgroundColor: context.colorScheme.error,
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: PharmedButton(
+                  child: MedButton(
                     label: 'Dolum Yapıldı',
-                    backgroundColor: Colors.green,
+                    variant: MedButtonVariant.success,
                     onPressed: () => Navigator.pop(context, true),
                   ),
                 ),

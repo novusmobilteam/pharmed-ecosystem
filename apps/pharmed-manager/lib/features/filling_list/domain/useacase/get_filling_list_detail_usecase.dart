@@ -4,12 +4,11 @@ import '../entity/filling_detail.dart';
 import '../entity/filling_object.dart';
 import '../repository/i_filling_list_repository.dart';
 
-class GetFillingListDetailUseCase implements UseCase<List<FillingObject>, int> {
+class GetFillingListDetailUseCase {
   final IFillingListRepository _repository;
 
   GetFillingListDetailUseCase(this._repository);
 
-  @override
   Future<Result<List<FillingObject>>> call(int fillingListId) async {
     final response = await _repository.getFillingListDetail(fillingListId);
     return response.when(

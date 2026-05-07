@@ -32,12 +32,11 @@ class RefillMedicineParams {
   }
 }
 
-class RefillMedicineUseCase implements UseCase<void, List<RefillMedicineParams>> {
+class RefillMedicineUseCase {
   final ICabinStockRepository _cabinStockRepository;
 
   RefillMedicineUseCase(this._cabinStockRepository);
 
-  @override
   Future<Result<void>> call(List<RefillMedicineParams> params) {
     return _cabinStockRepository.refillMasterCabin(params);
   }

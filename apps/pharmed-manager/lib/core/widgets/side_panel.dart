@@ -210,12 +210,7 @@ class _SidePanelFooter extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          PharmedButton(
-            label: 'İptal',
-            onPressed: onClose,
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xFF3D4F66),
-          ),
+          MedButton(label: 'İptal', onPressed: onClose, variant: MedButtonVariant.primary),
           const SizedBox(width: 6),
           SizedBox(
             width: 150,

@@ -6,9 +6,9 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
-import 'package:pharmed_manager/features/auth/presentation/screen/login_screen.dart';
-import 'package:pharmed_manager/features/auth/presentation/state/auth_state.dart';
+import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
+import 'package:pharmed_manager/features/auth/view/login_screen.dart';
+import 'package:pharmed_manager/features/auth/notifier/auth_state.dart';
 import 'package:pharmed_manager/features/home/view/home_screen.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:provider/provider.dart';

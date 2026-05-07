@@ -26,12 +26,11 @@ class FillingListRefillParams extends CabinFillingRequest {
   }
 }
 
-class FillingListRefillUseCase implements UseCase<void, List<CabinFillingRequest>> {
+class FillingListRefillUseCase {
   final IFillingListRepository _repository;
 
   FillingListRefillUseCase(this._repository);
 
-  @override
   Future<Result<void>> call(List<CabinFillingRequest> params) {
     return _repository.fill(params);
   }

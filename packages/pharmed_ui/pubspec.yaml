@@ -18,4 +18,6 @@ dependencies:
     path: ../pharmed_core
   pharmed_data:
     path: ../pharmed_data
+  pharmed_utils:
+    path: ../pharmed_utils
 resolution: workspace

@@ -3,7 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/dose_stepper.dart';
-import '../../../../core/widgets/info_chip.dart';
 
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 import '../../../medicine_management/presentation/widgets/cabin_operation_card/cabin_operation_witness_section.dart';

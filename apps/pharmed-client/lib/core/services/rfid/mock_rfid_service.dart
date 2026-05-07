@@ -39,7 +39,6 @@ class MockRfidService implements IRfidService {
     _connected = false;
   }
 
-  @override
   Future<Result<List<RfidTag>>> scan() async {
     if (!_connected) {
       return Result.error(ServiceException(message: 'Mock RFID servisi bağlı değil.', statusCode: 503));

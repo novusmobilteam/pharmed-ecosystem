@@ -52,15 +52,11 @@ class StationSetupScreen extends StatelessWidget {
               title: menu.name ?? 'İstasyon Tanımlama',
               subtitle: menu.description,
               actions: [
-                PharmedButton(
+                MedButton(
                   onPressed: () => _onAdd(context, notifier.activeIndex),
                   label: _onAddLabels.elementAt(notifier.activeIndex),
                 ),
-                PharmedButton(
-                  onPressed: () => _showStationSetupWizardView(context),
-                  label: 'Kurulum Sihirbazı',
-                  backgroundColor: MedColors.amber,
-                ),
+                MedButton(onPressed: () => _showStationSetupWizardView(context), label: 'Kurulum Sihirbazı'),
               ],
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,

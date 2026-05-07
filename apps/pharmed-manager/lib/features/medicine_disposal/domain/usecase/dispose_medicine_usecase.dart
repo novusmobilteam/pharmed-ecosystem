@@ -21,12 +21,11 @@ class DisposeMedicineParams {
   }
 }
 
-class DisposeMedicineUseCase implements UseCase<void, DisposeMedicineParams> {
+class DisposeMedicineUseCase {
   final IMedicineManagementRepository _repository;
 
   DisposeMedicineUseCase(this._repository);
 
-  @override
   Future<Result<void>> call(DisposeMedicineParams params) async {
     final type = params.type;
     switch (type) {

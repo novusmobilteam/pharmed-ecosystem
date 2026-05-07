@@ -84,6 +84,7 @@ class PrescriptionItem implements TableData, Selectable {
   User? get activityUser {
     switch (status ?? PrescriptionStatus.pendingApproval) {
       case PrescriptionStatus.pendingApproval:
+      case PrescriptionStatus.filledWaiting:
         return createdUser;
       case PrescriptionStatus.purchasePending:
         return approvalUser;
@@ -105,6 +106,7 @@ class PrescriptionItem implements TableData, Selectable {
   DateTime? get activityDate {
     switch (status ?? PrescriptionStatus.pendingApproval) {
       case PrescriptionStatus.pendingApproval:
+      case PrescriptionStatus.filledWaiting:
         return createdDate;
       case PrescriptionStatus.purchasePending:
         return approvalDate;

@@ -29,7 +29,7 @@ class _ReturnInputViewState extends State<ReturnInputView> {
                   notifier.changeAmount(val, onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg));
                 },
               ),
-              PharmedButton(
+              MedButton(
                 label: 'İade Et',
                 isActive: (notifier.refundAmount ?? 0.0) > 0,
                 isLoading: notifier.isLoading(notifier.submitOp) || notifier.isLoading(notifier.checkOp),

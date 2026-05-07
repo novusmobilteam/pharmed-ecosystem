@@ -82,7 +82,7 @@ class UnloadConfirmationView extends StatelessWidget {
                 const SizedBox(height: 32),
                 SizedBox(
                   width: context.width,
-                  child: PharmedButton(
+                  child: MedButton(
                     onPressed: () => _handleComplete(context, notifier, UnloadType.basic),
                     label: 'İşlemi Tamamla',
                   ),
@@ -92,17 +92,17 @@ class UnloadConfirmationView extends StatelessWidget {
                   spacing: 12,
                   children: [
                     Expanded(
-                      child: PharmedButton(
+                      child: MedButton(
                         onPressed: () => _handleComplete(context, notifier, UnloadType.deleteAssignment),
                         label: 'Tamamla ve Atamayı Sil',
-                        backgroundColor: Colors.red,
+                        variant: MedButtonVariant.danger,
                       ),
                     ),
                     Expanded(
-                      child: PharmedButton(
+                      child: MedButton(
                         onPressed: () => _handleComplete(context, notifier, UnloadType.changeAssignment),
                         label: 'Tamamla ve Atamayı Değiştir',
-                        backgroundColor: Colors.amber,
+                        variant: MedButtonVariant.danger,
                       ),
                     ),
                   ],

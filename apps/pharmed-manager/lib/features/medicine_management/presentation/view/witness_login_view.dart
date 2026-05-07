@@ -377,7 +377,7 @@ class _ConfirmButton extends StatelessWidget {
       height: 54,
       child: isLoading
           ? const Center(child: CircularProgressIndicator.adaptive())
-          : PharmedButton(onPressed: onPressed, label: 'Şahitliği Onayla'),
+          : MedButton(onPressed: onPressed, label: 'Şahitliği Onayla'),
     );
   }
 }

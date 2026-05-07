@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
-import '../view_model/medicine_activity_viewmodel.dart';
+import '../notifier/medicine_activity_viewmodel.dart';
 
 part 'table_view.dart';
 

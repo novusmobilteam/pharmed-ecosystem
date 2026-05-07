@@ -7,7 +7,7 @@ class StockOperationsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final operations = [
+    final _ = [
       MenuItem(
         label: 'İlaç Dolum',
         //icon: PhosphorIcons.boxArrowUp(),
@@ -25,9 +25,6 @@ class StockOperationsView extends StatelessWidget {
       ),
     ];
 
-    return CustomDialog(
-      title: 'Stok İşlemleri',
-      child: SubGridMenuView(items: operations),
-    );
+    return CustomDialog(title: 'Stok İşlemleri', child: Center());
   }
 }

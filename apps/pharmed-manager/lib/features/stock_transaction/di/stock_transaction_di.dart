@@ -3,7 +3,6 @@ import 'package:provider/single_child_widget.dart';
 
 import '../../../core/core.dart';
 import '../data/datasource/stock_transaction_datasource.dart';
-import '../data/datasource/stock_transaction_local_datasource.dart';
 import '../data/datasource/stock_transaction_remote_datasource.dart';
 import '../data/repository/stock_transaction_repository.dart';
 import '../domain/repository/i_stock_transaction_repository.dart';
@@ -18,35 +17,21 @@ class StockTransactionProviders {
       // 1. Data Source
       Provider<StockTransactionDataSource>(
         create: (context) {
-          if (isDev) {
-            return StockTransactionLocalDataSource(assetPath: 'assets/mocks/stock_transaction.json');
-          } else {
-            return StockTransactionRemoteDataSource(apiManager: context.read<APIManager>());
-          }
+          return StockTransactionRemoteDataSource(apiManager: context.read<APIManager>());
         },
       ),
 
       // 2. Repository
-      Provider<IStockTransactionRepository>(
-        create: (context) => StockTransactionRepository(context.read()),
-      ),
+      Provider<IStockTransactionRepository>(create: (context) => StockTransactionRepository(context.read())),
 
       // 3. Use Cases
-      Provider<CreateStockTransactionUseCase>(
-        create: (context) => CreateStockTransactionUseCase(context.read()),
-      ),
+      Provider<CreateStockTransactionUseCase>(create: (context) => CreateStockTransactionUseCase(context.read())),
 
-      Provider<DeleteStockTransactionUseCase>(
-        create: (context) => DeleteStockTransactionUseCase(context.read()),
-      ),
+      Provider<DeleteStockTransactionUseCase>(create: (context) => DeleteStockTransactionUseCase(context.read())),
 
-      Provider<GetStockTransactionsUseCase>(
-        create: (context) => GetStockTransactionsUseCase(context.read()),
-      ),
+      Provider<GetStockTransactionsUseCase>(create: (context) => GetStockTransactionsUseCase(context.read())),
 
-      Provider<GetCabinStockTransactionsUseCase>(
-        create: (context) => GetCabinStockTransactionsUseCase(context.read()),
-      ),
+      Provider<GetCabinStockTransactionsUseCase>(create: (context) => GetCabinStockTransactionsUseCase(context.read())),
     ];
   }
 }

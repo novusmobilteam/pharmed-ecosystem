@@ -61,10 +61,10 @@ class NewFillingListView extends StatelessWidget {
             spacing: 15,
             children: List.generate(FillingType.values.length, (index) {
               FillingType type = FillingType.values.elementAt(index);
-              return CustomCheckboxTile(
+              return MedCheckbox(
                 label: type.label,
                 value: type == notifier.fillingType,
-                onTap: () => notifier.selectFillingType(type),
+                onChanged: (_) => notifier.selectFillingType(type),
               );
             }),
           ),

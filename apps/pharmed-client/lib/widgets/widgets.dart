@@ -5,7 +5,6 @@ export 'cabin_widgets/wizard_cabin_preview.dart';
 export 'cabin_widgets/cabin_action_bar.dart';
 export 'cabin_widgets/cabin_stats_grid.dart';
 export 'cabin_widgets/cabin_summary_view.dart';
-export 'cell_info_card.dart';
 export 'operation_panel_base.dart';
 export 'dashboard_app_bar.dart';
 

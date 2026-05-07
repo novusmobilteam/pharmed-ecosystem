@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../auth/presentation/notifier/auth_notifier.dart';
+import '../../../auth/notifier/auth_notifier.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../domain/entity/filling_object.dart';
 import '../../domain/useacase/create_filling_list_usecase.dart';

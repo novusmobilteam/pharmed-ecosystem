@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
 
-import '../../../core/widgets/remaining_day_badge.dart';
 import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../../core/widgets/unified_table/unified_table_view.dart';
 

@@ -18,9 +18,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ChangePasswordNotifier(
-        changePasswordUseCase: context.read(),
-      ),
+      create: (context) => ChangePasswordNotifier(changePasswordUseCase: context.read()),
       child: Consumer<ChangePasswordNotifier>(
         builder: (context, notifier, child) {
           return CustomDialog(
@@ -56,7 +54,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   Spacer(),
                   SizedBox(
                     width: double.infinity,
-                    child: PharmedButton(
+                    child: MedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           await notifier.changePassword();
@@ -96,10 +94,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
         labelText: label,
         prefixIcon: const Icon(Icons.lock_outline),
         suffixIcon: IconButton(
-          icon: Icon(
-            obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-            color: Colors.grey,
-          ),
+          icon: Icon(obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.grey),
           onPressed: onToggleVisibility,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

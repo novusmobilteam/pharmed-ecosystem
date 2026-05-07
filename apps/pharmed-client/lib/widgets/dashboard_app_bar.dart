@@ -201,12 +201,21 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
 
           // ── Çıkış (sadece giriş yapılmışsa) ──────────────────
           if (widget.isLoggedIn) ...[
-            _IconButton(icon: PhosphorIcons.signOut(), tooltip: context.l10n.dashboard_logoutTooltip, danger: true, onTap: widget.onLogoutTap),
+            _IconButton(
+              icon: PhosphorIcons.signOut(),
+              tooltip: context.l10n.dashboard_logoutTooltip,
+              danger: true,
+              onTap: widget.onLogoutTap,
+            ),
             const SizedBox(width: 4),
           ],
 
           if (widget.isLoggedIn)
-            _IconButton(icon: PhosphorIcons.gearSix(), tooltip: context.l10n.settings_title, onTap: widget.onSettingsTap),
+            _IconButton(
+              icon: PhosphorIcons.gearSix(),
+              tooltip: context.l10n.settings_title,
+              onTap: widget.onSettingsTap,
+            ),
         ],
       ),
     );
