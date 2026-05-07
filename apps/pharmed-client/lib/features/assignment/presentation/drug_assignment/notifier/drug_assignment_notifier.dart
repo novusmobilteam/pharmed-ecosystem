@@ -15,8 +15,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../core/providers/providers.dart';
-import '../../assignment.dart';
+import '../../../../../core/providers/providers.dart';
+import '../../../assignment.dart';
 
 final drugAssignmentNotifierProvider = NotifierProvider<DrugAssignmentNotifier, DrugAssignmentUiState>(
   DrugAssignmentNotifier.new,
@@ -127,8 +127,6 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       criticalQty: assignment.critQuantityFromBackend.toInt(),
     );
   }
-
-  // ── İlaç seçimi ──────────────────────────────────────────────────
 
   /// Dialog'dan ilaç seçildiğinde çağrılır.
   void onDrugSelected(Medicine drug) {

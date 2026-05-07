@@ -19,7 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../providers/providers.dart';
+import '../../providers/providers.dart';
 import 'mobile_drawer_session_state.dart';
 
 final mobileDrawerSessionProvider = NotifierProvider<MobileDrawerSessionNotifier, MobileDrawerSessionState>(

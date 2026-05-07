@@ -10,8 +10,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../notifier/mobile_drawer_session_notifier.dart';
-import '../widgets/mobile_drawer_status_banner.dart';
+import 'mobile_drawer_session_notifier.dart';
+import 'mobile_drawer_status_banner.dart';
 
 class MobileDrawerOperationWrapper extends ConsumerWidget {
   const MobileDrawerOperationWrapper({super.key, required this.child});

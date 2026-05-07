@@ -18,7 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../providers/providers.dart';
+import '../../providers/providers.dart';
 import 'rfid_scan_session_state.dart';
 
 final rfidScanSessionProvider = NotifierProvider<RfidScanSessionNotifier, RfidScanSessionState>(

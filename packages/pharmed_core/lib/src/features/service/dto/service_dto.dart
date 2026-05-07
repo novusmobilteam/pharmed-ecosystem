@@ -1,6 +1,6 @@
 import 'package:pharmed_manager/core/core.dart';
 
-class ServiceDTO {
+class ServiceDto {
   final int? id;
   final String? name;
   final int? branchId;
@@ -10,7 +10,7 @@ class ServiceDTO {
   final bool isActive;
   final List<RoomDto>? rooms;
 
-  const ServiceDTO({
+  const ServiceDto({
     this.id,
     this.name,
     this.branchId,
@@ -21,8 +21,8 @@ class ServiceDTO {
     this.rooms,
   });
 
-  factory ServiceDTO.fromJson(Map<String, dynamic> json) {
-    return ServiceDTO(
+  factory ServiceDto.fromJson(Map<String, dynamic> json) {
+    return ServiceDto(
       id: json['id'] as int?,
       name: json['name'] as String?,
       branchId: json['branchId'] as int?,

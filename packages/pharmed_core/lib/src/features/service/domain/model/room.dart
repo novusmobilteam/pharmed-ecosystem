@@ -5,10 +5,11 @@ class Room extends Selectable {
   final int? serviceId;
   final String? name;
   final List<Bed> beds;
+  final HospitalService? service;
 
   int get bedCount => beds.length;
 
-  Room({this.id, this.name, this.serviceId, this.beds = const []}) : super(title: name.toString());
+  Room({this.id, this.name, this.serviceId, this.beds = const [], this.service}) : super(title: name.toString());
 
   Room copyWith({int? id, String? name, int? serviceId, List<Bed>? beds}) {
     return Room(

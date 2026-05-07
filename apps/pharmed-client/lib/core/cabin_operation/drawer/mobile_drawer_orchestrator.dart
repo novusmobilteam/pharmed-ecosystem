@@ -22,10 +22,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../providers/providers.dart';
-import 'presentation/notifier/mobile_drawer_session_notifier.dart';
-import 'presentation/notifier/mobile_drawer_session_state.dart';
-import 'presentation/notifier/rfid_scan_session_notifier.dart';
+import '../../providers/providers.dart';
+import 'mobile_drawer_session_notifier.dart';
+import 'mobile_drawer_session_state.dart';
+import '../rfid/rfid_scan_session_notifier.dart';
 
 typedef DrawerStageCallback = void Function(MobileDrawerStage? previous, MobileDrawerStage current);
 

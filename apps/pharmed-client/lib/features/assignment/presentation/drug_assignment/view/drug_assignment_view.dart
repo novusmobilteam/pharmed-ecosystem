@@ -20,8 +20,8 @@ import 'package:pharmed_client/core/enums/cabin_operation_mode.dart';
 import 'package:pharmed_client/widgets/widgets.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import '../../../../core/providers/providers.dart';
-import '../../assignment.dart';
+import '../../../../../core/providers/providers.dart';
+import '../../../assignment.dart';
 
 class DrugAssignmentView extends ConsumerStatefulWidget {
   const DrugAssignmentView({super.key, this.data});

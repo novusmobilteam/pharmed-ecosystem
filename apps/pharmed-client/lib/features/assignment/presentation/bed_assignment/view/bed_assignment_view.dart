@@ -1,5 +1,3 @@
-// lib/features/assignment/presentation/view/patient_assignment_view.dart
-//
 // [SWREQ-UI-CAB-006]
 // Hasta bazlı atama ekranı — sadece mobil kabin.
 //
@@ -12,14 +10,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/features/assignment/presentation/view/bed_assignment_panel.dart';
+import 'package:pharmed_client/features/assignment/presentation/bed_assignment/view/bed_assignment_panel.dart';
 import 'package:pharmed_client/core/enums/cabin_operation_mode.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../widgets/widgets.dart';
+import '../../../../../widgets/widgets.dart';
 import '../notifier/bed_assignment_notifier.dart';
-import '../state/bed_assignment_state.dart';
+import '../notifier/bed_assignment_state.dart';
 
 class BedAssignmentView extends ConsumerStatefulWidget {
   const BedAssignmentView({super.key, this.data});

@@ -6,9 +6,9 @@ class HospitalizationDTO {
   final int? patientId;
   final PatientDto? patient;
   final int? physicalServiceId;
-  final ServiceDTO? physicalService;
+  final ServiceDto? physicalService;
   final int? inpatientServiceId;
-  final ServiceDTO? inpatientService;
+  final ServiceDto? inpatientService;
   final int? doctorId;
   final UserDTO? doctor;
   final int? roomId;
@@ -52,9 +52,9 @@ class HospitalizationDTO {
       patientId: json['patientId'] as int?,
       patient: json['patient'] != null ? PatientDto.fromJson(json['patient']) : null,
       physicalServiceId: json['physicalServiceId'] as int?,
-      physicalService: json['physicalService'] != null ? ServiceDTO.fromJson(json['physicalService']) : null,
+      physicalService: json['physicalService'] != null ? ServiceDto.fromJson(json['physicalService']) : null,
       inpatientServiceId: json['inpatientServiceId'] as int?,
-      inpatientService: json['inpatientService'] != null ? ServiceDTO.fromJson(json['inpatientService']) : null,
+      inpatientService: json['inpatientService'] != null ? ServiceDto.fromJson(json['inpatientService']) : null,
       doctorId: json['doctorId'] as int?,
       doctor: json['doctor'] != null ? UserDTO.fromJson(json['doctor']) : null,
       roomId: json['roomId'] as int?,
@@ -95,9 +95,9 @@ class HospitalizationDTO {
     int? patientId,
     PatientDto? patient,
     int? physicalServiceId,
-    ServiceDTO? physicalService,
+    ServiceDto? physicalService,
     int? inpatientServiceId,
-    ServiceDTO? inpatientService,
+    ServiceDto? inpatientService,
     int? doctorId,
     UserDTO? doctor,
     int? roomId,

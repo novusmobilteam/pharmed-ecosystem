@@ -5,8 +5,9 @@ class RoomDto {
   final int? serviceId;
   final String? name;
   final List<BedDto>? beds;
+  final ServiceDto? serviceDto;
 
-  const RoomDto({this.id, this.name, this.serviceId, this.beds});
+  const RoomDto({this.id, this.name, this.serviceId, this.beds, this.serviceDto});
 
   factory RoomDto.fromJson(Map<String, dynamic> json) {
     return RoomDto(
@@ -16,6 +17,7 @@ class RoomDto {
       beds: json['beds'] != null
           ? (json['beds'] as List).map((e) => BedDto.fromJson(e as Map<String, dynamic>)).toList()
           : null,
+      serviceDto: json['service'] != null ? ServiceDto.fromJson(json['service']) : null,
     );
   }
 

@@ -7,7 +7,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../widgets/widgets.dart';
+import '../../../../../widgets/widgets.dart';
 
 sealed class BedAssignmentState {
   const BedAssignmentState();
@@ -151,6 +151,7 @@ final class BedAssignmentSuccess extends BedAssignmentState {
     required this.slots,
     required this.mobileSlots,
     required this.selectedSlot,
+    required this.selectedCell,
     required this.assignments,
     required this.cabinId,
     required this.message,
@@ -159,6 +160,7 @@ final class BedAssignmentSuccess extends BedAssignmentState {
   final List<MobileSlotVisual> slots;
   final List<MobileDrawerSlot> mobileSlots;
   final MobileSlotVisual selectedSlot;
+  final MobileCellCoord selectedCell;
   final List<BedAssignment> assignments;
   final int cabinId;
   final String message;

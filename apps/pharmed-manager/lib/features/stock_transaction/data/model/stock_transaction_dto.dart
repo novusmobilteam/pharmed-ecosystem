@@ -17,7 +17,7 @@ class StockTransactionDTO {
   final bool? isSend;
   final int? transactionType;
   final int? sendServiceId;
-  final ServiceDTO? sendService;
+  final ServiceDto? sendService;
   final DateTime? sendDate;
   final DateTime? expirationDate;
 
@@ -58,7 +58,7 @@ class StockTransactionDTO {
       expirationDate: json['miadDate'] != null ? DateTime.tryParse(json['miadDate']) : null,
       transactionType: json['transactionType'],
       sendServiceId: json['sendServiceId'],
-      sendService: json['sendService'] != null ? ServiceDTO.fromJson(json['sendService']) : null,
+      sendService: json['sendService'] != null ? ServiceDto.fromJson(json['sendService']) : null,
     );
   }
 

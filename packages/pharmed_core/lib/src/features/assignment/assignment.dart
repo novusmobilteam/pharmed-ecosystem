@@ -1,5 +1,5 @@
-export 'data/medicine_assignment_dto.dart';
-export 'data/bed_assignment_dto.dart';
+export 'dto/medicine_assignment_dto.dart';
+export 'dto/bed_assignment_dto.dart';
 
 export 'domain/entity/medicine_assignment.dart';
 export 'domain/entity/bed_assignment.dart';

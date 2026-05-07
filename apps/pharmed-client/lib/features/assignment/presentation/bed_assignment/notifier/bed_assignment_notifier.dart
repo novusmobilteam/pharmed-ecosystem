@@ -13,9 +13,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../core/providers/providers.dart';
-import '../../../../widgets/widgets.dart';
-import '../../assignment.dart';
+import '../../../../../core/providers/providers.dart';
+import '../../../../../widgets/widgets.dart';
+import '../../../assignment.dart';
 
 final bedAssignmentNotifierProvider = NotifierProvider<BedAssignmentNotifier, BedAssignmentState>(
   BedAssignmentNotifier.new,
@@ -156,8 +156,9 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
       cabinId: current.cabinId,
       services: _services,
       existingAssignment: existingAssignment,
-      // Mevcut atama varsa bed bilgisini önceden doldur
       selectedBed: existingAssignment?.bed,
+      selectedRoom: existingAssignment?.bed?.room,
+      selectedService: existingAssignment?.hospitalization?.physicalService ?? existingAssignment?.bed?.room?.service,
     );
   }
 
@@ -241,6 +242,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
         mobileSlots: current.mobileSlots,
         selectedSlot: current.selectedSlot,
         cabinId: current.cabinId,
+        selectedCell: current.selectedCell,
         // TODO(l10n): move to view layer or pass translated string as parameter
         message: 'Yatak ataması başarıyla kaydedildi',
       ),
@@ -271,6 +273,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
         mobileSlots: current.mobileSlots,
         selectedSlot: current.selectedSlot,
         cabinId: current.cabinId,
+        selectedCell: current.selectedCell,
         // TODO(l10n): move to view layer or pass translated string as parameter
         message: 'Yatak ataması kaldırıldı',
       ),
@@ -284,6 +287,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
     required List<MobileSlotVisual> slots,
     required List<MobileDrawerSlot> mobileSlots,
     required MobileSlotVisual selectedSlot,
+    required MobileCellCoord selectedCell,
     required int cabinId,
     required String message,
   }) async {
@@ -294,6 +298,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
         slots: slots,
         mobileSlots: mobileSlots,
         selectedSlot: selectedSlot,
+        selectedCell: selectedCell,
         assignments: assignments,
         cabinId: cabinId,
         message: message,
@@ -320,12 +325,22 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
   void dismissSuccess() {
     final current = state;
     if (current is! BedAssignmentSuccess) return;
-    state = BedAssignmentSlotSelected(
+
+    final cellId = _resolveCellId(mobileSlots: current.mobileSlots, coord: current.selectedCell);
+    final existingAssignment = cellId != null ? current.assignments.firstWhereOrNull((a) => a.cellId == cellId) : null;
+
+    state = BedAssignmentCellSelected(
       slots: current.slots,
       cabinId: current.cabinId,
       mobileSlots: current.mobileSlots,
       assignments: current.assignments,
       selectedSlot: current.selectedSlot,
+      selectedCell: current.selectedCell,
+      services: _services,
+      existingAssignment: existingAssignment,
+      selectedBed: existingAssignment?.bed,
+      selectedRoom: existingAssignment?.bed?.room,
+      selectedService: existingAssignment?.hospitalization?.physicalService ?? existingAssignment?.bed?.room?.service,
     );
   }
 
