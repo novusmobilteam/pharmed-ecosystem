@@ -114,19 +114,19 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
   }
 
   /// Belirtilen kabindeki tüm yatak atamalarını getirir.
-  Future<Result<List<PatientAssignmentDto>>> getBedAssignments(int cabinId) async {
-    final res = await fetchRequest<List<PatientAssignmentDto>>(
+  Future<Result<List<BedAssignmentDto>>> getBedAssignments(int cabinId) async {
+    final res = await fetchRequest<List<BedAssignmentDto>>(
       path: '$_patientBase/cabin/$cabinId',
-      parser: BaseRemoteDataSource.listParser(PatientAssignmentDto.fromJson),
+      parser: BaseRemoteDataSource.listParser(BedAssignmentDto.fromJson),
       successLog: 'Atamalar getirildi',
       emptyLog: 'Atama bulunamadı',
     );
 
-    return res.when(ok: (list) => Result.ok(list ?? const <PatientAssignmentDto>[]), error: Result.error);
+    return res.when(ok: (list) => Result.ok(list ?? const <BedAssignmentDto>[]), error: Result.error);
   }
 
   /// Mobil kabin gözüne yatak ataması yapar.
-  Future<Result<void>> createBedAssignment(PatientAssignmentDto dto) {
+  Future<Result<void>> createBedAssignment(BedAssignmentDto dto) {
     return postRequest(
       path: '$_patientBase',
       body: dto.toJson(),
@@ -136,7 +136,7 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
   }
 
   /// Mevcut bir yatak atamasını günceller.
-  Future<Result<void>> updateBedAssignment(PatientAssignmentDto dto) {
+  Future<Result<void>> updateBedAssignment(BedAssignmentDto dto) {
     return putRequest(
       path: '$_patientBase/${dto.id}',
       body: dto.toJson(),

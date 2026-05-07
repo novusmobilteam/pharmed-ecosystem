@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/providers/providers.dart';
 import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../fault.dart';
 
@@ -184,7 +185,9 @@ class MobileFaultNotifier extends Notifier<MobileFaultState> {
 
         ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer();
         return MobileFaultSuccess(
-          message: isNewRecord ? 'Arıza kaydı oluşturuldu.' : 'Arıza kaydı kapatıldı.', // TODO(l10n): move to view layer or pass translated string as parameter
+          message: isNewRecord
+              ? 'Arıza kaydı oluşturuldu.'
+              : 'Arıza kaydı kapatıldı.', // TODO(l10n): move to view layer or pass translated string as parameter
           previous: nextSelected,
         );
       },

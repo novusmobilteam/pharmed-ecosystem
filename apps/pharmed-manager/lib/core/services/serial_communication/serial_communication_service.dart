@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 import '../../core.dart';
-import 'i_serial_communication_service.dart';
 
 class SerialCommunicationService implements ISerialCommunicationService {
   SerialPort? _port;
@@ -198,5 +197,11 @@ class SerialCommunicationService implements ISerialCommunicationService {
     if (_completer != null && !_completer!.isCompleted) {
       _completer!.completeError("Disconnected");
     }
+  }
+
+  @override
+  List<String> getAvailablePorts() {
+    // TODO: implement getAvailablePorts
+    throw UnimplementedError();
   }
 }

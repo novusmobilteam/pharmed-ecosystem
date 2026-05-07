@@ -51,4 +51,16 @@ class MockRfidService implements IRfidService {
     await Future.delayed(const Duration(milliseconds: 800));
     return const Result.ok(RfidReaderInfo(firmwareVersion: '3.2', readerType: 1, maxPower: 30, currentPower: 22));
   }
+
+  @override
+  Stream<RfidTag> startInventory() {
+    // TODO: implement startInventory
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<void>> stopInventory() {
+    // TODO: implement stopInventory
+    throw UnimplementedError();
+  }
 }

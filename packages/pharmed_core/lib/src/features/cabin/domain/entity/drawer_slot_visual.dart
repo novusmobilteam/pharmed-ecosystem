@@ -37,4 +37,26 @@ final class MobileSlotVisual extends DrawerSlotVisual {
 
   int get rowCount => rowColumns.length;
   int get totalCells => rowColumns.fold(0, (sum, c) => sum + c);
+
+  /// Mobil kontrol kartının fiziksel port sayısı.
+  static const int totalDrawerPorts = 4;
+
+  /// Verilen [slot]'un fiziksel kontrol kartı portunu döner (1-tabanlı).
+  ///
+  /// Mobil kontrol kartı [totalDrawerPorts] portlu sabittir. Slot'lar
+  /// [slots] listesindeki sıraya göre 1:1 eşleşir:
+  ///   - slots[0] → port 1
+  ///   - slots[1] → port 2
+  ///   - ...
+  ///
+  /// 4'ten fazla slot olursa modulo ile sarılır (ileride genişleme için).
+  ///
+  /// [slot] [slots] listesinde bulunmuyorsa [StateError] fırlatır.
+  static int portOf(List<MobileSlotVisual> slots, MobileSlotVisual slot) {
+    final index = slots.indexWhere((s) => s.slotId == slot.slotId);
+    if (index < 0) {
+      throw StateError('MobileSlotVisual.portOf: slot listede yok (slotId=${slot.slotId})');
+    }
+    return (index % totalDrawerPorts) + 1;
+  }
 }

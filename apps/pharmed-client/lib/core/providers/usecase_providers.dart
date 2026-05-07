@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../features/refill/refill.dart';
+import '../cache/app_settings_cache.dart';
 import 'providers.dart';
 
 final getHospitalizationsUseCaseProvider = Provider<GetHospitalizationsUseCase>((ref) {
@@ -67,4 +69,133 @@ final getUpcomingTreatmensUseCaseProvider = Provider<GetUpcomingTreatmensUseCase
 
 final getFilteredMenusUseCaseProvider = Provider<GetFilteredMenusUseCase>((ref) {
   return GetFilteredMenusUseCase(ref.read(dashboardRepositoryProvider), isManager: false);
+});
+
+final createBedAssignmentUseCaseProvider = Provider<CreateBedAssignmentUseCase>((ref) {
+  return CreateBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final createAssignmentUseCaseProvider = Provider<CreateMedicineAssignmentUseCase>((ref) {
+  return CreateMedicineAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final deleteBedAssignmentUseCaseProvider = Provider<DeleteBedAssignmentUseCase>((ref) {
+  return DeleteBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final deleteAssignmentUseCaseProvider = Provider<DeleteMedicineAssignmentUseCase>((ref) {
+  return DeleteMedicineAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final getBedAssignmentsUseCaseProvider = Provider<GetBedAssignmentsUseCase>((ref) {
+  return GetBedAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final getMedicineAssignmentsUseCaseProvider = Provider<GetMedicineAssignmentsUseCase>((ref) {
+  return GetMedicineAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final updateBedAssignmentUseCaseProvider = Provider<UpdateBedAssignmentUseCase>((ref) {
+  return UpdateBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final updateMedicineAssignmentUseCaseProvider = Provider<UpdateMedicineAssignmentUseCase>((ref) {
+  return UpdateMedicineAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final getCabinUseCaseProvider = Provider<GetCabinUseCase>((ref) {
+  return GetCabinUseCase(ref.read(cabinRepositoryProvider));
+});
+
+final clearMasterCabinFaultRecordProvider = Provider<ClearMasterCabinFaultRecordUseCase>((ref) {
+  return ClearMasterCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
+});
+
+final clearMobileCabinFaultRecordProvider = Provider<ClearMobileCabinFaultRecordUseCase>((ref) {
+  return ClearMobileCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
+});
+
+final createMasterCabinFaultRecordProvider = Provider<CreateMasterCabinFaultRecordUseCase>((ref) {
+  return CreateMasterCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
+});
+
+final createMobileCabinFaultRecordProvider = Provider<CreateMobileCabinFaultRecordUseCase>((ref) {
+  return CreateMobileCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
+});
+
+final getMasterCabinFaultRecordsProvider = Provider<GetMasterCabinFaultRecordsUseCase>((ref) {
+  return GetMasterCabinFaultRecordsUseCase(ref.read(faultRepositoryProvider));
+});
+
+final getMobileCabinFaultRecordsProvider = Provider<GetMobileCabinFaultRecordsUseCase>((ref) {
+  return GetMobileCabinFaultRecordsUseCase(ref.read(faultRepositoryProvider));
+});
+
+final getCabinVisualizerDataUseCaseProvider = Provider<GetCabinVisualizerDataUseCase>((ref) {
+  return GetCabinVisualizerDataUseCase(
+    ref.read(cabinRepositoryProvider),
+    ref.read(cabinStockRepositoryProvider),
+    ref.read(appSettingsCacheProvider),
+    ref.read(getMasterCabinFaultRecordsProvider),
+    ref.read(getMobileCabinFaultRecordsProvider),
+  );
+});
+
+final createCabinUseCaseProvider = Provider<CreateCabinUseCase>((ref) {
+  return CreateCabinUseCase(ref.read(cabinRepositoryProvider), ref.read(stationRepositoryProvider));
+});
+
+final saveCabinDesignUseCaseProvider = Provider<SaveCabinDesignUseCase>((ref) {
+  return SaveCabinDesignUseCase(
+    cabinRepository: ref.read(cabinRepositoryProvider),
+    localDataSource: ref.read(cabinLocaleDataSourceProvider),
+  );
+});
+
+final saveMobileCabinDesignUseCaseProvider = Provider<SaveMobileCabinDesignUseCase>((ref) {
+  return SaveMobileCabinDesignUseCase(
+    cabinRepository: ref.read(cabinRepositoryProvider),
+    localDataSource: ref.read(cabinLocaleDataSourceProvider),
+  );
+});
+
+final finishCabinSetupUseCaseProvider = Provider<FinishCabinSetupUseCase>((ref) {
+  return FinishCabinSetupUseCase(
+    createCabin: ref.read(createCabinUseCaseProvider),
+    saveCabinDesign: ref.read(saveCabinDesignUseCaseProvider),
+    appSettingsCache: ref.read(appSettingsCacheProvider),
+    saveMobileCabinDesign: ref.read(saveMobileCabinDesignUseCaseProvider),
+  );
+});
+
+final scanCabinUseCaseProvider = Provider<ScanCabinUseCase>((ref) {
+  return ScanCabinUseCase(
+    cabinRepository: ref.read(cabinRepositoryProvider),
+    cabinOperationService: ref.read(cabinOperationServiceProvider),
+    serialService: ref.read(serialServiceProvider),
+  );
+});
+
+final getUnassignedStationsUseCaseProvider = Provider<GetUnassignedStationsUseCase>((ref) {
+  return GetUnassignedStationsUseCase(ref.read(stationRepositoryProvider));
+});
+
+final startMobileDrawerSessionUseCaseProvider = Provider<StartMobileDrawerSessionUseCase>((ref) {
+  return StartMobileDrawerSessionUseCase(cabinOperationService: ref.read(cabinOperationServiceProvider));
+});
+
+final testRfidConnectionUseCaseProvider = Provider<TestRfidConnectionUseCase>((ref) {
+  return TestRfidConnectionUseCase(ref.read(rfidServiceProvider));
+});
+
+final testCabinConnectionUseCaseProvider = Provider<TestCabinConnectionUseCase>((ref) {
+  return TestCabinConnectionUseCase(ref.read(serialServiceProvider));
+});
+
+final getPatientPrescriptionHistoryUseCaseProvider = Provider<GetPatientPrescriptionHistoryUseCase>((ref) {
+  return GetPatientPrescriptionHistoryUseCase(ref.read(prescriptionRepositoryProvider));
+});
+
+final refillMobileCabinUseCaseProvider = Provider<RefillMobileCabinUseCase>((ref) {
+  return RefillMobileCabinUseCase(ref.read(cabinStockRepositoryProvider));
 });

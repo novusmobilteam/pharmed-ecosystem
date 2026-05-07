@@ -12,6 +12,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import '../../../../core/providers/providers.dart';
 import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../fault.dart';
 

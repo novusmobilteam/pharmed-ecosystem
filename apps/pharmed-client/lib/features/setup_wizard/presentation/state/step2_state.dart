@@ -1,7 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../setup_wizard.dart';
-
 class Step2State {
   const Step2State({
     this.basicInfo,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'i_serial_communication_service.dart';
+import 'package:pharmed_manager/core/core.dart';
 
 class MockSerialCommunicationService implements ISerialCommunicationService {
   bool _connected = false;
@@ -32,5 +31,11 @@ class MockSerialCommunicationService implements ISerialCommunicationService {
   @override
   Future<void> disconnect() async {
     _connected = false;
+  }
+
+  @override
+  List<String> getAvailablePorts() {
+    // TODO: implement getAvailablePorts
+    throw UnimplementedError();
   }
 }

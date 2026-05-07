@@ -1,19 +1,23 @@
-// [SWREQ-RFID-005] [IEC 62304 §5.5]
-// Reçete kalemine RFID etiketi atama use case'i.
+// pharmed_core/lib/src/prescription/usecase/assign_rfid_tag_use_case.dart
+//
+// [SWREQ-RFID-ASSIGN-001] [IEC 62304 §5.5]
+// Bir reçete kalemine RFID etiketi atar.
 //
 // Akış:
-//   1. Bağlı değilse default ayarlarla connect()
-//   2. IRfidService.scan() → tag listesi
-//   3. Liste boşsa → NotFoundException
-//   4. En yüksek RSSI'lı tag seçilir (okuyucuya en yakın fiziksel etiket)
-//   5. IPrescriptionRepository.assignRfidTag(itemId, epc) → API isteği
-//   6. Başarılıysa atanan EPC string döner
-//
-// Not: Host/port ilerleyen aşamada ayarlar ekranından okunacak.
+//   1. RFID okuyucuya bağlan (gerekirse)
+//   2. Inventory stream'i başlat (Real-time mode)
+//   3. Hibrit pencere ile tag topla:
+//        - İlk tag için max 3sn bekle (timeout)
+//        - İlk tag geldikten sonra 500ms daha topla (komşu tag'lerin RSSI'ı için)
+//   4. Inventory'i durdur (Answer Mode'a geri dön)
+//   5. En yüksek RSSI'a sahip tag'i (= en yakın etiketi) seç
+//   6. Backend'e gönder, prescription item ile eşle
 //
 // Sınıf: Class B
 
-import 'package:pharmed_core/pharmed_core.dart';
+import 'dart:async';
+
+import 'package:pharmed_manager/core/core.dart';
 
 class AssignRfidTagUseCase {
   const AssignRfidTagUseCase(this._rfidService, this._prescriptionRepository);
@@ -25,36 +29,111 @@ class AssignRfidTagUseCase {
   static const _defaultHost = '192.168.1.190';
   static const _defaultPort = 6000;
 
+  /// İlk tag için maksimum bekleme süresi.
+  static const _firstTagTimeout = Duration(seconds: 3);
+
+  /// İlk tag geldikten sonra ek toplama penceresi (komşu tag'lerin RSSI'ı için).
+  static const _collectionWindow = Duration(milliseconds: 500);
+
   Future<Result<String>> call(int prescriptionItemId) async {
-    // 1. Her scan öncesi reconnect — Socket stream tek kullanımlık olduğu için
-    //    önceki bağlantı kapatılıp yeni bir socket açılır.
-    await _rfidService.disconnect();
-    final connectResult = await _rfidService.connect(_defaultHost, _defaultPort);
-    final connectError = connectResult.when(ok: (_) => null, error: (e) => e);
-    if (connectError != null) return Result.error(connectError);
-
-    // 2. Scan
-    final scanResult = await _rfidService.scan();
-    final scanError = scanResult.when(ok: (_) => null, error: (e) => e);
-    if (scanError != null) return Result.error(scanError);
-
-    final tags = scanResult.when(ok: (t) => t, error: (_) => <RfidTag>[]);
-
-    // 3. Tag bulunamadı
-    if (tags.isEmpty) {
-      return Result.error(
-        NotFoundException(
-          message: 'Okuyucu alanında RFID etiketi bulunamadı.',
-          id: prescriptionItemId,
-          resourceType: 'RfidTag',
-        ),
-      );
+    // ── 1. Bağlantı (gerekirse) ───────────────────────────────────────────
+    if (!_rfidService.isConnected) {
+      final connectResult = await _rfidService.connect(_defaultHost, _defaultPort);
+      final connectError = connectResult.when(ok: (_) => null, error: (e) => e);
+      if (connectError != null) return Result.error(connectError);
     }
 
-    // 4. En yüksek RSSI — okuyucuya en yakın etiket
-    final bestTag = tags.reduce((a, b) => a.rssi > b.rssi ? a : b);
+    // ── 2. Tag toplama (hibrit pencere) ───────────────────────────────────
+    final tagsResult = await _collectTagsWithWindow();
 
-    // 5. API — etiketi kaleme bağla
-    return _prescriptionRepository.assignRfidTag(prescriptionItemId: prescriptionItemId, epc: bestTag.epc);
+    return tagsResult.when(
+      ok: (tags) async {
+        if (tags.isEmpty) {
+          return Result<String>.error(
+            NotFoundException(
+              message: 'Okuyucu alanında RFID etiketi bulunamadı.',
+              id: prescriptionItemId,
+              resourceType: 'RfidTag',
+            ),
+          );
+        }
+
+        // ── 3. En yüksek RSSI — okuyucuya en yakın etiket ──────────────────
+        // Aynı EPC birden fazla okunmuş olabilir; her EPC için max RSSI'ı al,
+        // sonra en yüksek RSSI'lı EPC'yi seç.
+        final bestRssiByEpc = <String, int>{};
+        for (final tag in tags) {
+          final current = bestRssiByEpc[tag.epc];
+          if (current == null || tag.rssi > current) {
+            bestRssiByEpc[tag.epc] = tag.rssi;
+          }
+        }
+
+        final bestEpc = bestRssiByEpc.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+
+        MedLogger.info(
+          unit: 'AssignRfidTagUseCase',
+          swreq: 'SWREQ-RFID-ASSIGN-001',
+          message: 'En güçlü RFID etiketi seçildi',
+          context: {'epc': bestEpc, 'rssi': bestRssiByEpc[bestEpc], 'totalUniqueTags': bestRssiByEpc.length},
+        );
+
+        // ── 4. Backend'e ata ───────────────────────────────────────────────
+        return _prescriptionRepository.assignRfidTag(prescriptionItemId: prescriptionItemId, epc: bestEpc);
+      },
+      error: (e) => Result<String>.error(e),
+    );
+  }
+
+  /// Hibrit pencere mantığı:
+  ///   - İlk tag gelene kadar max [_firstTagTimeout] bekle
+  ///   - İlk tag geldikten sonra [_collectionWindow] boyunca daha topla
+  ///   - Stream'i her durumda kapat (stopInventory)
+  Future<Result<List<RfidTag>>> _collectTagsWithWindow() async {
+    StreamSubscription<RfidTag>? sub;
+    final tags = <RfidTag>[];
+    final firstTagCompleter = Completer<void>();
+
+    try {
+      final stream = _rfidService.startInventory();
+
+      sub = stream.listen(
+        (tag) {
+          tags.add(tag);
+          if (!firstTagCompleter.isCompleted) {
+            firstTagCompleter.complete();
+          }
+        },
+        onError: (e) {
+          if (!firstTagCompleter.isCompleted) {
+            firstTagCompleter.completeError(e);
+          }
+        },
+      );
+
+      // İlk tag'i bekle (max 3sn)
+      try {
+        await firstTagCompleter.future.timeout(_firstTagTimeout);
+      } on TimeoutException {
+        // Tag yok — boş liste dön
+        return const Result.ok([]);
+      }
+
+      // İlk tag geldi — 500ms daha topla
+      await Future.delayed(_collectionWindow);
+
+      return Result.ok(List.unmodifiable(tags));
+    } catch (e) {
+      MedLogger.error(
+        unit: 'AssignRfidTagUseCase',
+        swreq: 'SWREQ-RFID-ASSIGN-001',
+        message: 'Tag toplama hatası',
+        context: {'error': e.toString()},
+      );
+      return Result.error(ServiceException(message: 'RFID etiketi okunurken hata oluştu: $e', statusCode: 500));
+    } finally {
+      await sub?.cancel();
+      await _rfidService.stopInventory();
+    }
   }
 }

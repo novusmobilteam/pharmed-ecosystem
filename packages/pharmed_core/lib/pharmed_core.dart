@@ -87,6 +87,11 @@ export 'src/failure/app_exceptions.dart';
 export 'src/models/group_item.dart';
 export 'src/models/selectable.dart';
 export 'src/models/table_data.dart';
+export 'src/models/control_card.dart';
+export 'src/models/drawer_status.dart';
+export 'src/models/management_card.dart';
+export 'src/models/rfid_reader_info.dart';
+export 'src/models/rfid_tag.dart';
 
 // result
 export 'src/result/result.dart';
@@ -95,4 +100,10 @@ export 'src/result/result.dart';
 export 'src/repository/repo_result.dart';
 
 // services
-export 'src/services/rfid/rfid.dart';
+export 'src/services/i_cabin_operation_service.dart';
+export 'src/services/i_rfid_service.dart';
+export 'src/services/i_serial_communication_service.dart';
+export 'src/services/usecase/test_cabin_connection_usecase.dart';
+export 'src/services/usecase/test_rfid_connection_usecase.dart';
+
+export 'src/utils/command_builder.dart';

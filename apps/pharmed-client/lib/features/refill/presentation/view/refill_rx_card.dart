@@ -6,14 +6,27 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 // [SWREQ-CLI-REFILL-001] [IEC 62304 §5.5]
 // Mobil kabin dolum ekranı — ilaç kartı bileşeni.
+// Kullanıcı dolum başlamadan önce hangi ilaçları yerleştireceğini bu kartlardan
+// seçer (toggle). Süreç başladıktan sonra (isProcessActive=true) seçim kilitli
+// hale gelir; kart hâlâ RFID okuma durumunu gösterir.
+//
 // Sınıf: Class B
 
 class RefillRxCard extends StatelessWidget {
-  const RefillRxCard({super.key, required this.item, required this.isRfidRead, required this.isRefilling});
+  const RefillRxCard({
+    super.key,
+    required this.item,
+    required this.isSelected,
+    required this.isRfidRead,
+    required this.onTap,
+  });
 
   final PrescriptionItem item;
+  final bool isSelected;
   final bool isRfidRead;
-  final bool isRefilling;
+
+  /// `null` ise kart tıklanamaz (süreç başladı veya item.id yok).
+  final VoidCallback? onTap;
 
   bool get _needsRfid {
     if (item.medicine == null || !item.medicine!.isDrug) return false;
@@ -22,41 +35,72 @@ class RefillRxCard extends StatelessWidget {
 
   bool get _hasRfidTag => item.rfidTag != null;
 
+  /// Seçim kilitli mi? (onTap null → süreç aktif veya item geçersiz)
+  bool get _isLocked => onTap == null;
+
+  /// RFID inline durum gösterilsin mi?
+  /// Kilitliyken (=süreç aktif) ve seçili + RFID etiketi olan kartlarda gösterilir.
+  bool get _showRfidLiveStatus => _isLocked && isSelected && _needsRfid && _hasRfidTag;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: MedColors.surface,
+    final borderColor = isSelected ? MedColors.blue : MedColors.border;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Material(
+        color: Colors.transparent,
         borderRadius: MedRadius.mdAll,
-        border: Border.all(color: MedColors.border),
-        boxShadow: MedShadows.sm,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _CardBody(item: item, isRfidRead: isRfidRead, needsRfid: _needsRfid, isRefilling: isRefilling),
-          if (_needsRfid && _hasRfidTag) ...[
-            Divider(height: 1, thickness: 1, color: MedColors.border2),
-            _RfidRow(isRead: isRfidRead, isRefilling: isRefilling, tag: item.rfidTag!),
-          ],
-        ],
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: MedRadius.mdAll,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            decoration: BoxDecoration(
+              color: MedColors.surface,
+              borderRadius: MedRadius.mdAll,
+              border: Border.all(color: borderColor, width: isSelected ? 1.5 : 1),
+              boxShadow: MedShadows.sm,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _CardBody(
+                  item: item,
+                  isSelected: isSelected,
+                  isRfidRead: isRfidRead,
+                  needsRfid: _needsRfid,
+                  showRfidLiveStatus: _showRfidLiveStatus,
+                ),
+                if (_needsRfid && _hasRfidTag) ...[
+                  Divider(height: 1, thickness: 1, color: MedColors.border2),
+                  _RfidRow(isRead: isRfidRead, showLiveStatus: _showRfidLiveStatus, tag: item.rfidTag!),
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// Kart gövdesi
-// ---------------------------------------------------------------------------
+// ── Kart gövdesi ─────────────────────────────────────────────────────────────
 
 class _CardBody extends StatelessWidget {
-  const _CardBody({required this.item, required this.isRfidRead, required this.needsRfid, required this.isRefilling});
+  const _CardBody({
+    required this.item,
+    required this.isSelected,
+    required this.isRfidRead,
+    required this.needsRfid,
+    required this.showRfidLiveStatus,
+  });
 
   final PrescriptionItem item;
+  final bool isSelected;
   final bool isRfidRead;
   final bool needsRfid;
-  final bool isRefilling;
+  final bool showRfidLiveStatus;
 
   String get _doseText {
     final piece = item.dosePiece?.formatFractional ?? '-';
@@ -68,65 +112,94 @@ class _CardBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Üst satır: ilaç adı + durum badge + miktar
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // İlaç adı
-              Expanded(
-                child: Text(
-                  item.medicine?.name ?? 'İsimsiz',
-                  style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+          // Selection indicator (checkbox)
+          Padding(
+            padding: const EdgeInsets.only(top: 1, right: 10),
+            child: _SelectionIndicator(isSelected: isSelected),
+          ),
+
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Üst satır: ilaç adı + miktar
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.medicine?.name ?? 'İsimsiz',
+                        style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _doseText,
+                      style: MedTextStyles.monoSm(color: MedColors.text2, weight: FontWeight.w600),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 8),
-              // Miktar
-              Text(
-                _doseText,
-                style: MedTextStyles.monoSm(color: MedColors.text2, weight: FontWeight.w600),
-              ),
-            ],
-          ),
 
-          const SizedBox(height: 4),
+                const SizedBox(height: 4),
 
-          // Alt satır: uygulama bilgisi + saat chip
-          Row(
-            children: [
-              if (item.medicine?.barcode != null) ...[
-                Text(item.medicine!.barcode!, style: MedTextStyles.monoXs()),
-                const SizedBox(width: 8),
+                // Alt satır: barkod + saat chip
+                Row(
+                  children: [
+                    if (item.medicine?.barcode != null) ...[
+                      Text(item.medicine!.barcode!, style: MedTextStyles.monoXs()),
+                      const SizedBox(width: 8),
+                    ],
+                    if (item.time != null) _TimeChip(time: item.time!),
+                  ],
+                ),
+
+                // RFID inline durum — süreç aktifken seçili kartta
+                if (showRfidLiveStatus) ...[const SizedBox(height: 6), _RfidInlineStatus(isRead: isRfidRead)],
               ],
-              if (item.time != null) _TimeChip(time: item.time!),
-            ],
+            ),
           ),
-
-          // RFID — dolum aktifken ve etiket atanmışsa inline göster
-          if (needsRfid && isRefilling && item.rfidTag != null) ...[
-            const SizedBox(height: 6),
-            _RfidInlineStatus(isRead: isRfidRead),
-          ],
         ],
       ),
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// RFID satırı — accordion değil, kart altında ince şerit
-// ---------------------------------------------------------------------------
+// ── Selection indicator (checkbox tarzı) ─────────────────────────────────────
+
+class _SelectionIndicator extends StatelessWidget {
+  const _SelectionIndicator({required this.isSelected});
+
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      width: 18,
+      height: 18,
+      decoration: BoxDecoration(
+        color: isSelected ? MedColors.blue : Colors.transparent,
+        border: Border.all(color: isSelected ? MedColors.blue : MedColors.border, width: 1.5),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: isSelected ? const Icon(Icons.check_rounded, size: 14, color: Colors.white) : null,
+    );
+  }
+}
+
+// ── RFID şerit (kart altında) ────────────────────────────────────────────────
 
 class _RfidRow extends StatelessWidget {
-  const _RfidRow({required this.isRead, required this.isRefilling, required this.tag});
+  const _RfidRow({required this.isRead, required this.showLiveStatus, required this.tag});
 
   final bool isRead;
-  final bool isRefilling;
+  final bool showLiveStatus;
   final String tag;
 
   @override
@@ -146,7 +219,7 @@ class _RfidRow extends StatelessWidget {
           const SizedBox(width: 5),
           Text(tag, style: MedTextStyles.monoXs(color: color)),
           const Spacer(),
-          if (isRefilling)
+          if (showLiveStatus)
             _RfidInlineStatus(isRead: isRead)
           else
             Text('RFID', style: MedTextStyles.monoXs(color: MedColors.text4)),
@@ -156,9 +229,7 @@ class _RfidRow extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// RFID inline durum göstergesi
-// ---------------------------------------------------------------------------
+// ── RFID inline durum ────────────────────────────────────────────────────────
 
 class _RfidInlineStatus extends StatelessWidget {
   const _RfidInlineStatus({required this.isRead});
@@ -189,9 +260,7 @@ class _RfidInlineStatus extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Saat chip
-// ---------------------------------------------------------------------------
+// ── Saat chip ────────────────────────────────────────────────────────────────
 
 class _TimeChip extends StatelessWidget {
   const _TimeChip({required this.time});

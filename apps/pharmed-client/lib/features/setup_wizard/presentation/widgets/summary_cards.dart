@@ -72,11 +72,6 @@ class ServiceScopeCard extends StatelessWidget {
           ),
           _Divider(),
           SummaryRow(label: context.l10n.wizard_summaryLabelRooms, value: rooms.map((r) => r.name).join(', ')),
-          _Divider(),
-          SummaryRow(
-            label: context.l10n.wizard_summaryLabelBeds,
-            value: rooms.expand((r) => r.beds.map((b) => b.name)).join(', '),
-          ),
         ],
       },
     );

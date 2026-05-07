@@ -15,3 +15,4 @@ export 'domain/usecase/get_scanned_barcodes_usecase.dart';
 export 'domain/usecase/get_deleted_barcodes_usecase.dart';
 export 'domain/usecase/get_unapplied_prescriptions_usecase.dart';
 export 'domain/usecase/get_unapplied_prescription_detail_usecase.dart';
+export 'domain/usecase/get_patient_prescription_history_usecase.dart';

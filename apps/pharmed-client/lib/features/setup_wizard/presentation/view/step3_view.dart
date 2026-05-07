@@ -8,7 +8,6 @@ import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../domain/entity/cabin_setup_config.dart';
 import '../notifier/setup_wizard_notifier.dart';
 import '../notifier/step1_notifier.dart';
 import '../notifier/step3_notifier.dart';

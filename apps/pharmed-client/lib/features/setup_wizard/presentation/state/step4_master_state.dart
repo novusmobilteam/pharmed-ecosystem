@@ -3,7 +3,6 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
-import '../../domain/entity/scan_log_entry.dart';
 
 class Step4MasterState {
   const Step4MasterState({

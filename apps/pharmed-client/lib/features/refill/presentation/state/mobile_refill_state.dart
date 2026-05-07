@@ -91,8 +91,8 @@ final class MobileRefillReady extends MobileRefillState {
     required this.bed,
     required this.room,
     required this.prescriptionItems,
-    required this.rfidReadIds,
-    required this.isRefilling,
+    required this.rfidReadEpcs,
+    required this.selectedItemIds,
   });
 
   final List<MobileSlotVisual> slots;
@@ -101,29 +101,41 @@ final class MobileRefillReady extends MobileRefillState {
   final MobileCellCoord selectedCell;
   final List<BedAssignment> assignments;
   final int cabinId;
-
   final Patient patient;
   final Bed? bed;
   final Room? room;
   final List<PrescriptionItem> prescriptionItems;
-  final Set<int> rfidReadIds;
-  final bool isRefilling;
+  final Set<String> rfidReadEpcs;
+  final Set<int> selectedItemIds;
 
   int get selectedSlotId => selectedSlot.slotId;
 
-  // ── Computed ──────────────────────────────────────────────────────────────
+  /// Banner sayacı için: işaretli RFID'li ilaç sayısı.
+  int get rfidExpectedCount => _selectedRfidItems.length;
 
-  /// RFID etiketi atanmış ve isRfidEnable olan ilaç sayısı
-  int get rfidItemCount => prescriptionItems
-      .where((i) => i.medicine != null && i.medicine!.isDrug && (i.medicine as Drug).isRfidEnable && i.rfidTag != null)
-      .length;
+  /// Bunlardan kaç tanesinin EPC'si okundu.
+  int get rfidReadCount => _selectedRfidItems.where((i) => rfidReadEpcs.contains(i.rfidTag)).length;
 
-  int get rfidReadCount => rfidReadIds.length;
+  /// Tamamla butonu için: tüm seçili RFID'li ilaçların etiketleri okundu mu?
+  bool get allSelectedRfidRead => rfidExpectedCount == 0 || rfidReadCount >= rfidExpectedCount;
 
-  /// RFID'li ilaç yoksa true — dolum tamamlanabilir
-  bool get allRfidRead => rfidItemCount == 0 || rfidReadCount >= rfidItemCount;
+  List<PrescriptionItem> get _selectedRfidItems => prescriptionItems
+      .where(
+        (i) =>
+            i.id != null &&
+            selectedItemIds.contains(i.id) &&
+            i.medicine != null &&
+            i.medicine!.isDrug &&
+            (i.medicine as Drug).isRfidEnable &&
+            i.rfidTag != null,
+      )
+      .toList();
 
-  MobileRefillReady copyWith({List<PrescriptionItem>? prescriptionItems, Set<int>? rfidReadIds, bool? isRefilling}) {
+  MobileRefillReady copyWith({
+    List<PrescriptionItem>? prescriptionItems,
+    Set<String>? rfidReadEpcs,
+    Set<int>? selectedItemIds,
+  }) {
     return MobileRefillReady(
       slots: slots,
       mobileSlots: mobileSlots,
@@ -135,8 +147,8 @@ final class MobileRefillReady extends MobileRefillState {
       bed: bed,
       room: room,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
-      rfidReadIds: rfidReadIds ?? this.rfidReadIds,
-      isRefilling: isRefilling ?? this.isRefilling,
+      rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
+      selectedItemIds: selectedItemIds ?? this.selectedItemIds,
     );
   }
 }
@@ -285,4 +297,10 @@ extension MobileRefillStateX on MobileRefillState {
     }
     return null;
   }
+
+  /// Panel listesinde gösterilebilecek atamalar.
+  /// Sadece bir göze (cell) bağlı olanlar listelenir; göz ataması olmayan
+  /// kabaca-atanmış kayıtlar kullanıcıya gösterilmez.
+  List<BedAssignment> get availableAssignments =>
+      assignments.where((a) => a.cellId != null && a.hospitalization != null).toList();
 }

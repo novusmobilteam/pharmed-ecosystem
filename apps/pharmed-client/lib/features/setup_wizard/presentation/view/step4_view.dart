@@ -12,15 +12,12 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../l10n/l10n_ext.dart';
-import '../../domain/entity/scan_log_entry.dart';
-import '../../domain/entity/wizard_mobile_layout.dart';
 import '../notifier/setup_wizard_notifier.dart';
 import '../notifier/step1_notifier.dart';
 import '../notifier/step3_notifier.dart';
 import '../notifier/step4_master_notifier.dart';
 import '../notifier/step4_mobile_notifier.dart';
 import '../state/step4_master_state.dart';
-import '../state/step4_mobile_state.dart';
 import '../widgets/step_shared_widgets.dart';
 
 part '../widgets/master_drawer_scan_view.dart';
@@ -41,9 +38,7 @@ class Step4View extends ConsumerWidget {
         ? 'Mobil kabinin çekmece sayısını, iç bölümlerini ve port bağlantılarını tanımlayın.'
         : 'Cihazdan kabin iç yapısı otomatik okunacaktır.';
 
-    final isComplete = isMobile
-        ? ref.watch(step4MobileNotifierProvider.select((s) => s.isComplete))
-        : ref.watch(step4MasterNotifierProvider.select((s) => s.isComplete));
+    final isComplete = isMobile ? true : ref.watch(step4MasterNotifierProvider.select((s) => s.isComplete));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

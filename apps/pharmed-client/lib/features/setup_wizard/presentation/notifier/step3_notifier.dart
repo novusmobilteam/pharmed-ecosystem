@@ -7,7 +7,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/providers/providers.dart';
-import '../../setup_wizard.dart';
 import '../state/step3_state.dart';
 
 final step3NotifierProvider = NotifierProvider<Step3Notifier, Step3State>(Step3Notifier.new);

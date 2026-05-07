@@ -4,8 +4,6 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../domain/entity/cabin_setup_config.dart';
-
 // ── State ─────────────────────────────────────────────────────────────────
 
 class Step3State {

@@ -15,6 +15,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/providers/providers.dart';
 import '../../assignment.dart';
 
 final drugAssignmentNotifierProvider = NotifierProvider<DrugAssignmentNotifier, DrugAssignmentUiState>(

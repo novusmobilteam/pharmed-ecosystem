@@ -19,6 +19,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cache/app_settings_cache.dart';
+import '../../../../core/providers/providers.dart';
 import '../../setup_wizard.dart';
 import 'step1_notifier.dart';
 import 'step2_notifier.dart';

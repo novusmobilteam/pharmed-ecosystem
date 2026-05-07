@@ -15,7 +15,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/providers/providers.dart';
 import '../../../../widgets/widgets.dart';
-import '../../../cabin/cabin.dart';
 import '../../assignment.dart';
 
 final bedAssignmentNotifierProvider = NotifierProvider<BedAssignmentNotifier, BedAssignmentState>(
