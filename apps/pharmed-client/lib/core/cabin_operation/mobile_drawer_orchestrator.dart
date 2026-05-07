@@ -30,6 +30,7 @@ import 'presentation/notifier/rfid_scan_session_notifier.dart';
 typedef DrawerStageCallback = void Function(MobileDrawerStage? previous, MobileDrawerStage current);
 
 typedef EpcReadCallback = void Function(String epc);
+typedef EpcLostCallback = void Function(String epc);
 
 class MobileDrawerOrchestrator {
   MobileDrawerOrchestrator({required this.ref});
@@ -37,10 +38,14 @@ class MobileDrawerOrchestrator {
   final Ref ref;
 
   ProviderSubscription<MobileDrawerSessionState>? _drawerSub;
-  StreamSubscription<String>? _epcSub;
 
   DrawerStageCallback? _onStage;
+
   EpcReadCallback? _onEpc;
+  EpcLostCallback? _onEpcLost;
+
+  StreamSubscription<String>? _epcSub;
+  StreamSubscription<String>? _epcLostSub;
 
   bool _initialized = false;
   IRfidService get _rfid => ref.read(rfidServiceProvider);
@@ -49,7 +54,7 @@ class MobileDrawerOrchestrator {
   ///
   /// [onStageChange] her drawer stage geçişinde çağrılır.
   /// [onEpcRead] her yeni okunan EPC için çağrılır (deduplication oturum içinde).
-  void init({DrawerStageCallback? onStageChange, EpcReadCallback? onEpcRead}) {
+  void init({DrawerStageCallback? onStageChange, EpcReadCallback? onEpcRead, EpcLostCallback? onEpcLost}) {
     if (_initialized) {
       MedLogger.warn(
         unit: 'MobileDrawerOrchestrator',
@@ -62,6 +67,7 @@ class MobileDrawerOrchestrator {
 
     _onStage = onStageChange;
     _onEpc = onEpcRead;
+    _onEpcLost = onEpcLost;
 
     _drawerSub = ref.listen<MobileDrawerSessionState>(
       mobileDrawerSessionProvider,
@@ -69,6 +75,7 @@ class MobileDrawerOrchestrator {
     );
 
     _epcSub = ref.read(rfidScanSessionProvider.notifier).epcStream.listen(_handleEpcRead);
+    _epcLostSub = ref.read(rfidScanSessionProvider.notifier).epcLostStream.listen(_handleEpcLost);
   }
 
   /// Tüm subscription'ları kapatır. Feature notifier ref.onDispose'da çağırmalı.
@@ -76,9 +83,12 @@ class MobileDrawerOrchestrator {
     _drawerSub?.close();
     _drawerSub = null;
     await _epcSub?.cancel();
-    _epcSub = null;
+    await _epcLostSub?.cancel();
     _onStage = null;
+    _epcSub = null;
+    _epcLostSub = null;
     _onEpc = null;
+    _onEpcLost = null;
     _initialized = false;
   }
 
@@ -127,6 +137,10 @@ class MobileDrawerOrchestrator {
 
   void _handleEpcRead(String epc) {
     _onEpc?.call(epc);
+  }
+
+  void _handleEpcLost(String epc) {
+    _onEpcLost?.call(epc);
   }
 
   Future<void> _ensureRfidConnected() async {

@@ -98,8 +98,6 @@ class _MedButtonState extends State<MedButton> {
   }
 }
 
-// ── Renk çözümleyici ──────────────────────────────────────────────
-
 final class _ButtonColors {
   const _ButtonColors({required this.background, required this.foreground, this.borderColor, this.shadow});
   final Color background;
@@ -137,8 +135,6 @@ _ButtonColors _resolveColors(MedButtonVariant v) {
     ),
   };
 }
-
-// ── Boyut çözümleyici ─────────────────────────────────────────────
 
 final class _ButtonSizing {
   const _ButtonSizing({required this.padding, required this.minHeight, required this.fontSize, required this.radius});

@@ -17,10 +17,19 @@ final class MobileRefillUninitialized extends MobileRefillState {
 
 /// İlk yükleme devam ediyor.
 final class MobileRefillLoading extends MobileRefillState {
-  const MobileRefillLoading({required this.slots, required this.cabinId});
+  const MobileRefillLoading({
+    required this.slots,
+    required this.cabinId,
+    this.mobileSlots,
+    this.selectedSlot,
+    this.assignments,
+  });
 
   final List<MobileSlotVisual> slots;
   final int cabinId;
+  final List<MobileDrawerSlot>? mobileSlots;
+  final MobileSlotVisual? selectedSlot;
+  final List<BedAssignment>? assignments;
 }
 
 /// Kabin verisi yüklendi, slot/göz seçilmedi.
@@ -161,6 +170,7 @@ final class MobileRefillSaving extends MobileRefillState {
     required this.selectedSlot,
     required this.assignments,
     required this.cabinId,
+    required this.ready,
   });
 
   final List<MobileSlotVisual> slots;
@@ -168,6 +178,7 @@ final class MobileRefillSaving extends MobileRefillState {
   final MobileSlotVisual selectedSlot;
   final List<BedAssignment> assignments;
   final int cabinId;
+  final MobileRefillReady ready;
 }
 
 /// Dolum başarıyla tamamlandı.
@@ -179,6 +190,7 @@ final class MobileRefillSuccess extends MobileRefillState {
     required this.assignments,
     required this.cabinId,
     required this.message,
+    required this.ready,
   });
 
   final List<MobileSlotVisual> slots;
@@ -187,6 +199,7 @@ final class MobileRefillSuccess extends MobileRefillState {
   final List<BedAssignment> assignments;
   final int cabinId;
   final String message;
+  final MobileRefillReady ready;
 }
 
 /// İşlem hatası — previousState'e dönülür.
@@ -214,6 +227,7 @@ extension MobileRefillStateX on MobileRefillState {
 
   List<MobileDrawerSlot> get mobileSlots => switch (this) {
     MobileRefillIdle(:final mobileSlots) => mobileSlots,
+    MobileRefillLoading(:final mobileSlots) => mobileSlots ?? const [],
     MobileRefillSlotSelected(:final mobileSlots) => mobileSlots,
     MobileRefillNoPatient(:final mobileSlots) => mobileSlots,
     MobileRefillReady(:final mobileSlots) => mobileSlots,
@@ -226,6 +240,7 @@ extension MobileRefillStateX on MobileRefillState {
   List<BedAssignment> get assignments => switch (this) {
     MobileRefillIdle(:final assignments) => assignments,
     MobileRefillSlotSelected(:final assignments) => assignments,
+    MobileRefillLoading(:final assignments) => assignments ?? const [],
     MobileRefillNoPatient(:final assignments) => assignments,
     MobileRefillReady(:final assignments) => assignments,
     MobileRefillSaving(:final assignments) => assignments,
@@ -246,6 +261,7 @@ extension MobileRefillStateX on MobileRefillState {
 
   MobileSlotVisual? get selectedSlot => switch (this) {
     MobileRefillSlotSelected(:final selectedSlot) => selectedSlot,
+    MobileRefillLoading(:final selectedSlot) => selectedSlot,
     MobileRefillNoPatient(:final selectedSlot) => selectedSlot,
     MobileRefillReady(:final selectedSlot) => selectedSlot,
     MobileRefillSaving(:final selectedSlot) => selectedSlot,

@@ -70,10 +70,6 @@ class MobileCabinDrawerPanel extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _MobileDrawerHeader
-// ─────────────────────────────────────────────────────────────────
-
 class _MobileDrawerHeader extends StatelessWidget {
   const _MobileDrawerHeader({required this.slot, required this.mode});
 
@@ -106,10 +102,6 @@ class _MobileDrawerHeader extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// _MobileDrawerBody
-// ─────────────────────────────────────────────────────────────────
 
 class _MobileDrawerBody extends StatelessWidget {
   const _MobileDrawerBody({
@@ -174,10 +166,6 @@ class _MobileDrawerBody extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _MobileDrawerRow
-// ─────────────────────────────────────────────────────────────────
-
 class _MobileDrawerRow extends StatelessWidget {
   const _MobileDrawerRow({
     required this.slotId,
@@ -237,10 +225,6 @@ class _MobileDrawerRow extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// _MobileCabinCell
-// ─────────────────────────────────────────────────────────────────
 
 class _MobileCabinCell extends StatelessWidget {
   const _MobileCabinCell({

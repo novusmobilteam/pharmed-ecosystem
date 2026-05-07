@@ -1,4 +1,4 @@
-part of 'mobile_refill_panel.dart';
+part of '../view/mobile_refill_panel.dart';
 
 class _PatientPickerListView extends StatefulWidget {
   const _PatientPickerListView({required this.assignments, required this.onSelected});

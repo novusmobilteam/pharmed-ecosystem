@@ -2,12 +2,12 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 class RefillMobileCabinParams {
   final int prescriptionDetailId;
-  final String epc;
+  final String? epc;
 
-  RefillMobileCabinParams({required this.prescriptionDetailId, required this.epc});
+  RefillMobileCabinParams({required this.prescriptionDetailId, this.epc});
 
   Map<String, dynamic> toJson() {
-    return {'prescriptionDetailId': prescriptionDetailId, 'rfidCardTag': epc};
+    return {'prescriptionDetailId': prescriptionDetailId, 'rfidCardTag': epc ?? null};
   }
 }
 
@@ -17,7 +17,6 @@ class RefillMobileCabinUseCase {
   RefillMobileCabinUseCase(this._repository);
 
   Future<Result<void>> call(List<RefillMobileCabinParams> params) async {
-    final body = params.map((p) => p.toJson()).toList();
-    return await _repository.refillMobileCabin(body);
+    return await _repository.refillMobileCabin(params);
   }
 }

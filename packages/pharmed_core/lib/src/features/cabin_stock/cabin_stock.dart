@@ -1,11 +1,15 @@
-export 'data/cabin_stock_dto.dart';
-export 'data/station_stock_dto.dart';
-export 'domain/model/cabin_stock.dart';
-export 'domain/model/station_stock.dart';
+export 'dto/cabin_stock_dto.dart';
+export 'dto/station_stock_dto.dart';
+
+export 'domain/entity/cabin_stock.dart';
+export 'domain/entity/station_stock.dart';
+
 export 'domain/repository/i_cabin_stock_repository.dart';
+
 export 'domain/usecase/count_medicine_usecase.dart';
 export 'domain/usecase/get_cabin_stock_usecase.dart';
 export 'domain/usecase/get_current_cabin_stock_usecase.dart';
 export 'domain/usecase/get_expired_stocks_usecase.dart';
 export 'domain/usecase/get_expiring_stocks_usecase.dart';
 export 'domain/usecase/get_station_stocks_usecase.dart';
+export 'domain/usecase/refill_mobile_cabin_usecase.dart';

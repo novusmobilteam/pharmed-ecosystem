@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../features/refill/refill.dart';
 import '../cache/app_settings_cache.dart';
 import 'providers.dart';
 

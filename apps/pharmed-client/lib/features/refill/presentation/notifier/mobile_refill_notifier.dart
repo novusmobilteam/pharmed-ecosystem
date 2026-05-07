@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/providers/providers.dart';
@@ -26,6 +27,8 @@ final mobileRefillNotifierProvider = NotifierProvider<MobileRefillNotifier, Mobi
 
 class MobileRefillNotifier extends Notifier<MobileRefillState> {
   late final MobileDrawerOrchestrator _drawer;
+  MobileDrawerStage get _drawerStage => ref.read(mobileDrawerSessionProvider).stage;
+
   GetBedAssignmentsUseCase get _getAssignments => ref.read(getBedAssignmentsUseCaseProvider);
   RefillMobileCabinUseCase get _refillMobileCabin => ref.read(refillMobileCabinUseCaseProvider);
   GetPatientPrescriptionHistoryUseCase get _getPrescriptionHistory =>
@@ -34,7 +37,8 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   @override
   MobileRefillState build() {
     // Drawer stage geçişlerini dinle — Opened/Closed/Failed'a tepki ver.
-    _drawer = MobileDrawerOrchestrator(ref: ref)..init(onStageChange: _onDrawerStageChange, onEpcRead: _onEpcRead);
+    _drawer = MobileDrawerOrchestrator(ref: ref)
+      ..init(onStageChange: _onDrawerStageChange, onEpcRead: _onEpcRead, onEpcLost: _onEpcLost);
 
     ref.onDispose(() => _drawer.dispose());
 
@@ -115,7 +119,13 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     if (patient?.id == null) return;
 
     // Loading sırasında sol/orta panel kaybolmasın
-    state = MobileRefillLoading(slots: slots, cabinId: cabinId);
+    state = MobileRefillLoading(
+      slots: slots,
+      cabinId: cabinId,
+      selectedSlot: selectedSlot,
+      mobileSlots: mobileSlots,
+      assignments: assignments,
+    );
 
     final result = await _getPrescriptionHistory(patient!.id!);
 
@@ -153,10 +163,14 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   }
 
   void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
-    // Refill için stage'e özel bir state müdahalesi şu an yok.
-    // RFID start/stop otomasyonu orchestrator'da hallediliyor.
-    // İleride: Failed durumunda kullanıcıya snackbar göstermek için
-    // bir sinyal yayınlanabilir, view'da ref.listen ile yakalanır.
+    if (next is MobileDrawerFailed) {
+      final current = state;
+      final cleaned = switch (current) {
+        MobileRefillReady r => r.copyWith(rfidReadEpcs: {}, selectedItemIds: {}),
+        _ => current,
+      };
+      state = MobileRefillError(message: next.message, previousState: cleaned);
+    }
   }
 
   void _onEpcRead(String epc) {
@@ -164,6 +178,20 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     if (current is! MobileRefillReady) return;
     if (current.rfidReadEpcs.contains(epc)) return;
     state = current.copyWith(rfidReadEpcs: {...current.rfidReadEpcs, epc});
+  }
+
+  void _onEpcLost(String epc) {
+    final current = state;
+    if (current is! MobileRefillReady) return;
+    if (!current.rfidReadEpcs.contains(epc)) return;
+    final updated = Set<String>.from(current.rfidReadEpcs)..remove(epc);
+    state = current.copyWith(rfidReadEpcs: updated);
+    MedLogger.info(
+      unit: 'MobileRefillNotifier',
+      swreq: 'SWREQ-CLI-REFILL-003',
+      message: 'RFID tag kapsama dışına çıktı',
+      context: {'epc': epc},
+    );
   }
 
   /// Doluma başla — drawer oturumunu açar.
@@ -190,6 +218,36 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     state = current.copyWith(selectedItemIds: next);
   }
 
+  Future<void> cancelRefill() async {
+    final current = state;
+    final ready = switch (current) {
+      MobileRefillReady r => r,
+      MobileRefillSaving(:final ready) => ready,
+      _ => null,
+    };
+
+    final stage = _drawerStage;
+
+    // DrawerIdle + seçim var → seçimleri sıfırla
+    if (stage is MobileDrawerIdle) {
+      if (ready == null) return;
+      state = ready.copyWith(selectedItemIds: {}, rfidReadEpcs: {});
+      return;
+    }
+
+    // DrawerOpening/Opened + RFID yok → view handle eder, biz dönüyoruz
+    if ((stage is MobileDrawerOpening || stage is MobileDrawerOpened) && (ready?.rfidReadCount ?? 0) > 0) {
+      return;
+    }
+
+    // DrawerClosed/Failed veya Opening/Opened+RFID yok → session durdur, seçimleri sıfırla
+    await _drawer.stop();
+
+    if (ready != null) {
+      state = ready.copyWith(selectedItemIds: {});
+    }
+  }
+
   /// Dolumu tamamla — drawer Closed + tüm seçili RFID etiketler okundu olmalı.
   Future<void> completeRefill() async {
     final current = state;
@@ -207,11 +265,12 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
       selectedSlot: current.selectedSlot,
       assignments: current.assignments,
       cabinId: current.cabinId,
+      ready: current,
     );
 
     final params = current.prescriptionItems
         .where((i) => i.id != null && current.selectedItemIds.contains(i.id))
-        .map((i) => RefillMobileCabinParams(prescriptionDetailId: i.id!, epc: i.rfidTag ?? ''))
+        .map((i) => RefillMobileCabinParams(prescriptionDetailId: i.id!, epc: i.rfidTag))
         .toList();
 
     final result = await _refillMobileCabin(params);
@@ -228,10 +287,14 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
           assignments: current.assignments,
           cabinId: current.cabinId,
           message: 'Dolum başarıyla tamamlandı.',
+          ready: current.copyWith(rfidReadEpcs: {}, selectedItemIds: {}),
         );
       },
       error: (e) {
-        state = MobileRefillError(message: e.message, previousState: current);
+        state = MobileRefillError(
+          message: e.message,
+          previousState: current.copyWith(rfidReadEpcs: {}, selectedItemIds: {}),
+        );
       },
     );
   }

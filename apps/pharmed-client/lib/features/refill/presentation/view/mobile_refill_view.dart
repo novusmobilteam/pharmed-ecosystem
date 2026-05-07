@@ -52,6 +52,33 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
     });
   }
 
+  Future<void> _handleCancelRefill(MobileRefillState state, MobileDrawerStage drawerStage) async {
+    final notifier = ref.read(mobileRefillNotifierProvider.notifier);
+    final rfidReadCount = state is MobileRefillReady ? state.rfidReadCount : 0;
+
+    // DrawerOpening/Opened + RFID yok → snackbar, iptal etme
+    if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidReadCount == 0) {
+      MessageUtils.showInfoSnackbar(context, 'İşlemi iptal etmek için çekmeceyi kapatın.');
+      return;
+    }
+
+    // DrawerClosed + RFID yok → onay dialogu
+    if (drawerStage is MobileDrawerClosed && rfidReadCount == 0) {
+      MessageUtils.showConfirmDialog(
+        context: context,
+        action: ConfirmAction.exit,
+        customTitle: 'Dolumu İptal Et',
+        customMessage: 'İlaçları çekmeceden çıkardığınız varsayılacak. Dolum iptal edilsin mi?',
+        confirmButtonText: 'İptal Et',
+        onConfirm: notifier.cancelRefill,
+      );
+      return;
+    }
+
+    // Diğer durumlar → direkt iptal
+    notifier.cancelRefill();
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(mobileRefillNotifierProvider);
@@ -66,6 +93,7 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
       if (next is MobileRefillError) {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
+        ref.read(mobileDrawerSessionProvider.notifier).stop();
       } else if (next is MobileRefillSuccess) {
         MessageUtils.showSuccessSnackbar(context, next.message);
         notifier.dismissSuccess();
@@ -75,10 +103,6 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
     if (widget.data == null || state is MobileRefillUninitialized) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
-
-    // if (state is MobileRefillLoading) {
-    //   return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-    // }
 
     return MobileDrawerOperationWrapper(
       child: CabinOperationScaffold(
@@ -104,6 +128,7 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
           onSelectAssignment: notifier.selectAssignment,
           onChangePatient: notifier.clearPatientSelection,
           onToggleItem: notifier.toggleItemSelection,
+          onCancelRefill: () => _handleCancelRefill(state, drawerStage),
         ),
       ),
     );

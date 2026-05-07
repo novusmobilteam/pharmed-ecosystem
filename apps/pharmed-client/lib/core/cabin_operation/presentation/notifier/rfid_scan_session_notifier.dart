@@ -27,11 +27,18 @@ final rfidScanSessionProvider = NotifierProvider<RfidScanSessionNotifier, RfidSc
 
 class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
   StreamSubscription<RfidTag>? _inventorySub;
-  final _seenEpcs = <String>{};
   final _epcController = StreamController<String>.broadcast();
+  final _lostController = StreamController<String>.broadcast();
+
+  final _lastSeen = <String, DateTime>{};
+  final _presentEpcs = <String>{};
+  Timer? _presenceTimer;
+  static const _presenceTimeout = Duration(seconds: 3);
+  static const _presenceCheckInterval = Duration(milliseconds: 500);
 
   /// Okunan EPC'leri yayınlayan broadcast stream.
   Stream<String> get epcStream => _epcController.stream;
+  Stream<String> get epcLostStream => _lostController.stream;
 
   IRfidService get _rfid => ref.read(rfidServiceProvider);
 
@@ -40,8 +47,6 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
     ref.onDispose(_dispose);
     return const RfidScanSessionState.initial();
   }
-
-  // ── Public API ───────────────────────────────────────────────────────────
 
   /// İnventory başlat. RFID service Real-time mode'a geçer ve tag'ler
   /// stream üzerinden gelmeye başlar.
@@ -65,7 +70,8 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
       return;
     }
 
-    _seenEpcs.clear();
+    _lastSeen.clear();
+    _presentEpcs.clear();
     state = state.copyWith(isScanning: true, clearError: true);
 
     MedLogger.info(
@@ -85,10 +91,13 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
       );
       state = state.copyWith(isScanning: false, lastError: e.message);
     }
+
+    _startPresenceTimer();
   }
 
   /// İnventory durdur. RFID service Answer Mode'a döner.
   Future<void> stop() async {
+    _stopPresenceTimer();
     final sub = _inventorySub;
     _inventorySub = null;
 
@@ -117,22 +126,27 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
       unit: 'RfidScanSessionNotifier',
       swreq: 'SWREQ-CLI-RFID-SCAN-002',
       message: 'RFID inventory durdu',
-      context: {'totalEpcsRead': _seenEpcs.length},
+      context: {'totalEpcsRead': _presentEpcs.length},
     );
   }
 
   // ── Internal handlers ────────────────────────────────────────────────────
 
   void _onTagRead(RfidTag tag) {
-    if (!_seenEpcs.add(tag.epc)) return; // duplicate
+    final now = DateTime.now();
+    _lastSeen[tag.epc] = now;
 
-    _epcController.add(tag.epc);
-    MedLogger.info(
-      unit: 'RfidScanSessionNotifier',
-      swreq: 'SWREQ-CLI-RFID-SCAN-002',
-      message: 'Yeni EPC okundu',
-      context: {'epc': tag.epc, 'rssi': tag.rssi, 'antenna': tag.antenna},
-    );
+    // İlk kez görüldü → yayınla
+    if (_presentEpcs.add(tag.epc)) {
+      _epcController.add(tag.epc);
+      MedLogger.info(
+        unit: 'RfidScanSessionNotifier',
+        swreq: 'SWREQ-CLI-RFID-SCAN-002',
+        message: 'Yeni EPC kapsama alanına girdi',
+        context: {'epc': tag.epc, 'rssi': tag.rssi, 'antenna': tag.antenna},
+      );
+    }
+    // _seenEpcs artık kullanılmıyor
   }
 
   void _onInventoryError(Object e, StackTrace _) {
@@ -150,6 +164,35 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
     if (state.isScanning) {
       state = state.copyWith(isScanning: false);
     }
+  }
+
+  void _startPresenceTimer() {
+    _presenceTimer = Timer.periodic(_presenceCheckInterval, (_) {
+      final now = DateTime.now();
+      final lost = _presentEpcs.where((epc) {
+        final last = _lastSeen[epc];
+        return last == null || now.difference(last) > _presenceTimeout;
+      }).toList();
+
+      for (final epc in lost) {
+        _presentEpcs.remove(epc);
+        _lastSeen.remove(epc);
+        _lostController.add(epc);
+        MedLogger.info(
+          unit: 'RfidScanSessionNotifier',
+          swreq: 'SWREQ-CLI-RFID-SCAN-002',
+          message: 'EPC kapsama alanından çıktı (timeout)',
+          context: {'epc': epc},
+        );
+      }
+    });
+  }
+
+  void _stopPresenceTimer() {
+    _presenceTimer?.cancel();
+    _presenceTimer = null;
+    _presentEpcs.clear();
+    _lastSeen.clear();
   }
 
   Future<void> _dispose() async {

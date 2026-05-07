@@ -158,9 +158,6 @@ class _CardBody extends StatelessWidget {
                     if (item.time != null) _TimeChip(time: item.time!),
                   ],
                 ),
-
-                // RFID inline durum — süreç aktifken seçili kartta
-                if (showRfidLiveStatus) ...[const SizedBox(height: 6), _RfidInlineStatus(isRead: isRfidRead)],
               ],
             ),
           ),
@@ -241,10 +238,12 @@ class _RfidInlineStatus extends StatelessWidget {
     if (isRead) {
       return Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), size: 12, color: MedColors.green),
           const SizedBox(width: 4),
-          Text('Okundu', style: MedTextStyles.monoXs(color: MedColors.green)),
+          Text('Okundu', style: MedTextStyles.monoSm(color: MedColors.green)),
         ],
       );
     }
@@ -254,7 +253,7 @@ class _RfidInlineStatus extends StatelessWidget {
       children: [
         SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 1.5, color: MedColors.amber)),
         const SizedBox(width: 4),
-        Text('Bekleniyor', style: MedTextStyles.monoXs(color: MedColors.amber)),
+        Text('Bekleniyor', style: MedTextStyles.monoSm(color: MedColors.amber)),
       ],
     );
   }

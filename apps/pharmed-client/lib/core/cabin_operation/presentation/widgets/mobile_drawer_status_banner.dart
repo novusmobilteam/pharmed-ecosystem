@@ -38,21 +38,20 @@ class MobileDrawerStatusBanner extends StatelessWidget {
       ),
       child: Container(
         key: ValueKey(spec.runtimeKey),
-        width: 280,
+        width: 260,
+        padding: EdgeInsets.symmetric(horizontal: 12.0),
         decoration: BoxDecoration(
           color: MedColors.surface,
           border: Border.all(color: MedColors.border, width: 1),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8.0),
           boxShadow: MedShadows.sm,
         ),
         child: IntrinsicHeight(
           child: Row(
+            spacing: 10.0,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(width: 3, color: spec.accentColor),
-              const SizedBox(width: 9),
-              Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: spec.leading),
-              const SizedBox(width: 10),
+              Center(child: spec.leading),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 12, 10),
@@ -68,11 +67,13 @@ class MobileDrawerStatusBanner extends StatelessWidget {
                       ),
                       if (spec.subtitle != null) ...[
                         const SizedBox(height: 2),
-                        Text(
-                          spec.subtitle!,
-                          style: MedTextStyles.monoXs(color: spec.subtitleColor ?? MedColors.text3),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        Flexible(
+                          child: Text(
+                            spec.subtitle!,
+                            style: MedTextStyles.monoXs(color: spec.subtitleColor ?? MedColors.text3),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ],
@@ -99,7 +100,7 @@ class MobileDrawerStatusBanner extends StatelessWidget {
         runtimeKey: 'opening',
         accentColor: MedColors.blue,
         title: 'Çekmece açılıyor',
-        subtitle: 'PORT $port',
+        subtitle: 'Çekmece $port',
         leading: const SizedBox(
           width: 22,
           height: 22,
@@ -107,11 +108,11 @@ class MobileDrawerStatusBanner extends StatelessWidget {
         ),
       ),
 
-      MobileDrawerOpened(:final port) => _BannerSpec(
+      MobileDrawerOpened() => _BannerSpec(
         runtimeKey: 'opened',
         accentColor: MedColors.green,
         title: 'Çekmece açık',
-        subtitle: 'PORT $port',
+        subtitle: 'İşlemi tamamlamak için çekmeceyi kapatınız.',
         leading: _CircleIcon(
           color: MedColors.green,
           bg: MedColors.greenLight,
