@@ -1,4 +1,4 @@
-part of 'fault_view.dart';
+part of '../../fault_view.dart';
 
 class MobileFaultView extends ConsumerStatefulWidget {
   const MobileFaultView({super.key, this.data});

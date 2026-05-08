@@ -1,4 +1,4 @@
-part of 'fault_view.dart';
+part of '../../fault_view.dart';
 
 class MasterFaultView extends ConsumerStatefulWidget {
   const MasterFaultView({super.key, this.data});
