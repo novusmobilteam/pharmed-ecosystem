@@ -13,7 +13,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../setup/app_setup_notifier.dart';
 import '../../features/auth/presentation/notifier/auth_notifier.dart';
 import '../../features/auth/presentation/state/auth_state.dart';
-import '../../features/setup_wizard/presentation/view/setup_wizard_screen.dart';
+import '../../features/setup_wizard/view/setup_wizard_screen.dart';
 import '../../features/dashboard/presentation/view/dashboard_screen.dart';
 
 class AppRouter extends ConsumerWidget {

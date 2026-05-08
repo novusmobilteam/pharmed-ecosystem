@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/providers/providers.dart';
-import '../notifier/step2_notifier.dart';
+import '../../../core/providers/providers.dart';
+import 'step2_notifier.dart';
 import '../state/step4_master_state.dart';
 
 final step4MasterNotifierProvider = NotifierProvider<Step4MasterNotifier, Step4MasterState>(Step4MasterNotifier.new);

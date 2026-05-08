@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../l10n/l10n_ext.dart';
+import '../../../l10n/l10n_ext.dart';
 import '../notifier/setup_wizard_notifier.dart';
 import '../notifier/step1_notifier.dart';
 import '../notifier/step3_notifier.dart';
