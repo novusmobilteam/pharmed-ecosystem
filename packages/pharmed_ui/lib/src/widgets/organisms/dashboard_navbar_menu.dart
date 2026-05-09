@@ -1,4 +1,4 @@
-// lib/shared/widgets/organisms/kabin_mega_menu.dart
+// lib/shared/widgets/organisms/dashboard_navbar_menu.dart
 //
 // [SWREQ-UI-NAV-KABIN-001]
 // "Kabin Yönetimi" menü öğesine tıklandığında açılan mega menü paneli.
@@ -6,8 +6,31 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_core/pharmed_core.dart' hide MaterialType;
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
+
+// ─────────────────────────────────────────────────────────────────
+// pharmed_core::MenuItem bağımlılığını kaldırmak için yerel model.
+// pharmed-client bu modele MenuItem'ı map'ler.
+// ─────────────────────────────────────────────────────────────────
+
+class NavMenuItem {
+  const NavMenuItem({
+    this.id,
+    this.parentId,
+    this.name,
+    this.description,
+    this.unicode,
+    this.route,
+  });
+
+  final int? id;
+  final int? parentId;
+  final String? name;
+  final String? description;
+  final String? unicode;
+  final String? route;
+}
 
 class DashboardNavbarMenu extends StatelessWidget {
   const DashboardNavbarMenu({
@@ -19,17 +42,13 @@ class DashboardNavbarMenu extends StatelessWidget {
   });
 
   final int parentId;
-  final List<MenuItem> flattenedMenus;
+  final List<NavMenuItem> flattenedMenus;
   final void Function(int id)? onCardTap;
   final void Function(String id)? onQuickTap;
 
   @override
   Widget build(BuildContext context) {
-    // 1. Bu menüye ait alt öğeleri filtrele
     final children = flattenedMenus.where((m) => m.parentId == parentId).toList();
-
-    // Tasarım gereği 2x2 grid yapısını korumak için (veya daha fazlası için)
-    // Eğer alt menü yoksa boş dönebilir veya bir uyarı gösterebilirsin.
     if (children.isEmpty) return const SizedBox.shrink();
 
     return Material(
@@ -48,29 +67,23 @@ class DashboardNavbarMenu extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Dinamik Başlık (Parent menü adı)
-              _buildHeader(context),
+              _buildHeader(),
               const SizedBox(height: 16),
-
-              // Dinamik Grid (2 sütunlu)
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
                 children: children.map((item) {
                   return SizedBox(
-                    width: 248, // (600 - padding - spacing) / 2
+                    width: 248,
                     child: _SubCard(item: item, onTap: (id) => onCardTap?.call(id)),
                   );
                 }).toList(),
               ),
-
-              // Eğer bu menü için özel hızlı aksiyonlar tanımlıysa
-              _buildQuickActions(context),
             ],
           ),
         ),
@@ -78,7 +91,7 @@ class DashboardNavbarMenu extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     final parent = flattenedMenus.firstWhere((m) => m.id == parentId);
     return Row(
       children: [
@@ -88,18 +101,12 @@ class DashboardNavbarMenu extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildQuickActions(BuildContext context) {
-    // Burada projenin mantığına göre hızlı aksiyonlar eklenebilir.
-    // Eğer MenuItem modelinde 'isQuickAction' gibi bir flag varsa filtreleyebilirsin.
-    return const SizedBox.shrink();
-  }
 }
 
 class _SubCard extends StatefulWidget {
   const _SubCard({required this.item, required this.onTap});
 
-  final MenuItem item;
+  final NavMenuItem item;
   final void Function(int id) onTap;
 
   @override
@@ -128,7 +135,6 @@ class _SubCardState extends State<_SubCard> {
           ),
           child: Row(
             children: [
-              // İkon Alanı
               Container(
                 width: 32,
                 height: 32,
@@ -139,7 +145,6 @@ class _SubCardState extends State<_SubCard> {
                 child: Icon(iconData, size: 16, color: _hovered ? Colors.white : MedColors.text2),
               ),
               const SizedBox(width: 12),
-              // Metin Alanı
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

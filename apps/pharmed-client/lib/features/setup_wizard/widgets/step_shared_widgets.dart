@@ -23,20 +23,7 @@ class StepHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-            decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: BorderRadius.circular(20)),
-            child: Text(
-              badge,
-              style: const TextStyle(
-                fontFamily: MedFonts.mono,
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: MedColors.blue,
-                letterSpacing: 1,
-              ),
-            ),
-          ),
+          MedBadge(label: badge, variant: MedBadgeVariant.blue, size: MedBadgeSize.sm),
           const SizedBox(height: 8),
           Text(
             title,
@@ -87,10 +74,7 @@ class StepFooter extends StatelessWidget {
             ),
           if (note != null) ...[
             const SizedBox(width: 12),
-            Text(
-              note!,
-              style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 12, color: MedColors.text3),
-            ),
+            Text(note!, style: MedTextStyles.bodySm(color: MedColors.text3)),
           ],
           const Spacer(),
           if (onNext != null)

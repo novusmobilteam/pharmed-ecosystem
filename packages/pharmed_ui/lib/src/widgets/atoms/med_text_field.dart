@@ -1,16 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_ui/src/widgets/inputs/input_field_style.dart';
+import 'package:pharmed_ui/src/widgets/inputs/med_input_decorator.dart';
 
+// ─────────────────────────────────────────────────────────────────
 // MedTextField
 // [SWREQ-UI-ATOM-TF-001]
-// Dokunmatik HMI text input. Min 48px yükseklik.
+// Dokunmatik HMI text input. Min yükseklik InputFieldTheme'den gelir.
 // Desteklenen durumlar: normal, focused, error, success, disabled.
-// data-keyboard özelliği yerine keyboardType kullanılır.
-// Sınıf : Class A (görsel girdi, iş mantığı dışında)
+// Tüm görsel değerleri InputFieldTheme.of(context) üzerinden alır —
+// sıfır hardcoded tasarım değeri.
+// Sınıf: Class A (görsel girdi, iş mantığı dışında)
+// ─────────────────────────────────────────────────────────────────
 
-enum MedTextFieldState { normal, error, success }
+/// [MedTextFieldState] artık [MedFieldState] ile eşanlamlıdır.
+/// Mevcut kullanım alanları için geriye dönük uyumluluk typedef'i.
+typedef MedTextFieldState = MedFieldState;
 
+/// Tek satırlık veya çok satırlı metin girişi.
+///
+/// Görsel kabuk tamamen [MedInputDecorator] tarafından yönetilir;
+/// bu widget yalnızca focus durumunu ve TextField içeriğini yönetir.
+///
+/// Stil (köşe yarıçapı, padding, label boyutu) otomatik olarak
+/// [InputFieldTheme.of(context)] üzerinden alınır:
+/// - pharmed-client: [InputFieldStyle.client] — geniş, yuvarlak, dokunmatik
+/// - pharmed-manager: [InputFieldStyle.manager] — sıkı, keskin, fare dostu
+///
+/// Örnek kullanım:
+/// ```dart
+/// MedTextField(
+///   label: 'Hasta Adı',
+///   hint: 'Adı giriniz',
+///   onChanged: (val) => print(val),
+/// )
+/// ```
 class MedTextField extends StatefulWidget {
   const MedTextField({
     super.key,
@@ -22,7 +47,7 @@ class MedTextField extends StatefulWidget {
     this.errorText,
     this.prefixIcon,
     this.suffixWidget,
-    this.fieldState = MedTextFieldState.normal,
+    this.fieldState = MedFieldState.normal,
     this.enabled = true,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
@@ -37,15 +62,31 @@ class MedTextField extends StatefulWidget {
 
   final TextEditingController? controller;
   final FocusNode? focusNode;
+
+  /// Input alanı üstünde gösterilen etiket.
   final String? label;
+
+  /// Input boşken gösterilen ipucu metni.
   final String? hint;
+
+  /// Hata yokken gösterilen yardımcı metin.
   final String? helperText;
+
+  /// Hata mesajı — varsa [fieldState]'i hata moduna zorlar.
   final String? errorText;
+
   final Widget? prefixIcon;
   final Widget? suffixWidget;
-  final MedTextFieldState fieldState;
+
+  /// Input'un görsel durumu. [MedFieldState.error] kırmızı kenarlık,
+  /// [MedFieldState.success] yeşil kenarlık gösterir.
+  final MedFieldState fieldState;
+
   final bool enabled;
+
+  /// `true` ise metin gizlenir — şifre alanları için.
   final bool obscureText;
+
   final TextInputType keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onChanged;
@@ -53,6 +94,10 @@ class MedTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final int? maxLength;
   final bool readOnly;
+
+  /// Input metni için [MedLabel] varyantı. Belirtilmezse
+  /// [InputFieldStyle.inputFontSize] ve [InputFieldStyle.inputFontWeight]
+  /// kullanılır.
   final MedLabelVariant? textVariant;
 
   @override
@@ -63,13 +108,6 @@ class _MedTextFieldState extends State<MedTextField> {
   late final FocusNode _focus;
   bool _focused = false;
   bool _obscure = false;
-
-  TextStyle get _textStyle {
-    if (widget.textVariant != null) {
-      return MedLabel.resolveStyle(widget.textVariant!, color: MedColors.text);
-    }
-    return TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text, height: 1.4);
-  }
 
   @override
   void initState() {
@@ -90,105 +128,85 @@ class _MedTextFieldState extends State<MedTextField> {
     super.dispose();
   }
 
-  Color get _borderColor {
-    if (!widget.enabled) return MedColors.border;
-    if (widget.fieldState == MedTextFieldState.error) return MedColors.red;
-    if (widget.fieldState == MedTextFieldState.success) return MedColors.green;
-    if (_focused) return MedColors.blue;
-    return MedColors.border;
-  }
-
-  Color get _bgColor {
-    if (!widget.enabled) return MedColors.surface3;
-    if (widget.fieldState == MedTextFieldState.error) return MedColors.redLight;
-    if (_focused) return MedColors.surface;
-    return MedColors.surface2;
-  }
-
-  List<BoxShadow>? get _shadow {
-    if (!_focused || !widget.enabled) return null;
-    final shadowColor = widget.fieldState == MedTextFieldState.error
-        ? const Color(0x1FDC2626)
-        : const Color(0x1F1A6FD8);
-    return [BoxShadow(color: shadowColor, blurRadius: 0, spreadRadius: 3)];
+  TextStyle _inputTextStyle(InputFieldStyle style) {
+    if (widget.textVariant != null) {
+      return MedLabel.resolveStyle(widget.textVariant!, color: MedColors.text);
+    }
+    return TextStyle(
+      fontFamily: MedFonts.sans,
+      fontSize: style.inputFontSize,
+      fontWeight: style.inputFontWeight,
+      color: widget.enabled ? MedColors.text : MedColors.text3,
+      height: 1.4,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.label != null) ...[Text(widget.label!, style: _textStyle), const SizedBox(height: 6)],
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          decoration: BoxDecoration(
-            color: _bgColor,
-            border: Border.all(color: _borderColor, width: 1.5),
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: _shadow,
-          ),
-          child: Row(
-            children: [
-              if (widget.prefixIcon != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 14),
-                  child: IconTheme(
-                    data: const IconThemeData(color: MedColors.text3, size: 16),
-                    child: widget.prefixIcon!,
-                  ),
-                ),
-              Expanded(
-                child: TextField(
-                  controller: widget.controller,
-                  focusNode: _focus,
-                  enabled: widget.enabled,
-                  obscureText: _obscure,
-                  keyboardType: widget.keyboardType,
-                  inputFormatters: widget.inputFormatters,
-                  onChanged: widget.onChanged,
-                  onSubmitted: widget.onSubmitted,
-                  textInputAction: widget.textInputAction,
-                  maxLength: widget.maxLength,
-                  readOnly: widget.readOnly,
-                  style: TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text, height: 1.4),
-                  decoration: InputDecoration(
-                    hintText: widget.hint,
-                    hintStyle: const TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text4),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: widget.prefixIcon != null ? 10 : 14, vertical: 8),
-                    isDense: false,
-                    counterText: '',
-                    constraints: const BoxConstraints(minHeight: 40),
-                  ),
-                ),
+    final style = InputFieldTheme.of(context);
+
+    return MedInputDecorator(
+      label: widget.label,
+      errorText: widget.errorText,
+      helperText: widget.helperText,
+      enabled: widget.enabled,
+      isFocused: _focused,
+      fieldState: widget.fieldState,
+      child: Row(
+        children: [
+          if (widget.prefixIcon != null)
+            Padding(
+              padding: const EdgeInsets.only(right: MedSpacing.sm),
+              child: IconTheme(
+                data: const IconThemeData(color: MedColors.text3, size: 16),
+                child: widget.prefixIcon!,
               ),
-              if (widget.obscureText)
-                _PasswordToggleButton(obscure: _obscure, onToggle: () => setState(() => _obscure = !_obscure))
-              else if (widget.suffixWidget != null)
-                Padding(padding: const EdgeInsets.only(right: 14), child: widget.suffixWidget!),
-            ],
+            ),
+          Expanded(
+            child: TextField(
+              controller: widget.controller,
+              focusNode: _focus,
+              enabled: widget.enabled,
+              obscureText: _obscure,
+              keyboardType: widget.keyboardType,
+              inputFormatters: widget.inputFormatters,
+              onChanged: widget.onChanged,
+              onSubmitted: widget.onSubmitted,
+              textInputAction: widget.textInputAction,
+              maxLength: widget.maxLength,
+              readOnly: widget.readOnly,
+              textAlign: style.inputTextAlign,
+              style: _inputTextStyle(style),
+              decoration: InputDecoration(
+                hintText: widget.hint,
+                hintStyle: TextStyle(
+                  fontFamily: MedFonts.sans,
+                  fontSize: style.inputFontSize,
+                  color: MedColors.text4,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+                isDense: true,
+                counterText: '',
+              ),
+            ),
           ),
-        ),
-        if (widget.fieldState == MedTextFieldState.error && widget.errorText != null) ...[
-          const SizedBox(height: 4),
-          Text(
-            widget.errorText!,
-            style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.red),
-          ),
-        ] else if (widget.helperText != null) ...[
-          const SizedBox(height: 4),
-          Text(
-            widget.helperText!,
-            style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.text3),
-          ),
+          if (widget.obscureText)
+            _PasswordToggleButton(
+              obscure: _obscure,
+              onToggle: () => setState(() => _obscure = !_obscure),
+            )
+          else if (widget.suffixWidget != null)
+            Padding(
+              padding: const EdgeInsets.only(left: MedSpacing.sm),
+              child: widget.suffixWidget!,
+            ),
         ],
-      ],
+      ),
     );
   }
 }
 
-// ── Şifre göster/gizle butonu ────────────────────────────────────
 class _PasswordToggleButton extends StatelessWidget {
   const _PasswordToggleButton({required this.obscure, required this.onToggle});
 
@@ -200,7 +218,7 @@ class _PasswordToggleButton extends StatelessWidget {
     return GestureDetector(
       onTap: onToggle,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
+        padding: const EdgeInsets.only(left: MedSpacing.sm),
         child: Icon(
           obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
           size: 18,
