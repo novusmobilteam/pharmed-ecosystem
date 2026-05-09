@@ -4,7 +4,6 @@ import '../../../../core/core.dart';
 import 'package:provider/provider.dart';
 
 import '../../../cabin/shared/cabin_inventory/view/cabin_inventory_view.dart';
-import '../../../station_stock/widgets/cabin_stock_view.dart';
 import '../notifier/medicine_disposal_notifier.dart';
 
 class MedicineDisposalView extends StatelessWidget {
@@ -46,18 +45,19 @@ class MedicineDisposalView extends StatelessWidget {
                   child: Text('İmha Et'),
                 ),
             ],
-            child: CabinStockView(
-              key: ValueKey(notifier.allItems),
-              // selectedAssignments: notifier.selectedItems,
-              // onTapUnit: (assignment) {
-              //   notifier.selectItem(
-              //     assignment,
-              //     onFailed: (msg) {
-              //       MessageUtils.showErrorSnackbar(context, msg);
-              //     },
-              //   );
-              // },
-            ),
+            child: SizedBox(),
+            // child: CabinStockView(
+            //   key: ValueKey(notifier.allItems),
+            //   // selectedAssignments: notifier.selectedItems,
+            //   // onTapUnit: (assignment) {
+            //   //   notifier.selectItem(
+            //   //     assignment,
+            //   //     onFailed: (msg) {
+            //   //       MessageUtils.showErrorSnackbar(context, msg);
+            //   //     },
+            //   //   );
+            //   // },
+            // ),
           );
         },
       ),

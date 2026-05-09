@@ -1,8 +1,6 @@
 // [SWREQ-CORE-CABIN-UC-008]
 // Sınıf: Class B
 
-import 'package:pharmed_core/src/models/management_card.dart';
-import 'package:pharmed_core/src/services/i_cabin_operation_service.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 class OpenDrawerUseCase {

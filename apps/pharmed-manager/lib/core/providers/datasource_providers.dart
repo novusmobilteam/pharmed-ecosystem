@@ -25,12 +25,14 @@ class DatasourceProviders {
       Provider(create: (context) => ServiceRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => StationRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => CabinStockRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => CabinStockLocalDataSource()),
       Provider(create: (context) => UnitRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => UserRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => WarehouseRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => WarningRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => RoleAuthorizationRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => UserAuthorizationRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => StockTransactionRemoteDataSource(apiManager: context.read())),
     ];
   }
 }

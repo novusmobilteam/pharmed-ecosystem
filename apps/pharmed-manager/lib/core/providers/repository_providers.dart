@@ -299,6 +299,20 @@ class RepositoryProviders {
           AppFlavor.dev || AppFlavor.prod => WarningRepositoryImpl(dataSource: context.read(), mapper: WarningMapper()),
         },
       ),
+
+      /// Stock Transaction
+      Provider<IStockTransactionRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => StockTransactionRepositoryImpl(
+            dataSource: context.read(),
+            mapper: StockTransactionMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => StockTransactionRepositoryImpl(
+            dataSource: context.read(),
+            mapper: StockTransactionMapper(),
+          ),
+        },
+      ),
     ];
   }
 }

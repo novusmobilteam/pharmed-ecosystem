@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
 import 'package:pharmed_manager/features/prescription/view/prescription_screen.dart';
+import 'package:pharmed_manager/features/reports/expired_items/view/expired_items_report_screen.dart';
+import 'package:pharmed_manager/features/reports/station_transaction/view/station_transaction_report_screen.dart';
 import 'package:pharmed_manager/features/role/view/role_screen.dart';
 import 'package:pharmed_manager/features/station_stock/view/station_stock_screen.dart';
 import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
@@ -135,6 +137,8 @@ class _HomeContent extends StatelessWidget {
       '-emergency-patient-end-manager' => UrgentPatientScreen(menu: menu!),
       'unappliedPrescriptions' => UnappliedPrescriptionsScreen(menu: menu!),
       'inconsistency' => InconsistencyScreen(menu: menu!),
+      'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),
+      'cabin-transaction-report' => StationTransactionReportScreen(menu: menu!),
       _ => const _NotFoundView(),
     };
   }

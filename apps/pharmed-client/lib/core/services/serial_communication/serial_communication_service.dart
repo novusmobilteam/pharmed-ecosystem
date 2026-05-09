@@ -146,7 +146,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
         ..parity = SerialPortParity.none
         ..stopBits = 1
         ..dtr = 0
-        ..rts = 0
+        ..rts = 1
         ..xonXoff = 0;
 
       port.config = config;
@@ -266,6 +266,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
   void _onDataReceived(Uint8List data) {
     if (_completer == null || _completer!.isCompleted) return;
+    debugPrint('📥 Ham veri geldi: ${data.length} byte — ${data.map((b) => b.toRadixString(16)).join(' ')}');
 
     try {
       final chunk = String.fromCharCodes(data);

@@ -13,3 +13,4 @@ export 'domain/usecase/get_expired_stocks_usecase.dart';
 export 'domain/usecase/get_expiring_stocks_usecase.dart';
 export 'domain/usecase/get_station_stocks_usecase.dart';
 export 'domain/usecase/refill_mobile_cabin_usecase.dart';
+export 'domain/usecase/refill_master_cabin_usecase.dart';

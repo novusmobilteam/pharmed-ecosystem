@@ -6,6 +6,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../notifier/mobile_refill_state.dart';
 
 part '../widgets/patient_picker_list_view.dart';
@@ -138,7 +139,7 @@ class _PrescriptionList extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 6, bottom: 6),
+      padding: const EdgeInsets.only(top: 6, bottom: 6, right: 2),
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];

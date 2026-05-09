@@ -15,17 +15,17 @@ import 'package:flutter/foundation.dart';
 class GetCabinVisualizerDataUseCase {
   const GetCabinVisualizerDataUseCase(
     this._cabinRepository,
-    this._stockRepository,
     this._settingsCache,
     this._getMasterFaults,
     this._getMobileFaults,
+    this._getCabinStocks,
   );
 
   final ICabinRepository _cabinRepository;
-  final ICabinStockRepository _stockRepository;
   final AppSettingsCache _settingsCache;
   final GetMasterCabinFaultRecordsUseCase _getMasterFaults;
   final GetMobileCabinFaultRecordsUseCase _getMobileFaults;
+  final GetCabinStockUseCase _getCabinStocks;
 
   /// [debugCabin] sadece kDebugMode'da geçilir.
   /// null → normal akış (cache'deki cabinId + deviceMode).
@@ -114,7 +114,7 @@ class GetCabinVisualizerDataUseCase {
   Future<RepoResult<CabinVisualizerData>> _buildStandardVisualizer(int cabinId) async {
     final (slotResult, stockResult, faultResult) = await (
       _cabinRepository.getCabinSlots(cabinId),
-      _stockRepository.getCurrentCabinStock(),
+      _getCabinStocks.call(cabinId),
       _getMasterFaults.call(),
     ).wait;
 
@@ -157,7 +157,7 @@ class GetCabinVisualizerDataUseCase {
 
     groups.sort((a, b) => a.orderNumber.compareTo(b.orderNumber));
 
-    final stocks = stockResult.when(success: (data) => data, stale: (data, _) => data, failure: (_) => <CabinStock>[]);
+    final stocks = stockResult.when(ok: (data) => data, error: (_) => <CabinStock>[]);
 
     final slotVisuals = _buildSlots(groups, stocks);
 

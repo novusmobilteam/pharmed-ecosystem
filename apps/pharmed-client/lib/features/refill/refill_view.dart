@@ -26,7 +26,7 @@ class RefillView extends ConsumerWidget {
 
     return switch (deviceModeAsync) {
       AsyncData(:final value) => switch (value) {
-        CabinType.master => MobileRefillView(data: cabinData),
+        CabinType.master => MasterRefillView(data: cabinData),
         CabinType.mobile => MobileRefillView(data: cabinData),
         _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       },

@@ -126,6 +126,7 @@ class UsecaseProviders {
       Provider(create: (context) => AssignRfidTagUseCase(context.read(), context.read())),
       Provider(create: (context) => DeleteRfidTagUseCase(context.read())),
       Provider(create: (context) => CheckAndApprovePrescriptionUseCase(context.read())),
+      Provider(create: (context) => CreatePrescriptionUseCase(prescriptionRepository: context.read())),
 
       /// Refund
       Provider(create: (context) => GetRefundablesUseCase(context.read())),
@@ -199,6 +200,12 @@ class UsecaseProviders {
       Provider(create: (context) => CreateWarningUseCase(context.read())),
       Provider(create: (context) => UpdateWarningUseCase(context.read())),
       Provider(create: (context) => DeleteWarningUseCase(context.read())),
+
+      /// Stock Transaction
+      Provider(create: (context) => CreateStockTransactionUseCase(context.read())),
+      Provider(create: (context) => DeleteStockTransactionUseCase(context.read())),
+      Provider(create: (context) => GetStockTransactionsUseCase(context.read())),
+      Provider(create: (context) => GetCabinStockTransactionsUseCase(context.read())),
     ];
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../cabin_operation/cabin_operation.dart';
 import '../cache/app_settings_cache.dart';
 import 'providers.dart';
 
@@ -133,10 +134,10 @@ final getMobileCabinFaultRecordsProvider = Provider<GetMobileCabinFaultRecordsUs
 final getCabinVisualizerDataUseCaseProvider = Provider<GetCabinVisualizerDataUseCase>((ref) {
   return GetCabinVisualizerDataUseCase(
     ref.read(cabinRepositoryProvider),
-    ref.read(cabinStockRepositoryProvider),
     ref.read(appSettingsCacheProvider),
     ref.read(getMasterCabinFaultRecordsProvider),
     ref.read(getMobileCabinFaultRecordsProvider),
+    ref.read(getCabinStocksUseCaseProvider),
   );
 });
 
@@ -183,6 +184,10 @@ final startMobileDrawerSessionUseCaseProvider = Provider<StartMobileDrawerSessio
   return StartMobileDrawerSessionUseCase(cabinOperationService: ref.read(cabinOperationServiceProvider));
 });
 
+final startMasterDrawerSessionUseCaseProvider = Provider<StartMasterDrawerSessionUseCase>((ref) {
+  return StartMasterDrawerSessionUseCase(ref.read(cabinOperationServiceProvider));
+});
+
 final testRfidConnectionUseCaseProvider = Provider<TestRfidConnectionUseCase>((ref) {
   return TestRfidConnectionUseCase(ref.read(rfidServiceProvider));
 });
@@ -197,4 +202,16 @@ final getPatientPrescriptionHistoryUseCaseProvider = Provider<GetPatientPrescrip
 
 final refillMobileCabinUseCaseProvider = Provider<RefillMobileCabinUseCase>((ref) {
   return RefillMobileCabinUseCase(ref.read(cabinStockRepositoryProvider));
+});
+
+final getCabinAssignmentsUseCaseProvider = Provider<GetCabinAssignmentsUseCase>((ref) {
+  return GetCabinAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
+final getCabinStocksUseCaseProvider = Provider<GetCabinStockUseCase>((ref) {
+  return GetCabinStockUseCase(ref.read(cabinStockRepositoryProvider));
+});
+
+final refillMasterCabinUsecaseProvider = Provider<RefillMasterCabinUseCase>((ref) {
+  return RefillMasterCabinUseCase(ref.read(cabinStockRepositoryProvider));
 });
