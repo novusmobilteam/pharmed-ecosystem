@@ -32,12 +32,11 @@ class UnloadMedicineParams {
   }
 }
 
-class UnloadMedicineUseCase implements UseCase<void, List<UnloadMedicineParams>> {
+class UnloadMedicineUseCase {
   final ICabinStockRepository _cabinStockRepository;
 
   UnloadMedicineUseCase(this._cabinStockRepository);
 
-  @override
   Future<Result<void>> call(List<UnloadMedicineParams> params) {
     final data = params.map((p) => p.toJson()).toList();
     return _cabinStockRepository.unload(data);

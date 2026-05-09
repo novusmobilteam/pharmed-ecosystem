@@ -26,8 +26,7 @@ class RectangleIconButton extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     // Arka plan rengi: Dışarıdan gelmezse hafif gri tonu (Tonal Style)
-    final backgroundColor =
-        color ?? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
+    final backgroundColor = color ?? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
 
     // İkon rengi: Dışarıdan gelmezse koyu gri
     final effectiveIconColor = iconColor ?? colorScheme.onSurfaceVariant;
@@ -50,8 +49,7 @@ class RectangleIconButton extends StatelessWidget {
                 iconData,
                 color: onPressed != null
                     ? effectiveIconColor
-                    : effectiveIconColor.withValues(
-                        alpha: 0.5), // Disabled durumu
+                    : effectiveIconColor.withValues(alpha: 0.5), // Disabled durumu
                 size: iconSize,
               ),
             ),

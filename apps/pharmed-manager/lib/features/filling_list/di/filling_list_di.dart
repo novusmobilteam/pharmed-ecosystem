@@ -2,7 +2,6 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 import '../data/datasource/filling_list_datasource.dart';
-import '../data/datasource/filling_list_local_datasource.dart';
 import '../data/datasource/filling_list_remote_datasource.dart';
 import '../data/repository/filling_list_repository.dart';
 import '../domain/repository/i_filling_list_repository.dart';
@@ -21,14 +20,7 @@ class FillingListProviders {
     return [
       Provider<FillingListDataSource>(
         create: (context) {
-          if (isDev) {
-            return FillingListLocalDataSource(
-              recordsPath: 'assets/mocks/filling_record.json',
-              detailsPath: 'assets/mocks/filling_detail.json',
-            );
-          } else {
-            return FillingListRemoteDataSource(apiManager: context.read());
-          }
+          return FillingListRemoteDataSource(apiManager: context.read());
         },
       ),
       Provider<IFillingListRepository>(

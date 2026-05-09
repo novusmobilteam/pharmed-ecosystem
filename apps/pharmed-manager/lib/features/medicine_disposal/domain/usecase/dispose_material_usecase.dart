@@ -13,12 +13,11 @@ class DisposeMaterialParams {
   }
 }
 
-class DisposeMaterialUseCase implements UseCase<void, List<DisposeMaterialParams>> {
+class DisposeMaterialUseCase {
   final IMedicineManagementRepository _repository;
 
   DisposeMaterialUseCase(this._repository);
 
-  @override
   Future<Result<void>> call(List<DisposeMaterialParams> params) async {
     final data = params.map((p) => p.toJson()).toList();
     return _repository.disposeMaterial(data);

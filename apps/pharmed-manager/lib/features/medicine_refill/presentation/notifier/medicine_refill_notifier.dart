@@ -3,12 +3,11 @@ import 'package:flutter/foundation.dart';
 import '../../../../../../../core/core.dart';
 
 import '../../../cabin/domain/entity/cabin_input_data.dart';
-import '../../domain/usecase/refill_medicine_usecase.dart';
 
 class MedicineRefillNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MedicineAssignment> {
-  final RefillMedicineUseCase _refillMedicineUseCase;
+  final RefillMasterCabinUseCase _refillMedicineUseCase;
 
-  MedicineRefillNotifier({required RefillMedicineUseCase refillMedicineUseCase})
+  MedicineRefillNotifier({required RefillMasterCabinUseCase refillMedicineUseCase})
     : _refillMedicineUseCase = refillMedicineUseCase;
 
   Future<Result<void>> fillCabin(List<CabinInputData> inputs) async {

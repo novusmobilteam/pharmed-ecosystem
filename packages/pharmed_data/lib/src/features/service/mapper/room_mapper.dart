@@ -1,12 +1,20 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/src/features/service/mapper/bed_mapper.dart';
 
+import 'service_mapper.dart';
+
 /// Room ↔ RoomDto dönüşümleri.
 class RoomMapper {
   const RoomMapper();
 
   Room toEntity(RoomDto dto) {
-    return Room(id: dto.id, serviceId: dto.serviceId, name: dto.name, beds: BedMapper().toEntityList(dto.beds ?? []));
+    return Room(
+      id: dto.id,
+      serviceId: dto.serviceId,
+      name: dto.name,
+      beds: BedMapper().toEntityList(dto.beds ?? []),
+      service: ServiceMapper().toEntityOrNull(dto.serviceDto),
+    );
   }
 
   Room? toEntityOrNull(RoomDto? dto) => dto == null ? null : toEntity(dto);

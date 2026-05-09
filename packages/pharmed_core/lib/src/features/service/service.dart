@@ -1,6 +1,6 @@
-export 'data/service_dto.dart';
-export 'data/room_dto.dart';
-export 'data/bed_dto.dart';
+export 'dto/service_dto.dart';
+export 'dto/room_dto.dart';
+export 'dto/bed_dto.dart';
 
 export 'domain/model/hospital_service.dart';
 export 'domain/model/room.dart';

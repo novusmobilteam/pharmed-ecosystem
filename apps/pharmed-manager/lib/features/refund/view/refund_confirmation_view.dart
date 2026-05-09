@@ -14,26 +14,16 @@ class RefundConfirmationView extends StatelessWidget {
         return Dialog(
           child: Container(
             padding: EdgeInsets.all(24.0),
-            constraints: const BoxConstraints(
-              minWidth: 340,
-              maxWidth: 420,
-            ),
+            constraints: const BoxConstraints(minWidth: 340, maxWidth: 420),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   height: 72,
                   width: 72,
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.primary,
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: BoxDecoration(color: context.colorScheme.primary, shape: BoxShape.circle),
                   child: Center(
-                    child: Icon(
-                      PhosphorIcons.trayArrowDown(),
-                      color: context.colorScheme.onPrimary,
-                      size: 32,
-                    ),
+                    child: Icon(PhosphorIcons.trayArrowDown(), color: context.colorScheme.onPrimary, size: 32),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -65,24 +55,19 @@ class RefundConfirmationView extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: PharmedButton(
-                        onPressed: () => context.pop(false),
-                        label: 'İptal',
-                        backgroundColor: context.colorScheme.surfaceContainer,
-                        foregroundColor: context.colorScheme.onSurface,
-                      ),
+                      child: MedButton(onPressed: () => context.pop(false), label: 'İptal'),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: PharmedButton(
+                      child: MedButton(
                         onPressed: () {
                           context.pop(true);
                         },
                         label: 'Tamamla',
                       ),
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

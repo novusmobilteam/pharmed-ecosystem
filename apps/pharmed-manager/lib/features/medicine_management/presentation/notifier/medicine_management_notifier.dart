@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../auth/presentation/notifier/auth_notifier.dart';
+import '../../../auth/notifier/auth_notifier.dart';
 
 enum MedicineManagementType { allPatients, myPatients }
 

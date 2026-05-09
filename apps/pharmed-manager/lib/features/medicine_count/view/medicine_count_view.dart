@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/core.dart';
 import '../../cabin/shared/cabin_process/view/cabin_process_wrapper.dart';
-import '../../station_stock/widgets/cabin_stock_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../cabin/shared/cabin_assignment_picker/notifier/cabin_assignment_picker_notifier.dart';
@@ -107,12 +106,13 @@ class _MedicineCountViewState extends State<MedicineCountView> {
           },
         );
       },
-      child: CabinStockView(
-        key: _stockViewKey,
-        // onTapUnit: isCabinMode ? null : notifier.selectAssignment,
-        // selectedAssignments: isCabinMode ? [] : notifier.selectedAssignments,
-        // onDataLoaded: notifier.setAllAssignments,
-      ),
+      child: SizedBox(),
+      // child: CabinStockView(
+      //   key: _stockViewKey,
+      //   // onTapUnit: isCabinMode ? null : notifier.selectAssignment,
+      //   // selectedAssignments: isCabinMode ? [] : notifier.selectedAssignments,
+      //   // onDataLoaded: notifier.setAllAssignments,
+      // ),
     );
   }
 

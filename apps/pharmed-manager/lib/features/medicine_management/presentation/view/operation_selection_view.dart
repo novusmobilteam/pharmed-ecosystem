@@ -8,7 +8,7 @@ class OperationSelectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final operations = [
+    final _ = [
       MenuItem(
         label: 'Alım',
         // icon: PhosphorIcons.trayArrowDown(),
@@ -51,7 +51,7 @@ class OperationSelectionView extends StatelessWidget {
       title: 'Hasta İlaç İşlemleri',
       maxHeight: context.height * 0.6,
       width: context.width * 0.5,
-      child: SubGridMenuView(items: operations),
+      child: Center(),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
-import '../../../auth/presentation/notifier/auth_notifier.dart';
+import '../../../auth/notifier/auth_notifier.dart';
 import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 
 import '../../domain/mapper/withdraw_item_mapper.dart';

@@ -8,7 +8,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import '../../features/auth/presentation/notifier/auth_notifier.dart';
+import '../../features/auth/notifier/auth_notifier.dart';
 import '../config/auth_config.dart';
 
 class AuthProviders {

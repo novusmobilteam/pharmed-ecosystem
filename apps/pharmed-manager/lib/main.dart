@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'core/providers/providers.dart';
 import 'core/routing/app_router.dart';
-import 'features/prescription/prescription.dart';
 import 'features/role/role.dart';
 
 void main() async {
@@ -30,34 +29,9 @@ class ManagerApp extends StatelessWidget {
       providers: [
         ...CoreProviders.providers(),
         ...AuthProviders.providers(),
-        ...MenuProviders.providers(),
-        ...StationProviders.providers(),
-        ...ServiceProviders.providers(),
-        ...WarehouseProviders.providers(),
-        ...UserProviders.providers(),
-        ...BranchProviders.providers(),
-        ...FirmProviders.providers(),
-        ...MedicineProviders.providers(),
-        ...ActiveIngredientProviders.providers(),
-        ...DrugTypeProviders.providers(),
-        ...DrugClassProviders.providers(),
-        ...UnitProviders.providers(),
-        ...DosageFormProviders.providers(),
-        ...DrugClassProviders.providers(),
-        ...DrugTypeProviders.providers(),
-        ...MaterialTypeProviders.providers(),
-        ...PatientProviders.providers(),
-        ...KitContentProviders.providers(),
-        ...KitProviders.providers(),
-        ...WarningProviders.providers(),
-        ...HospitalizationProviders.providers(),
-        ...PrescriptionProviders.providers(),
-        ...RefundProviders.providers(),
-        ...StationStockProviders.providers(),
-        ...RoleProviders.providers(),
-        ...AuthorizationProviders.providers(),
-        ...InconsistencyProviders.providers(),
-
+        ...DatasourceProviders.providers(),
+        ...RepositoryProviders.providers(),
+        ...UsecaseProviders.providers(),
         ChangeNotifierProvider(
           create: (ctx) => HomeNotifier(getFilteredMenusUseCase: ctx.read(), authNotifier: ctx.read()),
         ),

@@ -55,7 +55,7 @@ class UserTableView extends StatelessWidget {
         } else {
           final days = user.validUntil?.difference(DateTime.now()).inDays;
           return days != null
-              ? RemainingDayBadge(days: days)
+              ? RemainingDayChip(days: days)
               : const Text('-', style: TextStyle(fontSize: 13, color: Color(0xFF4B5563)));
         }
 

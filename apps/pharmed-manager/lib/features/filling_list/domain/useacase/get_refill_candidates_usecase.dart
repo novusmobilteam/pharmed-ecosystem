@@ -10,12 +10,11 @@ class GetRefillCandidatesParams {
   GetRefillCandidatesParams({required this.type, required this.stationId});
 }
 
-class GetRefillCandidatesUseCase implements UseCase<List<FillingObject>, GetRefillCandidatesParams> {
+class GetRefillCandidatesUseCase {
   final IFillingListRepository _repository;
 
   GetRefillCandidatesUseCase(this._repository);
 
-  @override
   Future<Result<List<FillingObject>>> call(GetRefillCandidatesParams params) async {
     final type = params.type;
     final stationId = params.stationId;

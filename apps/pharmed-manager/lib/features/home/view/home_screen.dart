@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/features/auth/presentation/notifier/auth_notifier.dart';
+import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
-import 'package:pharmed_manager/features/prescription/presentation/view/prescription_screen.dart';
-import 'package:pharmed_manager/features/role/presentation/view/role_screen.dart';
+import 'package:pharmed_manager/features/prescription/view/prescription_screen.dart';
+import 'package:pharmed_manager/features/reports/expired_items/view/expired_items_report_screen.dart';
+import 'package:pharmed_manager/features/reports/station_transaction/view/station_transaction_report_screen.dart';
+import 'package:pharmed_manager/features/role/view/role_screen.dart';
 import 'package:pharmed_manager/features/station_stock/view/station_stock_screen.dart';
 import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -13,7 +15,7 @@ import '../../../../core/core.dart';
 import '../../authorization/authorization_screen.dart';
 import '../../hospitalization/view/hospitalization_screen.dart';
 import '../../inconsistency/view/inconsistency_screen.dart';
-import '../../medicine/presentation/view/medicine_screen.dart';
+import '../../medicine/view/medicine_screen.dart';
 import '../../refund/view/drawer_refund_screen.dart';
 import '../../refund/view/pharmacy_refund_screen.dart';
 import '../../station_setup/view/station_screen.dart';
@@ -64,12 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(
                   width: 200,
-                  child: PharmedButton(
+                  child: MedButton(
                     onPressed: () {
                       context.read<AuthNotifier>().logout();
                     },
                     label: 'Çıkış Yap',
-                    backgroundColor: Colors.black,
                   ),
                 ),
               ],
@@ -136,6 +137,8 @@ class _HomeContent extends StatelessWidget {
       '-emergency-patient-end-manager' => UrgentPatientScreen(menu: menu!),
       'unappliedPrescriptions' => UnappliedPrescriptionsScreen(menu: menu!),
       'inconsistency' => InconsistencyScreen(menu: menu!),
+      'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),
+      'cabin-transaction-report' => StationTransactionReportScreen(menu: menu!),
       _ => const _NotFoundView(),
     };
   }

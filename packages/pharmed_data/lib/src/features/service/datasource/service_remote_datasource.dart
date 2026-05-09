@@ -12,7 +12,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-SERVICE';
 
-  Future<Result<ApiResponse<List<ServiceDTO>>?>> getServices({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<ServiceDto>>?>> getServices({int? skip, int? take, String? search}) async {
     final res = await fetchRequest(
       path: _base,
       skip: skip,
@@ -20,7 +20,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
       searchText: search,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(ServiceDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(ServiceDto.fromJson),
       successLog: 'Servisler getirildi',
       emptyLog: 'Servis bulunamadı',
     );
@@ -31,10 +31,10 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<ServiceDTO>?>> getAllServices() async {
+  Future<Result<List<ServiceDto>?>> getAllServices() async {
     final res = await fetchRequest(
       path: '$_base',
-      parser: BaseRemoteDataSource.listParser(ServiceDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(ServiceDto.fromJson),
       successLog: 'Servis getirildi',
       emptyLog: 'Servis bulunamadı',
     );
@@ -42,10 +42,10 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data), error: Result.error);
   }
 
-  Future<Result<ServiceDTO?>> getService(int serviceId) async {
+  Future<Result<ServiceDto?>> getService(int serviceId) async {
     final res = await fetchRequest(
       path: '$_base/$serviceId',
-      parser: BaseRemoteDataSource.singleParser(ServiceDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(ServiceDto.fromJson),
       successLog: 'Servis getirildi',
       emptyLog: 'Servis bulunamadı',
     );
@@ -53,7 +53,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data), error: Result.error);
   }
 
-  Future<Result<void>> createService(ServiceDTO dto) {
+  Future<Result<void>> createService(ServiceDto dto) {
     print(dto.toJson());
     return postRequest(
       path: _base,
@@ -63,7 +63,7 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> updateService(ServiceDTO dto) {
+  Future<Result<void>> updateService(ServiceDto dto) {
     print(dto.toJson());
     print(dto.toJson().toString());
     return putRequest(

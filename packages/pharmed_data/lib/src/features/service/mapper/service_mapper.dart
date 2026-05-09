@@ -5,7 +5,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 class ServiceMapper {
   const ServiceMapper();
 
-  HospitalService toEntity(ServiceDTO dto) {
+  HospitalService toEntity(ServiceDto dto) {
     return HospitalService(
       id: dto.id,
       name: dto.name,
@@ -16,12 +16,12 @@ class ServiceMapper {
     );
   }
 
-  HospitalService? toEntityOrNull(ServiceDTO? dto) => dto == null ? null : toEntity(dto);
+  HospitalService? toEntityOrNull(ServiceDto? dto) => dto == null ? null : toEntity(dto);
 
-  List<HospitalService> toEntityList(List<ServiceDTO> dtos) => dtos.map(toEntity).toList();
+  List<HospitalService> toEntityList(List<ServiceDto> dtos) => dtos.map(toEntity).toList();
 
-  ServiceDTO toDto(HospitalService entity) {
-    return ServiceDTO(
+  ServiceDto toDto(HospitalService entity) {
+    return ServiceDto(
       id: entity.id,
       name: entity.name,
       isActive: entity.isActive,
@@ -32,7 +32,7 @@ class ServiceMapper {
     );
   }
 
-  ServiceDTO? toDtoOrNull(HospitalService? entity) => entity == null ? null : toDto(entity);
+  ServiceDto? toDtoOrNull(HospitalService? entity) => entity == null ? null : toDto(entity);
 
-  List<ServiceDTO> toDtoList(List<HospitalService> entities) => entities.map(toDto).toList();
+  List<ServiceDto> toDtoList(List<HospitalService> entities) => entities.map(toDto).toList();
 }

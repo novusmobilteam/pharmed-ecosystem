@@ -219,10 +219,6 @@ class _MasterDrawerBody extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _MasterKubicView
-// ─────────────────────────────────────────────────────────────────
-
 class _MasterKubicView extends StatelessWidget {
   const _MasterKubicView({
     required this.group,
@@ -293,10 +289,6 @@ class _MasterKubicView extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _MasterUnitDoseView
-// ─────────────────────────────────────────────────────────────────
-
 class _MasterUnitDoseView extends StatelessWidget {
   const _MasterUnitDoseView({
     required this.group,
@@ -352,6 +344,7 @@ class _MasterUnitDoseView extends StatelessWidget {
                     selectedUnitId: selectedUnitId,
                     selectedStepNo: selectedStepNo,
                     onCellTap: onCellTap,
+                    isGroupSelected: selectedUnitId == group.units[gi].id,
                   ),
                 ),
                 if (gi < group.units.length - 1)
@@ -371,10 +364,6 @@ class _MasterUnitDoseView extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// _MasterUnitDoseColumn
-// ─────────────────────────────────────────────────────────────────
-
 class _MasterUnitDoseColumn extends StatelessWidget {
   const _MasterUnitDoseColumn({
     required this.unit,
@@ -388,6 +377,7 @@ class _MasterUnitDoseColumn extends StatelessWidget {
     this.selectedUnitId,
     this.selectedStepNo,
     this.onCellTap,
+    this.isGroupSelected = false,
   });
 
   final DrawerUnit unit;
@@ -401,8 +391,12 @@ class _MasterUnitDoseColumn extends StatelessWidget {
   final int? selectedUnitId;
   final int? selectedStepNo;
   final void Function(DrawerUnit unit, int? stepNo)? onCellTap;
+  final bool isGroupSelected;
 
   bool get _isUnitSelected => selectedUnitId == unit.id;
+
+  // Column border için: kübik → _isUnitSelected, birim doz → isGroupSelected
+  bool get _showColumnBorder => _isUnitSelected || isGroupSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -412,7 +406,7 @@ class _MasterUnitDoseColumn extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       decoration: BoxDecoration(
-        border: Border.all(color: _isUnitSelected ? MedColors.blue : Colors.transparent, width: 2),
+        border: Border.all(color: _showColumnBorder ? MedColors.blue : Colors.transparent, width: 2),
         borderRadius: BorderRadius.circular(6),
       ),
       padding: const EdgeInsets.all(2),
@@ -432,9 +426,8 @@ class _MasterUnitDoseColumn extends StatelessWidget {
                         assignment: assignment,
                         mode: mode,
                         code: 'G${groupIndex + 1}·${step * stepMultiplier + w + 1}',
-                        isSelected: _isUnitSelected && selectedStepNo == step * stepMultiplier + w + 1,
+                        isSelected: false,
                         isKubik: false,
-
                         onTap: unit.workingStatus == CabinWorkingStatus.working || mode == CabinOperationMode.fault
                             ? () => onCellTap?.call(unit, step * stepMultiplier + w + 1)
                             : null,
@@ -450,10 +443,6 @@ class _MasterUnitDoseColumn extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// _MasterCabinCell
-// ─────────────────────────────────────────────────────────────────
 
 class _MasterCabinCell extends StatelessWidget {
   const _MasterCabinCell({
@@ -571,13 +560,13 @@ class _MasterCabinCell extends StatelessWidget {
     if (mode == CabinOperationMode.assign) return Center(child: _cellContent());
 
     final s = stock;
-    if (s == null) return const SizedBox.shrink();
-    return Center(child: _stockContent(s));
+    if (s != null) return Center(child: _stockContent(s));
+    return Center(child: _assignContent());
   }
 
   Widget _cellContent() => switch (mode) {
     CabinOperationMode.assign => _assignContent(),
-    CabinOperationMode.refill || CabinOperationMode.count => _stockFillContent(),
+    CabinOperationMode.count || CabinOperationMode.refill => stock != null ? _stockFillContent() : _assignContent(),
     CabinOperationMode.fault => const SizedBox.shrink(),
   };
 

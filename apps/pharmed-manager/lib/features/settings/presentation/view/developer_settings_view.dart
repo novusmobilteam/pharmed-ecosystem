@@ -40,7 +40,7 @@ class DeveloperSettingsView extends StatelessWidget {
 
   Widget _modeButton(BuildContext context, String label, AppMode mode) {
     final isActive = settings.currentMode == mode;
-    return PharmedButton(
+    return MedButton(
       isActive: isActive,
       onPressed: () {
         settings.setCurrentMode(mode);
