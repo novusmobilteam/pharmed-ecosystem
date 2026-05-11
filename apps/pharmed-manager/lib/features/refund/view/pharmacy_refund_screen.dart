@@ -3,8 +3,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
+
 import '../notifier/completed_pharmacy_refund_notifier.dart';
 import '../notifier/pharmacy_refund_notifier.dart';
 
@@ -55,7 +54,7 @@ class _RefundTableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UnifiedTableView<Refund>(
+    return MedTable<Refund>(
       data: notifier.categoryFilteredItems,
       isLoading: notifier.isFetching,
       categories: notifier.tableCategories,

@@ -31,7 +31,7 @@ class ScannedBarcodesView extends StatelessWidget {
             return CommonEmptyStates.noData();
           }
 
-          return UnifiedTableView<PrescriptionItem>(
+          return MedTable<PrescriptionItem>(
             data: notifier.scannedBarcodes,
             horizontalScroll: true,
             minTableWidth: 3000,

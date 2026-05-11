@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/widgets/side_panel.dart';
-import '../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../../core/widgets/unified_table/unified_table_view.dart';
+
 import '../../authorization_notifier.dart';
 import '../notifier/role_table_notifier.dart';
 
@@ -29,7 +28,7 @@ class RoleTableView extends StatelessWidget {
       value: context.read<RoleTableNotifier>(),
       child: Consumer<RoleTableNotifier>(
         builder: (context, notifier, child) {
-          return UnifiedTableView<Role>(
+          return MedTable<Role>(
             data: notifier.items,
             isLoading: notifier.isFetching,
             enableSearch: true,

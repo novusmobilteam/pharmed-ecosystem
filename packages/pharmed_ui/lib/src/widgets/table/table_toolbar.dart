@@ -1,4 +1,4 @@
-part of 'unified_table_view.dart';
+part of 'med_table_view.dart';
 
 class _TableToolbar<T extends TableData> extends StatelessWidget {
   const _TableToolbar({
@@ -47,24 +47,15 @@ class _TableToolbar<T extends TableData> extends StatelessWidget {
         children: [
           // ── Sol: seçim bilgisi VEYA arama + tarih filtresi
           if (_hasSelection) ...[
-            _SelectionInfo(
-              count: selectedCount,
-              onClear: onClearSelection,
-            ),
+            _SelectionInfo(count: selectedCount, onClear: onClearSelection),
             const SizedBox(width: 12),
             if (selectionActions != null)
-              ...selectionActions!.map((w) => Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: w,
-                  )),
+              ...selectionActions!.map((w) => Padding(padding: const EdgeInsets.only(right: 6), child: w)),
           ] else ...[
             if (enableSearch)
               SizedBox(
                 width: 240,
-                child: _SearchField(
-                  controller: searchController,
-                  onChanged: onSearchChanged,
-                ),
+                child: _SearchField(controller: searchController, onChanged: onSearchChanged),
               ),
           ],
 
@@ -72,10 +63,7 @@ class _TableToolbar<T extends TableData> extends StatelessWidget {
 
           // ── Sağ: tarih filtresi + export (her zaman)
           if (!_hasSelection && enableDateFilter) ...[
-            _DateFilterBtn(
-              active: currentDateRange != null,
-              onPressed: onDateFilterPressed ?? () {},
-            ),
+            _DateFilterBtn(active: currentDateRange != null, onPressed: onDateFilterPressed ?? () {}),
             const SizedBox(width: 6),
           ],
           if (_hasExport) ...[
@@ -127,17 +115,10 @@ class _SelectionInfo extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: const Color(0xFF2563EB),
-            borderRadius: BorderRadius.circular(6),
-          ),
+          decoration: BoxDecoration(color: const Color(0xFF2563EB), borderRadius: BorderRadius.circular(6)),
           child: Text(
             '$count seçili',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
           ),
         ),
         const SizedBox(width: 10),
@@ -145,11 +126,7 @@ class _SelectionInfo extends StatelessWidget {
           onTap: onClear,
           child: const Text(
             'Temizle',
-            style: TextStyle(
-              fontSize: 12,
-              color: Color(0xFF2563EB),
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 12, color: Color(0xFF2563EB), fontWeight: FontWeight.w500),
           ),
         ),
       ],
@@ -241,9 +218,7 @@ class _ExportBtnState extends State<_ExportBtn> {
           decoration: BoxDecoration(
             color: _hovered ? widget.bgColor : Colors.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: _hovered ? widget.color.withValues(alpha: 0.3) : widget.borderColor,
-            ),
+            border: Border.all(color: _hovered ? widget.color.withValues(alpha: 0.3) : widget.borderColor),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -252,11 +227,7 @@ class _ExportBtnState extends State<_ExportBtn> {
               const SizedBox(width: 5),
               Text(
                 widget.label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: widget.color,
-                ),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: widget.color),
               ),
             ],
           ),
@@ -299,18 +270,14 @@ class _DateFilterBtnState extends State<_DateFilterBtn> {
               color: widget.active
                   ? const Color(0xFF2563EB).withValues(alpha: 0.08)
                   : _hovered
-                      ? const Color(0xFFF5F7FA)
-                      : Colors.white,
+                  ? const Color(0xFFF5F7FA)
+                  : Colors.white,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: widget.active ? const Color(0xFF2563EB).withValues(alpha: 0.3) : const Color(0xFFE5E7EB),
               ),
             ),
-            child: Icon(
-              widget.active ? Icons.event_available : Icons.calendar_today_outlined,
-              size: 15,
-              color: color,
-            ),
+            child: Icon(widget.active ? Icons.event_available : Icons.calendar_today_outlined, size: 15, color: color),
           ),
         ),
       ),

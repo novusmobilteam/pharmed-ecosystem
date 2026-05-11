@@ -3,7 +3,6 @@ import '../../../../core/core.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../../../core/widgets/unified_table/unified_table_view.dart';
 import '../notifier/expired_items_report_notifier.dart';
 
 class ExpiredItemsReportScreen extends StatelessWidget {
@@ -25,7 +24,7 @@ class ExpiredItemsReportScreen extends StatelessWidget {
                 title: menu.name ?? 'S.K.T Geçmiş Malzemeler',
                 subtitle: menu.description,
                 showAddButton: false,
-                child: UnifiedTableView(
+                child: MedTable(
                   data: notifier.filteredItems,
                   isLoading: notifier.isFetching,
                   enableSearch: true,

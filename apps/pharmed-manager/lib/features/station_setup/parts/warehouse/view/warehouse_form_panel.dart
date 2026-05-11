@@ -15,13 +15,13 @@ class WarehouseFormPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final setupNotifier = context.watch<StationSetupNotifier>();
     final formKey = GlobalKey<FormState>();
-    final isNew = setupNotifier.editingWarehouse == null;
+    final isNew = setupNotifier.selectedWarehouse == null;
 
     return ChangeNotifierProvider(
       create: (BuildContext context) => WarehouseFormNotifier(
         createWarehouseUseCase: context.read(),
         updateWarehouseUseCase: context.read(),
-        warehouse: setupNotifier.editingWarehouse,
+        warehouse: setupNotifier.selectedWarehouse,
       ),
       child: Consumer<WarehouseFormNotifier>(
         builder: (context, notifier, _) {

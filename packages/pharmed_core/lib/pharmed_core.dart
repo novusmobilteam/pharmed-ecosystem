@@ -106,5 +106,8 @@ export 'src/services/i_rfid_service.dart';
 export 'src/services/i_serial_communication_service.dart';
 export 'src/services/usecase/test_cabin_connection_usecase.dart';
 export 'src/services/usecase/test_rfid_connection_usecase.dart';
+export 'src/services/export/excel_export_service.dart';
+export 'src/services/export/pdf_export_service.dart';
+export 'src/services/file/desktop_file_service.dart';
 
 export 'src/utils/command_builder.dart';

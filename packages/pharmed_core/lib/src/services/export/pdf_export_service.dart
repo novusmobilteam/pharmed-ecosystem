@@ -6,9 +6,10 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:printing/printing.dart';
 
-import '../../core.dart';
 import '../file/desktop_file_service.dart';
 import 'excel_export_service.dart'; // ExportBehavior için
 
@@ -31,17 +32,9 @@ class PdfExportService {
       if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
         File? savedFile;
         if (showSaveDialog) {
-          savedFile = await DesktopFileService.saveFile(
-            extension: 'pdf',
-            bytes: bytes,
-            fileName: fileName,
-          );
+          savedFile = await DesktopFileService.saveFile(extension: 'pdf', bytes: bytes, fileName: fileName);
         } else {
-          savedFile = await DesktopFileService.saveToDesktop(
-            bytes: bytes,
-            fileName: fileName,
-            extension: 'pdf',
-          );
+          savedFile = await DesktopFileService.saveToDesktop(bytes: bytes, fileName: fileName, extension: 'pdf');
         }
 
         if (savedFile != null) {
@@ -112,22 +105,13 @@ class PdfExportService {
     final columnNames = columns.map((col) => _getColumnName(col)).toList();
     final rowData = data.map((item) => item.content).toList();
 
-    await directPrint(
-      columnNames: columnNames,
-      data: rowData,
-      context: context,
-      title: title,
-    );
+    await directPrint(columnNames: columnNames, data: rowData, context: context, title: title);
   }
 
   // === PRIVATE HELPERS (ORTAK MANTIK) ===
 
   // PDF Oluşturma Mantığı (Tek Bir Yerde)
-  static Future<pw.Document> _generateDocument(
-    String title,
-    List<String> headers,
-    List<List<dynamic>> data,
-  ) async {
+  static Future<pw.Document> _generateDocument(String title, List<String> headers, List<List<dynamic>> data) async {
     final doc = pw.Document();
     final font = await PdfGoogleFonts.robotoRegular();
     final fontBold = await PdfGoogleFonts.robotoBold();
@@ -138,11 +122,7 @@ class PdfExportService {
         margin: const pw.EdgeInsets.all(32),
         theme: pw.ThemeData.withFont(base: font, bold: fontBold),
         build: (pw.Context pdfContext) {
-          return [
-            _buildHeader(title),
-            pw.SizedBox(height: 20),
-            _buildTable(headers, data),
-          ];
+          return [_buildHeader(title), pw.SizedBox(height: 20), _buildTable(headers, data)];
         },
         footer: (pw.Context context) => _buildFooter(context),
       ),
@@ -157,8 +137,10 @@ class PdfExportService {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(title, style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
-          pw.Text(DateTime.now().toString().substring(0, 16),
-              style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey)),
+          pw.Text(
+            DateTime.now().toString().substring(0, 16),
+            style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey),
+          ),
         ],
       ),
     );
@@ -173,8 +155,9 @@ class PdfExportService {
       cellAlignment: pw.Alignment.centerLeft,
       headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
       headerDecoration: const pw.BoxDecoration(color: PdfColors.blueGrey700),
-      rowDecoration:
-          const pw.BoxDecoration(border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey300, width: 0.5))),
+      rowDecoration: const pw.BoxDecoration(
+        border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey300, width: 0.5)),
+      ),
       cellPadding: const pw.EdgeInsets.symmetric(horizontal: 5, vertical: 8),
       oddRowDecoration: const pw.BoxDecoration(color: PdfColors.grey100),
     );
@@ -184,8 +167,10 @@ class PdfExportService {
     return pw.Container(
       alignment: pw.Alignment.centerRight,
       margin: const pw.EdgeInsets.only(top: 10.0),
-      child: pw.Text('Sayfa ${context.pageNumber} / ${context.pagesCount}',
-          style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey)),
+      child: pw.Text(
+        'Sayfa ${context.pageNumber} / ${context.pagesCount}',
+        style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey),
+      ),
     );
   }
 

@@ -73,7 +73,7 @@ class UserTableView extends StatelessWidget {
       builder: (context, vm, _) {
         final colDefs = _buildColumnDefs(vm.selectedCategory);
 
-        return UnifiedTableView<User>(
+        return MedTable<User>(
           data: vm.users,
           isLoading: vm.isFetching,
           categories: vm.tableCategories,

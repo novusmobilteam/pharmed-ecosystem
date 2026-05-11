@@ -97,8 +97,8 @@ class _CodeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HospitalizationFormNotifier>(
       builder: (context, notifier, _) {
-        return Lockable(
-          locked: true,
+        return IgnorePointer(
+          ignoring: true,
           child: TextInputField(
             label: 'Yatış Kodu',
             initialValue: notifier.hospitalization?.code.toString(),

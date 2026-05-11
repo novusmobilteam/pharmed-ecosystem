@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
 
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-
 class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<User>, SidePanelMixin<User, Never> {
   final GetUsersUseCase _getUsersUseCase;
   final DeleteUserUseCase _deleteUserUseCase;

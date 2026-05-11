@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
 import '../notifier/drawer_refund_notifier.dart';
 
 class DrawerRefundScreen extends StatelessWidget {
@@ -23,7 +22,7 @@ class DrawerRefundScreen extends StatelessWidget {
               title: menu.name ?? 'İade Çekmece Kontrol',
               subtitle: menu.description,
               showAddButton: false,
-              child: UnifiedTableView<Refund>(
+              child: MedTable<Refund>(
                 data: notifier.categoryFilteredItems,
                 isLoading: notifier.isFetching,
                 categories: notifier.tableCategories,

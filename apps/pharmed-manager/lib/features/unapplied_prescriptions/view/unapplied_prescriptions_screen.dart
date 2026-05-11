@@ -3,8 +3,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
+
 import '../notifier/unapplied_prescriptions_notifier.dart';
 
 part 'prescription_detail_view.dart';
@@ -31,7 +30,7 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
                 title: menu.name ?? 'Uygulanmamış Reçeteler',
                 subtitle: menu.description,
                 showAddButton: false,
-                child: UnifiedTableView<Prescription>(
+                child: MedTable<Prescription>(
                   data: notifier.filteredItems,
                   isLoading: notifier.isFetching,
                   enableExcel: true,

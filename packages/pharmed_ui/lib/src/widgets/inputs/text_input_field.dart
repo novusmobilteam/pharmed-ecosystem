@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'med_input_decorator.dart';
-import 'input_field_style.dart';
 
 // Yeniden yazıldı: BaseInputField kalıtımı kaldırıldı, MedInputDecorator
 // kompozisyon modeline geçildi. Herkese açık API değişmedi.
@@ -140,11 +138,7 @@ class _TextInputFieldState extends State<TextInputField> {
                 contentPadding: EdgeInsets.zero,
                 counterText: '',
                 hintText: widget.hintText,
-                hintStyle: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: style.inputFontSize,
-                  color: MedColors.text4,
-                ),
+                hintStyle: TextStyle(fontFamily: MedFonts.sans, fontSize: style.inputFontSize, color: MedColors.text4),
                 suffixIcon: widget.suffixIcon,
                 suffixIconConstraints: const BoxConstraints(minWidth: 24, minHeight: 24),
               ),

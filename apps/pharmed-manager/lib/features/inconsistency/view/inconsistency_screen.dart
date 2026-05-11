@@ -3,8 +3,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
+
 import '../notifier/inconsistency_notifier.dart';
 
 // part 'inconsistency_detail_view.dart';
@@ -29,7 +28,7 @@ class InconsistencyScreen extends StatelessWidget {
               title: menu.name ?? 'Tutarsızlık Hareketleri',
               subtitle: menu.description,
               showAddButton: false,
-              child: UnifiedTableView<Inconsistency>(
+              child: MedTable<Inconsistency>(
                 data: notifier.filteredItems,
                 enableExcel: true,
                 enableSearch: true,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/unified_table/unified_table_view.dart';
+import 'package:pharmed_ui/src/widgets/table/med_table_view.dart';
 import '../../../../core/core.dart';
 import '../notifier/station_transaction_report_notifier.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +24,7 @@ class StationTransactionReportScreen extends StatelessWidget {
           subtitle: menu.description,
           child: Consumer<StationTransactionReportNotifier>(
             builder: (context, notifier, _) {
-              return UnifiedTableView(
+              return MedTable(
                 isLoading: notifier.isFetching,
                 enableSearch: true,
                 onSearchChanged: notifier.search,

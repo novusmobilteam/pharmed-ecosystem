@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-
-import '../../core.dart';
 
 enum TableSelectionMode {
   /// Seçim yok — satırlara tıklanamaz
@@ -59,21 +58,13 @@ class TableColumnDef {
 /// [colIndex]  → kolonun listedeki sırası (0-based)
 /// [value]     → item.content[contentIndex] (contentIndex null ise null)
 /// null döndürülürse varsayılan text render kullanılır.
-typedef CellBuilder<T extends TableData> = Widget? Function(
-  T item,
-  int colIndex,
-  dynamic value,
-);
+typedef CellBuilder<T extends TableData> = Widget? Function(T item, int colIndex, dynamic value);
 
 class TableSideCategory {
   final String id;
   final String label;
   final int? count;
-  const TableSideCategory({
-    required this.id,
-    required this.label,
-    this.count,
-  });
+  const TableSideCategory({required this.id, required this.label, this.count});
 }
 
 // ─── ACTION ITEM ─────────────────────────────────────────────────────────────
@@ -96,19 +87,10 @@ class TableActionItem<T extends TableData> {
   });
 
   factory TableActionItem.edit({required void Function(T item) onPressed}) {
-    return TableActionItem(
-      icon: PhosphorIcons.pen(),
-      tooltip: 'Düzenle',
-      onPressed: onPressed,
-    );
+    return TableActionItem(icon: PhosphorIcons.pen(), tooltip: 'Düzenle', onPressed: onPressed);
   }
 
   factory TableActionItem.delete({required void Function(T item) onPressed}) {
-    return TableActionItem(
-      icon: PhosphorIcons.trashSimple(),
-      tooltip: 'Sil',
-      color: Colors.red,
-      onPressed: onPressed,
-    );
+    return TableActionItem(icon: PhosphorIcons.trashSimple(), tooltip: 'Sil', color: Colors.red, onPressed: onPressed);
   }
 }

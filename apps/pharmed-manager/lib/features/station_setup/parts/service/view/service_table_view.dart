@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../../../core/widgets/unified_table/unified_table_view.dart';
+
 import '../../../notifier/station_setup_notifier.dart';
 import '../notifier/service_notifier.dart';
 
@@ -15,7 +14,7 @@ class ServiceTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ServiceNotifier>(
       builder: (context, notifier, _) {
-        return UnifiedTableView<HospitalService>(
+        return MedTable<HospitalService>(
           data: notifier.filteredItems,
           isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
           enableExcel: true,

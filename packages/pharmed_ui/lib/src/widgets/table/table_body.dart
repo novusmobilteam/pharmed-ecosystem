@@ -1,4 +1,4 @@
-part of 'unified_table_view.dart';
+part of 'med_table_view.dart';
 
 class _TableBody<T extends TableData> extends StatelessWidget {
   const _TableBody({
@@ -58,8 +58,9 @@ class _TableBody<T extends TableData> extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Yatay scroll açıksa minimum genişliği uygula
-        final contentWidth =
-            horizontalScroll ? math.max(constraints.maxWidth, minRowWidth ?? 800.0) : constraints.maxWidth;
+        final contentWidth = horizontalScroll
+            ? math.max(constraints.maxWidth, minRowWidth ?? 800.0)
+            : constraints.maxWidth;
 
         final fixedW = (_showSelCol ? _selColW : 0.0) + (_showActions ? _actionColW * actions.length : 0.0);
         final available = contentWidth - fixedW;
@@ -88,9 +89,7 @@ class _TableBody<T extends TableData> extends StatelessWidget {
                                   value: allSelected ? true : (someSelected ? null : false),
                                   tristate: true,
                                   onChanged: (_) => onToggleAll(),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                   activeColor: const Color(0xFF2563EB),
                                 ),
                               ),
@@ -124,11 +123,7 @@ class _TableBody<T extends TableData> extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF6B7280),
-                          ),
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF6B7280)),
                         ),
                       ),
                     ),
@@ -146,10 +141,7 @@ class _TableBody<T extends TableData> extends StatelessWidget {
                         children: [
                           Icon(Icons.search_off, size: 40, color: Color(0xFFD1D5DB)),
                           SizedBox(height: 8),
-                          Text(
-                            'Sonuç bulunamadı',
-                            style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
-                          ),
+                          Text('Sonuç bulunamadı', style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF))),
                         ],
                       ),
                     )
@@ -262,11 +254,7 @@ class _HeaderCellState extends State<_HeaderCell> {
                 child: Text(
                   widget.col.title,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF6B7280),
-                  ),
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF6B7280)),
                 ),
               ),
             if (widget.onFilter != null)
@@ -383,9 +371,7 @@ class _TableRowState<T extends TableData> extends State<_TableRow<T>> {
                                 child: Checkbox(
                                   value: widget.isSelected,
                                   onChanged: (_) => widget.onToggle(),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                   activeColor: const Color(0xFF2563EB),
                                 ),
                               )
@@ -417,10 +403,7 @@ class _TableRowState<T extends TableData> extends State<_TableRow<T>> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         child: custom != null
-                            ? Align(
-                                alignment: Alignment.centerLeft,
-                                child: custom,
-                              )
+                            ? Align(alignment: Alignment.centerLeft, child: custom)
                             : Text(
                                 _fmt(value),
                                 textAlign: TextAlign.left,
@@ -465,12 +448,7 @@ class _TableRowState<T extends TableData> extends State<_TableRow<T>> {
 
             // ── Sol seçim çubuğu (Positioned → genişliğe ek yük yok)
             if (widget.isSelected)
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                child: Container(width: 3, color: const Color(0xFF2563EB)),
-              ),
+              Positioned(left: 0, top: 0, bottom: 0, child: Container(width: 3, color: const Color(0xFF2563EB))),
           ],
         ),
       ),
@@ -595,15 +573,15 @@ class _ActiveFilterBar extends StatelessWidget {
                       icon: Icons.calendar_today_outlined,
                       onRemove: () => onClearDateRange?.call(),
                     ),
-                  if (searchQuery.isNotEmpty)
-                    _FilterChip(
-                      label: '"$searchQuery"',
-                      onRemove: onClearSearch,
-                    ),
-                  ...colFilters.entries.where((e) => e.value.isNotEmpty).map((e) => _FilterChip(
-                        label: '${_titleFor(e.key)}: ${e.value.length} seçili',
-                        onRemove: () => onRemoveColFilter(e.key),
-                      )),
+                  if (searchQuery.isNotEmpty) _FilterChip(label: '"$searchQuery"', onRemove: onClearSearch),
+                  ...colFilters.entries
+                      .where((e) => e.value.isNotEmpty)
+                      .map(
+                        (e) => _FilterChip(
+                          label: '${_titleFor(e.key)}: ${e.value.length} seçili',
+                          onRemove: () => onRemoveColFilter(e.key),
+                        ),
+                      ),
                 ],
               ),
             ),
@@ -641,11 +619,11 @@ class _FilterChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[
-            Icon(icon, size: 11, color: const Color(0xFF1D4ED8)),
-            const SizedBox(width: 3),
-          ],
-          Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF1D4ED8))),
+          if (icon != null) ...[Icon(icon, size: 11, color: const Color(0xFF1D4ED8)), const SizedBox(width: 3)],
+          Text(
+            label,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF1D4ED8)),
+          ),
           const SizedBox(width: 4),
           GestureDetector(
             onTap: onRemove,
@@ -660,11 +638,7 @@ class _FilterChip extends StatelessWidget {
 // ─── KOLON FİLTRE DİYALOĞU ───────────────────────────────────────────────────
 
 class _ColFilterDialog extends StatefulWidget {
-  const _ColFilterDialog({
-    required this.columnTitle,
-    required this.uniqueValues,
-    required this.selected,
-  });
+  const _ColFilterDialog({required this.columnTitle, required this.uniqueValues, required this.selected});
 
   final String columnTitle;
   final List<String> uniqueValues;
@@ -717,12 +691,16 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
           children: [
             Container(
               padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
-              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFEEF0F4)))),
+              decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: Color(0xFFEEF0F4))),
+              ),
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(widget.columnTitle,
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+                    child: Text(
+                      widget.columnTitle,
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF111827)),
+                    ),
                   ),
                   GestureDetector(
                     onTap: () => Navigator.pop(context, null),
@@ -747,12 +725,17 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
                     fillColor: const Color(0xFFF8F9FB),
                     contentPadding: EdgeInsets.zero,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE5E7EB))),
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                    ),
                     enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE5E7EB))),
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                    ),
                     focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5)),
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+                    ),
                   ),
                 ),
               ),
@@ -788,7 +771,9 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
               child: _filtered.isEmpty
                   ? const Padding(
                       padding: EdgeInsets.all(24),
-                      child: Center(child: Text('Sonuç yok', style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)))),
+                      child: Center(
+                        child: Text('Sonuç yok', style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF))),
+                      ),
                     )
                   : ListView.builder(
                       shrinkWrap: true,
@@ -815,7 +800,8 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
-                                    child: Text(val, style: const TextStyle(fontSize: 13, color: Color(0xFF374151)))),
+                                  child: Text(val, style: const TextStyle(fontSize: 13, color: Color(0xFF374151))),
+                                ),
                               ],
                             ),
                           ),

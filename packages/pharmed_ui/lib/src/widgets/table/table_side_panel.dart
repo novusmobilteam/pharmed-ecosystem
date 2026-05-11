@@ -1,14 +1,9 @@
-part of 'unified_table_view.dart';
+part of 'med_table_view.dart';
 
 // ─── SOL KATEGORİ PANELİ ─────────────────────────────────────────────────────
 
 class _SidePanel extends StatelessWidget {
-  const _SidePanel({
-    required this.categories,
-    required this.selectedId,
-    required this.onSelect,
-    this.title,
-  });
+  const _SidePanel({required this.categories, required this.selectedId, required this.onSelect, this.title});
 
   final List<TableSideCategory> categories;
   final String? selectedId;
@@ -28,11 +23,7 @@ class _SidePanel extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               title ?? 'Kategoriler',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF374151),
-              ),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF374151)),
             ),
           ),
           const Divider(height: 1, color: Color(0xFFEEF0F4)),
@@ -58,12 +49,7 @@ class _SidePanel extends StatelessWidget {
 }
 
 class _SidePanelItem extends StatefulWidget {
-  const _SidePanelItem({
-    required this.label,
-    this.count,
-    required this.active,
-    required this.onTap,
-  });
+  const _SidePanelItem({required this.label, this.count, required this.active, required this.onTap});
 
   final String label;
   final int? count;
@@ -92,8 +78,8 @@ class _SidePanelItemState extends State<_SidePanelItem> {
             color: widget.active
                 ? const Color(0xFFEFF6FF)
                 : _hovered
-                    ? const Color(0xFFF5F7FA)
-                    : Colors.transparent,
+                ? const Color(0xFFF5F7FA)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -103,10 +89,7 @@ class _SidePanelItemState extends State<_SidePanelItem> {
                   width: 3,
                   height: 14,
                   margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2563EB),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+                  decoration: BoxDecoration(color: const Color(0xFF2563EB), borderRadius: BorderRadius.circular(2)),
                 )
               else
                 const SizedBox(width: 11),

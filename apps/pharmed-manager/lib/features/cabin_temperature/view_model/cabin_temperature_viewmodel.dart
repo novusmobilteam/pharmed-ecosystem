@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../core/widgets/unified_table/unified_table_models.dart';
 import '../data/repository/cabin_temperature_repository_impl.dart';
 import '../domain/entity/cabin_temperature.dart';
 import '../domain/entity/cabin_temperature_detail.dart';

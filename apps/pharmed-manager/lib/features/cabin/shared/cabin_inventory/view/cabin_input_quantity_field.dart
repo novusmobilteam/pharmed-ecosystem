@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../../core/widgets/form/form_inputs/touch_numpad_field.dart';
 
 /// Kabin stok işlemlerinde kullanılan miktar giriş alanı.
 ///
@@ -57,13 +56,15 @@ class CabinInputQuantityField extends StatelessWidget {
     final String unit = isRefill ? data.fillingUnit : data.operationUnit;
     double? step = data.medicine?.operationStep;
 
-    return TouchNumpadField(
-      label: label,
-      value: value,
-      unit: unit,
-      onChanged: (val) => onChanged(val),
-      step: step,
-      min: 0,
-    );
+    return SizedBox();
+
+    // return TouchNumpadField(
+    //   label: label,
+    //   value: value,
+    //   unit: unit,
+    //   onChanged: (val) => onChanged(val),
+    //   step: step,
+    //   min: 0,
+    // );
   }
 }

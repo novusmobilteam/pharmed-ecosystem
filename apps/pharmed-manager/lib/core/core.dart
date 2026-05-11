@@ -24,19 +24,10 @@ export 'theme/app_theme.dart';
 // Utils
 
 // Widgets
-export 'widgets/app_logo_view.dart';
 export 'widgets/dialog/custom_dialog.dart';
 export 'widgets/dialog/registration_dialog.dart';
 export 'widgets/editable_list_item.dart';
 export 'widgets/empty_state_widget.dart';
 
-export 'widgets/layout/desktop_layout.dart';
-export 'widgets/layout/mobile_layout.dart';
-export 'widgets/layout/responsive_layout.dart';
-export 'widgets/layout/tablet_layout.dart';
-export 'widgets/lockable.dart';
-export 'widgets/numpad_view.dart';
-export 'widgets/pharmed_segmented_button.dart';
-export 'widgets/pharmed_side_list_view.dart';
 export 'widgets/rectangle_icon_button.dart';
 export 'widgets/selectable_list_tile.dart';

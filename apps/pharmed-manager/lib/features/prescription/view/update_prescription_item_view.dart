@@ -52,8 +52,8 @@ class _DrugNameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Lockable(
-      locked: true,
+    return IgnorePointer(
+      ignoring: true,
       child: TextInputField(label: 'İlaç Adı', initialValue: drugName, onChanged: (_) {}),
     );
   }

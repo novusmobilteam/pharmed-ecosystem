@@ -5,8 +5,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../../core/widgets/unified_table/unified_table_view.dart';
+
 import '../../domain/entity/filling_list.dart';
 import '../../domain/entity/filling_object.dart';
 import '../widgets/medicine_filling_card.dart';
@@ -57,7 +56,7 @@ class _TableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UnifiedTableView<FillingList>(
+    return MedTable<FillingList>(
       data: notifier.filteredItems,
       isLoading: notifier.isTableLoading,
       enableExcel: true,

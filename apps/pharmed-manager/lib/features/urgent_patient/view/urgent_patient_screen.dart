@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/unified_table/unified_table_models.dart';
-import 'package:pharmed_manager/core/widgets/unified_table/unified_table_view.dart';
+import 'package:pharmed_ui/src/widgets/table/table_models.dart';
+import 'package:pharmed_ui/src/widgets/table/med_table_view.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -43,7 +43,7 @@ class UrgentPatientScreen extends StatelessWidget {
       return Center(child: CircularProgressIndicator.adaptive());
     }
 
-    return UnifiedTableView(
+    return MedTable(
       data: notifier.filteredItems,
       actions: [
         TableActionItem(

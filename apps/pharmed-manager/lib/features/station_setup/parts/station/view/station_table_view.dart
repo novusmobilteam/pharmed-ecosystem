@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/station_setup/notifier/station_setup_notifier.dart';
-import '../../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../../../core/widgets/unified_table/unified_table_view.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
@@ -15,9 +14,8 @@ class StationTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationNotifier>(
       builder: (context, notifier, _) {
-        return UnifiedTableView<Station>(
+        return MedTable<Station>(
           data: notifier.filteredItems,
-
           isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
           enableExcel: true,
           enableSearch: true,

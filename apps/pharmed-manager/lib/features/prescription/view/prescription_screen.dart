@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/widgets/side_panel.dart';
-import '../../../core/widgets/dose_stepper.dart';
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
+
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +55,7 @@ class PrescriptionScreen extends StatelessWidget {
                 isOpen: notifier.isPanelOpen,
                 width: 700,
                 panel: _buildPanel(notifier),
-                child: UnifiedTableView<Hospitalization>(
+                child: MedTable<Hospitalization>(
                   data: notifier.dateFilteredItems,
                   enableExcel: true,
                   enableSearch: true,

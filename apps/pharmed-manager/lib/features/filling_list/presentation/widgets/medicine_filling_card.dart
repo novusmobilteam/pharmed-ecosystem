@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/widgets/dose_stepper.dart';
 
 import '../../domain/entity/filling_object.dart';
 

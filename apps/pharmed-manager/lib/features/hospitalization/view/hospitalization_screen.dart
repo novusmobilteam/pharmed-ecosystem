@@ -5,8 +5,6 @@ import 'package:pharmed_manager/core/widgets/side_panel.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
 import '../notifier/hospitalization_form_notifier.dart';
 import '../notifier/patient_form_notifier.dart';
 
@@ -50,7 +48,7 @@ class HospitalizationScreen extends StatelessWidget {
                   HospitalizationPanelMode.editHospitalization => HospitalizationPanel(),
                   HospitalizationPanelMode.none => const SizedBox.shrink(),
                 },
-                child: UnifiedTableView<Hospitalization>(
+                child: MedTable<Hospitalization>(
                   data: notifier.filteredItems,
                   isLoading: notifier.isFetching,
                   enableExcel: true,

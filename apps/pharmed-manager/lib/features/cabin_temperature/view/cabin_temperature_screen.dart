@@ -6,8 +6,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
 
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
 import '../domain/entity/cabin_temperature_detail.dart';
 
 import '../view_model/cabin_temperature_control_form_view_model.dart';
@@ -52,7 +50,7 @@ class _TableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UnifiedTableView<CabinTemperatureDetail>(
+    return MedTable<CabinTemperatureDetail>(
       data: notifier.temperatureDetails,
       isLoading: notifier.isFetchingDetail || notifier.isFetchingStations,
       enableExcel: true,

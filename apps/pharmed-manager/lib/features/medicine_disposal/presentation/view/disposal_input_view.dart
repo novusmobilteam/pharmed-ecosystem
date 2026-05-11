@@ -22,7 +22,7 @@ class _DisposalInputViewState extends State<DisposalInputView> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              PharmedSegmentedButton(
+              MedSegmentedButton(
                 selectedIndex: notifier.selectedTypeIndex,
                 onChanged: (index) => notifier.changeType(index),
                 labels: DisposeType.values.map((w) => w.label).toList(),

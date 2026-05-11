@@ -40,16 +40,16 @@ class _CompletedRefundsTableView extends StatelessWidget {
   final CompletedPharmacyRefundNotifier notifier;
 
   List<TableColumnDef> _buildColumnDefs() => const [
-        TableColumnDef(title: 'Hasta Kodu', flex: 0.8), // colIndex: 0
-        TableColumnDef(title: 'Hasta', flex: 1.2), // colIndex: 1
-        TableColumnDef(title: 'Kullanıcı'), // colIndex: 2
-        TableColumnDef(title: 'Malzeme', flex: 1.5), // colIndex: 3
-        TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7), // colIndex: 4
-        TableColumnDef(title: 'Tarih'), // colIndex: 5
-        TableColumnDef(title: 'İade Alan Kullanıcı'), // colIndex: 6
-        TableColumnDef(title: 'İade Alma Tarihi'), // colIndex: 7
-        TableColumnDef(title: 'Açıklama', flex: 1.5), // colIndex: 8
-      ];
+    TableColumnDef(title: 'Hasta Kodu', flex: 0.8), // colIndex: 0
+    TableColumnDef(title: 'Hasta', flex: 1.2), // colIndex: 1
+    TableColumnDef(title: 'Kullanıcı'), // colIndex: 2
+    TableColumnDef(title: 'Malzeme', flex: 1.5), // colIndex: 3
+    TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7), // colIndex: 4
+    TableColumnDef(title: 'Tarih'), // colIndex: 5
+    TableColumnDef(title: 'İade Alan Kullanıcı'), // colIndex: 6
+    TableColumnDef(title: 'İade Alma Tarihi'), // colIndex: 7
+    TableColumnDef(title: 'Açıklama', flex: 1.5), // colIndex: 8
+  ];
 
   Widget? _buildCell(Refund item, int colIndex, dynamic _) {
     return switch (colIndex) {
@@ -68,7 +68,7 @@ class _CompletedRefundsTableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UnifiedTableView<Refund>(
+    return MedTable<Refund>(
       data: notifier.filteredItems,
       isLoading: notifier.isFetching,
       horizontalScroll: true,

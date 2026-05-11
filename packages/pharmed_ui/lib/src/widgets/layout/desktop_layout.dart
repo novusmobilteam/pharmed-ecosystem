@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class DesktopLayout extends StatelessWidget {
   const DesktopLayout({
@@ -27,7 +26,7 @@ class DesktopLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: AppDimensions.pagePadding,
+      padding: EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

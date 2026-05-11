@@ -19,8 +19,8 @@ class StationSetupNotifier extends ChangeNotifier with SidePanelMixin<void, Stat
   HospitalService? _selectedService;
   HospitalService? get selectedService => _selectedService;
 
-  Warehouse? _editingWarehouse;
-  Warehouse? get editingWarehouse => _editingWarehouse;
+  Warehouse? _selectedWarehouse;
+  Warehouse? get selectedWarehouse => _selectedWarehouse;
 
   void openStationPanel({Station? station}) {
     _selectedStation = station;
@@ -35,7 +35,7 @@ class StationSetupNotifier extends ChangeNotifier with SidePanelMixin<void, Stat
   }
 
   void openWarehousePanel({Warehouse? warehouse}) {
-    _editingWarehouse = warehouse;
+    _selectedWarehouse = warehouse;
     openPanel(type: StationPanelType.warehouse);
     notifyListeners();
   }
@@ -44,7 +44,7 @@ class StationSetupNotifier extends ChangeNotifier with SidePanelMixin<void, Stat
   void closePanel() {
     _selectedStation = null;
     _selectedService = null;
-    _editingWarehouse = null;
+    _selectedWarehouse = null;
     notifyListeners();
   }
 }

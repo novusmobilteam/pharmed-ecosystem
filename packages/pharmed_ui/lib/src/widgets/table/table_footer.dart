@@ -1,4 +1,4 @@
-part of 'unified_table_view.dart';
+part of 'med_table_view.dart';
 
 // ─── FOOTER ──────────────────────────────────────────────────────────────────
 
@@ -32,10 +32,7 @@ class _TableFooter extends StatelessWidget {
       );
     }
 
-    return _CountFooter(
-      filteredCount: filteredCount,
-      totalCount: totalCount,
-    );
+    return _CountFooter(filteredCount: filteredCount, totalCount: totalCount);
   }
 }
 
@@ -56,11 +53,7 @@ class _CountFooter extends StatelessWidget {
         children: [
           Text(
             isFiltered ? '$filteredCount / $totalCount kayıt' : '$totalCount kayıt',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF6B7280),
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280), fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -97,20 +90,12 @@ class _PaginationFooter extends StatelessWidget {
         children: [
           Text(
             'Toplam $totalCount kayıt',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF6B7280),
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280), fontWeight: FontWeight.w500),
           ),
           const Spacer(),
           Text(
             '$_startRecord–$_endRecord',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF374151),
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 12, color: Color(0xFF374151), fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 12),
           _PageBtn(
@@ -147,28 +132,21 @@ class _PaginationFooter extends StatelessWidget {
       final p = sorted[i];
       // Boşluk varsa "…" ekle
       if (i > 0 && sorted[i - 1] != p - 1) {
-        widgets.add(const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4),
-          child: Text('…', style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF))),
-        ));
+        widgets.add(
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            child: Text('…', style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF))),
+          ),
+        );
       }
-      widgets.add(_PageNumber(
-        page: p,
-        isActive: p == currentPage,
-        onPressed: () => onPageChanged?.call(p),
-      ));
+      widgets.add(_PageNumber(page: p, isActive: p == currentPage, onPressed: () => onPageChanged?.call(p)));
     }
     return widgets;
   }
 }
 
 class _PageBtn extends StatefulWidget {
-  const _PageBtn({
-    required this.icon,
-    required this.enabled,
-    required this.tooltip,
-    required this.onPressed,
-  });
+  const _PageBtn({required this.icon, required this.enabled, required this.tooltip, required this.onPressed});
 
   final IconData icon;
   final bool enabled;
@@ -199,9 +177,7 @@ class _PageBtnState extends State<_PageBtn> {
             decoration: BoxDecoration(
               color: _hovered && widget.enabled ? const Color(0xFFF5F7FA) : Colors.transparent,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                color: _hovered && widget.enabled ? const Color(0xFFE5E7EB) : Colors.transparent,
-              ),
+              border: Border.all(color: _hovered && widget.enabled ? const Color(0xFFE5E7EB) : Colors.transparent),
             ),
             child: Icon(
               widget.icon,
@@ -216,11 +192,7 @@ class _PageBtnState extends State<_PageBtn> {
 }
 
 class _PageNumber extends StatefulWidget {
-  const _PageNumber({
-    required this.page,
-    required this.isActive,
-    required this.onPressed,
-  });
+  const _PageNumber({required this.page, required this.isActive, required this.onPressed});
 
   final int page;
   final bool isActive;
@@ -251,14 +223,10 @@ class _PageNumberState extends State<_PageNumber> {
             color: widget.isActive
                 ? const Color(0xFF2563EB)
                 : _hovered
-                    ? const Color(0xFFF5F7FA)
-                    : Colors.transparent,
+                ? const Color(0xFFF5F7FA)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(6),
-            border: widget.isActive
-                ? null
-                : Border.all(
-                    color: _hovered ? const Color(0xFFE5E7EB) : Colors.transparent,
-                  ),
+            border: widget.isActive ? null : Border.all(color: _hovered ? const Color(0xFFE5E7EB) : Colors.transparent),
           ),
           child: Text(
             '${widget.page}',

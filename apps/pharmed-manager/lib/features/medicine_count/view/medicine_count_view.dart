@@ -51,7 +51,7 @@ class _MedicineCountViewState extends State<MedicineCountView> {
             child: Column(
               spacing: 20,
               children: [
-                PharmedSegmentedButton(
+                MedSegmentedButton(
                   selectedIndex: countNotifier.countTypeIndex,
                   onChanged: countNotifier.changeCountType,
                   labels: MedicineCountType.values.map((t) => t.title).toList(),

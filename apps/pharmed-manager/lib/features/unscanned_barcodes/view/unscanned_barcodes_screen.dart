@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
 
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
 import '../notifier/unscanned_barcodes_notifier.dart';
 
 part 'delete_description_view.dart';
@@ -78,7 +76,7 @@ class _TableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UnifiedTableView<PrescriptionItem>(
+    return MedTable<PrescriptionItem>(
       data: notifier.dateFilteredItems,
       isLoading: notifier.isFetching,
       enableExcel: true,

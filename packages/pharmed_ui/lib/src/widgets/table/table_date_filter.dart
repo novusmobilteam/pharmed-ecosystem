@@ -1,12 +1,9 @@
-part of 'unified_table_view.dart';
+part of 'med_table_view.dart';
 
 // ─── HIZLI TARİH FİLTRE POPUP ────────────────────────────────────────────────
 
 class _QuickDateFilterPopup extends StatelessWidget {
-  const _QuickDateFilterPopup({
-    this.selectedDateRange,
-    required this.onDateSelected,
-  });
+  const _QuickDateFilterPopup({this.selectedDateRange, required this.onDateSelected});
 
   final DateTimeRange? selectedDateRange;
   final Function(DateTimeRange?) onDateSelected;
@@ -44,31 +41,41 @@ class _QuickDateFilterPopup extends StatelessWidget {
               _buildHeader(context),
               const Divider(height: 1, color: Color(0xFFEEF0F4)),
               const SizedBox(height: 4),
-              _buildOption(context,
-                  icon: Icons.today_outlined,
-                  label: 'Bugün',
-                  isSelected: _isSameRange(todayStart, todayEnd),
-                  onTap: () => _select(context, todayStart, todayEnd)),
-              _buildOption(context,
-                  icon: Icons.history,
-                  label: 'Dün',
-                  isSelected: _isSameRange(yesterday, yesterday),
-                  onTap: () => _select(context, yesterday, yesterday)),
-              _buildOption(context,
-                  icon: Icons.calendar_view_week_outlined,
-                  label: 'Bu Hafta',
-                  isSelected: _isSameRange(thisWeekStart, thisWeekEnd),
-                  onTap: () => _select(context, thisWeekStart, thisWeekEnd)),
-              _buildOption(context,
-                  icon: Icons.calendar_month_outlined,
-                  label: 'Bu Ay',
-                  isSelected: _isSameRange(thisMonthStart, thisMonthEnd),
-                  onTap: () => _select(context, thisMonthStart, thisMonthEnd)),
-              _buildOption(context,
-                  icon: Icons.schedule_outlined,
-                  label: 'Son 30 Gün',
-                  isSelected: _isSameRange(last30Start, last30End),
-                  onTap: () => _select(context, last30Start, last30End)),
+              _buildOption(
+                context,
+                icon: Icons.today_outlined,
+                label: 'Bugün',
+                isSelected: _isSameRange(todayStart, todayEnd),
+                onTap: () => _select(context, todayStart, todayEnd),
+              ),
+              _buildOption(
+                context,
+                icon: Icons.history,
+                label: 'Dün',
+                isSelected: _isSameRange(yesterday, yesterday),
+                onTap: () => _select(context, yesterday, yesterday),
+              ),
+              _buildOption(
+                context,
+                icon: Icons.calendar_view_week_outlined,
+                label: 'Bu Hafta',
+                isSelected: _isSameRange(thisWeekStart, thisWeekEnd),
+                onTap: () => _select(context, thisWeekStart, thisWeekEnd),
+              ),
+              _buildOption(
+                context,
+                icon: Icons.calendar_month_outlined,
+                label: 'Bu Ay',
+                isSelected: _isSameRange(thisMonthStart, thisMonthEnd),
+                onTap: () => _select(context, thisMonthStart, thisMonthEnd),
+              ),
+              _buildOption(
+                context,
+                icon: Icons.schedule_outlined,
+                label: 'Son 30 Gün',
+                isSelected: _isSameRange(last30Start, last30End),
+                onTap: () => _select(context, last30Start, last30End),
+              ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 child: Divider(height: 1, color: Color(0xFFEEF0F4)),
@@ -79,7 +86,8 @@ class _QuickDateFilterPopup extends StatelessWidget {
                 label: 'Özel Aralık Belirle...',
                 color: const Color(0xFF2563EB),
                 fontWeight: FontWeight.w600,
-                isSelected: selectedDateRange != null &&
+                isSelected:
+                    selectedDateRange != null &&
                     !_isSameRange(todayStart, todayEnd) &&
                     !_isSameRange(yesterday, yesterday) &&
                     !_isSameRange(thisWeekStart, thisWeekEnd) &&
@@ -218,11 +226,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
 // ─── ÖZEL TARİH ARALIĞI SEÇİCİ ───────────────────────────────────────────────
 
 class _DateRangePicker extends StatefulWidget {
-  const _DateRangePicker({
-    this.initialStartDate,
-    this.initialEndDate,
-    required this.onApply,
-  });
+  const _DateRangePicker({this.initialStartDate, this.initialEndDate, required this.onApply});
 
   final DateTime? initialStartDate;
   final DateTime? initialEndDate;
@@ -313,7 +317,10 @@ class _DateRangePickerState extends State<_DateRangePicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF), fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF), fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
@@ -363,13 +370,17 @@ class _DateRangePickerState extends State<_DateRangePicker> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: days
-          .map((d) => SizedBox(
-                width: 36,
-                child: Center(
-                  child: Text(d,
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF))),
+          .map(
+            (d) => SizedBox(
+              width: 36,
+              child: Center(
+                child: Text(
+                  d,
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF)),
                 ),
-              ))
+              ),
+            ),
+          )
           .toList(),
     );
   }
@@ -404,8 +415,8 @@ class _DateRangePickerState extends State<_DateRangePicker> {
               color: (isStart || isEnd)
                   ? const Color(0xFF2563EB)
                   : inRange
-                      ? const Color(0xFF2563EB).withValues(alpha: 0.08)
-                      : Colors.transparent,
+                  ? const Color(0xFF2563EB).withValues(alpha: 0.08)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(7),
             ),
             child: Center(
@@ -417,8 +428,8 @@ class _DateRangePickerState extends State<_DateRangePicker> {
                   color: (isStart || isEnd)
                       ? Colors.white
                       : inRange
-                          ? const Color(0xFF2563EB)
-                          : const Color(0xFF374151),
+                      ? const Color(0xFF2563EB)
+                      : const Color(0xFF374151),
                 ),
               ),
             ),

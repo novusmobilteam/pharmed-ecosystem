@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/side_panel.dart';
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
+
 import '../../active_ingredient/view/active_ingredient_dialog.dart';
 import '../../drug_class/view/drug_class_dialog.dart';
 import '../../drug_type/view/drug_type_dialog.dart';
@@ -42,7 +41,7 @@ class MedicineScreen extends StatelessWidget {
                   spacing: 20,
                   children: [
                     Expanded(
-                      child: UnifiedTableView<Medicine>(
+                      child: MedTable<Medicine>(
                         data: notifier.filteredItems,
                         isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
                         enableExcel: true,

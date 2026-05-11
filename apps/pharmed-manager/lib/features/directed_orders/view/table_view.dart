@@ -24,7 +24,7 @@ class _TableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UnifiedTableView<Hospitalization>(
+    return MedTable<Hospitalization>(
       data: vm.filteredItems,
       isLoading: vm.isFetching,
       enableSearch: true,

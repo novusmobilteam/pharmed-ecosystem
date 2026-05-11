@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../core.dart';
 import '../file/desktop_file_service.dart';
 
 class ExcelExportService {
@@ -24,10 +25,7 @@ class ExcelExportService {
       for (int i = 0; i < columnNames.length; i++) {
         final cell = sheet.cell(CellIndex.indexByString("${_getExcelColumnName(i)}1"));
         cell.value = TextCellValue(columnNames[i]);
-        cell.cellStyle = CellStyle(
-          bold: true,
-          horizontalAlign: HorizontalAlign.Center,
-        );
+        cell.cellStyle = CellStyle(bold: true, horizontalAlign: HorizontalAlign.Center);
       }
 
       // Veri satırlarını ekle
@@ -35,8 +33,9 @@ class ExcelExportService {
         final row = data[rowIndex];
         for (int colIndex = 0; colIndex < row.length; colIndex++) {
           final value = row[colIndex]?.toString() ?? '';
-          sheet.cell(CellIndex.indexByString("${_getExcelColumnName(colIndex)}${rowIndex + 2}")).value =
-              TextCellValue(value);
+          sheet.cell(CellIndex.indexByString("${_getExcelColumnName(colIndex)}${rowIndex + 2}")).value = TextCellValue(
+            value,
+          );
         }
       }
 
@@ -47,18 +46,10 @@ class ExcelExportService {
 
         if (showSaveDialog) {
           // Kaydetme dialog'u göster
-          savedFile = await DesktopFileService.saveFile(
-            extension: 'xlsx',
-            bytes: bytes,
-            fileName: fileName,
-          );
+          savedFile = await DesktopFileService.saveFile(extension: 'xlsx', bytes: bytes, fileName: fileName);
         } else {
           // Masaüstüne direkt kaydet
-          savedFile = await DesktopFileService.saveToDesktop(
-            bytes: bytes,
-            fileName: fileName,
-            extension: 'xlsx',
-          );
+          savedFile = await DesktopFileService.saveToDesktop(bytes: bytes, fileName: fileName, extension: 'xlsx');
         }
 
         if (savedFile != null && context.mounted) {
@@ -136,8 +127,4 @@ class ExcelExportService {
   }
 }
 
-enum ExportBehavior {
-  saveDialog,
-  saveToDesktop,
-  custom,
-}
+enum ExportBehavior { saveDialog, saveToDesktop, custom }

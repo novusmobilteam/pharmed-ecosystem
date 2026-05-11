@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/core.dart';
-import '../../../core/widgets/form/form_inputs/base_display_field.dart';
 
 import 'package:provider/provider.dart';
 
@@ -137,19 +136,12 @@ class _FirstStep extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 3,
-                  child: BaseDisplayField(
+                  child: SelectionField(
                     label: 'İlaç Depo',
-                    displayText: notifier.station?.materialWarehouse?.name ?? '',
-                    onTap: () async {
-                      final w = await SelectionDialog.show<Warehouse>(
-                        context,
-                        title: 'Tıbbi Sarf Depo',
-                        dataSource: (skip, take, search) =>
-                            context.read<GetWarehousesUseCase>().call(GetWarehousesParams()),
-                        labelBuilder: (warehouse) => warehouse.title,
-                      );
-                      notifier.updateMaterialWarehouse(w);
-                    },
+                    dataSource: (skip, take, search) =>
+                        context.read<GetWarehousesUseCase>().call(GetWarehousesParams()),
+                    labelBuilder: (warehouse) => warehouse.title,
+                    onSelected: (warehouse) => notifier.updateMaterialWarehouse(warehouse),
                   ),
                 ),
                 Expanded(
@@ -169,19 +161,12 @@ class _FirstStep extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 3,
-                  child: BaseDisplayField(
+                  child: SelectionField(
                     label: 'Tıbbi Sarf Depo',
-                    displayText: notifier.station?.medicalConsumableWarehouse?.name ?? '',
-                    onTap: () async {
-                      final w = await SelectionDialog.show<Warehouse>(
-                        context,
-                        title: 'Tıbbi Sarf Depo',
-                        dataSource: (skip, take, search) =>
-                            context.read<GetWarehousesUseCase>().call(GetWarehousesParams()),
-                        labelBuilder: (warehouse) => warehouse.title,
-                      );
-                      notifier.updateConsumableWarehouse(w);
-                    },
+                    dataSource: (skip, take, search) =>
+                        context.read<GetWarehousesUseCase>().call(GetWarehousesParams()),
+                    labelBuilder: (warehouse) => warehouse.title,
+                    onSelected: (warehouse) => notifier.updateConsumableWarehouse(warehouse),
                   ),
                 ),
                 Expanded(
@@ -210,18 +195,11 @@ class _SecondStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return BaseDisplayField(
+        return SelectionField(
           label: 'Servis',
-          displayText: notifier.station?.service?.name ?? '',
-          onTap: () async {
-            final s = await SelectionDialog.show<HospitalService>(
-              context,
-              title: 'Tıbbi Sarf Depo',
-              dataSource: (skip, take, search) => context.read<GetServicesUseCase>().call(GetServicesParams()),
-              labelBuilder: (warehouse) => warehouse.title,
-            );
-            notifier.updateService(s);
-          },
+          dataSource: (skip, take, search) => context.read<GetServicesUseCase>().call(GetServicesParams()),
+          labelBuilder: (service) => service.title,
+          onSelected: (service) => notifier.updateService(service),
         );
       },
     );

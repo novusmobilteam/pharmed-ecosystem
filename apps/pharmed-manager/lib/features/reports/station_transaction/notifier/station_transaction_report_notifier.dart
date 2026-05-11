@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../../core/widgets/unified_table/unified_table_models.dart';
-
 class StationTransactionReportNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<StockTransaction> {
   final GetStationsUseCase _getStationsUseCase;
   final GetCabinStockTransactionsUseCase _getCabinStockTransactionsUseCase;

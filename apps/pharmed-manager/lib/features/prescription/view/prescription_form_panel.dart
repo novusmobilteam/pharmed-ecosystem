@@ -129,8 +129,8 @@ class _PatientField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PrescriptionFormNotifier>(
       builder: (context, vm, _) {
-        return Lockable(
-          locked: !vm.isPatientSelectionEnabled,
+        return IgnorePointer(
+          ignoring: !vm.isPatientSelectionEnabled,
           child: SelectionField<Hospitalization>(
             label: 'Hasta',
             initialValue: vm.hospitalization,

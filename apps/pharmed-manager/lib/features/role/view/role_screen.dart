@@ -4,8 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
+
 import '../notifier/role_form_notifier.dart';
 import '../notifier/role_notifier.dart';
 
@@ -56,7 +55,7 @@ class RoleScreen extends StatelessWidget {
       );
     }
 
-    return UnifiedTableView<Role>(
+    return MedTable<Role>(
       data: notifier.items,
       isLoading: notifier.isFetching,
       enableExcel: true,

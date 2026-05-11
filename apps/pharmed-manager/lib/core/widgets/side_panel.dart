@@ -146,7 +146,7 @@ class _SidePanelHeader extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: onClose,
+                onTap: () => onClose != null ? onClose!() : null,
                 child: Container(
                   width: 22,
                   height: 22,
@@ -210,7 +210,12 @@ class _SidePanelFooter extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          MedButton(label: 'İptal', onPressed: onClose, variant: MedButtonVariant.primary),
+          MedButton(
+            label: 'İptal',
+            onPressed: () => onClose != null ? onClose!() : null,
+            size: MedButtonSize.sm,
+            variant: MedButtonVariant.danger,
+          ),
           const SizedBox(width: 6),
           SizedBox(
             width: 150,

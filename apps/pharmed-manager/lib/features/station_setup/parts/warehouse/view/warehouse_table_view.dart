@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../../../core/widgets/unified_table/unified_table_view.dart';
 import '../../../notifier/station_setup_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +13,7 @@ class WarehouseTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarehouseNotifier>(
       builder: (context, notifier, _) {
-        return UnifiedTableView<Warehouse>(
+        return MedTable<Warehouse>(
           data: notifier.allItems,
           isLoading: notifier.isLoading(notifier.deleteOp) || notifier.isLoading(notifier.fetchOp),
           enableExcel: true,

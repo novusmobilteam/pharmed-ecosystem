@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../../core/widgets/unified_table/unified_table_models.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../domain/useacase/cancel_filling_list_usecase.dart';
 import '../../domain/useacase/get_filling_lists_usecase.dart';

@@ -31,7 +31,7 @@ class DeletedBarcodesView extends StatelessWidget {
             return CommonEmptyStates.noData();
           }
 
-          return UnifiedTableView<PrescriptionItem>(
+          return MedTable<PrescriptionItem>(
             data: notifier.deletedBarcodes,
             horizontalScroll: true,
             minTableWidth: 3000,

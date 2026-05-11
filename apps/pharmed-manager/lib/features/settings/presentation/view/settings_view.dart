@@ -62,7 +62,7 @@ class _SettingsViewState extends State<SettingsView> {
           child: Column(
             spacing: 20,
             children: [
-              PharmedSegmentedButton(
+              MedSegmentedButton(
                 selectedIndex: activeIndex,
                 onChanged: (index) => setState(() => activeIndex = index),
                 labels: currentTitles, // Dinamik liste

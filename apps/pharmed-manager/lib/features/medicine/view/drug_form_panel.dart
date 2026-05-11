@@ -461,8 +461,8 @@ Widget _measurementUnitField() {
                   ),
                 ),
                 Expanded(
-                  child: Lockable(
-                    locked: !isRequired,
+                  child: IgnorePointer(
+                    ignoring: !isRequired,
                     child: UnitField(
                       key: ObjectKey(vm.drug.doseMeasureUnit),
                       unit: vm.drug.unitMeasure,

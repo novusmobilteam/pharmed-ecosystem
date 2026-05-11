@@ -72,7 +72,7 @@ class StationSetupScreen extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 500,
-                      child: PharmedSegmentedButton(
+                      child: MedSegmentedButton(
                         selectedIndex: notifier.activeIndex,
                         onChanged: (index) => notifier.activeIndex = index,
                         labels: _titles,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/unified_table/unified_table_view.dart';
 import '../notifier/station_stock_notifier.dart';
 
 class StationStockScreen extends StatelessWidget {
@@ -24,7 +23,7 @@ class StationStockScreen extends StatelessWidget {
             desktop: DesktopLayout(
               title: menu.name ?? 'İstasyon Stok Listesi',
               isLoading: notifier.isFetching,
-              child: UnifiedTableView<StationStock>(
+              child: MedTable<StationStock>(
                 data: notifier.filteredItems,
                 isLoading: notifier.isFetching,
                 categories: notifier.tableCategories,

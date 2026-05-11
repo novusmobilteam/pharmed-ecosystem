@@ -69,7 +69,7 @@ class _RoleAuthorizationPanelState extends State<RoleAuthorizationPanel> {
                   child: SizedBox(
                     width: 300,
                     height: 40,
-                    child: PharmedSegmentedButton(
+                    child: MedSegmentedButton(
                       selectedIndex: _activeTab,
                       onChanged: changeTab,
                       labels: ['Menü', 'İlaç', 'Tıbbi Sarf'],

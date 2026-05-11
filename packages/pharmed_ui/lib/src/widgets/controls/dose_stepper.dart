@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../core.dart';
+import 'numpad_view.dart';
 
 enum DoseStepperType { large, compact }
 

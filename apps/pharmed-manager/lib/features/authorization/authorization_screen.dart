@@ -46,7 +46,7 @@ class AuthorizationScreen extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 400,
-                      child: PharmedSegmentedButton(
+                      child: MedSegmentedButton(
                         selectedIndex: notifier.activeIndex,
                         onChanged: (index) => notifier.activeIndex = index,
                         labels: _titles,

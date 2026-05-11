@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/widgets/menu_browser_view.dart';
-import '../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../../core/widgets/unified_table/unified_table_view.dart';
 
 import '../../authorization_notifier.dart';
 import '../notifier/user_authorization_notifier.dart';
@@ -25,7 +23,7 @@ class UserTableView extends StatelessWidget {
       value: context.read<UserTableNotifier>(),
       child: Consumer<UserTableNotifier>(
         builder: (context, notifier, child) {
-          return UnifiedTableView<User>(
+          return MedTable<User>(
             data: notifier.items,
             isLoading: notifier.isFetching,
             enableSearch: true,

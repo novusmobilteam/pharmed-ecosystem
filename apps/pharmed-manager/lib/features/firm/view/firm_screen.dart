@@ -4,8 +4,6 @@ import 'package:pharmed_manager/features/firm/view/firm_form_panel.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/widgets/unified_table/unified_table_models.dart';
-import '../../../../core/widgets/unified_table/unified_table_view.dart';
 
 import '../notifier/firm_notifier.dart';
 
@@ -31,7 +29,7 @@ class FirmScreen extends StatelessWidget {
                 isOpen: notifier.isPanelOpen,
                 width: 480,
                 panel: FirmFormPanel(),
-                child: UnifiedTableView<Firm>(
+                child: MedTable<Firm>(
                   data: notifier.filteredItems,
                   isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
                   enableExcel: true,

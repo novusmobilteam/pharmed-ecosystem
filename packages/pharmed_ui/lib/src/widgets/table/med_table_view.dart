@@ -2,17 +2,15 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../core.dart';
-import '../../services/export/excel_export_service.dart';
-import '../../services/export/pdf_export_service.dart';
-import 'unified_table_models.dart';
+import 'table_models.dart';
 
-part 'unified_table_side_panel.dart';
-part 'unified_table_toolbar.dart';
-part 'unified_table_body.dart';
-part 'unified_table_footer.dart';
-part 'unified_table_date_filter.dart';
+part 'table_side_panel.dart';
+part 'table_toolbar.dart';
+part 'table_body.dart';
+part 'table_footer.dart';
+part 'table_date_filter.dart';
 
 // ─── COLUMN META (dahili) ────────────────────────────────────────────────────
 //
@@ -40,8 +38,8 @@ class _ColMeta {
 
 // ─── UNIFIED TABLE VIEW ───────────────────────────────────────────────────────
 
-class UnifiedTableView<T extends TableData> extends StatefulWidget {
-  const UnifiedTableView({
+class MedTable<T extends TableData> extends StatefulWidget {
+  const MedTable({
     super.key,
     required this.data,
     // Kategori paneli
@@ -164,10 +162,10 @@ class UnifiedTableView<T extends TableData> extends StatefulWidget {
   final DateTimeRange? initialDateRange;
 
   @override
-  State<UnifiedTableView<T>> createState() => _UnifiedTableViewState<T>();
+  State<MedTable<T>> createState() => _MedTableState<T>();
 }
 
-class _UnifiedTableViewState<T extends TableData> extends State<UnifiedTableView<T>> {
+class _MedTableState<T extends TableData> extends State<MedTable<T>> {
   final _searchController = TextEditingController();
   int? _sortColIndex;
   bool _sortAsc = true;
@@ -200,7 +198,7 @@ class _UnifiedTableViewState<T extends TableData> extends State<UnifiedTableView
   }
 
   @override
-  void didUpdateWidget(UnifiedTableView<T> oldWidget) {
+  void didUpdateWidget(MedTable<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.data != widget.data) {
       _colFilters.clear();
@@ -451,13 +449,7 @@ class _UnifiedTableViewState<T extends TableData> extends State<UnifiedTableView
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -524,8 +516,8 @@ class _UnifiedTableViewState<T extends TableData> extends State<UnifiedTableView
                     child: widget.isLoading
                         ? (widget.loadingWidget ?? const Center(child: CircularProgressIndicator.adaptive()))
                         : widget.data.isEmpty
-                            ? (widget.emptyWidget ?? _defaultEmpty())
-                            : _buildTableArea(filteredData, cols),
+                        ? (widget.emptyWidget ?? _defaultEmpty())
+                        : _buildTableArea(filteredData, cols),
                   ),
                   const Divider(height: 1, color: Color(0xFFEEF0F4)),
                   _TableFooter(
@@ -570,16 +562,13 @@ class _UnifiedTableViewState<T extends TableData> extends State<UnifiedTableView
   }
 
   Widget _defaultEmpty() => const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.inbox_outlined, size: 40, color: Color(0xFFD1D5DB)),
-            SizedBox(height: 8),
-            Text(
-              'Veri bulunamadı',
-              style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
-            ),
-          ],
-        ),
-      );
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.inbox_outlined, size: 40, color: Color(0xFFD1D5DB)),
+        SizedBox(height: 8),
+        Text('Veri bulunamadı', style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF))),
+      ],
+    ),
+  );
 }

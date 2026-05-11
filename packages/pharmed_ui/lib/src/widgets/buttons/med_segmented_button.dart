@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class PharmedSegmentedButton extends StatelessWidget {
+class MedSegmentedButton extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onChanged;
   final List<String> labels;
 
-  const PharmedSegmentedButton({super.key, required this.selectedIndex, required this.onChanged, required this.labels});
+  const MedSegmentedButton({super.key, required this.selectedIndex, required this.onChanged, required this.labels});
 
   @override
   Widget build(BuildContext context) {

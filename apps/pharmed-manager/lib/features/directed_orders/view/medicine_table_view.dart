@@ -4,9 +4,7 @@ void showMedicineTableDialog(BuildContext context, Hospitalization hosp) {
   showDialog(
     context: context,
     builder: (_) => ChangeNotifierProvider(
-      create: (context) => DirectedOrdersDetailViewModel(
-        orderRepository: context.read(),
-      )..fetchOrders(),
+      create: (context) => DirectedOrdersDetailViewModel(orderRepository: context.read())..fetchOrders(),
       child: MedicineTableView(),
     ),
   );
@@ -26,10 +24,7 @@ class MedicineTableView extends StatelessWidget {
           width: context.width * 0.7,
           child: SizedBox(
             height: 600,
-            child: UnifiedTableView(
-              data: vm.filteredItems,
-              isLoading: vm.isFetching,
-            ),
+            child: MedTable(data: vm.filteredItems, isLoading: vm.isFetching),
           ),
         );
       },

@@ -25,7 +25,7 @@ class PrescriptionDetailView extends StatelessWidget {
           width: context.width * 0.7,
           height: 1000,
           isLoading: notifier.isFetching,
-          child: UnifiedTableView<PrescriptionItem>(
+          child: MedTable<PrescriptionItem>(
             data: notifier.prescriptionItems,
             isLoading: notifier.isFetchingDetail,
             enableSearch: false,
