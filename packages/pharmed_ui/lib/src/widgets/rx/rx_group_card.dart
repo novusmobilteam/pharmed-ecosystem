@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_ui/src/widgets/chips/time_chip.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 

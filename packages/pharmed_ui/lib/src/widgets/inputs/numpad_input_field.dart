@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'med_input_decorator.dart';
+import 'input_field_style.dart';
 
+// Yeniden yazıldı: hardcoded değerler kaldırıldı, MedInputDecorator kullanıldı.
+// Material colorScheme referansları MedColors ile değiştirildi.
+
+/// Numpad diyaloğu açan sayısal giriş alanı.
+///
+/// Dokunulduğunda tam ekran numpad açılır. Değer gösterimi ve birim
+/// [MedInputDecorator] kabuğu içinde render edilir.
+///
+/// ```dart
+/// NumpadInputField(
+///   label: 'Doz',
+///   value: '250',
+///   unit: 'mg',
+///   onChanged: (v) { ... },
+/// )
+/// ```
 class NumpadInputField extends StatefulWidget {
-  final String? label;
-  final String value;
-  final String hint;
-  final String? title;
-  final Function(String) onChanged;
-  final String? unit;
-
   const NumpadInputField({
     super.key,
     this.label,
@@ -18,6 +29,13 @@ class NumpadInputField extends StatefulWidget {
     required this.onChanged,
     this.unit,
   });
+
+  final String? label;
+  final String value;
+  final String hint;
+  final String? title;
+  final ValueChanged<String> onChanged;
+  final String? unit;
 
   @override
   State<NumpadInputField> createState() => _NumpadInputFieldState();
@@ -48,50 +66,35 @@ class _NumpadInputFieldState extends State<NumpadInputField> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isEmpty = widget.value.isEmpty;
+    final style = InputFieldTheme.of(context);
+    final isEmpty = widget.value.isEmpty;
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 50),
-      child: InkWell(
+    return MedInputDecorator(
+      label: widget.label,
+      child: GestureDetector(
         onTap: () async {
-          // final String? result = await showNumpadView(
-          //   context,
-          //   hintText: widget.hint,
-          //   title: widget.title ?? widget.label ?? widget.hint,
-          //   initialValue: widget.value == '0' ? '' : widget.value,
-          // );
-
-          // if (result != null) {
-          //   widget.onChanged(result);
-          // }
+          // Numpad entegrasyonu — Step 3.5'te MedNumpadField ile birleştirilecek.
         },
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: context.colorScheme.outlineVariant),
-          ),
-          child: Row(
-            spacing: 3,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: MedSpacing.xs,
+          children: [
+            Text(
+              isEmpty ? widget.hint : widget.value,
+              style: MedTextStyles.numericLg(
+                color: isEmpty ? MedColors.text4 : MedColors.text,
+              ),
+            ),
+            if (widget.unit != null && widget.value.isNotEmpty)
               Text(
-                isEmpty ? widget.hint : widget.value,
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isEmpty ? context.colorScheme.outline : context.colorScheme.onSurface,
+                widget.unit!,
+                style: TextStyle(
+                  fontFamily: MedFonts.sans,
+                  fontSize: style.labelFontSize + 2,
+                  color: MedColors.text3,
                 ),
               ),
-              if (widget.unit != null && widget.value != '0')
-                Text(
-                  widget.unit!,
-                  style: context.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isEmpty ? context.colorScheme.outline : context.colorScheme.onSurface,
-                  ),
-                ),
-            ],
-          ),
+          ],
         ),
       ),
     );

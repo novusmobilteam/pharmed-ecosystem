@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/theme/med_tokens.dart';
-import 'package:pharmed_ui/src/widgets/widgets.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
+/// Açma/kapama anahtarı + kalın etiket satırı.
+///
+/// [MedToggle] ile aynı API'yi sunar ancak yanına etiket ekler.
+///
+/// ```dart
+/// ToggleField(
+///   value: _isActive,
+///   label: 'Aktif',
+///   onChanged: (v) => setState(() => _isActive = v),
+/// )
+/// ```
 class ToggleField extends StatelessWidget {
-  const ToggleField({super.key, required this.value, this.onChanged, required this.label, this.enabled = true});
+  const ToggleField({
+    super.key,
+    required this.value,
+    this.onChanged,
+    required this.label,
+    this.enabled = true,
+  });
 
   final bool value;
   final ValueChanged<bool>? onChanged;
@@ -13,10 +29,13 @@ class ToggleField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      spacing: 4.0,
+      spacing: MedSpacing.xs,
       children: [
         MedToggle(value: value, onChanged: onChanged, enabled: enabled),
-        Text(label, style: MedTextStyles.bodySm().copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          label,
+          style: MedTextStyles.bodySm(weight: FontWeight.w700),
+        ),
       ],
     );
   }

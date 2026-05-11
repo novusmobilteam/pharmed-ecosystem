@@ -73,12 +73,7 @@ class _PlaceholderContent extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             context.l10n.common_selectCellTitle,
-            style: TextStyle(
-              fontFamily: MedFonts.sans,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: MedColors.text3,
-            ),
+            style: MedTextStyles.bodySm(color: MedColors.text3, weight: FontWeight.w500),
           ),
           const SizedBox(height: 4),
           Text(
@@ -296,15 +291,9 @@ class _DescriptionField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          context.l10n.fault_descriptionSectionLabel,
-          style: TextStyle(
-            fontFamily: MedFonts.mono,
-            fontSize: 9,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 1,
-            color: MedColors.text3,
-          ),
+        MedLabel(
+          text: context.l10n.fault_descriptionSectionLabel,
+          variant: MedLabelVariant.monoDetail,
         ),
         const SizedBox(height: 6),
         TextField(
@@ -346,15 +335,9 @@ class _FaultHistory extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          context.l10n.fault_historySectionLabel,
-          style: TextStyle(
-            fontFamily: MedFonts.mono,
-            fontSize: 9,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 1,
-            color: MedColors.text3,
-          ),
+        MedLabel(
+          text: context.l10n.fault_historySectionLabel,
+          variant: MedLabelVariant.monoDetail,
         ),
         const SizedBox(height: 6),
         Container(
@@ -409,12 +392,7 @@ class _FaultHistoryItem extends StatelessWidget {
       color: isActive ? accentColor.withOpacity(0.04) : Colors.transparent,
       child: Row(
         children: [
-          // Sol şerit
-          Container(
-            width: 3,
-            height: 36,
-            decoration: BoxDecoration(color: accentColor, borderRadius: BorderRadius.circular(2)),
-          ),
+          MedStatusBar(color: accentColor, height: 36, width: 3),
           const SizedBox(width: 10),
 
           Expanded(
@@ -434,28 +412,17 @@ class _FaultHistoryItem extends StatelessWidget {
                     ),
                     const Spacer(),
                     if (isActive)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: accentColor.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          context.l10n.fault_historyActiveBadge,
-                          style: TextStyle(
-                            fontFamily: MedFonts.mono,
-                            fontSize: 8,
-                            fontWeight: FontWeight.w600,
-                            color: accentColor,
-                          ),
-                        ),
+                      MedBadge(
+                        label: context.l10n.fault_historyActiveBadge,
+                        variant: isMaintenance ? MedBadgeVariant.amber : MedBadgeVariant.red,
+                        size: MedBadgeSize.sm,
                       ),
                   ],
                 ),
                 const SizedBox(height: 2),
                 Text(
                   _formatDate(fault.startDate),
-                  style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3),
+                  style: MedTextStyles.monoXs(color: MedColors.text3),
                 ),
                 if (fault.description != null && fault.description!.isNotEmpty) ...[
                   const SizedBox(height: 2),
@@ -495,39 +462,16 @@ class _SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = isNewRecord ? context.l10n.fault_reportFaultButton : context.l10n.fault_closeFaultButton;
     final icon = isNewRecord ? Icons.warning_amber_rounded : Icons.check_circle_outline_rounded;
-    final color = isNewRecord ? MedColors.red : MedColors.green;
-    final bg = isNewRecord ? MedColors.red : MedColors.green;
+    final variant = isNewRecord ? MedButtonVariant.danger : MedButtonVariant.success;
 
-    return GestureDetector(
-      onTap: canSubmit ? onTap : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
-        height: 48,
-        decoration: BoxDecoration(
-          color: canSubmit ? bg : MedColors.surface3,
-          border: Border.all(color: canSubmit ? color : MedColors.border, width: 1.5),
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: canSubmit
-              ? [BoxShadow(color: color.withOpacity(0.25), blurRadius: 8, offset: const Offset(0, 3))]
-              : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 16, color: canSubmit ? Colors.white : MedColors.text4),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: MedFonts.sans,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: canSubmit ? Colors.white : MedColors.text4,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return MedButton(
+      label: label,
+      variant: variant,
+      size: MedButtonSize.md,
+      fullWidth: true,
+      isActive: canSubmit,
+      prefixIcon: Icon(icon, size: 16),
+      onPressed: canSubmit ? onTap : null,
     );
   }
 }

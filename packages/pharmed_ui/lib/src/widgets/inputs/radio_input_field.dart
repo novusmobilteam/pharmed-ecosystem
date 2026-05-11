@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'input_field_style.dart';
 
+// Temizlendi: label stili InputFieldTheme'e bağlandı.
+// Herkese açık API değişmedi.
+
+/// Radio buton grubu, FormField desteği ile.
+///
+/// ```dart
+/// RadioInputField<Gender>(
+///   label: 'Cinsiyet',
+///   options: [
+///     MedRadioOption(value: Gender.male, label: 'Erkek'),
+///     MedRadioOption(value: Gender.female, label: 'Kadın'),
+///   ],
+///   onChanged: (g) { ... },
+/// )
+/// ```
 class RadioInputField<T> extends StatelessWidget {
   const RadioInputField({
     super.key,
@@ -8,6 +24,7 @@ class RadioInputField<T> extends StatelessWidget {
     this.initialValue,
     this.validator,
     this.enabled = true,
+    this.autovalidateMode = AutovalidateMode.disabled,
     required this.options,
     required this.onChanged,
   });
@@ -16,14 +33,18 @@ class RadioInputField<T> extends StatelessWidget {
   final T? initialValue;
   final String? Function(T?)? validator;
   final bool enabled;
+  final AutovalidateMode autovalidateMode;
   final List<MedRadioOption<T>> options;
   final ValueChanged<T> onChanged;
 
   @override
   Widget build(BuildContext context) {
+    final style = InputFieldTheme.of(context);
+
     return FormField<T>(
       initialValue: initialValue,
       validator: validator,
+      autovalidateMode: autovalidateMode,
       builder: (field) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,14 +52,18 @@ class RadioInputField<T> extends StatelessWidget {
           children: [
             if (label != null)
               Padding(
-                padding: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.only(bottom: MedSpacing.xs),
                 child: Text(
-                  label!.toUpperCase(),
-                  style: MedTextStyles.monoXs(color: MedColors.text3).copyWith(letterSpacing: 0.8),
+                  style.labelUpperCase ? label!.toUpperCase() : label!,
+                  style: TextStyle(
+                    fontFamily: MedFonts.mono,
+                    fontSize: style.labelFontSize,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: style.labelLetterSpacing,
+                    color: field.hasError ? MedColors.red : MedColors.text3,
+                  ),
                 ),
               ),
-
-            // Seçenekler yan yana
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: options.map((opt) {
@@ -54,14 +79,13 @@ class RadioInputField<T> extends StatelessWidget {
                 );
               }).toList(),
             ),
-
             if (field.hasError)
               Padding(
-                padding: const EdgeInsets.only(top: 4, left: 0),
+                padding: const EdgeInsets.only(top: MedSpacing.xs),
                 child: Row(
                   children: [
                     Icon(Icons.warning_amber_rounded, size: 11, color: MedColors.red),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: MedSpacing.xs),
                     Text(field.errorText!, style: MedTextStyles.monoXs(color: MedColors.red)),
                   ],
                 ),

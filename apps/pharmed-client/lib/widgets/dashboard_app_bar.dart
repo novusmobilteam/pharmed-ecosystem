@@ -122,7 +122,16 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
             left: pos.dx,
             child: DashboardNavbarMenu(
               parentId: id,
-              flattenedMenus: widget.flattenedMenus,
+              flattenedMenus: widget.flattenedMenus
+                  .map((m) => NavMenuItem(
+                        id: m.id,
+                        parentId: m.parentId,
+                        name: m.name,
+                        description: m.description,
+                        unicode: m.unicode,
+                        route: m.route,
+                      ))
+                  .toList(),
               onCardTap: (childId) {
                 _closeMenu();
                 widget.onMenuItemTap?.call(childId);

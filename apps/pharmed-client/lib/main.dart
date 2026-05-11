@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_client/l10n/app_localizations.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'core/providers/providers.dart';
 import 'core/router/app_router.dart';
 import 'core/services/service.dart';
@@ -23,18 +24,21 @@ class MyApp extends ConsumerWidget {
     final locale = ref.watch(settingsNotifierProvider.select((s) => s.language.locale));
     WidgetsBinding.instance.addObserver(SerialPortLifecycleObserver(ref.read(serialServiceProvider)));
 
-    return MaterialApp(
-      title: 'Pharmed',
-      debugShowCheckedModeBanner: false,
-      locale: locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('tr'), Locale('en'), Locale('ar')],
-      home: const AppRouter(),
+    return InputFieldTheme(
+      style: InputFieldStyle.client,
+      child: MaterialApp(
+        title: 'Pharmed',
+        debugShowCheckedModeBanner: false,
+        locale: locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('tr'), Locale('en'), Locale('ar')],
+        home: const AppRouter(),
+      ),
     );
   }
 }
