@@ -68,7 +68,6 @@ class _MedButtonState extends State<MedButton> {
           width: widget.fullWidth ? double.infinity : null,
           constraints: BoxConstraints(minHeight: sizing.minHeight),
           padding: sizing.padding,
-          transform: _pressed ? (Matrix4.identity()..translate(0.0, 1.0)) : Matrix4.identity(),
           decoration: BoxDecoration(
             color: colors.background,
             border: colors.borderColor != null ? Border.all(color: colors.borderColor!, width: 1.5) : null,

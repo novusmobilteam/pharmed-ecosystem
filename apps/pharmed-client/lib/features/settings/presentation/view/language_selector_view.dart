@@ -6,7 +6,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/enums/app_language.dart';

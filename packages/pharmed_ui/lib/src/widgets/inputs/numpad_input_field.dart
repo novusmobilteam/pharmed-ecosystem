@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'med_input_decorator.dart';
-import 'input_field_style.dart';
 
 // Yeniden yazıldı: hardcoded değerler kaldırıldı, MedInputDecorator kullanıldı.
 // Material colorScheme referansları MedColors ile değiştirildi.
@@ -81,18 +79,12 @@ class _NumpadInputFieldState extends State<NumpadInputField> {
           children: [
             Text(
               isEmpty ? widget.hint : widget.value,
-              style: MedTextStyles.numericLg(
-                color: isEmpty ? MedColors.text4 : MedColors.text,
-              ),
+              style: MedTextStyles.numericLg(color: isEmpty ? MedColors.text4 : MedColors.text),
             ),
             if (widget.unit != null && widget.value.isNotEmpty)
               Text(
                 widget.unit!,
-                style: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: style.labelFontSize + 2,
-                  color: MedColors.text3,
-                ),
+                style: TextStyle(fontFamily: MedFonts.sans, fontSize: style.labelFontSize + 2, color: MedColors.text3),
               ),
           ],
         ),

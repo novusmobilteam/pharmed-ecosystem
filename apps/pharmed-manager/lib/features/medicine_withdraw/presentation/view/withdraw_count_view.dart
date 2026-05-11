@@ -138,7 +138,7 @@ class _SlotCountCard extends StatelessWidget {
   });
 
   final int index;
-  final WithdrawDetail detail;
+  final IntakeDetail detail;
   final String doseUnit;
   final Function(int index) onCountTap;
   final bool showCensus;
@@ -171,7 +171,7 @@ class _SlotCountCard extends StatelessWidget {
 class _SlotInfo extends StatelessWidget {
   const _SlotInfo({required this.detail, required this.doseUnit});
 
-  final WithdrawDetail detail;
+  final IntakeDetail detail;
   final String doseUnit;
 
   @override
@@ -198,7 +198,7 @@ class _SlotInfo extends StatelessWidget {
 class _CountButton extends StatelessWidget {
   const _CountButton({required this.detail, required this.onTap});
 
-  final WithdrawDetail detail;
+  final IntakeDetail detail;
   final VoidCallback onTap;
 
   @override

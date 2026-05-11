@@ -4,7 +4,7 @@ import 'package:pharmed_manager/core/core.dart';
 class CustomWithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   Hospitalization? _hospitalization;
   final GetPatientMedicinesUseCase _getPatientMedicinesUseCase;
-  final WithdrawPatientMedicineUseCase _withdrawPatientMedicineUseCase;
+  final IntakePatientMedicineUseCase _withdrawPatientMedicineUseCase;
 
   OperationKey fetchOp = OperationKey.fetch();
   OperationKey submitOp = OperationKey.submit();
@@ -20,7 +20,7 @@ class CustomWithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
 
   CustomWithdrawNotifier({
     required GetPatientMedicinesUseCase getPatientMedicinesUseCase,
-    required WithdrawPatientMedicineUseCase withdrawPatientMedicineUseCase,
+    required IntakePatientMedicineUseCase withdrawPatientMedicineUseCase,
     required Hospitalization hospitalization,
   }) : _getPatientMedicinesUseCase = getPatientMedicinesUseCase,
        _withdrawPatientMedicineUseCase = withdrawPatientMedicineUseCase {

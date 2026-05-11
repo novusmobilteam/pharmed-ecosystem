@@ -39,7 +39,7 @@ class FillingListView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
         if (notifier.isEmpty || notifier.hasNoSearchResults) {
-          return Center(child: CommonEmptyStates.noData());
+          return Center(child: EmptyStateWidget(variant: EmptyStateVariant.custom));
         }
 
         return ListView.builder(

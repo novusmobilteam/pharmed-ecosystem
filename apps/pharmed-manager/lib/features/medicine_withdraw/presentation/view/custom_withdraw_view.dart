@@ -68,7 +68,7 @@ class _PatientMedicineWithdrawViewState extends State<PatientMedicineWithdrawVie
           return const Center(child: CircularProgressIndicator.adaptive());
         }
         if (vm.isEmpty) {
-          return Center(child: CommonEmptyStates.noData());
+          return Center(child: EmptyStateWidget(variant: EmptyStateVariant.custom));
         }
 
         return ListView.builder(

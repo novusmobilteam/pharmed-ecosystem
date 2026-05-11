@@ -114,7 +114,7 @@ class _FillingListView extends StatelessWidget {
     }
 
     if (notifier.allItems.isEmpty) {
-      return CommonEmptyStates.noData();
+      return EmptyStateWidget(variant: EmptyStateVariant.custom);
     }
 
     return ListView.separated(

@@ -23,11 +23,7 @@ class CompletedRefundsView extends StatelessWidget {
     }
 
     if (notifier.isEmpty) {
-      return CommonEmptyStates.generic(
-        icon: PhosphorIcons.receipt(),
-        message: 'İade bulunamadı',
-        subMessage: 'Alınmış iade kaydı bulunmuyor',
-      );
+      return EmptyStateWidget(variant: EmptyStateVariant.noResults);
     }
 
     return _CompletedRefundsTableView(notifier: notifier);
@@ -83,7 +79,7 @@ class _CompletedRefundsTableView extends StatelessWidget {
       },
       columnDefs: _buildColumnDefs(),
       cellBuilder: _buildCell,
-      emptyWidget: notifier.hasNoSearchResults ? CommonEmptyStates.searchNotFound() : CommonEmptyStates.noData(),
+      emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
     );
   }
 }

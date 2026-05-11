@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/widgets/table/med_table_view.dart';
 import '../../../../core/core.dart';
 import '../notifier/station_transaction_report_notifier.dart';
 import 'package:provider/provider.dart';

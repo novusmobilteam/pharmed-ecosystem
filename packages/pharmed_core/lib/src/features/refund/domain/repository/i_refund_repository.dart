@@ -2,10 +2,10 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 abstract class IRefundRepository {
   // Reçete ID'sine göre iade edilebilecekleri getirir
-  Future<Result<List<MedicineWithdrawItem>>> getRefundables({required int hospitalizationId});
+  Future<Result<List<MedicineIntakeItem>>> getRefundables({required int hospitalizationId});
 
   // İlgili ilaç için iade durumunu kontrol eder
-  Future<Result<MedicineWithdrawItem?>> checkRefundStatus({required int id, required double quantity});
+  Future<Result<MedicineIntakeItem?>> checkRefundStatus({required int id, required double quantity});
 
   // İlaç İade İşlemi - İade Kutusuna İade
   Future<Result<void>> refundToBox({required int id, required double quantity});

@@ -10,9 +10,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:printing/printing.dart';
 
-import '../file/desktop_file_service.dart';
-import 'excel_export_service.dart'; // ExportBehavior için
-
 class PdfExportService {
   // --- 1. DOSYAYA KAYDETME (SAVE) ---
   static Future<void> exportToPdf({

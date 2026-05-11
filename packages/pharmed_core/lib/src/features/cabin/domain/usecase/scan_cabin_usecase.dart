@@ -3,8 +3,6 @@
 // Seri port üzerinden bağlanır, çekmece yapısını okur ve DrawerGroup listesi döner.
 // Sınıf: Class B
 
-import 'package:pharmed_core/src/services/i_cabin_operation_service.dart';
-import 'package:pharmed_core/src/services/i_serial_communication_service.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 class ScanCabinUseCase {

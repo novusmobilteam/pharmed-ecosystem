@@ -137,6 +137,7 @@ final class _ModeConfig {
   final Color accentColor;
   final Color badgeBg;
 
+  // TODO : l10n
   static _ModeConfig of(CabinOperationMode mode) => switch (mode) {
     CabinOperationMode.assign => _ModeConfig(
       title: 'İLAÇ ATAMA',
@@ -161,6 +162,13 @@ final class _ModeConfig {
       badge: 'ARIZA',
       accentColor: MedColors.red,
       badgeBg: MedColors.redLight,
+    ),
+    // TODO: Handle this case.
+    CabinOperationMode.intake => _ModeConfig(
+      title: 'İLAÇ ALIM',
+      badge: 'ALIM',
+      accentColor: MedColors.blueDark,
+      badgeBg: MedColors.blueLight,
     ),
   };
 }

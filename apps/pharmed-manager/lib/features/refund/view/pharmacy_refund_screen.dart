@@ -76,7 +76,7 @@ class _RefundTableView extends StatelessWidget {
         ),
         TableActionItem.delete(onPressed: (refund) => showDeleteDescriptionView(context, refund)),
       ],
-      emptyWidget: notifier.hasNoSearchResults ? CommonEmptyStates.searchNotFound() : CommonEmptyStates.noData(),
+      emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
     );
   }
 }

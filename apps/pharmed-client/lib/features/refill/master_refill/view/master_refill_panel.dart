@@ -14,7 +14,6 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
@@ -359,7 +358,7 @@ class _UnitDoseInputList extends StatelessWidget {
         child: ListView.separated(
           padding: EdgeInsets.zero,
           itemCount: stepInputs.length,
-          separatorBuilder: (_, __) => Divider(height: 1, color: MedColors.border2),
+          separatorBuilder: (_, _) => Divider(height: 1, color: MedColors.border2),
           itemBuilder: (context, index) {
             final input = stepInputs[index];
             final assignment = assignments.firstWhereOrNull((a) => a.cabinDrawerId == input.unit.id);
@@ -477,10 +476,11 @@ class _MedicineInfoCard extends StatelessWidget {
     final minQty = assignment.minQuantity?.toDouble() ?? 0;
 
     Color stockColor = MedColors.green;
-    if (qty <= critQty)
+    if (qty <= critQty) {
       stockColor = MedColors.red;
-    else if (qty <= minQty)
+    } else if (qty <= minQty) {
       stockColor = MedColors.amber;
+    }
 
     return Container(
       padding: const EdgeInsets.all(12),

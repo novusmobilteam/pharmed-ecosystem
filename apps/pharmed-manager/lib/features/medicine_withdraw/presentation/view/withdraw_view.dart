@@ -109,7 +109,7 @@ class _WithdrawViewState extends State<WithdrawView> {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
     if (notifier.items.isEmpty) {
-      return Center(child: CommonEmptyStates.noData());
+      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults));
     }
 
     return ListView.builder(

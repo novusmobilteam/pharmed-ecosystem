@@ -23,7 +23,7 @@ class CabinSelectorHeader extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 4),
         itemCount: cabins.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 24), // Öğeler arası boşluğu açtık
+        separatorBuilder: (_, _) => const SizedBox(width: 24), // Öğeler arası boşluğu açtık
         itemBuilder: (context, index) {
           final cabin = cabins[index];
           final isSelected = selectedCabin?.id == cabin.id;
@@ -43,10 +43,7 @@ class CabinSelectorHeader extends StatelessWidget {
                     child: AnimatedScale(
                       scale: isSelected ? 1.1 : 1.0, // Seçili olan hafif büyüsün
                       duration: const Duration(milliseconds: 200),
-                      child: _CabinPhysicalSilhouette(
-                        type: cabin.type,
-                        isSelected: isSelected,
-                      ),
+                      child: _CabinPhysicalSilhouette(type: cabin.type, isSelected: isSelected),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -122,21 +119,12 @@ class _CabinPhysicalSilhouette extends StatelessWidget {
               child: Container(
                 width: 3,
                 height: 12,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(1),
-                ),
+                decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(1)),
               ),
             )
           : Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(
-                rows,
-                (_) => Container(
-                  height: 1.5,
-                  color: color.withAlpha(100),
-                ),
-              ),
+              children: List.generate(rows, (_) => Container(height: 1.5, color: color.withAlpha(100))),
             ),
     );
   }

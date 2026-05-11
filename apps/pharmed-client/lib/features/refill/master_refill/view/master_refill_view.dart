@@ -21,7 +21,6 @@ import '../../../../../widgets/widgets.dart';
 import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/cabin_operation/master_drawer/master_drawer_operation_wrapper.dart';
 import '../../refill.dart';
-import '../notifier/master_refill_notifier.dart';
 
 class MasterRefillView extends ConsumerStatefulWidget {
   const MasterRefillView({super.key, this.data});

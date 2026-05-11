@@ -39,7 +39,9 @@ class _TableView extends StatelessWidget {
           onPressed: (hosp) => showMedicineTableDialog(context, hosp),
         ),
       ],
-      emptyWidget: vm.hasNoSearchResults ? CommonEmptyStates.searchNotFound() : CommonEmptyStates.noData(),
+      emptyWidget: vm.hasNoSearchResults
+          ? EmptyStateWidget(variant: EmptyStateVariant.noResults)
+          : EmptyStateWidget(variant: EmptyStateVariant.noResults),
     );
   }
 }

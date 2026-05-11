@@ -99,11 +99,7 @@ class _TableView extends StatelessWidget {
         ),
         TableActionItem.delete(onPressed: (data) => showDeleteDescriptionView(context, data)),
       ],
-      emptyWidget: CommonEmptyStates.generic(
-        icon: Icons.qr_code_scanner,
-        message: 'Okutulmayan karekod bulunmuyor',
-        subMessage: 'Tüm karekodlar taranmış.',
-      ),
+      emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
     );
   }
 }

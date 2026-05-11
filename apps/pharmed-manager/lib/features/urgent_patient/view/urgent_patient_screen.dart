@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/src/widgets/table/table_models.dart';
-import 'package:pharmed_ui/src/widgets/table/med_table_view.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -52,11 +50,7 @@ class UrgentPatientScreen extends StatelessWidget {
           onPressed: (_) => showPatientListView(context),
         ),
       ],
-      emptyWidget: CommonEmptyStates.generic(
-        icon: PhosphorIcons.usersFour(),
-        message: 'İşlem yapılacak acil hasta bulunamadı.',
-        subMessage: 'Acil hasta oluşturulduğu zaman burada görüntülenecektir.',
-      ),
+      emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
     );
   }
 }

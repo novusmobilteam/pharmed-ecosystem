@@ -18,6 +18,9 @@ enum CabinOperationMode {
   /// İlaç Sayım — mevcut stok sayılır ve sisteme girilir.
   count,
 
+  /// İlaç Alım
+  intake,
+
   /// Çekmece Arıza — arıza/bakım kaydı oluşturulur, göz kilitlenir.
   fault,
 }
@@ -27,6 +30,7 @@ extension CabinOperationModeX on CabinOperationMode {
     CabinOperationMode.assign => 'İlaç Atama',
     CabinOperationMode.refill => 'İlaç Dolum',
     CabinOperationMode.count => 'İlaç Sayım',
+    CabinOperationMode.intake => 'İlaç Alım',
     CabinOperationMode.fault => 'Çekmece Arıza',
   };
 
@@ -35,6 +39,7 @@ extension CabinOperationModeX on CabinOperationMode {
     CabinOperationMode.assign => MedColors.blue,
     CabinOperationMode.refill => MedColors.green,
     CabinOperationMode.count => MedColors.amber,
+    CabinOperationMode.intake => MedColors.blueDark,
     CabinOperationMode.fault => MedColors.red,
   };
 }

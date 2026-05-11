@@ -215,3 +215,11 @@ final getCabinStocksUseCaseProvider = Provider<GetCabinStockUseCase>((ref) {
 final refillMasterCabinUsecaseProvider = Provider<RefillMasterCabinUseCase>((ref) {
   return RefillMasterCabinUseCase(ref.read(cabinStockRepositoryProvider));
 });
+
+final checkMobileIntakeUseCaseProvider = Provider((ref) {
+  return CheckMobileIntakeUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final completeMobileIntakeUseCaseProvider = Provider((ref) {
+  return CompleteMobileIntakeUseCase(ref.read(intakeRepositoryProvider));
+});

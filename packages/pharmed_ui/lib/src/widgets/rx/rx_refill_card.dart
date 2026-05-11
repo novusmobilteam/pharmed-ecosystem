@@ -18,12 +18,14 @@ class RxRefillCard extends StatelessWidget {
     required this.item,
     required this.isSelected,
     required this.isRfidRead,
+    required this.isEligible,
     required this.onTap,
   });
 
   final PrescriptionItem item;
   final bool isSelected;
   final bool isRfidRead;
+  final bool isEligible;
 
   /// `null` ise kart tıklanamaz (süreç başladı veya item.id yok).
   final VoidCallback? onTap;
@@ -42,9 +44,6 @@ class RxRefillCard extends StatelessWidget {
   /// Kilitliyken (=süreç aktif) ve seçili + RFID etiketi olan kartlarda gösterilir.
   bool get _showRfidLiveStatus => _isLocked && isSelected && _needsRfid && _hasRfidTag;
 
-  /// Dolum yapılabilir mi?
-  bool get _isEligibleForRefill => item.status == PrescriptionStatus.filledWaiting;
-
   @override
   Widget build(BuildContext context) {
     final borderColor = isSelected ? MedColors.blue : MedColors.border;
@@ -55,7 +54,7 @@ class RxRefillCard extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: MedRadius.mdAll,
         child: InkWell(
-          onTap: _isEligibleForRefill ? onTap : null,
+          onTap: isEligible ? onTap : null,
           borderRadius: MedRadius.mdAll,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
@@ -74,7 +73,7 @@ class RxRefillCard extends StatelessWidget {
                   isRfidRead: isRfidRead,
                   needsRfid: _needsRfid,
                   showRfidLiveStatus: _showRfidLiveStatus,
-                  isEligibleForRefill: _isEligibleForRefill,
+                  isEligible: isEligible,
                 ),
                 if (_needsRfid && _hasRfidTag) ...[
                   Divider(height: 1, thickness: 1, color: MedColors.border2),
@@ -96,7 +95,7 @@ class _CardBody extends StatelessWidget {
     required this.isRfidRead,
     required this.needsRfid,
     required this.showRfidLiveStatus,
-    required this.isEligibleForRefill,
+    required this.isEligible,
   });
 
   final PrescriptionItem item;
@@ -104,7 +103,7 @@ class _CardBody extends StatelessWidget {
   final bool isRfidRead;
   final bool needsRfid;
   final bool showRfidLiveStatus;
-  final bool isEligibleForRefill;
+  final bool isEligible;
 
   String get _doseText {
     final piece = item.dosePiece?.formatFractional ?? '-';
@@ -158,7 +157,7 @@ class _CardBody extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 10),
-                if (!isEligibleForRefill) RxStatusChip(status: item.status!),
+                RxStatusChip(status: item.status!),
               ],
             ),
           ),

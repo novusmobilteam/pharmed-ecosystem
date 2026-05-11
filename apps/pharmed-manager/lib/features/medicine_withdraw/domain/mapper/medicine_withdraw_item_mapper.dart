@@ -4,7 +4,7 @@ import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 
 /// MedicineWithdrawItem → CabinOperationItem dönüşümü.
 /// İade akışında kullanılır.
-extension MedicineWithdrawItemMapper on MedicineWithdrawItem {
+extension MedicineWithdrawItemMapper on MedicineIntakeItem {
   CabinOperationItem toCabinOperationItem() {
     return CabinOperationItem(
       id: id,

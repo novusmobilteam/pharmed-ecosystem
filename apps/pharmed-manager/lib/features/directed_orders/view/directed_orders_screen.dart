@@ -43,7 +43,7 @@ class DirectedOrdersScreen extends StatelessWidget {
     }
 
     if (vm.isEmpty) {
-      return CommonEmptyStates.noData();
+      return EmptyStateWidget();
     }
 
     return _TableView(vm: vm);

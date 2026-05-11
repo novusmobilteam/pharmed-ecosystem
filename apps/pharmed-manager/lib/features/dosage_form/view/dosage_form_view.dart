@@ -50,14 +50,15 @@ class _DosageFormViewState extends State<DosageFormView> {
     }
 
     if (notifier.hasNoSearchResults) {
-      return CommonEmptyStates.searchNotFound();
+      return EmptyStateWidget();
     }
 
     if (notifier.allItems.isEmpty) {
-      return CommonEmptyStates.generic(
+      return EmptyStateWidget(
         icon: Icons.science_outlined,
-        message: 'Henüz dozaj formu bulunmuyor',
-        subMessage: 'Dozaj formu oluşturmak için "+" butonuna tıklayın',
+        variant: EmptyStateVariant.custom,
+        title: 'Henüz dozaj formu bulunmuyor',
+        description: 'Dozaj formu oluşturmak için "+" butonuna tıklayın',
       );
     }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 // CabinStatsGrid

@@ -53,8 +53,8 @@ class MedicineRefundNotifier extends ChangeNotifier with ApiRequestMixin {
   List<DrawerGroup> _drawers = [];
   List<DrawerGroup> get drawers => _drawers;
 
-  MedicineWithdrawItem? _currentItem;
-  MedicineWithdrawItem? get currentItem => _currentItem;
+  MedicineIntakeItem? _currentItem;
+  MedicineIntakeItem? get currentItem => _currentItem;
 
   List<MedicineAssignment> _assignments = [];
   List<MedicineAssignment> get assignments => _assignments;

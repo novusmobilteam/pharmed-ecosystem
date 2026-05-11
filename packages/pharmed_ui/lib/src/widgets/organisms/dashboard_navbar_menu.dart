@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // pharmed_core::MenuItem bağımlılığını kaldırmak için yerel model.
@@ -15,14 +14,7 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 // ─────────────────────────────────────────────────────────────────
 
 class NavMenuItem {
-  const NavMenuItem({
-    this.id,
-    this.parentId,
-    this.name,
-    this.description,
-    this.unicode,
-    this.route,
-  });
+  const NavMenuItem({this.id, this.parentId, this.name, this.description, this.unicode, this.route});
 
   final int? id;
   final int? parentId;

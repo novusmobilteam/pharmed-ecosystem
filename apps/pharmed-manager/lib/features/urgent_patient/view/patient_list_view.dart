@@ -46,7 +46,7 @@ class PatientListView extends StatelessWidget {
         }
 
         if (notifier.patients.isEmpty) {
-          return Center(child: CommonEmptyStates.noData());
+          return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults));
         }
 
         return ListView.builder(

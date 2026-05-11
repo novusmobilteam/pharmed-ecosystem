@@ -48,14 +48,15 @@ class _UnitViewState extends State<UnitView> {
     }
 
     if (notifier.hasNoSearchResults) {
-      return CommonEmptyStates.searchNotFound();
+      return EmptyStateWidget(variant: EmptyStateVariant.noResults);
     }
 
     if (notifier.allItems.isEmpty) {
-      return CommonEmptyStates.generic(
+      return EmptyStateWidget(
         icon: Icons.square_foot_outlined,
-        message: 'Henüz birim bulunmuyor',
-        subMessage: 'Yeni birim eklemek için "+" butonuna tıklayın',
+        variant: EmptyStateVariant.custom,
+        title: 'Henüz birim bulunmuyor',
+        description: 'Yeni birim eklemek için "+" butonuna tıklayın',
       );
     }
 

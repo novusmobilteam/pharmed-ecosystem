@@ -29,7 +29,7 @@ export 'src/features/hospitalization/hospitalization.dart';
 export 'src/features/prescription/prescription.dart';
 export 'src/features/dashboard/dashboard.dart';
 export 'src/features/refund/refund.dart';
-export 'src/features/withdraw/withdraw.dart';
+export 'src/features/intake/intake.dart';
 export 'src/features/fault/fault.dart';
 export 'src/features/active_ingredient/active_ingredient.dart';
 export 'src/features/kit/kit.dart';

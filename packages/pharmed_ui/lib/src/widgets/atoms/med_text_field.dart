@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_ui/src/widgets/inputs/input_field_style.dart';
-import 'package:pharmed_ui/src/widgets/inputs/med_input_decorator.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // MedTextField
@@ -179,11 +177,7 @@ class _MedTextFieldState extends State<MedTextField> {
               style: _inputTextStyle(style),
               decoration: InputDecoration(
                 hintText: widget.hint,
-                hintStyle: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: style.inputFontSize,
-                  color: MedColors.text4,
-                ),
+                hintStyle: TextStyle(fontFamily: MedFonts.sans, fontSize: style.inputFontSize, color: MedColors.text4),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
                 isDense: true,
@@ -192,10 +186,7 @@ class _MedTextFieldState extends State<MedTextField> {
             ),
           ),
           if (widget.obscureText)
-            _PasswordToggleButton(
-              obscure: _obscure,
-              onToggle: () => setState(() => _obscure = !_obscure),
-            )
+            _PasswordToggleButton(obscure: _obscure, onToggle: () => setState(() => _obscure = !_obscure))
           else if (widget.suffixWidget != null)
             Padding(
               padding: const EdgeInsets.only(left: MedSpacing.sm),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'med_input_decorator.dart';
 
 // Yeniden yazıldı: BaseInputField kalıtımı kaldırıldı, MedInputDecorator
 // kompozisyon modeline geçildi. Herkese açık API değişmedi.
@@ -70,8 +69,7 @@ class _DateInputFieldState extends State<DateInputField> {
                       firstDate: widget.firstDate ?? DateTime(1900),
                       lastDate: widget.lastDate ?? DateTime(2100),
                       locale: const Locale('tr', 'TR'),
-                      builder: (context, child) =>
-                          Theme(data: Theme.of(context), child: child!),
+                      builder: (context, child) => Theme(data: Theme.of(context), child: child!),
                     );
                     if (selected != null) {
                       field.didChange(selected);
@@ -87,9 +85,7 @@ class _DateInputFieldState extends State<DateInputField> {
                     value != null ? value.formattedDate : 'Tarih seçin',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: MedTextStyles.bodyMd(
-                      color: value != null ? MedColors.text : MedColors.text4,
-                    ),
+                    style: MedTextStyles.bodyMd(color: value != null ? MedColors.text : MedColors.text4),
                   ),
                 ),
                 Icon(Icons.calendar_today_outlined, size: 14, color: MedColors.text3),

@@ -27,10 +27,11 @@ class _KitListViewState extends State<KitListView> {
         }
 
         if (notifier.isEmpty) {
-          return CommonEmptyStates.generic(
+          return EmptyStateWidget(
             icon: Icons.medical_services_outlined,
-            message: 'Henüz kit bulunmuyor',
-            subMessage: widget.isDialog ? 'Yeni kit eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            variant: EmptyStateVariant.custom,
+            title: 'Henüz kit bulunmuyor',
+            description: widget.isDialog ? 'Yeni kit eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
           );
         }
 

@@ -59,10 +59,11 @@ class _MaterialTypeListViewState extends State<MaterialTypeListView> {
         }
 
         if (notifier.isEmpty) {
-          return CommonEmptyStates.generic(
+          return EmptyStateWidget(
             icon: Icons.category_outlined,
-            message: 'Henüz malzeme tipi bulunmuyor',
-            subMessage: widget.isDialog ? 'Yeni malzeme tipi eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            variant: EmptyStateVariant.custom,
+            title: 'Henüz malzeme tipi bulunmuyor',
+            description: widget.isDialog ? 'Yeni malzeme tipi eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
           );
         }
 

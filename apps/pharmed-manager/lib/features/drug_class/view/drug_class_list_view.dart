@@ -26,10 +26,11 @@ class _DrugClassListViewState extends State<DrugClassListView> {
         }
 
         if (notifier.isEmpty) {
-          return CommonEmptyStates.generic(
+          return EmptyStateWidget(
             icon: Icons.category_outlined,
-            message: 'Henüz ilaç sınıfı bulunmuyor',
-            subMessage: widget.isDialog ? 'Yeni ilaç sınıfı eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            variant: EmptyStateVariant.custom,
+            title: 'Henüz ilaç sınıfı bulunmuyor',
+            description: widget.isDialog ? 'Yeni ilaç sınıfı eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
           );
         }
 

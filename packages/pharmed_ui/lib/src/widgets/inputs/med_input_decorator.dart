@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'input_field_style.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // MedFieldState — Input durumu enum'u
@@ -77,8 +76,7 @@ class MedInputDecorator extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = InputFieldTheme.of(context);
 
-    final effectiveState =
-        errorText != null ? MedFieldState.error : fieldState;
+    final effectiveState = errorText != null ? MedFieldState.error : fieldState;
     final borderColor = _resolveBorderColor(effectiveState);
     final bgColor = _resolveBgColor(effectiveState);
     final shadow = _resolveShadow(effectiveState);
@@ -86,8 +84,8 @@ class MedInputDecorator extends StatelessWidget {
     final labelText = label == null
         ? null
         : style.labelUpperCase
-            ? label!.toUpperCase()
-            : label!;
+        ? label!.toUpperCase()
+        : label!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,10 +110,7 @@ class MedInputDecorator extends StatelessWidget {
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: style.borderRadius,
-            border: Border.all(
-              color: borderColor,
-              width: style.borderWidth,
-            ),
+            border: Border.all(color: borderColor, width: style.borderWidth),
             boxShadow: shadow,
           ),
           padding: style.contentPadding,
@@ -125,21 +120,13 @@ class MedInputDecorator extends StatelessWidget {
           const SizedBox(height: MedSpacing.xs),
           Text(
             errorText!,
-            style: TextStyle(
-              fontFamily: MedFonts.sans,
-              fontSize: style.labelFontSize + 1,
-              color: MedColors.red,
-            ),
+            style: TextStyle(fontFamily: MedFonts.sans, fontSize: style.labelFontSize + 1, color: MedColors.red),
           ),
         ] else if (helperText != null) ...[
           const SizedBox(height: MedSpacing.xs),
           Text(
             helperText!,
-            style: TextStyle(
-              fontFamily: MedFonts.sans,
-              fontSize: style.labelFontSize + 1,
-              color: MedColors.text3,
-            ),
+            style: TextStyle(fontFamily: MedFonts.sans, fontSize: style.labelFontSize + 1, color: MedColors.text3),
           ),
         ],
       ],
@@ -149,25 +136,23 @@ class MedInputDecorator extends StatelessWidget {
   Color _resolveBorderColor(MedFieldState state) {
     if (!enabled) return MedColors.border2;
     return switch (state) {
-      MedFieldState.error   => MedColors.red,
+      MedFieldState.error => MedColors.red,
       MedFieldState.success => MedColors.green,
-      MedFieldState.normal  => isFocused ? MedColors.blue : MedColors.border,
+      MedFieldState.normal => isFocused ? MedColors.blue : MedColors.border,
     };
   }
 
   Color _resolveBgColor(MedFieldState state) {
     if (!enabled) return MedColors.surface3;
     return switch (state) {
-      MedFieldState.error  => MedColors.redLight,
-      _                    => isFocused ? MedColors.surface : MedColors.surface2,
+      MedFieldState.error => MedColors.redLight,
+      _ => isFocused ? MedColors.surface : MedColors.surface2,
     };
   }
 
   List<BoxShadow>? _resolveShadow(MedFieldState state) {
     if (!enabled || !isFocused) return null;
-    final color = state == MedFieldState.error
-        ? MedColors.shadowRed
-        : MedColors.shadowBlue;
+    final color = state == MedFieldState.error ? MedColors.shadowRed : MedColors.shadowBlue;
     return [BoxShadow(color: color, blurRadius: 0, spreadRadius: 3)];
   }
 }

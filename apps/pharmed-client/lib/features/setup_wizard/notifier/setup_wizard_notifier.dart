@@ -21,11 +21,6 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../core/cache/app_settings_cache.dart';
 import '../../../core/providers/providers.dart';
 import '../setup_wizard.dart';
-import 'step1_notifier.dart';
-import 'step2_notifier.dart';
-import 'step3_notifier.dart';
-import 'step4_master_notifier.dart';
-import 'step4_mobile_notifier.dart';
 
 final setupWizardNotifierProvider = NotifierProvider<SetupWizardNotifier, SetupWizardState>(SetupWizardNotifier.new);
 

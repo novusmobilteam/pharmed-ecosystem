@@ -565,7 +565,7 @@ class _MasterCabinCell extends StatelessWidget {
   }
 
   Widget _cellContent() => switch (mode) {
-    CabinOperationMode.assign => _assignContent(),
+    CabinOperationMode.assign || CabinOperationMode.intake => _assignContent(),
     CabinOperationMode.count || CabinOperationMode.refill => stock != null ? _stockFillContent() : _assignContent(),
     CabinOperationMode.fault => const SizedBox.shrink(),
   };
@@ -669,7 +669,8 @@ class _MasterCellLegend extends StatelessWidget {
       (CabinCellStatus.fault, context.l10n.cabin_legendAssignFault),
       (CabinCellStatus.maintenance, context.l10n.cabin_legendAssignMaintenance),
     ],
-    CabinOperationMode.refill => [
+    // TODO : l10n
+    CabinOperationMode.refill || CabinOperationMode.intake => [
       (CabinCellStatus.empty, context.l10n.cabin_legendFillEmpty),
       (CabinCellStatus.assigned, 'Normal stok'),
       (CabinCellStatus.low, 'Dolum gerekiyor'),

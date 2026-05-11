@@ -61,13 +61,11 @@ class MockRfidService implements IRfidService {
 
   @override
   Stream<RfidTag> startInventory() {
-    // TODO: implement startInventory
     throw UnimplementedError();
   }
 
   @override
   Future<Result<void>> stopInventory() {
-    // TODO: implement stopInventory
     throw UnimplementedError();
   }
 }

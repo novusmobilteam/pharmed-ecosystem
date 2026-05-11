@@ -87,7 +87,7 @@ class _MedicineRefundViewState extends State<MedicineRefundView> {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
         if (notifier.isEmpty) {
-          return Center(child: CommonEmptyStates.noData());
+          return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults));
         }
 
         return ListView.builder(

@@ -3,7 +3,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_client/features/assignment/assignment_view.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
 import 'package:pharmed_client/features/fault/fault_view.dart';
@@ -13,6 +12,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../auth/presentation/state/auth_state.dart';
+import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
 import '../../domain/model/dasboard_data.dart';
 

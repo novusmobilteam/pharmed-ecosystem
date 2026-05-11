@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'med_input_decorator.dart';
 
 // Yeniden yazıldı: BaseInputField kalıtımı kaldırıldı, MedInputDecorator
 // kompozisyon modeline geçildi. Herkese açık API değişmedi.
@@ -67,10 +66,7 @@ class _DropdownInputFieldState<T> extends State<DropdownInputField<T>> {
                   field.didChange(newValue);
                   widget.onChanged(newValue);
                 },
-                constraints: BoxConstraints(
-                  minWidth: constraints.maxWidth,
-                  maxWidth: constraints.maxWidth,
-                ),
+                constraints: BoxConstraints(minWidth: constraints.maxWidth, maxWidth: constraints.maxWidth),
                 offset: const Offset(0, 30),
                 shape: RoundedRectangleBorder(
                   borderRadius: MedRadius.mdAll,
@@ -96,10 +92,7 @@ class _DropdownInputFieldState<T> extends State<DropdownInputField<T>> {
                     height: 40,
                     child: SizedBox(
                       width: constraints.maxWidth,
-                      child: Text(
-                        widget.labelBuilder(item) ?? '-',
-                        style: MedTextStyles.bodyMd(color: MedColors.text),
-                      ),
+                      child: Text(widget.labelBuilder(item) ?? '-', style: MedTextStyles.bodyMd(color: MedColors.text)),
                     ),
                   );
                 }).toList(),

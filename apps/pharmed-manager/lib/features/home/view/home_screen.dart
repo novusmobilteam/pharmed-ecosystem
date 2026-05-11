@@ -58,10 +58,11 @@ class _HomeScreenState extends State<HomeScreen> {
               spacing: 12,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CommonEmptyStates.generic(
+                EmptyStateWidget(
                   icon: PhosphorIcons.fingerprint(),
-                  message: 'Yetkili Menü Bulunamadı',
-                  subMessage:
+                  variant: EmptyStateVariant.custom,
+                  title: 'Yetkili Menü Bulunamadı',
+                  description:
                       'Hesabınıza tanımlanmış erişim yetkisi bulunmamaktadır.\nErişim sağlamak için sistem yöneticiniz ile iletişime geçiniz.',
                 ),
                 SizedBox(

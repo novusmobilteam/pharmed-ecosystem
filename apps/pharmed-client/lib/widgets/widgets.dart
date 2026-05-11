@@ -9,5 +9,4 @@ export 'operation_panel_base.dart';
 export 'dashboard_app_bar.dart';
 
 export 'cabin_operation_scaffold.dart';
-export 'empty_state_widget.dart';
 export 'domain/domain.dart';

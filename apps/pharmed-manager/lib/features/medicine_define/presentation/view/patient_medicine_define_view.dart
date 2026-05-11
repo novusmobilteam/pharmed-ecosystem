@@ -69,7 +69,7 @@ class PatientMedicineDefineView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
         if (notifier.isEmpty) {
-          return Center(child: CommonEmptyStates.noData());
+          return Center(child: EmptyStateWidget(variant: EmptyStateVariant.custom));
         }
 
         return IndexedStack(index: notifier.activeIndex, children: [SlotInfoView(), MedicineInfoView()]);

@@ -28,7 +28,7 @@ class DeletedBarcodesView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator.adaptive());
           }
           if (!notifier.isLoading(notifier.fetchDeletedOp) && notifier.deletedBarcodes.isEmpty) {
-            return CommonEmptyStates.noData();
+            return EmptyStateWidget(variant: EmptyStateVariant.noResults);
           }
 
           return MedTable<PrescriptionItem>(

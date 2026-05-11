@@ -8,7 +8,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/l10n/l10n_ext.dart';
 import 'package:pharmed_client/features/settings/presentation/state/settings_state.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 

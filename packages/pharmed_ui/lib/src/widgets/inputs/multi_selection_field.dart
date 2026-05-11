@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'med_input_decorator.dart';
-import 'selection_dialog.dart';
 
 // Yeniden yazıldı: BaseInputField kalıtımı kaldırıldı, MedInputDecorator
 // kompozisyon modeline geçildi. Yanlış pharmed_manager import'u düzeltildi.
@@ -47,8 +45,7 @@ class MultiSelectionField<T extends Selectable> extends StatefulWidget {
   State<MultiSelectionField<T>> createState() => _MultiSelectionFieldState<T>();
 }
 
-class _MultiSelectionFieldState<T extends Selectable>
-    extends State<MultiSelectionField<T>> {
+class _MultiSelectionFieldState<T extends Selectable> extends State<MultiSelectionField<T>> {
   @override
   Widget build(BuildContext context) {
     return FormField<List<T>>(

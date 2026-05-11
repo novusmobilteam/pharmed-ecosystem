@@ -107,7 +107,7 @@ class MedicineManagementView extends StatelessWidget {
     }
 
     if (!isLoading && items.isEmpty) {
-      return Center(child: CommonEmptyStates.noData());
+      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.custom));
     }
 
     return HospitalizationGridView();

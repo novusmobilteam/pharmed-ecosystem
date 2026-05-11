@@ -36,10 +36,11 @@ class _KitContentListViewState extends State<KitContentListView> {
         }
 
         if (notifier.isEmpty) {
-          return CommonEmptyStates.generic(
+          return EmptyStateWidget(
             icon: Icons.inventory_2_outlined,
-            message: 'Henüz kit içeriği bulunmuyor',
-            subMessage: widget.isDialog ? 'Yeni içerik eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            variant: EmptyStateVariant.custom,
+            title: 'Henüz kit içeriği bulunmuyor',
+            description: widget.isDialog ? 'Yeni içerik eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
           );
         }
 

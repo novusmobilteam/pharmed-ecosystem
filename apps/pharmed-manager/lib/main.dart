@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'core/providers/providers.dart';
 import 'core/routing/app_router.dart';
-import 'features/role/role.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

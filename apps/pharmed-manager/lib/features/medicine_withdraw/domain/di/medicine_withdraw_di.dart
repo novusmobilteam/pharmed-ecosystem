@@ -17,9 +17,9 @@ class MedicineWithdrawProviders {
       // Provider<IMedicineWithdrawRepository>(create: (context) => MedicineWithdrawRepository(context.read())),
 
       // 3. Use Cases
-      Provider<CheckWithdrawUseCase>(create: (context) => CheckWithdrawUseCase(context.read())),
+      Provider<CheckIntakeUseCase>(create: (context) => CheckIntakeUseCase(context.read())),
 
-      Provider<CompleteWithdrawUseCase>(create: (context) => CompleteWithdrawUseCase(context.read())),
+      Provider<CompleteIntakeUseCase>(create: (context) => CompleteIntakeUseCase(context.read())),
 
       Provider<GetWithdrawItemsUseCase>(
         create: (context) => GetWithdrawItemsUseCase(
@@ -32,7 +32,7 @@ class MedicineWithdrawProviders {
       Provider<DisposeMedicineUseCase>(create: (context) => DisposeMedicineUseCase(context.read())),
       Provider<GetPatientMedicinesUseCase>(create: (context) => GetPatientMedicinesUseCase(context.read())),
       Provider<DefinePatientMedicineUseCase>(create: (context) => DefinePatientMedicineUseCase(context.read())),
-      Provider<WithdrawPatientMedicineUseCase>(create: (context) => WithdrawPatientMedicineUseCase(context.read())),
+      Provider<IntakePatientMedicineUseCase>(create: (context) => IntakePatientMedicineUseCase(context.read())),
     ];
   }
 }

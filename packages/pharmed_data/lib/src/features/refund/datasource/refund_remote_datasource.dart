@@ -10,20 +10,20 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-REFUND';
 
-  Future<Result<List<MedicineWithdrawItemDTO>>> getRefundables({required int hospitalizationId}) async {
-    final res = await fetchRequest<List<MedicineWithdrawItemDTO>>(
+  Future<Result<List<MedicineIntakeItemDto>>> getRefundables({required int hospitalizationId}) async {
+    final res = await fetchRequest<List<MedicineIntakeItemDto>>(
       path: '/Prescription/detail/getReturn/$hospitalizationId',
-      parser: BaseRemoteDataSource.listParser(MedicineWithdrawItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(MedicineIntakeItemDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <MedicineWithdrawItemDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <MedicineIntakeItemDto>[]), error: Result.error);
   }
 
-  Future<Result<MedicineWithdrawItemDTO?>> checkRefundStatus({required int id, required double quantity}) async {
+  Future<Result<MedicineIntakeItemDto?>> checkRefundStatus({required int id, required double quantity}) async {
     final res = await postRequest(
       path: '/Prescription/detail/$id/refundControl',
       parser: (json) {
         final detail = (json as Map<String, dynamic>)['detail'];
-        return detail != null ? MedicineWithdrawItemDTO.fromJson(detail) : null;
+        return detail != null ? MedicineIntakeItemDto.fromJson(detail) : null;
       },
       query: {'id': id, 'quantity': quantity},
     );

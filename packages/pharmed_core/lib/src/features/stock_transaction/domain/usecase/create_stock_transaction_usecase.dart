@@ -1,7 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../stock_transaction.dart';
-
 class CreateStockTransactionUseCase {
   final IStockTransactionRepository _repository;
 

@@ -4,7 +4,6 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'wizard_mobile_layout.dart';
 
 class WizardBasicInfo extends Equatable {
   const WizardBasicInfo({

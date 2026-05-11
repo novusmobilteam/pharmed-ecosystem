@@ -22,9 +22,10 @@ class DashboardContentFactory {
         'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
 
         // Diğer Modüller
-        'cabinDrawerStock' => Center(child: AssignmentView()),
-        'drawer-malfunction' => Center(child: FaultView()),
-        'refill' => RefillView(),
+        'drug-assignment' => AssignmentView(),
+        'drug-refill' => RefillView(),
+        'drug-intake' => IntakeView(),
+        'drawer-malfunction' => FaultView(),
 
         // Fallback
         _ => Center(child: Text(context.l10n.common_pageNotFound)),

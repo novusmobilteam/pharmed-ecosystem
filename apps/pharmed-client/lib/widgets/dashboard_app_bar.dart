@@ -10,7 +10,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:collection/collection.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../l10n/l10n_ext.dart';
 
 class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   const DashboardAppBar({
@@ -123,14 +122,16 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
             child: DashboardNavbarMenu(
               parentId: id,
               flattenedMenus: widget.flattenedMenus
-                  .map((m) => NavMenuItem(
-                        id: m.id,
-                        parentId: m.parentId,
-                        name: m.name,
-                        description: m.description,
-                        unicode: m.unicode,
-                        route: m.route,
-                      ))
+                  .map(
+                    (m) => NavMenuItem(
+                      id: m.id,
+                      parentId: m.parentId,
+                      name: m.name,
+                      description: m.description,
+                      unicode: m.unicode,
+                      route: m.route,
+                    ),
+                  )
                   .toList(),
               onCardTap: (childId) {
                 _closeMenu();

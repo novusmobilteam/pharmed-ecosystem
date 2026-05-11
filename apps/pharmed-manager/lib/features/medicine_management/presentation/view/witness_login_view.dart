@@ -113,7 +113,7 @@ class _WitnessListSection extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: witnesses.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) => _WitnessCard(
               user: witnesses[index],
               colorIndex: index,

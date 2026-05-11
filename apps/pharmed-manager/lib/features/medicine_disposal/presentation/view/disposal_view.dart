@@ -62,7 +62,7 @@ class _DisposalViewState extends State<DisposalView> {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
         if (notifier.isEmpty) {
-          return Center(child: CommonEmptyStates.noData());
+          return Center(child: EmptyStateWidget(variant: EmptyStateVariant.custom));
         }
 
         return ListView.builder(

@@ -152,3 +152,18 @@ final cabinRepositoryProvider = Provider<ICabinRepository>((ref) {
     ),
   };
 });
+
+final intakeRepositoryProvider = Provider<IIntakeRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => IntakeRepositoryImpl(
+      dataSource: ref.read(intakeDataSourceProvider),
+      intakeItemMapper: IntakeItemMapper(),
+      patientIntakeItemMapper: PatientIntakeItemMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => IntakeRepositoryImpl(
+      dataSource: ref.read(intakeDataSourceProvider),
+      intakeItemMapper: IntakeItemMapper(),
+      patientIntakeItemMapper: PatientIntakeItemMapper(),
+    ),
+  };
+});

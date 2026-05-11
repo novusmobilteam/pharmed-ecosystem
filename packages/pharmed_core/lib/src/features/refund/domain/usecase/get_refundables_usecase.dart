@@ -5,7 +5,7 @@ class GetRefundablesUseCase {
 
   GetRefundablesUseCase(this._repository);
 
-  Future<Result<List<MedicineWithdrawItem>>> call(int hospitalizationId) async {
+  Future<Result<List<MedicineIntakeItem>>> call(int hospitalizationId) async {
     return _repository.getRefundables(hospitalizationId: hospitalizationId);
   }
 }

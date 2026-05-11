@@ -51,11 +51,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
     }
 
     if (notifier.groupedPrescriptions.isEmpty) {
-      return CommonEmptyStates.generic(
-        icon: PhosphorIcons.receipt(),
-        message: 'Reçete bulunamadı',
-        subMessage: 'Hastaya ait reçete kaydı yok.',
-      );
+      return EmptyStateWidget(variant: EmptyStateVariant.noResults);
     }
 
     final grouped = notifier.groupedPrescriptions;
@@ -65,7 +61,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
       padding: const EdgeInsets.all(16),
       itemCount: grouped.length,
       shrinkWrap: true,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final prescriptionId = prescriptionIds[index];
         final items = grouped[prescriptionId] ?? [];

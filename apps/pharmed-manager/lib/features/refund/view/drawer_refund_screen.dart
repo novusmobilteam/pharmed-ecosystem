@@ -31,9 +31,7 @@ class DrawerRefundScreen extends StatelessWidget {
                 enableSearch: true,
                 onSearchChanged: notifier.search,
                 enableExcel: true,
-                emptyWidget: notifier.hasNoSearchResults
-                    ? CommonEmptyStates.searchNotFound()
-                    : CommonEmptyStates.noData(),
+                emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
               ),
             ),
           );

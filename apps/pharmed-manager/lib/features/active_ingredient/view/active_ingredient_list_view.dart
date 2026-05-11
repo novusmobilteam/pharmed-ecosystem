@@ -25,14 +25,15 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
         }
 
         if (vm.hasNoSearchResults) {
-          return CommonEmptyStates.searchNotFound();
+          return EmptyStateWidget(variant: EmptyStateVariant.error);
         }
 
         if (vm.allItems.isEmpty) {
-          return CommonEmptyStates.generic(
+          return EmptyStateWidget(
             icon: Icons.science_outlined,
-            message: 'Henüz etken madde bulunmuyor',
-            subMessage: widget.isDialog ? 'Yeni etken madde eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            variant: EmptyStateVariant.custom,
+            title: 'Henüz etken madde bulunmuyor',
+            description: widget.isDialog ? 'Yeni etken madde eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
           );
         }
 

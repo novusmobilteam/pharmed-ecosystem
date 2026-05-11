@@ -51,7 +51,7 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
                       onPressed: (item) => showPrescriptionDetailView(context, prescription: item),
                     ),
                   ],
-                  emptyWidget: CommonEmptyStates.noData(),
+                  emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
                 ),
               ),
             );

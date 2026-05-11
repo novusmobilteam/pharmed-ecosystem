@@ -9,3 +9,5 @@ export 'src/utils/show_loading.dart';
 export 'src/theme/med_tokens.dart';
 
 export 'src/widgets/widgets.dart';
+
+export 'src/l10n/l10n.dart';

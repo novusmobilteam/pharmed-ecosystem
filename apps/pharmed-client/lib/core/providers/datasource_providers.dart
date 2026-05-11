@@ -54,3 +54,7 @@ final cabinRemoteDataSourceProvider = Provider<CabinRemoteDataSource>((ref) {
 final cabinLocaleDataSourceProvider = Provider<ICabinLocalDataSource>((ref) {
   return CabinLocalDataSource();
 });
+
+final intakeDataSourceProvider = Provider((ref) {
+  return IntakeRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});

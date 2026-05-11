@@ -213,12 +213,12 @@ class RepositoryProviders {
           AppFlavor.mock => RefundRepositoryImpl(
             dataSource: context.read(),
             refundMapper: RefundMapper(),
-            withdrawItemMapper: MedicineWithdrawItemMapper(),
+            withdrawItemMapper: IntakeItemMapper(),
           ),
           AppFlavor.dev || AppFlavor.prod => RefundRepositoryImpl(
             dataSource: context.read(),
             refundMapper: RefundMapper(),
-            withdrawItemMapper: MedicineWithdrawItemMapper(),
+            withdrawItemMapper: IntakeItemMapper(),
           ),
         },
       ),

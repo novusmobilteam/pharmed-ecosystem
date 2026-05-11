@@ -13,8 +13,8 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   final AuthNotifier _authPersistence;
   final Hospitalization? _hospitalization;
   final GetWithdrawItemsUseCase _getWithdrawItemsUseCase;
-  final CheckWithdrawUseCase _checkWithdrawUseCase;
-  final CompleteWithdrawUseCase _completeWithdrawUseCase;
+  final CheckIntakeUseCase _checkWithdrawUseCase;
+  final CompleteIntakeUseCase _completeWithdrawUseCase;
   final GetCurrentStationUseCase _getCurrentStationUseCase;
 
   /// Tüm kontroller tamamlandığında ve alım başlatılabilir duruma gelindiğinde
@@ -26,8 +26,8 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     required WithdrawType type,
     Hospitalization? hospitalization,
     required GetWithdrawItemsUseCase getWithdrawItemsUseCase,
-    required CheckWithdrawUseCase checkWithdrawUseCase,
-    required CompleteWithdrawUseCase completeWithdrawUseCase,
+    required CheckIntakeUseCase checkWithdrawUseCase,
+    required CompleteIntakeUseCase completeWithdrawUseCase,
     required GetCurrentStationUseCase getCurrentStationUseCase,
     required AuthNotifier authPersistence,
   }) : _checkWithdrawUseCase = checkWithdrawUseCase,
@@ -74,8 +74,8 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   Map<int, WithdrawCheckStatus> _checkStatuses = {};
   Map<int, WithdrawCheckStatus> get checkStatuses => _checkStatuses;
 
-  Map<int, List<WithdrawDetail>> _withdrawPlans = {};
-  Map<int, List<WithdrawDetail>> get withdrawPlans => _withdrawPlans;
+  Map<int, List<IntakeDetail>> _withdrawPlans = {};
+  Map<int, List<IntakeDetail>> get withdrawPlans => _withdrawPlans;
 
   /// Anlık olarak işlem yapılan ilaç.
   CabinOperationItem? get currentItem => _selectedItems.isNotEmpty ? _selectedItems.first : null;
@@ -102,7 +102,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     return execute(
       refreshAssignments ? refreshAssignmentsOp : fetchItemsOp,
       operation: () => _getWithdrawItemsUseCase.call(
-        GetWithdrawItemsParams(
+        GetIntakeItemsParams(
           type: _type,
           hospitalizationId: _hospitalization?.id,
           refreshAssignments: refreshAssignments,
@@ -200,7 +200,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     CabinOperationItem item,
     int userId, {
     Function(String? msg)? onFailed,
-    Function(List<WithdrawDetail> details)? onSuccess,
+    Function(List<IntakeDetail> details)? onSuccess,
   }) async {
     _checkStatuses[item.id] = const CheckLoading();
     notifyListeners();
@@ -208,7 +208,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     await execute(
       checkOp,
       operation: () => _checkWithdrawUseCase.call(
-        CheckWithdrawParams(
+        CheckIntakeParams(
           type: _type,
           prescriptionDetailId: item.prescriptionItem?.id,
           hospitalizationId: _hospitalization?.id,
@@ -247,7 +247,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     await executeVoid(
       completeOp,
       operation: () => _completeWithdrawUseCase.call(
-        WithdrawParams(
+        IntakeParams(
           type: _type,
           prescriptionDetailId: currentItem?.prescriptionItem?.id,
           hospitalizationId: _hospitalization?.id,
@@ -365,7 +365,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   /// - [CountType.noCount]: censusQuantity null kalır, UI'da girdi gösterilmez.
   /// - [CountType.normalCount]: Mevcut stok başlangıç değeri olarak set edilir.
   /// - [CountType.blindCount]: censusQuantity null başlar, kullanıcı girer.
-  void _prepareCounting(CabinOperationItem item, List<WithdrawDetail> details) {
+  void _prepareCounting(CabinOperationItem item, List<IntakeDetail> details) {
     final drug = item.medicine as Drug?;
     final countType = drug?.countType;
 

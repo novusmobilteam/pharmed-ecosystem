@@ -71,11 +71,7 @@ class _CabinEditorViewState<T> extends State<CabinEditorView<T>> {
   @override
   Widget build(BuildContext context) {
     if (widget.cabins.isEmpty) {
-      return CommonEmptyStates.generic(
-        icon: PhosphorIcons.magnifyingGlass(),
-        message: "Kabin Bulunamadı",
-        subMessage: "Sistemde tanımlı herhangi bir kabin yok. Lütfen önce kabin ekleyiniz.",
-      );
+      return EmptyStateWidget(icon: PhosphorIcons.magnifyingGlass(), variant: EmptyStateVariant.noCabin);
     }
 
     if (widget.layouts.isEmpty) {
@@ -133,10 +129,11 @@ class _CabinEditorViewState<T> extends State<CabinEditorView<T>> {
         ),
         const SizedBox(height: 20),
         Expanded(
-          child: CommonEmptyStates.generic(
+          child: EmptyStateWidget(
             icon: PhosphorIcons.arrowsClockwise(),
-            message: "Tasarım Henüz Oluşturulmadı",
-            subMessage:
+            variant: EmptyStateVariant.custom,
+            title: "Tasarım Henüz Oluşturulmadı",
+            description:
                 "${widget.selectedCabin?.name ?? 'Seçili kabin'} için henüz bir tasarım bulunmuyor.\nLütfen tasarımı senkronize edin.",
           ),
         ),

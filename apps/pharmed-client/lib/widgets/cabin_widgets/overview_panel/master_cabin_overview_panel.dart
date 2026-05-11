@@ -115,7 +115,6 @@ class _MasterDrawerItem extends StatelessWidget {
   }
 
   _DrawerStockStatus _resolveStockDot() {
-    // TODO: DrawerGroup'a stok özet bilgisi eklenince güncelle
     return _DrawerStockStatus.normal;
   }
 }

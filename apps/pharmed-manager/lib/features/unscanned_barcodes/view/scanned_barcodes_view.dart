@@ -28,7 +28,7 @@ class ScannedBarcodesView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator.adaptive());
           }
           if (!notifier.isLoading(notifier.fetchScannedOp) && notifier.deletedBarcodes.isEmpty) {
-            return CommonEmptyStates.noData();
+            return EmptyStateWidget(variant: EmptyStateVariant.noResults);
           }
 
           return MedTable<PrescriptionItem>(

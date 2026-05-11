@@ -27,7 +27,7 @@ class CheckRefundStatusUseCase {
   final IRefundRepository _refundRepository;
   final ICabinRepository _cabinRepository;
 
-  Future<Result<MedicineWithdrawItem?>> call(CheckRefundStatusParams params) async {
+  Future<Result<MedicineIntakeItem?>> call(CheckRefundStatusParams params) async {
     final checkResult = await _refundRepository.checkRefundStatus(id: params.id, quantity: params.quantity);
 
     if (checkResult.isError) {
@@ -41,7 +41,7 @@ class CheckRefundStatusUseCase {
     };
   }
 
-  Future<Result<MedicineWithdrawItem?>> _handleDrawer() async {
+  Future<Result<MedicineIntakeItem?>> _handleDrawer() async {
     final cabinResult = await _cabinRepository.getCabins();
 
     // RepoResult → veri çıkar (success veya stale), failure → hata döndür
@@ -53,7 +53,7 @@ class CheckRefundStatusUseCase {
     return _findCubicSlot(cabins);
   }
 
-  Future<Result<MedicineWithdrawItem?>> _findCubicSlot(List<Cabin> cabins) async {
+  Future<Result<MedicineIntakeItem?>> _findCubicSlot(List<Cabin> cabins) async {
     if (cabins.isEmpty) {
       return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
     }
@@ -72,7 +72,7 @@ class CheckRefundStatusUseCase {
 
       if (cubicSlot != null) {
         return Result.ok(
-          MedicineWithdrawItem.empty(
+          MedicineIntakeItem.empty(
             MedicineAssignment(
               drawerUnit: DrawerUnit(drawerSlotId: cubicSlot.id, drawerSlot: cubicSlot),
               cabin: cabin,

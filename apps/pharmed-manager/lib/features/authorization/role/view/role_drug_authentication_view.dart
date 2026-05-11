@@ -18,7 +18,7 @@ class RoleDrugAuthenticationView extends StatelessWidget {
         }
 
         if (notifier.isEmpty) {
-          return Center(child: CommonEmptyStates.noData());
+          return Center(child: EmptyStateWidget(variant: EmptyStateVariant.error));
         }
 
         return _DrugTable(notifier: notifier);

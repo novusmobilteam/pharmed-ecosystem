@@ -48,11 +48,7 @@ class RoleScreen extends StatelessWidget {
     }
 
     if (notifier.items.isEmpty) {
-      return CommonEmptyStates.generic(
-        icon: PhosphorIcons.user(),
-        message: 'Henüz rol bulunmuyor',
-        subMessage: 'Yeni rol eklemek için "+" butonuna tıklayın',
-      );
+      return EmptyStateWidget(variant: EmptyStateVariant.noResults);
     }
 
     return MedTable<Role>(

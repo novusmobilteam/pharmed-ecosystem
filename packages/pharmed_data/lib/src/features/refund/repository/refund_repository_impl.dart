@@ -5,25 +5,25 @@ class RefundRepositoryImpl implements IRefundRepository {
   RefundRepositoryImpl({
     required RefundRemoteDataSource dataSource,
     required RefundMapper refundMapper,
-    required MedicineWithdrawItemMapper withdrawItemMapper,
+    required IntakeItemMapper withdrawItemMapper,
   }) : _dataSource = dataSource,
        _refundMapper = refundMapper,
-       _withdrawItemMapper = withdrawItemMapper;
+       _intakeItemMapper = withdrawItemMapper;
 
   final RefundRemoteDataSource _dataSource;
   final RefundMapper _refundMapper;
-  final MedicineWithdrawItemMapper _withdrawItemMapper;
+  final IntakeItemMapper _intakeItemMapper;
 
   @override
-  Future<Result<List<MedicineWithdrawItem>>> getRefundables({required int hospitalizationId}) async {
+  Future<Result<List<MedicineIntakeItem>>> getRefundables({required int hospitalizationId}) async {
     final result = await _dataSource.getRefundables(hospitalizationId: hospitalizationId);
-    return result.when(ok: (dtos) => Result.ok(_withdrawItemMapper.toEntityList(dtos)), error: (e) => Result.error(e));
+    return result.when(ok: (dtos) => Result.ok(_intakeItemMapper.toEntityList(dtos)), error: (e) => Result.error(e));
   }
 
   @override
-  Future<Result<MedicineWithdrawItem?>> checkRefundStatus({required int id, required double quantity}) async {
+  Future<Result<MedicineIntakeItem?>> checkRefundStatus({required int id, required double quantity}) async {
     final res = await _dataSource.checkRefundStatus(id: id, quantity: quantity);
-    return res.when(ok: (dto) => Result.ok(_withdrawItemMapper.toEntityOrNull(dto)), error: (e) => Result.error(e));
+    return res.when(ok: (dto) => Result.ok(_intakeItemMapper.toEntityOrNull(dto)), error: (e) => Result.error(e));
   }
 
   @override
