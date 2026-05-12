@@ -97,6 +97,7 @@ final class MobileIntakeReady extends MobileIntakeState {
     required this.room,
     required this.prescriptionItems,
     required this.rfidReadEpcs,
+    required this.takenEpcs,
     required this.selectedItemIds,
   });
 
@@ -111,18 +112,31 @@ final class MobileIntakeReady extends MobileIntakeState {
   final Room? room;
   final List<PrescriptionItem> prescriptionItems;
   final Set<String> rfidReadEpcs;
+
+  /// Kabinden çıkarılmış (alındı sayılan) EPC'ler.
+  ///
+  /// Dolumun tersine: [rfidReadEpcs] artık okunabilenler,
+  /// [takenEpcs] ise artık okunmayanlar (kabinden çıkarılanlar).
+  /// EPC geri gelirse [takenEpcs]'ten çıkarılır.
+  final Set<String> takenEpcs;
   final Set<int> selectedItemIds;
 
   int get selectedSlotId => selectedSlot.slotId;
 
+  /// Tamamla butonu için: seçili RFID'li item'ların EPC'si takenEpcs'te mi?
+  ///
+  /// RFID'li item yoksa (hepsi RFID'siz) direkt true döner.
+  bool get canComplete {
+    final rfidItems = _selectedRfidItems;
+    if (rfidItems.isEmpty) return true;
+    return rfidItems.every((i) => takenEpcs.contains(i.rfidTag!));
+  }
+
   /// Banner sayacı için: işaretli RFID'li ilaç sayısı.
   int get rfidExpectedCount => _selectedRfidItems.length;
 
-  /// Bunlardan kaç tanesinin EPC'si okundu.
-  int get rfidReadCount => _selectedRfidItems.where((i) => rfidReadEpcs.contains(i.rfidTag)).length;
-
-  /// Tamamla butonu için: tüm seçili RFID'li ilaçların etiketleri okundu mu?
-  bool get allSelectedRfidRead => rfidExpectedCount == 0 || rfidReadCount >= rfidExpectedCount;
+  /// Bunlardan kaç tanesinin EPC'si takenEpcs'te (alındı sayıldı).
+  int get rfidTakenCount => _selectedRfidItems.where((i) => takenEpcs.contains(i.rfidTag!)).length;
 
   List<PrescriptionItem> get _selectedRfidItems => prescriptionItems
       .where(
@@ -139,6 +153,7 @@ final class MobileIntakeReady extends MobileIntakeState {
   MobileIntakeReady copyWith({
     List<PrescriptionItem>? prescriptionItems,
     Set<String>? rfidReadEpcs,
+    Set<String>? takenEpcs,
     Set<int>? selectedItemIds,
   }) {
     return MobileIntakeReady(
@@ -153,12 +168,37 @@ final class MobileIntakeReady extends MobileIntakeState {
       room: room,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
+      takenEpcs: takenEpcs ?? this.takenEpcs,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
     );
   }
 }
 
-/// Dolum tamamlama işlemi devam ediyor.
+/// Backend check devam ediyor — [CheckMobileIntakeUseCase] sonucu bekleniyor.
+///
+/// Check başarılı olursa çekmece açılır, başarısız olursa
+/// [MobileIntakeError] ile [ready]'e dönülür.
+final class MobileIntakeCheckInProgress extends MobileIntakeState {
+  const MobileIntakeCheckInProgress({
+    required this.slots,
+    required this.mobileSlots,
+    required this.selectedSlot,
+    required this.assignments,
+    required this.cabinId,
+    required this.ready,
+  });
+
+  final List<MobileSlotVisual> slots;
+  final List<MobileDrawerSlot> mobileSlots;
+  final MobileSlotVisual selectedSlot;
+  final List<BedAssignment> assignments;
+  final int cabinId;
+
+  /// Check başarısız olursa bu state'e dönülür.
+  final MobileIntakeReady ready;
+}
+
+/// Alım tamamlama işlemi devam ediyor.
 final class MobileIntakeSaving extends MobileIntakeState {
   const MobileIntakeSaving({
     required this.slots,
@@ -177,7 +217,7 @@ final class MobileIntakeSaving extends MobileIntakeState {
   final MobileIntakeReady ready;
 }
 
-/// Dolum başarıyla tamamlandı.
+/// Alım başarıyla tamamlandı.
 final class MobileIntakeSuccess extends MobileIntakeState {
   const MobileIntakeSuccess({
     required this.slots,
@@ -206,6 +246,10 @@ final class MobileIntakeError extends MobileIntakeState {
   final MobileIntakeState previousState;
 }
 
+// ---------------------------------------------------------------------------
+// Extension
+// ---------------------------------------------------------------------------
+
 extension MobileIntakeStateX on MobileIntakeState {
   List<MobileSlotVisual> get slots => switch (this) {
     MobileIntakeLoading(:final slots) => slots,
@@ -213,6 +257,7 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeSlotSelected(:final slots) => slots,
     MobileIntakeNoPatient(:final slots) => slots,
     MobileIntakeReady(:final slots) => slots,
+    MobileIntakeCheckInProgress(:final slots) => slots,
     MobileIntakeSaving(:final slots) => slots,
     MobileIntakeSuccess(:final slots) => slots,
     MobileIntakeError(:final previousState) => previousState.slots,
@@ -225,6 +270,7 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeSlotSelected(:final mobileSlots) => mobileSlots,
     MobileIntakeNoPatient(:final mobileSlots) => mobileSlots,
     MobileIntakeReady(:final mobileSlots) => mobileSlots,
+    MobileIntakeCheckInProgress(:final mobileSlots) => mobileSlots,
     MobileIntakeSaving(:final mobileSlots) => mobileSlots,
     MobileIntakeSuccess(:final mobileSlots) => mobileSlots,
     MobileIntakeError(:final previousState) => previousState.mobileSlots,
@@ -237,6 +283,7 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeLoading(:final assignments) => assignments ?? const [],
     MobileIntakeNoPatient(:final assignments) => assignments,
     MobileIntakeReady(:final assignments) => assignments,
+    MobileIntakeCheckInProgress(:final assignments) => assignments,
     MobileIntakeSaving(:final assignments) => assignments,
     MobileIntakeSuccess(:final assignments) => assignments,
     MobileIntakeError(:final previousState) => previousState.assignments,
@@ -247,6 +294,7 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeSlotSelected(:final selectedSlotId) => selectedSlotId,
     MobileIntakeNoPatient(:final selectedSlotId) => selectedSlotId,
     MobileIntakeReady(:final selectedSlotId) => selectedSlotId,
+    MobileIntakeCheckInProgress(:final selectedSlot) => selectedSlot.slotId,
     MobileIntakeSaving(:final selectedSlot) => selectedSlot.slotId,
     MobileIntakeSuccess(:final selectedSlot) => selectedSlot.slotId,
     MobileIntakeError(:final previousState) => previousState.selectedSlotId,
@@ -258,6 +306,7 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeLoading(:final selectedSlot) => selectedSlot,
     MobileIntakeNoPatient(:final selectedSlot) => selectedSlot,
     MobileIntakeReady(:final selectedSlot) => selectedSlot,
+    MobileIntakeCheckInProgress(:final selectedSlot) => selectedSlot,
     MobileIntakeSaving(:final selectedSlot) => selectedSlot,
     MobileIntakeSuccess(:final selectedSlot) => selectedSlot,
     MobileIntakeError(:final previousState) => previousState.selectedSlot,
@@ -277,6 +326,7 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeSlotSelected(:final cabinId) => cabinId,
     MobileIntakeNoPatient(:final cabinId) => cabinId,
     MobileIntakeReady(:final cabinId) => cabinId,
+    MobileIntakeCheckInProgress(:final cabinId) => cabinId,
     MobileIntakeSaving(:final cabinId) => cabinId,
     MobileIntakeSuccess(:final cabinId) => cabinId,
     MobileIntakeError(:final previousState) => previousState.cabinId,
@@ -309,8 +359,7 @@ extension MobileIntakeStateX on MobileIntakeState {
   }
 
   /// Panel listesinde gösterilebilecek atamalar.
-  /// Sadece bir göze (cell) bağlı olanlar listelenir; göz ataması olmayan
-  /// kabaca-atanmış kayıtlar kullanıcıya gösterilmez.
+  /// Sadece bir göze (cell) bağlı olanlar listelenir.
   List<BedAssignment> get availableAssignments =>
       assignments.where((a) => a.cellId != null && a.hospitalization != null).toList();
 }

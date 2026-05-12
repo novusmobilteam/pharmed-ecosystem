@@ -12,7 +12,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   late WithdrawType _type;
   final AuthNotifier _authPersistence;
   final Hospitalization? _hospitalization;
-  final GetWithdrawItemsUseCase _getWithdrawItemsUseCase;
+  final GetIntakeItemsUseCase _getWithdrawItemsUseCase;
   final CheckIntakeUseCase _checkWithdrawUseCase;
   final CompleteIntakeUseCase _completeWithdrawUseCase;
   final GetCurrentStationUseCase _getCurrentStationUseCase;
@@ -25,7 +25,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     required this.onChecksCompleted,
     required WithdrawType type,
     Hospitalization? hospitalization,
-    required GetWithdrawItemsUseCase getWithdrawItemsUseCase,
+    required GetIntakeItemsUseCase getWithdrawItemsUseCase,
     required CheckIntakeUseCase checkWithdrawUseCase,
     required CompleteIntakeUseCase completeWithdrawUseCase,
     required GetCurrentStationUseCase getCurrentStationUseCase,

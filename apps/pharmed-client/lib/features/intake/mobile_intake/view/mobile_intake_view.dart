@@ -42,29 +42,29 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
 
   Future<void> _onCancelIntake(MobileIntakeState state, MobileDrawerStage drawerStage) async {
     final notifier = ref.read(mobileIntakeNotifierProvider.notifier);
-    final rfidReadCount = state is MobileIntakeReady ? state.rfidReadCount : 0;
+    final rfidTakenCount = state is MobileIntakeReady ? state.rfidTakenCount : 0;
 
-    // DrawerOpening/Opened + RFID yok → snackbar, iptal etme
-    if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidReadCount == 0) {
+    // DrawerOpening/Opened + henüz ilaç alınmadı → snackbar, iptal etme
+    if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidTakenCount == 0) {
       MessageUtils.showInfoSnackbar(context, 'İşlemi iptal etmek için çekmeceyi kapatın.');
       return;
     }
 
-    // DrawerClosed + RFID yok → onay dialogu
-    if (drawerStage is MobileDrawerClosed && rfidReadCount == 0) {
+    // DrawerClosed + henüz ilaç alınmadı → onay dialogu
+    if (drawerStage is MobileDrawerClosed && rfidTakenCount == 0) {
       MessageUtils.showConfirmDialog(
         context: context,
         action: ConfirmAction.exit,
-        customTitle: 'Dolumu İptal Et',
-        customMessage: 'İlaçları çekmeceden çıkardığınız varsayılacak. Dolum iptal edilsin mi?',
+        customTitle: 'Alımı İptal Et',
+        customMessage: 'Henüz ilaç alınmadı. Alım işlemi iptal edilsin mi?',
         confirmButtonText: 'İptal Et',
-        onConfirm: () {},
+        onConfirm: notifier.cancelIntake,
       );
       return;
     }
 
     // Diğer durumlar → direkt iptal
-    // notifier.cancelRefill();
+    notifier.cancelIntake();
   }
 
   @override
@@ -110,8 +110,8 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
         rightPanel: MobileIntakePanel(
           state: state,
           drawerStage: drawerStage,
-          onStartIntake: () {},
-          onCompleteIntake: () {},
+          onStartIntake: notifier.startIntake,
+          onCompleteIntake: notifier.completeIntake,
           onReopenDrawer: notifier.reopenDrawer,
           onSelectAssignment: notifier.selectAssignment,
           onChangePatient: notifier.clearPatientSelection,

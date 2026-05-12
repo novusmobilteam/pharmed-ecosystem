@@ -162,6 +162,31 @@ final class MobileRefillReady extends MobileRefillState {
   }
 }
 
+/// Çekmece açılış komutu gönderildi, ilk stage event bekleniyor.
+///
+/// [startRefill] çağrıldıktan sonra [MobileDrawerOpening] stream'den
+/// gelene kadar geçen kısa süreyi kapsar. UI bu state'de "Doluma başla"
+/// butonunu loading olarak gösterir.
+final class MobileRefillDrawerStarting extends MobileRefillState {
+  const MobileRefillDrawerStarting({
+    required this.slots,
+    required this.mobileSlots,
+    required this.selectedSlot,
+    required this.assignments,
+    required this.cabinId,
+    required this.ready,
+  });
+
+  final List<MobileSlotVisual> slots;
+  final List<MobileDrawerSlot> mobileSlots;
+  final MobileSlotVisual selectedSlot;
+  final List<BedAssignment> assignments;
+  final int cabinId;
+
+  /// Hata durumunda bu state'e dönülür.
+  final MobileRefillReady ready;
+}
+
 /// Dolum tamamlama işlemi devam ediyor.
 final class MobileRefillSaving extends MobileRefillState {
   const MobileRefillSaving({
@@ -219,6 +244,7 @@ extension MobileRefillStateX on MobileRefillState {
     MobileRefillSlotSelected(:final slots) => slots,
     MobileRefillNoPatient(:final slots) => slots,
     MobileRefillReady(:final slots) => slots,
+    MobileRefillDrawerStarting(:final slots) => slots,
     MobileRefillSaving(:final slots) => slots,
     MobileRefillSuccess(:final slots) => slots,
     MobileRefillError(:final previousState) => previousState.slots,
@@ -231,6 +257,7 @@ extension MobileRefillStateX on MobileRefillState {
     MobileRefillSlotSelected(:final mobileSlots) => mobileSlots,
     MobileRefillNoPatient(:final mobileSlots) => mobileSlots,
     MobileRefillReady(:final mobileSlots) => mobileSlots,
+    MobileRefillDrawerStarting(:final mobileSlots) => mobileSlots,
     MobileRefillSaving(:final mobileSlots) => mobileSlots,
     MobileRefillSuccess(:final mobileSlots) => mobileSlots,
     MobileRefillError(:final previousState) => previousState.mobileSlots,
@@ -243,6 +270,7 @@ extension MobileRefillStateX on MobileRefillState {
     MobileRefillLoading(:final assignments) => assignments ?? const [],
     MobileRefillNoPatient(:final assignments) => assignments,
     MobileRefillReady(:final assignments) => assignments,
+    MobileRefillDrawerStarting(:final assignments) => assignments,
     MobileRefillSaving(:final assignments) => assignments,
     MobileRefillSuccess(:final assignments) => assignments,
     MobileRefillError(:final previousState) => previousState.assignments,
@@ -253,6 +281,7 @@ extension MobileRefillStateX on MobileRefillState {
     MobileRefillSlotSelected(:final selectedSlotId) => selectedSlotId,
     MobileRefillNoPatient(:final selectedSlotId) => selectedSlotId,
     MobileRefillReady(:final selectedSlotId) => selectedSlotId,
+    MobileRefillDrawerStarting(:final selectedSlot) => selectedSlot.slotId,
     MobileRefillSaving(:final selectedSlot) => selectedSlot.slotId,
     MobileRefillSuccess(:final selectedSlot) => selectedSlot.slotId,
     MobileRefillError(:final previousState) => previousState.selectedSlotId,
@@ -264,6 +293,7 @@ extension MobileRefillStateX on MobileRefillState {
     MobileRefillLoading(:final selectedSlot) => selectedSlot,
     MobileRefillNoPatient(:final selectedSlot) => selectedSlot,
     MobileRefillReady(:final selectedSlot) => selectedSlot,
+    MobileRefillDrawerStarting(:final selectedSlot) => selectedSlot,
     MobileRefillSaving(:final selectedSlot) => selectedSlot,
     MobileRefillSuccess(:final selectedSlot) => selectedSlot,
     MobileRefillError(:final previousState) => previousState.selectedSlot,
@@ -283,6 +313,7 @@ extension MobileRefillStateX on MobileRefillState {
     MobileRefillSlotSelected(:final cabinId) => cabinId,
     MobileRefillNoPatient(:final cabinId) => cabinId,
     MobileRefillReady(:final cabinId) => cabinId,
+    MobileRefillDrawerStarting(:final cabinId) => cabinId,
     MobileRefillSaving(:final cabinId) => cabinId,
     MobileRefillSuccess(:final cabinId) => cabinId,
     MobileRefillError(:final previousState) => previousState.cabinId,

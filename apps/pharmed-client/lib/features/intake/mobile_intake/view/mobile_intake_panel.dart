@@ -53,10 +53,14 @@ class MobileIntakePanel extends StatelessWidget {
 
         MobileIntakeReady ready => _buildReady(ready),
 
-        MobileIntakeSaving(:final ready) || MobileIntakeSuccess(:final ready) => _buildReady(ready),
+        // Check, kaydetme ve başarı sırasında Ready görünümü korunur
+        MobileIntakeCheckInProgress(:final ready) ||
+        MobileIntakeSaving(:final ready) ||
+        MobileIntakeSuccess(:final ready) => _buildReady(ready),
 
         MobileIntakeError(:final previousState) => switch (previousState) {
           MobileIntakeReady ready => _buildReady(ready),
+          MobileIntakeCheckInProgress(:final ready) => _buildReady(ready),
           _ => CabinPatientPickerList(assignments: previousState.availableAssignments, onSelected: onSelectAssignment),
         },
       },
@@ -76,22 +80,24 @@ class MobileIntakePanel extends StatelessWidget {
         Expanded(
           child: _PrescriptionList(
             items: ready.prescriptionItems,
-            rfidReadEpcs: ready.rfidReadEpcs,
             selectedItemIds: ready.selectedItemIds,
             isProcessActive: _isSelectionLocked,
             onToggleItem: onToggleItem,
+            takenEpcs: ready.takenEpcs,
+            rfidReadEpcs: ready.rfidReadEpcs,
           ),
         ),
         _IntakeActionBar(
           drawerStage: drawerStage,
           hasSelection: ready.selectedItemIds.isNotEmpty,
-          allSelectedRfidRead: ready.allSelectedRfidRead,
           onStart: onStartIntake,
           onComplete: onCompleteIntake,
           onReopen: onReopenDrawer,
           onCancel: onCancelIntake,
-          rfidReadCount: ready.rfidReadCount,
           isSaving: state is MobileIntakeSaving,
+          canComplete: ready.canComplete,
+          rfidTakenCount: ready.rfidTakenCount,
+          isStarting: state is MobileIntakeCheckInProgress,
         ),
       ],
     );
@@ -101,6 +107,7 @@ class MobileIntakePanel extends StatelessWidget {
 class _PrescriptionList extends StatelessWidget {
   const _PrescriptionList({
     required this.items,
+    required this.takenEpcs,
     required this.rfidReadEpcs,
     required this.selectedItemIds,
     required this.isProcessActive,
@@ -108,7 +115,15 @@ class _PrescriptionList extends StatelessWidget {
   });
 
   final List<PrescriptionItem> items;
+
+  /// Kabinden çıkarılmış (alındı sayılan) EPC'ler.
+  ///
+  /// Alım akışında RFID semantiği dolumun tersidir:
+  /// EPC [takenEpcs]'te yoksa ilaç hâlâ kabinde → okundu (yeşil).
+  /// EPC [takenEpcs]'e girince kabinden çıktı → alındı.
+  final Set<String> takenEpcs;
   final Set<String> rfidReadEpcs;
+
   final Set<int> selectedItemIds;
 
   /// Süreç aktifken kullanıcı seçim değiştiremez (orchestrator açıkken kilitli).
@@ -129,13 +144,21 @@ class _PrescriptionList extends StatelessWidget {
 
         final isEligible = item.status == PrescriptionStatus.purchasePending;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
-        final isRfidRead = item.rfidTag != null && rfidReadEpcs.contains(item.rfidTag);
 
-        return RxRefillCard(
+        final rfidStatus = !isProcessActive
+            ? null // session başlamadı
+            : takenEpcs.contains(item.rfidTag)
+            ? RfidPresenceStatus.removed
+            : rfidReadEpcs.contains(item.rfidTag)
+            ? RfidPresenceStatus.present
+            : RfidPresenceStatus.absent;
+
+        return RxOperationCard(
+          mode: RxOperationCardMode.intake,
           item: item,
           isEligible: isEligible,
           isSelected: isSelected,
-          isRfidRead: isRfidRead,
+          rfidStatus: rfidStatus,
           onTap: isProcessActive || item.id == null ? null : () => onToggleItem(item.id!),
         );
       },
@@ -147,9 +170,10 @@ class _IntakeActionBar extends StatelessWidget {
   const _IntakeActionBar({
     required this.drawerStage,
     required this.hasSelection,
-    required this.allSelectedRfidRead,
-    required this.rfidReadCount,
+    required this.canComplete,
+    required this.rfidTakenCount,
     required this.isSaving,
+    required this.isStarting,
     required this.onStart,
     required this.onComplete,
     required this.onReopen,
@@ -158,20 +182,34 @@ class _IntakeActionBar extends StatelessWidget {
 
   final MobileDrawerStage drawerStage;
   final bool hasSelection;
-  final bool allSelectedRfidRead;
-  final int rfidReadCount;
+
+  /// Seçili RFID'li tüm item'ların EPC'si takenEpcs'te mi?
+  /// [MobileIntakeReady.canComplete] getter'ından gelir.
+  final bool canComplete;
+
+  /// Kabinden çıkarılmış (alındı sayılan) EPC sayısı.
+  /// [MobileIntakeReady.rfidTakenCount] getter'ından gelir.
+  final int rfidTakenCount;
+
   final bool isSaving;
+
+  /// Check + drawer açılış arasındaki süreçte true.
+  /// View'da [_isStarting] local state'i ile yönetilir.
+  final bool isStarting;
+
   final VoidCallback onStart;
   final VoidCallback onComplete;
   final VoidCallback onReopen;
   final VoidCallback onCancel;
 
+  bool get _isLocked => isSaving || isStarting;
+
   bool get _showCancel {
-    if (isSaving) return false;
+    if (_isLocked) return false;
     if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) {
-      return rfidReadCount == 0;
+      return rfidTakenCount == 0;
     }
-    if (drawerStage is MobileDrawerClosed) return rfidReadCount == 0;
+    if (drawerStage is MobileDrawerClosed) return rfidTakenCount == 0;
     if (drawerStage is MobileDrawerIdle) return hasSelection;
     if (drawerStage is MobileDrawerFailed) return true;
     return false;
@@ -182,7 +220,7 @@ class _IntakeActionBar extends StatelessWidget {
     return Row(
       children: [
         if (_showCancel) _CancelButton(onTap: onCancel) else const Spacer(),
-        Spacer(),
+        const Spacer(),
         _buildAction(),
       ],
     );
@@ -190,14 +228,24 @@ class _IntakeActionBar extends StatelessWidget {
 
   Widget _buildAction() {
     if (isSaving) {
-      return _ActionButton(label: 'Kaydediliyor', enabled: false, loading: true, onTap: () {});
+      return const _ActionButton(label: 'Kaydediliyor', enabled: false, loading: true, onTap: _noop);
+    }
+
+    // Check + drawer açılış loading — stage henüz Idle'da ama işlem başladı
+    if (isStarting) {
+      return const _ActionButton(label: 'Alıma başla', enabled: false, loading: true, onTap: _noop);
     }
 
     return switch (drawerStage) {
-      MobileDrawerOpening() => _ActionButton(label: 'Çekmece açılıyor', enabled: false, loading: true, onTap: () {}),
-      MobileDrawerOpened() => _ActionButton(label: 'İlaçları alın', enabled: false, onTap: () {}),
+      MobileDrawerOpening() => const _ActionButton(
+        label: 'Çekmece açılıyor',
+        enabled: false,
+        loading: true,
+        onTap: _noop,
+      ),
+      MobileDrawerOpened() => const _ActionButton(label: 'İlaçları alın', enabled: false, onTap: _noop),
       MobileDrawerClosed() =>
-        allSelectedRfidRead
+        canComplete
             ? _ActionButton(label: 'Alımı tamamla', onTap: onComplete)
             : _ActionButton(label: 'Alıma devam et', onTap: onReopen),
       MobileDrawerFailed() => _ActionButton(label: 'Tekrar dene', onTap: onStart),
@@ -205,6 +253,11 @@ class _IntakeActionBar extends StatelessWidget {
     };
   }
 }
+
+// ignore: avoid_returning_null_for_void — disabled state için placeholder
+void _noop() {}
+
+// ---------------------------------------------------------------------------
 
 class _ActionButton extends StatelessWidget {
   const _ActionButton({required this.label, required this.onTap, this.enabled = true, this.loading = false});

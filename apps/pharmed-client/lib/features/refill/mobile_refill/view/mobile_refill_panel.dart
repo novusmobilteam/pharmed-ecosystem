@@ -64,10 +64,14 @@ class MobileRefillPanel extends StatelessWidget {
 
         MobileRefillReady ready => _buildReady(ready),
 
-        MobileRefillSaving(:final ready) || MobileRefillSuccess(:final ready) => _buildReady(ready),
+        // Drawer başlatma, kaydetme ve başarı sırasında Ready görünümü korunur
+        MobileRefillDrawerStarting(:final ready) ||
+        MobileRefillSaving(:final ready) ||
+        MobileRefillSuccess(:final ready) => _buildReady(ready),
 
         MobileRefillError(:final previousState) => switch (previousState) {
           MobileRefillReady ready => _buildReady(ready),
+          MobileRefillDrawerStarting(:final ready) => _buildReady(ready),
           _ => CabinPatientPickerList(assignments: previousState.availableAssignments, onSelected: onSelectAssignment),
         },
       },
@@ -104,6 +108,7 @@ class MobileRefillPanel extends StatelessWidget {
           onCancel: onCancelRefill,
           rfidReadCount: ready.rfidReadCount,
           isSaving: state is MobileRefillSaving,
+          isStarting: state is MobileRefillDrawerStarting,
         ),
       ],
     );
@@ -141,12 +146,24 @@ class _PrescriptionList extends StatelessWidget {
 
         final isEligible = item.status == PrescriptionStatus.filledWaiting;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
-        final isRfidRead = item.rfidTag != null && rfidReadEpcs.contains(item.rfidTag);
+        final rfidStatus = !isProcessActive
+            ? null // session başlamadı
+            : rfidReadEpcs.contains(item.rfidTag)
+            ? RfidPresenceStatus.present
+            : RfidPresenceStatus.absent;
 
-        return RxRefillCard(
+        MedLogger.info(
+          unit: 'MobileRefillPanel',
+          swreq: 'SWREQ-CLI-REFILL-001',
+          message: 'isRfidRead kontrolü',
+          context: {'itemRfidTag': item.rfidTag, 'rfidReadEpcs': rfidReadEpcs.toList(), 'rfidStatus': rfidStatus},
+        );
+
+        return RxOperationCard(
+          mode: RxOperationCardMode.refill,
           item: item,
           isSelected: isSelected,
-          isRfidRead: isRfidRead,
+          rfidStatus: rfidStatus,
           isEligible: isEligible,
           onTap: isProcessActive || item.id == null ? null : () => onToggleItem(item.id!),
         );
@@ -166,12 +183,14 @@ class _RefillActionBar extends StatelessWidget {
     required this.onComplete,
     required this.onReopen,
     required this.onCancel,
+    required this.isStarting,
   });
 
   final MobileDrawerStage drawerStage;
   final bool hasSelection;
   final bool allSelectedRfidRead;
   final int rfidReadCount;
+  final bool isStarting;
   final bool isSaving;
   final VoidCallback onStart;
   final VoidCallback onComplete;
@@ -194,7 +213,7 @@ class _RefillActionBar extends StatelessWidget {
     return Row(
       children: [
         if (_showCancel) _CancelButton(onTap: onCancel) else const Spacer(),
-        Spacer(),
+        const Spacer(),
         _buildAction(),
       ],
     );
@@ -202,21 +221,31 @@ class _RefillActionBar extends StatelessWidget {
 
   Widget _buildAction() {
     if (isSaving) {
-      return _ActionButton(label: 'Kaydediliyor', enabled: false, loading: true, onTap: () {});
+      return const _ActionButton(label: 'Kaydediliyor', enabled: false, loading: true, onTap: _noop);
     }
 
     return switch (drawerStage) {
-      MobileDrawerOpening() => _ActionButton(label: 'Çekmece açılıyor', enabled: false, loading: true, onTap: () {}),
-      MobileDrawerOpened() => _ActionButton(label: 'İlaçları yerleştirin', enabled: false, onTap: () {}),
+      MobileDrawerOpening() => const _ActionButton(
+        label: 'Çekmece açılıyor',
+        enabled: false,
+        loading: true,
+        onTap: _noop,
+      ),
+      MobileDrawerOpened() => const _ActionButton(label: 'İlaçları yerleştirin', enabled: false, onTap: _noop),
       MobileDrawerClosed() =>
         allSelectedRfidRead
             ? _ActionButton(label: 'Dolumu tamamla', onTap: onComplete)
             : _ActionButton(label: 'Doluma devam et', onTap: onReopen),
       MobileDrawerFailed() => _ActionButton(label: 'Tekrar dene', onTap: onStart),
-      MobileDrawerIdle() => _ActionButton(label: 'Doluma başla', enabled: hasSelection, onTap: onStart),
+      MobileDrawerIdle() =>
+        isStarting
+            ? const _ActionButton(label: 'Bağlantı kuruluyor', enabled: false, loading: true, onTap: _noop)
+            : _ActionButton(label: 'Doluma başla', enabled: hasSelection, onTap: onStart),
     };
   }
 }
+
+void _noop() {}
 
 class _ActionButton extends StatelessWidget {
   const _ActionButton({required this.label, required this.onTap, this.enabled = true, this.loading = false});

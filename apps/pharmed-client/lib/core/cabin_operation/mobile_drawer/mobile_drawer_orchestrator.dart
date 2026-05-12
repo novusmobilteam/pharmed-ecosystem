@@ -49,6 +49,8 @@ class MobileDrawerOrchestrator {
   StreamSubscription<String>? _epcLostSub;
 
   bool _initialized = false;
+  bool _isConnecting = false;
+
   IRfidService get _rfid => ref.read(rfidServiceProvider);
 
   /// Listener'ları başlatır. Feature notifier build() içinde çağırmalı.
@@ -91,6 +93,7 @@ class MobileDrawerOrchestrator {
     _onEpc = null;
     _onEpcLost = null;
     _initialized = false;
+    _isConnecting = false;
   }
 
   /// Verilen [slot] için yeni bir çekmece oturumu başlatır.
@@ -112,14 +115,16 @@ class MobileDrawerOrchestrator {
   Future<void> stop() async {
     await ref.read(mobileDrawerSessionProvider.notifier).stop();
     ref.read(rfidScanSessionProvider.notifier).stop();
-    await _rfid.disconnect();
   }
 
   void _handleStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
     final rfidNotifier = ref.read(rfidScanSessionProvider.notifier);
 
     if (next is MobileDrawerOpened && prev is! MobileDrawerOpened) {
-      unawaited(_onDrawerOpened(rfidNotifier));
+      if (!_isConnecting) {
+        _isConnecting = true;
+        unawaited(_onDrawerOpened(rfidNotifier).whenComplete(() => _isConnecting = false));
+      }
     } else if (next is MobileDrawerClosed || next is MobileDrawerFailed) {
       _onDrawerClosed(rfidNotifier);
     }
@@ -145,7 +150,10 @@ class MobileDrawerOrchestrator {
   }
 
   Future<void> _ensureRfidConnected() async {
-    if (_rfid.isConnected) return;
+    // Önceki bağlantı varsa temizle (stale socket olabilir)
+    if (_rfid.isConnected) {
+      await _rfid.disconnect();
+    }
 
     MedLogger.info(
       unit: 'MobileDrawerOrchestrator',
@@ -153,7 +161,7 @@ class MobileDrawerOrchestrator {
       message: 'RFID connect başlatılıyor',
     );
 
-    final result = await _rfid.connect('192.168.1.190', 6000); // TODO: config
+    final result = await _rfid.connect('192.168.1.190', 6000);
 
     result.when(
       ok: (_) {

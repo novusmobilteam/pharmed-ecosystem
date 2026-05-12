@@ -21,8 +21,8 @@ class MedicineWithdrawProviders {
 
       Provider<CompleteIntakeUseCase>(create: (context) => CompleteIntakeUseCase(context.read())),
 
-      Provider<GetWithdrawItemsUseCase>(
-        create: (context) => GetWithdrawItemsUseCase(
+      Provider<GetIntakeItemsUseCase>(
+        create: (context) => GetIntakeItemsUseCase(
           withdrawRepository: context.read(),
           assignmentRepository: context.read(),
           medicineRepository: context.read(),

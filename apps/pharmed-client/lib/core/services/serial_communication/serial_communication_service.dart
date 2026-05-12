@@ -266,7 +266,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
   void _onDataReceived(Uint8List data) {
     if (_completer == null || _completer!.isCompleted) return;
-    debugPrint('📥 Ham veri geldi: ${data.length} byte — ${data.map((b) => b.toRadixString(16)).join(' ')}');
 
     try {
       final chunk = String.fromCharCodes(data);

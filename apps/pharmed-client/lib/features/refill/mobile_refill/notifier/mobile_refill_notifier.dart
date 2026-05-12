@@ -163,10 +163,19 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   }
 
   void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
+    if (next is MobileDrawerOpened) {
+      // DrawerStarting → Opened: ready'e geç, RFID okumaya hazır
+      final current = state;
+      if (current is MobileRefillDrawerStarting) {
+        state = current.ready;
+      }
+    }
+
     if (next is MobileDrawerFailed) {
       final current = state;
       final cleaned = switch (current) {
         MobileRefillReady r => r.copyWith(rfidReadEpcs: {}, selectedItemIds: {}),
+        MobileRefillDrawerStarting(:final ready) => ready.copyWith(rfidReadEpcs: {}, selectedItemIds: {}),
         _ => current,
       };
       state = MobileRefillError(message: next.message, previousState: cleaned);
@@ -175,17 +184,57 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
 
   void _onEpcRead(String epc) {
     final current = state;
-    if (current is! MobileRefillReady) return;
-    if (current.rfidReadEpcs.contains(epc)) return;
-    state = current.copyWith(rfidReadEpcs: {...current.rfidReadEpcs, epc});
+
+    final ready = switch (current) {
+      MobileRefillReady r => r,
+      MobileRefillDrawerStarting(:final ready) => ready,
+      _ => null,
+    };
+    if (ready == null) return;
+    if (ready.rfidReadEpcs.contains(epc)) return;
+
+    final updated = ready.copyWith(rfidReadEpcs: {...ready.rfidReadEpcs, epc});
+
+    state = switch (current) {
+      MobileRefillReady _ => updated,
+      MobileRefillDrawerStarting s => MobileRefillDrawerStarting(
+        slots: s.slots,
+        mobileSlots: s.mobileSlots,
+        selectedSlot: s.selectedSlot,
+        assignments: s.assignments,
+        cabinId: s.cabinId,
+        ready: updated,
+      ),
+      _ => current,
+    };
   }
 
   void _onEpcLost(String epc) {
     final current = state;
-    if (current is! MobileRefillReady) return;
-    if (!current.rfidReadEpcs.contains(epc)) return;
-    final updated = Set<String>.from(current.rfidReadEpcs)..remove(epc);
-    state = current.copyWith(rfidReadEpcs: updated);
+
+    final ready = switch (current) {
+      MobileRefillReady r => r,
+      MobileRefillDrawerStarting(:final ready) => ready,
+      _ => null,
+    };
+    if (ready == null) return;
+    if (!ready.rfidReadEpcs.contains(epc)) return;
+
+    final updated = ready.copyWith(rfidReadEpcs: Set<String>.from(ready.rfidReadEpcs)..remove(epc));
+
+    state = switch (current) {
+      MobileRefillReady _ => updated,
+      MobileRefillDrawerStarting s => MobileRefillDrawerStarting(
+        slots: s.slots,
+        mobileSlots: s.mobileSlots,
+        selectedSlot: s.selectedSlot,
+        assignments: s.assignments,
+        cabinId: s.cabinId,
+        ready: updated,
+      ),
+      _ => current,
+    };
+
     MedLogger.info(
       unit: 'MobileRefillNotifier',
       swreq: 'SWREQ-CLI-REFILL-003',
@@ -199,6 +248,15 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     final current = state;
     if (current is! MobileRefillReady) return;
     if (current.selectedItemIds.isEmpty) return;
+
+    state = MobileRefillDrawerStarting(
+      slots: current.slots,
+      mobileSlots: current.mobileSlots,
+      selectedSlot: current.selectedSlot,
+      assignments: current.assignments,
+      cabinId: current.cabinId,
+      ready: current,
+    );
 
     await _drawer.open(slots: current.slots, slot: current.selectedSlot);
   }
@@ -222,6 +280,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     final current = state;
     final ready = switch (current) {
       MobileRefillReady r => r,
+      MobileRefillDrawerStarting(:final ready) => ready,
       MobileRefillSaving(:final ready) => ready,
       _ => null,
     };
@@ -382,11 +441,30 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   void dismissSuccess() {
     final current = state;
     if (current is! MobileRefillSuccess) return;
-    state = MobileRefillIdle(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      assignments: current.assignments,
-      cabinId: current.cabinId,
+
+    // Seçili slot/cell ve assignment'ı koru, reçeteleri yenile
+    final ready = current.ready;
+    final assignment = current.assignmentByCoord[ready.selectedCell];
+    if (assignment == null) {
+      state = MobileRefillIdle(
+        slots: current.slots,
+        mobileSlots: current.mobileSlots,
+        assignments: current.assignments,
+        cabinId: current.cabinId,
+      );
+      return;
+    }
+
+    unawaited(
+      _loadPrescriptions(
+        slots: current.slots,
+        mobileSlots: current.mobileSlots,
+        selectedSlot: ready.selectedSlot,
+        selectedCell: ready.selectedCell,
+        assignments: current.assignments,
+        cabinId: current.cabinId,
+        assignment: assignment,
+      ),
     );
   }
 }

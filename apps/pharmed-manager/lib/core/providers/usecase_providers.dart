@@ -58,6 +58,7 @@ class UsecaseProviders {
       Provider(create: (context) => CreateHospitalizationUseCase(context.read())),
       Provider(create: (context) => DeleteHospitalizationUseCase(context.read())),
       Provider(create: (context) => GetFilteredHospitalizationsUseCase(context.read())),
+      Provider(create: (context) => GetHospitalizationsUseCase(context.read())),
       Provider(create: (context) => GetHospitalizationsWithPrescriptionUseCase(context.read())),
       Provider(create: (context) => GetPatientsWithActivePrescriptionUseCase(context.read())),
       Provider(create: (context) => UpdateHospitalizationUseCase(context.read())),

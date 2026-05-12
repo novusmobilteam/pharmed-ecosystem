@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -6,6 +8,24 @@ import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
+
+// [SWREQ-CLI-INTAKE-001] [IEC 62304 §5.5]
+// Mobil kabin ilaç alım ekranı state yönetimi.
+//
+// Sorumluluk:
+//   - CabinVisualizerData'dan slot + atama verilerini alır
+//   - Göz seçimi → hasta bilgisini çözer → reçeteleri çeker
+//   - Alım başlatma → CheckMobileIntakeUseCase ile backend validasyon → çekmece açar
+//   - RFID kaybı → takenEpcs günceller (dolumun tersi: kayıp = alındı)
+//   - Alım tamamlama → çekmece kapalıyken CompleteMobileIntakeUseCase çağırır
+//
+// Dolumdan farkı:
+//   - startIntake öncesi CheckMobileIntakeUseCase çalışır
+//   - rfidReadEpcs yerine takenEpcs takip edilir (EPC kaybolunca alındı sayılır)
+//   - EPC geri gelirse takenEpcs'ten çıkarılır (ilaç geri konuldu)
+//   - canComplete: seçili RFID'li item'ların EPC'si takenEpcs'te olmalı
+//
+// Sınıf: Class B
 
 final mobileIntakeNotifierProvider = NotifierProvider<MobileIntakeNotifier, MobileIntakeState>(
   MobileIntakeNotifier.new,
@@ -23,7 +43,6 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
 
   @override
   MobileIntakeState build() {
-    // Drawer stage geçişlerini dinle — Opened/Closed/Failed'a tepki ver.
     _drawer = MobileDrawerOrchestrator(ref: ref)
       ..init(onStageChange: _onDrawerStageChange, onEpcRead: _onEpcRead, onEpcLost: _onEpcLost);
 
@@ -66,7 +85,6 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
         .firstOrNull;
     if (coord == null) return;
 
-    // Slot henüz seçili değilse önce seç (onCellTap selectedSlot null ise döner)
     final slot = state.slots.where((s) => s.slotId == coord.$1).firstOrNull;
     if (slot == null) return;
     if (state.selectedSlotId != slot.slotId) {
@@ -77,7 +95,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
   }
 
   /// Ready/NoPatient state'inden hasta listesine geri döner.
-  /// Slot seçimi korunur (kullanıcı aynı çekmecedeyse devam edebilir).
+  /// Slot seçimi korunur.
   void clearPatientSelection() {
     final current = state;
     final selectedSlot = current.selectedSlot;
@@ -92,7 +110,293 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     );
   }
 
-  // Reçete yükleme
+  /// İlaç işaretle / işareti kaldır.
+  void toggleItemSelection(int itemId) {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+
+    final next = {...current.selectedItemIds};
+    if (!next.add(itemId)) next.remove(itemId);
+    state = current.copyWith(selectedItemIds: next);
+  }
+
+  /// Alıma başla — önce backend check, sonra çekmece aç.
+  ///
+  /// [CheckMobileIntakeUseCase] hata dönerse çekmece açılmaz.
+  /// Check geçerse [_drawer.open] çağrılır; RFID session orchestrator tarafından başlatılır.
+  ///
+  /// SWREQ-CLI-INTAKE-002
+  Future<void> startIntake() async {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+    if (current.selectedItemIds.isEmpty) return;
+
+    // Check sırasında UI kilitlenir — isStarting: state is MobileIntakeCheckInProgress
+    state = MobileIntakeCheckInProgress(
+      slots: current.slots,
+      mobileSlots: current.mobileSlots,
+      selectedSlot: current.selectedSlot,
+      assignments: current.assignments,
+      cabinId: current.cabinId,
+      ready: current,
+    );
+
+    // Check için EPC gönderilmez
+    final params = current.prescriptionItems
+        .where((i) => i.id != null && current.selectedItemIds.contains(i.id))
+        .map((i) => MobileIntakeParams(prescriptionDetailId: i.id!, dosePiece: i.dosePiece?.toDouble(), epc: i.rfidTag))
+        .toList();
+
+    final checkResult = await _checkIntake(params);
+
+    if (checkResult is Error) {
+      state = MobileIntakeError(message: checkResult.error.message, previousState: current);
+      return;
+    }
+
+    await _drawer.open(slots: current.slots, slot: current.selectedSlot);
+  }
+
+  /// Çekmeceyi tekrar aç — RFID eksikse "Alıma Devam Et" butonuna bağlanır.
+  Future<void> reopenDrawer() async {
+    await ref.read(mobileDrawerSessionProvider.notifier).reopen();
+  }
+
+  /// Alımı iptal et.
+  ///
+  /// - DrawerIdle + seçim var → seçimleri sıfırla
+  /// - DrawerOpening/Opened + takenEpcs dolu → view handle eder, dönülür
+  /// - Diğer durumlarda → session durdur, seçimleri sıfırla
+  Future<void> cancelIntake() async {
+    final current = state;
+    final ready = switch (current) {
+      MobileIntakeReady r => r,
+      MobileIntakeCheckInProgress(:final ready) => ready,
+      MobileIntakeSaving(:final ready) => ready,
+      _ => null,
+    };
+
+    final stage = _drawerStage;
+
+    if (stage is MobileDrawerIdle) {
+      if (ready == null) return;
+      state = ready.copyWith(selectedItemIds: {}, rfidReadEpcs: {}, takenEpcs: {});
+      return;
+    }
+
+    if ((stage is MobileDrawerOpening || stage is MobileDrawerOpened) && (ready?.takenEpcs.isNotEmpty ?? false)) {
+      return;
+    }
+
+    await _drawer.stop();
+
+    if (ready != null) {
+      state = ready.copyWith(selectedItemIds: {}, rfidReadEpcs: {}, takenEpcs: {});
+    }
+  }
+
+  /// Alımı tamamla — çekmece kapalı + [MobileIntakeReady.canComplete] true olmalı.
+  ///
+  /// canComplete koşulu:
+  ///   - RFID'li item: EPC'si takenEpcs'te olmalı
+  ///   - RFID'siz item: seçili olması yeterli
+  ///
+  /// SWREQ-CLI-INTAKE-003
+  Future<void> completeIntake() async {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+    if (current.selectedItemIds.isEmpty) return;
+    if (!current.canComplete) return;
+
+    final drawerStage = ref.read(mobileDrawerSessionProvider).stage;
+    if (drawerStage is! MobileDrawerClosed) return;
+
+    state = MobileIntakeSaving(
+      slots: current.slots,
+      mobileSlots: current.mobileSlots,
+      selectedSlot: current.selectedSlot,
+      assignments: current.assignments,
+      cabinId: current.cabinId,
+      ready: current,
+    );
+
+    final params = current.prescriptionItems
+        .where((i) => i.id != null && current.selectedItemIds.contains(i.id))
+        .map(
+          (i) => MobileIntakeParams(
+            prescriptionDetailId: i.id!,
+            dosePiece: i.dosePiece?.toDouble(),
+            // Yalnızca takenEpcs'te olan EPC'ler gönderilir
+            epc: current.takenEpcs.contains(i.rfidTag) ? i.rfidTag : null,
+          ),
+        )
+        .toList();
+
+    final result = await _completeIntake(params);
+
+    result.when(
+      ok: (_) async {
+        await _drawer.stop();
+
+        state = MobileIntakeSuccess(
+          slots: current.slots,
+          mobileSlots: current.mobileSlots,
+          selectedSlot: current.selectedSlot,
+          assignments: current.assignments,
+          cabinId: current.cabinId,
+          message: 'Alım işlemi başarıyla tamamlandı.',
+          ready: current.copyWith(rfidReadEpcs: {}, takenEpcs: {}, selectedItemIds: {}),
+        );
+      },
+      error: (e) {
+        state = MobileIntakeError(
+          message: e.message,
+          previousState: current.copyWith(rfidReadEpcs: {}, takenEpcs: {}, selectedItemIds: {}),
+        );
+      },
+    );
+  }
+
+  /// EPC okundu → ilaç geri konuldu: takenEpcs'ten çıkar.
+  ///
+  /// SWREQ-CLI-INTAKE-004
+  void _onEpcRead(String epc) {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+
+    final wasTaken = current.takenEpcs.contains(epc);
+    final alreadyRead = current.rfidReadEpcs.contains(epc);
+    if (!wasTaken && alreadyRead) return;
+
+    final newTaken = Set<String>.from(current.takenEpcs)..remove(epc);
+    final newRead = {...current.rfidReadEpcs, epc};
+
+    state = current.copyWith(rfidReadEpcs: newRead, takenEpcs: newTaken);
+
+    if (wasTaken) {
+      MedLogger.info(
+        unit: 'MobileIntakeNotifier',
+        swreq: 'SWREQ-CLI-INTAKE-004',
+        message: 'RFID tag tekrar kapsama alanına girdi — alındı sayımından çıkarıldı',
+        context: {'epc': epc},
+      );
+    }
+  }
+
+  /// EPC kayboldu → ilaç kabinden çıkarıldı: takenEpcs'e ekle.
+  ///
+  /// Seçili olmayan item'ın EPC'si kaybolsa bile takenEpcs'e eklenir;
+  /// [canComplete] yalnızca seçili item'ları dikkate alır.
+  ///
+  /// SWREQ-CLI-INTAKE-005
+  void _onEpcLost(String epc) {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+    if (current.takenEpcs.contains(epc)) return;
+
+    final newRead = Set<String>.from(current.rfidReadEpcs)..remove(epc);
+    final newTaken = {...current.takenEpcs, epc};
+
+    state = current.copyWith(rfidReadEpcs: newRead, takenEpcs: newTaken);
+
+    MedLogger.info(
+      unit: 'MobileIntakeNotifier',
+      swreq: 'SWREQ-CLI-INTAKE-005',
+      message: 'RFID tag kapsama dışına çıktı — alındı olarak işaretlendi',
+      context: {'epc': epc},
+    );
+  }
+
+  void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
+    if (next is MobileDrawerOpened) {
+      final current = state;
+      if (current is MobileIntakeCheckInProgress) {
+        state = current.ready;
+      }
+    }
+
+    if (next is MobileDrawerFailed) {
+      final current = state;
+      final cleaned = switch (current) {
+        MobileIntakeReady r => r.copyWith(rfidReadEpcs: {}, takenEpcs: {}, selectedItemIds: {}),
+        MobileIntakeCheckInProgress(:final ready) => ready.copyWith(
+          rfidReadEpcs: {},
+          takenEpcs: {},
+          selectedItemIds: {},
+        ),
+        _ => current,
+      };
+      state = MobileIntakeError(message: next.message, previousState: cleaned);
+    }
+  }
+
+  void onSlotTap(MobileSlotVisual slot) {
+    final current = state;
+    final slots = current.slots;
+    final ms = current.mobileSlots;
+    final assignments = current.assignments;
+    final cabinId = current.cabinId;
+
+    if (current.selectedSlotId == slot.slotId) {
+      state = MobileIntakeIdle(slots: slots, mobileSlots: ms, assignments: assignments, cabinId: cabinId);
+      return;
+    }
+
+    state = MobileIntakeSlotSelected(
+      slots: slots,
+      mobileSlots: ms,
+      selectedSlot: slot,
+      assignments: assignments,
+      cabinId: cabinId,
+    );
+  }
+
+  Future<void> onCellTap(MobileCellCoord coord) async {
+    final current = state;
+    final selectedSlot = current.selectedSlot;
+    if (selectedSlot == null) return;
+
+    final slots = current.slots;
+    final ms = current.mobileSlots;
+    final assignments = current.assignments;
+    final cabinId = current.cabinId;
+
+    if (current.selectedCell == coord) {
+      state = MobileIntakeSlotSelected(
+        slots: slots,
+        mobileSlots: ms,
+        selectedSlot: selectedSlot,
+        assignments: assignments,
+        cabinId: cabinId,
+      );
+      return;
+    }
+
+    final assignment = current.assignmentByCoord[coord];
+
+    if (assignment?.hospitalization?.patient == null) {
+      state = MobileIntakeNoPatient(
+        slots: slots,
+        mobileSlots: ms,
+        selectedSlot: selectedSlot,
+        selectedCell: coord,
+        assignments: assignments,
+        cabinId: cabinId,
+      );
+      return;
+    }
+
+    await _loadPrescriptions(
+      slots: slots,
+      mobileSlots: ms,
+      selectedSlot: selectedSlot,
+      selectedCell: coord,
+      assignments: assignments,
+      cabinId: cabinId,
+      assignment: assignment!,
+    );
+  }
+
   Future<void> _loadPrescriptions({
     required List<MobileSlotVisual> slots,
     required List<MobileDrawerSlot> mobileSlots,
@@ -105,7 +409,6 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     final patient = assignment.hospitalization?.patient;
     if (patient?.id == null) return;
 
-    // Loading sırasında sol/orta panel kaybolmasın
     state = MobileIntakeLoading(
       slots: slots,
       cabinId: cabinId,
@@ -130,6 +433,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
           room: assignment.bed?.room,
           prescriptionItems: items,
           rfidReadEpcs: const {},
+          takenEpcs: const {},
           selectedItemIds: {},
         );
       },
@@ -149,127 +453,6 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     );
   }
 
-  void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
-    if (next is MobileDrawerFailed) {
-      final current = state;
-      final cleaned = switch (current) {
-        MobileIntakeReady r => r.copyWith(rfidReadEpcs: {}, selectedItemIds: {}),
-        _ => current,
-      };
-      state = MobileIntakeError(message: next.message, previousState: cleaned);
-    }
-  }
-
-  void _onEpcRead(String epc) {
-    final current = state;
-    if (current is! MobileIntakeReady) return;
-    if (current.rfidReadEpcs.contains(epc)) return;
-    state = current.copyWith(rfidReadEpcs: {...current.rfidReadEpcs, epc});
-  }
-
-  void _onEpcLost(String epc) {
-    final current = state;
-    if (current is! MobileIntakeReady) return;
-    if (!current.rfidReadEpcs.contains(epc)) return;
-    final updated = Set<String>.from(current.rfidReadEpcs)..remove(epc);
-    state = current.copyWith(rfidReadEpcs: updated);
-    MedLogger.info(
-      unit: 'MobileIntakeNotifier',
-      swreq: 'SWREQ-CLI-Intake-003',
-      message: 'RFID tag kapsama dışına çıktı',
-      context: {'epc': epc},
-    );
-  }
-
-  /// Çekmeceyi tekrar aç — RFID eksikse "Doluma Devam Et" butonuna bağlanır.
-  Future<void> reopenDrawer() async {
-    await ref.read(mobileDrawerSessionProvider.notifier).reopen();
-  }
-
-  /// İlaç işaretle/işareti kaldır.
-  void toggleItemSelection(int itemId) {
-    final current = state;
-    if (current is! MobileIntakeReady) return;
-
-    final next = {...current.selectedItemIds};
-    if (!next.add(itemId)) next.remove(itemId);
-    state = current.copyWith(selectedItemIds: next);
-  }
-
-  // Slot seçimi
-  void onSlotTap(MobileSlotVisual slot) {
-    final current = state;
-    final slots = current.slots;
-    final ms = current.mobileSlots;
-    final assignments = current.assignments;
-    final cabinId = current.cabinId;
-
-    // Aynı slot tekrar tıklandıysa — Idle'a dön
-    if (current.selectedSlotId == slot.slotId) {
-      state = MobileIntakeIdle(slots: slots, mobileSlots: ms, assignments: assignments, cabinId: cabinId);
-      return;
-    }
-
-    state = MobileIntakeSlotSelected(
-      slots: slots,
-      mobileSlots: ms,
-      selectedSlot: slot,
-      assignments: assignments,
-      cabinId: cabinId,
-    );
-  }
-
-  // Göz seçimi
-  Future<void> onCellTap(MobileCellCoord coord) async {
-    final current = state;
-    final selectedSlot = current.selectedSlot;
-    if (selectedSlot == null) return;
-
-    final slots = current.slots;
-    final ms = current.mobileSlots;
-    final assignments = current.assignments;
-    final cabinId = current.cabinId;
-
-    // Aynı göz tekrar tıklandıysa — SlotSelected'a dön
-    if (current.selectedCell == coord) {
-      state = MobileIntakeSlotSelected(
-        slots: slots,
-        mobileSlots: ms,
-        selectedSlot: selectedSlot,
-        assignments: assignments,
-        cabinId: cabinId,
-      );
-      return;
-    }
-
-    // Gözdeki atamayı bul
-    final assignment = current.assignmentByCoord[coord];
-
-    if (assignment?.hospitalization?.patient == null) {
-      state = MobileIntakeNoPatient(
-        slots: slots,
-        mobileSlots: ms,
-        selectedSlot: selectedSlot,
-        selectedCell: coord,
-        assignments: assignments,
-        cabinId: cabinId,
-      );
-      return;
-    }
-
-    // Hasta var — reçeteleri çek
-    await _loadPrescriptions(
-      slots: slots,
-      mobileSlots: ms,
-      selectedSlot: selectedSlot,
-      selectedCell: coord,
-      assignments: assignments,
-      cabinId: cabinId,
-      assignment: assignment!,
-    );
-  }
-
-  // Dismiss
   void dismissError() {
     final current = state;
     if (current is! MobileIntakeError) return;

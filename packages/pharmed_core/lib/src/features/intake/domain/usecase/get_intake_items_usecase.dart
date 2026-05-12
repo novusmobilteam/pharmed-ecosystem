@@ -13,13 +13,13 @@ class GetIntakeItemsParams {
   GetIntakeItemsParams({required this.type, this.hospitalizationId, required this.refreshAssignments});
 }
 
-class GetWithdrawItemsUseCase {
+class GetIntakeItemsUseCase {
   final IIntakeRepository _withdrawRepository;
   final IAssignmentRepository _assignmentRepository;
   final IMedicineRepository _medicineRepository;
   List<WithdrawItem> _cachedItems = [];
 
-  GetWithdrawItemsUseCase({
+  GetIntakeItemsUseCase({
     required IIntakeRepository withdrawRepository,
     required IAssignmentRepository assignmentRepository,
     required IMedicineRepository medicineRepository,
@@ -136,7 +136,7 @@ class GetWithdrawItemsUseCase {
     List<WithdrawItem> items = [];
 
     final results = await Future.wait([
-      _withdrawRepository.getWithdrawItems(hospitalizationId: hospitalizationId),
+      _withdrawRepository.getIntakeItems(hospitalizationId: hospitalizationId),
       _assignmentRepository.getCabinAssignments(),
     ]);
 
