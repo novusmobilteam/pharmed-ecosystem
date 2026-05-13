@@ -197,10 +197,27 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     return putRequest(path: '$_base/detail/unReadQrCodeWarning/$id', parser: BaseRemoteDataSource.voidParser());
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getMedicineActivities() async {
+  Future<Result<List<PrescriptionItemDTO>?>> getDrugActivity() async {
     return await fetchRequest(
       path: '$_base/detail/materialActivity',
       parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<PrescriptionItemDTO>>?>> getCurrentStationDrugActivity({
+    int? skip,
+    int? take,
+    String? search,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    return await fetchRequest(
+      path: '$_base/detail/materialActivityCurrentStation',
+      skip: skip,
+      take: take,
+      startDate: startDate,
+      endDate: endDate,
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDTO.fromJson),
     );
   }
 

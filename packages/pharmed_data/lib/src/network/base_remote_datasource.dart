@@ -193,6 +193,8 @@ abstract class BaseRemoteDataSource {
     String? searchText,
     List<String>? searchFields,
     String searchOperator = 'contains',
+    DateTime? startDate,
+    DateTime? endDate,
   }) {
     final finalQuery = Map<String, dynamic>.from(query ?? {});
     if (skip != null) finalQuery['skip'] = skip;
@@ -202,6 +204,9 @@ abstract class BaseRemoteDataSource {
     if (searchText != null && searchText.isNotEmpty && searchFields != null && searchFields.isNotEmpty) {
       finalQuery['filter'] = _buildFilter(searchText, searchFields, searchOperator);
     }
+
+    if (startDate != null) finalQuery['startDate'] = startDate.toIso8601String();
+    if (endDate != null) finalQuery['endDate'] = endDate.toIso8601String();
 
     return _request<T>(
       method: HttpMethod.GET,

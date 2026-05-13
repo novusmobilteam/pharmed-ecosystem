@@ -5,32 +5,32 @@ import '../cabin_operation/cabin_operation.dart';
 import '../cache/app_settings_cache.dart';
 import 'providers.dart';
 
-final getHospitalizationsUseCaseProvider = Provider<GetHospitalizationsUseCase>((ref) {
+final getHospitalizationsUseCaseProvider = Provider((ref) {
   return GetHospitalizationsUseCase(ref.read(hospitalizationRepositoryProvider));
 });
 
-final getDrugsUseCaseProvider = Provider<GetDrugsUseCase>((ref) {
+final getDrugsUseCaseProvider = Provider((ref) {
   return GetDrugsUseCase(ref.read(medicineRepositoryProvider));
 });
 
 // GetStationUseCase
-final getStationUseCaseProvider = Provider<GetStationUseCase>((ref) {
+final getStationUseCaseProvider = Provider((ref) {
   return GetStationUseCase(ref.read(stationRepositoryProvider));
 });
 
-final getServiceUseCaseProvider = Provider<GetServiceUseCase>((ref) {
+final getServiceUseCaseProvider = Provider((ref) {
   return GetServiceUseCase(ref.read(serviceRepositoryProvider));
 });
 
-final _getAllServicesUseCaseProvider = Provider<GetAllServicesUseCase>((ref) {
+final _getAllServicesUseCaseProvider = Provider((ref) {
   return GetAllServicesUseCase(ref.read(serviceRepositoryProvider));
 });
 
-final _getAllRoomsUseCaseProvider = Provider<GetAllRoomsUseCase>((ref) {
+final _getAllRoomsUseCaseProvider = Provider((ref) {
   return GetAllRoomsUseCase(ref.read(serviceRepositoryProvider));
 });
 
-final _getAllBedsUseCaseProvider = Provider<GetAllBedsUseCase>((ref) {
+final _getAllBedsUseCaseProvider = Provider((ref) {
   return GetAllBedsUseCase(ref.read(serviceRepositoryProvider));
 });
 
@@ -53,17 +53,17 @@ final allBedsProvider = FutureProvider<List<Bed>>((ref) async {
 });
 
 // GetCriticalStocksUseCase
-final getCriticalStocksUseCaseProvider = Provider<GetCriticalStocksUseCase>((ref) {
+final getCriticalStocksUseCaseProvider = Provider((ref) {
   return GetCriticalStocksUseCase(ref.read(dashboardRepositoryProvider));
 });
 
 // GetExpiringMaterialsUseCase
-final getExpiringMaterialsUseCaseProvider = Provider<GetExpiringMaterialsUseCase>((ref) {
+final getExpiringMaterialsUseCaseProvider = Provider((ref) {
   return GetExpiringMaterialsUseCase(ref.read(dashboardRepositoryProvider));
 });
 
 // GetUpcomingTreatmensUseCase
-final getUpcomingTreatmensUseCaseProvider = Provider<GetUpcomingTreatmensUseCase>((ref) {
+final getUpcomingTreatmensUseCaseProvider = Provider((ref) {
   return GetUpcomingTreatmensUseCase(ref.read(dashboardRepositoryProvider));
 });
 
@@ -71,67 +71,67 @@ final getFilteredMenusUseCaseProvider = Provider<GetFilteredMenusUseCase>((ref) 
   return GetFilteredMenusUseCase(ref.read(dashboardRepositoryProvider), isManager: false);
 });
 
-final createBedAssignmentUseCaseProvider = Provider<CreateBedAssignmentUseCase>((ref) {
+final createBedAssignmentUseCaseProvider = Provider((ref) {
   return CreateBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final createAssignmentUseCaseProvider = Provider<CreateMedicineAssignmentUseCase>((ref) {
+final createAssignmentUseCaseProvider = Provider((ref) {
   return CreateMedicineAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final deleteBedAssignmentUseCaseProvider = Provider<DeleteBedAssignmentUseCase>((ref) {
+final deleteBedAssignmentUseCaseProvider = Provider((ref) {
   return DeleteBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final deleteAssignmentUseCaseProvider = Provider<DeleteMedicineAssignmentUseCase>((ref) {
+final deleteAssignmentUseCaseProvider = Provider((ref) {
   return DeleteMedicineAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final getBedAssignmentsUseCaseProvider = Provider<GetBedAssignmentsUseCase>((ref) {
+final getBedAssignmentsUseCaseProvider = Provider((ref) {
   return GetBedAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final getMedicineAssignmentsUseCaseProvider = Provider<GetMedicineAssignmentsUseCase>((ref) {
+final getMedicineAssignmentsUseCaseProvider = Provider((ref) {
   return GetMedicineAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final updateBedAssignmentUseCaseProvider = Provider<UpdateBedAssignmentUseCase>((ref) {
+final updateBedAssignmentUseCaseProvider = Provider((ref) {
   return UpdateBedAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final updateMedicineAssignmentUseCaseProvider = Provider<UpdateMedicineAssignmentUseCase>((ref) {
+final updateMedicineAssignmentUseCaseProvider = Provider((ref) {
   return UpdateMedicineAssignmentUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final getCabinUseCaseProvider = Provider<GetCabinUseCase>((ref) {
+final getCabinUseCaseProvider = Provider((ref) {
   return GetCabinUseCase(ref.read(cabinRepositoryProvider));
 });
 
-final clearMasterCabinFaultRecordProvider = Provider<ClearMasterCabinFaultRecordUseCase>((ref) {
+final clearMasterCabinFaultRecordProvider = Provider((ref) {
   return ClearMasterCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
 });
 
-final clearMobileCabinFaultRecordProvider = Provider<ClearMobileCabinFaultRecordUseCase>((ref) {
+final clearMobileCabinFaultRecordProvider = Provider((ref) {
   return ClearMobileCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
 });
 
-final createMasterCabinFaultRecordProvider = Provider<CreateMasterCabinFaultRecordUseCase>((ref) {
+final createMasterCabinFaultRecordProvider = Provider((ref) {
   return CreateMasterCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
 });
 
-final createMobileCabinFaultRecordProvider = Provider<CreateMobileCabinFaultRecordUseCase>((ref) {
+final createMobileCabinFaultRecordProvider = Provider((ref) {
   return CreateMobileCabinFaultRecordUseCase(ref.read(faultRepositoryProvider));
 });
 
-final getMasterCabinFaultRecordsProvider = Provider<GetMasterCabinFaultRecordsUseCase>((ref) {
+final getMasterCabinFaultRecordsProvider = Provider((ref) {
   return GetMasterCabinFaultRecordsUseCase(ref.read(faultRepositoryProvider));
 });
 
-final getMobileCabinFaultRecordsProvider = Provider<GetMobileCabinFaultRecordsUseCase>((ref) {
+final getMobileCabinFaultRecordsProvider = Provider((ref) {
   return GetMobileCabinFaultRecordsUseCase(ref.read(faultRepositoryProvider));
 });
 
-final getCabinVisualizerDataUseCaseProvider = Provider<GetCabinVisualizerDataUseCase>((ref) {
+final getCabinVisualizerDataUseCaseProvider = Provider((ref) {
   return GetCabinVisualizerDataUseCase(
     ref.read(cabinRepositoryProvider),
     ref.read(appSettingsCacheProvider),
@@ -141,25 +141,25 @@ final getCabinVisualizerDataUseCaseProvider = Provider<GetCabinVisualizerDataUse
   );
 });
 
-final createCabinUseCaseProvider = Provider<CreateCabinUseCase>((ref) {
+final createCabinUseCaseProvider = Provider((ref) {
   return CreateCabinUseCase(ref.read(cabinRepositoryProvider), ref.read(stationRepositoryProvider));
 });
 
-final saveCabinDesignUseCaseProvider = Provider<SaveCabinDesignUseCase>((ref) {
+final saveCabinDesignUseCaseProvider = Provider((ref) {
   return SaveCabinDesignUseCase(
     cabinRepository: ref.read(cabinRepositoryProvider),
     localDataSource: ref.read(cabinLocaleDataSourceProvider),
   );
 });
 
-final saveMobileCabinDesignUseCaseProvider = Provider<SaveMobileCabinDesignUseCase>((ref) {
+final saveMobileCabinDesignUseCaseProvider = Provider((ref) {
   return SaveMobileCabinDesignUseCase(
     cabinRepository: ref.read(cabinRepositoryProvider),
     localDataSource: ref.read(cabinLocaleDataSourceProvider),
   );
 });
 
-final finishCabinSetupUseCaseProvider = Provider<FinishCabinSetupUseCase>((ref) {
+final finishCabinSetupUseCaseProvider = Provider((ref) {
   return FinishCabinSetupUseCase(
     createCabin: ref.read(createCabinUseCaseProvider),
     saveCabinDesign: ref.read(saveCabinDesignUseCaseProvider),
@@ -168,7 +168,7 @@ final finishCabinSetupUseCaseProvider = Provider<FinishCabinSetupUseCase>((ref) 
   );
 });
 
-final scanCabinUseCaseProvider = Provider<ScanCabinUseCase>((ref) {
+final scanCabinUseCaseProvider = Provider((ref) {
   return ScanCabinUseCase(
     cabinRepository: ref.read(cabinRepositoryProvider),
     cabinOperationService: ref.read(cabinOperationServiceProvider),
@@ -176,43 +176,47 @@ final scanCabinUseCaseProvider = Provider<ScanCabinUseCase>((ref) {
   );
 });
 
-final getUnassignedStationsUseCaseProvider = Provider<GetUnassignedStationsUseCase>((ref) {
+final getUnassignedStationsUseCaseProvider = Provider((ref) {
   return GetUnassignedStationsUseCase(ref.read(stationRepositoryProvider));
 });
 
-final startMobileDrawerSessionUseCaseProvider = Provider<StartMobileDrawerSessionUseCase>((ref) {
+final startMobileDrawerSessionUseCaseProvider = Provider((ref) {
   return StartMobileDrawerSessionUseCase(cabinOperationService: ref.read(cabinOperationServiceProvider));
 });
 
-final startMasterDrawerSessionUseCaseProvider = Provider<StartMasterDrawerSessionUseCase>((ref) {
+final startMasterDrawerSessionUseCaseProvider = Provider((ref) {
   return StartMasterDrawerSessionUseCase(ref.read(cabinOperationServiceProvider));
 });
 
-final testRfidConnectionUseCaseProvider = Provider<TestRfidConnectionUseCase>((ref) {
+final testRfidConnectionUseCaseProvider = Provider((ref) {
   return TestRfidConnectionUseCase(ref.read(rfidServiceProvider));
 });
 
-final testCabinConnectionUseCaseProvider = Provider<TestCabinConnectionUseCase>((ref) {
+final testCabinConnectionUseCaseProvider = Provider((ref) {
   return TestCabinConnectionUseCase(ref.read(serialServiceProvider));
 });
 
-final getPatientPrescriptionHistoryUseCaseProvider = Provider<GetPatientPrescriptionHistoryUseCase>((ref) {
+final getPatientPrescriptionHistoryUseCaseProvider = Provider((ref) {
   return GetPatientPrescriptionHistoryUseCase(ref.read(prescriptionRepositoryProvider));
 });
 
-final refillMobileCabinUseCaseProvider = Provider<RefillMobileCabinUseCase>((ref) {
+final getCurrentStationDrugActivityUseCaseProvider = Provider((ref) {
+  return GetCurrentStationDrugActivityUseCase(ref.read(prescriptionRepositoryProvider));
+});
+
+final refillMobileCabinUseCaseProvider = Provider((ref) {
   return RefillMobileCabinUseCase(ref.read(cabinStockRepositoryProvider));
 });
 
-final getCabinAssignmentsUseCaseProvider = Provider<GetCabinAssignmentsUseCase>((ref) {
+final getCabinAssignmentsUseCaseProvider = Provider((ref) {
   return GetCabinAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
-final getCabinStocksUseCaseProvider = Provider<GetCabinStockUseCase>((ref) {
+final getCabinStocksUseCaseProvider = Provider((ref) {
   return GetCabinStockUseCase(ref.read(cabinStockRepositoryProvider));
 });
 
-final refillMasterCabinUsecaseProvider = Provider<RefillMasterCabinUseCase>((ref) {
+final refillMasterCabinUsecaseProvider = Provider((ref) {
   return RefillMasterCabinUseCase(ref.read(cabinStockRepositoryProvider));
 });
 

@@ -287,69 +287,55 @@ class PrescriptionItem implements TableData, Selectable {
     );
   }
 
+  // Hareket: status 3,4,5,6 arasından en geç tarihi olan
+  DateTime? get _movementDate {
+    final candidates = <DateTime?>[];
+    if (status == PrescriptionStatus.applied) candidates.add(applicationDate);
+    if (status == PrescriptionStatus.returned) candidates.add(returnDate);
+    if (status == PrescriptionStatus.wastaged) candidates.add(wastageDate);
+    if (status == PrescriptionStatus.destructed) candidates.add(destructionDate);
+
+    final dates = candidates.whereType<DateTime>().toList()..sort((a, b) => b.compareTo(a));
+    return dates.firstOrNull;
+  }
+
+  PrescriptionStatus? get movementStatus {
+    if (_movementDate == null) return null;
+    return status;
+  }
+
   @override
   List<dynamic> get content => [
-    barcode?.toCustomString(),
-    medicine?.name,
-    (firstDoseEmergency ?? false) ? 'Evet' : 'Hayır',
-    (askDoctor ?? false) ? 'Evet' : 'Hayır',
-    (inCaseOfNecessity ?? false) ? 'Evet' : 'Hayır',
-    prescriptionDate?.formattedDate ?? '',
-    time?.formattedTime ?? times?.map((t) => t.formattedTime).join(', ') ?? '',
-    dosePiece?.toCustomString() ?? '',
-    approvalDate?.formattedDate ?? '',
-    approvalUser?.fullName ?? '',
-    cancelDate?.formattedDate ?? '',
-    cancelUser?.fullName ?? '',
-    applicationDate?.formattedDate ?? '',
-    applicationUser?.fullName ?? '',
-    returnUser?.fullName ?? '',
-    returnQuantity?.toCustomString() ?? '',
-    returnDate?.formattedDate ?? '',
+    activityDate?.formattedDate ?? '', // 0 - Tarih
+    activityDate?.formattedTime ?? '', // 1 - Saat
+    prescription?.hospitalization?.patient?.fullName ?? '', // 2 - Hasta
+    activityUser?.fullName ?? '', // 3 - Kullanıcı
+    medicine?.name ?? '', // 4 - Malzeme
+    '${dosePiece?.formatFractional} ${medicine?.operationUnit}', // 5 - Miktar
+    movementStatus?.label ?? '', // 6 - Hareket
   ];
 
   @override
   List get rawContent => [
-    medicine?.barcode,
-    medicine?.name,
-    firstDoseEmergency,
-    askDoctor,
-    inCaseOfNecessity,
-    prescriptionDate,
-    time ?? times,
-    dosePiece,
-    approvalDate,
-    approvalUser,
-    cancelDate,
-    cancelUser,
-    applicationDate,
-    applicationUser,
-    returnUser,
-    returnQuantity,
-    returnDate,
+    activityDate, // 0
+    activityDate, // 1
+    patientName, // 2
+    activityUser, // 3
+    medicine, // 4
+    dosePiece, // 5
+    movementStatus, // 6
   ];
 
   @override
   List<String> get titles => [
-    'Barkod/SUT',
-    'Malzeme',
-    'İlk Doz Acil',
-    'Doktora Sor',
-    'Lüzumu Halinde',
-    'Tarih',
-    'Saat',
-    'Miktar',
-    'Onay Tarihi',
-    'Onaylayan',
-    'İptal Tarihi',
-    'İptal Eden',
-    'Uygulama Tarihi',
-    'Uygulayan',
-    'İade Eden',
-    'İade Miktar',
-    'İade Tarihi',
+    'Tarih', // 0
+    'Saat', // 1
+    'Hasta', // 2
+    'İşlemi Yapan', // 3
+    'Malzeme', // 4
+    'Miktar', // 5
+    'Hareket', // 6
   ];
-
   @override
   String? get subtitle => medicine?.barcode ?? '-';
 

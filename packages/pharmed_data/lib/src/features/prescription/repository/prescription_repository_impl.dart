@@ -159,10 +159,37 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<List<PrescriptionItem>>> getMedicineActivities() async {
-    final result = await _dataSource.getMedicineActivities();
+  Future<Result<List<PrescriptionItem>>> getDrugActivity() async {
+    final result = await _dataSource.getDrugActivity();
     return result.when(
       ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getCurrentStationDrugActivity({
+    int? skip,
+    int? take,
+    String? search,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final result = await _dataSource.getCurrentStationDrugActivity(
+      search: search,
+      skip: skip,
+      take: take,
+      startDate: startDate,
+      endDate: endDate,
+    );
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<PrescriptionItem>>(
+          data: apiResponse?.data != null ? _prescriptionItemMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess ?? true,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
       error: (e) => Result.error(e),
     );
   }

@@ -75,8 +75,6 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
     return '$h:$m:$s';
   }
 
-  // ── Menü overlay ──────────────────────────────────────────────
-
   void _toggleMenu(int id) {
     if (!widget.isLoggedIn) return;
 
@@ -171,11 +169,9 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
       ),
       child: Row(
         children: [
-          // ── Logo / Anasayfa ──────────────────────────────────
           _AppLogo(onTap: widget.onHomeTap),
           _Separator(),
 
-          // ── Navigasyon menüleri ──────────────────────────────
           ...widget.menuTree.map((item) {
             final id = item.id ?? 0;
             final key = _itemKeys.putIfAbsent(id, () => GlobalKey());
@@ -190,10 +186,8 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
               ),
             );
           }),
-
           const Spacer(),
 
-          // ── Saat ─────────────────────────────────────────────
           StreamBuilder<String>(
             stream: _clockStream,
             initialData: _timeStr,

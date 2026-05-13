@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
+import '../../auth/presentation/notifier/auth_notifier.dart';
+import '../drug_activity.dart';
+
+class DrugActivityScreen extends ConsumerWidget {
+  const DrugActivityScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(drugActivityNotifierProvider);
+    final notifier = ref.read(drugActivityNotifierProvider.notifier);
+
+    return GestureDetector(
+      onTap: () => ref.read(authNotifierProvider.notifier).onUserActivity(),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Scaffold(
+          backgroundColor: MedColors.bg,
+
+          body: switch (state) {
+            DrugActivityLoading() => const Center(child: CircularProgressIndicator()),
+            DrugActivityLoaded(:final items) => MedTable(
+              data: items,
+              emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
+              serverTotalCount: notifier.totalCount,
+              currentPage: notifier.currentPage,
+              pageSize: notifier.pageSize,
+              enableDateFilter: true,
+              initialDateRange: DateTimeRange(start: notifier.startDate, end: notifier.endDate),
+              onPageChanged: (page) => notifier.goToPage(page),
+              onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
+              columnDefs: const [
+                TableColumnDef(title: 'Tarih', flex: 0.9),
+                TableColumnDef(title: 'Saat', flex: 0.7),
+                TableColumnDef(title: 'Hasta', flex: 1.5),
+                TableColumnDef(title: 'Kullanıcı'),
+                TableColumnDef(title: 'Malzeme', flex: 1.5),
+                TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7),
+                TableColumnDef(title: 'Hareket', flex: 0.9),
+              ],
+              cellBuilder: (item, colIndex, value) {
+                if (colIndex == 6) {
+                  final status = (item).movementStatus;
+                  if (status == null) return const SizedBox.shrink();
+                  return MedInfoChip(
+                    info: status.label,
+                    backgroundColor: status.medBackgroundColor,
+                    foregroundColor: status.medColor,
+                  );
+                }
+                return null; // diğer kolonlar default render
+              },
+            ),
+            DrugActivityError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),
+          },
+        ),
+      ),
+    );
+  }
+}

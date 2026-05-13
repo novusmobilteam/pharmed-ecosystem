@@ -38,8 +38,17 @@ abstract interface class IPrescriptionRepository {
   Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions();
   Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptionDetail(int prescriptionId);
 
-  /// Kabine ait? ilaç aktivitelerini getiren servis.
-  Future<Result<List<PrescriptionItem>>> getMedicineActivities();
+  /// İlaç hareketlerini(dolum,alım,iade,fire/imha) getiren servis.
+  Future<Result<List<PrescriptionItem>>> getDrugActivity();
+
+  /// İşlem yapılan kabine ait hareketlerini(dolum,alım,iade,fire/imha) getiren servis.
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getCurrentStationDrugActivity({
+    int? skip,
+    int? take,
+    String? search,
+    DateTime? startDate,
+    DateTime? endDate,
+  });
 
   /// Acil Hasta'ya ataması yapılmış ilaçları getiren servis.
   Future<Result<List<PrescriptionItem>>> getEmergencyPatientMedicines(int hospitalizationId);

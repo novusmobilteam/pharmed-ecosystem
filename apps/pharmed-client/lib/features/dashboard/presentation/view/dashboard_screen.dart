@@ -13,6 +13,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../auth/presentation/state/auth_state.dart';
+import '../../../drug_activity/drug_activity.dart';
 import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
 import '../../../waste/waste.dart';
