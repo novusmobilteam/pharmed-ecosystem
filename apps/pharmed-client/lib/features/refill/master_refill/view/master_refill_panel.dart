@@ -400,10 +400,6 @@ class _UnitDoseRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final qty = stock?.quantity?.toDouble() ?? 0;
-    final maxQty = assignment?.maxQuantity?.toDouble() ?? 0;
-    final stockColor = _stockColor(qty, assignment);
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -451,14 +447,6 @@ class _UnitDoseRow extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Color _stockColor(double qty, MedicineAssignment? assignment) {
-    final crit = assignment?.criticalQuantity?.toDouble() ?? 0;
-    final min = assignment?.minQuantity?.toDouble() ?? 0;
-    if (qty <= crit) return MedColors.red;
-    if (qty <= min) return MedColors.amber;
-    return MedColors.green;
   }
 }
 

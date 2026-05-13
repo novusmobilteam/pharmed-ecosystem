@@ -735,4 +735,10 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get refundSelectPatient =>
       'İade işlemi başlatmak için sol listeden bir hasta seçin.';
+
+  @override
+  String get wasteNoWastableDrugs => 'Fire/imha edilebilir ilaç bulunamadı.';
+
+  @override
+  String get wasteSelectPatient => 'İşlem yapmak için hasta seçin.';
 }

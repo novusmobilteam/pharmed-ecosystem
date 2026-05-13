@@ -184,3 +184,18 @@ final refundRepositoryProvider = Provider<IRefundRepository>((ref) {
     ),
   };
 });
+
+final wasteRepositoryProvider = Provider<IWasteRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => WasteRepositoryImpl(
+      dataSource: ref.read(wasteDataSourceProvider),
+      assignmentMapper: MedicineAssignmentMapper(),
+      prescriptionItemMapper: PrescriptionItemMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => WasteRepositoryImpl(
+      dataSource: ref.read(wasteDataSourceProvider),
+      assignmentMapper: MedicineAssignmentMapper(),
+      prescriptionItemMapper: PrescriptionItemMapper(),
+    ),
+  };
+});

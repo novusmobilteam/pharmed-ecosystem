@@ -1,13 +1,11 @@
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
-
 /// PrescriptionItem → CabinOperationItem dönüşümü.
 /// Fire/imha akışında kullanılır.
 ///
 /// [witnesses] ve [stations]: İlaç isWitnessedDisposal ise servisden
 /// gelen liste buraya geçirilir. Değilse boş liste bırakılır.
-extension PrescriptionItemDisposalMapper on PrescriptionItem {
+extension CabinOperationItemMapper on PrescriptionItem {
   CabinOperationItem toCabinOperationItem({
     List<User> witnesses = const [],
     List<Station> stations = const [],

@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
-
-import '../../domain/usecase/dispose_medicine_usecase.dart';
-import '../../domain/usecase/get_disposables_usecase.dart';
-
 enum DisposeType {
   wastage('Fire'),
   destruction('İmha');
@@ -16,23 +11,26 @@ enum DisposeType {
 
 class DisposalNotifier extends ChangeNotifier with ApiRequestMixin {
   final Hospitalization? _hospitalization;
-  final GetDisposablesUseCase _getDisposablesUseCase;
+  final GetMasterDisposablesUseCase _getDisposablesUseCase;
   final GetCurrentStationUseCase _getCurrentStationUseCase;
-  final DisposeMedicineUseCase _disposeMedicineUseCase;
+  final MasterDestructionUseCase _destructionUseCase;
+  final MasterWastageUseCase _wastageUseCase;
 
   /// Doğrulama tamamlandığında (şahit onaylandı veya şahit gerekmiyorsa)
   /// tetiklenen callback. DisposalInputView bu callback üzerinden açılır.
   final Future<void> Function(DisposalNotifier notifier) onVerificationCompleted;
 
   DisposalNotifier({
-    required GetDisposablesUseCase getDisposablesUseCase,
+    required GetMasterDisposablesUseCase getDisposablesUseCase,
     required GetCurrentStationUseCase getCurrentStationUseCase,
-    required DisposeMedicineUseCase disposeMedicineUseCase,
+    required MasterDestructionUseCase destructionUseCase,
+    required MasterWastageUseCase wastageUseCase,
     required this.onVerificationCompleted,
     Hospitalization? hospitalization,
   }) : _getDisposablesUseCase = getDisposablesUseCase,
        _getCurrentStationUseCase = getCurrentStationUseCase,
-       _disposeMedicineUseCase = disposeMedicineUseCase,
+       _destructionUseCase = destructionUseCase,
+       _wastageUseCase = wastageUseCase,
        _hospitalization = hospitalization;
 
   OperationKey fetchOp = OperationKey.fetch();
@@ -157,14 +155,25 @@ class DisposalNotifier extends ChangeNotifier with ApiRequestMixin {
 
     await executeVoid(
       submitOp,
-      operation: () => _disposeMedicineUseCase.call(
-        DisposeMedicineParams(
-          type: type,
-          prescriptionDetailId: _selectedItem?.id ?? 0,
-          witnessId: _selectedItem?.witness?.id,
-          dosePiece: disposableAmount ?? 0.0,
-        ),
-      ),
+      operation: () {
+        if (_type == DisposeType.wastage) {
+          return _wastageUseCase.call(
+            WasteParams(
+              prescriptionItemId: _selectedItem?.id ?? 0,
+              witnessId: _selectedItem?.witness?.id,
+              quantity: disposableAmount ?? 0.0,
+            ),
+          );
+        } else {
+          return _destructionUseCase.call(
+            WasteParams(
+              prescriptionItemId: _selectedItem?.id ?? 0,
+              witnessId: _selectedItem?.witness?.id,
+              quantity: disposableAmount ?? 0.0,
+            ),
+          );
+        }
+      },
       onSuccess: () {
         onSuccess?.call('Fire/İmha işlemi başarılı.');
         if (_selectedItem != null) {

@@ -7,6 +7,7 @@ export 'data/drawer_cell_dto.dart';
 export 'data/mobile_drawer_request_dto.dart';
 export 'data/mobile_drawer_slot_dto.dart';
 
+export 'domain/entity/cabin_operation_item.dart';
 export 'domain/entity/cabin.dart';
 export 'domain/entity/drawer_type.dart';
 export 'domain/entity/drawer_config.dart';

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 import '../../../medicine_management/presentation/view/witness_login_view.dart';
 import '../../../medicine_management/presentation/widgets/cabin_operation_card/cabin_operation_card.dart';
 import '../notifier/disposal_notifier.dart';
@@ -26,7 +25,8 @@ class _DisposalViewState extends State<DisposalView> {
         hospitalization: widget.hospitalization,
         getDisposablesUseCase: context.read(),
         getCurrentStationUseCase: context.read(),
-        disposeMedicineUseCase: context.read(),
+        destructionUseCase: context.read(),
+        wastageUseCase: context.read(),
         onVerificationCompleted: (notifier) async {
           await showDialog(
             context: context,

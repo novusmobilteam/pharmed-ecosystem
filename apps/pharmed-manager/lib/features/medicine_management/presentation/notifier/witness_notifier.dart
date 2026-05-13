@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
 
-import '../../domain/entity/cabin_operation_item.dart';
-
 /// Şahit doğrulama işlemlerini yöneten notifier.
 /// Alım ve fire/imha işlemlerinde ortak kullanılır.
 /// medicine_management/presentation/notifier/ altında yaşar.

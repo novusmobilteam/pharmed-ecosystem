@@ -26,6 +26,7 @@ class DashboardContentFactory {
         'drug-refill' => RefillView(),
         'drug-intake' => IntakeView(),
         'drug-return' => RefundView(),
+        'drug-waste' => WasteView(),
         'drawer-malfunction' => FaultView(),
 
         // Fallback

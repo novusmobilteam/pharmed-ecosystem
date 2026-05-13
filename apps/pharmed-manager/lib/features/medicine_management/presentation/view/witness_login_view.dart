@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 
-import '../../domain/entity/cabin_operation_item.dart';
 import '../notifier/witness_notifier.dart';
 
 /// Şahit doğrulama dialog'u.

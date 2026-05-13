@@ -3,8 +3,6 @@ import 'package:pharmed_manager/features/medicine_withdraw/domain/mapper/medicin
 
 import '../../../core/core.dart';
 
-import '../../medicine_management/domain/entity/cabin_operation_item.dart';
-
 class MedicineRefundNotifier extends ChangeNotifier with ApiRequestMixin {
   Hospitalization? _hospitalization;
   final GetMasterRefundablesUseCase _getRefundablesUseCase;

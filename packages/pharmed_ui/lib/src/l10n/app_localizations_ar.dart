@@ -732,4 +732,11 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get refundSelectPatient =>
       'حدد مريضاً من القائمة على اليسار لبدء عملية الإرجاع.';
+
+  @override
+  String get wasteNoWastableDrugs =>
+      'لم يتم العثور على أدوية قابلة للتخلص منها.';
+
+  @override
+  String get wasteSelectPatient => 'حدد مريضاً للمتابعة.';
 }

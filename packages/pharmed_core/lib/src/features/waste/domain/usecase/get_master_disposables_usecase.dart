@@ -1,17 +1,14 @@
-import '../../../../core/core.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
-import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
-import '../../../medicine_management/domain/repository/i_medicine_management_repository.dart';
-import '../mapper/prescription_item_mapper.dart';
-
-class GetDisposablesUseCase {
-  final IMedicineManagementRepository _repository;
+class GetMasterDisposablesUseCase {
+  final IWasteRepository _repository;
   final IMedicineRepository _medicineRepository;
 
-  GetDisposablesUseCase(this._repository, this._medicineRepository);
+  GetMasterDisposablesUseCase(this._repository, this._medicineRepository);
 
   Future<Result<List<CabinOperationItem>>> call(int hospitalizationId) async {
-    final result = await _repository.getDisposables(hospitalizationId: hospitalizationId);
+    final result = await _repository.getMasterDisposables(hospitalizationId: hospitalizationId);
 
     return result.when(
       ok: (items) async {

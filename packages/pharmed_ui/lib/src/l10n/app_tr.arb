@@ -702,5 +702,8 @@
 "refundSelectPatient": "İade işlemi başlatmak için sol listeden bir hasta seçin.",
 "@refundSelectPatient": {
   "description": "Sağ panelde hasta seçilmediğinde gösterilen boş durum mesajı."
-}
+},
+
+"wasteNoWastableDrugs": "Fire/imha edilebilir ilaç bulunamadı.",
+"wasteSelectPatient": "İşlem yapmak için hasta seçin."
 }

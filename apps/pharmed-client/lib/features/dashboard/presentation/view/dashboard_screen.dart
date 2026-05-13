@@ -15,6 +15,7 @@ import '../../../auth/presentation/notifier/auth_notifier.dart';
 import '../../../auth/presentation/state/auth_state.dart';
 import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
+import '../../../waste/waste.dart';
 import '../../domain/model/dasboard_data.dart';
 
 import '../notifier/dashboard_notifier.dart';

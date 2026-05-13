@@ -109,5 +109,17 @@ final class EmptyStateResolver {
           title: _l10n.refundSelectPatient,
           description: '',
         ),
+
+        EmptyStateVariant.noWastableDrugs => EmptyStateContent(
+          icon: icon ?? PhosphorIcons.info(),
+          title: _l10n.wasteNoWastableDrugs,
+          description: '',
+        ),
+
+        EmptyStateVariant.wasteSelectPatient => EmptyStateContent(
+          icon: icon ?? PhosphorIcons.info(),
+          title: _l10n.wasteSelectPatient,
+          description: '',
+        ),
       };
 }

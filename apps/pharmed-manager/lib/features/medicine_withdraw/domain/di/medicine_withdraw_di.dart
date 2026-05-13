@@ -1,5 +1,4 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_manager/features/medicine_disposal/domain/usecase/dispose_medicine_usecase.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -29,7 +28,6 @@ class MedicineWithdrawProviders {
         ),
       ),
       Provider<WitnessUserLoginUseCase>(create: (context) => WitnessUserLoginUseCase(context.read())),
-      Provider<DisposeMedicineUseCase>(create: (context) => DisposeMedicineUseCase(context.read())),
       Provider<GetPatientMedicinesUseCase>(create: (context) => GetPatientMedicinesUseCase(context.read())),
       Provider<DefinePatientMedicineUseCase>(create: (context) => DefinePatientMedicineUseCase(context.read())),
       Provider<IntakePatientMedicineUseCase>(create: (context) => IntakePatientMedicineUseCase(context.read())),

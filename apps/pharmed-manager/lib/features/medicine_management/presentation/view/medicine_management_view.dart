@@ -3,8 +3,6 @@ import '../../../../core/core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/widgets/hospitalization_card.dart';
-
 import '../../../medicine_withdraw/presentation/view/withdraw_view.dart';
 import '../notifier/medicine_management_notifier.dart';
 

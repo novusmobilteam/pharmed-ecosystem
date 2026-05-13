@@ -736,4 +736,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get refundSelectPatient =>
       'Select a patient from the list on the left to start a refund.';
+
+  @override
+  String get wasteNoWastableDrugs => 'No disposable drugs found.';
+
+  @override
+  String get wasteSelectPatient => 'Select a patient to proceed.';
 }

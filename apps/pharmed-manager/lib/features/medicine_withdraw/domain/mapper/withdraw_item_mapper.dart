@@ -1,7 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
-
 /// WithdrawItem → CabinOperationItem dönüşümü.
 /// Alım akışında kullanılır.
 extension WithdrawItemMapper on WithdrawItem {

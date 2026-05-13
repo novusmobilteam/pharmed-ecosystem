@@ -38,6 +38,7 @@ export 'src/features/warning/warning.dart';
 export 'src/features/authorization/authorization.dart';
 export 'src/features/inconsistency/inconsistency.dart';
 export 'src/features/stock_transaction/stock_transaction.dart';
+export 'src/features/waste/waste.dart';
 
 // Constants
 export 'src/constants/device_constants.dart';

@@ -1443,6 +1443,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a patient from the list on the left to start a refund.'**
   String get refundSelectPatient;
+
+  /// No description provided for @wasteNoWastableDrugs.
+  ///
+  /// In en, this message translates to:
+  /// **'No disposable drugs found.'**
+  String get wasteNoWastableDrugs;
+
+  /// No description provided for @wasteSelectPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient to proceed.'**
+  String get wasteSelectPatient;
 }
 
 class _AppLocalizationsDelegate

@@ -702,5 +702,8 @@
 "refundSelectPatient": "Select a patient from the list on the left to start a refund.",
 "@refundSelectPatient": {
   "description": "Empty state message shown in the right panel when no patient is selected."
-}
+},
+
+"wasteNoWastableDrugs": "No disposable drugs found.",
+"wasteSelectPatient": "Select a patient to proceed."
 }

@@ -1,4 +1,4 @@
-import '../../../../core/core.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
 /// Kabin işlemlerinde (alım, iade, fire/imha) ortak kullanılan model.
 ///

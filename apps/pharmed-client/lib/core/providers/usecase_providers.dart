@@ -235,3 +235,35 @@ final completeMobileRefundUseCaseProvider = Provider((ref) {
 final checkMobileRefundStatusUseCaseProvider = Provider((ref) {
   return CheckMobileRefundStatusUseCase(ref.read(refundRepositoryProvider));
 });
+
+final mobileWastageUseCaseProvider = Provider((ref) {
+  return MobileWastageUseCase(ref.read(wasteRepositoryProvider));
+});
+
+final mobileDestructionUseCaseProvider = Provider((ref) {
+  return MobileDestructionUseCase(ref.read(wasteRepositoryProvider));
+});
+
+final masterWastageUseCaseProvider = Provider((ref) {
+  return MasterWastageUseCase(ref.read(wasteRepositoryProvider));
+});
+
+final masterDisposeMaterialUseCaseProvider = Provider((ref) {
+  return MasterDisposeMaterialUseCase(ref.read(wasteRepositoryProvider));
+});
+
+final masterDestructionUseCaseProvider = Provider((ref) {
+  return MasterDestructionUseCase(ref.read(wasteRepositoryProvider));
+});
+
+final getMobileDisposablesUseCaseProvider = Provider((ref) {
+  return GetMobileDisposablesUseCase(ref.read(wasteRepositoryProvider));
+});
+
+final getMasterDisposablesUseCaseProvider = Provider((ref) {
+  return GetMasterDisposablesUseCase(ref.read(wasteRepositoryProvider), ref.read(medicineRepositoryProvider));
+});
+
+final getMasterDisposableMaterialsUseCaseProvider = Provider((ref) {
+  return GetMasterDisposableMaterialsUseCase(ref.read(wasteRepositoryProvider));
+});

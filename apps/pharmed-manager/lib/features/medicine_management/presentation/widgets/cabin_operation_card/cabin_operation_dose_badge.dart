@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/core.dart';
 
-import '../../../domain/entity/cabin_operation_item.dart';
-
 /// İşlem tipinden bağımsız doz rozetini gösterir.
 /// Alım, iade ve fire/imha kartlarında ortak kullanılır.
 class CabinOperationDoseBadge extends StatelessWidget {

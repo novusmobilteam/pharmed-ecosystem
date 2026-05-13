@@ -3,7 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../medicine_management/domain/entity/cabin_operation_item.dart';
 import '../../../medicine_management/presentation/widgets/cabin_operation_card/cabin_operation_witness_section.dart';
 import '../../../medicine_management/presentation/widgets/cabin_operation_card/prescription_status_badge.dart';
 

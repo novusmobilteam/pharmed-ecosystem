@@ -4,16 +4,13 @@ import '../../../../core/core.dart';
 
 import '../../../cabin/domain/entity/cabin_input_data.dart';
 
-import '../../domain/usecase/dispose_material_usecase.dart';
-import '../../domain/usecase/get_disposable_materials_usecase.dart';
-
 class MedicineDisposalNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MedicineAssignment> {
-  final GetDisposableMaterialsUseCase _getDisposableMaterialsUseCase;
-  final DisposeMaterialUseCase _disposeMaterialUseCase;
+  final GetMasterDisposableMaterialsUseCase _getDisposableMaterialsUseCase;
+  final MasterDisposeMaterialUseCase _disposeMaterialUseCase;
 
   MedicineDisposalNotifier({
-    required GetDisposableMaterialsUseCase getDisposableMaterialsUseCase,
-    required DisposeMaterialUseCase disposeMaterialUseCase,
+    required GetMasterDisposableMaterialsUseCase getDisposableMaterialsUseCase,
+    required MasterDisposeMaterialUseCase disposeMaterialUseCase,
   }) : _getDisposableMaterialsUseCase = getDisposableMaterialsUseCase,
        _disposeMaterialUseCase = disposeMaterialUseCase;
 

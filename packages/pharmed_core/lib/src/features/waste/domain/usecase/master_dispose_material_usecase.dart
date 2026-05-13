@@ -1,6 +1,4 @@
-import '../../../../core/core.dart';
-
-import '../../../medicine_management/domain/repository/i_medicine_management_repository.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
 class DisposeMaterialParams {
   final int stockId;
@@ -13,13 +11,13 @@ class DisposeMaterialParams {
   }
 }
 
-class DisposeMaterialUseCase {
-  final IMedicineManagementRepository _repository;
+class MasterDisposeMaterialUseCase {
+  final IWasteRepository _repository;
 
-  DisposeMaterialUseCase(this._repository);
+  MasterDisposeMaterialUseCase(this._repository);
 
   Future<Result<void>> call(List<DisposeMaterialParams> params) async {
     final data = params.map((p) => p.toJson()).toList();
-    return _repository.disposeMaterial(data);
+    return _repository.masterDisposeMaterial(data);
   }
 }
