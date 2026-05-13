@@ -142,13 +142,13 @@ abstract final class MedRadius {
   /// 24px — numpad dialog ve büyük kayan paneller.
   static const Radius xl3 = Radius.circular(24);
 
-  static const BorderRadius xsAll  = BorderRadius.all(xs);
-  static const BorderRadius smAll  = BorderRadius.all(sm);
-  static const BorderRadius mdAll  = BorderRadius.all(md);
+  static const BorderRadius xsAll = BorderRadius.all(xs);
+  static const BorderRadius smAll = BorderRadius.all(sm);
+  static const BorderRadius mdAll = BorderRadius.all(md);
   static const BorderRadius midAll = BorderRadius.all(mid);
-  static const BorderRadius lgAll  = BorderRadius.all(lg);
+  static const BorderRadius lgAll = BorderRadius.all(lg);
   static const BorderRadius xl2All = BorderRadius.all(xl2);
-  static const BorderRadius xlAll  = BorderRadius.all(xl);
+  static const BorderRadius xlAll = BorderRadius.all(xl);
   static const BorderRadius xl3All = BorderRadius.all(xl3);
 }
 
@@ -220,6 +220,13 @@ abstract final class MedTextStyles {
     color: color ?? MedColors.text,
   );
 
+  static TextStyle bodyLg({Color? color, FontWeight? weight}) => TextStyle(
+    fontFamily: MedFonts.sans,
+    fontSize: 14,
+    fontWeight: weight ?? FontWeight.w400,
+    color: color ?? MedColors.text,
+  );
+
   static TextStyle bodySm({Color? color, FontWeight? weight}) => TextStyle(
     fontFamily: MedFonts.sans,
     fontSize: 11,
@@ -246,20 +253,12 @@ abstract final class MedTextStyles {
       TextStyle(fontFamily: MedFonts.mono, fontSize: 9, fontWeight: FontWeight.w400, color: color ?? MedColors.text3);
 
   /// Sayısal gösterim — stepper değeri, doz miktarı (18px).
-  static TextStyle numericLg({Color? color}) => TextStyle(
-    fontFamily: MedFonts.sans,
-    fontSize: 18,
-    fontWeight: FontWeight.w600,
-    color: color ?? MedColors.text,
-  );
+  static TextStyle numericLg({Color? color}) =>
+      TextStyle(fontFamily: MedFonts.sans, fontSize: 18, fontWeight: FontWeight.w600, color: color ?? MedColors.text);
 
   /// Büyük sayısal gösterim — numpad değer ekranı (22px).
-  static TextStyle numericXl({Color? color}) => TextStyle(
-    fontFamily: MedFonts.sans,
-    fontSize: 22,
-    fontWeight: FontWeight.w600,
-    color: color ?? MedColors.text,
-  );
+  static TextStyle numericXl({Color? color}) =>
+      TextStyle(fontFamily: MedFonts.sans, fontSize: 22, fontWeight: FontWeight.w600, color: color ?? MedColors.text);
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -310,12 +309,10 @@ abstract final class MedSpacing {
 
   // ── Input alanı özel değerleri ──────────────────────────────────
   /// Manager input padding — sıkı, fare dostu yerleşim.
-  static const EdgeInsets inputPaddingManager =
-      EdgeInsets.symmetric(horizontal: 9, vertical: 7);
+  static const EdgeInsets inputPaddingManager = EdgeInsets.symmetric(horizontal: 9, vertical: 7);
 
   /// Client input padding — geniş, dokunmatik dostu yerleşim.
-  static const EdgeInsets inputPaddingClient =
-      EdgeInsets.symmetric(horizontal: 14, vertical: 10);
+  static const EdgeInsets inputPaddingClient = EdgeInsets.symmetric(horizontal: 14, vertical: 10);
 
   /// Manager input minimum yüksekliği.
   static const double inputMinHeightManager = 36.0;
@@ -345,14 +342,11 @@ abstract final class MedSpacing {
 
   // ── Chip / badge padding ────────────────────────────────────────
   /// Küçük chip iç boşluğu — DoseChip, TimeChip.
-  static const EdgeInsets chipPaddingSm =
-      EdgeInsets.symmetric(horizontal: 6, vertical: 3);
+  static const EdgeInsets chipPaddingSm = EdgeInsets.symmetric(horizontal: 6, vertical: 3);
 
   /// Orta chip iç boşluğu — InfoChip, MedBadge.
-  static const EdgeInsets chipPaddingMd =
-      EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+  static const EdgeInsets chipPaddingMd = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
 
   /// Büyük chip iç boşluğu — RxStatusChip, MedBadge large.
-  static const EdgeInsets chipPaddingLg =
-      EdgeInsets.symmetric(horizontal: 10, vertical: 5);
+  static const EdgeInsets chipPaddingLg = EdgeInsets.symmetric(horizontal: 10, vertical: 5);
 }

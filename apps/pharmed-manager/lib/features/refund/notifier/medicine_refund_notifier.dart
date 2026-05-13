@@ -7,16 +7,16 @@ import '../../medicine_management/domain/entity/cabin_operation_item.dart';
 
 class MedicineRefundNotifier extends ChangeNotifier with ApiRequestMixin {
   Hospitalization? _hospitalization;
-  final GetRefundablesUseCase _getRefundablesUseCase;
-  final CheckRefundStatusUseCase _checkRefundStatusUseCase;
+  final GetMasterRefundablesUseCase _getRefundablesUseCase;
+  final CheckMasterRefundStatusUseCase _checkRefundStatusUseCase;
   final CompleteRefundUseCase _completeRefundUseCase;
 
   final Future<void> Function(MedicineRefundNotifier notifier, MedicineAssignment assignment) onCheckCompleted;
 
   MedicineRefundNotifier({
     required Hospitalization hospitalization,
-    required GetRefundablesUseCase getRefundablesUseCase,
-    required CheckRefundStatusUseCase checkRefundStatusUseCase,
+    required GetMasterRefundablesUseCase getRefundablesUseCase,
+    required CheckMasterRefundStatusUseCase checkRefundStatusUseCase,
     required CompleteRefundUseCase completeRefundUseCase,
     required this.onCheckCompleted,
   }) : _getRefundablesUseCase = getRefundablesUseCase,

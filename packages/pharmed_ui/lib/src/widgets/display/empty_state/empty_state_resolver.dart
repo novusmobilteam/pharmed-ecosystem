@@ -98,5 +98,16 @@ final class EmptyStateResolver {
           title: title ?? '',
           description: description ?? '',
         ),
+        EmptyStateVariant.noRefundableDrugs => EmptyStateContent(
+          icon: icon ?? PhosphorIcons.info(),
+          title: _l10n.refundNoRefundableDrugs,
+          description: '',
+        ),
+
+        EmptyStateVariant.refundSelectPatient => EmptyStateContent(
+          icon: icon ?? PhosphorIcons.info(),
+          title: _l10n.refundSelectPatient,
+          description: '',
+        ),
       };
 }

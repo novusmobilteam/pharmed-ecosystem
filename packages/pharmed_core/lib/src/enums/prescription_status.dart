@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 enum PrescriptionStatus {
@@ -62,6 +63,9 @@ enum PrescriptionStatus {
 
 /// PrescriptionStatus için UI renk ve ikon bilgisi.
 extension PrescriptionStatusStyle on PrescriptionStatus {
+  // ── Eski API — geriye dönük uyumluluk için korundu ──────────────
+  // Yeni kodda medColor / medBackgroundColor / medBorderColor kullanın.
+
   Color get color => switch (this) {
     PrescriptionStatus.pendingApproval => Colors.orange,
     PrescriptionStatus.purchasePending => Colors.blue,
@@ -77,6 +81,34 @@ extension PrescriptionStatusStyle on PrescriptionStatus {
   Color get backgroundColor => color.withValues(alpha: 0.12);
   Color get borderColor => color.withValues(alpha: 0.3);
 
+  // ── MedColors token'larına dayalı yeni API ──────────────────────
+
+  /// Chip / badge ön plan rengi — metin ve ikon için.
+  Color get medColor => switch (this) {
+    PrescriptionStatus.applied => MedColors.green,
+    PrescriptionStatus.returned => MedColors.blue,
+    PrescriptionStatus.purchasePending => MedColors.amber,
+    PrescriptionStatus.pendingApproval => MedColors.amber,
+    PrescriptionStatus.filledWaiting => MedColors.amber,
+    PrescriptionStatus.wastaged => MedColors.red,
+    PrescriptionStatus.destructed => MedColors.red,
+    PrescriptionStatus.cancelled => MedColors.red,
+    PrescriptionStatus.rejected => MedColors.red,
+  };
+
+  /// Chip / badge arka plan rengi.
+  Color get medBackgroundColor => switch (this) {
+    PrescriptionStatus.applied => MedColors.greenLight,
+    PrescriptionStatus.returned => MedColors.blueLight,
+    PrescriptionStatus.purchasePending => MedColors.amberLight,
+    PrescriptionStatus.pendingApproval => MedColors.amberLight,
+    PrescriptionStatus.filledWaiting => MedColors.amberLight,
+    PrescriptionStatus.wastaged => MedColors.redLight,
+    PrescriptionStatus.destructed => MedColors.redLight,
+    PrescriptionStatus.cancelled => MedColors.redLight,
+    PrescriptionStatus.rejected => MedColors.redLight,
+  };
+
   IconData get icon => switch (this) {
     PrescriptionStatus.pendingApproval => PhosphorIcons.hourglass(PhosphorIconsStyle.fill),
     PrescriptionStatus.purchasePending => PhosphorIcons.shoppingBag(PhosphorIconsStyle.fill),
@@ -89,7 +121,8 @@ extension PrescriptionStatusStyle on PrescriptionStatus {
     PrescriptionStatus.filledWaiting => PhosphorIcons.hourglass(PhosphorIconsStyle.fill),
   };
 
-  /// Reçete onay/reddet kısmında sadece bu statuse sahip olanlarla işlem yapılabilir.
+  /// Reçete onay/reddet kısmında sadece bu statuse sahip olanlarla
+  /// işlem yapılabilir.
   bool get isSelectable =>
       this == PrescriptionStatus.pendingApproval ||
       this == PrescriptionStatus.purchasePending ||

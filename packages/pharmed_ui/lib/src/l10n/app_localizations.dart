@@ -1431,6 +1431,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unexpected error occurred. Please try again or contact your system administrator.'**
   String get emptyStateErrorDescription;
+
+  /// Message shown when the selected patient has no refundable medications.
+  ///
+  /// In en, this message translates to:
+  /// **'No refundable medications found for this patient.'**
+  String get refundNoRefundableDrugs;
+
+  /// Empty state message shown in the right panel when no patient is selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient from the list on the left to start a refund.'**
+  String get refundSelectPatient;
 }
 
 class _AppLocalizationsDelegate

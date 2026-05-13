@@ -692,5 +692,15 @@
   "emptyStateServerErrorDescription": "The server could not be reached. Please try again later.",
 
   "emptyStateErrorTitle": "Something Went Wrong",
-  "emptyStateErrorDescription": "An unexpected error occurred. Please try again or contact your system administrator."
+  "emptyStateErrorDescription": "An unexpected error occurred. Please try again or contact your system administrator.",
+
+  "refundNoRefundableDrugs": "No refundable medications found for this patient.",
+"@refundNoRefundableDrugs": {
+  "description": "Message shown when the selected patient has no refundable medications."
+},
+
+"refundSelectPatient": "Select a patient from the list on the left to start a refund.",
+"@refundSelectPatient": {
+  "description": "Empty state message shown in the right panel when no patient is selected."
+}
 }

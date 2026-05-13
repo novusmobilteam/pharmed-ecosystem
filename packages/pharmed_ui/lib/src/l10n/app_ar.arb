@@ -694,5 +694,15 @@
   "emptyStateServerErrorDescription": "لا يمكن الاتصال بالخادم. يرجى المحاولة مرة أخرى لاحقاً.",
 
   "emptyStateErrorTitle": "حدث خطأ ما",
-  "emptyStateErrorDescription": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى أو التواصل مع مسؤول النظام."
+  "emptyStateErrorDescription": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى أو التواصل مع مسؤول النظام.",
+
+  "refundNoRefundableDrugs": "لم يتم العثور على أدوية قابلة للإرجاع لهذا المريض.",
+"@refundNoRefundableDrugs": {
+  "description": "رسالة تظهر عندما لا توجد أدوية قابلة للإرجاع للمريض المحدد."
+},
+
+"refundSelectPatient": "حدد مريضاً من القائمة على اليسار لبدء عملية الإرجاع.",
+"@refundSelectPatient": {
+  "description": "رسالة الحالة الفارغة التي تظهر في اللوحة اليمنى عند عدم تحديد مريض."
+}
 }

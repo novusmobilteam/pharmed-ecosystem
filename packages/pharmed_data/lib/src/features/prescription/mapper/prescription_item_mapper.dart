@@ -9,7 +9,7 @@ class PrescriptionItemMapper {
     return PrescriptionItem(
       id: dto.id,
       prescriptionId: dto.prescriptionId,
-      patientRegistrationId: dto.patientRegistrationId,
+      patientRegistrationId: dto.hospitalizationId,
       physicalServiceId: dto.physicalServiceId,
       inpatientServiceId: dto.inpatientServiceId,
       doctorId: dto.doctorId,
@@ -88,7 +88,7 @@ class PrescriptionItemMapper {
     return PrescriptionItemDTO(
       id: entity.id,
       prescriptionId: entity.prescriptionId,
-      patientRegistrationId: entity.patientRegistrationId,
+      hospitalizationId: entity.patientRegistrationId,
       physicalServiceId: entity.physicalServiceId,
       inpatientServiceId: entity.inpatientServiceId,
       doctorId: entity.doctorId,

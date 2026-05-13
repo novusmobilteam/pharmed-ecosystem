@@ -97,7 +97,7 @@ class MedInputDecorator extends StatelessWidget {
             style: TextStyle(
               fontFamily: MedFonts.mono,
               fontSize: style.labelFontSize,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               letterSpacing: style.labelLetterSpacing,
               color: enabled ? MedColors.text3 : MedColors.text4,
             ),

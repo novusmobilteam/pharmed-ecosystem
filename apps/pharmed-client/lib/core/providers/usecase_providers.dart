@@ -223,3 +223,15 @@ final checkMobileIntakeUseCaseProvider = Provider((ref) {
 final completeMobileIntakeUseCaseProvider = Provider((ref) {
   return CompleteMobileIntakeUseCase(ref.read(intakeRepositoryProvider));
 });
+
+final getMobileRefundablesUseCaseProvider = Provider((ref) {
+  return GetMobileRefundablesUseCase(ref.read(refundRepositoryProvider));
+});
+
+final completeMobileRefundUseCaseProvider = Provider((ref) {
+  return CompleteMobileRefundUseCase(ref.read(refundRepositoryProvider));
+});
+
+final checkMobileRefundStatusUseCaseProvider = Provider((ref) {
+  return CheckMobileRefundStatusUseCase(ref.read(refundRepositoryProvider));
+});

@@ -130,7 +130,7 @@ class UsecaseProviders {
       Provider(create: (context) => CreatePrescriptionUseCase(prescriptionRepository: context.read())),
 
       /// Refund
-      Provider(create: (context) => GetRefundablesUseCase(context.read())),
+      Provider(create: (context) => GetMasterRefundablesUseCase(context.read())),
       Provider(create: (context) => CompleteRefundUseCase(context.read())),
       Provider(create: (context) => CompletePharmacyRefundUseCase(context.read())),
       Provider(create: (context) => GetCompletedPharmacyRefundsUseCase(context.read())),
@@ -139,7 +139,7 @@ class UsecaseProviders {
       Provider(create: (context) => DeletePharmacyRefundUseCase(context.read())),
       Provider(
         create: (context) =>
-            CheckRefundStatusUseCase(refundRepository: context.read(), cabinRepository: context.read()),
+            CheckMasterRefundStatusUseCase(refundRepository: context.read(), cabinRepository: context.read()),
       ),
 
       /// Role

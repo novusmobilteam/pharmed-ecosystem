@@ -33,6 +33,13 @@ class Patient extends Selectable implements TableData {
 
   String get fullName => '${name ?? '-'} ${surname ?? ''}'.trim();
 
+  String get initials {
+    if (name == null) return '?';
+    final parts = fullName.trim().split(' ');
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+
   bool isChanged(Patient other) {
     return name != other.name ||
         surname != other.surname ||

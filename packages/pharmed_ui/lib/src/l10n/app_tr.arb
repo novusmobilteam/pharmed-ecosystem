@@ -692,5 +692,15 @@
   "emptyStateServerErrorDescription": "Sunucuya bağlanılamıyor. Lütfen daha sonra tekrar deneyin.",
 
   "emptyStateErrorTitle": "Bir Hata Oluştu",
-  "emptyStateErrorDescription": "Beklenmeyen bir hata meydana geldi. Lütfen tekrar deneyin veya sistem yöneticinize başvurun."
+  "emptyStateErrorDescription": "Beklenmeyen bir hata meydana geldi. Lütfen tekrar deneyin veya sistem yöneticinize başvurun.",
+
+  "refundNoRefundableDrugs": "Bu hastaya ait iade edilebilir ilaç bulunamadı.",
+"@refundNoRefundableDrugs": {
+  "description": "Seçili hastanın iade edilebilir ilaç listesi boş olduğunda gösterilen mesaj."
+  },
+
+"refundSelectPatient": "İade işlemi başlatmak için sol listeden bir hasta seçin.",
+"@refundSelectPatient": {
+  "description": "Sağ panelde hasta seçilmediğinde gösterilen boş durum mesajı."
+}
 }

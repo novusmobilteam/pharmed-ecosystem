@@ -214,11 +214,13 @@ class RepositoryProviders {
             dataSource: context.read(),
             refundMapper: RefundMapper(),
             withdrawItemMapper: IntakeItemMapper(),
+            prescriptionMapper: PrescriptionItemMapper(),
           ),
           AppFlavor.dev || AppFlavor.prod => RefundRepositoryImpl(
             dataSource: context.read(),
             refundMapper: RefundMapper(),
             withdrawItemMapper: IntakeItemMapper(),
+            prescriptionMapper: PrescriptionItemMapper(),
           ),
         },
       ),

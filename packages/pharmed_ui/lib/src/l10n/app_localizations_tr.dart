@@ -727,4 +727,12 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get emptyStateErrorDescription =>
       'Beklenmeyen bir hata meydana geldi. Lütfen tekrar deneyin veya sistem yöneticinize başvurun.';
+
+  @override
+  String get refundNoRefundableDrugs =>
+      'Bu hastaya ait iade edilebilir ilaç bulunamadı.';
+
+  @override
+  String get refundSelectPatient =>
+      'İade işlemi başlatmak için sol listeden bir hasta seçin.';
 }

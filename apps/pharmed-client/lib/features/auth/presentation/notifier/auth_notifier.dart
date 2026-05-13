@@ -10,6 +10,7 @@ import 'package:pharmed_client/core/providers/auth_providers.dart';
 import 'package:pharmed_client/core/providers/network_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../state/auth_state.dart';
 
@@ -50,8 +51,9 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  Future<String?> login({required String email, required String password, String? macAddress}) async {
+  Future<String?> login({required String email, required String password}) async {
     state = const AuthLoading();
+    final macAddress = await DeviceInfo.getMacAddress();
 
     final result = await _loginUseCase(LoginParams(email: email, password: password, macAddress: macAddress));
 

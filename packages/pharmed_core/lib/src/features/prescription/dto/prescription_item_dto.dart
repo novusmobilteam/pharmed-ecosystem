@@ -3,7 +3,9 @@ import 'package:pharmed_core/pharmed_core.dart';
 class PrescriptionItemDTO {
   final int? id;
   final int? prescriptionId;
-  final int? patientRegistrationId;
+
+  final int? hospitalizationId;
+  final HospitalizationDTO? hospitalization;
 
   final int? physicalServiceId;
   final ServiceDto? physicalService;
@@ -80,7 +82,8 @@ class PrescriptionItemDTO {
   const PrescriptionItemDTO({
     this.id,
     this.prescriptionId,
-    this.patientRegistrationId,
+    this.hospitalizationId,
+    this.hospitalization,
     this.physicalServiceId,
     this.physicalService,
     this.inpatientServiceId,
@@ -163,7 +166,10 @@ class PrescriptionItemDTO {
     return PrescriptionItemDTO(
       id: json['id'] as int?,
       prescriptionId: json['prescriptionId'] as int?,
-      patientRegistrationId: json['patientRegistrationId'] as int?,
+      hospitalizationId: json['patientHospitalizationId'] as int?,
+      hospitalization: json['patientHospitalization'] != null
+          ? HospitalizationDTO.fromJson(json['patientHospitalization'])
+          : null,
       physicalServiceId: json['physicalServiceId'] as int?,
       physicalService: json['physicalService'] != null ? ServiceDto.fromJson(json['physicalService']) : null,
       inpatientServiceId: json['inpatientServiceId'] as int?,
@@ -274,7 +280,7 @@ class PrescriptionItemDTO {
     return PrescriptionItemDTO(
       id: id ?? this.id,
       prescriptionId: prescriptionId ?? this.prescriptionId,
-      patientRegistrationId: patientRegistrationId ?? this.patientRegistrationId,
+      hospitalizationId: patientRegistrationId ?? this.hospitalizationId,
       doctorId: doctorId ?? this.doctorId,
       approvalUserId: approvalUserId ?? this.approvalUserId,
       qrCode: qrCode ?? this.qrCode,

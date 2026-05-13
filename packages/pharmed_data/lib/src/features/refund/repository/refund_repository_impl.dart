@@ -6,24 +6,43 @@ class RefundRepositoryImpl implements IRefundRepository {
     required RefundRemoteDataSource dataSource,
     required RefundMapper refundMapper,
     required IntakeItemMapper withdrawItemMapper,
+    required PrescriptionItemMapper prescriptionMapper,
   }) : _dataSource = dataSource,
        _refundMapper = refundMapper,
-       _intakeItemMapper = withdrawItemMapper;
+       _intakeItemMapper = withdrawItemMapper,
+       _prescriptionMapper = prescriptionMapper;
 
   final RefundRemoteDataSource _dataSource;
   final RefundMapper _refundMapper;
   final IntakeItemMapper _intakeItemMapper;
+  final PrescriptionItemMapper _prescriptionMapper;
 
   @override
-  Future<Result<List<MedicineIntakeItem>>> getRefundables({required int hospitalizationId}) async {
-    final result = await _dataSource.getRefundables(hospitalizationId: hospitalizationId);
+  Future<Result<List<MedicineIntakeItem>>> getMasterRefundables({required int hospitalizationId}) async {
+    final result = await _dataSource.getMasterRefundables(hospitalizationId: hospitalizationId);
     return result.when(ok: (dtos) => Result.ok(_intakeItemMapper.toEntityList(dtos)), error: (e) => Result.error(e));
   }
 
   @override
-  Future<Result<MedicineIntakeItem?>> checkRefundStatus({required int id, required double quantity}) async {
-    final res = await _dataSource.checkRefundStatus(id: id, quantity: quantity);
+  Future<Result<List<PrescriptionItem>>> getMobileRefundables({required int hospitalizationId}) async {
+    final result = await _dataSource.getMobileRefundables(hospitalizationId: hospitalizationId);
+    return result.when(ok: (dtos) => Result.ok(_prescriptionMapper.toEntityList(dtos)), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<MedicineIntakeItem?>> checkMasterRefundStatus({required int id, required double quantity}) async {
+    final res = await _dataSource.checkMasterRefundStatus(id: id, quantity: quantity);
     return res.when(ok: (dto) => Result.ok(_intakeItemMapper.toEntityOrNull(dto)), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> checkMobileRefundStatus({required int id, required double quantity}) async {
+    return await _dataSource.checkMobileRefundStatus(id: id, quantity: quantity);
+  }
+
+  @override
+  Future<Result<void>> refundMobile({required int id, required double quantity}) async {
+    return await _dataSource.refundMobile(id: id, quantity: quantity);
   }
 
   @override

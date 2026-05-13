@@ -166,12 +166,6 @@ class CabinPatientPickerItem extends StatelessWidget {
   /// Tek kelimeli isimde yalnızca ilk harf, çok kelimeli isimde
   /// ilk ve son kelimenin baş harfleri büyük harfle döndürülür.
   /// Boş veya geçersiz isimde `'?'` döner.
-  String get _initials {
-    final parts = _name.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty || parts.first.isEmpty) return '?';
-    if (parts.length == 1) return parts.first[0].toUpperCase();
-    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +175,7 @@ class CabinPatientPickerItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
-            MedAvatar(initials: _initials, palette: AvatarPalette.blue),
+            MedAvatar(initials: assignment.hospitalization?.patient?.initials ?? '?', palette: AvatarPalette.blue),
             const SizedBox(width: 10),
             Expanded(
               child: Column(

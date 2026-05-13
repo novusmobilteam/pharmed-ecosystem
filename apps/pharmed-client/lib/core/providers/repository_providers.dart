@@ -167,3 +167,20 @@ final intakeRepositoryProvider = Provider<IIntakeRepository>((ref) {
     ),
   };
 });
+
+final refundRepositoryProvider = Provider<IRefundRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => RefundRepositoryImpl(
+      dataSource: ref.read(refundDataSourceProvider),
+      refundMapper: RefundMapper(),
+      withdrawItemMapper: IntakeItemMapper(),
+      prescriptionMapper: PrescriptionItemMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => RefundRepositoryImpl(
+      dataSource: ref.read(refundDataSourceProvider),
+      refundMapper: RefundMapper(),
+      withdrawItemMapper: IntakeItemMapper(),
+      prescriptionMapper: PrescriptionItemMapper(),
+    ),
+  };
+});

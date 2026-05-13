@@ -21,10 +21,10 @@ class HospitalizationGridView extends StatelessWidget {
             final hosp = notifier.filteredItems.elementAt(index);
             return GestureDetector(
               onTap: () => _showOperationSelectionView(context, notifier, hospitalization: hosp),
-              child: HospitalizationCard(
-                hospitalization: hosp,
-                isSelected: true,
-              ),
+              // child: HospitalizationCard(
+              //   hospitalization: hosp,
+              //   isSelected: true,
+              // ),
             );
           },
         );
@@ -40,10 +40,8 @@ class HospitalizationGridView extends StatelessWidget {
     await showDialog(
       context: context,
       barrierColor: Colors.transparent,
-      builder: (context) => OperationSelectionView(
-        hospitalization: hospitalization,
-        withdrawType: notifier.viewOrderStatus.withdrawType,
-      ),
+      builder: (context) =>
+          OperationSelectionView(hospitalization: hospitalization, withdrawType: notifier.viewOrderStatus.withdrawType),
     );
   }
 }

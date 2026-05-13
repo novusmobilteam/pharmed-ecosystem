@@ -19,16 +19,18 @@ class CheckRefundStatusParams {
   final int medicineId;
 }
 
-class CheckRefundStatusUseCase {
-  CheckRefundStatusUseCase({required IRefundRepository refundRepository, required ICabinRepository cabinRepository})
-    : _refundRepository = refundRepository,
-      _cabinRepository = cabinRepository;
+class CheckMasterRefundStatusUseCase {
+  CheckMasterRefundStatusUseCase({
+    required IRefundRepository refundRepository,
+    required ICabinRepository cabinRepository,
+  }) : _refundRepository = refundRepository,
+       _cabinRepository = cabinRepository;
 
   final IRefundRepository _refundRepository;
   final ICabinRepository _cabinRepository;
 
   Future<Result<MedicineIntakeItem?>> call(CheckRefundStatusParams params) async {
-    final checkResult = await _refundRepository.checkRefundStatus(id: params.id, quantity: params.quantity);
+    final checkResult = await _refundRepository.checkMasterRefundStatus(id: params.id, quantity: params.quantity);
 
     if (checkResult.isError) {
       return Result.error((checkResult as Error).error);

@@ -728,4 +728,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get emptyStateErrorDescription =>
       'An unexpected error occurred. Please try again or contact your system administrator.';
+
+  @override
+  String get refundNoRefundableDrugs =>
+      'No refundable medications found for this patient.';
+
+  @override
+  String get refundSelectPatient =>
+      'Select a patient from the list on the left to start a refund.';
 }

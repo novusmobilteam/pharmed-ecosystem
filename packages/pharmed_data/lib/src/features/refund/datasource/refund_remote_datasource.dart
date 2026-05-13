@@ -10,15 +10,23 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-REFUND';
 
-  Future<Result<List<MedicineIntakeItemDto>>> getRefundables({required int hospitalizationId}) async {
-    final res = await fetchRequest<List<MedicineIntakeItemDto>>(
+  Future<Result<List<MedicineIntakeItemDto>>> getMasterRefundables({required int hospitalizationId}) async {
+    final res = await fetchRequest(
       path: '/Prescription/detail/getReturn/$hospitalizationId',
       parser: BaseRemoteDataSource.listParser(MedicineIntakeItemDto.fromJson),
     );
     return res.when(ok: (data) => Result.ok(data ?? const <MedicineIntakeItemDto>[]), error: Result.error);
   }
 
-  Future<Result<MedicineIntakeItemDto?>> checkRefundStatus({required int id, required double quantity}) async {
+  Future<Result<List<PrescriptionItemDTO>>> getMobileRefundables({required int hospitalizationId}) async {
+    final res = await fetchRequest(
+      path: '/Prescription/detail/getReturnMobileCabin/$hospitalizationId',
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+    );
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
+  }
+
+  Future<Result<MedicineIntakeItemDto?>> checkMasterRefundStatus({required int id, required double quantity}) async {
     final res = await postRequest(
       path: '/Prescription/detail/$id/refundControl',
       parser: (json) {
@@ -27,12 +35,22 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
       },
       query: {'id': id, 'quantity': quantity},
     );
-    return res.when(
-      ok: (data) {
-        print('Inside DataSource: ${data?.toJson().toString()}');
-        return Result.ok(data);
-      },
-      error: Result.error,
+    return res.when(ok: (data) => Result.ok(data), error: Result.error);
+  }
+
+  Future<Result<void>> checkMobileRefundStatus({required int id, required double quantity}) async {
+    return postRequest(
+      path: '/Prescription/detail/$id/refundControlMobile',
+      query: {'id': id, 'quantity': quantity},
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+  }
+
+  Future<Result<void>> refundMobile({required int id, required double quantity}) async {
+    return await postRequest(
+      path: '/Prescription/detail/$id/refundMobilePharmacy',
+      parser: BaseRemoteDataSource.voidParser(),
+      query: {'id': id, 'quantity': quantity},
     );
   }
 

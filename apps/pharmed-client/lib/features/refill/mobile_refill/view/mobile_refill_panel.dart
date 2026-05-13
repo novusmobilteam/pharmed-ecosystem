@@ -152,13 +152,6 @@ class _PrescriptionList extends StatelessWidget {
             ? RfidPresenceStatus.present
             : RfidPresenceStatus.absent;
 
-        MedLogger.info(
-          unit: 'MobileRefillPanel',
-          swreq: 'SWREQ-CLI-REFILL-001',
-          message: 'isRfidRead kontrolü',
-          context: {'itemRfidTag': item.rfidTag, 'rfidReadEpcs': rfidReadEpcs.toList(), 'rfidStatus': rfidStatus},
-        );
-
         return RxOperationCard(
           mode: RxOperationCardMode.refill,
           item: item,

@@ -724,4 +724,12 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get emptyStateErrorDescription =>
       'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى أو التواصل مع مسؤول النظام.';
+
+  @override
+  String get refundNoRefundableDrugs =>
+      'لم يتم العثور على أدوية قابلة للإرجاع لهذا المريض.';
+
+  @override
+  String get refundSelectPatient =>
+      'حدد مريضاً من القائمة على اليسار لبدء عملية الإرجاع.';
 }

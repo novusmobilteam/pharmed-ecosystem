@@ -21,6 +21,12 @@ enum EmptyStateVariant {
   /// Tanımlı kabin bulunamadı.
   noCabin,
 
+  /// İade edilebilecek ilaç bulunamadı.
+  noRefundableDrugs,
+
+  /// İade hasta seçimi
+  refundSelectPatient,
+
   /// Ağ bağlantısı yok.
   networkError,
 
