@@ -73,7 +73,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ActiveIngredientFormNotifier>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Adı',
           autoFocus: vm.isCreate,
           initialValue: vm.activeIngredient.name,
@@ -92,7 +92,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ActiveIngredientFormNotifier>(
       builder: (context, vm, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           initialValue: vm.activeIngredient.status,
           options: Status.values,

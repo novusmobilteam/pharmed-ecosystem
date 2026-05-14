@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../../../../core/widgets/side_panel.dart';
+import '../../../../../widgets/side_panel.dart';
 
 import '../../authorization_notifier.dart';
 import '../notifier/role_table_notifier.dart';

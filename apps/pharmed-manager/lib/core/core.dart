@@ -24,9 +24,9 @@ export 'theme/app_theme.dart';
 // Utils
 
 // Widgets
-export 'widgets/dialog/custom_dialog.dart';
-export 'widgets/dialog/registration_dialog.dart';
-export 'widgets/editable_list_item.dart';
+export '../../widgets/dialog/custom_dialog.dart';
+export '../../widgets/dialog/registration_dialog.dart';
+export '../../widgets/editable_list_item.dart';
 
-export 'widgets/rectangle_icon_button.dart';
-export 'widgets/selectable_list_tile.dart';
+export '../../widgets/rectangle_icon_button.dart';
+export '../../widgets/selectable_list_tile.dart';

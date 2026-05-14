@@ -1,17 +1,10 @@
-// Core
 export 'indicators/indicators.dart';
 export 'charts/charts.dart';
 export 'buttons/buttons.dart';
-export 'controls/controls.dart';
 export 'display/display.dart';
 export 'chips/chips.dart';
 export 'cards/cards.dart';
-export 'navigation/navigation.dart';
-export 'dialogs/dialogs.dart';
 export 'inputs/inputs.dart';
-export 'molecules/molecules.dart';
-export 'organisms/organisms.dart';
-export 'atoms/atoms.dart';
 export 'layout/layouts.dart';
 export 'table/table.dart';
 export 'display/empty_state/empty_state.dart';

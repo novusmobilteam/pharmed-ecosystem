@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pharmed_manager/core/core.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -31,10 +31,10 @@ class HospitalizationScreen extends StatelessWidget {
           HospitalizationNotifier(hospitalizationRepository: context.read())..getHospitalizations(),
       child: Consumer<HospitalizationNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Hasta İşlemleri',
               subtitle: menu.description,
               actions: _buildActions(context, notifier),

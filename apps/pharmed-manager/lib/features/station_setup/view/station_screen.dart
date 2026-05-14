@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/core.dart';
-import '../../../core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 import '../parts/service/view/service_form_panel.dart';
 import '../notifier/station_setup_notifier.dart';
 import '../parts/station/view/station_form_panel.dart';
@@ -45,10 +45,10 @@ class StationSetupScreen extends StatelessWidget {
       ],
       child: Consumer<StationSetupNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'İstasyon Tanımlama',
               subtitle: menu.description,
               actions: [

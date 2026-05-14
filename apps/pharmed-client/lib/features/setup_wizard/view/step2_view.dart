@@ -90,12 +90,10 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Kimlik ──
-                MedTextField(
+                MedTextInputField(
                   controller: _nameCtrl,
                   label: context.l10n.wizard_cabinNameLabel,
                   hint: context.l10n.wizard_cabinNameHint,
-                  textVariant: MedLabelVariant.monoValue,
-                  prefixIcon: const Icon(Icons.inventory_2_outlined),
                   onChanged: (_) => _notify(),
                 ),
                 const SizedBox(height: 24),
@@ -157,16 +155,15 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
         const SizedBox(width: 16),
         SizedBox(
           width: 120,
-          child: MedSelectField<String>(
+          child: MedDropdownInputField<String>(
             label: 'Port',
-            value: _port,
-            textVariant: MedLabelVariant.monoValue,
             enabled: state.availablePorts.isNotEmpty,
             onChanged: (val) {
               setState(() => _port = val);
               _notify();
             },
-            options: state.availablePorts.map((p) => MedSelectOption(label: p, value: p)).toList(),
+            options: state.availablePorts.map((p) => p).toList(),
+            labelBuilder: (p) => p,
           ),
         ),
       ],
@@ -193,7 +190,7 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
   Column _antennaField(Step2State state, Step2Notifier notifier) {
     return Column(
       children: [
-        ToggleField(
+        MedToggleField(
           value: _rfidEnable,
           onChanged: (value) {
             setState(() => _rfidEnable = value);
@@ -227,9 +224,8 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
                   const SizedBox(width: 16),
                   SizedBox(
                     width: 120,
-                    child: MedTextField(
+                    child: MedTextInputField(
                       label: 'RFID Port',
-                      textVariant: MedLabelVariant.monoValue,
                       controller: _rfidPortController,
                       enabled: state.availablePorts.isNotEmpty,
                       onChanged: (_) => _notify(),

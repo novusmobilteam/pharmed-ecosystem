@@ -17,10 +17,10 @@ class ExpiredItemsReportScreen extends StatelessWidget {
       builder: (context, child) {
         return Consumer<ExpiredItemsReportNotifier>(
           builder: (context, notifier, _) {
-            return ResponsiveLayout(
-              mobile: const MobileLayout(),
-              tablet: const TabletLayout(),
-              desktop: DesktopLayout(
+            return MedResponsiveLayout(
+              mobile: const MedMobileLayout(),
+              tablet: const MedTabletLayout(),
+              desktop: MedDesktopLayout(
                 title: menu.name ?? 'S.K.T Geçmiş Malzemeler',
                 subtitle: menu.description,
                 showAddButton: false,

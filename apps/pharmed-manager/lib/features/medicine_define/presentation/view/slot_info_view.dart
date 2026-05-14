@@ -24,7 +24,7 @@ class SlotInfoView extends StatelessWidget {
               ),
             ),
             if (notifier.selectedSlot != null)
-              TextInputField(
+              MedTextInputField(
                 label: 'Göz No',
                 onChanged: (value) => notifier.compartmentNo = int.tryParse(value ?? "0") ?? 0,
               ),

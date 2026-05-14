@@ -4,7 +4,7 @@ import 'package:pharmed_manager/features/firm/notifier/firm_notifier.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 import '../notifier/firm_form_notifier.dart';
 
 class FirmFormPanel extends StatelessWidget {
@@ -72,7 +72,7 @@ class _NameField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<FirmFormNotifier>(
-      builder: (context, vm, _) => TextInputField(
+      builder: (context, vm, _) => MedTextInputField(
         label: 'Firma Adı',
         initialValue: vm.firm.name,
         validator: (v) => Validators.cannotBlankValidator(v),
@@ -88,7 +88,7 @@ class _TaxNoField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<FirmFormNotifier>(
-      builder: (context, vm, _) => TextInputField(
+      builder: (context, vm, _) => MedTextInputField(
         label: 'Vergi No',
         initialValue: vm.firm.taxNo?.toString(),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -107,7 +107,11 @@ class _TaxOfficeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FirmFormNotifier>(
       builder: (context, vm, _) {
-        return TextInputField(label: 'Vergi Dairesi', initialValue: vm.firm.taxOffice, onChanged: vm.updateTaxOffice);
+        return MedTextInputField(
+          label: 'Vergi Dairesi',
+          initialValue: vm.firm.taxOffice,
+          onChanged: vm.updateTaxOffice,
+        );
       },
     );
   }
@@ -120,7 +124,7 @@ class _FirmTypeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FirmFormNotifier>(
       builder: (context, vm, _) {
-        return DropdownInputField<FirmType>(
+        return MedDropdownInputField<FirmType>(
           label: 'Firma Tipi',
           initialValue: vm.firm.type,
           options: FirmType.values,

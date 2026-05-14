@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -21,10 +21,10 @@ class RoleScreen extends StatelessWidget {
       create: (context) => RoleNotifier(getRolesUseCase: context.read(), deleteRoleUseCase: context.read())..getRoles(),
       child: Consumer<RoleNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: MobileLayout(),
-            tablet: TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: MedMobileLayout(),
+            tablet: MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Rol Tanımlama',
               subtitle: menu.description,
               actions: [MedButton(label: 'Yeni Rol', size: MedButtonSize.sm, onPressed: () => notifier.openPanel())],

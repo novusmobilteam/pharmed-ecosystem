@@ -18,7 +18,7 @@ class PersonelField extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = 'Personel';
 
-    return MultiSelectionField<User>(
+    return MedMultiSelectionField<User>(
       label: label,
       enabled: enabled,
       validator: (users) {

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../../core/widgets/side_panel.dart';
+import '../../../../../../widgets/side_panel.dart';
 import '../../../notifier/station_setup_notifier.dart';
 import '../notifier/warehouse_form_notifier.dart';
 import '../notifier/warehouse_notifier.dart';
@@ -65,7 +65,7 @@ class _CodeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Depo Kodu',
           maxLength: 5,
           keyboardType: TextInputType.number,
@@ -89,7 +89,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Depo Adı',
           autoFocus: vm.isCreate,
           initialValue: vm.warehouse.name,
@@ -108,7 +108,7 @@ class _WarehouseTypeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, vm, _) {
-        return DropdownInputField<WarehouseType>(
+        return MedDropdownInputField<WarehouseType>(
           label: 'Depo Türü',
           options: WarehouseType.values,
           initialValue: vm.warehouse.type,
@@ -128,7 +128,7 @@ class _UserField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<User>(
+        return MedSelectionField<User>(
           label: 'Depo Sorumlusu',
           title: 'Depo Sorumlusu Seç',
           initialValue: notifier.warehouse.user,
@@ -149,7 +149,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, vm, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           options: Status.values,
           initialValue: vm.warehouse.status,

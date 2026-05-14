@@ -84,9 +84,9 @@ class InputFieldStyle {
     borderRadius: MedRadius.mdAll,
     contentPadding: MedSpacing.inputPaddingClient,
     minHeight: MedSpacing.inputMinHeightClient,
-    borderWidth: 1.5,
-    inputFontSize: 14,
-    inputFontWeight: FontWeight.w600,
+    borderWidth: 1,
+    inputFontSize: 12,
+    inputFontWeight: FontWeight.w500,
     inputTextAlign: TextAlign.center,
   );
 
@@ -135,17 +135,17 @@ class InputFieldStyle {
 
   @override
   int get hashCode => Object.hash(
-        labelFontSize,
-        labelLetterSpacing,
-        labelUpperCase,
-        borderRadius,
-        contentPadding,
-        minHeight,
-        borderWidth,
-        inputFontSize,
-        inputFontWeight,
-        inputTextAlign,
-      );
+    labelFontSize,
+    labelLetterSpacing,
+    labelUpperCase,
+    borderRadius,
+    contentPadding,
+    minHeight,
+    borderWidth,
+    inputFontSize,
+    inputFontWeight,
+    inputTextAlign,
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -165,11 +165,7 @@ class InputFieldStyle {
 /// )
 /// ```
 class InputFieldTheme extends InheritedWidget {
-  const InputFieldTheme({
-    super.key,
-    required this.style,
-    required super.child,
-  });
+  const InputFieldTheme({super.key, required this.style, required super.child});
 
   final InputFieldStyle style;
 
@@ -177,10 +173,7 @@ class InputFieldTheme extends InheritedWidget {
   ///
   /// Ağaçta [InputFieldTheme] bulunamazsa [InputFieldStyle.manager] döner.
   static InputFieldStyle of(BuildContext context) {
-    return context
-            .dependOnInheritedWidgetOfExactType<InputFieldTheme>()
-            ?.style ??
-        InputFieldStyle.manager;
+    return context.dependOnInheritedWidgetOfExactType<InputFieldTheme>()?.style ?? InputFieldStyle.manager;
   }
 
   @override

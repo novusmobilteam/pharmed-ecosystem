@@ -116,7 +116,7 @@ Widget _buildNameField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.name,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -131,7 +131,7 @@ Widget _buildBarcodeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.barcode,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -147,7 +147,7 @@ Widget _buildInstitutionCodeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.institutionCode?.toCustomString(),
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -163,7 +163,7 @@ Widget _buildSUTCodeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.sutCode?.toCustomString(),
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -179,7 +179,7 @@ Widget _buildUBBCodeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.ubbCode?.toCustomString(),
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -195,7 +195,7 @@ Widget _buildMaterialTypeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return SelectionField<MaterialType>(
+      return MedSelectionField<MaterialType>(
         label: label,
         title: label,
         initialValue: vm.mc.materialType,
@@ -213,7 +213,7 @@ Widget _buildFirmField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return SelectionField<Firm>(
+      return MedSelectionField<Firm>(
         label: label,
         initialValue: vm.mc.firm,
         labelBuilder: (value) => value.name,
@@ -230,7 +230,7 @@ Widget _buildCountTypeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return DropdownInputField<CountType>(
+      return MedDropdownInputField<CountType>(
         label: label,
         options: CountType.values,
         initialValue: vm.mc.countType,
@@ -247,7 +247,7 @@ Widget _buildDailyMaxUsageField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.dailyMaxUsage.toCustomString(),
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -263,7 +263,7 @@ Widget _buildPurchaseTypeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return DropdownInputField<PurchaseType>(
+      return MedDropdownInputField<PurchaseType>(
         label: label,
         options: PurchaseType.values,
         initialValue: vm.mc.purchaseType,
@@ -280,7 +280,7 @@ Widget _buildReturnTypeField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return DropdownInputField<ReturnType>(
+      return MedDropdownInputField<ReturnType>(
         label: label,
         options: ReturnType.values,
         initialValue: vm.mc.returnType,
@@ -297,7 +297,7 @@ Widget _buildCollectNoteField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.collectNote,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -312,7 +312,7 @@ Widget _buildReturnNoteField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.returnNote,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -327,7 +327,7 @@ Widget _buildDesctructionNoteField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.mc.destructionNote,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -342,7 +342,7 @@ Widget _buildStatusField() {
 
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
-      return DropdownInputField<Status>(
+      return MedDropdownInputField<Status>(
         label: label,
         options: Status.values,
         initialValue: vm.mc.status,

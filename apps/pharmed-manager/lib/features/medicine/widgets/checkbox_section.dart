@@ -35,7 +35,7 @@ class _LowerDoseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           value: vm.drug.isCanLowerDose,
           onChanged: (_) => vm.toggleLowerDose(),
           label: 'Belirtilen dozdan düşük doz alınabilir',
@@ -52,7 +52,7 @@ class _RfidTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           value: vm.drug.isRfidEnable,
           onChanged: (_) => vm.toggleRfid(),
           label: 'RFID Kullanılabilir',
@@ -69,7 +69,7 @@ class _MultiPatientAccessTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           label: 'Çoklu Hasta Erişim',
           value: vm.drug.isMultiplePatientAccess,
           onChanged: (_) => vm.toggleMultiPatientAccess(),
@@ -86,7 +86,7 @@ class _SingleUseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           label: 'Tek Kullanımlık',
           value: vm.drug.isSingleUse,
           onChanged: (_) => vm.toggleSingleUse(),
@@ -103,7 +103,7 @@ class _CameraRecordingTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           label: 'Kamera Kayıt',
           value: vm.drug.isCameraRecording,
           onChanged: (_) => vm.toggleCameraRecording(),
@@ -120,7 +120,7 @@ class _IndependentMaterialTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           label: 'Serbest İlaç',
           value: vm.drug.isIndependentMaterial,
           onChanged: (_) => vm.toggleIndependentMaterial(),
@@ -137,7 +137,7 @@ class _RequirePharmacyApprovalForDisposalTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           label: 'Fire/İmha Eczane Onayı Alınsın mı?',
           value: vm.drug.isWastagePharmacyApproval,
           onChanged: (_) => vm.toggleWastagePharmacyApproval(),
@@ -154,7 +154,7 @@ class _FireOrderRenewableTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           label: 'Fire Order Yenilensin mi?',
           value: vm.drug.isWastageOrderRenewed,
           onChanged: (_) => vm.toggleWastageOrderRenewed(),

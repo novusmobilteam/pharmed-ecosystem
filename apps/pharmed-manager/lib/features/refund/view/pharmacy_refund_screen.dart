@@ -24,10 +24,10 @@ class PharmacyRefundScreen extends StatelessWidget {
       )..getRefunds(),
       child: Consumer<PharmacyRefundNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Eczane İade Alma',
               subtitle: menu.description,
               isLoading: notifier.isLoading(notifier.completeOp),
@@ -132,7 +132,7 @@ class DeleteDescriptionView extends StatelessWidget {
           },
           child: Column(
             children: [
-              TextInputField(
+              MedTextInputField(
                 maxLines: 3,
                 label: 'Silme nedeninizi açıklayınız',
                 onChanged: (value) => notifier.description = value ?? '',

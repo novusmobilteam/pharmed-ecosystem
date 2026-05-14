@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 import 'package:pharmed_manager/features/firm/view/firm_form_panel.dart';
 import 'package:provider/provider.dart';
 
@@ -18,10 +18,10 @@ class FirmScreen extends StatelessWidget {
       create: (_) => FirmNotifier(getFirmsUseCase: context.read(), deleteFirmUseCase: context.read())..getFirms(),
       child: Consumer<FirmNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Firma Tanımlama',
               subtitle: menu.description,
               actions: [MedButton(onPressed: () => notifier.openPanel(), size: MedButtonSize.sm, label: 'Yeni Firma')],

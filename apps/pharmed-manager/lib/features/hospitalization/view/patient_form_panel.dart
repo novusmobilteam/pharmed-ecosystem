@@ -76,7 +76,7 @@ class _IdentityField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PatientFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'T.C Kimlik No',
           maxLength: 11,
           initialValue: notifier.patient?.tcNo,
@@ -98,7 +98,7 @@ class _NameField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
+          return MedTextInputField(
             label: 'Adı',
             initialValue: notifier.patient?.name,
             validator: (value) => Validators.cannotBlankValidator(value),
@@ -119,7 +119,7 @@ class _SurnameField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
+          return MedTextInputField(
             label: 'Soyadı',
             initialValue: notifier.patient?.surname,
             validator: (value) => Validators.cannotBlankValidator(value),
@@ -140,7 +140,7 @@ class _BirthDateField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return DateInputField(
+          return MedDateInputField(
             label: 'Doğum Tarihi',
             validator: (value) => Validators.cannotBlankValidator(value?.formattedDate),
             initialValue: notifier.patient?.birthDate,
@@ -161,7 +161,7 @@ class _GenderField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return DropdownInputField<Gender>(
+          return MedDropdownInputField<Gender>(
             label: 'Cinsiyet',
             initialValue: notifier.patient?.gender,
             options: Gender.values,
@@ -183,7 +183,7 @@ class _WeightField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
+          return MedTextInputField(
             label: 'Kilo',
             initialValue: notifier.patient?.weight?.toCustomString(),
             onChanged: (value) => notifier.updateWeight(value),
@@ -203,7 +203,7 @@ class _MotherNameField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
+          return MedTextInputField(
             label: 'Anne Adı',
             initialValue: notifier.patient?.motherName,
             onChanged: (value) => notifier.updateMother(value),
@@ -223,7 +223,7 @@ class _FatherNameField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
+          return MedTextInputField(
             label: 'Baba Adı',
             initialValue: notifier.patient?.fatherName,
             onChanged: (value) => notifier.updateFather(value),
@@ -242,7 +242,7 @@ class _PhoneField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PatientFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Telefon',
           maxLength: 11,
           initialValue: notifier.patient?.phone?.toString(),
@@ -263,7 +263,7 @@ class _PatientDescriptionField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
+          return MedTextInputField(
             label: 'Açıklama',
             maxLines: 3,
             initialValue: notifier.patient?.description?.toString(),
@@ -284,7 +284,7 @@ class _AddressField extends StatelessWidget {
     return Expanded(
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          return TextInputField(
+          return MedTextInputField(
             label: 'Adres',
             maxLines: 3,
             initialValue: notifier.patient?.address?.toString(),
@@ -303,7 +303,7 @@ class _ProtocolField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PatientFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Protokol No',
           initialValue: notifier.patient?.protocolNo,
           onChanged: notifier.updateProtocolNo,

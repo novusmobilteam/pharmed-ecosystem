@@ -77,7 +77,7 @@ class MedicineFillingCard extends StatelessWidget {
             ),
 
             // Sağ: Modern Stepper
-            DoseStepper.compact(
+            MedDoseStepper.compact(
               value: selectedQuantity,
               unit: object.medicine?.operationUnit ?? 'Adet',
               // onChanged doğrudan yeni değeri (double) döndürür

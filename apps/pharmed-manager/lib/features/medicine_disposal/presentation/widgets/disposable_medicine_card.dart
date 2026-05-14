@@ -65,12 +65,12 @@ class DisposableMedicineCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _infoChip(
+                _MedInfoChip(
                   context,
                   'Alım Tarihi',
                   '${displayDate?.formattedDate ?? "--"} ${displayDate?.formattedTime ?? "--"}',
                 ),
-                _infoChip(context, 'Alan Kişi', appUser?.fullName ?? '-'),
+                _MedInfoChip(context, 'Alan Kişi', appUser?.fullName ?? '-'),
               ],
             ),
           ],
@@ -98,7 +98,7 @@ class DisposableMedicineCard extends StatelessWidget {
     );
   }
 
-  Widget _infoChip(BuildContext context, String title, String label) {
+  Widget _MedInfoChip(BuildContext context, String title, String label) {
     return Flexible(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

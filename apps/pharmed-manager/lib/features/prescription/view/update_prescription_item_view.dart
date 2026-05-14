@@ -54,7 +54,7 @@ class _DrugNameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return IgnorePointer(
       ignoring: true,
-      child: TextInputField(label: 'İlaç Adı', initialValue: drugName, onChanged: (_) {}),
+      child: MedTextInputField(label: 'İlaç Adı', initialValue: drugName, onChanged: (_) {}),
     );
   }
 }
@@ -67,7 +67,7 @@ class _DoseField extends StatelessWidget {
     return Expanded(
       child: Consumer<UpdatePrescriptionItemNotifier>(
         builder: (context, vm, _) {
-          return TextInputField(
+          return MedTextInputField(
             label: 'Doz',
             initialValue: vm.prescriptionItem.dosePiece.toCustomString(),
             onChanged: (value) => vm.updateDose(value),
@@ -86,7 +86,7 @@ class _TimeField extends StatelessWidget {
     return Expanded(
       child: Consumer<UpdatePrescriptionItemNotifier>(
         builder: (context, notifier, _) {
-          return TimeInputField(
+          return MedTimeInputField(
             label: 'Saat',
             initialValue: notifier.prescriptionItem.time.toTimeOfDay,
             onTimeSelected: (time) => notifier.updateTime(time),
@@ -105,7 +105,7 @@ class _ApplicationDateField extends StatelessWidget {
     return Expanded(
       child: Consumer<UpdatePrescriptionItemNotifier>(
         builder: (context, notifier, _) {
-          return DateInputField(
+          return MedDateInputField(
             label: 'Uygulama Tarihi',
             onDateSelected: notifier.updateDate,
             initialValue: notifier.prescriptionItem.applicationDate,
@@ -124,7 +124,7 @@ class _ApplicationTimeField extends StatelessWidget {
     return Expanded(
       child: Consumer<UpdatePrescriptionItemNotifier>(
         builder: (context, notifier, _) {
-          return TimeInputField(
+          return MedTimeInputField(
             label: 'Saat',
             initialValue: notifier.prescriptionItem.time.toTimeOfDay,
             onTimeSelected: notifier.updateApplicationTime,
@@ -142,7 +142,7 @@ class _DescriptionField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UpdatePrescriptionItemNotifier>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Açıklama',
           maxLines: 3,
           initialValue: vm.prescriptionItem.dosePiece.toCustomString(),

@@ -91,7 +91,7 @@ class _UserField extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = context.read<NewFillingListNotifier>();
 
-    return SelectionField<User>(
+    return MedSelectionField<User>(
       label: 'Dolum Yapacak Kullanıcı',
       title: 'Dolum Yapacak Kullanıcı',
       dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),

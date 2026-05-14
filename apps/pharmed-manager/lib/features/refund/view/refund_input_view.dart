@@ -21,14 +21,14 @@ class _ReturnInputViewState extends State<ReturnInputView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 20,
             children: [
-              NumpadInputField(
-                value: notifier.refundAmount?.formatFractional ?? '-',
-                unit: notifier.selectedItem?.medicine?.operationUnit ?? 'Adet',
-                label: 'İade Miktarı',
-                onChanged: (val) {
-                  notifier.changeAmount(val, onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg));
-                },
-              ),
+              // NumpadInputField(
+              //   value: notifier.refundAmount?.formatFractional ?? '-',
+              //   unit: notifier.selectedItem?.medicine?.operationUnit ?? 'Adet',
+              //   label: 'İade Miktarı',
+              //   onChanged: (val) {
+              //     notifier.changeAmount(val, onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg));
+              //   },
+              // ),
               MedButton(
                 label: 'İade Et',
                 isActive: (notifier.refundAmount ?? 0.0) > 0,

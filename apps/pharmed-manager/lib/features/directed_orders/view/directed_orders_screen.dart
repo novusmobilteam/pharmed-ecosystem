@@ -20,9 +20,9 @@ class DirectedOrdersScreen extends StatelessWidget {
       create: (BuildContext context) =>
           DirectedOrdersViewModel(hospitalizationRepository: context.read())..fetchHospitalizations(),
       child: Consumer<DirectedOrdersViewModel>(
-        builder: (context, vm, _) => ResponsiveLayout(
-          mobile: const MobileLayout(),
-          tablet: const TabletLayout(),
+        builder: (context, vm, _) => MedResponsiveLayout(
+          mobile: const MedMobileLayout(),
+          tablet: const MedTabletLayout(),
           desktop: _buildDesktopLayout(context, vm),
         ),
       ),
@@ -30,7 +30,7 @@ class DirectedOrdersScreen extends StatelessWidget {
   }
 
   Widget _buildDesktopLayout(BuildContext context, DirectedOrdersViewModel vm) {
-    return DesktopLayout(
+    return MedDesktopLayout(
       title: 'Yönlendirilmiş Order Listesi',
       showAddButton: false,
       child: _buildContent(context, vm),

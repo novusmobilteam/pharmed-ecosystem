@@ -54,13 +54,9 @@ class MedKpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final innerPad = dense
-        ? const EdgeInsets.fromLTRB(12, 12, 12, 10)
-        : const EdgeInsets.fromLTRB(16, 16, 16, 14);
+    final innerPad = dense ? const EdgeInsets.fromLTRB(12, 12, 12, 10) : const EdgeInsets.fromLTRB(16, 16, 16, 14);
     final gap = dense ? 10.0 : 14.0;
-    final valueStyle = dense
-        ? MedTextStyles.titleLg(color: accentColor)
-        : MedTextStyles.titleXl(color: accentColor);
+    final valueStyle = dense ? MedTextStyles.titleLg(color: accentColor) : MedTextStyles.titleXl(color: accentColor);
 
     return GestureDetector(
       onTap: onTap,

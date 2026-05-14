@@ -1,5 +1,3 @@
-// lib/shared/widgets/cabin_widgets/cabin_operation_scaffold.dart
-//
 // Kabin işlem ekranlarının (atama, dolum, sayım, arıza) ortak layout iskeleti.
 // Sol / Orta / Sağ panel yapısını ve boyutlarını tek noktada yönetir.
 //

@@ -7,14 +7,9 @@ class TimesRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       spacing: AppDimensions.registrationDialogSpacing / 3,
-      children: List.generate(
-        5,
-        (index) {
-          return Expanded(
-            child: TimeBox(index: index),
-          );
-        },
-      ),
+      children: List.generate(5, (index) {
+        return Expanded(child: TimeBox(index: index));
+      }),
     );
   }
 }
@@ -28,27 +23,24 @@ class TimeBox extends StatelessWidget {
     return Consumer<MedicineDefineNotifier>(
       builder: (context, vm, _) {
         final time = vm.selectedTimes.elementAtOrNull(index);
-        final text =
-            time != null ? '${time.hour.toString().padLeft(2, '0')}.${time.minute.toString().padLeft(2, '0')}' : '';
+        final text = time != null
+            ? '${time.hour.toString().padLeft(2, '0')}.${time.minute.toString().padLeft(2, '0')}'
+            : '';
         final controller = TextEditingController(text: text);
 
         return GestureDetector(
           onTap: () async {
             final TimeOfDay? selectedTime = await showTimePicker(
               context: context,
-              initialTime:
-                  time != null ? TimeOfDay(hour: time.hour, minute: time.minute) : const TimeOfDay(hour: 12, minute: 0),
+              initialTime: time != null
+                  ? TimeOfDay(hour: time.hour, minute: time.minute)
+                  : const TimeOfDay(hour: 12, minute: 0),
             );
             if (selectedTime != null) {
               vm.updateSelectedTime(index, selectedTime);
             }
           },
-          child: TextInputField(
-            controller: controller,
-            readOnly: true,
-            label: 'Saat',
-            onChanged: (_) {},
-          ),
+          child: MedTextInputField(controller: controller, readOnly: true, label: 'Saat', onChanged: (_) {}),
         );
       },
     );

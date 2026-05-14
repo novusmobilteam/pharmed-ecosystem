@@ -27,10 +27,10 @@ class _CabinTemperatureScreenState extends State<CabinTemperatureScreen> {
       create: (context) => CabinTemperatureViewModel(cabinTemperatureRepository: context.read())..getStations(),
       child: Consumer<CabinTemperatureViewModel>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: MobileLayout(),
-            tablet: TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: MedMobileLayout(),
+            tablet: MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: 'Kabin Isı Kontrol',
               showAddButton: true,
               onAddPressed: () => _onEdit(context),

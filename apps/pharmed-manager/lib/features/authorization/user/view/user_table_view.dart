@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../../../widgets/side_panel.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/widgets/menu_browser_view.dart';
+import '../../../../../widgets/menu_browser_view.dart';
 
 import '../../authorization_notifier.dart';
 import '../notifier/user_authorization_notifier.dart';

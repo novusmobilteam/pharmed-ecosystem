@@ -77,7 +77,7 @@ class FillingListView extends StatelessWidget {
                             style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 10),
-                          InfoChip(info: item.status?.label),
+                          MedInfoChip(info: item.status?.label),
                         ],
                       ),
                       Icon(PhosphorIcons.caretRight()),

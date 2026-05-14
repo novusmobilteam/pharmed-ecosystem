@@ -37,26 +37,6 @@ class UpcomingTreatmentsView extends StatelessWidget {
       );
     }).toList();
 
-    return TreatmentList(
-      items: items,
-      isStale: isStale,
-      onNewAssign: () async {
-        await showDialog<void>(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => MedConfirmationDialog(
-            title: 'Yeni Tedavi Ata',
-            description: 'Yeni tedavi atama ekranına geçilecek.',
-            confirmLabel: 'Devam Et',
-            cancelLabel: context.l10n.common_cancelButton,
-            isDangerous: false,
-            onConfirm: () {
-              Navigator.of(context).pop();
-            },
-            onCancel: () => Navigator.of(context).pop(),
-          ),
-        );
-      },
-    );
+    return TreatmentList(items: items, isStale: isStale, onNewAssign: () {});
   }
 }

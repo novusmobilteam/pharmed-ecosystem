@@ -34,18 +34,14 @@ class MedLedIndicator extends StatefulWidget {
   State<MedLedIndicator> createState() => _MedLedIndicatorState();
 }
 
-class _MedLedIndicatorState extends State<MedLedIndicator>
-    with SingleTickerProviderStateMixin {
+class _MedLedIndicatorState extends State<MedLedIndicator> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _opacity;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    );
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2));
     _opacity = TweenSequence<double>([
       TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.3), weight: 50),
       TweenSequenceItem(tween: Tween(begin: 0.3, end: 1.0), weight: 50),
@@ -80,9 +76,7 @@ class _MedLedIndicatorState extends State<MedLedIndicator>
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(color: color.withOpacity(0.53), blurRadius: 5),
-        ],
+        boxShadow: [BoxShadow(color: color.withOpacity(0.53), blurRadius: 5)],
       ),
     );
 
@@ -96,8 +90,8 @@ class _MedLedIndicatorState extends State<MedLedIndicator>
   }
 
   Color _resolveColor(LedStatus status) => switch (status) {
-        LedStatus.on => MedColors.ledGreen,
-        LedStatus.warning => MedColors.ledAmber,
-        LedStatus.off => MedColors.ledRed,
-      };
+    LedStatus.on => MedColors.ledGreen,
+    LedStatus.warning => MedColors.ledAmber,
+    LedStatus.off => MedColors.ledRed,
+  };
 }

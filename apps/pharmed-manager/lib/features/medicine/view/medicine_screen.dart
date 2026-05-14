@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 
 import '../../active_ingredient/view/active_ingredient_dialog.dart';
 import '../../drug_class/view/drug_class_dialog.dart';
@@ -26,10 +26,10 @@ class MedicineScreen extends StatelessWidget {
           MedicineNotifier(getMedicinesUseCase: context.read(), deleteMedicineUseCase: context.read())..getMedicines(),
       child: Consumer<MedicineNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
+          return MedResponsiveLayout(
             mobile: const SizedBox(),
             tablet: const SizedBox(),
-            desktop: DesktopLayout(
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'İlaç/Tıbbi Sarf Tanımlama',
               subtitle: menu.description,
               actions: [MedButton(onPressed: () => notifier.openPanel(), size: MedButtonSize.sm, label: 'Yeni İlaç')],

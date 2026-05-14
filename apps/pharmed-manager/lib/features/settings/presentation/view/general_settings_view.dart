@@ -11,13 +11,13 @@ class GeneralSettingsView extends StatelessWidget {
     return Column(
       spacing: 10,
       children: [
-        DropdownInputField(
+        MedDropdownInputField(
           options: options,
           onChanged: (_) {},
           labelBuilder: (option) => option?.toString(),
           label: 'Program Otomatik Beklemeye Geçme Süresi (saniye)',
         ),
-        TextInputField(
+        MedTextInputField(
           label: 'Miad Uyarı',
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (_) {},

@@ -190,7 +190,7 @@ abstract final class MedTextStyles {
 
   static TextStyle titleLg({Color? color}) => TextStyle(
     fontFamily: MedFonts.title,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: FontWeight.w800,
     height: 1,
     color: color ?? MedColors.text,
@@ -312,7 +312,7 @@ abstract final class MedSpacing {
   static const EdgeInsets inputPaddingManager = EdgeInsets.symmetric(horizontal: 9, vertical: 7);
 
   /// Client input padding — geniş, dokunmatik dostu yerleşim.
-  static const EdgeInsets inputPaddingClient = EdgeInsets.symmetric(horizontal: 14, vertical: 10);
+  static const EdgeInsets inputPaddingClient = EdgeInsets.symmetric(horizontal: 14, vertical: 0);
 
   /// Manager input minimum yüksekliği.
   static const double inputMinHeightManager = 36.0;
@@ -344,7 +344,7 @@ abstract final class MedSpacing {
   /// Küçük chip iç boşluğu — DoseChip, TimeChip.
   static const EdgeInsets chipPaddingSm = EdgeInsets.symmetric(horizontal: 6, vertical: 3);
 
-  /// Orta chip iç boşluğu — InfoChip, MedBadge.
+  /// Orta chip iç boşluğu — MedInfoChip, MedBadge.
   static const EdgeInsets chipPaddingMd = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
 
   /// Büyük chip iç boşluğu — RxStatusChip, MedBadge large.

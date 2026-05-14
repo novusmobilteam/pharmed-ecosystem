@@ -5,6 +5,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../widgets/widgets.dart';
 import '../notifier/mobile_refill_state.dart';
 
 // [SWREQ-CLI-REFILL-002] [IEC 62304 §5.5]

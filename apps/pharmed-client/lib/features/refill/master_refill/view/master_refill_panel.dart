@@ -304,7 +304,7 @@ class _KubikInputSection extends StatelessWidget {
                 spacing: 8,
                 children: [
                   Expanded(
-                    child: TextInputField(
+                    child: MedTextInputField(
                       label: 'Sayım Miktarı',
                       initialValue: countQuantity.formatFractional,
                       onChanged: (value) {},
@@ -312,7 +312,7 @@ class _KubikInputSection extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: TextInputField(
+                    child: MedTextInputField(
                       label: 'Dolum Miktarı',
                       initialValue: fillingQuantity.formatFractional,
                       onChanged: (value) {},
@@ -321,7 +321,7 @@ class _KubikInputSection extends StatelessWidget {
                   ),
                 ],
               ),
-              DateInputField(label: 'Son Kullanma Tarihi', initialValue: miadDate, onDateSelected: onMiadChanged),
+              MedDateInputField(label: 'Son Kullanma Tarihi', initialValue: miadDate, onDateSelected: onMiadChanged),
             ],
           ),
         ),
@@ -424,7 +424,7 @@ class _UnitDoseRow extends StatelessWidget {
                 spacing: 6,
                 children: [
                   Expanded(
-                    child: TextInputField(
+                    child: MedTextInputField(
                       label: 'Sayım Miktarı',
                       initialValue: input.countQuantity.formatFractional,
                       onChanged: (value) {},
@@ -432,7 +432,7 @@ class _UnitDoseRow extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: TextInputField(
+                    child: MedTextInputField(
                       label: 'Dolum Miktarı',
                       initialValue: input.fillingQuantity.formatFractional,
                       // onChanged: onFillingChanged,
@@ -441,7 +441,7 @@ class _UnitDoseRow extends StatelessWidget {
                   ),
                 ],
               ),
-              DateInputField(initialValue: input.miadDate, onDateSelected: onMiadChanged),
+              MedDateInputField(initialValue: input.miadDate, onDateSelected: onMiadChanged),
             ],
           ),
         ],

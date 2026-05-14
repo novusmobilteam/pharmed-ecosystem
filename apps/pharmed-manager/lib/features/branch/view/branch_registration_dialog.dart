@@ -52,7 +52,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<BranchFormNotifier>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Branş Adı',
           autoFocus: vm.isCreate,
           initialValue: vm.branch.name,
@@ -71,7 +71,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<BranchFormNotifier>(
       builder: (context, vm, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           initialValue: vm.branch.status,
           options: Status.values,

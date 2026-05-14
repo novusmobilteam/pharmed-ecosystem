@@ -24,7 +24,7 @@ class MedDoseChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = '${item.dosePiece?.formatFractional ?? '-'} ${item.medicine?.operationUnit ?? 'Adet'}';
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
         color: MedColors.surface3,
         borderRadius: MedRadius.smAll,

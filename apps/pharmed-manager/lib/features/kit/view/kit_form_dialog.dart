@@ -71,7 +71,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<KitFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Kit Adı',
           initialValue: notifier.kit.name,
           validator: (v) => Validators.cannotBlankValidator(v),
@@ -89,7 +89,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<KitFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           initialValue: notifier.kit.status,
           options: Status.values,

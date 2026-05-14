@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../widgets/widgets.dart';
+
 /// Sağ panel — fire/imha edilebilir ilaç kartları. Tek seçim.
 class WasteDrugList extends StatelessWidget {
   const WasteDrugList({

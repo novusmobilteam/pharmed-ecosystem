@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 
@@ -65,7 +65,7 @@ class _SubjectField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarningFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<WarningSubject>(
+        return MedDropdownInputField<WarningSubject>(
           label: 'Uyarı Konusu',
           options: WarningSubject.values,
           initialValue: notifier.warning.subject,
@@ -85,7 +85,7 @@ class _TextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarningFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Uyarı Metni',
           autoFocus: notifier.isCreate,
           initialValue: notifier.warning.text,
@@ -104,7 +104,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WarningFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           initialValue: notifier.warning.status,
           options: Status.values,

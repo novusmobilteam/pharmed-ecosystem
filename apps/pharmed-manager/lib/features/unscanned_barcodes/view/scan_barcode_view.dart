@@ -39,7 +39,7 @@ class _ScanBarcodeViewState extends State<ScanBarcodeView> {
           },
           saveButtonText: 'Karekod Gir',
           child: Column(
-            children: [TextInputField(label: 'Karekod', onChanged: (value) => notifier.barcode = value ?? '')],
+            children: [MedTextInputField(label: 'Karekod', onChanged: (value) => notifier.barcode = value ?? '')],
           ),
         );
       },

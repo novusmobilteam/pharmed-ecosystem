@@ -1,0 +1,129 @@
+// lib/features/prescription_screen/prescription_screen_state.dart
+//
+// [SWREQ-UI-PRESC-STATE-001]
+// Sınıf : Class A
+//
+// CabinStockState ile aynı hasta seçim akışı — fark:
+//   - prescriptionItems filtresiz (tüm statusler)
+//   - selectedItem yok (bu ekranda ilaç seçimi olmaz)
+
+import 'package:pharmed_core/pharmed_core.dart';
+
+sealed class PrescriptionState {
+  const PrescriptionState();
+}
+
+final class PrescriptionUninitialized extends PrescriptionState {
+  const PrescriptionUninitialized();
+}
+
+final class PrescriptionLoading extends PrescriptionState {
+  const PrescriptionLoading({required this.cabinId});
+  final int cabinId;
+}
+
+final class PrescriptionIdle extends PrescriptionState {
+  const PrescriptionIdle({required this.cabinId, required this.patients, this.search = ''});
+
+  final int cabinId;
+  final List<Hospitalization> patients;
+  final String search;
+}
+
+final class PrescriptionPatientSelected extends PrescriptionState {
+  const PrescriptionPatientSelected({
+    required this.cabinId,
+    required this.patients,
+    required this.selectedPatient,
+    required this.prescriptionItems,
+    this.search = '',
+    this.isPrescriptionsLoading = false,
+  });
+
+  final int cabinId;
+  final List<Hospitalization> patients;
+  final Hospitalization selectedPatient;
+
+  /// Tüm statusler — filtrelenmemiş.
+  final List<PrescriptionItem> prescriptionItems;
+
+  final String search;
+  final bool isPrescriptionsLoading;
+
+  static const _sentinel = Object();
+
+  PrescriptionPatientSelected copyWith({
+    List<PrescriptionItem>? prescriptionItems,
+    String? search,
+    Object? isPrescriptionsLoading = _sentinel,
+  }) {
+    return PrescriptionPatientSelected(
+      cabinId: cabinId,
+      patients: patients,
+      selectedPatient: selectedPatient,
+      prescriptionItems: prescriptionItems ?? this.prescriptionItems,
+      search: search ?? this.search,
+      isPrescriptionsLoading: isPrescriptionsLoading == _sentinel
+          ? this.isPrescriptionsLoading
+          : isPrescriptionsLoading as bool,
+    );
+  }
+}
+
+final class PrescriptionError extends PrescriptionState {
+  const PrescriptionError({required this.message, required this.previousState});
+
+  final String message;
+  final PrescriptionState previousState;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Extension
+// ─────────────────────────────────────────────────────────────────────────────
+
+extension PrescriptionStateX on PrescriptionState {
+  int? get cabinId => switch (this) {
+    PrescriptionLoading(:final cabinId) => cabinId,
+    PrescriptionIdle(:final cabinId) => cabinId,
+    PrescriptionPatientSelected(:final cabinId) => cabinId,
+    PrescriptionError(:final previousState) => previousState.cabinId,
+    _ => null,
+  };
+
+  List<Hospitalization> get patients => switch (this) {
+    PrescriptionIdle(:final patients) => patients,
+    PrescriptionPatientSelected(:final patients) => patients,
+    PrescriptionError(:final previousState) => previousState.patients,
+    _ => const [],
+  };
+
+  String get search => switch (this) {
+    PrescriptionIdle(:final search) => search,
+    PrescriptionPatientSelected(:final search) => search,
+    PrescriptionError(:final previousState) => previousState.search,
+    _ => '',
+  };
+
+  Hospitalization? get selectedPatient => switch (this) {
+    PrescriptionPatientSelected(:final selectedPatient) => selectedPatient,
+    PrescriptionError(:final previousState) => previousState.selectedPatient,
+    _ => null,
+  };
+
+  List<PrescriptionItem> get prescriptionItems => switch (this) {
+    PrescriptionPatientSelected(:final prescriptionItems) => prescriptionItems,
+    PrescriptionError(:final previousState) => previousState.prescriptionItems,
+    _ => const [],
+  };
+
+  bool get isPrescriptionsLoading => switch (this) {
+    PrescriptionPatientSelected(:final isPrescriptionsLoading) => isPrescriptionsLoading,
+    _ => false,
+  };
+
+  bool get isPatientSelected => switch (this) {
+    PrescriptionPatientSelected() => true,
+    PrescriptionError(:final previousState) => previousState.isPatientSelected,
+    _ => false,
+  };
+}

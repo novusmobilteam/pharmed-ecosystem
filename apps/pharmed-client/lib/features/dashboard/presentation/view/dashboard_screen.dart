@@ -7,6 +7,7 @@ import 'package:pharmed_client/features/assignment/assignment_view.dart';
 import 'package:pharmed_client/features/cabin_stock.dart/cabin_stock.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
 import 'package:pharmed_client/features/fault/fault_view.dart';
+import 'package:pharmed_client/features/prescription/view/prescription_screen.dart';
 import 'package:pharmed_client/features/refund/refund_view.dart';
 import 'package:pharmed_client/features/settings/presentation/view/settings_modal.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -95,7 +96,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                 // StaleBanner
                 if (dashState is DashboardStale)
-                  StaleBanner(lastUpdated: dashState.staleSince, canProceed: dashState.canProceed),
+                  MedStaleBanner(lastUpdated: dashState.staleSince, canProceed: dashState.canProceed),
 
                 // İçerik
                 Expanded(child: DashboardContentFactory.buildContent(context, dashState, notifier, isLoggedIn)),

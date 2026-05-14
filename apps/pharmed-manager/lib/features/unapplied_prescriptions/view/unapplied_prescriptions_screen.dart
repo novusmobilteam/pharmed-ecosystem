@@ -23,10 +23,10 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
       builder: (context, child) {
         return Consumer<UnappliedPrescriptionsNotifier>(
           builder: (context, notifier, child) {
-            return ResponsiveLayout(
-              mobile: const MobileLayout(),
-              tablet: const TabletLayout(),
-              desktop: DesktopLayout(
+            return MedResponsiveLayout(
+              mobile: const MedMobileLayout(),
+              tablet: const MedTabletLayout(),
+              desktop: MedDesktopLayout(
                 title: menu.name ?? 'Uygulanmamış Reçeteler',
                 subtitle: menu.description,
                 showAddButton: false,

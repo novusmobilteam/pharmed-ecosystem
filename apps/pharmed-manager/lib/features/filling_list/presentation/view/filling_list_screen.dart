@@ -33,10 +33,10 @@ class _FillingListScreenState extends State<FillingListScreen> {
       )..getStations(),
       child: Consumer<FillingListScreenNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: 'Dolum Listesi',
               showAddButton: true,
               onAddPressed: () => _onAddPressed(context, notifier, station: notifier.selectedStation!),

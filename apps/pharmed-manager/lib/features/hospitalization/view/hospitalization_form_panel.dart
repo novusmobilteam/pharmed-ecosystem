@@ -76,7 +76,7 @@ class _PatientField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HospitalizationFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<Patient>(
+        return MedSelectionField<Patient>(
           label: 'Hasta',
           title: 'Hasta',
           initialValue: notifier.patient,
@@ -99,7 +99,7 @@ class _CodeField extends StatelessWidget {
       builder: (context, notifier, _) {
         return IgnorePointer(
           ignoring: true,
-          child: TextInputField(
+          child: MedTextInputField(
             label: 'Yatış Kodu',
             initialValue: notifier.hospitalization?.code.toString(),
             onChanged: (_) {},
@@ -117,7 +117,7 @@ class _DoctorField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HospitalizationFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<User>(
+        return MedSelectionField<User>(
           label: 'Doktor',
           title: 'Doktor',
           initialValue: notifier.doctor,
@@ -139,7 +139,7 @@ class _PhysicalServiceField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return SelectionField<HospitalService>(
+          return MedSelectionField<HospitalService>(
             label: 'Fiziki Servis',
             title: 'Fiziki Servis',
             initialValue: notifier.hospitalization?.physicalService,
@@ -162,7 +162,7 @@ class _InpatientServiceField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return SelectionField<HospitalService>(
+          return MedSelectionField<HospitalService>(
             label: 'Yatış Servis',
             title: 'Yatış Servis',
             labelBuilder: (s) => s.name ?? '-',
@@ -185,7 +185,7 @@ class _RoomField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return SelectionField<Room>(
+          return MedSelectionField<Room>(
             key: ValueKey(notifier.selectedRoom?.id ?? 'room_${notifier.selectedService?.id}'),
             label: 'Oda',
             title: 'Oda Seç',
@@ -215,7 +215,7 @@ class _BedField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return SelectionField<Bed>(
+          return MedSelectionField<Bed>(
             key: ValueKey(notifier.selectedBed?.id ?? 'bed_${notifier.selectedRoom?.id}'),
             label: 'Yatak',
             title: 'Yatak Seç',
@@ -246,7 +246,7 @@ class _AdmissionDateField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return DateInputField(
+          return MedDateInputField(
             label: 'Yatış Tarihi',
             firstDate: DateTime.now(),
             initialValue: notifier.hospitalization?.admissionDate,
@@ -267,7 +267,7 @@ class _ExitDateField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return DateInputField(label: 'Çıkış Tarihi', onDateSelected: notifier.updateExitDate);
+          return MedDateInputField(label: 'Çıkış Tarihi', onDateSelected: notifier.updateExitDate);
         },
       ),
     );
@@ -281,7 +281,7 @@ class _DescriptionField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HospitalizationFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Açıklama',
           hintText: 'Açıklama',
           maxLines: 3,
@@ -300,7 +300,7 @@ class _BabyToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HospitalizationFormNotifier>(
       builder: (context, notifier, _) {
-        return CheckboxField(
+        return MedCheckboxField(
           label: 'Bebek',
           onChanged: (_) => notifier.toggleIsBaby(),
           value: notifier.hospitalization?.isBaby ?? false,

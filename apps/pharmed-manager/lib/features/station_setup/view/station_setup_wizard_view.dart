@@ -136,7 +136,7 @@ class _FirstStep extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 3,
-                  child: SelectionField(
+                  child: MedSelectionField(
                     label: 'İlaç Depo',
                     dataSource: (skip, take, search) =>
                         context.read<GetWarehousesUseCase>().call(GetWarehousesParams()),
@@ -145,7 +145,7 @@ class _FirstStep extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: DropdownInputField<OrderStatus>(
+                  child: MedDropdownInputField<OrderStatus>(
                     label: 'İlaç Durumu',
                     options: OrderStatus.values,
                     initialValue: notifier.station?.drugStatus,
@@ -161,7 +161,7 @@ class _FirstStep extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 3,
-                  child: SelectionField(
+                  child: MedSelectionField(
                     label: 'Tıbbi Sarf Depo',
                     dataSource: (skip, take, search) =>
                         context.read<GetWarehousesUseCase>().call(GetWarehousesParams()),
@@ -170,7 +170,7 @@ class _FirstStep extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: DropdownInputField<OrderStatus>(
+                  child: MedDropdownInputField<OrderStatus>(
                     label: 'Tıbbi Sarf Durumu',
                     options: OrderStatus.values,
                     initialValue: notifier.station?.medicalConsumableStatus,
@@ -195,7 +195,7 @@ class _SecondStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField(
+        return MedSelectionField(
           label: 'Servis',
           dataSource: (skip, take, search) => context.read<GetServicesUseCase>().call(GetServicesParams()),
           labelBuilder: (service) => service.title,
@@ -216,12 +216,12 @@ class _ThirdStep extends StatelessWidget {
         return Column(
           spacing: AppDimensions.registrationDialogSpacing,
           children: [
-            TextInputField(
+            MedTextInputField(
               label: 'İstasyon Adı',
               initialValue: notifier.station?.name,
               onChanged: (String? value) => notifier.updateName(value),
             ),
-            MultiSelectionField<HospitalService>(
+            MedMultiSelectionField<HospitalService>(
               key: key,
               title: 'Hizmet Verdiği Servisler',
               label: 'Hizmet Verdiği Servisler',

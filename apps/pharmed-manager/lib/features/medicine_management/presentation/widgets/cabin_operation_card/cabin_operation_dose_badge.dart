@@ -34,11 +34,11 @@ class CabinOperationDoseBadge extends StatelessWidget {
   }
 }
 
-class CabinOperationInfoChip extends StatelessWidget {
+class CabinOperationMedInfoChip extends StatelessWidget {
   final String title;
   final String value;
 
-  const CabinOperationInfoChip({super.key, required this.title, required this.value});
+  const CabinOperationMedInfoChip({super.key, required this.title, required this.value});
 
   @override
   Widget build(BuildContext context) {

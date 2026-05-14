@@ -20,10 +20,10 @@ class _StationCabinStockScreenState extends State<StationCabinStockScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveLayout(
-      mobile: MobileLayout(),
-      tablet: TabletLayout(),
-      desktop: DesktopLayout(
+    return MedResponsiveLayout(
+      mobile: MedMobileLayout(),
+      tablet: MedTabletLayout(),
+      desktop: MedDesktopLayout(
         title: 'İstasyon Kabin Stok',
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

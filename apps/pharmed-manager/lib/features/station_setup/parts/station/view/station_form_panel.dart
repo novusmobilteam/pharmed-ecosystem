@@ -3,7 +3,7 @@ import 'package:pharmed_manager/features/station_setup/notifier/station_setup_no
 import 'package:provider/provider.dart';
 
 import '../../../../../core/core.dart';
-import '../../../../../core/widgets/side_panel.dart';
+import '../../../../../../widgets/side_panel.dart';
 import '../notifier/station_form_notifier.dart';
 import '../notifier/station_notifier.dart';
 
@@ -92,7 +92,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'İstasyon Adı',
           initialValue: notifier.station?.name,
           onChanged: notifier.updateName,
@@ -110,7 +110,7 @@ class _MaterialWarehouseField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<Warehouse>(
+        return MedSelectionField<Warehouse>(
           label: 'İlaç Depo',
           title: 'İlaç Depo Seç',
           initialValue: notifier.station?.materialWarehouse,
@@ -131,7 +131,7 @@ class _DrugStatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<OrderStatus>(
+        return MedDropdownInputField<OrderStatus>(
           label: 'İlaç Durumu',
           options: OrderStatus.values,
           initialValue: notifier.station?.drugStatus,
@@ -151,7 +151,7 @@ class _ConsumableWarehouseField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<Warehouse>(
+        return MedSelectionField<Warehouse>(
           label: 'Tıbbi Sarf Depo',
           title: 'Tıbbi Sarf Depo Seç',
           initialValue: notifier.station?.medicalConsumableWarehouse,
@@ -172,7 +172,7 @@ class _ConsumablesStatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<OrderStatus>(
+        return MedDropdownInputField<OrderStatus>(
           label: 'Tıbbi Sarf',
           initialValue: notifier.station?.medicalConsumableStatus,
           options: OrderStatus.values,
@@ -192,7 +192,7 @@ class _ServiceField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<HospitalService>(
+        return MedSelectionField<HospitalService>(
           key: key,
           label: 'Servis',
           title: 'Servis Seç',
@@ -215,7 +215,7 @@ class _ProvidedServices extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return MultiSelectionField<HospitalService>(
+        return MedMultiSelectionField<HospitalService>(
           label: 'Hizmet Verdiği Servisler',
           title: 'Servis Seç',
           initialValue: notifier.station?.services,
@@ -235,7 +235,7 @@ class _StationTypeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
-        return RadioInputField<StationType>(
+        return MedRadioInputField<StationType>(
           label: 'İstasyon Tipi',
           initialValue: notifier.station?.type,
           options: const [

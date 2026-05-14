@@ -17,12 +17,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 typedef StatusBar = MedStatusBar;
 
 class MedStatusBar extends StatelessWidget {
-  const MedStatusBar({
-    super.key,
-    required this.color,
-    this.height = 38,
-    this.width = 4,
-  });
+  const MedStatusBar({super.key, required this.color, this.height = 38, this.width = 4});
 
   final Color color;
   final double height;

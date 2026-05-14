@@ -75,7 +75,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MaterialTypeFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Malzeme Tipi Adı',
           initialValue: notifier.materialType.name,
           validator: (v) => Validators.cannotBlankValidator(v),
@@ -93,7 +93,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MaterialTypeFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           initialValue: notifier.materialType.status,
           options: Status.values,

@@ -72,7 +72,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UnitFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Adı',
           autoFocus: notifier.isCreate,
           initialValue: notifier.unit.name,
@@ -91,7 +91,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UnitFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           options: Status.values,
           labelBuilder: (status) => status?.label,

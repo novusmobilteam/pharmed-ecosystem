@@ -21,10 +21,10 @@ class InconsistencyScreen extends StatelessWidget {
       create: (context) => InconsistencyNotifier(getInconsistenciesUseCase: context.read())..getInconsistencies(),
       child: Consumer<InconsistencyNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: MobileLayout(),
-            tablet: TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: MedMobileLayout(),
+            tablet: MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Tutarsızlık Hareketleri',
               subtitle: menu.description,
               showAddButton: false,

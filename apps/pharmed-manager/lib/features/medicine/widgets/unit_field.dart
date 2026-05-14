@@ -11,7 +11,7 @@ class UnitField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = 'Birim';
-    return TextInputField(
+    return MedTextInputField(
       label: label,
       enabled: enabled,
       initialValue: unit?.name,

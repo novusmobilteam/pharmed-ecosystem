@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../widgets/side_panel.dart';
 import 'package:pharmed_manager/features/authorization/authorization_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -26,10 +26,10 @@ class AuthorizationScreen extends StatelessWidget {
       ],
       child: Consumer<AuthorizationNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
+          return MedResponsiveLayout(
             mobile: SizedBox(),
             tablet: SizedBox(),
-            desktop: DesktopLayout(
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Kullanıcı/Rol Yetkilendirme',
               subtitle: menu.description,
               child: SidePanelWrapper(

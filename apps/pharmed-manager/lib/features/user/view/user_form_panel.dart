@@ -98,7 +98,7 @@ class _RegistrationNumberField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'Kurum Sicil No',
           initialValue: notifier.user.registrationNumber,
@@ -117,7 +117,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'Adı',
           initialValue: notifier.user.name,
@@ -136,7 +136,7 @@ class _SurnameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'Soyadı',
           initialValue: notifier.user.surname,
@@ -155,7 +155,7 @@ class _RoleField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<Role>(
+        return MedSelectionField<Role>(
           key: key,
           label: 'Meslek Tipi',
           initialValue: notifier.user.role,
@@ -176,7 +176,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           options: Status.values,
           initialValue: notifier.user.status,
@@ -196,7 +196,7 @@ class _UsageKindField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<UserType>(
+        return MedDropdownInputField<UserType>(
           label: 'Kullanım Türü',
           options: UserType.values,
           initialValue: notifier.user.type,
@@ -216,7 +216,7 @@ class _ExpirationDateField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return DateInputField(
+        return MedDateInputField(
           label: 'Son Geçerlilik Tarihi',
           firstDate: DateTime.now(),
           initialValue: notifier.user.validUntil,
@@ -234,7 +234,7 @@ class _EmailField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'Email',
           initialValue: notifier.user.email,
@@ -253,7 +253,7 @@ class _OrderStatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<PermissionStatus>(
+        return MedDropdownInputField<PermissionStatus>(
           label: 'Ordersız Alım',
           options: PermissionStatus.values,
           initialValue: permissionStatusFromBool(notifier.user.isNotOrdered),
@@ -273,7 +273,7 @@ class _WitnessedStationField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<PermissionStatus>(
+        return MedDropdownInputField<PermissionStatus>(
           label: 'İstasyon Şahitli Giriş',
           options: PermissionStatus.values,
           initialValue: permissionStatusFromBool(notifier.user.isWitnessedStationEntry),
@@ -293,7 +293,7 @@ class _PurchaseKitField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<PermissionStatus>(
+        return MedDropdownInputField<PermissionStatus>(
           label: 'Kit Alım',
           options: PermissionStatus.values,
           initialValue: permissionStatusFromBool(notifier.user.kitPurchase),
@@ -313,7 +313,7 @@ class _StationsField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return MultiSelectionField<Station>(
+        return MedMultiSelectionField<Station>(
           key: ValueKey(notifier.selectedStations.length),
           label: 'Yetki İstasyonlar',
           initialValue: notifier.selectedStations,
@@ -336,7 +336,7 @@ class _UsernameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Kullanıcı Adı',
           initialValue: notifier.user.userName,
           onChanged: (value) => notifier.changeUsername(value),
@@ -353,7 +353,11 @@ class _PasswordField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(label: 'Şifre', obscureText: true, onChanged: (value) => notifier.changePassword(value));
+        return MedTextInputField(
+          label: 'Şifre',
+          obscureText: true,
+          onChanged: (value) => notifier.changePassword(value),
+        );
       },
     );
   }

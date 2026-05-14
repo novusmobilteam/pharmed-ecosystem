@@ -22,10 +22,10 @@ class UrgentPatientScreen extends StatelessWidget {
       )..getUrgentPatients(),
       child: Consumer<UrgentPatientNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: MobileLayout(),
-            tablet: TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: MedMobileLayout(),
+            tablet: MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Acil Hasta Sonlandır',
               subtitle: menu.description,
               child: _buildChild(context, notifier),

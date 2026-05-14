@@ -19,34 +19,34 @@ class _BedSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Servis dropdown
-        MedDropdown<HospitalService>(
-          hint: context.l10n.assignment_serviceSelectorHint,
-          selected: state.selectedService,
+        MedDropdownInputField<HospitalService>(
+          label: context.l10n.assignment_serviceSelectorHint,
+          initialValue: state.selectedService,
           options: state.services,
-          labelBuilder: (s) => s.name ?? '—',
-          onSelected: onServiceSelected,
+          labelBuilder: (s) => s?.name ?? '—',
+          onChanged: onServiceSelected,
         ),
         const SizedBox(height: 6),
 
         // Oda dropdown — servis seçilince aktif
-        MedDropdown<Room>(
-          hint: context.l10n.assignment_roomSelectorHint,
-          selected: state.selectedRoom,
+        MedDropdownInputField<Room>(
+          label: context.l10n.assignment_roomSelectorHint,
+          initialValue: state.selectedRoom,
           options: state.rooms,
-          labelBuilder: (r) => r.name ?? '—',
+          labelBuilder: (r) => r?.name ?? '—',
           enabled: state.selectedService != null && state.rooms.isNotEmpty,
-          onSelected: onRoomSelected,
+          onChanged: onRoomSelected,
         ),
         const SizedBox(height: 6),
 
         // Yatak dropdown — oda seçilince aktif
-        MedDropdown<Bed>(
-          hint: context.l10n.assignment_bedSelectorHint,
-          selected: state.selectedBed,
+        MedDropdownInputField<Bed>(
+          label: context.l10n.assignment_bedSelectorHint,
+          initialValue: state.selectedBed,
           options: state.beds,
-          labelBuilder: (b) => b.name ?? '—',
+          labelBuilder: (b) => b?.name ?? '—',
           enabled: state.selectedRoom != null && state.beds.isNotEmpty,
-          onSelected: onBedSelected,
+          onChanged: onBedSelected,
         ),
 
         const SizedBox(height: 12),

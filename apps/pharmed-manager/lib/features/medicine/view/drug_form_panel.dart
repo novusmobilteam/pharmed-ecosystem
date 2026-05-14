@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 import '../../dosage_form/view/dosage_form_view.dart';
 import 'package:provider/provider.dart';
 
@@ -164,7 +164,7 @@ Widget _definitionNameField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.drug.definition,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -179,7 +179,7 @@ Widget _barcodeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.drug.barcode,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -195,7 +195,7 @@ Widget _nameField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.drug.name,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -210,7 +210,7 @@ Widget _codeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         initialValue: vm.drug.code,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -225,7 +225,7 @@ Widget _prescriptionTypeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return DropdownInputField<PrescriptionType>(
+      return MedDropdownInputField<PrescriptionType>(
         label: label,
         options: PrescriptionType.values,
         initialValue: vm.drug.prescriptionType,
@@ -246,7 +246,7 @@ Widget _doseField() {
         spacing: AppDimensions.registrationDialogSpacing,
         children: [
           Expanded(
-            child: TextInputField(
+            child: MedTextInputField(
               label: label,
               initialValue: vm.drug.dose.toCustomString(),
               keyboardType: TextInputType.number,
@@ -274,7 +274,7 @@ Widget _manifacturerField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return SelectionField<Firm>(
+      return MedSelectionField<Firm>(
         label: label,
         title: label,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
@@ -294,7 +294,7 @@ Widget _maxUsageField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         suffix: Text(vm.drug.doseUnit?.title.toLowerCase() ?? ''),
         keyboardType: const TextInputType.numberWithOptions(),
@@ -311,7 +311,7 @@ Widget _drugTypeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return SelectionField<DrugType>(
+      return MedSelectionField<DrugType>(
         label: label,
         title: label,
         initialValue: vm.drug.drugType,
@@ -332,7 +332,7 @@ Widget _returnTypeField() {
       return Column(
         spacing: AppDimensions.registrationDialogSpacing,
         children: [
-          DropdownInputField<ReturnType>(
+          MedDropdownInputField<ReturnType>(
             label: label,
             options: ReturnType.values,
             initialValue: vm.drug.returnType,
@@ -343,12 +343,12 @@ Widget _returnTypeField() {
           if (vm.drug.returnType == ReturnType.toOrigin)
             Column(
               children: [
-                CheckboxField(
+                MedCheckboxField(
                   label: 'Serum kabininde maks. değere bakma',
                   value: vm.drug.isNotSerumCabinetMaxValue,
                   onChanged: (_) => vm.toggleSerumMaxValue(),
                 ),
-                CheckboxField(
+                MedCheckboxField(
                   label: 'Kübik çekmecede maks. değere bakma',
                   value: vm.drug.isNotCubicDrawrMaxValue,
                   onChanged: (_) => vm.toggleCubicMaxValue(),
@@ -368,10 +368,10 @@ Widget _qrCodeField() {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: CheckboxField(label: 'Karekodlu', value: vm.drug.isQrCode, onChanged: (_) => vm.toggleQr()),
+            child: MedCheckboxField(label: 'Karekodlu', value: vm.drug.isQrCode, onChanged: (_) => vm.toggleQr()),
           ),
           Expanded(
-            child: DropdownInputField(
+            child: MedDropdownInputField(
               label: 'Adet',
               enabled: vm.drug.isQrCode,
               initialValue: vm.drug.piece?.toInt() ?? 1,
@@ -392,7 +392,7 @@ Widget _drugClassField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return SelectionField<DrugClass>(
+      return MedSelectionField<DrugClass>(
         label: label,
         title: label,
         initialValue: vm.drug.drugClass,
@@ -414,7 +414,7 @@ Widget _purchaseTypeField() {
       return Column(
         spacing: AppDimensions.registrationDialogSpacing,
         children: [
-          DropdownInputField<PurchaseType>(
+          MedDropdownInputField<PurchaseType>(
             label: label,
             options: PurchaseType.values,
             initialValue: vm.drug.purchaseType,
@@ -444,14 +444,18 @@ Widget _measurementUnitField() {
       return Row(
         children: [
           Expanded(
-            child: CheckboxField(label: label, value: vm.drug.isMeasureUnit, onChanged: (_) => vm.toggleMeasurement()),
+            child: MedCheckboxField(
+              label: label,
+              value: vm.drug.isMeasureUnit,
+              onChanged: (_) => vm.toggleMeasurement(),
+            ),
           ),
           Expanded(
             child: Row(
               spacing: AppDimensions.registrationDialogSpacing,
               children: [
                 Expanded(
-                  child: TextInputField(
+                  child: MedTextInputField(
                     label: 'Doz',
                     enabled: isRequired,
                     initialValue: vm.drug.doseMeasureUnit.toCustomString(),
@@ -490,7 +494,7 @@ Widget _volumeField() {
         spacing: AppDimensions.registrationDialogSpacing,
         children: [
           Expanded(
-            child: TextInputField(
+            child: MedTextInputField(
               label: label,
               onChanged: vm.updateVolume,
               initialValue: vm.drug.volume.toCustomString(),
@@ -517,7 +521,7 @@ Widget _dosageFormField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         key: ObjectKey(vm.drug.dosageForm),
         label: label,
         validator: (value) => Validators.cannotBlankValidator(value),
@@ -538,7 +542,7 @@ Widget _statusField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return DropdownInputField<Status>(
+      return MedDropdownInputField<Status>(
         label: label,
         options: Status.values,
         initialValue: statusFromBool(vm.drug.isActive),
@@ -554,7 +558,7 @@ Widget _countTypeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return DropdownInputField<CountType>(
+      return MedDropdownInputField<CountType>(
         label: label,
         options: CountType.values,
         initialValue: vm.drug.countType,
@@ -570,7 +574,7 @@ Widget _atcCodeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(
+      return MedTextInputField(
         label: label,
         onChanged: vm.updateAtcCode,
         initialValue: vm.drug.atcCode.toCustomString(),
@@ -586,7 +590,7 @@ Widget _equivalentCodeField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(label: label, onChanged: vm.updateEquivalentCode, initialValue: vm.drug.equivalentCode);
+      return MedTextInputField(label: label, onChanged: vm.updateEquivalentCode, initialValue: vm.drug.equivalentCode);
     },
   );
 }
@@ -600,7 +604,7 @@ Widget _buildWitnessedPurchaseField() {
       return Row(
         children: [
           Expanded(
-            child: CheckboxField(
+            child: MedCheckboxField(
               label: label,
               value: vm.drug.isWitnessedPurchase,
               onChanged: (_) => vm.toggleWitnessedPurchase(),
@@ -646,7 +650,7 @@ Widget _buildWastageWitnessedPurchaseField() {
       return Row(
         children: [
           Expanded(
-            child: CheckboxField(
+            child: MedCheckboxField(
               label: label,
               value: vm.drug.isWastageWitnessedPurchase,
               onChanged: (_) => vm.toggleWastageWitnessedPurchase(),
@@ -692,7 +696,7 @@ Widget _buildDestroyableField() {
       return Row(
         children: [
           Expanded(
-            child: CheckboxField(
+            child: MedCheckboxField(
               label: label,
               value: vm.drug.isDestroyable,
               onChanged: (_) => vm.toggleIsDestroyable(),
@@ -718,7 +722,7 @@ Widget _buildActiveIngredientField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return MultiSelectionField<ActiveIngredient>(
+      return MedMultiSelectionField<ActiveIngredient>(
         key: ObjectKey(vm.activeIngredients),
         label: label,
         title: label,
@@ -743,7 +747,7 @@ Widget _buildCollectNoteField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(label: label, initialValue: vm.drug.collectNote, onChanged: vm.updateCollectNote);
+      return MedTextInputField(label: label, initialValue: vm.drug.collectNote, onChanged: vm.updateCollectNote);
     },
   );
 }
@@ -753,7 +757,7 @@ Widget _buildReturnNoteField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(label: label, initialValue: vm.drug.collectNote, onChanged: vm.updateReturnNote);
+      return MedTextInputField(label: label, initialValue: vm.drug.collectNote, onChanged: vm.updateReturnNote);
     },
   );
 }
@@ -763,7 +767,11 @@ Widget _buildDestructionNoteField() {
 
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return TextInputField(label: label, initialValue: vm.drug.destructionNote, onChanged: vm.updateDestructionNote);
+      return MedTextInputField(
+        label: label,
+        initialValue: vm.drug.destructionNote,
+        onChanged: vm.updateDestructionNote,
+      );
     },
   );
 }

@@ -124,7 +124,7 @@ class _StationField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CabinTemperatureControlFormViewModel>(
       builder: (context, vm, _) {
-        return SelectionField<Station>(
+        return MedSelectionField<Station>(
           key: key,
           label: 'İstasyon',
           title: 'İstasyon',
@@ -168,7 +168,7 @@ class _InsideBottomTempField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CabinTemperatureControlFormViewModel>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'İç Alt Sıcaklık',
           initialValue: vm.form?.topTemperatureInside?.toCustomString(),
@@ -187,7 +187,7 @@ class _InsideTopTempField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CabinTemperatureControlFormViewModel>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'İç Üst Sıcaklık',
           initialValue: vm.form?.topTemperatureInside?.toCustomString(),
@@ -206,7 +206,7 @@ class _OutsideBottomTempField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CabinTemperatureControlFormViewModel>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'Dış Alt Sıcaklık',
           initialValue: vm.form?.bottomTemperatureOutside?.toCustomString(),
@@ -225,7 +225,7 @@ class _OutsideTopTempField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CabinTemperatureControlFormViewModel>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'Dış Üst Sıcaklık',
           initialValue: vm.form?.topTemperatureOutside?.toCustomString(),
@@ -244,7 +244,7 @@ class _BottomHumidityField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CabinTemperatureControlFormViewModel>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'Nem Alt Sınır',
           initialValue: vm.form?.bottomLimitHumidity.toCustomString(),
@@ -263,7 +263,7 @@ class _TopHumidityField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CabinTemperatureControlFormViewModel>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           key: key,
           label: 'Nem Üst Sınır',
           initialValue: vm.form?.topLimitHumidity.toCustomString(),

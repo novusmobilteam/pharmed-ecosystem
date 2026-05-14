@@ -10,7 +10,7 @@ class CabinSettingsView extends StatelessWidget {
     return Column(
       spacing: 10,
       children: [
-        DropdownInputField(
+        MedDropdownInputField(
           options: options,
           onChanged: (_) {},
           labelBuilder: (option) => option?.toString(),

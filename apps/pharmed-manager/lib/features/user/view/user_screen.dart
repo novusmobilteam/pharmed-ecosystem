@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -28,10 +28,10 @@ class UserScreen extends StatelessWidget {
       )..init(),
       child: Consumer<UserNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
+          return MedResponsiveLayout(
             mobile: SizedBox(),
             tablet: SizedBox(),
-            desktop: DesktopLayout(
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Kullanıcı Listesi',
               subtitle: menu.description,
               showAddButton: true,
@@ -77,7 +77,7 @@ void _showValidDateDialog(BuildContext context, UserNotifier vm) {
           MessageUtils.showErrorSnackbar(context, vm.message(vm.updateValidDateOp) ?? 'Bir hata oluştu.');
         }
       },
-      child: DateInputField(
+      child: MedDateInputField(
         label: 'Yeni Son Geçerlilik Tarihi',
         initialValue: vm.validDate,
         onDateSelected: (date) => vm.validDate = date,

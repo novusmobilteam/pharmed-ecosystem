@@ -111,7 +111,7 @@ class _RoomTileState extends State<_RoomTile> {
                     color: MedColors.text3,
                   ),
                   Expanded(
-                    child: TextInputField(
+                    child: MedTextInputField(
                       controller: _nameCtrl,
                       onChanged: (v) => notifier.updateRoomName(widget.localId, v ?? '-'),
                     ),

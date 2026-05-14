@@ -131,7 +131,7 @@ class _PatientField extends StatelessWidget {
       builder: (context, vm, _) {
         return IgnorePointer(
           ignoring: !vm.isPatientSelectionEnabled,
-          child: SelectionField<Hospitalization>(
+          child: MedSelectionField<Hospitalization>(
             label: 'Hasta',
             initialValue: vm.hospitalization,
             labelBuilder: (u) => u.patient?.fullName,
@@ -153,7 +153,7 @@ class _DoctorField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PrescriptionFormNotifier>(
       builder: (context, vm, _) {
-        return SelectionField<User>(
+        return MedSelectionField<User>(
           label: 'Doktor',
           initialValue: vm.currentItem.doctor,
           labelBuilder: (u) => u.fullName,
@@ -173,7 +173,7 @@ class _DrugField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PrescriptionFormNotifier>(
       builder: (context, vm, _) {
-        return SelectionField<Medicine>(
+        return MedSelectionField<Medicine>(
           key: ValueKey('drug_${vm.currentItem.medicine?.id}'),
           label: 'İlaç / Malzeme',
           labelBuilder: (d) => d.name,
@@ -196,7 +196,7 @@ class _DosePieceField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PrescriptionFormNotifier>(
       builder: (context, vm, _) {
-        return DoseStepper(
+        return MedDoseStepper(
           type: DoseStepperType.compact,
           platform: DoseStepperPlatform.desktop,
           value: vm.currentItem.dosePiece?.toDouble() ?? 0,
@@ -217,7 +217,7 @@ class _RequestTypeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PrescriptionFormNotifier>(
       builder: (context, vm, _) {
-        return DropdownInputField<RequestType>(
+        return MedDropdownInputField<RequestType>(
           label: 'İstek Tipi',
           options: RequestType.values,
           labelBuilder: (t) => t?.label,
@@ -289,7 +289,7 @@ class _TimeBox extends StatelessWidget {
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TimeInputField(
+              MedTimeInputField(
                 key: ValueKey('time_${index}_${currentTime?.hashCode}'),
                 label: 'Saat',
                 //controller: controller,
@@ -300,7 +300,7 @@ class _TimeBox extends StatelessWidget {
               if (dayLabel.isNotEmpty)
                 SizedBox(
                   width: context.width * 0.6,
-                  child: InfoChip(info: dayLabel),
+                  child: MedInfoChip(info: dayLabel),
                 ),
             ],
           ),
@@ -319,7 +319,7 @@ class _DescriptionField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PrescriptionFormNotifier>(
       builder: (context, vm, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Açıklama',
           controller: controller,
           maxLines: 3,
@@ -362,17 +362,17 @@ class _ChecboxField extends StatelessWidget {
         return Row(
           spacing: 8,
           children: [
-            CheckboxField(
+            MedCheckboxField(
               label: 'İlk Doz Acil',
               value: vm.currentItem.firstDoseEmergency ?? false,
               onChanged: (_) => vm.toggleFirstDoseEmergency(),
             ),
-            CheckboxField(
+            MedCheckboxField(
               label: 'Doktora Sor',
               value: vm.currentItem.askDoctor ?? false,
               onChanged: (_) => vm.toggleAskDoctor(),
             ),
-            CheckboxField(
+            MedCheckboxField(
               label: 'Lüzum Halinde',
               value: vm.currentItem.inCaseOfNecessity ?? false,
               onChanged: (_) => vm.toggleInCaseOfNecessity(),

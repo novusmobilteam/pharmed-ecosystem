@@ -276,7 +276,7 @@ class _DrawerLoadingViewState extends State<DrawerLoadingView> {
     String? label,
     bool enabled = true,
   }) {
-    return DateInputField(
+    return MedDateInputField(
       label: label,
       initialValue: initialValue,
       firstDate: (isExpired || !enabled) ? null : DateTime.now(),

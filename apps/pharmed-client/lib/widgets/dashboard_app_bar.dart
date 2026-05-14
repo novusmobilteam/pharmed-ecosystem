@@ -1,5 +1,3 @@
-// lib/features/dashboard/presentation/widgets/dashboard_app_bar.dart
-//
 // [SWREQ-UI-TOP-001] [IEC 62304 §5.5]
 // Dashboard üst çubuğu — appbar + navigasyon tek widget'ta.
 // Giriş yapılmamışsa menüler disabled, giriş yap butonu gösterilir.
@@ -10,6 +8,8 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:collection/collection.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+
+import 'dashboard_navbar_menu.dart';
 
 class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   const DashboardAppBar({

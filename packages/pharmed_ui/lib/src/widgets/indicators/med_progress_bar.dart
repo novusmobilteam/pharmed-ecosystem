@@ -37,10 +37,7 @@ class MedProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(
-      animated || (value >= 0.0 && value <= 1.0),
-      'MedProgressBar.value $value aralık dışında [0.0, 1.0]',
-    );
+    assert(animated || (value >= 0.0 && value <= 1.0), 'MedProgressBar.value $value aralık dışında [0.0, 1.0]');
     return ClipRRect(
       borderRadius: MedRadius.smAll,
       child: SizedBox(

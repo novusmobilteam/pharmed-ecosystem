@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
 
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
+import '../../../widgets/widgets.dart';
 import '../notifier/prescription_detail_notifier.dart';
 import '../notifier/prescription_form_notifier.dart';
 import '../notifier/prescription_notifier.dart';
@@ -44,10 +44,10 @@ class PrescriptionScreen extends StatelessWidget {
       ],
       child: Consumer<PrescriptionNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Reçete İşlemleri',
               subtitle: menu.description,
               actions: [MedButton(label: 'Yeni Reçete', size: MedButtonSize.sm, onPressed: notifier.openFormPanel)],

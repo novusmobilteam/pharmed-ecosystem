@@ -42,7 +42,7 @@ class DeleteDescriptionView extends StatelessWidget {
           saveButtonText: 'Sil',
           child: Column(
             children: [
-              TextInputField(
+              MedTextInputField(
                 maxLines: 3,
                 label: 'Silme nedeninizi açıklayınız',
                 onChanged: (value) => notifier.deleteDescription = value ?? '',

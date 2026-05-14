@@ -18,7 +18,7 @@ class StationField extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = 'İstasyon';
 
-    return MultiSelectionField<Station>(
+    return MedMultiSelectionField<Station>(
       label: label,
       enabled: enabled,
       initialValue: initialValue,

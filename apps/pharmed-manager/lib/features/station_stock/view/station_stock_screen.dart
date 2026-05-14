@@ -17,10 +17,10 @@ class StationStockScreen extends StatelessWidget {
             ..getStations(),
       child: Consumer<StationStockNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: MobileLayout(),
-            tablet: TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: MedMobileLayout(),
+            tablet: MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'İstasyon Stok Listesi',
               isLoading: notifier.isFetching,
               child: MedTable<StationStock>(

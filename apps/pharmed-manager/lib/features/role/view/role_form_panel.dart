@@ -54,7 +54,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RoleFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Rol Adı',
           autoFocus: notifier.isCreate,
           initialValue: notifier.role.name,
@@ -73,7 +73,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RoleFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           initialValue: notifier.role.status,
           options: Status.values,

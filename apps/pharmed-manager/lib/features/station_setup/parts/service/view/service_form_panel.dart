@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../../../../widgets/side_panel.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/core.dart';
@@ -80,7 +80,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ServiceFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Servis Adı',
           initialValue: notifier.service.name,
           onChanged: notifier.updateName,
@@ -98,7 +98,7 @@ class _BranchField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ServiceFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<Branch>(
+        return MedSelectionField<Branch>(
           label: 'Branş',
           title: 'Branş Seç',
           initialValue: notifier.service.branch,
@@ -119,7 +119,7 @@ class _UserField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ServiceFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<User>(
+        return MedSelectionField<User>(
           label: 'Kullanıcı',
           initialValue: notifier.service.user,
           labelBuilder: (user) => user.fullName,
@@ -138,7 +138,7 @@ class _StatusField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ServiceFormNotifier>(
       builder: (context, notifier, _) {
-        return DropdownInputField<Status>(
+        return MedDropdownInputField<Status>(
           label: 'Durumu',
           options: Status.values,
           initialValue: notifier.service.status,

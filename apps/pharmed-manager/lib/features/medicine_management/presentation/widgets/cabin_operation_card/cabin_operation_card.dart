@@ -176,11 +176,11 @@ class _MedicineHeader extends StatelessWidget {
             runSpacing: 4,
             children: [
               if (item.prescriptionItem?.firstDoseEmergency ?? false)
-                InfoChip(info: 'İlk Doz Acil', backgroundColor: Colors.red),
+                MedInfoChip(info: 'İlk Doz Acil', backgroundColor: Colors.red),
               if (item.prescriptionItem?.askDoctor ?? false)
-                InfoChip(info: 'Doktora Sor', backgroundColor: Colors.deepPurple),
+                MedInfoChip(info: 'Doktora Sor', backgroundColor: Colors.deepPurple),
               if (item.prescriptionItem?.inCaseOfNecessity ?? false)
-                InfoChip(info: 'Lüzum Halinde', backgroundColor: Colors.amber),
+                MedInfoChip(info: 'Lüzum Halinde', backgroundColor: Colors.amber),
             ],
           ),
         ],
@@ -206,17 +206,17 @@ class _MetaInfoSection extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CabinOperationInfoChip(
+            CabinOperationMedInfoChip(
               title: 'Alım Tarihi',
               value: displayDate != null ? '${displayDate.formattedDate} ${displayDate.formattedTime}' : '--',
             ),
             const SizedBox(height: 2),
-            CabinOperationInfoChip(title: 'Alan Kişi', value: appUser?.fullName ?? '-'),
+            CabinOperationMedInfoChip(title: 'Alan Kişi', value: appUser?.fullName ?? '-'),
           ],
         ),
         // İade tipini sadece refund'da göster
         if (item.operationType == CabinOperationType.refund && item.medicine?.returnType != null)
-          CabinOperationInfoChip(title: 'İade Tipi', value: item.medicine!.returnType!.label),
+          CabinOperationMedInfoChip(title: 'İade Tipi', value: item.medicine!.returnType!.label),
       ],
     );
   }

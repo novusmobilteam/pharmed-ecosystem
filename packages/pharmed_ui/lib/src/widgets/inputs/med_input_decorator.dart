@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// ─────────────────────────────────────────────────────────────────
-// MedFieldState — Input durumu enum'u
-// ─────────────────────────────────────────────────────────────────
-
 /// Input alanının anlık görsel durumu.
 ///
 /// - [normal]: Varsayılan, pasif durum.
@@ -39,6 +35,7 @@ enum MedFieldState { normal, error, success }
 ///   child: TextField(...),
 /// );
 /// ```
+
 class MedInputDecorator extends StatelessWidget {
   const MedInputDecorator({
     super.key,
@@ -51,35 +48,18 @@ class MedInputDecorator extends StatelessWidget {
     required this.child,
   });
 
-  /// Input üzerinde gösterilen etiket metni.
   final String? label;
-
-  /// Hata mesajı — varsa [fieldState]'i [MedFieldState.error]'a zorlar.
   final String? errorText;
-
-  /// Hata yokken gösterilen yardımcı metin.
   final String? helperText;
-
-  /// Input'un etkin olup olmadığı. Devre dışıysa soluk renk uygulanır.
   final bool enabled;
-
-  /// Focus durumu — mavi kenarlık ve gölge için dışarıdan iletilir.
   final bool isFocused;
-
-  /// Görsel durum — hata veya başarı rengi için.
   final MedFieldState fieldState;
-
-  /// Gerçek input içeriği (TextField, GestureDetector sarmalı görünüm vb.).
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
     final style = InputFieldTheme.of(context);
-
     final effectiveState = errorText != null ? MedFieldState.error : fieldState;
-    final borderColor = _resolveBorderColor(effectiveState);
-    final bgColor = _resolveBgColor(effectiveState);
-    final shadow = _resolveShadow(effectiveState);
 
     final labelText = label == null
         ? null
@@ -89,6 +69,7 @@ class MedInputDecorator extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+
       mainAxisSize: MainAxisSize.min,
       children: [
         if (labelText != null) ...[
@@ -104,17 +85,13 @@ class MedInputDecorator extends StatelessWidget {
           ),
           const SizedBox(height: MedSpacing.xs),
         ],
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          constraints: BoxConstraints(minHeight: style.minHeight),
+        DecoratedBox(
           decoration: BoxDecoration(
-            color: bgColor,
+            color: _resolveBgColor(effectiveState),
             borderRadius: style.borderRadius,
-            border: Border.all(color: borderColor, width: style.borderWidth),
-            boxShadow: shadow,
+            border: Border.all(color: _resolveBorderColor(effectiveState), width: style.borderWidth),
           ),
-          padding: style.contentPadding,
-          child: child,
+          child: Padding(padding: style.contentPadding, child: child),
         ),
         if (effectiveState == MedFieldState.error && errorText != null) ...[
           const SizedBox(height: MedSpacing.xs),
@@ -148,11 +125,5 @@ class MedInputDecorator extends StatelessWidget {
       MedFieldState.error => MedColors.redLight,
       _ => isFocused ? MedColors.surface : MedColors.surface2,
     };
-  }
-
-  List<BoxShadow>? _resolveShadow(MedFieldState state) {
-    if (!enabled || !isFocused) return null;
-    final color = state == MedFieldState.error ? MedColors.shadowRed : MedColors.shadowBlue;
-    return [BoxShadow(color: color, blurRadius: 0, spreadRadius: 3)];
   }
 }

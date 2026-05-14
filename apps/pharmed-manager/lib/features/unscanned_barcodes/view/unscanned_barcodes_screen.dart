@@ -36,10 +36,10 @@ class UnscannedBarcodesScreen extends StatelessWidget {
       )..getUnscannedBarcodes(),
       child: Consumer<UnscannedBarcodesNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Okutulmayan Karekodlar',
               subtitle: menu.description,
               actions: [

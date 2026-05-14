@@ -112,7 +112,7 @@ class WithdrawOperationCard extends StatelessWidget {
                         opacity: isCheckSuccess ? 0.4 : 1.0,
                         child: IgnorePointer(
                           ignoring: isCheckSuccess,
-                          child: DoseStepper.compact(
+                          child: MedDoseStepper.compact(
                             value: item.dosePiece ?? 0,
                             unit: item.medicine?.operationUnit ?? 'Adet',
                             onChanged: onQuantityChanged,
@@ -261,11 +261,11 @@ class _WarningChips extends StatelessWidget {
         spacing: 6,
         children: [
           if (item.prescriptionItem?.firstDoseEmergency ?? false)
-            InfoChip(info: 'İlk Doz Acil', backgroundColor: Colors.red),
+            MedInfoChip(info: 'İlk Doz Acil', backgroundColor: Colors.red),
           if (item.prescriptionItem?.askDoctor ?? false)
-            InfoChip(info: 'Doktora Sor', backgroundColor: Colors.deepPurple),
+            MedInfoChip(info: 'Doktora Sor', backgroundColor: Colors.deepPurple),
           if (item.prescriptionItem?.inCaseOfNecessity ?? false)
-            InfoChip(info: 'Lüzum Halinde', backgroundColor: Colors.amber),
+            MedInfoChip(info: 'Lüzum Halinde', backgroundColor: Colors.amber),
         ],
       ),
     );

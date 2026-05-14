@@ -28,13 +28,13 @@ class _DisposalInputViewState extends State<DisposalInputView> {
                 labels: DisposeType.values.map((w) => w.label).toList(),
               ),
               SizedBox(height: 20),
-              NumpadInputField(
-                label: '$typeText Edilecek Miktar',
-                onChanged: (value) =>
-                    notifier.changeAmount(value, onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg)),
-                value: notifier.disposableAmount?.formatFractional ?? '-',
-                unit: notifier.doseUnit,
-              ),
+              // NumpadInputField(
+              //   label: '$typeText Edilecek Miktar',
+              //   onChanged: (value) =>
+              //       notifier.changeAmount(value, onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg)),
+              //   value: notifier.disposableAmount?.formatFractional ?? '-',
+              //   unit: notifier.doseUnit,
+              // ),
               SizedBox(height: 20),
               _submitButton(notifier, context),
               SizedBox(height: 20),

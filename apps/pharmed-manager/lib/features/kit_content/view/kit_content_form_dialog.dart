@@ -75,7 +75,7 @@ class _MaterialField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
-        return SelectionField<Medicine>(
+        return MedSelectionField<Medicine>(
           label: 'Malzeme',
           title: 'Malzeme',
           initialValue: notifier.kitContent.medicine,
@@ -96,7 +96,7 @@ class _PieceField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
-        return TextInputField(
+        return MedTextInputField(
           label: 'Adet',
           initialValue: notifier.kitContent.piece.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],

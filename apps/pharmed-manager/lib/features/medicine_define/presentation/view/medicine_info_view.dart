@@ -10,15 +10,9 @@ class MedicineInfoView extends StatelessWidget {
         return Column(
           spacing: AppDimensions.registrationDialogSpacing,
           children: [
-            TextInputField(
-              label: 'İlaç Adı',
-              onChanged: (value) => vm.medicineName = value,
-            ),
-            TextInputField(
-              label: 'Barkod',
-              onChanged: (value) => vm.barcode = value,
-            ),
-            TextInputField(
+            MedTextInputField(label: 'İlaç Adı', onChanged: (value) => vm.medicineName = value),
+            MedTextInputField(label: 'Barkod', onChanged: (value) => vm.barcode = value),
+            MedTextInputField(
               label: 'Doz',
               onChanged: (value) => vm.dosePiece = int.tryParse(value ?? "0"),
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],

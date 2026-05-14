@@ -15,10 +15,10 @@ class DrawerRefundScreen extends StatelessWidget {
       create: (context) => DrawerRefundNotifier(getDrawerRefundsUseCase: context.read())..getRefunds(),
       child: Consumer<DrawerRefundNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'İade Çekmece Kontrol',
               subtitle: menu.description,
               showAddButton: false,

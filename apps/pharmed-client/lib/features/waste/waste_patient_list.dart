@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../widgets/widgets.dart';
+
 /// Sol panel — hasta listesi + arama.
 class WastePatientList extends StatelessWidget {
   const WastePatientList({
@@ -29,7 +31,7 @@ class WastePatientList extends StatelessWidget {
         spacing: 12.0,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextInputField(
+          MedTextInputField(
             hintText: 'Hasta ara...',
             initialValue: search,
             onChanged: (query) => onSearchChanged(query ?? ''),

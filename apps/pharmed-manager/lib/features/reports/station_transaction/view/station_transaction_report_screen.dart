@@ -15,10 +15,10 @@ class StationTransactionReportScreen extends StatelessWidget {
         getCabinStockTransactionsUseCase: context.read(),
         getStationsUseCase: context.read(),
       )..getStations(),
-      child: ResponsiveLayout(
-        mobile: MobileLayout(),
-        tablet: TabletLayout(),
-        desktop: DesktopLayout(
+      child: MedResponsiveLayout(
+        mobile: MedMobileLayout(),
+        tablet: MedTabletLayout(),
+        desktop: MedDesktopLayout(
           title: menu.name ?? 'İstasyon Hareketleri',
           subtitle: menu.description,
           child: Consumer<StationTransactionReportNotifier>(

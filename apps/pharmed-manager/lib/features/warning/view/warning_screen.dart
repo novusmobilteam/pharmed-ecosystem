@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/widgets/side_panel.dart';
+import '../../../../widgets/side_panel.dart';
 
 import 'package:provider/provider.dart';
 
@@ -20,10 +20,10 @@ class WarningScreen extends StatelessWidget {
           WarningNotifier(getWarningsUseCase: context.read(), deleteWarningUseCase: context.read())..getWarnings(),
       child: Consumer<WarningNotifier>(
         builder: (context, notifier, _) {
-          return ResponsiveLayout(
-            mobile: const MobileLayout(),
-            tablet: const TabletLayout(),
-            desktop: DesktopLayout(
+          return MedResponsiveLayout(
+            mobile: const MedMobileLayout(),
+            tablet: const MedTabletLayout(),
+            desktop: MedDesktopLayout(
               title: menu.name ?? 'Uyarı Tanımlama',
               subtitle: menu.description,
               actions: [MedButton(onPressed: () => notifier.openPanel(), size: MedButtonSize.sm, label: 'Yeni Uyarı')],

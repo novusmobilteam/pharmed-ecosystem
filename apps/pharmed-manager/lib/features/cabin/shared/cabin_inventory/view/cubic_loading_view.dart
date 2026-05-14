@@ -112,7 +112,7 @@ class _CubicLoadingViewState extends State<CubicLoadingView> {
               children: [
                 // Miad tarihi giriş alanı: refill/count için düzenlenebilir
                 if (widget.type.enableMiadDateInput)
-                  DateInputField(
+                  MedDateInputField(
                     label: 'Miad Tarihi',
                     // _shouldLock=true: alan kilitli, mevcut miad salt-okunur gösterilir.
                     //   - enabled=false → ek görsel kilit
@@ -132,7 +132,7 @@ class _CubicLoadingViewState extends State<CubicLoadingView> {
                 // Bilgilendirme amaçlı miad tarihi: disposal/unload için salt-okunur.
                 // Bu tipler miad girişi gerektirmez ancak mevcut miad gösterilebilir.
                 if (!widget.type.enableMiadDateInput && context.read<CabinInventoryNotifier>().miadDate != null)
-                  DateInputField(
+                  MedDateInputField(
                     label: 'Mevcut Miad Tarihi',
                     enabled: false,
                     initialValue: context.read<CabinInventoryNotifier>().miadDate,
