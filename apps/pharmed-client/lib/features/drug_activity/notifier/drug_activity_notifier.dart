@@ -13,11 +13,11 @@ final drugActivityNotifierProvider = NotifierProvider<DrugActivityNotifier, Drug
 class DrugActivityNotifier extends Notifier<DrugActivityState> {
   GetCurrentStationDrugActivityUseCase get _useCase => ref.read(getCurrentStationDrugActivityUseCaseProvider);
 
-  DateTime _startDate = DateTime.now().subtract(const Duration(days: 1));
-  DateTime get startDate => _startDate;
+  DateTime? _startDate;
+  DateTime? get startDate => _startDate;
 
-  DateTime _endDate = DateTime.now().add(const Duration(days: 1));
-  DateTime get endDate => _endDate;
+  DateTime? _endDate;
+  DateTime? get endDate => _endDate;
 
   int _currentPage = 1;
   int get currentPage => _currentPage;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Bir [Hospitalization] kaydını liste satırı olarak gösteren genel
 /// amaçlı widget.
@@ -75,80 +74,80 @@ class HospitalizationCard extends StatelessWidget {
   String? get _location {
     final room = hospitalization.bed?.room?.name ?? hospitalization.room?.name;
     final bed = hospitalization.bed?.name;
-    if (room != null && bed != null) return '$room · $bed';
+    if (room != null && bed != null) return '· $room $bed';
     return room ?? bed;
-  }
-
-  /// Servis ve konumu birleştiren tek meta satırı.
-  ///
-  /// Her ikisi de varsa `Servis  ·  Oda · Yatak` biçiminde döner.
-  String? get _metaLine {
-    final s = _service;
-    final l = _location;
-    if (s != null && l != null) return '$s  ·  $l';
-    return s ?? l;
   }
 
   @override
   Widget build(BuildContext context) {
     final patient = hospitalization.patient;
+    print(hospitalization.room);
 
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
+        height: 85,
         duration: const Duration(milliseconds: 150),
-        constraints: const BoxConstraints(minHeight: MedSpacing.touchTarget),
-        padding: const EdgeInsets.symmetric(horizontal: MedSpacing.lg, vertical: MedSpacing.md + 2),
         decoration: BoxDecoration(
           color: isSelected ? MedColors.blueLight : Colors.transparent,
-          border: Border.all(color: isSelected ? MedColors.blue : Colors.transparent, width: 1.5),
-          borderRadius: MedRadius.smAll,
+          border: Border.all(color: isSelected ? MedColors.blue : MedColors.border, width: 1.5),
+          borderRadius: MedRadius.lgAll,
         ),
         child: Row(
           children: [
-            // ── Avatar ──────────────────────────────────────────────
-            MedAvatar(
-              initials: patient?.initials ?? '?',
-              palette: isSelected ? AvatarPalette.blue : AvatarPalette.blue,
-              size: 36,
+            Opacity(
+              opacity: isSelected ? 1 : 0,
+              child: Container(
+                width: 4,
+                height: 55,
+                decoration: BoxDecoration(
+                  color: MedColors.blue,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(MedRadius.sm.x),
+                    bottomRight: Radius.circular(MedRadius.sm.x),
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(width: MedSpacing.lg),
-            // ── İsim + meta ─────────────────────────────────────────
+            SizedBox(width: 15),
+            MedAvatar(initials: patient?.initials ?? '?', palette: AvatarPalette.blue, size: 42),
+            SizedBox(width: 10),
             Expanded(
               child: Column(
+                spacing: 2,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     patient?.fullName ?? '—',
-                    style: MedTextStyles.bodyMd(
-                      color: isSelected ? MedColors.blue : MedColors.text,
-                      weight: FontWeight.w600,
-                    ),
+                    style: MedTextStyles.titleMd(color: isSelected ? MedColors.blue : MedColors.text),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (_metaLine != null)
-                    Text(
-                      _metaLine!,
-                      style: MedTextStyles.monoXs(color: isSelected ? MedColors.blue.withAlpha(178) : MedColors.text3),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  Row(
+                    spacing: 4,
+                    children: [
+                      if (_service != null)
+                        Text(
+                          _service!,
+                          style: MedTextStyles.monoSm(
+                            color: MedColors.blue.withAlpha(178),
+                          ).copyWith(fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      if (_location != null)
+                        Text(
+                          _location!,
+                          style: MedTextStyles.monoSm().copyWith(fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            const SizedBox(width: MedSpacing.md),
-            // ── Trailing ────────────────────────────────────────────
-            if (isLoading)
-              SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2, color: isSelected ? MedColors.blue : MedColors.text3),
-              )
-            else if (trailing != null)
-              trailing!
-            else if (showChevron)
-              Icon(PhosphorIcons.caretRight(), size: 14, color: isSelected ? MedColors.blue : MedColors.text4),
           ],
         ),
       ),

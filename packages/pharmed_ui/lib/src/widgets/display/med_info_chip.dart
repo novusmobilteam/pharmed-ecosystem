@@ -24,11 +24,8 @@ class MedInfoChip extends StatelessWidget {
   Widget build(BuildContext context) {
     if (info == null) return const SizedBox.shrink();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor ?? MedColors.blueLight,
-        borderRadius: BorderRadius.circular(6),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(color: backgroundColor ?? MedColors.blueLight, borderRadius: BorderRadius.circular(8)),
       child: Text(
         info!,
         textAlign: TextAlign.center,

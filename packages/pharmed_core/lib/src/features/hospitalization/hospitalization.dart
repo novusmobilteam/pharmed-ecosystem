@@ -1,6 +1,6 @@
-export 'data/hospitalization_dto.dart';
-export 'domain/model/hospitalization.dart';
-export 'domain/model/patient_row.dart';
+export 'dto/hospitalization_dto.dart';
+export 'domain/entity/hospitalization.dart';
+export 'domain/entity/patient_row.dart';
 export 'domain/repository/i_hospitalization_repository.dart';
 export 'domain/usecase/create_hospitalization_usecase.dart';
 export 'domain/usecase/delete_hospitalization_usecase.dart';

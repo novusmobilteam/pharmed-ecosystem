@@ -6,3 +6,4 @@ export 'rx_draft_item_card.dart';
 export 'rx_group_card.dart';
 export 'rx_item_card.dart';
 export 'rx_operation_card.dart';
+export 'hospitalization_detail_banner.dart';

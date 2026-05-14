@@ -12,6 +12,7 @@ class HospitalizationDTO {
   final int? doctorId;
   final UserDTO? doctor;
   final int? roomId;
+  final BedDto? bed;
   final int? bedId;
   final String? description;
   final DateTime? admissionDate;
@@ -34,6 +35,7 @@ class HospitalizationDTO {
     this.doctorId,
     this.doctor,
     this.roomId,
+    this.bed,
     this.bedId,
     this.description,
     this.admissionDate,
@@ -58,6 +60,7 @@ class HospitalizationDTO {
       doctorId: json['doctorId'] as int?,
       doctor: json['doctor'] != null ? UserDTO.fromJson(json['doctor']) : null,
       roomId: json['roomId'] as int?,
+      bed: json['bed'] != null ? BedDto.fromJson(json['bed']) : null,
       bedId: json['bedId'] as int?,
       description: json['description'] as String?,
       admissionDate: json['admissionDate'] != null ? DateTime.tryParse(json['admissionDate']) : null,

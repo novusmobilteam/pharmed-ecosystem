@@ -30,7 +30,7 @@ class DrugActivityScreen extends ConsumerWidget {
               currentPage: notifier.currentPage,
               pageSize: notifier.pageSize,
               enableDateFilter: true,
-              initialDateRange: DateTimeRange(start: notifier.startDate, end: notifier.endDate),
+
               onPageChanged: (page) => notifier.goToPage(page),
               onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
               columnDefs: const [

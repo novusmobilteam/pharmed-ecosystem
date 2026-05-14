@@ -45,8 +45,8 @@ class _MobileRefundViewState extends ConsumerState<MobileRefundView> {
       children: [
         SizedBox(
           width: 360,
-          child: RefundPatientList(
-            patients: state.filteredPatients,
+          child: PatientListPanel(
+            patients: state.patients,
             selectedPatient: state.selectedPatient,
             isPatientLoading: state.isPatientLoading,
             search: state.search,
@@ -54,7 +54,7 @@ class _MobileRefundViewState extends ConsumerState<MobileRefundView> {
             onSearchChanged: notifier.onSearchChanged,
           ),
         ),
-        const VerticalDivider(width: 1, thickness: 1),
+        VerticalDivider(width: 1, thickness: 1, color: MedColors.border),
         Expanded(
           child: _RightPanel(state: state, notifier: notifier),
         ),
@@ -86,14 +86,16 @@ class _RightPanel extends StatelessWidget {
         Expanded(
           child: state.isPatientLoading
               ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
-              : RefundDrugList(
+              : RxDrugPanel(
+                  title: 'İade Edilebilir İlaçlar',
                   items: state.refundables,
                   selectedItem: state.selectedItem,
                   isBusy: state.isBusy,
                   onDrugTap: notifier.onDrugTap,
+                  hospitalization: selectedPatient,
+                  showFilters: false,
                 ),
         ),
-
         _RefundActionBar(
           state: state,
           onQuantityChanged: notifier.onQuantityChanged,
@@ -132,7 +134,7 @@ class _RefundActionBar extends StatelessWidget {
           MedButton(
             label: 'Vazgeç',
             variant: MedButtonVariant.ghost,
-            size: MedButtonSize.md,
+            size: MedButtonSize.sm,
             onPressed: selectedItem != null && !isBusy ? onClear : null,
           ),
           const SizedBox(width: MedSpacing.md),
@@ -140,7 +142,7 @@ class _RefundActionBar extends StatelessWidget {
             MedButton(
               label: state.isChecking ? 'Kontrol ediliyor...' : 'İade ediliyor...',
               variant: MedButtonVariant.primary,
-              size: MedButtonSize.md,
+              size: MedButtonSize.sm,
               isLoading: true,
               onPressed: null,
             )
@@ -148,7 +150,7 @@ class _RefundActionBar extends StatelessWidget {
             MedButton(
               label: 'İade Et',
               variant: MedButtonVariant.primary,
-              size: MedButtonSize.md,
+              size: MedButtonSize.sm,
               onPressed: canRefund ? onRefund : null,
             ),
         ],

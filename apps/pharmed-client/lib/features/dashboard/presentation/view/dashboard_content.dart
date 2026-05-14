@@ -29,6 +29,7 @@ class DashboardContentFactory {
         'drug-waste' => WasteView(),
         'drug-activity' => DrugActivityScreen(),
         'drawer-malfunction' => FaultView(),
+        'cabin-stock' => CabinStockView(),
 
         // Fallback
         _ => Center(child: Text(context.l10n.common_pageNotFound)),

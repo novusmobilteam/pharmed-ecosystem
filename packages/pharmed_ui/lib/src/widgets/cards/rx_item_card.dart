@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // RxItemCard
@@ -88,8 +89,8 @@ class RxItemCard extends StatelessWidget {
   /// Gösterilecek satır sayısını minimumda tutmak için
   /// [PrescriptionItem.activityUser] + [PrescriptionItem.activityDate]
   /// getter'ları kullanılır.
-  (String label, String? value) get _activityRow {
-    final label = switch (item.status) {
+  String get activityLabel {
+    return switch (item.status) {
       PrescriptionStatus.pendingApproval || PrescriptionStatus.filledWaiting => 'Oluşturan',
       PrescriptionStatus.purchasePending => 'Onaylayan',
       PrescriptionStatus.applied => 'Uygulayan',
@@ -100,22 +101,10 @@ class RxItemCard extends StatelessWidget {
       PrescriptionStatus.rejected => 'Reddeden',
       null => 'İşlem Yapan',
     };
-
-    final user = item.activityUser?.fullName;
-    final date = item.activityDate?.formattedDate;
-
-    final value = switch ((user, date)) {
-      (final u?, final d?) => '$u · $d',
-      (final u?, null) => u,
-      (null, final d?) => d,
-      _ => null,
-    };
-
-    return (label, value);
   }
 
-  String? get _serviceName => item.physicalService?.name ?? item.inpatientService?.name;
-
+  String? get _activityUser => item.activityUser?.fullName;
+  DateTime? get _activityDate => item.activityDate;
   String? get _doctorName => item.doctor?.fullName;
 
   @override
@@ -126,30 +115,24 @@ class RxItemCard extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.all(MedSpacing.xl),
         decoration: BoxDecoration(
-          color: isSelected ? MedColors.blueLight : MedColors.surface,
+          color: MedColors.surface,
           border: Border.all(color: isSelected ? MedColors.blue : MedColors.border, width: 1.5),
           borderRadius: MedRadius.lgAll,
         ),
         child: Column(
+          spacing: 12.0,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _TopRow(item: item, isSelected: isSelected),
-            const SizedBox(height: MedSpacing.lg),
-            Divider(height: 1),
-            const SizedBox(height: MedSpacing.lg),
+            DottedDivider(),
             _MetaGrid(
-              item: item,
               isSelected: isSelected,
-              activityRow: _activityRow,
-              serviceName: _serviceName,
+              activityLabel: activityLabel,
+              activityUser: _activityUser,
               doctorName: _doctorName,
+              activityDate: _activityDate,
             ),
             const SizedBox(height: MedSpacing.lg),
-            InfoChip(
-              info: item.status?.label,
-              backgroundColor: item.status?.backgroundColor,
-              foregroundColor: item.status?.color,
-            ),
             if (showStepper && isSelected) ...[
               const SizedBox(height: MedSpacing.lg),
               Divider(height: 1),
@@ -171,21 +154,31 @@ class _TopRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dose = '${item.dosePiece?.formatFractional} ${item.medicine?.operationUnit}';
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
+
       children: [
-        MedCheckbox(value: isSelected, onChanged: (value) {}),
-        const SizedBox(width: MedSpacing.lg),
-        Expanded(
-          child: Text(
-            item.medicine?.name ?? '—',
-            style: MedTextStyles.bodyLg(color: isSelected ? MedColors.blue : MedColors.text, weight: FontWeight.w600),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(color: item.status?.backgroundColor, borderRadius: MedRadius.mdAll),
+          child: Icon(PhosphorIcons.pill(), color: item.status?.color),
         ),
         const SizedBox(width: MedSpacing.lg),
-        MedDoseChip(item: item),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(item.medicine?.name ?? '—', style: MedTextStyles.titleMd(), overflow: TextOverflow.ellipsis),
+            Text(dose, style: MedTextStyles.titleSm()),
+          ],
+        ),
+        Spacer(),
+        InfoChip(
+          info: item.status?.label,
+          backgroundColor: item.status?.backgroundColor,
+          foregroundColor: item.status?.color,
+        ),
       ],
     );
   }
@@ -193,64 +186,49 @@ class _TopRow extends StatelessWidget {
 
 class _MetaGrid extends StatelessWidget {
   const _MetaGrid({
-    required this.item,
     required this.isSelected,
-    required this.activityRow,
-    required this.serviceName,
+    required this.activityLabel,
+    required this.activityUser,
     required this.doctorName,
+    this.activityDate,
   });
 
-  final PrescriptionItem item;
   final bool isSelected;
-  final (String, String?) activityRow;
-  final String? serviceName;
+  final String activityLabel;
+  final String? activityUser;
   final String? doctorName;
+  final DateTime? activityDate;
 
   @override
   Widget build(BuildContext context) {
-    final (actLabel, actValue) = activityRow;
-
-    // Her zaman gösterilecek satırlar
-    final entries = <(String, String?)>[
-      (actLabel, actValue),
-      if (item.dosePiece != null)
-        ('Doz', '${item.dosePiece!.formatFractional} ${item.medicine?.operationUnit ?? 'Adet'}'),
-      if (serviceName != null) ('Servis', serviceName),
-      if (doctorName != null) ('Doktor', doctorName),
-      if (item.prescriptionDate != null) ('Reçete Tarihi', item.prescriptionDate!.formattedDate),
-    ];
-
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      spacing: MedSpacing.xl4 * 2,
-      children: entries.map((e) => _MetaItem(label: e.$1, value: e.$2, isSelected: isSelected)).toList(),
+      spacing: 24.0,
+      children: [
+        _MetaItem(label: 'Doktor', value: doctorName),
+        _MetaItem(label: activityLabel, value: activityUser),
+        Spacer(),
+        if (activityDate != null) TimeChip(time: activityDate!),
+      ],
     );
   }
 }
 
 class _MetaItem extends StatelessWidget {
-  const _MetaItem({required this.label, required this.value, required this.isSelected});
+  const _MetaItem({required this.label, required this.value});
 
   final String label;
   final String? value;
-  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label.toUpperCase(),
-          style: MedTextStyles.monoXs(color: isSelected ? MedColors.blue.withAlpha(128) : MedColors.text4),
-        ),
+        Text(label.toUpperCase(), style: MedTextStyles.monoMd()),
         const SizedBox(height: 2),
         Text(
           value ?? '—',
-          style: MedTextStyles.bodySm(
-            color: isSelected ? MedColors.blue.withAlpha(217) : MedColors.text2,
-            weight: FontWeight.w500,
-          ),
+          style: MedTextStyles.bodyLg(color: MedColors.text2, weight: FontWeight.bold),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
