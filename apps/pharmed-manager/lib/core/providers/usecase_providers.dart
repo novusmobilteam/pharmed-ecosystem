@@ -96,6 +96,7 @@ class UsecaseProviders {
 
       /// Menu
       Provider(create: (context) => GetFilteredMenusUseCase(context.read(), isManager: true)),
+      Provider(create: (context) => GetAllMenusUseCase(context.read())),
 
       /// Patient
       Provider(create: (context) => AddPatientUseCase(context.read())),

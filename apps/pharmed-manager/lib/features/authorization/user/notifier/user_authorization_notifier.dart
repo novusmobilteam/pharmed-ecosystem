@@ -4,13 +4,13 @@ import '../../../../core/core.dart';
 class UserAuthorizationNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetUserMenuAuthorizationUseCase _getAuthUseCase;
   final SaveUserMenuAuthorizationUseCase _saveAuthUseCase;
-  final GetFilteredMenusUseCase _getMenusUseCase;
+  final GetAllMenusUseCase _getMenusUseCase;
   final User _user;
 
   UserAuthorizationNotifier({
     required GetUserMenuAuthorizationUseCase getAuthUseCase,
     required SaveUserMenuAuthorizationUseCase saveAuthUseCase,
-    required GetFilteredMenusUseCase getMenusUseCase,
+    required GetAllMenusUseCase getMenusUseCase,
     required User user,
   }) : _getAuthUseCase = getAuthUseCase,
        _saveAuthUseCase = saveAuthUseCase,

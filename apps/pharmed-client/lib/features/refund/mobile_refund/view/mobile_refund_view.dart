@@ -128,7 +128,7 @@ class _RefundActionBar extends StatelessWidget {
     final canRefund = state.canRefund;
 
     return Padding(
-      padding: MedSpacing.insetLg,
+      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl4, vertical: MedSpacing.xl),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

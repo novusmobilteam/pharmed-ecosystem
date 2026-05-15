@@ -122,6 +122,7 @@ class _CabinPatientPickerListState extends State<CabinPatientPickerList> {
   Widget _buildSearchField() {
     return MedTextInputField(
       controller: _searchController,
+      //prefixIcon: Icon(PhosphorIcons.magnifyingGlass()),
       hintText: 'Hasta, oda, yatak veya servis ara...',
       onChanged: (v) => setState(() => _query = v ?? ''),
     );
@@ -174,23 +175,22 @@ class CabinPatientPickerItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
-            MedAvatar(initials: assignment.hospitalization?.patient?.initials ?? '?', palette: AvatarPalette.blue),
+            MedAvatar(
+              initials: assignment.hospitalization?.patient?.initials ?? '?',
+              palette: AvatarPalette.blue,
+              size: 32,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    _name,
-                    style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (_location != null) Text(_location!, style: MedTextStyles.monoXs(color: MedColors.text3)),
+                  Text(_name, style: MedTextStyles.titleSm(), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  if (_location != null) Text(_location!, style: MedTextStyles.monoMd(color: MedColors.text3)),
                 ],
               ),
             ),
-            Icon(PhosphorIcons.caretRight(), size: 14, color: MedColors.text4),
+            Icon(PhosphorIcons.caretRight(), size: 16, color: MedColors.text4),
           ],
         ),
       ),

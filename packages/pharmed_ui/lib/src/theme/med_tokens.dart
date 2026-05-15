@@ -122,7 +122,7 @@ abstract final class MedRadius {
   static const Radius xs = Radius.circular(3);
 
   /// 4px — manager input alanları, sıkı yerleşim elementleri.
-  static const Radius sm = Radius.circular(4);
+  static const Radius sm = Radius.circular(5);
 
   /// 8px — butonlar, input alanları, kart köşeleri (genel).
   static const Radius md = Radius.circular(8);
@@ -318,7 +318,7 @@ abstract final class MedSpacing {
   static const double inputMinHeightManager = 38.0;
 
   /// Client input minimum yüksekliği — dokunmatik hedef boyutu.
-  static const double inputMinHeightClient = 48.0;
+  static const double inputMinHeightClient = 44.0;
 
   // ── Label tipografi değerleri ───────────────────────────────────
   /// Manager label font boyutu — sıkı mono etiket.

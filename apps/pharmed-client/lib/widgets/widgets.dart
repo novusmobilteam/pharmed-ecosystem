@@ -19,5 +19,6 @@ export 'rx_drug_panel.dart';
 export 'rx_group_card.dart';
 export 'rx_item_card.dart';
 export 'rx_operation_card.dart';
+export 'rx_status_detail_block.dart';
 
 export 'domain/domain.dart';

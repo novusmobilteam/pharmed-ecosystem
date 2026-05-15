@@ -101,15 +101,15 @@ class CabinActivePatientCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: MedColors.surface,
-        borderRadius: MedRadius.mdAll,
+        borderRadius: MedRadius.lgAll,
         border: Border.all(color: MedColors.border),
         boxShadow: MedShadows.sm,
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 8, 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         child: Row(
           children: [
-            MedAvatar(initials: _initials, palette: AvatarPalette.blue),
+            MedAvatar(initials: _initials, palette: AvatarPalette.blue, size: 32),
             const SizedBox(width: 10),
             Expanded(
               child: _PatientInfo(fullName: patient.fullName, location: _location),
@@ -135,13 +135,8 @@ class _PatientInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          fullName,
-          style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        if (location != null) Text(location!, style: MedTextStyles.monoXs()),
+        Text(fullName, style: MedTextStyles.titleSm(), maxLines: 1, overflow: TextOverflow.ellipsis),
+        if (location != null) Text(location!, style: MedTextStyles.monoMd(color: MedColors.text3)),
       ],
     );
   }
@@ -154,13 +149,14 @@ class _ChangeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(PhosphorIcons.userSwitch(), size: 18, color: MedColors.text2),
-      tooltip: 'Başka hasta seç',
-      onPressed: onTap,
-      padding: EdgeInsets.zero,
-      // HMI dokunmatik ekran kuralı: minimum 36×36 dokunma hedefi
-      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+    return GestureDetector(
+      onTap: onTap,
+      child: MedRectangleIcon(
+        backgroundColor: MedColors.surface2,
+        foregroundColor: MedColors.text2,
+        icon: PhosphorIcons.userSwitch(),
+        size: Size(36, 36),
+      ),
     );
   }
 }

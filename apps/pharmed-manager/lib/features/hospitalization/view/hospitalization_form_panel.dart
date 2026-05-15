@@ -284,7 +284,6 @@ class _DescriptionField extends StatelessWidget {
         return MedTextInputField(
           label: 'Açıklama',
           hintText: 'Açıklama',
-          maxLines: 3,
           initialValue: notifier.hospitalization?.description,
           onChanged: notifier.updateDescription,
         );

@@ -16,6 +16,8 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<List<MenuDTO>?>> getMenus({int? userId}) async {
     final path = userId == null ? '/Menu' : '/Menu/user/$userId';
 
+    print('Pathhhh:$path');
+
     return await fetchRequest<List<MenuDTO>>(path: path, parser: BaseRemoteDataSource.listParser(MenuDTO.fromJson));
   }
 

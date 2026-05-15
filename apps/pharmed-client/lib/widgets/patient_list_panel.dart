@@ -132,7 +132,7 @@ class _PatientList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
       itemCount: patients.length,
-      separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.xs / 2),
+      separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
       itemBuilder: (context, index) {
         final h = patients[index];
         final isSelected = selectedPatient?.id == h.id;

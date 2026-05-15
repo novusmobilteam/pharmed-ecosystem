@@ -131,14 +131,12 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
                 counterText: '',
                 hintText: widget.hintText,
                 hintStyle: TextStyle(fontFamily: MedFonts.sans, fontSize: style.inputFontSize, color: MedColors.text4),
+
                 prefixIcon: widget.prefixIcon != null
                     ? IconTheme(
                         data: IconThemeData(size: 16, color: _focused ? MedColors.blue : MedColors.text3),
                         child: widget.prefixIcon!,
                       )
-                    : null,
-                prefixIconConstraints: widget.prefixIcon != null
-                    ? const BoxConstraints(minWidth: 32, minHeight: 0)
                     : null,
                 suffixIcon: widget.suffixIcon,
                 suffixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 0),

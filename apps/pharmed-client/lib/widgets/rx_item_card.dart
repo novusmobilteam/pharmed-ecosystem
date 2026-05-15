@@ -1,6 +1,7 @@
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/widgets/rx_status_detail_block.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
@@ -82,38 +83,13 @@ class RxItemCard extends StatelessWidget {
   /// [showStepper] true ise zorunludur.
   final ValueChanged<double>? onQuantityChanged;
 
-  // ── Yardımcılar ────────────────────────────────────────────────
-
-  /// Status'a göre "kimin yaptığı"nı ve tarihini döner.
-  ///
-  /// Gösterilecek satır sayısını minimumda tutmak için
-  /// [PrescriptionItem.activityUser] + [PrescriptionItem.activityDate]
-  /// getter'ları kullanılır.
-  String get activityLabel {
-    return switch (item.status) {
-      PrescriptionStatus.pendingApproval || PrescriptionStatus.filledWaiting => 'Oluşturan',
-      PrescriptionStatus.purchasePending => 'Onaylayan',
-      PrescriptionStatus.applied => 'Uygulayan',
-      PrescriptionStatus.returned => 'İade Eden',
-      PrescriptionStatus.wastaged => 'Fire Eden',
-      PrescriptionStatus.destructed => 'İmha Eden',
-      PrescriptionStatus.cancelled => 'İptal Eden',
-      PrescriptionStatus.rejected => 'Reddeden',
-      null => 'İşlem Yapan',
-    };
-  }
-
-  String? get _activityUser => item.activityUser?.fullName;
-  DateTime? get _activityDate => item.activityDate;
-  String? get _doctorName => item.doctor?.fullName;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: isBusy ? null : onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.all(MedSpacing.xl),
+        padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl4, vertical: MedSpacing.xl2),
         decoration: BoxDecoration(
           color: MedColors.surface,
           border: Border.all(color: isSelected ? MedColors.blue : MedColors.border, width: 1.5),
@@ -125,13 +101,7 @@ class RxItemCard extends StatelessWidget {
           children: [
             _TopRow(item: item, isSelected: isSelected),
             MedDottedDivider(),
-            _MetaGrid(
-              isSelected: isSelected,
-              activityLabel: activityLabel,
-              activityUser: _activityUser,
-              doctorName: _doctorName,
-              activityDate: _activityDate,
-            ),
+            RxStatusDetailBlock(item: item),
             const SizedBox(height: MedSpacing.lg),
             if (showStepper && isSelected) ...[
               const SizedBox(height: MedSpacing.lg),
@@ -178,59 +148,6 @@ class _TopRow extends StatelessWidget {
           info: item.status?.label,
           backgroundColor: item.status?.backgroundColor,
           foregroundColor: item.status?.color,
-        ),
-      ],
-    );
-  }
-}
-
-class _MetaGrid extends StatelessWidget {
-  const _MetaGrid({
-    required this.isSelected,
-    required this.activityLabel,
-    required this.activityUser,
-    required this.doctorName,
-    this.activityDate,
-  });
-
-  final bool isSelected;
-  final String activityLabel;
-  final String? activityUser;
-  final String? doctorName;
-  final DateTime? activityDate;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      spacing: 24.0,
-      children: [
-        _MetaItem(label: 'Doktor', value: doctorName),
-        _MetaItem(label: activityLabel, value: activityUser),
-        Spacer(),
-        if (activityDate != null) TimeChip(time: activityDate!),
-      ],
-    );
-  }
-}
-
-class _MetaItem extends StatelessWidget {
-  const _MetaItem({required this.label, required this.value});
-
-  final String label;
-  final String? value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label.toUpperCase(), style: MedTextStyles.monoMd()),
-        const SizedBox(height: 2),
-        Text(
-          value ?? '—',
-          style: MedTextStyles.bodyLg(color: MedColors.text2, weight: FontWeight.bold),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

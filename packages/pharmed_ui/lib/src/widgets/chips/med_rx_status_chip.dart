@@ -22,7 +22,7 @@ class MedRxStatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
         color: status.backgroundColor,
         borderRadius: MedRadius.smAll,
@@ -31,7 +31,12 @@ class MedRxStatusChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(status.icon, size: 10, color: status.color),
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: status.color, shape: BoxShape.circle),
+          ),
+          // Icon(status.icon, size: 10, color: status.color),
           const SizedBox(width: 4),
           Text(status.label, style: MedTextStyles.monoSm(color: status.color)),
         ],

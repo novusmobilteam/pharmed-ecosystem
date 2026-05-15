@@ -165,7 +165,7 @@ class DashboardRepositoryImpl implements IDashboardRepository {
   }
 
   @override
-  Future<RepoResult<List<MenuItem>>> getMenuItems({bool forceRefresh = false, int? userId}) {
+  Future<RepoResult<List<MenuItem>>> getMenuItems({bool forceRefresh = true, int? userId}) {
     return CachedEntry.performFetch(
       ttl: _ttl,
       currentCache: _menuItems,

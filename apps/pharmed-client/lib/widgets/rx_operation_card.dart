@@ -67,10 +67,6 @@ enum RxOperationCardMode {
   intake,
 }
 
-// ---------------------------------------------------------------------------
-// RxOperationCard
-// ---------------------------------------------------------------------------
-
 class RxOperationCard extends StatelessWidget {
   const RxOperationCard({
     super.key,
@@ -105,10 +101,9 @@ class RxOperationCard extends StatelessWidget {
   }
 
   bool get _hasRfidTag => item.rfidTag != null;
-
   bool get _isLocked => onTap == null;
-
   bool get _showRfidLiveStatus => _isLocked && isSelected && _needsRfid && _hasRfidTag;
+  bool get _isActive => isSelected && _isLocked;
 
   Color get _borderColor {
     if (mode == RxOperationCardMode.intake && isSelected && _hasRfidTag && rfidStatus == RfidPresenceStatus.absent) {
@@ -116,66 +111,6 @@ class RxOperationCard extends StatelessWidget {
     }
     return isSelected ? MedColors.blue : MedColors.border;
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: MedRadius.mdAll,
-        child: InkWell(
-          onTap: isEligible ? onTap : null,
-          borderRadius: MedRadius.mdAll,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            decoration: BoxDecoration(
-              color: MedColors.surface,
-              borderRadius: MedRadius.mdAll,
-              border: Border.all(color: _borderColor, width: isSelected ? 1.5 : 1),
-              boxShadow: MedShadows.sm,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _CardBody(
-                  item: item,
-                  isSelected: isSelected,
-                  needsRfid: _needsRfid,
-                  showRfidLiveStatus: _showRfidLiveStatus,
-                  isEligible: isEligible,
-                ),
-                if (_needsRfid && _hasRfidTag) ...[
-                  Divider(height: 1, thickness: 1, color: MedColors.border2),
-                  _RfidRow(rfidStatus: rfidStatus, showLiveStatus: _showRfidLiveStatus, tag: item.rfidTag!, mode: mode),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// _CardBody
-// ---------------------------------------------------------------------------
-
-class _CardBody extends StatelessWidget {
-  const _CardBody({
-    required this.item,
-    required this.isSelected,
-    required this.needsRfid,
-    required this.showRfidLiveStatus,
-    required this.isEligible,
-  });
-
-  final PrescriptionItem item;
-  final bool isSelected;
-  final bool needsRfid;
-  final bool showRfidLiveStatus;
-  final bool isEligible;
 
   String get _doseText {
     final piece = item.dosePiece?.formatFractional ?? '-';
@@ -186,72 +121,100 @@ class _CardBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.medicine?.name ?? 'İsimsiz',
-                        style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _doseText,
-                      style: MedTextStyles.monoSm(color: MedColors.text2, weight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    if (item.medicine?.barcode != null) ...[
-                      Text(item.medicine!.barcode!, style: MedTextStyles.monoXs()),
-                      const SizedBox(width: 8),
-                    ],
-                    const Spacer(),
-                    if (item.time != null) TimeChip(time: item.time!),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                RxStatusChip(status: item.status!),
-              ],
-            ),
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: InkWell(
+        onTap: isEligible ? onTap : null,
+        borderRadius: MedRadius.mdAll,
+        child: AnimatedContainer(
+          padding: MedSpacing.insetLg,
+          duration: const Duration(milliseconds: 150),
+          decoration: BoxDecoration(
+            color: MedColors.surface,
+            borderRadius: MedRadius.lgAll,
+            border: Border.all(color: _borderColor, width: isSelected ? 1.5 : 1),
+            boxShadow: MedShadows.md,
           ),
-        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// İlaç ismi ve Doz
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      item.medicine?.name ?? 'İsimsiz',
+                      style: MedTextStyles.titleSm(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    _doseText,
+                    style: MedTextStyles.monoSm(color: MedColors.text2, weight: FontWeight.w600),
+                  ),
+                ],
+              ),
+
+              /// Barkod
+              if (item.medicine?.barcode != null) ...[
+                Text(item.medicine!.barcode!, style: MedTextStyles.bodySm(color: MedColors.text4)),
+              ],
+
+              SizedBox(height: 16.0),
+
+              if (_needsRfid && _hasRfidTag)
+                _RfidRow(
+                  rfidStatus: rfidStatus,
+                  showLiveStatus: _showRfidLiveStatus,
+                  tag: item.rfidTag!,
+                  mode: mode,
+                  isActive: _isActive,
+                ),
+
+              SizedBox(height: 12.0),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (item.status != null) RxStatusChip(status: item.status!),
+                  if (item.time != null) TimeChip(time: item.time!),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// _RfidRow
-// ---------------------------------------------------------------------------
-
 class _RfidRow extends StatelessWidget {
-  const _RfidRow({required this.rfidStatus, required this.showLiveStatus, required this.tag, required this.mode});
+  const _RfidRow({
+    required this.rfidStatus,
+    required this.showLiveStatus,
+    required this.tag,
+    required this.mode,
+    required this.isActive, // 🆕
+  });
 
   final RfidPresenceStatus? rfidStatus;
   final bool showLiveStatus;
   final String tag;
   final RxOperationCardMode mode;
 
+  /// Çekmece açık ve RFID session aktif mi?
+  ///
+  /// `false` → kart seçili değil veya çekmece kapandı → her zaman gri.
+  /// `true` + `rfidStatus == null` → session henüz başlamadı → gri placeholder.
+  /// `true` + `rfidStatus != null` → normal renk matrisi.
+  final bool isActive;
+
   Color get _tagColor {
-    if (rfidStatus == null) return MedColors.text3;
+    if (!isActive || rfidStatus == null) return MedColors.text3;
     return switch ((mode, rfidStatus!)) {
       (RxOperationCardMode.refill, RfidPresenceStatus.present) => MedColors.green,
-      (RxOperationCardMode.refill, _) => MedColors.text3,
+      (RxOperationCardMode.refill, _) => MedColors.blue,
       (RxOperationCardMode.intake, RfidPresenceStatus.present) => MedColors.blue,
       (RxOperationCardMode.intake, RfidPresenceStatus.absent) => MedColors.red,
       (RxOperationCardMode.intake, RfidPresenceStatus.removed) => MedColors.green,
@@ -259,10 +222,10 @@ class _RfidRow extends StatelessWidget {
   }
 
   Color get _rowBg {
-    if (rfidStatus == null) return MedColors.surface2;
+    if (!isActive || rfidStatus == null) return MedColors.surface2;
     return switch ((mode, rfidStatus!)) {
       (RxOperationCardMode.refill, RfidPresenceStatus.present) => MedColors.greenLight,
-      (RxOperationCardMode.refill, _) => MedColors.surface2,
+      (RxOperationCardMode.refill, _) => MedColors.blueLight,
       (RxOperationCardMode.intake, RfidPresenceStatus.present) => MedColors.blueLight,
       (RxOperationCardMode.intake, RfidPresenceStatus.absent) => MedColors.redLight,
       (RxOperationCardMode.intake, RfidPresenceStatus.removed) => MedColors.greenLight,
@@ -273,29 +236,19 @@ class _RfidRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-      decoration: BoxDecoration(
-        color: _rowBg,
-        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-      ),
+      decoration: BoxDecoration(color: _rowBg, borderRadius: BorderRadius.circular(6.0)),
       child: Row(
         children: [
-          Icon(PhosphorIcons.tag(PhosphorIconsStyle.fill), size: 11, color: _tagColor),
+          Icon(PhosphorIcons.tag(), size: 14, color: _tagColor),
           const SizedBox(width: 5),
           Text(tag, style: MedTextStyles.monoXs(color: _tagColor)),
           const Spacer(),
-          if (showLiveStatus && rfidStatus != null)
-            _RfidInlineStatus(status: rfidStatus!, mode: mode)
-          else
-            Text('RFID', style: MedTextStyles.monoXs(color: MedColors.text4)),
+          if (showLiveStatus && isActive && rfidStatus != null) _RfidInlineStatus(status: rfidStatus!, mode: mode),
         ],
       ),
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// _RfidInlineStatus
-// ---------------------------------------------------------------------------
 
 class _RfidInlineStatus extends StatelessWidget {
   const _RfidInlineStatus({required this.status, required this.mode});
@@ -312,48 +265,47 @@ class _RfidInlineStatus extends StatelessWidget {
   }
 
   Widget _buildRefillStatus() => switch (status) {
-    RfidPresenceStatus.present => Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), size: 12, color: MedColors.green),
-        const SizedBox(width: 4),
-        Text('Okundu', style: MedTextStyles.monoSm(color: MedColors.green)),
-      ],
-    ),
-    _ => Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 1.5, color: MedColors.amber)),
-        const SizedBox(width: 4),
-        Text('Bekleniyor', style: MedTextStyles.monoSm(color: MedColors.amber)),
-      ],
-    ),
+    RfidPresenceStatus.present => _StatusChip.check(label: 'Okundu', color: MedColors.green),
+    _ => _StatusChip.spinner(label: 'Bekleniyor', color: MedColors.blue),
   };
 
   Widget _buildIntakeStatus() => switch (status) {
-    RfidPresenceStatus.present => Row(
+    RfidPresenceStatus.present => _StatusChip.spinner(label: 'Kabinde', color: MedColors.blue),
+    RfidPresenceStatus.absent => _StatusChip.warning(label: 'Kabinde değil', color: MedColors.red),
+    RfidPresenceStatus.removed => _StatusChip.check(label: 'Alındı', color: MedColors.green),
+  };
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip.check({required this.label, required this.color}) : _type = _ChipType.check;
+  const _StatusChip.spinner({required this.label, required this.color}) : _type = _ChipType.spinner;
+  const _StatusChip.warning({required this.label, required this.color}) : _type = _ChipType.warning;
+
+  final String label;
+  final Color color;
+  final _ChipType _type;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 1.5, color: MedColors.blue)),
+        _buildLeading(),
         const SizedBox(width: 4),
-        Text('Kabinde', style: MedTextStyles.monoSm(color: MedColors.blue)),
+        Text(label, style: MedTextStyles.monoSm(color: color)),
       ],
-    ),
-    RfidPresenceStatus.absent => Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(PhosphorIcons.warningCircle(PhosphorIconsStyle.fill), size: 12, color: MedColors.red),
-        const SizedBox(width: 4),
-        Text('Kabinde değil', style: MedTextStyles.monoSm(color: MedColors.red)),
-      ],
-    ),
-    RfidPresenceStatus.removed => Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), size: 12, color: MedColors.green),
-        const SizedBox(width: 4),
-        Text('Alındı', style: MedTextStyles.monoSm(color: MedColors.green)),
-      ],
+    );
+  }
+
+  Widget _buildLeading() => switch (_type) {
+    _ChipType.check => Icon(PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), size: 14, color: color),
+    _ChipType.warning => Icon(PhosphorIcons.warningCircle(PhosphorIconsStyle.fill), size: 14, color: color),
+    _ChipType.spinner => SizedBox(
+      width: 10,
+      height: 10,
+      child: CircularProgressIndicator(strokeWidth: 1.5, color: color),
     ),
   };
 }
+
+enum _ChipType { check, warning, spinner }

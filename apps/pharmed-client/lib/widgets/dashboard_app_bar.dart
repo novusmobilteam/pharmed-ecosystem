@@ -187,7 +187,6 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
             );
           }),
           const Spacer(),
-
           StreamBuilder<String>(
             stream: _clockStream,
             initialData: _timeStr,

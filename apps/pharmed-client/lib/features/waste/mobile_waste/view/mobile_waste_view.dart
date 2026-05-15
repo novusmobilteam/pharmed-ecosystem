@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/widgets/widgets.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../waste.dart';
@@ -88,7 +89,9 @@ class _RightPanel extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: WasteDrugList(
+          child: RxDrugPanel(
+            title: 'Fire/İmha Edilebilir İlaçlar',
+            showFilters: false,
             items: state.disposables,
             selectedItem: state.selectedItem,
             isBusy: state.isSaving,
@@ -129,14 +132,14 @@ class _WasteActionBar extends StatelessWidget {
     final canWaste = state.canWaste;
 
     return Padding(
-      padding: MedSpacing.insetLg,
+      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl4, vertical: MedSpacing.xl),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           MedButton(
             label: 'Vazgeç',
             variant: MedButtonVariant.ghost,
-            size: MedButtonSize.md,
+            size: MedButtonSize.sm,
             onPressed: selectedItem != null && !isSaving ? onClear : null,
           ),
           const SizedBox(width: MedSpacing.md),
@@ -144,7 +147,7 @@ class _WasteActionBar extends StatelessWidget {
             MedButton(
               label: 'İşlem yapılıyor...',
               variant: MedButtonVariant.primary,
-              size: MedButtonSize.md,
+              size: MedButtonSize.sm,
               isLoading: true,
               onPressed: null,
             )
@@ -152,14 +155,14 @@ class _WasteActionBar extends StatelessWidget {
             MedButton(
               label: 'Fire Et',
               variant: MedButtonVariant.secondary,
-              size: MedButtonSize.md,
+              size: MedButtonSize.sm,
               onPressed: canWaste ? onWastage : null,
             ),
             const SizedBox(width: MedSpacing.md),
             MedButton(
               label: 'İmha Et',
               variant: MedButtonVariant.danger,
-              size: MedButtonSize.md,
+              size: MedButtonSize.sm,
               onPressed: canWaste ? onDestruction : null,
             ),
           ],

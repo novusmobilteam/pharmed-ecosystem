@@ -34,7 +34,7 @@ class CabinOperationScaffold extends StatelessWidget {
   final EdgeInsets padding;
 
   static const double _defaultLeftWidth = 260;
-  static const double _defaultRightWidth = 320;
+  static const double _defaultRightWidth = 350;
   static const double _defaultSpacing = 16;
 
   @override
