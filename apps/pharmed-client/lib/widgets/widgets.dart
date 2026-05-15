@@ -14,6 +14,7 @@ export 'hospitalization_card.dart';
 export 'hospitalization_detail_banner.dart';
 export 'operation_panel_base.dart';
 export 'patient_list_panel.dart';
+export 'rx_carousel.dart';
 export 'rx_drug_panel.dart';
 export 'rx_group_card.dart';
 export 'rx_item_card.dart';

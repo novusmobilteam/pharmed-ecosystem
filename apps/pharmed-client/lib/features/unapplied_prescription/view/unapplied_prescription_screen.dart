@@ -1,11 +1,13 @@
-// [SWREQ-UI-PRESC-VIEW-001]
+// lib/features/unapplied_prescription_screen/unapplied_prescription_screen.dart
+//
+// [SWREQ-UI-UNAPP-VIEW-001]
 // Sınıf : Class A
 //
 // Sol: PatientListPanel (hasta listesi)
-// Sağ: HospitalizationDetailBanner + PrescriptionDetailCard carousel
+// Sağ: HospitalizationDetailBanner + RxCarousel
 //
-// items prescriptionId'ye göre gruplandırılır;
-// her grup bir PrescriptionDetailCard olarak render edilir.
+// prescriptionItems notifier katmanında filtrelenmiştir (pendingPickup).
+// View hiç filtre uygulamaz; RxCarousel'e direkt state.prescriptionItems geçilir.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,11 +16,10 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../dashboard/presentation/state/dashboard_ui_state.dart';
-import '../notifier/prescription_notifier.dart';
-import '../notifier/prescription_state.dart';
+import '../unapplied_prescription.dart';
 
-class PrescriptionScreen extends ConsumerWidget {
-  const PrescriptionScreen({super.key});
+class UnappliedPrescriptionScreen extends ConsumerWidget {
+  const UnappliedPrescriptionScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,20 +38,20 @@ class PrescriptionScreen extends ConsumerWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _PrescriptionBodyView(cabinId: cabinId);
+    return _UnappliedPrescriptionBodyView(cabinId: cabinId);
   }
 }
 
-class _PrescriptionBodyView extends ConsumerStatefulWidget {
-  const _PrescriptionBodyView({required this.cabinId});
+class _UnappliedPrescriptionBodyView extends ConsumerStatefulWidget {
+  const _UnappliedPrescriptionBodyView({required this.cabinId});
 
   final int cabinId;
 
   @override
-  ConsumerState<_PrescriptionBodyView> createState() => _PrescriptionBodyViewState();
+  ConsumerState<_UnappliedPrescriptionBodyView> createState() => _UnappliedPrescriptionBodyViewState();
 }
 
-class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
+class _UnappliedPrescriptionBodyViewState extends ConsumerState<_UnappliedPrescriptionBodyView> {
   @override
   void initState() {
     super.initState();
@@ -58,7 +59,7 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
   }
 
   @override
-  void didUpdateWidget(_PrescriptionBodyView old) {
+  void didUpdateWidget(_UnappliedPrescriptionBodyView old) {
     super.didUpdateWidget(old);
     if (widget.cabinId != old.cabinId) _initialize(widget.cabinId);
   }
@@ -66,23 +67,23 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
   void _initialize(int cabinId) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(prescriptionNotifierProvider.notifier).init(cabinId);
+      ref.read(unappliedPrescriptionNotifierProvider.notifier).init(cabinId);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(prescriptionNotifierProvider);
-    final notifier = ref.read(prescriptionNotifierProvider.notifier);
+    final state = ref.watch(unappliedPrescriptionNotifierProvider);
+    final notifier = ref.read(unappliedPrescriptionNotifierProvider.notifier);
 
-    ref.listen(prescriptionNotifierProvider, (_, next) {
-      if (next is PrescriptionError) {
+    ref.listen(unappliedPrescriptionNotifierProvider, (_, next) {
+      if (next is UnappliedPrescriptionError) {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       }
     });
 
-    if (state is PrescriptionUninitialized || state is PrescriptionLoading) {
+    if (state is UnappliedPrescriptionUninitialized || state is UnappliedPrescriptionLoading) {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
@@ -100,18 +101,17 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
             title: 'Hastalar',
           ),
         ),
-
         VerticalDivider(width: 1, thickness: 1, color: MedColors.border),
-        Expanded(child: _PrescriptionRightPanel(state: state)),
+        Expanded(child: _UnappliedPrescriptionRightPanel(state: state)),
       ],
     );
   }
 }
 
-class _PrescriptionRightPanel extends StatelessWidget {
-  const _PrescriptionRightPanel({required this.state});
+class _UnappliedPrescriptionRightPanel extends StatelessWidget {
+  const _UnappliedPrescriptionRightPanel({required this.state});
 
-  final PrescriptionState state;
+  final UnappliedPrescriptionState state;
 
   @override
   Widget build(BuildContext context) {
@@ -130,11 +130,10 @@ class _PrescriptionRightPanel extends StatelessWidget {
 
     return Column(
       children: [
-        // Hasta özet şeridi
         HospitalizationDetailBanner(hospitalization: state.selectedPatient),
-
-        // Reçete carousel
-        Expanded(child: RxCarousel(items: state.prescriptionItems)),
+        Expanded(
+          child: RxCarousel(items: state.prescriptionItems, emptyVariant: EmptyStateVariant.error),
+        ),
       ],
     );
   }

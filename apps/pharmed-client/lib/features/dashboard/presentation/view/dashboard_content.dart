@@ -31,6 +31,7 @@ class DashboardContentFactory {
         'drawer-malfunction' => FaultView(),
         'cabin-stock' => CabinStockView(),
         'patient-request-review' => PrescriptionScreen(),
+        'unapplied-prescriptions' => UnappliedPrescriptionScreen(),
 
         // Fallback
         _ => Center(child: Text(context.l10n.common_pageNotFound)),

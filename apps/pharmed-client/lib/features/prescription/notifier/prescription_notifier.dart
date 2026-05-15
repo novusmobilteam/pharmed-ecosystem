@@ -15,14 +15,11 @@ final prescriptionNotifierProvider = NotifierProvider<PrescriptionNotifier, Pres
 
 class PrescriptionNotifier extends Notifier<PrescriptionState> {
   GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
-
   GetPatientPrescriptionHistoryUseCase get _getPrescriptionHistory =>
       ref.read(getPatientPrescriptionHistoryUseCaseProvider);
 
   @override
   PrescriptionState build() => const PrescriptionUninitialized();
-
-  // ── init ──────────────────────────────────────────────────────────────────
 
   Future<void> init(int cabinId) async {
     if (state.cabinId == cabinId && state is! PrescriptionUninitialized) return;
@@ -39,8 +36,6 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
       ),
     );
   }
-
-  // ── onPatientTap ──────────────────────────────────────────────────────────
 
   Future<void> onPatientTap(Hospitalization hospitalization) async {
     final patientId = hospitalization.patient?.id;
@@ -87,8 +82,6 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
     );
   }
 
-  // ── onSearchChanged ───────────────────────────────────────────────────────
-
   void onSearchChanged(String value) {
     state = switch (state) {
       PrescriptionIdle s => PrescriptionIdle(cabinId: s.cabinId, patients: s.patients, search: value),
@@ -97,14 +90,10 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
     };
   }
 
-  // ── dismissError ──────────────────────────────────────────────────────────
-
   void dismissError() {
     final current = state;
     if (current is PrescriptionError) state = current.previousState;
   }
-
-  // ── Yardımcı ──────────────────────────────────────────────────────────────
 
   List<Hospitalization> _toPatients(List<BedAssignment> assignments) {
     return assignments.map((a) => a.hospitalization).whereType<Hospitalization>().toList();
