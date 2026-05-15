@@ -50,6 +50,7 @@ class _MedDateInputFieldState extends State<MedDateInputField> {
       autovalidateMode: widget.autovalidateMode,
       builder: (field) {
         final value = field.value;
+        final style = InputFieldTheme.of(context);
 
         return MedInputDecorator(
           label: widget.label,
@@ -74,19 +75,22 @@ class _MedDateInputFieldState extends State<MedDateInputField> {
                     }
                   }
                 : null,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(
-                    value != null ? value.formattedDate : 'Tarih seçin',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: MedTextStyles.bodyMd(color: value != null ? MedColors.text : MedColors.text4),
+            child: Padding(
+              padding: style.contentPadding,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Text(
+                      value != null ? value.formattedDate : 'Tarih seçin',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: MedTextStyles.bodyMd(color: value != null ? MedColors.text : MedColors.text4),
+                    ),
                   ),
-                ),
-                Icon(Icons.calendar_today_outlined, size: 14, color: MedColors.text3),
-              ],
+                  Icon(Icons.calendar_today_outlined, size: 14, color: MedColors.text3),
+                ],
+              ),
             ),
           ),
         );

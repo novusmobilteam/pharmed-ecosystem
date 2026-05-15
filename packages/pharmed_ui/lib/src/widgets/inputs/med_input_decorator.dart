@@ -1,40 +1,17 @@
+// [SWREQ-UI-INPUT-DEC-001]
+// Sınıf : Class A
+//
+// applyPadding parametresi:
+//   true  (default) → Padding(style.contentPadding) uygulanır.
+//                     PopupMenuButton, DatePicker gibi widget'lar için.
+//   false           → Padding uygulanmaz; child kendi padding'ini yönetir.
+//                     TextFormField için — contentPadding TextField'a verilir,
+//                     textAlignVertical:center ile doğru ortalama sağlanır.
+
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-/// Input alanının anlık görsel durumu.
-///
-/// - [normal]: Varsayılan, pasif durum.
-/// - [error]: Doğrulama hatası — kırmızı kenarlık ve gölge.
-/// - [success]: Başarılı doğrulama — yeşil kenarlık.
 enum MedFieldState { normal, error, success }
-
-// ─────────────────────────────────────────────────────────────────
-// MedInputDecorator — Görsel kabuk widget'ı
-//
-// [SWREQ-UI-INPUT-DEC-001]
-// Tüm input widget'larının paylaştığı görsel kabuk.
-// Yalnızca görsel sorumluluk taşır: label, kenarlık, padding,
-// hata/yardımcı metin. State yönetimi yoktur, FormField değildir.
-//
-// Tüm görsel değerleri [InputFieldTheme.of(context)] üzerinden okur —
-// sıfır hardcoded tasarım değeri.
-// ─────────────────────────────────────────────────────────────────
-
-/// Input alanları için paylaşılan görsel kabuk.
-///
-/// Doğrudan kullanılmaz; her input widget'ı bunu içsel olarak
-/// kendi `build` metodunda oluşturur.
-///
-/// ```dart
-/// // MedTextField.build içinde:
-/// return MedInputDecorator(
-///   label: widget.label,
-///   errorText: widget.errorText,
-///   isFocused: _focused,
-///   fieldState: widget.fieldState,
-///   child: TextField(...),
-/// );
-/// ```
 
 class MedInputDecorator extends StatelessWidget {
   const MedInputDecorator({
@@ -45,6 +22,7 @@ class MedInputDecorator extends StatelessWidget {
     this.enabled = true,
     this.isFocused = false,
     this.fieldState = MedFieldState.normal,
+    this.applyPadding = true,
     required this.child,
   });
 
@@ -54,6 +32,11 @@ class MedInputDecorator extends StatelessWidget {
   final bool enabled;
   final bool isFocused;
   final MedFieldState fieldState;
+
+  /// false geçilirse Padding uygulanmaz — child kendi padding'ini yönetir.
+  /// [MedTextInputField] bunu false geçer; contentPadding TextField'a verilir.
+  final bool applyPadding;
+
   final Widget child;
 
   @override
@@ -69,7 +52,6 @@ class MedInputDecorator extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-
       mainAxisSize: MainAxisSize.min,
       children: [
         if (labelText != null) ...[
@@ -85,13 +67,14 @@ class MedInputDecorator extends StatelessWidget {
           ),
           const SizedBox(height: MedSpacing.xs),
         ],
-        DecoratedBox(
+        Container(
+          constraints: BoxConstraints(minHeight: style.minHeight, maxHeight: style.minHeight),
           decoration: BoxDecoration(
             color: _resolveBgColor(effectiveState),
             borderRadius: style.borderRadius,
-            border: Border.all(color: _resolveBorderColor(effectiveState), width: style.borderWidth),
+            border: Border.all(color: _resolveBorderColor(effectiveState)),
           ),
-          child: Padding(padding: style.contentPadding, child: child),
+          child: applyPadding ? Padding(padding: style.contentPadding, child: child) : child,
         ),
         if (effectiveState == MedFieldState.error && errorText != null) ...[
           const SizedBox(height: MedSpacing.xs),

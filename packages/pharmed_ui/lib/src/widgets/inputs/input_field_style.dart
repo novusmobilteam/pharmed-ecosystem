@@ -32,7 +32,7 @@ class InputFieldStyle {
     this.borderWidth = 1.5,
     this.inputFontSize = 13,
     this.inputFontWeight = FontWeight.w500,
-    this.inputTextAlign = TextAlign.start,
+    this.inputTextAlign = TextAlign.center,
   });
 
   /// Label metninin font boyutu (pt).

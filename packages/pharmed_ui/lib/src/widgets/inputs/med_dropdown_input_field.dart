@@ -51,7 +51,6 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
       autovalidateMode: widget.autovalidateMode,
       builder: (field) {
         final value = field.value;
-
         return MedInputDecorator(
           label: widget.label,
           errorText: field.errorText,
@@ -59,7 +58,6 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               return PopupMenuButton<T>(
-                padding: EdgeInsets.zero,
                 enabled: widget.enabled,
                 initialValue: value,
                 onSelected: (T newValue) {
@@ -68,11 +66,17 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
                 },
                 constraints: BoxConstraints(minWidth: constraints.maxWidth, maxWidth: constraints.maxWidth),
                 offset: const Offset(0, 30),
-                shape: RoundedRectangleBorder(
-                  borderRadius: MedRadius.mdAll,
-                  side: BorderSide(color: MedColors.border, width: 0.5),
-                ),
+
                 elevation: 3,
+                itemBuilder: (context) => widget.options.map((item) {
+                  return PopupMenuItem<T>(
+                    value: item,
+                    child: SizedBox(
+                      width: constraints.maxWidth,
+                      child: Text(widget.labelBuilder(item) ?? '-', style: MedTextStyles.bodyMd(color: MedColors.text)),
+                    ),
+                  );
+                }).toList(),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -86,16 +90,6 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
                     Icon(PhosphorIcons.caretDown(), size: 16, color: MedColors.text3),
                   ],
                 ),
-                itemBuilder: (context) => widget.options.map((item) {
-                  return PopupMenuItem<T>(
-                    value: item,
-                    height: 40,
-                    child: SizedBox(
-                      width: constraints.maxWidth,
-                      child: Text(widget.labelBuilder(item) ?? '-', style: MedTextStyles.bodyMd(color: MedColors.text)),
-                    ),
-                  );
-                }).toList(),
               );
             },
           ),

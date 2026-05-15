@@ -309,13 +309,13 @@ abstract final class MedSpacing {
 
   // ── Input alanı özel değerleri ──────────────────────────────────
   /// Manager input padding — sıkı, fare dostu yerleşim.
-  static const EdgeInsets inputPaddingManager = EdgeInsets.symmetric(horizontal: 9, vertical: 7);
+  static const EdgeInsets inputPaddingManager = EdgeInsets.symmetric(horizontal: 9);
 
   /// Client input padding — geniş, dokunmatik dostu yerleşim.
-  static const EdgeInsets inputPaddingClient = EdgeInsets.symmetric(horizontal: 14, vertical: 0);
+  static const EdgeInsets inputPaddingClient = EdgeInsets.symmetric(horizontal: 14);
 
   /// Manager input minimum yüksekliği.
-  static const double inputMinHeightManager = 36.0;
+  static const double inputMinHeightManager = 38.0;
 
   /// Client input minimum yüksekliği — dokunmatik hedef boyutu.
   static const double inputMinHeightClient = 48.0;

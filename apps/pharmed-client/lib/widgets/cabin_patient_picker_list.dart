@@ -122,7 +122,7 @@ class _CabinPatientPickerListState extends State<CabinPatientPickerList> {
   Widget _buildSearchField() {
     return MedTextInputField(
       controller: _searchController,
-      hint: 'Hasta, oda, yatak veya servis ara...',
+      hintText: 'Hasta, oda, yatak veya servis ara...',
       onChanged: (v) => setState(() => _query = v ?? ''),
     );
   }

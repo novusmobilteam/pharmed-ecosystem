@@ -1,5 +1,11 @@
 // [SWREQ-UI-INPUT-TEXT-001]
 // Sınıf : Class A
+//
+// applyPadding: false → decorator padding uygulamaz.
+// contentPadding: style.contentPadding → TextField'a verilir.
+// textAlignVertical: center → Flutter kendi mekanizmasıyla
+//                             contentPadding alanı içinde ortalar.
+// isDense: true → 48px floor kaldırılır.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -90,6 +96,7 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
           errorText: field.errorText,
           enabled: widget.enabled,
           isFocused: _focused,
+          applyPadding: false,
           child: IgnorePointer(
             ignoring: !widget.enabled,
             child: TextFormField(
@@ -105,28 +112,34 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
               inputFormatters: widget.inputFormatters,
               controller: widget.controller,
               onTap: widget.onTap,
+              textAlignVertical: TextAlignVertical.center,
               onChanged: (v) {
                 field.didChange(v);
                 widget.onChanged?.call(v);
               },
-              style: TextStyle(
-                fontFamily: MedFonts.sans,
-                fontSize: style.inputFontSize,
-                fontWeight: style.inputFontWeight,
-                color: widget.enabled ? MedColors.text : MedColors.text3,
-              ),
+              style: MedTextStyles.bodyMd(color: MedColors.text),
               decoration: InputDecoration(
                 suffix: widget.suffix,
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
+                border: OutlineInputBorder(borderSide: BorderSide.none),
+                enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                errorBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                disabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
                 filled: false,
-                contentPadding: EdgeInsets.zero,
+                isDense: false,
+                contentPadding: style.contentPadding,
                 counterText: '',
                 hintText: widget.hintText,
                 hintStyle: TextStyle(fontFamily: MedFonts.sans, fontSize: style.inputFontSize, color: MedColors.text4),
+                prefixIcon: widget.prefixIcon != null
+                    ? IconTheme(
+                        data: IconThemeData(size: 16, color: _focused ? MedColors.blue : MedColors.text3),
+                        child: widget.prefixIcon!,
+                      )
+                    : null,
+                prefixIconConstraints: widget.prefixIcon != null
+                    ? const BoxConstraints(minWidth: 32, minHeight: 0)
+                    : null,
                 suffixIcon: widget.suffixIcon,
                 suffixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 0),
               ),
