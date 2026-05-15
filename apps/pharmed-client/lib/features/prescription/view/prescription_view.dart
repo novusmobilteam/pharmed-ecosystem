@@ -9,7 +9,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
@@ -17,8 +19,10 @@ import '../../dashboard/presentation/state/dashboard_ui_state.dart';
 import '../notifier/prescription_notifier.dart';
 import '../notifier/prescription_state.dart';
 
-class PrescriptionScreen extends ConsumerWidget {
-  const PrescriptionScreen({super.key});
+class PrescriptionView extends ConsumerWidget {
+  const PrescriptionView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,14 +41,15 @@ class PrescriptionScreen extends ConsumerWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _PrescriptionBodyView(cabinId: cabinId);
+    return _PrescriptionBodyView(cabinId: cabinId, menu: menu);
   }
 }
 
 class _PrescriptionBodyView extends ConsumerStatefulWidget {
-  const _PrescriptionBodyView({required this.cabinId});
+  const _PrescriptionBodyView({required this.cabinId, required this.menu});
 
   final int cabinId;
+  final MenuItem menu;
 
   @override
   ConsumerState<_PrescriptionBodyView> createState() => _PrescriptionBodyViewState();
@@ -86,24 +91,21 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
-    return Row(
-      children: [
-        SizedBox(
-          width: 380,
-          child: PatientListPanel(
-            patients: state.patients,
-            selectedPatient: state.selectedPatient,
-            isPatientLoading: state.isPrescriptionsLoading,
-            search: state.search,
-            onPatientTap: notifier.onPatientTap,
-            onSearchChanged: notifier.onSearchChanged,
-            title: 'Hastalar',
-          ),
-        ),
-
-        VerticalDivider(width: 1, thickness: 1, color: MedColors.border),
-        Expanded(child: _PrescriptionRightPanel(state: state)),
-      ],
+    return TwoColumnLayout(
+      menuItem: widget.menu,
+      leftTitle: 'Hasta Listesi',
+      leftSubtitle: 'Toplam ${state.patients.length} hasta',
+      leftIcon: PhosphorIcons.users(),
+      left: PatientListPanel(
+        patients: state.patients,
+        selectedPatient: state.selectedPatient,
+        isPatientLoading: state.isPrescriptionsLoading,
+        search: state.search,
+        onPatientTap: notifier.onPatientTap,
+        onSearchChanged: notifier.onSearchChanged,
+        title: 'Hasta Listesi',
+      ),
+      right: _PrescriptionRightPanel(state: state),
     );
   }
 }
@@ -120,22 +122,9 @@ class _PrescriptionRightPanel extends StatelessWidget {
     }
 
     if (state.isPrescriptionsLoading) {
-      return Column(
-        children: [
-          HospitalizationDetailBanner(hospitalization: state.selectedPatient),
-          const Expanded(child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
-        ],
-      );
+      return Center(child: MedLoadingIndicator());
     }
 
-    return Column(
-      children: [
-        // Hasta özet şeridi
-        HospitalizationDetailBanner(hospitalization: state.selectedPatient),
-
-        // Reçete carousel
-        Expanded(child: RxCarousel(items: state.prescriptionItems)),
-      ],
-    );
+    return RxCarousel(items: state.prescriptionItems);
   }
 }

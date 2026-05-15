@@ -1,13 +1,15 @@
 // [SWREQ-UI-DASH-004] [HAZ-003] [HAZ-007] [HAZ-009]
 // Sınıf: Class B
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/assignment/assignment_view.dart';
 import 'package:pharmed_client/features/cabin_stock.dart/cabin_stock.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
 import 'package:pharmed_client/features/fault/fault_view.dart';
-import 'package:pharmed_client/features/prescription/view/prescription_screen.dart';
+import 'package:pharmed_client/features/my_patients/view/my_patients_screen.dart';
+import 'package:pharmed_client/features/prescription/view/prescription_view.dart';
 import 'package:pharmed_client/features/refund/refund_view.dart';
 import 'package:pharmed_client/features/settings/presentation/view/settings_modal.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';

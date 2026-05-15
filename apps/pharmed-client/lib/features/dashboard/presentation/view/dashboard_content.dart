@@ -15,6 +15,15 @@ class DashboardContentFactory {
       _ => 'dashboard',
     };
 
+    final flattenedMenus = switch (state) {
+      DashboardLoaded s => s.flattenedMenus,
+      DashboardStale s => s.flattenedMenus,
+      DashboardPartial s => s.flattenedMenus,
+      _ => null,
+    };
+
+    final activeMenu = flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
+
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       child: switch (route) {
@@ -25,13 +34,14 @@ class DashboardContentFactory {
         'drug-assignment' => AssignmentView(),
         'drug-refill' => RefillView(),
         'drug-intake' => IntakeView(),
-        'drug-return' => RefundView(),
-        'drug-waste' => WasteView(),
+        'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
+        'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
         'drug-activity' => DrugActivityScreen(),
         'drawer-malfunction' => FaultView(),
         'cabin-stock' => CabinStockView(),
-        'patient-request-review' => PrescriptionScreen(),
+        'patient-request-review' => activeMenu != null ? PrescriptionView(menu: activeMenu) : const SizedBox.shrink(),
         'unapplied-prescriptions' => UnappliedPrescriptionScreen(),
+        'my-patients' => activeMenu != null ? MyPatientsScreen(menu: activeMenu) : const SizedBox.shrink(),
 
         // Fallback
         _ => Center(child: Text(context.l10n.common_pageNotFound)),

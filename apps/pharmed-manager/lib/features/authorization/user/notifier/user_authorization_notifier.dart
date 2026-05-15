@@ -98,6 +98,7 @@ class UserAuthorizationNotifier extends ChangeNotifier with ApiRequestMixin {
         notifyListeners();
         onSuccess?.call('İşleminiz başarıyla tamamlandı');
       },
+      onFailed: (error) => onFailed?.call(error.message),
     );
   }
 

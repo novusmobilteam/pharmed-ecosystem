@@ -271,3 +271,15 @@ final getMasterDisposablesUseCaseProvider = Provider((ref) {
 final getMasterDisposableMaterialsUseCaseProvider = Provider((ref) {
   return GetMasterDisposableMaterialsUseCase(ref.read(wasteRepositoryProvider));
 });
+
+final getMyPatientsUseCaseProvider = Provider((ref) {
+  return GetMyPatientsUseCase(ref.read(patientRepositoryProvider));
+});
+
+final addPatientUseCaseProvider = Provider((ref) {
+  return AddPatientUseCase(ref.read(patientRepositoryProvider));
+});
+
+final removePatientsUseCaseProvider = Provider((ref) {
+  return RemovePatientsUseCase(ref.read(patientRepositoryProvider));
+});

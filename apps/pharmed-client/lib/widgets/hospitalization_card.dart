@@ -9,25 +9,44 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 /// sunar. Seçili / yükleniyor durumlarını destekler; dokunma davranışı
 /// tamamen çağırana bırakılır.
 ///
-/// ## Kullanım alanları
-/// - `RefundPatientList` — iade ekranı hasta listesi
-/// - `CabinPatientPickerList` — kabin işlemleri hasta seçici
-/// - İleride oluşturulacak her türlü hasta listeleme ekranı
+/// ## Aksiyon Buton Kullanımı
 ///
-/// ## Örnek
+/// Sağ uca üç farklı yöntemle aksiyon eklenebilir:
 ///
+/// ### 1. `onAdd` — yeşil `+` butonu (sol liste, henüz eklenmemiş hasta)
 /// ```dart
 /// HospitalizationCard(
 ///   hospitalization: h,
-///   isSelected: state.selectedPatient?.id == h.id,
-///   isLoading: isSelected && state.isPatientLoading,
-///   onTap: () => notifier.onPatientTap(h),
+///   onAdd: () => notifier.addPatient(h),
 /// )
 /// ```
 ///
-/// Sağ uçtaki trailing slot'u özelleştirmek için [trailing] kullanılır;
-/// verilmezse varsayılan olarak sağ ok ikonu gösterilir.
-/// [showChevron] false yapılırsa ok ikonu da gizlenir.
+/// ### 2. `onRemove` — kırmızı `—` butonu (sağ liste, eklenmiş hasta)
+/// ```dart
+/// HospitalizationCard(
+///   hospitalization: h,
+///   onRemove: () => notifier.removePatient(h),
+/// )
+/// ```
+///
+/// ### 3. `showCheckmark` — yeşil ✓ ikonu (sol liste, seçili/eklenmiş hasta)
+/// ```dart
+/// HospitalizationCard(
+///   hospitalization: h,
+///   isSelected: true,
+///   showCheckmark: true,
+/// )
+/// ```
+///
+/// ### 4. `trailing` — tamamen özel widget
+/// ```dart
+/// HospitalizationCard(
+///   hospitalization: h,
+///   trailing: MyCustomWidget(),
+/// )
+/// ```
+///
+/// Öncelik sırası: `trailing` > `onAdd`/`onRemove` > `showCheckmark` > `showChevron`
 class HospitalizationCard extends StatelessWidget {
   const HospitalizationCard({
     super.key,
@@ -37,6 +56,9 @@ class HospitalizationCard extends StatelessWidget {
     this.isLoading = false,
     this.trailing,
     this.showChevron = true,
+    this.showCheckmark = false,
+    this.onAdd,
+    this.onRemove,
   });
 
   /// Gösterilecek yatış kaydı.
@@ -53,24 +75,39 @@ class HospitalizationCard extends StatelessWidget {
   /// Genellikle `isSelected && state.isPatientLoading` olarak geçilir.
   final bool isLoading;
 
-  /// Sağ uca yerleştirilen özel widget.
+  /// Sağ uca yerleştirilen tamamen özel widget.
   ///
-  /// Null ise [showChevron]'a göre ok ikonu veya hiçbir şey gösterilir.
+  /// Verildiğinde diğer tüm trailing seçenekleri ([onAdd], [onRemove],
+  /// [showCheckmark], [showChevron]) devre dışı kalır.
   final Widget? trailing;
 
-  /// [trailing] null olduğunda sağ ok ikonunun gösterilip
-  /// gösterilmeyeceğini belirler. Varsayılan: true.
+  /// [trailing] ve diğer aksiyon seçenekleri yoksa sağ ok ikonunu gösterir.
+  ///
+  /// Varsayılan: true.
   final bool showChevron;
+
+  /// `true` ise sağa yeşil ✓ ikonu yerleştirilir.
+  ///
+  /// Sol liste "seçili/eklendi" durumu için kullanılır.
+  /// [trailing] veya [onAdd]/[onRemove] varsa gösterilmez.
+  final bool showCheckmark;
+
+  /// Null olmayan değer verildiğinde sağa **yeşil `+` butonu** eklenir.
+  ///
+  /// Sol listede henüz eklenmemiş hastalar için kullanılır.
+  /// [trailing] varsa gösterilmez.
+  final VoidCallback? onAdd;
+
+  /// Null olmayan değer verildiğinde sağa **kırmızı `—` butonu** eklenir.
+  ///
+  /// Sağ listede mevcut hastayı çıkarmak için kullanılır.
+  /// [trailing] varsa gösterilmez.
+  final VoidCallback? onRemove;
 
   // ── Meta bilgi yardımcıları ─────────────────────────────────────
 
-  /// Servis adı; physicalService → inpatientService → null sıralamasıyla
-  /// ilk bulunanı döner.
   String? get _service => hospitalization.physicalService?.name ?? hospitalization.inpatientService?.name;
 
-  /// "Oda · Yatak" formatında konum satırı.
-  ///
-  /// Sadece biri mevcutsa tek başına gösterilir.
   String? get _location {
     final room = hospitalization.bed?.room?.name ?? hospitalization.room?.name;
     final bed = hospitalization.bed?.name;
@@ -78,23 +115,58 @@ class HospitalizationCard extends StatelessWidget {
     return room ?? bed;
   }
 
+  // ── Trailing widget çözümleyici ─────────────────────────────────
+
+  Widget? get _resolvedTrailing {
+    // 1. Özel trailing her şeyin önünde gelir
+    if (trailing != null) return trailing;
+
+    // 2. Yüklenme spinner'ı
+    if (isLoading) {
+      return SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(MedColors.blue)),
+      );
+    }
+
+    // 3. + butonu
+    if (onAdd != null) return _ActionButton.add(onTap: onAdd!);
+
+    // 4. — butonu
+    if (onRemove != null) return _ActionButton.remove(onTap: onRemove!);
+
+    // 5. Checkmark ikonu
+    if (showCheckmark) {
+      return Icon(Icons.check_rounded, color: MedColors.green, size: 22);
+    }
+
+    // 6. Şevron
+    if (showChevron) {
+      return Icon(Icons.chevron_right_rounded, color: MedColors.text3, size: 20);
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final patient = hospitalization.patient;
-    print(hospitalization.room);
+    final resolvedTrailing = _resolvedTrailing;
 
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        height: 85,
+        height: 95,
         duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
-          color: isSelected ? MedColors.blueLight : Colors.transparent,
+          color: isSelected ? MedColors.blueLight : MedColors.surface,
           border: Border.all(color: isSelected ? MedColors.blue : MedColors.border, width: 1.5),
           borderRadius: MedRadius.lgAll,
         ),
         child: Row(
           children: [
+            // Seçim çubuğu
             Opacity(
               opacity: isSelected ? 1 : 0,
               child: Container(
@@ -110,8 +182,10 @@ class HospitalizationCard extends StatelessWidget {
               ),
             ),
             SizedBox(width: 15),
+            // Avatar
             MedAvatar(initials: patient?.initials ?? '?', palette: AvatarPalette.blue, size: 42),
             SizedBox(width: 10),
+            // İsim + meta bilgi
             Expanded(
               child: Column(
                 spacing: 2,
@@ -148,8 +222,66 @@ class HospitalizationCard extends StatelessWidget {
                 ],
               ),
             ),
+            // Trailing
+            if (resolvedTrailing != null) ...[Padding(padding: EdgeInsets.all(24.0), child: resolvedTrailing)],
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Dahili aksiyon butonu ────────────────────────────────────────────────────
+
+/// `+` ve `—` aksiyon butonları için dahili yardımcı widget.
+///
+/// Doğrudan `HospitalizationCard` dışında kullanılmaz; bunun yerine
+/// [HospitalizationCard.onAdd] ve [HospitalizationCard.onRemove]
+/// parametrelerini kullanın.
+class _ActionButton extends StatelessWidget {
+  const _ActionButton._({
+    required this.icon,
+    required this.color,
+    required this.backgroundColor,
+    required this.borderColor,
+    required this.onTap,
+  });
+
+  factory _ActionButton.add({required VoidCallback onTap}) => _ActionButton._(
+    icon: Icons.add_rounded,
+    color: MedColors.green,
+    backgroundColor: MedColors.greenLight,
+    borderColor: MedColors.green.withAlpha(77),
+    onTap: onTap,
+  );
+
+  factory _ActionButton.remove({required VoidCallback onTap}) => _ActionButton._(
+    icon: Icons.remove_rounded,
+    color: MedColors.text3,
+    backgroundColor: MedColors.surface,
+    borderColor: MedColors.text3,
+    onTap: onTap,
+  );
+
+  final IconData icon;
+  final Color color;
+  final Color backgroundColor;
+  final Color borderColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: MedSpacing.touchTarget, // 44px
+        height: MedSpacing.touchTarget, // 44px
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border.all(color: borderColor, width: 1.5),
+          borderRadius: MedRadius.mdAll,
+        ),
+        child: Icon(icon, color: color, size: 20),
       ),
     );
   }

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/widgets/widgets.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../waste.dart';
 
 class MobileWasteView extends ConsumerStatefulWidget {
-  const MobileWasteView({super.key});
+  const MobileWasteView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   ConsumerState<MobileWasteView> createState() => _MobileWasteViewState();
@@ -42,24 +46,27 @@ class _MobileWasteViewState extends ConsumerState<MobileWasteView> {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
-    return Row(
-      children: [
-        SizedBox(
-          width: 360,
-          child: WastePatientList(
-            patients: state.filteredPatients,
-            selectedPatient: state.selectedPatient,
-            isPatientLoading: state.isPatientLoading,
-            search: state.search,
-            onPatientTap: notifier.onPatientTap,
-            onSearchChanged: notifier.onSearchChanged,
-          ),
-        ),
-        const VerticalDivider(width: 1, thickness: 1),
-        Expanded(
-          child: _RightPanel(state: state, notifier: notifier),
-        ),
-      ],
+    return TwoColumnLayout(
+      menuItem: widget.menu,
+      leftTitle: 'Hasta Listesi',
+      leftIcon: PhosphorIcons.users(),
+      leftSubtitle: 'Toplam ${state.patients.length} hasta',
+      left: PatientListPanel(
+        patients: state.patients,
+        selectedPatient: state.selectedPatient,
+        isPatientLoading: state.isPatientLoading,
+        search: state.search,
+        onPatientTap: notifier.onPatientTap,
+        onSearchChanged: notifier.onSearchChanged,
+      ),
+      right: _RightPanel(state: state, notifier: notifier),
+      footer: _WasteActionBar(
+        state: state,
+        onQuantityChanged: notifier.onQuantityChanged,
+        onWastage: notifier.wastage,
+        onDestruction: notifier.destruction,
+        onClear: notifier.clearSelection,
+      ),
     );
   }
 }
@@ -86,26 +93,13 @@ class _RightPanel extends StatelessWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.noWastableDrugs);
     }
 
-    return Column(
-      children: [
-        Expanded(
-          child: RxDrugPanel(
-            title: 'Fire/İmha Edilebilir İlaçlar',
-            showFilters: false,
-            items: state.disposables,
-            selectedItem: state.selectedItem,
-            isBusy: state.isSaving,
-            onDrugTap: notifier.onDrugTap,
-          ),
-        ),
-        _WasteActionBar(
-          state: state,
-          onQuantityChanged: notifier.onQuantityChanged,
-          onWastage: notifier.wastage,
-          onDestruction: notifier.destruction,
-          onClear: notifier.clearSelection,
-        ),
-      ],
+    return RxDrugPanel(
+      title: 'Fire/İmha Edilebilir İlaçlar',
+      showFilters: false,
+      items: state.disposables,
+      selectedItem: state.selectedItem,
+      isBusy: state.isSaving,
+      onDrugTap: notifier.onDrugTap,
     );
   }
 }
@@ -131,43 +125,40 @@ class _WasteActionBar extends StatelessWidget {
     final isSaving = state.isSaving;
     final canWaste = state.canWaste;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl4, vertical: MedSpacing.xl),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        MedButton(
+          label: 'Vazgeç',
+          variant: MedButtonVariant.ghost,
+          size: MedButtonSize.sm,
+          onPressed: selectedItem != null && !isSaving ? onClear : null,
+        ),
+        const SizedBox(width: MedSpacing.md),
+        if (isSaving)
           MedButton(
-            label: 'Vazgeç',
-            variant: MedButtonVariant.ghost,
+            label: 'İşlem yapılıyor...',
+            variant: MedButtonVariant.primary,
             size: MedButtonSize.sm,
-            onPressed: selectedItem != null && !isSaving ? onClear : null,
+            isLoading: true,
+            onPressed: null,
+          )
+        else ...[
+          MedButton(
+            label: 'Fire Et',
+            variant: MedButtonVariant.secondary,
+            size: MedButtonSize.sm,
+            onPressed: canWaste ? onWastage : null,
           ),
           const SizedBox(width: MedSpacing.md),
-          if (isSaving)
-            MedButton(
-              label: 'İşlem yapılıyor...',
-              variant: MedButtonVariant.primary,
-              size: MedButtonSize.sm,
-              isLoading: true,
-              onPressed: null,
-            )
-          else ...[
-            MedButton(
-              label: 'Fire Et',
-              variant: MedButtonVariant.secondary,
-              size: MedButtonSize.sm,
-              onPressed: canWaste ? onWastage : null,
-            ),
-            const SizedBox(width: MedSpacing.md),
-            MedButton(
-              label: 'İmha Et',
-              variant: MedButtonVariant.danger,
-              size: MedButtonSize.sm,
-              onPressed: canWaste ? onDestruction : null,
-            ),
-          ],
+          MedButton(
+            label: 'İmha Et',
+            variant: MedButtonVariant.danger,
+            size: MedButtonSize.sm,
+            onPressed: canWaste ? onDestruction : null,
+          ),
         ],
-      ),
+      ],
     );
   }
 }

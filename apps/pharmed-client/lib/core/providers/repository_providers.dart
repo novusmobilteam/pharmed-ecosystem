@@ -199,3 +199,22 @@ final wasteRepositoryProvider = Provider<IWasteRepository>((ref) {
     ),
   };
 });
+
+final patientRepositoryProvider = Provider<IPatientRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => PatientRepositoryImpl(
+      dataSource: ref.read(patientDataSourceProvider),
+      patientMapper: PatientMapper(),
+      myPatientMapper: MyPatientMapper(),
+      urgentPatientMapper: UrgentPatientMapper(),
+      hospitalizationMapper: HospitalizationMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => PatientRepositoryImpl(
+      dataSource: ref.read(patientDataSourceProvider),
+      patientMapper: PatientMapper(),
+      myPatientMapper: MyPatientMapper(),
+      urgentPatientMapper: UrgentPatientMapper(),
+      hospitalizationMapper: HospitalizationMapper(),
+    ),
+  };
+});

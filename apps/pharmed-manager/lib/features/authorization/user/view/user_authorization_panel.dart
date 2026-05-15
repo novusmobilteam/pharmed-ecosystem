@@ -24,7 +24,7 @@ class UserAuthorizationPanel extends StatelessWidget {
             onClose: authNotifier.closePanel,
             onSave: () async {
               await notifier.submit(
-                onFailed: (msg) => MessageUtils.showErrorDialog(context, notifier.statusMessage),
+                onFailed: (msg) => MessageUtils.showErrorSnackbar(context, notifier.statusMessage),
                 onSuccess: (msg) {
                   MessageUtils.showSuccessSnackbar(context, notifier.statusMessage);
                   authNotifier.closePanel();

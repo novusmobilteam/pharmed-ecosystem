@@ -175,14 +175,14 @@ class RepositoryProviders {
       /// Patient
       Provider<IPatientRepository>(
         create: (context) => switch (FlavorConfig.instance.flavor) {
-          AppFlavor.mock => PatientRepository(
+          AppFlavor.mock => PatientRepositoryImpl(
             dataSource: context.read(),
             patientMapper: PatientMapper(),
             myPatientMapper: MyPatientMapper(),
             urgentPatientMapper: UrgentPatientMapper(),
             hospitalizationMapper: HospitalizationMapper(),
           ),
-          AppFlavor.dev || AppFlavor.prod => PatientRepository(
+          AppFlavor.dev || AppFlavor.prod => PatientRepositoryImpl(
             dataSource: context.read(),
             patientMapper: PatientMapper(),
             myPatientMapper: MyPatientMapper(),

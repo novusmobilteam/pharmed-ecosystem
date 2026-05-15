@@ -13,9 +13,10 @@ class AddPatientParams {
 
 class AddPatientUseCase {
   final IPatientRepository _repository;
+
   AddPatientUseCase(this._repository);
 
-  Future<Result<void>> call(List<AddPatientParams> params) {
-    return _repository.addPatients(params.map((p) => p.toJson()).toList());
+  Future<Result<void>> call(AddPatientParams params) {
+    return _repository.addPatient(params.userId, params.hospitalizationId);
   }
 }

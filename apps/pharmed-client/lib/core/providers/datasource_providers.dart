@@ -66,3 +66,7 @@ final refundDataSourceProvider = Provider((ref) {
 final wasteDataSourceProvider = Provider((ref) {
   return WasteRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
+
+final patientDataSourceProvider = Provider((ref) {
+  return PatientRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});

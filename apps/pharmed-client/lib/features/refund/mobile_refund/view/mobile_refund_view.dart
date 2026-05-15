@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
 import '../../refund.dart';
 
 class MobileRefundView extends ConsumerStatefulWidget {
-  const MobileRefundView({super.key});
+  const MobileRefundView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   ConsumerState<MobileRefundView> createState() => _MobileRefundViewState();
@@ -42,24 +46,26 @@ class _MobileRefundViewState extends ConsumerState<MobileRefundView> {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
-    return Row(
-      children: [
-        SizedBox(
-          width: 360,
-          child: PatientListPanel(
-            patients: state.patients,
-            selectedPatient: state.selectedPatient,
-            isPatientLoading: state.isPatientLoading,
-            search: state.search,
-            onPatientTap: notifier.onPatientTap,
-            onSearchChanged: notifier.onSearchChanged,
-          ),
-        ),
-        VerticalDivider(width: 1, thickness: 1, color: MedColors.border),
-        Expanded(
-          child: _RightPanel(state: state, notifier: notifier),
-        ),
-      ],
+    return TwoColumnLayout(
+      menuItem: widget.menu,
+      leftIcon: PhosphorIcons.users(),
+      leftSubtitle: 'Toplam ${state.patients.length} hasta',
+      leftTitle: 'Hasta Listesi',
+      left: PatientListPanel(
+        patients: state.patients,
+        selectedPatient: state.selectedPatient,
+        isPatientLoading: state.isPatientLoading,
+        search: state.search,
+        onPatientTap: notifier.onPatientTap,
+        onSearchChanged: notifier.onSearchChanged,
+      ),
+      right: _RightPanel(state: state, notifier: notifier),
+      footer: _RefundActionBar(
+        state: state,
+        onQuantityChanged: notifier.onQuantityChanged,
+        onRefund: notifier.refund,
+        onClear: notifier.clearSelection,
+      ),
     );
   }
 }
@@ -82,28 +88,14 @@ class _RightPanel extends StatelessWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.noRefundableDrugs);
     }
 
-    return Column(
-      children: [
-        Expanded(
-          child: state.isPatientLoading
-              ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
-              : RxDrugPanel(
-                  title: 'İade Edilebilir İlaçlar',
-                  items: state.refundables,
-                  selectedItem: state.selectedItem,
-                  isBusy: state.isBusy,
-                  onDrugTap: notifier.onDrugTap,
-                  hospitalization: selectedPatient,
-                  showFilters: false,
-                ),
-        ),
-        _RefundActionBar(
-          state: state,
-          onQuantityChanged: notifier.onQuantityChanged,
-          onRefund: notifier.refund,
-          onClear: notifier.clearSelection,
-        ),
-      ],
+    return RxDrugPanel(
+      title: 'İade Edilebilir İlaçlar',
+      items: state.refundables,
+      selectedItem: state.selectedItem,
+      isBusy: state.isBusy,
+      onDrugTap: notifier.onDrugTap,
+      hospitalization: selectedPatient,
+      showFilters: false,
     );
   }
 }
@@ -127,35 +119,32 @@ class _RefundActionBar extends StatelessWidget {
     final isBusy = state.isBusy;
     final canRefund = state.canRefund;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl4, vertical: MedSpacing.xl),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        MedButton(
+          label: 'Vazgeç',
+          variant: MedButtonVariant.ghost,
+          size: MedButtonSize.sm,
+          onPressed: selectedItem != null && !isBusy ? onClear : null,
+        ),
+        const SizedBox(width: MedSpacing.md),
+        if (isBusy)
           MedButton(
-            label: 'Vazgeç',
-            variant: MedButtonVariant.ghost,
+            label: state.isChecking ? 'Kontrol ediliyor...' : 'İade ediliyor...',
+            variant: MedButtonVariant.primary,
             size: MedButtonSize.sm,
-            onPressed: selectedItem != null && !isBusy ? onClear : null,
+            isLoading: true,
+            onPressed: null,
+          )
+        else
+          MedButton(
+            label: 'İade Et',
+            variant: MedButtonVariant.primary,
+            size: MedButtonSize.sm,
+            onPressed: canRefund ? onRefund : null,
           ),
-          const SizedBox(width: MedSpacing.md),
-          if (isBusy)
-            MedButton(
-              label: state.isChecking ? 'Kontrol ediliyor...' : 'İade ediliyor...',
-              variant: MedButtonVariant.primary,
-              size: MedButtonSize.sm,
-              isLoading: true,
-              onPressed: null,
-            )
-          else
-            MedButton(
-              label: 'İade Et',
-              variant: MedButtonVariant.primary,
-              size: MedButtonSize.sm,
-              onPressed: canRefund ? onRefund : null,
-            ),
-        ],
-      ),
+      ],
     );
   }
 }

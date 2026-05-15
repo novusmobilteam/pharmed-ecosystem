@@ -29,7 +29,7 @@ class PatientListPanel extends StatelessWidget {
     required this.search,
     required this.onPatientTap,
     required this.onSearchChanged,
-    this.title = 'Hastalar',
+    this.title = 'Hasta Listesi',
   });
 
   final List<Hospitalization> patients;
@@ -49,8 +49,6 @@ class PatientListPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Header(title: title, count: patients.length),
-          const Divider(height: 1, thickness: 1, color: MedColors.border),
           _SearchBar(search: search, onChanged: onSearchChanged),
           Expanded(
             child: patients.isEmpty
@@ -62,32 +60,6 @@ class PatientListPanel extends StatelessWidget {
                     onPatientTap: onPatientTap,
                   ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  const _Header({required this.title, required this.count});
-
-  final String title;
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: MedSpacing.xl,
-        right: MedSpacing.xl,
-        top: MedSpacing.xl,
-        bottom: MedSpacing.md,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: MedTextStyles.titleMd()),
-          MedInfoChip(info: '$count Hasta'),
         ],
       ),
     );

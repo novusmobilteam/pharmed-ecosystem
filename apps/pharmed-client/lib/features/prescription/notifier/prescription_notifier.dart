@@ -1,5 +1,3 @@
-// lib/features/prescription_screen/prescription_screen_notifier.dart
-//
 // [SWREQ-UI-PRESC-NOTIFIER-001]
 // Sınıf : Class A
 

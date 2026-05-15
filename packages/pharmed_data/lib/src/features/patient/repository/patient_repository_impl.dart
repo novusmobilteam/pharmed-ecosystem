@@ -1,8 +1,8 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-class PatientRepository implements IPatientRepository {
-  PatientRepository({
+class PatientRepositoryImpl implements IPatientRepository {
+  PatientRepositoryImpl({
     required PatientRemoteDataSource dataSource,
     required PatientMapper patientMapper,
     required MyPatientMapper myPatientMapper,
