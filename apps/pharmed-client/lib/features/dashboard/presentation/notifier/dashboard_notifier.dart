@@ -10,17 +10,17 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
-import 'package:pharmed_client/features/auth/presentation/notifier/auth_notifier.dart';
+import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../settings/presentation/notifier/settings_notifier.dart';
 import '../../domain/model/dasboard_data.dart';
-import '../state/dashboard_ui_state.dart';
+import 'dashboard_state.dart';
 
-final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardUiState>(DashboardNotifier.new);
+final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardState>(DashboardNotifier.new);
 
-class DashboardNotifier extends Notifier<DashboardUiState> {
+class DashboardNotifier extends Notifier<DashboardState> {
   // Veriler 7 dakikada bir güncellenir.
   static const _refreshInterval = Duration(minutes: 60);
   Timer? _timer;
@@ -32,7 +32,7 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
   GetCabinVisualizerDataUseCase get _getCabinVisualizer => ref.read(getCabinVisualizerDataUseCaseProvider);
 
   @override
-  DashboardUiState build() {
+  DashboardState build() {
     ref.onDispose(() => _timer?.cancel());
     if (kDebugMode) {
       ref.listen(settingsNotifierProvider, (prev, next) {
@@ -341,7 +341,7 @@ class DashboardNotifier extends Notifier<DashboardUiState> {
   }
 
   // Yardımcı metod: Farklı state tiplerinden listeyi güvenli al
-  List<MenuItem>? _getFlattenMenus(DashboardUiState s) => switch (s) {
+  List<MenuItem>? _getFlattenMenus(DashboardState s) => switch (s) {
     DashboardLoaded(:final flattenedMenus) => flattenedMenus,
     DashboardStale(:final flattenedMenus) => flattenedMenus,
     DashboardPartial(:final flattenedMenus) => flattenedMenus,

@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+
+import '../../../core/core.dart';
+
+import '../../cabin/domain/entity/cabin_input_data.dart';
+
+enum MedicineCountType {
+  // İlaç Bazlı
+  medicine('İlaç Bazlı'),
+  // Çekmece Bazlı
+  drawer('Çekmece Bazlı'),
+  // Kabin Bazlı
+  cabin('Kabin Bazlı');
+
+  final String title;
+
+  const MedicineCountType(this.title);
+}
+
+class MedicineCountNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MedicineAssignment> {
+  final CompleteMasterCensusUseCase _countMedicineUseCase;
+  final Future<void> Function(MedicineAssignment assignment)? onOperationRequired;
+
+  MedicineCountNotifier({required CompleteMasterCensusUseCase countMedicineUseCase, this.onOperationRequired})
+    : _countMedicineUseCase = countMedicineUseCase;
+
+  MedicineCountType _countType = MedicineCountType.medicine;
+  MedicineCountType get countType => _countType;
+  int get countTypeIndex => MedicineCountType.values.indexOf(_countType);
+
+  List<MedicineAssignment> _selectedAssignments = [];
+  List<MedicineAssignment> get selectedAssignments => _selectedAssignments;
+
+  List<MedicineAssignment> _allAssignments = [];
+  List<MedicineAssignment> get allAssignments => _allAssignments;
+  List<MedicineAssignment> _currentQueue = [];
+
+  bool _isProcessing = false;
+
+  bool get showStartCountButton =>
+      (_countType == MedicineCountType.drawer && _selectedAssignments.isNotEmpty) ||
+      _countType == MedicineCountType.cabin;
+
+  Future<Result<void>> count(List<CabinInputData> inputs) async {
+    final data = inputs.map((e) {
+      return MasterCensusParams(
+        e.materialId,
+        e.cabinDrawerDetailId ?? 0,
+        e.censusQuantity,
+        e.miadDate,
+        e.shelfNo ?? 0,
+        e.compartmentNo ?? 0,
+      );
+    }).toList();
+
+    return await _countMedicineUseCase.call(data);
+  }
+
+  void startCount() {
+    List<MedicineAssignment> targetList;
+    if (_countType == MedicineCountType.drawer) {
+      targetList = _selectedAssignments;
+    } else if (_countType == MedicineCountType.cabin) {
+      targetList = _allAssignments;
+    } else {
+      return;
+    }
+
+    if (targetList.isNotEmpty) {
+      _currentQueue = List.from(targetList);
+      _isProcessing = true;
+      _triggerNextFromQueue();
+    }
+  }
+
+  void _triggerNextFromQueue() {
+    if (_currentQueue.isEmpty) {
+      _isProcessing = false;
+      notifyListeners();
+      return;
+    }
+
+    final next = _currentQueue.first;
+    onOperationRequired?.call(next); // Çekmeceyi aç
+  }
+
+  // Wrapper'ın "Bitti, sıradakini ver" dediği yer burası olacak
+  void proceedToNext() {
+    if (_currentQueue.isNotEmpty) {
+      _currentQueue.removeAt(0); // Biteni kuyruktan at
+      _triggerNextFromQueue(); // Sıradakini aç
+    } else {
+      _isProcessing = false;
+    }
+  }
+
+  Future<void> _processNext(List<MedicineAssignment> assignments) async {
+    if (assignments.isEmpty || onOperationRequired == null || _isProcessing) {
+      return;
+    }
+
+    _isProcessing = true;
+
+    try {
+      final nextAssignment = assignments.first;
+      await onOperationRequired!(nextAssignment);
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  Future<Result<void>> drawerBasedCount(
+    List<CabinInputData> inputs,
+    MedicineAssignment currentAssignment, {
+    Function(String? message)? onSuccess,
+    Function(String? message)? onFailed,
+  }) async {
+    final data = inputs.map((e) {
+      return MasterCensusParams(
+        e.materialId,
+        e.cabinDrawerDetailId ?? 0,
+        e.censusQuantity,
+        e.miadDate,
+        e.shelfNo ?? 0,
+        e.compartmentNo ?? 0,
+      );
+    }).toList();
+
+    final result = await _countMedicineUseCase.call(data);
+    result.when(
+      ok: (_) async {
+        _selectedAssignments.removeWhere((element) => element.id == currentAssignment.id);
+
+        // 2. Başarı mesajını UI'a bildir
+        onSuccess?.call("${currentAssignment.medicine?.name} sayımı kaydedildi.");
+
+        // 3. Eğer hala stok varsa bir sonrakine geç
+        if (_selectedAssignments.isNotEmpty) {
+          await Future.delayed(const Duration(milliseconds: 400));
+          await _processNext(_selectedAssignments);
+        } else {
+          onSuccess?.call("COMPLETED");
+        }
+      },
+      error: (error) => onFailed?.call(error.message),
+    );
+
+    return result;
+  }
+
+  Future<Result<void>> cabinBasedCount(
+    List<CabinInputData> inputs,
+    MedicineAssignment currentAssignment, {
+    Function(String? message)? onSuccess,
+    Function(String? message)? onFailed,
+  }) async {
+    final data = inputs.map((e) {
+      return MasterCensusParams(
+        e.materialId,
+        e.cabinDrawerDetailId ?? 0,
+        e.censusQuantity,
+        e.miadDate,
+        e.shelfNo ?? 0,
+        e.compartmentNo ?? 0,
+      );
+    }).toList();
+
+    final result = await _countMedicineUseCase.call(data);
+    result.when(
+      ok: (_) async {
+        // 1. Listeden temizle
+        _allAssignments.removeWhere((element) => element.id == currentAssignment.id);
+
+        // 2. Başarı mesajını UI'a bildir
+        onSuccess?.call("${currentAssignment.medicine?.name} sayımı kaydedildi.");
+
+        // 3. Eğer hala stok varsa bir sonrakine geç
+        if (_allAssignments.isNotEmpty) {
+          await Future.delayed(const Duration(milliseconds: 400));
+          await _processNext(_allAssignments);
+        } else {
+          onSuccess?.call("COMPLETED");
+        }
+      },
+      error: (error) => onFailed?.call(error.message),
+    );
+
+    return result;
+  }
+
+  void changeCountType(int index) {
+    _countType = MedicineCountType.values.elementAt(index);
+
+    notifyListeners();
+  }
+
+  void setAllAssignments(List<MedicineAssignment> assignments) {
+    _allAssignments = List.from(assignments);
+
+    notifyListeners();
+  }
+
+  void setSelectedAssignments(List<MedicineAssignment> assignments) {
+    _selectedAssignments = List.from(assignments);
+    notifyListeners();
+  }
+
+  void selectAssignment(MedicineAssignment assignment) {
+    if (_selectedAssignments.contains(assignment)) {
+      _selectedAssignments.remove(assignment);
+    } else {
+      _selectedAssignments.add(assignment);
+    }
+
+    notifyListeners();
+  }
+}

@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
-import 'package:pharmed_manager/core/theme/app_theme.dart';
 
 import 'package:pharmed_manager/features/home/notifier/home_notifier.dart';
 import 'package:provider/provider.dart';
 
+import 'core/core.dart';
 import 'core/providers/providers.dart';
-import 'core/routing/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,17 +34,22 @@ class ManagerApp extends StatelessWidget {
           create: (ctx) => HomeNotifier(getFilteredMenusUseCase: ctx.read(), authNotifier: ctx.read()),
         ),
       ],
-      child: MaterialApp(
-        title: 'Pharmed Manager',
-        theme: MaterialTheme().light(),
-        debugShowCheckedModeBanner: false,
-        home: AppRouter(),
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: [Locale('tr', 'TR')],
+      child: InputFieldTheme(
+        style: InputFieldStyle.manager,
+        child: MaterialApp(
+          title: 'Pharmed Manager',
+          theme: MaterialTheme().light(),
+          debugShowCheckedModeBanner: false,
+
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('tr'), Locale('en'), Locale('ar')],
+          home: AppRouter(),
+        ),
       ),
     );
   }

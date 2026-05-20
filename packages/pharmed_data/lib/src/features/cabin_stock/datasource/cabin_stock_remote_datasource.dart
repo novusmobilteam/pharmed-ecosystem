@@ -67,16 +67,6 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  /// Sayım sonucunu sunucuya iletir (Update/PATCH).
-  Future<Result<void>> count(List<dynamic> data) async {
-    return await putRequest(
-      path: '$_base/censusQuantity',
-      parser: BaseRemoteDataSource.voidParser(),
-      body: data.map((e) => e.toJson()).toList(),
-      successLog: 'Census quantity updated',
-    );
-  }
-
   Future<Result<List<CabinStockDTO>>> getCurrentCabinStock() async {
     final res = await fetchRequest<List<CabinStockDTO>>(
       path: '$_base/currentStationStock',

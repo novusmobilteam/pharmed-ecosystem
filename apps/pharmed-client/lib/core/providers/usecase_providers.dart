@@ -283,3 +283,11 @@ final addPatientUseCaseProvider = Provider((ref) {
 final removePatientsUseCaseProvider = Provider((ref) {
   return RemovePatientsUseCase(ref.read(patientRepositoryProvider));
 });
+
+final completeMobileCensusUseCaseProvider = Provider((ref) {
+  return CompleteMobileCensusUseCase(ref.read(censusRepositoryProvider));
+});
+
+final completeMasterCensusUseCaseProvider = Provider((ref) {
+  return CompleteMasterCensusUseCase(ref.read(censusRepositoryProvider));
+});

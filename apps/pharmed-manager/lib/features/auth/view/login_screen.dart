@@ -297,7 +297,7 @@ class _GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFDDE3EC).withOpacity(0.4)
+      ..color = const Color(0xFFDDE3EC).withAlpha(102)
       ..strokeWidth = 0.5;
 
     const step = 32.0;

@@ -1,12 +1,7 @@
 part of 'dashboard_screen.dart';
 
 class DashboardContentFactory {
-  static Widget buildContent(
-    BuildContext context,
-    DashboardUiState state,
-    DashboardNotifier notifier,
-    bool isLoggedIn,
-  ) {
+  static Widget buildContent(BuildContext context, DashboardState state, DashboardNotifier notifier, bool isLoggedIn) {
     // Rota bilgisini güvenli bir şekilde state'den ayıklıyoruz
     final route = switch (state) {
       DashboardLoaded s => s.activeRoute,
@@ -37,6 +32,8 @@ class DashboardContentFactory {
         'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
         'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
         'drug-activity' => DrugActivityScreen(),
+        'drug-unload' => UnloadView(),
+        'drug-census' => CensusView(),
         'drawer-malfunction' => FaultView(),
         'cabin-stock' => CabinStockView(),
         'patient-request-review' => activeMenu != null ? PrescriptionView(menu: activeMenu) : const SizedBox.shrink(),
@@ -51,7 +48,7 @@ class DashboardContentFactory {
 
   static Widget _buildMainDashboard(
     BuildContext context,
-    DashboardUiState state,
+    DashboardState state,
     DashboardNotifier notifier,
     bool isLoggedIn,
   ) {

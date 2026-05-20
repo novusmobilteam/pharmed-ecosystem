@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../core/providers/providers.dart';
-import '../../auth/presentation/notifier/auth_notifier.dart';
+import '../../auth/notifier/auth_notifier.dart';
 import 'my_patients_state.dart';
 
 final myPatientsNotifierProvider = NotifierProvider<MyPatientsNotifier, MyPatientsState>(MyPatientsNotifier.new);

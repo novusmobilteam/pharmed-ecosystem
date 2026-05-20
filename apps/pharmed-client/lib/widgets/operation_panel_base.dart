@@ -85,7 +85,7 @@ class _OperationPanelHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: config.accentColor,
               shape: BoxShape.circle,
-              boxShadow: [BoxShadow(color: config.accentColor.withOpacity(0.45), blurRadius: 6)],
+              boxShadow: [BoxShadow(color: config.accentColor.withAlpha(115), blurRadius: 6)],
             ),
           ),
           const SizedBox(width: 8),
@@ -151,7 +151,7 @@ final class _ModeConfig {
       accentColor: MedColors.green,
       badgeBg: MedColors.greenLight,
     ),
-    CabinOperationMode.count => _ModeConfig(
+    CabinOperationMode.census => _ModeConfig(
       title: 'İLAÇ SAYIM',
       badge: 'SAYIM',
       accentColor: MedColors.amber,
@@ -167,6 +167,13 @@ final class _ModeConfig {
     CabinOperationMode.intake => _ModeConfig(
       title: 'İLAÇ ALIM',
       badge: 'ALIM',
+      accentColor: MedColors.blueDark,
+      badgeBg: MedColors.blueLight,
+    ),
+    // TODO: Handle this case.
+    CabinOperationMode.unload => _ModeConfig(
+      title: 'İLAÇ BOŞALTMA',
+      badge: 'BOŞALTMA',
       accentColor: MedColors.blueDark,
       badgeBg: MedColors.blueLight,
     ),

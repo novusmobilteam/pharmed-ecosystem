@@ -30,7 +30,6 @@ class _BranchListViewState extends State<BranchListView> {
     });
   }
 
-  // TODO : Servis Düzelince aramaya debounce eklenecek ve pagination mantığı burada da kısmen çalışacak..
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

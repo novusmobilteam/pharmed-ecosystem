@@ -136,7 +136,7 @@ class _MobileRowPreview extends StatelessWidget {
           child: Container(
             height: 5,
             decoration: BoxDecoration(
-              color: faultColor?.withOpacity(0.5) ?? (isSelected ? MedColors.blue.withOpacity(0.4) : MedColors.border),
+              color: faultColor?.withAlpha(128) ?? (isSelected ? MedColors.blue.withAlpha(102) : MedColors.border),
               borderRadius: BorderRadius.circular(2),
             ),
           ),

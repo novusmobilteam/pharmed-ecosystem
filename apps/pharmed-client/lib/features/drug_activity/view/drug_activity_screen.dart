@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import '../../auth/presentation/notifier/auth_notifier.dart';
+import '../../auth/notifier/auth_notifier.dart';
 import '../drug_activity.dart';
 
 class DrugActivityScreen extends ConsumerWidget {

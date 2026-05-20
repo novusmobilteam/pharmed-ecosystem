@@ -30,6 +30,7 @@ class MenuTreeMapper {
       route: routeName,
       isManager: dto.isManager ?? false,
       description: dto.description,
+      isMobile: dto.isMobile,
       children: [],
     );
   }

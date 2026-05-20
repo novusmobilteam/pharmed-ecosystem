@@ -218,6 +218,5 @@ class LanLogSink implements LogSink {
     // Dio veya http paketi kullanılabilir
     // Başarısız olursa _pending'e ekle, sonraki başarılı logda flush et
     _pending.add(entry);
-    // TODO: Dio ile gerçek implementasyon
   }
 }

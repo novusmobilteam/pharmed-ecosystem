@@ -1,5 +1,5 @@
 import '../../../../core/core.dart';
-import '../../../cabin/domain/entity/cabin_filling_request.dart';
+import '../../../../old_features/cabin/domain/entity/cabin_filling_request.dart';
 import '../model/filling_list_dto.dart';
 import '../model/filling_detail_dto.dart';
 import 'filling_list_datasource.dart';
@@ -10,11 +10,9 @@ class FillingListRemoteDataSource extends BaseRemoteDataSource implements Fillin
   final String _basePath = '/FiilingList';
 
   @override
-  // TODO: implement logSwreq
   String get logSwreq => throw UnimplementedError();
 
   @override
-  // TODO: implement logUnit
   String get logUnit => throw UnimplementedError();
 
   @override

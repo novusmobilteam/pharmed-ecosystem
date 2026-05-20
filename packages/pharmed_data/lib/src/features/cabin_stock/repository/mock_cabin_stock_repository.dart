@@ -80,12 +80,6 @@ class MockCabinStockRepository implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<void>> count(List<dynamic> data) async {
-    await Future.delayed(_delay);
-    return const Result.ok(null);
-  }
-
-  @override
   Future<Result<void>> refillMasterCabin(List<dynamic> data) async {
     await Future.delayed(_delay);
     return const Result.ok(null);

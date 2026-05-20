@@ -218,3 +218,10 @@ final patientRepositoryProvider = Provider<IPatientRepository>((ref) {
     ),
   };
 });
+
+final censusRepositoryProvider = Provider<ICensusRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => CensusRepositoryImpl(dataSource: ref.read(censusDataSourceProvider)),
+    AppFlavor.dev || AppFlavor.prod => CensusRepositoryImpl(dataSource: ref.read(censusDataSourceProvider)),
+  };
+});

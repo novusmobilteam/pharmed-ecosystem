@@ -46,7 +46,7 @@ class _ScanIdle extends StatelessWidget {
               decoration: BoxDecoration(
                 color: MedColors.blueLight,
                 shape: BoxShape.circle,
-                border: Border.all(color: MedColors.blue.withOpacity(0.2), width: 2),
+                border: Border.all(color: MedColors.blue.withAlpha(51), width: 2),
               ),
               child: Icon(Icons.settings_input_component_rounded, size: 36, color: MedColors.blue),
             ),
@@ -142,7 +142,7 @@ class _ScanFound extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: MedColors.greenLight,
-              border: Border.all(color: MedColors.green.withOpacity(0.3)),
+              border: Border.all(color: MedColors.green.withAlpha(77)),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -168,7 +168,7 @@ class _ScanFound extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: MedFonts.sans,
                           fontSize: 11,
-                          color: MedColors.green.withOpacity(0.8),
+                          color: MedColors.green.withAlpha(204),
                         ),
                       ),
                     ],
@@ -309,7 +309,7 @@ class _ScanError extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: MedColors.redLight,
-              border: Border.all(color: MedColors.red.withOpacity(0.3)),
+              border: Border.all(color: MedColors.red.withAlpha(77)),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -410,7 +410,7 @@ class _ScanLogRow extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: MedFonts.mono,
                       fontSize: 10,
-                      color: entry.status == ScanLogStatus.error ? MedColors.red.withOpacity(0.7) : MedColors.text3,
+                      color: entry.status == ScanLogStatus.error ? MedColors.red.withAlpha(179) : MedColors.text3,
                     ),
                   ),
                 ],

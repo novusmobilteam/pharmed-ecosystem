@@ -1,6 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_data/src/features/waste/waste.dart';
 
 class WasteRepositoryImpl implements IWasteRepository {
   final WasteRemoteDataSource _dataSource;

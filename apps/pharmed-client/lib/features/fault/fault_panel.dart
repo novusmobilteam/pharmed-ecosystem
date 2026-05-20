@@ -291,10 +291,7 @@ class _DescriptionField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MedLabel(
-          text: context.l10n.fault_descriptionSectionLabel,
-          variant: MedLabelVariant.monoDetail,
-        ),
+        MedLabel(text: context.l10n.fault_descriptionSectionLabel, variant: MedLabelVariant.monoDetail),
         const SizedBox(height: 6),
         TextField(
           controller: controller,
@@ -335,10 +332,7 @@ class _FaultHistory extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MedLabel(
-          text: context.l10n.fault_historySectionLabel,
-          variant: MedLabelVariant.monoDetail,
-        ),
+        MedLabel(text: context.l10n.fault_historySectionLabel, variant: MedLabelVariant.monoDetail),
         const SizedBox(height: 6),
         Container(
           constraints: const BoxConstraints(maxHeight: 160),
@@ -389,7 +383,7 @@ class _FaultHistoryItem extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      color: isActive ? accentColor.withOpacity(0.04) : Colors.transparent,
+      color: isActive ? accentColor.withAlpha(10) : Colors.transparent,
       child: Row(
         children: [
           MedStatusBar(color: accentColor, height: 36, width: 3),
@@ -420,10 +414,7 @@ class _FaultHistoryItem extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  _formatDate(fault.startDate),
-                  style: MedTextStyles.monoXs(color: MedColors.text3),
-                ),
+                Text(_formatDate(fault.startDate), style: MedTextStyles.monoXs(color: MedColors.text3)),
                 if (fault.description != null && fault.description!.isNotEmpty) ...[
                   const SizedBox(height: 2),
                   Text(

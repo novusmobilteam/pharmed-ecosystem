@@ -174,7 +174,7 @@ class UsecaseProviders {
       Provider(create: (context) => GetExpiredStocksUseCase(context.read())),
       Provider(create: (context) => GetExpiringStocksUseCase(context.read())),
       Provider(create: (context) => GetStationStocksUseCase(context.read())),
-      Provider(create: (context) => CountMedicineUseCase(context.read())),
+      Provider(create: (context) => CompleteMasterCensusUseCase(context.read())),
 
       /// Unit
       Provider(create: (context) => GetUnitsUseCase(context.read())),

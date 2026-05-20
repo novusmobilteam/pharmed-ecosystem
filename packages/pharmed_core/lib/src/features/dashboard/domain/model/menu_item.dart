@@ -8,6 +8,7 @@ class MenuItem {
   final String? unicode;
   final String? route;
   final bool? isManager;
+  final bool? isMobile;
   final String? description;
   final List<MenuItem> children;
 
@@ -21,6 +22,7 @@ class MenuItem {
     this.unicode,
     this.route,
     this.isManager,
+    this.isMobile,
     this.description,
     List<MenuItem>? children,
   }) : children = children ?? [];

@@ -8,6 +8,7 @@ class MenuDTO {
   final String? unicode;
   final bool? isActive;
   final bool? isManager;
+  final bool? isMobile;
   final String? description;
 
   MenuDTO({
@@ -20,6 +21,7 @@ class MenuDTO {
     this.unicode,
     this.isActive,
     this.isManager,
+    this.isMobile,
     this.description,
   });
 
@@ -34,6 +36,7 @@ class MenuDTO {
       unicode: json['unicode'],
       isActive: json['isActive'],
       isManager: json['isManager'],
+      isMobile: json['isMobileMenu'],
       description: json['description'],
     );
   }

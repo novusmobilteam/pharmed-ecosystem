@@ -15,7 +15,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/state/dashboard_ui_state.dart';
+import '../../dashboard/presentation/notifier/dashboard_state.dart';
 import '../notifier/prescription_notifier.dart';
 import '../notifier/prescription_state.dart';
 
@@ -125,6 +125,9 @@ class _PrescriptionRightPanel extends StatelessWidget {
       return Center(child: MedLoadingIndicator());
     }
 
-    return RxCarousel(items: state.prescriptionItems);
+    return Padding(
+      padding: const EdgeInsets.all(MedSpacing.xl),
+      child: RxCarousel(items: state.prescriptionItems),
+    );
   }
 }

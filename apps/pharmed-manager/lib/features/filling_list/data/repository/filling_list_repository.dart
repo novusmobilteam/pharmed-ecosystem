@@ -1,7 +1,7 @@
 import '../../../../core/core.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../domain/entity/filling_detail.dart';
-import '../../../cabin/domain/entity/cabin_filling_request.dart';
+import '../../../../old_features/cabin/domain/entity/cabin_filling_request.dart';
 import '../../domain/repository/i_filling_list_repository.dart';
 import '../datasource/filling_list_datasource.dart';
 

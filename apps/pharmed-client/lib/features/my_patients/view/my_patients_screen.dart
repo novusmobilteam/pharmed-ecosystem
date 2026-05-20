@@ -17,7 +17,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/state/dashboard_ui_state.dart';
+import '../../dashboard/presentation/notifier/dashboard_state.dart';
 import '../notifier/my_patients_notifier.dart';
 import '../notifier/my_patients_state.dart';
 
@@ -145,7 +145,7 @@ class _AllPatientsPanel extends StatelessWidget {
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
                   itemCount: filtered.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.sm),
+                  separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
                   itemBuilder: (context, index) {
                     final h = filtered[index];
                     final hospId = h.id;

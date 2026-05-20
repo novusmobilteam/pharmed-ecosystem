@@ -24,7 +24,7 @@ class WasteDrugList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(MedSpacing.lg),
       itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.md),
+      separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.md),
       itemBuilder: (context, index) {
         final item = items[index];
         final isSelected = selectedItem?.id == item.id;

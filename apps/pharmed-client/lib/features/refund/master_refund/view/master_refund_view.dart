@@ -6,7 +6,6 @@ class MasterRefundView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // TODO(SWREQ-REFUND-10): Master kabin iade ekranı
     return const Center(child: Text('Master kabin iade ekranı henüz hazır değil.'));
   }
 }

@@ -21,6 +21,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(settingsNotifierProvider.select((s) => s.language.locale));
+
     WidgetsBinding.instance.addObserver(SerialPortLifecycleObserver(ref.read(serialServiceProvider)));
 
     return InputFieldTheme(

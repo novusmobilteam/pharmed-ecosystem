@@ -18,7 +18,6 @@ class MobileDrawerConfigView extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Çekmece sayısı ──────────────────────────────────────
           SectionLabel(label: context.l10n.wizard_drawerCountLabel),
           const SizedBox(height: 10),
           Row(
@@ -75,7 +74,7 @@ class _SameConfigToggle extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: value ? MedColors.blueLight : MedColors.surface2,
-          border: Border.all(color: value ? MedColors.blue.withOpacity(0.4) : MedColors.border),
+          border: Border.all(color: value ? MedColors.blue.withAlpha(102) : MedColors.border),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -230,7 +229,6 @@ class _DrawerConfigCardState extends State<_DrawerConfigCard> {
                     style: TextStyle(fontFamily: MedFonts.mono, fontSize: 11, color: MedColors.text3),
                   ),
                   const SizedBox(width: 8),
-
                   Icon(
                     _expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
                     size: 20,
@@ -349,8 +347,8 @@ class _RowBarPreview extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 1.5),
               decoration: BoxDecoration(
-                color: active ? MedColors.blue.withOpacity(0.2) : MedColors.surface2,
-                border: Border.all(color: active ? MedColors.blue.withOpacity(0.4) : MedColors.border2),
+                color: active ? MedColors.blue.withAlpha(51) : MedColors.surface2,
+                border: Border.all(color: active ? MedColors.blue.withAlpha(102) : MedColors.border2),
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -368,6 +366,7 @@ class _ActionChip extends StatelessWidget {
     required this.onTap,
     this.enabled = true,
     this.danger = false,
+    // ignore: unused_element_parameter
     this.primary = false,
   });
 
@@ -390,17 +389,17 @@ class _ActionChip extends StatelessWidget {
     final bgColor = !enabled
         ? MedColors.surface2
         : danger
-        ? MedColors.red.withOpacity(0.06)
+        ? MedColors.red.withAlpha(15)
         : primary
         ? MedColors.blue
         : MedColors.blueLight;
     final borderColor = !enabled
         ? MedColors.border
         : danger
-        ? MedColors.red.withOpacity(0.25)
+        ? MedColors.red.withAlpha(64)
         : primary
         ? MedColors.blue
-        : MedColors.blue.withOpacity(0.3);
+        : MedColors.blue.withAlpha(77);
 
     return GestureDetector(
       onTap: enabled ? onTap : null,

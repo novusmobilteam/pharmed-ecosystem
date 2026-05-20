@@ -16,30 +16,35 @@ enum CabinOperationMode {
   refill,
 
   /// İlaç Sayım — mevcut stok sayılır ve sisteme girilir.
-  count,
+  census,
 
   /// İlaç Alım
   intake,
 
   /// Çekmece Arıza — arıza/bakım kaydı oluşturulur, göz kilitlenir.
   fault,
+
+  /// İlaç Boşaltma
+  unload,
 }
 
 extension CabinOperationModeX on CabinOperationMode {
   String get label => switch (this) {
     CabinOperationMode.assign => 'İlaç Atama',
     CabinOperationMode.refill => 'İlaç Dolum',
-    CabinOperationMode.count => 'İlaç Sayım',
+    CabinOperationMode.census => 'İlaç Sayım',
     CabinOperationMode.intake => 'İlaç Alım',
     CabinOperationMode.fault => 'Çekmece Arıza',
+    CabinOperationMode.unload => 'İlaç Boşaltma',
   };
 
   /// Mod'a özgü vurgu rengi — hover, banner, chip rengi için
   Color get accentColor => switch (this) {
     CabinOperationMode.assign => MedColors.blue,
     CabinOperationMode.refill => MedColors.green,
-    CabinOperationMode.count => MedColors.amber,
+    CabinOperationMode.census => MedColors.amber,
     CabinOperationMode.intake => MedColors.blueDark,
     CabinOperationMode.fault => MedColors.red,
+    CabinOperationMode.unload => MedColors.shadowDark,
   };
 }

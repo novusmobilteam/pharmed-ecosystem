@@ -170,13 +170,13 @@ _ButtonSizing _resolveSizing(MedButtonSize s) {
     ),
     MedButtonSize.md => const _ButtonSizing(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      minHeight: 48,
+      minHeight: 40,
       fontSize: 14,
       radius: 8,
     ),
     MedButtonSize.lg => const _ButtonSizing(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-      minHeight: 54,
+      minHeight: 44,
       fontSize: 15,
       radius: 10,
     ),

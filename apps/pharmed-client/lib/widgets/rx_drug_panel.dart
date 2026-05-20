@@ -179,7 +179,7 @@ class _RxDrugList extends StatelessWidget {
 
     return ListView.separated(
       itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.md),
+      separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.md),
       itemBuilder: (context, index) {
         final item = items[index];
         return RxItemCard(

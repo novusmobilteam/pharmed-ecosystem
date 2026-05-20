@@ -119,10 +119,7 @@ class _IconBox extends StatelessWidget {
     return Container(
       width: boxSize,
       height: boxSize,
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: const BorderRadius.all(Radius.circular(9)),
-      ),
+      decoration: BoxDecoration(color: color.withAlpha(31), borderRadius: const BorderRadius.all(Radius.circular(9))),
       alignment: Alignment.center,
       child: IconTheme(
         data: IconThemeData(color: color, size: dense ? 13.0 : 16.0),

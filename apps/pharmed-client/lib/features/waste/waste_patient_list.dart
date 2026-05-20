@@ -41,7 +41,7 @@ class WastePatientList extends StatelessWidget {
                 ? const EmptyStateWidget(variant: EmptyStateVariant.noResults)
                 : ListView.separated(
                     itemCount: patients.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.xs / 2),
+                    separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.xs / 2),
                     itemBuilder: (context, index) {
                       final h = patients[index];
                       final isSelected = selectedPatient?.id == h.id;

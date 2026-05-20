@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-import '../../../cabin/domain/entity/cabin_input_data.dart';
+import '../../../../old_features/cabin/domain/entity/cabin_input_data.dart';
 import '../../domain/entity/filling_list.dart';
 import '../../domain/entity/filling_object.dart';
 import '../../domain/useacase/filling_list_refill_usecase.dart';

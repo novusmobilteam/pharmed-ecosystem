@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
-import '../../../cabin/shared/cabin_assignment_picker/notifier/cabin_assignment_picker_notifier.dart';
-import '../../../cabin/shared/cabin_assignment_picker/view/cabin_assignment_picker_view.dart';
+import '../../../../old_features/cabin/shared/cabin_assignment_picker/notifier/cabin_assignment_picker_notifier.dart';
+import '../../../../old_features/cabin/shared/cabin_assignment_picker/view/cabin_assignment_picker_view.dart';
 
 import '../../domain/entity/filling_object.dart';
 import '../notifier/filling_list_view_notifier.dart';

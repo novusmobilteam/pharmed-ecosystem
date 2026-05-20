@@ -230,7 +230,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
     try {
       for (int attempt = 0; attempt <= retryCount; attempt++) {
         try {
-          debugPrint('>> Giden: $command');
+          //debugPrint('>> Giden: $command');
 
           await Future.delayed(const Duration(milliseconds: _rs485DelayBeforeTxMs));
 
@@ -346,7 +346,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
       _buffer.write(chunk);
 
       final current = _buffer.toString().trim();
-      debugPrint('<< Gelen: $current');
+      //debugPrint('<< Gelen: $current');
 
       // Protokol bitiş karakteri: -, ,, ;, ]
       if (current.endsWith('-') || current.endsWith(',') || current.endsWith(';') || current.endsWith(']')) {

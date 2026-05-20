@@ -12,9 +12,6 @@ abstract class ICabinStockRepository {
 
   Future<Result<List<CabinStock>>> getExpiringStocks();
 
-  /// İlaç sayım ekranında sayım yapmak için kullanılan servis.
-  Future<Result<void>> count(List<dynamic> data);
-
   /// Master kabin dolum işlemi
   Future<Result<void>> refillMasterCabin(List<dynamic> data);
 

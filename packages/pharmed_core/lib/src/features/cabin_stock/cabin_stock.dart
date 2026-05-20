@@ -6,7 +6,7 @@ export 'domain/entity/station_stock.dart';
 
 export 'domain/repository/i_cabin_stock_repository.dart';
 
-export 'domain/usecase/count_medicine_usecase.dart';
+export '../census/domain/usecase/complete_master_census_usecase.dart';
 export 'domain/usecase/get_cabin_stock_usecase.dart';
 export 'domain/usecase/get_current_cabin_stock_usecase.dart';
 export 'domain/usecase/get_expired_stocks_usecase.dart';

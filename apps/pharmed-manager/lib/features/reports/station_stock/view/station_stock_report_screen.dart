@@ -12,12 +12,6 @@ class _StationCabinStockScreenState extends State<StationCabinStockScreen> {
   // ignore: unused_field
   Station? _station;
 
-  void _selectStation(Station? station) {
-    setState(() {
-      _station = station;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MedResponsiveLayout(

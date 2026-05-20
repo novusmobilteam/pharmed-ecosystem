@@ -3,9 +3,15 @@ import '../model/mail_preference_dto.dart';
 import 'mail_preference_datasource.dart';
 
 class MailPreferenceRemoteDataSource extends BaseRemoteDataSource implements MailPreferenceDataSource {
+  MailPreferenceRemoteDataSource({required super.apiManager});
+
   final String _basePath = '/EmailSendingPreferences';
 
-  MailPreferenceRemoteDataSource({required super.apiManager});
+  @override
+  String get logSwreq => throw UnimplementedError();
+
+  @override
+  String get logUnit => throw UnimplementedError();
 
   @override
   Future<Result<List<MailPreferenceDTO>>> getPreferences() async {
@@ -49,12 +55,4 @@ class MailPreferenceRemoteDataSource extends BaseRemoteDataSource implements Mai
       successLog: 'Mail preference deleted',
     );
   }
-
-  @override
-  // TODO: implement logSwreq
-  String get logSwreq => throw UnimplementedError();
-
-  @override
-  // TODO: implement logUnit
-  String get logUnit => throw UnimplementedError();
 }

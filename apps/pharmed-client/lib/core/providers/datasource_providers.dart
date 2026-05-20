@@ -70,3 +70,7 @@ final wasteDataSourceProvider = Provider((ref) {
 final patientDataSourceProvider = Provider((ref) {
   return PatientRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
+
+final censusDataSourceProvider = Provider((ref) {
+  return CensusRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});

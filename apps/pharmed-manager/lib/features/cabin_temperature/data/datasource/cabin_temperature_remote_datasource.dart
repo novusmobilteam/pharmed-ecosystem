@@ -10,11 +10,9 @@ class CabinTemperatureRemoteDataSource extends BaseRemoteDataSource implements C
   final String _basePath = '/CabinTemperatureControl';
 
   @override
-  // TODO: implement logSwreq
   String get logSwreq => throw UnimplementedError();
 
   @override
-  // TODO: implement logUnit
   String get logUnit => throw UnimplementedError();
 
   @override

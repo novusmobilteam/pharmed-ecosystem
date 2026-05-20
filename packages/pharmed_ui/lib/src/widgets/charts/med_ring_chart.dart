@@ -92,7 +92,7 @@ class _RingPainter extends CustomPainter {
     final radius = (size.width - strokeWidth) / 2;
 
     final bgPaint = Paint()
-      ..color = color.withOpacity(0.15)
+      ..color = color.withAlpha(38)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
 

@@ -1,5 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import '../../../../widgets/domain/domain.dart';
+import '../../dashboard.dart';
 
 extension CabinStockSktStatus on CabinStock {
   SktStatus get sktStatus {

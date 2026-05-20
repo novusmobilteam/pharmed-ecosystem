@@ -1,6 +1,6 @@
 import '../../../../core/core.dart';
 
-import '../../../cabin/domain/entity/cabin_filling_request.dart';
+import '../../../../old_features/cabin/domain/entity/cabin_filling_request.dart';
 import '../repository/i_filling_list_repository.dart';
 
 class FillingListRefillParams extends CabinFillingRequest {

@@ -34,7 +34,6 @@ class MockRfidService implements IRfidService {
     _connected = false;
   }
 
-  @override
   Future<Result<List<RfidTag>>> scan() async {
     if (!_connected) {
       return Result.error(ServiceException(message: 'Mock RFID servisi bağlı değil.', statusCode: 503));
@@ -54,13 +53,11 @@ class MockRfidService implements IRfidService {
 
   @override
   Stream<RfidTag> startInventory() {
-    // TODO: implement startInventory
     throw UnimplementedError();
   }
 
   @override
   Future<Result<void>> stopInventory() {
-    // TODO: implement stopInventory
     throw UnimplementedError();
   }
 }

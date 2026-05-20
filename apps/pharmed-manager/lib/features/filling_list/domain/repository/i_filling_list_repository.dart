@@ -1,7 +1,7 @@
 import '../../../../core/core.dart';
 import '../entity/filling_list.dart';
 import '../entity/filling_detail.dart';
-import '../../../cabin/domain/entity/cabin_filling_request.dart';
+import '../../../../old_features/cabin/domain/entity/cabin_filling_request.dart';
 
 abstract class IFillingListRepository {
   /// Dolum listelerini getiren servis

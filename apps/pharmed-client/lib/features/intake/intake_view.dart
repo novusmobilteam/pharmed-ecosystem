@@ -4,7 +4,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../core/cache/app_settings_cache.dart';
 import '../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../dashboard/presentation/state/dashboard_ui_state.dart';
+import '../dashboard/presentation/notifier/dashboard_state.dart';
 import 'intake.dart';
 
 class IntakeView extends ConsumerWidget {

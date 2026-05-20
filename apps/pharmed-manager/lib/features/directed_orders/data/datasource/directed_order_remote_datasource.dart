@@ -9,11 +9,9 @@ class DirectedOrderRemoteDataSource extends BaseRemoteDataSource implements Dire
   final String _basePath = '/DirectedOrder';
 
   @override
-  // TODO: implement logSwreq
   String get logSwreq => throw UnimplementedError();
 
   @override
-  // TODO: implement logUnit
   String get logUnit => throw UnimplementedError();
 
   @override

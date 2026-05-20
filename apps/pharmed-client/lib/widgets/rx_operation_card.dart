@@ -65,6 +65,8 @@ enum RxOperationCardMode {
   /// - [RfidPresenceStatus.absent]  → 🔴 Kabinde değil
   /// - [RfidPresenceStatus.removed] → 🟢 Alındı
   intake,
+
+  census,
 }
 
 class RxOperationCard extends StatelessWidget {
@@ -213,22 +215,32 @@ class _RfidRow extends StatelessWidget {
   Color get _tagColor {
     if (!isActive || rfidStatus == null) return MedColors.text3;
     return switch ((mode, rfidStatus!)) {
+      // Dolum: okundu → yeşil, bekleniyor → mavi
       (RxOperationCardMode.refill, RfidPresenceStatus.present) => MedColors.green,
       (RxOperationCardMode.refill, _) => MedColors.blue,
+      // Alım: kabinde → mavi, kabinde değil → kırmızı, alındı → yeşil
       (RxOperationCardMode.intake, RfidPresenceStatus.present) => MedColors.blue,
       (RxOperationCardMode.intake, RfidPresenceStatus.absent) => MedColors.red,
       (RxOperationCardMode.intake, RfidPresenceStatus.removed) => MedColors.green,
+      // Sayım: kabinde → yeşil, eksik → kırmızı
+      (RxOperationCardMode.census, RfidPresenceStatus.present) => MedColors.green,
+      (RxOperationCardMode.census, _) => MedColors.red,
     };
   }
 
   Color get _rowBg {
     if (!isActive || rfidStatus == null) return MedColors.surface2;
     return switch ((mode, rfidStatus!)) {
+      // Dolum
       (RxOperationCardMode.refill, RfidPresenceStatus.present) => MedColors.greenLight,
       (RxOperationCardMode.refill, _) => MedColors.blueLight,
+      // Alım
       (RxOperationCardMode.intake, RfidPresenceStatus.present) => MedColors.blueLight,
       (RxOperationCardMode.intake, RfidPresenceStatus.absent) => MedColors.redLight,
       (RxOperationCardMode.intake, RfidPresenceStatus.removed) => MedColors.greenLight,
+      // Sayım
+      (RxOperationCardMode.census, RfidPresenceStatus.present) => MedColors.greenLight,
+      (RxOperationCardMode.census, _) => MedColors.redLight,
     };
   }
 
@@ -261,6 +273,7 @@ class _RfidInlineStatus extends StatelessWidget {
     return switch (mode) {
       RxOperationCardMode.refill => _buildRefillStatus(),
       RxOperationCardMode.intake => _buildIntakeStatus(),
+      RxOperationCardMode.census => _buildCensusStatus(),
     };
   }
 
@@ -273,6 +286,16 @@ class _RfidInlineStatus extends StatelessWidget {
     RfidPresenceStatus.present => _StatusChip.spinner(label: 'Kabinde', color: MedColors.blue),
     RfidPresenceStatus.absent => _StatusChip.warning(label: 'Kabinde değil', color: MedColors.red),
     RfidPresenceStatus.removed => _StatusChip.check(label: 'Alındı', color: MedColors.green),
+  };
+
+  /// Sayım semantiği:
+  /// - present → ilaç kabinde fiziksel olarak mevcut → sayım geçerli
+  /// - absent  → ilaç okunmuyor → eksik
+  /// - removed → sayım ekranında bu durum oluşmaz (alım semantiğine özgü)
+  Widget _buildCensusStatus() => switch (status) {
+    RfidPresenceStatus.present => _StatusChip.check(label: 'Kabinde', color: MedColors.green),
+    RfidPresenceStatus.absent => _StatusChip.warning(label: 'Eksik', color: MedColors.red),
+    RfidPresenceStatus.removed => _StatusChip.warning(label: 'Eksik', color: MedColors.red),
   };
 }
 

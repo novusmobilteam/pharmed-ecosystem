@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/assignment/assignment_view.dart';
-import 'package:pharmed_client/features/cabin_stock.dart/cabin_stock.dart';
+import 'package:pharmed_client/features/cabin_stock/cabin_stock.dart';
 import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
 import 'package:pharmed_client/features/fault/fault_view.dart';
 import 'package:pharmed_client/features/my_patients/view/my_patients_screen.dart';
@@ -13,11 +13,12 @@ import 'package:pharmed_client/features/prescription/view/prescription_view.dart
 import 'package:pharmed_client/features/refund/refund_view.dart';
 import 'package:pharmed_client/features/settings/presentation/view/settings_modal.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';
+import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../widgets/widgets.dart';
-import '../../../auth/presentation/notifier/auth_notifier.dart';
-import '../../../auth/presentation/state/auth_state.dart';
+import '../../../auth/auth.dart';
+import '../../../census/census.dart';
 import '../../../drug_activity/drug_activity.dart';
 import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
@@ -25,7 +26,8 @@ import '../../../waste/waste.dart';
 import '../../domain/model/dasboard_data.dart';
 
 import '../notifier/dashboard_notifier.dart';
-import '../state/dashboard_ui_state.dart';
+import '../notifier/dashboard_state.dart';
+import '../widgets/dashboard_app_bar.dart';
 
 part 'upcoming_treatments_view.dart';
 part 'kpi_view.dart';
@@ -127,14 +129,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void _showLoginModal(BuildContext context, WidgetRef ref) {
     showDialog<void>(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => LoginModal(
-        onLogin: (username, password) async {
-          final notifier = ref.read(authNotifierProvider.notifier);
-          final error = await notifier.login(email: username, password: password);
-          return error;
+      barrierDismissible: true,
+      builder: (ctx) => Consumer(
+        builder: (ctx, ref, _) {
+          final isLoading = ref.watch(authNotifierProvider) is AuthLoading;
+          return LoginModal(
+            isLoading: isLoading,
+            onLogin: (username, password, onError) async {
+              await ref
+                  .read(authNotifierProvider.notifier)
+                  .login(email: username, password: password, onError: onError);
+              if (ref.read(authNotifierProvider) is AuthLoggedIn && ctx.mounted) {
+                Navigator.of(ctx).pop();
+              }
+            },
+          );
         },
-        onCancel: () => Navigator.of(context).pop(),
       ),
     );
   }

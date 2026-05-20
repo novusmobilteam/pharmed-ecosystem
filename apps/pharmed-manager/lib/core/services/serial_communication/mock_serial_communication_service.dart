@@ -35,7 +35,6 @@ class MockSerialCommunicationService implements ISerialCommunicationService {
 
   @override
   List<String> getAvailablePorts() {
-    // TODO: implement getAvailablePorts
     throw UnimplementedError();
   }
 }

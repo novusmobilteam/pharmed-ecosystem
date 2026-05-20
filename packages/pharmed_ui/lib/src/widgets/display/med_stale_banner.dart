@@ -43,7 +43,7 @@ class MedStaleBanner extends StatelessWidget {
           Container(
             width: 20,
             height: 20,
-            decoration: BoxDecoration(color: MedColors.amber.withOpacity(0.15), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: MedColors.amber.withAlpha(38), shape: BoxShape.circle),
             child: Icon(Icons.warning_amber_rounded, size: 13, color: MedColors.amber),
           ),
 
@@ -71,7 +71,7 @@ class MedStaleBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: canProceed ? MedColors.amber.withOpacity(0.15) : MedColors.redLight,
+              color: canProceed ? MedColors.amber.withAlpha(38) : MedColors.redLight,
               borderRadius: MedRadius.xlAll,
               border: Border.all(color: canProceed ? MedColors.amber : MedColors.red, width: 0.5),
             ),

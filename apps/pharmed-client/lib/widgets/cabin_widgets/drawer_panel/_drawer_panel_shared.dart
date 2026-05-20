@@ -111,7 +111,7 @@ class CabinModeBanner extends StatelessWidget {
       const Color(0xFF086E4A),
       context.l10n.cabin_bannerDrugFill,
     ),
-    CabinOperationMode.count => (
+    CabinOperationMode.census => (
       const Color(0xFFFEF3E2),
       const Color(0xFFF5C97A),
       const Color(0xFF92520A),
@@ -129,7 +129,14 @@ class CabinModeBanner extends StatelessWidget {
       const Color(0xFFE8F1FC),
       const Color(0xFFC4D9F5),
       const Color(0xFF1256AA),
-      'İlaç Dolum',
+      'İlaç Alım',
+    ),
+
+    CabinOperationMode.unload => (
+      const Color(0xFFE8F1FC),
+      const Color(0xFFC4D9F5),
+      const Color(0xFF1256AA),
+      'İlaç Boşaltma',
     ),
   };
 }

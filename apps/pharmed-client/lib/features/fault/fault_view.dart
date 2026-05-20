@@ -22,7 +22,7 @@ import '../../core/cache/app_settings_cache.dart';
 import '../../widgets/widgets.dart';
 import '../../core/enums/cabin_operation_mode.dart';
 import '../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../dashboard/presentation/state/dashboard_ui_state.dart';
+import '../dashboard/presentation/notifier/dashboard_state.dart';
 import 'master_fault/notifier/master_fault_notifier.dart';
 import 'mobile_fault/notifier/mobile_fault_notifier.dart';
 import 'fault_panel_state.dart';

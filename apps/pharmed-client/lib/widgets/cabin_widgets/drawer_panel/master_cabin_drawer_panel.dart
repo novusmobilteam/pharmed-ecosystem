@@ -548,7 +548,7 @@ class _MasterCabinCell extends StatelessWidget {
                 fontFamily: MedFonts.mono,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: const Color(0x993250780),
+                color: const Color(0xF3250780),
               ),
             ),
           ),
@@ -565,8 +565,8 @@ class _MasterCabinCell extends StatelessWidget {
   }
 
   Widget _cellContent() => switch (mode) {
-    CabinOperationMode.assign || CabinOperationMode.intake => _assignContent(),
-    CabinOperationMode.count || CabinOperationMode.refill => stock != null ? _stockFillContent() : _assignContent(),
+    CabinOperationMode.assign || CabinOperationMode.intake || CabinOperationMode.unload => _assignContent(),
+    CabinOperationMode.census || CabinOperationMode.refill => stock != null ? _stockFillContent() : _assignContent(),
     CabinOperationMode.fault => const SizedBox.shrink(),
   };
 
@@ -676,7 +676,7 @@ class _MasterCellLegend extends StatelessWidget {
       (CabinCellStatus.low, 'Dolum gerekiyor'),
       (CabinCellStatus.critical, 'Acil dolum'),
     ],
-    CabinOperationMode.count => [
+    CabinOperationMode.census => [
       (CabinCellStatus.assigned, context.l10n.cabin_legendCountAssigned),
       (CabinCellStatus.low, context.l10n.cabin_legendCountLow),
       (CabinCellStatus.empty, context.l10n.cabin_legendCountEmpty),
@@ -685,6 +685,13 @@ class _MasterCellLegend extends StatelessWidget {
       (CabinCellStatus.assigned, context.l10n.cabin_legendFaultNormal),
       (CabinCellStatus.fault, context.l10n.cabin_legendFaultReported),
       (CabinCellStatus.empty, context.l10n.cabin_legendFaultEmpty),
+    ],
+
+    CabinOperationMode.unload => [
+      (CabinCellStatus.empty, context.l10n.cabin_legendAssignEmpty),
+      (CabinCellStatus.assigned, context.l10n.cabin_legendAssignAssigned),
+      (CabinCellStatus.fault, context.l10n.cabin_legendAssignFault),
+      (CabinCellStatus.maintenance, context.l10n.cabin_legendAssignMaintenance),
     ],
   };
 }

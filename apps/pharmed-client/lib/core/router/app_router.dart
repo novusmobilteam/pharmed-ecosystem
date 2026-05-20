@@ -1,5 +1,3 @@
-// lib/core/router/app_router.dart
-//
 // [SWREQ-CORE-004] [IEC 62304 §5.5]
 // Uygulama giriş yönlendirici.
 // Önce auth kontrolü, ardından setup kontrolü yapılır.
@@ -7,12 +5,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/features/auth/presentation/screen/login_screen.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../features/auth/auth.dart';
 import '../setup/app_setup_notifier.dart';
-import '../../features/auth/presentation/notifier/auth_notifier.dart';
-import '../../features/auth/presentation/state/auth_state.dart';
 import '../../features/setup_wizard/view/setup_wizard_screen.dart';
 import '../../features/dashboard/presentation/view/dashboard_screen.dart';
 
@@ -24,23 +19,17 @@ class AppRouter extends ConsumerWidget {
     final authState = ref.watch(authNotifierProvider);
     final setupState = ref.watch(appSetupStatusProvider);
 
-    // AuthNotifier içindeki bir getter yardımıyla:
-    // Eğer kullanıcı daha önce giriş yapmışsa ve biz Dashboard'daysak,
-    // logout olsa bile dashboard'da kalmaya devam etmeli.
-    final authNotif = ref.read(authNotifierProvider.notifier);
-    final hasSessionHistory = authNotif.hasAccessedDashboard;
-
     return switch ((authState, setupState)) {
       // Auth yok → direkt login
-      (AuthLoggedOut(), _) when hasSessionHistory => const DashboardScreen(),
       (AuthLoggedOut(), _) => const LoginScreen(),
+      //(AuthLoggedOut(), _) when hasSessionHistory => const DashboardScreen(),
       (AuthError(), _) => const LoginScreen(),
 
       // Auth yükleniyor
-      (AuthLoading(), _) => const _SplashView(),
+      (AuthLoading(), _) => const LoginScreen(),
 
       // Auth tamam — setup kontrol et
-      (AuthLoggedIn(), AsyncLoading()) => const _SplashView(),
+      (AuthLoggedIn(), AsyncLoading()) => const LoginScreen(),
       (AuthLoggedIn(), AsyncData(value: false)) => const SetupWizardScreen(),
       (AuthLoggedIn(), AsyncData(value: true)) => const DashboardScreen(),
       (AuthLoggedIn(), AsyncError()) => const SetupWizardScreen(),
@@ -50,25 +39,7 @@ class AppRouter extends ConsumerWidget {
       (AuthSessionExpiring(), _) => const DashboardScreen(),
 
       // Diğer
-      _ => const _SplashView(),
+      _ => const LoginScreen(),
     };
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Splash — async işlemler tamamlanana kadar gösterilir
-// ─────────────────────────────────────────────────────────────────
-
-class _SplashView extends StatelessWidget {
-  const _SplashView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: MedColors.bg,
-      body: Center(
-        child: CircularProgressIndicator(strokeWidth: 2.5, valueColor: AlwaysStoppedAnimation(MedColors.blue)),
-      ),
-    );
   }
 }

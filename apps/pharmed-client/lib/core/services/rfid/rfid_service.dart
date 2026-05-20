@@ -77,20 +77,19 @@ class RfidService implements IRfidService {
         context: {'host': host, 'port': port},
       );
 
-      // Defensive: önceki uygulama crash'inden Real-time mode'da kalmış olabilir.
-      // Answer Mode'a al — başarısız olursa bağlantıyı bozmuyoruz, log'la geç.
-      //final modeResult = await _setWorkingMode(_modeAnswer);
-      // modeResult.when(
-      //   ok: (_) {},
-      //   error: (e) {
-      //     MedLogger.warn(
-      //       unit: 'RfidService',
-      //       swreq: 'SWREQ-CLI-RFID-001',
-      //       message: 'Defensive Answer Mode set başarısız (devam ediliyor)',
-      //       context: {'error': e.toString()},
-      //     );
-      //   },
-      // );
+      await Future.delayed(const Duration(milliseconds: 200)); // reader'ın hazırlanması için
+      final modeResult = await _setWorkingMode(_modeAnswer);
+      modeResult.when(
+        ok: (_) {},
+        error: (e) {
+          MedLogger.warn(
+            unit: 'RfidService',
+            swreq: 'SWREQ-CLI-RFID-001',
+            message: 'Defensive Answer Mode set başarısız (devam ediliyor)',
+            context: {'error': e.toString()},
+          );
+        },
+      );
 
       return const Result.ok(null);
     } on SocketException catch (e) {

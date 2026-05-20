@@ -15,7 +15,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/state/dashboard_ui_state.dart';
+import '../../dashboard/presentation/notifier/dashboard_state.dart';
 import '../unapplied_prescription.dart';
 
 class UnappliedPrescriptionScreen extends ConsumerWidget {
@@ -132,7 +132,10 @@ class _UnappliedPrescriptionRightPanel extends StatelessWidget {
       children: [
         HospitalizationDetailBanner(hospitalization: state.selectedPatient),
         Expanded(
-          child: RxCarousel(items: state.prescriptionItems, emptyVariant: EmptyStateVariant.error),
+          child: Padding(
+            padding: const EdgeInsets.all(MedSpacing.xl),
+            child: RxCarousel(items: state.prescriptionItems, emptyVariant: EmptyStateVariant.error),
+          ),
         ),
       ],
     );
