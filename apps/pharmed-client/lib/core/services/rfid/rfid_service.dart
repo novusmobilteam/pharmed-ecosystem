@@ -105,18 +105,23 @@ class RfidService implements IRfidService {
 
   @override
   Future<void> disconnect() async {
-    // stopInventory yerine direkt controller'ı kapat
-    // onCancel tetiklenmemesi için önce null'a al
     final controller = _inventoryController;
     _inventoryController = null;
     await controller?.close();
 
     await _socketSub?.cancel();
-    await _socket?.close();
     _socketSub = null;
+
+    // close() yerine destroy() — RST gönderir, FIN/ACK handshake beklemez.
+    // Okuyucunun port'u daha hızlı serbest bırakmasını sağlar.
+    _socket?.destroy();
     _socket = null;
+
     _rxBuffer.clear();
     _pendingCommandCompleter = null;
+
+    // Okuyucunun TCP stack'ini temizlemesi için kısa bekleme.
+    await Future.delayed(const Duration(milliseconds: 300));
 
     MedLogger.info(unit: 'RfidService', swreq: 'SWREQ-CLI-RFID-001', message: 'RFID bağlantısı kapatıldı');
   }

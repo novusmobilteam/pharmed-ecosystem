@@ -1,6 +1,9 @@
-import '../../../../core/core.dart';
+// [SWREQ-CORE-STOCK-UC-001]
+// Sınıf: Class B
 
-class UnloadMedicineParams {
+import 'package:pharmed_core/pharmed_core.dart';
+
+class UnloadMasterParams {
   final int materialId;
   final int cabinDrawerDetailId;
   final double countQuantity;
@@ -9,7 +12,7 @@ class UnloadMedicineParams {
   final int shelfNo;
   final int compartmentNo;
 
-  UnloadMedicineParams({
+  UnloadMasterParams({
     required this.materialId,
     required this.cabinDrawerDetailId,
     required this.countQuantity,
@@ -32,13 +35,13 @@ class UnloadMedicineParams {
   }
 }
 
-class UnloadMedicineUseCase {
-  final ICabinStockRepository _cabinStockRepository;
+class CompleteMasterUnloadUseCase {
+  final IUnloadRepository _repository;
 
-  UnloadMedicineUseCase(this._cabinStockRepository);
+  CompleteMasterUnloadUseCase(this._repository);
 
-  Future<Result<void>> call(List<UnloadMedicineParams> params) {
+  Future<Result<void>> call(List<UnloadMasterParams> params) {
     final data = params.map((p) => p.toJson()).toList();
-    return _cabinStockRepository.unload(data);
+    return _repository.masterUnload(data);
   }
 }

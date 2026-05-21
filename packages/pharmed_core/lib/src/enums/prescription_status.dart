@@ -24,10 +24,17 @@ enum PrescriptionStatus {
   /// İptal Edildi
   cancelled(7),
 
+  /// Reddedildi
   rejected(8),
 
   /// Dolum Bekliyor
-  filledWaiting(9);
+  filledWaiting(9),
+
+  /// İade Onay Bekliyor
+  returnPending(10),
+
+  /// Boşaltıldı
+  unloaded(11);
 
   final int id;
 
@@ -57,6 +64,10 @@ enum PrescriptionStatus {
         return 'Reddedildi';
       case PrescriptionStatus.filledWaiting:
         return 'Dolum Bekliyor';
+      case PrescriptionStatus.returnPending:
+        return 'İade Onayı Bekliyor';
+      case PrescriptionStatus.unloaded:
+        return 'Boşaltıldı';
     }
   }
 }
@@ -76,6 +87,8 @@ extension PrescriptionStatusStyle on PrescriptionStatus {
     PrescriptionStatus.cancelled => Colors.amber,
     PrescriptionStatus.rejected => Colors.red,
     PrescriptionStatus.filledWaiting => Colors.orange,
+    PrescriptionStatus.returnPending => Colors.purple,
+    PrescriptionStatus.unloaded => Colors.red,
   };
 
   Color get backgroundColor => color.withValues(alpha: 0.12);
@@ -90,10 +103,12 @@ extension PrescriptionStatusStyle on PrescriptionStatus {
     PrescriptionStatus.purchasePending => MedColors.amber,
     PrescriptionStatus.pendingApproval => MedColors.amber,
     PrescriptionStatus.filledWaiting => MedColors.amber,
+    PrescriptionStatus.returnPending => MedColors.amber,
     PrescriptionStatus.wastaged => MedColors.red,
     PrescriptionStatus.destructed => MedColors.red,
     PrescriptionStatus.cancelled => MedColors.red,
     PrescriptionStatus.rejected => MedColors.red,
+    PrescriptionStatus.unloaded => MedColors.red,
   };
 
   /// Chip / badge arka plan rengi.
@@ -103,10 +118,12 @@ extension PrescriptionStatusStyle on PrescriptionStatus {
     PrescriptionStatus.purchasePending => MedColors.amberLight,
     PrescriptionStatus.pendingApproval => MedColors.amberLight,
     PrescriptionStatus.filledWaiting => MedColors.amberLight,
+    PrescriptionStatus.returnPending => MedColors.amberLight,
     PrescriptionStatus.wastaged => MedColors.redLight,
     PrescriptionStatus.destructed => MedColors.redLight,
     PrescriptionStatus.cancelled => MedColors.redLight,
     PrescriptionStatus.rejected => MedColors.redLight,
+    PrescriptionStatus.unloaded => MedColors.redLight,
   };
 
   IconData get icon => switch (this) {
@@ -119,6 +136,8 @@ extension PrescriptionStatusStyle on PrescriptionStatus {
     PrescriptionStatus.cancelled => PhosphorIcons.prohibit(PhosphorIconsStyle.fill),
     PrescriptionStatus.rejected => PhosphorIcons.xCircle(PhosphorIconsStyle.fill),
     PrescriptionStatus.filledWaiting => PhosphorIcons.hourglass(PhosphorIconsStyle.fill),
+    PrescriptionStatus.returnPending => PhosphorIcons.arrowUUpLeft(PhosphorIconsStyle.fill),
+    PrescriptionStatus.unloaded => PhosphorIcons.tray(PhosphorIconsStyle.fill),
   };
 
   /// Reçete onay/reddet kısmında sadece bu statuse sahip olanlarla

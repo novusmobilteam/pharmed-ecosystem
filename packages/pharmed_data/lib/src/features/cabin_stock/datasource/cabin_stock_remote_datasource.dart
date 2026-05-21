@@ -95,13 +95,4 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
 
     return res.when(ok: (data) => Result.ok(data ?? const <StationStockDTO>[]), error: Result.error);
   }
-
-  Future<Result<void>> unload(List<Map<String, dynamic>> data) async {
-    return await postRequest(
-      path: '$_base/emptying',
-      parser: BaseRemoteDataSource.voidParser(),
-      body: data,
-      successLog: 'Unload process completed',
-    );
-  }
 }

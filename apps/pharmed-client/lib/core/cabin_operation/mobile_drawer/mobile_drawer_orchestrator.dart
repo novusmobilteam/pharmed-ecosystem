@@ -50,6 +50,7 @@ class MobileDrawerOrchestrator {
 
   bool _initialized = false;
   bool _isConnecting = false;
+  static bool _globalConnecting = false;
 
   IRfidService get _rfid => ref.read(rfidServiceProvider);
 
@@ -113,8 +114,14 @@ class MobileDrawerOrchestrator {
 
   /// Çekmece ve RFID oturumlarını sıfırlar. Banner kaybolur.
   Future<void> stop() async {
-    await ref.read(mobileDrawerSessionProvider.notifier).stop();
+    // Önce RFID session'ı durdur (inventory stream'i kapat)
     ref.read(rfidScanSessionProvider.notifier).stop();
+
+    // Kısa bekleme — stopInventory'nin Answer Mode set etmesi için
+    await Future.delayed(const Duration(milliseconds: 150));
+
+    // Sonra drawer session'ı durdur
+    await ref.read(mobileDrawerSessionProvider.notifier).stop();
   }
 
   void _handleStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
@@ -150,35 +157,45 @@ class MobileDrawerOrchestrator {
   }
 
   Future<void> _ensureRfidConnected() async {
-    // Önceki bağlantı varsa temizle (stale socket olabilir)
-    if (_rfid.isConnected) {
-      await _rfid.disconnect();
+    if (_globalConnecting) return;
+    _globalConnecting = true;
+
+    try {
+      // Önce aktif inventory'yi durdur
+      ref.read(rfidScanSessionProvider.notifier).stop();
+      await Future.delayed(const Duration(milliseconds: 150));
+
+      if (_rfid.isConnected) {
+        await _rfid.disconnect();
+      }
+
+      MedLogger.info(
+        unit: 'MobileDrawerOrchestrator',
+        swreq: 'SWREQ-CLI-CABIN-OP-005',
+        message: 'RFID connect başlatılıyor',
+      );
+
+      final result = await _rfid.connect('192.168.1.190', 6000);
+
+      result.when(
+        ok: (_) {
+          MedLogger.info(
+            unit: 'MobileDrawerOrchestrator',
+            swreq: 'SWREQ-CLI-CABIN-OP-005',
+            message: 'RFID connect başarılı',
+          );
+        },
+        error: (e) {
+          MedLogger.error(
+            unit: 'MobileDrawerOrchestrator',
+            swreq: 'SWREQ-CLI-CABIN-OP-005',
+            message: 'RFID connect başarısız',
+            context: {'error': e.message},
+          );
+        },
+      );
+    } finally {
+      _globalConnecting = false;
     }
-
-    MedLogger.info(
-      unit: 'MobileDrawerOrchestrator',
-      swreq: 'SWREQ-CLI-CABIN-OP-005',
-      message: 'RFID connect başlatılıyor',
-    );
-
-    final result = await _rfid.connect('192.168.1.190', 6000);
-
-    result.when(
-      ok: (_) {
-        MedLogger.info(
-          unit: 'MobileDrawerOrchestrator',
-          swreq: 'SWREQ-CLI-CABIN-OP-005',
-          message: 'RFID connect başarılı',
-        );
-      },
-      error: (e) {
-        MedLogger.error(
-          unit: 'MobileDrawerOrchestrator',
-          swreq: 'SWREQ-CLI-CABIN-OP-005',
-          message: 'RFID connect başarısız',
-          context: {'error': e.message},
-        );
-      },
-    );
   }
 }

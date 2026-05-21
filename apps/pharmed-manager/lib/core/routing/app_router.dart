@@ -1,16 +1,8 @@
-// lib/core/router/app_router.dart
-//
-// [SWREQ-CORE-004] [IEC 62304 §5.5]
-// Uygulama giriş yönlendirici.
-// Önce auth kontrolü, ardından setup kontrolü yapılır.
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/auth/view/login_screen.dart';
 import 'package:pharmed_manager/features/auth/notifier/auth_state.dart';
 import 'package:pharmed_manager/features/home/view/home_screen.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:provider/provider.dart';
 
 class AppRouter extends StatelessWidget {
@@ -22,28 +14,10 @@ class AppRouter extends StatelessWidget {
 
     return switch (authState) {
       AuthLoggedOut() => const LoginScreen(),
-      AuthLoading() => const _SplashView(),
+      AuthLoading() => const LoginScreen(),
       AuthLoggedIn() => const HomeScreen(),
       AuthError() => const LoginScreen(),
       AuthSessionExpiring() => const LoginScreen(),
     };
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Splash — async işlemler tamamlanana kadar gösterilir
-// ─────────────────────────────────────────────────────────────────
-
-class _SplashView extends StatelessWidget {
-  const _SplashView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: MedColors.bg,
-      body: Center(
-        child: CircularProgressIndicator(strokeWidth: 2.5, valueColor: AlwaysStoppedAnimation(MedColors.blue)),
-      ),
-    );
   }
 }

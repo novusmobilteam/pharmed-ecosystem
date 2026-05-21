@@ -74,3 +74,7 @@ final patientDataSourceProvider = Provider((ref) {
 final censusDataSourceProvider = Provider((ref) {
   return CensusRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
+
+final unloadDataSourceProvider = Provider((ref) {
+  return UnloadRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});

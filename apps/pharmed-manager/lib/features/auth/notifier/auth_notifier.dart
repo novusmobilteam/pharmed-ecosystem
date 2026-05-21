@@ -71,12 +71,15 @@ class AuthNotifier extends ChangeNotifier {
     }
   }
 
-  Future<String?> login({required String email, required String password, String? macAddress}) async {
+  Future<void> login({
+    required String email,
+    required String password,
+    required ValueChanged<String> onError,
+    String? macAddress,
+  }) async {
     _setState(const AuthLoading());
 
     final result = await _loginUseCase(LoginParams(email: email, password: password, macAddress: macAddress));
-
-    String? errorMsg;
 
     result.when(
       ok: (authToken) {
@@ -91,12 +94,11 @@ class AuthNotifier extends ChangeNotifier {
         _markDashboardAccessed();
       },
       error: (failure) {
-        errorMsg = failure is ServiceException ? failure.message : 'Bir hata oluştu';
-        _setState(AuthError(message: errorMsg!));
+        final msg = failure is ServiceException ? failure.message : 'Bir hata oluştu';
+        _setState(AuthError(message: msg));
+        onError(msg);
       },
     );
-
-    return errorMsg;
   }
 
   Future<void> logout() async {

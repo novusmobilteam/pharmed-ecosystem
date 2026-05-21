@@ -18,8 +18,6 @@ abstract class ICabinStockRepository {
   /// Mobil kabin dolum işlemi
   Future<Result<void>> refillMobileCabin(List<dynamic> data);
 
-  Future<Result<void>> unload(List<Map<String, dynamic>> data);
-
   Future<Result<List<CabinStock>>> getExpiredStocks();
 
   Future<Result<List<StationStock>>> getStationStocks(int stationId);

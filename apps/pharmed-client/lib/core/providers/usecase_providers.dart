@@ -291,3 +291,11 @@ final completeMobileCensusUseCaseProvider = Provider((ref) {
 final completeMasterCensusUseCaseProvider = Provider((ref) {
   return CompleteMasterCensusUseCase(ref.read(censusRepositoryProvider));
 });
+
+final completeMobileUnloadUseCaseProvider = Provider((ref) {
+  return CompleteMobileUnloadUseCase(ref.read(unloadRepositoryProvider));
+});
+
+final completeMasterUnloadUseCaseProvider = Provider((ref) {
+  return CompleteMasterUnloadUseCase(ref.read(unloadRepositoryProvider));
+});

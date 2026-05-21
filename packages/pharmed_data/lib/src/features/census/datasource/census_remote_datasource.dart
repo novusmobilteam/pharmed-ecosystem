@@ -25,7 +25,7 @@ class CensusRemoteDataSource extends BaseRemoteDataSource {
   /// Mobil kabin sayım işlemi
   Future<Result<void>> mobileCensus(List<dynamic> data) async {
     return await putRequest(
-      path: '$_base/censusQuantity',
+      path: '$_base/censusQuantityMobile',
       parser: BaseRemoteDataSource.voidParser(),
       body: data.map((e) => e.toJson()).toList(),
       successLog: 'Census quantity updated',

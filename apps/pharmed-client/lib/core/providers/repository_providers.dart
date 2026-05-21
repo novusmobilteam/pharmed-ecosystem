@@ -225,3 +225,10 @@ final censusRepositoryProvider = Provider<ICensusRepository>((ref) {
     AppFlavor.dev || AppFlavor.prod => CensusRepositoryImpl(dataSource: ref.read(censusDataSourceProvider)),
   };
 });
+
+final unloadRepositoryProvider = Provider<IUnloadRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => UnloadRepositoryImpl(dataSource: ref.read(unloadDataSourceProvider)),
+    AppFlavor.dev || AppFlavor.prod => UnloadRepositoryImpl(dataSource: ref.read(unloadDataSourceProvider)),
+  };
+});

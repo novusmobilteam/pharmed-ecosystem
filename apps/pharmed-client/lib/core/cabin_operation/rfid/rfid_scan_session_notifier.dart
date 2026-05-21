@@ -102,21 +102,11 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
     _inventorySub = null;
 
     if (sub != null) {
-      await sub.cancel();
+      // cancel() öncesi RfidService'teki _inventoryController'ı kapat —
+      // böylece onCancel tetiklenmez, stopInventory() tek komut gönderir.
+      await _rfid.stopInventory(); // Answer Mode'a dön + controller.close()
+      await sub.cancel(); // artık onCancel'da _setWorkingMode gitmez
     }
-
-    final result = await _rfid.stopInventory();
-    result.when(
-      ok: (_) {},
-      error: (e) {
-        MedLogger.warn(
-          unit: 'RfidScanSessionNotifier',
-          swreq: 'SWREQ-CLI-RFID-SCAN-002',
-          message: 'stopInventory hatası (göz ardı edildi)',
-          context: {'error': e.toString()},
-        );
-      },
-    );
 
     if (state.isScanning) {
       state = state.copyWith(isScanning: false);

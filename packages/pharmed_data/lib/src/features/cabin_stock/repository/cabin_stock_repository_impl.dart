@@ -82,9 +82,4 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
     final result = await _dataSource.getStationStocks(stationId);
     return result.when(ok: (dtos) => Result.ok(_stationMapper.toEntityList(dtos)), error: (e) => Result.error(e));
   }
-
-  @override
-  Future<Result<void>> unload(List<Map<String, dynamic>> data) async {
-    return _dataSource.unload(data);
-  }
 }

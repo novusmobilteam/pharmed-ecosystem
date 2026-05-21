@@ -118,12 +118,7 @@ class _StockRightPanel extends StatelessWidget {
 
     // Hasta seçildi, reçeteler yükleniyor
     if (state.isPrescriptionsLoading) {
-      return Column(
-        children: [
-          HospitalizationDetailBanner(hospitalization: state.selectedPatient),
-          const Expanded(child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
-        ],
-      );
+      return Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
     return Padding(

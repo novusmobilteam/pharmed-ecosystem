@@ -100,6 +100,12 @@ class PrescriptionItem implements TableData, Selectable {
         return cancelUser;
       case PrescriptionStatus.rejected:
         return rejectUser;
+      case PrescriptionStatus.returnPending:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case PrescriptionStatus.unloaded:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 
@@ -122,6 +128,12 @@ class PrescriptionItem implements TableData, Selectable {
         return cancelDate;
       case PrescriptionStatus.rejected:
         return cancelDate;
+      case PrescriptionStatus.returnPending:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case PrescriptionStatus.unloaded:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 

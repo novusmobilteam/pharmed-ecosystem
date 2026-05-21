@@ -38,6 +38,7 @@ class CompleteMasterCensusUseCase {
   CompleteMasterCensusUseCase(this._repository);
 
   Future<Result<void>> call(List<MasterCensusParams> params) {
-    return _repository.masterCensus(params);
+    final data = params.map((p) => p.toJson()).toList();
+    return _repository.masterCensus(data);
   }
 }

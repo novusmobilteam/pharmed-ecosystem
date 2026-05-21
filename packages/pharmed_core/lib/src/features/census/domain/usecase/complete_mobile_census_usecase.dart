@@ -22,6 +22,7 @@ class CompleteMobileCensusUseCase {
   CompleteMobileCensusUseCase(this._repository);
 
   Future<Result<void>> call(List<MobileCensusParams> params) {
-    return _repository.mobileCensus(params);
+    final data = params.map((p) => p.toJson()).toList();
+    return _repository.mobileCensus(data);
   }
 }
