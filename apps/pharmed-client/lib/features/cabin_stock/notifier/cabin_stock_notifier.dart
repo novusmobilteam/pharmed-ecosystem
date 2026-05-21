@@ -150,6 +150,6 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
 
   /// Yalnızca stokta bulunan (purchasePending) kalemleri döndürür.
   List<PrescriptionItem> _filterStockItems(List<PrescriptionItem> items) {
-    return items.where((i) => i.status == PrescriptionStatus.purchasePending).toList();
+    return items.where((i) => i.status == PrescriptionMovementType.purchasePending).toList();
   }
 }

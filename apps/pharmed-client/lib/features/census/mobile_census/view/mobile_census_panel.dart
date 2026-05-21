@@ -139,7 +139,7 @@ class _CensusPrescriptionList extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = items[index];
 
-        final isEligible = item.status == PrescriptionStatus.purchasePending;
+        final isEligible = item.status == PrescriptionMovementType.purchasePending;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
 
         // Sayım semantiği: EPC okunuyorsa ilaç kabinde var (present),

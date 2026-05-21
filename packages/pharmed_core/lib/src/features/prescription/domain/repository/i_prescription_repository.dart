@@ -68,4 +68,7 @@ abstract interface class IPrescriptionRepository {
   ///
   /// [prescriptionItemId] — kalem ID'si
   Future<Result<void>> deleteRfidTag({required int prescriptionItemId});
+
+  /// Reçete detay objesine ait hareketleri getirir
+  Future<Result<List<PrescriptionItemMovement>>> getPrescriptionItemMovements(int prescriptionItemId);
 }

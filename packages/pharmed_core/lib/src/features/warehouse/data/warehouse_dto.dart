@@ -5,7 +5,7 @@ class WarehouseDTO {
   final int? code;
   final String? name;
   final int? userId;
-  final UserDTO? user;
+  final UserDto? user;
   final int? warehouseKindId;
   final bool isActive;
 
@@ -24,7 +24,7 @@ class WarehouseDTO {
     code: json['code'] as int?,
     name: json['name'] as String?,
     userId: json['userId'] as int?,
-    user: json['user'] != null ? UserDTO.fromJson(json['user']) : null,
+    user: json['user'] != null ? UserDto.fromJson(json['user']) : null,
     warehouseKindId: json['warehouseKindId'] as int?,
     isActive: (json['isActive'] as bool?) ?? false,
   );

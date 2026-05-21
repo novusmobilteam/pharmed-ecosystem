@@ -74,18 +74,18 @@ class CustomWithdrawItemCard extends StatelessWidget {
                       ),
                     if (isCompleted) ...[
                       SizedBox(height: 12),
-                      _infoRow(
-                        context,
-                        PhosphorIcons.user(),
-                        'Uygulayan: ${item.prescriptionItem?.applicationUser?.fullName ?? '-'}',
-                        iconColor: Colors.green,
-                      ),
-                      _infoRow(
-                        context,
-                        PhosphorIcons.calendarCheck(),
-                        'Tarih: ${item.prescriptionItem?.applicationDate?.formattedDate}-${item.prescriptionItem?.applicationDate?.formattedTime} ',
-                        iconColor: Colors.green,
-                      ),
+                      // _infoRow(
+                      //   context,
+                      //   PhosphorIcons.user(),
+                      //   'Uygulayan: ${item.prescriptionItem?.applicationUser?.fullName ?? '-'}',
+                      //   iconColor: Colors.green,
+                      // ),
+                      // _infoRow(
+                      //   context,
+                      //   PhosphorIcons.calendarCheck(),
+                      //   'Tarih: ${item.prescriptionItem?.applicationDate?.formattedDate}-${item.prescriptionItem?.applicationDate?.formattedTime} ',
+                      //   iconColor: Colors.green,
+                      // ),
                     ],
                   ],
                 ),

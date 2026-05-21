@@ -19,8 +19,6 @@ extension CabinOperationItemMapper on PrescriptionItem {
       // Fire/imha'da doğrudan bir CabinAssignment bağlantısı gelmediği için null.
       // Stok gösterimi gerekirse ileride doldurulabilir.
       assignment: null,
-      applicationDate: applicationDate,
-      applicationUser: applicationUser,
       // Fire/imha reçete bağlamını taşır (firstDoseEmergency vb. göstermek için)
       // ancak prescriptionDose ve withdrawType alıma özgüdür.
       prescriptionItem: PrescriptionItem(
@@ -31,8 +29,6 @@ extension CabinOperationItemMapper on PrescriptionItem {
         askDoctor: askDoctor,
         inCaseOfNecessity: inCaseOfNecessity,
         medicine: medicine,
-        applicationDate: applicationDate,
-        applicationUser: applicationUser,
       ),
       prescriptionDose: null,
       withdrawType: null,

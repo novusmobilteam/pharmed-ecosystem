@@ -1,9 +1,11 @@
 export 'dto/prescription_dto.dart';
 export 'dto/prescription_item_dto.dart';
+export 'dto/prescription_item_movement_dto.dart';
 
 export 'domain/entity/prescription.dart';
 export 'domain/entity/prescription_item.dart';
 export 'domain/entity/prescription_grouping.dart';
+export 'domain/entity/prescription_item_movement.dart';
 
 export 'domain/repository/i_prescription_repository.dart';
 
@@ -26,3 +28,4 @@ export 'domain/usecase/get_unapplied_prescriptions_usecase.dart';
 export 'domain/usecase/get_unapplied_prescription_detail_usecase.dart';
 export 'domain/usecase/get_patient_prescription_history_usecase.dart';
 export 'domain/usecase/get_current_station_drug_activity_usecase.dart';
+export 'domain/usecase/get_prescription_item_movements_usecase.dart';

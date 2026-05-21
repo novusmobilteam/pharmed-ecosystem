@@ -12,12 +12,12 @@ class WasteRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-WASTE';
 
-  Future<Result<List<PrescriptionItemDTO>>> getMasterDisposables({required int hospitalizationId}) async {
-    final res = await fetchRequest<List<PrescriptionItemDTO>>(
+  Future<Result<List<PrescriptionItemDto>>> getMasterDisposables({required int hospitalizationId}) async {
+    final res = await fetchRequest<List<PrescriptionItemDto>>(
       path: '$_base/getFireDestruction/$hospitalizationId',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDto>[]), error: Result.error);
   }
 
   Future<Result<List<MedicineAssignmentDto>>> getMasterDisposableMaterials() async {
@@ -44,12 +44,12 @@ class WasteRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<PrescriptionItemDTO>>> getMobileDisposables({required int hospitalizationId}) async {
-    final res = await fetchRequest<List<PrescriptionItemDTO>>(
+  Future<Result<List<PrescriptionItemDto>>> getMobileDisposables({required int hospitalizationId}) async {
+    final res = await fetchRequest<List<PrescriptionItemDto>>(
       path: '$_base/getFireDestructionMobileCabin/$hospitalizationId',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDto>[]), error: Result.error);
   }
 
   Future<Result<void>> mobileWastage(Map<String, dynamic> data) async {

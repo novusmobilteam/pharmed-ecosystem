@@ -1,5 +1,3 @@
-// lib/features/prescription/widgets/rx_drug_panel.dart
-//
 // [SWREQ-UI-RX-DRUG-PANEL-001]
 // Sınıf : Class A
 
@@ -36,7 +34,7 @@ class RxDrugPanel extends StatefulWidget {
 }
 
 class _RxDrugPanelState extends State<RxDrugPanel> {
-  PrescriptionStatus? _activeFilter;
+  PrescriptionMovementType? _activeFilter;
 
   @override
   void didUpdateWidget(RxDrugPanel oldWidget) {

@@ -142,7 +142,7 @@ class _PrescriptionList extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = items[index];
 
-        final isEligible = item.status == PrescriptionStatus.purchasePending;
+        final isEligible = item.status == PrescriptionMovementType.purchasePending;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
 
         final rfidStatus = !isProcessActive

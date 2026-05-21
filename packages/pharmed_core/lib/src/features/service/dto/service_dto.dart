@@ -6,7 +6,7 @@ class ServiceDto {
   final int? branchId;
   final BranchDTO? branch;
   final int? userId;
-  final UserDTO? user;
+  final UserDto? user;
   final bool isActive;
   final List<RoomDto>? rooms;
 
@@ -28,7 +28,7 @@ class ServiceDto {
       branchId: json['branchId'] as int?,
       branch: json['branch'] != null ? BranchDTO.fromJson(json['branch']) : null,
       userId: json['userId'] as int?,
-      user: json['user'] != null ? UserDTO.fromJson(json['user']) : null,
+      user: json['user'] != null ? UserDto.fromJson(json['user']) : null,
       isActive: (json['isActive'] as bool?) ?? false,
       rooms: json['rooms'] != null
           ? (json['rooms'] as List).map((e) => RoomDto.fromJson(e as Map<String, dynamic>)).toList()

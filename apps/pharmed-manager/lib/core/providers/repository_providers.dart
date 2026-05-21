@@ -198,11 +198,13 @@ class RepositoryProviders {
             dataSource: context.read(),
             prescriptionMapper: PrescriptionMapper(),
             prescriptionItemMapper: PrescriptionItemMapper(),
+            prescriptionItemMovementMapper: PrescriptionItemMovementMapper(),
           ),
           AppFlavor.dev || AppFlavor.prod => PrescriptionRepositoryImpl(
             dataSource: context.read(),
             prescriptionMapper: PrescriptionMapper(),
             prescriptionItemMapper: PrescriptionItemMapper(),
+            prescriptionItemMovementMapper: PrescriptionItemMovementMapper(),
           ),
         },
       ),

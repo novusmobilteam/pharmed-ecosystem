@@ -1,85 +1,46 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class PrescriptionItemDTO {
+class PrescriptionItemDto {
   final int? id;
   final int? prescriptionId;
-
-  final int? hospitalizationId;
-  final HospitalizationDTO? hospitalization;
-
-  final int? physicalServiceId;
-  final ServiceDto? physicalService;
-
-  final int? inpatientServiceId;
-  final ServiceDto? inpatientService;
-
-  final int? doctorId;
-  final String? doctor;
-
   final int? medicineId;
-  final MedicineDTO? medicine;
-
-  final num? dosePiece;
+  final int? hospitalizationId;
+  final int? physicalServiceId;
+  final int? inpatientServiceId;
+  final int? doctorId;
   final int? requestType;
-  final String? requestTypeName;
-  final bool? firstDoseEmergency;
-  final bool? askDoctor;
-  final bool? inCaseOfNecessity;
 
-  final List<DateTime>? times;
-  final DateTime? time;
-  final String? description;
-  final String? deleteDescription;
-  final double? returnQuantity;
   final int? barcode;
   final int? sutCode;
   final int? ubbCode;
   final int? atcCode;
   final bool? isQrCode;
   final String? qrCode;
-  final DateTime? prescriptionDate;
-  final PrescriptionDTO? prescription;
-  final bool? removed;
   final String? name;
   final String? surname;
   final String? patientName;
   final String? protocolNo;
-  final int? statusId;
-
-  final DateTime? approvalDate;
-  final int? approvalUserId;
-  final UserDTO? approvalUser;
-
-  final DateTime? cancelDate;
-  final int? cancelUserId;
-  final UserDTO? cancelUser;
-
-  final DateTime? applicationDate;
-  final int? applicationUserId;
-  final UserDTO? applicationUser;
-
-  final DateTime? returnDate;
-  final int? returnUserId;
-  final UserDTO? returnUser;
-
-  final DateTime? createdDate;
-  final UserDTO? createdUser;
-  final int? createdUserId;
-
-  final DateTime? rejectDate;
-  final UserDTO? rejectUser;
-  final int? rejectUserId;
-
-  final DateTime? wastageDate;
-  final UserDTO? wastageUser;
-  final int? wastageUserId;
-
-  final DateTime? destructionDate;
-  final UserDTO? destructionUser;
-  final int? destructionUserId;
   final String? rfidTag;
+  final String? description;
+  final String? deleteDescription;
+  final bool? firstDoseEmergency;
+  final bool? askDoctor;
+  final bool? inCaseOfNecessity;
+  final DateTime? prescriptionDate;
+  final String? doctor;
+  final num? dosePiece;
+  final bool? removed;
+  final DateTime? time;
+  final List<DateTime>? times;
 
-  const PrescriptionItemDTO({
+  final MedicineDto? medicine;
+  final HospitalizationDto? hospitalization;
+  final ServiceDto? physicalService;
+  final ServiceDto? inpatientService;
+  final PrescriptionDto? prescription;
+  final PrescriptionItemMovementDto? lastMovement;
+
+  const PrescriptionItemDto({
     this.id,
     this.prescriptionId,
     this.hospitalizationId,
@@ -88,13 +49,13 @@ class PrescriptionItemDTO {
     this.physicalService,
     this.inpatientServiceId,
     this.inpatientService,
+    this.lastMovement,
     this.doctorId,
     this.doctor,
     this.medicineId,
     this.medicine,
     this.dosePiece,
     this.requestType,
-    this.requestTypeName,
     this.firstDoseEmergency = false,
     this.askDoctor = false,
     this.inCaseOfNecessity = false,
@@ -102,7 +63,6 @@ class PrescriptionItemDTO {
     this.time,
     this.description,
     this.deleteDescription,
-    this.returnQuantity,
     this.barcode,
     this.sutCode,
     this.ubbCode,
@@ -116,35 +76,10 @@ class PrescriptionItemDTO {
     this.surname,
     this.patientName,
     this.protocolNo,
-    this.statusId,
-    this.approvalDate,
-    this.approvalUserId,
-    this.approvalUser,
-    this.cancelDate,
-    this.cancelUserId,
-    this.cancelUser,
-    this.applicationDate,
-    this.applicationUserId,
-    this.applicationUser,
-    this.returnDate,
-    this.returnUserId,
-    this.returnUser,
-    this.createdDate,
-    this.createdUserId,
-    this.createdUser,
-    this.rejectDate,
-    this.rejectUser,
-    this.rejectUserId,
-    this.wastageDate,
-    this.wastageUser,
-    this.wastageUserId,
-    this.destructionDate,
-    this.destructionUser,
-    this.destructionUserId,
     this.rfidTag,
   });
 
-  factory PrescriptionItemDTO.fromJson(Map<String, dynamic> json) {
+  factory PrescriptionItemDto.fromJson(Map<String, dynamic> json) {
     // Times listesini güvenli parse etme
     List<DateTime>? parsedTimes;
     if (json['times'] != null && json['times'] is List) {
@@ -163,12 +98,12 @@ class PrescriptionItemDTO {
       }
     }
 
-    return PrescriptionItemDTO(
+    return PrescriptionItemDto(
       id: json['id'] as int?,
       prescriptionId: json['prescriptionId'] as int?,
       hospitalizationId: json['patientHospitalizationId'] as int?,
       hospitalization: json['patientHospitalization'] != null
-          ? HospitalizationDTO.fromJson(json['patientHospitalization'])
+          ? HospitalizationDto.fromJson(json['patientHospitalization'])
           : null,
       physicalServiceId: json['physicalServiceId'] as int?,
       physicalService: json['physicalService'] != null ? ServiceDto.fromJson(json['physicalService']) : null,
@@ -177,10 +112,9 @@ class PrescriptionItemDTO {
       doctorId: json['doctorId'] as int?,
       doctor: json['doctor'] as String?,
       medicineId: json['materialId'] as int?,
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       dosePiece: json['dosePiece'] as num?,
       requestType: json['requestType'] as int?,
-      requestTypeName: json['requestTypeName'] as String?,
       firstDoseEmergency: (json['firstDoseEmergency'] as bool?) ?? false,
       askDoctor: json['askDoctor'] as bool?,
       inCaseOfNecessity: json['inCaseOfNecessity'] as bool?,
@@ -189,55 +123,20 @@ class PrescriptionItemDTO {
       description: json['description'] as String?,
       deleteDescription: json['deleteDescription'] as String?,
       removed: (json['removed'] as bool?) ?? false,
-
-      returnQuantity: json['returnQuantity'] as double?,
       barcode: json['barcode'] as int?,
       sutCode: json['sutCode'] as int?,
       ubbCode: json['ubbCode'] as int?,
       atcCode: json['atcCode'] as int?,
       isQrCode: json['isQrCode'] as bool?,
       qrCode: json['qrCode'] as String?,
-      prescription: json['prescription'] != null ? PrescriptionDTO.fromJson(json['prescription']) : null,
+      prescription: json['prescription'] != null ? PrescriptionDto.fromJson(json['prescription']) : null,
       prescriptionDate: json['prescriptionDate'] != null ? DateTime.tryParse(json['prescriptionDate']) : null,
       name: json['name'] as String?,
       surname: json['surname'] as String?,
       patientName: json['patientName'] as String?,
       protocolNo: json['protocolNo'] as String?,
-      statusId: json['detailStatusId'] as int?,
-
-      //
-      approvalDate: json['approvalDate'] != null ? DateTime.tryParse(json['approvalDate']) : null,
-      approvalUserId: json['approvalUserId'] as int?,
-      approvalUser: json['approvalUser'] != null ? UserDTO.fromJson(json['approvalUser']) : null,
-      //
-      cancelDate: json['cancelDate'] != null ? DateTime.tryParse(json['cancelDate']) : null,
-      cancelUserId: json['cancelUserId'] as int?,
-      cancelUser: json['cancelUser'] != null ? UserDTO.fromJson(json['cancelUser']) : null,
-      //
-      applicationDate: json['applicationDate'] != null ? DateTime.tryParse(json['applicationDate']) : null,
-      applicationUserId: json['applicationUserId'] as int?,
-      applicationUser: json['applicationUser'] != null ? UserDTO.fromJson(json['applicationUser']) : null,
-      //
-      returnDate: json['returnDate'] != null ? DateTime.tryParse(json['returnDate']) : null,
-      returnUserId: json['returnUserId'] as int?,
-      returnUser: json['returnUser'] != null ? UserDTO.fromJson(json['returnUser']) : null,
-      //
-      createdDate: json['createdDate'] != null ? DateTime.tryParse(json['createdDate']) : null,
-      createdUserId: json['createdUserId'] as int?,
-      createdUser: json['createdUser'] != null ? UserDTO.fromJson(json['createdUser']) : null,
-      //
-      rejectDate: json['rejectDate'] != null ? DateTime.tryParse(json['rejectDate']) : null,
-      rejectUserId: json['rejectUserId'] as int?,
-      rejectUser: json['rejectUser'] != null ? UserDTO.fromJson(json['rejectUser']) : null,
-      //
-      wastageDate: json['wastageDate'] != null ? DateTime.tryParse(json['wastageDate']) : null,
-      wastageUserId: json['wastageUserId'] as int?,
-      wastageUser: json['wastageUser'] != null ? UserDTO.fromJson(json['wastageUser']) : null,
-      //
-      destructionDate: json['destructionDate'] != null ? DateTime.tryParse(json['destructionDate']) : null,
-      destructionUserId: json['destructionUserId'] as int?,
-      destructionUser: json['destructionUser'] != null ? UserDTO.fromJson(json['destructionUser']) : null,
       rfidTag: json['rfidCardTag'] as String?,
+      lastMovement: json['lastMovement'] != null ? PrescriptionItemMovementDto.fromJson(json['lastMovement']) : null,
     );
   }
 
@@ -256,74 +155,5 @@ class PrescriptionItemDTO {
       'qrCode': qrCode,
       'rfidCardTag': rfidTag,
     };
-  }
-
-  PrescriptionItemDTO copyWith({
-    int? id,
-    int? prescriptionId,
-    int? patientRegistrationId,
-    int? doctorId,
-    int? approvalUserId,
-    String? materialName,
-    String? qrCode,
-    double? dosePiece,
-    DateTime? date,
-    DateTime? approvalDate,
-    bool? isScanned,
-    bool? removed,
-    String? description,
-    double? returnQuantity,
-    DateTime? applicationDate,
-    int? applicationUserId,
-    UserDTO? applicationUser,
-  }) {
-    return PrescriptionItemDTO(
-      id: id ?? this.id,
-      prescriptionId: prescriptionId ?? this.prescriptionId,
-      hospitalizationId: patientRegistrationId ?? this.hospitalizationId,
-      doctorId: doctorId ?? this.doctorId,
-      approvalUserId: approvalUserId ?? this.approvalUserId,
-      qrCode: qrCode ?? this.qrCode,
-      dosePiece: dosePiece ?? this.dosePiece,
-      approvalDate: approvalDate ?? this.approvalDate,
-      removed: removed ?? this.removed,
-      description: description ?? this.description,
-      returnQuantity: returnQuantity ?? this.returnQuantity,
-      applicationDate: applicationDate ?? this.applicationDate,
-      applicationUserId: applicationUserId ?? this.applicationUserId,
-      applicationUser: applicationUser ?? this.applicationUser,
-      physicalServiceId: physicalServiceId,
-      physicalService: physicalService,
-      inpatientServiceId: inpatientServiceId,
-      inpatientService: inpatientService,
-      doctor: doctor,
-      medicineId: medicineId,
-      medicine: medicine,
-      requestType: requestType,
-      requestTypeName: requestTypeName,
-      firstDoseEmergency: firstDoseEmergency,
-      askDoctor: askDoctor,
-      inCaseOfNecessity: inCaseOfNecessity,
-      times: times,
-      time: time,
-      deleteDescription: deleteDescription,
-      cancelDate: cancelDate,
-      cancelUserId: cancelUserId,
-      cancelUser: cancelUser,
-      returnDate: returnDate,
-      returnUserId: returnUserId,
-      returnUser: returnUser,
-      barcode: barcode,
-      sutCode: sutCode,
-      ubbCode: ubbCode,
-      atcCode: atcCode,
-      isQrCode: isQrCode,
-      prescriptionDate: prescriptionDate,
-      prescription: prescription,
-      name: name,
-      surname: surname,
-      patientName: patientName,
-      protocolNo: protocolNo,
-    );
   }
 }

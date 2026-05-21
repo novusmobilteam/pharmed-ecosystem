@@ -5,7 +5,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 class PrescriptionItemMapper {
   const PrescriptionItemMapper();
 
-  PrescriptionItem toEntity(PrescriptionItemDTO dto) {
+  PrescriptionItem toEntity(PrescriptionItemDto dto) {
     return PrescriptionItem(
       id: dto.id,
       prescriptionId: dto.prescriptionId,
@@ -15,7 +15,6 @@ class PrescriptionItemMapper {
       doctorId: dto.doctorId,
       medicineId: dto.medicineId,
       dosePiece: dto.dosePiece,
-      requestTypeName: dto.requestTypeName,
       firstDoseEmergency: dto.firstDoseEmergency,
       askDoctor: dto.askDoctor,
       inCaseOfNecessity: dto.inCaseOfNecessity,
@@ -24,7 +23,6 @@ class PrescriptionItemMapper {
       description: dto.description,
       deleteDescription: dto.deleteDescription,
       removed: dto.removed,
-      returnQuantity: dto.returnQuantity,
       barcode: dto.barcode,
       sutCode: dto.sutCode,
       ubbCode: dto.ubbCode,
@@ -34,58 +32,25 @@ class PrescriptionItemMapper {
       prescriptionDate: dto.prescriptionDate,
       protocolNo: dto.protocolNo,
       patientName: _parsePatientName(dto),
+      rfidTag: dto.rfidTag,
 
       // Enum Dönüşümleri
       requestType: RequestType.fromId(dto.requestType),
-      status: PrescriptionStatus.fromId(dto.statusId),
 
       // Alt Mapperlar
       physicalService: const ServiceMapper().toEntityOrNull(dto.physicalService),
       inpatientService: const ServiceMapper().toEntityOrNull(dto.inpatientService),
       medicine: const MedicineMapper().toEntityOrNull(dto.medicine),
       prescription: const PrescriptionMapper().toEntityOrNull(dto.prescription),
-
-      // Doktor (DTO'da String veya Id olarak gelebiliyor)
       doctor: User.fromIdAndFullName(id: dto.doctorId, fullName: dto.doctor),
 
-      // Süreç Kullanıcıları ve Tarihleri
-      approvalDate: dto.approvalDate,
-      approvalUserId: dto.approvalUserId,
-      approvalUser: const UserMapper().toEntityOrNull(dto.approvalUser),
-
-      cancelDate: dto.cancelDate,
-      cancelUserId: dto.cancelUserId,
-      cancelUser: const UserMapper().toEntityOrNull(dto.cancelUser),
-
-      applicationDate: dto.applicationDate,
-      applicationUserId: dto.applicationUserId,
-      applicationUser: const UserMapper().toEntityOrNull(dto.applicationUser),
-
-      returnDate: dto.returnDate,
-      returnUserId: dto.returnUserId,
-      returnUser: const UserMapper().toEntityOrNull(dto.returnUser),
-
-      createdDate: dto.createdDate,
-      createdUserId: dto.createdUserId,
-      createdUser: const UserMapper().toEntityOrNull(dto.createdUser),
-
-      rejectDate: dto.rejectDate,
-      rejectUserId: dto.rejectUserId,
-      rejectUser: const UserMapper().toEntityOrNull(dto.rejectUser),
-
-      wastageDate: dto.wastageDate,
-      wastageUserId: dto.wastageUserId,
-      wastageUser: const UserMapper().toEntityOrNull(dto.wastageUser),
-
-      destructionDate: dto.destructionDate,
-      destructionUserId: dto.destructionUserId,
-      destructionUser: const UserMapper().toEntityOrNull(dto.destructionUser),
-      rfidTag: dto.rfidTag,
+      // Son Hareket
+      lastMovement: PrescriptionItemMovementMapper().toEntityOrNull(dto.lastMovement),
     );
   }
 
-  PrescriptionItemDTO toDto(PrescriptionItem entity) {
-    return PrescriptionItemDTO(
+  PrescriptionItemDto toDto(PrescriptionItem entity) {
+    return PrescriptionItemDto(
       id: entity.id,
       prescriptionId: entity.prescriptionId,
       hospitalizationId: entity.patientRegistrationId,
@@ -96,7 +61,6 @@ class PrescriptionItemMapper {
       medicineId: entity.medicineId,
       dosePiece: entity.dosePiece,
       requestType: entity.requestType?.id,
-      requestTypeName: entity.requestTypeName,
       firstDoseEmergency: entity.firstDoseEmergency,
       askDoctor: entity.askDoctor,
       inCaseOfNecessity: entity.inCaseOfNecessity,
@@ -105,7 +69,6 @@ class PrescriptionItemMapper {
       description: entity.description,
       deleteDescription: entity.deleteDescription,
       removed: entity.removed,
-      returnQuantity: entity.returnQuantity,
       barcode: entity.barcode,
       sutCode: entity.sutCode,
       ubbCode: entity.ubbCode,
@@ -115,43 +78,24 @@ class PrescriptionItemMapper {
       prescriptionDate: entity.prescriptionDate,
       protocolNo: entity.protocolNo,
       patientName: entity.patientName,
-      statusId: entity.status?.id,
+      rfidTag: entity.rfidTag,
 
       // Alt DTO Dönüşümleri
       physicalService: const ServiceMapper().toDtoOrNull(entity.physicalService),
       inpatientService: const ServiceMapper().toDtoOrNull(entity.inpatientService),
       medicine: const MedicineMapper().toDtoOrNull(entity.medicine),
       prescription: const PrescriptionMapper().toDtoOrNull(entity.prescription),
-
-      // Süreç Kullanıcı DTO'ları
-      approvalDate: entity.approvalDate,
-      approvalUserId: entity.approvalUserId,
-      approvalUser: const UserMapper().toDtoOrNull(entity.approvalUser),
-
-      cancelDate: entity.cancelDate,
-      cancelUserId: entity.cancelUserId,
-      cancelUser: const UserMapper().toDtoOrNull(entity.cancelUser),
-
-      applicationDate: entity.applicationDate,
-      applicationUserId: entity.applicationUserId,
-      applicationUser: const UserMapper().toDtoOrNull(entity.applicationUser),
-
-      returnDate: entity.returnDate,
-      returnUserId: entity.returnUserId,
-      returnUser: const UserMapper().toDtoOrNull(entity.returnUser),
-      rfidTag: entity.rfidTag,
     );
   }
 
-  /// Hasta adını DTO'daki farklı alanlardan (name/surname veya patientName) güvenli birleştirir.
-  String? _parsePatientName(PrescriptionItemDTO dto) {
+  String? _parsePatientName(PrescriptionItemDto dto) {
     if (dto.patientName != null) return dto.patientName;
     final namePart = [dto.name, dto.surname].whereType<String>().join(' ').trim();
     return namePart.isEmpty ? null : namePart;
   }
 
-  List<PrescriptionItem> toEntityList(List<PrescriptionItemDTO> dtos) => dtos.map(toEntity).toList();
-  List<PrescriptionItemDTO> toDtoList(List<PrescriptionItem> entities) => entities.map(toDto).toList();
-  PrescriptionItem? toEntityOrNull(PrescriptionItemDTO? dto) => dto == null ? null : toEntity(dto);
-  PrescriptionItemDTO? toDtoOrNull(PrescriptionItem? entity) => entity == null ? null : toDto(entity);
+  List<PrescriptionItem> toEntityList(List<PrescriptionItemDto> dtos) => dtos.map(toEntity).toList();
+  List<PrescriptionItemDto> toDtoList(List<PrescriptionItem> entities) => entities.map(toDto).toList();
+  PrescriptionItem? toEntityOrNull(PrescriptionItemDto? dto) => dto == null ? null : toEntity(dto);
+  PrescriptionItemDto? toDtoOrNull(PrescriptionItem? entity) => entity == null ? null : toDto(entity);
 }

@@ -12,9 +12,9 @@ class PatientMedicineIntakeItemDto {
   final DateTime? time;
   final String? description;
   final int? dosePiece;
-  final UserDTO? applicationUser;
+  final UserDto? applicationUser;
   final DateTime? applicationDate;
-  final HospitalizationDTO? hospitalization;
+  final HospitalizationDto? hospitalization;
   final PatientDto? patient;
 
   PatientMedicineIntakeItemDto({
@@ -49,7 +49,7 @@ class PatientMedicineIntakeItemDto {
       description: json['description'],
       barcode: json['barcode'],
       applicationDate: json['applicationDate'] != null ? DateTime.parse(json['applicationDate'] as String) : null,
-      applicationUser: json['applicationUser'] != null ? UserDTO.fromJson(json['applicationUser']) : null,
+      applicationUser: json['applicationUser'] != null ? UserDto.fromJson(json['applicationUser']) : null,
       // hospitalization:
       //     json['patientHospitalization'] != null ? HospitalizationDTO.fromJson(json['patientHospitalization']) : null,
       // user: json['user'] != null ? UserDTO.fromJson(json['json']) : null,

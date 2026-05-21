@@ -289,6 +289,6 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
   }
 
   double _maxDisposableQuantity(PrescriptionItem item) {
-    return (item.returnQuantity ?? item.dosePiece ?? 0).toDouble();
+    return (item.dosePiece ?? 0).toDouble();
   }
 }

@@ -18,12 +18,12 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data ?? const <MedicineIntakeItemDto>[]), error: Result.error);
   }
 
-  Future<Result<List<PrescriptionItemDTO>>> getMobileRefundables({required int hospitalizationId}) async {
+  Future<Result<List<PrescriptionItemDto>>> getMobileRefundables({required int hospitalizationId}) async {
     final res = await fetchRequest(
       path: '/Prescription/detail/getReturnMobileCabin/$hospitalizationId',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <PrescriptionItemDto>[]), error: Result.error);
   }
 
   Future<Result<MedicineIntakeItemDto?>> checkMasterRefundStatus({required int id, required double quantity}) async {

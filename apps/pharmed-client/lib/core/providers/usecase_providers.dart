@@ -204,6 +204,10 @@ final getCurrentStationDrugActivityUseCaseProvider = Provider((ref) {
   return GetCurrentStationDrugActivityUseCase(ref.read(prescriptionRepositoryProvider));
 });
 
+final getPrescriptionItemMovementsUseCaseProvider = Provider((ref) {
+  return GetPrescriptionItemMovementsUseCase(ref.read(prescriptionRepositoryProvider));
+});
+
 final refillMobileCabinUseCaseProvider = Provider((ref) {
   return RefillMobileCabinUseCase(ref.read(cabinStockRepositoryProvider));
 });

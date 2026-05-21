@@ -10,7 +10,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 class UserMapper {
   const UserMapper();
 
-  User toEntity(UserDTO dto) => User(
+  User toEntity(UserDto dto) => User(
     id: dto.id,
     registrationNumber: dto.registrationNumber,
     name: dto.name,
@@ -29,13 +29,13 @@ class UserMapper {
     isAdmin: dto.isAdmin,
   );
 
-  User? toEntityOrNull(UserDTO? dto) => dto == null ? null : toEntity(dto);
+  User? toEntityOrNull(UserDto? dto) => dto == null ? null : toEntity(dto);
 
-  UserDTO? toDtoOrNull(User? entity) => entity == null ? null : toDto(entity);
+  UserDto? toDtoOrNull(User? entity) => entity == null ? null : toDto(entity);
 
-  List<User> toEntityList(List<UserDTO> dtos) => dtos.map(toEntity).toList();
+  List<User> toEntityList(List<UserDto> dtos) => dtos.map(toEntity).toList();
 
-  UserDTO toDto(User entity) => UserDTO(
+  UserDto toDto(User entity) => UserDto(
     id: entity.id,
     registrationNumber: entity.registrationNumber,
     name: entity.name,

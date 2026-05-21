@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../cabin/shared/cabin_process/view/cabin_process_wrapper.dart';
-import '../widgets/custom_withdraw_item_card.dart';
 import '../notifier/custom_withdraw_notifier.dart';
 
 part 'custom_withdraw_confirm_dialog.dart';
@@ -74,23 +73,24 @@ class _PatientMedicineWithdrawViewState extends State<PatientMedicineWithdrawVie
         return ListView.builder(
           itemCount: vm.items.length,
           itemBuilder: (BuildContext context, int index) {
-            final item = vm.items.elementAt(index);
-            final isSelected = vm.selectedItem == item;
-            final isCompleted =
-                item.prescriptionItem?.applicationDate != null && item.prescriptionItem?.applicationUser != null;
+            // final item = vm.items.elementAt(index);
+            // final isSelected = vm.selectedItem == item;
+            return SizedBox();
+            // final isCompleted =
+            //     item.prescriptionItem?.applicationDate != null && item.prescriptionItem?.applicationUser != null;
 
-            return CustomWithdrawItemCard(
-              item: item,
-              isCompleted: isCompleted,
-              isSelected: isSelected,
-              onTap: () {
-                if (!isCompleted && item.assignment != null) {
-                  vm.selectItem(item);
+            // return CustomWithdrawItemCard(
+            //   item: item,
+            //   isCompleted: isCompleted,
+            //   isSelected: isSelected,
+            //   onTap: () {
+            //     if (!isCompleted && item.assignment != null) {
+            //       vm.selectItem(item);
 
-                  //context.read<CabinStatusNotifier>().startOperation(item.assignment!);
-                }
-              },
-            );
+            //       //context.read<CabinStatusNotifier>().startOperation(item.assignment!);
+            //     }
+            //   },
+            // );
           },
         );
       },

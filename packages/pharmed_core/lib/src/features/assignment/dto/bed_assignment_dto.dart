@@ -22,7 +22,7 @@ class BedAssignmentDto extends Equatable {
   final MobileDrawerCellDto? cabinDrawrDetail;
   final int? bedId;
   final BedDto? bed;
-  final HospitalizationDTO? hospitalization;
+  final HospitalizationDto? hospitalization;
 
   factory BedAssignmentDto.fromJson(Map<String, dynamic> json) {
     return BedAssignmentDto(
@@ -35,7 +35,7 @@ class BedAssignmentDto extends Equatable {
       bedId: json['bedId'] as int?,
       bed: json['bed'] != null ? BedDto.fromJson(json['bed'] as Map<String, dynamic>) : null,
       hospitalization: json['patientHospitalization'] != null
-          ? HospitalizationDTO.fromJson(json['patientHospitalization'] as Map<String, dynamic>)
+          ? HospitalizationDto.fromJson(json['patientHospitalization'] as Map<String, dynamic>)
           : null,
     );
   }

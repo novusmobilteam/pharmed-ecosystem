@@ -2,7 +2,7 @@
 
 part of 'medicine_dto.dart';
 
-class DrugDTO extends MedicineDTO {
+class DrugDTO extends MedicineDto {
   final int? id;
   final String? definition;
   final String? barcode;
@@ -75,10 +75,10 @@ class DrugDTO extends MedicineDTO {
   final List<int> activeIngredientIds;
   final List<String>? activeIngredients;
 
-  final List<UserDTO>? witnessedPurchaseUsers;
-  final List<UserDTO>? destroyableUsers;
-  final List<UserDTO>? wastageWitnessedPurchaseUsers;
-  final List<UserDTO>? materialOrderlessTakingUsers;
+  final List<UserDto>? witnessedPurchaseUsers;
+  final List<UserDto>? destroyableUsers;
+  final List<UserDto>? wastageWitnessedPurchaseUsers;
+  final List<UserDto>? materialOrderlessTakingUsers;
 
   final List<StationDTO>? wastageWitnessedPurchaseStations;
   final List<StationDTO>? witnessedPurchaseStations;
@@ -203,7 +203,7 @@ class DrugDTO extends MedicineDTO {
       equivalentCode: json['equivalentCode'] as String?,
       isWastageWitnessedPurchase: json['isWastageWitnessedPurchase'] as bool? ?? false,
       witnessedPurchaseUsers: json['witnessedPurchaseUser'] != null
-          ? (json['witnessedPurchaseUser'] as List).map((e) => UserDTO.fromJson(e as Map<String, dynamic>)).toList()
+          ? (json['witnessedPurchaseUser'] as List).map((e) => UserDto.fromJson(e as Map<String, dynamic>)).toList()
           : null,
       witnessedPurchaseStations: json['witnessedPurchaseStation'] != null
           ? (json['witnessedPurchaseStation'] as List)
@@ -212,7 +212,7 @@ class DrugDTO extends MedicineDTO {
           : null,
       wastageWitnessedPurchaseUsers: json['wastageWitnessedPurchaseUser'] != null
           ? (json['wastageWitnessedPurchaseUser'] as List)
-                .map((e) => UserDTO.fromJson(e as Map<String, dynamic>))
+                .map((e) => UserDto.fromJson(e as Map<String, dynamic>))
                 .toList()
           : null,
       wastageWitnessedPurchaseStations: json['wastageWitnessedPurchaseStation'] != null
@@ -221,11 +221,11 @@ class DrugDTO extends MedicineDTO {
                 .toList()
           : null,
       destroyableUsers: json['destroyableUser'] != null
-          ? (json['destroyableUser'] as List).map((e) => UserDTO.fromJson(e as Map<String, dynamic>)).toList()
+          ? (json['destroyableUser'] as List).map((e) => UserDto.fromJson(e as Map<String, dynamic>)).toList()
           : null,
       materialOrderlessTakingUsers: json['materialOrderlessTakingUser'] != null
           ? (json['materialOrderlessTakingUser'] as List)
-                .map((e) => UserDTO.fromJson(e as Map<String, dynamic>))
+                .map((e) => UserDto.fromJson(e as Map<String, dynamic>))
                 .toList()
           : null,
     );

@@ -10,17 +10,17 @@ part 'medical_consumable_dto.dart';
 ///
 /// isMaterial == true  -> DrugDTO
 /// isMaterial == false -> MedicalConsumableDTO
-sealed class MedicineDTO {
-  const MedicineDTO();
+sealed class MedicineDto {
+  const MedicineDto();
 
-  factory MedicineDTO.fromJson(Map<String, dynamic> json) {
+  factory MedicineDto.fromJson(Map<String, dynamic> json) {
     final isMaterial = json['isMaterial'] as bool? ?? false;
     return isMaterial ? DrugDTO.fromJson(json) : MedicalConsumableDTO.fromJson(json);
   }
 
-  static List<MedicineDTO> listFromJson(List<dynamic>? data) {
+  static List<MedicineDto> listFromJson(List<dynamic>? data) {
     if (data == null) return const [];
-    return data.whereType<Map<String, dynamic>>().map(MedicineDTO.fromJson).toList();
+    return data.whereType<Map<String, dynamic>>().map(MedicineDto.fromJson).toList();
   }
 
   T when<T>({required T Function(DrugDTO drug) drug, required T Function(MedicalConsumableDTO consumable) consumable}) {

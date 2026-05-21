@@ -56,11 +56,13 @@ final prescriptionRepositoryProvider = Provider<IPrescriptionRepository>((ref) {
     AppFlavor.mock => PrescriptionRepositoryImpl(
       prescriptionItemMapper: PrescriptionItemMapper(),
       prescriptionMapper: PrescriptionMapper(),
+      prescriptionItemMovementMapper: PrescriptionItemMovementMapper(),
       dataSource: ref.read(prescriptionRemoteDataSourceProvider),
     ),
     AppFlavor.dev || AppFlavor.prod => PrescriptionRepositoryImpl(
       prescriptionItemMapper: PrescriptionItemMapper(),
       prescriptionMapper: PrescriptionMapper(),
+      prescriptionItemMovementMapper: PrescriptionItemMovementMapper(),
       dataSource: ref.read(prescriptionRemoteDataSourceProvider),
     ),
   };

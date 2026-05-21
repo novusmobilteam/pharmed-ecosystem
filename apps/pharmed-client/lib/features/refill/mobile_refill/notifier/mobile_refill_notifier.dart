@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -270,6 +271,9 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   void toggleItemSelection(int itemId) {
     final current = state;
     if (current is! MobileRefillReady) return;
+
+    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
+    if (item == null || !(item.status?.canFill ?? false)) return;
 
     final next = {...current.selectedItemIds};
     if (!next.add(itemId)) next.remove(itemId);

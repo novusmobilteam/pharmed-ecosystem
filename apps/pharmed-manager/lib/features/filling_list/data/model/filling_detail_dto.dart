@@ -8,14 +8,14 @@ class FillingDetailDTO {
   final int? id;
   final int? fillingListId;
   final int? medicineId;
-  final MedicineDTO? medicine;
+  final MedicineDto? medicine;
   final DrawerUnitDTO? cabinDrawer;
   final MedicineAssignmentDto? cabinAssignment;
   final num? quantity;
   final num? fillingQuantity;
   final DateTime? fillingDate;
   final int? fillingUserId;
-  final UserDTO? fillingUser;
+  final UserDto? fillingUser;
   final bool? isEdit;
   final List<DrawerCellDTO>? cabinDrawerDetail;
   final List<CabinStockDTO>? stocks;
@@ -42,7 +42,7 @@ class FillingDetailDTO {
       id: json['id'] as int?,
       fillingListId: json['fiilingListId'] as int?,
       medicineId: json['materialId'] as int?,
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       cabinDrawer: json['cabinDrawr'] != null ? DrawerUnitDTO.fromJson(json['cabinDrawr']) : null,
       cabinAssignment: json['cabinDrawrQuantity'] != null
           ? MedicineAssignmentDto.fromJson(json['cabinDrawrQuantity'])
@@ -51,7 +51,7 @@ class FillingDetailDTO {
       fillingQuantity: json['fiilingQuantity'] as num?,
       fillingDate: json['fiilingDate'] != null ? DateTime.parse(json['fiilingDate'] as String) : null,
       fillingUserId: json['fiilingUserId'] as int?,
-      fillingUser: json['fillingUser'] != null ? UserDTO.fromJson(json['fillingUser']) : null,
+      fillingUser: json['fillingUser'] != null ? UserDto.fromJson(json['fillingUser']) : null,
       isEdit: json['isEdit'] as bool?,
       cabinDrawerDetail: json['cabinDrawrDetail'] != null
           ? (json['cabinDrawrDetail'] as List).map((e) => DrawerCellDTO.fromJson(e as Map<String, dynamic>)).toList()
@@ -102,7 +102,7 @@ class FillingDetailDTO {
     int? id,
     int? fillingListId,
     int? medicineId,
-    MedicineDTO? medicine,
+    MedicineDto? medicine,
     int? quantity,
     int? fillingQuantity,
     DateTime? fillingDate,

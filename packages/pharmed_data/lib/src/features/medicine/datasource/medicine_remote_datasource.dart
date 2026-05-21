@@ -14,7 +14,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-MEDICINE';
 
-  Future<Result<ApiResponse<List<MedicineDTO>>?>> getMedicines({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<MedicineDto>>?>> getMedicines({int? skip, int? take, String? search}) async {
     return fetchRequest(
       path: '$_base/all',
       skip: skip,
@@ -22,7 +22,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
       searchText: search,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(MedicineDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(MedicineDto.fromJson),
       successLog: 'Malzemeler getirildi',
       emptyLog: 'Malzeme bulunamadı',
     );
@@ -87,7 +87,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> createMedicine(MedicineDTO dto) {
+  Future<Result<void>> createMedicine(MedicineDto dto) {
     final path = dto.when(drug: (_) => '/Material', consumable: (_) => '/MedicalConsumables');
 
     return postRequest(
@@ -98,7 +98,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> updateMedicine(MedicineDTO dto) {
+  Future<Result<void>> updateMedicine(MedicineDto dto) {
     final path = dto.when(drug: (d) => '/Material/${d.id}', consumable: (c) => '/MedicalConsumables/${c.id}');
 
     return putRequest(
@@ -109,7 +109,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> deleteMedicine(MedicineDTO dto) {
+  Future<Result<void>> deleteMedicine(MedicineDto dto) {
     final path = dto.when(drug: (d) => '/Material/${d.id}', consumable: (c) => '/MedicalConsumables/${c.id}');
     return deleteRequest(path: path, parser: BaseRemoteDataSource.voidParser(), successLog: 'Malzeme tipi silindi');
   }

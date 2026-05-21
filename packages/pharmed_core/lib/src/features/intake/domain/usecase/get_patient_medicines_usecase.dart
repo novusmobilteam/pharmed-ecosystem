@@ -18,12 +18,7 @@ class GetPatientMedicinesUseCase {
               type: WithdrawType.free,
               assignment: d.assignment,
               dosePiece: d.dosePiece.toDouble(),
-              prescriptionItem: PrescriptionItem(
-                time: d.time,
-                applicationDate: d.applicationDate,
-                applicationUser: d.applicationUser,
-                description: d.description,
-              ),
+              prescriptionItem: PrescriptionItem(time: d.time, description: d.description),
               medicine: Drug(name: d.medicineName, dose: d.dosePiece, barcode: d.barcode),
             ),
           );

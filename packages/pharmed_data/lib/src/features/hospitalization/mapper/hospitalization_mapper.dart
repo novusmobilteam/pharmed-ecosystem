@@ -5,7 +5,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 class HospitalizationMapper {
   const HospitalizationMapper();
 
-  Hospitalization toEntity(HospitalizationDTO dto) {
+  Hospitalization toEntity(HospitalizationDto dto) {
     return Hospitalization(
       id: dto.id,
       code: dto.code,
@@ -29,8 +29,8 @@ class HospitalizationMapper {
     );
   }
 
-  HospitalizationDTO toDto(Hospitalization entity) {
-    return HospitalizationDTO(
+  HospitalizationDto toDto(Hospitalization entity) {
+    return HospitalizationDto(
       id: entity.id,
       code: entity.code,
       roomId: entity.roomId,
@@ -55,11 +55,11 @@ class HospitalizationMapper {
     );
   }
 
-  List<Hospitalization> toEntityList(List<HospitalizationDTO> dtos) => dtos.map(toEntity).toList();
+  List<Hospitalization> toEntityList(List<HospitalizationDto> dtos) => dtos.map(toEntity).toList();
 
-  List<HospitalizationDTO> toDtoList(List<Hospitalization> entities) => entities.map(toDto).toList();
+  List<HospitalizationDto> toDtoList(List<Hospitalization> entities) => entities.map(toDto).toList();
 
-  Hospitalization? toEntityOrNull(HospitalizationDTO? dto) => dto == null ? null : toEntity(dto);
+  Hospitalization? toEntityOrNull(HospitalizationDto? dto) => dto == null ? null : toEntity(dto);
 
-  HospitalizationDTO? toDtoOrNull(Hospitalization? entity) => entity == null ? null : toDto(entity);
+  HospitalizationDto? toDtoOrNull(Hospitalization? entity) => entity == null ? null : toDto(entity);
 }

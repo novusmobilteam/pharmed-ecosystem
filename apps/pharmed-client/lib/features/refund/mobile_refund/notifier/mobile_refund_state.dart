@@ -249,7 +249,8 @@ extension MobileRefundStateX on MobileRefundState {
   bool get isBusy => isChecking || isSaving;
 
   bool get canRefund => switch (this) {
-    MobileRefundDrugSelected(:final quantity) => quantity > 0,
+    MobileRefundDrugSelected(:final selectedItem, :final quantity) =>
+      quantity > 0 && (selectedItem.status?.canReturn ?? false),
     _ => false,
   };
 }

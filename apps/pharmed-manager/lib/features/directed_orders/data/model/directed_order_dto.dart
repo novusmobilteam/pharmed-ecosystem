@@ -5,7 +5,7 @@ import '../../domain/entity/directed_order.dart';
 class DirectedOrderDTO {
   final int? id;
   final StationDTO? station;
-  final PrescriptionItemDTO? medicine;
+  final PrescriptionItemDto? medicine;
 
   DirectedOrderDTO({this.id, this.station, this.medicine});
 
@@ -13,7 +13,7 @@ class DirectedOrderDTO {
     return DirectedOrderDTO(
       id: json['id'] as int?,
       station: json['station'] != null ? StationDTO.fromJson(json['station']) : null,
-      medicine: json['medicine'] != null ? PrescriptionItemDTO.fromJson(json['medicine']) : null,
+      medicine: json['medicine'] != null ? PrescriptionItemDto.fromJson(json['medicine']) : null,
     );
   }
 
@@ -21,7 +21,7 @@ class DirectedOrderDTO {
     return {'id': id, 'station': station, 'medicine': medicine};
   }
 
-  DirectedOrderDTO copyWith({int? id, StationDTO? station, PrescriptionItemDTO? medicine}) {
+  DirectedOrderDTO copyWith({int? id, StationDTO? station, PrescriptionItemDto? medicine}) {
     return DirectedOrderDTO(id: id ?? this.id, station: station ?? this.station, medicine: medicine ?? this.medicine);
   }
 

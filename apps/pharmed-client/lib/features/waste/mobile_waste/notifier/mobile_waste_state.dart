@@ -219,7 +219,8 @@ extension MobileWasteStateX on MobileWasteState {
   bool get isSaving => this is MobileWasteSaving;
 
   bool get canWaste => switch (this) {
-    MobileWasteDrugSelected(:final quantity) => quantity > 0,
+    MobileWasteDrugSelected(:final selectedItem, :final quantity) =>
+      quantity > 0 && ((selectedItem.status?.canWastage ?? false) || (selectedItem.status?.canDestruct ?? false)),
     _ => false,
   };
 }

@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class HospitalizationDTO {
+class HospitalizationDto {
   final int? id;
   final int? code;
   final int? patientId;
@@ -10,7 +10,7 @@ class HospitalizationDTO {
   final int? inpatientServiceId;
   final ServiceDto? inpatientService;
   final int? doctorId;
-  final UserDTO? doctor;
+  final UserDto? doctor;
   final int? roomId;
   final BedDto? bed;
   final int? bedId;
@@ -23,7 +23,7 @@ class HospitalizationDTO {
   final int? colorId;
   final bool? isUrgent;
 
-  HospitalizationDTO({
+  HospitalizationDto({
     this.id,
     this.code,
     this.patientId,
@@ -47,8 +47,8 @@ class HospitalizationDTO {
     this.isUrgent,
   });
 
-  factory HospitalizationDTO.fromJson(Map<String, dynamic> json) {
-    return HospitalizationDTO(
+  factory HospitalizationDto.fromJson(Map<String, dynamic> json) {
+    return HospitalizationDto(
       id: json['id'] as int?,
       code: json['code'] as int?,
       patientId: json['patientId'] as int?,
@@ -58,7 +58,7 @@ class HospitalizationDTO {
       inpatientServiceId: json['inpatientServiceId'] as int?,
       inpatientService: json['inpatientService'] != null ? ServiceDto.fromJson(json['inpatientService']) : null,
       doctorId: json['doctorId'] as int?,
-      doctor: json['doctor'] != null ? UserDTO.fromJson(json['doctor']) : null,
+      doctor: json['doctor'] != null ? UserDto.fromJson(json['doctor']) : null,
       roomId: json['roomId'] as int?,
       bed: json['bed'] != null ? BedDto.fromJson(json['bed']) : null,
       bedId: json['bedId'] as int?,
@@ -92,7 +92,7 @@ class HospitalizationDTO {
     };
   }
 
-  HospitalizationDTO copyWith({
+  HospitalizationDto copyWith({
     int? id,
     int? code,
     int? patientId,
@@ -102,14 +102,14 @@ class HospitalizationDTO {
     int? inpatientServiceId,
     ServiceDto? inpatientService,
     int? doctorId,
-    UserDTO? doctor,
+    UserDto? doctor,
     int? roomId,
     int? bedId,
     String? description,
     DateTime? admissionDate,
     DateTime? exitDate,
   }) {
-    return HospitalizationDTO(
+    return HospitalizationDto(
       id: id ?? this.id,
       code: code ?? this.code,
       patientId: patientId ?? this.patientId,

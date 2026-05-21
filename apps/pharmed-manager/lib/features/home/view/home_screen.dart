@@ -21,7 +21,6 @@ import '../../medicine/view/medicine_screen.dart';
 
 import '../../station_setup/view/station_screen.dart';
 import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
-import '../../unscanned_barcodes/view/unscanned_barcodes_screen.dart';
 import '../../user/view/user_screen.dart';
 import '../notifier/home_notifier.dart';
 
@@ -134,7 +133,7 @@ class _HomeContent extends StatelessWidget {
       'role' => RoleScreen(menu: menu!),
       'authorization' => AuthorizationScreen(menu: menu!),
       'user' => UserScreen(menu: menu!),
-      'unReadQrCode' => UnscannedBarcodesScreen(menu: menu!),
+      //'unReadQrCode' => UnscannedBarcodesScreen(menu: menu!),
       'unappliedPrescriptions' => UnappliedPrescriptionsScreen(menu: menu!),
       'inconsistency' => InconsistencyScreen(menu: menu!),
       'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),

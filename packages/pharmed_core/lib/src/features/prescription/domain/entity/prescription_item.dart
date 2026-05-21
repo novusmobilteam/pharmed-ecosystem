@@ -17,7 +17,6 @@ class PrescriptionItem implements TableData, Selectable {
   final Medicine? medicine;
   final num? dosePiece;
   final RequestType? requestType;
-  final String? requestTypeName;
   final bool? firstDoseEmergency;
   final bool? askDoctor;
   final bool? inCaseOfNecessity;
@@ -26,7 +25,6 @@ class PrescriptionItem implements TableData, Selectable {
   final String? description;
   final String? deleteDescription;
   final bool? removed;
-
   final int? barcode;
   final int? sutCode;
   final int? ubbCode;
@@ -37,105 +35,12 @@ class PrescriptionItem implements TableData, Selectable {
   final Prescription? prescription;
   final String? protocolNo;
   final String? patientName;
-  final PrescriptionStatus? status;
-
-  final DateTime? approvalDate;
-  final int? approvalUserId;
-  final User? approvalUser;
-
-  final DateTime? cancelDate;
-  final int? cancelUserId;
-  final User? cancelUser;
-
-  final DateTime? applicationDate;
-  final int? applicationUserId;
-  final User? applicationUser;
-
-  final DateTime? returnDate;
-  final int? returnUserId;
-  final User? returnUser;
-  final double? returnQuantity;
-
-  final DateTime? createdDate;
-  final User? createdUser;
-  final int? createdUserId;
-
-  final DateTime? rejectDate;
-  final User? rejectUser;
-  final int? rejectUserId;
-
-  final DateTime? wastageDate;
-  final User? wastageUser;
-  final int? wastageUserId;
-
-  final DateTime? destructionDate;
-  final User? destructionUser;
-  final int? destructionUserId;
   final String? rfidTag;
+  final PrescriptionItemMovement? lastMovement;
 
-  // Onay Bekliyor -> Created Date - Created User
-  // Alım Bekliyor -> Approval Date - Approval User
-  // İade Edildi -> Return Date - Return User
-  // Fire/İmha -> Cancel Date - Cancel User
-  // İptal Edildi -> Cancel Date - Cancle User
-  // Uygulandı -> Application Date - Application User
-
-  /// İlaç Aktivitede gösterilen user
-  User? get activityUser {
-    switch (status ?? PrescriptionStatus.pendingApproval) {
-      case PrescriptionStatus.pendingApproval:
-      case PrescriptionStatus.filledWaiting:
-        return createdUser;
-      case PrescriptionStatus.purchasePending:
-        return approvalUser;
-      case PrescriptionStatus.applied:
-        return applicationUser;
-      case PrescriptionStatus.returned:
-        return returnUser;
-      case PrescriptionStatus.wastaged:
-        return wastageUser;
-      case PrescriptionStatus.destructed:
-        return destructionUser;
-      case PrescriptionStatus.cancelled:
-        return cancelUser;
-      case PrescriptionStatus.rejected:
-        return rejectUser;
-      case PrescriptionStatus.returnPending:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-      case PrescriptionStatus.unloaded:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-    }
-  }
-
-  DateTime? get activityDate {
-    switch (status ?? PrescriptionStatus.pendingApproval) {
-      case PrescriptionStatus.pendingApproval:
-      case PrescriptionStatus.filledWaiting:
-        return createdDate;
-      case PrescriptionStatus.purchasePending:
-        return approvalDate;
-      case PrescriptionStatus.applied:
-        return applicationDate;
-      case PrescriptionStatus.returned:
-        return returnDate;
-      case PrescriptionStatus.wastaged:
-        return wastageDate;
-      case PrescriptionStatus.destructed:
-        return destructionDate;
-      case PrescriptionStatus.cancelled:
-        return cancelDate;
-      case PrescriptionStatus.rejected:
-        return cancelDate;
-      case PrescriptionStatus.returnPending:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-      case PrescriptionStatus.unloaded:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-    }
-  }
+  PrescriptionMovementType? get status => lastMovement?.type;
+  User? get activityUser => lastMovement?.performedBy;
+  DateTime? get activityDate => lastMovement?.createdAt;
 
   const PrescriptionItem({
     this.id,
@@ -151,7 +56,6 @@ class PrescriptionItem implements TableData, Selectable {
     this.medicine,
     this.dosePiece,
     this.requestType,
-    this.requestTypeName,
     this.firstDoseEmergency,
     this.askDoctor,
     this.inCaseOfNecessity,
@@ -160,7 +64,6 @@ class PrescriptionItem implements TableData, Selectable {
     this.description,
     this.deleteDescription,
     this.removed,
-    this.returnQuantity,
     this.barcode,
     this.sutCode,
     this.ubbCode,
@@ -171,32 +74,8 @@ class PrescriptionItem implements TableData, Selectable {
     this.prescription,
     this.protocolNo,
     this.patientName,
-    this.status,
-    this.approvalDate,
-    this.approvalUserId,
-    this.approvalUser,
-    this.cancelDate,
-    this.cancelUserId,
-    this.cancelUser,
-    this.applicationDate,
-    this.applicationUserId,
-    this.applicationUser,
-    this.returnDate,
-    this.returnUserId,
-    this.returnUser,
-    this.createdDate,
-    this.createdUserId,
-    this.createdUser,
-    this.rejectDate,
-    this.rejectUser,
-    this.rejectUserId,
-    this.wastageDate,
-    this.wastageUser,
-    this.wastageUserId,
-    this.destructionDate,
-    this.destructionUser,
-    this.destructionUserId,
     this.rfidTag,
+    this.lastMovement,
   });
 
   PrescriptionItem copyWith({
@@ -221,20 +100,7 @@ class PrescriptionItem implements TableData, Selectable {
     DateTime? time,
     String? description,
     String? deleteDescription,
-    DateTime? approvalDate,
-    int? approvalUserId,
-    User? approvalUser,
-    DateTime? cancelDate,
-    int? cancelUserId,
-    User? cancelUser,
     bool? removed,
-    DateTime? applicationDate,
-    int? applicationUserId,
-    User? applicationUser,
-    DateTime? returnDate,
-    int? returnUserId,
-    User? returnUser,
-    double? returnQuantity,
     int? barcode,
     int? sutCode,
     int? ubbCode,
@@ -246,7 +112,7 @@ class PrescriptionItem implements TableData, Selectable {
     String? protocolNo,
     String? patientName,
     String? rfidTag,
-    PrescriptionStatus? status,
+    PrescriptionItemMovement? lastMovement,
     bool clearRfidTag = false,
   }) {
     return PrescriptionItem(
@@ -259,29 +125,15 @@ class PrescriptionItem implements TableData, Selectable {
       patientRegistrationId: patientRegistrationId ?? this.patientRegistrationId,
       doctor: doctor ?? this.doctor,
       doctorId: doctor?.id ?? this.doctorId,
-      approvalUser: approvalUser ?? this.approvalUser,
-      approvalUserId: approvalUser?.id ?? this.approvalUserId,
-      cancelUser: cancelUser ?? this.cancelUser,
-      cancelUserId: cancelUser?.id ?? this.cancelUserId,
-      applicationUser: applicationUser ?? this.applicationUser,
-      applicationUserId: applicationUser?.id ?? this.applicationUserId,
-      returnUser: returnUser ?? this.returnUser,
-      returnUserId: returnUser?.id ?? this.returnUserId,
       medicine: medicine ?? this.medicine,
       medicineId: medicine?.id ?? this.medicineId,
       dosePiece: dosePiece ?? this.dosePiece,
       requestType: requestType ?? this.requestType,
-      requestTypeName: requestType?.label ?? this.requestTypeName,
       description: description ?? this.description,
       deleteDescription: deleteDescription ?? this.deleteDescription,
-      approvalDate: approvalDate ?? this.approvalDate,
-      cancelDate: cancelDate ?? this.cancelDate,
-      applicationDate: applicationDate ?? this.applicationDate,
-      returnDate: returnDate ?? this.returnDate,
       times: times ?? this.times,
       time: time ?? this.time,
       prescriptionDate: prescriptionDate ?? this.prescriptionDate,
-      returnQuantity: returnQuantity ?? this.returnQuantity,
       protocolNo: protocolNo ?? this.protocolNo,
       patientName: patientName ?? this.patientName,
       barcode: barcode ?? this.barcode,
@@ -294,26 +146,9 @@ class PrescriptionItem implements TableData, Selectable {
       inCaseOfNecessity: inCaseOfNecessity ?? this.inCaseOfNecessity,
       removed: removed ?? this.removed,
       rfidTag: clearRfidTag ? null : (rfidTag ?? this.rfidTag),
-      status: status ?? this.status,
       prescription: prescription ?? this.prescription,
+      lastMovement: lastMovement ?? this.lastMovement,
     );
-  }
-
-  // Hareket: status 3,4,5,6 arasından en geç tarihi olan
-  DateTime? get _movementDate {
-    final candidates = <DateTime?>[];
-    if (status == PrescriptionStatus.applied) candidates.add(applicationDate);
-    if (status == PrescriptionStatus.returned) candidates.add(returnDate);
-    if (status == PrescriptionStatus.wastaged) candidates.add(wastageDate);
-    if (status == PrescriptionStatus.destructed) candidates.add(destructionDate);
-
-    final dates = candidates.whereType<DateTime>().toList()..sort((a, b) => b.compareTo(a));
-    return dates.firstOrNull;
-  }
-
-  PrescriptionStatus? get movementStatus {
-    if (_movementDate == null) return null;
-    return status;
   }
 
   @override
@@ -324,7 +159,7 @@ class PrescriptionItem implements TableData, Selectable {
     activityUser?.fullName ?? '', // 3 - Kullanıcı
     medicine?.name ?? '', // 4 - Malzeme
     '${dosePiece?.formatFractional} ${medicine?.operationUnit}', // 5 - Miktar
-    movementStatus?.label ?? '', // 6 - Hareket
+    status?.label ?? '', // 6 - Hareket
   ];
 
   @override
@@ -335,7 +170,7 @@ class PrescriptionItem implements TableData, Selectable {
     activityUser, // 3
     medicine, // 4
     dosePiece, // 5
-    movementStatus, // 6
+    status, // 6
   ];
 
   @override
@@ -348,6 +183,7 @@ class PrescriptionItem implements TableData, Selectable {
     'Miktar', // 5
     'Hareket', // 6
   ];
+
   @override
   String? get subtitle => medicine?.barcode ?? '-';
 

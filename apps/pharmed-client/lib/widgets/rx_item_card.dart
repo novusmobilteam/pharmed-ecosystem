@@ -1,7 +1,5 @@
-// ignore_for_file: lines_longer_than_80_chars
-
 import 'package:flutter/material.dart';
-import 'package:pharmed_client/widgets/rx_status_detail_block.dart';
+import 'package:pharmed_client/widgets/rx_movement_block.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
@@ -101,7 +99,7 @@ class RxItemCard extends StatelessWidget {
           children: [
             _TopRow(item: item, isSelected: isSelected),
             MedDottedDivider(),
-            RxStatusDetailBlock(item: item),
+            RxMovementBlock(lastMovement: item.lastMovement, medicine: item.medicine),
             const SizedBox(height: MedSpacing.lg),
             if (showStepper && isSelected) ...[
               const SizedBox(height: MedSpacing.lg),
@@ -131,7 +129,7 @@ class _TopRow extends StatelessWidget {
       children: [
         MedRectangleIcon(
           backgroundColor: item.status?.backgroundColor ?? MedColors.blue,
-          foregroundColor: item.status?.color ?? Colors.white,
+          foregroundColor: item.status?.foregroundColor ?? Colors.white,
           icon: PhosphorIcons.pill(),
         ),
 
@@ -147,7 +145,7 @@ class _TopRow extends StatelessWidget {
         MedInfoChip(
           info: item.status?.label,
           backgroundColor: item.status?.backgroundColor,
-          foregroundColor: item.status?.color,
+          foregroundColor: item.status?.foregroundColor,
         ),
       ],
     );

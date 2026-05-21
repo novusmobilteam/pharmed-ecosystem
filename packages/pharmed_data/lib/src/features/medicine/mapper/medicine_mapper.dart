@@ -7,14 +7,14 @@ import 'drug_mapper.dart';
 class MedicineMapper {
   const MedicineMapper();
 
-  Medicine toEntity(MedicineDTO dto) {
+  Medicine toEntity(MedicineDto dto) {
     return dto.when(
       drug: (drugDto) => const DrugMapper().toEntity(drugDto),
       consumable: (consumableDto) => const MedicalConsumableMapper().toEntity(consumableDto),
     );
   }
 
-  Medicine? toEntityOrNull(MedicineDTO? dto) {
+  Medicine? toEntityOrNull(MedicineDto? dto) {
     if (dto == null) {
       return null;
     }
@@ -24,7 +24,7 @@ class MedicineMapper {
     );
   }
 
-  MedicineDTO toDto(Medicine entity) {
+  MedicineDto toDto(Medicine entity) {
     if (entity is Drug) {
       return const DrugMapper().toDto(entity);
     } else if (entity is MedicalConsumable) {
@@ -33,7 +33,7 @@ class MedicineMapper {
     throw StateError('Tanımlanamayan Medicine alt tipi: ${entity.runtimeType}');
   }
 
-  MedicineDTO? toDtoOrNull(Medicine? entity) {
+  MedicineDto? toDtoOrNull(Medicine? entity) {
     if (entity == null) return null;
     if (entity is Drug) {
       return const DrugMapper().toDto(entity);
@@ -43,7 +43,7 @@ class MedicineMapper {
     throw StateError('Tanımlanamayan Medicine alt tipi: ${entity.runtimeType}');
   }
 
-  List<Medicine> toEntityList(List<MedicineDTO> dtos) => dtos.map(toEntity).toList();
+  List<Medicine> toEntityList(List<MedicineDto> dtos) => dtos.map(toEntity).toList();
 
-  List<MedicineDTO> toDtoList(List<Medicine> entities) => entities.map(toDto).toList();
+  List<MedicineDto> toDtoList(List<Medicine> entities) => entities.map(toDto).toList();
 }

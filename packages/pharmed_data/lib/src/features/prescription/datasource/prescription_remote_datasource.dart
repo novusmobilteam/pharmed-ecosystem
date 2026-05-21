@@ -16,26 +16,26 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-PRESCRIPTION';
 
-  Future<Result<PrescriptionDTO?>> createPrescription(PrescriptionDTO dto) {
-    return postRequest<PrescriptionDTO?>(
+  Future<Result<PrescriptionDto?>> createPrescription(PrescriptionDto dto) {
+    return postRequest<PrescriptionDto?>(
       path: _base,
       body: dto.toJson(),
-      parser: BaseRemoteDataSource.singleParser(PrescriptionDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(PrescriptionDto.fromJson),
       successLog: 'Prescription created',
       envelope: ResponseEnvelope.apiResponse,
     );
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getPrescriptionDetail(int prescriptionId) {
-    return fetchRequest<List<PrescriptionItemDTO>>(
+  Future<Result<List<PrescriptionItemDto>?>> getPrescriptionDetail(int prescriptionId) {
+    return fetchRequest<List<PrescriptionItemDto>>(
       path: '$_base/detail/$prescriptionId/getAll',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
       successLog: 'Prescription items fetched',
       emptyLog: 'No prescription items',
     );
   }
 
-  Future<Result<void>> createPrescriptionDetail(List<PrescriptionItemDTO> items) {
+  Future<Result<void>> createPrescriptionDetail(List<PrescriptionItemDto> items) {
     final body = {'prescriptionDetails': items.map((e) => e.toJson()).toList()};
 
     return postRequest<void>(
@@ -46,7 +46,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemDTO>>?>> getUnscannedBarcodes({
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getUnscannedBarcodes({
     int? skip,
     int? take,
     String? search,
@@ -58,39 +58,39 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       searchText: search,
       searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemDTO>>?>> getScannedBarcodes({
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getScannedBarcodes({
     int? skip,
     int? take,
     String? search,
   }) async {
-    return await fetchRequest<ApiResponse<List<PrescriptionItemDTO>>>(
+    return await fetchRequest<ApiResponse<List<PrescriptionItemDto>>>(
       path: '/Prescription/detail/readQrCode',
       skip: skip,
       take: take,
       searchText: search,
       searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemDTO>>?>> getDeletedBarcodes({
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getDeletedBarcodes({
     int? skip,
     int? take,
     String? search,
   }) async {
-    return await fetchRequest<ApiResponse<List<PrescriptionItemDTO>>>(
+    return await fetchRequest<ApiResponse<List<PrescriptionItemDto>>>(
       path: '/Prescription/detail/QrCodeDelete',
       skip: skip,
       take: take,
       searchText: search,
       searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );
   }
 
@@ -103,37 +103,37 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionDTO>>?>> getUnappliedPrescriptions({
+  Future<Result<ApiResponse<List<PrescriptionDto>>?>> getUnappliedPrescriptions({
     int? skip,
     int? take,
     String? search,
   }) async {
-    return await fetchRequest<ApiResponse<List<PrescriptionDTO>>>(
+    return await fetchRequest<ApiResponse<List<PrescriptionDto>>>(
       path: _unapplied,
       skip: skip,
       take: take,
       searchText: search,
       searchFields: ['prescriptionNo'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionDto.fromJson),
       successLog: 'Unapplied prescriptions fetched',
       emptyLog: 'No unapplied prescriptions',
     );
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getUnappliedPrescriptionDetail(int prescriptionId) async {
+  Future<Result<List<PrescriptionItemDto>?>> getUnappliedPrescriptionDetail(int prescriptionId) async {
     return await fetchRequest(
       path: _unappliedDetail(prescriptionId),
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
       successLog: 'Unapplied prescription detail fetched',
       emptyLog: 'No unapplied prescription detail',
     );
   }
 
-  Future<Result<List<PrescriptionDTO>?>> getPatientPrescriptions(int hospitalizationId) async {
+  Future<Result<List<PrescriptionDto>?>> getPatientPrescriptions(int hospitalizationId) async {
     return await fetchRequest(
       path: '$_base/prescription/$hospitalizationId',
-      parser: BaseRemoteDataSource.listParser(PrescriptionDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionDto.fromJson),
       successLog: 'Unapplied prescription detail fetched',
       emptyLog: 'No unapplied prescription detail',
     );
@@ -155,7 +155,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     return await putBulkRequest(path: '$_base/detail/$prescriptionId/rejectBulk', body: ids);
   }
 
-  Future<Result<void>> updatePrescriptionItem(PrescriptionItemDTO dto) {
+  Future<Result<void>> updatePrescriptionItem(PrescriptionItemDto dto) {
     final body = {
       'id': dto.id,
       'prescriptionId': dto.prescriptionId,
@@ -165,7 +165,6 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       'inCaseOfNecessity': dto.inCaseOfNecessity,
       'time': dto.time?.toIso8601String(),
       'description': dto.description,
-      'applicationDate': dto.applicationDate?.toIso8601String(),
     };
 
     return putRequest(
@@ -197,14 +196,14 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     return putRequest(path: '$_base/detail/unReadQrCodeWarning/$id', parser: BaseRemoteDataSource.voidParser());
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getDrugActivity() async {
+  Future<Result<List<PrescriptionItemDto>?>> getDrugActivity() async {
     return await fetchRequest(
       path: '$_base/detail/materialActivity',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemDTO>>?>> getCurrentStationDrugActivity({
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getCurrentStationDrugActivity({
     int? skip,
     int? take,
     String? search,
@@ -217,28 +216,28 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       take: take,
       startDate: startDate,
       endDate: endDate,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getEmergencyPatientMedicines(int hospitalizationId) async {
+  Future<Result<List<PrescriptionItemDto>?>> getEmergencyPatientMedicines(int hospitalizationId) async {
     return await fetchRequest(
       path: '$_base/detail/$hospitalizationId/urgent',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getDailyJobList() async {
+  Future<Result<List<PrescriptionItemDto>?>> getDailyJobList() async {
     return await fetchRequest(
       path: '/MyPatient/dailyJobList',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getPatientPrescriptionHistory(int patientId) async {
+  Future<Result<List<PrescriptionItemDto>?>> getPatientPrescriptionHistory(int patientId) async {
     return await fetchRequest(
       path: '$_base/prescriptionByPatientId/$patientId',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
   }
 
@@ -250,5 +249,12 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<void>> deleteRfidTag({required int prescriptionItemId}) async {
     final path = '$_base/detail/$prescriptionItemId/rfidCardTag';
     return await deleteRequest(path: path, parser: BaseRemoteDataSource.voidParser());
+  }
+
+  Future<Result<List<PrescriptionItemMovementDto>?>> getPrescriptionItemMovements(int prescriptionItemId) async {
+    return await fetchRequest(
+      path: '$_base/prescriptionByPatientId/$prescriptionItemId',
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemMovementDto.fromJson),
+    );
   }
 }

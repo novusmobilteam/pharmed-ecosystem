@@ -1,6 +1,4 @@
 export 'waste_view.dart';
-export 'waste_patient_list.dart';
-export 'waste_drug_list.dart';
 
 export 'master_waste/view/master_waste_view.dart';
 

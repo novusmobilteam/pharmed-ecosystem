@@ -6,15 +6,15 @@ class RefundDTO {
   final double? quantity;
   final int? returnFormId;
   final int? prescriptionDetailId;
-  final PrescriptionItemDTO? prescriptionDetail;
-  final MedicineDTO? medicine;
+  final PrescriptionItemDto? prescriptionDetail;
+  final MedicineDto? medicine;
   final StationDTO? station;
   final int? userId;
   final String? user;
   final DateTime? receiveDate;
-  final UserDTO? receiveUser;
+  final UserDto? receiveUser;
   final bool? isCancel;
-  final UserDTO? cancelUser;
+  final UserDto? cancelUser;
   final String? description;
   final bool? isDeleted;
   final DateTime? createdDate;
@@ -46,15 +46,15 @@ class RefundDTO {
     double? quantity,
     int? returnFormId,
     int? prescriptionDetailId,
-    PrescriptionItemDTO? prescriptionDetail,
-    MedicineDTO? medicine,
+    PrescriptionItemDto? prescriptionDetail,
+    MedicineDto? medicine,
     StationDTO? station,
     int? userId,
     String? user,
     DateTime? receiveDate,
-    UserDTO? receiveUser,
+    UserDto? receiveUser,
     bool? isCancel,
-    UserDTO? cancelUser,
+    UserDto? cancelUser,
     String? description,
     bool? isDeleted,
   }) {
@@ -78,16 +78,16 @@ class RefundDTO {
       returnFormId: json['returnFormId'] as int?,
       prescriptionDetailId: json['prescriptionDetailId'] as int?,
       prescriptionDetail: json['prescriptionDetail'] != null
-          ? PrescriptionItemDTO.fromJson(json['prescriptionDetail'])
+          ? PrescriptionItemDto.fromJson(json['prescriptionDetail'])
           : null,
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       station: json['station'] != null ? StationDTO.fromJson(json['station']) : null,
       userId: json['userId'] as int?,
       user: json['user'] as String?,
       receiveDate: json['receiveDate'] != null ? DateTime.parse(json['receiveDate'] as String) : null,
-      receiveUser: json['receiveUser'] != null ? UserDTO.fromJson(json['receiveUser']) : null,
+      receiveUser: json['receiveUser'] != null ? UserDto.fromJson(json['receiveUser']) : null,
       isCancel: json['isCancel'] as bool?,
-      cancelUser: json['cancelUser'] != null ? UserDTO.fromJson(json['cancelUser']) : null,
+      cancelUser: json['cancelUser'] != null ? UserDto.fromJson(json['cancelUser']) : null,
       description: json['description'] as String?,
       isDeleted: json['isDeleted'] as bool?,
       createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate'] as String) : null,

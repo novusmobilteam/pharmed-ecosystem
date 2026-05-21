@@ -1,6 +1,6 @@
 part of 'medicine_dto.dart';
 
-class MedicalConsumableDTO extends MedicineDTO {
+class MedicalConsumableDTO extends MedicineDto {
   final int? id;
   final String? barcode;
   final String? name;

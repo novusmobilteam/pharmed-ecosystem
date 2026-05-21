@@ -7,7 +7,7 @@ class StationStockDTO {
   final String? code;
   final String? barcode;
   final int? medicineId;
-  final MedicineDTO? medicine;
+  final MedicineDto? medicine;
   final num? maxQuantity;
   final num? currentQuantity;
   final num? reservedQuantity;
@@ -37,7 +37,7 @@ class StationStockDTO {
       code: json['code'] as String?,
       barcode: json['barcode'] as String?,
       medicineId: json['materialId'] as int?,
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       maxQuantity: json['maxQuantity'],
       currentQuantity: json['currentQuantity'],
       reservedQuantity: json['reservedQuantity'],
@@ -68,7 +68,7 @@ class StationStockDTO {
     String? code,
     String? barcode,
     int? medicineId,
-    MedicineDTO? medicine,
+    MedicineDto? medicine,
     num? maxQuantity,
     num? currentQuantity,
     num? reservedQuantity,

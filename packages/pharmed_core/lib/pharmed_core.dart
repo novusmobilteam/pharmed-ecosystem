@@ -66,7 +66,7 @@ export 'src/enums/order_status.dart';
 export 'src/enums/parity_bit.dart';
 export 'src/enums/patient_filter_type.dart';
 export 'src/enums/permission_status.dart';
-export 'src/enums/prescription_status.dart';
+export 'src/enums/prescription_movement_type.dart';
 export 'src/enums/prescription_type.dart';
 export 'src/enums/purchase_type.dart';
 export 'src/enums/request_type.dart';

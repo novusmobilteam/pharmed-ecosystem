@@ -5,13 +5,13 @@ class StockTransactionDTO {
   final int? warehouseId;
   final WarehouseDTO? warehouse;
   final int? medicineId;
-  final MedicineDTO? medicine;
+  final MedicineDto? medicine;
   final int? materialType;
   final int? prescriptionDetailId;
   final int? transactionKind;
   final int? quantity;
   final int? userId;
-  final UserDTO? user;
+  final UserDto? user;
   final bool? isSend;
   final int? transactionType;
   final int? sendServiceId;
@@ -45,7 +45,7 @@ class StockTransactionDTO {
       warehouseId: json['warehouseId'],
       warehouse: json['warehouse'] != null ? WarehouseDTO.fromJson(json['warehouse']) : null,
       medicineId: json['materialId'],
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       materialType: json['materialType'],
       prescriptionDetailId: json['prescriptionDetailId'],
       transactionKind: json['transactionKind'],

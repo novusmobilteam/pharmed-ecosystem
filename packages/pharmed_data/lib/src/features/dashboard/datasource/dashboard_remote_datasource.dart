@@ -53,24 +53,24 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<PrescriptionDTO>?>> getUnappliedPrescriptions() async {
-    return await fetchRequest<List<PrescriptionDTO>>(
+  Future<Result<List<PrescriptionDto>?>> getUnappliedPrescriptions() async {
+    return await fetchRequest<List<PrescriptionDto>>(
       path: '$_basePath/prescriptionCollect',
-      parser: BaseRemoteDataSource.listParser(PrescriptionDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionDto.fromJson),
     );
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getUnreadQrCodes() async {
-    return await fetchRequest<List<PrescriptionItemDTO>>(
+  Future<Result<List<PrescriptionItemDto>?>> getUnreadQrCodes() async {
+    return await fetchRequest<List<PrescriptionItemDto>>(
       path: '$_basePath/unReadQrCode',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
   }
 
-  Future<Result<List<PrescriptionItemDTO>?>> getUpcomingTreatments() async {
-    return await fetchRequest<List<PrescriptionItemDTO>>(
+  Future<Result<List<PrescriptionItemDto>?>> getUpcomingTreatments() async {
+    return await fetchRequest<List<PrescriptionItemDto>>(
       path: '$_basePath/clientPrescriptionCollect',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
       query: {"mac": DeviceInfo.getMacAddress()},
     );
   }

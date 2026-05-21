@@ -17,15 +17,15 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
 
   static const _base = '/User';
 
-  Future<Result<UserDTO?>> getCurrentUser() async {
+  Future<Result<UserDto?>> getCurrentUser() async {
     return await fetchRequest(
       path: '/CurrentUser',
-      parser: BaseRemoteDataSource.singleParser(UserDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(UserDto.fromJson),
       successLog: 'Kullanıcı getirildi.',
     );
   }
 
-  Future<Result<ApiResponse<List<UserDTO>>?>> getUsers({
+  Future<Result<ApiResponse<List<UserDto>>?>> getUsers({
     UserType? type,
     int? skip,
     int? take,
@@ -39,13 +39,13 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
       searchText: search,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(UserDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(UserDto.fromJson),
       successLog: 'Kişiler getirildi',
       emptyLog: 'Kişi bulunamadı',
     );
   }
 
-  Future<Result<void>> createUser(UserDTO dto) {
+  Future<Result<void>> createUser(UserDto dto) {
     return postRequest(
       path: _base,
       body: dto.toJson(),
@@ -54,7 +54,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> updateUser(UserDTO dto) {
+  Future<Result<void>> updateUser(UserDto dto) {
     return putRequest(
       path: _base,
       body: dto.toJson(),
@@ -84,14 +84,14 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<UserDTO?>> witnessUserLogin({
+  Future<Result<UserDto?>> witnessUserLogin({
     required String email,
     required String password,
     required String macAddress,
   }) async {
     return postRequest(
       path: '$_base/otherLogin',
-      parser: BaseRemoteDataSource.singleParser(UserDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(UserDto.fromJson),
       body: {"email": email, "password": password, "macAddress": macAddress},
     );
   }

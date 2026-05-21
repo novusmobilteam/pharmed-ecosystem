@@ -44,12 +44,12 @@ class DrugActivityScreen extends ConsumerWidget {
               ],
               cellBuilder: (item, colIndex, value) {
                 if (colIndex == 6) {
-                  final status = (item).movementStatus;
+                  final status = (item).status;
                   if (status == null) return const SizedBox.shrink();
                   return MedInfoChip(
                     info: status.label,
-                    backgroundColor: status.medBackgroundColor,
-                    foregroundColor: status.medColor,
+                    backgroundColor: status.backgroundColor,
+                    foregroundColor: status.foregroundColor,
                   );
                 }
                 return null; // diğer kolonlar default render

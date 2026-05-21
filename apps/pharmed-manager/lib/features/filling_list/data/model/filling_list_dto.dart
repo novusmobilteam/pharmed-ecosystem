@@ -5,7 +5,7 @@ class FillingListDTO {
   final int? id;
   final int? stationId;
   final StationDTO? station;
-  final UserDTO? user;
+  final UserDto? user;
   final String? status;
   final int? statusId;
   final bool isCancel;
@@ -28,7 +28,7 @@ class FillingListDTO {
     int? id,
     int? stationId,
     StationDTO? station,
-    UserDTO? user,
+    UserDto? user,
     String? status,
     int? statusId,
     bool? isCancel,
@@ -53,7 +53,7 @@ class FillingListDTO {
       id: json['id'] as int?,
       stationId: json['stationId'] as int?,
       station: json['station'] != null ? StationDTO.fromJson(json['station']) : null,
-      user: json['user'] != null ? UserDTO.fromJson(json['user']) : null,
+      user: json['user'] != null ? UserDto.fromJson(json['user']) : null,
       status: json['status'] as String?,
       statusId: json['statusId'] as int?,
       isCancel: (json['isCancel'] as bool?) ?? false,

@@ -265,6 +265,6 @@ class RefundNotifier extends Notifier<MobileRefundState> {
     // PrescriptionItem'da refundableQuantity alanı varsa doğrudan kullan.
     // Yoksa prescribedQuantity - returnedQuantity gibi bir alan beklenir.
     // Burada alan adı projeye göre uyarlanmalıdır.
-    return (item.returnQuantity ?? item.dosePiece ?? 0).toDouble();
+    return (item.dosePiece ?? 0).toDouble();
   }
 }

@@ -14,9 +14,7 @@ enum StockTransactionKind {
 
   static StockTransactionKind? fromId(int? value) {
     if (value == null) return null;
-    return StockTransactionKind.values.firstWhereOrNull(
-      (e) => e.id == value,
-    );
+    return StockTransactionKind.values.firstWhereOrNull((e) => e.id == value);
   }
 
   String get label {

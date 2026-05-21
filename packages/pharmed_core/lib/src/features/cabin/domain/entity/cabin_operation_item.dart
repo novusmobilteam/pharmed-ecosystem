@@ -66,7 +66,7 @@ class CabinOperationItem {
 
   /// Reçete kalemi durumu — tüm işlem tiplerinde gösterilir.
   /// Mapper'dan doldurulur, null ise badge gösterilmez.
-  final PrescriptionStatus? status;
+  final PrescriptionMovementType? status;
 
   const CabinOperationItem({
     required this.id,
@@ -133,7 +133,7 @@ class CabinOperationItem {
     List<User>? witnesses,
     User? witness,
     List<Station>? stations,
-    PrescriptionStatus? status,
+    PrescriptionMovementType? status,
     MedicineAssignment? assignment,
   }) {
     return CabinOperationItem(

@@ -9,7 +9,7 @@ class MedicineAssignmentDto {
   final num? criticalQuantity;
   final num? maxQuantity;
   final CabinDTO? cabin;
-  final MedicineDTO? medicine;
+  final MedicineDto? medicine;
   final DrawerUnitDTO? cabinDrawer;
   final List<DrawerCellDTO>? cabinDrawerDetail;
 
@@ -39,7 +39,7 @@ class MedicineAssignmentDto {
       criticalQuantity: json['criticalQuantity'] as int?,
       maxQuantity: json['maxQuantity'] as int?,
       cabin: json['cabin'] != null ? CabinDTO.fromJson(json['cabin']) : null,
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       cabinDrawer: json['cabinDrawr'] != null ? DrawerUnitDTO.fromJson(json['cabinDrawr']) : null,
       cabinDrawerDetail: json['cabinDrawrDetail'] != null
           ? (json['cabinDrawrDetail'] as List).map((e) => DrawerCellDTO.fromJson(e as Map<String, dynamic>)).toList()
@@ -68,7 +68,7 @@ class MedicineAssignmentDto {
     int? criticalQuantity,
     int? maxQuantity,
     CabinDTO? cabin,
-    MedicineDTO? medicine,
+    MedicineDto? medicine,
     DrawerUnitDTO? cabinDrawer,
   }) {
     return MedicineAssignmentDto(

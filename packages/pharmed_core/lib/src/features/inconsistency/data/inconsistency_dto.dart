@@ -3,7 +3,7 @@ import 'package:pharmed_manager/core/core.dart';
 class InconsistencyDTO {
   final int? id;
   final DrawerCellDTO? cabinDrawerDetail;
-  final MedicineDTO? medicine;
+  final MedicineDto? medicine;
   final num? quantity;
   final num? stockEntryQuantity;
   final num? stockExitQuantity;
@@ -31,7 +31,7 @@ class InconsistencyDTO {
     return InconsistencyDTO(
       id: json['id'] as int?,
       cabinDrawerDetail: json['cabinDrawrDetail'] != null ? DrawerCellDTO.fromJson(json['cabinDrawrDetail']) : null,
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       quantity: json['quantity'],
       stockEntryQuantity: json['stockEntryQuantity'],
       stockExitQuantity: json['stockExitQuantity'],

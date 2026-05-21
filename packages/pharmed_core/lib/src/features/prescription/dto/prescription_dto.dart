@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class PrescriptionDTO {
+class PrescriptionDto {
   final int? id;
   final int? code;
   final String? name;
@@ -9,9 +9,9 @@ class PrescriptionDTO {
   final bool? isPrescribed;
   final int? remainingCount;
   final int? hospitalizationId;
-  final HospitalizationDTO? hospitalization;
+  final HospitalizationDto? hospitalization;
 
-  PrescriptionDTO({
+  PrescriptionDto({
     this.id,
     this.code,
     this.name,
@@ -23,14 +23,14 @@ class PrescriptionDTO {
     this.hospitalization,
   });
 
-  factory PrescriptionDTO.fromJson(Map<String, dynamic> json) {
-    return PrescriptionDTO(
+  factory PrescriptionDto.fromJson(Map<String, dynamic> json) {
+    return PrescriptionDto(
       id: json['id'] as int?,
       code: json['code'] as int?,
       name: json['name'] as String?,
       hospitalizationId: json['patientHospitalizationId'] as int?,
       hospitalization: json['patientHospitalization'] != null
-          ? HospitalizationDTO.fromJson(json['patientHospitalization'])
+          ? HospitalizationDto.fromJson(json['patientHospitalization'])
           : null,
       prescriptionDate: json['prescriptionDate'] != null ? DateTime.parse(json['prescriptionDate'] as String) : null,
       hospitalizationDate: json['hospitalizationDate'] != null
@@ -51,8 +51,8 @@ class PrescriptionDTO {
     };
   }
 
-  PrescriptionDTO copyWith({int? id, int? code, int? hospitalizationId, String? name, DateTime? prescriptionDate}) {
-    return PrescriptionDTO(
+  PrescriptionDto copyWith({int? id, int? code, int? hospitalizationId, String? name, DateTime? prescriptionDate}) {
+    return PrescriptionDto(
       id: id ?? this.id,
       code: code ?? this.code,
       hospitalizationId: hospitalizationId ?? this.hospitalizationId,

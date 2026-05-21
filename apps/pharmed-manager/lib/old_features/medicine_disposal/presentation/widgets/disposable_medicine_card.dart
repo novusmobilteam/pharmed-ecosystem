@@ -12,8 +12,8 @@ class DisposableMedicineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final medicine = item.medicine;
-    final displayDate = item.applicationDate;
-    final appUser = item.applicationUser;
+    // final displayDate = item.applicationDate;
+    // final appUser = item.applicationUser;
 
     return Container(
       padding: const EdgeInsets.all(12.0),
@@ -62,17 +62,17 @@ class DisposableMedicineCard extends StatelessWidget {
               child: Divider(height: 1, color: theme.dividerColor),
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _medInfoChip(
-                  context,
-                  'Alım Tarihi',
-                  '${displayDate?.formattedDate ?? "--"} ${displayDate?.formattedTime ?? "--"}',
-                ),
-                _medInfoChip(context, 'Alan Kişi', appUser?.fullName ?? '-'),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     _medInfoChip(
+            //       context,
+            //       'Alım Tarihi',
+            //       '${displayDate?.formattedDate ?? "--"} ${displayDate?.formattedTime ?? "--"}',
+            //     ),
+            //     _medInfoChip(context, 'Alan Kişi', appUser?.fullName ?? '-'),
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -98,6 +98,7 @@ class DisposableMedicineCard extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _medInfoChip(BuildContext context, String title, String label) {
     return Flexible(
       child: Row(

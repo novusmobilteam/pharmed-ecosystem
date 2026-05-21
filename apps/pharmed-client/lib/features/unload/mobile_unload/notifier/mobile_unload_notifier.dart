@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -107,6 +108,9 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   void toggleItemSelection(int itemId) {
     final current = state;
     if (current is! MobileUnloadReady) return;
+
+    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
+    if (item == null || !(item.status?.canUnload ?? false)) return;
 
     final next = {...current.selectedItemIds};
     if (!next.add(itemId)) next.remove(itemId);

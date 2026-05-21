@@ -179,7 +179,7 @@ class RxOperationCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (item.status != null) RxStatusChip(status: item.status!),
+                  if (item.status != null) MedRxMovementChip(status: item.status!),
                   if (item.time != null) TimeChip(time: item.time!),
                 ],
               ),

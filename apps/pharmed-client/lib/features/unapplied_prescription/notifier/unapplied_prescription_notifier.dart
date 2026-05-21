@@ -69,7 +69,7 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
         selectedPatient: hospitalization,
         // ── Tek fark burası ──────────────────────────────────────────
         // Tüm reçete kalemleri arasından yalnızca alım bekleyenler alınır.
-        prescriptionItems: items.where((item) => item.status == PrescriptionStatus.purchasePending).toList(),
+        prescriptionItems: items.where((item) => item.status == PrescriptionMovementType.purchasePending).toList(),
         // ─────────────────────────────────────────────────────────────
         search: state.search,
         isPrescriptionsLoading: false,

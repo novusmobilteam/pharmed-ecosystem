@@ -6,13 +6,16 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
     required PrescriptionRemoteDataSource dataSource,
     required PrescriptionMapper prescriptionMapper,
     required PrescriptionItemMapper prescriptionItemMapper,
+    required PrescriptionItemMovementMapper prescriptionItemMovementMapper,
   }) : _dataSource = dataSource,
        _prescriptionMapper = prescriptionMapper,
-       _prescriptionItemMapper = prescriptionItemMapper;
+       _prescriptionItemMapper = prescriptionItemMapper,
+       _prescriptionItemMovementMapper = prescriptionItemMovementMapper;
 
   final PrescriptionRemoteDataSource _dataSource;
   final PrescriptionMapper _prescriptionMapper;
   final PrescriptionItemMapper _prescriptionItemMapper;
+  final PrescriptionItemMovementMapper _prescriptionItemMovementMapper;
 
   @override
   Future<Result<Prescription?>> createPrescription(Prescription entity) async {
@@ -231,5 +234,14 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   Future<Result<void>> deleteRfidTag({required int prescriptionItemId}) async {
     final result = await _dataSource.deleteRfidTag(prescriptionItemId: prescriptionItemId);
     return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<List<PrescriptionItemMovement>>> getPrescriptionItemMovements(int prescriptionItemId) async {
+    final result = await _dataSource.getPrescriptionItemMovements(prescriptionItemId);
+    return result.when(
+      ok: (dtos) => Result.ok(_prescriptionItemMovementMapper.toEntityList(dtos ?? [])),
+      error: (e) => Result.error(e),
+    );
   }
 }

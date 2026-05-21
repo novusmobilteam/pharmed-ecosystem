@@ -129,6 +129,7 @@ class UsecaseProviders {
       Provider(create: (context) => DeleteRfidTagUseCase(context.read())),
       Provider(create: (context) => CheckAndApprovePrescriptionUseCase(context.read())),
       Provider(create: (context) => CreatePrescriptionUseCase(prescriptionRepository: context.read())),
+      Provider(create: (context) => GetPrescriptionItemMovementsUseCase(context.read())),
 
       /// Refund
       Provider(create: (context) => GetMasterRefundablesUseCase(context.read())),

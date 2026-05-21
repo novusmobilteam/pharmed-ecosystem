@@ -16,11 +16,11 @@ class MedicineIntakeItemDto {
   final bool? inCaseOfNecessity;
   final DateTime? applicationDate;
 
-  final HospitalizationDTO? hospitalization;
-  final MedicineDTO? medicine;
-  final UserDTO? approvalUser;
-  final UserDTO? applicationUser;
-  final PrescriptionDTO? prescription;
+  final HospitalizationDto? hospitalization;
+  final MedicineDto? medicine;
+  final UserDto? approvalUser;
+  final UserDto? applicationUser;
+  final PrescriptionDto? prescription;
   final MedicineAssignmentDto? cabinAssignment;
   final CabinStockDTO? cabinDrawerStock;
 
@@ -65,12 +65,12 @@ class MedicineIntakeItemDto {
       inCaseOfNecessity: json['inCaseOfNecessity'],
       applicationDate: json['applicationDate'] != null ? DateTime.parse(json['applicationDate'] as String) : null,
       hospitalization: json['patientHospitalization'] != null
-          ? HospitalizationDTO.fromJson(json['patientHospitalization'])
+          ? HospitalizationDto.fromJson(json['patientHospitalization'])
           : null,
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
-      approvalUser: json['approvalUser'] != null ? UserDTO.fromJson(json['approvalUser']) : null,
-      applicationUser: json['applicationUser'] != null ? UserDTO.fromJson(json['applicationUser']) : null,
-      prescription: json['prescription'] != null ? PrescriptionDTO.fromJson(json['prescription']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
+      approvalUser: json['approvalUser'] != null ? UserDto.fromJson(json['approvalUser']) : null,
+      applicationUser: json['applicationUser'] != null ? UserDto.fromJson(json['applicationUser']) : null,
+      prescription: json['prescription'] != null ? PrescriptionDto.fromJson(json['prescription']) : null,
       cabinAssignment: json['cabinDrawrQuantity'] != null
           ? MedicineAssignmentDto.fromJson(json['cabinDrawrQuantity'])
           : null,

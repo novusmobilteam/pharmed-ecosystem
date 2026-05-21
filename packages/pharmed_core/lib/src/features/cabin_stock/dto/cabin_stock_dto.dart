@@ -10,7 +10,7 @@ class CabinStockDTO {
   final int? shelfNo;
   final num? quantity;
   final DateTime? miadDate;
-  final MedicineDTO? medicine;
+  final MedicineDto? medicine;
   final MedicineAssignmentDto? cabinDrawerQuantity;
   final DrawerCellDTO? cabinDrawerDetail;
 
@@ -38,7 +38,7 @@ class CabinStockDTO {
       quantity: json['quantity'],
       shelfNo: json['shelfNo'],
       miadDate: json['miadDate'] != null ? DateTime.tryParse(json['miadDate']) : null,
-      medicine: json['material'] != null ? MedicineDTO.fromJson(json['material']) : null,
+      medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       cabinDrawerQuantity: json['cabinDrawrQuantity'] != null
           ? MedicineAssignmentDto.fromJson(json['cabinDrawrQuantity'])
           : null,
@@ -66,7 +66,7 @@ class CabinStockDTO {
     int? shelfNo,
     double? quantity,
     DateTime? miadDate,
-    MedicineDTO? medicine,
+    MedicineDto? medicine,
     MedicineAssignmentDto? cabinDrawerQuantity,
     DrawerCellDTO? cabinDrawerDetail,
   }) {

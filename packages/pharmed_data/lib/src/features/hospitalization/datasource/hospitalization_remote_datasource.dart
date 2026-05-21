@@ -12,19 +12,19 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-HOSPITALIZATON';
 
-  Future<Result<ApiResponse<List<HospitalizationDTO>>?>> getHospitalizations({
+  Future<Result<ApiResponse<List<HospitalizationDto>>?>> getHospitalizations({
     int? skip,
     int? take,
     String? search,
   }) async {
-    final res = await fetchRequest<ApiResponse<List<HospitalizationDTO>>>(
+    final res = await fetchRequest<ApiResponse<List<HospitalizationDto>>>(
       path: _basePath,
       skip: skip,
       take: take,
       searchText: search,
       searchFields: ['patientName'],
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(HospitalizationDto.fromJson),
       successLog: 'PatientHospitalization list fetched',
       emptyLog: 'No patient hospitalizations',
     );
@@ -35,17 +35,17 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<HospitalizationDTO?>> createHospitalization(HospitalizationDTO dto) {
+  Future<Result<HospitalizationDto?>> createHospitalization(HospitalizationDto dto) {
     print(dto.toJson().toString());
-    return postRequest<HospitalizationDTO?>(
+    return postRequest<HospitalizationDto?>(
       path: _basePath,
       body: dto.toJson(),
-      parser: BaseRemoteDataSource.singleParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(HospitalizationDto.fromJson),
       successLog: 'PatientHospitalization created',
     );
   }
 
-  Future<Result<void>> updateHospitalization(HospitalizationDTO dto) {
+  Future<Result<void>> updateHospitalization(HospitalizationDto dto) {
     if (dto.id == null) {
       return Future.value(Result.error(CustomException(message: 'updatePatientHospitalization: id is null')));
     }
@@ -65,35 +65,35 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<HospitalizationDTO>>> getHospitalizationsWithPrescription() async {
-    final res = await fetchRequest<List<HospitalizationDTO>>(
+  Future<Result<List<HospitalizationDto>>> getHospitalizationsWithPrescription() async {
+    final res = await fetchRequest<List<HospitalizationDto>>(
       path: '$_basePath/allDetails',
-      parser: BaseRemoteDataSource.listParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
   }
 
-  Future<Result<List<HospitalizationDTO>>> getPatientsWithActivePrescription() async {
-    final res = await fetchRequest<List<HospitalizationDTO>>(
+  Future<Result<List<HospitalizationDto>>> getPatientsWithActivePrescription() async {
+    final res = await fetchRequest<List<HospitalizationDto>>(
       path: '$_basePath/materialCollect',
-      parser: BaseRemoteDataSource.listParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
   }
 
-  Future<Result<List<HospitalizationDTO>>> getFilteredHospitalizations(PatientFilterType filter) async {
-    final res = await fetchRequest<List<HospitalizationDTO>>(
+  Future<Result<List<HospitalizationDto>>> getFilteredHospitalizations(PatientFilterType filter) async {
+    final res = await fetchRequest<List<HospitalizationDto>>(
       path: '/Patient/myHospitalization/${filter.id}',
-      parser: BaseRemoteDataSource.listParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
   }
 
-  Future<Result<List<HospitalizationDTO>>> getHospitalizationsByService(int serviceId) async {
-    final res = await fetchRequest<List<HospitalizationDTO>>(
+  Future<Result<List<HospitalizationDto>>> getHospitalizationsByService(int serviceId) async {
+    final res = await fetchRequest<List<HospitalizationDto>>(
       path: '$_basePath/service/$serviceId',
-      parser: BaseRemoteDataSource.listParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDTO>[]), error: Result.error);
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
   }
 }

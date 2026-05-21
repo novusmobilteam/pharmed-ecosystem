@@ -5,7 +5,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 class PrescriptionMapper {
   const PrescriptionMapper();
 
-  Prescription toEntity(PrescriptionDTO dto) {
+  Prescription toEntity(PrescriptionDto dto) {
     return Prescription(
       id: dto.id,
       code: dto.code,
@@ -22,8 +22,8 @@ class PrescriptionMapper {
     );
   }
 
-  PrescriptionDTO toDto(Prescription entity) {
-    return PrescriptionDTO(
+  PrescriptionDto toDto(Prescription entity) {
+    return PrescriptionDto(
       id: entity.id,
       code: entity.code,
       name: entity.name,
@@ -38,11 +38,11 @@ class PrescriptionMapper {
     );
   }
 
-  List<Prescription> toEntityList(List<PrescriptionDTO> dtos) => dtos.map(toEntity).toList();
+  List<Prescription> toEntityList(List<PrescriptionDto> dtos) => dtos.map(toEntity).toList();
 
-  List<PrescriptionDTO> toDtoList(List<Prescription> entities) => entities.map(toDto).toList();
+  List<PrescriptionDto> toDtoList(List<Prescription> entities) => entities.map(toDto).toList();
 
-  Prescription? toEntityOrNull(PrescriptionDTO? dto) => dto == null ? null : toEntity(dto);
+  Prescription? toEntityOrNull(PrescriptionDto? dto) => dto == null ? null : toEntity(dto);
 
-  PrescriptionDTO? toDtoOrNull(Prescription? entity) => entity == null ? null : toDto(entity);
+  PrescriptionDto? toDtoOrNull(Prescription? entity) => entity == null ? null : toDto(entity);
 }

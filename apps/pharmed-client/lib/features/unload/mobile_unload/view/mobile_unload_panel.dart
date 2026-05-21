@@ -129,7 +129,7 @@ class _UnloadPrescriptionList extends StatelessWidget {
         final item = items[index];
 
         // Boşaltma için yalnızca 'purchasePending' (Alım Bekliyor) seçilebilir
-        final isEligible = item.status == PrescriptionStatus.purchasePending;
+        final isEligible = item.status == PrescriptionMovementType.purchasePending;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
 
         // Alımla aynı RFID semantiği:

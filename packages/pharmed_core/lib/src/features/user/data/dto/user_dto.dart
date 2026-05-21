@@ -1,4 +1,4 @@
-class UserDTO {
+class UserDto {
   final int? id;
   final int? type;
   final String? registrationNumber;
@@ -17,7 +17,7 @@ class UserDTO {
   final List<int>? stationIds;
   final bool? isAdmin;
 
-  const UserDTO({
+  const UserDto({
     this.id,
     this.type,
     this.registrationNumber,
@@ -37,8 +37,8 @@ class UserDTO {
     this.isAdmin,
   });
 
-  factory UserDTO.fromJson(Map<String, dynamic> json) {
-    return UserDTO(
+  factory UserDto.fromJson(Map<String, dynamic> json) {
+    return UserDto(
       id: json['id'],
       registrationNumber: json['registrationNumber'] as String?,
       name: json['name'] as String?,

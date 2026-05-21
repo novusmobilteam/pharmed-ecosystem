@@ -1,5 +1,3 @@
-// lib/features/prescription/widgets/prescription_detail_card.dart
-//
 // Reçete detay kartı — açılıp kapanan, ilaç kalemleri carousel içinde gösterilir.
 //
 // [SWREQ-UI-RX-DETAIL-CARD-001]
@@ -22,6 +20,8 @@
 //   )
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/providers/usecase_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -152,17 +152,44 @@ class _RxCardHeader extends StatelessWidget {
   }
 }
 
-class _RxItemRow extends StatefulWidget {
+class _RxItemRow extends ConsumerStatefulWidget {
   const _RxItemRow({required this.item});
 
   final PrescriptionItem item;
 
   @override
-  State<_RxItemRow> createState() => _RxItemRowState();
+  ConsumerState<_RxItemRow> createState() => _RxItemRowState();
 }
 
-class _RxItemRowState extends State<_RxItemRow> {
+class _RxItemRowState extends ConsumerState<_RxItemRow> {
   bool _detailExpanded = false;
+  bool _isLoading = false;
+  bool _hasLoaded = false;
+  List<PrescriptionItemMovement>? _movements;
+
+  Future<void> _loadMovements() async {
+    if (_hasLoaded || _isLoading) return;
+    final itemId = widget.item.id;
+    if (itemId == null) return;
+
+    setState(() => _isLoading = true);
+
+    final useCase = ref.read(getPrescriptionItemMovementsUseCaseProvider);
+    final result = await useCase.call(itemId);
+
+    result.when(
+      ok: (movements) {
+        setState(() {
+          _movements = movements;
+          _isLoading = false;
+          _hasLoaded = true;
+        });
+      },
+      error: (_) {
+        setState(() => _isLoading = false);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,31 +207,27 @@ class _RxItemRowState extends State<_RxItemRow> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // İlaç adı + barkod
                 Expanded(
                   child: Column(
                     spacing: 2.0,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(item.medicine?.name ?? '—', style: MedTextStyles.titleLg()),
-                      if (item.medicine?.barcode != null) ...[
+                      if (item.medicine?.barcode != null)
                         Text(item.medicine!.barcode!, style: MedTextStyles.monoMd(color: MedColors.text4)),
-                      ],
                     ],
                   ),
                 ),
-
                 Row(
                   spacing: 6.0,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Saat chip
                     if (status != null) ...[
                       const SizedBox(height: MedSpacing.xs),
                       MedInfoChip(
                         info: status.label,
                         backgroundColor: status.backgroundColor,
-                        foregroundColor: status.color,
+                        foregroundColor: status.foregroundColor,
                       ),
                     ],
                     if (item.dosePiece != null) MedDoseChip(item: item),
@@ -222,7 +245,30 @@ class _RxItemRowState extends State<_RxItemRow> {
             child: _detailExpanded
                 ? Padding(
                     padding: const EdgeInsets.only(top: 12.0),
-                    child: RxStatusDetailBlock(item: item),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: MedSpacing.md,
+                      children: [
+                        RxMovementBlock(
+                          lastMovement: item.lastMovement,
+                          medicine: item.medicine,
+                          movements: _movements,
+                          isLoading: _isLoading,
+                        ),
+                        if (!_hasLoaded)
+                          GestureDetector(
+                            onTap: _loadMovements,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: MedSpacing.sm,
+                              children: [
+                                Icon(PhosphorIcons.clockCounterClockwise(), size: 14, color: MedColors.text3),
+                                Text('Tüm Hareketleri Göster', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
                   )
                 : const SizedBox.shrink(),
           ),

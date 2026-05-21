@@ -6,7 +6,7 @@ import '../../../../../core/core.dart';
 /// item.status null ise render edilmez — widget çağrılmadan önce
 /// null kontrolü yapılması önerilir.
 class PrescriptionStatusBadge extends StatelessWidget {
-  final PrescriptionStatus status;
+  final PrescriptionMovementType status;
 
   const PrescriptionStatusBadge({super.key, required this.status});
 
@@ -17,16 +17,16 @@ class PrescriptionStatusBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: status.backgroundColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: status.borderColor),
+        border: Border.all(color: status.foregroundColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(status.icon, size: 12, color: status.color),
+          Icon(status.icon, size: 12, color: status.foregroundColor),
           const SizedBox(width: 4),
           Text(
             status.label,
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: status.color),
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: status.foregroundColor),
           ),
         ],
       ),

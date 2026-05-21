@@ -117,10 +117,10 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<HospitalizationDTO?>> createUrgentPatient(int serviceId) async {
-    return await postRequest<HospitalizationDTO>(
+  Future<Result<HospitalizationDto?>> createUrgentPatient(int serviceId) async {
+    return await postRequest<HospitalizationDto>(
       path: '$_base/hospitalization/urgent',
-      parser: BaseRemoteDataSource.singleParser(HospitalizationDTO.fromJson),
+      parser: BaseRemoteDataSource.singleParser(HospitalizationDto.fromJson),
       body: {"serviceId": serviceId},
     );
   }

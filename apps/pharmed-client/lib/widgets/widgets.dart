@@ -18,5 +18,5 @@ export 'rx_drug_panel.dart';
 export 'rx_group_card.dart';
 export 'rx_item_card.dart';
 export 'rx_operation_card.dart';
-export 'rx_status_detail_block.dart';
+export 'rx_movement_block.dart';
 export 'session_timeout_banner.dart';
