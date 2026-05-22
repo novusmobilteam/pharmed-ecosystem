@@ -35,6 +35,8 @@ class CreatePrescriptionUseCase {
       error: Result.error,
       ok: (created) async {
         final prescId = created?.id;
+        print('Reçete oluşturuldu');
+        print(prescription.toString());
 
         if (prescId == null) {
           return Result.error(
@@ -49,6 +51,7 @@ class CreatePrescriptionUseCase {
         final entities = expanded.map((e) => e.copyWith(prescriptionId: prescId)).toList();
 
         final rDetail = await _prescriptionRepository.createPrescriptionDetail(entities);
+        print(entities.map((m) => m));
 
         return rDetail.when(ok: (_) => Result.ok(items), error: Result.error);
       },

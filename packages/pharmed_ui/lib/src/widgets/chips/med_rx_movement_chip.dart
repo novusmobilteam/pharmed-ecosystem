@@ -22,25 +22,13 @@ class MedRxMovementChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: status.backgroundColor,
         borderRadius: MedRadius.smAll,
-        border: Border.all(color: status.foregroundColor),
+        border: Border.all(color: status.backgroundColor.withAlpha(55)),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: status.foregroundColor, shape: BoxShape.circle),
-          ),
-          // Icon(status.icon, size: 10, color: status.color),
-          const SizedBox(width: 4),
-          Text(status.label, style: MedTextStyles.monoSm(color: status.foregroundColor)),
-        ],
-      ),
+      child: Text(status.label, style: MedTextStyles.monoSm(color: status.foregroundColor)),
     );
   }
 }

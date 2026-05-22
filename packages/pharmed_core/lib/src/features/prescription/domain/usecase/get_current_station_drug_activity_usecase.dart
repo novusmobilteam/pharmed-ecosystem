@@ -6,7 +6,7 @@ class GetCurrentStationDrugActivityUseCase {
 
   GetCurrentStationDrugActivityUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> call({
+  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> call({
     int? skip,
     int? take,
     String? search,

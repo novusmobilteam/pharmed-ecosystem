@@ -203,7 +203,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getCurrentStationDrugActivity({
+  Future<Result<ApiResponse<List<PrescriptionItemMovementDto>>?>> getCurrentStationDrugActivity({
     int? skip,
     int? take,
     String? search,
@@ -216,7 +216,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       take: take,
       startDate: startDate,
       endDate: endDate,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemMovementDto.fromJson),
     );
   }
 
@@ -253,7 +253,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<List<PrescriptionItemMovementDto>?>> getPrescriptionItemMovements(int prescriptionItemId) async {
     return await fetchRequest(
-      path: '$_base/prescriptionByPatientId/$prescriptionItemId',
+      path: '$_base/detail/history/$prescriptionItemId',
       parser: BaseRemoteDataSource.listParser(PrescriptionItemMovementDto.fromJson),
     );
   }

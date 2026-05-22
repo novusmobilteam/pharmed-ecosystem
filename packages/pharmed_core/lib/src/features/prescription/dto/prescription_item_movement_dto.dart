@@ -25,9 +25,9 @@ class PrescriptionItemMovementDto {
     return PrescriptionItemMovementDto(
       id: json['id'] as int?,
       prescriptionItemId: json['prescriptionDetailId'] as int?,
-      movementId: json['transactionKind'] as int?,
+      movementId: json['detailStatusId'] as int?,
       cabinDrawerDetailId: json['CabinDrawrDetailId'] as int?,
-      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdDate']) : null,
+      createdAt: json['createdDate'] != null ? DateTime.tryParse(json['createdDate']) : null,
       user: json['user'] != null ? UserDto.fromJson(json['user']) : null,
       quantity: json['quantity'] as double?,
       stationId: json['stationId'] as int?,

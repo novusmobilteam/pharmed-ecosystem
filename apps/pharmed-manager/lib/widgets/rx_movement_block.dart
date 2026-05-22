@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_manager/core/core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class RxMovementBlock extends StatelessWidget {
@@ -20,14 +18,9 @@ class RxMovementBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(
-        child: Padding(padding: EdgeInsets.all(MedSpacing.xl2), child: CircularProgressIndicator.adaptive()),
-      );
-    }
+    final displayList = movements ?? (lastMovement != null ? [lastMovement!] : []);
 
-    // Tüm hareketler yüklendi ama boş geldi
-    if (movements != null && movements!.isEmpty) {
+    if (displayList.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: MedSpacing.xl),
         child: Row(
@@ -40,10 +33,6 @@ class RxMovementBlock extends StatelessWidget {
         ),
       );
     }
-
-    final displayList = movements ?? (lastMovement != null ? [lastMovement!] : []);
-
-    if (displayList.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +64,7 @@ class _MovementGroup extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _DetailGroupTitle(label: type.label),
+        _DetailGroupTitle(label: type.actorLabel),
         const SizedBox(height: 6),
         _DetailRow(
           fields: [

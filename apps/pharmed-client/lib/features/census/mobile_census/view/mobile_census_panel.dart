@@ -35,7 +35,7 @@ class MobileCensusPanel extends StatelessWidget {
   bool get _isProcessActive => drawerStage.isActive;
 
   /// Çekmece açılıyor veya açıkken seçim değiştirilemez.
-  bool get _isSelectionLocked => drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened;
+  bool get _isSelectionLocked => drawerStage is! MobileDrawerOpened;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +83,7 @@ class MobileCensusPanel extends StatelessWidget {
             rfidReadEpcs: ready.rfidReadEpcs,
             isProcessActive: _isProcessActive,
             onToggleItem: onToggleItem,
+            drawerStage: drawerStage,
           ),
         ),
         _CensusActionBar(
@@ -101,8 +102,6 @@ class MobileCensusPanel extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-
 class _CensusPrescriptionList extends StatelessWidget {
   const _CensusPrescriptionList({
     required this.items,
@@ -111,6 +110,7 @@ class _CensusPrescriptionList extends StatelessWidget {
     required this.isSelectionLocked,
     required this.isProcessActive,
     required this.onToggleItem,
+    required this.drawerStage,
   });
 
   final List<PrescriptionItem> items;
@@ -126,6 +126,7 @@ class _CensusPrescriptionList extends StatelessWidget {
   final bool isProcessActive;
 
   final ValueChanged<int> onToggleItem;
+  final MobileDrawerStage drawerStage;
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +157,12 @@ class _CensusPrescriptionList extends StatelessWidget {
           isEligible: isEligible,
           isSelected: isSelected,
           rfidStatus: rfidStatus,
-          onTap: isSelectionLocked || item.id == null ? null : () => onToggleItem(item.id!),
+          onTap: isSelectionLocked || item.id == null
+              ? null
+              : () {
+                  print('tapped: ${item.id}');
+                  onToggleItem(item.id!);
+                },
         );
       },
     );
@@ -198,11 +204,9 @@ class _CensusActionBar extends StatelessWidget {
 
   bool get _showCancel {
     if (isSaving) return false;
-    if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) {
-      return false; // açık çekmecede iptal yok — view snackbar gösterir
-    }
+    if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) return false;
+    if (drawerStage is MobileDrawerIdle) return true;
     if (drawerStage is MobileDrawerClosed) return rfidPresentCount == 0;
-    if (drawerStage is MobileDrawerIdle) return hasSelection;
     if (drawerStage is MobileDrawerFailed) return true;
     return false;
   }
@@ -236,7 +240,7 @@ class _CensusActionBar extends StatelessWidget {
             ? _ActionButton(label: 'Sayımı tamamla', onTap: onComplete)
             : _ActionButton(label: 'Sayıma devam et', onTap: onReopen),
       MobileDrawerFailed() => _ActionButton(label: 'Tekrar dene', onTap: onStart),
-      MobileDrawerIdle() => _ActionButton(label: 'Sayıma başla', enabled: hasSelection, onTap: onStart),
+      MobileDrawerIdle() => _ActionButton(label: 'Sayıma başla', onTap: onStart),
     };
   }
 }

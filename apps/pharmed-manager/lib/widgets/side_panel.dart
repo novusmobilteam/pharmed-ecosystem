@@ -188,8 +188,6 @@ class _SidePanelHeader extends StatelessWidget {
   }
 }
 
-// ── Footer ────────────────────────────────────────────────────────
-
 class _SidePanelFooter extends StatelessWidget {
   const _SidePanelFooter({required this.saveLabel, this.onSave, this.onClose, this.onDelete, this.isLoading = false});
 
@@ -217,15 +215,16 @@ class _SidePanelFooter extends StatelessWidget {
             variant: MedButtonVariant.danger,
           ),
           const SizedBox(width: 6),
-          SizedBox(
-            width: 150,
-            child: MedButton(
-              label: saveLabel,
-              size: MedButtonSize.sm,
-              onPressed: isLoading ? null : onSave,
-              isLoading: isLoading,
+          if (onSave != null)
+            SizedBox(
+              width: 150,
+              child: MedButton(
+                label: saveLabel,
+                size: MedButtonSize.sm,
+                onPressed: isLoading ? null : onSave,
+                isLoading: isLoading,
+              ),
             ),
-          ),
         ],
       ),
     );

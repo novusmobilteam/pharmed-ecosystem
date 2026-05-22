@@ -256,16 +256,9 @@ class _RxItemRowState extends ConsumerState<_RxItemRow> {
                           isLoading: _isLoading,
                         ),
                         if (!_hasLoaded)
-                          GestureDetector(
-                            onTap: _loadMovements,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              spacing: MedSpacing.sm,
-                              children: [
-                                Icon(PhosphorIcons.clockCounterClockwise(), size: 14, color: MedColors.text3),
-                                Text('Tüm Hareketleri Göster', style: MedTextStyles.bodySm(color: MedColors.text3)),
-                              ],
-                            ),
+                          TextButton(
+                            onPressed: _loadMovements,
+                            child: Text('Tüm Hareketleri Göster', style: MedTextStyles.bodyMd(color: MedColors.text3)),
                           ),
                       ],
                     ),

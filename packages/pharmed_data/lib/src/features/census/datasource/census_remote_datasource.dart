@@ -17,7 +17,7 @@ class CensusRemoteDataSource extends BaseRemoteDataSource {
     return await putRequest(
       path: '$_base/censusQuantity',
       parser: BaseRemoteDataSource.voidParser(),
-      body: data.map((e) => e.toJson()).toList(),
+      body: data,
       successLog: 'Census quantity updated',
     );
   }
@@ -27,7 +27,7 @@ class CensusRemoteDataSource extends BaseRemoteDataSource {
     return await putRequest(
       path: '$_base/censusQuantityMobile',
       parser: BaseRemoteDataSource.voidParser(),
-      body: data.map((e) => e.toJson()).toList(),
+      body: data,
       successLog: 'Census quantity updated',
     );
   }

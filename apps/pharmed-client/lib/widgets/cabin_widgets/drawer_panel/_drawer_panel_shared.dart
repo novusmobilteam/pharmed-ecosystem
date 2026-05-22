@@ -115,7 +115,7 @@ class CabinModeBanner extends StatelessWidget {
       const Color(0xFFFEF3E2),
       const Color(0xFFF5C97A),
       const Color(0xFF92520A),
-      context.l10n.cabin_bannerDrugCount,
+      'Çekmece açıldıktan sonra kabinde bulunan ilaçları seçin ve sayımı tamamlayın. Durumu "Alım Bekliyor" olan ilaçların sayımı yapılabilir ve seçilmeyen ilaçların miktarı 0 kabul edilir.',
     ),
     CabinOperationMode.fault => (
       const Color(0xFFFEF2F2),

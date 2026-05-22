@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class RxMovementBlock extends StatelessWidget {
   const RxMovementBlock({
@@ -32,15 +33,21 @@ class RxMovementBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(
-        child: Padding(padding: EdgeInsets.all(MedSpacing.xl2), child: CircularProgressIndicator()),
-      );
-    }
-
     final displayList = movements ?? (lastMovement != null ? [lastMovement!] : []);
 
-    if (displayList.isEmpty) return const SizedBox.shrink();
+    if (displayList.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: MedSpacing.xl),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(PhosphorIcons.clockCounterClockwise(), size: 14, color: MedColors.text4),
+            const SizedBox(width: MedSpacing.sm),
+            Text('Hareket kaydı bulunamadı.', style: MedTextStyles.monoSm(color: MedColors.text4)),
+          ],
+        ),
+      );
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -78,7 +85,7 @@ class _MovementBlockRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 8.0,
         children: [
-          Text(type.label.toUpperCase(), style: MedTextStyles.titleMd(color: type.foregroundColor)),
+          Text(type.actorLabel.toUpperCase(), style: MedTextStyles.titleMd(color: type.backgroundColor)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

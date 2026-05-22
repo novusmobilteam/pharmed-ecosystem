@@ -42,7 +42,7 @@ abstract interface class IPrescriptionRepository {
   Future<Result<List<PrescriptionItem>>> getDrugActivity();
 
   /// İşlem yapılan kabine ait hareketlerini(dolum,alım,iade,fire/imha) getiren servis.
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getCurrentStationDrugActivity({
+  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> getCurrentStationDrugActivity({
     int? skip,
     int? take,
     String? search,

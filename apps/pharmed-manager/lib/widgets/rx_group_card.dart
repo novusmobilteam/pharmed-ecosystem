@@ -137,10 +137,6 @@ class _RxGroupCardState extends State<RxGroupCard> {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// _RxHeader
-// ─────────────────────────────────────────────────────────────────────────────
-
 class _RxHeader extends StatelessWidget {
   const _RxHeader({
     required this.prescriptionId,
@@ -211,10 +207,6 @@ class _RxHeader extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _RxDrugBlock
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _RxDrugBlock extends StatefulWidget {
   const _RxDrugBlock({
@@ -328,10 +320,6 @@ class _RxDrugBlockState extends State<_RxDrugBlock> {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// _DrugRow
-// ─────────────────────────────────────────────────────────────────────────────
-
 class _DrugRow extends StatelessWidget {
   const _DrugRow({
     required this.item,
@@ -404,9 +392,9 @@ class _DrugRow extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    if (item.time != null) ...[TimeChip(time: item.time!), const SizedBox(width: 6)],
                     DoseChip(item: item),
                     const SizedBox(width: 8),
+                    if (item.time != null) ...[TimeChip(time: item.time!), const SizedBox(width: 6)],
                     if (item.status != null) MedRxMovementChip(status: item.status!),
                     const SizedBox(width: 8),
                     AnimatedRotation(
@@ -428,10 +416,6 @@ class _DrugRow extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _DrugAccordion
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _DrugAccordion extends StatelessWidget {
   const _DrugAccordion({
@@ -485,18 +469,20 @@ class _DrugAccordion extends StatelessWidget {
               movements: movements,
               isLoading: isLoadingMovements,
             ),
-            if (!hasLoadedMovements && !isLoadingMovements) ...[
+
+            if (!hasLoadedMovements && !isLoadingMovements && (item.lastMovement?.type.canShowHistory ?? false)) ...[
               const SizedBox(height: MedSpacing.md),
-              GestureDetector(
-                onTap: onLoadMovements,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(PhosphorIcons.clockCounterClockwise(), size: 14, color: MedColors.text3),
-                    const SizedBox(width: MedSpacing.sm),
-                    Text('Tüm Hareketleri Göster', style: MedTextStyles.bodySm(color: MedColors.text3)),
-                  ],
-                ),
+              Center(
+                child: isLoadingMovements
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 1.5, color: MedColors.text3),
+                      )
+                    : TextButton(
+                        onPressed: onLoadMovements,
+                        child: Text('Tüm Hareketleri Göster', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                      ),
               ),
             ],
           ],
@@ -506,10 +492,6 @@ class _DrugAccordion extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Yardımcı widget'lar — değişmedi
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _RfidSection extends StatelessWidget {
   const _RfidSection({required this.item, required this.isLoading, this.onTap, this.onDelete});

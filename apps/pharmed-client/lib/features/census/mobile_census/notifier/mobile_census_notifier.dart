@@ -129,7 +129,6 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
   Future<void> startCensus() async {
     final current = state;
     if (current is! MobileCensusReady) return;
-    if (current.selectedItemIds.isEmpty) return;
 
     await _drawer.open(slots: current.slots, slot: current.selectedSlot);
   }
@@ -177,7 +176,6 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
   Future<void> completeCensus() async {
     final current = state;
     if (current is! MobileCensusReady) return;
-    if (current.selectedItemIds.isEmpty) return;
     if (!current.canComplete) return;
 
     final drawerStage = ref.read(mobileDrawerSessionProvider).stage;
@@ -193,8 +191,15 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     );
 
     final params = current.prescriptionItems
-        .where((i) => i.id != null && current.selectedItemIds.contains(i.id))
-        .map((i) => MobileCensusParams(prescriptionDetailId: i.id!, dosePiece: i.dosePiece?.toDouble(), epc: i.rfidTag))
+        .where((i) => i.id != null && i.status == PrescriptionMovementType.purchasePending)
+        .map((i) {
+          final isSelected = current.selectedItemIds.contains(i.id);
+          return MobileCensusParams(
+            prescriptionDetailId: i.id!,
+            dosePiece: isSelected ? i.dosePiece?.toDouble() : 0,
+            epc: isSelected ? i.rfidTag : null,
+          );
+        })
         .toList();
 
     final result = await _completeCensus(params);

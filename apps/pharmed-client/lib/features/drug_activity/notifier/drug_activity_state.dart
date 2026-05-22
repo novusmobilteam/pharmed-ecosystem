@@ -9,7 +9,7 @@ final class DrugActivityLoading extends DrugActivityState {
 }
 
 final class DrugActivityLoaded extends DrugActivityState {
-  final List<PrescriptionItem> items;
+  final List<PrescriptionItemMovement> items;
   const DrugActivityLoaded({required this.items});
 }
 

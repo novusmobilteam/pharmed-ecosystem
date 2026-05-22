@@ -8,8 +8,8 @@ class PrescriptionItemMovementMapper {
     return PrescriptionItemMovement(
       id: dto.id!,
       prescriptionItemId: dto.prescriptionItemId!,
-      type: PrescriptionMovementType.fromId(dto.movementId!),
-      createdAt: dto.createdAt!,
+      type: PrescriptionMovementType.fromId(dto.movementId),
+      createdAt: dto.createdAt,
       performedBy: const UserMapper().toEntityOrNull(dto.user),
       quantity: dto.quantity,
     );

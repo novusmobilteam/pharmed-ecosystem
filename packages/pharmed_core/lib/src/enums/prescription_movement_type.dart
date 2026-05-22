@@ -110,35 +110,50 @@ enum PrescriptionMovementType {
     PrescriptionMovementType.returnPending => 'İade Onayı Bekliyor',
     PrescriptionMovementType.unloaded => 'Boşaltıldı',
   };
+
+  /// Hareketi gerçekleştiren kişiyi betimleyen etiket.
+  /// UI'da "Oluşturan", "Onaylayan" gibi gösterilir.
+  String get actorLabel => switch (this) {
+    PrescriptionMovementType.pendingApproval => 'Oluşturan',
+    PrescriptionMovementType.filledWaiting => 'Onaylayan',
+    PrescriptionMovementType.purchasePending => 'Dolum Yapan',
+    PrescriptionMovementType.applied => 'Uygulayan',
+    PrescriptionMovementType.returned => 'İade Eden',
+    PrescriptionMovementType.wastaged => 'Fire Eden',
+    PrescriptionMovementType.destructed => 'İmha Eden',
+    PrescriptionMovementType.cancelled => 'İptal Eden',
+    PrescriptionMovementType.rejected => 'Reddeden',
+    PrescriptionMovementType.returnPending => 'İade Talep Eden',
+    PrescriptionMovementType.unloaded => 'Boşaltan',
+  };
 }
 
 extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
   Color get backgroundColor => switch (this) {
+    PrescriptionMovementType.pendingApproval => MedColors.amber,
+    PrescriptionMovementType.purchasePending || PrescriptionMovementType.filledWaiting => MedColors.blue,
     PrescriptionMovementType.applied => MedColors.green,
     PrescriptionMovementType.returned => MedColors.blue,
-    PrescriptionMovementType.purchasePending => MedColors.amber,
-    PrescriptionMovementType.pendingApproval => MedColors.amber,
-    PrescriptionMovementType.filledWaiting => MedColors.amber,
-    PrescriptionMovementType.returnPending => MedColors.amber,
-    PrescriptionMovementType.wastaged => MedColors.red,
+    PrescriptionMovementType.wastaged => MedColors.amber,
     PrescriptionMovementType.destructed => MedColors.red,
     PrescriptionMovementType.cancelled => MedColors.red,
     PrescriptionMovementType.rejected => MedColors.red,
-    PrescriptionMovementType.unloaded => MedColors.red,
+    PrescriptionMovementType.returnPending => MedColors.amber,
+    PrescriptionMovementType.unloaded => MedColors.text3,
   };
 
   Color get foregroundColor => switch (this) {
+    PrescriptionMovementType.pendingApproval => MedColors.amberLight,
+    PrescriptionMovementType.purchasePending => MedColors.blueLight,
     PrescriptionMovementType.applied => MedColors.greenLight,
     PrescriptionMovementType.returned => MedColors.blueLight,
-    PrescriptionMovementType.purchasePending => MedColors.amberLight,
-    PrescriptionMovementType.pendingApproval => MedColors.amberLight,
-    PrescriptionMovementType.filledWaiting => MedColors.amberLight,
-    PrescriptionMovementType.returnPending => MedColors.amberLight,
-    PrescriptionMovementType.wastaged => MedColors.redLight,
+    PrescriptionMovementType.wastaged => MedColors.amberLight,
     PrescriptionMovementType.destructed => MedColors.redLight,
     PrescriptionMovementType.cancelled => MedColors.redLight,
     PrescriptionMovementType.rejected => MedColors.redLight,
-    PrescriptionMovementType.unloaded => MedColors.redLight,
+    PrescriptionMovementType.filledWaiting => MedColors.amberLight,
+    PrescriptionMovementType.returnPending => MedColors.amberLight,
+    PrescriptionMovementType.unloaded => MedColors.surface3,
   };
 
   IconData get icon => switch (this) {
@@ -185,4 +200,7 @@ extension PrescriptionMovementTypeActions on PrescriptionMovementType {
       this == PrescriptionMovementType.cancelled ||
       this == PrescriptionMovementType.rejected ||
       this == PrescriptionMovementType.unloaded;
+
+  /// Eğer durumu "Onay Bekliyor" ise hareket geçmişi olamaz.
+  bool get canShowHistory => this != PrescriptionMovementType.pendingApproval;
 }

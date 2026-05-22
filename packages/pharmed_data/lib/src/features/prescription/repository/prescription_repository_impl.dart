@@ -171,7 +171,7 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getCurrentStationDrugActivity({
+  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> getCurrentStationDrugActivity({
     int? skip,
     int? take,
     String? search,
@@ -187,8 +187,8 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
     );
     return result.when(
       ok: (apiResponse) => Result.ok(
-        ApiResponse<List<PrescriptionItem>>(
-          data: apiResponse?.data != null ? _prescriptionItemMapper.toEntityList(apiResponse!.data!) : null,
+        ApiResponse<List<PrescriptionItemMovement>>(
+          data: apiResponse?.data != null ? _prescriptionItemMovementMapper.toEntityList(apiResponse!.data!) : null,
           isSuccess: apiResponse?.isSuccess ?? true,
           totalCount: apiResponse?.totalCount,
         ),
