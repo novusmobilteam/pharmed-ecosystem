@@ -67,8 +67,8 @@ class MasterRefillPanel extends StatelessWidget {
       child: switch (state) {
         MasterRefillUninitialized() ||
         MasterRefillLoading() => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-        MasterRefillIdle() => const _EmptyHint(message: 'Dolum yapmak için sol panelden bir çekmece seçin.'),
-        MasterRefillDrawerSelected() => const _EmptyHint(message: 'Çekmeceden bir göz seçin.'),
+        MasterRefillIdle() => _EmptyHint(message: context.l10n.refill_hint_selectDrawer),
+        MasterRefillDrawerSelected() => _EmptyHint(message: context.l10n.refill_hint_selectCell),
         MasterRefillCellSelected ready => _ReadyBody(
           group: ready.selectedGroup,
           selectedUnit: ready.selectedUnit,
@@ -140,7 +140,7 @@ class MasterRefillPanel extends StatelessWidget {
             onSave: onSave,
             onCancelDrawer: onCancelDrawer,
           ),
-          _ => const _EmptyHint(message: 'Bir göz seçin.'),
+          _ => _EmptyHint(message: context.l10n.refill_hint_cellError),
         },
       },
     );
@@ -305,7 +305,7 @@ class _KubikInputSection extends StatelessWidget {
                 children: [
                   Expanded(
                     child: MedTextInputField(
-                      label: 'Sayım Miktarı',
+                      label: context.l10n.refill_label_countQty,
                       initialValue: countQuantity.formatFractional,
                       onChanged: (value) {},
                       // onChanged: onCountChanged,
@@ -313,7 +313,7 @@ class _KubikInputSection extends StatelessWidget {
                   ),
                   Expanded(
                     child: MedTextInputField(
-                      label: 'Dolum Miktarı',
+                      label: context.l10n.refill_label_fillQty,
                       initialValue: fillingQuantity.formatFractional,
                       onChanged: (value) {},
                       // onChanged: onFillingChanged,
@@ -321,7 +321,7 @@ class _KubikInputSection extends StatelessWidget {
                   ),
                 ],
               ),
-              MedDateInputField(label: 'Son Kullanma Tarihi', initialValue: miadDate, onDateSelected: onMiadChanged),
+              MedDateInputField(label: context.l10n.refill_label_expiryDate, initialValue: miadDate, onDateSelected: onMiadChanged),
             ],
           ),
         ),
@@ -425,7 +425,7 @@ class _UnitDoseRow extends StatelessWidget {
                 children: [
                   Expanded(
                     child: MedTextInputField(
-                      label: 'Sayım Miktarı',
+                      label: context.l10n.refill_label_countQty,
                       initialValue: input.countQuantity.formatFractional,
                       onChanged: (value) {},
                       // onChanged: onCountChanged,
@@ -433,7 +433,7 @@ class _UnitDoseRow extends StatelessWidget {
                   ),
                   Expanded(
                     child: MedTextInputField(
-                      label: 'Dolum Miktarı',
+                      label: context.l10n.refill_label_fillQty,
                       initialValue: input.fillingQuantity.formatFractional,
                       // onChanged: onFillingChanged,
                       onChanged: (value) {},
@@ -529,6 +529,6 @@ class _SaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(label: 'Doluma Başla', isLoading: isSaving, onPressed: enabled ? onSave : null);
+    return MedButton(label: context.l10n.refill_action_start, isLoading: isSaving, onPressed: enabled ? onSave : null);
   }
 }

@@ -742,4 +742,208 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wasteSelectPatient => 'Select a patient to proceed.';
+
+  @override
+  String get common_confirmCancelButton => 'Cancel';
+
+  @override
+  String get common_dismissButton => 'Dismiss';
+
+  @override
+  String get common_action_saving => 'Saving';
+
+  @override
+  String get common_action_drawerOpening => 'Opening drawer';
+
+  @override
+  String get common_action_connecting => 'Connecting';
+
+  @override
+  String get common_action_processing => 'Processing...';
+
+  @override
+  String get common_cancelInfo_drawerClose =>
+      'To cancel the operation, close the drawer.';
+
+  @override
+  String get common_patientListTitle => 'Patient List';
+
+  @override
+  String common_patientCountSubtitle(int count) {
+    return 'Total $count patients';
+  }
+
+  @override
+  String get assignment_error_stationLoadFailed =>
+      'Could not load cabin station information';
+
+  @override
+  String get cabinStock_panel_title =>
+      'Medications in Cabin Assigned to Patient';
+
+  @override
+  String get census_cancelDialog_title => 'Cancel Census';
+
+  @override
+  String get census_cancelDialog_message => 'Cancel the census operation?';
+
+  @override
+  String get census_action_start => 'Start census';
+
+  @override
+  String get census_action_drawerOpen => 'Count medications';
+
+  @override
+  String get census_action_complete => 'Complete census';
+
+  @override
+  String get census_action_continue => 'Continue census';
+
+  @override
+  String get census_success_completed => 'Census completed successfully.';
+
+  @override
+  String get drugActivity_column_date => 'Date';
+
+  @override
+  String get drugActivity_column_time => 'Time';
+
+  @override
+  String get drugActivity_column_patient => 'Patient';
+
+  @override
+  String get drugActivity_column_user => 'User';
+
+  @override
+  String get drugActivity_column_material => 'Material';
+
+  @override
+  String get drugActivity_column_quantity => 'Quantity';
+
+  @override
+  String get drugActivity_column_movement => 'Movement';
+
+  @override
+  String get intake_cancelDialog_title => 'Cancel Intake';
+
+  @override
+  String get intake_cancelDialog_message =>
+      'No medication taken yet. Cancel the intake?';
+
+  @override
+  String get intake_action_start => 'Start intake';
+
+  @override
+  String get intake_action_drawerOpen => 'Take medications';
+
+  @override
+  String get intake_action_complete => 'Complete intake';
+
+  @override
+  String get intake_action_continue => 'Continue intake';
+
+  @override
+  String get intake_success_completed => 'Intake completed successfully.';
+
+  @override
+  String get myPatients_search_hint => 'Search patient, room, service...';
+
+  @override
+  String get refill_cancelDialog_title => 'Cancel Refill';
+
+  @override
+  String get refill_cancelDialog_message =>
+      'Medications will be assumed removed from the drawer. Cancel the refill?';
+
+  @override
+  String get refill_action_start => 'Start refill';
+
+  @override
+  String get refill_action_placeDrugs => 'Place medications';
+
+  @override
+  String get refill_action_complete => 'Complete refill';
+
+  @override
+  String get refill_action_continue => 'Continue refill';
+
+  @override
+  String get refill_success_completedMobile => 'Refill completed successfully.';
+
+  @override
+  String get refill_success_completedMaster => 'Refill saved successfully';
+
+  @override
+  String get refill_hint_selectDrawer =>
+      'Select a drawer from the left panel to start refilling.';
+
+  @override
+  String get refill_hint_selectCell => 'Select a cell from the drawer.';
+
+  @override
+  String get refill_hint_cellError => 'Select a cell.';
+
+  @override
+  String get refill_label_countQty => 'Count Quantity';
+
+  @override
+  String get refill_label_fillQty => 'Fill Quantity';
+
+  @override
+  String get refill_label_expiryDate => 'Expiry Date';
+
+  @override
+  String get refund_success_completed => 'Refund completed successfully.';
+
+  @override
+  String get refund_panel_title => 'Refundable Medications';
+
+  @override
+  String get refund_action_checking => 'Checking...';
+
+  @override
+  String get refund_action_refunding => 'Refunding...';
+
+  @override
+  String get refund_action_refund => 'Refund';
+
+  @override
+  String get unappliedPrescription_panel_patientTitle => 'Patients';
+
+  @override
+  String get unload_cancelDialog_title => 'Cancel Unload';
+
+  @override
+  String get unload_cancelDialog_message =>
+      'No medication removed yet. Cancel the unload?';
+
+  @override
+  String get unload_action_start => 'Start unload';
+
+  @override
+  String get unload_action_drawerOpen => 'Remove medications';
+
+  @override
+  String get unload_action_complete => 'Complete unload';
+
+  @override
+  String get unload_action_continue => 'Continue unload';
+
+  @override
+  String get unload_success_completed => 'Unload completed successfully.';
+
+  @override
+  String get waste_panel_title => 'Wasteable/Destructible Medications';
+
+  @override
+  String get waste_action_wastage => 'Waste';
+
+  @override
+  String get waste_action_destruction => 'Destroy';
+
+  @override
+  String get waste_success_wastage => 'Wastage completed successfully.';
+
+  @override
+  String get waste_success_destruction => 'Destruction completed successfully.';
 }

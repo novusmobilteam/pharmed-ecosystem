@@ -199,7 +199,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
           selectedSlot: current.selectedSlot,
           assignments: current.assignments,
           cabinId: current.cabinId,
-          message: 'Boşaltma işlemi başarıyla tamamlandı.',
+          message: '',
           ready: current.copyWith(rfidReadEpcs: {}, takenEpcs: {}, selectedItemIds: {}),
         );
       },

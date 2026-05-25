@@ -349,7 +349,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
           selectedSlot: current.selectedSlot,
           assignments: current.assignments,
           cabinId: current.cabinId,
-          message: 'Dolum başarıyla tamamlandı.',
+          message: '',
           ready: current.copyWith(rfidReadEpcs: {}, selectedItemIds: {}),
         );
       },

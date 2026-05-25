@@ -33,14 +33,14 @@ class DrugActivityScreen extends ConsumerWidget {
 
               onPageChanged: (page) => notifier.goToPage(page),
               onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
-              columnDefs: const [
-                TableColumnDef(title: 'Tarih', flex: 0.9),
-                TableColumnDef(title: 'Saat', flex: 0.7),
-                TableColumnDef(title: 'Hasta', flex: 1.5),
-                TableColumnDef(title: 'Kullanıcı'),
-                TableColumnDef(title: 'Malzeme', flex: 1.5),
-                TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7),
-                TableColumnDef(title: 'Hareket', flex: 0.9),
+              columnDefs: [
+                TableColumnDef(title: context.l10n.drugActivity_column_date, flex: 0.9),
+                TableColumnDef(title: context.l10n.drugActivity_column_time, flex: 0.7),
+                TableColumnDef(title: context.l10n.drugActivity_column_patient, flex: 1.5),
+                TableColumnDef(title: context.l10n.drugActivity_column_user),
+                TableColumnDef(title: context.l10n.drugActivity_column_material, flex: 1.5),
+                TableColumnDef(title: context.l10n.drugActivity_column_quantity, numeric: true, flex: 0.7),
+                TableColumnDef(title: context.l10n.drugActivity_column_movement, flex: 0.9),
               ],
               cellBuilder: (item, colIndex, value) {
                 if (colIndex == 6) {

@@ -46,7 +46,7 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
 
     // DrawerOpening/Opened + henüz ilaç çıkarılmadı → snackbar
     if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidTakenCount == 0) {
-      MessageUtils.showInfoSnackbar(context, 'İşlemi iptal etmek için çekmeceyi kapatın.');
+      MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
       return;
     }
 
@@ -55,9 +55,9 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
       MessageUtils.showConfirmDialog(
         context: context,
         action: ConfirmAction.exit,
-        customTitle: 'Boşaltmayı İptal Et',
-        customMessage: 'Henüz ilaç çıkarılmadı. Boşaltma işlemi iptal edilsin mi?',
-        confirmButtonText: 'İptal Et',
+        customTitle: context.l10n.unload_cancelDialog_title,
+        customMessage: context.l10n.unload_cancelDialog_message,
+        confirmButtonText: context.l10n.common_confirmCancelButton,
         onConfirm: notifier.cancelUnload,
       );
       return;
@@ -78,7 +78,7 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
         notifier.dismissError();
         ref.read(mobileDrawerSessionProvider.notifier).stop();
       } else if (next is MobileUnloadSuccess) {
-        MessageUtils.showSuccessSnackbar(context, next.message);
+        MessageUtils.showSuccessSnackbar(context, context.l10n.unload_success_completed);
         notifier.dismissSuccess();
       }
     });

@@ -214,7 +214,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
           selectedSlot: current.selectedSlot,
           assignments: current.assignments,
           cabinId: current.cabinId,
-          message: 'Sayım işlemi başarıyla tamamlandı.',
+          message: '',
           ready: current.copyWith(rfidReadEpcs: {}, selectedItemIds: {}),
         );
       },

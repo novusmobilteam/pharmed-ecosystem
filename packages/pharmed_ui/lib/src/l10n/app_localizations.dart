@@ -1455,6 +1455,396 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a patient to proceed.'**
   String get wasteSelectPatient;
+
+  /// No description provided for @common_confirmCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get common_confirmCancelButton;
+
+  /// No description provided for @common_dismissButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get common_dismissButton;
+
+  /// No description provided for @common_action_saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving'**
+  String get common_action_saving;
+
+  /// No description provided for @common_action_drawerOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening drawer'**
+  String get common_action_drawerOpening;
+
+  /// No description provided for @common_action_connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting'**
+  String get common_action_connecting;
+
+  /// No description provided for @common_action_processing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get common_action_processing;
+
+  /// No description provided for @common_cancelInfo_drawerClose.
+  ///
+  /// In en, this message translates to:
+  /// **'To cancel the operation, close the drawer.'**
+  String get common_cancelInfo_drawerClose;
+
+  /// No description provided for @common_patientListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient List'**
+  String get common_patientListTitle;
+
+  /// No description provided for @common_patientCountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Total {count} patients'**
+  String common_patientCountSubtitle(int count);
+
+  /// No description provided for @assignment_error_stationLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load cabin station information'**
+  String get assignment_error_stationLoadFailed;
+
+  /// No description provided for @cabinStock_panel_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Medications in Cabin Assigned to Patient'**
+  String get cabinStock_panel_title;
+
+  /// No description provided for @census_cancelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Census'**
+  String get census_cancelDialog_title;
+
+  /// No description provided for @census_cancelDialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel the census operation?'**
+  String get census_cancelDialog_message;
+
+  /// No description provided for @census_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start census'**
+  String get census_action_start;
+
+  /// No description provided for @census_action_drawerOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Count medications'**
+  String get census_action_drawerOpen;
+
+  /// No description provided for @census_action_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete census'**
+  String get census_action_complete;
+
+  /// No description provided for @census_action_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue census'**
+  String get census_action_continue;
+
+  /// No description provided for @census_success_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Census completed successfully.'**
+  String get census_success_completed;
+
+  /// No description provided for @drugActivity_column_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get drugActivity_column_date;
+
+  /// No description provided for @drugActivity_column_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get drugActivity_column_time;
+
+  /// No description provided for @drugActivity_column_patient.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get drugActivity_column_patient;
+
+  /// No description provided for @drugActivity_column_user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get drugActivity_column_user;
+
+  /// No description provided for @drugActivity_column_material.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get drugActivity_column_material;
+
+  /// No description provided for @drugActivity_column_quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get drugActivity_column_quantity;
+
+  /// No description provided for @drugActivity_column_movement.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get drugActivity_column_movement;
+
+  /// No description provided for @intake_cancelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Intake'**
+  String get intake_cancelDialog_title;
+
+  /// No description provided for @intake_cancelDialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'No medication taken yet. Cancel the intake?'**
+  String get intake_cancelDialog_message;
+
+  /// No description provided for @intake_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start intake'**
+  String get intake_action_start;
+
+  /// No description provided for @intake_action_drawerOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Take medications'**
+  String get intake_action_drawerOpen;
+
+  /// No description provided for @intake_action_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete intake'**
+  String get intake_action_complete;
+
+  /// No description provided for @intake_action_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue intake'**
+  String get intake_action_continue;
+
+  /// No description provided for @intake_success_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Intake completed successfully.'**
+  String get intake_success_completed;
+
+  /// No description provided for @myPatients_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search patient, room, service...'**
+  String get myPatients_search_hint;
+
+  /// No description provided for @refill_cancelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Refill'**
+  String get refill_cancelDialog_title;
+
+  /// No description provided for @refill_cancelDialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Medications will be assumed removed from the drawer. Cancel the refill?'**
+  String get refill_cancelDialog_message;
+
+  /// No description provided for @refill_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start refill'**
+  String get refill_action_start;
+
+  /// No description provided for @refill_action_placeDrugs.
+  ///
+  /// In en, this message translates to:
+  /// **'Place medications'**
+  String get refill_action_placeDrugs;
+
+  /// No description provided for @refill_action_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete refill'**
+  String get refill_action_complete;
+
+  /// No description provided for @refill_action_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue refill'**
+  String get refill_action_continue;
+
+  /// No description provided for @refill_success_completedMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill completed successfully.'**
+  String get refill_success_completedMobile;
+
+  /// No description provided for @refill_success_completedMaster.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill saved successfully'**
+  String get refill_success_completedMaster;
+
+  /// No description provided for @refill_hint_selectDrawer.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a drawer from the left panel to start refilling.'**
+  String get refill_hint_selectDrawer;
+
+  /// No description provided for @refill_hint_selectCell.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a cell from the drawer.'**
+  String get refill_hint_selectCell;
+
+  /// No description provided for @refill_hint_cellError.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a cell.'**
+  String get refill_hint_cellError;
+
+  /// No description provided for @refill_label_countQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Count Quantity'**
+  String get refill_label_countQty;
+
+  /// No description provided for @refill_label_fillQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill Quantity'**
+  String get refill_label_fillQty;
+
+  /// No description provided for @refill_label_expiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get refill_label_expiryDate;
+
+  /// No description provided for @refund_success_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund completed successfully.'**
+  String get refund_success_completed;
+
+  /// No description provided for @refund_panel_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Refundable Medications'**
+  String get refund_panel_title;
+
+  /// No description provided for @refund_action_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get refund_action_checking;
+
+  /// No description provided for @refund_action_refunding.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunding...'**
+  String get refund_action_refunding;
+
+  /// No description provided for @refund_action_refund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get refund_action_refund;
+
+  /// No description provided for @unappliedPrescription_panel_patientTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patients'**
+  String get unappliedPrescription_panel_patientTitle;
+
+  /// No description provided for @unload_cancelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Unload'**
+  String get unload_cancelDialog_title;
+
+  /// No description provided for @unload_cancelDialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'No medication removed yet. Cancel the unload?'**
+  String get unload_cancelDialog_message;
+
+  /// No description provided for @unload_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start unload'**
+  String get unload_action_start;
+
+  /// No description provided for @unload_action_drawerOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove medications'**
+  String get unload_action_drawerOpen;
+
+  /// No description provided for @unload_action_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete unload'**
+  String get unload_action_complete;
+
+  /// No description provided for @unload_action_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue unload'**
+  String get unload_action_continue;
+
+  /// No description provided for @unload_success_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unload completed successfully.'**
+  String get unload_success_completed;
+
+  /// No description provided for @waste_panel_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Wasteable/Destructible Medications'**
+  String get waste_panel_title;
+
+  /// No description provided for @waste_action_wastage.
+  ///
+  /// In en, this message translates to:
+  /// **'Waste'**
+  String get waste_action_wastage;
+
+  /// No description provided for @waste_action_destruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Destroy'**
+  String get waste_action_destruction;
+
+  /// No description provided for @waste_success_wastage.
+  ///
+  /// In en, this message translates to:
+  /// **'Wastage completed successfully.'**
+  String get waste_success_wastage;
+
+  /// No description provided for @waste_success_destruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Destruction completed successfully.'**
+  String get waste_success_destruction;
 }
 
 class _AppLocalizationsDelegate

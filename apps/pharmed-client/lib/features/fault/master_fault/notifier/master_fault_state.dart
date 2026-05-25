@@ -115,10 +115,14 @@ final class MasterFaultSaving extends MasterFaultState {
 
 /// Kayıt işlemi başarılı
 class MasterFaultSuccess extends MasterFaultState {
-  const MasterFaultSuccess({required this.message, required this.previous});
+  const MasterFaultSuccess({required this.message, required this.previous, required this.isNewRecord});
 
   final String message;
   final MasterFaultCellSelected previous;
+
+  /// true → yeni arıza kaydı oluşturuldu; false → mevcut kayıt kapatıldı.
+  /// View'da doğru l10n mesajını seçmek için kullanılır.
+  final bool isNewRecord;
 }
 
 /// İşlem hatası.

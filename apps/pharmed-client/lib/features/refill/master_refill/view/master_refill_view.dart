@@ -65,7 +65,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is MasterRefillSuccess) {
-        MessageUtils.showSuccessSnackbar(context, next.message);
+        MessageUtils.showSuccessSnackbar(context, context.l10n.refill_success_completedMaster);
         notifier.dismissSuccess();
       }
     });

@@ -37,7 +37,10 @@ class _MobileWasteViewState extends ConsumerState<MobileWasteView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is MobileWasteSuccess) {
-        MessageUtils.showSuccessSnackbar(context, next.message);
+        final msg = next.isWastage
+            ? context.l10n.waste_success_wastage
+            : context.l10n.waste_success_destruction;
+        MessageUtils.showSuccessSnackbar(context, msg);
         notifier.dismissSuccess();
       }
     });
@@ -48,9 +51,9 @@ class _MobileWasteViewState extends ConsumerState<MobileWasteView> {
 
     return TwoColumnLayout(
       menuItem: widget.menu,
-      leftTitle: 'Hasta Listesi',
+      leftTitle: context.l10n.common_patientListTitle,
       leftIcon: PhosphorIcons.users(),
-      leftSubtitle: 'Toplam ${state.patients.length} hasta',
+      leftSubtitle: context.l10n.common_patientCountSubtitle(state.patients.length),
       left: PatientListPanel(
         patients: state.patients,
         selectedPatient: state.selectedPatient,
@@ -94,7 +97,7 @@ class _RightPanel extends StatelessWidget {
     }
 
     return RxDrugPanel(
-      title: 'Fire/İmha Edilebilir İlaçlar',
+      title: context.l10n.waste_panel_title,
       showFilters: false,
       items: state.disposables,
       selectedItem: state.selectedItem,
@@ -129,7 +132,7 @@ class _WasteActionBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         MedButton(
-          label: 'Vazgeç',
+          label: context.l10n.common_dismissButton,
           variant: MedButtonVariant.ghost,
           size: MedButtonSize.sm,
           onPressed: selectedItem != null && !isSaving ? onClear : null,
@@ -137,7 +140,7 @@ class _WasteActionBar extends StatelessWidget {
         const SizedBox(width: MedSpacing.md),
         if (isSaving)
           MedButton(
-            label: 'İşlem yapılıyor...',
+            label: context.l10n.common_action_processing,
             variant: MedButtonVariant.primary,
             size: MedButtonSize.sm,
             isLoading: true,
@@ -145,14 +148,14 @@ class _WasteActionBar extends StatelessWidget {
           )
         else ...[
           MedButton(
-            label: 'Fire Et',
+            label: context.l10n.waste_action_wastage,
             variant: MedButtonVariant.secondary,
             size: MedButtonSize.sm,
             onPressed: canWaste ? onWastage : null,
           ),
           const SizedBox(width: MedSpacing.md),
           MedButton(
-            label: 'İmha Et',
+            label: context.l10n.waste_action_destruction,
             variant: MedButtonVariant.danger,
             size: MedButtonSize.sm,
             onPressed: canWaste ? onDestruction : null,

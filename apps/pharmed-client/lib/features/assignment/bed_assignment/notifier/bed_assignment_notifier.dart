@@ -56,6 +56,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
 
     if (cabin == null || cabin.stationId == null) {
       state = BedAssignmentError(
+        // TODO(l10n): move to view layer once BedAssignmentError carries a discriminant
         message: 'Kabin istasyon bilgisi alınamadı',
         previousState: BedAssignmentIdle(
           slots: slots,

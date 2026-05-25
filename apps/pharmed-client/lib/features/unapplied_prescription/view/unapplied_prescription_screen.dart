@@ -98,7 +98,7 @@ class _UnappliedPrescriptionBodyViewState extends ConsumerState<_UnappliedPrescr
             search: state.search,
             onPatientTap: notifier.onPatientTap,
             onSearchChanged: notifier.onSearchChanged,
-            title: 'Hastalar',
+            title: context.l10n.unappliedPrescription_panel_patientTitle,
           ),
         ),
         VerticalDivider(width: 1, thickness: 1, color: MedColors.border),
