@@ -124,7 +124,7 @@ class _MasterDrawerHeader extends StatelessWidget {
     final config = g.slot.drawerConfig;
     final steps = config?.numberOfSteps ?? 0;
     final mult = config?.stepMultiplier ?? 1;
-    return '${g.units.length} grup · $steps adım × $mult';
+    return context.l10n.cabin_masterDrawerStats(g.units.length, steps, mult);
   }
 }
 

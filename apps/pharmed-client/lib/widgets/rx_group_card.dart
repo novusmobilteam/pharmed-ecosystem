@@ -258,7 +258,7 @@ class _RxItemRowState extends ConsumerState<_RxItemRow> {
                         if (!_hasLoaded)
                           TextButton(
                             onPressed: _loadMovements,
-                            child: Text('Tüm Hareketleri Göster', style: MedTextStyles.bodyMd(color: MedColors.text3)),
+                            child: Text(context.l10n.movement_showAll, style: MedTextStyles.bodyMd(color: MedColors.text3)),
                           ),
                       ],
                     ),

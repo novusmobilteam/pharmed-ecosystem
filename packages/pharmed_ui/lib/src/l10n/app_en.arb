@@ -843,5 +843,8 @@
   "hospitalization_admissionDate": "Admission Date | {date}",
 
   "movement_dateLabel": "Date",
-  "movement_quantityLabel": "Quantity"
+  "movement_quantityLabel": "Quantity",
+
+  "movement_showAll": "Show All Movements",
+  "cabin_masterDrawerStats": "{groupCount} groups · {steps} steps × {mult}"
 }

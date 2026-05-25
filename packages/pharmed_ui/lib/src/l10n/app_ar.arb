@@ -844,5 +844,8 @@
   "hospitalization_admissionDate": "تاريخ الدخول | {date}",
 
   "movement_dateLabel": "التاريخ",
-  "movement_quantityLabel": "الكمية"
+  "movement_quantityLabel": "الكمية",
+
+  "movement_showAll": "عرض جميع الحركات",
+  "cabin_masterDrawerStats": "{groupCount} مجموعات · {steps} خطوات × {mult}"
 }

@@ -1053,5 +1053,18 @@
   "@movement_dateLabel": { "description": "Column label for the date of a drug movement" },
 
   "movement_quantityLabel": "Miktar",
-  "@movement_quantityLabel": { "description": "Column label for the quantity of a drug movement" }
+  "@movement_quantityLabel": { "description": "Column label for the quantity of a drug movement" },
+
+  "movement_showAll": "Tüm Hareketleri Göster",
+  "@movement_showAll": { "description": "Button label to load and show all movement history for a prescription item" },
+
+  "cabin_masterDrawerStats": "{groupCount} grup · {steps} adım × {mult}",
+  "@cabin_masterDrawerStats": {
+    "description": "Master drawer dimensions summary: group count, step count, step multiplier",
+    "placeholders": {
+      "groupCount": { "type": "Object" },
+      "steps": { "type": "Object" },
+      "mult": { "type": "Object" }
+    }
+  }
 }

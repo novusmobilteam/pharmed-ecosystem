@@ -1091,4 +1091,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get movement_quantityLabel => 'Miktar';
+
+  @override
+  String get movement_showAll => 'Tüm Hareketleri Göster';
+
+  @override
+  String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps) {
+    return '$groupCount grup · $steps adım × $mult';
+  }
 }

@@ -1089,4 +1089,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get movement_quantityLabel => 'Quantity';
+
+  @override
+  String get movement_showAll => 'Show All Movements';
+
+  @override
+  String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps) {
+    return '$groupCount groups · $steps steps × $mult';
+  }
 }

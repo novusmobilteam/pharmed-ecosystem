@@ -2115,6 +2115,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quantity'**
   String get movement_quantityLabel;
+
+  /// No description provided for @movement_showAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Show All Movements'**
+  String get movement_showAll;
+
+  /// No description provided for @cabin_masterDrawerStats.
+  ///
+  /// In en, this message translates to:
+  /// **'{groupCount} groups · {steps} steps × {mult}'**
+  String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps);
 }
 
 class _AppLocalizationsDelegate
