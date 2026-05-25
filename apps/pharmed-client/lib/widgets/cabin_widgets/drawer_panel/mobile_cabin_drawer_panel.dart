@@ -91,8 +91,7 @@ class _MobileDrawerHeader extends StatelessWidget {
           Text(context.l10n.cabin_mobileDrawerTitle, style: MedTextStyles.titleMd()),
           const SizedBox(height: 3),
           Text(
-            '${slot.rowCount} satır · ${slot.totalCells} göz  ·  '
-            '${slot.rowColumns.join(", ")} sütun',
+            context.l10n.cabin_drawerStats(slot.rowCount, slot.totalCells, slot.rowColumns.join(', ')),
             style: MedTextStyles.monoMd(color: MedColors.text3),
           ),
           const SizedBox(height: 8),

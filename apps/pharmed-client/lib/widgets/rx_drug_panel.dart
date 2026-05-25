@@ -168,7 +168,7 @@ class _RxDrugList extends StatelessWidget {
     if (items.isEmpty) {
       return Center(
         child: Text(
-          emptyMessage ?? 'Bu filtrede ilaç bulunamadı.',
+          emptyMessage ?? context.l10n.common_drug_noFilterResults,
           style: MedTextStyles.bodySm(color: MedColors.text4),
           textAlign: TextAlign.center,
         ),

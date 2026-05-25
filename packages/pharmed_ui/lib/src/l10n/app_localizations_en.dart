@@ -952,4 +952,141 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assignment_success_deleted => 'Bed assignment removed.';
+
+  @override
+  String get cabin_bannerCensus =>
+      'After the drawer opens, select the medications in the cabinet and complete the count. Medications with status \"Pending Intake\" can be counted; unselected medications are assumed to have a quantity of 0.';
+
+  @override
+  String get cabin_bannerIntake => 'Drug Intake';
+
+  @override
+  String get cabin_bannerUnload => 'Drug Unload';
+
+  @override
+  String get operationPanel_title_assign => 'DRUG ASSIGNMENT';
+
+  @override
+  String get operationPanel_badge_assign => 'ASSIGN';
+
+  @override
+  String get operationPanel_title_refill => 'DRUG REFILL';
+
+  @override
+  String get operationPanel_badge_refill => 'REFILL';
+
+  @override
+  String get operationPanel_title_census => 'DRUG COUNT';
+
+  @override
+  String get operationPanel_badge_census => 'COUNT';
+
+  @override
+  String get operationPanel_title_fault => 'REPORT FAULT';
+
+  @override
+  String get operationPanel_badge_fault => 'FAULT';
+
+  @override
+  String get operationPanel_title_intake => 'DRUG INTAKE';
+
+  @override
+  String get operationPanel_badge_intake => 'INTAKE';
+
+  @override
+  String get operationPanel_title_unload => 'DRUG UNLOAD';
+
+  @override
+  String get operationPanel_badge_unload => 'UNLOAD';
+
+  @override
+  String get drugAssignment_panel_title => 'Select Drug';
+
+  @override
+  String get session_timeout_warning => 'Your session is about to expire.';
+
+  @override
+  String get session_timeout_continueButton => 'Continue';
+
+  @override
+  String get session_timeout_prefix => 'Your session will close in ';
+
+  @override
+  String get session_timeout_suffix => ' seconds.';
+
+  @override
+  String get session_locked_prefix => 'Your session ';
+
+  @override
+  String get session_locked_reason => 'timed out';
+
+  @override
+  String get session_locked_suffix =>
+      ' and was closed. Please log in to continue.';
+
+  @override
+  String get movement_noHistory => 'No movement history found.';
+
+  @override
+  String get movement_performedBy => 'Performed by';
+
+  @override
+  String get common_search_noPatientResults => 'No patients match your search.';
+
+  @override
+  String get common_drug_noFilterResults => 'No medications match this filter.';
+
+  @override
+  String get common_unknownName => 'Unknown';
+
+  @override
+  String get rfidStatus_read => 'Read';
+
+  @override
+  String get rfidStatus_waiting => 'Waiting';
+
+  @override
+  String get rfidStatus_inCabin => 'In cabinet';
+
+  @override
+  String get rfidStatus_notInCabin => 'Not in cabinet';
+
+  @override
+  String get rfidStatus_taken => 'Taken';
+
+  @override
+  String get rfidStatus_missing => 'Missing';
+
+  @override
+  String get drawerStatus_full => 'Full';
+
+  @override
+  String get drawerStatus_low => 'Low';
+
+  @override
+  String get drawerStatus_critical => 'Critical';
+
+  @override
+  String get drawerStatus_empty => 'Empty';
+
+  @override
+  String cabin_cellCount(Object count) {
+    return '$count cells';
+  }
+
+  @override
+  String cabin_drawerStats(Object columns, Object rowCount, Object totalCells) {
+    return '$rowCount rows · $totalCells cells · $columns columns';
+  }
+
+  @override
+  String hospitalization_admissionDate(Object date) {
+    return 'Admission Date | $date';
+  }
+
+  @override
+  String get movement_dateLabel => 'Date';
+
+  @override
+  String get movement_quantityLabel => 'Quantity';
 }

@@ -953,4 +953,142 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get assignment_success_deleted => 'Yatak ataması kaldırıldı.';
+
+  @override
+  String get cabin_bannerCensus =>
+      'Çekmece açıldıktan sonra kabinde bulunan ilaçları seçin ve sayımı tamamlayın. Durumu \"Alım Bekliyor\" olan ilaçların sayımı yapılabilir ve seçilmeyen ilaçların miktarı 0 kabul edilir.';
+
+  @override
+  String get cabin_bannerIntake => 'İlaç Alım';
+
+  @override
+  String get cabin_bannerUnload => 'İlaç Boşaltma';
+
+  @override
+  String get operationPanel_title_assign => 'İLAÇ ATAMA';
+
+  @override
+  String get operationPanel_badge_assign => 'ATAMA';
+
+  @override
+  String get operationPanel_title_refill => 'İLAÇ DOLUM';
+
+  @override
+  String get operationPanel_badge_refill => 'DOLUM';
+
+  @override
+  String get operationPanel_title_census => 'İLAÇ SAYIM';
+
+  @override
+  String get operationPanel_badge_census => 'SAYIM';
+
+  @override
+  String get operationPanel_title_fault => 'ARIZA BİLDİR';
+
+  @override
+  String get operationPanel_badge_fault => 'ARIZA';
+
+  @override
+  String get operationPanel_title_intake => 'İLAÇ ALIM';
+
+  @override
+  String get operationPanel_badge_intake => 'ALIM';
+
+  @override
+  String get operationPanel_title_unload => 'İLAÇ BOŞALTMA';
+
+  @override
+  String get operationPanel_badge_unload => 'BOŞALTMA';
+
+  @override
+  String get drugAssignment_panel_title => 'İlaç Seç';
+
+  @override
+  String get session_timeout_warning => 'Oturum süreniz dolmak üzere.';
+
+  @override
+  String get session_timeout_continueButton => 'Devam Et';
+
+  @override
+  String get session_timeout_prefix => 'Oturumunuz ';
+
+  @override
+  String get session_timeout_suffix => ' saniye içinde kapanacak.';
+
+  @override
+  String get session_locked_prefix => 'Oturumunuz ';
+
+  @override
+  String get session_locked_reason => 'zaman aşımı';
+
+  @override
+  String get session_locked_suffix =>
+      ' nedeniyle kapatıldı. İşlem yapmak için giriş yapın.';
+
+  @override
+  String get movement_noHistory => 'Hareket kaydı bulunamadı.';
+
+  @override
+  String get movement_performedBy => 'İşlemi Yapan';
+
+  @override
+  String get common_search_noPatientResults =>
+      'Aramayla eşleşen hasta bulunamadı.';
+
+  @override
+  String get common_drug_noFilterResults => 'Bu filtrede ilaç bulunamadı.';
+
+  @override
+  String get common_unknownName => 'İsimsiz';
+
+  @override
+  String get rfidStatus_read => 'Okundu';
+
+  @override
+  String get rfidStatus_waiting => 'Bekleniyor';
+
+  @override
+  String get rfidStatus_inCabin => 'Kabinde';
+
+  @override
+  String get rfidStatus_notInCabin => 'Kabinde değil';
+
+  @override
+  String get rfidStatus_taken => 'Alındı';
+
+  @override
+  String get rfidStatus_missing => 'Eksik';
+
+  @override
+  String get drawerStatus_full => 'Dolu';
+
+  @override
+  String get drawerStatus_low => 'Düşük';
+
+  @override
+  String get drawerStatus_critical => 'Kritik';
+
+  @override
+  String get drawerStatus_empty => 'Boş';
+
+  @override
+  String cabin_cellCount(Object count) {
+    return '$count göz';
+  }
+
+  @override
+  String cabin_drawerStats(Object columns, Object rowCount, Object totalCells) {
+    return '$rowCount satır · $totalCells göz · $columns sütun';
+  }
+
+  @override
+  String hospitalization_admissionDate(Object date) {
+    return 'Yatış Tarihi | $date';
+  }
+
+  @override
+  String get movement_dateLabel => 'Tarih';
+
+  @override
+  String get movement_quantityLabel => 'Miktar';
 }

@@ -948,4 +948,140 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get assignment_success_deleted => 'تمت إزالة تعيين السرير.';
+
+  @override
+  String get cabin_bannerCensus =>
+      'بعد فتح الدرج، حدد الأدوية الموجودة في الخزانة وأكمل العد. يمكن عد الأدوية ذات الحالة \"في انتظار الاستلام\"؛ تُعتبر الأدوية غير المحددة بكمية 0.';
+
+  @override
+  String get cabin_bannerIntake => 'استلام الدواء';
+
+  @override
+  String get cabin_bannerUnload => 'تفريغ الدواء';
+
+  @override
+  String get operationPanel_title_assign => 'تعيين الدواء';
+
+  @override
+  String get operationPanel_badge_assign => 'تعيين';
+
+  @override
+  String get operationPanel_title_refill => 'إعادة تعبئة الدواء';
+
+  @override
+  String get operationPanel_badge_refill => 'تعبئة';
+
+  @override
+  String get operationPanel_title_census => 'جرد الدواء';
+
+  @override
+  String get operationPanel_badge_census => 'جرد';
+
+  @override
+  String get operationPanel_title_fault => 'الإبلاغ عن عطل';
+
+  @override
+  String get operationPanel_badge_fault => 'عطل';
+
+  @override
+  String get operationPanel_title_intake => 'استلام الدواء';
+
+  @override
+  String get operationPanel_badge_intake => 'استلام';
+
+  @override
+  String get operationPanel_title_unload => 'تفريغ الدواء';
+
+  @override
+  String get operationPanel_badge_unload => 'تفريغ';
+
+  @override
+  String get drugAssignment_panel_title => 'اختر الدواء';
+
+  @override
+  String get session_timeout_warning => 'جلستك على وشك الانتهاء.';
+
+  @override
+  String get session_timeout_continueButton => 'متابعة';
+
+  @override
+  String get session_timeout_prefix => 'ستنتهي جلستك خلال ';
+
+  @override
+  String get session_timeout_suffix => ' ثانية.';
+
+  @override
+  String get session_locked_prefix => 'تم إغلاق جلستك بسبب ';
+
+  @override
+  String get session_locked_reason => 'انتهاء المهلة';
+
+  @override
+  String get session_locked_suffix => '. سجل الدخول للمتابعة.';
+
+  @override
+  String get movement_noHistory => 'لم يتم العثور على سجل حركة.';
+
+  @override
+  String get movement_performedBy => 'نُفِّذ بواسطة';
+
+  @override
+  String get common_search_noPatientResults => 'لا يوجد مرضى يطابقون بحثك.';
+
+  @override
+  String get common_drug_noFilterResults => 'لا توجد أدوية تطابق هذا المرشح.';
+
+  @override
+  String get common_unknownName => 'غير معروف';
+
+  @override
+  String get rfidStatus_read => 'تمت القراءة';
+
+  @override
+  String get rfidStatus_waiting => 'في الانتظار';
+
+  @override
+  String get rfidStatus_inCabin => 'في الخزانة';
+
+  @override
+  String get rfidStatus_notInCabin => 'ليس في الخزانة';
+
+  @override
+  String get rfidStatus_taken => 'مأخوذ';
+
+  @override
+  String get rfidStatus_missing => 'مفقود';
+
+  @override
+  String get drawerStatus_full => 'ممتلئ';
+
+  @override
+  String get drawerStatus_low => 'منخفض';
+
+  @override
+  String get drawerStatus_critical => 'حرج';
+
+  @override
+  String get drawerStatus_empty => 'فارغ';
+
+  @override
+  String cabin_cellCount(Object count) {
+    return '$count خلايا';
+  }
+
+  @override
+  String cabin_drawerStats(Object columns, Object rowCount, Object totalCells) {
+    return '$rowCount صفوف · $totalCells خلايا · $columns أعمدة';
+  }
+
+  @override
+  String hospitalization_admissionDate(Object date) {
+    return 'تاريخ الدخول | $date';
+  }
+
+  @override
+  String get movement_dateLabel => 'التاريخ';
+
+  @override
+  String get movement_quantityLabel => 'الكمية';
 }

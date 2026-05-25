@@ -790,5 +790,58 @@
   "waste_success_destruction": "Destruction completed successfully.",
 
   "assignment_success_created": "Bed assignment saved successfully.",
-  "assignment_success_deleted": "Bed assignment removed."
+  "assignment_success_deleted": "Bed assignment removed.",
+
+  "cabin_bannerCensus": "After the drawer opens, select the medications in the cabinet and complete the count. Medications with status \"Pending Intake\" can be counted; unselected medications are assumed to have a quantity of 0.",
+  "cabin_bannerIntake": "Drug Intake",
+  "cabin_bannerUnload": "Drug Unload",
+
+  "operationPanel_title_assign": "DRUG ASSIGNMENT",
+  "operationPanel_badge_assign": "ASSIGN",
+  "operationPanel_title_refill": "DRUG REFILL",
+  "operationPanel_badge_refill": "REFILL",
+  "operationPanel_title_census": "DRUG COUNT",
+  "operationPanel_badge_census": "COUNT",
+  "operationPanel_title_fault": "REPORT FAULT",
+  "operationPanel_badge_fault": "FAULT",
+  "operationPanel_title_intake": "DRUG INTAKE",
+  "operationPanel_badge_intake": "INTAKE",
+  "operationPanel_title_unload": "DRUG UNLOAD",
+  "operationPanel_badge_unload": "UNLOAD",
+
+  "drugAssignment_panel_title": "Select Drug",
+
+  "session_timeout_warning": "Your session is about to expire.",
+  "session_timeout_continueButton": "Continue",
+  "session_timeout_prefix": "Your session will close in ",
+  "session_timeout_suffix": " seconds.",
+  "session_locked_prefix": "Your session ",
+  "session_locked_reason": "timed out",
+  "session_locked_suffix": " and was closed. Please log in to continue.",
+
+  "movement_noHistory": "No movement history found.",
+  "movement_performedBy": "Performed by",
+
+  "common_search_noPatientResults": "No patients match your search.",
+  "common_drug_noFilterResults": "No medications match this filter.",
+  "common_unknownName": "Unknown",
+
+  "rfidStatus_read": "Read",
+  "rfidStatus_waiting": "Waiting",
+  "rfidStatus_inCabin": "In cabinet",
+  "rfidStatus_notInCabin": "Not in cabinet",
+  "rfidStatus_taken": "Taken",
+  "rfidStatus_missing": "Missing",
+
+  "drawerStatus_full": "Full",
+  "drawerStatus_low": "Low",
+  "drawerStatus_critical": "Critical",
+  "drawerStatus_empty": "Empty",
+
+  "cabin_cellCount": "{count} cells",
+  "cabin_drawerStats": "{rowCount} rows · {totalCells} cells · {columns} columns",
+  "hospitalization_admissionDate": "Admission Date | {date}",
+
+  "movement_dateLabel": "Date",
+  "movement_quantityLabel": "Quantity"
 }

@@ -145,7 +145,7 @@ class RxOperationCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      item.medicine?.name ?? 'İsimsiz',
+                      item.medicine?.name ?? context.l10n.common_unknownName,
                       style: MedTextStyles.titleSm(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -271,31 +271,31 @@ class _RfidInlineStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (mode) {
-      RxOperationCardMode.refill => _buildRefillStatus(),
-      RxOperationCardMode.intake => _buildIntakeStatus(),
-      RxOperationCardMode.census => _buildCensusStatus(),
+      RxOperationCardMode.refill => _buildRefillStatus(context),
+      RxOperationCardMode.intake => _buildIntakeStatus(context),
+      RxOperationCardMode.census => _buildCensusStatus(context),
     };
   }
 
-  Widget _buildRefillStatus() => switch (status) {
-    RfidPresenceStatus.present => _StatusChip.check(label: 'Okundu', color: MedColors.green),
-    _ => _StatusChip.spinner(label: 'Bekleniyor', color: MedColors.blue),
+  Widget _buildRefillStatus(BuildContext context) => switch (status) {
+    RfidPresenceStatus.present => _StatusChip.check(label: context.l10n.rfidStatus_read, color: MedColors.green),
+    _ => _StatusChip.spinner(label: context.l10n.rfidStatus_waiting, color: MedColors.blue),
   };
 
-  Widget _buildIntakeStatus() => switch (status) {
-    RfidPresenceStatus.present => _StatusChip.spinner(label: 'Kabinde', color: MedColors.blue),
-    RfidPresenceStatus.absent => _StatusChip.warning(label: 'Kabinde değil', color: MedColors.red),
-    RfidPresenceStatus.removed => _StatusChip.check(label: 'Alındı', color: MedColors.green),
+  Widget _buildIntakeStatus(BuildContext context) => switch (status) {
+    RfidPresenceStatus.present => _StatusChip.spinner(label: context.l10n.rfidStatus_inCabin, color: MedColors.blue),
+    RfidPresenceStatus.absent => _StatusChip.warning(label: context.l10n.rfidStatus_notInCabin, color: MedColors.red),
+    RfidPresenceStatus.removed => _StatusChip.check(label: context.l10n.rfidStatus_taken, color: MedColors.green),
   };
 
   /// Sayım semantiği:
   /// - present → ilaç kabinde fiziksel olarak mevcut → sayım geçerli
   /// - absent  → ilaç okunmuyor → eksik
   /// - removed → sayım ekranında bu durum oluşmaz (alım semantiğine özgü)
-  Widget _buildCensusStatus() => switch (status) {
-    RfidPresenceStatus.present => _StatusChip.check(label: 'Kabinde', color: MedColors.green),
-    RfidPresenceStatus.absent => _StatusChip.warning(label: 'Eksik', color: MedColors.red),
-    RfidPresenceStatus.removed => _StatusChip.warning(label: 'Eksik', color: MedColors.red),
+  Widget _buildCensusStatus(BuildContext context) => switch (status) {
+    RfidPresenceStatus.present => _StatusChip.check(label: context.l10n.rfidStatus_inCabin, color: MedColors.green),
+    RfidPresenceStatus.absent => _StatusChip.warning(label: context.l10n.rfidStatus_missing, color: MedColors.red),
+    RfidPresenceStatus.removed => _StatusChip.warning(label: context.l10n.rfidStatus_missing, color: MedColors.red),
   };
 }
 

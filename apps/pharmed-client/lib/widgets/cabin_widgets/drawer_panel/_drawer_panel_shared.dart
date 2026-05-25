@@ -115,7 +115,7 @@ class CabinModeBanner extends StatelessWidget {
       const Color(0xFFFEF3E2),
       const Color(0xFFF5C97A),
       const Color(0xFF92520A),
-      'Çekmece açıldıktan sonra kabinde bulunan ilaçları seçin ve sayımı tamamlayın. Durumu "Alım Bekliyor" olan ilaçların sayımı yapılabilir ve seçilmeyen ilaçların miktarı 0 kabul edilir.',
+      context.l10n.cabin_bannerCensus,
     ),
     CabinOperationMode.fault => (
       const Color(0xFFFEF2F2),
@@ -123,20 +123,17 @@ class CabinModeBanner extends StatelessWidget {
       const Color(0xFF9B1C1C),
       context.l10n.cabin_bannerFault,
     ),
-
-    // TODO : l10n
     CabinOperationMode.intake => (
       const Color(0xFFE8F1FC),
       const Color(0xFFC4D9F5),
       const Color(0xFF1256AA),
-      'İlaç Alım',
+      context.l10n.cabin_bannerIntake,
     ),
-
     CabinOperationMode.unload => (
       const Color(0xFFE8F1FC),
       const Color(0xFFC4D9F5),
       const Color(0xFF1256AA),
-      'İlaç Boşaltma',
+      context.l10n.cabin_bannerUnload,
     ),
   };
 }

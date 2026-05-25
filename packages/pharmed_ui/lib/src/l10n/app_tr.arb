@@ -911,5 +911,147 @@
   "@assignment_success_created": { "description": "Success snackbar shown after a bed assignment is created" },
 
   "assignment_success_deleted": "Yatak ataması kaldırıldı.",
-  "@assignment_success_deleted": { "description": "Success snackbar shown after a bed assignment is deleted" }
+  "@assignment_success_deleted": { "description": "Success snackbar shown after a bed assignment is deleted" },
+
+  "cabin_bannerCensus": "Çekmece açıldıktan sonra kabinde bulunan ilaçları seçin ve sayımı tamamlayın. Durumu \"Alım Bekliyor\" olan ilaçların sayımı yapılabilir ve seçilmeyen ilaçların miktarı 0 kabul edilir.",
+  "@cabin_bannerCensus": { "description": "Instruction banner shown in the drawer panel during census mode" },
+
+  "cabin_bannerIntake": "İlaç Alım",
+  "@cabin_bannerIntake": { "description": "Label shown in the drawer panel banner during intake mode" },
+
+  "cabin_bannerUnload": "İlaç Boşaltma",
+  "@cabin_bannerUnload": { "description": "Label shown in the drawer panel banner during unload mode" },
+
+  "operationPanel_title_assign": "İLAÇ ATAMA",
+  "@operationPanel_title_assign": { "description": "Right panel header title for drug-assignment mode" },
+
+  "operationPanel_badge_assign": "ATAMA",
+  "@operationPanel_badge_assign": { "description": "Right panel badge label for drug-assignment mode" },
+
+  "operationPanel_title_refill": "İLAÇ DOLUM",
+  "@operationPanel_title_refill": { "description": "Right panel header title for refill mode" },
+
+  "operationPanel_badge_refill": "DOLUM",
+  "@operationPanel_badge_refill": { "description": "Right panel badge label for refill mode" },
+
+  "operationPanel_title_census": "İLAÇ SAYIM",
+  "@operationPanel_title_census": { "description": "Right panel header title for census mode" },
+
+  "operationPanel_badge_census": "SAYIM",
+  "@operationPanel_badge_census": { "description": "Right panel badge label for census mode" },
+
+  "operationPanel_title_fault": "ARIZA BİLDİR",
+  "@operationPanel_title_fault": { "description": "Right panel header title for fault-reporting mode" },
+
+  "operationPanel_badge_fault": "ARIZA",
+  "@operationPanel_badge_fault": { "description": "Right panel badge label for fault-reporting mode" },
+
+  "operationPanel_title_intake": "İLAÇ ALIM",
+  "@operationPanel_title_intake": { "description": "Right panel header title for intake mode" },
+
+  "operationPanel_badge_intake": "ALIM",
+  "@operationPanel_badge_intake": { "description": "Right panel badge label for intake mode" },
+
+  "operationPanel_title_unload": "İLAÇ BOŞALTMA",
+  "@operationPanel_title_unload": { "description": "Right panel header title for unload mode" },
+
+  "operationPanel_badge_unload": "BOŞALTMA",
+  "@operationPanel_badge_unload": { "description": "Right panel badge label for unload mode" },
+
+  "drugAssignment_panel_title": "İlaç Seç",
+  "@drugAssignment_panel_title": { "description": "Title of the drug selection panel in drug-assignment view" },
+
+  "session_timeout_warning": "Oturum süreniz dolmak üzere.",
+  "@session_timeout_warning": { "description": "Warning text shown in the session timeout banner" },
+
+  "session_timeout_continueButton": "Devam Et",
+  "@session_timeout_continueButton": { "description": "Button label to extend the session in the timeout banner" },
+
+  "session_timeout_prefix": "Oturumunuz ",
+  "@session_timeout_prefix": { "description": "Text before the seconds countdown in the session timeout banner" },
+
+  "session_timeout_suffix": " saniye içinde kapanacak.",
+  "@session_timeout_suffix": { "description": "Text after the seconds countdown in the session timeout banner" },
+
+  "session_locked_prefix": "Oturumunuz ",
+  "@session_locked_prefix": { "description": "Text before the reason phrase in the locked-session banner" },
+
+  "session_locked_reason": "zaman aşımı",
+  "@session_locked_reason": { "description": "Highlighted reason phrase in the locked-session banner" },
+
+  "session_locked_suffix": " nedeniyle kapatıldı. İşlem yapmak için giriş yapın.",
+  "@session_locked_suffix": { "description": "Text after the reason phrase in the locked-session banner" },
+
+  "movement_noHistory": "Hareket kaydı bulunamadı.",
+  "@movement_noHistory": { "description": "Empty state message when a prescription item has no movement history" },
+
+  "movement_performedBy": "İşlemi Yapan",
+  "@movement_performedBy": { "description": "Label for the user who performed a drug movement action" },
+
+  "common_search_noPatientResults": "Aramayla eşleşen hasta bulunamadı.",
+  "@common_search_noPatientResults": { "description": "Empty-search message in patient picker list" },
+
+  "common_drug_noFilterResults": "Bu filtrede ilaç bulunamadı.",
+  "@common_drug_noFilterResults": { "description": "Empty-filter message in drug panel" },
+
+  "common_unknownName": "İsimsiz",
+  "@common_unknownName": { "description": "Fallback label when a medicine name is null" },
+
+  "rfidStatus_read": "Okundu",
+  "@rfidStatus_read": { "description": "RFID chip status label: tag is present and read" },
+
+  "rfidStatus_waiting": "Bekleniyor",
+  "@rfidStatus_waiting": { "description": "RFID chip status label: waiting to be read" },
+
+  "rfidStatus_inCabin": "Kabinde",
+  "@rfidStatus_inCabin": { "description": "RFID chip status label: item is physically in the cabinet" },
+
+  "rfidStatus_notInCabin": "Kabinde değil",
+  "@rfidStatus_notInCabin": { "description": "RFID chip status label: item is not detected in the cabinet" },
+
+  "rfidStatus_taken": "Alındı",
+  "@rfidStatus_taken": { "description": "RFID chip status label: item has been removed from the cabinet" },
+
+  "rfidStatus_missing": "Eksik",
+  "@rfidStatus_missing": { "description": "RFID chip status label: item is missing / not accounted for" },
+
+  "drawerStatus_full": "Dolu",
+  "@drawerStatus_full": { "description": "Drawer fill-level status label: full" },
+
+  "drawerStatus_low": "Düşük",
+  "@drawerStatus_low": { "description": "Drawer fill-level status label: low stock" },
+
+  "drawerStatus_critical": "Kritik",
+  "@drawerStatus_critical": { "description": "Drawer fill-level status label: critical stock level" },
+
+  "drawerStatus_empty": "Boş",
+  "@drawerStatus_empty": { "description": "Drawer fill-level status label: empty" },
+
+  "cabin_cellCount": "{count} göz",
+  "@cabin_cellCount": {
+    "description": "Cell count label shown on a drawer slot",
+    "placeholders": { "count": { "type": "Object" } }
+  },
+
+  "cabin_drawerStats": "{rowCount} satır · {totalCells} göz · {columns} sütun",
+  "@cabin_drawerStats": {
+    "description": "Drawer dimensions summary: rows, total cells, column layout",
+    "placeholders": {
+      "rowCount": { "type": "Object" },
+      "totalCells": { "type": "Object" },
+      "columns": { "type": "Object" }
+    }
+  },
+
+  "hospitalization_admissionDate": "Yatış Tarihi | {date}",
+  "@hospitalization_admissionDate": {
+    "description": "Label and value for hospitalization admission date",
+    "placeholders": { "date": { "type": "Object" } }
+  },
+
+  "movement_dateLabel": "Tarih",
+  "@movement_dateLabel": { "description": "Column label for the date of a drug movement" },
+
+  "movement_quantityLabel": "Miktar",
+  "@movement_quantityLabel": { "description": "Column label for the quantity of a drug movement" }
 }
