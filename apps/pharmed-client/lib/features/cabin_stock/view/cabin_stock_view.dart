@@ -124,7 +124,7 @@ class _StockRightPanel extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(MedSpacing.xl),
       child: RxDrugPanel(
-        title: 'Hastaya Ait Kabinde Bulunan İlaçlar',
+        title: context.l10n.cabinStock_panel_title,
         items: state.prescriptionItems,
         selectedItem: state.selectedItem,
         isBusy: state.isBusy,

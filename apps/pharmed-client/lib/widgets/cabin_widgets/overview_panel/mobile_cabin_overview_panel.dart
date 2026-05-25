@@ -94,7 +94,7 @@ class _MobileSlotItem extends StatelessWidget {
                       color: _faultColor,
                     )
                   else
-                    Text('${slot.totalCells} göz', style: _subLabelStyle),
+                    Text(context.l10n.cabin_cellCount(slot.totalCells), style: _subLabelStyle),
                 ],
               ),
             ),

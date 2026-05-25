@@ -43,7 +43,7 @@ class RxMovementBlock extends StatelessWidget {
           children: [
             Icon(PhosphorIcons.clockCounterClockwise(), size: 14, color: MedColors.text4),
             const SizedBox(width: MedSpacing.sm),
-            Text('Hareket kaydı bulunamadı.', style: MedTextStyles.monoSm(color: MedColors.text4)),
+            Text(context.l10n.movement_noHistory, style: MedTextStyles.monoSm(color: MedColors.text4)),
           ],
         ),
       );
@@ -89,11 +89,11 @@ class _MovementBlockRow extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _FieldColumn(label: 'İşlemi Yapan', value: movement.performedBy?.fullName),
-              _FieldColumn(label: 'Tarih', value: movement.createdAt.formattedDateTime),
+              _FieldColumn(label: context.l10n.movement_performedBy, value: movement.performedBy?.fullName),
+              _FieldColumn(label: context.l10n.movement_dateLabel, value: movement.createdAt.formattedDateTime),
               if (movement.quantity != null)
                 _FieldColumn(
-                  label: 'Miktar',
+                  label: context.l10n.movement_quantityLabel,
                   value: '${movement.quantity!.formatFractional} ${medicine?.operationUnit ?? ''}',
                 ),
             ],

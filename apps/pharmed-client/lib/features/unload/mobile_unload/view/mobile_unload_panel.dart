@@ -197,30 +197,30 @@ class _UnloadActionBar extends StatelessWidget {
       children: [
         if (_showCancel) _CancelButton(onTap: onCancel) else const Spacer(),
         const Spacer(),
-        _buildAction(),
+        _buildAction(context),
       ],
     );
   }
 
-  Widget _buildAction() {
+  Widget _buildAction(BuildContext context) {
     if (isSaving) {
-      return const _ActionButton(label: 'Kaydediliyor', enabled: false, loading: true, onTap: _noop);
+      return _ActionButton(label: context.l10n.common_action_saving, enabled: false, loading: true, onTap: _noop);
     }
 
     return switch (drawerStage) {
-      MobileDrawerOpening() => const _ActionButton(
-        label: 'Çekmece açılıyor',
+      MobileDrawerOpening() => _ActionButton(
+        label: context.l10n.common_action_drawerOpening,
         enabled: false,
         loading: true,
         onTap: _noop,
       ),
-      MobileDrawerOpened() => const _ActionButton(label: 'İlaçları çıkarın', enabled: false, onTap: _noop),
+      MobileDrawerOpened() => _ActionButton(label: context.l10n.unload_action_drawerOpen, enabled: false, onTap: _noop),
       MobileDrawerClosed() =>
         canComplete
-            ? _ActionButton(label: 'Boşaltmayı tamamla', onTap: onComplete)
-            : _ActionButton(label: 'Boşaltmaya devam et', onTap: onReopen),
-      MobileDrawerFailed() => _ActionButton(label: 'Tekrar dene', onTap: onStart),
-      MobileDrawerIdle() => _ActionButton(label: 'Boşaltmaya başla', enabled: hasSelection, onTap: onStart),
+            ? _ActionButton(label: context.l10n.unload_action_complete, onTap: onComplete)
+            : _ActionButton(label: context.l10n.unload_action_continue, onTap: onReopen),
+      MobileDrawerFailed() => _ActionButton(label: context.l10n.common_retryButton, onTap: onStart),
+      MobileDrawerIdle() => _ActionButton(label: context.l10n.unload_action_start, enabled: hasSelection, onTap: onStart),
     };
   }
 }
@@ -254,6 +254,6 @@ class _CancelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(label: 'İptal', size: MedButtonSize.sm, variant: MedButtonVariant.danger, onPressed: onTap);
+    return MedButton(label: context.l10n.common_cancelButton, size: MedButtonSize.sm, variant: MedButtonVariant.danger, onPressed: onTap);
   }
 }

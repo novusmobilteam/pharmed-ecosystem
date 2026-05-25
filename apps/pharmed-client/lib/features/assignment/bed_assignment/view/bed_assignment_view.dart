@@ -61,7 +61,10 @@ class _BedAssignmentViewState extends ConsumerState<BedAssignmentView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is BedAssignmentSuccess) {
-        MessageUtils.showSuccessSnackbar(context, next.message);
+        final msg = next.isCreated
+            ? context.l10n.assignment_success_created
+            : context.l10n.assignment_success_deleted;
+        MessageUtils.showSuccessSnackbar(context, msg);
         notifier.dismissSuccess();
       }
     });

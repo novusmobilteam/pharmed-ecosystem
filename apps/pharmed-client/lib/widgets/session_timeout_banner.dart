@@ -33,14 +33,14 @@ class SessionTimeoutBanner extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Oturum süreniz dolmak üzere.',
+                context.l10n.session_timeout_warning,
                 style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
               ),
               RichText(
                 text: TextSpan(
                   style: MedTextStyles.bodySm(color: MedColors.text2),
                   children: [
-                    const TextSpan(text: 'Oturumunuz '),
+                    TextSpan(text: context.l10n.session_timeout_prefix),
                     TextSpan(
                       text: '$secondsRemaining',
                       style: const TextStyle(
@@ -50,7 +50,7 @@ class SessionTimeoutBanner extends StatelessWidget {
                         color: MedColors.red,
                       ),
                     ),
-                    const TextSpan(text: ' saniye içinde kapanacak.'),
+                    TextSpan(text: context.l10n.session_timeout_suffix),
                   ],
                 ),
               ),
@@ -62,9 +62,9 @@ class SessionTimeoutBanner extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.smAll),
-              child: const Text(
-                'Devam Et',
-                style: TextStyle(
+              child: Text(
+                context.l10n.session_timeout_continueButton,
+                style: const TextStyle(
                   fontFamily: MedFonts.sans,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -107,13 +107,13 @@ class LockedBanner extends StatelessWidget {
               text: TextSpan(
                 style: MedTextStyles.bodySm(color: MedColors.text2),
                 children: [
-                  TextSpan(text: 'Oturumunuz ', style: TextStyle(color: MedColors.text2)),
-                  const TextSpan(
-                    text: 'zaman aşımı',
-                    style: TextStyle(color: MedColors.amber, fontWeight: FontWeight.w600),
+                  TextSpan(text: context.l10n.session_locked_prefix, style: TextStyle(color: MedColors.text2)),
+                  TextSpan(
+                    text: context.l10n.session_locked_reason,
+                    style: const TextStyle(color: MedColors.amber, fontWeight: FontWeight.w600),
                   ),
                   TextSpan(
-                    text: ' nedeniyle kapatıldı. İşlem yapmak için giriş yapın.',
+                    text: context.l10n.session_locked_suffix,
                     style: TextStyle(color: MedColors.text2),
                   ),
                 ],

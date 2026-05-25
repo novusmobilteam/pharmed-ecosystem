@@ -95,8 +95,8 @@ class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
 
     return TwoColumnLayout(
       menuItem: widget.menu,
-      leftTitle: 'Hasta Listesi',
-      leftSubtitle: 'Toplam ${state.allPatients.length} hasta',
+      leftTitle: context.l10n.common_patientListTitle,
+      leftSubtitle: context.l10n.common_patientCountSubtitle(state.allPatients.length),
       left: _AllPatientsPanel(state: state, notifier: notifier),
       right: _MyPatientsPanel(state: state, notifier: notifier),
     );
@@ -131,7 +131,7 @@ class _AllPatientsPanel extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
           child: MedTextInputField(
-            hintText: 'Hasta, oda, servis ara...',
+            hintText: context.l10n.myPatients_search_hint,
             prefixIcon: Icon(PhosphorIcons.magnifyingGlass()),
             initialValue: state.search,
             onChanged: (q) => notifier.onSearchChanged(q ?? ''),

@@ -739,4 +739,357 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wasteSelectPatient => 'حدد مريضاً للمتابعة.';
+
+  @override
+  String get common_confirmCancelButton => 'إلغاء';
+
+  @override
+  String get common_dismissButton => 'تجاهل';
+
+  @override
+  String get common_action_saving => 'جارٍ الحفظ';
+
+  @override
+  String get common_action_drawerOpening => 'جارٍ فتح الدرج';
+
+  @override
+  String get common_action_connecting => 'جارٍ الاتصال';
+
+  @override
+  String get common_action_processing => 'جارٍ المعالجة...';
+
+  @override
+  String get common_cancelInfo_drawerClose => 'لإلغاء العملية، أغلق الدرج.';
+
+  @override
+  String get common_patientListTitle => 'قائمة المرضى';
+
+  @override
+  String common_patientCountSubtitle(int count) {
+    return 'إجمالي $count مريض';
+  }
+
+  @override
+  String get assignment_error_stationLoadFailed =>
+      'تعذّر تحميل معلومات محطة الكابين';
+
+  @override
+  String get cabinStock_panel_title =>
+      'الأدوية الموجودة في الكابين المخصص للمريض';
+
+  @override
+  String get census_cancelDialog_title => 'إلغاء الجرد';
+
+  @override
+  String get census_cancelDialog_message => 'هل تريد إلغاء عملية الجرد؟';
+
+  @override
+  String get census_action_start => 'بدء الجرد';
+
+  @override
+  String get census_action_drawerOpen => 'عدّ الأدوية';
+
+  @override
+  String get census_action_complete => 'إتمام الجرد';
+
+  @override
+  String get census_action_continue => 'متابعة الجرد';
+
+  @override
+  String get census_success_completed => 'تم إتمام الجرد بنجاح.';
+
+  @override
+  String get drugActivity_column_date => 'التاريخ';
+
+  @override
+  String get drugActivity_column_time => 'الوقت';
+
+  @override
+  String get drugActivity_column_patient => 'المريض';
+
+  @override
+  String get drugActivity_column_user => 'المستخدم';
+
+  @override
+  String get drugActivity_column_material => 'المادة';
+
+  @override
+  String get drugActivity_column_quantity => 'الكمية';
+
+  @override
+  String get drugActivity_column_movement => 'الحركة';
+
+  @override
+  String get intake_cancelDialog_title => 'إلغاء الاستلام';
+
+  @override
+  String get intake_cancelDialog_message =>
+      'لم يُستلم أي دواء بعد. هل تريد إلغاء عملية الاستلام؟';
+
+  @override
+  String get intake_action_start => 'بدء الاستلام';
+
+  @override
+  String get intake_action_drawerOpen => 'أخذ الأدوية';
+
+  @override
+  String get intake_action_complete => 'إتمام الاستلام';
+
+  @override
+  String get intake_action_continue => 'متابعة الاستلام';
+
+  @override
+  String get intake_success_completed => 'تم إتمام الاستلام بنجاح.';
+
+  @override
+  String get myPatients_search_hint => 'ابحث عن مريض، غرفة، قسم...';
+
+  @override
+  String get refill_cancelDialog_title => 'إلغاء التعبئة';
+
+  @override
+  String get refill_cancelDialog_message =>
+      'سيُفترض أن الأدوية قد أُخرجت من الدرج. هل تريد إلغاء التعبئة؟';
+
+  @override
+  String get refill_action_start => 'بدء التعبئة';
+
+  @override
+  String get refill_action_placeDrugs => 'ضع الأدوية';
+
+  @override
+  String get refill_action_complete => 'إتمام التعبئة';
+
+  @override
+  String get refill_action_continue => 'متابعة التعبئة';
+
+  @override
+  String get refill_success_completedMobile => 'تمت التعبئة بنجاح.';
+
+  @override
+  String get refill_success_completedMaster => 'تم حفظ التعبئة بنجاح';
+
+  @override
+  String get refill_hint_selectDrawer =>
+      'اختر درجاً من اللوحة اليسرى لبدء التعبئة.';
+
+  @override
+  String get refill_hint_selectCell => 'اختر خلية من الدرج.';
+
+  @override
+  String get refill_hint_cellError => 'اختر خلية.';
+
+  @override
+  String get refill_label_countQty => 'كمية الجرد';
+
+  @override
+  String get refill_label_fillQty => 'كمية التعبئة';
+
+  @override
+  String get refill_label_expiryDate => 'تاريخ الانتهاء';
+
+  @override
+  String get refund_success_completed => 'تم إتمام الإرجاع بنجاح.';
+
+  @override
+  String get refund_panel_title => 'الأدوية القابلة للإرجاع';
+
+  @override
+  String get refund_action_checking => 'جارٍ التحقق...';
+
+  @override
+  String get refund_action_refunding => 'جارٍ الإرجاع...';
+
+  @override
+  String get refund_action_refund => 'إرجاع';
+
+  @override
+  String get unappliedPrescription_panel_patientTitle => 'المرضى';
+
+  @override
+  String get unload_cancelDialog_title => 'إلغاء الإفراغ';
+
+  @override
+  String get unload_cancelDialog_message =>
+      'لم يُخرج أي دواء بعد. هل تريد إلغاء عملية الإفراغ؟';
+
+  @override
+  String get unload_action_start => 'بدء الإفراغ';
+
+  @override
+  String get unload_action_drawerOpen => 'أخرج الأدوية';
+
+  @override
+  String get unload_action_complete => 'إتمام الإفراغ';
+
+  @override
+  String get unload_action_continue => 'متابعة الإفراغ';
+
+  @override
+  String get unload_success_completed => 'تم إتمام الإفراغ بنجاح.';
+
+  @override
+  String get waste_panel_title => 'الأدوية القابلة للهدر/الإتلاف';
+
+  @override
+  String get waste_action_wastage => 'هدر';
+
+  @override
+  String get waste_action_destruction => 'إتلاف';
+
+  @override
+  String get waste_success_wastage => 'تمت عملية الهدر بنجاح.';
+
+  @override
+  String get waste_success_destruction => 'تمت عملية الإتلاف بنجاح.';
+
+  @override
+  String get assignment_success_created => 'تم حفظ تعيين السرير بنجاح.';
+
+  @override
+  String get assignment_success_deleted => 'تمت إزالة تعيين السرير.';
+
+  @override
+  String get cabin_bannerCensus =>
+      'بعد فتح الدرج، حدد الأدوية الموجودة في الخزانة وأكمل العد. يمكن عد الأدوية ذات الحالة \"في انتظار الاستلام\"؛ تُعتبر الأدوية غير المحددة بكمية 0.';
+
+  @override
+  String get cabin_bannerIntake => 'استلام الدواء';
+
+  @override
+  String get cabin_bannerUnload => 'تفريغ الدواء';
+
+  @override
+  String get operationPanel_title_assign => 'تعيين الدواء';
+
+  @override
+  String get operationPanel_badge_assign => 'تعيين';
+
+  @override
+  String get operationPanel_title_refill => 'إعادة تعبئة الدواء';
+
+  @override
+  String get operationPanel_badge_refill => 'تعبئة';
+
+  @override
+  String get operationPanel_title_census => 'جرد الدواء';
+
+  @override
+  String get operationPanel_badge_census => 'جرد';
+
+  @override
+  String get operationPanel_title_fault => 'الإبلاغ عن عطل';
+
+  @override
+  String get operationPanel_badge_fault => 'عطل';
+
+  @override
+  String get operationPanel_title_intake => 'استلام الدواء';
+
+  @override
+  String get operationPanel_badge_intake => 'استلام';
+
+  @override
+  String get operationPanel_title_unload => 'تفريغ الدواء';
+
+  @override
+  String get operationPanel_badge_unload => 'تفريغ';
+
+  @override
+  String get drugAssignment_panel_title => 'اختر الدواء';
+
+  @override
+  String get session_timeout_warning => 'جلستك على وشك الانتهاء.';
+
+  @override
+  String get session_timeout_continueButton => 'متابعة';
+
+  @override
+  String get session_timeout_prefix => 'ستنتهي جلستك خلال ';
+
+  @override
+  String get session_timeout_suffix => ' ثانية.';
+
+  @override
+  String get session_locked_prefix => 'تم إغلاق جلستك بسبب ';
+
+  @override
+  String get session_locked_reason => 'انتهاء المهلة';
+
+  @override
+  String get session_locked_suffix => '. سجل الدخول للمتابعة.';
+
+  @override
+  String get movement_noHistory => 'لم يتم العثور على سجل حركة.';
+
+  @override
+  String get movement_performedBy => 'نُفِّذ بواسطة';
+
+  @override
+  String get common_search_noPatientResults => 'لا يوجد مرضى يطابقون بحثك.';
+
+  @override
+  String get common_drug_noFilterResults => 'لا توجد أدوية تطابق هذا المرشح.';
+
+  @override
+  String get common_unknownName => 'غير معروف';
+
+  @override
+  String get rfidStatus_read => 'تمت القراءة';
+
+  @override
+  String get rfidStatus_waiting => 'في الانتظار';
+
+  @override
+  String get rfidStatus_inCabin => 'في الخزانة';
+
+  @override
+  String get rfidStatus_notInCabin => 'ليس في الخزانة';
+
+  @override
+  String get rfidStatus_taken => 'مأخوذ';
+
+  @override
+  String get rfidStatus_missing => 'مفقود';
+
+  @override
+  String get drawerStatus_full => 'ممتلئ';
+
+  @override
+  String get drawerStatus_low => 'منخفض';
+
+  @override
+  String get drawerStatus_critical => 'حرج';
+
+  @override
+  String get drawerStatus_empty => 'فارغ';
+
+  @override
+  String cabin_cellCount(Object count) {
+    return '$count خلايا';
+  }
+
+  @override
+  String cabin_drawerStats(Object columns, Object rowCount, Object totalCells) {
+    return '$rowCount صفوف · $totalCells خلايا · $columns أعمدة';
+  }
+
+  @override
+  String hospitalization_admissionDate(Object date) {
+    return 'تاريخ الدخول | $date';
+  }
+
+  @override
+  String get movement_dateLabel => 'التاريخ';
+
+  @override
+  String get movement_quantityLabel => 'الكمية';
+
+  @override
+  String get movement_showAll => 'عرض جميع الحركات';
+
+  @override
+  String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps) {
+    return '$groupCount مجموعات · $steps خطوات × $mult';
+  }
 }

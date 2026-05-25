@@ -71,7 +71,10 @@ class _MasterFaultViewState extends ConsumerState<MasterFaultView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is MasterFaultSuccess) {
-        MessageUtils.showSuccessSnackbar(context, next.message);
+        final msg = next.isNewRecord
+            ? context.l10n.fault_recordCreatedSuccess
+            : context.l10n.fault_recordClosedSuccess;
+        MessageUtils.showSuccessSnackbar(context, msg);
         notifier.dismissSuccess();
       }
     });

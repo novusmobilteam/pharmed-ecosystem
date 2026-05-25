@@ -102,7 +102,7 @@ class _CabinPatientPickerListState extends State<CabinPatientPickerList> {
                   child: Padding(
                     padding: const EdgeInsets.all(24),
                     child: Text(
-                      'Aramayla eşleşen hasta bulunamadı.',
+                      context.l10n.common_search_noPatientResults,
                       style: MedTextStyles.bodyMd(color: MedColors.text3),
                       textAlign: TextAlign.center,
                     ),

@@ -222,9 +222,8 @@ class MasterFaultNotifier extends Notifier<MasterFaultState> {
           description: null,
         );
 
-        final message = isNewRecord ? 'Arıza kaydı oluşturuldu.' : 'Arıza kaydı kapatıldı.';
         ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer();
-        return MasterFaultSuccess(message: message, previous: nextSelected);
+        return MasterFaultSuccess(message: '', previous: nextSelected, isNewRecord: isNewRecord);
       },
       error: (e) => MasterFaultError(
         message: e.message,

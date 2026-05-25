@@ -58,7 +58,7 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
 
     // DrawerOpening/Opened + RFID yok → snackbar, iptal etme
     if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidReadCount == 0) {
-      MessageUtils.showInfoSnackbar(context, 'İşlemi iptal etmek için çekmeceyi kapatın.');
+      MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
       return;
     }
 
@@ -67,9 +67,9 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
       MessageUtils.showConfirmDialog(
         context: context,
         action: ConfirmAction.exit,
-        customTitle: 'Dolumu İptal Et',
-        customMessage: 'İlaçları çekmeceden çıkardığınız varsayılacak. Dolum iptal edilsin mi?',
-        confirmButtonText: 'İptal Et',
+        customTitle: context.l10n.refill_cancelDialog_title,
+        customMessage: context.l10n.refill_cancelDialog_message,
+        confirmButtonText: context.l10n.common_confirmCancelButton,
         onConfirm: notifier.cancelRefill,
       );
       return;
@@ -95,7 +95,7 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
         notifier.dismissError();
         ref.read(mobileDrawerSessionProvider.notifier).stop();
       } else if (next is MobileRefillSuccess) {
-        MessageUtils.showSuccessSnackbar(context, next.message);
+        MessageUtils.showSuccessSnackbar(context, context.l10n.refill_success_completedMobile);
         notifier.dismissSuccess();
       }
     });

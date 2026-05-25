@@ -45,7 +45,7 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
 
     // DrawerOpening/Opened → iptal için önce çekmece kapatılmalı
     if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) {
-      MessageUtils.showInfoSnackbar(context, 'İşlemi iptal etmek için çekmeceyi kapatın.');
+      MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
       return;
     }
 
@@ -54,9 +54,9 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
       MessageUtils.showConfirmDialog(
         context: context,
         action: ConfirmAction.exit,
-        customTitle: 'Sayımı İptal Et',
-        customMessage: 'Sayım işlemi iptal edilsin mi?',
-        confirmButtonText: 'İptal Et',
+        customTitle: context.l10n.census_cancelDialog_title,
+        customMessage: context.l10n.census_cancelDialog_message,
+        confirmButtonText: context.l10n.common_confirmCancelButton,
         onConfirm: notifier.cancelCensus,
       );
       return;
@@ -78,7 +78,7 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
         notifier.dismissError();
         ref.read(mobileDrawerSessionProvider.notifier).stop();
       } else if (next is MobileCensusSuccess) {
-        MessageUtils.showSuccessSnackbar(context, next.message);
+        MessageUtils.showSuccessSnackbar(context, context.l10n.census_success_completed);
         notifier.dismissSuccess();
       }
     });

@@ -246,7 +246,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
         patients: patients,
         selectedPatient: selectedPatient,
         refundables: items,
-        message: 'İade başarıyla tamamlandı.',
+        message: '',
         search: search,
       ),
       error: (e) => MobileRefundError(

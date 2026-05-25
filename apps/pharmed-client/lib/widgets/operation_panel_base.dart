@@ -36,7 +36,7 @@ class OperationPanelBase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final config = _ModeConfig.of(mode);
+    final config = _ModeConfig.of(mode, context);
 
     return Container(
       decoration: BoxDecoration(
@@ -137,43 +137,40 @@ final class _ModeConfig {
   final Color accentColor;
   final Color badgeBg;
 
-  // TODO : l10n
-  static _ModeConfig of(CabinOperationMode mode) => switch (mode) {
+  static _ModeConfig of(CabinOperationMode mode, BuildContext context) => switch (mode) {
     CabinOperationMode.assign => _ModeConfig(
-      title: 'İLAÇ ATAMA',
-      badge: 'ATAMA',
+      title: context.l10n.operationPanel_title_assign,
+      badge: context.l10n.operationPanel_badge_assign,
       accentColor: MedColors.blue,
       badgeBg: MedColors.blueLight,
     ),
     CabinOperationMode.refill => _ModeConfig(
-      title: 'İLAÇ DOLUM',
-      badge: 'DOLUM',
+      title: context.l10n.operationPanel_title_refill,
+      badge: context.l10n.operationPanel_badge_refill,
       accentColor: MedColors.green,
       badgeBg: MedColors.greenLight,
     ),
     CabinOperationMode.census => _ModeConfig(
-      title: 'İLAÇ SAYIM',
-      badge: 'SAYIM',
+      title: context.l10n.operationPanel_title_census,
+      badge: context.l10n.operationPanel_badge_census,
       accentColor: MedColors.amber,
       badgeBg: MedColors.amberLight,
     ),
     CabinOperationMode.fault => _ModeConfig(
-      title: 'ARIZA BİLDİR',
-      badge: 'ARIZA',
+      title: context.l10n.operationPanel_title_fault,
+      badge: context.l10n.operationPanel_badge_fault,
       accentColor: MedColors.red,
       badgeBg: MedColors.redLight,
     ),
-    // TODO: Handle this case.
     CabinOperationMode.intake => _ModeConfig(
-      title: 'İLAÇ ALIM',
-      badge: 'ALIM',
+      title: context.l10n.operationPanel_title_intake,
+      badge: context.l10n.operationPanel_badge_intake,
       accentColor: MedColors.blueDark,
       badgeBg: MedColors.blueLight,
     ),
-    // TODO: Handle this case.
     CabinOperationMode.unload => _ModeConfig(
-      title: 'İLAÇ BOŞALTMA',
-      badge: 'BOŞALTMA',
+      title: context.l10n.operationPanel_title_unload,
+      badge: context.l10n.operationPanel_badge_unload,
       accentColor: MedColors.blueDark,
       badgeBg: MedColors.blueLight,
     ),

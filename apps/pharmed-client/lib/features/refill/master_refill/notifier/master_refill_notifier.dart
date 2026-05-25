@@ -308,7 +308,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
         selectedGroup: current.selectedGroup,
         selectedUnit: current.selectedUnit,
         cabinId: current.cabinId,
-        message: 'Dolum başarıyla kaydedildi',
+        message: '',
       ),
       error: (e) {
         state = MasterRefillError(message: e.message, previousState: current);

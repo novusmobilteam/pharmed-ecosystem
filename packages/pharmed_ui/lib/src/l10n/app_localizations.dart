@@ -1455,6 +1455,678 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a patient to proceed.'**
   String get wasteSelectPatient;
+
+  /// No description provided for @common_confirmCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get common_confirmCancelButton;
+
+  /// No description provided for @common_dismissButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get common_dismissButton;
+
+  /// No description provided for @common_action_saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving'**
+  String get common_action_saving;
+
+  /// No description provided for @common_action_drawerOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening drawer'**
+  String get common_action_drawerOpening;
+
+  /// No description provided for @common_action_connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting'**
+  String get common_action_connecting;
+
+  /// No description provided for @common_action_processing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get common_action_processing;
+
+  /// No description provided for @common_cancelInfo_drawerClose.
+  ///
+  /// In en, this message translates to:
+  /// **'To cancel the operation, close the drawer.'**
+  String get common_cancelInfo_drawerClose;
+
+  /// No description provided for @common_patientListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient List'**
+  String get common_patientListTitle;
+
+  /// No description provided for @common_patientCountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Total {count} patients'**
+  String common_patientCountSubtitle(int count);
+
+  /// No description provided for @assignment_error_stationLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load cabin station information'**
+  String get assignment_error_stationLoadFailed;
+
+  /// No description provided for @cabinStock_panel_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Medications in Cabin Assigned to Patient'**
+  String get cabinStock_panel_title;
+
+  /// No description provided for @census_cancelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Census'**
+  String get census_cancelDialog_title;
+
+  /// No description provided for @census_cancelDialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel the census operation?'**
+  String get census_cancelDialog_message;
+
+  /// No description provided for @census_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start census'**
+  String get census_action_start;
+
+  /// No description provided for @census_action_drawerOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Count medications'**
+  String get census_action_drawerOpen;
+
+  /// No description provided for @census_action_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete census'**
+  String get census_action_complete;
+
+  /// No description provided for @census_action_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue census'**
+  String get census_action_continue;
+
+  /// No description provided for @census_success_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Census completed successfully.'**
+  String get census_success_completed;
+
+  /// No description provided for @drugActivity_column_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get drugActivity_column_date;
+
+  /// No description provided for @drugActivity_column_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get drugActivity_column_time;
+
+  /// No description provided for @drugActivity_column_patient.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get drugActivity_column_patient;
+
+  /// No description provided for @drugActivity_column_user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get drugActivity_column_user;
+
+  /// No description provided for @drugActivity_column_material.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get drugActivity_column_material;
+
+  /// No description provided for @drugActivity_column_quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get drugActivity_column_quantity;
+
+  /// No description provided for @drugActivity_column_movement.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get drugActivity_column_movement;
+
+  /// No description provided for @intake_cancelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Intake'**
+  String get intake_cancelDialog_title;
+
+  /// No description provided for @intake_cancelDialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'No medication taken yet. Cancel the intake?'**
+  String get intake_cancelDialog_message;
+
+  /// No description provided for @intake_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start intake'**
+  String get intake_action_start;
+
+  /// No description provided for @intake_action_drawerOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Take medications'**
+  String get intake_action_drawerOpen;
+
+  /// No description provided for @intake_action_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete intake'**
+  String get intake_action_complete;
+
+  /// No description provided for @intake_action_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue intake'**
+  String get intake_action_continue;
+
+  /// No description provided for @intake_success_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Intake completed successfully.'**
+  String get intake_success_completed;
+
+  /// No description provided for @myPatients_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search patient, room, service...'**
+  String get myPatients_search_hint;
+
+  /// No description provided for @refill_cancelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Refill'**
+  String get refill_cancelDialog_title;
+
+  /// No description provided for @refill_cancelDialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Medications will be assumed removed from the drawer. Cancel the refill?'**
+  String get refill_cancelDialog_message;
+
+  /// No description provided for @refill_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start refill'**
+  String get refill_action_start;
+
+  /// No description provided for @refill_action_placeDrugs.
+  ///
+  /// In en, this message translates to:
+  /// **'Place medications'**
+  String get refill_action_placeDrugs;
+
+  /// No description provided for @refill_action_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete refill'**
+  String get refill_action_complete;
+
+  /// No description provided for @refill_action_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue refill'**
+  String get refill_action_continue;
+
+  /// No description provided for @refill_success_completedMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill completed successfully.'**
+  String get refill_success_completedMobile;
+
+  /// No description provided for @refill_success_completedMaster.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill saved successfully'**
+  String get refill_success_completedMaster;
+
+  /// No description provided for @refill_hint_selectDrawer.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a drawer from the left panel to start refilling.'**
+  String get refill_hint_selectDrawer;
+
+  /// No description provided for @refill_hint_selectCell.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a cell from the drawer.'**
+  String get refill_hint_selectCell;
+
+  /// No description provided for @refill_hint_cellError.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a cell.'**
+  String get refill_hint_cellError;
+
+  /// No description provided for @refill_label_countQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Count Quantity'**
+  String get refill_label_countQty;
+
+  /// No description provided for @refill_label_fillQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill Quantity'**
+  String get refill_label_fillQty;
+
+  /// No description provided for @refill_label_expiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get refill_label_expiryDate;
+
+  /// No description provided for @refund_success_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund completed successfully.'**
+  String get refund_success_completed;
+
+  /// No description provided for @refund_panel_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Refundable Medications'**
+  String get refund_panel_title;
+
+  /// No description provided for @refund_action_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get refund_action_checking;
+
+  /// No description provided for @refund_action_refunding.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunding...'**
+  String get refund_action_refunding;
+
+  /// No description provided for @refund_action_refund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get refund_action_refund;
+
+  /// No description provided for @unappliedPrescription_panel_patientTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patients'**
+  String get unappliedPrescription_panel_patientTitle;
+
+  /// No description provided for @unload_cancelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Unload'**
+  String get unload_cancelDialog_title;
+
+  /// No description provided for @unload_cancelDialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'No medication removed yet. Cancel the unload?'**
+  String get unload_cancelDialog_message;
+
+  /// No description provided for @unload_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start unload'**
+  String get unload_action_start;
+
+  /// No description provided for @unload_action_drawerOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove medications'**
+  String get unload_action_drawerOpen;
+
+  /// No description provided for @unload_action_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete unload'**
+  String get unload_action_complete;
+
+  /// No description provided for @unload_action_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue unload'**
+  String get unload_action_continue;
+
+  /// No description provided for @unload_success_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unload completed successfully.'**
+  String get unload_success_completed;
+
+  /// No description provided for @waste_panel_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Wasteable/Destructible Medications'**
+  String get waste_panel_title;
+
+  /// No description provided for @waste_action_wastage.
+  ///
+  /// In en, this message translates to:
+  /// **'Waste'**
+  String get waste_action_wastage;
+
+  /// No description provided for @waste_action_destruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Destroy'**
+  String get waste_action_destruction;
+
+  /// No description provided for @waste_success_wastage.
+  ///
+  /// In en, this message translates to:
+  /// **'Wastage completed successfully.'**
+  String get waste_success_wastage;
+
+  /// No description provided for @waste_success_destruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Destruction completed successfully.'**
+  String get waste_success_destruction;
+
+  /// No description provided for @assignment_success_created.
+  ///
+  /// In en, this message translates to:
+  /// **'Bed assignment saved successfully.'**
+  String get assignment_success_created;
+
+  /// No description provided for @assignment_success_deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Bed assignment removed.'**
+  String get assignment_success_deleted;
+
+  /// No description provided for @cabin_bannerCensus.
+  ///
+  /// In en, this message translates to:
+  /// **'After the drawer opens, select the medications in the cabinet and complete the count. Medications with status \"Pending Intake\" can be counted; unselected medications are assumed to have a quantity of 0.'**
+  String get cabin_bannerCensus;
+
+  /// No description provided for @cabin_bannerIntake.
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Intake'**
+  String get cabin_bannerIntake;
+
+  /// No description provided for @cabin_bannerUnload.
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Unload'**
+  String get cabin_bannerUnload;
+
+  /// No description provided for @operationPanel_title_assign.
+  ///
+  /// In en, this message translates to:
+  /// **'DRUG ASSIGNMENT'**
+  String get operationPanel_title_assign;
+
+  /// No description provided for @operationPanel_badge_assign.
+  ///
+  /// In en, this message translates to:
+  /// **'ASSIGN'**
+  String get operationPanel_badge_assign;
+
+  /// No description provided for @operationPanel_title_refill.
+  ///
+  /// In en, this message translates to:
+  /// **'DRUG REFILL'**
+  String get operationPanel_title_refill;
+
+  /// No description provided for @operationPanel_badge_refill.
+  ///
+  /// In en, this message translates to:
+  /// **'REFILL'**
+  String get operationPanel_badge_refill;
+
+  /// No description provided for @operationPanel_title_census.
+  ///
+  /// In en, this message translates to:
+  /// **'DRUG COUNT'**
+  String get operationPanel_title_census;
+
+  /// No description provided for @operationPanel_badge_census.
+  ///
+  /// In en, this message translates to:
+  /// **'COUNT'**
+  String get operationPanel_badge_census;
+
+  /// No description provided for @operationPanel_title_fault.
+  ///
+  /// In en, this message translates to:
+  /// **'REPORT FAULT'**
+  String get operationPanel_title_fault;
+
+  /// No description provided for @operationPanel_badge_fault.
+  ///
+  /// In en, this message translates to:
+  /// **'FAULT'**
+  String get operationPanel_badge_fault;
+
+  /// No description provided for @operationPanel_title_intake.
+  ///
+  /// In en, this message translates to:
+  /// **'DRUG INTAKE'**
+  String get operationPanel_title_intake;
+
+  /// No description provided for @operationPanel_badge_intake.
+  ///
+  /// In en, this message translates to:
+  /// **'INTAKE'**
+  String get operationPanel_badge_intake;
+
+  /// No description provided for @operationPanel_title_unload.
+  ///
+  /// In en, this message translates to:
+  /// **'DRUG UNLOAD'**
+  String get operationPanel_title_unload;
+
+  /// No description provided for @operationPanel_badge_unload.
+  ///
+  /// In en, this message translates to:
+  /// **'UNLOAD'**
+  String get operationPanel_badge_unload;
+
+  /// No description provided for @drugAssignment_panel_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Drug'**
+  String get drugAssignment_panel_title;
+
+  /// No description provided for @session_timeout_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session is about to expire.'**
+  String get session_timeout_warning;
+
+  /// No description provided for @session_timeout_continueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get session_timeout_continueButton;
+
+  /// No description provided for @session_timeout_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session will close in '**
+  String get session_timeout_prefix;
+
+  /// No description provided for @session_timeout_suffix.
+  ///
+  /// In en, this message translates to:
+  /// **' seconds.'**
+  String get session_timeout_suffix;
+
+  /// No description provided for @session_locked_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session '**
+  String get session_locked_prefix;
+
+  /// No description provided for @session_locked_reason.
+  ///
+  /// In en, this message translates to:
+  /// **'timed out'**
+  String get session_locked_reason;
+
+  /// No description provided for @session_locked_suffix.
+  ///
+  /// In en, this message translates to:
+  /// **' and was closed. Please log in to continue.'**
+  String get session_locked_suffix;
+
+  /// No description provided for @movement_noHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No movement history found.'**
+  String get movement_noHistory;
+
+  /// No description provided for @movement_performedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Performed by'**
+  String get movement_performedBy;
+
+  /// No description provided for @common_search_noPatientResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No patients match your search.'**
+  String get common_search_noPatientResults;
+
+  /// No description provided for @common_drug_noFilterResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No medications match this filter.'**
+  String get common_drug_noFilterResults;
+
+  /// No description provided for @common_unknownName.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get common_unknownName;
+
+  /// No description provided for @rfidStatus_read.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get rfidStatus_read;
+
+  /// No description provided for @rfidStatus_waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get rfidStatus_waiting;
+
+  /// No description provided for @rfidStatus_inCabin.
+  ///
+  /// In en, this message translates to:
+  /// **'In cabinet'**
+  String get rfidStatus_inCabin;
+
+  /// No description provided for @rfidStatus_notInCabin.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in cabinet'**
+  String get rfidStatus_notInCabin;
+
+  /// No description provided for @rfidStatus_taken.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken'**
+  String get rfidStatus_taken;
+
+  /// No description provided for @rfidStatus_missing.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing'**
+  String get rfidStatus_missing;
+
+  /// No description provided for @drawerStatus_full.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get drawerStatus_full;
+
+  /// No description provided for @drawerStatus_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get drawerStatus_low;
+
+  /// No description provided for @drawerStatus_critical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get drawerStatus_critical;
+
+  /// No description provided for @drawerStatus_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty'**
+  String get drawerStatus_empty;
+
+  /// No description provided for @cabin_cellCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} cells'**
+  String cabin_cellCount(Object count);
+
+  /// No description provided for @cabin_drawerStats.
+  ///
+  /// In en, this message translates to:
+  /// **'{rowCount} rows · {totalCells} cells · {columns} columns'**
+  String cabin_drawerStats(Object columns, Object rowCount, Object totalCells);
+
+  /// No description provided for @hospitalization_admissionDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Date | {date}'**
+  String hospitalization_admissionDate(Object date);
+
+  /// No description provided for @movement_dateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get movement_dateLabel;
+
+  /// No description provided for @movement_quantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get movement_quantityLabel;
+
+  /// No description provided for @movement_showAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Show All Movements'**
+  String get movement_showAll;
+
+  /// No description provided for @cabin_masterDrawerStats.
+  ///
+  /// In en, this message translates to:
+  /// **'{groupCount} groups · {steps} steps × {mult}'**
+  String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps);
 }
 
 class _AppLocalizationsDelegate

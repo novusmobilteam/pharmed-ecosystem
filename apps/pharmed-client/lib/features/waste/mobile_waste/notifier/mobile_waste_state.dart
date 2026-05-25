@@ -129,6 +129,7 @@ final class MobileWasteSuccess extends MobileWasteState {
     required this.selectedPatient,
     required this.disposables,
     required this.message,
+    required this.isWastage,
     this.search = '',
   });
 
@@ -136,6 +137,10 @@ final class MobileWasteSuccess extends MobileWasteState {
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> disposables;
   final String message;
+
+  /// true → fire (wastage) işlemi; false → imha (destruction) işlemi.
+  /// View'da doğru l10n mesajını seçmek için kullanılır.
+  final bool isWastage;
   final String search;
 }
 

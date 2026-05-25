@@ -168,7 +168,8 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
         patients: current.patients,
         selectedPatient: current.selectedPatient,
         search: current.search,
-        message: 'Fire işlemi başarıyla tamamlandı.',
+        message: '',
+        isWastage: true,
       ),
       error: (e) async {
         MedLogger.error(
@@ -212,7 +213,8 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
         patients: current.patients,
         selectedPatient: current.selectedPatient,
         search: current.search,
-        message: 'İmha işlemi başarıyla tamamlandı.',
+        message: '',
+        isWastage: false,
       ),
       error: (e) async {
         MedLogger.error(
@@ -265,6 +267,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
     required Hospitalization selectedPatient,
     required String search,
     required String message,
+    required bool isWastage,
   }) async {
     final result = await _getDisposables.call(selectedPatient.id ?? 0);
 
@@ -274,6 +277,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
         selectedPatient: selectedPatient,
         disposables: items,
         message: message,
+        isWastage: isWastage,
         search: search,
       ),
       error: (e) => MobileWasteError(

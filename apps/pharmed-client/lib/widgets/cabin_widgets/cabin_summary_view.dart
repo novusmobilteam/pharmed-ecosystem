@@ -232,11 +232,11 @@ class _MobileSlotView extends StatelessWidget {
 class _CabinLegend extends StatelessWidget {
   const _CabinLegend();
 
-  static const _items = [
-    (DrawerStatus.full, 'Dolu'),
-    (DrawerStatus.low, 'Düşük'),
-    (DrawerStatus.critical, 'Kritik'),
-    (DrawerStatus.empty, 'Boş'),
+  List<(DrawerStatus, String)> _items(BuildContext context) => [
+    (DrawerStatus.full, context.l10n.drawerStatus_full),
+    (DrawerStatus.low, context.l10n.drawerStatus_low),
+    (DrawerStatus.critical, context.l10n.drawerStatus_critical),
+    (DrawerStatus.empty, context.l10n.drawerStatus_empty),
   ];
 
   @override
@@ -249,7 +249,7 @@ class _CabinLegend extends StatelessWidget {
       child: Wrap(
         spacing: 10,
         runSpacing: 4,
-        children: _items.map((item) {
+        children: _items(context).map((item) {
           final colors = _StatusColors.of(item.$1);
           return Row(
             mainAxisSize: MainAxisSize.min,

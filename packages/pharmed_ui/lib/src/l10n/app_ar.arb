@@ -706,5 +706,146 @@
   "description": "رسالة الحالة الفارغة التي تظهر في اللوحة اليمنى عند عدم تحديد مريض."
 },
 "wasteNoWastableDrugs": "لم يتم العثور على أدوية قابلة للتخلص منها.",
-"wasteSelectPatient": "حدد مريضاً للمتابعة."
+"wasteSelectPatient": "حدد مريضاً للمتابعة.",
+
+  "common_confirmCancelButton": "إلغاء",
+  "common_dismissButton": "تجاهل",
+  "common_action_saving": "جارٍ الحفظ",
+  "common_action_drawerOpening": "جارٍ فتح الدرج",
+  "common_action_connecting": "جارٍ الاتصال",
+  "common_action_processing": "جارٍ المعالجة...",
+  "common_cancelInfo_drawerClose": "لإلغاء العملية، أغلق الدرج.",
+  "common_patientListTitle": "قائمة المرضى",
+  "common_patientCountSubtitle": "إجمالي {count} مريض",
+  "@common_patientCountSubtitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "assignment_error_stationLoadFailed": "تعذّر تحميل معلومات محطة الكابين",
+
+  "cabinStock_panel_title": "الأدوية الموجودة في الكابين المخصص للمريض",
+
+  "census_cancelDialog_title": "إلغاء الجرد",
+  "census_cancelDialog_message": "هل تريد إلغاء عملية الجرد؟",
+  "census_action_start": "بدء الجرد",
+  "census_action_drawerOpen": "عدّ الأدوية",
+  "census_action_complete": "إتمام الجرد",
+  "census_action_continue": "متابعة الجرد",
+  "census_success_completed": "تم إتمام الجرد بنجاح.",
+
+  "drugActivity_column_date": "التاريخ",
+  "drugActivity_column_time": "الوقت",
+  "drugActivity_column_patient": "المريض",
+  "drugActivity_column_user": "المستخدم",
+  "drugActivity_column_material": "المادة",
+  "drugActivity_column_quantity": "الكمية",
+  "drugActivity_column_movement": "الحركة",
+
+  "intake_cancelDialog_title": "إلغاء الاستلام",
+  "intake_cancelDialog_message": "لم يُستلم أي دواء بعد. هل تريد إلغاء عملية الاستلام؟",
+  "intake_action_start": "بدء الاستلام",
+  "intake_action_drawerOpen": "أخذ الأدوية",
+  "intake_action_complete": "إتمام الاستلام",
+  "intake_action_continue": "متابعة الاستلام",
+  "intake_success_completed": "تم إتمام الاستلام بنجاح.",
+
+  "myPatients_search_hint": "ابحث عن مريض، غرفة، قسم...",
+
+  "refill_cancelDialog_title": "إلغاء التعبئة",
+  "refill_cancelDialog_message": "سيُفترض أن الأدوية قد أُخرجت من الدرج. هل تريد إلغاء التعبئة؟",
+  "refill_action_start": "بدء التعبئة",
+  "refill_action_placeDrugs": "ضع الأدوية",
+  "refill_action_complete": "إتمام التعبئة",
+  "refill_action_continue": "متابعة التعبئة",
+  "refill_success_completedMobile": "تمت التعبئة بنجاح.",
+  "refill_success_completedMaster": "تم حفظ التعبئة بنجاح",
+  "refill_hint_selectDrawer": "اختر درجاً من اللوحة اليسرى لبدء التعبئة.",
+  "refill_hint_selectCell": "اختر خلية من الدرج.",
+  "refill_hint_cellError": "اختر خلية.",
+  "refill_label_countQty": "كمية الجرد",
+  "refill_label_fillQty": "كمية التعبئة",
+  "refill_label_expiryDate": "تاريخ الانتهاء",
+
+  "refund_success_completed": "تم إتمام الإرجاع بنجاح.",
+  "refund_panel_title": "الأدوية القابلة للإرجاع",
+  "refund_action_checking": "جارٍ التحقق...",
+  "refund_action_refunding": "جارٍ الإرجاع...",
+  "refund_action_refund": "إرجاع",
+
+  "unappliedPrescription_panel_patientTitle": "المرضى",
+
+  "unload_cancelDialog_title": "إلغاء الإفراغ",
+  "unload_cancelDialog_message": "لم يُخرج أي دواء بعد. هل تريد إلغاء عملية الإفراغ؟",
+  "unload_action_start": "بدء الإفراغ",
+  "unload_action_drawerOpen": "أخرج الأدوية",
+  "unload_action_complete": "إتمام الإفراغ",
+  "unload_action_continue": "متابعة الإفراغ",
+  "unload_success_completed": "تم إتمام الإفراغ بنجاح.",
+
+  "waste_panel_title": "الأدوية القابلة للهدر/الإتلاف",
+  "waste_action_wastage": "هدر",
+  "waste_action_destruction": "إتلاف",
+  "waste_success_wastage": "تمت عملية الهدر بنجاح.",
+  "waste_success_destruction": "تمت عملية الإتلاف بنجاح.",
+
+  "assignment_success_created": "تم حفظ تعيين السرير بنجاح.",
+  "assignment_success_deleted": "تمت إزالة تعيين السرير.",
+
+  "cabin_bannerCensus": "بعد فتح الدرج، حدد الأدوية الموجودة في الخزانة وأكمل العد. يمكن عد الأدوية ذات الحالة \"في انتظار الاستلام\"؛ تُعتبر الأدوية غير المحددة بكمية 0.",
+  "cabin_bannerIntake": "استلام الدواء",
+  "cabin_bannerUnload": "تفريغ الدواء",
+
+  "operationPanel_title_assign": "تعيين الدواء",
+  "operationPanel_badge_assign": "تعيين",
+  "operationPanel_title_refill": "إعادة تعبئة الدواء",
+  "operationPanel_badge_refill": "تعبئة",
+  "operationPanel_title_census": "جرد الدواء",
+  "operationPanel_badge_census": "جرد",
+  "operationPanel_title_fault": "الإبلاغ عن عطل",
+  "operationPanel_badge_fault": "عطل",
+  "operationPanel_title_intake": "استلام الدواء",
+  "operationPanel_badge_intake": "استلام",
+  "operationPanel_title_unload": "تفريغ الدواء",
+  "operationPanel_badge_unload": "تفريغ",
+
+  "drugAssignment_panel_title": "اختر الدواء",
+
+  "session_timeout_warning": "جلستك على وشك الانتهاء.",
+  "session_timeout_continueButton": "متابعة",
+  "session_timeout_prefix": "ستنتهي جلستك خلال ",
+  "session_timeout_suffix": " ثانية.",
+  "session_locked_prefix": "تم إغلاق جلستك بسبب ",
+  "session_locked_reason": "انتهاء المهلة",
+  "session_locked_suffix": ". سجل الدخول للمتابعة.",
+
+  "movement_noHistory": "لم يتم العثور على سجل حركة.",
+  "movement_performedBy": "نُفِّذ بواسطة",
+
+  "common_search_noPatientResults": "لا يوجد مرضى يطابقون بحثك.",
+  "common_drug_noFilterResults": "لا توجد أدوية تطابق هذا المرشح.",
+  "common_unknownName": "غير معروف",
+
+  "rfidStatus_read": "تمت القراءة",
+  "rfidStatus_waiting": "في الانتظار",
+  "rfidStatus_inCabin": "في الخزانة",
+  "rfidStatus_notInCabin": "ليس في الخزانة",
+  "rfidStatus_taken": "مأخوذ",
+  "rfidStatus_missing": "مفقود",
+
+  "drawerStatus_full": "ممتلئ",
+  "drawerStatus_low": "منخفض",
+  "drawerStatus_critical": "حرج",
+  "drawerStatus_empty": "فارغ",
+
+  "cabin_cellCount": "{count} خلايا",
+  "cabin_drawerStats": "{rowCount} صفوف · {totalCells} خلايا · {columns} أعمدة",
+  "hospitalization_admissionDate": "تاريخ الدخول | {date}",
+
+  "movement_dateLabel": "التاريخ",
+  "movement_quantityLabel": "الكمية",
+
+  "movement_showAll": "عرض جميع الحركات",
+  "cabin_masterDrawerStats": "{groupCount} مجموعات · {steps} خطوات × {mult}"
 }

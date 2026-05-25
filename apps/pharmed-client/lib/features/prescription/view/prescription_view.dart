@@ -93,8 +93,8 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
 
     return TwoColumnLayout(
       menuItem: widget.menu,
-      leftTitle: 'Hasta Listesi',
-      leftSubtitle: 'Toplam ${state.patients.length} hasta',
+      leftTitle: context.l10n.common_patientListTitle,
+      leftSubtitle: context.l10n.common_patientCountSubtitle(state.patients.length),
       leftIcon: PhosphorIcons.users(),
       left: PatientListPanel(
         patients: state.patients,
@@ -103,7 +103,7 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
         search: state.search,
         onPatientTap: notifier.onPatientTap,
         onSearchChanged: notifier.onSearchChanged,
-        title: 'Hasta Listesi',
+        title: context.l10n.common_patientListTitle,
       ),
       right: _PrescriptionRightPanel(state: state),
     );

@@ -248,7 +248,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
           selectedSlot: current.selectedSlot,
           assignments: current.assignments,
           cabinId: current.cabinId,
-          message: 'Alım işlemi başarıyla tamamlandı.',
+          message: '',
           ready: current.copyWith(rfidReadEpcs: {}, takenEpcs: {}, selectedItemIds: {}),
         );
       },

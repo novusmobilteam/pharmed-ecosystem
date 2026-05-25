@@ -705,5 +705,146 @@
 },
 
 "wasteNoWastableDrugs": "No disposable drugs found.",
-"wasteSelectPatient": "Select a patient to proceed."
+"wasteSelectPatient": "Select a patient to proceed.",
+
+  "common_confirmCancelButton": "Cancel",
+  "common_dismissButton": "Dismiss",
+  "common_action_saving": "Saving",
+  "common_action_drawerOpening": "Opening drawer",
+  "common_action_connecting": "Connecting",
+  "common_action_processing": "Processing...",
+  "common_cancelInfo_drawerClose": "To cancel the operation, close the drawer.",
+  "common_patientListTitle": "Patient List",
+  "common_patientCountSubtitle": "Total {count} patients",
+  "@common_patientCountSubtitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "assignment_error_stationLoadFailed": "Could not load cabin station information",
+
+  "cabinStock_panel_title": "Medications in Cabin Assigned to Patient",
+
+  "census_cancelDialog_title": "Cancel Census",
+  "census_cancelDialog_message": "Cancel the census operation?",
+  "census_action_start": "Start census",
+  "census_action_drawerOpen": "Count medications",
+  "census_action_complete": "Complete census",
+  "census_action_continue": "Continue census",
+  "census_success_completed": "Census completed successfully.",
+
+  "drugActivity_column_date": "Date",
+  "drugActivity_column_time": "Time",
+  "drugActivity_column_patient": "Patient",
+  "drugActivity_column_user": "User",
+  "drugActivity_column_material": "Material",
+  "drugActivity_column_quantity": "Quantity",
+  "drugActivity_column_movement": "Movement",
+
+  "intake_cancelDialog_title": "Cancel Intake",
+  "intake_cancelDialog_message": "No medication taken yet. Cancel the intake?",
+  "intake_action_start": "Start intake",
+  "intake_action_drawerOpen": "Take medications",
+  "intake_action_complete": "Complete intake",
+  "intake_action_continue": "Continue intake",
+  "intake_success_completed": "Intake completed successfully.",
+
+  "myPatients_search_hint": "Search patient, room, service...",
+
+  "refill_cancelDialog_title": "Cancel Refill",
+  "refill_cancelDialog_message": "Medications will be assumed removed from the drawer. Cancel the refill?",
+  "refill_action_start": "Start refill",
+  "refill_action_placeDrugs": "Place medications",
+  "refill_action_complete": "Complete refill",
+  "refill_action_continue": "Continue refill",
+  "refill_success_completedMobile": "Refill completed successfully.",
+  "refill_success_completedMaster": "Refill saved successfully",
+  "refill_hint_selectDrawer": "Select a drawer from the left panel to start refilling.",
+  "refill_hint_selectCell": "Select a cell from the drawer.",
+  "refill_hint_cellError": "Select a cell.",
+  "refill_label_countQty": "Count Quantity",
+  "refill_label_fillQty": "Fill Quantity",
+  "refill_label_expiryDate": "Expiry Date",
+
+  "refund_success_completed": "Refund completed successfully.",
+  "refund_panel_title": "Refundable Medications",
+  "refund_action_checking": "Checking...",
+  "refund_action_refunding": "Refunding...",
+  "refund_action_refund": "Refund",
+
+  "unappliedPrescription_panel_patientTitle": "Patients",
+
+  "unload_cancelDialog_title": "Cancel Unload",
+  "unload_cancelDialog_message": "No medication removed yet. Cancel the unload?",
+  "unload_action_start": "Start unload",
+  "unload_action_drawerOpen": "Remove medications",
+  "unload_action_complete": "Complete unload",
+  "unload_action_continue": "Continue unload",
+  "unload_success_completed": "Unload completed successfully.",
+
+  "waste_panel_title": "Wasteable/Destructible Medications",
+  "waste_action_wastage": "Waste",
+  "waste_action_destruction": "Destroy",
+  "waste_success_wastage": "Wastage completed successfully.",
+  "waste_success_destruction": "Destruction completed successfully.",
+
+  "assignment_success_created": "Bed assignment saved successfully.",
+  "assignment_success_deleted": "Bed assignment removed.",
+
+  "cabin_bannerCensus": "After the drawer opens, select the medications in the cabinet and complete the count. Medications with status \"Pending Intake\" can be counted; unselected medications are assumed to have a quantity of 0.",
+  "cabin_bannerIntake": "Drug Intake",
+  "cabin_bannerUnload": "Drug Unload",
+
+  "operationPanel_title_assign": "DRUG ASSIGNMENT",
+  "operationPanel_badge_assign": "ASSIGN",
+  "operationPanel_title_refill": "DRUG REFILL",
+  "operationPanel_badge_refill": "REFILL",
+  "operationPanel_title_census": "DRUG COUNT",
+  "operationPanel_badge_census": "COUNT",
+  "operationPanel_title_fault": "REPORT FAULT",
+  "operationPanel_badge_fault": "FAULT",
+  "operationPanel_title_intake": "DRUG INTAKE",
+  "operationPanel_badge_intake": "INTAKE",
+  "operationPanel_title_unload": "DRUG UNLOAD",
+  "operationPanel_badge_unload": "UNLOAD",
+
+  "drugAssignment_panel_title": "Select Drug",
+
+  "session_timeout_warning": "Your session is about to expire.",
+  "session_timeout_continueButton": "Continue",
+  "session_timeout_prefix": "Your session will close in ",
+  "session_timeout_suffix": " seconds.",
+  "session_locked_prefix": "Your session ",
+  "session_locked_reason": "timed out",
+  "session_locked_suffix": " and was closed. Please log in to continue.",
+
+  "movement_noHistory": "No movement history found.",
+  "movement_performedBy": "Performed by",
+
+  "common_search_noPatientResults": "No patients match your search.",
+  "common_drug_noFilterResults": "No medications match this filter.",
+  "common_unknownName": "Unknown",
+
+  "rfidStatus_read": "Read",
+  "rfidStatus_waiting": "Waiting",
+  "rfidStatus_inCabin": "In cabinet",
+  "rfidStatus_notInCabin": "Not in cabinet",
+  "rfidStatus_taken": "Taken",
+  "rfidStatus_missing": "Missing",
+
+  "drawerStatus_full": "Full",
+  "drawerStatus_low": "Low",
+  "drawerStatus_critical": "Critical",
+  "drawerStatus_empty": "Empty",
+
+  "cabin_cellCount": "{count} cells",
+  "cabin_drawerStats": "{rowCount} rows · {totalCells} cells · {columns} columns",
+  "hospitalization_admissionDate": "Admission Date | {date}",
+
+  "movement_dateLabel": "Date",
+  "movement_quantityLabel": "Quantity",
+
+  "movement_showAll": "Show All Movements",
+  "cabin_masterDrawerStats": "{groupCount} groups · {steps} steps × {mult}"
 }

@@ -56,6 +56,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
 
     if (cabin == null || cabin.stationId == null) {
       state = BedAssignmentError(
+        // TODO(l10n): move to view layer once BedAssignmentError carries a discriminant
         message: 'Kabin istasyon bilgisi alınamadı',
         previousState: BedAssignmentIdle(
           slots: slots,
@@ -243,8 +244,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
         selectedSlot: current.selectedSlot,
         cabinId: current.cabinId,
         selectedCell: current.selectedCell,
-        // TODO(l10n): move to view layer or pass translated string as parameter
-        message: 'Yatak ataması başarıyla kaydedildi',
+        isCreated: true,
       ),
       error: (e) {
         state = BedAssignmentError(message: e.message, previousState: current);
@@ -274,8 +274,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
         selectedSlot: current.selectedSlot,
         cabinId: current.cabinId,
         selectedCell: current.selectedCell,
-        // TODO(l10n): move to view layer or pass translated string as parameter
-        message: 'Yatak ataması kaldırıldı',
+        isCreated: false,
       ),
       error: (e) {
         state = BedAssignmentError(message: e.message, previousState: current);
@@ -289,7 +288,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
     required MobileSlotVisual selectedSlot,
     required MobileCellCoord selectedCell,
     required int cabinId,
-    required String message,
+    required bool isCreated,
   }) async {
     final result = await _getAssignments.call(cabinId);
 
@@ -301,7 +300,8 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
         selectedCell: selectedCell,
         assignments: assignments,
         cabinId: cabinId,
-        message: message,
+        message: '',
+        isCreated: isCreated,
       ),
       error: (e) => BedAssignmentError(
         message: e.message,

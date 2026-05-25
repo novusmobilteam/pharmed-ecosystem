@@ -102,7 +102,10 @@ class HospitalizationDetailBanner extends StatelessWidget {
           ),
 
           const SizedBox(width: MedSpacing.lg),
-          Text('Yatış Tarihi | ${hospitalization?.admissionDate.formattedDate}', style: MedTextStyles.monoMd()),
+          Text(
+            context.l10n.hospitalization_admissionDate(hospitalization?.admissionDate.formattedDate ?? '—'),
+            style: MedTextStyles.monoMd(),
+          ),
         ],
       ),
     );

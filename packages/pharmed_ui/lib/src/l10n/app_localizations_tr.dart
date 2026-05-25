@@ -741,4 +741,362 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get wasteSelectPatient => 'İşlem yapmak için hasta seçin.';
+
+  @override
+  String get common_confirmCancelButton => 'İptal Et';
+
+  @override
+  String get common_dismissButton => 'Vazgeç';
+
+  @override
+  String get common_action_saving => 'Kaydediliyor';
+
+  @override
+  String get common_action_drawerOpening => 'Çekmece açılıyor';
+
+  @override
+  String get common_action_connecting => 'Bağlantı kuruluyor';
+
+  @override
+  String get common_action_processing => 'İşlem yapılıyor...';
+
+  @override
+  String get common_cancelInfo_drawerClose =>
+      'İşlemi iptal etmek için çekmeceyi kapatın.';
+
+  @override
+  String get common_patientListTitle => 'Hasta Listesi';
+
+  @override
+  String common_patientCountSubtitle(int count) {
+    return 'Toplam $count hasta';
+  }
+
+  @override
+  String get assignment_error_stationLoadFailed =>
+      'Kabin istasyon bilgisi alınamadı';
+
+  @override
+  String get cabinStock_panel_title => 'Hastaya Ait Kabinde Bulunan İlaçlar';
+
+  @override
+  String get census_cancelDialog_title => 'Sayımı İptal Et';
+
+  @override
+  String get census_cancelDialog_message => 'Sayım işlemi iptal edilsin mi?';
+
+  @override
+  String get census_action_start => 'Sayıma başla';
+
+  @override
+  String get census_action_drawerOpen => 'İlaçları sayın';
+
+  @override
+  String get census_action_complete => 'Sayımı tamamla';
+
+  @override
+  String get census_action_continue => 'Sayıma devam et';
+
+  @override
+  String get census_success_completed => 'Sayım işlemi başarıyla tamamlandı.';
+
+  @override
+  String get drugActivity_column_date => 'Tarih';
+
+  @override
+  String get drugActivity_column_time => 'Saat';
+
+  @override
+  String get drugActivity_column_patient => 'Hasta';
+
+  @override
+  String get drugActivity_column_user => 'Kullanıcı';
+
+  @override
+  String get drugActivity_column_material => 'Malzeme';
+
+  @override
+  String get drugActivity_column_quantity => 'Miktar';
+
+  @override
+  String get drugActivity_column_movement => 'Hareket';
+
+  @override
+  String get intake_cancelDialog_title => 'Alımı İptal Et';
+
+  @override
+  String get intake_cancelDialog_message =>
+      'Henüz ilaç alınmadı. Alım işlemi iptal edilsin mi?';
+
+  @override
+  String get intake_action_start => 'Alıma başla';
+
+  @override
+  String get intake_action_drawerOpen => 'İlaçları alın';
+
+  @override
+  String get intake_action_complete => 'Alımı tamamla';
+
+  @override
+  String get intake_action_continue => 'Alıma devam et';
+
+  @override
+  String get intake_success_completed => 'Alım işlemi başarıyla tamamlandı.';
+
+  @override
+  String get myPatients_search_hint => 'Hasta, oda, servis ara...';
+
+  @override
+  String get refill_cancelDialog_title => 'Dolumu İptal Et';
+
+  @override
+  String get refill_cancelDialog_message =>
+      'İlaçları çekmeceden çıkardığınız varsayılacak. Dolum iptal edilsin mi?';
+
+  @override
+  String get refill_action_start => 'Doluma başla';
+
+  @override
+  String get refill_action_placeDrugs => 'İlaçları yerleştirin';
+
+  @override
+  String get refill_action_complete => 'Dolumu tamamla';
+
+  @override
+  String get refill_action_continue => 'Doluma devam et';
+
+  @override
+  String get refill_success_completedMobile =>
+      'Dolum işlemi başarıyla tamamlandı.';
+
+  @override
+  String get refill_success_completedMaster => 'Dolum başarıyla kaydedildi';
+
+  @override
+  String get refill_hint_selectDrawer =>
+      'Dolum yapmak için sol panelden bir çekmece seçin.';
+
+  @override
+  String get refill_hint_selectCell => 'Çekmeceden bir göz seçin.';
+
+  @override
+  String get refill_hint_cellError => 'Bir göz seçin.';
+
+  @override
+  String get refill_label_countQty => 'Sayım Miktarı';
+
+  @override
+  String get refill_label_fillQty => 'Dolum Miktarı';
+
+  @override
+  String get refill_label_expiryDate => 'Son Kullanma Tarihi';
+
+  @override
+  String get refund_success_completed => 'İade başarıyla tamamlandı.';
+
+  @override
+  String get refund_panel_title => 'İade Edilebilir İlaçlar';
+
+  @override
+  String get refund_action_checking => 'Kontrol ediliyor...';
+
+  @override
+  String get refund_action_refunding => 'İade ediliyor...';
+
+  @override
+  String get refund_action_refund => 'İade Et';
+
+  @override
+  String get unappliedPrescription_panel_patientTitle => 'Hastalar';
+
+  @override
+  String get unload_cancelDialog_title => 'Boşaltmayı İptal Et';
+
+  @override
+  String get unload_cancelDialog_message =>
+      'Henüz ilaç çıkarılmadı. Boşaltma işlemi iptal edilsin mi?';
+
+  @override
+  String get unload_action_start => 'Boşaltmaya başla';
+
+  @override
+  String get unload_action_drawerOpen => 'İlaçları çıkarın';
+
+  @override
+  String get unload_action_complete => 'Boşaltmayı tamamla';
+
+  @override
+  String get unload_action_continue => 'Boşaltmaya devam et';
+
+  @override
+  String get unload_success_completed =>
+      'Boşaltma işlemi başarıyla tamamlandı.';
+
+  @override
+  String get waste_panel_title => 'Fire/İmha Edilebilir İlaçlar';
+
+  @override
+  String get waste_action_wastage => 'Fire Et';
+
+  @override
+  String get waste_action_destruction => 'İmha Et';
+
+  @override
+  String get waste_success_wastage => 'Fire işlemi başarıyla tamamlandı.';
+
+  @override
+  String get waste_success_destruction => 'İmha işlemi başarıyla tamamlandı.';
+
+  @override
+  String get assignment_success_created =>
+      'Yatak ataması başarıyla kaydedildi.';
+
+  @override
+  String get assignment_success_deleted => 'Yatak ataması kaldırıldı.';
+
+  @override
+  String get cabin_bannerCensus =>
+      'Çekmece açıldıktan sonra kabinde bulunan ilaçları seçin ve sayımı tamamlayın. Durumu \"Alım Bekliyor\" olan ilaçların sayımı yapılabilir ve seçilmeyen ilaçların miktarı 0 kabul edilir.';
+
+  @override
+  String get cabin_bannerIntake => 'İlaç Alım';
+
+  @override
+  String get cabin_bannerUnload => 'İlaç Boşaltma';
+
+  @override
+  String get operationPanel_title_assign => 'İLAÇ ATAMA';
+
+  @override
+  String get operationPanel_badge_assign => 'ATAMA';
+
+  @override
+  String get operationPanel_title_refill => 'İLAÇ DOLUM';
+
+  @override
+  String get operationPanel_badge_refill => 'DOLUM';
+
+  @override
+  String get operationPanel_title_census => 'İLAÇ SAYIM';
+
+  @override
+  String get operationPanel_badge_census => 'SAYIM';
+
+  @override
+  String get operationPanel_title_fault => 'ARIZA BİLDİR';
+
+  @override
+  String get operationPanel_badge_fault => 'ARIZA';
+
+  @override
+  String get operationPanel_title_intake => 'İLAÇ ALIM';
+
+  @override
+  String get operationPanel_badge_intake => 'ALIM';
+
+  @override
+  String get operationPanel_title_unload => 'İLAÇ BOŞALTMA';
+
+  @override
+  String get operationPanel_badge_unload => 'BOŞALTMA';
+
+  @override
+  String get drugAssignment_panel_title => 'İlaç Seç';
+
+  @override
+  String get session_timeout_warning => 'Oturum süreniz dolmak üzere.';
+
+  @override
+  String get session_timeout_continueButton => 'Devam Et';
+
+  @override
+  String get session_timeout_prefix => 'Oturumunuz ';
+
+  @override
+  String get session_timeout_suffix => ' saniye içinde kapanacak.';
+
+  @override
+  String get session_locked_prefix => 'Oturumunuz ';
+
+  @override
+  String get session_locked_reason => 'zaman aşımı';
+
+  @override
+  String get session_locked_suffix =>
+      ' nedeniyle kapatıldı. İşlem yapmak için giriş yapın.';
+
+  @override
+  String get movement_noHistory => 'Hareket kaydı bulunamadı.';
+
+  @override
+  String get movement_performedBy => 'İşlemi Yapan';
+
+  @override
+  String get common_search_noPatientResults =>
+      'Aramayla eşleşen hasta bulunamadı.';
+
+  @override
+  String get common_drug_noFilterResults => 'Bu filtrede ilaç bulunamadı.';
+
+  @override
+  String get common_unknownName => 'İsimsiz';
+
+  @override
+  String get rfidStatus_read => 'Okundu';
+
+  @override
+  String get rfidStatus_waiting => 'Bekleniyor';
+
+  @override
+  String get rfidStatus_inCabin => 'Kabinde';
+
+  @override
+  String get rfidStatus_notInCabin => 'Kabinde değil';
+
+  @override
+  String get rfidStatus_taken => 'Alındı';
+
+  @override
+  String get rfidStatus_missing => 'Eksik';
+
+  @override
+  String get drawerStatus_full => 'Dolu';
+
+  @override
+  String get drawerStatus_low => 'Düşük';
+
+  @override
+  String get drawerStatus_critical => 'Kritik';
+
+  @override
+  String get drawerStatus_empty => 'Boş';
+
+  @override
+  String cabin_cellCount(Object count) {
+    return '$count göz';
+  }
+
+  @override
+  String cabin_drawerStats(Object columns, Object rowCount, Object totalCells) {
+    return '$rowCount satır · $totalCells göz · $columns sütun';
+  }
+
+  @override
+  String hospitalization_admissionDate(Object date) {
+    return 'Yatış Tarihi | $date';
+  }
+
+  @override
+  String get movement_dateLabel => 'Tarih';
+
+  @override
+  String get movement_quantityLabel => 'Miktar';
+
+  @override
+  String get movement_showAll => 'Tüm Hareketleri Göster';
+
+  @override
+  String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps) {
+    return '$groupCount grup · $steps adım × $mult';
+  }
 }

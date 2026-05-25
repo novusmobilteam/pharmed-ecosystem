@@ -60,7 +60,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
 
     final selected = await SelectionDialog.show<Medicine>(
       context,
-      title: 'İlaç Seç',
+      title: context.l10n.drugAssignment_panel_title,
       dataSource: (skip, take, search) => getDrugs.call(GetDrugsParams(skip: skip, take: take, search: search)),
       labelBuilder: (m) => m.name ?? '—',
       subtitleBuilder: (m) => m.barcode,

@@ -742,4 +742,359 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wasteSelectPatient => 'Select a patient to proceed.';
+
+  @override
+  String get common_confirmCancelButton => 'Cancel';
+
+  @override
+  String get common_dismissButton => 'Dismiss';
+
+  @override
+  String get common_action_saving => 'Saving';
+
+  @override
+  String get common_action_drawerOpening => 'Opening drawer';
+
+  @override
+  String get common_action_connecting => 'Connecting';
+
+  @override
+  String get common_action_processing => 'Processing...';
+
+  @override
+  String get common_cancelInfo_drawerClose =>
+      'To cancel the operation, close the drawer.';
+
+  @override
+  String get common_patientListTitle => 'Patient List';
+
+  @override
+  String common_patientCountSubtitle(int count) {
+    return 'Total $count patients';
+  }
+
+  @override
+  String get assignment_error_stationLoadFailed =>
+      'Could not load cabin station information';
+
+  @override
+  String get cabinStock_panel_title =>
+      'Medications in Cabin Assigned to Patient';
+
+  @override
+  String get census_cancelDialog_title => 'Cancel Census';
+
+  @override
+  String get census_cancelDialog_message => 'Cancel the census operation?';
+
+  @override
+  String get census_action_start => 'Start census';
+
+  @override
+  String get census_action_drawerOpen => 'Count medications';
+
+  @override
+  String get census_action_complete => 'Complete census';
+
+  @override
+  String get census_action_continue => 'Continue census';
+
+  @override
+  String get census_success_completed => 'Census completed successfully.';
+
+  @override
+  String get drugActivity_column_date => 'Date';
+
+  @override
+  String get drugActivity_column_time => 'Time';
+
+  @override
+  String get drugActivity_column_patient => 'Patient';
+
+  @override
+  String get drugActivity_column_user => 'User';
+
+  @override
+  String get drugActivity_column_material => 'Material';
+
+  @override
+  String get drugActivity_column_quantity => 'Quantity';
+
+  @override
+  String get drugActivity_column_movement => 'Movement';
+
+  @override
+  String get intake_cancelDialog_title => 'Cancel Intake';
+
+  @override
+  String get intake_cancelDialog_message =>
+      'No medication taken yet. Cancel the intake?';
+
+  @override
+  String get intake_action_start => 'Start intake';
+
+  @override
+  String get intake_action_drawerOpen => 'Take medications';
+
+  @override
+  String get intake_action_complete => 'Complete intake';
+
+  @override
+  String get intake_action_continue => 'Continue intake';
+
+  @override
+  String get intake_success_completed => 'Intake completed successfully.';
+
+  @override
+  String get myPatients_search_hint => 'Search patient, room, service...';
+
+  @override
+  String get refill_cancelDialog_title => 'Cancel Refill';
+
+  @override
+  String get refill_cancelDialog_message =>
+      'Medications will be assumed removed from the drawer. Cancel the refill?';
+
+  @override
+  String get refill_action_start => 'Start refill';
+
+  @override
+  String get refill_action_placeDrugs => 'Place medications';
+
+  @override
+  String get refill_action_complete => 'Complete refill';
+
+  @override
+  String get refill_action_continue => 'Continue refill';
+
+  @override
+  String get refill_success_completedMobile => 'Refill completed successfully.';
+
+  @override
+  String get refill_success_completedMaster => 'Refill saved successfully';
+
+  @override
+  String get refill_hint_selectDrawer =>
+      'Select a drawer from the left panel to start refilling.';
+
+  @override
+  String get refill_hint_selectCell => 'Select a cell from the drawer.';
+
+  @override
+  String get refill_hint_cellError => 'Select a cell.';
+
+  @override
+  String get refill_label_countQty => 'Count Quantity';
+
+  @override
+  String get refill_label_fillQty => 'Fill Quantity';
+
+  @override
+  String get refill_label_expiryDate => 'Expiry Date';
+
+  @override
+  String get refund_success_completed => 'Refund completed successfully.';
+
+  @override
+  String get refund_panel_title => 'Refundable Medications';
+
+  @override
+  String get refund_action_checking => 'Checking...';
+
+  @override
+  String get refund_action_refunding => 'Refunding...';
+
+  @override
+  String get refund_action_refund => 'Refund';
+
+  @override
+  String get unappliedPrescription_panel_patientTitle => 'Patients';
+
+  @override
+  String get unload_cancelDialog_title => 'Cancel Unload';
+
+  @override
+  String get unload_cancelDialog_message =>
+      'No medication removed yet. Cancel the unload?';
+
+  @override
+  String get unload_action_start => 'Start unload';
+
+  @override
+  String get unload_action_drawerOpen => 'Remove medications';
+
+  @override
+  String get unload_action_complete => 'Complete unload';
+
+  @override
+  String get unload_action_continue => 'Continue unload';
+
+  @override
+  String get unload_success_completed => 'Unload completed successfully.';
+
+  @override
+  String get waste_panel_title => 'Wasteable/Destructible Medications';
+
+  @override
+  String get waste_action_wastage => 'Waste';
+
+  @override
+  String get waste_action_destruction => 'Destroy';
+
+  @override
+  String get waste_success_wastage => 'Wastage completed successfully.';
+
+  @override
+  String get waste_success_destruction => 'Destruction completed successfully.';
+
+  @override
+  String get assignment_success_created => 'Bed assignment saved successfully.';
+
+  @override
+  String get assignment_success_deleted => 'Bed assignment removed.';
+
+  @override
+  String get cabin_bannerCensus =>
+      'After the drawer opens, select the medications in the cabinet and complete the count. Medications with status \"Pending Intake\" can be counted; unselected medications are assumed to have a quantity of 0.';
+
+  @override
+  String get cabin_bannerIntake => 'Drug Intake';
+
+  @override
+  String get cabin_bannerUnload => 'Drug Unload';
+
+  @override
+  String get operationPanel_title_assign => 'DRUG ASSIGNMENT';
+
+  @override
+  String get operationPanel_badge_assign => 'ASSIGN';
+
+  @override
+  String get operationPanel_title_refill => 'DRUG REFILL';
+
+  @override
+  String get operationPanel_badge_refill => 'REFILL';
+
+  @override
+  String get operationPanel_title_census => 'DRUG COUNT';
+
+  @override
+  String get operationPanel_badge_census => 'COUNT';
+
+  @override
+  String get operationPanel_title_fault => 'REPORT FAULT';
+
+  @override
+  String get operationPanel_badge_fault => 'FAULT';
+
+  @override
+  String get operationPanel_title_intake => 'DRUG INTAKE';
+
+  @override
+  String get operationPanel_badge_intake => 'INTAKE';
+
+  @override
+  String get operationPanel_title_unload => 'DRUG UNLOAD';
+
+  @override
+  String get operationPanel_badge_unload => 'UNLOAD';
+
+  @override
+  String get drugAssignment_panel_title => 'Select Drug';
+
+  @override
+  String get session_timeout_warning => 'Your session is about to expire.';
+
+  @override
+  String get session_timeout_continueButton => 'Continue';
+
+  @override
+  String get session_timeout_prefix => 'Your session will close in ';
+
+  @override
+  String get session_timeout_suffix => ' seconds.';
+
+  @override
+  String get session_locked_prefix => 'Your session ';
+
+  @override
+  String get session_locked_reason => 'timed out';
+
+  @override
+  String get session_locked_suffix =>
+      ' and was closed. Please log in to continue.';
+
+  @override
+  String get movement_noHistory => 'No movement history found.';
+
+  @override
+  String get movement_performedBy => 'Performed by';
+
+  @override
+  String get common_search_noPatientResults => 'No patients match your search.';
+
+  @override
+  String get common_drug_noFilterResults => 'No medications match this filter.';
+
+  @override
+  String get common_unknownName => 'Unknown';
+
+  @override
+  String get rfidStatus_read => 'Read';
+
+  @override
+  String get rfidStatus_waiting => 'Waiting';
+
+  @override
+  String get rfidStatus_inCabin => 'In cabinet';
+
+  @override
+  String get rfidStatus_notInCabin => 'Not in cabinet';
+
+  @override
+  String get rfidStatus_taken => 'Taken';
+
+  @override
+  String get rfidStatus_missing => 'Missing';
+
+  @override
+  String get drawerStatus_full => 'Full';
+
+  @override
+  String get drawerStatus_low => 'Low';
+
+  @override
+  String get drawerStatus_critical => 'Critical';
+
+  @override
+  String get drawerStatus_empty => 'Empty';
+
+  @override
+  String cabin_cellCount(Object count) {
+    return '$count cells';
+  }
+
+  @override
+  String cabin_drawerStats(Object columns, Object rowCount, Object totalCells) {
+    return '$rowCount rows · $totalCells cells · $columns columns';
+  }
+
+  @override
+  String hospitalization_admissionDate(Object date) {
+    return 'Admission Date | $date';
+  }
+
+  @override
+  String get movement_dateLabel => 'Date';
+
+  @override
+  String get movement_quantityLabel => 'Quantity';
+
+  @override
+  String get movement_showAll => 'Show All Movements';
+
+  @override
+  String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps) {
+    return '$groupCount groups · $steps steps × $mult';
+  }
 }

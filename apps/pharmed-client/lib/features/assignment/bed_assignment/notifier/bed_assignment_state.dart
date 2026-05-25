@@ -155,6 +155,7 @@ final class BedAssignmentSuccess extends BedAssignmentState {
     required this.assignments,
     required this.cabinId,
     required this.message,
+    required this.isCreated,
   });
 
   final List<MobileSlotVisual> slots;
@@ -164,6 +165,10 @@ final class BedAssignmentSuccess extends BedAssignmentState {
   final List<BedAssignment> assignments;
   final int cabinId;
   final String message;
+
+  /// true → yeni yatak ataması kaydedildi; false → mevcut atama kaldırıldı.
+  /// View'da doğru l10n mesajını seçmek için kullanılır.
+  final bool isCreated;
 }
 
 /// İşlem hatası — previousState'e dönülür.
