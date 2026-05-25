@@ -942,4 +942,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get waste_success_destruction => 'تمت عملية الإتلاف بنجاح.';
+
+  @override
+  String get assignment_success_created => 'تم حفظ تعيين السرير بنجاح.';
+
+  @override
+  String get assignment_success_deleted => 'تمت إزالة تعيين السرير.';
 }

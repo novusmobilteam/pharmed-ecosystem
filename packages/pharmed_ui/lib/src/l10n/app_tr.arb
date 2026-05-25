@@ -905,5 +905,11 @@
   "@waste_success_wastage": { "description": "Success snackbar shown after a wastage operation is saved" },
 
   "waste_success_destruction": "İmha işlemi başarıyla tamamlandı.",
-  "@waste_success_destruction": { "description": "Success snackbar shown after a destruction operation is saved" }
+  "@waste_success_destruction": { "description": "Success snackbar shown after a destruction operation is saved" },
+
+  "assignment_success_created": "Yatak ataması başarıyla kaydedildi.",
+  "@assignment_success_created": { "description": "Success snackbar shown after a bed assignment is created" },
+
+  "assignment_success_deleted": "Yatak ataması kaldırıldı.",
+  "@assignment_success_deleted": { "description": "Success snackbar shown after a bed assignment is deleted" }
 }

@@ -185,10 +185,9 @@ class MobileFaultNotifier extends Notifier<MobileFaultState> {
 
         ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer();
         return MobileFaultSuccess(
-          message: isNewRecord
-              ? 'Arıza kaydı oluşturuldu.'
-              : 'Arıza kaydı kapatıldı.', // TODO(l10n): move to view layer or pass translated string as parameter
+          message: '',
           previous: nextSelected,
+          isNewRecord: isNewRecord,
         );
       },
       error: (e) => MobileFaultError(

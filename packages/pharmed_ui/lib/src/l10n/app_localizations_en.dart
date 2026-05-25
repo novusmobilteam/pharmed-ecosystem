@@ -946,4 +946,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get waste_success_destruction => 'Destruction completed successfully.';
+
+  @override
+  String get assignment_success_created => 'Bed assignment saved successfully.';
+
+  @override
+  String get assignment_success_deleted => 'Bed assignment removed.';
 }

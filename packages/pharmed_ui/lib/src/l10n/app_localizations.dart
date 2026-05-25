@@ -1845,6 +1845,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Destruction completed successfully.'**
   String get waste_success_destruction;
+
+  /// No description provided for @assignment_success_created.
+  ///
+  /// In en, this message translates to:
+  /// **'Bed assignment saved successfully.'**
+  String get assignment_success_created;
+
+  /// No description provided for @assignment_success_deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Bed assignment removed.'**
+  String get assignment_success_deleted;
 }
 
 class _AppLocalizationsDelegate

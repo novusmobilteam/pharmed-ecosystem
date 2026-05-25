@@ -788,5 +788,8 @@
   "waste_action_wastage": "هدر",
   "waste_action_destruction": "إتلاف",
   "waste_success_wastage": "تمت عملية الهدر بنجاح.",
-  "waste_success_destruction": "تمت عملية الإتلاف بنجاح."
+  "waste_success_destruction": "تمت عملية الإتلاف بنجاح.",
+
+  "assignment_success_created": "تم حفظ تعيين السرير بنجاح.",
+  "assignment_success_deleted": "تمت إزالة تعيين السرير."
 }

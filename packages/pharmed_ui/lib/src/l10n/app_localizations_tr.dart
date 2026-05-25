@@ -946,4 +946,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get waste_success_destruction => 'İmha işlemi başarıyla tamamlandı.';
+
+  @override
+  String get assignment_success_created =>
+      'Yatak ataması başarıyla kaydedildi.';
+
+  @override
+  String get assignment_success_deleted => 'Yatak ataması kaldırıldı.';
 }

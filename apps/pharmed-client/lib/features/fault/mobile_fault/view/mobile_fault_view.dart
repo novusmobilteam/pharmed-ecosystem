@@ -61,7 +61,10 @@ class _MobileFaultViewState extends ConsumerState<MobileFaultView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is MobileFaultSuccess) {
-        MessageUtils.showSuccessSnackbar(context, next.message);
+        final msg = next.isNewRecord
+            ? context.l10n.fault_recordCreatedSuccess
+            : context.l10n.fault_recordClosedSuccess;
+        MessageUtils.showSuccessSnackbar(context, msg);
         notifier.dismissSuccess();
       }
     });

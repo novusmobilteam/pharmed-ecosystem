@@ -76,10 +76,14 @@ class MobileFaultSaving extends MobileFaultState {
 }
 
 class MobileFaultSuccess extends MobileFaultState {
-  const MobileFaultSuccess({required this.message, required this.previous});
+  const MobileFaultSuccess({required this.message, required this.previous, required this.isNewRecord});
 
   final String message;
   final MobileFaultSlotSelected previous;
+
+  /// true → yeni arıza kaydı oluşturuldu; false → mevcut kayıt kapatıldı.
+  /// View'da doğru l10n mesajını seçmek için kullanılır.
+  final bool isNewRecord;
 }
 
 class MobileFaultError extends MobileFaultState {

@@ -787,5 +787,8 @@
   "waste_action_wastage": "Waste",
   "waste_action_destruction": "Destroy",
   "waste_success_wastage": "Wastage completed successfully.",
-  "waste_success_destruction": "Destruction completed successfully."
+  "waste_success_destruction": "Destruction completed successfully.",
+
+  "assignment_success_created": "Bed assignment saved successfully.",
+  "assignment_success_deleted": "Bed assignment removed."
 }
