@@ -705,5 +705,205 @@
 },
 
 "wasteNoWastableDrugs": "Fire/imha edilebilir ilaç bulunamadı.",
-"wasteSelectPatient": "İşlem yapmak için hasta seçin."
+"wasteSelectPatient": "İşlem yapmak için hasta seçin.",
+
+  "common_confirmCancelButton": "İptal Et",
+  "@common_confirmCancelButton": { "description": "Confirm cancel button label inside danger/exit dialogs" },
+
+  "common_dismissButton": "Vazgeç",
+  "@common_dismissButton": { "description": "Dismiss/clear button label used in action bars" },
+
+  "common_action_saving": "Kaydediliyor",
+  "@common_action_saving": { "description": "Loading button label while a save operation is in progress" },
+
+  "common_action_drawerOpening": "Çekmece açılıyor",
+  "@common_action_drawerOpening": { "description": "Loading button label while the physical drawer is opening" },
+
+  "common_action_connecting": "Bağlantı kuruluyor",
+  "@common_action_connecting": { "description": "Loading button label while establishing a device connection" },
+
+  "common_action_processing": "İşlem yapılıyor...",
+  "@common_action_processing": { "description": "Generic loading button label while any operation is in progress" },
+
+  "common_cancelInfo_drawerClose": "İşlemi iptal etmek için çekmeceyi kapatın.",
+  "@common_cancelInfo_drawerClose": { "description": "Info snackbar shown when user tries to cancel while drawer is opening or open" },
+
+  "common_patientListTitle": "Hasta Listesi",
+  "@common_patientListTitle": { "description": "Title shown above the patient list in two-column layout left panel" },
+
+  "common_patientCountSubtitle": "Toplam {count} hasta",
+  "@common_patientCountSubtitle": {
+    "description": "Subtitle showing total number of patients in the left panel",
+    "placeholders": {
+      "count": { "type": "int", "description": "Total number of patients" }
+    }
+  },
+
+  "assignment_error_stationLoadFailed": "Kabin istasyon bilgisi alınamadı",
+  "@assignment_error_stationLoadFailed": { "description": "Error message when cabin station data fails to load during bed assignment init" },
+
+  "cabinStock_panel_title": "Hastaya Ait Kabinde Bulunan İlaçlar",
+  "@cabinStock_panel_title": { "description": "Title of the drug panel in the cabin stock view showing medications assigned to a patient" },
+
+  "census_cancelDialog_title": "Sayımı İptal Et",
+  "@census_cancelDialog_title": { "description": "Title of the confirmation dialog shown before cancelling a census operation" },
+
+  "census_cancelDialog_message": "Sayım işlemi iptal edilsin mi?",
+  "@census_cancelDialog_message": { "description": "Body message of the confirm-cancel dialog in the census flow" },
+
+  "census_action_start": "Sayıma başla",
+  "@census_action_start": { "description": "Action bar button label to start the census (open drawer)" },
+
+  "census_action_drawerOpen": "İlaçları sayın",
+  "@census_action_drawerOpen": { "description": "Disabled action bar label shown while the drawer is open during census" },
+
+  "census_action_complete": "Sayımı tamamla",
+  "@census_action_complete": { "description": "Action bar button label to complete the census when all RFID items are detected" },
+
+  "census_action_continue": "Sayıma devam et",
+  "@census_action_continue": { "description": "Action bar button label to reopen the drawer and continue census when not all items are detected" },
+
+  "census_success_completed": "Sayım işlemi başarıyla tamamlandı.",
+  "@census_success_completed": { "description": "Success snackbar shown after a census operation is saved" },
+
+  "drugActivity_column_date": "Tarih",
+  "@drugActivity_column_date": { "description": "Column header for the date column in the drug activity table" },
+
+  "drugActivity_column_time": "Saat",
+  "@drugActivity_column_time": { "description": "Column header for the time column in the drug activity table" },
+
+  "drugActivity_column_patient": "Hasta",
+  "@drugActivity_column_patient": { "description": "Column header for the patient column in the drug activity table" },
+
+  "drugActivity_column_user": "Kullanıcı",
+  "@drugActivity_column_user": { "description": "Column header for the user column in the drug activity table" },
+
+  "drugActivity_column_material": "Malzeme",
+  "@drugActivity_column_material": { "description": "Column header for the material/drug column in the drug activity table" },
+
+  "drugActivity_column_quantity": "Miktar",
+  "@drugActivity_column_quantity": { "description": "Column header for the quantity column in the drug activity table" },
+
+  "drugActivity_column_movement": "Hareket",
+  "@drugActivity_column_movement": { "description": "Column header for the movement type column in the drug activity table" },
+
+  "intake_cancelDialog_title": "Alımı İptal Et",
+  "@intake_cancelDialog_title": { "description": "Title of the confirmation dialog shown before cancelling an intake operation" },
+
+  "intake_cancelDialog_message": "Henüz ilaç alınmadı. Alım işlemi iptal edilsin mi?",
+  "@intake_cancelDialog_message": { "description": "Body message of the confirm-cancel dialog in the intake flow" },
+
+  "intake_action_start": "Alıma başla",
+  "@intake_action_start": { "description": "Action bar button label to start the intake (open drawer)" },
+
+  "intake_action_drawerOpen": "İlaçları alın",
+  "@intake_action_drawerOpen": { "description": "Disabled action bar label shown while the drawer is open during intake" },
+
+  "intake_action_complete": "Alımı tamamla",
+  "@intake_action_complete": { "description": "Action bar button label to complete the intake when all RFID items are taken" },
+
+  "intake_action_continue": "Alıma devam et",
+  "@intake_action_continue": { "description": "Action bar button label to reopen the drawer and continue intake" },
+
+  "intake_success_completed": "Alım işlemi başarıyla tamamlandı.",
+  "@intake_success_completed": { "description": "Success snackbar shown after an intake operation is saved" },
+
+  "myPatients_search_hint": "Hasta, oda, servis ara...",
+  "@myPatients_search_hint": { "description": "Hint text in the search field on the my patients screen" },
+
+  "refill_cancelDialog_title": "Dolumu İptal Et",
+  "@refill_cancelDialog_title": { "description": "Title of the confirmation dialog shown before cancelling a mobile refill operation" },
+
+  "refill_cancelDialog_message": "İlaçları çekmeceden çıkardığınız varsayılacak. Dolum iptal edilsin mi?",
+  "@refill_cancelDialog_message": { "description": "Body message of the confirm-cancel dialog in the mobile refill flow" },
+
+  "refill_action_start": "Doluma başla",
+  "@refill_action_start": { "description": "Action bar button label to start the refill (open drawer)" },
+
+  "refill_action_placeDrugs": "İlaçları yerleştirin",
+  "@refill_action_placeDrugs": { "description": "Disabled action bar label shown while the drawer is open during refill" },
+
+  "refill_action_complete": "Dolumu tamamla",
+  "@refill_action_complete": { "description": "Action bar button label to complete the refill when all RFID items are placed" },
+
+  "refill_action_continue": "Doluma devam et",
+  "@refill_action_continue": { "description": "Action bar button label to reopen the drawer and continue refill" },
+
+  "refill_success_completedMobile": "Dolum işlemi başarıyla tamamlandı.",
+  "@refill_success_completedMobile": { "description": "Success snackbar shown after a mobile refill operation is saved" },
+
+  "refill_success_completedMaster": "Dolum başarıyla kaydedildi",
+  "@refill_success_completedMaster": { "description": "Success snackbar shown after a master cabinet refill is saved" },
+
+  "refill_hint_selectDrawer": "Dolum yapmak için sol panelden bir çekmece seçin.",
+  "@refill_hint_selectDrawer": { "description": "Empty hint shown in master refill right panel when no drawer is selected" },
+
+  "refill_hint_selectCell": "Çekmeceden bir göz seçin.",
+  "@refill_hint_selectCell": { "description": "Empty hint shown in master refill right panel when a drawer is selected but no cell" },
+
+  "refill_hint_cellError": "Bir göz seçin.",
+  "@refill_hint_cellError": { "description": "Short empty hint shown in master refill right panel on error fallback" },
+
+  "refill_label_countQty": "Sayım Miktarı",
+  "@refill_label_countQty": { "description": "Input field label for count quantity in master refill panel" },
+
+  "refill_label_fillQty": "Dolum Miktarı",
+  "@refill_label_fillQty": { "description": "Input field label for fill quantity in master refill panel" },
+
+  "refill_label_expiryDate": "Son Kullanma Tarihi",
+  "@refill_label_expiryDate": { "description": "Input field label for expiry date in master refill panel" },
+
+  "refund_success_completed": "İade başarıyla tamamlandı.",
+  "@refund_success_completed": { "description": "Success snackbar shown after a refund operation is completed" },
+
+  "refund_panel_title": "İade Edilebilir İlaçlar",
+  "@refund_panel_title": { "description": "Title of the drug panel in the mobile refund right panel" },
+
+  "refund_action_checking": "Kontrol ediliyor...",
+  "@refund_action_checking": { "description": "Loading button label while refund eligibility is being checked" },
+
+  "refund_action_refunding": "İade ediliyor...",
+  "@refund_action_refunding": { "description": "Loading button label while the refund is being processed" },
+
+  "refund_action_refund": "İade Et",
+  "@refund_action_refund": { "description": "Primary action button label to submit a refund" },
+
+  "unappliedPrescription_panel_patientTitle": "Hastalar",
+  "@unappliedPrescription_panel_patientTitle": { "description": "Title of the patient list panel in the unapplied prescription screen" },
+
+  "unload_cancelDialog_title": "Boşaltmayı İptal Et",
+  "@unload_cancelDialog_title": { "description": "Title of the confirmation dialog shown before cancelling an unload operation" },
+
+  "unload_cancelDialog_message": "Henüz ilaç çıkarılmadı. Boşaltma işlemi iptal edilsin mi?",
+  "@unload_cancelDialog_message": { "description": "Body message of the confirm-cancel dialog in the unload flow" },
+
+  "unload_action_start": "Boşaltmaya başla",
+  "@unload_action_start": { "description": "Action bar button label to start the unload (open drawer)" },
+
+  "unload_action_drawerOpen": "İlaçları çıkarın",
+  "@unload_action_drawerOpen": { "description": "Disabled action bar label shown while the drawer is open during unload" },
+
+  "unload_action_complete": "Boşaltmayı tamamla",
+  "@unload_action_complete": { "description": "Action bar button label to complete the unload when all items are removed" },
+
+  "unload_action_continue": "Boşaltmaya devam et",
+  "@unload_action_continue": { "description": "Action bar button label to reopen the drawer and continue unload" },
+
+  "unload_success_completed": "Boşaltma işlemi başarıyla tamamlandı.",
+  "@unload_success_completed": { "description": "Success snackbar shown after an unload operation is saved" },
+
+  "waste_panel_title": "Fire/İmha Edilebilir İlaçlar",
+  "@waste_panel_title": { "description": "Title of the drug panel in the mobile waste right panel" },
+
+  "waste_action_wastage": "Fire Et",
+  "@waste_action_wastage": { "description": "Button label for the wastage (fire) action in the waste action bar" },
+
+  "waste_action_destruction": "İmha Et",
+  "@waste_action_destruction": { "description": "Button label for the destruction (imha) action in the waste action bar" },
+
+  "waste_success_wastage": "Fire işlemi başarıyla tamamlandı.",
+  "@waste_success_wastage": { "description": "Success snackbar shown after a wastage operation is saved" },
+
+  "waste_success_destruction": "İmha işlemi başarıyla tamamlandı.",
+  "@waste_success_destruction": { "description": "Success snackbar shown after a destruction operation is saved" }
 }

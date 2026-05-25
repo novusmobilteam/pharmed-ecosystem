@@ -705,5 +705,87 @@
 },
 
 "wasteNoWastableDrugs": "No disposable drugs found.",
-"wasteSelectPatient": "Select a patient to proceed."
+"wasteSelectPatient": "Select a patient to proceed.",
+
+  "common_confirmCancelButton": "Cancel",
+  "common_dismissButton": "Dismiss",
+  "common_action_saving": "Saving",
+  "common_action_drawerOpening": "Opening drawer",
+  "common_action_connecting": "Connecting",
+  "common_action_processing": "Processing...",
+  "common_cancelInfo_drawerClose": "To cancel the operation, close the drawer.",
+  "common_patientListTitle": "Patient List",
+  "common_patientCountSubtitle": "Total {count} patients",
+  "@common_patientCountSubtitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "assignment_error_stationLoadFailed": "Could not load cabin station information",
+
+  "cabinStock_panel_title": "Medications in Cabin Assigned to Patient",
+
+  "census_cancelDialog_title": "Cancel Census",
+  "census_cancelDialog_message": "Cancel the census operation?",
+  "census_action_start": "Start census",
+  "census_action_drawerOpen": "Count medications",
+  "census_action_complete": "Complete census",
+  "census_action_continue": "Continue census",
+  "census_success_completed": "Census completed successfully.",
+
+  "drugActivity_column_date": "Date",
+  "drugActivity_column_time": "Time",
+  "drugActivity_column_patient": "Patient",
+  "drugActivity_column_user": "User",
+  "drugActivity_column_material": "Material",
+  "drugActivity_column_quantity": "Quantity",
+  "drugActivity_column_movement": "Movement",
+
+  "intake_cancelDialog_title": "Cancel Intake",
+  "intake_cancelDialog_message": "No medication taken yet. Cancel the intake?",
+  "intake_action_start": "Start intake",
+  "intake_action_drawerOpen": "Take medications",
+  "intake_action_complete": "Complete intake",
+  "intake_action_continue": "Continue intake",
+  "intake_success_completed": "Intake completed successfully.",
+
+  "myPatients_search_hint": "Search patient, room, service...",
+
+  "refill_cancelDialog_title": "Cancel Refill",
+  "refill_cancelDialog_message": "Medications will be assumed removed from the drawer. Cancel the refill?",
+  "refill_action_start": "Start refill",
+  "refill_action_placeDrugs": "Place medications",
+  "refill_action_complete": "Complete refill",
+  "refill_action_continue": "Continue refill",
+  "refill_success_completedMobile": "Refill completed successfully.",
+  "refill_success_completedMaster": "Refill saved successfully",
+  "refill_hint_selectDrawer": "Select a drawer from the left panel to start refilling.",
+  "refill_hint_selectCell": "Select a cell from the drawer.",
+  "refill_hint_cellError": "Select a cell.",
+  "refill_label_countQty": "Count Quantity",
+  "refill_label_fillQty": "Fill Quantity",
+  "refill_label_expiryDate": "Expiry Date",
+
+  "refund_success_completed": "Refund completed successfully.",
+  "refund_panel_title": "Refundable Medications",
+  "refund_action_checking": "Checking...",
+  "refund_action_refunding": "Refunding...",
+  "refund_action_refund": "Refund",
+
+  "unappliedPrescription_panel_patientTitle": "Patients",
+
+  "unload_cancelDialog_title": "Cancel Unload",
+  "unload_cancelDialog_message": "No medication removed yet. Cancel the unload?",
+  "unload_action_start": "Start unload",
+  "unload_action_drawerOpen": "Remove medications",
+  "unload_action_complete": "Complete unload",
+  "unload_action_continue": "Continue unload",
+  "unload_success_completed": "Unload completed successfully.",
+
+  "waste_panel_title": "Wasteable/Destructible Medications",
+  "waste_action_wastage": "Waste",
+  "waste_action_destruction": "Destroy",
+  "waste_success_wastage": "Wastage completed successfully.",
+  "waste_success_destruction": "Destruction completed successfully."
 }
