@@ -842,6 +842,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get intake_success_completed => 'تم إتمام الاستلام بنجاح.';
 
   @override
+  String get intake_action_reportMissingStock => 'الإبلاغ عن نقص المخزون';
+
+  @override
   String get myPatients_search_hint => 'ابحث عن مريض، غرفة، قسم...';
 
   @override

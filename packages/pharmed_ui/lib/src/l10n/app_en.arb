@@ -749,6 +749,7 @@
   "intake_action_complete": "Complete intake",
   "intake_action_continue": "Continue intake",
   "intake_success_completed": "Intake completed successfully.",
+  "intake_action_reportMissingStock": "Report Missing Stock",
 
   "myPatients_search_hint": "Search patient, room, service...",
 

@@ -31,4 +31,7 @@ abstract interface class IIntakeRepository {
   /// Mobil kabin ilaç kontrol ve alım işlemleri
   Future<Result<void>> checkMobileIntake(List<Map<String, dynamic>> data);
   Future<Result<void>> completeMobileIntake(List<Map<String, dynamic>> data);
+
+  /// Mobil kabinde ilaç alım esnasında eksik stok bildirme işlemi
+  Future<Result<void>> reportMissingStock(int prescriptionItemId);
 }

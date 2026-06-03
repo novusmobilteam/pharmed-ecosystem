@@ -117,6 +117,7 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
           onChangePatient: notifier.clearPatientSelection,
           onToggleItem: notifier.toggleItemSelection,
           onCancelIntake: () => _onCancelIntake(state, drawerStage),
+          onReportMissing: notifier.reportMissingStock,
         ),
       ),
     );

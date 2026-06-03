@@ -846,6 +846,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get intake_success_completed => 'Intake completed successfully.';
 
   @override
+  String get intake_action_reportMissingStock => 'Report Missing Stock';
+
+  @override
   String get myPatients_search_hint => 'Search patient, room, service...';
 
   @override

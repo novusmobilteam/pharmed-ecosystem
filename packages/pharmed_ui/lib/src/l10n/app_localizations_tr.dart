@@ -844,6 +844,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get intake_success_completed => 'Alım işlemi başarıyla tamamlandı.';
 
   @override
+  String get intake_action_reportMissingStock => 'Eksik Stok Bildir';
+
+  @override
   String get myPatients_search_hint => 'Hasta, oda, servis ara...';
 
   @override

@@ -16,3 +16,4 @@ export 'domain/usecase/get_intake_items_usecase.dart';
 export 'domain/usecase/intake_patient_medicine_usecase.dart';
 export 'domain/usecase/check_mobile_intake_usecase.dart';
 export 'domain/usecase/complete_mobile_intake_usecase.dart';
+export 'domain/usecase/report_missing_stock_usecase.dart';

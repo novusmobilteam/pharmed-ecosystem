@@ -78,6 +78,8 @@ class RxOperationCard extends StatelessWidget {
     required this.isEligible,
     required this.mode,
     required this.onTap,
+    this.onReportMissing,
+    this.isReportingMissing = false,
   });
 
   final PrescriptionItem item;
@@ -97,6 +99,11 @@ class RxOperationCard extends StatelessWidget {
   /// `null` ise kart tıklanamaz (süreç aktif veya item.id yok).
   final VoidCallback? onTap;
 
+  /// "Eksik Stok Bildir" — yalnızca intake modunda, eligible item'da gösterilir.
+  /// `null` ise buton gizlenir (süreç aktif vb.).
+  final VoidCallback? onReportMissing;
+  final bool isReportingMissing;
+
   bool get _needsRfid {
     if (item.medicine == null || !item.medicine!.isDrug) return false;
     return (item.medicine as Drug).isRfidEnable;
@@ -106,6 +113,7 @@ class RxOperationCard extends StatelessWidget {
   bool get _isLocked => onTap == null;
   bool get _showRfidLiveStatus => _isLocked && isSelected && _needsRfid && _hasRfidTag;
   bool get _isActive => isSelected && _isLocked;
+  bool get _showReportMissing => mode == RxOperationCardMode.intake && isEligible && onReportMissing != null;
 
   Color get _borderColor {
     if (mode == RxOperationCardMode.intake && isSelected && _hasRfidTag && rfidStatus == RfidPresenceStatus.absent) {
@@ -183,6 +191,18 @@ class RxOperationCard extends StatelessWidget {
                   if (item.time != null) TimeChip(time: item.time!),
                 ],
               ),
+
+              if (_showReportMissing) ...[
+                const SizedBox(height: 12.0),
+                MedButton(
+                  label: context.l10n.intake_action_reportMissingStock,
+                  size: MedButtonSize.sm,
+                  variant: MedButtonVariant.danger,
+                  fullWidth: true,
+                  isLoading: isReportingMissing,
+                  onPressed: isReportingMissing ? null : onReportMissing,
+                ),
+              ],
             ],
           ),
         ),

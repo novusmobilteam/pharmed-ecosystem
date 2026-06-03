@@ -750,6 +750,7 @@
   "intake_action_complete": "إتمام الاستلام",
   "intake_action_continue": "متابعة الاستلام",
   "intake_success_completed": "تم إتمام الاستلام بنجاح.",
+  "intake_action_reportMissingStock": "الإبلاغ عن نقص المخزون",
 
   "myPatients_search_hint": "ابحث عن مريض، غرفة، قسم...",
 

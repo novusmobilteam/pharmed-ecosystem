@@ -99,6 +99,7 @@ final class MobileIntakeReady extends MobileIntakeState {
     required this.rfidReadEpcs,
     required this.takenEpcs,
     required this.selectedItemIds,
+    this.reportingItemIds = const {}, // "eksik stok bildiriliyor" loading
   });
 
   final List<MobileSlotVisual> slots;
@@ -112,6 +113,7 @@ final class MobileIntakeReady extends MobileIntakeState {
   final Room? room;
   final List<PrescriptionItem> prescriptionItems;
   final Set<String> rfidReadEpcs;
+  final Set<int> reportingItemIds;
 
   /// Kabinden çıkarılmış (alındı sayılan) EPC'ler.
   ///
@@ -155,6 +157,7 @@ final class MobileIntakeReady extends MobileIntakeState {
     Set<String>? rfidReadEpcs,
     Set<String>? takenEpcs,
     Set<int>? selectedItemIds,
+    Set<int>? reportingItemIds,
   }) {
     return MobileIntakeReady(
       slots: slots,
@@ -170,6 +173,7 @@ final class MobileIntakeReady extends MobileIntakeState {
       rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
       takenEpcs: takenEpcs ?? this.takenEpcs,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
+      reportingItemIds: reportingItemIds ?? this.reportingItemIds,
     );
   }
 }

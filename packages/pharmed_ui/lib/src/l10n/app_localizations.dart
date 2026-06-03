@@ -1648,6 +1648,12 @@ abstract class AppLocalizations {
   /// **'Intake completed successfully.'**
   String get intake_success_completed;
 
+  /// No description provided for @intake_action_reportMissingStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Missing Stock'**
+  String get intake_action_reportMissingStock;
+
   /// No description provided for @myPatients_search_hint.
   ///
   /// In en, this message translates to:

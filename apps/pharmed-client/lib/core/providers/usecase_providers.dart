@@ -303,3 +303,7 @@ final completeMobileUnloadUseCaseProvider = Provider((ref) {
 final completeMasterUnloadUseCaseProvider = Provider((ref) {
   return CompleteMasterUnloadUseCase(ref.read(unloadRepositoryProvider));
 });
+
+final reportMissingStockUseCaseProvider = Provider((ref) {
+  return ReportMissingStockUseCase(ref.read(intakeRepositoryProvider));
+});

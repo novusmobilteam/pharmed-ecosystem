@@ -19,6 +19,7 @@ class MobileIntakePanel extends StatelessWidget {
     required this.onChangePatient,
     required this.onToggleItem,
     required this.onCancelIntake,
+    required this.onReportMissing,
   });
 
   final MobileIntakeState state;
@@ -30,12 +31,16 @@ class MobileIntakePanel extends StatelessWidget {
   final VoidCallback onChangePatient;
   final ValueChanged<int> onToggleItem;
   final VoidCallback onCancelIntake;
+  final ValueChanged<int> onReportMissing;
 
   /// Süreç aktif (Opening/Opened/Closed) mı?
   bool get _isProcessActive => drawerStage.isActive;
 
   /// Çekmece açılıyor veya açıkken seçim değiştirilemez.
   bool get _isSelectionLocked => drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened;
+
+  /// Eksik stok bildirimi yalnızca çekmece fiziksel olarak açıkken yapılabilir.
+  bool get _isDrawerOpen => drawerStage is MobileDrawerOpened;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +90,9 @@ class MobileIntakePanel extends StatelessWidget {
             onToggleItem: onToggleItem,
             takenEpcs: ready.takenEpcs,
             rfidReadEpcs: ready.rfidReadEpcs,
+            onReportMissing: onReportMissing,
+            reportingItemIds: ready.reportingItemIds,
+            isDrawerOpen: _isDrawerOpen,
           ),
         ),
         _IntakeActionBar(
@@ -112,6 +120,9 @@ class _PrescriptionList extends StatelessWidget {
     required this.selectedItemIds,
     required this.isProcessActive,
     required this.onToggleItem,
+    required this.onReportMissing,
+    required this.reportingItemIds,
+    required this.isDrawerOpen,
   });
 
   final List<PrescriptionItem> items;
@@ -129,6 +140,10 @@ class _PrescriptionList extends StatelessWidget {
   /// Süreç aktifken kullanıcı seçim değiştiremez (orchestrator açıkken kilitli).
   final bool isProcessActive;
   final ValueChanged<int> onToggleItem;
+
+  final ValueChanged<int> onReportMissing;
+  final Set<int> reportingItemIds;
+  final bool isDrawerOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +175,9 @@ class _PrescriptionList extends StatelessWidget {
           isSelected: isSelected,
           rfidStatus: rfidStatus,
           onTap: isProcessActive || item.id == null ? null : () => onToggleItem(item.id!),
+          // 🆕 Süreç aktifken (orchestrator açık) buton gizlenir
+          onReportMissing: isDrawerOpen && item.id != null ? () => onReportMissing(item.id!) : null,
+          isReportingMissing: item.id != null && reportingItemIds.contains(item.id),
         );
       },
     );
@@ -249,7 +267,11 @@ class _IntakeActionBar extends StatelessWidget {
             ? _ActionButton(label: context.l10n.intake_action_complete, onTap: onComplete)
             : _ActionButton(label: context.l10n.intake_action_continue, onTap: onReopen),
       MobileDrawerFailed() => _ActionButton(label: context.l10n.common_retryButton, onTap: onStart),
-      MobileDrawerIdle() => _ActionButton(label: context.l10n.intake_action_start, enabled: hasSelection, onTap: onStart),
+      MobileDrawerIdle() => _ActionButton(
+        label: context.l10n.intake_action_start,
+        enabled: hasSelection,
+        onTap: onStart,
+      ),
     };
   }
 }
@@ -285,6 +307,11 @@ class _CancelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(label: context.l10n.common_cancelButton, size: MedButtonSize.sm, variant: MedButtonVariant.danger, onPressed: onTap);
+    return MedButton(
+      label: context.l10n.common_cancelButton,
+      size: MedButtonSize.sm,
+      variant: MedButtonVariant.danger,
+      onPressed: onTap,
+    );
   }
 }

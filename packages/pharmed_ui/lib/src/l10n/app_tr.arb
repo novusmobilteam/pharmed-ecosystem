@@ -808,6 +808,8 @@
   "intake_success_completed": "Alım işlemi başarıyla tamamlandı.",
   "@intake_success_completed": { "description": "Success snackbar shown after an intake operation is saved" },
 
+   "intake_action_reportMissingStock": "Eksik Stok Bildir",
+
   "myPatients_search_hint": "Hasta, oda, servis ara...",
   "@myPatients_search_hint": { "description": "Hint text in the search field on the my patients screen" },
 
@@ -1066,5 +1068,5 @@
       "steps": { "type": "Object" },
       "mult": { "type": "Object" }
     }
-  }
+  } 
 }

@@ -41,6 +41,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
       ref.read(getPatientPrescriptionHistoryUseCaseProvider);
   CheckMobileIntakeUseCase get _checkIntake => ref.read(checkMobileIntakeUseCaseProvider);
   CompleteMobileIntakeUseCase get _completeIntake => ref.read(completeMobileIntakeUseCaseProvider);
+  ReportMissingStockUseCase get _reportMissingStock => ref.read(reportMissingStockUseCaseProvider);
 
   @override
   MobileIntakeState build() {
@@ -258,6 +259,67 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
           previousState: current.copyWith(rfidReadEpcs: {}, takenEpcs: {}, selectedItemIds: {}),
         );
       },
+    );
+  }
+
+  /// Eksik stok bildir — ilaç fiziksel olarak kabinde yok.
+  ///
+  /// Backend bildirimi başarılıysa reçete yeniden çekilir; ilgili item
+  /// artık "Alım Bekliyor" olmaktan çıkar ve seçiliyse seçimi kaldırılır.
+  ///
+  /// Süreç (orchestrator) aktifken çağrılmaz — buton zaten gizli olur.
+  ///
+  /// SWREQ-CLI-INTAKE-006
+  Future<void> reportMissingStock(int itemId) async {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+    if (current.reportingItemIds.contains(itemId)) return; // bu item zaten işlemde
+
+    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
+    if (item == null) return;
+    if (!(item.status?.canReportShortage ?? false)) return; // sadece "Alım Bekliyor"
+
+    // Bu item için buton loading
+    state = current.copyWith(reportingItemIds: {...current.reportingItemIds, itemId});
+
+    final result = await _reportMissingStock(itemId);
+
+    result.when(
+      ok: (_) async {
+        final patientId = current.patient.id;
+        if (patientId == null) {
+          state = current.copyWith(reportingItemIds: {...current.reportingItemIds}..remove(itemId));
+          return;
+        }
+
+        final refreshed = await _getPrescriptionHistory(patientId);
+
+        state = refreshed.when(
+          ok: (items) => current.copyWith(
+            prescriptionItems: items,
+            selectedItemIds: {...current.selectedItemIds}..remove(itemId),
+            reportingItemIds: {...current.reportingItemIds}..remove(itemId),
+          ),
+          error: (e) => MobileIntakeError(
+            message: e.message,
+            previousState: current.copyWith(
+              selectedItemIds: {...current.selectedItemIds}..remove(itemId),
+              reportingItemIds: {...current.reportingItemIds}..remove(itemId),
+            ),
+          ),
+        );
+
+        MedLogger.info(
+          unit: 'MobileIntakeNotifier',
+          swreq: 'SWREQ-CLI-INTAKE-006',
+          message: 'Eksik stok bildirildi, reçete yenilendi',
+          context: {'prescriptionDetailId': itemId},
+        );
+      },
+      error: (e) => state = MobileIntakeError(
+        message: e.message,
+        previousState: current.copyWith(reportingItemIds: {...current.reportingItemIds}..remove(itemId)),
+      ),
     );
   }
 

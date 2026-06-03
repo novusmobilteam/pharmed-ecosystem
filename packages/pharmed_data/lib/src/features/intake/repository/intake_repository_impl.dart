@@ -78,4 +78,9 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   Future<Result<void>> completeMobileIntake(List<Map<String, dynamic>> data) async {
     return await _dataSource.completeMobileIntake(data);
   }
+
+  @override
+  Future<Result<void>> reportMissingStock(int prescriptionItemId) async {
+    return await _dataSource.reportMissingStock(prescriptionItemId);
+  }
 }

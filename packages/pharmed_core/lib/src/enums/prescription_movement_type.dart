@@ -4,35 +4,43 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 // DURUMLAR
 // ────────
-// pendingApproval  (1)  Onay Bekliyor
-// purchasePending  (2)  Alım Bekliyor
-// applied          (3)  Uygulandı
-// returned         (4)  İade Edildi        [terminal]
-// wastaged         (5)  Fire Edildi        [terminal]
-// destructed       (6)  İmha Edildi        [terminal]
-// cancelled        (7)  İptal Edildi       [terminal]
-// rejected         (8)  Reddedildi         [terminal]
-// filledWaiting    (9)  Dolum Bekliyor
-// returnPending   (10)  İade Onayı Bekliyor
-// unloaded        (11)  Boşaltıldı         [terminal]
+// pendingApproval         (1)  Onay Bekliyor
+// purchasePending         (2)  Alım Bekliyor
+// applied                 (3)  Uygulandı
+// returned                (4)  İade Edildi              [terminal]
+// wastaged                (5)  Fire Edildi              [terminal]
+// destructed              (6)  İmha Edildi              [terminal]
+// cancelled               (7)  İptal Edildi             [terminal]
+// rejected                (8)  Reddedildi               [terminal]
+// filledWaiting           (9)  Dolum Bekliyor
+// returnPending          (10)  İade Onayı Bekliyor
+// unloaded               (11)  Boşaltıldı               [terminal]
+// shortageReported       (12)  Eksik Bildirildi
+// replenishmentPending   (13)  İkmal Bekliyor
 
 // GEÇİŞLER
 // ─────────
-// pendingApproval  ──[onayla]──►  purchasePending
-// pendingApproval  ──[reddet]──►  rejected
-// pendingApproval  ──[iptal]───►  cancelled
+// pendingApproval     ──[onayla]──────────►  purchasePending
+// pendingApproval     ──[reddet]──────────►  rejected
+// pendingApproval     ──[iptal]───────────►  cancelled
 
-// purchasePending  ──[al]──────►  applied
-// purchasePending  ──[iptal]───►  cancelled
-// purchasePending  ──[boşalt]──►  unloaded
+// purchasePending     ──[al]──────────────►  applied
+// purchasePending     ──[iptal]───────────►  cancelled
+// purchasePending     ──[boşalt]──────────►  unloaded
+// purchasePending     ──[eksik bildir]────►  shortageReported
 
-// filledWaiting    ──[doldur]──►  purchasePending
+// shortageReported    ──[onayla / manager]►  replenishmentPending
+// shortageReported    ──[reddet  / manager]►  ??? (aşağıdaki nota bak)
 
-// applied          ──[iade et]──►  returnPending
-// applied          ──[fire et]──►  wastaged
-// applied          ──[imha et]──►  destructed
+// replenishmentPending──[doldur]──────────►  purchasePending
 
-// returnPending    ──[iade onayla]──►  returned   [manager]
+// filledWaiting       ──[doldur]──────────►  purchasePending
+
+// applied             ──[iade et]─────────►  returnPending
+// applied             ──[fire et]─────────►  wastaged
+// applied             ──[imha et]─────────►  destructed
+
+// returnPending       ──[iade onayla]─────►  returned   [manager]
 
 // TERMINAL DURUMLAR
 // ─────────────────
@@ -41,16 +49,19 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 // AKSİYON MATRİSİ
 // ────────────────
-// canApprove      →  pendingApproval
-// canReject       →  pendingApproval
-// canCancel       →  pendingApproval | purchasePending
-// canFill         →  filledWaiting
-// canPurchase     →  purchasePending
-// canReturn       →  applied
-// canWastage      →  applied
-// canDestruct     →  applied
-// canUnload       →  purchasePending
-// canApproveReturn→  returnPending
+// canApprove          →  pendingApproval
+// canReject           →  pendingApproval
+// canCancel           →  pendingApproval | purchasePending
+// canFill             →  filledWaiting | replenishmentPending
+// canPurchase         →  purchasePending
+// canReportShortage   →  purchasePending
+// canReturn           →  applied
+// canWastage          →  applied
+// canDestruct         →  applied
+// canUnload           →  purchasePending
+// canApproveReturn    →  returnPending
+//
+// shortageReported    →  HİÇBİR client aksiyonu yok (manager onayı bekleniyor)
 
 enum PrescriptionMovementType {
   /// Onay Bekliyor
@@ -84,7 +95,13 @@ enum PrescriptionMovementType {
   returnPending(10),
 
   /// Boşaltıldı
-  unloaded(11);
+  unloaded(11),
+
+  /// Eksik Bildirildi — kullanıcı eksik stok bildirdi, manager onayı bekleniyor.
+  shortageReported(12),
+
+  /// İkmal Bekliyor — eksik onaylandı, dolum yapılabilir.
+  replenishmentPending(13);
 
   final int id;
 
@@ -109,6 +126,8 @@ enum PrescriptionMovementType {
     PrescriptionMovementType.filledWaiting => 'Dolum Bekliyor',
     PrescriptionMovementType.returnPending => 'İade Onayı Bekliyor',
     PrescriptionMovementType.unloaded => 'Boşaltıldı',
+    PrescriptionMovementType.shortageReported => 'Eksik Bildirildi',
+    PrescriptionMovementType.replenishmentPending => 'İkmal Bekliyor',
   };
 
   /// Hareketi gerçekleştiren kişiyi betimleyen etiket.
@@ -125,6 +144,8 @@ enum PrescriptionMovementType {
     PrescriptionMovementType.rejected => 'Reddeden',
     PrescriptionMovementType.returnPending => 'İade Talep Eden',
     PrescriptionMovementType.unloaded => 'Boşaltan',
+    PrescriptionMovementType.shortageReported => 'Eksik Bildiren',
+    PrescriptionMovementType.replenishmentPending => 'İkmal Onaylayan',
   };
 }
 
@@ -140,6 +161,8 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.rejected => MedColors.red,
     PrescriptionMovementType.returnPending => MedColors.amber,
     PrescriptionMovementType.unloaded => MedColors.text3,
+    PrescriptionMovementType.shortageReported => MedColors.amber,
+    PrescriptionMovementType.replenishmentPending => MedColors.blue,
   };
 
   Color get foregroundColor => switch (this) {
@@ -154,6 +177,8 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.filledWaiting => MedColors.amberLight,
     PrescriptionMovementType.returnPending => MedColors.amberLight,
     PrescriptionMovementType.unloaded => MedColors.surface3,
+    PrescriptionMovementType.shortageReported => MedColors.amberLight,
+    PrescriptionMovementType.replenishmentPending => MedColors.blueLight,
   };
 
   IconData get icon => switch (this) {
@@ -168,6 +193,8 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.filledWaiting => PhosphorIcons.hourglass(PhosphorIconsStyle.fill),
     PrescriptionMovementType.returnPending => PhosphorIcons.arrowUUpLeft(PhosphorIconsStyle.fill),
     PrescriptionMovementType.unloaded => PhosphorIcons.tray(PhosphorIconsStyle.fill),
+    PrescriptionMovementType.shortageReported => PhosphorIcons.warningOctagon(PhosphorIconsStyle.fill),
+    PrescriptionMovementType.replenishmentPending => PhosphorIcons.package(PhosphorIconsStyle.fill),
   };
 }
 
@@ -179,9 +206,16 @@ extension PrescriptionMovementTypeActions on PrescriptionMovementType {
   bool get canCancel =>
       this == PrescriptionMovementType.pendingApproval || this == PrescriptionMovementType.purchasePending;
 
-  bool get canFill => this == PrescriptionMovementType.filledWaiting;
+  // shortageReported iptal edilebilsin istersen yukarıdaki canCancel'a
+  // `|| this == PrescriptionMovementType.shortageReported` ekle.
+
+  bool get canFill =>
+      this == PrescriptionMovementType.filledWaiting || this == PrescriptionMovementType.replenishmentPending;
 
   bool get canPurchase => this == PrescriptionMovementType.purchasePending;
+
+  /// Eksik stok bildirme — yalnızca "Alım Bekliyor" durumunda.
+  bool get canReportShortage => this == PrescriptionMovementType.purchasePending;
 
   bool get canReturn => this == PrescriptionMovementType.applied;
 
