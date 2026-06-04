@@ -176,6 +176,8 @@ class UsecaseProviders {
       Provider(create: (context) => GetExpiringStocksUseCase(context.read())),
       Provider(create: (context) => GetStationStocksUseCase(context.read())),
       Provider(create: (context) => CompleteMasterCensusUseCase(context.read())),
+      Provider(create: (context) => ApproveMissingStockUseCase(context.read())),
+      Provider(create: (context) => RejectMissingStockUseCase(context.read())),
 
       /// Unit
       Provider(create: (context) => GetUnitsUseCase(context.read())),
@@ -209,6 +211,14 @@ class UsecaseProviders {
       Provider(create: (context) => DeleteStockTransactionUseCase(context.read())),
       Provider(create: (context) => GetStockTransactionsUseCase(context.read())),
       Provider(create: (context) => GetCabinStockTransactionsUseCase(context.read())),
+
+      /// Dashboard
+      Provider(create: (context) => GetMissingStocksUseCase(context.read())),
+      Provider(create: (context) => GetCabinsUseCase(context.read())),
+      Provider(create: (context) => GetDashboardUnappliedPrescriptionsUseCase(context.read())),
+      Provider(create: (context) => GetUpcomingTreatmentsUseCase(context.read())),
+      Provider(create: (context) => GetDashboardCabinsUseCase(context.read())),
+      Provider(create: (context) => GetDrugActivitiesUseCase(context.read())),
     ];
   }
 }

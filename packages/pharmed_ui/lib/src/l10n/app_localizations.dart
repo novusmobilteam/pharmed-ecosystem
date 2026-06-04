@@ -1432,6 +1432,18 @@ abstract class AppLocalizations {
   /// **'An unexpected error occurred. Please try again or contact your system administrator.'**
   String get emptyStateErrorDescription;
 
+  /// No description provided for @emptyStateNoDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Data'**
+  String get emptyStateNoDataTitle;
+
+  /// No description provided for @emptyStateNoDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no data to display yet.'**
+  String get emptyStateNoDataDescription;
+
   /// Message shown when the selected patient has no refundable medications.
   ///
   /// In en, this message translates to:

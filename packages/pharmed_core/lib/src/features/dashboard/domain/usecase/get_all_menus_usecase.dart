@@ -5,12 +5,11 @@ class GetAllMenusUseCase {
 
   GetAllMenusUseCase(this._dashboardRepository);
 
-  Future<RepoResult<FilteredMenus>> call() async {
+  Future<Result<FilteredMenus>> call() async {
     final result = await _dashboardRepository.getMenuItems();
     return result.when(
-      success: (menus) => RepoSuccess(FilteredMenus(tree: menus, flattened: _flattenTree(menus))),
-      stale: (menus, savedAt) => RepoStale(FilteredMenus(tree: menus, flattened: _flattenTree(menus)), savedAt),
-      failure: (error) => RepoFailure(error),
+      ok: (value) => Result.ok(FilteredMenus(tree: value, flattened: _flattenTree(value))),
+      error: Result.error,
     );
   }
 

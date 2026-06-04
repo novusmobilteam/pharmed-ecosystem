@@ -64,7 +64,7 @@ final getExpiringMaterialsUseCaseProvider = Provider((ref) {
 
 // GetUpcomingTreatmensUseCase
 final getUpcomingTreatmensUseCaseProvider = Provider((ref) {
-  return GetUpcomingTreatmensUseCase(ref.read(dashboardRepositoryProvider));
+  return GetUpcomingTreatmentsUseCase(ref.read(dashboardRepositoryProvider));
 });
 
 final getFilteredMenusUseCaseProvider = Provider<GetFilteredMenusUseCase>((ref) {

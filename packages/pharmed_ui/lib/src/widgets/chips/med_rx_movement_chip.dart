@@ -15,9 +15,13 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 /// MedRxMovementChip(status: prescription.status)
 /// ```
 class MedRxMovementChip extends StatelessWidget {
-  const MedRxMovementChip({super.key, required this.status});
+  const MedRxMovementChip({super.key, required this.status, this.useActionLabel = false});
 
   final PrescriptionMovementType status;
+
+  /// `true` → durumun [PrescriptionMovementType.actionLabel]'ı (yapılan eylem)
+  /// `false` → [PrescriptionMovementType.label]'ı (mevcut durum). Varsayılan.
+  final bool useActionLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +32,10 @@ class MedRxMovementChip extends StatelessWidget {
         borderRadius: MedRadius.smAll,
         border: Border.all(color: status.backgroundColor.withAlpha(55)),
       ),
-      child: Text(status.label, style: MedTextStyles.monoSm(color: status.foregroundColor)),
+      child: Text(
+        useActionLabel ? status.actionLabel : status.label,
+        style: MedTextStyles.monoSm(color: status.foregroundColor),
+      ),
     );
   }
 }

@@ -127,7 +127,7 @@ enum PrescriptionMovementType {
     PrescriptionMovementType.returnPending => 'İade Onayı Bekliyor',
     PrescriptionMovementType.unloaded => 'Boşaltıldı',
     PrescriptionMovementType.shortageReported => 'Eksik Bildirildi',
-    PrescriptionMovementType.replenishmentPending => 'İkmal Bekliyor',
+    PrescriptionMovementType.replenishmentPending => 'Dolum Bekliyor',
   };
 
   /// Hareketi gerçekleştiren kişiyi betimleyen etiket.
@@ -146,6 +146,30 @@ enum PrescriptionMovementType {
     PrescriptionMovementType.unloaded => 'Boşaltan',
     PrescriptionMovementType.shortageReported => 'Eksik Bildiren',
     PrescriptionMovementType.replenishmentPending => 'İkmal Onaylayan',
+  };
+
+  /// Bu duruma **geçişi sağlayan eylem**i betimler.
+  ///
+  /// [label] o anki durumu ("Alım Bekliyor") gösterir; aktivite/hareket
+  /// geçmişinde ise "ne yapıldığı" anlamlıdır. Bu getter o eylemi verir.
+  ///
+  /// Not: Bazı durumlara birden fazla eylemle gelinebilir (ör. purchasePending
+  /// hem onaylama hem dolum ile). Burada iş akışındaki **baskın/temsili** eylem
+  /// seçilmiştir; actorLabel ile tutarlıdır.
+  String get actionLabel => switch (this) {
+    PrescriptionMovementType.pendingApproval => 'Oluşturuldu',
+    PrescriptionMovementType.purchasePending => 'Dolum Yapıldı',
+    PrescriptionMovementType.applied => 'Uygulandı',
+    PrescriptionMovementType.returned => 'İade Edildi',
+    PrescriptionMovementType.wastaged => 'Fire Edildi',
+    PrescriptionMovementType.destructed => 'İmha Edildi',
+    PrescriptionMovementType.cancelled => 'İptal Edildi',
+    PrescriptionMovementType.rejected => 'Reddedildi',
+    PrescriptionMovementType.filledWaiting => 'Onaylandı',
+    PrescriptionMovementType.returnPending => 'İade Talep Edildi',
+    PrescriptionMovementType.unloaded => 'Boşaltıldı',
+    PrescriptionMovementType.shortageReported => 'Eksik Bildirildi',
+    PrescriptionMovementType.replenishmentPending => 'İkmal Onaylandı',
   };
 }
 

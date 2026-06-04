@@ -24,7 +24,7 @@ class MedRectangleIcon extends StatelessWidget {
       width: size?.width ?? 42,
       height: size?.height ?? 42,
       decoration: BoxDecoration(color: backgroundColor, borderRadius: MedRadius.mdAll),
-      child: Icon(icon, size: 20, color: foregroundColor),
+      child: Icon(icon, size: iconSize ?? 20, color: foregroundColor),
     );
   }
 }

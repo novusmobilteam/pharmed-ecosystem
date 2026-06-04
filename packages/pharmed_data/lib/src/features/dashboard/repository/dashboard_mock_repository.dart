@@ -1,7 +1,7 @@
 // [SWREQ-DATA-DASH-007] [IEC 62304 §5.5]
 // Mock flavor için dashboard repository'si.
 // API'ye çıkılmaz, sabit veriler döner.
-// Read metodları her zaman RepoSuccess döndürür.
+// Read metodları her zaman Result.ok döndürür.
 // Sınıf: Class A
 
 import 'package:pharmed_core/pharmed_core.dart';
@@ -112,56 +112,69 @@ class MockDashboardRepository implements IDashboardRepository {
     ),
   ];
 
-  // ── Repository metodları ───────────────────────────────────────
-
   @override
-  void clearCache() {} // Mock'ta cache yok, no-op
-
-  @override
-  Future<RepoResult<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false}) async {
+  Future<Result<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false}) async {
     await Future.delayed(_delay);
-    return RepoSuccess(List.unmodifiable(_unreadQrCodes));
+    return Result.ok(List.unmodifiable(_unreadQrCodes));
   }
 
   @override
-  Future<RepoResult<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false}) async {
+  Future<Result<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false}) async {
     await Future.delayed(_delay);
-    return RepoSuccess(List.unmodifiable(_expiringMaterials));
+    return Result.ok(List.unmodifiable(_expiringMaterials));
   }
 
   @override
-  Future<RepoResult<List<CabinStock>>> getCriticalStocks({bool isClient = false, bool forceRefresh = false}) async {
+  Future<Result<List<CabinStock>>> getCriticalStocks({bool isClient = false, bool forceRefresh = false}) async {
     await Future.delayed(_delay);
-    return RepoSuccess(List.unmodifiable(_criticalStocks));
+    return Result.ok(List.unmodifiable(_criticalStocks));
   }
 
   @override
-  Future<RepoResult<List<Prescription>>> getUnappliedPrescriptions({bool forceRefresh = false}) async {
+  Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptions({bool forceRefresh = false}) async {
     await Future.delayed(_delay);
-    return RepoSuccess(List.unmodifiable(_unappliedPrescriptions));
+    return Result.ok(List.unmodifiable(_unappliedPrescriptions));
   }
 
   @override
-  Future<RepoResult<List<Refund>>> getRefunds({bool forceRefresh = false}) async {
+  Future<Result<List<Refund>>> getRefunds({bool forceRefresh = false}) async {
     await Future.delayed(_delay);
-    return RepoSuccess(List.unmodifiable(_refunds));
+    return Result.ok(List.unmodifiable(_refunds));
   }
 
   @override
-  Future<RepoResult<List<CabinStock>>> getGeneralStocks({bool forceRefresh = false}) async {
+  Future<Result<List<CabinStock>>> getGeneralStocks({bool forceRefresh = false}) async {
     await Future.delayed(_delay);
-    return RepoSuccess(List.unmodifiable(_generalStocks));
+    return Result.ok(List.unmodifiable(_generalStocks));
   }
 
   @override
-  Future<RepoResult<List<PrescriptionItem>>> getUpcomingTreatments({bool forceRefresh = false}) async {
+  Future<Result<List<PrescriptionItem>>> getUpcomingTreatments({bool forceRefresh = false, required String mac}) async {
     await Future.delayed(_delay);
-    return RepoSuccess(List.unmodifiable(_upcomingTreatments));
+    return Result.ok(List.unmodifiable(_upcomingTreatments));
   }
 
   @override
-  Future<RepoResult<List<MenuItem>>> getMenuItems({int? userId}) async {
+  Future<Result<List<MenuItem>>> getMenuItems({int? userId}) async {
     await Future.delayed(_delay);
-    return RepoSuccess([]);
+    return Result.ok([]);
+  }
+
+  @override
+  Future<Result<List<PrescriptionItem>>> getMissingStocks({bool forceRefresh = false, required String mac}) async {
+    await Future.delayed(_delay);
+    return Result.ok([]);
+  }
+
+  @override
+  Future<Result<List<Cabin>>> getCabins() async {
+    await Future.delayed(_delay);
+    return Result.ok([]);
+  }
+
+  @override
+  Future<Result<List<PrescriptionItemMovement>?>> getDrugActivities({required String mac}) async {
+    await Future.delayed(_delay);
+    return Result.ok([]);
   }
 }

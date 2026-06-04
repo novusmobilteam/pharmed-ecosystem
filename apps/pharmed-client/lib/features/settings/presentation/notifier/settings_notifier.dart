@@ -56,9 +56,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final result = await ref.read(getCabinsUseCaseProvider).call();
 
     result.when(
-      success: (cabins) => state = state.copyWith(cabins: cabins, isLoadingCabins: false),
-      stale: (cabins, _) => state = state.copyWith(cabins: cabins, isLoadingCabins: false),
-      failure: (e) => state = state.copyWith(isLoadingCabins: false, cabinsError: e.message),
+      ok: (value) => state = state.copyWith(cabins: value, isLoadingCabins: false),
+      error: (error) => state = state.copyWith(isLoadingCabins: false, cabinsError: error.message),
     );
   }
 }

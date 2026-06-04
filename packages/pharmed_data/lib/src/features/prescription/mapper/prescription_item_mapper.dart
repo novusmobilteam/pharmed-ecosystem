@@ -43,6 +43,7 @@ class PrescriptionItemMapper {
       medicine: const MedicineMapper().toEntityOrNull(dto.medicine),
       prescription: const PrescriptionMapper().toEntityOrNull(dto.prescription),
       doctor: User.fromIdAndFullName(id: dto.doctorId, fullName: dto.doctor),
+      hospitalization: HospitalizationMapper().toEntityOrNull(dto.hospitalization),
 
       // Son Hareket
       lastMovement: PrescriptionItemMovementMapper().toEntityOrNull(dto.lastMovement),

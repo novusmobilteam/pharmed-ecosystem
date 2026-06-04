@@ -5,7 +5,7 @@ class GetGeneralStocksUseCase {
 
   GetGeneralStocksUseCase(this._repository);
 
-  Future<RepoResult<List<CabinStock>>> call() {
+  Future<Result<List<CabinStock>>> call() {
     return _repository.getGeneralStocks();
   }
 }

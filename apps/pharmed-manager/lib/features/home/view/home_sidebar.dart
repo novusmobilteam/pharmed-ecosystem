@@ -7,38 +7,31 @@ class HomeSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = context.watch<HomeNotifier>();
 
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Container(
-        width: 240,
-        decoration: BoxDecoration(
-          color: MedColors.surface,
-          borderRadius: MedRadius.lgAll,
-          border: Border.all(color: MedColors.border),
-          boxShadow: MedShadows.sm,
-        ),
-        child: ClipRRect(
-          borderRadius: MedRadius.lgAll,
-          child: Column(
-            children: [
-              // Menü listesi
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  itemCount: notifier.parentMenuItems.length,
-                  itemBuilder: (context, index) {
-                    final parent = notifier.parentMenuItems[index];
-                    final isActive = notifier.activeTab == index;
-                    return _SidebarParentItem(
-                      menu: parent,
-                      isActive: isActive,
-                      onTap: () => notifier.changeTab(parent),
-                    );
-                  },
-                ),
+    return Container(
+      width: 240,
+      decoration: BoxDecoration(
+        color: MedColors.surface,
+        borderRadius: MedRadius.lgAll,
+        border: Border.all(color: MedColors.border),
+        boxShadow: MedShadows.sm,
+      ),
+      child: ClipRRect(
+        borderRadius: MedRadius.lgAll,
+        child: Column(
+          children: [
+            // Menü listesi
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                itemCount: notifier.parentMenuItems.length,
+                itemBuilder: (context, index) {
+                  final parent = notifier.parentMenuItems[index];
+                  final isActive = notifier.activeTab == index;
+                  return _SidebarParentItem(menu: parent, isActive: isActive, onTap: () => notifier.changeTab(parent));
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

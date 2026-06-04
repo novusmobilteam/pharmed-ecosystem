@@ -42,6 +42,9 @@ enum EmptyStateVariant {
   /// Genel hata durumu.
   error,
 
+  /// Servisten veri gelmedi / liste boş.
+  noData,
+
   /// Özel içerik.
   ///
   /// [EmptyStateWidget.icon], [EmptyStateWidget.title] ve

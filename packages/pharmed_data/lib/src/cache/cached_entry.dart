@@ -22,7 +22,7 @@ class CachedEntry<T> {
   static CachedEntry<T> fromJson<T>(Map<dynamic, dynamic> json, T Function(dynamic) dataDeserializer) =>
       CachedEntry<T>(data: dataDeserializer(json['data']), savedAt: DateTime.parse(json['savedAt'] as String));
 
-  static Future<RepoResult<T>> performFetch<T>({
+  static Future<Result<T>> performFetch<T>({
     required CachedEntry<T>? currentCache,
     required Duration ttl,
     required bool forceRefresh,
@@ -31,7 +31,7 @@ class CachedEntry<T> {
   }) async {
     // 1. Cache geçerliyse hemen döndür
     if (!forceRefresh && currentCache != null && !currentCache.isExpired(ttl)) {
-      return RepoSuccess(currentCache.data);
+      return Result.ok(currentCache.data);
     }
 
     // 2. Yeni veriyi çek
@@ -41,14 +41,14 @@ class CachedEntry<T> {
       ok: (data) {
         final newEntry = CachedEntry(data: data, savedAt: DateTime.now());
         onSaveCache(newEntry);
-        return RepoSuccess(data);
+        return Result.ok(data);
       },
       error: (error) {
         // 3. Hata durumunda cache varsa 'Stale' döndür, yoksa Failure
         if (currentCache != null) {
-          return RepoStale(currentCache.data, currentCache.savedAt);
+          return Result.ok(currentCache.data);
         }
-        return RepoFailure(error);
+        return Result.error(error);
       },
     );
   }

@@ -726,6 +726,12 @@ class AppLocalizationsAr extends AppLocalizations {
       'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى أو التواصل مع مسؤول النظام.';
 
   @override
+  String get emptyStateNoDataTitle => 'لا توجد بيانات';
+
+  @override
+  String get emptyStateNoDataDescription => 'لا توجد بيانات للعرض حتى الآن.';
+
+  @override
   String get refundNoRefundableDrugs =>
       'لم يتم العثور على أدوية قابلة للإرجاع لهذا المريض.';
 

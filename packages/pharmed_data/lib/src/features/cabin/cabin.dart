@@ -10,4 +10,3 @@ export 'mapper/mobile_drawer_slot_mapper.dart';
 export 'mapper/cabin_operation_item_mapper.dart';
 
 export 'repository/cabin_repository_impl.dart';
-export 'repository/cabin_mock_repository.dart';

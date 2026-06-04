@@ -682,7 +682,7 @@
   "emptyStateNoPrescriptionTitle": "Reçete bulunamadı",
   "emptyStateNoPrescriptionDescription": "Bu hastaya ait aktif reçete bulunmuyor.",
 
-    "emptyStateNoCabinTitle": "Kabin Bulunamadı",
+  "emptyStateNoCabinTitle": "Kabin Bulunamadı",
   "emptyStateNoCabinDescription": "Henüz tanımlı bir kabin bulunmuyor. Devam edebilmek için lütfen bir kabin tanımlayın.",
 
   "emptyStateNetworkErrorTitle": "İnternet Bağlantısı Yok",
@@ -693,6 +693,9 @@
 
   "emptyStateErrorTitle": "Bir Hata Oluştu",
   "emptyStateErrorDescription": "Beklenmeyen bir hata meydana geldi. Lütfen tekrar deneyin veya sistem yöneticinize başvurun.",
+
+  "emptyStateNoDataTitle": "Veri Yok",
+  "emptyStateNoDataDescription": "Henüz görüntülenecek veri bulunmuyor.",
 
   "refundNoRefundableDrugs": "Bu hastaya ait iade edilebilir ilaç bulunamadı.",
 "@refundNoRefundableDrugs": {
@@ -1068,5 +1071,5 @@
       "steps": { "type": "Object" },
       "mult": { "type": "Object" }
     }
-  } 
+  }
 }

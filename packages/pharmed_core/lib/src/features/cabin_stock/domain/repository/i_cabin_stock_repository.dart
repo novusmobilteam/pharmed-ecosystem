@@ -4,7 +4,7 @@ abstract class ICabinStockRepository {
   Future<Result<List<CabinStock>>> getStocks(int cabinId);
 
   /// Giriş yapılmış kabindeki stokları getiren servis
-  Future<RepoResult<List<CabinStock>>> getCurrentCabinStock();
+  Future<Result<List<CabinStock>>> getCurrentCabinStock();
 
   /// İlaç Dolum Listesi ekranında ilgili ilacın kabinde hangi çekmeceye
   /// dolumunun yapılacağı veren servis.
@@ -21,4 +21,10 @@ abstract class ICabinStockRepository {
   Future<Result<List<CabinStock>>> getExpiredStocks();
 
   Future<Result<List<StationStock>>> getStationStocks(int stationId);
+
+  /// Eksik stok bildirimi onaylama işlemi
+  Future<Result<void>> approveMissingStock(int prescriptionItemId);
+
+  /// Eksik stok bildirimi reddetme işlemi
+  Future<Result<void>> rejectMissingStock(int prescriptionItemId);
 }

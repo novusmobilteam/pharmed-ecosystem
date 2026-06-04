@@ -100,9 +100,6 @@ export 'src/models/rfid_tag.dart';
 // result
 export 'src/result/result.dart';
 
-// repository
-export 'src/repository/repo_result.dart';
-
 // services
 export 'src/services/i_cabin_operation_service.dart';
 export 'src/services/i_rfid_service.dart';

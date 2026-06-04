@@ -5,7 +5,7 @@ class GetRefundsUseCase {
 
   GetRefundsUseCase(this._repository);
 
-  Future<RepoResult<List<Refund>>> call() {
+  Future<Result<List<Refund>>> call() {
     return _repository.getRefunds();
   }
 }

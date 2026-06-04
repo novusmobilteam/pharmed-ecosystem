@@ -12,6 +12,7 @@ class PrescriptionItemMovementMapper {
       createdAt: dto.createdAt,
       performedBy: const UserMapper().toEntityOrNull(dto.user),
       quantity: dto.quantity,
+      prescriptionItem: PrescriptionItemMapper().toEntityOrNull(dto.prescriptionItem),
     );
   }
 

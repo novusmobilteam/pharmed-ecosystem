@@ -33,6 +33,8 @@ class DatasourceProviders {
       Provider(create: (context) => RoleAuthorizationRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => UserAuthorizationRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => StockTransactionRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => CabinRemoteDataSource(apiManager: context.read())),
+      Provider<ICabinLocalDataSource>(create: (context) => CabinLocalDataSource()),
     ];
   }
 }

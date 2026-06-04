@@ -13,6 +13,7 @@ import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../settings/presentation/notifier/settings_notifier.dart';
 import '../../domain/model/dasboard_data.dart';
@@ -21,14 +22,13 @@ import 'dashboard_state.dart';
 final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardState>(DashboardNotifier.new);
 
 class DashboardNotifier extends Notifier<DashboardState> {
-  // Veriler 7 dakikada bir güncellenir.
   static const _refreshInterval = Duration(minutes: 60);
   Timer? _timer;
   FilteredMenus? _pendingMenus;
 
   GetCriticalStocksUseCase get _getCriticalStocks => ref.read(getCriticalStocksUseCaseProvider);
   GetExpiringMaterialsUseCase get _getExpiringMaterials => ref.read(getExpiringMaterialsUseCaseProvider);
-  GetUpcomingTreatmensUseCase get _getUpcomingTreatments => ref.read(getUpcomingTreatmensUseCaseProvider);
+  GetUpcomingTreatmentsUseCase get _getUpcomingTreatments => ref.read(getUpcomingTreatmensUseCaseProvider);
   GetCabinVisualizerDataUseCase get _getCabinVisualizer => ref.read(getCabinVisualizerDataUseCaseProvider);
 
   @override
@@ -58,7 +58,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
     final current = state;
     final hasMenu = switch (current) {
       DashboardLoaded(:final menuTree) => menuTree != null,
-      DashboardStale(:final menuTree) => menuTree != null,
       DashboardPartial(:final menuTree) => menuTree != null,
       _ => false,
     };
@@ -68,14 +67,12 @@ class DashboardNotifier extends Notifier<DashboardState> {
     final menuResult = await ref.read(getFilteredMenusUseCaseProvider)(userId: user?.id);
 
     menuResult.when(
-      success: (menus) => _applyMenus(menus),
-      stale: (menus, savedAt) => _applyMenus(menus), // [HAZ-007]
-      failure: (_) {
+      ok: (FilteredMenus value) => _applyMenus(value),
+      error: (error) {
         // Dashboard gösterilebilir, menü bölümü hata gösterir
         final current = state;
         state = switch (current) {
           DashboardLoaded() => current.copyWith(failedSections: [DashboardSection.menu]),
-          DashboardStale() => current.copyWith(failedSections: [DashboardSection.menu]),
           DashboardPartial() => current.copyWith(failedSections: [...current.failedSections, DashboardSection.menu]),
           _ => current, // Loading → _resolveState zaten _pendingMenus'a bakar, menu null kalır
         };
@@ -88,7 +85,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
     state = switch (current) {
       DashboardLoaded() => current.copyWith(menuTree: menus.tree, flattenedMenus: menus.flattened),
-      DashboardStale() => current.copyWith(menuTree: menus.tree, flattenedMenus: menus.flattened),
       DashboardPartial() => current.copyWith(menuTree: menus.tree, flattenedMenus: menus.flattened),
       _ => current,
     };
@@ -107,20 +103,21 @@ class DashboardNotifier extends Notifier<DashboardState> {
       message: 'Dashboard yükleniyor — forceRefresh: $forceRefresh',
     );
 
-    if (state is! DashboardLoaded && state is! DashboardStale && state is! DashboardPartial) {
+    if (state is! DashboardLoaded && state is! DashboardPartial) {
       state = const DashboardLoading();
     }
 
     final deviceMode = await ref.read(deviceModeProvider.future);
+    final macAddress = await DeviceInfo.getMacAddress();
 
     final results = await Future.wait([
       _getCabinVisualizer.call(
         deviceMode: deviceMode,
         debugCabin: kDebugMode ? ref.read(settingsNotifierProvider).debugCabin : null,
       ),
-      _getCriticalStocks.call(true, forceRefresh: forceRefresh),
-      _getExpiringMaterials.call(forceRefresh: forceRefresh),
-      _getUpcomingTreatments.call(forceRefresh: forceRefresh),
+      _getCriticalStocks.call(true),
+      _getExpiringMaterials.call(),
+      _getUpcomingTreatments.call(mac: macAddress),
 
       /// Hasta atama işlemlerinde oda/yatak/servis bilgileri Hospitalization içerisinde
       /// yer almadığı için (sadece idleri geliyor) önden bu verileri çekip in-memory cachede
@@ -130,10 +127,10 @@ class DashboardNotifier extends Notifier<DashboardState> {
       ref.read(allServicesProvider.future),
     ]);
 
-    final cabinResult = results[0] as RepoResult<CabinVisualizerData>;
-    final criticalResult = results[1] as RepoResult<List<CabinStock>>;
-    final expiringResult = results[2] as RepoResult<List<CabinStock>>;
-    final treatmentsResult = results[3] as RepoResult<List<PrescriptionItem>>;
+    final cabinResult = results[0] as Result<CabinVisualizerData>;
+    final criticalResult = results[1] as Result<List<CabinStock>>;
+    final expiringResult = results[2] as Result<List<CabinStock>>;
+    final treatmentsResult = results[3] as Result<List<PrescriptionItem>>;
 
     _resolveState(
       criticalResult: criticalResult,
@@ -157,7 +154,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
     state = switch (current) {
       DashboardLoaded s => s.copyWith(data: s.data.copyWith(cabinVisualizerData: cabinData)),
-      DashboardStale s => s.copyWith(data: s.data.copyWith(cabinVisualizerData: cabinData)),
       DashboardPartial s => s.copyWith(data: s.data.copyWith(cabinVisualizerData: cabinData)),
       _ => current,
     };
@@ -176,15 +172,14 @@ class DashboardNotifier extends Notifier<DashboardState> {
   }
 
   void _resolveState({
-    required RepoResult<List<CabinStock>> criticalResult,
-    required RepoResult<List<CabinStock>> expiringResult,
-    required RepoResult<List<PrescriptionItem>> treatmentsResult,
-    required RepoResult<CabinVisualizerData> cabinResult,
+    required Result<List<CabinStock>> criticalResult,
+    required Result<List<CabinStock>> expiringResult,
+    required Result<List<PrescriptionItem>> treatmentsResult,
+    required Result<CabinVisualizerData> cabinResult,
   }) {
     // _resolveState başında mevcut menüyü al
     final existingMenus = switch (state) {
       DashboardLoaded(:final menuTree, :final flattenedMenus) => (menuTree, flattenedMenus),
-      DashboardStale(:final menuTree, :final flattenedMenus) => (menuTree, flattenedMenus),
       DashboardPartial(:final menuTree, :final flattenedMenus) => (menuTree, flattenedMenus),
       _ => (null, null),
     };
@@ -256,28 +251,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
       ),
     );
 
-    // En az bir kaynak Stale — HAZ-007
-    final staleEntry = _firstStaleEntry([criticalResult, expiringResult, treatmentsResult]);
-
-    if (staleEntry != null) {
-      MedLogger.warn(
-        unit: 'SW-UNIT-UI',
-        swreq: 'SWREQ-UI-DASH-007',
-        message: 'Dashboard: eski cache verisi gösteriliyor — savedAt: ${staleEntry.savedAt}',
-      );
-      // HAZ-009: kritik stok verisi stale ise aksiyon kısıtlanır
-      final canProceed = criticalResult is! RepoStale;
-      state = DashboardStale(
-        data: data,
-        staleSince: staleEntry.savedAt,
-        canProceed: canProceed,
-        menuTree: menuTree,
-        flattenedMenus: flattenedMenus,
-      );
-      _pendingMenus = null;
-      return;
-    }
-
     // Kısmi hata — bazı bölümler yüklendi
     if (failedSections.isNotEmpty) {
       MedLogger.warn(
@@ -300,20 +273,11 @@ class DashboardNotifier extends Notifier<DashboardState> {
     state = DashboardLoaded(data).copyWith(menuTree: menuTree, flattenedMenus: flattenedMenus);
   }
 
-  /// RepoSuccess veya RepoStale → data döner, RepoFailure → null
-  T? _extractData<T>(RepoResult<T> result) => switch (result) {
-    RepoSuccess(:final data) => data,
-    RepoStale(:final data) => data,
-    RepoFailure() => null,
+  /// Result.ok → data döner, Result.error → null
+  T? _extractData<T>(Result<T> result) => switch (result) {
+    Ok(:final value) => value,
+    Error() => null,
   };
-
-  /// Listede ilk RepoStale'i döndürür — staleSince için
-  RepoStale? _firstStaleEntry(List<RepoResult> results) {
-    for (final r in results) {
-      if (r is RepoStale) return r;
-    }
-    return null;
-  }
 
   void navigateTo(dynamic destination) {
     final current = state;
@@ -333,7 +297,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
     // 3. Mevcut state tipine göre copyWith ile rotayı güncelle
     state = switch (current) {
       DashboardLoaded s => s.copyWith(activeRoute: targetRoute),
-      DashboardStale s => s.copyWith(activeRoute: targetRoute),
       DashboardPartial s => s.copyWith(activeRoute: targetRoute),
       _ => current, // Loading veya Error durumunda rota değişmez
     };
@@ -344,7 +307,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
   // Yardımcı metod: Farklı state tiplerinden listeyi güvenli al
   List<MenuItem>? _getFlattenMenus(DashboardState s) => switch (s) {
     DashboardLoaded(:final flattenedMenus) => flattenedMenus,
-    DashboardStale(:final flattenedMenus) => flattenedMenus,
     DashboardPartial(:final flattenedMenus) => flattenedMenus,
     _ => null,
   };

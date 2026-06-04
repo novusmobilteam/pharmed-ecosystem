@@ -729,6 +729,13 @@ class AppLocalizationsTr extends AppLocalizations {
       'Beklenmeyen bir hata meydana geldi. Lütfen tekrar deneyin veya sistem yöneticinize başvurun.';
 
   @override
+  String get emptyStateNoDataTitle => 'Veri Yok';
+
+  @override
+  String get emptyStateNoDataDescription =>
+      'Henüz görüntülenecek veri bulunmuyor.';
+
+  @override
   String get refundNoRefundableDrugs =>
       'Bu hastaya ait iade edilebilir ilaç bulunamadı.';
 

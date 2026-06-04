@@ -8,5 +8,5 @@ class GetCurrentCabinStockUseCase {
 
   GetCurrentCabinStockUseCase(this._repository);
 
-  Future<RepoResult<List<CabinStock>>> call() => _repository.getCurrentCabinStock();
+  Future<Result<List<CabinStock>>> call() => _repository.getCurrentCabinStock();
 }

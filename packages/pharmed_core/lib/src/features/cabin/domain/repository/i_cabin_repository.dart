@@ -2,7 +2,7 @@
 // Kabin domain repository arayüzü.
 //
 // Dönüş tipi kuralları:
-//   - Read operasyonları → RepoResult<T>
+//   - Read operasyonları → Result<T>
 //     API başarılı → RepoSuccess
 //     API başarısız + cache var → RepoStale
 //     API başarısız + cache yok → RepoFailure
@@ -18,13 +18,13 @@ abstract interface class ICabinRepository {
   // ==================== KABİN İŞLEMLERİ ====================
 
   /// Sistemdeki tüm kabinleri listeler.
-  Future<RepoResult<List<Cabin>>> getCabins();
+  Future<Result<List<Cabin>>> getCabins();
 
   /// Belirli bir kabini getirir.
-  Future<RepoResult<Cabin?>> getCabin(int cabinId);
+  Future<Result<Cabin?>> getCabin(int cabinId);
 
   /// Belirli bir istasyona bağlı kabinleri listeler.
-  Future<RepoResult<List<Cabin>>> getCabinsByStation(int stationId);
+  Future<Result<List<Cabin>>> getCabinsByStation(int stationId);
 
   /// Yeni bir kabin tanımı oluşturur.
   Future<Result<Cabin?>> createCabin(Cabin cabin);
@@ -38,14 +38,14 @@ abstract interface class ICabinRepository {
   // ==================== YUVA (SLOT) VE DİZİLİM İŞLEMLERİ ====================
 
   /// Bir kabinin fiziksel yuva (slot) yapısını ve dizilimini getirir.
-  Future<RepoResult<List<DrawerSlot>>> getCabinSlots(int cabinId);
+  Future<Result<List<DrawerSlot>>> getCabinSlots(int cabinId);
 
   /// Mobil kabinin çekmece yapısını getirir.
   /// Gerçek zamanlı değil — cache desteklidir.
-  Future<RepoResult<List<MobileDrawerSlot>>> getMobileCabinSlots(int cabinId);
+  Future<Result<List<MobileDrawerSlot>>> getMobileCabinSlots(int cabinId);
 
   /// Seçili çekmeceye ait iç parçaları getirir. Gerçek zamanlı — cache'lenmez.
-  Future<RepoResult<List<DrawerUnit>>> getDrawerUnits(int slotId);
+  Future<Result<List<DrawerUnit>>> getDrawerUnits(int slotId);
 
   /// Kabin için yeni bir yuva dizilimi kaydeder.
   Future<Result<void>> createDrawerSlots(List<DrawerSlot> slots);
@@ -70,9 +70,9 @@ abstract interface class ICabinRepository {
 
   /// Sistemde tanımlı tüm çekmece şablonlarını getirir.
   /// [forceRefresh]: true ise cache atlanır, API'ye gidilir.
-  Future<RepoResult<List<DrawerType>>> getDrawerTypes({bool forceRefresh = false});
+  Future<Result<List<DrawerType>>> getDrawerTypes({bool forceRefresh = false});
 
   /// Motor ayarları ve cihaz tipi bilgilerini içeren konfigürasyonları getirir.
   /// [forceRefresh]: true ise cache atlanır, API'ye gidilir.
-  Future<RepoResult<List<DrawerConfig>>> getDrawerConfigs({bool forceRefresh = false});
+  Future<Result<List<DrawerConfig>>> getDrawerConfigs({bool forceRefresh = false});
 }

@@ -22,24 +22,16 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
   final StationStockMapper _stationMapper;
 
   @override
-  Future<RepoResult<List<CabinStock>>> getCurrentCabinStock() async {
+  Future<Result<List<CabinStock>>> getCurrentCabinStock() async {
     final result = await _dataSource.getCurrentCabinStock();
 
     return result.when(
       ok: (dtos) async {
         // Başarılı → cache'e yaz
         await _local.saveCurrentStock(dtos);
-        return RepoSuccess(_cabinMapper.toEntityList(dtos));
+        return Result.ok(_cabinMapper.toEntityList(dtos));
       },
-      error: (error) async {
-        // API fail → cache'e bak
-        final cached = await _local.readCurrentStock();
-        final savedAt = await _local.currentStockSavedAt();
-        if (cached != null && savedAt != null) {
-          return RepoStale(_cabinMapper.toEntityList(cached), savedAt);
-        }
-        return RepoFailure(error);
-      },
+      error: (e) => Result.error(e),
     );
   }
 
@@ -81,5 +73,15 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
   Future<Result<List<StationStock>>> getStationStocks(int stationId) async {
     final result = await _dataSource.getStationStocks(stationId);
     return result.when(ok: (dtos) => Result.ok(_stationMapper.toEntityList(dtos)), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> approveMissingStock(int prescriptionItemId) async {
+    return await _dataSource.approveMissingStock(prescriptionItemId);
+  }
+
+  @override
+  Future<Result<void>> rejectMissingStock(int prescriptionItemId) async {
+    return await _dataSource.rejectMissingStock(prescriptionItemId);
   }
 }

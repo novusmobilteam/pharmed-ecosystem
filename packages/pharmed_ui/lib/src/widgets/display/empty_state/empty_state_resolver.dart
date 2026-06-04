@@ -121,5 +121,11 @@ final class EmptyStateResolver {
           title: _l10n.wasteSelectPatient,
           description: '',
         ),
+
+        EmptyStateVariant.noData => EmptyStateContent(
+          icon: PhosphorIcons.tray(),
+          title: _l10n.emptyStateNoDataTitle,
+          description: _l10n.emptyStateNoDataDescription,
+        ),
       };
 }

@@ -15,166 +15,91 @@ class DashboardRepositoryImpl implements IDashboardRepository {
   DashboardRepositoryImpl({
     required DashboardRemoteDataSource dataSource,
     required CabinStockMapper cabinStockMapper,
+    required CabinMapper cabinMapper,
     required PrescriptionItemMapper prescriptionItemMapper,
-    required PrescriptionMapper prescriptionMapper,
     required RefundMapper refundMapper,
     required MenuTreeMapper menuMapper,
+    required PrescriptionItemMovementMapper itemMovementMapper,
     Duration cacheTtl = const Duration(minutes: 5),
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
+       _cabinMapper = cabinMapper,
        _prescriptionItemMapper = prescriptionItemMapper,
-       _prescriptionMapper = prescriptionMapper,
        _refundMapper = refundMapper,
        _menuMapper = menuMapper,
-       _ttl = cacheTtl;
+       _itemMovementMapper = itemMovementMapper;
 
   final DashboardRemoteDataSource _dataSource;
   final CabinStockMapper _cabinStockMapper;
+  final CabinMapper _cabinMapper;
   final PrescriptionItemMapper _prescriptionItemMapper;
-  final PrescriptionMapper _prescriptionMapper;
   final RefundMapper _refundMapper;
   final MenuTreeMapper _menuMapper;
-  final Duration _ttl;
-
-  // ── In-Memory Cache ────────────────────────────────────────────
-
-  CachedEntry<List<PrescriptionItem>>? _unreadQrCodes;
-  CachedEntry<List<CabinStock>>? _expiringMaterials;
-  CachedEntry<List<CabinStock>>? _criticalStocks;
-  CachedEntry<List<Prescription>>? _unappliedPrescriptions;
-  CachedEntry<List<Refund>>? _refunds;
-  CachedEntry<List<CabinStock>>? _generalStocks;
-  CachedEntry<List<PrescriptionItem>>? _upcomingTreatments;
-  CachedEntry<List<MenuItem>>? _menuItems;
+  final PrescriptionItemMovementMapper _itemMovementMapper;
 
   @override
-  void clearCache() {
-    _unreadQrCodes = null;
-    _expiringMaterials = null;
-    _criticalStocks = null;
-    _unappliedPrescriptions = null;
-    _refunds = null;
-    _generalStocks = null;
-    _upcomingTreatments = null;
-  }
-
-  // ── Repository metodları ───────────────────────────────────────
-
-  @override
-  Future<RepoResult<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false}) {
-    return CachedEntry.performFetch(
-      ttl: _ttl,
-      currentCache: _unreadQrCodes,
-      onSaveCache: (e) => _unreadQrCodes = e,
-      forceRefresh: forceRefresh,
-      fetcher: () async {
-        final result = await _dataSource.getUnreadQrCodes();
-        return result.when(
-          ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])),
-          error: Result.error,
-        );
-      },
-    );
+  Future<Result<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false}) async {
+    final result = await _dataSource.getUnreadQrCodes();
+    return result.when(ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 
   @override
-  Future<RepoResult<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false}) {
-    return CachedEntry.performFetch(
-      ttl: _ttl,
-      currentCache: _expiringMaterials,
-      onSaveCache: (e) => _expiringMaterials = e,
-      forceRefresh: forceRefresh,
-      fetcher: () async {
-        final result = await _dataSource.getExpiringMaterials();
-        return result.when(ok: (dtos) => Result.ok(_cabinStockMapper.toEntityList(dtos ?? [])), error: Result.error);
-      },
-    );
+  Future<Result<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false}) async {
+    final result = await _dataSource.getExpiringMaterials();
+    return result.when(ok: (dtos) => Result.ok(_cabinStockMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 
   @override
-  Future<RepoResult<List<CabinStock>>> getCriticalStocks({bool isClient = false, bool forceRefresh = false}) {
-    return CachedEntry.performFetch(
-      ttl: _ttl,
-      currentCache: _criticalStocks,
-      onSaveCache: (e) => _criticalStocks = e,
-      forceRefresh: forceRefresh,
-      fetcher: () async {
-        final result = await _dataSource.getCriticalStocks(isClient: isClient);
-        return result.when(ok: (dtos) => Result.ok(_cabinStockMapper.toEntityList(dtos ?? [])), error: Result.error);
-      },
-    );
+  Future<Result<List<CabinStock>>> getCriticalStocks({bool isClient = false, bool forceRefresh = false}) async {
+    final result = await _dataSource.getCriticalStocks(isClient: isClient);
+    return result.when(ok: (dtos) => Result.ok(_cabinStockMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 
   @override
-  Future<RepoResult<List<Prescription>>> getUnappliedPrescriptions({bool forceRefresh = false}) {
-    return CachedEntry.performFetch(
-      ttl: _ttl,
-      currentCache: _unappliedPrescriptions,
-      onSaveCache: (e) => _unappliedPrescriptions = e,
-      forceRefresh: forceRefresh,
-      fetcher: () async {
-        final result = await _dataSource.getUnappliedPrescriptions();
-        return result.when(ok: (dtos) => Result.ok(_prescriptionMapper.toEntityList(dtos ?? [])), error: Result.error);
-      },
-    );
+  Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptions({bool forceRefresh = false}) async {
+    final result = await _dataSource.getUnappliedPrescriptions();
+    return result.when(ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 
   @override
-  Future<RepoResult<List<Refund>>> getRefunds({bool forceRefresh = false}) {
-    return CachedEntry.performFetch(
-      ttl: _ttl,
-      currentCache: _refunds,
-      onSaveCache: (e) => _refunds = e,
-      forceRefresh: forceRefresh,
-      fetcher: () async {
-        final result = await _dataSource.getRefunds();
-        return result.when(ok: (dtos) => Result.ok(_refundMapper.toEntityList(dtos ?? [])), error: Result.error);
-      },
-    );
+  Future<Result<List<Refund>>> getRefunds({bool forceRefresh = false}) async {
+    final result = await _dataSource.getRefunds();
+    return result.when(ok: (dtos) => Result.ok(_refundMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 
   @override
-  Future<RepoResult<List<CabinStock>>> getGeneralStocks({bool forceRefresh = false}) {
-    return CachedEntry.performFetch(
-      ttl: _ttl,
-      currentCache: _generalStocks,
-      onSaveCache: (e) => _generalStocks = e,
-      forceRefresh: forceRefresh,
-      fetcher: () async {
-        final result = await _dataSource.getGeneralStocks();
-        return result.when(ok: (dtos) => Result.ok(_cabinStockMapper.toEntityList(dtos ?? [])), error: Result.error);
-      },
-    );
+  Future<Result<List<CabinStock>>> getGeneralStocks({bool forceRefresh = false}) async {
+    final result = await _dataSource.getGeneralStocks();
+    return result.when(ok: (dtos) => Result.ok(_cabinStockMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 
   @override
-  Future<RepoResult<List<PrescriptionItem>>> getUpcomingTreatments({bool forceRefresh = false}) {
-    return CachedEntry.performFetch(
-      ttl: _ttl,
-      currentCache: _upcomingTreatments,
-      onSaveCache: (e) => _upcomingTreatments = e,
-      forceRefresh: forceRefresh,
-      fetcher: () async {
-        final result = await _dataSource.getUpcomingTreatments();
-        return result.when(
-          ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])),
-          error: Result.error,
-        );
-      },
-    );
+  Future<Result<List<PrescriptionItem>>> getUpcomingTreatments({bool forceRefresh = false, required String mac}) async {
+    final result = await _dataSource.getUpcomingTreatments(mac: mac);
+    return result.when(ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 
   @override
-  Future<RepoResult<List<MenuItem>>> getMenuItems({bool forceRefresh = true, int? userId}) {
-    return CachedEntry.performFetch(
-      ttl: _ttl,
-      currentCache: _menuItems,
-      onSaveCache: (e) => _menuItems = e,
-      forceRefresh: forceRefresh,
-      fetcher: () async {
-        final result = await _dataSource.getMenus(userId: userId);
-        return result.when(ok: (dtos) => Result.ok(_menuMapper.toTreeList(dtos ?? [])), error: Result.error);
-      },
-    );
+  Future<Result<List<MenuItem>>> getMenuItems({bool forceRefresh = true, int? userId}) async {
+    final result = await _dataSource.getMenus(userId: userId);
+    return result.when(ok: (dtos) => Result.ok(_menuMapper.toTreeList(dtos ?? [])), error: Result.error);
+  }
+
+  @override
+  Future<Result<List<PrescriptionItem>>> getMissingStocks({bool forceRefresh = false, required String mac}) async {
+    final result = await _dataSource.getMissingStocks(mac: mac);
+    return result.when(ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])), error: Result.error);
+  }
+
+  @override
+  Future<Result<List<Cabin>>> getCabins() async {
+    final result = await _dataSource.getCabins();
+    return result.when(ok: (dtos) => Result.ok(_cabinMapper.toEntityList(dtos ?? [])), error: Result.error);
+  }
+
+  @override
+  Future<Result<List<PrescriptionItemMovement>?>> getDrugActivities({required String mac}) async {
+    final result = await _dataSource.getDrugActivities(mac: mac);
+    return result.when(ok: (dtos) => Result.ok(_itemMovementMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 }

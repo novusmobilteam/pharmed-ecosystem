@@ -47,7 +47,7 @@ class CheckMasterRefundStatusUseCase {
     final cabinResult = await _cabinRepository.getCabins();
 
     // RepoResult → veri çıkar (success veya stale), failure → hata döndür
-    final cabins = cabinResult.dataOrNull;
+    final cabins = cabinResult.data;
     if (cabins == null) {
       return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
     }
@@ -67,7 +67,7 @@ class CheckMasterRefundStatusUseCase {
       final slotsResult = await _cabinRepository.getCabinSlots(cabinId);
 
       // RepoResult → veri çıkar (success veya stale), failure → atla
-      final slots = slotsResult.dataOrNull;
+      final slots = slotsResult.data;
       if (slots == null) continue;
 
       final cubicSlot = slots.firstWhereOrNull((slot) => slot.drawerConfig?.drawerType?.isKubik ?? false);

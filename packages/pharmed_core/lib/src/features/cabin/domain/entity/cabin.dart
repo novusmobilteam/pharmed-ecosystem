@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 class Cabin extends Selectable implements TableData {
-  final int? stationId;
+  final dynamic stationId;
   final int? no;
   final String? name;
   final int? sequenceNo;

@@ -5,7 +5,7 @@ class GetCabinUseCase {
 
   GetCabinUseCase(this._repository);
 
-  Future<RepoResult<Cabin?>> call(int cabinId) async {
+  Future<Result<Cabin?>> call(int cabinId) async {
     return _repository.getCabin(cabinId);
   }
 }

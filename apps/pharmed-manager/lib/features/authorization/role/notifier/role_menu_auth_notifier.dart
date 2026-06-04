@@ -46,10 +46,10 @@ class RoleMenuAuthNotifier extends ChangeNotifier with ApiRequestMixin {
         final menuRes = await _getMenusUseCase.call();
         final authRes = await _getAuthUseCase.call(_role);
 
-        if (menuRes case RepoFailure(error: final e)) return Result.error(e);
+        if (menuRes case Error(error: final e)) return Result.error(e);
         if (authRes case Error(error: final e)) return Result.error(e);
 
-        final menus = menuRes.dataOrNull;
+        final menus = menuRes.data;
         if (menus != null) _menuTree = menus.tree;
 
         if (authRes case Ok(value: final auth)) {

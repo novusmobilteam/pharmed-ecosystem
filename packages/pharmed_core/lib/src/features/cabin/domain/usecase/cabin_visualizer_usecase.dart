@@ -6,7 +6,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // Kabin görselleştirme verisi use case.
 //
 // debugCabin != null ise cache'e dokunulmadan bu kabinin
-// id ve type'ı kullanılır. Cache değişmez.
+// id ve type'ı kullanılır.
 //
 // Sınıf: Class B
 
@@ -30,8 +30,7 @@ class GetCabinVisualizerDataUseCase {
   /// [debugCabin] sadece kDebugMode'da geçilir.
   /// null → normal akış (cache'deki cabinId + deviceMode).
   /// non-null → debugCabin.id ve debugCabin.type kullanılır.
-  Future<RepoResult<CabinVisualizerData>> call({required CabinType? deviceMode, Cabin? debugCabin}) async {
-    // Effective id ve mode
+  Future<Result<CabinVisualizerData>> call({required CabinType? deviceMode, Cabin? debugCabin}) async {
     final int? cabinId;
     final CabinType? effectiveMode;
 
@@ -56,7 +55,7 @@ class GetCabinVisualizerDataUseCase {
     }
 
     if (cabinId == null) {
-      return RepoFailure(ServiceException(message: 'Aktif kabin bulunamadı', statusCode: 404));
+      return Result.error(ServiceException(message: 'Aktif kabin bulunamadı', statusCode: 404));
     }
 
     if (effectiveMode == CabinType.mobile) {
@@ -67,16 +66,16 @@ class GetCabinVisualizerDataUseCase {
   }
 
   // Mobil kabin akışı
-  Future<RepoResult<CabinVisualizerData>> _buildMobileVisualizer(int cabinId) async {
+  Future<Result<CabinVisualizerData>> _buildMobileVisualizer(int cabinId) async {
     final results = await Future.wait([_cabinRepository.getMobileCabinSlots(cabinId), _getMobileFaults.call()]);
 
-    final slotResult = results[0] as RepoResult<List<MobileDrawerSlot>>;
+    final slotResult = results[0] as Result<List<MobileDrawerSlot>>;
     final faultResult = results[1] as Result<List<MobileFault>>;
 
-    final slots = slotResult.when(success: (data) => data, stale: (data, _) => data, failure: (_) => null);
+    final slots = slotResult.when(ok: (data) => data, error: (_) => null);
 
     if (slots == null || slots.isEmpty) {
-      return RepoFailure(ServiceException(message: 'Mobil kabin tasarımı bulunamadı', statusCode: 404));
+      return Result.error(ServiceException(message: 'Mobil kabin tasarımı bulunamadı', statusCode: 404));
     }
 
     final mobileFaults = faultResult.when(
@@ -84,10 +83,7 @@ class GetCabinVisualizerDataUseCase {
       error: (_) => <MobileFault>[],
     );
 
-    // Aktif fault'a göre slot visual oluştur
     final faultBySlotId = {for (final f in mobileFaults) f.cabinDesignId: f};
-
-    final isStale = slotResult is RepoStale;
 
     final slotVisuals = slots.map((slot) {
       return MobileSlotVisual(
@@ -101,27 +97,26 @@ class GetCabinVisualizerDataUseCase {
       cabinId: cabinId,
       slots: slotVisuals,
       mobileSlots: slots,
-      isStale: isStale,
       groups: const [],
       stocks: const [],
       mobileFaults: mobileFaults,
     );
 
-    return isStale ? RepoStale(data, DateTime.now()) : RepoSuccess(data);
+    return Result.ok(data);
   }
 
   // Standart kabin akışı
-  Future<RepoResult<CabinVisualizerData>> _buildStandardVisualizer(int cabinId) async {
+  Future<Result<CabinVisualizerData>> _buildStandardVisualizer(int cabinId) async {
     final (slotResult, stockResult, faultResult) = await (
       _cabinRepository.getCabinSlots(cabinId),
       _getCabinStocks.call(cabinId),
       _getMasterFaults.call(),
     ).wait;
 
-    final slots = slotResult.when(success: (data) => data, stale: (data, _) => data, failure: (_) => null);
+    final slots = slotResult.when(ok: (data) => data, error: (_) => null);
 
     if (slots == null || slots.isEmpty) {
-      return RepoFailure(ServiceException(message: 'Kabin tasarımı bulunamadı', statusCode: 404));
+      return Result.error(ServiceException(message: 'Kabin tasarımı bulunamadı', statusCode: 404));
     }
 
     final masterFaults = faultResult.when(
@@ -135,15 +130,12 @@ class GetCabinVisualizerDataUseCase {
       slots.where((s) => s.id != null).map((s) => _cabinRepository.getDrawerUnits(s.id!)),
     );
 
-    bool isStale = slotResult is RepoStale || stockResult is RepoStale || unitResults.any((r) => r is RepoStale);
-
     final groups = <DrawerGroup>[];
     final validSlots = slots.where((s) => s.id != null).toList();
 
     for (int i = 0; i < validSlots.length; i++) {
       final unitResult = unitResults[i];
-      if (unitResult is RepoStale) isStale = true;
-      final units = unitResult.when(success: (data) => data, stale: (data, _) => data, failure: (_) => <DrawerUnit>[]);
+      final units = unitResult.when(ok: (data) => data, error: (_) => <DrawerUnit>[]);
 
       // Fault durumunu DrawerUnit'e yansıt
       final enrichedUnits = units.map((u) {
@@ -164,13 +156,12 @@ class GetCabinVisualizerDataUseCase {
     final data = CabinVisualizerData(
       cabinId: cabinId,
       slots: slotVisuals,
-      isStale: isStale,
       groups: groups,
       stocks: stocks,
       masterFaults: masterFaults,
     );
 
-    return isStale ? RepoStale(data, DateTime.now()) : RepoSuccess(data);
+    return Result.ok(data);
   }
 
   // Slot builder

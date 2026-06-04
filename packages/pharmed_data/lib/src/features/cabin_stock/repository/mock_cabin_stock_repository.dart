@@ -47,9 +47,9 @@ class MockCabinStockRepository implements ICabinStockRepository {
   ];
 
   @override
-  Future<RepoResult<List<CabinStock>>> getCurrentCabinStock() async {
+  Future<Result<List<CabinStock>>> getCurrentCabinStock() async {
     await Future.delayed(_delay);
-    return RepoSuccess(_mockStocks);
+    return Result.ok(_mockStocks);
   }
 
   @override
@@ -86,12 +86,6 @@ class MockCabinStockRepository implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<void>> unload(List<Map<String, dynamic>> data) async {
-    await Future.delayed(_delay);
-    return const Result.ok(null);
-  }
-
-  @override
   Future<Result<List<StationStock>>> getStationStocks(int stationId) async {
     await Future.delayed(_delay);
     return Result.ok([]);
@@ -99,6 +93,18 @@ class MockCabinStockRepository implements ICabinStockRepository {
 
   @override
   Future<Result<void>> refillMobileCabin(List<dynamic> data) async {
+    await Future.delayed(_delay);
+    return Result.ok([]);
+  }
+
+  @override
+  Future<Result<void>> approveMissingStock(int prescriptionItemId) async {
+    await Future.delayed(_delay);
+    return Result.ok([]);
+  }
+
+  @override
+  Future<Result<void>> rejectMissingStock(int prescriptionItemId) async {
     await Future.delayed(_delay);
     return Result.ok([]);
   }

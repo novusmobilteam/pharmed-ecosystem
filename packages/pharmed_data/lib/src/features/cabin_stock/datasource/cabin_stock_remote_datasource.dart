@@ -8,9 +8,9 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
 
   static const _base = '/CabinDrawrStock';
 
-  String get logSwreq => 'SWREQ-DATA-DRUGCLASS-001';
+  String get logSwreq => 'SWREQ-DATA-CABINSTOCK-001';
 
-  String get logUnit => 'SW-UNIT-DRUGCLASS';
+  String get logUnit => 'SW-UNIT-CABINSTOCK';
 
   /// Belirtilen kabindeki tüm materyal stoklarını çeker.
   Future<Result<List<CabinStockDTO>>> getStocks(int cabinId) async {
@@ -91,6 +91,24 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.listParser(StationStockDTO.fromJson),
       successLog: 'Station stocks fetched',
       emptyLog: 'No station stocks',
+    );
+
+    return res.when(ok: (data) => Result.ok(data ?? const <StationStockDTO>[]), error: Result.error);
+  }
+
+  Future<Result<void>> approveMissingStock(int prescriptionItemId) async {
+    final res = await postRequest(
+      path: '$_base/mobileStockShortageReportedApprove/$prescriptionItemId',
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+
+    return res.when(ok: (data) => Result.ok(data ?? const <StationStockDTO>[]), error: Result.error);
+  }
+
+  Future<Result<void>> rejectMissingStock(int prescriptionItemId) async {
+    final res = await postRequest(
+      path: '$_base/mobileStockShortageReportedReject/$prescriptionItemId',
+      parser: BaseRemoteDataSource.voidParser(),
     );
 
     return res.when(ok: (data) => Result.ok(data ?? const <StationStockDTO>[]), error: Result.error);

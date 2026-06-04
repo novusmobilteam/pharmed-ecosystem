@@ -10,3 +10,6 @@ export 'data/menu_dto.dart';
 export 'domain/model/menu_item.dart';
 export 'domain/usecase/get_filtered_menus_usecase.dart';
 export 'domain/usecase/get_all_menus_usecase.dart';
+export 'domain/usecase/get_missing_stocks_usecase.dart';
+export 'domain/usecase/get_cabins_usecase.dart';
+export 'domain/usecase/get_drug_activities_usecase.dart';

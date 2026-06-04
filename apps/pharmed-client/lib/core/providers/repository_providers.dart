@@ -102,9 +102,10 @@ final dashboardRepositoryProvider = Provider<IDashboardRepository>((ref) {
       dataSource: ref.read(dashboardRemoteDataSourceProvider),
       cabinStockMapper: CabinStockMapper(),
       prescriptionItemMapper: PrescriptionItemMapper(),
-      prescriptionMapper: PrescriptionMapper(),
       refundMapper: RefundMapper(),
       menuMapper: MenuTreeMapper(),
+      cabinMapper: CabinMapper(),
+      itemMovementMapper: PrescriptionItemMovementMapper(),
     ),
   };
 });
@@ -141,7 +142,16 @@ final faultRepositoryProvider = Provider<IFaultRepository>((ref) {
 
 final cabinRepositoryProvider = Provider<ICabinRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => CabinMockRepository(),
+    AppFlavor.mock => CabinRepositoryImpl(
+      cabinMapper: CabinMapper(),
+      drawerSlotMapper: DrawerSlotMapper(),
+      drawerConfigMapper: DrawerConfigMapper(),
+      drawerUnitMapper: DrawerUnitMapper(),
+      drawerTypeMapper: DrawerTypeMapper(),
+      mobileDrawerSlotMapper: MobileDrawerSlotMapper(),
+      remoteDataSource: ref.read(cabinRemoteDataSourceProvider),
+      localDataSource: ref.read(cabinLocaleDataSourceProvider),
+    ),
     AppFlavor.dev || AppFlavor.prod => CabinRepositoryImpl(
       cabinMapper: CabinMapper(),
       drawerSlotMapper: DrawerSlotMapper(),

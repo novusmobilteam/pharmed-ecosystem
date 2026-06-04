@@ -1,6 +1,6 @@
 // [SWREQ-CORE-DASH-001] [IEC 62304 §5.5]
 // Dashboard domain repository arayüzü.
-// Read metodları RepoResult<T> döndürür.
+// Read metodları Result<T> döndürür.
 // Cache TTL: 5 dakika — TTL dolmadan gelen istekler cache'den karşılanır.
 // [forceRefresh]: true → TTL göz ardı edilir, API'ye gidilir.
 // Sınıf: Class B
@@ -8,31 +8,37 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract interface class IDashboardRepository {
-  Future<RepoResult<List<MenuItem>>> getMenuItems({int? userId});
+  Future<Result<List<MenuItem>>> getMenuItems({int? userId});
 
   /// Okunmamış QR kodlu reçete kalemlerini listeler.
-  Future<RepoResult<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false});
+  Future<Result<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false});
 
   /// Son kullanma tarihi yaklaşan stok kalemlerini listeler.
-  Future<RepoResult<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false});
+  Future<Result<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false});
 
   /// Kritik stok seviyesindeki kalemleri listeler.
   /// [isClient]: true → sadece aktif kabine ait stoklar, false → tüm kabinler.
-  Future<RepoResult<List<CabinStock>>> getCriticalStocks({bool isClient = false, bool forceRefresh = false});
+  Future<Result<List<CabinStock>>> getCriticalStocks({bool isClient = false, bool forceRefresh = false});
 
   /// Uygulanmamış (onay bekleyen) reçeteleri listeler.
-  Future<RepoResult<List<Prescription>>> getUnappliedPrescriptions({bool forceRefresh = false});
+  Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptions({bool forceRefresh = false});
 
   /// İade işlemlerini listeler.
-  Future<RepoResult<List<Refund>>> getRefunds({bool forceRefresh = false});
+  Future<Result<List<Refund>>> getRefunds({bool forceRefresh = false});
 
   /// Genel stok durumunu listeler.
-  Future<RepoResult<List<CabinStock>>> getGeneralStocks({bool forceRefresh = false});
+  Future<Result<List<CabinStock>>> getGeneralStocks({bool forceRefresh = false});
 
   /// Yaklaşan tedavi zamanlarını listeler.
-  Future<RepoResult<List<PrescriptionItem>>> getUpcomingTreatments({bool forceRefresh = false});
+  Future<Result<List<PrescriptionItem>>> getUpcomingTreatments({bool forceRefresh = false, required String mac});
 
-  /// Tüm in-memory cache'i temizler.
-  /// Logout veya session sonlandırmada çağrılır.
-  void clearCache();
+  /// Eksik bildirilen stokları listeler.
+  Future<Result<List<PrescriptionItem>>> getMissingStocks({bool forceRefresh = false, required String mac});
+
+  /// Kabinleri listeler. Kabinleri listeleyen metod token istediği için dashboard için ayrı bir
+  /// endpoint tanımlandı.
+  Future<Result<List<Cabin>>> getCabins();
+
+  /// İlgili kabindeki ilaç aktivitilerini getirir
+  Future<Result<List<PrescriptionItemMovement>?>> getDrugActivities({required String mac});
 }

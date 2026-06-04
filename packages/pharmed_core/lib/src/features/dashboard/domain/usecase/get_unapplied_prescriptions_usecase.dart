@@ -5,7 +5,7 @@ class GetDashboardUnappliedPrescriptionsUseCase {
 
   GetDashboardUnappliedPrescriptionsUseCase(this._repository);
 
-  Future<RepoResult<List<Prescription>>> call() {
+  Future<Result<List<PrescriptionItem>>> call() {
     return _repository.getUnappliedPrescriptions();
   }
 }

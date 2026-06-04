@@ -4,7 +4,6 @@ class CabinVisualizerData {
   const CabinVisualizerData({
     required this.cabinId,
     required this.slots,
-    required this.isStale,
     required this.groups,
     required this.stocks,
     this.mobileSlots = const [],
@@ -17,7 +16,6 @@ class CabinVisualizerData {
   final List<DrawerGroup> groups;
   final List<CabinStock> stocks;
   final List<MobileDrawerSlot> mobileSlots;
-  final bool isStale;
   final List<MasterFault> masterFaults;
   final List<MobileFault> mobileFaults;
 

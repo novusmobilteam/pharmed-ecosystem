@@ -730,6 +730,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'An unexpected error occurred. Please try again or contact your system administrator.';
 
   @override
+  String get emptyStateNoDataTitle => 'No Data';
+
+  @override
+  String get emptyStateNoDataDescription => 'There is no data to display yet.';
+
+  @override
   String get refundNoRefundableDrugs =>
       'No refundable medications found for this patient.';
 

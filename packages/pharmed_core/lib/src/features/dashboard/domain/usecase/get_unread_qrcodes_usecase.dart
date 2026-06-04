@@ -5,7 +5,7 @@ class GetUnreadQrcodesUsecase {
 
   GetUnreadQrcodesUsecase(this._repository);
 
-  Future<RepoResult<List<PrescriptionItem>>> call() {
+  Future<Result<List<PrescriptionItem>>> call() {
     return _repository.getUnreadQrCodes();
   }
 }

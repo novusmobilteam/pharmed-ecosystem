@@ -1,7 +1,8 @@
 // pharmed_data/src/cache/hive_cache.dart
 
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pharmed_data/src/cache/cached_entry.dart';
+
+import 'cached_entry.dart';
 
 class HiveCache<T> {
   HiveCache({required this.boxName, required this.serialize, required this.deserialize, required this.isMock});

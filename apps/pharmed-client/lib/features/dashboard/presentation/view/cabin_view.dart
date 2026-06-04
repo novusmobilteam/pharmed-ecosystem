@@ -49,7 +49,6 @@ class CabinView extends StatelessWidget {
                   fullDrawers: cabin.fullDrawers,
                   emptyDrawers: cabin.emptyDrawers,
                   criticalCount: cabin.criticalCount,
-                  isStale: cabin.isStale,
                 ),
               ],
             ),

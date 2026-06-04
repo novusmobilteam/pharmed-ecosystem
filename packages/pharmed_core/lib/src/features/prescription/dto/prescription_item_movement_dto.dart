@@ -9,6 +9,7 @@ class PrescriptionItemMovementDto {
   final UserDto? user;
   final double? quantity;
   final int? stationId;
+  final PrescriptionItemDto? prescriptionItem;
 
   PrescriptionItemMovementDto({
     this.id,
@@ -19,6 +20,7 @@ class PrescriptionItemMovementDto {
     this.user,
     this.quantity,
     this.stationId,
+    this.prescriptionItem,
   });
 
   factory PrescriptionItemMovementDto.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,9 @@ class PrescriptionItemMovementDto {
       user: json['user'] != null ? UserDto.fromJson(json['user']) : null,
       quantity: json['quantity'] as double?,
       stationId: json['stationId'] as int?,
+      prescriptionItem: json['prescriptionDetail'] != null
+          ? PrescriptionItemDto.fromJson(json['prescriptionDetail'])
+          : null,
     );
   }
 }

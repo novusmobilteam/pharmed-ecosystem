@@ -30,28 +30,18 @@ class DrugActivityScreen extends ConsumerWidget {
               currentPage: notifier.currentPage,
               pageSize: notifier.pageSize,
               enableDateFilter: true,
-
               onPageChanged: (page) => notifier.goToPage(page),
               onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
-              columnDefs: [
-                TableColumnDef(title: context.l10n.drugActivity_column_date, flex: 0.9),
-                TableColumnDef(title: context.l10n.drugActivity_column_time, flex: 0.7),
-                TableColumnDef(title: context.l10n.drugActivity_column_patient, flex: 1.5),
-                TableColumnDef(title: context.l10n.drugActivity_column_user),
-                TableColumnDef(title: context.l10n.drugActivity_column_material, flex: 1.5),
-                TableColumnDef(title: context.l10n.drugActivity_column_quantity, numeric: true, flex: 0.7),
-                TableColumnDef(title: context.l10n.drugActivity_column_movement, flex: 0.9),
-              ],
               cellBuilder: (item, colIndex, value) {
                 if (colIndex == 6) {
                   final status = (item).type;
                   return MedInfoChip(
-                    info: status.label,
+                    info: status.actionLabel,
                     backgroundColor: status.backgroundColor,
                     foregroundColor: status.foregroundColor,
                   );
                 }
-                return null; // diğer kolonlar default render
+                return null;
               },
             ),
             DrugActivityError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),

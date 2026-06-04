@@ -165,9 +165,10 @@ class RepositoryProviders {
             dataSource: context.read(),
             cabinStockMapper: CabinStockMapper(),
             prescriptionItemMapper: PrescriptionItemMapper(),
-            prescriptionMapper: PrescriptionMapper(),
             refundMapper: RefundMapper(),
             menuMapper: MenuTreeMapper(),
+            cabinMapper: CabinMapper(),
+            itemMovementMapper: PrescriptionItemMovementMapper(),
           ),
         },
       ),
@@ -314,6 +315,32 @@ class RepositoryProviders {
           AppFlavor.dev || AppFlavor.prod => StockTransactionRepositoryImpl(
             dataSource: context.read(),
             mapper: StockTransactionMapper(),
+          ),
+        },
+      ),
+
+      /// Cabin
+      Provider<ICabinRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => CabinRepositoryImpl(
+            remoteDataSource: context.read(),
+            localDataSource: context.read(),
+            cabinMapper: CabinMapper(),
+            drawerSlotMapper: DrawerSlotMapper(),
+            drawerConfigMapper: DrawerConfigMapper(),
+            drawerUnitMapper: DrawerUnitMapper(),
+            drawerTypeMapper: DrawerTypeMapper(),
+            mobileDrawerSlotMapper: MobileDrawerSlotMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => CabinRepositoryImpl(
+            remoteDataSource: context.read(),
+            localDataSource: context.read(),
+            cabinMapper: CabinMapper(),
+            drawerSlotMapper: DrawerSlotMapper(),
+            drawerConfigMapper: DrawerConfigMapper(),
+            drawerUnitMapper: DrawerUnitMapper(),
+            drawerTypeMapper: DrawerTypeMapper(),
+            mobileDrawerSlotMapper: MobileDrawerSlotMapper(),
           ),
         },
       ),

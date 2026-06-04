@@ -15,9 +15,6 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<List<MenuDTO>?>> getMenus({int? userId}) async {
     final path = userId == null ? '/Menu' : '/Menu/user/$userId';
-
-    print('Pathhhh:$path');
-
     return await fetchRequest<List<MenuDTO>>(path: path, parser: BaseRemoteDataSource.listParser(MenuDTO.fromJson));
   }
 
@@ -53,10 +50,10 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<PrescriptionDto>?>> getUnappliedPrescriptions() async {
-    return await fetchRequest<List<PrescriptionDto>>(
+  Future<Result<List<PrescriptionItemDto>?>> getUnappliedPrescriptions() async {
+    return await fetchRequest<List<PrescriptionItemDto>>(
       path: '$_basePath/prescriptionCollect',
-      parser: BaseRemoteDataSource.listParser(PrescriptionDto.fromJson),
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
   }
 
@@ -67,11 +64,34 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<PrescriptionItemDto>?>> getUpcomingTreatments() async {
+  Future<Result<List<PrescriptionItemDto>?>> getUpcomingTreatments({required String mac}) async {
     return await fetchRequest<List<PrescriptionItemDto>>(
-      path: '$_basePath/clientPrescriptionCollect',
+      path: '$_basePath/upcomingTreatments',
       parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
-      query: {"mac": DeviceInfo.getMacAddress()},
+      query: {"mac": mac},
+    );
+  }
+
+  Future<Result<List<PrescriptionItemDto>?>> getMissingStocks({required String mac}) async {
+    return await fetchRequest<List<PrescriptionItemDto>>(
+      path: '$_basePath/mobileStockShortageReported',
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
+      query: {"mac": mac},
+    );
+  }
+
+  Future<Result<List<CabinDTO>?>> getCabins() async {
+    return await fetchRequest<List<CabinDTO>>(
+      path: '$_basePath/cabin',
+      parser: BaseRemoteDataSource.listParser(CabinDTO.fromJson),
+    );
+  }
+
+  Future<Result<List<PrescriptionItemMovementDto>?>> getDrugActivities({required String mac}) async {
+    return await fetchRequest(
+      path: '$_basePath/materialActivity',
+      parser: BaseRemoteDataSource.listParser(PrescriptionItemMovementDto.fromJson),
+      query: {"mac": mac},
     );
   }
 }

@@ -44,15 +44,11 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
     // 1. Kabin + atamalar paralel çek
     final results = await Future.wait([_getCabin.call(data.cabinId), _getAssignments.call(data.cabinId)]);
 
-    final cabinResult = results[0] as RepoResult<Cabin?>;
+    final cabinResult = results[0] as Result<Cabin?>;
     final assignmentResult = results[1] as Result<List<BedAssignment>>;
 
     // 2. Kabin başarısız → hata
-    final Cabin? cabin = switch (cabinResult) {
-      RepoSuccess(:final data) => data,
-      RepoStale(:final data) => data,
-      RepoFailure() => null,
-    };
+    final Cabin? cabin = cabinResult.when(ok: (data) => data, error: (_) => null);
 
     if (cabin == null || cabin.stationId == null) {
       state = BedAssignmentError(

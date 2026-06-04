@@ -684,7 +684,7 @@
   "emptyStateNoPrescriptionTitle": "لم يتم العثور على وصفة طبية",
   "emptyStateNoPrescriptionDescription": "لا توجد وصفات طبية نشطة لهذا المريض.",
 
-    "emptyStateNoCabinTitle": "لم يتم العثور على خزانة",
+  "emptyStateNoCabinTitle": "لم يتم العثور على خزانة",
   "emptyStateNoCabinDescription": "لم يتم تعريف أي خزانة بعد. يرجى تعريف خزانة للمتابعة.",
 
   "emptyStateNetworkErrorTitle": "لا يوجد اتصال بالإنترنت",
@@ -695,6 +695,9 @@
 
   "emptyStateErrorTitle": "حدث خطأ ما",
   "emptyStateErrorDescription": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى أو التواصل مع مسؤول النظام.",
+
+  "emptyStateNoDataTitle": "لا توجد بيانات",
+  "emptyStateNoDataDescription": "لا توجد بيانات للعرض حتى الآن.",
 
   "refundNoRefundableDrugs": "لم يتم العثور على أدوية قابلة للإرجاع لهذا المريض.",
 "@refundNoRefundableDrugs": {

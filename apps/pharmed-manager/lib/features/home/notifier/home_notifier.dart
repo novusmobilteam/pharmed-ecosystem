@@ -58,7 +58,7 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> fetchMenus() async {
-    await executeRepo(
+    await execute(
       fetchOp,
       operation: () => _getFilteredMenusUseCase.call(userId: _authNotifier.currentUser?.id),
       onData: (data) {

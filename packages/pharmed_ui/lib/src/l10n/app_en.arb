@@ -694,6 +694,9 @@
   "emptyStateErrorTitle": "Something Went Wrong",
   "emptyStateErrorDescription": "An unexpected error occurred. Please try again or contact your system administrator.",
 
+  "emptyStateNoDataTitle": "No Data",
+  "emptyStateNoDataDescription": "There is no data to display yet.",
+
   "refundNoRefundableDrugs": "No refundable medications found for this patient.",
 "@refundNoRefundableDrugs": {
   "description": "Message shown when the selected patient has no refundable medications."

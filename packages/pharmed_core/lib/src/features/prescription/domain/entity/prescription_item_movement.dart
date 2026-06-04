@@ -11,6 +11,7 @@ class PrescriptionItemMovement implements TableData {
   final User? performedBy;
   final double? quantity;
   final int? stationId;
+  final PrescriptionItem? prescriptionItem;
 
   const PrescriptionItemMovement({
     required this.id,
@@ -21,28 +22,29 @@ class PrescriptionItemMovement implements TableData {
     this.performedBy,
     this.quantity,
     this.stationId,
+    this.prescriptionItem,
   });
 
   @override
   List<dynamic> get content => [
     createdAt.formattedDate,
     createdAt.formattedTime,
-    'Hasta Bilgileri',
+    prescriptionItem?.prescription?.hospitalization?.patient?.fullName,
     performedBy?.fullName,
-    'Malzeme Bilgileri',
+    prescriptionItem?.medicine?.name,
     quantity.formatFractional,
-    type.label,
+    type.actionLabel,
   ];
 
   @override
   List<dynamic> get rawContent => [
     createdAt.formattedDate,
     createdAt.formattedTime,
-    'Hasta Bilgileri',
+    prescriptionItem?.prescription?.hospitalization?.patient?.fullName,
     performedBy?.fullName,
-    'Malzeme Bilgileri',
+    prescriptionItem?.medicine?.name,
     quantity.formatFractional,
-    type.label,
+    type.actionLabel,
   ];
 
   @override

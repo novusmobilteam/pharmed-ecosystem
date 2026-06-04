@@ -15,5 +15,5 @@ class GetCabinsUseCase {
   GetCabinsUseCase(this._repository);
   final ICabinRepository _repository;
 
-  Future<RepoResult<List<Cabin>>> call() => _repository.getCabins();
+  Future<Result<List<Cabin>>> call() => _repository.getCabins();
 }

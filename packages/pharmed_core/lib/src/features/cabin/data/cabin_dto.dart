@@ -2,7 +2,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 class CabinDTO {
   final int? id;
-  final int? stationId;
+  final dynamic stationId;
   final int? no;
   final String? name;
   final bool? isActive;

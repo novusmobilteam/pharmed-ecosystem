@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/src/network/base_remote_datasource.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class CabinRemoteDataSource extends BaseRemoteDataSource {
   CabinRemoteDataSource({required super.apiManager});
@@ -16,6 +17,13 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.listParser(CabinDTO.fromJson),
       successLog: 'Kabinler getirildi',
       emptyLog: 'Kabin bulunamadı',
+    );
+
+    MedLogger.info(
+      unit: 'CabinDataSource',
+      message: 'getCabins raw response',
+      context: {'json': res.data.toString()},
+      swreq: '',
     );
 
     return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);

@@ -45,23 +45,19 @@ class ScanCabinUseCase {
 
       final results = await Future.wait([_cabinRepository.getDrawerConfigs(), _cabinRepository.getDrawerTypes()]);
 
-      final configsRes = results[0] as RepoResult<List<DrawerConfig>>;
-      final typesRes = results[1] as RepoResult<List<DrawerType>>;
+      final configsRes = results[0] as Result<List<DrawerConfig>>;
+      final typesRes = results[1] as Result<List<DrawerType>>;
 
-      // RepoFailure → tarama durduruluyor
-      // RepoStale → cache var, taramaya devam edilebilir
-      if (configsRes is RepoFailure || typesRes is RepoFailure) {
+      final allConfigs = configsRes.when(ok: (data) => data, error: (_) => null);
+      final allTypes = typesRes.when(ok: (data) => data, error: (_) => null);
+
+      // Herhangi biri başarısız → tarama durur
+      if (allConfigs == null || allTypes == null) {
         onStatusChanged?.call(ScanStatus.metadataFailed, detail: 'Tanımlamalar alınamadı.');
         return Result.error(CustomException(message: 'Tanımlamalar alınamadı.'));
       }
 
-      final allConfigs = configsRes.dataOrNull!;
-      final allTypes = typesRes.dataOrNull!;
-
-      onStatusChanged?.call(
-        ScanStatus.metadataReady,
-        detail: '${allConfigs.length} konfigürasyon${configsRes.isStale ? ' (önbellek)' : ''}',
-      );
+      onStatusChanged?.call(ScanStatus.metadataReady, detail: '${allConfigs.length} konfigürasyon');
 
       // ── 3. Yönetim Kartı ───────────────────────────────────────
       onStatusChanged?.call(ScanStatus.searchingManager);

@@ -13,20 +13,10 @@ class GetFilteredMenusUseCase {
 
   GetFilteredMenusUseCase(this._dashboardRepository, {this.isManager = false});
 
-  Future<RepoResult<FilteredMenus>> call({int? userId, bool forceRefresh = false}) async {
+  Future<Result<FilteredMenus>> call({int? userId, bool forceRefresh = false}) async {
     final result = await _dashboardRepository.getMenuItems(userId: userId);
 
-    return result.when(
-      success: (treeMenus) {
-        final processed = _processMenus(treeMenus);
-        return RepoSuccess(processed);
-      },
-      stale: (treeMenus, savedAt) {
-        final processed = _processMenus(treeMenus);
-        return RepoStale(processed, savedAt);
-      },
-      failure: (error) => RepoFailure(error),
-    );
+    return result.when(ok: (value) => Result.ok(_processMenus(value)), error: Result.error);
   }
 
   FilteredMenus _processMenus(List<MenuItem> treeMenus) {

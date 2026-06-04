@@ -34,6 +34,7 @@ class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onHomeTap,
     this.onLogoutTap,
     this.onSettingsTap,
+    this.onLoginTap,
   });
 
   final bool isLoggedIn;
@@ -42,6 +43,7 @@ class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onHomeTap;
   final VoidCallback? onLogoutTap;
   final VoidCallback? onSettingsTap;
+  final VoidCallback? onLoginTap;
 
   @override
   Size get preferredSize => const Size.fromHeight(62); // 52 + 10 padding üst
@@ -62,7 +64,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget build(BuildContext context) {
     return Container(
       color: MedColors.bg,
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
       child: Container(
         height: 52,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -103,7 +104,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
             // ── Kullanıcı alanı ──────────────────────────────────
             if (!widget.isLoggedIn)
-              _LoginButton(onTap: null)
+              _LoginButton(onTap: widget.onLoginTap) // 🆕 artık çalışıyor
             else if (widget.user != null)
               _UserInfo(user: widget.user!),
 

@@ -37,6 +37,7 @@ class PrescriptionItem implements TableData, Selectable {
   final String? patientName;
   final String? rfidTag;
   final PrescriptionItemMovement? lastMovement;
+  final Hospitalization? hospitalization;
 
   PrescriptionMovementType? get status => lastMovement?.type;
   User? get activityUser => lastMovement?.performedBy;
@@ -76,6 +77,7 @@ class PrescriptionItem implements TableData, Selectable {
     this.patientName,
     this.rfidTag,
     this.lastMovement,
+    this.hospitalization,
   });
 
   PrescriptionItem copyWith({
