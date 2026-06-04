@@ -19,6 +19,8 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
     final items = section.data ?? const <PrescriptionItem>[];
 
     return DashboardListPanel<List<PrescriptionItem>>(
+      key: const ValueKey('unapplied_panel'),
+      useCarousel: true,
       title: 'UYGULANMAMIŞ REÇETELER',
       count: items.length,
       countColor: MedColors.amber,
@@ -30,10 +32,13 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
         final item = items[index];
         return DashboardRxItemCard(
           item: item,
+          showFlags: true,
+          showStatusChip: false,
+          showTimeChip: true,
           infoRows: [
             MedInfoRow(label: 'HASTA', value: item.prescription?.hospitalization?.patient?.fullName ?? '-'),
             MedInfoRow(label: 'DOKTOR', value: item.doctor?.fullName ?? '-'),
-            MedInfoRow(label: 'SERVİS', value: item.physicalService?.name ?? '-'),
+            MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'),
             MedInfoRow(
               label: 'ODA / YATAK',
               value: [

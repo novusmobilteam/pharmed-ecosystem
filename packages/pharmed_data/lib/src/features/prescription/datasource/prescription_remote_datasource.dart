@@ -216,6 +216,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       take: take,
       startDate: startDate,
       endDate: endDate,
+      envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemMovementDto.fromJson),
     );
   }

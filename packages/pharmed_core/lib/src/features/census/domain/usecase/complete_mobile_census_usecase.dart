@@ -12,7 +12,7 @@ class MobileCensusParams {
   MobileCensusParams({this.prescriptionDetailId, this.userId, this.dosePiece, this.epc});
 
   Map<String, dynamic> toJson() {
-    return {'prescriptionDetailId': prescriptionDetailId, 'userId': userId, 'dosePiece': dosePiece, 'rfidCardTag': epc};
+    return {'prescriptionDetailId': prescriptionDetailId};
   }
 }
 

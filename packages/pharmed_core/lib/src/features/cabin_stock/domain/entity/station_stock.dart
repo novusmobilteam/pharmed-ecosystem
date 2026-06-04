@@ -18,11 +18,11 @@ class StationStock implements TableData {
     code,
     medicine?.barcode,
     medicine?.name,
-    maxQuantity?.toCustomString(),
-    currentQuantity?.toCustomString(),
-    reservedQuantity?.toCustomString(),
-    remainingQuantity?.toCustomString(),
-    fillingQuantity?.toCustomString(),
+    maxQuantity?.formatFractional,
+    currentQuantity?.formatFractional,
+    reservedQuantity?.formatFractional,
+    remainingQuantity?.formatFractional,
+    fillingQuantity?.formatFractional,
   ];
 
   @override
@@ -30,11 +30,11 @@ class StationStock implements TableData {
     code,
     medicine?.barcode,
     medicine?.name,
-    maxQuantity,
-    currentQuantity,
-    reservedQuantity,
-    remainingQuantity,
-    fillingQuantity,
+    maxQuantity.formatFractional,
+    currentQuantity.formatFractional,
+    reservedQuantity.formatFractional,
+    remainingQuantity.formatFractional,
+    fillingQuantity.formatFractional,
   ];
 
   @override

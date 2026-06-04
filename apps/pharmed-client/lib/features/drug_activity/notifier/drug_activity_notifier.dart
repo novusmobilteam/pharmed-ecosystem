@@ -40,20 +40,26 @@ class DrugActivityNotifier extends Notifier<DrugActivityState> {
     return const DrugActivityLoading();
   }
 
+  /// Tablo varsa koru + tablo-içi loading; yoksa (ilk yükleme) tam ekran Loading.
+  void _enterLoading() {
+    final current = state;
+    state = current is DrugActivityLoaded ? current.copyWith(isLoading: true) : const DrugActivityLoading();
+  }
+
   Future<void> _load() async {
     final skip = (_currentPage - 1) * _pageSize;
     final result = await _useCase.call(skip: skip, take: _pageSize, startDate: _startDate, endDate: _endDate);
     result.when(
       ok: (response) {
         _totalCount = response?.totalCount ?? 0;
-        state = DrugActivityLoaded(items: response?.data ?? []);
+        state = DrugActivityLoaded(items: response?.data ?? []); // isLoading: false (default)
       },
       error: (e) => state = DrugActivityError(message: e.message),
     );
   }
 
   Future<void> refresh() async {
-    state = const DrugActivityLoading();
+    _enterLoading();
     await _load();
   }
 
@@ -61,13 +67,14 @@ class DrugActivityNotifier extends Notifier<DrugActivityState> {
     _startDate = start ?? _startDate;
     _endDate = end ?? _endDate;
     _currentPage = 1;
+    _enterLoading();
     await _load();
   }
 
   Future<void> goToPage(int page) async {
     if (page < 1 || (totalPages > 0 && page > totalPages)) return;
     _currentPage = page;
-    state = const DrugActivityLoading();
+    _enterLoading();
     await _load();
   }
 

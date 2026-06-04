@@ -19,6 +19,8 @@ class UpcomingTreatmentPanel extends StatelessWidget {
     final items = section.data ?? const <PrescriptionItem>[];
 
     return DashboardListPanel(
+      key: const ValueKey('upcoming_panel'),
+      useCarousel: true,
       title: 'YAKLAŞAN TEDAVİLER',
       count: items.length,
       countColor: MedColors.blue,
@@ -35,7 +37,7 @@ class UpcomingTreatmentPanel extends StatelessWidget {
           showTimeChip: true,
           infoRows: [
             MedInfoRow(label: 'HASTA', value: item.prescription?.hospitalization?.patient?.fullName ?? '-'),
-            MedInfoRow(label: 'SERVİS', value: item.physicalService?.name ?? '-'),
+            MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'),
           ],
         );
       },

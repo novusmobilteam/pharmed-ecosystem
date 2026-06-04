@@ -144,7 +144,7 @@ class _PrescriptionList extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = items[index];
 
-        final isEligible = item.status == PrescriptionMovementType.filledWaiting;
+        final isEligible = item.status?.canFill ?? false;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
         final rfidStatus = !isProcessActive
             ? null // session başlamadı
@@ -266,6 +266,11 @@ class _CancelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(label: context.l10n.common_cancelButton, size: MedButtonSize.sm, variant: MedButtonVariant.danger, onPressed: onTap);
+    return MedButton(
+      label: context.l10n.common_cancelButton,
+      size: MedButtonSize.sm,
+      variant: MedButtonVariant.danger,
+      onPressed: onTap,
+    );
   }
 }

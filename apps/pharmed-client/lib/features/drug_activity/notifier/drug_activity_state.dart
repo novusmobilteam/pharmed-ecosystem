@@ -8,9 +8,14 @@ final class DrugActivityLoading extends DrugActivityState {
   const DrugActivityLoading();
 }
 
-final class DrugActivityLoaded extends DrugActivityState {
+class DrugActivityLoaded extends DrugActivityState {
+  const DrugActivityLoaded({required this.items, this.isLoading = false});
+
   final List<PrescriptionItemMovement> items;
-  const DrugActivityLoaded({required this.items});
+  final bool isLoading;
+
+  DrugActivityLoaded copyWith({List<PrescriptionItemMovement>? items, bool? isLoading}) =>
+      DrugActivityLoaded(items: items ?? this.items, isLoading: isLoading ?? this.isLoading);
 }
 
 final class DrugActivityError extends DrugActivityState {

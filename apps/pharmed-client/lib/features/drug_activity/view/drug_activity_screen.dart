@@ -23,13 +23,15 @@ class DrugActivityScreen extends ConsumerWidget {
 
           body: switch (state) {
             DrugActivityLoading() => const Center(child: CircularProgressIndicator()),
-            DrugActivityLoaded(:final items) => MedTable(
+            DrugActivityLoaded(:final items, :final isLoading) => MedTable(
               data: items,
+              isLoading: isLoading,
               emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
               serverTotalCount: notifier.totalCount,
               currentPage: notifier.currentPage,
               pageSize: notifier.pageSize,
               enableDateFilter: true,
+              enablePagination: true,
               onPageChanged: (page) => notifier.goToPage(page),
               onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
               cellBuilder: (item, colIndex, value) {
