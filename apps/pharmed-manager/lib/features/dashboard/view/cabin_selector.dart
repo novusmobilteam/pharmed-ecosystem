@@ -35,10 +35,7 @@ class DashboardCabinSelector extends StatelessWidget {
                       label: cabin.name ?? '-',
                       size: MedButtonSize.sm,
                       variant: cabin.id == selectedId ? MedButtonVariant.primary : MedButtonVariant.secondary,
-                      onPressed: () {
-                        print(cabin.station?.name);
-                      },
-                      // onPressed: () => onSelect(cabin.id!),
+                      onPressed: () => onSelect(cabin.id!),
                     ),
                     const SizedBox(width: 8),
                   ],

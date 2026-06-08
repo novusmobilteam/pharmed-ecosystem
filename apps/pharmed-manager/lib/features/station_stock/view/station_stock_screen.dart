@@ -22,6 +22,7 @@ class StationStockScreen extends StatelessWidget {
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
               title: menu.name ?? 'İstasyon Stok Listesi',
+              subtitle: menu.description,
               isLoading: notifier.isFetching,
               child: MedTable<StationStock>(
                 data: notifier.filteredItems,

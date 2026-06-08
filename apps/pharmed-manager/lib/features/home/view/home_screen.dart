@@ -21,6 +21,7 @@ import '../../hospitalization/view/hospitalization_screen.dart';
 import '../../inconsistency/view/inconsistency_screen.dart';
 import '../../medicine/view/medicine_screen.dart';
 
+import '../../refill_list/view/refill_list_screen.dart';
 import '../../station_setup/view/station_screen.dart';
 import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
 import '../../user/view/user_screen.dart';
@@ -177,6 +178,7 @@ class _HomeContent extends StatelessWidget {
       'inconsistency' => InconsistencyScreen(menu: menu!),
       'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),
       'cabin-transaction-report' => StationTransactionReportScreen(menu: menu!),
+      'refill' => RefillListScreen(menu: menu!),
       _ => const _NotFoundView(),
     };
   }
