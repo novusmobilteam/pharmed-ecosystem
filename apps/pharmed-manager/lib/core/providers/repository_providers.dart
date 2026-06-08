@@ -344,6 +344,24 @@ class RepositoryProviders {
           ),
         },
       ),
+
+      /// Refill List
+      Provider<IRefillListRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => RefillListRepositoryImpl(
+            dataSource: context.read(),
+            refillListMapper: RefillListMapper(),
+            detailMapper: RefillListDetailMapper(),
+            cabinStockMapper: CabinStockMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => RefillListRepositoryImpl(
+            dataSource: context.read(),
+            refillListMapper: RefillListMapper(),
+            detailMapper: RefillListDetailMapper(),
+            cabinStockMapper: CabinStockMapper(),
+          ),
+        },
+      ),
     ];
   }
 }

@@ -219,6 +219,16 @@ class UsecaseProviders {
       Provider(create: (context) => GetUpcomingTreatmentsUseCase(context.read())),
       Provider(create: (context) => GetDashboardCabinsUseCase(context.read())),
       Provider(create: (context) => GetDrugActivitiesUseCase(context.read())),
+
+      /// Refill List
+      Provider(create: (context) => CancelRefillListUseCase(context.read())),
+      Provider(create: (context) => CreateRefillListUseCase(context.read())),
+      Provider(create: (context) => GetCurrentStationRefillListsUseCase(context.read())),
+      Provider(create: (context) => GetRefillCandidatesUseCase(context.read())),
+      Provider(create: (context) => GetRefillListDetailUseCase(context.read())),
+      Provider(create: (context) => GetRefillListsUseCase(context.read())),
+      Provider(create: (context) => UpdateRefillListStatusUseCase(context.read())),
+      Provider(create: (context) => UpdateRefillListUseCase(context.read())),
     ];
   }
 }
