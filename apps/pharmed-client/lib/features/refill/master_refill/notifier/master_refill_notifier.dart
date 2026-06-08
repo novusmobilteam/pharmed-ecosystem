@@ -1,29 +1,28 @@
-// lib/features/refill/master_refill/presentation/notifier/master_refill_notifier.dart
+// pharmed-client/lib/features/refill/master_refill/presentation/notifier/master_refill_notifier.dart
 //
 // [SWREQ-CLI-MREFILL-002] [IEC 62304 §5.5]
-// Master kabin dolum ekranı state yönetimi.
+// İlaç-merkezli master kabin dolum akışını yöneten notifier.
 //
-// Sorumluluk:
-//   - CabinVisualizerData'dan groups, stocks, faults alır — ekstra istek yok
-//   - init() → GetMedicineAssignmentsUseCase ile atamaları çeker
-//   - onDrawerTap: her iki tip için DrawerSelected — göz bekleniyor
-//   - onCellTap:
-//       Kübik    → CellSelected, tek göz input
-//       Birim doz → CellSelected, seçili unit'in tüm gözleri için stepInputs
-//   - saveRefill() → RefillMedicineUseCase
-//   - Çekmece kapandığında (MasterDrawerClosed) saveRefill otomatik tetiklenir
+// FAZ 1 (Selection): GetCabinAssignmentsUseCase ile atanmış ilaçları çeker,
+//   kullanıcının ilaç/göz seçimini yönetir.
+// FAZ 2 (Executing): RefillQueueBuilder ile çekmece kuyruğu üretir, kuyruğu
+//   MasterDrawerOrchestrator üzerinden sırayla işler:
+//     - currentJob'ı aç (open)
+//     - Opened → kullanıcı gözleri doldurur
+//     - confirmClose → çekmece kapanır (WaitingForClose → Closed)
+//     - Closed → aktif job kaydedilir, sıradaki job açılır
+//
+// Aynı anda yalnızca TEK fiziksel çekmece açıktır.
 //
 // Sınıf: Class B
 
-import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../../core/providers/providers.dart';
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/cabin_operation/master_drawer/master_drawer_orchestrator.dart';
-import '../../refill.dart';
-import 'refill_step_input.dart';
+import '../../../../core/providers/providers.dart';
+import 'master_refill_state.dart';
 
 final masterRefillNotifierProvider = NotifierProvider<MasterRefillNotifier, MasterRefillState>(
   MasterRefillNotifier.new,
@@ -32,355 +31,363 @@ final masterRefillNotifierProvider = NotifierProvider<MasterRefillNotifier, Mast
 class MasterRefillNotifier extends Notifier<MasterRefillState> {
   late final MasterDrawerOrchestrator _orchestrator;
 
-  GetMedicineAssignmentsUseCase get _getAssignments => ref.read(getMedicineAssignmentsUseCaseProvider);
-  RefillMasterCabinUseCase get _refillMedicine => ref.read(refillMasterCabinUsecaseProvider);
+  GetCabinAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
+  RefillMasterCabinUseCase get _refillCabin => ref.read(refillMasterCabinUseCaseProvider);
 
   @override
   MasterRefillState build() {
     _orchestrator = MasterDrawerOrchestrator(ref: ref);
-    _orchestrator.init();
-
-    ref.listen<MasterDrawerSessionState>(masterDrawerSessionProvider, (_, next) {
-      if (next.stage is MasterDrawerClosed) {
-        saveRefill();
-        _orchestrator.stop();
-      }
-    });
-
-    ref.onDispose(() => _orchestrator.dispose());
-
+    _orchestrator.init(onStageChange: _onDrawerStage);
+    ref.onDispose(_orchestrator.dispose);
     return const MasterRefillUninitialized();
   }
 
-  Future<void> openDrawer() async {
-    final current = state;
-    if (current is! MasterRefillCellSelected) return;
+  // ── FAZ 1: Init & Seçim ─────────────────────────────────────────────────
 
-    final openCubicLid = current.selectedGroup.isKubik;
-    final assignment = current.isKubik
-        ? current.selectedAssignment
-        : current.assignments.firstWhereOrNull((a) => a.cabinDrawerId == current.selectedUnit.id);
-
-    if (assignment == null) return;
-
-    await _orchestrator.open(assignment: assignment, openCubicLid: openCubicLid);
-  }
-
-  void confirmClose() => _orchestrator.confirmClose();
-  Future<void> cancelDrawer() => _orchestrator.stop();
-
+  /// Ekran açılışında çağrılır — kabine atanmış ilaçları yükler.
   Future<void> init(CabinVisualizerData data) async {
     final cabinId = data.cabinId;
-    state = MasterRefillLoading(groups: data.groups, cabinId: cabinId);
+    state = const MasterRefillLoading();
 
-    final result = await _getAssignments.call(cabinId);
-
-    state = result.when(
-      ok: (assignments) => MasterRefillIdle(
-        groups: data.groups,
-        cabinId: cabinId,
-        stocks: data.stocks,
-        faults: data.masterFaults,
-        assignments: assignments,
-      ),
-      error: (e) => MasterRefillError(
-        message: e.message,
-        previousState: MasterRefillIdle(
-          groups: data.groups,
-          cabinId: cabinId,
-          stocks: data.stocks,
-          faults: data.masterFaults,
-          assignments: const [],
-        ),
-      ),
-    );
-  }
-
-  void onDrawerTap(DrawerGroup group) {
-    final currentSlotId = switch (state) {
-      MasterRefillDrawerSelected s => s.selectedSlotId,
-      MasterRefillCellSelected s => s.selectedSlotId,
-      _ => null,
-    };
-
-    // Aynı çekmece tekrar tıklandı → Idle'a dön
-    if (currentSlotId == (group.slot.id ?? -1)) {
-      state = MasterRefillIdle(
-        groups: state.groups,
-        assignments: state.assignments,
-        stocks: state.stocks,
-        faults: state.faults,
-        cabinId: state.cabinId,
-      );
-      return;
-    }
-
-    // Her iki tip için DrawerSelected — göz/sıra seçimi bekleniyor
-    state = MasterRefillDrawerSelected(
-      groups: state.groups,
-      assignments: state.assignments,
-      stocks: state.stocks,
-      faults: state.faults,
-      selectedGroup: group,
-      cabinId: state.cabinId,
-    );
-  }
-
-  void onCellTap(DrawerUnit unit, int? stepNo) {
-    final selectedGroup = state.selectedGroup;
-    if (selectedGroup == null) return;
-
-    // Toggle — aynı göz/sıra tekrar tıklandı → DrawerSelected'a dön
-    if (state is MasterRefillCellSelected) {
-      final current = state as MasterRefillCellSelected;
-      final isSameSelection = current.isKubik
-          ? current.selectedUnitId == unit.id && current.selectedStepNo == stepNo
-          : current.selectedUnitId == unit.id;
-
-      if (isSameSelection) {
-        state = MasterRefillDrawerSelected(
-          groups: state.groups,
-          assignments: state.assignments,
-          stocks: state.stocks,
-          faults: state.faults,
-          selectedGroup: selectedGroup,
-          cabinId: state.cabinId,
-        );
-        return;
-      }
-    }
-
-    if (selectedGroup.isKubik || selectedGroup.isSerum) {
-      _selectKubikCell(selectedGroup, unit, stepNo);
-    } else {
-      _selectUnitDoseCell(selectedGroup, unit);
-    }
-  }
-
-  void _selectKubikCell(DrawerGroup group, DrawerUnit unit, int? stepNo) {
-    state = MasterRefillCellSelected(
-      groups: state.groups,
-      assignments: state.assignments,
-      stocks: state.stocks,
-      faults: state.faults,
-      selectedGroup: group,
-      selectedUnit: unit,
-      selectedStepNo: stepNo,
-      cabinId: state.cabinId,
-      stepInputs: null,
-      fillingQuantity: 0,
-      countQuantity: 0,
-      miadDate: null,
-    );
-  }
-
-  void _selectUnitDoseCell(DrawerGroup group, DrawerUnit unit) {
-    final config = group.slot.drawerConfig;
-    final numberOfSteps = config?.numberOfSteps ?? 6;
-    final stepMultiplier = config?.stepMultiplier ?? 1;
-    final totalSteps = numberOfSteps * stepMultiplier;
-
-    final stepInputs = List.generate(totalSteps, (i) {
-      final stepNo = i + 1;
-      final stock = state.stocks.firstWhereOrNull(
-        (s) => s.cabinDrawerDetail?.drawerUnit?.id == unit.id && s.cabinDrawerDetail?.stepNo == stepNo,
-      );
-      return RefillStepInput(
-        unit: unit,
-        stepNo: stepNo,
-        countQuantity: stock?.quantity?.toDouble() ?? 0,
-        miadDate: null,
-      );
-    });
-
-    state = MasterRefillCellSelected(
-      groups: state.groups,
-      assignments: state.assignments,
-      stocks: state.stocks,
-      faults: state.faults,
-      selectedGroup: group,
-      selectedUnit: unit,
-      cabinId: state.cabinId,
-      stepInputs: stepInputs,
-    );
-  }
-
-  // ── Kübik input değişiklikleri ────────────────────────────────────────────
-
-  void onFillingQuantityChanged(double value) {
-    final current = state;
-    if (current is! MasterRefillCellSelected || !current.isKubik) return;
-    state = current.copyWithKubik(fillingQuantity: value);
-  }
-
-  void onCountQuantityChanged(double value) {
-    final current = state;
-    if (current is! MasterRefillCellSelected || !current.isKubik) return;
-    state = current.copyWithKubik(countQuantity: value);
-  }
-
-  void onMiadDateChanged(DateTime? date) {
-    final current = state;
-    if (current is! MasterRefillCellSelected || !current.isKubik) return;
-    state = current.copyWithKubik(miadDate: date);
-  }
-
-  // ── Birim doz göz bazlı input değişiklikleri ──────────────────────────────
-
-  void onStepFillingChanged(int index, double value) {
-    final current = state;
-    if (current is! MasterRefillCellSelected || !current.isUnitDose) return;
-    final updated = current.stepInputs![index].copyWith(fillingQuantity: value);
-    state = current.copyWithStepInput(index, updated);
-  }
-
-  void onStepCountChanged(int index, double value) {
-    final current = state;
-    if (current is! MasterRefillCellSelected || !current.isUnitDose) return;
-    final updated = current.stepInputs![index].copyWith(countQuantity: value);
-    state = current.copyWithStepInput(index, updated);
-  }
-
-  void onStepMiadChanged(int index, DateTime? date) {
-    final current = state;
-    if (current is! MasterRefillCellSelected || !current.isUnitDose) return;
-    final updated = current.stepInputs![index].copyWith(miadDate: date);
-    state = current.copyWithStepInput(index, updated);
-  }
-
-  // ── Kaydet ───────────────────────────────────────────────────────────────
-
-  Future<void> saveRefill() async {
-    final current = state;
-    if (current is! MasterRefillCellSelected) return;
-    if (!current.canSave) return;
-
-    state = MasterRefillSaving(
-      groups: current.groups,
-      assignments: current.assignments,
-      stocks: current.stocks,
-      faults: current.faults,
-      selectedGroup: current.selectedGroup,
-      selectedUnit: current.selectedUnit,
-      cabinId: current.cabinId,
-    );
-
-    final List<RefillMedicineParams> params;
-
-    if (current.isKubik) {
-      final assignment = current.selectedAssignment!;
-      params = [
-        RefillMedicineParams(
-          cabinDrawerDetailId: assignment.id ?? 0,
-          quantity: current.fillingQuantity,
-          countQuantity: current.countQuantity,
-          miadDate: current.miadDate,
-          materialId: assignment.medicine?.id ?? 0,
-          shelfNo: current.selectedUnit.orderNo ?? 0,
-          compartmentNo: current.selectedUnit.compartmentNo ?? 0,
-        ),
-      ];
-    } else {
-      // Birim doz: (unitId, stepNo) → cabinDrawerDetailId lookup
-      params = current.stepInputs!.where((s) => s.hasInput).map((s) {
-        final assignment = current.assignments.firstWhereOrNull((a) => a.cabinDrawerId == s.unit.id);
-        // stepNo bazlı cabinDrawerDetail bul
-        final detail = assignment?.cabinDrawerDetail?.firstWhereOrNull((d) => d.stepNo == s.stepNo);
-        return RefillMedicineParams(
-          cabinDrawerDetailId: detail?.id ?? 0,
-          quantity: s.fillingQuantity,
-          countQuantity: s.countQuantity,
-          miadDate: s.miadDate,
-          materialId: assignment?.medicine?.id ?? 0,
-          shelfNo: s.unit.orderNo ?? 0,
-          compartmentNo: s.stepNo,
-        );
-      }).toList();
-    }
-
-    final result = await _refillMedicine.call(params);
-
+    final result = await _getAssignments();
     result.when(
-      ok: (_) => _refreshAssignments(
-        groups: current.groups,
-        stocks: current.stocks,
-        faults: current.faults,
-        selectedGroup: current.selectedGroup,
-        selectedUnit: current.selectedUnit,
-        cabinId: current.cabinId,
-        message: '',
-      ),
+      ok: (assignments) {
+        state = MasterRefillSelection(cabinId: cabinId, medicines: assignments);
+      },
       error: (e) {
-        state = MasterRefillError(message: e.message, previousState: current);
+        state = MasterRefillError(
+          message: e.message,
+          previousState: MasterRefillSelection(cabinId: cabinId, medicines: const []),
+        );
       },
     );
   }
 
-  Future<void> _refreshAssignments({
-    required List<DrawerGroup> groups,
-    required List<CabinStock> stocks,
-    required List<MasterFault> faults,
-    required DrawerGroup selectedGroup,
-    required DrawerUnit selectedUnit,
-    required int cabinId,
-    required String message,
-  }) async {
-    final result = await _getAssignments.call(cabinId);
-
-    state = result.when(
-      ok: (assignments) => MasterRefillSuccess(
-        groups: groups,
-        assignments: assignments,
-        stocks: stocks,
-        faults: faults,
-        selectedGroup: selectedGroup,
-        selectedUnit: selectedUnit,
-        cabinId: cabinId,
-        message: message,
-      ),
-      error: (e) => MasterRefillError(
-        message: e.message,
-        previousState: MasterRefillIdle(
-          groups: groups,
-          assignments: const [],
-          stocks: stocks,
-          faults: faults,
-          cabinId: cabinId,
-        ),
-      ),
-    );
+  void onSearchChanged(String value) {
+    final s = state;
+    if (s is! MasterRefillSelection) return;
+    state = s.copyWith(search: value);
   }
 
-  // ── Dismiss ───────────────────────────────────────────────────────────────
-
-  void dismissError() {
-    final current = state;
-    if (current is! MasterRefillError) return;
-    state = current.previousState;
+  /// Bir gözü (cabinDrawerId) seçer/çıkarır.
+  void toggleUnit(int cabinDrawerId) {
+    final s = state;
+    if (s is! MasterRefillSelection) return;
+    final next = Set<int>.from(s.selectedUnitIds);
+    next.contains(cabinDrawerId) ? next.remove(cabinDrawerId) : next.add(cabinDrawerId);
+    state = s.copyWith(selectedUnitIds: next);
   }
 
-  void dismissSuccess() {
-    final current = state;
-    if (current is! MasterRefillSuccess) return;
+  /// Bir ilacın tüm gözlerini topluca seçer/çıkarır.
+  void toggleMedicine(int medicineId) {
+    final s = state;
+    if (s is! MasterRefillSelection) return;
+    final unitIds = s.medicines
+        .where((a) => a.medicine?.id == medicineId)
+        .map((a) => a.cabinDrawerId)
+        .whereType<int>()
+        .toSet();
+    final next = Set<int>.from(s.selectedUnitIds);
+    final allSelected = unitIds.every(next.contains);
+    allSelected ? next.removeAll(unitIds) : next.addAll(unitIds);
+    state = s.copyWith(selectedUnitIds: next);
+  }
 
-    // Birim doz: aynı unit'i yeniden seç — stoklar refresh'ten geldi
-    if (!current.selectedGroup.isKubik && !current.selectedGroup.isSerum) {
-      _selectUnitDoseCell(current.selectedGroup, current.selectedUnit);
+  // ── FAZ 2: Kuyruğu Başlat ───────────────────────────────────────────────
+
+  /// "Otomatik Dolum Başlat" — seçimlerden kuyruk üretir, ilk çekmeceyi açar.
+  Future<void> startAutoRefill() async {
+    final s = state;
+    if (s is! MasterRefillSelection || !s.canStart) return;
+
+    final jobs = RefillQueueBuilder.build(s.selectedAssignments);
+    if (jobs.isEmpty) return;
+
+    state = MasterRefillExecuting(cabinId: s.cabinId, jobs: jobs, currentIndex: 0);
+    await _openCurrentJob();
+  }
+
+  Future<void> _openCurrentJob() async {
+    final s = state;
+    if (s is! MasterRefillExecuting) return;
+    final job = s.currentJob;
+    if (job == null) return;
+
+    // Aktif job'ı işaretle, lid alt-kuyruğunu başa al.
+    state = s.copyWith(jobs: _withStatus(s.jobs, s.currentIndex, RefillJobStatus.active), currentTargetIndex: 0);
+
+    await _orchestrator.open(assignment: job.representativeAssignment);
+  }
+
+  // ── Göz input güncellemeleri (aktif job içinde) ───────────────────────────
+
+  // Kübik çekmece (target tek değer taşır)
+  void onCubicCountChanged(int targetIndex, double value) => _updateTarget(targetIndex, (t) => t.withCubicCount(value));
+
+  void onCubicFillingChanged(int targetIndex, double value) =>
+      _updateTarget(targetIndex, (t) => t.withCubicFilling(value));
+
+  void onCubicMiadChanged(int targetIndex, DateTime? date) => _updateTarget(targetIndex, (t) => t.withCubicMiad(date));
+
+  // Birim doz çekmece (target içinde step bazlı)
+  void onStepCountChanged(int targetIndex, int stepIndex, double value) =>
+      _updateTarget(targetIndex, (t) => t.withStepCount(stepIndex, value));
+
+  void onStepFillingChanged(int targetIndex, int stepIndex, double value) =>
+      _updateTarget(targetIndex, (t) => t.withStepFilling(stepIndex, value));
+
+  void onStepMiadChanged(int targetIndex, int stepIndex, DateTime? date) =>
+      _updateTarget(targetIndex, (t) => t.withStepMiad(stepIndex, date));
+
+  /// isPerCellMiad=false birim doz çekmecede tüm gözlere uygulanan tek miad.
+  void onSingleMiadChanged(int targetIndex, DateTime? date) =>
+      _updateTarget(targetIndex, (t) => t.withSingleMiad(date));
+
+  void _updateTarget(int targetIndex, RefillFillTarget Function(RefillFillTarget) update) {
+    final s = state;
+    if (s is! MasterRefillExecuting) return;
+    final job = s.currentJob;
+    if (job == null || targetIndex < 0 || targetIndex >= job.targets.length) return;
+
+    final newTargets = List<RefillFillTarget>.from(job.targets);
+    newTargets[targetIndex] = update(newTargets[targetIndex]);
+
+    final newJobs = List<RefillDrawerJob>.from(s.jobs);
+    newJobs[s.currentIndex] = job.copyWith(targets: newTargets);
+    state = s.copyWith(jobs: newJobs);
+  }
+
+  // ── Dolumu tamamla ────────────────────────────────────────────────────────
+
+  /// "Dolumu tamamla":
+  ///   - Birim doz/standart: tüm gözler tek formda → çekmece kapanmasını tetikle,
+  ///     kayıt çekmece kapandığında (Closed) yapılır.
+  ///   - Kübik: aktif gözün API'si HEMEN atılır; başarılıysa sıradaki lid açılır,
+  ///     son göz ise çekmece kapanması tetiklenir.
+  Future<void> confirmCurrent() async {
+    final s = state;
+    if (s is! MasterRefillExecuting) return;
+    final job = s.currentJob;
+    if (job == null) return;
+
+    if (!job.isKubik) {
+      // Birim doz/standart — tüm gözler geçerli olmalı.
+      if (!job.canComplete) return;
+      _orchestrator.confirmClose();
       return;
     }
 
-    // Kübik: seçimi koru, inputları sıfırla
-    state = MasterRefillCellSelected(
-      groups: current.groups,
-      assignments: current.assignments,
-      stocks: current.stocks,
-      faults: current.faults,
-      selectedGroup: current.selectedGroup,
-      selectedUnit: current.selectedUnit,
-      cabinId: current.cabinId,
-      fillingQuantity: 0,
-      countQuantity: 0,
-      miadDate: null,
+    // Kübik — aktif gözü kaydet.
+    final target = s.currentTarget;
+    if (target == null || !target.isValid) return;
+
+    // Dolum girilmemişse kayıt atlanır, direkt sıradaki lid'e geçilir.
+    if (target.hasFilling) {
+      state = s.copyWith(isSaving: true);
+      final params = RefillJobParamsMapper.toParamsForTarget(target);
+      final result = await _refillCabin(params);
+      final saved = state;
+      if (saved is! MasterRefillExecuting) return;
+
+      bool failed = false;
+      result.when(
+        ok: (_) {},
+        error: (e) {
+          failed = true;
+          state = MasterRefillError(
+            message: e.message,
+            previousState: saved.copyWith(isSaving: false),
+            isQueueError: true,
+          );
+        },
+      );
+      if (failed) return;
+    }
+
+    await _advanceCubicLid();
+  }
+
+  /// Kübik job içinde sıradaki lid'e geçer; son lid ise çekmece kapanışını başlatır.
+  Future<void> _advanceCubicLid() async {
+    final s = state;
+    if (s is! MasterRefillExecuting) return;
+    final job = s.currentJob;
+    if (job == null) return;
+
+    final nextTarget = s.currentTargetIndex + 1;
+    if (nextTarget >= job.targets.length) {
+      // Tüm gözler bitti → çekmeceyi kapatmaya geç.
+      state = s.copyWith(isSaving: false);
+      _orchestrator.confirmClose();
+      return;
+    }
+
+    // Sıradaki gözün lid'ini aç.
+    state = s.copyWith(currentTargetIndex: nextTarget, isSaving: false);
+    final cellAssignment = job.targets[nextTarget].assignment;
+    await _orchestrator.openCubicLid(cellAssignment);
+  }
+
+  // ── Orchestrator stage geçişleri ──────────────────────────────────────────
+
+  void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
+    switch (current) {
+      case MasterDrawerOpened():
+        _onDrawerOpened();
+      case MasterDrawerClosed():
+        _onCurrentDrawerClosed();
+      case MasterDrawerFailed(:final message):
+        _onDrawerFailed(message);
+      default:
+        break;
+    }
+  }
+
+  /// Ana çekmece açıldı. Kübikse ilk hedef gözün lid'ini aç.
+  /// Birim doz/standart çekmecede kullanıcı zaten tüm formu görüyor — lid yok.
+  Future<void> _onDrawerOpened() async {
+    final s = state;
+    if (s is! MasterRefillExecuting) return;
+    final job = s.currentJob;
+    if (job == null || !job.isKubik) return;
+    if (job.targets.isEmpty) return;
+
+    final firstCell = job.targets[s.currentTargetIndex].assignment;
+    await _orchestrator.openCubicLid(firstCell);
+  }
+
+  /// Aktif çekmece fiziksel olarak kapandı.
+  ///   - Birim doz/standart: tüm gözleri şimdi kaydet → sıradaki job.
+  ///   - Kübik: kayıt zaten lid bazlı yapıldı → doğrudan sıradaki job.
+  Future<void> _onCurrentDrawerClosed() async {
+    final s = state;
+    if (s is! MasterRefillExecuting) return;
+    final job = s.currentJob;
+    if (job == null) return;
+
+    // Birim doz/standart: çekmece kapanınca tüm gözleri tek istekte kaydet.
+    if (!job.isKubik && job.hasAnyFilling) {
+      state = s.copyWith(isSaving: true);
+      final params = RefillJobParamsMapper.toParams(job);
+      final result = await _refillCabin(params);
+      final saved = state;
+      if (saved is! MasterRefillExecuting) return;
+
+      bool failed = false;
+      result.when(
+        ok: (_) {},
+        error: (e) {
+          failed = true;
+          // Çekmece zaten fiziksel kapandı ama kayıt başarısız — kullanıcı
+          // ilaçları geri almalı. Kuyruk hatası olarak işaretle.
+          state = MasterRefillError(
+            message: e.message,
+            previousState: saved.copyWith(isSaving: false),
+            isQueueError: true,
+          );
+        },
+      );
+      if (failed) return;
+    }
+
+    // Job'ı completed işaretle, orchestrator'ı sıfırla, sıradaki job'a geç.
+    final completedJobs = _withStatus(s.jobs, s.currentIndex, RefillJobStatus.completed);
+    final nextIndex = s.currentIndex + 1;
+    await _orchestrator.stop();
+
+    if (nextIndex >= s.jobs.length) {
+      state = MasterRefillCompleted(
+        cabinId: s.cabinId,
+        filledJobCount: completedJobs.where((j) => j.status == RefillJobStatus.completed).length,
+      );
+      return;
+    }
+
+    state = MasterRefillExecuting(
+      cabinId: s.cabinId,
+      jobs: completedJobs,
+      currentIndex: nextIndex,
+      currentTargetIndex: 0,
+      isSaving: false,
     );
+    await _openCurrentJob();
+  }
+
+  void _onDrawerFailed(String message) {
+    final s = state;
+    if (s is MasterRefillExecuting) {
+      state = MasterRefillError(message: message, previousState: s.copyWith(isSaving: false), isQueueError: true);
+    }
+  }
+
+  // ── Durdur / İptal ────────────────────────────────────────────────────────
+
+  /// Kuyruğu tamamen durdurur, seçim fazına döner.
+  Future<void> stopQueue() async {
+    final s = state;
+    await _orchestrator.stop();
+    if (s is MasterRefillExecuting) {
+      final assignments = s.jobs.expand((j) => j.targets.map((t) => t.assignment)).toList();
+      state = MasterRefillSelection(cabinId: s.cabinId, medicines: assignments);
+    }
+  }
+
+  // ── Kuyruk hatası sonrası kurtarma ────────────────────────────────────────
+
+  /// Kuyruk hatası sonrası kullanıcı "Devam"ı onayladı: hatalı çekmeceyi
+  /// failed işaretle, orchestrator'ı sıfırla, sıradaki çekmeceye geç.
+  /// Sıradaki yoksa kuyruğu tamamlanmış say.
+  Future<void> continueAfterError() async {
+    final s = state;
+    if (s is! MasterRefillError || !s.isQueueError) return;
+    final prev = s.previousState;
+    if (prev is! MasterRefillExecuting) return;
+
+    final markedJobs = _withStatus(prev.jobs, prev.currentIndex, RefillJobStatus.failed);
+    final nextIndex = prev.currentIndex + 1;
+    await _orchestrator.stop();
+
+    if (nextIndex >= markedJobs.length) {
+      state = MasterRefillCompleted(
+        cabinId: prev.cabinId,
+        filledJobCount: markedJobs.where((j) => j.status == RefillJobStatus.completed).length,
+      );
+      return;
+    }
+
+    state = MasterRefillExecuting(cabinId: prev.cabinId, jobs: markedJobs, currentIndex: nextIndex, isSaving: false);
+    await _openCurrentJob();
+  }
+
+  /// Kuyruk hatası sonrası kullanıcı "Sonlandır"ı seçti: orchestrator'ı kapat,
+  /// kuyruğu bitir (tamamlanan dolumlar korunur).
+  Future<void> abortAfterError() async {
+    final s = state;
+    if (s is! MasterRefillError) return;
+    final prev = s.previousState;
+    await _orchestrator.stop();
+
+    if (prev is MasterRefillExecuting) {
+      final markedJobs = _withStatus(prev.jobs, prev.currentIndex, RefillJobStatus.failed);
+      state = MasterRefillCompleted(
+        cabinId: prev.cabinId,
+        filledJobCount: markedJobs.where((j) => j.status == RefillJobStatus.completed).length,
+      );
+    } else {
+      state = prev;
+    }
+  }
+
+  void dismissError() {
+    final s = state;
+    if (s is MasterRefillError) state = s.previousState;
+  }
+
+  // ── Helper ────────────────────────────────────────────────────────────────
+
+  List<RefillDrawerJob> _withStatus(List<RefillDrawerJob> jobs, int index, RefillJobStatus status) {
+    final next = List<RefillDrawerJob>.from(jobs);
+    next[index] = next[index].copyWith(status: status);
+    return next;
   }
 }

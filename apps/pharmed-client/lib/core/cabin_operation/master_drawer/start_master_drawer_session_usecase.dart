@@ -1,12 +1,18 @@
 // [SWREQ-CLI-CABIN-OP-011] [IEC 62304 §5.5]
 // Master kabin çekmece oturumunu başlatır ve aşamaları stream olarak yayınlar.
 //
-// OpenDrawerUseCase'in callback bazlı yapısını stream'e çevirir.
-// MobileDrawerSessionNotifier ile aynı pattern'de kullanılabilir.
+// DEĞİŞİKLİK (ilaç-merkezli dolum): Kübik çekmecede artık TÜM lid'ler otomatik
+// açılmaz. Ana çekmece açılır ve Opened yayınlanır; lid açma kontrolü feature
+// notifier'a (MasterRefillNotifier) devredilmiştir — notifier hedef gözlerin
+// lid'lerini openMasterCubicDrawer ile tek tek açar (lid-by-lid alt-kuyruk).
 //
-// Kübik çekmece akışı:
-//   Opening → WaitingForPull → (sensor fullyOpen) → OpeningLid →
-//   Opened → WaitingForClose → (sensor locked) → Closed
+// Bu sayede:
+//   - sadece dolum yapılacak gözlerin kapakları açılır
+//   - her göz ayrı doldurulup ayrı API isteğiyle kaydedilir
+//
+// Kübik çekmece akışı (bu use case):
+//   Opening → WaitingForPull → (sensor fullyOpen) → Opened
+//   (lid açma notifier tarafında yapılır)
 //
 // Standart çekmece akışı:
 //   Opening → WaitingForPull → (sensor fullyOpen) → Opened →
@@ -27,9 +33,9 @@ class StartMasterDrawerSessionUseCase {
 
   /// [assignment] için çekmece oturumu başlatır.
   ///
-  /// [openCubicLid] true ise kübik çekmecelerde kapak açma aşaması eklenir.
-  /// İade işlemlerinde false geçilir — sadece çekmece açılır, kapak açılmaz.
-  Stream<MasterDrawerStage> call({required MedicineAssignment assignment, bool openCubicLid = true}) async* {
+  /// Kübik çekmecelerde kapak (lid) açma BU use case'te YAPILMAZ; ana çekmece
+  /// açılır ve Opened yayınlanır. Lid açma feature notifier'ın sorumluluğundadır.
+  Stream<MasterDrawerStage> call({required MedicineAssignment assignment}) async* {
     final isKubik = assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
     final isSerum = assignment.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false;
     final address = calculateAddressFromAssignment(assignment);
@@ -103,37 +109,11 @@ class StartMasterDrawerSessionUseCase {
       }
     }
 
-    // ── 4. Kübik: kapak açma ──────────────────────────────────────────────
-    if (isKubik && openCubicLid) {
-      yield const MasterDrawerOpeningLid();
-
-      try {
-        final monitorAddress = DrawerAddress.cubicMaster(address.row);
-        // Tüm kapakları aç — lidIndex 0'dan başlar
-        final lidCount = assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.compartmentCount ?? 16;
-        for (int i = 0; i < lidCount; i++) {
-          await _service.openMasterCubicDrawer(
-            manager: manager,
-            row: monitorAddress.row,
-            port: monitorAddress.port,
-            lidIndex: i,
-          );
-        }
-      } catch (e) {
-        yield MasterDrawerFailed(message: 'Kapak açılamadı: $e');
-        return;
-      }
-    }
-
-    // ── 5. Kullanıcı işlem yapabilir ──────────────────────────────────────
+    // ── 4. Kullanıcı işlem yapabilir ──────────────────────────────────────
+    // Kübikte lid açma notifier tarafında lid-by-lid yapılır.
     yield const MasterDrawerOpened();
 
-    // ── 6. Kullanıcı dolumu onaylayınca WaitingForClose tetiklenir ────────
-    // Bu aşama MasterDrawerSessionNotifier.confirmClose() ile dışarıdan tetiklenir.
-    // Use case burada durur — notifier manuel geçiş yapar.
-    // Sensor stream notifier tarafında ayrıca dinlenir.
-    //
-    // Not: Stream burada sonlanır. Notifier Opened sonrası sensor'ı
-    // ayrı subscription ile izler, locked gelince Closed'a geçer.
+    // ── 5. Kullanıcı dolumu onaylayınca WaitingForClose tetiklenir ────────
+    // confirmClose() ile dışarıdan; sensor stream notifier tarafında izlenir.
   }
 }

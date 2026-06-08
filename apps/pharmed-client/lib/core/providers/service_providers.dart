@@ -18,8 +18,8 @@ final serialServiceProvider = Provider<ISerialCommunicationService>((ref) {
 
 final cabinOperationServiceProvider = Provider<ICabinOperationService>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => MockCabinOperationService(),
-    AppFlavor.prod || AppFlavor.dev => CabinOperationService(serialService: ref.read(serialServiceProvider)),
+    AppFlavor.mock || AppFlavor.dev => MockCabinOperationService(),
+    AppFlavor.prod => CabinOperationService(serialService: ref.read(serialServiceProvider)),
   };
 });
 

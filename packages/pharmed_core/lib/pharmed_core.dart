@@ -42,6 +42,7 @@ export 'src/features/waste/waste.dart';
 export 'src/features/census/census.dart';
 export 'src/features/unload/unload.dart';
 export 'src/features/refill_list/refill_list.dart';
+export 'src/features/refill/refill.dart';
 
 // Constants
 export 'src/constants/device_constants.dart';

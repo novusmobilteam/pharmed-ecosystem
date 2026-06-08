@@ -771,6 +771,175 @@
   "refill_label_fillQty": "Fill Quantity",
   "refill_label_expiryDate": "Expiry Date",
 
+
+  "refill_title_selectMedicines": "Select medicines to refill",
+  "@refill_title_selectMedicines": {
+    "description": "Phase 1 header — medicine selection screen title"
+  },
+
+  "refill_title_autoRefill": "Auto refill",
+  "@refill_title_autoRefill": {
+    "description": "Phase 2 header — automatic refill queue title"
+  },
+
+  "refill_label_selectedCount": "{count} selected",
+  "@refill_label_selectedCount": {
+    "description": "Number of selected cells in the selection header",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "refill_label_cellCount": "{count, plural, one{{count} cell} other{{count} cells}}",
+  "@refill_label_cellCount": {
+    "description": "How many cells a medicine is assigned to",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "refill_label_multiMedicine": "{count} medicines",
+  "@refill_label_multiMedicine": {
+    "description": "Drawer job containing multiple distinct medicines",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "refill_label_targetCells": "Cells to refill",
+  "@refill_label_targetCells": {
+    "description": "Label above the per-medicine cell chips"
+  },
+
+  "refill_label_queueProgress": "{done} / {total} drawers",
+  "@refill_label_queueProgress": {
+    "description": "Queue progress indicator (completed/total drawers)",
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "refill_label_current": "Current: {qty}",
+  "@refill_label_current": {
+    "description": "Current stock quantity for a cell, in pieces",
+    "placeholders": {
+      "qty": { "type": "String" }
+    }
+  },
+
+  "refill_label_countQty": "Count",
+  "@refill_label_countQty": {
+    "description": "Census/count input label"
+  },
+
+  "refill_label_fillQty": "Fill quantity",
+  "@refill_label_fillQty": {
+    "description": "Filling amount input label"
+  },
+
+  "refill_label_expiryDate": "Expiry",
+  "@refill_label_expiryDate": {
+    "description": "Expiry (miad) date input label"
+  },
+
+  "refill_chip_drawer": "Drawer {address}",
+  "@refill_chip_drawer": {
+    "description": "Standard (non-cubic) drawer chip label by address",
+    "placeholders": {
+      "address": { "type": "String" }
+    }
+  },
+
+  "refill_chip_drawerCell": "Drawer {address} · Cell {cell}",
+  "@refill_chip_drawerCell": {
+    "description": "Cubic drawer cell chip label",
+    "placeholders": {
+      "address": { "type": "String" },
+      "cell": { "type": "String" }
+    }
+  },
+
+  "refill_subtitle_kubikCells": "Drawer {address} · {count, plural, one{{count} cell} other{{count} cells}}",
+  "@refill_subtitle_kubikCells": {
+    "description": "Cubic drawer subtitle with cell count",
+    "placeholders": {
+      "address": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+
+  "refill_status_done": "Done",
+  "@refill_status_done": { "description": "Queue item completed status" },
+
+  "refill_status_open": "Open",
+  "@refill_status_open": { "description": "Queue item active/open status (short)" },
+
+  "refill_status_queued": "Queued",
+  "@refill_status_queued": { "description": "Queue item pending status" },
+
+  "refill_status_drawerOpen": "Drawer open",
+  "@refill_status_drawerOpen": { "description": "Active form pill — drawer physically open" },
+
+  "refill_status_drawerOpening": "Opening drawer",
+  "@refill_status_drawerOpening": { "description": "Active form pill — drawer not yet open" },
+
+  "refill_hint_searchMedicine": "Search medicine…",
+  "@refill_hint_searchMedicine": { "description": "Search field placeholder" },
+
+  "refill_hint_noMedicines": "No medicines assigned to this cabinet",
+  "@refill_hint_noMedicines": { "description": "Empty list hint" },
+
+  "refill_hint_autoQueueOrder": "Selected drawers open one by one; the next opens once the current is closed.",
+  "@refill_hint_autoQueueOrder": { "description": "Selection footer info about queue behaviour" },
+
+  "refill_hint_confirmCloses": "Saving will close the drawer and open the next one.",
+  "@refill_hint_confirmCloses": { "description": "Execution footer info" },
+
+  "refill_action_startAuto": "Start auto refill",
+  "@refill_action_startAuto": { "description": "Phase 1 primary button" },
+
+  "refill_action_completeFilling": "Complete refill",
+  "@refill_action_completeFilling": { "description": "Phase 2 confirm button" },
+
+  "refill_action_stop": "Stop",
+  "@refill_action_stop": { "description": "Stop the auto-refill queue" },
+
+  "refill_success_completedMaster": "Refill completed successfully",
+  "@refill_success_completedMaster": { "description": "Success message after queue finishes" },
+
+  "refill_label_min": "Min",
+  "refill_label_critical": "Critical",
+  "refill_label_max": "Max",
+    "refill_error_queueTitle": "Operation could not be completed",
+  "refill_error_queueMessage": "This drawer’s refill could not be saved. Please take back the medicines you placed.",
+  "refill_error_continueNext": "Next drawer",
+  "refill_error_endProcess": "End process",
+  "refill_status_failed": "Failed",
+    "refill_status_failed": "Failed",
+  "refill_label_cellProgress": "Cell {current}/{total}",
+  "@refill_label_cellProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "refill_label_cellNo": "Cell {no}",
+  "@refill_label_cellNo": {
+    "placeholders": {
+      "no": {
+        "type": "int"
+      }
+    }
+  },
+  "refill_action_nextCell": "Next cell",
+  "refill_hint_nextCellOpens": "Saving closes this cell and opens the next one.",
+
+
   "refund_success_completed": "Refund completed successfully.",
   "refund_panel_title": "Refundable Medications",
   "refund_action_checking": "Checking...",

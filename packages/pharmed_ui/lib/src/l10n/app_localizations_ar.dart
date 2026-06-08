@@ -876,7 +876,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get refill_success_completedMobile => 'تمت التعبئة بنجاح.';
 
   @override
-  String get refill_success_completedMaster => 'تم حفظ التعبئة بنجاح';
+  String get refill_success_completedMaster => 'اكتملت التعبئة بنجاح';
 
   @override
   String get refill_hint_selectDrawer =>
@@ -889,13 +889,162 @@ class AppLocalizationsAr extends AppLocalizations {
   String get refill_hint_cellError => 'اختر خلية.';
 
   @override
-  String get refill_label_countQty => 'كمية الجرد';
+  String get refill_label_countQty => 'الجرد';
 
   @override
   String get refill_label_fillQty => 'كمية التعبئة';
 
   @override
   String get refill_label_expiryDate => 'تاريخ الانتهاء';
+
+  @override
+  String get refill_title_selectMedicines => 'اختر الأدوية المراد تعبئتها';
+
+  @override
+  String get refill_title_autoRefill => 'التعبئة التلقائية';
+
+  @override
+  String refill_label_selectedCount(int count) {
+    return '$count محدد';
+  }
+
+  @override
+  String refill_label_cellCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count خانة',
+      many: '$count خانة',
+      few: '$count خانات',
+      two: 'خانتان',
+      one: 'خانة واحدة',
+      zero: '$count خانة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String refill_label_multiMedicine(int count) {
+    return '$count أدوية';
+  }
+
+  @override
+  String get refill_label_targetCells => 'الخانات المراد تعبئتها';
+
+  @override
+  String refill_label_queueProgress(int done, int total) {
+    return '$done / $total درج';
+  }
+
+  @override
+  String refill_label_current(String qty) {
+    return 'المتوفر: $qty';
+  }
+
+  @override
+  String refill_chip_drawer(String address) {
+    return 'الدرج $address';
+  }
+
+  @override
+  String refill_chip_drawerCell(String address, String cell) {
+    return 'الدرج $address · الخانة $cell';
+  }
+
+  @override
+  String refill_subtitle_kubikCells(String address, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count خانة',
+      many: '$count خانة',
+      few: '$count خانات',
+      two: 'خانتان',
+      one: 'خانة واحدة',
+      zero: '$count خانة',
+    );
+    return 'الدرج $address · $_temp0';
+  }
+
+  @override
+  String get refill_status_done => 'تم';
+
+  @override
+  String get refill_status_open => 'مفتوح';
+
+  @override
+  String get refill_status_queued => 'في الانتظار';
+
+  @override
+  String get refill_status_drawerOpen => 'الدرج مفتوح';
+
+  @override
+  String get refill_status_drawerOpening => 'جاري فتح الدرج';
+
+  @override
+  String get refill_hint_searchMedicine => 'ابحث عن دواء…';
+
+  @override
+  String get refill_hint_noMedicines => 'لا توجد أدوية مخصصة لهذه الخزانة';
+
+  @override
+  String get refill_hint_autoQueueOrder =>
+      'تُفتح الأدراج المحددة تباعًا؛ يُفتح التالي بمجرد إغلاق الحالي.';
+
+  @override
+  String get refill_hint_confirmCloses =>
+      'سيؤدي الحفظ إلى إغلاق الدرج وفتح الدرج التالي.';
+
+  @override
+  String get refill_action_startAuto => 'بدء التعبئة التلقائية';
+
+  @override
+  String get refill_action_completeFilling => 'إكمال التعبئة';
+
+  @override
+  String get refill_action_stop => 'إيقاف';
+
+  @override
+  String get refill_label_min => 'الحد الأدنى';
+
+  @override
+  String get refill_label_critical => 'حرج';
+
+  @override
+  String get refill_label_max => 'الحد الأقصى';
+
+  @override
+  String get refill_error_queueTitle => 'تعذّر إكمال العملية';
+
+  @override
+  String get refill_error_queueMessage =>
+      'تعذّر حفظ تعبئة هذا الدرج. يُرجى استرجاع الأدوية التي وضعتها.';
+
+  @override
+  String get refill_error_continueNext => 'الدرج التالي';
+
+  @override
+  String get refill_error_endProcess => 'إنهاء العملية';
+
+  @override
+  String get refill_status_failed => 'فشل';
+
+  @override
+  String refill_label_cellProgress(int current, int total) {
+    return 'الخانة $current/$total';
+  }
+
+  @override
+  String refill_label_cellNo(int no) {
+    return 'الخانة $no';
+  }
+
+  @override
+  String get refill_action_nextCell => 'الخانة التالية';
+
+  @override
+  String get refill_hint_nextCellOpens =>
+      'سيؤدي الحفظ إلى إغلاق هذه الخانة وفتح التالية.';
 
   @override
   String get refund_success_completed => 'تم إتمام الإرجاع بنجاح.';

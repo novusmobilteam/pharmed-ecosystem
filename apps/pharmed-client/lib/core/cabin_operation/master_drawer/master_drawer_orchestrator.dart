@@ -6,19 +6,12 @@
 // Sorumluluk:
 //   - masterDrawerSessionProvider'a subscribe olur
 //   - Stage geçişlerini feature notifier'a callback ile bildirir
-//   - open / confirmClose / reopen / stop API'lerini sarmalar
-//
-// RFID yok — MobileDrawerOrchestrator'dan farklı olarak EPC stream yok.
-//
-// Kullanım:
-//   Feature notifier build() içinde instance oluşturur, init() çağırır.
-//   ref.onDispose içinde dispose() çağırır.
+//   - open / openCubicLid / confirmClose / reopen / stop API'lerini sarmalar
 //
 // Sınıf: Class B
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'master_drawer_session_notifier.dart';
 import 'master_drawer_stage.dart';
@@ -36,18 +29,8 @@ class MasterDrawerOrchestrator {
 
   // ── Init / Dispose ────────────────────────────────────────────────────────
 
-  /// Listener'ları başlatır. Feature notifier build() içinde çağırmalı.
-  ///
-  /// [onStageChange] her stage geçişinde çağrılır.
   void init({MasterDrawerStageCallback? onStageChange}) {
-    if (_initialized) {
-      MedLogger.warn(
-        unit: 'MasterDrawerOrchestrator',
-        swreq: 'SWREQ-CLI-CABIN-OP-013',
-        message: 'init() zaten çağrılmış, yeniden başlatma atlandı',
-      );
-      return;
-    }
+    if (_initialized) return;
     _initialized = true;
     _onStage = onStageChange;
 
@@ -57,7 +40,6 @@ class MasterDrawerOrchestrator {
     );
   }
 
-  /// Tüm subscription'ları kapatır. Feature notifier ref.onDispose'da çağırmalı.
   Future<void> dispose() async {
     _drawerSub?.close();
     _drawerSub = null;
@@ -67,26 +49,25 @@ class MasterDrawerOrchestrator {
 
   // ── Çekmece Operasyonları ─────────────────────────────────────────────────
 
-  /// Verilen [assignment] için yeni bir çekmece oturumu başlatır.
-  ///
-  /// [openCubicLid] false geçilirse kübik çekmecelerde kapak açılmaz
-  /// (iade modunda kullanılır).
-  Future<void> open({required MedicineAssignment assignment, bool openCubicLid = true}) async {
-    await ref.read(masterDrawerSessionProvider.notifier).start(assignment: assignment, openCubicLid: openCubicLid);
+  /// Verilen [assignment] için yeni bir çekmece oturumu başlatır (ana çekmece).
+  Future<void> open({required MedicineAssignment assignment}) async {
+    await ref.read(masterDrawerSessionProvider.notifier).start(assignment: assignment);
+  }
+
+  /// Kübik çekmecede tek bir gözün kapağını açar (lid-by-lid akış).
+  Future<void> openCubicLid(MedicineAssignment cellAssignment) async {
+    await ref.read(masterDrawerSessionProvider.notifier).openCubicLid(cellAssignment);
   }
 
   /// Kullanıcı dolumu tamamladı — çekmece kapanması bekleniyor.
-  /// [MasterDrawerOpened] state'inde çağrılmalıdır.
   void confirmClose() {
     ref.read(masterDrawerSessionProvider.notifier).confirmClose();
   }
 
-  /// Aynı assignment ile çekmeceyi yeniden açar (Closed/Failed sonrası).
   Future<void> reopen() async {
     await ref.read(masterDrawerSessionProvider.notifier).reopen();
   }
 
-  /// Çekmece oturumunu sıfırlar. Banner kaybolur.
   Future<void> stop() async {
     await ref.read(masterDrawerSessionProvider.notifier).stop();
   }

@@ -1,13 +1,14 @@
-// lib/features/refill/master_refill/presentation/view/master_refill_view.dart
-//
 // [SWREQ-CLI-MREFILL-004] [IEC 62304 §5.5]
-// Master kabin dolum ekranının root view'ı.
+// İlaç-merkezli master kabin dolum ekranının root view'ı.
 //
 // Sorumluluk:
 //   - CabinVisualizerData ile MasterRefillNotifier'ı initialize eder
-//   - Orchestrator notifier build() içinde yönetilir — view sadece aksiyon callback'lerini iletir
-//   - Üç panel scaffold'unu MasterDrawerOperationWrapper ile sarar
-//   - Error / Success state'lerini snackbar olarak gösterir
+//   - State fazına göre Selection veya Executing panelini gösterir
+//   - Error / Completed state'lerini snackbar olarak yansıtır
+//   - MasterDrawerOperationWrapper ile sarar (sol alt köşe çekmece banner'ı)
+//
+// Eski göz-merkezli CabinOperationScaffold (üç panel) kaldırıldı; artık iki
+// fazlı tek-kolon / iki-kolon layout kullanılır.
 //
 // Sınıf: Class B
 
@@ -15,12 +16,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../../core/enums/cabin_operation_mode.dart';
-import '../../../../../widgets/widgets.dart';
-import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/cabin_operation/master_drawer/master_drawer_operation_wrapper.dart';
-import '../../refill.dart';
+import '../notifier/master_refill_notifier.dart';
+import '../notifier/master_refill_state.dart';
+import 'master_refill_selection_panel.dart';
+import 'master_refill_execution_panel.dart';
 
 class MasterRefillView extends ConsumerStatefulWidget {
   const MasterRefillView({super.key, this.data});
@@ -57,16 +59,33 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(masterRefillNotifierProvider);
-    final notifier = ref.read(masterRefillNotifierProvider.notifier);
-    final drawerStage = ref.watch(masterDrawerSessionProvider).stage;
 
     ref.listen(masterRefillNotifierProvider, (_, next) {
       if (next is MasterRefillError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
-        notifier.dismissError();
-      } else if (next is MasterRefillSuccess) {
+        final notifier = ref.read(masterRefillNotifierProvider.notifier);
+        if (next.isQueueError) {
+          // Dolum/çekmece hatası: çekmece kapandı ama kayıt başarısız.
+          // Kullanıcı ilaçları geri almalı, sonra devam veya sonlandır.
+          MessageUtils.showConfirmDialog(
+            context: context,
+            action: ConfirmAction.custom,
+            customTitle: context.l10n.refill_error_queueTitle,
+            customMessage: next.message.isNotEmpty
+                ? '${context.l10n.refill_error_queueMessage}\n\n${next.message}'
+                : context.l10n.refill_error_queueMessage,
+            iconData: PhosphorIcons.warning(),
+            color: MedColors.amber,
+            confirmButtonText: context.l10n.refill_error_continueNext,
+            cancelButtonText: context.l10n.refill_error_endProcess,
+            onConfirm: notifier.continueAfterError,
+            onCancel: notifier.abortAfterError,
+          );
+        } else {
+          MessageUtils.showErrorSnackbar(context, next.message);
+          notifier.dismissError();
+        }
+      } else if (next is MasterRefillCompleted) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.refill_success_completedMaster);
-        notifier.dismissSuccess();
       }
     });
 
@@ -79,37 +98,17 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
     }
 
     return MasterDrawerOperationWrapper(
-      child: CabinOperationScaffold(
-        leftPanel: MasterCabinOverviewPanel(
-          groups: state.groups,
-          selectedSlotId: state.selectedSlotId,
-          mode: CabinOperationMode.refill,
-          onDrawerTap: notifier.onDrawerTap,
-        ),
-        centerPanel: MasterCabinDrawerPanel(
-          mode: CabinOperationMode.refill,
-          group: state.selectedGroup,
-          assignments: state.assignments,
-          stocks: state.stocks,
-          faults: state.faults,
-          selectedUnitId: state.selectedUnitId,
-          selectedStepNo: state.selectedStepNo,
-          onCellTap: notifier.onCellTap,
-        ),
-        rightPanel: MasterRefillPanel(
-          state: state,
-          drawerStage: drawerStage,
-          onFillingQuantityChanged: notifier.onFillingQuantityChanged,
-          onCountQuantityChanged: notifier.onCountQuantityChanged,
-          onMiadDateChanged: notifier.onMiadDateChanged,
-          onStepFillingChanged: notifier.onStepFillingChanged,
-          onStepCountChanged: notifier.onStepCountChanged,
-          onStepMiadChanged: notifier.onStepMiadChanged,
-          onOpenDrawer: notifier.openDrawer,
-          onConfirmClose: notifier.confirmClose,
-          onSave: notifier.saveRefill,
-          onCancelDrawer: notifier.cancelDrawer,
-        ),
+      child: Padding(
+        padding: MedSpacing.insetXl * 1.5,
+        child: switch (state) {
+          MasterRefillSelection() ||
+          // Hata sonrası Selection'a geri dönüldüğünde de seçim paneli gösterilir.
+          MasterRefillError(previousState: MasterRefillSelection()) => const MasterRefillSelectionPanel(),
+          MasterRefillExecuting() ||
+          MasterRefillError(previousState: MasterRefillExecuting()) ||
+          MasterRefillCompleted() => const MasterRefillExecutionPanel(),
+          _ => const EmptyStateWidget(variant: EmptyStateVariant.cabinData),
+        },
       ),
     );
   }

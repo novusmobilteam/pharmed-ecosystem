@@ -1714,10 +1714,10 @@ abstract class AppLocalizations {
   /// **'Refill completed successfully.'**
   String get refill_success_completedMobile;
 
-  /// No description provided for @refill_success_completedMaster.
+  /// Success message after queue finishes
   ///
   /// In en, this message translates to:
-  /// **'Refill saved successfully'**
+  /// **'Refill completed successfully'**
   String get refill_success_completedMaster;
 
   /// No description provided for @refill_hint_selectDrawer.
@@ -1738,23 +1738,233 @@ abstract class AppLocalizations {
   /// **'Select a cell.'**
   String get refill_hint_cellError;
 
-  /// No description provided for @refill_label_countQty.
+  /// Census/count input label
   ///
   /// In en, this message translates to:
-  /// **'Count Quantity'**
+  /// **'Count'**
   String get refill_label_countQty;
 
-  /// No description provided for @refill_label_fillQty.
+  /// Filling amount input label
   ///
   /// In en, this message translates to:
-  /// **'Fill Quantity'**
+  /// **'Fill quantity'**
   String get refill_label_fillQty;
 
-  /// No description provided for @refill_label_expiryDate.
+  /// Expiry (miad) date input label
   ///
   /// In en, this message translates to:
-  /// **'Expiry Date'**
+  /// **'Expiry'**
   String get refill_label_expiryDate;
+
+  /// Phase 1 header — medicine selection screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Select medicines to refill'**
+  String get refill_title_selectMedicines;
+
+  /// Phase 2 header — automatic refill queue title
+  ///
+  /// In en, this message translates to:
+  /// **'Auto refill'**
+  String get refill_title_autoRefill;
+
+  /// Number of selected cells in the selection header
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String refill_label_selectedCount(int count);
+
+  /// How many cells a medicine is assigned to
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} cell} other{{count} cells}}'**
+  String refill_label_cellCount(int count);
+
+  /// Drawer job containing multiple distinct medicines
+  ///
+  /// In en, this message translates to:
+  /// **'{count} medicines'**
+  String refill_label_multiMedicine(int count);
+
+  /// Label above the per-medicine cell chips
+  ///
+  /// In en, this message translates to:
+  /// **'Cells to refill'**
+  String get refill_label_targetCells;
+
+  /// Queue progress indicator (completed/total drawers)
+  ///
+  /// In en, this message translates to:
+  /// **'{done} / {total} drawers'**
+  String refill_label_queueProgress(int done, int total);
+
+  /// Current stock quantity for a cell, in pieces
+  ///
+  /// In en, this message translates to:
+  /// **'Current: {qty}'**
+  String refill_label_current(String qty);
+
+  /// Standard (non-cubic) drawer chip label by address
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {address}'**
+  String refill_chip_drawer(String address);
+
+  /// Cubic drawer cell chip label
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {address} · Cell {cell}'**
+  String refill_chip_drawerCell(String address, String cell);
+
+  /// Cubic drawer subtitle with cell count
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {address} · {count, plural, one{{count} cell} other{{count} cells}}'**
+  String refill_subtitle_kubikCells(String address, int count);
+
+  /// Queue item completed status
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get refill_status_done;
+
+  /// Queue item active/open status (short)
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get refill_status_open;
+
+  /// Queue item pending status
+  ///
+  /// In en, this message translates to:
+  /// **'Queued'**
+  String get refill_status_queued;
+
+  /// Active form pill — drawer physically open
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer open'**
+  String get refill_status_drawerOpen;
+
+  /// Active form pill — drawer not yet open
+  ///
+  /// In en, this message translates to:
+  /// **'Opening drawer'**
+  String get refill_status_drawerOpening;
+
+  /// Search field placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Search medicine…'**
+  String get refill_hint_searchMedicine;
+
+  /// Empty list hint
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines assigned to this cabinet'**
+  String get refill_hint_noMedicines;
+
+  /// Selection footer info about queue behaviour
+  ///
+  /// In en, this message translates to:
+  /// **'Selected drawers open one by one; the next opens once the current is closed.'**
+  String get refill_hint_autoQueueOrder;
+
+  /// Execution footer info
+  ///
+  /// In en, this message translates to:
+  /// **'Saving will close the drawer and open the next one.'**
+  String get refill_hint_confirmCloses;
+
+  /// Phase 1 primary button
+  ///
+  /// In en, this message translates to:
+  /// **'Start auto refill'**
+  String get refill_action_startAuto;
+
+  /// Phase 2 confirm button
+  ///
+  /// In en, this message translates to:
+  /// **'Complete refill'**
+  String get refill_action_completeFilling;
+
+  /// Stop the auto-refill queue
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get refill_action_stop;
+
+  /// No description provided for @refill_label_min.
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get refill_label_min;
+
+  /// No description provided for @refill_label_critical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get refill_label_critical;
+
+  /// No description provided for @refill_label_max.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get refill_label_max;
+
+  /// No description provided for @refill_error_queueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation could not be completed'**
+  String get refill_error_queueTitle;
+
+  /// No description provided for @refill_error_queueMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This drawer’s refill could not be saved. Please take back the medicines you placed.'**
+  String get refill_error_queueMessage;
+
+  /// No description provided for @refill_error_continueNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next drawer'**
+  String get refill_error_continueNext;
+
+  /// No description provided for @refill_error_endProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'End process'**
+  String get refill_error_endProcess;
+
+  /// No description provided for @refill_status_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get refill_status_failed;
+
+  /// No description provided for @refill_label_cellProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Cell {current}/{total}'**
+  String refill_label_cellProgress(int current, int total);
+
+  /// No description provided for @refill_label_cellNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cell {no}'**
+  String refill_label_cellNo(int no);
+
+  /// No description provided for @refill_action_nextCell.
+  ///
+  /// In en, this message translates to:
+  /// **'Next cell'**
+  String get refill_action_nextCell;
+
+  /// No description provided for @refill_hint_nextCellOpens.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving closes this cell and opens the next one.'**
+  String get refill_hint_nextCellOpens;
 
   /// No description provided for @refund_success_completed.
   ///

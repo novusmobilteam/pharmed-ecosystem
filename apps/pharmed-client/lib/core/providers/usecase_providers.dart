@@ -212,6 +212,10 @@ final refillMobileCabinUseCaseProvider = Provider((ref) {
   return RefillMobileCabinUseCase(ref.read(cabinStockRepositoryProvider));
 });
 
+final refillMasterCabinUseCaseProvider = Provider((ref) {
+  return RefillMasterCabinUseCase(ref.read(cabinStockRepositoryProvider));
+});
+
 final getCabinAssignmentsUseCaseProvider = Provider((ref) {
   return GetCabinAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });

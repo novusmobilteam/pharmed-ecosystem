@@ -880,7 +880,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Dolum işlemi başarıyla tamamlandı.';
 
   @override
-  String get refill_success_completedMaster => 'Dolum başarıyla kaydedildi';
+  String get refill_success_completedMaster => 'Dolum başarıyla tamamlandı';
 
   @override
   String get refill_hint_selectDrawer =>
@@ -900,6 +900,147 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refill_label_expiryDate => 'Son Kullanma Tarihi';
+
+  @override
+  String get refill_title_selectMedicines => 'Dolum yapılacak ilaçları seçin';
+
+  @override
+  String get refill_title_autoRefill => 'Otomatik dolum';
+
+  @override
+  String refill_label_selectedCount(int count) {
+    return '$count seçili';
+  }
+
+  @override
+  String refill_label_cellCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count göz',
+      one: '$count göz',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String refill_label_multiMedicine(int count) {
+    return '$count ilaç';
+  }
+
+  @override
+  String get refill_label_targetCells => 'Dolum yapılacak gözler';
+
+  @override
+  String refill_label_queueProgress(int done, int total) {
+    return '$done / $total çekmece';
+  }
+
+  @override
+  String refill_label_current(String qty) {
+    return 'Mevcut: $qty';
+  }
+
+  @override
+  String refill_chip_drawer(String address) {
+    return 'Çekmece $address';
+  }
+
+  @override
+  String refill_chip_drawerCell(String address, String cell) {
+    return 'Çekmece $address · Göz $cell';
+  }
+
+  @override
+  String refill_subtitle_kubikCells(String address, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count göz',
+      one: '$count göz',
+    );
+    return 'Çekmece $address · $_temp0';
+  }
+
+  @override
+  String get refill_status_done => 'Tamam';
+
+  @override
+  String get refill_status_open => 'Açık';
+
+  @override
+  String get refill_status_queued => 'Sırada';
+
+  @override
+  String get refill_status_drawerOpen => 'Çekmece açık';
+
+  @override
+  String get refill_status_drawerOpening => 'Çekmece açılıyor';
+
+  @override
+  String get refill_hint_searchMedicine => 'İlaç ara…';
+
+  @override
+  String get refill_hint_noMedicines => 'Bu kabine atanmış ilaç yok';
+
+  @override
+  String get refill_hint_autoQueueOrder =>
+      'Seçilen çekmeceler sırayla açılır; biri kapanınca sıradaki açılır.';
+
+  @override
+  String get refill_hint_confirmCloses =>
+      'Kaydedince çekmece kapanır ve sıradaki açılır.';
+
+  @override
+  String get refill_action_startAuto => 'Otomatik Dolum Başlat';
+
+  @override
+  String get refill_action_completeFilling => 'Dolumu tamamla';
+
+  @override
+  String get refill_action_stop => 'Durdur';
+
+  @override
+  String get refill_label_min => 'Min';
+
+  @override
+  String get refill_label_critical => 'Kritik';
+
+  @override
+  String get refill_label_max => 'Maks';
+
+  @override
+  String get refill_error_queueTitle => 'İşlem tamamlanamadı';
+
+  @override
+  String get refill_error_queueMessage =>
+      'Bu çekmecenin dolumu kaydedilemedi. Lütfen yerleştirdiğiniz ilaçları geri alın.';
+
+  @override
+  String get refill_error_continueNext => 'Sonraki çekmece';
+
+  @override
+  String get refill_error_endProcess => 'İşlemi sonlandır';
+
+  @override
+  String get refill_status_failed => 'Başarısız';
+
+  @override
+  String refill_label_cellProgress(int current, int total) {
+    return 'Göz $current/$total';
+  }
+
+  @override
+  String refill_label_cellNo(int no) {
+    return '$no. Göz';
+  }
+
+  @override
+  String get refill_action_nextCell => 'Sonraki göz';
+
+  @override
+  String get refill_hint_nextCellOpens =>
+      'Kaydedince bu gözün kapağı kapanır, sıradaki açılır.';
 
   @override
   String get refund_success_completed => 'İade başarıyla tamamlandı.';

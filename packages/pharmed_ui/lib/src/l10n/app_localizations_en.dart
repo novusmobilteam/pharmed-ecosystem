@@ -880,7 +880,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refill_success_completedMobile => 'Refill completed successfully.';
 
   @override
-  String get refill_success_completedMaster => 'Refill saved successfully';
+  String get refill_success_completedMaster => 'Refill completed successfully';
 
   @override
   String get refill_hint_selectDrawer =>
@@ -893,13 +893,154 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refill_hint_cellError => 'Select a cell.';
 
   @override
-  String get refill_label_countQty => 'Count Quantity';
+  String get refill_label_countQty => 'Count';
 
   @override
-  String get refill_label_fillQty => 'Fill Quantity';
+  String get refill_label_fillQty => 'Fill quantity';
 
   @override
-  String get refill_label_expiryDate => 'Expiry Date';
+  String get refill_label_expiryDate => 'Expiry';
+
+  @override
+  String get refill_title_selectMedicines => 'Select medicines to refill';
+
+  @override
+  String get refill_title_autoRefill => 'Auto refill';
+
+  @override
+  String refill_label_selectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String refill_label_cellCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cells',
+      one: '$count cell',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String refill_label_multiMedicine(int count) {
+    return '$count medicines';
+  }
+
+  @override
+  String get refill_label_targetCells => 'Cells to refill';
+
+  @override
+  String refill_label_queueProgress(int done, int total) {
+    return '$done / $total drawers';
+  }
+
+  @override
+  String refill_label_current(String qty) {
+    return 'Current: $qty';
+  }
+
+  @override
+  String refill_chip_drawer(String address) {
+    return 'Drawer $address';
+  }
+
+  @override
+  String refill_chip_drawerCell(String address, String cell) {
+    return 'Drawer $address · Cell $cell';
+  }
+
+  @override
+  String refill_subtitle_kubikCells(String address, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cells',
+      one: '$count cell',
+    );
+    return 'Drawer $address · $_temp0';
+  }
+
+  @override
+  String get refill_status_done => 'Done';
+
+  @override
+  String get refill_status_open => 'Open';
+
+  @override
+  String get refill_status_queued => 'Queued';
+
+  @override
+  String get refill_status_drawerOpen => 'Drawer open';
+
+  @override
+  String get refill_status_drawerOpening => 'Opening drawer';
+
+  @override
+  String get refill_hint_searchMedicine => 'Search medicine…';
+
+  @override
+  String get refill_hint_noMedicines => 'No medicines assigned to this cabinet';
+
+  @override
+  String get refill_hint_autoQueueOrder =>
+      'Selected drawers open one by one; the next opens once the current is closed.';
+
+  @override
+  String get refill_hint_confirmCloses =>
+      'Saving will close the drawer and open the next one.';
+
+  @override
+  String get refill_action_startAuto => 'Start auto refill';
+
+  @override
+  String get refill_action_completeFilling => 'Complete refill';
+
+  @override
+  String get refill_action_stop => 'Stop';
+
+  @override
+  String get refill_label_min => 'Min';
+
+  @override
+  String get refill_label_critical => 'Critical';
+
+  @override
+  String get refill_label_max => 'Max';
+
+  @override
+  String get refill_error_queueTitle => 'Operation could not be completed';
+
+  @override
+  String get refill_error_queueMessage =>
+      'This drawer’s refill could not be saved. Please take back the medicines you placed.';
+
+  @override
+  String get refill_error_continueNext => 'Next drawer';
+
+  @override
+  String get refill_error_endProcess => 'End process';
+
+  @override
+  String get refill_status_failed => 'Failed';
+
+  @override
+  String refill_label_cellProgress(int current, int total) {
+    return 'Cell $current/$total';
+  }
+
+  @override
+  String refill_label_cellNo(int no) {
+    return 'Cell $no';
+  }
+
+  @override
+  String get refill_action_nextCell => 'Next cell';
+
+  @override
+  String get refill_hint_nextCellOpens =>
+      'Saving closes this cell and opens the next one.';
 
   @override
   String get refund_success_completed => 'Refund completed successfully.';

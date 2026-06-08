@@ -21,19 +21,21 @@ class MessageUtils {
     required BuildContext context,
     required ConfirmAction action,
     required VoidCallback onConfirm,
+    VoidCallback? onCancel,
     String? customTitle,
     String? customMessage,
     String confirmButtonText = 'Onayla',
     String cancelButtonText = 'Vazgeç',
     Color? color,
     IconData? iconData,
+    bool barrierDismissible = false,
   }) {
     final theme = Theme.of(context);
     final dialogContent = _getConfirmDialogContent(action, context);
 
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: barrierDismissible,
       builder: (dialogContext) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -94,7 +96,10 @@ class MessageUtils {
                       variant: MedButtonVariant.ghost,
                       size: MedButtonSize.sm,
                       fullWidth: true,
-                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        onCancel?.call();
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),

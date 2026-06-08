@@ -858,6 +858,107 @@
   "refill_label_expiryDate": "Son Kullanma Tarihi",
   "@refill_label_expiryDate": { "description": "Input field label for expiry date in master refill panel" },
 
+  "refill_title_selectMedicines": "Dolum yapılacak ilaçları seçin",
+  "refill_title_autoRefill": "Otomatik dolum",
+
+  "refill_label_selectedCount": "{count} seçili",
+  "@refill_label_selectedCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "refill_label_cellCount": "{count, plural, one{{count} göz} other{{count} göz}}",
+  "@refill_label_cellCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "refill_label_multiMedicine": "{count} ilaç",
+  "@refill_label_multiMedicine": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "refill_label_targetCells": "Dolum yapılacak gözler",
+
+  "refill_label_queueProgress": "{done} / {total} çekmece",
+  "@refill_label_queueProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "refill_label_current": "Mevcut: {qty}",
+  "@refill_label_current": {
+    "placeholders": { "qty": { "type": "String" } }
+  },
+
+
+  "refill_chip_drawer": "Çekmece {address}",
+  "@refill_chip_drawer": {
+    "placeholders": { "address": { "type": "String" } }
+  },
+
+  "refill_chip_drawerCell": "Çekmece {address} · Göz {cell}",
+  "@refill_chip_drawerCell": {
+    "placeholders": {
+      "address": { "type": "String" },
+      "cell": { "type": "String" }
+    }
+  },
+
+  "refill_subtitle_kubikCells": "Çekmece {address} · {count, plural, one{{count} göz} other{{count} göz}}",
+  "@refill_subtitle_kubikCells": {
+    "placeholders": {
+      "address": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+
+  "refill_status_done": "Tamam",
+  "refill_status_open": "Açık",
+  "refill_status_queued": "Sırada",
+  "refill_status_drawerOpen": "Çekmece açık",
+  "refill_status_drawerOpening": "Çekmece açılıyor",
+
+  "refill_hint_searchMedicine": "İlaç ara…",
+  "refill_hint_noMedicines": "Bu kabine atanmış ilaç yok",
+  "refill_hint_autoQueueOrder": "Seçilen çekmeceler sırayla açılır; biri kapanınca sıradaki açılır.",
+  "refill_hint_confirmCloses": "Kaydedince çekmece kapanır ve sıradaki açılır.",
+
+  "refill_action_startAuto": "Otomatik Dolum Başlat",
+  "refill_action_completeFilling": "Dolumu tamamla",
+  "refill_action_stop": "Durdur",
+
+  "refill_success_completedMaster": "Dolum başarıyla tamamlandı",
+  "refill_label_min": "Min",
+  "refill_label_critical": "Kritik",
+  "refill_label_max": "Maks",
+  "refill_error_queueTitle": "İşlem tamamlanamadı",
+  "refill_error_queueMessage": "Bu çekmecenin dolumu kaydedilemedi. Lütfen yerleştirdiğiniz ilaçları geri alın.",
+  "refill_error_continueNext": "Sonraki çekmece",
+  "refill_error_endProcess": "İşlemi sonlandır",
+  "refill_status_failed": "Başarısız",
+    "refill_label_cellProgress": "Göz {current}/{total}",
+  "@refill_label_cellProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "refill_label_cellNo": "{no}. Göz",
+  "@refill_label_cellNo": {
+    "placeholders": {
+      "no": {
+        "type": "int"
+      }
+    }
+  },
+  "refill_action_nextCell": "Sonraki göz",
+  "refill_hint_nextCellOpens": "Kaydedince bu gözün kapağı kapanır, sıradaki açılır.",
+
   "refund_success_completed": "İade başarıyla tamamlandı.",
   "@refund_success_completed": { "description": "Success snackbar shown after a refund operation is completed" },
 

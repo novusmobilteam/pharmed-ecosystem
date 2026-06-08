@@ -1,11 +1,11 @@
-export 'data/cabin_dto.dart';
-export 'data/drawer_type_dto.dart';
-export 'data/drawer_config_dto.dart';
-export 'data/drawer_slot_dto.dart';
-export 'data/drawer_unit_dto.dart';
-export 'data/drawer_cell_dto.dart';
-export 'data/mobile_drawer_request_dto.dart';
-export 'data/mobile_drawer_slot_dto.dart';
+export 'dto/cabin_dto.dart';
+export 'dto/drawer_type_dto.dart';
+export 'dto/drawer_config_dto.dart';
+export 'dto/drawer_slot_dto.dart';
+export 'dto/drawer_unit_dto.dart';
+export 'dto/drawer_cell_dto.dart';
+export 'dto/mobile_drawer_request_dto.dart';
+export 'dto/mobile_drawer_slot_dto.dart';
 
 export 'domain/entity/cabin_operation_item.dart';
 export 'domain/entity/cabin.dart';

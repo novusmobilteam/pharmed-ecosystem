@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pharmed_manager/widgets/side_panel.dart';
 
 import 'package:phosphor_flutter/phosphor_flutter.dart';

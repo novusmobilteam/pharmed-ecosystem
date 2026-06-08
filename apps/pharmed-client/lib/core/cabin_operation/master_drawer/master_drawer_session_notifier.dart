@@ -7,9 +7,11 @@
 //   - StartMasterDrawerSessionUseCase stream'ini dinler, stage'i state'e yansıtır
 //   - Opened sonrası sensor'ı ayrı subscription ile izler (WaitingForClose → Closed)
 //   - confirmClose() ile kullanıcı dolumu onayladığında WaitingForClose'a geçer
+//   - openCubicLid() ile kübik çekmecede TEK bir gözün kapağını açar (lid-by-lid)
 //   - reopen / stop API'leri sunar
 //
-// MobileDrawerSessionNotifier ile paralel tasarım.
+// DEĞİŞİKLİK: Kübik lid açma artık burada — start() tüm lid'leri açmaz, sadece
+// ana çekmeceyi açar. Lid'ler feature notifier'ın talebiyle tek tek açılır.
 //
 // Sınıf: Class B
 
@@ -48,7 +50,6 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
 
   // reopen için son parametreler
   MedicineAssignment? _lastAssignment;
-  bool _lastOpenCubicLid = true;
 
   StartMasterDrawerSessionUseCase get _startSession => ref.read(startMasterDrawerSessionUseCaseProvider);
   ICabinOperationService get _service => ref.read(cabinOperationServiceProvider);
@@ -61,14 +62,13 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
 
   // ── Public API ───────────────────────────────────────────────────────────
 
-  /// Yeni bir çekmece oturumu başlatır.
-  Future<void> start({required MedicineAssignment assignment, bool openCubicLid = true}) async {
+  /// Yeni bir çekmece oturumu başlatır (ana çekmece açılır, kübikte lid açılmaz).
+  Future<void> start({required MedicineAssignment assignment}) async {
     await _cancelAll();
     _lastAssignment = assignment;
-    _lastOpenCubicLid = openCubicLid;
 
     _sessionSub = _startSession
-        .call(assignment: assignment, openCubicLid: openCubicLid)
+        .call(assignment: assignment)
         .listen(
           _handleStage,
           onError: (e, _) {
@@ -84,21 +84,43 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
         );
   }
 
-  /// Aynı assignment ile oturumu yeniden başlatır.
-  Future<void> reopen() async {
-    if (_lastAssignment == null) return;
-    await start(assignment: _lastAssignment!, openCubicLid: _lastOpenCubicLid);
+  /// Kübik çekmecede TEK bir gözün kapağını açar.
+  ///
+  /// [cellAssignment] açılacak göze ait atamadır (kendi orderNo/compartmentNo
+  /// ile lid adresi hesaplanır). Lid kapanma sensörü donanımda olmadığından
+  /// kapanma takip edilmez; akış yazılımsal ilerler.
+  Future<void> openCubicLid(MedicineAssignment cellAssignment) async {
+    final manager = await _service.getOrScanManager(targetPort: cellAssignment.cabin?.comPort?.name);
+    if (manager == null) {
+      state = state.copyWith(stage: const MasterDrawerFailed(message: 'Yönetim kartı bulunamadı.'));
+      return;
+    }
+
+    final address = calculateAddressFromAssignment(cellAssignment);
+    try {
+      await _service.openMasterCubicDrawer(
+        manager: manager,
+        row: address.row,
+        port: address.port,
+        lidIndex: address.index,
+      );
+    } catch (e) {
+      state = state.copyWith(stage: MasterDrawerFailed(message: 'Kapak açılamadı: $e'));
+    }
   }
 
   /// Kullanıcı dolumu tamamladı — çekmece kapanması bekleniyor.
-  ///
   /// Sadece [MasterDrawerOpened] state'inde çağrılabilir.
-  /// Sensor'ı dinlemeye başlar: locked → [MasterDrawerClosed].
   void confirmClose() {
     if (state.stage is! MasterDrawerOpened) return;
-
     state = state.copyWith(stage: const MasterDrawerWaitingForClose());
     _startCloseMonitoring();
+  }
+
+  /// Aynı assignment ile oturumu yeniden başlatır.
+  Future<void> reopen() async {
+    if (_lastAssignment == null) return;
+    await start(assignment: _lastAssignment!);
   }
 
   /// Oturumu sonlandırır, tüm subscription'ları iptal eder.
@@ -111,13 +133,9 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
 
   void _handleStage(MasterDrawerStage stage) {
     state = state.copyWith(stage: stage);
-
-    // Opened'a geçişte session stream biter (use case tasarımı gereği).
-    // Sensor monitoring confirmClose() çağrısına kadar bekler.
   }
 
   /// [MasterDrawerWaitingForClose] sonrası sensor stream'i başlatır.
-  /// locked gelince [MasterDrawerClosed]'a geçer.
   void _startCloseMonitoring() {
     _sensorSub?.cancel();
 
@@ -128,7 +146,6 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
     final isKubik = assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
     final address = calculateAddressFromAssignment(assignment);
 
-    // Yönetim kartını cache'den al — bu noktada zaten bağlı olmalı
     _service.getOrScanManager(targetPort: assignment.cabin?.comPort?.name).then((manager) {
       if (manager == null) {
         state = state.copyWith(stage: const MasterDrawerFailed(message: 'Yönetim kartı bulunamadı.'));
