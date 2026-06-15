@@ -311,3 +311,39 @@ final completeMasterUnloadUseCaseProvider = Provider((ref) {
 final reportMissingStockUseCaseProvider = Provider((ref) {
   return ReportMissingStockUseCase(ref.read(intakeRepositoryProvider));
 });
+
+final getIntakeItemsUseCaseProvider = Provider((ref) {
+  return GetIntakeItemsUseCase(
+    intakeRepository: ref.read(intakeRepositoryProvider),
+    assignmentRepository: ref.read(assignmentRepositoryProvider),
+    medicineRepository: ref.read(medicineRepositoryProvider),
+  );
+});
+
+final checkIntakeUseCaseProvider = Provider((ref) {
+  return CheckIntakeUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final completeIntakeUseCaseProvider = Provider((ref) {
+  return CompleteIntakeUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final getCurrentStationUseCaseProvider = Provider((ref) {
+  return GetCurrentStationUseCase(ref.read(stationRepositoryProvider));
+});
+
+final loginWitnessUseCaseProvider = Provider((ref) {
+  return WitnessUserLoginUseCase(ref.read(userManagerProvider));
+});
+
+final getHospitalizationsByServiceUseCaseProvider = Provider((ref) {
+  return GetHospitalizationsByServiceUseCase(ref.read(hospitalizationRepositoryProvider));
+});
+
+final getFilteredHospitalizationsUseCaseProvider = Provider((ref) {
+  return GetFilteredHospitalizationsUseCase(ref.read(hospitalizationRepositoryProvider));
+});
+
+final createUrgentPatientUseCaseProvider = Provider((ref) {
+  return CreateUrgentPatientUseCase(ref.read(patientRepositoryProvider));
+});

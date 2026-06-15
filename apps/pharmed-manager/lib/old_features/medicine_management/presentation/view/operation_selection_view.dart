@@ -3,7 +3,7 @@ part of 'medicine_management_view.dart';
 class OperationSelectionView extends StatelessWidget {
   const OperationSelectionView({super.key, required this.hospitalization, required this.withdrawType});
 
-  final WithdrawType withdrawType;
+  final IntakeType withdrawType;
   final Hospitalization hospitalization;
 
   @override

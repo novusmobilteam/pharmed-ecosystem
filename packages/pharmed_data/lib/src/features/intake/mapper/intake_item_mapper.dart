@@ -16,13 +16,10 @@ class IntakeItemMapper {
       askDoctor: dto.askDoctor ?? false,
       inCaseOfNecessity: dto.inCaseOfNecessity ?? false,
       time: _parseTime(dto.time),
-      applicationDate: dto.applicationDate,
-
+      lastMovement: PrescriptionItemMovementMapper().toEntityOrNull(dto.lastMovement),
       // Alt Mapper'lar
       hospitalization: const HospitalizationMapper().toEntityOrNull(dto.hospitalization),
       medicine: const MedicineMapper().toEntityOrNull(dto.medicine),
-      approvalUser: const UserMapper().toEntityOrNull(dto.approvalUser),
-      applicationUser: const UserMapper().toEntityOrNull(dto.applicationUser),
 
       // Kabinet ve Çekmece Bilgileri
       cabinAssignment: dto.cabinAssignment != null
@@ -41,14 +38,11 @@ class IntakeItemMapper {
       firstDoseEmergency: entity.firstDoseEmergency,
       askDoctor: entity.askDoctor,
       inCaseOfNecessity: entity.inCaseOfNecessity,
-      applicationDate: entity.applicationDate,
       time: entity.time?.toIso8601String(),
 
       // Alt DTO Dönüşümleri
       hospitalization: const HospitalizationMapper().toDtoOrNull(entity.hospitalization),
       medicine: const MedicineMapper().toDtoOrNull(entity.medicine),
-      approvalUser: const UserMapper().toDtoOrNull(entity.approvalUser),
-      applicationUser: const UserMapper().toDtoOrNull(entity.applicationUser),
       cabinAssignment: const MedicineAssignmentMapper().toDtoOrNull(entity.cabinAssignment),
       cabinDrawerStock: const CabinStockMapper().toDtoOrNull(entity.stock),
     );

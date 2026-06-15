@@ -1,7 +1,7 @@
 part of 'custom_withdraw_view.dart';
 
 class CustomWithdrawConfirmDialog extends StatelessWidget {
-  final WithdrawItem item;
+  final IntakeItem item;
 
   const CustomWithdrawConfirmDialog({super.key, required this.item});
 

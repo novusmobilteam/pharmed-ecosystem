@@ -48,7 +48,7 @@ class CabinOperationItem {
 
   /// Alım alt tipi: orderli, ordersiz veya serbest.
   /// Yalnızca [CabinOperationType.withdraw]'da anlamlı.
-  final WithdrawType? withdrawType;
+  final IntakeType? withdrawType;
 
   // ---------------------------------------------------------------------------
   // Şahit bilgisi — alım (isWitnessedPurchase) ve fire/imha'da (isWitnessedDisposal) kullanılır

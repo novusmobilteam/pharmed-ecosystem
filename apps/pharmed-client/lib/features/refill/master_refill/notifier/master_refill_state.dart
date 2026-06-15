@@ -142,15 +142,7 @@ final class MasterRefillExecuting extends MasterRefillState {
   }
 }
 
-// ── Terminal ──────────────────────────────────────────────────────────────────
-
-/// Tüm kuyruk başarıyla tamamlandı.
-final class MasterRefillCompleted extends MasterRefillState {
-  const MasterRefillCompleted({required this.cabinId, required this.filledJobCount});
-
-  final int cabinId;
-  final int filledJobCount;
-}
+// ── Hata ────────────────────────────────────────────────────────────────────
 
 /// Hata — önceki state'e dönmek için previousState taşınır.
 ///

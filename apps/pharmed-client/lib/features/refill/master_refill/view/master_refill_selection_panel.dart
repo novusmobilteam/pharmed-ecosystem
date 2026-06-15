@@ -26,13 +26,43 @@ class MasterRefillSelectionPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(masterRefillNotifierProvider);
-    if (state is! MasterRefillSelection) return const SizedBox.shrink();
-
     final notifier = ref.read(masterRefillNotifierProvider.notifier);
+
+    // Selection: aktif seçim. Executing: kilitli, job'lardan türetilir.
+    final selection = switch (state) {
+      MasterRefillSelection s => s,
+      MasterRefillError(previousState: MasterRefillSelection s) => s,
+      _ => null,
+    };
+    final executing = switch (state) {
+      MasterRefillExecuting e => e,
+      MasterRefillError(previousState: MasterRefillExecuting e) => e,
+      _ => null,
+    };
+
+    if (selection == null && executing == null) return const SizedBox.shrink();
+
+    final bool isLocked = executing != null;
+
+    // Görüntülenecek ilaç listesi + seçim durumu.
+    final List<MedicineAssignment> medicines;
+    final Set<int> selectedUnitIds;
+    final String search;
+    if (selection != null) {
+      medicines = selection.visibleMedicines;
+      selectedUnitIds = selection.selectedUnitIds;
+      search = selection.search;
+    } else {
+      // Executing: job hedeflerinden ilaç listesi + tümü seçili.
+      final targets = executing!.jobs.expand((j) => j.targets.map((t) => t.assignment)).toList();
+      medicines = targets;
+      selectedUnitIds = targets.map((a) => a.cabinDrawerId).whereType<int>().toSet();
+      search = '';
+    }
 
     // İlaçları medicine.id bazında grupla (sıra korunur).
     final groups = <int, List<MedicineAssignment>>{};
-    for (final a in state.visibleMedicines) {
+    for (final a in medicines) {
       final mid = a.medicine?.id;
       if (mid == null) continue;
       groups.putIfAbsent(mid, () => []).add(a);
@@ -41,30 +71,79 @@ class MasterRefillSelectionPanel extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _Header(selectedCount: state.selectedCount),
+        _Header(selectedCount: selectedUnitIds.length),
         const SizedBox(height: 12),
-        _SearchField(value: state.search, onChanged: notifier.onSearchChanged),
-        const SizedBox(height: 12),
+        if (!isLocked) ...[
+          _SearchField(value: search, onChanged: notifier.onSearchChanged),
+          const SizedBox(height: 12),
+        ],
         Expanded(
-          child: groups.isEmpty
-              ? _EmptyHint(message: context.l10n.refill_hint_noMedicines)
-              : ListView.separated(
-                  padding: EdgeInsets.zero,
-                  itemCount: groups.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final units = groups.values.elementAt(index);
-                    return _MedicineCard(
-                      units: units,
-                      selectedUnitIds: state.selectedUnitIds,
-                      onToggleMedicine: notifier.toggleMedicine,
-                      onToggleUnit: notifier.toggleUnit,
-                    );
-                  },
-                ),
+          child: IgnorePointer(
+            ignoring: isLocked,
+            child: Opacity(
+              opacity: isLocked ? 0.6 : 1.0,
+              child: groups.isEmpty
+                  ? EmptyStateWidget(title: context.l10n.refill_hint_noMedicines)
+                  : ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: groups.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final units = groups.values.elementAt(index);
+                        return _MedicineCard(
+                          units: units,
+                          selectedUnitIds: selectedUnitIds,
+                          onToggleMedicine: notifier.toggleMedicine,
+                          onToggleUnit: notifier.toggleUnit,
+                        );
+                      },
+                    ),
+            ),
+          ),
         ),
         const SizedBox(height: 12),
-        _StartBar(canStart: state.canStart, onStart: notifier.startAutoRefill),
+        if (isLocked)
+          _RunningBar(onStop: notifier.stopQueue)
+        else
+          _StartBar(canStart: selection!.canStart, onStart: notifier.startAutoRefill),
+      ],
+    );
+  }
+}
+
+// ── Yürütme sırasında kilitli durum çubuğu ──────────────────────────────────────
+
+class _RunningBar extends StatelessWidget {
+  const _RunningBar({required this.onStop});
+
+  final Future<void> Function() onStop;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Row(
+            spacing: 6,
+            children: [
+              Icon(PhosphorIcons.lock(), size: 15, color: MedColors.text3),
+              Expanded(
+                child: Text(
+                  context.l10n.refill_hint_selectionLocked,
+                  style: MedTextStyles.bodySm(color: MedColors.text3),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        MedButton(
+          label: context.l10n.refill_action_stop,
+          //icon: PhosphorIcons.x(),
+          variant: MedButtonVariant.danger,
+          size: MedButtonSize.sm,
+          onPressed: () => onStop(),
+        ),
       ],
     );
   }
@@ -101,11 +180,13 @@ class _SearchField extends StatelessWidget {
     return MedTextInputField(
       initialValue: value,
       hintText: context.l10n.refill_hint_searchMedicine,
-      prefixIcon: Icon(PhosphorIcons.magnifyingGlass(), size: 18, color: MedColors.text3),
+      prefixIcon: Icon(PhosphorIcons.magnifyingGlass(), color: MedColors.text3),
       onChanged: (v) => onChanged(v ?? ''),
     );
   }
 }
+
+// ── İlaç kartı ─────────────────────────────────────────────────────────────────
 
 class _MedicineCard extends StatelessWidget {
   const _MedicineCard({
@@ -136,10 +217,10 @@ class _MedicineCard extends StatelessWidget {
     final maxStock = units.fold<double>(0, (sum, u) => sum + u.maxQuantityFromBackend);
 
     return Container(
-      padding: MedSpacing.insetLg,
+      padding: MedSpacing.insetMd,
       decoration: BoxDecoration(
         color: MedColors.surface,
-        border: Border.all(color: anySelected ? MedColors.blue : MedColors.border, width: anySelected ? 2 : 1),
+        border: Border.all(color: anySelected ? MedColors.blue : MedColors.border, width: 1),
         borderRadius: MedRadius.lgAll,
       ),
       child: Column(
@@ -162,12 +243,12 @@ class _MedicineCard extends StatelessWidget {
                       children: [
                         Text(
                           medicine?.name ?? '—',
-                          style: MedTextStyles.titleMd(),
+                          style: MedTextStyles.titleSm(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         if (medicine?.barcode != null)
-                          Text(medicine!.barcode!, style: MedTextStyles.monoMd(color: MedColors.text3)),
+                          Text(medicine!.barcode!, style: MedTextStyles.monoXs(color: MedColors.text3)),
                       ],
                     ),
                   ),
@@ -177,41 +258,33 @@ class _MedicineCard extends StatelessWidget {
             ),
           ),
           if (anySelected) ...[
-            Divider(height: 1, color: MedColors.border2),
             Padding(
               padding: MedSpacing.insetMd,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 6,
-                children: [
-                  Text(context.l10n.refill_label_targetCells, style: MedTextStyles.bodySm(color: MedColors.text3)),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      // Büyük dokunmatik ekran: kart genişliği ~260px hedefli,
-                      // sığan kadar kolon. En az 1.
-                      const targetWidth = 260.0;
-                      const gap = 8.0;
-                      final columns = (constraints.maxWidth / (targetWidth + gap)).floor().clamp(1, 4);
-                      final cardWidth = (constraints.maxWidth - gap * (columns - 1)) / columns;
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Büyük dokunmatik ekran: kart genişliği ~260px hedefli,
+                  // sığan kadar kolon. En az 1.
+                  const targetWidth = 225.0;
+                  const gap = 8.0;
+                  final columns = (constraints.maxWidth / (targetWidth + gap)).floor().clamp(1, 4);
+                  final cardWidth = (constraints.maxWidth - gap * (columns - 1)) / columns;
 
-                      return Wrap(
-                        spacing: gap,
-                        runSpacing: gap,
-                        children: units.map((u) {
-                          final id = u.cabinDrawerId;
-                          return SizedBox(
-                            width: 260,
-                            child: _CellChip(
-                              assignment: u,
-                              selected: id != null && selectedUnitIds.contains(id),
-                              onTap: id == null ? null : () => onToggleUnit(id),
-                            ),
-                          );
-                        }).toList(),
+                  return Wrap(
+                    spacing: gap,
+                    runSpacing: gap,
+                    children: units.map((u) {
+                      final id = u.cabinDrawerId;
+                      return SizedBox(
+                        width: cardWidth,
+                        child: _CellChip(
+                          assignment: u,
+                          selected: id != null && selectedUnitIds.contains(id),
+                          onTap: id == null ? null : () => onToggleUnit(id),
+                        ),
                       );
-                    },
-                  ),
-                ],
+                    }).toList(),
+                  );
+                },
               ),
             ),
           ],
@@ -220,6 +293,8 @@ class _MedicineCard extends StatelessWidget {
     );
   }
 }
+
+// ── Göz kartı (min/max/kritik + mevcut stok ile) ───────────────────────────────
 
 class _CellChip extends StatelessWidget {
   const _CellChip({required this.assignment, required this.selected, required this.onTap});
@@ -255,7 +330,7 @@ class _CellChip extends StatelessWidget {
       onTap: onTap,
       borderRadius: MedRadius.mdAll,
       child: Container(
-        padding: MedSpacing.insetMd,
+        padding: MedSpacing.insetLg,
         decoration: BoxDecoration(
           color: selected ? MedColors.blueLight : MedColors.surface2,
           border: Border.all(color: selected ? MedColors.blue : MedColors.border, width: selected ? 1.5 : 1),
@@ -269,11 +344,6 @@ class _CellChip extends StatelessWidget {
             Row(
               spacing: 6,
               children: [
-                Icon(
-                  selected ? PhosphorIcons.checkCircle(PhosphorIconsStyle.fill) : PhosphorIcons.circle(),
-                  size: 16,
-                  color: selected ? MedColors.blue : MedColors.text4,
-                ),
                 Expanded(
                   child: Text(
                     label,
@@ -285,7 +355,7 @@ class _CellChip extends StatelessWidget {
                 ),
                 Text(
                   '${current.formatFractional} / ${maxQty.formatFractional}',
-                  style: MedTextStyles.monoMd(color: stockColor),
+                  style: MedTextStyles.monoSm(color: stockColor),
                 ),
               ],
             ),
@@ -295,7 +365,7 @@ class _CellChip extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: maxQty > 0 ? (current / maxQty).clamp(0.0, 1.0) : 0,
                 minHeight: 6,
-                backgroundColor: MedColors.border2,
+                backgroundColor: MedColors.surface,
                 valueColor: AlwaysStoppedAnimation(stockColor),
               ),
             ),
@@ -344,8 +414,8 @@ class _ThresholdBadge extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 2,
           children: [
-            Text(label, style: MedTextStyles.monoMd(color: MedColors.text4)),
-            Text(value, style: MedTextStyles.monoMd(color: color)),
+            Text(label, style: MedTextStyles.monoXs(color: MedColors.text4)),
+            Text(value, style: MedTextStyles.monoSm(color: color)),
           ],
         ),
       ),
@@ -371,33 +441,29 @@ class _StockSummary extends StatelessWidget {
     }
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
-      spacing: 5,
+      spacing: 6,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 6,
-          children: [
-            Text('${total.toInt()} / ${max.toInt()}', style: MedTextStyles.bodyMd(color: color)),
-            SizedBox(
-              width: 80,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: ratio.clamp(0.0, 1.0),
-                  minHeight: 6,
-                  backgroundColor: MedColors.border2,
-                  valueColor: AlwaysStoppedAnimation(color),
-                ),
-              ),
+        Text('${total.toInt()} / ${max.toInt()}', style: MedTextStyles.monoMd(color: color)),
+        SizedBox(
+          width: 60,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: ratio.clamp(0.0, 1.0),
+              minHeight: 6,
+              backgroundColor: MedColors.border2,
+              valueColor: AlwaysStoppedAnimation(color),
             ),
-          ],
+          ),
         ),
-        Text(context.l10n.refill_label_cellCount(unitCount), style: MedTextStyles.monoMd(color: MedColors.text3)),
       ],
     );
   }
 }
+
+// ── Checkbox ─────────────────────────────────────────────────────────────────
 
 class _CheckBox extends StatelessWidget {
   const _CheckBox({required this.checked, required this.partial});
@@ -458,30 +524,6 @@ class _StartBar extends StatelessWidget {
           onPressed: canStart ? onStart : null,
         ),
       ],
-    );
-  }
-}
-
-class _EmptyHint extends StatelessWidget {
-  const _EmptyHint({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 10,
-        children: [
-          Icon(PhosphorIcons.pill(), size: 36, color: MedColors.text4),
-          Text(
-            message,
-            style: MedTextStyles.bodySm(color: MedColors.text3),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 }

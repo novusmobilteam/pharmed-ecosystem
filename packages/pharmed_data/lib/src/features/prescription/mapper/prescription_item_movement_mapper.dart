@@ -19,4 +19,16 @@ class PrescriptionItemMovementMapper {
   PrescriptionItemMovement? toEntityOrNull(PrescriptionItemMovementDto? dto) => dto == null ? null : toEntity(dto);
 
   List<PrescriptionItemMovement> toEntityList(List<PrescriptionItemMovementDto> dtos) => dtos.map(toEntity).toList();
+
+  PrescriptionItemMovementDto toDto(PrescriptionItemMovement entity) {
+    return PrescriptionItemMovementDto(
+      id: entity.id,
+      prescriptionItemId: entity.prescriptionItemId!,
+      movementId: entity.type.id,
+      createdAt: entity.createdAt,
+      user: const UserMapper().toDtoOrNull(entity.performedBy),
+      quantity: entity.quantity,
+      prescriptionItem: PrescriptionItemMapper().toDtoOrNull(entity.prescriptionItem),
+    );
+  }
 }

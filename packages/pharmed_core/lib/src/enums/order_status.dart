@@ -1,4 +1,4 @@
-import 'withdraw_type.dart';
+import 'intake_type.dart';
 
 enum OrderStatus { ordered, orderless }
 
@@ -39,12 +39,12 @@ extension OrderStatusExtension on OrderStatus {
     return this == OrderStatus.ordered;
   }
 
-  WithdrawType get withdrawType {
+  IntakeType get intakeType {
     switch (this) {
       case OrderStatus.ordered:
-        return WithdrawType.ordered;
+        return IntakeType.ordered;
       case OrderStatus.orderless:
-        return WithdrawType.orderless;
+        return IntakeType.orderless;
     }
   }
 }

@@ -2,7 +2,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 /// WithdrawItem → CabinOperationItem dönüşümü.
 /// Alım akışında kullanılır.
-extension WithdrawItemMapper on WithdrawItem {
+extension WithdrawItemMapper on IntakeItem {
   CabinOperationItem toCabinOperationItem() {
     return CabinOperationItem(
       id: id,

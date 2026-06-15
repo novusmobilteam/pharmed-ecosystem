@@ -41,7 +41,7 @@ class HospitalizationGridView extends StatelessWidget {
       context: context,
       barrierColor: Colors.transparent,
       builder: (context) =>
-          OperationSelectionView(hospitalization: hospitalization, withdrawType: notifier.viewOrderStatus.withdrawType),
+          OperationSelectionView(hospitalization: hospitalization, withdrawType: notifier.viewOrderStatus.intakeType),
     );
   }
 }

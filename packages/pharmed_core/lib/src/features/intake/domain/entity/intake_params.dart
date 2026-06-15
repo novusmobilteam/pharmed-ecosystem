@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 class IntakeParams {
-  final WithdrawType type;
+  final IntakeType type;
   final int? hospitalizationId;
   final int? prescriptionDetailId;
   final int? userId;
@@ -16,8 +16,8 @@ class IntakeParams {
   });
 
   Map<String, dynamic> toJson() {
-    var paramKey = type != WithdrawType.ordered ? "patientHospitalizationId" : "prescriptionDetailId";
-    var paramVal = type != WithdrawType.ordered ? hospitalizationId : prescriptionDetailId;
+    var paramKey = type != IntakeType.ordered ? "patientHospitalizationId" : "prescriptionDetailId";
+    var paramVal = type != IntakeType.ordered ? hospitalizationId : prescriptionDetailId;
     return {paramKey: paramVal, "userId": userId, "detail": details.map((x) => x.toJson()).toList()};
   }
 }

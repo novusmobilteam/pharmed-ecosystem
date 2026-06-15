@@ -6,7 +6,7 @@ import '../../../../core/core.dart';
 import 'quantity_badge.dart';
 
 class CustomWithdrawItemCard extends StatelessWidget {
-  final WithdrawItem item;
+  final IntakeItem item;
   final bool isCompleted;
   final bool isSelected;
   final VoidCallback onTap;

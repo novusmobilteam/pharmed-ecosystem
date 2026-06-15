@@ -948,7 +948,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String refill_chip_drawerCell(String address, String cell) {
-    return 'Çekmece $address · Göz $cell';
+    return 'Çekmece $address - Göz $cell';
   }
 
   @override
@@ -1041,6 +1041,12 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get refill_hint_nextCellOpens =>
       'Kaydedince bu gözün kapağı kapanır, sıradaki açılır.';
+
+  @override
+  String get refill_hint_selectionLocked => 'Dolum sürüyor — seçim kilitli.';
+
+  @override
+  String get refill_hint_idleExecution => 'Soldan ilaç seçip dolumu başlatın.';
 
   @override
   String get refund_success_completed => 'İade başarıyla tamamlandı.';

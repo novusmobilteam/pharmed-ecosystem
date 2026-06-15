@@ -948,7 +948,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String refill_chip_drawerCell(String address, String cell) {
-    return 'الدرج $address · الخانة $cell';
+    return 'الدرج $address - الخانة $cell';
   }
 
   @override
@@ -1045,6 +1045,13 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get refill_hint_nextCellOpens =>
       'سيؤدي الحفظ إلى إغلاق هذه الخانة وفتح التالية.';
+
+  @override
+  String get refill_hint_selectionLocked => 'التعبئة جارية — الاختيار مقفل.';
+
+  @override
+  String get refill_hint_idleExecution =>
+      'اختر الأدوية من اليسار لبدء التعبئة.';
 
   @override
   String get refund_success_completed => 'تم إتمام الإرجاع بنجاح.';

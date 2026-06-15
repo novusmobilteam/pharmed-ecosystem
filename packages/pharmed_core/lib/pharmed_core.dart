@@ -81,7 +81,7 @@ export 'src/enums/user_role.dart';
 export 'src/enums/user_type.dart';
 export 'src/enums/warehouse_type.dart';
 export 'src/enums/warning_subject.dart';
-export 'src/enums/withdraw_type.dart';
+export 'src/enums/intake_type.dart';
 export 'src/enums/scan_status.dart';
 export 'src/enums/drawer_status.dart';
 export 'src/enums/station_type.dart';

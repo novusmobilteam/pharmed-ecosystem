@@ -225,7 +225,7 @@ class _WithdrawMedicineHeader extends StatelessWidget {
           style: context.textTheme.bodySmall?.copyWith(color: context.theme.hintColor),
         ),
         // Orderli alımda reçete saatini göster
-        if (item.withdrawType == WithdrawType.ordered && !isCompleted)
+        if (item.withdrawType == IntakeType.ordered && !isCompleted)
           Padding(
             padding: const EdgeInsets.only(top: 4.0),
             child: Row(

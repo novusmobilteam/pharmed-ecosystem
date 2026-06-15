@@ -897,7 +897,7 @@
     "placeholders": { "address": { "type": "String" } }
   },
 
-  "refill_chip_drawerCell": "Çekmece {address} · Göz {cell}",
+  "refill_chip_drawerCell": "Çekmece {address} - Göz {cell}",
   "@refill_chip_drawerCell": {
     "placeholders": {
       "address": { "type": "String" },
@@ -958,6 +958,8 @@
   },
   "refill_action_nextCell": "Sonraki göz",
   "refill_hint_nextCellOpens": "Kaydedince bu gözün kapağı kapanır, sıradaki açılır.",
+  "refill_hint_selectionLocked": "Dolum sürüyor — seçim kilitli.",
+  "refill_hint_idleExecution": "Soldan ilaç seçip dolumu başlatın.",
 
   "refund_success_completed": "İade başarıyla tamamlandı.",
   "@refund_success_completed": { "description": "Success snackbar shown after a refund operation is completed" },

@@ -3,12 +3,13 @@
 //
 // Sorumluluk:
 //   - CabinVisualizerData ile MasterRefillNotifier'ı initialize eder
-//   - State fazına göre Selection veya Executing panelini gösterir
-//   - Error / Completed state'lerini snackbar olarak yansıtır
+//   - Kalıcı iki-panel layout: sol (4) seçim, sağ (6) yürütme/boş state
+//   - Kuyruk hatası dialog'unu yönetir
 //   - MasterDrawerOperationWrapper ile sarar (sol alt köşe çekmece banner'ı)
 //
-// Eski göz-merkezli CabinOperationScaffold (üç panel) kaldırıldı; artık iki
-// fazlı tek-kolon / iki-kolon layout kullanılır.
+// Selection ve Execution panelleri artık yan yana gösterilir; yürütme
+// başlayınca sol panel kendi içinde kilitlenir. İşlem bitince notifier
+// seçimleri temizleyip Selection'a döner (ayrı "başarılı" ekranı yok).
 //
 // Sınıf: Class B
 
@@ -61,31 +62,27 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
     final state = ref.watch(masterRefillNotifierProvider);
 
     ref.listen(masterRefillNotifierProvider, (_, next) {
-      if (next is MasterRefillError) {
+      if (next is MasterRefillError && next.isQueueError) {
+        // Dolum/çekmece hatası: çekmece kapandı ama kayıt başarısız.
+        // Kullanıcı ilaçları geri almalı, sonra devam veya sonlandır.
         final notifier = ref.read(masterRefillNotifierProvider.notifier);
-        if (next.isQueueError) {
-          // Dolum/çekmece hatası: çekmece kapandı ama kayıt başarısız.
-          // Kullanıcı ilaçları geri almalı, sonra devam veya sonlandır.
-          MessageUtils.showConfirmDialog(
-            context: context,
-            action: ConfirmAction.custom,
-            customTitle: context.l10n.refill_error_queueTitle,
-            customMessage: next.message.isNotEmpty
-                ? '${context.l10n.refill_error_queueMessage}\n\n${next.message}'
-                : context.l10n.refill_error_queueMessage,
-            iconData: PhosphorIcons.warning(),
-            color: MedColors.amber,
-            confirmButtonText: context.l10n.refill_error_continueNext,
-            cancelButtonText: context.l10n.refill_error_endProcess,
-            onConfirm: notifier.continueAfterError,
-            onCancel: notifier.abortAfterError,
-          );
-        } else {
-          MessageUtils.showErrorSnackbar(context, next.message);
-          notifier.dismissError();
-        }
-      } else if (next is MasterRefillCompleted) {
-        MessageUtils.showSuccessSnackbar(context, context.l10n.refill_success_completedMaster);
+        MessageUtils.showConfirmDialog(
+          context: context,
+          action: ConfirmAction.custom,
+          customTitle: context.l10n.refill_error_queueTitle,
+          customMessage: next.message.isNotEmpty
+              ? '${context.l10n.refill_error_queueMessage}\n\n${next.message}'
+              : context.l10n.refill_error_queueMessage,
+          iconData: PhosphorIcons.warning(),
+          color: MedColors.amber,
+          confirmButtonText: context.l10n.refill_error_continueNext,
+          cancelButtonText: context.l10n.refill_error_endProcess,
+          onConfirm: notifier.continueAfterError,
+          onCancel: notifier.abortAfterError,
+        );
+      } else if (next is MasterRefillError) {
+        MessageUtils.showErrorSnackbar(context, next.message);
+        ref.read(masterRefillNotifierProvider.notifier).dismissError();
       }
     });
 
@@ -99,16 +96,37 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
 
     return MasterDrawerOperationWrapper(
       child: Padding(
-        padding: MedSpacing.insetXl * 1.5,
-        child: switch (state) {
-          MasterRefillSelection() ||
-          // Hata sonrası Selection'a geri dönüldüğünde de seçim paneli gösterilir.
-          MasterRefillError(previousState: MasterRefillSelection()) => const MasterRefillSelectionPanel(),
-          MasterRefillExecuting() ||
-          MasterRefillError(previousState: MasterRefillExecuting()) ||
-          MasterRefillCompleted() => const MasterRefillExecutionPanel(),
-          _ => const EmptyStateWidget(variant: EmptyStateVariant.cabinData),
-        },
+        padding: MedSpacing.insetLg,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 4,
+              child: Container(
+                padding: MedSpacing.insetXl,
+                decoration: BoxDecoration(
+                  boxShadow: MedShadows.sm,
+                  color: MedColors.surface,
+                  borderRadius: MedRadius.lgAll,
+                ),
+                child: MasterRefillSelectionPanel(),
+              ),
+            ),
+            SizedBox(width: 24),
+            Expanded(
+              flex: 6,
+              child: Container(
+                padding: MedSpacing.insetXl,
+                decoration: BoxDecoration(
+                  boxShadow: MedShadows.sm,
+                  color: MedColors.surface,
+                  borderRadius: MedRadius.lgAll,
+                ),
+                child: MasterRefillExecutionPanel(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

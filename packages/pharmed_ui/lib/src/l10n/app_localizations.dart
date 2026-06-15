@@ -1813,7 +1813,7 @@ abstract class AppLocalizations {
   /// Cubic drawer cell chip label
   ///
   /// In en, this message translates to:
-  /// **'Drawer {address} · Cell {cell}'**
+  /// **'Drawer {address} - Cell {cell}'**
   String refill_chip_drawerCell(String address, String cell);
 
   /// Cubic drawer subtitle with cell count
@@ -1965,6 +1965,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saving closes this cell and opens the next one.'**
   String get refill_hint_nextCellOpens;
+
+  /// No description provided for @refill_hint_selectionLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill in progress — selection locked.'**
+  String get refill_hint_selectionLocked;
+
+  /// No description provided for @refill_hint_idleExecution.
+  ///
+  /// In en, this message translates to:
+  /// **'Select medicines on the left to start refilling.'**
+  String get refill_hint_idleExecution;
 
   /// No description provided for @refund_success_completed.
   ///

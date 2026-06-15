@@ -4,7 +4,7 @@ extension ToStringExtension on num? {
   /// Eğer sayı tam sayı ise (örn: 5.0) "5" olarak,
   /// ondalıklı ise (örn: 5.5) "5.5" olarak döndürür.
   String get formatFractional {
-    if (this == null) return '-';
+    if (this == null) return '';
     return this! % 1 == 0 ? this!.toInt().toString() : toString();
   }
 }

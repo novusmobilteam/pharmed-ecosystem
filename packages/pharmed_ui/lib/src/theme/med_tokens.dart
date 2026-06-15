@@ -21,6 +21,7 @@ abstract final class MedColors {
   static const Color green = Color(0xFF0D9E6C);
   static const Color greenLight = Color(0xFFE6F7F2);
   static const Color amber = Color(0xFFD97006);
+  static const Color purple = Color(0xFF340068);
   static const Color amberLight = Color(0xFFFEF3E2);
   static const Color red = Color(0xFFDC2626);
   static const Color redLight = Color(0xFFFEF2F2);

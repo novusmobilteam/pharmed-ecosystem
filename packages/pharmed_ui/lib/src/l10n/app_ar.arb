@@ -821,7 +821,7 @@
     "placeholders": { "address": { "type": "String" } }
   },
 
-  "refill_chip_drawerCell": "الدرج {address} · الخانة {cell}",
+  "refill_chip_drawerCell": "الدرج {address} - الخانة {cell}",
   "@refill_chip_drawerCell": {
     "placeholders": {
       "address": { "type": "String" },
@@ -883,6 +883,8 @@
   },
   "refill_action_nextCell": "الخانة التالية",
   "refill_hint_nextCellOpens": "سيؤدي الحفظ إلى إغلاق هذه الخانة وفتح التالية.",
+  "refill_hint_selectionLocked": "التعبئة جارية — الاختيار مقفل.",
+"refill_hint_idleExecution": "اختر الأدوية من اليسار لبدء التعبئة.",
 
 
   "unappliedPrescription_panel_patientTitle": "المرضى",

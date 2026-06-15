@@ -5,11 +5,7 @@ class _ActionBar extends StatelessWidget {
   final Color accentColor;
   final bool isOrderless;
 
-  const _ActionBar({
-    required this.notifier,
-    required this.accentColor,
-    required this.isOrderless,
-  });
+  const _ActionBar({required this.notifier, required this.accentColor, required this.isOrderless});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +20,7 @@ class _ActionBar extends StatelessWidget {
             color: accentColor,
             onPressed: () => showDialog(
               context: context,
-              builder: (_) => WithdrawView(withdrawType: WithdrawType.free),
+              builder: (_) => WithdrawView(withdrawType: IntakeType.free),
             ),
           ),
           const SizedBox(width: 8),
@@ -45,10 +41,8 @@ class _ActionBar extends StatelessWidget {
                     MessageUtils.showSuccessSnackbar(context, msg);
                     showDialog(
                       context: context,
-                      builder: (_) => WithdrawView(
-                        withdrawType: WithdrawType.urgent,
-                        hospitalization: notifier.urgentPatient,
-                      ),
+                      builder: (_) =>
+                          WithdrawView(withdrawType: IntakeType.urgent, hospitalization: notifier.urgentPatient),
                     );
                   },
                 );
@@ -76,12 +70,7 @@ class _ActionButton extends StatelessWidget {
   final Color color;
   final VoidCallback onPressed;
 
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onPressed,
-  });
+  const _ActionButton({required this.icon, required this.label, required this.color, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

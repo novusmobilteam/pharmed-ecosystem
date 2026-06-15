@@ -74,7 +74,7 @@ abstract final class RefillJobParamsMapper {
           : 0;
 
       final quantity = isMeasureUnitInput
-          ? medicine.toFillingBackendValue(step.fillingQuantity).toDouble()
+          ? medicine.toFillingBackendValue(step.fillingQuantity ?? 0).toDouble()
           : step.fillingQuantity;
 
       // Boş göz (fill=0 && count=0) → fallback miad; aksi halde per-cell/single.
@@ -89,8 +89,8 @@ abstract final class RefillJobParamsMapper {
         RefillMedicineParams(
           materialId: matId,
           cabinDrawerDetailId: detailId,
-          quantity: quantity,
-          countQuantity: step.countQuantity,
+          quantity: quantity ?? 0,
+          countQuantity: step.countQuantity ?? 0,
           miadDate: miadDate,
           // Birim dozda eski kod: shelfNo = drawerUnit.compartmentNo,
           // compartmentNo = cabinDrawerDetail[i].stepNo

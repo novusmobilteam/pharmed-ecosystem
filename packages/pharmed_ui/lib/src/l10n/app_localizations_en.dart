@@ -948,7 +948,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String refill_chip_drawerCell(String address, String cell) {
-    return 'Drawer $address · Cell $cell';
+    return 'Drawer $address - Cell $cell';
   }
 
   @override
@@ -1041,6 +1041,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get refill_hint_nextCellOpens =>
       'Saving closes this cell and opens the next one.';
+
+  @override
+  String get refill_hint_selectionLocked =>
+      'Refill in progress — selection locked.';
+
+  @override
+  String get refill_hint_idleExecution =>
+      'Select medicines on the left to start refilling.';
 
   @override
   String get refund_success_completed => 'Refund completed successfully.';

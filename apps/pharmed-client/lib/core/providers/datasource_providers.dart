@@ -43,7 +43,7 @@ final faultRemoteDataSourceProvider = Provider<FaultRemoteDataSource>((ref) {
   return FaultRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
 
-final cabinAssignmentRemoteDataSourceProvider = Provider<AssignmentRemoteDataSource>((ref) {
+final assignmentRemoteDataSourceProvider = Provider<AssignmentRemoteDataSource>((ref) {
   return AssignmentRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
 

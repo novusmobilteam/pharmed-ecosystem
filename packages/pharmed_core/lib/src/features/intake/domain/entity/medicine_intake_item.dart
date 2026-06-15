@@ -14,10 +14,8 @@ class MedicineIntakeItem {
   final Medicine? medicine;
   final Hospitalization? hospitalization;
   final MedicineAssignment cabinAssignment;
-  final User? approvalUser;
-  final DateTime? applicationDate;
-  final User? applicationUser;
   final CabinStock? stock;
+  final PrescriptionItemMovement? lastMovement;
 
   MedicineIntakeItem({
     required this.id,
@@ -32,10 +30,8 @@ class MedicineIntakeItem {
     this.askDoctor = false,
     this.inCaseOfNecessity = false,
     this.time,
-    this.approvalUser,
-    this.applicationUser,
-    this.applicationDate,
     this.stock,
+    this.lastMovement,
   });
 
   factory MedicineIntakeItem.empty(MedicineAssignment? assignment) {

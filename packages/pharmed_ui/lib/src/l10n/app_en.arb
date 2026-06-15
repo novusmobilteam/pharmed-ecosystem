@@ -851,7 +851,7 @@
     }
   },
 
-  "refill_chip_drawerCell": "Drawer {address} · Cell {cell}",
+  "refill_chip_drawerCell": "Drawer {address} - Cell {cell}",
   "@refill_chip_drawerCell": {
     "description": "Cubic drawer cell chip label",
     "placeholders": {
@@ -938,6 +938,8 @@
   },
   "refill_action_nextCell": "Next cell",
   "refill_hint_nextCellOpens": "Saving closes this cell and opens the next one.",
+  "refill_hint_selectionLocked": "Refill in progress — selection locked.",
+"refill_hint_idleExecution": "Select medicines on the left to start refilling.",
 
 
   "refund_success_completed": "Refund completed successfully.",

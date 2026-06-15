@@ -1,5 +1,3 @@
-// pharmed-client/lib/features/refill/master_refill/presentation/view/master_refill_execution_panel.dart
-//
 // [SWREQ-CLI-MREFILL-006] [IEC 62304 §5.5]
 // FAZ 2 — Otomatik dolum kuyruğunun işlendiği panel.
 //
@@ -16,7 +14,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../notifier/master_refill_notifier.dart';
@@ -35,27 +32,20 @@ class MasterRefillExecutionPanel extends ConsumerWidget {
       _ => null,
     };
 
-    if (executing == null) return const _CompletedView();
-
+    // Yürütme yoksa (seçim fazı veya boş) yönlendirici boş state.
+    if (executing == null) {
+      return EmptyStateWidget(title: context.l10n.refill_hint_idleExecution);
+    }
     final notifier = ref.read(masterRefillNotifierProvider.notifier);
     final drawerStage = ref.watch(masterDrawerSessionProvider).stage;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _ProgressBar(state: executing, onStop: notifier.stopQueue),
+        _ProgressBar(state: executing),
         const SizedBox(height: 12),
         Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(width: 300, child: _QueueList(state: executing)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _ActiveForm(state: executing, drawerStage: drawerStage, notifier: notifier),
-              ),
-            ],
-          ),
+          child: _ActiveForm(state: executing, drawerStage: drawerStage, notifier: notifier),
         ),
       ],
     );
@@ -65,17 +55,15 @@ class MasterRefillExecutionPanel extends ConsumerWidget {
 // ── İlerleme çubuğu ──────────────────────────────────────────────────────────
 
 class _ProgressBar extends StatelessWidget {
-  const _ProgressBar({required this.state, required this.onStop});
+  const _ProgressBar({required this.state});
 
   final MasterRefillExecuting state;
-  final Future<void> Function() onStop;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       spacing: 10,
       children: [
-        Text(context.l10n.refill_title_autoRefill, style: MedTextStyles.titleSm()),
         Expanded(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -90,202 +78,6 @@ class _ProgressBar extends StatelessWidget {
         Text(
           context.l10n.refill_label_queueProgress(state.completedJobs, state.totalJobs),
           style: MedTextStyles.monoSm(color: MedColors.text3),
-        ),
-        MedButton(
-          label: context.l10n.refill_action_stop,
-          //icon: PhosphorIcons.x(),
-          variant: MedButtonVariant.danger,
-          size: MedButtonSize.sm,
-          onPressed: () => onStop(),
-        ),
-      ],
-    );
-  }
-}
-
-// ── Kuyruk listesi (çekmece + kübik alt-adımlar) ───────────────────────────────
-
-class _QueueList extends StatelessWidget {
-  const _QueueList({required this.state});
-
-  final MasterRefillExecuting state;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      itemCount: state.jobs.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 6),
-      itemBuilder: (context, index) {
-        final job = state.jobs[index];
-        final isActive = index == state.currentIndex;
-        return _QueueItem(job: job, isActive: isActive, activeTargetIndex: isActive ? state.currentTargetIndex : -1);
-      },
-    );
-  }
-}
-
-class _QueueItem extends StatelessWidget {
-  const _QueueItem({required this.job, required this.isActive, required this.activeTargetIndex});
-
-  final RefillDrawerJob job;
-  final bool isActive;
-  final int activeTargetIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    final (icon, iconColor, statusLabel, statusColor) = switch (job.status) {
-      RefillJobStatus.completed => (
-        PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
-        MedColors.green,
-        context.l10n.refill_status_done,
-        MedColors.green,
-      ),
-      RefillJobStatus.active => (
-        PhosphorIcons.package(PhosphorIconsStyle.fill),
-        MedColors.blue,
-        context.l10n.refill_status_open,
-        MedColors.blue,
-      ),
-      RefillJobStatus.pending => (
-        PhosphorIcons.clock(),
-        MedColors.text3,
-        context.l10n.refill_status_queued,
-        MedColors.text3,
-      ),
-      RefillJobStatus.failed => (
-        PhosphorIcons.xCircle(PhosphorIconsStyle.fill),
-        MedColors.red,
-        context.l10n.refill_status_failed,
-        MedColors.red,
-      ),
-    };
-
-    final slot = job.representativeAssignment.drawerUnit?.drawerSlot;
-    final address = slot?.address ?? '?';
-    final isDimmed = job.status == RefillJobStatus.completed || job.status == RefillJobStatus.failed;
-
-    // Kübik çekmecede aktifken alt-adımları (gözleri) göster.
-    final showSubSteps = isActive && job.isKubik && job.targets.length > 1;
-
-    return Opacity(
-      opacity: isDimmed ? 0.6 : 1.0,
-      child: Container(
-        decoration: BoxDecoration(
-          color: MedColors.surface,
-          border: Border.all(color: isActive ? MedColors.blue : MedColors.border, width: isActive ? 2 : 1),
-          borderRadius: MedRadius.mdAll,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
-              child: Row(
-                spacing: 8,
-                children: [
-                  Icon(icon, size: 18, color: iconColor),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 2,
-                      children: [
-                        Text(
-                          _drawerTitle(context, job, address),
-                          style: MedTextStyles.bodySm(color: MedColors.text, weight: FontWeight.w600),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          _drawerSubtitle(context, job, address),
-                          style: MedTextStyles.monoXs(color: MedColors.text3),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text(statusLabel, style: MedTextStyles.monoXs(color: statusColor)),
-                ],
-              ),
-            ),
-            if (showSubSteps) ...[
-              Divider(height: 1, color: MedColors.border2),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(11, 8, 11, 10),
-                child: Column(
-                  spacing: 6,
-                  children: List.generate(job.targets.length, (i) {
-                    return _SubStepRow(target: job.targets[i], index: i, activeIndex: activeTargetIndex);
-                  }),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _drawerTitle(BuildContext context, RefillDrawerJob job, String address) {
-    final distinct = job.distinctMedicineCount;
-    if (distinct == 1) {
-      return job.representativeAssignment.medicine?.name ?? context.l10n.refill_chip_drawer(address);
-    }
-    return context.l10n.refill_label_multiMedicine(distinct);
-  }
-
-  String _drawerSubtitle(BuildContext context, RefillDrawerJob job, String address) {
-    return job.isKubik
-        ? context.l10n.refill_subtitle_kubikCells(address, job.targets.length)
-        : context.l10n.refill_chip_drawer(address);
-  }
-}
-
-/// Kübik çekmecenin tek bir gözünün (lid) alt-adım satırı.
-class _SubStepRow extends StatelessWidget {
-  const _SubStepRow({required this.target, required this.index, required this.activeIndex});
-
-  final RefillFillTarget target;
-  final int index;
-  final int activeIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDone = index < activeIndex;
-    final isActive = index == activeIndex;
-
-    final (icon, color) = isDone
-        ? (PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), MedColors.green)
-        : isActive
-        ? (PhosphorIcons.dotOutline(PhosphorIconsStyle.fill), MedColors.blue)
-        : (PhosphorIcons.circle(), MedColors.text4);
-
-    final cellNo = target.unit?.orderNo ?? target.unit?.compartmentNo ?? (index + 1);
-    final medName = target.assignment.medicine?.name ?? '—';
-
-    return Row(
-      spacing: 7,
-      children: [
-        Icon(icon, size: 15, color: color),
-        Container(
-          width: 20,
-          height: 20,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isActive ? MedColors.blueLight : MedColors.surface2,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Text('$cellNo', style: MedTextStyles.monoXs(color: isActive ? MedColors.blue : MedColors.text3)),
-        ),
-        Expanded(
-          child: Text(
-            medName,
-            style: MedTextStyles.bodySm(
-              color: isActive ? MedColors.text : MedColors.text3,
-              weight: isActive ? FontWeight.w600 : FontWeight.w400,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
         ),
       ],
     );
@@ -310,38 +102,31 @@ class _ActiveForm extends StatelessWidget {
 
     final isLocked = !_isOpened || state.isSaving;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border.all(color: MedColors.border),
-        borderRadius: MedRadius.lgAll,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _FormHeader(state: state, job: job, isOpened: _isOpened),
-          Divider(height: 1, color: MedColors.border2),
-          Expanded(
-            child: Opacity(
-              opacity: isLocked ? 0.55 : 1.0,
-              child: IgnorePointer(
-                ignoring: isLocked,
-                child: job.isKubik
-                    ? _KubikBody(state: state, notifier: notifier)
-                    : _UnitDoseBody(state: state, notifier: notifier),
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _FormHeader(state: state, job: job, isOpened: _isOpened, assignment: state.currentTarget?.assignment),
+        SizedBox(height: 12.0),
+        Expanded(
+          child: Opacity(
+            opacity: isLocked ? 0.55 : 1.0,
+            child: IgnorePointer(
+              ignoring: isLocked,
+              child: job.isKubik
+                  ? _KubikBody(state: state, notifier: notifier)
+                  : _UnitDoseBody(state: state, notifier: notifier),
             ),
           ),
-          Divider(height: 1, color: MedColors.border2),
-          _FormFooter(
-            canConfirm: _canConfirm(job) && _isOpened,
-            isSaving: state.isSaving,
-            isKubik: job.isKubik,
-            isLastCubicCell: job.isKubik && state.currentTargetIndex >= job.targets.length - 1,
-            onConfirm: () => notifier.confirmCurrent(),
-          ),
-        ],
-      ),
+        ),
+        Divider(height: 1, color: MedColors.border2),
+        _FormFooter(
+          canConfirm: _canConfirm(job) && _isOpened,
+          isSaving: state.isSaving,
+          isKubik: job.isKubik,
+          isLastCubicCell: job.isKubik && state.currentTargetIndex >= job.targets.length - 1,
+          onConfirm: () => notifier.confirmCurrent(),
+        ),
+      ],
     );
   }
 
@@ -355,9 +140,10 @@ class _ActiveForm extends StatelessWidget {
 }
 
 class _FormHeader extends StatelessWidget {
-  const _FormHeader({required this.state, required this.job, required this.isOpened});
+  const _FormHeader({required this.state, this.assignment, required this.job, required this.isOpened});
 
   final MasterRefillExecuting state;
+  final MedicineAssignment? assignment;
   final RefillDrawerJob job;
   final bool isOpened;
 
@@ -381,35 +167,50 @@ class _FormHeader extends StatelessWidget {
       subtitle = context.l10n.refill_chip_drawer(address);
     }
 
-    return Padding(
-      padding: MedSpacing.insetMd,
-      child: Row(
-        spacing: 10,
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: MedRadius.mdAll),
-            child: Icon(
-              job.isKubik ? PhosphorIcons.squaresFour() : PhosphorIcons.rows(),
-              size: 19,
-              color: MedColors.blue,
+    final maxQty = assignment?.maxQuantityFromBackend;
+    final critQty = assignment?.critQuantityFromBackend;
+    final minQty = assignment?.minQuantityFromBackend;
+
+    return Column(
+      spacing: 10,
+      children: [
+        Row(
+          spacing: 10,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
+                children: [
+                  Text(title, style: MedTextStyles.titleSm(), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(subtitle, style: MedTextStyles.monoXs(color: MedColors.text3)),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 2,
-              children: [
-                Text(title, style: MedTextStyles.titleSm(), maxLines: 1, overflow: TextOverflow.ellipsis),
-                Text(subtitle, style: MedTextStyles.monoXs(color: MedColors.text3)),
-              ],
+            _DrawerStatePill(isOpened: isOpened),
+          ],
+        ),
+        Row(
+          spacing: 8,
+          children: [
+            _ThresholdInline(
+              label: context.l10n.refill_label_min,
+              value: minQty.formatFractional,
+              color: MedColors.text2,
             ),
-          ),
-          _DrawerStatePill(isOpened: isOpened),
-        ],
-      ),
+            _ThresholdInline(
+              label: context.l10n.refill_label_critical,
+              value: critQty.formatFractional,
+              color: MedColors.red,
+            ),
+            _ThresholdInline(
+              label: context.l10n.refill_label_max,
+              value: maxQty.formatFractional,
+              color: MedColors.text2,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -423,25 +224,13 @@ class _DrawerStatePill extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = isOpened ? MedColors.green : MedColors.amber;
     final bg = isOpened ? MedColors.greenLight : MedColors.amberLight;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(color: bg, borderRadius: MedRadius.mdAll),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 5,
-        children: [
-          Icon(isOpened ? PhosphorIcons.lockOpen() : PhosphorIcons.lock(), size: 14, color: color),
-          Text(
-            isOpened ? context.l10n.refill_status_drawerOpen : context.l10n.refill_status_drawerOpening,
-            style: MedTextStyles.bodySm(color: color),
-          ),
-        ],
-      ),
+    return MedInfoChip(
+      backgroundColor: bg,
+      foregroundColor: color,
+      info: isOpened ? context.l10n.refill_status_drawerOpen : context.l10n.refill_status_drawerOpening,
     );
   }
 }
-
-// ── Kübik gövde (tek aktif göz) ────────────────────────────────────────────────
 
 class _KubikBody extends StatelessWidget {
   const _KubikBody({required this.state, required this.notifier});
@@ -456,7 +245,6 @@ class _KubikBody extends StatelessWidget {
     if (target == null) return const SizedBox.shrink();
 
     return SingleChildScrollView(
-      padding: MedSpacing.insetMd,
       child: _CellInputCard(
         assignment: target.assignment,
         current: target.currentQuantity,
@@ -471,8 +259,6 @@ class _KubikBody extends StatelessWidget {
   }
 }
 
-// ── Birim doz gövde (tüm step'ler) ────────────────────────────────────────────
-
 class _UnitDoseBody extends StatelessWidget {
   const _UnitDoseBody({required this.state, required this.notifier});
 
@@ -486,7 +272,6 @@ class _UnitDoseBody extends StatelessWidget {
     const ti = 0; // birim dozda job içinde tek target
 
     return ListView.separated(
-      padding: MedSpacing.insetMd,
       itemCount: target.steps.length,
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, stepIndex) {
@@ -507,14 +292,12 @@ class _UnitDoseBody extends StatelessWidget {
   }
 }
 
-// ── Göz input kartı (ortak) ────────────────────────────────────────────────────
-
 class _CellInputCard extends StatelessWidget {
   const _CellInputCard({
     required this.assignment,
     required this.current,
-    required this.countQuantity,
-    required this.fillingQuantity,
+    this.countQuantity,
+    this.fillingQuantity,
     required this.miadDate,
     required this.onCountChanged,
     required this.onFillingChanged,
@@ -524,8 +307,8 @@ class _CellInputCard extends StatelessWidget {
 
   final MedicineAssignment assignment;
   final double current;
-  final double countQuantity;
-  final double fillingQuantity;
+  final double? countQuantity;
+  final double? fillingQuantity;
   final DateTime? miadDate;
   final ValueChanged<double> onCountChanged;
   final ValueChanged<double> onFillingChanged;
@@ -541,10 +324,9 @@ class _CellInputCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFilling = fillingQuantity > 0;
+    final hasFilling = (fillingQuantity ?? 0) > 0;
     final needsMiad = hasFilling && miadDate == null;
 
-    final maxQty = assignment.maxQuantityFromBackend;
     final critQty = assignment.critQuantityFromBackend;
     final minQty = assignment.minQuantityFromBackend;
 
@@ -556,7 +338,7 @@ class _CellInputCard extends StatelessWidget {
     }
 
     return Container(
-      padding: MedSpacing.insetXl,
+      padding: MedSpacing.insetXl * 1.5,
       decoration: BoxDecoration(
         border: Border.all(color: needsMiad ? MedColors.amber : MedColors.border),
         borderRadius: MedRadius.mdAll,
@@ -588,26 +370,7 @@ class _CellInputCard extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            spacing: 8,
-            children: [
-              _ThresholdInline(
-                label: context.l10n.refill_label_min,
-                value: minQty.formatFractional,
-                color: MedColors.text2,
-              ),
-              _ThresholdInline(
-                label: context.l10n.refill_label_critical,
-                value: critQty.formatFractional,
-                color: MedColors.red,
-              ),
-              _ThresholdInline(
-                label: context.l10n.refill_label_max,
-                value: maxQty.formatFractional,
-                color: MedColors.text2,
-              ),
-            ],
-          ),
+
           Row(
             spacing: 8,
             children: [
@@ -633,6 +396,7 @@ class _CellInputCard extends StatelessWidget {
                   label: context.l10n.refill_label_expiryDate,
                   initialValue: miadDate,
                   onDateSelected: onMiadChanged,
+                  firstDate: DateTime.now(),
                 ),
               ),
             ],
@@ -654,7 +418,7 @@ class _ThresholdInline extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(color: MedColors.surface2, borderRadius: MedRadius.smAll),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -707,26 +471,6 @@ class _FormFooter extends StatelessWidget {
             isLoading: isSaving,
             onPressed: canConfirm ? onConfirm : null,
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Tamamlandı ───────────────────────────────────────────────────────────────
-
-class _CompletedView extends StatelessWidget {
-  const _CompletedView();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 12,
-        children: [
-          Icon(PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), size: 48, color: MedColors.green),
-          Text(context.l10n.refill_success_completedMaster, style: MedTextStyles.titleMd()),
         ],
       ),
     );

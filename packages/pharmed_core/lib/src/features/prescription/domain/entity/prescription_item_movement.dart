@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
@@ -49,4 +50,8 @@ class PrescriptionItemMovement implements TableData {
 
   @override
   List<String?> get titles => ['Tarih', 'Saat', 'Hasta', 'Kullanıcı', 'Malzeme', 'Miktar', 'Hareket'];
+
+  @override
+  String toString() =>
+      'Type: ${type.label} - createdAt: ${createdAt.formattedDate} - item: ${PrescriptionItemMapper().toDtoOrNull(prescriptionItem)?.toJson()}';
 }

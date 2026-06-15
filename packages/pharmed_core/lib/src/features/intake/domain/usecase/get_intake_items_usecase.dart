@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 class GetIntakeItemsParams {
-  final WithdrawType type;
+  final IntakeType type;
   final int? hospitalizationId;
   // Orderlı alımda birbirine yakın saatlerde aynı iki ilacı almaya çalıştığımız
   // senaryoda ilk alım işleminden sonra kabin stokları yenilenmediği için
@@ -14,37 +14,37 @@ class GetIntakeItemsParams {
 }
 
 class GetIntakeItemsUseCase {
-  final IIntakeRepository _withdrawRepository;
+  final IIntakeRepository _intakeRepository;
   final IAssignmentRepository _assignmentRepository;
   final IMedicineRepository _medicineRepository;
-  List<WithdrawItem> _cachedItems = [];
+  List<IntakeItem> _cachedItems = [];
 
   GetIntakeItemsUseCase({
-    required IIntakeRepository withdrawRepository,
+    required IIntakeRepository intakeRepository,
     required IAssignmentRepository assignmentRepository,
     required IMedicineRepository medicineRepository,
-  }) : _withdrawRepository = withdrawRepository,
+  }) : _intakeRepository = intakeRepository,
        _assignmentRepository = assignmentRepository,
        _medicineRepository = medicineRepository;
 
-  Future<Result<List<WithdrawItem>>> call(GetIntakeItemsParams params) async {
+  Future<Result<List<IntakeItem>>> call(GetIntakeItemsParams params) async {
     final type = params.type;
     final refreshAssignments = params.refreshAssignments;
     final hospitalizationId = params.hospitalizationId ?? 0;
 
     switch (type) {
-      case WithdrawType.ordered:
+      case IntakeType.ordered:
         return await _getOrdered(hospitalizationId, refreshAssignments);
-      case WithdrawType.orderless:
-      case WithdrawType.urgent:
+      case IntakeType.orderless:
+      case IntakeType.urgent:
         return await _getOrderless();
-      case WithdrawType.free:
+      case IntakeType.free:
         return await _getFree();
     }
   }
 
-  Future<Result<List<WithdrawItem>>> _getOrderless() async {
-    List<WithdrawItem> items = [];
+  Future<Result<List<IntakeItem>>> _getOrderless() async {
+    List<IntakeItem> items = [];
     final result = await _assignmentRepository.getOrderlessCabinAssignments();
     return result.when(
       ok: (data) async {
@@ -55,9 +55,9 @@ class GetIntakeItemsUseCase {
 
           var (witnesses, stations) = await _fetchWitnesses(d.medicine!);
           items.add(
-            WithdrawItem(
+            IntakeItem(
               id: d.id ?? 0,
-              type: WithdrawType.orderless,
+              type: IntakeType.orderless,
               assignment: d,
               medicine: d.medicine!,
               witnesses: witnesses,
@@ -71,8 +71,8 @@ class GetIntakeItemsUseCase {
     );
   }
 
-  Future<Result<List<WithdrawItem>>> _getFree() async {
-    List<WithdrawItem> items = [];
+  Future<Result<List<IntakeItem>>> _getFree() async {
+    List<IntakeItem> items = [];
     final result = await _assignmentRepository.getIndependentMaterials();
     return result.when(
       ok: (data) async {
@@ -84,9 +84,9 @@ class GetIntakeItemsUseCase {
           var (witnesses, stations) = await _fetchWitnesses(d.medicine!);
 
           items.add(
-            WithdrawItem(
+            IntakeItem(
               id: d.id ?? 0,
-              type: WithdrawType.free,
+              type: IntakeType.free,
               assignment: d,
               medicine: d.medicine!,
               witnesses: witnesses,
@@ -100,13 +100,13 @@ class GetIntakeItemsUseCase {
     );
   }
 
-  Future<Result<List<WithdrawItem>>> _getOrdered(int hospitalizationId, bool refreshAssignments) async {
+  Future<Result<List<IntakeItem>>> _getOrdered(int hospitalizationId, bool refreshAssignments) async {
     // İlk yükleme: her iki istek paralel çalışır
     if (!refreshAssignments) {
       final result = await _fetchOrdered(hospitalizationId);
       // İlk yüklemede cache'i doldur
       if (result is Ok) {
-        _cachedItems = (result as Ok<List<WithdrawItem>>).value;
+        _cachedItems = (result as Ok<List<IntakeItem>>).value;
       }
       return result;
     }
@@ -132,11 +132,11 @@ class GetIntakeItemsUseCase {
     return Result.ok(_cachedItems);
   }
 
-  Future<Result<List<WithdrawItem>>> _fetchOrdered(int hospitalizationId) async {
-    List<WithdrawItem> items = [];
+  Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId) async {
+    List<IntakeItem> items = [];
 
     final results = await Future.wait([
-      _withdrawRepository.getIntakeItems(hospitalizationId: hospitalizationId),
+      _intakeRepository.getIntakeItems(hospitalizationId: hospitalizationId),
       _assignmentRepository.getCabinAssignments(),
     ]);
 
@@ -160,23 +160,17 @@ class GetIntakeItemsUseCase {
       var (witnesses, stations) = await _fetchWitnesses(task.medicine!);
 
       items.add(
-        WithdrawItem(
+        IntakeItem(
           id: task.id,
-          type: WithdrawType.ordered,
+          type: IntakeType.ordered,
           assignment: assignment, // null olsa bile ekliyoruz
           medicine: assignment?.medicine ?? task.medicine, // Fallback mekanizması
           dosePiece: task.dosePiece.toDouble(),
           prescriptionDose: task.dosePiece.toDouble(),
           witnesses: witnesses,
           stations: stations,
-          prescriptionItem: PrescriptionItem(
-            id: task.id,
-            time: task.time,
-            firstDoseEmergency: task.firstDoseEmergency,
-            askDoctor: task.askDoctor,
-            inCaseOfNecessity: task.inCaseOfNecessity,
-            dosePiece: task.dosePiece.toDouble(),
-          ),
+          prescriptionItem: task.lastMovement?.prescriptionItem,
+          lastMovement: task.lastMovement,
         ),
       );
     }
@@ -207,8 +201,8 @@ class GetIntakeItemsUseCase {
     return (witnesses, stations);
   }
 
-  List<WithdrawItem> _groupByMedicine(List<WithdrawItem> items) {
-    final Map<int, WithdrawItem> grouped = {};
+  List<IntakeItem> _groupByMedicine(List<IntakeItem> items) {
+    final Map<int, IntakeItem> grouped = {};
 
     for (final item in items) {
       final medicineId = item.medicine?.id ?? item.id;

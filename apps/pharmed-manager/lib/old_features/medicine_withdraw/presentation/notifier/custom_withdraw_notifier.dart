@@ -12,11 +12,11 @@ class CustomWithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isFetching => isLoading(fetchOp);
   bool get isEmpty => _items.isEmpty;
 
-  List<WithdrawItem> _items = [];
-  List<WithdrawItem> get items => _items;
+  List<IntakeItem> _items = [];
+  List<IntakeItem> get items => _items;
 
-  WithdrawItem? _selectedItem;
-  WithdrawItem? get selectedItem => _selectedItem;
+  IntakeItem? _selectedItem;
+  IntakeItem? get selectedItem => _selectedItem;
 
   CustomWithdrawNotifier({
     required GetPatientMedicinesUseCase getPatientMedicinesUseCase,
@@ -50,7 +50,7 @@ class CustomWithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
     getItems();
   }
 
-  void selectItem(WithdrawItem item) {
+  void selectItem(IntakeItem item) {
     _selectedItem = item;
     notifyListeners();
   }

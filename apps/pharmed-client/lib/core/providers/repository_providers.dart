@@ -9,6 +9,10 @@ final userRepositoryProvider = Provider<IUserReader>((ref) {
   return UserRepositoryImpl(dataSource: ref.read(userRemoteDataSourceProvider), mapper: ref.read(userMapperProvider));
 });
 
+final userManagerProvider = Provider<IUserManager>((ref) {
+  return UserRepositoryImpl(dataSource: ref.read(userRemoteDataSourceProvider), mapper: ref.read(userMapperProvider));
+});
+
 final cabinStockRepositoryProvider = Provider<ICabinStockRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
     AppFlavor.mock => MockCabinStockRepository(),
@@ -112,13 +116,13 @@ final dashboardRepositoryProvider = Provider<IDashboardRepository>((ref) {
 
 final cabinAssignmentRepositoryProvider = Provider<IAssignmentRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => AssignmentRepository(
-      dataSource: ref.read(cabinAssignmentRemoteDataSourceProvider),
+    AppFlavor.mock => AssignmentRepositoryImpl(
+      dataSource: ref.read(assignmentRemoteDataSourceProvider),
       medicineAssignmentMapper: MedicineAssignmentMapper(),
       patientAssignmentMapper: PatientAssignmentMapper(),
     ),
-    AppFlavor.dev || AppFlavor.prod => AssignmentRepository(
-      dataSource: ref.read(cabinAssignmentRemoteDataSourceProvider),
+    AppFlavor.dev || AppFlavor.prod => AssignmentRepositoryImpl(
+      dataSource: ref.read(assignmentRemoteDataSourceProvider),
       medicineAssignmentMapper: MedicineAssignmentMapper(),
       patientAssignmentMapper: PatientAssignmentMapper(),
     ),
@@ -242,5 +246,20 @@ final unloadRepositoryProvider = Provider<IUnloadRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
     AppFlavor.mock => UnloadRepositoryImpl(dataSource: ref.read(unloadDataSourceProvider)),
     AppFlavor.dev || AppFlavor.prod => UnloadRepositoryImpl(dataSource: ref.read(unloadDataSourceProvider)),
+  };
+});
+
+final assignmentRepositoryProvider = Provider<IAssignmentRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => AssignmentRepositoryImpl(
+      dataSource: ref.read(assignmentRemoteDataSourceProvider),
+      medicineAssignmentMapper: MedicineAssignmentMapper(),
+      patientAssignmentMapper: PatientAssignmentMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => AssignmentRepositoryImpl(
+      dataSource: ref.read(assignmentRemoteDataSourceProvider),
+      medicineAssignmentMapper: MedicineAssignmentMapper(),
+      patientAssignmentMapper: PatientAssignmentMapper(),
+    ),
   };
 });

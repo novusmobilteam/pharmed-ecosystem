@@ -5,8 +5,8 @@ import 'package:pharmed_data/pharmed_data.dart';
 // ICabinAssignmentRepository implementasyonu.
 // DTO → entity dönüşümü SttionMapper üzerinden yapılır.
 // Sınıf: Class B
-class AssignmentRepository implements IAssignmentRepository {
-  AssignmentRepository({
+class AssignmentRepositoryImpl implements IAssignmentRepository {
+  AssignmentRepositoryImpl({
     required AssignmentRemoteDataSource dataSource,
     required MedicineAssignmentMapper medicineAssignmentMapper,
     required PatientAssignmentMapper patientAssignmentMapper,

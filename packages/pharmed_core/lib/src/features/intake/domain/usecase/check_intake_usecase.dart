@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 class CheckIntakeParams {
-  final WithdrawType type;
+  final IntakeType type;
   final int userId;
   final int? hospitalizationId;
   final int? prescriptionDetailId;
@@ -27,12 +27,12 @@ class CheckIntakeUseCase {
     final type = params.type;
 
     switch (type) {
-      case WithdrawType.ordered:
+      case IntakeType.ordered:
         return await _checkOrdered(params);
-      case WithdrawType.orderless:
-      case WithdrawType.urgent:
+      case IntakeType.orderless:
+      case IntakeType.urgent:
         return await _checkOrderless(params);
-      case WithdrawType.free:
+      case IntakeType.free:
         return await _checkFree(params);
     }
   }

@@ -18,13 +18,13 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 /// Birim doz çekmecesinde tek bir gözün (step) girdisi.
 class RefillStepEntry {
-  const RefillStepEntry({this.countQuantity = 0, this.fillingQuantity = 0, this.miadDate});
+  const RefillStepEntry({this.countQuantity, this.fillingQuantity, this.miadDate});
 
-  final double countQuantity;
-  final double fillingQuantity;
+  final double? countQuantity;
+  final double? fillingQuantity;
   final DateTime? miadDate;
 
-  bool get hasFilling => fillingQuantity > 0;
+  bool get hasFilling => (fillingQuantity ?? 0) > 0;
 
   RefillStepEntry copyWith({
     double? countQuantity,

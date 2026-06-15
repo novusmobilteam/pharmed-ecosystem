@@ -10,8 +10,7 @@ extension MedicineWithdrawItemMapper on MedicineIntakeItem {
       medicine: medicine,
       dosePiece: dosePiece.toDouble(),
       assignment: cabinAssignment,
-      applicationDate: applicationDate,
-      applicationUser: applicationUser,
+
       // İade'de reçete bağlamı taşınmaz
       prescriptionItem: null,
       prescriptionDose: null,

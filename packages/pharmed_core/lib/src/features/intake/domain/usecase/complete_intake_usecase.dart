@@ -9,22 +9,22 @@ class CompleteIntakeUseCase {
     final type = params.type;
 
     switch (type) {
-      case WithdrawType.ordered:
+      case IntakeType.ordered:
         return await _completeOrdered(params);
-      case WithdrawType.orderless:
-      case WithdrawType.urgent:
+      case IntakeType.orderless:
+      case IntakeType.urgent:
         return await _completeOrderless(params);
-      case WithdrawType.free:
+      case IntakeType.free:
         return await _completeFree(params);
     }
   }
 
   Future<Result<void>> _completeOrdered(IntakeParams params) {
-    return _repository.checkOrderedIntake(params.toJson());
+    return _repository.completeOrderedIntake(params.toJson());
   }
 
   Future<Result<void>> _completeOrderless(IntakeParams params) {
-    return _repository.checkOrderlessIntake(params.toJson());
+    return _repository.completeOrderlessIntake(params.toJson());
   }
 
   Future<Result<void>> _completeFree(IntakeParams params) async {

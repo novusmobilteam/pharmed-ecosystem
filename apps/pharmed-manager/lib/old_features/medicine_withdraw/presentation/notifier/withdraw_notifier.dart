@@ -8,7 +8,7 @@ import '../../domain/mapper/withdraw_item_mapper.dart';
 import '../../domain/utils/withdraw_check_status.dart';
 
 class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
-  late WithdrawType _type;
+  late IntakeType _type;
   final AuthNotifier _authPersistence;
   final Hospitalization? _hospitalization;
   final GetIntakeItemsUseCase _getWithdrawItemsUseCase;
@@ -22,7 +22,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
 
   WithdrawNotifier({
     required this.onChecksCompleted,
-    required WithdrawType type,
+    required IntakeType type,
     Hospitalization? hospitalization,
     required GetIntakeItemsUseCase getWithdrawItemsUseCase,
     required CheckIntakeUseCase checkWithdrawUseCase,
@@ -82,7 +82,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   /// Anlık olarak işlem yapılan ilacın kabin ataması.
   MedicineAssignment? get currentAssignment => currentItem?.assignment;
 
-  WithdrawType get type => _type;
+  IntakeType get type => _type;
 
   void initialize() async {
     await execute(
@@ -97,7 +97,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> getItems({bool refreshAssignments = false}) async {
-    if (_hospitalization == null && _type != WithdrawType.free) return;
+    if (_hospitalization == null && _type != IntakeType.free) return;
     return execute(
       refreshAssignments ? refreshAssignmentsOp : fetchItemsOp,
       operation: () => _getWithdrawItemsUseCase.call(
@@ -315,7 +315,7 @@ class WithdrawNotifier extends ChangeNotifier with ApiRequestMixin {
       if (validatedAmount < 1) validatedAmount = 1;
       if (validatedAmount > stockLimit) validatedAmount = stockLimit;
     } else if (medicine is Drug) {
-      final bool isOrdered = _type == WithdrawType.ordered;
+      final bool isOrdered = _type == IntakeType.ordered;
       final bool canLower = medicine.isCanLowerDose;
       final double upperLimitFromOrder = item.prescriptionDose ?? 0.0;
 

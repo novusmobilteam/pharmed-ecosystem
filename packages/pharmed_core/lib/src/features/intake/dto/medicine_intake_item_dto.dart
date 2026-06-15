@@ -14,15 +14,13 @@ class MedicineIntakeItemDto {
   final bool? firstDoseEmergency;
   final bool? askDoctor;
   final bool? inCaseOfNecessity;
-  final DateTime? applicationDate;
 
   final HospitalizationDto? hospitalization;
   final MedicineDto? medicine;
-  final UserDto? approvalUser;
-  final UserDto? applicationUser;
   final PrescriptionDto? prescription;
   final MedicineAssignmentDto? cabinAssignment;
   final CabinStockDTO? cabinDrawerStock;
+  final PrescriptionItemMovementDto? lastMovement;
 
   MedicineIntakeItemDto({
     this.id,
@@ -37,15 +35,13 @@ class MedicineIntakeItemDto {
     this.requestTypeId,
     this.hospitalization,
     this.medicine,
-    this.approvalUser,
-    this.applicationUser,
     this.prescription,
     this.cabinAssignment,
     this.cabinDrawerStock,
     this.firstDoseEmergency,
     this.askDoctor,
     this.inCaseOfNecessity,
-    this.applicationDate,
+    this.lastMovement,
   });
 
   factory MedicineIntakeItemDto.fromJson(Map<String, dynamic> json) {
@@ -63,18 +59,16 @@ class MedicineIntakeItemDto {
       firstDoseEmergency: json['firstDoseEmergency'],
       askDoctor: json['askDoctor'],
       inCaseOfNecessity: json['inCaseOfNecessity'],
-      applicationDate: json['applicationDate'] != null ? DateTime.parse(json['applicationDate'] as String) : null,
       hospitalization: json['patientHospitalization'] != null
           ? HospitalizationDto.fromJson(json['patientHospitalization'])
           : null,
       medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
-      approvalUser: json['approvalUser'] != null ? UserDto.fromJson(json['approvalUser']) : null,
-      applicationUser: json['applicationUser'] != null ? UserDto.fromJson(json['applicationUser']) : null,
       prescription: json['prescription'] != null ? PrescriptionDto.fromJson(json['prescription']) : null,
       cabinAssignment: json['cabinDrawrQuantity'] != null
           ? MedicineAssignmentDto.fromJson(json['cabinDrawrQuantity'])
           : null,
       cabinDrawerStock: json['cabinDrawrStock'] != null ? CabinStockDTO.fromJson(json['cabinDrawrStock']) : null,
+      lastMovement: json['lastMovement'] != null ? PrescriptionItemMovementDto.fromJson(json['lastMovement']) : null,
     );
   }
 

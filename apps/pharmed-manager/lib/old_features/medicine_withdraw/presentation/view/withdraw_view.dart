@@ -16,7 +16,7 @@ class WithdrawView extends StatefulWidget {
   const WithdrawView({super.key, this.hospitalization, required this.withdrawType});
 
   final Hospitalization? hospitalization;
-  final WithdrawType withdrawType;
+  final IntakeType withdrawType;
 
   @override
   State<WithdrawView> createState() => _WithdrawViewState();
@@ -59,7 +59,7 @@ class _WithdrawViewState extends State<WithdrawView> {
               await Future.delayed(const Duration(milliseconds: 1000));
 
               // Önce stokları güncelle, tamamlanmadan devam etme
-              if (notifier.type == WithdrawType.ordered) {
+              if (notifier.type == IntakeType.ordered) {
                 debugPrint("🔄 getItems başlıyor...");
                 await notifier.getItems(refreshAssignments: true);
                 debugPrint("✅ getItems tamamlandı.");

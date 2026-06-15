@@ -1,5 +1,3 @@
-// pharmed-client/lib/features/refill/master_refill/presentation/notifier/master_refill_notifier.dart
-//
 // [SWREQ-CLI-MREFILL-002] [IEC 62304 §5.5]
 // İlaç-merkezli master kabin dolum akışını yöneten notifier.
 //
@@ -296,10 +294,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     await _orchestrator.stop();
 
     if (nextIndex >= s.jobs.length) {
-      state = MasterRefillCompleted(
-        cabinId: s.cabinId,
-        filledJobCount: completedJobs.where((j) => j.status == RefillJobStatus.completed).length,
-      );
+      await _reloadSelectionAfterQueue(s.cabinId);
       return;
     }
 
@@ -327,8 +322,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     final s = state;
     await _orchestrator.stop();
     if (s is MasterRefillExecuting) {
-      final assignments = s.jobs.expand((j) => j.targets.map((t) => t.assignment)).toList();
-      state = MasterRefillSelection(cabinId: s.cabinId, medicines: assignments);
+      await _reloadSelectionAfterQueue(s.cabinId);
     }
   }
 
@@ -348,10 +342,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     await _orchestrator.stop();
 
     if (nextIndex >= markedJobs.length) {
-      state = MasterRefillCompleted(
-        cabinId: prev.cabinId,
-        filledJobCount: markedJobs.where((j) => j.status == RefillJobStatus.completed).length,
-      );
+      await _reloadSelectionAfterQueue(prev.cabinId);
       return;
     }
 
@@ -368,11 +359,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     await _orchestrator.stop();
 
     if (prev is MasterRefillExecuting) {
-      final markedJobs = _withStatus(prev.jobs, prev.currentIndex, RefillJobStatus.failed);
-      state = MasterRefillCompleted(
-        cabinId: prev.cabinId,
-        filledJobCount: markedJobs.where((j) => j.status == RefillJobStatus.completed).length,
-      );
+      await _reloadSelectionAfterQueue(prev.cabinId);
     } else {
       state = prev;
     }
@@ -384,6 +371,20 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
   }
 
   // ── Helper ────────────────────────────────────────────────────────────────
+
+  /// Kuyruk bittiğinde çağrılır: ilaç listesini yeniden çeker (stoklar değişti)
+  /// ve temiz (seçimsiz) Selection fazına döner. Ayrı "başarılı" ekranı yoktur.
+  Future<void> _reloadSelectionAfterQueue(int cabinId) async {
+    state = const MasterRefillLoading();
+    final result = await _getAssignments();
+    result.when(
+      ok: (assignments) => state = MasterRefillSelection(cabinId: cabinId, medicines: assignments),
+      error: (e) => state = MasterRefillError(
+        message: e.message,
+        previousState: MasterRefillSelection(cabinId: cabinId, medicines: const []),
+      ),
+    );
+  }
 
   List<RefillDrawerJob> _withStatus(List<RefillDrawerJob> jobs, int index, RefillJobStatus status) {
     final next = List<RefillDrawerJob>.from(jobs);
