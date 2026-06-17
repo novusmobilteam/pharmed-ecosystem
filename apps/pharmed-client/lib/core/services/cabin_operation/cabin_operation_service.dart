@@ -19,11 +19,19 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
+
+import '../../cache/app_settings_cache.dart';
 
 class CabinOperationService implements ICabinOperationService {
-  CabinOperationService({required ISerialCommunicationService serialService}) : _serialService = serialService;
+  CabinOperationService({
+    required ISerialCommunicationService serialService,
+    required AppSettingsCache appSettingsCache,
+  }) : _serialService = serialService,
+       _settingsCache = appSettingsCache;
 
   final ISerialCommunicationService _serialService;
+  final AppSettingsCache _settingsCache;
   ManagementCard? _cachedManager;
 
   // ── Sabitler ──────────────────────────────────────────────────────────────
@@ -42,42 +50,88 @@ class CabinOperationService implements ICabinOperationService {
 
   @override
   Future<ManagementCard?> getOrScanManager({String? targetPort}) async {
-    if (!_serialService.isConnected) {
-      final port = targetPort ?? 'COM3';
-      debugPrint('🔌 Port bağlı değil. Otomatik bağlanılıyor: $port');
-      // Bağlantı kesilmişse cache geçersiz — temizle
-      _cachedManager = null;
-      await _serialService.connectToPort(port);
+    // Cache'de manager varsa ve bağlantı hâlâ ayakta ise, taramadan dön
+    if (_cachedManager != null && _serialService.isConnected) {
+      return _cachedManager;
     }
 
-    if (_cachedManager != null) return _cachedManager;
+    final preferredPort = targetPort ?? await _settingsCache.getComPort();
 
-    final found = await scanManagementCard();
-    if (found != null) _cachedManager = found;
-    return found;
+    if (preferredPort == null) {
+      MedLogger.error(unit: 'CabinOps', swreq: 'SWREQ-CABIN-OP-003', message: 'COM port bilinmiyor — cache boş');
+      return null;
+    }
+
+    final manager = await _tryConnectAndScan(preferredPort);
+    if (manager != null) return manager;
+
+    MedLogger.error(
+      unit: 'CabinOps',
+      swreq: 'SWREQ-CABIN-OP-003',
+      message: 'Yönetim kartı bulunamadı',
+      context: {'port': preferredPort},
+    );
+    return null;
+  }
+
+  Future<ManagementCard?> _tryConnectAndScan(String port) async {
+    try {
+      if (_serialService.isConnected) {
+        await _serialService.disconnect(); // ya da _forceCleanup
+      }
+
+      _cachedManager = null;
+      await _serialService.connectToPort(port);
+      final found = await scanManagementCard();
+      if (found != null) {
+        _cachedManager = found;
+        return found;
+      }
+    } catch (e) {
+      MedLogger.warn(
+        unit: 'CabinOps',
+        swreq: 'SWREQ-CABIN-OP-003',
+        message: 'Port denemesi başarısız',
+        context: {'port': port, 'error': e.toString()},
+      );
+    }
+    return null;
   }
 
   @override
   Future<ManagementCard?> scanManagementCard() async {
-    debugPrint('🔍 Yönetim kartı aranıyor (adres 1-16 taranıyor)...');
+    debugPrint('🔍 Yönetim kartı aranıyor...');
 
+    // İLK-TX-KAYBI/GECİKME ABSORBE:
+    // Bağlantıdan sonraki ilk komut hatta geç çıkıyor, yanıtı bir sonraki
+    // sorgunun hanesine kayıyor. Zararsız bir warmup ile hattı uyandır.
+    try {
+      await _serialService.sendAndReceive(
+        CommandBuilder.buildManagementCommand(addressIndex: 1, row: 0),
+        timeout: const Duration(milliseconds: 1200),
+      );
+    } catch (_) {}
+    await Future.delayed(const Duration(milliseconds: 250));
+
+    // Gerçek tarama
     for (int i = 1; i <= 16; i++) {
-      final command = CommandBuilder.buildManagementCommand(addressIndex: i, row: 0);
-
       try {
-        final response = await _serialService.sendAndReceive(command, timeout: const Duration(milliseconds: 700));
-
-        if (response != null && (response.contains('ok') || response.contains('+ok-'))) {
-          debugPrint('✅ Yönetim kartı bulundu: Adres $i');
+        final response = await _serialService.sendAndReceive(
+          CommandBuilder.buildManagementCommand(addressIndex: i, row: 0),
+          timeout: const Duration(milliseconds: 700),
+        );
+        if (response != null && response.trim() == '+ok-') {
+          MedLogger.info(
+            unit: 'CabinOps',
+            swreq: 'SWREQ-CABIN-OP-003',
+            message: 'Yönetim kartı bulundu',
+            context: {'adres': i},
+          );
           return ManagementCard(addressIndex: i);
         }
-      } catch (e) {
-        debugPrint('⚠️ Yönetim kartı sorgu hatası (Adres $i): $e');
-        continue;
-      }
+      } catch (_) {}
+      await Future.delayed(const Duration(milliseconds: 120));
     }
-
-    debugPrint('❌ Yönetim kartı bulunamadı.');
     return null;
   }
 
@@ -129,36 +183,28 @@ class CabinOperationService implements ICabinOperationService {
 
   @override
   Future<void> openMobileDrawer({required ManagementCard manager, required int port}) async {
-    // Adım 1: Serum kartını slave moda al
     final isSelected = await _selectRow(manager.addressIndex, _serumSlaveRow);
     if (!isSelected) {
-      throw SerialPortException(
-        message:
-            'Serum kartı slave moda alınamadı. '
-            'Yönetim kartı bağlantısını kontrol edin.',
-      );
+      throw SerialPortException(message: 'Serum kartı slave moda alınamadı...');
     }
+    await Future.delayed(const Duration(milliseconds: 150));
 
-    // Adım 2: Port kilidini aç
     final command = CommandBuilder.buildDrawerCommand(action: DeviceAction.open, port: port, drawer: _serumDrawer);
 
-    final response = await _serialService.sendAndReceive(command);
-
-    if (response != null && response.contains('.no')) {
-      throw SerialPortException(message: 'Mobil kabin port $port solenoid yok (.no). Yanıt: $response');
+    String? response;
+    for (int attempt = 0; attempt < 2; attempt++) {
+      response = await _serialService.sendAndReceive(command, timeout: const Duration(milliseconds: 2500));
+      if (response != null && (response.contains('.ok') || response.contains(DeviceConstants.responseOk))) {
+        debugPrint('✅ Port $port açıldı (deneme ${attempt + 1}).');
+        return;
+      }
+      if (response != null && response.contains('.no')) {
+        throw SerialPortException(message: 'Port $port solenoid yok (.no).');
+      }
+      await Future.delayed(const Duration(milliseconds: 200));
     }
 
-    final success = response != null && (response.contains('.ok') || response.contains(DeviceConstants.responseOk));
-
-    if (!success) {
-      throw SerialPortException(
-        message:
-            'Mobil kabin port $port açılamadı. '
-            'Yanıt: $response. Solenoid bağlı mı?',
-      );
-    }
-
-    debugPrint('✅ Mobil kabin port $port açıldı.');
+    throw SerialPortException(message: 'Port $port açılamadı. Yanıt: $response');
   }
 
   @override
@@ -326,13 +372,19 @@ class CabinOperationService implements ICabinOperationService {
   Future<bool> _selectRow(int managerAddress, int rowToSelect) async {
     final command = CommandBuilder.buildManagementCommand(addressIndex: managerAddress, row: rowToSelect);
 
-    try {
-      final response = await _serialService.sendAndReceive(command, timeout: const Duration(milliseconds: 500));
-      return response != null && response.contains('ok');
-    } catch (e) {
-      debugPrint('⚠️ Satır seçme hatası (Yönetici $managerAddress, Satır $rowToSelect): $e');
-      return false;
+    for (int attempt = 0; attempt < 3; attempt++) {
+      try {
+        final response = await _serialService.sendAndReceive(
+          command,
+          timeout: const Duration(milliseconds: 800), // 500 → 800
+        );
+        if (response != null && response.contains('ok')) return true;
+      } catch (e) {
+        debugPrint('⚠️ Satır seçme denemesi ${attempt + 1} başarısız: $e');
+      }
+      await Future.delayed(const Duration(milliseconds: 100));
     }
+    return false;
   }
 
   /// Mobil kabin (serum kartı) yanıt parser.

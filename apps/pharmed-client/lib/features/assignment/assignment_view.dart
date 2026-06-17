@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../dashboard/presentation/notifier/dashboard_state.dart';
@@ -43,7 +44,17 @@ class AssignmentView extends ConsumerWidget {
       AsyncData(:final value) => switch (value) {
         CabinType.master => DrugAssignmentView(data: cabinData),
         CabinType.mobile => BedAssignmentView(data: cabinData),
-        _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        _ => Center(
+          child: SingleChildScrollView(
+            child: Text(
+              MedLogger.recentLogs
+                  .where((e) => e.message.contains('deviceMode') || e.unit == 'SW-UNIT-UI')
+                  .map((e) => e.toString())
+                  .join('\n'),
+              style: const TextStyle(fontSize: 10),
+            ),
+          ),
+        ),
       },
       _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
     };

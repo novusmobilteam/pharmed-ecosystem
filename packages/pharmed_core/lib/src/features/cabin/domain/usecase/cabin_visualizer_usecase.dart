@@ -19,6 +19,7 @@ class GetCabinVisualizerDataUseCase {
     this._getMasterFaults,
     this._getMobileFaults,
     this._getCabinStocks,
+    this._getCabin,
   );
 
   final ICabinRepository _cabinRepository;
@@ -26,6 +27,7 @@ class GetCabinVisualizerDataUseCase {
   final GetMasterCabinFaultRecordsUseCase _getMasterFaults;
   final GetMobileCabinFaultRecordsUseCase _getMobileFaults;
   final GetCabinStockUseCase _getCabinStocks;
+  final GetCabinUseCase _getCabin;
 
   /// [debugCabin] sadece kDebugMode'da geçilir.
   /// null → normal akış (cache'deki cabinId + deviceMode).
@@ -37,6 +39,7 @@ class GetCabinVisualizerDataUseCase {
     if (kDebugMode && debugCabin != null) {
       cabinId = debugCabin.id;
       effectiveMode = debugCabin.type;
+
       MedLogger.info(
         unit: 'SW-UNIT-UI',
         swreq: 'SWREQ-UI-DASH-003',
@@ -45,6 +48,12 @@ class GetCabinVisualizerDataUseCase {
       );
     } else {
       cabinId = await _settingsCache.getCurrentCabinId();
+      MedLogger.info(
+        unit: 'SW-UNIT-UI',
+        swreq: 'SWREQ-UI-DASH-003',
+        message: 'Servis comPort',
+        context: {'label': debugCabin?.comPort?.label, 'cabinId': cabinId},
+      );
       effectiveMode = deviceMode;
       MedLogger.info(
         unit: 'SW-UNIT-UI',
@@ -57,6 +66,8 @@ class GetCabinVisualizerDataUseCase {
     if (cabinId == null) {
       return Result.error(ServiceException(message: 'Aktif kabin bulunamadı', statusCode: 404));
     }
+
+    await _syncComPort(cabinId);
 
     if (effectiveMode == CabinType.mobile) {
       return _buildMobileVisualizer(cabinId);
@@ -230,6 +241,32 @@ class GetCabinVisualizerDataUseCase {
     }
 
     return worst;
+  }
+
+  Future<void> _syncComPort(int cabinId) async {
+    final result = await _getCabin.call(cabinId);
+    switch (result) {
+      case Ok(value: final cabin):
+        final port = cabin?.comPort;
+        if (port != null) {
+          await _settingsCache.saveComPort(port.label);
+          MedLogger.info(
+            unit: 'SW-UNIT-UI',
+            swreq: 'SWREQ-UI-DASH-003',
+            message: 'COM port cache senkronlandı',
+            context: {'cabinId': cabinId, 'comPort': port.label},
+          );
+        } else {
+          MedLogger.warn(
+            unit: 'SW-UNIT-UI',
+            swreq: 'SWREQ-UI-DASH-003',
+            message: 'Kabin comPort null',
+            context: {'cabinId': cabinId},
+          );
+        }
+      case Error(error: final e):
+        MedLogger.error(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'COM port çekilemedi', error: e);
+    }
   }
 }
 

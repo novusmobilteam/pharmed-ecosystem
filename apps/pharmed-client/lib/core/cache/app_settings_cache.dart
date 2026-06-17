@@ -17,7 +17,7 @@ final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
 });
 
 // Cache değeri — bir kere okunur
-final _cachedDeviceModeProvider = FutureProvider<CabinType?>((ref) async {
+final cachedDeviceModeProvider = FutureProvider<CabinType?>((ref) async {
   final raw = await ref.read(appSettingsCacheProvider).getDeviceMode();
   if (raw == null) return null;
   return CabinType.values.firstWhereOrNull((t) => t.name == raw || 'CabinType.${t.name}' == raw);
@@ -29,7 +29,9 @@ final deviceModeProvider = FutureProvider<CabinType?>((ref) async {
     final debugCabin = ref.watch(settingsNotifierProvider).debugCabin;
     if (debugCabin != null) return debugCabin.type;
   }
-  return await ref.read(_cachedDeviceModeProvider.future);
+  final mode = await ref.read(cachedDeviceModeProvider.future);
+  MedLogger.info(unit: '', swreq: '', message: 'deviceMode prod resolved: $mode'); // <-- buraya bak
+  return mode;
 });
 
 class AppSettingsCache {
@@ -38,6 +40,7 @@ class AppSettingsCache {
   static const _keyDeviceMode = 'device_mode';
   static const _keyCurrentCabinId = 'current_cabin_id';
   static const _keyLanguage = 'language';
+  static const _keyComPort = 'com_port';
 
   Box? _box;
 
@@ -89,6 +92,7 @@ class AppSettingsCache {
     await _open();
     await _box!.delete(_keySetupDone);
     await _box!.delete(_keyDeviceMode);
+    await _box!.delete(_keyComPort);
     // currentCabinId varsa onu da sil
     await _box!.delete(_keyCurrentCabinId);
   }
@@ -103,6 +107,16 @@ class AppSettingsCache {
   Future<String?> getLanguage() async {
     await _open();
     return _box!.get(_keyLanguage) as String?;
+  }
+
+  Future<void> saveComPort(String port) async {
+    await _open();
+    await _box!.put(_keyComPort, port);
+  }
+
+  Future<String?> getComPort() async {
+    await _open();
+    return _box!.get(_keyComPort) as String?;
   }
 }
 

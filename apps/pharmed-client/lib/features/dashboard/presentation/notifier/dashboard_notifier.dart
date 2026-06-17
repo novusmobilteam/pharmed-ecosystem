@@ -41,6 +41,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
         }
       });
     }
+    Future.microtask(() => _load(forceRefresh: true));
     return const DashboardLoading();
   }
 

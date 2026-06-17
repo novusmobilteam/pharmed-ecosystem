@@ -7,9 +7,7 @@ class DeviceInfo {
     final deviceInfo = await plugin.deviceInfo;
     // ignore: unused_local_variable
     final macAddressRaw = deviceInfo.data['systemGUID'] ?? deviceInfo.data['deviceId'];
-    // String macResult = macAddressRaw.toString().replaceAll(RegExp(r'^\{|\}$'), '');
-    // TODO : Düzelt
-    String macResult = "155134BA-6ET586-4732124-9A5C-24356ASDSS1AS8E";
+    String macResult = macAddressRaw.toString().replaceAll(RegExp(r'^\{|\}$'), '');
     return macResult;
   }
 }

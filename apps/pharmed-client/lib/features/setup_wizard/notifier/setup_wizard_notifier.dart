@@ -100,18 +100,21 @@ class SetupWizardNotifier extends Notifier<SetupWizardState> {
 
     final result = await ref.read(finishCabinSetupUseCaseProvider).call(config);
 
-    result.when(
-      ok: (cabinId) {
+    switch (result) {
+      case Ok(value: final cabinId):
         MedLogger.info(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UC-001',
           message: 'Kabin kurulumu tamamlandı',
           context: {'cabinId': cabinId},
         );
-        appSettingsCache.markSetupComplete(deviceMode: config.cabinType.name);
+        await appSettingsCache.markSetupComplete(deviceMode: config.cabinType.name);
+        await appSettingsCache.saveCurrentCabinId(cabinId);
+        ref.invalidate(cachedDeviceModeProvider);
+        ref.invalidate(deviceModeProvider);
         state = WizardSaved(cabinId: cabinId, cabinName: config.basicInfo.cabinName);
-      },
-      error: (error) {
+
+      case Error(error: final error):
         MedLogger.error(
           unit: 'SW-UNIT-SETUP',
           swreq: 'SWREQ-SETUP-UC-001',
@@ -119,8 +122,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardState> {
           error: error,
         );
         state = WizardSaveError(message: error.message, currentStep: current.currentStep);
-      },
-    );
+    }
   }
 
   void retryFromError() {

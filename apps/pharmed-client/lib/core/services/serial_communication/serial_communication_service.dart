@@ -21,6 +21,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class SerialCommunicationService implements ISerialCommunicationService {
   SerialPort? _port;
@@ -37,7 +38,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
   // RS485 timing sabitleri — Python scriptiyle eşleşir
   static const _rs485DelayBeforeTxMs = 1;
   static const _rs485DelayAfterTxMs = 5;
-  static const _connectSettleMs = 500; // Python: CONNECT_DELAY_S = 0.5
 
   @override
   bool get isConnected => _port?.isOpen ?? false;
@@ -78,71 +78,63 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
   @override
   Future<void> connectToPort(String portName, {Function(String message)? onStatusChanged}) async {
+    MedLogger.info(
+      unit: 'SW-UNIT-SER',
+      swreq: 'SWREQ-HW-SER-002',
+      message: 'Bağlanma denemesi',
+      context: {'istenen': portName},
+    );
+
+    await _forceCleanup();
+    await _reclaimStalePort(portName);
+
     try {
       onStatusChanged?.call('$portName portuna bağlanılıyor...');
       await _attemptConnection(portName);
       onStatusChanged?.call('Bağlantı başarılı: $portName');
-      return;
+      MedLogger.info(
+        unit: 'SW-UNIT-SER',
+        swreq: 'SWREQ-HW-SER-002',
+        message: 'Bağlantı başarılı',
+        context: {'port': portName},
+      );
     } catch (e) {
-      debugPrint('⚠️ $portName başarısız: $e');
-    }
-
-    onStatusChanged?.call('$portName başarısız. Diğer portlar taranıyor...');
-
-    List<String> availablePorts;
-    try {
-      availablePorts = SerialPort.availablePorts.where((p) => p != portName).toList();
-    } catch (e) {
-      throw SerialPortException(message: 'Port listesi alınamadı. Sürücülerin yüklü olduğundan emin olun.');
-    }
-
-    if (availablePorts.isEmpty) {
+      MedLogger.error(
+        unit: 'SW-UNIT-SER',
+        swreq: 'SWREQ-HW-SER-002',
+        message: 'Bağlantı başarısız',
+        context: {'port': portName, 'error': e.toString()},
+      );
       throw SerialPortException(
         message:
-            '$portName portuna bağlanılamadı ve başka aktif port bulunamadı. '
-            'Kablo bağlantısını ve sürücüleri kontrol edin.',
+            '$portName portuna bağlanılamadı. '
+            'Cihazın bağlı ve açık olduğundan, portun başka bir uygulama tarafından '
+            'kullanılmadığından emin olun.',
       );
     }
-
-    for (final candidatePort in availablePorts) {
-      try {
-        onStatusChanged?.call('Deneniyor: $candidatePort...');
-        await _attemptConnection(candidatePort);
-        onStatusChanged?.call('Bağlantı sağlandı: $candidatePort');
-        return;
-      } catch (e) {
-        debugPrint('⚠️ $candidatePort başarısız: $e');
-      }
-    }
-
-    throw SerialPortException(
-      message:
-          'Hiçbir porta bağlanılamadı. '
-          'Kablo bağlantısını kontrol edin ve cihazın açık olduğundan emin olun.',
-    );
   }
 
   Future<void> _attemptConnection(String portName) async {
     await _forceCleanup();
 
+    MedLogger.info(
+      unit: 'SW-UNIT-SER',
+      swreq: 'SWREQ-HW-SER-002',
+      message: 'Port nesnesi oluşturuluyor',
+      context: {'port': portName},
+    );
+
     SerialPort? port;
     try {
       port = SerialPort(portName);
 
-      // Python: rtscts=False, dsrdtr=False
-      // Önceki implementasyonda dtr=0, rts=1 vardı — bu RS485 yönü
-      // manuel tutuyordu. Python bunu converter'a bırakıyor (rts=False).
-      // RS485 USB converter'lar genellikle TX aktifken RTS'i otomatik
-      // yönetiyor, manuel set gereksiz ve zaman zaman çakışıyor.
       final config = SerialPortConfig()
         ..baudRate = 9600
         ..bits = 8
         ..parity = SerialPortParity.none
         ..stopBits = 1
-        ..dtr =
-            0 // dsrdtr=False
-        ..rts =
-            1 // rtscts=False — converter kendi yönetir
+        ..dtr = 0
+        ..rts = 1
         ..xonXoff = 0;
 
       port.config = config;
@@ -150,6 +142,13 @@ class SerialCommunicationService implements ISerialCommunicationService {
       port?.dispose();
       throw SerialPortException(message: 'Port konfigürasyonu başarısız ($portName): $e');
     }
+
+    MedLogger.info(
+      unit: 'SW-UNIT-SER',
+      swreq: 'SWREQ-HW-SER-002',
+      message: 'openReadWrite çağrılıyor',
+      context: {'port': portName},
+    );
 
     if (!port.openReadWrite()) {
       final lastError = SerialPort.lastError;
@@ -161,20 +160,21 @@ class SerialCommunicationService implements ISerialCommunicationService {
       );
     }
 
+    MedLogger.info(
+      unit: 'SW-UNIT-SER',
+      swreq: 'SWREQ-HW-SER-002',
+      message: 'Port açıldı, reader kuruluyor',
+      context: {'port': portName},
+    );
+
     _port = port;
 
-    // Python: reset_input_buffer() + reset_output_buffer()
-    // flush(both) yeterli değil — Windows'ta bazen buffer'da eski
-    // veri kalıyor. İkisini ayrı ayrı sıfırla.
     try {
       _port!.flush(SerialPortBuffer.input);
       _port!.flush(SerialPortBuffer.output);
-    } catch (_) {
-      // Flush hatası kritik değil
-    }
+    } catch (_) {}
 
     _reader = SerialPortReader(_port!);
-
     _subscription = _reader?.stream.listen(
       _onDataReceived,
       onError: (Object e) {
@@ -183,29 +183,27 @@ class SerialCommunicationService implements ISerialCommunicationService {
       },
     );
 
-    // Python: time.sleep(CONNECT_DELAY_S)  →  0.5s
-    await Future.delayed(const Duration(milliseconds: _connectSettleMs));
-    // İlk açılışta converter'ı "uyandır"
-    // Bazı RS485 USB converter'larda ilk TX kaybolabiliyor.
+    // Converter settle — kısalttım (500 → 300), yavaş PC'de toplam bağlanma süresini düşürür
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    // RS485 wakeup — ilk TX kaybına karşı
     try {
       _port!.flush(SerialPortBuffer.input);
       _port!.flush(SerialPortBuffer.output);
-
-      // Dummy wakeup byte
       _port!.write(Uint8List.fromList([0x00]));
-
-      // KRİTİK: gerçekten hatta çıksın
       _port!.flush(SerialPortBuffer.output);
-
       await Future.delayed(const Duration(milliseconds: 100));
-
-      // Gelen garbage temizle
       _port!.flush(SerialPortBuffer.input);
     } catch (e) {
       debugPrint('⚠️ RS485 wakeup hatası: $e');
     }
 
-    debugPrint('✅ Seri port bağlandı: $portName');
+    MedLogger.info(
+      unit: 'SW-UNIT-SER',
+      swreq: 'SWREQ-HW-SER-002',
+      message: 'Bağlantı tamamlandı',
+      context: {'port': portName},
+    );
   }
 
   // ════════════════════════════════════════════════════════════════
@@ -218,8 +216,14 @@ class SerialCommunicationService implements ISerialCommunicationService {
       throw SerialPortException(message: 'Seri port bağlantısı yok. Önce bağlantı kurulmalı.');
     }
 
-    await _waitForAvailability();
+    MedLogger.info(
+      unit: 'SW-UNIT-SER',
+      swreq: 'SWREQ-HW-SER-001',
+      message: 'TX komut',
+      context: {'komut': command, 'port': connectedPortName, 'bytes': utf8.encode(command)},
+    );
 
+    await _waitForAvailability();
     _isBusy = true;
     _completer = Completer<String?>();
     _buffer.clear();
@@ -230,13 +234,16 @@ class SerialCommunicationService implements ISerialCommunicationService {
     try {
       for (int attempt = 0; attempt <= retryCount; attempt++) {
         try {
-          //debugPrint('>> Giden: $command');
-
           await Future.delayed(const Duration(milliseconds: _rs485DelayBeforeTxMs));
-
-          _setTransmitMode();
-
+          //_setTransmitMode();
           final written = _port?.write(bytes);
+
+          MedLogger.info(
+            unit: 'SW-UNIT-SER',
+            swreq: 'SWREQ-HW-SER-001',
+            message: 'Yazıldı',
+            context: {'yazilanBytes': written, 'attempt': attempt + 1},
+          );
 
           if (written == null || written <= 0) {
             throw SerialPortException(message: 'Komut gönderilemedi. Port yazma hatası.');
@@ -249,39 +256,43 @@ class SerialCommunicationService implements ISerialCommunicationService {
           }
 
           await Future.delayed(const Duration(milliseconds: 5));
-
-          _setReceiveMode();
-
+          //_setReceiveMode();
           await Future.delayed(const Duration(milliseconds: _rs485DelayAfterTxMs));
 
           final effectiveTimeout = timeout ?? const Duration(milliseconds: 1000);
           final response = await _completer!.future.timeout(effectiveTimeout);
 
+          MedLogger.info(
+            unit: 'SW-UNIT-SER',
+            swreq: 'SWREQ-HW-SER-001',
+            message: 'RX yanıt',
+            context: {'yanit': response},
+          );
+
           return response;
         } on TimeoutException {
-          debugPrint('⏱ Timeout: $command (attempt=${attempt + 1})');
+          MedLogger.warn(
+            unit: 'SW-UNIT-SER',
+            swreq: 'SWREQ-HW-SER-001',
+            message: 'TIMEOUT — yanıt gelmedi',
+            context: {'komut': command, 'attempt': attempt + 1, 'bufferAnlik': _buffer.toString()},
+          );
 
           if (attempt < retryCount) {
             _buffer.clear();
-
-            // retry öncesi yeni completer oluştur
             _completer = Completer<String?>();
-
             await Future.delayed(const Duration(milliseconds: 150));
-
             continue;
           }
-
           return null;
         }
       }
-
       return null;
     } finally {
       _lastSentBytes = null;
       _completer = null;
       _isBusy = false;
-
+      _buffer.clear();
       await Future.delayed(const Duration(milliseconds: 60));
     }
   }
@@ -323,6 +334,15 @@ class SerialCommunicationService implements ISerialCommunicationService {
   }
 
   void _onDataReceived(Uint8List data) {
+    MedLogger.info(
+      unit: 'SW-UNIT-SER',
+      swreq: 'SWREQ-HW-SER-001',
+      message: 'RAW RX',
+      context: {
+        'text': utf8.decode(data, allowMalformed: true),
+        'lastSent': _lastSentBytes != null ? utf8.decode(_lastSentBytes!, allowMalformed: true) : null,
+      },
+    );
     if (_completer == null || _completer!.isCompleted) return;
 
     try {
@@ -428,6 +448,21 @@ class SerialCommunicationService implements ISerialCommunicationService {
     _buffer.clear();
 
     await Future.delayed(const Duration(milliseconds: 200));
+  }
+
+  /// Hot restart sonrası orphan kalan OS handle'ını zorla serbest bırakır.
+  /// _port null olsa bile (yeni VM instance'ı) port adı üzerinden temizler.
+  Future<void> _reclaimStalePort(String portName) async {
+    try {
+      final stale = SerialPort(portName);
+      if (stale.isOpen) {
+        stale.close();
+      }
+      stale.dispose();
+    } catch (e) {
+      debugPrint('⚠️ Stale port reclaim: $e');
+    }
+    await Future.delayed(const Duration(milliseconds: 150));
   }
 
   void _cancelPendingCompleter(String reason) {
