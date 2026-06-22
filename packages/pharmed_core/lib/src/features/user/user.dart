@@ -10,3 +10,4 @@ export 'domain/usecase/get_users_usecase.dart';
 export 'domain/usecase/update_user_usecase.dart';
 export 'domain/usecase/update_valid_date_usecase.dart';
 export 'domain/usecase/witness_user_login_usecase.dart';
+export 'domain/usecase/get_doctors_usecase.dart';

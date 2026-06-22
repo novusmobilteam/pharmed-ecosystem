@@ -137,8 +137,9 @@ class _PatientField extends StatelessWidget {
             labelBuilder: (u) => u.patient?.fullName,
             onSelected: (u) => vm.updatePatient(u),
             validator: (u) => Validators.cannotBlankValidator(u?.patient?.fullName),
-            dataSource: (skip, take, search) =>
-                context.read<GetHospitalizationsUseCase>().call(GetHospitalizationsParams()),
+            dataSource: (skip, take, search) => context.read<GetHospitalizationsUseCase>().call(
+              GetHospitalizationsParams(search: search, skip: skip, take: take),
+            ),
           ),
         );
       },
@@ -159,7 +160,9 @@ class _DoctorField extends StatelessWidget {
           labelBuilder: (u) => u.fullName,
           onSelected: (u) => vm.updateDoctor(u),
           validator: (u) => Validators.cannotBlankValidator(u?.fullName),
-          dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+          dataSource: (skip, take, search) {
+            return context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search));
+          },
         );
       },
     );
@@ -180,7 +183,8 @@ class _DrugField extends StatelessWidget {
           initialValue: vm.currentItem.medicine,
           onSelected: (d) => vm.updateMaterial(d),
           validator: (d) => Validators.cannotBlankValidator(d?.name),
-          dataSource: (skip, take, search) => context.read<IMedicineRepository>().getMedicines(),
+          dataSource: (skip, take, search) =>
+              context.read<GetMedicinesUseCase>().call(GetMedicinesParams(skip: skip, take: take, search: search)),
         );
       },
     );

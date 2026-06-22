@@ -23,4 +23,12 @@ abstract interface class IUserManager implements IUserReader {
   Future<Result<void>> changePassword({required String currentPassword, required String newPassword});
 
   Future<Result<User?>> witnessUserLogin({required String email, required String password, required String macAddress});
+
+  Future<Result<ApiResponse<List<User>>?>> getDoctors({
+    UserType? type,
+    int? skip,
+    int? take,
+    String? search,
+    List<String>? searchFields,
+  });
 }

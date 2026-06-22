@@ -8,8 +8,9 @@ class GetStationsParams {
   final int? skip;
   final int? take;
   final String? search;
+  final List<String>? searchFields;
 
-  GetStationsParams({this.skip, this.take, this.search});
+  GetStationsParams({this.skip, this.take, this.search, this.searchFields});
 }
 
 class GetStationsUseCase {

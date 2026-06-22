@@ -29,7 +29,8 @@ class PersonelField extends StatelessWidget {
         }
       },
       initialValue: initialValue,
-      dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(GetUsersParams()),
+      dataSource: (skip, take, search) =>
+          context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search)),
       labelBuilder: (user) => user.fullName,
       onSelected: (user) => onChanged(user),
     );

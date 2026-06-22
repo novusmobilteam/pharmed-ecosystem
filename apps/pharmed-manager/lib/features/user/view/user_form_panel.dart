@@ -160,7 +160,8 @@ class _RoleField extends StatelessWidget {
           label: 'Meslek Tipi',
           initialValue: notifier.user.role,
           labelBuilder: (r) => r.name,
-          dataSource: (skip, take, search) => context.read<IRoleRepository>().getRoles(),
+          dataSource: (skip, take, search) =>
+              context.read<GetRolesUseCase>().call(GetRolesParams(skip: skip, take: take, search: search)),
           onSelected: (role) => notifier.changeRole(role),
           validator: (r) => Validators.cannotBlankValidator(r?.name),
         );
@@ -317,7 +318,8 @@ class _StationsField extends StatelessWidget {
           key: ValueKey(notifier.selectedStations.length),
           label: 'Yetki İstasyonlar',
           initialValue: notifier.selectedStations,
-          dataSource: (skip, take, search) => context.read<IStationRepository>().getStations(),
+          dataSource: (skip, take, search) =>
+              context.read<GetStationsUseCase>().call(GetStationsParams(skip: skip, take: take, search: search)),
           labelBuilder: (s) => s.name,
           onSelected: (stations) => notifier.changeStations(stations ?? []),
           // validator: (value) => Validators.cannotBlankValidator(

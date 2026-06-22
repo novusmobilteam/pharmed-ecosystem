@@ -15,7 +15,12 @@ class MockStationRepository implements IStationRepository {
   ];
 
   @override
-  Future<Result<ApiResponse<List<Station>>>> getStations({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<Station>>>> getStations({
+    int? skip,
+    int? take,
+    String? search,
+    List<String>? searchFields,
+  }) async {
     await Future.delayed(const Duration(milliseconds: 600));
 
     var result = _stations;

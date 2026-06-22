@@ -280,7 +280,8 @@ Widget _manifacturerField() {
         validator: (value) => Validators.cannotBlankValidator(value?.name),
         initialValue: vm.drug.firm,
         labelBuilder: (value) => value.name,
-        dataSource: (skip, take, search) => context.read<IFirmRepository>().getFirms(),
+        dataSource: (skip, take, search) =>
+            context.read<GetFirmsUseCase>().call(GetFirmsParams(skip: skip, take: take, search: search)),
         onSelected: vm.updateFirm,
       );
     },
@@ -317,7 +318,8 @@ Widget _drugTypeField() {
         initialValue: vm.drug.drugType,
         labelBuilder: (value) => value.name,
         onSelected: vm.updateDrugType,
-        dataSource: (skip, take, search) => context.read<IDrugTypeRepository>().getDrugTypes(),
+        dataSource: (skip, take, search) =>
+            context.read<GetDrugTypesUseCase>().call(GetDrugTypesParams(skip: skip, take: take, search: search)),
         validator: (value) => Validators.cannotBlankValidator(value?.name),
       );
     },
@@ -397,7 +399,8 @@ Widget _drugClassField() {
         title: label,
         initialValue: vm.drug.drugClass,
         labelBuilder: (value) => value.name,
-        dataSource: (skip, take, search) => context.read<IDrugClassRepository>().getDrugClasses(),
+        dataSource: (skip, take, search) =>
+            context.read<GetDrugClassUseCase>().call(GetDrugClassParams(skip: skip, take: take, search: search)),
         onSelected: vm.updateDrugClass,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
       );
@@ -735,7 +738,9 @@ Widget _buildActiveIngredientField() {
             return Validators.cannotBlankValidator(null);
           }
         },
-        dataSource: (skip, take, search) => context.read<IActiveIngredientRepository>().getActiveIngredients(),
+        dataSource: (skip, take, search) => context.read<GetActiveIngredientsUseCase>().call(
+          GetActiveIngredientsParams(skip: skip, take: take, search: search),
+        ),
         onSelected: vm.updateActiveIngredients,
       );
     },

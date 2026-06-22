@@ -143,11 +143,17 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
   }
 
   Future<void> _fetch({bool reset = false}) async {
-    if (_isLoading || _isLoadingMore) return;
+    if (_isLoading || _isLoadingMore) {
+      _isFetchingMore = false; // guard'a takılırsak da bırak
+      return;
+    }
 
     final skip = reset ? 0 : _items.length;
 
-    if (!reset && _totalCount != -1 && _items.length >= _totalCount) return;
+    if (!reset && _totalCount != -1 && _items.length >= _totalCount) {
+      _isFetchingMore = false;
+      return;
+    }
 
     setState(() {
       if (reset) {
@@ -158,28 +164,31 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
       }
     });
 
-    final result = await widget.dataSource(skip, widget.pageSize, _search.isEmpty ? null : _search);
+    try {
+      final result = await widget.dataSource(skip, widget.pageSize, _search.isEmpty ? null : _search);
+      if (!mounted) return;
 
-    if (!mounted) return;
-
-    result.when(
-      ok: (response) {
-        setState(() {
-          if (reset) _items.clear();
-          _items.addAll(response?.data ?? []);
-          _totalCount = response?.totalCount ?? 0;
-          _isLoading = false;
-          _isLoadingMore = false;
-        });
-      },
-      error: (e) {
-        setState(() {
-          _error = e.message;
-          _isLoading = false;
-          _isLoadingMore = false;
-        });
-      },
-    );
+      result.when(
+        ok: (response) {
+          setState(() {
+            if (reset) _items.clear();
+            _items.addAll(response?.data ?? []);
+            _totalCount = response?.totalCount ?? 0;
+            _isLoading = false;
+            _isLoadingMore = false;
+          });
+        },
+        error: (e) {
+          setState(() {
+            _error = e.message;
+            _isLoading = false;
+            _isLoadingMore = false;
+          });
+        },
+      );
+    } finally {
+      _isFetchingMore = false;
+    }
   }
 
   // ── Scroll — infinite scroll tetikleyici ─────────────────────────

@@ -82,7 +82,8 @@ class _PatientField extends StatelessWidget {
           initialValue: notifier.patient,
           labelBuilder: (value) => value.fullName,
           validator: (value) => Validators.cannotBlankValidator(value?.fullName),
-          dataSource: (skip, take, search) => context.read<GetPatientsUseCase>().call(GetPatientsParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetPatientsUseCase>().call(GetPatientsParams(skip: skip, take: take, search: search)),
           onSelected: (value) => notifier.selectPatient(value),
         );
       },
@@ -123,7 +124,8 @@ class _DoctorField extends StatelessWidget {
           initialValue: notifier.doctor,
           labelBuilder: (value) => value.fullName,
           validator: (value) => Validators.cannotBlankValidator(value?.fullName),
-          dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetDoctorsUseCase>().call(GetDoctorsParams(search: search, skip: skip, take: take)),
           onSelected: (value) => notifier.selectDoctor(value),
         );
       },
@@ -145,7 +147,8 @@ class _PhysicalServiceField extends StatelessWidget {
             initialValue: notifier.hospitalization?.physicalService,
             validator: (s) => Validators.cannotBlankValidator(s?.name),
             labelBuilder: (s) => s.name ?? '-',
-            dataSource: (skip, take, search) => context.read<IServiceRepository>().getServices(),
+            dataSource: (skip, take, search) =>
+                context.read<GetServicesUseCase>().call(GetServicesParams(search: search, skip: skip, take: take)),
             onSelected: (s) => notifier.selectPhysicalService(s),
           );
         },
@@ -168,7 +171,8 @@ class _InpatientServiceField extends StatelessWidget {
             labelBuilder: (s) => s.name ?? '-',
             initialValue: notifier.hospitalization?.inpatientService,
             validator: (s) => Validators.cannotBlankValidator(s?.name),
-            dataSource: (skip, take, search) => context.read<IServiceRepository>().getServices(),
+            dataSource: (skip, take, search) =>
+                context.read<GetServicesUseCase>().call(GetServicesParams(search: search, skip: skip, take: take)),
             onSelected: (s) => notifier.selectInpatientService(s),
           );
         },

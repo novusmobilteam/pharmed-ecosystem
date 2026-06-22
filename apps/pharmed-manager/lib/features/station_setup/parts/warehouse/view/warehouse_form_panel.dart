@@ -132,7 +132,8 @@ class _UserField extends StatelessWidget {
           label: 'Depo Sorumlusu',
           title: 'Depo Sorumlusu Seç',
           initialValue: notifier.warehouse.user,
-          dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(GetUsersParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search)),
           labelBuilder: (w) => w.fullName,
           onSelected: notifier.updateUser,
           validator: (value) => Validators.cannotBlankValidator(value?.toString()),

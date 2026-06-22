@@ -201,7 +201,8 @@ Widget _buildMaterialTypeField() {
         initialValue: vm.mc.materialType,
         labelBuilder: (value) => value.name,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
-        dataSource: (skip, take, search) => context.read<IMaterialTypeRepository>().getMaterialTypes(),
+        dataSource: (skip, take, search) =>
+            context.read<GetMaterialTypesUseCase>().call(GetMaterialTypeParams(skip: skip, take: take, search: search)),
         onSelected: vm.updateMaterialType,
       );
     },
@@ -218,7 +219,8 @@ Widget _buildFirmField() {
         initialValue: vm.mc.firm,
         labelBuilder: (value) => value.name,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
-        dataSource: (skip, take, search) => context.read<GetFirmsUseCase>().call(GetFirmsParams()),
+        dataSource: (skip, take, search) =>
+            context.read<GetFirmsUseCase>().call(GetFirmsParams(skip: skip, take: take, search: search)),
         onSelected: vm.updateFirm,
       );
     },

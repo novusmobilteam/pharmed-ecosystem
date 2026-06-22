@@ -193,6 +193,7 @@ class UsecaseProviders {
       Provider(create: (context) => DeleteUserUseCase(context.read<IUserManager>())),
       Provider(create: (context) => BulkUpdateValidDateUseCase(context.read<IUserManager>())),
       Provider(create: (context) => ChangePasswordUseCase(context.read<IUserManager>())),
+      Provider(create: (context) => GetDoctorsUseCase(context.read<IUserManager>())),
 
       /// Warehouse
       Provider(create: (context) => GetWarehousesUseCase(context.read())),

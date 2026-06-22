@@ -114,7 +114,8 @@ class _MaterialWarehouseField extends StatelessWidget {
           label: 'İlaç Depo',
           title: 'İlaç Depo Seç',
           initialValue: notifier.station?.materialWarehouse,
-          dataSource: (skip, take, search) => context.read<GetWarehousesUseCase>().call(GetWarehousesParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetWarehousesUseCase>().call(GetWarehousesParams(skip: skip, take: take, search: search)),
           labelBuilder: (w) => w.name ?? '—',
           onSelected: notifier.updateMaterialWarehouse,
           validator: (value) => Validators.cannotBlankValidator(value?.toString()),
@@ -158,7 +159,8 @@ class _ConsumableWarehouseField extends StatelessWidget {
           labelBuilder: (w) => w.name ?? '—',
           validator: (value) => Validators.cannotBlankValidator(value?.toString()),
           onSelected: notifier.updateConsumableWarehouse,
-          dataSource: (skip, take, search) => context.read<GetWarehousesUseCase>().call(GetWarehousesParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetWarehousesUseCase>().call(GetWarehousesParams(skip: skip, take: take, search: search)),
         );
       },
     );
@@ -199,7 +201,8 @@ class _ServiceField extends StatelessWidget {
           initialValue: notifier.station?.service,
           labelBuilder: (value) => value.name ?? '-',
           onSelected: notifier.updateService,
-          dataSource: (skip, take, search) => context.read<GetServicesUseCase>().call(GetServicesParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetServicesUseCase>().call(GetServicesParams(skip: skip, take: take, search: search)),
           validator: (value) => Validators.cannotBlankValidator(value?.name),
         );
       },
@@ -219,7 +222,8 @@ class _ProvidedServices extends StatelessWidget {
           label: 'Hizmet Verdiği Servisler',
           title: 'Servis Seç',
           initialValue: notifier.station?.services,
-          dataSource: (skip, take, search) => context.read<GetServicesUseCase>().call(GetServicesParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetServicesUseCase>().call(GetServicesParams(skip: skip, take: take, search: search)),
           labelBuilder: (s) => s.name ?? '—',
           onSelected: notifier.updateProvidedServices,
         );

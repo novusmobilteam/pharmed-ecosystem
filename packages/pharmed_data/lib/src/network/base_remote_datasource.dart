@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:pharmed_core/pharmed_core.dart'; // Result, ApiResponse, ApiError vb. buradan geldiğini varsayıyorum
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -313,14 +315,14 @@ abstract class BaseRemoteDataSource {
   }
 
   String _buildFilter(String text, List<String> fields, String operator) {
-    if (fields.length == 1) return '["${fields[0]}","$operator","$text"]';
-    final conditions = fields.map((field) => '["$field","$operator","$text"]').toList();
-    final buffer = StringBuffer('[');
-    for (int i = 0; i < conditions.length; i++) {
-      buffer.write(conditions[i]);
-      if (i < conditions.length - 1) buffer.write(',"or",');
+    if (fields.length == 1) {
+      return jsonEncode([fields[0], operator, text]);
     }
-    buffer.write(']');
-    return buffer.toString();
+    final parts = <dynamic>[];
+    for (var i = 0; i < fields.length; i++) {
+      parts.add([fields[i], operator, text]);
+      if (i < fields.length - 1) parts.add('or');
+    }
+    return jsonEncode(parts);
   }
 }
