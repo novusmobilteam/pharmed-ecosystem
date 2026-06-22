@@ -89,8 +89,20 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions() async {
-    final result = await _dataSource.getUnappliedPrescriptions();
+  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({
+    int? skip,
+    int? take,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final result = await _dataSource.getUnappliedPrescriptions(
+      skip: skip,
+      take: take,
+      searchQuery: searchQuery,
+      startDate: startDate,
+      endDate: endDate,
+    );
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<Prescription>>(

@@ -18,6 +18,6 @@ class GetMedicalConsumablesUseCase {
   GetMedicalConsumablesUseCase(this._repository);
 
   Future<Result<ApiResponse<List<Medicine>>>> call(GetMedicalConsumablesParams params) {
-    return _repository.getMedicines(skip: params.skip, take: params.take, search: params.search);
+    return _repository.getMedicines(skip: params.skip, take: params.take, searchQuery: params.search);
   }
 }

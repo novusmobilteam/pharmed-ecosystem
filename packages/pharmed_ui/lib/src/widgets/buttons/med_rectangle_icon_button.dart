@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-class RectangleIconButton extends StatelessWidget {
-  const RectangleIconButton({
+import '../../theme/med_tokens.dart';
+
+class MedRectangleIconButton extends StatelessWidget {
+  const MedRectangleIconButton({
     super.key,
     required this.iconData,
     this.color,
@@ -36,10 +38,13 @@ class RectangleIconButton extends StatelessWidget {
       height: size,
       child: Tooltip(
         message: tooltip ?? '',
-        child: Material(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(8.0), // Köşe yuvarlaklığı
-          clipBehavior: Clip.antiAlias, // Ripple taşmasın diye
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: MedRadius.mdAll,
+            border: Border.all(color: iconColor != null ? iconColor!.withAlpha(54) : Colors.transparent),
+          ),
+          clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: onPressed,
             splashColor: colorScheme.primary.withValues(alpha: 0.1),

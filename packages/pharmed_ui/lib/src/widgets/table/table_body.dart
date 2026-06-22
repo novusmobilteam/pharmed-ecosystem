@@ -815,72 +815,19 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
               child: Row(
                 children: [
                   Expanded(
-                    child: _DialogBtn(
-                      label: 'Temizle',
-                      onPressed: () => Navigator.pop(context, <String>{}),
-                      filled: false,
-                    ),
+                    child: MedButton(label: 'Temizle', onPressed: () => Navigator.pop(context, <String>{})),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _DialogBtn(
+                    child: MedButton(
                       label: 'Uygula (${_selected.length})',
                       onPressed: () => Navigator.pop(context, Set<String>.from(_selected)),
-                      filled: true,
                     ),
                   ),
                 ],
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─── DİYALOG BUTON ───────────────────────────────────────────────────────────
-
-class _DialogBtn extends StatefulWidget {
-  const _DialogBtn({required this.label, required this.onPressed, required this.filled});
-
-  final String label;
-  final VoidCallback onPressed;
-  final bool filled;
-
-  @override
-  State<_DialogBtn> createState() => _DialogBtnState();
-}
-
-class _DialogBtnState extends State<_DialogBtn> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onPressed,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          padding: const EdgeInsets.symmetric(vertical: 9),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: widget.filled
-                ? (_hovered ? const Color(0xFF1D4ED8) : const Color(0xFF2563EB))
-                : (_hovered ? const Color(0xFFF5F7FA) : Colors.white),
-            borderRadius: BorderRadius.circular(8),
-            border: widget.filled ? null : Border.all(color: const Color(0xFFE5E7EB)),
-          ),
-          child: Text(
-            widget.label,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: widget.filled ? Colors.white : const Color(0xFF374151),
-            ),
-          ),
         ),
       ),
     );

@@ -13,7 +13,6 @@ export 'domain/usecase/assign_rfid_tag_usecase.dart';
 export 'domain/usecase/check_and_approve_prescription_useacase.dart';
 export 'domain/usecase/create_prescription_usecase.dart';
 export 'domain/usecase/delete_rfid_tag_usecase.dart';
-export 'domain/usecase/get_hospitalizations_with_prescription_usecase.dart';
 export 'domain/usecase/submit_prescription_action_usecase.dart';
 export 'domain/usecase/get_patient_prescriptions_usecase.dart';
 export 'domain/usecase/get_prescription_detail_usecase.dart';

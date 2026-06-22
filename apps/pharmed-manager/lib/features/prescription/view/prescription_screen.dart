@@ -30,8 +30,10 @@ class PrescriptionScreen extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) =>
-              PrescriptionNotifier(getHospitalizationsWithPrescriptionUseCase: context.read())..getHospitalizations(),
+          create: (context) => PrescriptionNotifier(
+            getActiveHospitalizationsUseCase: context.read(),
+            getHospitalizationsUseCase: context.read(),
+          )..fetch(),
         ),
         ChangeNotifierProvider(
           create: (context) => PrescriptionDetailNotifier(
@@ -57,16 +59,17 @@ class PrescriptionScreen extends StatelessWidget {
                 width: 700,
                 panel: _buildPanel(notifier),
                 child: MedTable<Hospitalization>(
-                  data: notifier.dateFilteredItems,
+                  data: notifier.items,
                   enableExcel: true,
                   enableSearch: true,
+                  enablePDF: true,
+
                   isLoading: notifier.isFetching,
                   onSearchChanged: notifier.search,
                   enableDateFilter: true,
-                  initialDateRange: DateTimeRange(start: DateTime.now(), end: DateTime.now()),
-                  onDateRangeChanged: (value) {
-                    notifier.setDateRange(value?.start, value?.end);
-                  },
+
+                  initialDateRange: notifier.dateRange,
+                  onDateRangeChanged: notifier.setDateRange,
                   actions: [
                     TableActionItem<Hospitalization>(
                       icon: PhosphorIcons.receipt(),
@@ -80,6 +83,20 @@ class PrescriptionScreen extends StatelessWidget {
                       onPressed: (hosp) => notifier.openFormPanel(hosp: hosp),
                     ),
                   ],
+                  toolbarActions: [
+                    MedRectangleIconButton(
+                      tooltip: notifier.showDischarged ? 'Aktif yatışları getir' : 'Taburcu olanları göster',
+                      iconData: notifier.showDischarged ? PhosphorIcons.userMinus() : PhosphorIcons.userCheck(),
+                      color: MedColors.amberLight,
+                      iconColor: MedColors.amber,
+                      onPressed: notifier.toggleDischarged,
+                    ),
+                  ],
+
+                  enablePagination: true,
+                  pageSize: notifier.pageSize,
+                  currentPage: notifier.currentPage,
+                  onPageChanged: (page) => notifier.setPage(page),
                 ),
               ),
             ),

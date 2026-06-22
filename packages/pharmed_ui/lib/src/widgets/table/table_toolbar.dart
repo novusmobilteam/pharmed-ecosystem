@@ -16,6 +16,7 @@ class _TableToolbar<T extends TableData> extends StatelessWidget {
     this.currentDateRange,
     this.onDateFilterPressed,
     this.selectionActions,
+    this.toolbarActions,
   });
 
   final TextEditingController searchController;
@@ -32,6 +33,7 @@ class _TableToolbar<T extends TableData> extends StatelessWidget {
   final DateTimeRange? currentDateRange;
   final VoidCallback? onDateFilterPressed;
   final List<Widget>? selectionActions;
+  final List<Widget>? toolbarActions;
 
   bool get _hasExport => enableExcel || enablePDF;
   bool get _hasSelection => selectionMode != TableSelectionMode.none && selectedCount > 0;
@@ -61,36 +63,37 @@ class _TableToolbar<T extends TableData> extends StatelessWidget {
 
           const Spacer(),
 
+          if (toolbarActions != null) ...[
+            for (final action in toolbarActions!) ...[action, const SizedBox(width: 6)],
+          ],
+
           // ── Sağ: tarih filtresi + export (her zaman)
           if (!_hasSelection && enableDateFilter) ...[
-            _DateFilterBtn(active: currentDateRange != null, onPressed: onDateFilterPressed ?? () {}),
+            MedRectangleIconButton(
+              onPressed: onDateFilterPressed ?? () {},
+              color: MedColors.blueLight,
+              iconColor: MedColors.blue,
+              iconData: currentDateRange != null ? PhosphorIcons.calendar() : PhosphorIcons.calendarBlank(),
+            ),
             const SizedBox(width: 6),
           ],
+
           if (_hasExport) ...[
-            if (enableExcel || enablePDF)
-              Container(
-                height: 20,
-                width: 1,
-                margin: const EdgeInsets.symmetric(horizontal: 6),
-                color: const Color(0xFFE5E7EB),
-              ),
             if (enableExcel)
-              _ExportBtn(
-                icon: Icons.table_chart_outlined,
-                label: _hasSelection ? 'Seçilenleri Aktar' : 'Excel',
-                color: const Color(0xFF166534),
-                bgColor: const Color(0xFFF0FDF4),
-                borderColor: const Color(0xFFBBF7D0),
+              MedRectangleIconButton(
+                iconData: PhosphorIcons.microsoftExcelLogo(),
+                tooltip: _hasSelection ? 'Seçilenleri Aktar' : 'Excel',
+                color: MedColors.greenLight,
+                iconColor: MedColors.green,
                 onPressed: onExcelPressed,
               ),
             if (enableExcel && enablePDF) const SizedBox(width: 6),
             if (enablePDF)
-              _ExportBtn(
-                icon: Icons.picture_as_pdf_outlined,
-                label: _hasSelection ? 'PDF' : 'PDF',
-                color: const Color(0xFF991B1B),
-                bgColor: const Color(0xFFFFF1F2),
-                borderColor: const Color(0xFFFFCDD2),
+              MedRectangleIconButton(
+                iconData: PhosphorIcons.filePdf(),
+                tooltip: _hasSelection ? 'PDF' : 'PDF',
+                color: MedColors.redLight,
+                iconColor: MedColors.red,
                 onPressed: onPdfPressed,
               ),
           ],
@@ -134,8 +137,6 @@ class _SelectionInfo extends StatelessWidget {
   }
 }
 
-// ─── ARAMA ALANI ─────────────────────────────────────────────────────────────
-
 class _SearchField extends StatelessWidget {
   const _SearchField({required this.controller, required this.onChanged});
 
@@ -174,110 +175,6 @@ class _SearchField extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── EXPORT BUTTON ───────────────────────────────────────────────────────────
-
-class _ExportBtn extends StatefulWidget {
-  const _ExportBtn({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.bgColor,
-    required this.borderColor,
-    required this.onPressed,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color, bgColor, borderColor;
-  final VoidCallback onPressed;
-
-  @override
-  State<_ExportBtn> createState() => _ExportBtnState();
-}
-
-class _ExportBtnState extends State<_ExportBtn> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onPressed,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 130),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: _hovered ? widget.bgColor : Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: _hovered ? widget.color.withValues(alpha: 0.3) : widget.borderColor),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(widget.icon, size: 14, color: widget.color),
-              const SizedBox(width: 5),
-              Text(
-                widget.label,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: widget.color),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── DATE FILTER BUTTON ───────────────────────────────────────────────────────
-
-class _DateFilterBtn extends StatefulWidget {
-  const _DateFilterBtn({required this.active, required this.onPressed});
-
-  final bool active;
-  final VoidCallback onPressed;
-
-  @override
-  State<_DateFilterBtn> createState() => _DateFilterBtnState();
-}
-
-class _DateFilterBtnState extends State<_DateFilterBtn> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = widget.active ? const Color(0xFF2563EB) : const Color(0xFF6B7280);
-
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: Tooltip(
-        message: 'Tarih Filtresi',
-        child: GestureDetector(
-          onTap: widget.onPressed,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 130),
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-            decoration: BoxDecoration(
-              color: widget.active
-                  ? const Color(0xFF2563EB).withValues(alpha: 0.08)
-                  : _hovered
-                  ? const Color(0xFFF5F7FA)
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: widget.active ? const Color(0xFF2563EB).withValues(alpha: 0.3) : const Color(0xFFE5E7EB),
-              ),
-            ),
-            child: Icon(widget.active ? Icons.event_available : Icons.calendar_today_outlined, size: 15, color: color),
           ),
         ),
       ),

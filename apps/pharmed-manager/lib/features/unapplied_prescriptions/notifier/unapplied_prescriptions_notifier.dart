@@ -2,8 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-class UnappliedPrescriptionsNotifier extends ChangeNotifier
-    with ApiRequestMixin, SearchMixin<Prescription>, DateFilterMixin<Prescription> {
+class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Prescription> {
   final GetUnappliedPrescriptionsUseCase _getUnappliedPrescriptionsUseCase;
   final GetUnappliedPrescriptionDetailUseCase _getUnappliedPrescriptionDetailUseCase;
 
@@ -23,23 +22,11 @@ class UnappliedPrescriptionsNotifier extends ChangeNotifier
   List<PrescriptionItem> get prescriptionItems => _prescriptionItems;
 
   @override
-  DateTime? getDateField(Prescription item) => item.hospitalizationDate;
-
-  @override
-  List<Prescription> get filteredItems {
-    if (super.searchQuery.isNotEmpty) {
-      return super.filteredItems;
-    }
-    return applyDateFilter(allItems);
-  }
-
-  Future<void> getUnappliedPrescriptions() async {
-    await execute(
-      fetchOp,
-      operation: () => _getUnappliedPrescriptionsUseCase.call(),
-      onData: (apiResponse) {
-        allItems = apiResponse?.data ?? [];
-      },
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) => _getUnappliedPrescriptionsUseCase.call(
+        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+      ),
     );
   }
 

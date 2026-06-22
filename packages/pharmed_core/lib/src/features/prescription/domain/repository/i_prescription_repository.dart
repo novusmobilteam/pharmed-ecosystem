@@ -35,7 +35,13 @@ abstract interface class IPrescriptionRepository {
   Future<Result<void>> deleteUnscannedBarcode({required int prescriptionItemId, required String description});
 
   // Uygulanmamış Reçeteler
-  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions();
+  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({
+    int? skip,
+    int? take,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+  });
   Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptionDetail(int prescriptionId);
 
   /// İlaç hareketlerini(dolum,alım,iade,fire/imha) getiren servis.

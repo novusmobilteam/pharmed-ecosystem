@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class FirmNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Firm> {
+class FirmNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Firm> {
   final GetFirmsUseCase _getFirmsUseCase;
   final DeleteFirmUseCase _deleteFirmUseCase;
 
@@ -32,15 +32,12 @@ class FirmNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Firm
     notifyListeners();
   }
 
-  Future<void> getFirms() async {
-    await execute(
-      fetchOp,
-      operation: () => _getFirmsUseCase.call(GetFirmsParams()),
-      onData: (response) {
-        if (response.data != null) {
-          allItems = response.data!;
-        }
-      },
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) => _getFirmsUseCase.call(
+        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+      ),
     );
   }
 
@@ -50,7 +47,7 @@ class FirmNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Firm
       operation: () => _deleteFirmUseCase.call(firm),
       onSuccess: () {
         onSuccess?.call('İşleminiz başarıyla tamamlandı');
-        getFirms();
+        fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),
     );

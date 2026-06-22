@@ -23,7 +23,7 @@ class MedicineScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) =>
-          MedicineNotifier(getMedicinesUseCase: context.read(), deleteMedicineUseCase: context.read())..getMedicines(),
+          MedicineNotifier(getMedicinesUseCase: context.read(), deleteMedicineUseCase: context.read())..fetch(),
       child: Consumer<MedicineNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
@@ -42,7 +42,7 @@ class MedicineScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: MedTable<Medicine>(
-                        data: notifier.filteredItems,
+                        data: notifier.items,
                         isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
                         enableExcel: true,
                         enableSearch: true,
@@ -51,6 +51,10 @@ class MedicineScreen extends StatelessWidget {
                           TableActionItem.edit(onPressed: (medicine) => notifier.openPanel(medicine: medicine)),
                           TableActionItem.delete(onPressed: (medicine) => _onDelete(context, notifier, medicine)),
                         ],
+                        enablePagination: true,
+                        pageSize: notifier.pageSize,
+                        currentPage: notifier.currentPage,
+                        onPageChanged: (page) => notifier.setPage(page),
                       ),
                     ),
                     _DefinitionButtonsView(notifier),
@@ -95,7 +99,7 @@ class _DefinitionButtonsView extends StatelessWidget {
           onPressed: () async {
             final result = await showMedicalConsumableFormView(context);
             if (result) {
-              notifier.getMedicines();
+              notifier.fetch();
             }
           },
         ),

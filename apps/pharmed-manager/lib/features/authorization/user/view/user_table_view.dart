@@ -37,7 +37,7 @@ class UserTableView extends StatelessWidget {
 
             onPageChanged: (page) {
               notifier.setPage(page);
-              notifier.getUsers();
+              notifier.fetch();
             },
             actions: [TableActionItem(icon: PhosphorIcons.pen(), tooltip: 'Düzenle', onPressed: onEdit)],
           );

@@ -31,16 +31,15 @@ class StationSetupScreen extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StationSetupNotifier()),
         ChangeNotifierProvider(
           create: (_) =>
-              StationNotifier(getStationsUseCase: context.read(), deleteStationUseCase: context.read())..getStations(),
+              StationNotifier(getStationsUseCase: context.read(), deleteStationUseCase: context.read())..fetch(),
         ),
         ChangeNotifierProvider(
           create: (context) =>
-              WarehouseNotifier(getWarehousesUseCase: context.read(), deleteWarehouseUseCase: context.read())
-                ..getWarehouses(),
+              WarehouseNotifier(getWarehousesUseCase: context.read(), deleteWarehouseUseCase: context.read())..fetch(),
         ),
         ChangeNotifierProvider(
           create: (_) =>
-              ServiceNotifier(getServicesUseCase: context.read(), deleteServiceUseCase: context.read())..getServices(),
+              ServiceNotifier(getServicesUseCase: context.read(), deleteServiceUseCase: context.read())..fetch(),
         ),
       ],
       child: Consumer<StationSetupNotifier>(
@@ -112,6 +111,6 @@ Future<void> _showStationSetupWizardView(BuildContext context) async {
   final result = await showDialog<bool?>(context: context, builder: (context) => StationSetupWizardView());
 
   if (context.mounted && result == true) {
-    context.read<StationNotifier>().getStations();
+    context.read<StationNotifier>().fetch();
   }
 }

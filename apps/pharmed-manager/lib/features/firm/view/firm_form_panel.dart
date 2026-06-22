@@ -35,7 +35,7 @@ class FirmFormPanel extends StatelessWidget {
                 if (context.mounted && formNotifier.isSuccess(formNotifier.submitOp)) {
                   MessageUtils.showSuccessSnackbar(context, formNotifier.statusMessage);
                   firmNotifier.closePanel();
-                  firmNotifier.getFirms();
+                  firmNotifier.fetch();
                 } else if (context.mounted && formNotifier.isFailed(formNotifier.submitOp)) {
                   MessageUtils.showErrorDialog(context, formNotifier.statusMessage);
                 }

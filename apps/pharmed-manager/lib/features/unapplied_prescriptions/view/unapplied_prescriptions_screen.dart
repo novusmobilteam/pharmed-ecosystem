@@ -19,7 +19,7 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
       create: (context) => UnappliedPrescriptionsNotifier(
         getUnappliedPrescriptionsUseCase: context.read(),
         getUnappliedPrescriptionDetailUseCase: context.read(),
-      )..getUnappliedPrescriptions(),
+      )..fetch(),
       builder: (context, child) {
         return Consumer<UnappliedPrescriptionsNotifier>(
           builder: (context, notifier, child) {
@@ -31,16 +31,13 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
                 subtitle: menu.description,
                 showAddButton: false,
                 child: MedTable<Prescription>(
-                  data: notifier.filteredItems,
+                  data: notifier.items,
                   isLoading: notifier.isFetching,
                   enableExcel: true,
                   enableDateFilter: true,
                   enableSearch: true,
                   onSearchChanged: notifier.search,
-                  onDateRangeChanged: (value) {
-                    notifier.setStartDate(value?.start);
-                    notifier.setEndDate(value?.end);
-                  },
+                  onDateRangeChanged: notifier.setDateRange,
 
                   // Tablo Satır Aksiyonları
                   actions: [
@@ -52,6 +49,11 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
                     ),
                   ],
                   emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
+
+                  enablePagination: true,
+                  pageSize: notifier.pageSize,
+                  currentPage: notifier.currentPage,
+                  onPageChanged: (page) => notifier.setPage(page),
                 ),
               ),
             );

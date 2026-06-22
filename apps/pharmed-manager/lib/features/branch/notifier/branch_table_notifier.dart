@@ -20,7 +20,8 @@ class BranchTableNotifier extends ChangeNotifier with ApiRequestMixin, Paginatio
 
   String? get statusMessage => message(deleteOp);
 
-  Future<void> getBranches() async {
+  @override
+  Future<void> fetch() async {
     await fetchPagedData(
       fetchMethod: (skip, take) {
         return _getBranchesUseCase.call(GetBranchesParams(skip: skip, take: take, search: _searchQuery));
@@ -29,13 +30,6 @@ class BranchTableNotifier extends ChangeNotifier with ApiRequestMixin, Paginatio
   }
 
   Future<void> deleteBranch(Branch branch) async {
-    await executeVoid(deleteOp, operation: () => _deleteBranchUseCase.call(branch), onSuccess: () => getBranches());
-  }
-
-  void search(String query) {
-    if (_searchQuery == query) return;
-    _searchQuery = query;
-    setPage(1);
-    getBranches();
+    await executeVoid(deleteOp, operation: () => _deleteBranchUseCase.call(branch), onSuccess: () => fetch());
   }
 }

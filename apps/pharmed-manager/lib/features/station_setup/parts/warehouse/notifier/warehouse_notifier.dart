@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class WarehouseNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Warehouse> {
+class WarehouseNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Warehouse> {
   final GetWarehousesUseCase _getWarehousesUseCase;
   final DeleteWarehouseUseCase _deleteWarehouseUseCase;
 
@@ -14,15 +14,12 @@ class WarehouseNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin
   OperationKey deleteOp = OperationKey.delete();
   OperationKey fetchOp = OperationKey.fetch();
 
-  Future<void> getWarehouses() async {
-    await execute(
-      fetchOp,
-      operation: () => _getWarehousesUseCase.call(GetWarehousesParams()),
-      onData: (response) {
-        if (response.data != null) {
-          allItems = response.data!;
-        }
-      },
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) => _getWarehousesUseCase.call(
+        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+      ),
     );
   }
 
@@ -36,7 +33,7 @@ class WarehouseNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin
       operation: () => _deleteWarehouseUseCase.call(warehouse),
       onSuccess: () {
         onSuccess?.call('İşleminiz başarıyla tamamlandı');
-        getWarehouses();
+        fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),
     );

@@ -23,7 +23,7 @@ class StationField extends StatelessWidget {
       enabled: enabled,
       initialValue: initialValue,
       dataSource: (skip, take, search) =>
-          context.read<GetStationsUseCase>().call(GetStationsParams(skip: skip, take: take, search: search)),
+          context.read<GetStationsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
       labelBuilder: (station) => station.name,
       onSelected: (station) => onChanged(station),
     );

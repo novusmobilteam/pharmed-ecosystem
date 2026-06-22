@@ -14,13 +14,13 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-MEDICINE';
 
-  Future<Result<ApiResponse<List<MedicineDto>>?>> getMedicines({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<MedicineDto>>?>> getMedicines({int? skip, int? take, String? searchQuery}) async {
     return fetchRequest(
       path: '$_base/all',
       skip: skip,
       take: take,
-      searchText: search,
-      searchFields: const ['name'],
+      searchQuery: searchQuery,
+      searchFields: const ['name', 'barcode', 'atcCode'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(MedicineDto.fromJson),
       successLog: 'Malzemeler getirildi',
@@ -33,7 +33,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(DrugDTO.fromJson),
@@ -51,7 +51,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
       path: '/MedicalConsumables',
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(MedicalConsumableDTO.fromJson),
@@ -70,7 +70,7 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
       path: '$_base/equivalentMaterials/$medicineId',
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(DrugDTO.fromJson),

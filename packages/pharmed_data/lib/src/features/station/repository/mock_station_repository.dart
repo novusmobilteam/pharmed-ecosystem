@@ -15,18 +15,13 @@ class MockStationRepository implements IStationRepository {
   ];
 
   @override
-  Future<Result<ApiResponse<List<Station>>>> getStations({
-    int? skip,
-    int? take,
-    String? search,
-    List<String>? searchFields,
-  }) async {
+  Future<Result<ApiResponse<List<Station>>>> getStations({int? skip, int? take, String? searchQuery}) async {
     await Future.delayed(const Duration(milliseconds: 600));
 
     var result = _stations;
 
-    if (search != null && search.isNotEmpty) {
-      result = result.where((s) => s.name?.toLowerCase().contains(search.toLowerCase()) ?? false).toList();
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      result = result.where((s) => s.name?.toLowerCase().contains(searchQuery.toLowerCase()) ?? false).toList();
     }
 
     return Result.ok(ApiResponse(data: result, statusCode: 200, isSuccess: true, totalCount: result.length));

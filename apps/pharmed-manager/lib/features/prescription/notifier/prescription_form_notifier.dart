@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
+import '../../auth/notifier/auth_notifier.dart';
 
 class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreatePrescriptionUseCase _useCase;
+  final AuthNotifier _authNotifier;
 
-  PrescriptionFormNotifier({required CreatePrescriptionUseCase useCase, Hospitalization? hospitalization})
-    : _useCase = useCase {
+  PrescriptionFormNotifier({
+    required CreatePrescriptionUseCase useCase,
+    Hospitalization? hospitalization,
+    required AuthNotifier authNotifier,
+  }) : _useCase = useCase,
+       _authNotifier = authNotifier {
     _hospitalization = hospitalization;
+
     _isPatientSelectionEnabled = hospitalization == null;
     _currentItem = PrescriptionItem(requestType: RequestType.normal, dosePiece: 1);
+    if (_authNotifier.currentUser != null) {
+      updateDoctor(_authNotifier.currentUser!.toUser());
+    }
   }
 
   OperationKey submitOp = OperationKey.submit();

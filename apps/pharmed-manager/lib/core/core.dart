@@ -5,7 +5,6 @@ export 'package:pharmed_ui/pharmed_ui.dart';
 
 // Mixins
 export 'mixins/api_request_mixin.dart';
-export 'mixins/date_filter_mixin.dart';
 export 'mixins/form_mixin.dart';
 export 'mixins/pagination_mixin.dart';
 export 'mixins/search_mixin.dart';
@@ -28,5 +27,4 @@ export '../../widgets/dialog/custom_dialog.dart';
 export '../../widgets/dialog/registration_dialog.dart';
 export '../../widgets/editable_list_item.dart';
 
-export '../../widgets/rectangle_icon_button.dart';
 export '../../widgets/selectable_list_tile.dart';

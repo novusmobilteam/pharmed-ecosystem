@@ -81,7 +81,7 @@ class _MaterialField extends StatelessWidget {
           initialValue: notifier.kitContent.medicine,
           labelBuilder: (medicine) => medicine.name ?? '-',
           dataSource: (skip, take, search) =>
-              context.read<GetMedicinesUseCase>().call(GetMedicinesParams(skip: skip, take: take, search: search)),
+              context.read<GetMedicinesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           validator: (value) => Validators.cannotBlankValidator(value?.name),
           onSelected: notifier.updateMaterial,
         );

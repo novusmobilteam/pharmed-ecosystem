@@ -139,7 +139,7 @@ class _FirstStep extends StatelessWidget {
                   child: MedSelectionField(
                     label: 'İlaç Depo',
                     dataSource: (skip, take, search) => context.read<GetWarehousesUseCase>().call(
-                      GetWarehousesParams(skip: skip, take: take, search: search),
+                      PagedQueryParams(skip: skip, take: take, searchQuery: search),
                     ),
                     labelBuilder: (warehouse) => warehouse.title,
                     onSelected: (warehouse) => notifier.updateMaterialWarehouse(warehouse),
@@ -165,7 +165,7 @@ class _FirstStep extends StatelessWidget {
                   child: MedSelectionField(
                     label: 'Tıbbi Sarf Depo',
                     dataSource: (skip, take, search) => context.read<GetWarehousesUseCase>().call(
-                      GetWarehousesParams(skip: skip, take: take, search: search),
+                      PagedQueryParams(skip: skip, take: take, searchQuery: search),
                     ),
                     labelBuilder: (warehouse) => warehouse.title,
                     onSelected: (warehouse) => notifier.updateConsumableWarehouse(warehouse),
@@ -200,7 +200,7 @@ class _SecondStep extends StatelessWidget {
         return MedSelectionField(
           label: 'Servis',
           dataSource: (skip, take, search) =>
-              context.read<GetServicesUseCase>().call(GetServicesParams(skip: skip, take: take, search: search)),
+              context.read<GetServicesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           labelBuilder: (service) => service.title,
           onSelected: (service) => notifier.updateService(service),
         );
@@ -231,8 +231,9 @@ class _ThirdStep extends StatelessWidget {
               initialValue: notifier.station?.services,
               labelBuilder: (value) => value.name ?? '',
               onSelected: notifier.updateProvidedServices,
-              dataSource: (skip, take, search) =>
-                  context.read<GetServicesUseCase>().call(GetServicesParams(skip: skip, take: take, search: search)),
+              dataSource: (skip, take, search) => context.read<GetServicesUseCase>().call(
+                PagedQueryParams(skip: skip, take: take, searchQuery: search),
+              ),
             ),
           ],
         );

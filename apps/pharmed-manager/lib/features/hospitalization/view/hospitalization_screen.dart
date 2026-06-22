@@ -27,8 +27,10 @@ class HospitalizationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) =>
-          HospitalizationNotifier(hospitalizationRepository: context.read())..getHospitalizations(),
+      create: (BuildContext context) => HospitalizationNotifier(
+        getActiveHospitalizationsUseCase: context.read(),
+        getHospitalizationsUseCase: context.read(),
+      )..fetch(),
       child: Consumer<HospitalizationNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
@@ -49,22 +51,15 @@ class HospitalizationScreen extends StatelessWidget {
                   HospitalizationPanelMode.none => const SizedBox.shrink(),
                 },
                 child: MedTable<Hospitalization>(
-                  data: notifier.filteredItems,
+                  data: notifier.items,
                   isLoading: notifier.isFetching,
                   enableExcel: true,
                   enableSearch: true,
                   enablePDF: true,
                   enableDateFilter: true,
-                  // selectionMode: TableSelectionMode.single,
                   onSearchChanged: notifier.search,
-                  initialDateRange: DateTimeRange(start: DateTime.now(), end: DateTime.now()),
-                  onDateRangeChanged: (range) {
-                    notifier.setStartDate(range?.start);
-                    notifier.setEndDate(range?.end);
-                  },
-                  // onSingleSelectionChanged: (data) {
-                  //   notifier.selectHospitalization(data);
-                  // },
+                  initialDateRange: notifier.dateRange,
+                  onDateRangeChanged: notifier.setDateRange,
                   actions: [
                     TableActionItem(
                       icon: PhosphorIcons.pen(),
@@ -91,6 +86,20 @@ class HospitalizationScreen extends StatelessWidget {
                       },
                     ),
                   ],
+                  toolbarActions: [
+                    MedRectangleIconButton(
+                      tooltip: notifier.showDischarged ? 'Aktif yatışları getir' : 'Taburcu olanları göster',
+                      iconData: notifier.showDischarged ? PhosphorIcons.userMinus() : PhosphorIcons.userCheck(),
+                      color: MedColors.amberLight,
+                      iconColor: MedColors.amber,
+                      onPressed: notifier.toggleDischarged,
+                    ),
+                  ],
+
+                  enablePagination: true,
+                  pageSize: notifier.pageSize,
+                  currentPage: notifier.currentPage,
+                  onPageChanged: (page) => notifier.setPage(page),
                 ),
               ),
             ),
@@ -103,16 +112,16 @@ class HospitalizationScreen extends StatelessWidget {
   List<Widget> _buildActions(BuildContext context, HospitalizationNotifier notifier) {
     return [
       // Yeni Hasta
-      IconButton(
+      MedButton(
         onPressed: () => notifier.openPanel(HospitalizationPanelMode.newPatient),
-        tooltip: 'Yeni Hasta Oluştur',
-        icon: Icon(PhosphorIcons.userPlus()),
+        size: MedButtonSize.sm,
+        label: 'Yeni Hasta Oluştur',
       ),
       // Yeni Yatış
-      IconButton(
+      MedButton(
         onPressed: () => notifier.openPanel(HospitalizationPanelMode.newHospitalization),
-        tooltip: 'Yeni Yatış Oluştur',
-        icon: Icon(PhosphorIcons.bed()),
+        size: MedButtonSize.sm,
+        label: 'Yeni Yatış Oluştur',
       ),
     ];
   }

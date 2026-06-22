@@ -20,7 +20,7 @@ class DirectedOrderRemoteDataSource extends BaseRemoteDataSource implements Dire
       path: _basePath,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(DirectedOrderDTO.fromJson),

@@ -12,12 +12,12 @@ class ServiceRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-SERVICE';
 
-  Future<Result<ApiResponse<List<ServiceDto>>?>> getServices({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<ServiceDto>>?>> getServices({int? skip, int? take, String? searchQuery}) async {
     final res = await fetchRequest(
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: searchQuery,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(ServiceDto.fromJson),

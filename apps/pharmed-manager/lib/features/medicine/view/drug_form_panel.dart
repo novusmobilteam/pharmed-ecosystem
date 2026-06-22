@@ -51,7 +51,7 @@ class DrugFormPanel extends StatelessWidget {
                 if (context.mounted && formNotifier.isSuccess(formNotifier.submitOp)) {
                   MessageUtils.showSuccessSnackbar(context, formNotifier.statusMessage);
                   medicineNotifier.closePanel();
-                  medicineNotifier.getMedicines();
+                  medicineNotifier.fetch();
                 } else if (context.mounted && formNotifier.isFailed(formNotifier.submitOp)) {
                   MessageUtils.showErrorDialog(context, formNotifier.statusMessage);
                 }
@@ -281,7 +281,7 @@ Widget _manifacturerField() {
         initialValue: vm.drug.firm,
         labelBuilder: (value) => value.name,
         dataSource: (skip, take, search) =>
-            context.read<GetFirmsUseCase>().call(GetFirmsParams(skip: skip, take: take, search: search)),
+            context.read<GetFirmsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
         onSelected: vm.updateFirm,
       );
     },

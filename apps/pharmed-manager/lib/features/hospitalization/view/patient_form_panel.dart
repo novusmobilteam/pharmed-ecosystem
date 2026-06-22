@@ -30,7 +30,7 @@ class PatientFormPanel extends StatelessWidget {
                   onSuccess: (msg) {
                     MessageUtils.showSuccessSnackbar(context, msg);
                     hospNotifier.closePanel();
-                    hospNotifier.getHospitalizations();
+                    hospNotifier.fetch();
                   },
                 );
               }

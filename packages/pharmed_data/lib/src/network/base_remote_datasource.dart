@@ -192,9 +192,10 @@ abstract class BaseRemoteDataSource {
     ResponseEnvelope envelope = ResponseEnvelope.auto,
     int? skip,
     int? take,
-    String? searchText,
+    String? searchQuery,
     List<String>? searchFields,
     String searchOperator = 'contains',
+    String? dateField,
     DateTime? startDate,
     DateTime? endDate,
   }) {
@@ -203,12 +204,16 @@ abstract class BaseRemoteDataSource {
     if (take != null) finalQuery['take'] = take;
     if (skip != null || take != null) finalQuery['requireTotalCount'] = true;
 
-    if (searchText != null && searchText.isNotEmpty && searchFields != null && searchFields.isNotEmpty) {
-      finalQuery['filter'] = _buildFilter(searchText, searchFields, searchOperator);
-    }
+    final filter = _buildFilter(
+      searchText: searchQuery,
+      searchFields: searchFields,
+      searchOperator: searchOperator,
+      dateField: dateField,
+      startDate: startDate,
+      endDate: endDate,
+    );
 
-    if (startDate != null) finalQuery['startDate'] = startDate.toIso8601String();
-    if (endDate != null) finalQuery['endDate'] = endDate.toIso8601String();
+    if (filter != null) finalQuery['filter'] = filter;
 
     return _request<T>(
       method: HttpMethod.GET,
@@ -314,15 +319,48 @@ abstract class BaseRemoteDataSource {
         (m.containsKey('data') && m.containsKey('totalCount'));
   }
 
-  String _buildFilter(String text, List<String> fields, String operator) {
-    if (fields.length == 1) {
-      return jsonEncode([fields[0], operator, text]);
-    }
-    final parts = <dynamic>[];
+  /// Build a DevExtreme filter expression combining search and date range filters.
+  /// Returns null if both are empty.
+  String? _buildFilter({
+    String? searchText,
+    List<String>? searchFields,
+    String searchOperator = 'contains',
+    String? dateField,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    final searchPart = _buildSearchPart(searchText, searchFields, searchOperator);
+    final datePart = _buildDatePart(dateField, startDate, endDate);
+
+    if (searchPart == null && datePart == null) return null;
+    if (searchPart != null && datePart == null) return jsonEncode(searchPart);
+    if (searchPart == null && datePart != null) return jsonEncode(datePart);
+
+    return jsonEncode([searchPart, 'and', datePart]);
+  }
+
+  Object? _buildSearchPart(String? text, List<String>? fields, String operator) {
+    if (text == null || text.isEmpty || fields == null || fields.isEmpty) return null;
+    if (fields.length == 1) return [fields[0], operator, text];
+
+    final parts = <Object>[];
     for (var i = 0; i < fields.length; i++) {
       parts.add([fields[i], operator, text]);
       if (i < fields.length - 1) parts.add('or');
     }
-    return jsonEncode(parts);
+    return parts;
+  }
+
+  Object? _buildDatePart(String? dateField, DateTime? start, DateTime? end) {
+    if (dateField == null || (start == null && end == null)) return null;
+    if (start != null && end != null) {
+      return [
+        [dateField, '>=', start.toIso8601String()],
+        'and',
+        [dateField, '<=', end.toIso8601String()],
+      ];
+    }
+    if (start != null) return [dateField, '>=', start.toIso8601String()];
+    return [dateField, '<=', end!.toIso8601String()];
   }
 }

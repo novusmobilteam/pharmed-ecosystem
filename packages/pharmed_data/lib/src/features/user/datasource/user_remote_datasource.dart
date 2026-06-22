@@ -32,12 +32,14 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
     String? search,
     List<String>? searchFields,
   }) async {
+    print('[3-datasource] search="$search" searchFields=$searchFields');
+
     return await fetchRequest(
       path: '$_base/type/${type?.id ?? 0}',
       skip: skip,
       take: take,
-      searchText: search,
-      searchFields: const ['name'],
+      searchQuery: search,
+      searchFields: searchFields ?? const ['name', 'surname', 'registrationNumber'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(UserDto.fromJson),
       successLog: 'Kişiler getirildi',
@@ -65,7 +67,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
       path: '$_base/roleDoctor',
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(UserDto.fromJson),

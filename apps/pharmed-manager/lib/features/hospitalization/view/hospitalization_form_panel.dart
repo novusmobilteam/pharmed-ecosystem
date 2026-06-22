@@ -14,6 +14,7 @@ class HospitalizationPanel extends StatelessWidget {
       create: (BuildContext context) => HospitalizationFormNotifier(
         getRoomsUseCase: context.read(),
         getBedsUseCase: context.read(),
+        authNotifier: context.read(),
         createHospitalizationUseCase: context.read(),
         updateHospitalizationUseCase: context.read(),
         hospitalization: selectedHospitalization,
@@ -32,7 +33,7 @@ class HospitalizationPanel extends StatelessWidget {
                   onSuccess: (msg) {
                     MessageUtils.showSuccessSnackbar(context, msg);
                     hospNotifier.closePanel();
-                    hospNotifier.getHospitalizations();
+                    hospNotifier.fetch();
                   },
                 );
               }
@@ -148,7 +149,7 @@ class _PhysicalServiceField extends StatelessWidget {
             validator: (s) => Validators.cannotBlankValidator(s?.name),
             labelBuilder: (s) => s.name ?? '-',
             dataSource: (skip, take, search) =>
-                context.read<GetServicesUseCase>().call(GetServicesParams(search: search, skip: skip, take: take)),
+                context.read<GetServicesUseCase>().call(PagedQueryParams(searchQuery: search, skip: skip, take: take)),
             onSelected: (s) => notifier.selectPhysicalService(s),
           );
         },
@@ -172,7 +173,7 @@ class _InpatientServiceField extends StatelessWidget {
             initialValue: notifier.hospitalization?.inpatientService,
             validator: (s) => Validators.cannotBlankValidator(s?.name),
             dataSource: (skip, take, search) =>
-                context.read<GetServicesUseCase>().call(GetServicesParams(search: search, skip: skip, take: take)),
+                context.read<GetServicesUseCase>().call(PagedQueryParams(searchQuery: search, skip: skip, take: take)),
             onSelected: (s) => notifier.selectInpatientService(s),
           );
         },

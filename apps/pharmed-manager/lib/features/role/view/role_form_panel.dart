@@ -27,7 +27,7 @@ class RoleFormPanel extends StatelessWidget {
                   onSuccess: (msg) {
                     MessageUtils.showSuccessSnackbar(context, msg);
                     roleNotifier.closePanel();
-                    roleNotifier.getRoles();
+                    roleNotifier.fetch();
                   },
                 );
               }

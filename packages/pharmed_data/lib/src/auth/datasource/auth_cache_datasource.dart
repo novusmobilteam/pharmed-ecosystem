@@ -48,6 +48,7 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
       'surname': user.surname,
       'fullName': user.fullName,
       'role': user.role,
+      'roleId': user.roleId,
       'isNotOrdered': user.isNotOrdered,
       'isAdmin': user.isAdmin,
     });
@@ -63,6 +64,7 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
     return AppUser(
       id: map['id'] as int? ?? 0,
       email: map['email'] as String? ?? '',
+      roleId: map['roleId'] as int? ?? 0,
       fullName: map['fullName'] as String? ?? '',
       name: map['name'] as String? ?? '',
       surname: map['surname'] as String? ?? '',

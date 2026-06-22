@@ -98,6 +98,7 @@ export 'src/models/drawer_status.dart';
 export 'src/models/management_card.dart';
 export 'src/models/rfid_reader_info.dart';
 export 'src/models/rfid_tag.dart';
+export 'src/models/paged_query_params.dart';
 
 // result
 export 'src/result/result.dart';

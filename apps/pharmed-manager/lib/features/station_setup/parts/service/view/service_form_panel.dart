@@ -41,7 +41,7 @@ class ServiceFormPanel extends StatelessWidget {
                 if (context.mounted && notifier.isSuccess(notifier.submitOp)) {
                   MessageUtils.showSuccessSnackbar(context, notifier.statusMessage);
                   context.read<StationSetupNotifier>().closePanel();
-                  context.read<ServiceNotifier>().getServices();
+                  context.read<ServiceNotifier>().fetch();
                 } else if (context.mounted && notifier.isFailed(notifier.submitOp)) {
                   MessageUtils.showErrorDialog(context, notifier.statusMessage);
                 }

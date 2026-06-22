@@ -38,7 +38,7 @@ class StationFormPanel extends StatelessWidget {
                 if (context.mounted && formNotifier.isSuccess(formNotifier.submitOp)) {
                   MessageUtils.showSuccessSnackbar(context, formNotifier.statusMessage);
                   context.read<StationSetupNotifier>().closePanel();
-                  context.read<StationNotifier>().getStations();
+                  context.read<StationNotifier>().fetch();
                 } else if (context.mounted && formNotifier.isFailed(formNotifier.submitOp)) {
                   MessageUtils.showErrorDialog(context, formNotifier.statusMessage);
                 }
@@ -115,7 +115,7 @@ class _MaterialWarehouseField extends StatelessWidget {
           title: 'İlaç Depo Seç',
           initialValue: notifier.station?.materialWarehouse,
           dataSource: (skip, take, search) =>
-              context.read<GetWarehousesUseCase>().call(GetWarehousesParams(skip: skip, take: take, search: search)),
+              context.read<GetWarehousesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           labelBuilder: (w) => w.name ?? '—',
           onSelected: notifier.updateMaterialWarehouse,
           validator: (value) => Validators.cannotBlankValidator(value?.toString()),
@@ -160,7 +160,7 @@ class _ConsumableWarehouseField extends StatelessWidget {
           validator: (value) => Validators.cannotBlankValidator(value?.toString()),
           onSelected: notifier.updateConsumableWarehouse,
           dataSource: (skip, take, search) =>
-              context.read<GetWarehousesUseCase>().call(GetWarehousesParams(skip: skip, take: take, search: search)),
+              context.read<GetWarehousesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
         );
       },
     );
@@ -202,7 +202,7 @@ class _ServiceField extends StatelessWidget {
           labelBuilder: (value) => value.name ?? '-',
           onSelected: notifier.updateService,
           dataSource: (skip, take, search) =>
-              context.read<GetServicesUseCase>().call(GetServicesParams(skip: skip, take: take, search: search)),
+              context.read<GetServicesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           validator: (value) => Validators.cannotBlankValidator(value?.name),
         );
       },
@@ -223,7 +223,7 @@ class _ProvidedServices extends StatelessWidget {
           title: 'Servis Seç',
           initialValue: notifier.station?.services,
           dataSource: (skip, take, search) =>
-              context.read<GetServicesUseCase>().call(GetServicesParams(skip: skip, take: take, search: search)),
+              context.read<GetServicesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           labelBuilder: (s) => s.name ?? '—',
           onSelected: notifier.updateProvidedServices,
         );

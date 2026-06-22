@@ -39,8 +39,11 @@ class _PrescriptionFormPanelState extends State<PrescriptionFormPanel> {
 
     return ChangeNotifierProvider(
       key: ValueKey(selectedHospitalization?.id ?? 'create'),
-      create: (BuildContext context) =>
-          PrescriptionFormNotifier(useCase: context.read(), hospitalization: selectedHospitalization),
+      create: (BuildContext context) => PrescriptionFormNotifier(
+        useCase: context.read(),
+        hospitalization: selectedHospitalization,
+        authNotifier: context.read(),
+      ),
       child: Consumer<PrescriptionFormNotifier>(
         builder: (context, notifier, _) {
           return SidePanel(
@@ -138,7 +141,7 @@ class _PatientField extends StatelessWidget {
             onSelected: (u) => vm.updatePatient(u),
             validator: (u) => Validators.cannotBlankValidator(u?.patient?.fullName),
             dataSource: (skip, take, search) => context.read<GetHospitalizationsUseCase>().call(
-              GetHospitalizationsParams(search: search, skip: skip, take: take),
+              PagedQueryParams(searchQuery: search, skip: skip, take: take),
             ),
           ),
         );
@@ -184,7 +187,7 @@ class _DrugField extends StatelessWidget {
           onSelected: (d) => vm.updateMaterial(d),
           validator: (d) => Validators.cannotBlankValidator(d?.name),
           dataSource: (skip, take, search) =>
-              context.read<GetMedicinesUseCase>().call(GetMedicinesParams(skip: skip, take: take, search: search)),
+              context.read<GetMedicinesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
         );
       },
     );

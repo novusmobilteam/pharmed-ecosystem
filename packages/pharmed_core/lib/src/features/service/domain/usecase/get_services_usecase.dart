@@ -4,21 +4,13 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-class GetServicesParams {
-  const GetServicesParams({this.skip, this.take, this.search});
-
-  final int? skip;
-  final int? take;
-  final String? search;
-}
-
 class GetServicesUseCase {
   const GetServicesUseCase(this._repository);
 
   final IServiceRepository _repository;
 
-  Future<Result<ApiResponse<List<HospitalService>>>> call(GetServicesParams params) =>
-      _repository.getServices(skip: params.skip, take: params.take, search: params.search);
+  Future<Result<ApiResponse<List<HospitalService>>>> call(PagedQueryParams params) =>
+      _repository.getServices(skip: params.skip, take: params.take, searchQuery: params.searchQuery);
 }
 
 class GetAllServicesUseCase {

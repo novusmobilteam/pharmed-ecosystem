@@ -10,15 +10,16 @@ enum HospitalizationPanelMode {
   editHospitalization,
 }
 
-class HospitalizationNotifier extends ChangeNotifier
-    with ApiRequestMixin, SearchMixin<Hospitalization>, DateFilterMixin<Hospitalization> {
-  final IHospitalizationRepository _hospitalizationRepository;
+class HospitalizationNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Hospitalization> {
+  final GetActiveHospitalizationsUseCase _getActiveHospitalizationsUseCase;
+  final GetHospitalizationsUseCase _getHospitalizationsUseCase;
 
-  HospitalizationNotifier({required IHospitalizationRepository hospitalizationRepository})
-    : _hospitalizationRepository = hospitalizationRepository {
-    // Varsayılan tarih aralığı: son 4 gün
-    setStartDate(DateTime.now().subtract(const Duration(days: 4)));
-    setEndDate(DateTime.now());
+  HospitalizationNotifier({
+    required GetActiveHospitalizationsUseCase getActiveHospitalizationsUseCase,
+    required GetHospitalizationsUseCase getHospitalizationsUseCase,
+  }) : _getActiveHospitalizationsUseCase = getActiveHospitalizationsUseCase,
+       _getHospitalizationsUseCase = getHospitalizationsUseCase {
+    setDateRange(DateTimeRange(start: DateTime.now(), end: DateTime.now()));
   }
 
   HospitalizationPanelMode _panelMode = HospitalizationPanelMode.none;
@@ -37,16 +38,8 @@ class HospitalizationNotifier extends ChangeNotifier
 
   bool get hasSelection => _selectedHospitalization != null;
 
-  /// Filtrelenmiş yatış listesi.
-  /// Önce arama filtresini (SearchMixin default), sonra tarih filtresini uygular.
-  @override
-  List<Hospitalization> get filteredItems {
-    // SearchMixin'in default araması searchQuery varsa çalışır
-    if (searchQuery.isNotEmpty) {
-      return applyDateFilter(super.filteredItems);
-    }
-    return applyDateFilter(allItems);
-  }
+  bool _showDischarged = false; //  taburcu toggle'ı
+  bool get showDischarged => _showDischarged;
 
   void selectHospitalization(Hospitalization? hospitalization) {
     _selectedHospitalization = hospitalization;
@@ -78,18 +71,27 @@ class HospitalizationNotifier extends ChangeNotifier
     notifyListeners();
   }
 
-  /// Yatan hasta listesini API'den çeker.
-  Future<void> getHospitalizations() async {
-    _selectedHospitalization = null;
-    await execute(
-      fetchOp,
-      operation: () => _hospitalizationRepository.getHospitalizations(),
-      onData: (response) => allItems = response.data ?? [],
-    );
+  @override
+  Future<void> fetch() async {
+    if (_showDischarged) {
+      await fetchPagedData(
+        fetchMethod: (skip, take) => _getHospitalizationsUseCase.call(
+          PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+        ),
+      );
+    } else {
+      await fetchPagedData(
+        fetchMethod: (skip, take) => _getActiveHospitalizationsUseCase.call(
+          PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+        ),
+      );
+    }
   }
 
-  /// Tarih alanını belirler (DateFilterMixin için gerekli).
-  /// Yatış tarihi (admissionDate) üzerinden filtreleme yapar.
-  @override
-  DateTime? getDateField(Hospitalization item) => item.admissionDate;
+  void toggleDischarged() {
+    _showDischarged = !_showDischarged;
+    resetFilters(notify: false);
+    notifyListeners();
+    fetch();
+  }
 }

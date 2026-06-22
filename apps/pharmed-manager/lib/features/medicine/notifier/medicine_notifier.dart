@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class MedicineNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Medicine> {
+class MedicineNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Medicine> {
   final GetMedicinesUseCase _getMedicinesUseCase;
   final DeleteMedicineUseCase _deleteMedicineUseCase;
 
@@ -16,8 +16,6 @@ class MedicineNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<
 
   bool get isFetching => isLoading(fetchOp);
   bool get isDeleting => isLoading(deleteOp);
-
-  List<Medicine> get medicines => filteredItems;
 
   Medicine? _selectedMedicine;
   Medicine? get selectedMedicine => _selectedMedicine;
@@ -37,15 +35,12 @@ class MedicineNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<
     notifyListeners();
   }
 
-  Future<void> getMedicines() async {
-    await execute(
-      fetchOp,
-      operation: () => _getMedicinesUseCase.call(GetMedicinesParams()),
-      onData: (response) {
-        if (response.data != null) {
-          allItems = response.data!;
-        }
-      },
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) => _getMedicinesUseCase.call(
+        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+      ),
     );
   }
 
@@ -59,7 +54,7 @@ class MedicineNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<
       operation: () => _deleteMedicineUseCase.call(medicine),
       onSuccess: () {
         onSuccess?.call('İşleminiz başarıyla tamamlandı');
-        getMedicines();
+        fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),
     );

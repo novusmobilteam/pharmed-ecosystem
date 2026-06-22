@@ -70,6 +70,7 @@ class AuthRepositoryImpl implements IAuthRepository {
         role: userDto.role?.name ?? '',
         isAdmin: userDto.isAdmin ?? false,
         isNotOrdered: userDto.isNotOrdered,
+        roleId: userDto.role?.id ?? 0,
       );
 
       // 5. User'ı cache'e yaz

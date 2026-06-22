@@ -89,8 +89,9 @@ class Hospitalization extends Selectable implements TableData {
     patient?.tcNo,
     patient?.fullName,
     admissionDate?.formattedDate,
-    waitingQuantity,
-    lastApproveDate?.formattedDate,
+    exitDate?.formattedDate,
+    // waitingQuantity,
+    // lastApproveDate?.formattedDate,
   ];
 
   @override
@@ -100,8 +101,8 @@ class Hospitalization extends Selectable implements TableData {
     patient?.tcNo,
     patient?.fullName,
     admissionDate?.formattedDate,
-    waitingQuantity,
-    lastApproveDate?.formattedDate,
+    // waitingQuantity,
+    // lastApproveDate?.formattedDate,
   ];
 
   @override
@@ -111,8 +112,9 @@ class Hospitalization extends Selectable implements TableData {
     'T.C No',
     'Hasta',
     'Yatış Tarihi',
-    'Bekleyen Adet',
-    'Son Onay Tarihi',
+    'Çıkış Tarihi',
+    // 'Bekleyen Adet',
+    // 'Son Onay Tarihi',
   ];
 
   // TODO : Düzelt

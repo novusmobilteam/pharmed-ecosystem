@@ -26,7 +26,6 @@ class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
   UserType get selectedCategory => _selectedCategory;
 
   List<User> _selectedUsers = [];
-  String _searchQuery = '';
   DateTime validDate = DateTime.now();
 
   bool get isFetching => isTableLoading;
@@ -65,12 +64,15 @@ class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
     } catch (_) {}
   }
 
-  Future<void> getUsers() async {
+  @override
+  Future<void> fetch() async {
     await fetchPagedData(
-      fetchMethod: (skip, take) =>
-          _getUsersUseCase.call(GetUsersParams(type: _selectedCategory, skip: skip, take: take, search: _searchQuery)),
+      fetchMethod: (skip, take) {
+        return _getUsersUseCase.call(
+          GetUsersParams(type: _selectedCategory, skip: skip, take: take, search: searchQuery),
+        );
+      },
     );
-
     _usersByType[_selectedCategory] = items;
     _totalCountByType[_selectedCategory] = totalCount;
     notifyListeners();
@@ -80,17 +82,9 @@ class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
     if (_selectedCategory == type) return;
     _selectedCategory = type;
     _selectedUsers.clear();
-    _searchQuery = '';
-    setPage(1);
+    resetFilters(notify: false);
     notifyListeners();
-  }
-
-  void search(String query) {
-    debouncedSearch(query, () {
-      _searchQuery = query;
-      setPage(1);
-      getUsers();
-    });
+    fetch();
   }
 
   void selectUsers(Set<User> selected) {
@@ -114,9 +108,15 @@ class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
       operation: () => _bulkUpdateValidDateUseCase.call(BulkUpdateValidDateParams(date: validDate, ids: ids)),
       onSuccess: () {
         _selectedUsers.clear();
-        getUsers(); // sadece seçili tipi (süreli) tazele
+        fetch();
       },
       successMessage: 'Son geçerlilik tarihi güncellendi',
     );
+  }
+
+  @override
+  void dispose() {
+    cancelSearchDebounce();
+    super.dispose();
   }
 }

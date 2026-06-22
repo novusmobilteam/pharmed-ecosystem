@@ -319,7 +319,7 @@ class _StationsField extends StatelessWidget {
           label: 'Yetki İstasyonlar',
           initialValue: notifier.selectedStations,
           dataSource: (skip, take, search) =>
-              context.read<GetStationsUseCase>().call(GetStationsParams(skip: skip, take: take, search: search)),
+              context.read<GetStationsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           labelBuilder: (s) => s.name,
           onSelected: (stations) => notifier.changeStations(stations ?? []),
           // validator: (value) => Validators.cannotBlankValidator(

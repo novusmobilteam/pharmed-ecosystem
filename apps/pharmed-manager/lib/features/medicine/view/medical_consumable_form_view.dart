@@ -220,7 +220,7 @@ Widget _buildFirmField() {
         labelBuilder: (value) => value.name,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
         dataSource: (skip, take, search) =>
-            context.read<GetFirmsUseCase>().call(GetFirmsParams(skip: skip, take: take, search: search)),
+            context.read<GetFirmsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
         onSelected: vm.updateFirm,
       );
     },

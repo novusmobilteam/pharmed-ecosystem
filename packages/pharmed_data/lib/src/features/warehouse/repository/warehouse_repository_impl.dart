@@ -14,8 +14,8 @@ class WarehouseRepositoryImpl implements IWarehouseRepository {
   final WarehouseMapper _mapper;
 
   @override
-  Future<Result<ApiResponse<List<Warehouse>>>> getWarehouses({int? skip, int? take, String? search}) async {
-    final result = await _dataSource.getWarehouses(skip: skip, take: take, search: search);
+  Future<Result<ApiResponse<List<Warehouse>>>> getWarehouses({int? skip, int? take, String? searchQuery}) async {
+    final result = await _dataSource.getWarehouses(skip: skip, take: take, searchQuery: searchQuery);
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<Warehouse>>(

@@ -12,12 +12,12 @@ class WarehouseRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-WAREHOUSE';
 
-  Future<Result<ApiResponse<List<WarehouseDTO>>?>> getWarehouses({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<WarehouseDTO>>?>> getWarehouses({int? skip, int? take, String? searchQuery}) async {
     return fetchRequest(
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: searchQuery,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(WarehouseDTO.fromJson),

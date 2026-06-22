@@ -5,6 +5,8 @@
 
 import 'package:equatable/equatable.dart';
 
+import '../../../../pharmed_core.dart';
+
 class AppUser extends Equatable {
   const AppUser({
     required this.id,
@@ -13,6 +15,7 @@ class AppUser extends Equatable {
     required this.surname,
     required this.fullName,
     required this.role,
+    required this.roleId,
     this.isNotOrdered = false,
     this.isAdmin = false,
   });
@@ -23,6 +26,7 @@ class AppUser extends Equatable {
   final String surname;
   final String fullName;
   final String role;
+  final int roleId;
   final bool isNotOrdered;
   final bool isAdmin;
 
@@ -39,4 +43,14 @@ class AppUser extends Equatable {
 
   @override
   List<Object?> get props => [id, email, fullName, role, isNotOrdered, isAdmin];
+
+  User toUser() {
+    return User(
+      id: id,
+      name: name,
+      surname: surname,
+      role: Role.fromIdAndName(id: roleId, name: role),
+      isNotOrdered: isNotOrdered,
+    );
+  }
 }
