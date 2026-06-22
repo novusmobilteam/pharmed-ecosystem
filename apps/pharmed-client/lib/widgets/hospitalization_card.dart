@@ -111,7 +111,7 @@ class HospitalizationCard extends StatelessWidget {
   String? get _location {
     final room = hospitalization.bed?.room?.name ?? hospitalization.room?.name;
     final bed = hospitalization.bed?.name;
-    if (room != null && bed != null) return '· $room $bed';
+    if (room != null && bed != null) return '$room $bed';
     return room ?? bed;
   }
 
@@ -198,8 +198,8 @@ class HospitalizationCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Row(
-                    spacing: 4,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (_service != null)
                         Text(

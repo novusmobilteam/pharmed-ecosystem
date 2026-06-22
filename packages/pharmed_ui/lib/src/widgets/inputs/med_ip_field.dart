@@ -8,15 +8,20 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // IP adresi girişi — 4 oktet, otomatik odak geçişi, numpad klavye.
 // Her oktet 0–255 arası sayısal değer.
 // Sınıf : Class A (görsel girdi)
+//
+// MedInputDecorator + InputFieldTheme üzerine kurulu. Label, border,
+// yükseklik ve odak görseli MedTextInputField / MedDropdownInputField
+// ile birebir aynı kaynaktan gelir; elle çizim yapılmaz.
 // ─────────────────────────────────────────────────────────────────
 
 class MedIpField extends StatefulWidget {
-  const MedIpField({super.key, this.initialValue, this.onChanged, this.label, this.helperText});
+  const MedIpField({super.key, this.initialValue, this.onChanged, this.label, this.helperText, this.enabled = true});
 
   final String? initialValue; // "192.168.1.100"
   final ValueChanged<String>? onChanged;
   final String? label;
   final String? helperText;
+  final bool enabled;
 
   @override
   State<MedIpField> createState() => _MedIpFieldState();
@@ -61,32 +66,20 @@ class _MedIpFieldState extends State<MedIpField> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.label != null) ...[
-          Text(
-            widget.label!,
-            style: const TextStyle(
-              fontFamily: MedFonts.sans,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: MedColors.text2,
-              letterSpacing: 0.2,
-            ),
-          ),
-          const SizedBox(height: 6),
-        ],
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          constraints: const BoxConstraints(minHeight: 48),
-          decoration: BoxDecoration(
-            color: _focused ? MedColors.surface : MedColors.surface2,
-            border: Border.all(color: _focused ? MedColors.blue : MedColors.border, width: 1.5),
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: _focused ? const [BoxShadow(color: Color(0x1F1A6FD8), blurRadius: 0, spreadRadius: 3)] : null,
-          ),
+    final style = InputFieldTheme.of(context);
+
+    return MedInputDecorator(
+      label: widget.label,
+      helperText: widget.helperText,
+      enabled: widget.enabled,
+      isFocused: _focused,
+      // Padding'i biz veriyoruz; oktet alanları decorator'ın sabit
+      // yüksekliği içinde dikey ortalanır.
+      applyPadding: false,
+      child: IgnorePointer(
+        ignoring: !widget.enabled,
+        child: Padding(
+          padding: style.contentPadding,
           child: Row(
             children: [
               _OctetField(
@@ -94,45 +87,42 @@ class _MedIpFieldState extends State<MedIpField> {
                 focusNode: _focuses[0],
                 nextFocus: _focuses[1],
                 placeholder: '192',
+                fontSize: style.inputFontSize,
                 onChanged: (_) => _notifyChange(),
               ),
-              _Dot(),
+              _Dot(fontSize: style.inputFontSize),
               _OctetField(
                 controller: _controllers[1],
                 focusNode: _focuses[1],
                 nextFocus: _focuses[2],
                 prevFocus: _focuses[0],
                 placeholder: '168',
+                fontSize: style.inputFontSize,
                 onChanged: (_) => _notifyChange(),
               ),
-              _Dot(),
+              _Dot(fontSize: style.inputFontSize),
               _OctetField(
                 controller: _controllers[2],
                 focusNode: _focuses[2],
                 nextFocus: _focuses[3],
                 prevFocus: _focuses[1],
                 placeholder: '1',
+                fontSize: style.inputFontSize,
                 onChanged: (_) => _notifyChange(),
               ),
-              _Dot(),
+              _Dot(fontSize: style.inputFontSize),
               _OctetField(
                 controller: _controllers[3],
                 focusNode: _focuses[3],
                 prevFocus: _focuses[2],
                 placeholder: '100',
+                fontSize: style.inputFontSize,
                 onChanged: (_) => _notifyChange(),
               ),
             ],
           ),
         ),
-        if (widget.helperText != null) ...[
-          const SizedBox(height: 4),
-          Text(
-            widget.helperText!,
-            style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.text3),
-          ),
-        ],
-      ],
+      ),
     );
   }
 }
@@ -142,6 +132,7 @@ class _OctetField extends StatelessWidget {
     required this.controller,
     required this.focusNode,
     required this.placeholder,
+    required this.fontSize,
     this.nextFocus,
     this.prevFocus,
     this.onChanged,
@@ -152,6 +143,7 @@ class _OctetField extends StatelessWidget {
   final FocusNode? nextFocus;
   final FocusNode? prevFocus;
   final String placeholder;
+  final double fontSize;
   final ValueChanged<String>? onChanged;
 
   @override
@@ -161,21 +153,21 @@ class _OctetField extends StatelessWidget {
         controller: controller,
         focusNode: focusNode,
         textAlign: TextAlign.center,
+        textAlignVertical: TextAlignVertical.center,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly, _OctetFormatter()],
-        style: const TextStyle(
+        style: TextStyle(
           fontFamily: MedFonts.mono,
-          fontSize: 15,
+          fontSize: fontSize,
           fontWeight: FontWeight.w500,
           color: MedColors.text,
         ),
         decoration: InputDecoration(
           hintText: placeholder,
-          hintStyle: const TextStyle(fontFamily: MedFonts.mono, fontSize: 15, color: MedColors.text4),
+          hintStyle: TextStyle(fontFamily: MedFonts.mono, fontSize: fontSize, color: MedColors.text4),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-          constraints: const BoxConstraints(minHeight: 48),
-          isDense: false,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
         ),
         onChanged: (val) {
           onChanged?.call(val);
@@ -194,13 +186,17 @@ class _OctetField extends StatelessWidget {
 }
 
 class _Dot extends StatelessWidget {
+  const _Dot({required this.fontSize});
+
+  final double fontSize;
+
   @override
   Widget build(BuildContext context) {
     return Text(
       '.',
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: MedFonts.mono,
-        fontSize: 18,
+        fontSize: fontSize + 3,
         fontWeight: FontWeight.w700,
         color: MedColors.text3,
       ),

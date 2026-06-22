@@ -11,7 +11,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
@@ -19,7 +21,9 @@ import '../../dashboard/presentation/notifier/dashboard_state.dart';
 import '../unapplied_prescription.dart';
 
 class UnappliedPrescriptionScreen extends ConsumerWidget {
-  const UnappliedPrescriptionScreen({super.key});
+  const UnappliedPrescriptionScreen({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,14 +42,15 @@ class UnappliedPrescriptionScreen extends ConsumerWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _UnappliedPrescriptionBodyView(cabinId: cabinId);
+    return _UnappliedPrescriptionBodyView(cabinId: cabinId, menu: menu);
   }
 }
 
 class _UnappliedPrescriptionBodyView extends ConsumerStatefulWidget {
-  const _UnappliedPrescriptionBodyView({required this.cabinId});
+  const _UnappliedPrescriptionBodyView({required this.cabinId, required this.menu});
 
   final int cabinId;
+  final MenuItem menu;
 
   @override
   ConsumerState<_UnappliedPrescriptionBodyView> createState() => _UnappliedPrescriptionBodyViewState();
@@ -61,7 +66,7 @@ class _UnappliedPrescriptionBodyViewState extends ConsumerState<_UnappliedPrescr
   @override
   void didUpdateWidget(_UnappliedPrescriptionBodyView old) {
     super.didUpdateWidget(old);
-    if (widget.cabinId != old.cabinId) _initialize(widget.cabinId);
+    _initialize(widget.cabinId);
   }
 
   void _initialize(int cabinId) {
@@ -84,26 +89,33 @@ class _UnappliedPrescriptionBodyViewState extends ConsumerState<_UnappliedPrescr
     });
 
     if (state is UnappliedPrescriptionUninitialized || state is UnappliedPrescriptionLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return const Center(child: MedLoadingIndicator());
     }
 
-    return Row(
-      children: [
-        SizedBox(
-          width: 380,
-          child: PatientListPanel(
-            patients: state.patients,
-            selectedPatient: state.selectedPatient,
-            isPatientLoading: state.isPrescriptionsLoading,
-            search: state.search,
-            onPatientTap: notifier.onPatientTap,
-            onSearchChanged: notifier.onSearchChanged,
-            title: context.l10n.unappliedPrescription_panel_patientTitle,
-          ),
-        ),
-        VerticalDivider(width: 1, thickness: 1, color: MedColors.border),
-        Expanded(child: _UnappliedPrescriptionRightPanel(state: state)),
-      ],
+    if (state.hospitalizations.isEmpty) {
+      return EmptyStateWidget(
+        icon: PhosphorIcons.usersThree(),
+        size: EmptyStateSize.normal,
+        title: context.l10n.prescription_noPatients_title,
+        description: context.l10n.prescription_noPatients_message,
+      );
+    }
+
+    return TwoColumnLayout(
+      menuItem: widget.menu,
+      leftTitle: context.l10n.common_patientListTitle,
+      leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
+      leftIcon: PhosphorIcons.users(),
+      left: PatientListPanel(
+        patients: state.hospitalizations,
+        selectedPatient: state.selectedPatient,
+        isPatientLoading: state.isPrescriptionsLoading,
+        search: state.search,
+        onPatientTap: notifier.onPatientTap,
+        onSearchChanged: notifier.onSearchChanged,
+        title: context.l10n.unappliedPrescription_panel_patientTitle,
+      ),
+      right: _UnappliedPrescriptionRightPanel(state: state),
     );
   }
 }
@@ -115,29 +127,22 @@ class _UnappliedPrescriptionRightPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!state.isPatientSelected) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.error);
+    if (state.isPrescriptionsLoading) {
+      return Center(child: MedLoadingIndicator());
     }
 
-    if (state.isPrescriptionsLoading) {
-      return Column(
-        children: [
-          HospitalizationDetailBanner(hospitalization: state.selectedPatient),
-          const Expanded(child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
-        ],
+    if (!state.isPatientSelected) {
+      return const EmptyStateWidget(variant: EmptyStateVariant.noPatientSelected);
+    }
+
+    if (state.prescriptionItems.isEmpty) {
+      return EmptyStateWidget(
+        icon: PhosphorIcons.receiptX(),
+        title: context.l10n.unadministered_prescriptions_empty_title,
+        description: context.l10n.unadministered_prescriptions_empty_description,
       );
     }
 
-    return Column(
-      children: [
-        HospitalizationDetailBanner(hospitalization: state.selectedPatient),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(MedSpacing.xl),
-            child: RxCarousel(items: state.prescriptionItems, emptyVariant: EmptyStateVariant.error),
-          ),
-        ),
-      ],
-    );
+    return RxCarousel(items: state.prescriptionItems, emptyVariant: EmptyStateVariant.error);
   }
 }

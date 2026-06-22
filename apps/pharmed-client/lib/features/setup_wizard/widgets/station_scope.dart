@@ -116,11 +116,9 @@ class _StationList extends StatelessWidget {
         height: 200,
         child: Center(
           child: Column(
+            spacing: 12.0,
             children: [
-              Text(
-                'Kayıtlı istasyon bulunamadı.',
-                style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
-              ),
+              Text('Kayıtlı istasyon bulunamadı.', style: MedTextStyles.titleSm()),
               MedButton(
                 label: context.l10n.common_retryButton,
                 variant: MedButtonVariant.secondary,

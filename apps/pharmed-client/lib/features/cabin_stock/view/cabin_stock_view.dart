@@ -3,7 +3,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
@@ -11,7 +13,9 @@ import '../../dashboard/presentation/notifier/dashboard_state.dart';
 import '../cabin_stock.dart';
 
 class CabinStockView extends ConsumerWidget {
-  const CabinStockView({super.key});
+  const CabinStockView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,14 +34,15 @@ class CabinStockView extends ConsumerWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _CabinStockBodyView(cabinId: cabinId);
+    return _CabinStockBodyView(cabinId: cabinId, menu: menu);
   }
 }
 
 class _CabinStockBodyView extends ConsumerStatefulWidget {
-  const _CabinStockBodyView({required this.cabinId});
+  const _CabinStockBodyView({required this.cabinId, required this.menu});
 
   final int cabinId;
+  final MenuItem menu;
 
   @override
   ConsumerState<_CabinStockBodyView> createState() => _CabinStockBodyViewState();
@@ -53,7 +58,7 @@ class _CabinStockBodyViewState extends ConsumerState<_CabinStockBodyView> {
   @override
   void didUpdateWidget(_CabinStockBodyView old) {
     super.didUpdateWidget(old);
-    if (widget.cabinId != old.cabinId) _initialize(widget.cabinId);
+    _initialize(widget.cabinId);
   }
 
   void _initialize(int cabinId) {
@@ -76,62 +81,67 @@ class _CabinStockBodyViewState extends ConsumerState<_CabinStockBodyView> {
     });
 
     if (state is CabinStockUninitialized || state is CabinStockLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return const Center(child: MedLoadingIndicator());
     }
 
-    return Row(
-      children: [
-        SizedBox(
-          width: 380,
-          child: PatientListPanel(
-            patients: state.patients,
-            selectedPatient: state.selectedPatient,
-            isPatientLoading: state.isPrescriptionsLoading,
-            search: state.search,
-            onPatientTap: notifier.onPatientTap,
-            onSearchChanged: notifier.onSearchChanged,
-          ),
-        ),
+    if (state.hospitalizations.isEmpty) {
+      return EmptyStateWidget(
+        icon: PhosphorIcons.usersThree(),
+        size: EmptyStateSize.normal,
+        title: context.l10n.prescription_noPatients_title,
+        description: context.l10n.prescription_noPatients_message,
+      );
+    }
 
-        VerticalDivider(width: 1, thickness: 1, color: MedColors.border),
-
-        Expanded(
-          child: _StockRightPanel(state: state, notifier: notifier),
-        ),
-      ],
+    return TwoColumnLayout(
+      menuItem: widget.menu,
+      leftTitle: context.l10n.common_patientListTitle,
+      leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
+      leftIcon: PhosphorIcons.users(),
+      left: PatientListPanel(
+        patients: state.hospitalizations,
+        selectedPatient: state.selectedPatient,
+        isPatientLoading: state.isPrescriptionsLoading,
+        search: state.search,
+        onPatientTap: notifier.onPatientTap,
+        onSearchChanged: notifier.onSearchChanged,
+        title: context.l10n.unappliedPrescription_panel_patientTitle,
+      ),
+      right: _StockRightPanel(state: state),
     );
   }
 }
 
 class _StockRightPanel extends StatelessWidget {
-  const _StockRightPanel({required this.state, required this.notifier});
+  const _StockRightPanel({required this.state});
 
   final CabinStockState state;
-  final CabinStockNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    // Henüz hasta seçilmedi
-    if (!state.isPatientSelected) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.error);
-    }
-
-    // Hasta seçildi, reçeteler yükleniyor
     if (state.isPrescriptionsLoading) {
-      return Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return Center(child: MedLoadingIndicator());
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(MedSpacing.xl),
-      child: RxDrugPanel(
-        title: context.l10n.cabinStock_panel_title,
-        items: state.prescriptionItems,
-        selectedItem: state.selectedItem,
-        isBusy: state.isBusy,
-        onDrugTap: (_) {},
-        hospitalization: state.selectedPatient,
-        showFilters: false,
-      ),
+    if (!state.isPatientSelected) {
+      return const EmptyStateWidget(variant: EmptyStateVariant.noPatientSelected);
+    }
+
+    if (state.prescriptionItems.isEmpty) {
+      return EmptyStateWidget(
+        icon: PhosphorIcons.package(),
+        title: context.l10n.cabin_stock_empty_title,
+        description: context.l10n.cabin_stock_empty_description,
+      );
+    }
+    return RxDrugPanel(
+      title: context.l10n.cabinStock_panel_title,
+      items: state.prescriptionItems,
+      selectedItem: state.selectedItem,
+      isBusy: state.isBusy,
+      onDrugTap: (_) {},
+      hospitalization: state.selectedPatient,
+      showFilters: false,
     );
   }
 }

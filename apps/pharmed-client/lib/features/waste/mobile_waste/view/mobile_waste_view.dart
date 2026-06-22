@@ -7,22 +7,62 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../waste.dart';
 
-class MobileWasteView extends ConsumerStatefulWidget {
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+import '../../../dashboard/presentation/notifier/dashboard_state.dart';
+
+class MobileWasteView extends ConsumerWidget {
   const MobileWasteView({super.key, required this.menu});
 
   final MenuItem menu;
 
   @override
-  ConsumerState<MobileWasteView> createState() => _MobileWasteViewState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cabinId = ref.watch(
+      dashboardNotifierProvider.select(
+        (s) => switch (s) {
+          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
+          DashboardStale(:final data) => data.cabinVisualizerData?.cabinId,
+          DashboardPartial(:final data) => data.cabinVisualizerData?.cabinId,
+          _ => null,
+        },
+      ),
+    );
+
+    if (cabinId == null) {
+      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
+    }
+
+    return _MobileWasteBodyView(cabinId: cabinId, menu: menu);
+  }
 }
 
-class _MobileWasteViewState extends ConsumerState<MobileWasteView> {
+class _MobileWasteBodyView extends ConsumerStatefulWidget {
+  const _MobileWasteBodyView({required this.cabinId, required this.menu});
+
+  final int cabinId;
+  final MenuItem menu;
+
+  @override
+  ConsumerState<_MobileWasteBodyView> createState() => _MobileWasteBodyViewState();
+}
+
+class _MobileWasteBodyViewState extends ConsumerState<_MobileWasteBodyView> {
   @override
   void initState() {
     super.initState();
+    _initialize(widget.cabinId);
+  }
+
+  @override
+  void didUpdateWidget(_MobileWasteBodyView old) {
+    super.didUpdateWidget(old);
+    if (widget.cabinId != old.cabinId) _initialize(widget.cabinId);
+  }
+
+  void _initialize(int cabinId) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(mobileWasteNotifierProvider.notifier).init();
+      ref.read(mobileWasteNotifierProvider.notifier).init(cabinId);
     });
   }
 
@@ -37,25 +77,34 @@ class _MobileWasteViewState extends ConsumerState<MobileWasteView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is MobileWasteSuccess) {
-        final msg = next.isWastage
-            ? context.l10n.waste_success_wastage
-            : context.l10n.waste_success_destruction;
+        final msg = next.isWastage ? context.l10n.waste_success_wastage : context.l10n.waste_success_destruction;
         MessageUtils.showSuccessSnackbar(context, msg);
         notifier.dismissSuccess();
       }
     });
 
     if (state is MobileWasteUninitialized || state is MobileWasteLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return Center(child: MedLoadingIndicator());
+    }
+
+    // Kabine atanmış hasta yoksa boş durum
+    if (state.hospitalizations.isEmpty) {
+      return EmptyStateWidget(
+        card: false,
+        icon: PhosphorIcons.usersThree(),
+        size: EmptyStateSize.normal,
+        title: context.l10n.prescription_noPatients_title,
+        description: context.l10n.prescription_noPatients_message,
+      );
     }
 
     return TwoColumnLayout(
       menuItem: widget.menu,
       leftTitle: context.l10n.common_patientListTitle,
       leftIcon: PhosphorIcons.users(),
-      leftSubtitle: context.l10n.common_patientCountSubtitle(state.patients.length),
+      leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
       left: PatientListPanel(
-        patients: state.patients,
+        patients: state.hospitalizations,
         selectedPatient: state.selectedPatient,
         isPatientLoading: state.isPatientLoading,
         search: state.search,
@@ -82,14 +131,12 @@ class _RightPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedPatient = state.selectedPatient;
-
-    if (selectedPatient == null) {
-      return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.wasteSelectPatient));
+    if (state.isPrescriptionsLoading) {
+      return Center(child: MedLoadingIndicator());
     }
 
-    if (state.isPatientLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+    if (!state.isPatientSelected) {
+      return const EmptyStateWidget(variant: EmptyStateVariant.noPatientSelected);
     }
 
     if (state.disposables.isEmpty) {

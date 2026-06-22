@@ -616,6 +616,9 @@
     }
   },
 
+  "wizard_successReloginPrompt": "You must log in to continue.",
+  "wizard_successLoginButton": "Log In",
+
   "wizard_successDashboardButton": "Go to Dashboard",
   "@wizard_successDashboardButton": { "description": "Button on the wizard success screen to navigate to the dashboard" },
 
@@ -1021,5 +1024,26 @@
   "movement_quantityLabel": "Quantity",
 
   "movement_showAll": "Show All Movements",
-  "cabin_masterDrawerStats": "{groupCount} groups · {steps} steps × {mult}"
+  "cabin_masterDrawerStats": "{groupCount} groups · {steps} steps × {mult}",
+
+  "dashboard_cabinConnectionStatus_connected": "Connected",
+"dashboard_cabinConnectionStatus_connecting": "Connecting…",
+"dashboard_cabinConnectionStatus_error": "No Connection",
+"dashboard_cabinConnectionStatus_disconnected": "Disconnected",
+"dashboard_cabinConnection_reconnectButton": "Reconnect",
+
+"prescription_noPatients_title": "No Assigned Patients",
+"prescription_noPatients_message": "No patients have been assigned to this cabinet yet. Patients must be assigned before prescriptions can be reviewed.",
+
+"myPatients_empty_title": "No Patients Selected Yet",
+"myPatients_empty_description": "Select patients from the list on the left to add them to your patient list. Your selected patients will appear here.",
+
+"cabin_stock_empty_title": "No stock for this patient",
+"cabin_stock_empty_description": "This patient has no medications stocked in this cabin yet.",
+
+"unadministered_prescriptions_empty_title": "No pending prescriptions",
+"unadministered_prescriptions_empty_description": "There are no prescriptions waiting to be administered for this patient.",
+
+"empty_state_no_patient_selected_title": "Select a patient",
+"empty_state_no_patient_selected_description": "Choose a patient from the list to view their details."
 }

@@ -23,17 +23,17 @@ final class PrescriptionLoading extends PrescriptionState {
 }
 
 final class PrescriptionIdle extends PrescriptionState {
-  const PrescriptionIdle({required this.cabinId, required this.patients, this.search = ''});
+  const PrescriptionIdle({required this.cabinId, required this.hospitalizations, this.search = ''});
 
   final int cabinId;
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final String search;
 }
 
 final class PrescriptionPatientSelected extends PrescriptionState {
   const PrescriptionPatientSelected({
     required this.cabinId,
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.prescriptionItems,
     this.search = '',
@@ -41,7 +41,7 @@ final class PrescriptionPatientSelected extends PrescriptionState {
   });
 
   final int cabinId;
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
 
   /// Tüm statusler — filtrelenmemiş.
@@ -59,7 +59,7 @@ final class PrescriptionPatientSelected extends PrescriptionState {
   }) {
     return PrescriptionPatientSelected(
       cabinId: cabinId,
-      patients: patients,
+      hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       search: search ?? this.search,
@@ -90,10 +90,10 @@ extension PrescriptionStateX on PrescriptionState {
     _ => null,
   };
 
-  List<Hospitalization> get patients => switch (this) {
-    PrescriptionIdle(:final patients) => patients,
-    PrescriptionPatientSelected(:final patients) => patients,
-    PrescriptionError(:final previousState) => previousState.patients,
+  List<Hospitalization> get hospitalizations => switch (this) {
+    PrescriptionIdle(:final hospitalizations) => hospitalizations,
+    PrescriptionPatientSelected(:final hospitalizations) => hospitalizations,
+    PrescriptionError(:final previousState) => previousState.hospitalizations,
     _ => const [],
   };
 

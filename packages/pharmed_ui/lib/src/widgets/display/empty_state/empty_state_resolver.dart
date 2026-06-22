@@ -127,5 +127,10 @@ final class EmptyStateResolver {
           title: _l10n.emptyStateNoDataTitle,
           description: _l10n.emptyStateNoDataDescription,
         ),
+        EmptyStateVariant.noPatientSelected => EmptyStateContent(
+          icon: PhosphorIcons.userList(),
+          title: _l10n.empty_state_no_patient_selected_title,
+          description: _l10n.empty_state_no_patient_selected_description,
+        ),
       };
 }

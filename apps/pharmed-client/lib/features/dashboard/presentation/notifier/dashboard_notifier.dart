@@ -14,6 +14,7 @@ import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
+import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../settings/presentation/notifier/settings_notifier.dart';
 import '../../domain/model/dasboard_data.dart';
@@ -48,6 +49,10 @@ class DashboardNotifier extends Notifier<DashboardState> {
   Future<void> initialize() async {
     Future.microtask(_fetchMenus);
     Future.microtask(_load);
+    final setupDone = await appSettingsCache.isSetupComplete();
+    if (setupDone) {
+      ref.read(cabinConnectionProvider.notifier).connect();
+    }
 
     _startPeriodicRefresh();
   }

@@ -18,7 +18,6 @@ final unappliedPrescriptionNotifierProvider =
 
 class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState> {
   GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
-
   GetPatientPrescriptionHistoryUseCase get _getPrescriptionHistory =>
       ref.read(getPatientPrescriptionHistoryUseCaseProvider);
 
@@ -26,18 +25,23 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
   UnappliedPrescriptionState build() => const UnappliedPrescriptionUninitialized();
 
   Future<void> init(int cabinId) async {
-    if (state.cabinId == cabinId && state is! UnappliedPrescriptionUninitialized) return;
-
     state = UnappliedPrescriptionLoading(cabinId: cabinId);
-
     final result = await _getBedAssignments.call(cabinId);
 
-    state = result.when(
-      ok: (assignments) => UnappliedPrescriptionIdle(cabinId: cabinId, patients: _toPatients(assignments)),
-      error: (e) => UnappliedPrescriptionError(
-        message: e.message,
-        previousState: UnappliedPrescriptionIdle(cabinId: cabinId, patients: const []),
-      ),
+    await result.when(
+      ok: (assignments) async {
+        final hospitalizations = _toHospitalizations(assignments);
+        state = UnappliedPrescriptionIdle(cabinId: cabinId, hospitalizations: hospitalizations);
+        if (hospitalizations.isEmpty) return;
+
+        await onPatientTap(hospitalizations.first);
+      },
+      error: (error) {
+        state = UnappliedPrescriptionError(
+          message: error.message,
+          previousState: UnappliedPrescriptionIdle(cabinId: cabinId, hospitalizations: const []),
+        );
+      },
     );
   }
 
@@ -47,13 +51,17 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
 
     // Toggle — aynı hasta tekrar seçilirse Idle'a dön
     if (state.selectedPatient?.patient?.id == patientId) {
-      state = UnappliedPrescriptionIdle(cabinId: state.cabinId!, patients: state.patients, search: state.search);
+      state = UnappliedPrescriptionIdle(
+        cabinId: state.cabinId!,
+        hospitalizations: state.hospitalizations,
+        search: state.search,
+      );
       return;
     }
 
     state = UnappliedPrescriptionPatientSelected(
       cabinId: state.cabinId!,
-      patients: state.patients,
+      hospitalizations: state.hospitalizations,
       selectedPatient: hospitalization,
       prescriptionItems: const [],
       search: state.search,
@@ -65,12 +73,9 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
     state = result.when(
       ok: (items) => UnappliedPrescriptionPatientSelected(
         cabinId: state.cabinId!,
-        patients: state.patients,
+        hospitalizations: state.hospitalizations,
         selectedPatient: hospitalization,
-        // ── Tek fark burası ──────────────────────────────────────────
-        // Tüm reçete kalemleri arasından yalnızca alım bekleyenler alınır.
         prescriptionItems: items.where((item) => item.status == PrescriptionMovementType.purchasePending).toList(),
-        // ─────────────────────────────────────────────────────────────
         search: state.search,
         isPrescriptionsLoading: false,
       ),
@@ -78,7 +83,7 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
         message: e.message,
         previousState: UnappliedPrescriptionPatientSelected(
           cabinId: state.cabinId!,
-          patients: state.patients,
+          hospitalizations: state.hospitalizations,
           selectedPatient: hospitalization,
           prescriptionItems: const [],
           search: state.search,
@@ -90,7 +95,11 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
 
   void onSearchChanged(String value) {
     state = switch (state) {
-      UnappliedPrescriptionIdle s => UnappliedPrescriptionIdle(cabinId: s.cabinId, patients: s.patients, search: value),
+      UnappliedPrescriptionIdle s => UnappliedPrescriptionIdle(
+        cabinId: s.cabinId,
+        hospitalizations: s.hospitalizations,
+        search: value,
+      ),
       UnappliedPrescriptionPatientSelected s => s.copyWith(search: value),
       _ => state,
     };
@@ -101,7 +110,7 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
     if (current is UnappliedPrescriptionError) state = current.previousState;
   }
 
-  List<Hospitalization> _toPatients(List<BedAssignment> assignments) {
+  List<Hospitalization> _toHospitalizations(List<BedAssignment> assignments) {
     return assignments.map((a) => a.hospitalization).whereType<Hospitalization>().toList();
   }
 }

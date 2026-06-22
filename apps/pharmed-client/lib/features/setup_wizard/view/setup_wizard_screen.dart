@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/setup/app_setup_notifier.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import '../../auth/auth.dart';
 import '../notifier/setup_wizard_notifier.dart';
 import '../state/setup_wizard_state.dart';
 import 'step1_view.dart';
@@ -193,6 +194,17 @@ class WizardSuccessViewState extends ConsumerState<WizardSuccessView> with Singl
                     style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text3),
                     textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 6),
+                  Text(
+                    context.l10n.wizard_successReloginPrompt,
+                    style: const TextStyle(
+                      fontFamily: MedFonts.sans,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: MedColors.text2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -209,10 +221,13 @@ class WizardSuccessViewState extends ConsumerState<WizardSuccessView> with Singl
                   ),
                   const SizedBox(height: 32),
                   MedButton(
-                    label: context.l10n.wizard_successDashboardButton,
+                    label: context.l10n.wizard_successLoginButton,
                     size: MedButtonSize.lg,
-                    prefixIcon: const Icon(Icons.dashboard_rounded, size: 18),
-                    onPressed: () => ref.read(appSetupStatusProvider.notifier).markComplete(),
+                    prefixIcon: const Icon(Icons.login_rounded, size: 18),
+                    onPressed: () async {
+                      ref.read(authNotifierProvider.notifier).logout();
+                      ref.read(appSetupStatusProvider.notifier).markComplete();
+                    },
                   ),
                 ],
               ),

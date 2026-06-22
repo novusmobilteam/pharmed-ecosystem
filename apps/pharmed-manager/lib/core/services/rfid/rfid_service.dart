@@ -43,6 +43,17 @@ class RfidService implements IRfidService {
   static const int _modeAnswer = 0x00;
   static const int _modeRealtime = 0x01;
 
+  static const int _cmdSetWorkingAntenna = 0x3F;
+
+  // ── Anten maskeleri (Format 1, 0x3f) ───────────────────────────────────
+  // bit0=Ant1, bit1=Ant2, bit2=Ant3, bit3=Ant4
+  // bit7=0 → ayar power-off'ta korunur (kalıcı)
+  // DİKKAT: Etkinleştirilen portta fiziksel anten yoksa okuyucu komutun
+  //         TAMAMINI 0xF9 ile reddeder (kısmi kabul yok).
+  static const int _antennaMask2 = 0x03; // Ant1 + Ant2 (mevcut test)
+  static const int _antennaMask4 = 0x0F; // Ant1..Ant4 (saha cihazı)
+  static const int _statusAntennaCheckFailure = 0xF9;
+
   Socket? _socket;
   StreamSubscription<List<int>>? _socketSub;
 
@@ -60,16 +71,12 @@ class RfidService implements IRfidService {
 
   bool get _inventoryActive => _inventoryController != null;
 
-  // ── Bağlantı ────────────────────────────────────────────────────────────
-
   @override
   Future<Result<void>> connect(String host, int port) async {
     if (_socket != null) return const Result.ok(null);
 
     try {
       _socket = await Socket.connect(host, port, timeout: const Duration(seconds: _connectTimeoutSeconds));
-
-      // Tek socket listener — tüm okuma buradan akar
       _socketSub = _socket!.listen(_handleIncomingData, onError: _handleSocketError, onDone: _handleSocketDone);
 
       MedLogger.info(
@@ -79,8 +86,7 @@ class RfidService implements IRfidService {
         context: {'host': host, 'port': port},
       );
 
-      // Defensive: önceki uygulama crash'inden Real-time mode'da kalmış olabilir.
-      // Answer Mode'a al — başarısız olursa bağlantıyı bozmuyoruz, log'la geç.
+      await Future.delayed(const Duration(milliseconds: 200)); // reader'ın hazırlanması için
       final modeResult = await _setWorkingMode(_modeAnswer);
       modeResult.when(
         ok: (_) {},
@@ -89,6 +95,20 @@ class RfidService implements IRfidService {
             unit: 'RfidService',
             swreq: 'SWREQ-CLI-RFID-001',
             message: 'Defensive Answer Mode set başarısız (devam ediliyor)',
+            context: {'error': e.toString()},
+          );
+        },
+      );
+
+      // Çalışma antenlerini ayarla. Bağlı port belirsizse adaptive kullanılır.
+      final antResult = await _setWorkingAntennaAdaptive(_antennaMask4); // ← 4 anten için _antennaMask4
+      antResult.when(
+        ok: (mask) {},
+        error: (e) {
+          MedLogger.warn(
+            unit: 'RfidService',
+            swreq: 'SWREQ-CLI-RFID-001',
+            message: 'Anten ayarı başarısız (devam ediliyor)',
             context: {'error': e.toString()},
           );
         },
@@ -108,19 +128,26 @@ class RfidService implements IRfidService {
 
   @override
   Future<void> disconnect() async {
-    if (_inventoryActive) {
-      await stopInventory();
-    }
+    final controller = _inventoryController;
+    _inventoryController = null;
+    await controller?.close();
+
     await _socketSub?.cancel();
-    await _socket?.close();
     _socketSub = null;
+
+    // close() yerine destroy() — RST gönderir, FIN/ACK handshake beklemez.
+    // Okuyucunun port'u daha hızlı serbest bırakmasını sağlar.
+    _socket?.destroy();
     _socket = null;
+
     _rxBuffer.clear();
     _pendingCommandCompleter = null;
+
+    // Okuyucunun TCP stack'ini temizlemesi için kısa bekleme.
+    await Future.delayed(const Duration(milliseconds: 300));
+
     MedLogger.info(unit: 'RfidService', swreq: 'SWREQ-CLI-RFID-001', message: 'RFID bağlantısı kapatıldı');
   }
-
-  // ── Inventory akışı ─────────────────────────────────────────────────────
 
   @override
   Stream<RfidTag> startInventory() {
@@ -179,9 +206,6 @@ class RfidService implements IRfidService {
     return result;
   }
 
-  // ── Test bağlantı ───────────────────────────────────────────────────────
-  // Kalıcı bağlantıdan ayrı bir socket kullanır; ana bağlantıyı bozmaz.
-
   @override
   Future<Result<RfidReaderInfo>> testConnection({required String ip, required int port}) async {
     Socket? testSocket;
@@ -239,8 +263,6 @@ class RfidService implements IRfidService {
     }
   }
 
-  // ── RF Güç ──────────────────────────────────────────────────────────────
-
   @override
   Future<Result<void>> setPower(int dbm) async {
     if (_inventoryActive) {
@@ -266,8 +288,6 @@ class RfidService implements IRfidService {
     );
   }
 
-  // ── Internal: SetWorkingMode komutu ─────────────────────────────────────
-
   Future<Result<void>> _setWorkingMode(int mode) async {
     final result = await _sendCommandAndWait(_cmdSetWorkingMode, [mode]);
     return result.when(
@@ -287,7 +307,74 @@ class RfidService implements IRfidService {
     );
   }
 
-  // ── Internal: Senkron komut + cevap ─────────────────────────────────────
+  Future<Result<void>> _setWorkingAntenna(int mask) async {
+    final result = await _sendCommandAndWait(_cmdSetWorkingAntenna, [mask]);
+    return result.when(
+      ok: (resp) {
+        if (resp.length >= 4 && resp[3] != 0x00) {
+          final status = resp[3];
+          final hint = status == _statusAntennaCheckFailure
+              ? ' (anten bağlantı hatası — etkinleştirilen portlardan biri boş)'
+              : '';
+          return Result.error(
+            ServiceException(
+              message: 'SetWorkingAntenna reddedildi (status=0x${status.toRadixString(16)})$hint',
+              statusCode: 502,
+            ),
+          );
+        }
+        MedLogger.info(
+          unit: 'RfidService',
+          swreq: 'SWREQ-CLI-RFID-001',
+          message: 'Çalışma antenleri ayarlandı',
+          context: {'mask': '0x${mask.toRadixString(16)}'},
+        );
+        return const Result.ok(null);
+      },
+      error: (e) => Result.error(e),
+    );
+  }
+
+  /// İstenen maskedeki antenleri etkinleştirmeye çalışır. Okuyucu boş port
+  /// nedeniyle 0xF9 dönerse, maskeyi tek tek azaltarak yalnızca bağlı
+  /// portları bulup etkinleştirir. Hangi portların bağlı olduğu önceden
+  /// bilinmeyen kurulumlar (manager) için.
+  Future<Result<int>> _setWorkingAntennaAdaptive(int desiredMask) async {
+    // Önce istenen maskeyi dene (en yaygın durum: hepsi bağlı)
+    final full = await _setWorkingAntenna(desiredMask);
+    final fullOk = full.when(ok: (_) => true, error: (_) => false);
+    if (fullOk) return Result.ok(desiredMask);
+
+    // 0xF9 → en az bir port boş. Bağlı portları tek tek tespit et.
+    var connectedMask = 0x00;
+    for (var bit = 0; bit < 4; bit++) {
+      final single = 1 << bit;
+      if (desiredMask & single == 0) continue; // bu portu zaten istemiyoruz
+
+      final probe = await _setWorkingAntenna(single);
+      final ok = probe.when(ok: (_) => true, error: (_) => false);
+      if (ok) connectedMask |= single;
+    }
+
+    if (connectedMask == 0x00) {
+      return Result.error(ServiceException(message: 'Hiçbir antene bağlanılamadı (tüm portlar boş).', statusCode: 502));
+    }
+
+    // Bulunan bağlı portların hepsini birlikte etkinleştir.
+    final finalResult = await _setWorkingAntenna(connectedMask);
+    return finalResult.when(
+      ok: (_) {
+        MedLogger.info(
+          unit: 'RfidService',
+          swreq: 'SWREQ-CLI-RFID-001',
+          message: 'Bağlı antenler otomatik tespit edildi',
+          context: {'mask': '0x${connectedMask.toRadixString(16)}'},
+        );
+        return Result.ok(connectedMask);
+      },
+      error: (e) => Result.error(e),
+    );
+  }
 
   Future<Result<Uint8List>> _sendCommandAndWait(int cmd, List<int> data) async {
     final socket = _socket;

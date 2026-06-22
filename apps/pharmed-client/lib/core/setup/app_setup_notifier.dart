@@ -1,5 +1,3 @@
-// lib/core/setup/app_setup_notifier.dart
-//
 // [SWREQ-CORE-003] [IEC 62304 §5.5]
 // Kurulum durumu yönetimi.
 // AsyncLoading → Hive okunuyor

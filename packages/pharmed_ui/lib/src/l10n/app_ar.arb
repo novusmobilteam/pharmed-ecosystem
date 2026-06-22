@@ -618,6 +618,9 @@
     }
   },
 
+  "wizard_successReloginPrompt": "يجب عليك تسجيل الدخول للمتابعة.",
+  "wizard_successLoginButton": "تسجيل الدخول",
+
   "wizard_successDashboardButton": "الانتقال إلى Dashboard",
   "@wizard_successDashboardButton": { "description": "Button on the wizard success screen to navigate to the dashboard" },
 
@@ -960,5 +963,26 @@
   "movement_quantityLabel": "الكمية",
 
   "movement_showAll": "عرض جميع الحركات",
-  "cabin_masterDrawerStats": "{groupCount} مجموعات · {steps} خطوات × {mult}"
+  "cabin_masterDrawerStats": "{groupCount} مجموعات · {steps} خطوات × {mult}",
+
+  "dashboard_cabinConnectionStatus_connected": "متصل",
+"dashboard_cabinConnectionStatus_connecting": "جارٍ الاتصال…",
+"dashboard_cabinConnectionStatus_error": "لا يوجد اتصال",
+"dashboard_cabinConnectionStatus_disconnected": "غير متصل",
+"dashboard_cabinConnection_reconnectButton": "إعادة الاتصال",
+
+"prescription_noPatients_title": "لا يوجد مرضى معينون",
+"prescription_noPatients_message": "لم يتم تعيين أي مريض لهذه الخزانة بعد. يجب تعيين المرضى قبل أن تتمكن من مراجعة الطلبات.",
+
+"myPatients_empty_title": "لم تختر أي مريض بعد",
+"myPatients_empty_description": "اختر المرضى من القائمة على اليسار لإضافتهم إلى قائمة مرضاك. سيظهر المرضى الذين اخترتهم هنا.",
+
+"cabin_stock_empty_title": "لا يوجد مخزون لهذا المريض",
+"cabin_stock_empty_description": "لا توجد أدوية مخزّنة لهذا المريض في هذه الخزانة بعد.",
+
+"unadministered_prescriptions_empty_title": "لا توجد وصفات معلّقة",
+"unadministered_prescriptions_empty_description": "لا توجد وصفات بانتظار التطبيق لهذا المريض.",
+
+"empty_state_no_patient_selected_title": "اختر مريضًا",
+"empty_state_no_patient_selected_description": "اختر مريضًا من القائمة لعرض تفاصيله."
 }

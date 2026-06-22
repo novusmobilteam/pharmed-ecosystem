@@ -89,11 +89,9 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Kimlik ──
                 MedTextInputField(
                   controller: _nameCtrl,
                   label: context.l10n.wizard_cabinNameLabel,
-                  hint: context.l10n.wizard_cabinNameHint,
                   onChanged: (_) => _notify(),
                 ),
                 const SizedBox(height: 24),
@@ -140,10 +138,9 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MedLabel(text: context.l10n.wizard_ipAddressLabel, variant: MedLabelVariant.monoValue),
-              const SizedBox(height: 6),
               MedIpField(
                 initialValue: _ipAddress,
+                label: context.l10n.wizard_ipAddressLabel,
                 onChanged: (ip) {
                   _ipAddress = ip;
                   _notify();
@@ -174,9 +171,8 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MedLabel(text: 'DVR IP', variant: MedLabelVariant.monoValue),
-        const SizedBox(height: 6),
         MedIpField(
+          label: 'DVR IP',
           initialValue: _dvrIp,
           onChanged: (ip) {
             _dvrIp = ip;
@@ -206,19 +202,13 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
                 children: [
                   Expanded(
                     flex: 3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MedLabel(text: 'RFID IP Adresi', variant: MedLabelVariant.monoValue),
-                        const SizedBox(height: 6),
-                        MedIpField(
-                          initialValue: _rfidIpAddress,
-                          onChanged: (ip) {
-                            _rfidIpAddress = ip;
-                            _notify();
-                          },
-                        ),
-                      ],
+                    child: MedIpField(
+                      label: 'RFID IP Adresi',
+                      initialValue: _rfidIpAddress,
+                      onChanged: (ip) {
+                        _rfidIpAddress = ip;
+                        _notify();
+                      },
                     ),
                   ),
                   const SizedBox(width: 16),

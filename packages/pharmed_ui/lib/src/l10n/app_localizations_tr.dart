@@ -617,6 +617,13 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get wizard_successReloginPrompt =>
+      'İşleminize devam etmek için giriş yapmalısınız.';
+
+  @override
+  String get wizard_successLoginButton => 'Giriş Yap';
+
+  @override
   String get wizard_successDashboardButton => 'Dashboard\'a Git';
 
   @override
@@ -1256,4 +1263,54 @@ class AppLocalizationsTr extends AppLocalizations {
   String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps) {
     return '$groupCount grup · $steps adım × $mult';
   }
+
+  @override
+  String get dashboard_cabinConnectionStatus_connected => 'Bağlı';
+
+  @override
+  String get dashboard_cabinConnectionStatus_connecting => 'Bağlanıyor…';
+
+  @override
+  String get dashboard_cabinConnectionStatus_error => 'Bağlantı Yok';
+
+  @override
+  String get dashboard_cabinConnectionStatus_disconnected => 'Bağlı Değil';
+
+  @override
+  String get dashboard_cabinConnection_reconnectButton => 'Yeniden Bağlan';
+
+  @override
+  String get prescription_noPatients_title => 'Atanmış Hasta Yok';
+
+  @override
+  String get prescription_noPatients_message =>
+      'Bu kabine henüz hasta atanmamış. İstem inceleyebilmek için önce kabine hasta atanması gerekir.';
+
+  @override
+  String get myPatients_empty_title => 'Henüz Hasta Seçmediniz';
+
+  @override
+  String get myPatients_empty_description =>
+      'Soldaki listeden hasta seçerek kendi hasta listenize ekleyebilirsiniz. Seçtiğiniz hastalar burada görünür.';
+
+  @override
+  String get cabin_stock_empty_title => 'Bu hastaya ait stok yok';
+
+  @override
+  String get cabin_stock_empty_description =>
+      'Seçili hastaya ait bu kabinde henüz stoklanmış ilaç bulunmuyor.';
+
+  @override
+  String get unadministered_prescriptions_empty_title => 'Bekleyen reçete yok';
+
+  @override
+  String get unadministered_prescriptions_empty_description =>
+      'Bu hastaya uygulanmayı bekleyen reçete bulunmuyor.';
+
+  @override
+  String get empty_state_no_patient_selected_title => 'Bir hasta seçin';
+
+  @override
+  String get empty_state_no_patient_selected_description =>
+      'Detayları görüntülemek için listeden bir hasta seçin.';
 }

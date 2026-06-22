@@ -11,7 +11,7 @@ import '../../refund.dart';
 final refundNotifierProvider = NotifierProvider<RefundNotifier, MobileRefundState>(RefundNotifier.new);
 
 class RefundNotifier extends Notifier<MobileRefundState> {
-  GetHospitalizationsUseCase get _getHospitalizations => ref.read(getHospitalizationsUseCaseProvider);
+  GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
   GetMobileRefundablesUseCase get _getRefundables => ref.read(getMobileRefundablesUseCaseProvider);
   CheckMobileRefundStatusUseCase get _checkStatus => ref.read(checkMobileRefundStatusUseCaseProvider);
   CompleteMobileRefundUseCase get _completeRefund => ref.read(completeMobileRefundUseCaseProvider);
@@ -19,72 +19,56 @@ class RefundNotifier extends Notifier<MobileRefundState> {
   @override
   MobileRefundState build() => const MobileRefundUninitialized();
 
-  Future<void> init() async {
-    if (state is! MobileRefundUninitialized) return;
-
-    MedLogger.info(unit: 'RefundNotifier', swreq: 'SWREQ-REFUND-02', message: 'init — hasta listesi yükleniyor');
-
+  Future<void> init(int cabinId) async {
     state = const MobileRefundLoading();
+    final result = await _getBedAssignments.call(cabinId);
 
-    final result = await _getHospitalizations.call(GetHospitalizationsParams());
-
-    state = result.when(
-      ok: (response) => MobileRefundIdle(patients: response.data ?? const []),
-      error: (e) => MobileRefundError(
-        message: e.message,
-        previousState: const MobileRefundIdle(patients: []),
-      ),
+    await result.when(
+      ok: (assignments) async {
+        final hospitalizations = _toHospitalizations(assignments);
+        state = MobileRefundIdle(hospitalizations: hospitalizations);
+        if (hospitalizations.isEmpty) return;
+        await onPatientTap(hospitalizations.first);
+      },
+      error: (error) {
+        state = MobileRefundError(
+          message: error.message,
+          previousState: MobileRefundIdle(hospitalizations: const []),
+        );
+      },
     );
-  }
-
-  void onSearchChanged(String query) {
-    final current = state;
-    state = switch (current) {
-      MobileRefundIdle() => current.copyWith(search: query),
-      MobileRefundPatientSelected() => current.copyWith(search: query),
-      MobileRefundDrugSelected() => MobileRefundPatientSelected(
-        patients: current.patients,
-        selectedPatient: current.selectedPatient,
-        refundables: current.refundables,
-        search: query,
-      ),
-      _ => current,
-    };
   }
 
   Future<void> onPatientTap(Hospitalization hospitalization) async {
-    final currentPatientId = state.selectedPatient?.id;
+    final patientId = hospitalization.patient?.id;
+    if (patientId == null) return;
 
-    // Aynı hasta tekrar tıklandıysa — seçimi kaldır
-    if (currentPatientId == hospitalization.id) {
-      state = MobileRefundIdle(patients: state.patients, search: state.search);
+    // Toggle — aynı hasta tekrar seçilirse Idle'a dön
+    if (state.selectedPatient?.patient?.id == patientId) {
+      state = MobileRefundIdle(hospitalizations: state.hospitalizations, search: state.search);
       return;
     }
 
-    MedLogger.info(
-      unit: 'RefundNotifier',
-      swreq: 'SWREQ-REFUND-02',
-      message: 'onPatientTap — hospitalizationId=${hospitalization.id}',
-    );
-
-    state = MobileRefundPatientLoading(
-      patients: state.patients,
+    state = MobileRefundPatientSelected(
+      hospitalizations: state.hospitalizations,
       selectedPatient: hospitalization,
+      refundables: const [],
       search: state.search,
+      isPrescriptionsLoading: true,
     );
 
     final result = await _getRefundables.call(hospitalization.id ?? 0);
 
     state = result.when(
       ok: (items) => MobileRefundPatientSelected(
-        patients: state.patients,
+        hospitalizations: state.hospitalizations,
         selectedPatient: hospitalization,
         refundables: items,
         search: state.search,
       ),
       error: (e) => MobileRefundError(
         message: e.message,
-        previousState: MobileRefundIdle(patients: state.patients, search: state.search),
+        previousState: MobileRefundIdle(hospitalizations: state.hospitalizations, search: state.search),
       ),
     );
   }
@@ -96,7 +80,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
       case MobileRefundPatientSelected():
         // Yeni seçim — varsayılan miktar: 1
         state = MobileRefundDrugSelected(
-          patients: current.patients,
+          hospitalizations: current.hospitalizations,
           selectedPatient: current.selectedPatient,
           refundables: current.refundables,
           selectedItem: item,
@@ -108,7 +92,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
         if (current.selectedItem.id == item.id) {
           // Aynı ilaç — seçimi kaldır
           state = MobileRefundPatientSelected(
-            patients: current.patients,
+            hospitalizations: current.hospitalizations,
             selectedPatient: current.selectedPatient,
             refundables: current.refundables,
             search: current.search,
@@ -116,7 +100,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
         } else {
           // Farklı ilaç — yeni seçim
           state = MobileRefundDrugSelected(
-            patients: current.patients,
+            hospitalizations: current.hospitalizations,
             selectedPatient: current.selectedPatient,
             refundables: current.refundables,
             selectedItem: item,
@@ -152,7 +136,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
     );
 
     state = MobileRefundChecking(
-      patients: current.patients,
+      hospitalizations: current.hospitalizations,
       selectedPatient: current.selectedPatient,
       refundables: current.refundables,
       selectedItem: current.selectedItem,
@@ -174,7 +158,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
     }
 
     state = MobileRefundSaving(
-      patients: current.patients,
+      hospitalizations: current.hospitalizations,
       selectedPatient: current.selectedPatient,
       refundables: current.refundables,
       selectedItem: current.selectedItem,
@@ -189,7 +173,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
 
     await refundResult.when(
       ok: (_) => _refreshAfterRefund(
-        patients: current.patients,
+        hospitalizations: current.hospitalizations,
         selectedPatient: current.selectedPatient,
         search: current.search,
       ),
@@ -210,7 +194,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
     if (current is! MobileRefundSuccess) return;
     // Başarı sonrası aynı hasta seçili kalır; MobileRefundPatientSelected'a dön
     state = MobileRefundPatientSelected(
-      patients: current.patients,
+      hospitalizations: current.hospitalizations,
       selectedPatient: current.selectedPatient,
       refundables: current.refundables,
       search: current.search,
@@ -222,20 +206,20 @@ class RefundNotifier extends Notifier<MobileRefundState> {
     switch (current) {
       case MobileRefundDrugSelected():
         state = MobileRefundPatientSelected(
-          patients: current.patients,
+          hospitalizations: current.hospitalizations,
           selectedPatient: current.selectedPatient,
           refundables: current.refundables,
           search: current.search,
         );
       case MobileRefundPatientSelected():
-        state = MobileRefundIdle(patients: current.patients, search: current.search);
+        state = MobileRefundIdle(hospitalizations: current.hospitalizations, search: current.search);
       default:
         break;
     }
   }
 
   Future<void> _refreshAfterRefund({
-    required List<Hospitalization> patients,
+    required List<Hospitalization> hospitalizations,
     required Hospitalization selectedPatient,
     required String search,
   }) async {
@@ -243,7 +227,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
 
     state = result.when(
       ok: (items) => MobileRefundSuccess(
-        patients: patients,
+        hospitalizations: hospitalizations,
         selectedPatient: selectedPatient,
         refundables: items,
         message: '',
@@ -252,7 +236,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
       error: (e) => MobileRefundError(
         message: e.message,
         previousState: MobileRefundPatientSelected(
-          patients: patients,
+          hospitalizations: hospitalizations,
           selectedPatient: selectedPatient,
           refundables: const [],
           search: search,
@@ -266,5 +250,24 @@ class RefundNotifier extends Notifier<MobileRefundState> {
     // Yoksa prescribedQuantity - returnedQuantity gibi bir alan beklenir.
     // Burada alan adı projeye göre uyarlanmalıdır.
     return (item.dosePiece ?? 0).toDouble();
+  }
+
+  List<Hospitalization> _toHospitalizations(List<BedAssignment> assignments) {
+    return assignments.map((a) => a.hospitalization).whereType<Hospitalization>().toList();
+  }
+
+  void onSearchChanged(String query) {
+    final current = state;
+    state = switch (current) {
+      MobileRefundIdle() => current.copyWith(search: query),
+      MobileRefundPatientSelected() => current.copyWith(search: query),
+      MobileRefundDrugSelected() => MobileRefundPatientSelected(
+        hospitalizations: current.hospitalizations,
+        selectedPatient: current.selectedPatient,
+        refundables: current.refundables,
+        search: query,
+      ),
+      _ => current,
+    };
   }
 }

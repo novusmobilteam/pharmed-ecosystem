@@ -28,21 +28,21 @@ final class MobileWasteLoading extends MobileWasteState {
 
 /// Hasta listesi yüklendi, seçim bekleniyor.
 final class MobileWasteIdle extends MobileWasteState {
-  const MobileWasteIdle({required this.patients, this.search = ''});
+  const MobileWasteIdle({required this.hospitalizations, this.search = ''});
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final String search;
 
   MobileWasteIdle copyWith({String? search}) {
-    return MobileWasteIdle(patients: patients, search: search ?? this.search);
+    return MobileWasteIdle(hospitalizations: hospitalizations, search: search ?? this.search);
   }
 }
 
 /// Hasta seçildi, o hastanın fire/imha edilebilir ilaçları yükleniyor.
 final class MobileWastePatientLoading extends MobileWasteState {
-  const MobileWastePatientLoading({required this.patients, required this.selectedPatient, this.search = ''});
+  const MobileWastePatientLoading({required this.hospitalizations, required this.selectedPatient, this.search = ''});
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final String search;
 }
@@ -50,23 +50,34 @@ final class MobileWastePatientLoading extends MobileWasteState {
 /// Hasta seçildi, fire/imha edilebilir ilaç listesi hazır.
 final class MobileWastePatientSelected extends MobileWasteState {
   const MobileWastePatientSelected({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.disposables,
     this.search = '',
+    this.isPrescriptionsLoading = false,
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> disposables;
   final String search;
+  final bool isPrescriptionsLoading;
 
-  MobileWastePatientSelected copyWith({String? search}) {
+  static const _sentinel = Object();
+
+  MobileWastePatientSelected copyWith({
+    String? search,
+    Object? isPrescriptionsLoading = _sentinel,
+    List<PrescriptionItem>? refundables,
+  }) {
     return MobileWastePatientSelected(
-      patients: patients,
+      hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
       disposables: disposables,
       search: search ?? this.search,
+      isPrescriptionsLoading: isPrescriptionsLoading == _sentinel
+          ? this.isPrescriptionsLoading
+          : isPrescriptionsLoading as bool,
     );
   }
 }
@@ -74,7 +85,7 @@ final class MobileWastePatientSelected extends MobileWasteState {
 /// İlaç seçildi, miktar girilebilir.
 final class MobileWasteDrugSelected extends MobileWasteState {
   const MobileWasteDrugSelected({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.disposables,
     required this.selectedItem,
@@ -82,7 +93,7 @@ final class MobileWasteDrugSelected extends MobileWasteState {
     this.search = '',
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> disposables;
   final PrescriptionItem selectedItem;
@@ -93,7 +104,7 @@ final class MobileWasteDrugSelected extends MobileWasteState {
 
   MobileWasteDrugSelected copyWith({Object? quantity = _sentinel}) {
     return MobileWasteDrugSelected(
-      patients: patients,
+      hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
       disposables: disposables,
       selectedItem: selectedItem,
@@ -106,7 +117,7 @@ final class MobileWasteDrugSelected extends MobileWasteState {
 /// Fire veya imha servisi çalışıyor (MobileWastageUseCase / MobileDestructionUseCase).
 final class MobileWasteSaving extends MobileWasteState {
   const MobileWasteSaving({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.disposables,
     required this.selectedItem,
@@ -114,7 +125,7 @@ final class MobileWasteSaving extends MobileWasteState {
     this.search = '',
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> disposables;
   final PrescriptionItem selectedItem;
@@ -125,7 +136,7 @@ final class MobileWasteSaving extends MobileWasteState {
 /// İşlem tamamlandı — liste yenilenir, ardından dismiss edilir.
 final class MobileWasteSuccess extends MobileWasteState {
   const MobileWasteSuccess({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.disposables,
     required this.message,
@@ -133,7 +144,7 @@ final class MobileWasteSuccess extends MobileWasteState {
     this.search = '',
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> disposables;
   final String message;
@@ -153,14 +164,14 @@ final class MobileWasteError extends MobileWasteState {
 }
 
 extension MobileWasteStateX on MobileWasteState {
-  List<Hospitalization> get patients => switch (this) {
-    MobileWasteIdle(:final patients) => patients,
-    MobileWastePatientLoading(:final patients) => patients,
-    MobileWastePatientSelected(:final patients) => patients,
-    MobileWasteDrugSelected(:final patients) => patients,
-    MobileWasteSaving(:final patients) => patients,
-    MobileWasteSuccess(:final patients) => patients,
-    MobileWasteError(:final previousState) => previousState.patients,
+  List<Hospitalization> get hospitalizations => switch (this) {
+    MobileWasteIdle(:final hospitalizations) => hospitalizations,
+    MobileWastePatientLoading(:final hospitalizations) => hospitalizations,
+    MobileWastePatientSelected(:final hospitalizations) => hospitalizations,
+    MobileWasteDrugSelected(:final hospitalizations) => hospitalizations,
+    MobileWasteSaving(:final hospitalizations) => hospitalizations,
+    MobileWasteSuccess(:final hospitalizations) => hospitalizations,
+    MobileWasteError(:final previousState) => previousState.hospitalizations,
     _ => const [],
   };
 
@@ -178,8 +189,8 @@ extension MobileWasteStateX on MobileWasteState {
   /// Arama filtresi uygulanmış hasta listesi.
   List<Hospitalization> get filteredPatients {
     final q = search.trim().toLowerCase();
-    if (q.isEmpty) return patients;
-    return patients.where((h) {
+    if (q.isEmpty) return hospitalizations;
+    return hospitalizations.where((h) {
       final name = h.patient?.fullName.toLowerCase() ?? '';
       final room = h.room?.name?.toLowerCase() ?? '';
       return name.contains(q) || room.contains(q);
@@ -226,6 +237,17 @@ extension MobileWasteStateX on MobileWasteState {
   bool get canWaste => switch (this) {
     MobileWasteDrugSelected(:final selectedItem, :final quantity) =>
       quantity > 0 && ((selectedItem.status?.canWastage ?? false) || (selectedItem.status?.canDestruct ?? false)),
+    _ => false,
+  };
+
+  bool get isPrescriptionsLoading => switch (this) {
+    MobileWastePatientSelected(:final isPrescriptionsLoading) => isPrescriptionsLoading,
+    _ => false,
+  };
+
+  bool get isPatientSelected => switch (this) {
+    MobileWastePatientSelected() => true,
+    MobileWasteError(:final previousState) => previousState.isPatientSelected,
     _ => false,
   };
 }

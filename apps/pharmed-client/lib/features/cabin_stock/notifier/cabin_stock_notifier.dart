@@ -18,38 +18,39 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
   CabinStockState build() => const CabinStockUninitialized();
 
   Future<void> init(int cabinId) async {
-    if (state.cabinId == cabinId && state is! CabinStockUninitialized) return;
-
     state = CabinStockLoading(cabinId: cabinId);
 
     final result = await _getBedAssignments.call(cabinId);
 
-    state = result.when(
-      ok: (assignments) => CabinStockIdle(cabinId: cabinId, patients: _toPatients(assignments)),
-      error: (e) => CabinStockError(
-        message: e.message,
-        previousState: CabinStockIdle(cabinId: cabinId, patients: const []),
-      ),
+    await result.when(
+      ok: (assignments) async {
+        final hospitalizations = _toHospitalizations(assignments);
+        state = CabinStockIdle(cabinId: cabinId, hospitalizations: hospitalizations);
+        if (hospitalizations.isEmpty) return;
+
+        await onPatientTap(hospitalizations.first);
+      },
+      error: (error) {
+        state = CabinStockError(
+          message: error.message,
+          previousState: CabinStockIdle(cabinId: cabinId, hospitalizations: const []),
+        );
+      },
     );
   }
-
-  // ── onPatientTap ──────────────────────────────────────────────────────────
-  // Toggle: aynı hasta tekrar tıklanırsa Idle'a dön.
 
   Future<void> onPatientTap(Hospitalization hospitalization) async {
     final patientId = hospitalization.patient?.id;
     if (patientId == null) return;
 
-    // Toggle
     if (state.selectedPatient?.patient?.id == patientId) {
-      state = CabinStockIdle(cabinId: state.cabinId!, patients: state.patients, search: state.search);
+      state = CabinStockIdle(cabinId: state.cabinId!, hospitalizations: state.hospitalizations, search: state.search);
       return;
     }
 
-    // Yeni hasta — önce loading geçişini göster
     state = CabinStockPatientSelected(
       cabinId: state.cabinId!,
-      patients: state.patients,
+      hospitalizations: state.hospitalizations,
       selectedPatient: hospitalization,
       prescriptionItems: const [],
       search: state.search,
@@ -61,7 +62,7 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
     state = result.when(
       ok: (items) => CabinStockPatientSelected(
         cabinId: state.cabinId!,
-        patients: state.patients,
+        hospitalizations: state.hospitalizations,
         selectedPatient: hospitalization,
         // Yalnızca stokta olan (purchasePending) ilaçları göster
         prescriptionItems: _filterStockItems(items),
@@ -72,7 +73,7 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
         message: e.message,
         previousState: CabinStockPatientSelected(
           cabinId: state.cabinId!,
-          patients: state.patients,
+          hospitalizations: state.hospitalizations,
           selectedPatient: hospitalization,
           prescriptionItems: const [],
           search: state.search,
@@ -81,9 +82,6 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
       ),
     );
   }
-
-  // ── onDrugTap ─────────────────────────────────────────────────────────────
-  // Toggle: aynı ilaç tekrar tıklanırsa PatientSelected'a dön.
 
   void onDrugTap(PrescriptionItem item) {
     final current = state;
@@ -103,7 +101,7 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
     if (state.selectedItem?.id == item.id) {
       state = CabinStockPatientSelected(
         cabinId: state.cabinId!,
-        patients: state.patients,
+        hospitalizations: state.hospitalizations,
         selectedPatient: patient,
         prescriptionItems: items,
         search: state.search,
@@ -113,7 +111,7 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
 
     state = CabinStockDrugSelected(
       cabinId: state.cabinId!,
-      patients: state.patients,
+      hospitalizations: state.hospitalizations,
       selectedPatient: patient,
       prescriptionItems: items,
       selectedItem: item,
@@ -124,11 +122,15 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
   void onSearchChanged(String value) {
     final current = state;
     state = switch (current) {
-      CabinStockIdle() => CabinStockIdle(cabinId: current.cabinId, patients: current.patients, search: value),
+      CabinStockIdle() => CabinStockIdle(
+        cabinId: current.cabinId,
+        hospitalizations: current.hospitalizations,
+        search: value,
+      ),
       CabinStockPatientSelected() => current.copyWith(search: value),
       CabinStockDrugSelected() => CabinStockDrugSelected(
         cabinId: current.cabinId,
-        patients: current.patients,
+        hospitalizations: current.hospitalizations,
         selectedPatient: current.selectedPatient,
         prescriptionItems: current.prescriptionItems,
         selectedItem: current.selectedItem,
@@ -144,7 +146,7 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
   }
 
   /// BedAssignment listesinden null olmayan Hospitalization'ları çıkarır.
-  List<Hospitalization> _toPatients(List<BedAssignment> assignments) {
+  List<Hospitalization> _toHospitalizations(List<BedAssignment> assignments) {
     return assignments.map((a) => a.hospitalization).whereType<Hospitalization>().toList();
   }
 

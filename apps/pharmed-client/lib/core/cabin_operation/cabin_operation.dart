@@ -15,3 +15,6 @@ export 'master_drawer/start_master_drawer_session_usecase.dart';
 
 export 'patient_gateway/patient_selection_notifier.dart';
 export 'patient_gateway/patient_selection_state.dart';
+
+export 'cabin_connection/cabin_connection_notifier.dart';
+export 'cabin_connection/cabin_connection_state.dart';

@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/auth/auth.dart';
+import '../../features/dashboard/dashboard.dart';
 import '../setup/app_setup_notifier.dart';
 import '../../features/setup_wizard/view/setup_wizard_screen.dart';
-import '../../features/dashboard/presentation/view/dashboard_screen.dart';
 
 class AppRouter extends ConsumerWidget {
   const AppRouter({super.key});
@@ -19,6 +19,24 @@ class AppRouter extends ConsumerWidget {
     final authState = ref.watch(authNotifierProvider);
     final setupState = ref.watch(appSetupStatusProvider);
 
+    // ──────────────────────────────────────────────────────────────
+    // [GEÇİCİ - DEV] Setup wizard geliştirmesi için: login olunca
+    // setup durumundan bağımsız olarak her zaman SetupWizard'a git.
+    // Geliştirme bitince aşağıdaki blok silinip alttaki orijinal
+    // switch yorumdan çıkarılacak.
+    // ──────────────────────────────────────────────────────────────
+    // return switch (authState) {
+    //   AuthLoggedOut() => const LoginScreen(),
+    //   AuthError() => const LoginScreen(),
+    //   AuthLoading() => const LoginScreen(),
+    //   AuthLoggedIn() => const SetupWizardScreen(),
+    //   AuthSessionExpiring() => const SetupWizardScreen(),
+    //   _ => const LoginScreen(),
+    // };
+
+    // ──────────────────────────────────────────────────────────────
+    // [ORİJİNAL AKIŞ] Dev geçici blok kaldırılınca aşağısı aktif edilecek.
+    // ──────────────────────────────────────────────────────────────
     return switch ((authState, setupState)) {
       // Auth yok → direkt login
       (AuthLoggedOut(), _) => const LoginScreen(),

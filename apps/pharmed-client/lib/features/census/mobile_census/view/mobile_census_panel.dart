@@ -160,7 +160,6 @@ class _CensusPrescriptionList extends StatelessWidget {
           onTap: isSelectionLocked || item.id == null
               ? null
               : () {
-                  print('tapped: ${item.id}');
                   onToggleItem(item.id!);
                 },
         );
@@ -276,6 +275,11 @@ class _CancelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(label: context.l10n.common_cancelButton, size: MedButtonSize.sm, variant: MedButtonVariant.danger, onPressed: onTap);
+    return MedButton(
+      label: context.l10n.common_cancelButton,
+      size: MedButtonSize.sm,
+      variant: MedButtonVariant.danger,
+      onPressed: onTap,
+    );
   }
 }

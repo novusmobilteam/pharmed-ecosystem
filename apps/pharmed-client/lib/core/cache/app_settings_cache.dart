@@ -41,6 +41,7 @@ class AppSettingsCache {
   static const _keyCurrentCabinId = 'current_cabin_id';
   static const _keyLanguage = 'language';
   static const _keyComPort = 'com_port';
+  static const _keyManualRts = 'manual_rts';
 
   Box? _box;
 
@@ -117,6 +118,17 @@ class AppSettingsCache {
   Future<String?> getComPort() async {
     await _open();
     return _box!.get(_keyComPort) as String?;
+  }
+
+  Future<void> setManualRts(bool enabled) async {
+    await _open();
+    await _box!.put(_keyManualRts, enabled);
+  }
+
+  Future<bool> getManualRts() async {
+    await _open();
+    // Varsayılan: false (Waveshare otomatik-yön converter, saha standardı)
+    return _box!.get(_keyManualRts, defaultValue: false) as bool;
   }
 }
 

@@ -65,7 +65,7 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
   @override
   void didUpdateWidget(_PrescriptionBodyView old) {
     super.didUpdateWidget(old);
-    if (widget.cabinId != old.cabinId) _initialize(widget.cabinId);
+    _initialize(widget.cabinId);
   }
 
   void _initialize(int cabinId) {
@@ -88,16 +88,25 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
     });
 
     if (state is PrescriptionUninitialized || state is PrescriptionLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return Center(child: MedLoadingIndicator());
+    }
+
+    if (state.hospitalizations.isEmpty) {
+      return EmptyStateWidget(
+        icon: PhosphorIcons.usersThree(),
+        size: EmptyStateSize.normal,
+        title: context.l10n.prescription_noPatients_title,
+        description: context.l10n.prescription_noPatients_message,
+      );
     }
 
     return TwoColumnLayout(
       menuItem: widget.menu,
       leftTitle: context.l10n.common_patientListTitle,
-      leftSubtitle: context.l10n.common_patientCountSubtitle(state.patients.length),
+      leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
       leftIcon: PhosphorIcons.users(),
       left: PatientListPanel(
-        patients: state.patients,
+        patients: state.hospitalizations,
         selectedPatient: state.selectedPatient,
         isPatientLoading: state.isPrescriptionsLoading,
         search: state.search,
@@ -117,12 +126,12 @@ class _PrescriptionRightPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!state.isPatientSelected) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.error);
-    }
-
     if (state.isPrescriptionsLoading) {
       return Center(child: MedLoadingIndicator());
+    }
+
+    if (!state.isPatientSelected) {
+      return const EmptyStateWidget(variant: EmptyStateVariant.noPatientSelected);
     }
 
     return Padding(

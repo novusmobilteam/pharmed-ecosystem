@@ -18,7 +18,7 @@ enum EmptyStateSize {
       padding: EdgeInsets.all(32),
       boxSize: 64,
       iconSize: 28,
-      boxRadius: 16,
+      boxRadius: 10,
       titleSize: 14,
       iconBottomGap: 16,
       titleBottomGap: 6,

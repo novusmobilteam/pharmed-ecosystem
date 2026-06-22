@@ -104,73 +104,33 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return Stack(
-      children: [
-        MobileDrawerOperationWrapper(
-          child: CabinOperationScaffold(
-            leftPanel: MobileCabinOverviewPanel(
-              slots: state.slots,
-              selectedSlotId: state.selectedSlotId,
-              mode: CabinOperationMode.refill,
-              onSlotTap: notifier.onSlotTap,
-            ),
-            centerPanel: MobileCabinDrawerPanel(
-              mode: CabinOperationMode.refill,
-              slot: state.selectedSlot,
-              selectedCell: state.selectedCell,
-              onCellTap: notifier.onCellTap,
-              assignmentByCoord: state.assignmentByCoord,
-            ),
-            rightPanel: MobileRefillPanel(
-              state: state,
-              drawerStage: drawerStage,
-              onStartRefill: notifier.startRefill,
-              onCompleteRefill: notifier.completeRefill,
-              onReopenDrawer: notifier.reopenDrawer,
-              onSelectAssignment: notifier.selectAssignment,
-              onChangePatient: notifier.clearPatientSelection,
-              onToggleItem: notifier.toggleItemSelection,
-              onCancelRefill: () => _handleCancelRefill(state, drawerStage),
-            ),
-          ),
+    return MobileDrawerOperationWrapper(
+      child: CabinOperationScaffold(
+        leftPanel: MobileCabinOverviewPanel(
+          slots: state.slots,
+          selectedSlotId: state.selectedSlotId,
+          mode: CabinOperationMode.refill,
+          onSlotTap: notifier.onSlotTap,
         ),
-
-        // ── GEÇİCİ DEBUG OVERLAY — TEST SONRASI KALDIR ──
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 600,
-          child: IgnorePointer(
-            child: Container(
-              height: 700,
-              width: 400,
-              color: Colors.black.withOpacity(0.85),
-              padding: const EdgeInsets.all(6),
-              child: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                reverse: false,
-                child: Text(
-                  MedLogger.recentLogs
-                      .where(
-                        (e) =>
-                            e.unit == 'SW-UNIT-SER' ||
-                            e.unit == 'CabinOps' ||
-                            e.unit.contains('Rfid') ||
-                            e.unit.contains('MobileDrawer'),
-                      )
-                      .map(
-                        (e) =>
-                            '${e.timestamp.toIso8601String().substring(11, 23)} '
-                            '[${e.unit}] ${e.message} ${e.context ?? ''}',
-                      )
-                      .join('\n'),
-                  style: const TextStyle(color: Colors.greenAccent, fontSize: 12, fontFamily: 'monospace'),
-                ),
-              ),
-            ),
-          ),
+        centerPanel: MobileCabinDrawerPanel(
+          mode: CabinOperationMode.refill,
+          slot: state.selectedSlot,
+          selectedCell: state.selectedCell,
+          onCellTap: notifier.onCellTap,
+          assignmentByCoord: state.assignmentByCoord,
         ),
-      ],
+        rightPanel: MobileRefillPanel(
+          state: state,
+          drawerStage: drawerStage,
+          onStartRefill: notifier.startRefill,
+          onCompleteRefill: notifier.completeRefill,
+          onReopenDrawer: notifier.reopenDrawer,
+          onSelectAssignment: notifier.selectAssignment,
+          onChangePatient: notifier.clearPatientSelection,
+          onToggleItem: notifier.toggleItemSelection,
+          onCancelRefill: () => _handleCancelRefill(state, drawerStage),
+        ),
+      ),
     );
   }
 }

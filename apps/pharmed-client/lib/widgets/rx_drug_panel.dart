@@ -165,16 +165,6 @@ class _RxDrugList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty) {
-      return Center(
-        child: Text(
-          emptyMessage ?? context.l10n.common_drug_noFilterResults,
-          style: MedTextStyles.bodySm(color: MedColors.text4),
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-
     return ListView.separated(
       itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.md),

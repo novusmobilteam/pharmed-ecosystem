@@ -29,13 +29,13 @@ final class MobileRefundLoading extends MobileRefundState {
 
 /// Hasta listesi yüklendi, seçim bekleniyor.
 final class MobileRefundIdle extends MobileRefundState {
-  const MobileRefundIdle({required this.patients, this.search = ''});
+  const MobileRefundIdle({required this.hospitalizations, this.search = ''});
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final String search;
 
   MobileRefundIdle copyWith({String? search}) {
-    return MobileRefundIdle(patients: patients, search: search ?? this.search);
+    return MobileRefundIdle(hospitalizations: hospitalizations, search: search ?? this.search);
   }
 }
 
@@ -51,23 +51,34 @@ final class MobileRefundPatientLoading extends MobileRefundState {
 /// Hasta seçildi, iade edilebilir ilaç listesi hazır.
 final class MobileRefundPatientSelected extends MobileRefundState {
   const MobileRefundPatientSelected({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.refundables,
     this.search = '',
+    this.isPrescriptionsLoading = false,
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> refundables;
   final String search;
+  final bool isPrescriptionsLoading;
 
-  MobileRefundPatientSelected copyWith({String? search}) {
+  static const _sentinel = Object();
+
+  MobileRefundPatientSelected copyWith({
+    String? search,
+    Object? isPrescriptionsLoading = _sentinel,
+    List<PrescriptionItem>? refundables,
+  }) {
     return MobileRefundPatientSelected(
-      patients: patients,
+      hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
-      refundables: refundables,
+      refundables: refundables ?? this.refundables,
       search: search ?? this.search,
+      isPrescriptionsLoading: isPrescriptionsLoading == _sentinel
+          ? this.isPrescriptionsLoading
+          : isPrescriptionsLoading as bool,
     );
   }
 }
@@ -75,7 +86,7 @@ final class MobileRefundPatientSelected extends MobileRefundState {
 /// İlaç seçildi, miktar girilebilir.
 final class MobileRefundDrugSelected extends MobileRefundState {
   const MobileRefundDrugSelected({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.refundables,
     required this.selectedItem,
@@ -83,7 +94,7 @@ final class MobileRefundDrugSelected extends MobileRefundState {
     this.search = '',
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> refundables;
   final PrescriptionItem selectedItem;
@@ -94,7 +105,7 @@ final class MobileRefundDrugSelected extends MobileRefundState {
 
   MobileRefundDrugSelected copyWith({Object? quantity = _sentinel}) {
     return MobileRefundDrugSelected(
-      patients: patients,
+      hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
       refundables: refundables,
       selectedItem: selectedItem,
@@ -107,7 +118,7 @@ final class MobileRefundDrugSelected extends MobileRefundState {
 /// Kontrol servisi çalışıyor (CheckMobileRefundStatusUseCase).
 final class MobileRefundChecking extends MobileRefundState {
   const MobileRefundChecking({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.refundables,
     required this.selectedItem,
@@ -115,7 +126,7 @@ final class MobileRefundChecking extends MobileRefundState {
     this.search = '',
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> refundables;
   final PrescriptionItem selectedItem;
@@ -126,7 +137,7 @@ final class MobileRefundChecking extends MobileRefundState {
 /// İade servisi çalışıyor (CompleteMobileRefundUseCase).
 final class MobileRefundSaving extends MobileRefundState {
   const MobileRefundSaving({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.refundables,
     required this.selectedItem,
@@ -134,7 +145,7 @@ final class MobileRefundSaving extends MobileRefundState {
     this.search = '',
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> refundables;
   final PrescriptionItem selectedItem;
@@ -145,14 +156,14 @@ final class MobileRefundSaving extends MobileRefundState {
 /// İade tamamlandı — liste yenilenir, ardından dismiss edilir.
 final class MobileRefundSuccess extends MobileRefundState {
   const MobileRefundSuccess({
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.refundables,
     required this.message,
     this.search = '',
   });
 
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> refundables;
   final String message;
@@ -168,15 +179,15 @@ final class MobileRefundError extends MobileRefundState {
 }
 
 extension MobileRefundStateX on MobileRefundState {
-  List<Hospitalization> get patients => switch (this) {
-    MobileRefundIdle(:final patients) => patients,
+  List<Hospitalization> get hospitalizations => switch (this) {
+    MobileRefundIdle(:final hospitalizations) => hospitalizations,
     MobileRefundPatientLoading(:final patients) => patients,
-    MobileRefundPatientSelected(:final patients) => patients,
-    MobileRefundDrugSelected(:final patients) => patients,
-    MobileRefundChecking(:final patients) => patients,
-    MobileRefundSaving(:final patients) => patients,
-    MobileRefundSuccess(:final patients) => patients,
-    MobileRefundError(:final previousState) => previousState.patients,
+    MobileRefundPatientSelected(:final hospitalizations) => hospitalizations,
+    MobileRefundDrugSelected(:final hospitalizations) => hospitalizations,
+    MobileRefundChecking(:final hospitalizations) => hospitalizations,
+    MobileRefundSaving(:final hospitalizations) => hospitalizations,
+    MobileRefundSuccess(:final hospitalizations) => hospitalizations,
+    MobileRefundError(:final previousState) => previousState.hospitalizations,
     _ => const [],
   };
 
@@ -195,8 +206,8 @@ extension MobileRefundStateX on MobileRefundState {
   /// Arama filtresi uygulanmış hasta listesi.
   List<Hospitalization> get filteredPatients {
     final q = search.trim().toLowerCase();
-    if (q.isEmpty) return patients;
-    return patients.where((h) {
+    if (q.isEmpty) return hospitalizations;
+    return hospitalizations.where((h) {
       final name = h.patient?.fullName.toLowerCase() ?? '';
       final room = h.room?.name?.toLowerCase() ?? '';
       return name.contains(q) || room.contains(q);
@@ -251,6 +262,17 @@ extension MobileRefundStateX on MobileRefundState {
   bool get canRefund => switch (this) {
     MobileRefundDrugSelected(:final selectedItem, :final quantity) =>
       quantity > 0 && (selectedItem.status?.canReturn ?? false),
+    _ => false,
+  };
+
+  bool get isPatientSelected => switch (this) {
+    MobileRefundPatientSelected() => true,
+    MobileRefundError(:final previousState) => previousState.isPatientSelected,
+    _ => false,
+  };
+
+  bool get isPrescriptionsLoading => switch (this) {
+    MobileRefundPatientSelected(:final isPrescriptionsLoading) => isPrescriptionsLoading,
     _ => false,
   };
 }

@@ -45,6 +45,8 @@ enum EmptyStateVariant {
   /// Servisten veri gelmedi / liste boş.
   noData,
 
+  noPatientSelected,
+
   /// Özel içerik.
   ///
   /// [EmptyStateWidget.icon], [EmptyStateWidget.title] ve

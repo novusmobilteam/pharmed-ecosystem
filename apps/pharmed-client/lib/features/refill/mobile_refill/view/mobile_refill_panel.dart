@@ -138,11 +138,22 @@ class _PrescriptionList extends StatelessWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.noPrescription);
     }
 
+    // 1. Orijinal listeyi bozmamak için bir kopyasını oluşturup sıralıyoruz.
+    final sortedItems = List<PrescriptionItem>.from(items)
+      ..sort((a, b) {
+        final aCanFill = a.lastMovement?.type.canFill ?? false;
+        final bCanFill = b.lastMovement?.type.canFill ?? false;
+
+        if (aCanFill && !bCanFill) return -1; // 'a' dolum bekliyor, başa al
+        if (!aCanFill && bCanFill) return 1; // 'b' dolum bekliyor, 'a'yı arkaya at
+        return 0; // Durumları aynıysa sırayı bozma
+      });
+
     return ListView.builder(
       padding: const EdgeInsets.only(top: 6, bottom: 6, right: 2),
       itemCount: items.length,
       itemBuilder: (context, index) {
-        final item = items[index];
+        final item = sortedItems[index];
 
         final isEligible = item.status?.canFill ?? false;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);

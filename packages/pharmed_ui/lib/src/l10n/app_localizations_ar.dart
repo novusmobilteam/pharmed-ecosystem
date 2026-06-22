@@ -615,6 +615,12 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get wizard_successReloginPrompt => 'يجب عليك تسجيل الدخول للمتابعة.';
+
+  @override
+  String get wizard_successLoginButton => 'تسجيل الدخول';
+
+  @override
   String get wizard_successDashboardButton => 'الانتقال إلى Dashboard';
 
   @override
@@ -1257,4 +1263,54 @@ class AppLocalizationsAr extends AppLocalizations {
   String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps) {
     return '$groupCount مجموعات · $steps خطوات × $mult';
   }
+
+  @override
+  String get dashboard_cabinConnectionStatus_connected => 'متصل';
+
+  @override
+  String get dashboard_cabinConnectionStatus_connecting => 'جارٍ الاتصال…';
+
+  @override
+  String get dashboard_cabinConnectionStatus_error => 'لا يوجد اتصال';
+
+  @override
+  String get dashboard_cabinConnectionStatus_disconnected => 'غير متصل';
+
+  @override
+  String get dashboard_cabinConnection_reconnectButton => 'إعادة الاتصال';
+
+  @override
+  String get prescription_noPatients_title => 'لا يوجد مرضى معينون';
+
+  @override
+  String get prescription_noPatients_message =>
+      'لم يتم تعيين أي مريض لهذه الخزانة بعد. يجب تعيين المرضى قبل أن تتمكن من مراجعة الطلبات.';
+
+  @override
+  String get myPatients_empty_title => 'لم تختر أي مريض بعد';
+
+  @override
+  String get myPatients_empty_description =>
+      'اختر المرضى من القائمة على اليسار لإضافتهم إلى قائمة مرضاك. سيظهر المرضى الذين اخترتهم هنا.';
+
+  @override
+  String get cabin_stock_empty_title => 'لا يوجد مخزون لهذا المريض';
+
+  @override
+  String get cabin_stock_empty_description =>
+      'لا توجد أدوية مخزّنة لهذا المريض في هذه الخزانة بعد.';
+
+  @override
+  String get unadministered_prescriptions_empty_title => 'لا توجد وصفات معلّقة';
+
+  @override
+  String get unadministered_prescriptions_empty_description =>
+      'لا توجد وصفات بانتظار التطبيق لهذا المريض.';
+
+  @override
+  String get empty_state_no_patient_selected_title => 'اختر مريضًا';
+
+  @override
+  String get empty_state_no_patient_selected_description =>
+      'اختر مريضًا من القائمة لعرض تفاصيله.';
 }

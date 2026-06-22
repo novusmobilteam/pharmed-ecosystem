@@ -30,7 +30,7 @@ class AssignRfidTagUseCase {
   static const _defaultPort = 6000;
 
   /// İlk tag için maksimum bekleme süresi.
-  static const _firstTagTimeout = Duration(seconds: 3);
+  static const _firstTagTimeout = Duration(seconds: 10);
 
   /// İlk tag geldikten sonra ek toplama penceresi (komşu tag'lerin RSSI'ı için).
   static const _collectionWindow = Duration(milliseconds: 500);

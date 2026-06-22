@@ -34,6 +34,8 @@ class LanguageSelectorView extends ConsumerWidget {
               child: _LangRow(lang: lang, isSelected: lang == current, onTap: () => notifier.setLanguage(lang)),
             ),
           ),
+
+          SizedBox(height: 12),
         ],
       ),
     );

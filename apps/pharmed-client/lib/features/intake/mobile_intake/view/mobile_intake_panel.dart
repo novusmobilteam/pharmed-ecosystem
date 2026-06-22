@@ -151,11 +151,33 @@ class _PrescriptionList extends StatelessWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.noPrescription);
     }
 
+    // 1. Listeyi kopyalayıp çift kriterli (Durum + Saat) sıralıyoruz.
+    final sortedItems = List<PrescriptionItem>.from(items)
+      ..sort((a, b) {
+        final aIsPurchasePending = a.status == PrescriptionMovementType.purchasePending;
+        final bIsPurchasePending = b.status == PrescriptionMovementType.purchasePending;
+
+        // Kriter 1: Durum kontrolü (Alım bekleyenler üste)
+        if (aIsPurchasePending && !bIsPurchasePending) return -1;
+        if (!aIsPurchasePending && bIsPurchasePending) return 1;
+
+        // Kriter 2: Durumlar aynıysa saate göre sırala (Erken olan üste)
+        if (a.time != null && b.time != null) {
+          return a.time!.compareTo(b.time!); // Artan sırada (08:00, 09:00...)
+        }
+
+        // Saat null kontrolü koruması (Saati olmayanları alta iter)
+        if (a.time != null && b.time == null) return -1;
+        if (a.time == null && b.time != null) return 1;
+
+        return 0;
+      });
+
     return ListView.builder(
       padding: const EdgeInsets.only(top: 6, bottom: 6, right: 2),
       itemCount: items.length,
       itemBuilder: (context, index) {
-        final item = items[index];
+        final item = sortedItems[index];
 
         final isEligible = item.status == PrescriptionMovementType.purchasePending;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);

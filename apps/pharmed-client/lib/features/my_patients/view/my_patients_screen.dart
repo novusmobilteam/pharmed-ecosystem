@@ -185,7 +185,13 @@ class _MyPatientsPanel extends StatelessWidget {
       children: [
         Expanded(
           child: myPatients.isEmpty
-              ? const EmptyStateWidget(variant: EmptyStateVariant.error)
+              ? EmptyStateWidget(
+                  variant: EmptyStateVariant.custom,
+
+                  icon: PhosphorIcons.userPlus(),
+                  title: context.l10n.myPatients_empty_title,
+                  description: context.l10n.myPatients_empty_description,
+                )
               : ListView.separated(
                   padding: const EdgeInsets.all(MedSpacing.xl),
                   itemCount: myPatients.length,

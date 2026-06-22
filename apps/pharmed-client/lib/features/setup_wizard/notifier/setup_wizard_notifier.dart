@@ -75,7 +75,6 @@ class SetupWizardNotifier extends Notifier<SetupWizardState> {
     }
 
     final mobileLayout = cabinType == CabinType.mobile ? step4Mobile.mobileLayout : null;
-
     final scannedLayout = cabinType == CabinType.master ? step4Master.scannedLayout : null;
 
     if (cabinType == CabinType.mobile && mobileLayout == null) return;
@@ -110,6 +109,11 @@ class SetupWizardNotifier extends Notifier<SetupWizardState> {
         );
         await appSettingsCache.markSetupComplete(deviceMode: config.cabinType.name);
         await appSettingsCache.saveCurrentCabinId(cabinId);
+
+        final comPort = config.basicInfo.comPort;
+        if (comPort != null && comPort.isNotEmpty) {
+          await appSettingsCache.saveComPort(comPort);
+        }
         ref.invalidate(cachedDeviceModeProvider);
         ref.invalidate(deviceModeProvider);
         state = WizardSaved(cabinId: cabinId, cabinName: config.basicInfo.cabinName);

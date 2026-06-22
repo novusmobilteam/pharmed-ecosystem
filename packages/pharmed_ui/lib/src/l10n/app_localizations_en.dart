@@ -617,6 +617,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get wizard_successReloginPrompt => 'You must log in to continue.';
+
+  @override
+  String get wizard_successLoginButton => 'Log In';
+
+  @override
   String get wizard_successDashboardButton => 'Go to Dashboard';
 
   @override
@@ -1255,4 +1261,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps) {
     return '$groupCount groups · $steps steps × $mult';
   }
+
+  @override
+  String get dashboard_cabinConnectionStatus_connected => 'Connected';
+
+  @override
+  String get dashboard_cabinConnectionStatus_connecting => 'Connecting…';
+
+  @override
+  String get dashboard_cabinConnectionStatus_error => 'No Connection';
+
+  @override
+  String get dashboard_cabinConnectionStatus_disconnected => 'Disconnected';
+
+  @override
+  String get dashboard_cabinConnection_reconnectButton => 'Reconnect';
+
+  @override
+  String get prescription_noPatients_title => 'No Assigned Patients';
+
+  @override
+  String get prescription_noPatients_message =>
+      'No patients have been assigned to this cabinet yet. Patients must be assigned before prescriptions can be reviewed.';
+
+  @override
+  String get myPatients_empty_title => 'No Patients Selected Yet';
+
+  @override
+  String get myPatients_empty_description =>
+      'Select patients from the list on the left to add them to your patient list. Your selected patients will appear here.';
+
+  @override
+  String get cabin_stock_empty_title => 'No stock for this patient';
+
+  @override
+  String get cabin_stock_empty_description =>
+      'This patient has no medications stocked in this cabin yet.';
+
+  @override
+  String get unadministered_prescriptions_empty_title =>
+      'No pending prescriptions';
+
+  @override
+  String get unadministered_prescriptions_empty_description =>
+      'There are no prescriptions waiting to be administered for this patient.';
+
+  @override
+  String get empty_state_no_patient_selected_title => 'Select a patient';
+
+  @override
+  String get empty_state_no_patient_selected_description =>
+      'Choose a patient from the list to view their details.';
 }

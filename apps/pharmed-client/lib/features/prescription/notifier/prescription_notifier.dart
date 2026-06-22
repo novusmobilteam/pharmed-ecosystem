@@ -20,18 +20,23 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
   PrescriptionState build() => const PrescriptionUninitialized();
 
   Future<void> init(int cabinId) async {
-    if (state.cabinId == cabinId && state is! PrescriptionUninitialized) return;
-
     state = PrescriptionLoading(cabinId: cabinId);
-
     final result = await _getBedAssignments.call(cabinId);
 
-    state = result.when(
-      ok: (assignments) => PrescriptionIdle(cabinId: cabinId, patients: _toPatients(assignments)),
-      error: (e) => PrescriptionError(
-        message: e.message,
-        previousState: PrescriptionIdle(cabinId: cabinId, patients: const []),
-      ),
+    await result.when(
+      ok: (assignments) async {
+        final hospitalizations = _toHospitalizations(assignments);
+        state = PrescriptionIdle(cabinId: cabinId, hospitalizations: hospitalizations);
+        if (hospitalizations.isEmpty) return;
+
+        await onPatientTap(hospitalizations.first);
+      },
+      error: (error) {
+        state = PrescriptionError(
+          message: error.message,
+          previousState: PrescriptionIdle(cabinId: cabinId, hospitalizations: const []),
+        );
+      },
     );
   }
 
@@ -39,15 +44,14 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
     final patientId = hospitalization.patient?.id;
     if (patientId == null) return;
 
-    // Toggle
     if (state.selectedPatient?.patient?.id == patientId) {
-      state = PrescriptionIdle(cabinId: state.cabinId!, patients: state.patients, search: state.search);
+      state = PrescriptionIdle(cabinId: state.cabinId!, hospitalizations: state.hospitalizations, search: state.search);
       return;
     }
 
     state = PrescriptionPatientSelected(
       cabinId: state.cabinId!,
-      patients: state.patients,
+      hospitalizations: state.hospitalizations,
       selectedPatient: hospitalization,
       prescriptionItems: const [],
       search: state.search,
@@ -59,7 +63,7 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
     state = result.when(
       ok: (items) => PrescriptionPatientSelected(
         cabinId: state.cabinId!,
-        patients: state.patients,
+        hospitalizations: state.hospitalizations,
         selectedPatient: hospitalization,
         // Filtre yok — tüm statusler gösterilir
         prescriptionItems: items,
@@ -70,7 +74,7 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
         message: e.message,
         previousState: PrescriptionPatientSelected(
           cabinId: state.cabinId!,
-          patients: state.patients,
+          hospitalizations: state.hospitalizations,
           selectedPatient: hospitalization,
           prescriptionItems: const [],
           search: state.search,
@@ -82,7 +86,7 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
 
   void onSearchChanged(String value) {
     state = switch (state) {
-      PrescriptionIdle s => PrescriptionIdle(cabinId: s.cabinId, patients: s.patients, search: value),
+      PrescriptionIdle s => PrescriptionIdle(cabinId: s.cabinId, hospitalizations: s.hospitalizations, search: value),
       PrescriptionPatientSelected s => s.copyWith(search: value),
       _ => state,
     };
@@ -93,7 +97,7 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
     if (current is PrescriptionError) state = current.previousState;
   }
 
-  List<Hospitalization> _toPatients(List<BedAssignment> assignments) {
+  List<Hospitalization> _toHospitalizations(List<BedAssignment> assignments) {
     return assignments.map((a) => a.hospitalization).whereType<Hospitalization>().toList();
   }
 }

@@ -38,9 +38,10 @@ class DashboardContentFactory {
           'drug-unload' => UnloadView(),
           'drug-census' => CensusView(),
           'drawer-malfunction' => FaultView(),
-          'cabin-stock' => CabinStockView(),
+          'cabin-stock' => activeMenu != null ? CabinStockView(menu: activeMenu) : const SizedBox.shrink(),
           'patient-request-review' => activeMenu != null ? PrescriptionView(menu: activeMenu) : const SizedBox.shrink(),
-          'unapplied-prescriptions' => UnappliedPrescriptionScreen(),
+          'unapplied-prescriptions' =>
+            activeMenu != null ? UnappliedPrescriptionScreen(menu: activeMenu) : const SizedBox.shrink(),
           'my-patients' => activeMenu != null ? MyPatientsScreen(menu: activeMenu) : const SizedBox.shrink(),
 
           // Fallback

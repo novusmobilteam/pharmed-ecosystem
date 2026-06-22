@@ -608,6 +608,9 @@
     }
   },
 
+  "wizard_successReloginPrompt": "İşleminize devam etmek için giriş yapmalısınız.",
+  "wizard_successLoginButton": "Giriş Yap",
+
   "wizard_successCabinId": "Kabin ID: #{id}",
   "@wizard_successCabinId": {
     "description": "Cabin ID badge shown on the wizard success screen",
@@ -1174,5 +1177,26 @@
       "steps": { "type": "Object" },
       "mult": { "type": "Object" }
     }
-  }
+  },
+
+  "dashboard_cabinConnectionStatus_connected": "Bağlı",
+"dashboard_cabinConnectionStatus_connecting": "Bağlanıyor…",
+"dashboard_cabinConnectionStatus_error": "Bağlantı Yok",
+"dashboard_cabinConnectionStatus_disconnected": "Bağlı Değil",
+"dashboard_cabinConnection_reconnectButton": "Yeniden Bağlan",
+
+"prescription_noPatients_title": "Atanmış Hasta Yok",
+"prescription_noPatients_message": "Bu kabine henüz hasta atanmamış. İstem inceleyebilmek için önce kabine hasta atanması gerekir.",
+
+"myPatients_empty_title": "Henüz Hasta Seçmediniz",
+"myPatients_empty_description": "Soldaki listeden hasta seçerek kendi hasta listenize ekleyebilirsiniz. Seçtiğiniz hastalar burada görünür.",
+
+"cabin_stock_empty_title": "Bu hastaya ait stok yok",
+"cabin_stock_empty_description": "Seçili hastaya ait bu kabinde henüz stoklanmış ilaç bulunmuyor.",
+
+"unadministered_prescriptions_empty_title": "Bekleyen reçete yok",
+"unadministered_prescriptions_empty_description": "Bu hastaya uygulanmayı bekleyen reçete bulunmuyor.",
+
+"empty_state_no_patient_selected_title": "Bir hasta seçin",
+"empty_state_no_patient_selected_description": "Detayları görüntülemek için listeden bir hasta seçin."
 }

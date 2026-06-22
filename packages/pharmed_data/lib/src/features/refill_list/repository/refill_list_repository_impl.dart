@@ -1,8 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-import '../refill_list.dart';
-
 class RefillListRepositoryImpl implements IRefillListRepository {
   const RefillListRepositoryImpl({
     required RefillListRemoteDataSource dataSource,

@@ -52,10 +52,10 @@ final class CabinStockLoading extends CabinStockState {
 // ── Idle ─────────────────────────────────────────────────────────────────────
 
 final class CabinStockIdle extends CabinStockState {
-  const CabinStockIdle({required this.cabinId, required this.patients, this.search = ''});
+  const CabinStockIdle({required this.cabinId, required this.hospitalizations, this.search = ''});
 
   final int cabinId;
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final String search;
 }
 
@@ -64,7 +64,7 @@ final class CabinStockIdle extends CabinStockState {
 final class CabinStockPatientSelected extends CabinStockState {
   const CabinStockPatientSelected({
     required this.cabinId,
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.prescriptionItems,
     this.search = '',
@@ -72,7 +72,7 @@ final class CabinStockPatientSelected extends CabinStockState {
   });
 
   final int cabinId;
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
 
   /// Yalnızca PrescriptionStatus.purchasePending olanlar.
@@ -90,7 +90,7 @@ final class CabinStockPatientSelected extends CabinStockState {
   }) {
     return CabinStockPatientSelected(
       cabinId: cabinId,
-      patients: patients,
+      hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       search: search ?? this.search,
@@ -106,7 +106,7 @@ final class CabinStockPatientSelected extends CabinStockState {
 final class CabinStockDrugSelected extends CabinStockState {
   const CabinStockDrugSelected({
     required this.cabinId,
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.prescriptionItems,
     required this.selectedItem,
@@ -114,7 +114,7 @@ final class CabinStockDrugSelected extends CabinStockState {
   });
 
   final int cabinId;
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
   final List<PrescriptionItem> prescriptionItems;
   final PrescriptionItem selectedItem;
@@ -144,11 +144,11 @@ extension CabinStockStateX on CabinStockState {
     _ => null,
   };
 
-  List<Hospitalization> get patients => switch (this) {
-    CabinStockIdle(:final patients) => patients,
-    CabinStockPatientSelected(:final patients) => patients,
-    CabinStockDrugSelected(:final patients) => patients,
-    CabinStockError(:final previousState) => previousState.patients,
+  List<Hospitalization> get hospitalizations => switch (this) {
+    CabinStockIdle(:final hospitalizations) => hospitalizations,
+    CabinStockPatientSelected(:final hospitalizations) => hospitalizations,
+    CabinStockDrugSelected(:final hospitalizations) => hospitalizations,
+    CabinStockError(:final previousState) => previousState.hospitalizations,
     _ => const [],
   };
 

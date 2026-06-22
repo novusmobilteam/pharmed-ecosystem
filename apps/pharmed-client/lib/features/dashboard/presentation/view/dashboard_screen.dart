@@ -16,6 +16,7 @@ import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescri
 import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../auth/auth.dart';
 import '../../../census/census.dart';

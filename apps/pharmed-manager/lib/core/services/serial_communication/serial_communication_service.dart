@@ -204,4 +204,9 @@ class SerialCommunicationService implements ISerialCommunicationService {
     // TODO: implement getAvailablePorts
     throw UnimplementedError();
   }
+
+  @override
+  void setManualRts(bool value) {
+    // TODO: implement setManualRts
+  }
 }

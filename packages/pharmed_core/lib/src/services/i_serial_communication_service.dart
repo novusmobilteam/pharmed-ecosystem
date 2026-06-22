@@ -39,4 +39,6 @@ abstract interface class ISerialCommunicationService {
 
   /// Bağlantıyı kapatır ve tüm kaynakları serbest bırakır.
   Future<void> disconnect();
+
+  void setManualRts(bool value);
 }

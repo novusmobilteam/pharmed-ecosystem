@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,22 +10,7 @@ import 'features/settings/presentation/notifier/settings_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Hive.initFlutter();
-  // Tanılama log dosyası
-  try {
-    // TEMP her zaman yazılabilir
-    final logPath = '${Directory.systemTemp.path}\\pharmed_diag.log';
-    final logFile = File(logPath);
-    logFile.writeAsStringSync('=== LOG BAŞLADI ${DateTime.now()} ===\n', flush: true);
-    MedLogger.setRemoteSink(FileLogSink(logFile));
-  } catch (e) {
-    // En azından bunu görelim diye — bir dosyaya hata yaz
-    try {
-      File('${Directory.systemTemp.path}\\pharmed_logerror.txt').writeAsStringSync('Log kurulamadı: $e', flush: true);
-    } catch (_) {}
-  }
-
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -39,6 +22,7 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   late final SerialPortLifecycleObserver _observer;
+  final _navigatorKey = GlobalKey<NavigatorState>(); // <-- ekle
 
   @override
   void initState() {
@@ -61,6 +45,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       child: MaterialApp(
         title: 'Pharmed',
         debugShowCheckedModeBanner: false,
+        navigatorKey: _navigatorKey, // <-- ekle
         locale: locale,
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -70,7 +55,45 @@ class _MyAppState extends ConsumerState<MyApp> {
         ],
         supportedLocales: const [Locale('tr'), Locale('en'), Locale('ar')],
         home: const AppRouter(),
+        // builder: (context, child) {
+        //   return Stack(
+        //     children: [
+        //       if (child != null) child,
+        //       Positioned(
+        //         right: 12,
+        //         bottom: 12,
+        //         child: _LogLauncherButton(navigatorKey: _navigatorKey), // <-- key'i geçir
+        //       ),
+        //     ],
+        //   );
+        // },
       ),
     );
   }
 }
+
+// class _LogLauncherButton extends StatelessWidget {
+//   const _LogLauncherButton({required this.navigatorKey});
+//   final GlobalKey<NavigatorState> navigatorKey;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Material(
+//       color: Colors.transparent,
+//       child: SizedBox(
+//         width: 40,
+//         height: 40,
+//         child: FloatingActionButton.small(
+//           heroTag: 'global_log_viewer',
+//           backgroundColor: Colors.black.withOpacity(0.75),
+//           elevation: 2,
+//           onPressed: () {
+//             // context yerine navigatorKey üzerinden push — Navigator garantili
+//             navigatorKey.currentState?.push(MaterialPageRoute(builder: (_) => const LogViewerScreen()));
+//           },
+//           child: const Icon(Icons.terminal, size: 18, color: Colors.greenAccent),
+//         ),
+//       ),
+//     );
+//   }
+// }

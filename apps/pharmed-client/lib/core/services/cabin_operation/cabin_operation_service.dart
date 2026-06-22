@@ -77,12 +77,18 @@ class CabinOperationService implements ICabinOperationService {
   Future<ManagementCard?> _tryConnectAndScan(String port) async {
     try {
       if (_serialService.isConnected) {
-        await _serialService.disconnect(); // ya da _forceCleanup
+        await _serialService.disconnect();
       }
 
       _cachedManager = null;
+
+      // RS485 yön modunu cache'den uygula
+      final manualRts = await _settingsCache.getManualRts();
+      _serialService.setManualRts(manualRts);
+
       await _serialService.connectToPort(port);
       final found = await scanManagementCard();
+
       if (found != null) {
         _cachedManager = found;
         return found;
@@ -102,35 +108,59 @@ class CabinOperationService implements ICabinOperationService {
   Future<ManagementCard?> scanManagementCard() async {
     debugPrint('🔍 Yönetim kartı aranıyor...');
 
-    // İLK-TX-KAYBI/GECİKME ABSORBE:
-    // Bağlantıdan sonraki ilk komut hatta geç çıkıyor, yanıtı bir sonraki
-    // sorgunun hanesine kayıyor. Zararsız bir warmup ile hattı uyandır.
-    try {
-      await _serialService.sendAndReceive(
-        CommandBuilder.buildManagementCommand(addressIndex: 1, row: 0),
-        timeout: const Duration(milliseconds: 1200),
-      );
-    } catch (_) {}
-    await Future.delayed(const Duration(milliseconds: 250));
+    // Warmup — hattı uyandır
+    for (int w = 0; w < 2; w++) {
+      try {
+        await _serialService.sendAndReceive(
+          CommandBuilder.buildManagementCommand(addressIndex: 1, row: 0),
+          timeout: const Duration(milliseconds: 800),
+        );
+      } catch (_) {}
+      await Future.delayed(const Duration(milliseconds: 200));
+    }
 
-    // Gerçek tarama
-    for (int i = 1; i <= 16; i++) {
+    // 1. ÖNCE adres 1'i (A) birkaç kez dene — yeni cihazların varsayılanı
+    for (int attempt = 0; attempt < 4; attempt++) {
       try {
         final response = await _serialService.sendAndReceive(
-          CommandBuilder.buildManagementCommand(addressIndex: i, row: 0),
-          timeout: const Duration(milliseconds: 700),
+          CommandBuilder.buildManagementCommand(addressIndex: 1, row: 0),
+          timeout: const Duration(milliseconds: 800),
         );
         if (response != null && response.trim() == '+ok-') {
           MedLogger.info(
             unit: 'CabinOps',
             swreq: 'SWREQ-CABIN-OP-003',
-            message: 'Yönetim kartı bulundu',
-            context: {'adres': i},
+            message: 'Yönetim kartı bulundu (varsayılan A)',
+            context: {'adres': 1, 'deneme': attempt + 1},
           );
-          return ManagementCard(addressIndex: i);
+          return ManagementCard(addressIndex: 1);
         }
       } catch (_) {}
-      await Future.delayed(const Duration(milliseconds: 120));
+      await Future.delayed(const Duration(milliseconds: 150));
+    }
+
+    // 2. A bulunamadıysa — diğer adresleri tara (eski/farklı cihazlar için)
+    MedLogger.warn(unit: 'CabinOps', swreq: 'SWREQ-CABIN-OP-003', message: 'Adres A bulunamadı, tam tarama yapılıyor');
+
+    for (int i = 2; i <= 16; i++) {
+      for (int attempt = 0; attempt < 2; attempt++) {
+        try {
+          final response = await _serialService.sendAndReceive(
+            CommandBuilder.buildManagementCommand(addressIndex: i, row: 0),
+            timeout: const Duration(milliseconds: 800),
+          );
+          if (response != null && response.trim() == '+ok-') {
+            MedLogger.info(
+              unit: 'CabinOps',
+              swreq: 'SWREQ-CABIN-OP-003',
+              message: 'Yönetim kartı bulundu',
+              context: {'adres': i, 'deneme': attempt + 1},
+            );
+            return ManagementCard(addressIndex: i);
+          }
+        } catch (_) {}
+        await Future.delayed(const Duration(milliseconds: 80));
+      }
     }
     return null;
   }

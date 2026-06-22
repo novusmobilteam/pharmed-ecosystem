@@ -5,24 +5,63 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+import '../../../dashboard/presentation/notifier/dashboard_state.dart';
 import '../../refund.dart';
 
-class MobileRefundView extends ConsumerStatefulWidget {
+class MobileRefundView extends ConsumerWidget {
   const MobileRefundView({super.key, required this.menu});
 
   final MenuItem menu;
 
   @override
-  ConsumerState<MobileRefundView> createState() => _MobileRefundViewState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cabinId = ref.watch(
+      dashboardNotifierProvider.select(
+        (s) => switch (s) {
+          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
+          DashboardStale(:final data) => data.cabinVisualizerData?.cabinId,
+          DashboardPartial(:final data) => data.cabinVisualizerData?.cabinId,
+          _ => null,
+        },
+      ),
+    );
+
+    if (cabinId == null) {
+      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
+    }
+
+    return _MobileRefundBodyView(cabinId: cabinId, menu: menu);
+  }
 }
 
-class _MobileRefundViewState extends ConsumerState<MobileRefundView> {
+class _MobileRefundBodyView extends ConsumerStatefulWidget {
+  const _MobileRefundBodyView({required this.cabinId, required this.menu});
+
+  final int cabinId;
+  final MenuItem menu;
+
+  @override
+  ConsumerState<_MobileRefundBodyView> createState() => _MobileRefundBodyViewState();
+}
+
+class _MobileRefundBodyViewState extends ConsumerState<_MobileRefundBodyView> {
   @override
   void initState() {
     super.initState();
+    _initialize(widget.cabinId);
+  }
+
+  @override
+  void didUpdateWidget(_MobileRefundBodyView old) {
+    super.didUpdateWidget(old);
+    _initialize(widget.cabinId);
+  }
+
+  void _initialize(int cabinId) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(refundNotifierProvider.notifier).init();
+      ref.read(refundNotifierProvider.notifier).init(cabinId);
     });
   }
 
@@ -43,16 +82,25 @@ class _MobileRefundViewState extends ConsumerState<MobileRefundView> {
     });
 
     if (state is MobileRefundUninitialized || state is MobileRefundLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return Center(child: MedLoadingIndicator());
+    }
+
+    if (state.hospitalizations.isEmpty) {
+      return EmptyStateWidget(
+        icon: PhosphorIcons.usersThree(),
+        size: EmptyStateSize.normal,
+        title: context.l10n.prescription_noPatients_title,
+        description: context.l10n.prescription_noPatients_message,
+      );
     }
 
     return TwoColumnLayout(
       menuItem: widget.menu,
       leftIcon: PhosphorIcons.users(),
-      leftSubtitle: context.l10n.common_patientCountSubtitle(state.patients.length),
+      leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
       leftTitle: context.l10n.common_patientListTitle,
       left: PatientListPanel(
-        patients: state.patients,
+        patients: state.hospitalizations,
         selectedPatient: state.selectedPatient,
         isPatientLoading: state.isPatientLoading,
         search: state.search,
@@ -80,8 +128,12 @@ class _RightPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedPatient = state.selectedPatient;
 
-    if (selectedPatient == null) {
-      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.refundSelectPatient));
+    if (state.isPrescriptionsLoading) {
+      return Center(child: MedLoadingIndicator());
+    }
+
+    if (!state.isPatientSelected) {
+      return const EmptyStateWidget(variant: EmptyStateVariant.noPatientSelected);
     }
 
     if (state.refundables.isEmpty) {

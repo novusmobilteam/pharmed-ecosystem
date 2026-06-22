@@ -94,10 +94,10 @@ class Step3Notifier extends Notifier<Step3State> {
     }
 
     // Servis ID'lerini topla
-    final serviceIds = [
+    final serviceIds = <int>{
       if (stationDetail!.service?.id != null) stationDetail!.service!.id!,
       ...stationDetail!.services.map((s) => s.id).whereType<int>(),
-    ];
+    }.toList();
 
     if (serviceIds.isEmpty) {
       state = state.copyWith(servicesLoadState: ServicesLoadState.loaded, services: []);

@@ -21,17 +21,17 @@ final class UnappliedPrescriptionLoading extends UnappliedPrescriptionState {
 }
 
 final class UnappliedPrescriptionIdle extends UnappliedPrescriptionState {
-  const UnappliedPrescriptionIdle({required this.cabinId, required this.patients, this.search = ''});
+  const UnappliedPrescriptionIdle({required this.cabinId, required this.hospitalizations, this.search = ''});
 
   final int cabinId;
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final String search;
 }
 
 final class UnappliedPrescriptionPatientSelected extends UnappliedPrescriptionState {
   const UnappliedPrescriptionPatientSelected({
     required this.cabinId,
-    required this.patients,
+    required this.hospitalizations,
     required this.selectedPatient,
     required this.prescriptionItems,
     this.search = '',
@@ -39,7 +39,7 @@ final class UnappliedPrescriptionPatientSelected extends UnappliedPrescriptionSt
   });
 
   final int cabinId;
-  final List<Hospitalization> patients;
+  final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
 
   /// Yalnızca [PrescriptionItemStatus.pendingPickup] durumundaki kalemler.
@@ -57,7 +57,7 @@ final class UnappliedPrescriptionPatientSelected extends UnappliedPrescriptionSt
   }) {
     return UnappliedPrescriptionPatientSelected(
       cabinId: cabinId,
-      patients: patients,
+      hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       search: search ?? this.search,
@@ -84,10 +84,10 @@ extension UnappliedPrescriptionStateX on UnappliedPrescriptionState {
     _ => null,
   };
 
-  List<Hospitalization> get patients => switch (this) {
-    UnappliedPrescriptionIdle(:final patients) => patients,
-    UnappliedPrescriptionPatientSelected(:final patients) => patients,
-    UnappliedPrescriptionError(:final previousState) => previousState.patients,
+  List<Hospitalization> get hospitalizations => switch (this) {
+    UnappliedPrescriptionIdle(:final hospitalizations) => hospitalizations,
+    UnappliedPrescriptionPatientSelected(:final hospitalizations) => hospitalizations,
+    UnappliedPrescriptionError(:final previousState) => previousState.hospitalizations,
     _ => const [],
   };
 

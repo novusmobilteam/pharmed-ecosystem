@@ -1,7 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-import 'create_refill_list_usecase.dart';
-
 class UpdateRefillListUseCase {
   final IRefillListRepository _repository;
 

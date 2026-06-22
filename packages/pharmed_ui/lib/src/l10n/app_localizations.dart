@@ -1228,6 +1228,18 @@ abstract class AppLocalizations {
   /// **'Cabinet ID: #{id}'**
   String wizard_successCabinId(int id);
 
+  /// No description provided for @wizard_successReloginPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'You must log in to continue.'**
+  String get wizard_successReloginPrompt;
+
+  /// No description provided for @wizard_successLoginButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get wizard_successLoginButton;
+
   /// Button on the wizard success screen to navigate to the dashboard
   ///
   /// In en, this message translates to:
@@ -2367,6 +2379,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{groupCount} groups · {steps} steps × {mult}'**
   String cabin_masterDrawerStats(Object groupCount, Object mult, Object steps);
+
+  /// No description provided for @dashboard_cabinConnectionStatus_connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get dashboard_cabinConnectionStatus_connected;
+
+  /// No description provided for @dashboard_cabinConnectionStatus_connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get dashboard_cabinConnectionStatus_connecting;
+
+  /// No description provided for @dashboard_cabinConnectionStatus_error.
+  ///
+  /// In en, this message translates to:
+  /// **'No Connection'**
+  String get dashboard_cabinConnectionStatus_error;
+
+  /// No description provided for @dashboard_cabinConnectionStatus_disconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected'**
+  String get dashboard_cabinConnectionStatus_disconnected;
+
+  /// No description provided for @dashboard_cabinConnection_reconnectButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect'**
+  String get dashboard_cabinConnection_reconnectButton;
+
+  /// No description provided for @prescription_noPatients_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No Assigned Patients'**
+  String get prescription_noPatients_title;
+
+  /// No description provided for @prescription_noPatients_message.
+  ///
+  /// In en, this message translates to:
+  /// **'No patients have been assigned to this cabinet yet. Patients must be assigned before prescriptions can be reviewed.'**
+  String get prescription_noPatients_message;
+
+  /// No description provided for @myPatients_empty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No Patients Selected Yet'**
+  String get myPatients_empty_title;
+
+  /// No description provided for @myPatients_empty_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Select patients from the list on the left to add them to your patient list. Your selected patients will appear here.'**
+  String get myPatients_empty_description;
+
+  /// No description provided for @cabin_stock_empty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No stock for this patient'**
+  String get cabin_stock_empty_title;
+
+  /// No description provided for @cabin_stock_empty_description.
+  ///
+  /// In en, this message translates to:
+  /// **'This patient has no medications stocked in this cabin yet.'**
+  String get cabin_stock_empty_description;
+
+  /// No description provided for @unadministered_prescriptions_empty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending prescriptions'**
+  String get unadministered_prescriptions_empty_title;
+
+  /// No description provided for @unadministered_prescriptions_empty_description.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no prescriptions waiting to be administered for this patient.'**
+  String get unadministered_prescriptions_empty_description;
+
+  /// No description provided for @empty_state_no_patient_selected_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient'**
+  String get empty_state_no_patient_selected_title;
+
+  /// No description provided for @empty_state_no_patient_selected_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a patient from the list to view their details.'**
+  String get empty_state_no_patient_selected_description;
 }
 
 class _AppLocalizationsDelegate

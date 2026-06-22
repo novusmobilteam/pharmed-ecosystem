@@ -38,6 +38,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
   // RS485 timing sabitleri — Python scriptiyle eşleşir
   static const _rs485DelayBeforeTxMs = 1;
   static const _rs485DelayAfterTxMs = 5;
+  bool _manualRts = false;
 
   @override
   bool get isConnected => _port?.isOpen ?? false;
@@ -216,12 +217,12 @@ class SerialCommunicationService implements ISerialCommunicationService {
       throw SerialPortException(message: 'Seri port bağlantısı yok. Önce bağlantı kurulmalı.');
     }
 
-    MedLogger.info(
-      unit: 'SW-UNIT-SER',
-      swreq: 'SWREQ-HW-SER-001',
-      message: 'TX komut',
-      context: {'komut': command, 'port': connectedPortName, 'bytes': utf8.encode(command)},
-    );
+    // MedLogger.info(
+    //   unit: 'SW-UNIT-SER',
+    //   swreq: 'SWREQ-HW-SER-001',
+    //   message: 'TX komut',
+    //   context: {'komut': command, 'port': connectedPortName, 'bytes': utf8.encode(command)},
+    // );
 
     await _waitForAvailability();
     _isBusy = true;
@@ -235,15 +236,15 @@ class SerialCommunicationService implements ISerialCommunicationService {
       for (int attempt = 0; attempt <= retryCount; attempt++) {
         try {
           await Future.delayed(const Duration(milliseconds: _rs485DelayBeforeTxMs));
-          //_setTransmitMode();
+          _setTransmitMode();
           final written = _port?.write(bytes);
 
-          MedLogger.info(
-            unit: 'SW-UNIT-SER',
-            swreq: 'SWREQ-HW-SER-001',
-            message: 'Yazıldı',
-            context: {'yazilanBytes': written, 'attempt': attempt + 1},
-          );
+          // MedLogger.info(
+          //   unit: 'SW-UNIT-SER',
+          //   swreq: 'SWREQ-HW-SER-001',
+          //   message: 'Yazıldı',
+          //   context: {'yazilanBytes': written, 'attempt': attempt + 1},
+          // );
 
           if (written == null || written <= 0) {
             throw SerialPortException(message: 'Komut gönderilemedi. Port yazma hatası.');
@@ -256,18 +257,18 @@ class SerialCommunicationService implements ISerialCommunicationService {
           }
 
           await Future.delayed(const Duration(milliseconds: 5));
-          //_setReceiveMode();
+          _setReceiveMode();
           await Future.delayed(const Duration(milliseconds: _rs485DelayAfterTxMs));
 
           final effectiveTimeout = timeout ?? const Duration(milliseconds: 1000);
           final response = await _completer!.future.timeout(effectiveTimeout);
 
-          MedLogger.info(
-            unit: 'SW-UNIT-SER',
-            swreq: 'SWREQ-HW-SER-001',
-            message: 'RX yanıt',
-            context: {'yanit': response},
-          );
+          // MedLogger.info(
+          //   unit: 'SW-UNIT-SER',
+          //   swreq: 'SWREQ-HW-SER-001',
+          //   message: 'RX yanıt',
+          //   context: {'yanit': response},
+          // );
 
           return response;
         } on TimeoutException {
@@ -313,7 +314,11 @@ class SerialCommunicationService implements ISerialCommunicationService {
     }
   }
 
+  // connectToPort'tan önce ya da içinde set edilir
+  void setManualRts(bool value) => _manualRts = value;
+
   void _setTransmitMode() {
+    if (!_manualRts) return;
     try {
       final config = _port!.config;
       config.rts = 1;
@@ -324,6 +329,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
   }
 
   void _setReceiveMode() {
+    if (!_manualRts) return;
     try {
       final config = _port!.config;
       config.rts = 0;
@@ -334,15 +340,15 @@ class SerialCommunicationService implements ISerialCommunicationService {
   }
 
   void _onDataReceived(Uint8List data) {
-    MedLogger.info(
-      unit: 'SW-UNIT-SER',
-      swreq: 'SWREQ-HW-SER-001',
-      message: 'RAW RX',
-      context: {
-        'text': utf8.decode(data, allowMalformed: true),
-        'lastSent': _lastSentBytes != null ? utf8.decode(_lastSentBytes!, allowMalformed: true) : null,
-      },
-    );
+    // MedLogger.info(
+    //   unit: 'SW-UNIT-SER',
+    //   swreq: 'SWREQ-HW-SER-001',
+    //   message: 'RAW RX',
+    //   context: {
+    //     'text': utf8.decode(data, allowMalformed: true),
+    //     'lastSent': _lastSentBytes != null ? utf8.decode(_lastSentBytes!, allowMalformed: true) : null,
+    //   },
+    // );
     if (_completer == null || _completer!.isCompleted) return;
 
     try {

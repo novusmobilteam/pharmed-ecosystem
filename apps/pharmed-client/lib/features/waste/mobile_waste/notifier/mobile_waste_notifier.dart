@@ -11,7 +11,7 @@ import '../../waste.dart';
 final mobileWasteNotifierProvider = NotifierProvider<MobileWasteNotifier, MobileWasteState>(MobileWasteNotifier.new);
 
 class MobileWasteNotifier extends Notifier<MobileWasteState> {
-  GetHospitalizationsUseCase get _getHospitalizations => ref.read(getHospitalizationsUseCaseProvider);
+  GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
   GetMobileDisposablesUseCase get _getDisposables => ref.read(getMobileDisposablesUseCaseProvider);
   MobileWastageUseCase get _wastage => ref.read(mobileWastageUseCaseProvider);
   MobileDestructionUseCase get _destruction => ref.read(mobileDestructionUseCaseProvider);
@@ -20,68 +20,57 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
   @override
   MobileWasteState build() => const MobileWasteUninitialized();
 
-  Future<void> init() async {
-    if (state is! MobileWasteUninitialized) return;
-
-    MedLogger.info(unit: 'MobileWasteNotifier', swreq: 'SWREQ-WASTE-02', message: 'init — hasta listesi yükleniyor');
-
+  Future<void> init(int cabinId) async {
     state = const MobileWasteLoading();
 
-    final result = await _getHospitalizations.call(GetHospitalizationsParams());
+    final result = await _getBedAssignments.call(cabinId);
 
-    state = result.when(
-      ok: (response) => MobileWasteIdle(patients: response.data ?? const []),
-      error: (e) => MobileWasteError(
-        message: e.message,
-        previousState: const MobileWasteIdle(patients: []),
-      ),
+    await result.when(
+      ok: (assignments) async {
+        final hospitalizations = _toHospitalizations(assignments);
+        state = MobileWasteIdle(hospitalizations: hospitalizations);
+        if (hospitalizations.isEmpty) return;
+
+        await onPatientTap(hospitalizations.first);
+      },
+      error: (error) {
+        state = MobileWasteError(
+          message: error.message,
+          previousState: MobileWasteIdle(hospitalizations: const []),
+        );
+      },
     );
-  }
-
-  void onSearchChanged(String query) {
-    final current = state;
-    state = switch (current) {
-      MobileWasteIdle() => current.copyWith(search: query),
-      MobileWastePatientSelected() => current.copyWith(search: query),
-      MobileWasteDrugSelected() => MobileWastePatientSelected(
-        patients: current.patients,
-        selectedPatient: current.selectedPatient,
-        disposables: current.disposables,
-        search: query,
-      ),
-      _ => current,
-    };
   }
 
   Future<void> onPatientTap(Hospitalization hospitalization) async {
-    final currentPatientId = state.selectedPatient?.id;
+    final patientId = hospitalization.patient?.id;
+    if (patientId == null) return;
 
-    // Aynı hasta tekrar tıklandıysa — seçimi kaldır
-    if (currentPatientId == hospitalization.id) {
-      state = MobileWasteIdle(patients: state.patients, search: state.search);
+    if (state.selectedPatient?.patient?.id == patientId) {
+      state = MobileWasteIdle(hospitalizations: state.hospitalizations, search: state.search);
       return;
     }
 
-    MedLogger.info(
-      unit: 'MobileWasteNotifier',
-      swreq: 'SWREQ-WASTE-02',
-      message: 'onPatientTap — hospitalizationId=${hospitalization.id}',
+    state = MobileWastePatientSelected(
+      hospitalizations: state.hospitalizations,
+      selectedPatient: hospitalization,
+      disposables: const [],
+      search: state.search,
+      isPrescriptionsLoading: true,
     );
-
-    state = MobileWastePatientLoading(patients: state.patients, selectedPatient: hospitalization, search: state.search);
 
     final result = await _getDisposables.call(hospitalization.id ?? 0);
 
     state = result.when(
       ok: (items) => MobileWastePatientSelected(
-        patients: state.patients,
+        hospitalizations: state.hospitalizations,
         selectedPatient: hospitalization,
         disposables: items,
         search: state.search,
       ),
       error: (e) => MobileWasteError(
         message: e.message,
-        previousState: MobileWasteIdle(patients: state.patients, search: state.search),
+        previousState: MobileWasteIdle(hospitalizations: state.hospitalizations, search: state.search),
       ),
     );
   }
@@ -93,7 +82,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
       case MobileWastePatientSelected():
         // Yeni seçim — varsayılan miktar: 1
         state = MobileWasteDrugSelected(
-          patients: current.patients,
+          hospitalizations: current.hospitalizations,
           selectedPatient: current.selectedPatient,
           disposables: current.disposables,
           selectedItem: item,
@@ -105,7 +94,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
         if (current.selectedItem.id == item.id) {
           // Aynı ilaç — seçimi kaldır
           state = MobileWastePatientSelected(
-            patients: current.patients,
+            hospitalizations: current.hospitalizations,
             selectedPatient: current.selectedPatient,
             disposables: current.disposables,
             search: current.search,
@@ -113,7 +102,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
         } else {
           // Farklı ilaç — yeni seçim
           state = MobileWasteDrugSelected(
-            patients: current.patients,
+            hospitalizations: current.hospitalizations,
             selectedPatient: current.selectedPatient,
             disposables: current.disposables,
             selectedItem: item,
@@ -151,7 +140,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
     );
 
     state = MobileWasteSaving(
-      patients: current.patients,
+      hospitalizations: current.hospitalizations,
       selectedPatient: current.selectedPatient,
       disposables: current.disposables,
       selectedItem: current.selectedItem,
@@ -165,7 +154,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
 
     await result.when(
       ok: (_) => _refreshAfterAction(
-        patients: current.patients,
+        patients: current.hospitalizations,
         selectedPatient: current.selectedPatient,
         search: current.search,
         message: '',
@@ -196,7 +185,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
     );
 
     state = MobileWasteSaving(
-      patients: current.patients,
+      hospitalizations: current.hospitalizations,
       selectedPatient: current.selectedPatient,
       disposables: current.disposables,
       selectedItem: current.selectedItem,
@@ -210,7 +199,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
 
     await result.when(
       ok: (_) => _refreshAfterAction(
-        patients: current.patients,
+        patients: current.hospitalizations,
         selectedPatient: current.selectedPatient,
         search: current.search,
         message: '',
@@ -238,7 +227,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
     if (current is! MobileWasteSuccess) return;
     // Başarı sonrası aynı hasta seçili kalır; MobileWastePatientSelected'a dön
     state = MobileWastePatientSelected(
-      patients: current.patients,
+      hospitalizations: current.hospitalizations,
       selectedPatient: current.selectedPatient,
       disposables: current.disposables,
       search: current.search,
@@ -250,13 +239,13 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
     switch (current) {
       case MobileWasteDrugSelected():
         state = MobileWastePatientSelected(
-          patients: current.patients,
+          hospitalizations: current.hospitalizations,
           selectedPatient: current.selectedPatient,
           disposables: current.disposables,
           search: current.search,
         );
       case MobileWastePatientSelected():
-        state = MobileWasteIdle(patients: current.patients, search: current.search);
+        state = MobileWasteIdle(hospitalizations: current.hospitalizations, search: current.search);
       default:
         break;
     }
@@ -273,7 +262,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
 
     state = result.when(
       ok: (items) => MobileWasteSuccess(
-        patients: patients,
+        hospitalizations: patients,
         selectedPatient: selectedPatient,
         disposables: items,
         message: message,
@@ -283,7 +272,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
       error: (e) => MobileWasteError(
         message: e.message,
         previousState: MobileWastePatientSelected(
-          patients: patients,
+          hospitalizations: patients,
           selectedPatient: selectedPatient,
           disposables: const [],
           search: search,
@@ -294,5 +283,24 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
 
   double _maxDisposableQuantity(PrescriptionItem item) {
     return (item.dosePiece ?? 0).toDouble();
+  }
+
+  List<Hospitalization> _toHospitalizations(List<BedAssignment> assignments) {
+    return assignments.map((a) => a.hospitalization).whereType<Hospitalization>().toList();
+  }
+
+  void onSearchChanged(String query) {
+    final current = state;
+    state = switch (current) {
+      MobileWasteIdle() => current.copyWith(search: query),
+      MobileWastePatientSelected() => current.copyWith(search: query),
+      MobileWasteDrugSelected() => MobileWastePatientSelected(
+        hospitalizations: current.hospitalizations,
+        selectedPatient: current.selectedPatient,
+        disposables: current.disposables,
+        search: query,
+      ),
+      _ => current,
+    };
   }
 }
