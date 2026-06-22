@@ -30,7 +30,7 @@ class StationFormPanel extends StatelessWidget {
             title: isNew ? 'Yeni İstasyon' : 'İstasyonu Düzenle',
             subtitle: isNew ? 'İstasyon bilgilerini doldurun' : 'İstasyon bilgilerini güncelleyin',
             isLoading: formNotifier.isSubmitting,
-            onClose: () => setupNotifier.closePanel(),
+            onClose: setupNotifier.closePanel,
             onSave: () async {
               if (formKey.currentState!.validate()) {
                 await formNotifier.submit();

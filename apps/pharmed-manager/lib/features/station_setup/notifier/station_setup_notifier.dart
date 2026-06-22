@@ -45,6 +45,7 @@ class StationSetupNotifier extends ChangeNotifier with SidePanelMixin<void, Stat
     _selectedStation = null;
     _selectedService = null;
     _selectedWarehouse = null;
+    super.closePanel();
     notifyListeners();
   }
 }

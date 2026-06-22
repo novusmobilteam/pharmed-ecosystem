@@ -23,11 +23,13 @@ class RxGroupCard extends StatefulWidget {
     this.onCancel,
     this.onRfidTap,
     this.onRfidDelete,
+    this.isAdmin = false,
   });
 
   final int prescriptionId;
   final List<PrescriptionItem> items;
   final bool interactive;
+  final bool isAdmin;
   final Future<void> Function(List<PrescriptionItem>)? onApprove;
   final Future<void> Function(List<PrescriptionItem>)? onReject;
   final Future<void> Function(List<PrescriptionItem>)? onCancel;
@@ -91,16 +93,19 @@ class _RxGroupCardState extends State<RxGroupCard> {
               firstChild: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ...widget.items.map(
-                    (item) => _RxDrugBlock(
+                  ...widget.items.map((item) {
+                    final canModifyTag = widget.isAdmin || (item.status?.canModifyRfid ?? false);
+                    return _RxDrugBlock(
                       item: item,
                       isSelected: _selectedIds.contains(item.id),
                       interactive: widget.interactive,
                       onCheckTap: () => _toggleItem(item.id!),
-                      onRfidTap: widget.onRfidTap != null ? () => widget.onRfidTap!(item) : null,
-                      onRfidDelete: widget.onRfidDelete != null ? () => widget.onRfidDelete!(item) : null,
-                    ),
-                  ),
+                      onRfidTap: (widget.onRfidTap != null && canModifyTag) ? () => widget.onRfidTap!(item) : null,
+                      onRfidDelete: (widget.onRfidDelete != null && canModifyTag)
+                          ? () => widget.onRfidDelete!(item)
+                          : null,
+                    );
+                  }),
                   if (widget.interactive && _hasSelection)
                     _RxActionBar(
                       selectedCount: _selectedIds.length,
@@ -297,10 +302,14 @@ class _RxDrugBlockState extends State<_RxDrugBlock> {
             isSelectable: _isSelectable,
             isAccordionOpen: _isAccordionOpen,
             interactive: widget.interactive,
-            onCheckTap: widget.onCheckTap,
+            onCheckTap: () {
+              widget.onCheckTap();
+              if (!_isAccordionOpen) {
+                setState(() => _isAccordionOpen = true);
+              }
+            },
             onRowTap: () {
               setState(() => _isAccordionOpen = !_isAccordionOpen);
-              if (!_isAccordionOpen) _loadMovements();
             },
           ),
           _DrugAccordion(

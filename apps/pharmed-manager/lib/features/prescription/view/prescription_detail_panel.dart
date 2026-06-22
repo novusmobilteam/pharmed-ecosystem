@@ -69,6 +69,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
         return RxGroupCard(
           prescriptionId: prescriptionId,
           items: items,
+          isAdmin: context.read<AuthNotifier>().currentUser?.isAdmin ?? false,
           interactive: true,
           onRfidTap: (item) async {
             await notifier.assignRfidTag(item, onFailed: (message) => MessageUtils.showErrorSnackbar(context, message));

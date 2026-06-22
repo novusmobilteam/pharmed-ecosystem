@@ -261,4 +261,12 @@ extension PrescriptionMovementTypeActions on PrescriptionMovementType {
 
   /// Eğer durumu "Onay Bekliyor" ise hareket geçmişi olamaz.
   bool get canShowHistory => this != PrescriptionMovementType.pendingApproval;
+
+  /// RFID etiketi silinebilir/değiştirilebilir mi.
+  /// Sadece ilacın hayat döngüsünün ilk evrelerinde (alım öncesi) izinlidir.
+  /// Admin rolü bu kuralı UI tarafında bypass eder.
+  bool get canModifyRfid =>
+      this == PrescriptionMovementType.pendingApproval ||
+      this == PrescriptionMovementType.filledWaiting ||
+      this == PrescriptionMovementType.purchasePending;
 }
