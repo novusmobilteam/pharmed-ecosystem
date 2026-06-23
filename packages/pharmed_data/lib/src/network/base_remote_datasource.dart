@@ -198,6 +198,7 @@ abstract class BaseRemoteDataSource {
     String? dateField,
     DateTime? startDate,
     DateTime? endDate,
+    List<Object>? filters,
   }) {
     final finalQuery = Map<String, dynamic>.from(query ?? {});
     if (skip != null) finalQuery['skip'] = skip;
@@ -211,6 +212,7 @@ abstract class BaseRemoteDataSource {
       dateField: dateField,
       startDate: startDate,
       endDate: endDate,
+      filters: filters,
     );
 
     if (filter != null) finalQuery['filter'] = filter;
@@ -328,15 +330,23 @@ abstract class BaseRemoteDataSource {
     String? dateField,
     DateTime? startDate,
     DateTime? endDate,
+    List<Object>? filters,
   }) {
-    final searchPart = _buildSearchPart(searchText, searchFields, searchOperator);
-    final datePart = _buildDatePart(dateField, startDate, endDate);
+    final parts = <Object>[
+      if (_buildSearchPart(searchText, searchFields, searchOperator) case final s?) s,
+      if (_buildDatePart(dateField, startDate, endDate) case final d?) d,
+      if (filters != null) ...filters,
+    ];
 
-    if (searchPart == null && datePart == null) return null;
-    if (searchPart != null && datePart == null) return jsonEncode(searchPart);
-    if (searchPart == null && datePart != null) return jsonEncode(datePart);
+    if (parts.isEmpty) return null;
+    if (parts.length == 1) return jsonEncode(parts.first);
 
-    return jsonEncode([searchPart, 'and', datePart]);
+    final joined = <Object>[];
+    for (var i = 0; i < parts.length; i++) {
+      joined.add(parts[i]);
+      if (i < parts.length - 1) joined.add('and');
+    }
+    return jsonEncode(joined);
   }
 
   Object? _buildSearchPart(String? text, List<String>? fields, String operator) {

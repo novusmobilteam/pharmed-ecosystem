@@ -6,6 +6,7 @@ export 'domain/entity/prescription.dart';
 export 'domain/entity/prescription_item.dart';
 export 'domain/entity/prescription_grouping.dart';
 export 'domain/entity/prescription_item_movement.dart';
+export 'domain/entity/prescription_action_permissions.dart';
 
 export 'domain/repository/i_prescription_repository.dart';
 

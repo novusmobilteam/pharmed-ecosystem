@@ -29,14 +29,18 @@ mixin PaginationMixin<T> on ApiRequestMixin {
   bool get canGoNext => _currentPage < totalPages;
   bool get canGoPrev => _currentPage > 1;
 
-  DateTime? _startDate;
-  DateTime? _endDate;
+  bool get hasDateFilter => _dateRange?.start != null || _dateRange?.end != null;
 
-  DateTime? get startDate => _startDate;
-  DateTime? get endDate => _endDate;
-  bool get hasDateFilter => _startDate != null || _endDate != null;
+  DateTimeRange? _dateRange;
+  DateTimeRange? get dateRange =>
+      _dateRange ??
+      DateTimeRange(
+        start: _dateRange?.start ?? DateTime.now().subtract(Duration(days: 1)),
+        end: _dateRange?.end ?? DateTime.now(),
+      );
 
-  DateTimeRange? get dateRange => DateTimeRange(start: _startDate ?? DateTime.now(), end: _endDate ?? DateTime.now());
+  DateTime? get startDate => _dateRange?.start;
+  DateTime? get endDate => _dateRange?.end;
 
   // ── Alt sınıf sözleşmesi ──────────────────────────────────────────────────
   //
@@ -82,9 +86,8 @@ mixin PaginationMixin<T> on ApiRequestMixin {
   }
 
   void setDateRange(DateTimeRange<DateTime>? value) {
-    if (_startDate == value?.start && _endDate == value?.end) return;
-    _startDate = value?.start;
-    _endDate = value?.end;
+    if (_dateRange?.start == value?.start && _dateRange?.end == value?.end) return;
+    _dateRange = value;
     _currentPage = 1;
     notifyListeners();
     fetch();
@@ -141,10 +144,10 @@ mixin PaginationMixin<T> on ApiRequestMixin {
   /// Notifier kendi filtre state'ini de sıfırladıktan sonra reload çağırır.
   void resetFilters({bool notify = true}) {
     _searchDebounce?.cancel();
-    final changed = _searchQuery.isNotEmpty || _currentPage != 1 || _startDate != null || _endDate != null;
+    final changed =
+        _searchQuery.isNotEmpty || _currentPage != 1 || _dateRange?.start != null || _dateRange?.end != null;
     _searchQuery = '';
-    _startDate = null;
-    _endDate = null;
+    _dateRange = null;
     _currentPage = 1;
     if (notify && changed) notifyListeners();
   }

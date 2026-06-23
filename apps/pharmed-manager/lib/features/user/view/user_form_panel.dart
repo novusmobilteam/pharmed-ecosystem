@@ -27,10 +27,7 @@ class UserFormPanel extends StatelessWidget {
               if (formKey.currentState!.validate()) {
                 await notifier.submit(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  onSuccess: (msg) {
-                    MessageUtils.showSuccessSnackbar(context, msg);
-                    context.pop(true);
-                  },
+                  onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
                 );
               }
             },
@@ -183,7 +180,7 @@ class _StatusField extends StatelessWidget {
           initialValue: notifier.user.status,
           labelBuilder: (s) => s?.label,
           validator: (s) => Validators.cannotBlankValidator(s?.label),
-          onChanged: (s) => notifier.changeStatus(s.isActive),
+          onChanged: (s) => notifier.changeStatus(s?.isActive),
         );
       },
     );
@@ -260,7 +257,7 @@ class _OrderStatusField extends StatelessWidget {
           initialValue: permissionStatusFromBool(notifier.user.isNotOrdered),
           labelBuilder: (s) => s?.label,
           validator: (s) => Validators.cannotBlankValidator(s?.label),
-          onChanged: (value) => notifier.changeOrderPermission(value.isAllowed),
+          onChanged: (value) => notifier.changeOrderPermission(value?.isAllowed),
         );
       },
     );
@@ -280,7 +277,7 @@ class _WitnessedStationField extends StatelessWidget {
           initialValue: permissionStatusFromBool(notifier.user.isWitnessedStationEntry),
           labelBuilder: (s) => s?.label,
           validator: (s) => Validators.cannotBlankValidator(s?.label),
-          onChanged: (value) => notifier.changeWitnessedEntry(value.isAllowed),
+          onChanged: (value) => notifier.changeWitnessedEntry(value?.isAllowed),
         );
       },
     );
@@ -300,7 +297,7 @@ class _PurchaseKitField extends StatelessWidget {
           initialValue: permissionStatusFromBool(notifier.user.kitPurchase),
           labelBuilder: (s) => s?.label,
           validator: (s) => Validators.cannotBlankValidator(s?.label),
-          onChanged: (value) => notifier.changeKitPurchase(value.isAllowed),
+          onChanged: (value) => notifier.changeKitPurchase(value?.isAllowed),
         );
       },
     );

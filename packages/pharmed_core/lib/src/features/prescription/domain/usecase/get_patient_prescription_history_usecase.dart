@@ -5,11 +5,20 @@ class GetPatientPrescriptionHistoryUseCase {
 
   GetPatientPrescriptionHistoryUseCase(this._repository);
 
-  Future<Result<List<PrescriptionItem>>> call(int patientId) async {
-    final result = await _repository.getPatientPrescriptionHistory(patientId);
+  Future<Result<List<PrescriptionItem>>> call(int patientId, {PagedQueryParams? params}) async {
+    final result = await _repository.getPatientPrescriptionHistory(
+      patientId,
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      filters: params?.filters,
+    );
     return result.when(
       error: Result.error,
-      ok: (items) {
+      ok: (response) {
+        final items = response?.data ?? [];
         final sorted = [...items]
           ..sort((a, b) {
             // 1. İlaç adına göre

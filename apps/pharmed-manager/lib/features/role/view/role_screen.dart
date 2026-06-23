@@ -65,11 +65,17 @@ class RoleScreen extends StatelessWidget {
       },
       onSearchChanged: notifier.search,
       actions: [
-        TableActionItem(icon: PhosphorIcons.trash(), tooltip: 'Sil', onPressed: notifier.deleteRole),
+        TableActionItem(
+          icon: PhosphorIcons.trash(),
+          tooltip: 'Sil',
+          onPressed: notifier.deleteRole,
+          isVisible: (role) => role.type == null,
+        ),
         TableActionItem(
           icon: PhosphorIcons.pen(),
           tooltip: 'Düzenle',
           onPressed: (role) => notifier.openPanel(item: role),
+          isVisible: (role) => role.type == null,
         ),
       ],
     );

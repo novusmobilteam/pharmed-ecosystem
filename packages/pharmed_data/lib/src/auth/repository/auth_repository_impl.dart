@@ -67,7 +67,7 @@ class AuthRepositoryImpl implements IAuthRepository {
         name: userDto.name ?? '',
         surname: userDto.surname ?? '',
         fullName: [userDto.name, userDto.surname].whereType<String>().join(' ').trim(),
-        role: userDto.role?.name ?? '',
+        roleName: userDto.role?.name ?? '',
         isAdmin: userDto.isAdmin ?? false,
         isNotOrdered: userDto.isNotOrdered,
         roleId: userDto.role?.id ?? 0,

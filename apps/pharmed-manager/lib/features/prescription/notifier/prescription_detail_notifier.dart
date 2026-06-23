@@ -6,7 +6,7 @@ import 'package:pharmed_manager/core/core.dart';
 // hospitalization artık constructor'da değil, load() ile set edilir.
 // Sınıf: Class B
 
-class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<PrescriptionItem> {
+class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
   final SubmitPrescriptionActionUseCase _submitUseCase;
   final GetPatientPrescriptionHistoryUseCase _historyUseCase;
   final AssignRfidTagUseCase _assignRfidTagUseCase;
@@ -37,12 +37,41 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin, Se
   Hospitalization? _hospitalization;
   Hospitalization? get hospitalization => _hospitalization;
 
+  DateTime? _startDate;
+  DateTime? get startDate => _startDate;
+
+  DateTime? _endDate;
+  DateTime? get endDate => _endDate;
+
+  PrescriptionMovementType? _type;
+  PrescriptionMovementType? get type => _type;
+
   /// Panel açıldığında çağrılır. Yeni hospitalization set edilir ve
   /// geçmiş yeniden yüklenir.
-  void load(Hospitalization hosp) {
+  void load(Hospitalization hosp, {DateTimeRange? range}) {
+    _type = PrescriptionMovementType.pendingApproval;
+    _startDate = range?.start;
+    _endDate = range?.end;
     _hospitalization = hosp;
     _items = [];
     notifyListeners();
+    getPatientPrescriptionHistory();
+  }
+
+  void selectStartDate(DateTime? date) {
+    _startDate = date;
+    getPatientPrescriptionHistory();
+  }
+
+  void selectEndDate(DateTime? date) {
+    _endDate = date;
+    getPatientPrescriptionHistory();
+  }
+
+  void selectPrescriptionType(PrescriptionMovementType? type) {
+    _type = type;
+    notifyListeners();
+    print(_type);
     getPatientPrescriptionHistory();
   }
 
@@ -52,7 +81,14 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin, Se
 
     await execute(
       fetchOp,
-      operation: () => _historyUseCase.call(patientId),
+      operation: () => _historyUseCase.call(
+        patientId,
+        params: PagedQueryParams(
+          startDate: _startDate,
+          endDate: _endDate,
+          filters: [if (_type != null) Filter.eq('lastMovement.detailStatusId', _type!.id)],
+        ),
+      ),
       onData: (history) {
         _items = history;
         notifyListeners();

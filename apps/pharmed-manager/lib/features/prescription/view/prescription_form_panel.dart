@@ -164,7 +164,7 @@ class _DoctorField extends StatelessWidget {
           onSelected: (u) => vm.updateDoctor(u),
           validator: (u) => Validators.cannotBlankValidator(u?.fullName),
           dataSource: (skip, take, search) {
-            return context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search));
+            return context.read<GetDoctorsUseCase>().call(GetDoctorsParams(skip: skip, take: take, search: search));
           },
         );
       },

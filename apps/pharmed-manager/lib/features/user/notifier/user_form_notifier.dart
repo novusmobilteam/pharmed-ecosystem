@@ -88,12 +88,12 @@ class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
-  void changeStatus(bool isActive) {
+  void changeStatus(bool? isActive) {
     _user = _user.copyWith(isActive: isActive);
     notifyListeners();
   }
 
-  void changeUserType(UserType value) {
+  void changeUserType(UserType? value) {
     _user = _user.copyWith(type: value);
     notifyListeners();
   }
@@ -103,17 +103,17 @@ class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
-  void changeOrderPermission(bool value) {
+  void changeOrderPermission(bool? value) {
     _user = _user.copyWith(isNotOrdered: value);
     notifyListeners();
   }
 
-  void changeWitnessedEntry(bool value) {
+  void changeWitnessedEntry(bool? value) {
     _user = _user.copyWith(isWitnessedStationEntry: value);
     notifyListeners();
   }
 
-  void changeKitPurchase(bool value) {
+  void changeKitPurchase(bool? value) {
     _user = _user.copyWith(kitPurchase: value);
     notifyListeners();
   }

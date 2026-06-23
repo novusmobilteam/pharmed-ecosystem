@@ -156,7 +156,7 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
             label: 'Port',
             enabled: state.availablePorts.isNotEmpty,
             onChanged: (val) {
-              setState(() => _port = val);
+              setState(() => _port = val ?? '');
               _notify();
             },
             options: state.availablePorts.map((p) => p).toList(),

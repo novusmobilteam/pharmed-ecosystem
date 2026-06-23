@@ -18,6 +18,10 @@ class Role extends Selectable implements TableData {
   @override
   List<String?> get titles => const ['Rol Adı', 'Durumu'];
 
+  /// Sistem sabit rolüne karşılık geliyorsa o tip, aksi halde null.
+  /// Custom roller için her zaman null döner.
+  RoleType? get type => RoleType.fromId(id);
+
   // Update metodları
   Role updateName(String? newName) {
     return copyWith(name: newName);

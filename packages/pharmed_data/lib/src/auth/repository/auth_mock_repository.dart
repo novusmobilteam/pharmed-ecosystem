@@ -58,7 +58,7 @@ class AuthMockRepository implements IAuthRepository {
           name: userData.name,
           surname: userData.name,
           fullName: userData.name,
-          role: userData.role,
+          roleName: userData.role,
           isAdmin: userData.isAdmin,
           isNotOrdered: userData.isNotOrdered,
           roleId: userData.roleId,

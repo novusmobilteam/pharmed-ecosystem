@@ -78,7 +78,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> updateUser(UserDto dto) {
     return putRequest(
-      path: _base,
+      path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Kişi güncellendi',

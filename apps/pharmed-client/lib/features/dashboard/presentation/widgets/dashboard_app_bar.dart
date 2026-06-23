@@ -357,7 +357,7 @@ class _UserChip extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Text(
-              user.role,
+              user.roleName,
               style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3),
             ),
           ],
