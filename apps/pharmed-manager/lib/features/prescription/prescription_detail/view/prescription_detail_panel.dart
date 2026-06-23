@@ -1,9 +1,16 @@
-part of 'prescription_screen.dart';
-
 // [SWREQ-MGR-RX-004] [IEC 62304 §5.5]
 // Hastaya ait reçete geçmişini SidePanel içinde listeler.
 // Eski PrescriptionListView + CustomDialog yerine geçer.
 // Sınıf: Class B
+
+import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../core/core.dart';
+import '../../../../widgets/widgets.dart';
+import '../../../auth/notifier/auth_notifier.dart';
+import '../../prescription.dart';
 
 class PrescriptionDetailPanel extends StatefulWidget {
   const PrescriptionDetailPanel({super.key});
@@ -20,7 +27,6 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final hosp = context.read<PrescriptionNotifier>().selectedHospitalization;
       final range = context.read<PrescriptionNotifier>().dateRange;
-      print('Date Range: $range');
       if (hosp != null) {
         context.read<PrescriptionDetailNotifier>().load(hosp, range: range);
       }

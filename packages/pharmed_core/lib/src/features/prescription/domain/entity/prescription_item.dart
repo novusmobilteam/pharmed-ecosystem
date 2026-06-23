@@ -191,6 +191,28 @@ class PrescriptionItem implements TableData, Selectable {
 
   @override
   String get title => medicine?.title ?? '-';
+
+  /// Sunucudan gelen bir kalemi "yeni draft" haline getirir.
+  /// Sunucu yönetimindeki tüm alanları (id, prescriptionId, status, approval,
+  /// application, RFID, movement) temizler. Manuel düzenleme için temel alanları korur.
+  PrescriptionItem asDraft() {
+    return PrescriptionItem(
+      medicine: medicine,
+      medicineId: medicineId,
+      doctor: doctor,
+      doctorId: doctorId,
+      dosePiece: dosePiece,
+      requestType: requestType,
+      times: times,
+      firstDoseEmergency: firstDoseEmergency,
+      askDoctor: askDoctor,
+      inCaseOfNecessity: inCaseOfNecessity,
+      description: description,
+      // id, prescriptionId, prescription, time (singular),
+      // approval/application/cancel alanları, detailStatusId,
+      // rfidCardTag, lastMovement, createdUserId, createdDate dahil edilmez.
+    );
+  }
 }
 
 enum PrescriptionColumn {

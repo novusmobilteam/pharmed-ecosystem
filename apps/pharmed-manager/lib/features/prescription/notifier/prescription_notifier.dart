@@ -5,8 +5,6 @@ import 'package:pharmed_manager/core/core.dart';
 // Reçete listesi + panel koordinasyon notifier'ı.
 // Sınıf: Class B
 
-enum PrescriptionPanelType { form, detail }
-
 class PrescriptionNotifier extends ChangeNotifier
     with ApiRequestMixin, SearchMixin<Hospitalization>, PaginationMixin<Hospitalization> {
   final GetActiveHospitalizationsUseCase _getActiveHospitalizationsUseCase;
@@ -24,27 +22,15 @@ class PrescriptionNotifier extends ChangeNotifier
   bool _isPanelOpen = false;
   bool get isPanelOpen => _isPanelOpen;
 
-  PrescriptionPanelType _panelType = PrescriptionPanelType.form;
-  PrescriptionPanelType get panelType => _panelType;
-
   Hospitalization? _selectedHospitalization;
   Hospitalization? get selectedHospitalization => _selectedHospitalization;
 
   bool _showDischarged = false; //  taburcu toggle'ı
   bool get showDischarged => _showDischarged;
 
-  /// Yeni reçete oluşturma veya düzenleme panelini açar.
-  void openFormPanel({Hospitalization? hosp}) {
-    _selectedHospitalization = hosp;
-    _panelType = PrescriptionPanelType.form;
-    _isPanelOpen = true;
-    notifyListeners();
-  }
-
   /// Seçili hastanın reçete geçmişini gösteren detay panelini açar.
-  void openDetailPanel(Hospitalization hosp) {
+  void openPanel(Hospitalization hosp) {
     _selectedHospitalization = hosp;
-    _panelType = PrescriptionPanelType.detail;
     _isPanelOpen = true;
     notifyListeners();
   }

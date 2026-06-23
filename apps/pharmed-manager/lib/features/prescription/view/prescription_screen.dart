@@ -1,19 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
 
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
 import '../../../widgets/widgets.dart';
-import '../notifier/prescription_detail_notifier.dart';
-import '../notifier/prescription_form_notifier.dart';
-import '../notifier/prescription_notifier.dart';
-
-part 'prescription_form_panel.dart';
-part 'prescription_detail_panel.dart';
+import '../prescription.dart';
 
 // [SWREQ-MGR-RX-003] [IEC 62304 §5.5]
 // Reçete listesi ekranı.
@@ -53,11 +45,17 @@ class PrescriptionScreen extends StatelessWidget {
             desktop: MedDesktopLayout(
               title: menu.name ?? 'Reçete İşlemleri',
               subtitle: menu.description,
-              actions: [MedButton(label: 'Yeni Reçete', size: MedButtonSize.sm, onPressed: notifier.openFormPanel)],
+              actions: [
+                MedButton(
+                  label: 'Yeni Reçete',
+                  size: MedButtonSize.sm,
+                  onPressed: () => showPrescriptionFormDialog(context),
+                ),
+              ],
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
                 width: 700,
-                panel: _buildPanel(notifier),
+                panel: PrescriptionDetailPanel(key: ValueKey(notifier.selectedHospitalization?.id ?? 'detail')),
                 child: MedTable<Hospitalization>(
                   data: notifier.items,
                   enableExcel: true,
@@ -75,12 +73,12 @@ class PrescriptionScreen extends StatelessWidget {
                       icon: PhosphorIcons.receipt(),
                       tooltip: 'Reçete İçeriği',
                       color: context.colorScheme.onSurface,
-                      onPressed: notifier.openDetailPanel,
+                      onPressed: notifier.openPanel,
                     ),
                     TableActionItem<Hospitalization>(
                       icon: PhosphorIcons.plus(),
                       tooltip: 'Yeni Reçete',
-                      onPressed: (hosp) => notifier.openFormPanel(hosp: hosp),
+                      onPressed: (hosp) => showPrescriptionFormDialog(context, hospitalization: hosp),
                     ),
                   ],
                   toolbarActions: [
@@ -104,15 +102,5 @@ class PrescriptionScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  /// Panel tipine göre doğru widget'ı döndürür.
-  /// ValueKey ile hospitalization değiştiğinde PrescriptionDetailPanel
-  /// rebuild olur ve load() tekrar tetiklenir.
-  Widget _buildPanel(PrescriptionNotifier notifier) {
-    if (notifier.panelType == PrescriptionPanelType.detail) {
-      return PrescriptionDetailPanel(key: ValueKey(notifier.selectedHospitalization?.id ?? 'detail'));
-    }
-    return PrescriptionFormPanel(key: ValueKey(notifier.selectedHospitalization?.id ?? 'form'));
   }
 }

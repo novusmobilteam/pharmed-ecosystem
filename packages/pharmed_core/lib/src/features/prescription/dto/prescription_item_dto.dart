@@ -9,7 +9,6 @@ class PrescriptionItemDto {
   final int? inpatientServiceId;
   final int? doctorId;
   final int? requestType;
-
   final int? barcode;
   final int? sutCode;
   final int? ubbCode;
@@ -32,7 +31,6 @@ class PrescriptionItemDto {
   final bool? removed;
   final DateTime? time;
   final List<DateTime>? times;
-
   final MedicineDto? medicine;
   final HospitalizationDto? hospitalization;
   final ServiceDto? physicalService;

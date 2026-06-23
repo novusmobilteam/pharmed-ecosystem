@@ -9,7 +9,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 /// Manager form alanı — açılır menü, FormField desteği ile.
 ///
 /// ```dart
-/// MedDropdownInputField<String>(
+/// DropdownInputField<String>(
 ///   label: 'Birim',
 ///   options: ['mg', 'ml', 'adet'],
 ///   labelBuilder: (v) => v,
@@ -53,8 +53,6 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final style = InputFieldTheme.of(context);
-
     return FormField<T>(
       initialValue: widget.initialValue,
       validator: widget.validator,
@@ -65,10 +63,6 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
           label: widget.label,
           errorText: field.errorText,
           enabled: widget.enabled,
-          // Text input ile aynı: decorator padding'i atla, padding'i
-          // PopupMenuButton'ın child'ına biz veriyoruz ki yükseklik
-          // MedTextInputField ile birebir aynı olsun.
-          applyPadding: false,
           child: LayoutBuilder(
             builder: (context, constraints) {
               return PopupMenuButton<Object>(
@@ -81,16 +75,8 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
                 },
                 constraints: BoxConstraints(minWidth: constraints.maxWidth, maxWidth: constraints.maxWidth),
                 offset: const Offset(0, 30),
-                // Açılır menü yüzeyini temaya bağla — Flutter'ın default
-                // canvas/surfaceTint rengini kullanmasın.
-                color: MedColors.surface,
-                surfaceTintColor: Colors.transparent,
-                elevation: 8,
-                shadowColor: const Color(0x331A2332),
-                shape: RoundedRectangleBorder(
-                  borderRadius: MedRadius.mdAll,
-                  side: const BorderSide(color: MedColors.border),
-                ),
+
+                elevation: 3,
                 itemBuilder: (context) => widget.options.map((item) {
                   return PopupMenuItem<Object>(
                     value: _toMenuValue(item),
@@ -100,19 +86,6 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
                     ),
                   );
                 }).toList(),
-<<<<<<< HEAD
-                child: Padding(
-                  padding: style.contentPadding,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          value != null ? (widget.labelBuilder(value) ?? '-') : '',
-                          style: MedTextStyles.bodyMd(color: MedColors.text),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-=======
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -123,11 +96,10 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
                             : (widget.labelBuilder(null) ?? widget.placeholder),
                         style: MedTextStyles.bodyMd(color: MedColors.text),
                         overflow: TextOverflow.ellipsis,
->>>>>>> ac0f249 (feat(rx): role-based permissions, generic filters, and UI polish)
                       ),
-                      Icon(PhosphorIcons.caretDown(), size: 16, color: MedColors.text3),
-                    ],
-                  ),
+                    ),
+                    Icon(PhosphorIcons.caretDown(), size: 16, color: MedColors.text3),
+                  ],
                 ),
               );
             },

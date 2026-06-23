@@ -71,11 +71,10 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
   void selectPrescriptionType(PrescriptionMovementType? type) {
     _type = type;
     notifyListeners();
-    print(_type);
     getPatientPrescriptionHistory();
   }
 
-  void getPatientPrescriptionHistory() async {
+  Future<void> getPatientPrescriptionHistory() async {
     final patientId = _hospitalization?.patient?.id;
     if (patientId == null) return;
 

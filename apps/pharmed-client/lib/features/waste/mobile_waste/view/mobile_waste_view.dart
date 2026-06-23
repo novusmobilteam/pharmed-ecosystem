@@ -90,7 +90,6 @@ class _MobileWasteBodyViewState extends ConsumerState<_MobileWasteBodyView> {
     // Kabine atanmış hasta yoksa boş durum
     if (state.hospitalizations.isEmpty) {
       return EmptyStateWidget(
-        card: false,
         icon: PhosphorIcons.usersThree(),
         size: EmptyStateSize.normal,
         title: context.l10n.prescription_noPatients_title,

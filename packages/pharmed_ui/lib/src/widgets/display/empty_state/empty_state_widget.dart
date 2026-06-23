@@ -76,19 +76,27 @@ class EmptyStateWidget extends StatelessWidget {
     this.title,
     this.description,
     this.action,
-    this.card = false, // <-- yeni
   });
 
+  /// Görüntülenecek senaryo. Varsayılan: [EmptyStateVariant.custom].
   final EmptyStateVariant variant;
-  final EmptyStateSize size;
-  final IconData? icon;
-  final String? title;
-  final String? description;
-  final Widget? action;
 
-  /// `true` olduğunda boş durum içeriği bir kart yüzeyi (surface + border +
-  /// gölge) üzerinde gösterilir. Geniş boş alanlarda daha düzenli görünür.
-  final bool card; // <-- yeni
+  /// Görsel ölçek. Varsayılan: [EmptyStateSize.normal].
+  final EmptyStateSize size;
+
+  /// [EmptyStateVariant.custom] için ikon. Diğer varyantlarda yoksayılır.
+  final IconData? icon;
+
+  /// [EmptyStateVariant.custom] için başlık. Diğer varyantlarda yoksayılır.
+  final String? title;
+
+  /// [EmptyStateVariant.custom] için açıklama. Diğer varyantlarda yoksayılır.
+  final String? description;
+
+  /// İsteğe bağlı aksiyon widget'ı (genellikle [MedButton]).
+  ///
+  /// Yalnızca [EmptyStateSize.normal] modunda gösterilir.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -97,80 +105,32 @@ class EmptyStateWidget extends StatelessWidget {
     ).resolve(variant, icon: icon, title: title, description: description);
     final spec = size.spec;
 
-    final inner = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _IconBox(icon: content.icon, spec: spec),
-        SizedBox(height: spec.iconBottomGap),
-        Text(
-          content.title,
-          style: TextStyle(
-            fontFamily: MedFonts.title,
-            fontSize: spec.titleSize,
-            fontWeight: FontWeight.w700,
-            color: MedColors.text2,
-            letterSpacing: 0.2,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: spec.titleBottomGap / 2),
-        Text(
-          content.description,
-          style: MedTextStyles.bodyMd(color: MedColors.text3),
-          textAlign: TextAlign.center,
-        ),
-        if (action != null && size == EmptyStateSize.normal) ...[const SizedBox(height: 20), action!],
-      ],
-    );
-
-    // Kart modu — içeriği surface yüzeyine sar
-    if (card) {
-      return Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 560),
-          child: Container(
-            margin: const EdgeInsets.all(MedSpacing.xl),
-            padding: spec.padding,
-            decoration: BoxDecoration(
-              color: MedColors.surface,
-              border: Border.all(color: MedColors.border),
-              borderRadius: MedRadius.lgAll,
-              boxShadow: MedShadows.sm,
-            ),
-            child: inner,
-          ),
-        ),
-      );
-    }
-
-    // Varsayılan — kartsız
     return Center(
-      child: Padding(padding: spec.padding, child: inner),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Private sub-widgets
-// ---------------------------------------------------------------------------
-
-class _IconBox extends StatelessWidget {
-  const _IconBox({required this.icon, required this.spec});
-
-  final IconData icon;
-  final EmptyStateSizeSpec spec;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: spec.boxSize,
-      height: spec.boxSize,
-      decoration: BoxDecoration(
-        color: MedColors.surface3,
-        borderRadius: BorderRadius.circular(spec.boxRadius),
-        border: Border.all(color: MedColors.border, width: 1.5),
+      child: Padding(
+        padding: spec.padding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) Icon(icon, size: spec.iconSize, color: MedColors.text3),
+            Text(
+              content.title,
+              style: TextStyle(
+                fontFamily: MedFonts.title,
+                fontSize: spec.titleSize,
+                fontWeight: FontWeight.w700,
+                color: MedColors.text2,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              content.description,
+              style: MedTextStyles.bodySm(color: MedColors.text3),
+              textAlign: TextAlign.center,
+            ),
+            if (action != null && size == EmptyStateSize.normal) ...[const SizedBox(height: 20), action!],
+          ],
+        ),
       ),
-      child: Icon(icon, size: spec.iconSize, color: MedColors.text3),
     );
   }
 }
