@@ -1,7 +1,13 @@
 part of 'dashboard_screen.dart';
 
 class DashboardContentFactory {
-  static Widget buildContent(BuildContext context, DashboardState state, DashboardNotifier notifier, bool isLoggedIn) {
+  static Widget buildContent(
+    BuildContext context,
+    WidgetRef ref,
+    DashboardState state,
+    DashboardNotifier notifier,
+    bool isLoggedIn,
+  ) {
     // Rota bilgisini güvenli bir şekilde state'den ayıklıyoruz
     final route = switch (state) {
       DashboardLoaded s => s.activeRoute,
@@ -19,34 +25,41 @@ class DashboardContentFactory {
 
     final activeMenu = flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
 
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 250),
-      reverseDuration: Duration.zero,
-      child: KeyedSubtree(
-        key: ValueKey(route),
-        child: switch (route) {
-          // Ana Sayfa (Mevcut _DashboardBody içeriğin buraya taşındı)
-          'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) {
+        ref.read(authNotifierProvider.notifier).onUserActivity();
+      },
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: Duration.zero,
+        child: KeyedSubtree(
+          key: ValueKey(route),
+          child: switch (route) {
+            // Ana Sayfa (Mevcut _DashboardBody içeriğin buraya taşındı)
+            'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
 
-          // Diğer Modüller
-          'drug-assignment' => AssignmentView(),
-          'drug-refill' => RefillView(),
-          'drug-intake' => IntakeView(),
-          'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
-          'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
-          'drug-activity' => DrugActivityScreen(),
-          'drug-unload' => UnloadView(),
-          'drug-census' => CensusView(),
-          'drawer-malfunction' => FaultView(),
-          'cabin-stock' => activeMenu != null ? CabinStockView(menu: activeMenu) : const SizedBox.shrink(),
-          'patient-request-review' => activeMenu != null ? PrescriptionView(menu: activeMenu) : const SizedBox.shrink(),
-          'unapplied-prescriptions' =>
-            activeMenu != null ? UnappliedPrescriptionScreen(menu: activeMenu) : const SizedBox.shrink(),
-          'my-patients' => activeMenu != null ? MyPatientsScreen(menu: activeMenu) : const SizedBox.shrink(),
+            // Diğer Modüller
+            'drug-assignment' => AssignmentView(),
+            'drug-refill' => RefillView(),
+            'drug-intake' => IntakeView(),
+            'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
+            'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
+            'drug-activity' => DrugActivityScreen(),
+            'drug-unload' => UnloadView(),
+            'drug-census' => CensusView(),
+            'drawer-malfunction' => FaultView(),
+            'cabin-stock' => activeMenu != null ? CabinStockView(menu: activeMenu) : const SizedBox.shrink(),
+            'patient-request-review' =>
+              activeMenu != null ? PrescriptionView(menu: activeMenu) : const SizedBox.shrink(),
+            'unapplied-prescriptions' =>
+              activeMenu != null ? UnappliedPrescriptionScreen(menu: activeMenu) : const SizedBox.shrink(),
+            'my-patients' => activeMenu != null ? MyPatientsScreen(menu: activeMenu) : const SizedBox.shrink(),
 
-          // Fallback
-          _ => Center(child: Text(context.l10n.common_pageNotFound)),
-        },
+            // Fallback
+            _ => Center(child: Text(context.l10n.common_pageNotFound)),
+          },
+        ),
       ),
     );
   }

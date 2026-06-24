@@ -38,25 +38,21 @@ class AppRouter extends ConsumerWidget {
     // [ORİJİNAL AKIŞ] Dev geçici blok kaldırılınca aşağısı aktif edilecek.
     // ──────────────────────────────────────────────────────────────
     return switch ((authState, setupState)) {
-      // Auth yok → direkt login
-      (AuthLoggedOut(), _) => const LoginScreen(),
-      //(AuthLoggedOut(), _) when hasSessionHistory => const DashboardScreen(),
-      (AuthError(), _) => const LoginScreen(),
-
-      // Auth yükleniyor
-      (AuthLoading(), _) => const LoginScreen(),
-
-      // Auth tamam — setup kontrol et
       (AuthLoggedIn(), AsyncLoading()) => const LoginScreen(),
       (AuthLoggedIn(), AsyncData(value: false)) => const SetupWizardScreen(),
       (AuthLoggedIn(), AsyncData(value: true)) => const DashboardScreen(),
       (AuthLoggedIn(), AsyncError()) => const SetupWizardScreen(),
 
-      // Oturum bitiyor — dashboard'da kal, banner gösterilir
-      (AuthSessionExpiring(), AsyncData(value: true)) => const DashboardScreen(),
+      // Countdown sırasında dashboard'da kal, banner gösterilir
       (AuthSessionExpiring(), _) => const DashboardScreen(),
 
-      // Diğer
+      // YENİ: Locked çıkış → dashboard'da kal, appbar'da Giriş Yap butonu
+      (AuthLoggedOut(showLockedDashboard: true), _) => const DashboardScreen(),
+
+      // Diğer logout/error → login
+      (AuthLoggedOut(), _) => const LoginScreen(),
+      (AuthError(), _) => const LoginScreen(),
+      (AuthLoading(), _) => const LoginScreen(),
       _ => const LoginScreen(),
     };
   }

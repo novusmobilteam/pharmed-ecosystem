@@ -54,11 +54,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final dashState = ref.watch(dashboardNotifierProvider);
-    final authState = ref.watch(authNotifierProvider);
     final notifier = ref.read(dashboardNotifierProvider.notifier);
     final authNotif = ref.read(authNotifierProvider.notifier);
+    final authState = ref.watch(authNotifierProvider);
 
-    final isLoggedIn = authNotif.isLoggedIn;
+    // AuthSessionExpiring de "logged in" sayılır — countdown sırasında menüler
+    // aktif kalsın ki kullanıcı dokunsun, oturum uzasın.
+    final isLoggedIn = authState is AuthLoggedIn || authState is AuthSessionExpiring;
     final currentUser = authNotif.currentUser;
     final isExpiring = authState is AuthSessionExpiring;
 
@@ -90,7 +92,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           onLoginTap: () => _showLoginModal(context, ref),
           onLogoutTap: authNotif.logout,
           onSettingsTap: () => _showSettingsPopup(context),
-          onMenuItemTap: (id) => notifier.navigateTo(id),
+          onMenuItemTap: (id) => isLoggedIn ? notifier.navigateTo(id) : null,
         ),
         body: Stack(
           children: [
@@ -105,7 +107,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   MedStaleBanner(lastUpdated: dashState.staleSince, canProceed: dashState.canProceed),
 
                 // İçerik
-                Expanded(child: DashboardContentFactory.buildContent(context, dashState, notifier, isLoggedIn)),
+                Expanded(child: DashboardContentFactory.buildContent(context, ref, dashState, notifier, isLoggedIn)),
               ],
             ),
 
@@ -116,7 +118,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 right: 20,
                 child: SessionTimeoutBanner(
                   secondsRemaining: (authState).secondsRemaining,
-                  onExtend: authNotif.extendSession,
+                  onExtend: authNotif.onUserActivity,
                 ),
               ),
           ],

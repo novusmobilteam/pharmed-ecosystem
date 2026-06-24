@@ -6,7 +6,13 @@ sealed class AuthState {
 
 /// Kullanıcı giriş yapmamış veya oturum düşmüş.
 final class AuthLoggedOut extends AuthState {
-  const AuthLoggedOut();
+  /// `true` ise router LoginScreen yerine DashboardScreen (read-only) gösterir
+  /// ve appbar'da "Giriş Yap" butonu çıkar. Inactivity timeout veya 401
+  /// (`onUnauthorized`) sonrası logout'larda `true`. Kullanıcı manuel olarak
+  /// çıkış yaptığında veya uygulama ilk açıldığında `false`.
+  const AuthLoggedOut({this.showLockedDashboard = false});
+
+  final bool showLockedDashboard;
 }
 
 /// Giriş işlemi devam ediyor.
