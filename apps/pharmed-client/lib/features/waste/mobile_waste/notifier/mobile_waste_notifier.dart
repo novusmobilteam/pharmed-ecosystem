@@ -268,6 +268,12 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
         message: message,
         isWastage: isWastage,
         search: search,
+        previousState: MobileWastePatientSelected(
+          hospitalizations: patients,
+          selectedPatient: selectedPatient,
+          disposables: const [],
+          search: search,
+        ),
       ),
       error: (e) => MobileWasteError(
         message: e.message,

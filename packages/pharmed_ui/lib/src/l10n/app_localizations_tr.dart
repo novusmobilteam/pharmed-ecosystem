@@ -1056,7 +1056,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get refill_hint_idleExecution => 'Soldan ilaç seçip dolumu başlatın.';
 
   @override
-  String get refund_success_completed => 'İade başarıyla tamamlandı.';
+  String get refund_success_title => 'İade başarılı';
+
+  @override
+  String get refund_success_message =>
+      'Lütfen iade edilen ilacı eczacıya teslim ediniz.';
 
   @override
   String get refund_panel_title => 'İade Edilebilir İlaçlar';
@@ -1106,10 +1110,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get waste_action_destruction => 'İmha Et';
 
   @override
-  String get waste_success_wastage => 'Fire işlemi başarıyla tamamlandı.';
+  String get wastage_success_title => 'Fire kaydedildi';
 
   @override
-  String get waste_success_destruction => 'İmha işlemi başarıyla tamamlandı.';
+  String get wastage_success_message =>
+      'Lütfen fire kaydı yapılan ilacı fire kutusuna bırakınız.';
+
+  @override
+  String get destruction_success_title => 'İmha kaydedildi';
+
+  @override
+  String get destruction_success_message =>
+      'Lütfen ilacı imha prosedürüne uygun şekilde imha ediniz.';
 
   @override
   String get assignment_success_created =>

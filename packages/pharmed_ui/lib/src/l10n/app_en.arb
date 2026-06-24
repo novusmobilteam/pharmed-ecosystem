@@ -945,7 +945,9 @@
 "refill_hint_idleExecution": "Select medicines on the left to start refilling.",
 
 
-  "refund_success_completed": "Refund completed successfully.",
+  "refund_success_title": "Refund successful",
+  "refund_success_message": "Please deliver the refunded medication to the pharmacist.",
+
   "refund_panel_title": "Refundable Medications",
   "refund_action_checking": "Checking...",
   "refund_action_refunding": "Refunding...",
@@ -964,8 +966,12 @@
   "waste_panel_title": "Wasteable/Destructible Medications",
   "waste_action_wastage": "Waste",
   "waste_action_destruction": "Destroy",
-  "waste_success_wastage": "Wastage completed successfully.",
-  "waste_success_destruction": "Destruction completed successfully.",
+
+  "wastage_success_title": "Wastage recorded",
+  "wastage_success_message": "Please place the wasted medication in the wastage bin.",
+
+  "destruction_success_title": "Destruction recorded",
+  "destruction_success_message": "Please dispose of the medication in accordance with the destruction procedure.",
 
   "assignment_success_created": "Bed assignment saved successfully.",
   "assignment_success_deleted": "Bed assignment removed.",

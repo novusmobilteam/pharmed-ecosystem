@@ -228,28 +228,33 @@ class MessageUtils {
 
   // === DIALOG MESSAGE METHODS ===
 
-  static void showErrorDialog(BuildContext context, String? message) {
+  static void showErrorDialog(BuildContext context, String? message, {String? description}) {
     showDialog(
       context: context,
       builder: (context) => _CustomMessageDialog(
         message: message ?? 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
         type: MessageType.error,
+        description: description,
       ),
     );
   }
 
-  static void showSuccessDialog(BuildContext context, String? message) {
+  static void showSuccessDialog(BuildContext context, String? message, {String? description}) {
     showDialog(
       context: context,
-      builder: (context) =>
-          _CustomMessageDialog(message: message ?? 'İşleminiz başarıyla tamamlandı.', type: MessageType.success),
+      builder: (context) => _CustomMessageDialog(
+        message: message ?? 'İşleminiz başarıyla tamamlandı.',
+        type: MessageType.success,
+        description: description,
+      ),
     );
   }
 
-  static void showWarningDialog(BuildContext context, String? message) {
+  static void showWarningDialog(BuildContext context, String? message, {String? description}) {
     showDialog(
       context: context,
-      builder: (context) => _CustomMessageDialog(message: message ?? 'Uyarı!', type: MessageType.warning),
+      builder: (context) =>
+          _CustomMessageDialog(message: message ?? 'Uyarı!', type: MessageType.warning, description: description),
     );
   }
 
@@ -451,12 +456,12 @@ class _ConfirmDialogContent {
 class _CustomMessageDialog extends StatelessWidget {
   final String message;
   final MessageType type;
+  final String? description;
 
-  const _CustomMessageDialog({required this.message, required this.type});
+  const _CustomMessageDialog({required this.message, required this.type, this.description});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final themeData = MessageUtils._getToastThemeData(type);
     final icon = MessageUtils._getIconByType(type);
 
@@ -495,13 +500,15 @@ class _CustomMessageDialog extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: MedColors.text,
-                height: 1.55,
-              ),
+              style: MedTextStyles.bodyLg().copyWith(fontWeight: FontWeight.w600, color: MedColors.text, height: 1.55),
             ),
-            const SizedBox(height: 24),
+            if (description != null)
+              Text(
+                description!,
+                textAlign: TextAlign.center,
+                style: MedTextStyles.bodySm(color: MedColors.text),
+              ),
+            const SizedBox(height: 12),
             MedButton(
               label: 'Tamam',
               variant: buttonVariant,

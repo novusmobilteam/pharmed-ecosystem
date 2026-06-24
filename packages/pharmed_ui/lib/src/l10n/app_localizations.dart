@@ -1990,11 +1990,17 @@ abstract class AppLocalizations {
   /// **'Select medicines on the left to start refilling.'**
   String get refill_hint_idleExecution;
 
-  /// No description provided for @refund_success_completed.
+  /// No description provided for @refund_success_title.
   ///
   /// In en, this message translates to:
-  /// **'Refund completed successfully.'**
-  String get refund_success_completed;
+  /// **'Refund successful'**
+  String get refund_success_title;
+
+  /// No description provided for @refund_success_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Please deliver the refunded medication to the pharmacist.'**
+  String get refund_success_message;
 
   /// No description provided for @refund_panel_title.
   ///
@@ -2086,17 +2092,29 @@ abstract class AppLocalizations {
   /// **'Destroy'**
   String get waste_action_destruction;
 
-  /// No description provided for @waste_success_wastage.
+  /// No description provided for @wastage_success_title.
   ///
   /// In en, this message translates to:
-  /// **'Wastage completed successfully.'**
-  String get waste_success_wastage;
+  /// **'Wastage recorded'**
+  String get wastage_success_title;
 
-  /// No description provided for @waste_success_destruction.
+  /// No description provided for @wastage_success_message.
   ///
   /// In en, this message translates to:
-  /// **'Destruction completed successfully.'**
-  String get waste_success_destruction;
+  /// **'Please place the wasted medication in the wastage bin.'**
+  String get wastage_success_message;
+
+  /// No description provided for @destruction_success_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Destruction recorded'**
+  String get destruction_success_title;
+
+  /// No description provided for @destruction_success_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Please dispose of the medication in accordance with the destruction procedure.'**
+  String get destruction_success_message;
 
   /// No description provided for @assignment_success_created.
   ///

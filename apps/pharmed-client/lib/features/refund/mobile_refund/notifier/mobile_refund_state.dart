@@ -161,6 +161,7 @@ final class MobileRefundSuccess extends MobileRefundState {
     required this.refundables,
     required this.message,
     this.search = '',
+    required this.previousState,
   });
 
   final List<Hospitalization> hospitalizations;
@@ -168,6 +169,7 @@ final class MobileRefundSuccess extends MobileRefundState {
   final List<PrescriptionItem> refundables;
   final String message;
   final String search;
+  final MobileRefundState previousState;
 }
 
 /// Hata — previousState ile geriye dönülür.
@@ -267,7 +269,11 @@ extension MobileRefundStateX on MobileRefundState {
 
   bool get isPatientSelected => switch (this) {
     MobileRefundPatientSelected() => true,
+    MobileRefundDrugSelected() => true,
+    MobileRefundChecking() => true,
+    MobileRefundSaving() => true,
     MobileRefundError(:final previousState) => previousState.isPatientSelected,
+    MobileRefundSuccess(:final previousState) => previousState.isPatientSelected,
     _ => false,
   };
 

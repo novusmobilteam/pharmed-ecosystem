@@ -77,8 +77,11 @@ class _MobileWasteBodyViewState extends ConsumerState<_MobileWasteBodyView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is MobileWasteSuccess) {
-        final msg = next.isWastage ? context.l10n.waste_success_wastage : context.l10n.waste_success_destruction;
-        MessageUtils.showSuccessSnackbar(context, msg);
+        final msg = next.isWastage ? context.l10n.wastage_success_title : context.l10n.destruction_success_title;
+        final description = next.isWastage
+            ? context.l10n.wastage_success_message
+            : context.l10n.destruction_success_message;
+        MessageUtils.showSuccessDialog(context, msg, description: description);
         notifier.dismissSuccess();
       }
     });
