@@ -1339,4 +1339,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filter_all => 'All';
+
+  @override
+  String get census_action_report_extra_stock => 'Report Extra Stock';
+
+  @override
+  String get census_extra_stock_dialog_title => 'Report Extra Stock';
+
+  @override
+  String get census_extra_stock_quantity_label => 'Quantity';
+
+  @override
+  String get common_action_add => 'Add';
+
+  @override
+  String get census_extra_stock_summary_title => 'Reported Extra Stocks';
 }

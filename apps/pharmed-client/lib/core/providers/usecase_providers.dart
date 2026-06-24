@@ -347,3 +347,7 @@ final getFilteredHospitalizationsUseCaseProvider = Provider((ref) {
 final createUrgentPatientUseCaseProvider = Provider((ref) {
   return CreateUrgentPatientUseCase(ref.read(patientRepositoryProvider));
 });
+
+final getMedicinesUseCaseProvider = Provider((ref) {
+  return GetMedicinesUseCase(ref.read(medicineRepositoryProvider));
+});

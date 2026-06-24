@@ -83,8 +83,8 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
       operation: () => _historyUseCase.call(
         patientId,
         params: PagedQueryParams(
-          startDate: _startDate,
-          endDate: _endDate,
+          startDate: _startDate?.startOfDay,
+          endDate: _endDate?.endOfDay,
           filters: [if (_type != null) Filter.eq('lastMovement.detailStatusId', _type!.id)],
         ),
       ),

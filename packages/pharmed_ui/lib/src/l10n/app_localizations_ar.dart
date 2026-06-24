@@ -1340,4 +1340,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get filter_all => 'الكل';
+
+  @override
+  String get census_action_report_extra_stock => 'الإبلاغ عن مخزون زائد';
+
+  @override
+  String get census_extra_stock_dialog_title => 'الإبلاغ عن مخزون زائد';
+
+  @override
+  String get census_extra_stock_quantity_label => 'الكمية';
+
+  @override
+  String get common_action_add => 'إضافة';
+
+  @override
+  String get census_extra_stock_summary_title => 'المخزون الزائد المُبلَّغ عنه';
 }

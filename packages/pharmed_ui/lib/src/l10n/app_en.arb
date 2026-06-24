@@ -1057,5 +1057,10 @@
 "date_preset_last_3_days": "Last 3 days",
 "date_preset_last_7_days": "Last 7 days",
 "date_preset_all": "All",
-"filter_all": "All"
+"filter_all": "All",
+"census_action_report_extra_stock": "Report Extra Stock",
+"census_extra_stock_dialog_title": "Report Extra Stock",
+"census_extra_stock_quantity_label": "Quantity",
+"common_action_add": "Add",
+"census_extra_stock_summary_title": "Reported Extra Stocks"
 }

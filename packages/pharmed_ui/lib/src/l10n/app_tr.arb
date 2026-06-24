@@ -1204,5 +1204,10 @@
 "date_preset_last_3_days": "Son 3 gün",
 "date_preset_last_7_days": "Son 7 gün",
 "date_preset_all": "Tümü",
-"filter_all": "Tümü"
+"filter_all": "Tümü",
+"census_action_report_extra_stock": "Fazla Stok Bildir",
+"census_extra_stock_dialog_title": "Fazla Stok Bildir",
+"census_extra_stock_quantity_label": "Adet",
+"common_action_add": "Ekle",
+"census_extra_stock_summary_title": "Bildirilen Fazla Stoklar"
 }

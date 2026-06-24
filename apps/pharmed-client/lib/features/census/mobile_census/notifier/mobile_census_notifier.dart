@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -115,6 +116,18 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     final current = state;
     if (current is! MobileCensusReady) return;
 
+    // RFID'li item'lar sadece okuyucu tarafından seçilir/kaldırılır.
+    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
+    if (item?.rfidTag != null) {
+      MedLogger.warn(
+        unit: 'MobileCensusNotifier',
+        swreq: 'SWREQ-CLI-CENSUS-006',
+        message: 'RFID etiketli ilaç için manuel seçim engellendi',
+        context: {'itemId': itemId},
+      );
+      return;
+    }
+
     final next = {...current.selectedItemIds};
     if (!next.add(itemId)) next.remove(itemId);
     state = current.copyWith(selectedItemIds: next);
@@ -171,6 +184,43 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
   /// Çekmeceyi tekrar aç — RFID eksikse "Sayıma Devam Et" butonuna bağlanır.
   Future<void> reopenDrawer() async {
     await ref.read(mobileDrawerSessionProvider.notifier).reopen();
+  }
+
+  void onReportExtraStockTap() {
+    // Bir sonraki turda implement edeceğiz.
+    // İlaç seçim dialog'u açacak.
+    MedLogger.info(
+      unit: 'MobileCensusNotifier',
+      swreq: 'SWREQ-CLI-CENSUS-005',
+      message: 'Fazla stok bildirimi başlatıldı',
+    );
+  }
+
+  void addExtraStock({required Medicine medicine, required double quantity}) {
+    final current = state;
+    if (current is! MobileCensusReady) return;
+    if (quantity <= 0) return;
+
+    final entry = CensusExtraStock(
+      localId: DateTime.now().microsecondsSinceEpoch.toString(),
+      medicine: medicine,
+      quantity: quantity,
+    );
+
+    state = current.copyWith(extraStocks: [...current.extraStocks, entry]);
+
+    MedLogger.info(
+      unit: 'MobileCensusNotifier',
+      swreq: 'SWREQ-CLI-CENSUS-005',
+      message: 'Fazla stok eklendi',
+      context: {'medicineId': medicine.id, 'quantity': quantity},
+    );
+  }
+
+  void removeExtraStock(String localId) {
+    final current = state;
+    if (current is! MobileCensusReady) return;
+    state = current.copyWith(extraStocks: current.extraStocks.where((e) => e.localId != localId).toList());
   }
 
   /// Sayımı iptal et.
@@ -270,17 +320,29 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     if (current is! MobileCensusReady) return;
     if (current.rfidReadEpcs.contains(epc)) return;
 
-    state = current.copyWith(rfidReadEpcs: {...current.rfidReadEpcs, epc});
+    // Bu EPC'ye karşılık gelen, henüz seçilmemiş item'ı otomatik seç.
+    final autoSelected = <int>{};
+    for (final item in current.prescriptionItems) {
+      if (item.id == null || item.rfidTag != epc) continue;
+      if (current.selectedItemIds.contains(item.id)) continue;
+      autoSelected.add(item.id!);
+    }
+
+    state = current.copyWith(
+      rfidReadEpcs: {...current.rfidReadEpcs, epc},
+      selectedItemIds: autoSelected.isEmpty ? current.selectedItemIds : {...current.selectedItemIds, ...autoSelected},
+    );
 
     MedLogger.info(
       unit: 'MobileCensusNotifier',
       swreq: 'SWREQ-CLI-CENSUS-004',
       message: 'RFID tag okundu — ilaç kabinde mevcut',
-      context: {'epc': epc},
+      context: {'epc': epc, 'autoSelectedCount': autoSelected.length},
     );
   }
 
-  /// EPC kayboldu → ilaç kabinden çıkarıldı: rfidReadEpcs'ten çıkar.
+  /// EPC kayboldu → ilaç kabinden çıkarıldı: rfidReadEpcs'ten çıkar,
+  /// bu etikete bağlı seçili item'ların seçimini kaldır.
   ///
   /// SWREQ-CLI-CENSUS-005
   void _onEpcLost(String epc) {
@@ -288,14 +350,26 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     if (current is! MobileCensusReady) return;
     if (!current.rfidReadEpcs.contains(epc)) return;
 
-    final updated = Set<String>.from(current.rfidReadEpcs)..remove(epc);
-    state = current.copyWith(rfidReadEpcs: updated);
+    // Bu EPC'ye karşılık gelen seçili item'ları bul.
+    final toDeselect = <int>{};
+    for (final item in current.prescriptionItems) {
+      if (item.id == null || item.rfidTag != epc) continue;
+      if (!current.selectedItemIds.contains(item.id)) continue;
+      toDeselect.add(item.id!);
+    }
+
+    final updatedEpcs = Set<String>.from(current.rfidReadEpcs)..remove(epc);
+    final updatedSelection = toDeselect.isEmpty
+        ? current.selectedItemIds
+        : (Set<int>.from(current.selectedItemIds)..removeAll(toDeselect));
+
+    state = current.copyWith(rfidReadEpcs: updatedEpcs, selectedItemIds: updatedSelection);
 
     MedLogger.info(
       unit: 'MobileCensusNotifier',
       swreq: 'SWREQ-CLI-CENSUS-005',
       message: 'RFID tag kapsama dışına çıktı — ilaç kabinde yok',
-      context: {'epc': epc},
+      context: {'epc': epc, 'deselectedCount': toDeselect.length},
     );
   }
 

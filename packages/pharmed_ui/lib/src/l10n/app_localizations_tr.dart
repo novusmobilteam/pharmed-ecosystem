@@ -1340,4 +1340,19 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get filter_all => 'Tümü';
+
+  @override
+  String get census_action_report_extra_stock => 'Fazla Stok Bildir';
+
+  @override
+  String get census_extra_stock_dialog_title => 'Fazla Stok Bildir';
+
+  @override
+  String get census_extra_stock_quantity_label => 'Adet';
+
+  @override
+  String get common_action_add => 'Ekle';
+
+  @override
+  String get census_extra_stock_summary_title => 'Bildirilen Fazla Stoklar';
 }

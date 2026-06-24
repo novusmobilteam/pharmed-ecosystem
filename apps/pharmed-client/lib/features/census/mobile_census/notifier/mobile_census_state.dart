@@ -105,6 +105,7 @@ final class MobileCensusReady extends MobileCensusState {
     required this.selectedItemIds,
     this.datePreset = DateRangePreset.today,
     this.statusFilter = PrescriptionMovementType.purchasePending,
+    this.extraStocks = const [],
   });
 
   final List<MobileSlotVisual> slots;
@@ -127,6 +128,7 @@ final class MobileCensusReady extends MobileCensusState {
   final Set<int> selectedItemIds;
   final DateRangePreset datePreset;
   final PrescriptionMovementType? statusFilter;
+  final List<CensusExtraStock> extraStocks;
 
   int get selectedSlotId => selectedSlot.slotId;
 
@@ -141,11 +143,21 @@ final class MobileCensusReady extends MobileCensusState {
     return rfidItems.every((i) => rfidReadEpcs.contains(i.rfidTag!));
   }
 
+  List<CensusMedicineGroup> get groups => groupPrescriptionItemsByMedicine(
+    items: prescriptionItems,
+    rfidReadEpcs: rfidReadEpcs,
+    selectedItemIds: selectedItemIds,
+  );
+
   /// Banner sayacı için: işaretli RFID'li ilaç sayısı.
   int get rfidExpectedCount => _selectedRfidItems.length;
 
-  /// Bunlardan kaç tanesinin EPC'si şu an okunuyor (kabinde mevcut).
-  int get rfidPresentCount => _selectedRfidItems.where((i) => rfidReadEpcs.contains(i.rfidTag!)).length;
+  /// Okunan (kabinde mevcut) seçili RFID'li ilaç sayısı.
+  int get rfidPresentCount => prescriptionItems
+      .where(
+        (i) => i.id != null && selectedItemIds.contains(i.id) && i.rfidTag != null && rfidReadEpcs.contains(i.rfidTag),
+      )
+      .length;
 
   List<PrescriptionItem> get _selectedRfidItems => prescriptionItems
       .where(
@@ -166,6 +178,7 @@ final class MobileCensusReady extends MobileCensusState {
     DateRangePreset? datePreset,
     PrescriptionMovementType? statusFilter,
     bool clearStatusFilter = false,
+    List<CensusExtraStock>? extraStocks,
   }) {
     return MobileCensusReady(
       slots: slots,
@@ -182,6 +195,7 @@ final class MobileCensusReady extends MobileCensusState {
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
       datePreset: datePreset ?? this.datePreset,
       statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
+      extraStocks: extraStocks ?? this.extraStocks,
     );
   }
 }

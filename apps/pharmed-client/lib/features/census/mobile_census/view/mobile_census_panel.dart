@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/widgets/widgets.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/enums/cabin_operation_mode.dart';
+import '../../../../core/providers/providers.dart';
 import '../../census.dart';
+
+part 'report_extra_stock_dialog.dart';
+part 'extra_stock_summary_card.dart';
+part 'rx_census_group_card.dart';
 
 class MobileCensusPanel extends StatelessWidget {
   const MobileCensusPanel({
@@ -77,19 +85,25 @@ class MobileCensusPanel extends StatelessWidget {
           room: ready.room,
           onChange: _isProcessActive ? null : onChangePatient,
         ),
-        MedFilterChipGroup<PrescriptionMovementType?>(
-          options: [null, ...PrescriptionMovementType.intakeableTypes],
-          selected: ready.statusFilter,
-          onChanged: notifier.onStatusFilterChanged,
-          labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
-          bgColor: ready.statusFilter?.backgroundColor,
-        ),
-        MedFilterChipGroup<DateRangePreset>(
-          options: DateRangePreset.values,
-          selected: ready.datePreset,
-          labelBuilder: (p) => p.label(context.l10n),
-          onChanged: notifier.onDatePresetChanged,
-        ),
+        // Sayım aktifken filtreler yerine fazla stok butonu
+        if (_isProcessActive) ...[
+          _ReportExtraStockButton(onReport: notifier.addExtraStock),
+          _ExtraStockSummaryCard(extraStocks: ready.extraStocks, onRemove: notifier.removeExtraStock),
+        ] else ...[
+          MedFilterChipGroup<PrescriptionMovementType?>(
+            options: [null, ...PrescriptionMovementType.intakeableTypes],
+            selected: ready.statusFilter,
+            onChanged: notifier.onStatusFilterChanged,
+            labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+            bgColor: ready.statusFilter?.backgroundColor,
+          ),
+          MedFilterChipGroup<DateRangePreset>(
+            options: DateRangePreset.values,
+            selected: ready.datePreset,
+            labelBuilder: (p) => p.label(context.l10n),
+            onChanged: notifier.onDatePresetChanged,
+          ),
+        ],
         Expanded(
           child: _CensusPrescriptionList(
             items: ready.prescriptionItems,
@@ -99,6 +113,7 @@ class MobileCensusPanel extends StatelessWidget {
             isProcessActive: _isProcessActive,
             onToggleItem: onToggleItem,
             drawerStage: drawerStage,
+            ready: ready,
           ),
         ),
         _CensusActionBar(
@@ -126,6 +141,7 @@ class _CensusPrescriptionList extends StatelessWidget {
     required this.isProcessActive,
     required this.onToggleItem,
     required this.drawerStage,
+    required this.ready,
   });
 
   final List<PrescriptionItem> items;
@@ -142,6 +158,7 @@ class _CensusPrescriptionList extends StatelessWidget {
 
   final ValueChanged<int> onToggleItem;
   final MobileDrawerStage drawerStage;
+  final MobileCensusReady ready;
 
   @override
   Widget build(BuildContext context) {
@@ -149,34 +166,17 @@ class _CensusPrescriptionList extends StatelessWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.noPrescription);
     }
 
-    return ListView.builder(
+    return ListView.separated(
       padding: const EdgeInsets.only(bottom: 6, right: 2),
-      itemCount: items.length,
+      separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.sm),
+      itemCount: ready.groups.length,
       itemBuilder: (context, index) {
-        final item = items[index];
-
-        final isEligible = item.status == PrescriptionMovementType.purchasePending;
-        final isSelected = item.id != null && selectedItemIds.contains(item.id);
-
-        // Sayım semantiği: EPC okunuyorsa ilaç kabinde var (present),
-        // okunmuyorsa absent. Alımın tersi: "removed" durumu yok.
-        final rfidStatus = !isProcessActive
-            ? null // session başlamadı
-            : rfidReadEpcs.contains(item.rfidTag)
-            ? RfidPresenceStatus.present
-            : RfidPresenceStatus.absent;
-
-        return RxOperationCard(
-          mode: RxOperationCardMode.census,
-          item: item,
-          isEligible: isEligible,
-          isSelected: isSelected,
-          rfidStatus: rfidStatus,
-          onTap: isSelectionLocked || item.id == null
-              ? null
-              : () {
-                  onToggleItem(item.id!);
-                },
+        final group = ready.groups[index];
+        return RxCensusGroupCard(
+          group: group,
+          isProcessActive: isProcessActive,
+          isSelectionLocked: isSelectionLocked,
+          onToggleItem: onToggleItem,
         );
       },
     );
@@ -217,7 +217,7 @@ class _CensusActionBar extends StatelessWidget {
   bool get _showCancel {
     if (isSaving) return false;
     if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) return false;
-    if (drawerStage is MobileDrawerIdle) return true;
+    if (drawerStage is MobileDrawerIdle) return hasSelection;
     if (drawerStage is MobileDrawerClosed) return rfidPresentCount == 0;
     if (drawerStage is MobileDrawerFailed) return true;
     return false;
@@ -293,6 +293,31 @@ class _CancelButton extends StatelessWidget {
       size: MedButtonSize.sm,
       variant: MedButtonVariant.danger,
       onPressed: onTap,
+    );
+  }
+}
+
+class _ReportExtraStockButton extends StatelessWidget {
+  const _ReportExtraStockButton({required this.onReport});
+
+  final void Function({required Medicine medicine, required double quantity}) onReport;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: MedButton(
+        label: context.l10n.census_action_report_extra_stock,
+        size: MedButtonSize.md,
+        variant: MedButtonVariant.secondary,
+
+        onPressed: () async {
+          final result = await ReportExtraStockDialog.show(context);
+          if (result != null) {
+            onReport(medicine: result.medicine, quantity: result.quantity);
+          }
+        },
+      ),
     );
   }
 }

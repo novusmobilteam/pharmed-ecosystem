@@ -996,5 +996,10 @@
 "date_preset_last_3_days": "آخر 3 أيام",
 "date_preset_last_7_days": "آخر 7 أيام",
 "date_preset_all": "الكل",
-"filter_all": "الكل"
+"filter_all": "الكل",
+"census_action_report_extra_stock": "الإبلاغ عن مخزون زائد",
+"census_extra_stock_dialog_title": "الإبلاغ عن مخزون زائد",
+"census_extra_stock_quantity_label": "الكمية",
+"common_action_add": "إضافة",
+"census_extra_stock_summary_title": "المخزون الزائد المُبلَّغ عنه"
 }

@@ -2517,6 +2517,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All'**
   String get filter_all;
+
+  /// No description provided for @census_action_report_extra_stock.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Extra Stock'**
+  String get census_action_report_extra_stock;
+
+  /// No description provided for @census_extra_stock_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Extra Stock'**
+  String get census_extra_stock_dialog_title;
+
+  /// No description provided for @census_extra_stock_quantity_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get census_extra_stock_quantity_label;
+
+  /// No description provided for @common_action_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get common_action_add;
+
+  /// No description provided for @census_extra_stock_summary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported Extra Stocks'**
+  String get census_extra_stock_summary_title;
 }
 
 class _AppLocalizationsDelegate
