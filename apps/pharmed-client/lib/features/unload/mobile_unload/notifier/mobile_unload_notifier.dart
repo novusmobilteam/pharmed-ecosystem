@@ -117,6 +117,41 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     state = current.copyWith(selectedItemIds: next);
   }
 
+  void onDatePresetChanged(DateRangePreset preset) {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+    state = current.copyWith(datePreset: preset);
+    _reloadPrescriptions();
+  }
+
+  void onStatusFilterChanged(PrescriptionMovementType? type) {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+    state = current.copyWith(statusFilter: type, clearStatusFilter: type == null);
+    _reloadPrescriptions();
+  }
+
+  Future<void> _reloadPrescriptions() async {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+
+    final result = await _getPrescriptionHistory.call(
+      current.patient.id!,
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: current.datePreset,
+        filters: [if (current.statusFilter != null) Filter.eq('lastMovement.detailStatusId', current.statusFilter!.id)],
+      ),
+    );
+
+    result.when(
+      ok: (items) => state = current.copyWith(
+        prescriptionItems: items,
+        selectedItemIds: {}, // filtre değişince seçimi sıfırla
+      ),
+      error: (e) => state = MobileUnloadError(message: e.message, previousState: current),
+    );
+  }
+
   /// Boşaltmaya başla — check YOK, direkt çekmece aç.
   ///
   /// SWREQ-CLI-UNLOAD-002
@@ -358,7 +393,10 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
       assignments: assignments,
     );
 
-    final result = await _getPrescriptionHistory(patient!.id!);
+    final result = await _getPrescriptionHistory(
+      patient!.id!,
+      params: PagedQueryParamsBuilder.fromPreset(preset: DateRangePreset.today),
+    );
 
     result.when(
       ok: (items) {

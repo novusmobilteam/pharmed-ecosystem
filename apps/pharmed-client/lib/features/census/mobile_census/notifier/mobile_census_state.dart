@@ -103,6 +103,8 @@ final class MobileCensusReady extends MobileCensusState {
     required this.prescriptionItems,
     required this.rfidReadEpcs,
     required this.selectedItemIds,
+    this.datePreset = DateRangePreset.today,
+    this.statusFilter = PrescriptionMovementType.purchasePending,
   });
 
   final List<MobileSlotVisual> slots;
@@ -123,6 +125,8 @@ final class MobileCensusReady extends MobileCensusState {
   /// [canComplete] bu set üzerinden hesaplanır.
   final Set<String> rfidReadEpcs;
   final Set<int> selectedItemIds;
+  final DateRangePreset datePreset;
+  final PrescriptionMovementType? statusFilter;
 
   int get selectedSlotId => selectedSlot.slotId;
 
@@ -159,6 +163,9 @@ final class MobileCensusReady extends MobileCensusState {
     List<PrescriptionItem>? prescriptionItems,
     Set<String>? rfidReadEpcs,
     Set<int>? selectedItemIds,
+    DateRangePreset? datePreset,
+    PrescriptionMovementType? statusFilter,
+    bool clearStatusFilter = false,
   }) {
     return MobileCensusReady(
       slots: slots,
@@ -173,6 +180,8 @@ final class MobileCensusReady extends MobileCensusState {
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
+      datePreset: datePreset ?? this.datePreset,
+      statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
     );
   }
 }

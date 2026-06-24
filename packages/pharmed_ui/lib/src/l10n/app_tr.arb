@@ -1198,5 +1198,11 @@
 "unadministered_prescriptions_empty_description": "Bu hastaya uygulanmayı bekleyen reçete bulunmuyor.",
 
 "empty_state_no_patient_selected_title": "Bir hasta seçin",
-"empty_state_no_patient_selected_description": "Detayları görüntülemek için listeden bir hasta seçin."
+"empty_state_no_patient_selected_description": "Detayları görüntülemek için listeden bir hasta seçin.",
+
+"date_preset_today": "Bugün",
+"date_preset_last_3_days": "Son 3 gün",
+"date_preset_last_7_days": "Son 7 gün",
+"date_preset_all": "Tümü",
+"filter_all": "Tümü"
 }

@@ -108,6 +108,7 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
           assignmentByCoord: state.assignmentByCoord,
         ),
         rightPanel: MobileIntakePanel(
+          notifier: notifier,
           state: state,
           drawerStage: drawerStage,
           onStartIntake: notifier.startIntake,

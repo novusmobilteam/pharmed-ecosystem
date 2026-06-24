@@ -103,6 +103,7 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
           assignmentByCoord: state.assignmentByCoord,
         ),
         rightPanel: MobileUnloadPanel(
+          notifier: notifier,
           state: state,
           drawerStage: drawerStage,
           onStartUnload: notifier.startUnload,

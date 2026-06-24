@@ -171,6 +171,40 @@ enum PrescriptionMovementType {
     PrescriptionMovementType.shortageReported => 'Eksik Bildirildi',
     PrescriptionMovementType.replenishmentPending => 'İkmal Onaylandı',
   };
+
+  static List<PrescriptionMovementType> get refillableTypes => const [
+    PrescriptionMovementType.filledWaiting,
+    PrescriptionMovementType.pendingApproval,
+    PrescriptionMovementType.purchasePending,
+    PrescriptionMovementType.applied,
+    PrescriptionMovementType.returned,
+    PrescriptionMovementType.wastaged,
+    PrescriptionMovementType.destructed,
+    PrescriptionMovementType.cancelled,
+    PrescriptionMovementType.rejected,
+    PrescriptionMovementType.filledWaiting,
+    PrescriptionMovementType.returnPending,
+    PrescriptionMovementType.unloaded,
+    PrescriptionMovementType.shortageReported,
+    PrescriptionMovementType.replenishmentPending,
+  ];
+
+  static List<PrescriptionMovementType> get intakeableTypes => const [
+    PrescriptionMovementType.purchasePending,
+    PrescriptionMovementType.applied,
+    PrescriptionMovementType.filledWaiting,
+    PrescriptionMovementType.pendingApproval,
+    PrescriptionMovementType.returned,
+    PrescriptionMovementType.wastaged,
+    PrescriptionMovementType.destructed,
+    PrescriptionMovementType.cancelled,
+    PrescriptionMovementType.rejected,
+    PrescriptionMovementType.filledWaiting,
+    PrescriptionMovementType.returnPending,
+    PrescriptionMovementType.unloaded,
+    PrescriptionMovementType.shortageReported,
+    PrescriptionMovementType.replenishmentPending,
+  ];
 }
 
 extension PrescriptionMovementTypeStyle on PrescriptionMovementType {

@@ -990,5 +990,11 @@
 "unadministered_prescriptions_empty_description": "لا توجد وصفات بانتظار التطبيق لهذا المريض.",
 
 "empty_state_no_patient_selected_title": "اختر مريضًا",
-"empty_state_no_patient_selected_description": "اختر مريضًا من القائمة لعرض تفاصيله."
+"empty_state_no_patient_selected_description": "اختر مريضًا من القائمة لعرض تفاصيله.",
+
+"date_preset_today": "اليوم",
+"date_preset_last_3_days": "آخر 3 أيام",
+"date_preset_last_7_days": "آخر 7 أيام",
+"date_preset_all": "الكل",
+"filter_all": "الكل"
 }

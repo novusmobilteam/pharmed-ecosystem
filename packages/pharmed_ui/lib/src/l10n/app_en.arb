@@ -1051,5 +1051,11 @@
 "unadministered_prescriptions_empty_description": "There are no prescriptions waiting to be administered for this patient.",
 
 "empty_state_no_patient_selected_title": "Select a patient",
-"empty_state_no_patient_selected_description": "Choose a patient from the list to view their details."
+"empty_state_no_patient_selected_description": "Choose a patient from the list to view their details.",
+
+"date_preset_today": "Today",
+"date_preset_last_3_days": "Last 3 days",
+"date_preset_last_7_days": "Last 7 days",
+"date_preset_all": "All",
+"filter_all": "All"
 }

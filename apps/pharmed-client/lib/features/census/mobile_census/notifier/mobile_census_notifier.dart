@@ -120,6 +120,41 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     state = current.copyWith(selectedItemIds: next);
   }
 
+  void onDatePresetChanged(DateRangePreset preset) {
+    final current = state;
+    if (current is! MobileCensusReady) return;
+    state = current.copyWith(datePreset: preset);
+    _reloadPrescriptions();
+  }
+
+  void onStatusFilterChanged(PrescriptionMovementType? type) {
+    final current = state;
+    if (current is! MobileCensusReady) return;
+    state = current.copyWith(statusFilter: type, clearStatusFilter: type == null);
+    _reloadPrescriptions();
+  }
+
+  Future<void> _reloadPrescriptions() async {
+    final current = state;
+    if (current is! MobileCensusReady) return;
+
+    final result = await _getPrescriptionHistory.call(
+      current.patient.id!,
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: current.datePreset,
+        filters: [if (current.statusFilter != null) Filter.eq('lastMovement.detailStatusId', current.statusFilter!.id)],
+      ),
+    );
+
+    result.when(
+      ok: (items) => state = current.copyWith(
+        prescriptionItems: items,
+        selectedItemIds: {}, // filtre değişince seçimi sıfırla
+      ),
+      error: (e) => state = MobileCensusError(message: e.message, previousState: current),
+    );
+  }
+
   /// Sayıma başla — check YOK, direkt çekmece aç.
   ///
   /// [MobileDrawerOrchestrator.open] çağrılır; RFID session
@@ -363,7 +398,10 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
       assignments: assignments,
     );
 
-    final result = await _getPrescriptionHistory(patient!.id!);
+    final result = await _getPrescriptionHistory.call(
+      patient!.id!,
+      params: PagedQueryParamsBuilder.fromPreset(preset: DateRangePreset.today),
+    );
 
     result.when(
       ok: (items) {

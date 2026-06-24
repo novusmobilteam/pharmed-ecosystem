@@ -1325,4 +1325,19 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get empty_state_no_patient_selected_description =>
       'Detayları görüntülemek için listeden bir hasta seçin.';
+
+  @override
+  String get date_preset_today => 'Bugün';
+
+  @override
+  String get date_preset_last_3_days => 'Son 3 gün';
+
+  @override
+  String get date_preset_last_7_days => 'Son 7 gün';
+
+  @override
+  String get date_preset_all => 'Tümü';
+
+  @override
+  String get filter_all => 'Tümü';
 }

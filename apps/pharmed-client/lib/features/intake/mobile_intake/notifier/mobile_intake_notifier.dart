@@ -125,6 +125,41 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     state = current.copyWith(selectedItemIds: next);
   }
 
+  void onDatePresetChanged(DateRangePreset preset) {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+    state = current.copyWith(datePreset: preset);
+    _reloadPrescriptions();
+  }
+
+  void onStatusFilterChanged(PrescriptionMovementType? type) {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+    state = current.copyWith(statusFilter: type, clearStatusFilter: type == null);
+    _reloadPrescriptions();
+  }
+
+  Future<void> _reloadPrescriptions() async {
+    final current = state;
+    if (current is! MobileIntakeReady) return;
+
+    final result = await _getPrescriptionHistory.call(
+      current.patient.id!,
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: current.datePreset,
+        filters: [if (current.statusFilter != null) Filter.eq('lastMovement.detailStatusId', current.statusFilter!.id)],
+      ),
+    );
+
+    result.when(
+      ok: (items) => state = current.copyWith(
+        prescriptionItems: items,
+        selectedItemIds: {}, // filtre değişince seçimi sıfırla
+      ),
+      error: (e) => state = MobileIntakeError(message: e.message, previousState: current),
+    );
+  }
+
   /// Alıma başla — önce backend check, sonra çekmece aç.
   ///
   /// [CheckMobileIntakeUseCase] hata dönerse çekmece açılmaz.
@@ -483,7 +518,10 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
       assignments: assignments,
     );
 
-    final result = await _getPrescriptionHistory(patient!.id!);
+    final result = await _getPrescriptionHistory.call(
+      patient!.id!,
+      params: PagedQueryParamsBuilder.fromPreset(preset: DateRangePreset.today),
+    );
 
     result.when(
       ok: (items) {

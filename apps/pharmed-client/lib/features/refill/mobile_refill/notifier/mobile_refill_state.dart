@@ -102,6 +102,8 @@ final class MobileRefillReady extends MobileRefillState {
     required this.prescriptionItems,
     required this.rfidReadEpcs,
     required this.selectedItemIds,
+    this.datePreset = DateRangePreset.today,
+    this.statusFilter = PrescriptionMovementType.filledWaiting,
   });
 
   final List<MobileSlotVisual> slots;
@@ -116,6 +118,8 @@ final class MobileRefillReady extends MobileRefillState {
   final List<PrescriptionItem> prescriptionItems;
   final Set<String> rfidReadEpcs;
   final Set<int> selectedItemIds;
+  final DateRangePreset datePreset;
+  final PrescriptionMovementType? statusFilter;
 
   int get selectedSlotId => selectedSlot.slotId;
 
@@ -144,6 +148,9 @@ final class MobileRefillReady extends MobileRefillState {
     List<PrescriptionItem>? prescriptionItems,
     Set<String>? rfidReadEpcs,
     Set<int>? selectedItemIds,
+    DateRangePreset? datePreset,
+    PrescriptionMovementType? statusFilter,
+    bool clearStatusFilter = false,
   }) {
     return MobileRefillReady(
       slots: slots,
@@ -158,6 +165,8 @@ final class MobileRefillReady extends MobileRefillState {
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
+      datePreset: datePreset ?? this.datePreset,
+      statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
     );
   }
 }

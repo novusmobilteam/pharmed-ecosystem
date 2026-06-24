@@ -10,6 +10,7 @@ import '../../intake.dart';
 class MobileIntakePanel extends StatelessWidget {
   const MobileIntakePanel({
     super.key,
+    required this.notifier,
     required this.state,
     required this.drawerStage,
     required this.onStartIntake,
@@ -21,7 +22,7 @@ class MobileIntakePanel extends StatelessWidget {
     required this.onCancelIntake,
     required this.onReportMissing,
   });
-
+  final MobileIntakeNotifier notifier;
   final MobileIntakeState state;
   final MobileDrawerStage drawerStage;
   final VoidCallback onStartIntake;
@@ -56,31 +57,44 @@ class MobileIntakePanel extends StatelessWidget {
           onSelected: onSelectAssignment,
         ),
 
-        MobileIntakeReady ready => _buildReady(ready),
+        MobileIntakeReady ready => _buildReady(context, notifier, ready),
 
         // Check, kaydetme ve başarı sırasında Ready görünümü korunur
         MobileIntakeCheckInProgress(:final ready) ||
         MobileIntakeSaving(:final ready) ||
-        MobileIntakeSuccess(:final ready) => _buildReady(ready),
+        MobileIntakeSuccess(:final ready) => _buildReady(context, notifier, ready),
 
         MobileIntakeError(:final previousState) => switch (previousState) {
-          MobileIntakeReady ready => _buildReady(ready),
-          MobileIntakeCheckInProgress(:final ready) => _buildReady(ready),
+          MobileIntakeReady ready => _buildReady(context, notifier, ready),
+          MobileIntakeCheckInProgress(:final ready) => _buildReady(context, notifier, ready),
           _ => CabinPatientPickerList(assignments: previousState.availableAssignments, onSelected: onSelectAssignment),
         },
       },
     );
   }
 
-  Widget _buildReady(MobileIntakeReady ready) {
+  Widget _buildReady(BuildContext context, MobileIntakeNotifier notifier, MobileIntakeReady ready) {
     return Column(
-      spacing: 4.0,
+      spacing: 8.0,
       children: [
         CabinActivePatientCard(
           patient: ready.patient,
           bed: ready.bed,
           room: ready.room,
           onChange: _isProcessActive ? null : onChangePatient,
+        ),
+        MedFilterChipGroup<PrescriptionMovementType?>(
+          options: [null, ...PrescriptionMovementType.intakeableTypes],
+          selected: ready.statusFilter,
+          onChanged: notifier.onStatusFilterChanged,
+          labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+          bgColor: ready.statusFilter?.backgroundColor,
+        ),
+        MedFilterChipGroup<DateRangePreset>(
+          options: DateRangePreset.values,
+          selected: ready.datePreset,
+          labelBuilder: (p) => p.label(context.l10n),
+          onChanged: notifier.onDatePresetChanged,
         ),
         Expanded(
           child: _PrescriptionList(
@@ -174,7 +188,7 @@ class _PrescriptionList extends StatelessWidget {
       });
 
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 6, bottom: 6, right: 2),
+      padding: const EdgeInsets.only(bottom: 6, right: 2),
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = sortedItems[index];

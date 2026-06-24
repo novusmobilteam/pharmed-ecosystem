@@ -2487,6 +2487,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose a patient from the list to view their details.'**
   String get empty_state_no_patient_selected_description;
+
+  /// No description provided for @date_preset_today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get date_preset_today;
+
+  /// No description provided for @date_preset_last_3_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 3 days'**
+  String get date_preset_last_3_days;
+
+  /// No description provided for @date_preset_last_7_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get date_preset_last_7_days;
+
+  /// No description provided for @date_preset_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get date_preset_all;
+
+  /// No description provided for @filter_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filter_all;
 }
 
 class _AppLocalizationsDelegate

@@ -1,3 +1,5 @@
+import 'package:pharmed_core/pharmed_core.dart';
+
 class PagedQueryParams {
   const PagedQueryParams({
     this.skip,
@@ -82,5 +84,25 @@ abstract final class Filter {
       if (i < clauses.length - 1) parts.add(op);
     }
     return parts;
+  }
+}
+
+extension PagedQueryParamsBuilder on PagedQueryParams {
+  static PagedQueryParams fromPreset({
+    required DateRangePreset preset,
+    List<Object>? filters,
+    int skip = 0,
+    int take = 20,
+    String? search,
+  }) {
+    final range = preset.toRange(DateTime.now());
+    return PagedQueryParams(
+      skip: skip,
+      take: take,
+      searchQuery: search,
+      startDate: range.start,
+      endDate: range.end,
+      filters: filters,
+    );
   }
 }

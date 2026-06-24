@@ -100,6 +100,8 @@ final class MobileIntakeReady extends MobileIntakeState {
     required this.takenEpcs,
     required this.selectedItemIds,
     this.reportingItemIds = const {}, // "eksik stok bildiriliyor" loading
+    this.datePreset = DateRangePreset.today,
+    this.statusFilter = PrescriptionMovementType.purchasePending,
   });
 
   final List<MobileSlotVisual> slots;
@@ -122,6 +124,8 @@ final class MobileIntakeReady extends MobileIntakeState {
   /// EPC geri gelirse [takenEpcs]'ten çıkarılır.
   final Set<String> takenEpcs;
   final Set<int> selectedItemIds;
+  final DateRangePreset datePreset;
+  final PrescriptionMovementType? statusFilter;
 
   int get selectedSlotId => selectedSlot.slotId;
 
@@ -158,6 +162,9 @@ final class MobileIntakeReady extends MobileIntakeState {
     Set<String>? takenEpcs,
     Set<int>? selectedItemIds,
     Set<int>? reportingItemIds,
+    DateRangePreset? datePreset,
+    PrescriptionMovementType? statusFilter,
+    bool clearStatusFilter = false,
   }) {
     return MobileIntakeReady(
       slots: slots,
@@ -174,6 +181,8 @@ final class MobileIntakeReady extends MobileIntakeState {
       takenEpcs: takenEpcs ?? this.takenEpcs,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
       reportingItemIds: reportingItemIds ?? this.reportingItemIds,
+      datePreset: datePreset ?? this.datePreset,
+      statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
     );
   }
 }

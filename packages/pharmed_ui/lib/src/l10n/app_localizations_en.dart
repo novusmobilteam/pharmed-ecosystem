@@ -1324,4 +1324,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get empty_state_no_patient_selected_description =>
       'Choose a patient from the list to view their details.';
+
+  @override
+  String get date_preset_today => 'Today';
+
+  @override
+  String get date_preset_last_3_days => 'Last 3 days';
+
+  @override
+  String get date_preset_last_7_days => 'Last 7 days';
+
+  @override
+  String get date_preset_all => 'All';
+
+  @override
+  String get filter_all => 'All';
 }

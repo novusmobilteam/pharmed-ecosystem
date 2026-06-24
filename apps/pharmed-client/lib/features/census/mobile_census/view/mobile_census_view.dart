@@ -103,6 +103,7 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
           assignmentByCoord: state.assignmentByCoord,
         ),
         rightPanel: MobileCensusPanel(
+          notifier: notifier,
           state: state,
           drawerStage: drawerStage,
           onStartCensus: notifier.startCensus,

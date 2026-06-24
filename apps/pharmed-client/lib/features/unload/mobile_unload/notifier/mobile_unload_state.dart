@@ -104,6 +104,8 @@ final class MobileUnloadReady extends MobileUnloadState {
     required this.rfidReadEpcs,
     required this.takenEpcs,
     required this.selectedItemIds,
+    this.datePreset = DateRangePreset.today,
+    this.statusFilter = PrescriptionMovementType.purchasePending,
   });
 
   final List<MobileSlotVisual> slots;
@@ -122,6 +124,8 @@ final class MobileUnloadReady extends MobileUnloadState {
   /// EPC kaybolunca eklenir, geri gelirse çıkarılır.
   final Set<String> takenEpcs;
   final Set<int> selectedItemIds;
+  final DateRangePreset datePreset;
+  final PrescriptionMovementType? statusFilter;
 
   int get selectedSlotId => selectedSlot.slotId;
 
@@ -158,6 +162,9 @@ final class MobileUnloadReady extends MobileUnloadState {
     Set<String>? rfidReadEpcs,
     Set<String>? takenEpcs,
     Set<int>? selectedItemIds,
+    DateRangePreset? datePreset,
+    PrescriptionMovementType? statusFilter,
+    bool clearStatusFilter = false,
   }) {
     return MobileUnloadReady(
       slots: slots,
@@ -173,6 +180,8 @@ final class MobileUnloadReady extends MobileUnloadState {
       rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
       takenEpcs: takenEpcs ?? this.takenEpcs,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
+      datePreset: datePreset ?? this.datePreset,
+      statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
     );
   }
 }

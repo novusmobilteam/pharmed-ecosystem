@@ -10,6 +10,7 @@ import '../../census.dart';
 class MobileCensusPanel extends StatelessWidget {
   const MobileCensusPanel({
     super.key,
+    required this.notifier,
     required this.state,
     required this.drawerStage,
     required this.onStartCensus,
@@ -21,6 +22,7 @@ class MobileCensusPanel extends StatelessWidget {
     required this.onCancelCensus,
   });
 
+  final MobileCensusNotifier notifier;
   final MobileCensusState state;
   final MobileDrawerStage drawerStage;
   final VoidCallback onStartCensus;
@@ -51,29 +53,42 @@ class MobileCensusPanel extends StatelessWidget {
           onSelected: onSelectAssignment,
         ),
 
-        MobileCensusReady ready => _buildReady(ready),
+        MobileCensusReady ready => _buildReady(context, notifier, ready),
 
         // Kaydetme ve başarı sırasında Ready görünümü korunur
-        MobileCensusSaving(:final ready) || MobileCensusSuccess(:final ready) => _buildReady(ready),
+        MobileCensusSaving(:final ready) || MobileCensusSuccess(:final ready) => _buildReady(context, notifier, ready),
 
         MobileCensusError(:final previousState) => switch (previousState) {
-          MobileCensusReady ready => _buildReady(ready),
-          MobileCensusSaving(:final ready) => _buildReady(ready),
+          MobileCensusReady ready => _buildReady(context, notifier, ready),
+          MobileCensusSaving(:final ready) => _buildReady(context, notifier, ready),
           _ => CabinPatientPickerList(assignments: previousState.availableAssignments, onSelected: onSelectAssignment),
         },
       },
     );
   }
 
-  Widget _buildReady(MobileCensusReady ready) {
+  Widget _buildReady(BuildContext context, MobileCensusNotifier notifier, MobileCensusReady ready) {
     return Column(
-      spacing: 4.0,
+      spacing: 8.0,
       children: [
         CabinActivePatientCard(
           patient: ready.patient,
           bed: ready.bed,
           room: ready.room,
           onChange: _isProcessActive ? null : onChangePatient,
+        ),
+        MedFilterChipGroup<PrescriptionMovementType?>(
+          options: [null, ...PrescriptionMovementType.intakeableTypes],
+          selected: ready.statusFilter,
+          onChanged: notifier.onStatusFilterChanged,
+          labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+          bgColor: ready.statusFilter?.backgroundColor,
+        ),
+        MedFilterChipGroup<DateRangePreset>(
+          options: DateRangePreset.values,
+          selected: ready.datePreset,
+          labelBuilder: (p) => p.label(context.l10n),
+          onChanged: notifier.onDatePresetChanged,
         ),
         Expanded(
           child: _CensusPrescriptionList(
@@ -135,7 +150,7 @@ class _CensusPrescriptionList extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 6, bottom: 6, right: 2),
+      padding: const EdgeInsets.only(bottom: 6, right: 2),
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
@@ -167,8 +182,6 @@ class _CensusPrescriptionList extends StatelessWidget {
     );
   }
 }
-
-// ---------------------------------------------------------------------------
 
 class _CensusActionBar extends StatelessWidget {
   const _CensusActionBar({

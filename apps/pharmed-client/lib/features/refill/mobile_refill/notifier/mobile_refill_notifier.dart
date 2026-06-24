@@ -106,6 +106,41 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     );
   }
 
+  void onDatePresetChanged(DateRangePreset preset) {
+    final current = state;
+    if (current is! MobileRefillReady) return;
+    state = current.copyWith(datePreset: preset);
+    _reloadPrescriptions();
+  }
+
+  void onStatusFilterChanged(PrescriptionMovementType? type) {
+    final current = state;
+    if (current is! MobileRefillReady) return;
+    state = current.copyWith(statusFilter: type, clearStatusFilter: type == null);
+    _reloadPrescriptions();
+  }
+
+  Future<void> _reloadPrescriptions() async {
+    final current = state;
+    if (current is! MobileRefillReady) return;
+
+    final result = await _getPrescriptionHistory.call(
+      current.patient.id!,
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: current.datePreset,
+        filters: [if (current.statusFilter != null) Filter.eq('lastMovement.detailStatusId', current.statusFilter!.id)],
+      ),
+    );
+
+    result.when(
+      ok: (items) => state = current.copyWith(
+        prescriptionItems: items,
+        selectedItemIds: {}, // filtre değişince seçimi sıfırla
+      ),
+      error: (e) => state = MobileRefillError(message: e.message, previousState: current),
+    );
+  }
+
   // Reçete yükleme
   Future<void> _loadPrescriptions({
     required List<MobileSlotVisual> slots,
@@ -128,7 +163,10 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
       assignments: assignments,
     );
 
-    final result = await _getPrescriptionHistory(patient!.id!);
+    final result = await _getPrescriptionHistory.call(
+      patient!.id!,
+      params: PagedQueryParamsBuilder.fromPreset(preset: DateRangePreset.today),
+    );
 
     result.when(
       ok: (items) {

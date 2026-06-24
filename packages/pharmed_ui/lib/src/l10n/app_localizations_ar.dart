@@ -1325,4 +1325,19 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get empty_state_no_patient_selected_description =>
       'اختر مريضًا من القائمة لعرض تفاصيله.';
+
+  @override
+  String get date_preset_today => 'اليوم';
+
+  @override
+  String get date_preset_last_3_days => 'آخر 3 أيام';
+
+  @override
+  String get date_preset_last_7_days => 'آخر 7 أيام';
+
+  @override
+  String get date_preset_all => 'الكل';
+
+  @override
+  String get filter_all => 'الكل';
 }

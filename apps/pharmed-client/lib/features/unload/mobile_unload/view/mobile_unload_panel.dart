@@ -10,6 +10,7 @@ import '../../unload.dart';
 class MobileUnloadPanel extends StatelessWidget {
   const MobileUnloadPanel({
     super.key,
+    required this.notifier,
     required this.state,
     required this.drawerStage,
     required this.onStartUnload,
@@ -21,6 +22,7 @@ class MobileUnloadPanel extends StatelessWidget {
     required this.onCancelUnload,
   });
 
+  final MobileUnloadNotifier notifier;
   final MobileUnloadState state;
   final MobileDrawerStage drawerStage;
   final VoidCallback onStartUnload;
@@ -47,28 +49,41 @@ class MobileUnloadPanel extends StatelessWidget {
           onSelected: onSelectAssignment,
         ),
 
-        MobileUnloadReady ready => _buildReady(ready),
+        MobileUnloadReady ready => _buildReady(context, notifier, ready),
 
-        MobileUnloadSaving(:final ready) || MobileUnloadSuccess(:final ready) => _buildReady(ready),
+        MobileUnloadSaving(:final ready) || MobileUnloadSuccess(:final ready) => _buildReady(context, notifier, ready),
 
         MobileUnloadError(:final previousState) => switch (previousState) {
-          MobileUnloadReady ready => _buildReady(ready),
-          MobileUnloadSaving(:final ready) => _buildReady(ready),
+          MobileUnloadReady ready => _buildReady(context, notifier, ready),
+          MobileUnloadSaving(:final ready) => _buildReady(context, notifier, ready),
           _ => CabinPatientPickerList(assignments: previousState.availableAssignments, onSelected: onSelectAssignment),
         },
       },
     );
   }
 
-  Widget _buildReady(MobileUnloadReady ready) {
+  Widget _buildReady(BuildContext context, MobileUnloadNotifier notifier, MobileUnloadReady ready) {
     return Column(
-      spacing: 4.0,
+      spacing: 8.0,
       children: [
         CabinActivePatientCard(
           patient: ready.patient,
           bed: ready.bed,
           room: ready.room,
           onChange: _isProcessActive ? null : onChangePatient,
+        ),
+        MedFilterChipGroup<PrescriptionMovementType?>(
+          options: [null, ...PrescriptionMovementType.intakeableTypes],
+          selected: ready.statusFilter,
+          onChanged: notifier.onStatusFilterChanged,
+          labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+          bgColor: ready.statusFilter?.backgroundColor,
+        ),
+        MedFilterChipGroup<DateRangePreset>(
+          options: DateRangePreset.values,
+          selected: ready.datePreset,
+          labelBuilder: (p) => p.label(context.l10n),
+          onChanged: notifier.onDatePresetChanged,
         ),
         Expanded(
           child: _UnloadPrescriptionList(
@@ -220,7 +235,11 @@ class _UnloadActionBar extends StatelessWidget {
             ? _ActionButton(label: context.l10n.unload_action_complete, onTap: onComplete)
             : _ActionButton(label: context.l10n.unload_action_continue, onTap: onReopen),
       MobileDrawerFailed() => _ActionButton(label: context.l10n.common_retryButton, onTap: onStart),
-      MobileDrawerIdle() => _ActionButton(label: context.l10n.unload_action_start, enabled: hasSelection, onTap: onStart),
+      MobileDrawerIdle() => _ActionButton(
+        label: context.l10n.unload_action_start,
+        enabled: hasSelection,
+        onTap: onStart,
+      ),
     };
   }
 }
@@ -254,6 +273,11 @@ class _CancelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(label: context.l10n.common_cancelButton, size: MedButtonSize.sm, variant: MedButtonVariant.danger, onPressed: onTap);
+    return MedButton(
+      label: context.l10n.common_cancelButton,
+      size: MedButtonSize.sm,
+      variant: MedButtonVariant.danger,
+      onPressed: onTap,
+    );
   }
 }

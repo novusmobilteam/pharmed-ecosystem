@@ -121,6 +121,7 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
         ),
         rightPanel: MobileRefillPanel(
           state: state,
+          notifier: notifier,
           drawerStage: drawerStage,
           onStartRefill: notifier.startRefill,
           onCompleteRefill: notifier.completeRefill,
