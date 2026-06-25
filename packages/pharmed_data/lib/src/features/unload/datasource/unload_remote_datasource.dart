@@ -29,4 +29,11 @@ class UnloadRemoteDataSource extends BaseRemoteDataSource {
       successLog: 'Unload process completed',
     );
   }
+
+  Future<Result<void>> reportMissingStock(int prescriptionItemId) async {
+    return await postRequest(
+      path: '/CabinDrawrStock/mobileStockShortageReportedNonRenewable/$prescriptionItemId',
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+  }
 }

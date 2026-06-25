@@ -102,6 +102,7 @@ final class MobileUnloadReady extends MobileUnloadState {
     required this.room,
     required this.prescriptionItems,
     required this.rfidReadEpcs,
+    this.reportingItemIds = const {}, // "eksik stok bildiriliyor" loading
     required this.takenEpcs,
     required this.selectedItemIds,
     this.datePreset = DateRangePreset.today,
@@ -118,6 +119,7 @@ final class MobileUnloadReady extends MobileUnloadState {
   final Bed? bed;
   final Room? room;
   final List<PrescriptionItem> prescriptionItems;
+  final Set<int> reportingItemIds;
   final Set<String> rfidReadEpcs;
 
   /// Kabinden çıkarılmış (boşaltıldı sayılan) EPC'ler.
@@ -162,6 +164,7 @@ final class MobileUnloadReady extends MobileUnloadState {
     Set<String>? rfidReadEpcs,
     Set<String>? takenEpcs,
     Set<int>? selectedItemIds,
+    Set<int>? reportingItemIds,
     DateRangePreset? datePreset,
     PrescriptionMovementType? statusFilter,
     bool clearStatusFilter = false,
@@ -179,6 +182,8 @@ final class MobileUnloadReady extends MobileUnloadState {
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
       takenEpcs: takenEpcs ?? this.takenEpcs,
+      reportingItemIds: reportingItemIds ?? this.reportingItemIds,
+
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
       datePreset: datePreset ?? this.datePreset,
       statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),

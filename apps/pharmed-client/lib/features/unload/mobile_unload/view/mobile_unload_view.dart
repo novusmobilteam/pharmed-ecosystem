@@ -113,6 +113,7 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
           onChangePatient: notifier.clearPatientSelection,
           onToggleItem: notifier.toggleItemSelection,
           onCancelUnload: () => _onCancelUnload(state, drawerStage),
+          onReportMissing: notifier.reportMissingStock,
         ),
       ),
     );

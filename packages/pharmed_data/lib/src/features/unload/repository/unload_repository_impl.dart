@@ -16,4 +16,9 @@ class UnloadRepositoryImpl implements IUnloadRepository {
   Future<Result<void>> mobileUnload(List<Map<String, dynamic>> data) async {
     return _dataSource.mobileUnload(data);
   }
+
+  @override
+  Future<Result<void>> reportMissingStock(int prescriptionItemId) {
+    return _dataSource.reportMissingStock(prescriptionItemId);
+  }
 }

@@ -113,7 +113,8 @@ class RxOperationCard extends StatelessWidget {
   bool get _isLocked => onTap == null;
   bool get _showRfidLiveStatus => _isLocked && isSelected && _needsRfid && _hasRfidTag;
   bool get _isActive => isSelected && _isLocked;
-  bool get _showReportMissing => mode == RxOperationCardMode.intake && isEligible && onReportMissing != null;
+  bool get _showReportMissing =>
+      mode == RxOperationCardMode.intake && isEligible && isSelected && onReportMissing != null;
 
   Color get _borderColor {
     if (mode == RxOperationCardMode.intake && isSelected && _hasRfidTag && rfidStatus == RfidPresenceStatus.absent) {

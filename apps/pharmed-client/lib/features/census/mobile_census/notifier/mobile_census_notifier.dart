@@ -128,6 +128,10 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
       return;
     }
 
+    if (item?.status != PrescriptionMovementType.purchasePending) {
+      return;
+    }
+
     final next = {...current.selectedItemIds};
     if (!next.add(itemId)) next.remove(itemId);
     state = current.copyWith(selectedItemIds: next);
@@ -278,6 +282,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     final params = current.prescriptionItems
         .where((i) => i.id != null && i.status == PrescriptionMovementType.purchasePending)
         .map((i) {
+          print('selected: $i');
           final isSelected = current.selectedItemIds.contains(i.id);
           return MobileCensusParams(
             prescriptionDetailId: i.id!,
@@ -474,7 +479,10 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
 
     final result = await _getPrescriptionHistory.call(
       patient!.id!,
-      params: PagedQueryParamsBuilder.fromPreset(preset: DateRangePreset.today),
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: DateRangePreset.today,
+        filters: [Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.purchasePending.id)],
+      ),
     );
 
     result.when(

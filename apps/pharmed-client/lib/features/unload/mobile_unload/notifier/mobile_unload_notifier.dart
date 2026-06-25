@@ -39,6 +39,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   GetPatientPrescriptionHistoryUseCase get _getPrescriptionHistory =>
       ref.read(getPatientPrescriptionHistoryUseCaseProvider);
   CompleteMobileUnloadUseCase get _completeUnload => ref.read(completeMobileUnloadUseCaseProvider);
+  UnloadReportMissingStockUseCase get _reportMissingStock => ref.read(unloadReportMissingStockUseCaseProvider);
 
   @override
   MobileUnloadState build() {
@@ -247,6 +248,67 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     );
   }
 
+  /// Eksik stok bildir — ilaç fiziksel olarak kabinde yok.
+  ///
+  /// Backend bildirimi başarılıysa reçete yeniden çekilir; ilgili item
+  /// artık "Alım Bekliyor" olmaktan çıkar ve seçiliyse seçimi kaldırılır.
+  ///
+  /// Süreç (orchestrator) aktifken çağrılmaz — buton zaten gizli olur.
+  ///
+  /// SWREQ-CLI-INTAKE-006
+  Future<void> reportMissingStock(int itemId) async {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+    if (current.reportingItemIds.contains(itemId)) return; // bu item zaten işlemde
+
+    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
+    if (item == null) return;
+    if (!(item.status?.canReportShortage ?? false)) return; // sadece "Alım Bekliyor"
+
+    // Bu item için buton loading
+    state = current.copyWith(reportingItemIds: {...current.reportingItemIds, itemId});
+
+    final result = await _reportMissingStock(itemId);
+
+    result.when(
+      ok: (_) async {
+        final patientId = current.patient.id;
+        if (patientId == null) {
+          state = current.copyWith(reportingItemIds: {...current.reportingItemIds}..remove(itemId));
+          return;
+        }
+
+        final refreshed = await _getPrescriptionHistory(patientId);
+
+        state = refreshed.when(
+          ok: (items) => current.copyWith(
+            prescriptionItems: items,
+            selectedItemIds: {...current.selectedItemIds}..remove(itemId),
+            reportingItemIds: {...current.reportingItemIds}..remove(itemId),
+          ),
+          error: (e) => MobileUnloadError(
+            message: e.message,
+            previousState: current.copyWith(
+              selectedItemIds: {...current.selectedItemIds}..remove(itemId),
+              reportingItemIds: {...current.reportingItemIds}..remove(itemId),
+            ),
+          ),
+        );
+
+        MedLogger.info(
+          unit: 'MobileIntakeNotifier',
+          swreq: 'SWREQ-CLI-INTAKE-006',
+          message: 'Eksik stok bildirildi, reçete yenilendi',
+          context: {'prescriptionDetailId': itemId},
+        );
+      },
+      error: (e) => state = MobileUnloadError(
+        message: e.message,
+        previousState: current.copyWith(reportingItemIds: {...current.reportingItemIds}..remove(itemId)),
+      ),
+    );
+  }
+
   /// EPC okundu → ilaç geri konuldu: takenEpcs'ten çıkar.
   ///
   /// SWREQ-CLI-UNLOAD-004
@@ -395,7 +457,10 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
 
     final result = await _getPrescriptionHistory(
       patient!.id!,
-      params: PagedQueryParamsBuilder.fromPreset(preset: DateRangePreset.today),
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: DateRangePreset.today,
+        filters: [Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.purchasePending.id)],
+      ),
     );
 
     result.when(

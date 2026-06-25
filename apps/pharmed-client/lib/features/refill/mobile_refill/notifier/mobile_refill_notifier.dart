@@ -165,7 +165,10 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
 
     final result = await _getPrescriptionHistory.call(
       patient!.id!,
-      params: PagedQueryParamsBuilder.fromPreset(preset: DateRangePreset.today),
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: DateRangePreset.today,
+        filters: [Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.filledWaiting.id)],
+      ),
     );
 
     result.when(

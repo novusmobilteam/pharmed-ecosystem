@@ -20,6 +20,7 @@ class MobileUnloadPanel extends StatelessWidget {
     required this.onChangePatient,
     required this.onToggleItem,
     required this.onCancelUnload,
+    required this.onReportMissing,
   });
 
   final MobileUnloadNotifier notifier;
@@ -32,9 +33,16 @@ class MobileUnloadPanel extends StatelessWidget {
   final VoidCallback onChangePatient;
   final ValueChanged<int> onToggleItem;
   final VoidCallback onCancelUnload;
+  final ValueChanged<int> onReportMissing;
 
+  /// Süreç aktif (Opening/Opened/Closed) mı?
   bool get _isProcessActive => drawerStage.isActive;
+
+  /// Çekmece açılıyor veya açıkken seçim değiştirilemez.
   bool get _isSelectionLocked => drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened;
+
+  /// Eksik stok bildirimi yalnızca çekmece fiziksel olarak açıkken yapılabilir.
+  bool get _isDrawerOpen => drawerStage is MobileDrawerOpened;
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +102,9 @@ class MobileUnloadPanel extends StatelessWidget {
             takenEpcs: ready.takenEpcs,
             rfidReadEpcs: ready.rfidReadEpcs,
             onToggleItem: onToggleItem,
+            onReportMissing: onReportMissing,
+            reportingItemIds: ready.reportingItemIds,
+            isDrawerOpen: _isDrawerOpen,
           ),
         ),
         _UnloadActionBar(
@@ -121,6 +132,9 @@ class _UnloadPrescriptionList extends StatelessWidget {
     required this.isSelectionLocked,
     required this.isProcessActive,
     required this.onToggleItem,
+    required this.onReportMissing,
+    required this.reportingItemIds,
+    required this.isDrawerOpen,
   });
 
   final List<PrescriptionItem> items;
@@ -130,6 +144,10 @@ class _UnloadPrescriptionList extends StatelessWidget {
   final bool isSelectionLocked;
   final bool isProcessActive;
   final ValueChanged<int> onToggleItem;
+
+  final ValueChanged<int> onReportMissing;
+  final Set<int> reportingItemIds;
+  final bool isDrawerOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +184,8 @@ class _UnloadPrescriptionList extends StatelessWidget {
           isSelected: isSelected,
           rfidStatus: rfidStatus,
           onTap: isSelectionLocked || !isEligible || item.id == null ? null : () => onToggleItem(item.id!),
+          onReportMissing: isDrawerOpen && item.id != null ? () => onReportMissing(item.id!) : null,
+          isReportingMissing: item.id != null && reportingItemIds.contains(item.id),
         );
       },
     );

@@ -168,13 +168,6 @@ class _PrescriptionList extends StatelessWidget {
     // 1. Listeyi kopyalayıp çift kriterli (Durum + Saat) sıralıyoruz.
     final sortedItems = List<PrescriptionItem>.from(items)
       ..sort((a, b) {
-        final aIsPurchasePending = a.status == PrescriptionMovementType.purchasePending;
-        final bIsPurchasePending = b.status == PrescriptionMovementType.purchasePending;
-
-        // Kriter 1: Durum kontrolü (Alım bekleyenler üste)
-        if (aIsPurchasePending && !bIsPurchasePending) return -1;
-        if (!aIsPurchasePending && bIsPurchasePending) return 1;
-
         // Kriter 2: Durumlar aynıysa saate göre sırala (Erken olan üste)
         if (a.time != null && b.time != null) {
           return a.time!.compareTo(b.time!); // Artan sırada (08:00, 09:00...)

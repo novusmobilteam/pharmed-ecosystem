@@ -41,7 +41,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
       ref.read(getPatientPrescriptionHistoryUseCaseProvider);
   CheckMobileIntakeUseCase get _checkIntake => ref.read(checkMobileIntakeUseCaseProvider);
   CompleteMobileIntakeUseCase get _completeIntake => ref.read(completeMobileIntakeUseCaseProvider);
-  ReportMissingStockUseCase get _reportMissingStock => ref.read(reportMissingStockUseCaseProvider);
+  IntakeReportMissingStockUseCase get _reportMissingStock => ref.read(reportMissingStockUseCaseProvider);
 
   @override
   MobileIntakeState build() {
@@ -520,7 +520,10 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
 
     final result = await _getPrescriptionHistory.call(
       patient!.id!,
-      params: PagedQueryParamsBuilder.fromPreset(preset: DateRangePreset.today),
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: DateRangePreset.today,
+        filters: [Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.purchasePending.id)],
+      ),
     );
 
     result.when(
