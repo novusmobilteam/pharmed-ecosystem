@@ -22,7 +22,7 @@ class MedDropdownInputField<T> extends StatefulWidget {
     required this.options,
     required this.onChanged,
     required this.labelBuilder,
-    required this.label,
+    this.label,
     this.validator,
     this.initialValue,
     this.enabled = true,

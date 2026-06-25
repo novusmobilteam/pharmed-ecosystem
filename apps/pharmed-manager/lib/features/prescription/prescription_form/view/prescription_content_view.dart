@@ -1,7 +1,7 @@
 part of 'new_prescription_dialog.dart';
 
-class PrescriptionItemsColumn extends StatelessWidget {
-  const PrescriptionItemsColumn({super.key});
+class PrescriptionContentView extends StatelessWidget {
+  const PrescriptionContentView({super.key});
 
   @override
   Widget build(BuildContext context) {

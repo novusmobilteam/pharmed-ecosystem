@@ -4,21 +4,25 @@ import '../../../../core/core.dart';
 import '../../../auth/notifier/auth_notifier.dart';
 
 class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
-  final CreatePrescriptionUseCase _useCase;
   final AuthNotifier _authNotifier;
+  final CreatePrescriptionUseCase _useCase;
+  final CreatePrescriptionTemplateUseCase _templateUseCase;
 
   PrescriptionFormNotifier({
-    required CreatePrescriptionUseCase useCase,
     Hospitalization? hospitalization,
     required AuthNotifier authNotifier,
+    required CreatePrescriptionUseCase useCase,
+    required CreatePrescriptionTemplateUseCase templateUseCase,
   }) : _useCase = useCase,
-       _authNotifier = authNotifier {
+       _authNotifier = authNotifier,
+       _templateUseCase = templateUseCase {
     _hospitalization = hospitalization;
     _isPatientSelectionEnabled = hospitalization == null;
     _doctor = _authNotifier.currentUser?.toUser();
   }
 
   final OperationKey submitOp = OperationKey.submit();
+  final OperationKey templateOp = OperationKey.submit();
 
   Hospitalization? _hospitalization;
   Hospitalization? get hospitalization => _hospitalization;
@@ -47,9 +51,16 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
   String get templateName => _templateName;
 
   bool get isSubmitting => isLoading(submitOp);
-  String? get statusMessage => message(submitOp);
+  bool get isSavingTemplate => isLoading(templateOp);
+  String? get statusMessage => message(submitOp) ?? message(templateOp);
 
-  bool get canSave => _items.isNotEmpty && _hospitalization != null && _doctor != null;
+  bool get canSave {
+    final base = _items.isNotEmpty && _hospitalization != null && _doctor != null;
+    if (!base) return false;
+    // Şablon olarak da kaydedilecekse isim zorunlu.
+    if (_saveAsTemplate && _templateName.trim().isEmpty) return false;
+    return true;
+  }
 
   bool isItemValid(PrescriptionItem item) {
     return item.medicine != null &&
@@ -170,24 +181,47 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
   void importItems(List<PrescriptionItem> source) {
     if (source.isEmpty) return;
 
-    // 1. Backend her ilaç-saatini ayrı kalem olarak döndürdüğü için,
-    //    aynı reçete + aynı ilaç + aynı doz/flag setine sahip kalemlerin
-    //    saatlerini tek bir form kalemine topla.
     final grouped = _groupBySharedAttributes(source);
+    int? firstNewIndex;
 
-    // 2. Her grup → tek bir draft kalem + birleştirilmiş ve bugüne kaydırılmış times.
     for (final group in grouped) {
       final sourceTimes = group.map((it) => it.time).whereType<DateTime>().toList()..sort();
-
       final remapped = _remapTimesToToday(sourceTimes);
 
-      final draft = group.first.asDraft().copyWith(doctor: _doctor, doctorId: _doctor?.id, times: remapped);
+      final candidate = group.first.asDraft().copyWith(doctor: _doctor, doctorId: _doctor?.id, times: remapped);
 
-      _items.add(draft);
+      // Form'da aynı imzalı bir kalem var mı? Varsa times'ları birleştir.
+      final candidateSig = _itemSignature(candidate);
+      final existingIndex = _items.indexWhere((e) => _itemSignature(e) == candidateSig);
+
+      if (existingIndex >= 0) {
+        final merged = _mergeTimes(_items[existingIndex].times, candidate.times);
+        _items[existingIndex] = _items[existingIndex].copyWith(times: merged);
+      } else {
+        _items.add(candidate);
+        firstNewIndex ??= _items.length - 1;
+      }
     }
 
-    _selectedIndex = _items.length - grouped.length;
+    // En az bir yeni kalem eklendiyse ilkini seç; tamamı merge'lendiyse mevcut seçimi bozma.
+    if (firstNewIndex != null) {
+      _selectedIndex = firstNewIndex;
+    }
     notifyListeners();
+  }
+
+  /// İki times listesini birleştirir, saat-dakika bazında dedupe eder, sıralar.
+  List<DateTime>? _mergeTimes(List<DateTime>? a, List<DateTime>? b) {
+    final all = <DateTime>[...?a, ...?b];
+    if (all.isEmpty) return null;
+
+    final seen = <String>{};
+    final result = <DateTime>[];
+    for (final dt in all..sort()) {
+      final key = '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+      if (seen.add(key)) result.add(dt);
+    }
+    return result;
   }
 
   /// Backend'in kalem-per-saat formatını, form'un kalem-per-times formatına çevirmek için
@@ -195,17 +229,7 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
   List<List<PrescriptionItem>> _groupBySharedAttributes(List<PrescriptionItem> source) {
     final groups = <String, List<PrescriptionItem>>{};
     for (final item in source) {
-      final key = [
-        item.prescriptionId,
-        item.medicine?.id ?? item.medicineId,
-        item.dosePiece,
-        item.requestType?.id,
-        item.firstDoseEmergency ?? false,
-        item.askDoctor ?? false,
-        item.inCaseOfNecessity ?? false,
-        (item.description ?? '').trim(),
-      ].join('|');
-      groups.putIfAbsent(key, () => []).add(item);
+      groups.putIfAbsent(_itemSignature(item), () => []).add(item);
     }
     return groups.values.toList();
   }
@@ -229,9 +253,11 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
-  void updateTemplateName(String value) {
-    _templateName = value;
-    notifyListeners();
+  void updateTemplateName(String? value) {
+    if (value != null) {
+      _templateName = value;
+      notifyListeners();
+    }
   }
 
   Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
@@ -249,11 +275,51 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => _useCase.call(prescription: prescription, items: itemsWithDoctor),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () {
-        // TODO(template): _saveAsTemplate true ise CreateTemplateUseCase çağrılacak.
-        onSuccess?.call('Reçete başarıyla kaydedildi.');
+      onSuccess: () async {
+        // Reçete kaydı tamam. Şablon istendiyse onu da kaydetmeye çalış.
+        if (_saveAsTemplate) {
+          final ok = await _saveTemplate(itemsWithDoctor);
+          if (ok) {
+            onSuccess?.call('Reçete ve şablon başarıyla kaydedildi.');
+          } else {
+            // Reçete kaydedildi ama şablon kaydedilemedi — kullanıcıyı bilgilendir,
+            // reçete başarısını geri alma.
+            onSuccess?.call('Reçete kaydedildi ancak şablon kaydedilemedi.');
+          }
+        } else {
+          onSuccess?.call('Reçete başarıyla kaydedildi.');
+        }
       },
       loadingMessage: 'Reçete oluşturuluyor. Lütfen bekleyiniz..',
     );
+  }
+
+  /// Reçete başarıyla kaydedildikten sonra çağrılır.
+  /// Şablon başarıyla kaydedildi mi onu döner; hata yönetimi içeride yapılır.
+  Future<bool> _saveTemplate(List<PrescriptionItem> items) async {
+    final template = PrescriptionTemplate(name: _templateName.trim());
+
+    final templateItems = items.map((i) => i.toTemplateItem()).toList();
+
+    var success = false;
+    await execute<List<PrescriptionTemplateItem>>(
+      templateOp,
+      operation: () => _templateUseCase.call(template: template, items: templateItems),
+      onData: (_) => success = true,
+      loadingMessage: 'Şablon kaydediliyor..',
+    );
+    return success;
+  }
+
+  String _itemSignature(PrescriptionItem item) {
+    return [
+      item.medicine?.id ?? item.medicineId,
+      item.dosePiece,
+      item.requestType?.id,
+      item.firstDoseEmergency ?? false,
+      item.askDoctor ?? false,
+      item.inCaseOfNecessity ?? false,
+      (item.description ?? '').trim(),
+    ].join('|');
   }
 }

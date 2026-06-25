@@ -107,8 +107,8 @@ class MedDoseStepper extends StatelessWidget {
   }
 
   Widget _buildLarge(BuildContext context) {
-    final btnSize = platform == DoseStepperPlatform.touch ? 48.0 : 48.0;
-    final height = platform == DoseStepperPlatform.touch ? 48.0 : 48.0;
+    final btnSize = platform == DoseStepperPlatform.touch ? 44.0 : 44.0;
+    final height = platform == DoseStepperPlatform.touch ? 44.0 : 44.0;
 
     return Container(
       height: height,
@@ -175,6 +175,7 @@ class MedDoseStepper extends StatelessWidget {
     final btnSize = platform == DoseStepperPlatform.touch ? 36.0 : 36.0;
 
     return Container(
+      height: 44.0,
       decoration: BoxDecoration(
         color: MedColors.surface2,
         border: Border.all(color: MedColors.border),

@@ -1,66 +1,7 @@
 part of 'new_prescription_dialog.dart';
 
-class PrescriptionSourceColumn extends StatefulWidget {
-  const PrescriptionSourceColumn({super.key});
-
-  @override
-  State<PrescriptionSourceColumn> createState() => _PrescriptionSourceColumnState();
-}
-
-class _PrescriptionSourceColumnState extends State<PrescriptionSourceColumn> {
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: [
-          TabBar(
-            indicatorWeight: 1,
-            dividerColor: Colors.transparent,
-            indicatorSize: TabBarIndicatorSize.tab,
-            tabs: [
-              Tab(
-                child: Text('Geçmiş', style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.bold)),
-              ),
-              Tab(
-                child: Text('Şablonlar', style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-          Expanded(child: TabBarView(children: [_HistoryTab(), _TemplatesTabPlaceholder()])),
-        ],
-      ),
-    );
-  }
-}
-
-class _TemplatesTabPlaceholder extends StatelessWidget {
-  const _TemplatesTabPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(PhosphorIcons.bookmarksSimple(), size: 32, color: MedColors.text4),
-            const SizedBox(height: 12),
-            Text(
-              'Şablonlar yakında',
-              textAlign: TextAlign.center,
-              style: MedTextStyles.bodySm(color: MedColors.text3),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HistoryTab extends StatelessWidget {
-  const _HistoryTab();
+class PrescriptionHistoryView extends StatelessWidget {
+  const PrescriptionHistoryView({super.key});
 
   @override
   Widget build(BuildContext context) {

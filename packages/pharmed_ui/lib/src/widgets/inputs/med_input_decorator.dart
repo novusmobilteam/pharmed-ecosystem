@@ -47,7 +47,7 @@ class MedInputDecorator extends StatelessWidget {
     final labelText = label == null
         ? null
         : style.labelUpperCase
-        ? label!.toUpperCase()
+        ? label!
         : label!;
 
     return Column(
@@ -57,24 +57,20 @@ class MedInputDecorator extends StatelessWidget {
         if (labelText != null) ...[
           Text(
             labelText,
-            style: TextStyle(
-              fontFamily: MedFonts.mono,
-              fontSize: style.labelFontSize,
-              fontWeight: FontWeight.w400,
-              letterSpacing: style.labelLetterSpacing,
-              color: enabled ? MedColors.text3 : MedColors.text4,
-            ),
+            style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
           ),
           const SizedBox(height: MedSpacing.xs),
         ],
         Container(
-          constraints: BoxConstraints(minHeight: style.minHeight, maxHeight: style.minHeight),
+          constraints: BoxConstraints(minHeight: style.minHeight),
           decoration: BoxDecoration(
             color: _resolveBgColor(effectiveState),
             borderRadius: style.borderRadius,
             border: Border.all(color: _resolveBorderColor(effectiveState)),
           ),
-          child: applyPadding ? Padding(padding: style.contentPadding, child: child) : child,
+          child: applyPadding
+              ? Padding(padding: style.contentPadding, child: child)
+              : Align(alignment: Alignment.center, child: child),
         ),
         if (effectiveState == MedFieldState.error && errorText != null) ...[
           const SizedBox(height: MedSpacing.xs),

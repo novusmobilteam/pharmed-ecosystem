@@ -316,7 +316,7 @@ abstract final class MedSpacing {
   static const EdgeInsets inputPaddingClient = EdgeInsets.symmetric(horizontal: 14);
 
   /// Manager input minimum yüksekliği.
-  static const double inputMinHeightManager = 38.0;
+  static const double inputMinHeightManager = 44.0;
 
   /// Client input minimum yüksekliği — dokunmatik hedef boyutu.
   static const double inputMinHeightClient = 44.0;

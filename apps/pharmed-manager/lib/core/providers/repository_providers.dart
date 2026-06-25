@@ -362,6 +362,22 @@ class RepositoryProviders {
           ),
         },
       ),
+
+      /// PrescriptionTemplate
+      Provider<IPrescriptionTemplateRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => PrescriptionTemplateRepositoryImpl(
+            dataSource: context.read(),
+            templateMapper: PrescriptionTemplateMapper(),
+            itemMapper: PrescriptionTemplateItemMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => PrescriptionTemplateRepositoryImpl(
+            dataSource: context.read(),
+              templateMapper: PrescriptionTemplateMapper(),
+            itemMapper: PrescriptionTemplateItemMapper(),
+          ),
+        },
+      ),
     ];
   }
 }

@@ -78,7 +78,6 @@ class PrescriptionItemDto {
   });
 
   factory PrescriptionItemDto.fromJson(Map<String, dynamic> json) {
-    // Times listesini güvenli parse etme
     List<DateTime>? parsedTimes;
     if (json['times'] != null && json['times'] is List) {
       try {

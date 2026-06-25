@@ -229,6 +229,11 @@ class UsecaseProviders {
       Provider(create: (context) => GetRefillListsUseCase(context.read())),
       Provider(create: (context) => UpdateRefillListStatusUseCase(context.read())),
       Provider(create: (context) => UpdateRefillListUseCase(context.read())),
+
+      /// Refill List
+      Provider(create: (context) => CreatePrescriptionTemplateUseCase(context.read())),
+      Provider(create: (context) => GetPrescriptionTemplateItemsUseCase(context.read())),
+      Provider(create: (context) => GetPrescriptionTemplatesUseCase(context.read())),
     ];
   }
 }
