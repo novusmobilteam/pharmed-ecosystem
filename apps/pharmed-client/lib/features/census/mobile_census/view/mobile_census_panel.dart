@@ -12,7 +12,6 @@ import '../../../../core/providers/providers.dart';
 import '../../census.dart';
 
 part 'report_extra_stock_dialog.dart';
-part 'extra_stock_summary_card.dart';
 part 'rx_census_group_card.dart';
 
 class MobileCensusPanel extends StatelessWidget {
@@ -85,25 +84,19 @@ class MobileCensusPanel extends StatelessWidget {
           room: ready.room,
           onChange: _isProcessActive ? null : onChangePatient,
         ),
-        // Sayım aktifken filtreler yerine fazla stok butonu
-        if (_isProcessActive) ...[
-          _ReportExtraStockButton(onReport: notifier.addExtraStock),
-          _ExtraStockSummaryCard(extraStocks: ready.extraStocks, onRemove: notifier.removeExtraStock),
-        ] else ...[
-          MedFilterChipGroup<PrescriptionMovementType?>(
-            options: [null, ...PrescriptionMovementType.intakeableTypes],
-            selected: ready.statusFilter,
-            onChanged: notifier.onStatusFilterChanged,
-            labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
-            bgColor: ready.statusFilter?.backgroundColor,
-          ),
-          MedFilterChipGroup<DateRangePreset>(
-            options: DateRangePreset.values,
-            selected: ready.datePreset,
-            labelBuilder: (p) => p.label(context.l10n),
-            onChanged: notifier.onDatePresetChanged,
-          ),
-        ],
+        MedFilterChipGroup<PrescriptionMovementType?>(
+          options: [null, ...PrescriptionMovementType.intakeableTypes],
+          selected: ready.statusFilter,
+          onChanged: notifier.onStatusFilterChanged,
+          labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+          bgColor: ready.statusFilter?.backgroundColor,
+        ),
+        MedFilterChipGroup<DateRangePreset>(
+          options: DateRangePreset.values,
+          selected: ready.datePreset,
+          labelBuilder: (p) => p.label(context.l10n),
+          onChanged: notifier.onDatePresetChanged,
+        ),
         Expanded(
           child: _CensusPrescriptionList(
             items: ready.prescriptionItems,
@@ -168,15 +161,17 @@ class _CensusPrescriptionList extends StatelessWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 6, right: 2),
-      separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.sm),
-      itemCount: ready.groups.length,
+      separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        final group = ready.groups[index];
-        return RxCensusGroupCard(
-          group: group,
-          isProcessActive: isProcessActive,
-          isSelectionLocked: isSelectionLocked,
-          onToggleItem: onToggleItem,
+        final item = items[index];
+        return RxOperationCard(
+          item: item,
+          isSelected: false,
+          rfidStatus: null,
+          isEligible: false,
+          mode: RxOperationCardMode.census,
+          onTap: () {},
         );
       },
     );
@@ -214,24 +209,9 @@ class _CensusActionBar extends StatelessWidget {
   final VoidCallback onReopen;
   final VoidCallback onCancel;
 
-  bool get _showCancel {
-    if (isSaving) return false;
-    if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) return false;
-    if (drawerStage is MobileDrawerIdle) return hasSelection;
-    if (drawerStage is MobileDrawerClosed) return rfidPresentCount == 0;
-    if (drawerStage is MobileDrawerFailed) return true;
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (_showCancel) _CancelButton(onTap: onCancel) else const Spacer(),
-        const Spacer(),
-        _buildAction(context),
-      ],
-    );
+    return _buildAction(context);
   }
 
   Widget _buildAction(BuildContext context) {
@@ -240,19 +220,8 @@ class _CensusActionBar extends StatelessWidget {
     }
 
     return switch (drawerStage) {
-      MobileDrawerOpening() => _ActionButton(
-        label: context.l10n.common_action_drawerOpening,
-        enabled: false,
-        loading: true,
-        onTap: _noop,
-      ),
-      MobileDrawerOpened() => _ActionButton(label: context.l10n.census_action_drawerOpen, enabled: false, onTap: _noop),
-      MobileDrawerClosed() =>
-        canComplete
-            ? _ActionButton(label: context.l10n.census_action_complete, onTap: onComplete)
-            : _ActionButton(label: context.l10n.census_action_continue, onTap: onReopen),
-      MobileDrawerFailed() => _ActionButton(label: context.l10n.common_retryButton, onTap: onStart),
       MobileDrawerIdle() => _ActionButton(label: context.l10n.census_action_start, onTap: onStart),
+      _ => SizedBox(),
     };
   }
 }
@@ -272,51 +241,13 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(
-      label: label,
-      size: MedButtonSize.sm,
-      isLoading: loading,
-      onPressed: enabled && !loading ? onTap : null,
-    );
-  }
-}
-
-class _CancelButton extends StatelessWidget {
-  const _CancelButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return MedButton(
-      label: context.l10n.common_cancelButton,
-      size: MedButtonSize.sm,
-      variant: MedButtonVariant.danger,
-      onPressed: onTap,
-    );
-  }
-}
-
-class _ReportExtraStockButton extends StatelessWidget {
-  const _ReportExtraStockButton({required this.onReport});
-
-  final void Function({required Medicine medicine, required double quantity}) onReport;
-
-  @override
-  Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: context.width,
       child: MedButton(
-        label: context.l10n.census_action_report_extra_stock,
-        size: MedButtonSize.md,
-        variant: MedButtonVariant.secondary,
-
-        onPressed: () async {
-          final result = await ReportExtraStockDialog.show(context);
-          if (result != null) {
-            onReport(medicine: result.medicine, quantity: result.quantity);
-          }
-        },
+        label: label,
+        size: MedButtonSize.sm,
+        isLoading: loading,
+        onPressed: enabled && !loading ? onTap : null,
       ),
     );
   }

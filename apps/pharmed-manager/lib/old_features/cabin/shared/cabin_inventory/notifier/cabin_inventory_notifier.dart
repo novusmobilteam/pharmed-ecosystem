@@ -376,7 +376,7 @@ class CabinInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
             onFailed?.call('Dolum miktarı girilmelidir.');
             return false;
           }
-        case CabinInventoryType.count:
+        case CabinInventoryType.census:
           if ((_cubicCountQuantity ?? 0) == 0) {
             onFailed?.call('Sayım miktarı girilmelidir.');
             return false;
@@ -392,7 +392,7 @@ class CabinInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
           throw UnimplementedError();
       }
     } else {
-      if (inventoryType == CabinInventoryType.count) {
+      if (inventoryType == CabinInventoryType.census) {
         if (!_drawerCountQuantities.any((q) => q > 0)) {
           onFailed?.call('En az bir göz için sayım miktarı girilmelidir.');
           return false;
@@ -421,7 +421,7 @@ class CabinInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
     // refill ve count için miad tarihi zorunludur (unload/disposal hariç).
     // isPerCellMiad=true olan birim doz gözleri per-cell döngüsünde kontrol edilir;
     // kübik ve isPerCellMiad=false için tekil _miadDate burada kontrol edilir.
-    final bool requiresMiad = inventoryType == CabinInventoryType.refill || inventoryType == CabinInventoryType.count;
+    final bool requiresMiad = inventoryType == CabinInventoryType.refill || inventoryType == CabinInventoryType.census;
     if (requiresMiad && (isKubik || !isPerCellMiadEnabled) && _miadDate == null) {
       onFailed?.call('Miad tarihi girilmelidir.');
       return false;
@@ -440,10 +440,10 @@ class CabinInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
     // discharge ve destruction tipleri için miad validasyonu uygulanmaz.
     if (isPerCellMiadEnabled &&
         !isKubik &&
-        (inventoryType == CabinInventoryType.refill || inventoryType == CabinInventoryType.count)) {
+        (inventoryType == CabinInventoryType.refill || inventoryType == CabinInventoryType.census)) {
       for (int i = 0; i < numberOfSteps; i++) {
         // count tipinde sayım miktarı, diğer tiplerde dolum miktarı referans alınır
-        final relevantQuantity = inventoryType == CabinInventoryType.count
+        final relevantQuantity = inventoryType == CabinInventoryType.census
             ? _drawerCountQuantities[i]
             : _drawerFillingQuantities[i];
 

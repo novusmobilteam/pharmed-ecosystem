@@ -317,7 +317,7 @@ final reportMissingStockUseCaseProvider = Provider((ref) {
 });
 
 final reportExcessStockUseCaseProvider = Provider((ref) {
-  return ReportMissingStockUseCase(ref.read(cabinStockRepositoryProvider));
+  return ReportExcessStockUseCase(ref.read(cabinStockRepositoryProvider));
 });
 
 final getIntakeItemsUseCaseProvider = Provider((ref) {

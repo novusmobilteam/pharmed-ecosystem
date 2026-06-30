@@ -1,4 +1,4 @@
-part of 'mobile_census_panel.dart';
+part of 'mobile_census_dialog.dart';
 
 class _ExtraStockSummaryCard extends StatelessWidget {
   const _ExtraStockSummaryCard({required this.extraStocks, required this.onRemove});

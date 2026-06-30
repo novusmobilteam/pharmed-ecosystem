@@ -69,7 +69,7 @@ class _MedicineCountViewState extends State<MedicineCountView> {
 
   Widget _buildBody(BuildContext context, MedicineCountNotifier notifier) {
     if (notifier.countType == MedicineCountType.medicine) {
-      return CabinAssignmentPickerView(type: CabinInventoryType.count);
+      return CabinAssignmentPickerView(type: CabinInventoryType.census);
     } else {
       return _buildStockBasedView(context, notifier);
     }
@@ -88,7 +88,7 @@ class _MedicineCountViewState extends State<MedicineCountView> {
         return await showCabinInventoryView(
           context,
           quantity: 0,
-          inventoryType: CabinInventoryType.count,
+          inventoryType: CabinInventoryType.census,
           initial: initial,
           onSave: (inputs) {
             return isCabinMode

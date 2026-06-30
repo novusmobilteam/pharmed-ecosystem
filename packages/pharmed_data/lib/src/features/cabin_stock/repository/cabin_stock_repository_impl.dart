@@ -95,11 +95,11 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<void>> reportExcessStock({required int prescriptionItemId, required int cabinInventoryTypeId}) async {
-    return await _dataSource.reportExcessStock(
-      prescriptionItemId: prescriptionItemId,
-      cabinInventoryTypeId: cabinInventoryTypeId,
-    );
+  Future<Result<void>> reportExcessStock({
+    required Map<String, dynamic> data,
+    required int cabinInventoryTypeId,
+  }) async {
+    return await _dataSource.reportExcessStock(data: data, cabinInventoryTypeId: cabinInventoryTypeId);
   }
 
   @override

@@ -7,6 +7,7 @@ import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/enums/cabin_operation_mode.dart';
 import '../../../../widgets/widgets.dart';
 import '../../census.dart';
+import 'mobile_census_dialog.dart';
 
 class MobileCensusView extends ConsumerStatefulWidget {
   const MobileCensusView({super.key, this.data});
@@ -18,6 +19,9 @@ class MobileCensusView extends ConsumerStatefulWidget {
 }
 
 class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
+  /// Dialog şu an ekranda mı? Çift açma / yanlış pop'lamayı engeller.
+  bool _isDialogOpen = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +42,24 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
       if (!mounted) return;
       ref.read(mobileCensusNotifierProvider.notifier).init(data);
     });
+  }
+
+  /// Dialog sync — sadece AÇMA. Kapama dialog'un kendi sorumluluğu
+  /// (shouldKeepDialog false olunca kendini pop eder). Manuel pop yok →
+  /// hızlı state geçişlerinde dialog birikmesi yapısal olarak imkansız.
+  void _syncDialog(BuildContext context) {
+    final state = ref.read(mobileCensusNotifierProvider);
+    final stage = ref.read(mobileDrawerSessionProvider).stage;
+    final shouldBeOpen = state.shouldKeepDialog(stage);
+
+    if (shouldBeOpen && !_isDialogOpen) {
+      _isDialogOpen = true;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const MobileCensusDialog(),
+      ).then((_) => _isDialogOpen = false);
+    }
   }
 
   Future<void> _onCancelCensus(MobileCensusState state, MobileDrawerStage drawerStage) async {
@@ -72,11 +94,25 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
     final notifier = ref.read(mobileCensusNotifierProvider.notifier);
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
+    // Dialog sync — notifier veya drawer session değişimi her ikisini de tetikler
+    ref.listen<MobileCensusState>(mobileCensusNotifierProvider, (_, __) {
+      _syncDialog(context);
+    });
+    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, __) {
+      _syncDialog(context);
+    });
+
+    // Error: Dialog açıksa snackbar gösterme — dialog kendi banner'ını ve
+    // "Tekrar Dene" butonunu içeride sunar. Dialog kapalıyken (init / baseline
+    // scan fail) snackbar fallback olarak çalışır.
+    // Success: snackbar + dismissSuccess.
     ref.listen(mobileCensusNotifierProvider, (_, next) {
       if (next is MobileCensusError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
-        notifier.dismissError();
-        ref.read(mobileDrawerSessionProvider.notifier).stop();
+        final stage = ref.read(mobileDrawerSessionProvider).stage;
+        if (!next.shouldKeepDialog(stage)) {
+          MessageUtils.showErrorSnackbar(context, next.message);
+          notifier.dismissError();
+        }
       } else if (next is MobileCensusSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.census_success_completed);
         notifier.dismissSuccess();
@@ -87,33 +123,35 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return MobileDrawerOperationWrapper(
-      child: CabinOperationScaffold(
-        leftPanel: MobileCabinOverviewPanel(
-          slots: state.slots,
-          selectedSlotId: state.selectedSlotId,
-          mode: CabinOperationMode.census,
-          onSlotTap: notifier.onSlotTap,
-        ),
-        centerPanel: MobileCabinDrawerPanel(
-          mode: CabinOperationMode.census,
-          slot: state.selectedSlot,
-          selectedCell: state.selectedCell,
-          onCellTap: notifier.onCellTap,
-          assignmentByCoord: state.assignmentByCoord,
-        ),
-        rightPanel: MobileCensusPanel(
-          notifier: notifier,
-          state: state,
-          drawerStage: drawerStage,
-          onStartCensus: notifier.startCensus,
-          onCompleteCensus: notifier.completeCensus,
-          onReopenDrawer: notifier.reopenDrawer,
-          onSelectAssignment: notifier.selectAssignment,
-          onChangePatient: notifier.clearPatientSelection,
-          onToggleItem: notifier.toggleItemSelection,
-          onCancelCensus: () => _onCancelCensus(state, drawerStage),
-        ),
+    if (widget.data == null || state is MobileCensusUninitialized) {
+      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
+    }
+
+    return CabinOperationScaffold(
+      leftPanel: MobileCabinOverviewPanel(
+        slots: state.slots,
+        selectedSlotId: state.selectedSlotId,
+        mode: CabinOperationMode.census,
+        onSlotTap: notifier.onSlotTap,
+      ),
+      centerPanel: MobileCabinDrawerPanel(
+        mode: CabinOperationMode.census,
+        slot: state.selectedSlot,
+        selectedCell: state.selectedCell,
+        onCellTap: notifier.onCellTap,
+        assignmentByCoord: state.assignmentByCoord,
+      ),
+      rightPanel: MobileCensusPanel(
+        notifier: notifier,
+        state: state,
+        drawerStage: drawerStage,
+        onStartCensus: notifier.startCensus,
+        onCompleteCensus: notifier.completeCensus,
+        onReopenDrawer: notifier.reopenDrawer,
+        onSelectAssignment: notifier.selectAssignment,
+        onChangePatient: notifier.clearPatientSelection,
+        onToggleItem: notifier.toggleItemSelection,
+        onCancelCensus: () => _onCancelCensus(state, drawerStage),
       ),
     );
   }

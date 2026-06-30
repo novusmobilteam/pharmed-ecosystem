@@ -50,6 +50,7 @@ class RfidService implements IRfidService {
   // bit7=0 → ayar power-off'ta korunur (kalıcı)
   // DİKKAT: Etkinleştirilen portta fiziksel anten yoksa okuyucu komutun
   //         TAMAMINI 0xF9 ile reddeder (kısmi kabul yok).
+  // ignore: unused_field
   static const int _antennaMask2 = 0x03; // Ant1 + Ant2 (mevcut test)
   static const int _antennaMask4 = 0x0F; // Ant1..Ant4 (saha cihazı)
   static const int _statusAntennaCheckFailure = 0xF9;

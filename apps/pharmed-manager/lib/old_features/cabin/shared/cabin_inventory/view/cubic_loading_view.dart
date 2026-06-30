@@ -173,7 +173,7 @@ class _CubicLoadingViewState extends State<CubicLoadingView> {
             onChanged: widget.onCountQuantityChanged,
           ),
         ),
-        if (widget.type != CabinInventoryType.count)
+        if (widget.type != CabinInventoryType.census)
           Expanded(
             child: CabinInputQuantityField(
               data: widget.data,

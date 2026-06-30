@@ -3,7 +3,7 @@ enum CabinInventoryType {
   refill(1),
   intake(2),
   unload(3),
-  count(4),
+  census(4),
   disposal(5),
   refillList(6);
 
@@ -17,7 +17,7 @@ enum CabinInventoryType {
         return 'İlaç Dolum';
       case CabinInventoryType.refillList:
         return 'İlaç Dolum Listesi';
-      case CabinInventoryType.count:
+      case CabinInventoryType.census:
         return 'İlaç Sayım';
       case CabinInventoryType.disposal:
         return 'İlaç İmha';
@@ -34,7 +34,7 @@ enum CabinInventoryType {
         return 'Dolum Yap';
       case CabinInventoryType.refillList:
         return 'Dolum Yap';
-      case CabinInventoryType.count:
+      case CabinInventoryType.census:
         return 'Sayım Yap';
       case CabinInventoryType.disposal:
         return 'İmha Et';
@@ -51,7 +51,7 @@ enum CabinInventoryType {
         return 'Dolum Miktarı';
       case CabinInventoryType.refillList:
         return 'Dolum Miktarı';
-      case CabinInventoryType.count:
+      case CabinInventoryType.census:
         return 'Sayım Miktarı';
       case CabinInventoryType.disposal:
         return 'İmha Miktarı';
@@ -68,7 +68,7 @@ enum CabinInventoryType {
         return 'Otomatik Dolumu Başlat';
       case CabinInventoryType.refillList:
         return 'Otomatik Dolumu Başlat';
-      case CabinInventoryType.count:
+      case CabinInventoryType.census:
         return 'Otomatik Sayımı Başlat';
       case CabinInventoryType.disposal:
         return 'Otomatik İmhayı Başlat';
@@ -82,7 +82,7 @@ enum CabinInventoryType {
   /// Miad tarihi giriş alanı gösterilsin mi?
   /// disposal ve unload için miad girişi gerekmez; kullanıcı miad girmez.
   bool get enableMiadDateInput =>
-      this == CabinInventoryType.count || this == CabinInventoryType.refill || this == CabinInventoryType.refillList;
+      this == CabinInventoryType.census || this == CabinInventoryType.refill || this == CabinInventoryType.refillList;
 
   /// Bu operasyon tipinde miad geçmişse giriş alanları kilitlensin mi?
   ///
@@ -90,5 +90,5 @@ enum CabinInventoryType {
   /// disposal ve unload işlemleri geçmiş miadlı stok üzerinde yapılabilir —
   /// zaten bu işlemlerin amacı geçmiş miadlı ürünü sistemden çıkarmaktır.
   bool get shouldBlockOnExpiry =>
-      this == CabinInventoryType.count || this == CabinInventoryType.refill || this == CabinInventoryType.refillList;
+      this == CabinInventoryType.census || this == CabinInventoryType.refill || this == CabinInventoryType.refillList;
 }

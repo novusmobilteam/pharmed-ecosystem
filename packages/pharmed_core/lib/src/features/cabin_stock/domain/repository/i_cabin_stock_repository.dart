@@ -36,5 +36,5 @@ abstract class ICabinStockRepository {
   Future<Result<void>> reportMissingStock({required int prescriptionItemId, required int cabinInventoryTypeId});
 
   /// Mobil kabinde fazla stok bildirme işlemi
-  Future<Result<void>> reportExcessStock({required int prescriptionItemId, required int cabinInventoryTypeId});
+  Future<Result<void>> reportExcessStock({required Map<String, dynamic> data, required int cabinInventoryTypeId});
 }

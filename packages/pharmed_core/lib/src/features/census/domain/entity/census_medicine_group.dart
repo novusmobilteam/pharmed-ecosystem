@@ -1,5 +1,3 @@
-// pharmed_client/lib/src/features/census/domain/census_medicine_group.dart
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 /// Census ekranında aynı ilaca ait reçete kalemlerinin gruplanmış görünümü.
@@ -9,27 +7,42 @@ class CensusMedicineGroup {
   final Medicine medicine;
   final List<PrescriptionItem> items;
 
-  /// Şu an RFID ile okunan (kabinde mevcut) item ID'leri.
-  final Set<int> presentItemIds;
+  /// RFID ile okunan (kabinde fiziksel mevcut) EPC'ler.
+  final Set<String> rfidReadEpcs;
 
-  /// Kullanıcının manuel olarak da işaretleyebileceği (RFID otomatik eklediği)
-  /// "kabinde var" işaretli item ID'leri.
-  final Set<int> selectedItemIds;
+  /// Kullanıcının manuel "eksik" işaretlediği RFID'siz item ID'leri.
+  final Set<int> markedMissingItemIds;
 
   const CensusMedicineGroup({
     required this.medicine,
     required this.items,
-    required this.presentItemIds,
-    required this.selectedItemIds,
+    required this.rfidReadEpcs,
+    required this.markedMissingItemIds,
   });
 
   int get totalCount => items.length;
 
-  /// Bu grupta seçili (kabinde var olarak işaretli) item sayısı.
-  int get countedCount => items.where((i) => i.id != null && selectedItemIds.contains(i.id)).length;
+  /// Bir item "sayıldı" mı? (kabinde doğrulandı)
+  ///   - RFID'li → EPC okundu
+  ///   - RFID'siz → kullanıcı eksik işaretlemedi (varsayılan: var)
+  bool _isCounted(PrescriptionItem i) {
+    if (i.id == null) return false;
+    final epc = i.rfidTag;
+    if (epc != null) return rfidReadEpcs.contains(epc);
+    return !markedMissingItemIds.contains(i.id); // RFID'siz: işaretlenmemişse sayıldı
+  }
 
-  /// Bu grupta şu an RFID okunan item sayısı (UI rozeti için).
-  int get presentCount => items.where((i) => i.id != null && presentItemIds.contains(i.id)).length;
+  /// Bir item "eksik" mi?
+  bool isMissing(PrescriptionItem i) => !_isCounted(i);
+
+  /// Sayılan (doğrulanan) doz sayısı.
+  int get countedCount => items.where(_isCounted).length;
+
+  /// RFID ile fiziksel okunan doz sayısı (rozet için).
+  int get presentCount => items.where((i) {
+    final epc = i.rfidTag;
+    return epc != null && rfidReadEpcs.contains(epc);
+  }).length;
 
   /// Tüm dozlar sayılmış mı? Grup başlığındaki tik için.
   bool get isFullyCounted => countedCount == totalCount;
@@ -39,7 +52,7 @@ class CensusMedicineGroup {
 List<CensusMedicineGroup> groupPrescriptionItemsByMedicine({
   required List<PrescriptionItem> items,
   required Set<String> rfidReadEpcs,
-  required Set<int> selectedItemIds,
+  required Set<int> markedMissingItemIds,
 }) {
   final byMedicineId = <int, List<PrescriptionItem>>{};
   for (final item in items) {
@@ -52,16 +65,11 @@ List<CensusMedicineGroup> groupPrescriptionItemsByMedicine({
     final groupItems = [...e.value]
       ..sort((a, b) => (a.lastMovement?.createdAt ?? DateTime(0)).compareTo(b.lastMovement?.createdAt ?? DateTime(0)));
 
-    final presentIds = <int>{
-      for (final i in groupItems)
-        if (i.id != null && i.rfidTag != null && rfidReadEpcs.contains(i.rfidTag)) i.id!,
-    };
-
     return CensusMedicineGroup(
       medicine: groupItems.first.medicine!,
       items: groupItems,
-      presentItemIds: presentIds,
-      selectedItemIds: selectedItemIds,
+      rfidReadEpcs: rfidReadEpcs,
+      markedMissingItemIds: markedMissingItemIds,
     );
-  }).toList()..sort((a, b) => (a.medicine.name ?? '').compareTo(b.medicine.name ?? '')); // alfabetik
+  }).toList()..sort((a, b) => (a.medicine.name ?? '').compareTo(b.medicine.name ?? ''));
 }

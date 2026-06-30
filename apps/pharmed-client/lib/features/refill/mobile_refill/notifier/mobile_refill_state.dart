@@ -540,7 +540,7 @@ extension MobileRefillStateX on MobileRefillState {
     MobileRefillUninitialized() => const [],
     MobileRefillRollbackInProgress(:final slots) => slots,
     MobileRefillRollbackCompleted(:final slots) => slots,
-    MobileRefillFatalError(:final slots) => slots,
+    MobileRefillFatalError(:final previousState) => previousState.slots,
   };
 
   List<MobileDrawerSlot> get mobileSlots => switch (this) {

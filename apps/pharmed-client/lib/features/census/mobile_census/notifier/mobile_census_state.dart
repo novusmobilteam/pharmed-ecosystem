@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../widgets/widgets.dart';
 
 sealed class MobileCensusState {
@@ -106,6 +107,11 @@ final class MobileCensusReady extends MobileCensusState {
     this.datePreset = DateRangePreset.today,
     this.statusFilter = PrescriptionMovementType.purchasePending,
     this.extraStocks = const [],
+    this.baselineCompleted = false,
+    this.missingEpcs = const {},
+    this.excessEpcs = const {},
+    this.markedMissingItemIds = const {},
+    this.reportingItemIds = const {},
   });
 
   final List<MobileSlotVisual> slots;
@@ -129,6 +135,11 @@ final class MobileCensusReady extends MobileCensusState {
   final DateRangePreset datePreset;
   final PrescriptionMovementType? statusFilter;
   final List<CensusExtraStock> extraStocks;
+  final bool baselineCompleted; // şu an HİÇ yok — snapshot bitti mi?
+  final Set<String> missingEpcs; // EXPECTED ∖ OBSERVED → otomatik eksik
+  final Set<String> excessEpcs; // OBSERVED ∖ EXPECTED → otomatik fazla
+  final Set<int> markedMissingItemIds; // manuel eksik bildirilen RFID'siz item
+  final Set<int> reportingItemIds; // loading
 
   int get selectedSlotId => selectedSlot.slotId;
 
@@ -138,15 +149,16 @@ final class MobileCensusReady extends MobileCensusState {
   ///
   /// SWREQ-CLI-CENSUS-003
   bool get canComplete {
-    final rfidItems = _selectedRfidItems;
-    if (rfidItems.isEmpty) return true;
-    return rfidItems.every((i) => rfidReadEpcs.contains(i.rfidTag!));
+    if (!baselineCompleted) return false; // ← EKLENECEK
+    // sayım doğrulama: kullanıcı her şeyi görüp complete'e basabilir.
+    // Eksik/fazla olması complete'i ENGELLEMEZ — bildirim olarak gider.
+    return true;
   }
 
   List<CensusMedicineGroup> get groups => groupPrescriptionItemsByMedicine(
     items: prescriptionItems,
     rfidReadEpcs: rfidReadEpcs,
-    selectedItemIds: selectedItemIds,
+    markedMissingItemIds: markedMissingItemIds,
   );
 
   /// Banner sayacı için: işaretli RFID'li ilaç sayısı.
@@ -171,6 +183,15 @@ final class MobileCensusReady extends MobileCensusState {
       )
       .toList();
 
+  MobileCensusReady get clearedRfidState => copyWith(
+    baselineCompleted: false,
+    rfidReadEpcs: const {},
+    missingEpcs: const {},
+    excessEpcs: const {},
+    markedMissingItemIds: const {},
+    extraStocks: const [],
+  );
+
   MobileCensusReady copyWith({
     List<PrescriptionItem>? prescriptionItems,
     Set<String>? rfidReadEpcs,
@@ -179,6 +200,11 @@ final class MobileCensusReady extends MobileCensusState {
     PrescriptionMovementType? statusFilter,
     bool clearStatusFilter = false,
     List<CensusExtraStock>? extraStocks,
+    bool? baselineCompleted,
+    Set<String>? missingEpcs,
+    Set<String>? excessEpcs,
+    Set<int>? markedMissingItemIds,
+    Set<int>? reportingItemIds,
   }) {
     return MobileCensusReady(
       slots: slots,
@@ -196,6 +222,11 @@ final class MobileCensusReady extends MobileCensusState {
       datePreset: datePreset ?? this.datePreset,
       statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
       extraStocks: extraStocks ?? this.extraStocks,
+      baselineCompleted: baselineCompleted ?? this.baselineCompleted,
+      missingEpcs: missingEpcs ?? this.missingEpcs,
+      excessEpcs: excessEpcs ?? this.excessEpcs,
+      markedMissingItemIds: markedMissingItemIds ?? this.markedMissingItemIds,
+      reportingItemIds: reportingItemIds ?? this.reportingItemIds,
     );
   }
 }
@@ -358,4 +389,25 @@ extension MobileCensusStateX on MobileCensusState {
   /// Sadece bir göze (cell) bağlı olanlar listelenir.
   List<BedAssignment> get availableAssignments =>
       assignments.where((a) => a.cellId != null && a.hospitalization != null).toList();
+
+  MobileCensusReady? get readyContext => switch (this) {
+    MobileCensusReady r => r,
+    MobileCensusSaving(:final ready) => ready,
+    MobileCensusSuccess(:final ready) => ready,
+    MobileCensusError(:final previousState) => previousState.readyContext,
+    _ => null,
+  };
+
+  bool shouldKeepDialog(MobileDrawerStage stage) {
+    // Terminal — drawer ne olursa olsun KAPANIR
+    if (this is MobileCensusSuccess) return false;
+
+    // Açık kalmalı — drawer geçici inactive gösterse bile
+    if (this is MobileCensusSaving) return true;
+    if (this is MobileCensusError) return true;
+
+    final hasReady = readyContext != null;
+    final drawerActive = stage is MobileDrawerOpening || stage is MobileDrawerOpened || stage is MobileDrawerClosed;
+    return hasReady && drawerActive;
+  }
 }

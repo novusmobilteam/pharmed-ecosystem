@@ -116,7 +116,7 @@ class MockCabinStockRepository implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<void>> reportExcessStock({required int prescriptionItemId, required int cabinInventoryTypeId}) {
+  Future<Result<void>> reportExcessStock({required Map<String, dynamic> data, required int cabinInventoryTypeId}) {
     // TODO: implement reportExcessStock
     throw UnimplementedError();
   }
