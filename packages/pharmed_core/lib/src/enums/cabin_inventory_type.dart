@@ -1,10 +1,15 @@
 /// CabinInventoryView'ı açarken kullanılan tip.
 enum CabinInventoryType {
-  refill,
-  count,
-  disposal,
-  unload,
-  refillList;
+  refill(1),
+  intake(2),
+  unload(3),
+  count(4),
+  disposal(5),
+  refillList(6);
+
+  final int id;
+
+  const CabinInventoryType(this.id);
 
   String get title {
     switch (this) {
@@ -18,6 +23,8 @@ enum CabinInventoryType {
         return 'İlaç İmha';
       case CabinInventoryType.unload:
         return 'İlaç Boşaltma';
+      case CabinInventoryType.intake:
+        return 'İlaç Alım';
     }
   }
 
@@ -33,6 +40,8 @@ enum CabinInventoryType {
         return 'İmha Et';
       case CabinInventoryType.unload:
         return 'İlaç Boşalt';
+      case CabinInventoryType.intake:
+        return 'İlaç Al';
     }
   }
 
@@ -48,6 +57,8 @@ enum CabinInventoryType {
         return 'İmha Miktarı';
       case CabinInventoryType.unload:
         return 'Boşaltım Miktarı';
+      case CabinInventoryType.intake:
+        return 'Alım Miktarı';
     }
   }
 
@@ -63,6 +74,8 @@ enum CabinInventoryType {
         return 'Otomatik İmhayı Başlat';
       case CabinInventoryType.unload:
         return 'Otomatik Boşaltmayı Başlat';
+      case CabinInventoryType.intake:
+        return 'Otomatik Alım Başlat';
     }
   }
 

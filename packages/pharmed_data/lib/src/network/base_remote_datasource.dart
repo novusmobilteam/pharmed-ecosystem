@@ -37,6 +37,15 @@ abstract class BaseRemoteDataSource {
     };
   }
 
+  /// String, int, double gibi primitif tipler için liste parser'ı.
+  /// `fromJson` callback'i olmadığı için [listParser]'dan ayrıdır.
+  static Parser<List<T>> primitiveListParser<T>() {
+    return (obj) {
+      if (obj is List) return obj.cast<T>();
+      throw FormatException('Expected List but got ${obj.runtimeType}');
+    };
+  }
+
   static Parser<ApiResponse<List<T>>> apiResponseListParser<T>(T Function(Map<String, dynamic>) fromJson) {
     return (obj) {
       // Eğer raw envelope ile tüm Map geldiyse

@@ -7,6 +7,7 @@ import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/enums/cabin_operation_mode.dart';
 import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
+import 'mobile_intake_dialog.dart';
 
 class MobileIntakeView extends ConsumerStatefulWidget {
   const MobileIntakeView({super.key, this.data});
@@ -18,6 +19,8 @@ class MobileIntakeView extends ConsumerStatefulWidget {
 }
 
 class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
+  bool _isDialogOpen = false;
+
   @override
   void initState() {
     super.initState();
@@ -44,11 +47,11 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
     final notifier = ref.read(mobileIntakeNotifierProvider.notifier);
     final rfidTakenCount = state is MobileIntakeReady ? state.rfidTakenCount : 0;
 
-    // DrawerOpening/Opened + henüz ilaç alınmadı → snackbar, iptal etme
-    if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidTakenCount == 0) {
-      MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
-      return;
-    }
+    // // DrawerOpening/Opened + henüz ilaç alınmadı → snackbar, iptal etme
+    // if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidTakenCount == 0) {
+    //   MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
+    //   return;
+    // }
 
     // DrawerClosed + henüz ilaç alınmadı → onay dialogu
     if (drawerStage is MobileDrawerClosed && rfidTakenCount == 0) {
@@ -76,12 +79,20 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
     // buton seçiminde kullanır.
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
+    ref.listen<MobileIntakeState>(mobileIntakeNotifierProvider, (_, _) {
+      _syncDialog(context);
+    });
+    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, _) {
+      _syncDialog(context);
+    });
+
     // Error/Success snackbar
     ref.listen(mobileIntakeNotifierProvider, (_, next) {
       if (next is MobileIntakeError) {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
-        ref.read(mobileDrawerSessionProvider.notifier).stop();
+        // ❌ DEĞIŞTI: drawer.stop() ARTIK ÇAĞIRILMIYOR
+        // Kullanıcı retry yapabilmeli, çekmece açık kalmalı
       } else if (next is MobileIntakeSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.intake_success_completed);
         notifier.dismissSuccess();
@@ -92,35 +103,57 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return MobileDrawerOperationWrapper(
-      child: CabinOperationScaffold(
-        leftPanel: MobileCabinOverviewPanel(
-          slots: state.slots,
-          selectedSlotId: state.selectedSlotId,
-          mode: CabinOperationMode.intake,
-          onSlotTap: notifier.onSlotTap,
-        ),
-        centerPanel: MobileCabinDrawerPanel(
-          mode: CabinOperationMode.intake,
-          slot: state.selectedSlot,
-          selectedCell: state.selectedCell,
-          onCellTap: notifier.onCellTap,
-          assignmentByCoord: state.assignmentByCoord,
-        ),
-        rightPanel: MobileIntakePanel(
-          notifier: notifier,
-          state: state,
-          drawerStage: drawerStage,
-          onStartIntake: notifier.startIntake,
-          onCompleteIntake: notifier.completeIntake,
-          onReopenDrawer: notifier.reopenDrawer,
-          onSelectAssignment: notifier.selectAssignment,
-          onChangePatient: notifier.clearPatientSelection,
-          onToggleItem: notifier.toggleItemSelection,
-          onCancelIntake: () => _onCancelIntake(state, drawerStage),
-          onReportMissing: notifier.reportMissingStock,
-        ),
+    return CabinOperationScaffold(
+      leftPanel: MobileCabinOverviewPanel(
+        slots: state.slots,
+        selectedSlotId: state.selectedSlotId,
+        mode: CabinOperationMode.intake,
+        onSlotTap: notifier.onSlotTap,
+      ),
+      centerPanel: MobileCabinDrawerPanel(
+        mode: CabinOperationMode.intake,
+        slot: state.selectedSlot,
+        selectedCell: state.selectedCell,
+        onCellTap: notifier.onCellTap,
+        assignmentByCoord: state.assignmentByCoord,
+      ),
+      rightPanel: MobileIntakePanel(
+        notifier: notifier,
+        state: state,
+        drawerStage: drawerStage,
+        onStartIntake: notifier.startIntake,
+        onCompleteIntake: notifier.completeIntake,
+        onReopenDrawer: notifier.reopenDrawer,
+        onSelectAssignment: notifier.selectAssignment,
+        onChangePatient: notifier.clearPatientSelection,
+        onToggleItem: notifier.toggleItemSelection,
+        onCancelIntake: () => _onCancelIntake(state, drawerStage),
       ),
     );
+  }
+
+  void _syncDialog(BuildContext context) {
+    final state = ref.read(mobileIntakeNotifierProvider);
+    final stage = ref.read(mobileDrawerSessionProvider).stage;
+    final shouldBeOpen = _shouldShowDialog(state, stage);
+
+    if (shouldBeOpen && !_isDialogOpen) {
+      _isDialogOpen = true;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const MobileIntakeDialog(),
+      ).then((_) => _isDialogOpen = false);
+    } else if (!shouldBeOpen && _isDialogOpen) {
+      _isDialogOpen = false;
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+  }
+
+  bool _shouldShowDialog(MobileIntakeState state, MobileDrawerStage stage) {
+    // Ready/Saving/WaitingForClose + çekmece aktif → dialog
+    final hasReady = state is MobileIntakeReady || state is MobileIntakeSaving;
+    final drawerActive = stage is MobileDrawerOpening || stage is MobileDrawerOpened || stage is MobileDrawerClosed;
+    return hasReady && drawerActive;
   }
 }

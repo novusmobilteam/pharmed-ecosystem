@@ -27,4 +27,14 @@ abstract class ICabinStockRepository {
 
   /// Eksik stok bildirimi reddetme işlemi
   Future<Result<void>> rejectMissingStock(int prescriptionItemId);
+
+  /// Kabindeki tüm aktif RFID etiketlerini döner.
+  /// Boş liste = kabinde RFID'li ilaç olmadığı anlamına gelir, hata değildir.
+  Future<Result<List<CabinExpectedEpc>>> getExpectedEpcs(int cabinId);
+
+  /// Mobil kabinde ilaç alım esnasında eksik stok bildirme işlemi
+  Future<Result<void>> reportMissingStock({required int prescriptionItemId, required int cabinInventoryTypeId});
+
+  /// Mobil kabinde fazla stok bildirme işlemi
+  Future<Result<void>> reportExcessStock({required int prescriptionItemId, required int cabinInventoryTypeId});
 }

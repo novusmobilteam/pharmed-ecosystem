@@ -9,12 +9,16 @@ import '../../refill.dart';
 
 // [SWREQ-CLI-REFILL-002] [IEC 62304 §5.5]
 // Mobil kabin dolum sağ paneli.
-// Hasta seçilmemişse: o kabine atanmış hastaların listesi (arama dahil)
-// Hasta seçilmişse: hasta başlığı + reçete listesi + dolum aksiyonları
 //
-// Drawer/RFID akışı bu panel'in dışında yönetilir; panel sadece bilgi alır:
-//   - drawerStage: işlem aktif mi, kapanmış mı
-//   - state.rfidReadEpcs / rfidExpectedCount / rfidReadCount / allSelectedRfidRead
+// İki ana görünüm:
+//   - Hasta seçilmemişse: kabine atanmış hastaların listesi (CabinPatientPickerList)
+//   - Hasta seçilmişse:  hasta başlığı + filtreler + reçete listesi + action bar
+//
+// Drawer/RFID akışı bu panel'in dışında yönetilir; panel sadece state'ten okur:
+//   - drawerStage     → action bar buton seçimi
+//   - state.canComplete → "Tamamla" mı yoksa "Devam Et" mi (UNEXPECTED blokajı dahil)
+//   - state.isBlockedByUnexpected → UNEXPECTED banner'ı için
+//   - state.hasUnplannedMovement  → plan dışı banner'ı için
 //
 // Sınıf: Class B
 
@@ -58,24 +62,18 @@ class MobileRefillPanel extends StatelessWidget {
         MobileRefillUninitialized() ||
         MobileRefillLoading() => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
 
-        // Hasta seçilmediği tüm durumlarda → liste göster
-        MobileRefillIdle() || MobileRefillSlotSelected() || MobileRefillNoPatient() => CabinPatientPickerList(
+        MobileRefillIdle() ||
+        MobileRefillSlotSelected() ||
+        MobileRefillNoPatient() ||
+        MobileRefillRollbackCompleted() ||
+        MobileRefillFatalError() => CabinPatientPickerList(
           assignments: state.availableAssignments,
           onSelected: onSelectAssignment,
         ),
 
-        MobileRefillReady ready => _buildReady(context, notifier, ready),
+        _ when state.readyContext != null => _buildReady(context, notifier, state.readyContext!),
 
-        // Drawer başlatma, kaydetme ve başarı sırasında Ready görünümü korunur
-        MobileRefillDrawerStarting(:final ready) ||
-        MobileRefillSaving(:final ready) ||
-        MobileRefillSuccess(:final ready) => _buildReady(context, notifier, ready),
-
-        MobileRefillError(:final previousState) => switch (previousState) {
-          MobileRefillReady ready => _buildReady(context, notifier, ready),
-          MobileRefillDrawerStarting(:final ready) => _buildReady(context, notifier, ready),
-          _ => CabinPatientPickerList(assignments: previousState.availableAssignments, onSelected: onSelectAssignment),
-        },
+        _ => throw StateError('Unhandled MobileRefillState: $state'),
       },
     );
   }
@@ -90,6 +88,7 @@ class MobileRefillPanel extends StatelessWidget {
           room: ready.room,
           onChange: _isProcessActive ? null : onChangePatient,
         ),
+
         MedFilterChipGroup<PrescriptionMovementType?>(
           options: [null, ...PrescriptionMovementType.refillableTypes],
           selected: ready.statusFilter,
@@ -115,14 +114,14 @@ class MobileRefillPanel extends StatelessWidget {
         _RefillActionBar(
           drawerStage: drawerStage,
           hasSelection: ready.selectedItemIds.isNotEmpty,
-          allSelectedRfidRead: ready.allSelectedRfidRead,
+          canComplete: ready.canComplete,
+          rfidReadCount: ready.rfidReadCount,
           onStart: onStartRefill,
           onComplete: onCompleteRefill,
           onReopen: onReopenDrawer,
           onCancel: onCancelRefill,
-          rfidReadCount: ready.rfidReadCount,
           isSaving: state is MobileRefillSaving,
-          isStarting: state is MobileRefillDrawerStarting,
+          isStarting: state is MobileRefillDrawerOpening,
         ),
       ],
     );
@@ -152,15 +151,14 @@ class _PrescriptionList extends StatelessWidget {
       return const EmptyStateWidget(variant: EmptyStateVariant.noPrescription);
     }
 
-    // 1. Orijinal listeyi bozmamak için bir kopyasını oluşturup sıralıyoruz.
+    // canFill durumundakileri başa, diğerlerini arkaya sırala
     final sortedItems = List<PrescriptionItem>.from(items)
       ..sort((a, b) {
         final aCanFill = a.lastMovement?.type.canFill ?? false;
         final bCanFill = b.lastMovement?.type.canFill ?? false;
-
-        if (aCanFill && !bCanFill) return -1; // 'a' dolum bekliyor, başa al
-        if (!aCanFill && bCanFill) return 1; // 'b' dolum bekliyor, 'a'yı arkaya at
-        return 0; // Durumları aynıysa sırayı bozma
+        if (aCanFill && !bCanFill) return -1;
+        if (!aCanFill && bCanFill) return 1;
+        return 0;
       });
 
     return ListView.builder(
@@ -172,7 +170,7 @@ class _PrescriptionList extends StatelessWidget {
         final isEligible = item.status?.canFill ?? false;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
         final rfidStatus = !isProcessActive
-            ? null // session başlamadı
+            ? null
             : rfidReadEpcs.contains(item.rfidTag)
             ? RfidPresenceStatus.present
             : RfidPresenceStatus.absent;
@@ -190,11 +188,15 @@ class _PrescriptionList extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Action bar
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _RefillActionBar extends StatelessWidget {
   const _RefillActionBar({
     required this.drawerStage,
     required this.hasSelection,
-    required this.allSelectedRfidRead,
+    required this.canComplete,
     required this.rfidReadCount,
     required this.isSaving,
     required this.onStart,
@@ -206,7 +208,11 @@ class _RefillActionBar extends StatelessWidget {
 
   final MobileDrawerStage drawerStage;
   final bool hasSelection;
-  final bool allSelectedRfidRead;
+
+  /// Kompozit kural: baselineCompleted && !unexpectedEpcs && allSelectedRfidRead
+  /// (state.canComplete'ten gelir)
+  final bool canComplete;
+
   final int rfidReadCount;
   final bool isStarting;
   final bool isSaving;
@@ -215,26 +221,9 @@ class _RefillActionBar extends StatelessWidget {
   final VoidCallback onReopen;
   final VoidCallback onCancel;
 
-  bool get _showCancel {
-    if (isSaving) return false;
-    if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) {
-      return rfidReadCount == 0;
-    }
-    if (drawerStage is MobileDrawerClosed) return rfidReadCount == 0;
-    if (drawerStage is MobileDrawerIdle) return hasSelection;
-    if (drawerStage is MobileDrawerFailed) return true;
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (_showCancel) _CancelButton(onTap: onCancel) else const Spacer(),
-        const Spacer(),
-        _buildAction(context),
-      ],
-    );
+    return _buildAction(context);
   }
 
   Widget _buildAction(BuildContext context) {
@@ -243,22 +232,11 @@ class _RefillActionBar extends StatelessWidget {
     }
 
     return switch (drawerStage) {
-      MobileDrawerOpening() => _ActionButton(
-        label: context.l10n.common_action_drawerOpening,
-        enabled: false,
-        loading: true,
-        onTap: _noop,
-      ),
-      MobileDrawerOpened() => _ActionButton(label: context.l10n.refill_action_placeDrugs, enabled: false, onTap: _noop),
-      MobileDrawerClosed() =>
-        allSelectedRfidRead
-            ? _ActionButton(label: context.l10n.refill_action_complete, onTap: onComplete)
-            : _ActionButton(label: context.l10n.refill_action_continue, onTap: onReopen),
-      MobileDrawerFailed() => _ActionButton(label: context.l10n.common_retryButton, onTap: onStart),
       MobileDrawerIdle() =>
         isStarting
             ? _ActionButton(label: context.l10n.common_action_connecting, enabled: false, loading: true, onTap: _noop)
             : _ActionButton(label: context.l10n.refill_action_start, enabled: hasSelection, onTap: onStart),
+      _ => SizedBox(),
     };
   }
 }
@@ -275,27 +253,14 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(
-      label: label,
-      size: MedButtonSize.sm,
-      isLoading: loading,
-      onPressed: enabled && !loading ? onTap : null,
-    );
-  }
-}
-
-class _CancelButton extends StatelessWidget {
-  const _CancelButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return MedButton(
-      label: context.l10n.common_cancelButton,
-      size: MedButtonSize.sm,
-      variant: MedButtonVariant.danger,
-      onPressed: onTap,
+    return SizedBox(
+      width: context.width,
+      child: MedButton(
+        label: label,
+        size: MedButtonSize.sm,
+        isLoading: loading,
+        onPressed: enabled && !loading ? onTap : null,
+      ),
     );
   }
 }

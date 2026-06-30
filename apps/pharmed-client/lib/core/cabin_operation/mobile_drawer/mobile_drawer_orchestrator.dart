@@ -124,6 +124,16 @@ class MobileDrawerOrchestrator {
     await ref.read(mobileDrawerSessionProvider.notifier).stop();
   }
 
+  /// Baseline snapshot — RFID inventory aktifken çağrılır.
+  /// [window] süresi boyunca biriken EPC'leri döner.
+  ///
+  /// Çekmece açıldıktan sonra _handleStageChange RFID'yi başlatır;
+  /// feature notifier _onStage callback'inde MobileDrawerOpened gördüğünde
+  /// bu metodu çağırarak baseline alır.
+  Future<Set<String>> snapshot({Duration window = const Duration(milliseconds: 1500)}) {
+    return ref.read(rfidScanSessionProvider.notifier).snapshot(window: window);
+  }
+
   void _handleStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
     final rfidNotifier = ref.read(rfidScanSessionProvider.notifier);
 

@@ -271,6 +271,7 @@ class RepositoryProviders {
             localDataSource: context.read(),
             cabinMapper: CabinStockMapper(),
             stationMapper: StationStockMapper(),
+            epcMapper: CabinExpectedEpcMapper(),
           ),
         },
       ),
@@ -373,7 +374,7 @@ class RepositoryProviders {
           ),
           AppFlavor.dev || AppFlavor.prod => PrescriptionTemplateRepositoryImpl(
             dataSource: context.read(),
-              templateMapper: PrescriptionTemplateMapper(),
+            templateMapper: PrescriptionTemplateMapper(),
             itemMapper: PrescriptionTemplateItemMapper(),
           ),
         },

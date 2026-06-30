@@ -42,6 +42,14 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
 
   IRfidService get _rfid => ref.read(rfidServiceProvider);
 
+  /// Aktif snapshot işlemleri. Birden çok aynı anda başlatılabilse de
+  /// pratikte tek bir feature snapshot bekler; liste defensive kalır.
+  final _baselineCompleters = <Completer<Set<String>>>[];
+
+  /// Şu an kapsama alanındaki tüm EPC'lerin anlık snapshot'ı.
+  /// Çekmece açıkken her an çağrılabilir; immutable bir kopya döner.
+  Set<String> get presentEpcs => Set.unmodifiable(_presentEpcs);
+
   @override
   RfidScanSessionState build() {
     ref.onDispose(_dispose);
@@ -98,6 +106,8 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
   /// İnventory durdur. RFID service Answer Mode'a döner.
   Future<void> stop() async {
     _stopPresenceTimer();
+    _completePendingSnapshots();
+
     final sub = _inventorySub;
     _inventorySub = null;
 
@@ -118,6 +128,51 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
       message: 'RFID inventory durdu',
       context: {'totalEpcsRead': _presentEpcs.length},
     );
+  }
+
+  /// Çekmece açıldıktan sonra çağrılır.
+  /// [window] süresince stream'i dinler, biriken EPC'leri snapshot olarak döner.
+  /// Stream çalışmaya devam eder; sonraki [epcStream] ve [epcLostStream]
+  /// event'leri normal akışta çalışır.
+  ///
+  /// Inventory aktif değilse boş set döner (yanlış kullanımı sessizce kabul eder
+  /// ama log'lar; çağıran tarafın start() sonrası bu metodu çağırması beklenir).
+  Future<Set<String>> snapshot({Duration window = const Duration(milliseconds: 1500)}) async {
+    if (_inventorySub == null) {
+      MedLogger.warn(
+        unit: 'RfidScanSessionNotifier',
+        swreq: 'SWREQ-CLI-RFID-SCAN-003',
+        message: 'snapshot() çağrıldı ama inventory aktif değil',
+      );
+      return const {};
+    }
+
+    MedLogger.info(
+      unit: 'RfidScanSessionNotifier',
+      swreq: 'SWREQ-CLI-RFID-SCAN-003',
+      message: 'Baseline snapshot başladı',
+      context: {'windowMs': window.inMilliseconds},
+    );
+
+    final completer = Completer<Set<String>>();
+    _baselineCompleters.add(completer);
+
+    Timer(window, () {
+      if (completer.isCompleted) return;
+      _baselineCompleters.remove(completer);
+      final result = Set<String>.from(_presentEpcs);
+
+      MedLogger.info(
+        unit: 'RfidScanSessionNotifier',
+        swreq: 'SWREQ-CLI-RFID-SCAN-003',
+        message: 'Baseline snapshot tamamlandı',
+        context: {'epcCount': result.length, 'epcs': result.toList()},
+      );
+
+      completer.complete(result);
+    });
+
+    return completer.future;
   }
 
   // ── Internal handlers ────────────────────────────────────────────────────
@@ -186,7 +241,16 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
   }
 
   Future<void> _dispose() async {
+    _completePendingSnapshots();
     await _inventorySub?.cancel();
     await _epcController.close();
+    await _lostController.close(); // mevcut kodda kapatılmıyordu, ekledim
+  }
+
+  void _completePendingSnapshots() {
+    for (final c in _baselineCompleters) {
+      if (!c.isCompleted) c.complete(const {});
+    }
+    _baselineCompleters.clear();
   }
 }

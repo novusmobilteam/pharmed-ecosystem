@@ -77,12 +77,15 @@ extension PrescriptionItemTemplateX on PrescriptionItem {
 
 extension PrescriptionTemplateItemX on PrescriptionTemplateItem {
   PrescriptionItem toPrescriptionItem() {
+    final today = DateTime.now();
+    final remappedTimes = times?.map((dt) => DateTime(today.year, today.month, today.day, dt.hour, dt.minute)).toList();
+
     return PrescriptionItem(
       medicine: medicine,
       medicineId: medicineId,
       dosePiece: dosePiece,
       requestType: requestType,
-      times: times,
+      times: remappedTimes,
       firstDoseEmergency: firstDoseEmergency,
       askDoctor: askDoctor,
       inCaseOfNecessity: inCaseOfNecessity,

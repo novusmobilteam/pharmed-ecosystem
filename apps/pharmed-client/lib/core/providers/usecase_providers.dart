@@ -313,7 +313,11 @@ final unloadReportMissingStockUseCaseProvider = Provider((ref) {
 });
 
 final reportMissingStockUseCaseProvider = Provider((ref) {
-  return IntakeReportMissingStockUseCase(ref.read(intakeRepositoryProvider));
+  return ReportMissingStockUseCase(ref.read(cabinStockRepositoryProvider));
+});
+
+final reportExcessStockUseCaseProvider = Provider((ref) {
+  return ReportMissingStockUseCase(ref.read(cabinStockRepositoryProvider));
 });
 
 final getIntakeItemsUseCaseProvider = Provider((ref) {
@@ -354,4 +358,8 @@ final createUrgentPatientUseCaseProvider = Provider((ref) {
 
 final getMedicinesUseCaseProvider = Provider((ref) {
   return GetMedicinesUseCase(ref.read(medicineRepositoryProvider));
+});
+
+final getCabinExpectedEpcsUseCaseProvider = Provider((ref) {
+  return GetCabinExpectedEpcsUseCase(ref.read(cabinStockRepositoryProvider));
 });

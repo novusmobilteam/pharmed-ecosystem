@@ -20,7 +20,6 @@ class MobileIntakePanel extends StatelessWidget {
     required this.onChangePatient,
     required this.onToggleItem,
     required this.onCancelIntake,
-    required this.onReportMissing,
   });
   final MobileIntakeNotifier notifier;
   final MobileIntakeState state;
@@ -32,7 +31,6 @@ class MobileIntakePanel extends StatelessWidget {
   final VoidCallback onChangePatient;
   final ValueChanged<int> onToggleItem;
   final VoidCallback onCancelIntake;
-  final ValueChanged<int> onReportMissing;
 
   /// Süreç aktif (Opening/Opened/Closed) mı?
   bool get _isProcessActive => drawerStage.isActive;
@@ -51,24 +49,18 @@ class MobileIntakePanel extends StatelessWidget {
         MobileIntakeUninitialized() ||
         MobileIntakeLoading() => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
 
-        // Hasta seçilmediği tüm durumlarda → liste göster
-        MobileIntakeIdle() || MobileIntakeSlotSelected() || MobileIntakeNoPatient() => CabinPatientPickerList(
+        MobileIntakeIdle() ||
+        MobileIntakeSlotSelected() ||
+        MobileIntakeNoPatient() ||
+        MobileIntakeRollbackCompleted() ||
+        MobileIntakeFatalError() => CabinPatientPickerList(
           assignments: state.availableAssignments,
           onSelected: onSelectAssignment,
         ),
 
-        MobileIntakeReady ready => _buildReady(context, notifier, ready),
+        _ when state.readyContext != null => _buildReady(context, notifier, state.readyContext!),
 
-        // Check, kaydetme ve başarı sırasında Ready görünümü korunur
-        MobileIntakeCheckInProgress(:final ready) ||
-        MobileIntakeSaving(:final ready) ||
-        MobileIntakeSuccess(:final ready) => _buildReady(context, notifier, ready),
-
-        MobileIntakeError(:final previousState) => switch (previousState) {
-          MobileIntakeReady ready => _buildReady(context, notifier, ready),
-          MobileIntakeCheckInProgress(:final ready) => _buildReady(context, notifier, ready),
-          _ => CabinPatientPickerList(assignments: previousState.availableAssignments, onSelected: onSelectAssignment),
-        },
+        _ => throw StateError('Unhandled MobileIntakeState: $state'),
       },
     );
   }
@@ -104,8 +96,6 @@ class MobileIntakePanel extends StatelessWidget {
             onToggleItem: onToggleItem,
             takenEpcs: ready.takenEpcs,
             rfidReadEpcs: ready.rfidReadEpcs,
-            onReportMissing: onReportMissing,
-            reportingItemIds: ready.reportingItemIds,
             isDrawerOpen: _isDrawerOpen,
           ),
         ),
@@ -134,8 +124,6 @@ class _PrescriptionList extends StatelessWidget {
     required this.selectedItemIds,
     required this.isProcessActive,
     required this.onToggleItem,
-    required this.onReportMissing,
-    required this.reportingItemIds,
     required this.isDrawerOpen,
   });
 
@@ -155,8 +143,6 @@ class _PrescriptionList extends StatelessWidget {
   final bool isProcessActive;
   final ValueChanged<int> onToggleItem;
 
-  final ValueChanged<int> onReportMissing;
-  final Set<int> reportingItemIds;
   final bool isDrawerOpen;
 
   @override
@@ -204,9 +190,6 @@ class _PrescriptionList extends StatelessWidget {
           isSelected: isSelected,
           rfidStatus: rfidStatus,
           onTap: isProcessActive || item.id == null ? null : () => onToggleItem(item.id!),
-          // 🆕 Süreç aktifken (orchestrator açık) buton gizlenir
-          onReportMissing: isDrawerOpen && item.id != null ? () => onReportMissing(item.id!) : null,
-          isReportingMissing: item.id != null && reportingItemIds.contains(item.id),
         );
       },
     );
@@ -249,28 +232,9 @@ class _IntakeActionBar extends StatelessWidget {
   final VoidCallback onReopen;
   final VoidCallback onCancel;
 
-  bool get _isLocked => isSaving || isStarting;
-
-  bool get _showCancel {
-    if (_isLocked) return false;
-    if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) {
-      return rfidTakenCount == 0;
-    }
-    if (drawerStage is MobileDrawerClosed) return rfidTakenCount == 0;
-    if (drawerStage is MobileDrawerIdle) return hasSelection;
-    if (drawerStage is MobileDrawerFailed) return true;
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (_showCancel) _CancelButton(onTap: onCancel) else const Spacer(),
-        const Spacer(),
-        _buildAction(context),
-      ],
-    );
+    return _buildAction(context);
   }
 
   Widget _buildAction(BuildContext context) {
@@ -284,23 +248,13 @@ class _IntakeActionBar extends StatelessWidget {
     }
 
     return switch (drawerStage) {
-      MobileDrawerOpening() => _ActionButton(
-        label: context.l10n.common_action_drawerOpening,
-        enabled: false,
-        loading: true,
-        onTap: _noop,
-      ),
-      MobileDrawerOpened() => _ActionButton(label: context.l10n.intake_action_drawerOpen, enabled: false, onTap: _noop),
-      MobileDrawerClosed() =>
-        canComplete
-            ? _ActionButton(label: context.l10n.intake_action_complete, onTap: onComplete)
-            : _ActionButton(label: context.l10n.intake_action_continue, onTap: onReopen),
-      MobileDrawerFailed() => _ActionButton(label: context.l10n.common_retryButton, onTap: onStart),
       MobileDrawerIdle() => _ActionButton(
         label: context.l10n.intake_action_start,
         enabled: hasSelection,
         onTap: onStart,
       ),
+
+      _ => SizedBox(),
     };
   }
 }
@@ -320,27 +274,14 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedButton(
-      label: label,
-      size: MedButtonSize.sm,
-      isLoading: loading,
-      onPressed: enabled && !loading ? onTap : null,
-    );
-  }
-}
-
-class _CancelButton extends StatelessWidget {
-  const _CancelButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return MedButton(
-      label: context.l10n.common_cancelButton,
-      size: MedButtonSize.sm,
-      variant: MedButtonVariant.danger,
-      onPressed: onTap,
+    return SizedBox(
+      width: context.width,
+      child: MedButton(
+        label: label,
+        size: MedButtonSize.sm,
+        isLoading: loading,
+        onPressed: enabled && !loading ? onTap : null,
+      ),
     );
   }
 }

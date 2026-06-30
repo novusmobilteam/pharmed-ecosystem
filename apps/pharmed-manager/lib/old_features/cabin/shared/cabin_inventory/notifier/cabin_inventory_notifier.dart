@@ -387,6 +387,9 @@ class CabinInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
             onFailed?.call('İşlem miktarı girilmelidir.');
             return false;
           }
+        case CabinInventoryType.intake:
+          // TODO: Handle this case.
+          throw UnimplementedError();
       }
     } else {
       if (inventoryType == CabinInventoryType.count) {

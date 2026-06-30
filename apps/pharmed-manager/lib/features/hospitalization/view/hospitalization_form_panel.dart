@@ -43,6 +43,7 @@ class HospitalizationPanel extends StatelessWidget {
               child: Form(
                 key: formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: AppDimensions.registrationDialogSpacing,
                   children: [
                     _CodeField(),
