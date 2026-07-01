@@ -11,6 +11,16 @@ enum CabinInventoryType {
 
   const CabinInventoryType(this.id);
 
+  /// Banner/mesaj bağlamı için Türkçe etiket.
+  String get operationLabel => switch (this) {
+    CabinInventoryType.refill => 'Dolum',
+    CabinInventoryType.intake => 'Alım',
+    CabinInventoryType.unload => 'Boşaltma',
+    CabinInventoryType.census => 'Sayım',
+    CabinInventoryType.disposal => 'İmha',
+    CabinInventoryType.refillList => 'Dolum',
+  };
+
   String get title {
     switch (this) {
       case CabinInventoryType.refill:

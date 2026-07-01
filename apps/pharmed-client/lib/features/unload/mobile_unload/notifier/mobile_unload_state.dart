@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../widgets/widgets.dart';
 
 sealed class MobileUnloadState {
@@ -107,6 +108,14 @@ final class MobileUnloadReady extends MobileUnloadState {
     required this.selectedItemIds,
     this.datePreset = DateRangePreset.today,
     this.statusFilter = PrescriptionMovementType.purchasePending,
+    this.baselineCompleted = false,
+    this.notFoundEpcs = const {},
+    this.unexpectedEpcs = const {},
+    this.unplannedMovements = const {},
+    this.previouslyTakenEpcs = const {},
+    this.excludedItemIds = const {},
+    this.reportedMissingItemIds = const {},
+    this.passiveEpcs = const {},
   });
 
   final List<MobileSlotVisual> slots;
@@ -128,6 +137,14 @@ final class MobileUnloadReady extends MobileUnloadState {
   final Set<int> selectedItemIds;
   final DateRangePreset datePreset;
   final PrescriptionMovementType? statusFilter;
+  final bool baselineCompleted;
+  final Set<String> notFoundEpcs;
+  final Set<String> unexpectedEpcs;
+  final Set<String> unplannedMovements;
+  final Set<String> previouslyTakenEpcs;
+  final Set<int> excludedItemIds;
+  final Set<int> reportedMissingItemIds;
+  final Set<String> passiveEpcs;
 
   int get selectedSlotId => selectedSlot.slotId;
 
@@ -136,28 +153,31 @@ final class MobileUnloadReady extends MobileUnloadState {
   ///
   /// SWREQ-CLI-UNLOAD-003
   bool get canComplete {
-    final rfidItems = _selectedRfidItems;
-    if (rfidItems.isEmpty) return true;
-    return rfidItems.every((i) => takenEpcs.contains(i.rfidTag!));
+    if (!baselineCompleted) return false;
+    final hasUnload =
+        takenEpcs.isNotEmpty ||
+        prescriptionItems.any(
+          (i) =>
+              i.rfidTag == null &&
+              i.status == PrescriptionMovementType.purchasePending &&
+              !excludedItemIds.contains(i.id),
+        );
+    return hasUnload;
   }
 
-  /// Banner sayacı için: işaretli RFID'li ilaç sayısı.
-  int get rfidExpectedCount => _selectedRfidItems.length;
+  Set<String> get pendingRollbackEpcs => previouslyTakenEpcs.difference(rfidReadEpcs);
+  bool get isRollbackComplete => pendingRollbackEpcs.isEmpty;
 
-  /// Bunlardan kaç tanesinin EPC'si takenEpcs'te (boşaltıldı sayıldı).
-  int get rfidTakenCount => _selectedRfidItems.where((i) => takenEpcs.contains(i.rfidTag!)).length;
-
-  List<PrescriptionItem> get _selectedRfidItems => prescriptionItems
-      .where(
-        (i) =>
-            i.id != null &&
-            selectedItemIds.contains(i.id) &&
-            i.medicine != null &&
-            i.medicine!.isDrug &&
-            (i.medicine as Drug).isRfidEnable &&
-            i.rfidTag != null,
-      )
-      .toList();
+  MobileUnloadReady get clearedRfidState => copyWith(
+    baselineCompleted: false,
+    rfidReadEpcs: const {},
+    takenEpcs: const {},
+    notFoundEpcs: const {},
+    unexpectedEpcs: const {},
+    unplannedMovements: const {},
+    previouslyTakenEpcs: const {},
+    excludedItemIds: const {},
+  );
 
   MobileUnloadReady copyWith({
     List<PrescriptionItem>? prescriptionItems,
@@ -168,6 +188,14 @@ final class MobileUnloadReady extends MobileUnloadState {
     DateRangePreset? datePreset,
     PrescriptionMovementType? statusFilter,
     bool clearStatusFilter = false,
+    bool? baselineCompleted,
+    Set<String>? notFoundEpcs,
+    Set<String>? unexpectedEpcs,
+    Set<String>? unplannedMovements,
+    Set<String>? previouslyTakenEpcs,
+    Set<int>? excludedItemIds,
+    Set<int>? reportedMissingItemIds,
+    Set<String>? passiveEpcs,
   }) {
     return MobileUnloadReady(
       slots: slots,
@@ -183,10 +211,17 @@ final class MobileUnloadReady extends MobileUnloadState {
       rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
       takenEpcs: takenEpcs ?? this.takenEpcs,
       reportingItemIds: reportingItemIds ?? this.reportingItemIds,
-
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
       datePreset: datePreset ?? this.datePreset,
       statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
+      baselineCompleted: baselineCompleted ?? this.baselineCompleted,
+      notFoundEpcs: notFoundEpcs ?? this.notFoundEpcs,
+      unexpectedEpcs: unexpectedEpcs ?? this.unexpectedEpcs,
+      unplannedMovements: unplannedMovements ?? this.unplannedMovements,
+      previouslyTakenEpcs: previouslyTakenEpcs ?? this.previouslyTakenEpcs,
+      excludedItemIds: excludedItemIds ?? this.excludedItemIds,
+      reportedMissingItemIds: reportedMissingItemIds ?? this.reportedMissingItemIds,
+      passiveEpcs: passiveEpcs ?? this.passiveEpcs,
     );
   }
 }
@@ -231,6 +266,65 @@ final class MobileUnloadSuccess extends MobileUnloadState {
   final MobileUnloadReady ready;
 }
 
+/// Boşaltma kaydı başarısız oldu — kullanıcı çıkardığı ilaçları kabine geri
+/// koymalı. [ready.previouslyTakenEpcs] geri konması beklenen tag'leri tutar;
+/// kullanıcı geri koydukça [ready.rfidReadEpcs] dolar, hepsi tamamlanınca
+/// çekmece kapanışında finalize edilir.
+final class MobileUnloadRollbackInProgress extends MobileUnloadState {
+  const MobileUnloadRollbackInProgress({
+    required this.slots,
+    required this.mobileSlots,
+    required this.selectedSlot,
+    required this.assignments,
+    required this.cabinId,
+    required this.ready,
+  });
+
+  final List<MobileSlotVisual> slots;
+  final List<MobileDrawerSlot> mobileSlots;
+  final MobileSlotVisual selectedSlot;
+  final List<BedAssignment> assignments;
+  final int cabinId;
+  final MobileUnloadReady ready;
+
+  MobileUnloadRollbackInProgress copyWith({MobileUnloadReady? ready}) {
+    return MobileUnloadRollbackInProgress(
+      slots: slots,
+      mobileSlots: mobileSlots,
+      selectedSlot: selectedSlot,
+      assignments: assignments,
+      cabinId: cabinId,
+      ready: ready ?? this.ready,
+    );
+  }
+}
+
+/// Rollback başarıyla tamamlandı — tüm tag'ler kabine geri kondu.
+/// readyContext null olacak şekilde tasarlı → dialog kendiliğinden kapanır.
+final class MobileUnloadRollbackCompleted extends MobileUnloadState {
+  const MobileUnloadRollbackCompleted({
+    required this.slots,
+    required this.mobileSlots,
+    required this.selectedSlot,
+    required this.assignments,
+    required this.cabinId,
+  });
+
+  final List<MobileSlotVisual> slots;
+  final List<MobileDrawerSlot> mobileSlots;
+  final MobileSlotVisual selectedSlot;
+  final List<BedAssignment> assignments;
+  final int cabinId;
+}
+
+/// Çekmece donanım hatası — kurtarılamaz. Kullanıcı yalnızca dismiss edebilir.
+final class MobileUnloadFatalError extends MobileUnloadState {
+  const MobileUnloadFatalError({required this.message, required this.previousState});
+
+  final String message;
+  final MobileUnloadState previousState;
+}
+
 /// İşlem hatası — previousState'e dönülür.
 final class MobileUnloadError extends MobileUnloadState {
   const MobileUnloadError({required this.message, required this.previousState});
@@ -254,6 +348,9 @@ extension MobileUnloadStateX on MobileUnloadState {
     MobileUnloadSuccess(:final slots) => slots,
     MobileUnloadError(:final previousState) => previousState.slots,
     MobileUnloadUninitialized() => const [],
+    MobileUnloadRollbackInProgress(:final slots) => slots,
+    MobileUnloadRollbackCompleted(:final slots) => slots,
+    MobileUnloadFatalError(:final previousState) => previousState.slots,
   };
 
   List<MobileDrawerSlot> get mobileSlots => switch (this) {
@@ -265,6 +362,9 @@ extension MobileUnloadStateX on MobileUnloadState {
     MobileUnloadSaving(:final mobileSlots) => mobileSlots,
     MobileUnloadSuccess(:final mobileSlots) => mobileSlots,
     MobileUnloadError(:final previousState) => previousState.mobileSlots,
+    MobileUnloadRollbackInProgress(:final mobileSlots) => mobileSlots,
+    MobileUnloadRollbackCompleted(:final mobileSlots) => mobileSlots,
+    MobileUnloadFatalError(:final previousState) => previousState.mobileSlots,
     _ => const [],
   };
 
@@ -277,6 +377,9 @@ extension MobileUnloadStateX on MobileUnloadState {
     MobileUnloadSaving(:final assignments) => assignments,
     MobileUnloadSuccess(:final assignments) => assignments,
     MobileUnloadError(:final previousState) => previousState.assignments,
+    MobileUnloadRollbackInProgress(:final assignments) => assignments,
+    MobileUnloadRollbackCompleted(:final assignments) => assignments,
+    MobileUnloadFatalError(:final previousState) => previousState.assignments,
     _ => const [],
   };
 
@@ -287,6 +390,9 @@ extension MobileUnloadStateX on MobileUnloadState {
     MobileUnloadSaving(:final selectedSlot) => selectedSlot.slotId,
     MobileUnloadSuccess(:final selectedSlot) => selectedSlot.slotId,
     MobileUnloadError(:final previousState) => previousState.selectedSlotId,
+    MobileUnloadRollbackInProgress(:final selectedSlot) => selectedSlot.slotId,
+    MobileUnloadRollbackCompleted(:final selectedSlot) => selectedSlot.slotId,
+    MobileUnloadFatalError(:final previousState) => previousState.selectedSlotId,
     _ => null,
   };
 
@@ -318,6 +424,9 @@ extension MobileUnloadStateX on MobileUnloadState {
     MobileUnloadSuccess(:final cabinId) => cabinId,
     MobileUnloadError(:final previousState) => previousState.cabinId,
     MobileUnloadUninitialized() => 0,
+    MobileUnloadRollbackInProgress(:final cabinId) => cabinId,
+    MobileUnloadRollbackCompleted(:final cabinId) => cabinId,
+    MobileUnloadFatalError(:final previousState) => previousState.cabinId,
   };
 
   Map<MobileCellCoord, BedAssignment> get assignmentByCoord {
@@ -347,4 +456,29 @@ extension MobileUnloadStateX on MobileUnloadState {
 
   List<BedAssignment> get availableAssignments =>
       assignments.where((a) => a.cellId != null && a.hospitalization != null).toList();
+
+  MobileUnloadReady? get readyContext => switch (this) {
+    MobileUnloadReady r => r,
+    MobileUnloadSaving(:final ready) => ready,
+    MobileUnloadSuccess(:final ready) => ready,
+    MobileUnloadError(:final previousState) => previousState.readyContext,
+    MobileUnloadRollbackInProgress(:final ready) => ready,
+    _ => null,
+  };
+
+  bool shouldKeepDialog(MobileDrawerStage stage) {
+    // Terminal → kapanır
+    if (this is MobileUnloadSuccess) return false;
+    if (this is MobileUnloadRollbackCompleted) return false;
+    if (this is MobileUnloadFatalError) return false;
+
+    // Açık kalmalı
+    if (this is MobileUnloadRollbackInProgress) return true;
+    if (this is MobileUnloadSaving) return true;
+    if (this is MobileUnloadError) return true;
+
+    final hasReady = readyContext != null;
+    final drawerActive = stage is MobileDrawerOpening || stage is MobileDrawerOpened || stage is MobileDrawerClosed;
+    return hasReady && drawerActive;
+  }
 }

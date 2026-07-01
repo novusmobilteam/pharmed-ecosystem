@@ -38,10 +38,12 @@ class _RxCensusGroupCardState extends State<RxCensusGroupCard> {
     final g = widget.group;
 
     return Container(
+      padding: EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: MedColors.surface,
         borderRadius: MedRadius.lgAll,
         border: Border.all(color: MedColors.border),
+        boxShadow: MedShadows.sm,
       ),
       child: Column(
         children: [
@@ -53,49 +55,27 @@ class _RxCensusGroupCardState extends State<RxCensusGroupCard> {
               child: Row(
                 children: [
                   Expanded(child: Text(g.medicine.name ?? '—', style: MedTextStyles.titleSm())),
-                  _CountBadge(counted: g.countedCount, total: g.totalCount),
-                  const SizedBox(width: MedSpacing.sm),
-                  Icon(_expanded ? Icons.expand_less : Icons.expand_more, color: MedColors.text3),
+                  Icon(_expanded ? PhosphorIcons.caretUp() : PhosphorIcons.caretDown()),
                 ],
               ),
             ),
           ),
           if (_expanded) ...[
-            const Divider(height: 1, color: MedColors.border),
+            const SizedBox(height: MedSpacing.xs),
             ...g.items.map((item) {
               final status = _censusItemStatus(item, g);
               return _CensusItemRow(
                 item: item,
                 status: status,
-                // RFID'li item'da toggle yok (null); RFID'siz'de toggle aktif
                 onToggleMissing: item.rfidTag != null || item.id == null
                     ? null
                     : () => widget.onToggleMissing(item.id!),
               );
             }),
+            const SizedBox(height: MedSpacing.xs),
           ],
         ],
       ),
-    );
-  }
-}
-
-class _CountBadge extends StatelessWidget {
-  const _CountBadge({required this.counted, required this.total});
-
-  final int counted;
-  final int total;
-
-  @override
-  Widget build(BuildContext context) {
-    final isFull = counted == total;
-    final bg = isFull ? MedColors.greenLight : MedColors.surface2;
-    final fg = isFull ? MedColors.green : MedColors.text2;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.sm, vertical: MedSpacing.xs),
-      decoration: BoxDecoration(color: bg, borderRadius: MedRadius.smAll),
-      child: Text('$counted / $total', style: MedTextStyles.bodySm().copyWith(color: fg)),
     );
   }
 }
@@ -113,28 +93,43 @@ class _CensusItemRow extends StatelessWidget {
     return '$piece $unit';
   }
 
+  ItemCardColors get _colors => switch (status) {
+    _CensusItemStatus.present => ItemCardColors.green,
+    _CensusItemStatus.missing => ItemCardColors.amber,
+    _CensusItemStatus.markedMissing => ItemCardColors.red,
+    _CensusItemStatus.pending => ItemCardColors.mutedNeutral,
+  };
+
   @override
   Widget build(BuildContext context) {
     final time = item.lastMovement?.createdAt?.shortRelativeLabel;
+    final c = _colors;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.md, vertical: MedSpacing.sm),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: MedSpacing.md, vertical: MedSpacing.xs),
+      padding: MedSpacing.insetLg,
+      decoration: BoxDecoration(
+        color: c.bg,
+        borderRadius: MedRadius.mdAll,
+        border: Border.all(color: c.border, width: 1),
+      ),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(time ?? '—', style: MedTextStyles.bodyLg()),
                 Text(
-                  _doseText,
-                  style: MedTextStyles.bodyMd(color: MedColors.text2, weight: FontWeight.w600),
+                  time ?? '—',
+                  style: MedTextStyles.bodyMd(color: c.text, weight: FontWeight.bold),
                 ),
+                const SizedBox(height: 2),
+                Text(_doseText, style: MedTextStyles.bodySm(color: c.muted)),
               ],
             ),
           ),
-
-          // RFID'li → otomatik durum rozeti; RFID'siz → "Eksik İşaretle" toggle
+          const SizedBox(width: MedSpacing.sm),
           if (item.rfidTag != null)
             _CensusStatusBadge(status: status)
           else

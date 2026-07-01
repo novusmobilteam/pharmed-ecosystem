@@ -308,10 +308,6 @@ final completeMasterUnloadUseCaseProvider = Provider((ref) {
   return CompleteMasterUnloadUseCase(ref.read(unloadRepositoryProvider));
 });
 
-final unloadReportMissingStockUseCaseProvider = Provider((ref) {
-  return UnloadReportMissingStockUseCase(ref.read(unloadRepositoryProvider));
-});
-
 final reportMissingStockUseCaseProvider = Provider((ref) {
   return ReportMissingStockUseCase(ref.read(cabinStockRepositoryProvider));
 });

@@ -6,9 +6,9 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../widgets/widgets.dart';
 import '../../census.dart';
 
-part 'banners.dart';
 part 'footer.dart';
 part 'extra_stock_summary_card.dart';
 
@@ -18,6 +18,7 @@ class MobileCensusDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(mobileCensusNotifierProvider);
+    final notifier = ref.read(mobileCensusNotifierProvider.notifier);
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
     if (!state.shouldKeepDialog(drawerStage)) {
@@ -34,51 +35,55 @@ class MobileCensusDialog extends ConsumerWidget {
 
     final errorMessage = state is MobileCensusError ? (state).message : null;
 
-    return MedDialog(
-      title: 'İlaç Sayım',
+    return CabinOperationDialog(
+      type: CabinInventoryType.census,
+      statusInput: OperationStatusInput(
+        phase: _censusPhase(state),
+        drawerStage: drawerStage,
+        baselineCompleted: ready.baselineCompleted,
+        canComplete: ready.canComplete,
+      ),
+      stats: [
+        StatCellData(
+          label: 'Sayıldı',
+          value: '${ready.rfidReadEpcs.length} / ${ready.rfidReadEpcs.length + ready.missingEpcs.length}',
+          valueColor: ready.missingEpcs.isEmpty && ready.baselineCompleted && ready.rfidReadEpcs.isNotEmpty
+              ? MedColors.green
+              : null,
+        ),
+        StatCellData(
+          label: 'Eksik',
+          value: '${ready.missingEpcs.length}',
+          valueColor: ready.missingEpcs.isNotEmpty ? MedColors.amber : null,
+          icon: ready.missingEpcs.isNotEmpty ? PhosphorIcons.minusCircle(PhosphorIconsStyle.bold) : null,
+        ),
+        StatCellData(
+          label: 'Fazla',
+          value: '${ready.excessEpcs.length}',
+          valueColor: ready.excessEpcs.isNotEmpty ? MedColors.amber : null,
+          icon: ready.excessEpcs.isNotEmpty ? PhosphorIcons.package(PhosphorIconsStyle.bold) : null,
+        ),
+      ],
+      banners: [
+        if (errorMessage != null) OperationErrorBanner(message: errorMessage),
+        if (ready.excessEpcs.isNotEmpty)
+          UnexpectedTagBanner(
+            epcs: ready.excessEpcs,
+            message:
+                'Kabinde ${ready.excessEpcs.length} beklenmeyen etiketli ilaç okundu. '
+                'Lütfen alın veya fazla stok olarak bildirin.',
+          ),
+        if (ready.missingEpcs.isNotEmpty) MissingStockBanner(count: ready.missingEpcs.length),
+      ],
+      footerContent: _censusFooter(state, drawerStage, ready, notifier),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Banner'lar ──────────────────────────────────────────────
-          if (errorMessage != null) ...[
-            _CensusBanner(
-              tone: _BannerTone.error,
-              icon: PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
-              message: errorMessage,
-            ),
-            const SizedBox(height: MedSpacing.sm),
-          ],
-          if (ready.excessEpcs.isNotEmpty) ...[
-            _CensusBanner(
-              tone: _BannerTone.warning,
-              icon: PhosphorIcons.package(PhosphorIconsStyle.bold),
-              message:
-                  'Kabinde ${ready.excessEpcs.length} beklenmeyen etiketli ilaç okundu. '
-                  'Lütfen alın veya fazla stok olarak bildirin.',
-            ),
-            const SizedBox(height: MedSpacing.sm),
-          ],
-          if (ready.missingEpcs.isNotEmpty) ...[
-            _CensusBanner(
-              tone: _BannerTone.info,
-              icon: PhosphorIcons.minusCircle(PhosphorIconsStyle.bold),
-              message:
-                  '${ready.missingEpcs.length} ilaç kabinde bulunamadı. '
-                  'Tamamlandığında eksik stok olarak bildirilecek.',
-            ),
-            const SizedBox(height: MedSpacing.sm),
-          ],
-
-          // ── Fazla stok bildir butonu ────────────────────────────────
           if (ready.extraStocks.isNotEmpty) ...[
-            const SizedBox(height: MedSpacing.sm),
-            _ExtraStockSummaryCard(
-              extraStocks: ready.extraStocks,
-              onRemove: ref.read(mobileCensusNotifierProvider.notifier).removeExtraStock,
-            ),
+            _ExtraStockSummaryCard(extraStocks: ready.extraStocks, onRemove: notifier.removeExtraStock),
+            const SizedBox(height: MedSpacing.xl),
           ],
-          const SizedBox(height: MedSpacing.md),
 
           // ── Grup listesi ────────────────────────────────────────────
           Flexible(
@@ -102,13 +107,16 @@ class MobileCensusDialog extends ConsumerWidget {
           const SizedBox(height: MedSpacing.md),
 
           _ReportExtraStockButton(onReport: ref.read(mobileCensusNotifierProvider.notifier).addExtraStock),
-          const SizedBox(height: MedSpacing.xl),
-
-          _CensusDialogFooter(state: state, drawerStage: drawerStage, ready: ready),
         ],
       ),
     );
   }
+}
+
+OperationPhase _censusPhase(MobileCensusState s) {
+  if (s is MobileCensusSaving) return OperationPhase.saving;
+  if (s is MobileCensusError) return OperationPhase.error;
+  return OperationPhase.normal;
 }
 
 class _ReportExtraStockButton extends StatelessWidget {

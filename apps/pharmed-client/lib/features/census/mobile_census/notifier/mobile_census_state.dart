@@ -399,15 +399,18 @@ extension MobileCensusStateX on MobileCensusState {
   };
 
   bool shouldKeepDialog(MobileDrawerStage stage) {
-    // Terminal — drawer ne olursa olsun KAPANIR
     if (this is MobileCensusSuccess) return false;
-
-    // Açık kalmalı — drawer geçici inactive gösterse bile
     if (this is MobileCensusSaving) return true;
     if (this is MobileCensusError) return true;
 
-    final hasReady = readyContext != null;
-    final drawerActive = stage is MobileDrawerOpening || stage is MobileDrawerOpened || stage is MobileDrawerClosed;
-    return hasReady && drawerActive;
+    final ready = readyContext;
+    if (ready == null) return false;
+
+    // Dialog yalnızca işlem fiilen başladığında açılır:
+    // - Çekmece açılıyor/açık, VEYA
+    // - Baseline yapılmış (işlem başlamış) ve çekmece kapandı (complete öncesi)
+    if (stage is MobileDrawerOpening || stage is MobileDrawerOpened) return true;
+    if (stage is MobileDrawerClosed) return ready.baselineCompleted;
+    return false;
   }
 }

@@ -26,7 +26,6 @@ class MobileCensusPanel extends StatelessWidget {
     required this.onSelectAssignment,
     required this.onChangePatient,
     required this.onToggleItem,
-    required this.onCancelCensus,
   });
 
   final MobileCensusNotifier notifier;
@@ -38,7 +37,6 @@ class MobileCensusPanel extends StatelessWidget {
   final ValueChanged<BedAssignment> onSelectAssignment;
   final VoidCallback onChangePatient;
   final ValueChanged<int> onToggleItem;
-  final VoidCallback onCancelCensus;
 
   /// Süreç aktif (Opening/Opened/Closed) mı?
   bool get _isProcessActive => drawerStage.isActive;
@@ -111,14 +109,11 @@ class MobileCensusPanel extends StatelessWidget {
         ),
         _CensusActionBar(
           drawerStage: drawerStage,
-          hasSelection: ready.selectedItemIds.isNotEmpty,
-          canComplete: ready.canComplete,
-          rfidPresentCount: ready.rfidPresentCount,
           isSaving: state is MobileCensusSaving,
           onStart: onStartCensus,
-          onComplete: onCompleteCensus,
-          onReopen: onReopenDrawer,
-          onCancel: onCancelCensus,
+          hasCountableItems: ready.prescriptionItems.any(
+            (i) => i.id != null && i.status == PrescriptionMovementType.purchasePending,
+          ),
         ),
       ],
     );
@@ -181,74 +176,27 @@ class _CensusPrescriptionList extends StatelessWidget {
 class _CensusActionBar extends StatelessWidget {
   const _CensusActionBar({
     required this.drawerStage,
-    required this.hasSelection,
-    required this.canComplete,
-    required this.rfidPresentCount,
     required this.isSaving,
+    required this.hasCountableItems,
     required this.onStart,
-    required this.onComplete,
-    required this.onReopen,
-    required this.onCancel,
   });
 
   final MobileDrawerStage drawerStage;
-  final bool hasSelection;
-
-  /// Seçili RFID'li tüm item'ların EPC'si şu an okunuyor mu?
-  /// [MobileCensusReady.canComplete] getter'ından gelir.
-  final bool canComplete;
-
-  /// Şu an okunan (kabinde mevcut) seçili RFID'li ilaç sayısı.
-  /// [MobileCensusReady.rfidPresentCount] getter'ından gelir.
-  final int rfidPresentCount;
-
   final bool isSaving;
 
+  /// Sayılacak ilaç var mı? Yoksa başlat butonu gizlenir.
+  final bool hasCountableItems;
+
   final VoidCallback onStart;
-  final VoidCallback onComplete;
-  final VoidCallback onReopen;
-  final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
-    return _buildAction(context);
-  }
-
-  Widget _buildAction(BuildContext context) {
-    if (isSaving) {
-      return _ActionButton(label: context.l10n.common_action_saving, enabled: false, loading: true, onTap: _noop);
-    }
-
     return switch (drawerStage) {
-      MobileDrawerIdle() => _ActionButton(label: context.l10n.census_action_start, onTap: onStart),
-      _ => SizedBox(),
-    };
-  }
-}
-
-// ignore: avoid_returning_null_for_void
-void _noop() {}
-
-// ---------------------------------------------------------------------------
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.label, required this.onTap, this.enabled = true, this.loading = false});
-
-  final String label;
-  final VoidCallback onTap;
-  final bool enabled;
-  final bool loading;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: context.width,
-      child: MedButton(
-        label: label,
-        size: MedButtonSize.sm,
-        isLoading: loading,
-        onPressed: enabled && !loading ? onTap : null,
+      MobileDrawerIdle() when hasCountableItems => SizedBox(
+        width: context.width,
+        child: MedButton(label: context.l10n.census_action_start, onPressed: onStart),
       ),
-    );
+      _ => const SizedBox.shrink(),
+    };
   }
 }

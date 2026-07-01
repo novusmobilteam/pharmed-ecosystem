@@ -30,24 +30,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../widgets/widgets.dart';
 import '../../refill.dart';
 
-part 'badges.dart';
 part 'items_list.dart';
-part 'banners.dart';
 part 'footer.dart';
-
-String _formatEpc(String epc) {
-  final clean = epc.replaceAll(' ', '');
-  final chunks = <String>[];
-  for (var i = 0; i < clean.length; i += 4) {
-    chunks.add(clean.substring(i, (i + 4).clamp(0, clean.length)));
-  }
-  return chunks.join(' ');
-}
 
 class MobileRefillDialog extends ConsumerWidget {
   const MobileRefillDialog({super.key});
@@ -55,6 +46,7 @@ class MobileRefillDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(mobileRefillNotifierProvider);
+    final notifier = ref.read(mobileRefillNotifierProvider.notifier);
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
     if (!state.shouldKeepDialog(drawerStage)) {
@@ -72,61 +64,56 @@ class MobileRefillDialog extends ConsumerWidget {
     }
 
     final errorMessage = state is MobileRefillError ? state.message : null;
-
-    return Dialog(
-      insetPadding: const EdgeInsets.all(24),
-      shape: RoundedRectangleBorder(borderRadius: MedRadius.xl2All),
-      backgroundColor: MedColors.surface,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 720, maxHeight: 800),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _Header(),
-            _StatsRow(),
-            Flexible(child: _ItemsList()),
-            if (errorMessage != null)
-              _ErrorBanner(
-                message: 'Tekrar deneyebilir ya da yerleştirdiğiniz ilaçları alarak işleminizi sonlandırabilirsiniz.',
-              ),
-            // UNEXPECTED blokaj — Dolum'a özel, kırmızı banner
-            if (ready.isBlockedByUnexpected) _UnexpectedBanner(epcs: ready.unexpectedEpcs),
-            // EXTRA PLACEMENT — kullanıcı seçili olmayan ilacın etiketini koydu
-            if (ready.hasExtraPlacement) _ExtraPlacementBanner(epcs: ready.extraPlacedEpcs),
-            // UNPLANNED hareket — Intake ile ortak, amber banner
-            if (ready.hasUnplannedMovement) _UnplannedBanner(epcs: ready.unplannedMovements),
-            if (state is MobileRefillRollbackInProgress)
-              const _ErrorBanner(
-                message:
-                    'Dolum işlemi tamamlanamadı. Yerleştirdiğiniz ilaçları çekmeceden çıkartın ve çekmeceyi kapatarak işlemi sonlandırın.',
-              ),
-
-            _Footer(),
-          ],
-        ),
+    return CabinOperationDialog(
+      type: CabinInventoryType.refill,
+      statusInput: OperationStatusInput(
+        phase: _refillPhase(state),
+        drawerStage: drawerStage,
+        baselineCompleted: ready.baselineCompleted,
+        canComplete: ready.canComplete,
+        // Dolumda rollback sonlanma anı: rfidReadEpcs boş (tüm tag çıkarıldı)
+        rollbackSettling: state is MobileRefillRollbackInProgress && ready.rfidReadEpcs.isEmpty,
       ),
+      stats: [
+        StatCellData(label: 'Seçili', value: '${ready.selectedItemIds.length} ilaç'),
+        StatCellData(
+          label: 'Yerleştirilen',
+          value: '${ready.rfidReadCount} / ${ready.rfidExpectedCount}',
+          valueColor: ready.allSelectedRfidRead && ready.baselineCompleted ? MedColors.green : null,
+        ),
+        StatCellData(
+          label: 'Plan Dışı',
+          value: '${ready.unplannedCount}',
+          valueColor: ready.unplannedCount > 0 ? MedColors.red : null,
+          icon: ready.unplannedCount > 0 ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
+        ),
+      ],
+      banners: [
+        if (errorMessage != null)
+          const OperationErrorBanner(
+            message: 'Tekrar deneyebilir ya da yerleştirdiğiniz ilaçları alarak işleminizi sonlandırabilirsiniz.',
+          ),
+        // UNEXPECTED blokaj — Dolum'a özel, kırmızı (blocking)
+        if (ready.hasExtraPlacement) UnexpectedTagBanner(epcs: ready.unexpectedEpcs, blocking: true),
+        // UNPLANNED hareket — bildirim oluşacak
+        if (ready.hasUnplannedMovement) UnplannedMovementBanner(epcs: ready.unplannedMovements),
+        if (state is MobileRefillRollbackInProgress)
+          const OperationErrorBanner(
+            message:
+                'Dolum işlemi tamamlanamadı. Yerleştirdiğiniz ilaçları çekmeceden çıkartın '
+                've çekmeceyi kapatarak işlemi sonlandırın.',
+          ),
+      ],
+      footerContent: _refillFooter(state, drawerStage, ready, notifier),
+      child: _ItemsList(),
     );
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: MedSpacing.insetXl,
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: MedColors.border, width: 0.5)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text('İlaç dolum işlemi', style: MedTextStyles.titleSm(color: MedColors.text)),
-          ),
-          const _StatusBadge(),
-        ],
-      ),
-    );
-  }
+OperationPhase _refillPhase(MobileRefillState s) {
+  if (s is MobileRefillFatalError) return OperationPhase.fatal;
+  if (s is MobileRefillSaving) return OperationPhase.saving;
+  if (s is MobileRefillError) return OperationPhase.error;
+  if (s is MobileRefillRollbackInProgress) return OperationPhase.rollback;
+  return OperationPhase.normal;
 }

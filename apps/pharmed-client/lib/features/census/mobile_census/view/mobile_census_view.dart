@@ -62,32 +62,6 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
     }
   }
 
-  Future<void> _onCancelCensus(MobileCensusState state, MobileDrawerStage drawerStage) async {
-    final notifier = ref.read(mobileCensusNotifierProvider.notifier);
-
-    // DrawerOpening/Opened → iptal için önce çekmece kapatılmalı
-    if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) {
-      MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
-      return;
-    }
-
-    // DrawerClosed → onay dialogu
-    if (drawerStage is MobileDrawerClosed) {
-      MessageUtils.showConfirmDialog(
-        context: context,
-        action: ConfirmAction.exit,
-        customTitle: context.l10n.census_cancelDialog_title,
-        customMessage: context.l10n.census_cancelDialog_message,
-        confirmButtonText: context.l10n.common_confirmCancelButton,
-        onConfirm: notifier.cancelCensus,
-      );
-      return;
-    }
-
-    // DrawerIdle → direkt iptal
-    notifier.cancelCensus();
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(mobileCensusNotifierProvider);
@@ -151,7 +125,6 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
         onSelectAssignment: notifier.selectAssignment,
         onChangePatient: notifier.clearPatientSelection,
         onToggleItem: notifier.toggleItemSelection,
-        onCancelCensus: () => _onCancelCensus(state, drawerStage),
       ),
     );
   }

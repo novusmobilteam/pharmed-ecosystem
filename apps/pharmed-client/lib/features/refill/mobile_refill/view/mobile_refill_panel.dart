@@ -30,11 +30,9 @@ class MobileRefillPanel extends StatelessWidget {
     required this.drawerStage,
     required this.onStartRefill,
     required this.onCompleteRefill,
-    required this.onReopenDrawer,
     required this.onSelectAssignment,
     required this.onChangePatient,
     required this.onToggleItem,
-    required this.onCancelRefill,
   });
 
   final MobileRefillNotifier notifier;
@@ -42,11 +40,9 @@ class MobileRefillPanel extends StatelessWidget {
   final MobileDrawerStage drawerStage;
   final VoidCallback onStartRefill;
   final VoidCallback onCompleteRefill;
-  final VoidCallback onReopenDrawer;
   final ValueChanged<BedAssignment> onSelectAssignment;
   final VoidCallback onChangePatient;
   final ValueChanged<int> onToggleItem;
-  final VoidCallback onCancelRefill;
 
   /// Süreç aktif (Opening/Opened/Closed) mı?
   bool get _isProcessActive => drawerStage.isActive;
@@ -114,14 +110,7 @@ class MobileRefillPanel extends StatelessWidget {
         _RefillActionBar(
           drawerStage: drawerStage,
           hasSelection: ready.selectedItemIds.isNotEmpty,
-          canComplete: ready.canComplete,
-          rfidReadCount: ready.rfidReadCount,
           onStart: onStartRefill,
-          onComplete: onCompleteRefill,
-          onReopen: onReopenDrawer,
-          onCancel: onCancelRefill,
-          isSaving: state is MobileRefillSaving,
-          isStarting: state is MobileRefillDrawerOpening,
         ),
       ],
     );
@@ -188,79 +177,26 @@ class _PrescriptionList extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Action bar
-// ─────────────────────────────────────────────────────────────────────────────
-
 class _RefillActionBar extends StatelessWidget {
-  const _RefillActionBar({
-    required this.drawerStage,
-    required this.hasSelection,
-    required this.canComplete,
-    required this.rfidReadCount,
-    required this.isSaving,
-    required this.onStart,
-    required this.onComplete,
-    required this.onReopen,
-    required this.onCancel,
-    required this.isStarting,
-  });
+  const _RefillActionBar({required this.drawerStage, required this.hasSelection, required this.onStart});
 
   final MobileDrawerStage drawerStage;
   final bool hasSelection;
-
-  /// Kompozit kural: baselineCompleted && !unexpectedEpcs && allSelectedRfidRead
-  /// (state.canComplete'ten gelir)
-  final bool canComplete;
-
-  final int rfidReadCount;
-  final bool isStarting;
-  final bool isSaving;
   final VoidCallback onStart;
-  final VoidCallback onComplete;
-  final VoidCallback onReopen;
-  final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
-    return _buildAction(context);
-  }
-
-  Widget _buildAction(BuildContext context) {
-    if (isSaving) {
-      return _ActionButton(label: context.l10n.common_action_saving, enabled: false, loading: true, onTap: _noop);
+    if (drawerStage is MobileDrawerIdle) {
+      return SizedBox(
+        width: context.width,
+        child: MedButton(
+          label: context.l10n.refill_action_start,
+          onPressed: hasSelection ? onStart : null,
+          size: MedButtonSize.sm,
+        ),
+      );
+    } else {
+      return SizedBox();
     }
-
-    return switch (drawerStage) {
-      MobileDrawerIdle() =>
-        isStarting
-            ? _ActionButton(label: context.l10n.common_action_connecting, enabled: false, loading: true, onTap: _noop)
-            : _ActionButton(label: context.l10n.refill_action_start, enabled: hasSelection, onTap: onStart),
-      _ => SizedBox(),
-    };
-  }
-}
-
-void _noop() {}
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.label, required this.onTap, this.enabled = true, this.loading = false});
-
-  final String label;
-  final VoidCallback onTap;
-  final bool enabled;
-  final bool loading;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: context.width,
-      child: MedButton(
-        label: label,
-        size: MedButtonSize.sm,
-        isLoading: loading,
-        onPressed: enabled && !loading ? onTap : null,
-      ),
-    );
   }
 }

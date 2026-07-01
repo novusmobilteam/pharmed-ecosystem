@@ -57,23 +57,6 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
     });
   }
 
-  // ───────────────────────────────────────────────────────────────────────
-  // Dialog sync
-  //
-  // Sadece AÇMA — kapama dialog'un kendi sorumluluğu. Bu önemli: dialog'u
-  // dış context'ten manuel `Navigator.pop` ile kapatmaya çalışmak (view'daki
-  // showDialog'a denk gelen pop) state geçişleri hızlı olduğunda yarış
-  // sorunu yaratıyor:
-  //
-  //   t0: Saving → Error → Ready (hızlı geçiş)
-  //   t1: _syncDialog shouldBeOpen=false sanıp pop atar
-  //   t2: pop animasyonu bitmeden state Ready'e döner, _syncDialog yeniden
-  //       açar → 2 dialog üst üste birikir
-  //
-  // Bunun yerine dialog ref.listen ile state'i kendi izliyor, kapanma kararını
-  // kendi veriyor. Manuel pop yok, birikme yapısal olarak imkansız.
-  // ───────────────────────────────────────────────────────────────────────
-
   void _syncDialog(BuildContext context) {
     final state = ref.read(mobileRefillNotifierProvider);
     final stage = ref.read(mobileDrawerSessionProvider).stage;
@@ -87,39 +70,6 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
         builder: (_) => const MobileRefillDialog(),
       ).then((_) => _isDialogOpen = false);
     }
-    // Kapama YOK — MobileRefillDialog kendi pop'unu çağırıyor.
-  }
-
-  // ───────────────────────────────────────────────────────────────────────
-  // Cancel akışı
-  //
-  //   - DrawerOpening/Opened + RFID yok → bilgi snackbar (çekmeceyi kapatın)
-  //   - DrawerClosed + RFID yok          → onay dialogu (geri dönülemez)
-  //   - Diğer                            → doğrudan iptal
-  // ───────────────────────────────────────────────────────────────────────
-
-  Future<void> _handleCancelRefill(MobileRefillState state, MobileDrawerStage drawerStage) async {
-    final notifier = ref.read(mobileRefillNotifierProvider.notifier);
-    final rfidReadCount = state is MobileRefillReady ? state.rfidReadCount : 0;
-
-    if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidReadCount == 0) {
-      MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
-      return;
-    }
-
-    if (drawerStage is MobileDrawerClosed && rfidReadCount == 0) {
-      MessageUtils.showConfirmDialog(
-        context: context,
-        action: ConfirmAction.exit,
-        customTitle: context.l10n.refill_cancelDialog_title,
-        customMessage: context.l10n.refill_cancelDialog_message,
-        confirmButtonText: context.l10n.common_confirmCancelButton,
-        onConfirm: notifier.cancelRefill,
-      );
-      return;
-    }
-
-    notifier.cancelRefill();
   }
 
   @override
@@ -136,13 +86,6 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
       _syncDialog(context);
     });
 
-    // Error/Success snackbar
-    //
-    // Error: Dialog açıksa snackbar gösterme — dialog kendi error banner'ını
-    // ve "Tekrar Dene / Vazgeç" butonlarını içeride sunar. Dialog kapalıyken
-    // (örn. init veya baseline scan fail) snackbar fallback olarak çalışır.
-    //
-    // Success: snackbar + dismissSuccess (mevcut akış).
     ref.listen(mobileRefillNotifierProvider, (_, next) {
       if (next is MobileRefillError) {
         final stage = ref.read(mobileDrawerSessionProvider).stage;
@@ -180,11 +123,9 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
         drawerStage: drawerStage,
         onStartRefill: notifier.startRefill,
         onCompleteRefill: notifier.completeRefill,
-        onReopenDrawer: notifier.reopenDrawer,
         onSelectAssignment: notifier.selectAssignment,
         onChangePatient: notifier.clearPatientSelection,
         onToggleItem: notifier.toggleItemSelection,
-        onCancelRefill: () => _handleCancelRefill(state, drawerStage),
       ),
     );
   }

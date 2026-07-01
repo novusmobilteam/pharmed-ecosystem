@@ -8,7 +8,7 @@ class ReportExcessStockParams {
   ReportExcessStockParams({this.hospitalizationId, this.medicineId, this.quantity});
 
   Map<String, dynamic> toJson() {
-    return {'patientHospitalizationId': hospitalizationId, 'medicineId': medicineId, 'quantity': quantity};
+    return {'patientHospitalizationId': hospitalizationId, 'materialId': medicineId, 'quantity': quantity};
   }
 }
 

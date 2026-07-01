@@ -66,6 +66,8 @@ enum RxOperationCardMode {
   /// - [RfidPresenceStatus.removed] → 🟢 Alındı
   intake,
 
+  unload,
+
   census,
 }
 
@@ -246,6 +248,8 @@ class _RfidRow extends StatelessWidget {
       // Sayım: kabinde → yeşil, eksik → kırmızı
       (RxOperationCardMode.census, RfidPresenceStatus.present) => MedColors.green,
       (RxOperationCardMode.census, _) => MedColors.red,
+
+      (RxOperationCardMode.unload, _) => MedColors.blue,
     };
   }
 
@@ -262,6 +266,8 @@ class _RfidRow extends StatelessWidget {
       // Sayım
       (RxOperationCardMode.census, RfidPresenceStatus.present) => MedColors.greenLight,
       (RxOperationCardMode.census, _) => MedColors.redLight,
+
+      (RxOperationCardMode.unload, _) => MedColors.blueLight,
     };
   }
 
@@ -295,6 +301,7 @@ class _RfidInlineStatus extends StatelessWidget {
       RxOperationCardMode.refill => _buildRefillStatus(context),
       RxOperationCardMode.intake => _buildIntakeStatus(context),
       RxOperationCardMode.census => _buildCensusStatus(context),
+      RxOperationCardMode.unload => _buildCensusStatus(context),
     };
   }
 

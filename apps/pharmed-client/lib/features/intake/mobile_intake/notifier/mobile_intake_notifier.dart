@@ -485,22 +485,28 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
       (i) => i.id != null && current.selectedItemIds.contains(i.id) && i.rfidTag == epc,
     );
 
-    final newTaken = Set<String>.from(current.takenEpcs)..remove(epc);
+    final isExpected = _expectedMap.containsKey(epc);
+
     final newRead = {...current.rfidReadEpcs};
+    final newTaken = Set<String>.from(current.takenEpcs)..remove(epc);
     final newNotFound = Set<String>.from(current.notFoundEpcs)..remove(epc);
-    final newUnexpected = {...current.unexpectedEpcs};
+    final newPassive = Set<String>.from(current.passiveEpcs)..remove(epc);
+    final newUnexpected = Set<String>.from(current.unexpectedEpcs)..remove(epc);
     final newUnplanned = Set<String>.from(current.unplannedMovements)..remove(epc);
 
     if (isSelected) {
-      newRead.add(epc);
+      newRead.add(epc); // MATCHED (veya NOT_FOUND → MATCHED geri dönüşü)
+    } else if (isExpected) {
+      newPassive.add(epc); // PASSIVE — kabinin stoğu, senin ilacın değil, normal
     } else {
-      newUnexpected.add(epc);
+      newUnexpected.add(epc); // gerçek UNEXPECTED — kabine ait değil, yabancı
     }
 
     state = current.copyWith(
       rfidReadEpcs: newRead,
       takenEpcs: newTaken,
       notFoundEpcs: newNotFound,
+      passiveEpcs: newPassive,
       unexpectedEpcs: newUnexpected,
       unplannedMovements: newUnplanned,
     );
@@ -551,28 +557,29 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     if (current.takenEpcs.contains(epc)) return;
 
     if (current.rfidReadEpcs.contains(epc)) {
+      // MATCHED → TAKEN
       final newRead = Set<String>.from(current.rfidReadEpcs)..remove(epc);
       final newTaken = {...current.takenEpcs, epc};
       state = current.copyWith(rfidReadEpcs: newRead, takenEpcs: newTaken);
+      return;
+    }
 
-      MedLogger.info(
-        unit: 'MobileIntakeNotifier',
-        swreq: 'SWREQ-CLI-INTAKE-005',
-        message: 'Seçili EPC çekmeceden çıktı — alındı',
-        context: {'epc': epc},
-      );
+    if (current.passiveEpcs.contains(epc)) {
+      // PASSIVE → UNPLANNED — kabinin stoğu izinsiz çıkarıldı
+      final newPassive = Set<String>.from(current.passiveEpcs)..remove(epc);
+      final newUnplanned = {...current.unplannedMovements, epc};
+      state = current.copyWith(passiveEpcs: newPassive, unplannedMovements: newUnplanned);
       return;
     }
 
     if (current.unexpectedEpcs.contains(epc)) {
+      // UNEXPECTED → lost — düzeltici hareket, YOKSAY (Dolum'daki unexpectedLostEpcs mantığının aynısı)
       final newUnexpected = Set<String>.from(current.unexpectedEpcs)..remove(epc);
-      final newUnplanned = {...current.unplannedMovements, epc};
-      state = current.copyWith(unexpectedEpcs: newUnexpected, unplannedMovements: newUnplanned);
-
-      MedLogger.warn(
+      state = current.copyWith(unexpectedEpcs: newUnexpected);
+      MedLogger.info(
         unit: 'MobileIntakeNotifier',
-        swreq: 'SWREQ-CLI-INTAKE-008',
-        message: 'Plan dışı hareket algılandı — seçili olmayan EPC kabinden çıkarıldı',
+        swreq: 'SWREQ-CLI-INTAKE-005',
+        message: 'Yabancı etiket çekmeceden çıkarıldı — düzeltici hareket, bildirim yok',
         context: {'epc': epc},
       );
       return;
@@ -846,14 +853,16 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     //    SELECTED = seçili RFID'li item'ların beklenen EPC'leri
     final selected = afterReady.selectedRfidEpcs;
 
-    final matched = selected.intersection(observed); // seçili & kabinde
-    final notFound = selected.difference(observed); // seçili & kabinde yok → otomatik eksik
-    final unexpected = observed.difference(expectedSet); // kabinde ama kabin stoğuna ait değil
+    final matched = selected.intersection(observed); // MATCHED
+    final notFound = selected.difference(observed); // NOT_FOUND
+    final passive = observed.intersection(expectedSet.difference(selected)); // PASSIVE ← YENİ
+    final unexpected = observed.difference(expectedSet);
 
     final updatedReady = afterReady.copyWith(
       baselineCompleted: true,
       rfidReadEpcs: matched,
       notFoundEpcs: notFound,
+      passiveEpcs: passive,
       unexpectedEpcs: unexpected,
     );
 

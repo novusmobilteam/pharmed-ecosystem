@@ -13,22 +13,10 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../widgets/cabin_operation_dialog/cabin_operation_dialog.dart';
 import '../../intake.dart';
 
-part 'badges.dart';
 part 'items_list.dart';
-part 'banners.dart';
-part 'footer.dart';
-
-// EPC formatı: "E280116060000204..." → "E280 1160 6000 0204 ..."
-String _formatEpc(String epc) {
-  final clean = epc.replaceAll(' ', '');
-  final chunks = <String>[];
-  for (var i = 0; i < clean.length; i += 4) {
-    chunks.add(clean.substring(i, (i + 4).clamp(0, clean.length)));
-  }
-  return chunks.join(' ');
-}
 
 class MobileIntakeDialog extends ConsumerWidget {
   const MobileIntakeDialog({super.key});
@@ -36,20 +24,10 @@ class MobileIntakeDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(mobileIntakeNotifierProvider);
+    final notifier = ref.read(mobileIntakeNotifierProvider.notifier);
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
-    final keep = state.shouldKeepDialog(drawerStage);
-    MedLogger.info(
-      unit: 'MobileIntakeDialog',
-      swreq: 'SWREQ-CLI-INTAKE-003',
-      message: 'shouldKeepDialog',
-      context: {
-        'keep': keep,
-        'state': state.runtimeType.toString(),
-        'stage': drawerStage.runtimeType.toString(),
-        'canPop': Navigator.of(context).canPop(),
-      },
-    );
-    if (!keep) {
+
+    if (!state.shouldKeepDialog(drawerStage)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (context.mounted && Navigator.of(context).canPop()) {
           Navigator.of(context).pop();
@@ -66,59 +44,99 @@ class MobileIntakeDialog extends ConsumerWidget {
 
     final errorMessage = state is MobileIntakeError ? state.message : null;
 
-    return Dialog(
-      insetPadding: const EdgeInsets.all(24),
-      shape: RoundedRectangleBorder(borderRadius: MedRadius.xl2All),
-      backgroundColor: MedColors.surface,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 720, maxHeight: 800),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _Header(),
-            _StatsRow(),
-            Flexible(child: _ItemsList()),
-            if (errorMessage != null)
-              _ErrorBanner(
-                message: 'Tekrar deneyebilir ya da yerleştirdiğiniz ilaçları alarak işleminizi sonlandırabilirsiniz.',
-              ),
-            if (ready.hasUnplannedMovement) _UnplannedBanner(epcs: ready.unplannedMovements),
-            if (state is MobileIntakeRollbackInProgress)
-              const _ErrorBanner(
-                message:
-                    'Alım işlemi tamamlanamadı. Aldığınız ilaçları çekmeceden çıkartın ve çekmeceyi kapatarak işlemi sonlandırın.',
-              ),
-
-            _Footer(),
-          ],
-        ),
+    return CabinOperationDialog(
+      type: CabinInventoryType.intake,
+      statusInput: OperationStatusInput(
+        phase: _intakePhase(state),
+        drawerStage: drawerStage,
+        baselineCompleted: ready.baselineCompleted,
+        canComplete: ready.canComplete,
+        rollbackSettling: state is MobileIntakeRollbackInProgress && ready.rfidReadEpcs.isEmpty,
       ),
+      stats: [
+        StatCellData(label: 'Seçili', value: '${ready.selectedItemIds.length} ilaç'),
+        StatCellData(label: 'Kabinde Okunan', value: '${ready.totalReadCount} etiket'),
+        StatCellData(
+          label: 'Plan Dışı',
+          value: '${ready.unplannedCount}',
+          valueColor: ready.unplannedCount > 0 ? MedColors.red : null,
+          icon: ready.unplannedCount > 0 ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
+        ),
+      ],
+      banners: [
+        if (errorMessage != null)
+          const OperationErrorBanner(
+            message: 'Tekrar deneyebilir ya da yerleştirdiğiniz ilaçları alarak işleminizi sonlandırabilirsiniz.',
+          ),
+        if (ready.hasUnplannedMovement) UnplannedMovementBanner(epcs: ready.unplannedMovements),
+        if (ready.hasUnexpectedTag) UnexpectedTagBanner(epcs: ready.unexpectedEpcs),
+        if (state is MobileIntakeRollbackInProgress)
+          const RollbackBanner(
+            message:
+                'Alım işlemi tamamlanamadı. Aldığınız ilaçları çekmeceye koyun '
+                've çekmeceyi kapatarak işlemi sonlandırın.',
+          ),
+      ],
+      footerContent: _intakeFooter(state, drawerStage, ready, notifier),
+      child: _ItemsList(),
     );
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header();
+OperationPhase _intakePhase(MobileIntakeState s) {
+  if (s is MobileIntakeFatalError) return OperationPhase.fatal;
+  if (s is MobileIntakeSaving) return OperationPhase.saving;
+  if (s is MobileIntakeError) return OperationPhase.error;
+  if (s is MobileIntakeRollbackInProgress) return OperationPhase.rollback;
+  return OperationPhase.normal;
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: MedSpacing.insetXl,
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: MedColors.border, width: 0.5)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [Text('İlaç alım işlemi', style: MedTextStyles.titleSm(color: MedColors.text))],
-            ),
-          ),
-          _StatusBadge(),
-        ],
-      ),
-    );
-  }
+FooterContent _intakeFooter(
+  MobileIntakeState state,
+  MobileDrawerStage stage,
+  MobileIntakeReady ready,
+  MobileIntakeNotifier notifier,
+) {
+  // ── Hint ──
+  final hint = switch (state) {
+    MobileIntakeFatalError(:final message) => 'Kritik bir hata oluştu: $message',
+    MobileIntakeSaving() => 'Kaydediliyor...',
+    MobileIntakeError() => 'Hata oluştu — tekrar deneyebilirsiniz',
+    MobileIntakeRollbackInProgress() => switch (stage) {
+      MobileDrawerOpening() => 'Çekmece açılıyor, lütfen bekleyin...',
+      MobileDrawerOpened() => 'Çıkardığınız ilaçları kabine geri koyun, ardından çekmeceyi kapatın.',
+      MobileDrawerClosed() =>
+        ready.isRollbackComplete
+            ? 'İlaçları geri koydunuz. İşlem sonlandırılıyor...'
+            : 'Bazı ilaçlar hâlâ eksik. Çekmeceyi açıp kalan ilaçları geri koyun.',
+      _ => 'İşlem geri alınıyor...',
+    },
+    _ => switch (stage) {
+      MobileDrawerOpening() => 'Çekmece açılıyor...',
+      MobileDrawerOpened() =>
+        ready.baselineCompleted
+            ? 'Almak istediğiniz ilaçları çekmeceden çıkartın, ardından çekmeceyi kapatın'
+            : 'Kabin taranıyor, lütfen bekleyin',
+      MobileDrawerClosed() =>
+        ready.canComplete
+            ? 'İşlemi bitirmek için tamamla butonuna basın'
+            : 'Henüz ilaç alınmadı. Çekmeceyi açıp ilaçları çıkartın.',
+      _ => 'İlaçları çekmeceden çıkartın, ardından çekmeceyi kapatın',
+    },
+  };
+
+  // ── Actions ──
+  final actions = switch (state) {
+    MobileIntakeFatalError() => [FooterActions.dismiss(notifier.dismissError)],
+    MobileIntakeError() => [FooterActions.retry(notifier.retryComplete)],
+    MobileIntakeSaving() => [FooterActions.saving()],
+    MobileIntakeRollbackInProgress() => const <Widget>[],
+    _ when stage is MobileDrawerClosed && ready.canComplete => [
+      FooterActions.primary('İşlemi tamamla', notifier.completeIntake),
+    ],
+    _ when stage is MobileDrawerClosed => [FooterActions.primary('Almaya Devam Et', notifier.reopenDrawer)],
+    _ => [FooterActions.primary('İşlemi tamamla', null)],
+  };
+
+  return FooterContent(hint: hint, actions: actions);
 }

@@ -160,6 +160,7 @@ final class MobileIntakeReady extends MobileIntakeState {
     this.unplannedMovements = const {},
     this.previouslyTakenEpcs = const {},
     this.reportedMissingItemIds = const {},
+    this.passiveEpcs = const {},
   });
 
   final List<MobileSlotVisual> slots;
@@ -216,10 +217,14 @@ final class MobileIntakeReady extends MobileIntakeState {
   /// backend reçeteyi yenileyip item'ı düşürene kadar butonu disabled tutar.
   final Set<int> reportedMissingItemIds;
 
+  /// Kabinde okunan, expectedEpcs'te olan ama seçili olmayan EPC'ler
+  /// (= PASSIVE, başka hastaların ilaçları). Kaybolurlarsa unplannedMovements'a geçer.
+  final Set<String> passiveEpcs;
+
   int get selectedSlotId => selectedSlot.slotId;
 
   /// Snapshot'ta okunan toplam etiket sayısı (mockup'taki "Kabinde okunan").
-  int get totalReadCount => rfidReadEpcs.length + unexpectedEpcs.length;
+  int get totalReadCount => rfidReadEpcs.length + passiveEpcs.length + unexpectedEpcs.length;
 
   /// Plan dışı hareket sayısı (mockup'taki "Plan dışı hareket").
   int get unplannedCount => unplannedMovements.length;
@@ -251,6 +256,8 @@ final class MobileIntakeReady extends MobileIntakeState {
   /// UI banner'ı için: plan dışı hareket var mı?
   bool get hasUnplannedMovement => unplannedMovements.isNotEmpty;
 
+  bool get hasUnexpectedTag => unexpectedEpcs.isNotEmpty;
+
   /// Rollback sırasında: previouslyTakenEpcs'ten henüz kabine geri konmamış
   /// (yani hâlâ rfidReadEpcs'te OKUNMAYAN) tag'ler. Boşsa rollback tamamdır.
   /// _onDrawerStageChange'deki MobileDrawerClosed branch'i bunu kullanır.
@@ -272,6 +279,7 @@ final class MobileIntakeReady extends MobileIntakeState {
     takenEpcs: const {},
     notFoundEpcs: const {},
     unexpectedEpcs: const {},
+    passiveEpcs: const {},
     unplannedMovements: const {},
     previouslyTakenEpcs: const {},
   );
@@ -303,6 +311,8 @@ final class MobileIntakeReady extends MobileIntakeState {
     Set<String>? unplannedMovements,
     Set<String>? previouslyTakenEpcs,
     Set<int>? reportedMissingItemIds,
+    Set<String>? expectedEpcs,
+    Set<String>? passiveEpcs,
   }) {
     return MobileIntakeReady(
       slots: slots,
@@ -327,6 +337,8 @@ final class MobileIntakeReady extends MobileIntakeState {
       unplannedMovements: unplannedMovements ?? this.unplannedMovements,
       previouslyTakenEpcs: previouslyTakenEpcs ?? this.previouslyTakenEpcs,
       reportedMissingItemIds: reportedMissingItemIds ?? this.reportedMissingItemIds,
+
+      passiveEpcs: passiveEpcs ?? this.passiveEpcs,
     );
   }
 }
