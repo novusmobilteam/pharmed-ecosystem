@@ -14,7 +14,6 @@ class HospitalizationPanel extends StatelessWidget {
       create: (BuildContext context) => HospitalizationFormNotifier(
         getRoomsUseCase: context.read(),
         getBedsUseCase: context.read(),
-        authNotifier: context.read(),
         createHospitalizationUseCase: context.read(),
         updateHospitalizationUseCase: context.read(),
         hospitalization: selectedHospitalization,
@@ -273,7 +272,13 @@ class _ExitDateField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return MedDateInputField(label: 'Çıkış Tarihi', onDateSelected: notifier.updateExitDate);
+          return MedDateInputField(
+            label: 'Çıkış Tarihi',
+            onDateSelected: (date) {
+              print(date);
+              //notifier.updateExitDate(date);
+            },
+          );
         },
       ),
     );

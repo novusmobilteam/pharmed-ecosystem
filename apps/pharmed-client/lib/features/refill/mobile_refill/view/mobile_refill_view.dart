@@ -93,6 +93,9 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
           MessageUtils.showErrorSnackbar(context, next.message);
           notifier.dismissError();
         }
+      } else if (next is MobileRefillFatalError) {
+        MessageUtils.showErrorSnackbar(context, next.message);
+        notifier.dismissError();
       } else if (next is MobileRefillSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.refill_success_completedMobile);
         notifier.dismissSuccess();

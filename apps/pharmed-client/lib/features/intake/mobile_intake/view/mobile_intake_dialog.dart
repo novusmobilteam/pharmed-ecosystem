@@ -17,6 +17,7 @@ import '../../../../widgets/cabin_operation_dialog/cabin_operation_dialog.dart';
 import '../../intake.dart';
 
 part 'items_list.dart';
+part 'footer.dart';
 
 class MobileIntakeDialog extends ConsumerWidget {
   const MobileIntakeDialog({super.key});
@@ -51,16 +52,16 @@ class MobileIntakeDialog extends ConsumerWidget {
         drawerStage: drawerStage,
         baselineCompleted: ready.baselineCompleted,
         canComplete: ready.canComplete,
-        rollbackSettling: state is MobileIntakeRollbackInProgress && ready.rfidReadEpcs.isEmpty,
       ),
       stats: [
         StatCellData(label: 'Seçili', value: '${ready.selectedItemIds.length} ilaç'),
         StatCellData(label: 'Kabinde Okunan', value: '${ready.totalReadCount} etiket'),
+        StatCellData(label: 'Alınan', value: '${ready.takenEpcs.length}'),
         StatCellData(
-          label: 'Plan Dışı',
-          value: '${ready.unplannedCount}',
-          valueColor: ready.unplannedCount > 0 ? MedColors.red : null,
-          icon: ready.unplannedCount > 0 ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
+          label: 'İzinsiz Alım',
+          value: '${ready.unplannedMovements.length}',
+          valueColor: ready.unplannedMovements.isNotEmpty ? MedColors.amber : null,
+          icon: ready.unplannedMovements.isNotEmpty ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
         ),
       ],
       banners: [
@@ -69,13 +70,7 @@ class MobileIntakeDialog extends ConsumerWidget {
             message: 'Tekrar deneyebilir ya da yerleştirdiğiniz ilaçları alarak işleminizi sonlandırabilirsiniz.',
           ),
         if (ready.hasUnplannedMovement) UnplannedMovementBanner(epcs: ready.unplannedMovements),
-        if (ready.hasUnexpectedTag) UnexpectedTagBanner(epcs: ready.unexpectedEpcs),
-        if (state is MobileIntakeRollbackInProgress)
-          const RollbackBanner(
-            message:
-                'Alım işlemi tamamlanamadı. Aldığınız ilaçları çekmeceye koyun '
-                've çekmeceyi kapatarak işlemi sonlandırın.',
-          ),
+        if (ready.hasUnexpectedEpc) UnexpectedTagBanner(epcs: ready.placedEpcs),
       ],
       footerContent: _intakeFooter(state, drawerStage, ready, notifier),
       child: _ItemsList(),
@@ -87,56 +82,5 @@ OperationPhase _intakePhase(MobileIntakeState s) {
   if (s is MobileIntakeFatalError) return OperationPhase.fatal;
   if (s is MobileIntakeSaving) return OperationPhase.saving;
   if (s is MobileIntakeError) return OperationPhase.error;
-  if (s is MobileIntakeRollbackInProgress) return OperationPhase.rollback;
   return OperationPhase.normal;
-}
-
-FooterContent _intakeFooter(
-  MobileIntakeState state,
-  MobileDrawerStage stage,
-  MobileIntakeReady ready,
-  MobileIntakeNotifier notifier,
-) {
-  // ── Hint ──
-  final hint = switch (state) {
-    MobileIntakeFatalError(:final message) => 'Kritik bir hata oluştu: $message',
-    MobileIntakeSaving() => 'Kaydediliyor...',
-    MobileIntakeError() => 'Hata oluştu — tekrar deneyebilirsiniz',
-    MobileIntakeRollbackInProgress() => switch (stage) {
-      MobileDrawerOpening() => 'Çekmece açılıyor, lütfen bekleyin...',
-      MobileDrawerOpened() => 'Çıkardığınız ilaçları kabine geri koyun, ardından çekmeceyi kapatın.',
-      MobileDrawerClosed() =>
-        ready.isRollbackComplete
-            ? 'İlaçları geri koydunuz. İşlem sonlandırılıyor...'
-            : 'Bazı ilaçlar hâlâ eksik. Çekmeceyi açıp kalan ilaçları geri koyun.',
-      _ => 'İşlem geri alınıyor...',
-    },
-    _ => switch (stage) {
-      MobileDrawerOpening() => 'Çekmece açılıyor...',
-      MobileDrawerOpened() =>
-        ready.baselineCompleted
-            ? 'Almak istediğiniz ilaçları çekmeceden çıkartın, ardından çekmeceyi kapatın'
-            : 'Kabin taranıyor, lütfen bekleyin',
-      MobileDrawerClosed() =>
-        ready.canComplete
-            ? 'İşlemi bitirmek için tamamla butonuna basın'
-            : 'Henüz ilaç alınmadı. Çekmeceyi açıp ilaçları çıkartın.',
-      _ => 'İlaçları çekmeceden çıkartın, ardından çekmeceyi kapatın',
-    },
-  };
-
-  // ── Actions ──
-  final actions = switch (state) {
-    MobileIntakeFatalError() => [FooterActions.dismiss(notifier.dismissError)],
-    MobileIntakeError() => [FooterActions.retry(notifier.retryComplete)],
-    MobileIntakeSaving() => [FooterActions.saving()],
-    MobileIntakeRollbackInProgress() => const <Widget>[],
-    _ when stage is MobileDrawerClosed && ready.canComplete => [
-      FooterActions.primary('İşlemi tamamla', notifier.completeIntake),
-    ],
-    _ when stage is MobileDrawerClosed => [FooterActions.primary('Almaya Devam Et', notifier.reopenDrawer)],
-    _ => [FooterActions.primary('İşlemi tamamla', null)],
-  };
-
-  return FooterContent(hint: hint, actions: actions);
 }

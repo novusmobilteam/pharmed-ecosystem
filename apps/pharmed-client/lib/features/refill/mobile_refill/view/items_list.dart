@@ -9,8 +9,6 @@ class _ItemsList extends ConsumerWidget {
     final ready = state.readyContext;
     if (ready == null) return const SizedBox.shrink();
 
-    final isRollbackInProgress = state is MobileRefillRollbackInProgress;
-
     final selectedItems =
         ready.prescriptionItems.where((i) => i.id != null && ready.selectedItemIds.contains(i.id)).toList()
           ..sort((a, b) {
@@ -28,7 +26,7 @@ class _ItemsList extends ConsumerWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, i) {
         final item = selectedItems[i];
-        final status = _itemStatusFor(item, ready, isRollbackInProgress: isRollbackInProgress);
+        final status = _itemStatusFor(item, ready);
         return _ItemCard(item: item, status: status);
       },
     );
@@ -64,16 +62,7 @@ class _ItemCard extends StatelessWidget {
         'Bekleniyor',
         PhosphorIcons.hourglassMedium(PhosphorIconsStyle.bold),
       ),
-      _ItemStatus.removed => (
-        MedColors.redLight,
-        MedColors.red.withValues(alpha: 0.3),
-        MedColors.red,
-        MedColors.red.withValues(alpha: 0.8),
-        MedColors.red,
-        MedColors.redLight,
-        'Kabinden Çıkarıldı',
-        PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-      ),
+
       _ItemStatus.nonRfid => (
         MedColors.bg,
         MedColors.border,
@@ -148,28 +137,17 @@ enum _ItemStatus {
   /// RFID'li item, EPC'si henüz kabinde değil (kullanıcı yerleştirmeli)
   awaiting,
 
-  /// RFID'li item, Error sonrası kullanıcı kabinden çıkardı
-  removed,
-
   /// RFID'siz item — manuel tracking, RFID akışı dışı
   nonRfid,
 }
 
-_ItemStatus _itemStatusFor(PrescriptionItem item, MobileRefillReady ready, {required bool isRollbackInProgress}) {
+_ItemStatus _itemStatusFor(PrescriptionItem item, MobileRefillReady ready) {
   final isRfid = item.medicine is Drug && (item.medicine as Drug).isRfidEnable && item.rfidTag != null;
   if (!isRfid) return _ItemStatus.nonRfid;
 
   final epc = item.rfidTag!;
 
-  // Rollback sırasında: önceden yerleştirilmişti, şimdi yoksa → removed.
-  // previouslyPlacedEpcs Ready'de tutulur; rollback başlatılınca yerleştirilen
-  // tüm tag'ler buraya kopyalanır, sonra kullanıcı çıkardıkça rfidReadEpcs
-  // boşalır → fark "Kabinden Çıkarıldı" rozetiyle gösterilir.
-  if (isRollbackInProgress && ready.previouslyPlacedEpcs.contains(epc) && !ready.rfidReadEpcs.contains(epc)) {
-    return _ItemStatus.removed;
-  }
-
-  if (ready.rfidReadEpcs.contains(epc)) return _ItemStatus.placed;
+  if (ready.placedEpcs.contains(epc)) return _ItemStatus.placed;
   return _ItemStatus.awaiting;
 }
 
@@ -186,12 +164,6 @@ StatusBadge _refillItemBadge(_ItemStatus status) {
       MedColors.blue,
       PhosphorIcons.hourglassMedium(PhosphorIconsStyle.bold),
       'Bekleniyor',
-    ),
-    _ItemStatus.removed => (
-      MedColors.red,
-      MedColors.redLight,
-      PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-      'Kabinden Çıkarıldı',
     ),
     _ItemStatus.nonRfid => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), 'RFID yok'),
   };

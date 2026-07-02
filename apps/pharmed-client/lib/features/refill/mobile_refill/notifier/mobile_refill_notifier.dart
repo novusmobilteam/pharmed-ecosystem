@@ -10,6 +10,10 @@ import '../../../../core/providers/providers.dart';
 import '../../../../widgets/widgets.dart';
 import '../../refill.dart';
 
+// Kabinde olan ilaçlar => Snapshottan gelir => baselineEpcs
+// Dolum yapılacak ilaçlar => Kullanıcının seçiminde gelir => expectedEpcs
+// Kabinden alınmaması gereken bir ilaç alındı =>
+
 // [SWREQ-CLI-REFILL-004] [IEC 62304 §5.5]
 // Mobil kabin ilaç dolum ekranı state yönetimi.
 //
@@ -43,8 +47,9 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   GetBedAssignmentsUseCase get _getAssignments => ref.read(getBedAssignmentsUseCaseProvider);
   GetPatientPrescriptionHistoryUseCase get _getPrescriptionHistory =>
       ref.read(getPatientPrescriptionHistoryUseCaseProvider);
-  GetCabinExpectedEpcsUseCase get _getCabinExpectedEpcs => ref.read(getCabinExpectedEpcsUseCaseProvider);
+
   RefillMobileCabinUseCase get _refillMobileCabin => ref.read(refillMobileCabinUseCaseProvider);
+  GetCabinExpectedEpcsUseCase get _getCabinExpectedEpcs => ref.read(getCabinExpectedEpcsUseCaseProvider);
 
   /// Eksik Stok Bildirimi — UNPLANNED EPC'leri için backend'e bildirir.
   /// Dolum'da `CabinInventoryType.refill` ile çağrılır.
@@ -56,6 +61,10 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   // State class'larında tutulmaz çünkü boyutu büyüyebilir ve reactive UI'a
   // ihtiyaç duyulmaz. cancel/error/success akışlarında temizlenir.
   Map<String, CabinExpectedEpc> _expectedMap = const <String, CabinExpectedEpc>{};
+
+  /// Saving sırasında çekmece kapandıysa true. Kayıt sonucu gelince
+  /// (_completeRefill) değerlendirilir: OK → doğrudan Success, hata → Error.
+  bool _closedDuringSaving = false;
 
   @override
   MobileRefillState build() {
@@ -94,10 +103,6 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
       ),
     );
   }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // Hasta / göz seçimi
-  // ═════════════════════════════════════════════════════════════════════════
 
   /// Sol panel'deki hasta listesinden bir hasta seçildiğinde çağrılır.
   /// İlgili göze otomatik gider — mevcut [onCellTap] akışını kullanır.
@@ -213,10 +218,6 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
       cabinId: current.cabinId,
     );
   }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // Reçete yükleme / filtreleme
-  // ═════════════════════════════════════════════════════════════════════════
 
   /// SWREQ-CLI-REFILL-001
   void onDatePresetChanged(DateRangePreset preset) {
@@ -336,17 +337,13 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     );
   }
 
-  // ═════════════════════════════════════════════════════════════════════════
-  // Dolum süreci — start / reopen / cancel
-  // ═════════════════════════════════════════════════════════════════════════
-
   /// Doluma başla → orchestrator'a çekmece açma komutu gönderir.
   ///
   /// Akış:
   ///   1. state = DrawerStarting (ready ile sarmalanır)
   ///   2. _drawer.open() çağrılır
   ///   3. Stage Opening → Opened geçişinde [_onDrawerStageChange] ready'e döner
-  ///   4. Opened anında [_performBaselineScan] tetiklenir
+  ///   4. Opened anında [_scanCabin] tetiklenir
   ///
   /// SWREQ-CLI-REFILL-001
   Future<void> startRefill() async {
@@ -354,173 +351,10 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     if (current is! MobileRefillReady) return;
     if (current.selectedItemIds.isEmpty) return;
 
-    state = MobileRefillDrawerOpening(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      selectedSlot: current.selectedSlot,
-      assignments: current.assignments,
-      cabinId: current.cabinId,
-      ready: current,
-    );
+    state = MobileRefillDrawerOpening(ready: current);
 
     await _drawer.open(slots: current.slots, slot: current.selectedSlot);
   }
-
-  /// Çekmeceyi tekrar aç — "Doluma Devam Et" butonuna bağlanır.
-  ///
-  /// İki durumda gerekli (rfid-stock-notifications §4 reopen akışı):
-  ///   - RFID eksik (allSelectedRfidRead false): kullanıcı yerleştirmeye devam edecek
-  ///   - UNEXPECTED blokajı: kullanıcı kabin stoğuna ait olmayan tag'i çıkaracak
-  ///
-  /// Davranış:
-  ///   - RFID state TAMAMEN sıfırlanır (yeni baseline alınacak)
-  ///   - selectedItemIds KORUNUR — kullanıcı yeniden seçmek zorunda kalmasın
-  ///   - EXPECTED_MAP temizlenir (baseline tekrar çekecek)
-  ///
-  /// SWREQ-CLI-REFILL-012
-  Future<void> reopenDrawer() async {
-    final current = state;
-    if (current is MobileRefillReady) {
-      state = current.clearedRfidState;
-    }
-    _resetExpectedMap();
-    await ref.read(mobileDrawerSessionProvider.notifier).reopen();
-  }
-
-  /// Dolum iptali — drawer durumuna göre farklı davranır:
-  ///
-  ///   - DrawerIdle (henüz başlamadı) → seçimleri sıfırla, drawer'a dokunma
-  ///   - DrawerOpening/Opened (yerleştirme var) → view handle eder (confirm dialog)
-  ///   - Error state'inde → RFID state'ini KORUYARAK iptal et (kullanıcı ilaçlarını alabilir)
-  ///   - Diğer (Closed/Failed veya hareket yok) → drawer.stop() + tüm state sıfırla
-  ///
-  /// SWREQ-CLI-REFILL-001
-  Future<void> cancelRefill() async {
-    final current = state;
-    final ready = _readyOf(current);
-    final stage = _drawerStage;
-
-    // Drawer hiç açılmadı: sadece seçimleri ve RFID kümelerini sıfırla
-    if (stage is MobileDrawerIdle) {
-      if (ready == null) return;
-      state = ready.clearedRfidState.copyWith(selectedItemIds: const {});
-      return;
-    }
-
-    // Drawer açık/açılıyor + en az bir tag yerleştirilmiş → view confirm dialog
-    // gösterir, biz cancel yapmayız (return)
-    if ((stage is MobileDrawerOpening || stage is MobileDrawerOpened) && (ready?.rfidReadCount ?? 0) > 0) {
-      return;
-    }
-
-    // Drawer durumu fail veya hiç hareket yok → tam temizlik
-    await _drawer.stop();
-    _resetExpectedMap();
-
-    if (ready != null) {
-      state = ready.clearedRfidState.copyWith(selectedItemIds: const {});
-    }
-  }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // Drawer stage callback
-  // ═════════════════════════════════════════════════════════════════════════
-
-  /// Orchestrator'ın drawer stage callback'i.
-  ///
-  /// Olaylar (rfid-stock-notifications §4):
-  ///   - Opened ilk geçiş      → DrawerStarting ise Ready'e dön + baseline başlat
-  ///   - Closed/Failed         → orchestrator zaten RFID'yi durdurur
-  ///   - Failed                → tüm RFID + seçim state'i sıfırla, Error state
-  ///
-  /// SWREQ-CLI-REFILL-001
-  void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
-    if (next is MobileDrawerOpened) {
-      final current = state;
-      // Normal akış: DrawerStarting → Ready, ardından baseline scan
-      if (current is MobileRefillDrawerOpening) {
-        state = current.ready;
-        unawaited(_performBaselineScan());
-      }
-      // RollbackInProgress'te baseline scan YAPILMAZ — RFID state korunur,
-      // kullanıcı çıkardıkça _onEpcLost rfidReadEpcs'i azaltır.
-    }
-
-    if (next is MobileDrawerClosed) {
-      final current = state;
-      if (current is MobileRefillRollbackInProgress) {
-        if (current.ready.rfidReadEpcs.isEmpty) {
-          // Tüm yerleştirilen tag'ler kabinden çıkartıldı → rollback tamam
-          unawaited(_finalizeRollback(current));
-        }
-        // else: kabinde tag var, state aynı kalır. Dialog footer'ı
-        // "Çekmeceyi Aç" / "Tekrar Dene" butonlarını gösterir.
-      }
-    }
-
-    if (next is MobileDrawerFailed) {
-      _resetExpectedMap();
-      final current = state;
-      final cleaned = switch (current) {
-        MobileRefillReady r => r.clearedRfidState.copyWith(selectedItemIds: const {}),
-        MobileRefillDrawerOpening(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
-        _ => current,
-      };
-      // Çekmece donanım hatası → kurtarılamaz, FatalError
-      state = MobileRefillFatalError(message: next.message, previousState: cleaned);
-    }
-  }
-
-  /// Rollback başarıyla tamamlandı — drawer + RFID temizliği yapar ve
-  /// state'i [MobileRefillRollbackCompleted]'e geçirir.
-  ///
-  /// Dialog `readyContext` null gördüğü için kendiliğinden kapanır.
-  /// Sonrasında state Idle'a çekilir ki kullanıcı yeni bir dolum
-  /// başlatabilsin (dialog dispose olduktan sonra).
-  ///
-  /// SWREQ-CLI-REFILL-014
-  Future<void> _finalizeRollback(MobileRefillRollbackInProgress current) async {
-    MedLogger.info(
-      unit: 'MobileRefillNotifier',
-      swreq: 'SWREQ-CLI-REFILL-014',
-      message: 'Rollback tamamlandı — tüm tag\'ler kabinden çıkartıldı',
-      context: {
-        'previouslyPlacedCount': current.ready.previouslyPlacedEpcs.length,
-        'unplannedCount': current.ready.unplannedMovements.length,
-      },
-    );
-
-    await _drawer.stop();
-    _resetExpectedMap();
-
-    state = MobileRefillRollbackCompleted(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      selectedSlot: current.selectedSlot,
-      assignments: current.assignments,
-      cabinId: current.cabinId,
-    );
-
-    // Dialog kendi kendine kapanır (readyContext null). Bir sonraki frame'de
-    // state Idle'a çekilir → kullanıcı kaldığı yerden devam edebilir.
-    unawaited(
-      Future.microtask(() {
-        final s = state;
-        if (s is MobileRefillRollbackCompleted) {
-          state = MobileRefillIdle(
-            slots: s.slots,
-            mobileSlots: s.mobileSlots,
-            assignments: s.assignments,
-            cabinId: s.cabinId,
-          );
-        }
-      }),
-    );
-  }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // Baseline scan + reconciliation
-  // ═════════════════════════════════════════════════════════════════════════
 
   /// Çekmece açıldıktan sonra baseline snapshot alır ve reconciliation yapar.
   ///
@@ -540,194 +374,97 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   /// (veya sarmalayıcısı) olup olmadığı kontrol edilir — değilse atlanır.
   ///
   /// SWREQ-CLI-REFILL-006
-  Future<void> _performBaselineScan() async {
+  Future<void> _scanCabin() async {
     final current = state;
-
-    if (current is MobileRefillError || current is MobileRefillRollbackInProgress) {
-      return;
-    }
+    if (current is MobileRefillError) return;
 
     final ready = _readyOf(current);
     if (ready == null) return;
 
-    // 1) Beklenen kabin tag'lerini çek
-    final expectedResult = await _getCabinExpectedEpcs.call(ready.cabinId);
+    // _expectedMap boşsa ilk açılış; doluysa reopen (map + baseline korunur)
+    final isFirstScan = ready.baselineEpcs.isEmpty && _expectedMap.isEmpty;
 
-    List<CabinExpectedEpc>? expected;
-    String? errorMessage;
+    if (isFirstScan) {
+      // Beklenen kabin tag'lerini çek (EPC → prescriptionItemId lookup)
+      final expectedResult = await _getCabinExpectedEpcs.call(ready.cabinId);
+      String? errorMessage;
+      expectedResult.when(
+        ok: (value) => _expectedMap = {for (final e in value) (e.rfidTag ?? ''): e},
+        error: (e) => errorMessage = e.message,
+      );
 
-    expectedResult.when(ok: (value) => expected = value, error: (e) => errorMessage = e.message);
+      if (errorMessage != null) {
+        state = MobileRefillError(message: errorMessage!, previousState: ready);
+        return;
+      }
 
-    if (errorMessage != null) {
-      state = MobileRefillError(message: errorMessage!, previousState: ready);
-      return;
+      // İlk snapshot → baseline (bir kez, sabit)
+      final observed = await _drawer.snapshot();
+      MedLogger.info(
+        unit: 'MobileRefillNotifier',
+        swreq: 'SWREQ-CLI-REFILL-XXX',
+        message: 'Baseline snapshot alındı',
+        context: {'count': observed.length, 'epcs': observed.toList()},
+      );
+      final after = state;
+      final afterReady = _readyOf(after);
+      if (afterReady == null) return;
+
+      state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
+    } else {
+      // Reopen: baseline KORUNUR, sadece scan tamamlandı işaretle.
+      // Runtime kümeleri (placedEpcs / baselineLostEpcs) canlı event'lerle
+      // zaten güncel; RFID inventory tekrar başladığında farkları yakalar.
+      state = _withReady(current, ready.copyWith(baselineCompleted: true));
     }
-
-    _expectedMap = {for (final e in expected!) (e.rfidTag ?? ''): e};
-    final expectedSet = _expectedMap.keys.toSet();
-
-    // 2) Snapshot al (RFID inventory aktif, orchestrator opened sonrası başlattı)
-    final observed = await _drawer.snapshot();
-
-    // 3) Race condition guard
-    final after = state;
-    final afterReady = _readyOf(after);
-    if (afterReady == null) {
-      return;
-    }
-
-    // 4) Reconciliation kümeleri
-    final passive = observed.intersection(expectedSet);
-    final unexpected = observed.difference(expectedSet);
-
-    final updatedReady = afterReady.copyWith(baselineCompleted: true, passiveEpcs: passive, unexpectedEpcs: unexpected);
-
-    state = _withReady(after, updatedReady);
   }
 
-  // ═════════════════════════════════════════════════════════════════════════
-  // RFID event handler'ları
-  // ═════════════════════════════════════════════════════════════════════════
-
-  /// EPC okundu — çekmecede bir tag göründü.
-  ///
-  /// Davranış (rfid-stock-notifications §3 bidirectional geçişler):
-  ///
-  ///   1. Baseline öncesi → ignore (snapshot zaten çalışıyor)
-  ///   2. Hata kümesinden geri dönüş varsa → orijinal kategorisini restore et:
-  ///        UNPLANNED      → PASSIVE        (kullanıcı geri koydu)
-  ///        UNEXPECTED_LOST→ UNEXPECTED     (kullanıcı tekrar koydu → tekrar blokaj)
-  ///   3. Hiç bilinmiyorsa (ilk kez):
-  ///        EXPECTED'da var → PASSIVE       (geç gelen kabin stoğu)
-  ///        EXPECTED'da yok → rfidReadEpcs  (yerleştirilen yeni dolum tag'i)
-  ///   4. Zaten bilinen bir kümede → dedup, hiçbir şey yapma
-  ///
-  /// SWREQ-CLI-REFILL-007
-  void _onEpcRead(String epc) {
+  /// ClosedEarly / Error → "İptal". Kayıt YOK. İşlemi bitirir, dialog kapanır.
+  /// Not: çekmece fiziksel olarak açık kalmış olabilir — UI kullanıcıya
+  /// "çekmeceyi kapatın" bilgisini gösterebilir.
+  /// SWREQ-CLI-REFILL-001
+  Future<void> cancelEarlyClose() async {
     final current = state;
     final ready = _readyOf(current);
-    if (ready == null) return;
-    if (!ready.baselineCompleted) return;
 
-    // 1) Hata kümelerinden çıkarmayı dene
-    final wasUnplanned = ready.unplannedMovements.contains(epc);
-    final wasUnexpectedLost = ready.unexpectedLostEpcs.contains(epc);
+    await _drawer.stop();
+    _resetExpectedMap();
+    _closedDuringSaving = false;
 
-    // 2) Zaten aktif bir kümede mi? Öyleyse dedup
-    final alreadyKnown =
-        ready.rfidReadEpcs.contains(epc) || ready.passiveEpcs.contains(epc) || ready.unexpectedEpcs.contains(epc);
-
-    if (!wasUnplanned && !wasUnexpectedLost && alreadyKnown) {
-      return; // dedup
+    if (ready == null) {
+      // sahne yoksa gerçekten boşa dön
+      state = const MobileRefillIdle(slots: [], mobileSlots: [], assignments: [], cabinId: 0);
+      return;
     }
 
-    // 3) Sınıflandır
-    Set<String> newRead = ready.rfidReadEpcs;
-    Set<String> newPassive = ready.passiveEpcs;
-    Set<String> newUnexpected = ready.unexpectedEpcs;
-    Set<String> newUnplanned = ready.unplannedMovements;
-    Set<String> newUnexpectedLost = ready.unexpectedLostEpcs;
-    Set<String> newPreviouslyPlaced = ready.previouslyPlacedEpcs;
-
-    if (wasUnplanned) {
-      // PASSIVE'e geri yükle
-      newUnplanned = Set<String>.from(newUnplanned)..remove(epc);
-      newPassive = {...newPassive, epc};
-    } else if (wasUnexpectedLost) {
-      // UNEXPECTED'a geri yükle (blokaj tekrar aktif)
-      newUnexpectedLost = Set<String>.from(newUnexpectedLost)..remove(epc);
-      newUnexpected = {...newUnexpected, epc};
-    } else {
-      // İlk kez görüldü → EXPECTED'a göre sınıflandır
-      if (_expectedMap.containsKey(epc)) {
-        newPassive = {...newPassive, epc};
-      } else {
-        newRead = {...newRead, epc};
-        newPreviouslyPlaced = {...newPreviouslyPlaced, epc};
-      }
-    }
-
-    state = _withReady(
-      current,
-      ready.copyWith(
-        rfidReadEpcs: newRead,
-        passiveEpcs: newPassive,
-        unexpectedEpcs: newUnexpected,
-        unplannedMovements: newUnplanned,
-        unexpectedLostEpcs: newUnexpectedLost,
-        previouslyPlacedEpcs: newPreviouslyPlaced,
-      ),
+    // Sahneyi KORU (slots/mobileSlots/assignments/cabinId), sadece işlemi sıfırla
+    state = MobileRefillIdle(
+      slots: ready.slots,
+      mobileSlots: ready.mobileSlots,
+      assignments: ready.assignments,
+      cabinId: ready.cabinId,
     );
   }
 
-  /// EPC kayboldu — çekmeceden tag çıktı (presence timeout).
-  ///
-  /// Davranış (rfid-stock-notifications §5.1 Dolum):
-  ///
-  ///   - rfidReadEpcs'te → sessiz çıkar (kullanıcı yerleştirdiğini geri aldı)
-  ///   - passiveEpcs'te  → UNPLANNED'a yaz (izinsiz çıkış → bildirim)
-  ///   - unexpectedEpcs'te → UNEXPECTED_LOST'a yaz (düzeltici → bildirim YOK)
-  ///   - Bilinmiyor → ignore
-  ///
-  /// SWREQ-CLI-REFILL-008
-  void _onEpcLost(String epc) {
+  /// ClosedEarly / Error → "Tekrar Dene". Çekmece yeniden açılır.
+  /// Baseline KORUNUR (reopen), _expectedMap KORUNUR — _scanCabin reopen dalına girer.
+  /// Runtime kümeleri (placedEpcs / baselineLostEpcs) de KORUNUR.
+  /// SWREQ-CLI-REFILL-012
+  Future<void> retryEarlyClose() async {
     final current = state;
     final ready = _readyOf(current);
     if (ready == null) return;
-    if (!ready.baselineCompleted) return;
 
-    if (current is MobileRefillRollbackInProgress) {
-      final ready = current.ready;
+    _closedDuringSaving = false;
 
-      // Çıkan tag'i, o anki RFID listemizden siliyoruz
-      final newRead = Set<String>.from(ready.rfidReadEpcs)..remove(epc);
+    // ready olduğu gibi taşınır (baseline + placedEpcs + baselineLostEpcs dahil).
+    // Sadece baselineCompleted false → UI "Tarama yapılıyor" gösterir,
+    // complete butonu reopen tamamlanana kadar disabled.
+    final reopening = ready.copyWith(baselineCompleted: false);
+    state = MobileRefillDrawerOpening(ready: reopening);
 
-      // Güncellenmiş "Ready" state'ini oluşturuyoruz
-      final updatedReady = ready.copyWith(rfidReadEpcs: newRead);
-
-      if (newRead.isEmpty) {
-        state = MobileRefillRollbackCompleted(
-          slots: current.slots,
-          mobileSlots: current.mobileSlots,
-          selectedSlot: current.selectedSlot,
-          assignments: current.assignments,
-          cabinId: current.cabinId,
-        );
-      } else {
-        // Hâlâ içeride ilaç var, RollbackInProgress state'ini güncellemeye devam et
-        state = current.copyWith(ready: updatedReady);
-      }
-    }
-
-    // Yerleştirilen dolum tag'i geri alındı (sessiz)
-    if (ready.rfidReadEpcs.contains(epc)) {
-      final newRead = Set<String>.from(ready.rfidReadEpcs)..remove(epc);
-      state = _withReady(current, ready.copyWith(rfidReadEpcs: newRead));
-      return;
-    }
-
-    // PASSIVE → UNPLANNED (izinsiz çıkış)
-    if (ready.passiveEpcs.contains(epc)) {
-      final newPassive = Set<String>.from(ready.passiveEpcs)..remove(epc);
-      final newUnplanned = {...ready.unplannedMovements, epc};
-      state = _withReady(current, ready.copyWith(passiveEpcs: newPassive, unplannedMovements: newUnplanned));
-      return;
-    }
-
-    // UNEXPECTED → UNEXPECTED_LOST (düzeltici, yoksay)
-    if (ready.unexpectedEpcs.contains(epc)) {
-      final newUnexpected = Set<String>.from(ready.unexpectedEpcs)..remove(epc);
-      final newUnexpectedLost = {...ready.unexpectedLostEpcs, epc};
-      state = _withReady(current, ready.copyWith(unexpectedEpcs: newUnexpected, unexpectedLostEpcs: newUnexpectedLost));
-      return;
-    }
-
-    // Bilinmiyor — ignore
+    await ref.read(mobileDrawerSessionProvider.notifier).reopen();
   }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // Complete akışı
-  // ═════════════════════════════════════════════════════════════════════════
 
   /// Dolumu tamamla — drawer Closed durumunda çağrılır.
   ///
@@ -756,17 +493,10 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     if (current.selectedItemIds.isEmpty) return;
     if (!current.canComplete) return;
 
-    // Drawer kapalı olmalı (Dolum semantiği)
-    if (_drawerStage is! MobileDrawerClosed) return;
+    // YENİ akış: çekmece AÇIKKEN tamamlanır (kapalı değil)
+    if (_drawerStage is! MobileDrawerOpened) return;
 
-    state = MobileRefillSaving(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      selectedSlot: current.selectedSlot,
-      assignments: current.assignments,
-      cabinId: current.cabinId,
-      ready: current,
-    );
+    state = MobileRefillSaving(ready: current);
 
     final params = current.prescriptionItems
         .where((i) => i.id != null && current.selectedItemIds.contains(i.id))
@@ -776,41 +506,24 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     final result = await _refillMobileCabin(params);
 
     result.when(
-      ok: (_) async {
-        // Kayıt başarılı — drawer + RFID kapama
-        await _drawer.stop();
-        // _expectedMap'i snapshot al, sonra reset et. Bu sıralama kritik:
-        // _dispatchNotifications async (unawaited) başlatılıyor; eğer önce
-        // _resetExpectedMap çağrılırsa dispatch boş map görür ve EPC'lerden
-        // prescriptionItemId çözülemez.
-        final expectedSnapshot = _expectedMap;
-        _resetExpectedMap();
-
-        // Arka planda fire-and-forget bildirim akışı
-        unawaited(_reportUnplannedMovements(current, expectedSnapshot));
-
-        state = MobileRefillSuccess(
-          slots: current.slots,
-          mobileSlots: current.mobileSlots,
-          selectedSlot: current.selectedSlot,
-          assignments: current.assignments,
-          cabinId: current.cabinId,
-          message: '',
-          ready: current.clearedRfidState.copyWith(selectedItemIds: const {}),
-        );
+      ok: (_) {
+        // Kayıt başarılı. Çekmece HÂLÂ AÇIK — kullanıcının kapatması beklenir.
+        // _expectedMap ve runtime kümeleri KORUNUR (kapanışta rapor için lazım).
+        if (_closedDuringSaving) {
+          // Kayıt uçarken kullanıcı çekmeceyi çoktan kapatmış → doğrudan kapanış akışı
+          _closedDuringSaving = false;
+          unawaited(_reportUnplannedMovements(current));
+          state = MobileRefillSuccess(ready: current);
+        } else {
+          // Normal: kapanışı bekle. RFID canlı dinlenmeye devam eder.
+          state = MobileRefillWaitingClose(ready: current);
+        }
       },
-      error: (e) async {
-        // Kayıt başarısız — RFID state KORUNUR, drawer'a dokunma
-        state = MobileRefillRollbackInProgress(
-          slots: current.slots,
-          mobileSlots: current.mobileSlots,
-          selectedSlot: current.selectedSlot,
-          assignments: current.assignments,
-          cabinId: current.cabinId,
-          ready: current,
-        );
-
-        await _drawer.open(slots: current.slots, slot: current.selectedSlot);
+      error: (e) {
+        // Kayıt başarısız → Error (kurtarılabilir, "Tekrar Dene").
+        // RFID state + baseline KORUNUR; drawer'a dokunma (çekmece hâlâ açık).
+        _closedDuringSaving = false;
+        state = MobileRefillError(message: e.message, previousState: current);
       },
     );
   }
@@ -825,8 +538,12 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   Future<void> retryComplete() async {
     final current = state;
     if (current is! MobileRefillError) return;
-    state = current.previousState;
-    await completeRefill();
+
+    final ready = current.previousState.readyContext;
+    if (ready == null) return;
+
+    state = ready; // Error → Ready
+    await completeRefill(); // guard'lar geçer, tekrar Saving
   }
 
   /// Hiçbir bildirim hatası kullanıcıyı durdurmaz; sadece log atılır.
@@ -843,45 +560,142 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   /// (race condition guard).
   ///
   /// SWREQ-CLI-REFILL-011
-  Future<void> _reportUnplannedMovements(
-    MobileRefillReady completedReady,
-    Map<String, CabinExpectedEpc> expectedSnapshot,
-  ) async {
-    if (completedReady.unplannedMovements.isEmpty) return;
-    // Her UNPLANNED EPC için ayrı çağrı — log düzeni için sıralı
-    for (final epc in completedReady.unplannedMovements) {
-      final expected = expectedSnapshot[epc];
-      final prescriptionItemId = expected?.prescriptionItemId;
+  Future<void> _reportUnplannedMovements(MobileRefillReady ready) async {
+    final missing = ready.missingEpcs;
+    if (missing.isEmpty) return;
 
+    for (final epc in missing) {
+      final prescriptionItemId = _expectedMap[epc]?.prescriptionItemId;
       if (prescriptionItemId == null) {
         continue;
       }
 
-      final result = await _reportMissingStock.call(
-        prescriptionItemId: prescriptionItemId,
-        type: CabinInventoryType.refill,
-      );
-
-      result.when(
-        ok: (_) => MedLogger.info(
-          unit: 'MobileRefillNotifier',
-          swreq: 'SWREQ-CLI-REFILL-011',
-          message: 'UNPLANNED bildirimi gönderildi',
-          context: {'epc': epc, 'prescriptionItemId': prescriptionItemId},
-        ),
-        error: (e) => MedLogger.error(
-          unit: 'MobileRefillNotifier',
-          swreq: 'SWREQ-CLI-REFILL-011',
-          message: 'UNPLANNED bildirimi başarısız (kullanıcı durdurulmaz)',
-          context: {'epc': epc, 'prescriptionItemId': prescriptionItemId, 'error': e.message},
-        ),
-      );
+      await _reportMissingStock.call(prescriptionItemId: prescriptionItemId, type: CabinInventoryType.refill);
     }
   }
 
-  // ═════════════════════════════════════════════════════════════════════════
-  // Dismiss
-  // ═════════════════════════════════════════════════════════════════════════
+  /// EPC okundu — çekmecede bir tag göründü.
+  ///
+  /// Davranış (rfid-stock-notifications §3 bidirectional geçişler):
+  ///
+  ///   1. Baseline öncesi → ignore (snapshot zaten çalışıyor)
+  ///   2. Hata kümesinden geri dönüş varsa → orijinal kategorisini restore et:
+  ///        UNPLANNED      → PASSIVE        (kullanıcı geri koydu)
+  ///        UNEXPECTED_LOST→ UNEXPECTED     (kullanıcı tekrar koydu → tekrar blokaj)
+  ///   3. Hiç bilinmiyorsa (ilk kez):
+  ///        EXPECTED'da var → PASSIVE       (geç gelen kabin stoğu)
+  ///        EXPECTED'da yok → rfidReadEpcs  (yerleştirilen yeni dolum tag'i)
+  ///   4. Zaten bilinen bir kümede → dedup, hiçbir şey yapma
+  ///
+  /// SWREQ-CLI-REFILL-007
+  void _onEpcRead(String epc) {
+    final current = state;
+    final ready = _readyOf(current);
+    if (ready == null) return;
+    if (!ready.baselineCompleted) return;
+
+    // Baseline'daki bir tag geri okundu → lost'tan çıkar (kullanıcı geri koydu)
+    if (ready.baselineEpcs.contains(epc)) {
+      if (ready.baselineLostEpcs.contains(epc)) {
+        state = _withReady(
+          current,
+          ready.copyWith(baselineLostEpcs: Set<String>.from(ready.baselineLostEpcs)..remove(epc)),
+        );
+      }
+      return; // baseline'da ve hâlâ duruyor → değişiklik yok (dedup)
+    }
+
+    // Baseline'da olmayan yeni tag → yerleştirme (dedup: set zaten idempotent)
+    if (ready.placedEpcs.contains(epc)) return;
+    state = _withReady(current, ready.copyWith(placedEpcs: {...ready.placedEpcs, epc}));
+  }
+
+  /// EPC kayboldu — çekmeceden tag çıktı (presence timeout).
+  ///
+  /// Davranış (rfid-stock-notifications §5.1 Dolum):
+  ///
+  ///   - rfidReadEpcs'te → sessiz çıkar (kullanıcı yerleştirdiğini geri aldı)
+  ///   - passiveEpcs'te  → UNPLANNED'a yaz (izinsiz çıkış → bildirim)
+  ///   - unexpectedEpcs'te → UNEXPECTED_LOST'a yaz (düzeltici → bildirim YOK)
+  ///   - Bilinmiyor → ignore
+  ///
+  /// SWREQ-CLI-REFILL-008
+  void _onEpcLost(String epc) {
+    final current = state;
+    final ready = _readyOf(current);
+    if (ready == null) return;
+    if (!ready.baselineCompleted) return;
+
+    // Yerleştirilen dolum tag'i geri alındı → placed'den çıkar (sessiz)
+    if (ready.placedEpcs.contains(epc)) {
+      state = _withReady(current, ready.copyWith(placedEpcs: Set<String>.from(ready.placedEpcs)..remove(epc)));
+      return;
+    }
+
+    // Baseline'daki bir tag çıktı → izinsiz çıkış (baselineLostEpcs'e ekle)
+    if (ready.baselineEpcs.contains(epc)) {
+      if (ready.baselineLostEpcs.contains(epc)) return; // zaten lost, dedup
+      state = _withReady(current, ready.copyWith(baselineLostEpcs: {...ready.baselineLostEpcs, epc}));
+      return;
+    }
+
+    // Ne placed ne baseline — bilinmiyor, ignore
+  }
+
+  /// Orchestrator'ın drawer stage callback'i.
+  ///
+  /// Olaylar (rfid-stock-notifications §4):
+  ///   - Opened ilk geçiş      → DrawerStarting ise Ready'e dön + baseline başlat
+  ///   - Closed/Failed         → orchestrator zaten RFID'yi durdurur
+  ///   - Failed                → tüm RFID + seçim state'i sıfırla, Error state
+  ///
+  /// SWREQ-CLI-REFILL-001
+  void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage drawerStage) {
+    // ── Çekmece açıldı → sahneye geç, baseline tara ──────────────────────
+    if (drawerStage is MobileDrawerOpened) {
+      final current = state;
+      if (current is MobileRefillDrawerOpening) {
+        state = current.ready;
+        unawaited(_scanCabin());
+      }
+    }
+
+    // ── Çekmece kapandı ──────────────────────────────────────────────────
+    if (drawerStage is MobileDrawerClosed) {
+      final current = state;
+      switch (current) {
+        // Normal akış: kayıt gitti, kapanış bekleniyordu → bildir + Success
+        case MobileRefillWaitingClose(:final ready):
+          unawaited(_reportUnplannedMovements(ready));
+          state = MobileRefillSuccess(ready: ready);
+
+        // Kayıt uçuşta kapandı → hemen işleme, flag'le; Saving çözülünce bak
+        case MobileRefillSaving():
+          _closedDuringSaving = true;
+
+        // Tamamla denmeden kapandı → kullanıcıya karar sor
+        case MobileRefillReady r:
+          state = MobileRefillClosedEarly(ready: r);
+
+        default:
+          break;
+      }
+    }
+
+    // ── Çekmece donanım hatası → kurtarılamaz, FatalError ────────────────
+    if (drawerStage is MobileDrawerFailed) {
+      _resetExpectedMap();
+      final current = state;
+      final cleaned = switch (current) {
+        MobileRefillReady r => r.clearedRfidState.copyWith(selectedItemIds: const {}),
+        MobileRefillDrawerOpening(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
+        MobileRefillWaitingClose(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
+        MobileRefillSaving(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
+        _ => current,
+      };
+      state = MobileRefillFatalError(message: drawerStage.message, previousState: cleaned);
+    }
+  }
 
   /// Error snackbar kapatıldığında previousState'e geri döner.
   /// Complete fail durumunda previousState RFID state'li Ready'dir → kullanıcı
@@ -894,42 +708,23 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     state = current.previousState;
   }
 
-  /// Success snackbar kapatıldığında seçili gözde reçeteleri yenileyerek
-  /// Ready'e döner. Atama bulunamazsa Idle'a gider.
+  /// Success snackbar kapatıldığında işlem sonlanır: drawer kapatılır ve
+  /// slot seçim ekranına (Idle) dönülür. Kullanıcı yeni hasta/slot seçer.
   ///
   /// SWREQ-CLI-REFILL-001
-  void dismissSuccess() {
+  Future<void> dismissSuccess() async {
     final current = state;
     if (current is! MobileRefillSuccess) return;
 
-    final ready = current.ready;
-    final assignment = current.assignmentByCoord[ready.selectedCell];
-    if (assignment == null) {
-      state = MobileRefillIdle(
-        slots: current.slots,
-        mobileSlots: current.mobileSlots,
-        assignments: current.assignments,
-        cabinId: current.cabinId,
-      );
-      return;
-    }
+    await _drawer.stop(); // stage → Idle, ActionBar "Başlat" gösterir
 
-    unawaited(
-      _loadPrescriptions(
-        slots: current.slots,
-        mobileSlots: current.mobileSlots,
-        selectedSlot: ready.selectedSlot,
-        selectedCell: ready.selectedCell,
-        assignments: current.assignments,
-        cabinId: current.cabinId,
-        assignment: assignment,
-      ),
+    state = MobileRefillIdle(
+      slots: current.slots,
+      mobileSlots: current.mobileSlots,
+      assignments: current.assignments,
+      cabinId: current.cabinId,
     );
   }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // Internal helpers — state sarmalayıcı yönetimi
-  // ═════════════════════════════════════════════════════════════════════════
 
   /// State içinden Ready'i çıkarır. Tüm sarmalayıcı state'leri
   /// (DrawerStarting, Saving) ve Ready'nin kendisini kapsar.
@@ -937,8 +732,9 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     MobileRefillReady r => r,
     MobileRefillDrawerOpening(:final ready) => ready,
     MobileRefillSaving(:final ready) => ready,
+    MobileRefillWaitingClose(:final ready) => ready,
+    MobileRefillClosedEarly(:final ready) => ready,
     MobileRefillError(:final previousState) => _readyOf(previousState),
-    MobileRefillRollbackInProgress(:final ready) => ready, // ← YENİ
     _ => null,
   };
 
@@ -946,31 +742,10 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   /// doğrudan döner. Tanımsız state'ler değişmeden döner.
   MobileRefillState _withReady(MobileRefillState s, MobileRefillReady ready) => switch (s) {
     MobileRefillReady _ => ready,
-    MobileRefillDrawerOpening w => MobileRefillDrawerOpening(
-      slots: w.slots,
-      mobileSlots: w.mobileSlots,
-      selectedSlot: w.selectedSlot,
-      assignments: w.assignments,
-      cabinId: w.cabinId,
-      ready: ready,
-    ),
-    MobileRefillSaving w => MobileRefillSaving(
-      slots: w.slots,
-      mobileSlots: w.mobileSlots,
-      selectedSlot: w.selectedSlot,
-      assignments: w.assignments,
-      cabinId: w.cabinId,
-      ready: ready,
-    ),
-    MobileRefillRollbackInProgress w => MobileRefillRollbackInProgress(
-      slots: w.slots,
-      mobileSlots: w.mobileSlots,
-      selectedSlot: w.selectedSlot,
-      assignments: w.assignments,
-      cabinId: w.cabinId,
-      ready: ready,
-      cancelledAt: w.cancelledAt,
-    ),
+    MobileRefillDrawerOpening _ => MobileRefillDrawerOpening(ready: ready),
+    MobileRefillSaving _ => MobileRefillSaving(ready: ready),
+    MobileRefillWaitingClose _ => MobileRefillWaitingClose(ready: ready),
+    MobileRefillClosedEarly _ => MobileRefillClosedEarly(ready: ready),
     _ => s,
   };
 

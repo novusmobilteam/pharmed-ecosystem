@@ -10,32 +10,19 @@ enum _ItemStatus {
   /// RFID'li item, baseline'da kabinde bulunamadı (otomatik eksik bildirim)
   notFound,
 
-  /// RFID'li item, rollback sırasında kabine geri kondu
-  restored,
-
-  /// RFID'li item, rollback sırasında henüz geri konmadı (kullanıcı koymalı)
-  awaitingReturn,
-
   /// RFID'siz item — manuel tracking, RFID akışı dışı
   nonRfid,
 }
 
-_ItemStatus _itemStatusFor(PrescriptionItem item, MobileIntakeReady ready, {required bool isRollbackInProgress}) {
+_ItemStatus _itemStatusFor(PrescriptionItem item, MobileIntakeReady ready) {
   final isRfid = item.medicine is Drug && (item.medicine as Drug).isRfidEnable && item.rfidTag != null;
   if (!isRfid) return _ItemStatus.nonRfid;
 
   final epc = item.rfidTag!;
 
-  // Rollback sırasında: bu tag alınmıştı (previouslyTakenEpcs), şimdi
-  // kabinde okunuyorsa geri kondu → restored; okunmuyorsa hâlâ bekleniyor.
-  if (isRollbackInProgress && ready.previouslyTakenEpcs.contains(epc)) {
-    return ready.rfidReadEpcs.contains(epc) ? _ItemStatus.restored : _ItemStatus.awaitingReturn;
-  }
-
   if (ready.takenEpcs.contains(epc)) return _ItemStatus.taken;
   if (ready.notFoundEpcs.contains(epc)) return _ItemStatus.notFound;
-  if (ready.rfidReadEpcs.contains(epc)) return _ItemStatus.inCabinet;
-  // Baseline öncesi default — inCabinet'a yakın görsel
+  // Baseline'da var ve çıkmadı → hâlâ kabinde
   return _ItemStatus.inCabinet;
 }
 
@@ -47,8 +34,6 @@ class _ItemsList extends ConsumerWidget {
     final state = ref.watch(mobileIntakeNotifierProvider);
     final ready = state.readyContext;
     if (ready == null) return const SizedBox.shrink();
-
-    final isRollbackInProgress = state is MobileIntakeRollbackInProgress;
 
     final selectedItems =
         ready.prescriptionItems.where((i) => i.id != null && ready.selectedItemIds.contains(i.id)).toList()
@@ -64,10 +49,10 @@ class _ItemsList extends ConsumerWidget {
       shrinkWrap: true,
       padding: EdgeInsets.only(bottom: MedSpacing.insetMd.top),
       itemCount: selectedItems.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, i) {
         final item = selectedItems[i];
-        final status = _itemStatusFor(item, ready, isRollbackInProgress: isRollbackInProgress);
+        final status = _itemStatusFor(item, ready);
         return _ItemCard(item: item, status: status);
       },
     );
@@ -83,10 +68,9 @@ class _ItemCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = switch (status) {
-      _ItemStatus.taken || _ItemStatus.restored => ItemCardColors.green,
+      _ItemStatus.taken => ItemCardColors.green,
       _ItemStatus.inCabinet => ItemCardColors.blue,
       _ItemStatus.notFound => ItemCardColors.amber,
-      _ItemStatus.awaitingReturn => ItemCardColors.red,
       _ItemStatus.nonRfid => ItemCardColors.neutral,
     };
 
@@ -141,18 +125,6 @@ StatusBadge _intakeItemBadge(_ItemStatus status) {
       MedColors.amberLight,
       PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
       'Bulunamadı',
-    ),
-    _ItemStatus.restored => (
-      MedColors.green,
-      MedColors.greenLight,
-      PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
-      'Geri Kondu',
-    ),
-    _ItemStatus.awaitingReturn => (
-      MedColors.red,
-      MedColors.redLight,
-      PhosphorIcons.arrowUDownLeft(PhosphorIconsStyle.bold),
-      'Geri Konmalı',
     ),
     _ItemStatus.nonRfid => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), 'RFID yok'),
   };

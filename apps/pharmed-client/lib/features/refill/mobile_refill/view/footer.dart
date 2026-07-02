@@ -10,41 +10,33 @@ FooterContent _refillFooter(
   final hint = switch (state) {
     MobileRefillFatalError(:final message) => 'Kritik bir hata oluştu: $message',
     MobileRefillSaving() => 'Kaydediliyor...',
-    MobileRefillError() => 'Hata oluştu — tekrar deneyebilir veya çekmeceyi açıp ilaçları çıkartabilirsiniz',
-    MobileRefillRollbackInProgress() => switch (stage) {
-      MobileDrawerOpening() => 'Çekmece açılıyor, lütfen bekleyin...',
-      MobileDrawerOpened() => 'Yerleştirdiğiniz ilaçları kabinden çıkartın, ardından çekmeceyi kapatın.',
-      MobileDrawerClosed() =>
-        ready.rfidReadEpcs.isEmpty
-            ? 'İlaçları çıkardınız. İşlem sonlandırılıyor...'
-            : 'İlaçlar hâlâ kabinde. Tekrar denemek için "Tekrar Dene" veya çekmeceyi açmak için ilgili butonu kullanın.',
-      _ => 'İşlem geri alınıyor...',
-    },
+    MobileRefillSuccess() => 'İşlem tamamlandı',
+    MobileRefillError() => 'Hata oluştu - tekrar deneyebilirsiniz',
+    MobileRefillWaitingClose() => 'Kayıt alındı. İşlemi bitirmek için çekmeceyi kapatın',
+    MobileRefillClosedEarly() => 'Çekmece kapatıldı. İptal edebilir veya kaldığınız yerden devam edebilirsiniz',
     _ => switch (stage) {
       MobileDrawerOpening() => 'Çekmece açılıyor...',
-      MobileDrawerClosed() => switch (ready) {
-        _ when ready.canComplete => 'İşlemi bitirmek için tamamla butonuna basın',
-        _ when ready.isBlockedByUnexpected => 'Kabine ait olmayan etiket(ler) var, çekmeceyi tekrar açıp çıkartın',
-        _ when ready.hasExtraPlacement => 'Seçili ilaçlar dışında etiket kondu, çekmeceyi tekrar açıp çıkartın',
-        _ => 'Eksik etiketler var, çekmeceyi tekrar açıp yerleştirmeye devam edin',
-      },
-      // Drawer Opened
       _ when !ready.baselineCompleted => 'Kabin taranıyor, lütfen bekleyin',
-      _ => 'İlaçları yerleştirin, ardından çekmeceyi kapatın',
+      _ when ready.canComplete => 'Hazır — işlemi tamamlayabilirsiniz',
+      _ when ready.hasExtraPlacement => 'Seçili ilaçlar dışında etiket kondu, lütfen çıkartın',
+      _ => 'İlaçları yerleştirin, ardından işlemi tamamlayın',
     },
   };
 
   // ── Actions ──
-  final actions = switch (state) {
+  final List<Widget> actions = switch (state) {
     MobileRefillFatalError() => [FooterActions.dismiss(notifier.dismissError)],
-    MobileRefillError() => [FooterActions.retry(notifier.retryComplete)],
-    MobileRefillRollbackInProgress() => const <Widget>[],
+    MobileRefillSuccess() => [FooterActions.dismiss(notifier.dismissSuccess)],
     MobileRefillSaving() => [FooterActions.saving()],
-    _ when stage is MobileDrawerClosed && ready.canComplete => [
-      FooterActions.primary('İşlemi tamamla', notifier.completeRefill),
+    MobileRefillError() => [FooterActions.retry(notifier.retryComplete)],
+    MobileRefillWaitingClose() => const [], // buton yok, kapanış bekleniyor
+    MobileRefillClosedEarly() => [
+      FooterActions.secondary('İptal', notifier.cancelEarlyClose),
+      SizedBox(width: 10),
+      FooterActions.primary('Devam Et', notifier.retryEarlyClose),
     ],
-    _ when stage is MobileDrawerClosed => [FooterActions.primary('Doluma Devam Et', notifier.reopenDrawer)],
-    _ => [FooterActions.primary('İşlemi tamamla', null)],
+    _ when ready.canComplete => [FooterActions.primary('İşlemi tamamla', notifier.completeRefill)],
+    _ => [FooterActions.primary('İşlemi tamamla', null)], // disabled
   };
 
   return FooterContent(hint: hint, actions: actions);

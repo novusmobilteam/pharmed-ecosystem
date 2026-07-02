@@ -88,6 +88,14 @@ class MobileDrawerOrchestrator {
     _drawerSub = null;
     await _epcSub?.cancel();
     await _epcLostSub?.cancel();
+
+    // RFID oturumunu kapat — bir sonraki feature (dolum→alım geçişi) temiz başlasın.
+    // Aksi halde inventory açık kalır, yeni feature Opened'da erken/çift inventory yaşar.
+    ref.read(rfidScanSessionProvider.notifier).stop();
+    if (_rfid.isConnected) {
+      await _rfid.disconnect();
+    }
+
     _onStage = null;
     _epcSub = null;
     _epcLostSub = null;
@@ -95,6 +103,7 @@ class MobileDrawerOrchestrator {
     _onEpcLost = null;
     _initialized = false;
     _isConnecting = false;
+    _globalConnecting = false; // static guard'ı da temizle — geçişte kalıntı kalmasın
   }
 
   /// Verilen [slot] için yeni bir çekmece oturumu başlatır.
@@ -114,13 +123,11 @@ class MobileDrawerOrchestrator {
 
   /// Çekmece ve RFID oturumlarını sıfırlar. Banner kaybolur.
   Future<void> stop() async {
-    // Önce RFID session'ı durdur (inventory stream'i kapat)
     ref.read(rfidScanSessionProvider.notifier).stop();
-
-    // Kısa bekleme — stopInventory'nin Answer Mode set etmesi için
     await Future.delayed(const Duration(milliseconds: 150));
-
-    // Sonra drawer session'ı durdur
+    if (_rfid.isConnected) {
+      await _rfid.disconnect();
+    }
     await ref.read(mobileDrawerSessionProvider.notifier).stop();
   }
 
@@ -131,7 +138,7 @@ class MobileDrawerOrchestrator {
   /// feature notifier _onStage callback'inde MobileDrawerOpened gördüğünde
   /// bu metodu çağırarak baseline alır.
   Future<Set<String>> snapshot({Duration window = const Duration(milliseconds: 1500)}) {
-    return ref.read(rfidScanSessionProvider.notifier).snapshot(window: window);
+    return ref.read(rfidScanSessionProvider.notifier).snapshot();
   }
 
   void _handleStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
@@ -140,8 +147,15 @@ class MobileDrawerOrchestrator {
     if (next is MobileDrawerOpened && prev is! MobileDrawerOpened) {
       if (!_isConnecting) {
         _isConnecting = true;
-        unawaited(_onDrawerOpened(rfidNotifier).whenComplete(() => _isConnecting = false));
+        // Opened'ı feature notifier'a inventory HAZIR olduktan sonra bildir.
+        unawaited(
+          _onDrawerOpened(rfidNotifier).whenComplete(() {
+            _isConnecting = false;
+            _onStage?.call(prev, next);
+          }),
+        );
       }
+      return; // Opened için _onStage'i aşağıda TEKRAR çağırma
     } else if (next is MobileDrawerClosed || next is MobileDrawerFailed) {
       _onDrawerClosed(rfidNotifier);
     }
@@ -167,7 +181,9 @@ class MobileDrawerOrchestrator {
   }
 
   Future<void> _ensureRfidConnected() async {
-    if (_globalConnecting) return;
+    while (_globalConnecting) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
     _globalConnecting = true;
 
     try {

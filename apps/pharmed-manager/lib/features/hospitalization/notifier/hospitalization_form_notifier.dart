@@ -2,10 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../auth/notifier/auth_notifier.dart';
-
 class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
-  final AuthNotifier _authNotifier;
   final CreateHospitalizationUseCase _createHospitalizationUseCase;
   final UpdateHospitalizationUseCase _updateHospitalizationUseCase;
   final GetRoomsUseCase _getRoomsUseCase;
@@ -14,13 +11,12 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   HospitalizationFormNotifier({
     Patient? patient,
     Hospitalization? hospitalization,
-    required AuthNotifier authNotifier,
+
     required GetRoomsUseCase getRoomsUseCase,
     required GetBedsUseCase getBedsUseCase,
     required CreateHospitalizationUseCase createHospitalizationUseCase,
     required UpdateHospitalizationUseCase updateHospitalizationUseCase,
-  }) : _authNotifier = authNotifier,
-       _createHospitalizationUseCase = createHospitalizationUseCase,
+  }) : _createHospitalizationUseCase = createHospitalizationUseCase,
        _updateHospitalizationUseCase = updateHospitalizationUseCase,
        _getRoomsUseCase = getRoomsUseCase,
        _getBedsUseCase = getBedsUseCase {
@@ -38,9 +34,6 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
           bedId: hospitalization.bedId,
         );
       }
-    }
-    if (_authNotifier.currentUser != null) {
-      selectDoctor(_authNotifier.currentUser!.toUser());
     }
   }
 

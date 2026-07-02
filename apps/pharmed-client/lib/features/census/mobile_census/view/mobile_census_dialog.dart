@@ -66,13 +66,7 @@ class MobileCensusDialog extends ConsumerWidget {
       ],
       banners: [
         if (errorMessage != null) OperationErrorBanner(message: errorMessage),
-        if (ready.excessEpcs.isNotEmpty)
-          UnexpectedTagBanner(
-            epcs: ready.excessEpcs,
-            message:
-                'Kabinde ${ready.excessEpcs.length} beklenmeyen etiketli ilaç okundu. '
-                'Lütfen alın veya fazla stok olarak bildirin.',
-          ),
+        if (ready.excessEpcs.isNotEmpty) UnexpectedTagBanner(epcs: ready.excessEpcs),
         if (ready.missingEpcs.isNotEmpty) MissingStockBanner(count: ready.missingEpcs.length),
       ],
       footerContent: _censusFooter(state, drawerStage, ready, notifier),

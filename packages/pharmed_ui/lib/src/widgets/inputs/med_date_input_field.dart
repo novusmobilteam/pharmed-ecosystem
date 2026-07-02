@@ -69,8 +69,19 @@ class _MedDateInputFieldState extends State<MedDateInputField> {
                       builder: (context, child) => Theme(data: Theme.of(context), child: child!),
                     );
                     if (selected != null) {
-                      field.didChange(selected);
-                      widget.onDateSelected?.call(selected);
+                      final now = DateTime.now();
+                      final exactDate = DateTime(
+                        selected.year,
+                        selected.month,
+                        selected.day,
+                        now.hour,
+                        now.minute,
+                        now.second,
+                      );
+
+                      field.didChange(exactDate);
+
+                      widget.onDateSelected?.call(exactDate);
                     }
                   }
                 : null,

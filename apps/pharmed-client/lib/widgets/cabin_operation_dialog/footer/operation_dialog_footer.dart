@@ -42,6 +42,9 @@ class FooterActions {
   static Widget primary(String label, VoidCallback? onPressed) =>
       MedButton(label: label, size: MedButtonSize.sm, onPressed: onPressed);
 
+  static Widget secondary(String label, VoidCallback? onPressed) =>
+      MedButton(label: label, size: MedButtonSize.sm, onPressed: onPressed, variant: MedButtonVariant.secondary);
+
   /// "Tekrar Dene" — Error state'inde.
   static Widget retry(VoidCallback onPressed) =>
       MedButton(label: 'Tekrar Dene', size: MedButtonSize.sm, onPressed: onPressed);

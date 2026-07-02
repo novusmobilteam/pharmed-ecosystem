@@ -46,11 +46,7 @@ class MobileIntakePanel extends StatelessWidget {
         MobileIntakeUninitialized() ||
         MobileIntakeLoading() => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
 
-        MobileIntakeIdle() ||
-        MobileIntakeSlotSelected() ||
-        MobileIntakeNoPatient() ||
-        MobileIntakeRollbackCompleted() ||
-        MobileIntakeFatalError() => CabinPatientPickerList(
+        MobileIntakeIdle() || MobileIntakeSlotSelected() || MobileIntakeNoPatient() => CabinPatientPickerList(
           assignments: state.availableAssignments,
           onSelected: onSelectAssignment,
         ),
@@ -91,16 +87,10 @@ class MobileIntakePanel extends StatelessWidget {
             selectedItemIds: ready.selectedItemIds,
             isProcessActive: _isSelectionLocked,
             onToggleItem: onToggleItem,
-            takenEpcs: ready.takenEpcs,
-            rfidReadEpcs: ready.rfidReadEpcs,
             isDrawerOpen: _isDrawerOpen,
           ),
         ),
-        _IntakeActionBar(
-          drawerStage: drawerStage,
-          hasSelection: ready.selectedItemIds.isNotEmpty,
-          onStart: onStartIntake,
-        ),
+        _IntakeActionBar(state: ready, hasSelection: ready.selectedItemIds.isNotEmpty, onStart: onStartIntake),
       ],
     );
   }
@@ -109,8 +99,6 @@ class MobileIntakePanel extends StatelessWidget {
 class _PrescriptionList extends StatelessWidget {
   const _PrescriptionList({
     required this.items,
-    required this.takenEpcs,
-    required this.rfidReadEpcs,
     required this.selectedItemIds,
     required this.isProcessActive,
     required this.onToggleItem,
@@ -118,14 +106,6 @@ class _PrescriptionList extends StatelessWidget {
   });
 
   final List<PrescriptionItem> items;
-
-  /// Kabinden çıkarılmış (alındı sayılan) EPC'ler.
-  ///
-  /// Alım akışında RFID semantiği dolumun tersidir:
-  /// EPC [takenEpcs]'te yoksa ilaç hâlâ kabinde → okundu (yeşil).
-  /// EPC [takenEpcs]'e girince kabinden çıktı → alındı.
-  final Set<String> takenEpcs;
-  final Set<String> rfidReadEpcs;
 
   final Set<int> selectedItemIds;
 
@@ -165,20 +145,11 @@ class _PrescriptionList extends StatelessWidget {
         final isEligible = item.status == PrescriptionMovementType.purchasePending;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
 
-        final rfidStatus = !isProcessActive
-            ? null // session başlamadı
-            : takenEpcs.contains(item.rfidTag)
-            ? RfidPresenceStatus.removed
-            : rfidReadEpcs.contains(item.rfidTag)
-            ? RfidPresenceStatus.present
-            : RfidPresenceStatus.absent;
-
         return RxOperationCard(
           mode: RxOperationCardMode.intake,
           item: item,
           isEligible: isEligible,
           isSelected: isSelected,
-          rfidStatus: rfidStatus,
           onTap: isProcessActive || item.id == null ? null : () => onToggleItem(item.id!),
         );
       },
@@ -187,15 +158,15 @@ class _PrescriptionList extends StatelessWidget {
 }
 
 class _IntakeActionBar extends StatelessWidget {
-  const _IntakeActionBar({required this.drawerStage, required this.hasSelection, required this.onStart});
+  const _IntakeActionBar({required this.state, required this.hasSelection, required this.onStart});
 
-  final MobileDrawerStage drawerStage;
+  final MobileIntakeState state;
   final bool hasSelection;
   final VoidCallback onStart;
 
   @override
   Widget build(BuildContext context) {
-    if (drawerStage is MobileDrawerIdle) {
+    if (state is MobileIntakeReady) {
       return SizedBox(
         width: context.width,
         child: MedButton(

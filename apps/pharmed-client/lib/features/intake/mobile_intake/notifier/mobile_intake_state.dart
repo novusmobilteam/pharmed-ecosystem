@@ -84,27 +84,12 @@ final class MobileIntakeNoPatient extends MobileIntakeState {
   int get selectedSlotId => selectedSlot.slotId;
 }
 
-/// Backend check devam ediyor — [CheckMobileIntakeUseCase] sonucu bekleniyor.
-///
-/// Check başarılı olursa çekmece açılır, başarısız olursa
-/// [MobileIntakeError] ile [ready]'e dönülür.
+/// Çekmece açılmadan ÖNCE: alım işleminin yapılabilir olup olmadığını
+/// sunucuya soran kontrol fazı. Başarılı → Ready (çekmece açılır),
+/// başarısız → Error (previousState: ready).
 final class MobileIntakeCheckInProgress extends MobileIntakeState {
-  const MobileIntakeCheckInProgress({
-    required this.slots,
-    required this.mobileSlots,
-    required this.selectedSlot,
-    required this.assignments,
-    required this.cabinId,
-    required this.ready,
-  });
+  const MobileIntakeCheckInProgress({required this.ready});
 
-  final List<MobileSlotVisual> slots;
-  final List<MobileDrawerSlot> mobileSlots;
-  final MobileSlotVisual selectedSlot;
-  final List<BedAssignment> assignments;
-  final int cabinId;
-
-  /// Check başarısız olursa bu state'e dönülür.
   final MobileIntakeReady ready;
 }
 
@@ -115,27 +100,21 @@ final class MobileIntakeCheckInProgress extends MobileIntakeState {
 /// gösterir. Bu state Opened event'i ile [MobileIntakeReady]'e geri döner ve
 /// baseline scan başlar.
 final class MobileIntakeDrawerOpening extends MobileIntakeState {
-  const MobileIntakeDrawerOpening({
-    required this.slots,
-    required this.mobileSlots,
-    required this.selectedSlot,
-    required this.assignments,
-    required this.cabinId,
-    required this.ready,
-  });
+  const MobileIntakeDrawerOpening({required this.ready});
 
-  final List<MobileSlotVisual> slots;
-  final List<MobileDrawerSlot> mobileSlots;
-  final MobileSlotVisual selectedSlot;
-  final List<BedAssignment> assignments;
-  final int cabinId;
-
-  /// Hata veya geri dönüş için referans. RFID kümeleri burada tutulur;
-  /// orchestrator opened sonrası ready'e döner.
   final MobileIntakeReady ready;
 }
 
 /// Göz seçildi, hasta var, reçeteler yüklendi — ana çalışma state'i.
+///
+/// RFID reconciliation modeli (dolumla simetrik, alım = kabinden ÇIKARMA):
+///   Kalıcı runtime alanları YALNIZCA iki tanedir:
+///     - baselineEpcs      = snapshot anındaki tüm kabin etiketleri (SABİT)
+///     - baselineLostEpcs  = baseline'dan çıkarılan (lost olan) etiketler
+///   Diğer tüm kümeler bunlardan + expectedEpcs (seçim) türetilir:
+///     - takenEpcs      = baselineLostEpcs ∩ expectedEpcs  (başarıyla alındı)
+///     - unplannedMovements = baselineLostEpcs ∖ expectedEpcs (izinsiz çıkış)
+///     - notFoundEpcs   = expectedEpcs ∖ baselineEpcs  (kabinde hiç yoktu → eksik)
 final class MobileIntakeReady extends MobileIntakeState {
   const MobileIntakeReady({
     required this.slots,
@@ -148,21 +127,18 @@ final class MobileIntakeReady extends MobileIntakeState {
     required this.bed,
     required this.room,
     required this.prescriptionItems,
-    required this.rfidReadEpcs,
-    required this.takenEpcs,
     required this.selectedItemIds,
-    this.reportingItemIds = const {}, // "eksik stok bildiriliyor" loading
+    this.reportingItemIds = const {},
     this.datePreset = DateRangePreset.today,
     this.statusFilter = PrescriptionMovementType.purchasePending,
     this.baselineCompleted = false,
-    this.notFoundEpcs = const {},
-    this.unexpectedEpcs = const {},
-    this.unplannedMovements = const {},
-    this.previouslyTakenEpcs = const {},
+    this.baselineEpcs = const {},
+    this.baselineLostEpcs = const {},
     this.reportedMissingItemIds = const {},
-    this.passiveEpcs = const {},
+    this.placedEpcs = const {},
   });
 
+  // ── Sahne ──────────────────────────────────────────────────────────────
   final List<MobileSlotVisual> slots;
   final List<MobileDrawerSlot> mobileSlots;
   final MobileSlotVisual selectedSlot;
@@ -172,117 +148,40 @@ final class MobileIntakeReady extends MobileIntakeState {
   final Patient patient;
   final Bed? bed;
   final Room? room;
-  final List<PrescriptionItem> prescriptionItems;
-  final Set<String> rfidReadEpcs;
-  final Set<int> reportingItemIds;
 
-  /// Kabinden çıkarılmış (alındı sayılan) EPC'ler.
-  ///
-  /// Dolumun tersine: [rfidReadEpcs] artık okunabilenler,
-  /// [takenEpcs] ise artık okunmayanlar (kabinden çıkarılanlar).
-  /// EPC geri gelirse [takenEpcs]'ten çıkarılır.
-  final Set<String> takenEpcs;
+  // ── Reçete ve seçim ────────────────────────────────────────────────────
+  final List<PrescriptionItem> prescriptionItems;
   final Set<int> selectedItemIds;
   final DateRangePreset datePreset;
   final PrescriptionMovementType? statusFilter;
 
-  /// Çekmece açıldıktan sonra baseline snapshot tamamlandı mı?
-  /// false iken dialog "Tarama yapılıyor..." gösterir.
-  final bool baselineCompleted;
-
-  /// Seçili RFID'li item'ların snapshot'ta okunmayan EPC'leri.
-  /// Bu EPC'ler için kullanıcı hiçbir şey yapmaz; "Tamamla" basıldığında
-  /// otomatik eksik stok bildirimi tetiklenir.
-  ///
-  /// SWREQ-CLI-INTAKE-007
-  final Set<String> notFoundEpcs;
-
-  /// Snapshot'ta okunan ama seçili herhangi bir item'a ait olmayan EPC'ler.
-  /// Kabinde olmaları normal (başka hastaların ilaçları); yalnızca
-  /// kaybolurlarsa plan dışı sayılır.
-  final Set<String> unexpectedEpcs;
-
-  /// Plan dışı hareket eden EPC'ler.
-  /// unexpectedEpcs'ten lost olanlar buraya geçer.
-  ///
-  /// SWREQ-CLI-INTAKE-008
-  final Set<String> unplannedMovements;
-
-  /// MobileIntakeRollbackInProgress state'inde, daha önce yerleştirilmiş olan tag'leri tutar.
-  /// Bu sayede tag çıkarıldığında "Kabine Bırakıldı" badge'i gösterebiliriz.
-  final Set<String> previouslyTakenEpcs;
+  /// "Eksik stok bildiriliyor" anlık loading göstergesi (item id'leri).
+  final Set<int> reportingItemIds;
 
   /// Manuel eksik stok bildirimi BAŞARIYLA gönderilmiş item id'leri.
-  /// reportingItemIds (anlık loading) ile karıştırılmamalı — bu kalıcıdır,
-  /// backend reçeteyi yenileyip item'ı düşürene kadar butonu disabled tutar.
+  /// Kalıcıdır; backend reçeteyi yenileyip item'ı düşürene kadar butonu
+  /// disabled tutar. reportingItemIds (anlık loading) ile karıştırılmamalı.
   final Set<int> reportedMissingItemIds;
 
-  /// Kabinde okunan, expectedEpcs'te olan ama seçili olmayan EPC'ler
-  /// (= PASSIVE, başka hastaların ilaçları). Kaybolurlarsa unplannedMovements'a geçer.
-  final Set<String> passiveEpcs;
+  // ── RFID reconciliation — kalıcı iki alan ───────────────────────────────
+
+  /// Çekmece açıldıktan sonra baseline snapshot tamamlandı mı?
+  /// false iken dialog "Tarama yapılıyor..." gösterir; complete disabled.
+  final bool baselineCompleted;
+
+  /// Snapshot ile yakalanan, işlem ÖNCESİ kabinde bulunan TÜM etiketler.
+  /// İşlem boyunca SABİT kalır; kaynak-doğruluk kümesi.
+  final Set<String> baselineEpcs;
+
+  /// Baseline'dan çıkarılan (lost olan) etiketler.
+  /// Seçiliyse → alındı (taken), değilse → izinsiz çıkış (unplanned).
+  /// Bidirectional: EPC tekrar okunursa buradan çıkar (kullanıcı geri koydu).
+  final Set<String> baselineLostEpcs;
+
+  /// İlk taramada (baseline) olmayıp, süreç esnasında okunan yabancı/hatalı etiketler.
+  final Set<String> placedEpcs;
 
   int get selectedSlotId => selectedSlot.slotId;
-
-  /// Snapshot'ta okunan toplam etiket sayısı (mockup'taki "Kabinde okunan").
-  int get totalReadCount => rfidReadEpcs.length + passiveEpcs.length + unexpectedEpcs.length;
-
-  /// Plan dışı hareket sayısı (mockup'taki "Plan dışı hareket").
-  int get unplannedCount => unplannedMovements.length;
-
-  /// Bulunamayan seçili RFID'li item sayısı.
-  int get notFoundCount => _selectedRfidItems.where((i) => notFoundEpcs.contains(i.rfidTag!)).length;
-
-  /// Tamamla butonu için: seçili RFID'li item'ların EPC'si takenEpcs'te mi?
-  ///
-  /// RFID'li item yoksa (hepsi RFID'siz) direkt true döner.
-  bool get canComplete {
-    if (!baselineCompleted) return false; // snapshot daha bitmedi
-    final rfidItems = _selectedRfidItems;
-    if (rfidItems.isEmpty) return true;
-    return rfidItems.every((i) {
-      final epc = i.rfidTag!;
-      // Ya kabinde okundu ve çıkartıldı → takenEpcs
-      // Ya da hiç okunmadı → notFoundEpcs (otomatik eksik bildirim olacak)
-      return takenEpcs.contains(epc) || notFoundEpcs.contains(epc);
-    });
-  }
-
-  /// Banner sayacı için: işaretli RFID'li ilaç sayısı.
-  int get rfidExpectedCount => _selectedRfidItems.length;
-
-  /// Bunlardan kaç tanesinin EPC'si takenEpcs'te (alındı sayıldı).
-  int get rfidTakenCount => _selectedRfidItems.where((i) => takenEpcs.contains(i.rfidTag!)).length;
-
-  /// UI banner'ı için: plan dışı hareket var mı?
-  bool get hasUnplannedMovement => unplannedMovements.isNotEmpty;
-
-  bool get hasUnexpectedTag => unexpectedEpcs.isNotEmpty;
-
-  /// Rollback sırasında: previouslyTakenEpcs'ten henüz kabine geri konmamış
-  /// (yani hâlâ rfidReadEpcs'te OKUNMAYAN) tag'ler. Boşsa rollback tamamdır.
-  /// _onDrawerStageChange'deki MobileDrawerClosed branch'i bunu kullanır.
-  Set<String> get pendingRollbackEpcs => previouslyTakenEpcs.difference(rfidReadEpcs);
-
-  /// Rollback tamamlanma koşulu: tüm alınan tag'ler kabine geri kondu mu?
-  bool get isRollbackComplete => pendingRollbackEpcs.isEmpty;
-
-  Set<String> get selectedRfidEpcs => _selectedRfidItems.map((i) => i.rfidTag!).toSet();
-
-  /// RFID reconciliation kümelerinin tümünü sıfırlayan bir kopya.
-  /// Reopen, cancel, drawer fail, complete success akışlarında kullanılır.
-  /// Reçete, seçim ve sahne KORUNUR — sadece RFID bayrakları sıfırlanır.
-  /// previouslyTakenEpcs de sıfırlanır (rollback bağlamı bitti).
-  MobileIntakeReady get clearedRfidState => copyWith(
-    // ← YENİ (dolumdan uyarlandı)
-    baselineCompleted: false,
-    rfidReadEpcs: const {},
-    takenEpcs: const {},
-    notFoundEpcs: const {},
-    unexpectedEpcs: const {},
-    passiveEpcs: const {},
-    unplannedMovements: const {},
-    previouslyTakenEpcs: const {},
-  );
 
   List<PrescriptionItem> get _selectedRfidItems => prescriptionItems
       .where(
@@ -296,23 +195,65 @@ final class MobileIntakeReady extends MobileIntakeState {
       )
       .toList();
 
+  /// Seçili RFID'li ilaçların beklenen etiketleri (alınması gerekenler).
+  Set<String> get expectedEpcs => _selectedRfidItems.map((i) => i.rfidTag!).toSet();
+
+  /// Baseline'dan çıkarılan VE seçili olan → başarıyla alındı.
+  Set<String> get takenEpcs => baselineLostEpcs.intersection(expectedEpcs);
+
+  /// Baseline'dan çıkarılan VE seçili OLMAYAN → izinsiz çıkış (başka hasta stoğu).
+  /// Kapanışta eksik stok bildirimine dönüşür.
+  Set<String> get unplannedMovements => baselineLostEpcs.difference(expectedEpcs);
+
+  /// Beklenen ama baseline'da hiç okunmayan → kabinde yoktu (bulunamadı).
+  /// "Tamamla" basıldığında otomatik eksik stok bildirimi tetiklenir.
+  Set<String> get notFoundEpcs => expectedEpcs.difference(baselineEpcs);
+
+  /// Kabinde anlık okunan toplam etiket (hâlâ duran baseline).
+  int get totalReadCount => baselineEpcs.difference(baselineLostEpcs).length;
+
+  int get unplannedCount => unplannedMovements.length;
+  int get notFoundCount => notFoundEpcs.length;
+
+  /// Banner sayacı: işaretli RFID'li ilaç sayısı.
+  int get rfidExpectedCount => expectedEpcs.length;
+
+  /// Bunlardan kaç tanesi alındı (taken).
+  int get rfidTakenCount => takenEpcs.length;
+
+  bool get hasUnplannedMovement => unplannedMovements.isNotEmpty;
+  bool get hasUnexpectedEpc => placedEpcs.isNotEmpty;
+
+  /// Tamamla kuralı: seçili RFID'li ilaçların hepsi ya alındı ya bulunamadı.
+  /// RFID'li ilaç yoksa (hepsi RFID'siz) direkt true.
+  bool get canComplete {
+    if (!baselineCompleted) return false;
+    final rfidItems = _selectedRfidItems;
+    if (rfidItems.isEmpty) return true;
+    return rfidItems.every((i) {
+      final epc = i.rfidTag!;
+      return takenEpcs.contains(epc) || notFoundEpcs.contains(epc);
+    });
+  }
+
+  /// RFID reconciliation kümelerini sıfırlayan kopya.
+  /// Reopen, cancel, drawer fail, complete success akışlarında kullanılır.
+  /// Reçete, seçim ve sahne KORUNUR.
+  MobileIntakeReady get clearedRfidState =>
+      copyWith(baselineCompleted: false, baselineEpcs: const {}, baselineLostEpcs: const {});
+
   MobileIntakeReady copyWith({
     List<PrescriptionItem>? prescriptionItems,
-    Set<String>? rfidReadEpcs,
-    Set<String>? takenEpcs,
     Set<int>? selectedItemIds,
     Set<int>? reportingItemIds,
+    Set<int>? reportedMissingItemIds,
     DateRangePreset? datePreset,
     PrescriptionMovementType? statusFilter,
     bool clearStatusFilter = false,
     bool? baselineCompleted,
-    Set<String>? notFoundEpcs,
-    Set<String>? unexpectedEpcs,
-    Set<String>? unplannedMovements,
-    Set<String>? previouslyTakenEpcs,
-    Set<int>? reportedMissingItemIds,
-    Set<String>? expectedEpcs,
-    Set<String>? passiveEpcs,
+    Set<String>? baselineEpcs,
+    Set<String>? baselineLostEpcs,
+    Set<String>? placedEpcs,
   }) {
     return MobileIntakeReady(
       slots: slots,
@@ -325,133 +266,50 @@ final class MobileIntakeReady extends MobileIntakeState {
       bed: bed,
       room: room,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
-      rfidReadEpcs: rfidReadEpcs ?? this.rfidReadEpcs,
-      takenEpcs: takenEpcs ?? this.takenEpcs,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
       reportingItemIds: reportingItemIds ?? this.reportingItemIds,
+      reportedMissingItemIds: reportedMissingItemIds ?? this.reportedMissingItemIds,
       datePreset: datePreset ?? this.datePreset,
       statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
       baselineCompleted: baselineCompleted ?? this.baselineCompleted,
-      notFoundEpcs: notFoundEpcs ?? this.notFoundEpcs,
-      unexpectedEpcs: unexpectedEpcs ?? this.unexpectedEpcs,
-      unplannedMovements: unplannedMovements ?? this.unplannedMovements,
-      previouslyTakenEpcs: previouslyTakenEpcs ?? this.previouslyTakenEpcs,
-      reportedMissingItemIds: reportedMissingItemIds ?? this.reportedMissingItemIds,
-
-      passiveEpcs: passiveEpcs ?? this.passiveEpcs,
+      baselineEpcs: baselineEpcs ?? this.baselineEpcs,
+      baselineLostEpcs: baselineLostEpcs ?? this.baselineLostEpcs,
+      placedEpcs: placedEpcs ?? this.placedEpcs,
     );
   }
 }
 
 /// Alım tamamlama işlemi devam ediyor.
 final class MobileIntakeSaving extends MobileIntakeState {
-  const MobileIntakeSaving({
-    required this.slots,
-    required this.mobileSlots,
-    required this.selectedSlot,
-    required this.assignments,
-    required this.cabinId,
-    required this.ready,
-  });
+  const MobileIntakeSaving({required this.ready});
 
-  final List<MobileSlotVisual> slots;
-  final List<MobileDrawerSlot> mobileSlots;
-  final MobileSlotVisual selectedSlot;
-  final List<BedAssignment> assignments;
-  final int cabinId;
+  final MobileIntakeReady ready;
+}
+
+/// Kayıt başarıyla gitti; çekmece hâlâ açık, kullanıcının kapatması bekleniyor.
+/// Butonlar kalkar. RFID canlı dinlenir — kullanıcı bu sırada tag alır/geri
+/// koyarsa ready.baselineLostEpcs güncellenir, banner anlık gösterilir.
+/// Çekmece kapandığı an _reportUnplannedMovements bu kümeleri okuyup bildirir.
+final class MobileIntakeWaitingClose extends MobileIntakeState {
+  const MobileIntakeWaitingClose({required this.ready});
+
+  final MobileIntakeReady ready;
+}
+
+/// Kullanıcı "Tamamla" demeden çekmeceyi kapattı. Kayıt YOK.
+/// İptal (çık) veya Tekrar Dene (çekmece yeniden açılır) seçenekleri sunulur.
+final class MobileIntakeClosedEarly extends MobileIntakeState {
+  const MobileIntakeClosedEarly({required this.ready});
+
   final MobileIntakeReady ready;
 }
 
 /// Alım başarıyla tamamlandı.
 final class MobileIntakeSuccess extends MobileIntakeState {
-  const MobileIntakeSuccess({
-    required this.slots,
-    required this.mobileSlots,
-    required this.selectedSlot,
-    required this.assignments,
-    required this.cabinId,
-    required this.message,
-    required this.ready,
-  });
+  const MobileIntakeSuccess({required this.ready, this.message});
 
-  final List<MobileSlotVisual> slots;
-  final List<MobileDrawerSlot> mobileSlots;
-  final MobileSlotVisual selectedSlot;
-  final List<BedAssignment> assignments;
-  final int cabinId;
-  final String message;
   final MobileIntakeReady ready;
-}
-
-/// Kullanıcı hata aldıktan sonra "Vazgeç" ile işlemi iptal etti.
-/// RFID state'i KORUNUR, böylece kullanıcı çıkardığı tag'ler
-/// unplannedMovements olarak doğru şekilde kaydedilir.
-///
-/// Bu state'teyken:
-///   - Drawer açık veya kapanmış olabilir
-///   - Kullanıcı tag'leri çıkarırken event'ler çalışmaya devam eder
-///   - Tüm tag'ler çıkınca işlem doğal olarak sonlanır
-final class MobileIntakeRollbackInProgress extends MobileIntakeState {
-  const MobileIntakeRollbackInProgress({
-    required this.slots,
-    required this.mobileSlots,
-    required this.selectedSlot,
-    required this.assignments,
-    required this.cabinId,
-    required this.ready,
-    this.cancelledAt,
-  });
-
-  final List<MobileSlotVisual> slots;
-  final List<MobileDrawerSlot> mobileSlots;
-  final MobileSlotVisual selectedSlot;
-  final List<BedAssignment> assignments;
-  final int cabinId;
-
-  /// RFID state'i KORUNAN Ready (baselineCompleted, rfidReadEpcs, passiveEpcs, unplannedMovements, vs.)
-  final MobileIntakeReady ready;
-
-  final DateTime? cancelledAt;
-
-  int get selectedSlotId => selectedSlot.slotId;
-  MobileCellCoord get selectedCell => ready.selectedCell;
-
-  MobileIntakeRollbackInProgress copyWith({MobileIntakeReady? ready}) {
-    return MobileIntakeRollbackInProgress(
-      slots: slots,
-      mobileSlots: mobileSlots,
-      selectedSlot: selectedSlot,
-      assignments: assignments,
-      cabinId: cabinId,
-      ready: ready ?? this.ready,
-    );
-  }
-}
-
-/// Geri alma (rollback) işlemi başarıyla tamamlandı.
-///
-/// Kullanıcı, donanımdan geri alması gereken tüm etiketleri çıkardığında
-/// (yani rfidReadEpcs kümesi tamamen boşaldığında) bu state'e geçilir.
-///
-/// Bu state'teyken:
-///   - UI katmanı bu değişimi dinler ve açık olan dialogu otomatik kapatır.
-///   - Sistem güvenli bir şekilde [MobileIntakeIdle] veya uygun sahneye döner.
-final class MobileIntakeRollbackCompleted extends MobileIntakeState {
-  const MobileIntakeRollbackCompleted({
-    required this.slots,
-    required this.mobileSlots,
-    required this.selectedSlot,
-    required this.assignments,
-    required this.cabinId,
-  });
-
-  final List<MobileSlotVisual> slots;
-  final List<MobileDrawerSlot> mobileSlots;
-  final MobileSlotVisual selectedSlot;
-  final List<BedAssignment> assignments;
-  final int cabinId;
-
-  int get selectedSlotId => selectedSlot.slotId;
+  final String? message;
 }
 
 /// İşlem hatası — previousState'e dönülür.
@@ -479,10 +337,6 @@ final class MobileIntakeFatalError extends MobileIntakeState {
   final MobileIntakeState previousState;
 }
 
-// ---------------------------------------------------------------------------
-// Extension
-// ---------------------------------------------------------------------------
-
 extension MobileIntakeStateX on MobileIntakeState {
   List<MobileSlotVisual> get slots => switch (this) {
     MobileIntakeLoading(:final slots) => slots,
@@ -490,15 +344,15 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeSlotSelected(:final slots) => slots,
     MobileIntakeNoPatient(:final slots) => slots,
     MobileIntakeReady(:final slots) => slots,
-    MobileIntakeCheckInProgress(:final slots) => slots,
-    MobileIntakeSaving(:final slots) => slots,
-    MobileIntakeSuccess(:final slots) => slots,
+    MobileIntakeDrawerOpening(:final ready) => ready.slots,
+    MobileIntakeSaving(:final ready) => ready.slots,
+    MobileIntakeWaitingClose(:final ready) => ready.slots,
+    MobileIntakeClosedEarly(:final ready) => ready.slots,
+    MobileIntakeSuccess(:final ready) => ready.slots,
     MobileIntakeError(:final previousState) => previousState.slots,
+    MobileIntakeFatalError(:final previousState) => previousState.slots,
     MobileIntakeUninitialized() => const [],
-    MobileIntakeDrawerOpening(:final slots) => slots,
-    MobileIntakeRollbackInProgress(:final slots) => slots,
-    MobileIntakeRollbackCompleted(:final slots) => slots,
-    MobileIntakeFatalError(:final slots) => slots,
+    MobileIntakeCheckInProgress(:final ready) => ready.slots,
   };
 
   List<MobileDrawerSlot> get mobileSlots => switch (this) {
@@ -507,10 +361,13 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeSlotSelected(:final mobileSlots) => mobileSlots,
     MobileIntakeNoPatient(:final mobileSlots) => mobileSlots,
     MobileIntakeReady(:final mobileSlots) => mobileSlots,
-    MobileIntakeCheckInProgress(:final mobileSlots) => mobileSlots,
-    MobileIntakeSaving(:final mobileSlots) => mobileSlots,
-    MobileIntakeSuccess(:final mobileSlots) => mobileSlots,
+    MobileIntakeDrawerOpening(:final ready) => ready.mobileSlots,
+    MobileIntakeSaving(:final ready) => ready.mobileSlots,
+    MobileIntakeWaitingClose(:final ready) => ready.mobileSlots,
+    MobileIntakeClosedEarly(:final ready) => ready.mobileSlots,
+    MobileIntakeSuccess(:final ready) => ready.mobileSlots,
     MobileIntakeError(:final previousState) => previousState.mobileSlots,
+    MobileIntakeCheckInProgress(:final ready) => ready.mobileSlots,
     _ => const [],
   };
 
@@ -520,10 +377,13 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeLoading(:final assignments) => assignments ?? const [],
     MobileIntakeNoPatient(:final assignments) => assignments,
     MobileIntakeReady(:final assignments) => assignments,
-    MobileIntakeCheckInProgress(:final assignments) => assignments,
-    MobileIntakeSaving(:final assignments) => assignments,
-    MobileIntakeSuccess(:final assignments) => assignments,
+    MobileIntakeDrawerOpening(:final ready) => ready.assignments,
+    MobileIntakeSaving(:final ready) => ready.assignments,
+    MobileIntakeWaitingClose(:final ready) => ready.assignments,
+    MobileIntakeClosedEarly(:final ready) => ready.assignments,
+    MobileIntakeSuccess(:final ready) => ready.assignments,
     MobileIntakeError(:final previousState) => previousState.assignments,
+    MobileIntakeCheckInProgress(:final ready) => ready.assignments,
     _ => const [],
   };
 
@@ -531,10 +391,13 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeSlotSelected(:final selectedSlotId) => selectedSlotId,
     MobileIntakeNoPatient(:final selectedSlotId) => selectedSlotId,
     MobileIntakeReady(:final selectedSlotId) => selectedSlotId,
-    MobileIntakeCheckInProgress(:final selectedSlot) => selectedSlot.slotId,
-    MobileIntakeSaving(:final selectedSlot) => selectedSlot.slotId,
-    MobileIntakeSuccess(:final selectedSlot) => selectedSlot.slotId,
+    MobileIntakeDrawerOpening(:final ready) => ready.selectedSlotId,
+    MobileIntakeSaving(:final ready) => ready.selectedSlotId,
+    MobileIntakeWaitingClose(:final ready) => ready.selectedSlotId,
+    MobileIntakeClosedEarly(:final ready) => ready.selectedSlotId,
+    MobileIntakeSuccess(:final ready) => ready.selectedSlotId,
     MobileIntakeError(:final previousState) => previousState.selectedSlotId,
+    MobileIntakeCheckInProgress(:final ready) => ready.selectedSlotId,
     _ => null,
   };
 
@@ -543,17 +406,26 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeLoading(:final selectedSlot) => selectedSlot,
     MobileIntakeNoPatient(:final selectedSlot) => selectedSlot,
     MobileIntakeReady(:final selectedSlot) => selectedSlot,
-    MobileIntakeCheckInProgress(:final selectedSlot) => selectedSlot,
-    MobileIntakeSaving(:final selectedSlot) => selectedSlot,
-    MobileIntakeSuccess(:final selectedSlot) => selectedSlot,
+    MobileIntakeDrawerOpening(:final ready) => ready.selectedSlot,
+    MobileIntakeSaving(:final ready) => ready.selectedSlot,
+    MobileIntakeWaitingClose(:final ready) => ready.selectedSlot,
+    MobileIntakeClosedEarly(:final ready) => ready.selectedSlot,
+    MobileIntakeSuccess(:final ready) => ready.selectedSlot,
     MobileIntakeError(:final previousState) => previousState.selectedSlot,
+    MobileIntakeCheckInProgress(:final ready) => ready.selectedSlot,
     _ => null,
   };
 
   MobileCellCoord? get selectedCell => switch (this) {
     MobileIntakeNoPatient(:final selectedCell) => selectedCell,
     MobileIntakeReady(:final selectedCell) => selectedCell,
+    MobileIntakeDrawerOpening(:final ready) => ready.selectedCell,
+    MobileIntakeSaving(:final ready) => ready.selectedCell,
+    MobileIntakeWaitingClose(:final ready) => ready.selectedCell,
+    MobileIntakeClosedEarly(:final ready) => ready.selectedCell,
+    MobileIntakeSuccess(:final ready) => ready.selectedCell,
     MobileIntakeError(:final previousState) => previousState.selectedCell,
+    MobileIntakeCheckInProgress(:final ready) => ready.selectedCell,
     _ => null,
   };
 
@@ -563,15 +435,15 @@ extension MobileIntakeStateX on MobileIntakeState {
     MobileIntakeSlotSelected(:final cabinId) => cabinId,
     MobileIntakeNoPatient(:final cabinId) => cabinId,
     MobileIntakeReady(:final cabinId) => cabinId,
-    MobileIntakeCheckInProgress(:final cabinId) => cabinId,
-    MobileIntakeSaving(:final cabinId) => cabinId,
-    MobileIntakeSuccess(:final cabinId) => cabinId,
+    MobileIntakeDrawerOpening(:final ready) => ready.cabinId,
+    MobileIntakeSaving(:final ready) => ready.cabinId,
+    MobileIntakeWaitingClose(:final ready) => ready.cabinId,
+    MobileIntakeClosedEarly(:final ready) => ready.cabinId,
+    MobileIntakeSuccess(:final ready) => ready.cabinId,
     MobileIntakeError(:final previousState) => previousState.cabinId,
     MobileIntakeUninitialized() => 0,
-    MobileIntakeDrawerOpening(:final cabinId) => cabinId,
-    MobileIntakeRollbackInProgress(:final cabinId) => cabinId,
-    MobileIntakeRollbackCompleted(:final cabinId) => cabinId,
-    MobileIntakeFatalError(:final cabinId) => cabinId,
+    MobileIntakeCheckInProgress(:final ready) => ready.cabinId,
+    _ => 0,
   };
 
   Map<MobileCellCoord, BedAssignment> get assignmentByCoord {
@@ -599,49 +471,31 @@ extension MobileIntakeStateX on MobileIntakeState {
     return null;
   }
 
-  /// Panel listesinde gösterilebilecek atamalar.
-  /// Sadece bir göze (cell) bağlı olanlar listelenir.
   List<BedAssignment> get availableAssignments =>
       assignments.where((a) => a.cellId != null && a.hospitalization != null).toList();
 
-  /// RFID reconciliation kümelerini taşıyan Ready'i çıkarır.
-  ///
-  /// Error state'i için previousState içine recursive bakar — böylece complete
-  /// fail sırasında dialog hâlâ RFID kümelerini, baseline durumunu ve
-  /// reçete/seçim sahnesini gösterebilir. Dialog state geçişleri (Ready →
-  /// Saving → Error → Ready) sırasında kapanmaz, içinde error mesajı + retry
-  /// butonu göstererek yerinde kalır.
   MobileIntakeReady? get readyContext => switch (this) {
     MobileIntakeReady r => r,
-    MobileIntakeCheckInProgress(:final ready) => ready,
     MobileIntakeDrawerOpening(:final ready) => ready,
     MobileIntakeSaving(:final ready) => ready,
+    MobileIntakeWaitingClose(:final ready) => ready,
+    MobileIntakeClosedEarly(:final ready) => ready,
     MobileIntakeSuccess(:final ready) => ready,
     MobileIntakeError(:final previousState) => previousState.readyContext,
-    MobileIntakeRollbackInProgress(:final ready) => ready,
+    MobileIntakeCheckInProgress(:final ready) => ready,
+    MobileIntakeFatalError(:final previousState) => previousState.readyContext,
     _ => null,
   };
 
-  /// Dialog şu anki state + drawer stage kombinasyonunda açık tutulmalı mı?
-  ///
-  /// Aynı mantık hem view'da (açma kararı) hem dialog'da (kapanma kararı)
-  /// kullanılır — tek kaynak, çift kontrol noktasında tutarlılık. Pop'u
-  /// dialog'un kendi context'inden çağırmak için bu helper gereklidir;
-  /// böylece manuel `Navigator.pop` ile state geçişleri arasındaki yarış
-  /// sorunu kalmaz.
   bool shouldKeepDialog(MobileDrawerStage stage) {
-    // Terminal state'ler — drawer stage ne olursa olsun dialog KAPANIR
-    if (this is MobileIntakeSuccess) return false;
-    if (this is MobileIntakeRollbackCompleted) return false;
-    if (this is MobileIntakeFatalError) return false;
-
-    // Bu state'lerde drawer stage ne olursa olsun dialog AÇIK kalmalı
-    if (this is MobileIntakeRollbackInProgress) return true;
-    if (this is MobileIntakeSaving) return true;
-    if (this is MobileIntakeError) return true;
-
-    final hasReady = readyContext != null;
-    final drawerActive = stage is MobileDrawerOpening || stage is MobileDrawerOpened || stage is MobileDrawerClosed;
-    return hasReady && drawerActive;
+    return switch (this) {
+      MobileIntakeSuccess() || MobileIntakeFatalError() => false,
+      MobileIntakeCheckInProgress() => false, // ← kontrol fazı, dialog kapalı (inline spinner)
+      MobileIntakeClosedEarly() => true,
+      MobileIntakeWaitingClose() => true,
+      MobileIntakeSaving() => true,
+      MobileIntakeError() => true,
+      _ => readyContext != null && (stage is MobileDrawerOpening || stage is MobileDrawerOpened),
+    };
   }
 }

@@ -18,9 +18,7 @@ class HospitalizationNotifier extends ChangeNotifier with ApiRequestMixin, Pagin
     required GetActiveHospitalizationsUseCase getActiveHospitalizationsUseCase,
     required GetHospitalizationsUseCase getHospitalizationsUseCase,
   }) : _getActiveHospitalizationsUseCase = getActiveHospitalizationsUseCase,
-       _getHospitalizationsUseCase = getHospitalizationsUseCase {
-    setDateRange(DateTimeRange(start: DateTime.now(), end: DateTime.now()));
-  }
+       _getHospitalizationsUseCase = getHospitalizationsUseCase;
 
   HospitalizationPanelMode _panelMode = HospitalizationPanelMode.none;
   HospitalizationPanelMode get panelMode => _panelMode;

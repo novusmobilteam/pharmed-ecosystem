@@ -76,7 +76,7 @@ class RxOperationCard extends StatelessWidget {
     super.key,
     required this.item,
     required this.isSelected,
-    required this.rfidStatus,
+    this.rfidStatus,
     required this.isEligible,
     required this.mode,
     required this.onTap,

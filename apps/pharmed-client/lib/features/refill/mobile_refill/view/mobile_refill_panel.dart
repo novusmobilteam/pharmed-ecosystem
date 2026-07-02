@@ -58,14 +58,8 @@ class MobileRefillPanel extends StatelessWidget {
         MobileRefillUninitialized() ||
         MobileRefillLoading() => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
 
-        MobileRefillIdle() ||
-        MobileRefillSlotSelected() ||
-        MobileRefillNoPatient() ||
-        MobileRefillRollbackCompleted() ||
-        MobileRefillFatalError() => CabinPatientPickerList(
-          assignments: state.availableAssignments,
-          onSelected: onSelectAssignment,
-        ),
+        MobileRefillIdle() || MobileRefillSlotSelected() || MobileRefillNoPatient() || MobileRefillFatalError() =>
+          CabinPatientPickerList(assignments: state.availableAssignments, onSelected: onSelectAssignment),
 
         _ when state.readyContext != null => _buildReady(context, notifier, state.readyContext!),
 
@@ -101,17 +95,12 @@ class MobileRefillPanel extends StatelessWidget {
         Expanded(
           child: _PrescriptionList(
             items: ready.prescriptionItems,
-            rfidReadEpcs: ready.rfidReadEpcs,
             selectedItemIds: ready.selectedItemIds,
             isProcessActive: _isSelectionLocked,
             onToggleItem: onToggleItem,
           ),
         ),
-        _RefillActionBar(
-          drawerStage: drawerStage,
-          hasSelection: ready.selectedItemIds.isNotEmpty,
-          onStart: onStartRefill,
-        ),
+        _RefillActionBar(state: ready, hasSelection: ready.selectedItemIds.isNotEmpty, onStart: onStartRefill),
       ],
     );
   }
@@ -120,14 +109,12 @@ class MobileRefillPanel extends StatelessWidget {
 class _PrescriptionList extends StatelessWidget {
   const _PrescriptionList({
     required this.items,
-    required this.rfidReadEpcs,
     required this.selectedItemIds,
     required this.isProcessActive,
     required this.onToggleItem,
   });
 
   final List<PrescriptionItem> items;
-  final Set<String> rfidReadEpcs;
   final Set<int> selectedItemIds;
 
   /// Süreç aktifken kullanıcı seçim değiştiremez (orchestrator açıkken kilitli).
@@ -158,17 +145,11 @@ class _PrescriptionList extends StatelessWidget {
 
         final isEligible = item.status?.canFill ?? false;
         final isSelected = item.id != null && selectedItemIds.contains(item.id);
-        final rfidStatus = !isProcessActive
-            ? null
-            : rfidReadEpcs.contains(item.rfidTag)
-            ? RfidPresenceStatus.present
-            : RfidPresenceStatus.absent;
 
         return RxOperationCard(
           mode: RxOperationCardMode.refill,
           item: item,
           isSelected: isSelected,
-          rfidStatus: rfidStatus,
           isEligible: isEligible,
           onTap: isProcessActive || item.id == null ? null : () => onToggleItem(item.id!),
         );
@@ -178,15 +159,15 @@ class _PrescriptionList extends StatelessWidget {
 }
 
 class _RefillActionBar extends StatelessWidget {
-  const _RefillActionBar({required this.drawerStage, required this.hasSelection, required this.onStart});
+  const _RefillActionBar({required this.state, required this.hasSelection, required this.onStart});
 
-  final MobileDrawerStage drawerStage;
+  final MobileRefillState state;
   final bool hasSelection;
   final VoidCallback onStart;
 
   @override
   Widget build(BuildContext context) {
-    if (drawerStage is MobileDrawerIdle) {
+    if (state is MobileRefillReady) {
       return SizedBox(
         width: context.width,
         child: MedButton(

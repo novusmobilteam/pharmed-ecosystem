@@ -82,6 +82,9 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
       if (next is MobileIntakeError) {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
+      } else if (next is MobileIntakeFatalError) {
+        MessageUtils.showErrorSnackbar(context, next.message);
+        notifier.dismissError();
       } else if (next is MobileIntakeSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.intake_success_completed);
         notifier.dismissSuccess();

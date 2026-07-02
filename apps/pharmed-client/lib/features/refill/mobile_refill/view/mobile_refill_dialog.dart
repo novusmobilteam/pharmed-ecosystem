@@ -71,8 +71,6 @@ class MobileRefillDialog extends ConsumerWidget {
         drawerStage: drawerStage,
         baselineCompleted: ready.baselineCompleted,
         canComplete: ready.canComplete,
-        // Dolumda rollback sonlanma anı: rfidReadEpcs boş (tüm tag çıkarıldı)
-        rollbackSettling: state is MobileRefillRollbackInProgress && ready.rfidReadEpcs.isEmpty,
       ),
       stats: [
         StatCellData(label: 'Seçili', value: '${ready.selectedItemIds.length} ilaç'),
@@ -87,22 +85,19 @@ class MobileRefillDialog extends ConsumerWidget {
           valueColor: ready.unplannedCount > 0 ? MedColors.red : null,
           icon: ready.unplannedCount > 0 ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
         ),
+        StatCellData(
+          label: 'Fazla Etiket',
+          value: '${ready.unexpectedEpcs.length}',
+          valueColor: ready.unexpectedEpcs.isNotEmpty ? MedColors.amber : null,
+          icon: ready.unexpectedEpcs.isNotEmpty ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
+        ),
       ],
       banners: [
-        if (errorMessage != null)
-          const OperationErrorBanner(
-            message: 'Tekrar deneyebilir ya da yerleştirdiğiniz ilaçları alarak işleminizi sonlandırabilirsiniz.',
-          ),
-        // UNEXPECTED blokaj — Dolum'a özel, kırmızı (blocking)
+        if (errorMessage != null) const OperationErrorBanner(message: 'Tekrar deneyebilirsiniz.'),
+        // Fazla/yanlış etiket — Dolum'a özel blokaj (kırmızı, blocking)
         if (ready.hasExtraPlacement) UnexpectedTagBanner(epcs: ready.unexpectedEpcs, blocking: true),
-        // UNPLANNED hareket — bildirim oluşacak
-        if (ready.hasUnplannedMovement) UnplannedMovementBanner(epcs: ready.unplannedMovements),
-        if (state is MobileRefillRollbackInProgress)
-          const OperationErrorBanner(
-            message:
-                'Dolum işlemi tamamlanamadı. Yerleştirdiğiniz ilaçları çekmeceden çıkartın '
-                've çekmeceyi kapatarak işlemi sonlandırın.',
-          ),
+        // Plan dışı çıkış — kapanışta eksik stok bildirimi oluşacak
+        if (ready.hasUnplannedMovement) UnplannedMovementBanner(epcs: ready.baselineLostEpcs),
       ],
       footerContent: _refillFooter(state, drawerStage, ready, notifier),
       child: _ItemsList(),
@@ -114,6 +109,5 @@ OperationPhase _refillPhase(MobileRefillState s) {
   if (s is MobileRefillFatalError) return OperationPhase.fatal;
   if (s is MobileRefillSaving) return OperationPhase.saving;
   if (s is MobileRefillError) return OperationPhase.error;
-  if (s is MobileRefillRollbackInProgress) return OperationPhase.rollback;
   return OperationPhase.normal;
 }

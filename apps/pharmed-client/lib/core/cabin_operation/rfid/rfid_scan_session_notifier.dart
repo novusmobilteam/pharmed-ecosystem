@@ -137,7 +137,10 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
   ///
   /// Inventory aktif değilse boş set döner (yanlış kullanımı sessizce kabul eder
   /// ama log'lar; çağıran tarafın start() sonrası bu metodu çağırması beklenir).
-  Future<Set<String>> snapshot({Duration window = const Duration(milliseconds: 1500)}) async {
+  Future<Set<String>> snapshot({
+    Duration settleTime = const Duration(milliseconds: 500),
+    Duration maxWindow = const Duration(milliseconds: 2500),
+  }) async {
     if (_inventorySub == null) {
       MedLogger.warn(
         unit: 'RfidScanSessionNotifier',
@@ -150,29 +153,35 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
     MedLogger.info(
       unit: 'RfidScanSessionNotifier',
       swreq: 'SWREQ-CLI-RFID-SCAN-003',
-      message: 'Baseline snapshot başladı',
-      context: {'windowMs': window.inMilliseconds},
+      message: 'Baseline snapshot başladı (stabilizasyon)',
+      context: {'settleMs': settleTime.inMilliseconds, 'maxMs': maxWindow.inMilliseconds},
     );
 
-    final completer = Completer<Set<String>>();
-    _baselineCompleters.add(completer);
+    final deadline = DateTime.now().add(maxWindow);
+    int lastCount = -1;
+    DateTime lastChange = DateTime.now();
 
-    Timer(window, () {
-      if (completer.isCompleted) return;
-      _baselineCompleters.remove(completer);
-      final result = Set<String>.from(_presentEpcs);
+    // Set büyümeyi durdurana kadar (settleTime) VEYA maxWindow'a kadar bekle
+    while (DateTime.now().isBefore(deadline)) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      final now = _presentEpcs.length;
+      if (now != lastCount) {
+        lastCount = now;
+        lastChange = DateTime.now();
+      } else if (DateTime.now().difference(lastChange) >= settleTime && now > 0) {
+        // settleTime boyunca değişmedi ve en az 1 tag var → oturdu
+        break;
+      }
+    }
 
-      MedLogger.info(
-        unit: 'RfidScanSessionNotifier',
-        swreq: 'SWREQ-CLI-RFID-SCAN-003',
-        message: 'Baseline snapshot tamamlandı',
-        context: {'epcCount': result.length, 'epcs': result.toList()},
-      );
-
-      completer.complete(result);
-    });
-
-    return completer.future;
+    final result = Set<String>.from(_presentEpcs);
+    MedLogger.info(
+      unit: 'RfidScanSessionNotifier',
+      swreq: 'SWREQ-CLI-RFID-SCAN-003',
+      message: 'Baseline snapshot tamamlandı',
+      context: {'epcCount': result.length, 'epcs': result.toList()},
+    );
+    return result;
   }
 
   // ── Internal handlers ────────────────────────────────────────────────────
