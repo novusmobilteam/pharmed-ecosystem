@@ -9,13 +9,17 @@ FooterContent _censusFooter(
   // ── Hint ──
   final hint = switch (state) {
     MobileCensusSaving() => 'Kaydediliyor...',
+    MobileCensusWaitingClose() => 'Kayıt alındı — sayımı bitirmek için çekmeceyi kapatın',
+    MobileCensusClosedEarly() => 'Çekmece erken kapandı — tekrar deneyebilir veya iptal edebilirsiniz',
     MobileCensusError() => 'Hata oluştu — tekrar deneyebilirsiniz',
     _ => switch (drawerStage) {
       MobileDrawerOpening() => 'Çekmece açılıyor...',
       MobileDrawerOpened() =>
-        ready.baselineCompleted ? 'Sayımı bitirmek için çekmeceyi kapatın' : 'Kabin taranıyor, lütfen bekleyin',
-      MobileDrawerClosed() =>
-        ready.canComplete ? 'Sayımı tamamlamak için butona basın' : 'Tarama tamamlanmadı, lütfen bekleyin',
+        !ready.baselineCompleted
+            ? 'Kabin taranıyor, lütfen bekleyin'
+            : ready.placedEpcs.isNotEmpty
+            ? 'Kabine ait olmayan etiket var — çıkarıp devam edin'
+            : 'Sayımı tamamlamak için butona basın',
       _ => '',
     },
   };
@@ -23,8 +27,14 @@ FooterContent _censusFooter(
   // ── Actions ──
   final actions = switch (state) {
     MobileCensusSaving() => [FooterActions.saving()],
+    MobileCensusWaitingClose() => [FooterActions.primary('Çekmeceyi Kapatın', null)],
+    MobileCensusClosedEarly() => [
+      FooterActions.secondary('İptal', notifier.cancelEarlyClose),
+      SizedBox(width: 10),
+      FooterActions.retry(notifier.retryEarlyClose),
+    ],
     MobileCensusError() => [FooterActions.retry(notifier.retryComplete)],
-    _ when drawerStage is MobileDrawerClosed && ready.canComplete => [
+    _ when drawerStage is MobileDrawerOpened && ready.canComplete => [
       FooterActions.primary('Sayımı Tamamla', notifier.completeCensus),
     ],
     _ => [FooterActions.primary('Sayımı Tamamla', null)],

@@ -19,11 +19,10 @@ class OperationStatsRow extends StatelessWidget {
 }
 
 class StatCellData {
-  const StatCellData({required this.label, required this.value, this.valueColor, this.icon});
+  const StatCellData({required this.label, required this.value, this.valueColor});
   final String label;
   final String value;
   final Color? valueColor;
-  final IconData? icon;
 }
 
 class _StatCell extends StatelessWidget {
@@ -37,17 +36,9 @@ class _StatCell extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(data.label, style: MedTextStyles.monoXs(color: MedColors.text3)),
+        Text(data.label, style: MedTextStyles.bodyMd(color: MedColors.text3)),
         const SizedBox(height: 4),
-        Row(
-          children: [
-            if (data.icon != null) ...[
-              Icon(data.icon, size: 18, color: data.valueColor ?? MedColors.text),
-              const SizedBox(width: 6),
-            ],
-            Text(data.value, style: MedTextStyles.titleSm(color: data.valueColor ?? MedColors.text)),
-          ],
-        ),
+        Text(data.value, style: MedTextStyles.titleSm(color: data.valueColor ?? MedColors.text)),
       ],
     );
   }

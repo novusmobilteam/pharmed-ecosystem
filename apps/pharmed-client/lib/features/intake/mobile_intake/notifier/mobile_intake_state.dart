@@ -128,14 +128,13 @@ final class MobileIntakeReady extends MobileIntakeState {
     required this.room,
     required this.prescriptionItems,
     required this.selectedItemIds,
-    this.reportingItemIds = const {},
     this.datePreset = DateRangePreset.today,
     this.statusFilter = PrescriptionMovementType.purchasePending,
     this.baselineCompleted = false,
     this.baselineEpcs = const {},
     this.baselineLostEpcs = const {},
-    this.reportedMissingItemIds = const {},
     this.placedEpcs = const {},
+    this.markedMissingItemIds = const {},
   });
 
   // ── Sahne ──────────────────────────────────────────────────────────────
@@ -155,14 +154,6 @@ final class MobileIntakeReady extends MobileIntakeState {
   final DateRangePreset datePreset;
   final PrescriptionMovementType? statusFilter;
 
-  /// "Eksik stok bildiriliyor" anlık loading göstergesi (item id'leri).
-  final Set<int> reportingItemIds;
-
-  /// Manuel eksik stok bildirimi BAŞARIYLA gönderilmiş item id'leri.
-  /// Kalıcıdır; backend reçeteyi yenileyip item'ı düşürene kadar butonu
-  /// disabled tutar. reportingItemIds (anlık loading) ile karıştırılmamalı.
-  final Set<int> reportedMissingItemIds;
-
   // ── RFID reconciliation — kalıcı iki alan ───────────────────────────────
 
   /// Çekmece açıldıktan sonra baseline snapshot tamamlandı mı?
@@ -180,6 +171,11 @@ final class MobileIntakeReady extends MobileIntakeState {
 
   /// İlk taramada (baseline) olmayıp, süreç esnasında okunan yabancı/hatalı etiketler.
   final Set<String> placedEpcs;
+
+  /// Manuel EKSİK işaretlenen RFID'siz item id'leri.
+  /// Complete anında değil — çekmece fiziksel kapandığında topluca eksik
+  /// stok bildirimine dönüşür. Boşaltma/alım params'ından dışlanır.
+  final Set<int> markedMissingItemIds;
 
   int get selectedSlotId => selectedSlot.slotId;
 
@@ -224,6 +220,8 @@ final class MobileIntakeReady extends MobileIntakeState {
   bool get hasUnplannedMovement => unplannedMovements.isNotEmpty;
   bool get hasUnexpectedEpc => placedEpcs.isNotEmpty;
 
+  int get totalMissingCount => notFoundEpcs.length + markedMissingItemIds.length;
+
   /// Tamamla kuralı: seçili RFID'li ilaçların hepsi ya alındı ya bulunamadı.
   /// RFID'li ilaç yoksa (hepsi RFID'siz) direkt true.
   bool get canComplete {
@@ -245,8 +243,8 @@ final class MobileIntakeReady extends MobileIntakeState {
   MobileIntakeReady copyWith({
     List<PrescriptionItem>? prescriptionItems,
     Set<int>? selectedItemIds,
-    Set<int>? reportingItemIds,
-    Set<int>? reportedMissingItemIds,
+    Set<int>? markedMissingItemIds,
+
     DateRangePreset? datePreset,
     PrescriptionMovementType? statusFilter,
     bool clearStatusFilter = false,
@@ -267,8 +265,7 @@ final class MobileIntakeReady extends MobileIntakeState {
       room: room,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
-      reportingItemIds: reportingItemIds ?? this.reportingItemIds,
-      reportedMissingItemIds: reportedMissingItemIds ?? this.reportedMissingItemIds,
+      markedMissingItemIds: markedMissingItemIds ?? this.markedMissingItemIds,
       datePreset: datePreset ?? this.datePreset,
       statusFilter: clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
       baselineCompleted: baselineCompleted ?? this.baselineCompleted,

@@ -66,16 +66,17 @@ class _CheckboxSpec {
 // ─────────────────────────────────────────────────────────────────
 // MedCheckbox
 // [SWREQ-UI-ATOM-CHK-001]
-// Özel checkbox — sm/md/lg varyantlar, partial destek.
+// Özel checkbox — sm/md/lg varyantlar, partial destek, parametrik renk.
 // Sınıf : Class A (görsel seçim)
 // ─────────────────────────────────────────────────────────────────
 
-/// Özel onay kutusu — sm/md/lg boyut, partial destek.
+/// Özel onay kutusu — sm/md/lg boyut, partial destek, opsiyonel renk.
 ///
 /// ```dart
 /// MedCheckbox(value: isChecked, onChanged: (v) => ...);
 /// MedCheckbox(value: isChecked, size: MedCheckboxSize.sm, onChanged: ...);
 /// MedCheckbox(value: true, partial: true, onChanged: ...); // kısmi seçim
+/// MedCheckbox(value: true, activeColor: MedColors.green, onChanged: ...); // özel renk
 /// ```
 class MedCheckbox extends StatelessWidget {
   const MedCheckbox({
@@ -86,6 +87,10 @@ class MedCheckbox extends StatelessWidget {
     this.enabled = true,
     this.partial = false,
     this.size = MedCheckboxSize.md,
+    this.activeColor,
+    this.checkColor,
+    this.borderColor,
+    this.inactiveColor,
   });
 
   final bool value;
@@ -94,6 +99,18 @@ class MedCheckbox extends StatelessWidget {
   final bool enabled;
   final bool partial;
   final MedCheckboxSize size;
+
+  /// Seçili durumdaki dolgu ve kenarlık rengi. Verilmezse `MedColors.blue`.
+  final Color? activeColor;
+
+  /// Tik/tire ikon rengi. Verilmezse beyaz.
+  final Color? checkColor;
+
+  /// Seçili değilken kenarlık rengi. Verilmezse `MedColors.border`.
+  final Color? borderColor;
+
+  /// Seçili değilken dolgu rengi. Verilmezse `MedColors.surface2`.
+  final Color? inactiveColor;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +126,15 @@ class MedCheckbox extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _CheckBox(value: value, partial: partial, spec: spec),
+              _CheckBox(
+                value: value,
+                partial: partial,
+                spec: spec,
+                activeColor: activeColor ?? MedColors.blue,
+                checkColor: checkColor ?? Colors.white,
+                borderColor: borderColor ?? MedColors.border,
+                inactiveColor: inactiveColor ?? MedColors.surface2,
+              ),
               if (label != null) ...[SizedBox(width: spec.gap), Flexible(child: Text(label!, style: spec.labelStyle))],
             ],
           ),
@@ -127,6 +152,10 @@ class MedCheckboxField extends StatelessWidget {
     required this.label,
     this.enabled = true,
     this.size = MedCheckboxSize.md,
+    this.activeColor,
+    this.checkColor,
+    this.borderColor,
+    this.inactiveColor,
   });
 
   final bool value;
@@ -134,6 +163,10 @@ class MedCheckboxField extends StatelessWidget {
   final String label;
   final bool enabled;
   final MedCheckboxSize size;
+  final Color? activeColor;
+  final Color? checkColor;
+  final Color? borderColor;
+  final Color? inactiveColor;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +177,16 @@ class MedCheckboxField extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          MedCheckbox(value: value, onChanged: onChanged, enabled: enabled, size: size),
+          MedCheckbox(
+            value: value,
+            onChanged: onChanged,
+            enabled: enabled,
+            size: size,
+            activeColor: activeColor,
+            checkColor: checkColor,
+            borderColor: borderColor,
+            inactiveColor: inactiveColor,
+          ),
           SizedBox(width: spec.gap - MedSpacing.xs),
           Text(label, style: spec.labelStyle),
         ],
@@ -154,11 +196,23 @@ class MedCheckboxField extends StatelessWidget {
 }
 
 class _CheckBox extends StatelessWidget {
-  const _CheckBox({required this.value, required this.partial, required this.spec});
+  const _CheckBox({
+    required this.value,
+    required this.partial,
+    required this.spec,
+    required this.activeColor,
+    required this.checkColor,
+    required this.borderColor,
+    required this.inactiveColor,
+  });
 
   final bool value;
   final bool partial;
   final _CheckboxSpec spec;
+  final Color activeColor;
+  final Color checkColor;
+  final Color borderColor;
+  final Color inactiveColor;
 
   @override
   Widget build(BuildContext context) {
@@ -169,15 +223,15 @@ class _CheckBox extends StatelessWidget {
       width: spec.box,
       height: spec.box,
       decoration: BoxDecoration(
-        color: isOn ? MedColors.blue : MedColors.surface2,
-        border: Border.all(color: isOn ? MedColors.blue : MedColors.border, width: spec.border),
+        color: isOn ? activeColor : inactiveColor,
+        border: Border.all(color: isOn ? activeColor : borderColor, width: spec.border),
         borderRadius: spec.radius,
       ),
       child: AnimatedOpacity(
         opacity: isOn ? 1.0 : 0.0,
         duration: const Duration(milliseconds: 100),
         child: isOn
-            ? Icon(partial ? Icons.remove_rounded : Icons.check_rounded, size: spec.icon, color: Colors.white)
+            ? Icon(partial ? Icons.remove_rounded : Icons.check_rounded, size: spec.icon, color: checkColor)
             : null,
       ),
     );

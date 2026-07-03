@@ -87,6 +87,9 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
           MessageUtils.showErrorSnackbar(context, next.message);
           notifier.dismissError();
         }
+      } else if (next is MobileCensusFatalError) {
+        MessageUtils.showErrorSnackbar(context, next.message);
+        notifier.dismissError();
       } else if (next is MobileCensusSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.census_success_completed);
         notifier.dismissSuccess();
@@ -120,8 +123,6 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
         state: state,
         drawerStage: drawerStage,
         onStartCensus: notifier.startCensus,
-        onCompleteCensus: notifier.completeCensus,
-        onReopenDrawer: notifier.reopenDrawer,
         onSelectAssignment: notifier.selectAssignment,
         onChangePatient: notifier.clearPatientSelection,
         onToggleItem: notifier.toggleItemSelection,

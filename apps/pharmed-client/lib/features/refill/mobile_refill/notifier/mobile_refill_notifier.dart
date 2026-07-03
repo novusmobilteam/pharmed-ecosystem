@@ -301,7 +301,10 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
       patient!.id!,
       params: PagedQueryParamsBuilder.fromPreset(
         preset: DateRangePreset.today,
-        filters: [Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.filledWaiting.id)],
+        filters: [
+          Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.filledWaiting.id),
+          Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.filledWaiting.id),
+        ],
       ),
     );
 
@@ -381,42 +384,26 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     final ready = _readyOf(current);
     if (ready == null) return;
 
-    // _expectedMap boşsa ilk açılış; doluysa reopen (map + baseline korunur)
-    final isFirstScan = ready.baselineEpcs.isEmpty && _expectedMap.isEmpty;
+    // Beklenen kabin tag'lerini çek (EPC → prescriptionItemId lookup)
+    final expectedResult = await _getCabinExpectedEpcs.call(ready.cabinId);
+    String? errorMessage;
+    expectedResult.when(
+      ok: (value) => _expectedMap = {for (final e in value) (e.rfidTag ?? ''): e},
+      error: (e) => errorMessage = e.message,
+    );
 
-    if (isFirstScan) {
-      // Beklenen kabin tag'lerini çek (EPC → prescriptionItemId lookup)
-      final expectedResult = await _getCabinExpectedEpcs.call(ready.cabinId);
-      String? errorMessage;
-      expectedResult.when(
-        ok: (value) => _expectedMap = {for (final e in value) (e.rfidTag ?? ''): e},
-        error: (e) => errorMessage = e.message,
-      );
-
-      if (errorMessage != null) {
-        state = MobileRefillError(message: errorMessage!, previousState: ready);
-        return;
-      }
-
-      // İlk snapshot → baseline (bir kez, sabit)
-      final observed = await _drawer.snapshot();
-      MedLogger.info(
-        unit: 'MobileRefillNotifier',
-        swreq: 'SWREQ-CLI-REFILL-XXX',
-        message: 'Baseline snapshot alındı',
-        context: {'count': observed.length, 'epcs': observed.toList()},
-      );
-      final after = state;
-      final afterReady = _readyOf(after);
-      if (afterReady == null) return;
-
-      state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
-    } else {
-      // Reopen: baseline KORUNUR, sadece scan tamamlandı işaretle.
-      // Runtime kümeleri (placedEpcs / baselineLostEpcs) canlı event'lerle
-      // zaten güncel; RFID inventory tekrar başladığında farkları yakalar.
-      state = _withReady(current, ready.copyWith(baselineCompleted: true));
+    if (errorMessage != null) {
+      state = MobileRefillError(message: errorMessage!, previousState: ready);
+      return;
     }
+
+    // İlk snapshot → baseline (bir kez, sabit)
+    final observed = await _drawer.snapshot();
+    final after = state;
+    final afterReady = _readyOf(after);
+    if (afterReady == null) return;
+
+    state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
   }
 
   /// ClosedEarly / Error → "İptal". Kayıt YOK. İşlemi bitirir, dialog kapanır.
@@ -592,6 +579,9 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     final current = state;
     final ready = _readyOf(current);
     if (ready == null) return;
+
+    // KORUMA: baseline bitmediyse okunan her etiket kabinin kendi malı;
+    // unexpected/placed sayılamaz.
     if (!ready.baselineCompleted) return;
 
     // Baseline'daki bir tag geri okundu → lost'tan çıkar (kullanıcı geri koydu)
@@ -704,8 +694,19 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   /// SWREQ-CLI-REFILL-001
   void dismissError() {
     final current = state;
-    if (current is! MobileRefillError) return;
-    state = current.previousState;
+    final previous = switch (current) {
+      MobileRefillError(:final previousState) => previousState,
+      MobileRefillFatalError(:final previousState) => previousState,
+      _ => null,
+    };
+    if (previous == null) return;
+
+    unawaited(_drawer.stop());
+    _resetExpectedMap();
+
+    // previousState'ten gerçek Ready'yi çıkar — wrapper/NoPatient olabilir.
+    final ready = _readyOf(previous);
+    state = ready ?? previous;
   }
 
   /// Success snackbar kapatıldığında işlem sonlanır: drawer kapatılır ve

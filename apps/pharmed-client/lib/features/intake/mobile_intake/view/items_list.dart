@@ -12,11 +12,17 @@ enum _ItemStatus {
 
   /// RFID'siz item — manuel tracking, RFID akışı dışı
   nonRfid,
+
+  pending,
 }
 
 _ItemStatus _itemStatusFor(PrescriptionItem item, MobileIntakeReady ready) {
   final isRfid = item.medicine is Drug && (item.medicine as Drug).isRfidEnable && item.rfidTag != null;
   if (!isRfid) return _ItemStatus.nonRfid;
+
+  if (!ready.baselineCompleted) {
+    return _ItemStatus.pending;
+  }
 
   final epc = item.rfidTag!;
 
@@ -67,17 +73,31 @@ class _ItemCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = switch (status) {
-      _ItemStatus.taken => ItemCardColors.green,
-      _ItemStatus.inCabinet => ItemCardColors.blue,
-      _ItemStatus.notFound => ItemCardColors.amber,
-      _ItemStatus.nonRfid => ItemCardColors.neutral,
-    };
+    // final colors = switch (status) {
+    //   _ItemStatus.taken => ItemCardColors.green,
+    //   _ItemStatus.inCabinet => ItemCardColors.blue,
+    //   _ItemStatus.notFound => ItemCardColors.amber,
+    //   _ItemStatus.nonRfid => ItemCardColors.neutral,
+    //   _ItemStatus.pending => ItemCardColors.neutral,
+    // };
+
+    final notifier = ref.read(mobileIntakeNotifierProvider.notifier);
+    final ready = ref.watch(mobileIntakeNotifierProvider).readyContext;
 
     final isNonRfid = status == _ItemStatus.nonRfid;
-    final ready = ref.watch(mobileIntakeNotifierProvider).readyContext;
-    final isReported = ready != null && item.id != null && ready.reportedMissingItemIds.contains(item.id);
-    final isReporting = ready != null && item.id != null && ready.reportingItemIds.contains(item.id);
+    final itemId = item.id;
+
+    final isMarkedMissing = ready != null && itemId != null && ready.markedMissingItemIds.contains(itemId);
+
+    final colors = isNonRfid
+        ? (isMarkedMissing ? ItemCardColors.red : (ItemCardColors.mutedNeutral))
+        : switch (status) {
+            _ItemStatus.taken => ItemCardColors.green,
+            _ItemStatus.inCabinet => ItemCardColors.blue,
+            _ItemStatus.notFound => ItemCardColors.amber,
+            _ItemStatus.nonRfid => ItemCardColors.neutral,
+            _ItemStatus.pending => ItemCardColors.neutral,
+          };
 
     return OperationItemCard(
       item: item,
@@ -85,23 +105,20 @@ class _ItemCard extends ConsumerWidget {
       border: colors.border,
       textColor: colors.text,
       mutedColor: colors.muted,
-      trailing: _intakeItemBadge(status),
-      footer: (isNonRfid && item.id != null)
-          ? (isReported
-                ? reportedMissingBadge()
-                : Align(
-                    alignment: Alignment.centerRight,
-                    child: MedButton(
-                      label: isReporting ? 'Bildiriliyor...' : 'Eksik Stok Bildir',
-                      size: MedButtonSize.sm,
-                      variant: MedButtonVariant.danger,
-                      isLoading: isReporting,
-                      onPressed: isReporting
-                          ? null
-                          : () => ref.read(mobileIntakeNotifierProvider.notifier).reportMissingStock(item.id!),
-                    ),
-                  ))
-          : null,
+
+      // RFID'siz → eksik toggle; RFID'li → durum rozeti
+      trailing: (isNonRfid && itemId != null)
+          ? Align(
+              alignment: Alignment.centerRight,
+              child: MedToggle(
+                value: isMarkedMissing,
+                color: MedColors.red,
+                label: 'Eksik Stok Bildir',
+                textStyle: MedTextStyles.monoSm(),
+                onChanged: (_) => notifier.toggleMarkMissing(itemId),
+              ),
+            )
+          : _intakeItemBadge(status),
     );
   }
 }
@@ -125,6 +142,12 @@ StatusBadge _intakeItemBadge(_ItemStatus status) {
       MedColors.amberLight,
       PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
       'Bulunamadı',
+    ),
+    _ItemStatus.pending => (
+      MedColors.surface2,
+      MedColors.text3,
+      PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
+      'Taranıyor',
     ),
     _ItemStatus.nonRfid => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), 'RFID yok'),
   };

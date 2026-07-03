@@ -90,7 +90,13 @@ class MobileIntakePanel extends StatelessWidget {
             isDrawerOpen: _isDrawerOpen,
           ),
         ),
-        _IntakeActionBar(state: ready, hasSelection: ready.selectedItemIds.isNotEmpty, onStart: onStartIntake),
+        _IntakeActionBar(
+          state: ready,
+          hasSelection: ready.selectedItemIds.isNotEmpty,
+          onStart: onStartIntake,
+          drawerStage: drawerStage,
+          baselineCompleted: ready.baselineCompleted,
+        ),
       ],
     );
   }
@@ -158,15 +164,43 @@ class _PrescriptionList extends StatelessWidget {
 }
 
 class _IntakeActionBar extends StatelessWidget {
-  const _IntakeActionBar({required this.state, required this.hasSelection, required this.onStart});
+  const _IntakeActionBar({
+    required this.state,
+    required this.drawerStage,
+    required this.hasSelection,
+    required this.baselineCompleted,
+    required this.onStart,
+  });
 
   final MobileIntakeState state;
+  final MobileDrawerStage drawerStage;
   final bool hasSelection;
+  final bool baselineCompleted;
   final VoidCallback onStart;
 
   @override
   Widget build(BuildContext context) {
-    if (state is MobileIntakeReady) {
+    // Loading: check yapılıyor VEYA çekmece açılıyor VEYA açık ama baseline yok.
+    final isBusy =
+        state is MobileIntakeCheckInProgress ||
+        drawerStage is MobileDrawerOpening ||
+        (drawerStage is MobileDrawerOpened && !baselineCompleted);
+
+    if (isBusy) {
+      return SizedBox(
+        width: context.width,
+        child: MedButton(
+          label: context.l10n.intake_action_start,
+          onPressed: null,
+          isLoading: true,
+          size: MedButtonSize.sm,
+        ),
+      );
+    }
+
+    // Ready + çekmece aktif değil (Idle/Failed/Closed sonrası reset) → başlat.
+    final drawerInactive = drawerStage is MobileDrawerIdle || drawerStage is MobileDrawerFailed;
+    if (state is MobileIntakeReady && drawerInactive) {
       return SizedBox(
         width: context.width,
         child: MedButton(
@@ -175,8 +209,8 @@ class _IntakeActionBar extends StatelessWidget {
           size: MedButtonSize.sm,
         ),
       );
-    } else {
-      return SizedBox();
     }
+
+    return const SizedBox.shrink();
   }
 }

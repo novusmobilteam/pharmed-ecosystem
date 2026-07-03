@@ -60,8 +60,7 @@ class MobileIntakeDialog extends ConsumerWidget {
         StatCellData(
           label: 'İzinsiz Alım',
           value: '${ready.unplannedMovements.length}',
-          valueColor: ready.unplannedMovements.isNotEmpty ? MedColors.amber : null,
-          icon: ready.unplannedMovements.isNotEmpty ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
+          valueColor: ready.unplannedMovements.isNotEmpty ? MedColors.red : null,
         ),
       ],
       banners: [

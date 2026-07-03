@@ -21,8 +21,6 @@ class MobileCensusPanel extends StatelessWidget {
     required this.state,
     required this.drawerStage,
     required this.onStartCensus,
-    required this.onCompleteCensus,
-    required this.onReopenDrawer,
     required this.onSelectAssignment,
     required this.onChangePatient,
     required this.onToggleItem,
@@ -32,17 +30,13 @@ class MobileCensusPanel extends StatelessWidget {
   final MobileCensusState state;
   final MobileDrawerStage drawerStage;
   final VoidCallback onStartCensus;
-  final VoidCallback onCompleteCensus;
-  final VoidCallback onReopenDrawer;
+
   final ValueChanged<BedAssignment> onSelectAssignment;
   final VoidCallback onChangePatient;
   final ValueChanged<int> onToggleItem;
 
   /// Süreç aktif (Opening/Opened/Closed) mı?
   bool get _isProcessActive => drawerStage.isActive;
-
-  /// Çekmece açılıyor veya açıkken seçim değiştirilemez.
-  bool get _isSelectionLocked => drawerStage is! MobileDrawerOpened;
 
   @override
   Widget build(BuildContext context) {
@@ -52,22 +46,15 @@ class MobileCensusPanel extends StatelessWidget {
         MobileCensusUninitialized() ||
         MobileCensusLoading() => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
 
-        // Hasta seçilmediği tüm durumlarda → liste göster
-        MobileCensusIdle() || MobileCensusSlotSelected() || MobileCensusNoPatient() => CabinPatientPickerList(
-          assignments: state.availableAssignments,
-          onSelected: onSelectAssignment,
-        ),
+        // Hasta seçilmediği tüm durumlar + kurtarılamaz hata → liste göster
+        MobileCensusIdle() || MobileCensusSlotSelected() || MobileCensusNoPatient() || MobileCensusFatalError() =>
+          CabinPatientPickerList(assignments: state.availableAssignments, onSelected: onSelectAssignment),
 
-        MobileCensusReady ready => _buildReady(context, notifier, ready),
+        // ready taşıyan tüm state'ler (Ready/DrawerOpening/Saving/WaitingClose/
+        // ClosedEarly/Success/Error) → Ready görünümü
+        _ when state.readyContext != null => _buildReady(context, notifier, state.readyContext!),
 
-        // Kaydetme ve başarı sırasında Ready görünümü korunur
-        MobileCensusSaving(:final ready) || MobileCensusSuccess(:final ready) => _buildReady(context, notifier, ready),
-
-        MobileCensusError(:final previousState) => switch (previousState) {
-          MobileCensusReady ready => _buildReady(context, notifier, ready),
-          MobileCensusSaving(:final ready) => _buildReady(context, notifier, ready),
-          _ => CabinPatientPickerList(assignments: previousState.availableAssignments, onSelected: onSelectAssignment),
-        },
+        _ => throw StateError('Unhandled MobileCensusState: $state'),
       },
     );
   }
@@ -96,24 +83,15 @@ class MobileCensusPanel extends StatelessWidget {
           onChanged: notifier.onDatePresetChanged,
         ),
         Expanded(
-          child: _CensusPrescriptionList(
-            items: ready.prescriptionItems,
-            selectedItemIds: ready.selectedItemIds,
-            isSelectionLocked: _isSelectionLocked,
-            rfidReadEpcs: ready.rfidReadEpcs,
-            isProcessActive: _isProcessActive,
-            onToggleItem: onToggleItem,
-            drawerStage: drawerStage,
-            ready: ready,
-          ),
+          child: _CensusPrescriptionList(items: ready.prescriptionItems, drawerStage: drawerStage),
         ),
         _CensusActionBar(
           drawerStage: drawerStage,
-          isSaving: state is MobileCensusSaving,
           onStart: onStartCensus,
           hasCountableItems: ready.prescriptionItems.any(
             (i) => i.id != null && i.status == PrescriptionMovementType.purchasePending,
           ),
+          baselineCompleted: ready.baselineCompleted,
         ),
       ],
     );
@@ -121,32 +99,10 @@ class MobileCensusPanel extends StatelessWidget {
 }
 
 class _CensusPrescriptionList extends StatelessWidget {
-  const _CensusPrescriptionList({
-    required this.items,
-    required this.selectedItemIds,
-    required this.rfidReadEpcs,
-    required this.isSelectionLocked,
-    required this.isProcessActive,
-    required this.onToggleItem,
-    required this.drawerStage,
-    required this.ready,
-  });
+  const _CensusPrescriptionList({required this.items, required this.drawerStage});
 
   final List<PrescriptionItem> items;
-  final Set<int> selectedItemIds;
-
-  /// Şu an okuyucu tarafından görülen EPC'ler — kabinde fiziksel olarak mevcut.
-  final Set<String> rfidReadEpcs;
-
-  /// Çekmece açılıyor veya açıkken true — seçim kilitli.
-  final bool isSelectionLocked;
-
-  /// RFID session aktif mi (çekmece herhangi bir aktif aşamada mı)?
-  final bool isProcessActive;
-
-  final ValueChanged<int> onToggleItem;
   final MobileDrawerStage drawerStage;
-  final MobileCensusReady ready;
 
   @override
   Widget build(BuildContext context) {
@@ -176,26 +132,34 @@ class _CensusPrescriptionList extends StatelessWidget {
 class _CensusActionBar extends StatelessWidget {
   const _CensusActionBar({
     required this.drawerStage,
-    required this.isSaving,
     required this.hasCountableItems,
+    required this.baselineCompleted,
     required this.onStart,
   });
 
   final MobileDrawerStage drawerStage;
-  final bool isSaving;
-
-  /// Sayılacak ilaç var mı? Yoksa başlat butonu gizlenir.
   final bool hasCountableItems;
-
+  final bool baselineCompleted;
   final VoidCallback onStart;
 
   @override
   Widget build(BuildContext context) {
+    // Çekmece açılıyor VEYA açıldı ama baseline henüz alınmadı → loading.
+    final isOpening = drawerStage is MobileDrawerOpening || (drawerStage is MobileDrawerOpened && !baselineCompleted);
+
     return switch (drawerStage) {
+      // Idle + sayılacak item var → başlat butonu
       MobileDrawerIdle() when hasCountableItems => SizedBox(
         width: context.width,
-        child: MedButton(label: context.l10n.census_action_start, onPressed: onStart),
+        child: MedButton(label: context.l10n.census_action_start, onPressed: onStart, isLoading: false),
       ),
+
+      // Açılıyor / taranıyor → aynı buton ama loading, basılamaz
+      MobileDrawerOpening() || MobileDrawerOpened() when isOpening => SizedBox(
+        width: context.width,
+        child: MedButton(label: context.l10n.census_action_start, onPressed: null, isLoading: true),
+      ),
+
       _ => const SizedBox.shrink(),
     };
   }

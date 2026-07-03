@@ -7,24 +7,33 @@ enum _CensusItemStatus {
   pending, // RFID'siz, henüz işaretlenmedi (nötr)
 }
 
-_CensusItemStatus _censusItemStatus(PrescriptionItem item, CensusMedicineGroup group) {
+_CensusItemStatus _censusItemStatus(PrescriptionItem item, CensusMedicineGroup group, bool baselineCompleted) {
   final epc = item.rfidTag;
   if (epc != null) {
+    // Baseline bitmeden "eksik" deme — henüz taranıyor.
+    if (!baselineCompleted) return _CensusItemStatus.pending;
     return group.rfidReadEpcs.contains(epc) ? _CensusItemStatus.present : _CensusItemStatus.missing;
   }
   if (item.id != null && group.markedMissingItemIds.contains(item.id)) {
     return _CensusItemStatus.markedMissing;
   }
-  return _CensusItemStatus.pending;
+
+  return _CensusItemStatus.present;
 }
 
 class RxCensusGroupCard extends StatefulWidget {
-  const RxCensusGroupCard({super.key, required this.group, required this.onToggleMissing});
+  const RxCensusGroupCard({
+    super.key,
+    required this.group,
+    required this.onToggleMissing,
+    required this.baselineCompleted,
+  });
 
   final CensusMedicineGroup group;
 
   /// RFID'siz item için "eksik" toggle. RFID'li item'larda kullanılmaz.
   final ValueChanged<int> onToggleMissing;
+  final bool baselineCompleted;
 
   @override
   State<RxCensusGroupCard> createState() => _RxCensusGroupCardState();
@@ -63,7 +72,7 @@ class _RxCensusGroupCardState extends State<RxCensusGroupCard> {
           if (_expanded) ...[
             const SizedBox(height: MedSpacing.xs),
             ...g.items.map((item) {
-              final status = _censusItemStatus(item, g);
+              final status = _censusItemStatus(item, g, widget.baselineCompleted);
               return _CensusItemRow(
                 item: item,
                 status: status,
@@ -95,7 +104,7 @@ class _CensusItemRow extends StatelessWidget {
 
   ItemCardColors get _colors => switch (status) {
     _CensusItemStatus.present => ItemCardColors.green,
-    _CensusItemStatus.missing => ItemCardColors.amber,
+    _CensusItemStatus.missing => ItemCardColors.red,
     _CensusItemStatus.markedMissing => ItemCardColors.red,
     _CensusItemStatus.pending => ItemCardColors.mutedNeutral,
   };
@@ -114,7 +123,14 @@ class _CensusItemRow extends StatelessWidget {
         border: Border.all(color: c.border, width: 1),
       ),
       child: Row(
+        spacing: 12.0,
         children: [
+          if (item.rfidTag == null)
+            MedCheckbox(
+              value: status != _CensusItemStatus.markedMissing,
+              onChanged: (_) => onToggleMissing!(),
+              activeColor: MedColors.green,
+            ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,48 +146,8 @@ class _CensusItemRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: MedSpacing.sm),
-          if (item.rfidTag != null)
-            _CensusStatusBadge(status: status)
-          else
-            _MissingToggle(isMarked: status == _CensusItemStatus.markedMissing, onTap: onToggleMissing),
+          if (item.rfidTag != null) _CensusStatusBadge(status: status),
         ],
-      ),
-    );
-  }
-}
-
-class _MissingToggle extends StatelessWidget {
-  const _MissingToggle({required this.isMarked, required this.onTap});
-
-  final bool isMarked;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = isMarked ? MedColors.redLight : MedColors.surface2;
-    final fg = isMarked ? MedColors.red : MedColors.text2;
-    final label = isMarked ? 'Eksik Stok Çıkar' : 'Eksik Stok Ekle';
-    final icon = isMarked
-        ? PhosphorIcons.minusCircle(PhosphorIconsStyle.bold)
-        : PhosphorIcons.plusCircle(PhosphorIconsStyle.bold);
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: MedRadius.smAll,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: MedSpacing.sm, vertical: MedSpacing.xs),
-        decoration: BoxDecoration(color: bg, borderRadius: MedRadius.smAll),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 14, color: fg),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: MedTextStyles.bodySm(color: fg, weight: FontWeight.w500),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -192,8 +168,8 @@ class _CensusStatusBadge extends StatelessWidget {
         'Sayıldı',
       ),
       _CensusItemStatus.missing => (
-        MedColors.amberLight,
-        MedColors.amber,
+        MedColors.redLight,
+        MedColors.red,
         PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
         'Eksik',
       ),

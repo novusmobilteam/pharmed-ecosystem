@@ -32,7 +32,6 @@ class MobileUnloadDialog extends ConsumerWidget {
     final ready = state.readyContext;
     if (ready == null) return const SizedBox.shrink();
 
-    final isRollback = state is MobileUnloadRollbackInProgress;
     final errorMessage = state is MobileUnloadError ? (state).message : null;
 
     return CabinOperationDialog(
@@ -42,34 +41,39 @@ class MobileUnloadDialog extends ConsumerWidget {
         drawerStage: drawerStage,
         baselineCompleted: ready.baselineCompleted,
         canComplete: ready.canComplete,
-        rollbackSettling: state is MobileUnloadRollbackInProgress && ready.rfidReadEpcs.isEmpty,
       ),
       stats: [
-        StatCellData(label: 'Seçili', value: '${ready.selectedItemIds.length} ilaç'),
-        StatCellData(label: 'Kabinde Okunan', value: '${ready.rfidReadEpcs.length} etiket'),
+        StatCellData(
+          label: 'Boşaltıldı',
+          value: '${ready.unloadCountedTotal} / ${ready.unloadTotalCount}',
+          valueColor:
+              ready.baselineCompleted &&
+                  ready.missingEpcs.isEmpty &&
+                  ready.markedMissingItemIds.isEmpty &&
+                  ready.unloadTotalCount > 0
+              ? MedColors.green
+              : null,
+        ),
+        StatCellData(
+          label: 'Eksik',
+          value: '${ready.totalMissingCount}',
+          valueColor: ready.totalMissingCount > 0 ? MedColors.red : null,
+        ),
         StatCellData(
           label: 'Plan Dışı',
-          value: '${ready.unplannedMovements.length}',
-          valueColor: ready.unplannedMovements.isNotEmpty ? MedColors.red : null,
-          icon: ready.unplannedMovements.isNotEmpty ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
+          value: '${ready.unplannedCount}',
+          valueColor: ready.unplannedCount > 0 ? MedColors.red : null,
+        ),
+        StatCellData(
+          label: 'Yabancı',
+          value: '${ready.placedEpcs.length}',
+          valueColor: ready.placedEpcs.isNotEmpty ? MedColors.red : null,
         ),
       ],
       banners: [
         if (errorMessage != null) OperationErrorBanner(message: errorMessage),
-        if (isRollback)
-          const RollbackBanner(
-            message:
-                'Boşaltma tamamlanamadı. Çıkardığınız ilaçları kabine geri koyun '
-                've çekmeceyi kapatarak işlemi sonlandırın.',
-          ),
-        if (!isRollback && ready.unplannedMovements.isNotEmpty)
-          UnplannedMovementBanner(
-            epcs: ready.unplannedMovements,
-            message:
-                'Boşaltma hedefleri dışında ${ready.unplannedMovements.length} etiket kabinden çıkarıldı. '
-                'Eczaneye bildirim oluşturulacak.',
-          ),
-        if (!isRollback && ready.unexpectedEpcs.isNotEmpty) UnexpectedTagBanner(epcs: ready.unexpectedEpcs),
+        if (ready.placedEpcs.isNotEmpty) UnexpectedTagBanner(epcs: ready.placedEpcs, blocking: true),
+        if (ready.missingEpcs.isNotEmpty) MissingStockBanner(count: ready.missingEpcs.length),
       ],
       footerContent: _unloadFooter(state, drawerStage, ready, notifier),
       child: _ItemsList(),
@@ -81,6 +85,5 @@ OperationPhase _unloadPhase(MobileUnloadState s) {
   if (s is MobileUnloadFatalError) return OperationPhase.fatal;
   if (s is MobileUnloadSaving) return OperationPhase.saving;
   if (s is MobileUnloadError) return OperationPhase.error;
-  if (s is MobileUnloadRollbackInProgress) return OperationPhase.rollback;
   return OperationPhase.normal;
 }

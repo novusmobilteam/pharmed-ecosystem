@@ -346,34 +346,26 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     final ready = _readyOf(current);
     if (ready == null) return;
 
-    // İlk açılış mı, reopen mı? (baseline + _expectedMap korunur)
-    final isFirstScan = ready.baselineEpcs.isEmpty && _expectedMap.isEmpty;
-
-    if (isFirstScan) {
-      // Beklenen kabin tag'lerini çek — reconciliation için DEĞİL,
-      // yalnızca kapanışta EPC → prescriptionItemId çözümü için lookup.
-      final expectedResult = await _getCabinExpectedEpcs.call(ready.cabinId);
-      String? errorMessage;
-      expectedResult.when(
-        ok: (value) => _expectedMap = {for (final e in value) (e.rfidTag ?? ''): e},
-        error: (e) => errorMessage = e.message,
-      );
-      if (errorMessage != null) {
-        state = MobileIntakeError(message: errorMessage!, previousState: ready);
-        return;
-      }
-
-      // Snapshot → baseline (bölünmez, hepsi eşit)
-      final observed = await _drawer.snapshot();
-      final after = state;
-      final afterReady = _readyOf(after);
-      if (afterReady == null) return;
-
-      state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
-    } else {
-      // Reopen: baseline KORUNUR, sadece scan tamamlandı işaretle.
-      state = _withReady(current, ready.copyWith(baselineCompleted: true));
+    // Beklenen kabin tag'lerini çek — reconciliation için DEĞİL,
+    // yalnızca kapanışta EPC → prescriptionItemId çözümü için lookup.
+    final expectedResult = await _getCabinExpectedEpcs.call(ready.cabinId);
+    String? errorMessage;
+    expectedResult.when(
+      ok: (value) => _expectedMap = {for (final e in value) (e.rfidTag ?? ''): e},
+      error: (e) => errorMessage = e.message,
+    );
+    if (errorMessage != null) {
+      state = MobileIntakeError(message: errorMessage!, previousState: ready);
+      return;
     }
+
+    // Snapshot → baseline (bölünmez, hepsi eşit)
+    final observed = await _drawer.snapshot();
+    final after = state;
+    final afterReady = _readyOf(after);
+    if (afterReady == null) return;
+
+    state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
   }
 
   /// ClosedEarly / Error → "İptal". Kayıt YOK. İşlemi bitirir, Idle'a döner.
@@ -503,67 +495,56 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     await completeIntake();
   }
 
+  /// RFID'siz bir item'ı "eksik" işaretler / kaldırır.
+  /// Servise anında gitmez; çekmece fiziksel kapandığında topluca eksik stok
+  /// bildirimine dönüşür ve complete params'ından dışlanır.
+  ///
+  /// SWREQ-CLI-INTAKE-007
+  void toggleMarkMissing(int itemId) {
+    final current = state;
+    final ready = _readyOf(current);
+    if (ready == null) return;
+
+    final marked = ready.markedMissingItemIds;
+    final next = marked.contains(itemId) ? (Set<int>.from(marked)..remove(itemId)) : {...marked, itemId};
+
+    state = _withReady(current, ready.copyWith(markedMissingItemIds: next));
+  }
+
   /// Plan dışı hareketleri eczaneye bildirir.
   /// SWREQ-CLI-INTAKE-008
   Future<void> _reportUnplannedMovements(MobileIntakeReady ready) async {
-    // Kapanışta otomatik bildirilecek eksikler:
+    // a) Otomatik eksik — EPC bazlı:
     //   1) unplannedMovements — almaması gereken ilaç alındı (baseline'dan izinsiz çıkış)
     //   2) notFoundEpcs        — alacağı ilaç kabinde hiç yoktu (okunmadı)
-    final toReport = <String>{...ready.unplannedMovements, ...ready.notFoundEpcs};
-    if (toReport.isEmpty) return;
-
-    for (final epc in toReport) {
+    final autoReport = <String>{...ready.unplannedMovements, ...ready.notFoundEpcs};
+    for (final epc in autoReport) {
       final prescriptionItemId = _expectedMap[epc]?.prescriptionItemId;
-      if (prescriptionItemId == null) {
-        continue;
-      }
+      if (prescriptionItemId == null) continue;
 
-      await _reportMissingStock.call(prescriptionItemId: prescriptionItemId, type: CabinInventoryType.intake);
-    }
-  }
-
-  /// Eksik stok bildir — ilaç fiziksel olarak kabinde yok.
-  ///
-  /// Backend bildirimi başarılıysa reçete yeniden çekilir; ilgili item
-  /// artık "Alım Bekliyor" olmaktan çıkar ve seçiliyse seçimi kaldırılır.
-  ///
-  /// Süreç (orchestrator) aktifken çağrılmaz — buton zaten gizli olur.
-  ///
-  /// SWREQ-CLI-INTAKE-006
-  Future<void> reportMissingStock(int itemId) async {
-    final current = state;
-    if (current is! MobileIntakeReady) return;
-    if (current.reportingItemIds.contains(itemId)) return; // bu item zaten işlemde
-    if (current.reportedMissingItemIds.contains(itemId)) return;
-
-    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
-    if (item == null) return;
-    if (!(item.status?.canReportShortage ?? false)) return; // sadece "Alım Bekliyor"
-
-    // Bu item için buton loading
-    state = current.copyWith(reportingItemIds: {...current.reportingItemIds, itemId});
-
-    final result = await _reportMissingStock(prescriptionItemId: item.id!, type: CabinInventoryType.intake);
-
-    final after = state;
-    if (after is! MobileIntakeReady) return;
-
-    result.when(
-      ok: (_) async {
-        state = after.copyWith(
-          reportingItemIds: {...after.reportingItemIds}..remove(itemId),
-          reportedMissingItemIds: {...after.reportedMissingItemIds, itemId},
-        );
-
-        MedLogger.info(
+      final r = await _reportMissingStock.call(prescriptionItemId: prescriptionItemId, type: CabinInventoryType.intake);
+      if (r is Error) {
+        MedLogger.error(
           unit: 'MobileIntakeNotifier',
-          swreq: 'SWREQ-CLI-INTAKE-007',
-          message: 'Manuel eksik stok bildirildi',
-          context: {'itemId': itemId},
+          swreq: 'SWREQ-CLI-INTAKE-008',
+          message: 'otomatik eksik bildirimi başarısız (retry yok)',
+          context: {'itemId': prescriptionItemId, 'epc': epc, 'error': r.error.message},
         );
-      },
-      error: (e) => state = after.copyWith(reportingItemIds: {...after.reportingItemIds}..remove(itemId)),
-    );
+      }
+    }
+
+    // b) Manuel eksik — markedMissingItemIds (RFID'siz item'lar)
+    for (final itemId in ready.markedMissingItemIds) {
+      final r = await _reportMissingStock.call(prescriptionItemId: itemId, type: CabinInventoryType.intake);
+      if (r is Error) {
+        MedLogger.error(
+          unit: 'MobileIntakeNotifier',
+          swreq: 'SWREQ-CLI-INTAKE-008',
+          message: 'manuel eksik bildirimi başarısız (retry yok)',
+          context: {'itemId': itemId, 'error': r.error.message},
+        );
+      }
+    }
   }
 
   void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
@@ -694,8 +675,19 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
 
   void dismissError() {
     final current = state;
-    if (current is! MobileIntakeError) return;
-    state = current.previousState;
+    final previous = switch (current) {
+      MobileIntakeError(:final previousState) => previousState,
+      MobileIntakeFatalError(:final previousState) => previousState,
+      _ => null,
+    };
+    if (previous == null) return;
+
+    unawaited(_drawer.stop());
+    _resetExpectedMap();
+
+    // previousState'ten gerçek Ready'yi çıkar — wrapper/NoPatient olabilir.
+    final ready = _readyOf(previous);
+    state = ready ?? previous;
   }
 
   Future<void> dismissSuccess() async {

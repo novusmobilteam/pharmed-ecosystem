@@ -4,17 +4,16 @@ enum _ItemStatus {
   inCabinet, // RFID'li, kabinde okunuyor (boşaltılmayı bekliyor)
   unloaded, // RFID'li, çıkarıldı (boşaltıldı)
   notFound, // RFID'li, baseline'da yok → otomatik eksik
-  restored, // RFID'li, rollback'te geri kondu
-  awaitingReturn, // RFID'li, rollback'te henüz geri konmadı
-  nonRfid, // RFID'siz, checkbox + eksik bildir
+  nonRfid, // RFID'siz, checkbox + eksik bildir toggle
+  pending,
 }
 
-_ItemStatus _itemStatusFor(PrescriptionItem item, MobileUnloadReady ready, {required bool isRollbackInProgress}) {
+_ItemStatus _itemStatusFor(PrescriptionItem item, MobileUnloadReady ready) {
   final epc = item.rfidTag;
   if (epc == null) return _ItemStatus.nonRfid;
 
-  if (isRollbackInProgress && ready.previouslyTakenEpcs.contains(epc)) {
-    return ready.rfidReadEpcs.contains(epc) ? _ItemStatus.restored : _ItemStatus.awaitingReturn;
+  if (!ready.baselineCompleted) {
+    return _ItemStatus.pending;
   }
 
   if (ready.takenEpcs.contains(epc)) return _ItemStatus.unloaded;
@@ -28,11 +27,9 @@ class _ItemsList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(mobileUnloadNotifierProvider);
-    final drawerStage = ref.watch(mobileDrawerSessionProvider).stage; // ← ekle
+    final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
     final ready = state.readyContext;
     if (ready == null) return const SizedBox.shrink();
-
-    final isRollbackInProgress = state is MobileUnloadRollbackInProgress;
 
     final items = ready.prescriptionItems.where((i) => i.id != null).toList()
       ..sort((a, b) {
@@ -50,7 +47,7 @@ class _ItemsList extends ConsumerWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, i) {
         final item = items[i];
-        final status = _itemStatusFor(item, ready, isRollbackInProgress: isRollbackInProgress);
+        final status = _itemStatusFor(item, ready);
         return _ItemCard(item: item, status: status, drawerStage: drawerStage);
       },
     );
@@ -70,21 +67,21 @@ class _ItemCard extends ConsumerWidget {
     final ready = ref.watch(mobileUnloadNotifierProvider).readyContext;
 
     final isNonRfid = status == _ItemStatus.nonRfid;
-    final isExcluded = ready != null && item.id != null && ready.excludedItemIds.contains(item.id);
-    final isReported = ready != null && item.id != null && ready.reportedMissingItemIds.contains(item.id);
-    final isReporting = ready != null && item.id != null && ready.reportingItemIds.contains(item.id);
-    final canReport = item.status?.canReportShortage ?? false;
-    final canToggle = drawerStage is MobileDrawerOpened && !isReported;
+    final itemId = item.id;
 
-    // RFID'siz + excluded → soluk; değilse duruma göre
+    final isIncluded = ready != null && itemId != null && ready.isUnloadIncluded(itemId);
+    final isMarkedMissing = ready != null && itemId != null && ready.markedMissingItemIds.contains(itemId);
+
+    // RFID'siz: boşaltmaya dahil değilse VE eksik değilse soluk (skipped).
+    // Eksik işaretlendiyse amber, dahilse nötr.
     final colors = isNonRfid
-        ? (isExcluded ? ItemCardColors.mutedNeutral : ItemCardColors.neutral)
+        ? (isMarkedMissing ? ItemCardColors.red : (isIncluded ? ItemCardColors.neutral : ItemCardColors.mutedNeutral))
         : switch (status) {
-            _ItemStatus.unloaded || _ItemStatus.restored => ItemCardColors.green,
+            _ItemStatus.unloaded => ItemCardColors.green,
             _ItemStatus.inCabinet => ItemCardColors.blue,
             _ItemStatus.notFound => ItemCardColors.amber,
-            _ItemStatus.awaitingReturn => ItemCardColors.red,
             _ItemStatus.nonRfid => ItemCardColors.neutral,
+            _ItemStatus.pending => ItemCardColors.neutral,
           };
 
     return OperationItemCard(
@@ -93,30 +90,28 @@ class _ItemCard extends ConsumerWidget {
       border: colors.border,
       textColor: colors.text,
       mutedColor: colors.muted,
-      // RFID'siz → boşaltma checkbox'ı (işaretli = boşaltılacak)
+      // RFID'siz → boşaltma checkbox'ı (işaretli = boşaltmaya dahil)
       leading: isNonRfid
           ? MedCheckbox(
-              value: !isExcluded,
-              onChanged: canToggle && item.id != null ? (_) => notifier.toggleExclude(item.id!) : null,
+              value: isIncluded,
+              onChanged: itemId != null ? (_) => notifier.toggleUnloadInclude(itemId) : null,
             )
           : null,
       // RFID'li → durum rozeti
-      trailing: isNonRfid ? null : _unloadItemBadge(status),
-      // RFID'siz + eksik bildirilebilir + boşaltma dışı DEĞİL + çekmece açık → buton
-      footer: (isNonRfid && canReport && !isExcluded && drawerStage is MobileDrawerOpened && item.id != null)
-          ? (isReported
-                ? reportedMissingBadge()
-                : Align(
-                    alignment: Alignment.centerRight,
-                    child: MedButton(
-                      label: isReporting ? 'Bildiriliyor...' : 'Eksik Stok Bildir',
-                      size: MedButtonSize.sm,
-                      variant: MedButtonVariant.danger,
-                      isLoading: isReporting,
-                      onPressed: isReporting ? null : () => notifier.reportMissingStock(item.id!),
-                    ),
-                  ))
-          : null,
+      trailing: (isNonRfid && itemId != null)
+          ? Align(
+              alignment: Alignment.centerRight,
+              child: MedToggle(
+                value: isMarkedMissing,
+                color: MedColors.red,
+                label: 'Eksik Stok Bildir',
+                textStyle: MedTextStyles.monoSm(),
+                onChanged: (_) => notifier.toggleMarkMissing(itemId),
+              ),
+            )
+          : _unloadItemBadge(status),
+
+      // RFID'siz + eksik bildirilebilir + çekmece açık → "Eksik Bildir" toggle
     );
   }
 }
@@ -141,17 +136,11 @@ StatusBadge _unloadItemBadge(_ItemStatus status) {
       PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
       'Bulunamadı',
     ),
-    _ItemStatus.restored => (
-      MedColors.green,
-      MedColors.greenLight,
-      PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
-      'Geri Kondu',
-    ),
-    _ItemStatus.awaitingReturn => (
-      MedColors.red,
-      MedColors.redLight,
-      PhosphorIcons.arrowUDownLeft(PhosphorIconsStyle.bold),
-      'Geri Konmalı',
+    _ItemStatus.pending => (
+      MedColors.surface2,
+      MedColors.text3,
+      PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
+      'Taranıyor',
     ),
     _ => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), '—'),
   };

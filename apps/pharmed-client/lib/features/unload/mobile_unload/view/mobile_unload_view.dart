@@ -56,27 +56,6 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
     }
   }
 
-  Future<void> _onCancelUnload(MobileUnloadState state, MobileDrawerStage drawerStage) async {
-    final notifier = ref.read(mobileUnloadNotifierProvider.notifier);
-
-    if (drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) {
-      MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
-      return;
-    }
-    if (drawerStage is MobileDrawerClosed) {
-      MessageUtils.showConfirmDialog(
-        context: context,
-        action: ConfirmAction.exit,
-        customTitle: context.l10n.unload_cancelDialog_title,
-        customMessage: context.l10n.unload_cancelDialog_message,
-        confirmButtonText: context.l10n.common_confirmCancelButton,
-        onConfirm: notifier.cancelUnload,
-      );
-      return;
-    }
-    notifier.cancelUnload();
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(mobileUnloadNotifierProvider);
@@ -84,7 +63,7 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
     ref.listen<MobileUnloadState>(mobileUnloadNotifierProvider, (_, __) => _syncDialog(context));
-    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, __) => _syncDialog(context));
+    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, _) => _syncDialog(context));
 
     ref.listen(mobileUnloadNotifierProvider, (_, next) {
       if (next is MobileUnloadError) {
@@ -93,6 +72,9 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
           MessageUtils.showErrorSnackbar(context, next.message);
           notifier.dismissError();
         }
+      } else if (next is MobileUnloadFatalError) {
+        MessageUtils.showErrorSnackbar(context, next.message);
+        notifier.dismissError();
       } else if (next is MobileUnloadSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.unload_success_completed);
         notifier.dismissSuccess();
@@ -123,10 +105,9 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
         drawerStage: drawerStage,
         onStartUnload: notifier.startUnload,
         onCompleteUnload: notifier.completeUnload,
-        onReopenDrawer: notifier.reopenDrawer,
+
         onSelectAssignment: notifier.selectAssignment,
         onChangePatient: notifier.clearPatientSelection,
-        onCancelUnload: () => _onCancelUnload(state, drawerStage),
       ),
     );
   }

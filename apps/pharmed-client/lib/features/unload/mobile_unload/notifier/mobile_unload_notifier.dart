@@ -49,6 +49,10 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   // ihtiyaç duyulmaz. cancel/error/success akışlarında temizlenir.
   Map<String, CabinExpectedEpc> _expectedMap = const <String, CabinExpectedEpc>{};
 
+  /// Saving sırasında çekmece kapandıysa true. Kayıt sonucu gelince
+  /// (_completeRefill) değerlendirilir: OK → doğrudan Success, hata → Error.
+  bool _closedDuringSaving = false;
+
   @override
   MobileUnloadState build() {
     _drawer = MobileDrawerOrchestrator(ref: ref)
@@ -98,597 +102,6 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     }
 
     await onCellTap(coord);
-  }
-
-  void clearPatientSelection() {
-    final current = state;
-    final selectedSlot = current.selectedSlot;
-    if (selectedSlot == null) return;
-
-    state = MobileUnloadSlotSelected(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      selectedSlot: selectedSlot,
-      assignments: current.assignments,
-      cabinId: current.cabinId,
-    );
-  }
-
-  void toggleItemSelection(int itemId) {
-    final current = state;
-    if (current is! MobileUnloadReady) return;
-
-    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
-    if (item == null || !(item.status?.canUnload ?? false)) return;
-
-    final next = {...current.selectedItemIds};
-    if (!next.add(itemId)) next.remove(itemId);
-    state = current.copyWith(selectedItemIds: next);
-  }
-
-  void onDatePresetChanged(DateRangePreset preset) {
-    final current = state;
-    if (current is! MobileUnloadReady) return;
-    state = current.copyWith(datePreset: preset);
-    _reloadPrescriptions();
-  }
-
-  void onStatusFilterChanged(PrescriptionMovementType? type) {
-    final current = state;
-    if (current is! MobileUnloadReady) return;
-    state = current.copyWith(statusFilter: type, clearStatusFilter: type == null);
-    _reloadPrescriptions();
-  }
-
-  Future<void> _reloadPrescriptions() async {
-    final current = state;
-    if (current is! MobileUnloadReady) return;
-
-    final result = await _getPrescriptionHistory.call(
-      current.patient.id!,
-      params: PagedQueryParamsBuilder.fromPreset(
-        preset: current.datePreset,
-        filters: [if (current.statusFilter != null) Filter.eq('lastMovement.detailStatusId', current.statusFilter!.id)],
-      ),
-    );
-
-    result.when(
-      ok: (items) => state = current.copyWith(
-        prescriptionItems: items,
-        selectedItemIds: {}, // filtre değişince seçimi sıfırla
-      ),
-      error: (e) => state = MobileUnloadError(message: e.message, previousState: current),
-    );
-  }
-
-  /// Boşaltmaya başla — check YOK, direkt çekmece aç.
-  ///
-  /// SWREQ-CLI-UNLOAD-002
-  Future<void> startUnload() async {
-    final current = state;
-    if (current is! MobileUnloadReady) return;
-
-    // Çekmece idle olmalı (henüz açılmamış)
-    final drawerStage = ref.read(mobileDrawerSessionProvider).stage;
-    if (drawerStage is! MobileDrawerIdle) return;
-
-    await _drawer.open(slots: current.slots, slot: current.selectedSlot);
-  }
-
-  Future<void> reopenDrawer() async {
-    await ref.read(mobileDrawerSessionProvider.notifier).reopen();
-  }
-
-  Future<void> cancelUnload() async {
-    final current = state;
-    final ready = switch (current) {
-      MobileUnloadReady r => r,
-      MobileUnloadSaving(:final ready) => ready,
-      _ => null,
-    };
-
-    final stage = _drawerStage;
-
-    if (stage is MobileDrawerIdle) {
-      if (ready == null) return;
-      state = ready.copyWith(selectedItemIds: {}, rfidReadEpcs: {}, takenEpcs: {});
-      return;
-    }
-
-    if ((stage is MobileDrawerOpening || stage is MobileDrawerOpened) && (ready?.takenEpcs.isNotEmpty ?? false)) {
-      return;
-    }
-
-    await _drawer.stop();
-
-    if (ready != null) {
-      state = ready.copyWith(selectedItemIds: {}, rfidReadEpcs: {}, takenEpcs: {});
-    }
-  }
-
-  /// Boşaltmayı tamamla — çekmece kapalıyken çağrılır.
-  ///
-  /// Asıl kayıt başarısızsa ROLLBACK: çekmece otomatik açılır, kullanıcı
-  /// çıkardığı ilaçları geri koyar (previouslyTakenEpcs).
-  ///
-  /// SWREQ-CLI-UNLOAD-003
-  Future<void> completeUnload() async {
-    final current = state;
-    if (current is! MobileUnloadReady) return;
-    if (!current.canComplete) return;
-
-    final drawerStage = ref.read(mobileDrawerSessionProvider).stage;
-    if (drawerStage is! MobileDrawerClosed) return;
-
-    state = MobileUnloadSaving(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      selectedSlot: current.selectedSlot,
-      assignments: current.assignments,
-      cabinId: current.cabinId,
-      ready: current,
-    );
-
-    // 1) NotFound + manuel hariç tutulan RFID'siz item'lar için eksik bildirimi.
-    //    Henüz fiziksel kayıt yok → fail olursa Error (rollback DEĞİL).
-    final missingItems = current.prescriptionItems.where((i) {
-      if (i.id == null) return false;
-      final epc = i.rfidTag;
-      // RFID'li & baseline'da bulunamadı → otomatik eksik
-      if (epc != null && current.notFoundEpcs.contains(epc)) return true;
-      return false;
-    }).toList();
-
-    for (final item in missingItems) {
-      final r = await _reportMissingStock(prescriptionItemId: item.id!, type: CabinInventoryType.unload);
-      if (r is Error) {
-        MedLogger.warn(
-          unit: 'MobileUnloadNotifier',
-          swreq: 'SWREQ-CLI-UNLOAD-007',
-          message: 'Auto eksik stok bildirimi başarısız — complete iptal',
-          context: {'itemId': item.id, 'error': r.error.message},
-        );
-        state = MobileUnloadError(
-          message: 'Eksik stok bildirimi başarısız: ${r.error.message}',
-          previousState: current,
-        );
-        return;
-      }
-    }
-
-    // 3) Asıl boşaltma kaydı — seçim yok, tüm hasta ilaçları.
-    //    Boşaltılan = (RFID'li takenEpcs) + (RFID'siz, excludedItemIds'te DEĞİL).
-    //    notFound ve excluded dışlanır.
-    final params = current.prescriptionItems
-        .where((i) => i.id != null && i.status == PrescriptionMovementType.purchasePending)
-        .where((i) {
-          final epc = i.rfidTag;
-          if (epc != null) {
-            // RFID'li: yalnızca fiziksel çıkarılanlar boşaltılır
-            return current.takenEpcs.contains(epc);
-          }
-          // RFID'siz: hariç tutulmadıysa boşaltılır
-          return !current.excludedItemIds.contains(i.id);
-        })
-        .map((i) => MobileUnloadParams(prescriptionDetailId: i.id!))
-        .toList();
-
-    if (params.isEmpty) {
-      // Boşaltılacak bir şey yok → doğrudan Success
-      await _drawer.stop();
-      _resetExpectedMap();
-      state = MobileUnloadSuccess(
-        slots: current.slots,
-        mobileSlots: current.mobileSlots,
-        selectedSlot: current.selectedSlot,
-        assignments: current.assignments,
-        cabinId: current.cabinId,
-        message: '',
-        ready: current.clearedRfidState,
-      );
-      return;
-    }
-
-    final result = await _completeUnload(params);
-
-    await result.when(
-      ok: (_) async {
-        await _drawer.stop();
-
-        // Plan-dışı bildirimi — kayıt OK olduktan SONRA (skill §7), fire-and-forget
-        if (current.unplannedMovements.isNotEmpty) {
-          final expectedSnapshot = _expectedMap;
-          unawaited(_reportUnplannedMovements(current.unplannedMovements, expectedSnapshot));
-        }
-        _resetExpectedMap();
-
-        state = MobileUnloadSuccess(
-          slots: current.slots,
-          mobileSlots: current.mobileSlots,
-          selectedSlot: current.selectedSlot,
-          assignments: current.assignments,
-          cabinId: current.cabinId,
-          message: '',
-          ready: current.clearedRfidState,
-        );
-      },
-      error: (e) async {
-        // BAŞARISIZ → ROLLBACK: ilaçlar fiziksel çıktı ama kayıt geçmedi.
-        MedLogger.warn(
-          unit: 'MobileUnloadNotifier',
-          swreq: 'SWREQ-CLI-UNLOAD-003',
-          message: 'Complete başarısız — rollback başlatılıyor',
-          context: {'error': e.message, 'takenCount': current.takenEpcs.length},
-        );
-
-        final rollbackReady = current.copyWith(previouslyTakenEpcs: current.takenEpcs, rfidReadEpcs: const {});
-
-        state = MobileUnloadRollbackInProgress(
-          slots: current.slots,
-          mobileSlots: current.mobileSlots,
-          selectedSlot: current.selectedSlot,
-          assignments: current.assignments,
-          cabinId: current.cabinId,
-          ready: rollbackReady,
-        );
-
-        await _drawer.open(slots: current.slots, slot: current.selectedSlot);
-      },
-    );
-  }
-
-  /// Plan-dışı hareketleri bildirir (fire-and-forget, complete sonrası).
-  /// Her UNPLANNED EPC için EXPECTED_MAP'ten materialId/itemId çözülür.
-  /// Hata kullanıcıyı durdurmaz — kayıt zaten başarılı (skill §7).
-  ///
-  /// SWREQ-CLI-UNLOAD-008
-  Future<void> _reportUnplannedMovements(Set<String> unplannedEpcs, Map<String, CabinExpectedEpc> expectedMap) async {
-    for (final epc in unplannedEpcs) {
-      final exp = expectedMap[epc];
-      final itemId = exp?.prescriptionItem?.id;
-      if (itemId == null) {
-        MedLogger.warn(
-          unit: 'MobileUnloadNotifier',
-          swreq: 'SWREQ-CLI-UNLOAD-008',
-          message: 'Plan-dışı için itemId çözülemedi',
-          context: {'epc': epc},
-        );
-        continue;
-      }
-      final r = await _reportMissingStock(prescriptionItemId: itemId, type: CabinInventoryType.unload);
-      if (r is Error) {
-        MedLogger.error(
-          unit: 'MobileUnloadNotifier',
-          swreq: 'SWREQ-CLI-UNLOAD-008',
-          message: 'Plan-dışı bildirimi başarısız (retry yok)',
-          context: {'epc': epc, 'itemId': itemId, 'error': r.error.message},
-        );
-      }
-    }
-  }
-
-  /// Error sonrası boşaltmayı yeniden dener — completeUnload'u baştan çalıştırır.
-  /// Çekmece kapalı, RFID/baseline state korunmuş; dokunulmaz.
-  ///
-  /// SWREQ-CLI-UNLOAD-003
-  Future<void> retryComplete() async {
-    final current = state;
-    if (current is! MobileUnloadError) return;
-    final previous = current.previousState;
-    if (previous is! MobileUnloadReady) return;
-
-    state = previous;
-    await completeUnload();
-  }
-
-  /// Eksik stok bildir — ilaç fiziksel olarak kabinde yok.
-  ///
-  /// Backend bildirimi başarılıysa reçete yeniden çekilir; ilgili item
-  /// artık "Alım Bekliyor" olmaktan çıkar ve seçiliyse seçimi kaldırılır.
-  ///
-  /// Süreç (orchestrator) aktifken çağrılmaz — buton zaten gizli olur.
-  ///
-  /// SWREQ-CLI-INTAKE-006
-  Future<void> reportMissingStock(int itemId) async {
-    final current = state;
-    if (current is! MobileUnloadReady) return;
-    if (current.reportingItemIds.contains(itemId)) return; // zaten işlemde
-    if (current.reportedMissingItemIds.contains(itemId)) return; // zaten bildirildi
-
-    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
-    if (item == null) return;
-    if (!(item.status?.canReportShortage ?? false)) return;
-
-    state = current.copyWith(reportingItemIds: {...current.reportingItemIds, itemId});
-
-    final result = await _reportMissingStock.call(prescriptionItemId: itemId, type: CabinInventoryType.unload);
-
-    result.when(
-      ok: (_) async {
-        state = current.copyWith(
-          reportingItemIds: {...current.reportingItemIds}..remove(itemId),
-          reportedMissingItemIds: {...current.reportedMissingItemIds, itemId},
-        );
-        return;
-      },
-      error: (e) => state = MobileUnloadError(
-        message: e.message,
-        previousState: current.copyWith(reportingItemIds: {...current.reportingItemIds}..remove(itemId)),
-      ),
-    );
-  }
-
-  /// Çekmece açıldıktan sonra baseline snapshot alır ve reconciliation yapar.
-  ///
-  /// Boşaltma seçimsizdir — tüm hasta ilaçları boşaltılacak (sayım gibi),
-  /// fiziksel olarak çıkarılır (alım gibi). Reconciliation EXPECTED üzerinden:
-  ///   - matched (EXPECTED ∩ OBSERVED) → rfidReadEpcs (kabinde, boşaltılmayı bekliyor)
-  ///   - notFound (EXPECTED ∖ OBSERVED) → notFoundEpcs (boşaltılacak ama yok → otomatik eksik)
-  ///   - unexpected (OBSERVED ∖ EXPECTED) → unexpectedEpcs (sessiz, lost olursa unplanned)
-  ///
-  /// SWREQ-CLI-UNLOAD-009
-  Future<void> _performBaselineScan() async {
-    final current = state;
-    if (current is MobileUnloadError || current is MobileUnloadRollbackInProgress) return;
-
-    final ready = _readyOf(current);
-    if (ready == null) return;
-
-    // EXPECTED: tüm kabin stoğu (PASSIVE ayrımı için)
-    final expectedResult = await _getCabinExpectedEpcs.call(ready.cabinId);
-    List<CabinExpectedEpc>? expected;
-    String? errorMessage;
-    expectedResult.when(ok: (v) => expected = v, error: (e) => errorMessage = e.message);
-    if (errorMessage != null) {
-      state = MobileUnloadError(message: errorMessage!, previousState: ready);
-      return;
-    }
-
-    _expectedMap = {for (final e in expected!) (e.rfidTag ?? ''): e};
-    final expectedSet = _expectedMap.keys.toSet();
-
-    // TARGET: boşaltılacak gözün RFID'li ilaçları (seçim yok — tüm hasta ilaçları)
-    final targetSet = ready.prescriptionItems
-        .where((i) => i.rfidTag != null && i.status == PrescriptionMovementType.purchasePending)
-        .map((i) => i.rfidTag!)
-        .toSet();
-
-    final observed = await _drawer.snapshot();
-
-    final after = state;
-    final afterReady = _readyOf(after);
-    if (afterReady == null) return;
-
-    // Dört küme
-    final matched = targetSet.intersection(observed); // boşaltılacak, kabinde
-    final notFound = targetSet.difference(observed); // boşaltılacak ama yok
-    final passive = expectedSet.difference(targetSet).intersection(observed); // başka göz stoğu
-    final unexpected = observed.difference(expectedSet); // kabine ait değil
-
-    final updatedReady = afterReady.copyWith(
-      baselineCompleted: true,
-      rfidReadEpcs: matched,
-      notFoundEpcs: notFound,
-      passiveEpcs: passive,
-      unexpectedEpcs: unexpected,
-    );
-
-    state = _withReady(after, updatedReady);
-  }
-
-  /// RFID'siz bir item'ı "boşaltma dışı" (kabinde kalacak) işaretler / kaldırır.
-  /// Servise gitmez — completeUnload params'ında dışlanır.
-  ///
-  /// SWREQ-CLI-UNLOAD-007
-  void toggleExclude(int itemId) {
-    final current = state;
-    final ready = _readyOf(current);
-    if (ready == null) return;
-
-    final excluded = ready.excludedItemIds;
-    final next = excluded.contains(itemId) ? (Set<int>.from(excluded)..remove(itemId)) : {...excluded, itemId};
-
-    state = _withReady(current, ready.copyWith(excludedItemIds: next));
-  }
-
-  /// EPC okundu — çekmecede tag göründü.
-  ///
-  ///   - Rollback sırasında: kullanıcı boşalttığı ilacı geri koyuyor →
-  ///     rfidReadEpcs'e ekle; previouslyTakenEpcs hepsi geri konunca finalize.
-  ///   - Baseline öncesi → ignore
-  ///   - Baseline sonrası:
-  ///     · takenEpcs'te → boşaltılan ilaç geri konuldu, takenEpcs'ten çıkar
-  ///     · notFoundEpcs'te → eksikti, geç okundu, çıkar → matched'a dön
-  ///     · expected'da → matched (rfidReadEpcs)
-  ///     · değilse → unexpected
-  ///
-  /// SWREQ-CLI-UNLOAD-004
-  void _onEpcRead(String epc) {
-    final current = state;
-
-    // ── Rollback: geri konan tag'i izle ──────────────────────────────────
-    if (current is MobileUnloadRollbackInProgress) {
-      final ready = current.ready;
-      if (!ready.previouslyTakenEpcs.contains(epc)) return;
-      if (ready.rfidReadEpcs.contains(epc)) return; // dedup
-
-      final updatedReady = ready.copyWith(rfidReadEpcs: {...ready.rfidReadEpcs, epc});
-      state = current.copyWith(ready: updatedReady);
-
-      MedLogger.info(
-        unit: 'MobileUnloadNotifier',
-        swreq: 'SWREQ-CLI-UNLOAD-004',
-        message: 'Rollback — boşaltılan tag kabine geri kondu',
-        context: {'epc': epc, 'pending': updatedReady.pendingRollbackEpcs.length},
-      );
-      return;
-    }
-
-    final ready = _readyOf(current);
-    if (ready == null) return;
-    if (!ready.baselineCompleted) return;
-
-    // Hata kümelerinden geri dönüş
-    final wasUnplanned = ready.unplannedMovements.contains(epc);
-
-    // Zaten bilinen aktif kümede mi? dedup
-    final alreadyKnown =
-        ready.rfidReadEpcs.contains(epc) || ready.passiveEpcs.contains(epc) || ready.unexpectedEpcs.contains(epc);
-    if (!wasUnplanned && alreadyKnown) return;
-
-    var newRead = ready.rfidReadEpcs;
-    var newNotFound = Set<String>.from(ready.notFoundEpcs)..remove(epc);
-    var newPassive = ready.passiveEpcs;
-    var newUnexpected = ready.unexpectedEpcs;
-    var newUnplanned = ready.unplannedMovements;
-    var newTaken = Set<String>.from(ready.takenEpcs)..remove(epc);
-
-    final isTarget = _isTargetEpc(ready, epc);
-    final isExpected = _expectedMap.containsKey(epc);
-
-    if (wasUnplanned) {
-      // Plan dışı çıkarılan geri kondu → PASSIVE'e geri yükle
-      newUnplanned = Set<String>.from(newUnplanned)..remove(epc);
-      newPassive = {...newPassive, epc};
-    } else if (isTarget) {
-      newRead = {...newRead, epc}; // boşaltma hedefi, kabinde
-    } else if (isExpected) {
-      newPassive = {...newPassive, epc}; // başka gözün stoğu
-    } else {
-      newUnexpected = {...newUnexpected, epc}; // kabine ait değil
-    }
-
-    state = _withReady(
-      current,
-      ready.copyWith(
-        rfidReadEpcs: newRead,
-        takenEpcs: newTaken,
-        notFoundEpcs: newNotFound,
-        passiveEpcs: newPassive,
-        unexpectedEpcs: newUnexpected,
-        unplannedMovements: newUnplanned,
-      ),
-    );
-  }
-
-  bool _isTargetEpc(MobileUnloadReady ready, String epc) =>
-      ready.prescriptionItems.any((i) => i.status == PrescriptionMovementType.purchasePending && i.rfidTag == epc);
-
-  /// EPC kayboldu — çekmeceden tag çıktı.
-  ///
-  ///   - Rollback sırasında: geri konan tag tekrar çıkarıldı → rfidReadEpcs'ten düş
-  ///   - Baseline öncesi → ignore
-  ///   - Baseline sonrası:
-  ///     · rfidReadEpcs'te (matched) → takenEpcs'e geç (boşaltıldı — normal akış)
-  ///     · unexpectedEpcs'te → unplannedMovements'a geç (plan dışı çıkış)
-  ///     · Bilinmiyor → ignore
-  ///
-  /// SWREQ-CLI-UNLOAD-005
-  void _onEpcLost(String epc) {
-    final current = state;
-
-    // ── Rollback: geri konmuş tag tekrar çıktıysa geri al ─────────────────
-    if (current is MobileUnloadRollbackInProgress) {
-      final ready = current.ready;
-      if (!ready.rfidReadEpcs.contains(epc)) return;
-
-      final newRead = Set<String>.from(ready.rfidReadEpcs)..remove(epc);
-      state = current.copyWith(ready: ready.copyWith(rfidReadEpcs: newRead));
-
-      MedLogger.info(
-        unit: 'MobileUnloadNotifier',
-        swreq: 'SWREQ-CLI-UNLOAD-005',
-        message: 'Rollback — geri konan tag tekrar çıkarıldı',
-        context: {'epc': epc},
-      );
-      return;
-    }
-
-    final ready = _readyOf(current);
-    if (ready == null) return;
-    if (!ready.baselineCompleted) return;
-
-    if (ready.takenEpcs.contains(epc)) return; // zaten boşaltıldı
-
-    // MATCHED → TAKEN (boşaltıldı — normal akış)
-    if (ready.rfidReadEpcs.contains(epc)) {
-      final newRead = Set<String>.from(ready.rfidReadEpcs)..remove(epc);
-      final newTaken = {...ready.takenEpcs, epc};
-      state = _withReady(current, ready.copyWith(rfidReadEpcs: newRead, takenEpcs: newTaken));
-
-      MedLogger.info(
-        unit: 'MobileUnloadNotifier',
-        swreq: 'SWREQ-CLI-UNLOAD-005',
-        message: 'EPC çekmeceden çıktı — boşaltıldı',
-        context: {'epc': epc},
-      );
-      return;
-    }
-
-    // PASSIVE → UNPLANNED (başka gözün ilacı çıkarıldı → plan dışı, YAPILMAMALI)
-    if (ready.passiveEpcs.contains(epc)) {
-      final newPassive = Set<String>.from(ready.passiveEpcs)..remove(epc);
-      final newUnplanned = {...ready.unplannedMovements, epc};
-      state = _withReady(current, ready.copyWith(passiveEpcs: newPassive, unplannedMovements: newUnplanned));
-
-      MedLogger.warn(
-        unit: 'MobileUnloadNotifier',
-        swreq: 'SWREQ-CLI-UNLOAD-008',
-        message: 'Plan dışı — boşaltma hedefi olmayan kabin ilacı çıkarıldı',
-        context: {'epc': epc},
-      );
-      return;
-    }
-
-    // UNEXPECTED → UNPLANNED (plan dışı çıkış → eksik bildirim)
-    if (ready.unexpectedEpcs.contains(epc)) {
-      final newUnexpected = Set<String>.from(ready.unexpectedEpcs)..remove(epc);
-      final newUnplanned = {...ready.unplannedMovements, epc};
-      state = _withReady(current, ready.copyWith(unexpectedEpcs: newUnexpected, unplannedMovements: newUnplanned));
-
-      MedLogger.warn(
-        unit: 'MobileUnloadNotifier',
-        swreq: 'SWREQ-CLI-UNLOAD-008',
-        message: 'Plan dışı hareket — beklenmeyen EPC kabinden çıktı',
-        context: {'epc': epc},
-      );
-      return;
-    }
-  }
-
-  void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
-    // Çekmece açıldı → baseline scan (rollback'te değil, RFID state korunur)
-    if (next is MobileDrawerOpened) {
-      final current = state;
-      if (current is! MobileUnloadRollbackInProgress) {
-        unawaited(_performBaselineScan());
-      }
-    }
-
-    if (next is MobileDrawerClosed) {
-      final current = state;
-
-      // Rollback: tüm boşaltılan tag'ler kabine geri kondu mu?
-      if (current is MobileUnloadRollbackInProgress) {
-        if (current.ready.isRollbackComplete) {
-          unawaited(_finalizeRollback(current));
-        }
-        // else: hâlâ eksik tag var, state aynı kalır.
-        // Footer "Çekmeceyi Aç" / "Tekrar Dene" gösterir.
-      }
-    }
-
-    if (next is MobileDrawerFailed) {
-      _resetExpectedMap();
-      final current = state;
-      final cleaned = switch (current) {
-        MobileUnloadReady r => r.clearedRfidState,
-        MobileUnloadSaving(:final ready) => ready.clearedRfidState,
-        MobileUnloadRollbackInProgress(:final ready) => ready.clearedRfidState,
-        _ => current,
-      };
-      state = MobileUnloadFatalError(message: next.message, previousState: cleaned);
-    }
   }
 
   void onSlotTap(MobileSlotVisual slot) {
@@ -758,6 +171,67 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     );
   }
 
+  void clearPatientSelection() {
+    final current = state;
+    final selectedSlot = current.selectedSlot;
+    if (selectedSlot == null) return;
+
+    state = MobileUnloadSlotSelected(
+      slots: current.slots,
+      mobileSlots: current.mobileSlots,
+      selectedSlot: selectedSlot,
+      assignments: current.assignments,
+      cabinId: current.cabinId,
+    );
+  }
+
+  void onDatePresetChanged(DateRangePreset preset) {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+    state = current.copyWith(datePreset: preset);
+    _reloadPrescriptions();
+  }
+
+  void onStatusFilterChanged(PrescriptionMovementType? type) {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+    state = current.copyWith(statusFilter: type, clearStatusFilter: type == null);
+    _reloadPrescriptions();
+  }
+
+  void toggleItemSelection(int itemId) {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+
+    final item = current.prescriptionItems.firstWhereOrNull((i) => i.id == itemId);
+    if (item == null || !(item.status?.canUnload ?? false)) return;
+
+    final next = {...current.selectedItemIds};
+    if (!next.add(itemId)) next.remove(itemId);
+    state = current.copyWith(selectedItemIds: next);
+  }
+
+  Future<void> _reloadPrescriptions() async {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+
+    final result = await _getPrescriptionHistory.call(
+      current.patient.id!,
+      params: PagedQueryParamsBuilder.fromPreset(
+        preset: current.datePreset,
+        filters: [if (current.statusFilter != null) Filter.eq('lastMovement.detailStatusId', current.statusFilter!.id)],
+      ),
+    );
+
+    result.when(
+      ok: (items) => state = current.copyWith(
+        prescriptionItems: items,
+        selectedItemIds: {}, // filtre değişince seçimi sıfırla
+      ),
+      error: (e) => state = MobileUnloadError(message: e.message, previousState: current),
+    );
+  }
+
   Future<void> _loadPrescriptions({
     required List<MobileSlotVisual> slots,
     required List<MobileDrawerSlot> mobileSlots,
@@ -799,8 +273,6 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
           bed: assignment.bed,
           room: assignment.bed?.room,
           prescriptionItems: items,
-          rfidReadEpcs: const {},
-          takenEpcs: const {},
           selectedItemIds: const {},
         );
       },
@@ -820,10 +292,386 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     );
   }
 
-  void dismissError() {
+  /// Boşaltmaya başla — check YOK, direkt çekmece aç.
+  ///
+  /// SWREQ-CLI-UNLOAD-002
+  Future<void> startUnload() async {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+
+    state = MobileUnloadDrawerOpening(ready: current.copyWith(baselineCompleted: false));
+
+    await _drawer.open(slots: current.slots, slot: current.selectedSlot);
+  }
+
+  /// Çekmece açıldıktan sonra baseline snapshot alır ve reconciliation yapar.
+  ///
+  /// Boşaltma seçimsizdir — tüm hasta ilaçları boşaltılacak (sayım gibi),
+  /// fiziksel olarak çıkarılır (alım gibi). Reconciliation EXPECTED üzerinden:
+  ///   - matched (EXPECTED ∩ OBSERVED) → rfidReadEpcs (kabinde, boşaltılmayı bekliyor)
+  ///   - notFound (EXPECTED ∖ OBSERVED) → notFoundEpcs (boşaltılacak ama yok → otomatik eksik)
+  ///   - unexpected (OBSERVED ∖ EXPECTED) → unexpectedEpcs (sessiz, lost olursa unplanned)
+  ///
+  /// SWREQ-CLI-UNLOAD-009
+  Future<void> _scanCabin() async {
+    final current = state;
+    if (current is MobileUnloadError) return;
+
+    final ready = _readyOf(current);
+    if (ready == null) return;
+
+    // Beklenen kabin tag'lerini çek — reconciliation için DEĞİL,
+    // yalnızca kapanışta EPC → prescriptionItemId çözümü için lookup.
+    final expectedResult = await _getCabinExpectedEpcs.call(ready.cabinId);
+    String? errorMessage;
+
+    expectedResult.when(
+      ok: (value) => _expectedMap = {
+        for (final e in value)
+          if (e.rfidTag != null) e.rfidTag!: e,
+      },
+      error: (e) => errorMessage = e.message,
+    );
+
+    if (errorMessage != null) {
+      state = MobileUnloadError(message: errorMessage!, previousState: ready);
+      return;
+    }
+
+    // Snapshot → baseline (bölünmez, hepsi eşit)
+    final observed = await _drawer.snapshot();
+    final after = state;
+    final afterReady = _readyOf(after);
+    if (afterReady == null) return;
+    state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
+  }
+
+  /// ClosedEarly / Error → "İptal". Kayıt YOK. İşlemi bitirir, Idle'a döner.
+  Future<void> cancelEarlyClose() async {
+    final current = state;
+    final ready = _readyOf(current);
+
+    await _drawer.stop();
+    _resetExpectedMap();
+    _closedDuringSaving = false;
+
+    if (ready == null) {
+      state = const MobileUnloadIdle(slots: [], mobileSlots: [], assignments: [], cabinId: 0);
+      return;
+    }
+
+    // Sahne KORUNUR — slot/hasta listesi ekranda kalır
+    state = MobileUnloadIdle(
+      slots: ready.slots,
+      mobileSlots: ready.mobileSlots,
+      assignments: ready.assignments,
+      cabinId: ready.cabinId,
+    );
+  }
+
+  /// ClosedEarly → "Tekrar Dene". Çekmece yeniden açılır (Sayım'da check YOK zaten).
+  /// Baseline + _expectedMap + runtime kümeleri KORUNUR.
+  Future<void> retryEarlyClose() async {
+    final current = state;
+    final ready = _readyOf(current);
+    if (ready == null) return;
+
+    _closedDuringSaving = false;
+
+    // ready olduğu gibi taşınır (baseline + placedEpcs + baselineLostEpcs dahil).
+    // Sadece baselineCompleted false → UI "Tarama yapılıyor" gösterir,
+    // complete butonu reopen tamamlanana kadar disabled.
+    final reopening = ready.copyWith(baselineCompleted: false);
+    state = MobileUnloadDrawerOpening(ready: reopening);
+
+    await ref.read(mobileDrawerSessionProvider.notifier).reopen();
+  }
+
+  /// Checkbox — RFID'siz item'ı boşaltmaya dahil et / çıkar.
+  /// Default dahildir; kapatılınca hariç tutulur. Dahil edilince eksik işareti kalkar.
+  /// SWREQ-CLI-UNLOAD-007
+  void toggleUnloadInclude(int itemId) {
+    final current = state;
+    final ready = _readyOf(current);
+    if (ready == null) return;
+
+    final excluded = ready.unloadExcludedItemIds;
+    final wasExcluded = excluded.contains(itemId);
+    // wasExcluded ise şimdi dahil ediyoruz (setten çıkar), değilse hariç tut (sete ekle).
+    final nextExcluded = wasExcluded ? (Set<int>.from(excluded)..remove(itemId)) : {...excluded, itemId};
+
+    // Boşaltmaya dahil edildiyse (wasExcluded==true) eksik işaretini kaldır.
+    final nextMissing = wasExcluded
+        ? (Set<int>.from(ready.markedMissingItemIds)..remove(itemId))
+        : ready.markedMissingItemIds;
+
+    state = _withReady(current, ready.copyWith(unloadExcludedItemIds: nextExcluded, markedMissingItemIds: nextMissing));
+  }
+
+  /// Toggle — RFID'siz item'ı eksik işaretle / kaldır.
+  /// Eksik işaretlenince boşaltmadan çıkar (ikisi bir arada olamaz).
+  /// SWREQ-CLI-UNLOAD-007
+  void toggleMarkMissing(int itemId) {
+    final current = state;
+    final ready = _readyOf(current);
+    if (ready == null) return;
+
+    final marked = ready.markedMissingItemIds;
+    final wasMarked = marked.contains(itemId);
+    final nextMissing = wasMarked ? (Set<int>.from(marked)..remove(itemId)) : {...marked, itemId};
+
+    // Eksik işaretlendiyse (yeni marked) boşaltmadan çıkar → hariç tut.
+    final nextExcluded = wasMarked ? ready.unloadExcludedItemIds : {...ready.unloadExcludedItemIds, itemId};
+
+    state = _withReady(current, ready.copyWith(unloadExcludedItemIds: nextExcluded, markedMissingItemIds: nextMissing));
+  }
+
+  /// Boşaltmayı tamamla — çekmece kapalıyken çağrılır.
+  ///
+  /// Asıl kayıt başarısızsa ROLLBACK: çekmece otomatik açılır, kullanıcı
+  /// çıkardığı ilaçları geri koyar (previouslyTakenEpcs).
+  ///
+  /// SWREQ-CLI-UNLOAD-003
+  Future<void> completeUnload() async {
+    final current = state;
+    if (current is! MobileUnloadReady) return;
+    if (!current.canComplete) return;
+
+    if (_drawerStage is! MobileDrawerOpened) return;
+
+    state = MobileUnloadSaving(ready: current);
+
+    // Asıl boşaltma kaydı — seçim yok, tüm hasta ilaçları.
+    // Boşaltılan = (RFID'li takenEpcs) + (RFID'siz, eksik İŞARETLENMEYEN).
+    // notFound (hiç okunmayan) ve manuel eksik işaretlenenler dışlanır.
+    final params = current.prescriptionItems
+        .where((i) => i.id != null && i.status == PrescriptionMovementType.purchasePending)
+        .where((i) {
+          final epc = i.rfidTag;
+          if (epc != null) {
+            // RFID'li: yalnızca fiziksel çıkarılanlar boşaltılır
+            return current.takenEpcs.contains(epc);
+          }
+          // RFID'siz: eksik işaretlenmediyse boşaltılır
+          return current.isUnloadIncluded(i.id!);
+        })
+        .map((i) => MobileUnloadParams(prescriptionDetailId: i.id!))
+        .toList();
+
+    final result = await _completeUnload(params);
+
+    await result.when(
+      ok: (_) async {
+        // WaitingClose → drawer fiziksel kapanınca _onDrawerStageChange
+        // eksik bildirimlerini topluca yapar, sonra Success.
+        state = MobileUnloadWaitingClose(ready: current);
+      },
+      error: (e) async {
+        // Kayıt FAIL — RFID state KORUNUR, drawer açık, retry edilebilir.
+        state = MobileUnloadError(message: e.message, previousState: current);
+      },
+    );
+  }
+
+  /// Error → "Tekrar Dene". Çekmece açık; kaydı yeniden dener (reopen YOK).
+  Future<void> retryComplete() async {
     final current = state;
     if (current is! MobileUnloadError) return;
-    state = current.previousState;
+    final ready = current.previousState.readyContext;
+    if (ready == null) return;
+
+    state = ready;
+    await completeUnload();
+  }
+
+  /// Plan-dışı hareketleri bildirir (fire-and-forget, complete sonrası).
+  /// Her UNPLANNED EPC için EXPECTED_MAP'ten materialId/itemId çözülür.
+  /// Hata kullanıcıyı durdurmaz — kayıt zaten başarılı (skill §7).
+  ///
+  /// SWREQ-CLI-UNLOAD-008
+  Future<void> _reportUnplannedMovements(MobileUnloadReady ready, Map<String, CabinExpectedEpc> expectedMap) async {
+    // a) Otomatik eksik — missingEpcs → prescriptionItemId (EXPECTED_MAP'ten)
+    for (final epc in ready.missingEpcs) {
+      final itemId = expectedMap[epc]?.prescriptionItem?.id;
+      if (itemId == null) continue;
+      final r = await _reportMissingStock(prescriptionItemId: itemId, type: CabinInventoryType.unload);
+      if (r is Error) {
+        MedLogger.error(
+          unit: 'MobileUnloadNotifier',
+          swreq: 'SWREQ-CLI-UNLOAD-008',
+          message: 'otomatik eksik bildirimi başarısız (retry yok)',
+          context: {'itemId': itemId, 'epc': epc, 'error': r.error.message},
+        );
+      }
+    }
+
+    // b) Manuel eksik — markedMissingItemIds (RFID'siz item'lar)
+    for (final itemId in ready.markedMissingItemIds) {
+      final r = await _reportMissingStock(prescriptionItemId: itemId, type: CabinInventoryType.unload);
+      if (r is Error) {
+        MedLogger.error(
+          unit: 'MobileUnloadNotifier',
+          swreq: 'SWREQ-CLI-UNLOAD-008',
+          message: 'manuel eksik bildirimi başarısız (retry yok)',
+          context: {'itemId': itemId, 'error': r.error.message},
+        );
+      }
+    }
+
+    // Boşaltmada fazla stok bildirimi YOK (sayım kapsamı değil).
+  }
+
+  /// EPC okundu — çekmecede tag göründü.
+  ///
+  ///   - Rollback sırasında: kullanıcı boşalttığı ilacı geri koyuyor →
+  ///     rfidReadEpcs'e ekle; previouslyTakenEpcs hepsi geri konunca finalize.
+  ///   - Baseline öncesi → ignore
+  ///   - Baseline sonrası:
+  ///     · takenEpcs'te → boşaltılan ilaç geri konuldu, takenEpcs'ten çıkar
+  ///     · notFoundEpcs'te → eksikti, geç okundu, çıkar → matched'a dön
+  ///     · expected'da → matched (rfidReadEpcs)
+  ///     · değilse → unexpected
+  ///
+  /// SWREQ-CLI-UNLOAD-004
+  void _onEpcRead(String epc) {
+    final current = state;
+    final ready = _readyOf(current);
+    if (ready == null) return;
+
+    // KORUMA: baseline bitmediyse okunan her etiket kabinin kendi malı;
+    // unexpected/placed sayılamaz.
+    if (!ready.baselineCompleted) return;
+
+    // Baseline'daki tag geri okundu → lost'tan kurtar (kullanıcı geri koydu).
+    if (ready.baselineEpcs.contains(epc)) {
+      if (ready.baselineLostEpcs.contains(epc)) {
+        state = _withReady(
+          current,
+          ready.copyWith(baselineLostEpcs: Set<String>.from(ready.baselineLostEpcs)..remove(epc)),
+        );
+      }
+      return;
+    }
+
+    // Baseline'da yok → sonradan konan tag.
+    if (ready.placedEpcs.contains(epc)) return;
+    state = _withReady(current, ready.copyWith(placedEpcs: {...ready.placedEpcs, epc}));
+  }
+
+  /// EPC kayboldu — çekmeceden tag çıktı.
+  ///
+  ///   - Rollback sırasında: geri konan tag tekrar çıkarıldı → rfidReadEpcs'ten düş
+  ///   - Baseline öncesi → ignore
+  ///   - Baseline sonrası:
+  ///     · rfidReadEpcs'te (matched) → takenEpcs'e geç (boşaltıldı — normal akış)
+  ///     · unexpectedEpcs'te → unplannedMovements'a geç (plan dışı çıkış)
+  ///     · Bilinmiyor → ignore
+  ///
+  /// SWREQ-CLI-UNLOAD-005
+  void _onEpcLost(String epc) {
+    final current = state;
+    final ready = _readyOf(current);
+    if (ready == null) return;
+    if (!ready.baselineCompleted) return;
+
+    // Baseline'daki tag çıktı → kabinden alındı.
+    // Seçili → missing/taken, seçili değil → unplanned (getter türetir).
+    if (ready.baselineEpcs.contains(epc)) {
+      if (ready.baselineLostEpcs.contains(epc)) return; // dedup
+      state = _withReady(current, ready.copyWith(baselineLostEpcs: {...ready.baselineLostEpcs, epc}));
+
+      return;
+    }
+
+    // Sonradan konan yabancı tag çıktı → kullanıcı geri aldı (düzeltici).
+    // placedEpcs'ten silinince unexpected uyarısı/blokajı kalkar. Bildirim YOK.
+    if (ready.placedEpcs.contains(epc)) {
+      state = _withReady(current, ready.copyWith(placedEpcs: Set<String>.from(ready.placedEpcs)..remove(epc)));
+      return;
+    }
+
+    // Ne baseline ne placed — ignore
+  }
+
+  void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
+    // ── Çekmece açıldı → sahneye geç, baseline tara ──────────────────────
+    if (next is MobileDrawerOpened) {
+      final current = state;
+      // Sayımda check YOK: ilk açılış VE reopen ikisi de DrawerOpening → Ready.
+      final ready = switch (current) {
+        MobileUnloadDrawerOpening(:final ready) => ready,
+        _ => null,
+      };
+      if (ready != null) {
+        state = ready;
+        unawaited(_scanCabin());
+      }
+    }
+
+    // ── Çekmece kapandı ──────────────────────────────────────────────────
+    if (next is MobileDrawerClosed) {
+      final current = state;
+      switch (current) {
+        // Normal: kayıt gitti, kapanış bekleniyordu → bildir + Success
+        case MobileUnloadWaitingClose(:final ready):
+          final expectedSnapshot = Map<String, CabinExpectedEpc>.of(_expectedMap);
+          unawaited(_reportUnplannedMovements(ready, expectedSnapshot));
+          unawaited(_drawer.stop());
+          state = MobileUnloadSuccess(
+            slots: ready.slots,
+            mobileSlots: ready.mobileSlots,
+            selectedSlot: ready.selectedSlot,
+            assignments: ready.assignments,
+            cabinId: ready.cabinId,
+            message: '',
+            ready: ready.clearedRfidState,
+          );
+          _resetExpectedMap();
+
+        // Kayıt uçuşta kapandı → flag'le; Saving çözülünce değerlendir
+        case MobileUnloadSaving():
+          _closedDuringSaving = true;
+
+        // Tamamla denmeden kapandı → kullanıcıya karar sor
+        case MobileUnloadReady r:
+          state = MobileUnloadClosedEarly(ready: r);
+
+        default:
+          break;
+      }
+    }
+
+    // ── Çekmece donanım hatası → kurtarılamaz, FatalError ────────────────
+    if (next is MobileDrawerFailed) {
+      _resetExpectedMap();
+      final current = state;
+      final cleaned = switch (current) {
+        MobileUnloadReady r => r.clearedRfidState.copyWith(selectedItemIds: const {}),
+        MobileUnloadDrawerOpening(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
+        MobileUnloadSaving(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
+        MobileUnloadWaitingClose(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
+        MobileUnloadClosedEarly(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
+        _ => current,
+      };
+      state = MobileUnloadFatalError(message: next.message, previousState: cleaned);
+    }
+  }
+
+  void dismissError() {
+    final current = state;
+    final previous = switch (current) {
+      MobileUnloadError(:final previousState) => previousState,
+      MobileUnloadFatalError(:final previousState) => previousState,
+      _ => null,
+    };
+    if (previous == null) return;
+
+    unawaited(_drawer.stop());
+    _resetExpectedMap();
+
+    // previousState'ten gerçek Ready'yi çıkar — wrapper/NoPatient olabilir.
+    final ready = _readyOf(previous);
+    state = ready ?? previous;
   }
 
   void dismissSuccess() {
@@ -842,76 +690,26 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     _expectedMap = const <String, CabinExpectedEpc>{};
   }
 
-  /// Rollback başarıyla tamamlandı — drawer + RFID temizliği yapar,
-  /// state'i RollbackCompleted'e, ardından Idle'a çeker.
-  ///
-  /// SWREQ-CLI-UNLOAD-014
-  Future<void> _finalizeRollback(MobileUnloadRollbackInProgress current) async {
-    MedLogger.info(
-      unit: 'MobileUnloadNotifier',
-      swreq: 'SWREQ-CLI-UNLOAD-014',
-      message: 'Rollback tamamlandı — tüm tag\'ler kabine geri kondu',
-      context: {
-        'previouslyTakenCount': current.ready.previouslyTakenEpcs.length,
-        'unplannedCount': current.ready.unplannedMovements.length,
-      },
-    );
-
-    await _drawer.stop();
-    _resetExpectedMap();
-
-    state = MobileUnloadRollbackCompleted(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      selectedSlot: current.selectedSlot,
-      assignments: current.assignments,
-      cabinId: current.cabinId,
-    );
-
-    unawaited(
-      Future.microtask(() {
-        final s = state;
-        if (s is MobileUnloadRollbackCompleted) {
-          state = MobileUnloadIdle(
-            slots: s.slots,
-            mobileSlots: s.mobileSlots,
-            assignments: s.assignments,
-            cabinId: s.cabinId,
-          );
-        }
-      }),
-    );
-  }
-
   MobileUnloadReady? _readyOf(MobileUnloadState s) => switch (s) {
     MobileUnloadReady r => r,
+    MobileUnloadDrawerOpening(:final ready) => ready,
     MobileUnloadSaving(:final ready) => ready,
+    MobileUnloadWaitingClose(:final ready) => ready,
+    MobileUnloadClosedEarly(:final ready) => ready,
     MobileUnloadSuccess(:final ready) => ready,
     MobileUnloadError(:final previousState) => _readyOf(previousState),
-    MobileUnloadRollbackInProgress(:final ready) => ready,
+    MobileUnloadFatalError(:final previousState) => _readyOf(previousState),
     _ => null,
   };
 
   /// Sarmalayıcı state'in [ready] alanını günceller; sarmalanmamış Ready'i
   /// doğrudan döner. Tanımsız state'ler değişmeden döner.
+  /// Sarmalayıcı state'in [ready] alanını günceller; sarmalanmamış Ready'i
+  /// doğrudan döner. RFID event'i işlenmemesi gereken state'ler değişmeden döner.
   MobileUnloadState _withReady(MobileUnloadState s, MobileUnloadReady ready) => switch (s) {
     MobileUnloadReady _ => ready,
-    MobileUnloadSaving w => MobileUnloadSaving(
-      slots: w.slots,
-      mobileSlots: w.mobileSlots,
-      selectedSlot: w.selectedSlot,
-      assignments: w.assignments,
-      cabinId: w.cabinId,
-      ready: ready,
-    ),
-    MobileUnloadRollbackInProgress w => MobileUnloadRollbackInProgress(
-      slots: w.slots,
-      mobileSlots: w.mobileSlots,
-      selectedSlot: w.selectedSlot,
-      assignments: w.assignments,
-      cabinId: w.cabinId,
-      ready: ready,
-    ),
+    MobileUnloadDrawerOpening _ => MobileUnloadDrawerOpening(ready: ready),
+    MobileUnloadSaving _ => MobileUnloadSaving(ready: ready),
     _ => s,
   };
 }

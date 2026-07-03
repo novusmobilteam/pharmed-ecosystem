@@ -46,27 +46,34 @@ class MobileCensusDialog extends ConsumerWidget {
       stats: [
         StatCellData(
           label: 'Sayıldı',
-          value: '${ready.rfidReadEpcs.length} / ${ready.rfidReadEpcs.length + ready.missingEpcs.length}',
-          valueColor: ready.missingEpcs.isEmpty && ready.baselineCompleted && ready.rfidReadEpcs.isNotEmpty
+          value: '${ready.censusCountedTotal} / ${ready.censusTotalCount}',
+          valueColor:
+              ready.baselineCompleted &&
+                  ready.missingEpcs.isEmpty &&
+                  ready.markedMissingItemIds.isEmpty &&
+                  ready.censusTotalCount > 0
               ? MedColors.green
               : null,
         ),
         StatCellData(
           label: 'Eksik',
-          value: '${ready.missingEpcs.length}',
-          valueColor: ready.missingEpcs.isNotEmpty ? MedColors.amber : null,
-          icon: ready.missingEpcs.isNotEmpty ? PhosphorIcons.minusCircle(PhosphorIconsStyle.bold) : null,
+          value: '${ready.totalMissingCount}',
+          valueColor: ready.totalMissingCount > 0 ? MedColors.red : null,
         ),
         StatCellData(
           label: 'Fazla',
-          value: '${ready.excessEpcs.length}',
-          valueColor: ready.excessEpcs.isNotEmpty ? MedColors.amber : null,
-          icon: ready.excessEpcs.isNotEmpty ? PhosphorIcons.package(PhosphorIconsStyle.bold) : null,
+          value: '${ready.extraStocks.length}',
+          valueColor: ready.extraStocks.isNotEmpty ? MedColors.amber : null,
+        ),
+        StatCellData(
+          label: 'Yabancı',
+          value: '${ready.placedEpcs.length}',
+          valueColor: ready.placedEpcs.isNotEmpty ? MedColors.red : null,
         ),
       ],
       banners: [
         if (errorMessage != null) OperationErrorBanner(message: errorMessage),
-        if (ready.excessEpcs.isNotEmpty) UnexpectedTagBanner(epcs: ready.excessEpcs),
+        if (ready.placedEpcs.isNotEmpty) UnexpectedTagBanner(epcs: ready.placedEpcs, blocking: true),
         if (ready.missingEpcs.isNotEmpty) MissingStockBanner(count: ready.missingEpcs.length),
       ],
       footerContent: _censusFooter(state, drawerStage, ready, notifier),
@@ -92,6 +99,7 @@ class MobileCensusDialog extends ConsumerWidget {
                       final group = ready.groups[i];
                       return RxCensusGroupCard(
                         group: group,
+                        baselineCompleted: ready.baselineCompleted,
                         onToggleMissing: ref.read(mobileCensusNotifierProvider.notifier).toggleMissingMark,
                       );
                     },
@@ -99,7 +107,6 @@ class MobileCensusDialog extends ConsumerWidget {
           ),
 
           const SizedBox(height: MedSpacing.md),
-
           _ReportExtraStockButton(onReport: ref.read(mobileCensusNotifierProvider.notifier).addExtraStock),
         ],
       ),

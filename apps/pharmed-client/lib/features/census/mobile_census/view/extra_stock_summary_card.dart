@@ -11,7 +11,7 @@ class _ExtraStockSummaryCard extends StatelessWidget {
     if (extraStocks.isEmpty) return const SizedBox.shrink();
 
     return OperationBanner(
-      tone: BannerTone.info,
+      tone: BannerTone.warning,
       icon: PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
       title: context.l10n.census_extra_stock_summary_title,
       message: 'İşlem sonunda fazla stoklar bildirilecektir.',

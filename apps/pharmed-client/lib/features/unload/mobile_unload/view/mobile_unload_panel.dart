@@ -15,10 +15,8 @@ class MobileUnloadPanel extends StatelessWidget {
     required this.drawerStage,
     required this.onStartUnload,
     required this.onCompleteUnload,
-    required this.onReopenDrawer,
     required this.onSelectAssignment,
     required this.onChangePatient,
-    required this.onCancelUnload,
   });
 
   final MobileUnloadNotifier notifier;
@@ -26,10 +24,8 @@ class MobileUnloadPanel extends StatelessWidget {
   final MobileDrawerStage drawerStage;
   final VoidCallback onStartUnload;
   final VoidCallback onCompleteUnload;
-  final VoidCallback onReopenDrawer;
   final ValueChanged<BedAssignment> onSelectAssignment;
   final VoidCallback onChangePatient;
-  final VoidCallback onCancelUnload;
 
   bool get _isProcessActive => drawerStage.isActive;
 
@@ -41,11 +37,7 @@ class MobileUnloadPanel extends StatelessWidget {
         MobileUnloadUninitialized() ||
         MobileUnloadLoading() => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
 
-        MobileUnloadIdle() ||
-        MobileUnloadSlotSelected() ||
-        MobileUnloadNoPatient() ||
-        MobileUnloadRollbackCompleted() ||
-        MobileUnloadFatalError() => CabinPatientPickerList(
+        MobileUnloadIdle() || MobileUnloadSlotSelected() || MobileUnloadNoPatient() => CabinPatientPickerList(
           assignments: state.availableAssignments,
           onSelected: onSelectAssignment,
         ),
@@ -87,7 +79,12 @@ class MobileUnloadPanel extends StatelessWidget {
           ),
         ],
         Expanded(child: _UnloadPrescriptionList(items: ready.prescriptionItems)),
-        _UnloadActionBar(drawerStage: drawerStage, onStart: onStartUnload, hasUnloadableItems: hasUnloadableItems),
+        _UnloadActionBar(
+          drawerStage: drawerStage,
+          onStart: onStartUnload,
+          hasUnloadableItems: hasUnloadableItems,
+          baselineCompleted: ready.baselineCompleted,
+        ),
       ],
     );
   }
@@ -121,25 +118,37 @@ class _UnloadPrescriptionList extends StatelessWidget {
 }
 
 class _UnloadActionBar extends StatelessWidget {
-  const _UnloadActionBar({required this.drawerStage, required this.onStart, required this.hasUnloadableItems});
+  const _UnloadActionBar({
+    required this.drawerStage,
+    required this.hasUnloadableItems,
+    required this.baselineCompleted,
+    required this.onStart,
+  });
 
   final MobileDrawerStage drawerStage;
-  final VoidCallback onStart;
   final bool hasUnloadableItems;
+  final bool baselineCompleted;
+  final VoidCallback onStart;
 
   @override
   Widget build(BuildContext context) {
-    // İşlem aktifken (çekmece açık/kapalı) asıl kontrol dialog'da.
-    // Panel action bar yalnızca Idle'da "Başlat" ve iptal gösterir.
-    return Row(
-      children: [
-        if (drawerStage is MobileDrawerIdle && hasUnloadableItems) ...[
-          Expanded(
-            child: MedButton(label: context.l10n.unload_action_start, size: MedButtonSize.sm, onPressed: onStart),
-          ),
-        ] else
-          const Spacer(),
-      ],
-    );
+    // Çekmece açılıyor VEYA açıldı ama baseline henüz alınmadı → loading.
+    final isOpening = drawerStage is MobileDrawerOpening || (drawerStage is MobileDrawerOpened && !baselineCompleted);
+
+    return switch (drawerStage) {
+      // Idle + sayılacak item var → başlat butonu
+      MobileDrawerIdle() when hasUnloadableItems => SizedBox(
+        width: context.width,
+        child: MedButton(label: context.l10n.unload_action_start, onPressed: onStart, isLoading: false),
+      ),
+
+      // Açılıyor / taranıyor → aynı buton ama loading, basılamaz
+      MobileDrawerOpening() || MobileDrawerOpened() when isOpening => SizedBox(
+        width: context.width,
+        child: MedButton(label: context.l10n.unload_action_start, onPressed: null, isLoading: true),
+      ),
+
+      _ => const SizedBox.shrink(),
+    };
   }
 }

@@ -30,7 +30,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
@@ -83,13 +82,11 @@ class MobileRefillDialog extends ConsumerWidget {
           label: 'Plan Dışı',
           value: '${ready.unplannedCount}',
           valueColor: ready.unplannedCount > 0 ? MedColors.red : null,
-          icon: ready.unplannedCount > 0 ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
         ),
         StatCellData(
           label: 'Fazla Etiket',
           value: '${ready.unexpectedEpcs.length}',
           valueColor: ready.unexpectedEpcs.isNotEmpty ? MedColors.amber : null,
-          icon: ready.unexpectedEpcs.isNotEmpty ? PhosphorIcons.warning(PhosphorIconsStyle.bold) : null,
         ),
       ],
       banners: [
