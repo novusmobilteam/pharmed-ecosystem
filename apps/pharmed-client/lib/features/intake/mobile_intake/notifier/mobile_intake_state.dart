@@ -201,6 +201,11 @@ final class MobileIntakeReady extends MobileIntakeState {
   /// Kapanışta eksik stok bildirimine dönüşür.
   Set<String> get unplannedMovements => baselineLostEpcs.difference(expectedEpcs);
 
+  /// Kullanıcının seçtiği ilaçlara denk gelmeyen, fazladan/yanlış yerleştirilmiş
+  /// etiketler. Boş değilse complete blokeli — kullanıcı çekmeceyi tekrar açıp
+  /// fazla etiketi çıkarmalı (lost olunca otomatik silinir, blokaj kalkar).
+  Set<String> get unexpectedEpcs => placedEpcs.difference(expectedEpcs);
+
   /// Beklenen ama baseline'da hiç okunmayan → kabinde yoktu (bulunamadı).
   /// "Tamamla" basıldığında otomatik eksik stok bildirimi tetiklenir.
   Set<String> get notFoundEpcs => expectedEpcs.difference(baselineEpcs);
@@ -218,7 +223,7 @@ final class MobileIntakeReady extends MobileIntakeState {
   int get rfidTakenCount => takenEpcs.length;
 
   bool get hasUnplannedMovement => unplannedMovements.isNotEmpty;
-  bool get hasUnexpectedEpc => placedEpcs.isNotEmpty;
+  bool get hasExtraPlacement => unexpectedEpcs.isNotEmpty;
 
   int get totalMissingCount => notFoundEpcs.length + markedMissingItemIds.length;
 

@@ -32,6 +32,37 @@ _ItemStatus _itemStatusFor(PrescriptionItem item, MobileIntakeReady ready) {
   return _ItemStatus.inCabinet;
 }
 
+StatusBadge _intakeItemBadge(_ItemStatus status) {
+  final (bg, fg, icon, label) = switch (status) {
+    _ItemStatus.taken => (
+      MedColors.green,
+      MedColors.greenLight,
+      PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
+      'Alındı',
+    ),
+    _ItemStatus.inCabinet => (
+      MedColors.blue.withValues(alpha: 0.3),
+      MedColors.blue,
+      PhosphorIcons.package(PhosphorIconsStyle.bold),
+      'Kabinde',
+    ),
+    _ItemStatus.notFound => (
+      MedColors.amber,
+      MedColors.amberLight,
+      PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
+      'Bulunamadı',
+    ),
+    _ItemStatus.pending => (
+      MedColors.surface2,
+      MedColors.text3,
+      PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
+      'Taranıyor',
+    ),
+    _ItemStatus.nonRfid => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), 'RFID yok'),
+  };
+  return StatusBadge(bg: bg, fg: fg, icon: icon, label: label);
+}
+
 class _ItemsList extends ConsumerWidget {
   const _ItemsList();
 
@@ -73,14 +104,6 @@ class _ItemCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final colors = switch (status) {
-    //   _ItemStatus.taken => ItemCardColors.green,
-    //   _ItemStatus.inCabinet => ItemCardColors.blue,
-    //   _ItemStatus.notFound => ItemCardColors.amber,
-    //   _ItemStatus.nonRfid => ItemCardColors.neutral,
-    //   _ItemStatus.pending => ItemCardColors.neutral,
-    // };
-
     final notifier = ref.read(mobileIntakeNotifierProvider.notifier);
     final ready = ref.watch(mobileIntakeNotifierProvider).readyContext;
 
@@ -90,12 +113,12 @@ class _ItemCard extends ConsumerWidget {
     final isMarkedMissing = ready != null && itemId != null && ready.markedMissingItemIds.contains(itemId);
 
     final colors = isNonRfid
-        ? (isMarkedMissing ? ItemCardColors.red : (ItemCardColors.mutedNeutral))
+        ? (isMarkedMissing ? ItemCardColors.red : (ItemCardColors.green))
         : switch (status) {
             _ItemStatus.taken => ItemCardColors.green,
             _ItemStatus.inCabinet => ItemCardColors.blue,
             _ItemStatus.notFound => ItemCardColors.amber,
-            _ItemStatus.nonRfid => ItemCardColors.neutral,
+            _ItemStatus.nonRfid => ItemCardColors.green,
             _ItemStatus.pending => ItemCardColors.neutral,
           };
 
@@ -121,35 +144,4 @@ class _ItemCard extends ConsumerWidget {
           : _intakeItemBadge(status),
     );
   }
-}
-
-StatusBadge _intakeItemBadge(_ItemStatus status) {
-  final (bg, fg, icon, label) = switch (status) {
-    _ItemStatus.taken => (
-      MedColors.green,
-      MedColors.greenLight,
-      PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
-      'Alındı',
-    ),
-    _ItemStatus.inCabinet => (
-      MedColors.blue.withValues(alpha: 0.3),
-      MedColors.blue,
-      PhosphorIcons.package(PhosphorIconsStyle.bold),
-      'Kabinde',
-    ),
-    _ItemStatus.notFound => (
-      MedColors.amber,
-      MedColors.amberLight,
-      PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
-      'Bulunamadı',
-    ),
-    _ItemStatus.pending => (
-      MedColors.surface2,
-      MedColors.text3,
-      PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
-      'Taranıyor',
-    ),
-    _ItemStatus.nonRfid => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), 'RFID yok'),
-  };
-  return StatusBadge(bg: bg, fg: fg, icon: icon, label: label);
 }

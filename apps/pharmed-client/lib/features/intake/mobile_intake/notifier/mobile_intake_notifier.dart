@@ -343,7 +343,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     final current = state;
     if (current is MobileIntakeError) return;
 
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     // Beklenen kabin tag'lerini çek — reconciliation için DEĞİL,
@@ -362,7 +362,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     // Snapshot → baseline (bölünmez, hepsi eşit)
     final observed = await _drawer.snapshot();
     final after = state;
-    final afterReady = _readyOf(after);
+    final afterReady = after.readyContext;
     if (afterReady == null) return;
 
     state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
@@ -371,7 +371,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
   /// ClosedEarly / Error → "İptal". Kayıt YOK. İşlemi bitirir, Idle'a döner.
   Future<void> cancelEarlyClose() async {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
 
     await _drawer.stop();
     _resetExpectedMap();
@@ -395,7 +395,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
   /// Baseline + _expectedMap + runtime kümeleri KORUNUR.
   Future<void> retryEarlyClose() async {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     _closedDuringSaving = false;
@@ -502,7 +502,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
   /// SWREQ-CLI-INTAKE-007
   void toggleMarkMissing(int itemId) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     final marked = ready.markedMissingItemIds;
@@ -615,7 +615,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
   /// SWREQ-CLI-INTAKE-004
   void _onEpcRead(String epc) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     // KORUMA 1: Eğer baseline taraması henüz bitmediyse, okunan her etiket
@@ -652,7 +652,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
   /// SWREQ-CLI-INTAKE-005
   void _onEpcLost(String epc) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
     if (!ready.baselineCompleted) return;
 
@@ -686,7 +686,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     _resetExpectedMap();
 
     // previousState'ten gerçek Ready'yi çıkar — wrapper/NoPatient olabilir.
-    final ready = _readyOf(previous);
+    final ready = current.readyContext;
     state = ready ?? previous;
   }
 
@@ -710,20 +710,6 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     _expectedMap = const <String, CabinExpectedEpc>{};
   }
 
-  /// State içinden Ready'i çıkarır. Tüm sarmalayıcı state'leri
-  /// (DrawerStarting, Saving) ve Ready'nin kendisini kapsar.
-  MobileIntakeReady? _readyOf(MobileIntakeState s) => switch (s) {
-    MobileIntakeReady r => r,
-    MobileIntakeCheckInProgress(:final ready) => ready,
-    MobileIntakeDrawerOpening(:final ready) => ready,
-    MobileIntakeSaving(:final ready) => ready,
-    MobileIntakeWaitingClose(:final ready) => ready,
-    MobileIntakeClosedEarly(:final ready) => ready,
-    MobileIntakeError(:final previousState) => _readyOf(previousState),
-    MobileIntakeFatalError(:final previousState) => previousState.readyContext,
-    _ => null,
-  };
-
   /// Sarmalayıcı state'in [ready] alanını günceller; sarmalanmamış Ready'i
   /// doğrudan döner. Tanımsız state'ler değişmeden döner.
   MobileIntakeState _withReady(MobileIntakeState s, MobileIntakeReady ready) => switch (s) {
@@ -731,6 +717,9 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     MobileIntakeCheckInProgress _ => MobileIntakeCheckInProgress(ready: ready),
     MobileIntakeDrawerOpening _ => MobileIntakeDrawerOpening(ready: ready),
     MobileIntakeSaving _ => MobileIntakeSaving(ready: ready),
+    MobileIntakeWaitingClose _ => MobileIntakeWaitingClose(ready: ready),
+    MobileIntakeClosedEarly _ => MobileIntakeClosedEarly(ready: ready),
+    MobileIntakeSuccess _ => MobileIntakeSuccess(ready: ready),
     _ => s,
   };
 }

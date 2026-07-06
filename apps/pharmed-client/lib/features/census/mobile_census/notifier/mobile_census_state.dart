@@ -317,22 +317,9 @@ final class MobileCensusSaving extends MobileCensusState {
 
 /// Sayım başarıyla tamamlandı.
 final class MobileCensusSuccess extends MobileCensusState {
-  const MobileCensusSuccess({
-    required this.slots,
-    required this.mobileSlots,
-    required this.selectedSlot,
-    required this.assignments,
-    required this.cabinId,
-    required this.message,
-    required this.ready,
-  });
+  const MobileCensusSuccess({this.message, required this.ready});
 
-  final List<MobileSlotVisual> slots;
-  final List<MobileDrawerSlot> mobileSlots;
-  final MobileSlotVisual selectedSlot;
-  final List<BedAssignment> assignments;
-  final int cabinId;
-  final String message;
+  final String? message;
   final MobileCensusReady ready;
 }
 
@@ -417,7 +404,7 @@ extension MobileCensusStateX on MobileCensusState {
     MobileCensusSaving(:final ready) => ready.selectedSlotId,
     MobileCensusWaitingClose(:final ready) => ready.selectedSlotId,
     MobileCensusClosedEarly(:final ready) => ready.selectedSlotId,
-    MobileCensusSuccess(:final selectedSlot) => selectedSlot.slotId,
+    MobileCensusSuccess(:final ready) => ready.selectedSlotId,
     MobileCensusError(:final previousState) => previousState.selectedSlotId,
     MobileCensusFatalError(:final previousState) => previousState.selectedSlotId,
     MobileCensusDrawerOpening(:final ready) => ready.selectedSlotId,

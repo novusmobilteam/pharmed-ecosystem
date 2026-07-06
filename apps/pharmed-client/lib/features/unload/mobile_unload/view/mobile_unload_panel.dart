@@ -139,13 +139,23 @@ class _UnloadActionBar extends StatelessWidget {
       // Idle + sayılacak item var → başlat butonu
       MobileDrawerIdle() when hasUnloadableItems => SizedBox(
         width: context.width,
-        child: MedButton(label: context.l10n.unload_action_start, onPressed: onStart, isLoading: false),
+        child: MedButton(
+          label: context.l10n.unload_action_start,
+          onPressed: onStart,
+          isLoading: false,
+          size: MedButtonSize.sm,
+        ),
       ),
 
       // Açılıyor / taranıyor → aynı buton ama loading, basılamaz
       MobileDrawerOpening() || MobileDrawerOpened() when isOpening => SizedBox(
         width: context.width,
-        child: MedButton(label: context.l10n.unload_action_start, onPressed: null, isLoading: true),
+        child: MedButton(
+          label: context.l10n.unload_action_start,
+          onPressed: null,
+          isLoading: true,
+          size: MedButtonSize.sm,
+        ),
       ),
 
       _ => const SizedBox.shrink(),

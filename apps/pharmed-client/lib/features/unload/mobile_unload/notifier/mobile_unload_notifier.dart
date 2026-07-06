@@ -317,7 +317,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     final current = state;
     if (current is MobileUnloadError) return;
 
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     // Beklenen kabin tag'lerini çek — reconciliation için DEĞİL,
@@ -341,7 +341,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     // Snapshot → baseline (bölünmez, hepsi eşit)
     final observed = await _drawer.snapshot();
     final after = state;
-    final afterReady = _readyOf(after);
+    final afterReady = after.readyContext;
     if (afterReady == null) return;
     state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
   }
@@ -349,7 +349,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   /// ClosedEarly / Error → "İptal". Kayıt YOK. İşlemi bitirir, Idle'a döner.
   Future<void> cancelEarlyClose() async {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
 
     await _drawer.stop();
     _resetExpectedMap();
@@ -373,7 +373,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   /// Baseline + _expectedMap + runtime kümeleri KORUNUR.
   Future<void> retryEarlyClose() async {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     _closedDuringSaving = false;
@@ -392,7 +392,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   /// SWREQ-CLI-UNLOAD-007
   void toggleUnloadInclude(int itemId) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     final excluded = ready.unloadExcludedItemIds;
@@ -413,7 +413,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   /// SWREQ-CLI-UNLOAD-007
   void toggleMarkMissing(int itemId) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     final marked = ready.markedMissingItemIds;
@@ -535,7 +535,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   /// SWREQ-CLI-UNLOAD-004
   void _onEpcRead(String epc) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     // KORUMA: baseline bitmediyse okunan her etiket kabinin kendi malı;
@@ -570,7 +570,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   /// SWREQ-CLI-UNLOAD-005
   void _onEpcLost(String epc) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
     if (!ready.baselineCompleted) return;
 
@@ -670,7 +670,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
     _resetExpectedMap();
 
     // previousState'ten gerçek Ready'yi çıkar — wrapper/NoPatient olabilir.
-    final ready = _readyOf(previous);
+    final ready = current.readyContext;
     state = ready ?? previous;
   }
 
@@ -689,18 +689,6 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
   void _resetExpectedMap() {
     _expectedMap = const <String, CabinExpectedEpc>{};
   }
-
-  MobileUnloadReady? _readyOf(MobileUnloadState s) => switch (s) {
-    MobileUnloadReady r => r,
-    MobileUnloadDrawerOpening(:final ready) => ready,
-    MobileUnloadSaving(:final ready) => ready,
-    MobileUnloadWaitingClose(:final ready) => ready,
-    MobileUnloadClosedEarly(:final ready) => ready,
-    MobileUnloadSuccess(:final ready) => ready,
-    MobileUnloadError(:final previousState) => _readyOf(previousState),
-    MobileUnloadFatalError(:final previousState) => _readyOf(previousState),
-    _ => null,
-  };
 
   /// Sarmalayıcı state'in [ready] alanını günceller; sarmalanmamış Ready'i
   /// doğrudan döner. Tanımsız state'ler değişmeden döner.

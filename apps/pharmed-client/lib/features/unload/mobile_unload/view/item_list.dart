@@ -75,7 +75,7 @@ class _ItemCard extends ConsumerWidget {
     // RFID'siz: boşaltmaya dahil değilse VE eksik değilse soluk (skipped).
     // Eksik işaretlendiyse amber, dahilse nötr.
     final colors = isNonRfid
-        ? (isMarkedMissing ? ItemCardColors.red : (isIncluded ? ItemCardColors.neutral : ItemCardColors.mutedNeutral))
+        ? (isMarkedMissing ? ItemCardColors.red : (isIncluded ? ItemCardColors.green : ItemCardColors.mutedNeutral))
         : switch (status) {
             _ItemStatus.unloaded => ItemCardColors.green,
             _ItemStatus.inCabinet => ItemCardColors.blue,
@@ -95,6 +95,7 @@ class _ItemCard extends ConsumerWidget {
           ? MedCheckbox(
               value: isIncluded,
               onChanged: itemId != null ? (_) => notifier.toggleUnloadInclude(itemId) : null,
+              activeColor: MedColors.green,
             )
           : null,
       // RFID'li → durum rozeti

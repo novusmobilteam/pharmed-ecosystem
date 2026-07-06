@@ -6,7 +6,4 @@ abstract interface class IUnloadRepository {
 
   /// Mobil kabin ilaç boşaltma servisi
   Future<Result<void>> mobileUnload(List<Map<String, dynamic>> data);
-
-  /// Mobil kabinde ilaç boşaltma esnasında eksik stok bildirme işlemi
-  Future<Result<void>> reportMissingStock(int prescriptionItemId);
 }

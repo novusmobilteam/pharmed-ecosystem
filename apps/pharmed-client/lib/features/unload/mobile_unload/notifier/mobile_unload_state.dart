@@ -202,19 +202,19 @@ final class MobileUnloadReady extends MobileUnloadState {
       .where((i) => i.id != null && i.status == PrescriptionMovementType.purchasePending && i.rfidTag == null)
       .toList();
 
-  /// Sayılacak toplam ilaç sayısı = RFID'li + RFID'siz.
-  int get unloadTotalCount => _unloadRfidItems.length + _unloadNonRfidItems.length;
+  /// Boşaltma kapsamındaki RFID'siz item'lar (hariç tutulmamış olanlar).
+  List<PrescriptionItem> get _unloadIncludedNonRfidItems =>
+      _unloadNonRfidItems.where((i) => !unloadExcludedItemIds.contains(i.id)).toList();
+
+  /// Boşaltılan toplam = fiziksel çıkan RFID'li (taken) + dahil edilen RFID'siz.
+  int get unloadCountedTotal => takenEpcs.length + _unloadIncludedNonRfidItems.length;
+
+  /// Boşaltılacak toplam = tüm RFID'li + dahil edilen RFID'siz.
+  /// (Hariç tutulanlar hedeften düşer, yoksa asla 100% olmaz.)
+  int get unloadTotalCount => _unloadRfidItems.length + _unloadIncludedNonRfidItems.length;
 
   /// Toplam eksik bildirim sayısı = otomatik RFID eksikleri + manuel işaretlenen RFID'siz eksikler.
-  int get totalMissingCount => missingEpcs.length + markedMissingItemIds.length;
-
-  /// Sayılmış kabul edilen = kabinde okunan RFID'li + eksik İŞARETLENMEYEN RFID'siz.
-  /// (Kullanıcı bir RFID'siz item'ı eksik işaretlerse "sayılmadı" demektir.)
-  int get unloadCountedTotal {
-    final rfidCounted = rfidCountedCount; // expected ∩ read
-    final nonRfidCounted = _unloadNonRfidItems.where((i) => !markedMissingItemIds.contains(i.id)).length;
-    return rfidCounted + nonRfidCounted;
-  }
+  int get totalMissingCount => notFoundEpcs.length + markedMissingItemIds.length;
 
   int get unplannedCount => unplannedMovements.length;
   int get notFoundCount => notFoundEpcs.length;

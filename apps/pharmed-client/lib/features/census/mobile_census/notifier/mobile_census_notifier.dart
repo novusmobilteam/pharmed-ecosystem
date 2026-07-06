@@ -342,7 +342,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     final current = state;
     if (current is MobileCensusError) return;
 
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     // Beklenen kabin tag'lerini çek — reconciliation için DEĞİL,
@@ -366,7 +366,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     // Snapshot → baseline (bölünmez, hepsi eşit)
     final observed = await _drawer.snapshot();
     final after = state;
-    final afterReady = _readyOf(after);
+    final afterReady = after.readyContext;
     if (afterReady == null) return;
     state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
   }
@@ -374,7 +374,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
   /// ClosedEarly / Error → "İptal". Kayıt YOK. İşlemi bitirir, Idle'a döner.
   Future<void> cancelEarlyClose() async {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
 
     await _drawer.stop();
     _resetExpectedMap();
@@ -398,7 +398,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
   /// Baseline + _expectedMap + runtime kümeleri KORUNUR.
   Future<void> retryEarlyClose() async {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     _closedDuringSaving = false;
@@ -449,7 +449,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
   /// SWREQ-CLI-CENSUS-007
   void toggleMissingMark(int prescriptionItemId) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     final marked = ready.markedMissingItemIds;
@@ -581,7 +581,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
   /// SWREQ-CLI-CENSUS-004
   void _onEpcRead(String epc) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     // KORUMA: baseline bitmediyse okunan her etiket kabinin kendi malı;
@@ -617,7 +617,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
   /// SWREQ-CLI-CENSUS-005
   void _onEpcLost(String epc) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
     if (!ready.baselineCompleted) return;
 
@@ -664,15 +664,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
           final expectedSnapshot = Map<String, CabinExpectedEpc>.of(_expectedMap);
           unawaited(_reportUnplannedMovements(ready, expectedSnapshot));
           unawaited(_drawer.stop());
-          state = MobileCensusSuccess(
-            slots: ready.slots,
-            mobileSlots: ready.mobileSlots,
-            selectedSlot: ready.selectedSlot,
-            assignments: ready.assignments,
-            cabinId: ready.cabinId,
-            message: '',
-            ready: ready.clearedRfidState,
-          );
+          state = MobileCensusSuccess(ready: ready.clearedRfidState);
           _resetExpectedMap();
 
         // Kayıt uçuşta kapandı → flag'le; Saving çözülünce değerlendir
@@ -717,7 +709,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     _resetExpectedMap();
 
     // previousState'ten gerçek Ready'yi çıkar — wrapper/NoPatient olabilir.
-    final ready = _readyOf(previous);
+    final ready = previous.readyContext;
     state = ready ?? previous;
   }
 
@@ -732,18 +724,6 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     );
   }
 
-  MobileCensusReady? _readyOf(MobileCensusState s) => switch (s) {
-    MobileCensusReady r => r,
-    MobileCensusDrawerOpening(:final ready) => ready,
-    MobileCensusSaving(:final ready) => ready,
-    MobileCensusWaitingClose(:final ready) => ready,
-    MobileCensusClosedEarly(:final ready) => ready,
-    MobileCensusSuccess(:final ready) => ready,
-    MobileCensusError(:final previousState) => _readyOf(previousState),
-    MobileCensusFatalError(:final previousState) => _readyOf(previousState),
-    _ => null,
-  };
-
   /// Sarmalayıcı state'in [ready] alanını günceller; sarmalanmamış Ready'i
   /// doğrudan döner. Tanımsız state'ler değişmeden döner.
   /// Sarmalayıcı state'in [ready] alanını günceller; sarmalanmamış Ready'i
@@ -752,6 +732,9 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
     MobileCensusReady _ => ready,
     MobileCensusDrawerOpening _ => MobileCensusDrawerOpening(ready: ready),
     MobileCensusSaving _ => MobileCensusSaving(ready: ready),
+    MobileCensusWaitingClose _ => MobileCensusWaitingClose(ready: ready),
+    MobileCensusClosedEarly _ => MobileCensusClosedEarly(ready: ready),
+    MobileCensusSuccess _ => MobileCensusSuccess(ready: ready),
     _ => s,
   };
 

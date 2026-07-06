@@ -1,64 +1,5 @@
 part of 'mobile_refill_dialog.dart';
 
-class _ItemsList extends ConsumerWidget {
-  const _ItemsList();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(mobileRefillNotifierProvider);
-    final ready = state.readyContext;
-    if (ready == null) return const SizedBox.shrink();
-
-    final selectedItems =
-        ready.prescriptionItems.where((i) => i.id != null && ready.selectedItemIds.contains(i.id)).toList()
-          ..sort((a, b) {
-            final aRfid = (a.medicine is Drug) && (a.medicine as Drug).isRfidEnable;
-            final bRfid = (b.medicine is Drug) && (b.medicine as Drug).isRfidEnable;
-            if (aRfid && !bRfid) return -1;
-            if (!aRfid && bRfid) return 1;
-            return 0;
-          });
-
-    return ListView.separated(
-      shrinkWrap: true,
-      padding: EdgeInsets.only(bottom: MedSpacing.insetMd.top),
-      itemCount: selectedItems.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
-      itemBuilder: (context, i) {
-        final item = selectedItems[i];
-        final status = _itemStatusFor(item, ready);
-        return _ItemCard(item: item, status: status);
-      },
-    );
-  }
-}
-
-class _ItemCard extends StatelessWidget {
-  const _ItemCard({required this.item, required this.status});
-
-  final PrescriptionItem item;
-  final _ItemStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = switch (status) {
-      _ItemStatus.placed => ItemCardColors.green,
-      _ItemStatus.awaiting => ItemCardColors.blue,
-      _ItemStatus.nonRfid => ItemCardColors.neutral,
-      _ItemStatus.pending => ItemCardColors.neutral,
-    };
-
-    return OperationItemCard(
-      item: item,
-      bg: colors.bg,
-      border: colors.border,
-      textColor: colors.text,
-      mutedColor: colors.muted,
-      trailing: _refillItemBadge(status),
-    );
-  }
-}
-
 enum _ItemStatus {
   /// RFID'li item, EPC'si kabinde okundu (yerleştirilmiş)
   placed,
@@ -107,7 +48,66 @@ StatusBadge _refillItemBadge(_ItemStatus status) {
       'Taranıyor',
     ),
 
-    _ItemStatus.nonRfid => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), 'RFID yok'),
+    _ItemStatus.nonRfid => (Colors.transparent, Colors.transparent, PhosphorIcons.minusCircle(), ''),
   };
   return StatusBadge(bg: bg, fg: fg, icon: icon, label: label);
+}
+
+class _ItemsList extends ConsumerWidget {
+  const _ItemsList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(mobileRefillNotifierProvider);
+    final ready = state.readyContext;
+    if (ready == null) return const SizedBox.shrink();
+
+    final selectedItems =
+        ready.prescriptionItems.where((i) => i.id != null && ready.selectedItemIds.contains(i.id)).toList()
+          ..sort((a, b) {
+            final aRfid = (a.medicine is Drug) && (a.medicine as Drug).isRfidEnable;
+            final bRfid = (b.medicine is Drug) && (b.medicine as Drug).isRfidEnable;
+            if (aRfid && !bRfid) return -1;
+            if (!aRfid && bRfid) return 1;
+            return 0;
+          });
+
+    return ListView.separated(
+      shrinkWrap: true,
+      padding: EdgeInsets.only(bottom: MedSpacing.insetMd.top),
+      itemCount: selectedItems.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      itemBuilder: (context, i) {
+        final item = selectedItems[i];
+        final status = _itemStatusFor(item, ready);
+        return _ItemCard(item: item, status: status);
+      },
+    );
+  }
+}
+
+class _ItemCard extends StatelessWidget {
+  const _ItemCard({required this.item, required this.status});
+
+  final PrescriptionItem item;
+  final _ItemStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = switch (status) {
+      _ItemStatus.placed => ItemCardColors.green,
+      _ItemStatus.awaiting => ItemCardColors.blue,
+      _ItemStatus.nonRfid => ItemCardColors.green,
+      _ItemStatus.pending => ItemCardColors.neutral,
+    };
+
+    return OperationItemCard(
+      item: item,
+      bg: colors.bg,
+      border: colors.border,
+      textColor: colors.text,
+      mutedColor: colors.muted,
+      trailing: _refillItemBadge(status),
+    );
+  }
 }

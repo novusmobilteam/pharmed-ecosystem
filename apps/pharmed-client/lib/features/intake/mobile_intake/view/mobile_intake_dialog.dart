@@ -68,8 +68,8 @@ class MobileIntakeDialog extends ConsumerWidget {
           const OperationErrorBanner(
             message: 'Tekrar deneyebilir ya da yerleştirdiğiniz ilaçları alarak işleminizi sonlandırabilirsiniz.',
           ),
+        if (ready.hasExtraPlacement) UnexpectedTagBanner(epcs: ready.placedEpcs),
         if (ready.hasUnplannedMovement) UnplannedMovementBanner(epcs: ready.unplannedMovements),
-        if (ready.hasUnexpectedEpc) UnexpectedTagBanner(epcs: ready.placedEpcs),
       ],
       footerContent: _intakeFooter(state, drawerStage, ready, notifier),
       child: _ItemsList(),

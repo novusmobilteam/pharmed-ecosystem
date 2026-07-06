@@ -18,7 +18,7 @@ FooterContent _intakeFooter(
       MobileDrawerOpening() => 'Çekmece açılıyor...',
       _ when !ready.baselineCompleted => 'Kabin taranıyor, lütfen bekleyin',
       _ when ready.canComplete => 'Hazır - işlemi tamamlayabilirsiniz',
-      _ when ready.hasUnexpectedEpc => 'Kabine olmaması gereken bir ilaç yüklendi, lütfen çıkarın.',
+      _ when ready.hasExtraPlacement => 'Kabine olmaması gereken bir ilaç yüklendi, lütfen çıkarın.',
       _ => 'İlaçları alın, ardından işlemi tamamlayın',
     },
   };

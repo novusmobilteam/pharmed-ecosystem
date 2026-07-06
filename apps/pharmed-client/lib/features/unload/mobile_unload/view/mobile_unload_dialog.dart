@@ -48,15 +48,15 @@ class MobileUnloadDialog extends ConsumerWidget {
           value: '${ready.unloadCountedTotal} / ${ready.unloadTotalCount}',
           valueColor:
               ready.baselineCompleted &&
-                  ready.missingEpcs.isEmpty &&
-                  ready.markedMissingItemIds.isEmpty &&
-                  ready.unloadTotalCount > 0
+                  ready.notFoundEpcs.isEmpty &&
+                  ready.unloadTotalCount > 0 &&
+                  ready.unloadCountedTotal == ready.unloadTotalCount
               ? MedColors.green
               : null,
         ),
         StatCellData(
           label: 'Eksik',
-          value: '${ready.totalMissingCount}',
+          value: ready.baselineCompleted ? '${ready.totalMissingCount}' : '-',
           valueColor: ready.totalMissingCount > 0 ? MedColors.red : null,
         ),
         StatCellData(
@@ -73,7 +73,8 @@ class MobileUnloadDialog extends ConsumerWidget {
       banners: [
         if (errorMessage != null) OperationErrorBanner(message: errorMessage),
         if (ready.placedEpcs.isNotEmpty) UnexpectedTagBanner(epcs: ready.placedEpcs, blocking: true),
-        if (ready.missingEpcs.isNotEmpty) MissingStockBanner(count: ready.missingEpcs.length),
+        if (ready.baselineCompleted && ready.notFoundEpcs.isNotEmpty)
+          MissingStockBanner(count: ready.notFoundEpcs.length),
       ],
       footerContent: _unloadFooter(state, drawerStage, ready, notifier),
       child: _ItemsList(),

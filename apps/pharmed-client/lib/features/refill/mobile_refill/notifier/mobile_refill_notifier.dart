@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/providers/providers.dart';
@@ -381,7 +380,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     final current = state;
     if (current is MobileRefillError) return;
 
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     // Beklenen kabin tag'lerini çek (EPC → prescriptionItemId lookup)
@@ -400,7 +399,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     // İlk snapshot → baseline (bir kez, sabit)
     final observed = await _drawer.snapshot();
     final after = state;
-    final afterReady = _readyOf(after);
+    final afterReady = current.readyContext;
     if (afterReady == null) return;
 
     state = _withReady(after, afterReady.copyWith(baselineCompleted: true, baselineEpcs: observed));
@@ -412,7 +411,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   /// SWREQ-CLI-REFILL-001
   Future<void> cancelEarlyClose() async {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
 
     await _drawer.stop();
     _resetExpectedMap();
@@ -439,7 +438,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   /// SWREQ-CLI-REFILL-012
   Future<void> retryEarlyClose() async {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     _closedDuringSaving = false;
@@ -577,7 +576,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   /// SWREQ-CLI-REFILL-007
   void _onEpcRead(String epc) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
 
     // KORUMA: baseline bitmediyse okunan her etiket kabinin kendi malı;
@@ -612,7 +611,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   /// SWREQ-CLI-REFILL-008
   void _onEpcLost(String epc) {
     final current = state;
-    final ready = _readyOf(current);
+    final ready = current.readyContext;
     if (ready == null) return;
     if (!ready.baselineCompleted) return;
 
@@ -705,7 +704,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     _resetExpectedMap();
 
     // previousState'ten gerçek Ready'yi çıkar — wrapper/NoPatient olabilir.
-    final ready = _readyOf(previous);
+    final ready = current.readyContext;
     state = ready ?? previous;
   }
 
@@ -726,18 +725,6 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
       cabinId: current.cabinId,
     );
   }
-
-  /// State içinden Ready'i çıkarır. Tüm sarmalayıcı state'leri
-  /// (DrawerStarting, Saving) ve Ready'nin kendisini kapsar.
-  MobileRefillReady? _readyOf(MobileRefillState s) => switch (s) {
-    MobileRefillReady r => r,
-    MobileRefillDrawerOpening(:final ready) => ready,
-    MobileRefillSaving(:final ready) => ready,
-    MobileRefillWaitingClose(:final ready) => ready,
-    MobileRefillClosedEarly(:final ready) => ready,
-    MobileRefillError(:final previousState) => _readyOf(previousState),
-    _ => null,
-  };
 
   /// Sarmalayıcı state'in [ready] alanını günceller; sarmalanmamış Ready'i
   /// doğrudan döner. Tanımsız state'ler değişmeden döner.
