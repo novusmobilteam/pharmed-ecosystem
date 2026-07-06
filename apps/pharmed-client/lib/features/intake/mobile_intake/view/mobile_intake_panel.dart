@@ -4,7 +4,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
-import '../../../../core/enums/cabin_operation_mode.dart';
 import '../../intake.dart';
 
 class MobileIntakePanel extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/features/assignment/view/assignment_screen.dart';
 import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
 import 'package:pharmed_manager/features/prescription/view/prescription_screen.dart';
@@ -179,6 +180,7 @@ class _HomeContent extends StatelessWidget {
       'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),
       'cabin-transaction-report' => StationTransactionReportScreen(menu: menu!),
       'refill' => RefillListScreen(menu: menu!),
+      'tray' => AssignmentScreen(menu: menu!),
       _ => const _NotFoundView(),
     };
   }

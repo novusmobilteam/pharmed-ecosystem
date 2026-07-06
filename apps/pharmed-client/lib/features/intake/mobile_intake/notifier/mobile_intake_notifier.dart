@@ -7,7 +7,6 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/providers/providers.dart';
-import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
 
 // [SWREQ-CLI-INTAKE-001] [IEC 62304 §5.5]

@@ -20,7 +20,6 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../core/cache/app_settings_cache.dart';
 import '../../widgets/widgets.dart';
-import '../../core/enums/cabin_operation_mode.dart';
 import '../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../dashboard/presentation/notifier/dashboard_state.dart';
 import 'master_fault/notifier/master_fault_notifier.dart';

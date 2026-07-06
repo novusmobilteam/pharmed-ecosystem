@@ -2,10 +2,10 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 abstract interface class IFaultRepository {
   /// Master kabin arıza/bakım kayıtlarını getiren servis
-  Future<Result<List<MasterFault>>> getMasterCabinFaultRecords();
+  Future<Result<List<MasterFault>>> getMasterCabinFaultRecords(int cabinId);
 
   /// Mobil kabin arıza/bakım kayıtlarını getiren servis
-  Future<Result<List<MobileFault>>> getMobileCabinFaultRecords();
+  Future<Result<List<MobileFault>>> getMobileCabinFaultRecords(int cabinId);
 
   /// Master kabin arıza kaydı oluşturan servis
   Future<Result<void>> createMasterCabinFaultRecord(MasterFault fault, int cellId);

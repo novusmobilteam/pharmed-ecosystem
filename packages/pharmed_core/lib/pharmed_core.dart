@@ -88,6 +88,7 @@ export 'src/enums/drawer_status.dart';
 export 'src/enums/station_type.dart';
 export 'src/enums/role_type.dart';
 export 'src/enums/date_range_preset.dart';
+export 'src/enums/cabin_operation_mode.dart';
 
 // failure
 export 'src/failure/app_exceptions.dart';

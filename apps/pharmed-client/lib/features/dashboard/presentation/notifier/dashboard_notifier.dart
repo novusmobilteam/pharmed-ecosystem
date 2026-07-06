@@ -31,6 +31,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
   GetExpiringMaterialsUseCase get _getExpiringMaterials => ref.read(getExpiringMaterialsUseCaseProvider);
   GetUpcomingTreatmentsUseCase get _getUpcomingTreatments => ref.read(getUpcomingTreatmensUseCaseProvider);
   GetCabinVisualizerDataUseCase get _getCabinVisualizer => ref.read(getCabinVisualizerDataUseCaseProvider);
+  AppSettingsCache get _settings => ref.read(appSettingsCacheProvider);
 
   @override
   DashboardState build() {
@@ -116,11 +117,10 @@ class DashboardNotifier extends Notifier<DashboardState> {
     final deviceMode = await ref.read(deviceModeProvider.future);
     final macAddress = await DeviceInfo.getMacAddress();
 
+    final cabinId = await _settings.getCurrentCabinId();
+
     final results = await Future.wait([
-      _getCabinVisualizer.call(
-        deviceMode: deviceMode,
-        debugCabin: kDebugMode ? ref.read(settingsNotifierProvider).debugCabin : null,
-      ),
+      _getCabinVisualizer.call(deviceMode: deviceMode, cabinId: cabinId),
       _getCriticalStocks.call(true),
       _getExpiringMaterials.call(),
       _getUpcomingTreatments.call(mac: macAddress),
@@ -148,11 +148,9 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
   Future<void> refreshCabinVisualizer() async {
     final deviceMode = await ref.read(deviceModeProvider.future);
+    final cabinId = await _settings.getCurrentCabinId();
 
-    final cabinResult = await _getCabinVisualizer.call(
-      deviceMode: deviceMode,
-      debugCabin: kDebugMode ? ref.read(settingsNotifierProvider).debugCabin : null,
-    );
+    final cabinResult = await _getCabinVisualizer.call(deviceMode: deviceMode, cabinId: cabinId);
 
     final current = state;
     final cabinData = _extractData(cabinResult);

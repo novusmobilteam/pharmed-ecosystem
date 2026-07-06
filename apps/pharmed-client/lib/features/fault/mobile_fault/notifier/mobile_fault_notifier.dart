@@ -20,7 +20,7 @@ class MobileFaultNotifier extends Notifier<MobileFaultState> {
 
     state = MobileFaultLoading(slots: slots, cabinId: data.cabinId);
 
-    final result = await _getFaults.call();
+    final result = await _getFaults.call(data.cabinId);
 
     state = result.when(
       ok: (faults) => MobileFaultIdle(slots: slots, faults: faults, cabinId: data.cabinId),
@@ -165,7 +165,7 @@ class MobileFaultNotifier extends Notifier<MobileFaultState> {
     required MobileSlotVisual selectedSlot,
     required bool isNewRecord,
   }) async {
-    final result = await _getFaults.call();
+    final result = await _getFaults.call(cabinId);
 
     state = result.when(
       ok: (faults) {
@@ -184,11 +184,7 @@ class MobileFaultNotifier extends Notifier<MobileFaultState> {
         );
 
         ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer();
-        return MobileFaultSuccess(
-          message: '',
-          previous: nextSelected,
-          isNewRecord: isNewRecord,
-        );
+        return MobileFaultSuccess(message: '', previous: nextSelected, isNewRecord: isNewRecord);
       },
       error: (e) => MobileFaultError(
         message: e.message,

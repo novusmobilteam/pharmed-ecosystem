@@ -21,7 +21,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/cabin_operation/patient_gateway/master_cabin_patient_picker_panel.dart'
     show CabinPatientPickerPanel;
-import '../../../../core/enums/cabin_operation_mode.dart';
 import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
 import 'intake_operation_card.dart';

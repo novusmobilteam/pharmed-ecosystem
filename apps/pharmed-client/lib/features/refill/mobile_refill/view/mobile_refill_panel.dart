@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_client/core/enums/cabin_operation_mode.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 

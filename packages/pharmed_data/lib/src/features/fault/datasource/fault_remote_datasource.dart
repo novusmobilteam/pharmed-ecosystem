@@ -21,9 +21,9 @@ class FaultRemoteDataSource extends BaseRemoteDataSource {
   String get logUnit => 'SW-UNIT-FAULT';
 
   // Master kabin arıza/bakım kayıtlarını getiren servis
-  Future<Result<List<MasterFaultDto>?>> getMasterCabinFaultRecords() async {
+  Future<Result<List<MasterFaultDto>?>> getMasterCabinFaultRecords(int cabinId) async {
     return await fetchRequest<List<MasterFaultDto>>(
-      path: _masterBase,
+      path: '$_masterBase/cabin/$cabinId',
       parser: BaseRemoteDataSource.listParser(MasterFaultDto.fromJson),
       successLog: 'Master kabin arıza/bakım kayıtları getirildi',
       emptyLog: 'Master kabin arıza/bakım kaydı bulunamadı',
@@ -31,9 +31,9 @@ class FaultRemoteDataSource extends BaseRemoteDataSource {
   }
 
   // Mobil kabin arıza/bakım kayıtlarını getiren servis
-  Future<Result<List<MobileFaultDto>?>> getMobileCabinFaultRecords() async {
+  Future<Result<List<MobileFaultDto>?>> getMobileCabinFaultRecords(int cabinId) async {
     return await fetchRequest<List<MobileFaultDto>>(
-      path: _mobileBase,
+      path: '$_mobileBase/cabin/$cabinId',
       parser: BaseRemoteDataSource.listParser(MobileFaultDto.fromJson),
       successLog: 'Mobil kabin arıza/bakım kayıtları getirildi',
       emptyLog: 'Mobil kabin arıza/bakım kaydı bulunamadı',

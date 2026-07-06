@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/cabin_operation/cabin_operation.dart';
-import '../../../../widgets/widgets.dart';
 
 // [SWREQ-CLI-REFILL-003] [IEC 62304 §5.5]
 // Mobil kabin dolum ekranı state tanımları.

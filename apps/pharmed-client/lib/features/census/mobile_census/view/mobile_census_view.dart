@@ -4,8 +4,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
-import '../../../../core/enums/cabin_operation_mode.dart';
-import '../../../../widgets/widgets.dart';
 import '../../census.dart';
 import 'mobile_census_dialog.dart';
 
@@ -69,10 +67,10 @@ class _MobileCensusViewState extends ConsumerState<MobileCensusView> {
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
     // Dialog sync — notifier veya drawer session değişimi her ikisini de tetikler
-    ref.listen<MobileCensusState>(mobileCensusNotifierProvider, (_, __) {
+    ref.listen<MobileCensusState>(mobileCensusNotifierProvider, (_, _) {
       _syncDialog(context);
     });
-    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, __) {
+    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, _) {
       _syncDialog(context);
     });
 

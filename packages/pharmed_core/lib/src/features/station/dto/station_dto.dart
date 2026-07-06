@@ -11,6 +11,7 @@ class StationDTO {
   final WarehouseDTO? medicalConsumableWarehouse;
   final List<ServiceDto> stationProvidedServices;
   final int? workingMethod;
+  final List<CabinDTO>? cabins;
 
   const StationDTO({
     this.id,
@@ -23,6 +24,7 @@ class StationDTO {
     this.macAddress,
     this.stationProvidedServices = const [],
     this.workingMethod,
+    this.cabins,
   });
 
   factory StationDTO.fromJson(Map<String, dynamic> json) => StationDTO(
@@ -40,6 +42,9 @@ class StationDTO {
         ? (json['stationProvidedServices'] as List).map((e) => ServiceDto.fromJson(e as Map<String, dynamic>)).toList()
         : const [],
     workingMethod: json['workingMethodId'] as int?,
+    cabins: json['cabins'] != null
+        ? (json['cabins'] as List).map((e) => CabinDTO.fromJson(e as Map<String, dynamic>)).toList()
+        : const [],
   );
 
   Map<String, dynamic> toJson() => {

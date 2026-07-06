@@ -7,7 +7,6 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
-import '../../../../core/enums/cabin_operation_mode.dart';
 import '../../../../core/providers/providers.dart';
 import '../../census.dart';
 

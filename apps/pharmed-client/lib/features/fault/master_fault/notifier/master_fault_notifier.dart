@@ -29,7 +29,7 @@ class MasterFaultNotifier extends Notifier<MasterFaultState> {
   Future<void> init(CabinVisualizerData data) async {
     state = MasterFaultLoading(groups: data.groups, cabinId: data.cabinId);
 
-    final result = await _getFaults.call();
+    final result = await _getFaults.call(data.cabinId);
 
     state = result.when(
       ok: (faults) => MasterFaultIdle(groups: data.groups, faults: faults, cabinId: data.cabinId),
@@ -203,7 +203,7 @@ class MasterFaultNotifier extends Notifier<MasterFaultState> {
     required DrawerUnit selectedUnit,
     required bool isNewRecord,
   }) async {
-    final result = await _getFaults.call();
+    final result = await _getFaults.call(cabinId);
 
     state = result.when(
       ok: (faults) {

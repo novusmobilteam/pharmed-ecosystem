@@ -10,6 +10,9 @@ class Station extends Selectable implements TableData {
   final String? macAddress;
   final List<HospitalService> services;
   final StationType? type;
+  final List<Cabin> cabins;
+
+  Cabin? get activeCabin => cabins.isNotEmpty ? cabins.first : null;
 
   Station({
     super.id,
@@ -22,6 +25,7 @@ class Station extends Selectable implements TableData {
     this.macAddress,
     this.services = const [],
     this.type,
+    this.cabins = const [],
   }) : super(title: name.toString());
 
   static Station? fromIdAndName({int? id, String? name}) {

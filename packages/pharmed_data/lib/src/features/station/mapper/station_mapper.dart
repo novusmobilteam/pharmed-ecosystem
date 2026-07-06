@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/src/features/cabin/cabin.dart';
 import 'package:pharmed_data/src/features/service/mapper/service_mapper.dart';
 import 'package:pharmed_data/src/features/warehouse/mapper/warehouse_mapper.dart';
 
@@ -18,6 +19,7 @@ class StationMapper {
       macAddress: dto.macAddress,
       services: ServiceMapper().toEntityList(dto.stationProvidedServices),
       type: StationType.fromId(dto.workingMethod),
+      cabins: CabinMapper().toEntityList(dto.cabins ?? []),
     );
   }
 

@@ -275,8 +275,7 @@ class _ExitDateField extends StatelessWidget {
           return MedDateInputField(
             label: 'Çıkış Tarihi',
             onDateSelected: (date) {
-              print(date);
-              //notifier.updateExitDate(date);
+              notifier.updateExitDate(date);
             },
           );
         },

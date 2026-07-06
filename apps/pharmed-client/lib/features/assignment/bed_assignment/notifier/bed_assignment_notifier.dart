@@ -12,9 +12,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/providers/providers.dart';
-import '../../../../widgets/widgets.dart';
 import '../../assignment.dart';
 
 final bedAssignmentNotifierProvider = NotifierProvider<BedAssignmentNotifier, BedAssignmentState>(

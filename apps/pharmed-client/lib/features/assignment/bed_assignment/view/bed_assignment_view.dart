@@ -11,11 +11,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/assignment/bed_assignment/view/bed_assignment_panel.dart';
-import 'package:pharmed_client/core/enums/cabin_operation_mode.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../widgets/widgets.dart';
 import '../notifier/bed_assignment_notifier.dart';
 import '../notifier/bed_assignment_state.dart';
 
@@ -61,9 +59,7 @@ class _BedAssignmentViewState extends ConsumerState<BedAssignmentView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is BedAssignmentSuccess) {
-        final msg = next.isCreated
-            ? context.l10n.assignment_success_created
-            : context.l10n.assignment_success_deleted;
+        final msg = next.isCreated ? context.l10n.assignment_success_created : context.l10n.assignment_success_deleted;
         MessageUtils.showSuccessSnackbar(context, msg);
         notifier.dismissSuccess();
       }

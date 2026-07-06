@@ -4,8 +4,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
-import '../../../../core/enums/cabin_operation_mode.dart';
-import '../../../../widgets/widgets.dart';
 import '../../unload.dart';
 import 'mobile_unload_dialog.dart';
 
@@ -62,7 +60,7 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
     final notifier = ref.read(mobileUnloadNotifierProvider.notifier);
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
-    ref.listen<MobileUnloadState>(mobileUnloadNotifierProvider, (_, __) => _syncDialog(context));
+    ref.listen<MobileUnloadState>(mobileUnloadNotifierProvider, (_, _) => _syncDialog(context));
     ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, _) => _syncDialog(context));
 
     ref.listen(mobileUnloadNotifierProvider, (_, next) {

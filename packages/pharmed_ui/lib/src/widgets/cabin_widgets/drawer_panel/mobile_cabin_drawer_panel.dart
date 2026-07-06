@@ -1,5 +1,3 @@
-// lib/shared/widgets/cabin_widgets/drawer_panel/mobile_cabin_drawer_panel.dart
-//
 // [SWREQ-UI-CAB-007]
 // Mobil kabin işlemleri ekranının orta paneli.
 // Seçili MobileSlotVisual'ın rowColumns grid'ini gösterir.

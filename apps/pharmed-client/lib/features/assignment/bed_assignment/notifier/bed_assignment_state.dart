@@ -6,8 +6,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
-
-import '../../../../widgets/widgets.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 sealed class BedAssignmentState {
   const BedAssignmentState();

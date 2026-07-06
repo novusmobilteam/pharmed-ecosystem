@@ -17,8 +17,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cabin_operation/cabin_operation.dart';
-import '../../../../core/enums/cabin_operation_mode.dart';
-import '../../../../widgets/widgets.dart';
 import '../../refill.dart';
 import 'mobile_refill_dialog.dart';
 
@@ -79,10 +77,10 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
     // Dialog sync — notifier veya drawer session değişimi her ikisini de tetikler
-    ref.listen<MobileRefillState>(mobileRefillNotifierProvider, (_, __) {
+    ref.listen<MobileRefillState>(mobileRefillNotifierProvider, (_, _) {
       _syncDialog(context);
     });
-    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, __) {
+    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, _) {
       _syncDialog(context);
     });
 

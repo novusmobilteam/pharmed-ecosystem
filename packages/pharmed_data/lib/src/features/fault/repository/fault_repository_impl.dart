@@ -20,8 +20,8 @@ class FaultRepositoryImpl implements IFaultRepository {
   final MobileFaultMapper _mobileFaultMapper;
 
   @override
-  Future<Result<List<MasterFault>>> getMasterCabinFaultRecords() async {
-    final res = await _dataSource.getMasterCabinFaultRecords();
+  Future<Result<List<MasterFault>>> getMasterCabinFaultRecords(int cabinId) async {
+    final res = await _dataSource.getMasterCabinFaultRecords(cabinId);
     return res.when(
       ok: (dtos) => Result.ok(_masterFaultMapper.toEntityList(dtos ?? [])),
       error: (e) => Result.error(e),
@@ -29,8 +29,8 @@ class FaultRepositoryImpl implements IFaultRepository {
   }
 
   @override
-  Future<Result<List<MobileFault>>> getMobileCabinFaultRecords() async {
-    final res = await _dataSource.getMobileCabinFaultRecords();
+  Future<Result<List<MobileFault>>> getMobileCabinFaultRecords(int cabinId) async {
+    final res = await _dataSource.getMobileCabinFaultRecords(cabinId);
     return res.when(
       ok: (dtos) => Result.ok(_mobileFaultMapper.toEntityList(dtos ?? [])),
       error: (e) => Result.error(e),

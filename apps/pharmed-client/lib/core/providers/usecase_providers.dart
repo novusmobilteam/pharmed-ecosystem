@@ -134,7 +134,6 @@ final getMobileCabinFaultRecordsProvider = Provider((ref) {
 final getCabinVisualizerDataUseCaseProvider = Provider((ref) {
   return GetCabinVisualizerDataUseCase(
     ref.read(cabinRepositoryProvider),
-    ref.read(appSettingsCacheProvider),
     ref.read(getMasterCabinFaultRecordsProvider),
     ref.read(getMobileCabinFaultRecordsProvider),
     ref.read(getCabinStocksUseCaseProvider),

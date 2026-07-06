@@ -5,7 +5,7 @@ class GetMasterCabinFaultRecordsUseCase {
 
   GetMasterCabinFaultRecordsUseCase(this._repository);
 
-  Future<Result<List<MasterFault>>> call() {
-    return _repository.getMasterCabinFaultRecords();
+  Future<Result<List<MasterFault>>> call(int cabinId) {
+    return _repository.getMasterCabinFaultRecords(cabinId);
   }
 }

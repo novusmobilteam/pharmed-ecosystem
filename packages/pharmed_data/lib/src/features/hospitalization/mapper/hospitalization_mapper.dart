@@ -30,6 +30,7 @@ class HospitalizationMapper {
   }
 
   HospitalizationDto toDto(Hospitalization entity) {
+    print(entity.exitDate);
     return HospitalizationDto(
       id: entity.id,
       code: entity.code,

@@ -1,4 +1,3 @@
-// lib/shared/widgets/cabin_widgets/overview_panel/_cabin_overview_panel_shared.dart
 //
 // MasterCabinOverviewPanel ve MobileCabinOverviewPanel tarafından
 // paylaşılan ortak widget'lar.

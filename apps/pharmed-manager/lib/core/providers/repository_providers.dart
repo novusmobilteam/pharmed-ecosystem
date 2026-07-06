@@ -379,6 +379,38 @@ class RepositoryProviders {
           ),
         },
       ),
+
+      /// Fault
+      Provider<IFaultRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => FaultRepositoryImpl(
+            dataSource: context.read(),
+            masterFaultMapper: MasterFaultMapper(),
+            mobileFaultMapper: MobileFaultMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => FaultRepositoryImpl(
+            dataSource: context.read(),
+            masterFaultMapper: MasterFaultMapper(),
+            mobileFaultMapper: MobileFaultMapper(),
+          ),
+        },
+      ),
+
+      /// Assignment
+      Provider<IAssignmentRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => AssignmentRepositoryImpl(
+            dataSource: context.read(),
+            medicineAssignmentMapper: MedicineAssignmentMapper(),
+            patientAssignmentMapper: PatientAssignmentMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => AssignmentRepositoryImpl(
+            dataSource: context.read(),
+            medicineAssignmentMapper: MedicineAssignmentMapper(),
+            patientAssignmentMapper: PatientAssignmentMapper(),
+          ),
+        },
+      ),
     ];
   }
 }

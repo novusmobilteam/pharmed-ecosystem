@@ -151,6 +151,7 @@ class UsecaseProviders {
 
       /// Service
       Provider(create: (context) => GetServicesUseCase(context.read())),
+      Provider(create: (context) => GetServiceUseCase(context.read())),
       Provider(create: (context) => CreateServiceUseCase(context.read())),
       Provider(create: (context) => UpdateServiceUseCase(context.read())),
       Provider(create: (context) => DeleteServiceUseCase(context.read())),
@@ -219,6 +220,12 @@ class UsecaseProviders {
       Provider(create: (context) => GetUpcomingTreatmentsUseCase(context.read())),
       Provider(create: (context) => GetDashboardCabinsUseCase(context.read())),
       Provider(create: (context) => GetDrugActivitiesUseCase(context.read())),
+      Provider(create: (context) => GetMasterCabinFaultRecordsUseCase(context.read())),
+      Provider(create: (context) => GetMobileCabinFaultRecordsUseCase(context.read())),
+      Provider(
+        create: (context) =>
+            GetCabinVisualizerDataUseCase(context.read(), context.read(), context.read(), context.read()),
+      ),
 
       /// Refill List
       Provider(create: (context) => CancelRefillListUseCase(context.read())),
@@ -234,6 +241,12 @@ class UsecaseProviders {
       Provider(create: (context) => CreatePrescriptionTemplateUseCase(context.read())),
       Provider(create: (context) => GetPrescriptionTemplateItemsUseCase(context.read())),
       Provider(create: (context) => GetPrescriptionTemplatesUseCase(context.read())),
+
+      /// Assignment
+      Provider(create: (context) => GetBedAssignmentsUseCase(context.read())),
+      Provider(create: (context) => CreateBedAssignmentUseCase(context.read())),
+      Provider(create: (context) => DeleteBedAssignmentUseCase(context.read())),
+      Provider(create: (context) => UpdateBedAssignmentUseCase(context.read())),
     ];
   }
 }
