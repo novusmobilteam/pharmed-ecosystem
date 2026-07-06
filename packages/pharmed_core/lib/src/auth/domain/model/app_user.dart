@@ -5,6 +5,8 @@
 
 import 'package:equatable/equatable.dart';
 
+import '../../../../pharmed_core.dart';
+
 class AppUser extends Equatable {
   const AppUser({
     required this.id,
@@ -12,7 +14,8 @@ class AppUser extends Equatable {
     required this.name,
     required this.surname,
     required this.fullName,
-    required this.role,
+    required this.roleName,
+    required this.roleId,
     this.isNotOrdered = false,
     this.isAdmin = false,
   });
@@ -22,7 +25,8 @@ class AppUser extends Equatable {
   final String name;
   final String surname;
   final String fullName;
-  final String role;
+  final String roleName;
+  final int roleId;
   final bool isNotOrdered;
   final bool isAdmin;
 
@@ -38,5 +42,20 @@ class AppUser extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, email, fullName, role, isNotOrdered, isAdmin];
+  List<Object?> get props => [id, email, fullName, roleName, isNotOrdered, isAdmin];
+
+  /// Sistem rolü. Custom rol için null — UI tarafı "yetkisiz" varsayar.
+  RoleType? get roleType => RoleType.fromId(roleId);
+
+  Role get role => Role(id: roleId, name: roleName);
+
+  User toUser() {
+    return User(
+      id: id,
+      name: name,
+      surname: surname,
+      role: Role.fromIdAndName(id: roleId, name: roleName),
+      isNotOrdered: isNotOrdered,
+    );
+  }
 }

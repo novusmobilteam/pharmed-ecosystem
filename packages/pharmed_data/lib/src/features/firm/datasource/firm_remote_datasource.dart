@@ -14,12 +14,12 @@ class FirmRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-Firm';
 
-  Future<Result<ApiResponse<List<FirmDTO>>?>> getFirms({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<FirmDTO>>?>> getFirms({int? skip, int? take, String? searchQuery}) async {
     return fetchRequest(
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: searchQuery,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(FirmDTO.fromJson),

@@ -95,11 +95,4 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.listParser(PatientMedicineIntakeItemDto.fromJson),
     );
   }
-
-  Future<Result<void>> reportMissingStock(int prescriptionItemId) async {
-    return await postRequest(
-      path: '/CabinDrawrStock/mobileStockShortageReported/$prescriptionItemId',
-      parser: BaseRemoteDataSource.voidParser(),
-    );
-  }
 }

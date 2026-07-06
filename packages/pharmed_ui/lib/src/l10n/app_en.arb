@@ -945,7 +945,9 @@
 "refill_hint_idleExecution": "Select medicines on the left to start refilling.",
 
 
-  "refund_success_completed": "Refund completed successfully.",
+  "refund_success_title": "Refund successful",
+  "refund_success_message": "Please deliver the refunded medication to the pharmacist.",
+
   "refund_panel_title": "Refundable Medications",
   "refund_action_checking": "Checking...",
   "refund_action_refunding": "Refunding...",
@@ -964,8 +966,12 @@
   "waste_panel_title": "Wasteable/Destructible Medications",
   "waste_action_wastage": "Waste",
   "waste_action_destruction": "Destroy",
-  "waste_success_wastage": "Wastage completed successfully.",
-  "waste_success_destruction": "Destruction completed successfully.",
+
+  "wastage_success_title": "Wastage recorded",
+  "wastage_success_message": "Please place the wasted medication in the wastage bin.",
+
+  "destruction_success_title": "Destruction recorded",
+  "destruction_success_message": "Please dispose of the medication in accordance with the destruction procedure.",
 
   "assignment_success_created": "Bed assignment saved successfully.",
   "assignment_success_deleted": "Bed assignment removed.",
@@ -1045,5 +1051,16 @@
 "unadministered_prescriptions_empty_description": "There are no prescriptions waiting to be administered for this patient.",
 
 "empty_state_no_patient_selected_title": "Select a patient",
-"empty_state_no_patient_selected_description": "Choose a patient from the list to view their details."
+"empty_state_no_patient_selected_description": "Choose a patient from the list to view their details.",
+
+"date_preset_today": "Today",
+"date_preset_last_3_days": "Last 3 days",
+"date_preset_last_7_days": "Last 7 days",
+"date_preset_all": "All",
+"filter_all": "All",
+"census_action_report_extra_stock": "Report Extra Stock",
+"census_extra_stock_dialog_title": "Report Extra Stock",
+"census_extra_stock_quantity_label": "Quantity",
+"common_action_add": "Add",
+"census_extra_stock_summary_title": "Reported Extra Stocks"
 }

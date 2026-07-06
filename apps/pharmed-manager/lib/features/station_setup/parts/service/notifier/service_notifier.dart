@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class ServiceNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<HospitalService> {
+class ServiceNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<HospitalService> {
   final GetServicesUseCase _getServicesUseCase;
   final DeleteServiceUseCase _deleteServiceUseCase;
 
@@ -12,15 +12,12 @@ class ServiceNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<H
   OperationKey deleteOp = OperationKey.delete();
   OperationKey fetchOp = OperationKey.fetch();
 
-  Future<void> getServices() async {
-    await execute(
-      fetchOp,
-      operation: () => _getServicesUseCase.call(GetServicesParams()),
-      onData: (response) {
-        if (response.data != null) {
-          allItems = response.data!;
-        }
-      },
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) => _getServicesUseCase.call(
+        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+      ),
     );
   }
 
@@ -34,7 +31,7 @@ class ServiceNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<H
       operation: () => _deleteServiceUseCase.call(service),
       onSuccess: () {
         onSuccess?.call('İşleminiz başarıyla tamamlandı.');
-        getServices();
+        fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),
     );

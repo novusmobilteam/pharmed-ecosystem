@@ -41,7 +41,7 @@ class RoleTableView extends StatelessWidget {
             onSearchChanged: notifier.search,
             onPageChanged: (page) {
               notifier.setPage(page);
-              notifier.getRoles();
+              notifier.fetch();
             },
             actions: [TableActionItem(icon: PhosphorIcons.pen(), tooltip: 'Düzenle', onPressed: onEdit)],
           );

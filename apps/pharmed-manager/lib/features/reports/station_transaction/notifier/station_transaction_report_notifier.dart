@@ -36,7 +36,7 @@ class StationTransactionReportNotifier extends ChangeNotifier with ApiRequestMix
   Future<void> getStations() async {
     await execute(
       fetchStationsOp,
-      operation: () => _getStationsUseCase.call(GetStationsParams()),
+      operation: () => _getStationsUseCase.call(PagedQueryParams()),
       onData: (response) {
         final data = response.data ?? [];
         _stations = data;

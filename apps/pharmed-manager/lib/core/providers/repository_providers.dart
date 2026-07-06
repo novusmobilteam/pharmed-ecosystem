@@ -271,6 +271,7 @@ class RepositoryProviders {
             localDataSource: context.read(),
             cabinMapper: CabinStockMapper(),
             stationMapper: StationStockMapper(),
+            epcMapper: CabinExpectedEpcMapper(),
           ),
         },
       ),
@@ -359,6 +360,22 @@ class RepositoryProviders {
             refillListMapper: RefillListMapper(),
             detailMapper: RefillListDetailMapper(),
             cabinStockMapper: CabinStockMapper(),
+          ),
+        },
+      ),
+
+      /// PrescriptionTemplate
+      Provider<IPrescriptionTemplateRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => PrescriptionTemplateRepositoryImpl(
+            dataSource: context.read(),
+            templateMapper: PrescriptionTemplateMapper(),
+            itemMapper: PrescriptionTemplateItemMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => PrescriptionTemplateRepositoryImpl(
+            dataSource: context.read(),
+            templateMapper: PrescriptionTemplateMapper(),
+            itemMapper: PrescriptionTemplateItemMapper(),
           ),
         },
       ),

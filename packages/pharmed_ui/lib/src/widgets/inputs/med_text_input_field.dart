@@ -23,6 +23,7 @@ class MedTextInputField extends StatefulWidget {
     this.autoFocus = false,
     this.keyboardType,
     this.maxLines = 1,
+    this.minLines,
     this.obscureText = false,
     this.maxLength,
     this.inputFormatters,
@@ -45,6 +46,7 @@ class MedTextInputField extends StatefulWidget {
   final bool autoFocus;
   final TextInputType? keyboardType;
   final int? maxLines;
+  final int? minLines;
   final bool obscureText;
   final int? maxLength;
   final List<TextInputFormatter>? inputFormatters;
@@ -64,6 +66,8 @@ class MedTextInputField extends StatefulWidget {
 class _MedTextInputFieldState extends State<MedTextInputField> {
   late final FocusNode _focus;
   bool _focused = false;
+
+  bool get _isMultiline => (widget.maxLines ?? 1) > 1;
 
   @override
   void initState() {
@@ -99,47 +103,55 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
           applyPadding: false,
           child: IgnorePointer(
             ignoring: !widget.enabled,
-            child: TextFormField(
-              focusNode: _focus,
-              readOnly: widget.readOnly,
-              autofocus: widget.autoFocus,
-              initialValue: widget.controller == null ? widget.initialValue : null,
-              enabled: widget.enabled,
-              keyboardType: widget.keyboardType,
-              maxLines: widget.obscureText ? 1 : widget.maxLines,
-              maxLength: widget.maxLength,
-              obscureText: widget.obscureText,
-              inputFormatters: widget.inputFormatters,
-              controller: widget.controller,
-              onTap: widget.onTap,
-              textAlignVertical: TextAlignVertical.center,
-              onChanged: (v) {
-                field.didChange(v);
-                widget.onChanged?.call(v);
-              },
-              style: MedTextStyles.bodyMd(color: MedColors.text),
-              decoration: InputDecoration(
-                suffix: widget.suffix,
-                border: OutlineInputBorder(borderSide: BorderSide.none),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
-                focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
-                errorBorder: OutlineInputBorder(borderSide: BorderSide.none),
-                disabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
-                filled: false,
-                isDense: false,
-                contentPadding: style.contentPadding,
-                counterText: '',
-                hintText: widget.hintText,
-                hintStyle: TextStyle(fontFamily: MedFonts.sans, fontSize: style.inputFontSize, color: MedColors.text4),
+            child: Align(
+              alignment: _isMultiline ? Alignment.topLeft : Alignment.center,
+              child: TextFormField(
+                focusNode: _focus,
+                readOnly: widget.readOnly,
+                autofocus: widget.autoFocus,
+                initialValue: widget.controller == null ? widget.initialValue : null,
+                enabled: widget.enabled,
+                //textAlignVertical: _isMultiline ? TextAlignVertical.top : TextAlignVertical.center,
+                keyboardType: widget.keyboardType,
+                maxLines: widget.obscureText ? 1 : widget.maxLines,
+                minLines: widget.obscureText ? 1 : widget.minLines,
+                maxLength: widget.maxLength,
+                obscureText: widget.obscureText,
+                inputFormatters: widget.inputFormatters,
+                controller: widget.controller,
+                onTap: widget.onTap,
+                onChanged: (v) {
+                  field.didChange(v);
+                  widget.onChanged?.call(v);
+                },
+                style: MedTextStyles.bodyMd(color: MedColors.text),
+                decoration: InputDecoration(
+                  suffix: widget.suffix,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  filled: false,
+                  isDense: true,
+                  contentPadding: style.contentPadding,
+                  counterText: '',
+                  hintText: widget.hintText,
+                  hintStyle: TextStyle(
+                    fontFamily: MedFonts.sans,
+                    fontSize: style.inputFontSize,
+                    color: MedColors.text4,
+                  ),
 
-                prefixIcon: widget.prefixIcon != null
-                    ? IconTheme(
-                        data: IconThemeData(size: 16, color: _focused ? MedColors.blue : MedColors.text3),
-                        child: widget.prefixIcon!,
-                      )
-                    : null,
-                suffixIcon: widget.suffixIcon,
-                suffixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 0),
+                  prefixIcon: widget.prefixIcon != null
+                      ? IconTheme(
+                          data: IconThemeData(size: 16, color: _focused ? MedColors.blue : MedColors.text3),
+                          child: widget.prefixIcon!,
+                        )
+                      : null,
+                  suffixIcon: widget.suffixIcon,
+                  suffixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 0),
+                ),
               ),
             ),
           ),

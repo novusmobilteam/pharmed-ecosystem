@@ -16,8 +16,8 @@ class StationRepositoryImpl implements IStationRepository {
   final StationMapper _mapper;
 
   @override
-  Future<Result<ApiResponse<List<Station>>>> getStations({int? skip, int? take, String? search}) async {
-    final result = await _dataSource.getStations(skip: skip, take: take, search: search);
+  Future<Result<ApiResponse<List<Station>>>> getStations({int? skip, int? take, String? searchQuery}) async {
+    final result = await _dataSource.getStations(skip: skip, take: take, search: searchQuery);
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<Station>>(

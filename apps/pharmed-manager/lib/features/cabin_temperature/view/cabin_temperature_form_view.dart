@@ -129,7 +129,8 @@ class _StationField extends StatelessWidget {
           label: 'İstasyon',
           title: 'İstasyon',
           initialValue: vm.form?.station,
-          dataSource: (skip, take, search) => context.read<IStationRepository>().getStations(),
+          dataSource: (skip, take, search) =>
+              context.read<GetStationsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           labelBuilder: (value) => value.name ?? '',
           validator: (value) => Validators.cannotBlankValidator(value?.name),
           onSelected: (value) => context.read<CabinTemperatureControlFormViewModel>().setStation(value),

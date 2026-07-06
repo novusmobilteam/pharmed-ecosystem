@@ -41,7 +41,7 @@ class ServiceFormPanel extends StatelessWidget {
                 if (context.mounted && notifier.isSuccess(notifier.submitOp)) {
                   MessageUtils.showSuccessSnackbar(context, notifier.statusMessage);
                   context.read<StationSetupNotifier>().closePanel();
-                  context.read<ServiceNotifier>().getServices();
+                  context.read<ServiceNotifier>().fetch();
                 } else if (context.mounted && notifier.isFailed(notifier.submitOp)) {
                   MessageUtils.showErrorDialog(context, notifier.statusMessage);
                 }
@@ -102,7 +102,8 @@ class _BranchField extends StatelessWidget {
           label: 'Branş',
           title: 'Branş Seç',
           initialValue: notifier.service.branch,
-          dataSource: (skip, take, search) => context.read<GetBranchesUseCase>().call(GetBranchesParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetBranchesUseCase>().call(GetBranchesParams(skip: skip, take: take, search: search)),
           labelBuilder: (w) => w.name ?? '—',
           onSelected: notifier.updateBranch,
           validator: (value) => Validators.cannotBlankValidator(value?.toString()),
@@ -124,7 +125,8 @@ class _UserField extends StatelessWidget {
           initialValue: notifier.service.user,
           labelBuilder: (user) => user.fullName,
           onSelected: notifier.updateUser,
-          dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search)),
         );
       },
     );

@@ -66,6 +66,8 @@ enum RxOperationCardMode {
   /// - [RfidPresenceStatus.removed] → 🟢 Alındı
   intake,
 
+  unload,
+
   census,
 }
 
@@ -74,7 +76,7 @@ class RxOperationCard extends StatelessWidget {
     super.key,
     required this.item,
     required this.isSelected,
-    required this.rfidStatus,
+    this.rfidStatus,
     required this.isEligible,
     required this.mode,
     required this.onTap,
@@ -113,7 +115,8 @@ class RxOperationCard extends StatelessWidget {
   bool get _isLocked => onTap == null;
   bool get _showRfidLiveStatus => _isLocked && isSelected && _needsRfid && _hasRfidTag;
   bool get _isActive => isSelected && _isLocked;
-  bool get _showReportMissing => mode == RxOperationCardMode.intake && isEligible && onReportMissing != null;
+  bool get _showReportMissing =>
+      mode == RxOperationCardMode.intake && isEligible && isSelected && onReportMissing != null;
 
   Color get _borderColor {
     if (mode == RxOperationCardMode.intake && isSelected && _hasRfidTag && rfidStatus == RfidPresenceStatus.absent) {
@@ -245,6 +248,8 @@ class _RfidRow extends StatelessWidget {
       // Sayım: kabinde → yeşil, eksik → kırmızı
       (RxOperationCardMode.census, RfidPresenceStatus.present) => MedColors.green,
       (RxOperationCardMode.census, _) => MedColors.red,
+
+      (RxOperationCardMode.unload, _) => MedColors.blue,
     };
   }
 
@@ -261,6 +266,8 @@ class _RfidRow extends StatelessWidget {
       // Sayım
       (RxOperationCardMode.census, RfidPresenceStatus.present) => MedColors.greenLight,
       (RxOperationCardMode.census, _) => MedColors.redLight,
+
+      (RxOperationCardMode.unload, _) => MedColors.blueLight,
     };
   }
 
@@ -294,6 +301,7 @@ class _RfidInlineStatus extends StatelessWidget {
       RxOperationCardMode.refill => _buildRefillStatus(context),
       RxOperationCardMode.intake => _buildIntakeStatus(context),
       RxOperationCardMode.census => _buildCensusStatus(context),
+      RxOperationCardMode.unload => _buildCensusStatus(context),
     };
   }
 

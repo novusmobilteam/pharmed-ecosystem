@@ -22,8 +22,8 @@ class MedicineRepositoryImpl implements IMedicineRepository {
   final MedicalConsumableMapper _mcMapper;
 
   @override
-  Future<Result<ApiResponse<List<Medicine>>>> getMedicines({int? skip, int? take, String? search}) async {
-    final result = await _dataSource.getMedicines(skip: skip, take: take, search: search);
+  Future<Result<ApiResponse<List<Medicine>>>> getMedicines({int? skip, int? take, String? searchQuery}) async {
+    final result = await _dataSource.getMedicines(skip: skip, take: take, searchQuery: searchQuery);
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<Medicine>>(

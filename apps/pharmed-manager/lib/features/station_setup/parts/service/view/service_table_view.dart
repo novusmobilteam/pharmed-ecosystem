@@ -15,7 +15,7 @@ class ServiceTableView extends StatelessWidget {
     return Consumer<ServiceNotifier>(
       builder: (context, notifier, _) {
         return MedTable<HospitalService>(
-          data: notifier.filteredItems,
+          data: notifier.items,
           isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
           enableExcel: true,
           enableSearch: true,
@@ -26,6 +26,10 @@ class ServiceTableView extends StatelessWidget {
             ),
             TableActionItem.delete(onPressed: (service) => _onDelete(context, notifier, service)),
           ],
+          enablePagination: true,
+          pageSize: notifier.pageSize,
+          currentPage: notifier.currentPage,
+          onPageChanged: (page) => notifier.setPage(page),
         );
       },
     );

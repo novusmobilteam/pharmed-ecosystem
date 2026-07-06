@@ -36,6 +36,7 @@ class DatasourceProviders {
       Provider(create: (context) => CabinRemoteDataSource(apiManager: context.read())),
       Provider<ICabinLocalDataSource>(create: (context) => CabinLocalDataSource()),
       Provider(create: (context) => RefillListRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => PrescriptionTemplateRemoteDataSource(apiManager: context.read())),
     ];
   }
 }

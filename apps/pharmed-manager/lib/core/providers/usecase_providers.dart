@@ -59,8 +59,7 @@ class UsecaseProviders {
       Provider(create: (context) => DeleteHospitalizationUseCase(context.read())),
       Provider(create: (context) => GetFilteredHospitalizationsUseCase(context.read())),
       Provider(create: (context) => GetHospitalizationsUseCase(context.read())),
-      Provider(create: (context) => GetHospitalizationsWithPrescriptionUseCase(context.read())),
-      Provider(create: (context) => GetPatientsWithActivePrescriptionUseCase(context.read())),
+      Provider(create: (context) => GetActiveHospitalizationsUseCase(context.read())),
       Provider(create: (context) => UpdateHospitalizationUseCase(context.read())),
       Provider(create: (context) => GetHospitalizationsByServiceUseCase(context.read())),
 
@@ -193,6 +192,7 @@ class UsecaseProviders {
       Provider(create: (context) => DeleteUserUseCase(context.read<IUserManager>())),
       Provider(create: (context) => BulkUpdateValidDateUseCase(context.read<IUserManager>())),
       Provider(create: (context) => ChangePasswordUseCase(context.read<IUserManager>())),
+      Provider(create: (context) => GetDoctorsUseCase(context.read<IUserManager>())),
 
       /// Warehouse
       Provider(create: (context) => GetWarehousesUseCase(context.read())),
@@ -229,6 +229,11 @@ class UsecaseProviders {
       Provider(create: (context) => GetRefillListsUseCase(context.read())),
       Provider(create: (context) => UpdateRefillListStatusUseCase(context.read())),
       Provider(create: (context) => UpdateRefillListUseCase(context.read())),
+
+      /// Refill List
+      Provider(create: (context) => CreatePrescriptionTemplateUseCase(context.read())),
+      Provider(create: (context) => GetPrescriptionTemplateItemsUseCase(context.read())),
+      Provider(create: (context) => GetPrescriptionTemplatesUseCase(context.read())),
     ];
   }
 }

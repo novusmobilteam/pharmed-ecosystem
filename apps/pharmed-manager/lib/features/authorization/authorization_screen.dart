@@ -21,8 +21,8 @@ class AuthorizationScreen extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthorizationNotifier()),
-        ChangeNotifierProvider(create: (context) => UserTableNotifier(getUsersUseCase: context.read())..getUsers()),
-        ChangeNotifierProvider(create: (context) => RoleTableNotifier(getRolesUseCase: context.read())..getRoles()),
+        ChangeNotifierProvider(create: (context) => UserTableNotifier(getUsersUseCase: context.read())..fetch()),
+        ChangeNotifierProvider(create: (context) => RoleTableNotifier(getRolesUseCase: context.read())..fetch()),
       ],
       child: Consumer<AuthorizationNotifier>(
         builder: (context, notifier, _) {

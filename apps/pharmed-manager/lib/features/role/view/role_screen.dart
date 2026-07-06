@@ -18,7 +18,7 @@ class RoleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => RoleNotifier(getRolesUseCase: context.read(), deleteRoleUseCase: context.read())..getRoles(),
+      create: (context) => RoleNotifier(getRolesUseCase: context.read(), deleteRoleUseCase: context.read())..fetch(),
       child: Consumer<RoleNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
@@ -61,15 +61,21 @@ class RoleScreen extends StatelessWidget {
       currentPage: notifier.currentPage,
       onPageChanged: (page) {
         notifier.setPage(page);
-        notifier.getRoles();
+        notifier.fetch();
       },
       onSearchChanged: notifier.search,
       actions: [
-        TableActionItem(icon: PhosphorIcons.trash(), tooltip: 'Sil', onPressed: notifier.deleteRole),
+        TableActionItem(
+          icon: PhosphorIcons.trash(),
+          tooltip: 'Sil',
+          onPressed: notifier.deleteRole,
+          isVisible: (role) => role.type == null,
+        ),
         TableActionItem(
           icon: PhosphorIcons.pen(),
           tooltip: 'Düzenle',
           onPressed: (role) => notifier.openPanel(item: role),
+          isVisible: (role) => role.type == null,
         ),
       ],
     );

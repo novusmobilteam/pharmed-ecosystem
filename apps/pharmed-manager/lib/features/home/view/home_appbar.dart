@@ -245,7 +245,7 @@ class _UserInfo extends StatelessWidget {
               ),
             ),
             Text(
-              user.role.toUpperCase(),
+              user.roleName.toUpperCase(),
               style: const TextStyle(
                 fontFamily: MedFonts.mono,
                 fontSize: 9,

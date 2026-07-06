@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class RefillListNotifier extends ChangeNotifier
-    with ApiRequestMixin, SearchMixin<RefillList>, DateFilterMixin<RefillList> {
+class RefillListNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<RefillList> {
   final GetRefillListsUseCase _getRefillLists;
   final UpdateRefillListStatusUseCase _updateRefillListStatus;
   final CancelRefillListUseCase _cancelRefillList;
@@ -17,9 +16,6 @@ class RefillListNotifier extends ChangeNotifier
        _getRefillLists = getRefillLists,
        _updateRefillListStatus = updateRefillListStatus,
        _cancelRefillList = cancelRefillList;
-
-  @override
-  DateTime? getDateField(RefillList item) => item.date;
 
   OperationKey fetchStationsOp = OperationKey.custom('fetch-stations');
   OperationKey fetchRecordsOp = OperationKey.custom('fetch-records');
@@ -49,7 +45,7 @@ class RefillListNotifier extends ChangeNotifier
   void getStations() async {
     await execute(
       fetchStationsOp,
-      operation: () => _getStations.call(GetStationsParams()),
+      operation: () => _getStations.call(PagedQueryParams()),
       onData: (response) {
         if (response.data != null) {
           _stations = response.data!;

@@ -152,7 +152,7 @@ class _DrawerLoadingViewState extends State<DrawerLoadingView> {
           Expanded(
             child: Center(child: Text('Sayım Miktarı', style: style)),
           ),
-          if (widget.type != CabinInventoryType.count)
+          if (widget.type != CabinInventoryType.census)
             Expanded(
               child: Center(child: Text(widget.type.fieldText, style: style)),
             ),
@@ -170,7 +170,7 @@ class _DrawerLoadingViewState extends State<DrawerLoadingView> {
     final double currentFill = widget.fillingQuantities[index];
     final DateTime? currentMiad = widget.cellMiadDates[index];
 
-    final bool hasInput = widget.type == CabinInventoryType.count ? currentCount > 0 : currentFill > 0;
+    final bool hasInput = widget.type == CabinInventoryType.census ? currentCount > 0 : currentFill > 0;
     final bool isCellLocked = _isCellLocked(index);
 
     return Opacity(
@@ -220,7 +220,7 @@ class _DrawerLoadingViewState extends State<DrawerLoadingView> {
                   onChanged: (val) => widget.onCountQuantityChanged(val, index),
                 ),
               ),
-              if (widget.type != CabinInventoryType.count)
+              if (widget.type != CabinInventoryType.census)
                 Expanded(
                   child: CabinInputQuantityField(
                     data: widget.data,

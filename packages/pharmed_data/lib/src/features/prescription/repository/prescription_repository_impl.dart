@@ -89,8 +89,20 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions() async {
-    final result = await _dataSource.getUnappliedPrescriptions();
+  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({
+    int? skip,
+    int? take,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final result = await _dataSource.getUnappliedPrescriptions(
+      skip: skip,
+      take: take,
+      searchQuery: searchQuery,
+      startDate: startDate,
+      endDate: endDate,
+    );
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<Prescription>>(
@@ -216,10 +228,32 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<List<PrescriptionItem>>> getPatientPrescriptionHistory(int patientId) async {
-    final result = await _dataSource.getPatientPrescriptionHistory(patientId);
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getPatientPrescriptionHistory(
+    int patientId, {
+    int? skip,
+    int? take,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+    List<Object>? filters,
+  }) async {
+    final result = await _dataSource.getPatientPrescriptionHistory(
+      patientId,
+      search: searchQuery,
+      skip: skip,
+      take: take,
+      startDate: startDate,
+      endDate: endDate,
+      filters: filters,
+    );
     return result.when(
-      ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])),
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<PrescriptionItem>>(
+          data: apiResponse?.data != null ? _prescriptionItemMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess ?? true,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
       error: (e) => Result.error(e),
     );
   }

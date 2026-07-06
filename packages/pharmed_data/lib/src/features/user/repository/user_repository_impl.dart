@@ -57,6 +57,33 @@ class UserRepositoryImpl implements IUserManager {
   }
 
   @override
+  Future<Result<ApiResponse<List<User>>?>> getDoctors({
+    UserType? type,
+    int? skip,
+    int? take,
+    String? search,
+    List<String>? searchFields,
+  }) async {
+    final result = await _dataSource.getDoctors(
+      type: type,
+      skip: skip,
+      take: take,
+      search: search,
+      searchFields: searchFields,
+    );
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<User>>(
+          data: apiResponse?.data != null ? _mapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
   Future<Result<void>> createUser(User user) => _dataSource.createUser(_mapper.toDto(user));
 
   @override

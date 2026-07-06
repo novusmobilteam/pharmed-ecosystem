@@ -27,10 +27,7 @@ class UserFormPanel extends StatelessWidget {
               if (formKey.currentState!.validate()) {
                 await notifier.submit(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  onSuccess: (msg) {
-                    MessageUtils.showSuccessSnackbar(context, msg);
-                    context.pop(true);
-                  },
+                  onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
                 );
               }
             },
@@ -160,7 +157,8 @@ class _RoleField extends StatelessWidget {
           label: 'Meslek Tipi',
           initialValue: notifier.user.role,
           labelBuilder: (r) => r.name,
-          dataSource: (skip, take, search) => context.read<IRoleRepository>().getRoles(),
+          dataSource: (skip, take, search) =>
+              context.read<GetRolesUseCase>().call(GetRolesParams(skip: skip, take: take, search: search)),
           onSelected: (role) => notifier.changeRole(role),
           validator: (r) => Validators.cannotBlankValidator(r?.name),
         );
@@ -182,7 +180,7 @@ class _StatusField extends StatelessWidget {
           initialValue: notifier.user.status,
           labelBuilder: (s) => s?.label,
           validator: (s) => Validators.cannotBlankValidator(s?.label),
-          onChanged: (s) => notifier.changeStatus(s.isActive),
+          onChanged: (s) => notifier.changeStatus(s?.isActive),
         );
       },
     );
@@ -259,7 +257,7 @@ class _OrderStatusField extends StatelessWidget {
           initialValue: permissionStatusFromBool(notifier.user.isNotOrdered),
           labelBuilder: (s) => s?.label,
           validator: (s) => Validators.cannotBlankValidator(s?.label),
-          onChanged: (value) => notifier.changeOrderPermission(value.isAllowed),
+          onChanged: (value) => notifier.changeOrderPermission(value?.isAllowed),
         );
       },
     );
@@ -279,7 +277,7 @@ class _WitnessedStationField extends StatelessWidget {
           initialValue: permissionStatusFromBool(notifier.user.isWitnessedStationEntry),
           labelBuilder: (s) => s?.label,
           validator: (s) => Validators.cannotBlankValidator(s?.label),
-          onChanged: (value) => notifier.changeWitnessedEntry(value.isAllowed),
+          onChanged: (value) => notifier.changeWitnessedEntry(value?.isAllowed),
         );
       },
     );
@@ -299,7 +297,7 @@ class _PurchaseKitField extends StatelessWidget {
           initialValue: permissionStatusFromBool(notifier.user.kitPurchase),
           labelBuilder: (s) => s?.label,
           validator: (s) => Validators.cannotBlankValidator(s?.label),
-          onChanged: (value) => notifier.changeKitPurchase(value.isAllowed),
+          onChanged: (value) => notifier.changeKitPurchase(value?.isAllowed),
         );
       },
     );
@@ -317,7 +315,8 @@ class _StationsField extends StatelessWidget {
           key: ValueKey(notifier.selectedStations.length),
           label: 'Yetki İstasyonlar',
           initialValue: notifier.selectedStations,
-          dataSource: (skip, take, search) => context.read<IStationRepository>().getStations(),
+          dataSource: (skip, take, search) =>
+              context.read<GetStationsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           labelBuilder: (s) => s.name,
           onSelected: (stations) => notifier.changeStations(stations ?? []),
           // validator: (value) => Validators.cannotBlankValidator(

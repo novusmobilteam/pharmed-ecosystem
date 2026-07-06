@@ -7,6 +7,7 @@ import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../core/enums/cabin_operation_mode.dart';
 import '../../../../widgets/widgets.dart';
 import '../../unload.dart';
+import 'mobile_unload_dialog.dart';
 
 class MobileUnloadView extends ConsumerStatefulWidget {
   const MobileUnloadView({super.key, this.data});
@@ -18,6 +19,8 @@ class MobileUnloadView extends ConsumerStatefulWidget {
 }
 
 class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
+  bool _isDialogOpen = false;
+
   @override
   void initState() {
     super.initState();
@@ -40,30 +43,17 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
     });
   }
 
-  Future<void> _onCancelUnload(MobileUnloadState state, MobileDrawerStage drawerStage) async {
-    final notifier = ref.read(mobileUnloadNotifierProvider.notifier);
-    final rfidTakenCount = state is MobileUnloadReady ? state.rfidTakenCount : 0;
-
-    // DrawerOpening/Opened + henüz ilaç çıkarılmadı → snackbar
-    if ((drawerStage is MobileDrawerOpening || drawerStage is MobileDrawerOpened) && rfidTakenCount == 0) {
-      MessageUtils.showInfoSnackbar(context, context.l10n.common_cancelInfo_drawerClose);
-      return;
-    }
-
-    // DrawerClosed + henüz ilaç çıkarılmadı → onay dialogu
-    if (drawerStage is MobileDrawerClosed && rfidTakenCount == 0) {
-      MessageUtils.showConfirmDialog(
+  void _syncDialog(BuildContext context) {
+    final state = ref.read(mobileUnloadNotifierProvider);
+    final stage = ref.read(mobileDrawerSessionProvider).stage;
+    if (state.shouldKeepDialog(stage) && !_isDialogOpen) {
+      _isDialogOpen = true;
+      showDialog(
         context: context,
-        action: ConfirmAction.exit,
-        customTitle: context.l10n.unload_cancelDialog_title,
-        customMessage: context.l10n.unload_cancelDialog_message,
-        confirmButtonText: context.l10n.common_confirmCancelButton,
-        onConfirm: notifier.cancelUnload,
-      );
-      return;
+        barrierDismissible: false,
+        builder: (_) => const MobileUnloadDialog(),
+      ).then((_) => _isDialogOpen = false);
     }
-
-    notifier.cancelUnload();
   }
 
   @override
@@ -72,11 +62,19 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
     final notifier = ref.read(mobileUnloadNotifierProvider.notifier);
     final drawerStage = ref.watch(mobileDrawerSessionProvider).stage;
 
+    ref.listen<MobileUnloadState>(mobileUnloadNotifierProvider, (_, __) => _syncDialog(context));
+    ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, _) => _syncDialog(context));
+
     ref.listen(mobileUnloadNotifierProvider, (_, next) {
       if (next is MobileUnloadError) {
+        final stage = ref.read(mobileDrawerSessionProvider).stage;
+        if (!next.shouldKeepDialog(stage)) {
+          MessageUtils.showErrorSnackbar(context, next.message);
+          notifier.dismissError();
+        }
+      } else if (next is MobileUnloadFatalError) {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
-        ref.read(mobileDrawerSessionProvider.notifier).stop();
       } else if (next is MobileUnloadSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.unload_success_completed);
         notifier.dismissSuccess();
@@ -87,32 +85,29 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return MobileDrawerOperationWrapper(
-      child: CabinOperationScaffold(
-        leftPanel: MobileCabinOverviewPanel(
-          slots: state.slots,
-          selectedSlotId: state.selectedSlotId,
-          mode: CabinOperationMode.unload,
-          onSlotTap: notifier.onSlotTap,
-        ),
-        centerPanel: MobileCabinDrawerPanel(
-          mode: CabinOperationMode.unload,
-          slot: state.selectedSlot,
-          selectedCell: state.selectedCell,
-          onCellTap: notifier.onCellTap,
-          assignmentByCoord: state.assignmentByCoord,
-        ),
-        rightPanel: MobileUnloadPanel(
-          state: state,
-          drawerStage: drawerStage,
-          onStartUnload: notifier.startUnload,
-          onCompleteUnload: notifier.completeUnload,
-          onReopenDrawer: notifier.reopenDrawer,
-          onSelectAssignment: notifier.selectAssignment,
-          onChangePatient: notifier.clearPatientSelection,
-          onToggleItem: notifier.toggleItemSelection,
-          onCancelUnload: () => _onCancelUnload(state, drawerStage),
-        ),
+    return CabinOperationScaffold(
+      leftPanel: MobileCabinOverviewPanel(
+        slots: state.slots,
+        selectedSlotId: state.selectedSlotId,
+        mode: CabinOperationMode.unload,
+        onSlotTap: notifier.onSlotTap,
+      ),
+      centerPanel: MobileCabinDrawerPanel(
+        mode: CabinOperationMode.unload,
+        slot: state.selectedSlot,
+        selectedCell: state.selectedCell,
+        onCellTap: notifier.onCellTap,
+        assignmentByCoord: state.assignmentByCoord,
+      ),
+      rightPanel: MobileUnloadPanel(
+        notifier: notifier,
+        state: state,
+        drawerStage: drawerStage,
+        onStartUnload: notifier.startUnload,
+        onCompleteUnload: notifier.completeUnload,
+
+        onSelectAssignment: notifier.selectAssignment,
+        onChangePatient: notifier.clearPatientSelection,
       ),
     );
   }

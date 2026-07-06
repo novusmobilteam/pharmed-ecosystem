@@ -6,25 +6,16 @@ class UserTableNotifier extends ChangeNotifier with ApiRequestMixin, PaginationM
 
   UserTableNotifier({required GetUsersUseCase getUsersUseCase}) : _getUsersUseCase = getUsersUseCase;
 
-  static const fetch = OperationKey.fetch();
+  static const fetchOp = OperationKey.fetch();
 
   bool get isFetching => isTableLoading;
 
-  String _searchQuery = '';
-
-  Future<void> getUsers() async {
+  @override
+  Future<void> fetch() async {
     await fetchPagedData(
       fetchMethod: (skip, take) async {
-        return _getUsersUseCase.call(GetUsersParams(skip: skip, take: take, search: _searchQuery));
+        return _getUsersUseCase.call(GetUsersParams(skip: skip, take: take, search: searchQuery));
       },
     );
-  }
-
-  void search(String query) {
-    if (_searchQuery == query) return;
-    _searchQuery = query;
-    // Sayfayı resetle ve veriyi tekrar çek
-    setPage(1);
-    getUsers();
   }
 }

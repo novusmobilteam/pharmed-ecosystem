@@ -11,15 +11,18 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
     required CabinStockLocalDataSource localDataSource,
     required CabinStockMapper cabinMapper,
     required StationStockMapper stationMapper,
+    required CabinExpectedEpcMapper epcMapper,
   }) : _dataSource = dataSource,
        _local = localDataSource,
        _cabinMapper = cabinMapper,
-       _stationMapper = stationMapper;
+       _stationMapper = stationMapper,
+       _epcMapper = epcMapper;
 
   final CabinStockRemoteDataSource _dataSource;
   final CabinStockLocalDataSource _local;
   final CabinStockMapper _cabinMapper;
   final StationStockMapper _stationMapper;
+  final CabinExpectedEpcMapper _epcMapper;
 
   @override
   Future<Result<List<CabinStock>>> getCurrentCabinStock() async {
@@ -83,5 +86,27 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
   @override
   Future<Result<void>> rejectMissingStock(int prescriptionItemId) async {
     return await _dataSource.rejectMissingStock(prescriptionItemId);
+  }
+
+  @override
+  Future<Result<List<CabinExpectedEpc>>> getExpectedEpcs(int cabinId) async {
+    final result = await _dataSource.getExpectedEpcs(cabinId);
+    return result.when(ok: (dtos) => Result.ok(_epcMapper.toEntityList(dtos)), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> reportExcessStock({
+    required Map<String, dynamic> data,
+    required int cabinInventoryTypeId,
+  }) async {
+    return await _dataSource.reportExcessStock(data: data, cabinInventoryTypeId: cabinInventoryTypeId);
+  }
+
+  @override
+  Future<Result<void>> reportMissingStock({required int prescriptionItemId, required int cabinInventoryTypeId}) async {
+    return await _dataSource.reportMissingStock(
+      prescriptionItemId: prescriptionItemId,
+      cabinInventoryTypeId: cabinInventoryTypeId,
+    );
   }
 }

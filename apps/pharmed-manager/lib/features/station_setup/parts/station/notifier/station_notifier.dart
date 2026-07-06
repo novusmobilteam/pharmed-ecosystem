@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class StationNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Station> {
+class StationNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Station> {
   final GetStationsUseCase _getStationsUseCase;
   final DeleteStationUseCase _deleteStationUseCase;
 
@@ -12,15 +12,12 @@ class StationNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<S
   OperationKey deleteOp = OperationKey.delete();
   OperationKey fetchOp = OperationKey.fetch();
 
-  Future<void> getStations() async {
-    await execute(
-      fetchOp,
-      operation: () => _getStationsUseCase.call(GetStationsParams()),
-      onData: (response) {
-        if (response.data != null) {
-          allItems = response.data!;
-        }
-      },
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) => _getStationsUseCase.call(
+        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+      ),
     );
   }
 
@@ -34,7 +31,7 @@ class StationNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<S
       operation: () => _deleteStationUseCase.call(station),
       onSuccess: () {
         onSuccess?.call('İşleminiz başarıyla tamamlandı');
-        getStations();
+        fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),
     );

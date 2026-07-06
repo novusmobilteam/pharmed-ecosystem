@@ -91,7 +91,8 @@ class _UserField extends StatelessWidget {
     return MedSelectionField<User>(
       label: 'Dolum Yapacak Kullanıcı',
       title: 'Dolum Yapacak Kullanıcı',
-      dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+      dataSource: (skip, take, search) =>
+          context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search)),
       initialValue: notifier.user,
       labelBuilder: (value) => value.fullName,
       onSelected: (value) => notifier.selectUser(value),

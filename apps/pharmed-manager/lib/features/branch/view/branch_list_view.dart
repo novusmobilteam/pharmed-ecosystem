@@ -34,7 +34,7 @@ class _BranchListViewState extends State<BranchListView> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) =>
-          BranchTableNotifier(getBranchesUseCase: context.read(), deleteBranchUseCase: context.read())..getBranches(),
+          BranchTableNotifier(getBranchesUseCase: context.read(), deleteBranchUseCase: context.read())..fetch(),
       child: Consumer<BranchTableNotifier>(
         builder: (context, vm, _) => CustomDialog(
           title: 'Branş Tanımlama',
@@ -48,7 +48,7 @@ class _BranchListViewState extends State<BranchListView> {
             alignment: Alignment.bottomRight,
             children: [
               _listView(vm.items),
-              RectangleIconButton(
+              MedRectangleIconButton(
                 color: _selected != null ? context.colorScheme.primary : Colors.grey,
                 iconColor: context.colorScheme.onPrimary,
                 iconData: PhosphorIcons.arrowRight(),
@@ -93,6 +93,6 @@ Future<void> _showBranchRegistrationDialog(BuildContext context, {Branch? initia
   );
 
   if (result == true && context.mounted) {
-    context.read<BranchTableNotifier>().getBranches();
+    context.read<BranchTableNotifier>().fetch();
   }
 }

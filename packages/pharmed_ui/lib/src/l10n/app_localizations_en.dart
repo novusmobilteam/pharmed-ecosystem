@@ -1057,7 +1057,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select medicines on the left to start refilling.';
 
   @override
-  String get refund_success_completed => 'Refund completed successfully.';
+  String get refund_success_title => 'Refund successful';
+
+  @override
+  String get refund_success_message =>
+      'Please deliver the refunded medication to the pharmacist.';
 
   @override
   String get refund_panel_title => 'Refundable Medications';
@@ -1106,10 +1110,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get waste_action_destruction => 'Destroy';
 
   @override
-  String get waste_success_wastage => 'Wastage completed successfully.';
+  String get wastage_success_title => 'Wastage recorded';
 
   @override
-  String get waste_success_destruction => 'Destruction completed successfully.';
+  String get wastage_success_message =>
+      'Please place the wasted medication in the wastage bin.';
+
+  @override
+  String get destruction_success_title => 'Destruction recorded';
+
+  @override
+  String get destruction_success_message =>
+      'Please dispose of the medication in accordance with the destruction procedure.';
 
   @override
   String get assignment_success_created => 'Bed assignment saved successfully.';
@@ -1312,4 +1324,34 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get empty_state_no_patient_selected_description =>
       'Choose a patient from the list to view their details.';
+
+  @override
+  String get date_preset_today => 'Today';
+
+  @override
+  String get date_preset_last_3_days => 'Last 3 days';
+
+  @override
+  String get date_preset_last_7_days => 'Last 7 days';
+
+  @override
+  String get date_preset_all => 'All';
+
+  @override
+  String get filter_all => 'All';
+
+  @override
+  String get census_action_report_extra_stock => 'Report Extra Stock';
+
+  @override
+  String get census_extra_stock_dialog_title => 'Report Extra Stock';
+
+  @override
+  String get census_extra_stock_quantity_label => 'Quantity';
+
+  @override
+  String get common_action_add => 'Add';
+
+  @override
+  String get census_extra_stock_summary_title => 'Reported Extra Stocks';
 }

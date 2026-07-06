@@ -21,6 +21,7 @@ final cabinStockRepositoryProvider = Provider<ICabinStockRepository>((ref) {
       localDataSource: ref.read(cabinStockLocalDataSourceProvider),
       cabinMapper: CabinStockMapper(),
       stationMapper: StationStockMapper(),
+      epcMapper: CabinExpectedEpcMapper(),
     ),
   };
 });

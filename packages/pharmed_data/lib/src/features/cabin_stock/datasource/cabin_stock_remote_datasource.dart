@@ -59,6 +59,7 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
 
   /// Mobil kabin dolum işlemi
   Future<Result<void>> refillMobileCabin(List<dynamic> data) async {
+    //return Result.error(CustomException(message: 'message'));
     return await postRequest(
       path: '$_base/mobileCabin',
       parser: BaseRemoteDataSource.voidParser(),
@@ -96,6 +97,26 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data ?? const <StationStockDTO>[]), error: Result.error);
   }
 
+  Future<Result<void>> reportMissingStock({required int prescriptionItemId, required int cabinInventoryTypeId}) async {
+    return await postRequest(
+      path: '/CabinDrawrStock/mobileStockShortageReported/$prescriptionItemId',
+      query: {'stockNotificationType': cabinInventoryTypeId},
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+  }
+
+  Future<Result<void>> reportExcessStock({
+    required Map<String, dynamic> data,
+    required int cabinInventoryTypeId,
+  }) async {
+    return await postRequest(
+      path: '/CabinDrawrStock/mobileExcessStockReported',
+      body: data,
+      query: {'stockNotificationType': cabinInventoryTypeId},
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+  }
+
   Future<Result<void>> approveMissingStock(int prescriptionItemId) async {
     final res = await postRequest(
       path: '$_base/mobileStockShortageReportedApprove/$prescriptionItemId',
@@ -112,5 +133,19 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
     );
 
     return res.when(ok: (data) => Result.ok(data ?? const <StationStockDTO>[]), error: Result.error);
+  }
+
+  /// GET /CabinDrawrStockRfidTag?cabinId={id}
+  ///
+  /// Response: { statusCode, isSuccess, data: List<String> }
+  Future<Result<List<CabinExpectedEpcDto>>> getExpectedEpcs(int cabinId) async {
+    final res = await fetchRequest<List<CabinExpectedEpcDto>>(
+      path: '/CabinDrawrStockRfidTag/$cabinId',
+      parser: BaseRemoteDataSource.listParser(CabinExpectedEpcDto.fromJson),
+      successLog: 'Station stocks fetched',
+      emptyLog: 'No station stocks',
+    );
+
+    return res.when(ok: (data) => Result.ok(data ?? const <CabinExpectedEpcDto>[]), error: Result.error);
   }
 }

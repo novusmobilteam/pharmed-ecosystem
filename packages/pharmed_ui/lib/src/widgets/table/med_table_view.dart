@@ -3,8 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-
-import 'table_models.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 part 'table_side_panel.dart';
 part 'table_toolbar.dart';
@@ -88,6 +88,7 @@ class MedTable<T extends TableData> extends StatefulWidget {
     this.loadingWidget,
     this.categoryTitle,
     this.initialDateRange,
+    this.toolbarActions,
   });
 
   final List<T> data;
@@ -160,6 +161,8 @@ class MedTable<T extends TableData> extends StatefulWidget {
   final String? categoryTitle;
 
   final DateTimeRange? initialDateRange;
+
+  final List<Widget>? toolbarActions;
 
   @override
   State<MedTable<T>> createState() => _MedTableState<T>();
@@ -478,6 +481,7 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
                   _TableToolbar<T>(
                     searchController: _searchController,
                     enableSearch: widget.enableSearch,
+                    toolbarActions: widget.toolbarActions,
                     onSearchChanged: (q) {
                       setState(() {});
                       widget.onSearchChanged?.call(q);

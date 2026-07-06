@@ -9,9 +9,9 @@ class _BedSelector extends StatelessWidget {
   });
 
   final BedAssignmentCellSelected state;
-  final ValueChanged<HospitalService> onServiceSelected;
-  final ValueChanged<Room> onRoomSelected;
-  final ValueChanged<Bed> onBedSelected;
+  final ValueChanged<HospitalService?> onServiceSelected;
+  final ValueChanged<Room?> onRoomSelected;
+  final ValueChanged<Bed?> onBedSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class _BedSelector extends StatelessWidget {
           initialValue: state.selectedService,
           options: state.services,
           labelBuilder: (s) => s?.name ?? '—',
-          onChanged: onServiceSelected,
+          onChanged: (service) => onServiceSelected(service),
         ),
         const SizedBox(height: 6),
 
@@ -35,7 +35,7 @@ class _BedSelector extends StatelessWidget {
           options: state.rooms,
           labelBuilder: (r) => r?.name ?? '—',
           enabled: state.selectedService != null && state.rooms.isNotEmpty,
-          onChanged: onRoomSelected,
+          onChanged: (room) => onRoomSelected(room),
         ),
         const SizedBox(height: 6),
 
@@ -46,7 +46,7 @@ class _BedSelector extends StatelessWidget {
           options: state.beds,
           labelBuilder: (b) => b?.name ?? '—',
           enabled: state.selectedRoom != null && state.beds.isNotEmpty,
-          onChanged: onBedSelected,
+          onChanged: (bed) => onBedSelected(bed),
         ),
 
         const SizedBox(height: 12),

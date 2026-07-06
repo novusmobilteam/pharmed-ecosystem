@@ -13,12 +13,20 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 /// )
 /// ```
 class MedToggleField extends StatelessWidget {
-  const MedToggleField({super.key, required this.value, this.onChanged, required this.label, this.enabled = true});
+  const MedToggleField({
+    super.key,
+    required this.value,
+    this.onChanged,
+    required this.label,
+    this.enabled = true,
+    this.textStyle,
+  });
 
   final bool value;
   final ValueChanged<bool>? onChanged;
   final String label;
   final bool enabled;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +41,22 @@ class MedToggleField extends StatelessWidget {
 }
 
 class MedToggle extends StatelessWidget {
-  const MedToggle({super.key, required this.value, required this.onChanged, this.label, this.enabled = true});
+  const MedToggle({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.label,
+    this.enabled = true,
+    this.textStyle,
+    this.color,
+  });
 
   final bool value;
   final ValueChanged<bool>? onChanged;
   final String? label;
   final bool enabled;
+  final TextStyle? textStyle;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -53,18 +71,10 @@ class MedToggle extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _TrackWidget(value: value),
+              _TrackWidget(value: value, color: color),
               if (label != null) ...[
                 const SizedBox(width: 12),
-                Text(
-                  label!,
-                  style: const TextStyle(
-                    fontFamily: MedFonts.sans,
-                    fontSize: 14,
-                    color: MedColors.text,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                Text(label!, style: textStyle ?? MedTextStyles.bodyMd()),
               ],
             ],
           ),
@@ -75,8 +85,10 @@ class MedToggle extends StatelessWidget {
 }
 
 class _TrackWidget extends StatelessWidget {
-  const _TrackWidget({required this.value});
+  const _TrackWidget({required this.value, this.color});
+
   final bool value;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +97,7 @@ class _TrackWidget extends StatelessWidget {
       width: 50,
       height: 28,
       decoration: BoxDecoration(
-        color: value ? MedColors.blue : MedColors.border,
+        color: value ? color ?? MedColors.blue : MedColors.border,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Padding(

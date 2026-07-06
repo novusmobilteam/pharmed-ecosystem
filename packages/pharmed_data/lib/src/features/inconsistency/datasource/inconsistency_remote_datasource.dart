@@ -18,7 +18,7 @@ class InconsistencyRemoteDataSource extends BaseRemoteDataSource {
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: ['drugName'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(InconsistencyDTO.fromJson),

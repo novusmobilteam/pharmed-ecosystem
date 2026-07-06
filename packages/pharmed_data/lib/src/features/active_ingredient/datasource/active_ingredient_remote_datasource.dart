@@ -23,7 +23,7 @@ class ActiveIngredientRemoteDataSource extends BaseRemoteDataSource {
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(ActiveIngredientDTO.fromJson),

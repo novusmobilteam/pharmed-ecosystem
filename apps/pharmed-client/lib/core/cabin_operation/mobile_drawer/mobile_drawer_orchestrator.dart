@@ -88,6 +88,14 @@ class MobileDrawerOrchestrator {
     _drawerSub = null;
     await _epcSub?.cancel();
     await _epcLostSub?.cancel();
+
+    // RFID oturumunu kapat — bir sonraki feature (dolum→alım geçişi) temiz başlasın.
+    // Aksi halde inventory açık kalır, yeni feature Opened'da erken/çift inventory yaşar.
+    ref.read(rfidScanSessionProvider.notifier).stop();
+    if (_rfid.isConnected) {
+      await _rfid.disconnect();
+    }
+
     _onStage = null;
     _epcSub = null;
     _epcLostSub = null;
@@ -95,6 +103,7 @@ class MobileDrawerOrchestrator {
     _onEpcLost = null;
     _initialized = false;
     _isConnecting = false;
+    _globalConnecting = false; // static guard'ı da temizle — geçişte kalıntı kalmasın
   }
 
   /// Verilen [slot] için yeni bir çekmece oturumu başlatır.
@@ -103,6 +112,7 @@ class MobileDrawerOrchestrator {
   ///
   /// RFID polling otomatik olarak Opened anında başlar.
   Future<void> open({required List<MobileSlotVisual> slots, required MobileSlotVisual slot}) async {
+    MedLogger.info(unit: 'Mobile Drawer Orch', swreq: '', message: '_drawer.open()');
     final port = MobileSlotVisual.portOf(slots, slot);
     await ref.read(mobileDrawerSessionProvider.notifier).start(drawerPort: port, slotId: slot.slotId);
   }
@@ -114,14 +124,22 @@ class MobileDrawerOrchestrator {
 
   /// Çekmece ve RFID oturumlarını sıfırlar. Banner kaybolur.
   Future<void> stop() async {
-    // Önce RFID session'ı durdur (inventory stream'i kapat)
     ref.read(rfidScanSessionProvider.notifier).stop();
-
-    // Kısa bekleme — stopInventory'nin Answer Mode set etmesi için
     await Future.delayed(const Duration(milliseconds: 150));
-
-    // Sonra drawer session'ı durdur
+    if (_rfid.isConnected) {
+      await _rfid.disconnect();
+    }
     await ref.read(mobileDrawerSessionProvider.notifier).stop();
+  }
+
+  /// Baseline snapshot — RFID inventory aktifken çağrılır.
+  /// [window] süresi boyunca biriken EPC'leri döner.
+  ///
+  /// Çekmece açıldıktan sonra _handleStageChange RFID'yi başlatır;
+  /// feature notifier _onStage callback'inde MobileDrawerOpened gördüğünde
+  /// bu metodu çağırarak baseline alır.
+  Future<Set<String>> snapshot({Duration window = const Duration(milliseconds: 1500)}) {
+    return ref.read(rfidScanSessionProvider.notifier).snapshot();
   }
 
   void _handleStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
@@ -130,8 +148,15 @@ class MobileDrawerOrchestrator {
     if (next is MobileDrawerOpened && prev is! MobileDrawerOpened) {
       if (!_isConnecting) {
         _isConnecting = true;
-        unawaited(_onDrawerOpened(rfidNotifier).whenComplete(() => _isConnecting = false));
+        // Opened'ı feature notifier'a inventory HAZIR olduktan sonra bildir.
+        unawaited(
+          _onDrawerOpened(rfidNotifier).whenComplete(() {
+            _isConnecting = false;
+            _onStage?.call(prev, next);
+          }),
+        );
       }
+      return; // Opened için _onStage'i aşağıda TEKRAR çağırma
     } else if (next is MobileDrawerClosed || next is MobileDrawerFailed) {
       _onDrawerClosed(rfidNotifier);
     }
@@ -157,17 +182,29 @@ class MobileDrawerOrchestrator {
   }
 
   Future<void> _ensureRfidConnected() async {
-    if (_globalConnecting) return;
-    _globalConnecting = true;
+    // Zaten bağlıysa hiçbir şey yapma — reconnect döngüsünü kır.
+    if (_rfid.isConnected) {
+      MedLogger.info(
+        unit: 'MobileDrawerOrchestrator',
+        swreq: 'SWREQ-CLI-CABIN-OP-005',
+        message: 'RFID zaten bağlı, reconnect atlandı',
+      );
+      return;
+    }
 
+    while (_globalConnecting) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+
+    // Bekleme bitince başka bir çağrı bağlamış olabilir — tekrar kontrol et.
+    if (_rfid.isConnected) return;
+
+    _globalConnecting = true;
     try {
-      // Önce aktif inventory'yi durdur
       ref.read(rfidScanSessionProvider.notifier).stop();
       await Future.delayed(const Duration(milliseconds: 150));
 
-      if (_rfid.isConnected) {
-        await _rfid.disconnect();
-      }
+      // disconnect'e gerek yok — zaten bağlı değiliz (yukarıda kontrol edildi).
 
       MedLogger.info(
         unit: 'MobileDrawerOrchestrator',
@@ -176,23 +213,18 @@ class MobileDrawerOrchestrator {
       );
 
       final result = await _rfid.connect('192.168.1.190', 6000);
-
       result.when(
-        ok: (_) {
-          MedLogger.info(
-            unit: 'MobileDrawerOrchestrator',
-            swreq: 'SWREQ-CLI-CABIN-OP-005',
-            message: 'RFID connect başarılı',
-          );
-        },
-        error: (e) {
-          MedLogger.error(
-            unit: 'MobileDrawerOrchestrator',
-            swreq: 'SWREQ-CLI-CABIN-OP-005',
-            message: 'RFID connect başarısız',
-            context: {'error': e.message},
-          );
-        },
+        ok: (_) => MedLogger.info(
+          unit: 'MobileDrawerOrchestrator',
+          swreq: 'SWREQ-CLI-CABIN-OP-005',
+          message: 'RFID connect başarılı',
+        ),
+        error: (e) => MedLogger.error(
+          unit: 'MobileDrawerOrchestrator',
+          swreq: 'SWREQ-CLI-CABIN-OP-005',
+          message: 'RFID connect başarısız',
+          context: {'error': e.message},
+        ),
       );
     } finally {
       _globalConnecting = false;

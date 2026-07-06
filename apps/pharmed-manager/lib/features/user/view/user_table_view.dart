@@ -70,25 +70,27 @@ class UserTableView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<UserNotifier>(
-      builder: (context, vm, _) {
-        final colDefs = _buildColumnDefs(vm.selectedCategory);
+      builder: (context, notifier, _) {
+        final colDefs = _buildColumnDefs(notifier.selectedCategory);
 
         return MedTable<User>(
-          data: vm.users,
-          isLoading: vm.isFetching,
-          categories: vm.tableCategories,
-          selectedCategoryId: vm.selectedCategory.name.toString(),
+          data: notifier.users,
+          isLoading: notifier.isFetching,
+          categories: notifier.tableCategories,
+          selectedCategoryId: notifier.selectedCategory.name.toString(),
           onCategoryChanged: (id) {
-            vm.selectCategory(UserType.values.firstWhere((type) => type.name.toString() == id));
+            notifier.selectCategory(UserType.values.firstWhere((type) => type.name.toString() == id));
           },
           columnDefs: colDefs,
           enableSearch: true,
-          onSearchChanged: vm.search,
+          onSearchChanged: notifier.search,
           enableDateFilter: true,
           enableExcel: true,
           enablePDF: true,
-          selectionMode: vm.selectedCategory == UserType.timeBased ? TableSelectionMode.multi : TableSelectionMode.none,
-          onSelectionChanged: vm.selectUsers,
+          selectionMode: notifier.selectedCategory == UserType.timeBased
+              ? TableSelectionMode.multi
+              : TableSelectionMode.none,
+          onSelectionChanged: notifier.selectUsers,
 
           actions: [
             TableActionItem(icon: PhosphorIcons.pen(), tooltip: 'Düzenle', onPressed: onEdit),
@@ -96,22 +98,19 @@ class UserTableView extends StatelessWidget {
               icon: PhosphorIcons.trashSimple(),
               tooltip: 'Sil',
               color: Colors.red,
-              onPressed: (user) => _onDelete(context, vm, user),
+              onPressed: (user) => _onDelete(context, notifier, user),
             ),
           ],
 
           // ── Hücre render (User alanlarına doğrudan erişim)
-          cellBuilder: (user, colIndex, _) => _buildCell(user, colIndex, vm.selectedCategory),
+          cellBuilder: (user, colIndex, _) => _buildCell(user, colIndex, notifier.selectedCategory),
 
           // ── Server-side pagination
           enablePagination: true,
-          currentPage: vm.currentPage,
-          pageSize: vm.pageSize,
-          serverTotalCount: vm.currentTypeTotal,
-          onPageChanged: (page) {
-            vm.setPage(page);
-            vm.getUsers();
-          },
+          currentPage: notifier.currentPage,
+          pageSize: notifier.pageSize,
+          serverTotalCount: notifier.currentTypeTotal,
+          onPageChanged: (page) => notifier.setPage(page),
         );
       },
     );

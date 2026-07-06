@@ -1990,11 +1990,17 @@ abstract class AppLocalizations {
   /// **'Select medicines on the left to start refilling.'**
   String get refill_hint_idleExecution;
 
-  /// No description provided for @refund_success_completed.
+  /// No description provided for @refund_success_title.
   ///
   /// In en, this message translates to:
-  /// **'Refund completed successfully.'**
-  String get refund_success_completed;
+  /// **'Refund successful'**
+  String get refund_success_title;
+
+  /// No description provided for @refund_success_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Please deliver the refunded medication to the pharmacist.'**
+  String get refund_success_message;
 
   /// No description provided for @refund_panel_title.
   ///
@@ -2086,17 +2092,29 @@ abstract class AppLocalizations {
   /// **'Destroy'**
   String get waste_action_destruction;
 
-  /// No description provided for @waste_success_wastage.
+  /// No description provided for @wastage_success_title.
   ///
   /// In en, this message translates to:
-  /// **'Wastage completed successfully.'**
-  String get waste_success_wastage;
+  /// **'Wastage recorded'**
+  String get wastage_success_title;
 
-  /// No description provided for @waste_success_destruction.
+  /// No description provided for @wastage_success_message.
   ///
   /// In en, this message translates to:
-  /// **'Destruction completed successfully.'**
-  String get waste_success_destruction;
+  /// **'Please place the wasted medication in the wastage bin.'**
+  String get wastage_success_message;
+
+  /// No description provided for @destruction_success_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Destruction recorded'**
+  String get destruction_success_title;
+
+  /// No description provided for @destruction_success_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Please dispose of the medication in accordance with the destruction procedure.'**
+  String get destruction_success_message;
 
   /// No description provided for @assignment_success_created.
   ///
@@ -2469,6 +2487,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose a patient from the list to view their details.'**
   String get empty_state_no_patient_selected_description;
+
+  /// No description provided for @date_preset_today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get date_preset_today;
+
+  /// No description provided for @date_preset_last_3_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 3 days'**
+  String get date_preset_last_3_days;
+
+  /// No description provided for @date_preset_last_7_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get date_preset_last_7_days;
+
+  /// No description provided for @date_preset_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get date_preset_all;
+
+  /// No description provided for @filter_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filter_all;
+
+  /// No description provided for @census_action_report_extra_stock.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Extra Stock'**
+  String get census_action_report_extra_stock;
+
+  /// No description provided for @census_extra_stock_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Extra Stock'**
+  String get census_extra_stock_dialog_title;
+
+  /// No description provided for @census_extra_stock_quantity_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get census_extra_stock_quantity_label;
+
+  /// No description provided for @common_action_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get common_action_add;
+
+  /// No description provided for @census_extra_stock_summary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported Extra Stocks'**
+  String get census_extra_stock_summary_title;
 }
 
 class _AppLocalizationsDelegate

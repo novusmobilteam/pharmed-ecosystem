@@ -12,18 +12,12 @@ class RoleTableNotifier extends ChangeNotifier with ApiRequestMixin, PaginationM
 
   String _searchQuery = '';
 
-  Future<void> getRoles() async {
+  @override
+  Future<void> fetch() async {
     await fetchPagedData(
       fetchMethod: (int skip, int take) async {
         return _getRolesUseCase.call(GetRolesParams(search: _searchQuery, skip: skip, take: take));
       },
     );
-  }
-
-  void search(String query) {
-    if (_searchQuery == query) return;
-    _searchQuery = query;
-    setPage(1);
-    getRoles();
   }
 }

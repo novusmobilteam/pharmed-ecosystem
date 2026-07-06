@@ -32,12 +32,14 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
     String? search,
     List<String>? searchFields,
   }) async {
+    print('[3-datasource] search="$search" searchFields=$searchFields');
+
     return await fetchRequest(
       path: '$_base/type/${type?.id ?? 0}',
       skip: skip,
       take: take,
-      searchText: search,
-      searchFields: const ['name'],
+      searchQuery: search,
+      searchFields: searchFields ?? const ['name', 'surname', 'registrationNumber'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(UserDto.fromJson),
       successLog: 'Kişiler getirildi',
@@ -54,9 +56,29 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  Future<Result<ApiResponse<List<UserDto>>?>> getDoctors({
+    UserType? type,
+    int? skip,
+    int? take,
+    String? search,
+    List<String>? searchFields,
+  }) async {
+    return await fetchRequest(
+      path: '$_base/roleDoctor',
+      skip: skip,
+      take: take,
+      searchQuery: search,
+      searchFields: const ['name'],
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(UserDto.fromJson),
+      successLog: 'Doktorlar getirildi',
+      emptyLog: 'Doktor bulunamadı',
+    );
+  }
+
   Future<Result<void>> updateUser(UserDto dto) {
     return putRequest(
-      path: _base,
+      path: '$_base/${dto.id}',
       body: dto.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Kişi güncellendi',

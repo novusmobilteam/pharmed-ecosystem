@@ -68,7 +68,7 @@ final class MobileWastePatientSelected extends MobileWasteState {
   MobileWastePatientSelected copyWith({
     String? search,
     Object? isPrescriptionsLoading = _sentinel,
-    List<PrescriptionItem>? refundables,
+    List<PrescriptionItem>? wasteables,
   }) {
     return MobileWastePatientSelected(
       hospitalizations: hospitalizations,
@@ -142,6 +142,7 @@ final class MobileWasteSuccess extends MobileWasteState {
     required this.message,
     required this.isWastage,
     this.search = '',
+    required this.previousState,
   });
 
   final List<Hospitalization> hospitalizations;
@@ -153,6 +154,7 @@ final class MobileWasteSuccess extends MobileWasteState {
   /// View'da doğru l10n mesajını seçmek için kullanılır.
   final bool isWastage;
   final String search;
+  final MobileWasteState previousState;
 }
 
 /// Hata — previousState ile geriye dönülür.
@@ -247,7 +249,10 @@ extension MobileWasteStateX on MobileWasteState {
 
   bool get isPatientSelected => switch (this) {
     MobileWastePatientSelected() => true,
+    MobileWasteDrugSelected() => true,
+    MobileWasteSaving() => true,
     MobileWasteError(:final previousState) => previousState.isPatientSelected,
+    MobileWasteSuccess(:final previousState) => previousState.isPatientSelected,
     _ => false,
   };
 }

@@ -22,7 +22,7 @@ class RoleRemoteDataSource extends BaseRemoteDataSource {
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: const ['name'],
       parser: BaseRemoteDataSource.apiResponseListParser(RoleDTO.fromJson),
       successLog: 'Roller getirildi',

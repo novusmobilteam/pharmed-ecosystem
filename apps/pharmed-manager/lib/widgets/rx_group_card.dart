@@ -17,7 +17,8 @@ class RxGroupCard extends StatefulWidget {
     super.key,
     required this.prescriptionId,
     required this.items,
-    this.interactive = false,
+    required this.permissions, // <-- yeni
+    this.canOverrideRfidLock = false, // <-- isAdmin yerine
     this.onApprove,
     this.onReject,
     this.onCancel,
@@ -27,7 +28,8 @@ class RxGroupCard extends StatefulWidget {
 
   final int prescriptionId;
   final List<PrescriptionItem> items;
-  final bool interactive;
+  final PrescriptionActionPermissions permissions;
+  final bool canOverrideRfidLock;
   final Future<void> Function(List<PrescriptionItem>)? onApprove;
   final Future<void> Function(List<PrescriptionItem>)? onReject;
   final Future<void> Function(List<PrescriptionItem>)? onCancel;
@@ -41,13 +43,47 @@ class RxGroupCard extends StatefulWidget {
 class _RxGroupCardState extends State<RxGroupCard> {
   final Set<int> _selectedIds = {};
   bool _isExpanded = true;
+
+  bool get _interactive => widget.permissions.hasAny;
   bool get _hasSelection => _selectedIds.isNotEmpty;
 
+  bool _isItemSelectable(PrescriptionItem item) {
+    final s = item.status;
+    if (s == null) return false;
+    return (widget.permissions.canApprove && s.canApprove) ||
+        (widget.permissions.canReject && s.canReject) ||
+        (widget.permissions.canCancel && s.canCancel);
+  }
+
+  List<PrescriptionItem> get _selectableItems => widget.items.where(_isItemSelectable).toList();
   List<PrescriptionItem> get _selectedItems => widget.items.where((i) => _selectedIds.contains(i.id)).toList();
+
+  bool get _areAllSelectableSelected {
+    final selectable = _selectableItems;
+    if (selectable.isEmpty) return false;
+    return selectable.every((i) => _selectedIds.contains(i.id));
+  }
+
   bool get _canApproveSelected =>
-      _selectedItems.isNotEmpty && _selectedItems.every((i) => i.status?.canApprove ?? false);
-  bool get _canRejectSelected => _selectedItems.isNotEmpty && _selectedItems.every((i) => i.status?.canReject ?? false);
-  bool get _canCancelSelected => _selectedItems.isNotEmpty && _selectedItems.every((i) => i.status?.canCancel ?? false);
+      widget.permissions.canApprove &&
+      _selectedItems.isNotEmpty &&
+      _selectedItems.every((i) => i.status?.canApprove ?? false);
+
+  bool get _canRejectSelected =>
+      widget.permissions.canReject &&
+      _selectedItems.isNotEmpty &&
+      _selectedItems.every((i) => i.status?.canReject ?? false);
+
+  bool get _canCancelSelected =>
+      widget.permissions.canCancel &&
+      _selectedItems.isNotEmpty &&
+      _selectedItems.every((i) => i.status?.canCancel ?? false);
+
+  bool get _hasPartialSelection {
+    if (_selectableItems.isEmpty) return false;
+    final selectedSelectable = _selectableItems.where((i) => _selectedIds.contains(i.id)).length;
+    return selectedSelectable > 0 && selectedSelectable < _selectableItems.length;
+  }
 
   void _toggleItem(int id) {
     setState(() {
@@ -55,6 +91,18 @@ class _RxGroupCardState extends State<RxGroupCard> {
         _selectedIds.remove(id);
       } else {
         _selectedIds.add(id);
+      }
+    });
+  }
+
+  void _toggleSelectAll() {
+    setState(() {
+      if (_areAllSelectableSelected) {
+        _selectedIds.clear();
+      } else {
+        _selectedIds
+          ..clear()
+          ..addAll(_selectableItems.map((i) => i.id!));
       }
     });
   }
@@ -85,51 +133,51 @@ class _RxGroupCardState extends State<RxGroupCard> {
               isExpanded: _isExpanded,
               onTap: () => setState(() => _isExpanded = !_isExpanded),
             ),
-            AnimatedCrossFade(
-              duration: const Duration(milliseconds: 220),
-              crossFadeState: _isExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-              firstChild: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...widget.items.map(
-                    (item) => _RxDrugBlock(
-                      item: item,
-                      isSelected: _selectedIds.contains(item.id),
-                      interactive: widget.interactive,
-                      onCheckTap: () => _toggleItem(item.id!),
-                      onRfidTap: widget.onRfidTap != null ? () => widget.onRfidTap!(item) : null,
-                      onRfidDelete: widget.onRfidDelete != null ? () => widget.onRfidDelete!(item) : null,
-                    ),
-                  ),
-                  if (widget.interactive && _hasSelection)
-                    _RxActionBar(
-                      selectedCount: _selectedIds.length,
-                      canApprove: _canApproveSelected,
-                      canReject: _canRejectSelected,
-                      canCancel: _canCancelSelected,
-                      onApprove: widget.onApprove != null && _canApproveSelected
-                          ? () async {
-                              await widget.onApprove!(_selectedItems);
-                              setState(() => _selectedIds.clear());
-                            }
-                          : null,
-                      onReject: widget.onReject != null && _canRejectSelected
-                          ? () async {
-                              await widget.onReject!(_selectedItems);
-                              setState(() => _selectedIds.clear());
-                            }
-                          : null,
-                      onCancel: widget.onCancel != null && _canCancelSelected
-                          ? () async {
-                              await widget.onCancel!(_selectedItems);
-                              setState(() => _selectedIds.clear());
-                            }
-                          : null,
-                    ),
-                ],
-              ),
-              secondChild: const SizedBox.shrink(),
-            ),
+            if (_isExpanded) ...[
+              if (_interactive && _selectableItems.isNotEmpty)
+                _SelectAllBar(
+                  isAllSelected: _areAllSelectableSelected,
+                  isPartial: _hasPartialSelection,
+                  selectableCount: _selectableItems.length,
+                  onTap: _toggleSelectAll,
+                ),
+              ...widget.items.map((item) {
+                final canModifyTag = widget.canOverrideRfidLock || (item.status?.canModifyRfid ?? false);
+                return _RxDrugBlock(
+                  item: item,
+                  isSelected: _selectedIds.contains(item.id),
+                  interactive: _interactive,
+                  onCheckTap: () => _toggleItem(item.id!),
+                  onRfidTap: (widget.onRfidTap != null && canModifyTag) ? () => widget.onRfidTap!(item) : null,
+                  onRfidDelete: (widget.onRfidDelete != null && canModifyTag) ? () => widget.onRfidDelete!(item) : null,
+                );
+              }),
+              if (_interactive && _hasSelection)
+                _RxActionBar(
+                  selectedCount: _selectedIds.length,
+                  canApprove: _canApproveSelected,
+                  canReject: _canRejectSelected,
+                  canCancel: _canCancelSelected,
+                  onApprove: widget.onApprove != null && _canApproveSelected
+                      ? () async {
+                          await widget.onApprove!(_selectedItems);
+                          setState(() => _selectedIds.clear());
+                        }
+                      : null,
+                  onReject: widget.onReject != null && _canRejectSelected
+                      ? () async {
+                          await widget.onReject!(_selectedItems);
+                          setState(() => _selectedIds.clear());
+                        }
+                      : null,
+                  onCancel: widget.onCancel != null && _canCancelSelected
+                      ? () async {
+                          await widget.onCancel!(_selectedItems);
+                          setState(() => _selectedIds.clear());
+                        }
+                      : null,
+                ),
+            ],
           ],
         ),
       ),
@@ -196,11 +244,58 @@ class _RxHeader extends StatelessWidget {
               child: Text('$itemCount kalem', style: MedTextStyles.monoXs()),
             ),
             const SizedBox(width: 8),
-            AnimatedRotation(
-              turns: isExpanded ? 0 : -0.25,
-              duration: const Duration(milliseconds: 200),
-              child: Icon(PhosphorIcons.caretDown(PhosphorIconsStyle.bold), size: 13, color: MedColors.text4),
+            Icon(
+              isExpanded
+                  ? PhosphorIcons.caretUp(PhosphorIconsStyle.bold)
+                  : PhosphorIcons.caretDown(PhosphorIconsStyle.bold),
+              size: 13,
+              color: MedColors.text4,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectAllBar extends StatelessWidget {
+  const _SelectAllBar({
+    required this.isAllSelected,
+    required this.isPartial,
+    required this.selectableCount,
+    required this.onTap,
+  });
+
+  final bool isAllSelected;
+  final bool isPartial;
+  final int selectableCount;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: MedColors.surface,
+          border: Border(bottom: BorderSide(color: MedColors.border2)),
+        ),
+        child: Row(
+          children: [
+            MedCheckbox(
+              value: isAllSelected,
+              partial: isPartial && !isAllSelected,
+              size: MedCheckboxSize.sm,
+              onChanged: (_) => onTap(),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              isAllSelected ? 'Seçimi Kaldır' : 'Tümünü Seç',
+              style: MedTextStyles.bodySm(color: MedColors.blue, weight: FontWeight.w600),
+            ),
+            const Spacer(),
+            Text('$selectableCount işlem yapılabilir kalem', style: MedTextStyles.monoXs(color: MedColors.text3)),
           ],
         ),
       ),
@@ -297,23 +392,27 @@ class _RxDrugBlockState extends State<_RxDrugBlock> {
             isSelectable: _isSelectable,
             isAccordionOpen: _isAccordionOpen,
             interactive: widget.interactive,
-            onCheckTap: widget.onCheckTap,
+            onCheckTap: () {
+              widget.onCheckTap();
+              if (!_isAccordionOpen) {
+                setState(() => _isAccordionOpen = true);
+              }
+            },
             onRowTap: () {
               setState(() => _isAccordionOpen = !_isAccordionOpen);
-              if (!_isAccordionOpen) _loadMovements();
             },
           ),
-          _DrugAccordion(
-            item: widget.item,
-            isOpen: _isAccordionOpen,
-            isRfidLoading: _isRfidLoading,
-            movements: _movements,
-            isLoadingMovements: _isLoading,
-            hasLoadedMovements: _hasLoaded,
-            onRfidTap: widget.onRfidTap != null ? _handleRfidTap : null,
-            onRfidDelete: widget.onRfidDelete != null ? _handleRfidDelete : null,
-            onLoadMovements: _loadMovements,
-          ),
+          if (_isAccordionOpen)
+            _DrugAccordion(
+              item: widget.item,
+              isRfidLoading: _isRfidLoading,
+              movements: _movements,
+              isLoadingMovements: _isLoading,
+              hasLoadedMovements: _hasLoaded,
+              onRfidTap: widget.onRfidTap != null ? _handleRfidTap : null,
+              onRfidDelete: widget.onRfidDelete != null ? _handleRfidDelete : null,
+              onLoadMovements: _loadMovements,
+            ),
         ],
       ),
     );
@@ -350,18 +449,18 @@ class _DrugRow extends StatelessWidget {
       bgColor = MedColors.surface3;
     }
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
+    return Container(
       color: bgColor,
       child: Row(
         children: [
           if (interactive)
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: isSelectable ? onCheckTap : null,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                child: _Checkbox(isSelected: isSelected, isSelectable: isSelectable),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+              child: MedCheckbox(
+                value: isSelected,
+                size: MedCheckboxSize.sm,
+                enabled: isSelectable,
+                onChanged: (_) => onCheckTap(),
               ),
             )
           else
@@ -397,14 +496,12 @@ class _DrugRow extends StatelessWidget {
                     if (item.time != null) ...[TimeChip(time: item.time!), const SizedBox(width: 6)],
                     if (item.status != null) MedRxMovementChip(status: item.status!),
                     const SizedBox(width: 8),
-                    AnimatedRotation(
-                      turns: isAccordionOpen ? 0.5 : 0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Icon(
-                        PhosphorIcons.caretDown(PhosphorIconsStyle.bold),
-                        size: 12,
-                        color: isAccordionOpen ? MedColors.blue : MedColors.text4,
-                      ),
+                    Icon(
+                      isAccordionOpen
+                          ? PhosphorIcons.caretUp(PhosphorIconsStyle.bold)
+                          : PhosphorIcons.caretDown(PhosphorIconsStyle.bold),
+                      size: 12,
+                      color: isAccordionOpen ? MedColors.blue : MedColors.text4,
                     ),
                   ],
                 ),
@@ -420,7 +517,6 @@ class _DrugRow extends StatelessWidget {
 class _DrugAccordion extends StatelessWidget {
   const _DrugAccordion({
     required this.item,
-    required this.isOpen,
     required this.isRfidLoading,
     required this.isLoadingMovements,
     required this.hasLoadedMovements,
@@ -431,7 +527,6 @@ class _DrugAccordion extends StatelessWidget {
   });
 
   final PrescriptionItem item;
-  final bool isOpen;
   final bool isRfidLoading;
   final bool isLoadingMovements;
   final bool hasLoadedMovements;
@@ -448,47 +543,35 @@ class _DrugAccordion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedCrossFade(
-      duration: const Duration(milliseconds: 240),
-      crossFadeState: isOpen ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-      firstChild: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: MedColors.border2)),
-        ),
-        padding: const EdgeInsets.fromLTRB(50, 12, 14, 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_needRfid) ...[
-              _RfidSection(item: item, onTap: onRfidTap, isLoading: isRfidLoading, onDelete: onRfidDelete),
-              const SizedBox(height: 12),
-            ],
-            RxMovementBlock(
-              lastMovement: item.lastMovement,
-              medicine: item.medicine,
-              movements: movements,
-              isLoading: isLoadingMovements,
-            ),
-
-            if (!hasLoadedMovements && !isLoadingMovements && (item.lastMovement?.type.canShowHistory ?? false)) ...[
-              const SizedBox(height: MedSpacing.md),
-              Center(
-                child: isLoadingMovements
-                    ? const SizedBox(
-                        width: 14,
-                        height: 14,
-                        child: CircularProgressIndicator(strokeWidth: 1.5, color: MedColors.text3),
-                      )
-                    : TextButton(
-                        onPressed: onLoadMovements,
-                        child: Text('Tüm Hareketleri Göster', style: MedTextStyles.bodySm(color: MedColors.text3)),
-                      ),
-              ),
-            ],
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: MedColors.border2)),
       ),
-      secondChild: const SizedBox.shrink(),
+      padding: const EdgeInsets.fromLTRB(50, 12, 14, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_needRfid) ...[
+            _RfidSection(item: item, onTap: onRfidTap, isLoading: isRfidLoading, onDelete: onRfidDelete),
+            const SizedBox(height: 12),
+          ],
+          RxMovementBlock(
+            lastMovement: item.lastMovement,
+            medicine: item.medicine,
+            movements: movements,
+            isLoading: isLoadingMovements,
+          ),
+          if (!hasLoadedMovements && !isLoadingMovements && (item.lastMovement?.type.canShowHistory ?? false)) ...[
+            const SizedBox(height: MedSpacing.md),
+            Center(
+              child: TextButton(
+                onPressed: onLoadMovements,
+                child: Text('Tüm Hareketleri Göster', style: MedTextStyles.bodySm(color: MedColors.text3)),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -502,6 +585,10 @@ class _RfidSection extends StatelessWidget {
   final VoidCallback? onDelete;
 
   bool get _hasTag => item.rfidTag != null;
+  bool get _isEditable => onTap != null || onDelete != null;
+  // Yeşil "aktif" görünüm yalnızca etiket VAR ve düzenlenebilir durumdaysa.
+  bool get _showActiveState => _hasTag && _isEditable;
+
   String get _tagDisplay => item.rfidTag ?? '—';
 
   @override
@@ -509,9 +596,12 @@ class _RfidSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: _hasTag ? MedColors.greenLight : MedColors.surface,
+        color: _showActiveState ? MedColors.greenLight : MedColors.surface,
         borderRadius: MedRadius.mdAll,
-        border: Border.all(color: _hasTag ? MedColors.green : MedColors.border, width: _hasTag ? 1.5 : 1),
+        border: Border.all(
+          color: _showActiveState ? MedColors.green : MedColors.border,
+          width: _showActiveState ? 1.5 : 1,
+        ),
       ),
       child: Row(
         children: [
@@ -519,13 +609,13 @@ class _RfidSection extends StatelessWidget {
             width: 30,
             height: 30,
             decoration: BoxDecoration(
-              color: _hasTag ? MedColors.green.withValues(alpha: 0.15) : MedColors.surface3,
+              color: _showActiveState ? MedColors.green.withValues(alpha: 0.15) : MedColors.surface3,
               borderRadius: MedRadius.smAll,
             ),
             child: Icon(
               PhosphorIcons.tag(PhosphorIconsStyle.duotone),
               size: 15,
-              color: _hasTag ? MedColors.green : MedColors.text3,
+              color: _showActiveState ? MedColors.green : MedColors.text3,
             ),
           ),
           const SizedBox(width: 10),
@@ -540,7 +630,9 @@ class _RfidSection extends StatelessWidget {
                 else
                   Text(
                     _hasTag ? _tagDisplay : 'Henüz etiket atanmadı',
-                    style: MedTextStyles.monoMd(color: _hasTag ? MedColors.green : MedColors.text4),
+                    style: MedTextStyles.monoMd(
+                      color: _showActiveState ? MedColors.green : (_hasTag ? MedColors.text2 : MedColors.text4),
+                    ),
                   ),
               ],
             ),
@@ -549,80 +641,26 @@ class _RfidSection extends StatelessWidget {
             SizedBox(
               width: 16,
               height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2, color: _hasTag ? MedColors.green : MedColors.blue),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: _showActiveState ? MedColors.green : MedColors.blue,
+              ),
             )
           else ...[
             if (_hasTag && onDelete != null) ...[
-              _SmallButton(label: 'Sil', color: MedColors.red, bgColor: MedColors.redLight, onTap: onDelete!),
+              MedButton(label: 'Sil', variant: MedButtonVariant.danger, size: MedButtonSize.sm, onPressed: onDelete!),
               const SizedBox(width: 6),
             ],
             if (onTap != null)
-              _SmallButton(
+              MedButton(
                 label: _hasTag ? 'Değiştir' : 'Etiket Ata',
-                color: _hasTag ? MedColors.green : MedColors.blue,
-                bgColor: _hasTag ? MedColors.greenLight : MedColors.blueLight,
-                onTap: onTap!,
+                size: MedButtonSize.sm,
+                variant: _hasTag ? MedButtonVariant.primary : MedButtonVariant.success,
+
+                onPressed: onTap!,
               ),
           ],
         ],
-      ),
-    );
-  }
-}
-
-class _Checkbox extends StatelessWidget {
-  const _Checkbox({required this.isSelected, required this.isSelectable});
-
-  final bool isSelected;
-  final bool isSelectable;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
-      width: 16,
-      height: 16,
-      decoration: BoxDecoration(
-        color: isSelected ? MedColors.blue : Colors.transparent,
-        borderRadius: MedRadius.smAll,
-        border: Border.all(
-          color: isSelected
-              ? MedColors.blue
-              : isSelectable
-              ? MedColors.text3
-              : MedColors.border,
-          width: 1.5,
-        ),
-      ),
-      child: isSelected ? const Icon(Icons.check, size: 11, color: Colors.white) : null,
-    );
-  }
-}
-
-class _SmallButton extends StatelessWidget {
-  const _SmallButton({required this.label, required this.color, required this.bgColor, required this.onTap});
-
-  final String label;
-  final Color color;
-  final Color bgColor;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: MedRadius.mdAll,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: MedRadius.mdAll,
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Text(
-          label,
-          style: MedTextStyles.bodySm(color: color, weight: FontWeight.w600),
-        ),
       ),
     );
   }
@@ -649,48 +687,45 @@ class _RxActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 200),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-        decoration: BoxDecoration(
-          color: MedColors.surface2,
-          border: Border(top: BorderSide(color: MedColors.border)),
-        ),
-        child: Row(
-          children: [
-            Text('$selectedCount kalem seçildi', style: MedTextStyles.monoSm()),
-            const Spacer(),
-            if (canApprove && onApprove != null) ...[
-              _ActionChip(
-                label: 'Onayla',
-                icon: PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
-                color: MedColors.green,
-                bgColor: MedColors.greenLight,
-                onTap: onApprove!,
-              ),
-              const SizedBox(width: 8),
-            ],
-            if (canReject && onReject != null) ...[
-              _ActionChip(
-                label: 'Reddet',
-                icon: PhosphorIcons.xCircle(PhosphorIconsStyle.fill),
-                color: MedColors.red,
-                bgColor: MedColors.redLight,
-                onTap: onReject!,
-              ),
-              const SizedBox(width: 8),
-            ],
-            if (canCancel && onCancel != null)
-              _ActionChip(
-                label: 'İptal',
-                icon: PhosphorIcons.prohibit(PhosphorIconsStyle.fill),
-                color: MedColors.amber,
-                bgColor: MedColors.amberLight,
-                onTap: onCancel!,
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      decoration: BoxDecoration(
+        color: MedColors.surface2,
+        border: Border(top: BorderSide(color: MedColors.border)),
+      ),
+      child: Row(
+        children: [
+          Text('$selectedCount kalem seçildi', style: MedTextStyles.monoSm()),
+          const Spacer(),
+          if (canApprove && onApprove != null) ...[
+            _ActionChip(
+              label: 'Onayla',
+              icon: PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
+              color: MedColors.green,
+              bgColor: MedColors.greenLight,
+              onTap: onApprove!,
+            ),
+            const SizedBox(width: 8),
           ],
-        ),
+          if (canReject && onReject != null) ...[
+            _ActionChip(
+              label: 'Reddet',
+              icon: PhosphorIcons.xCircle(PhosphorIconsStyle.fill),
+              color: MedColors.red,
+              bgColor: MedColors.redLight,
+              onTap: onReject!,
+            ),
+            const SizedBox(width: 8),
+          ],
+          if (canCancel && onCancel != null)
+            _ActionChip(
+              label: 'İptal',
+              icon: PhosphorIcons.prohibit(PhosphorIconsStyle.fill),
+              color: MedColors.amber,
+              bgColor: MedColors.amberLight,
+              onTap: onCancel!,
+            ),
+        ],
       ),
     );
   }

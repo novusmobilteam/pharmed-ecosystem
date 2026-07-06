@@ -71,9 +71,10 @@ class UserMapper {
     name: user.name ?? '',
     surname: user.surname ?? '',
     fullName: [user.name, user.surname].whereType<String>().join(' ').trim(),
-    role: user.role?.name ?? '',
+    roleName: user.role?.name ?? '',
     isNotOrdered: user.isNotOrdered,
     isAdmin: user.isAdmin ?? false,
+    roleId: user.role?.id ?? 0,
   );
 
   AppUser? fromUserOrNull(User? user) => user == null ? null : fromUser(user);

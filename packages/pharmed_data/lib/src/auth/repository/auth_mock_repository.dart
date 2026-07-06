@@ -18,14 +18,23 @@ class AuthMockRepository implements IAuthRepository {
       role: 'Sorumlu Hemşire',
       isAdmin: false,
       isNotOrdered: false,
+      roleId: 1,
     ),
-    'admin': (password: 'admin', name: 'Sistem Yöneticisi', role: 'Admin', isAdmin: true, isNotOrdered: false),
+    'admin': (
+      password: 'admin',
+      name: 'Sistem Yöneticisi',
+      role: 'Admin',
+      isAdmin: true,
+      isNotOrdered: false,
+      roleId: 1,
+    ),
     'dr.celik@hastane.com': (
       password: 'dr123',
       name: 'Dr. Ahmet Çelik',
       role: 'Hekim',
       isAdmin: false,
       isNotOrdered: true,
+      roleId: 1,
     ),
   };
 
@@ -49,9 +58,10 @@ class AuthMockRepository implements IAuthRepository {
           name: userData.name,
           surname: userData.name,
           fullName: userData.name,
-          role: userData.role,
+          roleName: userData.role,
           isAdmin: userData.isAdmin,
           isNotOrdered: userData.isNotOrdered,
+          roleId: userData.roleId,
         ),
       ),
     );

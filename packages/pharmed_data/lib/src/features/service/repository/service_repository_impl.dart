@@ -40,8 +40,8 @@ class ServiceRepositoryImpl implements IServiceRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<HospitalService>>>> getServices({int? skip, int? take, String? search}) async {
-    final result = await _dataSource.getServices(skip: skip, take: take, search: search);
+  Future<Result<ApiResponse<List<HospitalService>>>> getServices({int? skip, int? take, String? searchQuery}) async {
+    final result = await _dataSource.getServices(skip: skip, take: take, searchQuery: searchQuery);
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<HospitalService>>(

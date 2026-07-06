@@ -14,7 +14,7 @@ class WarehouseTableView extends StatelessWidget {
     return Consumer<WarehouseNotifier>(
       builder: (context, notifier, _) {
         return MedTable<Warehouse>(
-          data: notifier.allItems,
+          data: notifier.items,
           isLoading: notifier.isLoading(notifier.deleteOp) || notifier.isLoading(notifier.fetchOp),
           enableExcel: true,
           enableSearch: true,
@@ -25,6 +25,10 @@ class WarehouseTableView extends StatelessWidget {
             ),
             TableActionItem.delete(onPressed: (warehouse) => _onDelete(context, notifier, warehouse)),
           ],
+          enablePagination: true,
+          pageSize: notifier.pageSize,
+          currentPage: notifier.currentPage,
+          onPageChanged: (page) => notifier.setPage(page),
         );
       },
     );

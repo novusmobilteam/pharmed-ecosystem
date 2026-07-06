@@ -1,10 +1,25 @@
 /// CabinInventoryView'ı açarken kullanılan tip.
 enum CabinInventoryType {
-  refill,
-  count,
-  disposal,
-  unload,
-  refillList;
+  refill(1),
+  intake(2),
+  unload(3),
+  census(4),
+  disposal(5),
+  refillList(6);
+
+  final int id;
+
+  const CabinInventoryType(this.id);
+
+  /// Banner/mesaj bağlamı için Türkçe etiket.
+  String get operationLabel => switch (this) {
+    CabinInventoryType.refill => 'Dolum',
+    CabinInventoryType.intake => 'Alım',
+    CabinInventoryType.unload => 'Boşaltma',
+    CabinInventoryType.census => 'Sayım',
+    CabinInventoryType.disposal => 'İmha',
+    CabinInventoryType.refillList => 'Dolum',
+  };
 
   String get title {
     switch (this) {
@@ -12,12 +27,14 @@ enum CabinInventoryType {
         return 'İlaç Dolum';
       case CabinInventoryType.refillList:
         return 'İlaç Dolum Listesi';
-      case CabinInventoryType.count:
+      case CabinInventoryType.census:
         return 'İlaç Sayım';
       case CabinInventoryType.disposal:
         return 'İlaç İmha';
       case CabinInventoryType.unload:
         return 'İlaç Boşaltma';
+      case CabinInventoryType.intake:
+        return 'İlaç Alım';
     }
   }
 
@@ -27,12 +44,14 @@ enum CabinInventoryType {
         return 'Dolum Yap';
       case CabinInventoryType.refillList:
         return 'Dolum Yap';
-      case CabinInventoryType.count:
+      case CabinInventoryType.census:
         return 'Sayım Yap';
       case CabinInventoryType.disposal:
         return 'İmha Et';
       case CabinInventoryType.unload:
         return 'İlaç Boşalt';
+      case CabinInventoryType.intake:
+        return 'İlaç Al';
     }
   }
 
@@ -42,12 +61,14 @@ enum CabinInventoryType {
         return 'Dolum Miktarı';
       case CabinInventoryType.refillList:
         return 'Dolum Miktarı';
-      case CabinInventoryType.count:
+      case CabinInventoryType.census:
         return 'Sayım Miktarı';
       case CabinInventoryType.disposal:
         return 'İmha Miktarı';
       case CabinInventoryType.unload:
         return 'Boşaltım Miktarı';
+      case CabinInventoryType.intake:
+        return 'Alım Miktarı';
     }
   }
 
@@ -57,19 +78,21 @@ enum CabinInventoryType {
         return 'Otomatik Dolumu Başlat';
       case CabinInventoryType.refillList:
         return 'Otomatik Dolumu Başlat';
-      case CabinInventoryType.count:
+      case CabinInventoryType.census:
         return 'Otomatik Sayımı Başlat';
       case CabinInventoryType.disposal:
         return 'Otomatik İmhayı Başlat';
       case CabinInventoryType.unload:
         return 'Otomatik Boşaltmayı Başlat';
+      case CabinInventoryType.intake:
+        return 'Otomatik Alım Başlat';
     }
   }
 
   /// Miad tarihi giriş alanı gösterilsin mi?
   /// disposal ve unload için miad girişi gerekmez; kullanıcı miad girmez.
   bool get enableMiadDateInput =>
-      this == CabinInventoryType.count || this == CabinInventoryType.refill || this == CabinInventoryType.refillList;
+      this == CabinInventoryType.census || this == CabinInventoryType.refill || this == CabinInventoryType.refillList;
 
   /// Bu operasyon tipinde miad geçmişse giriş alanları kilitlensin mi?
   ///
@@ -77,5 +100,5 @@ enum CabinInventoryType {
   /// disposal ve unload işlemleri geçmiş miadlı stok üzerinde yapılabilir —
   /// zaten bu işlemlerin amacı geçmiş miadlı ürünü sistemden çıkarmaktır.
   bool get shouldBlockOnExpiry =>
-      this == CabinInventoryType.count || this == CabinInventoryType.refill || this == CabinInventoryType.refillList;
+      this == CabinInventoryType.census || this == CabinInventoryType.refill || this == CabinInventoryType.refillList;
 }

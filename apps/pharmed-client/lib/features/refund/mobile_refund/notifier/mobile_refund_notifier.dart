@@ -232,6 +232,12 @@ class RefundNotifier extends Notifier<MobileRefundState> {
         refundables: items,
         message: '',
         search: search,
+        previousState: MobileRefundPatientSelected(
+          hospitalizations: hospitalizations,
+          selectedPatient: selectedPatient,
+          refundables: items,
+          search: search,
+        ),
       ),
       error: (e) => MobileRefundError(
         message: e.message,

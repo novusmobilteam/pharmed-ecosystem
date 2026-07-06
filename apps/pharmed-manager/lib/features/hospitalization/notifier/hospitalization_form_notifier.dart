@@ -11,6 +11,7 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   HospitalizationFormNotifier({
     Patient? patient,
     Hospitalization? hospitalization,
+
     required GetRoomsUseCase getRoomsUseCase,
     required GetBedsUseCase getBedsUseCase,
     required CreateHospitalizationUseCase createHospitalizationUseCase,

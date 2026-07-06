@@ -19,7 +19,7 @@ class DrugTypeRemoteDataSource extends BaseRemoteDataSource {
       path: _base,
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: const ['name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(DrugTypeDTO.fromJson),

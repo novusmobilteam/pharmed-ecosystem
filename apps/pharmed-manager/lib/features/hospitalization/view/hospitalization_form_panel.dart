@@ -32,7 +32,7 @@ class HospitalizationPanel extends StatelessWidget {
                   onSuccess: (msg) {
                     MessageUtils.showSuccessSnackbar(context, msg);
                     hospNotifier.closePanel();
-                    hospNotifier.getHospitalizations();
+                    hospNotifier.fetch();
                   },
                 );
               }
@@ -42,6 +42,7 @@ class HospitalizationPanel extends StatelessWidget {
               child: Form(
                 key: formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: AppDimensions.registrationDialogSpacing,
                   children: [
                     _CodeField(),
@@ -82,7 +83,8 @@ class _PatientField extends StatelessWidget {
           initialValue: notifier.patient,
           labelBuilder: (value) => value.fullName,
           validator: (value) => Validators.cannotBlankValidator(value?.fullName),
-          dataSource: (skip, take, search) => context.read<GetPatientsUseCase>().call(GetPatientsParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetPatientsUseCase>().call(GetPatientsParams(skip: skip, take: take, search: search)),
           onSelected: (value) => notifier.selectPatient(value),
         );
       },
@@ -123,7 +125,8 @@ class _DoctorField extends StatelessWidget {
           initialValue: notifier.doctor,
           labelBuilder: (value) => value.fullName,
           validator: (value) => Validators.cannotBlankValidator(value?.fullName),
-          dataSource: (skip, take, search) => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+          dataSource: (skip, take, search) =>
+              context.read<GetDoctorsUseCase>().call(GetDoctorsParams(search: search, skip: skip, take: take)),
           onSelected: (value) => notifier.selectDoctor(value),
         );
       },
@@ -145,7 +148,8 @@ class _PhysicalServiceField extends StatelessWidget {
             initialValue: notifier.hospitalization?.physicalService,
             validator: (s) => Validators.cannotBlankValidator(s?.name),
             labelBuilder: (s) => s.name ?? '-',
-            dataSource: (skip, take, search) => context.read<IServiceRepository>().getServices(),
+            dataSource: (skip, take, search) =>
+                context.read<GetServicesUseCase>().call(PagedQueryParams(searchQuery: search, skip: skip, take: take)),
             onSelected: (s) => notifier.selectPhysicalService(s),
           );
         },
@@ -168,7 +172,8 @@ class _InpatientServiceField extends StatelessWidget {
             labelBuilder: (s) => s.name ?? '-',
             initialValue: notifier.hospitalization?.inpatientService,
             validator: (s) => Validators.cannotBlankValidator(s?.name),
-            dataSource: (skip, take, search) => context.read<IServiceRepository>().getServices(),
+            dataSource: (skip, take, search) =>
+                context.read<GetServicesUseCase>().call(PagedQueryParams(searchQuery: search, skip: skip, take: take)),
             onSelected: (s) => notifier.selectInpatientService(s),
           );
         },
@@ -267,7 +272,13 @@ class _ExitDateField extends StatelessWidget {
     return Expanded(
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, _) {
-          return MedDateInputField(label: 'Çıkış Tarihi', onDateSelected: notifier.updateExitDate);
+          return MedDateInputField(
+            label: 'Çıkış Tarihi',
+            onDateSelected: (date) {
+              print(date);
+              //notifier.updateExitDate(date);
+            },
+          );
         },
       ),
     );

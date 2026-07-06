@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class RoleNotifier extends ChangeNotifier
-    with ApiRequestMixin, PaginationMixin<Role>, SearchMixin<Role>, SidePanelMixin<Role, Never> {
+class RoleNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Role>, SidePanelMixin<Role, Never> {
   final GetRolesUseCase _getRolesUseCase;
   final DeleteRoleUseCase _deleteRoleUseCase;
 
@@ -16,8 +15,8 @@ class RoleNotifier extends ChangeNotifier
   bool get isDeleting => isLoading(delete);
   String? get statusMessage => message(delete);
 
-  // Functions
-  Future<void> getRoles() async {
+  @override
+  Future<void> fetch() async {
     await fetchPagedData(
       fetchMethod: (skip, take) => _getRolesUseCase.call(GetRolesParams(search: searchQuery, skip: skip, take: take)),
     );
@@ -27,7 +26,7 @@ class RoleNotifier extends ChangeNotifier
     await executeVoid(
       delete,
       operation: () => _deleteRoleUseCase.call(role),
-      onSuccess: () => getRoles(),
+      onSuccess: () => fetch(),
       successMessage: 'Rol başarıyla silindi',
     );
   }

@@ -12,8 +12,47 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   final HospitalizationMapper _mapper;
 
   @override
-  Future<Result<ApiResponse<List<Hospitalization>>>> getHospitalizations({int? skip, int? take, String? search}) async {
-    final result = await _dataSource.getHospitalizations(skip: skip, take: take, search: search);
+  Future<Result<ApiResponse<List<Hospitalization>>>> getHospitalizations({
+    int? skip,
+    int? take,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final result = await _dataSource.getHospitalizations(
+      skip: skip,
+      take: take,
+      searchQuery: searchQuery,
+      startDate: startDate,
+      endDate: endDate,
+    );
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<Hospitalization>>(
+          data: apiResponse?.data != null ? _mapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess ?? true,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<Hospitalization>>>> getActiveHospitalizations({
+    int? skip,
+    int? take,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final result = await _dataSource.getActiveHospitalizations(
+      skip: skip,
+      take: take,
+      searchQuery: searchQuery,
+      startDate: startDate,
+      endDate: endDate,
+    );
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<Hospitalization>>(
@@ -45,12 +84,6 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
     }
     final result = await _dataSource.deleteHospitalization(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
-  }
-
-  @override
-  Future<Result<List<Hospitalization>>> getHospitalizationsWithPrescription() async {
-    final r = await _dataSource.getHospitalizationsWithPrescription();
-    return r.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos)), error: (e) => Result.error(e));
   }
 
   @override

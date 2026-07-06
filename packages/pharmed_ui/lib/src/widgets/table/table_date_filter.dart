@@ -20,7 +20,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
     final todayStart = now;
     final todayEnd = now;
     final yesterday = now.subtract(const Duration(days: 1));
-    final thisWeekStart = now.subtract(Duration(days: now.weekday - 1));
+    final thisWeekStart = now.subtract(const Duration(days: 6));
     final thisWeekEnd = now;
     final thisMonthStart = DateTime(now.year, now.month, 1);
     final thisMonthEnd = DateTime(now.year, now.month + 1, 0);
@@ -58,7 +58,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
               _buildOption(
                 context,
                 icon: Icons.calendar_view_week_outlined,
-                label: 'Bu Hafta',
+                label: 'Son 1 Hafta',
                 isSelected: _isSameRange(thisWeekStart, thisWeekEnd),
                 onTap: () => _select(context, thisWeekStart, thisWeekEnd),
               ),
@@ -223,8 +223,6 @@ class _QuickDateFilterPopup extends StatelessWidget {
   }
 }
 
-// ─── ÖZEL TARİH ARALIĞI SEÇİCİ ───────────────────────────────────────────────
-
 class _DateRangePicker extends StatefulWidget {
   const _DateRangePicker({this.initialStartDate, this.initialEndDate, required this.onApply});
 
@@ -263,6 +261,8 @@ class _DateRangePickerState extends State<_DateRangePicker> {
         }
       }
     });
+    print(_startDate);
+    print(_endDate);
   }
 
   void _changeMonth(int offset) {
@@ -443,17 +443,17 @@ class _DateRangePickerState extends State<_DateRangePicker> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _DialogBtn(label: 'İptal', onPressed: () => Navigator.pop(context), filled: false),
+        MedButton(label: 'İptal', onPressed: () => Navigator.pop(context), variant: MedButtonVariant.danger),
         const SizedBox(width: 8),
-        _DialogBtn(
+        MedButton(
           label: 'Uygula',
-          filled: true,
-          onPressed: () => _startDate != null && _endDate != null
-              ? () {
-                  widget.onApply(DateTimeRange(start: _startDate!, end: _endDate!));
-                  Navigator.pop(context);
-                }
-              : null,
+          isActive: _startDate != null && _endDate != null,
+          onPressed: () {
+            if (_startDate != null && _endDate != null) {
+              widget.onApply(DateTimeRange(start: _startDate!, end: _endDate!));
+              Navigator.pop(context);
+            }
+          },
         ),
       ],
     );
@@ -462,8 +462,10 @@ class _DateRangePickerState extends State<_DateRangePicker> {
 
 class _MonthBtn extends StatefulWidget {
   const _MonthBtn({required this.icon, required this.onPressed});
+
   final IconData icon;
   final VoidCallback onPressed;
+
   @override
   State<_MonthBtn> createState() => _MonthBtnState();
 }

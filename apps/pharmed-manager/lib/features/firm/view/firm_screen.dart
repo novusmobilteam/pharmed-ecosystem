@@ -15,7 +15,7 @@ class FirmScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => FirmNotifier(getFirmsUseCase: context.read(), deleteFirmUseCase: context.read())..getFirms(),
+      create: (_) => FirmNotifier(getFirmsUseCase: context.read(), deleteFirmUseCase: context.read())..fetch(),
       child: Consumer<FirmNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
@@ -30,7 +30,7 @@ class FirmScreen extends StatelessWidget {
                 width: 480,
                 panel: FirmFormPanel(),
                 child: MedTable<Firm>(
-                  data: notifier.filteredItems,
+                  data: notifier.items,
                   isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
                   enableExcel: true,
                   enableSearch: true,
@@ -39,6 +39,10 @@ class FirmScreen extends StatelessWidget {
                     TableActionItem.edit(onPressed: (firm) => notifier.openPanel(firm: firm)),
                     TableActionItem.delete(onPressed: (firm) => _onDelete(context, notifier, firm)),
                   ],
+                  enablePagination: true,
+                  pageSize: notifier.pageSize,
+                  currentPage: notifier.currentPage,
+                  onPageChanged: (page) => notifier.setPage(page),
                 ),
               ),
             ),

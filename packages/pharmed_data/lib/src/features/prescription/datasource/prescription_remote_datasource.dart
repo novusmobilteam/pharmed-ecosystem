@@ -55,7 +55,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       path: '/Prescription/detail/unReadQrCode',
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
@@ -71,7 +71,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       path: '/Prescription/detail/readQrCode',
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
@@ -87,7 +87,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       path: '/Prescription/detail/QrCodeDelete',
       skip: skip,
       take: take,
-      searchText: search,
+      searchQuery: search,
       searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
@@ -106,14 +106,19 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<ApiResponse<List<PrescriptionDto>>?>> getUnappliedPrescriptions({
     int? skip,
     int? take,
-    String? search,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
     return await fetchRequest<ApiResponse<List<PrescriptionDto>>>(
       path: _unapplied,
       skip: skip,
       take: take,
-      searchText: search,
-      searchFields: ['prescriptionNo'],
+      searchQuery: searchQuery,
+      startDate: startDate,
+      endDate: endDate,
+      searchFields: ['patientHospitalization.patient.name'],
+      dateField: 'hospitalizationDate',
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionDto.fromJson),
       successLog: 'Unapplied prescriptions fetched',
@@ -235,10 +240,25 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<PrescriptionItemDto>?>> getPatientPrescriptionHistory(int patientId) async {
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getPatientPrescriptionHistory(
+    int patientId, {
+    int? skip,
+    int? take,
+    String? search,
+    DateTime? startDate,
+    DateTime? endDate,
+    List<Object>? filters,
+  }) async {
     return await fetchRequest(
       path: '$_base/prescriptionByPatientId/$patientId',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
+      skip: skip,
+      take: take,
+      startDate: startDate,
+      endDate: endDate,
+      dateField: 'prescription.prescriptionDate',
+      filters: filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );
   }
 

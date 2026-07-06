@@ -2,7 +2,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
 abstract interface class IStationRepository {
-  Future<Result<ApiResponse<List<Station>>>> getStations({int? skip, int? take, String? search});
+  Future<Result<ApiResponse<List<Station>>>> getStations({int? skip, int? take, String? searchQuery});
   Future<Result<List<Station>>> getUnassignedStations();
   Future<Result<void>> createStation(Station station);
   Future<Result<void>> updateStation(Station station);

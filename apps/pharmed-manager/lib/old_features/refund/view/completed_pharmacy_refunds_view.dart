@@ -73,10 +73,10 @@ class _CompletedRefundsTableView extends StatelessWidget {
       enableSearch: true,
       enableDateFilter: true,
       onSearchChanged: notifier.search,
-      onDateRangeChanged: (range) {
-        notifier.setStartDate(range?.start);
-        notifier.setEndDate(range?.end);
-      },
+      // onDateRangeChanged: (range) {
+      //   notifier.setStartDate(range?.start);
+      //   notifier.setEndDate(range?.end);
+      // },
       columnDefs: _buildColumnDefs(),
       cellBuilder: _buildCell,
       emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),

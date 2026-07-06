@@ -29,9 +29,9 @@ class BedAssignmentPanel extends StatelessWidget {
   });
 
   final BedAssignmentState state;
-  final ValueChanged<HospitalService> onServiceSelected;
-  final ValueChanged<Room> onRoomSelected;
-  final ValueChanged<Bed> onBedSelected;
+  final ValueChanged<HospitalService?> onServiceSelected;
+  final ValueChanged<Room?> onRoomSelected;
+  final ValueChanged<Bed?> onBedSelected;
   final VoidCallback onSave;
   final VoidCallback onDelete;
 
@@ -115,9 +115,9 @@ class _CellSelectedContent extends StatelessWidget {
   });
 
   final BedAssignmentCellSelected state;
-  final ValueChanged<HospitalService> onServiceSelected;
-  final ValueChanged<Room> onRoomSelected;
-  final ValueChanged<Bed> onBedSelected;
+  final ValueChanged<HospitalService?> onServiceSelected;
+  final ValueChanged<Room?> onRoomSelected;
+  final ValueChanged<Bed?> onBedSelected;
   final VoidCallback onSave;
   final VoidCallback onDelete;
 

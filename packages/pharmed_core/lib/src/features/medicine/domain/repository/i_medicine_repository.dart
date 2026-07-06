@@ -3,7 +3,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 
 abstract class IMedicineRepository {
   /// İlaç ve tıbbi sarf malzemelerini sayfalı bir şekilde listeler.
-  Future<Result<ApiResponse<List<Medicine>>>> getMedicines({int? skip, int? take, String? search});
+  Future<Result<ApiResponse<List<Medicine>>>> getMedicines({int? skip, int? take, String? searchQuery});
 
   Future<Result<ApiResponse<List<Medicine>>>> getDrugs({int? skip, int? take, String? search});
 

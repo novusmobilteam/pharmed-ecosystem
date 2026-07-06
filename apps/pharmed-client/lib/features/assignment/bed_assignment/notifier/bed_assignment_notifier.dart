@@ -159,14 +159,14 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
     );
   }
 
-  Future<void> onServiceSelected(HospitalService service) async {
+  Future<void> onServiceSelected(HospitalService? service) async {
     final current = state;
     if (current is! BedAssignmentCellSelected) return;
 
     // Önce servisi seç, oda+yatak sıfırla, loading göster
     state = current.copyWith(selectedService: service, rooms: null, selectedRoom: null, beds: null, selectedBed: null);
 
-    final result = await _getService.call(service.id!);
+    final result = await _getService.call(service?.id! ?? 0);
 
     result.when(
       ok: (fullService) {
@@ -188,14 +188,14 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
     );
   }
 
-  void onRoomSelected(Room room) {
+  void onRoomSelected(Room? room) {
     final current = state;
     if (current is! BedAssignmentCellSelected) return;
 
-    state = current.copyWith(selectedRoom: room, beds: room.beds, selectedBed: null);
+    state = current.copyWith(selectedRoom: room, beds: room?.beds, selectedBed: null);
   }
 
-  void onBedSelected(Bed bed) {
+  void onBedSelected(Bed? bed) {
     final current = state;
     if (current is! BedAssignmentCellSelected) return;
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:pharmed_core/pharmed_core.dart'; // Result, ApiResponse, ApiError vb. buradan geldiğini varsayıyorum
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -31,6 +33,15 @@ abstract class BaseRemoteDataSource {
       if (obj is List) {
         return obj.map((e) => fromJson(e as Map<String, dynamic>)).toList();
       }
+      throw FormatException('Expected List but got ${obj.runtimeType}');
+    };
+  }
+
+  /// String, int, double gibi primitif tipler için liste parser'ı.
+  /// `fromJson` callback'i olmadığı için [listParser]'dan ayrıdır.
+  static Parser<List<T>> primitiveListParser<T>() {
+    return (obj) {
+      if (obj is List) return obj.cast<T>();
       throw FormatException('Expected List but got ${obj.runtimeType}');
     };
   }
@@ -190,23 +201,30 @@ abstract class BaseRemoteDataSource {
     ResponseEnvelope envelope = ResponseEnvelope.auto,
     int? skip,
     int? take,
-    String? searchText,
+    String? searchQuery,
     List<String>? searchFields,
     String searchOperator = 'contains',
+    String? dateField,
     DateTime? startDate,
     DateTime? endDate,
+    List<Object>? filters,
   }) {
     final finalQuery = Map<String, dynamic>.from(query ?? {});
     if (skip != null) finalQuery['skip'] = skip;
     if (take != null) finalQuery['take'] = take;
     if (skip != null || take != null) finalQuery['requireTotalCount'] = true;
 
-    if (searchText != null && searchText.isNotEmpty && searchFields != null && searchFields.isNotEmpty) {
-      finalQuery['filter'] = _buildFilter(searchText, searchFields, searchOperator);
-    }
+    final filter = _buildFilter(
+      searchText: searchQuery,
+      searchFields: searchFields,
+      searchOperator: searchOperator,
+      dateField: dateField,
+      startDate: startDate,
+      endDate: endDate,
+      filters: filters,
+    );
 
-    if (startDate != null) finalQuery['startDate'] = startDate.toIso8601String();
-    if (endDate != null) finalQuery['endDate'] = endDate.toIso8601String();
+    if (filter != null) finalQuery['filter'] = filter;
 
     return _request<T>(
       method: HttpMethod.GET,
@@ -312,15 +330,56 @@ abstract class BaseRemoteDataSource {
         (m.containsKey('data') && m.containsKey('totalCount'));
   }
 
-  String _buildFilter(String text, List<String> fields, String operator) {
-    if (fields.length == 1) return '["${fields[0]}","$operator","$text"]';
-    final conditions = fields.map((field) => '["$field","$operator","$text"]').toList();
-    final buffer = StringBuffer('[');
-    for (int i = 0; i < conditions.length; i++) {
-      buffer.write(conditions[i]);
-      if (i < conditions.length - 1) buffer.write(',"or",');
+  /// Build a DevExtreme filter expression combining search and date range filters.
+  /// Returns null if both are empty.
+  String? _buildFilter({
+    String? searchText,
+    List<String>? searchFields,
+    String searchOperator = 'contains',
+    String? dateField,
+    DateTime? startDate,
+    DateTime? endDate,
+    List<Object>? filters,
+  }) {
+    final parts = <Object>[
+      if (_buildSearchPart(searchText, searchFields, searchOperator) case final s?) s,
+      if (_buildDatePart(dateField, startDate, endDate) case final d?) d,
+      if (filters != null) ...filters,
+    ];
+
+    if (parts.isEmpty) return null;
+    if (parts.length == 1) return jsonEncode(parts.first);
+
+    final joined = <Object>[];
+    for (var i = 0; i < parts.length; i++) {
+      joined.add(parts[i]);
+      if (i < parts.length - 1) joined.add('and');
     }
-    buffer.write(']');
-    return buffer.toString();
+    return jsonEncode(joined);
+  }
+
+  Object? _buildSearchPart(String? text, List<String>? fields, String operator) {
+    if (text == null || text.isEmpty || fields == null || fields.isEmpty) return null;
+    if (fields.length == 1) return [fields[0], operator, text];
+
+    final parts = <Object>[];
+    for (var i = 0; i < fields.length; i++) {
+      parts.add([fields[i], operator, text]);
+      if (i < fields.length - 1) parts.add('or');
+    }
+    return parts;
+  }
+
+  Object? _buildDatePart(String? dateField, DateTime? start, DateTime? end) {
+    if (dateField == null || (start == null && end == null)) return null;
+    if (start != null && end != null) {
+      return [
+        [dateField, '>=', start.toIso8601String()],
+        'and',
+        [dateField, '<=', end.toIso8601String()],
+      ];
+    }
+    if (start != null) return [dateField, '>=', start.toIso8601String()];
+    return [dateField, '<=', end!.toIso8601String()];
   }
 }

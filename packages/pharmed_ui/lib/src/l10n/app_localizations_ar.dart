@@ -1060,7 +1060,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'اختر الأدوية من اليسار لبدء التعبئة.';
 
   @override
-  String get refund_success_completed => 'تم إتمام الإرجاع بنجاح.';
+  String get refund_success_title => 'تم الإرجاع بنجاح';
+
+  @override
+  String get refund_success_message =>
+      'يرجى تسليم الدواء المُرجَع إلى الصيدلي.';
 
   @override
   String get refund_panel_title => 'الأدوية القابلة للإرجاع';
@@ -1109,10 +1113,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get waste_action_destruction => 'إتلاف';
 
   @override
-  String get waste_success_wastage => 'تمت عملية الهدر بنجاح.';
+  String get wastage_success_title => 'تم تسجيل الهدر';
 
   @override
-  String get waste_success_destruction => 'تمت عملية الإتلاف بنجاح.';
+  String get wastage_success_message =>
+      'يرجى وضع الدواء المُسجَّل كهدر في صندوق الهدر.';
+
+  @override
+  String get destruction_success_title => 'تم تسجيل الإتلاف';
+
+  @override
+  String get destruction_success_message =>
+      'يرجى إتلاف الدواء وفقاً لإجراءات الإتلاف.';
 
   @override
   String get assignment_success_created => 'تم حفظ تعيين السرير بنجاح.';
@@ -1313,4 +1325,34 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get empty_state_no_patient_selected_description =>
       'اختر مريضًا من القائمة لعرض تفاصيله.';
+
+  @override
+  String get date_preset_today => 'اليوم';
+
+  @override
+  String get date_preset_last_3_days => 'آخر 3 أيام';
+
+  @override
+  String get date_preset_last_7_days => 'آخر 7 أيام';
+
+  @override
+  String get date_preset_all => 'الكل';
+
+  @override
+  String get filter_all => 'الكل';
+
+  @override
+  String get census_action_report_extra_stock => 'الإبلاغ عن مخزون زائد';
+
+  @override
+  String get census_extra_stock_dialog_title => 'الإبلاغ عن مخزون زائد';
+
+  @override
+  String get census_extra_stock_quantity_label => 'الكمية';
+
+  @override
+  String get common_action_add => 'إضافة';
+
+  @override
+  String get census_extra_stock_summary_title => 'المخزون الزائد المُبلَّغ عنه';
 }

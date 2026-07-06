@@ -964,8 +964,8 @@
   "refill_hint_selectionLocked": "Dolum sürüyor — seçim kilitli.",
   "refill_hint_idleExecution": "Soldan ilaç seçip dolumu başlatın.",
 
-  "refund_success_completed": "İade başarıyla tamamlandı.",
-  "@refund_success_completed": { "description": "Success snackbar shown after a refund operation is completed" },
+  "refund_success_title": "İade başarılı",
+  "refund_success_message": "Lütfen iade edilen ilacı eczacıya teslim ediniz.",
 
   "refund_panel_title": "İade Edilebilir İlaçlar",
   "@refund_panel_title": { "description": "Title of the drug panel in the mobile refund right panel" },
@@ -1012,11 +1012,11 @@
   "waste_action_destruction": "İmha Et",
   "@waste_action_destruction": { "description": "Button label for the destruction (imha) action in the waste action bar" },
 
-  "waste_success_wastage": "Fire işlemi başarıyla tamamlandı.",
-  "@waste_success_wastage": { "description": "Success snackbar shown after a wastage operation is saved" },
+  "wastage_success_title": "Fire kaydedildi",
+  "wastage_success_message": "Lütfen fire kaydı yapılan ilacı fire kutusuna bırakınız.",
 
-  "waste_success_destruction": "İmha işlemi başarıyla tamamlandı.",
-  "@waste_success_destruction": { "description": "Success snackbar shown after a destruction operation is saved" },
+  "destruction_success_title": "İmha kaydedildi",
+  "destruction_success_message": "Lütfen ilacı imha prosedürüne uygun şekilde imha ediniz.",
 
   "assignment_success_created": "Yatak ataması başarıyla kaydedildi.",
   "@assignment_success_created": { "description": "Success snackbar shown after a bed assignment is created" },
@@ -1198,5 +1198,16 @@
 "unadministered_prescriptions_empty_description": "Bu hastaya uygulanmayı bekleyen reçete bulunmuyor.",
 
 "empty_state_no_patient_selected_title": "Bir hasta seçin",
-"empty_state_no_patient_selected_description": "Detayları görüntülemek için listeden bir hasta seçin."
+"empty_state_no_patient_selected_description": "Detayları görüntülemek için listeden bir hasta seçin.",
+
+"date_preset_today": "Bugün",
+"date_preset_last_3_days": "Son 3 gün",
+"date_preset_last_7_days": "Son 7 gün",
+"date_preset_all": "Tümü",
+"filter_all": "Tümü",
+"census_action_report_extra_stock": "Fazla Stok Bildir",
+"census_extra_stock_dialog_title": "Fazla Stok Bildir",
+"census_extra_stock_quantity_label": "Adet",
+"common_action_add": "Ekle",
+"census_extra_stock_summary_title": "Bildirilen Fazla Stoklar"
 }

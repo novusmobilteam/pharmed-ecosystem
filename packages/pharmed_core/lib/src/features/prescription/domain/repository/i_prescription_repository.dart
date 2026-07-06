@@ -5,7 +5,17 @@ abstract interface class IPrescriptionRepository {
   Future<Result<Prescription?>> createPrescription(Prescription prescription);
   Future<Result<List<PrescriptionItem>>> getPrescriptionDetail(int prescriptionId);
   Future<Result<List<Prescription>>> getPatientPrescriptions(int hospitalizationId);
-  Future<Result<List<PrescriptionItem>>> getPatientPrescriptionHistory(int patientId);
+
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getPatientPrescriptionHistory(
+    int patientId, {
+    int? skip,
+    int? take,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+    List<Object>? filters,
+  });
+
   Future<Result<void>> createPrescriptionDetail(List<PrescriptionItem> items);
 
   Future<Result<void>> checkPrescriptionRequests(int prescriptionId, List<int> ids);
@@ -35,7 +45,13 @@ abstract interface class IPrescriptionRepository {
   Future<Result<void>> deleteUnscannedBarcode({required int prescriptionItemId, required String description});
 
   // Uygulanmamış Reçeteler
-  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions();
+  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({
+    int? skip,
+    int? take,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+  });
   Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptionDetail(int prescriptionId);
 
   /// İlaç hareketlerini(dolum,alım,iade,fire/imha) getiren servis.

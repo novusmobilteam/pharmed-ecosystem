@@ -76,7 +76,11 @@ class _MobileRefundBodyViewState extends ConsumerState<_MobileRefundBodyView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is MobileRefundSuccess) {
-        MessageUtils.showSuccessSnackbar(context, context.l10n.refund_success_completed);
+        MessageUtils.showSuccessDialog(
+          context,
+          context.l10n.refund_success_title,
+          description: context.l10n.refund_success_message,
+        );
         notifier.dismissSuccess();
       }
     });
