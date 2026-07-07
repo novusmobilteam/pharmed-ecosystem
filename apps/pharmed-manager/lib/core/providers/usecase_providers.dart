@@ -172,7 +172,6 @@ class UsecaseProviders {
       /// Stock
       Provider(create: (context) => GetCurrentCabinStockUseCase(context.read())),
       Provider(create: (context) => GetCabinStockUseCase(context.read())),
-      Provider(create: (context) => GetExpiredStocksUseCase(context.read())),
       Provider(create: (context) => GetExpiringStocksUseCase(context.read())),
       Provider(create: (context) => GetStationStocksUseCase(context.read())),
       Provider(create: (context) => CompleteMasterCensusUseCase(context.read())),
@@ -210,8 +209,6 @@ class UsecaseProviders {
       /// Stock Transaction
       Provider(create: (context) => CreateStockTransactionUseCase(context.read())),
       Provider(create: (context) => DeleteStockTransactionUseCase(context.read())),
-      Provider(create: (context) => GetStockTransactionsUseCase(context.read())),
-      Provider(create: (context) => GetCabinStockTransactionsUseCase(context.read())),
 
       /// Dashboard
       Provider(create: (context) => GetMissingStocksUseCase(context.read())),
@@ -247,6 +244,10 @@ class UsecaseProviders {
       Provider(create: (context) => CreateBedAssignmentUseCase(context.read())),
       Provider(create: (context) => DeleteBedAssignmentUseCase(context.read())),
       Provider(create: (context) => UpdateBedAssignmentUseCase(context.read())),
+
+      /// Reports
+      Provider(create: (context) => GetExpiredStocksUseCase(context.read())),
+      Provider(create: (context) => GetStationTransactionsUseCase(context.read())),
     ];
   }
 }

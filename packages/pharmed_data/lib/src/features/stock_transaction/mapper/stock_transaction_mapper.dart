@@ -13,6 +13,7 @@ class StockTransactionMapper {
       prescriptionDetailId: dto.prescriptionDetailId,
       transactionKind: dto.transactionKind != null ? StockTransactionKind.fromId(dto.transactionKind!) : null,
       quantity: dto.quantity,
+      beforeQuantity: dto.beforeQuantity,
       userId: dto.userId,
       user: dto.user != null ? const UserMapper().toEntity(dto.user!) : null,
       isSend: dto.isSend,

@@ -39,6 +39,7 @@ class DatasourceProviders {
       Provider(create: (context) => PrescriptionTemplateRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => FaultRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => AssignmentRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => ReportRemoteDataSource(apiManager: context.read())),
     ];
   }
 }

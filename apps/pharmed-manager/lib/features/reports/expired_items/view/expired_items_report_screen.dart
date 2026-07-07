@@ -13,7 +13,9 @@ class ExpiredItemsReportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ExpiredItemsReportNotifier(expiredStocksUseCase: context.read())..getExpiredStocks(),
+      create: (context) =>
+          ExpiredItemsReportNotifier(getExpiredStocksUseCase: context.read(), getStationsUseCase: context.read())
+            ..getStations(),
       builder: (context, child) {
         return Consumer<ExpiredItemsReportNotifier>(
           builder: (context, notifier, _) {
@@ -24,12 +26,33 @@ class ExpiredItemsReportScreen extends StatelessWidget {
                 title: menu.name ?? 'S.K.T Geçmiş Malzemeler',
                 subtitle: menu.description,
                 showAddButton: false,
-                child: MedTable(
-                  data: notifier.filteredItems,
+                child: MedTable<CabinStock>(
+                  data: notifier.items,
                   isLoading: notifier.isFetching,
+                  enableExcel: true,
                   enableSearch: true,
+                  enablePDF: true,
+                  enableDateFilter: true,
+                  // Pagination
+                  enablePagination: true,
+                  pageSize: notifier.pageSize,
+                  currentPage: notifier.currentPage,
+                  serverTotalCount: notifier.totalCount,
+                  onPageChanged: notifier.setPage,
+
+                  // Filter & Search
+                  initialDateRange: notifier.dateRange,
+                  onDateRangeChanged: notifier.setDateRange,
                   onSearchChanged: notifier.search,
-                  numericColumnIndices: {4, 5, 6, 7},
+
+                  // Kategori
+                  categories: notifier.tableCategories,
+                  selectedCategoryId: notifier.selectedCategoryId,
+                  onCategoryChanged: (id) =>
+                      notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
+                  categoryTitle: 'İstasyonlar',
+
+                  // Cell
                   cellBuilder: (item, colIndex, value) {
                     if (colIndex == 9) {
                       return RemainingDayChip(days: item.remainingDay ?? 0);

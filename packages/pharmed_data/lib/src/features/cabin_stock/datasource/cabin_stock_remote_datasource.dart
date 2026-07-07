@@ -6,10 +6,12 @@ import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 class CabinStockRemoteDataSource extends BaseRemoteDataSource {
   CabinStockRemoteDataSource({required super.apiManager});
 
-  static const _base = '/CabinDrawrStock';
+  static const _base = '/';
 
+  @override
   String get logSwreq => 'SWREQ-DATA-CABINSTOCK-001';
 
+  @override
   String get logUnit => 'SW-UNIT-CABINSTOCK';
 
   /// Belirtilen kabindeki tüm materyal stoklarını çeker.
@@ -71,15 +73,6 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<List<CabinStockDTO>>> getCurrentCabinStock() async {
     final res = await fetchRequest<List<CabinStockDTO>>(
       path: '$_base/currentStationStock',
-      parser: BaseRemoteDataSource.listParser(CabinStockDTO.fromJson),
-    );
-
-    return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);
-  }
-
-  Future<Result<List<CabinStockDTO>>> getExpiredStocks() async {
-    final res = await fetchRequest<List<CabinStockDTO>>(
-      path: '$_base/report/expiredMiadDate',
       parser: BaseRemoteDataSource.listParser(CabinStockDTO.fromJson),
     );
 

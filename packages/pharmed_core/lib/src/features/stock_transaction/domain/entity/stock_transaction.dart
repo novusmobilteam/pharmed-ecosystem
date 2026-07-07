@@ -8,7 +8,8 @@ class StockTransaction implements TableData {
   final Warehouse? warehouse;
   final int? materialType;
   final int? prescriptionDetailId;
-  final int? quantity;
+  final num? quantity;
+  final num? beforeQuantity;
   final int? userId;
   final User? user;
   final bool? isSend;
@@ -27,6 +28,7 @@ class StockTransaction implements TableData {
     this.prescriptionDetailId,
     this.transactionKind,
     this.quantity,
+    this.beforeQuantity,
     this.userId,
     this.user,
     this.isSend,
@@ -41,23 +43,41 @@ class StockTransaction implements TableData {
   List get content => [
     sendDate?.formattedDate,
     medicine?.name.toString(),
-    expirationDate?.formattedDate,
-    quantity?.toCustomString(),
-    service?.name,
+    medicine?.barcode,
+    transactionKind?.label,
+    '${quantity?.formatFractional} ${medicine?.operationUnit}',
+    '${beforeQuantity?.formatFractional} ${medicine?.operationUnit}',
+    user?.fullName,
   ];
 
   @override
-  List<String?> get titles => ['Tarih', 'Malzeme', 'Son Kullanma Tarihi', 'Miktar', 'Servis'];
+  List<String?> get titles => [
+    'Tarih',
+    'Malzeme',
+    'Barkod',
+    'İşlem Tipi',
+    'Miktar',
+    'Hareket Öncesi Miktar',
+    'İşlemi Yapan',
+  ];
 
   @override
-  List get rawContent => [sendDate, medicine?.name.toString(), expirationDate, quantity];
+  List get rawContent => [
+    sendDate?.formattedDate,
+    medicine?.name.toString(),
+    medicine?.barcode,
+    transactionKind?.label,
+    '${quantity?.formatFractional} ${medicine?.operationUnit}',
+    '${beforeQuantity?.formatFractional} ${medicine?.operationUnit}',
+    user?.fullName,
+  ];
 
   StockTransaction copyWith({
     int? id,
     int? warehouseId,
     int? materialType,
     int? prescriptionDetailId,
-    int? quantity,
+    double? quantity,
     int? userId,
     bool? isSend,
     DateTime? sendDate,

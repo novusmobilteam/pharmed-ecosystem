@@ -4,7 +4,6 @@ import '../../../../core/core.dart';
 import '../../../auth/notifier/auth_notifier.dart';
 
 class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
-  final AuthNotifier _authNotifier;
   final CreatePrescriptionUseCase _useCase;
   final CreatePrescriptionTemplateUseCase _templateUseCase;
 
@@ -14,11 +13,12 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
     required CreatePrescriptionUseCase useCase,
     required CreatePrescriptionTemplateUseCase templateUseCase,
   }) : _useCase = useCase,
-       _authNotifier = authNotifier,
        _templateUseCase = templateUseCase {
     _hospitalization = hospitalization;
     _isPatientSelectionEnabled = hospitalization == null;
-    _doctor = _authNotifier.currentUser?.toUser();
+    if (_hospitalization != null) {
+      _doctor = _hospitalization?.doctor;
+    }
   }
 
   final OperationKey submitOp = OperationKey.submit();

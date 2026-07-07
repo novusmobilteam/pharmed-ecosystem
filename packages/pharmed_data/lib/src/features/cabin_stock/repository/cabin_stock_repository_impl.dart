@@ -67,12 +67,6 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<List<CabinStock>>> getExpiredStocks() async {
-    final result = await _dataSource.getExpiredStocks();
-    return result.when(ok: (dtos) => Result.ok(_cabinMapper.toEntityList(dtos)), error: (e) => Result.error(e));
-  }
-
-  @override
   Future<Result<List<StationStock>>> getStationStocks(int stationId) async {
     final result = await _dataSource.getStationStocks(stationId);
     return result.when(ok: (dtos) => Result.ok(_stationMapper.toEntityList(dtos)), error: (e) => Result.error(e));

@@ -411,6 +411,22 @@ class RepositoryProviders {
           ),
         },
       ),
+
+      /// Report
+      Provider<IReportRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => ReportRepositoryImpl(
+            dataSource: context.read(),
+            cabinStockMapper: CabinStockMapper(),
+            stockTransactionMapper: StockTransactionMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
+            dataSource: context.read(),
+            cabinStockMapper: CabinStockMapper(),
+            stockTransactionMapper: StockTransactionMapper(),
+          ),
+        },
+      ),
     ];
   }
 }

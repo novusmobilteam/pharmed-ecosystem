@@ -115,12 +115,13 @@ mixin PaginationMixin<T> on ApiRequestMixin {
   }
 
   Future<void> fetchPagedData({
+    OperationKey? op,
     required Future<Result<ApiResponse<List<T>>?>> Function(int skip, int take) fetchMethod,
   }) async {
     final skip = (_currentPage - 1) * _pageSize;
 
     await execute(
-      const OperationKey.fetch(),
+      op ?? const OperationKey.fetch(),
       operation: () => fetchMethod(skip, _pageSize),
       onData: (apiResponse) {
         if (apiResponse?.isSuccess == true) {

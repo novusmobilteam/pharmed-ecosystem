@@ -21,14 +21,19 @@ enum StockTransactionKind {
     switch (this) {
       case StockTransactionKind.materialPurchasing:
         return 'Malzeme Alımı';
+
+      // Fazla ve Eksik stok bildirimi
       case StockTransactionKind.excessStock:
         return 'Stok Fazlası';
       case StockTransactionKind.insufficientStock:
         return 'Stok Eksiği';
+
       case StockTransactionKind.materialRefund:
         return 'Malzeme İadesi';
+
       case StockTransactionKind.counting:
         return 'Sayım';
+
       case StockTransactionKind.materialUse:
         return 'Malzeme Kullanımı';
     }

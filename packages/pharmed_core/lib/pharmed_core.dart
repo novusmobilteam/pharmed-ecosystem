@@ -44,6 +44,7 @@ export 'src/features/unload/unload.dart';
 export 'src/features/refill_list/refill_list.dart';
 export 'src/features/refill/refill.dart';
 export 'src/features/prescription_template/prescription_template.dart';
+export 'src/features/report/report.dart';
 
 // Constants
 export 'src/constants/device_constants.dart';

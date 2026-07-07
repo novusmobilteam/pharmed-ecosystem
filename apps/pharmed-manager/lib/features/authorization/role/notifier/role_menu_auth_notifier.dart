@@ -89,16 +89,44 @@ class RoleMenuAuthNotifier extends ChangeNotifier with ApiRequestMixin {
   Future<void> submit({Function(String? msg)? onSuccess, Function(String? msg)? onFailed}) async {
     if (_roleAuth == null || !_roleAuth!.isDirty) return;
 
+    final withParents = _roleAuth!.withPending(_expandWithParents(_roleAuth!.menuIdsPending));
+
     await execute(
       submitOp,
-      operation: () => _saveAuthUseCase.call(_roleAuth!),
+      operation: () => _saveAuthUseCase.call(withParents),
       onData: (_) {
-        _roleAuth = _roleAuth!.commit();
+        _roleAuth = withParents.commit();
         notifyListeners();
         onSuccess?.call('İşleminiz başarıyla tamamlandı');
       },
       onFailed: (error) => onFailed?.call(error.message),
     );
+  }
+
+  /// Seçili menülerin tüm parent zincirini ekler
+  Set<int> _expandWithParents(Set<int> selectedIds) {
+    final result = <int>{...selectedIds};
+    final parentMap = _buildParentMap(_menuTree, null);
+
+    for (final id in selectedIds) {
+      int? current = parentMap[id];
+      while (current != null && result.add(current)) {
+        current = parentMap[current];
+      }
+    }
+    return result;
+  }
+
+  /// childId -> parentId haritası
+  Map<int, int?> _buildParentMap(List<MenuItem> nodes, int? parentId) {
+    final map = <int, int?>{};
+    for (final node in nodes) {
+      if (node.id != null) {
+        map[node.id!] = parentId;
+        map.addAll(_buildParentMap(node.children, node.id));
+      }
+    }
+    return map;
   }
 
   /// Değişiklikleri iptal et

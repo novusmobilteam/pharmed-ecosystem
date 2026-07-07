@@ -32,8 +32,6 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
     String? search,
     List<String>? searchFields,
   }) async {
-    print('[3-datasource] search="$search" searchFields=$searchFields');
-
     return await fetchRequest(
       path: '$_base/type/${type?.id ?? 0}',
       skip: skip,

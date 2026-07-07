@@ -9,7 +9,8 @@ class StockTransactionDTO {
   final int? materialType;
   final int? prescriptionDetailId;
   final int? transactionKind;
-  final int? quantity;
+  final num? quantity;
+  final num? beforeQuantity;
   final int? userId;
   final UserDto? user;
   final bool? isSend;
@@ -29,6 +30,7 @@ class StockTransactionDTO {
     this.prescriptionDetailId,
     this.transactionKind,
     this.quantity,
+    this.beforeQuantity,
     this.userId,
     this.user,
     this.isSend,
@@ -49,7 +51,8 @@ class StockTransactionDTO {
       materialType: json['materialType'],
       prescriptionDetailId: json['prescriptionDetailId'],
       transactionKind: json['transactionKind'],
-      quantity: json['quantity'],
+      quantity: json['quantity'] as num?,
+      beforeQuantity: json['beforeQuantity'] as num?,
       userId: json['userId'],
       isSend: json['isSend'],
       sendDate: json['sendDate'] != null ? DateTime.tryParse(json['sendDate']) : null,
@@ -57,6 +60,7 @@ class StockTransactionDTO {
       transactionType: json['transactionType'],
       sendServiceId: json['sendServiceId'],
       sendService: json['sendService'] != null ? ServiceDto.fromJson(json['sendService']) : null,
+      user: json['user'] != null ? UserDto.fromJson(json['user']) : null,
     );
   }
 

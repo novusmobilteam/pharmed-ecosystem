@@ -7,7 +7,6 @@ import 'package:pharmed_manager/features/prescription/view/prescription_screen.d
 import 'package:pharmed_manager/features/reports/expired_items/view/expired_items_report_screen.dart';
 import 'package:pharmed_manager/features/reports/station_transaction/view/station_transaction_report_screen.dart';
 import 'package:pharmed_manager/features/role/view/role_screen.dart';
-import 'package:pharmed_manager/features/station_stock/view/station_stock_screen.dart';
 import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
@@ -170,7 +169,7 @@ class _HomeContent extends StatelessWidget {
       'prescription' => PrescriptionScreen(menu: menu!),
       'refund' => PharmacyRefundScreen(menu: menu!),
       'refundDrawer' => DrawerRefundScreen(menu: menu!),
-      'stationStock' => StationStockScreen(menu: menu!),
+      //'stationStock' => StationStockScreen(menu: menu!),
       'role' => RoleScreen(menu: menu!),
       'authorization' => AuthorizationScreen(menu: menu!),
       'user' => UserScreen(menu: menu!),

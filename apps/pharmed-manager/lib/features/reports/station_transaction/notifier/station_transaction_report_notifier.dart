@@ -1,37 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class StationTransactionReportNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<StockTransaction> {
+class StationTransactionReportNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<StockTransaction> {
   final GetStationsUseCase _getStationsUseCase;
-  final GetCabinStockTransactionsUseCase _getCabinStockTransactionsUseCase;
+  final GetStationTransactionsUseCase _getStationTransactionsUseCase;
 
   StationTransactionReportNotifier({
-    required GetCabinStockTransactionsUseCase getCabinStockTransactionsUseCase,
     required GetStationsUseCase getStationsUseCase,
-  }) : _getCabinStockTransactionsUseCase = getCabinStockTransactionsUseCase,
-       _getStationsUseCase = getStationsUseCase;
+    required GetStationTransactionsUseCase getStationTransactionsUseCase,
+  }) : _getStationsUseCase = getStationsUseCase,
+       _getStationTransactionsUseCase = getStationTransactionsUseCase;
 
   OperationKey fetchStationsOp = OperationKey.fetch();
-  OperationKey fetchTransactionsOp = OperationKey.fetch();
-
-  Station? _selectedStation;
-  Station? get selectedStation => _selectedStation;
+  OperationKey fetchReportsOp = OperationKey.fetch();
 
   List<Station> _stations = [];
   List<Station> get stations => _stations;
 
-  List<StockTransaction> _transactions = [];
-  List<StockTransaction> get transactions => _transactions;
-
-  bool get isFetching => isLoading(fetchTransactionsOp);
-
-  int get activeIndex => !stations.contains(_selectedStation) ? 0 : stations.indexOf(_selectedStation!);
-
-  String get selectedCategoryId => _selectedStation?.id.toString() ?? '-1';
+  Station? _selectedStation;
+  Station? get selectedStation => _selectedStation;
 
   List<TableSideCategory> get tableCategories => [
     ..._stations.map((s) => TableSideCategory(id: s.id.toString(), label: s.name ?? '-')),
   ];
+
+  String get selectedCategoryId => _selectedStation?.id.toString() ?? '-1';
+  int get activeIndex => !stations.contains(_selectedStation) ? 0 : stations.indexOf(_selectedStation!);
+
+  bool get isFetching => isLoading(fetchReportsOp);
+  String? get statusMessage => message(fetchReportsOp);
 
   Future<void> getStations() async {
     await execute(
@@ -47,22 +44,20 @@ class StationTransactionReportNotifier extends ChangeNotifier with ApiRequestMix
     );
   }
 
-  Future<void> getTransactions() async {
-    if (_selectedStation == null) return;
-
-    await execute(
-      fetchTransactionsOp,
-      operation: () => _getCabinStockTransactionsUseCase.call(_selectedStation!.id!),
-      onData: (transactions) {
-        _transactions = transactions;
-        notifyListeners();
-      },
-    );
-  }
-
   void selectStation(Station station) {
     _selectedStation = station;
-    getTransactions();
+    fetch();
     notifyListeners();
+  }
+
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      op: fetchReportsOp,
+      fetchMethod: (skip, take) => _getStationTransactionsUseCase.call(
+        stationId: _selectedStation?.id ?? 0,
+        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+      ),
+    );
   }
 }

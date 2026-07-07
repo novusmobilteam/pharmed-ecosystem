@@ -10,7 +10,6 @@ export 'domain/repository/i_cabin_stock_repository.dart';
 
 export 'domain/usecase/get_cabin_stock_usecase.dart';
 export 'domain/usecase/get_current_cabin_stock_usecase.dart';
-export 'domain/usecase/get_expired_stocks_usecase.dart';
 export 'domain/usecase/get_expiring_stocks_usecase.dart';
 export 'domain/usecase/get_station_stocks_usecase.dart';
 export 'domain/usecase/get_cabin_expected_epcs_usecase.dart';

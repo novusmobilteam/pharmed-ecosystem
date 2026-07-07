@@ -55,6 +55,7 @@ class UserAuthorizationNotifier extends ChangeNotifier with ApiRequestMixin {
 
         if (authRes case Ok(value: final auth)) {
           _userAuth = auth;
+          print(_userAuth.toString());
         }
 
         return const Result.ok(null);
@@ -90,11 +91,13 @@ class UserAuthorizationNotifier extends ChangeNotifier with ApiRequestMixin {
   Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
     if (_userAuth == null || !_userAuth!.isDirty) return;
 
+    final withParents = _userAuth!.withPending(_expandWithParents(_userAuth!.menuIdsPending));
+
     await execute(
       submitKey,
       operation: () => _saveAuthUseCase.call(_userAuth!),
       onData: (_) {
-        _userAuth = _userAuth!.commit();
+        _userAuth = withParents.commit();
         notifyListeners();
         onSuccess?.call('İşleminiz başarıyla tamamlandı');
       },
@@ -152,5 +155,30 @@ class UserAuthorizationNotifier extends ChangeNotifier with ApiRequestMixin {
       }
     }
     return result;
+  }
+
+  Set<int> _expandWithParents(Set<int> selectedIds) {
+    final result = <int>{...selectedIds};
+    final parentMap = _buildParentMap(_menuTree, null);
+
+    for (final id in selectedIds) {
+      int? current = parentMap[id];
+      while (current != null && result.add(current)) {
+        current = parentMap[current];
+      }
+    }
+    return result;
+  }
+
+  /// childId -> parentId haritası
+  Map<int, int?> _buildParentMap(List<MenuItem> nodes, int? parentId) {
+    final map = <int, int?>{};
+    for (final node in nodes) {
+      if (node.id != null) {
+        map[node.id!] = parentId;
+        map.addAll(_buildParentMap(node.children, node.id));
+      }
+    }
+    return map;
   }
 }
