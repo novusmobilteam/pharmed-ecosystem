@@ -29,8 +29,10 @@ class _DrugTypeListViewState extends State<DrugTypeListView> {
           return EmptyStateWidget(
             icon: Icons.inventory_2_outlined,
             variant: EmptyStateVariant.custom,
-            title: 'Henüz ilaç tipi bulunmuyor',
-            description: widget.isDialog ? 'Yeni ilaç tipi eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            title: context.l10n.drugTypeListEmptyTitle,
+            description: widget.isDialog
+                ? context.l10n.common_addItemHint('ilaç tipi')
+                : context.l10n.common_emptyListMessage,
           );
         }
 
@@ -65,7 +67,7 @@ class _DrugTypeListViewState extends State<DrugTypeListView> {
       onConfirm: () => notifier.deleteDrugType(
         item,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
       ),
     );
   }

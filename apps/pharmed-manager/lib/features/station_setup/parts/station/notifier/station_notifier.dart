@@ -30,7 +30,7 @@ class StationNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMix
       deleteOp,
       operation: () => _deleteStationUseCase.call(station),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
         fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),

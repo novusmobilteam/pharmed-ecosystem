@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class GetIntakeItemsParams {
   final IntakeType type;
@@ -50,7 +51,7 @@ class GetIntakeItemsUseCase {
       ok: (data) async {
         for (var d in data) {
           if (d.medicine == null) {
-            return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.'));
+            return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
           }
 
           var (witnesses, stations) = await _fetchWitnesses(d.medicine!);
@@ -78,7 +79,7 @@ class GetIntakeItemsUseCase {
       ok: (data) async {
         for (var d in data) {
           if (d.medicine == null) {
-            return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.'));
+            return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
           }
 
           var (witnesses, stations) = await _fetchWitnesses(d.medicine!);
@@ -114,7 +115,7 @@ class GetIntakeItemsUseCase {
     // Sonraki alımlar: sadece assignment güncellenir, tasks tekrar çekilmez
     final assignmentsResult = await _assignmentRepository.getCabinAssignments();
     if (assignmentsResult is! Ok) {
-      return Result.error(CustomException(message: "Bir hata oluştu."));
+      return Result.error(CustomException(message: contextlessL10n().core_genericErrorShortMessage));
     }
 
     final List<MedicineAssignment> freshAssignments = (assignmentsResult as Ok).value;
@@ -144,7 +145,7 @@ class GetIntakeItemsUseCase {
     final assignmentsResult = results[1] as Result<List<MedicineAssignment>>;
 
     if (tasksResult is! Ok || assignmentsResult is! Ok) {
-      return Result.error(CustomException(message: "Bir hata oluştu."));
+      return Result.error(CustomException(message: contextlessL10n().core_genericErrorShortMessage));
     }
 
     final allTasks = (tasksResult as Ok).value;
@@ -154,7 +155,7 @@ class GetIntakeItemsUseCase {
       final assignment = allAssignments.firstWhereOrNull((a) => a.cabinDrawerId == task.cabinAssignment.cabinDrawerId);
 
       if (task.medicine == null) {
-        return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.'));
+        return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
       }
 
       var (witnesses, stations) = await _fetchWitnesses(task.medicine!);

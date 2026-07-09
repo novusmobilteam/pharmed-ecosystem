@@ -95,7 +95,7 @@ class _CabinPatientPickerListState extends State<CabinPatientPickerList> {
 
     return Column(
       children: [
-        _buildSearchField(),
+        _buildSearchField(context),
         Expanded(
           child: filtered.isEmpty
               ? Center(
@@ -119,11 +119,11 @@ class _CabinPatientPickerListState extends State<CabinPatientPickerList> {
     );
   }
 
-  Widget _buildSearchField() {
+  Widget _buildSearchField(BuildContext context) {
     return MedTextInputField(
       controller: _searchController,
       //prefixIcon: Icon(PhosphorIcons.magnifyingGlass()),
-      hintText: 'Hasta, oda, yatak veya servis ara...',
+      hintText: context.l10n.cabinPatientPicker_searchHint,
       onChanged: (v) => setState(() => _query = v ?? ''),
     );
   }
@@ -143,9 +143,9 @@ class CabinPatientPickerItem extends StatelessWidget {
   final VoidCallback onTap;
 
   /// Hasta adını döndürür. Hasta verisi yoksa `'Bilinmeyen Hasta'` gösterilir.
-  String get _name {
+  String _name(BuildContext context) {
     final p = assignment.hospitalization?.patient;
-    if (p == null) return 'Bilinmeyen Hasta';
+    if (p == null) return context.l10n.common_unknownPatientFallback;
     final full = p.fullName.trim();
     return full.isNotEmpty ? full : '—';
   }
@@ -185,7 +185,7 @@ class CabinPatientPickerItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(_name, style: MedTextStyles.titleSm(), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(_name(context), style: MedTextStyles.titleSm(), maxLines: 1, overflow: TextOverflow.ellipsis),
                   if (_location != null) Text(_location!, style: MedTextStyles.monoMd(color: MedColors.text3)),
                 ],
               ),

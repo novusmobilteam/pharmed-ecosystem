@@ -11,7 +11,7 @@ class UpcomingTreatmentsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = treatments.map((t) {
       final palette = AvatarPalette.values[(t.id ?? 0) % AvatarPalette.values.length];
-      final initials = (t.patientName ?? 'Bilinmeyen Hasta')
+      final initials = (t.patientName ?? context.l10n.common_unknownPatientFallback)
           .split(' ')
           .where((w) => w.isNotEmpty)
           .take(2)
@@ -20,11 +20,11 @@ class UpcomingTreatmentsView extends StatelessWidget {
 
       return TreatmentItem(
         time: t.time?.formattedTime.toString() ?? '',
-        patientName: t.patientName ?? 'Bilinmeyen Hasta',
+        patientName: t.patientName ?? context.l10n.common_unknownPatientFallback,
         patientId: '',
         //patientId: t.patientIdLabel,
         avatar: MedAvatar(initials: initials, palette: palette),
-        medicineName: t.medicine?.name ?? 'Bilinmeyen İlaç',
+        medicineName: t.medicine?.name ?? context.l10n.authorization_drugTable_unknownDrugFallback,
         dose: '',
         drawerCode: '',
         priority: TreatmentPriority.normal,
@@ -178,12 +178,15 @@ class _TreatmentHeader extends StatelessWidget {
         children: [
           MedStatusDot(color: MedColors.blue),
           const SizedBox(width: 8),
-          Text('YAKLAŞAN TEDAVİLER', style: MedTextStyles.titleSm()),
+          Text(context.l10n.dashboard_upcomingTreatmentsHeader, style: MedTextStyles.titleSm()),
           const Spacer(),
           AnimatedOpacity(
             opacity: isStale ? 0.45 : 1.0,
             duration: const Duration(milliseconds: 300),
-            child: MedBadge(label: '$pendingCount Bekliyor', variant: MedBadgeVariant.amber),
+            child: MedBadge(
+              label: context.l10n.dashboard_pendingTreatmentsBadge(pendingCount),
+              variant: MedBadgeVariant.amber,
+            ),
           ),
         ],
       ),
@@ -211,19 +214,19 @@ class _TreatmentToolbar extends StatelessWidget {
           Expanded(child: _SearchBox(onChanged: onSearch)),
           const SizedBox(width: 7),
           _FilterChip(
-            label: 'Tümü',
+            label: context.l10n.filter_all,
             isActive: activeFilter == TreatmentFilter.all,
             onTap: () => onFilterChanged(TreatmentFilter.all),
           ),
           const SizedBox(width: 5),
           _FilterChip(
-            label: 'Bekleyen',
+            label: context.l10n.dashboard_pendingFilterLabel,
             isActive: activeFilter == TreatmentFilter.pending,
             onTap: () => onFilterChanged(TreatmentFilter.pending),
           ),
           const SizedBox(width: 5),
           _FilterChip(
-            label: 'Acil',
+            label: context.l10n.dashboard_urgentFilterLabel,
             isActive: activeFilter == TreatmentFilter.urgent,
             onTap: () => onFilterChanged(TreatmentFilter.urgent),
           ),
@@ -258,7 +261,7 @@ class _SearchBox extends StatelessWidget {
               onChanged: onChanged,
               style: MedTextStyles.bodyMd(color: MedColors.text),
               decoration: InputDecoration(
-                hintText: 'Hasta veya ilaç ara...',
+                hintText: context.l10n.dashboard_treatmentSearchHint,
                 hintStyle: MedTextStyles.bodyMd(color: MedColors.text4),
                 isDense: true,
                 border: InputBorder.none,
@@ -322,7 +325,7 @@ class _NewAssignButton extends StatelessWidget {
             const Icon(Icons.add, size: 11, color: Colors.white),
             const SizedBox(width: 5),
             Text(
-              'Yeni Ata',
+              context.l10n.dashboard_newAssignButton,
               style: MedTextStyles.bodySm(color: Colors.white, weight: FontWeight.w600),
             ),
           ],
@@ -340,9 +343,9 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = switch (filter) {
-      TreatmentFilter.all => 'Tedavi kaydı bulunamadı',
-      TreatmentFilter.pending => 'Bekleyen tedavi yok',
-      TreatmentFilter.urgent => 'Acil tedavi yok',
+      TreatmentFilter.all => context.l10n.dashboard_noTreatmentsAllFilter,
+      TreatmentFilter.pending => context.l10n.dashboard_noTreatmentsPendingFilter,
+      TreatmentFilter.urgent => context.l10n.dashboard_noTreatmentsUrgentFilter,
     };
 
     return Padding(
@@ -556,9 +559,9 @@ class _PriorityBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (bg, fg, label) = switch (priority) {
-      TreatmentPriority.urgent => (MedColors.redLight, MedColors.red, 'Acil'),
-      TreatmentPriority.normal => (MedColors.blueLight, MedColors.blue, 'Normal'),
-      TreatmentPriority.routine => (MedColors.greenLight, MedColors.green, 'Rutin'),
+      TreatmentPriority.urgent => (MedColors.redLight, MedColors.red, context.l10n.dashboard_priorityUrgentLabel),
+      TreatmentPriority.normal => (MedColors.blueLight, MedColors.blue, context.l10n.dashboard_priorityNormalLabel),
+      TreatmentPriority.routine => (MedColors.greenLight, MedColors.green, context.l10n.dashboard_priorityRoutineLabel),
     };
 
     return Container(
@@ -586,9 +589,14 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (bg, fg, label, border) = switch (status) {
-      TreatmentStatus.pending => (MedColors.amberLight, MedColors.amber, 'Bekliyor', null),
-      TreatmentStatus.done => (MedColors.greenLight, MedColors.green, 'Dağıtıldı', null),
-      TreatmentStatus.returned => (MedColors.surface3, MedColors.text3, 'İade', MedColors.border2),
+      TreatmentStatus.pending => (MedColors.amberLight, MedColors.amber, context.l10n.dashboard_statusPendingLabel, null),
+      TreatmentStatus.done => (MedColors.greenLight, MedColors.green, context.l10n.dashboard_statusDoneLabel, null),
+      TreatmentStatus.returned => (
+        MedColors.surface3,
+        MedColors.text3,
+        context.l10n.dashboard_statusReturnedLabel,
+        MedColors.border2,
+      ),
     };
 
     return Container(

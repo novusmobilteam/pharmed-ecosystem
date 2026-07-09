@@ -171,7 +171,7 @@ class _SearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     return MedTextInputField(
       initialValue: value,
-      hintText: 'İlaç ara (ad / barkod)',
+      hintText: context.l10n.intake_hint_searchMedicine,
       prefixIcon: Icon(PhosphorIcons.magnifyingGlass(), color: MedColors.text3),
       onChanged: (v) => onChanged(v ?? ''),
     );
@@ -193,13 +193,18 @@ class _RunningBar extends StatelessWidget {
             children: [
               Icon(PhosphorIcons.lock(), size: 15, color: MedColors.text3),
               Expanded(
-                child: Text('Alım sürüyor — seçim kilitli.', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                child: Text(context.l10n.intake_hint_selectionLocked, style: MedTextStyles.bodySm(color: MedColors.text3)),
               ),
             ],
           ),
         ),
         const SizedBox(width: 12),
-        MedButton(label: 'Durdur', variant: MedButtonVariant.danger, size: MedButtonSize.sm, onPressed: () => onStop()),
+        MedButton(
+          label: context.l10n.refill_action_stop,
+          variant: MedButtonVariant.danger,
+          size: MedButtonSize.sm,
+          onPressed: () => onStop(),
+        ),
       ],
     );
   }
@@ -223,7 +228,7 @@ class _StartBar extends StatelessWidget {
               Icon(PhosphorIcons.info(), size: 15, color: MedColors.text3),
               Expanded(
                 child: Text(
-                  'Çekmeceler en kısa yol sırasıyla açılacak.',
+                  context.l10n.intake_hint_autoQueueOrder,
                   style: MedTextStyles.bodySm(color: MedColors.text3),
                 ),
               ),
@@ -231,7 +236,7 @@ class _StartBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        MedButton(label: 'Alıma Başla', isLoading: isChecking, onPressed: canStart ? onStart : null),
+        MedButton(label: context.l10n.intake_action_start, isLoading: isChecking, onPressed: canStart ? onStart : null),
       ],
     );
   }

@@ -22,9 +22,15 @@ class FirmScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Firma Tanımlama',
+              title: menu.name ?? context.l10n.firm_screenDefaultTitle,
               subtitle: menu.description,
-              actions: [MedButton(onPressed: () => notifier.openPanel(), size: MedButtonSize.sm, label: 'Yeni Firma')],
+              actions: [
+                MedButton(
+                  onPressed: () => notifier.openPanel(),
+                  size: MedButtonSize.sm,
+                  label: context.l10n.firm_createPanelTitle,
+                ),
+              ],
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
                 width: 480,
@@ -36,8 +42,8 @@ class FirmScreen extends StatelessWidget {
                   enableSearch: true,
                   onSearchChanged: notifier.search,
                   actions: [
-                    TableActionItem.edit(onPressed: (firm) => notifier.openPanel(firm: firm)),
-                    TableActionItem.delete(onPressed: (firm) => _onDelete(context, notifier, firm)),
+                    TableActionItem.edit(context: context, onPressed: (firm) => notifier.openPanel(firm: firm)),
+                    TableActionItem.delete(context: context, onPressed: (firm) => _onDelete(context, notifier, firm)),
                   ],
                   enablePagination: true,
                   pageSize: notifier.pageSize,

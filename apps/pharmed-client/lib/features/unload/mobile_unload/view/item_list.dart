@@ -105,43 +105,43 @@ class _ItemCard extends ConsumerWidget {
               child: MedToggle(
                 value: isMarkedMissing,
                 color: MedColors.red,
-                label: 'Eksik Stok Bildir',
+                label: context.l10n.intake_action_reportMissingStock,
                 textStyle: MedTextStyles.monoSm(),
                 onChanged: (_) => notifier.toggleMarkMissing(itemId),
               ),
             )
-          : _unloadItemBadge(status),
+          : _unloadItemBadge(context, status),
 
       // RFID'siz + eksik bildirilebilir + çekmece açık → "Eksik Bildir" toggle
     );
   }
 }
 
-StatusBadge _unloadItemBadge(_ItemStatus status) {
+StatusBadge _unloadItemBadge(BuildContext context, _ItemStatus status) {
   final (bg, fg, icon, label) = switch (status) {
     _ItemStatus.unloaded => (
       MedColors.green,
       MedColors.greenLight,
       PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
-      'Boşaltıldı',
+      context.l10n.unload_label_unloaded,
     ),
     _ItemStatus.inCabinet => (
       MedColors.blue.withValues(alpha: 0.3),
       MedColors.blue,
       PhosphorIcons.package(PhosphorIconsStyle.bold),
-      'Kabinde',
+      context.l10n.rfidStatus_inCabin,
     ),
     _ItemStatus.notFound => (
       MedColors.amber,
       MedColors.amberLight,
       PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
-      'Bulunamadı',
+      context.l10n.rfidStatus_notFound,
     ),
     _ItemStatus.pending => (
       MedColors.surface2,
       MedColors.text3,
       PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
-      'Taranıyor',
+      context.l10n.rfidStatus_scanning,
     ),
     _ => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), '—'),
   };

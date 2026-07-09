@@ -5,6 +5,7 @@
 
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class FinishCabinSetupUseCase {
   FinishCabinSetupUseCase({
@@ -58,7 +59,7 @@ class FinishCabinSetupUseCase {
         final cabinId = createdCabin?.id;
 
         if (cabinId == null) {
-          return Result.error(ServiceException(message: 'Kabin oluşturuldu fakat ID alınamadı.', statusCode: 500));
+          return Result.error(ServiceException(message: contextlessL10n().cabinCore_createdButIdMissing, statusCode: 500));
         }
 
         await _appSettingsCache.saveCurrentCabinId(cabinId);

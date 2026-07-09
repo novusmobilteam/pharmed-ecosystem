@@ -215,7 +215,7 @@ class CabinOperationService implements ICabinOperationService {
   Future<void> openMobileDrawer({required ManagementCard manager, required int port}) async {
     final isSelected = await _selectRow(manager.addressIndex, _serumSlaveRow);
     if (!isSelected) {
-      throw SerialPortException(message: 'Serum kartı slave moda alınamadı...');
+      throw SerialPortException(message: contextlessL10n().hw_cabinOps_serumSlaveModeError);
     }
     await Future.delayed(const Duration(milliseconds: 150));
 
@@ -229,12 +229,12 @@ class CabinOperationService implements ICabinOperationService {
         return;
       }
       if (response != null && response.contains('.no')) {
-        throw SerialPortException(message: 'Port $port solenoid yok (.no).');
+        throw SerialPortException(message: contextlessL10n().hw_cabinOps_solenoidMissingError(port));
       }
       await Future.delayed(const Duration(milliseconds: 200));
     }
 
-    throw SerialPortException(message: 'Port $port açılamadı. Yanıt: $response');
+    throw SerialPortException(message: contextlessL10n().hw_cabinOps_portOpenFailedError(port, response ?? ''));
   }
 
   @override
@@ -298,9 +298,7 @@ class CabinOperationService implements ICabinOperationService {
 
     if (response == null || !response.contains(DeviceConstants.responseOk)) {
       throw SerialPortException(
-        message:
-            'Master çekmece açılamadı '
-            '(row=$row, port=$port, drawer=$drawer). Yanıt: $response',
+        message: contextlessL10n().hw_cabinOps_masterDrawerOpenFailedError(row, port, drawer, response ?? ''),
       );
     }
   }
@@ -353,7 +351,7 @@ class CabinOperationService implements ICabinOperationService {
         (response.contains(DeviceConstants.responseOk) || response.contains('.ok') || response.contains('h3'));
 
     if (!success) {
-      throw SerialPortException(message: 'Master serum çekmecesi açılamadı (row=$row). Yanıt: $response');
+      throw SerialPortException(message: contextlessL10n().hw_cabinOps_masterSerumOpenFailedError(row, response ?? ''));
     }
   }
 

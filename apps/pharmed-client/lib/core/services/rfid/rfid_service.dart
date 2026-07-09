@@ -123,7 +123,9 @@ class RfidService implements IRfidService {
         message: 'TCP bağlantı hatası',
         context: {'error': e.message},
       );
-      return Result.error(ServiceException(message: 'RFID okuyucuya bağlanılamadı: ${e.message}', statusCode: 503));
+      return Result.error(
+        ServiceException(message: contextlessL10n().hw_rfid_connectFailedError(e.message), statusCode: 503),
+      );
     }
   }
 
@@ -237,7 +239,7 @@ class RfidService implements IRfidService {
       final resp = await completer.future;
 
       if (resp.length < 9) {
-        return Result.error(ServiceException(message: 'Geçersiz cevap alındı.', statusCode: 502));
+        return Result.error(ServiceException(message: contextlessL10n().hw_rfid_invalidResponseError, statusCode: 502));
       }
 
       final info = RfidReaderInfo(
@@ -256,9 +258,11 @@ class RfidService implements IRfidService {
 
       return Result.ok(info);
     } on SocketException catch (e) {
-      return Result.error(ServiceException(message: 'RFID okuyucuya ulaşılamadı: ${e.message}', statusCode: 503));
+      return Result.error(
+        ServiceException(message: contextlessL10n().hw_rfid_unreachableError(e.message), statusCode: 503),
+      );
     } on TimeoutException {
-      return Result.error(ServiceException(message: 'RFID bağlantı testi zaman aşımına uğradı.', statusCode: 408));
+      return Result.error(ServiceException(message: contextlessL10n().hw_rfid_testTimeoutError, statusCode: 408));
     } finally {
       await testSocket?.close();
     }
@@ -268,10 +272,7 @@ class RfidService implements IRfidService {
   Future<Result<void>> setPower(int dbm) async {
     if (_inventoryActive) {
       return Result.error(
-        ServiceException(
-          message: 'Inventory aktifken güç ayarı değiştirilemez. Önce stopInventory() çağırın.',
-          statusCode: 409,
-        ),
+        ServiceException(message: contextlessL10n().hw_rfid_powerChangeBlockedError, statusCode: 409),
       );
     }
     final result = await _sendCommandAndWait(_cmdSetPower, [dbm]);
@@ -297,7 +298,7 @@ class RfidService implements IRfidService {
         if (resp.length >= 4 && resp[3] != 0x00) {
           return Result.error(
             ServiceException(
-              message: 'SetWorkingMode reddedildi (status=0x${resp[3].toRadixString(16)})',
+              message: contextlessL10n().hw_rfid_setModeRejectedError(resp[3].toRadixString(16)),
               statusCode: 502,
             ),
           );
@@ -314,12 +315,11 @@ class RfidService implements IRfidService {
       ok: (resp) {
         if (resp.length >= 4 && resp[3] != 0x00) {
           final status = resp[3];
-          final hint = status == _statusAntennaCheckFailure
-              ? ' (anten bağlantı hatası — etkinleştirilen portlardan biri boş)'
-              : '';
+          final l10n = contextlessL10n();
+          final hint = status == _statusAntennaCheckFailure ? l10n.hw_rfid_antennaConnFailedHint : '';
           return Result.error(
             ServiceException(
-              message: 'SetWorkingAntenna reddedildi (status=0x${status.toRadixString(16)})$hint',
+              message: '${l10n.hw_rfid_setAntennaRejectedError(status.toRadixString(16))}$hint',
               statusCode: 502,
             ),
           );
@@ -358,7 +358,9 @@ class RfidService implements IRfidService {
     }
 
     if (connectedMask == 0x00) {
-      return Result.error(ServiceException(message: 'Hiçbir antene bağlanılamadı (tüm portlar boş).', statusCode: 502));
+      return Result.error(
+        ServiceException(message: contextlessL10n().hw_rfid_noAntennaConnectedError, statusCode: 502),
+      );
     }
 
     // Bulunan bağlı portların hepsini birlikte etkinleştir.
@@ -380,10 +382,10 @@ class RfidService implements IRfidService {
   Future<Result<Uint8List>> _sendCommandAndWait(int cmd, List<int> data) async {
     final socket = _socket;
     if (socket == null) {
-      return Result.error(ServiceException(message: 'RFID servisi bağlı değil.', statusCode: 503));
+      return Result.error(ServiceException(message: contextlessL10n().hw_rfid_notConnectedError, statusCode: 503));
     }
     if (_pendingCommandCompleter != null) {
-      return Result.error(ServiceException(message: 'Önceki komut hâlâ cevap bekliyor.', statusCode: 409));
+      return Result.error(ServiceException(message: contextlessL10n().hw_rfid_commandPendingError, statusCode: 409));
     }
 
     final completer = Completer<Uint8List>();
@@ -399,12 +401,14 @@ class RfidService implements IRfidService {
     } on TimeoutException {
       return Result.error(
         ServiceException(
-          message: 'Komut cevabı zaman aşımına uğradı (cmd=0x${cmd.toRadixString(16)}).',
+          message: contextlessL10n().hw_rfid_commandTimeoutError(cmd.toRadixString(16)),
           statusCode: 408,
         ),
       );
     } catch (e) {
-      return Result.error(ServiceException(message: 'Komut hatası: $e', statusCode: 500));
+      return Result.error(
+        ServiceException(message: contextlessL10n().hw_rfid_commandErrorWithDetail(e.toString()), statusCode: 500),
+      );
     } finally {
       _pendingCommandCompleter = null;
     }

@@ -297,7 +297,10 @@ abstract class BaseRemoteDataSource {
                 final apiError = ApiError.fromJson(rawData);
                 MedLogger.warn(unit: logUnit, swreq: logSwreq, message: apiError.message ?? 'Hata');
                 return Result.error(
-                  ServiceException(message: apiError.message ?? 'Hata', statusCode: apiError.statusCode ?? 0),
+                  ServiceException(
+                    message: apiError.message ?? contextlessL10n().dataError_envelopeErrorFallback,
+                    statusCode: apiError.statusCode ?? 0,
+                  ),
                 );
               }
             }

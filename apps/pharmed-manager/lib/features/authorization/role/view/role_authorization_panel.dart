@@ -59,7 +59,7 @@ class _RoleAuthorizationPanelState extends State<RoleAuthorizationPanel> {
             //   }
             // },
             onSave: () => _onSave(ctx),
-            title: 'Rol Yetkilendirme - ${selectedRole.name}',
+            title: ctx.l10n.authorization_rolePanelTitle(selectedRole.name ?? ''),
             child: Column(
               spacing: 20,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +72,11 @@ class _RoleAuthorizationPanelState extends State<RoleAuthorizationPanel> {
                     child: MedSegmentedButton(
                       selectedIndex: _activeTab,
                       onChanged: changeTab,
-                      labels: ['Menü', 'İlaç', 'Tıbbi Sarf'],
+                      labels: [
+                        ctx.l10n.authorization_tabMenuLabel,
+                        ctx.l10n.authorization_tabDrugLabel,
+                        ctx.l10n.authorization_tabConsumableLabel,
+                      ],
                     ),
                   ),
                 ),
@@ -102,17 +106,17 @@ class _RoleAuthorizationPanelState extends State<RoleAuthorizationPanel> {
       case 0:
         context.read<RoleMenuAuthNotifier>().submit(
           onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
         );
       case 1:
         context.read<RoleDrugAuthNotifier>().submit(
           onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
         );
       case 2:
         context.read<RoleMcAuthNotifier>().submit(
           onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
         );
     }
   }

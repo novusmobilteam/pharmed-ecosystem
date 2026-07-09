@@ -21,13 +21,13 @@ class UpcomingTreatmentPanel extends StatelessWidget {
     return DashboardListPanel(
       key: const ValueKey('upcoming_panel'),
       useCarousel: true,
-      title: 'YAKLAŞAN TEDAVİLER',
+      title: context.l10n.dashboardUpcomingTreatmentsPanelTitle,
       count: items.length,
       countColor: MedColors.blue,
       countBg: MedColors.blueLight,
       section: section,
       itemCount: items.length,
-      emptyTitle: 'Yaklaşan tedavi yok',
+      emptyTitle: context.l10n.dashboardUpcomingTreatmentsEmptyTitle,
       itemBuilder: (context, index) {
         final item = items[index];
         return DashboardRxItemCard(
@@ -36,8 +36,11 @@ class UpcomingTreatmentPanel extends StatelessWidget {
           showStatusChip: true,
           showTimeChip: true,
           infoRows: [
-            MedInfoRow(label: 'HASTA', value: item.prescription?.hospitalization?.patient?.fullName ?? '-'),
-            MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'),
+            MedInfoRow(
+              label: context.l10n.assignment_patientLabel,
+              value: item.prescription?.hospitalization?.patient?.fullName ?? '-',
+            ),
+            MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
           ],
         );
       },

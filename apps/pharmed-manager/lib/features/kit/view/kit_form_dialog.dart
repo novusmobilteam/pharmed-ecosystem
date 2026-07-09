@@ -32,7 +32,7 @@ class _KitFormDialogState extends State<KitFormDialog> {
   Widget build(BuildContext context) {
     return Consumer<KitFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? 'Yeni Kit' : 'Kit Düzenle';
+        final String title = notifier.isCreate ? context.l10n.kitFormAddTitle : context.l10n.kitFormEditTitle;
 
         return RegistrationDialog(
           title: title,
@@ -43,7 +43,7 @@ class _KitFormDialogState extends State<KitFormDialog> {
               await notifier.submit(
                 onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                 onSuccess: (msg) {
-                  MessageUtils.showSuccessSnackbar(context, msg);
+                  MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                   context.pop(true);
                 },
               );
@@ -72,7 +72,7 @@ class _NameField extends StatelessWidget {
     return Consumer<KitFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Kit Adı',
+          label: context.l10n.kitFormNameLabel,
           initialValue: notifier.kit.name,
           validator: (v) => Validators.cannotBlankValidator(v),
           onChanged: notifier.updateName,
@@ -90,7 +90,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<KitFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           initialValue: notifier.kit.status,
           options: Status.values,
           labelBuilder: (status) => status?.label,

@@ -24,14 +24,15 @@ class _CabinTemperatureScreenState extends State<CabinTemperatureScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => CabinTemperatureViewModel(cabinTemperatureRepository: context.read())..getStations(),
+      create: (context) =>
+          CabinTemperatureViewModel(cabinTemperatureRepository: context.read(), l10n: context.l10n)..getStations(),
       child: Consumer<CabinTemperatureViewModel>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
             mobile: MedMobileLayout(),
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: 'Kabin Isı Kontrol',
+              title: context.l10n.cabinTemperatureScreenTitle,
               showAddButton: true,
               onAddPressed: () => _onEdit(context),
               child: _TableView(notifier: notifier),
@@ -57,9 +58,20 @@ class _TableView extends StatelessWidget {
       categories: notifier.tableCategories,
       selectedCategoryId: notifier.selectedCategoryId,
       onCategoryChanged: notifier.selectCategory,
+      // CabinTemperatureDetail.titles context'e erişimi olmayan bir entity
+      // getter'ı olduğundan, kolon başlıkları burada l10n ile override edilir.
+      columnDefs: [
+        TableColumnDef(title: context.l10n.cabinTemperatureColumnCabin, contentIndex: 0),
+        TableColumnDef(title: context.l10n.cabinTemperatureInsideBottomLabel, contentIndex: 1),
+        TableColumnDef(title: context.l10n.cabinTemperatureInsideTopLabel, contentIndex: 2),
+        TableColumnDef(title: context.l10n.cabinTemperatureOutsideBottomLabel, contentIndex: 3),
+        TableColumnDef(title: context.l10n.cabinTemperatureOutsideTopLabel, contentIndex: 4),
+        TableColumnDef(title: context.l10n.cabinTemperatureHumidityBottomLabel, contentIndex: 5),
+        TableColumnDef(title: context.l10n.cabinTemperatureHumidityTopLabel, contentIndex: 6),
+      ],
       actions: [
-        TableActionItem.edit(onPressed: (data) => _onEdit(context, initial: data)),
-        TableActionItem.delete(onPressed: (data) => _onDelete(context, data)),
+        TableActionItem.edit(context: context, onPressed: (data) => _onEdit(context, initial: data)),
+        TableActionItem.delete(context: context, onPressed: (data) => _onDelete(context, data)),
       ],
     );
   }

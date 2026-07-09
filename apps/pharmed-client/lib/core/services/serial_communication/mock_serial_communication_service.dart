@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// SERİ PORT HABERLEŞMESİ — MOCK İMPLEMENTASYON
 /// ----------------------------------------------
@@ -18,10 +19,11 @@ class MockSerialCommunicationService implements ISerialCommunicationService {
 
   @override
   Future<void> connectToPort(String portName, {Function(String message)? onStatusChanged}) async {
-    onStatusChanged?.call('$portName portuna bağlanılıyor...');
+    final l10n = contextlessL10n();
+    onStatusChanged?.call(l10n.core_serialConnectingStatus(portName));
     await Future.delayed(const Duration(seconds: 1));
     _connected = true;
-    onStatusChanged?.call('Bağlantı başarılı: $portName');
+    onStatusChanged?.call(l10n.core_serialConnectSuccessStatus(portName));
     debugPrint('MOCK: $portName portuna bağlanıldı.');
   }
 

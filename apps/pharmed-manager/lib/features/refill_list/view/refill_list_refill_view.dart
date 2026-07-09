@@ -31,7 +31,7 @@ class RefillListRefillView extends StatelessWidget {
           }
 
           return CustomDialog(
-            title: 'İlaç Dolum Listesi',
+            title: context.l10n.refillList_dialogTitle,
             width: context.width * 0.8,
             maxHeight: context.height * 0.9,
             onSearchChanged: accordionNotifier.search,

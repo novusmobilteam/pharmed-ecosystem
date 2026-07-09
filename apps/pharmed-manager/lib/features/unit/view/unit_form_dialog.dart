@@ -33,7 +33,7 @@ class _UnitFormDialogState extends State<UnitFormDialog> {
   Widget build(BuildContext context) {
     return Consumer<UnitFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? 'Yeni Birim Oluştur' : 'Birim Düzenle';
+        final String title = notifier.isCreate ? context.l10n.unitFormAddTitle : context.l10n.unitFormEditTitle;
 
         return RegistrationDialog(
           title: title,
@@ -45,7 +45,7 @@ class _UnitFormDialogState extends State<UnitFormDialog> {
               await notifier.submit(
                 onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                 onSuccess: (msg) {
-                  MessageUtils.showSuccessSnackbar(context, msg);
+                  MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                   context.pop(true);
                 },
               );
@@ -73,7 +73,7 @@ class _NameField extends StatelessWidget {
     return Consumer<UnitFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Adı',
+          label: context.l10n.common_nameLabel,
           autoFocus: notifier.isCreate,
           initialValue: notifier.unit.name,
           validator: Validators.cannotBlankValidator,
@@ -92,7 +92,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<UnitFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           options: Status.values,
           labelBuilder: (status) => status?.label,
           initialValue: notifier.unit.status,

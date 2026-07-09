@@ -38,7 +38,9 @@ class _KitContentFormDialogState extends State<KitContentFormDialog> {
   Widget build(BuildContext context) {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? 'Kit İçeriği Ekle' : 'Kit İçeriği Düzenle';
+        final String title = notifier.isCreate
+            ? context.l10n.kitContentFormAddTitle
+            : context.l10n.kitContentFormEditTitle;
         return RegistrationDialog(
           title: title,
           width: 600,
@@ -48,7 +50,7 @@ class _KitContentFormDialogState extends State<KitContentFormDialog> {
               await notifier.submit(
                 onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                 onSuccess: (msg) {
-                  MessageUtils.showSuccessSnackbar(context, msg);
+                  MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                   context.pop(true);
                 },
               );
@@ -76,8 +78,8 @@ class _MaterialField extends StatelessWidget {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
         return MedSelectionField<Medicine>(
-          label: 'Malzeme',
-          title: 'Malzeme',
+          label: context.l10n.kitContentFormMaterialLabel,
+          title: context.l10n.kitContentFormMaterialLabel,
           initialValue: notifier.kitContent.medicine,
           labelBuilder: (medicine) => medicine.name ?? '-',
           dataSource: (skip, take, search) =>
@@ -98,7 +100,7 @@ class _PieceField extends StatelessWidget {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Adet',
+          label: context.l10n.kitContentFormPieceLabel,
           initialValue: notifier.kitContent.piece.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: (v) => Validators.cannotBlankValidator(v),

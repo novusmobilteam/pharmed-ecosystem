@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Firm extends Selectable implements TableData {
   final String? name;
@@ -24,7 +25,13 @@ class Firm extends Selectable implements TableData {
   List get rawContent => content;
 
   @override
-  List<String> titles = ['Id', 'Adı', 'Firma Tipi', 'Vergi Dairesi', 'Vergi No'];
+  List<String> titles = [
+    contextlessL10n().tableCore_firmIdColumn,
+    contextlessL10n().tableCore_firmNameColumn,
+    contextlessL10n().tableCore_firmTypeColumn,
+    contextlessL10n().tableCore_firmTaxOfficeColumn,
+    contextlessL10n().tableCore_firmTaxNoColumn,
+  ];
 
   Firm copyWith({int? id, String? name, String? taxOffice, int? taxNo, FirmType? type}) {
     return Firm(

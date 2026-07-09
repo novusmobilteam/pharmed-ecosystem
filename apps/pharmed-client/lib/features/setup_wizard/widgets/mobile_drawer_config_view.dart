@@ -31,7 +31,7 @@ class MobileDrawerConfigView extends ConsumerWidget {
               ),
               const SizedBox(width: 16),
               Text(
-                '1–8 çekmece',
+                context.l10n.wizard_drawerCountRangeHint,
                 style: TextStyle(fontFamily: MedFonts.sans, fontSize: 12, color: MedColors.text3),
               ),
             ],
@@ -105,7 +105,7 @@ class _SameConfigToggle extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Tüm çekmeceler aynı yapıda',
+                    context.l10n.wizard_sameConfigToggleLabel,
                     style: TextStyle(
                       fontFamily: MedFonts.sans,
                       fontSize: 14,
@@ -116,8 +116,8 @@ class _SameConfigToggle extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     value
-                        ? 'Tüm çekmeceler aynı satır/sütun konfigürasyonunu kullanır'
-                        : 'Kapalıysa her çekmece için satır/sütun ayrı seçilebilir',
+                        ? context.l10n.wizard_sameConfigToggleOnDesc
+                        : context.l10n.wizard_sameConfigToggleOffDesc,
                     style: TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.text3),
                   ),
                 ],
@@ -168,7 +168,7 @@ class _DrawerConfigCardState extends State<_DrawerConfigCard> {
   @override
   Widget build(BuildContext context) {
     final drawer = widget.drawer;
-    final summary = '${drawer.rowCount} satır · ${drawer.totalCells} hücre';
+    final summary = context.l10n.wizard_drawerRowCellSummary(drawer.rowCount, drawer.totalCells);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -211,7 +211,7 @@ class _DrawerConfigCardState extends State<_DrawerConfigCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${drawer.drawerIndex + 1}. Çekmece',
+                          context.l10n.wizard_summaryLabelDrawerIndexed(drawer.drawerIndex + 1),
                           style: TextStyle(
                             fontFamily: MedFonts.sans,
                             fontSize: 14,
@@ -220,7 +220,10 @@ class _DrawerConfigCardState extends State<_DrawerConfigCard> {
                           ),
                         ),
                         if (drawer.portNumber != null)
-                          Text('Port ${drawer.portNumber}', style: MedTextStyles.monoXs(color: MedColors.text3)),
+                          Text(
+                            context.l10n.wizard_drawerPortLabel(drawer.portNumber!),
+                            style: MedTextStyles.monoXs(color: MedColors.text3),
+                          ),
                       ],
                     ),
                   ),
@@ -302,7 +305,7 @@ class _RowConfigItem extends StatelessWidget {
           SizedBox(
             width: 56,
             child: Text(
-              'SATIR ${rowIndex + 1}',
+              context.l10n.wizard_rowLabel(rowIndex + 1),
               style: TextStyle(
                 fontFamily: MedFonts.mono,
                 fontSize: 9,

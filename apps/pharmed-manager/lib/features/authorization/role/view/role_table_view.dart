@@ -43,7 +43,9 @@ class RoleTableView extends StatelessWidget {
               notifier.setPage(page);
               notifier.fetch();
             },
-            actions: [TableActionItem(icon: PhosphorIcons.pen(), tooltip: 'Düzenle', onPressed: onEdit)],
+            actions: [
+              TableActionItem(icon: PhosphorIcons.pen(), tooltip: context.l10n.common_editTooltip, onPressed: onEdit),
+            ],
           );
         },
       ),

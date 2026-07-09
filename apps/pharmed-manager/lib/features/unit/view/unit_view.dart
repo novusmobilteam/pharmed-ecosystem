@@ -12,7 +12,7 @@ Future<Unit?> showUnitView(BuildContext context) async {
       create: (context) => UnitNotifier(getUnitsUseCase: context.read(), deleteUnitUseCase: context.read())..getUnits(),
       child: Consumer<UnitNotifier>(
         builder: (context, notifier, Widget? child) => CustomDialog(
-          title: 'Birim',
+          title: context.l10n.unitDialogTitle,
           showSearch: true,
           showAdd: true,
           onSearchChanged: (query) => notifier.search(query),
@@ -37,12 +37,12 @@ class _UnitViewState extends State<UnitView> {
   Widget build(BuildContext context) {
     return Consumer<UnitNotifier>(
       builder: (context, notifier, _) {
-        return _buildContent(notifier);
+        return _buildContent(context, notifier);
       },
     );
   }
 
-  Widget _buildContent(UnitNotifier notifier) {
+  Widget _buildContent(BuildContext context, UnitNotifier notifier) {
     if (notifier.isFetching && notifier.isEmpty) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
@@ -55,8 +55,8 @@ class _UnitViewState extends State<UnitView> {
       return EmptyStateWidget(
         icon: Icons.square_foot_outlined,
         variant: EmptyStateVariant.custom,
-        title: 'Henüz birim bulunmuyor',
-        description: 'Yeni birim eklemek için "+" butonuna tıklayın',
+        title: context.l10n.unitListEmptyTitle,
+        description: context.l10n.common_addItemHint('birim'),
       );
     }
 
@@ -90,7 +90,7 @@ void _onDelete(BuildContext context, Unit item) {
     onConfirm: () => context.read<UnitNotifier>().deleteUnit(
       item,
       onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-      onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+      onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
     ),
   );
 }

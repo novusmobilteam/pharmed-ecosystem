@@ -71,12 +71,16 @@ class EditableListItem extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ...additionalActions,
-                    _ActionIcon(icon: PhosphorIcons.pencilSimple(), onPressed: onEdit, tooltip: 'Düzenle'),
+                    _ActionIcon(
+                      icon: PhosphorIcons.pencilSimple(),
+                      onPressed: onEdit,
+                      tooltip: context.l10n.common_editTooltip,
+                    ),
                     if (onDelete != null)
                       _ActionIcon(
                         icon: PhosphorIcons.trash(),
                         onPressed: onDelete!,
-                        tooltip: 'Sil',
+                        tooltip: context.l10n.common_deleteTooltip,
                         color: MedColors.red.withValues(alpha: 0.7),
                         hoverColor: MedColors.redLight,
                       ),

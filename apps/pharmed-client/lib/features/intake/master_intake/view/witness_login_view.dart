@@ -70,12 +70,12 @@ class _WitnessLoginViewState extends ConsumerState<WitnessLoginView> {
         // Aktif (login) kullanıcı kendi işlemine şahit olamaz.
         final currentUserId = ref.read(authNotifierProvider.notifier).currentUser?.id;
         if (currentUserId != null && user.id == currentUserId) {
-          MessageUtils.showErrorSnackbar(context, 'İşlemi yapan kullanıcı aynı işleme şahit olamaz.');
+          MessageUtils.showErrorSnackbar(context, context.l10n.intake_error_selfWitness);
           return;
         }
 
         widget.onWitnessLoggedIn(user);
-        MessageUtils.showSuccessSnackbar(context, '${user.fullName} şahit olarak onaylandı.');
+        MessageUtils.showSuccessSnackbar(context, context.l10n.intake_success_witnessConfirmed(user.fullName));
         Navigator.of(context).pop(true);
       },
       error: (e) => MessageUtils.showErrorSnackbar(context, e.message),
@@ -87,7 +87,7 @@ class _WitnessLoginViewState extends ConsumerState<WitnessLoginView> {
     final witnesses = widget.item.witnesses;
 
     return MedDialog(
-      title: 'Şahit Doğrulaması',
+      title: context.l10n.intake_witnessDialog_title,
       subtitle: widget.item.medicine?.name,
       icon: PhosphorIcons.shieldCheck(),
       width: 520,
@@ -104,22 +104,26 @@ class _WitnessLoginViewState extends ConsumerState<WitnessLoginView> {
               _WitnessChips(witnesses: witnesses, selected: widget.item.witness),
             MedTextInputField(
               controller: _usernameController,
-              label: 'Şahit Kullanıcı Adı',
+              label: context.l10n.intake_witnessDialog_usernameLabel,
               prefixIcon: Icon(PhosphorIcons.user(), color: MedColors.text3),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Kullanıcı adı giriniz' : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.intake_witnessDialog_usernameRequired : null,
               onChanged: (_) {},
             ),
             MedTextInputField(
               controller: _passwordController,
-              label: 'Şahit Şifresi',
+              label: context.l10n.intake_witnessDialog_passwordLabel,
               obscureText: true,
               prefixIcon: Icon(PhosphorIcons.lock(), color: MedColors.text3),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Şifre giriniz' : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.intake_witnessDialog_passwordRequired : null,
               onChanged: (_) {},
             ),
             SizedBox(
               width: double.infinity,
-              child: MedButton(label: 'Şahitliği Onayla', isLoading: _isLoading, onPressed: _handleLogin),
+              child: MedButton(
+                label: context.l10n.intake_witnessDialog_confirmButton,
+                isLoading: _isLoading,
+                onPressed: _handleLogin,
+              ),
             ),
           ],
         ),
@@ -143,7 +147,7 @@ class _AnyoneCanWitnessInfo extends StatelessWidget {
           Icon(PhosphorIcons.users(), size: 16, color: MedColors.blue),
           Expanded(
             child: Text(
-              'Bu işlem için herhangi bir personel şahitlik yapabilir.',
+              context.l10n.intake_witnessDialog_anyoneInfo,
               style: MedTextStyles.bodySm(color: MedColors.text3),
             ),
           ),
@@ -165,7 +169,7 @@ class _WitnessChips extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
       children: [
-        Text('Yetkili Şahitler (${witnesses.length})', style: MedTextStyles.bodySm(color: MedColors.text3)),
+        Text(context.l10n.intake_witnessDialog_authorizedWitnesses(witnesses.length), style: MedTextStyles.bodySm(color: MedColors.text3)),
         Wrap(
           spacing: 6,
           runSpacing: 6,

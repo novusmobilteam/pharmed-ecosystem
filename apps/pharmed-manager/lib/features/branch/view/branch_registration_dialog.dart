@@ -14,7 +14,7 @@ class BranchRegistrationDialog extends StatelessWidget {
 
     return Consumer<BranchFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? 'Branş Ekle' : 'Branş Düzenle';
+        final String title = notifier.isCreate ? context.l10n.branch_addTitle : context.l10n.branch_editTitle;
 
         return RegistrationDialog(
           title: title,
@@ -53,7 +53,7 @@ class _NameField extends StatelessWidget {
     return Consumer<BranchFormNotifier>(
       builder: (context, vm, _) {
         return MedTextInputField(
-          label: 'Branş Adı',
+          label: context.l10n.branch_nameLabel,
           autoFocus: vm.isCreate,
           initialValue: vm.branch.name,
           validator: (v) => Validators.cannotBlankValidator(v),
@@ -72,7 +72,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<BranchFormNotifier>(
       builder: (context, vm, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           initialValue: vm.branch.status,
           options: Status.values,
           labelBuilder: (value) => value?.label,

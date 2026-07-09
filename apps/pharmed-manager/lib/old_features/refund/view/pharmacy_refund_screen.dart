@@ -74,7 +74,7 @@ class _RefundTableView extends StatelessWidget {
             onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
           ),
         ),
-        TableActionItem.delete(onPressed: (refund) => showDeleteDescriptionView(context, refund)),
+        TableActionItem.delete(context: context, onPressed: (refund) => showDeleteDescriptionView(context, refund)),
       ],
       emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
     );

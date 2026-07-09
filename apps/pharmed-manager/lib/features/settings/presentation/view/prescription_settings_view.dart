@@ -14,7 +14,7 @@ class PrescriptionSettingsView extends StatelessWidget {
           options: options,
           onChanged: (_) {},
           labelBuilder: (option) => option?.toString(),
-          label: 'Reçete Erişilebilirlik Süresi (dakika)',
+          label: context.l10n.settingsPrescription_accessDurationLabel,
         ),
         Row(
           spacing: 10,
@@ -22,7 +22,7 @@ class PrescriptionSettingsView extends StatelessWidget {
             Icon(PhosphorIcons.info()),
             Expanded(
               child: Text(
-                'Reçetelerin ürün alım saatlerinden ne kadar önce ve sonra erişilebilir olacağını belirtir.',
+                context.l10n.settingsPrescription_accessDurationDescription,
                 textAlign: TextAlign.left,
               ),
             ),

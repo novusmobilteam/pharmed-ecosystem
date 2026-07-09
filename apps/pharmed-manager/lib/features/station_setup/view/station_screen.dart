@@ -15,10 +15,6 @@ import '../parts/station/view/station_table_view.dart';
 import '../parts/warehouse/notifier/warehouse_notifier.dart';
 import '../parts/warehouse/view/warehouse_table_view.dart';
 
-const _titles = ['İstasyon Tanımlama', 'Servis Tanımlama', 'Depo Tanımlama'];
-
-const _onAddLabels = ['Yeni İstasyon', 'Yeni Servis', 'Yeni Depo'];
-
 class StationSetupScreen extends StatelessWidget {
   const StationSetupScreen({super.key, required this.menu});
 
@@ -44,18 +40,31 @@ class StationSetupScreen extends StatelessWidget {
       ],
       child: Consumer<StationSetupNotifier>(
         builder: (context, notifier, _) {
+          final titles = [
+            context.l10n.stationSetup_screen_stationTabTitle,
+            context.l10n.stationSetup_screen_serviceTabTitle,
+            context.l10n.stationSetup_screen_warehouseTabTitle,
+          ];
+          final onAddLabels = [
+            context.l10n.stationSetup_station_formTitleNew,
+            context.l10n.stationSetup_service_formTitleNew,
+            context.l10n.stationSetup_warehouse_formTitleNew,
+          ];
           return MedResponsiveLayout(
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'İstasyon Tanımlama',
+              title: menu.name ?? context.l10n.stationSetup_screen_stationTabTitle,
               subtitle: menu.description,
               actions: [
                 MedButton(
                   onPressed: () => _onAdd(context, notifier.activeIndex),
-                  label: _onAddLabels.elementAt(notifier.activeIndex),
+                  label: onAddLabels.elementAt(notifier.activeIndex),
                 ),
-                MedButton(onPressed: () => _showStationSetupWizardView(context), label: 'Kurulum Sihirbazı'),
+                MedButton(
+                  onPressed: () => _showStationSetupWizardView(context),
+                  label: context.l10n.stationSetup_screen_setupWizardButton,
+                ),
               ],
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
@@ -74,7 +83,7 @@ class StationSetupScreen extends StatelessWidget {
                       child: MedSegmentedButton(
                         selectedIndex: notifier.activeIndex,
                         onChanged: (index) => notifier.activeIndex = index,
-                        labels: _titles,
+                        labels: titles,
                       ),
                     ),
                     SizedBox(height: 10),

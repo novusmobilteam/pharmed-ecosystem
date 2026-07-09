@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_tr.dart';
 
 // ignore_for_file: type=lint
@@ -97,6 +98,7 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
     Locale('en'),
+    Locale('fr'),
     Locale('tr'),
   ];
 
@@ -2547,6 +2549,5603 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reported Extra Stocks'**
   String get census_extra_stock_summary_title;
+
+  /// Fallback label shown when the serial port connection has no active port name
+  ///
+  /// In en, this message translates to:
+  /// **'Not Connected'**
+  String get core_serialPortDisconnectedLabel;
+
+  /// Live status line shown while attempting to connect to a serial port
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to port: {portName}...'**
+  String core_serialConnectingStatus(String portName);
+
+  /// Live status line shown after a successful serial port connection
+  ///
+  /// In en, this message translates to:
+  /// **'Connected successfully: {portName}'**
+  String core_serialConnectSuccessStatus(String portName);
+
+  /// Live status line shown when the default port fails and the service falls back to scanning other ports
+  ///
+  /// In en, this message translates to:
+  /// **'{portName} failed. Scanning other ports...'**
+  String core_serialPortFailedScanningOthersStatus(String portName);
+
+  /// Error message shown when the default serial port fails and no fallback port is available
+  ///
+  /// In en, this message translates to:
+  /// **'The default port ({portName}) failed and no other port was found.'**
+  String core_serialNoOtherPortsError(String portName);
+
+  /// Live status line shown while trying an individual serial port during the scan
+  ///
+  /// In en, this message translates to:
+  /// **'Trying: {portName}...'**
+  String core_serialTryingPortStatus(String portName);
+
+  /// Live status line shown once a serial port connection has been established during the scan
+  ///
+  /// In en, this message translates to:
+  /// **'Connection established: {portName}'**
+  String core_serialConnectionEstablishedStatus(String portName);
+
+  /// Error message shown when no serial port could be connected to after scanning all candidates
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to any port. Check the cables.'**
+  String get core_serialNoPortConnectedError;
+
+  /// Error message shown when a specific serial port fails to open
+  ///
+  /// In en, this message translates to:
+  /// **'The port could not be opened ({portName}).'**
+  String core_serialPortOpenFailedError(String portName);
+
+  /// Error message shown when a serial command is attempted with no active connection
+  ///
+  /// In en, this message translates to:
+  /// **'No connection.'**
+  String get core_serialNoConnectionError;
+
+  /// Error message shown when the serial port is locked/busy and times out waiting for access
+  ///
+  /// In en, this message translates to:
+  /// **'Port timed out.'**
+  String get core_serialPortBusyTimeoutError;
+
+  /// Error message shown when writing to the serial port fails
+  ///
+  /// In en, this message translates to:
+  /// **'Write failed.'**
+  String get core_serialWriteFailedError;
+
+  /// Fallback success message shown when an API operation succeeds without a specific message
+  ///
+  /// In en, this message translates to:
+  /// **'Operation successful'**
+  String get common_defaultSuccessMessage;
+
+  /// Generic success message shown after create/update/delete operations across CRUD screens (shared across the app)
+  ///
+  /// In en, this message translates to:
+  /// **'Your operation was completed successfully.'**
+  String get common_operationSuccessMessage;
+
+  /// Generic loading indicator text shown while a dialog/overlay is busy
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get common_loadingEllipsis;
+
+  /// Generic search field hint text used in dialogs and lists
+  ///
+  /// In en, this message translates to:
+  /// **'Search...'**
+  String get common_searchHint;
+
+  /// Tooltip on the generic search icon button
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get common_searchTooltip;
+
+  /// Tooltip on the generic add icon button
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get common_addTooltip;
+
+  /// Tooltip on the generic close icon button
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get common_closeTooltip;
+
+  /// Generic save button label used across forms and dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get common_saveButton;
+
+  /// Generic edit tooltip/button label used across list/table action items
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get common_editTooltip;
+
+  /// Generic delete tooltip/button label used across list/table action items
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get common_deleteTooltip;
+
+  /// Generic status field/dropdown label used across CRUD forms
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get common_statusLabel;
+
+  /// Generic empty-state description shown when a CRUD list has no items (non-dialog context)
+  ///
+  /// In en, this message translates to:
+  /// **'The list is currently empty'**
+  String get common_emptyListMessage;
+
+  /// Generic entity-name field label used across CRUD forms (e.g. active ingredient, unit)
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get common_nameLabel;
+
+  /// Validation error dialog message shown when required form fields are left empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in the required fields.'**
+  String get common_requiredFieldsError;
+
+  /// Generic description field label/hint used across forms
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get common_descriptionLabel;
+
+  /// Button label to deselect all selected items in a selectable list
+  ///
+  /// In en, this message translates to:
+  /// **'Deselect All'**
+  String get common_deselectAllButton;
+
+  /// Button label to select all items in a selectable list
+  ///
+  /// In en, this message translates to:
+  /// **'Select All'**
+  String get common_selectAllButton;
+
+  /// Fallback unit label shown when a medicine/material has no operation unit configured
+  ///
+  /// In en, this message translates to:
+  /// **'Piece'**
+  String get common_defaultUnitFallback;
+
+  /// Badge/checkbox label for the 'first dose emergency' prescription item flag
+  ///
+  /// In en, this message translates to:
+  /// **'First Dose Emergency'**
+  String get common_flagFirstDoseEmergency;
+
+  /// Badge/checkbox label for the 'ask doctor' prescription item flag
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Doctor'**
+  String get common_flagAskDoctor;
+
+  /// Badge/checkbox label for the 'in case of necessity' (PRN) prescription item flag
+  ///
+  /// In en, this message translates to:
+  /// **'As Needed'**
+  String get common_flagInCaseOfNecessity;
+
+  /// Empty-state hint shown in selection dialogs, telling the user how to add a new item of the given type
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the \"+\" button to add a new {item}'**
+  String common_addItemHint(String item);
+
+  /// Generic fallback error message shown when an operation fails without a specific error
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred.'**
+  String get common_genericErrorMessage;
+
+  /// Fallback text shown on the hospitalization card when the doctor's name is null
+  ///
+  /// In en, this message translates to:
+  /// **'No Doctor Specified'**
+  String get hospitalizationCard_noDoctorFallback;
+
+  /// Footer info label for the patient's national ID number on the hospitalization card
+  ///
+  /// In en, this message translates to:
+  /// **'National ID No.'**
+  String get hospitalizationCard_nationalIdLabel;
+
+  /// Footer info label for the admission date on the hospitalization card
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Date'**
+  String get hospitalizationCard_admissionDateLabel;
+
+  /// Header label above the category list in the menu browser
+  ///
+  /// In en, this message translates to:
+  /// **'CATEGORIES'**
+  String get menuBrowser_categoriesHeader;
+
+  /// Search field hint text in the menu browser's category list
+  ///
+  /// In en, this message translates to:
+  /// **'Search category...'**
+  String get menuBrowser_searchHint;
+
+  /// Badge showing how many items are selected out of the total in the current category
+  ///
+  /// In en, this message translates to:
+  /// **'{selected}/{total}'**
+  String menuBrowser_selectionCountBadge(int selected, int total);
+
+  /// Empty-state message shown when a selected category has no menu items
+  ///
+  /// In en, this message translates to:
+  /// **'No menu found in this category'**
+  String get menuBrowser_emptyCategoryMessage;
+
+  /// Header title for a prescription group card, showing the prescription ID
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription #{id}'**
+  String rxGroup_headerTitle(Object id);
+
+  /// Header subtitle for a prescription group card, showing the doctor name and prescription date
+  ///
+  /// In en, this message translates to:
+  /// **'{doctorName} · {date}'**
+  String rxGroup_headerSubtitle(String doctorName, String date);
+
+  /// Badge showing the total number of items in a prescription group
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String rxGroup_itemCountBadge(int count);
+
+  /// Label showing how many items in a prescription group can currently be acted on
+  ///
+  /// In en, this message translates to:
+  /// **'{count} actionable items'**
+  String rxGroup_selectableCountLabel(int count);
+
+  /// Fallback text shown when a prescription's doctor name is null
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get rxGroup_unknownDoctorFallback;
+
+  /// Section label for the RFID tag area of a prescription item row
+  ///
+  /// In en, this message translates to:
+  /// **'RFID TAG'**
+  String get rxGroup_rfidTagLabel;
+
+  /// Loading-state label shown while an RFID tag is being read
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for tag...'**
+  String get rxGroup_rfidTagLoadingLabel;
+
+  /// Label shown when a prescription item has no RFID tag assigned
+  ///
+  /// In en, this message translates to:
+  /// **'No tag assigned yet'**
+  String get rxGroup_rfidTagUnassignedLabel;
+
+  /// Button label to change the RFID tag assigned to a prescription item
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get rxGroup_rfidChangeButton;
+
+  /// Button label to assign an RFID tag to a prescription item
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Tag'**
+  String get rxGroup_rfidAssignButton;
+
+  /// Bottom action bar label showing how many prescription items are currently selected
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items selected'**
+  String rxGroup_selectedCountBar(int count);
+
+  /// Action chip label to approve selected prescription items
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get rxGroup_approveAction;
+
+  /// Action chip label to reject selected prescription items
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get rxGroup_rejectAction;
+
+  /// Dialog title for the change-password screen
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword_dialogTitle;
+
+  /// Field label for the current password input
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get changePassword_currentPasswordLabel;
+
+  /// Field label for the new password input
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get changePassword_newPasswordLabel;
+
+  /// Field label for the new password confirmation input
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get changePassword_confirmPasswordLabel;
+
+  /// Submit button label on the change-password form
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword_submitButton;
+
+  /// Small badge label shown in the manager app bar
+  ///
+  /// In en, this message translates to:
+  /// **'MANAGEMENT PANEL'**
+  String get home_appBarBadgeLabel;
+
+  /// Tooltip on the developer settings icon, only visible in debug builds
+  ///
+  /// In en, this message translates to:
+  /// **'Developer Settings'**
+  String get home_devSettingsTooltip;
+
+  /// Empty-state title shown when the logged-in user has no accessible menus
+  ///
+  /// In en, this message translates to:
+  /// **'No Authorized Menu Found'**
+  String get home_noAuthorizedMenuTitle;
+
+  /// Empty-state description shown when the logged-in user has no accessible menus
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has no access permissions defined.\nPlease contact your system administrator to obtain access.'**
+  String get home_noAuthorizedMenuDescription;
+
+  /// Dialog title for the branch (medical specialty) list screen
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Definition'**
+  String get branch_listDialogTitle;
+
+  /// Dialog title when creating a new branch
+  ///
+  /// In en, this message translates to:
+  /// **'Add Branch'**
+  String get branch_addTitle;
+
+  /// Dialog title when editing an existing branch
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Branch'**
+  String get branch_editTitle;
+
+  /// Field label for the branch name
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Name'**
+  String get branch_nameLabel;
+
+  /// Success message shown after creating a firm/supplier
+  ///
+  /// In en, this message translates to:
+  /// **'Firm created successfully'**
+  String get firm_createSuccessMessage;
+
+  /// Success message shown after updating a firm/supplier
+  ///
+  /// In en, this message translates to:
+  /// **'Firm updated successfully'**
+  String get firm_updateSuccessMessage;
+
+  /// Side panel title / toolbar button label when creating a new firm
+  ///
+  /// In en, this message translates to:
+  /// **'New Firm'**
+  String get firm_createPanelTitle;
+
+  /// Side panel title when editing an existing firm
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Firm'**
+  String get firm_editPanelTitle;
+
+  /// Side panel subtitle when creating a new firm
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the firm details'**
+  String get firm_createPanelSubtitle;
+
+  /// Side panel subtitle when editing an existing firm
+  ///
+  /// In en, this message translates to:
+  /// **'Update the firm details'**
+  String get firm_editPanelSubtitle;
+
+  /// Field label for the firm name
+  ///
+  /// In en, this message translates to:
+  /// **'Firm Name'**
+  String get firm_nameLabel;
+
+  /// Field label for the firm's tax number
+  ///
+  /// In en, this message translates to:
+  /// **'Tax No.'**
+  String get firm_taxNoLabel;
+
+  /// Field label for the firm's tax office
+  ///
+  /// In en, this message translates to:
+  /// **'Tax Office'**
+  String get firm_taxOfficeLabel;
+
+  /// Field label for the firm type
+  ///
+  /// In en, this message translates to:
+  /// **'Firm Type'**
+  String get firm_typeLabel;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Firm Definition'**
+  String get firm_screenDefaultTitle;
+
+  /// Success message shown after deleting a dosage form
+  ///
+  /// In en, this message translates to:
+  /// **'The dosage form was deleted successfully.'**
+  String get dosageForm_deleteSuccessMessage;
+
+  /// Success message shown after creating or updating a dosage form
+  ///
+  /// In en, this message translates to:
+  /// **'The dosage form was saved successfully.'**
+  String get dosageForm_saveSuccessMessage;
+
+  /// Dialog title when creating a new dosage form
+  ///
+  /// In en, this message translates to:
+  /// **'Create Dosage Form'**
+  String get dosageForm_createTitle;
+
+  /// Dialog title when editing an existing dosage form
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Dosage Form'**
+  String get dosageForm_editTitle;
+
+  /// Dialog title for the dosage form list screen
+  ///
+  /// In en, this message translates to:
+  /// **'Dosage Form'**
+  String get dosageForm_listDialogTitle;
+
+  /// Empty-state title for the dosage form list
+  ///
+  /// In en, this message translates to:
+  /// **'No dosage forms yet'**
+  String get dosageForm_emptyTitle;
+
+  /// Empty-state description for the dosage form list, prompting the user to add one
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the \"+\" button to create a dosage form'**
+  String get dosageForm_emptyDescription;
+
+  /// Tab label / side panel title for user authorization
+  ///
+  /// In en, this message translates to:
+  /// **'User Authorization'**
+  String get authorization_userTabTitle;
+
+  /// Tab label for role authorization
+  ///
+  /// In en, this message translates to:
+  /// **'Role Authorization'**
+  String get authorization_roleTabTitle;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'User/Role Authorization'**
+  String get authorization_screenTitleFallback;
+
+  /// Panel title showing which role's permissions are being edited
+  ///
+  /// In en, this message translates to:
+  /// **'Role Authorization - {roleName}'**
+  String authorization_rolePanelTitle(String roleName);
+
+  /// Sub-tab label for menu permissions within the role authorization panel
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get authorization_tabMenuLabel;
+
+  /// Sub-tab label for drug permissions within the role authorization panel
+  ///
+  /// In en, this message translates to:
+  /// **'Drug'**
+  String get authorization_tabDrugLabel;
+
+  /// Sub-tab label for medical consumable permissions within the role authorization panel
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Consumable'**
+  String get authorization_tabConsumableLabel;
+
+  /// Column header for the 'pull drug' permission in the role/drug authorization table
+  ///
+  /// In en, this message translates to:
+  /// **'Pull Drug'**
+  String get authorization_drugTable_pullColumn;
+
+  /// Column header for the 'refill' permission in the role/drug authorization table
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get authorization_drugTable_fillColumn;
+
+  /// Column header for the 'return' permission in the role/drug authorization table
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get authorization_drugTable_returnColumn;
+
+  /// Column header for the 'dispose' permission in the role/drug authorization table
+  ///
+  /// In en, this message translates to:
+  /// **'Dispose'**
+  String get authorization_drugTable_disposeColumn;
+
+  /// Row label for the 'select all drugs' header row in the drug authorization table
+  ///
+  /// In en, this message translates to:
+  /// **'All Drugs'**
+  String get authorization_drugTable_allDrugsRow;
+
+  /// Fallback text shown when a drug's name is null in the authorization table
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Drug'**
+  String get authorization_drugTable_unknownDrugFallback;
+
+  /// Success message shown after saving application settings
+  ///
+  /// In en, this message translates to:
+  /// **'Settings updated successfully.'**
+  String get settings_updateSuccessMessage;
+
+  /// Dropdown label for the drawer-open wait duration setting
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer Open Wait Time (seconds)'**
+  String get settingsCabin_drawerOpenWaitLabel;
+
+  /// Helper text explaining the drawer-open wait duration setting
+  ///
+  /// In en, this message translates to:
+  /// **'Specifies when the system will send a close command to the drawer if it is left open.'**
+  String get settingsCabin_drawerOpenWaitDescription;
+
+  /// Switch label to toggle the admin dashboard feature
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Dashboard Active'**
+  String get settingsDeveloper_adminDashboardActiveLabel;
+
+  /// Section label for the developer app-mode toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Application Mode'**
+  String get settingsDeveloper_appModeLabel;
+
+  /// Mode toggle button label to switch the app into client mode
+  ///
+  /// In en, this message translates to:
+  /// **'Client Mode'**
+  String get settingsDeveloper_clientModeButton;
+
+  /// Mode toggle button label to switch the app into manager mode
+  ///
+  /// In en, this message translates to:
+  /// **'Manager Mode'**
+  String get settingsDeveloper_managerModeButton;
+
+  /// Dropdown label for the auto-standby duration setting
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Standby Duration (seconds)'**
+  String get settingsGeneral_autoStandbyDurationLabel;
+
+  /// Text field label for the expiry warning threshold setting
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Warning'**
+  String get settingsGeneral_expiryWarningLabel;
+
+  /// Checkbox label for enabling hospital information system stock control
+  ///
+  /// In en, this message translates to:
+  /// **'HIS Stock Control'**
+  String get settingsGeneral_hbysStockControlLabel;
+
+  /// Checkbox label restricting cabinet access to fingerprint reader only
+  ///
+  /// In en, this message translates to:
+  /// **'Only allow fingerprint reader use on cabinets.'**
+  String get settingsGeneral_fingerprintOnlyLabel;
+
+  /// Checkbox label allowing orders to be accepted outside the configured time window
+  ///
+  /// In en, this message translates to:
+  /// **'Orders outside the time window may be accepted.'**
+  String get settingsGeneral_allowOutOfWindowOrdersLabel;
+
+  /// Checkbox label allowing per-cell expiry date entry for unit-dose drawers during refill
+  ///
+  /// In en, this message translates to:
+  /// **'Allow entering a separate expiry date for each compartment in unit-dose drawers during drug refill.'**
+  String get settingsGeneral_perCellExpiryDateLabel;
+
+  /// Dropdown label for the prescription access duration setting
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription Access Duration (minutes)'**
+  String get settingsPrescription_accessDurationLabel;
+
+  /// Helper text explaining the prescription access duration setting
+  ///
+  /// In en, this message translates to:
+  /// **'Specifies how long before and after product pickup times prescriptions remain accessible.'**
+  String get settingsPrescription_accessDurationDescription;
+
+  /// Tab title for cabinet communication settings, visible to manager/admin only
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet Communication Settings'**
+  String get settingsView_cabinTabTitle;
+
+  /// Tab title for prescription settings, visible to manager/admin only
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription Settings'**
+  String get settingsView_prescriptionTabTitle;
+
+  /// Tab title for general settings, visible to everyone
+  ///
+  /// In en, this message translates to:
+  /// **'General Settings'**
+  String get settingsView_generalTabTitle;
+
+  /// Tab title for developer settings, visible to admin only
+  ///
+  /// In en, this message translates to:
+  /// **'Developer Settings'**
+  String get settingsView_developerTabTitle;
+
+  /// Button label to refresh the current user's permissions
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Permissions'**
+  String get settingsView_refreshPermissionsButton;
+
+  /// Default room name seeded into the name field when adding a new room
+  ///
+  /// In en, this message translates to:
+  /// **'Room {index}'**
+  String stationSetup_defaultRoomName(int index);
+
+  /// Success message shown after creating a service
+  ///
+  /// In en, this message translates to:
+  /// **'Service created successfully'**
+  String get stationSetup_service_createdSuccessMessage;
+
+  /// Success message shown after updating a service
+  ///
+  /// In en, this message translates to:
+  /// **'Service updated successfully'**
+  String get stationSetup_service_updatedSuccessMessage;
+
+  /// Section header above the room/bed list in the service form
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms & Beds'**
+  String get stationSetup_roomsSectionTitle;
+
+  /// Summary line showing the total room and bed count for a service
+  ///
+  /// In en, this message translates to:
+  /// **'{roomCount} rooms · {bedCount} beds'**
+  String stationSetup_roomsBedsSummary(int roomCount, int bedCount);
+
+  /// Button label to add a new room
+  ///
+  /// In en, this message translates to:
+  /// **'Add Room'**
+  String get stationSetup_addRoomButton;
+
+  /// Badge showing the bed count for a room
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} bed} other{{count} beds}}'**
+  String stationSetup_bedCountBadge(int count);
+
+  /// Empty-state text inside an expanded room tile when it has no beds
+  ///
+  /// In en, this message translates to:
+  /// **'No beds added yet'**
+  String get stationSetup_noBedsAddedYetMessage;
+
+  /// Button label to add a new bed to a room
+  ///
+  /// In en, this message translates to:
+  /// **'Add Bed'**
+  String get stationSetup_addBedButton;
+
+  /// Side panel title / add button label when creating a new service
+  ///
+  /// In en, this message translates to:
+  /// **'New Service'**
+  String get stationSetup_service_formTitleNew;
+
+  /// Side panel title when editing an existing service
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Service'**
+  String get stationSetup_service_formTitleEdit;
+
+  /// Side panel subtitle when creating a new service
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the service details'**
+  String get stationSetup_service_formSubtitleNew;
+
+  /// Side panel subtitle when editing an existing service
+  ///
+  /// In en, this message translates to:
+  /// **'Update the service details'**
+  String get stationSetup_service_formSubtitleEdit;
+
+  /// Field label for the service name
+  ///
+  /// In en, this message translates to:
+  /// **'Service Name'**
+  String get stationSetup_service_nameLabel;
+
+  /// Field label for the service's branch selection
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get stationSetup_service_branchLabel;
+
+  /// Selection dialog title for choosing a branch
+  ///
+  /// In en, this message translates to:
+  /// **'Select Branch'**
+  String get stationSetup_service_branchSelectTitle;
+
+  /// Field label for the service's responsible user selection
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get stationSetup_service_userLabel;
+
+  /// Status dropdown label shared by the service and warehouse forms in station setup
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get stationSetup_common_statusLabel;
+
+  /// Success message shown after creating a station
+  ///
+  /// In en, this message translates to:
+  /// **'Station created successfully'**
+  String get stationSetup_station_createdSuccessMessage;
+
+  /// Success message shown after updating a station
+  ///
+  /// In en, this message translates to:
+  /// **'Station updated successfully'**
+  String get stationSetup_station_updatedSuccessMessage;
+
+  /// Side panel title / add button label when creating a new station
+  ///
+  /// In en, this message translates to:
+  /// **'New Station'**
+  String get stationSetup_station_formTitleNew;
+
+  /// Side panel title when editing an existing station
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Station'**
+  String get stationSetup_station_formTitleEdit;
+
+  /// Side panel subtitle when creating a new station
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the station details'**
+  String get stationSetup_station_formSubtitleNew;
+
+  /// Side panel subtitle when editing an existing station
+  ///
+  /// In en, this message translates to:
+  /// **'Update the station details'**
+  String get stationSetup_station_formSubtitleEdit;
+
+  /// Field label for the station name
+  ///
+  /// In en, this message translates to:
+  /// **'Station Name'**
+  String get stationSetup_station_nameLabel;
+
+  /// Field label for the station's drug warehouse selection
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Warehouse'**
+  String get stationSetup_station_drugWarehouseLabel;
+
+  /// Selection dialog title for choosing a drug warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Select Drug Warehouse'**
+  String get stationSetup_station_drugWarehouseSelectTitle;
+
+  /// Dropdown label for the station's drug status
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Status'**
+  String get stationSetup_station_drugStatusLabel;
+
+  /// Field label for the station's medical consumable warehouse selection
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Consumable Warehouse'**
+  String get stationSetup_station_consumableWarehouseLabel;
+
+  /// Selection dialog title for choosing a medical consumable warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Select Medical Consumable Warehouse'**
+  String get stationSetup_station_consumableWarehouseSelectTitle;
+
+  /// Dropdown label for the station's medical consumable status, shown in the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Consumable Status'**
+  String get stationSetup_station_consumableStatusLabel;
+
+  /// Field label for the station's service selection
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get stationSetup_station_serviceLabel;
+
+  /// Selection dialog title for choosing a service
+  ///
+  /// In en, this message translates to:
+  /// **'Select Service'**
+  String get stationSetup_station_serviceSelectTitle;
+
+  /// Field label / dialog title for the station's multi-selected list of served services
+  ///
+  /// In en, this message translates to:
+  /// **'Services Served'**
+  String get stationSetup_station_providedServicesLabel;
+
+  /// Radio field label for the station type
+  ///
+  /// In en, this message translates to:
+  /// **'Station Type'**
+  String get stationSetup_station_typeLabel;
+
+  /// Radio option label for patient-based station type
+  ///
+  /// In en, this message translates to:
+  /// **'Patient-Based'**
+  String get stationSetup_station_typePatientBasedLabel;
+
+  /// Radio option label for medicine-based station type
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine-Based'**
+  String get stationSetup_station_typeMedicineBasedLabel;
+
+  /// Success message shown after creating a warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse created successfully'**
+  String get stationSetup_warehouse_createdSuccessMessage;
+
+  /// Success message shown after updating a warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse updated successfully'**
+  String get stationSetup_warehouse_updatedSuccessMessage;
+
+  /// Side panel title / add button label when creating a new warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'New Warehouse'**
+  String get stationSetup_warehouse_formTitleNew;
+
+  /// Side panel title when editing an existing warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Warehouse'**
+  String get stationSetup_warehouse_formTitleEdit;
+
+  /// Side panel subtitle when creating a new warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the warehouse details'**
+  String get stationSetup_warehouse_formSubtitleNew;
+
+  /// Side panel subtitle when editing an existing warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Update the warehouse details'**
+  String get stationSetup_warehouse_formSubtitleEdit;
+
+  /// Field label for the warehouse code
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Code'**
+  String get stationSetup_warehouse_codeLabel;
+
+  /// Field label for the warehouse name
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Name'**
+  String get stationSetup_warehouse_nameLabel;
+
+  /// Dropdown label for the warehouse type
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Type'**
+  String get stationSetup_warehouse_typeLabel;
+
+  /// Field label for the warehouse manager selection
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Manager'**
+  String get stationSetup_warehouse_managerLabel;
+
+  /// Selection dialog title for choosing a warehouse manager
+  ///
+  /// In en, this message translates to:
+  /// **'Select Warehouse Manager'**
+  String get stationSetup_warehouse_managerSelectTitle;
+
+  /// Segmented-button tab label / wizard step title for station definition
+  ///
+  /// In en, this message translates to:
+  /// **'Station Definition'**
+  String get stationSetup_screen_stationTabTitle;
+
+  /// Segmented-button tab label / wizard step title for service definition
+  ///
+  /// In en, this message translates to:
+  /// **'Service Definition'**
+  String get stationSetup_screen_serviceTabTitle;
+
+  /// Segmented-button tab label / wizard step title for warehouse definition
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Definition'**
+  String get stationSetup_screen_warehouseTabTitle;
+
+  /// Button label opening the station setup wizard dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Setup Wizard'**
+  String get stationSetup_screen_setupWizardButton;
+
+  /// Dialog title for the station setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Station Setup Wizard'**
+  String get stationSetup_wizard_title;
+
+  /// Final-step confirm button label in the station setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Setup'**
+  String get stationSetup_wizard_completeSetupButton;
+
+  /// Continue button label for non-final steps in the station setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get stationSetup_wizard_continueButton;
+
+  /// Back button label in the station setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get stationSetup_wizard_backButton;
+
+  /// Dialog title for the unapplied prescription detail/material list view
+  ///
+  /// In en, this message translates to:
+  /// **'Material List'**
+  String get unappliedPrescription_detailDialogTitle;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Unapplied Prescriptions'**
+  String get unappliedPrescription_screenTitleFallback;
+
+  /// Tooltip on the table action item to view unapplied prescription details
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get unappliedPrescription_viewDetailsTooltip;
+
+  /// Fallback error text shown when the cabin list fails to load and no specific error message is provided
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinets could not be loaded'**
+  String get dashboardCabinsLoadErrorFallback;
+
+  /// Label shown next to the cabin selector when the cabin list is stale
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet list is out of date'**
+  String get dashboardCabinListStaleLabel;
+
+  /// Panel header title for the dashboard drug activity panel
+  ///
+  /// In en, this message translates to:
+  /// **'DRUG ACTIVITY'**
+  String get dashboardDrugActivityPanelTitle;
+
+  /// Empty-state title for the drug activity panel
+  ///
+  /// In en, this message translates to:
+  /// **'No activity'**
+  String get dashboardDrugActivityEmptyTitle;
+
+  /// Combined date/time info-row label in the drug activity panel
+  ///
+  /// In en, this message translates to:
+  /// **'DATE / TIME'**
+  String get dashboardDrugActivityDateTimeLabel;
+
+  /// Panel header title for the dashboard missing-stock panel
+  ///
+  /// In en, this message translates to:
+  /// **'MISSING STOCK REPORTS'**
+  String get dashboardMissingStockPanelTitle;
+
+  /// Empty-state title for the missing-stock panel
+  ///
+  /// In en, this message translates to:
+  /// **'No missing stock reports'**
+  String get dashboardMissingStockEmptyTitle;
+
+  /// Column header for the time in the missing-stock panel table
+  ///
+  /// In en, this message translates to:
+  /// **'TIME'**
+  String get dashboardMissingStockTimeLabel;
+
+  /// Approve action button in the missing-stock panel
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get dashboardMissingStockApproveButton;
+
+  /// Reject action button in the missing-stock panel
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get dashboardMissingStockRejectButton;
+
+  /// Placeholder text shown for the non-mobile-cabin panel, noting it's planned for a future iteration
+  ///
+  /// In en, this message translates to:
+  /// **'Expired materials & critical stock (coming next)'**
+  String get dashboardOtherCabinPlaceholderText;
+
+  /// Panel header title for the dashboard unapplied-prescriptions panel
+  ///
+  /// In en, this message translates to:
+  /// **'UNAPPLIED PRESCRIPTIONS'**
+  String get dashboardUnappliedPrescriptionsPanelTitle;
+
+  /// Empty-state title for the unapplied-prescriptions panel
+  ///
+  /// In en, this message translates to:
+  /// **'No unapplied prescriptions'**
+  String get dashboardUnappliedPrescriptionsEmptyTitle;
+
+  /// Column header for the doctor name in the unapplied-prescriptions panel
+  ///
+  /// In en, this message translates to:
+  /// **'DOCTOR'**
+  String get dashboardDoctorLabel;
+
+  /// Combined column header for room and bed in the unapplied-prescriptions panel
+  ///
+  /// In en, this message translates to:
+  /// **'ROOM / BED'**
+  String get dashboardRoomBedLabel;
+
+  /// Panel header title for the dashboard upcoming-treatments panel
+  ///
+  /// In en, this message translates to:
+  /// **'UPCOMING TREATMENTS'**
+  String get dashboardUpcomingTreatmentsPanelTitle;
+
+  /// Empty-state title for the upcoming-treatments panel
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming treatments'**
+  String get dashboardUpcomingTreatmentsEmptyTitle;
+
+  /// Fallback error text for a dashboard list panel when no specific error message is provided
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load'**
+  String get dashboardListPanelLoadErrorFallback;
+
+  /// Success message shown after cancelling or rejecting a prescription action
+  ///
+  /// In en, this message translates to:
+  /// **'The operation was completed successfully.'**
+  String get prescriptionActionCompletedSuccess;
+
+  /// Success message shown after approving a prescription
+  ///
+  /// In en, this message translates to:
+  /// **'The prescription was approved successfully.'**
+  String get prescriptionApprovedSuccess;
+
+  /// Fallback panel title shown when the hospitalization record is null
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get prescriptionDetailPanelPatientFallback;
+
+  /// Side panel subtitle for the prescription detail view
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription History'**
+  String get prescriptionDetailPanelSubtitle;
+
+  /// Field label for the prescription movement filter start date
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get prescriptionDetailStartDateLabel;
+
+  /// Field label for the prescription movement filter end date
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get prescriptionDetailEndDateLabel;
+
+  /// Dropdown field label for the prescription movement type filter
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get prescriptionDetailStatusLabel;
+
+  /// Confirm dialog title for the check-warning flow before approving a prescription
+  ///
+  /// In en, this message translates to:
+  /// **'Check Warning'**
+  String get prescriptionCheckWarningDialogTitle;
+
+  /// Success message shown when both the prescription and its template are saved
+  ///
+  /// In en, this message translates to:
+  /// **'The prescription and template were saved successfully.'**
+  String get prescriptionSaveWithTemplateSuccess;
+
+  /// Informational message shown when the prescription saved but its template failed to save
+  ///
+  /// In en, this message translates to:
+  /// **'The prescription was saved, but the template could not be saved.'**
+  String get prescriptionSavedTemplateFailedMessage;
+
+  /// Success message shown after saving a prescription without a template
+  ///
+  /// In en, this message translates to:
+  /// **'The prescription was saved successfully.'**
+  String get prescriptionSavedSuccess;
+
+  /// Loading-state message shown while a prescription is being created
+  ///
+  /// In en, this message translates to:
+  /// **'Creating prescription. Please wait.'**
+  String get prescriptionCreatingLoadingMessage;
+
+  /// Loading-state message shown while a prescription template is being saved
+  ///
+  /// In en, this message translates to:
+  /// **'Saving template.'**
+  String get prescriptionTemplateSavingLoadingMessage;
+
+  /// Dialog title / button label / tooltip for creating a new prescription
+  ///
+  /// In en, this message translates to:
+  /// **'New Prescription'**
+  String get prescriptionNewTitle;
+
+  /// Subtitle on the new-prescription dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Create a prescription or import one from history'**
+  String get prescriptionNewDialogSubtitle;
+
+  /// Tab label for the prescription history tab
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get prescriptionTabHistory;
+
+  /// Tab label for the prescription templates tab
+  ///
+  /// In en, this message translates to:
+  /// **'Templates'**
+  String get prescriptionTabTemplates;
+
+  /// Empty-state title for the prescription content list
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t added any medicine to the prescription yet.'**
+  String get prescriptionContentEmptyTitle;
+
+  /// Empty-state description for the prescription content list
+  ///
+  /// In en, this message translates to:
+  /// **'The medicines you add will be displayed here.'**
+  String get prescriptionContentEmptyDescription;
+
+  /// Shown when a prescription item has no configured dose times
+  ///
+  /// In en, this message translates to:
+  /// **'No times added'**
+  String get prescriptionItemNoTimesLabel;
+
+  /// Placeholder item title shown before a medicine is selected
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine selected yet'**
+  String get prescriptionItemNoMedicineSelected;
+
+  /// Selection field label for the patient on the prescription dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get prescriptionPatientFieldLabel;
+
+  /// Selection field label for the doctor on the prescription dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get prescriptionDoctorFieldLabel;
+
+  /// Primary save button label on the prescription dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Save Prescription'**
+  String get prescriptionSaveButton;
+
+  /// Checkbox label to also save the prescription as a reusable template
+  ///
+  /// In en, this message translates to:
+  /// **'Also save as template'**
+  String get prescriptionSaveAsTemplateCheckboxLabel;
+
+  /// Text field hint for the prescription template name
+  ///
+  /// In en, this message translates to:
+  /// **'Template Name'**
+  String get prescriptionTemplateNameHint;
+
+  /// Field label for the medicine/material selection on the prescription item form
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine / Material'**
+  String get prescriptionMedicineFieldLabel;
+
+  /// Text field label for the prescription item description
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get prescriptionDescriptionFieldLabel;
+
+  /// Quick-pick chip label for tomorrow's date on the prescription time picker
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get prescriptionTomorrowLabel;
+
+  /// Section label above the dose times list on the prescription form
+  ///
+  /// In en, this message translates to:
+  /// **'Times'**
+  String get prescriptionTimesLabel;
+
+  /// Add-row action label to add a new dose time
+  ///
+  /// In en, this message translates to:
+  /// **'Add time'**
+  String get prescriptionAddTimeButton;
+
+  /// Empty-state title shown before a patient is selected in prescription history
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient'**
+  String get prescriptionHistorySelectPatientTitle;
+
+  /// Empty-state description shown before a patient is selected in prescription history
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient first to view their prescription history'**
+  String get prescriptionHistorySelectPatientDescription;
+
+  /// Empty-state description shown when the selected patient has no prescription history
+  ///
+  /// In en, this message translates to:
+  /// **'This patient has no prescription history'**
+  String get prescriptionHistoryEmptyDescription;
+
+  /// Button label to add the selected items to the current prescription, showing the selected count
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Prescription ({count})'**
+  String prescriptionAddToRxButton(int count);
+
+  /// Empty-state title for the prescription template list
+  ///
+  /// In en, this message translates to:
+  /// **'No template found'**
+  String get prescriptionTemplateEmptyTitle;
+
+  /// Empty-state description for the prescription template list
+  ///
+  /// In en, this message translates to:
+  /// **'There is no saved prescription template'**
+  String get prescriptionTemplateEmptyDescription;
+
+  /// Shown when an expanded prescription template has zero items
+  ///
+  /// In en, this message translates to:
+  /// **'This template has no items'**
+  String get prescriptionTemplateNoItemsMessage;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription Operations'**
+  String get prescriptionScreenTitleFallback;
+
+  /// Table row action tooltip to view prescription content
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription Content'**
+  String get prescriptionContentTooltip;
+
+  /// Toolbar toggle tooltip to switch back to showing active hospitalizations
+  ///
+  /// In en, this message translates to:
+  /// **'Show active admissions'**
+  String get prescriptionShowActiveButton;
+
+  /// Toolbar toggle tooltip to show discharged patients
+  ///
+  /// In en, this message translates to:
+  /// **'Show discharged patients'**
+  String get prescriptionShowDischargedButton;
+
+  /// Desktop layout screen title for cabinet temperature control
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet Temperature Control'**
+  String get cabinTemperatureScreenTitle;
+
+  /// Dialog title for the cabinet temperature form, used for both create and edit
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Cabinet'**
+  String get cabinTemperatureFormDialogTitle;
+
+  /// Field label / table column header for the inside-bottom temperature reading
+  ///
+  /// In en, this message translates to:
+  /// **'Inside Bottom Temperature'**
+  String get cabinTemperatureInsideBottomLabel;
+
+  /// Field label / table column header for the inside-top temperature reading
+  ///
+  /// In en, this message translates to:
+  /// **'Inside Top Temperature'**
+  String get cabinTemperatureInsideTopLabel;
+
+  /// Field label / table column header for the outside-bottom temperature reading
+  ///
+  /// In en, this message translates to:
+  /// **'Outside Bottom Temperature'**
+  String get cabinTemperatureOutsideBottomLabel;
+
+  /// Field label / table column header for the outside-top temperature reading
+  ///
+  /// In en, this message translates to:
+  /// **'Outside Top Temperature'**
+  String get cabinTemperatureOutsideTopLabel;
+
+  /// Field label / table column header for the humidity lower limit
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity Lower Limit'**
+  String get cabinTemperatureHumidityBottomLabel;
+
+  /// Field label / table column header for the humidity upper limit
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity Upper Limit'**
+  String get cabinTemperatureHumidityTopLabel;
+
+  /// Generic error message with the underlying error detail appended
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred: {error}'**
+  String cabinTemperatureGenericErrorMessage(String error);
+
+  /// Validation error shown when no station is selected before creating a cabinet temperature setting
+  ///
+  /// In en, this message translates to:
+  /// **'No station selected'**
+  String get cabinTemperatureStationNotSelectedError;
+
+  /// Success message shown after creating a cabinet temperature setting
+  ///
+  /// In en, this message translates to:
+  /// **'The cabinet temperature setting was created successfully.'**
+  String get cabinTemperatureCreateSuccess;
+
+  /// Validation error shown when the record to update cannot be found
+  ///
+  /// In en, this message translates to:
+  /// **'No record found to update'**
+  String get cabinTemperatureUpdateRecordNotFoundError;
+
+  /// Success message shown after updating a cabinet temperature setting
+  ///
+  /// In en, this message translates to:
+  /// **'The cabinet temperature setting was updated successfully.'**
+  String get cabinTemperatureUpdateSuccess;
+
+  /// Fallback station name shown in the sidebar category label when the station has no name
+  ///
+  /// In en, this message translates to:
+  /// **'Unnamed Station'**
+  String get cabinTemperatureUnnamedStationFallback;
+
+  /// Loading-state message while stations are being fetched
+  ///
+  /// In en, this message translates to:
+  /// **'Loading stations...'**
+  String get cabinTemperatureStationsLoadingMessage;
+
+  /// Loading-state message while temperature details are being fetched
+  ///
+  /// In en, this message translates to:
+  /// **'Loading temperature details...'**
+  String get cabinTemperatureDetailsLoadingMessage;
+
+  /// Table column header for the cabinet name in the cabin temperature table
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet'**
+  String get cabinTemperatureColumnCabin;
+
+  /// Desktop layout screen title / dialog title for the directed orders list
+  ///
+  /// In en, this message translates to:
+  /// **'Directed Order List'**
+  String get directedOrdersScreenTitle;
+
+  /// Table column title for the protocol number in the directed orders table
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol No.'**
+  String get directedOrdersColumnProtocolNo;
+
+  /// Table column title for the bed in the directed orders table
+  ///
+  /// In en, this message translates to:
+  /// **'Bed'**
+  String get directedOrdersColumnBed;
+
+  /// Table column title for the room in the directed orders table
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get directedOrdersColumnRoom;
+
+  /// Row action tooltip that opens the medicine table dialog for a directed order
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines'**
+  String get directedOrdersMedicinesTooltip;
+
+  /// Loading-state message while patients are being fetched
+  ///
+  /// In en, this message translates to:
+  /// **'Loading patients...'**
+  String get directedOrdersPatientsLoadingMessage;
+
+  /// Table column title for the barcode in the directed order entity
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get directedOrdersColumnBarcode;
+
+  /// Success message shown after creating a drug
+  ///
+  /// In en, this message translates to:
+  /// **'Drug created'**
+  String get medicine_successCreated;
+
+  /// Success message shown after updating a drug
+  ///
+  /// In en, this message translates to:
+  /// **'Drug updated'**
+  String get medicine_successUpdated;
+
+  /// Success message shown after creating a medical consumable
+  ///
+  /// In en, this message translates to:
+  /// **'Medical consumable created'**
+  String get medicalConsumable_successCreated;
+
+  /// Success message shown after updating a medical consumable
+  ///
+  /// In en, this message translates to:
+  /// **'Medical consumable updated'**
+  String get medicalConsumable_successUpdated;
+
+  /// Side panel title / toolbar button label when creating a new drug
+  ///
+  /// In en, this message translates to:
+  /// **'New Drug'**
+  String get medicine_formTitleNew;
+
+  /// Side panel title when editing an existing drug
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Drug'**
+  String get medicine_formTitleEdit;
+
+  /// Side panel subtitle when creating a new drug
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the drug details'**
+  String get medicine_formSubtitleNew;
+
+  /// Side panel subtitle when editing an existing drug
+  ///
+  /// In en, this message translates to:
+  /// **'Update the drug details'**
+  String get medicine_formSubtitleEdit;
+
+  /// Text field label for the drug's definition name
+  ///
+  /// In en, this message translates to:
+  /// **'Definition Name'**
+  String get medicine_fieldDefinitionName;
+
+  /// Text field label for the drug/consumable barcode, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get medicine_fieldBarcode;
+
+  /// Text field label for the drug name
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Name'**
+  String get medicine_fieldName;
+
+  /// Text field label for the drug code
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Code'**
+  String get medicine_fieldCode;
+
+  /// Dropdown label for the drug's prescription type
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription Type'**
+  String get medicine_fieldPrescriptionType;
+
+  /// Text field label for dose, used for both the main dose and measurement dose fields
+  ///
+  /// In en, this message translates to:
+  /// **'Dose'**
+  String get medicine_fieldDose;
+
+  /// Selection field label for the manufacturer, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer'**
+  String get medicine_fieldManufacturer;
+
+  /// Field label for the daily maximum usage amount, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Max. Usage Amount'**
+  String get medicine_fieldDailyMaxUsage;
+
+  /// Selection field label/title for the drug type
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Type'**
+  String get medicine_fieldDrugType;
+
+  /// Selection field label for the return method, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Return Method'**
+  String get medicine_fieldReturnType;
+
+  /// Checkbox label shown when the return type is 'to origin'
+  ///
+  /// In en, this message translates to:
+  /// **'Check the max value in the serum cabinet'**
+  String get medicine_checkboxSerumMaxValue;
+
+  /// Conditional checkbox label for checking the max value in a cubic drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Check the max value in the cubic drawer'**
+  String get medicine_checkboxCubicMaxValue;
+
+  /// Checkbox label indicating the drug has a QR code
+  ///
+  /// In en, this message translates to:
+  /// **'Has QR Code'**
+  String get medicine_checkboxQrCode;
+
+  /// Dropdown label for the QR piece-count unit on the drug form
+  ///
+  /// In en, this message translates to:
+  /// **'Piece Count'**
+  String get medicine_fieldPieceCountLabel;
+
+  /// Selection field label/title for the drug class
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Class'**
+  String get medicine_fieldDrugClass;
+
+  /// Selection field label for the purchase method, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Method'**
+  String get medicine_fieldPurchaseType;
+
+  /// Checkbox label to enable measurement unit fields on the drug form
+  ///
+  /// In en, this message translates to:
+  /// **'Use Measurement Unit'**
+  String get medicine_checkboxUseMeasurementUnit;
+
+  /// Text field label for the drug's volume
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get medicine_fieldVolume;
+
+  /// Text field label opening the dosage form picker
+  ///
+  /// In en, this message translates to:
+  /// **'Dosage Form'**
+  String get medicine_fieldDosageForm;
+
+  /// Dropdown label for the drug's status
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get medicine_fieldStatus;
+
+  /// Selection field label for the count type, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Count Type'**
+  String get medicine_fieldCountType;
+
+  /// Text field label for the drug's ATC code
+  ///
+  /// In en, this message translates to:
+  /// **'ATC Code'**
+  String get medicine_fieldAtcCode;
+
+  /// Text field label for the drug's equivalent code
+  ///
+  /// In en, this message translates to:
+  /// **'Equivalent Code'**
+  String get medicine_fieldEquivalentCode;
+
+  /// Checkbox label indicating purchases require a witness
+  ///
+  /// In en, this message translates to:
+  /// **'Witnessed Purchase'**
+  String get medicine_checkboxWitnessedPurchase;
+
+  /// Checkbox label indicating waste/disposal requires a witness
+  ///
+  /// In en, this message translates to:
+  /// **'Witnessed Waste/Disposal'**
+  String get medicine_checkboxWastageWitnessed;
+
+  /// Checkbox label indicating the drug can be disposed of
+  ///
+  /// In en, this message translates to:
+  /// **'Disposable'**
+  String get medicine_checkboxDestroyable;
+
+  /// Multi-selection field label/title for the drug's active ingredients
+  ///
+  /// In en, this message translates to:
+  /// **'Active Ingredient'**
+  String get medicine_fieldActiveIngredient;
+
+  /// Text field label for the purchase note, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Note'**
+  String get medicine_fieldCollectNote;
+
+  /// Text field label for the return note, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Return Note'**
+  String get medicine_fieldReturnNote;
+
+  /// Text field label for the disposal note, shared between drug and medical consumable forms
+  ///
+  /// In en, this message translates to:
+  /// **'Disposal Note'**
+  String get medicine_fieldDestructionNote;
+
+  /// Dialog title for the medical consumable form, used for both create and edit
+  ///
+  /// In en, this message translates to:
+  /// **'Add/Edit Medical Consumable'**
+  String get medicalConsumable_dialogTitle;
+
+  /// Text field label for the medical consumable name
+  ///
+  /// In en, this message translates to:
+  /// **'Material Name'**
+  String get medicalConsumable_fieldName;
+
+  /// Text field label for the medical consumable's institution code
+  ///
+  /// In en, this message translates to:
+  /// **'Institution Code'**
+  String get medicalConsumable_fieldInstitutionCode;
+
+  /// Text field label for the medical consumable's SUT (reimbursement) code
+  ///
+  /// In en, this message translates to:
+  /// **'SUT Code/Annex'**
+  String get medicalConsumable_fieldSutCode;
+
+  /// Text field label for the medical consumable's UBB (national product bank) code
+  ///
+  /// In en, this message translates to:
+  /// **'UBB Code'**
+  String get medicalConsumable_fieldUbbCode;
+
+  /// Selection field label/title for the medical consumable's material type
+  ///
+  /// In en, this message translates to:
+  /// **'Material Type'**
+  String get medicalConsumable_fieldMaterialType;
+
+  /// Dropdown label for the medical consumable's status
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get medicalConsumable_fieldStatus;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Drug/Medical Consumable Definition'**
+  String get medicine_screenTitleFallback;
+
+  /// Toolbar button label to create a new drug
+  ///
+  /// In en, this message translates to:
+  /// **'New Drug'**
+  String get medicine_newButtonLabel;
+
+  /// Bottom action button opening medical consumable definition
+  ///
+  /// In en, this message translates to:
+  /// **'Define Medical Consumable'**
+  String get medicine_defineMedicalConsumableButton;
+
+  /// Bottom action button opening active ingredient definition
+  ///
+  /// In en, this message translates to:
+  /// **'Define Active Ingredient'**
+  String get medicine_defineActiveIngredientButton;
+
+  /// Bottom action button opening drug class definition
+  ///
+  /// In en, this message translates to:
+  /// **'Define Drug Class'**
+  String get medicine_defineDrugClassButton;
+
+  /// Bottom action button opening drug type definition
+  ///
+  /// In en, this message translates to:
+  /// **'Define Drug Type'**
+  String get medicine_defineDrugTypeButton;
+
+  /// Bottom action button opening kit creation
+  ///
+  /// In en, this message translates to:
+  /// **'Create Drug Kit'**
+  String get medicine_createKitButton;
+
+  /// Bottom action button opening material type definition
+  ///
+  /// In en, this message translates to:
+  /// **'Define Material Type'**
+  String get medicine_defineMaterialTypeButton;
+
+  /// Checkbox label allowing doses lower than the specified amount
+  ///
+  /// In en, this message translates to:
+  /// **'A dose lower than specified may be taken'**
+  String get medicine_checkboxLowerDose;
+
+  /// Checkbox label indicating RFID can be used for this drug
+  ///
+  /// In en, this message translates to:
+  /// **'RFID Available'**
+  String get medicine_checkboxRfid;
+
+  /// Checkbox label enabling multi-patient access to the drug
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Patient Access'**
+  String get medicine_checkboxMultiPatientAccess;
+
+  /// Checkbox label indicating the drug is for single use
+  ///
+  /// In en, this message translates to:
+  /// **'Single Use'**
+  String get medicine_checkboxSingleUse;
+
+  /// Checkbox label requiring camera recording during drug operations
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Recording'**
+  String get medicine_checkboxCameraRecording;
+
+  /// Checkbox label indicating the drug is independent/unrestricted
+  ///
+  /// In en, this message translates to:
+  /// **'Independent Drug'**
+  String get medicine_checkboxIndependentMaterial;
+
+  /// Checkbox label requiring pharmacy approval for waste/disposal
+  ///
+  /// In en, this message translates to:
+  /// **'Require Pharmacy Approval for Waste/Disposal?'**
+  String get medicine_checkboxWastagePharmacyApproval;
+
+  /// Checkbox label to renew the waste order automatically
+  ///
+  /// In en, this message translates to:
+  /// **'Renew Waste Order?'**
+  String get medicine_checkboxWastageOrderRenewed;
+
+  /// Multi-selection field label for authorized personnel
+  ///
+  /// In en, this message translates to:
+  /// **'Personnel'**
+  String get medicine_fieldPersonnel;
+
+  /// Multi-selection field label for the drug's assigned stations
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get medicine_fieldStation;
+
+  /// Text field label opening the unit picker
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get medicine_fieldUnit;
+
+  /// Dialog title for the refill list detail/refill view
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Refill List'**
+  String get refillList_dialogTitle;
+
+  /// Label showing the refill list's record number
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Record No: {id}'**
+  String refillList_recordNoLabel(Object id);
+
+  /// Label showing the refill list's creation date
+  ///
+  /// In en, this message translates to:
+  /// **'Created Date: {date}'**
+  String refillList_createdDateLabel(String date);
+
+  /// Label showing the user assigned to perform the refill
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned To: {name}'**
+  String refillList_assignedUserNameLabel(String name);
+
+  /// Side panel title when creating a new refill list
+  ///
+  /// In en, this message translates to:
+  /// **'Create Refill List'**
+  String get refillList_formTitleCreate;
+
+  /// Side panel title when editing an existing refill list
+  ///
+  /// In en, this message translates to:
+  /// **'Update Refill List'**
+  String get refillList_formTitleUpdate;
+
+  /// Selection field label/title for the user assigned to perform the refill
+  ///
+  /// In en, this message translates to:
+  /// **'User Assigned to Refill'**
+  String get refillList_fieldAssignedUser;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Refill List'**
+  String get refillList_screenTitleFallback;
+
+  /// Toolbar button label to create a new refill list
+  ///
+  /// In en, this message translates to:
+  /// **'New Refill List'**
+  String get refillList_newButtonLabel;
+
+  /// Category title for the stations side-list, shared across refill list, expired items report and station transaction report screens
+  ///
+  /// In en, this message translates to:
+  /// **'Stations'**
+  String get report_stationsCategoryTitle;
+
+  /// Table cell boolean display for a true value in the refill list table
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get refillList_cellValueYes;
+
+  /// Table cell boolean display for a false value in the refill list table
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get refillList_cellValueNo;
+
+  /// Tooltip on the table action item to update the refill list status
+  ///
+  /// In en, this message translates to:
+  /// **'Update Status'**
+  String get refillList_updateStatusTooltip;
+
+  /// Fallback unit text shown in the refill dose stepper when the medicine has no operation unit
+  ///
+  /// In en, this message translates to:
+  /// **'Piece'**
+  String get refillList_defaultUnitFallback;
+
+  /// Fallback screen title when the menu name is not provided, for the expired items report
+  ///
+  /// In en, this message translates to:
+  /// **'Expired Materials'**
+  String get report_expiredItemsTitleFallback;
+
+  /// Fixed screen title for the station stock report
+  ///
+  /// In en, this message translates to:
+  /// **'Station Cabinet Stock'**
+  String get report_stationStockTitle;
+
+  /// Fallback screen title when the menu name is not provided, for the station transaction report
+  ///
+  /// In en, this message translates to:
+  /// **'Station Transactions'**
+  String get report_stationTransactionTitleFallback;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Inconsistency Movements'**
+  String get inconsistency_screenTitleFallback;
+
+  /// Tooltip on the table action item to view inconsistency details
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get inconsistency_viewTooltip;
+
+  /// Tooltip on the table action item to view the inconsistency photo
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get inconsistency_photoTooltip;
+
+  /// Side panel title / tooltip / button label when creating a new hospitalization
+  ///
+  /// In en, this message translates to:
+  /// **'Enter New Admission'**
+  String get hospitalization_formTitleNew;
+
+  /// Side panel title / tooltip when editing an existing hospitalization
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Admission'**
+  String get hospitalization_formTitleEdit;
+
+  /// Selection field label/title for the hospitalization's patient
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get hospitalization_fieldPatient;
+
+  /// Read-only text field label for the hospitalization code
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Code'**
+  String get hospitalization_fieldCode;
+
+  /// Selection field label/title for the hospitalization's doctor
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get hospitalization_fieldDoctor;
+
+  /// Selection field label/title for the hospitalization's physical service
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Service'**
+  String get hospitalization_fieldPhysicalService;
+
+  /// Selection field label/title for the hospitalization's inpatient service
+  ///
+  /// In en, this message translates to:
+  /// **'Inpatient Service'**
+  String get hospitalization_fieldInpatientService;
+
+  /// Field label for the hospitalization's room
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get hospitalization_fieldRoom;
+
+  /// Selection dialog title for choosing a room
+  ///
+  /// In en, this message translates to:
+  /// **'Select Room'**
+  String get hospitalization_roomDialogTitle;
+
+  /// Field label for the hospitalization's bed
+  ///
+  /// In en, this message translates to:
+  /// **'Bed'**
+  String get hospitalization_fieldBed;
+
+  /// Selection dialog title for choosing a bed
+  ///
+  /// In en, this message translates to:
+  /// **'Select Bed'**
+  String get hospitalization_bedDialogTitle;
+
+  /// Date field label for the hospitalization's admission date (standalone form field, distinct from the combined display string elsewhere)
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Date'**
+  String get hospitalization_fieldAdmissionDate;
+
+  /// Date field label for the hospitalization's discharge date
+  ///
+  /// In en, this message translates to:
+  /// **'Discharge Date'**
+  String get hospitalization_fieldExitDate;
+
+  /// Checkbox label indicating the patient is an infant
+  ///
+  /// In en, this message translates to:
+  /// **'Infant'**
+  String get hospitalization_checkboxBaby;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Operations'**
+  String get hospitalization_screenTitleFallback;
+
+  /// Tooltip on the table action item to edit patient details
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Patient Details'**
+  String get hospitalization_editPatientTooltip;
+
+  /// Toolbar icon tooltip to switch back to showing active hospitalizations
+  ///
+  /// In en, this message translates to:
+  /// **'Show active admissions'**
+  String get hospitalization_showActiveTooltip;
+
+  /// Toolbar icon tooltip to show discharged patients
+  ///
+  /// In en, this message translates to:
+  /// **'Show discharged patients'**
+  String get hospitalization_showDischargedTooltip;
+
+  /// Header action button to create a new admission
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Admission'**
+  String get hospitalization_createButton;
+
+  /// Side panel title / header action button label when creating a new patient
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Patient'**
+  String get patient_formTitleNew;
+
+  /// Side panel title when editing an existing patient
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Patient'**
+  String get patient_formTitleEdit;
+
+  /// Text field label for the patient's national ID number
+  ///
+  /// In en, this message translates to:
+  /// **'National ID No.'**
+  String get patient_fieldIdentity;
+
+  /// Text field label for the patient's first name
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get patient_fieldName;
+
+  /// Text field label for the patient's last name
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get patient_fieldSurname;
+
+  /// Date field label for the patient's birth date
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get patient_fieldBirthDate;
+
+  /// Dropdown label for the patient's gender
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get patient_fieldGender;
+
+  /// Text field label for the patient's weight
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get patient_fieldWeight;
+
+  /// Text field label for the patient's mother's name
+  ///
+  /// In en, this message translates to:
+  /// **'Mother\'s Name'**
+  String get patient_fieldMotherName;
+
+  /// Text field label for the patient's father's name
+  ///
+  /// In en, this message translates to:
+  /// **'Father\'s Name'**
+  String get patient_fieldFatherName;
+
+  /// Text field label for the patient's phone number
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get patient_fieldPhone;
+
+  /// Text field label for the patient's address
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get patient_fieldAddress;
+
+  /// Text field label for the patient's protocol number
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol No.'**
+  String get patient_fieldProtocolNo;
+
+  /// Dialog title when the active ingredient dialog is opened in selection mode
+  ///
+  /// In en, this message translates to:
+  /// **'Select Active Ingredient'**
+  String get activeIngredientDialogSelectTitle;
+
+  /// Dialog title when the active ingredient dialog is opened in management mode
+  ///
+  /// In en, this message translates to:
+  /// **'Active Ingredient Definition'**
+  String get activeIngredientDialogTitle;
+
+  /// Form dialog title when creating a new active ingredient
+  ///
+  /// In en, this message translates to:
+  /// **'Add Active Ingredient'**
+  String get activeIngredientFormAddTitle;
+
+  /// Form dialog title when editing an existing active ingredient
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Active Ingredient'**
+  String get activeIngredientFormEditTitle;
+
+  /// Empty-state title for the active ingredient list
+  ///
+  /// In en, this message translates to:
+  /// **'No active ingredients yet'**
+  String get activeIngredientListEmptyTitle;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Station Material Assignment'**
+  String get assignmentScreenTitle;
+
+  /// Dropdown placeholder for the station selector on the assignment screen
+  ///
+  /// In en, this message translates to:
+  /// **'Select a station'**
+  String get assignmentStationSelectPlaceholder;
+
+  /// Dialog title when the drug class dialog is opened in selection mode
+  ///
+  /// In en, this message translates to:
+  /// **'Select Drug Class'**
+  String get drugClassDialogSelectTitle;
+
+  /// Dialog title when the drug class dialog is opened in management mode
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Class Definition'**
+  String get drugClassDialogTitle;
+
+  /// Form dialog title when creating a new drug class
+  ///
+  /// In en, this message translates to:
+  /// **'Add Drug Class'**
+  String get drugClassFormAddTitle;
+
+  /// Form dialog title when editing an existing drug class
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Drug Class'**
+  String get drugClassFormEditTitle;
+
+  /// Text field label for the drug class name
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Class Name'**
+  String get drugClassFormNameLabel;
+
+  /// Empty-state title for the drug class list
+  ///
+  /// In en, this message translates to:
+  /// **'No drug classes yet'**
+  String get drugClassListEmptyTitle;
+
+  /// Dialog title when the drug type dialog is opened in selection mode
+  ///
+  /// In en, this message translates to:
+  /// **'Select Drug Type'**
+  String get drugTypeDialogSelectTitle;
+
+  /// Dialog title when the drug type dialog is opened in management mode
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Type Definition'**
+  String get drugTypeDialogTitle;
+
+  /// Form dialog title when creating a new drug type
+  ///
+  /// In en, this message translates to:
+  /// **'Add Drug Type'**
+  String get drugTypeFormAddTitle;
+
+  /// Form dialog title when editing an existing drug type
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Drug Type'**
+  String get drugTypeFormEditTitle;
+
+  /// Text field label for the drug type name
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Type Name'**
+  String get drugTypeFormNameLabel;
+
+  /// Empty-state title for the drug type list
+  ///
+  /// In en, this message translates to:
+  /// **'No drug types yet'**
+  String get drugTypeListEmptyTitle;
+
+  /// Form dialog title when creating a new kit
+  ///
+  /// In en, this message translates to:
+  /// **'New Kit'**
+  String get kitFormAddTitle;
+
+  /// Form dialog title when editing an existing kit
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Kit'**
+  String get kitFormEditTitle;
+
+  /// Text field label for the kit name
+  ///
+  /// In en, this message translates to:
+  /// **'Kit Name'**
+  String get kitFormNameLabel;
+
+  /// Dialog title when the kit dialog is opened in selection mode
+  ///
+  /// In en, this message translates to:
+  /// **'Select Kit'**
+  String get kitDialogSelectTitle;
+
+  /// Dialog title when the kit dialog is opened in management mode
+  ///
+  /// In en, this message translates to:
+  /// **'Kit Definition'**
+  String get kitDialogTitle;
+
+  /// Empty-state title for the kit list
+  ///
+  /// In en, this message translates to:
+  /// **'No kits yet'**
+  String get kitListEmptyTitle;
+
+  /// Tooltip on the additional action button that opens the kit content dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Kit Content'**
+  String get kitListManageContentTooltip;
+
+  /// Form dialog title when creating a new kit content item
+  ///
+  /// In en, this message translates to:
+  /// **'Add Kit Content'**
+  String get kitContentFormAddTitle;
+
+  /// Form dialog title when editing an existing kit content item
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Kit Content'**
+  String get kitContentFormEditTitle;
+
+  /// Field label / selection dialog title for the kit content's material
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get kitContentFormMaterialLabel;
+
+  /// Quantity/piece-count field label on the kit content form
+  ///
+  /// In en, this message translates to:
+  /// **'Piece Count'**
+  String get kitContentFormPieceLabel;
+
+  /// Dialog title for the kit content list
+  ///
+  /// In en, this message translates to:
+  /// **'Kit Content Definition'**
+  String get kitContentDialogTitle;
+
+  /// Empty-state title for the kit content list
+  ///
+  /// In en, this message translates to:
+  /// **'No kit content yet'**
+  String get kitContentListEmptyTitle;
+
+  /// Form dialog title when creating a new material type
+  ///
+  /// In en, this message translates to:
+  /// **'New Material Type'**
+  String get materialTypeFormAddTitle;
+
+  /// Form dialog title when editing an existing material type
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Material Type'**
+  String get materialTypeFormEditTitle;
+
+  /// Text field label for the material type name
+  ///
+  /// In en, this message translates to:
+  /// **'Material Type Name'**
+  String get materialTypeFormNameLabel;
+
+  /// Dialog title when the material type dialog is opened in selection mode
+  ///
+  /// In en, this message translates to:
+  /// **'Select Material Type'**
+  String get materialTypeDialogSelectTitle;
+
+  /// Dialog title when the material type dialog is opened in management mode
+  ///
+  /// In en, this message translates to:
+  /// **'Material Type Definition'**
+  String get materialTypeDialogTitle;
+
+  /// Empty-state title for the material type list
+  ///
+  /// In en, this message translates to:
+  /// **'No material types yet'**
+  String get materialTypeListEmptyTitle;
+
+  /// Form dialog title when editing an existing role
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Role'**
+  String get roleFormEditTitle;
+
+  /// Form dialog title when creating a new role
+  ///
+  /// In en, this message translates to:
+  /// **'Add Role'**
+  String get roleFormAddTitle;
+
+  /// Text field label for the role name
+  ///
+  /// In en, this message translates to:
+  /// **'Role Name'**
+  String get roleFormNameLabel;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Role Definition'**
+  String get roleScreenTitle;
+
+  /// Toolbar button label to create a new role
+  ///
+  /// In en, this message translates to:
+  /// **'New Role'**
+  String get roleScreenAddButton;
+
+  /// Success message shown after deleting a role
+  ///
+  /// In en, this message translates to:
+  /// **'Role deleted successfully'**
+  String get roleDeleteSuccessMessage;
+
+  /// Form dialog title when creating a new unit
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Unit'**
+  String get unitFormAddTitle;
+
+  /// Form dialog title when editing an existing unit
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Unit'**
+  String get unitFormEditTitle;
+
+  /// Dialog title for the unit list screen
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get unitDialogTitle;
+
+  /// Empty-state title for the unit list
+  ///
+  /// In en, this message translates to:
+  /// **'No units yet'**
+  String get unitListEmptyTitle;
+
+  /// Side category tab label for the normal user type filter
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get userCategoryNormalLabel;
+
+  /// Side category tab label for the time-based user type filter
+  ///
+  /// In en, this message translates to:
+  /// **'Time-Limited'**
+  String get userCategoryTimeBasedLabel;
+
+  /// Side category tab label for the temporary user type filter
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary'**
+  String get userCategoryTemporaryLabel;
+
+  /// Success message shown after deleting a user
+  ///
+  /// In en, this message translates to:
+  /// **'User deleted successfully'**
+  String get userDeleteSuccessMessage;
+
+  /// Success message shown after a bulk valid-date update
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry date updated'**
+  String get userValidDateUpdateSuccessMessage;
+
+  /// Form panel title when editing an existing user
+  ///
+  /// In en, this message translates to:
+  /// **'Edit User'**
+  String get userFormEditTitle;
+
+  /// Form panel title when creating a new user
+  ///
+  /// In en, this message translates to:
+  /// **'Create User'**
+  String get userFormCreateTitle;
+
+  /// Field label / column header for the user's institution registry number
+  ///
+  /// In en, this message translates to:
+  /// **'Institution Registry No.'**
+  String get userRegistrationNumberLabel;
+
+  /// Field label for the user's first name, paired with surname
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get userNameLabel;
+
+  /// Field label / column header for the user's last name
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get userSurnameLabel;
+
+  /// Field label / column header for the user's occupation/role type
+  ///
+  /// In en, this message translates to:
+  /// **'Occupation Type'**
+  String get userRoleTypeLabel;
+
+  /// Field label for the user's usage type
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Type'**
+  String get userUsageTypeLabel;
+
+  /// Field label / column header for the user's account expiry date
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get userValidUntilLabel;
+
+  /// Field label for the user's email address on the user creation form
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get userEmailLabel;
+
+  /// Field label for the permission allowing purchase without an order
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Without Order'**
+  String get userOrderPermissionLabel;
+
+  /// Field label for the permission requiring a witness for station entry
+  ///
+  /// In en, this message translates to:
+  /// **'Witnessed Station Entry'**
+  String get userWitnessedStationEntryLabel;
+
+  /// Field label for the kit purchase permission
+  ///
+  /// In en, this message translates to:
+  /// **'Kit Purchase'**
+  String get userKitPurchaseLabel;
+
+  /// Field label for the user's authorized stations
+  ///
+  /// In en, this message translates to:
+  /// **'Authorized Stations'**
+  String get userAuthorizedStationsLabel;
+
+  /// Field label for the user's username
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get userUsernameLabel;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'User List'**
+  String get userScreenTitle;
+
+  /// Toolbar button label to create a new user
+  ///
+  /// In en, this message translates to:
+  /// **'New User'**
+  String get userScreenAddButton;
+
+  /// Button shown when time-based users are multi-selected, to bulk-update their expiry date
+  ///
+  /// In en, this message translates to:
+  /// **'Update Expiry Date'**
+  String get userBulkUpdateValidDateButton;
+
+  /// Dialog title for the bulk valid-date update
+  ///
+  /// In en, this message translates to:
+  /// **'Update Date'**
+  String get userValidDateDialogTitle;
+
+  /// Save-button label on the bulk valid-date update dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get userValidDateDialogSaveButton;
+
+  /// Date field label inside the bulk-update dialog
+  ///
+  /// In en, this message translates to:
+  /// **'New Expiry Date'**
+  String get userNewValidUntilLabel;
+
+  /// Column header shown only for normal-type users
+  ///
+  /// In en, this message translates to:
+  /// **'National ID No.'**
+  String get userNationalIdColumnHeader;
+
+  /// Side panel title / add button label when creating a new warning
+  ///
+  /// In en, this message translates to:
+  /// **'New Warning'**
+  String get warningFormAddTitle;
+
+  /// Side panel title when editing an existing warning
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Warning'**
+  String get warningFormEditTitle;
+
+  /// Side panel subtitle when creating a new warning
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the warning details'**
+  String get warningFormAddSubtitle;
+
+  /// Side panel subtitle when editing an existing warning
+  ///
+  /// In en, this message translates to:
+  /// **'Update the warning details'**
+  String get warningFormEditSubtitle;
+
+  /// Text field label for the warning subject
+  ///
+  /// In en, this message translates to:
+  /// **'Warning Subject'**
+  String get warningFormSubjectLabel;
+
+  /// Text field label for the warning body text
+  ///
+  /// In en, this message translates to:
+  /// **'Warning Text'**
+  String get warningFormTextLabel;
+
+  /// Fallback screen title when the menu name is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Warning Definition'**
+  String get warningScreenTitle;
+
+  /// Error message shown when the dashboard fails to load its data sections
+  ///
+  /// In en, this message translates to:
+  /// **'The data could not be loaded. Please try again.'**
+  String get dashboard_allSectionsLoadError;
+
+  /// Ring-chart label for critically expiring items (under 7 days)
+  ///
+  /// In en, this message translates to:
+  /// **'Critical\n(<7 days)'**
+  String get dashboard_sktCriticalRingLabel;
+
+  /// Ring-chart label for expiring-soon items (7-30 days)
+  ///
+  /// In en, this message translates to:
+  /// **'Warning\n(7-30 days)'**
+  String get dashboard_sktWarningRingLabel;
+
+  /// Ring-chart label for already-expired items
+  ///
+  /// In en, this message translates to:
+  /// **'Expired\nItems'**
+  String get dashboard_sktExpiredRingLabel;
+
+  /// Section header for the expiry-date (SKT) status panel on the dashboard
+  ///
+  /// In en, this message translates to:
+  /// **'EXPIRY STATUS'**
+  String get dashboard_sktStatusHeader;
+
+  /// Badge showing the total item count in the SKT status panel
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Items'**
+  String dashboard_sktItemCountBadge(int count);
+
+  /// Small badge tag shown on expired SKT items
+  ///
+  /// In en, this message translates to:
+  /// **'EXPIRED'**
+  String get dashboard_sktExpiredTag;
+
+  /// Inline hint link shown under an expired SKT item, offering to destroy it
+  ///
+  /// In en, this message translates to:
+  /// **'destroy'**
+  String get dashboard_sktDestroyHint;
+
+  /// Label following the numeric days-remaining value on an SKT item
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{day left} other{days left}}'**
+  String dashboard_sktDaysRemainingLabel(int days);
+
+  /// Section header for the upcoming treatments panel on the dashboard
+  ///
+  /// In en, this message translates to:
+  /// **'UPCOMING TREATMENTS'**
+  String get dashboard_upcomingTreatmentsHeader;
+
+  /// Badge showing the count of pending treatments
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Pending'**
+  String dashboard_pendingTreatmentsBadge(int count);
+
+  /// Filter chip label for pending treatments
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get dashboard_pendingFilterLabel;
+
+  /// Filter chip label for urgent treatments
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get dashboard_urgentFilterLabel;
+
+  /// Search field hint on the upcoming treatments panel
+  ///
+  /// In en, this message translates to:
+  /// **'Search patient or medicine...'**
+  String get dashboard_treatmentSearchHint;
+
+  /// Button label to create a new treatment assignment
+  ///
+  /// In en, this message translates to:
+  /// **'New Assignment'**
+  String get dashboard_newAssignButton;
+
+  /// Empty-state message for upcoming treatments when the 'all' filter is active
+  ///
+  /// In en, this message translates to:
+  /// **'No treatment records found'**
+  String get dashboard_noTreatmentsAllFilter;
+
+  /// Empty-state message for upcoming treatments when the 'pending' filter is active
+  ///
+  /// In en, this message translates to:
+  /// **'No pending treatments'**
+  String get dashboard_noTreatmentsPendingFilter;
+
+  /// Empty-state message for upcoming treatments when the 'urgent' filter is active
+  ///
+  /// In en, this message translates to:
+  /// **'No urgent treatments'**
+  String get dashboard_noTreatmentsUrgentFilter;
+
+  /// Priority badge label for urgent treatments
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get dashboard_priorityUrgentLabel;
+
+  /// Priority badge label for normal-priority treatments
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get dashboard_priorityNormalLabel;
+
+  /// Priority badge label for routine treatments
+  ///
+  /// In en, this message translates to:
+  /// **'Routine'**
+  String get dashboard_priorityRoutineLabel;
+
+  /// Status badge label for a pending treatment
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get dashboard_statusPendingLabel;
+
+  /// Status badge label for a dispensed/completed treatment
+  ///
+  /// In en, this message translates to:
+  /// **'Dispensed'**
+  String get dashboard_statusDoneLabel;
+
+  /// Status badge label for a returned treatment item
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get dashboard_statusReturnedLabel;
+
+  /// Placeholder message shown for a settings section that isn't implemented yet
+  ///
+  /// In en, this message translates to:
+  /// **'{label} settings coming soon'**
+  String settings_sectionComingSoon(String label);
+
+  /// Stub message shown on the not-yet-implemented master cabinet refund screen
+  ///
+  /// In en, this message translates to:
+  /// **'The master cabinet return screen isn\'t ready yet.'**
+  String get refund_masterScreenNotReady;
+
+  /// Error shown when the cabin's management/control board cannot be found during connection or drawer session setup
+  ///
+  /// In en, this message translates to:
+  /// **'Management card not found.'**
+  String get core_cabinConn_managerNotFoundError;
+
+  /// Cabin connection state message shown when the connection to the cabin drops
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost'**
+  String get core_cabinConn_disconnectedError;
+
+  /// Banner title instructing the operator to pull open an unlocked drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Open the drawer'**
+  String get common_action_pullDrawerTitle;
+
+  /// Banner subtitle instructing the operator to pull open an unlocked drawer
+  ///
+  /// In en, this message translates to:
+  /// **'The lock is open, please pull it.'**
+  String get common_action_pullDrawerSubtitle;
+
+  /// Banner title shown while cubic drawer lids are opening
+  ///
+  /// In en, this message translates to:
+  /// **'Opening lids'**
+  String get masterDrawer_openingLidTitle;
+
+  /// Banner subtitle shown while cubic drawer lids are opening
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing the cubic drawer lids.'**
+  String get masterDrawer_openingLidSubtitle;
+
+  /// Banner subtitle shown once the drawer is open and ready for the operation
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the operation and confirm.'**
+  String get masterDrawer_readySubtitle;
+
+  /// Banner title instructing the operator to close the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Close the drawer'**
+  String get common_action_closeDrawerTitle;
+
+  /// Banner subtitle instructing the operator to close the drawer after confirming the operation
+  ///
+  /// In en, this message translates to:
+  /// **'The operation is confirmed, please close it.'**
+  String get common_action_closeDrawerSubtitle;
+
+  /// Banner/status title shown once the drawer has been closed
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer closed'**
+  String get common_action_drawerClosed;
+
+  /// Banner subtitle shown once the drawer operation has fully completed
+  ///
+  /// In en, this message translates to:
+  /// **'The operation is complete.'**
+  String get common_action_operationCompletedSubtitle;
+
+  /// Banner/status title shown when a drawer-related error occurs
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer error'**
+  String get common_action_drawerError;
+
+  /// Generic unexpected-error banner subtitle with the underlying error detail appended, used by master and mobile drawer session notifiers
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected error: {error}'**
+  String common_error_unexpectedWithDetail(Object error);
+
+  /// Error message shown when a cubic drawer lid fails to open
+  ///
+  /// In en, this message translates to:
+  /// **'The lid could not be opened: {error}'**
+  String masterDrawer_lidOpenFailedError(Object error);
+
+  /// Status message shown while the hardware device is being prepared before a drawer session starts
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing device...'**
+  String get common_action_devicePreparing;
+
+  /// Error message shown when connecting to the cabin fails, with the underlying error detail appended
+  ///
+  /// In en, this message translates to:
+  /// **'Connection error: {error}'**
+  String common_error_connectionErrorWithDetail(Object error);
+
+  /// Status message shown while the drawer lock is being opened
+  ///
+  /// In en, this message translates to:
+  /// **'Opening lock...'**
+  String get common_action_lockOpening;
+
+  /// Error message shown when opening the drawer lock fails, with the underlying error detail appended
+  ///
+  /// In en, this message translates to:
+  /// **'The lock could not be opened: {error}'**
+  String common_error_lockOpenFailedWithDetail(Object error);
+
+  /// Subtitle showing the port number of the mobile drawer being operated
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {port}'**
+  String mobileDrawer_portSubtitle(int port);
+
+  /// Status banner subtitle shown while a mobile drawer is open, prompting the operator to close it
+  ///
+  /// In en, this message translates to:
+  /// **'Close the drawer to complete the operation.'**
+  String get mobileDrawer_openedSubtitle;
+
+  /// Status banner subtitle shown after a mobile drawer is closed, waiting for operator confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your confirmation'**
+  String get mobileDrawer_closedSubtitle;
+
+  /// Error message shown when connecting to the cabin's management board fails, with detail appended
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the management card: {error}'**
+  String common_error_managerConnectFailedWithDetail(Object error);
+
+  /// Error message shown when the drawer-open hardware command fails to send
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send the drawer-open command: {error}'**
+  String mobileDrawer_openCommandFailedError(Object error);
+
+  /// Error shown when reading the mobile drawer's hardware status times out
+  ///
+  /// In en, this message translates to:
+  /// **'Timed out while reading the drawer status.'**
+  String get mobileDrawer_statusTimeoutError;
+
+  /// Error shown when the hardware doesn't confirm the drawer actually opened
+  ///
+  /// In en, this message translates to:
+  /// **'Could not confirm that the drawer opened.'**
+  String get mobileDrawer_openNotConfirmedError;
+
+  /// Error shown when reading the mobile drawer's hardware status fails
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while reading the drawer status: {error}'**
+  String mobileDrawer_statusReadError(Object error);
+
+  /// Search field hint text in the master cabin patient picker panel
+  ///
+  /// In en, this message translates to:
+  /// **'Search patient'**
+  String get patientPicker_searchHint;
+
+  /// Toggle button label for filtering to patients without an order
+  ///
+  /// In en, this message translates to:
+  /// **'Without Order'**
+  String get patientPicker_orderlessToggleLabel;
+
+  /// Toggle button label for filtering to patients with an order
+  ///
+  /// In en, this message translates to:
+  /// **'With Order'**
+  String get patientPicker_orderedToggleLabel;
+
+  /// Toggle button label for filtering to the current user's own patients
+  ///
+  /// In en, this message translates to:
+  /// **'My Patients'**
+  String get patientPicker_myPatientsToggleLabel;
+
+  /// Hint text explaining how to create an urgent patient record
+  ///
+  /// In en, this message translates to:
+  /// **'Create a record for an urgent patient not on the list.'**
+  String get patientPicker_urgentPatientHint;
+
+  /// Button label to create an urgent (unlisted) patient record
+  ///
+  /// In en, this message translates to:
+  /// **'Create Urgent Patient'**
+  String get patientPicker_createUrgentPatientButton;
+
+  /// Success snackbar message shown after creating an urgent patient record
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent patient created.'**
+  String get patientPicker_urgentPatientCreatedMessage;
+
+  /// Hardware error shown when the serum cabinet card fails to enter slave communication mode
+  ///
+  /// In en, this message translates to:
+  /// **'The serum card could not be set to slave mode...'**
+  String get hw_cabinOps_serumSlaveModeError;
+
+  /// Hardware error shown when a port has no configured solenoid
+  ///
+  /// In en, this message translates to:
+  /// **'Port {port} has no solenoid (.no).'**
+  String hw_cabinOps_solenoidMissingError(Object port);
+
+  /// Hardware error shown when opening a cabin port fails, with the raw device response appended
+  ///
+  /// In en, this message translates to:
+  /// **'Port {port} could not be opened. Response: {response}'**
+  String hw_cabinOps_portOpenFailedError(Object port, Object response);
+
+  /// Hardware error shown when opening a master cabin drawer fails, with technical addressing detail and raw device response
+  ///
+  /// In en, this message translates to:
+  /// **'The master drawer could not be opened (row={row}, port={port}, drawer={drawer}). Response: {response}'**
+  String hw_cabinOps_masterDrawerOpenFailedError(
+    Object row,
+    Object port,
+    Object drawer,
+    Object response,
+  );
+
+  /// Hardware error shown when opening a master serum drawer fails
+  ///
+  /// In en, this message translates to:
+  /// **'The master serum drawer could not be opened (row={row}). Response: {response}'**
+  String hw_cabinOps_masterSerumOpenFailedError(Object row, Object response);
+
+  /// Detailed error shown when connecting to a serial port fails, with troubleshooting guidance
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to port {portName}. Make sure the device is connected and powered on, and that the port isn\'t in use by another application.'**
+  String hw_serial_connectFailedDetailedError(String portName);
+
+  /// Error shown when configuring a serial port fails
+  ///
+  /// In en, this message translates to:
+  /// **'Port configuration failed ({portName}): {error}'**
+  String hw_serial_portConfigFailedError(String portName, Object error);
+
+  /// Suffix appended to a port-open-failed error when a specific system error is available
+  ///
+  /// In en, this message translates to:
+  /// **'System error: {error}'**
+  String hw_serial_systemErrorSuffix(Object error);
+
+  /// Suffix appended to a port-open-failed error when no specific system error is available
+  ///
+  /// In en, this message translates to:
+  /// **'The port may be in use by another application.'**
+  String get hw_serial_portInUseSuffix;
+
+  /// Error shown when reading from the serial port fails
+  ///
+  /// In en, this message translates to:
+  /// **'Port read error: {error}'**
+  String hw_serial_readErrorWithDetail(Object error);
+
+  /// Status message used as the cancellation reason for pending commands while the serial connection restarts
+  ///
+  /// In en, this message translates to:
+  /// **'Restarting the connection.'**
+  String get hw_serial_reconnectingStatus;
+
+  /// Error shown when connecting to the RFID reader fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the RFID reader: {error}'**
+  String hw_rfid_connectFailedError(Object error);
+
+  /// Error shown when the RFID reader returns an unparseable response
+  ///
+  /// In en, this message translates to:
+  /// **'An invalid response was received.'**
+  String get hw_rfid_invalidResponseError;
+
+  /// Error shown when the RFID reader cannot be reached
+  ///
+  /// In en, this message translates to:
+  /// **'The RFID reader could not be reached: {error}'**
+  String hw_rfid_unreachableError(Object error);
+
+  /// Error shown when the RFID reader connection test times out
+  ///
+  /// In en, this message translates to:
+  /// **'The RFID connection test timed out.'**
+  String get hw_rfid_testTimeoutError;
+
+  /// Error shown when attempting to change RFID reader power settings during an active inventory scan
+  ///
+  /// In en, this message translates to:
+  /// **'The power setting cannot be changed while inventory is active. Call stopInventory() first.'**
+  String get hw_rfid_powerChangeBlockedError;
+
+  /// Error shown when the RFID reader rejects a working-mode change command, with the raw hex status code
+  ///
+  /// In en, this message translates to:
+  /// **'SetWorkingMode was rejected (status=0x{status})'**
+  String hw_rfid_setModeRejectedError(Object status);
+
+  /// Error shown when the RFID reader rejects an antenna configuration command, with the raw hex status code
+  ///
+  /// In en, this message translates to:
+  /// **'SetWorkingAntenna was rejected (status=0x{status})'**
+  String hw_rfid_setAntennaRejectedError(Object status);
+
+  /// Hint suffix appended to the antenna-rejected error when the cause is a disconnected antenna port
+  ///
+  /// In en, this message translates to:
+  /// **' (antenna connection error — one of the enabled ports is empty)'**
+  String get hw_rfid_antennaConnFailedHint;
+
+  /// Error shown when no RFID antenna could be connected on any port
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to any antenna (all ports are empty).'**
+  String get hw_rfid_noAntennaConnectedError;
+
+  /// Error shown when an RFID operation is attempted while the service is disconnected
+  ///
+  /// In en, this message translates to:
+  /// **'The RFID service is not connected.'**
+  String get hw_rfid_notConnectedError;
+
+  /// Error shown when a new RFID command is issued while a previous one hasn't completed
+  ///
+  /// In en, this message translates to:
+  /// **'The previous command is still awaiting a response.'**
+  String get hw_rfid_commandPendingError;
+
+  /// Error shown when an RFID command times out waiting for a response, with the raw hex command code
+  ///
+  /// In en, this message translates to:
+  /// **'The command response timed out (cmd=0x{cmd}).'**
+  String hw_rfid_commandTimeoutError(Object cmd);
+
+  /// Generic RFID command error with the underlying error detail appended
+  ///
+  /// In en, this message translates to:
+  /// **'Command error: {error}'**
+  String hw_rfid_commandErrorWithDetail(Object error);
+
+  /// Error shown by the mock RFID service (used only in the mock app flavor) when not connected
+  ///
+  /// In en, this message translates to:
+  /// **'The mock RFID service is not connected.'**
+  String get hw_rfid_mockNotConnectedError;
+
+  /// Status badge label for a fatal/critical operation error
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Error'**
+  String get operationStatus_fatalErrorLabel;
+
+  /// Status badge label for a generic operation error
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get operationStatus_errorLabel;
+
+  /// Status badge / rollback banner title shown while an operation is being rolled back
+  ///
+  /// In en, this message translates to:
+  /// **'Rolling back the operation'**
+  String get operationStatus_rollingBackLabel;
+
+  /// Status badge label shown while an operation is being finalized
+  ///
+  /// In en, this message translates to:
+  /// **'Finalizing the operation'**
+  String get operationStatus_finalizingLabel;
+
+  /// Status badge label shown when medicines remain in the cabinet after an operation
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines are still in the cabinet'**
+  String get operationStatus_drugsStillInCabinetLabel;
+
+  /// Status badge label for an incomplete or inconsistent operation result
+  ///
+  /// In en, this message translates to:
+  /// **'Incomplete / Inconsistent'**
+  String get operationStatus_incompleteLabel;
+
+  /// Status badge label shown while an RFID scan is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning'**
+  String get operationStatus_scanningLabel;
+
+  /// Status badge label for an item reported as missing stock
+  ///
+  /// In en, this message translates to:
+  /// **'Reported Missing'**
+  String get operationStatus_reportedMissingLabel;
+
+  /// Default title for the unplanned-movement warning banner
+  ///
+  /// In en, this message translates to:
+  /// **'Unplanned movement detected'**
+  String get operationBanner_unplannedMovementTitle;
+
+  /// Message for the unplanned-movement warning banner, with the count of tags removed
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} tag was removed from the cabinet unexpectedly.} other{{count} tags were removed from the cabinet unexpectedly.}} A report will be sent to the pharmacy.'**
+  String operationBanner_unplannedMovementMessage(num count);
+
+  /// Title for the blocking banner shown when unexpected tags must be removed before continuing
+  ///
+  /// In en, this message translates to:
+  /// **'Tag(s) not belonging to this cabinet detected'**
+  String get operationBanner_unexpectedTagBlockingTitle;
+
+  /// Title for the warning banner shown when unexpected tags are detected but don't block the operation
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected medicine'**
+  String get operationBanner_unexpectedTagWarningTitle;
+
+  /// Message for the blocking unexpected-tag banner, listing how many tags must be removed
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the following {count, plural, one{{count} tag} other{{count} tags}} from the drawer to continue.'**
+  String operationBanner_unexpectedTagBlockingMessage(num count);
+
+  /// Message for the non-blocking unexpected-tag warning banner
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} tag} other{{count} tags}} not belonging to this cabinet {count, plural, one{was} other{were}} read. Please remove {count, plural, one{it} other{them}}.'**
+  String operationBanner_unexpectedTagWarningMessage(num count);
+
+  /// Title for the missing-stock warning banner shown during a cabin operation
+  ///
+  /// In en, this message translates to:
+  /// **'Missing stock'**
+  String get operationBanner_missingStockTitle;
+
+  /// Message for the missing-stock warning banner, with the count of medicines not found
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} medicine was} other{{count} medicines were}} not found in the cabinet. It will be reported as missing stock when completed.'**
+  String operationBanner_missingStockMessage(num count);
+
+  /// Generic OK/dismiss button label used to close a dialog or banner
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get common_okButton;
+
+  /// Search field hint text in the cabin patient picker list
+  ///
+  /// In en, this message translates to:
+  /// **'Search patient, room, bed, or service...'**
+  String get cabinPatientPicker_searchHint;
+
+  /// Fallback text shown when a patient's full name is unavailable, used across cabin patient picker and dashboard treatment views
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Patient'**
+  String get common_unknownPatientFallback;
+
+  /// Search field hint text in the generic patient list panel
+  ///
+  /// In en, this message translates to:
+  /// **'Search patient...'**
+  String get patientListPanel_searchHint;
+
+  /// Suffix showing the maximum allowed quantity next to a dose value on the rx item card
+  ///
+  /// In en, this message translates to:
+  /// **'/ max. {max} {unit}'**
+  String rxItemCard_maxQuantitySuffix(String max, String unit);
+
+  /// Banner message on the census extra-stock summary card
+  ///
+  /// In en, this message translates to:
+  /// **'Excess stock will be reported at the end of the operation.'**
+  String get census_extraStockSummaryMessage;
+
+  /// Footer hint shown while the cabinet is being RFID-scanned, shared across census/intake/refill/unload
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning the cabinet, please wait'**
+  String get cabinOperation_hint_scanning;
+
+  /// Footer hint shown after census data is recorded, prompting the drawer to be closed
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded — close the drawer to finish the census'**
+  String get census_hint_waitingClose;
+
+  /// Footer hint shown when the census drawer closes before the operation completes
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer closed early — you can retry or cancel'**
+  String get census_hint_closedEarly;
+
+  /// Footer hint shown when an error occurs during a cabin operation, shared across census/intake/refill/unload
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred — you can retry'**
+  String get cabinOperation_hint_error;
+
+  /// Footer hint shown when an unexpected RFID tag is detected during census/unload
+  ///
+  /// In en, this message translates to:
+  /// **'There is a tag that doesn\'t belong in this cabinet — remove it to continue'**
+  String get census_hint_unexpectedTag;
+
+  /// Footer hint shown when the census is ready to be completed
+  ///
+  /// In en, this message translates to:
+  /// **'Press the button to complete the census'**
+  String get census_hint_readyToComplete;
+
+  /// Footer button/instruction label to close the drawer, shared across census/unload
+  ///
+  /// In en, this message translates to:
+  /// **'Close the Drawer'**
+  String get cabinOperation_action_closeDrawer;
+
+  /// Stat label / status badge for items that have been counted during census
+  ///
+  /// In en, this message translates to:
+  /// **'Counted'**
+  String get census_label_counted;
+
+  /// Stat label for excess stock found during census
+  ///
+  /// In en, this message translates to:
+  /// **'Excess'**
+  String get census_label_excess;
+
+  /// Stat label for tags that don't belong to the cabinet, shared across census/unload
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign'**
+  String get cabinOperation_label_unexpectedTag;
+
+  /// Error shown when an intake operation requires a witness login that hasn't been provided
+  ///
+  /// In en, this message translates to:
+  /// **'A witness login is required.'**
+  String get intake_error_witnessRequired;
+
+  /// Error shown when none of the selected medicines have valid intake targets
+  ///
+  /// In en, this message translates to:
+  /// **'The intake could not be performed for the selected medicines.'**
+  String get intake_error_noValidTargets;
+
+  /// Error shown when no drawer is found for the intake operation
+  ///
+  /// In en, this message translates to:
+  /// **'No drawer was found to take from.'**
+  String get intake_error_noDrawerFound;
+
+  /// Hint shown on the intake operation card when the cabinet has no stock for the item
+  ///
+  /// In en, this message translates to:
+  /// **'There is no stock in the cabinet'**
+  String get intake_hint_noStock;
+
+  /// Label showing the confirmed witness's name on the intake operation card
+  ///
+  /// In en, this message translates to:
+  /// **'Witness: {name}'**
+  String intake_label_witnessName(String name);
+
+  /// Hint shown on the intake operation card when a witness hasn't logged in yet
+  ///
+  /// In en, this message translates to:
+  /// **'Witness login required'**
+  String get intake_hint_witnessRequired;
+
+  /// Status label shown while an intake item's eligibility is being checked
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get intake_status_checking;
+
+  /// Status label shown when an intake item is ready to be taken
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to take'**
+  String get intake_status_readyToTake;
+
+  /// Fallback status label shown when an intake item's eligibility check fails without a specific message
+  ///
+  /// In en, this message translates to:
+  /// **'Check failed'**
+  String get intake_status_checkFailed;
+
+  /// Empty-state message shown before any medicine is selected on the master intake execution panel
+  ///
+  /// In en, this message translates to:
+  /// **'Select a medicine to start the intake.'**
+  String get intake_emptyState_selectMedicine;
+
+  /// Label showing the count of distinct medicines in the current intake queue
+  ///
+  /// In en, this message translates to:
+  /// **'{count} different medicines'**
+  String intake_label_multiMedicine(int count);
+
+  /// Label showing the amount taken during an intake operation
+  ///
+  /// In en, this message translates to:
+  /// **'Taken: {amount} {unit}'**
+  String intake_label_takenAmount(String amount, String unit);
+
+  /// Field label for the manual count input during intake, showing the unit
+  ///
+  /// In en, this message translates to:
+  /// **'Count ({unit})'**
+  String intake_label_countFieldLabel(String unit);
+
+  /// Hint shown on the intake execution panel explaining that confirming opens the next cell
+  ///
+  /// In en, this message translates to:
+  /// **'The next cell will open once you confirm.'**
+  String get intake_hint_nextCellOpens;
+
+  /// Hint shown on the intake execution panel explaining that confirming closes the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer will close once you confirm.'**
+  String get intake_hint_confirmCloses;
+
+  /// Search field hint on the master intake selection panel
+  ///
+  /// In en, this message translates to:
+  /// **'Search medicine (name / barcode)'**
+  String get intake_hint_searchMedicine;
+
+  /// Hint shown on the master intake selection panel while an intake is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Intake in progress — selection is locked.'**
+  String get intake_hint_selectionLocked;
+
+  /// Hint explaining the automatic drawer queue ordering for intake
+  ///
+  /// In en, this message translates to:
+  /// **'Drawers will open in the shortest-path order.'**
+  String get intake_hint_autoQueueOrder;
+
+  /// Informational message shown when an already-confirmed witness is auto-assigned to another medicine
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was also assigned as the witness for this medicine.'**
+  String intake_info_witnessAutoAssigned(String name);
+
+  /// Dialog title shown when the intake queue encounters an unrecoverable error
+  ///
+  /// In en, this message translates to:
+  /// **'The intake could not be completed'**
+  String get intake_error_queueTitle;
+
+  /// Dialog message shown when the intake queue encounters an unrecoverable error, instructing the operator to undo their action; may have additional detail appended
+  ///
+  /// In en, this message translates to:
+  /// **'Put the medicines back where you took them from.'**
+  String get intake_error_queueMessage;
+
+  /// Validation error shown when the operator tries to log in as their own witness
+  ///
+  /// In en, this message translates to:
+  /// **'The user performing the operation cannot also witness it.'**
+  String get intake_error_selfWitness;
+
+  /// Success message shown after a witness successfully logs in
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was confirmed as the witness.'**
+  String intake_success_witnessConfirmed(String name);
+
+  /// Dialog title for the witness login dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Witness Verification'**
+  String get intake_witnessDialog_title;
+
+  /// Field label for the witness's username
+  ///
+  /// In en, this message translates to:
+  /// **'Witness Username'**
+  String get intake_witnessDialog_usernameLabel;
+
+  /// Validation message for the witness username field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a username'**
+  String get intake_witnessDialog_usernameRequired;
+
+  /// Field label for the witness's password
+  ///
+  /// In en, this message translates to:
+  /// **'Witness Password'**
+  String get intake_witnessDialog_passwordLabel;
+
+  /// Validation message for the witness password field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a password'**
+  String get intake_witnessDialog_passwordRequired;
+
+  /// Button label to confirm the witness login
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Witness'**
+  String get intake_witnessDialog_confirmButton;
+
+  /// Informational text on the witness login dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Any staff member can witness this operation.'**
+  String get intake_witnessDialog_anyoneInfo;
+
+  /// Section header showing the count of authorized witnesses
+  ///
+  /// In en, this message translates to:
+  /// **'Authorized Witnesses ({count})'**
+  String intake_witnessDialog_authorizedWitnesses(int count);
+
+  /// Footer hint shown when a fatal error occurs during intake/refill, with the error detail appended
+  ///
+  /// In en, this message translates to:
+  /// **'A critical error occurred: {message}'**
+  String cabinOperation_hint_fatalError(String message);
+
+  /// Footer hint shown when the intake/refill operation has completed
+  ///
+  /// In en, this message translates to:
+  /// **'Operation completed'**
+  String get cabinOperation_hint_completed;
+
+  /// Footer hint shown after intake/refill data is recorded, prompting the drawer to be closed
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded. Close the drawer to finish the operation'**
+  String get cabinOperation_hint_waitingCloseGeneric;
+
+  /// Footer hint shown when the intake/refill drawer closes before the operation completes
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer was closed. You can cancel or continue where you left off'**
+  String get cabinOperation_hint_closedEarlyGeneric;
+
+  /// Footer hint shown when the intake/refill operation is ready to be completed
+  ///
+  /// In en, this message translates to:
+  /// **'Ready — you can complete the operation'**
+  String get cabinOperation_hint_ready;
+
+  /// Footer hint shown when an unexpected medicine is placed in the cabinet during intake
+  ///
+  /// In en, this message translates to:
+  /// **'A medicine that shouldn\'t be in the cabinet was loaded, please remove it.'**
+  String get intake_hint_extraPlacement;
+
+  /// Footer hint instructing the operator to take medicines during intake
+  ///
+  /// In en, this message translates to:
+  /// **'Take the medicines, then complete the operation'**
+  String get intake_hint_takeItems;
+
+  /// Generic primary action button label used on the mobile intake and refill footers
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the operation'**
+  String get cabinOperation_action_completeGeneric;
+
+  /// RFID status badge shown when an expected tag was not found, shared across intake/unload
+  ///
+  /// In en, this message translates to:
+  /// **'Not Found'**
+  String get rfidStatus_notFound;
+
+  /// RFID status badge shown while a tag is being scanned, shared across intake/refill/unload
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning'**
+  String get rfidStatus_scanning;
+
+  /// Status badge shown when an intake item has no RFID tag
+  ///
+  /// In en, this message translates to:
+  /// **'No RFID'**
+  String get intake_label_noRfid;
+
+  /// Stat label showing the count of selected items, shared across intake/refill dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get cabinOperation_label_selected;
+
+  /// Stat label for the count of tags read inside the cabinet during intake
+  ///
+  /// In en, this message translates to:
+  /// **'Read in Cabinet'**
+  String get intake_label_readInCabin;
+
+  /// Label showing the total number of RFID tags read
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tags'**
+  String intake_label_tagCount(int count);
+
+  /// Stat label for the count of items taken during intake
+  ///
+  /// In en, this message translates to:
+  /// **'Taken'**
+  String get intake_label_takenCount;
+
+  /// Stat label for unauthorized/unplanned takes detected during intake
+  ///
+  /// In en, this message translates to:
+  /// **'Unauthorized Take'**
+  String get intake_label_unauthorizedTake;
+
+  /// Fixed error banner message shown on the mobile intake dialog when the operation cannot proceed
+  ///
+  /// In en, this message translates to:
+  /// **'You can retry, or finish the operation by taking back the medicines you placed.'**
+  String get intake_error_retryOrFinish;
+
+  /// RFID status badge shown when a medicine has been placed in the drawer during refill
+  ///
+  /// In en, this message translates to:
+  /// **'Placed'**
+  String get refill_label_placed;
+
+  /// Stat label for the count of medicines placed during refill
+  ///
+  /// In en, this message translates to:
+  /// **'Placed'**
+  String get refill_label_placedCount;
+
+  /// Progress label showing placed-tag count out of expected count during refill
+  ///
+  /// In en, this message translates to:
+  /// **'{done} / {total}'**
+  String refill_label_placedProgress(Object done, Object total);
+
+  /// Stat label for unplanned tag movements, shared across refill/unload dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'Unplanned'**
+  String get cabinOperation_label_unplanned;
+
+  /// Stat label for extra/unexpected tags detected during refill
+  ///
+  /// In en, this message translates to:
+  /// **'Extra Tag'**
+  String get refill_label_extraTag;
+
+  /// Fixed error banner message shown on the mobile refill dialog
+  ///
+  /// In en, this message translates to:
+  /// **'You can try again.'**
+  String get refill_error_retry;
+
+  /// Footer hint shown after unload data is recorded, prompting the drawer to be closed
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded — close the drawer to finish unloading'**
+  String get unload_hint_waitingClose;
+
+  /// Footer hint shown when the unload drawer closes before the operation completes
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer closed early — you can retry or cancel'**
+  String get unload_hint_closedEarly;
+
+  /// Footer hint shown when the unload operation is ready to be completed
+  ///
+  /// In en, this message translates to:
+  /// **'Press the button to complete unloading'**
+  String get unload_hint_readyToComplete;
+
+  /// Status badge / stat label for items that have been unloaded
+  ///
+  /// In en, this message translates to:
+  /// **'Unloaded'**
+  String get unload_label_unloaded;
+
+  /// Progress label showing unloaded-count out of expected total during unload
+  ///
+  /// In en, this message translates to:
+  /// **'{done} / {total}'**
+  String unload_label_unloadProgress(Object done, Object total);
+
+  /// Step progress badge shown at the top of each setup wizard step
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} / {total}'**
+  String wizard_stepBadge(int step, int total);
+
+  /// Title for wizard step 4 (drawer configuration)
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer Configuration'**
+  String get wizard_step4Header;
+
+  /// Subtitle for wizard step 4 when configuring a mobile cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'Define the mobile cabinet\'s drawer count, internal sections, and port connections.'**
+  String get wizard_step4SubtitleMobile;
+
+  /// Subtitle for wizard step 4 when configuring a master cabinet (auto-scanned)
+  ///
+  /// In en, this message translates to:
+  /// **'The cabinet\'s internal structure will be read automatically from the device.'**
+  String get wizard_step4SubtitleMaster;
+
+  /// Shared 'Back' button label used by every setup wizard step footer
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get wizard_backButton;
+
+  /// Idle-state button label to test the cabinet's serial connection
+  ///
+  /// In en, this message translates to:
+  /// **'Test Cabinet Connection'**
+  String get wizard_testCabinConnectionButton;
+
+  /// Loading-state label shown while a connection test is running, shared between cabin and RFID test buttons
+  ///
+  /// In en, this message translates to:
+  /// **'Testing…'**
+  String get wizard_testingInProgress;
+
+  /// Success-state label shown after a connection test succeeds, shared between cabin and RFID test buttons
+  ///
+  /// In en, this message translates to:
+  /// **'Connection successful'**
+  String get wizard_connectionSuccessLabel;
+
+  /// Link to re-run a connection test after success, shared between cabin and RFID test buttons
+  ///
+  /// In en, this message translates to:
+  /// **'Test again'**
+  String get wizard_retestLink;
+
+  /// Fallback error text for the cabinet connection test when no specific error is available
+  ///
+  /// In en, this message translates to:
+  /// **'Could not establish a connection. Check the port settings.'**
+  String get wizard_cabinConnectionErrorFallback;
+
+  /// Idle-state button label to test the RFID antenna connection
+  ///
+  /// In en, this message translates to:
+  /// **'Test Antenna Connection'**
+  String get wizard_testRfidConnectionButton;
+
+  /// RFID reader firmware version and power level shown after a successful connection test
+  ///
+  /// In en, this message translates to:
+  /// **'· FW {firmwareVersion}  {power} dBm'**
+  String wizard_rfidFirmwareInfo(String firmwareVersion, Object power);
+
+  /// Fallback error text for the RFID connection test when no specific error is available
+  ///
+  /// In en, this message translates to:
+  /// **'Could not establish a connection. Check the IP and port settings.'**
+  String get wizard_rfidConnectionErrorFallback;
+
+  /// Dropdown field label for the COM port selector in the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get wizard_portLabel;
+
+  /// Toggle field label enabling the RFID configuration section in the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Has RFID reader'**
+  String get wizard_rfidReaderToggleLabel;
+
+  /// Field label for the RFID reader's IP address
+  ///
+  /// In en, this message translates to:
+  /// **'RFID IP Address'**
+  String get wizard_rfidIpAddressLabel;
+
+  /// Field label for the RFID reader's port number
+  ///
+  /// In en, this message translates to:
+  /// **'RFID Port'**
+  String get wizard_rfidPortFieldLabel;
+
+  /// Hint text next to the drawer-count stepper in the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'1–8 drawers'**
+  String get wizard_drawerCountRangeHint;
+
+  /// Toggle title for applying the same drawer configuration to all drawers
+  ///
+  /// In en, this message translates to:
+  /// **'All drawers have the same structure'**
+  String get wizard_sameConfigToggleLabel;
+
+  /// Toggle description shown when the same-configuration toggle is ON
+  ///
+  /// In en, this message translates to:
+  /// **'All drawers use the same row/column configuration'**
+  String get wizard_sameConfigToggleOnDesc;
+
+  /// Toggle description shown when the same-configuration toggle is OFF
+  ///
+  /// In en, this message translates to:
+  /// **'When off, row/column can be set separately for each drawer'**
+  String get wizard_sameConfigToggleOffDesc;
+
+  /// Summary text next to each collapsed drawer configuration card
+  ///
+  /// In en, this message translates to:
+  /// **'{rowCount} rows · {totalCells} cells'**
+  String wizard_drawerRowCellSummary(int rowCount, int totalCells);
+
+  /// Label showing the port number assigned to a drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Port {portNumber}'**
+  String wizard_drawerPortLabel(Object portNumber);
+
+  /// Uppercase row label in the drawer row-configuration editor
+  ///
+  /// In en, this message translates to:
+  /// **'ROW {rowIndex}'**
+  String wizard_rowLabel(int rowIndex);
+
+  /// Error shown when a hospital service's details fail to load in the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the service details.'**
+  String get wizard_serviceDetailsLoadError;
+
+  /// Error shown when a station's details fail to load in the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the station details.'**
+  String get wizard_stationDetailsLoadError;
+
+  /// Fallback error shown when the station list fails to load and no specific message is provided
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the stations.'**
+  String get wizard_stationsLoadErrorFallback;
+
+  /// Empty-state message when the station list loads successfully but is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No registered stations were found.'**
+  String get wizard_noStationsFoundMessage;
+
+  /// Empty-state message when a selected station has no rooms defined
+  ///
+  /// In en, this message translates to:
+  /// **'No rooms are defined for this station.'**
+  String get wizard_noRoomsDefinedMessage;
+
+  /// Badge chip showing the selected room count in the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} room} other{{count} rooms}}'**
+  String wizard_selectedRoomCountBadge(int count);
+
+  /// Fraction label showing how many rooms are selected out of the total
+  ///
+  /// In en, this message translates to:
+  /// **'{selected}/{total}'**
+  String wizard_roomSelectionFraction(int selected, int total);
+
+  /// Footer hint shown when an unexpected medicine tag is placed during refill
+  ///
+  /// In en, this message translates to:
+  /// **'A tag other than the selected medicines was placed, please remove it'**
+  String get refill_hint_extraPlacement;
+
+  /// Footer hint instructing the operator to place medicines during refill
+  ///
+  /// In en, this message translates to:
+  /// **'Place the medicines, then complete the operation'**
+  String get refill_hint_placeItems;
+
+  /// Fallback UI message for NetworkUnavailableException, the base error-translation extension used by the manager app's generic error-display mixin
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the server. Check your network connection.'**
+  String get appException_networkUnavailable;
+
+  /// Fallback UI message for TimeoutException
+  ///
+  /// In en, this message translates to:
+  /// **'The server did not respond. Please try again.'**
+  String get appException_timeout;
+
+  /// Fallback UI message for ServiceException with a 5xx status code
+  ///
+  /// In en, this message translates to:
+  /// **'Server error ({statusCode}). Please try again.'**
+  String appException_serviceError5xx(Object statusCode);
+
+  /// Fallback UI message for ServiceException with a non-5xx status code
+  ///
+  /// In en, this message translates to:
+  /// **'The operation could not be completed ({statusCode}).'**
+  String appException_serviceErrorOther(Object statusCode);
+
+  /// Fallback UI message for MalformedDataException
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected data was received from the server.'**
+  String get appException_malformedData;
+
+  /// Fallback UI message for EmptyResponseException
+  ///
+  /// In en, this message translates to:
+  /// **'The server returned an empty response.'**
+  String get appException_emptyResponse;
+
+  /// Fallback UI message for ValidationException when a specific field is known
+  ///
+  /// In en, this message translates to:
+  /// **'The {field} field is invalid.'**
+  String appException_validationField(String field);
+
+  /// Fallback UI message for ValidationException when no specific field is known
+  ///
+  /// In en, this message translates to:
+  /// **'The information entered is invalid.'**
+  String get appException_validationGeneric;
+
+  /// Fallback UI message for MappingException
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while processing the data.'**
+  String get appException_mapping;
+
+  /// Fallback UI message for CacheException
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read local data.'**
+  String get appException_cache;
+
+  /// Fallback UI message for StaleCacheException
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot reach up-to-date data. Please check the connection.'**
+  String get appException_staleCache;
+
+  /// Fallback UI message for NotFoundException when the resource type is known
+  ///
+  /// In en, this message translates to:
+  /// **'{resourceType} not found.'**
+  String appException_notFoundWithType(String resourceType);
+
+  /// Fallback UI message for NotFoundException when no resource type is known
+  ///
+  /// In en, this message translates to:
+  /// **'Record not found.'**
+  String get appException_notFoundGeneric;
+
+  /// Fallback UI message for UnexpectedException (catch-all)
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again.'**
+  String get appException_unexpected;
+
+  /// Fallback UI message for SerialPortException
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the serial port. Please contact technical service.'**
+  String get appException_serialPort;
+
+  /// Fixed fallback UI message shown for any CustomException, regardless of its own message
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred. Please try again later.'**
+  String get appException_custom;
+
+  /// APIManager error message when an API call returns 2xx with an empty body
+  ///
+  /// In en, this message translates to:
+  /// **'The server returned an empty response'**
+  String get dataError_emptyResponse;
+
+  /// APIManager error message when the response parser throws
+  ///
+  /// In en, this message translates to:
+  /// **'The response could not be processed'**
+  String get dataError_malformedResponse;
+
+  /// APIManager fallback error message for connect/receive/send timeouts
+  ///
+  /// In en, this message translates to:
+  /// **'The request timed out'**
+  String get dataError_requestTimeout;
+
+  /// APIManager error message for connection errors (no network/DNS failure)
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the network'**
+  String get dataError_networkUnavailable;
+
+  /// APIManager fallback error message for a non-2xx HTTP response with no recognizable error field in the body — highest blast radius in the data layer
+  ///
+  /// In en, this message translates to:
+  /// **'We encountered an error. Please try again later.'**
+  String get dataError_genericApiError;
+
+  /// APIManager error message when a request is cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'The request was cancelled'**
+  String get dataError_requestCancelled;
+
+  /// BaseRemoteDataSource fallback error message when the API response envelope says isSuccess:false with no message
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get dataError_envelopeErrorFallback;
+
+  /// Login error shown when the login endpoint returns 200 but no valid token
+  ///
+  /// In en, this message translates to:
+  /// **'An invalid token response was received from the server'**
+  String get authError_invalidTokenResponse;
+
+  /// Login error shown when the token is obtained but fetching the current user fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not retrieve user information'**
+  String get authError_userInfoFetchFailed;
+
+  /// Login error shown when the current-user payload is null
+  ///
+  /// In en, this message translates to:
+  /// **'The user information returned was empty'**
+  String get authError_userInfoEmpty;
+
+  /// Fallback error message for the login-specific Dio error parser
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get authError_genericLoginError;
+
+  /// Credential error shown by the mock login repository (mock app flavor only)
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect username or password.'**
+  String get authError_invalidCredentialsMock;
+
+  /// Validation guard before deleting an active ingredient with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the active ingredient to delete cannot be empty'**
+  String get dataGuard_deleteActiveIngredientIdEmpty;
+
+  /// Validation guard before deleting a branch with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the branch to delete cannot be empty'**
+  String get dataGuard_deleteBranchIdEmpty;
+
+  /// Validation guard before deleting a cabinet with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the cabinet to delete cannot be empty'**
+  String get dataGuard_deleteCabinIdEmpty;
+
+  /// Validation guard before deleting a dosage form with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the dosage form to delete cannot be empty'**
+  String get dataGuard_deleteDosageFormIdEmpty;
+
+  /// Validation guard before deleting a drug class with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the drug class to delete cannot be empty'**
+  String get dataGuard_deleteDrugClassIdEmpty;
+
+  /// Validation guard before deleting a firm with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the firm to delete cannot be empty'**
+  String get dataGuard_deleteFirmIdEmpty;
+
+  /// Validation guard before deleting a drug type with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the drug type to delete cannot be empty'**
+  String get dataGuard_deleteDrugTypeIdEmpty;
+
+  /// Validation guard before deleting a hospitalization/admission with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the admission to delete cannot be empty'**
+  String get dataGuard_deleteHospitalizationIdEmpty;
+
+  /// Validation guard before deleting a kit with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the kit to delete cannot be empty'**
+  String get dataGuard_deleteKitIdEmpty;
+
+  /// Validation guard before deleting a kit content item with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the kit content to delete cannot be empty'**
+  String get dataGuard_deleteKitContentIdEmpty;
+
+  /// Validation guard before deleting a material type with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the material type to delete cannot be empty'**
+  String get dataGuard_deleteMaterialTypeIdEmpty;
+
+  /// Validation guard before deleting a medicine with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the medicine to delete cannot be empty'**
+  String get dataGuard_deleteMedicineIdEmpty;
+
+  /// Validation guard before deleting a patient with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the patient to delete cannot be empty'**
+  String get dataGuard_deletePatientIdEmpty;
+
+  /// Validation guard before deleting a role with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the role to delete cannot be empty'**
+  String get dataGuard_deleteRoleIdEmpty;
+
+  /// Validation guard before deleting a hospital service with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the service to delete cannot be empty'**
+  String get dataGuard_deleteServiceIdEmpty;
+
+  /// Validation guard before deleting a station with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the station to delete cannot be empty'**
+  String get dataGuard_deleteStationIdEmpty;
+
+  /// Validation guard before deleting a unit with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the unit to delete cannot be empty'**
+  String get dataGuard_deleteUnitIdEmpty;
+
+  /// Validation guard before deleting a warehouse with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the warehouse to delete cannot be empty'**
+  String get dataGuard_deleteWarehouseIdEmpty;
+
+  /// Validation guard before deleting a warning with a null/empty id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the warning to delete cannot be empty'**
+  String get dataGuard_deleteWarningIdEmpty;
+
+  /// Validation guard before updating a patient with a null id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the patient to update cannot be empty'**
+  String get dataGuard_updatePatientIdEmpty;
+
+  /// Validation guard before updating a hospitalization/admission with a null id
+  ///
+  /// In en, this message translates to:
+  /// **'The ID of the admission to update cannot be empty'**
+  String get dataGuard_updateHospitalizationIdEmpty;
+
+  /// Generic error message with retry guidance, shared across several pharmed_core usecases (intake, refund)
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred. Please try again later.'**
+  String get core_genericErrorRetryMessage;
+
+  /// Short generic error message, shared across several pharmed_core usecases (intake)
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred.'**
+  String get core_genericErrorShortMessage;
+
+  /// Error shown when cabinet creation fails
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while creating the cabinet. Please try again later.'**
+  String get cabinCore_createError;
+
+  /// Error shown when no active cabinet is found for the visualizer
+  ///
+  /// In en, this message translates to:
+  /// **'No active cabinet found'**
+  String get cabinCore_activeCabinNotFound;
+
+  /// Error shown when a mobile cabinet's design cannot be found
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile cabinet design not found'**
+  String get cabinCore_mobileCabinDesignNotFound;
+
+  /// Error shown when a cabinet's design cannot be found
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet design not found'**
+  String get cabinCore_cabinDesignNotFound;
+
+  /// Error shown when cabinet creation succeeds but the server doesn't return an ID
+  ///
+  /// In en, this message translates to:
+  /// **'The cabinet was created but its ID could not be retrieved.'**
+  String get cabinCore_createdButIdMissing;
+
+  /// Error shown during cabinet scan when definitions cannot be fetched
+  ///
+  /// In en, this message translates to:
+  /// **'The definitions could not be retrieved.'**
+  String get cabinCore_definitionsNotFound;
+
+  /// Error shown during cabinet scan when no control cards are found
+  ///
+  /// In en, this message translates to:
+  /// **'No cards were found.'**
+  String get cabinCore_noCardsFound;
+
+  /// Error shown during cabinet scan when no drawer matches
+  ///
+  /// In en, this message translates to:
+  /// **'No matching drawer was found.'**
+  String get cabinCore_noMatchingDrawerFound;
+
+  /// Error shown when there is no cabinet design data to save
+  ///
+  /// In en, this message translates to:
+  /// **'No data was found to save.'**
+  String get cabinCore_designDataNotFound;
+
+  /// Error shown when prescription creation fails
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while creating the prescription. Please try again later.'**
+  String get prescriptionCore_createError;
+
+  /// Error shown when assigning an RFID tag but none is detected
+  ///
+  /// In en, this message translates to:
+  /// **'No RFID tag was found in the reader\'s range.'**
+  String get prescriptionCore_rfidTagNotFoundInReader;
+
+  /// Error shown when reading an RFID tag fails, with the underlying error detail appended
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while reading the RFID tag: {error}'**
+  String prescriptionCore_rfidReadErrorWithDetail(Object error);
+
+  /// Table column header for the role name
+  ///
+  /// In en, this message translates to:
+  /// **'Role Name'**
+  String get tableCore_roleNameColumn;
+
+  /// Table column header for the warning subject
+  ///
+  /// In en, this message translates to:
+  /// **'Warning Subject'**
+  String get tableCore_warningSubjectColumn;
+
+  /// Table column header for the warning text
+  ///
+  /// In en, this message translates to:
+  /// **'Warning Text'**
+  String get tableCore_warningTextColumn;
+
+  /// Table column header for the warehouse code
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Code'**
+  String get tableCore_warehouseCodeColumn;
+
+  /// Table column header for the warehouse name
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Name'**
+  String get tableCore_warehouseNameColumn;
+
+  /// Table column header for the warehouse manager
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Manager'**
+  String get tableCore_warehouseManagerColumn;
+
+  /// Table column header for the dosage form's branch name (shared with the Branch entity's own name column)
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Name'**
+  String get tableCore_dosageFormBranchColumn;
+
+  /// Table column header for the firm's ID
+  ///
+  /// In en, this message translates to:
+  /// **'ID'**
+  String get tableCore_firmIdColumn;
+
+  /// Table column header for the firm name
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get tableCore_firmNameColumn;
+
+  /// Table column header for the firm type
+  ///
+  /// In en, this message translates to:
+  /// **'Firm Type'**
+  String get tableCore_firmTypeColumn;
+
+  /// Table column header for the firm's tax office
+  ///
+  /// In en, this message translates to:
+  /// **'Tax Office'**
+  String get tableCore_firmTaxOfficeColumn;
+
+  /// Table column header for the firm's tax number
+  ///
+  /// In en, this message translates to:
+  /// **'Tax No.'**
+  String get tableCore_firmTaxNoColumn;
+
+  /// Table column header for the kit name
+  ///
+  /// In en, this message translates to:
+  /// **'Kit Name'**
+  String get tableCore_kitNameColumn;
+
+  /// Table column header for the kit content's material name
+  ///
+  /// In en, this message translates to:
+  /// **'Material Name'**
+  String get tableCore_kitContentMaterialNameColumn;
+
+  /// Table column header for the kit content's piece count
+  ///
+  /// In en, this message translates to:
+  /// **'Piece Count'**
+  String get tableCore_kitContentPieceColumn;
+
+  /// Table column header for the drug type name
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Type'**
+  String get tableCore_drugTypeColumn;
+
+  /// Table column header for the drug class name
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Class'**
+  String get tableCore_drugClassColumn;
+
+  /// Table column header for the material type name
+  ///
+  /// In en, this message translates to:
+  /// **'Material Type'**
+  String get tableCore_materialTypeColumn;
+
+  /// Table column header for the station code
+  ///
+  /// In en, this message translates to:
+  /// **'Station Code'**
+  String get tableCore_stationCodeColumn;
+
+  /// Table column header for the station name
+  ///
+  /// In en, this message translates to:
+  /// **'Station Name'**
+  String get tableCore_stationNameColumn;
+
+  /// Table column header for the station's drug warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Warehouse'**
+  String get tableCore_stationDrugWarehouseColumn;
+
+  /// Table column header for the station's drug status
+  ///
+  /// In en, this message translates to:
+  /// **'Drug'**
+  String get tableCore_stationDrugColumn;
+
+  /// Table column header for the station's medical consumable warehouse
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Consumable Warehouse'**
+  String get tableCore_stationConsumableWarehouseColumn;
+
+  /// Table column header for the station's medical consumable status
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Consumable'**
+  String get tableCore_stationConsumableColumn;
+
+  /// Table column header for the station's working type
+  ///
+  /// In en, this message translates to:
+  /// **'Working Type'**
+  String get tableCore_stationWorkingTypeColumn;
+
+  /// Table column header for the hospitalization protocol number
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol No.'**
+  String get tableCore_hospitalizationProtocolNoColumn;
+
+  /// Table column header for the patient's national ID, on the hospitalization table
+  ///
+  /// In en, this message translates to:
+  /// **'National ID No.'**
+  String get tableCore_hospitalizationNationalIdColumn;
+
+  /// Table column header for the patient name, on the hospitalization table
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get tableCore_hospitalizationPatientColumn;
+
+  /// Table column header for the patient's national ID, on the patient row table
+  ///
+  /// In en, this message translates to:
+  /// **'Patient National ID'**
+  String get tableCore_patientRowNationalIdColumn;
+
+  /// Table column header for the patient's full name, on the patient row table
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get tableCore_patientRowFullNameColumn;
+
+  /// Table column header for the cabinet, on the inconsistency table
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet'**
+  String get tableCore_inconsistencyCabinColumn;
+
+  /// Table column header for the row number, on the inconsistency table
+  ///
+  /// In en, this message translates to:
+  /// **'Row No.'**
+  String get tableCore_inconsistencyRowNoColumn;
+
+  /// Table column header for the drawer cell, on the inconsistency table
+  ///
+  /// In en, this message translates to:
+  /// **'Cell'**
+  String get tableCore_inconsistencyCellColumn;
+
+  /// Table column header for the expected quantity, on the inconsistency table
+  ///
+  /// In en, this message translates to:
+  /// **'Expected'**
+  String get tableCore_inconsistencyExpectedColumn;
+
+  /// Table column header for the counted quantity, on the inconsistency table
+  ///
+  /// In en, this message translates to:
+  /// **'Counted Quantity'**
+  String get tableCore_inconsistencyCountedColumn;
+
+  /// Table column header for the transaction date, on the stock transaction table
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get tableCore_stockTransactionDateColumn;
+
+  /// Table column header for the barcode, on the stock transaction table
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get tableCore_stockTransactionBarcodeColumn;
+
+  /// Table column header for the transaction type, on the stock transaction table
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Type'**
+  String get tableCore_stockTransactionTypeColumn;
+
+  /// Table column header for the quantity, on the stock transaction table
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get tableCore_stockTransactionQuantityColumn;
+
+  /// Table column header for the quantity before the transaction, on the stock transaction table
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity Before Movement'**
+  String get tableCore_stockTransactionPreviousQuantityColumn;
+
+  /// Table column header for who performed the transaction, on the stock transaction table
+  ///
+  /// In en, this message translates to:
+  /// **'Performed By'**
+  String get tableCore_stockTransactionActorColumn;
+
+  /// Shared table column header for a hospital service, used across station/hospitalization/patient row tables
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get tableCore_serviceColumn;
+
+  /// Shared table column header for the admission date, used across hospitalization/patient row tables
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Date'**
+  String get tableCore_admissionDateColumn;
+
+  /// Shared table column header for the discharge date, used across hospitalization/patient row tables
+  ///
+  /// In en, this message translates to:
+  /// **'Discharge Date'**
+  String get tableCore_dischargeDateColumn;
+
+  /// Shared table column header for material, used across inconsistency/stock transaction tables
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get tableCore_materialColumn;
+
+  /// Shared enum label for the active status, used across most CRUD entities' Status enum
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get enumCore_statusActive;
+
+  /// Shared enum label for the inactive/passive status, used across most CRUD entities' Status enum
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get enumCore_statusPassive;
+
+  /// WarehouseType enum label for the main warehouse type
+  ///
+  /// In en, this message translates to:
+  /// **'Main Warehouse'**
+  String get enumCore_warehouseTypeMain;
+
+  /// FirmType enum label for supplier
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get enumCore_firmTypeSupplier;
+
+  /// FirmType enum label for customer
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get enumCore_firmTypeCustomer;
+
+  /// FirmType enum label for manufacturer
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer'**
+  String get enumCore_firmTypeManufacturer;
+
+  /// WarningSubject enum label for an untimely/out-of-window purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Untimely Purchase'**
+  String get enumCore_warningSubjectUntimelyPurchase;
+
+  /// WarningSubject enum label for waste
+  ///
+  /// In en, this message translates to:
+  /// **'Waste'**
+  String get enumCore_warningSubjectWaste;
+
+  /// WarningSubject enum label for inconsistency resolution
+  ///
+  /// In en, this message translates to:
+  /// **'Inconsistency Resolution'**
+  String get enumCore_warningSubjectInconsistencyResolution;
+
+  /// WarningSubject enum label for disposal
+  ///
+  /// In en, this message translates to:
+  /// **'Disposal'**
+  String get enumCore_warningSubjectDisposal;
+
+  /// StockTransactionType enum label for incoming stock
+  ///
+  /// In en, this message translates to:
+  /// **'Stock In'**
+  String get enumCore_stockTxTypeIn;
+
+  /// StockTransactionType enum label for outgoing stock
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Out'**
+  String get enumCore_stockTxTypeOut;
+
+  /// StockTransactionKind enum label for a material purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Material Purchase'**
+  String get enumCore_stockTxKindPurchase;
+
+  /// StockTransactionKind enum label for excess stock
+  ///
+  /// In en, this message translates to:
+  /// **'Excess Stock'**
+  String get enumCore_stockTxKindExcess;
+
+  /// StockTransactionKind enum label for stock shortage
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Shortage'**
+  String get enumCore_stockTxKindShortage;
+
+  /// StockTransactionKind enum label for a material return
+  ///
+  /// In en, this message translates to:
+  /// **'Material Return'**
+  String get enumCore_stockTxKindReturn;
+
+  /// StockTransactionKind enum label for a stock census/count
+  ///
+  /// In en, this message translates to:
+  /// **'Census'**
+  String get enumCore_stockTxKindCensus;
+
+  /// StockTransactionKind enum label for material usage
+  ///
+  /// In en, this message translates to:
+  /// **'Material Usage'**
+  String get enumCore_stockTxKindUsage;
+
+  /// CountType enum label for no census configured
+  ///
+  /// In en, this message translates to:
+  /// **'No Census'**
+  String get enumCore_countTypeNone;
+
+  /// CountType enum label for a normal (non-blind) census
+  ///
+  /// In en, this message translates to:
+  /// **'Normal Census'**
+  String get enumCore_countTypeNormal;
+
+  /// CountType enum label for a blind census
+  ///
+  /// In en, this message translates to:
+  /// **'Blind Census'**
+  String get enumCore_countTypeBlind;
+
+  /// ReturnType enum label for returning an item to its original location
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Origin'**
+  String get enumCore_returnTypeToOrigin;
+
+  /// ReturnType enum label for returning an item to the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Drawer'**
+  String get enumCore_returnTypeToDrawer;
+
+  /// ReturnType enum label for returning an item to the return box
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Return Box'**
+  String get enumCore_returnTypeToReturnBox;
+
+  /// ReturnType enum label for returning an item to the pharmacy
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Pharmacy'**
+  String get enumCore_returnTypeToPharmacy;
+
+  /// RequestType enum label for a normal request
+  ///
+  /// In en, this message translates to:
+  /// **'Normal Request'**
+  String get enumCore_requestTypeNormal;
+
+  /// RequestType enum label for an urgent request
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent Request'**
+  String get enumCore_requestTypeUrgent;
+
+  /// PurchaseType enum label for allowing both ordered and orderless purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get enumCore_purchaseTypeBoth;
+
+  /// PrescriptionType enum label for a white (standard) prescription
+  ///
+  /// In en, this message translates to:
+  /// **'White Prescription'**
+  String get enumCore_prescriptionTypeWhite;
+
+  /// PrescriptionType enum label for a serum white prescription
+  ///
+  /// In en, this message translates to:
+  /// **'Serum (White Prescription)'**
+  String get enumCore_prescriptionTypeSerumWhite;
+
+  /// PrescriptionType enum label for a red (controlled) prescription
+  ///
+  /// In en, this message translates to:
+  /// **'Red Prescription'**
+  String get enumCore_prescriptionTypeRed;
+
+  /// PrescriptionType enum label for a green prescription
+  ///
+  /// In en, this message translates to:
+  /// **'Green Prescription'**
+  String get enumCore_prescriptionTypeGreen;
+
+  /// PrescriptionType enum label for an orange prescription
+  ///
+  /// In en, this message translates to:
+  /// **'Orange Prescription'**
+  String get enumCore_prescriptionTypeOrange;
+
+  /// PrescriptionType enum label for a purple prescription
+  ///
+  /// In en, this message translates to:
+  /// **'Purple Prescription'**
+  String get enumCore_prescriptionTypePurple;
+
+  /// RefillListStatus enum label for a refill list awaiting collection
+  ///
+  /// In en, this message translates to:
+  /// **'To Collect'**
+  String get enumCore_refillListStatusToCollect;
+
+  /// RefillListStatus enum label for a collected refill list
+  ///
+  /// In en, this message translates to:
+  /// **'Collected'**
+  String get enumCore_refillListStatusCollected;
+
+  /// RefillListStatus enum label for a sent refill list
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get enumCore_refillListStatusSent;
+
+  /// FillingType enum label for the minimum fill level
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum'**
+  String get enumCore_fillingTypeMinimum;
+
+  /// FillingType enum label for the critical fill level
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get enumCore_fillingTypeCritical;
+
+  /// FillingType enum label for the maximum fill level
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum'**
+  String get enumCore_fillingTypeMaximum;
+
+  /// PatientFilterType enum label for patients whose order time has arrived
+  ///
+  /// In en, this message translates to:
+  /// **'Order Time Reached'**
+  String get enumCore_patientFilterOrderTimeReached;
+
+  /// PatientFilterType enum label for all patients
+  ///
+  /// In en, this message translates to:
+  /// **'All Patients'**
+  String get enumCore_patientFilterAll;
+
+  /// PatientFilterType enum label for patients whose time hasn't arrived yet
+  ///
+  /// In en, this message translates to:
+  /// **'Time Not Reached Yet'**
+  String get enumCore_patientFilterTimeNotReached;
+
+  /// PatientFilterType enum label for patients whose time has passed
+  ///
+  /// In en, this message translates to:
+  /// **'Time Passed'**
+  String get enumCore_patientFilterTimePassed;
+
+  /// PatientFilterType enum label for patients eligible for a return
+  ///
+  /// In en, this message translates to:
+  /// **'Return Available'**
+  String get enumCore_patientFilterReturnable;
+
+  /// PatientFilterType enum label for patients eligible for waste/disposal entry
+  ///
+  /// In en, this message translates to:
+  /// **'Waste/Disposal Available'**
+  String get enumCore_patientFilterWasteDisposable;
+
+  /// CabinType enum label for the standard cabinet type
+  ///
+  /// In en, this message translates to:
+  /// **'Standard Cabinet'**
+  String get enumCore_cabinTypeStandard;
+
+  /// CabinType enum label for a closet cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'Closet'**
+  String get enumCore_cabinTypeCloset;
+
+  /// CabinType enum label for a refrigerator cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'Refrigerator'**
+  String get enumCore_cabinTypeFridge;
+
+  /// CabinType enum label for an open closet cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'Open Closet'**
+  String get enumCore_cabinTypeOpenCloset;
+
+  /// CabinType enum label for a mobile cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Cabinet'**
+  String get enumCore_cabinTypeMobile;
+
+  /// CabinType enum label for an external return cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'External Return Cabinet'**
+  String get enumCore_cabinTypeExternalReturn;
+
+  /// CabinType enum label for an open cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'Open Cabinet'**
+  String get enumCore_cabinTypeOpen;
+
+  /// CabinType enum label for a serum cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'Serum Cabinet'**
+  String get enumCore_cabinTypeSerum;
+
+  /// CabinOperationMode enum label for the drug-assignment operation
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Assignment'**
+  String get enumCore_cabinOpModeAssignDrug;
+
+  /// CabinOperationMode enum label for the drug-refill operation
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Refill'**
+  String get enumCore_cabinOpModeRefill;
+
+  /// CabinOperationMode enum label for the drug-census operation
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Census'**
+  String get enumCore_cabinOpModeCensus;
+
+  /// CabinOperationMode enum label for the drug-intake operation
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Intake'**
+  String get enumCore_cabinOpModeIntake;
+
+  /// CabinOperationMode enum label for the drawer-fault operation
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer Fault'**
+  String get enumCore_cabinOpModeFault;
+
+  /// CabinOperationMode enum label for the drug-unload operation
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Unload'**
+  String get enumCore_cabinOpModeUnload;
+
+  /// PermissionStatus enum label for a granted permission
+  ///
+  /// In en, this message translates to:
+  /// **'Can'**
+  String get enumCore_permissionCan;
+
+  /// PermissionStatus enum label for a denied permission
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot'**
+  String get enumCore_permissionCannot;
+
+  /// Gender enum label for female
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get enumCore_genderFemale;
+
+  /// Gender enum label for male
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get enumCore_genderMale;
+
+  /// Gender enum label for unknown/unspecified
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get enumCore_genderUnknown;
+
+  /// UserType enum label for a permanent/unlimited-duration user account
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get enumCore_userTypeUnlimited;
+
+  /// AppMode/UserRole enum label for the admin mode/role
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get enumCore_appModeAdmin;
+
+  /// AppMode enum label for management mode
+  ///
+  /// In en, this message translates to:
+  /// **'Management'**
+  String get enumCore_appModeManager;
+
+  /// AppMode enum label for station mode
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get enumCore_appModeStation;
+
+  /// UserRole enum label for the manager role
+  ///
+  /// In en, this message translates to:
+  /// **'Manager'**
+  String get enumCore_userRoleManager;
+
+  /// UserRole enum label for the station operator role
+  ///
+  /// In en, this message translates to:
+  /// **'Station Operator'**
+  String get enumCore_userRoleStationOperator;
+
+  /// ParityBit enum label for no parity, serial port configuration
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get enumCore_parityBitNone;
+
+  /// ParityBit enum label for even parity, serial port configuration
+  ///
+  /// In en, this message translates to:
+  /// **'Even'**
+  String get enumCore_parityBitEven;
+
+  /// ParityBit enum label for odd parity, serial port configuration
+  ///
+  /// In en, this message translates to:
+  /// **'Odd'**
+  String get enumCore_parityBitOdd;
+
+  /// CabinColor enum label for blue
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get enumCore_cabinColorBlue;
+
+  /// CabinColor enum label for turquoise
+  ///
+  /// In en, this message translates to:
+  /// **'Turquoise'**
+  String get enumCore_cabinColorTurquoise;
+
+  /// CabinColor enum label for green
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get enumCore_cabinColorGreen;
+
+  /// CabinColor enum label for red
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get enumCore_cabinColorRed;
+
+  /// CabinColor enum label for orange
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get enumCore_cabinColorOrange;
+
+  /// CabinColor enum label for purple
+  ///
+  /// In en, this message translates to:
+  /// **'Purple'**
+  String get enumCore_cabinColorPurple;
+
+  /// CabinColor enum label for gray
+  ///
+  /// In en, this message translates to:
+  /// **'Gray'**
+  String get enumCore_cabinColorGray;
+
+  /// CabinColor enum label for black
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get enumCore_cabinColorBlack;
+
+  /// CabinColor enum label for white
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get enumCore_cabinColorWhite;
+
+  /// Generic confirm button label for the base confirm-dialog widget
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get common_confirmButton;
+
+  /// Generic warning dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Warning!'**
+  String get common_warningTitle;
+
+  /// Title of the app-wide generic delete-confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get dialog_deleteTitle;
+
+  /// Default message of the generic delete-confirmation dialog when no item name is supplied
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this item?'**
+  String get dialog_deleteDefaultMessage;
+
+  /// Message of the generic delete-confirmation dialog when a specific item name is supplied
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{itemName}\"?\nThis action cannot be undone.'**
+  String dialog_deleteItemMessage(String itemName);
+
+  /// Confirm button label on the exit-with-unsaved-changes dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get dialog_exitConfirmButtonText;
+
+  /// Message on the exit-confirmation dialog when there are unsaved changes
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. If you exit, these changes will be lost.'**
+  String get dialog_exitConfirmMessage;
+
+  /// Message on the exit-confirmation dialog when there are no unsaved changes
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to leave this page?'**
+  String get dialog_exitConfirmMessageNoChanges;
+
+  /// Confirm button label on the discard-changes confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Discard'**
+  String get dialog_confirmDiscardButton;
+
+  /// Title of the logout confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get dialog_logoutTitle;
+
+  /// Message on the logout confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out of your account?'**
+  String get dialog_logoutMessage;
+
+  /// Default empty-state title for MedTable when no emptyWidget override is supplied
+  ///
+  /// In en, this message translates to:
+  /// **'No data found'**
+  String get table_noDataTitle;
+
+  /// Column header for the actions column in MedTable
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get table_actionsColumnHeader;
+
+  /// Label preceding the active-filter chips in MedTable
+  ///
+  /// In en, this message translates to:
+  /// **'Filters:'**
+  String get table_activeFiltersLabel;
+
+  /// Generic clear button label, used in table selection info and filter bars
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get common_clearButton;
+
+  /// Label showing how many rows are selected in MedTable
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String table_selectedCountLabel(int count);
+
+  /// Label showing how many values are selected for a specific column filter
+  ///
+  /// In en, this message translates to:
+  /// **'{column}: {count} selected'**
+  String table_columnSelectedCountLabel(String column, int count);
+
+  /// Generic fallback label for a table column with no resolvable title
+  ///
+  /// In en, this message translates to:
+  /// **'Column'**
+  String get table_columnFallbackLabel;
+
+  /// Button label to select all filtered rows, showing the count
+  ///
+  /// In en, this message translates to:
+  /// **'Select All ({count})'**
+  String table_selectAllCountLabel(int count);
+
+  /// Short empty-state text in the table's column-filter popup
+  ///
+  /// In en, this message translates to:
+  /// **'No results'**
+  String get table_noResultsShort;
+
+  /// Button label to apply a column filter selection, showing the count
+  ///
+  /// In en, this message translates to:
+  /// **'Apply ({count})'**
+  String table_applyCountLabel(int count);
+
+  /// Generic apply button label in the table date-filter dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get table_applyButton;
+
+  /// Table footer label showing filtered vs total record count
+  ///
+  /// In en, this message translates to:
+  /// **'{filtered} / {total} records'**
+  String table_recordCountFiltered(int filtered, int total);
+
+  /// Table footer label showing total record count with no filter applied
+  ///
+  /// In en, this message translates to:
+  /// **'{total} records'**
+  String table_recordCount(int total);
+
+  /// Table pagination footer label showing the total record count
+  ///
+  /// In en, this message translates to:
+  /// **'Total {total} records'**
+  String table_totalRecordCount(int total);
+
+  /// Tooltip on the table pagination previous-page button
+  ///
+  /// In en, this message translates to:
+  /// **'Previous page'**
+  String get table_prevPageTooltip;
+
+  /// Tooltip on the table pagination next-page button
+  ///
+  /// In en, this message translates to:
+  /// **'Next page'**
+  String get table_nextPageTooltip;
+
+  /// Tooltip on the table toolbar's export button when rows are selected
+  ///
+  /// In en, this message translates to:
+  /// **'Export Selected'**
+  String get table_exportSelectedTooltip;
+
+  /// Default title for the table's category side panel when no categoryTitle override is supplied
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get table_categoriesDefaultTitle;
+
+  /// Fallback column title used when the legacy titles list has a null entry at a given index
+  ///
+  /// In en, this message translates to:
+  /// **'Column {index}'**
+  String table_columnFallback(int index);
+
+  /// Quick date-range preset for yesterday in the table date filter
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get dateFilter_yesterday;
+
+  /// Quick date-range preset for the last week
+  ///
+  /// In en, this message translates to:
+  /// **'Last Week'**
+  String get dateFilter_lastWeek;
+
+  /// Quick date-range preset for this month
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get dateFilter_thisMonth;
+
+  /// Quick date-range preset for the last 30 days
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 Days'**
+  String get dateFilter_last30Days;
+
+  /// Quick date-range preset to open the custom range picker
+  ///
+  /// In en, this message translates to:
+  /// **'Set Custom Range...'**
+  String get dateFilter_customRange;
+
+  /// Button to clear the active date filter
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filter'**
+  String get dateFilter_clearFilter;
+
+  /// Label shown when no date filter is applied
+  ///
+  /// In en, this message translates to:
+  /// **'No Filter'**
+  String get dateFilter_noFilter;
+
+  /// Label shown when a custom date range is selected
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Range'**
+  String get dateFilter_selectedRange;
+
+  /// Title of the custom date-range picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date Range'**
+  String get dateFilter_selectRangeTitle;
+
+  /// Label for the start date chip in the custom range picker
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get dateFilter_startDate;
+
+  /// Label for the end date chip in the custom range picker
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get dateFilter_endDate;
+
+  /// Generic placeholder text for dropdown/selection fields across the app, shown when nothing is selected
+  ///
+  /// In en, this message translates to:
+  /// **'Please select'**
+  String get common_selectPlaceholder;
+
+  /// Label showing how many items are selected in a multi-selection dialog
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items selected'**
+  String selectionDialog_selectedCount(int count);
+
+  /// Empty-state text shown in a selection dialog before any item is chosen
+  ///
+  /// In en, this message translates to:
+  /// **'No selection made'**
+  String get selectionDialog_noSelection;
+
+  /// Confirm button label on the generic selection dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get selectionDialog_confirmButton;
+
+  /// Placeholder text for an empty date input field
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get dateField_placeholder;
+
+  /// Help text on the native time picker when a specific day context is given
+  ///
+  /// In en, this message translates to:
+  /// **'Select a time for {day}'**
+  String timeField_helpTextWithDay(String day);
+
+  /// Help text on the native time picker with no day context
+  ///
+  /// In en, this message translates to:
+  /// **'Select a time'**
+  String get timeField_helpText;
+
+  /// Placeholder text for an empty time input field
+  ///
+  /// In en, this message translates to:
+  /// **'Select time'**
+  String get timeField_placeholder;
+
+  /// Title of the manual dose-entry numpad dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Enter {unit} Amount'**
+  String doseStepper_manualEntryTitle(String unit);
+
+  /// Default title for the generic numpad dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Amount'**
+  String get numpad_defaultTitle;
+
+  /// Close button label on the on-screen keyboard
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get keyboard_closeButton;
+
+  /// Enter/confirm key label on the on-screen keyboard
+  ///
+  /// In en, this message translates to:
+  /// **'↵ OK'**
+  String get keyboard_enterLabel;
+
+  /// Dash key label on the on-screen keyboard's symbol row
+  ///
+  /// In en, this message translates to:
+  /// **'— Dash'**
+  String get keyboard_dashKeyLabel;
+
+  /// Period key label on the on-screen keyboard's symbol row
+  ///
+  /// In en, this message translates to:
+  /// **'. Period'**
+  String get keyboard_periodKeyLabel;
+
+  /// Shift key label on the on-screen keyboard
+  ///
+  /// In en, this message translates to:
+  /// **'⇧ Shift'**
+  String get keyboard_shiftLabel;
+
+  /// Space bar label on the on-screen keyboard
+  ///
+  /// In en, this message translates to:
+  /// **'SPACE'**
+  String get keyboard_spaceLabel;
+
+  /// Relative time label for data updated less than a minute ago
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get staleBanner_justNow;
+
+  /// Relative time label for data updated N minutes ago
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min ago'**
+  String staleBanner_minutesAgo(int minutes);
+
+  /// Relative time label for data updated N hours ago
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hr ago'**
+  String staleBanner_hoursAgo(int hours);
+
+  /// Stale-data banner message when the operator may still proceed
+  ///
+  /// In en, this message translates to:
+  /// **'Data is not up to date. '**
+  String get staleBanner_dataStaleMessage;
+
+  /// Stale-data banner message when the operator may not proceed (Class B safety-relevant)
+  ///
+  /// In en, this message translates to:
+  /// **'Up-to-date data is unavailable. The operation cannot proceed. '**
+  String get staleBanner_dataUnavailableMessage;
+
+  /// Label showing the last-updated timestamp on the stale-data banner
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {time}'**
+  String staleBanner_lastUpdatedLabel(String time);
+
+  /// Status badge shown on the stale-data banner when the operation is blocked
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get staleBanner_blockedBadge;
+
+  /// Chip label showing today's scheduled dose time
+  ///
+  /// In en, this message translates to:
+  /// **'Today {time}'**
+  String timeChip_today(String time);
+
+  /// Chip label showing tomorrow's scheduled dose time
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow {time}'**
+  String timeChip_tomorrow(String time);
+
+  /// Lock button label in the cabin action bar
+  ///
+  /// In en, this message translates to:
+  /// **'Lock'**
+  String get cabin_lockButton;
+
+  /// Stat label for critical stock count in the cabin stats grid
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Stock'**
+  String get cabin_criticalStockLabel;
+
+  /// Sub-label under the critical stock stat, explaining the refill need
+  ///
+  /// In en, this message translates to:
+  /// **'refill needed'**
+  String get cabin_criticalStockSubLabel;
+
+  /// Legend entry for normal fill level in the master cabin drawer panel
+  ///
+  /// In en, this message translates to:
+  /// **'Normal stock'**
+  String get cabin_legendFillNormal;
+
+  /// Legend entry for a drawer needing refill in the master cabin drawer panel
+  ///
+  /// In en, this message translates to:
+  /// **'Refill needed'**
+  String get cabin_legendFillNeeded;
+
+  /// Legend entry for a drawer needing urgent refill in the master cabin drawer panel
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent refill'**
+  String get cabin_legendFillUrgent;
+
+  /// Type badge for a serum drug group on the master cabin overview panel
+  ///
+  /// In en, this message translates to:
+  /// **'SERUM'**
+  String get cabin_serumTypeLabel;
+
+  /// Type badge abbreviation for a unit-dose drug group on the master cabin overview panel
+  ///
+  /// In en, this message translates to:
+  /// **'U.DOSE'**
+  String get cabin_unitDoseTypeLabel;
 }
 
 class _AppLocalizationsDelegate
@@ -2560,7 +8159,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ar', 'en', 'tr'].contains(locale.languageCode);
+      <String>['ar', 'en', 'fr', 'tr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -2573,6 +8172,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsAr();
     case 'en':
       return AppLocalizationsEn();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'tr':
       return AppLocalizationsTr();
   }

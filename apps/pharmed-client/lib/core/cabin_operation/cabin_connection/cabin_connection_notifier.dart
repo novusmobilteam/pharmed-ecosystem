@@ -36,7 +36,10 @@ class CabinConnectionNotifier extends Notifier<CabinConnectionState> {
           context: {'adres': manager.addressIndex},
         );
       } else {
-        state = const CabinConnectionState(status: CabinConnectionStatus.error, message: 'Yönetim kartı bulunamadı');
+        state = CabinConnectionState(
+          status: CabinConnectionStatus.error,
+          message: contextlessL10n().core_cabinConn_managerNotFoundError,
+        );
       }
     } catch (e) {
       state = CabinConnectionState(status: CabinConnectionStatus.error, message: e.toString());
@@ -46,7 +49,10 @@ class CabinConnectionNotifier extends Notifier<CabinConnectionState> {
   /// İşlem sonrası bağlantı koptuysa durumu güncellemek için
   /// (örn. getOrScanManager null dönerse işlem notifier'ı çağırabilir).
   void markDisconnected() {
-    state = const CabinConnectionState(status: CabinConnectionStatus.error, message: 'Bağlantı koptu');
+    state = CabinConnectionState(
+      status: CabinConnectionStatus.error,
+      message: contextlessL10n().core_cabinConn_disconnectedError,
+    );
   }
 
   /// Manuel yeniden bağlanma (kullanıcı göstergeye tıklarsa ya da hata sonrası).

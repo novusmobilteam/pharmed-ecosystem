@@ -72,31 +72,34 @@ class MobileRefillDialog extends ConsumerWidget {
         canComplete: ready.canComplete,
       ),
       stats: [
-        StatCellData(label: 'Seçili', value: '${ready.selectedItemIds.length} ilaç'),
         StatCellData(
-          label: 'Yerleştirilen',
-          value: '${ready.rfidReadCount} / ${ready.rfidExpectedCount}',
+          label: context.l10n.cabinOperation_label_selected,
+          value: context.l10n.refill_label_multiMedicine(ready.selectedItemIds.length),
+        ),
+        StatCellData(
+          label: context.l10n.refill_label_placedCount,
+          value: context.l10n.refill_label_placedProgress(ready.rfidReadCount, ready.rfidExpectedCount),
           valueColor: ready.allSelectedRfidRead && ready.baselineCompleted ? MedColors.green : null,
         ),
         StatCellData(
-          label: 'Plan Dışı',
+          label: context.l10n.cabinOperation_label_unplanned,
           value: '${ready.unplannedCount}',
           valueColor: ready.unplannedCount > 0 ? MedColors.red : null,
         ),
         StatCellData(
-          label: 'Fazla Etiket',
+          label: context.l10n.refill_label_extraTag,
           value: '${ready.unexpectedEpcs.length}',
           valueColor: ready.unexpectedEpcs.isNotEmpty ? MedColors.amber : null,
         ),
       ],
       banners: [
-        if (errorMessage != null) const OperationErrorBanner(message: 'Tekrar deneyebilirsiniz.'),
+        if (errorMessage != null) OperationErrorBanner(message: context.l10n.refill_error_retry),
         // Fazla/yanlış etiket — Dolum'a özel blokaj (kırmızı, blocking)
         if (ready.hasExtraPlacement) UnexpectedTagBanner(epcs: ready.unexpectedEpcs, blocking: true),
         // Plan dışı çıkış — kapanışta eksik stok bildirimi oluşacak
         if (ready.hasUnplannedMovement) UnplannedMovementBanner(epcs: ready.baselineLostEpcs),
       ],
-      footerContent: _refillFooter(state, drawerStage, ready, notifier),
+      footerContent: _refillFooter(context, state, drawerStage, ready, notifier),
       child: _ItemsList(),
     );
   }

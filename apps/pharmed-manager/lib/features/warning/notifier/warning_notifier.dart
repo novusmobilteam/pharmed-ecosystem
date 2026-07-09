@@ -47,7 +47,7 @@ class WarningNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<W
       operation: () => _deleteWarningUseCase.call(warning),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+        onSuccess?.call(null);
         getWarnings();
       },
     );

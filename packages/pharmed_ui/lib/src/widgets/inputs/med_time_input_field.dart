@@ -66,7 +66,9 @@ class _MedTimeInputFieldState extends State<MedTimeInputField> {
                     final selected = await showTimePicker(
                       context: context,
                       initialTime: value ?? TimeOfDay.now(),
-                      helpText: widget.dayHint != null ? '${widget.dayHint} için saat seçin' : 'Saat seçin',
+                      helpText: widget.dayHint != null
+                          ? context.l10n.timeField_helpTextWithDay(widget.dayHint!)
+                          : context.l10n.timeField_helpText,
                       builder: (context, child) => Theme(data: Theme.of(context), child: child!),
                     );
                     if (selected != null && context.mounted) {
@@ -79,7 +81,7 @@ class _MedTimeInputFieldState extends State<MedTimeInputField> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  value != null ? value.format(context) : 'Saat seçin',
+                  value != null ? value.format(context) : context.l10n.timeField_placeholder,
                   style: MedTextStyles.bodyMd(color: value != null ? MedColors.text : MedColors.text4),
                 ),
                 if (value != null && widget.enabled)

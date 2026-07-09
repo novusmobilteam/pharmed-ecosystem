@@ -45,7 +45,7 @@ class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => isCreate ? _createUserUseCase.call(_user) : _updateUserUseCase.call(user),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

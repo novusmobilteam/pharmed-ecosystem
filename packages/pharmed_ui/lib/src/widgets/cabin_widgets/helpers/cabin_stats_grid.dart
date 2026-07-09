@@ -53,10 +53,10 @@ class CabinStatsGrid extends StatelessWidget {
           isStale: isStale,
         ),
         StatBox(
-          label: 'Kritik Stok',
+          label: context.l10n.cabin_criticalStockLabel,
           value: '$criticalCount',
           valueColor: MedColors.red,
-          subLabel: 'yenileme gerekli',
+          subLabel: context.l10n.cabin_criticalStockSubLabel,
           isStale: isStale,
         ),
         // StatBox(

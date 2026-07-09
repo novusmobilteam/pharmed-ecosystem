@@ -22,7 +22,7 @@ class SaveCabinDesignUseCase {
     final sorted = [...scanResults]..sort((a, b) => (a.address ?? '').compareTo(b.address ?? ''));
 
     if (scanResults.isEmpty) {
-      return Result.error(ServiceException(message: "Kaydedilecek veri bulunamadı.", statusCode: 404));
+      return Result.error(ServiceException(message: contextlessL10n().cabinCore_designDataNotFound, statusCode: 404));
     }
 
     final slots = sorted.indexed.map((entry) {

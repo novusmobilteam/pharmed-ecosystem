@@ -24,7 +24,7 @@ class MobileDrawerStatusBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     if (stage is MobileDrawerIdle) return const SizedBox.shrink();
 
-    final spec = _resolveSpec(stage);
+    final spec = _resolveSpec(context, stage);
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 220),
@@ -88,7 +88,7 @@ class MobileDrawerStatusBanner extends StatelessWidget {
     );
   }
 
-  _BannerSpec _resolveSpec(MobileDrawerStage stage) {
+  _BannerSpec _resolveSpec(BuildContext context, MobileDrawerStage stage) {
     return switch (stage) {
       MobileDrawerIdle() => const _BannerSpec(
         runtimeKey: 'idle',
@@ -100,8 +100,8 @@ class MobileDrawerStatusBanner extends StatelessWidget {
       MobileDrawerOpening(:final port) => _BannerSpec(
         runtimeKey: 'opening',
         accentColor: MedColors.blue,
-        title: 'Çekmece açılıyor',
-        subtitle: 'Çekmece $port',
+        title: context.l10n.common_action_drawerOpening,
+        subtitle: context.l10n.mobileDrawer_portSubtitle(port),
         leading: const SizedBox(
           width: 22,
           height: 22,
@@ -112,8 +112,8 @@ class MobileDrawerStatusBanner extends StatelessWidget {
       MobileDrawerOpened() => _BannerSpec(
         runtimeKey: 'opened',
         accentColor: MedColors.green,
-        title: 'Çekmece açık',
-        subtitle: 'İşlemi tamamlamak için çekmeceyi kapatınız.',
+        title: context.l10n.refill_status_drawerOpen,
+        subtitle: context.l10n.mobileDrawer_openedSubtitle,
         leading: _CircleIcon(
           color: MedColors.green,
           bg: MedColors.greenLight,
@@ -124,8 +124,8 @@ class MobileDrawerStatusBanner extends StatelessWidget {
       MobileDrawerClosed() => _BannerSpec(
         runtimeKey: 'closed',
         accentColor: MedColors.green,
-        title: 'Çekmece kapatıldı',
-        subtitle: 'İşlem onayınızı bekliyor',
+        title: context.l10n.common_action_drawerClosed,
+        subtitle: context.l10n.mobileDrawer_closedSubtitle,
         leading: _CircleIcon(
           color: MedColors.green,
           bg: MedColors.greenLight,
@@ -136,7 +136,7 @@ class MobileDrawerStatusBanner extends StatelessWidget {
       MobileDrawerFailed(:final message) => _BannerSpec(
         runtimeKey: 'failed',
         accentColor: MedColors.red,
-        title: 'Çekmece hatası',
+        title: context.l10n.common_action_drawerError,
         subtitle: message,
         subtitleColor: MedColors.red,
         leading: _CircleIcon(

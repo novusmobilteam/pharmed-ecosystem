@@ -116,14 +116,14 @@ class _TableBody<T extends TableData> extends StatelessWidget {
                   if (_showActions)
                     SizedBox(
                       width: _actionColW * actions.length,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 11),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 11),
                         child: Text(
-                          'İşlemler',
+                          context.l10n.table_actionsColumnHeader,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF6B7280)),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF6B7280)),
                         ),
                       ),
                     ),
@@ -135,13 +135,16 @@ class _TableBody<T extends TableData> extends StatelessWidget {
             // ── Satırlar ─────────────────────────────────────────────────────
             Expanded(
               child: data.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.search_off, size: 40, color: Color(0xFFD1D5DB)),
-                          SizedBox(height: 8),
-                          Text('Sonuç bulunamadı', style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF))),
+                          const Icon(Icons.search_off, size: 40, color: Color(0xFFD1D5DB)),
+                          const SizedBox(height: 8),
+                          Text(
+                            context.l10n.common_noResultsTitle,
+                            style: const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
+                          ),
                         ],
                       ),
                     )
@@ -540,11 +543,11 @@ class _ActiveFilterBar extends StatelessWidget {
     return s == e ? s : '$s – $e';
   }
 
-  String _titleFor(int contentIndex) {
+  String _titleFor(BuildContext context, int contentIndex) {
     try {
       return cols.firstWhere((c) => c.contentIndex == contentIndex).title;
     } catch (_) {
-      return 'Sütun';
+      return context.l10n.table_columnFallbackLabel;
     }
   }
 
@@ -557,9 +560,9 @@ class _ActiveFilterBar extends StatelessWidget {
         children: [
           const Icon(Icons.filter_list_rounded, size: 14, color: Color(0xFF2563EB)),
           const SizedBox(width: 6),
-          const Text(
-            'Filtreler:',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF6B7280)),
+          Text(
+            context.l10n.table_activeFiltersLabel,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF6B7280)),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -578,7 +581,7 @@ class _ActiveFilterBar extends StatelessWidget {
                       .where((e) => e.value.isNotEmpty)
                       .map(
                         (e) => _FilterChip(
-                          label: '${_titleFor(e.key)}: ${e.value.length} seçili',
+                          label: context.l10n.table_columnSelectedCountLabel(_titleFor(context, e.key), e.value.length),
                           onRemove: () => onRemoveColFilter(e.key),
                         ),
                       ),
@@ -588,9 +591,9 @@ class _ActiveFilterBar extends StatelessWidget {
           ),
           GestureDetector(
             onTap: onClearAll,
-            child: const Text(
-              'Temizle',
-              style: TextStyle(fontSize: 12, color: Color(0xFF2563EB), fontWeight: FontWeight.w500),
+            child: Text(
+              context.l10n.common_clearButton,
+              style: const TextStyle(fontSize: 12, color: Color(0xFF2563EB), fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -718,7 +721,7 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
                   autofocus: true,
                   style: const TextStyle(fontSize: 13),
                   decoration: InputDecoration(
-                    hintText: 'Ara...',
+                    hintText: context.l10n.common_searchHint,
                     hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
                     prefixIcon: const Icon(Icons.search, size: 16, color: Color(0xFF9CA3AF)),
                     filled: true,
@@ -758,7 +761,7 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Tümünü Seç (${_filtered.length})',
+                      context.l10n.table_selectAllCountLabel(_filtered.length),
                       style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF2563EB)),
                     ),
                   ],
@@ -769,10 +772,13 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 240),
               child: _filtered.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.all(24),
+                  ? Padding(
+                      padding: const EdgeInsets.all(24),
                       child: Center(
-                        child: Text('Sonuç yok', style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF))),
+                        child: Text(
+                          context.l10n.table_noResultsShort,
+                          style: const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
+                        ),
                       ),
                     )
                   : ListView.builder(
@@ -815,12 +821,15 @@ class _ColFilterDialogState extends State<_ColFilterDialog> {
               child: Row(
                 children: [
                   Expanded(
-                    child: MedButton(label: 'Temizle', onPressed: () => Navigator.pop(context, <String>{})),
+                    child: MedButton(
+                      label: context.l10n.common_clearButton,
+                      onPressed: () => Navigator.pop(context, <String>{}),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: MedButton(
-                      label: 'Uygula (${_selected.length})',
+                      label: context.l10n.table_applyCountLabel(_selected.length),
                       onPressed: () => Navigator.pop(context, Set<String>.from(_selected)),
                     ),
                   ),

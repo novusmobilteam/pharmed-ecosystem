@@ -77,7 +77,7 @@ class _MedSelectionFieldState<T extends Selectable> extends State<MedSelectionFi
               children: [
                 Flexible(
                   child: Text(
-                    hasValue ? (widget.labelBuilder(value as T) ?? '-') : 'Seçiniz',
+                    hasValue ? (widget.labelBuilder(value as T) ?? '-') : context.l10n.common_selectPlaceholder,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: MedTextStyles.bodyMd(color: MedColors.text),

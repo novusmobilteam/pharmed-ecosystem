@@ -175,7 +175,7 @@ class BedAssignmentNotifier extends ChangeNotifier with ApiRequestMixin {
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         _selectedCell = null;
-        onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+        onSuccess?.call(null);
         _getAssignments(_cabin!);
       },
     );
@@ -188,7 +188,7 @@ class BedAssignmentNotifier extends ChangeNotifier with ApiRequestMixin {
         operation: () => _deleteBedAssignmentUseCase.call(_currentAssignment!),
         onFailed: (error) => onFailed?.call(error.message),
         onSuccess: () {
-          onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+          onSuccess?.call(null);
           _getAssignments(_cabin!);
         },
       );

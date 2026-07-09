@@ -32,7 +32,7 @@ class WarehouseNotifier extends ChangeNotifier with ApiRequestMixin, PaginationM
       deleteOp,
       operation: () => _deleteWarehouseUseCase.call(warehouse),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
         fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),

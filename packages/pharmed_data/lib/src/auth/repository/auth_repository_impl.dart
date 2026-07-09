@@ -17,6 +17,7 @@
 import 'package:dio/dio.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class AuthRepositoryImpl implements IAuthRepository {
   const AuthRepositoryImpl({
@@ -50,14 +51,14 @@ class AuthRepositoryImpl implements IAuthRepository {
       if (userResult.isError) {
         // Token kaydedildi ama user alınamadı — cache'i temizle, tutarsız state bırakma
         await _cache.clear();
-        return Result.error(ServiceException(message: 'Kullanıcı bilgisi alınamadı', statusCode: 0));
+        return Result.error(ServiceException(message: contextlessL10n().authError_userInfoFetchFailed, statusCode: 0));
       }
 
       final userDto = userResult.data;
 
       if (userDto == null) {
         await _cache.clear();
-        return Result.error(ServiceException(message: 'Kullanıcı bilgisi boş döndü', statusCode: 404));
+        return Result.error(ServiceException(message: contextlessL10n().authError_userInfoEmpty, statusCode: 404));
       }
 
       // 4. Slim AppUser'a dönüştür
@@ -106,9 +107,9 @@ class AuthRepositoryImpl implements IAuthRepository {
         // ApiError yapısı: { "error": "...", "message": "..." }
         final error = data['error'] as String?;
         final message = data['message'] as String?;
-        return error ?? message ?? 'Bir hata oluştu';
+        return error ?? message ?? contextlessL10n().authError_genericLoginError;
       }
     } catch (_) {}
-    return e.message ?? 'Bir hata oluştu';
+    return e.message ?? contextlessL10n().authError_genericLoginError;
   }
 }

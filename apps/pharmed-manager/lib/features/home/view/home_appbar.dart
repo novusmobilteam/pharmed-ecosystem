@@ -81,7 +81,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
             // ── Uygulama etiketi ─────────────────────────────────
             Text(
-              'YÖNETİM PANELİ',
+              context.l10n.home_appBarBadgeLabel,
               style: TextStyle(
                 fontFamily: MedFonts.mono,
                 fontSize: 10,
@@ -114,7 +114,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             if (kDebugMode && widget.isLoggedIn) ...[
               _BarIconButton(
                 icon: PhosphorIcons.wrench(),
-                tooltip: 'Geliştirici Ayarları',
+                tooltip: context.l10n.home_devSettingsTooltip,
                 onTap: widget.onSettingsTap,
               ),
               const SizedBox(width: 4),
@@ -124,7 +124,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             if (widget.isLoggedIn)
               _BarIconButton(
                 icon: PhosphorIcons.signOut(),
-                tooltip: 'Çıkış Yap',
+                tooltip: context.l10n.dashboard_logoutTooltip,
                 danger: true,
                 onTap: widget.onLogoutTap,
               ),
@@ -277,9 +277,9 @@ class _LoginButton extends StatelessWidget {
           children: [
             Icon(PhosphorIcons.signIn(), size: 13, color: Colors.white),
             const SizedBox(width: 6),
-            const Text(
-              'Giriş Yap',
-              style: TextStyle(
+            Text(
+              context.l10n.dashboard_loginBarButton,
+              style: const TextStyle(
                 fontFamily: MedFonts.sans,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,

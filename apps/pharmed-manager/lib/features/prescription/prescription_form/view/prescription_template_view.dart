@@ -9,7 +9,10 @@ class PrescriptionTemplateView extends StatelessWidget {
 
     if (n.isFetching) return const Center(child: MedLoadingIndicator());
     if (n.templates.isEmpty) {
-      return EmptyStateWidget(title: 'Şablon bulunamadı', description: 'Kaydedilmiş bir reçete şablonu yok');
+      return EmptyStateWidget(
+        title: context.l10n.prescriptionTemplateEmptyTitle,
+        description: context.l10n.prescriptionTemplateEmptyDescription,
+      );
     }
 
     final sorted = [...n.templates]..sort((a, b) => (b.id ?? 0).compareTo(a.id ?? 0)); // yeni → eski
@@ -105,7 +108,10 @@ class _TemplateGroupCardState extends State<_TemplateGroupCard> {
             else if (items.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text('Bu şablonda kalem yok', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                child: Text(
+                  context.l10n.prescriptionTemplateNoItemsMessage,
+                  style: MedTextStyles.bodySm(color: MedColors.text3),
+                ),
               )
             else
               _TemplateItemsList(items: items),
@@ -171,7 +177,7 @@ class _TemplateItemsList extends StatelessWidget {
               children: [
                 Icon(PhosphorIcons.plus(), size: 16, color: MedColors.blueLight),
                 Text(
-                  'Reçeteye Ekle (${items.length})',
+                  context.l10n.prescriptionAddToRxButton(items.length),
                   style: MedTextStyles.bodyMd().copyWith(color: MedColors.blueLight, fontWeight: FontWeight.bold),
                 ),
               ],

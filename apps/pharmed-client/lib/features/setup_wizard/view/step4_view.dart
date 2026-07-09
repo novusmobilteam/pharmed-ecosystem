@@ -33,16 +33,18 @@ class Step4View extends ConsumerWidget {
 
     final isMobile = cabinType == CabinType.mobile && stationType == StationType.patientBased;
 
-    final subtitle = isMobile
-        ? 'Mobil kabinin çekmece sayısını, iç bölümlerini ve port bağlantılarını tanımlayın.'
-        : 'Cihazdan kabin iç yapısı otomatik okunacaktır.';
+    final subtitle = isMobile ? context.l10n.wizard_step4SubtitleMobile : context.l10n.wizard_step4SubtitleMaster;
 
     final isComplete = isMobile ? true : ref.watch(step4MasterNotifierProvider.select((s) => s.isComplete));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        StepHeader(badge: 'Adım 4 / 5', title: 'Çekmece Yapılandırması', subtitle: subtitle),
+        StepHeader(
+          badge: context.l10n.wizard_stepBadge(4, 5),
+          title: context.l10n.wizard_step4Header,
+          subtitle: subtitle,
+        ),
         Expanded(child: isMobile ? const MobileDrawerConfigView() : const MasterDrawerScanView()),
         StepFooter(onBack: wizard.previousStep, onNext: isComplete ? wizard.nextStep : null),
       ],

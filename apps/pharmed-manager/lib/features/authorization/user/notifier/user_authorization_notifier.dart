@@ -99,7 +99,7 @@ class UserAuthorizationNotifier extends ChangeNotifier with ApiRequestMixin {
       onData: (_) {
         _userAuth = withParents.commit();
         notifyListeners();
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
       },
       onFailed: (error) => onFailed?.call(error.message),
     );

@@ -25,7 +25,7 @@ class InconsistencyScreen extends StatelessWidget {
             mobile: MedMobileLayout(),
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Tutarsızlık Hareketleri',
+              title: menu.name ?? context.l10n.inconsistency_screenTitleFallback,
               subtitle: menu.description,
               showAddButton: false,
               child: MedTable<Inconsistency>(
@@ -34,8 +34,16 @@ class InconsistencyScreen extends StatelessWidget {
                 enableSearch: true,
                 onSearchChanged: notifier.search,
                 actions: [
-                  TableActionItem(icon: PhosphorIcons.qrCode(), tooltip: 'Görüntüle', onPressed: (data) {}),
-                  TableActionItem(icon: PhosphorIcons.camera(), tooltip: 'Fotoğraf', onPressed: (_) {}),
+                  TableActionItem(
+                    icon: PhosphorIcons.qrCode(),
+                    tooltip: context.l10n.inconsistency_viewTooltip,
+                    onPressed: (data) {},
+                  ),
+                  TableActionItem(
+                    icon: PhosphorIcons.camera(),
+                    tooltip: context.l10n.inconsistency_photoTooltip,
+                    onPressed: (_) {},
+                  ),
                 ],
               ),
             ),

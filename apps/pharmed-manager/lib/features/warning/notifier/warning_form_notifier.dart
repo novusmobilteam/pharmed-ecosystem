@@ -25,14 +25,19 @@ class WarningFormNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isSubmitting => isLoading(submitOp);
   String? get statusMessage => message(submitOp);
 
-  Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
+  Future<void> submit({
+    Function(String? msg)? onFailed,
+    Function(String? msg)? onSuccess,
+    String? successMessage,
+  }) async {
     if (!isValid) return;
 
     await executeVoid(
       submitOp,
       operation: () => isCreate ? _createWarningUseCase.call(_warning) : _updateWarningUseCase.call(_warning),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(successMessage),
+      successMessage: successMessage,
     );
   }
 

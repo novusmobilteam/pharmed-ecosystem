@@ -30,27 +30,43 @@ class OperationStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (label, icon, bg, fg) = _resolve(input);
+    final (label, icon, bg, fg) = _resolve(context, input);
     return StatusBadge(bg: bg, fg: fg, icon: icon, label: label);
   }
 
-  (String, IconData, Color, Color) _resolve(OperationStatusInput i) {
+  (String, IconData, Color, Color) _resolve(BuildContext context, OperationStatusInput i) {
     final stage = i.drawerStage;
+    final l10n = context.l10n;
 
     // ── Özel fazlar ──
     if (i.phase == OperationPhase.fatal) {
-      return ('Kritik Hata', PhosphorIcons.warningOctagon(PhosphorIconsStyle.bold), MedColors.redLight, MedColors.red);
+      return (
+        l10n.operationStatus_fatalErrorLabel,
+        PhosphorIcons.warningOctagon(PhosphorIconsStyle.bold),
+        MedColors.redLight,
+        MedColors.red,
+      );
     }
     if (i.phase == OperationPhase.saving) {
-      return ('Kaydediliyor', PhosphorIcons.circleNotch(PhosphorIconsStyle.bold), MedColors.blueLight, MedColors.blue);
+      return (
+        l10n.common_action_saving,
+        PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
+        MedColors.blueLight,
+        MedColors.blue,
+      );
     }
     if (i.phase == OperationPhase.error) {
-      return ('Hata', PhosphorIcons.warningCircle(PhosphorIconsStyle.bold), MedColors.redLight, MedColors.red);
+      return (
+        l10n.operationStatus_errorLabel,
+        PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
+        MedColors.redLight,
+        MedColors.red,
+      );
     }
     if (i.phase == OperationPhase.rollback) {
       if (stage is MobileDrawerOpening) {
         return (
-          'Çekmece açılıyor',
+          l10n.common_action_drawerOpening,
           PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
           MedColors.amberLight,
           MedColors.amber,
@@ -58,7 +74,7 @@ class OperationStatusBadge extends StatelessWidget {
       }
       if (stage is MobileDrawerOpened) {
         return (
-          'İşlem geri alınıyor',
+          l10n.operationStatus_rollingBackLabel,
           PhosphorIcons.handPalm(PhosphorIconsStyle.bold),
           MedColors.amberLight,
           MedColors.amber,
@@ -66,14 +82,14 @@ class OperationStatusBadge extends StatelessWidget {
       }
       if (stage is MobileDrawerClosed && i.rollbackSettling) {
         return (
-          'İşlem sonlandırılıyor',
+          l10n.operationStatus_finalizingLabel,
           PhosphorIcons.clock(PhosphorIconsStyle.bold),
           MedColors.amberLight,
           MedColors.amber,
         );
       }
       return (
-        'İlaçlar hâlâ kabinde',
+        l10n.operationStatus_drugsStillInCabinetLabel,
         PhosphorIcons.warning(PhosphorIconsStyle.bold),
         MedColors.amberLight,
         MedColors.amber,
@@ -83,7 +99,7 @@ class OperationStatusBadge extends StatelessWidget {
     // ── Normal (Ready ailesi) — drawerStage'e göre ──
     if (stage is MobileDrawerOpening) {
       return (
-        'Çekmece açılıyor',
+        l10n.common_action_drawerOpening,
         PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
         MedColors.blueLight,
         MedColors.blue,
@@ -92,16 +108,31 @@ class OperationStatusBadge extends StatelessWidget {
     if (stage is MobileDrawerClosed) {
       return i.canComplete
           ? (
-              'Çekmece kapatıldı',
+              l10n.common_action_drawerClosed,
               PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
               MedColors.greenLight,
               MedColors.green,
             )
-          : ('Eksik / Tutarsız', PhosphorIcons.warning(PhosphorIconsStyle.bold), MedColors.amberLight, MedColors.amber);
+          : (
+              l10n.operationStatus_incompleteLabel,
+              PhosphorIcons.warning(PhosphorIconsStyle.bold),
+              MedColors.amberLight,
+              MedColors.amber,
+            );
     }
     if (!i.baselineCompleted) {
-      return ('Tarama yapılıyor', PhosphorIcons.tag(PhosphorIconsStyle.bold), MedColors.blueLight, MedColors.blue);
+      return (
+        l10n.operationStatus_scanningLabel,
+        PhosphorIcons.tag(PhosphorIconsStyle.bold),
+        MedColors.blueLight,
+        MedColors.blue,
+      );
     }
-    return ('Çekmece açık', PhosphorIcons.lockOpen(PhosphorIconsStyle.bold), MedColors.greenLight, MedColors.green);
+    return (
+      l10n.refill_status_drawerOpen,
+      PhosphorIcons.lockOpen(PhosphorIconsStyle.bold),
+      MedColors.greenLight,
+      MedColors.green,
+    );
   }
 }

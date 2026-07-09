@@ -19,7 +19,7 @@ class StationTransactionReportScreen extends StatelessWidget {
         mobile: MedMobileLayout(),
         tablet: MedTabletLayout(),
         desktop: MedDesktopLayout(
-          title: menu.name ?? 'İstasyon Hareketleri',
+          title: menu.name ?? context.l10n.report_stationTransactionTitleFallback,
           subtitle: menu.description,
           child: Consumer<StationTransactionReportNotifier>(
             builder: (context, notifier, _) {
@@ -48,7 +48,7 @@ class StationTransactionReportScreen extends StatelessWidget {
                 selectedCategoryId: notifier.selectedCategoryId,
                 onCategoryChanged: (id) =>
                     notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
-                categoryTitle: 'İstasyonlar',
+                categoryTitle: context.l10n.report_stationsCategoryTitle,
               );
             },
           ),

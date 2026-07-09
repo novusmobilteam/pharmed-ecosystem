@@ -51,7 +51,7 @@ class AssignRfidTagUseCase {
         if (tags.isEmpty) {
           return Result<String>.error(
             NotFoundException(
-              message: 'Okuyucu alanında RFID etiketi bulunamadı.',
+              message: contextlessL10n().prescriptionCore_rfidTagNotFoundInReader,
               id: prescriptionItemId,
               resourceType: 'RfidTag',
             ),
@@ -130,7 +130,9 @@ class AssignRfidTagUseCase {
         message: 'Tag toplama hatası',
         context: {'error': e.toString()},
       );
-      return Result.error(ServiceException(message: 'RFID etiketi okunurken hata oluştu: $e', statusCode: 500));
+      return Result.error(
+        ServiceException(message: contextlessL10n().prescriptionCore_rfidReadErrorWithDetail(e.toString()), statusCode: 500),
+      );
     } finally {
       await sub?.cancel();
       await _rfidService.stopInventory();

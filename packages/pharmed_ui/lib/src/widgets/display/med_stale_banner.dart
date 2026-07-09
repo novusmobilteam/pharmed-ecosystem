@@ -28,10 +28,10 @@ class MedStaleBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final minutesAgo = DateTime.now().difference(lastUpdated).inMinutes;
     final timeLabel = minutesAgo < 1
-        ? 'az önce'
+        ? context.l10n.staleBanner_justNow
         : minutesAgo < 60
-        ? '$minutesAgo dk önce'
-        : '${(minutesAgo / 60).floor()} sa önce';
+        ? context.l10n.staleBanner_minutesAgo(minutesAgo)
+        : context.l10n.staleBanner_hoursAgo((minutesAgo / 60).floor());
 
     return Container(
       width: double.infinity,
@@ -56,10 +56,12 @@ class MedStaleBanner extends StatelessWidget {
                 style: MedTextStyles.bodySm(color: MedColors.amber),
                 children: [
                   TextSpan(
-                    text: canProceed ? 'Veriler güncel değil. ' : 'Güncel veriye ulaşılamıyor. İşlem yapılamaz. ',
+                    text: canProceed
+                        ? context.l10n.staleBanner_dataStaleMessage
+                        : context.l10n.staleBanner_dataUnavailableMessage,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  TextSpan(text: 'Son güncelleme: $timeLabel'),
+                  TextSpan(text: context.l10n.staleBanner_lastUpdatedLabel(timeLabel)),
                 ],
               ),
             ),
@@ -76,7 +78,7 @@ class MedStaleBanner extends StatelessWidget {
               border: Border.all(color: canProceed ? MedColors.amber : MedColors.red, width: 0.5),
             ),
             child: Text(
-              canProceed ? 'Devam Et' : 'Engelli',
+              canProceed ? context.l10n.session_timeout_continueButton : context.l10n.staleBanner_blockedBadge,
               style: TextStyle(
                 fontFamily: MedFonts.mono,
                 fontSize: 9,

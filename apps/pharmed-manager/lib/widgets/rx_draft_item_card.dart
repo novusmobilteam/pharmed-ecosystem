@@ -94,7 +94,8 @@ class RxDraftItemCard extends StatelessWidget {
                   spacing: 6,
                   children: [
                     _MetaChip(
-                      label: '${item.dosePiece.formatFractional} ${item.medicine?.operationUnit ?? 'Adet'}',
+                      label:
+                          '${item.dosePiece.formatFractional} ${item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback}',
                       color: MedColors.blue,
                       bg: MedColors.blueLight,
                     ),
@@ -117,11 +118,23 @@ class RxDraftItemCard extends StatelessWidget {
                     runSpacing: 4,
                     children: [
                       if (item.firstDoseEmergency ?? false)
-                        _MetaChip(label: 'İlk Doz Acil', color: MedColors.red, bg: MedColors.redLight),
+                        _MetaChip(
+                          label: context.l10n.common_flagFirstDoseEmergency,
+                          color: MedColors.red,
+                          bg: MedColors.redLight,
+                        ),
                       if (item.askDoctor ?? false)
-                        _MetaChip(label: 'Doktora Sor', color: const Color(0xFF6D28D9), bg: const Color(0xFFF5F3FF)),
+                        _MetaChip(
+                          label: context.l10n.common_flagAskDoctor,
+                          color: const Color(0xFF6D28D9),
+                          bg: const Color(0xFFF5F3FF),
+                        ),
                       if (item.inCaseOfNecessity ?? false)
-                        _MetaChip(label: 'Lüzum Halinde', color: MedColors.amber, bg: MedColors.amberLight),
+                        _MetaChip(
+                          label: context.l10n.common_flagInCaseOfNecessity,
+                          color: MedColors.amber,
+                          bg: MedColors.amberLight,
+                        ),
                     ],
                   ),
 

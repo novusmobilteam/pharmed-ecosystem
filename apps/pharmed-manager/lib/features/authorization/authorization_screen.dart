@@ -9,8 +9,6 @@ import 'role/view/role_table_view.dart';
 import 'user/notifier/user_table_notifier.dart';
 import 'user/view/user_table_view.dart';
 
-const _titles = ['Kullanıcı Yetkilendirme', 'Rol Yetkilendirme'];
-
 class AuthorizationScreen extends StatelessWidget {
   const AuthorizationScreen({super.key, required this.menu});
 
@@ -26,11 +24,12 @@ class AuthorizationScreen extends StatelessWidget {
       ],
       child: Consumer<AuthorizationNotifier>(
         builder: (context, notifier, _) {
+          final titles = [context.l10n.authorization_userTabTitle, context.l10n.authorization_roleTabTitle];
           return MedResponsiveLayout(
             mobile: SizedBox(),
             tablet: SizedBox(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Kullanıcı/Rol Yetkilendirme',
+              title: menu.name ?? context.l10n.authorization_screenTitleFallback,
               subtitle: menu.description,
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
@@ -49,7 +48,7 @@ class AuthorizationScreen extends StatelessWidget {
                       child: MedSegmentedButton(
                         selectedIndex: notifier.activeIndex,
                         onChanged: (index) => notifier.activeIndex = index,
-                        labels: _titles,
+                        labels: titles,
                       ),
                     ),
                     Expanded(

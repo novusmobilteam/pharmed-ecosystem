@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // [SWREQ-DATA-DRUGTYPE-002]
 // IDrugTypeRepository implementasyonu.
@@ -43,7 +44,7 @@ class DrugTypeRepositoryImpl implements IDrugTypeRepository {
   @override
   Future<Result<void>> deleteDrugType(DrugType entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek tipin id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteDrugTypeIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteDrugType(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

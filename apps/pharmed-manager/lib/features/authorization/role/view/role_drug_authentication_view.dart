@@ -59,7 +59,7 @@ class _DrugTable extends StatelessWidget {
               columnWidth: IntrinsicColumnWidth(flex: 1),
               headingRowAlignment: MainAxisAlignment.center,
               label: Text(
-                'İlaç Çeker',
+                context.l10n.authorization_drugTable_pullColumn,
                 style: TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -68,7 +68,7 @@ class _DrugTable extends StatelessWidget {
               columnWidth: IntrinsicColumnWidth(flex: 1),
               headingRowAlignment: MainAxisAlignment.center,
               label: Text(
-                'Dolum',
+                context.l10n.authorization_drugTable_fillColumn,
                 style: TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -77,7 +77,7 @@ class _DrugTable extends StatelessWidget {
               columnWidth: IntrinsicColumnWidth(flex: 1),
               headingRowAlignment: MainAxisAlignment.center,
               label: Text(
-                'İade',
+                context.l10n.authorization_drugTable_returnColumn,
                 style: TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -86,7 +86,7 @@ class _DrugTable extends StatelessWidget {
               columnWidth: IntrinsicColumnWidth(flex: 1),
               headingRowAlignment: MainAxisAlignment.center,
               label: Text(
-                'İmha',
+                context.l10n.authorization_drugTable_disposeColumn,
                 style: TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -95,7 +95,7 @@ class _DrugTable extends StatelessWidget {
               columnWidth: IntrinsicColumnWidth(flex: 1),
               headingRowAlignment: MainAxisAlignment.center,
               label: Text(
-                'Tümü',
+                context.l10n.filter_all,
                 style: TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -104,7 +104,9 @@ class _DrugTable extends StatelessWidget {
           rows: [
             DataRow(
               cells: [
-                const DataCell(Text('Tüm İlaçlar', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataCell(
+                  Text(context.l10n.authorization_drugTable_allDrugsRow, style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
                 ...DrugOp.values.map(
                   (op) => DataCell(
                     Center(
@@ -117,7 +119,7 @@ class _DrugTable extends StatelessWidget {
             ),
             // İlaç rows
             ...notifier.filteredAuths.map((item) {
-              return _buildDrugRow(notifier, item.medicine);
+              return _buildDrugRow(context, notifier, item.medicine);
             }),
           ],
         ),
@@ -125,10 +127,10 @@ class _DrugTable extends StatelessWidget {
     );
   }
 
-  DataRow _buildDrugRow(RoleDrugAuthNotifier notifier, Medicine? medicine) {
+  DataRow _buildDrugRow(BuildContext context, RoleDrugAuthNotifier notifier, Medicine? medicine) {
     return DataRow(
       cells: [
-        DataCell(Text(medicine?.name ?? 'Bilinmeyen İlaç')),
+        DataCell(Text(medicine?.name ?? context.l10n.authorization_drugTable_unknownDrugFallback)),
         ...DrugOp.values.map(
           (operation) => DataCell(
             Center(

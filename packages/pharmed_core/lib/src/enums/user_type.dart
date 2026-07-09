@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 enum UserType {
   normal(1),
   timeBased(2),
@@ -10,11 +12,11 @@ enum UserType {
   String get label {
     switch (this) {
       case UserType.normal:
-        return 'Süresiz';
+        return contextlessL10n().enumCore_userTypeUnlimited;
       case UserType.timeBased:
-        return 'Süreli';
+        return contextlessL10n().userCategoryTimeBasedLabel;
       case UserType.temporary:
-        return 'Geçici';
+        return contextlessL10n().userCategoryTemporaryLabel;
     }
   }
 

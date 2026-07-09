@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 /// Dolum Listesi Tip
 /// Ekranda yer alan min, max, kritik radio buttonları. İstek atılırken de kullanılıyor.
 enum FillingType {
@@ -20,13 +22,13 @@ enum FillingType {
   String get label {
     switch (this) {
       case FillingType.min:
-        return 'Minimum';
+        return contextlessL10n().enumCore_fillingTypeMinimum;
       case FillingType.critic:
-        return 'Kritik';
+        return contextlessL10n().enumCore_fillingTypeCritical;
       case FillingType.max:
-        return 'Maksimum';
+        return contextlessL10n().enumCore_fillingTypeMaximum;
       case FillingType.all:
-        return 'Tümü';
+        return contextlessL10n().filter_all;
     }
   }
 }

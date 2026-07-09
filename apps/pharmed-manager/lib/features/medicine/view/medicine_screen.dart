@@ -30,9 +30,15 @@ class MedicineScreen extends StatelessWidget {
             mobile: const SizedBox(),
             tablet: const SizedBox(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'İlaç/Tıbbi Sarf Tanımlama',
+              title: menu.name ?? context.l10n.medicine_screenTitleFallback,
               subtitle: menu.description,
-              actions: [MedButton(onPressed: () => notifier.openPanel(), size: MedButtonSize.sm, label: 'Yeni İlaç')],
+              actions: [
+                MedButton(
+                  onPressed: () => notifier.openPanel(),
+                  size: MedButtonSize.sm,
+                  label: context.l10n.medicine_newButtonLabel,
+                ),
+              ],
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
                 width: 1000,
@@ -48,8 +54,14 @@ class MedicineScreen extends StatelessWidget {
                         enableSearch: true,
                         onSearchChanged: notifier.search,
                         actions: [
-                          TableActionItem.edit(onPressed: (medicine) => notifier.openPanel(medicine: medicine)),
-                          TableActionItem.delete(onPressed: (medicine) => _onDelete(context, notifier, medicine)),
+                          TableActionItem.edit(
+                            context: context,
+                            onPressed: (medicine) => notifier.openPanel(medicine: medicine),
+                          ),
+                          TableActionItem.delete(
+                            context: context,
+                            onPressed: (medicine) => _onDelete(context, notifier, medicine),
+                          ),
                         ],
                         enablePagination: true,
                         pageSize: notifier.pageSize,
@@ -76,7 +88,7 @@ Future<void> _onDelete(BuildContext context, MedicineNotifier notifier, Medicine
       await notifier.deleteMedicine(
         data,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (_) => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
       );
     },
   );
@@ -94,7 +106,7 @@ class _DefinitionButtonsView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         MedButton(
-          label: 'Tıbbi Sarf Tanımlama',
+          label: context.l10n.medicine_defineMedicalConsumableButton,
           size: MedButtonSize.sm,
           onPressed: () async {
             final result = await showMedicalConsumableFormView(context);
@@ -104,19 +116,27 @@ class _DefinitionButtonsView extends StatelessWidget {
           },
         ),
         MedButton(
-          label: 'Etken Madde Tanımlama',
+          label: context.l10n.medicine_defineActiveIngredientButton,
           size: MedButtonSize.sm,
           onPressed: () => showActiveIngredientDialog(context),
         ),
         MedButton(
-          label: 'İlaç Sınıfı Tanımlama',
+          label: context.l10n.medicine_defineDrugClassButton,
           size: MedButtonSize.sm,
           onPressed: () => showDrugClassDialog(context),
         ),
-        MedButton(label: 'İlaç Tipi Tanımlama', size: MedButtonSize.sm, onPressed: () => showDrugTypeDialog(context)),
-        MedButton(label: 'İlaç Kiti Oluştur', size: MedButtonSize.sm, onPressed: () => showKitDialog(context)),
         MedButton(
-          label: 'Malzeme Tipi Tanımlama',
+          label: context.l10n.medicine_defineDrugTypeButton,
+          size: MedButtonSize.sm,
+          onPressed: () => showDrugTypeDialog(context),
+        ),
+        MedButton(
+          label: context.l10n.medicine_createKitButton,
+          size: MedButtonSize.sm,
+          onPressed: () => showKitDialog(context),
+        ),
+        MedButton(
+          label: context.l10n.medicine_defineMaterialTypeButton,
           size: MedButtonSize.sm,
           onPressed: () => showMaterialTypeDialog(context),
         ),

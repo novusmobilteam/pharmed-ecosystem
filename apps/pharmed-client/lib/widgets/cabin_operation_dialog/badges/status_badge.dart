@@ -32,9 +32,9 @@ class StatusBadge extends StatelessWidget {
 }
 
 /// Ortak "eksik bildirildi" rozeti (sayım/boşaltmada manuel eksik sonrası).
-StatusBadge reportedMissingBadge() => StatusBadge(
+StatusBadge reportedMissingBadge(BuildContext context) => StatusBadge(
   bg: MedColors.amberLight,
   fg: MedColors.amber,
   icon: PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
-  label: 'Eksik Bildirildi',
+  label: context.l10n.operationStatus_reportedMissingLabel,
 );

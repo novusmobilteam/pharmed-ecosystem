@@ -45,7 +45,7 @@ class SidePanel extends StatelessWidget {
     this.onClose,
     this.onSave,
     this.onDelete,
-    this.saveLabel = 'Kaydet',
+    this.saveLabel,
     this.isLoading = false,
     this.disableScroll = false,
   });
@@ -57,7 +57,7 @@ class SidePanel extends StatelessWidget {
   final VoidCallback? onClose;
   final VoidCallback? onSave;
   final VoidCallback? onDelete;
-  final String saveLabel;
+  final String? saveLabel;
   final bool isLoading;
   final bool disableScroll;
 
@@ -189,9 +189,9 @@ class _SidePanelHeader extends StatelessWidget {
 }
 
 class _SidePanelFooter extends StatelessWidget {
-  const _SidePanelFooter({required this.saveLabel, this.onSave, this.onClose, this.onDelete, this.isLoading = false});
+  const _SidePanelFooter({this.saveLabel, this.onSave, this.onClose, this.onDelete, this.isLoading = false});
 
-  final String saveLabel;
+  final String? saveLabel;
   final VoidCallback? onSave;
   final VoidCallback? onClose;
   final VoidCallback? onDelete;
@@ -209,7 +209,7 @@ class _SidePanelFooter extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           MedButton(
-            label: 'İptal',
+            label: context.l10n.common_cancelButton,
             onPressed: () => onClose != null ? onClose!() : null,
             size: MedButtonSize.sm,
             variant: MedButtonVariant.danger,
@@ -219,7 +219,7 @@ class _SidePanelFooter extends StatelessWidget {
             SizedBox(
               width: 150,
               child: MedButton(
-                label: saveLabel,
+                label: saveLabel ?? context.l10n.common_saveButton,
                 size: MedButtonSize.sm,
                 onPressed: isLoading ? null : onSave,
                 isLoading: isLoading,

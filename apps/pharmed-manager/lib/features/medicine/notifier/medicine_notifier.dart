@@ -53,7 +53,7 @@ class MedicineNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMi
       deleteOp,
       operation: () => _deleteMedicineUseCase.call(medicine),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
         fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),

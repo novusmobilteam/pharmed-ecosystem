@@ -21,9 +21,10 @@ class WarehouseTableView extends StatelessWidget {
           onSearchChanged: notifier.search,
           actions: [
             TableActionItem.edit(
+              context: context,
               onPressed: (warehouse) => context.read<StationSetupNotifier>().openWarehousePanel(warehouse: warehouse),
             ),
-            TableActionItem.delete(onPressed: (warehouse) => _onDelete(context, notifier, warehouse)),
+            TableActionItem.delete(context: context, onPressed: (warehouse) => _onDelete(context, notifier, warehouse)),
           ],
           enablePagination: true,
           pageSize: notifier.pageSize,
@@ -42,7 +43,7 @@ void _onDelete(BuildContext context, WarehouseNotifier notifier, Warehouse wareh
       await notifier.deleteWarehouse(
         warehouse,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
       );
     },
   );

@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   HospitalizationRepositoryImpl({
@@ -80,7 +81,7 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   @override
   Future<Result<void>> deleteHospitalization(Hospitalization entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek yatışın id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteHospitalizationIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteHospitalization(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

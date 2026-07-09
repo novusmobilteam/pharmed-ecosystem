@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 enum TableSelectionMode {
@@ -86,11 +87,16 @@ class TableActionItem<T extends TableData> {
     this.isVisible,
   });
 
-  factory TableActionItem.edit({required void Function(T item) onPressed}) {
-    return TableActionItem(icon: PhosphorIcons.pen(), tooltip: 'Düzenle', onPressed: onPressed);
+  factory TableActionItem.edit({required BuildContext context, required void Function(T item) onPressed}) {
+    return TableActionItem(icon: PhosphorIcons.pen(), tooltip: context.l10n.common_editTooltip, onPressed: onPressed);
   }
 
-  factory TableActionItem.delete({required void Function(T item) onPressed}) {
-    return TableActionItem(icon: PhosphorIcons.trashSimple(), tooltip: 'Sil', color: Colors.red, onPressed: onPressed);
+  factory TableActionItem.delete({required BuildContext context, required void Function(T item) onPressed}) {
+    return TableActionItem(
+      icon: PhosphorIcons.trashSimple(),
+      tooltip: context.l10n.common_deleteTooltip,
+      color: Colors.red,
+      onPressed: onPressed,
+    );
   }
 }

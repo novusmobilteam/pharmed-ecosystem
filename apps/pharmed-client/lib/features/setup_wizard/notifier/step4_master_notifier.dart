@@ -44,13 +44,13 @@ class Step4MasterNotifier extends Notifier<Step4MasterState> {
     void onStatus(ScanStatus status, {String? detail}) {
       switch (status) {
         case ScanStatus.connecting:
-          addLog(ScanLogEntry.pending('Seri porta bağlanılıyor…'));
+          addLog(ScanLogEntry.pending(contextlessL10n().wizard_scanLogConnecting));
         case ScanStatus.fetchingMetadata:
-          addLog(ScanLogEntry.pending('Çekmece tanımları yükleniyor…'));
+          addLog(ScanLogEntry.pending(contextlessL10n().wizard_scanLogFetchingMetadata));
         case ScanStatus.searchingManager:
-          addLog(ScanLogEntry.pending('Yönetim kartı aranıyor…'));
+          addLog(ScanLogEntry.pending(contextlessL10n().wizard_scanLogSearchingManager));
         case ScanStatus.scanningCards:
-          addLog(ScanLogEntry.pending('Kontrol kartları taranıyor…'));
+          addLog(ScanLogEntry.pending(contextlessL10n().wizard_scanLogScanningCards));
         case ScanStatus.connected:
           updateLastLog((e) => e.asOk(detail: detail));
         case ScanStatus.metadataReady:
@@ -58,7 +58,7 @@ class Step4MasterNotifier extends Notifier<Step4MasterState> {
         case ScanStatus.managerFound:
           updateLastLog((e) => e.asOk(detail: detail));
         case ScanStatus.drawerFound:
-          addLog(ScanLogEntry(message: detail ?? 'Çekmece bulundu', status: ScanLogStatus.ok));
+          addLog(ScanLogEntry(message: detail ?? contextlessL10n().wizard_scanLogDrawerFound, status: ScanLogStatus.ok));
         case ScanStatus.connectionFailed:
         case ScanStatus.metadataFailed:
         case ScanStatus.managerNotFound:

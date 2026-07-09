@@ -1,6 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/src/features/branch/branch.dart';
 import 'package:pharmed_data/src/models/api_response/api_response.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // [SWREQ-DATA-BRANCH-002]
 // IBranchRepository implementasyonu.
@@ -44,7 +45,7 @@ class BranchRepositoryImpl implements IBranchRepository {
   @override
   Future<Result<void>> deleteBranch(Branch entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek rolün id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteBranchIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteBranch(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

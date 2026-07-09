@@ -39,8 +39,10 @@ class _KitContentListViewState extends State<KitContentListView> {
           return EmptyStateWidget(
             icon: Icons.inventory_2_outlined,
             variant: EmptyStateVariant.custom,
-            title: 'Henüz kit içeriği bulunmuyor',
-            description: widget.isDialog ? 'Yeni içerik eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            title: context.l10n.kitContentListEmptyTitle,
+            description: widget.isDialog
+                ? context.l10n.common_addItemHint('içerik')
+                : context.l10n.common_emptyListMessage,
           );
         }
 
@@ -77,7 +79,7 @@ class _KitContentListViewState extends State<KitContentListView> {
         item.id!,
         widget.kit,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
       ),
     );
   }

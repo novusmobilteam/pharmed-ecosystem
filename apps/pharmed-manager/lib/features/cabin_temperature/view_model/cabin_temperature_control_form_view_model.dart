@@ -7,11 +7,16 @@ import '../domain/entity/cabin_temperature_detail.dart';
 
 class CabinTemperatureControlFormViewModel extends ChangeNotifier {
   final CabinTemperatureRepository _cabinTemperatureRepository;
+  // BuildContext'e erişimi olmayan bu ViewModel yerine, oluşturulduğu view
+  // katmanından (l10n ile) çözülen mesajlar için enjekte edilir.
+  final AppLocalizations _l10n;
 
   CabinTemperatureControlFormViewModel({
     required CabinTemperatureRepository cabinTemperatureRepository,
+    required AppLocalizations l10n,
     CabinTemperatureDetail? initial,
-  }) : _cabinTemperatureRepository = cabinTemperatureRepository {
+  }) : _cabinTemperatureRepository = cabinTemperatureRepository,
+       _l10n = l10n {
     init(initial);
   }
 
@@ -97,7 +102,7 @@ class CabinTemperatureControlFormViewModel extends ChangeNotifier {
       }
     } catch (e) {
       _submitStatus = APIRequestStatus.failed;
-      _statusMessage = 'Bir hata oluştu: $e';
+      _statusMessage = _l10n.cabinTemperatureGenericErrorMessage(e.toString());
       notifyListeners();
     }
   }
@@ -107,7 +112,7 @@ class CabinTemperatureControlFormViewModel extends ChangeNotifier {
 
     if (cabinTemperature.station == null) {
       _submitStatus = APIRequestStatus.failed;
-      _statusMessage = 'İstasyon seçilmedi';
+      _statusMessage = _l10n.cabinTemperatureStationNotSelectedError;
       notifyListeners();
       return;
     }
@@ -121,7 +126,7 @@ class CabinTemperatureControlFormViewModel extends ChangeNotifier {
         res.when(
           ok: (_) {
             _submitStatus = APIRequestStatus.success;
-            _statusMessage = 'Kabin sıcaklık ayarı başarıyla oluşturuldu.';
+            _statusMessage = _l10n.cabinTemperatureCreateSuccess;
             notifyListeners();
           },
           error: (error) {
@@ -142,7 +147,7 @@ class CabinTemperatureControlFormViewModel extends ChangeNotifier {
   Future<void> _updateCabinTemperature() async {
     if (_form?.id == null) {
       _submitStatus = APIRequestStatus.failed;
-      _statusMessage = 'Güncellenecek kayıt bulunamadı';
+      _statusMessage = _l10n.cabinTemperatureUpdateRecordNotFoundError;
       notifyListeners();
       return;
     }
@@ -151,7 +156,7 @@ class CabinTemperatureControlFormViewModel extends ChangeNotifier {
     res.when(
       ok: (_) {
         _submitStatus = APIRequestStatus.success;
-        _statusMessage = 'Kabin sıcaklık ayarı başarıyla güncellendi.';
+        _statusMessage = _l10n.cabinTemperatureUpdateSuccess;
         notifyListeners();
       },
       error: (error) {

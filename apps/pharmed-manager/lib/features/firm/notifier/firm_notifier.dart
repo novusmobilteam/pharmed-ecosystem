@@ -46,7 +46,7 @@ class FirmNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
       deleteOp,
       operation: () => _deleteFirmUseCase.call(firm),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(contextlessL10n().common_operationSuccessMessage);
         fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),

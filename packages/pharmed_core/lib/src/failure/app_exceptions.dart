@@ -3,6 +3,8 @@
 // Tüm exception'lar AppException'dan türer.
 // Her exception MedLogger ile loglanmalıdır.
 
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 // ─────────────────────────────────────────────────────────────────
 // Temel sınıf
 // ─────────────────────────────────────────────────────────────────
@@ -160,24 +162,27 @@ final class CheckException extends AppException {
 extension AppExceptionUiMessage on AppException {
   String get userMessage {
     return switch (this) {
-      NetworkUnavailableException() => 'Sunucuya bağlanılamıyor. Ağ bağlantınızı kontrol edin.',
-      TimeoutException() => 'Sunucu yanıt vermedi. Lütfen tekrar deneyin.',
+      NetworkUnavailableException() => contextlessL10n().appException_networkUnavailable,
+      TimeoutException() => contextlessL10n().appException_timeout,
       ServiceException(:final statusCode) =>
         statusCode >= 500
-            ? 'Sunucu hatası ($statusCode). Lütfen tekrar deneyin.'
-            : 'İşlem tamamlanamadı ($statusCode).',
-      MalformedDataException() => 'Sunucudan beklenmedik veri alındı.',
-      EmptyResponseException() => 'Sunucu boş yanıt döndürdü.',
-      ValidationException(:final field) => field != null ? '$field alanı geçersiz.' : 'Girilen bilgiler geçersiz.',
-      MappingException() => 'Veri işlenirken hata oluştu.',
-      CacheException() => 'Yerel veri okunamadı.',
-      StaleCacheException() => 'Güncel veriye ulaşılamıyor. Lütfen bağlantıyı kontrol edin.',
+            ? contextlessL10n().appException_serviceError5xx(statusCode)
+            : contextlessL10n().appException_serviceErrorOther(statusCode),
+      MalformedDataException() => contextlessL10n().appException_malformedData,
+      EmptyResponseException() => contextlessL10n().appException_emptyResponse,
+      ValidationException(:final field) =>
+        field != null ? contextlessL10n().appException_validationField(field) : contextlessL10n().appException_validationGeneric,
+      MappingException() => contextlessL10n().appException_mapping,
+      CacheException() => contextlessL10n().appException_cache,
+      StaleCacheException() => contextlessL10n().appException_staleCache,
       BusinessRuleException(:final message) => message,
       NotFoundException(:final resourceType) =>
-        resourceType != null ? '$resourceType bulunamadı.' : 'Kayıt bulunamadı.',
-      UnexpectedException() => 'Beklenmedik bir hata oluştu. Lütfen tekrar deneyin.',
-      SerialPortException() => 'Seri porta bağlanılamadı. Lütfen teknik servis ile iletişime geçiniz.',
-      CustomException() => 'Bilinmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
+        resourceType != null
+            ? contextlessL10n().appException_notFoundWithType(resourceType)
+            : contextlessL10n().appException_notFoundGeneric,
+      UnexpectedException() => contextlessL10n().appException_unexpected,
+      SerialPortException() => contextlessL10n().appException_serialPort,
+      CustomException() => contextlessL10n().appException_custom,
       CheckException(:final message) => message,
     };
   }

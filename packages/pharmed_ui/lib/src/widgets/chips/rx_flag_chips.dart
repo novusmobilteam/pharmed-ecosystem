@@ -16,7 +16,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 ///
 /// - firstDoseEmergency → 🔴 İlk Doz Acil
 /// - askDoctor          → 🔵 Doktora Sor
-/// - inCaseOfNecessity  → 🟡 Lüzum Halinde
+/// - inCaseOfNecessity  → 🟡 Gerektiğinde
 ///
 /// Hiçbiri aktif değilse hiçbir şey çizmez ([SizedBox.shrink]). Reçete kalemi
 /// içeren tüm kabin işlemlerinde (alım/iade/imha/aktivite) ortak kullanılır.
@@ -39,16 +39,20 @@ class RxFlagChips extends StatelessWidget {
       runSpacing: runSpacing,
       children: [
         if (item.firstDoseEmergency ?? false)
-          const MedInfoChip(info: 'İlk Doz Acil', backgroundColor: MedColors.red, foregroundColor: MedColors.redLight),
+          MedInfoChip(
+            info: context.l10n.common_flagFirstDoseEmergency,
+            backgroundColor: MedColors.red,
+            foregroundColor: MedColors.redLight,
+          ),
         if (item.askDoctor ?? false)
-          const MedInfoChip(
-            info: 'Doktora Sor',
+          MedInfoChip(
+            info: context.l10n.common_flagAskDoctor,
             backgroundColor: MedColors.purple,
             foregroundColor: MedColors.blueLight,
           ),
         if (item.inCaseOfNecessity ?? false)
-          const MedInfoChip(
-            info: 'Lüzum Halinde',
+          MedInfoChip(
+            info: context.l10n.common_flagInCaseOfNecessity,
             backgroundColor: MedColors.amber,
             foregroundColor: MedColors.amberLight,
           ),

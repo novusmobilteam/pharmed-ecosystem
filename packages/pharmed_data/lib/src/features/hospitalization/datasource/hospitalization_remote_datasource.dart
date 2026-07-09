@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
   HospitalizationRemoteDataSource({required super.apiManager});
@@ -80,7 +81,7 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> updateHospitalization(HospitalizationDto dto) {
     if (dto.id == null) {
-      return Future.value(Result.error(CustomException(message: 'updatePatientHospitalization: id is null')));
+      return Future.value(Result.error(CustomException(message: contextlessL10n().dataGuard_updateHospitalizationIdEmpty)));
     }
     return putRequest(
       path: '$_basePath/${dto.id}',

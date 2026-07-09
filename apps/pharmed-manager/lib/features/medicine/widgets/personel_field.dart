@@ -16,7 +16,7 @@ class PersonelField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = 'Personel';
+    final label = context.l10n.medicine_fieldPersonnel;
 
     return MedMultiSelectionField<User>(
       label: label,

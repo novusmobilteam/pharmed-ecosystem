@@ -52,12 +52,14 @@ class _LangRow extends StatelessWidget {
   String get _nativeName => switch (lang) {
     AppLanguage.turkish => 'Türkçe',
     AppLanguage.english => 'English',
+    AppLanguage.french => 'Français',
     AppLanguage.arabic => 'العربية',
   };
 
   String get _code => switch (lang) {
     AppLanguage.turkish => 'TR',
     AppLanguage.english => 'EN',
+    AppLanguage.french => 'FR',
     AppLanguage.arabic => 'AR',
   };
 

@@ -40,7 +40,7 @@ class RoleFormNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => isCreate ? _createRoleUseCase.call(_role) : _updateRoleUseCase(_role),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 }

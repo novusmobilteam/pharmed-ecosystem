@@ -63,7 +63,7 @@ class HospitalizationCard extends StatelessWidget {
                               _buildInfoRow(
                                 context,
                                 PhosphorIcons.stethoscope(),
-                                hospitalization.doctor?.fullName ?? 'Doktor Belirtilmemiş',
+                                hospitalization.doctor?.fullName ?? context.l10n.hospitalizationCard_noDoctorFallback,
                               ),
                             ],
                           ),
@@ -102,8 +102,12 @@ class HospitalizationCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildFooterInfo(context, 'T.C No', patient?.tcNo ?? '-'),
-                        _buildFooterInfo(context, 'Giriş Tarihi', hospitalization.admissionDate?.formattedDate ?? '-'),
+                        _buildFooterInfo(context, context.l10n.hospitalizationCard_nationalIdLabel, patient?.tcNo ?? '-'),
+                        _buildFooterInfo(
+                          context,
+                          context.l10n.hospitalizationCard_admissionDateLabel,
+                          hospitalization.admissionDate?.formattedDate ?? '-',
+                        ),
                       ],
                     ),
                   ],

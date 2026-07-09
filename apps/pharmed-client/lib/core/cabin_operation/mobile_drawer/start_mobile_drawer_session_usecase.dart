@@ -41,12 +41,20 @@ class StartMobileDrawerSessionUseCase {
         message: 'getOrScanManager exception',
         context: {'error': e.toString()},
       );
-      yield MobileDrawerFailed(message: 'Yönetim kartına bağlanılamadı: $e', port: drawerPort, slotId: slotId);
+      yield MobileDrawerFailed(
+        message: contextlessL10n().common_error_managerConnectFailedWithDetail(e.toString()),
+        port: drawerPort,
+        slotId: slotId,
+      );
       return;
     }
 
     if (manager == null) {
-      yield MobileDrawerFailed(message: 'Yönetim kartı bulunamadı.', port: drawerPort, slotId: slotId);
+      yield MobileDrawerFailed(
+        message: contextlessL10n().core_cabinConn_managerNotFoundError,
+        port: drawerPort,
+        slotId: slotId,
+      );
       return;
     }
 
@@ -63,13 +71,17 @@ class StartMobileDrawerSessionUseCase {
         context: {'port': drawerPort, 'error': e.toString()},
       );
       yield MobileDrawerFailed(
-        message: 'Çekmece açma komutu gönderilemedi: ${e.toString()}',
+        message: contextlessL10n().mobileDrawer_openCommandFailedError(e.toString()),
         port: drawerPort,
         slotId: slotId,
       );
       return;
     } catch (e) {
-      yield MobileDrawerFailed(message: 'Çekmece açma komutu gönderilemedi: $e', port: drawerPort, slotId: slotId);
+      yield MobileDrawerFailed(
+        message: contextlessL10n().mobileDrawer_openCommandFailedError(e.toString()),
+        port: drawerPort,
+        slotId: slotId,
+      );
       return;
     }
 
@@ -101,7 +113,7 @@ class StartMobileDrawerSessionUseCase {
 
           case DrawerPhysicalStatus.timeoutError:
             yield MobileDrawerFailed(
-              message: 'Çekmece durumu okunurken zaman aşımı oluştu.',
+              message: contextlessL10n().mobileDrawer_statusTimeoutError,
               port: drawerPort,
               slotId: slotId,
             );
@@ -116,7 +128,11 @@ class StartMobileDrawerSessionUseCase {
 
       // Stream caller iptal etmeden sonlandıysa ve hâlâ açılmadıysa → hata.
       if (!wasOpened) {
-        yield MobileDrawerFailed(message: 'Çekmecenin açıldığı doğrulanamadı.', port: drawerPort, slotId: slotId);
+        yield MobileDrawerFailed(
+          message: contextlessL10n().mobileDrawer_openNotConfirmedError,
+          port: drawerPort,
+          slotId: slotId,
+        );
       }
     } catch (e) {
       MedLogger.error(
@@ -125,7 +141,11 @@ class StartMobileDrawerSessionUseCase {
         message: 'Status stream hatası',
         context: {'port': drawerPort, 'error': e.toString()},
       );
-      yield MobileDrawerFailed(message: 'Çekmece durumu okunurken hata oluştu: $e', port: drawerPort, slotId: slotId);
+      yield MobileDrawerFailed(
+        message: contextlessL10n().mobileDrawer_statusReadError(e.toString()),
+        port: drawerPort,
+        slotId: slotId,
+      );
     }
   }
 }

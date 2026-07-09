@@ -15,6 +15,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class CreatePrescriptionUseCase {
   final IPrescriptionRepository _prescriptionRepository;
@@ -38,7 +39,7 @@ class CreatePrescriptionUseCase {
 
         if (prescId == null) {
           return Result.error(
-            CustomException(message: 'Reçete oluşturulurken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.'),
+            CustomException(message: contextlessL10n().prescriptionCore_createError),
           );
         }
 

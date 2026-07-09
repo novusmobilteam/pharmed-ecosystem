@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'banner_shell.dart';
 
@@ -15,8 +16,8 @@ class UnplannedMovementBanner extends StatelessWidget {
     return OperationBanner(
       tone: BannerTone.error,
       icon: PhosphorIcons.warning(),
-      title: title ?? 'Plan dışı hareket algılandı',
-      message: message ?? '${epcs.length} etiket plan dışı olarak kabinden çıkarıldı. Eczaneye bildirim oluşturulacak.',
+      title: title ?? context.l10n.operationBanner_unplannedMovementTitle,
+      message: message ?? context.l10n.operationBanner_unplannedMovementMessage(epcs.length),
       epcs: epcs,
     );
   }
@@ -34,7 +35,7 @@ class OperationErrorBanner extends StatelessWidget {
     return OperationBanner(
       tone: BannerTone.error,
       icon: PhosphorIcons.warningCircle(),
-      title: title ?? 'İşlem tamamlanamadı',
+      title: title ?? context.l10n.refill_error_queueTitle,
       message: message,
     );
   }
@@ -55,12 +56,15 @@ class UnexpectedTagBanner extends StatelessWidget {
     return OperationBanner(
       tone: blocking ? BannerTone.error : BannerTone.warning,
       icon: blocking ? PhosphorIcons.prohibit() : PhosphorIcons.package(),
-      title: title ?? (blocking ? 'Kabine ait olmayan etiket(ler) tespit edildi' : 'Beklenmeyen ilaç'),
+      title: title ??
+          (blocking
+              ? context.l10n.operationBanner_unexpectedTagBlockingTitle
+              : context.l10n.operationBanner_unexpectedTagWarningTitle),
       message:
           message ??
           (blocking
-              ? 'Devam edebilmek için aşağıdaki ${epcs.length} etiketi çekmeceden çıkartın.'
-              : 'Kabinde bu kabine ait olmayan ${epcs.length} etiket okundu. Lütfen çıkarın.'),
+              ? context.l10n.operationBanner_unexpectedTagBlockingMessage(epcs.length)
+              : context.l10n.operationBanner_unexpectedTagWarningMessage(epcs.length)),
       epcs: epcs,
     );
   }
@@ -80,8 +84,8 @@ class MissingStockBanner extends StatelessWidget {
     return OperationBanner(
       tone: BannerTone.warning,
       icon: PhosphorIcons.minusCircle(),
-      title: title ?? 'Eksik stok',
-      message: message ?? '$count ilaç kabinde bulunamadı. Tamamlandığında eksik stok olarak bildirilecek.',
+      title: title ?? context.l10n.operationBanner_missingStockTitle,
+      message: message ?? context.l10n.operationBanner_missingStockMessage(count),
       epcs: epcs,
     );
   }
@@ -101,7 +105,7 @@ class RollbackBanner extends StatelessWidget {
     return OperationBanner(
       tone: BannerTone.info,
       icon: PhosphorIcons.arrowCounterClockwise(),
-      title: title ?? 'İşlem geri alınıyor',
+      title: title ?? context.l10n.operationStatus_rollingBackLabel,
       message: message,
     );
   }

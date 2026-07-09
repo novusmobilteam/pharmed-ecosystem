@@ -37,7 +37,7 @@ class _BranchListViewState extends State<BranchListView> {
           BranchTableNotifier(getBranchesUseCase: context.read(), deleteBranchUseCase: context.read())..fetch(),
       child: Consumer<BranchTableNotifier>(
         builder: (context, vm, _) => CustomDialog(
-          title: 'Branş Tanımlama',
+          title: context.l10n.branch_listDialogTitle,
           showSearch: false,
           showAdd: true,
           isLoading: vm.isFetching,

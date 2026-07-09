@@ -11,6 +11,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class CabinRepositoryImpl implements ICabinRepository {
   CabinRepositoryImpl({
@@ -117,7 +118,7 @@ class CabinRepositoryImpl implements ICabinRepository {
   @override
   Future<Result<void>> deleteCabin(Cabin entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek kabinin id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteCabinIdEmpty, field: 'id'));
     }
     final result = await _remote.deleteCabin(entity.id!);
     return result.when(

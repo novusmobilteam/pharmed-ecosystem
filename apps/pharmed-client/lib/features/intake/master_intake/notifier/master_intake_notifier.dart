@@ -301,7 +301,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       (it) => it.needsWitness(currentStation: _currentStation) && it.witness == null,
     );
     if (missingWitness != null) {
-      state = MasterIntakeError(message: 'Şahit girişi yapılması gerekmektedir.', previousState: s);
+      state = MasterIntakeError(message: contextlessL10n().intake_error_witnessRequired, previousState: s);
       return;
     }
 
@@ -355,7 +355,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     // Hiç geçerli hedef yoksa hata göster, Selection'a dön.
     if (targets.isEmpty) {
       state = MasterIntakeError(
-        message: 'Seçilen ilaçlar için alım yapılamadı.',
+        message: contextlessL10n().intake_error_noValidTargets,
         previousState: s.copyWith(isChecking: false, checkStatuses: statuses),
       );
       return;
@@ -365,7 +365,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     final jobs = IntakeQueueBuilder.build(targets);
     if (jobs.isEmpty) {
       state = MasterIntakeError(
-        message: 'Alınacak çekmece bulunamadı.',
+        message: contextlessL10n().intake_error_noDrawerFound,
         previousState: s.copyWith(isChecking: false, checkStatuses: statuses),
       );
       return;

@@ -18,7 +18,7 @@ class _StationCabinStockScreenState extends State<StationCabinStockScreen> {
       mobile: MedMobileLayout(),
       tablet: MedTabletLayout(),
       desktop: MedDesktopLayout(
-        title: 'İstasyon Kabin Stok',
+        title: context.l10n.report_stationStockTitle,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

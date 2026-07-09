@@ -26,13 +26,13 @@ class WarningFormPanel extends StatelessWidget {
       child: Consumer<WarningFormNotifier>(
         builder: (context, formNotifier, _) {
           return SidePanel(
-            title: isNew ? 'Yeni Uyarı' : 'Uyarı Düzenle',
-            subtitle: isNew ? 'Uyarı bilgilerini doldurun' : 'Uyarı bilgilerini güncelleyin',
+            title: isNew ? context.l10n.warningFormAddTitle : context.l10n.warningFormEditTitle,
+            subtitle: isNew ? context.l10n.warningFormAddSubtitle : context.l10n.warningFormEditSubtitle,
             isLoading: formNotifier.isSubmitting,
             onClose: warningNotifier.closePanel,
             onSave: () async {
               if (formKey.currentState!.validate()) {
-                await formNotifier.submit();
+                await formNotifier.submit(successMessage: context.l10n.common_operationSuccessMessage);
 
                 if (context.mounted && formNotifier.isSuccess(formNotifier.submitOp)) {
                   MessageUtils.showSuccessSnackbar(context, formNotifier.statusMessage);
@@ -66,7 +66,7 @@ class _SubjectField extends StatelessWidget {
     return Consumer<WarningFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<WarningSubject>(
-          label: 'Uyarı Konusu',
+          label: context.l10n.warningFormSubjectLabel,
           options: WarningSubject.values,
           initialValue: notifier.warning.subject,
           labelBuilder: (s) => s?.label,
@@ -86,7 +86,7 @@ class _TextField extends StatelessWidget {
     return Consumer<WarningFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Uyarı Metni',
+          label: context.l10n.warningFormTextLabel,
           autoFocus: notifier.isCreate,
           initialValue: notifier.warning.text,
           validator: Validators.cannotBlankValidator,
@@ -105,7 +105,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<WarningFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           initialValue: notifier.warning.status,
           options: Status.values,
           labelBuilder: (s) => s?.label,

@@ -37,7 +37,7 @@ class HospitalizationScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Hasta İşlemleri',
+              title: menu.name ?? context.l10n.hospitalization_screenTitleFallback,
               subtitle: menu.description,
               actions: _buildActions(context, notifier),
               child: SidePanelWrapper(
@@ -63,7 +63,7 @@ class HospitalizationScreen extends StatelessWidget {
                   actions: [
                     TableActionItem(
                       icon: PhosphorIcons.pen(),
-                      tooltip: 'Yatış Düzenle',
+                      tooltip: context.l10n.hospitalization_formTitleEdit,
                       onPressed: (hospitalization) {
                         notifier.selectHospitalization(hospitalization);
                         notifier.openPanel(HospitalizationPanelMode.editHospitalization);
@@ -71,7 +71,7 @@ class HospitalizationScreen extends StatelessWidget {
                     ),
                     TableActionItem(
                       icon: PhosphorIcons.user(),
-                      tooltip: 'Hasta Bilgileri Düzenle',
+                      tooltip: context.l10n.hospitalization_editPatientTooltip,
                       onPressed: (hospitalization) {
                         notifier.selectHospitalization(hospitalization);
                         notifier.openPanel(HospitalizationPanelMode.editPatient);
@@ -79,7 +79,7 @@ class HospitalizationScreen extends StatelessWidget {
                     ),
                     TableActionItem(
                       icon: PhosphorIcons.plus(),
-                      tooltip: 'Yeni Yatış Gir',
+                      tooltip: context.l10n.hospitalization_formTitleNew,
                       onPressed: (hospitalization) {
                         notifier.selectHospitalization(hospitalization);
                         notifier.openPanel(HospitalizationPanelMode.newHospitalizationWithPatient);
@@ -88,7 +88,9 @@ class HospitalizationScreen extends StatelessWidget {
                   ],
                   toolbarActions: [
                     MedRectangleIconButton(
-                      tooltip: notifier.showDischarged ? 'Aktif yatışları getir' : 'Taburcu olanları göster',
+                      tooltip: notifier.showDischarged
+                          ? context.l10n.hospitalization_showActiveTooltip
+                          : context.l10n.hospitalization_showDischargedTooltip,
                       iconData: notifier.showDischarged ? PhosphorIcons.userMinus() : PhosphorIcons.userCheck(),
                       color: MedColors.amberLight,
                       iconColor: MedColors.amber,
@@ -115,13 +117,13 @@ class HospitalizationScreen extends StatelessWidget {
       MedButton(
         onPressed: () => notifier.openPanel(HospitalizationPanelMode.newPatient),
         size: MedButtonSize.sm,
-        label: 'Yeni Hasta Oluştur',
+        label: context.l10n.patient_formTitleNew,
       ),
       // Yeni Yatış
       MedButton(
         onPressed: () => notifier.openPanel(HospitalizationPanelMode.newHospitalization),
         size: MedButtonSize.sm,
-        label: 'Yeni Yatış Oluştur',
+        label: context.l10n.hospitalization_createButton,
       ),
     ];
   }

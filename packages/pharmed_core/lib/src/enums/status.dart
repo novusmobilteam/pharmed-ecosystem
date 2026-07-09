@@ -1,12 +1,14 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 enum Status { active, passive }
 
 extension StatusExtension on Status {
   String get label {
     switch (this) {
       case Status.active:
-        return 'Aktif';
+        return contextlessL10n().enumCore_statusActive;
       case Status.passive:
-        return 'Pasif';
+        return contextlessL10n().enumCore_statusPassive;
     }
   }
 

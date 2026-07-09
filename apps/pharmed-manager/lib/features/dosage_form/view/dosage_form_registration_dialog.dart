@@ -34,7 +34,9 @@ class _DosageFormRegistrationDialogState extends State<DosageFormRegistrationDia
   Widget build(BuildContext context) {
     return Consumer<DosageFormRegistrationNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? 'Dozaj Formu Oluştur' : 'Dozaj Formu Düzenle';
+        final String title = notifier.isCreate
+            ? context.l10n.dosageForm_createTitle
+            : context.l10n.dosageForm_editTitle;
 
         return RegistrationDialog(
           title: title,
@@ -72,7 +74,7 @@ class _NameField extends StatelessWidget {
     return Consumer<DosageFormRegistrationNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Adı',
+          label: context.l10n.common_nameLabel,
           autoFocus: notifier.isCreate,
           initialValue: notifier.dosageForm.name,
           validator: (v) => Validators.cannotBlankValidator(v),
@@ -91,7 +93,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<DosageFormRegistrationNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           initialValue: notifier.dosageForm.status,
           options: Status.values,
           labelBuilder: (value) => value?.label,

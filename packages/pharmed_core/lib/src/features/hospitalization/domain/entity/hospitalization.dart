@@ -107,12 +107,12 @@ class Hospitalization extends Selectable implements TableData {
 
   @override
   List<String?> get titles => [
-    'Servis',
-    'Protokol No',
-    'T.C No',
-    'Hasta',
-    'Yatış Tarihi',
-    'Çıkış Tarihi',
+    contextlessL10n().tableCore_serviceColumn,
+    contextlessL10n().tableCore_hospitalizationProtocolNoColumn,
+    contextlessL10n().tableCore_hospitalizationNationalIdColumn,
+    contextlessL10n().tableCore_hospitalizationPatientColumn,
+    contextlessL10n().tableCore_admissionDateColumn,
+    contextlessL10n().tableCore_dischargeDateColumn,
     // 'Bekleyen Adet',
     // 'Son Onay Tarihi',
   ];

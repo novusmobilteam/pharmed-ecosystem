@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 enum WarningSubject {
   /// Zamansız Alım
   untimelyIntake(1),
@@ -25,13 +27,13 @@ enum WarningSubject {
   String get label {
     switch (this) {
       case WarningSubject.untimelyIntake:
-        return 'Zamansız Alım';
+        return contextlessL10n().enumCore_warningSubjectUntimelyPurchase;
       case WarningSubject.wastage:
-        return 'Fire';
+        return contextlessL10n().enumCore_warningSubjectWaste;
       case WarningSubject.inconsistencyResolution:
-        return 'Tutarsızlık Çözümü';
+        return contextlessL10n().enumCore_warningSubjectInconsistencyResolution;
       case WarningSubject.destruction:
-        return 'İmha';
+        return contextlessL10n().enumCore_warningSubjectDisposal;
     }
   }
 }

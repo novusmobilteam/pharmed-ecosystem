@@ -38,9 +38,9 @@ class DashboardRxItemCard extends StatelessWidget {
   /// Alt kısımda aksiyon alanı (onayla/reddet gibi). null → gösterilmez.
   final Widget? actions;
 
-  String get _doseText {
+  String _doseText(BuildContext context) {
     final piece = item.dosePiece?.formatFractional ?? '-';
-    final unit = item.medicine?.operationUnit ?? 'Adet';
+    final unit = item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback;
     return '$piece $unit';
   }
 
@@ -76,7 +76,7 @@ class DashboardRxItemCard extends StatelessWidget {
                 MedTimeChip(time: item.time!)
               else
                 Text(
-                  _doseText,
+                  _doseText(context),
                   style: MedTextStyles.monoSm(color: MedColors.text2, weight: FontWeight.w600),
                 ),
             ],
@@ -86,7 +86,7 @@ class DashboardRxItemCard extends StatelessWidget {
           if (showTimeChip && item.time != null) ...[
             const SizedBox(height: 4),
             Text(
-              _doseText,
+              _doseText(context),
               style: MedTextStyles.monoSm(color: MedColors.text3, weight: FontWeight.w600),
             ),
           ],
@@ -105,20 +105,20 @@ class DashboardRxItemCard extends StatelessWidget {
               runSpacing: MedSpacing.xs,
               children: [
                 if (item.firstDoseEmergency == true)
-                  const MedInfoChip(
-                    info: 'İlk Doz Acil',
+                  MedInfoChip(
+                    info: context.l10n.common_flagFirstDoseEmergency,
                     backgroundColor: MedColors.redLight,
                     foregroundColor: MedColors.red,
                   ),
                 if (item.askDoctor == true)
-                  const MedInfoChip(
-                    info: 'Doktora Sor',
+                  MedInfoChip(
+                    info: context.l10n.common_flagAskDoctor,
                     backgroundColor: MedColors.amberLight,
                     foregroundColor: MedColors.amber,
                   ),
                 if (item.inCaseOfNecessity == true)
-                  const MedInfoChip(
-                    info: 'Gerektiğinde',
+                  MedInfoChip(
+                    info: context.l10n.common_flagInCaseOfNecessity,
                     backgroundColor: MedColors.blueLight,
                     foregroundColor: MedColors.blue,
                   ),

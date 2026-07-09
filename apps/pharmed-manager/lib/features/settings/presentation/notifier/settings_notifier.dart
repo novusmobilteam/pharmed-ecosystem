@@ -62,7 +62,7 @@ class SettingsNotifier extends ChangeNotifier with ApiRequestMixin {
       await executeVoid(
         submitOp,
         operation: () => _repository.updateSystemParameter(updatedParam),
-        onSuccess: () => onSuccess?.call('Ayarlar başarıyla güncellendi.'),
+        onSuccess: () => onSuccess?.call(null),
         onFailed: (error) => onFailed?.call(error.message),
       );
     }

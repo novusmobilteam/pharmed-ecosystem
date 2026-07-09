@@ -14,7 +14,7 @@ class _ExtraStockSummaryCard extends StatelessWidget {
       tone: BannerTone.warning,
       icon: PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
       title: context.l10n.census_extra_stock_summary_title,
-      message: 'İşlem sonunda fazla stoklar bildirilecektir.',
+      message: context.l10n.census_extraStockSummaryMessage,
       child: Column(
         children: extraStocks
             .map((stock) => _ExtraStockRow(stock: stock, onRemove: () => onRemove(stock.localId)))

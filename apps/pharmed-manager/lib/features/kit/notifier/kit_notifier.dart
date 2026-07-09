@@ -24,7 +24,7 @@ class KitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Kit> 
       operation: () => _deleteKitUseCase.call(kit),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+        onSuccess?.call(null);
         getKits();
       },
     );

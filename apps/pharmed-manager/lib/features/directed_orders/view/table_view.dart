@@ -5,11 +5,11 @@ class _TableView extends StatelessWidget {
 
   final DirectedOrdersViewModel vm;
 
-  List<TableColumnDef> _buildColumnDefs() => const [
-    TableColumnDef(title: 'Hasta', flex: 1.5), // colIndex: 0
-    TableColumnDef(title: 'Protokol No'), // colIndex: 1
-    TableColumnDef(title: 'Yatak', flex: 0.7), // colIndex: 2
-    TableColumnDef(title: 'Oda', flex: 0.7), // colIndex: 3
+  List<TableColumnDef> _buildColumnDefs(BuildContext context) => [
+    TableColumnDef(title: context.l10n.drugActivity_column_patient, flex: 1.5), // colIndex: 0
+    TableColumnDef(title: context.l10n.directedOrdersColumnProtocolNo), // colIndex: 1
+    TableColumnDef(title: context.l10n.directedOrdersColumnBed, flex: 0.7), // colIndex: 2
+    TableColumnDef(title: context.l10n.directedOrdersColumnRoom, flex: 0.7), // colIndex: 3
   ];
 
   Widget? _buildCell(Hospitalization item, int colIndex, dynamic _) {
@@ -30,12 +30,12 @@ class _TableView extends StatelessWidget {
       enableSearch: true,
       enableExcel: true,
       onSearchChanged: vm.search,
-      columnDefs: _buildColumnDefs(),
+      columnDefs: _buildColumnDefs(context),
       cellBuilder: _buildCell,
       actions: [
         TableActionItem(
           icon: PhosphorIcons.dotsThreeVertical(),
-          tooltip: 'İlaçlar',
+          tooltip: context.l10n.directedOrdersMedicinesTooltip,
           onPressed: (hosp) => showMedicineTableDialog(context, hosp),
         ),
       ],

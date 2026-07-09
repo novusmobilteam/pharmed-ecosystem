@@ -36,7 +36,7 @@ class MasterIntakeExecutionPanel extends ConsumerWidget {
     };
 
     if (executing == null) {
-      return const EmptyStateWidget(title: 'Alıma başlamak için ilaç seçin.');
+      return EmptyStateWidget(title: context.l10n.intake_emptyState_selectMedicine);
     }
 
     final notifier = ref.read(masterIntakeNotifierProvider.notifier);
@@ -76,7 +76,10 @@ class _ProgressBar extends StatelessWidget {
             ),
           ),
         ),
-        Text('${state.completedJobs}/${state.totalJobs} çekmece', style: MedTextStyles.monoSm(color: MedColors.text3)),
+        Text(
+          context.l10n.refill_label_queueProgress(state.completedJobs, state.totalJobs),
+          style: MedTextStyles.monoSm(color: MedColors.text3),
+        ),
       ],
     );
   }
@@ -152,11 +155,13 @@ class _FormHeader extends StatelessWidget {
     if (job.isKubik) {
       final t = state.currentTarget;
       title = t?.medicine?.name ?? '—';
-      subtitle = 'Göz ${state.currentTargetIndex + 1}/${job.targets.length}';
+      subtitle = context.l10n.refill_label_cellProgress(state.currentTargetIndex + 1, job.targets.length);
     } else {
       final distinct = job.distinctMedicineCount;
-      title = distinct == 1 ? (job.representativeAssignment.medicine?.name ?? '—') : '$distinct farklı ilaç';
-      subtitle = 'Çekmece $address';
+      title = distinct == 1
+          ? (job.representativeAssignment.medicine?.name ?? '—')
+          : context.l10n.intake_label_multiMedicine(distinct);
+      subtitle = context.l10n.refill_chip_drawer(address);
     }
 
     return Row(
@@ -188,7 +193,7 @@ class _DrawerStatePill extends StatelessWidget {
     return MedInfoChip(
       backgroundColor: isOpened ? MedColors.greenLight : MedColors.amberLight,
       foregroundColor: isOpened ? MedColors.green : MedColors.amber,
-      info: isOpened ? 'Çekmece açık' : 'Çekmece açılıyor',
+      info: isOpened ? context.l10n.refill_status_drawerOpen : context.l10n.refill_status_drawerOpening,
     );
   }
 }
@@ -254,7 +259,7 @@ class _TargetCountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unit = target.medicine?.operationUnit ?? 'Adet';
+    final unit = target.medicine?.operationUnit ?? context.l10n.refillList_defaultUnitFallback;
     final showCensus = target.needsCount;
 
     return Container(
@@ -279,7 +284,7 @@ class _TargetCountCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'Alınan: ${target.totalDose.formatFractional} $unit',
+                context.l10n.intake_label_takenAmount(target.totalDose.formatFractional, unit),
                 style: MedTextStyles.monoMd(color: MedColors.blue),
               ),
             ],
@@ -322,7 +327,7 @@ class _CensusRow extends StatelessWidget {
           ),
         Expanded(
           child: MedTextInputField(
-            label: 'Sayım ($unit)',
+            label: context.l10n.intake_label_countFieldLabel(unit),
             initialValue: value.formatFractional,
             keyboardType: TextInputType.number,
             onChanged: onChanged,
@@ -350,10 +355,10 @@ class _FormFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = (isKubik && !isLastCubicCell) ? 'Sonraki göz' : 'Alımı tamamla';
+    final label = (isKubik && !isLastCubicCell) ? context.l10n.refill_action_nextCell : context.l10n.intake_action_complete;
     final hint = (isKubik && !isLastCubicCell)
-        ? 'Onayladığınızda sıradaki göz açılır.'
-        : 'Onayladığınızda çekmece kapanır.';
+        ? context.l10n.intake_hint_nextCellOpens
+        : context.l10n.intake_hint_confirmCloses;
 
     return Padding(
       padding: MedSpacing.insetMd,

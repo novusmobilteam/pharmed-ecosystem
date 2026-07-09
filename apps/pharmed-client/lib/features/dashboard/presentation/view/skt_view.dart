@@ -100,9 +100,24 @@ class SktList extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                MedRingChart(count: criticalCount, total: total, color: MedColors.red, label: 'Kritik\n(<7 gün)'),
-                MedRingChart(count: warningCount, total: total, color: MedColors.amber, label: 'Uyarı\n(7-30 gün)'),
-                MedRingChart(count: expiredCount, total: total, color: MedColors.redDark, label: 'Geçmiş\nSKT'),
+                MedRingChart(
+                  count: criticalCount,
+                  total: total,
+                  color: MedColors.red,
+                  label: context.l10n.dashboard_sktCriticalRingLabel,
+                ),
+                MedRingChart(
+                  count: warningCount,
+                  total: total,
+                  color: MedColors.amber,
+                  label: context.l10n.dashboard_sktWarningRingLabel,
+                ),
+                MedRingChart(
+                  count: expiredCount,
+                  total: total,
+                  color: MedColors.redDark,
+                  label: context.l10n.dashboard_sktExpiredRingLabel,
+                ),
               ],
             ),
           ),
@@ -129,12 +144,12 @@ class _SktHeader extends StatelessWidget {
         children: [
           MedStatusDot(color: MedColors.amber),
           const SizedBox(width: 8),
-          Text('SKT DURUMU', style: MedTextStyles.titleSm()),
+          Text(context.l10n.dashboard_sktStatusHeader, style: MedTextStyles.titleSm()),
           const Spacer(),
           AnimatedOpacity(
             opacity: isStale ? 0.45 : 1.0,
             duration: const Duration(milliseconds: 300),
-            child: MedBadge(label: '$itemCount Kalem', variant: MedBadgeVariant.amber),
+            child: MedBadge(label: context.l10n.dashboard_sktItemCountBadge(itemCount), variant: MedBadgeVariant.amber),
           ),
         ],
       ),
@@ -239,8 +254,8 @@ class _DaysIndicator extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const Text(
-            'GEÇTİ',
+          Text(
+            context.l10n.dashboard_sktExpiredTag,
             style: TextStyle(
               fontFamily: MedFonts.mono,
               fontSize: 10,
@@ -250,7 +265,7 @@ class _DaysIndicator extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 1),
-          Text('imha et', style: MedTextStyles.monoXs(color: MedColors.red)),
+          Text(context.l10n.dashboard_sktDestroyHint, style: MedTextStyles.monoXs(color: MedColors.red)),
         ],
       );
     }
@@ -266,7 +281,7 @@ class _DaysIndicator extends StatelessWidget {
       children: [
         Text('${daysRemaining ?? 0}', style: MedTextStyles.titleMd(color: color)),
         const SizedBox(height: 1),
-        Text('gün kaldı', style: MedTextStyles.monoXs()),
+        Text(context.l10n.dashboard_sktDaysRemainingLabel(daysRemaining ?? 0), style: MedTextStyles.monoXs()),
       ],
     );
   }

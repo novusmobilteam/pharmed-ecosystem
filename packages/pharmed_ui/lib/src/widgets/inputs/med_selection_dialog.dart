@@ -242,10 +242,10 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
 
   bool get _hasSelection => widget.multi ? _selectedIds.isNotEmpty : _selected != null;
 
-  String? get _footerLabel {
+  String? _footerLabel(BuildContext context) {
     if (widget.multi) {
       if (_selectedIds.isEmpty) return null;
-      return '${_selectedIds.length} öğe seçildi';
+      return context.l10n.selectionDialog_selectedCount(_selectedIds.length);
     }
     return _selected != null ? widget.labelBuilder(_selected as T) : null;
   }
@@ -290,7 +290,7 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
             ),
             _SearchBar(controller: _searchController, onChanged: _onSearchChanged),
             Flexible(child: _buildList()),
-            _DialogFooter(selectedLabel: _footerLabel, onConfirm: _hasSelection ? _onConfirm : null),
+            _DialogFooter(selectedLabel: _footerLabel(context), onConfirm: _hasSelection ? _onConfirm : null),
           ],
         ),
       ),
@@ -404,7 +404,7 @@ class _SelectAllButton extends StatelessWidget {
           border: Border.all(color: MedColors.border),
         ),
         child: Text(
-          allSelected ? 'Seçimi Kaldır' : 'Tümünü Seç',
+          allSelected ? context.l10n.common_deselectAllButton : context.l10n.common_selectAllButton,
           style: TextStyle(
             fontFamily: MedFonts.sans,
             fontSize: 11,
@@ -462,7 +462,7 @@ class _SearchBar extends StatelessWidget {
         autofocus: true,
         style: TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text),
         decoration: InputDecoration(
-          hintText: 'Ara...',
+          hintText: context.l10n.common_searchHint,
           hintStyle: TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text3),
           prefixIcon: Icon(Icons.search_rounded, size: 18, color: MedColors.text3),
           filled: true,
@@ -605,16 +605,20 @@ class _DialogFooter extends StatelessWidget {
                       ),
                     ],
                   )
-                : Text('Seçim yapılmadı', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                : Text(context.l10n.selectionDialog_noSelection, style: MedTextStyles.bodySm(color: MedColors.text3)),
           ),
           const SizedBox(width: 12),
 
           // İptal
-          _FooterButton(label: 'İptal', onTap: () => Navigator.of(context).pop(), isPrimary: false),
+          _FooterButton(
+            label: context.l10n.common_cancelButton,
+            onTap: () => Navigator.of(context).pop(),
+            isPrimary: false,
+          ),
           const SizedBox(width: 8),
 
           // Seç
-          _FooterButton(label: 'Seç', onTap: onConfirm, isPrimary: true),
+          _FooterButton(label: context.l10n.selectionDialog_confirmButton, onTap: onConfirm, isPrimary: true),
         ],
       ),
     );
@@ -676,7 +680,7 @@ class _EmptyState extends StatelessWidget {
           Icon(Icons.search_off_rounded, size: 32, color: MedColors.text4),
           const SizedBox(height: 10),
           Text(
-            'Sonuç bulunamadı',
+            context.l10n.common_noResultsTitle,
             style: TextStyle(
               fontFamily: MedFonts.sans,
               fontSize: 13,
@@ -725,7 +729,7 @@ class _ErrorState extends StatelessWidget {
                 border: Border.all(color: MedColors.border),
               ),
               child: Text(
-                'Tekrar Dene',
+                context.l10n.common_retryButton,
                 style: TextStyle(
                   fontFamily: MedFonts.sans,
                   fontSize: 12,

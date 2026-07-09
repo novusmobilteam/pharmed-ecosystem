@@ -27,7 +27,7 @@ class MedDropdownInputField<T> extends StatefulWidget {
     this.initialValue,
     this.enabled = true,
     this.autovalidateMode = AutovalidateMode.disabled,
-    this.placeholder = 'Seçiniz',
+    this.placeholder,
   });
 
   final List<T> options;
@@ -38,7 +38,7 @@ class MedDropdownInputField<T> extends StatefulWidget {
   final T? initialValue;
   final bool enabled;
   final AutovalidateMode autovalidateMode;
-  final String placeholder;
+  final String? placeholder;
 
   @override
   State<MedDropdownInputField<T>> createState() => _MedDropdownInputFieldState<T>();
@@ -59,6 +59,7 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
       autovalidateMode: widget.autovalidateMode,
       builder: (field) {
         final value = field.value;
+        final resolvedPlaceholder = widget.placeholder ?? context.l10n.common_selectPlaceholder;
         return MedInputDecorator(
           label: widget.label,
           errorText: field.errorText,
@@ -93,7 +94,7 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
                       child: Text(
                         value != null
                             ? (widget.labelBuilder(value) ?? '-')
-                            : (widget.labelBuilder(null) ?? widget.placeholder),
+                            : (widget.labelBuilder(null) ?? resolvedPlaceholder),
                         style: MedTextStyles.bodyMd(color: MedColors.text),
                         overflow: TextOverflow.ellipsis,
                       ),

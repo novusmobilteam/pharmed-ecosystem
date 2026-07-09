@@ -77,7 +77,7 @@ class _SearchBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
       child: MedTextInputField(
-        hintText: 'Hasta ara...',
+        hintText: context.l10n.patientListPanel_searchHint,
         prefixIcon: Icon(PhosphorIcons.magnifyingGlass()),
         initialValue: search,
         onChanged: (query) => onChanged(query ?? ''),

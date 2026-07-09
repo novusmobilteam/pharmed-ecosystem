@@ -31,7 +31,7 @@ class DirectedOrdersScreen extends StatelessWidget {
 
   Widget _buildDesktopLayout(BuildContext context, DirectedOrdersViewModel vm) {
     return MedDesktopLayout(
-      title: 'Yönlendirilmiş Order Listesi',
+      title: context.l10n.directedOrdersScreenTitle,
       showAddButton: false,
       child: _buildContent(context, vm),
     );

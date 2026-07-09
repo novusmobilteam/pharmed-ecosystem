@@ -36,7 +36,7 @@ class Step5View extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         StepHeader(
-          badge: 'Adım 5 / 5',
+          badge: context.l10n.wizard_stepBadge(5, 5),
           title: context.l10n.wizard_step5Header,
           subtitle: context.l10n.wizard_step5Subtitle,
         ),
@@ -80,7 +80,11 @@ class Step5View extends ConsumerWidget {
             ),
           ),
         ),
-        StepFooter(onBack: wizard.previousStep, onNext: wizard.finish, nextLabel: 'Kurulumu Tamamla'),
+        StepFooter(
+          onBack: wizard.previousStep,
+          onNext: wizard.finish,
+          nextLabel: context.l10n.stationSetup_wizard_completeSetupButton,
+        ),
       ],
     );
   }

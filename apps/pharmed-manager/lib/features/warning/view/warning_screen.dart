@@ -24,9 +24,15 @@ class WarningScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Uyarı Tanımlama',
+              title: menu.name ?? context.l10n.warningScreenTitle,
               subtitle: menu.description,
-              actions: [MedButton(onPressed: () => notifier.openPanel(), size: MedButtonSize.sm, label: 'Yeni Uyarı')],
+              actions: [
+                MedButton(
+                  onPressed: () => notifier.openPanel(),
+                  size: MedButtonSize.sm,
+                  label: context.l10n.warningFormAddTitle,
+                ),
+              ],
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
                 width: 480,
@@ -38,12 +44,17 @@ class WarningScreen extends StatelessWidget {
                   enableSearch: true,
                   onSearchChanged: notifier.search,
                   actions: [
-                    TableActionItem.edit(onPressed: (warning) => notifier.openPanel(warning: warning)),
+                    TableActionItem.edit(
+                      context: context,
+                      onPressed: (warning) => notifier.openPanel(warning: warning),
+                    ),
                     TableActionItem.delete(
+                      context: context,
                       onPressed: (warning) => notifier.deleteWarning(
                         warning,
                         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+                        onSuccess: (msg) =>
+                            MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
                       ),
                     ),
                   ],

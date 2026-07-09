@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum WarehouseType {
   drug(1),
@@ -14,11 +15,11 @@ extension WarehouseTypeExtension on WarehouseType {
   String get label {
     switch (this) {
       case WarehouseType.drug:
-        return 'İlaç';
+        return contextlessL10n().tableCore_stationDrugColumn;
       case WarehouseType.medicalConsumable:
-        return 'Tıbbi Sarf';
+        return contextlessL10n().tableCore_stationConsumableColumn;
       case WarehouseType.mainWarehouse:
-        return 'Ana Depo';
+        return contextlessL10n().enumCore_warehouseTypeMain;
     }
   }
 }

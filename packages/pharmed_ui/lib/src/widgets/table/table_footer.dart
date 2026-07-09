@@ -52,7 +52,9 @@ class _CountFooter extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
-            isFiltered ? '$filteredCount / $totalCount kayıt' : '$totalCount kayıt',
+            isFiltered
+                ? context.l10n.table_recordCountFiltered(filteredCount, totalCount)
+                : context.l10n.table_recordCount(totalCount),
             style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280), fontWeight: FontWeight.w500),
           ),
         ],
@@ -89,7 +91,7 @@ class _PaginationFooter extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            'Toplam $totalCount kayıt',
+            context.l10n.table_totalRecordCount(totalCount),
             style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280), fontWeight: FontWeight.w500),
           ),
           const Spacer(),
@@ -101,7 +103,7 @@ class _PaginationFooter extends StatelessWidget {
           _PageBtn(
             icon: Icons.chevron_left,
             enabled: _canGoPrev,
-            tooltip: 'Önceki sayfa',
+            tooltip: context.l10n.table_prevPageTooltip,
             onPressed: () => onPageChanged?.call(currentPage - 1),
           ),
           // Sayfa numaraları
@@ -109,7 +111,7 @@ class _PaginationFooter extends StatelessWidget {
           _PageBtn(
             icon: Icons.chevron_right,
             enabled: _canGoNext,
-            tooltip: 'Sonraki sayfa',
+            tooltip: context.l10n.table_nextPageTooltip,
             onPressed: () => onPageChanged?.call(currentPage + 1),
           ),
         ],

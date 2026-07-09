@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 class KitContent implements TableData {
@@ -16,7 +17,10 @@ class KitContent implements TableData {
   List get rawContent => [medicine?.name, piece];
 
   @override
-  List<String?> get titles => ['Malzeme Adı', 'Adet'];
+  List<String?> get titles => [
+    contextlessL10n().tableCore_kitContentMaterialNameColumn,
+    contextlessL10n().tableCore_kitContentPieceColumn,
+  ];
 
   KitContent copyWith({int? id, int? kitId, Medicine? medicine, int? piece}) {
     return KitContent(

@@ -68,7 +68,11 @@ class MedicineFillingCard extends StatelessWidget {
                     style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  _infoText(context, 'Mevcut: ${current.formatFractional}', isCritical ? Colors.orange : null),
+                  _infoText(
+                    context,
+                    context.l10n.refill_label_current(current.formatFractional),
+                    isCritical ? Colors.orange : null,
+                  ),
                   _infoText(context, object.assignment?.quantityText ?? '-', null),
                 ],
               ),
@@ -77,7 +81,7 @@ class MedicineFillingCard extends StatelessWidget {
             // Sağ: Modern Stepper
             MedDoseStepper.compact(
               value: selectedQuantity,
-              unit: object.medicine?.operationUnit ?? 'Adet',
+              unit: object.medicine?.operationUnit ?? context.l10n.refillList_defaultUnitFallback,
               // onChanged doğrudan yeni değeri (double) döndürür
               onChanged: (newVal) => onQuantityChanged(newVal),
               // Minimum ve adım değerlerini de buradan kontrol edebilirsin (Opsiyonel)

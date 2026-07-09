@@ -65,7 +65,7 @@ class _MedDateInputFieldState extends State<MedDateInputField> {
                       initialDate: value ?? DateTime.now(),
                       firstDate: widget.firstDate ?? DateTime(1900),
                       lastDate: widget.lastDate ?? DateTime(2100),
-                      locale: const Locale('tr', 'TR'),
+                      locale: Localizations.localeOf(context),
                       builder: (context, child) => Theme(data: Theme.of(context), child: child!),
                     );
                     if (selected != null) {
@@ -90,7 +90,7 @@ class _MedDateInputFieldState extends State<MedDateInputField> {
               children: [
                 Flexible(
                   child: Text(
-                    value != null ? value.formattedDate : 'Tarih seçin',
+                    value != null ? value.formattedDate : context.l10n.dateField_placeholder,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: MedTextStyles.bodyMd(color: value != null ? MedColors.text : MedColors.text4),

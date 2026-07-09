@@ -24,22 +24,26 @@ class _RfidTestButton extends StatelessWidget {
     return switch (testState) {
       // Test edilmedi veya hata — butonu göster
       RfidTestState.idle => MedButton(
-        label: 'Anten Bağlantısını Test Et',
+        label: context.l10n.wizard_testRfidConnectionButton,
         size: MedButtonSize.sm,
         onPressed: _canTest ? onTestRfid : null,
       ),
 
       // Test devam ediyor — loading göster
-      RfidTestState.testing => const SizedBox(
+      RfidTestState.testing => SizedBox(
         height: 36,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: MedColors.blue)),
-            SizedBox(width: 10),
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(strokeWidth: 2, color: MedColors.blue),
+            ),
+            const SizedBox(width: 10),
             Text(
-              'Test ediliyor…',
-              style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
+              context.l10n.wizard_testingInProgress,
+              style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
             ),
           ],
         ),
@@ -51,7 +55,7 @@ class _RfidTestButton extends StatelessWidget {
           const Icon(Icons.check_circle_rounded, size: 16, color: MedColors.green),
           const SizedBox(width: 8),
           Text(
-            'Bağlantı başarılı',
+            context.l10n.wizard_connectionSuccessLabel,
             style: const TextStyle(
               fontFamily: MedFonts.sans,
               fontSize: 13,
@@ -62,7 +66,7 @@ class _RfidTestButton extends StatelessWidget {
           if (readerInfo != null) ...[
             const SizedBox(width: 8),
             Text(
-              '· FW ${readerInfo!.firmwareVersion}  ${readerInfo!.currentPower} dBm',
+              context.l10n.wizard_rfidFirmwareInfo(readerInfo!.firmwareVersion, readerInfo!.currentPower),
               style: const TextStyle(fontFamily: MedFonts.mono, fontSize: 11, color: MedColors.text3),
             ),
           ],
@@ -70,9 +74,9 @@ class _RfidTestButton extends StatelessWidget {
           // Yeniden test etmek isterse
           GestureDetector(
             onTap: onTestRfid,
-            child: const Text(
-              'Tekrar test et',
-              style: TextStyle(
+            child: Text(
+              context.l10n.wizard_retestLink,
+              style: const TextStyle(
                 fontFamily: MedFonts.sans,
                 fontSize: 12,
                 color: MedColors.blue,
@@ -86,7 +90,11 @@ class _RfidTestButton extends StatelessWidget {
       RfidTestState.failure => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MedButton(label: 'Bağlantıyı Test Et', size: MedButtonSize.sm, onPressed: _canTest ? onTestRfid : null),
+          MedButton(
+            label: context.l10n.wizard_testConnectionButton,
+            size: MedButtonSize.sm,
+            onPressed: _canTest ? onTestRfid : null,
+          ),
           const SizedBox(height: 6),
           Row(
             children: [
@@ -94,7 +102,7 @@ class _RfidTestButton extends StatelessWidget {
               const SizedBox(width: 5),
               Flexible(
                 child: Text(
-                  rfidTestError ?? 'Bağlantı kurulamadı. IP ve port bilgilerini kontrol edin.',
+                  rfidTestError ?? context.l10n.wizard_rfidConnectionErrorFallback,
                   style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.red),
                 ),
               ),

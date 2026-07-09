@@ -669,12 +669,11 @@ class _MasterCellLegend extends StatelessWidget {
       (CabinCellStatus.fault, context.l10n.cabin_legendAssignFault),
       (CabinCellStatus.maintenance, context.l10n.cabin_legendAssignMaintenance),
     ],
-    // TODO : l10n
     CabinOperationMode.refill || CabinOperationMode.intake => [
       (CabinCellStatus.empty, context.l10n.cabin_legendFillEmpty),
-      (CabinCellStatus.assigned, 'Normal stok'),
-      (CabinCellStatus.low, 'Dolum gerekiyor'),
-      (CabinCellStatus.critical, 'Acil dolum'),
+      (CabinCellStatus.assigned, context.l10n.cabin_legendFillNormal),
+      (CabinCellStatus.low, context.l10n.cabin_legendFillNeeded),
+      (CabinCellStatus.critical, context.l10n.cabin_legendFillUrgent),
     ],
     CabinOperationMode.census => [
       (CabinCellStatus.assigned, context.l10n.cabin_legendCountAssigned),

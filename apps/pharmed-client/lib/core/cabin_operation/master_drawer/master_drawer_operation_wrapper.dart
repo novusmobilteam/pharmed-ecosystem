@@ -52,7 +52,7 @@ class MasterDrawerStatusBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     if (stage is MasterDrawerIdle) return const SizedBox.shrink();
 
-    final spec = _resolveSpec(stage);
+    final spec = _resolveSpec(context, stage);
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 220),
@@ -116,7 +116,7 @@ class MasterDrawerStatusBanner extends StatelessWidget {
     );
   }
 
-  _BannerSpec _resolveSpec(MasterDrawerStage stage) => switch (stage) {
+  _BannerSpec _resolveSpec(BuildContext context, MasterDrawerStage stage) => switch (stage) {
     MasterDrawerIdle() => const _BannerSpec(
       runtimeKey: 'idle',
       accentColor: MedColors.text3,
@@ -127,7 +127,7 @@ class MasterDrawerStatusBanner extends StatelessWidget {
     MasterDrawerOpening(:final message) => _BannerSpec(
       runtimeKey: 'opening',
       accentColor: MedColors.blue,
-      title: 'Çekmece açılıyor',
+      title: context.l10n.common_action_drawerOpening,
       subtitle: message,
       leading: const SizedBox(
         width: 22,
@@ -139,8 +139,8 @@ class MasterDrawerStatusBanner extends StatelessWidget {
     MasterDrawerWaitingForPull() => _BannerSpec(
       runtimeKey: 'waiting_pull',
       accentColor: MedColors.amber,
-      title: 'Çekmeceyi açınız',
-      subtitle: 'Kilit açıldı, lütfen çekin.',
+      title: context.l10n.common_action_pullDrawerTitle,
+      subtitle: context.l10n.common_action_pullDrawerSubtitle,
       leading: _CircleIcon(
         color: MedColors.amber,
         bg: MedColors.amberLight,
@@ -151,8 +151,8 @@ class MasterDrawerStatusBanner extends StatelessWidget {
     MasterDrawerOpeningLid() => _BannerSpec(
       runtimeKey: 'opening_lid',
       accentColor: MedColors.blue,
-      title: 'Kapaklar açılıyor',
-      subtitle: 'Kübik çekmece kapakları hazırlanıyor.',
+      title: context.l10n.masterDrawer_openingLidTitle,
+      subtitle: context.l10n.masterDrawer_openingLidSubtitle,
       leading: const SizedBox(
         width: 22,
         height: 22,
@@ -163,8 +163,8 @@ class MasterDrawerStatusBanner extends StatelessWidget {
     MasterDrawerOpened() => _BannerSpec(
       runtimeKey: 'opened',
       accentColor: MedColors.green,
-      title: 'Çekmece açık',
-      subtitle: 'İşlemi tamamlayın ve onaylayın.',
+      title: context.l10n.refill_status_drawerOpen,
+      subtitle: context.l10n.masterDrawer_readySubtitle,
       leading: _CircleIcon(
         color: MedColors.green,
         bg: MedColors.greenLight,
@@ -175,8 +175,8 @@ class MasterDrawerStatusBanner extends StatelessWidget {
     MasterDrawerWaitingForClose() => _BannerSpec(
       runtimeKey: 'waiting_close',
       accentColor: MedColors.amber,
-      title: 'Çekmeceyi kapatınız',
-      subtitle: 'İşlem onaylandı, lütfen kapatın.',
+      title: context.l10n.common_action_closeDrawerTitle,
+      subtitle: context.l10n.common_action_closeDrawerSubtitle,
       leading: _CircleIcon(
         color: MedColors.amber,
         bg: MedColors.amberLight,
@@ -187,8 +187,8 @@ class MasterDrawerStatusBanner extends StatelessWidget {
     MasterDrawerClosed() => _BannerSpec(
       runtimeKey: 'closed',
       accentColor: MedColors.green,
-      title: 'Çekmece kapatıldı',
-      subtitle: 'İşlem tamamlandı.',
+      title: context.l10n.common_action_drawerClosed,
+      subtitle: context.l10n.common_action_operationCompletedSubtitle,
       leading: _CircleIcon(
         color: MedColors.green,
         bg: MedColors.greenLight,
@@ -199,7 +199,7 @@ class MasterDrawerStatusBanner extends StatelessWidget {
     MasterDrawerFailed(:final message) => _BannerSpec(
       runtimeKey: 'failed',
       accentColor: MedColors.red,
-      title: 'Çekmece hatası',
+      title: context.l10n.common_action_drawerError,
       subtitle: message,
       subtitleColor: MedColors.red,
       leading: _CircleIcon(

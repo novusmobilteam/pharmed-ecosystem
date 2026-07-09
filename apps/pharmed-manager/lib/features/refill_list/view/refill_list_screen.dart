@@ -32,10 +32,14 @@ class RefillListScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Dolum Listesi',
+              title: menu.name ?? context.l10n.refillList_screenTitleFallback,
               subtitle: menu.description,
               actions: [
-                MedButton(label: 'Yeni Dolum Listesi', size: MedButtonSize.sm, onPressed: () => notifier.openPanel()),
+                MedButton(
+                  label: context.l10n.refillList_newButtonLabel,
+                  size: MedButtonSize.sm,
+                  onPressed: () => notifier.openPanel(),
+                ),
               ],
 
               child: SidePanelWrapper(
@@ -49,35 +53,39 @@ class RefillListScreen extends StatelessWidget {
                   enableSearch: true,
                   categories: notifier.tableCategories,
                   onSearchChanged: notifier.search,
-                  categoryTitle: 'İstasyonlar',
+                  categoryTitle: context.l10n.report_stationsCategoryTitle,
                   onCategoryChanged: (id) =>
                       notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
                   selectedCategoryId: notifier.selectedStationId,
                   cellBuilder: (item, colIndex, value) {
                     if (colIndex == 3) {
-                      final text = value == true ? 'Evet' : 'Hayır';
+                      final text = value == true
+                          ? context.l10n.refillList_cellValueYes
+                          : context.l10n.refillList_cellValueNo;
                       return Text(text);
                     }
                     return null;
                   },
                   actions: [
-                    TableActionItem.edit(onPressed: (item) => notifier.openPanel),
+                    TableActionItem.edit(context: context, onPressed: (item) => notifier.openPanel),
                     TableActionItem(
                       icon: PhosphorIcons.arrowClockwise(),
-                      tooltip: 'Durum Güncelle',
+                      tooltip: context.l10n.refillList_updateStatusTooltip,
                       onPressed: (record) => notifier.updateRefillListStatus(
                         record,
                         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+                        onSuccess: (_) =>
+                            MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
                       ),
                     ),
                     TableActionItem(
                       icon: PhosphorIcons.x(),
-                      tooltip: 'İptal',
+                      tooltip: context.l10n.common_cancelButton,
                       onPressed: (record) => notifier.cancelRefillList(
                         record,
                         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+                        onSuccess: (_) =>
+                            MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
                       ),
                     ),
                   ],

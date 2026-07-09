@@ -4,6 +4,7 @@
 // Sınıf: Class B
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class ActiveIngredientRepositoryImpl implements IActiveIngredientRepository {
   ActiveIngredientRepositoryImpl({
@@ -49,7 +50,7 @@ class ActiveIngredientRepositoryImpl implements IActiveIngredientRepository {
   @override
   Future<Result<void>> deleteActiveIngredient(ActiveIngredient entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek rolün id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteActiveIngredientIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteActiveIngredient(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

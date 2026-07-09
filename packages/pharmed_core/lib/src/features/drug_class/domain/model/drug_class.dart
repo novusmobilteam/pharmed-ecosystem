@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class DrugClass extends Selectable implements TableData {
   final String? name;
@@ -13,7 +14,7 @@ class DrugClass extends Selectable implements TableData {
   List<String?> get content => [title, subtitle];
 
   @override
-  List<String?> get titles => ['İlaç Sınıfı', 'Durumu'];
+  List<String?> get titles => [contextlessL10n().tableCore_drugClassColumn, contextlessL10n().common_statusLabel];
 
   @override
   List get rawContent => content;

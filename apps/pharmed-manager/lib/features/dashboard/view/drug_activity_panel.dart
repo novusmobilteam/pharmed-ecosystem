@@ -22,13 +22,13 @@ class DrugActivityPanel extends StatelessWidget {
     final items = section.data ?? const <PrescriptionItemMovement>[];
 
     return DashboardListPanel<List<PrescriptionItemMovement>>(
-      title: 'İLAÇ HAREKETLERİ',
+      title: context.l10n.dashboardDrugActivityPanelTitle,
       count: items.length,
       countColor: MedColors.blue,
       countBg: MedColors.blueLight,
       section: section,
       itemCount: items.length,
-      emptyTitle: 'Hareket yok',
+      emptyTitle: context.l10n.dashboardDrugActivityEmptyTitle,
       onRetry: onRetry,
       itemBuilder: (context, index) => DrugActivityCard(movement: items[index]),
     );
@@ -40,9 +40,9 @@ class DrugActivityCard extends StatelessWidget {
 
   final PrescriptionItemMovement movement;
 
-  String get _doseText {
+  String _doseText(BuildContext context) {
     final piece = movement.quantity?.formatFractional ?? '-';
-    final unit = movement.prescriptionItem?.medicine?.operationUnit ?? 'Adet';
+    final unit = movement.prescriptionItem?.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback;
     return '$piece $unit';
   }
 
@@ -85,7 +85,7 @@ class DrugActivityCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                _doseText,
+                _doseText(context),
                 style: MedTextStyles.monoSm(color: MedColors.text2, weight: FontWeight.w600),
               ),
             ],
@@ -100,11 +100,11 @@ class DrugActivityCard extends StatelessWidget {
           const MedInfoRow(label: 'HASTA', value: '').runtimeType == Null
               ? const SizedBox()
               : const SizedBox(), // placeholder kaldırılacak
-          MedInfoRow(label: 'HASTA', value: _patient),
+          MedInfoRow(label: context.l10n.assignment_patientLabel, value: _patient),
           const SizedBox(height: 6),
-          MedInfoRow(label: 'İŞLEMİ YAPAN', value: _performedBy),
+          MedInfoRow(label: 'İŞLEMİ YAPAN', value: _performedBy), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
           const SizedBox(height: 6),
-          MedInfoRow(label: 'TARİH / SAAT', value: _dateTime),
+          MedInfoRow(label: context.l10n.dashboardDrugActivityDateTimeLabel, value: _dateTime),
 
           const SizedBox(height: 12),
 

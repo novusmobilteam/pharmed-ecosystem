@@ -24,28 +24,28 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
           return CustomDialog(
             maxHeight: 450,
             width: 400,
-            title: 'Şifre Değiştirme',
+            title: context.l10n.changePassword_dialogTitle,
             isLoading: notifier.isSubmitting,
             child: Form(
               key: _formKey,
               child: Column(
                 children: [
                   _buildPasswordField(
-                    label: 'Mevcut Şifre',
+                    label: context.l10n.changePassword_currentPasswordLabel,
                     obscureText: notifier.obscureCurrent,
                     onToggleVisibility: notifier.toggleCurrent,
                     onChanged: (value) => notifier.currentPassword = value,
                   ),
                   SizedBox(height: 20),
                   _buildPasswordField(
-                    label: 'Yeni Şifre',
+                    label: context.l10n.changePassword_newPasswordLabel,
                     obscureText: notifier.obscureNew,
                     onToggleVisibility: notifier.toggleNew,
                     onChanged: (value) => notifier.newPassword = value,
                   ),
                   SizedBox(height: 20),
                   _buildPasswordField(
-                    label: 'Yeni Şifre Tekrar',
+                    label: context.l10n.changePassword_confirmPasswordLabel,
                     obscureText: notifier.obscureNew,
                     onToggleVisibility: notifier.toggleNew,
                     onChanged: (value) => notifier.newPassword = value,
@@ -67,7 +67,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                           }
                         }
                       },
-                      label: 'Şifre Değiştir',
+                      label: context.l10n.changePassword_submitButton,
                     ),
                   ),
                 ],

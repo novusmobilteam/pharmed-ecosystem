@@ -37,17 +37,17 @@ class _StationsLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       height: 200,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MedColors.blue), strokeWidth: 2.5),
-            SizedBox(height: 14),
+            const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MedColors.blue), strokeWidth: 2.5),
+            const SizedBox(height: 14),
             Text(
-              'İstasyonlar yükleniyor…',
-              style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
+              context.l10n.cabinTemperatureStationsLoadingMessage,
+              style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
             ),
           ],
         ),
@@ -77,7 +77,7 @@ class _StationsError extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              message ?? 'İstasyonlar yüklenemedi.',
+              message ?? context.l10n.wizard_stationsLoadErrorFallback,
               style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
               textAlign: TextAlign.center,
             ),
@@ -118,7 +118,7 @@ class _StationList extends StatelessWidget {
           child: Column(
             spacing: 12.0,
             children: [
-              Text('Kayıtlı istasyon bulunamadı.', style: MedTextStyles.titleSm()),
+              Text(context.l10n.wizard_noStationsFoundMessage, style: MedTextStyles.titleSm()),
               MedButton(
                 label: context.l10n.common_retryButton,
                 variant: MedButtonVariant.secondary,

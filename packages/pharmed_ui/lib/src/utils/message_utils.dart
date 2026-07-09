@@ -24,14 +24,16 @@ class MessageUtils {
     VoidCallback? onCancel,
     String? customTitle,
     String? customMessage,
-    String confirmButtonText = 'Onayla',
-    String cancelButtonText = 'Vazgeç',
+    String? confirmButtonText,
+    String? cancelButtonText,
     Color? color,
     IconData? iconData,
     bool barrierDismissible = false,
   }) {
     final theme = Theme.of(context);
     final dialogContent = _getConfirmDialogContent(action, context);
+    final resolvedConfirmButtonText = confirmButtonText ?? context.l10n.common_confirmButton;
+    final resolvedCancelButtonText = cancelButtonText ?? context.l10n.common_dismissButton;
 
     showDialog(
       context: context,
@@ -92,7 +94,7 @@ class MessageUtils {
                 children: [
                   Expanded(
                     child: MedButton(
-                      label: cancelButtonText,
+                      label: resolvedCancelButtonText,
                       variant: MedButtonVariant.ghost,
                       size: MedButtonSize.sm,
                       fullWidth: true,
@@ -105,7 +107,7 @@ class MessageUtils {
                   const SizedBox(width: 12),
                   Expanded(
                     child: MedButton(
-                      label: confirmButtonText,
+                      label: resolvedConfirmButtonText,
                       variant: dialogContent.buttonVariant,
                       size: MedButtonSize.sm,
                       fullWidth: true,
@@ -135,10 +137,8 @@ class MessageUtils {
       context: context,
       action: ConfirmAction.delete,
       onConfirm: onConfirm,
-      confirmButtonText: 'Sil',
-      customMessage: itemName != null
-          ? '"$itemName" öğesini silmek istediğinizden emin misiniz?\nBu işlem geri alınamaz.'
-          : null,
+      confirmButtonText: context.l10n.common_deleteTooltip,
+      customMessage: itemName != null ? context.l10n.dialog_deleteItemMessage(itemName) : null,
     );
   }
 
@@ -151,15 +151,20 @@ class MessageUtils {
       context: context,
       action: ConfirmAction.exit,
       onConfirm: onConfirm,
-      confirmButtonText: 'Çıkış Yap',
+      confirmButtonText: context.l10n.dialog_exitConfirmButtonText,
       customMessage: hasUnsavedChanges
-          ? 'Kaydetmediğiniz değişiklikler var. Çıkış yaparsanız bu değişiklikler silinecektir.'
-          : 'Sayfadan çıkmak istediğinizden emin misiniz?',
+          ? context.l10n.dialog_exitConfirmMessage
+          : context.l10n.dialog_exitConfirmMessageNoChanges,
     );
   }
 
   static void showConfirmSaveDialog({required BuildContext context, required VoidCallback onConfirm}) {
-    showConfirmDialog(context: context, action: ConfirmAction.save, onConfirm: onConfirm, confirmButtonText: 'Kaydet');
+    showConfirmDialog(
+      context: context,
+      action: ConfirmAction.save,
+      onConfirm: onConfirm,
+      confirmButtonText: context.l10n.common_saveButton,
+    );
   }
 
   static void showConfirmDiscardDialog({required BuildContext context, required VoidCallback onConfirm}) {
@@ -167,19 +172,19 @@ class MessageUtils {
       context: context,
       action: ConfirmAction.discard,
       onConfirm: onConfirm,
-      confirmButtonText: 'Evet, İptal Et',
+      confirmButtonText: context.l10n.dialog_confirmDiscardButton,
     );
   }
 
   static void showConfirmLogoutDialog({required BuildContext context, required VoidCallback onConfirm}) {
     showConfirmDialog(
       context: context,
-      customTitle: 'Çıkış Yap',
-      customMessage: 'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+      customTitle: context.l10n.dialog_logoutTitle,
+      customMessage: context.l10n.dialog_logoutMessage,
       iconData: PhosphorIcons.signOut(),
       action: ConfirmAction.exit,
       onConfirm: onConfirm,
-      confirmButtonText: 'Çıkış Yap',
+      confirmButtonText: context.l10n.dialog_exitConfirmButtonText,
     );
   }
 
@@ -207,13 +212,17 @@ class MessageUtils {
   }
 
   static void showSuccessSnackbar(BuildContext context, String? message) {
-    showSnackbar(context: context, message: message ?? 'İşleminiz başarıyla tamamlandı.', type: MessageType.success);
+    showSnackbar(
+      context: context,
+      message: message ?? context.l10n.common_operationSuccessMessage,
+      type: MessageType.success,
+    );
   }
 
   static void showErrorSnackbar(BuildContext context, String? message) {
     showSnackbar(
       context: context,
-      message: message ?? 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
+      message: message ?? context.l10n.core_genericErrorRetryMessage,
       type: MessageType.error,
     );
   }
@@ -229,32 +238,29 @@ class MessageUtils {
   // === DIALOG MESSAGE METHODS ===
 
   static void showErrorDialog(BuildContext context, String? message, {String? description}) {
+    final resolvedMessage = message ?? context.l10n.core_genericErrorRetryMessage;
     showDialog(
       context: context,
-      builder: (context) => _CustomMessageDialog(
-        message: message ?? 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
-        type: MessageType.error,
-        description: description,
-      ),
+      builder: (context) =>
+          _CustomMessageDialog(message: resolvedMessage, type: MessageType.error, description: description),
     );
   }
 
   static void showSuccessDialog(BuildContext context, String? message, {String? description}) {
+    final resolvedMessage = message ?? context.l10n.common_operationSuccessMessage;
     showDialog(
       context: context,
-      builder: (context) => _CustomMessageDialog(
-        message: message ?? 'İşleminiz başarıyla tamamlandı.',
-        type: MessageType.success,
-        description: description,
-      ),
+      builder: (context) =>
+          _CustomMessageDialog(message: resolvedMessage, type: MessageType.success, description: description),
     );
   }
 
   static void showWarningDialog(BuildContext context, String? message, {String? description}) {
+    final resolvedMessage = message ?? context.l10n.common_warningTitle;
     showDialog(
       context: context,
       builder: (context) =>
-          _CustomMessageDialog(message: message ?? 'Uyarı!', type: MessageType.warning, description: description),
+          _CustomMessageDialog(message: resolvedMessage, type: MessageType.warning, description: description),
     );
   }
 
@@ -372,8 +378,8 @@ class MessageUtils {
     switch (action) {
       case ConfirmAction.delete:
         return _ConfirmDialogContent(
-          title: 'Silme İşlemi',
-          message: 'Bu öğeyi silmek istediğinizden emin misiniz?',
+          title: context.l10n.dialog_deleteTitle,
+          message: context.l10n.dialog_deleteDefaultMessage,
           icon: PhosphorIcons.trash(),
           iconColor: MedColors.red,
           iconBgColor: MedColors.redLight,
@@ -510,7 +516,7 @@ class _CustomMessageDialog extends StatelessWidget {
               ),
             const SizedBox(height: 12),
             MedButton(
-              label: 'Tamam',
+              label: context.l10n.common_okButton,
               variant: buttonVariant,
               size: MedButtonSize.sm,
               fullWidth: true,

@@ -3,6 +3,7 @@
 // Sınıf: Class B (reçete oluşturma akışı)
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pharmed_manager/core/core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,8 @@ Future<void> showPrescriptionFormDialog(BuildContext context, {Hospitalization? 
             hospitalization: initial,
             authNotifier: ctx.read(),
             templateUseCase: ctx.read(),
+            creatingLoadingMessage: ctx.l10n.prescriptionCreatingLoadingMessage,
+            templateSavingLoadingMessage: ctx.l10n.prescriptionTemplateSavingLoadingMessage,
           ),
         ),
         ChangeNotifierProvider(
@@ -57,8 +60,8 @@ class _NewPrescriptionDialog extends StatelessWidget {
     final width = (size.width * 0.85).clamp(1200.0, 1600.0);
 
     return MedDialog(
-      title: 'Yeni Reçete',
-      subtitle: 'Reçete oluştur veya geçmiş reçeteden içe aktar',
+      title: context.l10n.prescriptionNewTitle,
+      subtitle: context.l10n.prescriptionNewDialogSubtitle,
       icon: PhosphorIcons.notepad(),
       width: width,
       maxHeightFactor: 0.85,
@@ -96,10 +99,16 @@ class _ThreeColumnBody extends StatelessWidget {
                   indicatorSize: TabBarIndicatorSize.tab,
                   tabs: [
                     Tab(
-                      child: Text('Geçmiş', style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.bold)),
+                      child: Text(
+                        context.l10n.prescriptionTabHistory,
+                        style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.bold),
+                      ),
                     ),
                     Tab(
-                      child: Text('Şablonlar', style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.bold)),
+                      child: Text(
+                        context.l10n.prescriptionTabTemplates,
+                        style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),

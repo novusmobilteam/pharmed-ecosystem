@@ -26,7 +26,7 @@ class Step1View extends ConsumerWidget {
     return Column(
       children: [
         StepHeader(
-          badge: 'Adım 1 / 5',
+          badge: context.l10n.wizard_stepBadge(1, 5),
           title: context.l10n.wizard_step1Header,
           subtitle: context.l10n.wizard_step1Subtitle,
         ),

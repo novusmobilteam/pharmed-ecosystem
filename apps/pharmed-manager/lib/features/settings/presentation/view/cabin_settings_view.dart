@@ -14,7 +14,7 @@ class CabinSettingsView extends StatelessWidget {
           options: options,
           onChanged: (_) {},
           labelBuilder: (option) => option?.toString(),
-          label: 'Çekmece Açık Bekleme Süresi (saniye)',
+          label: context.l10n.settingsCabin_drawerOpenWaitLabel,
         ),
         Row(
           spacing: 10,
@@ -22,7 +22,7 @@ class CabinSettingsView extends StatelessWidget {
             Icon(PhosphorIcons.info()),
             Expanded(
               child: Text(
-                'Açık olan çekmece kapatılmadığı zaman sistemin çekmeceye ne zaman kapatma komutu göndereceğini belirtir.',
+                context.l10n.settingsCabin_drawerOpenWaitDescription,
                 textAlign: TextAlign.left,
               ),
             ),

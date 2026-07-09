@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum StockTransactionKind {
   materialPurchasing(1),
@@ -20,22 +21,22 @@ enum StockTransactionKind {
   String get label {
     switch (this) {
       case StockTransactionKind.materialPurchasing:
-        return 'Malzeme Alımı';
+        return contextlessL10n().enumCore_stockTxKindPurchase;
 
       // Fazla ve Eksik stok bildirimi
       case StockTransactionKind.excessStock:
-        return 'Stok Fazlası';
+        return contextlessL10n().enumCore_stockTxKindExcess;
       case StockTransactionKind.insufficientStock:
-        return 'Stok Eksiği';
+        return contextlessL10n().enumCore_stockTxKindShortage;
 
       case StockTransactionKind.materialRefund:
-        return 'Malzeme İadesi';
+        return contextlessL10n().enumCore_stockTxKindReturn;
 
       case StockTransactionKind.counting:
-        return 'Sayım';
+        return contextlessL10n().enumCore_stockTxKindCensus;
 
       case StockTransactionKind.materialUse:
-        return 'Malzeme Kullanımı';
+        return contextlessL10n().enumCore_stockTxKindUsage;
     }
   }
 }

@@ -21,7 +21,7 @@ class FillingListView extends StatelessWidget {
       child: Consumer<RefillListDetailNotifier>(
         builder: (context, notifier, child) {
           return CustomDialog(
-            title: 'İlaç Dolum Listesi',
+            title: context.l10n.refillList_dialogTitle,
             isLoading: notifier.isLoading(notifier.fetchDetailOp),
             showSearch: true,
             onSearchChanged: notifier.search,
@@ -65,15 +65,15 @@ class FillingListView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Dolum Kayıt No: ${item.id}',
+                            context.l10n.refillList_recordNoLabel('${item.id}'),
                             style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            'Oluşturulma Tarihi: ${item.date?.formattedDateTime}',
+                            context.l10n.refillList_createdDateLabel('${item.date?.formattedDateTime}'),
                             style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            'Dolum Yapacak Kişi: ${item.user?.fullName}',
+                            context.l10n.refillList_assignedUserNameLabel('${item.user?.fullName}'),
                             style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 10),

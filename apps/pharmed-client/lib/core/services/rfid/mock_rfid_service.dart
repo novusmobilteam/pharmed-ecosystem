@@ -1,6 +1,7 @@
 // pharmed-client/core/hardware/service/rfid/mock_rfid_service.dart
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// Dev/test flavor için sabit tag listesi döner.
 /// Gerçek TCP bağlantısı kurmaz.
@@ -41,7 +42,7 @@ class MockRfidService implements IRfidService {
 
   Future<Result<List<RfidTag>>> scan() async {
     if (!_connected) {
-      return Result.error(ServiceException(message: 'Mock RFID servisi bağlı değil.', statusCode: 503));
+      return Result.error(ServiceException(message: contextlessL10n().hw_rfid_mockNotConnectedError, statusCode: 503));
     }
     // Gerçek scan süresini simüle et
     await Future.delayed(const Duration(seconds: 2));

@@ -18,7 +18,7 @@ class UserAuthorizationPanel extends StatelessWidget {
       child: Consumer<UserAuthorizationNotifier>(
         builder: (context, notifier, child) {
           return SidePanel(
-            title: 'Kullanıcı Yetkilendirme',
+            title: context.l10n.authorization_userTabTitle,
             disableScroll: true,
             isLoading: notifier.isUpdating,
             onClose: authNotifier.closePanel,
@@ -26,7 +26,7 @@ class UserAuthorizationPanel extends StatelessWidget {
               await notifier.submit(
                 onFailed: (msg) => MessageUtils.showErrorSnackbar(context, notifier.statusMessage),
                 onSuccess: (msg) {
-                  MessageUtils.showSuccessSnackbar(context, notifier.statusMessage);
+                  MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage);
                   authNotifier.closePanel();
                 },
               );

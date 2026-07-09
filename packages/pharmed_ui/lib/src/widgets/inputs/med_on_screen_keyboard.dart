@@ -231,14 +231,14 @@ class _KbBar extends StatelessWidget {
               border: Border.all(color: MedColors.border),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.close, size: 12, color: MedColors.text2),
-                SizedBox(width: 5),
+                const Icon(Icons.close, size: 12, color: MedColors.text2),
+                const SizedBox(width: 5),
                 Text(
-                  'Kapat',
-                  style: TextStyle(
+                  context.l10n.keyboard_closeButton,
+                  style: const TextStyle(
                     fontFamily: MedFonts.sans,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -314,7 +314,7 @@ class _AlphaLayout extends StatelessWidget {
         _KbRow(
           children: [
             ..._rows[1].map((c) => _Key(char: c, controller: controller)),
-            _ActionKey(label: '↵ Tamam', flex: 2, onTap: () => controller.pressChar('enter')),
+            _ActionKey(label: context.l10n.keyboard_enterLabel, flex: 2, onTap: () => controller.pressChar('enter')),
           ],
         ),
         const SizedBox(height: 5),
@@ -330,8 +330,8 @@ class _AlphaLayout extends StatelessWidget {
         // Alt satır
         _KbRow(
           children: [
-            _SpecialKey(label: '— Çizgi', flex: 2, onTap: () => controller.pressChar('-')),
-            _SpecialKey(label: '. Nokta', flex: 2, onTap: () => controller.pressChar('.')),
+            _SpecialKey(label: context.l10n.keyboard_dashKeyLabel, flex: 2, onTap: () => controller.pressChar('-')),
+            _SpecialKey(label: context.l10n.keyboard_periodKeyLabel, flex: 2, onTap: () => controller.pressChar('.')),
             _SpaceKey(controller: controller),
             _SpecialKey(label: '0', onTap: () => controller.pressChar('0')),
             _SpecialKey(label: '1', onTap: () => controller.pressChar('1')),
@@ -532,7 +532,7 @@ class _ShiftKey extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _SpecialKey(label: '⇧ Büyük', isActive: controller.shift, onTap: controller.toggleShift);
+    return _SpecialKey(label: context.l10n.keyboard_shiftLabel, isActive: controller.shift, onTap: controller.toggleShift);
   }
 }
 
@@ -627,7 +627,7 @@ class _SpaceKeyState extends State<_SpaceKey> {
           ),
           child: Center(
             child: Text(
-              'BOŞLUK',
+              context.l10n.keyboard_spaceLabel,
               style: TextStyle(
                 fontFamily: MedFonts.sans,
                 fontSize: 13,

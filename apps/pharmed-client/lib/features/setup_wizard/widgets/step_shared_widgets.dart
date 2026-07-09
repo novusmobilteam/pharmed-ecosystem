@@ -47,12 +47,12 @@ class StepHeader extends StatelessWidget {
 }
 
 class StepFooter extends StatelessWidget {
-  const StepFooter({super.key, this.note, this.onBack, this.onNext, this.nextLabel = 'Devam Et', this.nextIcon});
+  const StepFooter({super.key, this.note, this.onBack, this.onNext, this.nextLabel, this.nextIcon});
 
   final String? note;
   final VoidCallback? onBack;
   final VoidCallback? onNext;
-  final String nextLabel;
+  final String? nextLabel;
   final Widget? nextIcon;
 
   @override
@@ -67,7 +67,7 @@ class StepFooter extends StatelessWidget {
         children: [
           if (onBack != null)
             MedButton(
-              label: 'Geri',
+              label: context.l10n.wizard_backButton,
               variant: MedButtonVariant.ghost,
               prefixIcon: const Icon(Icons.arrow_back_rounded, size: 16),
               onPressed: onBack,
@@ -78,7 +78,12 @@ class StepFooter extends StatelessWidget {
           ],
           const Spacer(),
           if (onNext != null)
-            MedButton(label: nextLabel, size: MedButtonSize.lg, onPressed: onNext, prefixIcon: nextIcon),
+            MedButton(
+              label: nextLabel ?? context.l10n.session_timeout_continueButton,
+              size: MedButtonSize.lg,
+              onPressed: onNext,
+              prefixIcon: nextIcon,
+            ),
         ],
       ),
     );

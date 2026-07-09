@@ -8,8 +8,11 @@ class CabinTemperatureFormView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) =>
-          CabinTemperatureControlFormViewModel(cabinTemperatureRepository: context.read(), initial: initial),
+      create: (context) => CabinTemperatureControlFormViewModel(
+        cabinTemperatureRepository: context.read(),
+        l10n: context.l10n,
+        initial: initial,
+      ),
       child: CabinTemperatureFormDialogBody(),
     );
   }
@@ -67,7 +70,7 @@ class _CabinTemperatureFormDialogBodyState extends State<CabinTemperatureFormDia
   @override
   Widget build(BuildContext context) {
     return RegistrationDialog(
-      title: 'Kabin Düzenleme',
+      title: context.l10n.cabinTemperatureFormDialogTitle,
       onClose: () => context.pop(true),
       onSave: () {
         if (formKey.currentState!.validate()) {
@@ -126,8 +129,8 @@ class _StationField extends StatelessWidget {
       builder: (context, vm, _) {
         return MedSelectionField<Station>(
           key: key,
-          label: 'İstasyon',
-          title: 'İstasyon',
+          label: context.l10n.wizard_summaryLabelStation,
+          title: context.l10n.wizard_summaryLabelStation,
           initialValue: vm.form?.station,
           dataSource: (skip, take, search) =>
               context.read<GetStationsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
@@ -171,7 +174,7 @@ class _InsideBottomTempField extends StatelessWidget {
       builder: (context, vm, _) {
         return MedTextInputField(
           key: key,
-          label: 'İç Alt Sıcaklık',
+          label: context.l10n.cabinTemperatureInsideBottomLabel,
           initialValue: vm.form?.topTemperatureInside?.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureControlFormViewModel>().setInsideBottomTemp(value),
@@ -190,7 +193,7 @@ class _InsideTopTempField extends StatelessWidget {
       builder: (context, vm, _) {
         return MedTextInputField(
           key: key,
-          label: 'İç Üst Sıcaklık',
+          label: context.l10n.cabinTemperatureInsideTopLabel,
           initialValue: vm.form?.topTemperatureInside?.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureControlFormViewModel>().setInsideTopTemp(value),
@@ -209,7 +212,7 @@ class _OutsideBottomTempField extends StatelessWidget {
       builder: (context, vm, _) {
         return MedTextInputField(
           key: key,
-          label: 'Dış Alt Sıcaklık',
+          label: context.l10n.cabinTemperatureOutsideBottomLabel,
           initialValue: vm.form?.bottomTemperatureOutside?.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureControlFormViewModel>().setOutsideBottomTemp(value),
@@ -228,7 +231,7 @@ class _OutsideTopTempField extends StatelessWidget {
       builder: (context, vm, _) {
         return MedTextInputField(
           key: key,
-          label: 'Dış Üst Sıcaklık',
+          label: context.l10n.cabinTemperatureOutsideTopLabel,
           initialValue: vm.form?.topTemperatureOutside?.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureControlFormViewModel>().setOutsideTopTemp(value),
@@ -247,7 +250,7 @@ class _BottomHumidityField extends StatelessWidget {
       builder: (context, vm, _) {
         return MedTextInputField(
           key: key,
-          label: 'Nem Alt Sınır',
+          label: context.l10n.cabinTemperatureHumidityBottomLabel,
           initialValue: vm.form?.bottomLimitHumidity.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureControlFormViewModel>().setBottomHumidity(value),
@@ -266,7 +269,7 @@ class _TopHumidityField extends StatelessWidget {
       builder: (context, vm, _) {
         return MedTextInputField(
           key: key,
-          label: 'Nem Üst Sınır',
+          label: context.l10n.cabinTemperatureHumidityTopLabel,
           initialValue: vm.form?.topLimitHumidity.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureControlFormViewModel>().setTopHumidity(value),

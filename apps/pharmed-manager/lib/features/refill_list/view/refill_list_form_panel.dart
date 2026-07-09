@@ -23,7 +23,9 @@ class RefillListFormPanel extends StatelessWidget {
       )..initalize(),
       child: Consumer<NewRefillListNotifier>(
         builder: (context, notifier, _) {
-          String title = notifier.isCreate ? 'Dolum Listesi Oluşturma' : 'Dolum Listesi Güncelleme';
+          String title = notifier.isCreate
+              ? context.l10n.refillList_formTitleCreate
+              : context.l10n.refillList_formTitleUpdate;
           return SidePanel(
             title: title,
             onClose: refillNotifier.closePanel,
@@ -87,10 +89,11 @@ class _UserField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = context.read<NewRefillListNotifier>();
+    final label = context.l10n.refillList_fieldAssignedUser;
 
     return MedSelectionField<User>(
-      label: 'Dolum Yapacak Kullanıcı',
-      title: 'Dolum Yapacak Kullanıcı',
+      label: label,
+      title: label,
       dataSource: (skip, take, search) =>
           context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search)),
       initialValue: notifier.user,

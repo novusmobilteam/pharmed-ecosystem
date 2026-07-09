@@ -40,24 +40,24 @@ class _SettingsViewState extends State<SettingsView> {
 
     // Manager Modu veya Admin ise bu ayarları göster
     if (settings.currentMode == AppMode.manager || isAdmin) {
-      currentTitles.addAll(['Kabin Haberleşme Ayarları', 'Reçete Ayarları']);
+      currentTitles.addAll([context.l10n.settingsView_cabinTabTitle, context.l10n.settingsView_prescriptionTabTitle]);
       currentViews.addAll([const CabinSettingsView(), const PrescriptionSettingsView()]);
     }
 
     // Herkesin gördüğü Genel Ayarlar
-    currentTitles.add('Genel Ayarlar');
+    currentTitles.add(context.l10n.settingsView_generalTabTitle);
     currentViews.add(const GeneralSettingsView());
 
     // SADECE ADMİN ise Geliştirici Ayarlarını ekle
     if (isAdmin) {
-      currentTitles.add('Geliştirici Ayarları');
+      currentTitles.add(context.l10n.settingsView_developerTabTitle);
       currentViews.add(DeveloperSettingsView(settings: settings));
     }
 
     return Consumer<SettingsNotifier>(
       builder: (context, notifier, _) {
         return CustomDialog(
-          title: 'Ayarlar',
+          title: context.l10n.settings_title,
           isLoading: notifier.isSubmitting,
           child: Column(
             spacing: 20,
@@ -79,16 +79,17 @@ class _SettingsViewState extends State<SettingsView> {
                 children: [
                   TextButton(
                     onPressed: () => context.read<HomeNotifier>().fetchMenus(),
-                    child: Text('Yetkileri Yenile'),
+                    child: Text(context.l10n.settingsView_refreshPermissionsButton),
                   ),
                   Spacer(),
-                  MedButton(onPressed: () {}, label: 'İptal'),
+                  MedButton(onPressed: () {}, label: context.l10n.common_cancelButton),
                   MedButton(
-                    label: 'Kaydet',
+                    label: context.l10n.common_saveButton,
                     onPressed: () {
                       notifier.saveAllChanges(
                         onFailed: (message) => MessageUtils.showErrorSnackbar(context, message),
-                        onSuccess: (message) => MessageUtils.showSuccessSnackbar(context, message),
+                        onSuccess: (message) =>
+                            MessageUtils.showSuccessSnackbar(context, message ?? context.l10n.settings_updateSuccessMessage),
                       );
                     },
                   ),

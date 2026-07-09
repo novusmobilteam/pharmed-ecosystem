@@ -78,7 +78,9 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
               message: 'Session stream hatası',
               context: {'error': e.toString()},
             );
-            state = state.copyWith(stage: MasterDrawerFailed(message: 'Beklenmeyen hata: $e'));
+            state = state.copyWith(
+              stage: MasterDrawerFailed(message: contextlessL10n().common_error_unexpectedWithDetail(e.toString())),
+            );
           },
           onDone: () => _sessionSub = null,
         );
@@ -92,7 +94,9 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
   Future<void> openCubicLid(MedicineAssignment cellAssignment) async {
     final manager = await _service.getOrScanManager(targetPort: cellAssignment.cabin?.comPort?.name);
     if (manager == null) {
-      state = state.copyWith(stage: const MasterDrawerFailed(message: 'Yönetim kartı bulunamadı.'));
+      state = state.copyWith(
+        stage: MasterDrawerFailed(message: contextlessL10n().core_cabinConn_managerNotFoundError),
+      );
       return;
     }
 
@@ -105,7 +109,9 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
         lidIndex: address.index,
       );
     } catch (e) {
-      state = state.copyWith(stage: MasterDrawerFailed(message: 'Kapak açılamadı: $e'));
+      state = state.copyWith(
+        stage: MasterDrawerFailed(message: contextlessL10n().masterDrawer_lidOpenFailedError(e.toString())),
+      );
     }
   }
 
@@ -148,7 +154,9 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
 
     _service.getOrScanManager(targetPort: assignment.cabin?.comPort?.name).then((manager) {
       if (manager == null) {
-        state = state.copyWith(stage: const MasterDrawerFailed(message: 'Yönetim kartı bulunamadı.'));
+        state = state.copyWith(
+        stage: MasterDrawerFailed(message: contextlessL10n().core_cabinConn_managerNotFoundError),
+      );
         return;
       }
 

@@ -39,7 +39,7 @@ class ActiveIngredientNotifier extends ChangeNotifier with SearchMixin<ActiveIng
       operation: () => _deleteActiveIngredientUseCase.call(item),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+        onSuccess?.call(null);
         getActiveIngredients();
       },
     );

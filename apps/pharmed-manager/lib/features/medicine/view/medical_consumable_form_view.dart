@@ -38,13 +38,13 @@ class _MedicalConsumableFormViewState extends State<MedicalConsumableFormView> {
     return Consumer<MedicalConsumableFormNotifier>(
       builder: (context, notifier, _) {
         return RegistrationDialog(
-          title: 'Tıbbi Sarf Malzemesi Ekle/Düzenle',
+          title: context.l10n.medicalConsumable_dialogTitle,
           width: context.width * 0.5,
           maxHeight: 800,
           isLoading: notifier.isSubmitting,
           onSave: () async {
             if (!formKey.currentState!.validate()) {
-              MessageUtils.showErrorDialog(context, 'Lütfen zorunlu alanları doldurunuz.');
+              MessageUtils.showErrorDialog(context, context.l10n.common_requiredFieldsError);
             } else {
               notifier.submit(
                 onFailed: (message) => MessageUtils.showErrorSnackbar(context, message),
@@ -112,12 +112,10 @@ class _MedicalConsumableFormViewState extends State<MedicalConsumableFormView> {
 }
 
 Widget _buildNameField() {
-  final label = 'Malzeme Adı';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicalConsumable_fieldName,
         initialValue: vm.mc.name,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: vm.updateName,
@@ -127,12 +125,10 @@ Widget _buildNameField() {
 }
 
 Widget _buildBarcodeField() {
-  final label = 'Barkod';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldBarcode,
         initialValue: vm.mc.barcode,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: vm.updateBarcode,
@@ -143,12 +139,10 @@ Widget _buildBarcodeField() {
 }
 
 Widget _buildInstitutionCodeField() {
-  final label = 'Kurum Kodu';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicalConsumable_fieldInstitutionCode,
         initialValue: vm.mc.institutionCode?.toCustomString(),
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: vm.updateInstitutionCode,
@@ -159,12 +153,10 @@ Widget _buildInstitutionCodeField() {
 }
 
 Widget _buildSUTCodeField() {
-  final label = 'SUT Kodu/Eki';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicalConsumable_fieldSutCode,
         initialValue: vm.mc.sutCode?.toCustomString(),
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: vm.updateSutCode,
@@ -175,12 +167,10 @@ Widget _buildSUTCodeField() {
 }
 
 Widget _buildUBBCodeField() {
-  final label = 'UBB Kodu';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicalConsumable_fieldUbbCode,
         initialValue: vm.mc.ubbCode?.toCustomString(),
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: vm.updateUbbCode,
@@ -191,10 +181,9 @@ Widget _buildUBBCodeField() {
 }
 
 Widget _buildMaterialTypeField() {
-  final label = 'Malzeme Tipi';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
+      final label = context.l10n.medicalConsumable_fieldMaterialType;
       return MedSelectionField<MaterialType>(
         label: label,
         title: label,
@@ -210,12 +199,10 @@ Widget _buildMaterialTypeField() {
 }
 
 Widget _buildFirmField() {
-  final label = 'Üretici Firma';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedSelectionField<Firm>(
-        label: label,
+        label: context.l10n.medicine_fieldManufacturer,
         initialValue: vm.mc.firm,
         labelBuilder: (value) => value.name,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
@@ -228,12 +215,10 @@ Widget _buildFirmField() {
 }
 
 Widget _buildCountTypeField() {
-  final label = 'Sayım Tipi';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedDropdownInputField<CountType>(
-        label: label,
+        label: context.l10n.medicine_fieldCountType,
         options: CountType.values,
         initialValue: vm.mc.countType,
         labelBuilder: (value) => value?.label,
@@ -245,12 +230,10 @@ Widget _buildCountTypeField() {
 }
 
 Widget _buildDailyMaxUsageField() {
-  final label = 'Günlük Maks. Kullanım Miktarı';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldDailyMaxUsage,
         initialValue: vm.mc.dailyMaxUsage.toCustomString(),
         validator: (value) => Validators.cannotBlankValidator(value),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -261,12 +244,10 @@ Widget _buildDailyMaxUsageField() {
 }
 
 Widget _buildPurchaseTypeField() {
-  final label = 'Alım Şekli';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedDropdownInputField<PurchaseType>(
-        label: label,
+        label: context.l10n.medicine_fieldPurchaseType,
         options: PurchaseType.values,
         initialValue: vm.mc.purchaseType,
         labelBuilder: (value) => value?.label,
@@ -278,12 +259,10 @@ Widget _buildPurchaseTypeField() {
 }
 
 Widget _buildReturnTypeField() {
-  final label = 'İade Şekli';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedDropdownInputField<ReturnType>(
-        label: label,
+        label: context.l10n.medicine_fieldReturnType,
         options: ReturnType.values,
         initialValue: vm.mc.returnType,
         labelBuilder: (value) => value?.label,
@@ -295,12 +274,10 @@ Widget _buildReturnTypeField() {
 }
 
 Widget _buildCollectNoteField() {
-  final label = 'Alım Notu';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldCollectNote,
         initialValue: vm.mc.collectNote,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: vm.updateCollectNote,
@@ -310,12 +287,10 @@ Widget _buildCollectNoteField() {
 }
 
 Widget _buildReturnNoteField() {
-  final label = 'İade Notu';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldReturnNote,
         initialValue: vm.mc.returnNote,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: vm.updateReturnNote,
@@ -325,12 +300,10 @@ Widget _buildReturnNoteField() {
 }
 
 Widget _buildDesctructionNoteField() {
-  final label = 'İmha Notu';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldDestructionNote,
         initialValue: vm.mc.destructionNote,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: vm.updateReturnNote,
@@ -340,12 +313,10 @@ Widget _buildDesctructionNoteField() {
 }
 
 Widget _buildStatusField() {
-  final label = 'Durum';
-
   return Consumer<MedicalConsumableFormNotifier>(
     builder: (context, vm, _) {
       return MedDropdownInputField<Status>(
-        label: label,
+        label: context.l10n.medicalConsumable_fieldStatus,
         options: Status.values,
         initialValue: vm.mc.status,
         labelBuilder: (value) => value?.label,

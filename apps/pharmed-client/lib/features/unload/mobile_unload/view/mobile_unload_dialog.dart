@@ -44,8 +44,8 @@ class MobileUnloadDialog extends ConsumerWidget {
       ),
       stats: [
         StatCellData(
-          label: 'Boşaltıldı',
-          value: '${ready.unloadCountedTotal} / ${ready.unloadTotalCount}',
+          label: context.l10n.unload_label_unloaded,
+          value: context.l10n.unload_label_unloadProgress(ready.unloadCountedTotal, ready.unloadTotalCount),
           valueColor:
               ready.baselineCompleted &&
                   ready.notFoundEpcs.isEmpty &&
@@ -55,17 +55,17 @@ class MobileUnloadDialog extends ConsumerWidget {
               : null,
         ),
         StatCellData(
-          label: 'Eksik',
+          label: context.l10n.rfidStatus_missing,
           value: ready.baselineCompleted ? '${ready.totalMissingCount}' : '-',
           valueColor: ready.totalMissingCount > 0 ? MedColors.red : null,
         ),
         StatCellData(
-          label: 'Plan Dışı',
+          label: context.l10n.cabinOperation_label_unplanned,
           value: '${ready.unplannedCount}',
           valueColor: ready.unplannedCount > 0 ? MedColors.red : null,
         ),
         StatCellData(
-          label: 'Yabancı',
+          label: context.l10n.cabinOperation_label_unexpectedTag,
           value: '${ready.placedEpcs.length}',
           valueColor: ready.placedEpcs.isNotEmpty ? MedColors.red : null,
         ),
@@ -76,7 +76,7 @@ class MobileUnloadDialog extends ConsumerWidget {
         if (ready.baselineCompleted && ready.notFoundEpcs.isNotEmpty)
           MissingStockBanner(count: ready.notFoundEpcs.length),
       ],
-      footerContent: _unloadFooter(state, drawerStage, ready, notifier),
+      footerContent: _unloadFooter(context, state, drawerStage, ready, notifier),
       child: _ItemsList(),
     );
   }

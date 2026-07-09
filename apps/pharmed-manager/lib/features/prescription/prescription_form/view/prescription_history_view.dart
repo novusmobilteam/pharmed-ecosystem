@@ -10,15 +10,18 @@ class PrescriptionHistoryView extends StatelessWidget {
 
     if (!hasPatient) {
       return EmptyStateWidget(
-        title: 'Hasta seçin',
-        description: 'Geçmiş reçeteleri görmek için önce hasta seçimi yapın',
+        title: context.l10n.prescriptionHistorySelectPatientTitle,
+        description: context.l10n.prescriptionHistorySelectPatientDescription,
       );
     }
 
     return history.isFetching
         ? const Center(child: MedLoadingIndicator())
         : history.items.isEmpty
-        ? EmptyStateWidget(title: 'Reçete bulunamadı', description: 'Bu hasta için geçmiş reçete yok')
+        ? EmptyStateWidget(
+            title: context.l10n.emptyStateNoPrescriptionTitle,
+            description: context.l10n.prescriptionHistoryEmptyDescription,
+          )
         : _HistoryList(items: history.items);
   }
 }
@@ -176,7 +179,7 @@ class _HistoryGroupCardState extends State<_HistoryGroupCard> {
                       children: [
                         Icon(PhosphorIcons.plus(), size: 16, color: MedColors.blueLight),
                         Text(
-                          'Reçeteye Ekle ($count)',
+                          context.l10n.prescriptionAddToRxButton(count),
                           style: MedTextStyles.bodyMd().copyWith(
                             color: MedColors.blueLight,
                             fontWeight: FontWeight.bold,

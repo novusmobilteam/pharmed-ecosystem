@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 /// Sayım Tipi
 enum CountType {
   noCount(1), // Sayım Yok
@@ -18,11 +20,11 @@ enum CountType {
   String get label {
     switch (this) {
       case CountType.noCount:
-        return 'Sayım Yok';
+        return contextlessL10n().enumCore_countTypeNone;
       case CountType.normalCount:
-        return 'Normal Sayım';
+        return contextlessL10n().enumCore_countTypeNormal;
       case CountType.blindCount:
-        return 'Kör Sayım';
+        return contextlessL10n().enumCore_countTypeBlind;
     }
   }
 }

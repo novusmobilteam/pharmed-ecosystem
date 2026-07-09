@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class MaterialType extends Selectable implements TableData {
   final String? name;
@@ -15,7 +16,7 @@ class MaterialType extends Selectable implements TableData {
   List<String?> get rawContent => [title, subtitle];
 
   @override
-  List<String?> get titles => ['Malzeme Tipi', 'Durumu'];
+  List<String?> get titles => [contextlessL10n().tableCore_materialTypeColumn, contextlessL10n().common_statusLabel];
 
   static MaterialType? fromIdAndName({int? id, String? name}) {
     final hasId = id != null;

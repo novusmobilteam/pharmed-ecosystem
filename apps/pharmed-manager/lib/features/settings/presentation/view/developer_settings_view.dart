@@ -13,7 +13,7 @@ class DeveloperSettingsView extends StatelessWidget {
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
-              'Admin Dashboard Aktif',
+              context.l10n.settingsDeveloper_adminDashboardActiveLabel,
               style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             value: settings.isAdminModeActive,
@@ -24,13 +24,16 @@ class DeveloperSettingsView extends StatelessWidget {
             },
           ),
           const SizedBox(height: 10),
-          Text('Uygulama Modu', style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            context.l10n.settingsDeveloper_appModeLabel,
+            style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 10),
           Row(
             children: [
-              _modeButton(context, 'Client Modu', AppMode.client),
+              _modeButton(context, context.l10n.settingsDeveloper_clientModeButton, AppMode.client),
               const SizedBox(width: 10),
-              _modeButton(context, 'Manager Modu', AppMode.manager),
+              _modeButton(context, context.l10n.settingsDeveloper_managerModeButton, AppMode.manager),
             ],
           ),
         ],

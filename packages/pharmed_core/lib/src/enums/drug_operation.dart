@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 enum DrugOp {
   pull, // İlaç Çeker
   fill, // Dolum
@@ -9,13 +11,13 @@ extension DrugOpExtension on DrugOp {
   String get label {
     switch (this) {
       case DrugOp.pull:
-        return 'İlaç Çeker';
+        return contextlessL10n().authorization_drugTable_pullColumn;
       case DrugOp.fill:
-        return 'Dolum';
+        return contextlessL10n().authorization_drugTable_fillColumn;
       case DrugOp.returnOp:
-        return 'İade';
+        return contextlessL10n().authorization_drugTable_returnColumn;
       case DrugOp.dispose:
-        return 'İmha';
+        return contextlessL10n().authorization_drugTable_disposeColumn;
     }
   }
 }

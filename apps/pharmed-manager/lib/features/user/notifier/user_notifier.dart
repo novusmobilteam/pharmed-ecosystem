@@ -36,10 +36,22 @@ class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
   /// Pagination footer için: seçili tipin toplam kayıt sayısı
   int get currentTypeTotal => _totalCountByType[_selectedCategory] ?? 0;
 
-  List<TableSideCategory> get tableCategories => [
-    TableSideCategory(id: UserType.normal.name, label: 'Normal', count: _totalCountByType[UserType.normal] ?? 0),
-    TableSideCategory(id: UserType.timeBased.name, label: 'Süreli', count: _totalCountByType[UserType.timeBased] ?? 0),
-    TableSideCategory(id: UserType.temporary.name, label: 'Geçici', count: _totalCountByType[UserType.temporary] ?? 0),
+  List<TableSideCategory> tableCategories(BuildContext context) => [
+    TableSideCategory(
+      id: UserType.normal.name,
+      label: context.l10n.userCategoryNormalLabel,
+      count: _totalCountByType[UserType.normal] ?? 0,
+    ),
+    TableSideCategory(
+      id: UserType.timeBased.name,
+      label: context.l10n.userCategoryTimeBasedLabel,
+      count: _totalCountByType[UserType.timeBased] ?? 0,
+    ),
+    TableSideCategory(
+      id: UserType.temporary.name,
+      label: context.l10n.userCategoryTemporaryLabel,
+      count: _totalCountByType[UserType.temporary] ?? 0,
+    ),
   ];
 
   Future<void> init() => _fetchAllTypes();
@@ -92,16 +104,16 @@ class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
     notifyListeners();
   }
 
-  Future<void> deleteUser(User user) async {
+  Future<void> deleteUser(User user, {String? successMessage}) async {
     await executeVoid(
       deleteOp,
       operation: () => _deleteUserUseCase.call(user.id ?? 0),
       onSuccess: () => _fetchAllTypes(), // tüm count + listeleri tazele
-      successMessage: 'Kullanıcı başarıyla silindi',
+      successMessage: successMessage,
     );
   }
 
-  Future<void> updateValidDate() async {
+  Future<void> updateValidDate({String? successMessage}) async {
     final ids = _selectedUsers.map((u) => u.id ?? 0).toList();
     await executeVoid(
       updateValidDateOp,
@@ -110,7 +122,7 @@ class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
         _selectedUsers.clear();
         fetch();
       },
-      successMessage: 'Son geçerlilik tarihi güncellendi',
+      successMessage: successMessage,
     );
   }
 

@@ -96,7 +96,6 @@ class StationFormNotifier extends ChangeNotifier with ApiRequestMixin {
       onSuccess: () {
         if (isCreate) resetForm();
       },
-      successMessage: 'İstasyon başarıyla ${isCreate ? 'oluşturuldu' : 'güncellendi'}',
     );
   }
 

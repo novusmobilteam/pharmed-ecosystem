@@ -8,6 +8,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class RoleRepositoryImpl implements IRoleRepository {
   const RoleRepositoryImpl({required RoleRemoteDataSource dataSource, required RoleMapper mapper})
@@ -47,7 +48,7 @@ class RoleRepositoryImpl implements IRoleRepository {
   @override
   Future<Result<void>> deleteRole(Role entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek rolün id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteRoleIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteRole(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

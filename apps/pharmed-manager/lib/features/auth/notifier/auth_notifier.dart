@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_manager/core/config/auth_config.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'auth_state.dart';
 
@@ -94,7 +95,7 @@ class AuthNotifier extends ChangeNotifier {
         _markDashboardAccessed();
       },
       error: (failure) {
-        final msg = failure is ServiceException ? failure.message : 'Bir hata oluştu';
+        final msg = failure is ServiceException ? failure.message : contextlessL10n().auth_genericError;
         _setState(AuthError(message: msg));
         onError(msg);
       },

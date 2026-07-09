@@ -193,7 +193,7 @@ class NewRefillListNotifier extends ChangeNotifier with ApiRequestMixin, SearchM
       submitOp,
       operation: () => isCreate ? _createRefillList.call(data) : _updateRefillList.call(data),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

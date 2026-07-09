@@ -22,9 +22,10 @@ class ServiceTableView extends StatelessWidget {
           onSearchChanged: notifier.search,
           actions: [
             TableActionItem.edit(
+              context: context,
               onPressed: (service) => context.read<StationSetupNotifier>().openServicePanel(service: service),
             ),
-            TableActionItem.delete(onPressed: (service) => _onDelete(context, notifier, service)),
+            TableActionItem.delete(context: context, onPressed: (service) => _onDelete(context, notifier, service)),
           ],
           enablePagination: true,
           pageSize: notifier.pageSize,
@@ -43,7 +44,7 @@ void _onDelete(BuildContext context, ServiceNotifier notifier, HospitalService s
       await notifier.deleteService(
         service,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
       );
     },
   );

@@ -4,6 +4,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class ScanCabinUseCase {
   ScanCabinUseCase({
@@ -54,7 +55,7 @@ class ScanCabinUseCase {
       // Herhangi biri başarısız → tarama durur
       if (allConfigs == null || allTypes == null) {
         onStatusChanged?.call(ScanStatus.metadataFailed, detail: 'Tanımlamalar alınamadı.');
-        return Result.error(CustomException(message: 'Tanımlamalar alınamadı.'));
+        return Result.error(CustomException(message: contextlessL10n().cabinCore_definitionsNotFound));
       }
 
       onStatusChanged?.call(ScanStatus.metadataReady, detail: '${allConfigs.length} konfigürasyon');
@@ -65,7 +66,7 @@ class ScanCabinUseCase {
       final manager = await _cabinOperationService.scanManagementCard();
       if (manager == null) {
         onStatusChanged?.call(ScanStatus.managerNotFound);
-        return Result.error(CustomException(message: 'Yönetim kartı bulunamadı.'));
+        return Result.error(CustomException(message: contextlessL10n().core_cabinConn_managerNotFoundError));
       }
 
       onStatusChanged?.call(ScanStatus.managerFound, detail: 'Adres: ${manager.addressIndex}');
@@ -76,7 +77,7 @@ class ScanCabinUseCase {
       final controlCards = await _cabinOperationService.discoverControlCards(manager);
       if (controlCards.isEmpty) {
         onStatusChanged?.call(ScanStatus.noCardsFound);
-        return Result.error(CustomException(message: 'Hiçbir kart bulunamadı.'));
+        return Result.error(CustomException(message: contextlessL10n().cabinCore_noCardsFound));
       }
 
       // ── 5. Eşleştirme ──────────────────────────────────────────
@@ -123,7 +124,7 @@ class ScanCabinUseCase {
 
       if (foundGroups.isEmpty) {
         onStatusChanged?.call(ScanStatus.noCardsFound);
-        return Result.error(CustomException(message: 'Eşleşen çekmece bulunamadı.'));
+        return Result.error(CustomException(message: contextlessL10n().cabinCore_noMatchingDrawerFound));
       }
 
       onStatusChanged?.call(ScanStatus.completed, detail: '${foundGroups.length} çekmece');

@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 class Inconsistency implements TableData {
@@ -42,13 +43,13 @@ class Inconsistency implements TableData {
 
   @override
   List<String?> get titles => [
-    'Kabin',
-    'Sıra No',
-    'Göz',
-    'Malzeme',
+    contextlessL10n().tableCore_inconsistencyCabinColumn,
+    contextlessL10n().tableCore_inconsistencyRowNoColumn,
+    contextlessL10n().tableCore_inconsistencyCellColumn,
+    contextlessL10n().tableCore_materialColumn,
     //'Etken Madde',
-    'Olması Gereken',
-    'Sayım Miktarı',
+    contextlessL10n().tableCore_inconsistencyExpectedColumn,
+    contextlessL10n().tableCore_inconsistencyCountedColumn,
     //'Kullanıcı',
   ];
 

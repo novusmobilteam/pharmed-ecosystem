@@ -94,7 +94,7 @@ class DashboardListPanel<T> extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              section.error ?? 'Yüklenemedi',
+              section.error ?? context.l10n.dashboardListPanelLoadErrorFallback,
               style: MedTextStyles.bodySm(color: MedColors.text3),
               textAlign: TextAlign.center,
             ),
@@ -103,7 +103,7 @@ class DashboardListPanel<T> extends StatelessWidget {
               SizedBox(
                 width: 120,
                 child: MedButton(
-                  label: 'Tekrar Dene',
+                  label: context.l10n.common_retryButton,
                   size: MedButtonSize.sm,
                   variant: MedButtonVariant.secondary,
                   onPressed: onRetry,

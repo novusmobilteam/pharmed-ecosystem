@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // [SWREQ-DATA-WAREHOUSE-002]
 // IWarehouseRepository implementasyonu.
@@ -43,7 +44,7 @@ class WarehouseRepositoryImpl implements IWarehouseRepository {
   @override
   Future<Result<void>> deleteWarehouse(Warehouse entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek deponun id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteWarehouseIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteWarehouse(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

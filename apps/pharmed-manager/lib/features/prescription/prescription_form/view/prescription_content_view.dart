@@ -13,7 +13,7 @@ class PrescriptionContentView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           MedButton(
-            label: 'Ekle',
+            label: context.l10n.common_action_add,
             variant: MedButtonVariant.secondary,
             prefixIcon: Icon(PhosphorIcons.plus()),
             onPressed: notifier.addEmptyItem,
@@ -22,8 +22,8 @@ class PrescriptionContentView extends StatelessWidget {
           Expanded(
             child: notifier.items.isEmpty
                 ? EmptyStateWidget(
-                    title: 'Reçeteye henüz ilaç eklemediniz.',
-                    description: 'Eklediğiniz ilaçlar burada görüntülenecektir.',
+                    title: context.l10n.prescriptionContentEmptyTitle,
+                    description: context.l10n.prescriptionContentEmptyDescription,
                   )
                 : ListView.separated(
                     itemCount: notifier.items.length,
@@ -42,8 +42,8 @@ class _ItemCard extends StatelessWidget {
 
   final int index;
 
-  String _timesSummary(List<DateTime>? times) {
-    if (times == null || times.isEmpty) return 'Saat eklenmedi';
+  String _timesSummary(BuildContext context, List<DateTime>? times) {
+    if (times == null || times.isEmpty) return context.l10n.prescriptionItemNoTimesLabel;
     final first = times.first.toTimeOfDay;
     final firstStr = first != null
         ? '${first.hour.toString().padLeft(2, '0')}:${first.minute.toString().padLeft(2, '0')}'
@@ -99,7 +99,7 @@ class _ItemCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.medicine?.name ?? 'Henüz ilaç seçilmedi',
+                    item.medicine?.name ?? context.l10n.prescriptionItemNoMedicineSelected,
                     style: MedTextStyles.bodyLg(
                       weight: FontWeight.w600,
                       color: item.medicine == null ? MedColors.text3 : MedColors.text,
@@ -114,7 +114,7 @@ class _ItemCard extends StatelessWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
-                        '${(item.dosePiece ?? 0).toStringAsFixed(0)} ${item.medicine?.operationUnit ?? 'ad'}',
+                        '${(item.dosePiece ?? 0).toStringAsFixed(0)} ${item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback}',
                         style: MedTextStyles.monoSm(color: MedColors.text2),
                       ),
                       Text('·', style: MedTextStyles.monoSm(color: MedColors.text4)),
@@ -125,7 +125,7 @@ class _ItemCard extends StatelessWidget {
                         children: [
                           Icon(PhosphorIcons.clock(), size: 11, color: MedColors.text3),
                           const SizedBox(width: 4),
-                          Text(_timesSummary(item.times), style: MedTextStyles.monoSm(color: MedColors.text2)),
+                          Text(_timesSummary(context, item.times), style: MedTextStyles.monoSm(color: MedColors.text2)),
                         ],
                       ),
                     ],

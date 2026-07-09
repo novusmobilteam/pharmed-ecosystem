@@ -29,8 +29,10 @@ class _DrugClassListViewState extends State<DrugClassListView> {
           return EmptyStateWidget(
             icon: Icons.category_outlined,
             variant: EmptyStateVariant.custom,
-            title: 'Henüz ilaç sınıfı bulunmuyor',
-            description: widget.isDialog ? 'Yeni ilaç sınıfı eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            title: context.l10n.drugClassListEmptyTitle,
+            description: widget.isDialog
+                ? context.l10n.common_addItemHint('ilaç sınıfı')
+                : context.l10n.common_emptyListMessage,
           );
         }
 
@@ -65,7 +67,7 @@ class _DrugClassListViewState extends State<DrugClassListView> {
       onConfirm: () => notifier.deleteDrugClass(
         item.id!,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
       ),
     );
   }

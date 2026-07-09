@@ -43,7 +43,7 @@ class _DashboardViewState extends State<DashboardView> {
           // Tam ekran hata — gösterecek kabin yok
           if (notifier.showFullScreenError) {
             return _FullScreenError(
-              message: notifier.cabinsError ?? 'Kabinler yüklenemedi',
+              message: notifier.cabinsError ?? context.l10n.dashboardCabinsLoadErrorFallback,
               onRetry: () => context.read<DashboardNotifier>().fetchCabins(),
             );
           }
@@ -55,7 +55,7 @@ class _DashboardViewState extends State<DashboardView> {
                 cabins: notifier.cabins,
                 selectedId: notifier.selectedCabinId,
                 onSelect: (id) => context.read<DashboardNotifier>().selectCabin(id),
-                lastUpdatedLabel: notifier.cabinsStale ? 'Kabin listesi güncel değil' : context.read(),
+                lastUpdatedLabel: notifier.cabinsStale ? context.l10n.dashboardCabinListStaleLabel : context.read(),
               ),
               const SizedBox(height: 12),
 
@@ -123,7 +123,7 @@ class _FullScreenError extends StatelessWidget {
           SizedBox(
             width: 180,
             child: MedButton(
-              label: 'Tekrar Dene',
+              label: context.l10n.common_retryButton,
               prefixIcon: Icon(PhosphorIcons.arrowClockwise()),
               onPressed: onRetry,
             ),

@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // [SWREQ-DATA-KIT-002]
 // IKitRepository implementasyonu.
@@ -34,7 +35,7 @@ class KitRepositoryImpl implements IKitRepository {
   @override
   Future<Result<void>> deleteKit(Kit entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek kitin id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteKitIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteKit(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

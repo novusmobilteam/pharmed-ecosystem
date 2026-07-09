@@ -55,7 +55,6 @@ class WarehouseFormNotifier extends ChangeNotifier with ApiRequestMixin {
       onSuccess: () {
         if (isCreate) resetForm();
       },
-      successMessage: 'Depo başarıyla ${isCreate ? 'oluşturuldu' : 'güncellendi'}',
     );
   }
 

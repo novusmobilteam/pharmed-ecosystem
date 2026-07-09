@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 enum CabinType {
   master(1),
   cabinet(2),
@@ -19,21 +21,21 @@ enum CabinType {
   String get label {
     switch (this) {
       case CabinType.master:
-        return 'Standart Kabin';
+        return contextlessL10n().enumCore_cabinTypeStandard;
       case CabinType.cabinet:
-        return 'Dolap';
+        return contextlessL10n().enumCore_cabinTypeCloset;
       case CabinType.freezer:
-        return 'Buzdolabı';
+        return contextlessL10n().enumCore_cabinTypeFridge;
       case CabinType.openCabinet:
-        return 'Açık Dolap';
+        return contextlessL10n().enumCore_cabinTypeOpenCloset;
       case CabinType.mobile:
-        return 'Mobil Kabin';
+        return contextlessL10n().enumCore_cabinTypeMobile;
       case CabinType.returnCabin:
-        return 'Harici İade Kabini';
+        return contextlessL10n().enumCore_cabinTypeExternalReturn;
       case CabinType.openCabin:
-        return 'Açık Kabin';
+        return contextlessL10n().enumCore_cabinTypeOpen;
       case CabinType.serum:
-        return 'Serum Kabini';
+        return contextlessL10n().enumCore_cabinTypeSerum;
     }
   }
 }

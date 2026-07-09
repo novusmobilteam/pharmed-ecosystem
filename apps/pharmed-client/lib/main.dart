@@ -53,7 +53,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [Locale('tr'), Locale('en'), Locale('ar')],
+        supportedLocales: const [Locale('tr'), Locale('en'), Locale('fr'), Locale('ar')],
         home: const AppRouter(),
         // builder: (context, child) {
         //   return Stack(

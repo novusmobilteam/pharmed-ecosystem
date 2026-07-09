@@ -102,7 +102,7 @@ class IntakeOperationCard extends StatelessWidget {
                     if (isSelected && !_hasNoStock)
                       MedDoseStepper.compact(
                         value: item.dosePiece ?? 0,
-                        unit: item.medicine?.operationUnit ?? 'Adet',
+                        unit: item.medicine?.operationUnit ?? context.l10n.refillList_defaultUnitFallback,
                         onChanged: onDoseChanged,
                         max: doseMax,
                       ),
@@ -130,7 +130,7 @@ class _NoStockChip extends StatelessWidget {
     return MedInfoChip(
       backgroundColor: MedColors.redLight,
       foregroundColor: MedColors.red,
-      info: 'Kabinde stok bulunmamaktadır',
+      info: context.l10n.intake_hint_noStock,
     );
   }
 }
@@ -161,7 +161,7 @@ class _WitnessRow extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                hasWitness ? 'Şahit: ${witness.fullName}' : 'Şahit girişi gerekli',
+                hasWitness ? context.l10n.intake_label_witnessName(witness.fullName) : context.l10n.intake_hint_witnessRequired,
                 style: MedTextStyles.bodyMd(color: hasWitness ? MedColors.green : MedColors.amber),
               ),
             ),
@@ -186,14 +186,14 @@ class _CheckStatusRow extends StatelessWidget {
         spacing: 6,
         children: [
           const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
-          Text('Kontrol ediliyor...', style: MedTextStyles.monoXs(color: MedColors.text3)),
+          Text(context.l10n.intake_status_checking, style: MedTextStyles.monoXs(color: MedColors.text3)),
         ],
       ),
       CheckSuccess() => Row(
         spacing: 6,
         children: [
           Icon(PhosphorIcons.check(), size: 14, color: MedColors.green),
-          Text('Alıma hazır', style: MedTextStyles.monoXs(color: MedColors.green)),
+          Text(context.l10n.intake_status_readyToTake, style: MedTextStyles.monoXs(color: MedColors.green)),
         ],
       ),
       CheckFailed(:final message) => Row(
@@ -202,7 +202,7 @@ class _CheckStatusRow extends StatelessWidget {
           Icon(PhosphorIcons.x(), size: 14, color: MedColors.red),
           Expanded(
             child: Text(
-              message ?? 'Kontrol başarısız',
+              message ?? context.l10n.intake_status_checkFailed,
               style: MedTextStyles.monoXs(color: MedColors.red),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

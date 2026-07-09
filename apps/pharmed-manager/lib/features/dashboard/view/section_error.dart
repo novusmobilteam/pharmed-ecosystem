@@ -25,7 +25,7 @@ class SectionError extends StatelessWidget {
           SizedBox(
             width: 140,
             child: MedButton(
-              label: 'Tekrar Dene',
+              label: context.l10n.common_retryButton,
               size: MedButtonSize.sm,
               variant: MedButtonVariant.secondary,
               prefixIcon: Icon(PhosphorIcons.arrowClockwise()),
@@ -51,7 +51,7 @@ class OtherCabinPlaceholder extends StatelessWidget {
         border: Border.all(color: MedColors.border),
         boxShadow: MedShadows.sm,
       ),
-      child: const Center(child: Text('SKT geçmiş malzemeler & kritik stoklar (sonraki tur)')),
+      child: Center(child: Text(context.l10n.dashboardOtherCabinPlaceholderText)),
     );
   }
 }
