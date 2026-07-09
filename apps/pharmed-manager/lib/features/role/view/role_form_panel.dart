@@ -15,7 +15,7 @@ class RoleFormPanel extends StatelessWidget {
           RoleFormNotifier(createRoleUseCase: context.read(), updateRoleUseCase: context.read(), role: selectedRole),
       child: Consumer<RoleFormNotifier>(
         builder: (context, notifier, _) {
-          final String title = roleNotifier.isEditing ? 'Rol Düzenle' : 'Rol Ekle';
+          final String title = roleNotifier.isEditing ? context.l10n.roleFormEditTitle : context.l10n.roleFormAddTitle;
           return SidePanel(
             title: title,
             isLoading: notifier.isLoading(notifier.submitOp),
@@ -25,7 +25,7 @@ class RoleFormPanel extends StatelessWidget {
                 await notifier.submit(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                   onSuccess: (msg) {
-                    MessageUtils.showSuccessSnackbar(context, msg);
+                    MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                     roleNotifier.closePanel();
                     roleNotifier.fetch();
                   },
@@ -55,7 +55,7 @@ class _NameField extends StatelessWidget {
     return Consumer<RoleFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Rol Adı',
+          label: context.l10n.roleFormNameLabel,
           autoFocus: notifier.isCreate,
           initialValue: notifier.role.name,
           validator: Validators.cannotBlankValidator,
@@ -74,7 +74,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<RoleFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           initialValue: notifier.role.status,
           options: Status.values,
           labelBuilder: (value) => value?.label,

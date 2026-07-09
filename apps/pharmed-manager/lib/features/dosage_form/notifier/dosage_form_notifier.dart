@@ -37,7 +37,7 @@ class DosageFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
       deleteOp,
       operation: () => _deleteDosageFormUseCase.call(item),
       onSuccess: () {
-        onSuccess?.call('Dozaj formu silme işlemi başarılı.');
+        onSuccess?.call(contextlessL10n().dosageForm_deleteSuccessMessage);
         getDosageForms();
       },
       onFailed: (error) => onFailed?.call(error.message),

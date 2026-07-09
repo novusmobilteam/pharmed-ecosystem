@@ -34,7 +34,7 @@ class RoleMcAuthNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => _saveAuthUseCase.call(_roleAuth!),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
         initialize();
       },
       onFailed: (error) => onFailed?.call(error.message),

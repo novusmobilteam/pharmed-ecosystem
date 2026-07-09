@@ -52,13 +52,13 @@ class StockTransaction implements TableData {
 
   @override
   List<String?> get titles => [
-    'Tarih',
-    'Malzeme',
-    'Barkod',
-    'İşlem Tipi',
-    'Miktar',
-    'Hareket Öncesi Miktar',
-    'İşlemi Yapan',
+    contextlessL10n().tableCore_stockTransactionDateColumn,
+    contextlessL10n().tableCore_materialColumn,
+    contextlessL10n().tableCore_stockTransactionBarcodeColumn,
+    contextlessL10n().tableCore_stockTransactionTypeColumn,
+    contextlessL10n().tableCore_stockTransactionQuantityColumn,
+    contextlessL10n().tableCore_stockTransactionPreviousQuantityColumn,
+    contextlessL10n().tableCore_stockTransactionActorColumn,
   ];
 
   @override

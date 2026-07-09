@@ -1,12 +1,24 @@
-enum ParityBit {
-  none(id: 1, label: 'Hiçbiri'),
-  even(id: 2, label: 'Çift'),
-  odd(id: 3, label: 'Tek');
+import 'package:pharmed_ui/pharmed_ui.dart';
 
-  const ParityBit({required this.id, required this.label});
+enum ParityBit {
+  none(id: 1),
+  even(id: 2),
+  odd(id: 3);
+
+  const ParityBit({required this.id});
 
   final int id;
-  final String label;
+
+  String get label {
+    switch (this) {
+      case ParityBit.none:
+        return contextlessL10n().enumCore_parityBitNone;
+      case ParityBit.even:
+        return contextlessL10n().enumCore_parityBitEven;
+      case ParityBit.odd:
+        return contextlessL10n().enumCore_parityBitOdd;
+    }
+  }
 
   static ParityBit? fromId(int? id) {
     return ParityBit.values.firstWhere(

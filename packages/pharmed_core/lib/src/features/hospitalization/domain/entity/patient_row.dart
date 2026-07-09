@@ -20,7 +20,13 @@ class PatientHospitalizationRow extends Selectable implements TableData {
   }) : super(title: patient.fullName, subtitle: physicalService?.name);
 
   @override
-  List<String> get titles => const ['Servis', 'Hasta T.C', 'Ad Soyad', 'Yatış Tarihi', 'Çıkış Tarihi'];
+  List<String> get titles => [
+    contextlessL10n().tableCore_serviceColumn,
+    contextlessL10n().tableCore_patientRowNationalIdColumn,
+    contextlessL10n().tableCore_patientRowFullNameColumn,
+    contextlessL10n().tableCore_admissionDateColumn,
+    contextlessL10n().tableCore_dischargeDateColumn,
+  ];
 
   @override
   List<String?> get content {

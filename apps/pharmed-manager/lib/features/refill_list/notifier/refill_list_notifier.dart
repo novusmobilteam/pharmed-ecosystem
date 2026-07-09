@@ -74,7 +74,7 @@ class RefillListNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         getRefillLists();
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
       },
     );
   }
@@ -91,7 +91,7 @@ class RefillListNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         getRefillLists();
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
       },
     );
   }

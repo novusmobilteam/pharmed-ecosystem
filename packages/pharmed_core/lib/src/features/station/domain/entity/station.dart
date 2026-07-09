@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Station extends Selectable implements TableData {
   final String? name;
@@ -53,14 +54,14 @@ class Station extends Selectable implements TableData {
 
   @override
   List<String> get titles => [
-    "İstasyon Kodu",
-    "İstasyon Adı",
-    "Servis",
-    "İlaç Depo",
-    "İlaç",
-    "Tıbbi Sarf Depo",
-    "Tıbbi Sarf",
-    "Çalışma Tipi",
+    contextlessL10n().tableCore_stationCodeColumn,
+    contextlessL10n().tableCore_stationNameColumn,
+    contextlessL10n().tableCore_serviceColumn,
+    contextlessL10n().tableCore_stationDrugWarehouseColumn,
+    contextlessL10n().tableCore_stationDrugColumn,
+    contextlessL10n().tableCore_stationConsumableWarehouseColumn,
+    contextlessL10n().tableCore_stationConsumableColumn,
+    contextlessL10n().tableCore_stationWorkingTypeColumn,
   ];
 
   Station copyWith({

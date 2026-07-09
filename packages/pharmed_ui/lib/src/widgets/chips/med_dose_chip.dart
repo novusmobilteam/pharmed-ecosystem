@@ -22,7 +22,7 @@ class MedDoseChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = '${item.dosePiece?.formatFractional ?? '-'} ${item.medicine?.operationUnit ?? 'Adet'}';
+    final text = '${item.dosePiece?.formatFractional ?? '-'} ${item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback}';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(

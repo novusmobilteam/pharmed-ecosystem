@@ -47,7 +47,7 @@ class ManagerApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [Locale('tr'), Locale('en'), Locale('ar')],
+          supportedLocales: const [Locale('tr'), Locale('en'), Locale('fr'), Locale('ar')],
           home: AppRouter(),
         ),
       ),

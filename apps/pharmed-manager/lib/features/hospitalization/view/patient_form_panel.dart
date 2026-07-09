@@ -18,7 +18,9 @@ class PatientFormPanel extends StatelessWidget {
       ),
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
-          final String title = notifier.isCreate ? 'Yeni Hasta Oluştur' : 'Hasta Düzenle';
+          final String title = notifier.isCreate
+              ? context.l10n.patient_formTitleNew
+              : context.l10n.patient_formTitleEdit;
           return SidePanel(
             title: title,
             isLoading: notifier.isLoading(notifier.submitOp),
@@ -27,8 +29,8 @@ class PatientFormPanel extends StatelessWidget {
               if (formKey.currentState!.validate()) {
                 notifier.submit(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  onSuccess: (msg) {
-                    MessageUtils.showSuccessSnackbar(context, msg);
+                  onSuccess: (_) {
+                    MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                     hospNotifier.closePanel();
                     hospNotifier.fetch();
                   },
@@ -77,7 +79,7 @@ class _IdentityField extends StatelessWidget {
     return Consumer<PatientFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'T.C Kimlik No',
+          label: context.l10n.patient_fieldIdentity,
           maxLength: 11,
           initialValue: notifier.patient?.tcNo,
           validator: (value) => Validators.tcValidator(value),
@@ -99,7 +101,7 @@ class _NameField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedTextInputField(
-            label: 'Adı',
+            label: context.l10n.patient_fieldName,
             initialValue: notifier.patient?.name,
             validator: (value) => Validators.cannotBlankValidator(value),
             onChanged: (value) => notifier.updateName(value),
@@ -120,7 +122,7 @@ class _SurnameField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedTextInputField(
-            label: 'Soyadı',
+            label: context.l10n.patient_fieldSurname,
             initialValue: notifier.patient?.surname,
             validator: (value) => Validators.cannotBlankValidator(value),
             onChanged: (value) => notifier.updateSurname(value),
@@ -141,7 +143,7 @@ class _BirthDateField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedDateInputField(
-            label: 'Doğum Tarihi',
+            label: context.l10n.patient_fieldBirthDate,
             validator: (value) => Validators.cannotBlankValidator(value?.formattedDate),
             initialValue: notifier.patient?.birthDate,
             onDateSelected: (value) => notifier.updateBirthdate(value),
@@ -162,7 +164,7 @@ class _GenderField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedDropdownInputField<Gender>(
-            label: 'Cinsiyet',
+            label: context.l10n.patient_fieldGender,
             initialValue: notifier.patient?.gender,
             options: Gender.values,
             labelBuilder: (value) => value?.label,
@@ -184,7 +186,7 @@ class _WeightField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedTextInputField(
-            label: 'Kilo',
+            label: context.l10n.patient_fieldWeight,
             initialValue: notifier.patient?.weight?.toCustomString(),
             onChanged: (value) => notifier.updateWeight(value),
           );
@@ -204,7 +206,7 @@ class _MotherNameField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedTextInputField(
-            label: 'Anne Adı',
+            label: context.l10n.patient_fieldMotherName,
             initialValue: notifier.patient?.motherName,
             onChanged: (value) => notifier.updateMother(value),
           );
@@ -224,7 +226,7 @@ class _FatherNameField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedTextInputField(
-            label: 'Baba Adı',
+            label: context.l10n.patient_fieldFatherName,
             initialValue: notifier.patient?.fatherName,
             onChanged: (value) => notifier.updateFather(value),
           );
@@ -243,7 +245,7 @@ class _PhoneField extends StatelessWidget {
     return Consumer<PatientFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Telefon',
+          label: context.l10n.patient_fieldPhone,
           maxLength: 11,
           initialValue: notifier.patient?.phone?.toString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -264,7 +266,7 @@ class _PatientDescriptionField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedTextInputField(
-            label: 'Açıklama',
+            label: context.l10n.common_descriptionLabel,
             maxLines: 3,
             initialValue: notifier.patient?.description?.toString(),
             onChanged: (value) => notifier.updateDescription(value),
@@ -285,7 +287,7 @@ class _AddressField extends StatelessWidget {
       child: Consumer<PatientFormNotifier>(
         builder: (context, notifier, _) {
           return MedTextInputField(
-            label: 'Adres',
+            label: context.l10n.patient_fieldAddress,
             maxLines: 3,
             initialValue: notifier.patient?.address?.toString(),
             onChanged: (value) => notifier.updateAddress(value),
@@ -304,7 +306,7 @@ class _ProtocolField extends StatelessWidget {
     return Consumer<PatientFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Protokol No',
+          label: context.l10n.patient_fieldProtocolNo,
           initialValue: notifier.patient?.protocolNo,
           onChanged: notifier.updateProtocolNo,
         );

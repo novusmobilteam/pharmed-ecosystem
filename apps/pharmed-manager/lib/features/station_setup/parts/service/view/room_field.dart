@@ -16,13 +16,16 @@ class RoomField extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Odalar & Yataklar',
+              context.l10n.stationSetup_roomsSectionTitle,
               style: Theme.of(
                 context,
               ).textTheme.labelMedium?.copyWith(color: MedColors.text2, fontWeight: FontWeight.w600),
             ),
             const Spacer(),
-            if (entries.isNotEmpty) _SummaryChip(label: '${entries.length} oda · ${notifier.totalBedCount} yatak'),
+            if (entries.isNotEmpty)
+              _SummaryChip(
+                label: context.l10n.stationSetup_roomsBedsSummary(entries.length, notifier.totalBedCount),
+              ),
           ],
         ),
 
@@ -35,11 +38,14 @@ class RoomField extends StatelessWidget {
 
         // ── Add room button
         MedButton(
-          label: 'Oda Ekle',
+          label: context.l10n.stationSetup_addRoomButton,
           variant: MedButtonVariant.secondary,
           size: MedButtonSize.sm,
           fullWidth: true,
-          onPressed: context.read<ServiceFormNotifier>().addRoom,
+          onPressed: () {
+            final roomNotifier = context.read<ServiceFormNotifier>();
+            roomNotifier.addRoom(name: context.l10n.stationSetup_defaultRoomName(roomNotifier.roomEntries.length + 1));
+          },
         ),
       ],
     );
@@ -118,7 +124,7 @@ class _RoomTileState extends State<_RoomTile> {
                   ),
 
                   // Yatak sayısı
-                  _SummaryChip(label: '${room.bedCount} yatak'),
+                  _SummaryChip(label: context.l10n.stationSetup_bedCountBadge(room.bedCount)),
 
                   // Sil
                   GestureDetector(
@@ -155,14 +161,14 @@ class _RoomTileState extends State<_RoomTile> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        'Henüz yatak eklenmedi',
+                        context.l10n.stationSetup_noBedsAddedYetMessage,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(color: MedColors.text3),
                       ),
                     ),
 
                   // Yatak ekle
                   MedButton(
-                    label: 'Yatak Ekle',
+                    label: context.l10n.stationSetup_addBedButton,
                     variant: MedButtonVariant.ghost,
                     size: MedButtonSize.sm,
                     onPressed: () => notifier.addBed(widget.localId),

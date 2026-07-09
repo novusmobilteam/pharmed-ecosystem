@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum StationType {
   medicineBased(1),
@@ -16,9 +17,9 @@ enum StationType {
   String get label {
     switch (this) {
       case StationType.medicineBased:
-        return 'İlaç Bazlı';
+        return contextlessL10n().stationSetup_station_typeMedicineBasedLabel;
       case StationType.patientBased:
-        return 'Hasta Bazlı';
+        return contextlessL10n().stationSetup_station_typePatientBasedLabel;
     }
   }
 }

@@ -80,7 +80,7 @@ class Step3Notifier extends Notifier<Step3State> {
         );
         state = state.copyWith(
           servicesLoadState: ServicesLoadState.error,
-          servicesError: 'İstasyon detayları yüklenemedi.',
+          servicesError: contextlessL10n().wizard_stationDetailsLoadError,
         );
       },
     );
@@ -130,7 +130,7 @@ class Step3Notifier extends Notifier<Step3State> {
     if (loaded.isEmpty) {
       state = state.copyWith(
         servicesLoadState: ServicesLoadState.error,
-        servicesError: 'Servis detayları yüklenemedi.',
+        servicesError: contextlessL10n().wizard_serviceDetailsLoadError,
       );
       return;
     }

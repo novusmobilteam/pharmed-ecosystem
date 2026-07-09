@@ -27,25 +27,25 @@ _ItemStatus _itemStatusFor(PrescriptionItem item, MobileRefillReady ready) {
   return _ItemStatus.awaiting;
 }
 
-StatusBadge _refillItemBadge(_ItemStatus status) {
+StatusBadge _refillItemBadge(BuildContext context, _ItemStatus status) {
   final (bg, fg, icon, label) = switch (status) {
     _ItemStatus.placed => (
       MedColors.green,
       MedColors.greenLight,
       PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
-      'Yerleştirildi',
+      context.l10n.refill_label_placed,
     ),
     _ItemStatus.awaiting => (
       MedColors.blue.withValues(alpha: 0.3),
       MedColors.blue,
       PhosphorIcons.hourglassMedium(PhosphorIconsStyle.bold),
-      'Bekleniyor',
+      context.l10n.rfidStatus_waiting,
     ),
     _ItemStatus.pending => (
       MedColors.surface2,
       MedColors.text3,
       PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
-      'Taranıyor',
+      context.l10n.rfidStatus_scanning,
     ),
 
     _ItemStatus.nonRfid => (Colors.transparent, Colors.transparent, PhosphorIcons.minusCircle(), ''),
@@ -107,7 +107,7 @@ class _ItemCard extends StatelessWidget {
       border: colors.border,
       textColor: colors.text,
       mutedColor: colors.muted,
-      trailing: _refillItemBadge(status),
+      trailing: _refillItemBadge(context, status),
     );
   }
 }

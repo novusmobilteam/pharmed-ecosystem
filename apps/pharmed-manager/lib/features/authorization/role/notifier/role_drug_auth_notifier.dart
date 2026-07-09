@@ -58,7 +58,7 @@ class RoleDrugAuthNotifier extends ChangeNotifier with ApiRequestMixin, SearchMi
         return await _saveAuthUseCase.call(allItems);
       },
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

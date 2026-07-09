@@ -1355,4 +1355,3245 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get census_extra_stock_summary_title => 'المخزون الزائد المُبلَّغ عنه';
+
+  @override
+  String get core_serialPortDisconnectedLabel => 'Not Connected';
+
+  @override
+  String core_serialConnectingStatus(String portName) {
+    return 'Connecting to port: $portName...';
+  }
+
+  @override
+  String core_serialConnectSuccessStatus(String portName) {
+    return 'Connected successfully: $portName';
+  }
+
+  @override
+  String core_serialPortFailedScanningOthersStatus(String portName) {
+    return '$portName failed. Scanning other ports...';
+  }
+
+  @override
+  String core_serialNoOtherPortsError(String portName) {
+    return 'The default port ($portName) failed and no other port was found.';
+  }
+
+  @override
+  String core_serialTryingPortStatus(String portName) {
+    return 'Trying: $portName...';
+  }
+
+  @override
+  String core_serialConnectionEstablishedStatus(String portName) {
+    return 'Connection established: $portName';
+  }
+
+  @override
+  String get core_serialNoPortConnectedError =>
+      'Could not connect to any port. Check the cables.';
+
+  @override
+  String core_serialPortOpenFailedError(String portName) {
+    return 'The port could not be opened ($portName).';
+  }
+
+  @override
+  String get core_serialNoConnectionError => 'No connection.';
+
+  @override
+  String get core_serialPortBusyTimeoutError => 'Port timed out.';
+
+  @override
+  String get core_serialWriteFailedError => 'Write failed.';
+
+  @override
+  String get common_defaultSuccessMessage => 'Operation successful';
+
+  @override
+  String get common_operationSuccessMessage =>
+      'Your operation was completed successfully.';
+
+  @override
+  String get common_loadingEllipsis => 'Loading...';
+
+  @override
+  String get common_searchHint => 'Search...';
+
+  @override
+  String get common_searchTooltip => 'Search';
+
+  @override
+  String get common_addTooltip => 'Add';
+
+  @override
+  String get common_closeTooltip => 'Close';
+
+  @override
+  String get common_saveButton => 'Save';
+
+  @override
+  String get common_editTooltip => 'Edit';
+
+  @override
+  String get common_deleteTooltip => 'Delete';
+
+  @override
+  String get common_statusLabel => 'Status';
+
+  @override
+  String get common_emptyListMessage => 'The list is currently empty';
+
+  @override
+  String get common_nameLabel => 'Name';
+
+  @override
+  String get common_requiredFieldsError =>
+      'Please fill in the required fields.';
+
+  @override
+  String get common_descriptionLabel => 'Description';
+
+  @override
+  String get common_deselectAllButton => 'Deselect All';
+
+  @override
+  String get common_selectAllButton => 'Select All';
+
+  @override
+  String get common_defaultUnitFallback => 'Piece';
+
+  @override
+  String get common_flagFirstDoseEmergency => 'First Dose Emergency';
+
+  @override
+  String get common_flagAskDoctor => 'Ask Doctor';
+
+  @override
+  String get common_flagInCaseOfNecessity => 'As Needed';
+
+  @override
+  String common_addItemHint(String item) {
+    return 'Tap the \"+\" button to add a new $item';
+  }
+
+  @override
+  String get common_genericErrorMessage => 'An error occurred.';
+
+  @override
+  String get hospitalizationCard_noDoctorFallback => 'No Doctor Specified';
+
+  @override
+  String get hospitalizationCard_nationalIdLabel => 'National ID No.';
+
+  @override
+  String get hospitalizationCard_admissionDateLabel => 'Admission Date';
+
+  @override
+  String get menuBrowser_categoriesHeader => 'CATEGORIES';
+
+  @override
+  String get menuBrowser_searchHint => 'Search category...';
+
+  @override
+  String menuBrowser_selectionCountBadge(int selected, int total) {
+    return '$selected/$total';
+  }
+
+  @override
+  String get menuBrowser_emptyCategoryMessage =>
+      'No menu found in this category';
+
+  @override
+  String rxGroup_headerTitle(Object id) {
+    return 'Prescription #$id';
+  }
+
+  @override
+  String rxGroup_headerSubtitle(String doctorName, String date) {
+    return '$doctorName · $date';
+  }
+
+  @override
+  String rxGroup_itemCountBadge(int count) {
+    return '$count items';
+  }
+
+  @override
+  String rxGroup_selectableCountLabel(int count) {
+    return '$count actionable items';
+  }
+
+  @override
+  String get rxGroup_unknownDoctorFallback => 'Unknown';
+
+  @override
+  String get rxGroup_rfidTagLabel => 'RFID TAG';
+
+  @override
+  String get rxGroup_rfidTagLoadingLabel => 'Waiting for tag...';
+
+  @override
+  String get rxGroup_rfidTagUnassignedLabel => 'No tag assigned yet';
+
+  @override
+  String get rxGroup_rfidChangeButton => 'Change';
+
+  @override
+  String get rxGroup_rfidAssignButton => 'Assign Tag';
+
+  @override
+  String rxGroup_selectedCountBar(int count) {
+    return '$count items selected';
+  }
+
+  @override
+  String get rxGroup_approveAction => 'Approve';
+
+  @override
+  String get rxGroup_rejectAction => 'Reject';
+
+  @override
+  String get changePassword_dialogTitle => 'Change Password';
+
+  @override
+  String get changePassword_currentPasswordLabel => 'Current Password';
+
+  @override
+  String get changePassword_newPasswordLabel => 'New Password';
+
+  @override
+  String get changePassword_confirmPasswordLabel => 'Confirm New Password';
+
+  @override
+  String get changePassword_submitButton => 'Change Password';
+
+  @override
+  String get home_appBarBadgeLabel => 'MANAGEMENT PANEL';
+
+  @override
+  String get home_devSettingsTooltip => 'Developer Settings';
+
+  @override
+  String get home_noAuthorizedMenuTitle => 'No Authorized Menu Found';
+
+  @override
+  String get home_noAuthorizedMenuDescription =>
+      'Your account has no access permissions defined.\nPlease contact your system administrator to obtain access.';
+
+  @override
+  String get branch_listDialogTitle => 'Branch Definition';
+
+  @override
+  String get branch_addTitle => 'Add Branch';
+
+  @override
+  String get branch_editTitle => 'Edit Branch';
+
+  @override
+  String get branch_nameLabel => 'Branch Name';
+
+  @override
+  String get firm_createSuccessMessage => 'Firm created successfully';
+
+  @override
+  String get firm_updateSuccessMessage => 'Firm updated successfully';
+
+  @override
+  String get firm_createPanelTitle => 'New Firm';
+
+  @override
+  String get firm_editPanelTitle => 'Edit Firm';
+
+  @override
+  String get firm_createPanelSubtitle => 'Fill in the firm details';
+
+  @override
+  String get firm_editPanelSubtitle => 'Update the firm details';
+
+  @override
+  String get firm_nameLabel => 'Firm Name';
+
+  @override
+  String get firm_taxNoLabel => 'Tax No.';
+
+  @override
+  String get firm_taxOfficeLabel => 'Tax Office';
+
+  @override
+  String get firm_typeLabel => 'Firm Type';
+
+  @override
+  String get firm_screenDefaultTitle => 'Firm Definition';
+
+  @override
+  String get dosageForm_deleteSuccessMessage =>
+      'The dosage form was deleted successfully.';
+
+  @override
+  String get dosageForm_saveSuccessMessage =>
+      'The dosage form was saved successfully.';
+
+  @override
+  String get dosageForm_createTitle => 'Create Dosage Form';
+
+  @override
+  String get dosageForm_editTitle => 'Edit Dosage Form';
+
+  @override
+  String get dosageForm_listDialogTitle => 'Dosage Form';
+
+  @override
+  String get dosageForm_emptyTitle => 'No dosage forms yet';
+
+  @override
+  String get dosageForm_emptyDescription =>
+      'Tap the \"+\" button to create a dosage form';
+
+  @override
+  String get authorization_userTabTitle => 'User Authorization';
+
+  @override
+  String get authorization_roleTabTitle => 'Role Authorization';
+
+  @override
+  String get authorization_screenTitleFallback => 'User/Role Authorization';
+
+  @override
+  String authorization_rolePanelTitle(String roleName) {
+    return 'Role Authorization - $roleName';
+  }
+
+  @override
+  String get authorization_tabMenuLabel => 'Menu';
+
+  @override
+  String get authorization_tabDrugLabel => 'Drug';
+
+  @override
+  String get authorization_tabConsumableLabel => 'Medical Consumable';
+
+  @override
+  String get authorization_drugTable_pullColumn => 'Pull Drug';
+
+  @override
+  String get authorization_drugTable_fillColumn => 'Refill';
+
+  @override
+  String get authorization_drugTable_returnColumn => 'Return';
+
+  @override
+  String get authorization_drugTable_disposeColumn => 'Dispose';
+
+  @override
+  String get authorization_drugTable_allDrugsRow => 'All Drugs';
+
+  @override
+  String get authorization_drugTable_unknownDrugFallback => 'Unknown Drug';
+
+  @override
+  String get settings_updateSuccessMessage => 'Settings updated successfully.';
+
+  @override
+  String get settingsCabin_drawerOpenWaitLabel =>
+      'Drawer Open Wait Time (seconds)';
+
+  @override
+  String get settingsCabin_drawerOpenWaitDescription =>
+      'Specifies when the system will send a close command to the drawer if it is left open.';
+
+  @override
+  String get settingsDeveloper_adminDashboardActiveLabel =>
+      'Admin Dashboard Active';
+
+  @override
+  String get settingsDeveloper_appModeLabel => 'Application Mode';
+
+  @override
+  String get settingsDeveloper_clientModeButton => 'Client Mode';
+
+  @override
+  String get settingsDeveloper_managerModeButton => 'Manager Mode';
+
+  @override
+  String get settingsGeneral_autoStandbyDurationLabel =>
+      'Auto-Standby Duration (seconds)';
+
+  @override
+  String get settingsGeneral_expiryWarningLabel => 'Expiry Warning';
+
+  @override
+  String get settingsGeneral_hbysStockControlLabel => 'HIS Stock Control';
+
+  @override
+  String get settingsGeneral_fingerprintOnlyLabel =>
+      'Only allow fingerprint reader use on cabinets.';
+
+  @override
+  String get settingsGeneral_allowOutOfWindowOrdersLabel =>
+      'Orders outside the time window may be accepted.';
+
+  @override
+  String get settingsGeneral_perCellExpiryDateLabel =>
+      'Allow entering a separate expiry date for each compartment in unit-dose drawers during drug refill.';
+
+  @override
+  String get settingsPrescription_accessDurationLabel =>
+      'Prescription Access Duration (minutes)';
+
+  @override
+  String get settingsPrescription_accessDurationDescription =>
+      'Specifies how long before and after product pickup times prescriptions remain accessible.';
+
+  @override
+  String get settingsView_cabinTabTitle => 'Cabinet Communication Settings';
+
+  @override
+  String get settingsView_prescriptionTabTitle => 'Prescription Settings';
+
+  @override
+  String get settingsView_generalTabTitle => 'General Settings';
+
+  @override
+  String get settingsView_developerTabTitle => 'Developer Settings';
+
+  @override
+  String get settingsView_refreshPermissionsButton => 'Refresh Permissions';
+
+  @override
+  String stationSetup_defaultRoomName(int index) {
+    return 'Room $index';
+  }
+
+  @override
+  String get stationSetup_service_createdSuccessMessage =>
+      'Service created successfully';
+
+  @override
+  String get stationSetup_service_updatedSuccessMessage =>
+      'Service updated successfully';
+
+  @override
+  String get stationSetup_roomsSectionTitle => 'Rooms & Beds';
+
+  @override
+  String stationSetup_roomsBedsSummary(int roomCount, int bedCount) {
+    return '$roomCount rooms · $bedCount beds';
+  }
+
+  @override
+  String get stationSetup_addRoomButton => 'Add Room';
+
+  @override
+  String stationSetup_bedCountBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count beds',
+      one: '$count bed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stationSetup_noBedsAddedYetMessage => 'No beds added yet';
+
+  @override
+  String get stationSetup_addBedButton => 'Add Bed';
+
+  @override
+  String get stationSetup_service_formTitleNew => 'New Service';
+
+  @override
+  String get stationSetup_service_formTitleEdit => 'Edit Service';
+
+  @override
+  String get stationSetup_service_formSubtitleNew =>
+      'Fill in the service details';
+
+  @override
+  String get stationSetup_service_formSubtitleEdit =>
+      'Update the service details';
+
+  @override
+  String get stationSetup_service_nameLabel => 'Service Name';
+
+  @override
+  String get stationSetup_service_branchLabel => 'Branch';
+
+  @override
+  String get stationSetup_service_branchSelectTitle => 'Select Branch';
+
+  @override
+  String get stationSetup_service_userLabel => 'User';
+
+  @override
+  String get stationSetup_common_statusLabel => 'Status';
+
+  @override
+  String get stationSetup_station_createdSuccessMessage =>
+      'Station created successfully';
+
+  @override
+  String get stationSetup_station_updatedSuccessMessage =>
+      'Station updated successfully';
+
+  @override
+  String get stationSetup_station_formTitleNew => 'New Station';
+
+  @override
+  String get stationSetup_station_formTitleEdit => 'Edit Station';
+
+  @override
+  String get stationSetup_station_formSubtitleNew =>
+      'Fill in the station details';
+
+  @override
+  String get stationSetup_station_formSubtitleEdit =>
+      'Update the station details';
+
+  @override
+  String get stationSetup_station_nameLabel => 'Station Name';
+
+  @override
+  String get stationSetup_station_drugWarehouseLabel => 'Drug Warehouse';
+
+  @override
+  String get stationSetup_station_drugWarehouseSelectTitle =>
+      'Select Drug Warehouse';
+
+  @override
+  String get stationSetup_station_drugStatusLabel => 'Drug Status';
+
+  @override
+  String get stationSetup_station_consumableWarehouseLabel =>
+      'Medical Consumable Warehouse';
+
+  @override
+  String get stationSetup_station_consumableWarehouseSelectTitle =>
+      'Select Medical Consumable Warehouse';
+
+  @override
+  String get stationSetup_station_consumableStatusLabel =>
+      'Medical Consumable Status';
+
+  @override
+  String get stationSetup_station_serviceLabel => 'Service';
+
+  @override
+  String get stationSetup_station_serviceSelectTitle => 'Select Service';
+
+  @override
+  String get stationSetup_station_providedServicesLabel => 'Services Served';
+
+  @override
+  String get stationSetup_station_typeLabel => 'Station Type';
+
+  @override
+  String get stationSetup_station_typePatientBasedLabel => 'Patient-Based';
+
+  @override
+  String get stationSetup_station_typeMedicineBasedLabel => 'Medicine-Based';
+
+  @override
+  String get stationSetup_warehouse_createdSuccessMessage =>
+      'Warehouse created successfully';
+
+  @override
+  String get stationSetup_warehouse_updatedSuccessMessage =>
+      'Warehouse updated successfully';
+
+  @override
+  String get stationSetup_warehouse_formTitleNew => 'New Warehouse';
+
+  @override
+  String get stationSetup_warehouse_formTitleEdit => 'Edit Warehouse';
+
+  @override
+  String get stationSetup_warehouse_formSubtitleNew =>
+      'Fill in the warehouse details';
+
+  @override
+  String get stationSetup_warehouse_formSubtitleEdit =>
+      'Update the warehouse details';
+
+  @override
+  String get stationSetup_warehouse_codeLabel => 'Warehouse Code';
+
+  @override
+  String get stationSetup_warehouse_nameLabel => 'Warehouse Name';
+
+  @override
+  String get stationSetup_warehouse_typeLabel => 'Warehouse Type';
+
+  @override
+  String get stationSetup_warehouse_managerLabel => 'Warehouse Manager';
+
+  @override
+  String get stationSetup_warehouse_managerSelectTitle =>
+      'Select Warehouse Manager';
+
+  @override
+  String get stationSetup_screen_stationTabTitle => 'Station Definition';
+
+  @override
+  String get stationSetup_screen_serviceTabTitle => 'Service Definition';
+
+  @override
+  String get stationSetup_screen_warehouseTabTitle => 'Warehouse Definition';
+
+  @override
+  String get stationSetup_screen_setupWizardButton => 'Setup Wizard';
+
+  @override
+  String get stationSetup_wizard_title => 'Station Setup Wizard';
+
+  @override
+  String get stationSetup_wizard_completeSetupButton => 'Complete Setup';
+
+  @override
+  String get stationSetup_wizard_continueButton => 'Continue';
+
+  @override
+  String get stationSetup_wizard_backButton => 'Go Back';
+
+  @override
+  String get unappliedPrescription_detailDialogTitle => 'Material List';
+
+  @override
+  String get unappliedPrescription_screenTitleFallback =>
+      'Unapplied Prescriptions';
+
+  @override
+  String get unappliedPrescription_viewDetailsTooltip => 'View Details';
+
+  @override
+  String get dashboardCabinsLoadErrorFallback => 'Cabinets could not be loaded';
+
+  @override
+  String get dashboardCabinListStaleLabel => 'Cabinet list is out of date';
+
+  @override
+  String get dashboardDrugActivityPanelTitle => 'DRUG ACTIVITY';
+
+  @override
+  String get dashboardDrugActivityEmptyTitle => 'No activity';
+
+  @override
+  String get dashboardDrugActivityDateTimeLabel => 'DATE / TIME';
+
+  @override
+  String get dashboardMissingStockPanelTitle => 'MISSING STOCK REPORTS';
+
+  @override
+  String get dashboardMissingStockEmptyTitle => 'No missing stock reports';
+
+  @override
+  String get dashboardMissingStockTimeLabel => 'TIME';
+
+  @override
+  String get dashboardMissingStockApproveButton => 'Approve';
+
+  @override
+  String get dashboardMissingStockRejectButton => 'Reject';
+
+  @override
+  String get dashboardOtherCabinPlaceholderText =>
+      'Expired materials & critical stock (coming next)';
+
+  @override
+  String get dashboardUnappliedPrescriptionsPanelTitle =>
+      'UNAPPLIED PRESCRIPTIONS';
+
+  @override
+  String get dashboardUnappliedPrescriptionsEmptyTitle =>
+      'No unapplied prescriptions';
+
+  @override
+  String get dashboardDoctorLabel => 'DOCTOR';
+
+  @override
+  String get dashboardRoomBedLabel => 'ROOM / BED';
+
+  @override
+  String get dashboardUpcomingTreatmentsPanelTitle => 'UPCOMING TREATMENTS';
+
+  @override
+  String get dashboardUpcomingTreatmentsEmptyTitle => 'No upcoming treatments';
+
+  @override
+  String get dashboardListPanelLoadErrorFallback => 'Could not load';
+
+  @override
+  String get prescriptionActionCompletedSuccess =>
+      'The operation was completed successfully.';
+
+  @override
+  String get prescriptionApprovedSuccess =>
+      'The prescription was approved successfully.';
+
+  @override
+  String get prescriptionDetailPanelPatientFallback => 'Patient';
+
+  @override
+  String get prescriptionDetailPanelSubtitle => 'Prescription History';
+
+  @override
+  String get prescriptionDetailStartDateLabel => 'Start Date';
+
+  @override
+  String get prescriptionDetailEndDateLabel => 'End Date';
+
+  @override
+  String get prescriptionDetailStatusLabel => 'Status';
+
+  @override
+  String get prescriptionCheckWarningDialogTitle => 'Check Warning';
+
+  @override
+  String get prescriptionSaveWithTemplateSuccess =>
+      'The prescription and template were saved successfully.';
+
+  @override
+  String get prescriptionSavedTemplateFailedMessage =>
+      'The prescription was saved, but the template could not be saved.';
+
+  @override
+  String get prescriptionSavedSuccess =>
+      'The prescription was saved successfully.';
+
+  @override
+  String get prescriptionCreatingLoadingMessage =>
+      'Creating prescription. Please wait.';
+
+  @override
+  String get prescriptionTemplateSavingLoadingMessage => 'Saving template.';
+
+  @override
+  String get prescriptionNewTitle => 'New Prescription';
+
+  @override
+  String get prescriptionNewDialogSubtitle =>
+      'Create a prescription or import one from history';
+
+  @override
+  String get prescriptionTabHistory => 'History';
+
+  @override
+  String get prescriptionTabTemplates => 'Templates';
+
+  @override
+  String get prescriptionContentEmptyTitle =>
+      'You haven\'t added any medicine to the prescription yet.';
+
+  @override
+  String get prescriptionContentEmptyDescription =>
+      'The medicines you add will be displayed here.';
+
+  @override
+  String get prescriptionItemNoTimesLabel => 'No times added';
+
+  @override
+  String get prescriptionItemNoMedicineSelected => 'No medicine selected yet';
+
+  @override
+  String get prescriptionPatientFieldLabel => 'Patient';
+
+  @override
+  String get prescriptionDoctorFieldLabel => 'Doctor';
+
+  @override
+  String get prescriptionSaveButton => 'Save Prescription';
+
+  @override
+  String get prescriptionSaveAsTemplateCheckboxLabel => 'Also save as template';
+
+  @override
+  String get prescriptionTemplateNameHint => 'Template Name';
+
+  @override
+  String get prescriptionMedicineFieldLabel => 'Medicine / Material';
+
+  @override
+  String get prescriptionDescriptionFieldLabel => 'Description';
+
+  @override
+  String get prescriptionTomorrowLabel => 'Tomorrow';
+
+  @override
+  String get prescriptionTimesLabel => 'Times';
+
+  @override
+  String get prescriptionAddTimeButton => 'Add time';
+
+  @override
+  String get prescriptionHistorySelectPatientTitle => 'Select a patient';
+
+  @override
+  String get prescriptionHistorySelectPatientDescription =>
+      'Select a patient first to view their prescription history';
+
+  @override
+  String get prescriptionHistoryEmptyDescription =>
+      'This patient has no prescription history';
+
+  @override
+  String prescriptionAddToRxButton(int count) {
+    return 'Add to Prescription ($count)';
+  }
+
+  @override
+  String get prescriptionTemplateEmptyTitle => 'No template found';
+
+  @override
+  String get prescriptionTemplateEmptyDescription =>
+      'There is no saved prescription template';
+
+  @override
+  String get prescriptionTemplateNoItemsMessage => 'This template has no items';
+
+  @override
+  String get prescriptionScreenTitleFallback => 'Prescription Operations';
+
+  @override
+  String get prescriptionContentTooltip => 'Prescription Content';
+
+  @override
+  String get prescriptionShowActiveButton => 'Show active admissions';
+
+  @override
+  String get prescriptionShowDischargedButton => 'Show discharged patients';
+
+  @override
+  String get cabinTemperatureScreenTitle => 'Cabinet Temperature Control';
+
+  @override
+  String get cabinTemperatureFormDialogTitle => 'Edit Cabinet';
+
+  @override
+  String get cabinTemperatureInsideBottomLabel => 'Inside Bottom Temperature';
+
+  @override
+  String get cabinTemperatureInsideTopLabel => 'Inside Top Temperature';
+
+  @override
+  String get cabinTemperatureOutsideBottomLabel => 'Outside Bottom Temperature';
+
+  @override
+  String get cabinTemperatureOutsideTopLabel => 'Outside Top Temperature';
+
+  @override
+  String get cabinTemperatureHumidityBottomLabel => 'Humidity Lower Limit';
+
+  @override
+  String get cabinTemperatureHumidityTopLabel => 'Humidity Upper Limit';
+
+  @override
+  String cabinTemperatureGenericErrorMessage(String error) {
+    return 'An error occurred: $error';
+  }
+
+  @override
+  String get cabinTemperatureStationNotSelectedError => 'No station selected';
+
+  @override
+  String get cabinTemperatureCreateSuccess =>
+      'The cabinet temperature setting was created successfully.';
+
+  @override
+  String get cabinTemperatureUpdateRecordNotFoundError =>
+      'No record found to update';
+
+  @override
+  String get cabinTemperatureUpdateSuccess =>
+      'The cabinet temperature setting was updated successfully.';
+
+  @override
+  String get cabinTemperatureUnnamedStationFallback => 'Unnamed Station';
+
+  @override
+  String get cabinTemperatureStationsLoadingMessage => 'Loading stations...';
+
+  @override
+  String get cabinTemperatureDetailsLoadingMessage =>
+      'Loading temperature details...';
+
+  @override
+  String get cabinTemperatureColumnCabin => 'Cabinet';
+
+  @override
+  String get directedOrdersScreenTitle => 'Directed Order List';
+
+  @override
+  String get directedOrdersColumnProtocolNo => 'Protocol No.';
+
+  @override
+  String get directedOrdersColumnBed => 'Bed';
+
+  @override
+  String get directedOrdersColumnRoom => 'Room';
+
+  @override
+  String get directedOrdersMedicinesTooltip => 'Medicines';
+
+  @override
+  String get directedOrdersPatientsLoadingMessage => 'Loading patients...';
+
+  @override
+  String get directedOrdersColumnBarcode => 'Barcode';
+
+  @override
+  String get medicine_successCreated => 'Drug created';
+
+  @override
+  String get medicine_successUpdated => 'Drug updated';
+
+  @override
+  String get medicalConsumable_successCreated => 'Medical consumable created';
+
+  @override
+  String get medicalConsumable_successUpdated => 'Medical consumable updated';
+
+  @override
+  String get medicine_formTitleNew => 'New Drug';
+
+  @override
+  String get medicine_formTitleEdit => 'Edit Drug';
+
+  @override
+  String get medicine_formSubtitleNew => 'Fill in the drug details';
+
+  @override
+  String get medicine_formSubtitleEdit => 'Update the drug details';
+
+  @override
+  String get medicine_fieldDefinitionName => 'Definition Name';
+
+  @override
+  String get medicine_fieldBarcode => 'Barcode';
+
+  @override
+  String get medicine_fieldName => 'Drug Name';
+
+  @override
+  String get medicine_fieldCode => 'Drug Code';
+
+  @override
+  String get medicine_fieldPrescriptionType => 'Prescription Type';
+
+  @override
+  String get medicine_fieldDose => 'Dose';
+
+  @override
+  String get medicine_fieldManufacturer => 'Manufacturer';
+
+  @override
+  String get medicine_fieldDailyMaxUsage => 'Daily Max. Usage Amount';
+
+  @override
+  String get medicine_fieldDrugType => 'Drug Type';
+
+  @override
+  String get medicine_fieldReturnType => 'Return Method';
+
+  @override
+  String get medicine_checkboxSerumMaxValue =>
+      'Check the max value in the serum cabinet';
+
+  @override
+  String get medicine_checkboxCubicMaxValue =>
+      'Check the max value in the cubic drawer';
+
+  @override
+  String get medicine_checkboxQrCode => 'Has QR Code';
+
+  @override
+  String get medicine_fieldPieceCountLabel => 'Piece Count';
+
+  @override
+  String get medicine_fieldDrugClass => 'Drug Class';
+
+  @override
+  String get medicine_fieldPurchaseType => 'Purchase Method';
+
+  @override
+  String get medicine_checkboxUseMeasurementUnit => 'Use Measurement Unit';
+
+  @override
+  String get medicine_fieldVolume => 'Volume';
+
+  @override
+  String get medicine_fieldDosageForm => 'Dosage Form';
+
+  @override
+  String get medicine_fieldStatus => 'Status';
+
+  @override
+  String get medicine_fieldCountType => 'Count Type';
+
+  @override
+  String get medicine_fieldAtcCode => 'ATC Code';
+
+  @override
+  String get medicine_fieldEquivalentCode => 'Equivalent Code';
+
+  @override
+  String get medicine_checkboxWitnessedPurchase => 'Witnessed Purchase';
+
+  @override
+  String get medicine_checkboxWastageWitnessed => 'Witnessed Waste/Disposal';
+
+  @override
+  String get medicine_checkboxDestroyable => 'Disposable';
+
+  @override
+  String get medicine_fieldActiveIngredient => 'Active Ingredient';
+
+  @override
+  String get medicine_fieldCollectNote => 'Purchase Note';
+
+  @override
+  String get medicine_fieldReturnNote => 'Return Note';
+
+  @override
+  String get medicine_fieldDestructionNote => 'Disposal Note';
+
+  @override
+  String get medicalConsumable_dialogTitle => 'Add/Edit Medical Consumable';
+
+  @override
+  String get medicalConsumable_fieldName => 'Material Name';
+
+  @override
+  String get medicalConsumable_fieldInstitutionCode => 'Institution Code';
+
+  @override
+  String get medicalConsumable_fieldSutCode => 'SUT Code/Annex';
+
+  @override
+  String get medicalConsumable_fieldUbbCode => 'UBB Code';
+
+  @override
+  String get medicalConsumable_fieldMaterialType => 'Material Type';
+
+  @override
+  String get medicalConsumable_fieldStatus => 'Status';
+
+  @override
+  String get medicine_screenTitleFallback =>
+      'Drug/Medical Consumable Definition';
+
+  @override
+  String get medicine_newButtonLabel => 'New Drug';
+
+  @override
+  String get medicine_defineMedicalConsumableButton =>
+      'Define Medical Consumable';
+
+  @override
+  String get medicine_defineActiveIngredientButton =>
+      'Define Active Ingredient';
+
+  @override
+  String get medicine_defineDrugClassButton => 'Define Drug Class';
+
+  @override
+  String get medicine_defineDrugTypeButton => 'Define Drug Type';
+
+  @override
+  String get medicine_createKitButton => 'Create Drug Kit';
+
+  @override
+  String get medicine_defineMaterialTypeButton => 'Define Material Type';
+
+  @override
+  String get medicine_checkboxLowerDose =>
+      'A dose lower than specified may be taken';
+
+  @override
+  String get medicine_checkboxRfid => 'RFID Available';
+
+  @override
+  String get medicine_checkboxMultiPatientAccess => 'Multi-Patient Access';
+
+  @override
+  String get medicine_checkboxSingleUse => 'Single Use';
+
+  @override
+  String get medicine_checkboxCameraRecording => 'Camera Recording';
+
+  @override
+  String get medicine_checkboxIndependentMaterial => 'Independent Drug';
+
+  @override
+  String get medicine_checkboxWastagePharmacyApproval =>
+      'Require Pharmacy Approval for Waste/Disposal?';
+
+  @override
+  String get medicine_checkboxWastageOrderRenewed => 'Renew Waste Order?';
+
+  @override
+  String get medicine_fieldPersonnel => 'Personnel';
+
+  @override
+  String get medicine_fieldStation => 'Station';
+
+  @override
+  String get medicine_fieldUnit => 'Unit';
+
+  @override
+  String get refillList_dialogTitle => 'Drug Refill List';
+
+  @override
+  String refillList_recordNoLabel(Object id) {
+    return 'Refill Record No: $id';
+  }
+
+  @override
+  String refillList_createdDateLabel(String date) {
+    return 'Created Date: $date';
+  }
+
+  @override
+  String refillList_assignedUserNameLabel(String name) {
+    return 'Assigned To: $name';
+  }
+
+  @override
+  String get refillList_formTitleCreate => 'Create Refill List';
+
+  @override
+  String get refillList_formTitleUpdate => 'Update Refill List';
+
+  @override
+  String get refillList_fieldAssignedUser => 'User Assigned to Refill';
+
+  @override
+  String get refillList_screenTitleFallback => 'Refill List';
+
+  @override
+  String get refillList_newButtonLabel => 'New Refill List';
+
+  @override
+  String get report_stationsCategoryTitle => 'Stations';
+
+  @override
+  String get refillList_cellValueYes => 'Yes';
+
+  @override
+  String get refillList_cellValueNo => 'No';
+
+  @override
+  String get refillList_updateStatusTooltip => 'Update Status';
+
+  @override
+  String get refillList_defaultUnitFallback => 'Piece';
+
+  @override
+  String get report_expiredItemsTitleFallback => 'Expired Materials';
+
+  @override
+  String get report_stationStockTitle => 'Station Cabinet Stock';
+
+  @override
+  String get report_stationTransactionTitleFallback => 'Station Transactions';
+
+  @override
+  String get inconsistency_screenTitleFallback => 'Inconsistency Movements';
+
+  @override
+  String get inconsistency_viewTooltip => 'View';
+
+  @override
+  String get inconsistency_photoTooltip => 'Photo';
+
+  @override
+  String get hospitalization_formTitleNew => 'Enter New Admission';
+
+  @override
+  String get hospitalization_formTitleEdit => 'Edit Admission';
+
+  @override
+  String get hospitalization_fieldPatient => 'Patient';
+
+  @override
+  String get hospitalization_fieldCode => 'Admission Code';
+
+  @override
+  String get hospitalization_fieldDoctor => 'Doctor';
+
+  @override
+  String get hospitalization_fieldPhysicalService => 'Physical Service';
+
+  @override
+  String get hospitalization_fieldInpatientService => 'Inpatient Service';
+
+  @override
+  String get hospitalization_fieldRoom => 'Room';
+
+  @override
+  String get hospitalization_roomDialogTitle => 'Select Room';
+
+  @override
+  String get hospitalization_fieldBed => 'Bed';
+
+  @override
+  String get hospitalization_bedDialogTitle => 'Select Bed';
+
+  @override
+  String get hospitalization_fieldAdmissionDate => 'Admission Date';
+
+  @override
+  String get hospitalization_fieldExitDate => 'Discharge Date';
+
+  @override
+  String get hospitalization_checkboxBaby => 'Infant';
+
+  @override
+  String get hospitalization_screenTitleFallback => 'Patient Operations';
+
+  @override
+  String get hospitalization_editPatientTooltip => 'Edit Patient Details';
+
+  @override
+  String get hospitalization_showActiveTooltip => 'Show active admissions';
+
+  @override
+  String get hospitalization_showDischargedTooltip =>
+      'Show discharged patients';
+
+  @override
+  String get hospitalization_createButton => 'Create New Admission';
+
+  @override
+  String get patient_formTitleNew => 'Create New Patient';
+
+  @override
+  String get patient_formTitleEdit => 'Edit Patient';
+
+  @override
+  String get patient_fieldIdentity => 'National ID No.';
+
+  @override
+  String get patient_fieldName => 'First Name';
+
+  @override
+  String get patient_fieldSurname => 'Last Name';
+
+  @override
+  String get patient_fieldBirthDate => 'Date of Birth';
+
+  @override
+  String get patient_fieldGender => 'Gender';
+
+  @override
+  String get patient_fieldWeight => 'Weight';
+
+  @override
+  String get patient_fieldMotherName => 'Mother\'s Name';
+
+  @override
+  String get patient_fieldFatherName => 'Father\'s Name';
+
+  @override
+  String get patient_fieldPhone => 'Phone';
+
+  @override
+  String get patient_fieldAddress => 'Address';
+
+  @override
+  String get patient_fieldProtocolNo => 'Protocol No.';
+
+  @override
+  String get activeIngredientDialogSelectTitle => 'Select Active Ingredient';
+
+  @override
+  String get activeIngredientDialogTitle => 'Active Ingredient Definition';
+
+  @override
+  String get activeIngredientFormAddTitle => 'Add Active Ingredient';
+
+  @override
+  String get activeIngredientFormEditTitle => 'Edit Active Ingredient';
+
+  @override
+  String get activeIngredientListEmptyTitle => 'No active ingredients yet';
+
+  @override
+  String get assignmentScreenTitle => 'Station Material Assignment';
+
+  @override
+  String get assignmentStationSelectPlaceholder => 'Select a station';
+
+  @override
+  String get drugClassDialogSelectTitle => 'Select Drug Class';
+
+  @override
+  String get drugClassDialogTitle => 'Drug Class Definition';
+
+  @override
+  String get drugClassFormAddTitle => 'Add Drug Class';
+
+  @override
+  String get drugClassFormEditTitle => 'Edit Drug Class';
+
+  @override
+  String get drugClassFormNameLabel => 'Drug Class Name';
+
+  @override
+  String get drugClassListEmptyTitle => 'No drug classes yet';
+
+  @override
+  String get drugTypeDialogSelectTitle => 'Select Drug Type';
+
+  @override
+  String get drugTypeDialogTitle => 'Drug Type Definition';
+
+  @override
+  String get drugTypeFormAddTitle => 'Add Drug Type';
+
+  @override
+  String get drugTypeFormEditTitle => 'Edit Drug Type';
+
+  @override
+  String get drugTypeFormNameLabel => 'Drug Type Name';
+
+  @override
+  String get drugTypeListEmptyTitle => 'No drug types yet';
+
+  @override
+  String get kitFormAddTitle => 'New Kit';
+
+  @override
+  String get kitFormEditTitle => 'Edit Kit';
+
+  @override
+  String get kitFormNameLabel => 'Kit Name';
+
+  @override
+  String get kitDialogSelectTitle => 'Select Kit';
+
+  @override
+  String get kitDialogTitle => 'Kit Definition';
+
+  @override
+  String get kitListEmptyTitle => 'No kits yet';
+
+  @override
+  String get kitListManageContentTooltip => 'Manage Kit Content';
+
+  @override
+  String get kitContentFormAddTitle => 'Add Kit Content';
+
+  @override
+  String get kitContentFormEditTitle => 'Edit Kit Content';
+
+  @override
+  String get kitContentFormMaterialLabel => 'Material';
+
+  @override
+  String get kitContentFormPieceLabel => 'Piece Count';
+
+  @override
+  String get kitContentDialogTitle => 'Kit Content Definition';
+
+  @override
+  String get kitContentListEmptyTitle => 'No kit content yet';
+
+  @override
+  String get materialTypeFormAddTitle => 'New Material Type';
+
+  @override
+  String get materialTypeFormEditTitle => 'Edit Material Type';
+
+  @override
+  String get materialTypeFormNameLabel => 'Material Type Name';
+
+  @override
+  String get materialTypeDialogSelectTitle => 'Select Material Type';
+
+  @override
+  String get materialTypeDialogTitle => 'Material Type Definition';
+
+  @override
+  String get materialTypeListEmptyTitle => 'No material types yet';
+
+  @override
+  String get roleFormEditTitle => 'Edit Role';
+
+  @override
+  String get roleFormAddTitle => 'Add Role';
+
+  @override
+  String get roleFormNameLabel => 'Role Name';
+
+  @override
+  String get roleScreenTitle => 'Role Definition';
+
+  @override
+  String get roleScreenAddButton => 'New Role';
+
+  @override
+  String get roleDeleteSuccessMessage => 'Role deleted successfully';
+
+  @override
+  String get unitFormAddTitle => 'Create New Unit';
+
+  @override
+  String get unitFormEditTitle => 'Edit Unit';
+
+  @override
+  String get unitDialogTitle => 'Unit';
+
+  @override
+  String get unitListEmptyTitle => 'No units yet';
+
+  @override
+  String get userCategoryNormalLabel => 'Normal';
+
+  @override
+  String get userCategoryTimeBasedLabel => 'Time-Limited';
+
+  @override
+  String get userCategoryTemporaryLabel => 'Temporary';
+
+  @override
+  String get userDeleteSuccessMessage => 'User deleted successfully';
+
+  @override
+  String get userValidDateUpdateSuccessMessage => 'Expiry date updated';
+
+  @override
+  String get userFormEditTitle => 'Edit User';
+
+  @override
+  String get userFormCreateTitle => 'Create User';
+
+  @override
+  String get userRegistrationNumberLabel => 'Institution Registry No.';
+
+  @override
+  String get userNameLabel => 'First Name';
+
+  @override
+  String get userSurnameLabel => 'Last Name';
+
+  @override
+  String get userRoleTypeLabel => 'Occupation Type';
+
+  @override
+  String get userUsageTypeLabel => 'Usage Type';
+
+  @override
+  String get userValidUntilLabel => 'Expiry Date';
+
+  @override
+  String get userEmailLabel => 'Email';
+
+  @override
+  String get userOrderPermissionLabel => 'Purchase Without Order';
+
+  @override
+  String get userWitnessedStationEntryLabel => 'Witnessed Station Entry';
+
+  @override
+  String get userKitPurchaseLabel => 'Kit Purchase';
+
+  @override
+  String get userAuthorizedStationsLabel => 'Authorized Stations';
+
+  @override
+  String get userUsernameLabel => 'Username';
+
+  @override
+  String get userScreenTitle => 'User List';
+
+  @override
+  String get userScreenAddButton => 'New User';
+
+  @override
+  String get userBulkUpdateValidDateButton => 'Update Expiry Date';
+
+  @override
+  String get userValidDateDialogTitle => 'Update Date';
+
+  @override
+  String get userValidDateDialogSaveButton => 'Update';
+
+  @override
+  String get userNewValidUntilLabel => 'New Expiry Date';
+
+  @override
+  String get userNationalIdColumnHeader => 'National ID No.';
+
+  @override
+  String get warningFormAddTitle => 'New Warning';
+
+  @override
+  String get warningFormEditTitle => 'Edit Warning';
+
+  @override
+  String get warningFormAddSubtitle => 'Fill in the warning details';
+
+  @override
+  String get warningFormEditSubtitle => 'Update the warning details';
+
+  @override
+  String get warningFormSubjectLabel => 'Warning Subject';
+
+  @override
+  String get warningFormTextLabel => 'Warning Text';
+
+  @override
+  String get warningScreenTitle => 'Warning Definition';
+
+  @override
+  String get dashboard_allSectionsLoadError =>
+      'The data could not be loaded. Please try again.';
+
+  @override
+  String get dashboard_sktCriticalRingLabel => 'Critical\n(<7 days)';
+
+  @override
+  String get dashboard_sktWarningRingLabel => 'Warning\n(7-30 days)';
+
+  @override
+  String get dashboard_sktExpiredRingLabel => 'Expired\nItems';
+
+  @override
+  String get dashboard_sktStatusHeader => 'EXPIRY STATUS';
+
+  @override
+  String dashboard_sktItemCountBadge(int count) {
+    return '$count Items';
+  }
+
+  @override
+  String get dashboard_sktExpiredTag => 'EXPIRED';
+
+  @override
+  String get dashboard_sktDestroyHint => 'destroy';
+
+  @override
+  String dashboard_sktDaysRemainingLabel(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'days left',
+      one: 'day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboard_upcomingTreatmentsHeader => 'UPCOMING TREATMENTS';
+
+  @override
+  String dashboard_pendingTreatmentsBadge(int count) {
+    return '$count Pending';
+  }
+
+  @override
+  String get dashboard_pendingFilterLabel => 'Pending';
+
+  @override
+  String get dashboard_urgentFilterLabel => 'Urgent';
+
+  @override
+  String get dashboard_treatmentSearchHint => 'Search patient or medicine...';
+
+  @override
+  String get dashboard_newAssignButton => 'New Assignment';
+
+  @override
+  String get dashboard_noTreatmentsAllFilter => 'No treatment records found';
+
+  @override
+  String get dashboard_noTreatmentsPendingFilter => 'No pending treatments';
+
+  @override
+  String get dashboard_noTreatmentsUrgentFilter => 'No urgent treatments';
+
+  @override
+  String get dashboard_priorityUrgentLabel => 'Urgent';
+
+  @override
+  String get dashboard_priorityNormalLabel => 'Normal';
+
+  @override
+  String get dashboard_priorityRoutineLabel => 'Routine';
+
+  @override
+  String get dashboard_statusPendingLabel => 'Pending';
+
+  @override
+  String get dashboard_statusDoneLabel => 'Dispensed';
+
+  @override
+  String get dashboard_statusReturnedLabel => 'Returned';
+
+  @override
+  String settings_sectionComingSoon(String label) {
+    return '$label settings coming soon';
+  }
+
+  @override
+  String get refund_masterScreenNotReady =>
+      'The master cabinet return screen isn\'t ready yet.';
+
+  @override
+  String get core_cabinConn_managerNotFoundError =>
+      'Management card not found.';
+
+  @override
+  String get core_cabinConn_disconnectedError => 'Connection lost';
+
+  @override
+  String get common_action_pullDrawerTitle => 'Open the drawer';
+
+  @override
+  String get common_action_pullDrawerSubtitle =>
+      'The lock is open, please pull it.';
+
+  @override
+  String get masterDrawer_openingLidTitle => 'Opening lids';
+
+  @override
+  String get masterDrawer_openingLidSubtitle =>
+      'Preparing the cubic drawer lids.';
+
+  @override
+  String get masterDrawer_readySubtitle =>
+      'Complete the operation and confirm.';
+
+  @override
+  String get common_action_closeDrawerTitle => 'Close the drawer';
+
+  @override
+  String get common_action_closeDrawerSubtitle =>
+      'The operation is confirmed, please close it.';
+
+  @override
+  String get common_action_drawerClosed => 'Drawer closed';
+
+  @override
+  String get common_action_operationCompletedSubtitle =>
+      'The operation is complete.';
+
+  @override
+  String get common_action_drawerError => 'Drawer error';
+
+  @override
+  String common_error_unexpectedWithDetail(Object error) {
+    return 'Unexpected error: $error';
+  }
+
+  @override
+  String masterDrawer_lidOpenFailedError(Object error) {
+    return 'The lid could not be opened: $error';
+  }
+
+  @override
+  String get common_action_devicePreparing => 'Preparing device...';
+
+  @override
+  String common_error_connectionErrorWithDetail(Object error) {
+    return 'Connection error: $error';
+  }
+
+  @override
+  String get common_action_lockOpening => 'Opening lock...';
+
+  @override
+  String common_error_lockOpenFailedWithDetail(Object error) {
+    return 'The lock could not be opened: $error';
+  }
+
+  @override
+  String mobileDrawer_portSubtitle(int port) {
+    return 'Drawer $port';
+  }
+
+  @override
+  String get mobileDrawer_openedSubtitle =>
+      'Close the drawer to complete the operation.';
+
+  @override
+  String get mobileDrawer_closedSubtitle => 'Waiting for your confirmation';
+
+  @override
+  String common_error_managerConnectFailedWithDetail(Object error) {
+    return 'Could not connect to the management card: $error';
+  }
+
+  @override
+  String mobileDrawer_openCommandFailedError(Object error) {
+    return 'Could not send the drawer-open command: $error';
+  }
+
+  @override
+  String get mobileDrawer_statusTimeoutError =>
+      'Timed out while reading the drawer status.';
+
+  @override
+  String get mobileDrawer_openNotConfirmedError =>
+      'Could not confirm that the drawer opened.';
+
+  @override
+  String mobileDrawer_statusReadError(Object error) {
+    return 'An error occurred while reading the drawer status: $error';
+  }
+
+  @override
+  String get patientPicker_searchHint => 'Search patient';
+
+  @override
+  String get patientPicker_orderlessToggleLabel => 'Without Order';
+
+  @override
+  String get patientPicker_orderedToggleLabel => 'With Order';
+
+  @override
+  String get patientPicker_myPatientsToggleLabel => 'My Patients';
+
+  @override
+  String get patientPicker_urgentPatientHint =>
+      'Create a record for an urgent patient not on the list.';
+
+  @override
+  String get patientPicker_createUrgentPatientButton => 'Create Urgent Patient';
+
+  @override
+  String get patientPicker_urgentPatientCreatedMessage =>
+      'Urgent patient created.';
+
+  @override
+  String get hw_cabinOps_serumSlaveModeError =>
+      'The serum card could not be set to slave mode...';
+
+  @override
+  String hw_cabinOps_solenoidMissingError(Object port) {
+    return 'Port $port has no solenoid (.no).';
+  }
+
+  @override
+  String hw_cabinOps_portOpenFailedError(Object port, Object response) {
+    return 'Port $port could not be opened. Response: $response';
+  }
+
+  @override
+  String hw_cabinOps_masterDrawerOpenFailedError(
+    Object row,
+    Object port,
+    Object drawer,
+    Object response,
+  ) {
+    return 'The master drawer could not be opened (row=$row, port=$port, drawer=$drawer). Response: $response';
+  }
+
+  @override
+  String hw_cabinOps_masterSerumOpenFailedError(Object row, Object response) {
+    return 'The master serum drawer could not be opened (row=$row). Response: $response';
+  }
+
+  @override
+  String hw_serial_connectFailedDetailedError(String portName) {
+    return 'Could not connect to port $portName. Make sure the device is connected and powered on, and that the port isn\'t in use by another application.';
+  }
+
+  @override
+  String hw_serial_portConfigFailedError(String portName, Object error) {
+    return 'Port configuration failed ($portName): $error';
+  }
+
+  @override
+  String hw_serial_systemErrorSuffix(Object error) {
+    return 'System error: $error';
+  }
+
+  @override
+  String get hw_serial_portInUseSuffix =>
+      'The port may be in use by another application.';
+
+  @override
+  String hw_serial_readErrorWithDetail(Object error) {
+    return 'Port read error: $error';
+  }
+
+  @override
+  String get hw_serial_reconnectingStatus => 'Restarting the connection.';
+
+  @override
+  String hw_rfid_connectFailedError(Object error) {
+    return 'Could not connect to the RFID reader: $error';
+  }
+
+  @override
+  String get hw_rfid_invalidResponseError =>
+      'An invalid response was received.';
+
+  @override
+  String hw_rfid_unreachableError(Object error) {
+    return 'The RFID reader could not be reached: $error';
+  }
+
+  @override
+  String get hw_rfid_testTimeoutError => 'The RFID connection test timed out.';
+
+  @override
+  String get hw_rfid_powerChangeBlockedError =>
+      'The power setting cannot be changed while inventory is active. Call stopInventory() first.';
+
+  @override
+  String hw_rfid_setModeRejectedError(Object status) {
+    return 'SetWorkingMode was rejected (status=0x$status)';
+  }
+
+  @override
+  String hw_rfid_setAntennaRejectedError(Object status) {
+    return 'SetWorkingAntenna was rejected (status=0x$status)';
+  }
+
+  @override
+  String get hw_rfid_antennaConnFailedHint =>
+      ' (antenna connection error — one of the enabled ports is empty)';
+
+  @override
+  String get hw_rfid_noAntennaConnectedError =>
+      'Could not connect to any antenna (all ports are empty).';
+
+  @override
+  String get hw_rfid_notConnectedError => 'The RFID service is not connected.';
+
+  @override
+  String get hw_rfid_commandPendingError =>
+      'The previous command is still awaiting a response.';
+
+  @override
+  String hw_rfid_commandTimeoutError(Object cmd) {
+    return 'The command response timed out (cmd=0x$cmd).';
+  }
+
+  @override
+  String hw_rfid_commandErrorWithDetail(Object error) {
+    return 'Command error: $error';
+  }
+
+  @override
+  String get hw_rfid_mockNotConnectedError =>
+      'The mock RFID service is not connected.';
+
+  @override
+  String get operationStatus_fatalErrorLabel => 'Critical Error';
+
+  @override
+  String get operationStatus_errorLabel => 'Error';
+
+  @override
+  String get operationStatus_rollingBackLabel => 'Rolling back the operation';
+
+  @override
+  String get operationStatus_finalizingLabel => 'Finalizing the operation';
+
+  @override
+  String get operationStatus_drugsStillInCabinetLabel =>
+      'Medicines are still in the cabinet';
+
+  @override
+  String get operationStatus_incompleteLabel => 'Incomplete / Inconsistent';
+
+  @override
+  String get operationStatus_scanningLabel => 'Scanning';
+
+  @override
+  String get operationStatus_reportedMissingLabel => 'Reported Missing';
+
+  @override
+  String get operationBanner_unplannedMovementTitle =>
+      'Unplanned movement detected';
+
+  @override
+  String operationBanner_unplannedMovementMessage(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString tags were removed from the cabinet unexpectedly.',
+      one: '$countString tag was removed from the cabinet unexpectedly.',
+    );
+    return '$_temp0 A report will be sent to the pharmacy.';
+  }
+
+  @override
+  String get operationBanner_unexpectedTagBlockingTitle =>
+      'Tag(s) not belonging to this cabinet detected';
+
+  @override
+  String get operationBanner_unexpectedTagWarningTitle => 'Unexpected medicine';
+
+  @override
+  String operationBanner_unexpectedTagBlockingMessage(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString tags',
+      one: '$countString tag',
+    );
+    return 'Remove the following $_temp0 from the drawer to continue.';
+  }
+
+  @override
+  String operationBanner_unexpectedTagWarningMessage(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString tags',
+      one: '$countString tag',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'were',
+      one: 'was',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'them',
+      one: 'it',
+    );
+    return '$_temp0 not belonging to this cabinet $_temp1 read. Please remove $_temp2.';
+  }
+
+  @override
+  String get operationBanner_missingStockTitle => 'Missing stock';
+
+  @override
+  String operationBanner_missingStockMessage(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString medicines were',
+      one: '$countString medicine was',
+    );
+    return '$_temp0 not found in the cabinet. It will be reported as missing stock when completed.';
+  }
+
+  @override
+  String get common_okButton => 'OK';
+
+  @override
+  String get cabinPatientPicker_searchHint =>
+      'Search patient, room, bed, or service...';
+
+  @override
+  String get common_unknownPatientFallback => 'Unknown Patient';
+
+  @override
+  String get patientListPanel_searchHint => 'Search patient...';
+
+  @override
+  String rxItemCard_maxQuantitySuffix(String max, String unit) {
+    return '/ max. $max $unit';
+  }
+
+  @override
+  String get census_extraStockSummaryMessage =>
+      'Excess stock will be reported at the end of the operation.';
+
+  @override
+  String get cabinOperation_hint_scanning =>
+      'Scanning the cabinet, please wait';
+
+  @override
+  String get census_hint_waitingClose =>
+      'Recorded — close the drawer to finish the census';
+
+  @override
+  String get census_hint_closedEarly =>
+      'The drawer closed early — you can retry or cancel';
+
+  @override
+  String get cabinOperation_hint_error => 'An error occurred — you can retry';
+
+  @override
+  String get census_hint_unexpectedTag =>
+      'There is a tag that doesn\'t belong in this cabinet — remove it to continue';
+
+  @override
+  String get census_hint_readyToComplete =>
+      'Press the button to complete the census';
+
+  @override
+  String get cabinOperation_action_closeDrawer => 'Close the Drawer';
+
+  @override
+  String get census_label_counted => 'Counted';
+
+  @override
+  String get census_label_excess => 'Excess';
+
+  @override
+  String get cabinOperation_label_unexpectedTag => 'Foreign';
+
+  @override
+  String get intake_error_witnessRequired => 'A witness login is required.';
+
+  @override
+  String get intake_error_noValidTargets =>
+      'The intake could not be performed for the selected medicines.';
+
+  @override
+  String get intake_error_noDrawerFound => 'No drawer was found to take from.';
+
+  @override
+  String get intake_hint_noStock => 'There is no stock in the cabinet';
+
+  @override
+  String intake_label_witnessName(String name) {
+    return 'Witness: $name';
+  }
+
+  @override
+  String get intake_hint_witnessRequired => 'Witness login required';
+
+  @override
+  String get intake_status_checking => 'Checking...';
+
+  @override
+  String get intake_status_readyToTake => 'Ready to take';
+
+  @override
+  String get intake_status_checkFailed => 'Check failed';
+
+  @override
+  String get intake_emptyState_selectMedicine =>
+      'Select a medicine to start the intake.';
+
+  @override
+  String intake_label_multiMedicine(int count) {
+    return '$count different medicines';
+  }
+
+  @override
+  String intake_label_takenAmount(String amount, String unit) {
+    return 'Taken: $amount $unit';
+  }
+
+  @override
+  String intake_label_countFieldLabel(String unit) {
+    return 'Count ($unit)';
+  }
+
+  @override
+  String get intake_hint_nextCellOpens =>
+      'The next cell will open once you confirm.';
+
+  @override
+  String get intake_hint_confirmCloses =>
+      'The drawer will close once you confirm.';
+
+  @override
+  String get intake_hint_searchMedicine => 'Search medicine (name / barcode)';
+
+  @override
+  String get intake_hint_selectionLocked =>
+      'Intake in progress — selection is locked.';
+
+  @override
+  String get intake_hint_autoQueueOrder =>
+      'Drawers will open in the shortest-path order.';
+
+  @override
+  String intake_info_witnessAutoAssigned(String name) {
+    return '$name was also assigned as the witness for this medicine.';
+  }
+
+  @override
+  String get intake_error_queueTitle => 'The intake could not be completed';
+
+  @override
+  String get intake_error_queueMessage =>
+      'Put the medicines back where you took them from.';
+
+  @override
+  String get intake_error_selfWitness =>
+      'The user performing the operation cannot also witness it.';
+
+  @override
+  String intake_success_witnessConfirmed(String name) {
+    return '$name was confirmed as the witness.';
+  }
+
+  @override
+  String get intake_witnessDialog_title => 'Witness Verification';
+
+  @override
+  String get intake_witnessDialog_usernameLabel => 'Witness Username';
+
+  @override
+  String get intake_witnessDialog_usernameRequired => 'Enter a username';
+
+  @override
+  String get intake_witnessDialog_passwordLabel => 'Witness Password';
+
+  @override
+  String get intake_witnessDialog_passwordRequired => 'Enter a password';
+
+  @override
+  String get intake_witnessDialog_confirmButton => 'Confirm Witness';
+
+  @override
+  String get intake_witnessDialog_anyoneInfo =>
+      'Any staff member can witness this operation.';
+
+  @override
+  String intake_witnessDialog_authorizedWitnesses(int count) {
+    return 'Authorized Witnesses ($count)';
+  }
+
+  @override
+  String cabinOperation_hint_fatalError(String message) {
+    return 'A critical error occurred: $message';
+  }
+
+  @override
+  String get cabinOperation_hint_completed => 'Operation completed';
+
+  @override
+  String get cabinOperation_hint_waitingCloseGeneric =>
+      'Recorded. Close the drawer to finish the operation';
+
+  @override
+  String get cabinOperation_hint_closedEarlyGeneric =>
+      'The drawer was closed. You can cancel or continue where you left off';
+
+  @override
+  String get cabinOperation_hint_ready =>
+      'Ready — you can complete the operation';
+
+  @override
+  String get intake_hint_extraPlacement =>
+      'A medicine that shouldn\'t be in the cabinet was loaded, please remove it.';
+
+  @override
+  String get intake_hint_takeItems =>
+      'Take the medicines, then complete the operation';
+
+  @override
+  String get cabinOperation_action_completeGeneric => 'Complete the operation';
+
+  @override
+  String get rfidStatus_notFound => 'Not Found';
+
+  @override
+  String get rfidStatus_scanning => 'Scanning';
+
+  @override
+  String get intake_label_noRfid => 'No RFID';
+
+  @override
+  String get cabinOperation_label_selected => 'Selected';
+
+  @override
+  String get intake_label_readInCabin => 'Read in Cabinet';
+
+  @override
+  String intake_label_tagCount(int count) {
+    return '$count tags';
+  }
+
+  @override
+  String get intake_label_takenCount => 'Taken';
+
+  @override
+  String get intake_label_unauthorizedTake => 'Unauthorized Take';
+
+  @override
+  String get intake_error_retryOrFinish =>
+      'You can retry, or finish the operation by taking back the medicines you placed.';
+
+  @override
+  String get refill_label_placed => 'Placed';
+
+  @override
+  String get refill_label_placedCount => 'Placed';
+
+  @override
+  String refill_label_placedProgress(Object done, Object total) {
+    return '$done / $total';
+  }
+
+  @override
+  String get cabinOperation_label_unplanned => 'Unplanned';
+
+  @override
+  String get refill_label_extraTag => 'Extra Tag';
+
+  @override
+  String get refill_error_retry => 'You can try again.';
+
+  @override
+  String get unload_hint_waitingClose =>
+      'Recorded — close the drawer to finish unloading';
+
+  @override
+  String get unload_hint_closedEarly =>
+      'The drawer closed early — you can retry or cancel';
+
+  @override
+  String get unload_hint_readyToComplete =>
+      'Press the button to complete unloading';
+
+  @override
+  String get unload_label_unloaded => 'Unloaded';
+
+  @override
+  String unload_label_unloadProgress(Object done, Object total) {
+    return '$done / $total';
+  }
+
+  @override
+  String wizard_stepBadge(int step, int total) {
+    return 'Step $step / $total';
+  }
+
+  @override
+  String get wizard_step4Header => 'Drawer Configuration';
+
+  @override
+  String get wizard_step4SubtitleMobile =>
+      'Define the mobile cabinet\'s drawer count, internal sections, and port connections.';
+
+  @override
+  String get wizard_step4SubtitleMaster =>
+      'The cabinet\'s internal structure will be read automatically from the device.';
+
+  @override
+  String get wizard_backButton => 'Back';
+
+  @override
+  String get wizard_testCabinConnectionButton => 'Test Cabinet Connection';
+
+  @override
+  String get wizard_testingInProgress => 'Testing…';
+
+  @override
+  String get wizard_connectionSuccessLabel => 'Connection successful';
+
+  @override
+  String get wizard_retestLink => 'Test again';
+
+  @override
+  String get wizard_cabinConnectionErrorFallback =>
+      'Could not establish a connection. Check the port settings.';
+
+  @override
+  String get wizard_testRfidConnectionButton => 'Test Antenna Connection';
+
+  @override
+  String wizard_rfidFirmwareInfo(String firmwareVersion, Object power) {
+    return '· FW $firmwareVersion  $power dBm';
+  }
+
+  @override
+  String get wizard_rfidConnectionErrorFallback =>
+      'Could not establish a connection. Check the IP and port settings.';
+
+  @override
+  String get wizard_portLabel => 'Port';
+
+  @override
+  String get wizard_rfidReaderToggleLabel => 'Has RFID reader';
+
+  @override
+  String get wizard_rfidIpAddressLabel => 'RFID IP Address';
+
+  @override
+  String get wizard_rfidPortFieldLabel => 'RFID Port';
+
+  @override
+  String get wizard_drawerCountRangeHint => '1–8 drawers';
+
+  @override
+  String get wizard_sameConfigToggleLabel =>
+      'All drawers have the same structure';
+
+  @override
+  String get wizard_sameConfigToggleOnDesc =>
+      'All drawers use the same row/column configuration';
+
+  @override
+  String get wizard_sameConfigToggleOffDesc =>
+      'When off, row/column can be set separately for each drawer';
+
+  @override
+  String wizard_drawerRowCellSummary(int rowCount, int totalCells) {
+    return '$rowCount rows · $totalCells cells';
+  }
+
+  @override
+  String wizard_drawerPortLabel(Object portNumber) {
+    return 'Port $portNumber';
+  }
+
+  @override
+  String wizard_rowLabel(int rowIndex) {
+    return 'ROW $rowIndex';
+  }
+
+  @override
+  String get wizard_serviceDetailsLoadError =>
+      'Could not load the service details.';
+
+  @override
+  String get wizard_stationDetailsLoadError =>
+      'Could not load the station details.';
+
+  @override
+  String get wizard_stationsLoadErrorFallback => 'Could not load the stations.';
+
+  @override
+  String get wizard_noStationsFoundMessage =>
+      'No registered stations were found.';
+
+  @override
+  String get wizard_noRoomsDefinedMessage =>
+      'No rooms are defined for this station.';
+
+  @override
+  String wizard_selectedRoomCountBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rooms',
+      one: '$count room',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String wizard_roomSelectionFraction(int selected, int total) {
+    return '$selected/$total';
+  }
+
+  @override
+  String get refill_hint_extraPlacement =>
+      'A tag other than the selected medicines was placed, please remove it';
+
+  @override
+  String get refill_hint_placeItems =>
+      'Place the medicines, then complete the operation';
+
+  @override
+  String get appException_networkUnavailable =>
+      'Could not connect to the server. Check your network connection.';
+
+  @override
+  String get appException_timeout =>
+      'The server did not respond. Please try again.';
+
+  @override
+  String appException_serviceError5xx(Object statusCode) {
+    return 'Server error ($statusCode). Please try again.';
+  }
+
+  @override
+  String appException_serviceErrorOther(Object statusCode) {
+    return 'The operation could not be completed ($statusCode).';
+  }
+
+  @override
+  String get appException_malformedData =>
+      'Unexpected data was received from the server.';
+
+  @override
+  String get appException_emptyResponse =>
+      'The server returned an empty response.';
+
+  @override
+  String appException_validationField(String field) {
+    return 'The $field field is invalid.';
+  }
+
+  @override
+  String get appException_validationGeneric =>
+      'The information entered is invalid.';
+
+  @override
+  String get appException_mapping =>
+      'An error occurred while processing the data.';
+
+  @override
+  String get appException_cache => 'Could not read local data.';
+
+  @override
+  String get appException_staleCache =>
+      'Cannot reach up-to-date data. Please check the connection.';
+
+  @override
+  String appException_notFoundWithType(String resourceType) {
+    return '$resourceType not found.';
+  }
+
+  @override
+  String get appException_notFoundGeneric => 'Record not found.';
+
+  @override
+  String get appException_unexpected =>
+      'An unexpected error occurred. Please try again.';
+
+  @override
+  String get appException_serialPort =>
+      'Could not connect to the serial port. Please contact technical service.';
+
+  @override
+  String get appException_custom =>
+      'An unknown error occurred. Please try again later.';
+
+  @override
+  String get dataError_emptyResponse => 'The server returned an empty response';
+
+  @override
+  String get dataError_malformedResponse =>
+      'The response could not be processed';
+
+  @override
+  String get dataError_requestTimeout => 'The request timed out';
+
+  @override
+  String get dataError_networkUnavailable => 'Could not connect to the network';
+
+  @override
+  String get dataError_genericApiError =>
+      'We encountered an error. Please try again later.';
+
+  @override
+  String get dataError_requestCancelled => 'The request was cancelled';
+
+  @override
+  String get dataError_envelopeErrorFallback => 'Error';
+
+  @override
+  String get authError_invalidTokenResponse =>
+      'An invalid token response was received from the server';
+
+  @override
+  String get authError_userInfoFetchFailed =>
+      'Could not retrieve user information';
+
+  @override
+  String get authError_userInfoEmpty =>
+      'The user information returned was empty';
+
+  @override
+  String get authError_genericLoginError => 'An error occurred';
+
+  @override
+  String get authError_invalidCredentialsMock =>
+      'Incorrect username or password.';
+
+  @override
+  String get dataGuard_deleteActiveIngredientIdEmpty =>
+      'The ID of the active ingredient to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteBranchIdEmpty =>
+      'The ID of the branch to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteCabinIdEmpty =>
+      'The ID of the cabinet to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteDosageFormIdEmpty =>
+      'The ID of the dosage form to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteDrugClassIdEmpty =>
+      'The ID of the drug class to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteFirmIdEmpty =>
+      'The ID of the firm to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteDrugTypeIdEmpty =>
+      'The ID of the drug type to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteHospitalizationIdEmpty =>
+      'The ID of the admission to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteKitIdEmpty =>
+      'The ID of the kit to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteKitContentIdEmpty =>
+      'The ID of the kit content to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteMaterialTypeIdEmpty =>
+      'The ID of the material type to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteMedicineIdEmpty =>
+      'The ID of the medicine to delete cannot be empty';
+
+  @override
+  String get dataGuard_deletePatientIdEmpty =>
+      'The ID of the patient to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteRoleIdEmpty =>
+      'The ID of the role to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteServiceIdEmpty =>
+      'The ID of the service to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteStationIdEmpty =>
+      'The ID of the station to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteUnitIdEmpty =>
+      'The ID of the unit to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteWarehouseIdEmpty =>
+      'The ID of the warehouse to delete cannot be empty';
+
+  @override
+  String get dataGuard_deleteWarningIdEmpty =>
+      'The ID of the warning to delete cannot be empty';
+
+  @override
+  String get dataGuard_updatePatientIdEmpty =>
+      'The ID of the patient to update cannot be empty';
+
+  @override
+  String get dataGuard_updateHospitalizationIdEmpty =>
+      'The ID of the admission to update cannot be empty';
+
+  @override
+  String get core_genericErrorRetryMessage =>
+      'An error occurred. Please try again later.';
+
+  @override
+  String get core_genericErrorShortMessage => 'An error occurred.';
+
+  @override
+  String get cabinCore_createError =>
+      'An error occurred while creating the cabinet. Please try again later.';
+
+  @override
+  String get cabinCore_activeCabinNotFound => 'No active cabinet found';
+
+  @override
+  String get cabinCore_mobileCabinDesignNotFound =>
+      'Mobile cabinet design not found';
+
+  @override
+  String get cabinCore_cabinDesignNotFound => 'Cabinet design not found';
+
+  @override
+  String get cabinCore_createdButIdMissing =>
+      'The cabinet was created but its ID could not be retrieved.';
+
+  @override
+  String get cabinCore_definitionsNotFound =>
+      'The definitions could not be retrieved.';
+
+  @override
+  String get cabinCore_noCardsFound => 'No cards were found.';
+
+  @override
+  String get cabinCore_noMatchingDrawerFound => 'No matching drawer was found.';
+
+  @override
+  String get cabinCore_designDataNotFound => 'No data was found to save.';
+
+  @override
+  String get prescriptionCore_createError =>
+      'An error occurred while creating the prescription. Please try again later.';
+
+  @override
+  String get prescriptionCore_rfidTagNotFoundInReader =>
+      'No RFID tag was found in the reader\'s range.';
+
+  @override
+  String prescriptionCore_rfidReadErrorWithDetail(Object error) {
+    return 'An error occurred while reading the RFID tag: $error';
+  }
+
+  @override
+  String get tableCore_roleNameColumn => 'Role Name';
+
+  @override
+  String get tableCore_warningSubjectColumn => 'Warning Subject';
+
+  @override
+  String get tableCore_warningTextColumn => 'Warning Text';
+
+  @override
+  String get tableCore_warehouseCodeColumn => 'Warehouse Code';
+
+  @override
+  String get tableCore_warehouseNameColumn => 'Warehouse Name';
+
+  @override
+  String get tableCore_warehouseManagerColumn => 'Warehouse Manager';
+
+  @override
+  String get tableCore_dosageFormBranchColumn => 'Branch Name';
+
+  @override
+  String get tableCore_firmIdColumn => 'ID';
+
+  @override
+  String get tableCore_firmNameColumn => 'Name';
+
+  @override
+  String get tableCore_firmTypeColumn => 'Firm Type';
+
+  @override
+  String get tableCore_firmTaxOfficeColumn => 'Tax Office';
+
+  @override
+  String get tableCore_firmTaxNoColumn => 'Tax No.';
+
+  @override
+  String get tableCore_kitNameColumn => 'Kit Name';
+
+  @override
+  String get tableCore_kitContentMaterialNameColumn => 'Material Name';
+
+  @override
+  String get tableCore_kitContentPieceColumn => 'Piece Count';
+
+  @override
+  String get tableCore_drugTypeColumn => 'Drug Type';
+
+  @override
+  String get tableCore_drugClassColumn => 'Drug Class';
+
+  @override
+  String get tableCore_materialTypeColumn => 'Material Type';
+
+  @override
+  String get tableCore_stationCodeColumn => 'Station Code';
+
+  @override
+  String get tableCore_stationNameColumn => 'Station Name';
+
+  @override
+  String get tableCore_stationDrugWarehouseColumn => 'Drug Warehouse';
+
+  @override
+  String get tableCore_stationDrugColumn => 'Drug';
+
+  @override
+  String get tableCore_stationConsumableWarehouseColumn =>
+      'Medical Consumable Warehouse';
+
+  @override
+  String get tableCore_stationConsumableColumn => 'Medical Consumable';
+
+  @override
+  String get tableCore_stationWorkingTypeColumn => 'Working Type';
+
+  @override
+  String get tableCore_hospitalizationProtocolNoColumn => 'Protocol No.';
+
+  @override
+  String get tableCore_hospitalizationNationalIdColumn => 'National ID No.';
+
+  @override
+  String get tableCore_hospitalizationPatientColumn => 'Patient';
+
+  @override
+  String get tableCore_patientRowNationalIdColumn => 'Patient National ID';
+
+  @override
+  String get tableCore_patientRowFullNameColumn => 'Full Name';
+
+  @override
+  String get tableCore_inconsistencyCabinColumn => 'Cabinet';
+
+  @override
+  String get tableCore_inconsistencyRowNoColumn => 'Row No.';
+
+  @override
+  String get tableCore_inconsistencyCellColumn => 'Cell';
+
+  @override
+  String get tableCore_inconsistencyExpectedColumn => 'Expected';
+
+  @override
+  String get tableCore_inconsistencyCountedColumn => 'Counted Quantity';
+
+  @override
+  String get tableCore_stockTransactionDateColumn => 'Date';
+
+  @override
+  String get tableCore_stockTransactionBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_stockTransactionTypeColumn => 'Transaction Type';
+
+  @override
+  String get tableCore_stockTransactionQuantityColumn => 'Quantity';
+
+  @override
+  String get tableCore_stockTransactionPreviousQuantityColumn =>
+      'Quantity Before Movement';
+
+  @override
+  String get tableCore_stockTransactionActorColumn => 'Performed By';
+
+  @override
+  String get tableCore_serviceColumn => 'Service';
+
+  @override
+  String get tableCore_admissionDateColumn => 'Admission Date';
+
+  @override
+  String get tableCore_dischargeDateColumn => 'Discharge Date';
+
+  @override
+  String get tableCore_materialColumn => 'Material';
+
+  @override
+  String get enumCore_statusActive => 'Active';
+
+  @override
+  String get enumCore_statusPassive => 'Inactive';
+
+  @override
+  String get enumCore_warehouseTypeMain => 'Main Warehouse';
+
+  @override
+  String get enumCore_firmTypeSupplier => 'Supplier';
+
+  @override
+  String get enumCore_firmTypeCustomer => 'Customer';
+
+  @override
+  String get enumCore_firmTypeManufacturer => 'Manufacturer';
+
+  @override
+  String get enumCore_warningSubjectUntimelyPurchase => 'Untimely Purchase';
+
+  @override
+  String get enumCore_warningSubjectWaste => 'Waste';
+
+  @override
+  String get enumCore_warningSubjectInconsistencyResolution =>
+      'Inconsistency Resolution';
+
+  @override
+  String get enumCore_warningSubjectDisposal => 'Disposal';
+
+  @override
+  String get enumCore_stockTxTypeIn => 'Stock In';
+
+  @override
+  String get enumCore_stockTxTypeOut => 'Stock Out';
+
+  @override
+  String get enumCore_stockTxKindPurchase => 'Material Purchase';
+
+  @override
+  String get enumCore_stockTxKindExcess => 'Excess Stock';
+
+  @override
+  String get enumCore_stockTxKindShortage => 'Stock Shortage';
+
+  @override
+  String get enumCore_stockTxKindReturn => 'Material Return';
+
+  @override
+  String get enumCore_stockTxKindCensus => 'Census';
+
+  @override
+  String get enumCore_stockTxKindUsage => 'Material Usage';
+
+  @override
+  String get enumCore_countTypeNone => 'No Census';
+
+  @override
+  String get enumCore_countTypeNormal => 'Normal Census';
+
+  @override
+  String get enumCore_countTypeBlind => 'Blind Census';
+
+  @override
+  String get enumCore_returnTypeToOrigin => 'Return to Origin';
+
+  @override
+  String get enumCore_returnTypeToDrawer => 'Return to Drawer';
+
+  @override
+  String get enumCore_returnTypeToReturnBox => 'Return to Return Box';
+
+  @override
+  String get enumCore_returnTypeToPharmacy => 'Return to Pharmacy';
+
+  @override
+  String get enumCore_requestTypeNormal => 'Normal Request';
+
+  @override
+  String get enumCore_requestTypeUrgent => 'Urgent Request';
+
+  @override
+  String get enumCore_purchaseTypeBoth => 'Both';
+
+  @override
+  String get enumCore_prescriptionTypeWhite => 'White Prescription';
+
+  @override
+  String get enumCore_prescriptionTypeSerumWhite =>
+      'Serum (White Prescription)';
+
+  @override
+  String get enumCore_prescriptionTypeRed => 'Red Prescription';
+
+  @override
+  String get enumCore_prescriptionTypeGreen => 'Green Prescription';
+
+  @override
+  String get enumCore_prescriptionTypeOrange => 'Orange Prescription';
+
+  @override
+  String get enumCore_prescriptionTypePurple => 'Purple Prescription';
+
+  @override
+  String get enumCore_refillListStatusToCollect => 'To Collect';
+
+  @override
+  String get enumCore_refillListStatusCollected => 'Collected';
+
+  @override
+  String get enumCore_refillListStatusSent => 'Sent';
+
+  @override
+  String get enumCore_fillingTypeMinimum => 'Minimum';
+
+  @override
+  String get enumCore_fillingTypeCritical => 'Critical';
+
+  @override
+  String get enumCore_fillingTypeMaximum => 'Maximum';
+
+  @override
+  String get enumCore_patientFilterOrderTimeReached => 'Order Time Reached';
+
+  @override
+  String get enumCore_patientFilterAll => 'All Patients';
+
+  @override
+  String get enumCore_patientFilterTimeNotReached => 'Time Not Reached Yet';
+
+  @override
+  String get enumCore_patientFilterTimePassed => 'Time Passed';
+
+  @override
+  String get enumCore_patientFilterReturnable => 'Return Available';
+
+  @override
+  String get enumCore_patientFilterWasteDisposable =>
+      'Waste/Disposal Available';
+
+  @override
+  String get enumCore_cabinTypeStandard => 'Standard Cabinet';
+
+  @override
+  String get enumCore_cabinTypeCloset => 'Closet';
+
+  @override
+  String get enumCore_cabinTypeFridge => 'Refrigerator';
+
+  @override
+  String get enumCore_cabinTypeOpenCloset => 'Open Closet';
+
+  @override
+  String get enumCore_cabinTypeMobile => 'Mobile Cabinet';
+
+  @override
+  String get enumCore_cabinTypeExternalReturn => 'External Return Cabinet';
+
+  @override
+  String get enumCore_cabinTypeOpen => 'Open Cabinet';
+
+  @override
+  String get enumCore_cabinTypeSerum => 'Serum Cabinet';
+
+  @override
+  String get enumCore_cabinOpModeAssignDrug => 'Drug Assignment';
+
+  @override
+  String get enumCore_cabinOpModeRefill => 'Drug Refill';
+
+  @override
+  String get enumCore_cabinOpModeCensus => 'Drug Census';
+
+  @override
+  String get enumCore_cabinOpModeIntake => 'Drug Intake';
+
+  @override
+  String get enumCore_cabinOpModeFault => 'Drawer Fault';
+
+  @override
+  String get enumCore_cabinOpModeUnload => 'Drug Unload';
+
+  @override
+  String get enumCore_permissionCan => 'Can';
+
+  @override
+  String get enumCore_permissionCannot => 'Cannot';
+
+  @override
+  String get enumCore_genderFemale => 'Female';
+
+  @override
+  String get enumCore_genderMale => 'Male';
+
+  @override
+  String get enumCore_genderUnknown => 'Unknown';
+
+  @override
+  String get enumCore_userTypeUnlimited => 'Unlimited';
+
+  @override
+  String get enumCore_appModeAdmin => 'Admin';
+
+  @override
+  String get enumCore_appModeManager => 'Management';
+
+  @override
+  String get enumCore_appModeStation => 'Station';
+
+  @override
+  String get enumCore_userRoleManager => 'Manager';
+
+  @override
+  String get enumCore_userRoleStationOperator => 'Station Operator';
+
+  @override
+  String get enumCore_parityBitNone => 'None';
+
+  @override
+  String get enumCore_parityBitEven => 'Even';
+
+  @override
+  String get enumCore_parityBitOdd => 'Odd';
+
+  @override
+  String get enumCore_cabinColorBlue => 'Blue';
+
+  @override
+  String get enumCore_cabinColorTurquoise => 'Turquoise';
+
+  @override
+  String get enumCore_cabinColorGreen => 'Green';
+
+  @override
+  String get enumCore_cabinColorRed => 'Red';
+
+  @override
+  String get enumCore_cabinColorOrange => 'Orange';
+
+  @override
+  String get enumCore_cabinColorPurple => 'Purple';
+
+  @override
+  String get enumCore_cabinColorGray => 'Gray';
+
+  @override
+  String get enumCore_cabinColorBlack => 'Black';
+
+  @override
+  String get enumCore_cabinColorWhite => 'White';
+
+  @override
+  String get common_confirmButton => 'Confirm';
+
+  @override
+  String get common_warningTitle => 'Warning!';
+
+  @override
+  String get dialog_deleteTitle => 'Delete';
+
+  @override
+  String get dialog_deleteDefaultMessage =>
+      'Are you sure you want to delete this item?';
+
+  @override
+  String dialog_deleteItemMessage(String itemName) {
+    return 'Are you sure you want to delete \"$itemName\"?\nThis action cannot be undone.';
+  }
+
+  @override
+  String get dialog_exitConfirmButtonText => 'Exit';
+
+  @override
+  String get dialog_exitConfirmMessage =>
+      'You have unsaved changes. If you exit, these changes will be lost.';
+
+  @override
+  String get dialog_exitConfirmMessageNoChanges =>
+      'Are you sure you want to leave this page?';
+
+  @override
+  String get dialog_confirmDiscardButton => 'Yes, Discard';
+
+  @override
+  String get dialog_logoutTitle => 'Log Out';
+
+  @override
+  String get dialog_logoutMessage =>
+      'Are you sure you want to log out of your account?';
+
+  @override
+  String get table_noDataTitle => 'No data found';
+
+  @override
+  String get table_actionsColumnHeader => 'Actions';
+
+  @override
+  String get table_activeFiltersLabel => 'Filters:';
+
+  @override
+  String get common_clearButton => 'Clear';
+
+  @override
+  String table_selectedCountLabel(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String table_columnSelectedCountLabel(String column, int count) {
+    return '$column: $count selected';
+  }
+
+  @override
+  String get table_columnFallbackLabel => 'Column';
+
+  @override
+  String table_selectAllCountLabel(int count) {
+    return 'Select All ($count)';
+  }
+
+  @override
+  String get table_noResultsShort => 'No results';
+
+  @override
+  String table_applyCountLabel(int count) {
+    return 'Apply ($count)';
+  }
+
+  @override
+  String get table_applyButton => 'Apply';
+
+  @override
+  String table_recordCountFiltered(int filtered, int total) {
+    return '$filtered / $total records';
+  }
+
+  @override
+  String table_recordCount(int total) {
+    return '$total records';
+  }
+
+  @override
+  String table_totalRecordCount(int total) {
+    return 'Total $total records';
+  }
+
+  @override
+  String get table_prevPageTooltip => 'Previous page';
+
+  @override
+  String get table_nextPageTooltip => 'Next page';
+
+  @override
+  String get table_exportSelectedTooltip => 'Export Selected';
+
+  @override
+  String get table_categoriesDefaultTitle => 'Categories';
+
+  @override
+  String table_columnFallback(int index) {
+    return 'Column $index';
+  }
+
+  @override
+  String get dateFilter_yesterday => 'Yesterday';
+
+  @override
+  String get dateFilter_lastWeek => 'Last Week';
+
+  @override
+  String get dateFilter_thisMonth => 'This Month';
+
+  @override
+  String get dateFilter_last30Days => 'Last 30 Days';
+
+  @override
+  String get dateFilter_customRange => 'Set Custom Range...';
+
+  @override
+  String get dateFilter_clearFilter => 'Clear Filter';
+
+  @override
+  String get dateFilter_noFilter => 'No Filter';
+
+  @override
+  String get dateFilter_selectedRange => 'Selected Range';
+
+  @override
+  String get dateFilter_selectRangeTitle => 'Select Date Range';
+
+  @override
+  String get dateFilter_startDate => 'Start';
+
+  @override
+  String get dateFilter_endDate => 'End';
+
+  @override
+  String get common_selectPlaceholder => 'Please select';
+
+  @override
+  String selectionDialog_selectedCount(int count) {
+    return '$count items selected';
+  }
+
+  @override
+  String get selectionDialog_noSelection => 'No selection made';
+
+  @override
+  String get selectionDialog_confirmButton => 'Select';
+
+  @override
+  String get dateField_placeholder => 'Select date';
+
+  @override
+  String timeField_helpTextWithDay(String day) {
+    return 'Select a time for $day';
+  }
+
+  @override
+  String get timeField_helpText => 'Select a time';
+
+  @override
+  String get timeField_placeholder => 'Select time';
+
+  @override
+  String doseStepper_manualEntryTitle(String unit) {
+    return 'Enter $unit Amount';
+  }
+
+  @override
+  String get numpad_defaultTitle => 'Enter Amount';
+
+  @override
+  String get keyboard_closeButton => 'Close';
+
+  @override
+  String get keyboard_enterLabel => '↵ OK';
+
+  @override
+  String get keyboard_dashKeyLabel => '— Dash';
+
+  @override
+  String get keyboard_periodKeyLabel => '. Period';
+
+  @override
+  String get keyboard_shiftLabel => '⇧ Shift';
+
+  @override
+  String get keyboard_spaceLabel => 'SPACE';
+
+  @override
+  String get staleBanner_justNow => 'just now';
+
+  @override
+  String staleBanner_minutesAgo(int minutes) {
+    return '$minutes min ago';
+  }
+
+  @override
+  String staleBanner_hoursAgo(int hours) {
+    return '$hours hr ago';
+  }
+
+  @override
+  String get staleBanner_dataStaleMessage => 'Data is not up to date. ';
+
+  @override
+  String get staleBanner_dataUnavailableMessage =>
+      'Up-to-date data is unavailable. The operation cannot proceed. ';
+
+  @override
+  String staleBanner_lastUpdatedLabel(String time) {
+    return 'Last updated: $time';
+  }
+
+  @override
+  String get staleBanner_blockedBadge => 'Blocked';
+
+  @override
+  String timeChip_today(String time) {
+    return 'Today $time';
+  }
+
+  @override
+  String timeChip_tomorrow(String time) {
+    return 'Tomorrow $time';
+  }
+
+  @override
+  String get cabin_lockButton => 'Lock';
+
+  @override
+  String get cabin_criticalStockLabel => 'Critical Stock';
+
+  @override
+  String get cabin_criticalStockSubLabel => 'refill needed';
+
+  @override
+  String get cabin_legendFillNormal => 'Normal stock';
+
+  @override
+  String get cabin_legendFillNeeded => 'Refill needed';
+
+  @override
+  String get cabin_legendFillUrgent => 'Urgent refill';
+
+  @override
+  String get cabin_serumTypeLabel => 'SERUM';
+
+  @override
+  String get cabin_unitDoseTypeLabel => 'U.DOSE';
 }

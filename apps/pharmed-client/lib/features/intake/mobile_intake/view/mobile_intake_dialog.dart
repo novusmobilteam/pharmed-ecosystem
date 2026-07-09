@@ -54,24 +54,27 @@ class MobileIntakeDialog extends ConsumerWidget {
         canComplete: ready.canComplete,
       ),
       stats: [
-        StatCellData(label: 'Seçili', value: '${ready.selectedItemIds.length} ilaç'),
-        StatCellData(label: 'Kabinde Okunan', value: '${ready.totalReadCount} etiket'),
-        StatCellData(label: 'Alınan', value: '${ready.takenEpcs.length}'),
         StatCellData(
-          label: 'İzinsiz Alım',
+          label: context.l10n.cabinOperation_label_selected,
+          value: context.l10n.refill_label_multiMedicine(ready.selectedItemIds.length),
+        ),
+        StatCellData(
+          label: context.l10n.intake_label_readInCabin,
+          value: context.l10n.intake_label_tagCount(ready.totalReadCount),
+        ),
+        StatCellData(label: context.l10n.intake_label_takenCount, value: '${ready.takenEpcs.length}'),
+        StatCellData(
+          label: context.l10n.intake_label_unauthorizedTake,
           value: '${ready.unplannedMovements.length}',
           valueColor: ready.unplannedMovements.isNotEmpty ? MedColors.red : null,
         ),
       ],
       banners: [
-        if (errorMessage != null)
-          const OperationErrorBanner(
-            message: 'Tekrar deneyebilir ya da yerleştirdiğiniz ilaçları alarak işleminizi sonlandırabilirsiniz.',
-          ),
+        if (errorMessage != null) OperationErrorBanner(message: context.l10n.intake_error_retryOrFinish),
         if (ready.hasExtraPlacement) UnexpectedTagBanner(epcs: ready.placedEpcs),
         if (ready.hasUnplannedMovement) UnplannedMovementBanner(epcs: ready.unplannedMovements),
       ],
-      footerContent: _intakeFooter(state, drawerStage, ready, notifier),
+      footerContent: _intakeFooter(context, state, drawerStage, ready, notifier),
       child: _ItemsList(),
     );
   }

@@ -99,9 +99,9 @@ class _MasterDrawerItem extends StatelessWidget {
   }
 
   String _typeLabel(BuildContext context) {
-    if (group.isSerum) return 'SERUM';
+    if (group.isSerum) return context.l10n.cabin_serumTypeLabel;
     if (group.isKubik) return context.l10n.cabin_kubikTypeLabel;
-    return 'B.DOZ';
+    return context.l10n.cabin_unitDoseTypeLabel;
   }
 
   CabinWorkingStatus _resolveWorkingStatus(List<DrawerUnit> units) {

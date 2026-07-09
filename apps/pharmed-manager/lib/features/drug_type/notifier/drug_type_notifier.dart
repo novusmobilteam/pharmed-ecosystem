@@ -36,7 +36,7 @@ class DrugTypeNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<
       operation: () => _deleteDrugTypeUseCase.call(type),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+        onSuccess?.call(null);
         getDrugTypes();
       },
     );

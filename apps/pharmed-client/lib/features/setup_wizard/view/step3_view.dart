@@ -45,7 +45,7 @@ class _Step3ViewState extends ConsumerState<Step3View> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         StepHeader(
-          badge: 'Adım 3 / 5',
+          badge: context.l10n.wizard_stepBadge(3, 5),
           title: context.l10n.wizard_step3Header,
           subtitle: context.l10n.wizard_step3Subtitle,
         ),

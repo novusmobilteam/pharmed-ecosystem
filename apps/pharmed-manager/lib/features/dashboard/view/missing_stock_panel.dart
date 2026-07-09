@@ -17,13 +17,13 @@ class MissingStockPanel extends StatelessWidget {
     final items = section.data ?? const <PrescriptionItem>[];
 
     return DashboardListPanel<List<PrescriptionItem>>(
-      title: 'EKSİK STOK BİLDİRİMLERİ',
+      title: context.l10n.dashboardMissingStockPanelTitle,
       count: items.length,
       countColor: MedColors.red,
       countBg: MedColors.redLight,
       section: section,
       itemCount: items.length,
-      emptyTitle: 'Eksik stok bildirimi yok',
+      emptyTitle: context.l10n.dashboardMissingStockEmptyTitle,
       onRetry: () => context.read<DashboardNotifier>().retryShortage(),
       itemBuilder: (context, index) {
         final item = items[index];
@@ -33,17 +33,20 @@ class MissingStockPanel extends StatelessWidget {
           showFlags: true,
           showStatusChip: true,
           infoRows: [
-            MedInfoRow(label: 'HASTA', value: item.prescription?.hospitalization?.patient?.fullName ?? '-'),
-            MedInfoRow(label: 'SERVİS', value: item.physicalService?.name ?? '-'),
-            MedInfoRow(label: 'İŞLEMİ YAPAN', value: item.activityUser?.fullName ?? '-'),
-            MedInfoRow(label: 'SAAT', value: item.activityDate?.formattedDateTime ?? '-'),
+            MedInfoRow(
+              label: context.l10n.assignment_patientLabel,
+              value: item.prescription?.hospitalization?.patient?.fullName ?? '-',
+            ),
+            MedInfoRow(label: 'SERVİS', value: item.physicalService?.name ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            MedInfoRow(label: 'İŞLEMİ YAPAN', value: item.activityUser?.fullName ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            MedInfoRow(label: context.l10n.dashboardMissingStockTimeLabel, value: item.activityDate?.formattedDateTime ?? '-'),
           ],
           actions: (isLoggedIn && item.status == PrescriptionMovementType.shortageReported)
               ? Row(
                   children: [
                     Expanded(
                       child: MedButton(
-                        label: 'Onayla',
+                        label: context.l10n.dashboardMissingStockApproveButton,
                         size: MedButtonSize.sm,
                         variant: MedButtonVariant.success,
                         fullWidth: true,
@@ -56,7 +59,7 @@ class MissingStockPanel extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: MedButton(
-                        label: 'Reddet',
+                        label: context.l10n.dashboardMissingStockRejectButton,
                         size: MedButtonSize.sm,
                         variant: MedButtonVariant.danger,
                         fullWidth: true,

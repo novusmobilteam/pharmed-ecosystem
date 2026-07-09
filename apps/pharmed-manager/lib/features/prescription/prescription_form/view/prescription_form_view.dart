@@ -42,7 +42,7 @@ class PrescriptionFormViewState extends State<PrescriptionFormView> {
         children: [
           MedSelectionField<Medicine>(
             key: ValueKey(notifier.selectedItem),
-            label: 'İlaç / Malzeme',
+            label: context.l10n.prescriptionMedicineFieldLabel,
             initialValue: selected.medicine,
             labelBuilder: (d) => d.name,
             onSelected: notifier.updateMedicine,
@@ -59,7 +59,7 @@ class PrescriptionFormViewState extends State<PrescriptionFormView> {
                   platform: DoseStepperPlatform.desktop,
                   value: selected.dosePiece?.toDouble() ?? 0,
                   step: selected.medicine?.operationStep ?? 1.0,
-                  unit: selected.medicine?.operationUnit ?? 'Adet',
+                  unit: selected.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback,
                   onChanged: notifier.updateDosePiece,
                 ),
               ),
@@ -81,7 +81,7 @@ class PrescriptionFormViewState extends State<PrescriptionFormView> {
           _TimesGrid(item: selected),
           const SizedBox(height: 12),
           MedTextInputField(
-            label: 'Açıklama',
+            label: context.l10n.prescriptionDescriptionFieldLabel,
             controller: _descriptionController,
             maxLines: 5,
             maxLength: 3000,
@@ -106,19 +106,19 @@ class _CheckboxRow extends StatelessWidget {
       runSpacing: 6,
       children: [
         MedCheckboxField(
-          label: 'İlk Doz Acil',
+          label: context.l10n.common_flagFirstDoseEmergency,
           value: item.firstDoseEmergency ?? false,
           onChanged: (_) => notifier.toggleFirstDoseEmergency(),
           size: MedCheckboxSize.md,
         ),
         MedCheckboxField(
-          label: 'Doktora Sor',
+          label: context.l10n.common_flagAskDoctor,
           value: item.askDoctor ?? false,
           onChanged: (_) => notifier.toggleAskDoctor(),
           size: MedCheckboxSize.md,
         ),
         MedCheckboxField(
-          label: 'Lüzum Halinde',
+          label: context.l10n.common_flagInCaseOfNecessity,
           value: item.inCaseOfNecessity ?? false,
           onChanged: (_) => notifier.toggleInCaseOfNecessity(),
           size: MedCheckboxSize.md,
@@ -133,16 +133,18 @@ class _TimesGrid extends StatelessWidget {
 
   final PrescriptionItem item;
 
-  String _dayLabel(DateTime? dt) {
+  String _dayLabel(BuildContext context, DateTime? dt) {
     if (dt == null) return '';
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final target = DateTime(dt.year, dt.month, dt.day);
     final diff = target.difference(today).inDays;
-    if (diff == 0) return 'Bugün';
-    if (diff == 1) return 'Yarın';
-    const dayNames = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
-    return dayNames[dt.weekday - 1];
+    if (diff == 0) return context.l10n.date_preset_today;
+    if (diff == 1) return context.l10n.prescriptionTomorrowLabel;
+    // Aktif locale'e göre kısaltılmış gün adı (ör. tr: "Pzt", en: "Mon").
+    // DateTime.weekday (Pzt=1..Paz=7) ile aynı sırayı korur.
+    final locale = Localizations.localeOf(context).toString();
+    return DateFormat('E', locale).format(dt);
   }
 
   String _formatTime(DateTime dt) => '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
@@ -159,7 +161,7 @@ class _TimesGrid extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Saatler',
+              context.l10n.prescriptionTimesLabel,
               style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
             ),
             const SizedBox(width: 6),
@@ -181,7 +183,7 @@ class _TimesGrid extends StatelessWidget {
                   index: i,
                   time: dt.toTimeOfDay,
                   label: _formatTime(dt),
-                  dayLabel: _dayLabel(dt),
+                  dayLabel: _dayLabel(context, dt),
                   showDivider: i < times.length - 1 || canAddMore,
                   onTimeChanged: (t) => notifier.updateDoseHour(i, t),
                   onRemove: () => notifier.updateDoseHour(i, null),
@@ -278,7 +280,7 @@ class _AddRow extends StatelessWidget {
             Icon(PhosphorIcons.plus(), size: 14, color: MedColors.blue),
             const SizedBox(width: 8),
             Text(
-              'Saat ekle',
+              context.l10n.prescriptionAddTimeButton,
               style: MedTextStyles.bodySm(color: MedColors.blue, weight: FontWeight.w600),
             ),
           ],

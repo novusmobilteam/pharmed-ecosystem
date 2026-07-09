@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class PatientRepositoryImpl implements IPatientRepository {
   PatientRepositoryImpl({
@@ -50,7 +51,7 @@ class PatientRepositoryImpl implements IPatientRepository {
   @override
   Future<Result<void>> deletePatient(Patient entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek hastanın id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deletePatientIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deletePatient(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

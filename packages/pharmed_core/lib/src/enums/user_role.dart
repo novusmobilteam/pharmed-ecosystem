@@ -1,15 +1,25 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 import 'app_mode.dart';
 
 enum UserRole {
-  admin('Admin'),
-  manager('Yönetici'),
-  client('İstasyon Operatörü');
-
-  final String label;
-  const UserRole(this.label);
+  admin,
+  manager,
+  client;
 }
 
 extension UserRoleExtension on UserRole {
+  String get label {
+    switch (this) {
+      case UserRole.admin:
+        return contextlessL10n().enumCore_appModeAdmin;
+      case UserRole.manager:
+        return contextlessL10n().enumCore_userRoleManager;
+      case UserRole.client:
+        return contextlessL10n().enumCore_userRoleStationOperator;
+    }
+  }
+
   // Bu rol hangi modlara geçiş yapabilir?
   List<AppMode> get switchableModes {
     switch (this) {

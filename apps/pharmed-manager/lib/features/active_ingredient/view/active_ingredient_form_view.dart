@@ -35,7 +35,9 @@ class _ActiveIngredientFormDialogState extends State<ActiveIngredientFormDialog>
   Widget build(BuildContext context) {
     return Consumer<ActiveIngredientFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? 'Etken Madde Ekle' : 'Etken Madde Düzenle';
+        final String title = notifier.isCreate
+            ? context.l10n.activeIngredientFormAddTitle
+            : context.l10n.activeIngredientFormEditTitle;
         return RegistrationDialog(
           title: title,
           maxHeight: 400,
@@ -47,7 +49,7 @@ class _ActiveIngredientFormDialogState extends State<ActiveIngredientFormDialog>
                 onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                 onSuccess: (msg) {
                   context.pop(true);
-                  MessageUtils.showSuccessSnackbar(context, msg);
+                  MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                 },
               );
             }
@@ -74,7 +76,7 @@ class _NameField extends StatelessWidget {
     return Consumer<ActiveIngredientFormNotifier>(
       builder: (context, vm, _) {
         return MedTextInputField(
-          label: 'Adı',
+          label: context.l10n.common_nameLabel,
           autoFocus: vm.isCreate,
           initialValue: vm.activeIngredient.name,
           validator: (v) => Validators.cannotBlankValidator(v),
@@ -93,7 +95,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<ActiveIngredientFormNotifier>(
       builder: (context, vm, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           initialValue: vm.activeIngredient.status,
           options: Status.values,
           labelBuilder: (value) => value?.label,

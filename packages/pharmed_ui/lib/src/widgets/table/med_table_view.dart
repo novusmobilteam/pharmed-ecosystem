@@ -239,7 +239,7 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
       return _ColMeta(
         index: i,
         contentIndex: i,
-        title: titles[i] ?? 'Sütun ${i + 1}',
+        title: titles[i] ?? context.l10n.table_columnFallback(i + 1),
         flex: (flexes != null && i < flexes.length) ? flexes[i] : 1.0,
         numeric: widget.numericColumnIndices.contains(i),
       );
@@ -565,13 +565,13 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
     );
   }
 
-  Widget _defaultEmpty() => const Center(
+  Widget _defaultEmpty() => Center(
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.inbox_outlined, size: 40, color: Color(0xFFD1D5DB)),
-        SizedBox(height: 8),
-        Text('Veri bulunamadı', style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF))),
+        const Icon(Icons.inbox_outlined, size: 40, color: Color(0xFFD1D5DB)),
+        const SizedBox(height: 8),
+        Text(context.l10n.table_noDataTitle, style: const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF))),
       ],
     ),
   );

@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 /// Alım Tipi
 enum PurchaseType {
   ordered(1), // Orderlı
@@ -18,11 +20,11 @@ enum PurchaseType {
   String get label {
     switch (this) {
       case PurchaseType.ordered:
-        return 'Orderlı';
+        return contextlessL10n().patientPicker_orderedToggleLabel;
       case PurchaseType.orderless:
-        return 'Ordersız';
+        return contextlessL10n().patientPicker_orderlessToggleLabel;
       case PurchaseType.both:
-        return 'Her İkisi de';
+        return contextlessL10n().enumCore_purchaseTypeBoth;
     }
   }
 }

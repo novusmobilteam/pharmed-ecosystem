@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum CabinWorkingStatus {
   working(0),
@@ -16,13 +17,14 @@ enum CabinWorkingStatus {
 
 extension CabinWorkingStatusExtension on CabinWorkingStatus {
   String get label {
+    final l10n = contextlessL10n();
     switch (this) {
       case CabinWorkingStatus.working:
-        return 'Çalışıyor';
+        return l10n.cabin_statusWorking;
       case CabinWorkingStatus.faulty:
-        return 'Arıza Kaydı';
+        return l10n.cabin_statusFaultRecord;
       case CabinWorkingStatus.maintenance:
-        return 'Bakım Kaydı';
+        return l10n.cabin_statusMaintenanceRecord;
     }
   }
 

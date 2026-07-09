@@ -14,7 +14,7 @@ Future<DosageForm?> showDosageFormView(BuildContext context) async {
             ..getDosageForms(forceRefresh: true),
       child: Consumer<DosageFormNotifier>(
         builder: (context, vm, Widget? child) => CustomDialog(
-          title: 'Dozaj Formu',
+          title: context.l10n.dosageForm_listDialogTitle,
           showSearch: true,
           showAdd: true,
           onSearchChanged: (query) => vm.search(query),
@@ -39,12 +39,12 @@ class _DosageFormViewState extends State<DosageFormView> {
   Widget build(BuildContext context) {
     return Consumer<DosageFormNotifier>(
       builder: (context, notifier, _) {
-        return _buildContent(notifier);
+        return _buildContent(context, notifier);
       },
     );
   }
 
-  Widget _buildContent(DosageFormNotifier notifier) {
+  Widget _buildContent(BuildContext context, DosageFormNotifier notifier) {
     if (notifier.isFetching && notifier.isEmpty) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
@@ -57,8 +57,8 @@ class _DosageFormViewState extends State<DosageFormView> {
       return EmptyStateWidget(
         icon: Icons.science_outlined,
         variant: EmptyStateVariant.custom,
-        title: 'Henüz dozaj formu bulunmuyor',
-        description: 'Dozaj formu oluşturmak için "+" butonuna tıklayın',
+        title: context.l10n.dosageForm_emptyTitle,
+        description: context.l10n.dosageForm_emptyDescription,
       );
     }
 

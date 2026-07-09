@@ -30,12 +30,12 @@ enum CabinOperationMode {
 
 extension CabinOperationModeX on CabinOperationMode {
   String get label => switch (this) {
-    CabinOperationMode.assign => 'İlaç Atama',
-    CabinOperationMode.refill => 'İlaç Dolum',
-    CabinOperationMode.census => 'İlaç Sayım',
-    CabinOperationMode.intake => 'İlaç Alım',
-    CabinOperationMode.fault => 'Çekmece Arıza',
-    CabinOperationMode.unload => 'İlaç Boşaltma',
+    CabinOperationMode.assign => contextlessL10n().enumCore_cabinOpModeAssignDrug,
+    CabinOperationMode.refill => contextlessL10n().enumCore_cabinOpModeRefill,
+    CabinOperationMode.census => contextlessL10n().enumCore_cabinOpModeCensus,
+    CabinOperationMode.intake => contextlessL10n().enumCore_cabinOpModeIntake,
+    CabinOperationMode.fault => contextlessL10n().enumCore_cabinOpModeFault,
+    CabinOperationMode.unload => contextlessL10n().enumCore_cabinOpModeUnload,
   };
 
   /// Mod'a özgü vurgu rengi — hover, banner, chip rengi için

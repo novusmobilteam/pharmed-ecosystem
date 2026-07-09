@@ -31,7 +31,7 @@ class PatientFormNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => isCreate ? _createPatientUseCase.call(_patient!) : _updatePatientUseCase.call(_patient!),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

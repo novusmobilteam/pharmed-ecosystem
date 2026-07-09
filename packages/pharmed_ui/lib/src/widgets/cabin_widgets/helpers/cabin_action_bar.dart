@@ -51,7 +51,7 @@ class CabinActionBar extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: _ActionButton(
-                label: 'Kilitle',
+                label: context.l10n.cabin_lockButton,
                 icon: Icons.lock_outlined,
                 variant: _ActionVariant.red,
                 isEnabled: isEnabled,

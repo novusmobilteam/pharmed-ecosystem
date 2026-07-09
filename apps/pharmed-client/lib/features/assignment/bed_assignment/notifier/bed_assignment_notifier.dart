@@ -52,8 +52,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
 
     if (cabin == null || cabin.stationId == null) {
       state = BedAssignmentError(
-        // TODO(l10n): move to view layer once BedAssignmentError carries a discriminant
-        message: 'Kabin istasyon bilgisi alınamadı',
+        message: contextlessL10n().assignment_error_stationLoadFailed,
         previousState: BedAssignmentIdle(
           slots: slots,
           mobileSlots: data.mobileSlots,
@@ -210,8 +209,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
 
     final cellId = _resolveCellId(mobileSlots: current.mobileSlots, coord: current.selectedCell);
     if (cellId == null) {
-      // TODO(l10n): move to view layer or pass translated string as parameter
-      state = BedAssignmentError(message: 'Seçili göz bulunamadı', previousState: current);
+      state = BedAssignmentError(message: contextlessL10n().assignment_cellNotFoundError, previousState: current);
       return;
     }
 

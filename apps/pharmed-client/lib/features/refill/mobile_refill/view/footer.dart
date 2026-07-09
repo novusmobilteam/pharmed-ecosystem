@@ -1,25 +1,28 @@
 part of 'mobile_refill_dialog.dart';
 
 FooterContent _refillFooter(
+  BuildContext context,
   MobileRefillState state,
   MobileDrawerStage stage,
   MobileRefillReady ready,
   MobileRefillNotifier notifier,
 ) {
+  final l10n = context.l10n;
+
   // ── Hint ──
   final hint = switch (state) {
-    MobileRefillFatalError(:final message) => 'Kritik bir hata oluştu: $message',
-    MobileRefillSaving() => 'Kaydediliyor...',
-    MobileRefillSuccess() => 'İşlem tamamlandı',
-    MobileRefillError() => 'Hata oluştu - tekrar deneyebilirsiniz',
-    MobileRefillWaitingClose() => 'Kayıt alındı. İşlemi bitirmek için çekmeceyi kapatın',
-    MobileRefillClosedEarly() => 'Çekmece kapatıldı. İptal edebilir veya kaldığınız yerden devam edebilirsiniz',
+    MobileRefillFatalError(:final message) => l10n.cabinOperation_hint_fatalError(message),
+    MobileRefillSaving() => l10n.common_action_saving,
+    MobileRefillSuccess() => l10n.cabinOperation_hint_completed,
+    MobileRefillError() => l10n.cabinOperation_hint_error,
+    MobileRefillWaitingClose() => l10n.cabinOperation_hint_waitingCloseGeneric,
+    MobileRefillClosedEarly() => l10n.cabinOperation_hint_closedEarlyGeneric,
     _ => switch (stage) {
-      MobileDrawerOpening() => 'Çekmece açılıyor...',
-      _ when !ready.baselineCompleted => 'Kabin taranıyor, lütfen bekleyin',
-      _ when ready.canComplete => 'Hazır — işlemi tamamlayabilirsiniz',
-      _ when ready.hasExtraPlacement => 'Seçili ilaçlar dışında etiket kondu, lütfen çıkartın',
-      _ => 'İlaçları yerleştirin, ardından işlemi tamamlayın',
+      MobileDrawerOpening() => l10n.refill_status_drawerOpening,
+      _ when !ready.baselineCompleted => l10n.cabinOperation_hint_scanning,
+      _ when ready.canComplete => l10n.cabinOperation_hint_ready,
+      _ when ready.hasExtraPlacement => l10n.refill_hint_extraPlacement,
+      _ => l10n.refill_hint_placeItems,
     },
   };
 
@@ -31,12 +34,12 @@ FooterContent _refillFooter(
     MobileRefillError() => [FooterActions.retry(notifier.retryComplete)],
     MobileRefillWaitingClose() => const [], // buton yok, kapanış bekleniyor
     MobileRefillClosedEarly() => [
-      FooterActions.secondary('İptal', notifier.cancelEarlyClose),
+      FooterActions.secondary(l10n.common_cancelButton, notifier.cancelEarlyClose),
       SizedBox(width: 10),
-      FooterActions.primary('Devam Et', notifier.retryEarlyClose),
+      FooterActions.primary(l10n.session_timeout_continueButton, notifier.retryEarlyClose),
     ],
-    _ when ready.canComplete => [FooterActions.primary('İşlemi tamamla', notifier.completeRefill)],
-    _ => [FooterActions.primary('İşlemi tamamla', null)], // disabled
+    _ when ready.canComplete => [FooterActions.primary(l10n.cabinOperation_action_completeGeneric, notifier.completeRefill)],
+    _ => [FooterActions.primary(l10n.cabinOperation_action_completeGeneric, null)], // disabled
   };
 
   return FooterContent(hint: hint, actions: actions);

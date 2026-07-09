@@ -23,7 +23,7 @@ class ExpiredItemsReportScreen extends StatelessWidget {
               mobile: const MedMobileLayout(),
               tablet: const MedTabletLayout(),
               desktop: MedDesktopLayout(
-                title: menu.name ?? 'S.K.T Geçmiş Malzemeler',
+                title: menu.name ?? context.l10n.report_expiredItemsTitleFallback,
                 subtitle: menu.description,
                 showAddButton: false,
                 child: MedTable<CabinStock>(
@@ -50,7 +50,7 @@ class ExpiredItemsReportScreen extends StatelessWidget {
                   selectedCategoryId: notifier.selectedCategoryId,
                   onCategoryChanged: (id) =>
                       notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
-                  categoryTitle: 'İstasyonlar',
+                  categoryTitle: context.l10n.report_stationsCategoryTitle,
 
                   // Cell
                   cellBuilder: (item, colIndex, value) {

@@ -19,7 +19,7 @@ class KitContentListDialog extends StatelessWidget {
           KitContentNotifier(getKitContentUseCase: context.read(), deleteKitContentUseCase: context.read()),
       child: Consumer<KitContentNotifier>(
         builder: (context, vm, _) => CustomDialog(
-          title: 'Kit İçerik Tanımlama',
+          title: context.l10n.kitContentDialogTitle,
           showSearch: true,
           showAdd: true,
           onSearchChanged: vm.search,

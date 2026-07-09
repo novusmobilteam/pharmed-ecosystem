@@ -27,7 +27,7 @@ class DrugClassFormNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => isCreate ? _createDrugClassUseCase.call(_drugClass) : _updateDrugClassUseCase.call(_drugClass),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

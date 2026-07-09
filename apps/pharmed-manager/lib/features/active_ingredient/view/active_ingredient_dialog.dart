@@ -16,7 +16,7 @@ Future<T?> showActiveIngredientDialog<T>(BuildContext context, {bool forSelectio
       )..getActiveIngredients(),
       child: Consumer<ActiveIngredientNotifier>(
         builder: (context, vm, Widget? child) => CustomDialog(
-          title: forSelection ? 'Etken Madde Seç' : 'Etken Madde Tanımlama',
+          title: forSelection ? context.l10n.activeIngredientDialogSelectTitle : context.l10n.activeIngredientDialogTitle,
           showSearch: true,
           showAdd: true,
           onSearchChanged: (query) => vm.search(query),

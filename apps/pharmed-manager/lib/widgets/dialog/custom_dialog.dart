@@ -17,9 +17,9 @@ class CustomDialog extends StatefulWidget {
     this.showSearch = false,
     this.showAdd = false,
     this.isLoading = false,
-    this.loadingText = 'Yükleniyor...',
+    this.loadingText,
     this.searchController,
-    this.searchHintText = 'Ara...',
+    this.searchHintText,
     this.onSearchChanged,
     this.onSearchSubmitted,
     this.onAddPressed,
@@ -37,9 +37,9 @@ class CustomDialog extends StatefulWidget {
   final bool showSearch;
   final bool showAdd;
   final bool isLoading;
-  final String loadingText;
+  final String? loadingText;
   final TextEditingController? searchController;
-  final String searchHintText;
+  final String? searchHintText;
   final ValueChanged<String>? onSearchChanged;
   final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onAddPressed;
@@ -156,7 +156,7 @@ class _CustomDialogState extends State<CustomDialog> {
                           icon: Icon(PhosphorIcons.magnifyingGlass()),
                           color: colorScheme.onSurfaceVariant,
                           onPressed: widget.isLoading ? null : _toggleSearch,
-                          tooltip: "Ara",
+                          tooltip: context.l10n.common_searchTooltip,
                         ),
                 ),
                 const SizedBox(width: 8),
@@ -168,7 +168,7 @@ class _CustomDialogState extends State<CustomDialog> {
                   icon: Icon(PhosphorIcons.plus()),
                   color: colorScheme.primary,
                   onPressed: widget.isLoading ? null : widget.onAddPressed,
-                  tooltip: "Ekle",
+                  tooltip: context.l10n.common_addTooltip,
                 ),
                 const SizedBox(width: 8),
               ],
@@ -182,7 +182,7 @@ class _CustomDialogState extends State<CustomDialog> {
               IconButton(
                 icon: Icon(PhosphorIcons.x()),
                 color: colorScheme.onSurfaceVariant,
-                tooltip: "Kapat",
+                tooltip: context.l10n.common_closeTooltip,
                 onPressed: () {
                   if (widget.onClose != null) {
                     widget.onClose!();
@@ -208,7 +208,7 @@ class _CustomDialogState extends State<CustomDialog> {
         enabled: !widget.isLoading,
         autofocus: true,
         decoration: InputDecoration(
-          hintText: widget.searchHintText,
+          hintText: widget.searchHintText ?? context.l10n.common_searchHint,
           hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 14),
           prefixIcon: Icon(PhosphorIcons.magnifyingGlass(), color: colorScheme.onSurfaceVariant, size: 18),
           suffixIcon: IconButton(
@@ -246,7 +246,7 @@ class _CustomDialogState extends State<CustomDialog> {
               CircularProgressIndicator(color: colorScheme.primary, strokeWidth: 3),
               const SizedBox(height: 16),
               Text(
-                widget.loadingText,
+                widget.loadingText ?? context.l10n.common_loadingEllipsis,
                 style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500, fontSize: 14),
               ),
             ],

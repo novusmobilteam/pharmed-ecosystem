@@ -7,6 +7,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class AuthMockRepository implements IAuthRepository {
   static const _delay = Duration(milliseconds: 600);
@@ -46,7 +47,7 @@ class AuthMockRepository implements IAuthRepository {
     final userData = _mockUsers[u];
 
     if (userData == null || userData.password != password) {
-      return Result.error(ServiceException(message: 'Kullanıcı adı veya şifre hatalı.', statusCode: 401));
+      return Result.error(ServiceException(message: contextlessL10n().authError_invalidCredentialsMock, statusCode: 401));
     }
 
     return Result.ok(

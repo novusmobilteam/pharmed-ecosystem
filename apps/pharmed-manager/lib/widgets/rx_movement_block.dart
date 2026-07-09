@@ -28,7 +28,7 @@ class RxMovementBlock extends StatelessWidget {
           children: [
             Icon(PhosphorIcons.clockCounterClockwise(), size: 14, color: MedColors.text4),
             const SizedBox(width: MedSpacing.sm),
-            Text('Hareket kaydı bulunamadı.', style: MedTextStyles.monoSm(color: MedColors.text4)),
+            Text(context.l10n.movement_noHistory, style: MedTextStyles.monoSm(color: MedColors.text4)),
           ],
         ),
       );
@@ -52,9 +52,9 @@ class _MovementGroup extends StatelessWidget {
   final PrescriptionItemMovement movement;
   final Medicine? medicine;
 
-  String _doseText() {
+  String _doseText(BuildContext context) {
     if (movement.quantity == null) return '-';
-    return '${movement.quantity!.formatFractional} ${medicine?.operationUnit ?? 'Adet'}';
+    return '${movement.quantity!.formatFractional} ${medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback}';
   }
 
   @override
@@ -68,9 +68,9 @@ class _MovementGroup extends StatelessWidget {
         const SizedBox(height: 6),
         _DetailRow(
           fields: [
-            _Field('İşlemi Yapan', movement.performedBy?.fullName),
-            _Field('Tarih', movement.createdAt.formattedDateTime),
-            if (movement.quantity != null) _Field('Miktar', _doseText()),
+            _Field(context.l10n.movement_performedBy, movement.performedBy?.fullName),
+            _Field(context.l10n.movement_dateLabel, movement.createdAt.formattedDateTime),
+            if (movement.quantity != null) _Field(context.l10n.movement_quantityLabel, _doseText(context)),
           ],
         ),
       ],

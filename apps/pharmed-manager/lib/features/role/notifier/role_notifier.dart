@@ -22,12 +22,12 @@ class RoleNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
     );
   }
 
-  Future<void> deleteRole(Role role) async {
+  Future<void> deleteRole(Role role, {String? successMessage}) async {
     await executeVoid(
       delete,
       operation: () => _deleteRoleUseCase.call(role),
       onSuccess: () => fetch(),
-      successMessage: 'Rol başarıyla silindi',
+      successMessage: successMessage,
     );
   }
 }

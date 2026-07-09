@@ -27,7 +27,7 @@ class MaterialTypeFormNotifier extends ChangeNotifier with ApiRequestMixin, Sear
       operation: () =>
           isCreate ? _createMaterialTypeUseCase.call(_materialType) : _updateMaterialTypeUseCase.call(_materialType),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

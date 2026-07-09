@@ -43,11 +43,11 @@ class PrescriptionScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Reçete İşlemleri',
+              title: menu.name ?? context.l10n.prescriptionScreenTitleFallback,
               subtitle: menu.description,
               actions: [
                 MedButton(
-                  label: 'Yeni Reçete',
+                  label: context.l10n.prescriptionNewTitle,
                   size: MedButtonSize.sm,
                   onPressed: () => showPrescriptionFormDialog(context),
                 ),
@@ -71,19 +71,21 @@ class PrescriptionScreen extends StatelessWidget {
                   actions: [
                     TableActionItem<Hospitalization>(
                       icon: PhosphorIcons.receipt(),
-                      tooltip: 'Reçete İçeriği',
+                      tooltip: context.l10n.prescriptionContentTooltip,
                       color: context.colorScheme.onSurface,
                       onPressed: notifier.openPanel,
                     ),
                     TableActionItem<Hospitalization>(
                       icon: PhosphorIcons.plus(),
-                      tooltip: 'Yeni Reçete',
+                      tooltip: context.l10n.prescriptionNewTitle,
                       onPressed: (hosp) => showPrescriptionFormDialog(context, hospitalization: hosp),
                     ),
                   ],
                   toolbarActions: [
                     MedRectangleIconButton(
-                      tooltip: notifier.showDischarged ? 'Aktif yatışları getir' : 'Taburcu olanları göster',
+                      tooltip: notifier.showDischarged
+                          ? context.l10n.prescriptionShowActiveButton
+                          : context.l10n.prescriptionShowDischargedButton,
                       iconData: notifier.showDischarged ? PhosphorIcons.userMinus() : PhosphorIcons.userCheck(),
                       color: MedColors.amberLight,
                       iconColor: MedColors.amber,

@@ -30,8 +30,10 @@ class _KitListViewState extends State<KitListView> {
           return EmptyStateWidget(
             icon: Icons.medical_services_outlined,
             variant: EmptyStateVariant.custom,
-            title: 'Henüz kit bulunmuyor',
-            description: widget.isDialog ? 'Yeni kit eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            title: context.l10n.kitListEmptyTitle,
+            description: widget.isDialog
+                ? context.l10n.common_addItemHint('kit')
+                : context.l10n.common_emptyListMessage,
           );
         }
 
@@ -50,7 +52,7 @@ class _KitListViewState extends State<KitListView> {
                 AdditionalActionButton(
                   icon: PhosphorIcons.gear(),
                   onPressed: () => _onManageContent(context, kit),
-                  tooltip: 'Kit İçeriğini Yönet',
+                  tooltip: context.l10n.kitListManageContentTooltip,
                 ),
               ],
             );
@@ -73,7 +75,7 @@ class _KitListViewState extends State<KitListView> {
       onConfirm: () => notifier.deleteKit(
         item,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
       ),
     );
   }

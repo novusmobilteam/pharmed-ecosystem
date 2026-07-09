@@ -3,17 +3,27 @@ import 'package:flutter/material.dart';
 import '../../../../core/core.dart';
 import '../../../auth/notifier/auth_notifier.dart';
 
+/// [submit] başarı sonucunu ayırt eder — gösterilecek mesaj metni context'e
+/// erişimi olmayan bu notifier yerine view katmanında (l10n ile) seçilir.
+enum PrescriptionSaveOutcome { savedWithTemplate, templateSaveFailed, savedOnly }
+
 class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreatePrescriptionUseCase _useCase;
   final CreatePrescriptionTemplateUseCase _templateUseCase;
+  final String _creatingLoadingMessage;
+  final String _templateSavingLoadingMessage;
 
   PrescriptionFormNotifier({
     Hospitalization? hospitalization,
     required AuthNotifier authNotifier,
     required CreatePrescriptionUseCase useCase,
     required CreatePrescriptionTemplateUseCase templateUseCase,
+    required String creatingLoadingMessage,
+    required String templateSavingLoadingMessage,
   }) : _useCase = useCase,
-       _templateUseCase = templateUseCase {
+       _templateUseCase = templateUseCase,
+       _creatingLoadingMessage = creatingLoadingMessage,
+       _templateSavingLoadingMessage = templateSavingLoadingMessage {
     _hospitalization = hospitalization;
     _isPatientSelectionEnabled = hospitalization == null;
     if (_hospitalization != null) {
@@ -260,7 +270,10 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
     }
   }
 
-  Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
+  Future<void> submit({
+    Function(String? msg)? onFailed,
+    void Function(PrescriptionSaveOutcome outcome)? onSuccess,
+  }) async {
     if (!canSave) return;
 
     final prescription = Prescription(
@@ -280,17 +293,17 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
         if (_saveAsTemplate) {
           final ok = await _saveTemplate(itemsWithDoctor);
           if (ok) {
-            onSuccess?.call('Reçete ve şablon başarıyla kaydedildi.');
+            onSuccess?.call(PrescriptionSaveOutcome.savedWithTemplate);
           } else {
             // Reçete kaydedildi ama şablon kaydedilemedi — kullanıcıyı bilgilendir,
             // reçete başarısını geri alma.
-            onSuccess?.call('Reçete kaydedildi ancak şablon kaydedilemedi.');
+            onSuccess?.call(PrescriptionSaveOutcome.templateSaveFailed);
           }
         } else {
-          onSuccess?.call('Reçete başarıyla kaydedildi.');
+          onSuccess?.call(PrescriptionSaveOutcome.savedOnly);
         }
       },
-      loadingMessage: 'Reçete oluşturuluyor. Lütfen bekleyiniz..',
+      loadingMessage: _creatingLoadingMessage,
     );
   }
 
@@ -306,7 +319,7 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
       templateOp,
       operation: () => _templateUseCase.call(template: template, items: templateItems),
       onData: (_) => success = true,
-      loadingMessage: 'Şablon kaydediliyor..',
+      loadingMessage: _templateSavingLoadingMessage,
     );
     return success;
   }

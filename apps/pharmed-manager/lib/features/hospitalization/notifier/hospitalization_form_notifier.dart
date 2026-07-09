@@ -78,7 +78,7 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
           ? await _createHospitalizationUseCase.call(_hospitalization!)
           : await _updateHospitalizationUseCase.call(_hospitalization!),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

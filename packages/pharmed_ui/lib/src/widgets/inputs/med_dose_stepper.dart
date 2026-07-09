@@ -90,7 +90,7 @@ class MedDoseStepper extends StatelessWidget {
 
     final String? result = await showNumpadView(
       context,
-      title: title ?? '$unit Miktarı Giriniz',
+      title: title ?? context.l10n.doseStepper_manualEntryTitle(unit),
       hintText: '0.0',
       initialValue: value == 0 ? '' : value.formatFractional,
     );

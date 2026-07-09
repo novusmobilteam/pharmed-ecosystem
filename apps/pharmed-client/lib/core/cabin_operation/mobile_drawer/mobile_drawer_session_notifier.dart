@@ -71,7 +71,9 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
               message: 'Stream hatası',
               context: {'error': e.toString()},
             );
-            _onStage(MobileDrawerFailed(message: 'Beklenmeyen hata: $e'));
+            _onStage(
+              MobileDrawerFailed(message: contextlessL10n().common_error_unexpectedWithDetail(e.toString())),
+            );
           },
           onDone: () => _sub = null,
         );

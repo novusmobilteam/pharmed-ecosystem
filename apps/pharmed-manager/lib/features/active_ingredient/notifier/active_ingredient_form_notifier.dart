@@ -33,7 +33,7 @@ class ActiveIngredientFormNotifier extends ChangeNotifier with ApiRequestMixin {
           ? _createActiveIngredientUseCase.call(_activeIngredient)
           : _updateActiveIngredientUseCase.call(_activeIngredient),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

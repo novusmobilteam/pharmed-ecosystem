@@ -1,11 +1,20 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 enum AppMode {
-  admin('Admin'),
-  manager('Yönetim'),
-  client('İstasyon');
+  admin,
+  manager,
+  client;
 
-  final String label;
-
-  const AppMode(this.label);
+  String get label {
+    switch (this) {
+      case AppMode.admin:
+        return contextlessL10n().enumCore_appModeAdmin;
+      case AppMode.manager:
+        return contextlessL10n().enumCore_appModeManager;
+      case AppMode.client:
+        return contextlessL10n().enumCore_appModeStation;
+    }
+  }
 
   bool get isAdmin => this == AppMode.admin;
   bool get isManager => this == AppMode.manager;

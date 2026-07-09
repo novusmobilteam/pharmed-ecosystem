@@ -45,7 +45,7 @@ class MobileCensusDialog extends ConsumerWidget {
       ),
       stats: [
         StatCellData(
-          label: 'Sayıldı',
+          label: context.l10n.census_label_counted,
           value: '${ready.censusCountedTotal} / ${ready.censusTotalCount}',
           valueColor:
               ready.baselineCompleted &&
@@ -56,17 +56,17 @@ class MobileCensusDialog extends ConsumerWidget {
               : null,
         ),
         StatCellData(
-          label: 'Eksik',
+          label: context.l10n.rfidStatus_missing,
           value: '${ready.totalMissingCount}',
           valueColor: ready.totalMissingCount > 0 ? MedColors.red : null,
         ),
         StatCellData(
-          label: 'Fazla',
+          label: context.l10n.census_label_excess,
           value: '${ready.extraStocks.length}',
           valueColor: ready.extraStocks.isNotEmpty ? MedColors.amber : null,
         ),
         StatCellData(
-          label: 'Yabancı',
+          label: context.l10n.cabinOperation_label_unexpectedTag,
           value: '${ready.placedEpcs.length}',
           valueColor: ready.placedEpcs.isNotEmpty ? MedColors.red : null,
         ),
@@ -76,7 +76,7 @@ class MobileCensusDialog extends ConsumerWidget {
         if (ready.placedEpcs.isNotEmpty) UnexpectedTagBanner(epcs: ready.placedEpcs, blocking: true),
         if (ready.missingEpcs.isNotEmpty) MissingStockBanner(count: ready.missingEpcs.length),
       ],
-      footerContent: _censusFooter(state, drawerStage, ready, notifier),
+      footerContent: _censusFooter(context, state, drawerStage, ready, notifier),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

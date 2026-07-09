@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// MedicineWithdrawItem ↔ MedicineWithdrawItemDTO dönüşümleri.
 class IntakeItemMapper {
@@ -9,7 +10,8 @@ class IntakeItemMapper {
     return MedicineIntakeItem(
       id: dto.id ?? 0,
       prescriptionId: dto.prescriptionId ?? 0,
-      medicineName: MedicineMapper().toEntityOrNull(dto.medicine)?.name ?? 'Bilinmeyen İlaç',
+      medicineName:
+          MedicineMapper().toEntityOrNull(dto.medicine)?.name ?? contextlessL10n().authorization_drugTable_unknownDrugFallback,
       medicineBarcode: MedicineMapper().toEntityOrNull(dto.medicine)?.barcode ?? '',
       dosePiece: dto.dosePiece ?? 0,
       firstDoseEmergency: dto.firstDoseEmergency ?? false,

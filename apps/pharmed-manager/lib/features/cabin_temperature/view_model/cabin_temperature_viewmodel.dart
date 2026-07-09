@@ -8,9 +8,13 @@ import '../domain/entity/cabin_temperature_detail.dart';
 
 class CabinTemperatureViewModel extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinTemperatureDetail> {
   final CabinTemperatureRepository _cabinTemperatureRepository;
+  // BuildContext'e erişimi olmayan bu ViewModel yerine, oluşturulduğu view
+  // katmanından (l10n ile) çözülen mesajlar için enjekte edilir.
+  final AppLocalizations _l10n;
 
-  CabinTemperatureViewModel({required CabinTemperatureRepository cabinTemperatureRepository})
-    : _cabinTemperatureRepository = cabinTemperatureRepository;
+  CabinTemperatureViewModel({required CabinTemperatureRepository cabinTemperatureRepository, required AppLocalizations l10n})
+    : _cabinTemperatureRepository = cabinTemperatureRepository,
+      _l10n = l10n;
 
   static const getStationsOperation = OperationKey.custom('get_stations');
   static const getDetailOperation = OperationKey.custom('get_detail');
@@ -32,7 +36,13 @@ class CabinTemperatureViewModel extends ChangeNotifier with ApiRequestMixin, Sea
   List<Station> get _stations => _filterStations(_temperatures);
 
   List<TableSideCategory> get tableCategories => _stations
-      .map((s) => TableSideCategory(id: s.id!.toString(), label: s.name ?? 'İsimsiz İstasyon', count: 0))
+      .map(
+        (s) => TableSideCategory(
+          id: s.id!.toString(),
+          label: s.name ?? _l10n.cabinTemperatureUnnamedStationFallback,
+          count: 0,
+        ),
+      )
       .toList();
 
   Station? get _selectedStation => _stations.firstWhereOrNull((s) => s.id?.toString() == _selectedCategoryId);
@@ -63,7 +73,7 @@ class CabinTemperatureViewModel extends ChangeNotifier with ApiRequestMixin, Sea
           getDetail();
         }
       },
-      loadingMessage: 'İstasyonlar yükleniyor...',
+      loadingMessage: _l10n.cabinTemperatureStationsLoadingMessage,
     );
   }
 
@@ -75,7 +85,7 @@ class CabinTemperatureViewModel extends ChangeNotifier with ApiRequestMixin, Sea
       getDetailOperation,
       operation: () => _cabinTemperatureRepository.getCabinTemperatureDetails(station!.id!),
       onData: (data) => _temperatureDetails = data,
-      loadingMessage: 'Sıcaklık detayları yükleniyor...',
+      loadingMessage: _l10n.cabinTemperatureDetailsLoadingMessage,
     );
   }
 
@@ -88,7 +98,10 @@ class CabinTemperatureViewModel extends ChangeNotifier with ApiRequestMixin, Sea
       deleteOperation,
       operation: () => _cabinTemperatureRepository.deleteCabinTemperatureDetail(entity),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        // Not: `cabinTemperatureDeleteSuccess` diye özel bir ARB anahtarı
+        // oluşturulmamış; bu genel işlem başarı mesajı ile aynı metin
+        // (bkz. common_operationSuccessMessage) reuse edilir.
+        onSuccess?.call(_l10n.common_operationSuccessMessage);
         getDetail();
       },
       onFailed: (error) => onFailed?.call(error.message),

@@ -147,7 +147,9 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
       operation: () =>
           _submitUseCase.call(SubmitActionParams(actionType: type, prescriptionId: prescriptionId, itemIds: ids)),
       onSuccess: () {
-        onSuccess?.call('İşlem başarıyla tamamlandı.');
+        // Metin, BuildContext'e erişimi olmayan notifier yerine görüntüleyen
+        // view katmanında (l10n ile) çözülür — bkz. prescription_detail_panel.dart.
+        onSuccess?.call(null);
         getPatientPrescriptionHistory();
       },
       onFailed: (error) => onFailed?.call(error.message),
@@ -172,7 +174,9 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => _checkAndApproveUseCase.call(prescriptionId, ids),
       onSuccess: () {
-        onSuccess?.call('Reçete başarıyla onaylandı.');
+        // Metin, BuildContext'e erişimi olmayan notifier yerine görüntüleyen
+        // view katmanında (l10n ile) çözülür — bkz. prescription_detail_panel.dart.
+        onSuccess?.call(null);
         getPatientPrescriptionHistory();
       },
       onFailed: (error) {
@@ -202,7 +206,9 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => _checkAndApproveUseCase.approveOnly(prescriptionId, ids),
       onSuccess: () {
-        onSuccess?.call('Reçete başarıyla onaylandı.');
+        // Metin, BuildContext'e erişimi olmayan notifier yerine görüntüleyen
+        // view katmanında (l10n ile) çözülür — bkz. prescription_detail_panel.dart.
+        onSuccess?.call(null);
         getPatientPrescriptionHistory();
       },
       onFailed: (error) => onFailed?.call(error.message),

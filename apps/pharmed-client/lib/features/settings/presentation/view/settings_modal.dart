@@ -137,7 +137,7 @@ class _PlaceholderView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        '$label ayarları yakında',
+        context.l10n.settings_sectionComingSoon(label),
         style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
       ),
     );

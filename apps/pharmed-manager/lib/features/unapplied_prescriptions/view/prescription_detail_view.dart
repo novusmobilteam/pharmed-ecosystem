@@ -21,7 +21,7 @@ class PrescriptionDetailView extends StatelessWidget {
     return Consumer<UnappliedPrescriptionsNotifier>(
       builder: (context, notifier, _) {
         return CustomDialog(
-          title: 'Malzeme Listesi',
+          title: context.l10n.unappliedPrescription_detailDialogTitle,
           width: context.width * 0.7,
           height: 1000,
           isLoading: notifier.isFetching,

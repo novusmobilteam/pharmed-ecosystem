@@ -113,7 +113,7 @@ mixin ApiRequestMixin on ChangeNotifier {
         _onLoadingCallbacks[key]?.call();
 
       case APIRequestStatus.success:
-        final msg = message ?? 'İşlem başarılı';
+        final msg = message ?? contextlessL10n().common_defaultSuccessMessage;
         _onSuccessCallbacks[key]?.call(msg);
         MedLogger.info(
           unit: 'SW-UNIT-UI',

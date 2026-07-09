@@ -67,12 +67,9 @@ class ServiceFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
-  void addRoom() {
+  void addRoom({String? name}) {
     _roomEntries.add(
-      _RoomEntry(
-        localId: const Uuid().v4(),
-        room: Room(name: 'Oda ${_roomEntries.length + 1}'),
-      ),
+      _RoomEntry(localId: const Uuid().v4(), room: Room(name: name ?? 'Oda ${_roomEntries.length + 1}')),
     );
     notifyListeners();
   }
@@ -152,7 +149,6 @@ class ServiceFormNotifier extends ChangeNotifier with ApiRequestMixin {
       onSuccess: () {
         if (isCreate) resetForm();
       },
-      successMessage: 'Servis başarıyla ${isCreate ? 'oluşturuldu' : 'güncellendi'}',
     );
   }
 

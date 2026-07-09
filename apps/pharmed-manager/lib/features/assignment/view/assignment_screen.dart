@@ -28,7 +28,7 @@ class AssignmentScreen extends StatelessWidget {
             mobile: MedMobileLayout(),
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'İstasyon Malzeme Atama',
+              title: menu.name ?? context.l10n.assignmentScreenTitle,
               subtitle: menu.description,
               isLoading:
                   notifier.isLoading(notifier.fetchVisualizerOp) ||
@@ -46,7 +46,7 @@ class AssignmentScreen extends StatelessWidget {
                       onChanged: notifier.selectStation,
                       initialValue: notifier.selectedStation,
                       labelBuilder: (station) => station?.name,
-                      placeholder: 'İstasyon seçiniz',
+                      placeholder: context.l10n.assignmentStationSelectPlaceholder,
                     ),
                   ),
                   if (notifier.cabin != null && notifier.cabinVisualizer != null) _buildView(notifier),

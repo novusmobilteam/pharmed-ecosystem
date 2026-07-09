@@ -35,7 +35,9 @@ class _DrugClassFormDialogState extends State<DrugClassFormDialog> {
   Widget build(BuildContext context) {
     return Consumer<DrugClassFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? 'İlaç Sınıfı Ekle' : 'İlaç Sınıfı Düzenle';
+        final String title = notifier.isCreate
+            ? context.l10n.drugClassFormAddTitle
+            : context.l10n.drugClassFormEditTitle;
         return RegistrationDialog(
           title: title,
           maxHeight: 400,
@@ -46,7 +48,7 @@ class _DrugClassFormDialogState extends State<DrugClassFormDialog> {
               await notifier.submit(
                 onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                 onSuccess: (msg) {
-                  MessageUtils.showSuccessSnackbar(context, msg);
+                  MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                   context.pop(true);
                 },
               );
@@ -74,7 +76,7 @@ class _NameField extends StatelessWidget {
     return Consumer<DrugClassFormNotifier>(
       builder: (context, vm, _) {
         return MedTextInputField(
-          label: 'İlaç Sınıfı Adı',
+          label: context.l10n.drugClassFormNameLabel,
           initialValue: vm.drugClass.name,
           validator: (v) => Validators.cannotBlankValidator(v),
           onChanged: vm.updateName,
@@ -92,7 +94,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<DrugClassFormNotifier>(
       builder: (context, vm, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           initialValue: vm.drugClass.status,
           options: Status.values,
           labelBuilder: (status) => status?.label,

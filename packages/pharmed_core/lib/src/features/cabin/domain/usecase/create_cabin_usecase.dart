@@ -2,6 +2,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class CreateCabinUseCase {
   final ICabinRepository _repository;
@@ -14,7 +15,7 @@ class CreateCabinUseCase {
     if (stationId == null) {
       return Result.error(
         ServiceException(
-          message: 'Kabin oluşturma işlemi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
+          message: contextlessL10n().cabinCore_createError,
           statusCode: 404,
         ),
       );

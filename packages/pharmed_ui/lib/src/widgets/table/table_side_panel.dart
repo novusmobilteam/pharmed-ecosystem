@@ -22,7 +22,7 @@ class _SidePanel extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.centerLeft,
             child: Text(
-              title ?? 'Kategoriler',
+              title ?? context.l10n.table_categoriesDefaultTitle,
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF374151)),
             ),
           ),

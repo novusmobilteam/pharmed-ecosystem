@@ -40,8 +40,8 @@ class DrugFormPanel extends StatelessWidget {
       child: Consumer<DrugFormNotifier>(
         builder: (context, formNotifier, _) {
           return SidePanel(
-            title: isNew ? 'Yeni İlaç' : 'İlaç Düzenle',
-            subtitle: isNew ? 'İlaç bilgilerini doldurun' : 'İlaç bilgilerini güncelleyin',
+            title: isNew ? context.l10n.medicine_formTitleNew : context.l10n.medicine_formTitleEdit,
+            subtitle: isNew ? context.l10n.medicine_formSubtitleNew : context.l10n.medicine_formSubtitleEdit,
             isLoading: formNotifier.isSubmitting,
             onClose: medicineNotifier.closePanel,
             onSave: () async {
@@ -56,7 +56,7 @@ class DrugFormPanel extends StatelessWidget {
                   MessageUtils.showErrorDialog(context, formNotifier.statusMessage);
                 }
               } else {
-                MessageUtils.showErrorDialog(context, 'Lütfen zorunlu alanları doldurunuz.');
+                MessageUtils.showErrorDialog(context, context.l10n.common_requiredFieldsError);
               }
             },
             child: Form(key: formKey, child: _dialogBody(formNotifier)),
@@ -160,12 +160,10 @@ class DrugFormPanel extends StatelessWidget {
 }
 
 Widget _definitionNameField() {
-  final label = 'Tanım Adı';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldDefinitionName,
         initialValue: vm.drug.definition,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: (value) => vm.updateDefinitionName(value),
@@ -175,12 +173,10 @@ Widget _definitionNameField() {
 }
 
 Widget _barcodeField() {
-  final label = 'Barkod';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldBarcode,
         initialValue: vm.drug.barcode,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: (value) => vm.updateBarcode(value),
@@ -191,12 +187,10 @@ Widget _barcodeField() {
 }
 
 Widget _nameField() {
-  final label = 'İlaç Adı';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldName,
         initialValue: vm.drug.name,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: (value) => vm.updateName(value),
@@ -206,12 +200,10 @@ Widget _nameField() {
 }
 
 Widget _codeField() {
-  final label = 'İlaç Kodu';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldCode,
         initialValue: vm.drug.code,
         validator: (value) => Validators.cannotBlankValidator(value),
         onChanged: (value) => vm.updateCode(value),
@@ -221,12 +213,10 @@ Widget _codeField() {
 }
 
 Widget _prescriptionTypeField() {
-  final label = 'Reçete Tipi';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedDropdownInputField<PrescriptionType>(
-        label: label,
+        label: context.l10n.medicine_fieldPrescriptionType,
         options: PrescriptionType.values,
         initialValue: vm.drug.prescriptionType,
         labelBuilder: (value) => value?.label,
@@ -238,8 +228,6 @@ Widget _prescriptionTypeField() {
 }
 
 Widget _doseField() {
-  final label = 'Doz';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return Row(
@@ -247,7 +235,7 @@ Widget _doseField() {
         children: [
           Expanded(
             child: MedTextInputField(
-              label: label,
+              label: context.l10n.medicine_fieldDose,
               initialValue: vm.drug.dose.toCustomString(),
               keyboardType: TextInputType.number,
               validator: (value) => Validators.cannotBlankValidator(value),
@@ -270,10 +258,9 @@ Widget _doseField() {
 }
 
 Widget _manifacturerField() {
-  final label = 'Üretici Firma';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
+      final label = context.l10n.medicine_fieldManufacturer;
       return MedSelectionField<Firm>(
         label: label,
         title: label,
@@ -291,12 +278,10 @@ Widget _manifacturerField() {
 // Kabinden ilaç alım yapılırken bu miktardan fazla ilaç verilmeyecek.
 // Birimi, ilacın birimiyle aynı olacak. ml -> ml
 Widget _maxUsageField() {
-  final label = 'Günlük Maks. Kullanım Miktarı';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldDailyMaxUsage,
         suffix: Text(vm.drug.doseUnit?.title.toLowerCase() ?? ''),
         keyboardType: const TextInputType.numberWithOptions(),
         initialValue: vm.drug.dailyMaxUsage.toCustomString(),
@@ -308,10 +293,9 @@ Widget _maxUsageField() {
 }
 
 Widget _drugTypeField() {
-  final label = 'İlaç Tipi';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
+      final label = context.l10n.medicine_fieldDrugType;
       return MedSelectionField<DrugType>(
         label: label,
         title: label,
@@ -327,15 +311,13 @@ Widget _drugTypeField() {
 }
 
 Widget _returnTypeField() {
-  final label = 'İade Şekli';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return Column(
         spacing: AppDimensions.registrationDialogSpacing,
         children: [
           MedDropdownInputField<ReturnType>(
-            label: label,
+            label: context.l10n.medicine_fieldReturnType,
             options: ReturnType.values,
             initialValue: vm.drug.returnType,
             labelBuilder: (value) => value?.label,
@@ -346,12 +328,12 @@ Widget _returnTypeField() {
             Column(
               children: [
                 MedCheckboxField(
-                  label: 'Serum kabininde maks. değere bakma',
+                  label: context.l10n.medicine_checkboxSerumMaxValue,
                   value: vm.drug.isNotSerumCabinetMaxValue,
                   onChanged: (_) => vm.toggleSerumMaxValue(),
                 ),
                 MedCheckboxField(
-                  label: 'Kübik çekmecede maks. değere bakma',
+                  label: context.l10n.medicine_checkboxCubicMaxValue,
                   value: vm.drug.isNotCubicDrawrMaxValue,
                   onChanged: (_) => vm.toggleCubicMaxValue(),
                 ),
@@ -370,11 +352,15 @@ Widget _qrCodeField() {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: MedCheckboxField(label: 'Karekodlu', value: vm.drug.isQrCode, onChanged: (_) => vm.toggleQr()),
+            child: MedCheckboxField(
+              label: context.l10n.medicine_checkboxQrCode,
+              value: vm.drug.isQrCode,
+              onChanged: (_) => vm.toggleQr(),
+            ),
           ),
           Expanded(
             child: MedDropdownInputField(
-              label: 'Adet',
+              label: context.l10n.medicine_fieldPieceCountLabel,
               enabled: vm.drug.isQrCode,
               initialValue: vm.drug.piece?.toInt() ?? 1,
               onChanged: vm.updatePiece,
@@ -390,10 +376,9 @@ Widget _qrCodeField() {
 }
 
 Widget _drugClassField() {
-  final label = 'İlaç Sınıfı';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
+      final label = context.l10n.medicine_fieldDrugClass;
       return MedSelectionField<DrugClass>(
         label: label,
         title: label,
@@ -409,8 +394,6 @@ Widget _drugClassField() {
 }
 
 Widget _purchaseTypeField() {
-  final label = 'Alım Şekli';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       bool enabled = vm.drug.purchaseType != PurchaseType.ordered;
@@ -418,7 +401,7 @@ Widget _purchaseTypeField() {
         spacing: AppDimensions.registrationDialogSpacing,
         children: [
           MedDropdownInputField<PurchaseType>(
-            label: label,
+            label: context.l10n.medicine_fieldPurchaseType,
             options: PurchaseType.values,
             initialValue: vm.drug.purchaseType,
             labelBuilder: (type) => type?.label,
@@ -439,8 +422,6 @@ Widget _purchaseTypeField() {
 }
 
 Widget _measurementUnitField() {
-  final label = 'Ölçü Birimi Kullan';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       bool isRequired = vm.drug.isMeasureUnit;
@@ -448,7 +429,7 @@ Widget _measurementUnitField() {
         children: [
           Expanded(
             child: MedCheckboxField(
-              label: label,
+              label: context.l10n.medicine_checkboxUseMeasurementUnit,
               value: vm.drug.isMeasureUnit,
               onChanged: (_) => vm.toggleMeasurement(),
             ),
@@ -459,7 +440,7 @@ Widget _measurementUnitField() {
               children: [
                 Expanded(
                   child: MedTextInputField(
-                    label: 'Doz',
+                    label: context.l10n.medicine_fieldDose,
                     enabled: isRequired,
                     initialValue: vm.drug.doseMeasureUnit.toCustomString(),
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -489,8 +470,6 @@ Widget _measurementUnitField() {
 }
 
 Widget _volumeField() {
-  final label = 'Hacim';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return Row(
@@ -498,7 +477,7 @@ Widget _volumeField() {
         children: [
           Expanded(
             child: MedTextInputField(
-              label: label,
+              label: context.l10n.medicine_fieldVolume,
               onChanged: vm.updateVolume,
               initialValue: vm.drug.volume.toCustomString(),
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -520,13 +499,11 @@ Widget _volumeField() {
 }
 
 Widget _dosageFormField() {
-  final label = 'Dozaj Formu';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
         key: ObjectKey(vm.drug.dosageForm),
-        label: label,
+        label: context.l10n.medicine_fieldDosageForm,
         validator: (value) => Validators.cannotBlankValidator(value),
         readOnly: true,
         initialValue: vm.drug.dosageForm?.name,
@@ -541,12 +518,10 @@ Widget _dosageFormField() {
 }
 
 Widget _statusField() {
-  final label = 'Durumu';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedDropdownInputField<Status>(
-        label: label,
+        label: context.l10n.medicine_fieldStatus,
         options: Status.values,
         initialValue: statusFromBool(vm.drug.isActive),
         labelBuilder: (value) => value?.label,
@@ -557,12 +532,10 @@ Widget _statusField() {
 }
 
 Widget _countTypeField() {
-  final label = 'Sayım Tipi';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedDropdownInputField<CountType>(
-        label: label,
+        label: context.l10n.medicine_fieldCountType,
         options: CountType.values,
         initialValue: vm.drug.countType,
         labelBuilder: (value) => value?.label,
@@ -573,12 +546,10 @@ Widget _countTypeField() {
 }
 
 Widget _atcCodeField() {
-  final label = 'ATC Kodu';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldAtcCode,
         onChanged: vm.updateAtcCode,
         initialValue: vm.drug.atcCode.toCustomString(),
         validator: Validators.cannotBlankValidator,
@@ -589,18 +560,18 @@ Widget _atcCodeField() {
 }
 
 Widget _equivalentCodeField() {
-  final label = 'Eşdeğer Kod';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return MedTextInputField(label: label, onChanged: vm.updateEquivalentCode, initialValue: vm.drug.equivalentCode);
+      return MedTextInputField(
+        label: context.l10n.medicine_fieldEquivalentCode,
+        onChanged: vm.updateEquivalentCode,
+        initialValue: vm.drug.equivalentCode,
+      );
     },
   );
 }
 
 Widget _buildWitnessedPurchaseField() {
-  final label = 'Şahitli Alım';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       bool enabled = vm.drug.isWitnessedPurchase;
@@ -608,7 +579,7 @@ Widget _buildWitnessedPurchaseField() {
         children: [
           Expanded(
             child: MedCheckboxField(
-              label: label,
+              label: context.l10n.medicine_checkboxWitnessedPurchase,
               value: vm.drug.isWitnessedPurchase,
               onChanged: (_) => vm.toggleWitnessedPurchase(),
             ),
@@ -645,8 +616,6 @@ Widget _buildWitnessedPurchaseField() {
 }
 
 Widget _buildWastageWitnessedPurchaseField() {
-  final label = 'Fire/İmha Şahitli';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       bool enabled = vm.drug.isWastageWitnessedPurchase;
@@ -654,7 +623,7 @@ Widget _buildWastageWitnessedPurchaseField() {
         children: [
           Expanded(
             child: MedCheckboxField(
-              label: label,
+              label: context.l10n.medicine_checkboxWastageWitnessed,
               value: vm.drug.isWastageWitnessedPurchase,
               onChanged: (_) => vm.toggleWastageWitnessedPurchase(),
             ),
@@ -691,8 +660,6 @@ Widget _buildWastageWitnessedPurchaseField() {
 }
 
 Widget _buildDestroyableField() {
-  final label = 'İmha Edilebilir';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       bool enabled = vm.drug.isDestroyable;
@@ -700,7 +667,7 @@ Widget _buildDestroyableField() {
         children: [
           Expanded(
             child: MedCheckboxField(
-              label: label,
+              label: context.l10n.medicine_checkboxDestroyable,
               value: vm.drug.isDestroyable,
               onChanged: (_) => vm.toggleIsDestroyable(),
             ),
@@ -721,10 +688,9 @@ Widget _buildDestroyableField() {
 }
 
 Widget _buildActiveIngredientField() {
-  final label = 'Etken Madde';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
+      final label = context.l10n.medicine_fieldActiveIngredient;
       return MedMultiSelectionField<ActiveIngredient>(
         key: ObjectKey(vm.activeIngredients),
         label: label,
@@ -748,32 +714,34 @@ Widget _buildActiveIngredientField() {
 }
 
 Widget _buildCollectNoteField() {
-  final label = 'Alım Notu';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return MedTextInputField(label: label, initialValue: vm.drug.collectNote, onChanged: vm.updateCollectNote);
+      return MedTextInputField(
+        label: context.l10n.medicine_fieldCollectNote,
+        initialValue: vm.drug.collectNote,
+        onChanged: vm.updateCollectNote,
+      );
     },
   );
 }
 
 Widget _buildReturnNoteField() {
-  final label = 'İade Notu';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
-      return MedTextInputField(label: label, initialValue: vm.drug.collectNote, onChanged: vm.updateReturnNote);
+      return MedTextInputField(
+        label: context.l10n.medicine_fieldReturnNote,
+        initialValue: vm.drug.collectNote,
+        onChanged: vm.updateReturnNote,
+      );
     },
   );
 }
 
 Widget _buildDestructionNoteField() {
-  final label = 'İmha Notu';
-
   return Consumer<DrugFormNotifier>(
     builder: (context, vm, _) {
       return MedTextInputField(
-        label: label,
+        label: context.l10n.medicine_fieldDestructionNote,
         initialValue: vm.drug.destructionNote,
         onChanged: vm.updateDestructionNote,
       );

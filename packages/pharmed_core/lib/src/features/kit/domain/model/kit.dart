@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Kit implements TableData {
   final int? id;
@@ -17,7 +18,7 @@ class Kit implements TableData {
   List<String> get rawContent => content;
 
   @override
-  List<String> get titles => ['Kit Adı', 'Durum'];
+  List<String> get titles => [contextlessL10n().tableCore_kitNameColumn, contextlessL10n().common_statusLabel];
 
   Kit copyWith({int? id, String? name, String? normalizedName, bool? isActive}) {
     return Kit(

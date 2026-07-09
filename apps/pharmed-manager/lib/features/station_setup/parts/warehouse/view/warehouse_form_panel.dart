@@ -26,16 +26,24 @@ class WarehouseFormPanel extends StatelessWidget {
       child: Consumer<WarehouseFormNotifier>(
         builder: (context, notifier, _) {
           return SidePanel(
-            title: isNew ? 'Yeni Depo' : 'Depo Düzenle',
-            subtitle: isNew ? 'Depo bilgilerini doldurun' : 'Depo bilgilerini güncelleyin',
+            title: isNew ? context.l10n.stationSetup_warehouse_formTitleNew : context.l10n.stationSetup_warehouse_formTitleEdit,
+            subtitle: isNew
+                ? context.l10n.stationSetup_warehouse_formSubtitleNew
+                : context.l10n.stationSetup_warehouse_formSubtitleEdit,
             isLoading: notifier.isSubmitting,
             onClose: () => setupNotifier.closePanel(),
             onSave: () async {
               if (formKey.currentState!.validate()) {
+                final wasCreate = notifier.isCreate;
                 await notifier.submit();
 
                 if (context.mounted && notifier.isSuccess(notifier.submitOp)) {
-                  MessageUtils.showSuccessSnackbar(context, notifier.statusMessage);
+                  MessageUtils.showSuccessSnackbar(
+                    context,
+                    wasCreate
+                        ? context.l10n.stationSetup_warehouse_createdSuccessMessage
+                        : context.l10n.stationSetup_warehouse_updatedSuccessMessage,
+                  );
                   context.read<StationSetupNotifier>().closePanel();
                   context.read<WarehouseNotifier>().fetch();
                 } else if (context.mounted && notifier.isFailed(notifier.submitOp)) {
@@ -66,7 +74,7 @@ class _CodeField extends StatelessWidget {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, vm, _) {
         return MedTextInputField(
-          label: 'Depo Kodu',
+          label: context.l10n.stationSetup_warehouse_codeLabel,
           maxLength: 5,
           keyboardType: TextInputType.number,
           initialValue: vm.warehouse.code.toCustomString(),
@@ -90,7 +98,7 @@ class _NameField extends StatelessWidget {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, vm, _) {
         return MedTextInputField(
-          label: 'Depo Adı',
+          label: context.l10n.stationSetup_warehouse_nameLabel,
           autoFocus: vm.isCreate,
           initialValue: vm.warehouse.name,
           validator: Validators.cannotBlankValidator,
@@ -109,7 +117,7 @@ class _WarehouseTypeField extends StatelessWidget {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, vm, _) {
         return MedDropdownInputField<WarehouseType>(
-          label: 'Depo Türü',
+          label: context.l10n.stationSetup_warehouse_typeLabel,
           options: WarehouseType.values,
           initialValue: vm.warehouse.type,
           labelBuilder: (value) => value?.label,
@@ -129,8 +137,8 @@ class _UserField extends StatelessWidget {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, notifier, _) {
         return MedSelectionField<User>(
-          label: 'Depo Sorumlusu',
-          title: 'Depo Sorumlusu Seç',
+          label: context.l10n.stationSetup_warehouse_managerLabel,
+          title: context.l10n.stationSetup_warehouse_managerSelectTitle,
           initialValue: notifier.warehouse.user,
           dataSource: (skip, take, search) =>
               context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search)),
@@ -151,7 +159,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<WarehouseFormNotifier>(
       builder: (context, vm, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.stationSetup_common_statusLabel,
           options: Status.values,
           initialValue: vm.warehouse.status,
           labelBuilder: (s) => s?.label,

@@ -82,7 +82,7 @@ class _MedMultiSelectionFieldState<T extends Selectable> extends State<MedMultiS
               children: [
                 Flexible(
                   child: Text(
-                    hasValue ? value.map(widget.labelBuilder).join(', ') : 'Seçiniz',
+                    hasValue ? value.map(widget.labelBuilder).join(', ') : context.l10n.common_selectPlaceholder,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: MedTextStyles.bodyMd(color: MedColors.text),

@@ -79,7 +79,7 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         StepHeader(
-          badge: 'Adım 2 / 5',
+          badge: context.l10n.wizard_stepBadge(2, 5),
           title: context.l10n.wizard_step2Header,
           subtitle: context.l10n.wizard_step2Subtitle,
         ),
@@ -153,7 +153,7 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
         SizedBox(
           width: 120,
           child: MedDropdownInputField<String>(
-            label: 'Port',
+            label: context.l10n.wizard_portLabel,
             enabled: state.availablePorts.isNotEmpty,
             onChanged: (val) {
               setState(() => _port = val ?? '');
@@ -172,7 +172,7 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         MedIpField(
-          label: 'DVR IP',
+          label: context.l10n.wizard_summaryLabelDvrIp,
           initialValue: _dvrIp,
           onChanged: (ip) {
             _dvrIp = ip;
@@ -192,7 +192,7 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
             setState(() => _rfidEnable = value);
             _notify();
           },
-          label: 'RFID okuyucu var',
+          label: context.l10n.wizard_rfidReaderToggleLabel,
         ),
         if (_rfidEnable)
           Column(
@@ -203,7 +203,7 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
                   Expanded(
                     flex: 3,
                     child: MedIpField(
-                      label: 'RFID IP Adresi',
+                      label: context.l10n.wizard_rfidIpAddressLabel,
                       initialValue: _rfidIpAddress,
                       onChanged: (ip) {
                         _rfidIpAddress = ip;
@@ -215,7 +215,7 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
                   SizedBox(
                     width: 120,
                     child: MedTextInputField(
-                      label: 'RFID Port',
+                      label: context.l10n.wizard_rfidPortFieldLabel,
                       controller: _rfidPortController,
                       enabled: state.availablePorts.isNotEmpty,
                       onChanged: (_) => _notify(),

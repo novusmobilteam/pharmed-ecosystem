@@ -62,7 +62,7 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
     final existing = notifier.resolveExistingWitness(item.id);
     if (existing != null) {
       notifier.addWitness(item.id, existing);
-      MessageUtils.showInfoSnackbar(context, '${existing.fullName} bu ilaç için de şahit olarak atandı.');
+      MessageUtils.showInfoSnackbar(context, context.l10n.intake_info_witnessAutoAssigned(existing.fullName));
       return;
     }
 
@@ -83,14 +83,14 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
         MessageUtils.showConfirmDialog(
           context: context,
           action: ConfirmAction.custom,
-          customTitle: 'Alım tamamlanamadı',
+          customTitle: context.l10n.intake_error_queueTitle,
           customMessage: next.message.isNotEmpty
-              ? 'İlaçları aldığınız yere geri bırakın.\n\n${next.message}'
-              : 'İlaçları aldığınız yere geri bırakın.',
+              ? '${context.l10n.intake_error_queueMessage}\n\n${next.message}'
+              : context.l10n.intake_error_queueMessage,
           iconData: PhosphorIcons.warning(),
           color: MedColors.amber,
-          confirmButtonText: 'Sonraki çekmece',
-          cancelButtonText: 'İşlemi sonlandır',
+          confirmButtonText: context.l10n.refill_error_continueNext,
+          cancelButtonText: context.l10n.refill_error_endProcess,
           onConfirm: notifier.continueAfterError,
           onCancel: notifier.abortAfterError,
         );

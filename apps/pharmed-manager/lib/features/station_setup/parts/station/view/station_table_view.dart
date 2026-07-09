@@ -22,9 +22,10 @@ class StationTableView extends StatelessWidget {
           onSearchChanged: notifier.search,
           actions: [
             TableActionItem.edit(
+              context: context,
               onPressed: (station) => context.read<StationSetupNotifier>().openStationPanel(station: station),
             ),
-            TableActionItem.delete(onPressed: (station) => _onDelete(context, notifier, station)),
+            TableActionItem.delete(context: context, onPressed: (station) => _onDelete(context, notifier, station)),
           ],
           enablePagination: true,
           pageSize: notifier.pageSize,
@@ -43,7 +44,7 @@ void _onDelete(BuildContext context, StationNotifier notifier, Station station) 
       await notifier.deleteStation(
         station,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
       );
     },
   );

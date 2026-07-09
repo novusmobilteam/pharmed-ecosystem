@@ -1,11 +1,15 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class DosageForm extends Selectable implements TableData {
   final String? name;
   final bool isActive;
 
   DosageForm({super.id, this.name, this.isActive = true})
-    : super(title: name?.isNotEmpty == true ? name! : 'İsimsiz', subtitle: statusFromBool(isActive).label);
+    : super(
+        title: name?.isNotEmpty == true ? name! : contextlessL10n().common_unknownName,
+        subtitle: statusFromBool(isActive).label,
+      );
 
   Status get status => statusFromBool(isActive);
 
@@ -13,7 +17,7 @@ class DosageForm extends Selectable implements TableData {
   List<String?> get content => [title, subtitle];
 
   @override
-  List<String?> get titles => ['Branş Adı', 'Durum'];
+  List<String?> get titles => [contextlessL10n().tableCore_dosageFormBranchColumn, contextlessL10n().common_statusLabel];
 
   @override
   List get rawContent => content;

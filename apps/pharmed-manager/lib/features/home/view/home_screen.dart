@@ -190,7 +190,7 @@ class _NotFoundView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Sayfa bulunamadı'));
+    return Center(child: Text(context.l10n.common_pageNotFound));
   }
 }
 
@@ -206,9 +206,8 @@ class _NoMenuContent extends StatelessWidget {
         EmptyStateWidget(
           icon: PhosphorIcons.fingerprint(),
           variant: EmptyStateVariant.custom,
-          title: 'Yetkili Menü Bulunamadı',
-          description:
-              'Hesabınıza tanımlanmış erişim yetkisi bulunmamaktadır.\nErişim sağlamak için sistem yöneticiniz ile iletişime geçiniz.',
+          title: context.l10n.home_noAuthorizedMenuTitle,
+          description: context.l10n.home_noAuthorizedMenuDescription,
         ),
         SizedBox(
           width: 200,
@@ -216,7 +215,7 @@ class _NoMenuContent extends StatelessWidget {
             onPressed: () {
               context.read<AuthNotifier>().logout();
             },
-            label: 'Çıkış Yap',
+            label: context.l10n.dashboard_logoutTooltip,
           ),
         ),
       ],

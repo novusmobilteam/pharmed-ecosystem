@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum Gender {
   female(0),
@@ -20,11 +21,11 @@ enum Gender {
   String get label {
     switch (this) {
       case Gender.female:
-        return 'Kadın';
+        return contextlessL10n().enumCore_genderFemale;
       case Gender.male:
-        return 'Erkek';
+        return contextlessL10n().enumCore_genderMale;
       case Gender.unknown:
-        return 'Bilinmiyor';
+        return contextlessL10n().enumCore_genderUnknown;
     }
   }
 

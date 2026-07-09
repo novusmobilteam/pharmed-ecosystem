@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum StockTransactionType {
   entry(1),
@@ -11,9 +12,9 @@ enum StockTransactionType {
   String get label {
     switch (this) {
       case StockTransactionType.entry:
-        return 'Stok Giriş';
+        return contextlessL10n().enumCore_stockTxTypeIn;
       case StockTransactionType.exit:
-        return 'Stok Çıkış';
+        return contextlessL10n().enumCore_stockTxTypeOut;
     }
   }
 

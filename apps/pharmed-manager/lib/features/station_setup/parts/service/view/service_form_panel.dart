@@ -30,16 +30,24 @@ class ServiceFormPanel extends StatelessWidget {
       child: Consumer<ServiceFormNotifier>(
         builder: (context, notifier, _) {
           return SidePanel(
-            title: isNew ? 'Yeni Servis' : 'Servis Düzenle',
-            subtitle: isNew ? 'Servis bilgilerini doldurun' : 'Servis bilgilerini güncelleyin',
+            title: isNew ? context.l10n.stationSetup_service_formTitleNew : context.l10n.stationSetup_service_formTitleEdit,
+            subtitle: isNew
+                ? context.l10n.stationSetup_service_formSubtitleNew
+                : context.l10n.stationSetup_service_formSubtitleEdit,
             isLoading: notifier.isSubmitting,
             onClose: setupNotifier.closePanel,
             onSave: () async {
               if (formKey.currentState!.validate()) {
+                final wasCreate = notifier.isCreate;
                 await notifier.submit();
 
                 if (context.mounted && notifier.isSuccess(notifier.submitOp)) {
-                  MessageUtils.showSuccessSnackbar(context, notifier.statusMessage);
+                  MessageUtils.showSuccessSnackbar(
+                    context,
+                    wasCreate
+                        ? context.l10n.stationSetup_service_createdSuccessMessage
+                        : context.l10n.stationSetup_service_updatedSuccessMessage,
+                  );
                   context.read<StationSetupNotifier>().closePanel();
                   context.read<ServiceNotifier>().fetch();
                 } else if (context.mounted && notifier.isFailed(notifier.submitOp)) {
@@ -81,7 +89,7 @@ class _NameField extends StatelessWidget {
     return Consumer<ServiceFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Servis Adı',
+          label: context.l10n.stationSetup_service_nameLabel,
           initialValue: notifier.service.name,
           onChanged: notifier.updateName,
           validator: (v) => Validators.cannotBlankValidator(v),
@@ -99,8 +107,8 @@ class _BranchField extends StatelessWidget {
     return Consumer<ServiceFormNotifier>(
       builder: (context, notifier, _) {
         return MedSelectionField<Branch>(
-          label: 'Branş',
-          title: 'Branş Seç',
+          label: context.l10n.stationSetup_service_branchLabel,
+          title: context.l10n.stationSetup_service_branchSelectTitle,
           initialValue: notifier.service.branch,
           dataSource: (skip, take, search) =>
               context.read<GetBranchesUseCase>().call(GetBranchesParams(skip: skip, take: take, search: search)),
@@ -121,7 +129,7 @@ class _UserField extends StatelessWidget {
     return Consumer<ServiceFormNotifier>(
       builder: (context, notifier, _) {
         return MedSelectionField<User>(
-          label: 'Kullanıcı',
+          label: context.l10n.stationSetup_service_userLabel,
           initialValue: notifier.service.user,
           labelBuilder: (user) => user.fullName,
           onSelected: notifier.updateUser,
@@ -141,7 +149,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<ServiceFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.stationSetup_common_statusLabel,
           options: Status.values,
           initialValue: notifier.service.status,
           onChanged: notifier.updateStatus,

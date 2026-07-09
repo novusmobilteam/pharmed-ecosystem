@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 enum PermissionStatus {
   allowed,
   denied;
@@ -5,9 +7,9 @@ enum PermissionStatus {
   String get label {
     switch (this) {
       case PermissionStatus.allowed:
-        return 'Yapabilir';
+        return contextlessL10n().enumCore_permissionCan;
       case PermissionStatus.denied:
-        return 'Yapamaz';
+        return contextlessL10n().enumCore_permissionCannot;
     }
   }
 

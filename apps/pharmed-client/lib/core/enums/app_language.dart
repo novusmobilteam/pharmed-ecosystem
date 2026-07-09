@@ -3,6 +3,7 @@ import 'dart:ui';
 enum AppLanguage {
   turkish('tr'),
   english('en'),
+  french('fr'),
   arabic('ar');
 
   const AppLanguage(this.code);

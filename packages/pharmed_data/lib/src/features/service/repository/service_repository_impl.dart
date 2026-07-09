@@ -1,6 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/src/features/service/service.dart';
 import 'package:pharmed_data/src/models/api_response/api_response.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // [SWREQ-DATA-SERVICE-002]
 // IServiceRepository implementasyonu.
@@ -78,7 +79,7 @@ class ServiceRepositoryImpl implements IServiceRepository {
   @override
   Future<Result<void>> deleteService(HospitalService entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek servisin id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteServiceIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteService(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

@@ -15,7 +15,7 @@ Future<T?> showMaterialTypeDialog<T>(BuildContext context, {bool forSelection = 
             ..getMaterialTypes(),
       child: Consumer<MaterialTypeNotifier>(
         builder: (context, vm, _) => CustomDialog(
-          title: forSelection ? 'Malzeme Tipi Seç' : 'Malzeme Tipi Tanımlama',
+          title: forSelection ? context.l10n.materialTypeDialogSelectTitle : context.l10n.materialTypeDialogTitle,
           showSearch: true,
           showAdd: !forSelection,
           isLoading: vm.isFetching,
@@ -62,8 +62,10 @@ class _MaterialTypeListViewState extends State<MaterialTypeListView> {
           return EmptyStateWidget(
             icon: Icons.category_outlined,
             variant: EmptyStateVariant.custom,
-            title: 'Henüz malzeme tipi bulunmuyor',
-            description: widget.isDialog ? 'Yeni malzeme tipi eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            title: context.l10n.materialTypeListEmptyTitle,
+            description: widget.isDialog
+                ? context.l10n.common_addItemHint('malzeme tipi')
+                : context.l10n.common_emptyListMessage,
           );
         }
 

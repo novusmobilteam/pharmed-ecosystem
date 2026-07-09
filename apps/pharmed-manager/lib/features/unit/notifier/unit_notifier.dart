@@ -30,7 +30,7 @@ class UnitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Unit
       operation: () => _deleteUnitUseCase.call(unit),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+        onSuccess?.call(null);
         getUnits();
       },
     );

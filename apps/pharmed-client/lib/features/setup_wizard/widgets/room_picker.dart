@@ -30,7 +30,7 @@ class _RoomBedSection extends StatelessWidget {
       ServicesLoadState.error => Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Text(
-          'Servis detayları yüklenemedi.',
+          context.l10n.wizard_serviceDetailsLoadError,
           style: TextStyle(fontFamily: MedFonts.sans, fontSize: 12, color: MedColors.red),
         ),
       ),
@@ -136,7 +136,7 @@ class _RoomBedPickerState extends State<RoomBedPicker> {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Text(
-          'Bu istasyona bağlı oda tanımlı değil.',
+          context.l10n.wizard_noRoomsDefinedMessage,
           style: TextStyle(fontFamily: MedFonts.sans, fontSize: 12, color: MedColors.text3),
         ),
       );
@@ -149,9 +149,15 @@ class _RoomBedPickerState extends State<RoomBedPicker> {
         if (widget.selectedRooms.isNotEmpty) ...[
           Row(
             children: [
-              MedBadge(label: '${widget.selectedRooms.length} oda', variant: MedBadgeVariant.blue),
+              MedBadge(
+                label: context.l10n.wizard_selectedRoomCountBadge(widget.selectedRooms.length),
+                variant: MedBadgeVariant.blue,
+              ),
               const SizedBox(width: 8),
-              MedBadge(label: '${widget.selectedBeds.length} yatak', variant: MedBadgeVariant.green),
+              MedBadge(
+                label: context.l10n.stationSetup_bedCountBadge(widget.selectedBeds.length),
+                variant: MedBadgeVariant.green,
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -252,7 +258,9 @@ class _ServiceGroup extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: BorderRadius.circular(10)),
                 child: Text(
-                  selCount > 0 ? '$selCount/${rooms.length}' : '${rooms.length} oda',
+                  selCount > 0
+                      ? context.l10n.wizard_roomSelectionFraction(selCount, rooms.length)
+                      : context.l10n.wizard_selectedRoomCountBadge(rooms.length),
                   style: const TextStyle(fontFamily: MedFonts.mono, fontSize: 10, color: MedColors.blue),
                 ),
               ),
@@ -338,7 +346,7 @@ class _RoomRow extends StatelessWidget {
                 ),
                 if (hasBeds) ...[
                   Text(
-                    '${room.beds.length} yatak',
+                    context.l10n.stationSetup_bedCountBadge(room.beds.length),
                     style: const TextStyle(fontFamily: MedFonts.mono, fontSize: 10, color: MedColors.text3),
                   ),
                   GestureDetector(

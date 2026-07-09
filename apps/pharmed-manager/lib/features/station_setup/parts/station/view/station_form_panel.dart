@@ -27,16 +27,24 @@ class StationFormPanel extends StatelessWidget {
       child: Consumer<StationFormNotifier>(
         builder: (context, formNotifier, _) {
           return SidePanel(
-            title: isNew ? 'Yeni İstasyon' : 'İstasyonu Düzenle',
-            subtitle: isNew ? 'İstasyon bilgilerini doldurun' : 'İstasyon bilgilerini güncelleyin',
+            title: isNew ? context.l10n.stationSetup_station_formTitleNew : context.l10n.stationSetup_station_formTitleEdit,
+            subtitle: isNew
+                ? context.l10n.stationSetup_station_formSubtitleNew
+                : context.l10n.stationSetup_station_formSubtitleEdit,
             isLoading: formNotifier.isSubmitting,
             onClose: setupNotifier.closePanel,
             onSave: () async {
               if (formKey.currentState!.validate()) {
+                final wasCreate = formNotifier.isCreate;
                 await formNotifier.submit();
 
                 if (context.mounted && formNotifier.isSuccess(formNotifier.submitOp)) {
-                  MessageUtils.showSuccessSnackbar(context, formNotifier.statusMessage);
+                  MessageUtils.showSuccessSnackbar(
+                    context,
+                    wasCreate
+                        ? context.l10n.stationSetup_station_createdSuccessMessage
+                        : context.l10n.stationSetup_station_updatedSuccessMessage,
+                  );
                   context.read<StationSetupNotifier>().closePanel();
                   context.read<StationNotifier>().fetch();
                 } else if (context.mounted && formNotifier.isFailed(formNotifier.submitOp)) {
@@ -93,7 +101,7 @@ class _NameField extends StatelessWidget {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'İstasyon Adı',
+          label: context.l10n.stationSetup_station_nameLabel,
           initialValue: notifier.station?.name,
           onChanged: notifier.updateName,
           validator: (v) => Validators.cannotBlankValidator(v),
@@ -111,8 +119,8 @@ class _MaterialWarehouseField extends StatelessWidget {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
         return MedSelectionField<Warehouse>(
-          label: 'İlaç Depo',
-          title: 'İlaç Depo Seç',
+          label: context.l10n.stationSetup_station_drugWarehouseLabel,
+          title: context.l10n.stationSetup_station_drugWarehouseSelectTitle,
           initialValue: notifier.station?.materialWarehouse,
           dataSource: (skip, take, search) =>
               context.read<GetWarehousesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
@@ -133,7 +141,7 @@ class _DrugStatusField extends StatelessWidget {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<OrderStatus>(
-          label: 'İlaç Durumu',
+          label: context.l10n.stationSetup_station_drugStatusLabel,
           options: OrderStatus.values,
           initialValue: notifier.station?.drugStatus,
           labelBuilder: (status) => status?.label,
@@ -153,8 +161,8 @@ class _ConsumableWarehouseField extends StatelessWidget {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
         return MedSelectionField<Warehouse>(
-          label: 'Tıbbi Sarf Depo',
-          title: 'Tıbbi Sarf Depo Seç',
+          label: context.l10n.stationSetup_station_consumableWarehouseLabel,
+          title: context.l10n.stationSetup_station_consumableWarehouseSelectTitle,
           initialValue: notifier.station?.medicalConsumableWarehouse,
           labelBuilder: (w) => w.name ?? '—',
           validator: (value) => Validators.cannotBlankValidator(value?.toString()),
@@ -175,7 +183,7 @@ class _ConsumablesStatusField extends StatelessWidget {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<OrderStatus>(
-          label: 'Tıbbi Sarf',
+          label: context.l10n.authorization_tabConsumableLabel,
           initialValue: notifier.station?.medicalConsumableStatus,
           options: OrderStatus.values,
           labelBuilder: (status) => status?.label,
@@ -196,8 +204,8 @@ class _ServiceField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedSelectionField<HospitalService>(
           key: key,
-          label: 'Servis',
-          title: 'Servis Seç',
+          label: context.l10n.stationSetup_station_serviceLabel,
+          title: context.l10n.stationSetup_station_serviceSelectTitle,
           initialValue: notifier.station?.service,
           labelBuilder: (value) => value.name ?? '-',
           onSelected: notifier.updateService,
@@ -219,8 +227,8 @@ class _ProvidedServices extends StatelessWidget {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
         return MedMultiSelectionField<HospitalService>(
-          label: 'Hizmet Verdiği Servisler',
-          title: 'Servis Seç',
+          label: context.l10n.stationSetup_station_providedServicesLabel,
+          title: context.l10n.stationSetup_station_serviceSelectTitle,
           initialValue: notifier.station?.services,
           dataSource: (skip, take, search) =>
               context.read<GetServicesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
@@ -240,11 +248,17 @@ class _StationTypeField extends StatelessWidget {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
         return MedRadioInputField<StationType>(
-          label: 'İstasyon Tipi',
+          label: context.l10n.stationSetup_station_typeLabel,
           initialValue: notifier.station?.type,
-          options: const [
-            MedRadioOption(value: StationType.patientBased, label: 'Hasta Bazlı'),
-            MedRadioOption(value: StationType.medicineBased, label: 'İlaç Bazlı'),
+          options: [
+            MedRadioOption(
+              value: StationType.patientBased,
+              label: context.l10n.stationSetup_station_typePatientBasedLabel,
+            ),
+            MedRadioOption(
+              value: StationType.medicineBased,
+              label: context.l10n.stationSetup_station_typeMedicineBasedLabel,
+            ),
           ],
           onChanged: notifier.updateType,
         );

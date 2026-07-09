@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 /// İade Tipi
 enum ReturnType {
   /// Yerine İade
@@ -26,13 +28,13 @@ enum ReturnType {
   String get label {
     switch (this) {
       case ReturnType.toOrigin:
-        return "Yerine İade";
+        return contextlessL10n().enumCore_returnTypeToOrigin;
       case ReturnType.toDrawer:
-        return "Çekmeceye İade";
+        return contextlessL10n().enumCore_returnTypeToDrawer;
       case ReturnType.toReturnBox:
-        return "İade Kutusuna İade";
+        return contextlessL10n().enumCore_returnTypeToReturnBox;
       case ReturnType.toPharmacy:
-        return "Eczaneye İade";
+        return contextlessL10n().enumCore_returnTypeToPharmacy;
     }
   }
 }

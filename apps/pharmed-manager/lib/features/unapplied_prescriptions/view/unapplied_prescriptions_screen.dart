@@ -27,7 +27,7 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
               mobile: const MedMobileLayout(),
               tablet: const MedTabletLayout(),
               desktop: MedDesktopLayout(
-                title: menu.name ?? 'Uygulanmamış Reçeteler',
+                title: menu.name ?? context.l10n.unappliedPrescription_screenTitleFallback,
                 subtitle: menu.description,
                 showAddButton: false,
                 child: MedTable<Prescription>(
@@ -43,7 +43,7 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
                   actions: [
                     TableActionItem(
                       icon: PhosphorIcons.qrCode(),
-                      tooltip: 'Detayları Görüntüle',
+                      tooltip: context.l10n.unappliedPrescription_viewDetailsTooltip,
                       color: context.colorScheme.onSurface,
                       onPressed: (item) => showPrescriptionDetailView(context, prescription: item),
                     ),

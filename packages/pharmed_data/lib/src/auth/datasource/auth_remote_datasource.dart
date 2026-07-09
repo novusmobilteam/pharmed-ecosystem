@@ -10,6 +10,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 abstract interface class IAuthRemoteDataSource {
   Future<String> login({required String email, required String password, String? macAddress});
@@ -32,7 +33,7 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
     final data = body['data'];
 
     if (data is! String || data.isEmpty) {
-      throw const ServiceException(message: 'Sunucudan geçersiz token yanıtı alındı', statusCode: 500);
+      throw ServiceException(message: contextlessL10n().authError_invalidTokenResponse, statusCode: 500);
     }
 
     return data;

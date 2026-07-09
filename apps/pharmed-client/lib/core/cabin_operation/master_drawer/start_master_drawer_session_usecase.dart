@@ -23,6 +23,7 @@
 import 'dart:async';
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'master_drawer_stage.dart';
 
@@ -42,23 +43,23 @@ class StartMasterDrawerSessionUseCase {
     final portName = assignment.cabin?.comPort?.name;
 
     // ── 1. Bağlan ─────────────────────────────────────────────────────────
-    yield const MasterDrawerOpening(message: 'Cihaz hazırlanıyor...');
+    yield MasterDrawerOpening(message: contextlessL10n().common_action_devicePreparing);
 
     final ManagementCard manager;
     try {
       final found = await _service.getOrScanManager(targetPort: portName);
       if (found == null) {
-        yield const MasterDrawerFailed(message: 'Yönetim kartı bulunamadı.');
+        yield MasterDrawerFailed(message: contextlessL10n().core_cabinConn_managerNotFoundError);
         return;
       }
       manager = found;
     } catch (e) {
-      yield MasterDrawerFailed(message: 'Bağlantı hatası: $e');
+      yield MasterDrawerFailed(message: contextlessL10n().common_error_connectionErrorWithDetail(e.toString()));
       return;
     }
 
     // ── 2. Kilit aç ───────────────────────────────────────────────────────
-    yield const MasterDrawerOpening(message: 'Kilit açılıyor...');
+    yield MasterDrawerOpening(message: contextlessL10n().common_action_lockOpening);
 
     try {
       if (isSerum) {
@@ -75,7 +76,7 @@ class StartMasterDrawerSessionUseCase {
         await _service.openMasterDrawer(manager: manager, row: address.row, port: address.port, drawer: address.index);
       }
     } catch (e) {
-      yield MasterDrawerFailed(message: 'Kilit açılamadı: $e');
+      yield MasterDrawerFailed(message: contextlessL10n().common_error_lockOpenFailedWithDetail(e.toString()));
       return;
     }
 

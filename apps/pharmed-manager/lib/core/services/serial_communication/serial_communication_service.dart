@@ -24,22 +24,24 @@ class SerialCommunicationService implements ISerialCommunicationService {
   @override
   bool get isConnected => _port?.isOpen ?? false;
 
-  String get connectedPortName => _port?.name ?? "Bağlı Değil";
+  String get connectedPortName => _port?.name ?? contextlessL10n().core_serialPortDisconnectedLabel;
 
   @override
   Future<void> connectToPort(String portName, {Function(String message)? onStatusChanged}) async {
+    final l10n = contextlessL10n();
+
     // 1. Önce istenen portu (COM3) dene
     try {
-      if (onStatusChanged != null) onStatusChanged("Porta bağlanılıyor: $portName...");
+      if (onStatusChanged != null) onStatusChanged(l10n.core_serialConnectingStatus(portName));
       await _attemptConnection(portName);
-      if (onStatusChanged != null) onStatusChanged("Bağlantı başarılı: $portName");
+      if (onStatusChanged != null) onStatusChanged(l10n.core_serialConnectSuccessStatus(portName));
       return;
     } catch (e) {
       debugPrint("⚠️ $portName başarısız: $e");
     }
 
     // 2. Başarısız olursa, diğer mevcut portları listele ve dene
-    if (onStatusChanged != null) onStatusChanged("$portName başarısız. Diğer portlar taranıyor...");
+    if (onStatusChanged != null) onStatusChanged(l10n.core_serialPortFailedScanningOthersStatus(portName));
 
     final availablePorts = SerialPort.availablePorts;
 
@@ -47,16 +49,16 @@ class SerialCommunicationService implements ISerialCommunicationService {
     final portsToTry = availablePorts.where((p) => p != portName).toList();
 
     if (portsToTry.isEmpty) {
-      throw SerialPortException(message: "Varsayılan port ($portName) başarısız ve başka port bulunamadı.");
+      throw SerialPortException(message: l10n.core_serialNoOtherPortsError(portName));
     }
 
     for (final pName in portsToTry) {
       try {
-        if (onStatusChanged != null) onStatusChanged("Deneniyor: $pName...");
+        if (onStatusChanged != null) onStatusChanged(l10n.core_serialTryingPortStatus(pName));
         await _attemptConnection(pName);
 
         // Buraya geldiyse bağlantı başarılı demektir
-        if (onStatusChanged != null) onStatusChanged("Bağlantı sağlandı: $pName");
+        if (onStatusChanged != null) onStatusChanged(l10n.core_serialConnectionEstablishedStatus(pName));
         return;
       } catch (e) {
         debugPrint("⚠️ $pName başarısız, sıradakine geçiliyor...");
@@ -64,7 +66,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
     }
 
     // 3. Hiçbiri olmazsa hata fırlat
-    throw SerialPortException(message: "Hiçbir porta bağlanılamadı. Kabloları kontrol edin.");
+    throw SerialPortException(message: l10n.core_serialNoPortConnectedError);
   }
 
   Future<void> _attemptConnection(String portName) async {
@@ -87,7 +89,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
     port.config = config;
 
     if (!port.openReadWrite()) {
-      throw SerialPortException(message: 'Port açılamadı ($portName).');
+      throw SerialPortException(message: contextlessL10n().core_serialPortOpenFailedError(portName));
     }
 
     _port = port;
@@ -109,7 +111,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
   @override
   Future<String?> sendAndReceive(String command, {Duration? timeout}) async {
     if (!isConnected) {
-      throw SerialPortException(message: 'Bağlantı yok.');
+      throw SerialPortException(message: contextlessL10n().core_serialNoConnectionError);
     }
 
     // 1. MUTEX: EĞER PORT MEŞGULSE BEKLE (Yarış Durumunu Önler)
@@ -120,7 +122,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
       if (waitCount > 100) {
         // 5 saniye bekledik hala meşgulse
         _isBusy = false; // Kilidi zorla kır
-        throw SerialPortException(message: "Port zaman aşımı (Busy Lock).");
+        throw SerialPortException(message: contextlessL10n().core_serialPortBusyTimeoutError);
       }
     }
 
@@ -138,7 +140,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
       final written = _port?.write(Uint8List.fromList(bytes));
       if (written == null || written <= 0) {
-        throw SerialPortException(message: "Yazma başarısız.");
+        throw SerialPortException(message: contextlessL10n().core_serialWriteFailedError);
       }
 
       // Cevabı bekle

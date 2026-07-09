@@ -16,7 +16,7 @@ class StationField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = 'İstasyon';
+    final label = context.l10n.medicine_fieldStation;
 
     return MedMultiSelectionField<Station>(
       label: label,

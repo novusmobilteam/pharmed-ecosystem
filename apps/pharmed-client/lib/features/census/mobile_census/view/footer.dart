@@ -1,25 +1,28 @@
 part of 'mobile_census_dialog.dart';
 
 FooterContent _censusFooter(
+  BuildContext context,
   MobileCensusState state,
   MobileDrawerStage drawerStage,
   MobileCensusReady ready,
   MobileCensusNotifier notifier,
 ) {
+  final l10n = context.l10n;
+
   // ── Hint ──
   final hint = switch (state) {
-    MobileCensusSaving() => 'Kaydediliyor...',
-    MobileCensusWaitingClose() => 'Kayıt alındı — sayımı bitirmek için çekmeceyi kapatın',
-    MobileCensusClosedEarly() => 'Çekmece erken kapandı — tekrar deneyebilir veya iptal edebilirsiniz',
-    MobileCensusError() => 'Hata oluştu — tekrar deneyebilirsiniz',
+    MobileCensusSaving() => l10n.common_action_saving,
+    MobileCensusWaitingClose() => l10n.census_hint_waitingClose,
+    MobileCensusClosedEarly() => l10n.census_hint_closedEarly,
+    MobileCensusError() => l10n.cabinOperation_hint_error,
     _ => switch (drawerStage) {
-      MobileDrawerOpening() => 'Çekmece açılıyor...',
+      MobileDrawerOpening() => l10n.refill_status_drawerOpening,
       MobileDrawerOpened() =>
         !ready.baselineCompleted
-            ? 'Kabin taranıyor, lütfen bekleyin'
+            ? l10n.cabinOperation_hint_scanning
             : ready.placedEpcs.isNotEmpty
-            ? 'Kabine ait olmayan etiket var — çıkarıp devam edin'
-            : 'Sayımı tamamlamak için butona basın',
+            ? l10n.census_hint_unexpectedTag
+            : l10n.census_hint_readyToComplete,
       _ => '',
     },
   };
@@ -27,17 +30,17 @@ FooterContent _censusFooter(
   // ── Actions ──
   final actions = switch (state) {
     MobileCensusSaving() => [FooterActions.saving()],
-    MobileCensusWaitingClose() => [FooterActions.primary('Çekmeceyi Kapatın', null)],
+    MobileCensusWaitingClose() => [FooterActions.primary(l10n.cabinOperation_action_closeDrawer, null)],
     MobileCensusClosedEarly() => [
-      FooterActions.secondary('İptal', notifier.cancelEarlyClose),
+      FooterActions.secondary(l10n.common_cancelButton, notifier.cancelEarlyClose),
       SizedBox(width: 10),
       FooterActions.retry(notifier.retryEarlyClose),
     ],
     MobileCensusError() => [FooterActions.retry(notifier.retryComplete)],
     _ when drawerStage is MobileDrawerOpened && ready.canComplete => [
-      FooterActions.primary('Sayımı Tamamla', notifier.completeCensus),
+      FooterActions.primary(l10n.census_action_complete, notifier.completeCensus),
     ],
-    _ => [FooterActions.primary('Sayımı Tamamla', null)],
+    _ => [FooterActions.primary(l10n.census_action_complete, null)],
   };
 
   return FooterContent(hint: hint, actions: actions);

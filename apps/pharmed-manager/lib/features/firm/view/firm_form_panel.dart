@@ -24,8 +24,8 @@ class FirmFormPanel extends StatelessWidget {
       child: Consumer<FirmFormNotifier>(
         builder: (context, formNotifier, _) {
           return SidePanel(
-            title: isNew ? 'Yeni Firma' : 'Firma Düzenle',
-            subtitle: isNew ? 'Firma bilgilerini doldurun' : 'Firma bilgilerini güncelleyin',
+            title: isNew ? context.l10n.firm_createPanelTitle : context.l10n.firm_editPanelTitle,
+            subtitle: isNew ? context.l10n.firm_createPanelSubtitle : context.l10n.firm_editPanelSubtitle,
             isLoading: formNotifier.isSubmitting,
             onClose: firmNotifier.closePanel,
             onSave: () async {
@@ -73,7 +73,7 @@ class _NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FirmFormNotifier>(
       builder: (context, vm, _) => MedTextInputField(
-        label: 'Firma Adı',
+        label: context.l10n.firm_nameLabel,
         initialValue: vm.firm.name,
         validator: (v) => Validators.cannotBlankValidator(v),
         onChanged: vm.updateName,
@@ -89,7 +89,7 @@ class _TaxNoField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FirmFormNotifier>(
       builder: (context, vm, _) => MedTextInputField(
-        label: 'Vergi No',
+        label: context.l10n.firm_taxNoLabel,
         initialValue: vm.firm.taxNo?.toString(),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: vm.updateTaxNo,
@@ -108,7 +108,7 @@ class _TaxOfficeField extends StatelessWidget {
     return Consumer<FirmFormNotifier>(
       builder: (context, vm, _) {
         return MedTextInputField(
-          label: 'Vergi Dairesi',
+          label: context.l10n.firm_taxOfficeLabel,
           initialValue: vm.firm.taxOffice,
           onChanged: vm.updateTaxOffice,
         );
@@ -125,7 +125,7 @@ class _FirmTypeField extends StatelessWidget {
     return Consumer<FirmFormNotifier>(
       builder: (context, vm, _) {
         return MedDropdownInputField<FirmType>(
-          label: 'Firma Tipi',
+          label: context.l10n.firm_typeLabel,
           initialValue: vm.firm.type,
           options: FirmType.values,
           labelBuilder: (type) => type?.label,

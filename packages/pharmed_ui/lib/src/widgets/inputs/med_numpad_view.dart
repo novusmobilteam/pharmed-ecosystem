@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Numpad Dialog'unu açan fonksiyon
 Future<String?> showNumpadView(
   BuildContext context, {
   String? hintText,
-  String title = 'Miktar Giriniz',
+  String? title,
   String? initialValue,
 }) async {
+  final resolvedTitle = title ?? context.l10n.numpad_defaultTitle;
   final controller = TextEditingController(text: initialValue);
 
   if (initialValue != null) {
@@ -54,7 +56,7 @@ Future<String?> showNumpadView(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      title,
+                      resolvedTitle,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colorScheme.onSurfaceVariant,

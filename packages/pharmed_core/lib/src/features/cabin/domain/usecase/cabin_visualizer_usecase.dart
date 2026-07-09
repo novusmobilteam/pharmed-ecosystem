@@ -28,7 +28,7 @@ class GetCabinVisualizerDataUseCase {
   /// non-null → debugCabin.id ve debugCabin.type kullanılır.
   Future<Result<CabinVisualizerData>> call({CabinType? deviceMode, int? cabinId}) async {
     if (cabinId == null) {
-      return Result.error(ServiceException(message: 'Aktif kabin bulunamadı', statusCode: 404));
+      return Result.error(ServiceException(message: contextlessL10n().cabinCore_activeCabinNotFound, statusCode: 404));
     }
 
     if (deviceMode == CabinType.mobile) {
@@ -48,7 +48,7 @@ class GetCabinVisualizerDataUseCase {
     final slots = slotResult.when(ok: (data) => data, error: (_) => null);
 
     if (slots == null || slots.isEmpty) {
-      return Result.error(ServiceException(message: 'Mobil kabin tasarımı bulunamadı', statusCode: 404));
+      return Result.error(ServiceException(message: contextlessL10n().cabinCore_mobileCabinDesignNotFound, statusCode: 404));
     }
 
     final mobileFaults = faultResult.when(
@@ -89,7 +89,7 @@ class GetCabinVisualizerDataUseCase {
     final slots = slotResult.when(ok: (data) => data, error: (_) => null);
 
     if (slots == null || slots.isEmpty) {
-      return Result.error(ServiceException(message: 'Kabin tasarımı bulunamadı', statusCode: 404));
+      return Result.error(ServiceException(message: contextlessL10n().cabinCore_cabinDesignNotFound, statusCode: 404));
     }
 
     final masterFaults = faultResult.when(

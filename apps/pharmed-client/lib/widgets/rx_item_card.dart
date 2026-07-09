@@ -160,25 +160,29 @@ class _StepperRow extends StatelessWidget {
   final double? maxQuantity;
   final ValueChanged<double> onChanged;
 
-  String get _unit => item.medicine?.operationUnit ?? 'Adet';
+  String _unit(BuildContext context) => item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback;
 
   @override
   Widget build(BuildContext context) {
+    final unit = _unit(context);
     return Row(
       children: [
-        Text('Miktar:', style: MedTextStyles.bodySm(color: MedColors.text3)),
+        Text(context.l10n.movement_quantityLabel, style: MedTextStyles.bodySm(color: MedColors.text3)),
         const SizedBox(width: MedSpacing.lg),
         MedDoseStepper.compact(
           value: quantity,
           onChanged: onChanged,
-          unit: _unit,
+          unit: unit,
           min: 0,
           max: maxQuantity,
           platform: DoseStepperPlatform.touch,
         ),
         if (maxQuantity != null) ...[
           const SizedBox(width: MedSpacing.md),
-          Text('/ maks. ${maxQuantity!.formatFractional} $_unit', style: MedTextStyles.monoXs(color: MedColors.text4)),
+          Text(
+            context.l10n.rxItemCard_maxQuantitySuffix(maxQuantity!.formatFractional, unit),
+            style: MedTextStyles.monoXs(color: MedColors.text4),
+          ),
         ],
       ],
     );

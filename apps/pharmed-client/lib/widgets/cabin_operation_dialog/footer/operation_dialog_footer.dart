@@ -47,13 +47,17 @@ class FooterActions {
 
   /// "Tekrar Dene" — Error state'inde.
   static Widget retry(VoidCallback onPressed) =>
-      MedButton(label: 'Tekrar Dene', size: MedButtonSize.sm, onPressed: onPressed);
+      MedButton(label: contextlessL10n().common_retryButton, size: MedButtonSize.sm, onPressed: onPressed);
 
   /// "Tamam" — FatalError dismiss.
-  static Widget dismiss(VoidCallback onPressed) =>
-      MedButton(label: 'Tamam', size: MedButtonSize.sm, variant: MedButtonVariant.danger, onPressed: onPressed);
+  static Widget dismiss(VoidCallback onPressed) => MedButton(
+    label: contextlessL10n().common_okButton,
+    size: MedButtonSize.sm,
+    variant: MedButtonVariant.danger,
+    onPressed: onPressed,
+  );
 
   /// Loading butonu — Saving.
   static Widget saving() =>
-      MedButton(label: 'Kaydediliyor...', size: MedButtonSize.sm, isLoading: true, onPressed: null);
+      MedButton(label: contextlessL10n().common_action_saving, size: MedButtonSize.sm, isLoading: true, onPressed: null);
 }

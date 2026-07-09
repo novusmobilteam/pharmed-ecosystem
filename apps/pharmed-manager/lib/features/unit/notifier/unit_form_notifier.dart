@@ -26,7 +26,7 @@ class UnitFormNotifier extends ChangeNotifier with ApiRequestMixin {
       submitOp,
       operation: () => isCreate ? _createUnitUseCase.call(_unit) : _updateUnitUseCase.call(_unit),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

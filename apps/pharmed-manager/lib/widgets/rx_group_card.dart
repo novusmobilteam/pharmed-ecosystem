@@ -111,7 +111,7 @@ class _RxGroupCardState extends State<RxGroupCard> {
   Widget build(BuildContext context) {
     final firstItem = widget.items.first;
     final prescriptionDate = firstItem.prescription?.prescriptionDate?.formattedDate ?? '-';
-    final doctorName = firstItem.doctor?.fullName ?? 'Bilinmiyor';
+    final doctorName = firstItem.doctor?.fullName ?? context.l10n.rxGroup_unknownDoctorFallback;
 
     return Container(
       decoration: BoxDecoration(
@@ -226,11 +226,11 @@ class _RxHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Reçete #$prescriptionId',
+                    context.l10n.rxGroup_headerTitle(prescriptionId),
                     style: MedTextStyles.monoMd(color: MedColors.text, weight: FontWeight.w600),
                   ),
                   const SizedBox(height: 2),
-                  Text('$doctorName · $prescriptionDate', style: MedTextStyles.monoSm()),
+                  Text(context.l10n.rxGroup_headerSubtitle(doctorName, prescriptionDate), style: MedTextStyles.monoSm()),
                 ],
               ),
             ),
@@ -241,7 +241,7 @@ class _RxHeader extends StatelessWidget {
                 borderRadius: MedRadius.xlAll,
                 border: Border.all(color: MedColors.border),
               ),
-              child: Text('$itemCount kalem', style: MedTextStyles.monoXs()),
+              child: Text(context.l10n.rxGroup_itemCountBadge(itemCount), style: MedTextStyles.monoXs()),
             ),
             const SizedBox(width: 8),
             Icon(
@@ -291,11 +291,14 @@ class _SelectAllBar extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Text(
-              isAllSelected ? 'Seçimi Kaldır' : 'Tümünü Seç',
+              isAllSelected ? context.l10n.common_deselectAllButton : context.l10n.common_selectAllButton,
               style: MedTextStyles.bodySm(color: MedColors.blue, weight: FontWeight.w600),
             ),
             const Spacer(),
-            Text('$selectableCount işlem yapılabilir kalem', style: MedTextStyles.monoXs(color: MedColors.text3)),
+            Text(
+              context.l10n.rxGroup_selectableCountLabel(selectableCount),
+              style: MedTextStyles.monoXs(color: MedColors.text3),
+            ),
           ],
         ),
       ),
@@ -477,7 +480,7 @@ class _DrugRow extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.medicine?.name ?? 'İsimsiz',
+                            item.medicine?.name ?? context.l10n.common_unknownName,
                             style: MedTextStyles.bodyMd(
                               color: isSelected ? MedColors.blue : MedColors.text,
                               weight: FontWeight.w600,
@@ -566,7 +569,7 @@ class _DrugAccordion extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: onLoadMovements,
-                child: Text('Tüm Hareketleri Göster', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                child: Text(context.l10n.movement_showAll, style: MedTextStyles.bodySm(color: MedColors.text3)),
               ),
             ),
           ],
@@ -623,13 +626,13 @@ class _RfidSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('RFID ETİKETİ', style: MedTextStyles.monoXs(color: MedColors.text3)),
+                Text(context.l10n.rxGroup_rfidTagLabel, style: MedTextStyles.monoXs(color: MedColors.text3)),
                 const SizedBox(height: 2),
                 if (isLoading)
-                  Text('Etiket bekleniyor...', style: MedTextStyles.monoMd(color: MedColors.text4))
+                  Text(context.l10n.rxGroup_rfidTagLoadingLabel, style: MedTextStyles.monoMd(color: MedColors.text4))
                 else
                   Text(
-                    _hasTag ? _tagDisplay : 'Henüz etiket atanmadı',
+                    _hasTag ? _tagDisplay : context.l10n.rxGroup_rfidTagUnassignedLabel,
                     style: MedTextStyles.monoMd(
                       color: _showActiveState ? MedColors.green : (_hasTag ? MedColors.text2 : MedColors.text4),
                     ),
@@ -648,12 +651,17 @@ class _RfidSection extends StatelessWidget {
             )
           else ...[
             if (_hasTag && onDelete != null) ...[
-              MedButton(label: 'Sil', variant: MedButtonVariant.danger, size: MedButtonSize.sm, onPressed: onDelete!),
+              MedButton(
+                label: context.l10n.common_deleteTooltip,
+                variant: MedButtonVariant.danger,
+                size: MedButtonSize.sm,
+                onPressed: onDelete!,
+              ),
               const SizedBox(width: 6),
             ],
             if (onTap != null)
               MedButton(
-                label: _hasTag ? 'Değiştir' : 'Etiket Ata',
+                label: _hasTag ? context.l10n.rxGroup_rfidChangeButton : context.l10n.rxGroup_rfidAssignButton,
                 size: MedButtonSize.sm,
                 variant: _hasTag ? MedButtonVariant.primary : MedButtonVariant.success,
 
@@ -695,11 +703,11 @@ class _RxActionBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text('$selectedCount kalem seçildi', style: MedTextStyles.monoSm()),
+          Text(context.l10n.rxGroup_selectedCountBar(selectedCount), style: MedTextStyles.monoSm()),
           const Spacer(),
           if (canApprove && onApprove != null) ...[
             _ActionChip(
-              label: 'Onayla',
+              label: context.l10n.rxGroup_approveAction,
               icon: PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
               color: MedColors.green,
               bgColor: MedColors.greenLight,
@@ -709,7 +717,7 @@ class _RxActionBar extends StatelessWidget {
           ],
           if (canReject && onReject != null) ...[
             _ActionChip(
-              label: 'Reddet',
+              label: context.l10n.rxGroup_rejectAction,
               icon: PhosphorIcons.xCircle(PhosphorIconsStyle.fill),
               color: MedColors.red,
               bgColor: MedColors.redLight,
@@ -719,7 +727,7 @@ class _RxActionBar extends StatelessWidget {
           ],
           if (canCancel && onCancel != null)
             _ActionChip(
-              label: 'İptal',
+              label: context.l10n.common_cancelButton,
               icon: PhosphorIcons.prohibit(PhosphorIconsStyle.fill),
               color: MedColors.amber,
               bgColor: MedColors.amberLight,

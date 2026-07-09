@@ -42,11 +42,13 @@ class BedAssignmentView extends StatelessWidget {
                 onBedSelected: notifier.selectBed,
                 onSave: () => notifier.saveAssignment(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+                  onSuccess: (msg) =>
+                      MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
                 ),
                 onDelete: () => notifier.deleteAssignment(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+                  onSuccess: (msg) =>
+                      MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
                 ),
               ),
             ),

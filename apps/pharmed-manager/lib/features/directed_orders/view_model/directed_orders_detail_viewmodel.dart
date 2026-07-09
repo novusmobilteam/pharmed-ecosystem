@@ -6,9 +6,13 @@ import '../domain/entity/directed_order.dart';
 
 class DirectedOrdersDetailViewModel extends ChangeNotifier with SearchMixin<DirectedOrder>, ApiRequestMixin {
   final DirectedOrderRepository _orderRepository;
+  // BuildContext'e erişimi olmayan bu ViewModel yerine, oluşturulduğu view
+  // katmanından (l10n ile) çözülen mesajlar için enjekte edilir.
+  final AppLocalizations _l10n;
 
-  DirectedOrdersDetailViewModel({required DirectedOrderRepository orderRepository})
-    : _orderRepository = orderRepository;
+  DirectedOrdersDetailViewModel({required DirectedOrderRepository orderRepository, required AppLocalizations l10n})
+    : _orderRepository = orderRepository,
+      _l10n = l10n;
 
   // Operation Keys
   static const fetch = OperationKey.fetch();
@@ -22,7 +26,7 @@ class DirectedOrdersDetailViewModel extends ChangeNotifier with SearchMixin<Dire
       fetch,
       operation: () => _orderRepository.getDirectedOrders(),
       onData: (response) => allItems = response.data ?? [],
-      loadingMessage: 'Hastalar yükleniyor...',
+      loadingMessage: _l10n.directedOrdersPatientsLoadingMessage,
     );
   }
 }

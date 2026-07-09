@@ -31,15 +31,19 @@ class UserScreen extends StatelessWidget {
             mobile: SizedBox(),
             tablet: SizedBox(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Kullanıcı Listesi',
+              title: menu.name ?? context.l10n.userScreenTitle,
               subtitle: menu.description,
               showAddButton: true,
               onAddPressed: notifier.openPanel,
               actions: [
-                MedButton(label: 'Yeni Kullanıcı', size: MedButtonSize.sm, onPressed: () => notifier.openPanel()),
+                MedButton(
+                  label: context.l10n.userScreenAddButton,
+                  size: MedButtonSize.sm,
+                  onPressed: () => notifier.openPanel(),
+                ),
                 if (notifier.showValidDateIcon)
                   MedButton(
-                    label: 'Son Geçerlilik Tarihi Güncelle',
+                    label: context.l10n.userBulkUpdateValidDateButton,
                     size: MedButtonSize.sm,
                     onPressed: () => _showValidDateDialog(context, notifier),
                   ),
@@ -64,20 +68,20 @@ void _showValidDateDialog(BuildContext context, UserNotifier vm) {
     builder: (ctx) => RegistrationDialog(
       maxHeight: 350,
       width: 400,
-      title: 'Tarih Güncelle',
-      saveButtonText: 'Güncelle',
+      title: context.l10n.userValidDateDialogTitle,
+      saveButtonText: context.l10n.userValidDateDialogSaveButton,
       isLoading: vm.isLoading(vm.updateValidDateOp),
       onSave: () async {
-        await vm.updateValidDate();
+        await vm.updateValidDate(successMessage: context.l10n.userValidDateUpdateSuccessMessage);
         if (ctx.mounted && vm.isSuccess(vm.updateValidDateOp)) {
           MessageUtils.showSuccessSnackbar(context, vm.message(vm.updateValidDateOp));
           Navigator.pop(ctx);
         } else if (ctx.mounted && vm.isFailed(vm.updateValidDateOp)) {
-          MessageUtils.showErrorSnackbar(context, vm.message(vm.updateValidDateOp) ?? 'Bir hata oluştu.');
+          MessageUtils.showErrorSnackbar(context, vm.message(vm.updateValidDateOp) ?? context.l10n.common_genericErrorMessage);
         }
       },
       child: MedDateInputField(
-        label: 'Yeni Son Geçerlilik Tarihi',
+        label: context.l10n.userNewValidUntilLabel,
         initialValue: vm.validDate,
         onDateSelected: (date) => vm.validDate = date,
       ),
@@ -90,7 +94,7 @@ void _onDelete(BuildContext context, UserNotifier vm, User user) {
     context: context,
     onConfirm: () async {
       showLoading(context);
-      await vm.deleteUser(user);
+      await vm.deleteUser(user, successMessage: context.l10n.userDeleteSuccessMessage);
       if (context.mounted) {
         hideLoading(context);
         if (vm.isSuccess(vm.deleteOp)) {

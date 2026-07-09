@@ -5,18 +5,22 @@ class UserTableView extends StatelessWidget {
 
   final Function(User user) onEdit;
 
-  List<TableColumnDef> _buildColumnDefs(UserType type) {
+  List<TableColumnDef> _buildColumnDefs(BuildContext context, UserType type) {
     final isNormalOrAll = type == UserType.normal;
 
     return [
-      TableColumnDef(title: type == UserType.normal ? 'T.C Kimlik No' : 'Kurum Sicil No'),
-      const TableColumnDef(title: 'Adı'),
-      const TableColumnDef(title: 'Soyadı'),
+      TableColumnDef(
+        title: type == UserType.normal
+            ? context.l10n.userNationalIdColumnHeader
+            : context.l10n.userRegistrationNumberLabel,
+      ),
+      TableColumnDef(title: context.l10n.userNameLabel),
+      TableColumnDef(title: context.l10n.userSurnameLabel),
       if (isNormalOrAll)
-        const TableColumnDef(title: 'Meslek Tipi')
+        TableColumnDef(title: context.l10n.userRoleTypeLabel)
       else
-        const TableColumnDef(title: 'Son Geçerlilik Tarihi'),
-      const TableColumnDef(title: 'Durumu'),
+        TableColumnDef(title: context.l10n.userValidUntilLabel),
+      TableColumnDef(title: context.l10n.common_statusLabel),
     ];
   }
 
@@ -71,12 +75,12 @@ class UserTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserNotifier>(
       builder: (context, notifier, _) {
-        final colDefs = _buildColumnDefs(notifier.selectedCategory);
+        final colDefs = _buildColumnDefs(context, notifier.selectedCategory);
 
         return MedTable<User>(
           data: notifier.users,
           isLoading: notifier.isFetching,
-          categories: notifier.tableCategories,
+          categories: notifier.tableCategories(context),
           selectedCategoryId: notifier.selectedCategory.name.toString(),
           onCategoryChanged: (id) {
             notifier.selectCategory(UserType.values.firstWhere((type) => type.name.toString() == id));
@@ -93,10 +97,10 @@ class UserTableView extends StatelessWidget {
           onSelectionChanged: notifier.selectUsers,
 
           actions: [
-            TableActionItem(icon: PhosphorIcons.pen(), tooltip: 'Düzenle', onPressed: onEdit),
+            TableActionItem(icon: PhosphorIcons.pen(), tooltip: context.l10n.common_editTooltip, onPressed: onEdit),
             TableActionItem(
               icon: PhosphorIcons.trashSimple(),
-              tooltip: 'Sil',
+              tooltip: context.l10n.common_deleteTooltip,
               color: Colors.red,
               onPressed: (user) => _onDelete(context, notifier, user),
             ),

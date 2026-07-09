@@ -44,35 +44,35 @@ class _QuickDateFilterPopup extends StatelessWidget {
               _buildOption(
                 context,
                 icon: Icons.today_outlined,
-                label: 'Bugün',
+                label: context.l10n.date_preset_today,
                 isSelected: _isSameRange(todayStart, todayEnd),
                 onTap: () => _select(context, todayStart, todayEnd),
               ),
               _buildOption(
                 context,
                 icon: Icons.history,
-                label: 'Dün',
+                label: context.l10n.dateFilter_yesterday,
                 isSelected: _isSameRange(yesterday, yesterday),
                 onTap: () => _select(context, yesterday, yesterday),
               ),
               _buildOption(
                 context,
                 icon: Icons.calendar_view_week_outlined,
-                label: 'Son 1 Hafta',
+                label: context.l10n.dateFilter_lastWeek,
                 isSelected: _isSameRange(thisWeekStart, thisWeekEnd),
                 onTap: () => _select(context, thisWeekStart, thisWeekEnd),
               ),
               _buildOption(
                 context,
                 icon: Icons.calendar_month_outlined,
-                label: 'Bu Ay',
+                label: context.l10n.dateFilter_thisMonth,
                 isSelected: _isSameRange(thisMonthStart, thisMonthEnd),
                 onTap: () => _select(context, thisMonthStart, thisMonthEnd),
               ),
               _buildOption(
                 context,
                 icon: Icons.schedule_outlined,
-                label: 'Son 30 Gün',
+                label: context.l10n.dateFilter_last30Days,
                 isSelected: _isSameRange(last30Start, last30End),
                 onTap: () => _select(context, last30Start, last30End),
               ),
@@ -83,7 +83,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
               _buildOption(
                 context,
                 icon: Icons.date_range_outlined,
-                label: 'Özel Aralık Belirle...',
+                label: context.l10n.dateFilter_customRange,
                 color: const Color(0xFF2563EB),
                 fontWeight: FontWeight.w600,
                 isSelected:
@@ -109,7 +109,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
                 _buildOption(
                   context,
                   icon: Icons.delete_outline,
-                  label: 'Filtreyi Temizle',
+                  label: context.l10n.dateFilter_clearFilter,
                   color: const Color(0xFFDC2626),
                   fontWeight: FontWeight.w600,
                   isSelected: false,
@@ -134,7 +134,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
             final e = fmt.format(selectedDateRange!.end);
             return s == e ? s : '$s – $e';
           }()
-        : 'Filtre Yok';
+        : context.l10n.dateFilter_noFilter;
 
     return Container(
       width: double.infinity,
@@ -144,7 +144,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            hasFilter ? 'Seçili Aralık' : 'Tarih Aralığı Seçin',
+            hasFilter ? context.l10n.dateFilter_selectedRange : context.l10n.dateFilter_selectRangeTitle,
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -303,12 +303,26 @@ class _DateRangePickerState extends State<_DateRangePicker> {
     final fmt = DateFormat('dd.MM.yyyy');
     return Row(
       children: [
-        Expanded(child: _buildDateChip('Başlangıç', _startDate, fmt, active: _endDate != null || _startDate == null)),
+        Expanded(
+          child: _buildDateChip(
+            context.l10n.dateFilter_startDate,
+            _startDate,
+            fmt,
+            active: _endDate != null || _startDate == null,
+          ),
+        ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Icon(Icons.arrow_forward, size: 16, color: Color(0xFF9CA3AF)),
         ),
-        Expanded(child: _buildDateChip('Bitiş', _endDate, fmt, active: _startDate != null && _endDate == null)),
+        Expanded(
+          child: _buildDateChip(
+            context.l10n.dateFilter_endDate,
+            _endDate,
+            fmt,
+            active: _startDate != null && _endDate == null,
+          ),
+        ),
       ],
     );
   }
@@ -366,7 +380,12 @@ class _DateRangePickerState extends State<_DateRangePicker> {
   }
 
   Widget _buildWeekDays() {
-    const days = ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz'];
+    // Aktif locale'e göre kısaltılmış gün adları, Pazartesi'den başlayarak.
+    // 2024-01-01 bilinen bir Pazartesi'dir; takvim ızgarasındaki
+    // `firstDay.weekday - 1` (Pzt=0..Paz=6) sırasıyla aynı hizadadır.
+    final locale = Localizations.localeOf(context).toString();
+    final monday = DateTime.utc(2024, 1, 1);
+    final days = List.generate(7, (i) => DateFormat('E', locale).format(monday.add(Duration(days: i))));
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: days
@@ -443,10 +462,14 @@ class _DateRangePickerState extends State<_DateRangePicker> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        MedButton(label: 'İptal', onPressed: () => Navigator.pop(context), variant: MedButtonVariant.danger),
+        MedButton(
+          label: context.l10n.common_cancelButton,
+          onPressed: () => Navigator.pop(context),
+          variant: MedButtonVariant.danger,
+        ),
         const SizedBox(width: 8),
         MedButton(
-          label: 'Uygula',
+          label: context.l10n.table_applyButton,
           isActive: _startDate != null && _endDate != null,
           onPressed: () {
             if (_startDate != null && _endDate != null) {

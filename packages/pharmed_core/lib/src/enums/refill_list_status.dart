@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 /// Dolum listesi durumu
 enum RefillListStatus {
   toBeCollected(1), // Toplanacak
@@ -15,11 +17,11 @@ enum RefillListStatus {
   String get label {
     switch (this) {
       case RefillListStatus.toBeCollected:
-        return 'Toplanacak';
+        return contextlessL10n().enumCore_refillListStatusToCollect;
       case RefillListStatus.collected:
-        return 'Toplandı';
+        return contextlessL10n().enumCore_refillListStatusCollected;
       case RefillListStatus.send:
-        return 'Gönderildi';
+        return contextlessL10n().enumCore_refillListStatusSent;
     }
   }
 

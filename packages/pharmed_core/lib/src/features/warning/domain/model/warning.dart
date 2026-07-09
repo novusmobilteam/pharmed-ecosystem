@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Warning implements TableData {
   final int? id;
@@ -17,7 +18,11 @@ class Warning implements TableData {
   List get rawContent => content;
 
   @override
-  List<String?> get titles => const ['Uyarı Konusu', 'Uyarı Metni', 'Durumu'];
+  List<String?> get titles => [
+    contextlessL10n().tableCore_warningSubjectColumn,
+    contextlessL10n().tableCore_warningTextColumn,
+    contextlessL10n().common_statusLabel,
+  ];
 
   // Update metodları
 

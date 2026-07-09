@@ -21,13 +21,13 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
     return DashboardListPanel<List<PrescriptionItem>>(
       key: const ValueKey('unapplied_panel'),
       useCarousel: true,
-      title: 'UYGULANMAMIŞ REÇETELER',
+      title: context.l10n.dashboardUnappliedPrescriptionsPanelTitle,
       count: items.length,
       countColor: MedColors.amber,
       countBg: MedColors.amberLight,
       section: section,
       itemCount: items.length,
-      emptyTitle: 'Uygulanmamış reçete yok',
+      emptyTitle: context.l10n.dashboardUnappliedPrescriptionsEmptyTitle,
       itemBuilder: (context, index) {
         final item = items[index];
         return DashboardRxItemCard(
@@ -36,11 +36,14 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
           showStatusChip: false,
           showTimeChip: true,
           infoRows: [
-            MedInfoRow(label: 'HASTA', value: item.prescription?.hospitalization?.patient?.fullName ?? '-'),
-            MedInfoRow(label: 'DOKTOR', value: item.doctor?.fullName ?? '-'),
-            MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'),
             MedInfoRow(
-              label: 'ODA / YATAK',
+              label: context.l10n.assignment_patientLabel,
+              value: item.prescription?.hospitalization?.patient?.fullName ?? '-',
+            ),
+            MedInfoRow(label: context.l10n.dashboardDoctorLabel, value: item.doctor?.fullName ?? '-'),
+            MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            MedInfoRow(
+              label: context.l10n.dashboardRoomBedLabel,
               value: [
                 item.prescription?.hospitalization?.room?.name,
                 item.prescription?.hospitalization?.bed?.name,

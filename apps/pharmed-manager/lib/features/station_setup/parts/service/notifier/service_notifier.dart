@@ -30,7 +30,7 @@ class ServiceNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMix
       deleteOp,
       operation: () => _deleteServiceUseCase.call(service),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+        onSuccess?.call(null);
         fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),

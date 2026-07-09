@@ -207,8 +207,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
     // Tüm kaynaklar failure — hiç data yok
     if (criticalStocks == null && expiringMaterials == null && upcomingTreatments == null && cabinVisualizer == null) {
       MedLogger.warn(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard: tüm kaynaklar başarısız');
-      // TODO(l10n): move to view layer or pass translated string as parameter
-      state = const DashboardError(message: 'Veriler yüklenemedi. Lütfen tekrar deneyin.', isRetryable: true);
+      state = DashboardError(message: contextlessL10n().dashboard_allSectionsLoadError, isRetryable: true);
       return;
     }
 

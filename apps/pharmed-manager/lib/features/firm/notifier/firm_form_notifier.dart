@@ -52,7 +52,9 @@ class FirmFormNotifier extends ChangeNotifier with ApiRequestMixin {
       onSuccess: () {
         if (isCreate) resetForm();
       },
-      successMessage: 'Firma başarıyla ${isCreate ? 'oluşturuldu' : 'güncellendi'}',
+      successMessage: isCreate
+          ? contextlessL10n().firm_createSuccessMessage
+          : contextlessL10n().firm_updateSuccessMessage,
     );
   }
 

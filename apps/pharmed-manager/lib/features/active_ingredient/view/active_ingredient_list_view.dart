@@ -32,8 +32,10 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
           return EmptyStateWidget(
             icon: Icons.science_outlined,
             variant: EmptyStateVariant.custom,
-            title: 'Henüz etken madde bulunmuyor',
-            description: widget.isDialog ? 'Yeni etken madde eklemek için "+" butonuna tıklayın' : 'Liste henüz boş',
+            title: context.l10n.activeIngredientListEmptyTitle,
+            description: widget.isDialog
+                ? context.l10n.common_addItemHint('etken madde')
+                : context.l10n.common_emptyListMessage,
           );
         }
 
@@ -72,7 +74,7 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
       onConfirm: () => context.read<ActiveIngredientNotifier>().deleteActiveIngredient(
         item.id!,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
       ),
     );
   }

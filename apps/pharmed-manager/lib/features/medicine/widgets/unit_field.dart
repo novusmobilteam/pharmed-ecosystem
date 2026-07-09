@@ -10,7 +10,7 @@ class UnitField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = 'Birim';
+    final label = context.l10n.medicine_fieldUnit;
     return MedTextInputField(
       label: label,
       enabled: enabled,

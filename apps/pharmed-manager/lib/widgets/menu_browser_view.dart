@@ -136,7 +136,7 @@ class _Sidebar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('KATEGORİLER', style: MedTextStyles.monoXs()),
+                Text(context.l10n.menuBrowser_categoriesHeader, style: MedTextStyles.monoXs()),
                 const SizedBox(height: 10),
                 _SearchField(value: searchQuery, onChanged: onSearchChanged),
               ],
@@ -180,7 +180,7 @@ class _SearchField extends StatelessWidget {
       onChanged: onChanged,
       style: MedTextStyles.bodyMd(),
       decoration: InputDecoration(
-        hintText: 'Kategori ara...',
+        hintText: context.l10n.menuBrowser_searchHint,
         hintStyle: MedTextStyles.bodyMd(color: MedColors.text3),
         prefixIcon: const Icon(Icons.search_rounded, size: 16, color: MedColors.text3),
         prefixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 36),
@@ -332,7 +332,7 @@ class _CategoryBadge extends StatelessWidget {
         borderRadius: MedRadius.xlAll,
       ),
       child: Text(
-        '$selectedCount/$totalCount',
+        context.l10n.menuBrowser_selectionCountBadge(selectedCount, totalCount),
         style: MedTextStyles.monoXs(color: isFull ? MedColors.green : MedColors.text3),
       ),
     );
@@ -382,7 +382,7 @@ class _ContentPanel extends StatelessWidget {
                       borderRadius: MedRadius.smAll,
                     ),
                     child: Text(
-                      isAllSelected ? 'Seçimi Kaldır' : 'Tümünü Seç',
+                      isAllSelected ? context.l10n.common_deselectAllButton : context.l10n.common_selectAllButton,
                       style: MedTextStyles.bodyMd(color: MedColors.blue, weight: FontWeight.w600),
                     ),
                   ),
@@ -426,7 +426,7 @@ class _EmptyState extends StatelessWidget {
         children: [
           Icon(Icons.grid_off_rounded, size: 48, color: MedColors.text3.withValues(alpha: 0.5)),
           const SizedBox(height: 12),
-          Text('Bu kategoride menü bulunamadı', style: MedTextStyles.bodyMd(color: MedColors.text3)),
+          Text(context.l10n.menuBrowser_emptyCategoryMessage, style: MedTextStyles.bodyMd(color: MedColors.text3)),
         ],
       ),
     );
@@ -476,7 +476,7 @@ class _MenuCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(
-                      item.label ?? 'İsimsiz',
+                      item.label ?? context.l10n.common_unknownName,
                       style: MedTextStyles.bodyMd(
                         color: isSelected ? MedColors.blue : MedColors.text,
                         weight: isSelected ? FontWeight.w600 : FontWeight.w500,

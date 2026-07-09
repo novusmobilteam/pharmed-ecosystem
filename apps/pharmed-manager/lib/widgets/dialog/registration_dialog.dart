@@ -14,8 +14,8 @@ class RegistrationDialog extends StatefulWidget {
     this.height,
     this.maxHeight,
     this.isLoading = false,
-    this.saveButtonText = 'Kaydet',
-    this.cancelButtonText = 'İptal',
+    this.saveButtonText,
+    this.cancelButtonText,
     this.actions = const [],
     this.showSearch = false,
     this.searchController,
@@ -33,8 +33,8 @@ class RegistrationDialog extends StatefulWidget {
   final double? height;
   final double? maxHeight;
   final bool isLoading;
-  final String saveButtonText;
-  final String cancelButtonText;
+  final String? saveButtonText;
+  final String? cancelButtonText;
   final List<Widget> actions;
   final bool showSearch;
   final TextEditingController? searchController;
@@ -176,7 +176,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
         enabled: !widget.isLoading,
         autofocus: true,
         decoration: InputDecoration(
-          hintText: 'Ara...',
+          hintText: context.l10n.common_searchHint,
           hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 14),
           prefixIcon: Icon(PhosphorIcons.magnifyingGlass(), color: colorScheme.onSurfaceVariant, size: 18),
           suffixIcon: IconButton(
@@ -224,7 +224,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: Text(widget.cancelButtonText),
+              child: Text(widget.cancelButtonText ?? context.l10n.common_cancelButton),
             ),
           ),
           const SizedBox(width: 12),
@@ -244,7 +244,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.onPrimary),
                     )
-                  : Text(widget.saveButtonText),
+                  : Text(widget.saveButtonText ?? context.l10n.common_saveButton),
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Role extends Selectable implements TableData {
   final String? name;
@@ -16,7 +17,7 @@ class Role extends Selectable implements TableData {
   List get rawContent => content;
 
   @override
-  List<String?> get titles => const ['Rol Adı', 'Durumu'];
+  List<String?> get titles => [contextlessL10n().tableCore_roleNameColumn, contextlessL10n().common_statusLabel];
 
   /// Sistem sabit rolüne karşılık geliyorsa o tip, aksi halde null.
   /// Custom roller için her zaman null döner.

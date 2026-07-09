@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Warehouse extends Selectable implements TableData {
   final int? code;
@@ -51,7 +52,12 @@ class Warehouse extends Selectable implements TableData {
   }
 
   @override
-  List<String> get titles => const ["Depo Kodu", "Depo Adı", "Depo Sorumlusu", "Durum"];
+  List<String> get titles => [
+    contextlessL10n().tableCore_warehouseCodeColumn,
+    contextlessL10n().tableCore_warehouseNameColumn,
+    contextlessL10n().tableCore_warehouseManagerColumn,
+    contextlessL10n().common_statusLabel,
+  ];
 
   Warehouse copyWith({int? id, int? code, String? name, User? user, bool? isActive, WarehouseType? type}) {
     return Warehouse(

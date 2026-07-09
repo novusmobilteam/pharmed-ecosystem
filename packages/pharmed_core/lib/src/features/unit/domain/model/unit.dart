@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Unit extends Selectable implements TableData {
   final String? name;
@@ -13,7 +14,7 @@ class Unit extends Selectable implements TableData {
   List get rawContent => content;
 
   @override
-  List<String?> get titles => ['Adı', 'Durumu'];
+  List<String?> get titles => [contextlessL10n().common_nameLabel, contextlessL10n().common_statusLabel];
 
   static Unit? fromIdAndName({int? id, String? name}) {
     final hasId = id != null;

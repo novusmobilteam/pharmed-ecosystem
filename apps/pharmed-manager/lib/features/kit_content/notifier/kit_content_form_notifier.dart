@@ -33,7 +33,7 @@ class KitContentFormNotifier extends ChangeNotifier with ApiRequestMixin, Search
       submitOp,
       operation: () => isCreate ? _createKitContentUseCase.call(content) : _updateKitContentUseCase.call(content),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call('İşleminiz başarıyla tamamlandı.'),
+      onSuccess: () => onSuccess?.call(null),
     );
   }
 

@@ -32,7 +32,7 @@ class DrugClassNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin
       operation: () => _deleteDrugClassUseCase.call(item),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
         getDrugClasses();
       },
     );

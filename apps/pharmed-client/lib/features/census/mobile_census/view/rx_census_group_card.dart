@@ -96,9 +96,9 @@ class _CensusItemRow extends StatelessWidget {
   final _CensusItemStatus status;
   final VoidCallback? onToggleMissing;
 
-  String get _doseText {
+  String _doseText(BuildContext context) {
     final piece = item.dosePiece?.formatFractional ?? '-';
-    final unit = item.medicine?.operationUnit ?? 'Adet';
+    final unit = item.medicine?.operationUnit ?? context.l10n.refillList_defaultUnitFallback;
     return '$piece $unit';
   }
 
@@ -141,7 +141,7 @@ class _CensusItemRow extends StatelessWidget {
                   style: MedTextStyles.bodyMd(color: c.text, weight: FontWeight.bold),
                 ),
                 const SizedBox(height: 2),
-                Text(_doseText, style: MedTextStyles.bodySm(color: c.muted)),
+                Text(_doseText(context), style: MedTextStyles.bodySm(color: c.muted)),
               ],
             ),
           ),
@@ -165,13 +165,13 @@ class _CensusStatusBadge extends StatelessWidget {
         MedColors.greenLight,
         MedColors.green,
         PhosphorIcons.checkCircle(PhosphorIconsStyle.bold),
-        'Sayıldı',
+        context.l10n.census_label_counted,
       ),
       _CensusItemStatus.missing => (
         MedColors.redLight,
         MedColors.red,
         PhosphorIcons.warningCircle(PhosphorIconsStyle.bold),
-        'Eksik',
+        context.l10n.rfidStatus_missing,
       ),
       _ => (MedColors.surface2, MedColors.text3, PhosphorIcons.minusCircle(), '—'),
     };

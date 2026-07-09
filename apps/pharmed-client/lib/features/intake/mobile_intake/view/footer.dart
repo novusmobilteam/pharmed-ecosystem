@@ -1,25 +1,28 @@
 part of 'mobile_intake_dialog.dart';
 
 FooterContent _intakeFooter(
+  BuildContext context,
   MobileIntakeState state,
   MobileDrawerStage stage,
   MobileIntakeReady ready,
   MobileIntakeNotifier notifier,
 ) {
+  final l10n = context.l10n;
+
   // ── Hint ──
   final hint = switch (state) {
-    MobileIntakeFatalError(:final message) => 'Kritik bir hata oluştu: $message',
-    MobileIntakeSaving() => 'Kaydediliyor...',
-    MobileIntakeSuccess() => 'İşlem tamamlandı',
-    MobileIntakeError() => 'Hata oluştu - tekrar deneyebilirsiniz',
-    MobileIntakeWaitingClose() => 'Kayıt alındı. İşlemi bitirmek için çekmeceyi kapatın',
-    MobileIntakeClosedEarly() => 'Çekmece kapatıldı. İptal edebilir veya kaldığınız yerden devam edebilirsiniz',
+    MobileIntakeFatalError(:final message) => l10n.cabinOperation_hint_fatalError(message),
+    MobileIntakeSaving() => l10n.common_action_saving,
+    MobileIntakeSuccess() => l10n.cabinOperation_hint_completed,
+    MobileIntakeError() => l10n.cabinOperation_hint_error,
+    MobileIntakeWaitingClose() => l10n.cabinOperation_hint_waitingCloseGeneric,
+    MobileIntakeClosedEarly() => l10n.cabinOperation_hint_closedEarlyGeneric,
     _ => switch (stage) {
-      MobileDrawerOpening() => 'Çekmece açılıyor...',
-      _ when !ready.baselineCompleted => 'Kabin taranıyor, lütfen bekleyin',
-      _ when ready.canComplete => 'Hazır - işlemi tamamlayabilirsiniz',
-      _ when ready.hasExtraPlacement => 'Kabine olmaması gereken bir ilaç yüklendi, lütfen çıkarın.',
-      _ => 'İlaçları alın, ardından işlemi tamamlayın',
+      MobileDrawerOpening() => l10n.refill_status_drawerOpening,
+      _ when !ready.baselineCompleted => l10n.cabinOperation_hint_scanning,
+      _ when ready.canComplete => l10n.cabinOperation_hint_ready,
+      _ when ready.hasExtraPlacement => l10n.intake_hint_extraPlacement,
+      _ => l10n.intake_hint_takeItems,
     },
   };
 
@@ -31,12 +34,12 @@ FooterContent _intakeFooter(
     MobileIntakeError() => [FooterActions.retry(notifier.retryComplete)],
     MobileIntakeWaitingClose() => const [],
     MobileIntakeClosedEarly() => [
-      FooterActions.secondary('İptal', notifier.cancelEarlyClose),
+      FooterActions.secondary(l10n.common_cancelButton, notifier.cancelEarlyClose),
       SizedBox(width: 10),
-      FooterActions.primary('Devam Et', notifier.retryEarlyClose),
+      FooterActions.primary(l10n.session_timeout_continueButton, notifier.retryEarlyClose),
     ],
-    _ when ready.canComplete => [FooterActions.primary('İşlemi tamamla', notifier.completeIntake)],
-    _ => [FooterActions.primary('İşlemi tamamla', null)], // disabled
+    _ when ready.canComplete => [FooterActions.primary(l10n.cabinOperation_action_completeGeneric, notifier.completeIntake)],
+    _ => [FooterActions.primary(l10n.cabinOperation_action_completeGeneric, null)], // disabled
   };
   return FooterContent(hint: hint, actions: actions);
 }

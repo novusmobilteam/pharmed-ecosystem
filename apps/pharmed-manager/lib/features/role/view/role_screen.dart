@@ -25,9 +25,11 @@ class RoleScreen extends StatelessWidget {
             mobile: MedMobileLayout(),
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? 'Rol Tanımlama',
+              title: menu.name ?? context.l10n.roleScreenTitle,
               subtitle: menu.description,
-              actions: [MedButton(label: 'Yeni Rol', size: MedButtonSize.sm, onPressed: () => notifier.openPanel())],
+              actions: [
+                MedButton(label: context.l10n.roleScreenAddButton, size: MedButtonSize.sm, onPressed: () => notifier.openPanel()),
+              ],
               onAddPressed: () => notifier.openPanel(),
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
@@ -67,13 +69,13 @@ class RoleScreen extends StatelessWidget {
       actions: [
         TableActionItem(
           icon: PhosphorIcons.trash(),
-          tooltip: 'Sil',
-          onPressed: notifier.deleteRole,
+          tooltip: context.l10n.common_deleteTooltip,
+          onPressed: (role) => notifier.deleteRole(role, successMessage: context.l10n.roleDeleteSuccessMessage),
           isVisible: (role) => role.type == null,
         ),
         TableActionItem(
           icon: PhosphorIcons.pen(),
-          tooltip: 'Düzenle',
+          tooltip: context.l10n.common_editTooltip,
           onPressed: (role) => notifier.openPanel(item: role),
           isVisible: (role) => role.type == null,
         ),

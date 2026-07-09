@@ -31,7 +31,7 @@ class DosageFormRegistrationNotifier extends ChangeNotifier with ApiRequestMixin
       submitOp,
       operation: () =>
           isCreate ? _createDosageFormUseCase.call(_dosageForm) : _updateDosageFormUseCase.call(_dosageForm),
-      onSuccess: () => onSuccess?.call('Dozaj formu başarıyla kaydedildi.'),
+      onSuccess: () => onSuccess?.call(contextlessL10n().dosageForm_saveSuccessMessage),
       onFailed: (error) => onFailed?.call(error.message),
     );
   }

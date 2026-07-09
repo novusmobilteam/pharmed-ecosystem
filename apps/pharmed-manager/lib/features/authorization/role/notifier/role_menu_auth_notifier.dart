@@ -97,7 +97,7 @@ class RoleMenuAuthNotifier extends ChangeNotifier with ApiRequestMixin {
       onData: (_) {
         _roleAuth = withParents.commit();
         notifyListeners();
-        onSuccess?.call('İşleminiz başarıyla tamamlandı');
+        onSuccess?.call(null);
       },
       onFailed: (error) => onFailed?.call(error.message),
     );

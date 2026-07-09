@@ -14,7 +14,7 @@ Future<T?> showDrugTypeDialog<T>(BuildContext context, {bool forSelection = fals
           DrugTypeNotifier(getDrugTypesUseCase: context.read(), deleteDrugTypeUseCase: context.read())..getDrugTypes(),
       child: Consumer<DrugTypeNotifier>(
         builder: (context, vm, _) => CustomDialog(
-          title: forSelection ? 'İlaç Tipi Seç' : 'İlaç Tipi Tanımlama',
+          title: forSelection ? context.l10n.drugTypeDialogSelectTitle : context.l10n.drugTypeDialogTitle,
           showSearch: true,
           showAdd: !forSelection,
           onSearchChanged: vm.search,

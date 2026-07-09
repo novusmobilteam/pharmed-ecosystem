@@ -82,7 +82,7 @@ class _TableToolbar<T extends TableData> extends StatelessWidget {
             if (enableExcel)
               MedRectangleIconButton(
                 iconData: PhosphorIcons.microsoftExcelLogo(),
-                tooltip: _hasSelection ? 'Seçilenleri Aktar' : 'Excel',
+                tooltip: _hasSelection ? context.l10n.table_exportSelectedTooltip : 'Excel',
                 color: MedColors.greenLight,
                 iconColor: MedColors.green,
                 onPressed: onExcelPressed,
@@ -120,16 +120,16 @@ class _SelectionInfo extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(color: const Color(0xFF2563EB), borderRadius: BorderRadius.circular(6)),
           child: Text(
-            '$count seçili',
+            context.l10n.table_selectedCountLabel(count),
             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
           ),
         ),
         const SizedBox(width: 10),
         GestureDetector(
           onTap: onClear,
-          child: const Text(
-            'Temizle',
-            style: TextStyle(fontSize: 12, color: Color(0xFF2563EB), fontWeight: FontWeight.w500),
+          child: Text(
+            context.l10n.common_clearButton,
+            style: const TextStyle(fontSize: 12, color: Color(0xFF2563EB), fontWeight: FontWeight.w500),
           ),
         ),
       ],
@@ -152,7 +152,7 @@ class _SearchField extends StatelessWidget {
         onChanged: onChanged,
         style: const TextStyle(fontSize: 13, color: Color(0xFF111827)),
         decoration: InputDecoration(
-          hintText: 'Ara...',
+          hintText: context.l10n.common_searchHint,
           hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
           prefixIcon: const Icon(Icons.search, size: 17, color: Color(0xFF9CA3AF)),
           suffixIcon: controller.text.isNotEmpty

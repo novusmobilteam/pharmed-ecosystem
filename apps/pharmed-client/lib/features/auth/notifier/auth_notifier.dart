@@ -11,6 +11,7 @@ import 'package:pharmed_client/core/providers/auth_providers.dart';
 import 'package:pharmed_client/core/providers/network_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 import 'auth_state.dart';
@@ -70,7 +71,8 @@ class AuthNotifier extends Notifier<AuthState> {
         _markDashboardAccessed();
       },
       error: (failure) {
-        final msg = failure is ServiceException ? failure.message : 'Bir hata oluştu';
+        final rawMsg = failure is ServiceException ? failure.message : null;
+        final msg = rawMsg ?? contextlessL10n().auth_genericError;
         state = AuthError(message: msg);
         onError(msg);
       },

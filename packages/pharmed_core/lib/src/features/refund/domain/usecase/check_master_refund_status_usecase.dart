@@ -3,6 +3,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:collection/collection.dart';
 
 class CheckRefundStatusParams {
@@ -49,7 +50,7 @@ class CheckMasterRefundStatusUseCase {
     // RepoResult → veri çıkar (success veya stale), failure → hata döndür
     final cabins = cabinResult.data;
     if (cabins == null) {
-      return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
+      return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
     }
 
     return _findCubicSlot(cabins);
@@ -57,7 +58,7 @@ class CheckMasterRefundStatusUseCase {
 
   Future<Result<MedicineIntakeItem?>> _findCubicSlot(List<Cabin> cabins) async {
     if (cabins.isEmpty) {
-      return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
+      return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
     }
 
     for (final cabin in cabins) {
@@ -84,6 +85,6 @@ class CheckMasterRefundStatusUseCase {
       }
     }
 
-    return Result.error(CustomException(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz'));
+    return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
   }
 }

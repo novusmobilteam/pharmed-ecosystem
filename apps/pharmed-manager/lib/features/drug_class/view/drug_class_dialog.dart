@@ -15,7 +15,7 @@ Future<T?> showDrugClassDialog<T>(BuildContext context, {bool forSelection = fal
             ..getDrugClasses(),
       child: Consumer<DrugClassNotifier>(
         builder: (context, vm, _) => CustomDialog(
-          title: forSelection ? 'İlaç Sınıfı Seç' : 'İlaç Sınıfı Tanımlama',
+          title: forSelection ? context.l10n.drugClassDialogSelectTitle : context.l10n.drugClassDialogTitle,
           showSearch: true,
           showAdd: !forSelection,
           onSearchChanged: vm.search,

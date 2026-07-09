@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────
@@ -18,7 +19,7 @@ class MedTimeChip extends StatelessWidget {
 
   final DateTime time;
 
-  String get _label {
+  String _label(BuildContext context) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final tomorrow = today.add(const Duration(days: 1));
@@ -28,11 +29,13 @@ class MedTimeChip extends StatelessWidget {
     final m = time.minute.toString().padLeft(2, '0');
     final timeStr = '$h:$m';
 
-    if (timeDay == today) return 'Bugün $timeStr';
-    if (timeDay == tomorrow) return 'Yarın $timeStr';
+    if (timeDay == today) return context.l10n.timeChip_today(timeStr);
+    if (timeDay == tomorrow) return context.l10n.timeChip_tomorrow(timeStr);
 
-    const days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
-    return '${days[time.weekday - 1]} $timeStr';
+    // Aktif locale'e göre kısaltılmış gün adı (ör. tr: "Pzt", en: "Mon").
+    final locale = Localizations.localeOf(context).toString();
+    final weekday = DateFormat('E', locale).format(time);
+    return '$weekday $timeStr';
   }
 
   @override
@@ -46,7 +49,7 @@ class MedTimeChip extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [Text(_label, style: MedTextStyles.monoSm(color: MedColors.amber))],
+        children: [Text(_label(context), style: MedTextStyles.monoSm(color: MedColors.amber))],
       ),
     );
   }

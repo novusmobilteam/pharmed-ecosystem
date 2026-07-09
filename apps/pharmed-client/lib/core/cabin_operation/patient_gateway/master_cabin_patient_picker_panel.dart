@@ -113,7 +113,7 @@ class _Toolbar extends StatelessWidget {
       children: [
         MedTextInputField(
           initialValue: state.search,
-          hintText: 'Hasta ara',
+          hintText: context.l10n.patientPicker_searchHint,
           prefixIcon: Icon(PhosphorIcons.magnifyingGlass(), color: MedColors.text3),
           onChanged: (v) => notifier.onSearchChanged(v ?? ''),
         ),
@@ -121,9 +121,14 @@ class _Toolbar extends StatelessWidget {
           spacing: 8,
           children: [
             if (state.isStatusButtonVisible)
-              MedToggleButton(label: state.isOrderless ? 'Ordersız' : 'Orderlı', onTap: notifier.toggleOrderlessStatus),
+              MedToggleButton(
+                label: state.isOrderless
+                    ? context.l10n.patientPicker_orderlessToggleLabel
+                    : context.l10n.patientPicker_orderedToggleLabel,
+                onTap: notifier.toggleOrderlessStatus,
+              ),
             MedToggleButton(
-              label: 'Hastalarım',
+              label: context.l10n.patientPicker_myPatientsToggleLabel,
               onTap: notifier.togglePatientView,
               size: MedToggleSize.sm,
               selected: state.viewType == PatientViewType.myPatients,
@@ -277,18 +282,18 @@ class _UrgentBar extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            'Listede olmayan acil hasta için kayıt oluşturun.',
+            context.l10n.patientPicker_urgentPatientHint,
             style: MedTextStyles.bodySm(color: MedColors.text3),
           ),
         ),
         const SizedBox(width: 12),
         MedButton(
-          label: 'Acil Hasta Oluştur',
+          label: context.l10n.patientPicker_createUrgentPatientButton,
           size: MedButtonSize.sm,
           isLoading: state.isCreatingUrgent,
           onPressed: () => notifier.createUrgentPatient(
             onSuccess: (h) {
-              MessageUtils.showSuccessSnackbar(context, 'Acil hasta oluşturuldu.');
+              MessageUtils.showSuccessSnackbar(context, context.l10n.patientPicker_urgentPatientCreatedMessage);
               onCreated(h);
             },
             onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),

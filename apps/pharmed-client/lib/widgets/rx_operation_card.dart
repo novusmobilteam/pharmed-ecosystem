@@ -125,9 +125,9 @@ class RxOperationCard extends StatelessWidget {
     return isSelected ? MedColors.blue : MedColors.border;
   }
 
-  String get _doseText {
+  String _doseText(BuildContext context) {
     final piece = item.dosePiece?.formatFractional ?? '-';
-    final unit = item.medicine?.operationUnit ?? 'Adet';
+    final unit = item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback;
     return '$piece $unit';
   }
 
@@ -163,7 +163,7 @@ class RxOperationCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    _doseText,
+                    _doseText(context),
                     style: MedTextStyles.monoSm(color: MedColors.text2, weight: FontWeight.w600),
                   ),
                 ],

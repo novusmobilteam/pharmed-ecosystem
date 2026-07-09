@@ -122,7 +122,7 @@ class APIManager {
           message: 'Boş yanıt gövdesi',
           context: {'path': path, 'status': statusCode},
         );
-        return Result.error(const EmptyResponseException(message: 'Sunucu boş yanıt döndürdü'));
+        return Result.error(EmptyResponseException(message: contextlessL10n().dataError_emptyResponse));
       }
 
       try {
@@ -136,7 +136,7 @@ class APIManager {
           error: e,
           stackTrace: stack,
         );
-        return Result.error(MalformedDataException(message: 'Yanıt işlenemedi', cause: e));
+        return Result.error(MalformedDataException(message: contextlessL10n().dataError_malformedResponse, cause: e));
       }
     } on DioException catch (e) {
       final exception = _mapDioException(e, path);
@@ -164,17 +164,20 @@ class APIManager {
     final exception = switch (e.type) {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.receiveTimeout ||
-      DioExceptionType.sendTimeout => TimeoutException(message: msg ?? 'İstek zaman aşımına uğradı', cause: e),
-      DioExceptionType.connectionError => NetworkUnavailableException(message: msg ?? 'Ağa bağlanılamadı', cause: e),
+      DioExceptionType.sendTimeout => TimeoutException(message: msg ?? contextlessL10n().dataError_requestTimeout, cause: e),
+      DioExceptionType.connectionError => NetworkUnavailableException(
+        message: msg ?? contextlessL10n().dataError_networkUnavailable,
+        cause: e,
+      ),
       DioExceptionType.badResponse => ServiceException(
-        message: msg ?? 'Bir hatayla karşılaştık. Lütfen daha sonra tekrar deneyiniz.',
+        message: msg ?? contextlessL10n().dataError_genericApiError,
         statusCode: e.response?.statusCode ?? 0,
         traceId: e.response?.headers.value('x-trace-id'),
         cause: e,
       ),
-      DioExceptionType.cancel => UnexpectedException(message: msg ?? 'İstek iptal edildi', cause: e),
+      DioExceptionType.cancel => UnexpectedException(message: msg ?? contextlessL10n().dataError_requestCancelled, cause: e),
       _ => UnexpectedException(
-        message: msg ?? 'Bir hatayla karşılaştık. Lütfen daha sonra tekrar deneyiniz.',
+        message: msg ?? contextlessL10n().dataError_genericApiError,
         cause: e,
       ),
     };

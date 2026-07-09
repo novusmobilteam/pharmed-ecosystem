@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 import 'intake_type.dart';
 
 enum OrderStatus { ordered, orderless }
@@ -6,9 +8,9 @@ extension OrderStatusExtension on OrderStatus {
   String get label {
     switch (this) {
       case OrderStatus.ordered:
-        return 'Orderlı';
+        return contextlessL10n().patientPicker_orderedToggleLabel;
       case OrderStatus.orderless:
-        return 'Ordersız';
+        return contextlessL10n().patientPicker_orderlessToggleLabel;
     }
   }
 

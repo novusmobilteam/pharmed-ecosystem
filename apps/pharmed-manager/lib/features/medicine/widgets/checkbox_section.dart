@@ -38,7 +38,7 @@ class _LowerDoseTile extends StatelessWidget {
         return MedCheckboxField(
           value: vm.drug.isCanLowerDose,
           onChanged: (_) => vm.toggleLowerDose(),
-          label: 'Belirtilen dozdan düşük doz alınabilir',
+          label: context.l10n.medicine_checkboxLowerDose,
         );
       },
     );
@@ -55,7 +55,7 @@ class _RfidTile extends StatelessWidget {
         return MedCheckboxField(
           value: vm.drug.isRfidEnable,
           onChanged: (_) => vm.toggleRfid(),
-          label: 'RFID Kullanılabilir',
+          label: context.l10n.medicine_checkboxRfid,
         );
       },
     );
@@ -70,7 +70,7 @@ class _MultiPatientAccessTile extends StatelessWidget {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
         return MedCheckboxField(
-          label: 'Çoklu Hasta Erişim',
+          label: context.l10n.medicine_checkboxMultiPatientAccess,
           value: vm.drug.isMultiplePatientAccess,
           onChanged: (_) => vm.toggleMultiPatientAccess(),
         );
@@ -87,7 +87,7 @@ class _SingleUseTile extends StatelessWidget {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
         return MedCheckboxField(
-          label: 'Tek Kullanımlık',
+          label: context.l10n.medicine_checkboxSingleUse,
           value: vm.drug.isSingleUse,
           onChanged: (_) => vm.toggleSingleUse(),
         );
@@ -104,7 +104,7 @@ class _CameraRecordingTile extends StatelessWidget {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
         return MedCheckboxField(
-          label: 'Kamera Kayıt',
+          label: context.l10n.medicine_checkboxCameraRecording,
           value: vm.drug.isCameraRecording,
           onChanged: (_) => vm.toggleCameraRecording(),
         );
@@ -121,7 +121,7 @@ class _IndependentMaterialTile extends StatelessWidget {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
         return MedCheckboxField(
-          label: 'Serbest İlaç',
+          label: context.l10n.medicine_checkboxIndependentMaterial,
           value: vm.drug.isIndependentMaterial,
           onChanged: (_) => vm.toggleIndependentMaterial(),
         );
@@ -138,7 +138,7 @@ class _RequirePharmacyApprovalForDisposalTile extends StatelessWidget {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
         return MedCheckboxField(
-          label: 'Fire/İmha Eczane Onayı Alınsın mı?',
+          label: context.l10n.medicine_checkboxWastagePharmacyApproval,
           value: vm.drug.isWastagePharmacyApproval,
           onChanged: (_) => vm.toggleWastagePharmacyApproval(),
         );
@@ -155,7 +155,7 @@ class _FireOrderRenewableTile extends StatelessWidget {
     return Consumer<DrugFormNotifier>(
       builder: (context, vm, _) {
         return MedCheckboxField(
-          label: 'Fire Order Yenilensin mi?',
+          label: context.l10n.medicine_checkboxWastageOrderRenewed,
           value: vm.drug.isWastageOrderRenewed,
           onChanged: (_) => vm.toggleWastageOrderRenewed(),
         );

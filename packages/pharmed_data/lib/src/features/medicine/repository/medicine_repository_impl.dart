@@ -1,5 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 // [SWREQ-DATA-MEDICINE-002]
 // IMedicineRepository implementasyonu.
@@ -113,7 +114,7 @@ class MedicineRepositoryImpl implements IMedicineRepository {
   @override
   Future<Result<void>> deleteMedicine(Medicine entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: "Silinecek servisin id'si boş olamaz", field: 'id'));
+      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteMedicineIdEmpty, field: 'id'));
     }
     final result = await _dataSource.deleteMedicine(_mapper.toDto(entity));
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));

@@ -36,7 +36,9 @@ class _MaterialTypeFormDialogState extends State<MaterialTypeFormDialog> {
   Widget build(BuildContext context) {
     return Consumer<MaterialTypeFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? 'Yeni Malzeme Tipi' : 'Malzeme Tipi Düzenle';
+        final String title = notifier.isCreate
+            ? context.l10n.materialTypeFormAddTitle
+            : context.l10n.materialTypeFormEditTitle;
 
         return RegistrationDialog(
           title: title,
@@ -47,7 +49,7 @@ class _MaterialTypeFormDialogState extends State<MaterialTypeFormDialog> {
               await notifier.submit(
                 onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                 onSuccess: (msg) {
-                  MessageUtils.showSuccessSnackbar(context, msg);
+                  MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                   context.pop(true);
                 },
               );
@@ -76,7 +78,7 @@ class _NameField extends StatelessWidget {
     return Consumer<MaterialTypeFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: 'Malzeme Tipi Adı',
+          label: context.l10n.materialTypeFormNameLabel,
           initialValue: notifier.materialType.name,
           validator: (v) => Validators.cannotBlankValidator(v),
           onChanged: notifier.updateName,
@@ -94,7 +96,7 @@ class _StatusField extends StatelessWidget {
     return Consumer<MaterialTypeFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<Status>(
-          label: 'Durumu',
+          label: context.l10n.common_statusLabel,
           initialValue: notifier.materialType.status,
           options: Status.values,
           labelBuilder: (status) => status?.label,

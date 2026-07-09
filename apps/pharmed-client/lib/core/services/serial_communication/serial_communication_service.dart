@@ -43,7 +43,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
   @override
   bool get isConnected => _port?.isOpen ?? false;
 
-  String get connectedPortName => _port?.name ?? 'Bağlı Değil';
+  String get connectedPortName => _port?.name ?? contextlessL10n().core_serialPortDisconnectedLabel;
 
   // ════════════════════════════════════════════════════════════════
   // PORT TARAMA
@@ -90,9 +90,9 @@ class SerialCommunicationService implements ISerialCommunicationService {
     await _reclaimStalePort(portName);
 
     try {
-      onStatusChanged?.call('$portName portuna bağlanılıyor...');
+      onStatusChanged?.call(contextlessL10n().core_serialConnectingStatus(portName));
       await _attemptConnection(portName);
-      onStatusChanged?.call('Bağlantı başarılı: $portName');
+      onStatusChanged?.call(contextlessL10n().core_serialConnectSuccessStatus(portName));
       MedLogger.info(
         unit: 'SW-UNIT-SER',
         swreq: 'SWREQ-HW-SER-002',
@@ -106,12 +106,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
         message: 'Bağlantı başarısız',
         context: {'port': portName, 'error': e.toString()},
       );
-      throw SerialPortException(
-        message:
-            '$portName portuna bağlanılamadı. '
-            'Cihazın bağlı ve açık olduğundan, portun başka bir uygulama tarafından '
-            'kullanılmadığından emin olun.',
-      );
+      throw SerialPortException(message: contextlessL10n().hw_serial_connectFailedDetailedError(portName));
     }
   }
 
@@ -141,7 +136,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
       port.config = config;
     } catch (e) {
       port?.dispose();
-      throw SerialPortException(message: 'Port konfigürasyonu başarısız ($portName): $e');
+      throw SerialPortException(message: contextlessL10n().hw_serial_portConfigFailedError(portName, e.toString()));
     }
 
     MedLogger.info(
@@ -154,11 +149,11 @@ class SerialCommunicationService implements ISerialCommunicationService {
     if (!port.openReadWrite()) {
       final lastError = SerialPort.lastError;
       port.dispose();
-      throw SerialPortException(
-        message:
-            'Port açılamadı ($portName). '
-            '${lastError != null ? 'Sistem hatası: $lastError' : 'Port başka bir uygulama tarafından kullanılıyor olabilir.'}',
-      );
+      final l10n = contextlessL10n();
+      final suffix = lastError != null
+          ? l10n.hw_serial_systemErrorSuffix(lastError.toString())
+          : l10n.hw_serial_portInUseSuffix;
+      throw SerialPortException(message: '${l10n.core_serialPortOpenFailedError(portName)} $suffix');
     }
 
     MedLogger.info(
@@ -180,7 +175,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
       _onDataReceived,
       onError: (Object e) {
         debugPrint('⚠️ Port okuma hatası: $e');
-        _cancelPendingCompleter('Port okuma hatası: $e');
+        _cancelPendingCompleter(contextlessL10n().hw_serial_readErrorWithDetail(e.toString()));
       },
     );
 
@@ -214,7 +209,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
   @override
   Future<String?> sendAndReceive(String command, {Duration? timeout, int retryCount = 1}) async {
     if (!isConnected) {
-      throw SerialPortException(message: 'Seri port bağlantısı yok. Önce bağlantı kurulmalı.');
+      throw SerialPortException(message: contextlessL10n().core_serialNoConnectionError);
     }
 
     // MedLogger.info(
@@ -247,7 +242,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
           // );
 
           if (written == null || written <= 0) {
-            throw SerialPortException(message: 'Komut gönderilemedi. Port yazma hatası.');
+            throw SerialPortException(message: contextlessL10n().core_serialWriteFailedError);
           }
 
           try {
@@ -307,7 +302,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
       waitCount++;
       if (waitCount > maxWait) {
         debugPrint('⚠️ Mutex timeout — kilit zorla kırılıyor.');
-        _cancelPendingCompleter('Port meşgul kalma süresi aşıldı.');
+        _cancelPendingCompleter(contextlessL10n().core_serialPortBusyTimeoutError);
         _isBusy = false;
         break;
       }
@@ -422,7 +417,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
     _isBusy = false;
     _lastSentBytes = null;
 
-    _cancelPendingCompleter('Bağlantı yeniden başlatılıyor.');
+    _cancelPendingCompleter(contextlessL10n().hw_serial_reconnectingStatus);
 
     try {
       await _subscription?.cancel();

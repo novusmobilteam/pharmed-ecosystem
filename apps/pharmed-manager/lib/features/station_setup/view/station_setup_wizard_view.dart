@@ -46,7 +46,7 @@ class _StationSetupWizardViewState extends State<StationSetupWizardView> {
           return CustomDialog(
             maxHeight: context.height * 0.7,
             width: context.width * 0.5,
-            title: 'İstasyon Kurulum Sihirbazı',
+            title: context.l10n.stationSetup_wizard_title,
             child: Stepper(
               currentStep: _step,
               // Tıklanan adıma gitme (Sadece geri gitmeye veya geçerli adıma izin verir)
@@ -71,11 +71,18 @@ class _StationSetupWizardViewState extends State<StationSetupWizardView> {
                             : null,
                         child: notifier.isLoading(notifier.submitOp)
                             ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                            : Text(isLastStep ? 'Kurulumu Tamamla' : 'Devam Et'),
+                            : Text(
+                                isLastStep
+                                    ? context.l10n.stationSetup_wizard_completeSetupButton
+                                    : context.l10n.stationSetup_wizard_continueButton,
+                              ),
                       ),
                       if (_step > 0) ...[
                         const SizedBox(width: 12),
-                        TextButton(onPressed: details.onStepCancel, child: const Text('Geri Dön')),
+                        TextButton(
+                          onPressed: details.onStepCancel,
+                          child: Text(context.l10n.stationSetup_wizard_backButton),
+                        ),
                       ],
                     ],
                   ),
@@ -85,19 +92,19 @@ class _StationSetupWizardViewState extends State<StationSetupWizardView> {
                 Step(
                   state: _step > 0 ? StepState.complete : StepState.indexed,
                   isActive: _step >= 0,
-                  title: Text('Depo Tanımlama'),
+                  title: Text(context.l10n.stationSetup_screen_warehouseTabTitle),
                   content: _FirstStep(),
                 ),
                 Step(
                   state: _step > 1 ? StepState.complete : StepState.indexed,
                   isActive: _step >= 1,
-                  title: Text('Servis Tanımlama'),
+                  title: Text(context.l10n.stationSetup_screen_serviceTabTitle),
                   content: _SecondStep(),
                 ),
                 Step(
                   state: _step == 2 ? StepState.editing : StepState.indexed,
                   isActive: _step >= 2,
-                  title: Text('İstasyon Tanımlama'),
+                  title: Text(context.l10n.stationSetup_screen_stationTabTitle),
                   content: _ThirdStep(),
                 ),
               ],
@@ -110,10 +117,16 @@ class _StationSetupWizardViewState extends State<StationSetupWizardView> {
 }
 
 Future<void> _finishSetup(BuildContext context, StationFormNotifier notifier) async {
+  final wasCreate = notifier.isCreate;
   await notifier.submit();
 
   if (context.mounted && notifier.isSuccess(notifier.submitOp)) {
-    MessageUtils.showSuccessSnackbar(context, notifier.statusMessage);
+    MessageUtils.showSuccessSnackbar(
+      context,
+      wasCreate
+          ? context.l10n.stationSetup_station_createdSuccessMessage
+          : context.l10n.stationSetup_station_updatedSuccessMessage,
+    );
     context.pop(true);
   } else if (context.mounted && notifier.isFailed(notifier.submitOp)) {
     MessageUtils.showErrorDialog(context, notifier.statusMessage);
@@ -137,7 +150,7 @@ class _FirstStep extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: MedSelectionField(
-                    label: 'İlaç Depo',
+                    label: context.l10n.stationSetup_station_drugWarehouseLabel,
                     dataSource: (skip, take, search) => context.read<GetWarehousesUseCase>().call(
                       PagedQueryParams(skip: skip, take: take, searchQuery: search),
                     ),
@@ -147,7 +160,7 @@ class _FirstStep extends StatelessWidget {
                 ),
                 Expanded(
                   child: MedDropdownInputField<OrderStatus>(
-                    label: 'İlaç Durumu',
+                    label: context.l10n.stationSetup_station_drugStatusLabel,
                     options: OrderStatus.values,
                     initialValue: notifier.station?.drugStatus,
                     labelBuilder: (status) => status?.label,
@@ -163,7 +176,7 @@ class _FirstStep extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: MedSelectionField(
-                    label: 'Tıbbi Sarf Depo',
+                    label: context.l10n.stationSetup_station_consumableWarehouseLabel,
                     dataSource: (skip, take, search) => context.read<GetWarehousesUseCase>().call(
                       PagedQueryParams(skip: skip, take: take, searchQuery: search),
                     ),
@@ -173,7 +186,7 @@ class _FirstStep extends StatelessWidget {
                 ),
                 Expanded(
                   child: MedDropdownInputField<OrderStatus>(
-                    label: 'Tıbbi Sarf Durumu',
+                    label: context.l10n.stationSetup_station_consumableStatusLabel,
                     options: OrderStatus.values,
                     initialValue: notifier.station?.medicalConsumableStatus,
                     labelBuilder: (status) => status?.label,
@@ -198,7 +211,7 @@ class _SecondStep extends StatelessWidget {
     return Consumer<StationFormNotifier>(
       builder: (context, notifier, _) {
         return MedSelectionField(
-          label: 'Servis',
+          label: context.l10n.stationSetup_station_serviceLabel,
           dataSource: (skip, take, search) =>
               context.read<GetServicesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           labelBuilder: (service) => service.title,
@@ -220,14 +233,14 @@ class _ThirdStep extends StatelessWidget {
           spacing: AppDimensions.registrationDialogSpacing,
           children: [
             MedTextInputField(
-              label: 'İstasyon Adı',
+              label: context.l10n.stationSetup_station_nameLabel,
               initialValue: notifier.station?.name,
               onChanged: (String? value) => notifier.updateName(value),
             ),
             MedMultiSelectionField<HospitalService>(
               key: key,
-              title: 'Hizmet Verdiği Servisler',
-              label: 'Hizmet Verdiği Servisler',
+              title: context.l10n.stationSetup_station_providedServicesLabel,
+              label: context.l10n.stationSetup_station_providedServicesLabel,
               initialValue: notifier.station?.services,
               labelBuilder: (value) => value.name ?? '',
               onSelected: notifier.updateProvidedServices,

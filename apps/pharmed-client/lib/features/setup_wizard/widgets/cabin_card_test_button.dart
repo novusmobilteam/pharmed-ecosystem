@@ -20,22 +20,26 @@ class _CabinCardTestButton extends StatelessWidget {
     return switch (testState) {
       // Test edilmedi veya hata — butonu göster
       CabinCardTestState.idle => MedButton(
-        label: 'Kabin Bağlantısını Test Et',
+        label: context.l10n.wizard_testCabinConnectionButton,
         size: MedButtonSize.sm,
         onPressed: _canTest ? onTestCabinCard : null,
       ),
 
       // Test devam ediyor — loading göster
-      CabinCardTestState.testing => const SizedBox(
+      CabinCardTestState.testing => SizedBox(
         height: 36,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: MedColors.blue)),
-            SizedBox(width: 10),
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(strokeWidth: 2, color: MedColors.blue),
+            ),
+            const SizedBox(width: 10),
             Text(
-              'Test ediliyor…',
-              style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
+              context.l10n.wizard_testingInProgress,
+              style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
             ),
           ],
         ),
@@ -47,7 +51,7 @@ class _CabinCardTestButton extends StatelessWidget {
           const Icon(Icons.check_circle_rounded, size: 16, color: MedColors.green),
           const SizedBox(width: 8),
           Text(
-            'Bağlantı başarılı',
+            context.l10n.wizard_connectionSuccessLabel,
             style: const TextStyle(
               fontFamily: MedFonts.sans,
               fontSize: 13,
@@ -59,9 +63,9 @@ class _CabinCardTestButton extends StatelessWidget {
           // Yeniden test etmek isterse
           GestureDetector(
             onTap: onTestCabinCard,
-            child: const Text(
-              'Tekrar test et',
-              style: TextStyle(
+            child: Text(
+              context.l10n.wizard_retestLink,
+              style: const TextStyle(
                 fontFamily: MedFonts.sans,
                 fontSize: 12,
                 color: MedColors.blue,
@@ -75,7 +79,11 @@ class _CabinCardTestButton extends StatelessWidget {
       CabinCardTestState.failure => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MedButton(label: 'Bağlantıyı Test Et', size: MedButtonSize.sm, onPressed: _canTest ? onTestCabinCard : null),
+          MedButton(
+            label: context.l10n.wizard_testConnectionButton,
+            size: MedButtonSize.sm,
+            onPressed: _canTest ? onTestCabinCard : null,
+          ),
           const SizedBox(height: 6),
           Row(
             children: [
@@ -83,7 +91,7 @@ class _CabinCardTestButton extends StatelessWidget {
               const SizedBox(width: 5),
               Flexible(
                 child: Text(
-                  cabinCardTestError ?? 'Bağlantı kurulamadı. Port bilgisini kontrol edin.',
+                  cabinCardTestError ?? context.l10n.wizard_cabinConnectionErrorFallback,
                   style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.red),
                 ),
               ),

@@ -1,0 +1,4264 @@
+{
+  "@@locale": "fr",
+  "core_serialPortDisconnectedLabel": "Non connecté",
+  "@core_serialPortDisconnectedLabel": {
+    "description": "Fallback label shown when the serial port connection has no active port name"
+  },
+  "core_serialConnectingStatus": "Connexion au port : {portName}...",
+  "@core_serialConnectingStatus": {
+    "description": "Live status line shown while attempting to connect to a serial port",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      }
+    }
+  },
+  "core_serialConnectSuccessStatus": "Connexion réussie : {portName}",
+  "@core_serialConnectSuccessStatus": {
+    "description": "Live status line shown after a successful serial port connection",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      }
+    }
+  },
+  "core_serialPortFailedScanningOthersStatus": "Échec de {portName}. Analyse des autres ports...",
+  "@core_serialPortFailedScanningOthersStatus": {
+    "description": "Live status line shown when the default port fails and the service falls back to scanning other ports",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      }
+    }
+  },
+  "core_serialNoOtherPortsError": "Le port par défaut ({portName}) a échoué et aucun autre port n'a été trouvé.",
+  "@core_serialNoOtherPortsError": {
+    "description": "Error message shown when the default serial port fails and no fallback port is available",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      }
+    }
+  },
+  "core_serialTryingPortStatus": "Tentative : {portName}...",
+  "@core_serialTryingPortStatus": {
+    "description": "Live status line shown while trying an individual serial port during the scan",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      }
+    }
+  },
+  "core_serialConnectionEstablishedStatus": "Connexion établie : {portName}",
+  "@core_serialConnectionEstablishedStatus": {
+    "description": "Live status line shown once a serial port connection has been established during the scan",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      }
+    }
+  },
+  "core_serialNoPortConnectedError": "Impossible de se connecter à un port. Vérifiez les câbles.",
+  "@core_serialNoPortConnectedError": {
+    "description": "Error message shown when no serial port could be connected to after scanning all candidates"
+  },
+  "core_serialPortOpenFailedError": "Le port n'a pas pu être ouvert ({portName}).",
+  "@core_serialPortOpenFailedError": {
+    "description": "Error message shown when a specific serial port fails to open",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      }
+    }
+  },
+  "core_serialNoConnectionError": "Aucune connexion.",
+  "@core_serialNoConnectionError": {
+    "description": "Error message shown when a serial command is attempted with no active connection"
+  },
+  "core_serialPortBusyTimeoutError": "Délai d'expiration du port.",
+  "@core_serialPortBusyTimeoutError": {
+    "description": "Error message shown when the serial port is locked/busy and times out waiting for access"
+  },
+  "core_serialWriteFailedError": "Échec de l'écriture.",
+  "@core_serialWriteFailedError": {
+    "description": "Error message shown when writing to the serial port fails"
+  },
+  "common_defaultSuccessMessage": "Opération réussie",
+  "@common_defaultSuccessMessage": {
+    "description": "Fallback success message shown when an API operation succeeds without a specific message"
+  },
+  "common_operationSuccessMessage": "Votre opération a été effectuée avec succès.",
+  "@common_operationSuccessMessage": {
+    "description": "Generic success message shown after create/update/delete operations across CRUD screens (shared across the app)"
+  },
+  "common_loadingEllipsis": "Chargement...",
+  "@common_loadingEllipsis": {
+    "description": "Generic loading indicator text shown while a dialog/overlay is busy"
+  },
+  "common_searchHint": "Rechercher...",
+  "@common_searchHint": {
+    "description": "Generic search field hint text used in dialogs and lists"
+  },
+  "common_searchTooltip": "Rechercher",
+  "@common_searchTooltip": {
+    "description": "Tooltip on the generic search icon button"
+  },
+  "common_addTooltip": "Ajouter",
+  "@common_addTooltip": {
+    "description": "Tooltip on the generic add icon button"
+  },
+  "common_closeTooltip": "Fermer",
+  "@common_closeTooltip": {
+    "description": "Tooltip on the generic close icon button"
+  },
+  "common_saveButton": "Enregistrer",
+  "@common_saveButton": {
+    "description": "Generic save button label used across forms and dialogs"
+  },
+  "common_editTooltip": "Modifier",
+  "@common_editTooltip": {
+    "description": "Generic edit tooltip/button label used across list/table action items"
+  },
+  "common_deleteTooltip": "Supprimer",
+  "@common_deleteTooltip": {
+    "description": "Generic delete tooltip/button label used across list/table action items"
+  },
+  "common_statusLabel": "Statut",
+  "@common_statusLabel": {
+    "description": "Generic status field/dropdown label used across CRUD forms"
+  },
+  "common_emptyListMessage": "La liste est actuellement vide",
+  "@common_emptyListMessage": {
+    "description": "Generic empty-state description shown when a CRUD list has no items (non-dialog context)"
+  },
+  "common_nameLabel": "Nom",
+  "@common_nameLabel": {
+    "description": "Generic entity-name field label used across CRUD forms (e.g. active ingredient, unit)"
+  },
+  "common_requiredFieldsError": "Veuillez remplir les champs obligatoires.",
+  "@common_requiredFieldsError": {
+    "description": "Validation error dialog message shown when required form fields are left empty"
+  },
+  "common_descriptionLabel": "Description",
+  "@common_descriptionLabel": {
+    "description": "Generic description field label/hint used across forms"
+  },
+  "common_deselectAllButton": "Tout désélectionner",
+  "@common_deselectAllButton": {
+    "description": "Button label to deselect all selected items in a selectable list"
+  },
+  "common_selectAllButton": "Tout sélectionner",
+  "@common_selectAllButton": {
+    "description": "Button label to select all items in a selectable list"
+  },
+  "common_defaultUnitFallback": "Pièce",
+  "@common_defaultUnitFallback": {
+    "description": "Fallback unit label shown when a medicine/material has no operation unit configured"
+  },
+  "common_flagFirstDoseEmergency": "Première dose urgente",
+  "@common_flagFirstDoseEmergency": {
+    "description": "Badge/checkbox label for the 'first dose emergency' prescription item flag"
+  },
+  "common_flagAskDoctor": "Demander au médecin",
+  "@common_flagAskDoctor": {
+    "description": "Badge/checkbox label for the 'ask doctor' prescription item flag"
+  },
+  "common_flagInCaseOfNecessity": "Si nécessaire",
+  "@common_flagInCaseOfNecessity": {
+    "description": "Badge/checkbox label for the 'in case of necessity' (PRN) prescription item flag"
+  },
+  "common_addItemHint": "Appuyez sur le bouton « + » pour ajouter un(e) nouveau/nouvelle {item}",
+  "@common_addItemHint": {
+    "description": "Empty-state hint shown in selection dialogs, telling the user how to add a new item of the given type",
+    "placeholders": {
+      "item": {
+        "type": "String",
+        "description": "Localized noun for the entity type being added, e.g. 'etken madde'"
+      }
+    }
+  },
+  "common_genericErrorMessage": "Une erreur s'est produite.",
+  "@common_genericErrorMessage": {
+    "description": "Generic fallback error message shown when an operation fails without a specific error"
+  },
+  "hospitalizationCard_noDoctorFallback": "Aucun médecin spécifié",
+  "@hospitalizationCard_noDoctorFallback": {
+    "description": "Fallback text shown on the hospitalization card when the doctor's name is null"
+  },
+  "hospitalizationCard_nationalIdLabel": "N° d'identité nationale",
+  "@hospitalizationCard_nationalIdLabel": {
+    "description": "Footer info label for the patient's national ID number on the hospitalization card"
+  },
+  "hospitalizationCard_admissionDateLabel": "Date d'admission",
+  "@hospitalizationCard_admissionDateLabel": {
+    "description": "Footer info label for the admission date on the hospitalization card"
+  },
+  "menuBrowser_categoriesHeader": "CATÉGORIES",
+  "@menuBrowser_categoriesHeader": {
+    "description": "Header label above the category list in the menu browser"
+  },
+  "menuBrowser_searchHint": "Rechercher une catégorie...",
+  "@menuBrowser_searchHint": {
+    "description": "Search field hint text in the menu browser's category list"
+  },
+  "menuBrowser_selectionCountBadge": "{selected}/{total}",
+  "@menuBrowser_selectionCountBadge": {
+    "description": "Badge showing how many items are selected out of the total in the current category",
+    "placeholders": {
+      "selected": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "menuBrowser_emptyCategoryMessage": "Aucun menu trouvé dans cette catégorie",
+  "@menuBrowser_emptyCategoryMessage": {
+    "description": "Empty-state message shown when a selected category has no menu items"
+  },
+  "rxGroup_headerTitle": "Ordonnance n° {id}",
+  "@rxGroup_headerTitle": {
+    "description": "Header title for a prescription group card, showing the prescription ID",
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "rxGroup_headerSubtitle": "{doctorName} · {date}",
+  "@rxGroup_headerSubtitle": {
+    "description": "Header subtitle for a prescription group card, showing the doctor name and prescription date",
+    "placeholders": {
+      "doctorName": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "rxGroup_itemCountBadge": "{count} articles",
+  "@rxGroup_itemCountBadge": {
+    "description": "Badge showing the total number of items in a prescription group",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rxGroup_selectableCountLabel": "{count} articles pouvant faire l'objet d'une action",
+  "@rxGroup_selectableCountLabel": {
+    "description": "Label showing how many items in a prescription group can currently be acted on",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rxGroup_unknownDoctorFallback": "Inconnu",
+  "@rxGroup_unknownDoctorFallback": {
+    "description": "Fallback text shown when a prescription's doctor name is null"
+  },
+  "rxGroup_rfidTagLabel": "ÉTIQUETTE RFID",
+  "@rxGroup_rfidTagLabel": {
+    "description": "Section label for the RFID tag area of a prescription item row"
+  },
+  "rxGroup_rfidTagLoadingLabel": "En attente de l'étiquette...",
+  "@rxGroup_rfidTagLoadingLabel": {
+    "description": "Loading-state label shown while an RFID tag is being read"
+  },
+  "rxGroup_rfidTagUnassignedLabel": "Aucune étiquette assignée pour le moment",
+  "@rxGroup_rfidTagUnassignedLabel": {
+    "description": "Label shown when a prescription item has no RFID tag assigned"
+  },
+  "rxGroup_rfidChangeButton": "Modifier",
+  "@rxGroup_rfidChangeButton": {
+    "description": "Button label to change the RFID tag assigned to a prescription item"
+  },
+  "rxGroup_rfidAssignButton": "Assigner une étiquette",
+  "@rxGroup_rfidAssignButton": {
+    "description": "Button label to assign an RFID tag to a prescription item"
+  },
+  "rxGroup_selectedCountBar": "{count} articles sélectionnés",
+  "@rxGroup_selectedCountBar": {
+    "description": "Bottom action bar label showing how many prescription items are currently selected",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rxGroup_approveAction": "Approuver",
+  "@rxGroup_approveAction": {
+    "description": "Action chip label to approve selected prescription items"
+  },
+  "rxGroup_rejectAction": "Rejeter",
+  "@rxGroup_rejectAction": {
+    "description": "Action chip label to reject selected prescription items"
+  },
+  "changePassword_dialogTitle": "Changer le mot de passe",
+  "@changePassword_dialogTitle": {
+    "description": "Dialog title for the change-password screen"
+  },
+  "changePassword_currentPasswordLabel": "Mot de passe actuel",
+  "@changePassword_currentPasswordLabel": {
+    "description": "Field label for the current password input"
+  },
+  "changePassword_newPasswordLabel": "Nouveau mot de passe",
+  "@changePassword_newPasswordLabel": {
+    "description": "Field label for the new password input"
+  },
+  "changePassword_confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+  "@changePassword_confirmPasswordLabel": {
+    "description": "Field label for the new password confirmation input"
+  },
+  "changePassword_submitButton": "Changer le mot de passe",
+  "@changePassword_submitButton": {
+    "description": "Submit button label on the change-password form"
+  },
+  "home_appBarBadgeLabel": "PANNEAU DE GESTION",
+  "@home_appBarBadgeLabel": {
+    "description": "Small badge label shown in the manager app bar"
+  },
+  "home_devSettingsTooltip": "Paramètres développeur",
+  "@home_devSettingsTooltip": {
+    "description": "Tooltip on the developer settings icon, only visible in debug builds"
+  },
+  "home_noAuthorizedMenuTitle": "Aucun menu autorisé trouvé",
+  "@home_noAuthorizedMenuTitle": {
+    "description": "Empty-state title shown when the logged-in user has no accessible menus"
+  },
+  "home_noAuthorizedMenuDescription": "Aucune autorisation d'accès n'est définie pour votre compte.\nVeuillez contacter votre administrateur système pour obtenir un accès.",
+  "@home_noAuthorizedMenuDescription": {
+    "description": "Empty-state description shown when the logged-in user has no accessible menus"
+  },
+  "branch_listDialogTitle": "Définition de la spécialité",
+  "@branch_listDialogTitle": {
+    "description": "Dialog title for the branch (medical specialty) list screen"
+  },
+  "branch_addTitle": "Ajouter une spécialité",
+  "@branch_addTitle": {
+    "description": "Dialog title when creating a new branch"
+  },
+  "branch_editTitle": "Modifier la spécialité",
+  "@branch_editTitle": {
+    "description": "Dialog title when editing an existing branch"
+  },
+  "branch_nameLabel": "Nom de la spécialité",
+  "@branch_nameLabel": {
+    "description": "Field label for the branch name"
+  },
+  "firm_createSuccessMessage": "Entreprise créée avec succès",
+  "@firm_createSuccessMessage": {
+    "description": "Success message shown after creating a firm/supplier"
+  },
+  "firm_updateSuccessMessage": "Entreprise mise à jour avec succès",
+  "@firm_updateSuccessMessage": {
+    "description": "Success message shown after updating a firm/supplier"
+  },
+  "firm_createPanelTitle": "Nouvelle entreprise",
+  "@firm_createPanelTitle": {
+    "description": "Side panel title / toolbar button label when creating a new firm"
+  },
+  "firm_editPanelTitle": "Modifier l'entreprise",
+  "@firm_editPanelTitle": {
+    "description": "Side panel title when editing an existing firm"
+  },
+  "firm_createPanelSubtitle": "Renseignez les informations de l'entreprise",
+  "@firm_createPanelSubtitle": {
+    "description": "Side panel subtitle when creating a new firm"
+  },
+  "firm_editPanelSubtitle": "Mettez à jour les informations de l'entreprise",
+  "@firm_editPanelSubtitle": {
+    "description": "Side panel subtitle when editing an existing firm"
+  },
+  "firm_nameLabel": "Nom de l'entreprise",
+  "@firm_nameLabel": {
+    "description": "Field label for the firm name"
+  },
+  "firm_taxNoLabel": "N° fiscal",
+  "@firm_taxNoLabel": {
+    "description": "Field label for the firm's tax number"
+  },
+  "firm_taxOfficeLabel": "Centre des impôts",
+  "@firm_taxOfficeLabel": {
+    "description": "Field label for the firm's tax office"
+  },
+  "firm_typeLabel": "Type d'entreprise",
+  "@firm_typeLabel": {
+    "description": "Field label for the firm type"
+  },
+  "firm_screenDefaultTitle": "Définition de l'entreprise",
+  "@firm_screenDefaultTitle": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "dosageForm_deleteSuccessMessage": "La forme posologique a été supprimée avec succès.",
+  "@dosageForm_deleteSuccessMessage": {
+    "description": "Success message shown after deleting a dosage form"
+  },
+  "dosageForm_saveSuccessMessage": "La forme posologique a été enregistrée avec succès.",
+  "@dosageForm_saveSuccessMessage": {
+    "description": "Success message shown after creating or updating a dosage form"
+  },
+  "dosageForm_createTitle": "Créer une forme posologique",
+  "@dosageForm_createTitle": {
+    "description": "Dialog title when creating a new dosage form"
+  },
+  "dosageForm_editTitle": "Modifier la forme posologique",
+  "@dosageForm_editTitle": {
+    "description": "Dialog title when editing an existing dosage form"
+  },
+  "dosageForm_listDialogTitle": "Forme posologique",
+  "@dosageForm_listDialogTitle": {
+    "description": "Dialog title for the dosage form list screen"
+  },
+  "dosageForm_emptyTitle": "Aucune forme posologique pour le moment",
+  "@dosageForm_emptyTitle": {
+    "description": "Empty-state title for the dosage form list"
+  },
+  "dosageForm_emptyDescription": "Appuyez sur le bouton « + » pour créer une forme posologique",
+  "@dosageForm_emptyDescription": {
+    "description": "Empty-state description for the dosage form list, prompting the user to add one"
+  },
+  "authorization_userTabTitle": "Autorisation utilisateur",
+  "@authorization_userTabTitle": {
+    "description": "Tab label / side panel title for user authorization"
+  },
+  "authorization_roleTabTitle": "Autorisation de rôle",
+  "@authorization_roleTabTitle": {
+    "description": "Tab label for role authorization"
+  },
+  "authorization_screenTitleFallback": "Autorisation utilisateur/rôle",
+  "@authorization_screenTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "authorization_rolePanelTitle": "Autorisation de rôle - {roleName}",
+  "@authorization_rolePanelTitle": {
+    "description": "Panel title showing which role's permissions are being edited",
+    "placeholders": {
+      "roleName": {
+        "type": "String"
+      }
+    }
+  },
+  "authorization_tabMenuLabel": "Menu",
+  "@authorization_tabMenuLabel": {
+    "description": "Sub-tab label for menu permissions within the role authorization panel"
+  },
+  "authorization_tabDrugLabel": "Médicament",
+  "@authorization_tabDrugLabel": {
+    "description": "Sub-tab label for drug permissions within the role authorization panel"
+  },
+  "authorization_tabConsumableLabel": "Consommable médical",
+  "@authorization_tabConsumableLabel": {
+    "description": "Sub-tab label for medical consumable permissions within the role authorization panel"
+  },
+  "authorization_drugTable_pullColumn": "Prélever le médicament",
+  "@authorization_drugTable_pullColumn": {
+    "description": "Column header for the 'pull drug' permission in the role/drug authorization table"
+  },
+  "authorization_drugTable_fillColumn": "Remplissage",
+  "@authorization_drugTable_fillColumn": {
+    "description": "Column header for the 'refill' permission in the role/drug authorization table"
+  },
+  "authorization_drugTable_returnColumn": "Retour",
+  "@authorization_drugTable_returnColumn": {
+    "description": "Column header for the 'return' permission in the role/drug authorization table"
+  },
+  "authorization_drugTable_disposeColumn": "Élimination",
+  "@authorization_drugTable_disposeColumn": {
+    "description": "Column header for the 'dispose' permission in the role/drug authorization table"
+  },
+  "authorization_drugTable_allDrugsRow": "Tous les médicaments",
+  "@authorization_drugTable_allDrugsRow": {
+    "description": "Row label for the 'select all drugs' header row in the drug authorization table"
+  },
+  "authorization_drugTable_unknownDrugFallback": "Médicament inconnu",
+  "@authorization_drugTable_unknownDrugFallback": {
+    "description": "Fallback text shown when a drug's name is null in the authorization table"
+  },
+  "settings_updateSuccessMessage": "Paramètres mis à jour avec succès.",
+  "@settings_updateSuccessMessage": {
+    "description": "Success message shown after saving application settings"
+  },
+  "settingsCabin_drawerOpenWaitLabel": "Délai d'attente tiroir ouvert (secondes)",
+  "@settingsCabin_drawerOpenWaitLabel": {
+    "description": "Dropdown label for the drawer-open wait duration setting"
+  },
+  "settingsCabin_drawerOpenWaitDescription": "Indique quand le système enverra une commande de fermeture au tiroir s'il reste ouvert.",
+  "@settingsCabin_drawerOpenWaitDescription": {
+    "description": "Helper text explaining the drawer-open wait duration setting"
+  },
+  "settingsDeveloper_adminDashboardActiveLabel": "Tableau de bord admin actif",
+  "@settingsDeveloper_adminDashboardActiveLabel": {
+    "description": "Switch label to toggle the admin dashboard feature"
+  },
+  "settingsDeveloper_appModeLabel": "Mode de l'application",
+  "@settingsDeveloper_appModeLabel": {
+    "description": "Section label for the developer app-mode toggle"
+  },
+  "settingsDeveloper_clientModeButton": "Mode client",
+  "@settingsDeveloper_clientModeButton": {
+    "description": "Mode toggle button label to switch the app into client mode"
+  },
+  "settingsDeveloper_managerModeButton": "Mode gestionnaire",
+  "@settingsDeveloper_managerModeButton": {
+    "description": "Mode toggle button label to switch the app into manager mode"
+  },
+  "settingsGeneral_autoStandbyDurationLabel": "Durée avant mise en veille automatique (secondes)",
+  "@settingsGeneral_autoStandbyDurationLabel": {
+    "description": "Dropdown label for the auto-standby duration setting"
+  },
+  "settingsGeneral_expiryWarningLabel": "Alerte d'expiration",
+  "@settingsGeneral_expiryWarningLabel": {
+    "description": "Text field label for the expiry warning threshold setting"
+  },
+  "settingsGeneral_hbysStockControlLabel": "Contrôle de stock SIH",
+  "@settingsGeneral_hbysStockControlLabel": {
+    "description": "Checkbox label for enabling hospital information system stock control"
+  },
+  "settingsGeneral_fingerprintOnlyLabel": "N'autoriser que le lecteur d'empreintes digitales sur les cabines.",
+  "@settingsGeneral_fingerprintOnlyLabel": {
+    "description": "Checkbox label restricting cabinet access to fingerprint reader only"
+  },
+  "settingsGeneral_allowOutOfWindowOrdersLabel": "Les commandes hors délai peuvent être acceptées.",
+  "@settingsGeneral_allowOutOfWindowOrdersLabel": {
+    "description": "Checkbox label allowing orders to be accepted outside the configured time window"
+  },
+  "settingsGeneral_perCellExpiryDateLabel": "Autoriser la saisie d'une date d'expiration distincte pour chaque compartiment des tiroirs à dose unitaire lors du remplissage.",
+  "@settingsGeneral_perCellExpiryDateLabel": {
+    "description": "Checkbox label allowing per-cell expiry date entry for unit-dose drawers during refill"
+  },
+  "settingsPrescription_accessDurationLabel": "Durée d'accès à l'ordonnance (minutes)",
+  "@settingsPrescription_accessDurationLabel": {
+    "description": "Dropdown label for the prescription access duration setting"
+  },
+  "settingsPrescription_accessDurationDescription": "Indique la durée pendant laquelle les ordonnances restent accessibles avant et après les heures de retrait des produits.",
+  "@settingsPrescription_accessDurationDescription": {
+    "description": "Helper text explaining the prescription access duration setting"
+  },
+  "settingsView_cabinTabTitle": "Paramètres de communication de la cabine",
+  "@settingsView_cabinTabTitle": {
+    "description": "Tab title for cabinet communication settings, visible to manager/admin only"
+  },
+  "settingsView_prescriptionTabTitle": "Paramètres de l'ordonnance",
+  "@settingsView_prescriptionTabTitle": {
+    "description": "Tab title for prescription settings, visible to manager/admin only"
+  },
+  "settingsView_generalTabTitle": "Paramètres généraux",
+  "@settingsView_generalTabTitle": {
+    "description": "Tab title for general settings, visible to everyone"
+  },
+  "settingsView_developerTabTitle": "Paramètres développeur",
+  "@settingsView_developerTabTitle": {
+    "description": "Tab title for developer settings, visible to admin only"
+  },
+  "settingsView_refreshPermissionsButton": "Actualiser les autorisations",
+  "@settingsView_refreshPermissionsButton": {
+    "description": "Button label to refresh the current user's permissions"
+  },
+  "stationSetup_defaultRoomName": "Chambre {index}",
+  "@stationSetup_defaultRoomName": {
+    "description": "Default room name seeded into the name field when adding a new room",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "stationSetup_service_createdSuccessMessage": "Service créé avec succès",
+  "@stationSetup_service_createdSuccessMessage": {
+    "description": "Success message shown after creating a service"
+  },
+  "stationSetup_service_updatedSuccessMessage": "Service mis à jour avec succès",
+  "@stationSetup_service_updatedSuccessMessage": {
+    "description": "Success message shown after updating a service"
+  },
+  "stationSetup_roomsSectionTitle": "Chambres et lits",
+  "@stationSetup_roomsSectionTitle": {
+    "description": "Section header above the room/bed list in the service form"
+  },
+  "stationSetup_roomsBedsSummary": "{roomCount} chambres · {bedCount} lits",
+  "@stationSetup_roomsBedsSummary": {
+    "description": "Summary line showing the total room and bed count for a service",
+    "placeholders": {
+      "roomCount": {
+        "type": "int"
+      },
+      "bedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "stationSetup_addRoomButton": "Ajouter une chambre",
+  "@stationSetup_addRoomButton": {
+    "description": "Button label to add a new room"
+  },
+  "stationSetup_bedCountBadge": "{count, plural, one{{count} lit} other{{count} lits}}",
+  "@stationSetup_bedCountBadge": {
+    "description": "Badge showing the bed count for a room",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stationSetup_noBedsAddedYetMessage": "Aucun lit ajouté pour le moment",
+  "@stationSetup_noBedsAddedYetMessage": {
+    "description": "Empty-state text inside an expanded room tile when it has no beds"
+  },
+  "stationSetup_addBedButton": "Ajouter un lit",
+  "@stationSetup_addBedButton": {
+    "description": "Button label to add a new bed to a room"
+  },
+  "stationSetup_service_formTitleNew": "Nouveau service",
+  "@stationSetup_service_formTitleNew": {
+    "description": "Side panel title / add button label when creating a new service"
+  },
+  "stationSetup_service_formTitleEdit": "Modifier le service",
+  "@stationSetup_service_formTitleEdit": {
+    "description": "Side panel title when editing an existing service"
+  },
+  "stationSetup_service_formSubtitleNew": "Renseignez les informations du service",
+  "@stationSetup_service_formSubtitleNew": {
+    "description": "Side panel subtitle when creating a new service"
+  },
+  "stationSetup_service_formSubtitleEdit": "Mettez à jour les informations du service",
+  "@stationSetup_service_formSubtitleEdit": {
+    "description": "Side panel subtitle when editing an existing service"
+  },
+  "stationSetup_service_nameLabel": "Nom du service",
+  "@stationSetup_service_nameLabel": {
+    "description": "Field label for the service name"
+  },
+  "stationSetup_service_branchLabel": "Spécialité",
+  "@stationSetup_service_branchLabel": {
+    "description": "Field label for the service's branch selection"
+  },
+  "stationSetup_service_branchSelectTitle": "Sélectionner une spécialité",
+  "@stationSetup_service_branchSelectTitle": {
+    "description": "Selection dialog title for choosing a branch"
+  },
+  "stationSetup_service_userLabel": "Utilisateur",
+  "@stationSetup_service_userLabel": {
+    "description": "Field label for the service's responsible user selection"
+  },
+  "stationSetup_common_statusLabel": "Statut",
+  "@stationSetup_common_statusLabel": {
+    "description": "Status dropdown label shared by the service and warehouse forms in station setup"
+  },
+  "stationSetup_station_createdSuccessMessage": "Station créée avec succès",
+  "@stationSetup_station_createdSuccessMessage": {
+    "description": "Success message shown after creating a station"
+  },
+  "stationSetup_station_updatedSuccessMessage": "Station mise à jour avec succès",
+  "@stationSetup_station_updatedSuccessMessage": {
+    "description": "Success message shown after updating a station"
+  },
+  "stationSetup_station_formTitleNew": "Nouvelle station",
+  "@stationSetup_station_formTitleNew": {
+    "description": "Side panel title / add button label when creating a new station"
+  },
+  "stationSetup_station_formTitleEdit": "Modifier la station",
+  "@stationSetup_station_formTitleEdit": {
+    "description": "Side panel title when editing an existing station"
+  },
+  "stationSetup_station_formSubtitleNew": "Renseignez les informations de la station",
+  "@stationSetup_station_formSubtitleNew": {
+    "description": "Side panel subtitle when creating a new station"
+  },
+  "stationSetup_station_formSubtitleEdit": "Mettez à jour les informations de la station",
+  "@stationSetup_station_formSubtitleEdit": {
+    "description": "Side panel subtitle when editing an existing station"
+  },
+  "stationSetup_station_nameLabel": "Nom de la station",
+  "@stationSetup_station_nameLabel": {
+    "description": "Field label for the station name"
+  },
+  "stationSetup_station_drugWarehouseLabel": "Entrepôt de médicaments",
+  "@stationSetup_station_drugWarehouseLabel": {
+    "description": "Field label for the station's drug warehouse selection"
+  },
+  "stationSetup_station_drugWarehouseSelectTitle": "Sélectionner un entrepôt de médicaments",
+  "@stationSetup_station_drugWarehouseSelectTitle": {
+    "description": "Selection dialog title for choosing a drug warehouse"
+  },
+  "stationSetup_station_drugStatusLabel": "Statut du médicament",
+  "@stationSetup_station_drugStatusLabel": {
+    "description": "Dropdown label for the station's drug status"
+  },
+  "stationSetup_station_consumableWarehouseLabel": "Entrepôt de consommables médicaux",
+  "@stationSetup_station_consumableWarehouseLabel": {
+    "description": "Field label for the station's medical consumable warehouse selection"
+  },
+  "stationSetup_station_consumableWarehouseSelectTitle": "Sélectionner un entrepôt de consommables médicaux",
+  "@stationSetup_station_consumableWarehouseSelectTitle": {
+    "description": "Selection dialog title for choosing a medical consumable warehouse"
+  },
+  "stationSetup_station_consumableStatusLabel": "Statut du consommable médical",
+  "@stationSetup_station_consumableStatusLabel": {
+    "description": "Dropdown label for the station's medical consumable status, shown in the setup wizard"
+  },
+  "stationSetup_station_serviceLabel": "Service",
+  "@stationSetup_station_serviceLabel": {
+    "description": "Field label for the station's service selection"
+  },
+  "stationSetup_station_serviceSelectTitle": "Sélectionner un service",
+  "@stationSetup_station_serviceSelectTitle": {
+    "description": "Selection dialog title for choosing a service"
+  },
+  "stationSetup_station_providedServicesLabel": "Services desservis",
+  "@stationSetup_station_providedServicesLabel": {
+    "description": "Field label / dialog title for the station's multi-selected list of served services"
+  },
+  "stationSetup_station_typeLabel": "Type de station",
+  "@stationSetup_station_typeLabel": {
+    "description": "Radio field label for the station type"
+  },
+  "stationSetup_station_typePatientBasedLabel": "Basé sur le patient",
+  "@stationSetup_station_typePatientBasedLabel": {
+    "description": "Radio option label for patient-based station type"
+  },
+  "stationSetup_station_typeMedicineBasedLabel": "Basé sur le médicament",
+  "@stationSetup_station_typeMedicineBasedLabel": {
+    "description": "Radio option label for medicine-based station type"
+  },
+  "stationSetup_warehouse_createdSuccessMessage": "Entrepôt créé avec succès",
+  "@stationSetup_warehouse_createdSuccessMessage": {
+    "description": "Success message shown after creating a warehouse"
+  },
+  "stationSetup_warehouse_updatedSuccessMessage": "Entrepôt mis à jour avec succès",
+  "@stationSetup_warehouse_updatedSuccessMessage": {
+    "description": "Success message shown after updating a warehouse"
+  },
+  "stationSetup_warehouse_formTitleNew": "Nouvel entrepôt",
+  "@stationSetup_warehouse_formTitleNew": {
+    "description": "Side panel title / add button label when creating a new warehouse"
+  },
+  "stationSetup_warehouse_formTitleEdit": "Modifier l'entrepôt",
+  "@stationSetup_warehouse_formTitleEdit": {
+    "description": "Side panel title when editing an existing warehouse"
+  },
+  "stationSetup_warehouse_formSubtitleNew": "Renseignez les informations de l'entrepôt",
+  "@stationSetup_warehouse_formSubtitleNew": {
+    "description": "Side panel subtitle when creating a new warehouse"
+  },
+  "stationSetup_warehouse_formSubtitleEdit": "Mettez à jour les informations de l'entrepôt",
+  "@stationSetup_warehouse_formSubtitleEdit": {
+    "description": "Side panel subtitle when editing an existing warehouse"
+  },
+  "stationSetup_warehouse_codeLabel": "Code de l'entrepôt",
+  "@stationSetup_warehouse_codeLabel": {
+    "description": "Field label for the warehouse code"
+  },
+  "stationSetup_warehouse_nameLabel": "Nom de l'entrepôt",
+  "@stationSetup_warehouse_nameLabel": {
+    "description": "Field label for the warehouse name"
+  },
+  "stationSetup_warehouse_typeLabel": "Type d'entrepôt",
+  "@stationSetup_warehouse_typeLabel": {
+    "description": "Dropdown label for the warehouse type"
+  },
+  "stationSetup_warehouse_managerLabel": "Responsable de l'entrepôt",
+  "@stationSetup_warehouse_managerLabel": {
+    "description": "Field label for the warehouse manager selection"
+  },
+  "stationSetup_warehouse_managerSelectTitle": "Sélectionner un responsable d'entrepôt",
+  "@stationSetup_warehouse_managerSelectTitle": {
+    "description": "Selection dialog title for choosing a warehouse manager"
+  },
+  "stationSetup_screen_stationTabTitle": "Définition de la station",
+  "@stationSetup_screen_stationTabTitle": {
+    "description": "Segmented-button tab label / wizard step title for station definition"
+  },
+  "stationSetup_screen_serviceTabTitle": "Définition du service",
+  "@stationSetup_screen_serviceTabTitle": {
+    "description": "Segmented-button tab label / wizard step title for service definition"
+  },
+  "stationSetup_screen_warehouseTabTitle": "Définition de l'entrepôt",
+  "@stationSetup_screen_warehouseTabTitle": {
+    "description": "Segmented-button tab label / wizard step title for warehouse definition"
+  },
+  "stationSetup_screen_setupWizardButton": "Assistant de configuration",
+  "@stationSetup_screen_setupWizardButton": {
+    "description": "Button label opening the station setup wizard dialog"
+  },
+  "stationSetup_wizard_title": "Assistant de configuration de la station",
+  "@stationSetup_wizard_title": {
+    "description": "Dialog title for the station setup wizard"
+  },
+  "stationSetup_wizard_completeSetupButton": "Terminer la configuration",
+  "@stationSetup_wizard_completeSetupButton": {
+    "description": "Final-step confirm button label in the station setup wizard"
+  },
+  "stationSetup_wizard_continueButton": "Continuer",
+  "@stationSetup_wizard_continueButton": {
+    "description": "Continue button label for non-final steps in the station setup wizard"
+  },
+  "stationSetup_wizard_backButton": "Retour",
+  "@stationSetup_wizard_backButton": {
+    "description": "Back button label in the station setup wizard"
+  },
+  "unappliedPrescription_detailDialogTitle": "Liste des matériaux",
+  "@unappliedPrescription_detailDialogTitle": {
+    "description": "Dialog title for the unapplied prescription detail/material list view"
+  },
+  "unappliedPrescription_screenTitleFallback": "Ordonnances non appliquées",
+  "@unappliedPrescription_screenTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "unappliedPrescription_viewDetailsTooltip": "Voir les détails",
+  "@unappliedPrescription_viewDetailsTooltip": {
+    "description": "Tooltip on the table action item to view unapplied prescription details"
+  },
+  "dashboardCabinsLoadErrorFallback": "Les cabines n'ont pas pu être chargées",
+  "@dashboardCabinsLoadErrorFallback": {
+    "description": "Fallback error text shown when the cabin list fails to load and no specific error message is provided"
+  },
+  "dashboardCabinListStaleLabel": "La liste des cabines n'est pas à jour",
+  "@dashboardCabinListStaleLabel": {
+    "description": "Label shown next to the cabin selector when the cabin list is stale"
+  },
+  "dashboardDrugActivityPanelTitle": "MOUVEMENTS DE MÉDICAMENTS",
+  "@dashboardDrugActivityPanelTitle": {
+    "description": "Panel header title for the dashboard drug activity panel"
+  },
+  "dashboardDrugActivityEmptyTitle": "Aucun mouvement",
+  "@dashboardDrugActivityEmptyTitle": {
+    "description": "Empty-state title for the drug activity panel"
+  },
+  "dashboardDrugActivityDateTimeLabel": "DATE / HEURE",
+  "@dashboardDrugActivityDateTimeLabel": {
+    "description": "Combined date/time info-row label in the drug activity panel"
+  },
+  "dashboardMissingStockPanelTitle": "SIGNALEMENTS DE STOCK MANQUANT",
+  "@dashboardMissingStockPanelTitle": {
+    "description": "Panel header title for the dashboard missing-stock panel"
+  },
+  "dashboardMissingStockEmptyTitle": "Aucun signalement de stock manquant",
+  "@dashboardMissingStockEmptyTitle": {
+    "description": "Empty-state title for the missing-stock panel"
+  },
+  "dashboardMissingStockTimeLabel": "HEURE",
+  "@dashboardMissingStockTimeLabel": {
+    "description": "Column header for the time in the missing-stock panel table"
+  },
+  "dashboardMissingStockApproveButton": "Approuver",
+  "@dashboardMissingStockApproveButton": {
+    "description": "Approve action button in the missing-stock panel"
+  },
+  "dashboardMissingStockRejectButton": "Rejeter",
+  "@dashboardMissingStockRejectButton": {
+    "description": "Reject action button in the missing-stock panel"
+  },
+  "dashboardOtherCabinPlaceholderText": "Matériaux périmés et stocks critiques (prochainement)",
+  "@dashboardOtherCabinPlaceholderText": {
+    "description": "Placeholder text shown for the non-mobile-cabin panel, noting it's planned for a future iteration"
+  },
+  "dashboardUnappliedPrescriptionsPanelTitle": "ORDONNANCES NON APPLIQUÉES",
+  "@dashboardUnappliedPrescriptionsPanelTitle": {
+    "description": "Panel header title for the dashboard unapplied-prescriptions panel"
+  },
+  "dashboardUnappliedPrescriptionsEmptyTitle": "Aucune ordonnance non appliquée",
+  "@dashboardUnappliedPrescriptionsEmptyTitle": {
+    "description": "Empty-state title for the unapplied-prescriptions panel"
+  },
+  "dashboardDoctorLabel": "MÉDECIN",
+  "@dashboardDoctorLabel": {
+    "description": "Column header for the doctor name in the unapplied-prescriptions panel"
+  },
+  "dashboardRoomBedLabel": "CHAMBRE / LIT",
+  "@dashboardRoomBedLabel": {
+    "description": "Combined column header for room and bed in the unapplied-prescriptions panel"
+  },
+  "dashboardUpcomingTreatmentsPanelTitle": "TRAITEMENTS À VENIR",
+  "@dashboardUpcomingTreatmentsPanelTitle": {
+    "description": "Panel header title for the dashboard upcoming-treatments panel"
+  },
+  "dashboardUpcomingTreatmentsEmptyTitle": "Aucun traitement à venir",
+  "@dashboardUpcomingTreatmentsEmptyTitle": {
+    "description": "Empty-state title for the upcoming-treatments panel"
+  },
+  "dashboardListPanelLoadErrorFallback": "Le chargement a échoué",
+  "@dashboardListPanelLoadErrorFallback": {
+    "description": "Fallback error text for a dashboard list panel when no specific error message is provided"
+  },
+  "prescriptionActionCompletedSuccess": "L'opération a été effectuée avec succès.",
+  "@prescriptionActionCompletedSuccess": {
+    "description": "Success message shown after cancelling or rejecting a prescription action"
+  },
+  "prescriptionApprovedSuccess": "L'ordonnance a été approuvée avec succès.",
+  "@prescriptionApprovedSuccess": {
+    "description": "Success message shown after approving a prescription"
+  },
+  "prescriptionDetailPanelPatientFallback": "Patient",
+  "@prescriptionDetailPanelPatientFallback": {
+    "description": "Fallback panel title shown when the hospitalization record is null"
+  },
+  "prescriptionDetailPanelSubtitle": "Historique des ordonnances",
+  "@prescriptionDetailPanelSubtitle": {
+    "description": "Side panel subtitle for the prescription detail view"
+  },
+  "prescriptionDetailStartDateLabel": "Date de début",
+  "@prescriptionDetailStartDateLabel": {
+    "description": "Field label for the prescription movement filter start date"
+  },
+  "prescriptionDetailEndDateLabel": "Date de fin",
+  "@prescriptionDetailEndDateLabel": {
+    "description": "Field label for the prescription movement filter end date"
+  },
+  "prescriptionDetailStatusLabel": "Statut",
+  "@prescriptionDetailStatusLabel": {
+    "description": "Dropdown field label for the prescription movement type filter"
+  },
+  "prescriptionCheckWarningDialogTitle": "Avertissement de contrôle",
+  "@prescriptionCheckWarningDialogTitle": {
+    "description": "Confirm dialog title for the check-warning flow before approving a prescription"
+  },
+  "prescriptionSaveWithTemplateSuccess": "L'ordonnance et le modèle ont été enregistrés avec succès.",
+  "@prescriptionSaveWithTemplateSuccess": {
+    "description": "Success message shown when both the prescription and its template are saved"
+  },
+  "prescriptionSavedTemplateFailedMessage": "L'ordonnance a été enregistrée, mais le modèle n'a pas pu être enregistré.",
+  "@prescriptionSavedTemplateFailedMessage": {
+    "description": "Informational message shown when the prescription saved but its template failed to save"
+  },
+  "prescriptionSavedSuccess": "L'ordonnance a été enregistrée avec succès.",
+  "@prescriptionSavedSuccess": {
+    "description": "Success message shown after saving a prescription without a template"
+  },
+  "prescriptionCreatingLoadingMessage": "Création de l'ordonnance en cours. Veuillez patienter.",
+  "@prescriptionCreatingLoadingMessage": {
+    "description": "Loading-state message shown while a prescription is being created"
+  },
+  "prescriptionTemplateSavingLoadingMessage": "Enregistrement du modèle en cours.",
+  "@prescriptionTemplateSavingLoadingMessage": {
+    "description": "Loading-state message shown while a prescription template is being saved"
+  },
+  "prescriptionNewTitle": "Nouvelle ordonnance",
+  "@prescriptionNewTitle": {
+    "description": "Dialog title / button label / tooltip for creating a new prescription"
+  },
+  "prescriptionNewDialogSubtitle": "Créer une ordonnance ou en importer une depuis l'historique",
+  "@prescriptionNewDialogSubtitle": {
+    "description": "Subtitle on the new-prescription dialog"
+  },
+  "prescriptionTabHistory": "Historique",
+  "@prescriptionTabHistory": {
+    "description": "Tab label for the prescription history tab"
+  },
+  "prescriptionTabTemplates": "Modèles",
+  "@prescriptionTabTemplates": {
+    "description": "Tab label for the prescription templates tab"
+  },
+  "prescriptionContentEmptyTitle": "Vous n'avez pas encore ajouté de médicament à l'ordonnance.",
+  "@prescriptionContentEmptyTitle": {
+    "description": "Empty-state title for the prescription content list"
+  },
+  "prescriptionContentEmptyDescription": "Les médicaments que vous ajoutez s'afficheront ici.",
+  "@prescriptionContentEmptyDescription": {
+    "description": "Empty-state description for the prescription content list"
+  },
+  "prescriptionItemNoTimesLabel": "Aucun horaire ajouté",
+  "@prescriptionItemNoTimesLabel": {
+    "description": "Shown when a prescription item has no configured dose times"
+  },
+  "prescriptionItemNoMedicineSelected": "Aucun médicament sélectionné pour le moment",
+  "@prescriptionItemNoMedicineSelected": {
+    "description": "Placeholder item title shown before a medicine is selected"
+  },
+  "prescriptionPatientFieldLabel": "Patient",
+  "@prescriptionPatientFieldLabel": {
+    "description": "Selection field label for the patient on the prescription dialog"
+  },
+  "prescriptionDoctorFieldLabel": "Médecin",
+  "@prescriptionDoctorFieldLabel": {
+    "description": "Selection field label for the doctor on the prescription dialog"
+  },
+  "prescriptionSaveButton": "Enregistrer l'ordonnance",
+  "@prescriptionSaveButton": {
+    "description": "Primary save button label on the prescription dialog"
+  },
+  "prescriptionSaveAsTemplateCheckboxLabel": "Enregistrer également comme modèle",
+  "@prescriptionSaveAsTemplateCheckboxLabel": {
+    "description": "Checkbox label to also save the prescription as a reusable template"
+  },
+  "prescriptionTemplateNameHint": "Nom du modèle",
+  "@prescriptionTemplateNameHint": {
+    "description": "Text field hint for the prescription template name"
+  },
+  "prescriptionMedicineFieldLabel": "Médicament / Matériel",
+  "@prescriptionMedicineFieldLabel": {
+    "description": "Field label for the medicine/material selection on the prescription item form"
+  },
+  "prescriptionDescriptionFieldLabel": "Description",
+  "@prescriptionDescriptionFieldLabel": {
+    "description": "Text field label for the prescription item description"
+  },
+  "prescriptionTomorrowLabel": "Demain",
+  "@prescriptionTomorrowLabel": {
+    "description": "Quick-pick chip label for tomorrow's date on the prescription time picker"
+  },
+  "prescriptionTimesLabel": "Horaires",
+  "@prescriptionTimesLabel": {
+    "description": "Section label above the dose times list on the prescription form"
+  },
+  "prescriptionAddTimeButton": "Ajouter un horaire",
+  "@prescriptionAddTimeButton": {
+    "description": "Add-row action label to add a new dose time"
+  },
+  "prescriptionHistorySelectPatientTitle": "Sélectionner un patient",
+  "@prescriptionHistorySelectPatientTitle": {
+    "description": "Empty-state title shown before a patient is selected in prescription history"
+  },
+  "prescriptionHistorySelectPatientDescription": "Sélectionnez d'abord un patient pour consulter son historique d'ordonnances",
+  "@prescriptionHistorySelectPatientDescription": {
+    "description": "Empty-state description shown before a patient is selected in prescription history"
+  },
+  "prescriptionHistoryEmptyDescription": "Ce patient n'a aucun historique d'ordonnances",
+  "@prescriptionHistoryEmptyDescription": {
+    "description": "Empty-state description shown when the selected patient has no prescription history"
+  },
+  "prescriptionAddToRxButton": "Ajouter à l'ordonnance ({count})",
+  "@prescriptionAddToRxButton": {
+    "description": "Button label to add the selected items to the current prescription, showing the selected count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "prescriptionTemplateEmptyTitle": "Aucun modèle trouvé",
+  "@prescriptionTemplateEmptyTitle": {
+    "description": "Empty-state title for the prescription template list"
+  },
+  "prescriptionTemplateEmptyDescription": "Aucun modèle d'ordonnance enregistré",
+  "@prescriptionTemplateEmptyDescription": {
+    "description": "Empty-state description for the prescription template list"
+  },
+  "prescriptionTemplateNoItemsMessage": "Ce modèle ne contient aucun article",
+  "@prescriptionTemplateNoItemsMessage": {
+    "description": "Shown when an expanded prescription template has zero items"
+  },
+  "prescriptionScreenTitleFallback": "Opérations d'ordonnance",
+  "@prescriptionScreenTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "prescriptionContentTooltip": "Contenu de l'ordonnance",
+  "@prescriptionContentTooltip": {
+    "description": "Table row action tooltip to view prescription content"
+  },
+  "prescriptionShowActiveButton": "Afficher les admissions actives",
+  "@prescriptionShowActiveButton": {
+    "description": "Toolbar toggle tooltip to switch back to showing active hospitalizations"
+  },
+  "prescriptionShowDischargedButton": "Afficher les patients sortis",
+  "@prescriptionShowDischargedButton": {
+    "description": "Toolbar toggle tooltip to show discharged patients"
+  },
+  "cabinTemperatureScreenTitle": "Contrôle de température de la cabine",
+  "@cabinTemperatureScreenTitle": {
+    "description": "Desktop layout screen title for cabinet temperature control"
+  },
+  "cabinTemperatureFormDialogTitle": "Modifier la cabine",
+  "@cabinTemperatureFormDialogTitle": {
+    "description": "Dialog title for the cabinet temperature form, used for both create and edit"
+  },
+  "cabinTemperatureInsideBottomLabel": "Température intérieure basse",
+  "@cabinTemperatureInsideBottomLabel": {
+    "description": "Field label / table column header for the inside-bottom temperature reading"
+  },
+  "cabinTemperatureInsideTopLabel": "Température intérieure haute",
+  "@cabinTemperatureInsideTopLabel": {
+    "description": "Field label / table column header for the inside-top temperature reading"
+  },
+  "cabinTemperatureOutsideBottomLabel": "Température extérieure basse",
+  "@cabinTemperatureOutsideBottomLabel": {
+    "description": "Field label / table column header for the outside-bottom temperature reading"
+  },
+  "cabinTemperatureOutsideTopLabel": "Température extérieure haute",
+  "@cabinTemperatureOutsideTopLabel": {
+    "description": "Field label / table column header for the outside-top temperature reading"
+  },
+  "cabinTemperatureHumidityBottomLabel": "Limite inférieure d'humidité",
+  "@cabinTemperatureHumidityBottomLabel": {
+    "description": "Field label / table column header for the humidity lower limit"
+  },
+  "cabinTemperatureHumidityTopLabel": "Limite supérieure d'humidité",
+  "@cabinTemperatureHumidityTopLabel": {
+    "description": "Field label / table column header for the humidity upper limit"
+  },
+  "cabinTemperatureGenericErrorMessage": "Une erreur s'est produite : {error}",
+  "@cabinTemperatureGenericErrorMessage": {
+    "description": "Generic error message with the underlying error detail appended",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinTemperatureStationNotSelectedError": "Aucune station sélectionnée",
+  "@cabinTemperatureStationNotSelectedError": {
+    "description": "Validation error shown when no station is selected before creating a cabinet temperature setting"
+  },
+  "cabinTemperatureCreateSuccess": "Le paramètre de température de la cabine a été créé avec succès.",
+  "@cabinTemperatureCreateSuccess": {
+    "description": "Success message shown after creating a cabinet temperature setting"
+  },
+  "cabinTemperatureUpdateRecordNotFoundError": "Aucun enregistrement trouvé à mettre à jour",
+  "@cabinTemperatureUpdateRecordNotFoundError": {
+    "description": "Validation error shown when the record to update cannot be found"
+  },
+  "cabinTemperatureUpdateSuccess": "Le paramètre de température de la cabine a été mis à jour avec succès.",
+  "@cabinTemperatureUpdateSuccess": {
+    "description": "Success message shown after updating a cabinet temperature setting"
+  },
+  "cabinTemperatureUnnamedStationFallback": "Station sans nom",
+  "@cabinTemperatureUnnamedStationFallback": {
+    "description": "Fallback station name shown in the sidebar category label when the station has no name"
+  },
+  "cabinTemperatureStationsLoadingMessage": "Chargement des stations...",
+  "@cabinTemperatureStationsLoadingMessage": {
+    "description": "Loading-state message while stations are being fetched"
+  },
+  "cabinTemperatureDetailsLoadingMessage": "Chargement des détails de température...",
+  "@cabinTemperatureDetailsLoadingMessage": {
+    "description": "Loading-state message while temperature details are being fetched"
+  },
+  "cabinTemperatureColumnCabin": "Cabine",
+  "@cabinTemperatureColumnCabin": {
+    "description": "Table column header for the cabinet name in the cabin temperature table"
+  },
+  "directedOrdersScreenTitle": "Liste des commandes dirigées",
+  "@directedOrdersScreenTitle": {
+    "description": "Desktop layout screen title / dialog title for the directed orders list"
+  },
+  "directedOrdersColumnProtocolNo": "N° de protocole",
+  "@directedOrdersColumnProtocolNo": {
+    "description": "Table column title for the protocol number in the directed orders table"
+  },
+  "directedOrdersColumnBed": "Lit",
+  "@directedOrdersColumnBed": {
+    "description": "Table column title for the bed in the directed orders table"
+  },
+  "directedOrdersColumnRoom": "Chambre",
+  "@directedOrdersColumnRoom": {
+    "description": "Table column title for the room in the directed orders table"
+  },
+  "directedOrdersMedicinesTooltip": "Médicaments",
+  "@directedOrdersMedicinesTooltip": {
+    "description": "Row action tooltip that opens the medicine table dialog for a directed order"
+  },
+  "directedOrdersPatientsLoadingMessage": "Chargement des patients...",
+  "@directedOrdersPatientsLoadingMessage": {
+    "description": "Loading-state message while patients are being fetched"
+  },
+  "directedOrdersColumnBarcode": "Code-barres",
+  "@directedOrdersColumnBarcode": {
+    "description": "Table column title for the barcode in the directed order entity"
+  },
+  "medicine_successCreated": "Médicament créé",
+  "@medicine_successCreated": {
+    "description": "Success message shown after creating a drug"
+  },
+  "medicine_successUpdated": "Médicament mis à jour",
+  "@medicine_successUpdated": {
+    "description": "Success message shown after updating a drug"
+  },
+  "medicalConsumable_successCreated": "Consommable médical créé",
+  "@medicalConsumable_successCreated": {
+    "description": "Success message shown after creating a medical consumable"
+  },
+  "medicalConsumable_successUpdated": "Consommable médical mis à jour",
+  "@medicalConsumable_successUpdated": {
+    "description": "Success message shown after updating a medical consumable"
+  },
+  "medicine_formTitleNew": "Nouveau médicament",
+  "@medicine_formTitleNew": {
+    "description": "Side panel title / toolbar button label when creating a new drug"
+  },
+  "medicine_formTitleEdit": "Modifier le médicament",
+  "@medicine_formTitleEdit": {
+    "description": "Side panel title when editing an existing drug"
+  },
+  "medicine_formSubtitleNew": "Renseignez les informations du médicament",
+  "@medicine_formSubtitleNew": {
+    "description": "Side panel subtitle when creating a new drug"
+  },
+  "medicine_formSubtitleEdit": "Mettez à jour les informations du médicament",
+  "@medicine_formSubtitleEdit": {
+    "description": "Side panel subtitle when editing an existing drug"
+  },
+  "medicine_fieldDefinitionName": "Nom de la définition",
+  "@medicine_fieldDefinitionName": {
+    "description": "Text field label for the drug's definition name"
+  },
+  "medicine_fieldBarcode": "Code-barres",
+  "@medicine_fieldBarcode": {
+    "description": "Text field label for the drug/consumable barcode, shared between drug and medical consumable forms"
+  },
+  "medicine_fieldName": "Nom du médicament",
+  "@medicine_fieldName": {
+    "description": "Text field label for the drug name"
+  },
+  "medicine_fieldCode": "Code du médicament",
+  "@medicine_fieldCode": {
+    "description": "Text field label for the drug code"
+  },
+  "medicine_fieldPrescriptionType": "Type d'ordonnance",
+  "@medicine_fieldPrescriptionType": {
+    "description": "Dropdown label for the drug's prescription type"
+  },
+  "medicine_fieldDose": "Dose",
+  "@medicine_fieldDose": {
+    "description": "Text field label for dose, used for both the main dose and measurement dose fields"
+  },
+  "medicine_fieldManufacturer": "Fabricant",
+  "@medicine_fieldManufacturer": {
+    "description": "Selection field label for the manufacturer, shared between drug and medical consumable forms"
+  },
+  "medicine_fieldDailyMaxUsage": "Quantité d'utilisation maximale quotidienne",
+  "@medicine_fieldDailyMaxUsage": {
+    "description": "Field label for the daily maximum usage amount, shared between drug and medical consumable forms"
+  },
+  "medicine_fieldDrugType": "Type de médicament",
+  "@medicine_fieldDrugType": {
+    "description": "Selection field label/title for the drug type"
+  },
+  "medicine_fieldReturnType": "Mode de retour",
+  "@medicine_fieldReturnType": {
+    "description": "Selection field label for the return method, shared between drug and medical consumable forms"
+  },
+  "medicine_checkboxSerumMaxValue": "Vérifier la valeur maximale dans l'armoire à sérum",
+  "@medicine_checkboxSerumMaxValue": {
+    "description": "Checkbox label shown when the return type is 'to origin'"
+  },
+  "medicine_checkboxCubicMaxValue": "Vérifier la valeur maximale dans le tiroir cubique",
+  "@medicine_checkboxCubicMaxValue": {
+    "description": "Conditional checkbox label for checking the max value in a cubic drawer"
+  },
+  "medicine_checkboxQrCode": "Avec code QR",
+  "@medicine_checkboxQrCode": {
+    "description": "Checkbox label indicating the drug has a QR code"
+  },
+  "medicine_fieldPieceCountLabel": "Nombre de pièces",
+  "@medicine_fieldPieceCountLabel": {
+    "description": "Dropdown label for the QR piece-count unit on the drug form"
+  },
+  "medicine_fieldDrugClass": "Classe de médicament",
+  "@medicine_fieldDrugClass": {
+    "description": "Selection field label/title for the drug class"
+  },
+  "medicine_fieldPurchaseType": "Mode d'achat",
+  "@medicine_fieldPurchaseType": {
+    "description": "Selection field label for the purchase method, shared between drug and medical consumable forms"
+  },
+  "medicine_checkboxUseMeasurementUnit": "Utiliser une unité de mesure",
+  "@medicine_checkboxUseMeasurementUnit": {
+    "description": "Checkbox label to enable measurement unit fields on the drug form"
+  },
+  "medicine_fieldVolume": "Volume",
+  "@medicine_fieldVolume": {
+    "description": "Text field label for the drug's volume"
+  },
+  "medicine_fieldDosageForm": "Forme posologique",
+  "@medicine_fieldDosageForm": {
+    "description": "Text field label opening the dosage form picker"
+  },
+  "medicine_fieldStatus": "Statut",
+  "@medicine_fieldStatus": {
+    "description": "Dropdown label for the drug's status"
+  },
+  "medicine_fieldCountType": "Type de comptage",
+  "@medicine_fieldCountType": {
+    "description": "Selection field label for the count type, shared between drug and medical consumable forms"
+  },
+  "medicine_fieldAtcCode": "Code ATC",
+  "@medicine_fieldAtcCode": {
+    "description": "Text field label for the drug's ATC code"
+  },
+  "medicine_fieldEquivalentCode": "Code équivalent",
+  "@medicine_fieldEquivalentCode": {
+    "description": "Text field label for the drug's equivalent code"
+  },
+  "medicine_checkboxWitnessedPurchase": "Achat avec témoin",
+  "@medicine_checkboxWitnessedPurchase": {
+    "description": "Checkbox label indicating purchases require a witness"
+  },
+  "medicine_checkboxWastageWitnessed": "Perte/élimination avec témoin",
+  "@medicine_checkboxWastageWitnessed": {
+    "description": "Checkbox label indicating waste/disposal requires a witness"
+  },
+  "medicine_checkboxDestroyable": "Peut être éliminé",
+  "@medicine_checkboxDestroyable": {
+    "description": "Checkbox label indicating the drug can be disposed of"
+  },
+  "medicine_fieldActiveIngredient": "Principe actif",
+  "@medicine_fieldActiveIngredient": {
+    "description": "Multi-selection field label/title for the drug's active ingredients"
+  },
+  "medicine_fieldCollectNote": "Note d'achat",
+  "@medicine_fieldCollectNote": {
+    "description": "Text field label for the purchase note, shared between drug and medical consumable forms"
+  },
+  "medicine_fieldReturnNote": "Note de retour",
+  "@medicine_fieldReturnNote": {
+    "description": "Text field label for the return note, shared between drug and medical consumable forms"
+  },
+  "medicine_fieldDestructionNote": "Note d'élimination",
+  "@medicine_fieldDestructionNote": {
+    "description": "Text field label for the disposal note, shared between drug and medical consumable forms"
+  },
+  "medicalConsumable_dialogTitle": "Ajouter/Modifier un consommable médical",
+  "@medicalConsumable_dialogTitle": {
+    "description": "Dialog title for the medical consumable form, used for both create and edit"
+  },
+  "medicalConsumable_fieldName": "Nom du matériel",
+  "@medicalConsumable_fieldName": {
+    "description": "Text field label for the medical consumable name"
+  },
+  "medicalConsumable_fieldInstitutionCode": "Code de l'établissement",
+  "@medicalConsumable_fieldInstitutionCode": {
+    "description": "Text field label for the medical consumable's institution code"
+  },
+  "medicalConsumable_fieldSutCode": "Code/Annexe SUT",
+  "@medicalConsumable_fieldSutCode": {
+    "description": "Text field label for the medical consumable's SUT (reimbursement) code"
+  },
+  "medicalConsumable_fieldUbbCode": "Code UBB",
+  "@medicalConsumable_fieldUbbCode": {
+    "description": "Text field label for the medical consumable's UBB (national product bank) code"
+  },
+  "medicalConsumable_fieldMaterialType": "Type de matériel",
+  "@medicalConsumable_fieldMaterialType": {
+    "description": "Selection field label/title for the medical consumable's material type"
+  },
+  "medicalConsumable_fieldStatus": "Statut",
+  "@medicalConsumable_fieldStatus": {
+    "description": "Dropdown label for the medical consumable's status"
+  },
+  "medicine_screenTitleFallback": "Définition médicament/consommable médical",
+  "@medicine_screenTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "medicine_newButtonLabel": "Nouveau médicament",
+  "@medicine_newButtonLabel": {
+    "description": "Toolbar button label to create a new drug"
+  },
+  "medicine_defineMedicalConsumableButton": "Définir un consommable médical",
+  "@medicine_defineMedicalConsumableButton": {
+    "description": "Bottom action button opening medical consumable definition"
+  },
+  "medicine_defineActiveIngredientButton": "Définir un principe actif",
+  "@medicine_defineActiveIngredientButton": {
+    "description": "Bottom action button opening active ingredient definition"
+  },
+  "medicine_defineDrugClassButton": "Définir une classe de médicament",
+  "@medicine_defineDrugClassButton": {
+    "description": "Bottom action button opening drug class definition"
+  },
+  "medicine_defineDrugTypeButton": "Définir un type de médicament",
+  "@medicine_defineDrugTypeButton": {
+    "description": "Bottom action button opening drug type definition"
+  },
+  "medicine_createKitButton": "Créer un kit de médicaments",
+  "@medicine_createKitButton": {
+    "description": "Bottom action button opening kit creation"
+  },
+  "medicine_defineMaterialTypeButton": "Définir un type de matériel",
+  "@medicine_defineMaterialTypeButton": {
+    "description": "Bottom action button opening material type definition"
+  },
+  "medicine_checkboxLowerDose": "Une dose inférieure à celle spécifiée peut être prise",
+  "@medicine_checkboxLowerDose": {
+    "description": "Checkbox label allowing doses lower than the specified amount"
+  },
+  "medicine_checkboxRfid": "RFID disponible",
+  "@medicine_checkboxRfid": {
+    "description": "Checkbox label indicating RFID can be used for this drug"
+  },
+  "medicine_checkboxMultiPatientAccess": "Accès multi-patients",
+  "@medicine_checkboxMultiPatientAccess": {
+    "description": "Checkbox label enabling multi-patient access to the drug"
+  },
+  "medicine_checkboxSingleUse": "Usage unique",
+  "@medicine_checkboxSingleUse": {
+    "description": "Checkbox label indicating the drug is for single use"
+  },
+  "medicine_checkboxCameraRecording": "Enregistrement caméra",
+  "@medicine_checkboxCameraRecording": {
+    "description": "Checkbox label requiring camera recording during drug operations"
+  },
+  "medicine_checkboxIndependentMaterial": "Médicament libre",
+  "@medicine_checkboxIndependentMaterial": {
+    "description": "Checkbox label indicating the drug is independent/unrestricted"
+  },
+  "medicine_checkboxWastagePharmacyApproval": "Exiger l'approbation de la pharmacie pour la perte/élimination ?",
+  "@medicine_checkboxWastagePharmacyApproval": {
+    "description": "Checkbox label requiring pharmacy approval for waste/disposal"
+  },
+  "medicine_checkboxWastageOrderRenewed": "Renouveler la commande de perte ?",
+  "@medicine_checkboxWastageOrderRenewed": {
+    "description": "Checkbox label to renew the waste order automatically"
+  },
+  "medicine_fieldPersonnel": "Personnel",
+  "@medicine_fieldPersonnel": {
+    "description": "Multi-selection field label for authorized personnel"
+  },
+  "medicine_fieldStation": "Station",
+  "@medicine_fieldStation": {
+    "description": "Multi-selection field label for the drug's assigned stations"
+  },
+  "medicine_fieldUnit": "Unité",
+  "@medicine_fieldUnit": {
+    "description": "Text field label opening the unit picker"
+  },
+  "refillList_dialogTitle": "Liste de remplissage de médicaments",
+  "@refillList_dialogTitle": {
+    "description": "Dialog title for the refill list detail/refill view"
+  },
+  "refillList_recordNoLabel": "N° d'enregistrement de remplissage : {id}",
+  "@refillList_recordNoLabel": {
+    "description": "Label showing the refill list's record number",
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "refillList_createdDateLabel": "Date de création : {date}",
+  "@refillList_createdDateLabel": {
+    "description": "Label showing the refill list's creation date",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "refillList_assignedUserNameLabel": "Assigné à : {name}",
+  "@refillList_assignedUserNameLabel": {
+    "description": "Label showing the user assigned to perform the refill",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "refillList_formTitleCreate": "Créer une liste de remplissage",
+  "@refillList_formTitleCreate": {
+    "description": "Side panel title when creating a new refill list"
+  },
+  "refillList_formTitleUpdate": "Mettre à jour la liste de remplissage",
+  "@refillList_formTitleUpdate": {
+    "description": "Side panel title when editing an existing refill list"
+  },
+  "refillList_fieldAssignedUser": "Utilisateur assigné au remplissage",
+  "@refillList_fieldAssignedUser": {
+    "description": "Selection field label/title for the user assigned to perform the refill"
+  },
+  "refillList_screenTitleFallback": "Liste de remplissage",
+  "@refillList_screenTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "refillList_newButtonLabel": "Nouvelle liste de remplissage",
+  "@refillList_newButtonLabel": {
+    "description": "Toolbar button label to create a new refill list"
+  },
+  "report_stationsCategoryTitle": "Stations",
+  "@report_stationsCategoryTitle": {
+    "description": "Category title for the stations side-list, shared across refill list, expired items report and station transaction report screens"
+  },
+  "refillList_cellValueYes": "Oui",
+  "@refillList_cellValueYes": {
+    "description": "Table cell boolean display for a true value in the refill list table"
+  },
+  "refillList_cellValueNo": "Non",
+  "@refillList_cellValueNo": {
+    "description": "Table cell boolean display for a false value in the refill list table"
+  },
+  "refillList_updateStatusTooltip": "Mettre à jour le statut",
+  "@refillList_updateStatusTooltip": {
+    "description": "Tooltip on the table action item to update the refill list status"
+  },
+  "refillList_defaultUnitFallback": "Pièce",
+  "@refillList_defaultUnitFallback": {
+    "description": "Fallback unit text shown in the refill dose stepper when the medicine has no operation unit"
+  },
+  "report_expiredItemsTitleFallback": "Matériaux périmés",
+  "@report_expiredItemsTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided, for the expired items report"
+  },
+  "report_stationStockTitle": "Stock de la cabine de station",
+  "@report_stationStockTitle": {
+    "description": "Fixed screen title for the station stock report"
+  },
+  "report_stationTransactionTitleFallback": "Mouvements de la station",
+  "@report_stationTransactionTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided, for the station transaction report"
+  },
+  "inconsistency_screenTitleFallback": "Mouvements d'incohérence",
+  "@inconsistency_screenTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "inconsistency_viewTooltip": "Afficher",
+  "@inconsistency_viewTooltip": {
+    "description": "Tooltip on the table action item to view inconsistency details"
+  },
+  "inconsistency_photoTooltip": "Photo",
+  "@inconsistency_photoTooltip": {
+    "description": "Tooltip on the table action item to view the inconsistency photo"
+  },
+  "hospitalization_formTitleNew": "Saisir une nouvelle admission",
+  "@hospitalization_formTitleNew": {
+    "description": "Side panel title / tooltip / button label when creating a new hospitalization"
+  },
+  "hospitalization_formTitleEdit": "Modifier l'admission",
+  "@hospitalization_formTitleEdit": {
+    "description": "Side panel title / tooltip when editing an existing hospitalization"
+  },
+  "hospitalization_fieldPatient": "Patient",
+  "@hospitalization_fieldPatient": {
+    "description": "Selection field label/title for the hospitalization's patient"
+  },
+  "hospitalization_fieldCode": "Code d'admission",
+  "@hospitalization_fieldCode": {
+    "description": "Read-only text field label for the hospitalization code"
+  },
+  "hospitalization_fieldDoctor": "Médecin",
+  "@hospitalization_fieldDoctor": {
+    "description": "Selection field label/title for the hospitalization's doctor"
+  },
+  "hospitalization_fieldPhysicalService": "Service physique",
+  "@hospitalization_fieldPhysicalService": {
+    "description": "Selection field label/title for the hospitalization's physical service"
+  },
+  "hospitalization_fieldInpatientService": "Service d'hospitalisation",
+  "@hospitalization_fieldInpatientService": {
+    "description": "Selection field label/title for the hospitalization's inpatient service"
+  },
+  "hospitalization_fieldRoom": "Chambre",
+  "@hospitalization_fieldRoom": {
+    "description": "Field label for the hospitalization's room"
+  },
+  "hospitalization_roomDialogTitle": "Sélectionner une chambre",
+  "@hospitalization_roomDialogTitle": {
+    "description": "Selection dialog title for choosing a room"
+  },
+  "hospitalization_fieldBed": "Lit",
+  "@hospitalization_fieldBed": {
+    "description": "Field label for the hospitalization's bed"
+  },
+  "hospitalization_bedDialogTitle": "Sélectionner un lit",
+  "@hospitalization_bedDialogTitle": {
+    "description": "Selection dialog title for choosing a bed"
+  },
+  "hospitalization_fieldAdmissionDate": "Date d'admission",
+  "@hospitalization_fieldAdmissionDate": {
+    "description": "Date field label for the hospitalization's admission date (standalone form field, distinct from the combined display string elsewhere)"
+  },
+  "hospitalization_fieldExitDate": "Date de sortie",
+  "@hospitalization_fieldExitDate": {
+    "description": "Date field label for the hospitalization's discharge date"
+  },
+  "hospitalization_checkboxBaby": "Nourrisson",
+  "@hospitalization_checkboxBaby": {
+    "description": "Checkbox label indicating the patient is an infant"
+  },
+  "hospitalization_screenTitleFallback": "Opérations patient",
+  "@hospitalization_screenTitleFallback": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "hospitalization_editPatientTooltip": "Modifier les informations du patient",
+  "@hospitalization_editPatientTooltip": {
+    "description": "Tooltip on the table action item to edit patient details"
+  },
+  "hospitalization_showActiveTooltip": "Afficher les admissions actives",
+  "@hospitalization_showActiveTooltip": {
+    "description": "Toolbar icon tooltip to switch back to showing active hospitalizations"
+  },
+  "hospitalization_showDischargedTooltip": "Afficher les patients sortis",
+  "@hospitalization_showDischargedTooltip": {
+    "description": "Toolbar icon tooltip to show discharged patients"
+  },
+  "hospitalization_createButton": "Créer une nouvelle admission",
+  "@hospitalization_createButton": {
+    "description": "Header action button to create a new admission"
+  },
+  "patient_formTitleNew": "Créer un nouveau patient",
+  "@patient_formTitleNew": {
+    "description": "Side panel title / header action button label when creating a new patient"
+  },
+  "patient_formTitleEdit": "Modifier le patient",
+  "@patient_formTitleEdit": {
+    "description": "Side panel title when editing an existing patient"
+  },
+  "patient_fieldIdentity": "N° d'identité nationale",
+  "@patient_fieldIdentity": {
+    "description": "Text field label for the patient's national ID number"
+  },
+  "patient_fieldName": "Prénom",
+  "@patient_fieldName": {
+    "description": "Text field label for the patient's first name"
+  },
+  "patient_fieldSurname": "Nom de famille",
+  "@patient_fieldSurname": {
+    "description": "Text field label for the patient's last name"
+  },
+  "patient_fieldBirthDate": "Date de naissance",
+  "@patient_fieldBirthDate": {
+    "description": "Date field label for the patient's birth date"
+  },
+  "patient_fieldGender": "Sexe",
+  "@patient_fieldGender": {
+    "description": "Dropdown label for the patient's gender"
+  },
+  "patient_fieldWeight": "Poids",
+  "@patient_fieldWeight": {
+    "description": "Text field label for the patient's weight"
+  },
+  "patient_fieldMotherName": "Nom de la mère",
+  "@patient_fieldMotherName": {
+    "description": "Text field label for the patient's mother's name"
+  },
+  "patient_fieldFatherName": "Nom du père",
+  "@patient_fieldFatherName": {
+    "description": "Text field label for the patient's father's name"
+  },
+  "patient_fieldPhone": "Téléphone",
+  "@patient_fieldPhone": {
+    "description": "Text field label for the patient's phone number"
+  },
+  "patient_fieldAddress": "Adresse",
+  "@patient_fieldAddress": {
+    "description": "Text field label for the patient's address"
+  },
+  "patient_fieldProtocolNo": "N° de protocole",
+  "@patient_fieldProtocolNo": {
+    "description": "Text field label for the patient's protocol number"
+  },
+  "activeIngredientDialogSelectTitle": "Sélectionner un principe actif",
+  "@activeIngredientDialogSelectTitle": {
+    "description": "Dialog title when the active ingredient dialog is opened in selection mode"
+  },
+  "activeIngredientDialogTitle": "Définition du principe actif",
+  "@activeIngredientDialogTitle": {
+    "description": "Dialog title when the active ingredient dialog is opened in management mode"
+  },
+  "activeIngredientFormAddTitle": "Ajouter un principe actif",
+  "@activeIngredientFormAddTitle": {
+    "description": "Form dialog title when creating a new active ingredient"
+  },
+  "activeIngredientFormEditTitle": "Modifier le principe actif",
+  "@activeIngredientFormEditTitle": {
+    "description": "Form dialog title when editing an existing active ingredient"
+  },
+  "activeIngredientListEmptyTitle": "Aucun principe actif pour le moment",
+  "@activeIngredientListEmptyTitle": {
+    "description": "Empty-state title for the active ingredient list"
+  },
+  "assignmentScreenTitle": "Attribution de matériel de station",
+  "@assignmentScreenTitle": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "assignmentStationSelectPlaceholder": "Sélectionnez une station",
+  "@assignmentStationSelectPlaceholder": {
+    "description": "Dropdown placeholder for the station selector on the assignment screen"
+  },
+  "drugClassDialogSelectTitle": "Sélectionner une classe de médicament",
+  "@drugClassDialogSelectTitle": {
+    "description": "Dialog title when the drug class dialog is opened in selection mode"
+  },
+  "drugClassDialogTitle": "Définition de la classe de médicament",
+  "@drugClassDialogTitle": {
+    "description": "Dialog title when the drug class dialog is opened in management mode"
+  },
+  "drugClassFormAddTitle": "Ajouter une classe de médicament",
+  "@drugClassFormAddTitle": {
+    "description": "Form dialog title when creating a new drug class"
+  },
+  "drugClassFormEditTitle": "Modifier la classe de médicament",
+  "@drugClassFormEditTitle": {
+    "description": "Form dialog title when editing an existing drug class"
+  },
+  "drugClassFormNameLabel": "Nom de la classe de médicament",
+  "@drugClassFormNameLabel": {
+    "description": "Text field label for the drug class name"
+  },
+  "drugClassListEmptyTitle": "Aucune classe de médicament pour le moment",
+  "@drugClassListEmptyTitle": {
+    "description": "Empty-state title for the drug class list"
+  },
+  "drugTypeDialogSelectTitle": "Sélectionner un type de médicament",
+  "@drugTypeDialogSelectTitle": {
+    "description": "Dialog title when the drug type dialog is opened in selection mode"
+  },
+  "drugTypeDialogTitle": "Définition du type de médicament",
+  "@drugTypeDialogTitle": {
+    "description": "Dialog title when the drug type dialog is opened in management mode"
+  },
+  "drugTypeFormAddTitle": "Ajouter un type de médicament",
+  "@drugTypeFormAddTitle": {
+    "description": "Form dialog title when creating a new drug type"
+  },
+  "drugTypeFormEditTitle": "Modifier le type de médicament",
+  "@drugTypeFormEditTitle": {
+    "description": "Form dialog title when editing an existing drug type"
+  },
+  "drugTypeFormNameLabel": "Nom du type de médicament",
+  "@drugTypeFormNameLabel": {
+    "description": "Text field label for the drug type name"
+  },
+  "drugTypeListEmptyTitle": "Aucun type de médicament pour le moment",
+  "@drugTypeListEmptyTitle": {
+    "description": "Empty-state title for the drug type list"
+  },
+  "kitFormAddTitle": "Nouveau kit",
+  "@kitFormAddTitle": {
+    "description": "Form dialog title when creating a new kit"
+  },
+  "kitFormEditTitle": "Modifier le kit",
+  "@kitFormEditTitle": {
+    "description": "Form dialog title when editing an existing kit"
+  },
+  "kitFormNameLabel": "Nom du kit",
+  "@kitFormNameLabel": {
+    "description": "Text field label for the kit name"
+  },
+  "kitDialogSelectTitle": "Sélectionner un kit",
+  "@kitDialogSelectTitle": {
+    "description": "Dialog title when the kit dialog is opened in selection mode"
+  },
+  "kitDialogTitle": "Définition du kit",
+  "@kitDialogTitle": {
+    "description": "Dialog title when the kit dialog is opened in management mode"
+  },
+  "kitListEmptyTitle": "Aucun kit pour le moment",
+  "@kitListEmptyTitle": {
+    "description": "Empty-state title for the kit list"
+  },
+  "kitListManageContentTooltip": "Gérer le contenu du kit",
+  "@kitListManageContentTooltip": {
+    "description": "Tooltip on the additional action button that opens the kit content dialog"
+  },
+  "kitContentFormAddTitle": "Ajouter le contenu du kit",
+  "@kitContentFormAddTitle": {
+    "description": "Form dialog title when creating a new kit content item"
+  },
+  "kitContentFormEditTitle": "Modifier le contenu du kit",
+  "@kitContentFormEditTitle": {
+    "description": "Form dialog title when editing an existing kit content item"
+  },
+  "kitContentFormMaterialLabel": "Matériel",
+  "@kitContentFormMaterialLabel": {
+    "description": "Field label / selection dialog title for the kit content's material"
+  },
+  "kitContentFormPieceLabel": "Nombre de pièces",
+  "@kitContentFormPieceLabel": {
+    "description": "Quantity/piece-count field label on the kit content form"
+  },
+  "kitContentDialogTitle": "Définition du contenu du kit",
+  "@kitContentDialogTitle": {
+    "description": "Dialog title for the kit content list"
+  },
+  "kitContentListEmptyTitle": "Aucun contenu de kit pour le moment",
+  "@kitContentListEmptyTitle": {
+    "description": "Empty-state title for the kit content list"
+  },
+  "materialTypeFormAddTitle": "Nouveau type de matériel",
+  "@materialTypeFormAddTitle": {
+    "description": "Form dialog title when creating a new material type"
+  },
+  "materialTypeFormEditTitle": "Modifier le type de matériel",
+  "@materialTypeFormEditTitle": {
+    "description": "Form dialog title when editing an existing material type"
+  },
+  "materialTypeFormNameLabel": "Nom du type de matériel",
+  "@materialTypeFormNameLabel": {
+    "description": "Text field label for the material type name"
+  },
+  "materialTypeDialogSelectTitle": "Sélectionner un type de matériel",
+  "@materialTypeDialogSelectTitle": {
+    "description": "Dialog title when the material type dialog is opened in selection mode"
+  },
+  "materialTypeDialogTitle": "Définition du type de matériel",
+  "@materialTypeDialogTitle": {
+    "description": "Dialog title when the material type dialog is opened in management mode"
+  },
+  "materialTypeListEmptyTitle": "Aucun type de matériel pour le moment",
+  "@materialTypeListEmptyTitle": {
+    "description": "Empty-state title for the material type list"
+  },
+  "roleFormEditTitle": "Modifier le rôle",
+  "@roleFormEditTitle": {
+    "description": "Form dialog title when editing an existing role"
+  },
+  "roleFormAddTitle": "Ajouter un rôle",
+  "@roleFormAddTitle": {
+    "description": "Form dialog title when creating a new role"
+  },
+  "roleFormNameLabel": "Nom du rôle",
+  "@roleFormNameLabel": {
+    "description": "Text field label for the role name"
+  },
+  "roleScreenTitle": "Définition du rôle",
+  "@roleScreenTitle": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "roleScreenAddButton": "Nouveau rôle",
+  "@roleScreenAddButton": {
+    "description": "Toolbar button label to create a new role"
+  },
+  "roleDeleteSuccessMessage": "Rôle supprimé avec succès",
+  "@roleDeleteSuccessMessage": {
+    "description": "Success message shown after deleting a role"
+  },
+  "unitFormAddTitle": "Créer une nouvelle unité",
+  "@unitFormAddTitle": {
+    "description": "Form dialog title when creating a new unit"
+  },
+  "unitFormEditTitle": "Modifier l'unité",
+  "@unitFormEditTitle": {
+    "description": "Form dialog title when editing an existing unit"
+  },
+  "unitDialogTitle": "Unité",
+  "@unitDialogTitle": {
+    "description": "Dialog title for the unit list screen"
+  },
+  "unitListEmptyTitle": "Aucune unité pour le moment",
+  "@unitListEmptyTitle": {
+    "description": "Empty-state title for the unit list"
+  },
+  "userCategoryNormalLabel": "Normal",
+  "@userCategoryNormalLabel": {
+    "description": "Side category tab label for the normal user type filter"
+  },
+  "userCategoryTimeBasedLabel": "Limité dans le temps",
+  "@userCategoryTimeBasedLabel": {
+    "description": "Side category tab label for the time-based user type filter"
+  },
+  "userCategoryTemporaryLabel": "Temporaire",
+  "@userCategoryTemporaryLabel": {
+    "description": "Side category tab label for the temporary user type filter"
+  },
+  "userDeleteSuccessMessage": "Utilisateur supprimé avec succès",
+  "@userDeleteSuccessMessage": {
+    "description": "Success message shown after deleting a user"
+  },
+  "userValidDateUpdateSuccessMessage": "Date d'expiration mise à jour",
+  "@userValidDateUpdateSuccessMessage": {
+    "description": "Success message shown after a bulk valid-date update"
+  },
+  "userFormEditTitle": "Modifier l'utilisateur",
+  "@userFormEditTitle": {
+    "description": "Form panel title when editing an existing user"
+  },
+  "userFormCreateTitle": "Créer un utilisateur",
+  "@userFormCreateTitle": {
+    "description": "Form panel title when creating a new user"
+  },
+  "userRegistrationNumberLabel": "N° de registre de l'établissement",
+  "@userRegistrationNumberLabel": {
+    "description": "Field label / column header for the user's institution registry number"
+  },
+  "userNameLabel": "Prénom",
+  "@userNameLabel": {
+    "description": "Field label for the user's first name, paired with surname"
+  },
+  "userSurnameLabel": "Nom de famille",
+  "@userSurnameLabel": {
+    "description": "Field label / column header for the user's last name"
+  },
+  "userRoleTypeLabel": "Type de profession",
+  "@userRoleTypeLabel": {
+    "description": "Field label / column header for the user's occupation/role type"
+  },
+  "userUsageTypeLabel": "Type d'utilisation",
+  "@userUsageTypeLabel": {
+    "description": "Field label for the user's usage type"
+  },
+  "userValidUntilLabel": "Date d'expiration",
+  "@userValidUntilLabel": {
+    "description": "Field label / column header for the user's account expiry date"
+  },
+  "userEmailLabel": "E-mail",
+  "@userEmailLabel": {
+    "description": "Field label for the user's email address on the user creation form"
+  },
+  "userOrderPermissionLabel": "Achat sans commande",
+  "@userOrderPermissionLabel": {
+    "description": "Field label for the permission allowing purchase without an order"
+  },
+  "userWitnessedStationEntryLabel": "Entrée de station avec témoin",
+  "@userWitnessedStationEntryLabel": {
+    "description": "Field label for the permission requiring a witness for station entry"
+  },
+  "userKitPurchaseLabel": "Achat de kit",
+  "@userKitPurchaseLabel": {
+    "description": "Field label for the kit purchase permission"
+  },
+  "userAuthorizedStationsLabel": "Stations autorisées",
+  "@userAuthorizedStationsLabel": {
+    "description": "Field label for the user's authorized stations"
+  },
+  "userUsernameLabel": "Nom d'utilisateur",
+  "@userUsernameLabel": {
+    "description": "Field label for the user's username"
+  },
+  "userScreenTitle": "Liste des utilisateurs",
+  "@userScreenTitle": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "userScreenAddButton": "Nouvel utilisateur",
+  "@userScreenAddButton": {
+    "description": "Toolbar button label to create a new user"
+  },
+  "userBulkUpdateValidDateButton": "Mettre à jour la date d'expiration",
+  "@userBulkUpdateValidDateButton": {
+    "description": "Button shown when time-based users are multi-selected, to bulk-update their expiry date"
+  },
+  "userValidDateDialogTitle": "Mettre à jour la date",
+  "@userValidDateDialogTitle": {
+    "description": "Dialog title for the bulk valid-date update"
+  },
+  "userValidDateDialogSaveButton": "Mettre à jour",
+  "@userValidDateDialogSaveButton": {
+    "description": "Save-button label on the bulk valid-date update dialog"
+  },
+  "userNewValidUntilLabel": "Nouvelle date d'expiration",
+  "@userNewValidUntilLabel": {
+    "description": "Date field label inside the bulk-update dialog"
+  },
+  "userNationalIdColumnHeader": "N° d'identité nationale",
+  "@userNationalIdColumnHeader": {
+    "description": "Column header shown only for normal-type users"
+  },
+  "warningFormAddTitle": "Nouvel avertissement",
+  "@warningFormAddTitle": {
+    "description": "Side panel title / add button label when creating a new warning"
+  },
+  "warningFormEditTitle": "Modifier l'avertissement",
+  "@warningFormEditTitle": {
+    "description": "Side panel title when editing an existing warning"
+  },
+  "warningFormAddSubtitle": "Renseignez les informations de l'avertissement",
+  "@warningFormAddSubtitle": {
+    "description": "Side panel subtitle when creating a new warning"
+  },
+  "warningFormEditSubtitle": "Mettez à jour les informations de l'avertissement",
+  "@warningFormEditSubtitle": {
+    "description": "Side panel subtitle when editing an existing warning"
+  },
+  "warningFormSubjectLabel": "Objet de l'avertissement",
+  "@warningFormSubjectLabel": {
+    "description": "Text field label for the warning subject"
+  },
+  "warningFormTextLabel": "Texte de l'avertissement",
+  "@warningFormTextLabel": {
+    "description": "Text field label for the warning body text"
+  },
+  "warningScreenTitle": "Définition de l'avertissement",
+  "@warningScreenTitle": {
+    "description": "Fallback screen title when the menu name is not provided"
+  },
+  "dashboard_allSectionsLoadError": "Les données n'ont pas pu être chargées. Veuillez réessayer.",
+  "@dashboard_allSectionsLoadError": {
+    "description": "Error message shown when the dashboard fails to load its data sections"
+  },
+  "dashboard_sktCriticalRingLabel": "Critique\n(<7 jours)",
+  "@dashboard_sktCriticalRingLabel": {
+    "description": "Ring-chart label for critically expiring items (under 7 days)"
+  },
+  "dashboard_sktWarningRingLabel": "Avertissement\n(7-30 jours)",
+  "@dashboard_sktWarningRingLabel": {
+    "description": "Ring-chart label for expiring-soon items (7-30 days)"
+  },
+  "dashboard_sktExpiredRingLabel": "Périmés",
+  "@dashboard_sktExpiredRingLabel": {
+    "description": "Ring-chart label for already-expired items"
+  },
+  "dashboard_sktStatusHeader": "STATUT D'EXPIRATION",
+  "@dashboard_sktStatusHeader": {
+    "description": "Section header for the expiry-date (SKT) status panel on the dashboard"
+  },
+  "dashboard_sktItemCountBadge": "{count} articles",
+  "@dashboard_sktItemCountBadge": {
+    "description": "Badge showing the total item count in the SKT status panel",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboard_sktExpiredTag": "EXPIRÉ",
+  "@dashboard_sktExpiredTag": {
+    "description": "Small badge tag shown on expired SKT items"
+  },
+  "dashboard_sktDestroyHint": "détruire",
+  "@dashboard_sktDestroyHint": {
+    "description": "Inline hint link shown under an expired SKT item, offering to destroy it"
+  },
+  "dashboard_sktDaysRemainingLabel": "{days, plural, one{jour restant} other{jours restants}}",
+  "@dashboard_sktDaysRemainingLabel": {
+    "description": "Label following the numeric days-remaining value on an SKT item",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboard_upcomingTreatmentsHeader": "TRAITEMENTS À VENIR",
+  "@dashboard_upcomingTreatmentsHeader": {
+    "description": "Section header for the upcoming treatments panel on the dashboard"
+  },
+  "dashboard_pendingTreatmentsBadge": "{count} en attente",
+  "@dashboard_pendingTreatmentsBadge": {
+    "description": "Badge showing the count of pending treatments",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboard_pendingFilterLabel": "En attente",
+  "@dashboard_pendingFilterLabel": {
+    "description": "Filter chip label for pending treatments"
+  },
+  "dashboard_urgentFilterLabel": "Urgent",
+  "@dashboard_urgentFilterLabel": {
+    "description": "Filter chip label for urgent treatments"
+  },
+  "dashboard_treatmentSearchHint": "Rechercher un patient ou un médicament...",
+  "@dashboard_treatmentSearchHint": {
+    "description": "Search field hint on the upcoming treatments panel"
+  },
+  "dashboard_newAssignButton": "Nouvelle attribution",
+  "@dashboard_newAssignButton": {
+    "description": "Button label to create a new treatment assignment"
+  },
+  "dashboard_noTreatmentsAllFilter": "Aucun enregistrement de traitement trouvé",
+  "@dashboard_noTreatmentsAllFilter": {
+    "description": "Empty-state message for upcoming treatments when the 'all' filter is active"
+  },
+  "dashboard_noTreatmentsPendingFilter": "Aucun traitement en attente",
+  "@dashboard_noTreatmentsPendingFilter": {
+    "description": "Empty-state message for upcoming treatments when the 'pending' filter is active"
+  },
+  "dashboard_noTreatmentsUrgentFilter": "Aucun traitement urgent",
+  "@dashboard_noTreatmentsUrgentFilter": {
+    "description": "Empty-state message for upcoming treatments when the 'urgent' filter is active"
+  },
+  "dashboard_priorityUrgentLabel": "Urgent",
+  "@dashboard_priorityUrgentLabel": {
+    "description": "Priority badge label for urgent treatments"
+  },
+  "dashboard_priorityNormalLabel": "Normal",
+  "@dashboard_priorityNormalLabel": {
+    "description": "Priority badge label for normal-priority treatments"
+  },
+  "dashboard_priorityRoutineLabel": "Routine",
+  "@dashboard_priorityRoutineLabel": {
+    "description": "Priority badge label for routine treatments"
+  },
+  "dashboard_statusPendingLabel": "En attente",
+  "@dashboard_statusPendingLabel": {
+    "description": "Status badge label for a pending treatment"
+  },
+  "dashboard_statusDoneLabel": "Distribué",
+  "@dashboard_statusDoneLabel": {
+    "description": "Status badge label for a dispensed/completed treatment"
+  },
+  "dashboard_statusReturnedLabel": "Retourné",
+  "@dashboard_statusReturnedLabel": {
+    "description": "Status badge label for a returned treatment item"
+  },
+  "settings_sectionComingSoon": "Paramètres {label} bientôt disponibles",
+  "@settings_sectionComingSoon": {
+    "description": "Placeholder message shown for a settings section that isn't implemented yet",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "refund_masterScreenNotReady": "L'écran de retour de la cabine maître n'est pas encore prêt.",
+  "@refund_masterScreenNotReady": {
+    "description": "Stub message shown on the not-yet-implemented master cabinet refund screen"
+  },
+  "core_cabinConn_managerNotFoundError": "Carte de gestion introuvable.",
+  "@core_cabinConn_managerNotFoundError": {
+    "description": "Error shown when the cabin's management/control board cannot be found during connection or drawer session setup"
+  },
+  "core_cabinConn_disconnectedError": "Connexion perdue",
+  "@core_cabinConn_disconnectedError": {
+    "description": "Cabin connection state message shown when the connection to the cabin drops"
+  },
+  "common_action_pullDrawerTitle": "Ouvrez le tiroir",
+  "@common_action_pullDrawerTitle": {
+    "description": "Banner title instructing the operator to pull open an unlocked drawer"
+  },
+  "common_action_pullDrawerSubtitle": "Le verrou est ouvert, veuillez tirer.",
+  "@common_action_pullDrawerSubtitle": {
+    "description": "Banner subtitle instructing the operator to pull open an unlocked drawer"
+  },
+  "masterDrawer_openingLidTitle": "Ouverture des couvercles",
+  "@masterDrawer_openingLidTitle": {
+    "description": "Banner title shown while cubic drawer lids are opening"
+  },
+  "masterDrawer_openingLidSubtitle": "Préparation des couvercles du tiroir cubique.",
+  "@masterDrawer_openingLidSubtitle": {
+    "description": "Banner subtitle shown while cubic drawer lids are opening"
+  },
+  "masterDrawer_readySubtitle": "Terminez l'opération et confirmez.",
+  "@masterDrawer_readySubtitle": {
+    "description": "Banner subtitle shown once the drawer is open and ready for the operation"
+  },
+  "common_action_closeDrawerTitle": "Fermez le tiroir",
+  "@common_action_closeDrawerTitle": {
+    "description": "Banner title instructing the operator to close the drawer"
+  },
+  "common_action_closeDrawerSubtitle": "L'opération est confirmée, veuillez fermer.",
+  "@common_action_closeDrawerSubtitle": {
+    "description": "Banner subtitle instructing the operator to close the drawer after confirming the operation"
+  },
+  "common_action_drawerClosed": "Tiroir fermé",
+  "@common_action_drawerClosed": {
+    "description": "Banner/status title shown once the drawer has been closed"
+  },
+  "common_action_operationCompletedSubtitle": "L'opération est terminée.",
+  "@common_action_operationCompletedSubtitle": {
+    "description": "Banner subtitle shown once the drawer operation has fully completed"
+  },
+  "common_action_drawerError": "Erreur de tiroir",
+  "@common_action_drawerError": {
+    "description": "Banner/status title shown when a drawer-related error occurs"
+  },
+  "common_error_unexpectedWithDetail": "Erreur inattendue : {error}",
+  "@common_error_unexpectedWithDetail": {
+    "description": "Generic unexpected-error banner subtitle with the underlying error detail appended, used by master and mobile drawer session notifiers",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "masterDrawer_lidOpenFailedError": "Le couvercle n'a pas pu être ouvert : {error}",
+  "@masterDrawer_lidOpenFailedError": {
+    "description": "Error message shown when a cubic drawer lid fails to open",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "common_action_devicePreparing": "Préparation de l'appareil...",
+  "@common_action_devicePreparing": {
+    "description": "Status message shown while the hardware device is being prepared before a drawer session starts"
+  },
+  "common_error_connectionErrorWithDetail": "Erreur de connexion : {error}",
+  "@common_error_connectionErrorWithDetail": {
+    "description": "Error message shown when connecting to the cabin fails, with the underlying error detail appended",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "common_action_lockOpening": "Ouverture du verrou...",
+  "@common_action_lockOpening": {
+    "description": "Status message shown while the drawer lock is being opened"
+  },
+  "common_error_lockOpenFailedWithDetail": "Le verrou n'a pas pu être ouvert : {error}",
+  "@common_error_lockOpenFailedWithDetail": {
+    "description": "Error message shown when opening the drawer lock fails, with the underlying error detail appended",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "mobileDrawer_portSubtitle": "Tiroir {port}",
+  "@mobileDrawer_portSubtitle": {
+    "description": "Subtitle showing the port number of the mobile drawer being operated",
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "mobileDrawer_openedSubtitle": "Fermez le tiroir pour terminer l'opération.",
+  "@mobileDrawer_openedSubtitle": {
+    "description": "Status banner subtitle shown while a mobile drawer is open, prompting the operator to close it"
+  },
+  "mobileDrawer_closedSubtitle": "En attente de votre confirmation",
+  "@mobileDrawer_closedSubtitle": {
+    "description": "Status banner subtitle shown after a mobile drawer is closed, waiting for operator confirmation"
+  },
+  "common_error_managerConnectFailedWithDetail": "Impossible de se connecter à la carte de gestion : {error}",
+  "@common_error_managerConnectFailedWithDetail": {
+    "description": "Error message shown when connecting to the cabin's management board fails, with detail appended",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "mobileDrawer_openCommandFailedError": "Impossible d'envoyer la commande d'ouverture du tiroir : {error}",
+  "@mobileDrawer_openCommandFailedError": {
+    "description": "Error message shown when the drawer-open hardware command fails to send",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "mobileDrawer_statusTimeoutError": "Délai d'expiration lors de la lecture de l'état du tiroir.",
+  "@mobileDrawer_statusTimeoutError": {
+    "description": "Error shown when reading the mobile drawer's hardware status times out"
+  },
+  "mobileDrawer_openNotConfirmedError": "Impossible de confirmer que le tiroir s'est ouvert.",
+  "@mobileDrawer_openNotConfirmedError": {
+    "description": "Error shown when the hardware doesn't confirm the drawer actually opened"
+  },
+  "mobileDrawer_statusReadError": "Une erreur s'est produite lors de la lecture de l'état du tiroir : {error}",
+  "@mobileDrawer_statusReadError": {
+    "description": "Error shown when reading the mobile drawer's hardware status fails",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "patientPicker_searchHint": "Rechercher un patient",
+  "@patientPicker_searchHint": {
+    "description": "Search field hint text in the master cabin patient picker panel"
+  },
+  "patientPicker_orderlessToggleLabel": "Sans commande",
+  "@patientPicker_orderlessToggleLabel": {
+    "description": "Toggle button label for filtering to patients without an order"
+  },
+  "patientPicker_orderedToggleLabel": "Avec commande",
+  "@patientPicker_orderedToggleLabel": {
+    "description": "Toggle button label for filtering to patients with an order"
+  },
+  "patientPicker_myPatientsToggleLabel": "Mes patients",
+  "@patientPicker_myPatientsToggleLabel": {
+    "description": "Toggle button label for filtering to the current user's own patients"
+  },
+  "patientPicker_urgentPatientHint": "Créez un dossier pour un patient urgent qui ne figure pas dans la liste.",
+  "@patientPicker_urgentPatientHint": {
+    "description": "Hint text explaining how to create an urgent patient record"
+  },
+  "patientPicker_createUrgentPatientButton": "Créer un patient urgent",
+  "@patientPicker_createUrgentPatientButton": {
+    "description": "Button label to create an urgent (unlisted) patient record"
+  },
+  "patientPicker_urgentPatientCreatedMessage": "Patient urgent créé.",
+  "@patientPicker_urgentPatientCreatedMessage": {
+    "description": "Success snackbar message shown after creating an urgent patient record"
+  },
+  "hw_cabinOps_serumSlaveModeError": "La carte sérum n'a pas pu être mise en mode esclave...",
+  "@hw_cabinOps_serumSlaveModeError": {
+    "description": "Hardware error shown when the serum cabinet card fails to enter slave communication mode"
+  },
+  "hw_cabinOps_solenoidMissingError": "Le port {port} n'a pas de solénoïde (.no).",
+  "@hw_cabinOps_solenoidMissingError": {
+    "description": "Hardware error shown when a port has no configured solenoid",
+    "placeholders": {
+      "port": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_cabinOps_portOpenFailedError": "Le port {port} n'a pas pu être ouvert. Réponse : {response}",
+  "@hw_cabinOps_portOpenFailedError": {
+    "description": "Hardware error shown when opening a cabin port fails, with the raw device response appended",
+    "placeholders": {
+      "port": {
+        "type": "Object"
+      },
+      "response": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_cabinOps_masterDrawerOpenFailedError": "Le tiroir maître n'a pas pu être ouvert (ligne={row}, port={port}, tiroir={drawer}). Réponse : {response}",
+  "@hw_cabinOps_masterDrawerOpenFailedError": {
+    "description": "Hardware error shown when opening a master cabin drawer fails, with technical addressing detail and raw device response",
+    "placeholders": {
+      "row": {
+        "type": "Object"
+      },
+      "port": {
+        "type": "Object"
+      },
+      "drawer": {
+        "type": "Object"
+      },
+      "response": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_cabinOps_masterSerumOpenFailedError": "Le tiroir sérum maître n'a pas pu être ouvert (ligne={row}). Réponse : {response}",
+  "@hw_cabinOps_masterSerumOpenFailedError": {
+    "description": "Hardware error shown when opening a master serum drawer fails",
+    "placeholders": {
+      "row": {
+        "type": "Object"
+      },
+      "response": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_serial_connectFailedDetailedError": "Impossible de se connecter au port {portName}. Assurez-vous que l'appareil est connecté et sous tension, et que le port n'est pas utilisé par une autre application.",
+  "@hw_serial_connectFailedDetailedError": {
+    "description": "Detailed error shown when connecting to a serial port fails, with troubleshooting guidance",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      }
+    }
+  },
+  "hw_serial_portConfigFailedError": "Échec de la configuration du port ({portName}) : {error}",
+  "@hw_serial_portConfigFailedError": {
+    "description": "Error shown when configuring a serial port fails",
+    "placeholders": {
+      "portName": {
+        "type": "String"
+      },
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_serial_systemErrorSuffix": "Erreur système : {error}",
+  "@hw_serial_systemErrorSuffix": {
+    "description": "Suffix appended to a port-open-failed error when a specific system error is available",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_serial_portInUseSuffix": "Le port est peut-être utilisé par une autre application.",
+  "@hw_serial_portInUseSuffix": {
+    "description": "Suffix appended to a port-open-failed error when no specific system error is available"
+  },
+  "hw_serial_readErrorWithDetail": "Erreur de lecture du port : {error}",
+  "@hw_serial_readErrorWithDetail": {
+    "description": "Error shown when reading from the serial port fails",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_serial_reconnectingStatus": "Redémarrage de la connexion.",
+  "@hw_serial_reconnectingStatus": {
+    "description": "Status message used as the cancellation reason for pending commands while the serial connection restarts"
+  },
+  "hw_rfid_connectFailedError": "Impossible de se connecter au lecteur RFID : {error}",
+  "@hw_rfid_connectFailedError": {
+    "description": "Error shown when connecting to the RFID reader fails",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_rfid_invalidResponseError": "Une réponse invalide a été reçue.",
+  "@hw_rfid_invalidResponseError": {
+    "description": "Error shown when the RFID reader returns an unparseable response"
+  },
+  "hw_rfid_unreachableError": "Le lecteur RFID n'a pas pu être joint : {error}",
+  "@hw_rfid_unreachableError": {
+    "description": "Error shown when the RFID reader cannot be reached",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_rfid_testTimeoutError": "Le test de connexion RFID a expiré.",
+  "@hw_rfid_testTimeoutError": {
+    "description": "Error shown when the RFID reader connection test times out"
+  },
+  "hw_rfid_powerChangeBlockedError": "Le réglage de puissance ne peut pas être modifié pendant que l'inventaire est actif. Appelez d'abord stopInventory().",
+  "@hw_rfid_powerChangeBlockedError": {
+    "description": "Error shown when attempting to change RFID reader power settings during an active inventory scan"
+  },
+  "hw_rfid_setModeRejectedError": "SetWorkingMode a été rejeté (statut=0x{status})",
+  "@hw_rfid_setModeRejectedError": {
+    "description": "Error shown when the RFID reader rejects a working-mode change command, with the raw hex status code",
+    "placeholders": {
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_rfid_setAntennaRejectedError": "SetWorkingAntenna a été rejeté (statut=0x{status})",
+  "@hw_rfid_setAntennaRejectedError": {
+    "description": "Error shown when the RFID reader rejects an antenna configuration command, with the raw hex status code",
+    "placeholders": {
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_rfid_antennaConnFailedHint": " (erreur de connexion d'antenne — l'un des ports activés est vide)",
+  "@hw_rfid_antennaConnFailedHint": {
+    "description": "Hint suffix appended to the antenna-rejected error when the cause is a disconnected antenna port"
+  },
+  "hw_rfid_noAntennaConnectedError": "Impossible de se connecter à une antenne (tous les ports sont vides).",
+  "@hw_rfid_noAntennaConnectedError": {
+    "description": "Error shown when no RFID antenna could be connected on any port"
+  },
+  "hw_rfid_notConnectedError": "Le service RFID n'est pas connecté.",
+  "@hw_rfid_notConnectedError": {
+    "description": "Error shown when an RFID operation is attempted while the service is disconnected"
+  },
+  "hw_rfid_commandPendingError": "La commande précédente est toujours en attente d'une réponse.",
+  "@hw_rfid_commandPendingError": {
+    "description": "Error shown when a new RFID command is issued while a previous one hasn't completed"
+  },
+  "hw_rfid_commandTimeoutError": "La réponse à la commande a expiré (cmd=0x{cmd}).",
+  "@hw_rfid_commandTimeoutError": {
+    "description": "Error shown when an RFID command times out waiting for a response, with the raw hex command code",
+    "placeholders": {
+      "cmd": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_rfid_commandErrorWithDetail": "Erreur de commande : {error}",
+  "@hw_rfid_commandErrorWithDetail": {
+    "description": "Generic RFID command error with the underlying error detail appended",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "hw_rfid_mockNotConnectedError": "Le service RFID simulé n'est pas connecté.",
+  "@hw_rfid_mockNotConnectedError": {
+    "description": "Error shown by the mock RFID service (used only in the mock app flavor) when not connected"
+  },
+  "operationStatus_fatalErrorLabel": "Erreur critique",
+  "@operationStatus_fatalErrorLabel": {
+    "description": "Status badge label for a fatal/critical operation error"
+  },
+  "operationStatus_errorLabel": "Erreur",
+  "@operationStatus_errorLabel": {
+    "description": "Status badge label for a generic operation error"
+  },
+  "operationStatus_rollingBackLabel": "Annulation de l'opération en cours",
+  "@operationStatus_rollingBackLabel": {
+    "description": "Status badge / rollback banner title shown while an operation is being rolled back"
+  },
+  "operationStatus_finalizingLabel": "Finalisation de l'opération en cours",
+  "@operationStatus_finalizingLabel": {
+    "description": "Status badge label shown while an operation is being finalized"
+  },
+  "operationStatus_drugsStillInCabinetLabel": "Les médicaments sont toujours dans la cabine",
+  "@operationStatus_drugsStillInCabinetLabel": {
+    "description": "Status badge label shown when medicines remain in the cabinet after an operation"
+  },
+  "operationStatus_incompleteLabel": "Incomplet / Incohérent",
+  "@operationStatus_incompleteLabel": {
+    "description": "Status badge label for an incomplete or inconsistent operation result"
+  },
+  "operationStatus_scanningLabel": "Analyse en cours",
+  "@operationStatus_scanningLabel": {
+    "description": "Status badge label shown while an RFID scan is in progress"
+  },
+  "operationStatus_reportedMissingLabel": "Signalé manquant",
+  "@operationStatus_reportedMissingLabel": {
+    "description": "Status badge label for an item reported as missing stock"
+  },
+  "operationBanner_unplannedMovementTitle": "Mouvement imprévu détecté",
+  "@operationBanner_unplannedMovementTitle": {
+    "description": "Default title for the unplanned-movement warning banner"
+  },
+  "operationBanner_unplannedMovementMessage": "{count, plural, one{{count} étiquette a été retirée de la cabine de manière imprévue.} other{{count} étiquettes ont été retirées de la cabine de manière imprévue.}} Un signalement sera envoyé à la pharmacie.",
+  "@operationBanner_unplannedMovementMessage": {
+    "description": "Message for the unplanned-movement warning banner, with the count of tags removed",
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
+  "operationBanner_unexpectedTagBlockingTitle": "Étiquette(s) n'appartenant pas à cette cabine détectée(s)",
+  "@operationBanner_unexpectedTagBlockingTitle": {
+    "description": "Title for the blocking banner shown when unexpected tags must be removed before continuing"
+  },
+  "operationBanner_unexpectedTagWarningTitle": "Médicament inattendu",
+  "@operationBanner_unexpectedTagWarningTitle": {
+    "description": "Title for the warning banner shown when unexpected tags are detected but don't block the operation"
+  },
+  "operationBanner_unexpectedTagBlockingMessage": "Retirez {count, plural, one{la {count} étiquette suivante} other{les {count} étiquettes suivantes}} du tiroir pour continuer.",
+  "@operationBanner_unexpectedTagBlockingMessage": {
+    "description": "Message for the blocking unexpected-tag banner, listing how many tags must be removed",
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
+  "operationBanner_unexpectedTagWarningMessage": "{count, plural, one{{count} étiquette n'appartenant pas} other{{count} étiquettes n'appartenant pas}} à cette cabine {count, plural, one{a été lue} other{ont été lues}}. Veuillez la/les retirer.",
+  "@operationBanner_unexpectedTagWarningMessage": {
+    "description": "Message for the non-blocking unexpected-tag warning banner",
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
+  "operationBanner_missingStockTitle": "Stock manquant",
+  "@operationBanner_missingStockTitle": {
+    "description": "Title for the missing-stock warning banner shown during a cabin operation"
+  },
+  "operationBanner_missingStockMessage": "{count, plural, one{{count} médicament n'a pas été trouvé} other{{count} médicaments n'ont pas été trouvés}} dans la cabine. Cela sera signalé comme stock manquant une fois terminé.",
+  "@operationBanner_missingStockMessage": {
+    "description": "Message for the missing-stock warning banner, with the count of medicines not found",
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
+  "common_okButton": "OK",
+  "@common_okButton": {
+    "description": "Generic OK/dismiss button label used to close a dialog or banner"
+  },
+  "cabinPatientPicker_searchHint": "Rechercher un patient, une chambre, un lit ou un service...",
+  "@cabinPatientPicker_searchHint": {
+    "description": "Search field hint text in the cabin patient picker list"
+  },
+  "common_unknownPatientFallback": "Patient inconnu",
+  "@common_unknownPatientFallback": {
+    "description": "Fallback text shown when a patient's full name is unavailable, used across cabin patient picker and dashboard treatment views"
+  },
+  "patientListPanel_searchHint": "Rechercher un patient...",
+  "@patientListPanel_searchHint": {
+    "description": "Search field hint text in the generic patient list panel"
+  },
+  "rxItemCard_maxQuantitySuffix": "/ max. {max} {unit}",
+  "@rxItemCard_maxQuantitySuffix": {
+    "description": "Suffix showing the maximum allowed quantity next to a dose value on the rx item card",
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "census_extraStockSummaryMessage": "Le stock excédentaire sera signalé à la fin de l'opération.",
+  "@census_extraStockSummaryMessage": {
+    "description": "Banner message on the census extra-stock summary card"
+  },
+  "cabinOperation_hint_scanning": "Analyse de la cabine en cours, veuillez patienter",
+  "@cabinOperation_hint_scanning": {
+    "description": "Footer hint shown while the cabinet is being RFID-scanned, shared across census/intake/refill/unload"
+  },
+  "census_hint_waitingClose": "Enregistré — fermez le tiroir pour terminer le comptage",
+  "@census_hint_waitingClose": {
+    "description": "Footer hint shown after census data is recorded, prompting the drawer to be closed"
+  },
+  "census_hint_closedEarly": "Le tiroir s'est fermé prématurément — vous pouvez réessayer ou annuler",
+  "@census_hint_closedEarly": {
+    "description": "Footer hint shown when the census drawer closes before the operation completes"
+  },
+  "cabinOperation_hint_error": "Une erreur s'est produite — vous pouvez réessayer",
+  "@cabinOperation_hint_error": {
+    "description": "Footer hint shown when an error occurs during a cabin operation, shared across census/intake/refill/unload"
+  },
+  "census_hint_unexpectedTag": "Une étiquette n'appartenant pas à cette cabine est présente — retirez-la pour continuer",
+  "@census_hint_unexpectedTag": {
+    "description": "Footer hint shown when an unexpected RFID tag is detected during census/unload"
+  },
+  "census_hint_readyToComplete": "Appuyez sur le bouton pour terminer le comptage",
+  "@census_hint_readyToComplete": {
+    "description": "Footer hint shown when the census is ready to be completed"
+  },
+  "cabinOperation_action_closeDrawer": "Fermez le tiroir",
+  "@cabinOperation_action_closeDrawer": {
+    "description": "Footer button/instruction label to close the drawer, shared across census/unload"
+  },
+  "census_label_counted": "Compté",
+  "@census_label_counted": {
+    "description": "Stat label / status badge for items that have been counted during census"
+  },
+  "census_label_excess": "Excédent",
+  "@census_label_excess": {
+    "description": "Stat label for excess stock found during census"
+  },
+  "cabinOperation_label_unexpectedTag": "Étranger",
+  "@cabinOperation_label_unexpectedTag": {
+    "description": "Stat label for tags that don't belong to the cabinet, shared across census/unload"
+  },
+  "intake_error_witnessRequired": "Une connexion de témoin est requise.",
+  "@intake_error_witnessRequired": {
+    "description": "Error shown when an intake operation requires a witness login that hasn't been provided"
+  },
+  "intake_error_noValidTargets": "L'entrée n'a pas pu être effectuée pour les médicaments sélectionnés.",
+  "@intake_error_noValidTargets": {
+    "description": "Error shown when none of the selected medicines have valid intake targets"
+  },
+  "intake_error_noDrawerFound": "Aucun tiroir trouvé pour le prélèvement.",
+  "@intake_error_noDrawerFound": {
+    "description": "Error shown when no drawer is found for the intake operation"
+  },
+  "intake_hint_noStock": "Il n'y a pas de stock dans la cabine",
+  "@intake_hint_noStock": {
+    "description": "Hint shown on the intake operation card when the cabinet has no stock for the item"
+  },
+  "intake_label_witnessName": "Témoin : {name}",
+  "@intake_label_witnessName": {
+    "description": "Label showing the confirmed witness's name on the intake operation card",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "intake_hint_witnessRequired": "Connexion de témoin requise",
+  "@intake_hint_witnessRequired": {
+    "description": "Hint shown on the intake operation card when a witness hasn't logged in yet"
+  },
+  "intake_status_checking": "Vérification en cours...",
+  "@intake_status_checking": {
+    "description": "Status label shown while an intake item's eligibility is being checked"
+  },
+  "intake_status_readyToTake": "Prêt pour le prélèvement",
+  "@intake_status_readyToTake": {
+    "description": "Status label shown when an intake item is ready to be taken"
+  },
+  "intake_status_checkFailed": "Échec de la vérification",
+  "@intake_status_checkFailed": {
+    "description": "Fallback status label shown when an intake item's eligibility check fails without a specific message"
+  },
+  "intake_emptyState_selectMedicine": "Sélectionnez un médicament pour commencer l'entrée.",
+  "@intake_emptyState_selectMedicine": {
+    "description": "Empty-state message shown before any medicine is selected on the master intake execution panel"
+  },
+  "intake_label_multiMedicine": "{count} médicaments différents",
+  "@intake_label_multiMedicine": {
+    "description": "Label showing the count of distinct medicines in the current intake queue",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_label_takenAmount": "Prélevé : {amount} {unit}",
+  "@intake_label_takenAmount": {
+    "description": "Label showing the amount taken during an intake operation",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "intake_label_countFieldLabel": "Comptage ({unit})",
+  "@intake_label_countFieldLabel": {
+    "description": "Field label for the manual count input during intake, showing the unit",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "intake_hint_nextCellOpens": "La case suivante s'ouvrira une fois que vous aurez confirmé.",
+  "@intake_hint_nextCellOpens": {
+    "description": "Hint shown on the intake execution panel explaining that confirming opens the next cell"
+  },
+  "intake_hint_confirmCloses": "Le tiroir se fermera une fois que vous aurez confirmé.",
+  "@intake_hint_confirmCloses": {
+    "description": "Hint shown on the intake execution panel explaining that confirming closes the drawer"
+  },
+  "intake_hint_searchMedicine": "Rechercher un médicament (nom / code-barres)",
+  "@intake_hint_searchMedicine": {
+    "description": "Search field hint on the master intake selection panel"
+  },
+  "intake_hint_selectionLocked": "Entrée en cours — la sélection est verrouillée.",
+  "@intake_hint_selectionLocked": {
+    "description": "Hint shown on the master intake selection panel while an intake is in progress"
+  },
+  "intake_hint_autoQueueOrder": "Les tiroirs s'ouvriront dans l'ordre du chemin le plus court.",
+  "@intake_hint_autoQueueOrder": {
+    "description": "Hint explaining the automatic drawer queue ordering for intake"
+  },
+  "intake_info_witnessAutoAssigned": "{name} a également été désigné comme témoin pour ce médicament.",
+  "@intake_info_witnessAutoAssigned": {
+    "description": "Informational message shown when an already-confirmed witness is auto-assigned to another medicine",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "intake_error_queueTitle": "L'entrée n'a pas pu être terminée",
+  "@intake_error_queueTitle": {
+    "description": "Dialog title shown when the intake queue encounters an unrecoverable error"
+  },
+  "intake_error_queueMessage": "Remettez les médicaments à l'endroit où vous les avez pris.",
+  "@intake_error_queueMessage": {
+    "description": "Dialog message shown when the intake queue encounters an unrecoverable error, instructing the operator to undo their action; may have additional detail appended"
+  },
+  "intake_error_selfWitness": "L'utilisateur effectuant l'opération ne peut pas également en être témoin.",
+  "@intake_error_selfWitness": {
+    "description": "Validation error shown when the operator tries to log in as their own witness"
+  },
+  "intake_success_witnessConfirmed": "{name} a été confirmé comme témoin.",
+  "@intake_success_witnessConfirmed": {
+    "description": "Success message shown after a witness successfully logs in",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "intake_witnessDialog_title": "Vérification du témoin",
+  "@intake_witnessDialog_title": {
+    "description": "Dialog title for the witness login dialog"
+  },
+  "intake_witnessDialog_usernameLabel": "Nom d'utilisateur du témoin",
+  "@intake_witnessDialog_usernameLabel": {
+    "description": "Field label for the witness's username"
+  },
+  "intake_witnessDialog_usernameRequired": "Saisissez un nom d'utilisateur",
+  "@intake_witnessDialog_usernameRequired": {
+    "description": "Validation message for the witness username field"
+  },
+  "intake_witnessDialog_passwordLabel": "Mot de passe du témoin",
+  "@intake_witnessDialog_passwordLabel": {
+    "description": "Field label for the witness's password"
+  },
+  "intake_witnessDialog_passwordRequired": "Saisissez un mot de passe",
+  "@intake_witnessDialog_passwordRequired": {
+    "description": "Validation message for the witness password field"
+  },
+  "intake_witnessDialog_confirmButton": "Confirmer le témoin",
+  "@intake_witnessDialog_confirmButton": {
+    "description": "Button label to confirm the witness login"
+  },
+  "intake_witnessDialog_anyoneInfo": "Tout membre du personnel peut être témoin de cette opération.",
+  "@intake_witnessDialog_anyoneInfo": {
+    "description": "Informational text on the witness login dialog"
+  },
+  "intake_witnessDialog_authorizedWitnesses": "Témoins autorisés ({count})",
+  "@intake_witnessDialog_authorizedWitnesses": {
+    "description": "Section header showing the count of authorized witnesses",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cabinOperation_hint_fatalError": "Une erreur critique s'est produite : {message}",
+  "@cabinOperation_hint_fatalError": {
+    "description": "Footer hint shown when a fatal error occurs during intake/refill, with the error detail appended",
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinOperation_hint_completed": "Opération terminée",
+  "@cabinOperation_hint_completed": {
+    "description": "Footer hint shown when the intake/refill operation has completed"
+  },
+  "cabinOperation_hint_waitingCloseGeneric": "Enregistré. Fermez le tiroir pour terminer l'opération",
+  "@cabinOperation_hint_waitingCloseGeneric": {
+    "description": "Footer hint shown after intake/refill data is recorded, prompting the drawer to be closed"
+  },
+  "cabinOperation_hint_closedEarlyGeneric": "Le tiroir a été fermé. Vous pouvez annuler ou continuer là où vous vous êtes arrêté",
+  "@cabinOperation_hint_closedEarlyGeneric": {
+    "description": "Footer hint shown when the intake/refill drawer closes before the operation completes"
+  },
+  "cabinOperation_hint_ready": "Prêt — vous pouvez terminer l'opération",
+  "@cabinOperation_hint_ready": {
+    "description": "Footer hint shown when the intake/refill operation is ready to be completed"
+  },
+  "intake_hint_extraPlacement": "Un médicament qui ne devrait pas se trouver dans la cabine a été chargé, veuillez le retirer.",
+  "@intake_hint_extraPlacement": {
+    "description": "Footer hint shown when an unexpected medicine is placed in the cabinet during intake"
+  },
+  "intake_hint_takeItems": "Prenez les médicaments, puis terminez l'opération",
+  "@intake_hint_takeItems": {
+    "description": "Footer hint instructing the operator to take medicines during intake"
+  },
+  "cabinOperation_action_completeGeneric": "Terminer l'opération",
+  "@cabinOperation_action_completeGeneric": {
+    "description": "Generic primary action button label used on the mobile intake and refill footers",
+    "placeholders": {}
+  },
+  "rfidStatus_notFound": "Introuvable",
+  "@rfidStatus_notFound": {
+    "description": "RFID status badge shown when an expected tag was not found, shared across intake/unload"
+  },
+  "rfidStatus_scanning": "Analyse en cours",
+  "@rfidStatus_scanning": {
+    "description": "RFID status badge shown while a tag is being scanned, shared across intake/refill/unload"
+  },
+  "intake_label_noRfid": "Pas de RFID",
+  "@intake_label_noRfid": {
+    "description": "Status badge shown when an intake item has no RFID tag"
+  },
+  "cabinOperation_label_selected": "Sélectionné",
+  "@cabinOperation_label_selected": {
+    "description": "Stat label showing the count of selected items, shared across intake/refill dialogs"
+  },
+  "intake_label_readInCabin": "Lu dans la cabine",
+  "@intake_label_readInCabin": {
+    "description": "Stat label for the count of tags read inside the cabinet during intake"
+  },
+  "intake_label_tagCount": "{count} étiquettes",
+  "@intake_label_tagCount": {
+    "description": "Label showing the total number of RFID tags read",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_label_takenCount": "Prélevé",
+  "@intake_label_takenCount": {
+    "description": "Stat label for the count of items taken during intake"
+  },
+  "intake_label_unauthorizedTake": "Prélèvement non autorisé",
+  "@intake_label_unauthorizedTake": {
+    "description": "Stat label for unauthorized/unplanned takes detected during intake"
+  },
+  "intake_error_retryOrFinish": "Vous pouvez réessayer, ou terminer l'opération en reprenant les médicaments que vous avez placés.",
+  "@intake_error_retryOrFinish": {
+    "description": "Fixed error banner message shown on the mobile intake dialog when the operation cannot proceed"
+  },
+  "refill_label_placed": "Placé",
+  "@refill_label_placed": {
+    "description": "RFID status badge shown when a medicine has been placed in the drawer during refill"
+  },
+  "refill_label_placedCount": "Placé",
+  "@refill_label_placedCount": {
+    "description": "Stat label for the count of medicines placed during refill"
+  },
+  "refill_label_placedProgress": "{done} / {total}",
+  "@refill_label_placedProgress": {
+    "description": "Progress label showing placed-tag count out of expected count during refill",
+    "placeholders": {
+      "done": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "cabinOperation_label_unplanned": "Imprévu",
+  "@cabinOperation_label_unplanned": {
+    "description": "Stat label for unplanned tag movements, shared across refill/unload dialogs"
+  },
+  "refill_label_extraTag": "Étiquette en trop",
+  "@refill_label_extraTag": {
+    "description": "Stat label for extra/unexpected tags detected during refill"
+  },
+  "refill_error_retry": "Vous pouvez réessayer.",
+  "@refill_error_retry": {
+    "description": "Fixed error banner message shown on the mobile refill dialog"
+  },
+  "unload_hint_waitingClose": "Enregistré — fermez le tiroir pour terminer le déchargement",
+  "@unload_hint_waitingClose": {
+    "description": "Footer hint shown after unload data is recorded, prompting the drawer to be closed"
+  },
+  "unload_hint_closedEarly": "Le tiroir s'est fermé prématurément — vous pouvez réessayer ou annuler",
+  "@unload_hint_closedEarly": {
+    "description": "Footer hint shown when the unload drawer closes before the operation completes"
+  },
+  "unload_hint_readyToComplete": "Appuyez sur le bouton pour terminer le déchargement",
+  "@unload_hint_readyToComplete": {
+    "description": "Footer hint shown when the unload operation is ready to be completed"
+  },
+  "unload_label_unloaded": "Déchargé",
+  "@unload_label_unloaded": {
+    "description": "Status badge / stat label for items that have been unloaded"
+  },
+  "unload_label_unloadProgress": "{done} / {total}",
+  "@unload_label_unloadProgress": {
+    "description": "Progress label showing unloaded-count out of expected total during unload",
+    "placeholders": {
+      "done": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "wizard_stepBadge": "Étape {step} / {total}",
+  "@wizard_stepBadge": {
+    "description": "Step progress badge shown at the top of each setup wizard step",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "wizard_step4Header": "Configuration du tiroir",
+  "@wizard_step4Header": {
+    "description": "Title for wizard step 4 (drawer configuration)"
+  },
+  "wizard_step4SubtitleMobile": "Définissez le nombre de tiroirs, les sections internes et les connexions de port de la cabine mobile.",
+  "@wizard_step4SubtitleMobile": {
+    "description": "Subtitle for wizard step 4 when configuring a mobile cabinet"
+  },
+  "wizard_step4SubtitleMaster": "La structure interne de la cabine sera lue automatiquement depuis l'appareil.",
+  "@wizard_step4SubtitleMaster": {
+    "description": "Subtitle for wizard step 4 when configuring a master cabinet (auto-scanned)"
+  },
+  "wizard_backButton": "Retour",
+  "@wizard_backButton": {
+    "description": "Shared 'Back' button label used by every setup wizard step footer"
+  },
+  "wizard_testCabinConnectionButton": "Tester la connexion de la cabine",
+  "@wizard_testCabinConnectionButton": {
+    "description": "Idle-state button label to test the cabinet's serial connection"
+  },
+  "wizard_testingInProgress": "Test en cours…",
+  "@wizard_testingInProgress": {
+    "description": "Loading-state label shown while a connection test is running, shared between cabin and RFID test buttons"
+  },
+  "wizard_connectionSuccessLabel": "Connexion réussie",
+  "@wizard_connectionSuccessLabel": {
+    "description": "Success-state label shown after a connection test succeeds, shared between cabin and RFID test buttons"
+  },
+  "wizard_retestLink": "Tester à nouveau",
+  "@wizard_retestLink": {
+    "description": "Link to re-run a connection test after success, shared between cabin and RFID test buttons"
+  },
+  "wizard_cabinConnectionErrorFallback": "Impossible d'établir une connexion. Vérifiez les paramètres du port.",
+  "@wizard_cabinConnectionErrorFallback": {
+    "description": "Fallback error text for the cabinet connection test when no specific error is available"
+  },
+  "wizard_testRfidConnectionButton": "Tester la connexion de l'antenne",
+  "@wizard_testRfidConnectionButton": {
+    "description": "Idle-state button label to test the RFID antenna connection"
+  },
+  "wizard_rfidFirmwareInfo": "· FW {firmwareVersion}  {power} dBm",
+  "@wizard_rfidFirmwareInfo": {
+    "description": "RFID reader firmware version and power level shown after a successful connection test",
+    "placeholders": {
+      "firmwareVersion": {
+        "type": "String"
+      },
+      "power": {
+        "type": "Object"
+      }
+    }
+  },
+  "wizard_rfidConnectionErrorFallback": "Impossible d'établir une connexion. Vérifiez les paramètres IP et de port.",
+  "@wizard_rfidConnectionErrorFallback": {
+    "description": "Fallback error text for the RFID connection test when no specific error is available"
+  },
+  "wizard_portLabel": "Port",
+  "@wizard_portLabel": {
+    "description": "Dropdown field label for the COM port selector in the setup wizard"
+  },
+  "wizard_rfidReaderToggleLabel": "Possède un lecteur RFID",
+  "@wizard_rfidReaderToggleLabel": {
+    "description": "Toggle field label enabling the RFID configuration section in the setup wizard"
+  },
+  "wizard_rfidIpAddressLabel": "Adresse IP RFID",
+  "@wizard_rfidIpAddressLabel": {
+    "description": "Field label for the RFID reader's IP address"
+  },
+  "wizard_rfidPortFieldLabel": "Port RFID",
+  "@wizard_rfidPortFieldLabel": {
+    "description": "Field label for the RFID reader's port number"
+  },
+  "wizard_drawerCountRangeHint": "1 à 8 tiroirs",
+  "@wizard_drawerCountRangeHint": {
+    "description": "Hint text next to the drawer-count stepper in the setup wizard"
+  },
+  "wizard_sameConfigToggleLabel": "Tous les tiroirs ont la même structure",
+  "@wizard_sameConfigToggleLabel": {
+    "description": "Toggle title for applying the same drawer configuration to all drawers"
+  },
+  "wizard_sameConfigToggleOnDesc": "Tous les tiroirs utilisent la même configuration de lignes/colonnes",
+  "@wizard_sameConfigToggleOnDesc": {
+    "description": "Toggle description shown when the same-configuration toggle is ON"
+  },
+  "wizard_sameConfigToggleOffDesc": "Si désactivé, les lignes/colonnes peuvent être définies séparément pour chaque tiroir",
+  "@wizard_sameConfigToggleOffDesc": {
+    "description": "Toggle description shown when the same-configuration toggle is OFF"
+  },
+  "wizard_drawerRowCellSummary": "{rowCount} lignes · {totalCells} cellules",
+  "@wizard_drawerRowCellSummary": {
+    "description": "Summary text next to each collapsed drawer configuration card",
+    "placeholders": {
+      "rowCount": {
+        "type": "int"
+      },
+      "totalCells": {
+        "type": "int"
+      }
+    }
+  },
+  "wizard_drawerPortLabel": "Port {portNumber}",
+  "@wizard_drawerPortLabel": {
+    "description": "Label showing the port number assigned to a drawer",
+    "placeholders": {
+      "portNumber": {
+        "type": "Object"
+      }
+    }
+  },
+  "wizard_rowLabel": "LIGNE {rowIndex}",
+  "@wizard_rowLabel": {
+    "description": "Uppercase row label in the drawer row-configuration editor",
+    "placeholders": {
+      "rowIndex": {
+        "type": "int"
+      }
+    }
+  },
+  "wizard_serviceDetailsLoadError": "Impossible de charger les détails du service.",
+  "@wizard_serviceDetailsLoadError": {
+    "description": "Error shown when a hospital service's details fail to load in the setup wizard"
+  },
+  "wizard_stationDetailsLoadError": "Impossible de charger les détails de la station.",
+  "@wizard_stationDetailsLoadError": {
+    "description": "Error shown when a station's details fail to load in the setup wizard"
+  },
+  "wizard_stationsLoadErrorFallback": "Impossible de charger les stations.",
+  "@wizard_stationsLoadErrorFallback": {
+    "description": "Fallback error shown when the station list fails to load and no specific message is provided"
+  },
+  "wizard_noStationsFoundMessage": "Aucune station enregistrée n'a été trouvée.",
+  "@wizard_noStationsFoundMessage": {
+    "description": "Empty-state message when the station list loads successfully but is empty"
+  },
+  "wizard_noRoomsDefinedMessage": "Aucune chambre n'est définie pour cette station.",
+  "@wizard_noRoomsDefinedMessage": {
+    "description": "Empty-state message when a selected station has no rooms defined"
+  },
+  "wizard_selectedRoomCountBadge": "{count, plural, one{{count} chambre} other{{count} chambres}}",
+  "@wizard_selectedRoomCountBadge": {
+    "description": "Badge chip showing the selected room count in the setup wizard",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wizard_roomSelectionFraction": "{selected}/{total}",
+  "@wizard_roomSelectionFraction": {
+    "description": "Fraction label showing how many rooms are selected out of the total",
+    "placeholders": {
+      "selected": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "refill_hint_extraPlacement": "Une étiquette autre que les médicaments sélectionnés a été placée, veuillez la retirer",
+  "@refill_hint_extraPlacement": {
+    "description": "Footer hint shown when an unexpected medicine tag is placed during refill"
+  },
+  "refill_hint_placeItems": "Placez les médicaments, puis terminez l'opération",
+  "@refill_hint_placeItems": {
+    "description": "Footer hint instructing the operator to place medicines during refill"
+  },
+  "appException_networkUnavailable": "Impossible de se connecter au serveur. Vérifiez votre connexion réseau.",
+  "@appException_networkUnavailable": {
+    "description": "Fallback UI message for NetworkUnavailableException, the base error-translation extension used by the manager app's generic error-display mixin"
+  },
+  "appException_timeout": "Le serveur n'a pas répondu. Veuillez réessayer.",
+  "@appException_timeout": {
+    "description": "Fallback UI message for TimeoutException"
+  },
+  "appException_serviceError5xx": "Erreur du serveur ({statusCode}). Veuillez réessayer.",
+  "@appException_serviceError5xx": {
+    "description": "Fallback UI message for ServiceException with a 5xx status code",
+    "placeholders": {
+      "statusCode": {
+        "type": "Object"
+      }
+    }
+  },
+  "appException_serviceErrorOther": "L'opération n'a pas pu être terminée ({statusCode}).",
+  "@appException_serviceErrorOther": {
+    "description": "Fallback UI message for ServiceException with a non-5xx status code",
+    "placeholders": {
+      "statusCode": {
+        "type": "Object"
+      }
+    }
+  },
+  "appException_malformedData": "Des données inattendues ont été reçues du serveur.",
+  "@appException_malformedData": {
+    "description": "Fallback UI message for MalformedDataException"
+  },
+  "appException_emptyResponse": "Le serveur a renvoyé une réponse vide.",
+  "@appException_emptyResponse": {
+    "description": "Fallback UI message for EmptyResponseException"
+  },
+  "appException_validationField": "Le champ {field} est invalide.",
+  "@appException_validationField": {
+    "description": "Fallback UI message for ValidationException when a specific field is known",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "appException_validationGeneric": "Les informations saisies sont invalides.",
+  "@appException_validationGeneric": {
+    "description": "Fallback UI message for ValidationException when no specific field is known"
+  },
+  "appException_mapping": "Une erreur s'est produite lors du traitement des données.",
+  "@appException_mapping": {
+    "description": "Fallback UI message for MappingException"
+  },
+  "appException_cache": "Impossible de lire les données locales.",
+  "@appException_cache": {
+    "description": "Fallback UI message for CacheException"
+  },
+  "appException_staleCache": "Impossible d'accéder aux données à jour. Veuillez vérifier la connexion.",
+  "@appException_staleCache": {
+    "description": "Fallback UI message for StaleCacheException"
+  },
+  "appException_notFoundWithType": "{resourceType} introuvable.",
+  "@appException_notFoundWithType": {
+    "description": "Fallback UI message for NotFoundException when the resource type is known",
+    "placeholders": {
+      "resourceType": {
+        "type": "String"
+      }
+    }
+  },
+  "appException_notFoundGeneric": "Enregistrement introuvable.",
+  "@appException_notFoundGeneric": {
+    "description": "Fallback UI message for NotFoundException when no resource type is known"
+  },
+  "appException_unexpected": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+  "@appException_unexpected": {
+    "description": "Fallback UI message for UnexpectedException (catch-all)"
+  },
+  "appException_serialPort": "Impossible de se connecter au port série. Veuillez contacter le service technique.",
+  "@appException_serialPort": {
+    "description": "Fallback UI message for SerialPortException"
+  },
+  "appException_custom": "Une erreur inconnue s'est produite. Veuillez réessayer plus tard.",
+  "@appException_custom": {
+    "description": "Fixed fallback UI message shown for any CustomException, regardless of its own message"
+  },
+  "dataError_emptyResponse": "Le serveur a renvoyé une réponse vide",
+  "@dataError_emptyResponse": {
+    "description": "APIManager error message when an API call returns 2xx with an empty body"
+  },
+  "dataError_malformedResponse": "La réponse n'a pas pu être traitée",
+  "@dataError_malformedResponse": {
+    "description": "APIManager error message when the response parser throws"
+  },
+  "dataError_requestTimeout": "La requête a expiré",
+  "@dataError_requestTimeout": {
+    "description": "APIManager fallback error message for connect/receive/send timeouts"
+  },
+  "dataError_networkUnavailable": "Impossible de se connecter au réseau",
+  "@dataError_networkUnavailable": {
+    "description": "APIManager error message for connection errors (no network/DNS failure)"
+  },
+  "dataError_genericApiError": "Nous avons rencontré une erreur. Veuillez réessayer plus tard.",
+  "@dataError_genericApiError": {
+    "description": "APIManager fallback error message for a non-2xx HTTP response with no recognizable error field in the body — highest blast radius in the data layer"
+  },
+  "dataError_requestCancelled": "La requête a été annulée",
+  "@dataError_requestCancelled": {
+    "description": "APIManager error message when a request is cancelled"
+  },
+  "dataError_envelopeErrorFallback": "Erreur",
+  "@dataError_envelopeErrorFallback": {
+    "description": "BaseRemoteDataSource fallback error message when the API response envelope says isSuccess:false with no message"
+  },
+  "authError_invalidTokenResponse": "Une réponse de jeton invalide a été reçue du serveur",
+  "@authError_invalidTokenResponse": {
+    "description": "Login error shown when the login endpoint returns 200 but no valid token"
+  },
+  "authError_userInfoFetchFailed": "Impossible de récupérer les informations utilisateur",
+  "@authError_userInfoFetchFailed": {
+    "description": "Login error shown when the token is obtained but fetching the current user fails"
+  },
+  "authError_userInfoEmpty": "Les informations utilisateur renvoyées étaient vides",
+  "@authError_userInfoEmpty": {
+    "description": "Login error shown when the current-user payload is null"
+  },
+  "authError_genericLoginError": "Une erreur s'est produite",
+  "@authError_genericLoginError": {
+    "description": "Fallback error message for the login-specific Dio error parser"
+  },
+  "authError_invalidCredentialsMock": "Nom d'utilisateur ou mot de passe incorrect.",
+  "@authError_invalidCredentialsMock": {
+    "description": "Credential error shown by the mock login repository (mock app flavor only)"
+  },
+  "dataGuard_deleteActiveIngredientIdEmpty": "L'ID du principe actif à supprimer ne peut pas être vide",
+  "@dataGuard_deleteActiveIngredientIdEmpty": {
+    "description": "Validation guard before deleting an active ingredient with a null/empty id"
+  },
+  "dataGuard_deleteBranchIdEmpty": "L'ID de la spécialité à supprimer ne peut pas être vide",
+  "@dataGuard_deleteBranchIdEmpty": {
+    "description": "Validation guard before deleting a branch with a null/empty id"
+  },
+  "dataGuard_deleteCabinIdEmpty": "L'ID de la cabine à supprimer ne peut pas être vide",
+  "@dataGuard_deleteCabinIdEmpty": {
+    "description": "Validation guard before deleting a cabinet with a null/empty id"
+  },
+  "dataGuard_deleteDosageFormIdEmpty": "L'ID de la forme posologique à supprimer ne peut pas être vide",
+  "@dataGuard_deleteDosageFormIdEmpty": {
+    "description": "Validation guard before deleting a dosage form with a null/empty id"
+  },
+  "dataGuard_deleteDrugClassIdEmpty": "L'ID de la classe de médicament à supprimer ne peut pas être vide",
+  "@dataGuard_deleteDrugClassIdEmpty": {
+    "description": "Validation guard before deleting a drug class with a null/empty id"
+  },
+  "dataGuard_deleteFirmIdEmpty": "L'ID de l'entreprise à supprimer ne peut pas être vide",
+  "@dataGuard_deleteFirmIdEmpty": {
+    "description": "Validation guard before deleting a firm with a null/empty id"
+  },
+  "dataGuard_deleteDrugTypeIdEmpty": "L'ID du type de médicament à supprimer ne peut pas être vide",
+  "@dataGuard_deleteDrugTypeIdEmpty": {
+    "description": "Validation guard before deleting a drug type with a null/empty id"
+  },
+  "dataGuard_deleteHospitalizationIdEmpty": "L'ID de l'admission à supprimer ne peut pas être vide",
+  "@dataGuard_deleteHospitalizationIdEmpty": {
+    "description": "Validation guard before deleting a hospitalization/admission with a null/empty id"
+  },
+  "dataGuard_deleteKitIdEmpty": "L'ID du kit à supprimer ne peut pas être vide",
+  "@dataGuard_deleteKitIdEmpty": {
+    "description": "Validation guard before deleting a kit with a null/empty id"
+  },
+  "dataGuard_deleteKitContentIdEmpty": "L'ID du contenu du kit à supprimer ne peut pas être vide",
+  "@dataGuard_deleteKitContentIdEmpty": {
+    "description": "Validation guard before deleting a kit content item with a null/empty id"
+  },
+  "dataGuard_deleteMaterialTypeIdEmpty": "L'ID du type de matériel à supprimer ne peut pas être vide",
+  "@dataGuard_deleteMaterialTypeIdEmpty": {
+    "description": "Validation guard before deleting a material type with a null/empty id"
+  },
+  "dataGuard_deleteMedicineIdEmpty": "L'ID du médicament à supprimer ne peut pas être vide",
+  "@dataGuard_deleteMedicineIdEmpty": {
+    "description": "Validation guard before deleting a medicine with a null/empty id"
+  },
+  "dataGuard_deletePatientIdEmpty": "L'ID du patient à supprimer ne peut pas être vide",
+  "@dataGuard_deletePatientIdEmpty": {
+    "description": "Validation guard before deleting a patient with a null/empty id"
+  },
+  "dataGuard_deleteRoleIdEmpty": "L'ID du rôle à supprimer ne peut pas être vide",
+  "@dataGuard_deleteRoleIdEmpty": {
+    "description": "Validation guard before deleting a role with a null/empty id"
+  },
+  "dataGuard_deleteServiceIdEmpty": "L'ID du service à supprimer ne peut pas être vide",
+  "@dataGuard_deleteServiceIdEmpty": {
+    "description": "Validation guard before deleting a hospital service with a null/empty id"
+  },
+  "dataGuard_deleteStationIdEmpty": "L'ID de la station à supprimer ne peut pas être vide",
+  "@dataGuard_deleteStationIdEmpty": {
+    "description": "Validation guard before deleting a station with a null/empty id"
+  },
+  "dataGuard_deleteUnitIdEmpty": "L'ID de l'unité à supprimer ne peut pas être vide",
+  "@dataGuard_deleteUnitIdEmpty": {
+    "description": "Validation guard before deleting a unit with a null/empty id"
+  },
+  "dataGuard_deleteWarehouseIdEmpty": "L'ID de l'entrepôt à supprimer ne peut pas être vide",
+  "@dataGuard_deleteWarehouseIdEmpty": {
+    "description": "Validation guard before deleting a warehouse with a null/empty id"
+  },
+  "dataGuard_deleteWarningIdEmpty": "L'ID de l'avertissement à supprimer ne peut pas être vide",
+  "@dataGuard_deleteWarningIdEmpty": {
+    "description": "Validation guard before deleting a warning with a null/empty id"
+  },
+  "dataGuard_updatePatientIdEmpty": "L'ID du patient à mettre à jour ne peut pas être vide",
+  "@dataGuard_updatePatientIdEmpty": {
+    "description": "Validation guard before updating a patient with a null id"
+  },
+  "dataGuard_updateHospitalizationIdEmpty": "L'ID de l'admission à mettre à jour ne peut pas être vide",
+  "@dataGuard_updateHospitalizationIdEmpty": {
+    "description": "Validation guard before updating a hospitalization/admission with a null id"
+  },
+  "core_genericErrorRetryMessage": "Une erreur s'est produite. Veuillez réessayer plus tard.",
+  "@core_genericErrorRetryMessage": {
+    "description": "Generic error message with retry guidance, shared across several pharmed_core usecases (intake, refund)"
+  },
+  "core_genericErrorShortMessage": "Une erreur s'est produite.",
+  "@core_genericErrorShortMessage": {
+    "description": "Short generic error message, shared across several pharmed_core usecases (intake)"
+  },
+  "cabinCore_createError": "Une erreur s'est produite lors de la création de la cabine. Veuillez réessayer plus tard.",
+  "@cabinCore_createError": {
+    "description": "Error shown when cabinet creation fails"
+  },
+  "cabinCore_activeCabinNotFound": "Aucune cabine active trouvée",
+  "@cabinCore_activeCabinNotFound": {
+    "description": "Error shown when no active cabinet is found for the visualizer"
+  },
+  "cabinCore_mobileCabinDesignNotFound": "Conception de cabine mobile introuvable",
+  "@cabinCore_mobileCabinDesignNotFound": {
+    "description": "Error shown when a mobile cabinet's design cannot be found"
+  },
+  "cabinCore_cabinDesignNotFound": "Conception de cabine introuvable",
+  "@cabinCore_cabinDesignNotFound": {
+    "description": "Error shown when a cabinet's design cannot be found"
+  },
+  "cabinCore_createdButIdMissing": "La cabine a été créée mais son ID n'a pas pu être récupéré.",
+  "@cabinCore_createdButIdMissing": {
+    "description": "Error shown when cabinet creation succeeds but the server doesn't return an ID"
+  },
+  "cabinCore_definitionsNotFound": "Les définitions n'ont pas pu être récupérées.",
+  "@cabinCore_definitionsNotFound": {
+    "description": "Error shown during cabinet scan when definitions cannot be fetched"
+  },
+  "cabinCore_noCardsFound": "Aucune carte n'a été trouvée.",
+  "@cabinCore_noCardsFound": {
+    "description": "Error shown during cabinet scan when no control cards are found"
+  },
+  "cabinCore_noMatchingDrawerFound": "Aucun tiroir correspondant n'a été trouvé.",
+  "@cabinCore_noMatchingDrawerFound": {
+    "description": "Error shown during cabinet scan when no drawer matches"
+  },
+  "cabinCore_designDataNotFound": "Aucune donnée trouvée à enregistrer.",
+  "@cabinCore_designDataNotFound": {
+    "description": "Error shown when there is no cabinet design data to save"
+  },
+  "prescriptionCore_createError": "Une erreur s'est produite lors de la création de l'ordonnance. Veuillez réessayer plus tard.",
+  "@prescriptionCore_createError": {
+    "description": "Error shown when prescription creation fails"
+  },
+  "prescriptionCore_rfidTagNotFoundInReader": "Aucune étiquette RFID trouvée dans la zone du lecteur.",
+  "@prescriptionCore_rfidTagNotFoundInReader": {
+    "description": "Error shown when assigning an RFID tag but none is detected"
+  },
+  "prescriptionCore_rfidReadErrorWithDetail": "Une erreur s'est produite lors de la lecture de l'étiquette RFID : {error}",
+  "@prescriptionCore_rfidReadErrorWithDetail": {
+    "description": "Error shown when reading an RFID tag fails, with the underlying error detail appended",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "tableCore_roleNameColumn": "Nom du rôle",
+  "@tableCore_roleNameColumn": {
+    "description": "Table column header for the role name"
+  },
+  "tableCore_warningSubjectColumn": "Objet de l'avertissement",
+  "@tableCore_warningSubjectColumn": {
+    "description": "Table column header for the warning subject"
+  },
+  "tableCore_warningTextColumn": "Texte de l'avertissement",
+  "@tableCore_warningTextColumn": {
+    "description": "Table column header for the warning text"
+  },
+  "tableCore_warehouseCodeColumn": "Code de l'entrepôt",
+  "@tableCore_warehouseCodeColumn": {
+    "description": "Table column header for the warehouse code"
+  },
+  "tableCore_warehouseNameColumn": "Nom de l'entrepôt",
+  "@tableCore_warehouseNameColumn": {
+    "description": "Table column header for the warehouse name"
+  },
+  "tableCore_warehouseManagerColumn": "Responsable de l'entrepôt",
+  "@tableCore_warehouseManagerColumn": {
+    "description": "Table column header for the warehouse manager"
+  },
+  "tableCore_dosageFormBranchColumn": "Nom de la spécialité",
+  "@tableCore_dosageFormBranchColumn": {
+    "description": "Table column header for the dosage form's branch name (shared with the Branch entity's own name column)"
+  },
+  "tableCore_firmIdColumn": "ID",
+  "@tableCore_firmIdColumn": {
+    "description": "Table column header for the firm's ID"
+  },
+  "tableCore_firmNameColumn": "Nom",
+  "@tableCore_firmNameColumn": {
+    "description": "Table column header for the firm name"
+  },
+  "tableCore_firmTypeColumn": "Type d'entreprise",
+  "@tableCore_firmTypeColumn": {
+    "description": "Table column header for the firm type"
+  },
+  "tableCore_firmTaxOfficeColumn": "Centre des impôts",
+  "@tableCore_firmTaxOfficeColumn": {
+    "description": "Table column header for the firm's tax office"
+  },
+  "tableCore_firmTaxNoColumn": "N° fiscal",
+  "@tableCore_firmTaxNoColumn": {
+    "description": "Table column header for the firm's tax number"
+  },
+  "tableCore_kitNameColumn": "Nom du kit",
+  "@tableCore_kitNameColumn": {
+    "description": "Table column header for the kit name"
+  },
+  "tableCore_kitContentMaterialNameColumn": "Nom du matériel",
+  "@tableCore_kitContentMaterialNameColumn": {
+    "description": "Table column header for the kit content's material name"
+  },
+  "tableCore_kitContentPieceColumn": "Nombre de pièces",
+  "@tableCore_kitContentPieceColumn": {
+    "description": "Table column header for the kit content's piece count"
+  },
+  "tableCore_drugTypeColumn": "Type de médicament",
+  "@tableCore_drugTypeColumn": {
+    "description": "Table column header for the drug type name"
+  },
+  "tableCore_drugClassColumn": "Classe de médicament",
+  "@tableCore_drugClassColumn": {
+    "description": "Table column header for the drug class name"
+  },
+  "tableCore_materialTypeColumn": "Type de matériel",
+  "@tableCore_materialTypeColumn": {
+    "description": "Table column header for the material type name"
+  },
+  "tableCore_stationCodeColumn": "Code de la station",
+  "@tableCore_stationCodeColumn": {
+    "description": "Table column header for the station code"
+  },
+  "tableCore_stationNameColumn": "Nom de la station",
+  "@tableCore_stationNameColumn": {
+    "description": "Table column header for the station name"
+  },
+  "tableCore_stationDrugWarehouseColumn": "Entrepôt de médicaments",
+  "@tableCore_stationDrugWarehouseColumn": {
+    "description": "Table column header for the station's drug warehouse"
+  },
+  "tableCore_stationDrugColumn": "Médicament",
+  "@tableCore_stationDrugColumn": {
+    "description": "Table column header for the station's drug status"
+  },
+  "tableCore_stationConsumableWarehouseColumn": "Entrepôt de consommables médicaux",
+  "@tableCore_stationConsumableWarehouseColumn": {
+    "description": "Table column header for the station's medical consumable warehouse"
+  },
+  "tableCore_stationConsumableColumn": "Consommable médical",
+  "@tableCore_stationConsumableColumn": {
+    "description": "Table column header for the station's medical consumable status"
+  },
+  "tableCore_stationWorkingTypeColumn": "Type de fonctionnement",
+  "@tableCore_stationWorkingTypeColumn": {
+    "description": "Table column header for the station's working type"
+  },
+  "tableCore_hospitalizationProtocolNoColumn": "N° de protocole",
+  "@tableCore_hospitalizationProtocolNoColumn": {
+    "description": "Table column header for the hospitalization protocol number"
+  },
+  "tableCore_hospitalizationNationalIdColumn": "N° d'identité nationale",
+  "@tableCore_hospitalizationNationalIdColumn": {
+    "description": "Table column header for the patient's national ID, on the hospitalization table"
+  },
+  "tableCore_hospitalizationPatientColumn": "Patient",
+  "@tableCore_hospitalizationPatientColumn": {
+    "description": "Table column header for the patient name, on the hospitalization table"
+  },
+  "tableCore_patientRowNationalIdColumn": "Identité nationale du patient",
+  "@tableCore_patientRowNationalIdColumn": {
+    "description": "Table column header for the patient's national ID, on the patient row table"
+  },
+  "tableCore_patientRowFullNameColumn": "Nom complet",
+  "@tableCore_patientRowFullNameColumn": {
+    "description": "Table column header for the patient's full name, on the patient row table"
+  },
+  "tableCore_inconsistencyCabinColumn": "Cabine",
+  "@tableCore_inconsistencyCabinColumn": {
+    "description": "Table column header for the cabinet, on the inconsistency table"
+  },
+  "tableCore_inconsistencyRowNoColumn": "N° de ligne",
+  "@tableCore_inconsistencyRowNoColumn": {
+    "description": "Table column header for the row number, on the inconsistency table"
+  },
+  "tableCore_inconsistencyCellColumn": "Case",
+  "@tableCore_inconsistencyCellColumn": {
+    "description": "Table column header for the drawer cell, on the inconsistency table"
+  },
+  "tableCore_inconsistencyExpectedColumn": "Attendu",
+  "@tableCore_inconsistencyExpectedColumn": {
+    "description": "Table column header for the expected quantity, on the inconsistency table"
+  },
+  "tableCore_inconsistencyCountedColumn": "Quantité comptée",
+  "@tableCore_inconsistencyCountedColumn": {
+    "description": "Table column header for the counted quantity, on the inconsistency table"
+  },
+  "tableCore_stockTransactionDateColumn": "Date",
+  "@tableCore_stockTransactionDateColumn": {
+    "description": "Table column header for the transaction date, on the stock transaction table"
+  },
+  "tableCore_stockTransactionBarcodeColumn": "Code-barres",
+  "@tableCore_stockTransactionBarcodeColumn": {
+    "description": "Table column header for the barcode, on the stock transaction table"
+  },
+  "tableCore_stockTransactionTypeColumn": "Type de transaction",
+  "@tableCore_stockTransactionTypeColumn": {
+    "description": "Table column header for the transaction type, on the stock transaction table"
+  },
+  "tableCore_stockTransactionQuantityColumn": "Quantité",
+  "@tableCore_stockTransactionQuantityColumn": {
+    "description": "Table column header for the quantity, on the stock transaction table"
+  },
+  "tableCore_stockTransactionPreviousQuantityColumn": "Quantité avant mouvement",
+  "@tableCore_stockTransactionPreviousQuantityColumn": {
+    "description": "Table column header for the quantity before the transaction, on the stock transaction table"
+  },
+  "tableCore_stockTransactionActorColumn": "Effectué par",
+  "@tableCore_stockTransactionActorColumn": {
+    "description": "Table column header for who performed the transaction, on the stock transaction table"
+  },
+  "tableCore_serviceColumn": "Service",
+  "@tableCore_serviceColumn": {
+    "description": "Shared table column header for a hospital service, used across station/hospitalization/patient row tables"
+  },
+  "tableCore_admissionDateColumn": "Date d'admission",
+  "@tableCore_admissionDateColumn": {
+    "description": "Shared table column header for the admission date, used across hospitalization/patient row tables"
+  },
+  "tableCore_dischargeDateColumn": "Date de sortie",
+  "@tableCore_dischargeDateColumn": {
+    "description": "Shared table column header for the discharge date, used across hospitalization/patient row tables"
+  },
+  "tableCore_materialColumn": "Matériel",
+  "@tableCore_materialColumn": {
+    "description": "Shared table column header for material, used across inconsistency/stock transaction tables"
+  },
+  "enumCore_statusActive": "Actif",
+  "@enumCore_statusActive": {
+    "description": "Shared enum label for the active status, used across most CRUD entities' Status enum"
+  },
+  "enumCore_statusPassive": "Inactif",
+  "@enumCore_statusPassive": {
+    "description": "Shared enum label for the inactive/passive status, used across most CRUD entities' Status enum"
+  },
+  "enumCore_warehouseTypeMain": "Entrepôt principal",
+  "@enumCore_warehouseTypeMain": {
+    "description": "WarehouseType enum label for the main warehouse type"
+  },
+  "enumCore_firmTypeSupplier": "Fournisseur",
+  "@enumCore_firmTypeSupplier": {
+    "description": "FirmType enum label for supplier"
+  },
+  "enumCore_firmTypeCustomer": "Client",
+  "@enumCore_firmTypeCustomer": {
+    "description": "FirmType enum label for customer"
+  },
+  "enumCore_firmTypeManufacturer": "Fabricant",
+  "@enumCore_firmTypeManufacturer": {
+    "description": "FirmType enum label for manufacturer"
+  },
+  "enumCore_warningSubjectUntimelyPurchase": "Achat intempestif",
+  "@enumCore_warningSubjectUntimelyPurchase": {
+    "description": "WarningSubject enum label for an untimely/out-of-window purchase"
+  },
+  "enumCore_warningSubjectWaste": "Perte",
+  "@enumCore_warningSubjectWaste": {
+    "description": "WarningSubject enum label for waste"
+  },
+  "enumCore_warningSubjectInconsistencyResolution": "Résolution d'incohérence",
+  "@enumCore_warningSubjectInconsistencyResolution": {
+    "description": "WarningSubject enum label for inconsistency resolution"
+  },
+  "enumCore_warningSubjectDisposal": "Élimination",
+  "@enumCore_warningSubjectDisposal": {
+    "description": "WarningSubject enum label for disposal"
+  },
+  "enumCore_stockTxTypeIn": "Entrée de stock",
+  "@enumCore_stockTxTypeIn": {
+    "description": "StockTransactionType enum label for incoming stock"
+  },
+  "enumCore_stockTxTypeOut": "Sortie de stock",
+  "@enumCore_stockTxTypeOut": {
+    "description": "StockTransactionType enum label for outgoing stock"
+  },
+  "enumCore_stockTxKindPurchase": "Achat de matériel",
+  "@enumCore_stockTxKindPurchase": {
+    "description": "StockTransactionKind enum label for a material purchase"
+  },
+  "enumCore_stockTxKindExcess": "Stock excédentaire",
+  "@enumCore_stockTxKindExcess": {
+    "description": "StockTransactionKind enum label for excess stock"
+  },
+  "enumCore_stockTxKindShortage": "Pénurie de stock",
+  "@enumCore_stockTxKindShortage": {
+    "description": "StockTransactionKind enum label for stock shortage"
+  },
+  "enumCore_stockTxKindReturn": "Retour de matériel",
+  "@enumCore_stockTxKindReturn": {
+    "description": "StockTransactionKind enum label for a material return"
+  },
+  "enumCore_stockTxKindCensus": "Comptage",
+  "@enumCore_stockTxKindCensus": {
+    "description": "StockTransactionKind enum label for a stock census/count"
+  },
+  "enumCore_stockTxKindUsage": "Utilisation de matériel",
+  "@enumCore_stockTxKindUsage": {
+    "description": "StockTransactionKind enum label for material usage"
+  },
+  "enumCore_countTypeNone": "Aucun comptage",
+  "@enumCore_countTypeNone": {
+    "description": "CountType enum label for no census configured"
+  },
+  "enumCore_countTypeNormal": "Comptage normal",
+  "@enumCore_countTypeNormal": {
+    "description": "CountType enum label for a normal (non-blind) census"
+  },
+  "enumCore_countTypeBlind": "Comptage à l'aveugle",
+  "@enumCore_countTypeBlind": {
+    "description": "CountType enum label for a blind census"
+  },
+  "enumCore_returnTypeToOrigin": "Retour à l'origine",
+  "@enumCore_returnTypeToOrigin": {
+    "description": "ReturnType enum label for returning an item to its original location"
+  },
+  "enumCore_returnTypeToDrawer": "Retour au tiroir",
+  "@enumCore_returnTypeToDrawer": {
+    "description": "ReturnType enum label for returning an item to the drawer"
+  },
+  "enumCore_returnTypeToReturnBox": "Retour à la boîte de retour",
+  "@enumCore_returnTypeToReturnBox": {
+    "description": "ReturnType enum label for returning an item to the return box"
+  },
+  "enumCore_returnTypeToPharmacy": "Retour à la pharmacie",
+  "@enumCore_returnTypeToPharmacy": {
+    "description": "ReturnType enum label for returning an item to the pharmacy"
+  },
+  "enumCore_requestTypeNormal": "Demande normale",
+  "@enumCore_requestTypeNormal": {
+    "description": "RequestType enum label for a normal request"
+  },
+  "enumCore_requestTypeUrgent": "Demande urgente",
+  "@enumCore_requestTypeUrgent": {
+    "description": "RequestType enum label for an urgent request"
+  },
+  "enumCore_purchaseTypeBoth": "Les deux",
+  "@enumCore_purchaseTypeBoth": {
+    "description": "PurchaseType enum label for allowing both ordered and orderless purchase"
+  },
+  "enumCore_prescriptionTypeWhite": "Ordonnance blanche",
+  "@enumCore_prescriptionTypeWhite": {
+    "description": "PrescriptionType enum label for a white (standard) prescription"
+  },
+  "enumCore_prescriptionTypeSerumWhite": "Sérum (ordonnance blanche)",
+  "@enumCore_prescriptionTypeSerumWhite": {
+    "description": "PrescriptionType enum label for a serum white prescription"
+  },
+  "enumCore_prescriptionTypeRed": "Ordonnance rouge",
+  "@enumCore_prescriptionTypeRed": {
+    "description": "PrescriptionType enum label for a red (controlled) prescription"
+  },
+  "enumCore_prescriptionTypeGreen": "Ordonnance verte",
+  "@enumCore_prescriptionTypeGreen": {
+    "description": "PrescriptionType enum label for a green prescription"
+  },
+  "enumCore_prescriptionTypeOrange": "Ordonnance orange",
+  "@enumCore_prescriptionTypeOrange": {
+    "description": "PrescriptionType enum label for an orange prescription"
+  },
+  "enumCore_prescriptionTypePurple": "Ordonnance violette",
+  "@enumCore_prescriptionTypePurple": {
+    "description": "PrescriptionType enum label for a purple prescription"
+  },
+  "enumCore_refillListStatusToCollect": "À rassembler",
+  "@enumCore_refillListStatusToCollect": {
+    "description": "RefillListStatus enum label for a refill list awaiting collection"
+  },
+  "enumCore_refillListStatusCollected": "Rassemblé",
+  "@enumCore_refillListStatusCollected": {
+    "description": "RefillListStatus enum label for a collected refill list"
+  },
+  "enumCore_refillListStatusSent": "Envoyé",
+  "@enumCore_refillListStatusSent": {
+    "description": "RefillListStatus enum label for a sent refill list"
+  },
+  "enumCore_fillingTypeMinimum": "Minimum",
+  "@enumCore_fillingTypeMinimum": {
+    "description": "FillingType enum label for the minimum fill level"
+  },
+  "enumCore_fillingTypeCritical": "Critique",
+  "@enumCore_fillingTypeCritical": {
+    "description": "FillingType enum label for the critical fill level"
+  },
+  "enumCore_fillingTypeMaximum": "Maximum",
+  "@enumCore_fillingTypeMaximum": {
+    "description": "FillingType enum label for the maximum fill level"
+  },
+  "enumCore_patientFilterOrderTimeReached": "Heure de commande atteinte",
+  "@enumCore_patientFilterOrderTimeReached": {
+    "description": "PatientFilterType enum label for patients whose order time has arrived"
+  },
+  "enumCore_patientFilterAll": "Tous les patients",
+  "@enumCore_patientFilterAll": {
+    "description": "PatientFilterType enum label for all patients"
+  },
+  "enumCore_patientFilterTimeNotReached": "Heure non atteinte",
+  "@enumCore_patientFilterTimeNotReached": {
+    "description": "PatientFilterType enum label for patients whose time hasn't arrived yet"
+  },
+  "enumCore_patientFilterTimePassed": "Heure dépassée",
+  "@enumCore_patientFilterTimePassed": {
+    "description": "PatientFilterType enum label for patients whose time has passed"
+  },
+  "enumCore_patientFilterReturnable": "Retour possible",
+  "@enumCore_patientFilterReturnable": {
+    "description": "PatientFilterType enum label for patients eligible for a return"
+  },
+  "enumCore_patientFilterWasteDisposable": "Perte/élimination possible",
+  "@enumCore_patientFilterWasteDisposable": {
+    "description": "PatientFilterType enum label for patients eligible for waste/disposal entry"
+  },
+  "enumCore_cabinTypeStandard": "Cabine standard",
+  "@enumCore_cabinTypeStandard": {
+    "description": "CabinType enum label for the standard cabinet type"
+  },
+  "enumCore_cabinTypeCloset": "Armoire",
+  "@enumCore_cabinTypeCloset": {
+    "description": "CabinType enum label for a closet cabinet"
+  },
+  "enumCore_cabinTypeFridge": "Réfrigérateur",
+  "@enumCore_cabinTypeFridge": {
+    "description": "CabinType enum label for a refrigerator cabinet"
+  },
+  "enumCore_cabinTypeOpenCloset": "Armoire ouverte",
+  "@enumCore_cabinTypeOpenCloset": {
+    "description": "CabinType enum label for an open closet cabinet"
+  },
+  "enumCore_cabinTypeMobile": "Cabine mobile",
+  "@enumCore_cabinTypeMobile": {
+    "description": "CabinType enum label for a mobile cabinet"
+  },
+  "enumCore_cabinTypeExternalReturn": "Cabine de retour externe",
+  "@enumCore_cabinTypeExternalReturn": {
+    "description": "CabinType enum label for an external return cabinet"
+  },
+  "enumCore_cabinTypeOpen": "Cabine ouverte",
+  "@enumCore_cabinTypeOpen": {
+    "description": "CabinType enum label for an open cabinet"
+  },
+  "enumCore_cabinTypeSerum": "Cabine à sérum",
+  "@enumCore_cabinTypeSerum": {
+    "description": "CabinType enum label for a serum cabinet"
+  },
+  "enumCore_cabinOpModeAssignDrug": "Attribution de médicament",
+  "@enumCore_cabinOpModeAssignDrug": {
+    "description": "CabinOperationMode enum label for the drug-assignment operation"
+  },
+  "enumCore_cabinOpModeRefill": "Remplissage de médicament",
+  "@enumCore_cabinOpModeRefill": {
+    "description": "CabinOperationMode enum label for the drug-refill operation"
+  },
+  "enumCore_cabinOpModeCensus": "Comptage de médicament",
+  "@enumCore_cabinOpModeCensus": {
+    "description": "CabinOperationMode enum label for the drug-census operation"
+  },
+  "enumCore_cabinOpModeIntake": "Entrée de médicament",
+  "@enumCore_cabinOpModeIntake": {
+    "description": "CabinOperationMode enum label for the drug-intake operation"
+  },
+  "enumCore_cabinOpModeFault": "Panne de tiroir",
+  "@enumCore_cabinOpModeFault": {
+    "description": "CabinOperationMode enum label for the drawer-fault operation"
+  },
+  "enumCore_cabinOpModeUnload": "Déchargement de médicament",
+  "@enumCore_cabinOpModeUnload": {
+    "description": "CabinOperationMode enum label for the drug-unload operation"
+  },
+  "enumCore_permissionCan": "Peut",
+  "@enumCore_permissionCan": {
+    "description": "PermissionStatus enum label for a granted permission"
+  },
+  "enumCore_permissionCannot": "Ne peut pas",
+  "@enumCore_permissionCannot": {
+    "description": "PermissionStatus enum label for a denied permission"
+  },
+  "enumCore_genderFemale": "Femme",
+  "@enumCore_genderFemale": {
+    "description": "Gender enum label for female"
+  },
+  "enumCore_genderMale": "Homme",
+  "@enumCore_genderMale": {
+    "description": "Gender enum label for male"
+  },
+  "enumCore_genderUnknown": "Inconnu",
+  "@enumCore_genderUnknown": {
+    "description": "Gender enum label for unknown/unspecified"
+  },
+  "enumCore_userTypeUnlimited": "Illimité",
+  "@enumCore_userTypeUnlimited": {
+    "description": "UserType enum label for a permanent/unlimited-duration user account"
+  },
+  "enumCore_appModeAdmin": "Admin",
+  "@enumCore_appModeAdmin": {
+    "description": "AppMode/UserRole enum label for the admin mode/role"
+  },
+  "enumCore_appModeManager": "Gestion",
+  "@enumCore_appModeManager": {
+    "description": "AppMode enum label for management mode"
+  },
+  "enumCore_appModeStation": "Station",
+  "@enumCore_appModeStation": {
+    "description": "AppMode enum label for station mode"
+  },
+  "enumCore_userRoleManager": "Gestionnaire",
+  "@enumCore_userRoleManager": {
+    "description": "UserRole enum label for the manager role"
+  },
+  "enumCore_userRoleStationOperator": "Opérateur de station",
+  "@enumCore_userRoleStationOperator": {
+    "description": "UserRole enum label for the station operator role"
+  },
+  "enumCore_parityBitNone": "Aucun",
+  "@enumCore_parityBitNone": {
+    "description": "ParityBit enum label for no parity, serial port configuration"
+  },
+  "enumCore_parityBitEven": "Pair",
+  "@enumCore_parityBitEven": {
+    "description": "ParityBit enum label for even parity, serial port configuration"
+  },
+  "enumCore_parityBitOdd": "Impair",
+  "@enumCore_parityBitOdd": {
+    "description": "ParityBit enum label for odd parity, serial port configuration"
+  },
+  "enumCore_cabinColorBlue": "Bleu",
+  "@enumCore_cabinColorBlue": {
+    "description": "CabinColor enum label for blue"
+  },
+  "enumCore_cabinColorTurquoise": "Turquoise",
+  "@enumCore_cabinColorTurquoise": {
+    "description": "CabinColor enum label for turquoise"
+  },
+  "enumCore_cabinColorGreen": "Vert",
+  "@enumCore_cabinColorGreen": {
+    "description": "CabinColor enum label for green"
+  },
+  "enumCore_cabinColorRed": "Rouge",
+  "@enumCore_cabinColorRed": {
+    "description": "CabinColor enum label for red"
+  },
+  "enumCore_cabinColorOrange": "Orange",
+  "@enumCore_cabinColorOrange": {
+    "description": "CabinColor enum label for orange"
+  },
+  "enumCore_cabinColorPurple": "Violet",
+  "@enumCore_cabinColorPurple": {
+    "description": "CabinColor enum label for purple"
+  },
+  "enumCore_cabinColorGray": "Gris",
+  "@enumCore_cabinColorGray": {
+    "description": "CabinColor enum label for gray"
+  },
+  "enumCore_cabinColorBlack": "Noir",
+  "@enumCore_cabinColorBlack": {
+    "description": "CabinColor enum label for black"
+  },
+  "enumCore_cabinColorWhite": "Blanc",
+  "@enumCore_cabinColorWhite": {
+    "description": "CabinColor enum label for white"
+  },
+  "common_confirmButton": "Confirmer",
+  "@common_confirmButton": {
+    "description": "Generic confirm button label for the base confirm-dialog widget"
+  },
+  "common_warningTitle": "Avertissement !",
+  "@common_warningTitle": {
+    "description": "Generic warning dialog title"
+  },
+  "dialog_deleteTitle": "Suppression",
+  "@dialog_deleteTitle": {
+    "description": "Title of the app-wide generic delete-confirmation dialog"
+  },
+  "dialog_deleteDefaultMessage": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+  "@dialog_deleteDefaultMessage": {
+    "description": "Default message of the generic delete-confirmation dialog when no item name is supplied"
+  },
+  "dialog_deleteItemMessage": "Êtes-vous sûr de vouloir supprimer « {itemName} » ?\nCette action est irréversible.",
+  "@dialog_deleteItemMessage": {
+    "description": "Message of the generic delete-confirmation dialog when a specific item name is supplied",
+    "placeholders": {
+      "itemName": {
+        "type": "String"
+      }
+    }
+  },
+  "dialog_exitConfirmButtonText": "Quitter",
+  "@dialog_exitConfirmButtonText": {
+    "description": "Confirm button label on the exit-with-unsaved-changes dialog"
+  },
+  "dialog_exitConfirmMessage": "Vous avez des modifications non enregistrées. Si vous quittez, ces modifications seront perdues.",
+  "@dialog_exitConfirmMessage": {
+    "description": "Message on the exit-confirmation dialog when there are unsaved changes"
+  },
+  "dialog_exitConfirmMessageNoChanges": "Êtes-vous sûr de vouloir quitter cette page ?",
+  "@dialog_exitConfirmMessageNoChanges": {
+    "description": "Message on the exit-confirmation dialog when there are no unsaved changes"
+  },
+  "dialog_confirmDiscardButton": "Oui, annuler",
+  "@dialog_confirmDiscardButton": {
+    "description": "Confirm button label on the discard-changes confirmation dialog"
+  },
+  "dialog_logoutTitle": "Se déconnecter",
+  "@dialog_logoutTitle": {
+    "description": "Title of the logout confirmation dialog"
+  },
+  "dialog_logoutMessage": "Êtes-vous sûr de vouloir vous déconnecter de votre compte ?",
+  "@dialog_logoutMessage": {
+    "description": "Message on the logout confirmation dialog"
+  },
+  "table_noDataTitle": "Aucune donnée trouvée",
+  "@table_noDataTitle": {
+    "description": "Default empty-state title for MedTable when no emptyWidget override is supplied"
+  },
+  "table_actionsColumnHeader": "Actions",
+  "@table_actionsColumnHeader": {
+    "description": "Column header for the actions column in MedTable"
+  },
+  "table_activeFiltersLabel": "Filtres :",
+  "@table_activeFiltersLabel": {
+    "description": "Label preceding the active-filter chips in MedTable"
+  },
+  "common_clearButton": "Effacer",
+  "@common_clearButton": {
+    "description": "Generic clear button label, used in table selection info and filter bars"
+  },
+  "table_selectedCountLabel": "{count} sélectionné(s)",
+  "@table_selectedCountLabel": {
+    "description": "Label showing how many rows are selected in MedTable",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "table_columnSelectedCountLabel": "{column} : {count} sélectionné(s)",
+  "@table_columnSelectedCountLabel": {
+    "description": "Label showing how many values are selected for a specific column filter",
+    "placeholders": {
+      "column": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "table_columnFallbackLabel": "Colonne",
+  "@table_columnFallbackLabel": {
+    "description": "Generic fallback label for a table column with no resolvable title"
+  },
+  "table_selectAllCountLabel": "Tout sélectionner ({count})",
+  "@table_selectAllCountLabel": {
+    "description": "Button label to select all filtered rows, showing the count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "table_noResultsShort": "Aucun résultat",
+  "@table_noResultsShort": {
+    "description": "Short empty-state text in the table's column-filter popup"
+  },
+  "table_applyCountLabel": "Appliquer ({count})",
+  "@table_applyCountLabel": {
+    "description": "Button label to apply a column filter selection, showing the count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "table_applyButton": "Appliquer",
+  "@table_applyButton": {
+    "description": "Generic apply button label in the table date-filter dialog"
+  },
+  "table_recordCountFiltered": "{filtered} / {total} enregistrements",
+  "@table_recordCountFiltered": {
+    "description": "Table footer label showing filtered vs total record count",
+    "placeholders": {
+      "filtered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "table_recordCount": "{total} enregistrements",
+  "@table_recordCount": {
+    "description": "Table footer label showing total record count with no filter applied",
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "table_totalRecordCount": "Total : {total} enregistrements",
+  "@table_totalRecordCount": {
+    "description": "Table pagination footer label showing the total record count",
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "table_prevPageTooltip": "Page précédente",
+  "@table_prevPageTooltip": {
+    "description": "Tooltip on the table pagination previous-page button"
+  },
+  "table_nextPageTooltip": "Page suivante",
+  "@table_nextPageTooltip": {
+    "description": "Tooltip on the table pagination next-page button"
+  },
+  "table_exportSelectedTooltip": "Exporter la sélection",
+  "@table_exportSelectedTooltip": {
+    "description": "Tooltip on the table toolbar's export button when rows are selected"
+  },
+  "table_categoriesDefaultTitle": "Catégories",
+  "@table_categoriesDefaultTitle": {
+    "description": "Default title for the table's category side panel when no categoryTitle override is supplied"
+  },
+  "table_columnFallback": "Colonne {index}",
+  "@table_columnFallback": {
+    "description": "Fallback column title used when the legacy titles list has a null entry at a given index",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "dateFilter_yesterday": "Hier",
+  "@dateFilter_yesterday": {
+    "description": "Quick date-range preset for yesterday in the table date filter"
+  },
+  "dateFilter_lastWeek": "La semaine dernière",
+  "@dateFilter_lastWeek": {
+    "description": "Quick date-range preset for the last week"
+  },
+  "dateFilter_thisMonth": "Ce mois-ci",
+  "@dateFilter_thisMonth": {
+    "description": "Quick date-range preset for this month"
+  },
+  "dateFilter_last30Days": "Les 30 derniers jours",
+  "@dateFilter_last30Days": {
+    "description": "Quick date-range preset for the last 30 days"
+  },
+  "dateFilter_customRange": "Définir une plage personnalisée...",
+  "@dateFilter_customRange": {
+    "description": "Quick date-range preset to open the custom range picker"
+  },
+  "dateFilter_clearFilter": "Effacer le filtre",
+  "@dateFilter_clearFilter": {
+    "description": "Button to clear the active date filter"
+  },
+  "dateFilter_noFilter": "Aucun filtre",
+  "@dateFilter_noFilter": {
+    "description": "Label shown when no date filter is applied"
+  },
+  "dateFilter_selectedRange": "Plage sélectionnée",
+  "@dateFilter_selectedRange": {
+    "description": "Label shown when a custom date range is selected"
+  },
+  "dateFilter_selectRangeTitle": "Sélectionner la plage de dates",
+  "@dateFilter_selectRangeTitle": {
+    "description": "Title of the custom date-range picker dialog"
+  },
+  "dateFilter_startDate": "Début",
+  "@dateFilter_startDate": {
+    "description": "Label for the start date chip in the custom range picker"
+  },
+  "dateFilter_endDate": "Fin",
+  "@dateFilter_endDate": {
+    "description": "Label for the end date chip in the custom range picker"
+  },
+  "common_selectPlaceholder": "Veuillez sélectionner",
+  "@common_selectPlaceholder": {
+    "description": "Generic placeholder text for dropdown/selection fields across the app, shown when nothing is selected"
+  },
+  "selectionDialog_selectedCount": "{count} éléments sélectionnés",
+  "@selectionDialog_selectedCount": {
+    "description": "Label showing how many items are selected in a multi-selection dialog",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectionDialog_noSelection": "Aucune sélection effectuée",
+  "@selectionDialog_noSelection": {
+    "description": "Empty-state text shown in a selection dialog before any item is chosen"
+  },
+  "selectionDialog_confirmButton": "Sélectionner",
+  "@selectionDialog_confirmButton": {
+    "description": "Confirm button label on the generic selection dialog"
+  },
+  "dateField_placeholder": "Sélectionner une date",
+  "@dateField_placeholder": {
+    "description": "Placeholder text for an empty date input field"
+  },
+  "timeField_helpTextWithDay": "Sélectionnez une heure pour {day}",
+  "@timeField_helpTextWithDay": {
+    "description": "Help text on the native time picker when a specific day context is given",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "timeField_helpText": "Sélectionner une heure",
+  "@timeField_helpText": {
+    "description": "Help text on the native time picker with no day context"
+  },
+  "timeField_placeholder": "Sélectionner l'heure",
+  "@timeField_placeholder": {
+    "description": "Placeholder text for an empty time input field"
+  },
+  "doseStepper_manualEntryTitle": "Entrez la quantité en {unit}",
+  "@doseStepper_manualEntryTitle": {
+    "description": "Title of the manual dose-entry numpad dialog",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "numpad_defaultTitle": "Entrez la quantité",
+  "@numpad_defaultTitle": {
+    "description": "Default title for the generic numpad dialog"
+  },
+  "keyboard_closeButton": "Fermer",
+  "@keyboard_closeButton": {
+    "description": "Close button label on the on-screen keyboard"
+  },
+  "keyboard_enterLabel": "↵ OK",
+  "@keyboard_enterLabel": {
+    "description": "Enter/confirm key label on the on-screen keyboard"
+  },
+  "keyboard_dashKeyLabel": "— Tiret",
+  "@keyboard_dashKeyLabel": {
+    "description": "Dash key label on the on-screen keyboard's symbol row"
+  },
+  "keyboard_periodKeyLabel": ". Point",
+  "@keyboard_periodKeyLabel": {
+    "description": "Period key label on the on-screen keyboard's symbol row"
+  },
+  "keyboard_shiftLabel": "⇧ Majuscule",
+  "@keyboard_shiftLabel": {
+    "description": "Shift key label on the on-screen keyboard"
+  },
+  "keyboard_spaceLabel": "ESPACE",
+  "@keyboard_spaceLabel": {
+    "description": "Space bar label on the on-screen keyboard"
+  },
+  "staleBanner_justNow": "à l'instant",
+  "@staleBanner_justNow": {
+    "description": "Relative time label for data updated less than a minute ago"
+  },
+  "staleBanner_minutesAgo": "il y a {minutes} min",
+  "@staleBanner_minutesAgo": {
+    "description": "Relative time label for data updated N minutes ago",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "staleBanner_hoursAgo": "il y a {hours} h",
+  "@staleBanner_hoursAgo": {
+    "description": "Relative time label for data updated N hours ago",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "staleBanner_dataStaleMessage": "Les données ne sont pas à jour. ",
+  "@staleBanner_dataStaleMessage": {
+    "description": "Stale-data banner message when the operator may still proceed"
+  },
+  "staleBanner_dataUnavailableMessage": "Les données à jour sont indisponibles. L'opération ne peut pas continuer. ",
+  "@staleBanner_dataUnavailableMessage": {
+    "description": "Stale-data banner message when the operator may not proceed (Class B safety-relevant)"
+  },
+  "staleBanner_lastUpdatedLabel": "Dernière mise à jour : {time}",
+  "@staleBanner_lastUpdatedLabel": {
+    "description": "Label showing the last-updated timestamp on the stale-data banner",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "staleBanner_blockedBadge": "Bloqué",
+  "@staleBanner_blockedBadge": {
+    "description": "Status badge shown on the stale-data banner when the operation is blocked"
+  },
+  "timeChip_today": "Aujourd'hui {time}",
+  "@timeChip_today": {
+    "description": "Chip label showing today's scheduled dose time",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "timeChip_tomorrow": "Demain {time}",
+  "@timeChip_tomorrow": {
+    "description": "Chip label showing tomorrow's scheduled dose time",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "cabin_lockButton": "Verrouiller",
+  "@cabin_lockButton": {
+    "description": "Lock button label in the cabin action bar"
+  },
+  "cabin_criticalStockLabel": "Stock critique",
+  "@cabin_criticalStockLabel": {
+    "description": "Stat label for critical stock count in the cabin stats grid"
+  },
+  "cabin_criticalStockSubLabel": "réapprovisionnement nécessaire",
+  "@cabin_criticalStockSubLabel": {
+    "description": "Sub-label under the critical stock stat, explaining the refill need"
+  },
+  "cabin_legendFillNormal": "Stock normal",
+  "@cabin_legendFillNormal": {
+    "description": "Legend entry for normal fill level in the master cabin drawer panel"
+  },
+  "cabin_legendFillNeeded": "Remplissage nécessaire",
+  "@cabin_legendFillNeeded": {
+    "description": "Legend entry for a drawer needing refill in the master cabin drawer panel"
+  },
+  "cabin_legendFillUrgent": "Remplissage urgent",
+  "@cabin_legendFillUrgent": {
+    "description": "Legend entry for a drawer needing urgent refill in the master cabin drawer panel"
+  },
+  "cabin_serumTypeLabel": "SÉRUM",
+  "@cabin_serumTypeLabel": {
+    "description": "Type badge for a serum drug group on the master cabin overview panel"
+  },
+  "cabin_unitDoseTypeLabel": "D.UNIT",
+  "@cabin_unitDoseTypeLabel": {
+    "description": "Type badge abbreviation for a unit-dose drug group on the master cabin overview panel"
+  }
+}

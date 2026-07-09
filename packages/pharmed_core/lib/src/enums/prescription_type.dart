@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 enum PrescriptionType {
   white(1),
   serumWhite(2),
@@ -20,21 +22,21 @@ enum PrescriptionType {
   String get label {
     switch (this) {
       case PrescriptionType.white:
-        return 'Beyaz Reçete';
+        return contextlessL10n().enumCore_prescriptionTypeWhite;
       case PrescriptionType.serumWhite:
-        return 'Serum(Beyaz Reçete)';
+        return contextlessL10n().enumCore_prescriptionTypeSerumWhite;
 
       case PrescriptionType.red:
-        return 'Kırmızı Reçete';
+        return contextlessL10n().enumCore_prescriptionTypeRed;
 
       case PrescriptionType.green:
-        return 'Yeşil Reçete';
+        return contextlessL10n().enumCore_prescriptionTypeGreen;
 
       case PrescriptionType.orange:
-        return 'Turuncu Reçete';
+        return contextlessL10n().enumCore_prescriptionTypeOrange;
 
       case PrescriptionType.purple:
-        return 'Mor Reçete';
+        return contextlessL10n().enumCore_prescriptionTypePurple;
     }
   }
 }
