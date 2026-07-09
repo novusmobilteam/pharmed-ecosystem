@@ -123,6 +123,8 @@ class _TopRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dose = '${item.dosePiece?.formatFractional} ${item.medicine?.operationUnit}';
+    final hour = item.prescription?.prescriptionDate?.shortRelativeLabel ?? '-';
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
 
@@ -137,7 +139,7 @@ class _TopRow extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item.medicine?.name ?? '—', style: MedTextStyles.titleMd(), overflow: TextOverflow.ellipsis),
+            Text('${item.medicine?.name} ($hour)', style: MedTextStyles.titleMd(), overflow: TextOverflow.ellipsis),
             Text(dose, style: MedTextStyles.titleSm()),
           ],
         ),

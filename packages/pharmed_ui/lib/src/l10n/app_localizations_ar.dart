@@ -2499,6 +2499,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get report_stationTransactionTitleFallback => 'Station Transactions';
 
   @override
+  String get report_hospitalStocksTitleFallback => 'Hospital Material List';
+
+  @override
   String get inconsistency_screenTitleFallback => 'Inconsistency Movements';
 
   @override
@@ -4116,28 +4119,40 @@ class AppLocalizationsAr extends AppLocalizations {
   String get enumCore_warningSubjectDisposal => 'Disposal';
 
   @override
+  String get enumCore_stockTxKindRefill => 'Material Refill';
+
+  @override
+  String get enumCore_stockTxKindStockOut => 'Stock Out';
+
+  @override
+  String get enumCore_stockTxKindConsistent => 'Consistent Count';
+
+  @override
+  String get enumCore_stockTxKindReturnInward => 'Return Intake';
+
+  @override
+  String get enumCore_stockTxKindWastage => 'Wastage';
+
+  @override
   String get enumCore_stockTxTypeIn => 'Stock In';
 
   @override
   String get enumCore_stockTxTypeOut => 'Stock Out';
 
   @override
-  String get enumCore_stockTxKindPurchase => 'Material Purchase';
-
-  @override
-  String get enumCore_stockTxKindExcess => 'Excess Stock';
-
-  @override
-  String get enumCore_stockTxKindShortage => 'Stock Shortage';
-
-  @override
   String get enumCore_stockTxKindReturn => 'Material Return';
 
   @override
-  String get enumCore_stockTxKindCensus => 'Census';
+  String get enumCore_stockTxKindExcess => 'Count Excess';
 
   @override
-  String get enumCore_stockTxKindUsage => 'Material Usage';
+  String get enumCore_stockTxKindShortage => 'Count Shortage';
+
+  @override
+  String get enumCore_stockTxKindPurchase => 'Material Intake';
+
+  @override
+  String get enumCore_stockTxKindUnload => 'Material Unload';
 
   @override
   String get enumCore_countTypeNone => 'No Census';
@@ -4596,4 +4611,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cabin_unitDoseTypeLabel => 'U.DOSE';
+
+  @override
+  String get refund_showCompletedTooltip => 'Show Completed';
+
+  @override
+  String get refund_showIncompleteTooltip => 'Show Incomplete';
 }

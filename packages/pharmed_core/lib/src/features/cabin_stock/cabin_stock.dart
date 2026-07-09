@@ -1,10 +1,12 @@
 export 'dto/cabin_stock_dto.dart';
 export 'dto/station_stock_dto.dart';
 export 'dto/cabin_expected_epc_dto.dart';
+export 'dto/hospital_stock_dto.dart';
 
 export 'domain/entity/cabin_stock.dart';
 export 'domain/entity/station_stock.dart';
 export 'domain/entity/cabin_expected_epc.dart';
+export 'domain/entity/hospital_stock.dart';
 
 export 'domain/repository/i_cabin_stock_repository.dart';
 

@@ -419,11 +419,13 @@ class RepositoryProviders {
             dataSource: context.read(),
             cabinStockMapper: CabinStockMapper(),
             stockTransactionMapper: StockTransactionMapper(),
+            hospitalStockMapper: HospitalStockMapper(),
           ),
           AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
             dataSource: context.read(),
             cabinStockMapper: CabinStockMapper(),
             stockTransactionMapper: StockTransactionMapper(),
+            hospitalStockMapper: HospitalStockMapper(),
           ),
         },
       ),

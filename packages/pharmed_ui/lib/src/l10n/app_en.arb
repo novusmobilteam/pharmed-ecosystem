@@ -2741,6 +2741,10 @@
   "@report_stationTransactionTitleFallback": {
     "description": "Fallback screen title when the menu name is not provided, for the station transaction report"
   },
+  "report_hospitalStocksTitleFallback": "Hospital Material List",
+  "@report_hospitalStocksTitleFallback": {
+    "description": "Fallback title for the hospital stock/material list report, shown when no more specific title is available"
+  },
   "inconsistency_screenTitleFallback": "Inconsistency Movements",
   "@inconsistency_screenTitleFallback": {
     "description": "Fallback screen title when the menu name is not provided"
@@ -4826,6 +4830,28 @@
   "@enumCore_warningSubjectDisposal": {
     "description": "WarningSubject enum label for disposal"
   },
+
+    "enumCore_stockTxKindRefill": "Refill",
+  "@enumCore_stockTxKindRefill": {
+    "description": "Label for the Refill value of the StockTransactionKind enum (stock replenishment into the cabin)"
+  },
+  "enumCore_stockTxKindStockOut": "Stock Out",
+  "@enumCore_stockTxKindStockOut": {
+    "description": "Label for the StockOut value of the StockTransactionKind enum (material taken out of stock for use)"
+  },
+  "enumCore_stockTxKindConsistent": "Count Consistent",
+  "@enumCore_stockTxKindConsistent": {
+    "description": "Label for the CountConsistent value of the StockTransactionKind enum (physical count matches expected stock, no excess or shortage)"
+  },
+  "enumCore_stockTxKindReturnInward": "Return Inward",
+  "@enumCore_stockTxKindReturnInward": {
+    "description": "Label for the ReturnInward value of the StockTransactionKind enum (stock returned back into inventory from an external source)"
+  },
+  "enumCore_stockTxKindWastage": "Wastage",
+  "@enumCore_stockTxKindWastage": {
+    "description": "Label for the Wastage value of the StockTransactionKind enum (material discarded/destroyed, e.g. expired or damaged)"
+  },
+
   "enumCore_stockTxTypeIn": "Stock In",
   "@enumCore_stockTxTypeIn": {
     "description": "StockTransactionType enum label for incoming stock"
@@ -4834,30 +4860,46 @@
   "@enumCore_stockTxTypeOut": {
     "description": "StockTransactionType enum label for outgoing stock"
   },
-  "enumCore_stockTxKindPurchase": "Material Purchase",
-  "@enumCore_stockTxKindPurchase": {
-    "description": "StockTransactionKind enum label for a material purchase"
-  },
-  "enumCore_stockTxKindExcess": "Excess Stock",
-  "@enumCore_stockTxKindExcess": {
-    "description": "StockTransactionKind enum label for excess stock"
-  },
-  "enumCore_stockTxKindShortage": "Stock Shortage",
-  "@enumCore_stockTxKindShortage": {
-    "description": "StockTransactionKind enum label for stock shortage"
-  },
-  "enumCore_stockTxKindReturn": "Material Return",
-  "@enumCore_stockTxKindReturn": {
-    "description": "StockTransactionKind enum label for a material return"
-  },
-  "enumCore_stockTxKindCensus": "Census",
-  "@enumCore_stockTxKindCensus": {
-    "description": "StockTransactionKind enum label for a stock census/count"
-  },
-  "enumCore_stockTxKindUsage": "Material Usage",
-  "@enumCore_stockTxKindUsage": {
-    "description": "StockTransactionKind enum label for material usage"
-  },
+ "enumCore_stockTxKindRefill": "Material Refill",
+"@enumCore_stockTxKindRefill": {
+  "description": "Label for the Refill value of the StockTransactionKind enum (stock replenishment into the cabin)"
+},
+"enumCore_stockTxKindStockOut": "Stock Out",
+"@enumCore_stockTxKindStockOut": {
+  "description": "Label for the StockOut value of the StockTransactionKind enum (material taken out of stock for use)"
+},
+"enumCore_stockTxKindReturn": "Material Return",
+"@enumCore_stockTxKindReturn": {
+  "description": "Label for the Return/Refund value of the StockTransactionKind enum (material returned out of the cabin)"
+},
+"enumCore_stockTxKindExcess": "Count Excess",
+"@enumCore_stockTxKindExcess": {
+  "description": "Label for the CountExcess value of the StockTransactionKind enum (physical census found more stock than expected)"
+},
+"enumCore_stockTxKindShortage": "Count Shortage",
+"@enumCore_stockTxKindShortage": {
+  "description": "Label for the CountShortage value of the StockTransactionKind enum (physical census found less stock than expected)"
+},
+"enumCore_stockTxKindConsistent": "Consistent Count",
+"@enumCore_stockTxKindConsistent": {
+  "description": "Label for the CountConsistent value of the StockTransactionKind enum (physical census matches expected stock)"
+},
+"enumCore_stockTxKindPurchase": "Material Intake",
+"@enumCore_stockTxKindPurchase": {
+  "description": "Label for the Intake value of the StockTransactionKind enum (material received into the cabin, e.g. from purchasing)"
+},
+"enumCore_stockTxKindReturnInward": "Return Intake",
+"@enumCore_stockTxKindReturnInward": {
+  "description": "Label for the ReturnInward value of the StockTransactionKind enum (a returned item received back into the cabin)"
+},
+"enumCore_stockTxKindWastage": "Wastage",
+"@enumCore_stockTxKindWastage": {
+  "description": "Label for the Wastage value of the StockTransactionKind enum (material discarded/destroyed, e.g. expired or damaged)"
+},
+"enumCore_stockTxKindUnload": "Material Unload",
+"@enumCore_stockTxKindUnload": {
+  "description": "Label for the Unload value of the StockTransactionKind enum (material removed/emptied out of the cabin)"
+},
   "enumCore_countTypeNone": "No Census",
   "@enumCore_countTypeNone": {
     "description": "CountType enum label for no census configured"
@@ -5504,5 +5546,13 @@
   "cabin_unitDoseTypeLabel": "U.DOSE",
   "@cabin_unitDoseTypeLabel": {
     "description": "Type badge abbreviation for a unit-dose drug group on the master cabin overview panel"
+  },
+  "refund_showCompletedTooltip": "Show Completed",
+  "@refund_showCompletedTooltip": {
+    "description": "Tooltip for the toggle on the refund screen that filters the list to show completed refund records"
+  },
+  "refund_showIncompleteTooltip": "Show Incomplete",
+  "@refund_showIncompleteTooltip": {
+    "description": "Tooltip for the toggle on the refund screen that filters the list to show incomplete (not yet completed) refund records"
   }
 }

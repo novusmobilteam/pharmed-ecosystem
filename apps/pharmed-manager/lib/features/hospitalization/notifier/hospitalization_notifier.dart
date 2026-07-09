@@ -88,7 +88,7 @@ class HospitalizationNotifier extends ChangeNotifier with ApiRequestMixin, Pagin
 
   void toggleDischarged() {
     _showDischarged = !_showDischarged;
-    resetFilters(notify: false);
+    resetFilters(notify: false, resetDate: false);
     notifyListeners();
     fetch();
   }

@@ -6,6 +6,7 @@ class RefundMapper {
   const RefundMapper();
 
   Refund toEntity(RefundDTO dto) {
+    print(dto.createdDate);
     return Refund(
       id: dto.id,
       type: dto.type,
@@ -24,6 +25,7 @@ class RefundMapper {
       station: const StationMapper().toEntityOrNull(dto.station),
       receiveUser: const UserMapper().toEntityOrNull(dto.receiveUser),
       cancelUser: const UserMapper().toEntityOrNull(dto.cancelUser),
+      createdDate: dto.createdDate,
     );
   }
 

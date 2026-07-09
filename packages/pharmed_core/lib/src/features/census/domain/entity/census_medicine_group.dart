@@ -62,8 +62,7 @@ List<CensusMedicineGroup> groupPrescriptionItemsByMedicine({
   }
 
   return byMedicineId.entries.map((e) {
-    final groupItems = [...e.value]
-      ..sort((a, b) => (a.lastMovement?.createdAt ?? DateTime(0)).compareTo(b.lastMovement?.createdAt ?? DateTime(0)));
+    final groupItems = [...e.value]..sort((a, b) => (a.time ?? DateTime(0)).compareTo(b.time ?? DateTime(0)));
 
     return CensusMedicineGroup(
       medicine: groupItems.first.medicine!,

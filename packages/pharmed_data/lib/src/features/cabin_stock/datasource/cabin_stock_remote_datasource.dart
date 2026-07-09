@@ -6,7 +6,7 @@ import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 class CabinStockRemoteDataSource extends BaseRemoteDataSource {
   CabinStockRemoteDataSource({required super.apiManager});
 
-  static const _base = '/';
+  static const _base = '/CabinDrawrStock';
 
   @override
   String get logSwreq => 'SWREQ-DATA-CABINSTOCK-001';

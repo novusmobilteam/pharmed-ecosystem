@@ -15,10 +15,10 @@ class _QuickDateFilterPopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+    final now = DateTime.now().copyWith(hour: 0, minute: 0);
 
     final todayStart = now;
-    final todayEnd = now;
+    final todayEnd = now.add(const Duration(hours: 23));
     final yesterday = now.subtract(const Duration(days: 1));
     final thisWeekStart = now.subtract(const Duration(days: 6));
     final thisWeekEnd = now;

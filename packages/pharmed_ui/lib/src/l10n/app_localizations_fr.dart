@@ -2548,6 +2548,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Mouvements de la station';
 
   @override
+  String get report_hospitalStocksTitleFallback =>
+      'Liste du Matériel Hospitalier';
+
+  @override
   String get inconsistency_screenTitleFallback => 'Mouvements d\'incohérence';
 
   @override
@@ -4200,28 +4204,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String get enumCore_warningSubjectDisposal => 'Élimination';
 
   @override
+  String get enumCore_stockTxKindRefill => 'Remplissage de Matériel';
+
+  @override
+  String get enumCore_stockTxKindStockOut => 'Sortie de Stock';
+
+  @override
+  String get enumCore_stockTxKindConsistent => 'Comptage Conforme';
+
+  @override
+  String get enumCore_stockTxKindReturnInward => 'Réception de Retour';
+
+  @override
+  String get enumCore_stockTxKindWastage => 'Gaspillage';
+
+  @override
   String get enumCore_stockTxTypeIn => 'Entrée de stock';
 
   @override
   String get enumCore_stockTxTypeOut => 'Sortie de stock';
 
   @override
-  String get enumCore_stockTxKindPurchase => 'Achat de matériel';
+  String get enumCore_stockTxKindReturn => 'Retour de Matériel';
 
   @override
-  String get enumCore_stockTxKindExcess => 'Stock excédentaire';
+  String get enumCore_stockTxKindExcess => 'Excédent de Comptage';
 
   @override
-  String get enumCore_stockTxKindShortage => 'Pénurie de stock';
+  String get enumCore_stockTxKindShortage => 'Manque de Comptage';
 
   @override
-  String get enumCore_stockTxKindReturn => 'Retour de matériel';
+  String get enumCore_stockTxKindPurchase => 'Réception de Matériel';
 
   @override
-  String get enumCore_stockTxKindCensus => 'Comptage';
-
-  @override
-  String get enumCore_stockTxKindUsage => 'Utilisation de matériel';
+  String get enumCore_stockTxKindUnload => 'Déchargement de Matériel';
 
   @override
   String get enumCore_countTypeNone => 'Aucun comptage';
@@ -4681,4 +4697,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cabin_unitDoseTypeLabel => 'D.UNIT';
+
+  @override
+  String get refund_showCompletedTooltip => 'Afficher les Terminés';
+
+  @override
+  String get refund_showIncompleteTooltip => 'Afficher les Non Terminés';
 }

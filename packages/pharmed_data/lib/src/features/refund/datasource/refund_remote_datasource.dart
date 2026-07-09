@@ -90,10 +90,22 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<RefundDTO>?>> getPharmacyRefunds() async {
+  Future<Result<ApiResponse<List<RefundDTO>>?>> getPharmacyRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
     return await fetchRequest(
-      path: '/RefundWasteDescrutionTransaction/refundApprovedPharmacy',
-      parser: BaseRemoteDataSource.listParser(RefundDTO.fromJson),
+      path: '/RefundWasteDescrutionTransaction/refundApprovedPharmacy/$stationId',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+
+      dateField: 'createdDate',
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(RefundDTO.fromJson),
     );
   }
 
@@ -104,10 +116,21 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<RefundDTO>?>> getCompletedPharmacyRefunds() async {
+  Future<Result<ApiResponse<List<RefundDTO>>?>> getCompletedPharmacyRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
     return await fetchRequest(
-      path: '/RefundWasteDescrutionTransaction/refundApprovelPharmacy',
-      parser: BaseRemoteDataSource.listParser(RefundDTO.fromJson),
+      path: '/RefundWasteDescrutionTransaction/refundApprovelPharmacy/$stationId',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      dateField: 'createdDate',
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(RefundDTO.fromJson),
     );
   }
 

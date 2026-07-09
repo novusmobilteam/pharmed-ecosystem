@@ -71,14 +71,14 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isLoadingRooms => isLoading(_roomsOp);
   bool get isLoadingBeds => isLoading(_bedsOp);
 
-  Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
+  Future<void> submit({Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
     await executeVoid(
       submitOp,
       operation: () async => isCreate
           ? await _createHospitalizationUseCase.call(_hospitalization!)
           : await _updateHospitalizationUseCase.call(_hospitalization!),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () => onSuccess?.call(null),
+      onSuccess: () => onSuccess?.call(),
     );
   }
 

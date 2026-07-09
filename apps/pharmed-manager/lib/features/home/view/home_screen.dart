@@ -13,7 +13,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
 import '../../../old_features/refund/view/drawer_refund_screen.dart';
-import '../../../old_features/refund/view/pharmacy_refund_screen.dart';
 import '../../auth/notifier/auth_state.dart';
 import '../../authorization/authorization_screen.dart';
 import '../../dashboard/view/dashboard_view.dart';
@@ -22,6 +21,8 @@ import '../../inconsistency/view/inconsistency_screen.dart';
 import '../../medicine/view/medicine_screen.dart';
 
 import '../../refill_list/view/refill_list_screen.dart';
+import '../../refund/view/pharmacy_refund_screen.dart';
+import '../../reports/hospital_stocks/view/hospital_stocks_report_screen.dart';
 import '../../station_setup/view/station_screen.dart';
 import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
 import '../../user/view/user_screen.dart';
@@ -169,17 +170,17 @@ class _HomeContent extends StatelessWidget {
       'prescription' => PrescriptionScreen(menu: menu!),
       'refund' => PharmacyRefundScreen(menu: menu!),
       'refundDrawer' => DrawerRefundScreen(menu: menu!),
-      //'stationStock' => StationStockScreen(menu: menu!),
       'role' => RoleScreen(menu: menu!),
       'authorization' => AuthorizationScreen(menu: menu!),
       'user' => UserScreen(menu: menu!),
-      //'unReadQrCode' => UnscannedBarcodesScreen(menu: menu!),
       'unappliedPrescriptions' => UnappliedPrescriptionsScreen(menu: menu!),
       'inconsistency' => InconsistencyScreen(menu: menu!),
       'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),
       'cabin-transaction-report' => StationTransactionReportScreen(menu: menu!),
+      'hospital-material-list' => HospitalStocksReportScreen(menu: menu!),
       'refill' => RefillListScreen(menu: menu!),
       'tray' => AssignmentScreen(menu: menu!),
+
       _ => const _NotFoundView(),
     };
   }

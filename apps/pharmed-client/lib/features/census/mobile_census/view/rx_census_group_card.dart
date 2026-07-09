@@ -111,7 +111,7 @@ class _CensusItemRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final time = item.lastMovement?.createdAt?.shortRelativeLabel;
+    final time = item.time?.shortRelativeLabel;
     final c = _colors;
 
     return Container(

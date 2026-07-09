@@ -2495,6 +2495,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get report_stationTransactionTitleFallback => 'İstasyon Hareketleri';
 
   @override
+  String get report_hospitalStocksTitleFallback => 'Hastane Malzeme Listesi';
+
+  @override
   String get inconsistency_screenTitleFallback => 'Tutarsızlık Hareketleri';
 
   @override
@@ -4077,28 +4080,40 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_warningSubjectDisposal => 'İmha';
 
   @override
+  String get enumCore_stockTxKindRefill => 'Malzeme Dolum';
+
+  @override
+  String get enumCore_stockTxKindStockOut => 'Stok Çıkışı';
+
+  @override
+  String get enumCore_stockTxKindConsistent => 'Tutarlı Sayım';
+
+  @override
+  String get enumCore_stockTxKindReturnInward => 'İade Alım';
+
+  @override
+  String get enumCore_stockTxKindWastage => 'Fire';
+
+  @override
   String get enumCore_stockTxTypeIn => 'Stok Giriş';
 
   @override
   String get enumCore_stockTxTypeOut => 'Stok Çıkış';
 
   @override
-  String get enumCore_stockTxKindPurchase => 'Malzeme Alımı';
+  String get enumCore_stockTxKindReturn => 'Malzeme İade';
 
   @override
-  String get enumCore_stockTxKindExcess => 'Stok Fazlası';
+  String get enumCore_stockTxKindExcess => 'Sayım Fazlası';
 
   @override
-  String get enumCore_stockTxKindShortage => 'Stok Eksiği';
+  String get enumCore_stockTxKindShortage => 'Sayım Eksiği';
 
   @override
-  String get enumCore_stockTxKindReturn => 'Malzeme İadesi';
+  String get enumCore_stockTxKindPurchase => 'Malzeme Alım';
 
   @override
-  String get enumCore_stockTxKindCensus => 'Sayım';
-
-  @override
-  String get enumCore_stockTxKindUsage => 'Malzeme Kullanımı';
+  String get enumCore_stockTxKindUnload => 'Malzeme Boşaltma';
 
   @override
   String get enumCore_countTypeNone => 'Sayım Yok';
@@ -4555,4 +4570,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabin_unitDoseTypeLabel => 'B.DOZ';
+
+  @override
+  String get refund_showCompletedTooltip => 'Tamamlananları Göster';
+
+  @override
+  String get refund_showIncompleteTooltip => 'Tamamlanmayanları Göster';
 }

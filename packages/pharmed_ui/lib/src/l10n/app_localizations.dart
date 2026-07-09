@@ -4608,6 +4608,12 @@ abstract class AppLocalizations {
   /// **'Station Transactions'**
   String get report_stationTransactionTitleFallback;
 
+  /// Fallback title for the hospital stock/material list report, shown when no more specific title is available
+  ///
+  /// In en, this message translates to:
+  /// **'Hospital Material List'**
+  String get report_hospitalStocksTitleFallback;
+
   /// Fallback screen title when the menu name is not provided
   ///
   /// In en, this message translates to:
@@ -7265,6 +7271,36 @@ abstract class AppLocalizations {
   /// **'Disposal'**
   String get enumCore_warningSubjectDisposal;
 
+  /// Label for the Refill value of the StockTransactionKind enum (stock replenishment into the cabin)
+  ///
+  /// In en, this message translates to:
+  /// **'Material Refill'**
+  String get enumCore_stockTxKindRefill;
+
+  /// Label for the StockOut value of the StockTransactionKind enum (material taken out of stock for use)
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Out'**
+  String get enumCore_stockTxKindStockOut;
+
+  /// Label for the CountConsistent value of the StockTransactionKind enum (physical census matches expected stock)
+  ///
+  /// In en, this message translates to:
+  /// **'Consistent Count'**
+  String get enumCore_stockTxKindConsistent;
+
+  /// Label for the ReturnInward value of the StockTransactionKind enum (a returned item received back into the cabin)
+  ///
+  /// In en, this message translates to:
+  /// **'Return Intake'**
+  String get enumCore_stockTxKindReturnInward;
+
+  /// Label for the Wastage value of the StockTransactionKind enum (material discarded/destroyed, e.g. expired or damaged)
+  ///
+  /// In en, this message translates to:
+  /// **'Wastage'**
+  String get enumCore_stockTxKindWastage;
+
   /// StockTransactionType enum label for incoming stock
   ///
   /// In en, this message translates to:
@@ -7277,41 +7313,35 @@ abstract class AppLocalizations {
   /// **'Stock Out'**
   String get enumCore_stockTxTypeOut;
 
-  /// StockTransactionKind enum label for a material purchase
-  ///
-  /// In en, this message translates to:
-  /// **'Material Purchase'**
-  String get enumCore_stockTxKindPurchase;
-
-  /// StockTransactionKind enum label for excess stock
-  ///
-  /// In en, this message translates to:
-  /// **'Excess Stock'**
-  String get enumCore_stockTxKindExcess;
-
-  /// StockTransactionKind enum label for stock shortage
-  ///
-  /// In en, this message translates to:
-  /// **'Stock Shortage'**
-  String get enumCore_stockTxKindShortage;
-
-  /// StockTransactionKind enum label for a material return
+  /// Label for the Return/Refund value of the StockTransactionKind enum (material returned out of the cabin)
   ///
   /// In en, this message translates to:
   /// **'Material Return'**
   String get enumCore_stockTxKindReturn;
 
-  /// StockTransactionKind enum label for a stock census/count
+  /// Label for the CountExcess value of the StockTransactionKind enum (physical census found more stock than expected)
   ///
   /// In en, this message translates to:
-  /// **'Census'**
-  String get enumCore_stockTxKindCensus;
+  /// **'Count Excess'**
+  String get enumCore_stockTxKindExcess;
 
-  /// StockTransactionKind enum label for material usage
+  /// Label for the CountShortage value of the StockTransactionKind enum (physical census found less stock than expected)
   ///
   /// In en, this message translates to:
-  /// **'Material Usage'**
-  String get enumCore_stockTxKindUsage;
+  /// **'Count Shortage'**
+  String get enumCore_stockTxKindShortage;
+
+  /// Label for the Intake value of the StockTransactionKind enum (material received into the cabin, e.g. from purchasing)
+  ///
+  /// In en, this message translates to:
+  /// **'Material Intake'**
+  String get enumCore_stockTxKindPurchase;
+
+  /// Label for the Unload value of the StockTransactionKind enum (material removed/emptied out of the cabin)
+  ///
+  /// In en, this message translates to:
+  /// **'Material Unload'**
+  String get enumCore_stockTxKindUnload;
 
   /// CountType enum label for no census configured
   ///
@@ -8146,6 +8176,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'U.DOSE'**
   String get cabin_unitDoseTypeLabel;
+
+  /// Tooltip for the toggle on the refund screen that filters the list to show completed refund records
+  ///
+  /// In en, this message translates to:
+  /// **'Show Completed'**
+  String get refund_showCompletedTooltip;
+
+  /// Tooltip for the toggle on the refund screen that filters the list to show incomplete (not yet completed) refund records
+  ///
+  /// In en, this message translates to:
+  /// **'Show Incomplete'**
+  String get refund_showIncompleteTooltip;
 }
 
 class _AppLocalizationsDelegate

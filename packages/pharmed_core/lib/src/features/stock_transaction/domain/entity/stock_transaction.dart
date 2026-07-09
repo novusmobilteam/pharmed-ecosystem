@@ -14,7 +14,8 @@ class StockTransaction implements TableData {
   final User? user;
   final bool? isSend;
   final DateTime? sendDate;
-  final DateTime? expirationDate;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final Medicine? medicine;
   final HospitalService? service;
   final StockTransactionType? transactionType;
@@ -34,14 +35,15 @@ class StockTransaction implements TableData {
     this.isSend,
     this.sendDate,
     this.transactionType,
-    this.expirationDate,
+    this.startDate,
+    this.endDate,
     this.medicine,
     this.service,
   });
 
   @override
   List get content => [
-    sendDate?.formattedDate,
+    startDate?.formattedDate,
     medicine?.name.toString(),
     medicine?.barcode,
     transactionKind?.label,
@@ -80,8 +82,8 @@ class StockTransaction implements TableData {
     double? quantity,
     int? userId,
     bool? isSend,
-    DateTime? sendDate,
-    DateTime? expirationDate,
+    DateTime? startDate,
+    DateTime? endDate,
     Medicine? medicine,
     HospitalService? service,
     StockTransactionType? transactionType,
@@ -96,7 +98,8 @@ class StockTransaction implements TableData {
       userId: userId ?? this.userId,
       isSend: isSend ?? this.isSend,
       sendDate: sendDate ?? this.sendDate,
-      expirationDate: expirationDate ?? this.expirationDate,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
       medicine: medicine ?? this.medicine,
       service: service ?? this.service,
       transactionKind: transactionKind ?? this.transactionKind,

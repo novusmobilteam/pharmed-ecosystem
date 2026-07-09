@@ -3034,6 +3034,10 @@
   "@report_stationTransactionTitleFallback": {
     "description": "Fallback screen title when the menu name is not provided, for the station transaction report"
   },
+  "report_hospitalStocksTitleFallback": "Hastane Malzeme Listesi",
+  "@report_hospitalStocksTitleFallback": {
+    "description": "Fallback title for the hospital stock/material list report, shown when no more specific title is available"
+  },
   "inconsistency_screenTitleFallback": "Tutarsızlık Hareketleri",
   "@inconsistency_screenTitleFallback": {
     "description": "Fallback screen title when the menu name is not provided"
@@ -5127,29 +5131,45 @@
   "@enumCore_stockTxTypeOut": {
     "description": "StockTransactionType enum label for outgoing stock"
   },
-  "enumCore_stockTxKindPurchase": "Malzeme Alımı",
-  "@enumCore_stockTxKindPurchase": {
-    "description": "StockTransactionKind enum label for a material purchase"
+  "enumCore_stockTxKindRefill": "Malzeme Dolum",
+  "@enumCore_stockTxKindRefill": {
+  "description": "Label for the Refill value of the StockTransactionKind enum (stock replenishment into the cabin)"
   },
-  "enumCore_stockTxKindExcess": "Stok Fazlası",
-  "@enumCore_stockTxKindExcess": {
-    "description": "StockTransactionKind enum label for excess stock"
+  "enumCore_stockTxKindStockOut": "Stok Çıkışı",
+  "@enumCore_stockTxKindStockOut": {
+  "description": "Label for the StockOut value of the StockTransactionKind enum (material taken out of stock for use)"
   },
-  "enumCore_stockTxKindShortage": "Stok Eksiği",
-  "@enumCore_stockTxKindShortage": {
-    "description": "StockTransactionKind enum label for stock shortage"
-  },
-  "enumCore_stockTxKindReturn": "Malzeme İadesi",
+  "enumCore_stockTxKindReturn": "Malzeme İade",
   "@enumCore_stockTxKindReturn": {
-    "description": "StockTransactionKind enum label for a material return"
+  "description": "Label for the Return/Refund value of the StockTransactionKind enum (material returned out of the cabin)"
   },
-  "enumCore_stockTxKindCensus": "Sayım",
-  "@enumCore_stockTxKindCensus": {
-    "description": "StockTransactionKind enum label for a stock census/count"
+  "enumCore_stockTxKindExcess": "Sayım Fazlası",
+  "@enumCore_stockTxKindExcess": {
+    "description": "Label for the CountExcess value of the StockTransactionKind enum (physical census found more stock than expected)"
   },
-  "enumCore_stockTxKindUsage": "Malzeme Kullanımı",
-  "@enumCore_stockTxKindUsage": {
-    "description": "StockTransactionKind enum label for material usage"
+  "enumCore_stockTxKindShortage": "Sayım Eksiği",
+  "@enumCore_stockTxKindShortage": {
+    "description": "Label for the CountShortage value of the StockTransactionKind enum (physical census found less stock than expected)"
+  },
+  "enumCore_stockTxKindConsistent": "Tutarlı Sayım",
+  "@enumCore_stockTxKindConsistent": {
+    "description": "Label for the CountConsistent value of the StockTransactionKind enum (physical census matches expected stock)"
+  },
+  "enumCore_stockTxKindPurchase": "Malzeme Alım",
+  "@enumCore_stockTxKindPurchase": {
+    "description": "Label for the Intake value of the StockTransactionKind enum (material received into the cabin, e.g. from purchasing)"
+  },
+  "enumCore_stockTxKindReturnInward": "İade Alım",
+  "@enumCore_stockTxKindReturnInward": {
+    "description": "Label for the ReturnInward value of the StockTransactionKind enum (a returned item received back into the cabin)"
+  },
+  "enumCore_stockTxKindWastage": "Fire",
+  "@enumCore_stockTxKindWastage": {
+    "description": "Label for the Wastage value of the StockTransactionKind enum (material discarded/destroyed, e.g. expired or damaged)"
+  },
+  "enumCore_stockTxKindUnload": "Malzeme Boşaltma",
+  "@enumCore_stockTxKindUnload": {
+    "description": "Label for the Unload value of the StockTransactionKind enum (material removed/emptied out of the cabin)"
   },
   "enumCore_countTypeNone": "Sayım Yok",
   "@enumCore_countTypeNone": {
@@ -5797,5 +5817,13 @@
   "cabin_unitDoseTypeLabel": "B.DOZ",
   "@cabin_unitDoseTypeLabel": {
     "description": "Type badge abbreviation for a unit-dose drug group on the master cabin overview panel"
+  },
+  "refund_showCompletedTooltip": "Tamamlananları Göster",
+  "@refund_showCompletedTooltip": {
+    "description": "Tooltip for the toggle on the refund screen that filters the list to show completed refund records"
+  },
+  "refund_showIncompleteTooltip": "Tamamlanmayanları Göster",
+  "@refund_showIncompleteTooltip": {
+    "description": "Tooltip for the toggle on the refund screen that filters the list to show incomplete (not yet completed) refund records"
   }
 }

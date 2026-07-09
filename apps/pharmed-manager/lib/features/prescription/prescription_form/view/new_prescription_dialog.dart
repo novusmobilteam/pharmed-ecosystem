@@ -21,6 +21,8 @@ part 'prescription_dialog_widgets.dart';
 /// dışa tıklama ile kapanmaz.
 Future<void> showPrescriptionFormDialog(BuildContext context, {Hospitalization? hospitalization}) {
   final initial = hospitalization ?? context.read<PrescriptionNotifier>().selectedHospitalization;
+  final creatingLoadingMessage = context.l10n.prescriptionCreatingLoadingMessage;
+  final templateSavingLoadingMessage = context.l10n.prescriptionTemplateSavingLoadingMessage;
 
   return showMedDialog(
     context: context,
@@ -33,8 +35,8 @@ Future<void> showPrescriptionFormDialog(BuildContext context, {Hospitalization? 
             hospitalization: initial,
             authNotifier: ctx.read(),
             templateUseCase: ctx.read(),
-            creatingLoadingMessage: ctx.l10n.prescriptionCreatingLoadingMessage,
-            templateSavingLoadingMessage: ctx.l10n.prescriptionTemplateSavingLoadingMessage,
+            creatingLoadingMessage: creatingLoadingMessage,
+            templateSavingLoadingMessage: templateSavingLoadingMessage,
           ),
         ),
         ChangeNotifierProvider(

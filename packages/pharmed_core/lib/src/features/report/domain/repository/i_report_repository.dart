@@ -10,4 +10,10 @@ abstract interface class IReportRepository {
     PagedQueryParams? params,
     required int stationId,
   });
+
+  /// Hastane Malzeme Listesi
+  Future<Result<ApiResponse<List<HospitalStock>>?>> getHospitalStocks({
+    PagedQueryParams? params,
+    required int stationId,
+  });
 }

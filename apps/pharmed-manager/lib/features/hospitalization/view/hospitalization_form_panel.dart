@@ -31,7 +31,7 @@ class HospitalizationPanel extends StatelessWidget {
               if (formKey.currentState!.validate()) {
                 notifier.submit(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  onSuccess: (_) {
+                  onSuccess: () {
                     MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
                     hospNotifier.closePanel();
                     hospNotifier.fetch();

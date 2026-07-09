@@ -1497,6 +1497,10 @@
   "@report_stationTransactionTitleFallback": {
     "description": "Fallback screen title when the menu name is not provided, for the station transaction report"
   },
+  "report_hospitalStocksTitleFallback": "Liste du Matériel Hospitalier",
+  "@report_hospitalStocksTitleFallback": {
+    "description": "Fallback title for the hospital stock/material list report, shown when no more specific title is available"
+  },
   "inconsistency_screenTitleFallback": "Mouvements d'incohérence",
   "@inconsistency_screenTitleFallback": {
     "description": "Fallback screen title when the menu name is not provided"
@@ -3590,29 +3594,45 @@
   "@enumCore_stockTxTypeOut": {
     "description": "StockTransactionType enum label for outgoing stock"
   },
-  "enumCore_stockTxKindPurchase": "Achat de matériel",
-  "@enumCore_stockTxKindPurchase": {
-    "description": "StockTransactionKind enum label for a material purchase"
+  "enumCore_stockTxKindRefill": "Remplissage de Matériel",
+  "@enumCore_stockTxKindRefill": {
+  "description": "Label for the Refill value of the StockTransactionKind enum (stock replenishment into the cabin)"
   },
-  "enumCore_stockTxKindExcess": "Stock excédentaire",
-  "@enumCore_stockTxKindExcess": {
-    "description": "StockTransactionKind enum label for excess stock"
+  "enumCore_stockTxKindStockOut": "Sortie de Stock",
+  "@enumCore_stockTxKindStockOut": {
+  "description": "Label for the StockOut value of the StockTransactionKind enum (material taken out of stock for use)"
   },
-  "enumCore_stockTxKindShortage": "Pénurie de stock",
-  "@enumCore_stockTxKindShortage": {
-    "description": "StockTransactionKind enum label for stock shortage"
-  },
-  "enumCore_stockTxKindReturn": "Retour de matériel",
+  "enumCore_stockTxKindReturn": "Retour de Matériel",
   "@enumCore_stockTxKindReturn": {
-    "description": "StockTransactionKind enum label for a material return"
+  "description": "Label for the Return/Refund value of the StockTransactionKind enum (material returned out of the cabin)"
   },
-  "enumCore_stockTxKindCensus": "Comptage",
-  "@enumCore_stockTxKindCensus": {
-    "description": "StockTransactionKind enum label for a stock census/count"
+  "enumCore_stockTxKindExcess": "Excédent de Comptage",
+  "@enumCore_stockTxKindExcess": {
+    "description": "Label for the CountExcess value of the StockTransactionKind enum (physical census found more stock than expected)"
   },
-  "enumCore_stockTxKindUsage": "Utilisation de matériel",
-  "@enumCore_stockTxKindUsage": {
-    "description": "StockTransactionKind enum label for material usage"
+  "enumCore_stockTxKindShortage": "Manque de Comptage",
+  "@enumCore_stockTxKindShortage": {
+    "description": "Label for the CountShortage value of the StockTransactionKind enum (physical census found less stock than expected)"
+  },
+  "enumCore_stockTxKindConsistent": "Comptage Conforme",
+  "@enumCore_stockTxKindConsistent": {
+    "description": "Label for the CountConsistent value of the StockTransactionKind enum (physical census matches expected stock)"
+  },
+  "enumCore_stockTxKindPurchase": "Réception de Matériel",
+  "@enumCore_stockTxKindPurchase": {
+    "description": "Label for the Intake value of the StockTransactionKind enum (material received into the cabin, e.g. from purchasing)"
+  },
+  "enumCore_stockTxKindReturnInward": "Réception de Retour",
+  "@enumCore_stockTxKindReturnInward": {
+    "description": "Label for the ReturnInward value of the StockTransactionKind enum (a returned item received back into the cabin)"
+  },
+  "enumCore_stockTxKindWastage": "Gaspillage",
+  "@enumCore_stockTxKindWastage": {
+    "description": "Label for the Wastage value of the StockTransactionKind enum (material discarded/destroyed, e.g. expired or damaged)"
+  },
+  "enumCore_stockTxKindUnload": "Déchargement de Matériel",
+  "@enumCore_stockTxKindUnload": {
+    "description": "Label for the Unload value of the StockTransactionKind enum (material removed/emptied out of the cabin)"
   },
   "enumCore_countTypeNone": "Aucun comptage",
   "@enumCore_countTypeNone": {
@@ -4260,5 +4280,13 @@
   "cabin_unitDoseTypeLabel": "D.UNIT",
   "@cabin_unitDoseTypeLabel": {
     "description": "Type badge abbreviation for a unit-dose drug group on the master cabin overview panel"
+  },
+  "refund_showCompletedTooltip": "Afficher les Terminés",
+  "@refund_showCompletedTooltip": {
+    "description": "Tooltip for the toggle on the refund screen that filters the list to show completed refund records"
+  },
+  "refund_showIncompleteTooltip": "Afficher les Non Terminés",
+  "@refund_showIncompleteTooltip": {
+    "description": "Tooltip for the toggle on the refund screen that filters the list to show incomplete (not yet completed) refund records"
   }
 }

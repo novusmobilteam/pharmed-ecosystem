@@ -75,18 +75,6 @@ class RefundRepositoryImpl implements IRefundRepository {
   }
 
   @override
-  Future<Result<List<Refund>>> getCompletedPharmacyRefunds() async {
-    final result = await _dataSource.getCompletedPharmacyRefunds();
-    return result.when(ok: (dtos) => Result.ok(_refundMapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
-  }
-
-  @override
-  Future<Result<List<Refund>>> getPharmacyRefunds() async {
-    final result = await _dataSource.getPharmacyRefunds();
-    return result.when(ok: (dtos) => Result.ok(_refundMapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
-  }
-
-  @override
   Future<Result<List<Refund>>> getDrawerRefunds() async {
     final result = await _dataSource.getDrawerRefunds();
     return result.when(ok: (dtos) => Result.ok(_refundMapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
@@ -95,5 +83,41 @@ class RefundRepositoryImpl implements IRefundRepository {
   @override
   Future<Result<void>> deletePharmacyRefund(int refundId, String? description) async {
     return await _dataSource.deletePharmacyRefund(refundId, description);
+  }
+
+  @override
+  Future<Result<ApiResponse<List<Refund>>?>> getCompletedPharmacyRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getCompletedPharmacyRefunds(params: params, stationId: stationId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<Refund>>(
+          data: apiResponse?.data != null ? _refundMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<Refund>>?>> getPharmacyRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getPharmacyRefunds(params: params, stationId: stationId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<Refund>>(
+          data: apiResponse?.data != null ? _refundMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
   }
 }

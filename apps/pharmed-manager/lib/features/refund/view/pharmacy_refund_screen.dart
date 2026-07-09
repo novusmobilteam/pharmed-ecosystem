@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_manager/core/core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/core.dart';
-
-import '../notifier/completed_pharmacy_refund_notifier.dart';
 import '../notifier/pharmacy_refund_notifier.dart';
-
-part 'completed_pharmacy_refunds_view.dart';
 
 class PharmacyRefundScreen extends StatelessWidget {
   const PharmacyRefundScreen({super.key, required this.menu});
@@ -21,7 +17,9 @@ class PharmacyRefundScreen extends StatelessWidget {
         getPharmacyRefundsUseCase: context.read(),
         completePharmacyRefundUseCase: context.read(),
         deletePharmacyRefundUseCase: context.read(),
-      )..getRefunds(),
+        getStationsUseCase: context.read(),
+        getCompletedPharmacyRefundsUseCase: context.read(),
+      )..getStations(),
       child: Consumer<PharmacyRefundNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
@@ -31,13 +29,6 @@ class PharmacyRefundScreen extends StatelessWidget {
               title: menu.name ?? 'Eczane İade Alma',
               subtitle: menu.description,
               isLoading: notifier.isLoading(notifier.completeOp),
-              actions: [
-                IconButton(
-                  onPressed: () => showCompletedRefundsView(context),
-                  tooltip: 'Tamamlanmış İadeler',
-                  icon: Icon(PhosphorIcons.clockCounterClockwise()),
-                ),
-              ],
               child: _RefundTableView(notifier: notifier),
             ),
           );
@@ -55,19 +46,35 @@ class _RefundTableView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MedTable<Refund>(
-      data: notifier.categoryFilteredItems,
+      data: notifier.items,
       isLoading: notifier.isFetching,
+      enableExcel: true,
+      enableSearch: true,
+      enablePDF: true,
+      enableDateFilter: true,
+
+      // Pagination
+      enablePagination: true,
+      pageSize: notifier.pageSize,
+      currentPage: notifier.currentPage,
+      serverTotalCount: notifier.totalCount,
+      onPageChanged: notifier.setPage,
+
+      // Filter & Search
+      initialDateRange: notifier.dateRange,
+      onDateRangeChanged: notifier.setDateRange,
+      onSearchChanged: notifier.search,
+
+      // Kategori
       categories: notifier.tableCategories,
       selectedCategoryId: notifier.selectedCategoryId,
-      onCategoryChanged: notifier.selectCategory,
-      enableSearch: true,
-      onSearchChanged: notifier.search,
-      enableExcel: true,
+      onCategoryChanged: (id) => notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
+      categoryTitle: context.l10n.report_stationsCategoryTitle,
+
       actions: [
         TableActionItem(
-          icon: PhosphorIcons.keyReturn(),
+          icon: PhosphorIcons.arrowFatDown(),
           tooltip: 'İade Al',
-          color: context.colorScheme.primary,
           onPressed: (refund) => notifier.completeRefund(
             refund,
             onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
@@ -76,20 +83,23 @@ class _RefundTableView extends StatelessWidget {
         ),
         TableActionItem.delete(context: context, onPressed: (refund) => showDeleteDescriptionView(context, refund)),
       ],
-      emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
+
+      toolbarActions: [
+        MedRectangleIconButton(
+          tooltip: notifier.showCompleted
+              ? context.l10n.refund_showCompletedTooltip
+              : context.l10n.refund_showIncompleteTooltip,
+          iconData: notifier.showCompleted ? PhosphorIcons.checkCircle() : PhosphorIcons.hourglass(),
+          color: MedColors.amberLight,
+          iconColor: MedColors.amber,
+          onPressed: notifier.toggleCompleted,
+        ),
+      ],
+
+      columnDefs: notifier.showCompleted ? _buildColumnDefs() : null,
+      cellBuilder: notifier.showCompleted ? _buildCell : null,
     );
   }
-}
-
-void showCompletedRefundsView(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) => ChangeNotifierProvider(
-      create: (context) =>
-          CompletedPharmacyRefundNotifier(getCompletedPharmacyRefundsUseCase: context.read())..getCompletedRefunds(),
-      child: const CompletedRefundsView(),
-    ),
-  );
 }
 
 void showDeleteDescriptionView(BuildContext context, Refund data) {
@@ -143,4 +153,30 @@ class DeleteDescriptionView extends StatelessWidget {
       },
     );
   }
+}
+
+List<TableColumnDef> _buildColumnDefs() => const [
+  TableColumnDef(title: 'Hasta Kodu', flex: 0.8), // colIndex: 0
+  TableColumnDef(title: 'Hasta', flex: 1.2), // colIndex: 1
+  TableColumnDef(title: 'Kullanıcı'), // colIndex: 2
+  TableColumnDef(title: 'Malzeme', flex: 1.5), // colIndex: 3
+  TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7), // colIndex: 4
+  TableColumnDef(title: 'Tarih'), // colIndex: 5
+  TableColumnDef(title: 'İade Alan Kullanıcı'), // colIndex: 6
+  TableColumnDef(title: 'İade Alma Tarihi'), // colIndex: 7
+];
+
+Widget? _buildCell(Refund item, int colIndex, dynamic _) {
+  return switch (colIndex) {
+    0 => Text(item.patient?.id?.toString() ?? '-'),
+    1 => Text(item.patient?.fullName ?? '-'),
+    2 => Text(item.user ?? '-'),
+    3 => Text(item.medicine?.name ?? '-'),
+    4 => Text(item.quantity?.formatFractional ?? '-'),
+    5 => Text(item.createdDate?.formattedDate ?? '-'),
+    6 => Text(item.receiveUser?.fullName ?? '-'),
+    7 => Text(item.receiveDate?.formattedDate ?? '-'),
+
+    _ => null,
+  };
 }

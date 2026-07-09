@@ -47,4 +47,21 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.apiResponseListParser(StockTransactionDTO.fromJson),
     );
   }
+
+  Future<Result<ApiResponse<List<HospitalStockDto>>?>> getHospitalStocks({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/hospitalMaterialList/$stationId',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(HospitalStockDto.fromJson),
+    );
+  }
 }

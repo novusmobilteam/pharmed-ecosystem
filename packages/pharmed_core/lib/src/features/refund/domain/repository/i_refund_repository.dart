@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 abstract class IRefundRepository {
   // Yatış ID'sine göre master kabinde iade edilebilecekleri getirir
@@ -29,13 +30,16 @@ abstract class IRefundRepository {
   Future<Result<void>> refundToOrigin({required int id, required double quantity, required int cabinDrawerDetailId});
 
   // Eczaneye iade edilen ilaçları getirir
-  Future<Result<List<Refund>>> getPharmacyRefunds();
+  Future<Result<ApiResponse<List<Refund>>?>> getPharmacyRefunds({PagedQueryParams? params, required int stationId});
 
   // Eczaneye iade edilen ilacın iadesinin tamamlanması işlemi
   Future<Result<void>> completePharmacyRefund(int id);
 
   // Eczaneye iade edilmiş ve eczacının tamamladığı iadeleri getirir
-  Future<Result<List<Refund>>> getCompletedPharmacyRefunds();
+  Future<Result<ApiResponse<List<Refund>>?>> getCompletedPharmacyRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  });
 
   // Çekmeceye iade edilen ilaçları getirir
   Future<Result<List<Refund>>> getDrawerRefunds();

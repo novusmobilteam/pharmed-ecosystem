@@ -2,12 +2,16 @@ import 'package:collection/collection.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum StockTransactionKind {
-  materialPurchasing(1),
-  excessStock(2),
-  insufficientStock(3),
-  materialRefund(4),
-  counting(5),
-  materialUse(6);
+  refill(1),
+  stockOut(2),
+  refund(3),
+  censusExcess(4),
+  censusShortage(5),
+  censusConsistent(6),
+  intake(7),
+  returnInward(8),
+  wastage(9),
+  unload(10);
 
   final int id;
 
@@ -20,23 +24,26 @@ enum StockTransactionKind {
 
   String get label {
     switch (this) {
-      case StockTransactionKind.materialPurchasing:
-        return contextlessL10n().enumCore_stockTxKindPurchase;
-
-      // Fazla ve Eksik stok bildirimi
-      case StockTransactionKind.excessStock:
-        return contextlessL10n().enumCore_stockTxKindExcess;
-      case StockTransactionKind.insufficientStock:
-        return contextlessL10n().enumCore_stockTxKindShortage;
-
-      case StockTransactionKind.materialRefund:
+      case StockTransactionKind.refill:
+        return contextlessL10n().enumCore_stockTxKindRefill;
+      case StockTransactionKind.stockOut:
+        return contextlessL10n().enumCore_stockTxKindStockOut;
+      case StockTransactionKind.refund:
         return contextlessL10n().enumCore_stockTxKindReturn;
-
-      case StockTransactionKind.counting:
-        return contextlessL10n().enumCore_stockTxKindCensus;
-
-      case StockTransactionKind.materialUse:
-        return contextlessL10n().enumCore_stockTxKindUsage;
+      case StockTransactionKind.censusExcess:
+        return contextlessL10n().enumCore_stockTxKindExcess;
+      case StockTransactionKind.censusShortage:
+        return contextlessL10n().enumCore_stockTxKindShortage;
+      case StockTransactionKind.censusConsistent:
+        return contextlessL10n().enumCore_stockTxKindConsistent;
+      case StockTransactionKind.intake:
+        return contextlessL10n().enumCore_stockTxKindPurchase;
+      case StockTransactionKind.returnInward:
+        return contextlessL10n().enumCore_stockTxKindReturnInward;
+      case StockTransactionKind.wastage:
+        return contextlessL10n().enumCore_stockTxKindWastage;
+      case StockTransactionKind.unload:
+        return contextlessL10n().enumCore_stockTxKindUnload;
     }
   }
 }

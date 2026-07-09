@@ -2,6 +2,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
+// TODO : Localization
 class Refund implements TableData {
   final int? id;
   final int? type;
@@ -19,6 +20,7 @@ class Refund implements TableData {
   final User? cancelUser;
   final String? description;
   final bool? isDeleted;
+  final DateTime? createdDate;
 
   Patient? get patient => prescriptionDetail?.prescription?.hospitalization?.patient;
 
@@ -29,7 +31,7 @@ class Refund implements TableData {
     user,
     medicine?.name,
     quantity?.formatFractional,
-    receiveDate?.formattedDate,
+    createdDate?.formattedDateTime,
     description,
   ];
 
@@ -43,7 +45,7 @@ class Refund implements TableData {
     user,
     medicine?.name,
     quantity?.formatFractional,
-    receiveDate?.formattedDate,
+    createdDate?.formattedDate,
     description,
   ];
 
@@ -64,5 +66,6 @@ class Refund implements TableData {
     this.cancelUser,
     this.description,
     this.isDeleted,
+    this.createdDate,
   });
 }

@@ -18,7 +18,8 @@ class StockTransactionDTO {
   final int? sendServiceId;
   final ServiceDto? sendService;
   final DateTime? sendDate;
-  final DateTime? expirationDate;
+  final DateTime? startDate;
+  final DateTime? endDate;
 
   const StockTransactionDTO({
     this.id,
@@ -36,7 +37,8 @@ class StockTransactionDTO {
     this.isSend,
     this.sendDate,
     this.transactionType,
-    this.expirationDate,
+    this.startDate,
+    this.endDate,
     this.sendServiceId,
     this.sendService,
   });
@@ -56,7 +58,8 @@ class StockTransactionDTO {
       userId: json['userId'],
       isSend: json['isSend'],
       sendDate: json['sendDate'] != null ? DateTime.tryParse(json['sendDate']) : null,
-      expirationDate: json['miadDate'] != null ? DateTime.tryParse(json['miadDate']) : null,
+      startDate: json['transactionStartDate'] != null ? DateTime.tryParse(json['transactionStartDate']) : null,
+      endDate: json['transactionEndDate'] != null ? DateTime.tryParse(json['transactionEndDate']) : null,
       transactionType: json['transactionType'],
       sendServiceId: json['sendServiceId'],
       sendService: json['sendService'] != null ? ServiceDto.fromJson(json['sendService']) : null,
@@ -76,7 +79,6 @@ class StockTransactionDTO {
       'isSend': isSend,
       'sendDate': sendDate?.toIso8601String(),
       'transactionType': transactionType,
-      'expirationDate': expirationDate?.toIso8601String(),
       'sendServiceId': sendServiceId,
     };
   }

@@ -143,12 +143,12 @@ mixin PaginationMixin<T> on ApiRequestMixin {
 
   /// Kategori/tab değişiminde her şeyi sıfırlayan tek nokta.
   /// Notifier kendi filtre state'ini de sıfırladıktan sonra reload çağırır.
-  void resetFilters({bool notify = true}) {
+  void resetFilters({bool notify = true, bool resetDate = true}) {
     _searchDebounce?.cancel();
     final changed =
         _searchQuery.isNotEmpty || _currentPage != 1 || _dateRange?.start != null || _dateRange?.end != null;
     _searchQuery = '';
-    _dateRange = null;
+    if (resetDate) _dateRange = null;
     _currentPage = 1;
     if (notify && changed) notifyListeners();
   }

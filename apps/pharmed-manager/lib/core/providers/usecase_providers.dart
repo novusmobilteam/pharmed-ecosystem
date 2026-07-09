@@ -248,6 +248,7 @@ class UsecaseProviders {
       /// Reports
       Provider(create: (context) => GetExpiredStocksUseCase(context.read())),
       Provider(create: (context) => GetStationTransactionsUseCase(context.read())),
+      Provider(create: (context) => GetHospitalStocksUseCase(context.read())),
     ];
   }
 }

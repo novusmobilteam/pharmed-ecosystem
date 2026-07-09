@@ -5,14 +5,17 @@ class ReportRepositoryImpl implements IReportRepository {
   final ReportRemoteDataSource _dataSource;
   final CabinStockMapper _cabinStockMapper;
   final StockTransactionMapper _stockTransactionMapper;
+  final HospitalStockMapper _hospitalStockMapper;
 
   ReportRepositoryImpl({
     required ReportRemoteDataSource dataSource,
     required CabinStockMapper cabinStockMapper,
     required StockTransactionMapper stockTransactionMapper,
+    required HospitalStockMapper hospitalStockMapper,
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
-       _stockTransactionMapper = stockTransactionMapper;
+       _stockTransactionMapper = stockTransactionMapper,
+       _hospitalStockMapper = hospitalStockMapper;
 
   @override
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({
@@ -42,6 +45,24 @@ class ReportRepositoryImpl implements IReportRepository {
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<StockTransaction>>(
           data: apiResponse?.data != null ? _stockTransactionMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<HospitalStock>>?>> getHospitalStocks({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getHospitalStocks(params: params, stationId: stationId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<HospitalStock>>(
+          data: apiResponse?.data != null ? _hospitalStockMapper.toEntityList(apiResponse!.data!) : null,
           isSuccess: apiResponse?.isSuccess,
           totalCount: apiResponse?.totalCount,
         ),
