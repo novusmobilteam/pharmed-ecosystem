@@ -1901,6 +1901,14 @@
   "@userKitPurchaseLabel": {
     "description": "Field label for the kit purchase permission"
   },
+  "user_badgeCardLabel": "Badge",
+  "@user_badgeCardLabel": {
+    "description": "Field label in the user form showing the badge (RFID) card value read from the card reader"
+  },
+  "user_badgeCardHint": "Scannez la carte",
+  "@user_badgeCardHint": {
+    "description": "Placeholder shown in the user form badge card field before a card is scanned"
+  },
   "userAuthorizedStationsLabel": "Stations autorisées",
   "@userAuthorizedStationsLabel": {
     "description": "Field label for the user's authorized stations"

@@ -16,4 +16,20 @@ abstract interface class IReportRepository {
     PagedQueryParams? params,
     required int stationId,
   });
+
+  /// Hasta Envanter Listesi
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getPatientInventory({
+    PagedQueryParams? params,
+    required int patientId,
+  });
+
+  /// Malzeme Kullanım Listesi
+  Future<Result<ApiResponse<List<StockTransaction>>?>> getMaterialUsages({
+    PagedQueryParams? params,
+    required int stationId,
+  });
+
+  /// Yetki Listesi
+  Future<Result<ApiResponse<List<UserAuthorizationSummary>>?>> getAuthorizationSummary({PagedQueryParams? params});
+  Future<Result<UserAuthorizationDetail?>> getUserAuthorizationSummary(int userId);
 }

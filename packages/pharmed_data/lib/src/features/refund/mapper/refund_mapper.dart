@@ -13,9 +13,7 @@ class RefundMapper {
       quantity: dto.quantity,
       returnFormId: dto.returnFormId,
       prescriptionDetailId: dto.prescriptionDetailId,
-      userId: dto.userId,
-      user: dto.user,
-      receiveDate: dto.receiveDate,
+
       isCancel: dto.isCancel,
       description: dto.description,
       isDeleted: dto.isDeleted,
@@ -23,9 +21,13 @@ class RefundMapper {
       prescriptionDetail: const PrescriptionItemMapper().toEntityOrNull(dto.prescriptionDetail),
       medicine: const MedicineMapper().toEntityOrNull(dto.medicine),
       station: const StationMapper().toEntityOrNull(dto.station),
+      createdUser: const UserMapper().toEntityOrNull(dto.createdUser),
       receiveUser: const UserMapper().toEntityOrNull(dto.receiveUser),
+      approvedUser: const UserMapper().toEntityOrNull(dto.approvedUser),
       cancelUser: const UserMapper().toEntityOrNull(dto.cancelUser),
       createdDate: dto.createdDate,
+      approvedDate: dto.approvedDate,
+      receiveDate: dto.receiveDate,
     );
   }
 
@@ -36,8 +38,6 @@ class RefundMapper {
       quantity: entity.quantity,
       returnFormId: entity.returnFormId,
       prescriptionDetailId: entity.prescriptionDetailId,
-      userId: entity.userId,
-      user: entity.user,
       receiveDate: entity.receiveDate,
       isCancel: entity.isCancel,
       description: entity.description,
@@ -46,6 +46,8 @@ class RefundMapper {
       prescriptionDetail: const PrescriptionItemMapper().toDtoOrNull(entity.prescriptionDetail),
       medicine: const MedicineMapper().toDtoOrNull(entity.medicine),
       station: const StationMapper().toDtoOrNull(entity.station),
+      createdUser: const UserMapper().toDtoOrNull(entity.createdUser),
+      approvedUser: const UserMapper().toDtoOrNull(entity.approvedUser),
       receiveUser: const UserMapper().toDtoOrNull(entity.receiveUser),
       cancelUser: const UserMapper().toDtoOrNull(entity.cancelUser),
     );

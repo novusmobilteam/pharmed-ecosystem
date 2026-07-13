@@ -44,8 +44,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       style: InputFieldStyle.client,
       child: MaterialApp(
         title: 'Pharmed',
+        theme: MedTheme.client(),
         debugShowCheckedModeBanner: false,
-        navigatorKey: _navigatorKey, // <-- ekle
+        navigatorKey: _navigatorKey,
         locale: locale,
         localizationsDelegates: const [
           AppLocalizations.delegate,

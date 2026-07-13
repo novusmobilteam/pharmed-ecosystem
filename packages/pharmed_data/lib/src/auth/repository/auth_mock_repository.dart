@@ -47,7 +47,9 @@ class AuthMockRepository implements IAuthRepository {
     final userData = _mockUsers[u];
 
     if (userData == null || userData.password != password) {
-      return Result.error(ServiceException(message: contextlessL10n().authError_invalidCredentialsMock, statusCode: 401));
+      return Result.error(
+        ServiceException(message: contextlessL10n().authError_invalidCredentialsMock, statusCode: 401),
+      );
     }
 
     return Result.ok(
@@ -76,4 +78,10 @@ class AuthMockRepository implements IAuthRepository {
 
   @override
   Future<String?> getStoredToken() async => null;
+
+  @override
+  Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress}) {
+    // TODO: implement loginWithBadge
+    throw UnimplementedError();
+  }
 }

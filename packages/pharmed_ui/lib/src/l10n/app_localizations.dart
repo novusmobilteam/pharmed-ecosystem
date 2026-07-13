@@ -5214,6 +5214,18 @@ abstract class AppLocalizations {
   /// **'Kit Purchase'**
   String get userKitPurchaseLabel;
 
+  /// Field label in the user form showing the badge (RFID) card value read from the card reader
+  ///
+  /// In en, this message translates to:
+  /// **'Badge Card'**
+  String get user_badgeCardLabel;
+
+  /// Placeholder shown in the user form badge card field before a card is scanned
+  ///
+  /// In en, this message translates to:
+  /// **'Scan card'**
+  String get user_badgeCardHint;
+
   /// Field label for the user's authorized stations
   ///
   /// In en, this message translates to:

@@ -2799,6 +2799,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get userKitPurchaseLabel => 'Kit Alım';
 
   @override
+  String get user_badgeCardLabel => 'Yaka Kartı';
+
+  @override
+  String get user_badgeCardHint => 'Kartı okutun';
+
+  @override
   String get userAuthorizedStationsLabel => 'Yetki İstasyonlar';
 
   @override

@@ -30,11 +30,11 @@ class MedicineTableView extends StatelessWidget {
               isLoading: vm.isFetching,
               // DirectedOrder.titles context'e erişimi olmayan bir entity
               // getter'ı olduğundan, kolon başlıkları burada l10n ile override edilir.
-              columnDefs: [
-                TableColumnDef(title: context.l10n.wizard_summaryLabelStation, contentIndex: 0),
-                TableColumnDef(title: context.l10n.directedOrdersColumnBarcode, contentIndex: 1),
-                TableColumnDef(title: context.l10n.drugActivity_column_material, contentIndex: 2),
-              ],
+              // columnDefs: [
+              //   TableColumnDef(title: context.l10n.wizard_summaryLabelStation, contentIndex: 0),
+              //   TableColumnDef(title: context.l10n.directedOrdersColumnBarcode, contentIndex: 1),
+              //   TableColumnDef(title: context.l10n.drugActivity_column_material, contentIndex: 2),
+              // ],
             ),
           ),
         );

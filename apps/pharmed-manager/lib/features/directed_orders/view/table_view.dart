@@ -30,7 +30,7 @@ class _TableView extends StatelessWidget {
       enableSearch: true,
       enableExcel: true,
       onSearchChanged: vm.search,
-      columnDefs: _buildColumnDefs(context),
+      // columnDefs: _buildColumnDefs(context),
       cellBuilder: _buildCell,
       actions: [
         TableActionItem(

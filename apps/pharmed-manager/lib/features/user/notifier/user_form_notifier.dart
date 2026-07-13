@@ -5,17 +5,16 @@ import '../../../core/core.dart';
 class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateUserUseCase _createUserUseCase;
   final UpdateUserUseCase _updateUserUseCase;
-  final IStationRepository _stationRepository;
-  User _user;
+  final GetStationsUseCase _getStationsUseCase;
 
   UserFormNotifier({
     required CreateUserUseCase createUserUseCase,
     required UpdateUserUseCase updateUserUseCase,
-    required IStationRepository stationRepository,
+    required GetStationsUseCase getStationsUseCase,
     User? user,
   }) : _createUserUseCase = createUserUseCase,
        _updateUserUseCase = updateUserUseCase,
-       _stationRepository = stationRepository,
+       _getStationsUseCase = getStationsUseCase,
        _user =
            user ??
            User(
@@ -30,6 +29,7 @@ class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
 
   OperationKey submitOp = OperationKey.submit();
 
+  User _user;
   User get user => _user;
 
   List<Station> _stations = [];
@@ -50,7 +50,7 @@ class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> _loadStations() async {
-    final res = await _stationRepository.getStations();
+    final res = await _getStationsUseCase.call(PagedQueryParams());
 
     res.when(
       ok: (response) {
@@ -125,6 +125,11 @@ class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
 
   void changePassword(String? value) {
     _user = _user.copyWith(password: value);
+    notifyListeners();
+  }
+
+  void changeRfidCardData(String? value) {
+    _user = _user.copyWith(rfidCardData: value);
     notifyListeners();
   }
 

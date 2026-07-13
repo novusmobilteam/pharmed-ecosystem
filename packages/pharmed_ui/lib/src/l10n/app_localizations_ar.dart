@@ -2803,6 +2803,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get userKitPurchaseLabel => 'Kit Purchase';
 
   @override
+  String get user_badgeCardLabel => 'Badge Card';
+
+  @override
+  String get user_badgeCardHint => 'Scan card';
+
+  @override
   String get userAuthorizedStationsLabel => 'Authorized Stations';
 
   @override

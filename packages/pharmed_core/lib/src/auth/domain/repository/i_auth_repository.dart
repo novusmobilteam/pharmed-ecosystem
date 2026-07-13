@@ -8,6 +8,8 @@ abstract interface class IAuthRepository {
   /// Başarılıysa token ve user'ı cache'e yazar, AuthToken döndürür.
   Future<Result<AuthToken>> login({required String email, required String password, String? macAddress});
 
+  Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress});
+
   /// Cache'i temizler.
   Future<Result<void>> logout();
 

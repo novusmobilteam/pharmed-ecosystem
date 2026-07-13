@@ -154,6 +154,11 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
+  Future<Result<void>> rejectApprovedRequests(int prescriptionId, List<int> ids) async {
+    return await _dataSource.rejectApprovedRequests(prescriptionId, ids);
+  }
+
+  @override
   Future<Result<void>> updatePrescriptionItem(PrescriptionItem entity) async {
     return await _dataSource.updatePrescriptionItem(_prescriptionItemMapper.toDto(entity));
   }

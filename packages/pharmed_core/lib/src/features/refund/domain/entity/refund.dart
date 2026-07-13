@@ -12,15 +12,23 @@ class Refund implements TableData {
   final PrescriptionItem? prescriptionDetail;
   final Medicine? medicine;
   final Station? station;
-  final int? userId;
-  final String? user;
-  final DateTime? receiveDate;
+
+  final int? createdUserId;
+  final User? createdUser;
+  final DateTime? createdDate;
+
+  final int? receiveUserId;
   final User? receiveUser;
+  final DateTime? receiveDate;
+
+  final int? approvedUserId;
+  final User? approvedUser;
+  final DateTime? approvedDate;
+
   final bool? isCancel;
   final User? cancelUser;
   final String? description;
   final bool? isDeleted;
-  final DateTime? createdDate;
 
   Patient? get patient => prescriptionDetail?.prescription?.hospitalization?.patient;
 
@@ -28,7 +36,7 @@ class Refund implements TableData {
   List<String?> get content => [
     patient?.id?.toCustomString(),
     patient?.fullName,
-    user,
+    createdUser?.fullName,
     medicine?.name,
     quantity?.formatFractional,
     createdDate?.formattedDateTime,
@@ -42,7 +50,7 @@ class Refund implements TableData {
   List get rawContent => [
     patient?.id?.toCustomString(),
     patient?.fullName,
-    user,
+    createdUser?.fullName,
     medicine?.name,
     quantity?.formatFractional,
     createdDate?.formattedDate,
@@ -58,14 +66,22 @@ class Refund implements TableData {
     this.prescriptionDetail,
     this.medicine,
     this.station,
-    this.userId,
-    this.user,
-    this.receiveDate,
+
+    this.createdUserId,
+    this.createdUser,
+    this.createdDate,
+
+    this.receiveUserId,
     this.receiveUser,
+    this.receiveDate,
+
+    this.approvedUserId,
+    this.approvedUser,
+    this.approvedDate,
+
     this.isCancel,
     this.cancelUser,
     this.description,
     this.isDeleted,
-    this.createdDate,
   });
 }

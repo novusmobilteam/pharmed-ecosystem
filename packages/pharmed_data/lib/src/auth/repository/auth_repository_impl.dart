@@ -86,6 +86,56 @@ class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
+  Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress}) async {
+    try {
+      // 1. Token al
+      final token = await _remote.loginWithBadge(cardData: cardData, macAddress: macAddress);
+
+      // 2. Token'ı cache'e yaz — interceptor bir sonraki istekte bunu okur
+      await _cache.saveToken(token);
+      _tokenHolder.setToken(token);
+
+      // 3. Kullanıcı bilgisini çek
+      final userResult = await _user.getCurrentUser();
+
+      if (userResult.isError) {
+        // Token kaydedildi ama user alınamadı — cache'i temizle, tutarsız state bırakma
+        await _cache.clear();
+        return Result.error(ServiceException(message: contextlessL10n().authError_userInfoFetchFailed, statusCode: 0));
+      }
+
+      final userDto = userResult.data;
+
+      if (userDto == null) {
+        await _cache.clear();
+        return Result.error(ServiceException(message: contextlessL10n().authError_userInfoEmpty, statusCode: 404));
+      }
+
+      // 4. Slim AppUser'a dönüştür
+      final appUser = AppUser(
+        id: userDto.id ?? 0,
+        email: userDto.email ?? '',
+        name: userDto.name ?? '',
+        surname: userDto.surname ?? '',
+        fullName: [userDto.name, userDto.surname].whereType<String>().join(' ').trim(),
+        roleName: userDto.role?.name ?? '',
+        isAdmin: userDto.isAdmin ?? false,
+        isNotOrdered: userDto.isNotOrdered,
+        roleId: userDto.role?.id ?? 0,
+      );
+
+      // 5. User'ı cache'e yaz
+      await _cache.saveUser(appUser);
+
+      return Result.ok(AuthToken(accessToken: token, user: appUser));
+    } on DioException catch (e) {
+      return Result.error(ServiceException(message: _parseDioError(e), statusCode: e.response?.statusCode ?? 0));
+    } catch (e) {
+      return Result.error(ServiceException(message: e.toString(), statusCode: 0));
+    }
+  }
+
+  @override
   Future<Result<void>> logout() async {
     try {
       await _cache.clear();

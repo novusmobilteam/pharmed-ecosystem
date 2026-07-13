@@ -72,24 +72,26 @@ class _RefundTableView extends StatelessWidget {
       categoryTitle: context.l10n.report_stationsCategoryTitle,
 
       actions: [
-        TableActionItem(
-          icon: PhosphorIcons.arrowFatDown(),
-          tooltip: 'İade Al',
-          onPressed: (refund) => notifier.completeRefund(
-            refund,
-            onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-            onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+        if (!notifier.showCompleted)
+          TableActionItem(
+            icon: PhosphorIcons.arrowFatDown(),
+            tooltip: 'İade Al',
+            onPressed: (refund) => notifier.completeRefund(
+              refund,
+              onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+              onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
+            ),
           ),
-        ),
-        TableActionItem.delete(context: context, onPressed: (refund) => showDeleteDescriptionView(context, refund)),
+        if (!notifier.showCompleted)
+          TableActionItem.delete(context: context, onPressed: (refund) => showDeleteDescriptionView(context, refund)),
       ],
 
       toolbarActions: [
         MedRectangleIconButton(
-          tooltip: notifier.showCompleted
+          tooltip: !notifier.showCompleted
               ? context.l10n.refund_showCompletedTooltip
               : context.l10n.refund_showIncompleteTooltip,
-          iconData: notifier.showCompleted ? PhosphorIcons.checkCircle() : PhosphorIcons.hourglass(),
+          iconData: !notifier.showCompleted ? PhosphorIcons.checkCircle() : PhosphorIcons.hourglass(),
           color: MedColors.amberLight,
           iconColor: MedColors.amber,
           onPressed: notifier.toggleCompleted,
@@ -97,7 +99,18 @@ class _RefundTableView extends StatelessWidget {
       ],
 
       columnDefs: notifier.showCompleted ? _buildColumnDefs() : null,
-      cellBuilder: notifier.showCompleted ? _buildCell : null,
+
+      // cellBuilder: notifier.showCompleted ? _buildCell : null,
+      pdfTitle: 'Eczane İade Raporu',
+      // veya daha zengin:
+      pdfHeaderBuilder: PdfReportHeader.build(
+        title: 'Eczane İade Raporu',
+        infoLines: [
+          if (notifier.selectedStation != null) 'İstasyon: ${notifier.selectedStation!.name}',
+          if (notifier.dateRange != null)
+            'Tarih: ${notifier.dateRange?.start.formattedDate} - ${notifier.dateRange?.end.formattedDate}',
+        ],
+      ),
     );
   }
 }
@@ -155,27 +168,41 @@ class DeleteDescriptionView extends StatelessWidget {
   }
 }
 
-List<TableColumnDef> _buildColumnDefs() => const [
-  TableColumnDef(title: 'Hasta Kodu', flex: 0.8), // colIndex: 0
-  TableColumnDef(title: 'Hasta', flex: 1.2), // colIndex: 1
-  TableColumnDef(title: 'Kullanıcı'), // colIndex: 2
-  TableColumnDef(title: 'Malzeme', flex: 1.5), // colIndex: 3
-  TableColumnDef(title: 'Miktar', numeric: true, flex: 0.7), // colIndex: 4
-  TableColumnDef(title: 'Tarih'), // colIndex: 5
-  TableColumnDef(title: 'İade Alan Kullanıcı'), // colIndex: 6
-  TableColumnDef(title: 'İade Alma Tarihi'), // colIndex: 7
+// TODO : Localization
+List<TableColumnDef<Refund>> _buildColumnDefs() => [
+  TableColumnDef<Refund>(title: 'Hasta Kodu', displayValue: (r) => r.patient?.id?.toString() ?? '-'),
+  TableColumnDef<Refund>(title: 'Hasta', displayValue: (r) => r.patient?.fullName ?? '-'),
+  TableColumnDef<Refund>(title: 'Kullanıcı', displayValue: (r) => r.createdUser?.fullName ?? '-'),
+  TableColumnDef<Refund>(title: 'Malzeme', displayValue: (r) => r.medicine?.name ?? '-'),
+  TableColumnDef<Refund>(
+    title: 'Miktar',
+    numeric: true,
+    displayValue: (r) => r.quantity?.formatFractional ?? '-',
+    sortValue: (r) => r.quantity,
+  ),
+  TableColumnDef<Refund>(
+    title: 'Tarih',
+    displayValue: (r) => r.createdDate?.formattedDate ?? '-',
+    sortValue: (r) => r.createdDate,
+  ),
+  TableColumnDef<Refund>(title: 'İade Alan Kullanıcı', displayValue: (r) => r.approvedUser?.fullName ?? '-'),
+  TableColumnDef<Refund>(
+    title: 'İade Alma Tarihi',
+    displayValue: (r) => r.approvedDate?.formattedDate ?? '-',
+    sortValue: (r) => r.approvedDate,
+  ),
 ];
 
 Widget? _buildCell(Refund item, int colIndex, dynamic _) {
   return switch (colIndex) {
     0 => Text(item.patient?.id?.toString() ?? '-'),
     1 => Text(item.patient?.fullName ?? '-'),
-    2 => Text(item.user ?? '-'),
+    2 => Text(item.createdUser?.fullName ?? '-'),
     3 => Text(item.medicine?.name ?? '-'),
     4 => Text(item.quantity?.formatFractional ?? '-'),
     5 => Text(item.createdDate?.formattedDate ?? '-'),
-    6 => Text(item.receiveUser?.fullName ?? '-'),
-    7 => Text(item.receiveDate?.formattedDate ?? '-'),
+    6 => Text(item.approvedUser?.fullName ?? '-'),
+    7 => Text(item.approvedDate?.formattedDate ?? '-'),
 
     _ => null,
   };

@@ -5,22 +5,27 @@ class UserTableView extends StatelessWidget {
 
   final Function(User user) onEdit;
 
-  List<TableColumnDef> _buildColumnDefs(BuildContext context, UserType type) {
+  List<TableColumnDef<User>> _buildColumnDefs(BuildContext context, UserType type) {
     final isNormalOrAll = type == UserType.normal;
 
     return [
-      TableColumnDef(
+      TableColumnDef<User>(
         title: type == UserType.normal
             ? context.l10n.userNationalIdColumnHeader
             : context.l10n.userRegistrationNumberLabel,
+        displayValue: (u) => u.registrationNumber ?? '-',
       ),
-      TableColumnDef(title: context.l10n.userNameLabel),
-      TableColumnDef(title: context.l10n.userSurnameLabel),
+      TableColumnDef<User>(title: context.l10n.userNameLabel, displayValue: (u) => u.name ?? '-'),
+      TableColumnDef<User>(title: context.l10n.userSurnameLabel, displayValue: (u) => u.surname ?? '-'),
       if (isNormalOrAll)
-        TableColumnDef(title: context.l10n.userRoleTypeLabel)
+        TableColumnDef<User>(title: context.l10n.userRoleTypeLabel, displayValue: (u) => u.role?.name ?? '-')
       else
-        TableColumnDef(title: context.l10n.userValidUntilLabel),
-      TableColumnDef(title: context.l10n.common_statusLabel),
+        TableColumnDef<User>(
+          title: context.l10n.userValidUntilLabel,
+          displayValue: (u) => u.validUntil.formattedDate,
+          sortValue: (u) => u.validUntil,
+        ),
+      TableColumnDef<User>(title: context.l10n.common_statusLabel, flex: 0.8, displayValue: (u) => u.status.label),
     ];
   }
 

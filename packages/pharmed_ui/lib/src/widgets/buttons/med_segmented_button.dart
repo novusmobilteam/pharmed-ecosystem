@@ -10,7 +10,6 @@ class MedSegmentedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. TEMA VERİLERİNİ ÇEKİYORUZ
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 

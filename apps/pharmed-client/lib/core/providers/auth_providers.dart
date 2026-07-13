@@ -55,6 +55,10 @@ final loginUseCaseProvider = Provider<LoginUseCase>((ref) {
   return LoginUseCase(ref.read(authRepositoryProvider));
 });
 
+final loginWithBadgeUseCaseProvider = Provider<LoginWithBadgeUseCase>((ref) {
+  return LoginWithBadgeUseCase(ref.read(authRepositoryProvider));
+});
+
 final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
   return LogoutUseCase(ref.read(authRepositoryProvider));
 });

@@ -21,6 +21,7 @@ final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotif
 class AuthNotifier extends Notifier<AuthState> {
   AuthConfig get _config => ref.read(authConfigProvider);
   LoginUseCase get _loginUseCase => ref.read(loginUseCaseProvider);
+  LoginWithBadgeUseCase get _loginWithBadge => ref.read(loginWithBadgeUseCaseProvider);
   LogoutUseCase get _logoutUseCase => ref.read(logoutUseCaseProvider);
   AuthCacheDataSource get _cache => ref.read(authCacheProvider);
   TokenHolder get _tokenHolder => ref.read(tokenHolderProvider);
@@ -63,6 +64,27 @@ class AuthNotifier extends Notifier<AuthState> {
     final macAddress = await DeviceInfo.getMacAddress();
 
     final result = await _loginUseCase(LoginParams(email: email, password: password, macAddress: macAddress));
+
+    result.when(
+      ok: (authToken) {
+        _tokenHolder.setToken(authToken.accessToken);
+        _setLoggedIn(authToken.user);
+        _markDashboardAccessed();
+      },
+      error: (failure) {
+        final rawMsg = failure is ServiceException ? failure.message : null;
+        final msg = rawMsg ?? contextlessL10n().auth_genericError;
+        state = AuthError(message: msg);
+        onError(msg);
+      },
+    );
+  }
+
+  Future<void> loginWithBadge({required String cardData, required ValueChanged<String> onError}) async {
+    state = const AuthLoading();
+    final macAddress = await DeviceInfo.getMacAddress();
+
+    final result = await _loginWithBadge.call(cardData: cardData, macAddress: macAddress);
 
     result.when(
       ok: (authToken) {

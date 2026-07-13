@@ -76,7 +76,6 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
               initialValue: detailNotifier.type,
               options: [null, ...PrescriptionMovementType.values],
               onChanged: (v) {
-                debugPrint('dropdown changed: $v');
                 detailNotifier.selectPrescriptionType(v);
               },
               labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
@@ -158,6 +157,9 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
             },
             onReject: (items) async {
               await _submit(context, prescriptionId, notifier, items, PrescriptionActionType.reject);
+            },
+            onRejectAfterApprove: (items) async {
+              await _submit(context, prescriptionId, notifier, items, PrescriptionActionType.rejectAfterApprove);
             },
           );
         },

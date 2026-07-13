@@ -17,10 +17,11 @@ class RxGroupCard extends StatefulWidget {
     super.key,
     required this.prescriptionId,
     required this.items,
-    required this.permissions, // <-- yeni
+    required this.permissions,
     this.canOverrideRfidLock = false, // <-- isAdmin yerine
     this.onApprove,
     this.onReject,
+    this.onRejectAfterApprove,
     this.onCancel,
     this.onRfidTap,
     this.onRfidDelete,
@@ -33,6 +34,7 @@ class RxGroupCard extends StatefulWidget {
   final Future<void> Function(List<PrescriptionItem>)? onApprove;
   final Future<void> Function(List<PrescriptionItem>)? onReject;
   final Future<void> Function(List<PrescriptionItem>)? onCancel;
+  final Future<void> Function(List<PrescriptionItem>)? onRejectAfterApprove;
   final Future<void> Function(PrescriptionItem item)? onRfidTap;
   final Future<void> Function(PrescriptionItem item)? onRfidDelete;
 
@@ -52,7 +54,8 @@ class _RxGroupCardState extends State<RxGroupCard> {
     if (s == null) return false;
     return (widget.permissions.canApprove && s.canApprove) ||
         (widget.permissions.canReject && s.canReject) ||
-        (widget.permissions.canCancel && s.canCancel);
+        (widget.permissions.canCancel && s.canCancel) ||
+        (widget.permissions.canRejectAfterApprove || s.canFill);
   }
 
   List<PrescriptionItem> get _selectableItems => widget.items.where(_isItemSelectable).toList();
@@ -78,6 +81,9 @@ class _RxGroupCardState extends State<RxGroupCard> {
       widget.permissions.canCancel &&
       _selectedItems.isNotEmpty &&
       _selectedItems.every((i) => i.status?.canCancel ?? false);
+
+  bool get _canRejectAfterApprovedSelected =>
+      _selectedItems.isNotEmpty && _selectedItems.every((i) => i.status?.canFill ?? false);
 
   bool get _hasPartialSelection {
     if (_selectableItems.isEmpty) return false;
@@ -158,6 +164,7 @@ class _RxGroupCardState extends State<RxGroupCard> {
                   canApprove: _canApproveSelected,
                   canReject: _canRejectSelected,
                   canCancel: _canCancelSelected,
+                  canRejectAfterApprove: _canRejectAfterApprovedSelected,
                   onApprove: widget.onApprove != null && _canApproveSelected
                       ? () async {
                           await widget.onApprove!(_selectedItems);
@@ -173,6 +180,12 @@ class _RxGroupCardState extends State<RxGroupCard> {
                   onCancel: widget.onCancel != null && _canCancelSelected
                       ? () async {
                           await widget.onCancel!(_selectedItems);
+                          setState(() => _selectedIds.clear());
+                        }
+                      : null,
+                  onRejectAfterApprove: widget.onRejectAfterApprove != null && _canRejectAfterApprovedSelected
+                      ? () async {
+                          await widget.onRejectAfterApprove!(_selectedItems);
                           setState(() => _selectedIds.clear());
                         }
                       : null,
@@ -230,7 +243,10 @@ class _RxHeader extends StatelessWidget {
                     style: MedTextStyles.monoMd(color: MedColors.text, weight: FontWeight.w600),
                   ),
                   const SizedBox(height: 2),
-                  Text(context.l10n.rxGroup_headerSubtitle(doctorName, prescriptionDate), style: MedTextStyles.monoSm()),
+                  Text(
+                    context.l10n.rxGroup_headerSubtitle(doctorName, prescriptionDate),
+                    style: MedTextStyles.monoSm(),
+                  ),
                 ],
               ),
             ),
@@ -680,18 +696,22 @@ class _RxActionBar extends StatelessWidget {
     required this.canApprove,
     required this.canReject,
     required this.canCancel,
+    required this.canRejectAfterApprove,
     this.onApprove,
     this.onReject,
     this.onCancel,
+    this.onRejectAfterApprove,
   });
 
   final int selectedCount;
   final bool canApprove;
   final bool canReject;
   final bool canCancel;
+  final bool canRejectAfterApprove;
   final VoidCallback? onApprove;
   final VoidCallback? onReject;
   final VoidCallback? onCancel;
+  final VoidCallback? onRejectAfterApprove;
 
   @override
   Widget build(BuildContext context) {
@@ -733,6 +753,17 @@ class _RxActionBar extends StatelessWidget {
               bgColor: MedColors.amberLight,
               onTap: onCancel!,
             ),
+
+          if (canRejectAfterApprove && onRejectAfterApprove != null) ...[
+            _ActionChip(
+              label: context.l10n.rxGroup_rejectAction,
+              icon: PhosphorIcons.xCircle(PhosphorIconsStyle.fill),
+              color: MedColors.red,
+              bgColor: MedColors.redLight,
+              onTap: onRejectAfterApprove!,
+            ),
+            const SizedBox(width: 8),
+          ],
         ],
       ),
     );

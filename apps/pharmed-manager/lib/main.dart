@@ -38,7 +38,7 @@ class ManagerApp extends StatelessWidget {
         style: InputFieldStyle.manager,
         child: MaterialApp(
           title: 'Pharmed Manager',
-          theme: MaterialTheme().light(),
+          theme: MedTheme.manager(),
           debugShowCheckedModeBanner: false,
 
           localizationsDelegates: [

@@ -35,6 +35,7 @@ class MedTextInputField extends StatefulWidget {
     this.suffixIcon,
     this.onTap,
     this.suffix,
+    this.onFieldSubmitted,
   });
 
   final String? label;
@@ -58,6 +59,7 @@ class MedTextInputField extends StatefulWidget {
   final Widget? suffixIcon;
   final VoidCallback? onTap;
   final Widget? suffix;
+  final Function(String? value)? onFieldSubmitted;
 
   @override
   State<MedTextInputField> createState() => _MedTextInputFieldState();
@@ -120,6 +122,7 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
                 inputFormatters: widget.inputFormatters,
                 controller: widget.controller,
                 onTap: widget.onTap,
+                onFieldSubmitted: widget.onFieldSubmitted,
                 onChanged: (v) {
                   field.didChange(v);
                   widget.onChanged?.call(v);

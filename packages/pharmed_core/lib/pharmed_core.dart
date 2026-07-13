@@ -5,6 +5,7 @@ export 'src/auth/domain/model/app_user.dart';
 export 'src/auth/domain/model/auth_token.dart';
 export 'src/auth/domain/usecase/login_use_case.dart';
 export 'src/auth/domain/usecase/logout_use_case.dart';
+export 'src/auth/domain/usecase/login_with_badge_usecase.dart';
 export 'src/auth/domain/repository/i_auth_repository.dart';
 
 // Features

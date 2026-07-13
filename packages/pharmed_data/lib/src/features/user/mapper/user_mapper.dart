@@ -27,6 +27,7 @@ class UserMapper {
     password: dto.password,
     stationIds: dto.stationIds,
     isAdmin: dto.isAdmin,
+    rfidCardData: dto.rfidCardData,
   );
 
   User? toEntityOrNull(UserDto? dto) => dto == null ? null : toEntity(dto);
@@ -52,6 +53,7 @@ class UserMapper {
     userName: entity.userName,
     password: entity.password,
     stationIds: entity.stationIds,
+    rfidCardData: entity.rfidCardData,
   );
 
   User fromAppUser(AppUser appUser) => User(

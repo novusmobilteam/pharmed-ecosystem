@@ -1,14 +1,14 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 enum PrescriptionActionType {
-  approve('Seçili Talepleri Onayla', 'Seçili talepleri onaylama işlemini onaylıyor musunuz?'),
-  cancel('Seçili Talepleri İptal Et', "Seçili talepler iptal edilecektir.\nOnaylıyor musunuz?"),
-  reject('Seçili Talepleri Reddet', 'Seçili talepler reddilecektir.\nOnaylıyor musunuz?');
+  approve('Seçili Talepleri Onayla'),
+  cancel('Seçili Talepleri İptal Et'),
+  reject('Seçili Talepleri Reddet'),
+  rejectAfterApprove('Seçili Talepleri Reddet');
 
   final String title;
-  final String message;
 
-  const PrescriptionActionType(this.title, this.message);
+  const PrescriptionActionType(this.title);
 }
 
 class SubmitActionParams {
@@ -38,6 +38,9 @@ class SubmitPrescriptionActionUseCase {
         break;
       case PrescriptionActionType.reject:
         result = await _repository.rejectPrescriptionRequests(params.prescriptionId, params.itemIds);
+        break;
+      case PrescriptionActionType.rejectAfterApprove:
+        result = await _repository.rejectApprovedRequests(params.prescriptionId, params.itemIds);
         break;
     }
 

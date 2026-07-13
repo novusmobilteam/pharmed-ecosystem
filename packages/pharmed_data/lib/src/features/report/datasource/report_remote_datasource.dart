@@ -64,4 +64,61 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.apiResponseListParser(HospitalStockDto.fromJson),
     );
   }
+
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getPatientInventory({
+    PagedQueryParams? params,
+    required int patientId,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/patientInventory/$patientId',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<StockTransactionDTO>>?>> getMaterialUsages({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/cabinStockMaterialCollect/$stationId',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(StockTransactionDTO.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<UserAuthorizationSummaryDto>>?>> getAuthorizationSummary({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/authorizationList',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(UserAuthorizationSummaryDto.fromJson),
+    );
+  }
+
+  Future<Result<UserAuthorizationDetailDto?>> getUserAuthorizationSummary(int userId) async {
+    return await fetchRequest(
+      path: '$_basePath/authorizationList/$userId',
+      parser: BaseRemoteDataSource.singleParser(UserAuthorizationDetailDto.fromJson),
+    );
+  }
 }

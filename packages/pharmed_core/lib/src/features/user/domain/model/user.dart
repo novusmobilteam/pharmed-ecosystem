@@ -18,6 +18,7 @@ class User extends Selectable implements TableData {
   final List<int>? stationIds;
   final Role? role;
   final bool? isAdmin;
+  final String? rfidCardData;
 
   User({
     super.id,
@@ -36,6 +37,7 @@ class User extends Selectable implements TableData {
     this.password,
     this.stationIds,
     this.isAdmin,
+    this.rfidCardData,
   }) : super(title: '$name $surname', subtitle: email);
 
   /// id ve "Ad Soyad" stringinden güvenli şekilde User üretir.
@@ -90,6 +92,7 @@ class User extends Selectable implements TableData {
     String? userName,
     String? password,
     List<int>? stationIds,
+    String? rfidCardData,
   }) {
     return User(
       id: id ?? this.id,
@@ -107,6 +110,7 @@ class User extends Selectable implements TableData {
       userName: userName ?? this.userName,
       password: password ?? this.password,
       stationIds: stationIds ?? this.stationIds,
+      rfidCardData: rfidCardData ?? this.rfidCardData,
     );
   }
 }

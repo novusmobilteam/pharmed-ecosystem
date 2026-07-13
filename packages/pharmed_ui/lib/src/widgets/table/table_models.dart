@@ -17,42 +17,64 @@ enum TableSelectionMode {
 // ─── COLUMN DEF ──────────────────────────────────────────────────────────────
 //
 // columnDefs verilirse item.titles / numericColumnIndices / columnFlexes yerine
-// bu liste kullanılır. Kolon başlığını, genişliğini, tipi ve hangi content
-// index'ini göstereceğini tanımlar.
+// bu liste kullanılır. Kolon kendi başlığını, genişliğini, tipini, nasıl
+// render edileceğini (cellBuilder) ve filtre/export/sıralama değerlerini
+// (displayValue / sortValue) TEK YERDE tanımlar.
 //
-// Kullanım örneği (tab index'e göre farklı kolonlar):
+// Değer kaynağı önceliği:
+//   • displayValue verilmişse → filtre, export, sıralama, fallback text ONU kullanır
+//   • yoksa → item.content[contentIndex] (klasik yol)
 //
-//   columnDefs: [
-//     TableColumnDef(title: index == 2 ? 'T.C Kimlik No' : 'Kurum Sicil No',
-//                    contentIndex: 0),
-//     TableColumnDef(title: 'Adı', contentIndex: 1),
-//     TableColumnDef(title: 'Soyadı', contentIndex: 2),
-//     if (index == 0)
-//       TableColumnDef(title: 'Meslek Tipi', contentIndex: 3),
-//     if (index != 0)
-//       TableColumnDef(title: 'Son Geçerlilik Tarihi', contentIndex: 4),
-//     TableColumnDef(title: 'Durumu', contentIndex: 5, flex: 0.8),
-//   ],
+// Görsel:
+//   • cellBuilder verilmişse → hücre onunla çizilir (chip, ikon vb.)
+//     (cellBuilder içindeki stilsiz Text'ler tablo hücre stilini otomatik alır)
+//   • yoksa → displayValue / content düz Text olarak basılır
+//
+// Kullanım örneği (görsel + filtre/export aynı kaynaktan):
+//
+//   TableColumnDef<PrescriptionItem>(
+//     title: 'İşlem',
+//     displayValue: (i) => i.lastMovement?.type.label ?? '-',   // filtre + export
+//     cellBuilder: (i) => i.lastMovement != null                // görsel
+//         ? MedRxMovementChip(status: i.lastMovement!.type)
+//         : Text(i.lastMovement?.type.label ?? '-'),
+//   ),
 
-class TableColumnDef {
+class TableColumnDef<T> {
   const TableColumnDef({
     required this.title,
 
     /// item.content[contentIndex] değerini bu kolona bağlar.
-    /// null → cellBuilder ile tamamen özel render (value parametresi null gelir)
+    /// displayValue verilmişse yok sayılır.
     this.contentIndex,
 
     /// Flex genişliği (varsayılan 1.0)
     this.flex = 1.0,
 
-    /// true → sıralanabilir (rawContent üzerinden); false → filtrelenebilir
+    /// true → sıralanabilir sayısal kolon
     this.numeric = false,
+
+    /// Görsel hücre (opsiyonel). Verilmezse displayValue/content düz Text basılır.
+    /// Döndürdüğü widget tablo hücre stiliyle otomatik sarılır.
+    this.cellBuilder,
+
+    /// Filtre + export + sıralama + fallback text için görünür string.
+    /// cellBuilder kullanılsa bile filtre/export bunu okur — bu yüzden
+    /// cellBuilder'lı kolonlarda da doldurulması önerilir.
+    this.displayValue,
+
+    /// Sıralama için karşılaştırılabilir ham değer.
+    /// Verilmezse displayValue string'i üzerinden sıralanır.
+    this.sortValue,
   });
 
   final String title;
   final int? contentIndex;
   final double flex;
   final bool numeric;
+  final Widget? Function(T item)? cellBuilder;
+  final String Function(T item)? displayValue;
+  final Comparable? Function(T item)? sortValue;
 }
 
 /// Belirli bir hücre için özel widget döndürür.

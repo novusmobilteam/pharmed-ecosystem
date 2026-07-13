@@ -1,4 +1,4 @@
-export 'data/dto/user_dto.dart';
+export 'dto/user_dto.dart';
 export 'domain/model/user.dart';
 export 'domain/repository/i_user_manager.dart';
 export 'domain/repository/i_user_reader.dart';

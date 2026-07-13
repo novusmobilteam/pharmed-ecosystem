@@ -22,6 +22,7 @@ abstract interface class IPrescriptionRepository {
   Future<Result<void>> approvePrescriptionRequests(int prescriptionId, List<int> ids);
   Future<Result<void>> rejectPrescriptionRequests(int prescriptionId, List<int> ids);
   Future<Result<void>> cancelPrescriptionRequests(int prescriptionId, List<int> ids);
+  Future<Result<void>> rejectApprovedRequests(int prescriptionId, List<int> ids);
 
   Future<Result<void>> updatePrescriptionItem(PrescriptionItem entity);
   Future<Result<void>> deletePrescription(int prescriptionId);

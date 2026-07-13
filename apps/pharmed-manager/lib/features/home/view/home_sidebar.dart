@@ -6,7 +6,6 @@ class HomeSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = context.watch<HomeNotifier>();
-    print(notifier.parentMenuItems.length);
 
     return Container(
       width: 240,

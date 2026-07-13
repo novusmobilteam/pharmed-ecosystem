@@ -16,6 +16,7 @@ class UserDto {
   final String? password;
   final List<int>? stationIds;
   final bool? isAdmin;
+  final String? rfidCardData;
 
   const UserDto({
     this.id,
@@ -35,6 +36,7 @@ class UserDto {
     this.password,
     this.stationIds,
     this.isAdmin,
+    this.rfidCardData,
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
@@ -56,6 +58,7 @@ class UserDto {
       password: json['password'] as String?,
       stationIds: json['stationIds'] is List ? (json['stationIds'] as List).whereType<int>().toList() : null,
       isAdmin: json['isAdmin'] is bool ? json['isAdmin'] as bool : false,
+      rfidCardData: json['managerCard'] as String?,
     );
   }
 
@@ -75,5 +78,6 @@ class UserDto {
     'userName': userName,
     'password': password,
     'stationIds': stationIds,
+    'managerCard': rfidCardData,
   };
 }

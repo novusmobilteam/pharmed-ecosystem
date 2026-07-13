@@ -2865,6 +2865,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get userKitPurchaseLabel => 'Achat de kit';
 
   @override
+  String get user_badgeCardLabel => 'Badge';
+
+  @override
+  String get user_badgeCardHint => 'Scannez la carte';
+
+  @override
   String get userAuthorizedStationsLabel => 'Stations autorisées';
 
   @override

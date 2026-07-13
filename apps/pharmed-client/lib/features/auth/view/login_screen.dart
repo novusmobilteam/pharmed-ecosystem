@@ -20,6 +20,9 @@ class LoginScreen extends ConsumerWidget {
           onLogin: (email, password, onError) async {
             await ref.read(authNotifierProvider.notifier).login(email: email, password: password, onError: onError);
           },
+          onLoginWithBadge: (cardData, onError) async {
+            await ref.read(authNotifierProvider.notifier).loginWithBadge(cardData: cardData, onError: onError);
+          },
         ),
       ),
     );

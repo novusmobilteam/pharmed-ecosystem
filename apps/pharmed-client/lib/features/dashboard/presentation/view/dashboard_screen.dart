@@ -146,6 +146,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 Navigator.of(ctx).pop();
               }
             },
+            onLoginWithBadge: (cardData, onError) async {
+              await ref.read(authNotifierProvider.notifier).loginWithBadge(cardData: cardData, onError: onError);
+              if (ref.read(authNotifierProvider) is AuthLoggedIn && ctx.mounted) {
+                Navigator.of(ctx).pop();
+              }
+            },
           );
         },
       ),

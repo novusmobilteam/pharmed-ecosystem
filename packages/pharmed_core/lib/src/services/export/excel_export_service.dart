@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
+
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 class ExcelExportService {
-  /// Masaüstü için Excel export
   static Future<void> exportToExcelDesktop({
     required String fileName,
     required List<String> columnNames,
@@ -19,14 +19,12 @@ class ExcelExportService {
       final excel = Excel.createExcel();
       final sheet = excel[sheetName!];
 
-      // Başlık satırını ekle (styling ile)
       for (int i = 0; i < columnNames.length; i++) {
         final cell = sheet.cell(CellIndex.indexByString("${_getExcelColumnName(i)}1"));
         cell.value = TextCellValue(columnNames[i]);
         cell.cellStyle = CellStyle(bold: true, horizontalAlign: HorizontalAlign.Center);
       }
 
-      // Veri satırlarını ekle
       for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
         final row = data[rowIndex];
         for (int colIndex = 0; colIndex < row.length; colIndex++) {
@@ -37,16 +35,12 @@ class ExcelExportService {
         }
       }
 
-      // Excel'i byte array'e dönüştür
       final bytes = excel.save();
       if (bytes != null) {
         File? savedFile;
-
         if (showSaveDialog) {
-          // Kaydetme dialog'u göster
           savedFile = await DesktopFileService.saveFile(extension: 'xlsx', bytes: bytes, fileName: fileName);
         } else {
-          // Masaüstüne direkt kaydet
           savedFile = await DesktopFileService.saveToDesktop(bytes: bytes, fileName: fileName, extension: 'xlsx');
         }
 
@@ -64,7 +58,6 @@ class ExcelExportService {
     }
   }
 
-  /// Platform bağımsız export - otomatik olarak platformu tespit eder
   static Future<void> exportToExcel({
     required String fileName,
     required List<String> columnNames,
@@ -73,7 +66,6 @@ class ExcelExportService {
     String? sheetName = 'Sheet1',
     bool showSaveDialog = true,
   }) async {
-    // Platform kontrolü
     if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       await exportToExcelDesktop(
         fileName: fileName,
@@ -86,22 +78,23 @@ class ExcelExportService {
     }
   }
 
-  /// Filtrelenmiş ve sıralanmış tablo verisi için export
-  static Future<void> exportTableData<T extends TableData>({
+  /// Kolon tanımlarından (displayValue) satır üreterek export eder.
+  ///
+  /// [columns] → başlık listesi (l10n'lı title'lar)
+  /// [rows]    → her item için, her kolonun displayValue'sundan üretilmiş
+  ///             String satırlar. Tablo widget'ı bunu hazırlayıp verir.
+  static Future<void> exportRows({
     required String fileName,
     required List<String> columns,
-    required List<T> data,
+    required List<List<String>> rows,
     required BuildContext context,
-    bool showSaveDialog = true,
     ExportBehavior exportBehavior = ExportBehavior.saveDialog,
   }) async {
     try {
-      final rowData = data.map((item) => item.content).toList();
-
       await exportToExcel(
         fileName: fileName,
         columnNames: columns,
-        data: rowData,
+        data: rows,
         context: context,
         showSaveDialog: exportBehavior == ExportBehavior.saveDialog,
       );
@@ -111,7 +104,24 @@ class ExcelExportService {
     }
   }
 
-  // === PRIVATE HELPERS ===
+  /// Geriye dönük: content tabanlı eski çağrılar için korunur.
+  static Future<void> exportTableData<T extends TableData>({
+    required String fileName,
+    required List<String> columns,
+    required List<T> data,
+    required BuildContext context,
+    bool showSaveDialog = true,
+    ExportBehavior exportBehavior = ExportBehavior.saveDialog,
+  }) async {
+    final rows = data.map((item) => item.content.map((c) => c?.toString() ?? '').toList()).toList();
+    await exportRows(
+      fileName: fileName,
+      columns: columns,
+      rows: rows,
+      context: context,
+      exportBehavior: exportBehavior,
+    );
+  }
 
   static String _getExcelColumnName(int index) {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

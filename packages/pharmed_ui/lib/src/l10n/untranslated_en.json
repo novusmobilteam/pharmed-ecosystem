@@ -444,6 +444,8 @@
     "userOrderPermissionLabel",
     "userWitnessedStationEntryLabel",
     "userKitPurchaseLabel",
+    "user_badgeCardLabel",
+    "user_badgeCardHint",
     "userAuthorizedStationsLabel",
     "userUsernameLabel",
     "userScreenTitle",

@@ -9,15 +9,23 @@ class RefundDTO {
   final PrescriptionItemDto? prescriptionDetail;
   final MedicineDto? medicine;
   final StationDTO? station;
-  final int? userId;
-  final String? user;
-  final DateTime? receiveDate;
+
+  final int? createdUserId;
+  final UserDto? createdUser;
+  final DateTime? createdDate;
+
+  final int? receiveUserId;
   final UserDto? receiveUser;
+  final DateTime? receiveDate;
+
+  final int? approvedUserId;
+  final UserDto? approvedUser;
+  final DateTime? approvedDate;
+
   final bool? isCancel;
   final UserDto? cancelUser;
   final String? description;
   final bool? isDeleted;
-  final DateTime? createdDate;
 
   RefundDTO({
     this.id,
@@ -28,47 +36,24 @@ class RefundDTO {
     this.prescriptionDetail,
     this.medicine,
     this.station,
-    this.userId,
-    this.user,
-    this.receiveDate,
+
+    this.createdUserId,
+    this.createdUser,
+    this.createdDate,
+
+    this.receiveUserId,
     this.receiveUser,
+    this.receiveDate,
+
+    this.approvedUserId,
+    this.approvedUser,
+    this.approvedDate,
+
     this.isCancel,
     this.cancelUser,
     this.description,
     this.isDeleted,
-    this.createdDate,
   });
-
-  // CopyWith metodu
-  RefundDTO copyWith({
-    int? id,
-    int? type,
-    double? quantity,
-    int? returnFormId,
-    int? prescriptionDetailId,
-    PrescriptionItemDto? prescriptionDetail,
-    MedicineDto? medicine,
-    StationDTO? station,
-    int? userId,
-    String? user,
-    DateTime? receiveDate,
-    UserDto? receiveUser,
-    bool? isCancel,
-    UserDto? cancelUser,
-    String? description,
-    bool? isDeleted,
-  }) {
-    return RefundDTO(
-      id: id ?? this.id,
-      type: type ?? this.type,
-      quantity: quantity ?? this.quantity,
-      returnFormId: returnFormId ?? this.returnFormId,
-      prescriptionDetailId: prescriptionDetailId ?? this.prescriptionDetailId,
-      prescriptionDetail: prescriptionDetail ?? this.prescriptionDetail,
-      medicine: medicine ?? this.medicine,
-      station: station ?? this.station,
-    );
-  }
 
   factory RefundDTO.fromJson(Map<String, dynamic> json) {
     return RefundDTO(
@@ -82,34 +67,23 @@ class RefundDTO {
           : null,
       medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       station: json['station'] != null ? StationDTO.fromJson(json['station']) : null,
-      userId: json['userId'] as int?,
-      user: json['user'] as String?,
-      receiveDate: json['receiveDate'] != null ? DateTime.parse(json['receiveDate'] as String) : null,
+
+      createdUserId: json['userId'] as int?,
+      createdUser: json['user'] != null ? UserDto.fromJson(json['user']) : null,
+      createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate'] as String) : null,
+
+      receiveUserId: json['receiveUserId'] as int?,
       receiveUser: json['receiveUser'] != null ? UserDto.fromJson(json['receiveUser']) : null,
+      receiveDate: json['receiveDate'] != null ? DateTime.parse(json['receiveDate'] as String) : null,
+
+      approvedUserId: json['approvedUserId'] as int?,
+      approvedUser: json['approvedUser'] != null ? UserDto.fromJson(json['approvedUser']) : null,
+      approvedDate: json['approvedDate'] != null ? DateTime.parse(json['approvedDate'] as String) : null,
+
       isCancel: json['isCancel'] as bool?,
       cancelUser: json['cancelUser'] != null ? UserDto.fromJson(json['cancelUser']) : null,
       description: json['description'] as String?,
       isDeleted: json['isDeleted'] as bool?,
-      createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate'] as String) : null,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'type': type,
-      'returnFormId': returnFormId,
-      'prescriptionDetailId': prescriptionDetailId,
-      'prescriptionDetail': prescriptionDetail?.toJson(),
-      'material': medicine?.toJson(),
-      'station': station?.toJson(),
-      'userId': userId,
-      'user': user,
-      'receiveDate': receiveDate?.toIso8601String(),
-      'receiveUser': receiveUser?.toJson(),
-      'isCancel': isCancel,
-      'cancelUser': cancelUser?.toJson(),
-      'description': description,
-    };
   }
 }

@@ -1,12 +1,14 @@
-export 'data/role_drug_authorization_dto.dart';
-export 'data/role_mc_authorization_dto.dart';
-export 'data/role_menu_authorization_dto.dart';
-export 'data/user_menu_authorization_dto.dart';
+export 'dto/role_drug_authorization_dto.dart';
+export 'dto/role_mc_authorization_dto.dart';
+export 'dto/role_menu_authorization_dto.dart';
+export 'dto/user_menu_authorization_dto.dart';
+export 'dto/user_authorization_summary_dto.dart';
 
 export 'domain/entity/role_drug_authorization.dart';
 export 'domain/entity/role_medical_consumable_authorization.dart';
 export 'domain/entity/role_menu_authorization.dart';
 export 'domain/entity/user_menu_authorization.dart';
+export 'domain/entity/user_authorization_summary.dart';
 
 export 'domain/repository/i_role_authorization_repository.dart';
 export 'domain/repository/i_user_authorization_repository.dart';

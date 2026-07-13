@@ -4,10 +4,10 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class LoginModal extends StatefulWidget {
-  const LoginModal({super.key, required this.onLogin, this.isLoading = false});
+  const LoginModal({super.key, required this.onLogin, this.isLoading = false, this.onLoginWithBadge});
 
   final Future<void> Function(String username, String password, ValueChanged<String> onError) onLogin;
-
+  final Future<void> Function(String cardData, ValueChanged<String> onError)? onLoginWithBadge;
   final bool isLoading;
 
   @override
@@ -18,6 +18,8 @@ class _LoginModalState extends State<LoginModal> {
   final _formKey = GlobalKey<FormState>();
   final _userCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+
+  bool loginWithUsername = true;
 
   @override
   void dispose() {
@@ -31,6 +33,26 @@ class _LoginModalState extends State<LoginModal> {
     await widget.onLogin(_userCtrl.text.trim(), _passCtrl.text, (msg) {
       if (!mounted) return;
       MessageUtils.showErrorSnackbar(context, msg);
+    });
+  }
+
+  Future<void> _submitWithBadge(String? cardData) async {
+    if (widget.onLoginWithBadge != null && cardData != null) {
+      if (!(_formKey.currentState?.validate() ?? false)) return;
+      await widget.onLoginWithBadge!(cardData, (msg) {
+        if (!mounted) return;
+        MessageUtils.showErrorSnackbar(context, msg);
+      });
+    }
+  }
+
+  void changeLoginMethod(int index) {
+    setState(() {
+      if (index == 0) {
+        loginWithUsername = true;
+      } else {
+        loginWithUsername = false;
+      }
     });
   }
 
@@ -66,39 +88,72 @@ class _LoginModalState extends State<LoginModal> {
                   ],
                 ),
               ),
-
+              if (widget.onLoginWithBadge != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0, left: 22.0, right: 22.0),
+                  child: MedSegmentedButton(
+                    selectedIndex: loginWithUsername ? 0 : 1,
+                    onChanged: (i) => changeLoginMethod(i),
+                    labels: [context.l10n.auth_emailLabel, context.l10n.user_badgeCardLabel],
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.all(22),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    MedTextInputField(
-                      onChanged: (_) {},
-                      controller: _userCtrl,
-                      label: context.l10n.auth_emailLabel,
-                      validator: Validators.cannotBlankValidator,
-                    ),
-                    const SizedBox(height: 14),
-                    MedTextInputField(
-                      onChanged: (_) {},
-                      controller: _passCtrl,
-                      obscureText: true,
-                      label: context.l10n.auth_passwordLabel,
-                      validator: Validators.cannotBlankValidator,
-                    ),
-                    const SizedBox(height: 24),
-                    MedButton(
-                      label: context.l10n.auth_loginButton,
-                      isLoading: widget.isLoading,
-                      onPressed: widget.isLoading ? null : _submit,
-                    ),
-                  ],
-                ),
+                child: loginWithUsername ? _loginWithUsernameView() : _loginWithBadge(),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _loginWithUsernameView() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        MedTextInputField(
+          onChanged: (_) {},
+          controller: _userCtrl,
+          label: context.l10n.auth_emailLabel,
+          validator: Validators.cannotBlankValidator,
+        ),
+        const SizedBox(height: 14),
+        MedTextInputField(
+          onChanged: (_) {},
+          controller: _passCtrl,
+          obscureText: true,
+          label: context.l10n.auth_passwordLabel,
+          validator: Validators.cannotBlankValidator,
+        ),
+        const SizedBox(height: 12),
+        MedButton(
+          label: context.l10n.auth_loginButton,
+          isLoading: widget.isLoading,
+          onPressed: widget.isLoading ? null : _submit,
+        ),
+      ],
+    );
+  }
+
+  Widget _loginWithBadge() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        MedTextInputField(
+          onChanged: (_) {},
+          autoFocus: true,
+          hint: context.l10n.user_badgeCardHint,
+          validator: Validators.cannotBlankValidator,
+          onFieldSubmitted: (value) => _submitWithBadge(value),
+        ),
+        const SizedBox(height: 12),
+        MedButton(
+          label: context.l10n.auth_loginButton,
+          isLoading: widget.isLoading,
+          onPressed: widget.isLoading ? null : _submit,
+        ),
+      ],
     );
   }
 }

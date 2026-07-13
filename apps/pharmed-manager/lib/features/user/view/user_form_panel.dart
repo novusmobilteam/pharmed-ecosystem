@@ -11,10 +11,10 @@ class UserFormPanel extends StatelessWidget {
 
     return ChangeNotifierProvider<UserFormNotifier>(
       create: (BuildContext context) => UserFormNotifier(
+        user: selectedUser,
         createUserUseCase: context.read(),
         updateUserUseCase: context.read(),
-        stationRepository: context.read(),
-        user: selectedUser,
+        getStationsUseCase: context.read(),
       ),
       child: Consumer<UserFormNotifier>(
         builder: (context, notifier, _) {
@@ -78,6 +78,7 @@ class UserFormPanel extends StatelessWidget {
                     _StationsField(),
                     _UsernameField(),
                     if (notifier.isCreate) _PasswordField(),
+                    _RfidCardField(),
                   ],
                 ),
               ),
@@ -357,6 +358,25 @@ class _PasswordField extends StatelessWidget {
           label: context.l10n.auth_passwordLabel,
           obscureText: true,
           onChanged: (value) => notifier.changePassword(value),
+        );
+      },
+    );
+  }
+}
+
+class _RfidCardField extends StatelessWidget {
+  const _RfidCardField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserFormNotifier>(
+      builder: (context, notifier, _) {
+        return MedTextInputField(
+          label: context.l10n.user_badgeCardLabel,
+          hint: context.l10n.user_badgeCardHint,
+          initialValue: notifier.user.rfidCardData,
+          obscureText: true,
+          onChanged: (value) => notifier.changeRfidCardData(value),
         );
       },
     );

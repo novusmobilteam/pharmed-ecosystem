@@ -19,7 +19,6 @@ export 'routing/app_routes.dart';
 // Theme
 export 'theme/app_dimensions.dart';
 export 'theme/app_images.dart';
-export 'theme/app_theme.dart';
 // Utils
 
 // Widgets

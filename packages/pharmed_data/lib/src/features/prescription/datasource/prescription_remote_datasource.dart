@@ -160,6 +160,10 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     return await putBulkRequest(path: '$_base/detail/$prescriptionId/rejectBulk', body: ids);
   }
 
+  Future<Result<void>> rejectApprovedRequests(int prescriptionId, List<int> ids) async {
+    return await putBulkRequest(path: '$_base/detail/$prescriptionId/rejectBulk', body: ids);
+  }
+
   Future<Result<void>> updatePrescriptionItem(PrescriptionItemDto dto) {
     final body = {
       'id': dto.id,

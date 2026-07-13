@@ -17,12 +17,15 @@ part 'table_date_filter.dart';
 // [index]        → kolonun listedeki sırası (sort state, filter state key'i)
 // [contentIndex] → item.content[] index'i; columnDefs ile farklı olabilir
 
-class _ColMeta {
+class _ColMeta<T> {
   final int index;
   final int contentIndex;
   final String title;
   final double flex;
   final bool numeric;
+  final Widget? Function(T)? cellBuilder;
+  final String Function(T)? displayValue;
+  final Comparable? Function(T)? sortValue;
 
   const _ColMeta({
     required this.index,
@@ -30,10 +33,30 @@ class _ColMeta {
     required this.title,
     required this.flex,
     required this.numeric,
+    this.cellBuilder,
+    this.displayValue,
+    this.sortValue,
   });
 
-  bool get filterable => !numeric;
-  bool get sortable => numeric;
+  bool get filterable => displayValue != null || !numeric;
+  bool get sortable => sortValue != null || displayValue != null || numeric;
+
+  /// Bir item'ın bu kolondaki görünür string değeri — TEK KAYNAK.
+  /// Filtre, export ve fallback text hep bunu çağırır.
+  String valueOf(T item, List<dynamic> Function(T) contentOf) {
+    if (displayValue != null) return displayValue!(item);
+    final content = contentOf(item);
+    return contentIndex < content.length ? content[contentIndex]?.toString() ?? '' : '';
+  }
+
+  /// Sıralama için karşılaştırılabilir değer.
+  Comparable? sortKeyOf(T item, List<dynamic> Function(T) rawOf) {
+    if (sortValue != null) return sortValue!(item);
+    if (displayValue != null) return displayValue!(item);
+    final raw = rawOf(item);
+    final v = contentIndex < raw.length ? raw[contentIndex] : null;
+    return v is Comparable ? v : v?.toString();
+  }
 }
 
 // ─── UNIFIED TABLE VIEW ───────────────────────────────────────────────────────
@@ -64,6 +87,8 @@ class MedTable<T extends TableData> extends StatefulWidget {
     this.exportFileName = 'Export',
     this.onExcelPressed,
     this.onPdfPressed,
+    this.pdfTitle,
+    this.pdfHeaderBuilder,
     // Tarih filtresi
     this.enableDateFilter = false,
     this.onDateRangeChanged,
@@ -101,7 +126,7 @@ class MedTable<T extends TableData> extends StatefulWidget {
   // ── Kolon ────────────────────────────────────────────────────────────────────
   /// Verilirse item.titles / numericColumnIndices / columnFlexes yerine geçer.
   /// Tab/index'e göre farklı kolonlar göstermek için idealdir.
-  final List<TableColumnDef>? columnDefs;
+  final List<TableColumnDef<T>>? columnDefs;
 
   /// columnDefs verilmemişse: hangi content index'leri numeric (sıralanabilir)
   final Set<int> numericColumnIndices;
@@ -123,6 +148,13 @@ class MedTable<T extends TableData> extends StatefulWidget {
   final String exportFileName;
   final VoidCallback? onExcelPressed;
   final VoidCallback? onPdfPressed;
+
+  /// PDF başlığı (basit string). pdfHeaderBuilder verilirse yok sayılır.
+  final String? pdfTitle;
+
+  /// PDF üst başlık bloğunu ekran tarafında kurmak için (uzun başlık,
+  /// hasta bilgi satırları vb.). Verilirse pdfTitle yerine bu kullanılır.
+  final PdfHeaderBuilder? pdfHeaderBuilder;
 
   // ── Tarih filtresi ────────────────────────────────────────────────────────────
   final bool enableDateFilter;
@@ -173,7 +205,9 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
   int? _sortColIndex;
   bool _sortAsc = true;
 
-  // Key: _ColMeta.contentIndex (hangi içeriği filtrelediği)
+  // Key: _ColMeta.index (kolonun listedeki sırası).
+  // contentIndex DEĞİL — displayValue kolonlarının content karşılığı
+  // olmayabilir ve iki kolon aynı contentIndex'e düşebilir.
   final Map<int, Set<String>> _colFilters = {};
 
   final Set<T> _selectedItems = {};
@@ -216,34 +250,36 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
 
   // ── Kolon meta ───────────────────────────────────────────────────────────────
 
-  List<_ColMeta> get _cols {
-    // 1) columnDefs verilmişse onu kullan
+  List<_ColMeta<T>> get _cols {
     if (widget.columnDefs != null) {
       return List.generate(widget.columnDefs!.length, (i) {
         final def = widget.columnDefs![i];
-        return _ColMeta(
+        return _ColMeta<T>(
           index: i,
           contentIndex: def.contentIndex ?? i,
           title: def.title,
           flex: def.flex,
           numeric: def.numeric,
+          cellBuilder: def.cellBuilder,
+          displayValue: def.displayValue,
+          sortValue: def.sortValue,
         );
       });
     }
-
-    // 2) Klasik yol: item.titles
+    // klasik content yolu — değişmedi
     if (widget.data.isEmpty) return [];
     final titles = widget.data.first.titles;
     final flexes = widget.columnFlexes;
-    return List.generate(titles.length, (i) {
-      return _ColMeta(
+    return List.generate(
+      titles.length,
+      (i) => _ColMeta<T>(
         index: i,
         contentIndex: i,
         title: titles[i] ?? context.l10n.table_columnFallback(i + 1),
         flex: (flexes != null && i < flexes.length) ? flexes[i] : 1.0,
         numeric: widget.numericColumnIndices.contains(i),
-      );
-    });
+      ),
+    );
   }
 
   double get _totalFlex {
@@ -256,51 +292,43 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
 
   List<T> get _filtered {
     var data = List<T>.from(widget.data);
+    final cols = _cols;
 
     // Client-side arama
     if (widget.onSearchChanged == null) {
       final q = _searchController.text.toLowerCase();
       if (q.isNotEmpty) {
-        data = data
-            .where((item) => item.content.any((cell) => cell?.toString().toLowerCase().contains(q) ?? false))
-            .toList();
+        data = data.where((item) {
+          // displayValue kolonları + ham content birlikte taranır
+          final inCols = cols.any((c) => c.valueOf(item, (i) => i.content).toLowerCase().contains(q));
+          final inContent = item.content.any((cell) => cell?.toString().toLowerCase().contains(q) ?? false);
+          return inCols || inContent;
+        }).toList();
       }
     }
 
-    // Kolon filtreleri (contentIndex bazında)
+    // Kolon filtreleri (col.index bazında)
     for (final entry in _colFilters.entries) {
       if (entry.value.isEmpty) continue;
-      data = data.where((item) {
-        final ci = entry.key;
-        final val = ci < item.content.length ? item.content[ci]?.toString() ?? '' : '';
-        return entry.value.contains(val);
-      }).toList();
+      final matches = cols.where((c) => c.index == entry.key);
+      if (matches.isEmpty) continue;
+      final col = matches.first;
+      data = data.where((item) => entry.value.contains(col.valueOf(item, (i) => i.content))).toList();
     }
 
-    // Sıralama (rawContent üzerinden)
-    if (_sortColIndex != null) {
-      final cols = _cols;
-      if (_sortColIndex! < cols.length) {
-        final col = cols[_sortColIndex!];
-        if (col.sortable) {
-          dynamic raw(T item) {
-            final rc = item.rawContent;
-            return col.contentIndex < rc.length ? rc[col.contentIndex] : null;
-          }
-
-          data.sort((a, b) {
-            final va = raw(a);
-            final vb = raw(b);
-            if (va == null && vb == null) return 0;
-            if (va == null) return 1;
-            if (vb == null) return -1;
-            if (va is num && vb is num) {
-              return _sortAsc ? va.compareTo(vb) : vb.compareTo(va);
-            }
-            final cmp = va.toString().compareTo(vb.toString());
-            return _sortAsc ? cmp : -cmp;
-          });
-        }
+    // Sıralama
+    if (_sortColIndex != null && _sortColIndex! < cols.length) {
+      final col = cols[_sortColIndex!];
+      if (col.sortable) {
+        data.sort((a, b) {
+          final va = col.sortKeyOf(a, (i) => i.rawContent);
+          final vb = col.sortKeyOf(b, (i) => i.rawContent);
+          if (va == null && vb == null) return 0;
+          if (va == null) return 1;
+          if (vb == null) return -1;
+          final cmp = va.compareTo(vb);
+          return _sortAsc ? cmp : -cmp;
+        });
       }
     }
 
@@ -309,24 +337,20 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
 
   List<T> get _exportData => _selectedItems.isNotEmpty ? _selectedItems.toList() : _filtered;
 
-  List<String> _uniqueValuesFor(int contentIndex) {
-    return widget.data
-        .map((item) => contentIndex < item.content.length ? item.content[contentIndex]?.toString() ?? '' : '')
-        .where((v) => v.isNotEmpty)
-        .toSet()
-        .toList()
+  List<String> _uniqueValuesFor(_ColMeta<T> col) {
+    return widget.data.map((item) => col.valueOf(item, (i) => i.content)).where((v) => v.isNotEmpty).toSet().toList()
       ..sort();
   }
 
   bool get _hasActiveFilters =>
       _colFilters.values.any((s) => s.isNotEmpty) || _searchController.text.isNotEmpty || _currentDateRange != null;
 
-  void _applyColFilter(int contentIndex, Set<String> values) {
+  void _applyColFilter(int colIndex, Set<String> values) {
     setState(() {
       if (values.isEmpty) {
-        _colFilters.remove(contentIndex);
+        _colFilters.remove(colIndex);
       } else {
-        _colFilters[contentIndex] = values;
+        _colFilters[colIndex] = values;
       }
     });
   }
@@ -342,13 +366,13 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
       barrierColor: Colors.black26,
       builder: (_) => _ColFilterDialog(
         columnTitle: col.title,
-        uniqueValues: _uniqueValuesFor(col.contentIndex),
-        selected: Set.from(_colFilters[col.contentIndex] ?? {}),
+        uniqueValues: _uniqueValuesFor(col),
+        selected: Set.from(_colFilters[col.index] ?? {}),
       ),
     );
 
     if (result != null && mounted) {
-      _applyColFilter(col.contentIndex, result);
+      _applyColFilter(col.index, result);
     }
   }
 
@@ -414,29 +438,30 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
 
   // ── Export ───────────────────────────────────────────────────────────────────
 
+  List<List<String>> _buildExportRows() {
+    final cols = _cols;
+    return _exportData.map((item) => cols.map((c) => c.valueOf(item, (i) => i.content)).toList()).toList();
+  }
+
   Future<void> _handleExcel() async {
-    if (widget.onExcelPressed != null) {
-      widget.onExcelPressed!();
-      return;
-    }
-    await ExcelExportService.exportTableData(
+    if (widget.onExcelPressed != null) return widget.onExcelPressed!();
+    await ExcelExportService.exportRows(
       fileName: widget.exportFileName,
       columns: _cols.map((c) => c.title).toList(),
-      data: _exportData,
+      rows: _buildExportRows(),
       context: context,
     );
   }
 
   Future<void> _handlePdf() async {
-    if (widget.onPdfPressed != null) {
-      widget.onPdfPressed!();
-      return;
-    }
-    await PdfExportService.exportTableData(
+    if (widget.onPdfPressed != null) return widget.onPdfPressed!();
+    await PdfExportService.exportRows(
       fileName: widget.exportFileName,
       columns: _cols.map((c) => c.title).toList(),
-      data: _exportData,
+      rows: _buildExportRows(),
       context: context,
+      title: widget.pdfTitle ?? 'Tablo Raporu',
+      headerBuilder: widget.pdfHeaderBuilder,
     );
   }
 
@@ -499,7 +524,7 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
                     selectionActions: widget.selectionActions,
                   ),
                   if (_hasActiveFilters)
-                    _ActiveFilterBar(
+                    _ActiveFilterBar<T>(
                       colFilters: _colFilters,
                       cols: cols,
                       searchQuery: _searchController.text,
@@ -542,7 +567,7 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
     );
   }
 
-  Widget _buildTableArea(List<T> filteredData, List<_ColMeta> cols) {
+  Widget _buildTableArea(List<T> filteredData, List<_ColMeta<T>> cols) {
     return _TableBody<T>(
       data: filteredData,
       cols: cols,
