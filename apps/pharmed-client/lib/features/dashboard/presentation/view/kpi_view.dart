@@ -105,30 +105,52 @@ class KpiGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: items.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        mainAxisExtent: 170,
-      ),
-      itemBuilder: (context, index) {
+    return Column(
+      children: List.generate(items.length, (index) {
         final item = items[index];
-        return MedKpiCard(
-          label: item.label,
-          value: item.value,
-          icon: item.icon,
-          accentColor: item.accentColor,
-          progressValue: item.progressValue,
-          deltaLabel: item.deltaLabel,
-          deltaDirection: item.deltaDirection,
-          isStale: isStale,
-          onTap: item.onTap,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: SizedBox(
+            width: 300,
+            child: MedKpiCard(
+              label: item.label,
+              value: item.value,
+              icon: item.icon,
+              accentColor: item.accentColor,
+              progressValue: item.progressValue,
+              deltaLabel: item.deltaLabel,
+              deltaDirection: item.deltaDirection,
+              isStale: isStale,
+              onTap: item.onTap,
+             ),
+          ),
         );
-      },
+      }),
     );
+    // return GridView.builder(
+    //   shrinkWrap: true,
+    //   physics: const NeverScrollableScrollPhysics(),
+    //   itemCount: items.length,
+    //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    //     crossAxisCount: 4,
+    //     crossAxisSpacing: 12,
+    //     mainAxisSpacing: 12,
+    //     mainAxisExtent: 170,
+    //   ),
+    //   itemBuilder: (context, index) {
+    //     final item = items[index];
+    //     return MedKpiCard(
+    //       label: item.label,
+    //       value: item.value,
+    //       icon: item.icon,
+    //       accentColor: item.accentColor,
+    //       progressValue: item.progressValue,
+    //       deltaLabel: item.deltaLabel,
+    //       deltaDirection: item.deltaDirection,
+    //       isStale: isStale,
+    //       onTap: item.onTap,
+    //     );
+    //   },
+    // );
   }
 }

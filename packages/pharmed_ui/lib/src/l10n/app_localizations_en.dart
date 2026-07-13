@@ -4622,4 +4622,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get refund_showIncompleteTooltip => 'Show Incomplete';
+
+  @override
+  String get dashboard_sensor_title => 'Sensors';
+
+  @override
+  String get dashboard_sensor_temperature => 'Temperature';
+
+  @override
+  String get dashboard_sensor_humidity => 'Humidity';
+
+  @override
+  String get dashboard_sensor_battery => 'Battery';
+
+  @override
+  String get dashboard_climate_title => 'Environment';
+
+  @override
+  String get dashboard_sensor_outOfRange => 'Out of range';
 }

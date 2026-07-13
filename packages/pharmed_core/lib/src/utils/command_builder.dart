@@ -22,6 +22,12 @@ class CommandBuilder {
   static const _drawerPrefix = 'T';
   static const _cubicPrefix = 'Z';
 
+    /// Yönetim kartı sensör satırları.
+  /// Bu satırlar seçildiğinde kart doğrudan veri döner (+(...)- formatında);
+  /// ayrıca bir okuma komutu gerekmez.
+  static const int rowBatteryLevel = 49;
+  static const int rowTempHumidity = 50;
+
   /// Yönetim kartı komutu oluşturur
   ///
   /// [addressIndex]: 1 ile 16 arası (1='a', 16='p')
@@ -36,8 +42,11 @@ class CommandBuilder {
     if (addressIndex < 1 || addressIndex > 16) {
       throw ArgumentError('Adres indeksi 1-16 arasında olmalı (a-p)');
     }
-    if (row < 0 || row > 26) {
-      throw ArgumentError('Satır 0-26 arasında olmalı');
+
+    // 0-26: kontrol kartı satırları
+    // 49-50: sensör satırları (akü, ısı/nem)
+    if (row < 0 || row > 50) {
+      throw ArgumentError('Satır 0-50 arasında olmalı');
     }
 
     // 2. Dönüşümler

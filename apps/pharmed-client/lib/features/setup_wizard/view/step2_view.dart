@@ -101,12 +101,12 @@ class _Step2BasicInfoState extends ConsumerState<Step2View> {
                 const SizedBox(height: 12),
                 Column(children: [_ipAddressField(state), const SizedBox(height: 12), _dvrIpField()]),
                 const SizedBox(height: 12),
-                _CabinCardTestButton(
-                  port: _port,
-                  testState: state.cabinCardTestState,
-                  onTestCabinCard: notifier.testCabinConnection,
-                  cabinCardTestError: state.cabinTestError,
-                ),
+                // _CabinCardTestButton(
+                //   port: _port,
+                //   testState: state.cabinCardTestState,
+                //   onTestCabinCard: notifier.testCabinConnection,
+                //   cabinCardTestError: state.cabinTestError,
+                // ),
                 if (state.availablePorts.isEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),

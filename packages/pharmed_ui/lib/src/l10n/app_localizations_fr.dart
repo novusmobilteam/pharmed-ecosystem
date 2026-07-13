@@ -4709,4 +4709,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get refund_showIncompleteTooltip => 'Afficher les Non Terminés';
+
+  @override
+  String get dashboard_sensor_title => 'Capteurs';
+
+  @override
+  String get dashboard_sensor_temperature => 'Température';
+
+  @override
+  String get dashboard_sensor_humidity => 'Humidité';
+
+  @override
+  String get dashboard_sensor_battery => 'Batterie';
+
+  @override
+  String get dashboard_climate_title => 'Conditions ambiantes';
+
+  @override
+  String get dashboard_sensor_outOfRange => 'Hors plage';
 }

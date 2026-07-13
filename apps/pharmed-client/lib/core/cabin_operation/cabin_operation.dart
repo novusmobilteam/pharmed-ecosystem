@@ -18,3 +18,6 @@ export 'patient_gateway/patient_selection_state.dart';
 
 export 'cabin_connection/cabin_connection_notifier.dart';
 export 'cabin_connection/cabin_connection_state.dart';
+
+export 'cabin_sensor/cabin_sensor_notifier.dart';
+export 'cabin_sensor/cabin_sensor_state.dart';

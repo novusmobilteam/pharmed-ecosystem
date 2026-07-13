@@ -5562,5 +5562,25 @@
   "refund_showIncompleteTooltip": "Show Incomplete",
   "@refund_showIncompleteTooltip": {
     "description": "Tooltip for the toggle on the refund screen that filters the list to show incomplete (not yet completed) refund records"
-  }
+  },
+
+  "dashboard_sensor_title": "Sensors",
+"@dashboard_sensor_title": {
+  "description": "Dashboard cabin sensor card title (temperature, humidity, battery)"
+},
+"dashboard_sensor_temperature": "Temperature",
+"@dashboard_sensor_temperature": {
+  "description": "Cabin internal temperature label on the sensor card"
+},
+"dashboard_sensor_humidity": "Humidity",
+"@dashboard_sensor_humidity": {
+  "description": "Cabin internal relative humidity label on the sensor card"
+},
+"dashboard_sensor_battery": "Battery",
+"@dashboard_sensor_battery": {
+  "description": "Cabin battery level label on the sensor card"
+},
+
+"dashboard_climate_title": "Environment",
+"dashboard_sensor_outOfRange": "Out of range"
 }

@@ -215,4 +215,19 @@ class MockCabinOperationService implements ICabinOperationService {
 
     return 'ok';
   }
+  
+  @override
+  Future<double?> readBatteryVoltage({required ManagementCard manager}) {
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<({double humidity, double temperature})?> readTempHumidity({required ManagementCard manager}) {
+    throw UnimplementedError();
+  }
+  
+  @override
+  Stream<CabinSensorReading> streamCabinSensors({required ManagementCard manager, Duration? interval}) {
+    throw UnimplementedError();
+  }
 }

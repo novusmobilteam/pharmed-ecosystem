@@ -5833,5 +5833,25 @@
   "refund_showIncompleteTooltip": "Tamamlanmayanları Göster",
   "@refund_showIncompleteTooltip": {
     "description": "Tooltip for the toggle on the refund screen that filters the list to show incomplete (not yet completed) refund records"
-  }
+  },
+
+  "dashboard_sensor_title": "Sensörler",
+"@dashboard_sensor_title": {
+  "description": "Dashboard cabin sensor card title (temperature, humidity, battery)"
+},
+"dashboard_sensor_temperature": "Sıcaklık",
+"@dashboard_sensor_temperature": {
+  "description": "Cabin internal temperature label on the sensor card"
+},
+"dashboard_sensor_humidity": "Nem",
+"@dashboard_sensor_humidity": {
+  "description": "Cabin internal relative humidity label on the sensor card"
+},
+"dashboard_sensor_battery": "Akü",
+"@dashboard_sensor_battery": {
+  "description": "Cabin battery level label on the sensor card"
+},
+
+"dashboard_climate_title": "Ortam Koşulları",
+"dashboard_sensor_outOfRange": "Aralık dışı"
 }

@@ -8200,6 +8200,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show Incomplete'**
   String get refund_showIncompleteTooltip;
+
+  /// Dashboard cabin sensor card title (temperature, humidity, battery)
+  ///
+  /// In en, this message translates to:
+  /// **'Sensors'**
+  String get dashboard_sensor_title;
+
+  /// Cabin internal temperature label on the sensor card
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature'**
+  String get dashboard_sensor_temperature;
+
+  /// Cabin internal relative humidity label on the sensor card
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity'**
+  String get dashboard_sensor_humidity;
+
+  /// Cabin battery level label on the sensor card
+  ///
+  /// In en, this message translates to:
+  /// **'Battery'**
+  String get dashboard_sensor_battery;
+
+  /// No description provided for @dashboard_climate_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Environment'**
+  String get dashboard_climate_title;
+
+  /// No description provided for @dashboard_sensor_outOfRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of range'**
+  String get dashboard_sensor_outOfRange;
 }
 
 class _AppLocalizationsDelegate

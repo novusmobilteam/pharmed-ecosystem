@@ -123,50 +123,44 @@ class _DashboardBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            failedSections.contains(DashboardSection.kpi)
-                ? _SectionError(label: context.l10n.dashboard_kpiLoadError)
-                : KpiView(kpi: data.kpi, isStale: isStale),
-            const SizedBox(height: 14),
-
             Row(
+              spacing: 12.0,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Sol kolon: Kabin
+               SizedBox(width: 260, child: KpiView(kpi: data.kpi, isStale: isStale)),
+                Spacer(),
                 SizedBox(
-                  width: 260,
-                  child: data.hasCabinData
-                      ? CabinView(
-                          cabin: data.cabinVisualizerData!,
-                          isStale: isStale,
-                          canProceed: canProceed,
-                          notifier: notifier,
-                        )
-                      : _SectionError(label: context.l10n.dashboard_cabinLoadError),
-                ),
-                const SizedBox(width: 14),
+  width: 260,
+  child: Column(
+    children: [
+         const CabinBatteryView(),
+      
+      const SizedBox(height: MedSpacing.lg),
+    const CabinClimateView(),
+            const SizedBox(height: MedSpacing.lg),
+      data.hasCabinData
+          ? CabinView(
+              cabin: data.cabinVisualizerData!,
+              isStale: isStale,
+              canProceed: canProceed,
+              notifier: notifier,
+            )
+          : _SectionError(label: context.l10n.dashboard_cabinLoadError),
 
-                // Orta kolon: Bekleyen Tedaviler
-                Expanded(
-                  child: failedSections.contains(DashboardSection.treatments)
-                      ? _SectionError(label: context.l10n.dashboard_treatmentsLoadError)
-                      : UpcomingTreatmentsView(
-                          treatments: data.upcomingTreatments,
-                          isStale: isStale,
-                          notifier: notifier,
-                        ),
-                ),
-
-                const SizedBox(width: 14),
-
+    ],
+  ),
+),
                 // Sağ kolon: Uyarılar + SKT + Hızlı + Aktivite
-                SizedBox(
-                  width: 256,
-                  child: failedSections.contains(DashboardSection.skt)
-                      ? _SectionError(label: context.l10n.dashboard_sktLoadError)
-                      : SktView(skt: data.expiringMaterials, isStale: isStale),
-                ),
+                // SizedBox(
+                //   width: 256,
+                //   child: failedSections.contains(DashboardSection.skt)
+                //       ? _SectionError(label: context.l10n.dashboard_sktLoadError)
+                //       : SktView(skt: data.expiringMaterials, isStale: isStale),
+                // ),
               ],
             ),
+            const SizedBox(height: 14),
           ],
         ),
       ),

@@ -28,6 +28,7 @@ import '../../domain/model/dasboard_data.dart';
 
 import '../notifier/dashboard_notifier.dart';
 import '../notifier/dashboard_state.dart';
+import '../widgets/cabin_sensor_view.dart';
 import '../widgets/dashboard_app_bar.dart';
 
 part 'upcoming_treatments_view.dart';

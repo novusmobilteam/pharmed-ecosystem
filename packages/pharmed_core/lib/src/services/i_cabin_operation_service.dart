@@ -332,4 +332,19 @@ abstract interface class ICabinOperationService {
     required int targetRow,
     required String commandPayload,
   });
+
+
+  /// Yönetim kartından ısı ve nem okur (row 50).
+Future<({double temperature, double humidity})?> readTempHumidity({
+  required ManagementCard manager,
+});
+
+/// Yönetim kartından akü voltajını okur (row 49).
+Future<double?> readBatteryVoltage({required ManagementCard manager});
+
+/// Isı, nem ve akü değerlerini periyodik yayınlar.
+Stream<CabinSensorReading> streamCabinSensors({
+  required ManagementCard manager,
+  Duration? interval,
+});
 }

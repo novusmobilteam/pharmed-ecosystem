@@ -940,7 +940,13 @@
     "cabin_serumTypeLabel",
     "cabin_unitDoseTypeLabel",
     "refund_showCompletedTooltip",
-    "refund_showIncompleteTooltip"
+    "refund_showIncompleteTooltip",
+    "dashboard_sensor_title",
+    "dashboard_sensor_temperature",
+    "dashboard_sensor_humidity",
+    "dashboard_sensor_battery",
+    "dashboard_climate_title",
+    "dashboard_sensor_outOfRange"
   ],
 
   "fr": [

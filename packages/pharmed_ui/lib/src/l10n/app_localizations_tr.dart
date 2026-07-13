@@ -4582,4 +4582,22 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refund_showIncompleteTooltip => 'Tamamlanmayanları Göster';
+
+  @override
+  String get dashboard_sensor_title => 'Sensörler';
+
+  @override
+  String get dashboard_sensor_temperature => 'Sıcaklık';
+
+  @override
+  String get dashboard_sensor_humidity => 'Nem';
+
+  @override
+  String get dashboard_sensor_battery => 'Akü';
+
+  @override
+  String get dashboard_climate_title => 'Ortam Koşulları';
+
+  @override
+  String get dashboard_sensor_outOfRange => 'Aralık dışı';
 }

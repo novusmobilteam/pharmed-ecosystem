@@ -165,9 +165,17 @@ class _OctetField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: placeholder,
           hintStyle: TextStyle(fontFamily: MedFonts.mono, fontSize: fontSize, color: MedColors.text4),
-          border: InputBorder.none,
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+            border: InputBorder.none,
+  enabledBorder: InputBorder.none,
+  focusedBorder: InputBorder.none,
+  disabledBorder: InputBorder.none,
+  errorBorder: InputBorder.none,
+  focusedErrorBorder: InputBorder.none,
+  fillColor: Colors.transparent,
+  hoverColor: Colors.transparent,
+  filled: false,
         ),
         onChanged: (val) {
           onChanged?.call(val);

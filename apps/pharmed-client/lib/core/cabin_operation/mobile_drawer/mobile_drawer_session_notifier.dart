@@ -18,6 +18,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../features/auth/notifier/auth_notifier.dart';
 import '../../providers/providers.dart';
+import '../cabin_operation.dart';
 import 'mobile_drawer_session_state.dart';
 import 'mobile_drawer_stage.dart';
 import 'start_mobile_drawer_session_usecase.dart';
@@ -38,6 +39,7 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
   // (auth notifier nested-safe counter tutuyor ama biz kendi balansımızı
   // bozmazsak counter'a kirli giriş yapma riskimiz olmaz.)
   bool _authPaused = false;
+  bool _sensorPaused = false;
 
   StartMobileDrawerSessionUseCase get _startSession => ref.read(startMobileDrawerSessionUseCaseProvider);
 
@@ -106,10 +108,12 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
     state = state.copyWith(stage: next);
 
     if (!wasOpen && isOpen) {
-      _acquireAuthPause();
-    } else if (wasOpen && !isOpen) {
-      _releaseAuthPauseIfHeld();
-    }
+    _acquireAuthPause();
+    _acquireSensorPause();
+  } else if (wasOpen && !isOpen) {
+    _releaseAuthPauseIfHeld();
+    _releaseSensorPauseIfHeld();
+  }
   }
 
   /// Fiziksel çekmece açık mı? Closed durumunda kullanıcı UI'ya döndüğü
@@ -127,4 +131,16 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
     ref.read(authNotifierProvider.notifier).resumeInactivityTimer();
     _authPaused = false;
   }
+
+  void _acquireSensorPause() {
+  if (_sensorPaused) return;
+  ref.read(cabinSensorProvider.notifier).pause();
+  _sensorPaused = true;
+}
+
+void _releaseSensorPauseIfHeld() {
+  if (!_sensorPaused) return;
+  ref.read(cabinSensorProvider.notifier).resume();
+  _sensorPaused = false;
+}
 }

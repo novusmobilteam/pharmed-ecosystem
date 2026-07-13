@@ -30,33 +30,55 @@ final class SerumSlotVisual extends DrawerSlotVisual {
 final class MobileSlotVisual extends DrawerSlotVisual {
   const MobileSlotVisual({required super.slotId, required this.rowColumns, this.workingStatus});
 
-  /// Her index bir satırı, değer o satırın sütun sayısını temsil eder.
-  /// Örn: [3, 2, 4] → 3 satır, sütunlar sırasıyla 3, 2, 4
   final List<int> rowColumns;
   final CabinWorkingStatus? workingStatus;
 
   int get rowCount => rowColumns.length;
   int get totalCells => rowColumns.fold(0, (sum, c) => sum + c);
 
-  /// Mobil kontrol kartının fiziksel port sayısı.
-  static const int totalDrawerPorts = 4;
+  /// Mobil kontrol kartının fiziksel çekmece sayısı.
+  ///
+  /// Yeni kart revizyonu: 4 → 5 çekmece.
+  static const int totalDrawers = 5;
+
+  /// Fiziksel çekmece numarası (1..5) → kontrol kartı port numarası.
+  ///
+  /// Yeni kart revizyonunda kablolama bir kaydı: çekmece N artık port N-1'e
+  /// bağlı, çekmece 1 ise port 5'e sarıyor. Donanımda birebir ölçülerek
+  /// doğrulandı (kapanış-bekleme akışıyla, 5 çekmece tek tek test edildi).
+  ///
+  /// [SWREQ-CLI-CABIN-OP-005] Kart rev.2 çekmece→port haritası.
+  static const Map<int, int> _drawerToPort = {
+    1: 5,
+    2: 1,
+    3: 2,
+    4: 3,
+    5: 4,
+  };
 
   /// Verilen [slot]'un fiziksel kontrol kartı portunu döner (1-tabanlı).
   ///
-  /// Mobil kontrol kartı [totalDrawerPorts] portlu sabittir. Slot'lar
-  /// [slots] listesindeki sıraya göre 1:1 eşleşir:
-  ///   - slots[0] → port 1
-  ///   - slots[1] → port 2
-  ///   - ...
+  /// Slot'lar [slots] listesindeki sıraya göre fiziksel çekmece numarasına
+  /// eşlenir (slots[0] → çekmece 1, slots[1] → çekmece 2, ...), ardından
+  /// [_drawerToPort] ile kartın gerçek port numarasına çevrilir.
   ///
-  /// 4'ten fazla slot olursa modulo ile sarılır (ileride genişleme için).
-  ///
-  /// [slot] [slots] listesinde bulunmuyorsa [StateError] fırlatır.
+  /// [slot] listede yoksa veya çekmece numarası haritada yoksa [StateError].
   static int portOf(List<MobileSlotVisual> slots, MobileSlotVisual slot) {
     final index = slots.indexWhere((s) => s.slotId == slot.slotId);
     if (index < 0) {
       throw StateError('MobileSlotVisual.portOf: slot listede yok (slotId=${slot.slotId})');
     }
-    return (index % totalDrawerPorts) + 1;
+
+    final drawerNumber = index + 1; // 1-tabanlı fiziksel çekmece no
+
+    final port = _drawerToPort[drawerNumber];
+    if (port == null) {
+      throw StateError(
+        'MobileSlotVisual.portOf: geçersiz çekmece numarası '
+        '(drawer=$drawerNumber, slotId=${slot.slotId}, toplam slot=${slots.length}). '
+        'Bu kart en fazla $totalDrawers çekmece destekler.',
+      );
+    }
+    return port;
   }
 }
