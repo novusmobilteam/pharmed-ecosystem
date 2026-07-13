@@ -29,7 +29,7 @@ class HospitalStocksReportScreen extends StatelessWidget {
                 enableExcel: true,
                 enableSearch: true,
                 enablePDF: true,
-                enableDateFilter: true,
+                enableDateFilter: false,
 
                 // Pagination
                 enablePagination: true,
@@ -38,9 +38,6 @@ class HospitalStocksReportScreen extends StatelessWidget {
                 serverTotalCount: notifier.totalCount,
                 onPageChanged: notifier.setPage,
 
-                // Filter & Search
-                initialDateRange: notifier.dateRange,
-                onDateRangeChanged: notifier.setDateRange,
                 onSearchChanged: notifier.search,
 
                 // Kategori

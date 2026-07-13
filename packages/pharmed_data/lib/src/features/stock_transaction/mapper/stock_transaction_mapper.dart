@@ -17,7 +17,6 @@ class StockTransactionMapper {
       userId: dto.userId,
       user: dto.user != null ? const UserMapper().toEntity(dto.user!) : null,
       isSend: dto.isSend,
-      sendDate: dto.sendDate,
       startDate: dto.startDate,
       endDate: dto.endDate,
       transactionType: dto.transactionType != null ? StockTransactionType.fromId(dto.transactionType!) : null,

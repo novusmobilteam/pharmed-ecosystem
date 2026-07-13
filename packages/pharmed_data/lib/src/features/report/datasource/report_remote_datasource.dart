@@ -42,7 +42,7 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       searchFields: params?.searchFields,
       startDate: params?.startDate,
       endDate: params?.endDate,
-
+      dateField: 'transactionStartDate',
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(StockTransactionDTO.fromJson),
     );
@@ -77,6 +77,7 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       searchFields: params?.searchFields,
       startDate: params?.startDate,
       endDate: params?.endDate,
+      dateField: 'prescription.prescriptionDate',
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );
@@ -94,6 +95,7 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       searchFields: params?.searchFields,
       startDate: params?.startDate,
       endDate: params?.endDate,
+      dateField: 'transactionStartDate',
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(StockTransactionDTO.fromJson),
     );
