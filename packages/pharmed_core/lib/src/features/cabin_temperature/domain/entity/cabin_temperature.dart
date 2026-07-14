@@ -1,7 +1,7 @@
-import '../../../../core/core.dart';
-import '../../data/model/cabin_temperature_detail_dto.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 
-class CabinTemperatureDetail implements TableData {
+class CabinTemperature implements TableData {
   final int? id;
   final Station? station;
   final Cabin? cabin;
@@ -11,6 +11,18 @@ class CabinTemperatureDetail implements TableData {
   final int? topTemperatureOutside;
   final int? bottomLimitHumidity;
   final int? topLimitHumidity;
+
+  CabinTemperature({
+    this.id,
+    this.station,
+    this.cabin,
+    this.bottomTemperatureInside,
+    this.topTemperatureInside,
+    this.bottomTemperatureOutside,
+    this.topTemperatureOutside,
+    this.bottomLimitHumidity,
+    this.topLimitHumidity,
+  });
 
   @override
   List get content => [
@@ -45,19 +57,7 @@ class CabinTemperatureDetail implements TableData {
     'Nem Üst Sınır',
   ];
 
-  CabinTemperatureDetail({
-    this.id,
-    this.station,
-    this.cabin,
-    this.bottomTemperatureInside,
-    this.topTemperatureInside,
-    this.bottomTemperatureOutside,
-    this.topTemperatureOutside,
-    this.bottomLimitHumidity,
-    this.topLimitHumidity,
-  });
-
-  CabinTemperatureDetail copyWith({
+  CabinTemperature copyWith({
     int? id,
     Station? station,
     Cabin? cabin,
@@ -68,7 +68,7 @@ class CabinTemperatureDetail implements TableData {
     int? bottomLimitHumidity,
     int? topLimitHumidity,
   }) {
-    return CabinTemperatureDetail(
+    return CabinTemperature(
       id: id ?? this.id,
       station: station ?? this.station,
       cabin: cabin ?? this.cabin,
@@ -78,20 +78,6 @@ class CabinTemperatureDetail implements TableData {
       topTemperatureOutside: topTemperatureOutside ?? this.topTemperatureOutside,
       bottomLimitHumidity: bottomLimitHumidity ?? this.bottomLimitHumidity,
       topLimitHumidity: topLimitHumidity ?? this.topLimitHumidity,
-    );
-  }
-
-  CabinTemperatureDetailDTO toDTO() {
-    return CabinTemperatureDetailDTO(
-      id: id,
-      station: StationMapper().toDtoOrNull(station),
-      cabin: CabinMapper().toDtoOrNull(cabin),
-      bottomTemperatureInside: bottomTemperatureInside,
-      topTemperatureInside: topTemperatureInside,
-      bottomTemperatureOutside: bottomTemperatureOutside,
-      topTemperatureOutside: topTemperatureOutside,
-      bottomLimitHumidity: bottomLimitHumidity,
-      topLimitHumidity: topLimitHumidity,
     );
   }
 }

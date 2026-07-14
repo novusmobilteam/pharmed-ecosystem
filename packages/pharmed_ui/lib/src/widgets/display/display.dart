@@ -4,3 +4,5 @@ export 'med_label.dart';
 export 'med_stale_banner.dart';
 export 'med_rectangle_icon.dart';
 export 'med_dialog.dart';
+export 'med_side_panel.dart';
+export 'sparkline_painter.dart';

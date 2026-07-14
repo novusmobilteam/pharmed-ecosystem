@@ -3,140 +3,131 @@
 // Her durum açık ve ayrıştırılmış — belirsizlik yok.
 // Sınıf: Class B
 
+import 'package:equatable/equatable.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../domain/model/dasboard_data.dart';
+class KpiData extends Equatable {
+  const KpiData({
+    required this.activePatients,
+    required this.activePatientsProgress,
+    required this.activePatientsChange,
+    required this.completedOperations,
+    required this.completedOperationsProgress,
+    required this.completedOperationsChange,
+    required this.pendingPrescriptions,
+    required this.pendingPrescriptionsProgress,
+    required this.criticalAlerts,
+    required this.criticalAlertsProgress,
+    required this.criticalAlertsChange,
+  });
 
-// ─────────────────────────────────────────────────────────────────
-// DashboardSection — hangi bölümün hatalı olduğunu belirtir
-// ─────────────────────────────────────────────────────────────────
+  final int activePatients;
+  final double activePatientsProgress; // 0.0 – 1.0
+  final int activePatientsChange; // +3, -1, 0
 
-enum DashboardSection { kpi, cabin, skt, treatments, menu }
+  final int completedOperations;
+  final double completedOperationsProgress;
+  final int completedOperationsChange;
+
+  final int pendingPrescriptions;
+  final double pendingPrescriptionsProgress;
+
+  final int criticalAlerts;
+  final double criticalAlertsProgress;
+  final int criticalAlertsChange;
+
+  @override
+  List<Object?> get props => [activePatients, completedOperations, pendingPrescriptions, criticalAlerts];
+}
+
+class DashboardData {
+  const DashboardData({
+    this.upcomingTreatments = const [],
+    this.drugActivities = const [],
+    this.cabinVisualizerData,
+    this.kpi,
+  });
+
+  final List<PrescriptionItem> upcomingTreatments;
+  final List<PrescriptionItemMovement> drugActivities;
+  final CabinVisualizerData? cabinVisualizerData;
+
+  /// KPI servisi henüz yok — hazır olana kadar null, şerit gizlenir.
+  final KpiData? kpi;
+
+  bool get hasCabinData => cabinVisualizerData != null;
+  bool get hasKpi => kpi != null;
+
+  DashboardData copyWith({
+    List<PrescriptionItem>? upcomingTreatments,
+    List<PrescriptionItemMovement>? drugActivities,
+    CabinVisualizerData? cabinVisualizerData,
+    KpiData? kpi,
+  }) => DashboardData(
+    upcomingTreatments: upcomingTreatments ?? this.upcomingTreatments,
+    drugActivities: drugActivities ?? this.drugActivities,
+    cabinVisualizerData: cabinVisualizerData ?? this.cabinVisualizerData,
+    kpi: kpi ?? this.kpi,
+  );
+}
+
+// [SWREQ-UI-DASH-003] [IEC 62304 §5.5]
+// Anasayfa state hiyerarşisi. Sınıf: Class B
 
 sealed class DashboardState {
   const DashboardState();
 }
 
-/// İlk yükleme
-final class DashboardLoading extends DashboardState {
+class DashboardLoading extends DashboardState {
   const DashboardLoading();
 }
 
-/// Veriler başarıyla yüklendi
-final class DashboardLoaded extends DashboardState {
-  const DashboardLoaded(
-    this.data, {
+/// Tüm kaynaklar başarısız — gösterilecek hiçbir şey yok.
+class DashboardError extends DashboardState {
+  const DashboardError({required this.message, this.isRetryable = true});
+
+  final String message;
+  final bool isRetryable;
+}
+
+class DashboardLoaded extends DashboardState {
+  const DashboardLoaded({
+    this.data = const DashboardData(),
     this.menuTree,
     this.flattenedMenus,
-    this.failedSections,
     this.activeRoute = 'dashboard',
+    this.treatmentsFailed = false,
+    this.activitiesFailed = false,
+    this.cabinFailed = false,
   });
 
   final DashboardData data;
   final List<MenuItem>? menuTree;
   final List<MenuItem>? flattenedMenus;
-  final List<DashboardSection>? failedSections;
   final String activeRoute;
+
+  /// Bölüm bazlı hata — ilgili panel yerine retry kutusu gösterilir.
+  /// Kurulum tamamlanmamışsa [cabinFailed] false kalır; kabin bölümü
+  /// hata değil, "veri yok" olarak ele alınır.
+  final bool treatmentsFailed;
+  final bool activitiesFailed;
+  final bool cabinFailed;
 
   DashboardLoaded copyWith({
     DashboardData? data,
     List<MenuItem>? menuTree,
     List<MenuItem>? flattenedMenus,
-    List<DashboardSection>? failedSections,
     String? activeRoute,
-  }) {
-    return DashboardLoaded(
-      data ?? this.data,
-      menuTree: menuTree ?? this.menuTree,
-      flattenedMenus: flattenedMenus ?? this.flattenedMenus,
-      failedSections: failedSections ?? this.failedSections,
-      activeRoute: activeRoute ?? this.activeRoute,
-    );
-  }
-}
-
-/// [HAZ-007] Servis çöktü, cache'den eski veri gösteriliyor
-/// Kullanıcı uyarılmalı, bazı aksiyonlar kısıtlanabilir
-final class DashboardStale extends DashboardState {
-  const DashboardStale({
-    required this.data,
-    required this.staleSince,
-    required this.canProceed,
-    this.menuTree,
-    this.flattenedMenus,
-    this.failedSections,
-    this.activeRoute = 'dashboard',
-  });
-
-  final DashboardData data;
-  final DateTime staleSince;
-
-  /// [HAZ-009] false → kritik aksiyonlar disabled
-  final bool canProceed;
-  final List<MenuItem>? menuTree;
-  final List<MenuItem>? flattenedMenus;
-  final List<DashboardSection>? failedSections;
-  final String activeRoute;
-
-  DashboardStale copyWith({
-    DashboardData? data,
-    DateTime? staleSince,
-    bool? canProceed,
-    List<MenuItem>? menuTree,
-    List<MenuItem>? flattenedMenus,
-    List<DashboardSection>? failedSections,
-    String? activeRoute,
-  }) {
-    return DashboardStale(
-      data: data ?? this.data,
-      staleSince: staleSince ?? this.staleSince,
-      canProceed: canProceed ?? this.canProceed,
-      menuTree: menuTree ?? this.menuTree,
-      flattenedMenus: flattenedMenus ?? this.flattenedMenus,
-      failedSections: failedSections ?? this.failedSections,
-      activeRoute: activeRoute ?? this.activeRoute,
-    );
-  }
-}
-
-/// Kısmi yükleme hatası — bazı widget'lar yüklenemedi
-/// Yüklenebilen kısımlar gösterilir, hatalı kısımlar error widget ile
-final class DashboardPartial extends DashboardState {
-  const DashboardPartial({
-    required this.data,
-    required this.failedSections,
-    this.menuTree,
-    this.flattenedMenus,
-    this.activeRoute = 'dashboard',
-  });
-
-  final DashboardData data;
-  final List<DashboardSection> failedSections;
-  final List<MenuItem>? menuTree;
-  final List<MenuItem>? flattenedMenus;
-  final String activeRoute;
-
-  DashboardPartial copyWith({
-    DashboardData? data,
-    List<DashboardSection>? failedSections,
-    List<MenuItem>? menuTree,
-    List<MenuItem>? flattenedMenus,
-    String? activeRoute,
-  }) {
-    return DashboardPartial(
-      data: data ?? this.data,
-      failedSections: failedSections ?? this.failedSections,
-      menuTree: menuTree ?? this.menuTree,
-      flattenedMenus: flattenedMenus ?? this.flattenedMenus,
-      activeRoute: activeRoute ?? this.activeRoute,
-    );
-  }
-}
-
-/// Hiçbir veri yüklenemedi
-final class DashboardError extends DashboardState {
-  const DashboardError({required this.message, required this.isRetryable});
-
-  final String message;
-  final bool isRetryable;
+    bool? treatmentsFailed,
+    bool? activitiesFailed,
+    bool? cabinFailed,
+  }) => DashboardLoaded(
+    data: data ?? this.data,
+    menuTree: menuTree ?? this.menuTree,
+    flattenedMenus: flattenedMenus ?? this.flattenedMenus,
+    activeRoute: activeRoute ?? this.activeRoute,
+    treatmentsFailed: treatmentsFailed ?? this.treatmentsFailed,
+    activitiesFailed: activitiesFailed ?? this.activitiesFailed,
+    cabinFailed: cabinFailed ?? this.cabinFailed,
+  );
 }

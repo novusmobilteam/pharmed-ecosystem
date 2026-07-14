@@ -78,3 +78,7 @@ final censusDataSourceProvider = Provider((ref) {
 final unloadDataSourceProvider = Provider((ref) {
   return UnloadRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
+
+final cabinTemperatureDataSourceProvider = Provider((ref) {
+  return CabinTemperatureRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});

@@ -1,165 +1,81 @@
 part of 'dashboard_screen.dart';
 
+/// Kabin görselleştirmesi + bağlantı durumu.
+///
+/// Bağlantı durumu panel başlığında rozet olarak yaşar; hata varsa
+/// gövdeye "yeniden bağlan" butonu düşer.
 class CabinView extends StatelessWidget {
-  const CabinView({
-    super.key,
-    required this.isStale,
-    required this.canProceed,
-    required this.notifier,
-    required this.cabin,
-  });
+  const CabinView({super.key, required this.cabin, required this.notifier});
 
-  final bool isStale;
-  final bool canProceed;
-  final DashboardNotifier notifier;
   final CabinVisualizerData cabin;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border.all(color: MedColors.border),
-        borderRadius: MedRadius.mdAll,
-        boxShadow: MedShadows.sm,
-      ),
-      child: Column(
-        children: [
-          _SectionHeader(title: context.l10n.dashboard_cabinStatusHeader, dotColor: MedColors.blue),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              children: [
-                CabinSummaryView(slots: cabin.slots, cabinId: ''),
-                const SizedBox(height: 12),
-                _CabinConnectionStatusView(),
-                const SizedBox(height: 10),
-                // CabinStatsGrid(
-                //   totalDrawers: cabin.totalDrawers,
-                //   fullDrawers: cabin.fullDrawers,
-                //   emptyDrawers: cabin.emptyDrawers,
-                //   criticalCount: cabin.criticalCount,
-                // ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, required this.dotColor});
-
-  final String title;
-  final Color dotColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      decoration: BoxDecoration(
-        color: MedColors.surface2,
-        border: Border(bottom: BorderSide(color: MedColors.border2)),
-        borderRadius: const BorderRadius.only(topLeft: MedRadius.md, topRight: MedRadius.md),
-      ),
-      child: Row(
-        children: [
-          StatusDot(color: dotColor, size: 7),
-          const SizedBox(width: 7),
-          Text(title, style: MedTextStyles.titleSm()),
-        ],
-      ),
-    );
-  }
-}
-
-class _CabinConnectionStatusView extends StatelessWidget {
-  const _CabinConnectionStatusView();
+  final DashboardNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         final conn = ref.watch(cabinConnectionProvider);
-
-        final (Color color, Color bg, String label) = switch (conn.status) {
-          CabinConnectionStatus.connected => (
-            MedColors.green,
-            MedColors.greenLight,
-            context.l10n.dashboard_cabinConnectionStatus_connected,
-          ),
-          CabinConnectionStatus.connecting => (
-            MedColors.amber,
-            MedColors.amberLight,
-            context.l10n.dashboard_cabinConnectionStatus_connecting,
-          ),
-          CabinConnectionStatus.error => (
-            MedColors.red,
-            MedColors.redLight,
-            context.l10n.dashboard_cabinConnectionStatus_error,
-          ),
-          CabinConnectionStatus.disconnected => (
-            MedColors.text3,
-            MedColors.surface3,
-            context.l10n.dashboard_cabinConnectionStatus_disconnected,
-          ),
-        };
-
-        final isConnecting = conn.status == CabinConnectionStatus.connecting;
+        final tone = _ConnectionTone.of(conn.status);
         final isError = conn.status == CabinConnectionStatus.error;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Durum rozeti
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: MedSpacing.lg, vertical: MedSpacing.md),
-              decoration: BoxDecoration(
-                color: bg,
-                borderRadius: MedRadius.mdAll,
-                border: Border.all(color: color.withOpacity(0.25)),
+        return Container(
+          decoration: BoxDecoration(
+            color: MedColors.surface,
+            border: Border.all(color: isError ? MedColors.red : MedColors.border, width: isError ? 1.5 : 1),
+            borderRadius: MedRadius.lgAll,
+            boxShadow: MedShadows.sm,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _PanelHeader(
+                title: context.l10n.dashboard_cabinStatusHeader,
+                leading: _ConnectionIndicator(status: conn.status, color: tone.color),
+                trailing: Text(
+                  tone.label(context),
+                  style: MedTextStyles.bodySm(color: tone.color, weight: FontWeight.w500),
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    context.l10n.dashboard_cabinStatusLabel,
-                    style: MedTextStyles.bodyMd(color: color, weight: FontWeight.w500),
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Bağlanıyor durumunda spinner, diğerlerinde nokta
-                      if (isConnecting)
-                        SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(color)),
-                        )
-                      else
-                        StatusDot(color: color, size: 8),
-                      const SizedBox(width: MedSpacing.sm),
-                      Text(
-                        label,
-                        style: MedTextStyles.bodyMd(color: color, weight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
 
-            // Hata durumunda belirgin "Yeniden Bağlan" butonu
-            if (isError) ...[
-              const SizedBox(height: MedSpacing.sm),
-              _ReconnectButton(onTap: () => ref.read(cabinConnectionProvider.notifier).reconnect()),
+              Padding(
+                padding: const EdgeInsets.all(MedSpacing.xl),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    CabinSummaryView(slots: cabin.slots, cabinId: ''),
+
+                    if (isError) ...[
+                      const SizedBox(height: MedSpacing.lg),
+                      _ReconnectButton(onTap: () => ref.read(cabinConnectionProvider.notifier).reconnect()),
+                    ],
+                  ],
+                ),
+              ),
             ],
-          ],
+          ),
         );
       },
     );
+  }
+}
+
+/// Bağlanıyor durumunda spinner, diğerlerinde durum noktası.
+class _ConnectionIndicator extends StatelessWidget {
+  const _ConnectionIndicator({required this.status, required this.color});
+
+  final CabinConnectionStatus status;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    if (status == CabinConnectionStatus.connecting) {
+      return SizedBox(
+        width: 10,
+        height: 10,
+        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(color)),
+      );
+    }
+    return StatusDot(color: color, size: 8);
   }
 }
 
@@ -176,16 +92,16 @@ class _ReconnectButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: MedRadius.mdAll,
         child: Container(
-          height: 44, // dokunmatik hedef
+          height: MedSpacing.touchTarget,
           decoration: BoxDecoration(color: MedColors.red, borderRadius: MedRadius.mdAll, boxShadow: MedShadows.sm),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.refresh_rounded, size: 16, color: Colors.white),
+              Icon(PhosphorIcons.arrowClockwise(), size: 16, color: Colors.white),
               const SizedBox(width: MedSpacing.sm),
               Text(
                 context.l10n.dashboard_cabinConnection_reconnectButton,
-                style: MedTextStyles.bodyMd(color: Colors.white, weight: FontWeight.w600),
+                style: MedTextStyles.bodyMd(color: Colors.white, weight: FontWeight.w500),
               ),
             ],
           ),
@@ -193,4 +109,30 @@ class _ReconnectButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Bağlantı durumu → renk + etiket.
+enum _ConnectionTone {
+  connected(MedColors.green),
+  connecting(MedColors.amber),
+  error(MedColors.red),
+  disconnected(MedColors.text3);
+
+  const _ConnectionTone(this.color);
+
+  final Color color;
+
+  static _ConnectionTone of(CabinConnectionStatus status) => switch (status) {
+    CabinConnectionStatus.connected => _ConnectionTone.connected,
+    CabinConnectionStatus.connecting => _ConnectionTone.connecting,
+    CabinConnectionStatus.error => _ConnectionTone.error,
+    CabinConnectionStatus.disconnected => _ConnectionTone.disconnected,
+  };
+
+  String label(BuildContext context) => switch (this) {
+    _ConnectionTone.connected => context.l10n.dashboard_cabinConnectionStatus_connected,
+    _ConnectionTone.connecting => context.l10n.dashboard_cabinConnectionStatus_connecting,
+    _ConnectionTone.error => context.l10n.dashboard_cabinConnectionStatus_error,
+    _ConnectionTone.disconnected => context.l10n.dashboard_cabinConnectionStatus_disconnected,
+  };
 }

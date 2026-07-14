@@ -282,10 +282,10 @@ abstract class AppLocalizations {
   /// **'Failed to load cabinet data'**
   String get dashboard_cabinLoadError;
 
-  /// Error label shown in place of the treatments section when loading fails
+  /// Section error shown in place of the upcoming treatments panel when its request fails
   ///
   /// In en, this message translates to:
-  /// **'Failed to load treatment list'**
+  /// **'Upcoming treatments could not be loaded'**
   String get dashboard_treatmentsLoadError;
 
   /// Error label shown in place of the expiry-date section when loading fails
@@ -8236,6 +8236,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Out of range'**
   String get dashboard_sensor_outOfRange;
+
+  /// Header of the upcoming treatments panel on the client dashboard
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Treatments'**
+  String get dashboard_upcomingTreatmentsPanelTitle;
+
+  /// Badge in the upcoming treatments panel header showing how many treatments are scheduled
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} scheduled} other{{count} scheduled}}'**
+  String dashboard_upcomingTreatmentsCountBadge(int count);
+
+  /// Empty state shown in the upcoming treatments panel when no treatment is planned
+  ///
+  /// In en, this message translates to:
+  /// **'No scheduled treatments'**
+  String get dashboard_upcomingTreatmentsEmptyTitle;
+
+  /// Shown under the time in a treatment row when the scheduled time has already passed
+  ///
+  /// In en, this message translates to:
+  /// **'overdue'**
+  String get dashboard_upcomingTreatmentsOverdueStatus;
+
+  /// Header of the recent drug movements panel on the client dashboard
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Activity'**
+  String get dashboard_drugActivityPanelTitle;
+
+  /// Empty state shown in the drug activity panel when there are no recent movements
+  ///
+  /// In en, this message translates to:
+  /// **'No activity yet'**
+  String get dashboard_drugActivityEmptyTitle;
+
+  /// Section error shown in place of the drug activity panel when its request fails
+  ///
+  /// In en, this message translates to:
+  /// **'Drug activity could not be loaded'**
+  String get dashboard_activitiesLoadError;
+
+  /// Header of the cabin telemetry panel showing temperature, humidity and battery
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin Climate'**
+  String get dashboard_telemetryPanelTitle;
+
+  /// Shown in the telemetry panel header while sensor polling is suspended during a cabin operation
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get dashboard_telemetryPausedStatus;
+
+  /// Label of the active patients card in the dashboard KPI strip
+  ///
+  /// In en, this message translates to:
+  /// **'Active Patients'**
+  String get dashboard_kpiActivePatientsLabel;
+
+  /// Label of the completed operations card in the dashboard KPI strip
+  ///
+  /// In en, this message translates to:
+  /// **'Completed Operations'**
+  String get dashboard_kpiCompletedOperationsLabel;
+
+  /// Label of the pending prescriptions card in the dashboard KPI strip
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Prescriptions'**
+  String get dashboard_kpiPendingPrescriptionsLabel;
+
+  /// Label of the critical alerts card in the dashboard KPI strip
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Alerts'**
+  String get dashboard_kpiCriticalAlertsLabel;
+
+  /// Generic button that opens the full list behind a summary panel
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get common_seeAllButton;
+
+  /// Generic fallback shown when a name (patient, medicine, user) is missing
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get common_unknownFallback;
+
+  /// Relative time shown for events that happened less than a minute ago
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get common_justNowStatus;
+
+  /// Relative time for events within the last hour, used in activity lists
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String common_minutesAgoStatus(int count);
+
+  /// Relative time for events within the last day, used in activity lists
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h ago'**
+  String common_hoursAgoStatus(int count);
+
+  /// Relative time for events older than a day, used in activity lists
+  ///
+  /// In en, this message translates to:
+  /// **'{count} d ago'**
+  String common_daysAgoStatus(int count);
+
+  /// Countdown shown next to a treatment scheduled within the next hour
+  ///
+  /// In en, this message translates to:
+  /// **'in {count} min'**
+  String common_minutesRemainingStatus(int count);
+
+  /// Countdown shown next to a treatment scheduled within the next day
+  ///
+  /// In en, this message translates to:
+  /// **'in {count} h'**
+  String common_hoursRemainingStatus(int count);
+
+  /// Countdown shown next to a treatment scheduled more than a day ahead
+  ///
+  /// In en, this message translates to:
+  /// **'in {count} d'**
+  String common_daysRemainingStatus(int count);
 }
 
 class _AppLocalizationsDelegate

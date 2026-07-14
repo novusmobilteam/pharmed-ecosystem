@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/assignment/view/assignment_screen.dart';
 import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
+import 'package:pharmed_manager/features/cabin_temperature/view/cabin_temperature_screen.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
 import 'package:pharmed_manager/features/prescription/view/prescription_screen.dart';
 import 'package:pharmed_manager/features/reports/auth_summary/view/auth_summary_report_screen.dart';
@@ -186,6 +187,7 @@ class _HomeContent extends StatelessWidget {
       'patient-inventory-list' => PatientInventoryReportScreen(menu: menu!),
       'material-usage-list' => MaterialUsageReportScreen(menu: menu!),
       'authorization-list' => AuthSummaryReportScreen(menu: menu!),
+      'heatControl' => CabinTemperatureScreen(menu: menu!),
 
       _ => const _NotFoundView(),
     };

@@ -4641,4 +4641,92 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dashboard_sensor_outOfRange => 'Out of range';
+
+  @override
+  String get dashboard_upcomingTreatmentsPanelTitle => 'Upcoming Treatments';
+
+  @override
+  String dashboard_upcomingTreatmentsCountBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count scheduled',
+      one: '$count scheduled',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboard_upcomingTreatmentsEmptyTitle =>
+      'No scheduled treatments';
+
+  @override
+  String get dashboard_upcomingTreatmentsOverdueStatus => 'overdue';
+
+  @override
+  String get dashboard_drugActivityPanelTitle => 'Drug Activity';
+
+  @override
+  String get dashboard_drugActivityEmptyTitle => 'No activity yet';
+
+  @override
+  String get dashboard_activitiesLoadError =>
+      'Drug activity could not be loaded';
+
+  @override
+  String get dashboard_telemetryPanelTitle => 'Cabin Climate';
+
+  @override
+  String get dashboard_telemetryPausedStatus => 'Paused';
+
+  @override
+  String get dashboard_kpiActivePatientsLabel => 'Active Patients';
+
+  @override
+  String get dashboard_kpiCompletedOperationsLabel => 'Completed Operations';
+
+  @override
+  String get dashboard_kpiPendingPrescriptionsLabel => 'Pending Prescriptions';
+
+  @override
+  String get dashboard_kpiCriticalAlertsLabel => 'Critical Alerts';
+
+  @override
+  String get common_seeAllButton => 'See All';
+
+  @override
+  String get common_unknownFallback => 'Unknown';
+
+  @override
+  String get common_justNowStatus => 'just now';
+
+  @override
+  String common_minutesAgoStatus(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String common_hoursAgoStatus(int count) {
+    return '$count h ago';
+  }
+
+  @override
+  String common_daysAgoStatus(int count) {
+    return '$count d ago';
+  }
+
+  @override
+  String common_minutesRemainingStatus(int count) {
+    return 'in $count min';
+  }
+
+  @override
+  String common_hoursRemainingStatus(int count) {
+    return 'in $count h';
+  }
+
+  @override
+  String common_daysRemainingStatus(int count) {
+    return 'in $count d';
+  }
 }

@@ -435,6 +435,20 @@ class RepositoryProviders {
           ),
         },
       ),
+
+      /// Cabin Temperature
+      Provider<ICabinTemperatureRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => CabinTemperatureRepositoryImpl(
+            dataSource: context.read(),
+            cabinTemperatureMapper: CabinTemperatureMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => CabinTemperatureRepositoryImpl(
+            dataSource: context.read(),
+            cabinTemperatureMapper: CabinTemperatureMapper(),
+          ),
+        },
+      ),
     ];
   }
 }

@@ -14,12 +14,6 @@ class AppDimensions {
     colors: [Color(0xFF00364b), Color(0xFF01071d)],
   );
 
-  static Decoration dialogDecoration = BoxDecoration(
-    borderRadius: BorderRadius.circular(12),
-    border: Border.all(width: 1, color: Colors.white.withAlpha(50)),
-    gradient: pharmedGradient,
-  );
-
   static BorderRadius homeCardRadius = BorderRadius.circular(12.0);
 
   static BorderRadius tableRadius = BorderRadius.circular(10.0);

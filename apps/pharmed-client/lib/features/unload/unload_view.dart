@@ -16,8 +16,6 @@ class UnloadView extends ConsumerWidget {
       dashboardNotifierProvider.select(
         (s) => switch (s) {
           DashboardLoaded(:final data) => data.cabinVisualizerData,
-          DashboardStale(:final data) => data.cabinVisualizerData,
-          DashboardPartial(:final data) => data.cabinVisualizerData,
           _ => null,
         },
       ),

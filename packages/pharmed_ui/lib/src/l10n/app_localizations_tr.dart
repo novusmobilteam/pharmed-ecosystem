@@ -101,7 +101,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashboard_cabinLoadError => 'Kabin verisi yüklenemedi';
 
   @override
-  String get dashboard_treatmentsLoadError => 'Tedavi listesi yüklenemedi';
+  String get dashboard_treatmentsLoadError => 'Yaklaşan tedaviler yüklenemedi';
 
   @override
   String get dashboard_sktLoadError => 'SKT verisi yüklenemedi';
@@ -4600,4 +4600,90 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get dashboard_sensor_outOfRange => 'Aralık dışı';
+
+  @override
+  String get dashboard_upcomingTreatmentsPanelTitle => 'Yaklaşan Tedaviler';
+
+  @override
+  String dashboard_upcomingTreatmentsCountBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count planlı',
+      one: '$count planlı',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboard_upcomingTreatmentsEmptyTitle => 'Planlanmış tedavi yok';
+
+  @override
+  String get dashboard_upcomingTreatmentsOverdueStatus => 'gecikti';
+
+  @override
+  String get dashboard_drugActivityPanelTitle => 'İlaç Aktiviteleri';
+
+  @override
+  String get dashboard_drugActivityEmptyTitle => 'Henüz hareket yok';
+
+  @override
+  String get dashboard_activitiesLoadError => 'İlaç aktiviteleri yüklenemedi';
+
+  @override
+  String get dashboard_telemetryPanelTitle => 'Kabin Ortamı';
+
+  @override
+  String get dashboard_telemetryPausedStatus => 'Duraklatıldı';
+
+  @override
+  String get dashboard_kpiActivePatientsLabel => 'Aktif Hasta';
+
+  @override
+  String get dashboard_kpiCompletedOperationsLabel => 'Tamamlanan İşlem';
+
+  @override
+  String get dashboard_kpiPendingPrescriptionsLabel => 'Bekleyen Reçete';
+
+  @override
+  String get dashboard_kpiCriticalAlertsLabel => 'Kritik Uyarı';
+
+  @override
+  String get common_seeAllButton => 'Tümünü Gör';
+
+  @override
+  String get common_unknownFallback => 'Bilinmiyor';
+
+  @override
+  String get common_justNowStatus => 'az önce';
+
+  @override
+  String common_minutesAgoStatus(int count) {
+    return '$count dk önce';
+  }
+
+  @override
+  String common_hoursAgoStatus(int count) {
+    return '$count sa önce';
+  }
+
+  @override
+  String common_daysAgoStatus(int count) {
+    return '$count gün önce';
+  }
+
+  @override
+  String common_minutesRemainingStatus(int count) {
+    return '$count dk';
+  }
+
+  @override
+  String common_hoursRemainingStatus(int count) {
+    return '$count sa';
+  }
+
+  @override
+  String common_daysRemainingStatus(int count) {
+    return '$count gün';
+  }
 }

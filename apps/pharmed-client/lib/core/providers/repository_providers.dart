@@ -264,3 +264,16 @@ final assignmentRepositoryProvider = Provider<IAssignmentRepository>((ref) {
     ),
   };
 });
+
+final cabinTemperatureRepositoryProvider = Provider<ICabinTemperatureRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => CabinTemperatureRepositoryImpl(
+      dataSource: ref.read(cabinTemperatureDataSourceProvider),
+      cabinTemperatureMapper: CabinTemperatureMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => CabinTemperatureRepositoryImpl(
+      dataSource: ref.read(cabinTemperatureDataSourceProvider),
+      cabinTemperatureMapper: CabinTemperatureMapper(),
+    ),
+  };
+});

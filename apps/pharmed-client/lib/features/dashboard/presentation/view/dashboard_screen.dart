@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/assignment/assignment_view.dart';
 import 'package:pharmed_client/features/cabin_stock/cabin_stock.dart';
-import 'package:pharmed_client/features/dashboard/presentation/extensions/cabin_stock_extension.dart';
 import 'package:pharmed_client/features/fault/fault_view.dart';
 import 'package:pharmed_client/features/my_patients/view/my_patients_screen.dart';
 import 'package:pharmed_client/features/prescription/view/prescription_view.dart';
@@ -16,6 +15,8 @@ import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescri
 import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../auth/auth.dart';
@@ -24,19 +25,18 @@ import '../../../drug_activity/drug_activity.dart';
 import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
 import '../../../waste/waste.dart';
-import '../../domain/model/dasboard_data.dart';
 
 import '../notifier/dashboard_notifier.dart';
 import '../notifier/dashboard_state.dart';
-import '../widgets/cabin_sensor_view.dart';
-import '../widgets/dashboard_app_bar.dart';
+import 'dashboard_app_bar.dart';
 
-part 'upcoming_treatments_view.dart';
-part 'kpi_view.dart';
-part 'skt_view.dart';
-part 'cabin_view.dart';
-part 'section_error.dart';
 part 'dashboard_content.dart';
+part 'cabin_view.dart';
+part 'cabin_telemetry_panel.dart';
+part 'upcoming_treatments_panel.dart';
+part 'drug_activity_panel.dart';
+part 'kpi_strip.dart';
+part 'dashboard_panel_shell.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -62,22 +62,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     // AuthSessionExpiring de "logged in" sayılır — countdown sırasında menüler
     // aktif kalsın ki kullanıcı dokunsun, oturum uzasın.
     final isLoggedIn = authState is AuthLoggedIn || authState is AuthSessionExpiring;
-    final currentUser = authNotif.currentUser;
     final isExpiring = authState is AuthSessionExpiring;
+    final currentUser = authNotif.currentUser;
 
-    final (menuTree, flattenedMenus) = switch (dashState) {
-      DashboardLoaded(:final menuTree, :final flattenedMenus) => (menuTree ?? [], flattenedMenus ?? []),
-      DashboardStale(:final menuTree, :final flattenedMenus) => (menuTree ?? [], flattenedMenus ?? []),
-      DashboardPartial(:final menuTree, :final flattenedMenus) => (menuTree ?? [], flattenedMenus ?? []),
-      _ => (const <MenuItem>[], const <MenuItem>[]),
-    };
-
-    final currentRoute = switch (dashState) {
-      DashboardLoaded s => s.activeRoute,
-      DashboardStale s => s.activeRoute,
-      DashboardPartial s => s.activeRoute,
-      _ => 'dashboard',
-    };
+    final loaded = dashState is DashboardLoaded ? dashState : null;
+    final menuTree = loaded?.menuTree ?? const <MenuItem>[];
+    final flattenedMenus = loaded?.flattenedMenus ?? const <MenuItem>[];
+    final currentRoute = loaded?.activeRoute ?? 'dashboard';
 
     return GestureDetector(
       onTap: authNotif.onUserActivity,
@@ -99,26 +90,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           children: [
             Column(
               children: [
-                // LockedBanner
                 if (!isLoggedIn && _wasLoggedIn(authState))
                   LockedBanner(onLoginTap: () => _showLoginModal(context, ref)),
 
-                // StaleBanner
-                if (dashState is DashboardStale)
-                  MedStaleBanner(lastUpdated: dashState.staleSince, canProceed: dashState.canProceed),
-
-                // İçerik
                 Expanded(child: DashboardContentFactory.buildContent(context, ref, dashState, notifier, isLoggedIn)),
               ],
             ),
 
-            // Session timeout banner
             if (isExpiring)
               Positioned(
                 bottom: 20,
                 right: 20,
                 child: SessionTimeoutBanner(
-                  secondsRemaining: (authState).secondsRemaining,
+                  secondsRemaining: authState.secondsRemaining,
                   onExtend: authNotif.onUserActivity,
                 ),
               ),
@@ -159,7 +143,5 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  void _showSettingsPopup(BuildContext context) {
-    showSettingsModal(context);
-  }
+  void _showSettingsPopup(BuildContext context) => showSettingsModal(context);
 }

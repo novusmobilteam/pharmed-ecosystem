@@ -5853,5 +5853,141 @@
 },
 
 "dashboard_climate_title": "Ortam Koşulları",
-"dashboard_sensor_outOfRange": "Aralık dışı"
+"dashboard_sensor_outOfRange": "Aralık dışı",
+
+"dashboard_upcomingTreatmentsPanelTitle": "Yaklaşan Tedaviler",
+"@dashboard_upcomingTreatmentsPanelTitle": {
+  "description": "Header of the upcoming treatments panel on the client dashboard"
+},
+
+"dashboard_upcomingTreatmentsCountBadge": "{count, plural, one{{count} planlı} other{{count} planlı}}",
+"@dashboard_upcomingTreatmentsCountBadge": {
+  "description": "Badge in the upcoming treatments panel header showing how many treatments are scheduled",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"dashboard_upcomingTreatmentsEmptyTitle": "Planlanmış tedavi yok",
+"@dashboard_upcomingTreatmentsEmptyTitle": {
+  "description": "Empty state shown in the upcoming treatments panel when no treatment is planned"
+},
+
+"dashboard_upcomingTreatmentsOverdueStatus": "gecikti",
+"@dashboard_upcomingTreatmentsOverdueStatus": {
+  "description": "Shown under the time in a treatment row when the scheduled time has already passed"
+},
+
+"dashboard_treatmentsLoadError": "Yaklaşan tedaviler yüklenemedi",
+"@dashboard_treatmentsLoadError": {
+  "description": "Section error shown in place of the upcoming treatments panel when its request fails"
+},
+
+"dashboard_drugActivityPanelTitle": "İlaç Aktiviteleri",
+"@dashboard_drugActivityPanelTitle": {
+  "description": "Header of the recent drug movements panel on the client dashboard"
+},
+
+"dashboard_drugActivityEmptyTitle": "Henüz hareket yok",
+"@dashboard_drugActivityEmptyTitle": {
+  "description": "Empty state shown in the drug activity panel when there are no recent movements"
+},
+
+"dashboard_activitiesLoadError": "İlaç aktiviteleri yüklenemedi",
+"@dashboard_activitiesLoadError": {
+  "description": "Section error shown in place of the drug activity panel when its request fails"
+},
+
+"dashboard_telemetryPanelTitle": "Kabin Ortamı",
+"@dashboard_telemetryPanelTitle": {
+  "description": "Header of the cabin telemetry panel showing temperature, humidity and battery"
+},
+
+"dashboard_telemetryPausedStatus": "Duraklatıldı",
+"@dashboard_telemetryPausedStatus": {
+  "description": "Shown in the telemetry panel header while sensor polling is suspended during a cabin operation"
+},
+
+"dashboard_kpiActivePatientsLabel": "Aktif Hasta",
+"@dashboard_kpiActivePatientsLabel": {
+  "description": "Label of the active patients card in the dashboard KPI strip"
+},
+
+"dashboard_kpiCompletedOperationsLabel": "Tamamlanan İşlem",
+"@dashboard_kpiCompletedOperationsLabel": {
+  "description": "Label of the completed operations card in the dashboard KPI strip"
+},
+
+"dashboard_kpiPendingPrescriptionsLabel": "Bekleyen Reçete",
+"@dashboard_kpiPendingPrescriptionsLabel": {
+  "description": "Label of the pending prescriptions card in the dashboard KPI strip"
+},
+
+"dashboard_kpiCriticalAlertsLabel": "Kritik Uyarı",
+"@dashboard_kpiCriticalAlertsLabel": {
+  "description": "Label of the critical alerts card in the dashboard KPI strip"
+},
+
+"common_seeAllButton": "Tümünü Gör",
+"@common_seeAllButton": {
+  "description": "Generic button that opens the full list behind a summary panel"
+},
+
+"common_unknownFallback": "Bilinmiyor",
+"@common_unknownFallback": {
+  "description": "Generic fallback shown when a name (patient, medicine, user) is missing"
+},
+
+"common_justNowStatus": "az önce",
+"@common_justNowStatus": {
+  "description": "Relative time shown for events that happened less than a minute ago"
+},
+
+"common_minutesAgoStatus": "{count} dk önce",
+"@common_minutesAgoStatus": {
+  "description": "Relative time for events within the last hour, used in activity lists",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_hoursAgoStatus": "{count} sa önce",
+"@common_hoursAgoStatus": {
+  "description": "Relative time for events within the last day, used in activity lists",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_daysAgoStatus": "{count} gün önce",
+"@common_daysAgoStatus": {
+  "description": "Relative time for events older than a day, used in activity lists",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_minutesRemainingStatus": "{count} dk",
+"@common_minutesRemainingStatus": {
+  "description": "Countdown shown next to a treatment scheduled within the next hour",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_hoursRemainingStatus": "{count} sa",
+"@common_hoursRemainingStatus": {
+  "description": "Countdown shown next to a treatment scheduled within the next day",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_daysRemainingStatus": "{count} gün",
+"@common_daysRemainingStatus": {
+  "description": "Countdown shown next to a treatment scheduled more than a day ahead",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+}
 }

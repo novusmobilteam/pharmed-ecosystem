@@ -8,47 +8,31 @@ class DashboardContentFactory {
     DashboardNotifier notifier,
     bool isLoggedIn,
   ) {
-    // Rota bilgisini güvenli bir şekilde state'den ayıklıyoruz
-    final route = switch (state) {
-      DashboardLoaded s => s.activeRoute,
-      DashboardStale s => s.activeRoute,
-      DashboardPartial s => s.activeRoute,
-      _ => 'dashboard',
-    };
-
-    final flattenedMenus = switch (state) {
-      DashboardLoaded s => s.flattenedMenus,
-      DashboardStale s => s.flattenedMenus,
-      DashboardPartial s => s.flattenedMenus,
-      _ => null,
-    };
-
-    final activeMenu = flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
+    final loaded = state is DashboardLoaded ? state : null;
+    final route = loaded?.activeRoute ?? 'dashboard';
+    final activeMenu = loaded?.flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
 
     return Listener(
       behavior: HitTestBehavior.translucent,
-      onPointerDown: (_) {
-        ref.read(authNotifierProvider.notifier).onUserActivity();
-      },
+      onPointerDown: (_) => ref.read(authNotifierProvider.notifier).onUserActivity(),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 250),
         reverseDuration: Duration.zero,
         child: KeyedSubtree(
           key: ValueKey(route),
           child: switch (route) {
-            // Ana Sayfa (Mevcut _DashboardBody içeriğin buraya taşındı)
             'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
 
-            // Diğer Modüller
-            'drug-assignment' => AssignmentView(),
-            'drug-refill' => RefillView(),
-            'drug-intake' => IntakeView(),
+            'drug-assignment' => const AssignmentView(),
+            'drug-refill' => const RefillView(),
+            'drug-intake' => const IntakeView(),
+            'drug-activity' => const DrugActivityScreen(),
+            'drug-unload' => const UnloadView(),
+            'drug-census' => const CensusView(),
+            'drawer-malfunction' => const FaultView(),
+
             'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
             'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
-            'drug-activity' => DrugActivityScreen(),
-            'drug-unload' => UnloadView(),
-            'drug-census' => CensusView(),
-            'drawer-malfunction' => FaultView(),
             'cabin-stock' => activeMenu != null ? CabinStockView(menu: activeMenu) : const SizedBox.shrink(),
             'patient-request-review' =>
               activeMenu != null ? PrescriptionView(menu: activeMenu) : const SizedBox.shrink(),
@@ -56,7 +40,6 @@ class DashboardContentFactory {
               activeMenu != null ? UnappliedPrescriptionScreen(menu: activeMenu) : const SizedBox.shrink(),
             'my-patients' => activeMenu != null ? MyPatientsScreen(menu: activeMenu) : const SizedBox.shrink(),
 
-            // Fallback
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
         ),
@@ -69,100 +52,91 @@ class DashboardContentFactory {
     DashboardState state,
     DashboardNotifier notifier,
     bool isLoggedIn,
-  ) {
-    return switch (state) {
-      DashboardLoading() => const _LoadingView(),
-      DashboardLoaded(:final data) => _DashboardBody(data: data, notifier: notifier, isLoggedIn: isLoggedIn),
-      DashboardStale(:final data, :final canProceed) => _DashboardBody(
-        data: data,
-        notifier: notifier,
-        isStale: true,
-        canProceed: canProceed,
-        isLoggedIn: isLoggedIn,
-      ),
-      DashboardPartial(:final data, :final failedSections) => _DashboardBody(
-        data: data,
-        notifier: notifier,
-        failedSections: failedSections,
-        isLoggedIn: isLoggedIn,
-      ),
-      DashboardError(:final message, :final isRetryable) => _ErrorView(
-        message: message,
-        isRetryable: isRetryable,
-        onRetry: notifier.refresh,
-      ),
-    };
-  }
+  ) => switch (state) {
+    DashboardLoading() => const _LoadingView(),
+    DashboardError(:final message, :final isRetryable) => _ErrorView(
+      message: message,
+      isRetryable: isRetryable,
+      onRetry: notifier.refresh,
+    ),
+    DashboardLoaded s => _DashboardBody(state: s, notifier: notifier, isLoggedIn: isLoggedIn),
+  };
 }
 
+/// Ana sayfa yerleşimi.
+///
+/// Sol (esnek): yaklaşan tedaviler → ilaç aktiviteleri
+/// Sağ (sabit 300): telemetri → kabin
+/// Alt (tam genişlik): KPI şeridi — servis hazır olunca görünür
 class _DashboardBody extends StatelessWidget {
-  const _DashboardBody({
-    required this.data,
-    required this.notifier,
-    required this.isLoggedIn,
-    this.isStale = false,
-    this.canProceed = true,
-    this.failedSections = const [],
-  });
+  const _DashboardBody({required this.state, required this.notifier, required this.isLoggedIn});
 
-  final DashboardData data;
+  final DashboardLoaded state;
   final DashboardNotifier notifier;
   final bool isLoggedIn;
-  final bool isStale;
-  final bool canProceed;
-  final List<DashboardSection> failedSections;
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      color: MedColors.blue,
-      onRefresh: notifier.refresh,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              spacing: 12.0,
+    final data = state.data;
+
+    return Padding(
+      padding: MedSpacing.insetXl * 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IntrinsicHeight(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Sol kolon: Kabin
-               SizedBox(width: 260, child: KpiView(kpi: data.kpi, isStale: isStale)),
-                Spacer(),
-                SizedBox(
-  width: 260,
-  child: Column(
-    children: [
-         const CabinBatteryView(),
-      
-      const SizedBox(height: MedSpacing.lg),
-    const CabinClimateView(),
-            const SizedBox(height: MedSpacing.lg),
-      data.hasCabinData
-          ? CabinView(
-              cabin: data.cabinVisualizerData!,
-              isStale: isStale,
-              canProceed: canProceed,
-              notifier: notifier,
-            )
-          : _SectionError(label: context.l10n.dashboard_cabinLoadError),
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: state.treatmentsFailed
+                            ? _SectionError(
+                                label: context.l10n.dashboard_treatmentsLoadError,
+                                onRetry: notifier.refresh,
+                              )
+                            : UpcomingTreatmentsPanel(treatments: data.upcomingTreatments, isLoggedIn: isLoggedIn),
+                      ),
+                      const SizedBox(width: MedSpacing.lg),
+                      Expanded(
+                        child: state.activitiesFailed
+                            ? _SectionError(
+                                label: context.l10n.dashboard_activitiesLoadError,
+                                onRetry: notifier.refresh,
+                              )
+                            : DrugActivityPanel(
+                                activities: data.drugActivities,
+                                onSeeAll: () => notifier.navigateTo('drug-activity'),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
 
-    ],
-  ),
-),
-                // Sağ kolon: Uyarılar + SKT + Hızlı + Aktivite
-                // SizedBox(
-                //   width: 256,
-                //   child: failedSections.contains(DashboardSection.skt)
-                //       ? _SectionError(label: context.l10n.dashboard_sktLoadError)
-                //       : SktView(skt: data.expiringMaterials, isStale: isStale),
-                // ),
+                const SizedBox(width: MedSpacing.xl3),
+
+                SizedBox(
+                  width: 300,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const CabinTelemetryPanel(),
+                      const SizedBox(height: MedSpacing.lg),
+                      data.hasCabinData
+                          ? CabinView(cabin: data.cabinVisualizerData!, notifier: notifier)
+                          : _SectionError(label: context.l10n.dashboard_cabinLoadError, onRetry: notifier.refresh),
+                    ],
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 14),
-          ],
-        ),
+          ),
+
+          if (data.hasKpi) ...[const SizedBox(height: MedSpacing.lg), KpiStrip(kpi: data.kpi!)],
+        ],
       ),
     );
   }
@@ -172,8 +146,36 @@ class _LoadingView extends StatelessWidget {
   const _LoadingView();
 
   @override
+  Widget build(BuildContext context) => const Center(child: CircularProgressIndicator(color: MedColors.blue));
+}
+
+/// Panel içi hata — tüm ekran yerine sadece o bölüm başarısız olduğunda.
+class _SectionError extends StatelessWidget {
+  const _SectionError({required this.label, this.onRetry});
+
+  final String label;
+  final VoidCallback? onRetry;
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(child: CircularProgressIndicator(color: MedColors.blue));
+    return Container(
+      padding: const EdgeInsets.all(MedSpacing.xl),
+      decoration: BoxDecoration(
+        color: MedColors.surface,
+        borderRadius: MedRadius.lgAll,
+        border: Border.all(color: MedColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(PhosphorIcons.warningCircle(), size: 18, color: MedColors.text3),
+          const SizedBox(width: MedSpacing.md),
+          Expanded(
+            child: Text(label, style: MedTextStyles.bodySm(color: MedColors.text3)),
+          ),
+          if (onRetry != null) _RetryButton(onTap: onRetry!, compact: true),
+        ],
+      ),
+    );
   }
 }
 
@@ -188,7 +190,7 @@ class _ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(MedSpacing.xl4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -196,26 +198,54 @@ class _ErrorView extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(color: MedColors.redLight, borderRadius: MedRadius.lgAll),
-              child: const Icon(Icons.wifi_off_rounded, size: 28, color: MedColors.red),
+              child: Icon(PhosphorIcons.wifiSlash(), size: 28, color: MedColors.red),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: MedSpacing.xl),
             Text(
               message,
-              style: MedTextStyles.bodySm(color: MedColors.text2),
+              style: MedTextStyles.bodyMd(color: MedColors.text2),
               textAlign: TextAlign.center,
             ),
-            if (isRetryable) ...[
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: onRetry,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                  decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.mdAll),
-                  child: Text(context.l10n.common_retryButton, style: MedTextStyles.bodyMd(color: Colors.white)),
-                ),
+            if (isRetryable) ...[const SizedBox(height: MedSpacing.xl2), _RetryButton(onTap: onRetry)],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RetryButton extends StatelessWidget {
+  const _RetryButton({required this.onTap, this.compact = false});
+
+  final VoidCallback onTap;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: MedRadius.mdAll,
+        child: Container(
+          height: compact ? 32 : MedSpacing.touchTarget,
+          padding: EdgeInsets.symmetric(horizontal: compact ? MedSpacing.lg : MedSpacing.xl3),
+          decoration: BoxDecoration(
+            color: compact ? MedColors.surface2 : MedColors.blue,
+            borderRadius: MedRadius.mdAll,
+            border: compact ? Border.all(color: MedColors.border2) : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(PhosphorIcons.arrowClockwise(), size: 14, color: compact ? MedColors.text2 : Colors.white),
+              const SizedBox(width: MedSpacing.sm),
+              Text(
+                context.l10n.common_retryButton,
+                style: MedTextStyles.bodySm(color: compact ? MedColors.text2 : Colors.white, weight: FontWeight.w500),
               ),
             ],
-          ],
+          ),
         ),
       ),
     );

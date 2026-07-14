@@ -97,10 +97,9 @@ class _SidePanelItemState extends State<_SidePanelItem> {
                 child: Text(
                   widget.label,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 13,
+                  style: MedTextStyles.bodyMd().copyWith(
                     fontWeight: widget.active ? FontWeight.w600 : FontWeight.w400,
-                    color: widget.active ? const Color(0xFF2563EB) : const Color(0xFF374151),
+                    color: widget.active ? MedColors.blue : MedColors.text,
                   ),
                 ),
               ),

@@ -5582,5 +5582,141 @@
 },
 
 "dashboard_climate_title": "Environment",
-"dashboard_sensor_outOfRange": "Out of range"
+"dashboard_sensor_outOfRange": "Out of range",
+
+"dashboard_upcomingTreatmentsPanelTitle": "Upcoming Treatments",
+"@dashboard_upcomingTreatmentsPanelTitle": {
+  "description": "Header of the upcoming treatments panel on the client dashboard"
+},
+
+"dashboard_upcomingTreatmentsCountBadge": "{count, plural, one{{count} scheduled} other{{count} scheduled}}",
+"@dashboard_upcomingTreatmentsCountBadge": {
+  "description": "Badge in the upcoming treatments panel header showing how many treatments are scheduled",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"dashboard_upcomingTreatmentsEmptyTitle": "No scheduled treatments",
+"@dashboard_upcomingTreatmentsEmptyTitle": {
+  "description": "Empty state shown in the upcoming treatments panel when no treatment is planned"
+},
+
+"dashboard_upcomingTreatmentsOverdueStatus": "overdue",
+"@dashboard_upcomingTreatmentsOverdueStatus": {
+  "description": "Shown under the time in a treatment row when the scheduled time has already passed"
+},
+
+"dashboard_treatmentsLoadError": "Upcoming treatments could not be loaded",
+"@dashboard_treatmentsLoadError": {
+  "description": "Section error shown in place of the upcoming treatments panel when its request fails"
+},
+
+"dashboard_drugActivityPanelTitle": "Drug Activity",
+"@dashboard_drugActivityPanelTitle": {
+  "description": "Header of the recent drug movements panel on the client dashboard"
+},
+
+"dashboard_drugActivityEmptyTitle": "No activity yet",
+"@dashboard_drugActivityEmptyTitle": {
+  "description": "Empty state shown in the drug activity panel when there are no recent movements"
+},
+
+"dashboard_activitiesLoadError": "Drug activity could not be loaded",
+"@dashboard_activitiesLoadError": {
+  "description": "Section error shown in place of the drug activity panel when its request fails"
+},
+
+"dashboard_telemetryPanelTitle": "Cabin Climate",
+"@dashboard_telemetryPanelTitle": {
+  "description": "Header of the cabin telemetry panel showing temperature, humidity and battery"
+},
+
+"dashboard_telemetryPausedStatus": "Paused",
+"@dashboard_telemetryPausedStatus": {
+  "description": "Shown in the telemetry panel header while sensor polling is suspended during a cabin operation"
+},
+
+"dashboard_kpiActivePatientsLabel": "Active Patients",
+"@dashboard_kpiActivePatientsLabel": {
+  "description": "Label of the active patients card in the dashboard KPI strip"
+},
+
+"dashboard_kpiCompletedOperationsLabel": "Completed Operations",
+"@dashboard_kpiCompletedOperationsLabel": {
+  "description": "Label of the completed operations card in the dashboard KPI strip"
+},
+
+"dashboard_kpiPendingPrescriptionsLabel": "Pending Prescriptions",
+"@dashboard_kpiPendingPrescriptionsLabel": {
+  "description": "Label of the pending prescriptions card in the dashboard KPI strip"
+},
+
+"dashboard_kpiCriticalAlertsLabel": "Critical Alerts",
+"@dashboard_kpiCriticalAlertsLabel": {
+  "description": "Label of the critical alerts card in the dashboard KPI strip"
+},
+
+"common_seeAllButton": "See All",
+"@common_seeAllButton": {
+  "description": "Generic button that opens the full list behind a summary panel"
+},
+
+"common_unknownFallback": "Unknown",
+"@common_unknownFallback": {
+  "description": "Generic fallback shown when a name (patient, medicine, user) is missing"
+},
+
+"common_justNowStatus": "just now",
+"@common_justNowStatus": {
+  "description": "Relative time shown for events that happened less than a minute ago"
+},
+
+"common_minutesAgoStatus": "{count} min ago",
+"@common_minutesAgoStatus": {
+  "description": "Relative time for events within the last hour, used in activity lists",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_hoursAgoStatus": "{count} h ago",
+"@common_hoursAgoStatus": {
+  "description": "Relative time for events within the last day, used in activity lists",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_daysAgoStatus": "{count} d ago",
+"@common_daysAgoStatus": {
+  "description": "Relative time for events older than a day, used in activity lists",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_minutesRemainingStatus": "in {count} min",
+"@common_minutesRemainingStatus": {
+  "description": "Countdown shown next to a treatment scheduled within the next hour",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_hoursRemainingStatus": "in {count} h",
+"@common_hoursRemainingStatus": {
+  "description": "Countdown shown next to a treatment scheduled within the next day",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+
+"common_daysRemainingStatus": "in {count} d",
+"@common_daysRemainingStatus": {
+  "description": "Countdown shown next to a treatment scheduled more than a day ahead",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+}
 }

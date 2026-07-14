@@ -40,6 +40,7 @@ class DatasourceProviders {
       Provider(create: (context) => FaultRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => AssignmentRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => ReportRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => CabinTemperatureRemoteDataSource(apiManager: context.read())),
     ];
   }
 }

@@ -101,7 +101,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dashboard_cabinLoadError => 'Failed to load cabinet data';
 
   @override
-  String get dashboard_treatmentsLoadError => 'Failed to load treatment list';
+  String get dashboard_treatmentsLoadError =>
+      'Impossible de charger les traitements à venir';
 
   @override
   String get dashboard_sktLoadError => 'Failed to load expiry data';
@@ -4727,4 +4728,94 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get dashboard_sensor_outOfRange => 'Hors plage';
+
+  @override
+  String get dashboard_upcomingTreatmentsPanelTitle => 'Traitements à Venir';
+
+  @override
+  String dashboard_upcomingTreatmentsCountBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count planifiés',
+      one: '$count planifié',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboard_upcomingTreatmentsEmptyTitle =>
+      'Aucun traitement planifié';
+
+  @override
+  String get dashboard_upcomingTreatmentsOverdueStatus => 'en retard';
+
+  @override
+  String get dashboard_drugActivityPanelTitle => 'Activité des Médicaments';
+
+  @override
+  String get dashboard_drugActivityEmptyTitle =>
+      'Aucune activité pour le moment';
+
+  @override
+  String get dashboard_activitiesLoadError =>
+      'Impossible de charger l\'activité des médicaments';
+
+  @override
+  String get dashboard_telemetryPanelTitle => 'Environnement de l\'Armoire';
+
+  @override
+  String get dashboard_telemetryPausedStatus => 'En pause';
+
+  @override
+  String get dashboard_kpiActivePatientsLabel => 'Patients Actifs';
+
+  @override
+  String get dashboard_kpiCompletedOperationsLabel => 'Opérations Terminées';
+
+  @override
+  String get dashboard_kpiPendingPrescriptionsLabel =>
+      'Prescriptions en Attente';
+
+  @override
+  String get dashboard_kpiCriticalAlertsLabel => 'Alertes Critiques';
+
+  @override
+  String get common_seeAllButton => 'Tout Voir';
+
+  @override
+  String get common_unknownFallback => 'Inconnu';
+
+  @override
+  String get common_justNowStatus => 'à l\'instant';
+
+  @override
+  String common_minutesAgoStatus(int count) {
+    return 'il y a $count min';
+  }
+
+  @override
+  String common_hoursAgoStatus(int count) {
+    return 'il y a $count h';
+  }
+
+  @override
+  String common_daysAgoStatus(int count) {
+    return 'il y a $count j';
+  }
+
+  @override
+  String common_minutesRemainingStatus(int count) {
+    return 'dans $count min';
+  }
+
+  @override
+  String common_hoursRemainingStatus(int count) {
+    return 'dans $count h';
+  }
+
+  @override
+  String common_daysRemainingStatus(int count) {
+    return 'dans $count j';
+  }
 }

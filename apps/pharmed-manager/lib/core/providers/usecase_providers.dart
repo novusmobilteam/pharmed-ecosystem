@@ -253,6 +253,12 @@ class UsecaseProviders {
       Provider(create: (context) => GetMaterialUsagesUseCase(context.read())),
       Provider(create: (context) => GetAuthorizationSummaryUseCase(context.read())),
       Provider(create: (context) => GetUserAuthorizationSummaryUseCase(context.read())),
+
+      /// CabinTemperature
+      Provider(create: (context) => GetCabinTemperatureUseCase(context.read())),
+      Provider(create: (context) => CreateCabinTemperatureUseCase(context.read())),
+      Provider(create: (context) => UpdateCabinTemperatureUseCase(context.read())),
+      Provider(create: (context) => GetCabinsByStationUseCase(context.read())),
     ];
   }
 }

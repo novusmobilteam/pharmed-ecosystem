@@ -32,8 +32,6 @@ class MyPatientsScreen extends ConsumerWidget {
       dashboardNotifierProvider.select(
         (s) => switch (s) {
           DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          DashboardStale(:final data) => data.cabinVisualizerData?.cabinId,
-          DashboardPartial(:final data) => data.cabinVisualizerData?.cabinId,
           _ => null,
         },
       ),

@@ -1,8 +1,6 @@
 import 'package:pharmed_manager/core/core.dart';
 
-import '../../domain/entity/cabin_temperature_detail.dart';
-
-class CabinTemperatureDetailDTO {
+class CabinTemperatureDto {
   final int? id;
 
   final StationDTO? station;
@@ -15,7 +13,7 @@ class CabinTemperatureDetailDTO {
   final int? bottomLimitHumidity;
   final int? topLimitHumidity;
 
-  CabinTemperatureDetailDTO({
+  CabinTemperatureDto({
     this.id,
     this.station,
     this.cabin,
@@ -27,8 +25,8 @@ class CabinTemperatureDetailDTO {
     this.topLimitHumidity,
   });
 
-  factory CabinTemperatureDetailDTO.fromJson(Map<String, dynamic> json) {
-    return CabinTemperatureDetailDTO(
+  factory CabinTemperatureDto.fromJson(Map<String, dynamic> json) {
+    return CabinTemperatureDto(
       id: json["id"],
       station: json['cabinTemperatureControlStation'] != null
           ? StationDTO.fromJson(json['cabinTemperatureControlStation'])
@@ -46,8 +44,8 @@ class CabinTemperatureDetailDTO {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "cabinTemperatureControlStation": station?.toJson(),
-      "cabin": cabin?.toJson(),
+      "stationId": station?.id,
+      "cabinId": cabin?.id,
       "bottomTemperatureInside": bottomTemperatureInside,
       "topTemperatureInside": topTemperatureInside,
       "bottomTemperatureOutside": bottomTemperatureOutside,
@@ -55,19 +53,5 @@ class CabinTemperatureDetailDTO {
       "bottomLimitHumidity": bottomLimitHumidity,
       "topLimitHumidity": topLimitHumidity,
     };
-  }
-
-  CabinTemperatureDetail toEntity() {
-    return CabinTemperatureDetail(
-      id: id,
-      station: StationMapper().toEntityOrNull(station),
-      cabin: CabinMapper().toEntityOrNull(cabin),
-      bottomTemperatureInside: bottomTemperatureInside,
-      topTemperatureInside: topTemperatureInside,
-      bottomTemperatureOutside: bottomTemperatureOutside,
-      topTemperatureOutside: topTemperatureOutside,
-      bottomLimitHumidity: bottomLimitHumidity,
-      topLimitHumidity: topLimitHumidity,
-    );
   }
 }

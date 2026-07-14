@@ -358,3 +358,19 @@ final getMedicinesUseCaseProvider = Provider((ref) {
 final getCabinExpectedEpcsUseCaseProvider = Provider((ref) {
   return GetCabinExpectedEpcsUseCase(ref.read(cabinStockRepositoryProvider));
 });
+
+final getDrugActivitiesUseCaseProvider = Provider((ref) {
+  return GetDrugActivitiesUseCase(ref.read(dashboardRepositoryProvider));
+});
+
+final saveSensorValuesUseCaseProvider = Provider<SaveSensorValuesUseCase>(
+  (ref) =>
+      SaveSensorValuesUseCase(ref.read(cabinTemperatureRepositoryProvider), ref.read(getCurrentStationUseCaseProvider)),
+);
+
+final getCabinThresholdsUseCaseProvider = Provider<GetCabinThresholdsUseCase>(
+  (ref) => GetCabinThresholdsUseCase(
+    ref.read(cabinTemperatureRepositoryProvider),
+    ref.read(getCurrentStationUseCaseProvider),
+  ),
+);
