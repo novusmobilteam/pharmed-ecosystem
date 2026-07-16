@@ -1,7 +1,6 @@
 export 'cabin_active_patient_card.dart';
 export 'cabin_patient_picker_list.dart';
 export 'hospitalization_card.dart';
-export 'hospitalization_detail_banner.dart';
 export 'patient_list_panel.dart';
 export 'rx_carousel.dart';
 export 'rx_drug_panel.dart';

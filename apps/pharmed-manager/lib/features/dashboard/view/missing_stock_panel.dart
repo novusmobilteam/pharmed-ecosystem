@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../../../widgets/widgets.dart';
 import '../dashboard.dart';
 
 class MissingStockPanel extends StatelessWidget {
@@ -37,9 +36,18 @@ class MissingStockPanel extends StatelessWidget {
               label: context.l10n.assignment_patientLabel,
               value: item.prescription?.hospitalization?.patient?.fullName ?? '-',
             ),
-            MedInfoRow(label: 'SERVİS', value: item.physicalService?.name ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
-            MedInfoRow(label: 'İŞLEMİ YAPAN', value: item.activityUser?.fullName ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
-            MedInfoRow(label: context.l10n.dashboardMissingStockTimeLabel, value: item.activityDate?.formattedDateTime ?? '-'),
+            MedInfoRow(
+              label: 'SERVİS',
+              value: item.physicalService?.name ?? '-',
+            ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            MedInfoRow(
+              label: 'İŞLEMİ YAPAN',
+              value: item.activityUser?.fullName ?? '-',
+            ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            MedInfoRow(
+              label: context.l10n.dashboardMissingStockTimeLabel,
+              value: item.activityDate?.formattedDateTime ?? '-',
+            ),
           ],
           actions: (isLoggedIn && item.status == PrescriptionMovementType.shortageReported)
               ? Row(

@@ -10,23 +10,19 @@ import 'rx_item_card.dart';
 class RxDrugPanel extends StatefulWidget {
   const RxDrugPanel({
     super.key,
-    required this.title,
     required this.items,
     required this.selectedItem,
     required this.isBusy,
     required this.onDrugTap,
-    this.hospitalization,
-    this.showFilters = true,
+
     this.emptyMessage,
   });
 
-  final String title;
   final List<PrescriptionItem> items;
   final PrescriptionItem? selectedItem;
   final bool isBusy;
   final ValueChanged<PrescriptionItem> onDrugTap;
-  final Hospitalization? hospitalization;
-  final bool showFilters;
+
   final String? emptyMessage;
 
   @override

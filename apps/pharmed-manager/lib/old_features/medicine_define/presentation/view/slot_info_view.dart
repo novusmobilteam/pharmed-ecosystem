@@ -13,13 +13,14 @@ class SlotInfoView extends StatelessWidget {
               child: ListView.builder(
                 itemCount: notifier.slots.length,
                 itemBuilder: (context, index) {
-                  final slot = notifier.slots.elementAt(index);
+                  return SizedBox.shrink();
+                  // final slot = notifier.slots.elementAt(index);
 
-                  return SelectableListTile(
-                    item: slot as Selectable,
-                    onTap: (item) => notifier.selectSlot(slot),
-                    isSelected: notifier.selectedSlot == slot,
-                  );
+                  // return SelectableListTile(
+                  //   item: slot as Selectable,
+                  //   onTap: (item) => notifier.selectSlot(slot),
+                  //   isSelected: notifier.selectedSlot == slot,
+                  // );
                 },
               ),
             ),

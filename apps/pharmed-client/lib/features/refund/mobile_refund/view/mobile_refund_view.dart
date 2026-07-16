@@ -128,8 +128,6 @@ class _RightPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedPatient = state.selectedPatient;
-
     if (state.isPrescriptionsLoading) {
       return Center(child: MedLoadingIndicator());
     }
@@ -143,13 +141,10 @@ class _RightPanel extends StatelessWidget {
     }
 
     return RxDrugPanel(
-      title: context.l10n.refund_panel_title,
       items: state.refundables,
       selectedItem: state.selectedItem,
       isBusy: state.isBusy,
       onDrugTap: notifier.onDrugTap,
-      hospitalization: selectedPatient,
-      showFilters: false,
     );
   }
 }

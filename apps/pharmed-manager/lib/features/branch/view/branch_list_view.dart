@@ -67,15 +67,13 @@ class _BranchListViewState extends State<BranchListView> {
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
-        final service = items.elementAt(index);
-        return SelectableListTile(
-          item: items.elementAt(index),
-          onTap: _selectBranch,
-          onDoubleTap: (item, context) {
-            _selectBranch(item);
-            context.pop(item);
-          },
-          isSelected: _selected == service,
+        final branch = items.elementAt(index);
+        return MedEditableListCard(
+          title: branch.title,
+          subtitle: branch.subtitle,
+          onTap: () => _selectBranch(branch),
+          isSelected: _selected == branch,
+          onEdit: () {},
         );
       },
     );

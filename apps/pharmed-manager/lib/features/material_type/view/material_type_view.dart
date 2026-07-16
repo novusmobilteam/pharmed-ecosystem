@@ -74,7 +74,7 @@ class _MaterialTypeListViewState extends State<MaterialTypeListView> {
           shrinkWrap: true,
           itemBuilder: (context, index) {
             final materialType = notifier.filteredItems[index];
-            return EditableListItem(
+            return MedEditableListCard(
               title: materialType.title,
               subtitle: materialType.subtitle,
               onEdit: () => _onEdit(context, notifier, initial: materialType),

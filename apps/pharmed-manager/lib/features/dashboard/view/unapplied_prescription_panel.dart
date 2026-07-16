@@ -29,28 +29,29 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
       itemCount: items.length,
       emptyTitle: context.l10n.dashboardUnappliedPrescriptionsEmptyTitle,
       itemBuilder: (context, index) {
+        return Center();
         final item = items[index];
-        return DashboardRxItemCard(
-          item: item,
-          showFlags: true,
-          showStatusChip: false,
-          showTimeChip: true,
-          infoRows: [
-            MedInfoRow(
-              label: context.l10n.assignment_patientLabel,
-              value: item.prescription?.hospitalization?.patient?.fullName ?? '-',
-            ),
-            MedInfoRow(label: context.l10n.dashboardDoctorLabel, value: item.doctor?.fullName ?? '-'),
-            MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
-            MedInfoRow(
-              label: context.l10n.dashboardRoomBedLabel,
-              value: [
-                item.prescription?.hospitalization?.room?.name,
-                item.prescription?.hospitalization?.bed?.name,
-              ].whereType<String>().join(' / '),
-            ),
-          ],
-        );
+        // return DashboardRxItemCard(
+        //   item: item,
+        //   showFlags: true,
+        //   showStatusChip: false,
+        //   showTimeChip: true,
+        //   infoRows: [
+        //     MedInfoRow(
+        //       label: context.l10n.assignment_patientLabel,
+        //       value: item.prescription?.hospitalization?.patient?.fullName ?? '-',
+        //     ),
+        //     MedInfoRow(label: context.l10n.dashboardDoctorLabel, value: item.doctor?.fullName ?? '-'),
+        //     MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+        //     MedInfoRow(
+        //       label: context.l10n.dashboardRoomBedLabel,
+        //       value: [
+        //         item.prescription?.hospitalization?.room?.name,
+        //         item.prescription?.hospitalization?.bed?.name,
+        //       ].whereType<String>().join(' / '),
+        //     ),
+        //   ],
+        // );
       },
     );
   }

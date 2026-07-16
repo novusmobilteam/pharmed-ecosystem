@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../theme/theme.dart';
+import '../../theme/med_density.dart';
+import '../../theme/med_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // MedRectangleIconButton
@@ -27,6 +28,7 @@ class MedRectangleIconButton extends StatelessWidget {
     this.size,
     this.iconSize,
     this.dimWhenDisabled = true,
+    this.borderColor,
   });
 
   final IconData iconData;
@@ -50,6 +52,9 @@ class MedRectangleIconButton extends StatelessWidget {
   /// MedRectangleIcon) için false; gerçek disabled buton için true.
   final bool dimWhenDisabled;
 
+  /// Kenarlık rengi. Verilmezse iconColor'ın %21 şeffafı (yoksa transparan).
+  final Color? borderColor;
+
   @override
   Widget build(BuildContext context) {
     final density = MedDensity.of(context);
@@ -69,7 +74,9 @@ class MedRectangleIconButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: MedRadius.mdAll,
-          border: Border.all(color: iconColor != null ? iconColor!.withValues(alpha: 0.21) : Colors.transparent),
+          border: Border.all(
+            color: borderColor ?? (iconColor != null ? iconColor!.withValues(alpha: 0.21) : Colors.transparent),
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

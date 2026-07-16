@@ -30,19 +30,20 @@ class UpcomingTreatmentPanel extends StatelessWidget {
       emptyTitle: context.l10n.dashboardUpcomingTreatmentsEmptyTitle,
       itemBuilder: (context, index) {
         final item = items[index];
-        return DashboardRxItemCard(
-          item: item,
-          showFlags: true,
-          showStatusChip: true,
-          showTimeChip: true,
-          infoRows: [
-            MedInfoRow(
-              label: context.l10n.assignment_patientLabel,
-              value: item.prescription?.hospitalization?.patient?.fullName ?? '-',
-            ),
-            MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
-          ],
-        );
+        return Center();
+        // return DashboardRxItemCard(
+        //   item: item,
+        //   showFlags: true,
+        //   showStatusChip: true,
+        //   showTimeChip: true,
+        //   infoRows: [
+        //     MedInfoRow(
+        //       label: context.l10n.assignment_patientLabel,
+        //       value: item.prescription?.hospitalization?.patient?.fullName ?? '-',
+        //     ),
+        //     MedInfoRow(label: 'SERVİS', value: item.prescription?.hospitalization?.physicalService?.name ?? '-'), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+        //   ],
+        // );
       },
     );
   }

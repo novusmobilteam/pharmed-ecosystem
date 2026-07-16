@@ -145,8 +145,6 @@ class _RightPanel extends StatelessWidget {
     }
 
     return RxDrugPanel(
-      title: context.l10n.waste_panel_title,
-      showFilters: false,
       items: state.disposables,
       selectedItem: state.selectedItem,
       isBusy: state.isSaving,

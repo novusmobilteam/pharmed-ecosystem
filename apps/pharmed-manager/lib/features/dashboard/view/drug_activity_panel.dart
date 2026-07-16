@@ -96,16 +96,18 @@ class DrugActivityCard extends StatelessWidget {
           const Divider(height: 1, color: MedColors.border2),
           const SizedBox(height: 12),
 
-          // Bilgi satırları
-          const MedInfoRow(label: 'HASTA', value: '').runtimeType == Null
-              ? const SizedBox()
-              : const SizedBox(), // placeholder kaldırılacak
-          MedInfoRow(label: context.l10n.assignment_patientLabel, value: _patient),
-          const SizedBox(height: 6),
-          MedInfoRow(label: 'İŞLEMİ YAPAN', value: _performedBy), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
-          const SizedBox(height: 6),
-          MedInfoRow(label: context.l10n.dashboardDrugActivityDateTimeLabel, value: _dateTime),
-
+          // // Bilgi satırları
+          // const MedInfoRow(label: 'HASTA', value: '').runtimeType == Null
+          //     ? const SizedBox()
+          //     : const SizedBox(), // placeholder kaldırılacak
+          // MedInfoRow(label: context.l10n.assignment_patientLabel, value: _patient),
+          // const SizedBox(height: 6),
+          // MedInfoRow(
+          //   label: 'İŞLEMİ YAPAN',
+          //   value: _performedBy,
+          // ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+          // const SizedBox(height: 6),
+          // MedInfoRow(label: context.l10n.dashboardDrugActivityDateTimeLabel, value: _dateTime),
           const SizedBox(height: 12),
 
           // Hareket tipi chip'i — eylem etiketiyle

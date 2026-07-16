@@ -1,8 +1,6 @@
 export 'rfid/rfid_scan_session_notifier.dart';
 export 'rfid/rfid_scan_session_state.dart';
 
-export 'mobile_drawer/mobile_drawer_operation_wrapper.dart';
-export 'mobile_drawer/mobile_drawer_status_banner.dart';
 export 'mobile_drawer/mobile_drawer_orchestrator.dart';
 export 'mobile_drawer/mobile_drawer_session_notifier.dart';
 export 'mobile_drawer/mobile_drawer_session_state.dart';

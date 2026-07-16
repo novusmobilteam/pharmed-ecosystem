@@ -65,7 +65,7 @@ class _UnitViewState extends State<UnitView> {
       shrinkWrap: true,
       itemBuilder: (context, index) {
         final unit = notifier.filteredItems[index];
-        return EditableListItem(
+        return MedEditableListCard(
           title: unit.title,
           subtitle: unit.subtitle,
           onEdit: () => _onEdit(context, initial: unit),

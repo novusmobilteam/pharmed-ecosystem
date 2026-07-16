@@ -43,7 +43,7 @@ class _KitListViewState extends State<KitListView> {
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final kit = notifier.filteredItems[index];
-            return EditableListItem(
+            return MedEditableListCard(
               title: kit.name ?? '-',
               onEdit: () => _onEdit(context, notifier, initial: kit),
               onDelete: () => _onDelete(context, notifier, kit),

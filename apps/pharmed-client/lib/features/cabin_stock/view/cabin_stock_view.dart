@@ -133,13 +133,10 @@ class _StockRightPanel extends StatelessWidget {
       );
     }
     return RxDrugPanel(
-      title: context.l10n.cabinStock_panel_title,
       items: state.prescriptionItems,
       selectedItem: state.selectedItem,
       isBusy: state.isBusy,
       onDrugTap: (_) {},
-      hospitalization: state.selectedPatient,
-      showFilters: false,
     );
   }
 }

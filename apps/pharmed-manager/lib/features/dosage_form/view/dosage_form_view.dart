@@ -67,7 +67,7 @@ class _DosageFormViewState extends State<DosageFormView> {
       shrinkWrap: true,
       itemBuilder: (context, index) {
         final dosageForm = notifier.filteredItems[index];
-        return EditableListItem(
+        return MedEditableListCard(
           title: dosageForm.title,
           subtitle: dosageForm.subtitle,
           onEdit: () => _onEdit(context, initial: dosageForm),

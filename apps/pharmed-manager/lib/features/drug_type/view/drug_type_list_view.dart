@@ -41,7 +41,7 @@ class _DrugTypeListViewState extends State<DrugTypeListView> {
           shrinkWrap: true,
           itemBuilder: (context, index) {
             final drugType = notifier.filteredItems[index];
-            return EditableListItem(
+            return MedEditableListCard(
               title: drugType.title,
               subtitle: drugType.subtitle,
               onEdit: () => _onEdit(context, notifier, initial: drugType),

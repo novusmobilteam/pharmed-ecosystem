@@ -44,7 +44,7 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
           shrinkWrap: true,
           itemBuilder: (context, index) {
             final activeIngredient = vm.filteredItems[index];
-            return EditableListItem(
+            return MedEditableListCard(
               title: activeIngredient.title,
               subtitle: activeIngredient.subtitle,
               onEdit: () => _onEdit(context, initial: activeIngredient),
@@ -54,6 +54,7 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
                       widget.onItemSelected?.call();
                     }
                   : null,
+              editTooltip: '',
             );
           },
         );

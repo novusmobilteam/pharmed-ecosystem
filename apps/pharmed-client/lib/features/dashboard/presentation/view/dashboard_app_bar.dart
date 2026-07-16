@@ -57,21 +57,14 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
   @override
   void initState() {
     super.initState();
-    _timeStr = _formatTime(DateTime.now());
-    _clockStream = Stream.periodic(const Duration(seconds: 1), (_) => _formatTime(DateTime.now()));
+    _timeStr = DateTime.now().formattedTime;
+    _clockStream = Stream.periodic(const Duration(seconds: 1), (_) => _timeStr);
   }
 
   @override
   void dispose() {
     _overlay?.remove();
     super.dispose();
-  }
-
-  String _formatTime(DateTime dt) {
-    final h = dt.hour.toString().padLeft(2, '0');
-    final m = dt.minute.toString().padLeft(2, '0');
-    final s = dt.second.toString().padLeft(2, '0');
-    return '$h:$m:$s';
   }
 
   void _toggleMenu(int id) {
@@ -190,20 +183,21 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
           const SizedBox(width: 6),
 
           if (widget.isLoggedIn) ...[
-            _IconButton(
-              icon: PhosphorIcons.signOut(),
+            MedRectangleIconButton(
               tooltip: context.l10n.dashboard_logoutTooltip,
-              danger: true,
-              onTap: widget.onLogoutTap,
+              iconData: PhosphorIcons.signOut(),
+              color: MedColors.red,
+              iconColor: Colors.white,
+              onPressed: widget.onLogoutTap,
             ),
             const SizedBox(width: 4),
           ],
 
           if (widget.isLoggedIn)
-            _IconButton(
-              icon: PhosphorIcons.gearSix(),
+            MedRectangleIconButton(
+              iconData: PhosphorIcons.gearSix(),
               tooltip: context.l10n.settings_title,
-              onTap: widget.onSettingsTap,
+              onPressed: widget.onSettingsTap,
             ),
         ],
       ),
@@ -398,35 +392,6 @@ class _LoginButton extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _IconButton extends StatelessWidget {
-  const _IconButton({required this.icon, required this.tooltip, this.onTap, this.danger = false});
-
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback? onTap;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-            color: danger ? MedColors.red : Colors.transparent,
-            border: Border.all(color: danger ? MedColors.red : MedColors.border),
-            borderRadius: MedRadius.mdAll,
-          ),
-          child: Icon(icon, size: 15, color: danger ? MedColors.bg : MedColors.text),
         ),
       ),
     );

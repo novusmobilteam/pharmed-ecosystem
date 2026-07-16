@@ -52,7 +52,7 @@ class _KitContentListViewState extends State<KitContentListView> {
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final kitContent = notifier.filteredItems.elementAt(index);
-            return EditableListItem(
+            return MedEditableListCard(
               title: kitContent.medicine?.title.toString() ?? "",
               subtitle: kitContent.medicine?.barcode,
               onEdit: () => _onEdit(context, notifier, initial: kitContent),
