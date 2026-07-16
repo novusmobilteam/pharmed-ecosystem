@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import '../../../../core/providers/providers.dart';
 import '../../assignment.dart';
 
 class DrugAssignmentView extends ConsumerStatefulWidget {
@@ -51,22 +50,6 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
       if (!mounted) return;
       ref.read(drugAssignmentNotifierProvider.notifier).init(data);
     });
-  }
-
-  Future<void> _openDrugDialog() async {
-    final getDrugs = ref.read(getDrugsUseCaseProvider);
-
-    final selected = await SelectionDialog.show<Medicine>(
-      context,
-      title: context.l10n.drugAssignment_panel_title,
-      dataSource: (skip, take, search) => getDrugs.call(GetDrugsParams(skip: skip, take: take, search: search)),
-      labelBuilder: (m) => m.name ?? '—',
-      subtitleBuilder: (m) => m.barcode,
-    );
-
-    if (selected != null && mounted) {
-      ref.read(drugAssignmentNotifierProvider.notifier).onDrugSelected(selected);
-    }
   }
 
   @override
@@ -116,7 +99,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
         mode: CabinOperationMode.assign,
         child: DrugAssignmentPanel(
           state: state,
-          onSelectDrug: _openDrugDialog,
+          onSelectDrug: notifier.onDrugSelected,
           onMinChanged: notifier.onMinQtyChanged,
           onMaxChanged: notifier.onMaxQtyChanged,
           onCriticalChanged: notifier.onCriticalQtyChanged,

@@ -6,6 +6,11 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // [SWREQ-UI-ATOM-BTN-001]
 // Dokunmatik HMI için standart buton bileşeni.
 // Min 48px yükseklik (HIG touch target), min 44px sm boyut.
+//
+// Boyut: `size` verilmezse MedDensity'den türetilir
+//   (touch → md, compact → sm). Verilirse override eder.
+//   Böylece mevcut `size: MedButtonSize.lg` çağrıları kırılmaz.
+//
 // Sınıf : Class A (görsel eylem, iş kararı notifier'da)
 // ─────────────────────────────────────────────────────────────────
 
@@ -17,6 +22,7 @@ enum MedButtonSize { sm, md, lg }
 ///
 /// ```dart
 /// MedButton(label: 'Kaydet', onPressed: _save, variant: MedButtonVariant.primary)
+/// // size verilmezse temaya (density) göre otomatik.
 /// ```
 class MedButton extends StatefulWidget {
   const MedButton({
@@ -24,7 +30,7 @@ class MedButton extends StatefulWidget {
     required this.label,
     this.onPressed,
     this.variant = MedButtonVariant.primary,
-    this.size = MedButtonSize.md,
+    this.size,
     this.prefixIcon,
     this.suffixIcon,
     this.fullWidth = false,
@@ -35,7 +41,10 @@ class MedButton extends StatefulWidget {
   final String label;
   final VoidCallback? onPressed;
   final MedButtonVariant variant;
-  final MedButtonSize size;
+
+  /// null → MedDensity'den (touch: md, compact: sm). Verilirse override.
+  final MedButtonSize? size;
+
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final bool fullWidth;
@@ -51,20 +60,23 @@ class _MedButtonState extends State<MedButton> {
 
   @override
   Widget build(BuildContext context) {
+    final density = MedDensity.of(context);
+    final effectiveSize = widget.size ?? (density.isCompact ? MedButtonSize.sm : MedButtonSize.md);
+
     final isDisabled = (widget.onPressed == null && !widget.isLoading) || !widget.isActive;
     final colors = _resolveColors(widget.variant);
-    final sizing = _resolveSizing(widget.size);
+    final sizing = _resolveSizing(effectiveSize);
 
     return AnimatedOpacity(
       opacity: isDisabled ? 0.4 : 1.0,
-      duration: const Duration(milliseconds: 150),
+      duration: MedMotion.quick,
       child: GestureDetector(
         onTapDown: isDisabled ? null : (_) => setState(() => _pressed = true),
         onTapUp: isDisabled ? null : (_) => setState(() => _pressed = false),
         onTapCancel: isDisabled ? null : () => setState(() => _pressed = false),
         onTap: isDisabled ? null : widget.onPressed,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
+          duration: MedMotion.instant,
           width: widget.fullWidth ? double.infinity : null,
           constraints: BoxConstraints(minHeight: sizing.minHeight),
           padding: sizing.padding,
@@ -121,30 +133,30 @@ final class _ButtonColors {
 
 _ButtonColors _resolveColors(MedButtonVariant v) {
   return switch (v) {
-    MedButtonVariant.primary => _ButtonColors(
+    MedButtonVariant.primary => const _ButtonColors(
       background: MedColors.blue,
       foreground: Colors.white,
-      shadow: const [BoxShadow(color: Color(0x4D1A6FD8), blurRadius: 8, offset: Offset(0, 2))],
+      shadow: [BoxShadow(color: MedColors.overlayBlue, blurRadius: 8, offset: Offset(0, 2))],
     ),
-    MedButtonVariant.secondary => _ButtonColors(
+    MedButtonVariant.secondary => const _ButtonColors(
       background: Colors.transparent,
       foreground: MedColors.blue,
       borderColor: MedColors.blue,
     ),
-    MedButtonVariant.ghost => _ButtonColors(
+    MedButtonVariant.ghost => const _ButtonColors(
       background: MedColors.surface2,
       foreground: MedColors.text2,
       borderColor: MedColors.border,
     ),
-    MedButtonVariant.danger => _ButtonColors(
+    MedButtonVariant.danger => const _ButtonColors(
       background: MedColors.red,
       foreground: Colors.white,
-      shadow: const [BoxShadow(color: Color(0x4DDC2626), blurRadius: 8, offset: Offset(0, 2))],
+      shadow: [BoxShadow(color: MedColors.overlayRed, blurRadius: 8, offset: Offset(0, 2))],
     ),
-    MedButtonVariant.success => _ButtonColors(
+    MedButtonVariant.success => const _ButtonColors(
       background: MedColors.green,
       foreground: Colors.white,
-      shadow: const [BoxShadow(color: Color(0x4D0D9E6C), blurRadius: 8, offset: Offset(0, 2))],
+      shadow: [BoxShadow(color: MedColors.overlayGreen, blurRadius: 8, offset: Offset(0, 2))],
     ),
   };
 }

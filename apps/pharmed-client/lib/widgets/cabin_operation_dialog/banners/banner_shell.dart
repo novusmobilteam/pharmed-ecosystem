@@ -9,17 +9,23 @@ enum BannerTone {
   info, // mavi
   success; // yeşil
 
-  (Color bg, Color fg) get colors => switch (this) {
-    BannerTone.error => (MedColors.redLight, MedColors.red),
-    BannerTone.warning => (MedColors.amberLight, MedColors.amber),
-    BannerTone.info => (MedColors.blueLight, MedColors.blue),
-    BannerTone.success => (MedColors.greenLight, MedColors.green),
+  /// Renk kaynağı artık tek: MedSemanticColors. Eşleme burada değil orada.
+  (Color bg, Color fg) get colors {
+    final c = MedSemanticColors.of(_tone);
+    return (c.background, c.foreground);
+  }
+
+  MedTone get _tone => switch (this) {
+    BannerTone.error => MedTone.error,
+    BannerTone.warning => MedTone.warning,
+    BannerTone.info => MedTone.info,
+    BannerTone.success => MedTone.success,
   };
 }
 
 /// Tüm kabin işlem dialog'larında ortak banner kabuğu.
 /// - [title] opsiyonel: verilirse iki satırlı (başlık + mesaj), yoksa tek satır.
-/// - [epcs] opsiyonel: verilirse altında etiket listesi gösterilir.
+/// - [epcs] opsiyonel: verilirse altında etiket listesi gösterilir (MedChip fullWidth).
 class OperationBanner extends StatelessWidget {
   const OperationBanner({
     super.key,
@@ -43,7 +49,7 @@ class OperationBanner extends StatelessWidget {
     final (bg, fg) = tone.colors;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12.0),
+      margin: const EdgeInsets.only(bottom: 12.0),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: bg,
@@ -70,8 +76,21 @@ class OperationBanner extends StatelessWidget {
                 Text(message, style: MedTextStyles.bodySm(color: fg)),
                 if (epcs != null && epcs!.isNotEmpty) ...[
                   const SizedBox(height: 10),
-                  SingleChildScrollView(
-                    child: Column(children: epcs!.map((epc) => _EpcChip(epc: epc)).toList()),
+                  Column(
+                    children: [
+                      for (final epc in epcs!)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: MedChip(
+                            label: formatEpc(epc),
+                            icon: PhosphorIcons.tag(),
+                            background: MedColors.surface,
+                            foreground: MedColors.text3,
+                            showBorder: false,
+                            fullWidth: true,
+                          ),
+                        ),
+                    ],
                   ),
                 ],
                 if (child != null) ...[const SizedBox(height: 10), child!],
@@ -79,31 +98,6 @@ class OperationBanner extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _EpcChip extends StatelessWidget {
-  const _EpcChip({required this.epc});
-  final String epc;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(color: MedColors.surface, borderRadius: MedRadius.mdAll),
-        child: Row(
-          children: [
-            Icon(PhosphorIcons.tag(), size: 13, color: MedColors.text3),
-            const SizedBox(width: 6),
-            Expanded(
-              child: Text(formatEpc(epc), style: MedTextStyles.monoXs(color: MedColors.text3)),
-            ),
-          ],
-        ),
       ),
     );
   }

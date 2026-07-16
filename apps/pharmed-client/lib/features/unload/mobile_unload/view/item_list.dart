@@ -117,7 +117,7 @@ class _ItemCard extends ConsumerWidget {
   }
 }
 
-StatusBadge _unloadItemBadge(BuildContext context, _ItemStatus status) {
+MedChip _unloadItemBadge(BuildContext context, _ItemStatus status) {
   final (bg, fg, icon, label) = switch (status) {
     _ItemStatus.unloaded => (
       MedColors.green,
@@ -145,5 +145,5 @@ StatusBadge _unloadItemBadge(BuildContext context, _ItemStatus status) {
     ),
     _ => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), '—'),
   };
-  return StatusBadge(bg: bg, fg: fg, icon: icon, label: label);
+  return MedChip(background: bg, foreground: fg, icon: icon, label: label);
 }

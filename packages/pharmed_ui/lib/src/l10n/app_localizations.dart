@@ -8368,6 +8368,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'in {count} d'**
   String common_daysRemainingStatus(int count);
+
+  /// Subtitle under the medicine selection screen title, guiding the user to pick cells
+  ///
+  /// In en, this message translates to:
+  /// **'Select the cells to fill. Low-stock cells are marked.'**
+  String get refill_hint_selectSlots;
+
+  /// Form header for a unit-dose drawer where all cells are filled in one list
+  ///
+  /// In en, this message translates to:
+  /// **'Fill Cells'**
+  String get refill_title_fillCells;
+
+  /// Inline validation shown on a cell input when filling quantity is entered but expiry date is missing
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry date required'**
+  String get refill_hint_miadRequired;
+
+  /// Full-screen title while the physical drawer is being opened by the motor
+  ///
+  /// In en, this message translates to:
+  /// **'Opening drawer…'**
+  String get refill_status_openingTitle;
+
+  /// Full-screen subtitle while the physical drawer is being opened
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait, the physical drawer is opening.'**
+  String get refill_status_openingBody;
+
+  /// Full-screen title when the lock is released and the drawer is waiting to be pulled open
+  ///
+  /// In en, this message translates to:
+  /// **'Pull the drawer'**
+  String get refill_status_waitingPullTitle;
+
+  /// Full-screen subtitle when the drawer lock is released and waiting for the user to pull
+  ///
+  /// In en, this message translates to:
+  /// **'The lock is released. Pull the drawer to continue.'**
+  String get refill_status_waitingPullBody;
+
+  /// Full-screen title while a cubic drawer inner lid is being opened
+  ///
+  /// In en, this message translates to:
+  /// **'Opening cell…'**
+  String get refill_status_openingLidTitle;
+
+  /// Full-screen subtitle while a cubic drawer inner lid is being opened
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait, the cell lid is opening.'**
+  String get refill_status_openingLidBody;
+
+  /// Status badge on a cell card when current stock is above the minimum threshold
+  ///
+  /// In en, this message translates to:
+  /// **'In stock'**
+  String get refill_status_stockOk;
+
+  /// Status badge on a cell card when current stock is at or below the minimum threshold
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get refill_status_stockLow;
+
+  /// Status badge on a cell card when current stock is at or below the critical threshold
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get refill_status_stockCritical;
+
+  /// Confirmation dialog title when the user taps Stop during an active refill queue
+  ///
+  /// In en, this message translates to:
+  /// **'Stop the refill?'**
+  String get refill_stop_confirmTitle;
+
+  /// Confirmation dialog body explaining the consequence of stopping an active refill queue
+  ///
+  /// In en, this message translates to:
+  /// **'If you stop, the open drawer will be locked and this refill will be marked as partially completed. Entered counts and fill amounts are kept, but you cannot resume — you must start a new refill.'**
+  String get refill_stop_confirmMessage;
+
+  /// Confirm button on the stop-refill confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Stop'**
+  String get refill_stop_confirmYes;
 }
 
 class _AppLocalizationsDelegate

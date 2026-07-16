@@ -5,37 +5,25 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // ─────────────────────────────────────────────────────────────────
 // MedRxMovementChip
 // [SWREQ-UI-CHIP-RX-001]
-// Kullanım: Reçete kartındaki durum chip'i.
-// Sınıf  : Class A
+// Reçete durum chip'i — PrescriptionMovementType extension'ından
+// renk/label alır, MedChip'e delege eder.
 // ─────────────────────────────────────────────────────────────────
 
-/// Reçete durum chip'i — PrescriptionStatus extension'ından renk/ikon alır.
-///
-/// ```dart
-/// MedRxMovementChip(status: prescription.status)
-/// ```
+/// Reçete durum chip'i.
 class MedRxMovementChip extends StatelessWidget {
   const MedRxMovementChip({super.key, required this.status, this.useActionLabel = false});
 
   final PrescriptionMovementType status;
 
-  /// `true` → durumun [PrescriptionMovementType.actionLabel]'ı (yapılan eylem)
-  /// `false` → [PrescriptionMovementType.label]'ı (mevcut durum). Varsayılan.
+  /// `true` → actionLabel (yapılan eylem), `false` → label (mevcut durum).
   final bool useActionLabel;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: status.backgroundColor,
-        borderRadius: MedRadius.smAll,
-        border: Border.all(color: status.backgroundColor.withAlpha(55)),
-      ),
-      child: Text(
-        useActionLabel ? status.actionLabel : status.label,
-        style: MedTextStyles.monoSm(color: status.foregroundColor),
-      ),
+    return MedChip(
+      label: useActionLabel ? status.actionLabel : status.label,
+      background: status.backgroundColor,
+      foreground: status.foregroundColor,
     );
   }
 }

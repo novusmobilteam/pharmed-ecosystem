@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../core/cabin_operation/cabin_operation.dart';
-import 'status_badge.dart';
 
 enum OperationPhase { normal, saving, error, fatal, rollback }
 
@@ -31,7 +30,7 @@ class OperationStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, icon, bg, fg) = _resolve(context, input);
-    return StatusBadge(bg: bg, fg: fg, icon: icon, label: label);
+    return MedChip(label: label, icon: icon, background: bg, foreground: fg, showBorder: false, mono: false);
   }
 
   (String, IconData, Color, Color) _resolve(BuildContext context, OperationStatusInput i) {

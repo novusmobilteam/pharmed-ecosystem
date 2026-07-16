@@ -44,6 +44,7 @@ class PatientFormPanel extends StatelessWidget {
                   spacing: AppDimensions.registrationDialogSpacing,
                   children: [
                     _IdentityField(),
+                    _ProtocolField(),
                     Row(spacing: AppDimensions.registrationDialogSpacing, children: [_NameField(), _SurnameField()]),
                     Row(
                       spacing: AppDimensions.registrationDialogSpacing,
@@ -54,11 +55,8 @@ class PatientFormPanel extends StatelessWidget {
                       children: [_BirthDateField(), _GenderField(), _WeightField()],
                     ),
                     _PhoneField(),
-                    Row(
-                      spacing: AppDimensions.registrationDialogSpacing,
-                      children: [_PatientDescriptionField(), _AddressField()],
-                    ),
-                    _ProtocolField(),
+                    _AddressField(),
+                    _PatientDescriptionField(),
                   ],
                 ),
               ),
@@ -262,17 +260,15 @@ class _PatientDescriptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Consumer<PatientFormNotifier>(
-        builder: (context, notifier, _) {
-          return MedTextInputField(
-            label: context.l10n.common_descriptionLabel,
-            maxLines: 3,
-            initialValue: notifier.patient?.description?.toString(),
-            onChanged: (value) => notifier.updateDescription(value),
-          );
-        },
-      ),
+    return Consumer<PatientFormNotifier>(
+      builder: (context, notifier, _) {
+        return MedTextInputField(
+          label: context.l10n.common_descriptionLabel,
+          maxLines: 3,
+          initialValue: notifier.patient?.description?.toString(),
+          onChanged: (value) => notifier.updateDescription(value),
+        );
+      },
     );
   }
 }
@@ -283,17 +279,16 @@ class _AddressField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Consumer<PatientFormNotifier>(
-        builder: (context, notifier, _) {
-          return MedTextInputField(
-            label: context.l10n.patient_fieldAddress,
-            maxLines: 3,
-            initialValue: notifier.patient?.address?.toString(),
-            onChanged: (value) => notifier.updateAddress(value),
-          );
-        },
-      ),
+    return Consumer<PatientFormNotifier>(
+      builder: (context, notifier, _) {
+        return MedTextInputField(
+          label: context.l10n.patient_fieldAddress,
+          maxLines: 3,
+
+          initialValue: notifier.patient?.address?.toString(),
+          onChanged: (value) => notifier.updateAddress(value),
+        );
+      },
     );
   }
 }

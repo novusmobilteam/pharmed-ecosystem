@@ -32,4 +32,11 @@ abstract interface class IReportRepository {
   /// Yetki Listesi
   Future<Result<ApiResponse<List<UserAuthorizationSummary>>?>> getAuthorizationSummary({PagedQueryParams? params});
   Future<Result<UserAuthorizationDetail?>> getUserAuthorizationSummary(int userId);
+
+  /// Kabin Isı Listesi
+  Future<Result<ApiResponse<List<CabinTemperatureValue>>?>> getCabinTemperatures({
+    PagedQueryParams? params,
+    required int stationId,
+    bool outOfRange = false,
+  });
 }

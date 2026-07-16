@@ -1,25 +1,18 @@
-// lib/shared/widgets/pharmed_search_dialog.dart
-//
+// [SWREQ-UI-SELECTIONDIALOG-001] [IEC 62304 §5.5]
 // Generic arama + infinite scroll seçim dialogu.
 //
-// Client'ta infinite scroll kullanılır.
-// Manager'da ayrı bir PharmedPagedDialog yazılacak (ilerleyen adımda).
+// TEMİZLİK: iç kopya widget'lar ortak widget'lara delege edildi:
+//   _EmptyState  → EmptyStateWidget(noResults)
+//   _ErrorState  → EmptyStateWidget(custom) + MedButton
+//   _FooterButton→ MedButton
+//   _SelectAllBtn→ MedButton(ghost)
+//   _CloseButton → MedRectangleIconButton
+//   header gradient renkleri token'a bağlandı
+// MANTIK (_fetch/_onScroll/debounce/seçim) hiç değişmedi.
 //
-// KULLANIM:
-//   final result = await PharmedSearchDialog.show<Medicine>(
-//     context: context,
-//     title: 'İlaç Seç',
-//     dataSource: (skip, take, search) =>
-//         ref.read(getDrugsUseCaseProvider).call(
-//           GetDrugsParams(skip: skip, take: take, search: search),
-//         ),
-//     labelBuilder: (m) => m.name ?? '—',
-//   );
-//   if (result != null) { ... }
-//
-// BAĞIMLILIK:
-//   - pharmed_core: Selectable, ApiResponse, Result
-//   - pharmed_ui: MedColors, MedFonts, MedTextStyles, MedRadius
+// BAĞIMLILIK: pharmed_core (Selectable, ApiResponse, Result), pharmed_data.
+//   (Bu dosya pharmed_ui'yi core'a bağlayanlardan; saflaştırma fazında
+//    app katmanına taşınması değerlendirilecek.)
 //
 // Sınıf: Class B
 
@@ -46,21 +39,12 @@ class SelectionDialog<T extends Selectable> extends StatefulWidget {
 
   final String title;
   final SearchDataSource<T> dataSource;
-
-  /// Her item için gösterilecek ana metin.
   final String? Function(T item) labelBuilder;
-
-  /// Her item için gösterilecek ikincil metin — opsiyonel.
   final String? Function(T item)? subtitleBuilder;
-
-  /// Sayfa başına item sayısı.
   final int pageSize;
-
   final bool multi;
   final List<T>? initiallySelected;
 
-  /// Dialog'u gösterir ve seçilen item'ı döndürür.
-  /// İptal edilirse null döner.
   static Future<T?> show<T extends Selectable>(
     BuildContext context, {
     required String title,
@@ -144,7 +128,7 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
 
   Future<void> _fetch({bool reset = false}) async {
     if (_isLoading || _isLoadingMore) {
-      _isFetchingMore = false; // guard'a takılırsak da bırak
+      _isFetchingMore = false;
       return;
     }
 
@@ -191,18 +175,14 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
     }
   }
 
-  // ── Scroll — infinite scroll tetikleyici ─────────────────────────
-
   void _onScroll() {
     if (_isLoading || _isLoadingMore || _isFetchingMore) return;
     if (_totalCount != -1 && _items.length >= _totalCount) return;
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 120) {
-      _isFetchingMore = true; // setState olmadan, sync olarak set et
+      _isFetchingMore = true;
       _fetch();
     }
   }
-
-  // ── Arama — debounced ────────────────────────────────────────────
 
   void _onSearchChanged(String value) {
     _debounce?.cancel();
@@ -212,8 +192,6 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
       _fetch(reset: true);
     });
   }
-
-  // ── Seçim ────────────────────────────────────────────────────────
 
   void _onItemTap(T item) {
     setState(() {
@@ -260,23 +238,24 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
         constraints: const BoxConstraints(maxHeight: 620),
         decoration: BoxDecoration(
           color: MedColors.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: MedRadius.xl2All,
           border: Border.all(color: MedColors.border, width: 1.5),
-          boxShadow: const [
-            BoxShadow(color: Color(0x1A0F192D), blurRadius: 40, offset: Offset(0, 12)),
-            BoxShadow(color: Color(0x0F0F192D), blurRadius: 8, offset: Offset(0, 4)),
-          ],
+          boxShadow: MedShadows.md,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _DialogHeader(
               title: widget.title,
-              onClose: () => Navigator.of(context).pop(), // Multi modda "Tümünü Seç" aksiyonu
+              onClose: () => Navigator.of(context).pop(),
               action: widget.multi
-                  ? _SelectAllButton(
-                      allSelected: _selectedIds.length == _items.length && _items.isNotEmpty,
-                      onTap: () {
+                  ? MedButton(
+                      label: (_selectedIds.length == _items.length && _items.isNotEmpty)
+                          ? context.l10n.common_deselectAllButton
+                          : context.l10n.common_selectAllButton,
+                      variant: MedButtonVariant.ghost,
+                      size: MedButtonSize.sm,
+                      onPressed: () {
                         setState(() {
                           if (_selectedIds.length == _items.length) {
                             _selectedIds.clear();
@@ -300,16 +279,33 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
   Widget _buildList() {
     if (_isLoading) {
       return const Center(
-        child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator(strokeWidth: 2)),
+        child: Padding(padding: EdgeInsets.all(32), child: MedLoadingIndicator()),
       );
     }
 
     if (_error != null) {
-      return _ErrorState(message: _error!, onRetry: () => _fetch(reset: true));
+      // EmptyStateWidget(custom) + retry butonu (compact'ta action gizli
+      // olduğu için Column ile elle diziyoruz).
+      return Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const EmptyStateWidget(variant: EmptyStateVariant.error, size: EmptyStateSize.compact),
+            const SizedBox(height: 12),
+            MedButton(
+              label: context.l10n.common_retryButton,
+              variant: MedButtonVariant.ghost,
+              size: MedButtonSize.sm,
+              onPressed: () => _fetch(reset: true),
+            ),
+          ],
+        ),
+      );
     }
 
     if (_items.isEmpty) {
-      return const _EmptyState();
+      return const EmptyStateWidget(variant: EmptyStateVariant.noResults, size: EmptyStateSize.compact);
     }
 
     return ListView.builder(
@@ -317,11 +313,10 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
       padding: const EdgeInsets.symmetric(vertical: 6),
       itemCount: _items.length + (_isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
-        // Listenin sonunda yükleme göstergesi
         if (index == _items.length) {
           return const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
-            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            child: Center(child: MedLoadingIndicator()),
           );
         }
 
@@ -341,9 +336,8 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Header
+// Header — gradient token'a bağlandı, kapat butonu MedRectangleIconButton
 // ─────────────────────────────────────────────────────────────────
-
 class _DialogHeader extends StatelessWidget {
   const _DialogHeader({required this.title, required this.onClose, this.action});
 
@@ -355,94 +349,29 @@ class _DialogHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 14, 12, 14),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFF4F7FF), Color(0xFFEEF2FB)],
+          colors: [MedColors.uiPanelBg, Color(0xFFEEF2FB)],
         ),
         border: Border(bottom: BorderSide(color: MedColors.border2, width: 1.5)),
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14)),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14)),
       ),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontFamily: MedFonts.title,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: MedColors.text,
-                letterSpacing: 0.3,
-              ),
-            ),
-          ),
+          Expanded(child: Text(title, style: MedTextStyles.titleMd())),
           if (action != null) ...[action!, const SizedBox(width: 8)],
-          _CloseButton(onTap: onClose),
+          MedRectangleIconButton(iconData: Icons.close_rounded, size: 32, iconSize: 16, onPressed: onClose),
         ],
       ),
     );
   }
 }
 
-class _SelectAllButton extends StatelessWidget {
-  const _SelectAllButton({required this.allSelected, required this.onTap});
-
-  final bool allSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: MedColors.surface2,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: MedColors.border),
-        ),
-        child: Text(
-          allSelected ? context.l10n.common_deselectAllButton : context.l10n.common_selectAllButton,
-          style: TextStyle(
-            fontFamily: MedFonts.sans,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: MedColors.text2,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CloseButton extends StatelessWidget {
-  const _CloseButton({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: MedColors.surface2,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: MedColors.border),
-        ),
-        child: Icon(Icons.close_rounded, size: 16, color: MedColors.text3),
-      ),
-    );
-  }
-}
-
 // ─────────────────────────────────────────────────────────────────
-// Arama çubuğu
+// Arama çubuğu (BIRAKILDI — özel fill/prefix davranışı)
 // ─────────────────────────────────────────────────────────────────
-
 class _SearchBar extends StatelessWidget {
   const _SearchBar({required this.controller, required this.onChanged});
 
@@ -453,32 +382,32 @@ class _SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: MedColors.border2)),
       ),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
         autofocus: true,
-        style: TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text),
+        style: MedTextStyles.bodyLg(color: MedColors.text),
         decoration: InputDecoration(
           hintText: context.l10n.common_searchHint,
-          hintStyle: TextStyle(fontFamily: MedFonts.sans, fontSize: 14, color: MedColors.text3),
+          hintStyle: MedTextStyles.bodyLg(color: MedColors.text3),
           prefixIcon: Icon(Icons.search_rounded, size: 18, color: MedColors.text3),
           filled: true,
           fillColor: MedColors.surface2,
           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: MedColors.border, width: 1.5),
+            borderRadius: MedRadius.mdAll,
+            borderSide: const BorderSide(color: MedColors.border, width: 1.5),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: MedColors.border, width: 1.5),
+            borderRadius: MedRadius.mdAll,
+            borderSide: const BorderSide(color: MedColors.border, width: 1.5),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: MedColors.blue, width: 1.5),
+            borderRadius: MedRadius.mdAll,
+            borderSide: const BorderSide(color: MedColors.blue, width: 1.5),
           ),
         ),
       ),
@@ -487,9 +416,8 @@ class _SearchBar extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Liste item
+// Liste item (BIRAKILDI — kendine özgü seçim görseli)
 // ─────────────────────────────────────────────────────────────────
-
 class _SearchListItem extends StatelessWidget {
   const _SearchListItem({
     required this.label,
@@ -515,24 +443,14 @@ class _SearchListItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected ? MedColors.blueLight : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: MedRadius.mdAll,
           border: Border.all(color: isSelected ? MedColors.blue : Colors.transparent, width: 1.5),
         ),
         child: Row(
           children: [
             if (showCheckbox) ...[
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 120),
-                width: 18,
-                height: 18,
-                margin: const EdgeInsets.only(right: 10),
-                decoration: BoxDecoration(
-                  color: isSelected ? MedColors.blue : Colors.transparent,
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: isSelected ? MedColors.blue : MedColors.border, width: 1.5),
-                ),
-                child: isSelected ? const Icon(Icons.check_rounded, size: 12, color: Colors.white) : null,
-              ),
+              MedCheckbox(value: isSelected, size: MedCheckboxSize.sm, onChanged: (_) => onTap()),
+              const SizedBox(width: 10),
             ],
             Expanded(
               child: Column(
@@ -540,19 +458,14 @@ class _SearchListItem extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: TextStyle(
-                      fontFamily: MedFonts.sans,
-                      fontSize: 13,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    style: MedTextStyles.bodyLg(
                       color: isSelected ? MedColors.blue : MedColors.text,
+                      weight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     ),
                   ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
-                    Text(
-                      subtitle!,
-                      style: TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.text3),
-                    ),
+                    Text(subtitle!, style: MedTextStyles.bodySm(color: MedColors.text3)),
                   ],
                 ],
               ),
@@ -566,9 +479,8 @@ class _SearchListItem extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Footer
+// Footer — butonlar MedButton'a delege
 // ─────────────────────────────────────────────────────────────────
-
 class _DialogFooter extends StatelessWidget {
   const _DialogFooter({required this.selectedLabel, required this.onConfirm});
 
@@ -579,12 +491,11 @@ class _DialogFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: MedColors.border2, width: 1.5)),
       ),
       child: Row(
         children: [
-          // Seçili item etiketi
           Expanded(
             child: selectedLabel != null
                 ? Row(
@@ -594,12 +505,7 @@ class _DialogFooter extends StatelessWidget {
                       Expanded(
                         child: Text(
                           selectedLabel!,
-                          style: TextStyle(
-                            fontFamily: MedFonts.sans,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: MedColors.text2,
-                          ),
+                          style: MedTextStyles.bodyMd(color: MedColors.text2, weight: FontWeight.w500),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -608,136 +514,18 @@ class _DialogFooter extends StatelessWidget {
                 : Text(context.l10n.selectionDialog_noSelection, style: MedTextStyles.bodySm(color: MedColors.text3)),
           ),
           const SizedBox(width: 12),
-
-          // İptal
-          _FooterButton(
+          MedButton(
             label: context.l10n.common_cancelButton,
-            onTap: () => Navigator.of(context).pop(),
-            isPrimary: false,
+            variant: MedButtonVariant.ghost,
+            size: MedButtonSize.sm,
+            onPressed: () => Navigator.of(context).pop(),
           ),
           const SizedBox(width: 8),
-
-          // Seç
-          _FooterButton(label: context.l10n.selectionDialog_confirmButton, onTap: onConfirm, isPrimary: true),
-        ],
-      ),
-    );
-  }
-}
-
-class _FooterButton extends StatelessWidget {
-  const _FooterButton({required this.label, required this.onTap, required this.isPrimary});
-
-  final String label;
-  final VoidCallback? onTap;
-  final bool isPrimary;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDisabled = onTap == null;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isPrimary ? (isDisabled ? MedColors.surface3 : MedColors.blue) : MedColors.surface2,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isPrimary ? (isDisabled ? MedColors.border : MedColors.blue) : MedColors.border,
-            width: 1.5,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: MedFonts.sans,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isPrimary ? (isDisabled ? MedColors.text3 : Colors.white) : MedColors.text2,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Boş durum
-// ─────────────────────────────────────────────────────────────────
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.search_off_rounded, size: 32, color: MedColors.text4),
-          const SizedBox(height: 10),
-          Text(
-            context.l10n.common_noResultsTitle,
-            style: TextStyle(
-              fontFamily: MedFonts.sans,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: MedColors.text3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Hata durumu
-// ─────────────────────────────────────────────────────────────────
-
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.error_outline_rounded, size: 32, color: MedColors.red),
-          const SizedBox(height: 10),
-          Text(
-            message,
-            style: TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 14),
-          GestureDetector(
-            onTap: onRetry,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: MedColors.surface2,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: MedColors.border),
-              ),
-              child: Text(
-                context.l10n.common_retryButton,
-                style: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: MedColors.text2,
-                ),
-              ),
-            ),
+          MedButton(
+            label: context.l10n.selectionDialog_confirmButton,
+            variant: MedButtonVariant.primary,
+            size: MedButtonSize.sm,
+            onPressed: onConfirm, // null → MedButton otomatik disabled
           ),
         ],
       ),

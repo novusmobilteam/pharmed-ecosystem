@@ -1,96 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
+
+import '../../theme/med_density.dart';
 
 // ─────────────────────────────────────────────────────────────────
-// InputFieldStyle — Input görsel tokenları için değer sınıfı
+// InputFieldStyle — Input görsel değerleri (MedDensity'den türer)
 //
-// Tüm input widget'ları görsel değerlerini doğrudan sabitlemez;
-// bu sınıftan okur. InputFieldTheme aracılığıyla widget ağacından
-// alınır. Bulunamazsa InputFieldStyle.manager varsayılanı döner.
+// ÖNEMLİ DEĞİŞİKLİK: Bu sınıf artık kendi manager/client sabitlerini
+// TANIMLAMAZ. Değerler tek gerçek kaynak olan MedDensity'den gelir.
+// Böylece client/manager farkı yalnızca bir yerde (MedDensity) yaşar.
 //
-// Kullanım:
-//   final style = InputFieldTheme.of(context);
-//   BorderRadius r = style.borderRadius;
+// InputFieldTheme (InheritedWidget) artık gerekmiyor: InputFieldTheme.of
+// geriye uyumluluk için korundu ama içten MedDensity.of(context)'e delege
+// ediyor. Input widget'larının çağrıları (InputFieldTheme.of(context))
+// değişmeden çalışır.
 // ─────────────────────────────────────────────────────────────────
 
 /// Input alanlarının görsel özelliklerini tutan immutable değer sınıfı.
-///
-/// İki hazır sabit sunar:
-/// - [InputFieldStyle.manager]: Sıkı, fare dostu, uppercase mono etiket.
-/// - [InputFieldStyle.client]: Geniş, dokunmatik dostu, normal Sora etiket.
-///
-/// Farklı bir görünüm için [copyWith] kullanarak türetme yapılabilir.
+/// MedDensity'den türetilir; elle sabit tanımlanmaz.
 @immutable
 class InputFieldStyle {
   const InputFieldStyle({
-    this.labelFontSize = MedSpacing.labelFontSizeManager,
-    this.labelLetterSpacing = MedSpacing.labelLetterSpacingManager,
-    this.labelUpperCase = true,
-    this.borderRadius = MedRadius.smAll,
-    this.contentPadding = MedSpacing.inputPaddingManager,
-    this.minHeight = MedSpacing.inputMinHeightManager,
-    this.borderWidth = 1.5,
-    this.inputFontSize = 13,
+    required this.labelFontSize,
+    required this.labelLetterSpacing,
+    required this.labelUpperCase,
+    required this.borderRadius,
+    required this.contentPadding,
+    required this.minHeight,
+    required this.borderWidth,
+    required this.inputFontSize,
     this.inputFontWeight = FontWeight.w500,
     this.inputTextAlign = TextAlign.center,
   });
 
-  /// Label metninin font boyutu (pt).
   final double labelFontSize;
-
-  /// Label metninin harf aralığı.
   final double labelLetterSpacing;
-
-  /// Label metninin büyük harfe dönüştürülüp dönüştürülmeyeceği.
   final bool labelUpperCase;
-
-  /// Input kutusunun köşe yarıçapı.
   final BorderRadius borderRadius;
-
-  /// Input kutusunun iç boşluğu.
   final EdgeInsetsGeometry contentPadding;
-
-  /// Input kutusunun minimum yüksekliği.
   final double minHeight;
-
-  /// Kenarlık kalınlığı (px).
   final double borderWidth;
-
-  /// Input metninin font boyutu (pt).
   final double inputFontSize;
-
-  /// Input metninin font ağırlığı.
   final FontWeight inputFontWeight;
-
-  /// Input metninin hizalaması.
   final TextAlign inputTextAlign;
 
-  /// Manager varsayılanı — sıkı yerleşim, fare dostu, uppercase mono etiket.
-  ///
-  /// pharmed-manager bu presetı otomatik alır; [InputFieldTheme] enjeksiyonu
-  /// gerekmez çünkü [InputFieldTheme.of] bu preseti fallback olarak döner.
-  static const InputFieldStyle manager = InputFieldStyle();
+  /// MedDensity'den input görünümü türetir. TEK dönüşüm noktası.
+  factory InputFieldStyle.fromDensity(MedDensity d) {
+    return InputFieldStyle(
+      labelFontSize: d.labelFontSize,
+      labelLetterSpacing: d.labelLetterSpacing,
+      labelUpperCase: d.labelUpperCase,
+      borderRadius: d.inputBorderRadius,
+      contentPadding: EdgeInsets.symmetric(horizontal: d.inputPaddingX),
+      minHeight: d.inputMinHeight,
+      borderWidth: d.inputBorderWidth,
+      inputFontSize: d.inputFontSize,
+    );
+  }
 
-  /// Client varsayılanı — geniş dokunmatik alan, yumuşak köşe, Sora etiket.
-  ///
-  /// pharmed-client uygulama kökünde [InputFieldTheme] ile enjekte edilir:
-  /// ```dart
-  /// InputFieldTheme(style: InputFieldStyle.client, child: MaterialApp(...))
-  /// ```
-  static const InputFieldStyle client = InputFieldStyle(
-    labelFontSize: MedSpacing.labelFontSizeClient,
-    labelLetterSpacing: MedSpacing.labelLetterSpacingClient,
-    labelUpperCase: false,
-    borderRadius: MedRadius.mdAll,
-    contentPadding: MedSpacing.inputPaddingClient,
-    minHeight: MedSpacing.inputMinHeightClient,
-    borderWidth: 1,
-    inputFontSize: 12,
-    inputFontWeight: FontWeight.w500,
-    inputTextAlign: TextAlign.center,
-  );
+  /// Context'ten okur — MedDensity üzerinden.
+  factory InputFieldStyle.of(BuildContext context) => InputFieldStyle.fromDensity(MedDensity.of(context));
 
-  /// Mevcut style'dan türetilmiş yeni bir style döner.
+  /// Manager varsayılanı (geriye uyumluluk; MedDensity.compact'tan türer).
+  static InputFieldStyle get manager => InputFieldStyle.fromDensity(MedDensity.compact);
+
+  /// Client varsayılanı (geriye uyumluluk; MedDensity.touch'tan türer).
+  static InputFieldStyle get client => InputFieldStyle.fromDensity(MedDensity.touch);
+
   InputFieldStyle copyWith({
     double? labelFontSize,
     double? labelLetterSpacing,
@@ -149,31 +124,28 @@ class InputFieldStyle {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// InputFieldTheme — InheritedWidget ile stil yayımı
+// InputFieldTheme — geriye uyumluluk kabuğu
+//
+// ARTIK GEREKMİYOR ama input widget'ları InputFieldTheme.of(context)
+// çağırdığı için korundu. İçten MedDensity.of(context)'e delege eder.
+//
+// Eskiden pharmed-client kökünde InputFieldTheme(style: client) ile
+// sarılıyordu. ARTIK GEREKMEZ — MedDensity zaten MedTheme.client()
+// içinde extension olarak var. Sarmalayıcıyı main.dart'tan
+// KALDIRABİLİRSİN (kalması da zararsız; manuel override görevi görür).
 // ─────────────────────────────────────────────────────────────────
-
-/// Widget ağacına [InputFieldStyle] enjekte eder.
-///
-/// pharmed-client kök widget'ında [InputFieldStyle.client] ile sarılır.
-/// pharmed-manager hiç sarmaz; [of] metodu [InputFieldStyle.manager] döner.
-///
-/// ```dart
-/// // pharmed-client main.dart
-/// InputFieldTheme(
-///   style: InputFieldStyle.client,
-///   child: MaterialApp(...),
-/// )
-/// ```
 class InputFieldTheme extends InheritedWidget {
   const InputFieldTheme({super.key, required this.style, required super.child});
 
+  /// Manuel override stili. Verilirse MedDensity yerine bu kullanılır.
   final InputFieldStyle style;
 
-  /// En yakın [InputFieldTheme]'den stili okur.
-  ///
-  /// Ağaçta [InputFieldTheme] bulunamazsa [InputFieldStyle.manager] döner.
+  /// Stili okur. Öncelik: ağaçta manuel InputFieldTheme override varsa onu,
+  /// yoksa MedDensity'den türetilmiş stili döner.
   static InputFieldStyle of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<InputFieldTheme>()?.style ?? InputFieldStyle.manager;
+    final override = context.dependOnInheritedWidgetOfExactType<InputFieldTheme>();
+    if (override != null) return override.style;
+    return InputFieldStyle.fromDensity(MedDensity.of(context));
   }
 
   @override

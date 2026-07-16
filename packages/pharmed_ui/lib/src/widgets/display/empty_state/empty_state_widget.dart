@@ -28,43 +28,12 @@ export 'empty_state_variant.dart';
 /// [action] ile isteğe bağlı bir eylem widget'ı eklenebilir.
 /// Yalnızca [EmptyStateSize.normal] modunda gösterilir.
 ///
-/// ## Örnekler
-///
-/// ```dart
-/// // Önceden tanımlı varyant
-/// EmptyStateWidget(variant: EmptyStateVariant.cabinData)
-///
-/// // Compact mod
-/// EmptyStateWidget(
-///   variant: EmptyStateVariant.noResults,
-///   size: EmptyStateSize.compact,
-/// )
-///
-/// // Özel içerik
-/// EmptyStateWidget(
-///   variant: EmptyStateVariant.custom,
-///   icon: PhosphorIcons.wifiSlash(),
-///   title: 'Bağlantı yok',
-///   description: 'Lütfen ağ bağlantınızı kontrol edin.',
-/// )
-///
-/// // Aksiyonlu
-/// EmptyStateWidget(
-///   variant: EmptyStateVariant.noPatient,
-///   action: MedButton.primary(label: 'Hasta Seç', onPressed: _pick),
-/// )
-/// ```
-///
 /// ## Yeni senaryo ekleme
 ///
 /// Widget dosyasına dokunmak gerekmez. Sırasıyla:
 /// 1. [EmptyStateVariant]'a yeni değeri ekle.
 /// 2. [EmptyStateResolver.resolve] switch'ine karşılık gelen içeriği ekle.
 /// 3. `.arb` dosyalarına lokalizasyon key'lerini ekle.
-///
-/// ## Konum
-///
-/// `pharmed_ui/lib/src/widgets/display/empty_state/`
 ///
 /// Sınıf: Class B
 class EmptyStateWidget extends StatelessWidget {
@@ -105,13 +74,18 @@ class EmptyStateWidget extends StatelessWidget {
     ).resolve(variant, icon: icon, title: title, description: description);
     final spec = size.spec;
 
+    final hasDescription = content.description.isNotEmpty;
+
     return Center(
       child: Padding(
         padding: spec.padding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) Icon(icon, size: spec.iconSize, color: MedColors.text3),
+            // FIX: content.icon kullanılıyor — preset varyantların ikonu
+            // artık görünüyor (önceden widget.icon'du, sadece custom'da doluydu).
+            Icon(content.icon, size: spec.iconSize, color: MedColors.text3),
+            SizedBox(height: spec.iconBottomGap),
             Text(
               content.title,
               style: TextStyle(
@@ -122,11 +96,14 @@ class EmptyStateWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            Text(
-              content.description,
-              style: MedTextStyles.bodySm(color: MedColors.text3),
-              textAlign: TextAlign.center,
-            ),
+            if (hasDescription) ...[
+              SizedBox(height: spec.titleBottomGap),
+              Text(
+                content.description,
+                style: MedTextStyles.bodySm(color: MedColors.text3),
+                textAlign: TextAlign.center,
+              ),
+            ],
             if (action != null && size == EmptyStateSize.normal) ...[const SizedBox(height: 20), action!],
           ],
         ),

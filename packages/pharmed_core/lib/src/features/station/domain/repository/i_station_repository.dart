@@ -8,6 +8,6 @@ abstract interface class IStationRepository {
   Future<Result<void>> updateStation(Station station);
   Future<Result<void>> deleteStation(Station station);
   Future<Result<Station?>> getStation(int stationId);
-  Future<Result<Station?>> getCurrentStation();
+  Future<Result<Station?>> getCurrentStation(String macAddress);
   Future<Result<void>> updateStationMacAddress(int stationId);
 }

@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────
-// MedBadge
+// MedBadge  (EMEKLİ / DEPRECATED)
 // [SWREQ-UI-ATOM-001]
-// Kullanım: Widget header badge'leri — "Kilitli", "5 Kalem", "7 Bekliyor"
-// Sınıf  : Class A (görsel bilgi, iş kararı vermez)
+//
+// MedChip'e taşındı. Badge = MedChip(shape: pill, showBorder: false).
+// Geriye uyumluluk için imza korundu.
+//
+// YENİ KOD İÇİN:
+//   MedChip(label: '7 Bekliyor', style: MedChipStyle.warning,
+//           shape: MedChipShape.pill, showBorder: false)
 // ─────────────────────────────────────────────────────────────────
 
 enum MedBadgeVariant { green, amber, red, blue, neutral }
 
 enum MedBadgeSize { sm, md }
 
-/// Yuvarlak köşeli badge — 5 renk varyantı, 2 boyut.
-///
-/// ```dart
-/// MedBadge(label: '7 Bekliyor', variant: MedBadgeVariant.amber)
-/// MedBadge(label: '3', variant: MedBadgeVariant.red, size: MedBadgeSize.sm)
-/// ```
+@Deprecated('MedChip(shape: pill, showBorder: false) kullanın.')
 class MedBadge extends StatelessWidget {
   const MedBadge({super.key, required this.label, required this.variant, this.size = MedBadgeSize.md});
 
@@ -27,32 +27,20 @@ class MedBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _resolveColors(variant);
-    final (hPad, vPad, style) = switch (size) {
-      MedBadgeSize.sm => (7.0, 1.0, MedTextStyles.monoXs(color: colors.foreground)),
-      MedBadgeSize.md => (10.0, 2.0, MedTextStyles.monoSm(color: colors.foreground)),
-    };
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: vPad),
-      decoration: BoxDecoration(color: colors.background, borderRadius: MedRadius.xlAll),
-      child: Text(label, style: style),
+    return MedChip(
+      label: label,
+      style: _style(variant),
+      shape: MedChipShape.pill,
+      size: size == MedBadgeSize.sm ? MedChipSize.sm : MedChipSize.md,
+      showBorder: false,
     );
   }
 
-  _BadgeColors _resolveColors(MedBadgeVariant variant) {
-    return switch (variant) {
-      MedBadgeVariant.green => _BadgeColors(MedColors.greenLight, MedColors.green),
-      MedBadgeVariant.amber => _BadgeColors(MedColors.amberLight, MedColors.amber),
-      MedBadgeVariant.red => _BadgeColors(MedColors.redLight, MedColors.red),
-      MedBadgeVariant.blue => _BadgeColors(MedColors.blueLight, MedColors.blue),
-      MedBadgeVariant.neutral => _BadgeColors(MedColors.surface3, MedColors.text3),
-    };
-  }
-}
-
-final class _BadgeColors {
-  const _BadgeColors(this.background, this.foreground);
-  final Color background;
-  final Color foreground;
+  MedChipStyle _style(MedBadgeVariant v) => switch (v) {
+    MedBadgeVariant.green => MedChipStyle.success,
+    MedBadgeVariant.amber => MedChipStyle.warning,
+    MedBadgeVariant.red => MedChipStyle.danger,
+    MedBadgeVariant.blue => MedChipStyle.info,
+    MedBadgeVariant.neutral => MedChipStyle.neutral,
+  };
 }

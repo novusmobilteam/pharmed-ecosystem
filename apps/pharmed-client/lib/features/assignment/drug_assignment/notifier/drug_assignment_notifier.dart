@@ -129,7 +129,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   }
 
   /// Dialog'dan ilaç seçildiğinde çağrılır.
-  void onDrugSelected(Medicine drug) {
+  void onDrugSelected(Medicine? drug) {
     final current = state;
     if (current is! DrugAssignmentCellSelected) return;
 

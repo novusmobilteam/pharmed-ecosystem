@@ -105,15 +105,15 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
           applyPadding: false,
           child: IgnorePointer(
             ignoring: !widget.enabled,
-            child: Align(
-              alignment: _isMultiline ? Alignment.topLeft : Alignment.center,
+            child: SizedBox(
+              height: !_isMultiline ? style.minHeight : null,
               child: TextFormField(
                 focusNode: _focus,
                 readOnly: widget.readOnly,
                 autofocus: widget.autoFocus,
                 initialValue: widget.controller == null ? widget.initialValue : null,
                 enabled: widget.enabled,
-                //textAlignVertical: _isMultiline ? TextAlignVertical.top : TextAlignVertical.center,
+                textAlignVertical: _isMultiline ? TextAlignVertical.top : TextAlignVertical.center,
                 keyboardType: widget.keyboardType,
                 maxLines: widget.obscureText ? 1 : widget.maxLines,
                 minLines: widget.obscureText ? 1 : widget.minLines,
@@ -137,7 +137,13 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
                   disabledBorder: InputBorder.none,
                   filled: false,
                   isDense: true,
-                  contentPadding: style.contentPadding,
+                  contentPadding: !_isMultiline
+                      ? EdgeInsets.only(
+                          left: style.contentPadding.horizontal / 2,
+                          top: style.minHeight / 2,
+                          bottom: style.minHeight / 2,
+                        )
+                      : null,
                   counterText: '',
                   hintText: widget.hintText,
                   hintStyle: TextStyle(

@@ -5989,5 +5989,66 @@
   "placeholders": {
     "count": { "type": "int" }
   }
+},
+
+"refill_hint_selectSlots": "Doldurulacak gözleri seçin. Az stoklu gözler işaretlenmiştir.",
+"@refill_hint_selectSlots": {
+  "description": "Subtitle under the medicine selection screen title, guiding the user to pick cells"
+},
+"refill_title_fillCells": "Gözleri Doldurun",
+"@refill_title_fillCells": {
+  "description": "Form header for a unit-dose drawer where all cells are filled in one list"
+},
+"refill_hint_miadRequired": "Son kullanma tarihi gerekli",
+"@refill_hint_miadRequired": {
+  "description": "Inline validation shown on a cell input when filling quantity is entered but expiry date is missing"
+},
+"refill_status_openingTitle": "Çekmece açılıyor…",
+"@refill_status_openingTitle": {
+  "description": "Full-screen title while the physical drawer is being opened by the motor"
+},
+"refill_status_openingBody": "Lütfen bekleyin, fiziksel çekmece açılıyor.",
+"@refill_status_openingBody": {
+  "description": "Full-screen subtitle while the physical drawer is being opened"
+},
+"refill_status_waitingPullTitle": "Çekmeceyi çekin",
+"@refill_status_waitingPullTitle": {
+  "description": "Full-screen title when the lock is released and the drawer is waiting to be pulled open"
+},
+"refill_status_waitingPullBody": "Kilit açıldı. Devam etmek için çekmeceyi çekin.",
+"@refill_status_waitingPullBody": {
+  "description": "Full-screen subtitle when the drawer lock is released and waiting for the user to pull"
+},
+"refill_status_openingLidTitle": "Göz açılıyor…",
+"@refill_status_openingLidTitle": {
+  "description": "Full-screen title while a cubic drawer inner lid is being opened"
+},
+"refill_status_openingLidBody": "Lütfen bekleyin, göz kapağı açılıyor.",
+"@refill_status_openingLidBody": {
+  "description": "Full-screen subtitle while a cubic drawer inner lid is being opened"
+},
+"refill_status_stockOk": "Stok yeterli",
+"@refill_status_stockOk": {
+  "description": "Status badge on a cell card when current stock is above the minimum threshold"
+},
+"refill_status_stockLow": "Az",
+"@refill_status_stockLow": {
+  "description": "Status badge on a cell card when current stock is at or below the minimum threshold"
+},
+"refill_status_stockCritical": "Kritik",
+"@refill_status_stockCritical": {
+  "description": "Status badge on a cell card when current stock is at or below the critical threshold"
+},
+"refill_stop_confirmTitle": "Dolum durdurulsun mu?",
+"@refill_stop_confirmTitle": {
+  "description": "Confirmation dialog title when the user taps Stop during an active refill queue"
+},
+"refill_stop_confirmMessage": "Durdurursanız açık çekmece kilitlenir ve bu dolum \"yarım tamamlandı\" olarak işaretlenir. Girilen sayım ve dolum bilgileri korunur, ancak işleme kaldığı yerden devam edilemez — yeni bir dolum başlatmanız gerekir.",
+"@refill_stop_confirmMessage": {
+  "description": "Confirmation dialog body explaining the consequence of stopping an active refill queue"
+},
+"refill_stop_confirmYes": "Evet, Durdur",
+"@refill_stop_confirmYes": {
+  "description": "Confirm button on the stop-refill confirmation dialog"
 }
 }

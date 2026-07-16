@@ -423,6 +423,7 @@ class RepositoryProviders {
             prescriptionItemMapper: PrescriptionItemMapper(),
             summaryMapper: UserAuthorizationSummaryMapper(),
             authorizationDetailMapper: UserAuthorizationDetailMapper(),
+            cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
           ),
           AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
             dataSource: context.read(),
@@ -432,6 +433,7 @@ class RepositoryProviders {
             prescriptionItemMapper: PrescriptionItemMapper(),
             summaryMapper: UserAuthorizationSummaryMapper(),
             authorizationDetailMapper: UserAuthorizationDetailMapper(),
+            cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
           ),
         },
       ),

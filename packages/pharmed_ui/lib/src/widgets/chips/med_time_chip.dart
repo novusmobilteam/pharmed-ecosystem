@@ -5,15 +5,11 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // ─────────────────────────────────────────────────────────────────
 // MedTimeChip
 // [SWREQ-UI-CHIP-TIME-001]
-// Kullanım: Reçete kartındaki sonraki uygulama zamanı chip'i.
-// Sınıf  : Class A
+// "Bugün 14:30" / "Yarın 08:00" / "Pzt 09:00" formatı. Sabit amber.
+// Formatlama burada; görsel iskelet MedChip'te.
 // ─────────────────────────────────────────────────────────────────
 
-/// Zaman chip'i — "Bugün 14:30", "Yarın 08:00", "Pzt 09:00" formatı.
-///
-/// ```dart
-/// MedTimeChip(time: nextDoseDateTime)
-/// ```
+/// Zaman chip'i — sonraki uygulama zamanı.
 class MedTimeChip extends StatelessWidget {
   const MedTimeChip({super.key, required this.time});
 
@@ -32,7 +28,6 @@ class MedTimeChip extends StatelessWidget {
     if (timeDay == today) return context.l10n.timeChip_today(timeStr);
     if (timeDay == tomorrow) return context.l10n.timeChip_tomorrow(timeStr);
 
-    // Aktif locale'e göre kısaltılmış gün adı (ör. tr: "Pzt", en: "Mon").
     final locale = Localizations.localeOf(context).toString();
     final weekday = DateFormat('E', locale).format(time);
     return '$weekday $timeStr';
@@ -40,18 +35,7 @@ class MedTimeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: BoxDecoration(
-        color: MedColors.amberLight,
-        borderRadius: MedRadius.smAll,
-        border: Border.all(color: MedColors.amber.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [Text(_label(context), style: MedTextStyles.monoSm(color: MedColors.amber))],
-      ),
-    );
+    return MedChip(label: _label(context), style: MedChipStyle.warning);
   }
 }
 

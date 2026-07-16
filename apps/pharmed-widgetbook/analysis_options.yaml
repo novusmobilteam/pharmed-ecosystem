@@ -1,0 +1,13 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Katalog bir geliştirici aracı, production değil.
+    # use_cases içinde bazı lint'ler gereksiz gürültü yapar.
+    avoid_print: ignore
+
+linter:
+  rules:
+    # Widgetbook use-case'lerinde const constructor zorlaması
+    # okunabilirliği düşürüyor; kapalı.
+    prefer_const_constructors: false

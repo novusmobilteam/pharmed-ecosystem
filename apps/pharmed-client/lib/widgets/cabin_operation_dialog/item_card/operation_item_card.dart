@@ -94,6 +94,8 @@ class OperationItemCard extends StatelessWidget {
   }
 }
 
+/// Item kartı renk paleti. Artık MedSemanticColors'tan türetilir —
+/// base renkler tek kaynaktan, alpha'lar (border 0.3 / muted 0.8) burada.
 class ItemCardColors {
   const ItemCardColors({required this.bg, required this.border, required this.text, required this.muted});
   final Color bg;
@@ -101,31 +103,25 @@ class ItemCardColors {
   final Color text;
   final Color muted;
 
-  /// Tema bazlı hazır paletler — durum→renk eşlemelerinde kullanılır.
-  static ItemCardColors green = ItemCardColors(
-    bg: MedColors.greenLight,
-    border: MedColors.green.withValues(alpha: 0.3),
-    text: MedColors.green,
-    muted: MedColors.green.withValues(alpha: 0.8),
-  );
-  static ItemCardColors blue = ItemCardColors(
-    bg: MedColors.blueLight,
-    border: MedColors.blue.withValues(alpha: 0.3),
-    text: MedColors.blue,
-    muted: MedColors.blue.withValues(alpha: 0.8),
-  );
-  static ItemCardColors amber = ItemCardColors(
-    bg: MedColors.amberLight,
-    border: MedColors.amber.withValues(alpha: 0.3),
-    text: MedColors.amber,
-    muted: MedColors.amber.withValues(alpha: 0.8),
-  );
-  static ItemCardColors red = ItemCardColors(
-    bg: MedColors.redLight,
-    border: MedColors.red.withValues(alpha: 0.3),
-    text: MedColors.red,
-    muted: MedColors.red.withValues(alpha: 0.8),
-  );
+  /// Semantic tondan palet türet — border 0.3, muted 0.8 alpha (eski değerler).
+  factory ItemCardColors.fromTone(MedTone tone) {
+    final c = MedSemanticColors.of(tone);
+    return ItemCardColors(
+      bg: c.background,
+      border: c.border(alpha: 0.3),
+      text: c.foreground,
+      muted: c.muted(alpha: 0.8),
+    );
+  }
+
+  static ItemCardColors green = ItemCardColors.fromTone(MedTone.success);
+  static ItemCardColors blue = ItemCardColors.fromTone(MedTone.info);
+  static ItemCardColors amber = ItemCardColors.fromTone(MedTone.warning);
+  static ItemCardColors red = ItemCardColors.fromTone(MedTone.error);
+
+  /// Nötr — item kartında zemin `bg` (sayfa arkaplanı), metin koyu.
+  /// MedSemanticColors.neutral surface3/text3 verdiği için bunu elle
+  /// tutuyoruz (item kartının nötr hali farklı: bg=sayfa, text=koyu).
   static ItemCardColors neutral = ItemCardColors(
     bg: MedColors.bg,
     border: MedColors.border,

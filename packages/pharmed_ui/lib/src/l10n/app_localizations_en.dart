@@ -4729,4 +4729,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String common_daysRemainingStatus(int count) {
     return 'in $count d';
   }
+
+  @override
+  String get refill_hint_selectSlots =>
+      'Select the cells to fill. Low-stock cells are marked.';
+
+  @override
+  String get refill_title_fillCells => 'Fill Cells';
+
+  @override
+  String get refill_hint_miadRequired => 'Expiry date required';
+
+  @override
+  String get refill_status_openingTitle => 'Opening drawer…';
+
+  @override
+  String get refill_status_openingBody =>
+      'Please wait, the physical drawer is opening.';
+
+  @override
+  String get refill_status_waitingPullTitle => 'Pull the drawer';
+
+  @override
+  String get refill_status_waitingPullBody =>
+      'The lock is released. Pull the drawer to continue.';
+
+  @override
+  String get refill_status_openingLidTitle => 'Opening cell…';
+
+  @override
+  String get refill_status_openingLidBody =>
+      'Please wait, the cell lid is opening.';
+
+  @override
+  String get refill_status_stockOk => 'In stock';
+
+  @override
+  String get refill_status_stockLow => 'Low';
+
+  @override
+  String get refill_status_stockCritical => 'Critical';
+
+  @override
+  String get refill_stop_confirmTitle => 'Stop the refill?';
+
+  @override
+  String get refill_stop_confirmMessage =>
+      'If you stop, the open drawer will be locked and this refill will be marked as partially completed. Entered counts and fill amounts are kept, but you cannot resume — you must start a new refill.';
+
+  @override
+  String get refill_stop_confirmYes => 'Yes, Stop';
 }

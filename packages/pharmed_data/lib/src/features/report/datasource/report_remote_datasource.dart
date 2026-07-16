@@ -123,4 +123,24 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.singleParser(UserAuthorizationDetailDto.fromJson),
     );
   }
+
+  Future<Result<ApiResponse<List<CabinTemperatureValueDto>>?>> getCabinTemperatures({
+    PagedQueryParams? params,
+    required int stationId,
+    bool outOfRange = false,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/stationTemperatureList',
+      query: {'stationId': stationId, 'onlyOutOfRange': outOfRange},
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      dateField: 'dateTime',
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(CabinTemperatureValueDto.fromJson),
+    );
+  }
 }

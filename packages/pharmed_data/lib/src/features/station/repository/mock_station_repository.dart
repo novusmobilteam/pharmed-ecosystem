@@ -35,7 +35,7 @@ class MockStationRepository implements IStationRepository {
   }
 
   @override
-  Future<Result<Station?>> getCurrentStation() async {
+  Future<Result<Station?>> getCurrentStation(String macAddress) async {
     await Future.delayed(const Duration(milliseconds: 300));
     return Result.ok(_stations.first);
   }

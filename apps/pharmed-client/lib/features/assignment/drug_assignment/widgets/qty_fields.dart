@@ -22,17 +22,17 @@ class _QtyFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          context.l10n.assignment_quantitySectionLabel,
-          style: TextStyle(
-            fontFamily: MedFonts.mono,
-            fontSize: 9,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 1,
-            color: MedColors.text3,
-          ),
-        ),
-        const SizedBox(height: 6),
+        // Text(
+        //   context.l10n.assignment_quantitySectionLabel,
+        //   style: TextStyle(
+        //     fontFamily: MedFonts.mono,
+        //     fontSize: 9,
+        //     fontWeight: FontWeight.w500,
+        //     letterSpacing: 1,
+        //     color: MedColors.text3,
+        //   ),
+        // ),
+        // const SizedBox(height: 6),
         Row(
           spacing: 8,
           children: [

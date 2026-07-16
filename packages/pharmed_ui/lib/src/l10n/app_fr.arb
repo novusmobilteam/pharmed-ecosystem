@@ -4452,5 +4452,65 @@
   "placeholders": {
     "count": { "type": "int" }
   }
+},
+"refill_hint_selectSlots": "Sélectionnez les cellules à remplir. Les cellules à faible stock sont signalées.",
+"@refill_hint_selectSlots": {
+  "description": "Subtitle under the medicine selection screen title, guiding the user to pick cells"
+},
+"refill_title_fillCells": "Remplir les cellules",
+"@refill_title_fillCells": {
+  "description": "Form header for a unit-dose drawer where all cells are filled in one list"
+},
+"refill_hint_miadRequired": "Date de péremption requise",
+"@refill_hint_miadRequired": {
+  "description": "Inline validation shown on a cell input when filling quantity is entered but expiry date is missing"
+},
+"refill_status_openingTitle": "Ouverture du tiroir…",
+"@refill_status_openingTitle": {
+  "description": "Full-screen title while the physical drawer is being opened by the motor"
+},
+"refill_status_openingBody": "Veuillez patienter, le tiroir physique s'ouvre.",
+"@refill_status_openingBody": {
+  "description": "Full-screen subtitle while the physical drawer is being opened"
+},
+"refill_status_waitingPullTitle": "Tirez le tiroir",
+"@refill_status_waitingPullTitle": {
+  "description": "Full-screen title when the lock is released and the drawer is waiting to be pulled open"
+},
+"refill_status_waitingPullBody": "Le verrou est libéré. Tirez le tiroir pour continuer.",
+"@refill_status_waitingPullBody": {
+  "description": "Full-screen subtitle when the drawer lock is released and waiting for the user to pull"
+},
+"refill_status_openingLidTitle": "Ouverture de la cellule…",
+"@refill_status_openingLidTitle": {
+  "description": "Full-screen title while a cubic drawer inner lid is being opened"
+},
+"refill_status_openingLidBody": "Veuillez patienter, le couvercle de la cellule s'ouvre.",
+"@refill_status_openingLidBody": {
+  "description": "Full-screen subtitle while a cubic drawer inner lid is being opened"
+},
+"refill_status_stockOk": "En stock",
+"@refill_status_stockOk": {
+  "description": "Status badge on a cell card when current stock is above the minimum threshold"
+},
+"refill_status_stockLow": "Faible",
+"@refill_status_stockLow": {
+  "description": "Status badge on a cell card when current stock is at or below the minimum threshold"
+},
+"refill_status_stockCritical": "Critique",
+"@refill_status_stockCritical": {
+  "description": "Status badge on a cell card when current stock is at or below the critical threshold"
+},
+"refill_stop_confirmTitle": "Arrêter le remplissage ?",
+"@refill_stop_confirmTitle": {
+  "description": "Confirmation dialog title when the user taps Stop during an active refill queue"
+},
+"refill_stop_confirmMessage": "Si vous arrêtez, le tiroir ouvert sera verrouillé et ce remplissage sera marqué comme partiellement terminé. Les quantités saisies sont conservées, mais vous ne pourrez pas reprendre — vous devrez démarrer un nouveau remplissage.",
+"@refill_stop_confirmMessage": {
+  "description": "Confirmation dialog body explaining the consequence of stopping an active refill queue"
+},
+"refill_stop_confirmYes": "Oui, arrêter",
+"@refill_stop_confirmYes": {
+  "description": "Confirm button on the stop-refill confirmation dialog"
 }
 }

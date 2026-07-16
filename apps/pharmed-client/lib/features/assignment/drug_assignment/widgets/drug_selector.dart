@@ -13,10 +13,7 @@ class _DrugSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MedLabel(
-          text: context.l10n.assignment_drugSectionLabel,
-          variant: MedLabelVariant.monoDetail,
-        ),
+        MedLabel(text: context.l10n.assignment_drugSectionLabel, variant: MedLabelVariant.monoDetail),
         const SizedBox(height: 6),
         GestureDetector(
           onTap: onTap,

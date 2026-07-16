@@ -32,7 +32,7 @@ _ItemStatus _itemStatusFor(PrescriptionItem item, MobileIntakeReady ready) {
   return _ItemStatus.inCabinet;
 }
 
-StatusBadge _intakeItemBadge(BuildContext context, _ItemStatus status) {
+MedChip _intakeItemBadge(BuildContext context, _ItemStatus status) {
   final (bg, fg, icon, label) = switch (status) {
     _ItemStatus.taken => (
       MedColors.green,
@@ -58,9 +58,14 @@ StatusBadge _intakeItemBadge(BuildContext context, _ItemStatus status) {
       PhosphorIcons.circleNotch(PhosphorIconsStyle.bold),
       context.l10n.rfidStatus_scanning,
     ),
-    _ItemStatus.nonRfid => (MedColors.surface3, MedColors.text3, PhosphorIcons.minusCircle(), context.l10n.intake_label_noRfid),
+    _ItemStatus.nonRfid => (
+      MedColors.surface3,
+      MedColors.text3,
+      PhosphorIcons.minusCircle(),
+      context.l10n.intake_label_noRfid,
+    ),
   };
-  return StatusBadge(bg: bg, fg: fg, icon: icon, label: label);
+  return MedChip(background: bg, foreground: fg, icon: icon, label: label);
 }
 
 class _ItemsList extends ConsumerWidget {

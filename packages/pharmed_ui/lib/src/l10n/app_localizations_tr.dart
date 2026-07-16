@@ -4686,4 +4686,54 @@ class AppLocalizationsTr extends AppLocalizations {
   String common_daysRemainingStatus(int count) {
     return '$count gün';
   }
+
+  @override
+  String get refill_hint_selectSlots =>
+      'Doldurulacak gözleri seçin. Az stoklu gözler işaretlenmiştir.';
+
+  @override
+  String get refill_title_fillCells => 'Gözleri Doldurun';
+
+  @override
+  String get refill_hint_miadRequired => 'Son kullanma tarihi gerekli';
+
+  @override
+  String get refill_status_openingTitle => 'Çekmece açılıyor…';
+
+  @override
+  String get refill_status_openingBody =>
+      'Lütfen bekleyin, fiziksel çekmece açılıyor.';
+
+  @override
+  String get refill_status_waitingPullTitle => 'Çekmeceyi çekin';
+
+  @override
+  String get refill_status_waitingPullBody =>
+      'Kilit açıldı. Devam etmek için çekmeceyi çekin.';
+
+  @override
+  String get refill_status_openingLidTitle => 'Göz açılıyor…';
+
+  @override
+  String get refill_status_openingLidBody =>
+      'Lütfen bekleyin, göz kapağı açılıyor.';
+
+  @override
+  String get refill_status_stockOk => 'Stok yeterli';
+
+  @override
+  String get refill_status_stockLow => 'Az';
+
+  @override
+  String get refill_status_stockCritical => 'Kritik';
+
+  @override
+  String get refill_stop_confirmTitle => 'Dolum durdurulsun mu?';
+
+  @override
+  String get refill_stop_confirmMessage =>
+      'Durdurursanız açık çekmece kilitlenir ve bu dolum \"yarım tamamlandı\" olarak işaretlenir. Girilen sayım ve dolum bilgileri korunur, ancak işleme kaldığı yerden devam edilemez — yeni bir dolum başlatmanız gerekir.';
+
+  @override
+  String get refill_stop_confirmYes => 'Evet, Durdur';
 }

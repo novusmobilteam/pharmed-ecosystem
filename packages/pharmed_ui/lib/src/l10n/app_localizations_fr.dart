@@ -4818,4 +4818,54 @@ class AppLocalizationsFr extends AppLocalizations {
   String common_daysRemainingStatus(int count) {
     return 'dans $count j';
   }
+
+  @override
+  String get refill_hint_selectSlots =>
+      'Sélectionnez les cellules à remplir. Les cellules à faible stock sont signalées.';
+
+  @override
+  String get refill_title_fillCells => 'Remplir les cellules';
+
+  @override
+  String get refill_hint_miadRequired => 'Date de péremption requise';
+
+  @override
+  String get refill_status_openingTitle => 'Ouverture du tiroir…';
+
+  @override
+  String get refill_status_openingBody =>
+      'Veuillez patienter, le tiroir physique s\'ouvre.';
+
+  @override
+  String get refill_status_waitingPullTitle => 'Tirez le tiroir';
+
+  @override
+  String get refill_status_waitingPullBody =>
+      'Le verrou est libéré. Tirez le tiroir pour continuer.';
+
+  @override
+  String get refill_status_openingLidTitle => 'Ouverture de la cellule…';
+
+  @override
+  String get refill_status_openingLidBody =>
+      'Veuillez patienter, le couvercle de la cellule s\'ouvre.';
+
+  @override
+  String get refill_status_stockOk => 'En stock';
+
+  @override
+  String get refill_status_stockLow => 'Faible';
+
+  @override
+  String get refill_status_stockCritical => 'Critique';
+
+  @override
+  String get refill_stop_confirmTitle => 'Arrêter le remplissage ?';
+
+  @override
+  String get refill_stop_confirmMessage =>
+      'Si vous arrêtez, le tiroir ouvert sera verrouillé et ce remplissage sera marqué comme partiellement terminé. Les quantités saisies sont conservées, mais vous ne pourrez pas reprendre — vous devrez démarrer un nouveau remplissage.';
+
+  @override
+  String get refill_stop_confirmYes => 'Oui, arrêter';
 }

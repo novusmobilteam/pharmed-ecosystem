@@ -2,10 +2,8 @@ import 'package:pharmed_manager/core/core.dart';
 
 class CabinTemperatureDto {
   final int? id;
-
   final StationDTO? station;
   final CabinDTO? cabin;
-
   final int? bottomTemperatureInside;
   final int? topTemperatureInside;
   final int? bottomTemperatureOutside;

@@ -77,9 +77,9 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<StationDTO?>> getCurrentStation() async {
+  Future<Result<StationDTO?>> getCurrentStation(String macAddress) async {
     return fetchRequest(
-      path: '$_base/currentStation',
+      path: '$_base/currentStation/$macAddress',
       parser: BaseRemoteDataSource.singleParser(StationDTO.fromJson),
       successLog: 'İstasyon getirildi',
       emptyLog: 'İstasyon bulunamadı',

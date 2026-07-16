@@ -2,28 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-/// Numpad Dialog'unu açan fonksiyon
-Future<String?> showNumpadView(
-  BuildContext context, {
-  String? hintText,
-  String? title,
-  String? initialValue,
-}) async {
+// ─────────────────────────────────────────────────────────────────
+// NumpadView / showNumpadView
+// [SWREQ-UI-INPUT-NUMPAD-001]
+//
+// ÖNCE: tamamen Theme.of(context).colorScheme kullanıyordu → client ve
+//   manager'da farklı renkler (token dışı sapma). ARTIK: tamamen MedColors
+//   token'ı + MedRadius + MedShadows + MedTextStyles.
+//
+// Dokunmatik sayısal giriş dialog'u. Kabin işlem ekranlarında doz/miktar
+// girişi için (MedDoseStepper, MedValueCard tetikler).
+//
+// Sınıf: Class A (görsel girdi)
+// ─────────────────────────────────────────────────────────────────
+
+/// Numpad dialog'unu açar, girilen değeri String olarak döndürür (iptal → null).
+Future<String?> showNumpadView(BuildContext context, {String? hintText, String? title, String? initialValue}) async {
   final resolvedTitle = title ?? context.l10n.numpad_defaultTitle;
   final controller = TextEditingController(text: initialValue);
 
   if (initialValue != null) {
-    controller.selection = TextSelection.fromPosition(
-      TextPosition(offset: initialValue.length),
-    );
+    controller.selection = TextSelection.fromPosition(TextPosition(offset: initialValue.length));
   }
 
   final result = await showDialog<String?>(
     context: context,
     builder: (context) {
-      final theme = Theme.of(context);
-      final colorScheme = theme.colorScheme;
-
       return Dialog(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -32,48 +36,34 @@ Future<String?> showNumpadView(
         child: Container(
           width: 380,
           decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(24.0),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-              width: 1.0,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 24,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            color: MedColors.surface,
+            borderRadius: MedRadius.xl3All,
+            border: Border.all(color: MedColors.border),
+            boxShadow: MedShadows.md,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // --- Header ---
+              // ── Header ──
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 16, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      resolvedTitle,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurfaceVariant,
+                    Text(resolvedTitle, style: MedTextStyles.titleMd()),
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(null),
+                      borderRadius: MedRadius.mdAll,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Icon(PhosphorIcons.x(), size: 20, color: MedColors.text2),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(PhosphorIcons.x()),
-                      color: colorScheme.onSurfaceVariant,
-                      onPressed: () => Navigator.of(context).pop(null),
                     ),
                   ],
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              // --- Content ---
+              // ── İçerik ──
               Padding(
                 padding: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
                 child: NumpadView(
@@ -94,86 +84,75 @@ Future<String?> showNumpadView(
 }
 
 class NumpadView extends StatelessWidget {
-  final TextEditingController controller;
-  final double buttonHeight;
-  final Function() onSubmit;
-  final String? hintText;
-
   const NumpadView({
     super.key,
     required this.controller,
-    this.buttonHeight = 72, // Buton yüksekliği
     required this.onSubmit,
+    this.buttonHeight = 72,
     this.hintText,
   });
 
+  final TextEditingController controller;
+  final double buttonHeight;
+  final VoidCallback onSubmit;
+  final String? hintText;
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Column(
       spacing: 12.0,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // --- Ekran (Display) ---
+        // ── Ekran (Display) ──
         Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            ),
+            color: MedColors.surface2,
+            borderRadius: MedRadius.xl2All,
+            border: Border.all(color: MedColors.border),
           ),
           child: TextField(
             controller: controller,
             textAlign: TextAlign.center,
-            style: theme.textTheme.headlineLarge?.copyWith(
+            style: TextStyle(
+              fontFamily: MedFonts.title,
+              fontSize: 28,
               fontWeight: FontWeight.w700,
-              color: colorScheme.primary,
+              color: MedColors.blue,
               letterSpacing: 2,
             ),
-            enabled: false, // Klavye açılmasın
+            enabled: false, // sistem klavyesi açılmasın
             decoration: InputDecoration.collapsed(
               hintText: hintText ?? '0',
-              hintStyle: TextStyle(
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-              ),
+              hintStyle: TextStyle(color: MedColors.text4),
             ),
           ),
         ),
-
         const SizedBox(height: 8),
-
-        // --- Tuşlar ---
-        _buildRow(context, ['1', '2', '3']),
-        _buildRow(context, ['4', '5', '6']),
-        _buildRow(context, ['7', '8', '9']),
-        _buildBottomRow(context),
+        // ── Tuşlar ──
+        _buildRow(['1', '2', '3']),
+        _buildRow(['4', '5', '6']),
+        _buildRow(['7', '8', '9']),
+        _buildBottomRow(),
       ],
     );
   }
 
-  Widget _buildRow(BuildContext context, List<String> values) {
+  Widget _buildRow(List<String> values) {
     return Row(
       spacing: 12.0,
       children: values
-          .map((val) => Expanded(
-                child: _NumpadButton(
-                  text: val,
-                  height: buttonHeight,
-                  onTap: () => _insertText(val),
-                ),
-              ))
+          .map(
+            (val) => Expanded(
+              child: _NumpadButton(text: val, height: buttonHeight, onTap: () => _insertText(val)),
+            ),
+          )
           .toList(),
     );
   }
 
-  Widget _buildBottomRow(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
+  Widget _buildBottomRow() {
     return Row(
       spacing: 12.0,
       children: [
@@ -182,35 +161,26 @@ class NumpadView extends StatelessWidget {
           child: _NumpadActionButton(
             icon: PhosphorIcons.backspace(),
             height: buttonHeight,
-            // Hata/Silme rengi tonları
-            backgroundColor: colorScheme.errorContainer.withValues(alpha: 0.5),
-            iconColor: colorScheme.error,
+            backgroundColor: MedColors.redLight,
+            iconColor: MedColors.red,
             onTap: _backspace,
           ),
         ),
-
-        // 0 Tuşu
+        // 0
         Expanded(
-          child: _NumpadButton(
-            text: '0',
-            height: buttonHeight,
-            onTap: () => _insertText('0'),
-          ),
+          child: _NumpadButton(text: '0', height: buttonHeight, onTap: () => _insertText('0')),
         ),
-
         // Submit
         Expanded(
           child: ValueListenableBuilder(
             valueListenable: controller,
             builder: (context, TextEditingValue value, child) {
-              final bool hasText = value.text.isNotEmpty;
-
+              final hasText = value.text.isNotEmpty;
               return _NumpadActionButton(
                 icon: PhosphorIcons.check(),
                 height: buttonHeight,
-                // Doluysa Primary, boşsa pasif gri
-                backgroundColor: hasText ? colorScheme.primary : colorScheme.surfaceContainerHighest,
-                iconColor: hasText ? colorScheme.onPrimary : colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                backgroundColor: hasText ? MedColors.blue : MedColors.surface3,
+                iconColor: hasText ? MedColors.surface : MedColors.text4,
                 onTap: hasText ? onSubmit : () {},
               );
             },
@@ -220,7 +190,6 @@ class NumpadView extends StatelessWidget {
     );
   }
 
-  // --- Logic Kısmı (Aynı kaldı) ---
   void _insertText(String myText) {
     final text = controller.text;
     final textSelection = controller.selection;
@@ -274,38 +243,31 @@ class NumpadView extends StatelessWidget {
 }
 
 class _NumpadButton extends StatelessWidget {
+  const _NumpadButton({required this.text, required this.onTap, required this.height});
+
   final String text;
   final VoidCallback onTap;
   final double height;
 
-  const _NumpadButton({
-    required this.text,
-    required this.onTap,
-    required this.height,
-  });
-
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: MedRadius.xl2All,
         child: Ink(
           height: height,
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.5), // Hafif gri buton
-            borderRadius: BorderRadius.circular(16),
-          ),
+          decoration: BoxDecoration(color: MedColors.surface2, borderRadius: MedRadius.xl2All),
           child: Center(
             child: Text(
               text,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
+              style: TextStyle(
+                fontFamily: MedFonts.title,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: MedColors.text,
+              ),
             ),
           ),
         ),
@@ -315,42 +277,31 @@ class _NumpadButton extends StatelessWidget {
 }
 
 class _NumpadActionButton extends StatelessWidget {
+  const _NumpadActionButton({
+    required this.icon,
+    required this.onTap,
+    required this.height,
+    this.backgroundColor,
+    this.iconColor,
+  });
+
   final IconData icon;
   final VoidCallback onTap;
   final Color? backgroundColor;
   final Color? iconColor;
   final double height;
 
-  const _NumpadActionButton({
-    required this.icon,
-    required this.onTap,
-    this.backgroundColor,
-    this.iconColor,
-    required this.height,
-  });
-
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: MedRadius.xl2All,
         child: Ink(
           height: height,
-          decoration: BoxDecoration(
-            color: backgroundColor ?? colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Center(
-            child: Icon(
-              icon,
-              size: 28,
-              color: iconColor ?? colorScheme.onSecondaryContainer,
-            ),
-          ),
+          decoration: BoxDecoration(color: backgroundColor ?? MedColors.surface3, borderRadius: MedRadius.xl2All),
+          child: Center(child: Icon(icon, size: 28, color: iconColor ?? MedColors.text2)),
         ),
       ),
     );

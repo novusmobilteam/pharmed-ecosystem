@@ -36,7 +36,6 @@ class AuthSummaryReportNotifier extends ChangeNotifier with ApiRequestMixin, Pag
       operation: () => _getUserAuthorizationSummaryUseCase.call(userId),
       onData: (data) {
         _userAuth = data;
-
         notifyListeners();
       },
     );

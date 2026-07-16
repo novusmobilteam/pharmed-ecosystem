@@ -18,12 +18,17 @@
 //
 // Sınıf: Class B
 
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 class MockCabinOperationService implements ICabinOperationService {
   bool _shouldFastForward = false;
   int _statusPollCount = 0;
+  final _rng = Random();
+  Timer? _sensorTimer;
 
   @override
   void triggerManualClose() {
@@ -215,19 +220,38 @@ class MockCabinOperationService implements ICabinOperationService {
 
     return 'ok';
   }
-  
+
   @override
-  Future<double?> readBatteryVoltage({required ManagementCard manager}) {
-    throw UnimplementedError();
+  Future<double?> readBatteryVoltage({required ManagementCard manager}) async {
+    await Future.delayed(const Duration(milliseconds: 150));
+    // 11.5–12.8V arası tipik kurşun-asit / batarya aralığı
+    return 11.5 + _rng.nextDouble() * 1.3;
   }
-  
+
   @override
-  Future<({double humidity, double temperature})?> readTempHumidity({required ManagementCard manager}) {
-    throw UnimplementedError();
+  Future<({double humidity, double temperature})?> readTempHumidity({required ManagementCard manager}) async {
+    await Future.delayed(const Duration(milliseconds: 150));
+    return (
+      humidity: 40 + _rng.nextDouble() * 20, // %40–60
+      temperature: 20 + _rng.nextDouble() * 6, // 20–26°C
+    );
   }
-  
+
   @override
-  Stream<CabinSensorReading> streamCabinSensors({required ManagementCard manager, Duration? interval}) {
-    throw UnimplementedError();
+  Stream<CabinSensorReading> streamCabinSensors({required ManagementCard manager, Duration? interval}) async* {
+    final period = interval ?? const Duration(seconds: 2);
+    // baseline değerler etrafında yumuşak drift
+    var temp = 23.0;
+    var hum = 50.0;
+    var volt = 26.2;
+
+    while (true) {
+      await Future.delayed(period);
+      temp = (temp + (_rng.nextDouble() - 0.5) * 0.4).clamp(20.0, 26.0);
+      hum = (hum + (_rng.nextDouble() - 0.5) * 2.0).clamp(40.0, 60.0);
+      //volt = (volt + (_rng.nextDouble() - 0.5) * 0.1).clamp(11.5, 12.8);
+
+      yield CabinSensorReading(temperature: temp, humidity: hum, batteryVolts: volt, timestamp: DateTime.now());
+    }
   }
 }

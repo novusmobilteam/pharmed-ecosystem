@@ -59,8 +59,8 @@ class StationRepositoryImpl implements IStationRepository {
   }
 
   @override
-  Future<Result<Station?>> getCurrentStation() async {
-    final result = await _dataSource.getCurrentStation();
+  Future<Result<Station?>> getCurrentStation(String macAddress) async {
+    final result = await _dataSource.getCurrentStation(macAddress);
     return result.when(
       ok: (stationDto) => Result.ok(_mapper.toEntityOrNull(stationDto)),
       error: (e) => Result.error(e),

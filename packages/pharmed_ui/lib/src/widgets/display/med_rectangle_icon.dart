@@ -1,7 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../pharmed_ui.dart';
+// ─────────────────────────────────────────────────────────────────
+// MedRectangleIcon  (EMEKLİ / DEPRECATED)
+//
+// MedRectangleIconButton'ın tıklanamayan (statik) hâliydi. Artık ona
+// delege ediyor: onPressed: null → statik, disabled görünüm YOK çünkü
+// renkler zorunlu veriliyor.
+//
+// YENİ KOD İÇİN:
+//   MedRectangleIconButton(
+//     iconData: icon, color: bg, iconColor: fg, size: 42, onPressed: null,
+//   )
+//
+// NOT: Eski MedRectangleIcon `Size?` alıyordu (genelde kare). Wrapper
+//   width'i kullanır; kare olmayan kullanım varsa doğrudan Container'a geç.
+// ─────────────────────────────────────────────────────────────────
 
+@Deprecated('MedRectangleIconButton(onPressed: null) kullanın.')
 class MedRectangleIcon extends StatelessWidget {
   const MedRectangleIcon({
     super.key,
@@ -20,11 +36,14 @@ class MedRectangleIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size?.width ?? 42,
-      height: size?.height ?? 42,
-      decoration: BoxDecoration(color: backgroundColor, borderRadius: MedRadius.mdAll),
-      child: Icon(icon, size: iconSize ?? 20, color: foregroundColor),
+    return MedRectangleIconButton(
+      iconData: icon,
+      color: backgroundColor,
+      iconColor: foregroundColor,
+      size: size?.width ?? 42,
+      iconSize: iconSize ?? 20,
+      dimWhenDisabled: false,
+      onPressed: null,
     );
   }
 }

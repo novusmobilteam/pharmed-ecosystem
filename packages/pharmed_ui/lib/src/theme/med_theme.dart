@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'med_density.dart';
 import 'med_tokens.dart'; // MedColors, MedFonts, MedRadius, MedTextStyles, MedSpacing
 
 // ─────────────────────────────────────────────────────────────────
@@ -13,15 +14,17 @@ import 'med_tokens.dart'; // MedColors, MedFonts, MedRadius, MedTextStyles, MedS
 //   • MedTheme.client()  → dokunmatik kiosk (geniş padding, büyük hedef)
 //   • MedTheme.manager() → Windows masaüstü (sıkı, fare dostu yerleşim)
 //
-// Aradaki TEK fark yoğunluktur (_Density). Renk, tipografi ve radius
-// her ikisinde de birebir aynı token'dan gelir.
+// Aradaki TEK fark yoğunluktur. Bu yoğunluk artık MedDensity
+// ThemeExtension'ı olarak temaya gömülüdür; widget'lar
+// MedDensity.of(context) ile okur. Renk, tipografi ve radius her
+// ikisinde de birebir aynı token'dan gelir.
 // ─────────────────────────────────────────────────────────────────
 abstract final class MedTheme {
   /// Dokunmatik HMI (pharmed-client) teması.
-  static ThemeData client() => _base(const _Density.touch());
+  static ThemeData client() => _base(MedDensity.touch);
 
   /// Masaüstü yönetim (pharmed-manager) teması.
-  static ThemeData manager() => _base(const _Density.compact());
+  static ThemeData manager() => _base(MedDensity.compact);
 
   // ── Ortak ColorScheme (token'lardan türetildi) ─────────────────
   static const ColorScheme _scheme = ColorScheme(
@@ -91,7 +94,7 @@ abstract final class MedTheme {
   );
 
   // ── Ana fabrika ────────────────────────────────────────────────
-  static ThemeData _base(_Density d) {
+  static ThemeData _base(MedDensity d) {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -100,6 +103,9 @@ abstract final class MedTheme {
       dividerColor: MedColors.border,
       fontFamily: MedFonts.sans,
       textTheme: _textTheme,
+
+      // ── Yoğunluk artık burada, tek kaynak ──────────────────────
+      extensions: <ThemeExtension<dynamic>>[d],
 
       // AppBar — beyaz, ince alt çizgi
       appBarTheme: const AppBarTheme(
@@ -130,12 +136,12 @@ abstract final class MedTheme {
         shape: RoundedRectangleBorder(borderRadius: MedRadius.xl2All),
       ),
 
-      // Input — yoğunluğa göre padding & yükseklik
+      // Input — yoğunluğa göre padding & yükseklik (artık gerçekten uygulanıyor)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: MedColors.surface,
-        //contentPadding: d.inputPadding,
-        //constraints: BoxConstraints(minHeight: d.inputMinHeight),
+        contentPadding: EdgeInsets.symmetric(horizontal: d.inputPaddingX, vertical: d.isCompact ? 10 : 14),
+        constraints: BoxConstraints(minHeight: d.inputMinHeight),
         labelStyle: MedTextStyles.bodyMd(color: MedColors.text2),
         hintStyle: MedTextStyles.bodyMd(color: MedColors.text3),
         border: _inputBorder(MedColors.border),
@@ -151,8 +157,8 @@ abstract final class MedTheme {
           backgroundColor: MedColors.blue,
           foregroundColor: MedColors.surface,
           elevation: 0,
-          minimumSize: Size(0, d.buttonMinHeight),
-          padding: d.buttonPadding,
+          minimumSize: Size(0, d.controlMinHeight),
+          padding: EdgeInsets.symmetric(horizontal: d.controlPaddingX + 8, vertical: d.isCompact ? 10 : 16),
           shape: const RoundedRectangleBorder(borderRadius: MedRadius.mdAll),
           textStyle: MedTextStyles.bodyLg(weight: FontWeight.w600),
         ),
@@ -163,8 +169,8 @@ abstract final class MedTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: MedColors.blue,
           side: const BorderSide(color: MedColors.blue, width: 1.5),
-          minimumSize: Size(0, d.buttonMinHeight),
-          padding: d.buttonPadding,
+          minimumSize: Size(0, d.controlMinHeight),
+          padding: EdgeInsets.symmetric(horizontal: d.controlPaddingX, vertical: d.isCompact ? 10 : 16),
           shape: const RoundedRectangleBorder(borderRadius: MedRadius.mdAll),
           textStyle: MedTextStyles.bodyLg(weight: FontWeight.w600),
         ),
@@ -174,8 +180,8 @@ abstract final class MedTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: MedColors.blue,
-          minimumSize: Size(0, d.buttonMinHeight),
-          padding: d.buttonPadding,
+          minimumSize: Size(0, d.controlMinHeight),
+          padding: EdgeInsets.symmetric(horizontal: d.controlPaddingX, vertical: d.isCompact ? 10 : 16),
           shape: const RoundedRectangleBorder(borderRadius: MedRadius.mdAll),
           textStyle: MedTextStyles.bodyLg(weight: FontWeight.w600),
         ),
@@ -212,36 +218,4 @@ abstract final class MedTheme {
       borderSide: BorderSide(color: color, width: width),
     );
   }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// _Density — client (dokunmatik) ile manager (masaüstü) arasındaki
-// TEK fark. Renk/tipografi/radius bu sınıfa girmez.
-// ─────────────────────────────────────────────────────────────────
-class _Density {
-  final EdgeInsets inputPadding;
-  final double inputMinHeight;
-  final EdgeInsets buttonPadding;
-  final double buttonMinHeight;
-
-  const _Density({
-    required this.inputPadding,
-    required this.inputMinHeight,
-    required this.buttonPadding,
-    required this.buttonMinHeight,
-  });
-
-  /// Dokunmatik kiosk — geniş hedefler (WCAG 2.5.5 / 44-48px).
-  const _Density.touch()
-    : inputPadding = const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      inputMinHeight = 48,
-      buttonPadding = const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      buttonMinHeight = 48;
-
-  /// Masaüstü — sıkı, fare dostu yerleşim.
-  const _Density.compact()
-    : inputPadding = const EdgeInsets.symmetric(horizontal: 9, vertical: 10),
-      inputMinHeight = 44,
-      buttonPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      buttonMinHeight = 40;
 }

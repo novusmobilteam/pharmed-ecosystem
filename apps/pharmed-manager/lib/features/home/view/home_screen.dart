@@ -24,6 +24,7 @@ import '../../medicine/view/medicine_screen.dart';
 
 import '../../refill_list/view/refill_list_screen.dart';
 import '../../refund/view/pharmacy_refund_screen.dart';
+import '../../reports/cabin_temperature/view/cabin_temperature_report_screen.dart';
 import '../../reports/hospital_stocks/view/hospital_stocks_report_screen.dart';
 import '../../reports/material_usage/view/material_usage_report_screen.dart';
 import '../../reports/patient_inventory/view/patient_inventory_report_screen.dart';
@@ -188,6 +189,7 @@ class _HomeContent extends StatelessWidget {
       'material-usage-list' => MaterialUsageReportScreen(menu: menu!),
       'authorization-list' => AuthSummaryReportScreen(menu: menu!),
       'heatControl' => CabinTemperatureScreen(menu: menu!),
+      'station-temperature-list' => CabinTemperatureReportScreen(menu: menu!),
 
       _ => const _NotFoundView(),
     };

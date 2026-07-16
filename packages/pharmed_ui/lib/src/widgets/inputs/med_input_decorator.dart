@@ -62,15 +62,14 @@ class MedInputDecorator extends StatelessWidget {
           const SizedBox(height: MedSpacing.xs),
         ],
         Container(
+          alignment: Alignment.center,
           constraints: BoxConstraints(minHeight: style.minHeight),
           decoration: BoxDecoration(
             color: _resolveBgColor(effectiveState),
             borderRadius: style.borderRadius,
             border: Border.all(color: _resolveBorderColor(effectiveState)),
           ),
-          child: applyPadding
-              ? Padding(padding: style.contentPadding, child: child)
-              : Align(alignment: Alignment.center, child: child),
+          child: applyPadding ? Padding(padding: style.contentPadding, child: child) : child,
         ),
         if (effectiveState == MedFieldState.error && errorText != null) ...[
           const SizedBox(height: MedSpacing.xs),

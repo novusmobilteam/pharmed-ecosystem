@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class MedSegmentedButton extends StatelessWidget {
   final int selectedIndex;

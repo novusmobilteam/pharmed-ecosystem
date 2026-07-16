@@ -968,7 +968,22 @@
     "common_daysAgoStatus",
     "common_minutesRemainingStatus",
     "common_hoursRemainingStatus",
-    "common_daysRemainingStatus"
+    "common_daysRemainingStatus",
+    "refill_hint_selectSlots",
+    "refill_title_fillCells",
+    "refill_hint_miadRequired",
+    "refill_status_openingTitle",
+    "refill_status_openingBody",
+    "refill_status_waitingPullTitle",
+    "refill_status_waitingPullBody",
+    "refill_status_openingLidTitle",
+    "refill_status_openingLidBody",
+    "refill_status_stockOk",
+    "refill_status_stockLow",
+    "refill_status_stockCritical",
+    "refill_stop_confirmTitle",
+    "refill_stop_confirmMessage",
+    "refill_stop_confirmYes"
   ],
 
   "fr": [

@@ -7,6 +7,7 @@ packages:
   - packages/pharmed_utils
   - apps/pharmed-client
   - apps/pharmed-manager
+  - apps/pharmed-widgetbook
 
 scripts:
   get:
@@ -28,3 +29,7 @@ scripts:
   run:manager:dev:
     run: flutter run --flavor dev -t apps/pharmed-manager/lib/main_dev.dart
     description: pharmed-manager dev flavor (Windows)
+
+  catalog:
+    run: melos exec --scope="pharmed_widgetbook" -- flutter run -d chrome
+    description: Widget kataloğunu tarayıcıda aç (Widgetbook)

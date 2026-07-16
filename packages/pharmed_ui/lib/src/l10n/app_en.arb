@@ -5718,5 +5718,65 @@
   "placeholders": {
     "count": { "type": "int" }
   }
+},
+"refill_hint_selectSlots": "Select the cells to fill. Low-stock cells are marked.",
+"@refill_hint_selectSlots": {
+  "description": "Subtitle under the medicine selection screen title, guiding the user to pick cells"
+},
+"refill_title_fillCells": "Fill Cells",
+"@refill_title_fillCells": {
+  "description": "Form header for a unit-dose drawer where all cells are filled in one list"
+},
+"refill_hint_miadRequired": "Expiry date required",
+"@refill_hint_miadRequired": {
+  "description": "Inline validation shown on a cell input when filling quantity is entered but expiry date is missing"
+},
+"refill_status_openingTitle": "Opening drawer…",
+"@refill_status_openingTitle": {
+  "description": "Full-screen title while the physical drawer is being opened by the motor"
+},
+"refill_status_openingBody": "Please wait, the physical drawer is opening.",
+"@refill_status_openingBody": {
+  "description": "Full-screen subtitle while the physical drawer is being opened"
+},
+"refill_status_waitingPullTitle": "Pull the drawer",
+"@refill_status_waitingPullTitle": {
+  "description": "Full-screen title when the lock is released and the drawer is waiting to be pulled open"
+},
+"refill_status_waitingPullBody": "The lock is released. Pull the drawer to continue.",
+"@refill_status_waitingPullBody": {
+  "description": "Full-screen subtitle when the drawer lock is released and waiting for the user to pull"
+},
+"refill_status_openingLidTitle": "Opening cell…",
+"@refill_status_openingLidTitle": {
+  "description": "Full-screen title while a cubic drawer inner lid is being opened"
+},
+"refill_status_openingLidBody": "Please wait, the cell lid is opening.",
+"@refill_status_openingLidBody": {
+  "description": "Full-screen subtitle while a cubic drawer inner lid is being opened"
+},
+"refill_status_stockOk": "In stock",
+"@refill_status_stockOk": {
+  "description": "Status badge on a cell card when current stock is above the minimum threshold"
+},
+"refill_status_stockLow": "Low",
+"@refill_status_stockLow": {
+  "description": "Status badge on a cell card when current stock is at or below the minimum threshold"
+},
+"refill_status_stockCritical": "Critical",
+"@refill_status_stockCritical": {
+  "description": "Status badge on a cell card when current stock is at or below the critical threshold"
+},
+"refill_stop_confirmTitle": "Stop the refill?",
+"@refill_stop_confirmTitle": {
+  "description": "Confirmation dialog title when the user taps Stop during an active refill queue"
+},
+"refill_stop_confirmMessage": "If you stop, the open drawer will be locked and this refill will be marked as partially completed. Entered counts and fill amounts are kept, but you cannot resume — you must start a new refill.",
+"@refill_stop_confirmMessage": {
+  "description": "Confirmation dialog body explaining the consequence of stopping an active refill queue"
+},
+"refill_stop_confirmYes": "Yes, Stop",
+"@refill_stop_confirmYes": {
+  "description": "Confirm button on the stop-refill confirmation dialog"
 }
 }
