@@ -5,8 +5,8 @@ export 'empty_state_resolver.dart' show EmptyStateContent;
 export 'empty_state_size.dart';
 export 'empty_state_variant.dart';
 
-/// Veri bulunamadığında veya bir bağlam henüz oluşmadığında gösterilen
-/// genel boş durum bileşeni.
+/// Veri bulunamadığında, bir bağlam henüz oluşmadığında veya bir bölüm
+/// yüklenemediğinde gösterilen genel durum bileşeni.
 ///
 /// `pharmed-client` ve `pharmed-manager` uygulamalarında ortak kullanılır.
 ///
@@ -19,9 +19,23 @@ export 'empty_state_variant.dart';
 ///
 /// ## Varyant
 ///
-/// [EmptyStateVariant] ile önceden tanımlı senaryolar seçilir.
-/// Tüm senaryolar lokalizedir. Özel içerik için [EmptyStateVariant.custom]
-/// kullanılır; bu durumda [icon], [title] ve [description] doldurulmalıdır.
+/// [EmptyStateVariant] ile önceden tanımlı senaryolar seçilir (boş durumlar
+/// ve hata durumları — [EmptyStateVariant.networkError], `serverError`,
+/// `error` dahil). Tüm senaryolar lokalizedir. Özel içerik için
+/// [EmptyStateVariant.custom] kullanılır; bu durumda [icon], [title] ve
+/// [description] doldurulmalıdır.
+///
+/// ## Yeniden dene
+///
+/// [onRetry] verilirse bir "yeniden dene" butonu gösterilir. Etiketi
+/// [retryLabel] ile verilir (pharmed_ui l10n bilmez):
+///
+/// - [EmptyStateSize.normal] → içeriğin altında normal buton.
+/// - [EmptyStateSize.compact] → ikon + metin ile aynı satırda, sağda compact
+///   buton (panel içi hata satırı). Eski `_SectionError` bu moddur.
+///
+/// [onRetry] ile [action] birlikte verilmemelidir; ikisi de varsa [onRetry]
+/// önceliklidir.
 ///
 /// ## Aksiyon butonu
 ///
@@ -45,6 +59,8 @@ class EmptyStateWidget extends StatelessWidget {
     this.title,
     this.description,
     this.action,
+    this.onRetry,
+    this.retryLabel,
   });
 
   /// Görüntülenecek senaryo. Varsayılan: [EmptyStateVariant.custom].
@@ -64,8 +80,17 @@ class EmptyStateWidget extends StatelessWidget {
 
   /// İsteğe bağlı aksiyon widget'ı (genellikle [MedButton]).
   ///
-  /// Yalnızca [EmptyStateSize.normal] modunda gösterilir.
+  /// Yalnızca [EmptyStateSize.normal] modunda ve [onRetry] yokken gösterilir.
   final Widget? action;
+
+  /// Verilirse "yeniden dene" butonu gösterilir. [retryLabel] ile birlikte
+  /// kullanılmalıdır.
+  final VoidCallback? onRetry;
+
+  /// Yeniden dene butonu etiketi.
+  final String? retryLabel;
+
+  bool get _hasRetry => onRetry != null && retryLabel != null;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +98,11 @@ class EmptyStateWidget extends StatelessWidget {
       context.l10n,
     ).resolve(variant, icon: icon, title: title, description: description);
     final spec = size.spec;
+
+    // Compact + retry → panel içi yatay hata satırı.
+    if (size == EmptyStateSize.compact && _hasRetry) {
+      return _CompactErrorRow(content: content, retryLabel: retryLabel!, onRetry: onRetry!);
+    }
 
     final hasDescription = content.description.isNotEmpty;
 
@@ -104,9 +134,59 @@ class EmptyStateWidget extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ],
-            if (action != null && size == EmptyStateSize.normal) ...[const SizedBox(height: 20), action!],
+            if (size == EmptyStateSize.normal) ...[
+              if (_hasRetry) ...[
+                const SizedBox(height: 20),
+                MedRetryButton(label: retryLabel!, onTap: onRetry!),
+              ] else if (action != null) ...[
+                const SizedBox(height: 20),
+                action!,
+              ],
+            ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Compact + retry: ikon + başlık/açıklama + sağda compact "yeniden dene".
+/// Eski dashboard `_SectionError` bileşeninin yerini alır.
+class _CompactErrorRow extends StatelessWidget {
+  const _CompactErrorRow({required this.content, required this.retryLabel, required this.onRetry});
+
+  final EmptyStateContent content;
+  final String retryLabel;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasDescription = content.description.isNotEmpty;
+
+    return Container(
+      padding: const EdgeInsets.all(MedSpacing.xl),
+      decoration: BoxDecoration(
+        color: MedColors.surface,
+        borderRadius: MedRadius.lgAll,
+        border: Border.all(color: MedColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(content.icon, size: 18, color: MedColors.text3),
+          const SizedBox(width: MedSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(content.title, style: MedTextStyles.bodySm(color: MedColors.text3)),
+                if (hasDescription) Text(content.description, style: MedTextStyles.monoXs(color: MedColors.text4)),
+              ],
+            ),
+          ),
+          const SizedBox(width: MedSpacing.md),
+          MedRetryButton(label: retryLabel, onTap: onRetry, compact: true),
+        ],
       ),
     );
   }

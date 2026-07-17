@@ -73,13 +73,6 @@ class MockCabinStockRepository implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<List<CabinStock>>> getExpiredStocks() async {
-    await Future.delayed(_delay);
-    final expired = _mockStocks.where((s) => s.daysUntilExpiration < 0).toList();
-    return Result.ok(expired);
-  }
-
-  @override
   Future<Result<void>> refillMasterCabin(List<dynamic> data) async {
     await Future.delayed(_delay);
     return const Result.ok(null);

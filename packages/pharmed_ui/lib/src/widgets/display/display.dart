@@ -6,3 +6,5 @@ export 'med_rectangle_icon.dart';
 export 'med_dialog.dart';
 export 'med_side_panel.dart';
 export 'sparkline_painter.dart';
+export 'med_dashboard_panel.dart';
+export 'med_info_row.dart';

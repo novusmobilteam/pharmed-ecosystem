@@ -25,6 +25,7 @@ class MedInfoChip extends StatelessWidget {
     if (info == null) return const SizedBox.shrink();
     return MedChip(
       label: info!,
+      border: Colors.transparent,
       background: backgroundColor ?? MedColors.blueLight,
       foreground: foregroundColor ?? MedColors.blue,
     );

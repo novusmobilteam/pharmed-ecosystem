@@ -21,6 +21,7 @@ class MedRxMovementChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MedChip(
+      border: Colors.transparent,
       label: useActionLabel ? status.actionLabel : status.label,
       background: status.backgroundColor,
       foreground: status.foregroundColor,
