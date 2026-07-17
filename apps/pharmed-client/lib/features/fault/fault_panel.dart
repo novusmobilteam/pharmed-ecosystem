@@ -406,10 +406,10 @@ class _FaultHistoryItem extends StatelessWidget {
                     ),
                     const Spacer(),
                     if (isActive)
-                      MedBadge(
+                      MedChip(
                         label: context.l10n.fault_historyActiveBadge,
-                        variant: isMaintenance ? MedBadgeVariant.amber : MedBadgeVariant.red,
-                        size: MedBadgeSize.sm,
+                        style: isMaintenance ? MedChipStyle.warning : MedChipStyle.danger,
+                        size: MedChipSize.sm,
                       ),
                   ],
                 ),

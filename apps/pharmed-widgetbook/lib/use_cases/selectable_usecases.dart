@@ -15,12 +15,12 @@ final selectableComponent = WidgetbookComponent(
 );
 
 Widget _selectablePlayground(BuildContext context) {
-  final shape = context.knobs.list<MedSelectableShape>(
+  final shape = context.knobs.object.dropdown(
     label: 'shape',
     options: MedSelectableShape.values,
     labelBuilder: (s) => s.name,
   );
-  final accent = context.knobs.list<MedAccent>(
+  final accent = context.knobs.object.dropdown(
     label: 'accent',
     options: MedAccent.values,
     labelBuilder: (a) => a.name,
@@ -30,7 +30,7 @@ Widget _selectablePlayground(BuildContext context) {
   final label = context.knobs.string(label: 'label', initialValue: 'Hastalarım');
 
   // size knob'u: null = temadan (density). Diğerleri override.
-  final sizeChoice = context.knobs.list<String>(
+  final sizeChoice = context.knobs.object.dropdown(
     label: 'size',
     options: const ['temadan', 'sm', 'md'],
   );
@@ -115,7 +115,7 @@ class _GroupDemoState extends State<_GroupDemo> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.knobs.list<MedAccent>(
+    final accent = context.knobs.object.dropdown(
       label: 'accent',
       options: MedAccent.values,
       labelBuilder: (a) => a.name,

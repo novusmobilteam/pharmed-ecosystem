@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pharmed_client/core/flavor/window_setup.dart';
 import 'package:pharmed_client/main.dart';
 import 'core/flavor/app_flavor.dart';
 

@@ -215,7 +215,7 @@ class _KubikGrid extends StatelessWidget {
         ),
         itemCount: units.length,
         itemBuilder: (context, i) {
-          final unit = units[i];
+          //final unit = units[i];
           final isActive = item.activeTargetIndex == i;
           final isCompleted = item.completedTargetIndexes.contains(i);
 

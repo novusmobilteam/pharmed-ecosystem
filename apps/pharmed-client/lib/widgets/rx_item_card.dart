@@ -129,10 +129,10 @@ class _TopRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
 
       children: [
-        MedRectangleIcon(
-          backgroundColor: item.status?.backgroundColor ?? MedColors.blue,
-          foregroundColor: item.status?.foregroundColor ?? Colors.white,
-          icon: PhosphorIcons.pill(),
+        MedRectangleIconButton(
+          color: item.status?.backgroundColor ?? MedColors.blue,
+          iconColor: item.status?.foregroundColor ?? Colors.white,
+          iconData: PhosphorIcons.pill(),
         ),
 
         const SizedBox(width: MedSpacing.lg),

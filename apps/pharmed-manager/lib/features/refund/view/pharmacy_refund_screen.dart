@@ -192,18 +192,3 @@ List<TableColumnDef<Refund>> _buildColumnDefs() => [
     sortValue: (r) => r.approvedDate,
   ),
 ];
-
-Widget? _buildCell(Refund item, int colIndex, dynamic _) {
-  return switch (colIndex) {
-    0 => Text(item.patient?.id?.toString() ?? '-'),
-    1 => Text(item.patient?.fullName ?? '-'),
-    2 => Text(item.createdUser?.fullName ?? '-'),
-    3 => Text(item.medicine?.name ?? '-'),
-    4 => Text(item.quantity?.formatFractional ?? '-'),
-    5 => Text(item.createdDate?.formattedDate ?? '-'),
-    6 => Text(item.approvedUser?.fullName ?? '-'),
-    7 => Text(item.approvedDate?.formattedDate ?? '-'),
-
-    _ => null,
-  };
-}

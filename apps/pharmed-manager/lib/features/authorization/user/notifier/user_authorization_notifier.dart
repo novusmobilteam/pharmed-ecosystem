@@ -55,7 +55,6 @@ class UserAuthorizationNotifier extends ChangeNotifier with ApiRequestMixin {
 
         if (authRes case Ok(value: final auth)) {
           _userAuth = auth;
-          print(_userAuth.toString());
         }
 
         return const Result.ok(null);

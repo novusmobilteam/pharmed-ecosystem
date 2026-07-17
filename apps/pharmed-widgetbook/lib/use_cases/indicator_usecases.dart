@@ -103,7 +103,7 @@ final statusDotComponent = WidgetbookComponent(
 Widget _statusDotPlayground(BuildContext context) {
   final pulsing = context.knobs.boolean(label: 'isPulsing', initialValue: true);
   final size = context.knobs.double.slider(label: 'size', initialValue: 8, min: 4, max: 24);
-  final colorName = context.knobs.list<String>(
+  final colorName = context.knobs.object.dropdown(
     label: 'color',
     options: const ['green', 'amber', 'red', 'blue'],
   );

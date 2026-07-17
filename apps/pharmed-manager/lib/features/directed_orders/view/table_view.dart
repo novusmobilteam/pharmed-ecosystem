@@ -5,13 +5,6 @@ class _TableView extends StatelessWidget {
 
   final DirectedOrdersViewModel vm;
 
-  List<TableColumnDef> _buildColumnDefs(BuildContext context) => [
-    TableColumnDef(title: context.l10n.drugActivity_column_patient, flex: 1.5), // colIndex: 0
-    TableColumnDef(title: context.l10n.directedOrdersColumnProtocolNo), // colIndex: 1
-    TableColumnDef(title: context.l10n.directedOrdersColumnBed, flex: 0.7), // colIndex: 2
-    TableColumnDef(title: context.l10n.directedOrdersColumnRoom, flex: 0.7), // colIndex: 3
-  ];
-
   Widget? _buildCell(Hospitalization item, int colIndex, dynamic _) {
     return switch (colIndex) {
       0 => Text(item.patient?.fullName ?? '-'),

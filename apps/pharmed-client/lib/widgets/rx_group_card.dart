@@ -130,10 +130,10 @@ class _RxCardHeader extends StatelessWidget {
         child: Row(
           spacing: 12,
           children: [
-            MedRectangleIcon(
-              backgroundColor: MedColors.blueLight,
-              foregroundColor: MedColors.blue,
-              icon: PhosphorIcons.prescription(),
+            MedRectangleIconButton(
+              color: MedColors.blueLight,
+              iconColor: MedColors.blue,
+              iconData: PhosphorIcons.prescription(),
             ),
             Expanded(
               child: Column(
@@ -258,7 +258,10 @@ class _RxItemRowState extends ConsumerState<_RxItemRow> {
                         if (!_hasLoaded)
                           TextButton(
                             onPressed: _loadMovements,
-                            child: Text(context.l10n.movement_showAll, style: MedTextStyles.bodyMd(color: MedColors.text3)),
+                            child: Text(
+                              context.l10n.movement_showAll,
+                              style: MedTextStyles.bodyMd(color: MedColors.text3),
+                            ),
                           ),
                       ],
                     ),

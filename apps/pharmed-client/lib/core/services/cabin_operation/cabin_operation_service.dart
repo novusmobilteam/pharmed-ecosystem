@@ -33,6 +33,7 @@ class CabinOperationService implements ICabinOperationService {
   final ISerialCommunicationService _serialService;
   final AppSettingsCache _settingsCache;
   ManagementCard? _cachedManager;
+  Future<ManagementCard?>? _inFlightScan;
 
   // ── Sabitler ──────────────────────────────────────────────────────────────
 
@@ -61,6 +62,25 @@ class CabinOperationService implements ICabinOperationService {
       return _cachedManager;
     }
 
+    // Zaten devam eden bir tarama varsa ONU bekle — ikinci bir bağlantı açma.
+    // Dashboard'da birden fazla widget (kabin durumu + sensör) aynı anda
+    // çağırdığında port çakışmasını (errno 5) önler.
+    final existing = _inFlightScan;
+    if (existing != null) {
+      return existing;
+    }
+
+    final scan = _doScan(targetPort);
+    _inFlightScan = scan;
+    try {
+      return await scan;
+    } finally {
+      _inFlightScan = null;
+    }
+  }
+
+  /// Asıl tarama mantığı — tek seferde bir tane çalışır.
+  Future<ManagementCard?> _doScan(String? targetPort) async {
     final preferredPort = targetPort ?? await _settingsCache.getComPort();
 
     if (preferredPort == null) {

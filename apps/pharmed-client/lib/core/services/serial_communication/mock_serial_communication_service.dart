@@ -53,9 +53,4 @@ class MockSerialCommunicationService implements ISerialCommunicationService {
     _connected = false;
     debugPrint('MOCK: Port bağlantısı kapatıldı.');
   }
-
-  @override
-  void setManualRts(bool value) {
-    // TODO: implement setManualRts
-  }
 }

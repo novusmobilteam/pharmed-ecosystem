@@ -34,10 +34,6 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../notifier/drug_assignment_state.dart';
 
-part '../widgets/action_buttons.dart';
-part '../widgets/drug_selector.dart';
-part '../widgets/qty_fields.dart';
-
 class DrugAssignmentPanel extends StatelessWidget {
   const DrugAssignmentPanel({
     super.key,
@@ -226,7 +222,27 @@ class _CellSelectedContent extends ConsumerWidget {
         const SizedBox(height: 20),
 
         // Butonlar
-        _ActionButtons(canSave: state.canSave, isAssigned: state.isAssigned, onSave: onSave, onDelete: onDelete),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Kaydet
+            MedButton(
+              label: context.l10n.assignment_saveAssignmentButton,
+              variant: MedButtonVariant.primary,
+              onPressed: state.canSave ? onSave : null,
+            ),
+
+            // Sil — sadece atanmış göz için
+            if (state.isAssigned) ...[
+              const SizedBox(height: 8),
+              MedButton(
+                label: context.l10n.assignment_removeAssignmentButton,
+                variant: MedButtonVariant.danger,
+                onPressed: onDelete,
+              ),
+            ],
+          ],
+        ),
       ],
     );
   }

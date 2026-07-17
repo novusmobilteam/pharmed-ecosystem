@@ -15,13 +15,14 @@ final buttonsComponent = WidgetbookComponent(
 );
 
 Widget _buttonPlayground(BuildContext context) {
-  final variant = context.knobs.list<MedButtonVariant>(
+  final variant = context.knobs.object.dropdown(
     label: 'variant',
     options: MedButtonVariant.values,
     labelBuilder: (v) => v.name,
   );
+
   // size null → temadan (density). Diğerleri override.
-  final sizeChoice = context.knobs.list<String>(
+  final sizeChoice = context.knobs.object.dropdown(
     label: 'size',
     options: const ['temadan', 'sm', 'md', 'lg'],
   );
@@ -87,7 +88,7 @@ Widget _iconButtonPlayground(BuildContext context) {
   final tinted = context.knobs.boolean(label: 'renkli (mavi)', initialValue: false);
   final withTooltip = context.knobs.boolean(label: 'tooltip', initialValue: true);
 
-  final sizeChoice = context.knobs.list<String>(
+  final sizeChoice = context.knobs.object.dropdown(
     label: 'size',
     options: const ['temadan', '32', '40', '48'],
   );

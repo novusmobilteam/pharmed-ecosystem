@@ -31,7 +31,7 @@ class _CheckboxDemoState extends State<_CheckboxDemo> {
   bool _v = false;
   @override
   Widget build(BuildContext context) {
-    final size = context.knobs.list<MedCheckboxSize>(
+    final size = context.knobs.object.dropdown(
       label: 'size',
       options: MedCheckboxSize.values,
       labelBuilder: (s) => s.name,

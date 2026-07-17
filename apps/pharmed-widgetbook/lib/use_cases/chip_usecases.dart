@@ -16,7 +16,7 @@ final chipComponent = WidgetbookComponent(
 );
 
 Widget _chipPlayground(BuildContext context) {
-  final style = context.knobs.list<MedChipStyle>(
+  final style = context.knobs.object.dropdown(
     label: 'style',
     options: MedChipStyle.values,
     labelBuilder: (s) => s.name,

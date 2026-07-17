@@ -13,7 +13,6 @@ import '../state/step2_state.dart';
 import '../widgets/step_shared_widgets.dart';
 
 part '../widgets/rfid_test_button.dart';
-part '../widgets/cabin_card_test_button.dart';
 
 class Step2View extends ConsumerStatefulWidget {
   const Step2View({super.key});

@@ -53,6 +53,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
 
   /// Saving sırasında çekmece kapandıysa true. Kayıt sonucu gelince
   /// (_completeRefill) değerlendirilir: OK → doğrudan Success, hata → Error.
+  // ignore: unused_field
   bool _closedDuringSaving = false;
 
   @override

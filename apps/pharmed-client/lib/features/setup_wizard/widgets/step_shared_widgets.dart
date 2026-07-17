@@ -23,7 +23,7 @@ class StepHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MedBadge(label: badge, variant: MedBadgeVariant.blue, size: MedBadgeSize.sm),
+          MedChip(label: badge, style: MedChipStyle.info, size: MedChipSize.sm),
           const SizedBox(height: 8),
           Text(
             title,

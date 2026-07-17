@@ -63,7 +63,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final menuTree = loaded?.menuTree ?? const <MenuItem>[];
     final flattenedMenus = loaded?.flattenedMenus ?? const <MenuItem>[];
     final currentRoute = loaded?.activeRoute ?? 'dashboard';
-    print(menuTree);
 
     return GestureDetector(
       onTap: authNotif.onUserActivity,

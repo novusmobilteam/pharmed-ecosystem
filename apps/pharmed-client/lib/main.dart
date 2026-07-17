@@ -7,7 +7,6 @@ import 'core/providers/providers.dart';
 import 'core/router/app_router.dart';
 import 'core/services/service.dart';
 import 'features/settings/presentation/notifier/settings_notifier.dart';
-import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

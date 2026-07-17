@@ -12,12 +12,6 @@ class StockTransactionRepositoryImpl implements IStockTransactionRepository {
        _mapper = mapper;
 
   @override
-  Future<Result<List<StockTransaction>>> getStockTransactions({int? skip, int? take, String? search}) async {
-    final r = await _dataSource.getStockTransactions();
-    return r.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos)), error: (err) => Result.error(err));
-  }
-
-  @override
   Future<Result<StockTransaction?>> createTransaction(StockTransaction entity) async {
     final dto = _mapper.toDto(entity);
     final res = await _dataSource.createTransaction(dto);

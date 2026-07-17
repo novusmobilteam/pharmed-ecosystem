@@ -204,7 +204,6 @@ class BedAssignmentNotifier extends ChangeNotifier with ApiRequestMixin {
         map[coord] = a;
       } else {
         // atama var ama coord çözülemiyor → _mobileSlots eksik/yanlış
-        print('coord çözülemedi cellId=${a.cellId}');
       }
     }
     return map;

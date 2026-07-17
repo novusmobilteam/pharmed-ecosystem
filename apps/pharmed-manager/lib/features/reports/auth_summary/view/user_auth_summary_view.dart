@@ -81,7 +81,7 @@ class _MenuColumn extends StatelessWidget {
                 : ListView.separated(
                     padding: MedSpacing.insetMd,
                     itemCount: items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.xs),
+                    separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.xs),
                     itemBuilder: (context, index) => _MenuTile(name: items[index].name ?? '-', accent: accent),
                   ),
           ),

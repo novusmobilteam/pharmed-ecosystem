@@ -103,20 +103,20 @@ class MockCabinStockRepository implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<List<CabinExpectedEpc>>> getExpectedEpcs(int cabinId) {
-    // TODO: implement getExpectedEpcs
-    throw UnimplementedError();
+  Future<Result<List<CabinExpectedEpc>>> getExpectedEpcs(int cabinId) async {
+    return Result.ok([]);
   }
 
   @override
-  Future<Result<void>> reportExcessStock({required Map<String, dynamic> data, required int cabinInventoryTypeId}) {
-    // TODO: implement reportExcessStock
-    throw UnimplementedError();
+  Future<Result<void>> reportExcessStock({
+    required Map<String, dynamic> data,
+    required int cabinInventoryTypeId,
+  }) async {
+    return Result.ok(null);
   }
 
   @override
-  Future<Result<void>> reportMissingStock({required int prescriptionItemId, required int cabinInventoryTypeId}) {
-    // TODO: implement reportMissingStock
-    throw UnimplementedError();
+  Future<Result<void>> reportMissingStock({required int prescriptionItemId, required int cabinInventoryTypeId}) async {
+    return Result.ok(null);
   }
 }

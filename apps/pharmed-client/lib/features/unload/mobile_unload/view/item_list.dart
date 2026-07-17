@@ -44,7 +44,7 @@ class _ItemsList extends ConsumerWidget {
       shrinkWrap: true,
       padding: EdgeInsets.only(bottom: MedSpacing.insetMd.top),
       itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, i) {
         final item = items[i];
         final status = _itemStatusFor(item, ready);

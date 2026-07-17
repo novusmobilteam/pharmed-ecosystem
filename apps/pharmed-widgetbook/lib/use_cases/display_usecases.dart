@@ -16,7 +16,7 @@ final avatarComponent = WidgetbookComponent(
 );
 
 Widget _avatarPlayground(BuildContext context) {
-  final palette = context.knobs.list<AvatarPalette>(
+  final palette = context.knobs.object.dropdown(
     label: 'palette',
     options: AvatarPalette.values,
     labelBuilder: (p) => p.name,
@@ -96,7 +96,7 @@ final emptyStateComponent = WidgetbookComponent(
 );
 
 Widget _emptyStatePlayground(BuildContext context) {
-  final variant = context.knobs.list<EmptyStateVariant>(
+  final variant = context.knobs.object.dropdown(
     label: 'variant',
     options: EmptyStateVariant.values,
     labelBuilder: (v) => v.name,

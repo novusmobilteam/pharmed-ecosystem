@@ -149,14 +149,14 @@ class _RoomBedPickerState extends State<RoomBedPicker> {
         if (widget.selectedRooms.isNotEmpty) ...[
           Row(
             children: [
-              MedBadge(
+              MedChip(
                 label: context.l10n.wizard_selectedRoomCountBadge(widget.selectedRooms.length),
-                variant: MedBadgeVariant.blue,
+                style: MedChipStyle.info,
               ),
               const SizedBox(width: 8),
-              MedBadge(
+              MedChip(
                 label: context.l10n.stationSetup_bedCountBadge(widget.selectedBeds.length),
-                variant: MedBadgeVariant.green,
+                style: MedChipStyle.info,
               ),
             ],
           ),

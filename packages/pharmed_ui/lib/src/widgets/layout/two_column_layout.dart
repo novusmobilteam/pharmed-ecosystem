@@ -123,7 +123,7 @@ class _PanelHeader extends StatelessWidget {
       child: Row(
         children: [
           if (icon != null) ...[
-            MedRectangleIcon(backgroundColor: MedColors.blueLight, foregroundColor: MedColors.blue, icon: icon!),
+            MedRectangleIconButton(color: MedColors.blueLight, iconColor: MedColors.blue, iconData: icon!),
             const SizedBox(width: 10),
           ],
           Column(

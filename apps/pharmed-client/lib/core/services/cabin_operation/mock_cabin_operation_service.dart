@@ -28,7 +28,6 @@ class MockCabinOperationService implements ICabinOperationService {
   bool _shouldFastForward = false;
   int _statusPollCount = 0;
   final _rng = Random();
-  Timer? _sensorTimer;
 
   @override
   void triggerManualClose() {

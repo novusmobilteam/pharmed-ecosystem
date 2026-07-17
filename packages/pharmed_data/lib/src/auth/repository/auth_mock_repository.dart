@@ -80,8 +80,20 @@ class AuthMockRepository implements IAuthRepository {
   Future<String?> getStoredToken() async => null;
 
   @override
-  Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress}) {
-    // TODO: implement loginWithBadge
-    throw UnimplementedError();
+  Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress}) async {
+    return Result.ok(
+      AuthToken(
+        accessToken: '',
+        user: AppUser(
+          id: 1,
+          email: '',
+          name: 'name',
+          surname: 'surname',
+          fullName: 'fullName',
+          roleName: 'roleName',
+          roleId: 1,
+        ),
+      ),
+    );
   }
 }

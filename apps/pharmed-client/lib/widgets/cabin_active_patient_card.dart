@@ -151,11 +151,10 @@ class _ChangeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: MedRectangleIcon(
-        backgroundColor: MedColors.surface2,
-        foregroundColor: MedColors.text2,
-        icon: PhosphorIcons.userSwitch(),
-        size: Size(36, 36),
+      child: MedRectangleIconButton(
+        color: MedColors.surface2,
+        iconColor: MedColors.text2,
+        iconData: PhosphorIcons.userSwitch(),
       ),
     );
   }
