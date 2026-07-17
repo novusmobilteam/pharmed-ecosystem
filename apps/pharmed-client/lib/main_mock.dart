@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:pharmed_client/core/flavor/window_setup.dart';
 import 'package:pharmed_client/core/providers/auth_providers.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -9,6 +10,8 @@ import 'main.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //await initWindowManager();
+
   FlavorConfig.initialize(AppFlavor.mock);
   await Hive.initFlutter();
   MedLogger.configure(verboseLogging: true);

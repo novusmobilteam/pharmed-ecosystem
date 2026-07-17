@@ -42,7 +42,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
     if (kDebugMode) {
       ref.listen(settingsNotifierProvider, (prev, next) {
         if (prev?.debugCabin?.id != next.debugCabin?.id) {
-          unawaited(_load());
+          unawaited(_load(cabinId: next.debugCabin?.id));
         }
       });
     }
@@ -65,7 +65,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
   // ------------------------------------------------------------------ fetch
 
-  Future<void> _load() async {
+  Future<void> _load({int? cabinId}) async {
     MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard yükleniyor');
 
     final mac = await DeviceInfo.getMacAddress();
@@ -87,7 +87,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
     final treatmentsSection = _toSection<List<PrescriptionItem>?>(treatmentsResult);
     final activitiesSection = _toSection<List<PrescriptionItemMovement>?>(activitiesResult);
     final unappliedSection = _toSection<List<PrescriptionItem>?>(unappliedResult);
-    final cabinVisualizer = setupDone ? await _loadCabinVisualizer() : null;
+    final cabinVisualizer = setupDone ? await _loadCabinVisualizer(debugCabinId: cabinId) : null;
 
     // Hiçbir kaynakta gösterilecek veri yoksa global hata
     final allFailed =
@@ -119,9 +119,9 @@ class DashboardNotifier extends Notifier<DashboardState> {
     };
   }
 
-  Future<CabinVisualizerData?> _loadCabinVisualizer() async {
+  Future<CabinVisualizerData?> _loadCabinVisualizer({int? debugCabinId}) async {
     final deviceMode = await ref.read(deviceModeProvider.future);
-    final cabinId = await _settings.getCurrentCabinId();
+    final cabinId = debugCabinId ?? await _settings.getCurrentCabinId();
 
     final result = await _getCabinVisualizer.call(deviceMode: deviceMode, cabinId: cabinId);
     return _unwrap(result);

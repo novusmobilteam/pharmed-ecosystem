@@ -29,7 +29,7 @@ final masterRefillNotifierProvider = NotifierProvider<MasterRefillNotifier, Mast
 class MasterRefillNotifier extends Notifier<MasterRefillState> {
   late final MasterDrawerOrchestrator _orchestrator;
 
-  GetMedicineAssignmentsUseCase get _getAssignments => ref.read(getMedicineAssignmentsUseCaseProvider);
+  GetCabinAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
   RefillMasterCabinUseCase get _refillCabin => ref.read(refillMasterCabinUseCaseProvider);
 
   @override
@@ -47,7 +47,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     final cabinId = data.cabinId;
     state = const MasterRefillLoading();
 
-    final result = await _getAssignments(cabinId);
+    final result = await _getAssignments();
     result.when(
       ok: (assignments) {
         state = MasterRefillSelection(cabinId: cabinId, medicines: assignments);
@@ -376,7 +376,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
   /// ve temiz (seçimsiz) Selection fazına döner. Ayrı "başarılı" ekranı yoktur.
   Future<void> _reloadSelectionAfterQueue(int cabinId) async {
     state = const MasterRefillLoading();
-    final result = await _getAssignments(cabinId);
+    final result = await _getAssignments();
     result.when(
       ok: (assignments) => state = MasterRefillSelection(cabinId: cabinId, medicines: assignments),
       error: (e) => state = MasterRefillError(

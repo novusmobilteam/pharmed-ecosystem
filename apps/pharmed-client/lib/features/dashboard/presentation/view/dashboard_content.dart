@@ -110,11 +110,11 @@ class _DashboardBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const CabinTelemetryPanel(),
-                const SizedBox(height: MedSpacing.lg),
                 data.hasCabinData
                     ? CabinStatusPanel(cabin: data.cabinVisualizerData!)
-                    : EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh),
+                    : EmptyStateWidget(variant: EmptyStateVariant.error, onRetry: notifier.refresh),
+                const SizedBox(height: MedSpacing.lg),
+                const CabinTelemetryPanel(),
               ],
             ),
           ),

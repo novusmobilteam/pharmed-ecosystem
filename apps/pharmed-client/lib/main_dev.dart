@@ -4,16 +4,15 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:pharmed_client/main.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 import 'core/flavor/app_flavor.dart';
+import 'core/flavor/window_setup.dart';
 
 void main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
+  //await initWindowManager();
   FlavorConfig.initialize(AppFlavor.dev);
   await Hive.initFlutter();
   MedLogger.configure(verboseLogging: true);
-  //await appSettingsCache.resetSetup();
-  //await AuthCacheDataSource(boxPrefix: 'client_').clear();
+
   runApp(const ProviderScope(child: MyApp()));
 }

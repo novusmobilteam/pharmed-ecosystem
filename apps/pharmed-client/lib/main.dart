@@ -7,10 +7,12 @@ import 'core/providers/providers.dart';
 import 'core/router/app_router.dart';
 import 'core/services/service.dart';
 import 'features/settings/presentation/notifier/settings_notifier.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -56,45 +58,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         ],
         supportedLocales: const [Locale('tr'), Locale('en'), Locale('fr'), Locale('ar')],
         home: const AppRouter(),
-        // builder: (context, child) {
-        //   return Stack(
-        //     children: [
-        //       if (child != null) child,
-        //       Positioned(
-        //         right: 12,
-        //         bottom: 12,
-        //         child: _LogLauncherButton(navigatorKey: _navigatorKey), // <-- key'i geçir
-        //       ),
-        //     ],
-        //   );
-        // },
       ),
     );
   }
 }
-
-// class _LogLauncherButton extends StatelessWidget {
-//   const _LogLauncherButton({required this.navigatorKey});
-//   final GlobalKey<NavigatorState> navigatorKey;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Material(
-//       color: Colors.transparent,
-//       child: SizedBox(
-//         width: 40,
-//         height: 40,
-//         child: FloatingActionButton.small(
-//           heroTag: 'global_log_viewer',
-//           backgroundColor: Colors.black.withOpacity(0.75),
-//           elevation: 2,
-//           onPressed: () {
-//             // context yerine navigatorKey üzerinden push — Navigator garantili
-//             navigatorKey.currentState?.push(MaterialPageRoute(builder: (_) => const LogViewerScreen()));
-//           },
-//           child: const Icon(Icons.terminal, size: 18, color: Colors.greenAccent),
-//         ),
-//       ),
-//     );
-//   }
-// }

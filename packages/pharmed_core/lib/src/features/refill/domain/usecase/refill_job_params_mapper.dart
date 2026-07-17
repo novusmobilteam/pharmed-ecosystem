@@ -79,7 +79,7 @@ abstract final class RefillJobParamsMapper {
 
       // Boş göz (fill=0 && count=0) → fallback miad; aksi halde per-cell/single.
       final DateTime? miadDate;
-      if (step.fillingQuantity == 0 && step.countQuantity == 0) {
+      if ((step.fillingQuantity ?? 0) == 0 && (step.countQuantity ?? 0) == 0) {
         miadDate = _emptyMiadFallback;
       } else {
         miadDate = step.miadDate ?? target.singleMiad;

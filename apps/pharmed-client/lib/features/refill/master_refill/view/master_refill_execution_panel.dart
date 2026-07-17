@@ -55,9 +55,23 @@ class MasterRefillExecutionPanel extends ConsumerWidget {
         _TopStrip(state: executing, onStop: notifier.stopQueue),
         const SizedBox(height: 20),
         Expanded(
-          child: isOpened
-              ? _FillForm(state: executing, job: job, notifier: notifier)
-              : _DrawerOpeningView(stage: drawerStage, job: job),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Sol: konum rehberi (sabit genişlik)
+              SizedBox(
+                width: 260,
+                child: CabinLocationGuide(items: executing.toLocationItems(), activeIndex: executing.currentIndex),
+              ),
+              const SizedBox(width: 20),
+              // Sağ: açılma bekleme ekranı veya dolum formu
+              Expanded(
+                child: isOpened
+                    ? _FillForm(state: executing, job: job, notifier: notifier)
+                    : _DrawerOpeningView(stage: drawerStage, job: job),
+              ),
+            ],
+          ),
         ),
       ],
     );

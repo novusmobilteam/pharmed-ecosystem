@@ -156,3 +156,50 @@ final class MasterRefillError extends MasterRefillState {
   final MasterRefillState previousState;
   final bool isQueueError;
 }
+
+extension MasterRefillExecutingLocationX on MasterRefillExecuting {
+  List<DrawerQueueItem> toLocationItems() {
+    final result = <DrawerQueueItem>[];
+
+    for (int i = 0; i < jobs.length; i++) {
+      final job = jobs[i];
+      final isActive = i == currentIndex;
+
+      // DrawerSlot null gelirse bu job'ı atla (veri eksikliği).
+      final slot = job.representativeAssignment.drawerUnit?.drawerSlot;
+      if (slot == null) continue;
+
+      // Job'daki tüm target assignment'larından DrawerUnit listesi derle.
+      // Birim dozda tek target → tek unit; kübikte her target ayrı göz → N unit.
+      final units = job.targets.map((t) => t.assignment.drawerUnit).whereType<DrawerUnit>().toList();
+
+      final group = DrawerGroup(slot: slot, units: units);
+
+      final status = switch (job.status) {
+        RefillJobStatus.completed => DrawerQueueStatus.completed,
+        RefillJobStatus.failed => DrawerQueueStatus.failed,
+        RefillJobStatus.active => DrawerQueueStatus.active,
+        RefillJobStatus.pending => isActive ? DrawerQueueStatus.active : DrawerQueueStatus.pending,
+      };
+
+      // Kübik: currentTargetIndex öncesindeki tüm lid'ler tamamlandı sayılır.
+      final completedIndexes = <int>{};
+      if (isActive && job.isKubik) {
+        for (int t = 0; t < currentTargetIndex; t++) {
+          completedIndexes.add(t);
+        }
+      }
+
+      result.add(
+        DrawerQueueItem(
+          group: group,
+          status: status,
+          activeTargetIndex: isActive && job.isKubik ? currentTargetIndex : null,
+          completedTargetIndexes: completedIndexes,
+        ),
+      );
+    }
+
+    return result;
+  }
+}

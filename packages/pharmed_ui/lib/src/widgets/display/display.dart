@@ -8,3 +8,4 @@ export 'med_side_panel.dart';
 export 'sparkline_painter.dart';
 export 'med_dashboard_panel.dart';
 export 'med_info_row.dart';
+export 'cabin_location_guide.dart';

@@ -88,10 +88,6 @@ class CabinOperationService implements ICabinOperationService {
 
       _cachedManager = null;
 
-      // RS485 yön modunu cache'den uygula
-      // final manualRts = await _settingsCache.getManualRts();
-      _serialService.setManualRts(true);
-
       await _serialService.connectToPort(port);
       final found = await scanManagementCard();
 

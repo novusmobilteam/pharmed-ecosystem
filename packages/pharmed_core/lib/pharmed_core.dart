@@ -106,6 +106,7 @@ export 'src/models/management_card.dart';
 export 'src/models/rfid_reader_info.dart';
 export 'src/models/rfid_tag.dart';
 export 'src/models/paged_query_params.dart';
+export 'src/models/drawer_queue_item.dart';
 
 // result
 export 'src/result/result.dart';

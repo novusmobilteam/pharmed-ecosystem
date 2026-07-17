@@ -38,7 +38,8 @@ class SerialCommunicationService implements ISerialCommunicationService {
   // RS485 timing sabitleri — Python scriptiyle eşleşir
   static const _rs485DelayBeforeTxMs = 1;
   static const _rs485DelayAfterTxMs = 5;
-  bool _manualRts = true;
+  // Yeni kabinde true olacak
+  final bool _manualRts = false;
 
   /// Baud rate'e göre bir byte'ın hattan çıkma süresi (µs).
   /// 9600 baud, 8N1 → 10 bit/byte → ~1041 µs/byte
@@ -56,10 +57,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
   bool get isConnected => _port?.isOpen ?? false;
 
   String get connectedPortName => _port?.name ?? contextlessL10n().core_serialPortDisconnectedLabel;
-
-  // ════════════════════════════════════════════════════════════════
-  // PORT TARAMA
-  // ════════════════════════════════════════════════════════════════
 
   @override
   List<String> getAvailablePorts() {
@@ -84,10 +81,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
     }
     return activePorts;
   }
-
-  // ════════════════════════════════════════════════════════════════
-  // BAĞLANTI
-  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<void> connectToPort(String portName, {Function(String message)? onStatusChanged}) async {
@@ -151,13 +144,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
       throw SerialPortException(message: contextlessL10n().hw_serial_portConfigFailedError(portName, e.toString()));
     }
 
-    MedLogger.info(
-      unit: 'SW-UNIT-SER',
-      swreq: 'SWREQ-HW-SER-002',
-      message: 'openReadWrite çağrılıyor',
-      context: {'port': portName},
-    );
-
     if (!port.openReadWrite()) {
       final lastError = SerialPort.lastError;
       port.dispose();
@@ -167,13 +153,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
           : l10n.hw_serial_portInUseSuffix;
       throw SerialPortException(message: '${l10n.core_serialPortOpenFailedError(portName)} $suffix');
     }
-
-    MedLogger.info(
-      unit: 'SW-UNIT-SER',
-      swreq: 'SWREQ-HW-SER-002',
-      message: 'Port açıldı, reader kuruluyor',
-      context: {'port': portName},
-    );
 
     _port = port;
 
@@ -205,31 +184,13 @@ class SerialCommunicationService implements ISerialCommunicationService {
     } catch (e) {
       debugPrint('⚠️ RS485 wakeup hatası: $e');
     }
-
-    MedLogger.info(
-      unit: 'SW-UNIT-SER',
-      swreq: 'SWREQ-HW-SER-002',
-      message: 'Bağlantı tamamlandı',
-      context: {'port': portName},
-    );
   }
-
-  // ════════════════════════════════════════════════════════════════
-  // KOMUT GÖNDERME
-  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<String?> sendAndReceive(String command, {Duration? timeout, int retryCount = 1}) async {
     if (!isConnected) {
       throw SerialPortException(message: contextlessL10n().core_serialNoConnectionError);
     }
-
-    // MedLogger.info(
-    //   unit: 'SW-UNIT-SER',
-    //   swreq: 'SWREQ-HW-SER-001',
-    //   message: 'TX komut',
-    //   context: {'komut': command, 'port': connectedPortName, 'bytes': utf8.encode(command)},
-    // );
 
     await _waitForAvailability();
     _isBusy = true;
@@ -245,13 +206,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
           await Future.delayed(const Duration(milliseconds: _rs485DelayBeforeTxMs));
           _setTransmitMode();
           final written = _port?.write(bytes);
-
-          // MedLogger.info(
-          //   unit: 'SW-UNIT-SER',
-          //   swreq: 'SWREQ-HW-SER-001',
-          //   message: 'Yazıldı',
-          //   context: {'yazilanBytes': written, 'attempt': attempt + 1},
-          // );
 
           if (written == null || written <= 0) {
             throw SerialPortException(message: contextlessL10n().core_serialWriteFailedError);
@@ -269,13 +223,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
           final effectiveTimeout = timeout ?? const Duration(milliseconds: 1000);
           final response = await _completer!.future.timeout(effectiveTimeout);
-
-          // MedLogger.info(
-          //   unit: 'SW-UNIT-SER',
-          //   swreq: 'SWREQ-HW-SER-001',
-          //   message: 'RX yanıt',
-          //   context: {'yanit': response},
-          // );
 
           return response;
         } on TimeoutException {
@@ -321,9 +268,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
     }
   }
 
-  // connectToPort'tan önce ya da içinde set edilir
-  void setManualRts(bool value) => _manualRts = value;
-
   void _setTransmitMode() {
     if (!_manualRts) return;
     try {
@@ -347,22 +291,9 @@ class SerialCommunicationService implements ISerialCommunicationService {
   }
 
   void _onDataReceived(Uint8List data) {
-    // MedLogger.info(
-    //   unit: 'SW-UNIT-SER',
-    //   swreq: 'SWREQ-HW-SER-001',
-    //   message: 'RAW RX',
-    //   context: {
-    //     'text': utf8.decode(data, allowMalformed: true),
-    //     'lastSent': _lastSentBytes != null ? utf8.decode(_lastSentBytes!, allowMalformed: true) : null,
-    //   },
-    // );
     if (_completer == null || _completer!.isCompleted) return;
 
     try {
-      // ── Echo filtresi ─────────────────────────────────────────
-      // RS485 half-duplex'te gönderilen veri geri okunur.
-      // Python: if raw == self._last_sent → yoksay
-      //         if raw in self._last_sent → kısmi echo, yoksay
       if (_lastSentBytes != null) {
         if (_isSameBytes(data, _lastSentBytes!)) {
           debugPrint('<< (echo, yoksayıldı) ${utf8.decode(data, allowMalformed: true)}');
@@ -373,15 +304,12 @@ class SerialCommunicationService implements ISerialCommunicationService {
           return;
         }
       }
-      // ─────────────────────────────────────────────────────────
 
       final chunk = utf8.decode(data, allowMalformed: true);
       _buffer.write(chunk);
 
       final current = _buffer.toString().trim();
-      //debugPrint('<< Gelen: $current');
 
-      // Protokol bitiş karakteri: -, ,, ;, ]
       if (current.endsWith('-') || current.endsWith(',') || current.endsWith(';') || current.endsWith(']')) {
         _completer?.complete(current);
         _buffer.clear();
@@ -414,10 +342,6 @@ class SerialCommunicationService implements ISerialCommunicationService {
     }
     return false;
   }
-
-  // ════════════════════════════════════════════════════════════════
-  // BAĞLANTI KAPATMA
-  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<void> disconnect() async {

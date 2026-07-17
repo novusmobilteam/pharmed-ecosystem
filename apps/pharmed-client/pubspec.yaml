@@ -42,6 +42,7 @@ dependencies:
   hive_flutter: ^1.1.0
   phosphor_flutter: ^2.1.0
   collection: ^1.19.1
+  window_manager: ^0.5.2
   
 
 dev_dependencies:
