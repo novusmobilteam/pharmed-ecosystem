@@ -31,6 +31,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
   GetUpcomingTreatmentsUseCase get _getUpcomingTreatments => ref.read(getUpcomingTreatmensUseCaseProvider);
   GetDrugActivitiesUseCase get _getDrugActivities => ref.read(getDrugActivitiesUseCaseProvider);
+  GetDashboardUnappliedPrescriptionsUseCase get _getUnapplied => ref.read(getUnappliedPrescriptionsUseCaseProvider);
   GetCabinVisualizerDataUseCase get _getCabinVisualizer => ref.read(getCabinVisualizerDataUseCaseProvider);
   AppSettingsCache get _settings => ref.read(appSettingsCacheProvider);
 
@@ -73,10 +74,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
     final results = await Future.wait([
       _getUpcomingTreatments.call(mac: mac),
       _getDrugActivities.call(mac: mac),
-
-      // Hasta atama işlemlerinde oda/yatak/servis bilgileri Hospitalization
-      // içinde gelmediği için (sadece id'ler var) önden çekip in-memory
-      // cache'te tutuyoruz.
+      _getUnapplied.call(),
       ref.read(allRoomsProvider.future),
       ref.read(allBedsProvider.future),
       ref.read(allServicesProvider.future),
@@ -84,44 +82,41 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
     final treatmentsResult = results[0] as Result<List<PrescriptionItem>>;
     final activitiesResult = results[1] as Result<List<PrescriptionItemMovement>?>;
+    final unappliedResult = results[2] as Result<List<PrescriptionItem>>;
 
-    final treatments = _unwrap(treatmentsResult);
-    final activities = _unwrap(activitiesResult);
+    final treatmentsSection = _toSection<List<PrescriptionItem>?>(treatmentsResult);
+    final activitiesSection = _toSection<List<PrescriptionItemMovement>?>(activitiesResult);
+    final unappliedSection = _toSection<List<PrescriptionItem>?>(unappliedResult);
+    final cabinVisualizer = setupDone ? await _loadCabinVisualizer() : null;
 
-    // Kurulum tamamlanmadıysa kabin yok — çağırmaya gerek yok, hata da değil.
-    final cabin = setupDone ? await _loadCabinVisualizer() : null;
-    final cabinFailed = setupDone && cabin == null;
+    // Hiçbir kaynakta gösterilecek veri yoksa global hata
+    final allFailed =
+        treatmentsSection.data == null && activitiesSection.data == null && (setupDone && cabinVisualizer == null);
 
-    // Hiçbir kaynak dönmediyse gösterilecek bir şey kalmıyor
-    if (treatments == null && activities == null && cabin == null) {
+    if (allFailed) {
       MedLogger.warn(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard: tüm kaynaklar başarısız');
       state = DashboardError(message: contextlessL10n().dashboard_allSectionsLoadError);
       return;
     }
 
     final data = DashboardData(
-      upcomingTreatments: treatments ?? const [],
-      drugActivities: activities ?? const [],
-      cabinVisualizerData: cabin,
-      kpi: _mockKpi(),
+      upcomingTreatments: treatmentsSection,
+      drugActivities: activitiesSection,
+      unappliedPrescriptions: unappliedSection,
+      cabinVisualizerData: cabinVisualizer,
     );
 
     final current = state;
-    state = current is DashboardLoaded
-        ? current.copyWith(
-            data: data,
-            treatmentsFailed: treatmentsResult is Error,
-            activitiesFailed: activitiesResult is Error,
-            cabinFailed: cabinFailed,
-          )
-        : DashboardLoaded(
-            data: data,
-            treatmentsFailed: treatmentsResult is Error,
-            activitiesFailed: activitiesResult is Error,
-            cabinFailed: cabinFailed,
-          );
+    state = current is DashboardLoaded ? current.copyWith(data: data) : DashboardLoaded(data: data);
 
     MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard yüklendi');
+  }
+
+  DashboardSection<T> _toSection<T>(Result<T> result) {
+    return switch (result) {
+      Ok(:final value) => DashboardSection<T>(data: value),
+      Error(:final error) => DashboardSection<T>(error: error.message),
+    };
   }
 
   Future<CabinVisualizerData?> _loadCabinVisualizer() async {
@@ -195,25 +190,4 @@ class DashboardNotifier extends Notifier<DashboardState> {
     Ok(:final value) => value,
     Error() => null,
   };
-
-  // --------------------------------------------------------------------- mock
-
-  /// Geçici KPI verisi — servis hazır olana kadar UI'ı beslemek için.
-  /// Servis geldiğinde bu metot ve çağrısı silinecek.
-  KpiData _mockKpi() => const KpiData(
-    activePatients: 22,
-    activePatientsProgress: 0.68,
-    activePatientsChange: 5,
-
-    completedOperations: 47,
-    completedOperationsProgress: 0.82,
-    completedOperationsChange: 12,
-
-    pendingPrescriptions: 9,
-    pendingPrescriptionsProgress: 0.30,
-
-    criticalAlerts: 3,
-    criticalAlertsProgress: 0.25,
-    criticalAlertsChange: -2,
-  );
 }

@@ -15,7 +15,6 @@ import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescri
 import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/cabin_operation/cabin_operation.dart';
 import '../../../../widgets/widgets.dart';
@@ -31,12 +30,7 @@ import '../notifier/dashboard_state.dart';
 import 'dashboard_app_bar.dart';
 
 part 'dashboard_content.dart';
-part 'cabin_view.dart';
 part 'cabin_telemetry_panel.dart';
-part 'upcoming_treatments_panel.dart';
-part 'drug_activity_panel.dart';
-part 'kpi_strip.dart';
-part 'dashboard_panel_shell.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -69,6 +63,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final menuTree = loaded?.menuTree ?? const <MenuItem>[];
     final flattenedMenus = loaded?.flattenedMenus ?? const <MenuItem>[];
     final currentRoute = loaded?.activeRoute ?? 'dashboard';
+    print(menuTree);
 
     return GestureDetector(
       onTap: authNotif.onUserActivity,

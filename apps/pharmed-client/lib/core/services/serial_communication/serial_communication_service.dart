@@ -41,17 +41,16 @@ class SerialCommunicationService implements ISerialCommunicationService {
   bool _manualRts = true;
 
   /// Baud rate'e göre bir byte'ın hattan çıkma süresi (µs).
-/// 9600 baud, 8N1 → 10 bit/byte → ~1041 µs/byte
-static const _baudRate = 9600;
-static const _bitsPerByte = 10; // 1 start + 8 data + 1 stop
+  /// 9600 baud, 8N1 → 10 bit/byte → ~1041 µs/byte
+  static const _baudRate = 9600;
+  static const _bitsPerByte = 10; // 1 start + 8 data + 1 stop
 
-/// Verilen byte sayısının hattan tamamen çıkması için gereken süre.
-/// Güvenlik payı olarak %50 ekleniyor (sürücü gecikmesi, jitter).
-Duration _txDrainTime(int byteCount) {
-  final micros = (byteCount * _bitsPerByte * 1000000) ~/ _baudRate;
-  return Duration(microseconds: (micros * 1.5).round() + 2000); // +2ms taban
-}
-
+  /// Verilen byte sayısının hattan tamamen çıkması için gereken süre.
+  /// Güvenlik payı olarak %50 ekleniyor (sürücü gecikmesi, jitter).
+  Duration _txDrainTime(int byteCount) {
+    final micros = (byteCount * _bitsPerByte * 1000000) ~/ _baudRate;
+    return Duration(microseconds: (micros * 1.5).round() + 2000); // +2ms taban
+  }
 
   @override
   bool get isConnected => _port?.isOpen ?? false;
@@ -124,7 +123,6 @@ Duration _txDrainTime(int byteCount) {
   }
 
   Future<void> _attemptConnection(String portName) async {
-    print(_manualRts);
     await _forceCleanup();
 
     MedLogger.info(
@@ -322,7 +320,7 @@ Duration _txDrainTime(int byteCount) {
       }
     }
   }
-  
+
   // connectToPort'tan önce ya da içinde set edilir
   void setManualRts(bool value) => _manualRts = value;
 

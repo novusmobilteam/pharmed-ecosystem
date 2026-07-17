@@ -19,9 +19,6 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../features/auth/notifier/auth_notifier.dart';
 import '../../providers/providers.dart';
 import '../cabin_operation.dart';
-import 'mobile_drawer_session_state.dart';
-import 'mobile_drawer_stage.dart';
-import 'start_mobile_drawer_session_usecase.dart';
 
 final mobileDrawerSessionProvider = NotifierProvider<MobileDrawerSessionNotifier, MobileDrawerSessionState>(
   MobileDrawerSessionNotifier.new,
@@ -73,9 +70,7 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
               message: 'Stream hatası',
               context: {'error': e.toString()},
             );
-            _onStage(
-              MobileDrawerFailed(message: contextlessL10n().common_error_unexpectedWithDetail(e.toString())),
-            );
+            _onStage(MobileDrawerFailed(message: contextlessL10n().common_error_unexpectedWithDetail(e.toString())));
           },
           onDone: () => _sub = null,
         );
@@ -108,12 +103,12 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
     state = state.copyWith(stage: next);
 
     if (!wasOpen && isOpen) {
-    _acquireAuthPause();
-    _acquireSensorPause();
-  } else if (wasOpen && !isOpen) {
-    _releaseAuthPauseIfHeld();
-    _releaseSensorPauseIfHeld();
-  }
+      _acquireAuthPause();
+      _acquireSensorPause();
+    } else if (wasOpen && !isOpen) {
+      _releaseAuthPauseIfHeld();
+      _releaseSensorPauseIfHeld();
+    }
   }
 
   /// Fiziksel çekmece açık mı? Closed durumunda kullanıcı UI'ya döndüğü
@@ -133,14 +128,14 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
   }
 
   void _acquireSensorPause() {
-  if (_sensorPaused) return;
-  ref.read(cabinSensorProvider.notifier).pause();
-  _sensorPaused = true;
-}
+    if (_sensorPaused) return;
+    ref.read(cabinSensorProvider.notifier).pause();
+    _sensorPaused = true;
+  }
 
-void _releaseSensorPauseIfHeld() {
-  if (!_sensorPaused) return;
-  ref.read(cabinSensorProvider.notifier).resume();
-  _sensorPaused = false;
-}
+  void _releaseSensorPauseIfHeld() {
+    if (!_sensorPaused) return;
+    ref.read(cabinSensorProvider.notifier).resume();
+    _sensorPaused = false;
+  }
 }

@@ -30,7 +30,6 @@ class DashboardContentFactory {
             'drug-unload' => const UnloadView(),
             'drug-census' => const CensusView(),
             'drawer-malfunction' => const FaultView(),
-
             'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
             'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
             'cabin-stock' => activeMenu != null ? CabinStockView(menu: activeMenu) : const SizedBox.shrink(),
@@ -53,12 +52,8 @@ class DashboardContentFactory {
     DashboardNotifier notifier,
     bool isLoggedIn,
   ) => switch (state) {
-    DashboardLoading() => const _LoadingView(),
-    DashboardError(:final message, :final isRetryable) => _ErrorView(
-      message: message,
-      isRetryable: isRetryable,
-      onRetry: notifier.refresh,
-    ),
+    DashboardLoading() => const Center(child: MedLoadingIndicator()),
+    DashboardError() => EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh),
     DashboardLoaded s => _DashboardBody(state: s, notifier: notifier, isLoggedIn: isLoggedIn),
   };
 }
@@ -81,173 +76,152 @@ class _DashboardBody extends StatelessWidget {
 
     return Padding(
       padding: MedSpacing.insetXl * 2,
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IntrinsicHeight(
+          Expanded(
             child: Row(
+              spacing: MedSpacing.lg,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: state.treatmentsFailed
-                            ? _SectionError(
-                                label: context.l10n.dashboard_treatmentsLoadError,
-                                onRetry: notifier.refresh,
-                              )
-                            : UpcomingTreatmentsPanel(treatments: data.upcomingTreatments, isLoggedIn: isLoggedIn),
-                      ),
-                      const SizedBox(width: MedSpacing.lg),
-                      Expanded(
-                        child: state.activitiesFailed
-                            ? _SectionError(
-                                label: context.l10n.dashboard_activitiesLoadError,
-                                onRetry: notifier.refresh,
-                              )
-                            : DrugActivityPanel(
-                                activities: data.drugActivities,
-                                onSeeAll: () => notifier.navigateTo('drug-activity'),
-                              ),
-                      ),
-                    ],
-                  ),
+                  child: data.upcomingTreatments.showError
+                      ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                      : UpcomingTreatmentPanel(section: data.upcomingTreatments),
                 ),
-
-                const SizedBox(width: MedSpacing.xl3),
-
-                SizedBox(
-                  width: 300,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const CabinTelemetryPanel(),
-                      const SizedBox(height: MedSpacing.lg),
-                      data.hasCabinData
-                          ? CabinView(cabin: data.cabinVisualizerData!, notifier: notifier)
-                          : _SectionError(label: context.l10n.dashboard_cabinLoadError, onRetry: notifier.refresh),
-                    ],
-                  ),
+                Expanded(
+                  child: data.drugActivities.showError
+                      ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                      : DrugActivityPanel(section: data.drugActivities),
+                ),
+                Expanded(
+                  child: data.unappliedPrescriptions.showError
+                      ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                      : UnappliedPrescriptionPanel(section: data.unappliedPrescriptions),
                 ),
               ],
             ),
           ),
 
-          if (data.hasKpi) ...[const SizedBox(height: MedSpacing.lg), KpiStrip(kpi: data.kpi!)],
-        ],
-      ),
-    );
-  }
-}
+          const SizedBox(width: MedSpacing.xl3),
 
-class _LoadingView extends StatelessWidget {
-  const _LoadingView();
-
-  @override
-  Widget build(BuildContext context) => const Center(child: CircularProgressIndicator(color: MedColors.blue));
-}
-
-/// Panel içi hata — tüm ekran yerine sadece o bölüm başarısız olduğunda.
-class _SectionError extends StatelessWidget {
-  const _SectionError({required this.label, this.onRetry});
-
-  final String label;
-  final VoidCallback? onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(MedSpacing.xl),
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        borderRadius: MedRadius.lgAll,
-        border: Border.all(color: MedColors.border),
-      ),
-      child: Row(
-        children: [
-          Icon(PhosphorIcons.warningCircle(), size: 18, color: MedColors.text3),
-          const SizedBox(width: MedSpacing.md),
-          Expanded(
-            child: Text(label, style: MedTextStyles.bodySm(color: MedColors.text3)),
+          SizedBox(
+            width: 300,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const CabinTelemetryPanel(),
+                const SizedBox(height: MedSpacing.lg),
+                data.hasCabinData
+                    ? CabinStatusPanel(cabin: data.cabinVisualizerData!)
+                    : EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh),
+              ],
+            ),
           ),
-          if (onRetry != null) _RetryButton(onTap: onRetry!, compact: true),
         ],
       ),
     );
   }
 }
 
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.message, required this.isRetryable, required this.onRetry});
+class DrugActivityPanel extends StatelessWidget {
+  const DrugActivityPanel({super.key, required this.section});
 
-  final String message;
-  final bool isRetryable;
-  final VoidCallback onRetry;
+  final DashboardSection<List<PrescriptionItemMovement>?> section;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(MedSpacing.xl4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(color: MedColors.redLight, borderRadius: MedRadius.lgAll),
-              child: Icon(PhosphorIcons.wifiSlash(), size: 28, color: MedColors.red),
+    final movements = section.data ?? const <PrescriptionItemMovement>[];
+
+    return MedDashboardPanel(
+      title: context.l10n.dashboard_drugActivityPanelTitle.toUpperCase(),
+      section: section,
+      itemCount: movements.length,
+      itemBuilder: (BuildContext context, int index) {
+        final movement = movements[index];
+        return MedDrugActivityCard(movement: movement);
+      },
+    );
+  }
+}
+
+class UpcomingTreatmentPanel extends StatelessWidget {
+  const UpcomingTreatmentPanel({super.key, required this.section});
+
+  final DashboardSection<List<PrescriptionItem>?> section;
+
+  @override
+  Widget build(BuildContext context) {
+    final items = section.data ?? const <PrescriptionItem>[];
+
+    return MedDashboardPanel(
+      key: const ValueKey('upcoming_panel'),
+      title: context.l10n.dashboardUpcomingTreatmentsPanelTitle,
+      section: section,
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return MedDashboardRxCard(
+          item: item,
+          showFlags: true,
+          showStatusChip: true,
+          showTimeChip: true,
+          tone: MedTone.neutral,
+          infoLines: [
+            DashboardRxInfoLine(
+              context.l10n.assignment_patientLabel,
+              item.prescription?.hospitalization?.patient?.fullName ?? '-',
             ),
-            const SizedBox(height: MedSpacing.xl),
-            Text(
-              message,
-              style: MedTextStyles.bodyMd(color: MedColors.text2),
-              textAlign: TextAlign.center,
-            ),
-            if (isRetryable) ...[const SizedBox(height: MedSpacing.xl2), _RetryButton(onTap: onRetry)],
+            DashboardRxInfoLine('SERVİS', item.prescription?.hospitalization?.physicalService?.name ?? '-'),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
-class _RetryButton extends StatelessWidget {
-  const _RetryButton({required this.onTap, this.compact = false});
+class UnappliedPrescriptionPanel extends StatelessWidget {
+  const UnappliedPrescriptionPanel({super.key, required this.section});
 
-  final VoidCallback onTap;
-  final bool compact;
+  final DashboardSection<List<PrescriptionItem>?> section;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: MedRadius.mdAll,
-        child: Container(
-          height: compact ? 32 : MedSpacing.touchTarget,
-          padding: EdgeInsets.symmetric(horizontal: compact ? MedSpacing.lg : MedSpacing.xl3),
-          decoration: BoxDecoration(
-            color: compact ? MedColors.surface2 : MedColors.blue,
-            borderRadius: MedRadius.mdAll,
-            border: compact ? Border.all(color: MedColors.border2) : null,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(PhosphorIcons.arrowClockwise(), size: 14, color: compact ? MedColors.text2 : Colors.white),
-              const SizedBox(width: MedSpacing.sm),
-              Text(
-                context.l10n.common_retryButton,
-                style: MedTextStyles.bodySm(color: compact ? MedColors.text2 : Colors.white, weight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ),
-      ),
+    final items = section.data ?? const <PrescriptionItem>[];
+
+    return MedDashboardPanel(
+      key: const ValueKey('unapplied_panel'),
+      title: context.l10n.dashboardUnappliedPrescriptionsPanelTitle,
+      section: section,
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return MedDashboardRxCard(
+          item: item,
+          showFlags: true,
+          showStatusChip: false,
+          showTimeChip: true,
+          tone: MedTone.warning,
+          infoLines: [
+            DashboardRxInfoLine(
+              context.l10n.assignment_patientLabel,
+              item.prescription?.hospitalization?.patient?.fullName ?? '-',
+            ),
+            DashboardRxInfoLine(context.l10n.dashboardDoctorLabel, item.doctor?.fullName ?? '-'),
+            DashboardRxInfoLine(
+              'SERVİS',
+              item.prescription?.hospitalization?.physicalService?.name ?? '-',
+            ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            DashboardRxInfoLine(
+              context.l10n.dashboardRoomBedLabel,
+              [
+                item.prescription?.hospitalization?.room?.name,
+                item.prescription?.hospitalization?.bed?.name,
+              ].whereType<String>().join(' / '),
+            ),
+          ],
+        );
+      },
     );
   }
 }

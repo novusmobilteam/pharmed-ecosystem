@@ -46,10 +46,10 @@ class CabinOperationService implements ICabinOperationService {
   static const int _serumDrawer = 0;
 
   /// Sensör polling aralığı — ısı/nem ve akü yavaş değişen büyüklükler.
-static const _sensorInterval = Duration(seconds: 10);
+  static const _sensorInterval = Duration(seconds: 10);
 
-/// Akü voltajı yumuşatma penceresi (LiFePO4 platosunda titremeyi azaltır).
-final _recentVolts = <double>[];
+  /// Akü voltajı yumuşatma penceresi (LiFePO4 platosunda titremeyi azaltır).
+  final _recentVolts = <double>[];
 
   @override
   void triggerManualClose() {}
@@ -275,12 +275,12 @@ final _recentVolts = <double>[];
         // Her döngüde slave mod seçimi (RS485 bus durumu değişmiş olabilir)
         final isSelected = await _selectRow(manager.addressIndex, _serumSlaveRow);
 
-         MedLogger.info(
-      unit: 'CabinOps',
-      swreq: 'SWREQ-CABIN-OP-003',
-      message: 'Status poll',
-      context: {'slaveSelected': isSelected, 'port': port},
-    );
+        MedLogger.info(
+          unit: 'CabinOps',
+          swreq: 'SWREQ-CABIN-OP-003',
+          message: 'Status poll',
+          context: {'slaveSelected': isSelected, 'port': port},
+        );
 
         if (!isSelected) {
           yield DrawerPhysicalStatus.unknown;
@@ -289,20 +289,20 @@ final _recentVolts = <double>[];
         }
 
         final response = await _serialService.sendAndReceive(statusCommand);
-         MedLogger.info(
-      unit: 'CabinOps',
-      swreq: 'SWREQ-CABIN-OP-003',
-      message: 'Status RAW',
-      context: {'cmd': statusCommand, 'response': response},
-    );
+        MedLogger.info(
+          unit: 'CabinOps',
+          swreq: 'SWREQ-CABIN-OP-003',
+          message: 'Status RAW',
+          context: {'cmd': statusCommand, 'response': response},
+        );
         yield _parseMobileDrawerStatus(response);
       } catch (e) {
-         MedLogger.warn(
-      unit: 'CabinOps',
-      swreq: 'SWREQ-CABIN-OP-003',
-      message: 'Status poll exception',
-      context: {'error': e.toString()},
-    );
+        MedLogger.warn(
+          unit: 'CabinOps',
+          swreq: 'SWREQ-CABIN-OP-003',
+          message: 'Status poll exception',
+          context: {'error': e.toString()},
+        );
         yield DrawerPhysicalStatus.unknown;
       }
 
@@ -493,91 +493,83 @@ final _recentVolts = <double>[];
     }
     return DrawerPhysicalStatus.unknown;
   }
-  
- /// Yönetim kartından akü voltajı okur (row 49).
-@override
-Future<double?> readBatteryVoltage({required ManagementCard manager}) async {
-  final command = CommandBuilder.buildManagementCommand(
-    addressIndex: manager.addressIndex,
-    row: CommandBuilder.rowBatteryLevel,
-  );
 
-  try {
-    final response = await _serialService.sendAndReceive(
-      command,
-      timeout: const Duration(milliseconds: 1000),
+  /// Yönetim kartından akü voltajı okur (row 49).
+  @override
+  Future<double?> readBatteryVoltage({required ManagementCard manager}) async {
+    final command = CommandBuilder.buildManagementCommand(
+      addressIndex: manager.addressIndex,
+      row: CommandBuilder.rowBatteryLevel,
     );
-    return CabinSensorParser.parseBattery(response);
-  } catch (e) {
-    MedLogger.warn(
-      unit: 'CabinOps',
-      swreq: 'SWREQ-HW-SENSOR-001',
-      message: 'Akü voltajı okunamadı',
-      context: {'error': e.toString()},
-    );
-    return null;
-  }
-}
-  
- /// Yönetim kartından ısı/nem okur (row 50).
-///
-/// Bu satır [_selectRow] KULLANMAZ — komutun kendisi veriyi döner ve
-/// yanıtta 'ok' bulunmaz, bu yüzden _selectRow burada çalışmaz.
-@override
-Future<({double temperature, double humidity})?> readTempHumidity({
-  required ManagementCard manager,
-}) async {
-  final command = CommandBuilder.buildManagementCommand(
-    addressIndex: manager.addressIndex,
-    row: CommandBuilder.rowTempHumidity,
-  );
 
-  try {
-    final response = await _serialService.sendAndReceive(
-      command,
-      timeout: const Duration(milliseconds: 1000),
-    );
-    return CabinSensorParser.parseTempHumidity(response);
-  } catch (e) {
-    MedLogger.warn(
-      unit: 'CabinOps',
-      swreq: 'SWREQ-HW-SENSOR-001',
-      message: 'Isı/nem okunamadı',
-      context: {'error': e.toString()},
-    );
-    return null;
-  }
-}
-  
- /// Isı, nem ve akü değerlerini periyodik yayınlar.
-///
-/// Tek seri hat paylaşıldığı için iki sensör aynı döngüde sırayla okunur.
-/// Okuma başarısızsa ilgili alan null döner; stream kapanmaz.
-@override
-Stream<CabinSensorReading> streamCabinSensors({
-  required ManagementCard manager,
-  Duration? interval = _sensorInterval,
-}) async* {
-  while (true) {
-    final th = await readTempHumidity(manager: manager);
-    await Future.delayed(const Duration(milliseconds: 200)); // hat nefes alsın
-    final volts = await readBatteryVoltage(manager: manager);
-
-    double? smoothed;
-    if (volts != null) {
-      _recentVolts.add(volts);
-      if (_recentVolts.length > 5) _recentVolts.removeAt(0);
-      smoothed = _recentVolts.reduce((a, b) => a + b) / _recentVolts.length;
+    try {
+      final response = await _serialService.sendAndReceive(command, timeout: const Duration(milliseconds: 1000));
+      return CabinSensorParser.parseBattery(response);
+    } catch (e) {
+      MedLogger.warn(
+        unit: 'CabinOps',
+        swreq: 'SWREQ-HW-SENSOR-001',
+        message: 'Akü voltajı okunamadı',
+        context: {'error': e.toString()},
+      );
+      return null;
     }
+  }
 
-    yield CabinSensorReading(
-      timestamp: DateTime.now(),
-      temperature: th?.temperature,
-      humidity: th?.humidity,
-      batteryVolts: smoothed,
+  /// Yönetim kartından ısı/nem okur (row 50).
+  ///
+  /// Bu satır [_selectRow] KULLANMAZ — komutun kendisi veriyi döner ve
+  /// yanıtta 'ok' bulunmaz, bu yüzden _selectRow burada çalışmaz.
+  @override
+  Future<({double temperature, double humidity})?> readTempHumidity({required ManagementCard manager}) async {
+    final command = CommandBuilder.buildManagementCommand(
+      addressIndex: manager.addressIndex,
+      row: CommandBuilder.rowTempHumidity,
     );
 
-    await Future.delayed(interval ?? _sensorInterval);
+    try {
+      final response = await _serialService.sendAndReceive(command, timeout: const Duration(milliseconds: 1000));
+      return CabinSensorParser.parseTempHumidity(response);
+    } catch (e) {
+      MedLogger.warn(
+        unit: 'CabinOps',
+        swreq: 'SWREQ-HW-SENSOR-001',
+        message: 'Isı/nem okunamadı',
+        context: {'error': e.toString()},
+      );
+      return null;
+    }
   }
-}
+
+  /// Isı, nem ve akü değerlerini periyodik yayınlar.
+  ///
+  /// Tek seri hat paylaşıldığı için iki sensör aynı döngüde sırayla okunur.
+  /// Okuma başarısızsa ilgili alan null döner; stream kapanmaz.
+  @override
+  Stream<CabinSensorReading> streamCabinSensors({
+    required ManagementCard manager,
+    Duration? interval = _sensorInterval,
+  }) async* {
+    while (true) {
+      final th = await readTempHumidity(manager: manager);
+      await Future.delayed(const Duration(milliseconds: 200)); // hat nefes alsın
+      final volts = await readBatteryVoltage(manager: manager);
+
+      double? smoothed;
+      if (volts != null) {
+        _recentVolts.add(volts);
+        if (_recentVolts.length > 5) _recentVolts.removeAt(0);
+        smoothed = _recentVolts.reduce((a, b) => a + b) / _recentVolts.length;
+      }
+
+      yield CabinSensorReading(
+        timestamp: DateTime.now(),
+        temperature: th?.temperature,
+        humidity: th?.humidity,
+        batteryVolts: smoothed,
+      );
+
+      await Future.delayed(interval ?? _sensorInterval);
+    }
+  }
 }

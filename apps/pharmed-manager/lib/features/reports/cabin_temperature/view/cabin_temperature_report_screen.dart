@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/core.dart';
 import 'package:provider/provider.dart';
 
@@ -50,6 +51,16 @@ class CabinTemperatureReportScreen extends StatelessWidget {
                 onCategoryChanged: (id) =>
                     notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
                 categoryTitle: context.l10n.report_stationsCategoryTitle,
+                toolbarActions: [
+                  // TODO : Localization
+                  MedRectangleIconButton(
+                    tooltip: !notifier.showOutOfRange ? 'Sınırı Aşanları Göster' : 'Tümünü Göster',
+                    iconData: !notifier.showOutOfRange ? PhosphorIcons.bellRinging() : PhosphorIcons.bell(),
+                    color: MedColors.amberLight,
+                    iconColor: MedColors.amber,
+                    onPressed: notifier.toggleOutOfRange,
+                  ),
+                ],
               );
             },
           ),

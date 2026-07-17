@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import 'dashboard_section.dart';
-
 // [SWREQ-MGR-DASH-004]
 // Manager dashboard state yönetimi.
 // Sınıf: Class B
