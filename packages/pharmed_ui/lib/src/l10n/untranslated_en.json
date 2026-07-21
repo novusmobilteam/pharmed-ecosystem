@@ -116,6 +116,10 @@
     "settingsGeneral_fingerprintOnlyLabel",
     "settingsGeneral_allowOutOfWindowOrdersLabel",
     "settingsGeneral_perCellExpiryDateLabel",
+    "settingsGeneral_collectOrderTimeLabel",
+    "settingsGeneral_wasteDestructionTimeLabel",
+    "settingsGeneral_wasteOrderReactivateLabel",
+    "settingsGeneral_badgeCardPasswordLabel",
     "settingsPrescription_accessDurationLabel",
     "settingsPrescription_accessDurationDescription",
     "settingsView_cabinTabTitle",
@@ -1114,7 +1118,17 @@
     "drugActivity_table_movementColumn",
     "rfid_notConnectedError",
     "rfid_inventoryStartFailedError",
-    "rfid_inventoryStreamError"
+    "rfid_inventoryStreamError",
+    "mobileDrawer_cabinConnectionErrorMessage",
+    "settingsView_title",
+    "settingsView_subtitle",
+    "settingsView_generalNav",
+    "settingsView_appearanceNav",
+    "settingsView_cabinNav",
+    "settingsView_prescriptionNav",
+    "settingsView_developerNav",
+    "settingsView_debugNav",
+    "settingsView_sectionComingSoon"
   ],
 
   "fr": [

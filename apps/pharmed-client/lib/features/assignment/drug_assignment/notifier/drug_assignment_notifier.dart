@@ -177,10 +177,6 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     if (current is! DrugAssignmentCellSelected) return;
     if (!current.canSave) return;
 
-    // isMeasureUnit=true olan Drug'larda kullanıcı adet girer,
-    // backend ml bekler → toFillingBackendValue ile çevir.
-    // MedicalConsumable veya isMeasureUnit=false → dönüşüm yok (multiplier=1).
-
     final updated = current.assignment.copyWith(
       medicine: current.selectedDrug,
       minQuantity: current.minQty,
@@ -277,9 +273,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
           selectedGroup: selectedGroup,
           assignment: assignment,
           selectedDrug: assignment.medicine,
-          minQty: assignment.minQuantity?.toInt(),
-          maxQty: assignment.maxQuantity?.toInt(),
-          criticalQty: assignment.criticalQuantity?.toInt(),
+          minQty: assignment.minQuantityFromBackend.toInt(),
+          maxQty: assignment.maxQuantityFromBackend.toInt(),
+          criticalQty: assignment.critQuantityFromBackend.toInt(),
           selectedStepNo: selectedStepNo,
         );
       },

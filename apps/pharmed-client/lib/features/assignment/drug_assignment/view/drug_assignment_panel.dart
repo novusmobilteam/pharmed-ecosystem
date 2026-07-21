@@ -1,36 +1,10 @@
-// [SWREQ-UI-CAB-005]
-// İlaç atama sağ panel içeriği.
-//
-// [OperationPanelBase] iskeletine yerleştirilir.
-// Göz seçilmeden önce placeholder gösterir.
-// Göz seçilince:
-//   - CellInfoCard (stok özeti)
-//   - İlaç seçici butonu
-//   - Min / Maks / Kritik miktar girişleri
-//   - Atamayı Kaydet / Atamayı Kaldır butonları
-//
-// KULLANIM:
-//   OperationPanelBase(
-//     mode: CabinOperationMode.assign,
-//     child: DrugAssignmentPanel(
-//       state: state,
-//       onSelectDrug: () async { ... },
-//       onMinChanged: notifier.onMinQtyChanged,
-//       onMaxChanged: notifier.onMaxQtyChanged,
-//       onCriticalChanged: notifier.onCriticalQtyChanged,
-//       onSave: notifier.saveAssignment,
-//       onDelete: notifier.deleteAssignment,
-//     ),
-//   )
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/providers/usecase_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../notifier/drug_assignment_state.dart';
 
@@ -152,74 +126,78 @@ class _CellSelectedContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final medicine = state.selectedDrug ?? state.assignment.medicine;
+    final suffix = medicine?.fillingUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
+
     return Column(
+      spacing: 8.0,
       key: ValueKey(state.assignment),
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        MedSelectionField(
+        MedValueCard(
+          key: ValueKey(state.assignment.medicine),
           label: context.l10n.assignment_drugSectionLabel,
-          initialValue: state.assignment.medicine,
-          dataSource: (skip, take, search) =>
-              ref.read(getDrugsUseCaseProvider).call(GetDrugsParams(skip: skip, take: take, search: search)),
-          labelBuilder: (drug) => drug.name,
-          onSelected: (drug) => onSelectDrug(drug),
+          value: state.selectedDrug?.name ?? state.assignment.medicine?.name ?? '',
+          density: MedValueCardDensity.compact,
+          trailingIcon: PhosphorIcons.magnifyingGlass(),
+          onTap: () async {
+            final result = await SelectionDialog.show<Medicine>(
+              context,
+              title: context.l10n.assignment_drugSectionLabel,
+              dataSource: (skip, take, search) =>
+                  ref.read(getDrugsUseCaseProvider).call(GetDrugsParams(skip: skip, take: take, search: search)),
+              labelBuilder: (drug) => drug.name,
+            );
+            if (result != null) {
+              onSelectDrug(result);
+            }
+          },
         ),
 
-        const SizedBox(height: 14),
-
-        Row(
-          spacing: 8.0,
-          children: [
-            Expanded(
-              child: MedTextInputField(
-                key: ValueKey(state.minQty),
-                readOnly: true,
-                label: context.l10n.common_minLabel,
-                initialValue: state.minQty?.toCustomString(),
-                onTap: () async {
-                  final result = await showNumpadView(context, initialValue: state.minQty?.toCustomString() ?? '');
-                  if (result != null) {
-                    onMinChanged(int.tryParse(result));
-                  }
-                },
-                onChanged: (String? value) {},
-              ),
-            ),
-            Expanded(
-              child: MedTextInputField(
-                key: ValueKey(state.maxQty),
-                readOnly: true,
-                label: context.l10n.common_maxLabel,
-                initialValue: state.maxQty?.toCustomString(),
-                onTap: () async {
-                  final result = await showNumpadView(context, initialValue: state.maxQty?.toCustomString() ?? '');
-                  if (result != null) {
-                    onMaxChanged(int.tryParse(result));
-                  }
-                },
-                onChanged: (String? value) {},
-              ),
-            ),
-            Expanded(
-              child: MedTextInputField(
-                key: ValueKey(state.criticalQty),
-                readOnly: true,
-
-                label: context.l10n.common_criticalLabel,
-                initialValue: state.criticalQty?.toCustomString(),
-                onTap: () async {
-                  final result = await showNumpadView(context, initialValue: state.criticalQty?.toCustomString() ?? '');
-                  if (result != null) {
-                    onCriticalChanged(int.tryParse(result));
-                  }
-                },
-                onChanged: (String? value) {},
-              ),
-            ),
-          ],
+        // Min
+        MedValueCard(
+          label: context.l10n.common_minLabel,
+          value: state.minQty?.toString() ?? '0',
+          density: MedValueCardDensity.compact,
+          suffix: suffix,
+          onTap: () async {
+            final result = await showNumpadView(context, initialValue: state.minQty?.toCustomString() ?? '');
+            if (result != null) {
+              onMinChanged(int.tryParse(result));
+            }
+          },
         ),
-        const SizedBox(height: 20),
+
+        // Maks
+        MedValueCard(
+          label: context.l10n.common_maxLabel,
+          value: state.maxQty?.toString() ?? '0',
+          density: MedValueCardDensity.compact,
+          suffix: suffix,
+          onTap: () async {
+            final result = await showNumpadView(context, initialValue: state.maxQty?.toCustomString() ?? '');
+            if (result != null) {
+              onMaxChanged(int.tryParse(result));
+            }
+          },
+        ),
+
+        // Kritik
+        MedValueCard(
+          label: context.l10n.common_criticalLabel,
+          value: state.criticalQty?.toString() ?? '0',
+          density: MedValueCardDensity.compact,
+          suffix: suffix,
+          onTap: () async {
+            final result = await showNumpadView(context, initialValue: state.criticalQty?.toCustomString() ?? '');
+            if (result != null) {
+              onCriticalChanged(int.tryParse(result));
+            }
+          },
+        ),
+
+        Spacer(),
 
         // Butonlar
         Column(

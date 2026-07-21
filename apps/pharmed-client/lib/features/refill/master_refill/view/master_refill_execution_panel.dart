@@ -108,15 +108,6 @@ class _TopStrip extends StatelessWidget {
             height: 10,
             backgroundColor: MedColors.border2,
           ),
-          // child: ClipRRect(
-          //   borderRadius: BorderRadius.circular(999),
-          //   child: LinearProgressIndicator(
-          //     value: state.progress,
-          //     minHeight: 8,
-          //     backgroundColor: MedColors.border2,
-          //     valueColor: const AlwaysStoppedAnimation(MedColors.blue),
-          //   ),
-          // ),
         ),
         MedButton(
           label: context.l10n.refill_action_stop,
@@ -441,8 +432,6 @@ class _RefillCellCard extends StatelessWidget {
   }
 
   Future<void> _openMiadPicker(BuildContext context) async {
-    // TODO(imza): projedeki özel tarih seçici ile değiştir. showNumpadView
-    // gibi bir showDatePickerView varsa onu çağır. Şimdilik native picker.
     final picked = await showDatePicker(
       context: context,
       initialDate: miadDate ?? DateTime.now(),
@@ -470,7 +459,9 @@ class _RefillCellCard extends StatelessWidget {
       level = MedCellStockLevel.ok;
     }
 
+    final medicine = assignment.medicine;
     final miadText = miadDate == null ? context.l10n.dateField_placeholder : miadDate.formattedDate;
+    final unitSuffix = medicine?.fillingUnitLocalized(context);
 
     return MedCellInputCard(
       density: density,
@@ -494,6 +485,8 @@ class _RefillCellCard extends StatelessWidget {
       miadHasError: needsMiad,
       miadIcon: PhosphorIcons.calendarBlank(),
       onMiadTap: () => _openMiadPicker(context),
+      countSuffix: unitSuffix,
+      fillingSuffix: unitSuffix,
     );
   }
 }

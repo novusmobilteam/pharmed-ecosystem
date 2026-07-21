@@ -50,35 +50,4 @@ class Step2Notifier extends Notifier<Step2State> {
       },
     );
   }
-
-  /// [SWREQ-SETUP-UI-016]
-  Future<void> testCabinConnection() async {
-    final port = state.basicInfo?.comPort;
-    if (port == null || port.isEmpty) return;
-
-    state = state.copyWith(cabinCardTestState: CabinCardTestState.testing, cabinTestError: null);
-
-    final result = await ref.read(testCabinConnectionUseCaseProvider).call(port);
-
-    result.when(
-      ok: (_) {
-        MedLogger.info(
-          unit: 'SW-UNIT-SETUP',
-          swreq: 'SWREQ-SETUP-UI-016',
-          message: 'Kabin kartı bağlantı testi başarılı',
-          context: {'port': port},
-        );
-        state = state.copyWith(cabinCardTestState: CabinCardTestState.success);
-      },
-      error: (e) {
-        MedLogger.error(
-          unit: 'SW-UNIT-SETUP',
-          swreq: 'SWREQ-SETUP-UI-016',
-          message: 'Kabin kartı bağlantı testi başarısız',
-          error: e,
-        );
-        state = state.copyWith(cabinCardTestState: CabinCardTestState.failure, cabinTestError: e.message);
-      },
-    );
-  }
 }

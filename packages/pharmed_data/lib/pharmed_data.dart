@@ -47,3 +47,4 @@ export 'src/features/refill_list/refill_list.dart';
 export 'src/features/prescription_template/prescription_template.dart';
 export 'src/features/report/report.dart';
 export 'src/features/cabin_temperature/cabin_temperature.dart';
+export 'src/features/settings/settings.dart';

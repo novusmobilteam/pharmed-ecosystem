@@ -1,10 +1,7 @@
 import 'package:pharmed_manager/core/core.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
-import 'package:pharmed_manager/features/settings/domain/repository/i_settings_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-
-import '../../features/settings/data/repository/settings_repository.dart';
 
 class RepositoryProviders {
   static List<SingleChildWidget> providers({bool isDev = false}) {
@@ -12,9 +9,9 @@ class RepositoryProviders {
       /// Settings
       Provider<ISettingsRepository>(
         create: (context) => switch (FlavorConfig.instance.flavor) {
-          AppFlavor.mock => SettingsRepository(remoteDataSource: context.read(), localPersistence: context.read()),
+          AppFlavor.mock => SettingsRepositoryImpl(dataSource: context.read(), mapper: SystemParameterMapper()),
           AppFlavor.dev ||
-          AppFlavor.prod => SettingsRepository(remoteDataSource: context.read(), localPersistence: context.read()),
+          AppFlavor.prod => SettingsRepositoryImpl(dataSource: context.read(), mapper: SystemParameterMapper()),
         },
       ),
 

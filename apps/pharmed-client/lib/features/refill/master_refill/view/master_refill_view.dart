@@ -69,7 +69,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
           action: ConfirmAction.custom,
           customTitle: context.l10n.refill_error_queueTitle,
           customMessage: next.failure.message(context).isNotEmpty
-              ? '${context.l10n.refill_error_queueMessage}\n\n${next.failure.message(context)}'
+              ? next.failure.message(context)
               : context.l10n.refill_error_queueMessage,
           iconData: PhosphorIcons.warning(),
           color: MedColors.amber,

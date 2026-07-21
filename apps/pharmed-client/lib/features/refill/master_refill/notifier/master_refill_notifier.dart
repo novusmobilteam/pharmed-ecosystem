@@ -40,8 +40,6 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     return const MasterRefillUninitialized();
   }
 
-  // ── FAZ 1: Init & Seçim ─────────────────────────────────────────────────
-
   /// Ekran açılışında çağrılır — kabine atanmış ilaçları yükler.
   Future<void> init(CabinVisualizerData data) async {
     final cabinId = data.cabinId;
@@ -91,8 +89,6 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     state = s.copyWith(selectedUnitIds: next);
   }
 
-  // ── FAZ 2: Kuyruğu Başlat ───────────────────────────────────────────────
-
   /// "Otomatik Dolum Başlat" — seçimlerden kuyruk üretir, ilk çekmeceyi açar.
   Future<void> startAutoRefill() async {
     final s = state;
@@ -116,8 +112,6 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
 
     await _orchestrator.open(assignment: job.representativeAssignment);
   }
-
-  // ── Göz input güncellemeleri (aktif job içinde) ───────────────────────────
 
   // Kübik çekmece (target tek değer taşır)
   void onCubicCountChanged(int targetIndex, double value) => _updateTarget(targetIndex, (t) => t.withCubicCount(value));
@@ -154,8 +148,6 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     newJobs[s.currentIndex] = job.copyWith(targets: newTargets);
     state = s.copyWith(jobs: newJobs);
   }
-
-  // ── Dolumu tamamla ────────────────────────────────────────────────────────
 
   /// "Dolumu tamamla":
   ///   - Birim doz/standart: tüm gözler tek formda → çekmece kapanmasını tetikle,

@@ -20,6 +20,7 @@ class MedValueCard extends StatelessWidget {
     required this.value,
     required this.onTap,
     this.trailingIcon,
+    this.suffix,
     this.hasError = false,
     this.placeholder = false,
     this.density = MedValueCardDensity.comfortable,
@@ -35,6 +36,11 @@ class MedValueCard extends StatelessWidget {
 
   /// Sağda gösterilecek opsiyonel ikon (ör. takvim).
   final IconData? trailingIcon;
+
+  /// Değerin yanında gösterilecek opsiyonel serbest içerik (ör. birim etiketi
+  /// "adet"/"mg", küçük bir badge vb.). [trailingIcon] ile birlikte de
+  /// kullanılabilir; sırayla value → suffix → trailingIcon dizilir.
+  final String? suffix;
 
   /// Zorunlu alan boş / geçersiz → amber kenar.
   final bool hasError;
@@ -52,15 +58,17 @@ class MedValueCard extends StatelessWidget {
         ? MedTextStyles.numericLg(color: placeholder ? MedColors.text3 : MedColors.text)
         : MedTextStyles.numericXl(color: placeholder ? MedColors.text3 : MedColors.text);
 
+    final suffixStyle = MedTextStyles.numericMd();
+
     return InkWell(
       onTap: onTap,
       borderRadius: MedRadius.lgAll,
       child: Container(
-        padding: _isCompact ? MedSpacing.insetMd : MedSpacing.insetLg,
+        padding: MedSpacing.insetLg,
         decoration: BoxDecoration(
           color: MedColors.surface,
-          border: Border.all(color: hasError ? MedColors.amber : MedColors.border),
-          borderRadius: MedRadius.lgAll,
+          border: Border.all(color: hasError ? MedColors.red : MedColors.border),
+          borderRadius: MedRadius.mdAll,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,6 +80,7 @@ class MedValueCard extends StatelessWidget {
                 Expanded(
                   child: Text(value, style: valueStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
                 ),
+                if (suffix != null) ...[const SizedBox(width: 6), Text(suffix!, style: suffixStyle)],
                 if (trailingIcon != null) ...[
                   const SizedBox(width: 6),
                   Icon(trailingIcon, size: _isCompact ? 16 : 18, color: MedColors.text3),

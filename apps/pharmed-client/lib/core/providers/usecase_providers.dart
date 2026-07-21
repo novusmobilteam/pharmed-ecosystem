@@ -182,10 +182,6 @@ final testRfidConnectionUseCaseProvider = Provider((ref) {
   return TestRfidConnectionUseCase(ref.read(rfidServiceProvider));
 });
 
-final testCabinConnectionUseCaseProvider = Provider((ref) {
-  return TestCabinConnectionUseCase(ref.read(serialServiceProvider));
-});
-
 final getPatientPrescriptionHistoryUseCaseProvider = Provider((ref) {
   return GetPatientPrescriptionHistoryUseCase(ref.read(prescriptionRepositoryProvider));
 });

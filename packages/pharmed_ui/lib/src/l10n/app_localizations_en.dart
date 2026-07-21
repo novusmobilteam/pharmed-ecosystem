@@ -1750,6 +1750,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'Allow entering a separate expiry date for each compartment in unit-dose drawers during drug refill.';
 
   @override
+  String get settingsGeneral_collectOrderTimeLabel =>
+      'Order Detail Listing Time Window (hours)';
+
+  @override
+  String get settingsGeneral_wasteDestructionTimeLabel =>
+      'Waste/Destruction Time Window (hours)';
+
+  @override
+  String get settingsGeneral_wasteOrderReactivateLabel =>
+      'Reactivate order after waste/destruction';
+
+  @override
+  String get settingsGeneral_badgeCardPasswordLabel =>
+      'Require password on badge card login';
+
+  @override
   String get settingsPrescription_accessDurationLabel =>
       'Prescription Access Duration (minutes)';
 
@@ -5206,4 +5222,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String rfid_inventoryStreamError(String detail) {
     return 'RFID inventory stream error: $detail';
   }
+
+  @override
+  String get mobileDrawer_cabinConnectionErrorMessage =>
+      'Unable to communicate with the cabinet. Please try again or contact authorized personnel.';
+
+  @override
+  String get settingsView_title => 'Settings';
+
+  @override
+  String get settingsView_subtitle => 'SYSTEM CONFIGURATION';
+
+  @override
+  String get settingsView_generalNav => 'General';
+
+  @override
+  String get settingsView_appearanceNav => 'Appearance';
+
+  @override
+  String get settingsView_cabinNav => 'Cabinet Settings';
+
+  @override
+  String get settingsView_prescriptionNav => 'Prescription Settings';
+
+  @override
+  String get settingsView_developerNav => 'Developer';
+
+  @override
+  String get settingsView_debugNav => 'Debug';
+
+  @override
+  String get settingsView_sectionComingSoon =>
+      'Content for this section is coming soon.';
 }

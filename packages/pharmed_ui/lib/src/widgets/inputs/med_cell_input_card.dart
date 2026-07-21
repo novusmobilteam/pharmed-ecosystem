@@ -45,6 +45,8 @@ class MedCellInputCard extends StatelessWidget {
     this.subtitle,
     this.stepLabel,
     this.density = MedCellDensity.comfortable,
+    this.countSuffix,
+    this.fillingSuffix,
   });
 
   /// İlaç adı (ana başlık).
@@ -89,6 +91,8 @@ class MedCellInputCard extends StatelessWidget {
   final bool miadPlaceholder;
 
   final MedCellDensity density;
+  final String? countSuffix;
+  final String? fillingSuffix;
 
   Color get _stockColor => switch (stockLevel) {
     MedCellStockLevel.ok => MedColors.green,
@@ -166,6 +170,7 @@ class MedCellInputCard extends StatelessWidget {
       value: countText,
       placeholder: countPlaceholder,
       onTap: onCountTap,
+      suffix: countSuffix,
     );
     final fillingCard = MedValueCard(
       density: _valueDensity,
@@ -173,6 +178,7 @@ class MedCellInputCard extends StatelessWidget {
       value: fillingText,
       placeholder: fillingPlaceholder,
       onTap: onFillingTap,
+      suffix: fillingSuffix,
     );
     final miadCard = MedValueCard(
       density: _valueDensity,

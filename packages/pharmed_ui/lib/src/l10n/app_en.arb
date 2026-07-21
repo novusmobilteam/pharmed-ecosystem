@@ -1787,6 +1787,10 @@
   "@settingsGeneral_perCellExpiryDateLabel": {
     "description": "Checkbox label allowing per-cell expiry date entry for unit-dose drawers during refill"
   },
+  "settingsGeneral_collectOrderTimeLabel": "Order Detail Listing Time Window (hours)",
+  "settingsGeneral_wasteDestructionTimeLabel": "Waste/Destruction Time Window (hours)",
+  "settingsGeneral_wasteOrderReactivateLabel": "Reactivate order after waste/destruction",
+  "settingsGeneral_badgeCardPasswordLabel": "Require password on badge card login",
   "settingsPrescription_accessDurationLabel": "Prescription Access Duration (minutes)",
   "@settingsPrescription_accessDurationLabel": {
     "description": "Dropdown label for the prescription access duration setting"
@@ -6336,6 +6340,19 @@
       "type": "String"
     }
   }
-}
+},
+"mobileDrawer_cabinConnectionErrorMessage": "Unable to communicate with the cabinet. Please try again or contact authorized personnel.",
+"@mobileDrawer_cabinConnectionErrorMessage": {
+  "description": "Generic error shown for all mobile drawer failures (managerNotFound, managerConnectFailed, openCommandFailed, statusTimeout, openNotConfirmed, statusReadError) when the cabinet cannot be reached"
+},
+"settingsView_title": "Settings",
+"settingsView_subtitle": "SYSTEM CONFIGURATION",
+"settingsView_generalNav": "General",
+"settingsView_appearanceNav": "Appearance",
+"settingsView_cabinNav": "Cabinet Settings",
+"settingsView_prescriptionNav": "Prescription Settings",
+"settingsView_developerNav": "Developer",
+"settingsView_debugNav": "Debug",
+"settingsView_sectionComingSoon": "Content for this section is coming soon."
 
 }

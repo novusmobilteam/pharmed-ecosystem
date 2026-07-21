@@ -4,12 +4,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 extension MasterDrawerFailureX on MasterDrawerFailure {
   String message(BuildContext context, {String? detail}) {
-    return switch (this) {
-      MasterDrawerFailure.managerNotFound => context.l10n.core_cabinConn_managerNotFoundError,
-      MasterDrawerFailure.managerConnectFailed => context.l10n.common_error_connectionErrorWithDetail(detail ?? ''),
-      MasterDrawerFailure.lockOpenFailed => context.l10n.common_error_lockOpenFailedWithDetail(detail ?? ''),
-      MasterDrawerFailure.lidOpenFailed => context.l10n.masterDrawer_lidOpenFailedError(detail ?? ''),
-    };
+    return context.l10n.mobileDrawer_cabinConnectionErrorMessage;
   }
 }
 

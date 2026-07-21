@@ -3246,6 +3246,30 @@ abstract class AppLocalizations {
   /// **'Allow entering a separate expiry date for each compartment in unit-dose drawers during drug refill.'**
   String get settingsGeneral_perCellExpiryDateLabel;
 
+  /// No description provided for @settingsGeneral_collectOrderTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Detail Listing Time Window (hours)'**
+  String get settingsGeneral_collectOrderTimeLabel;
+
+  /// No description provided for @settingsGeneral_wasteDestructionTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Waste/Destruction Time Window (hours)'**
+  String get settingsGeneral_wasteDestructionTimeLabel;
+
+  /// No description provided for @settingsGeneral_wasteOrderReactivateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate order after waste/destruction'**
+  String get settingsGeneral_wasteOrderReactivateLabel;
+
+  /// No description provided for @settingsGeneral_badgeCardPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Require password on badge card login'**
+  String get settingsGeneral_badgeCardPasswordLabel;
+
   /// Dropdown label for the prescription access duration setting
   ///
   /// In en, this message translates to:
@@ -9244,6 +9268,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'RFID inventory stream error: {detail}'**
   String rfid_inventoryStreamError(String detail);
+
+  /// Generic error shown for all mobile drawer failures (managerNotFound, managerConnectFailed, openCommandFailed, statusTimeout, openNotConfirmed, statusReadError) when the cabinet cannot be reached
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to communicate with the cabinet. Please try again or contact authorized personnel.'**
+  String get mobileDrawer_cabinConnectionErrorMessage;
+
+  /// No description provided for @settingsView_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsView_title;
+
+  /// No description provided for @settingsView_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SYSTEM CONFIGURATION'**
+  String get settingsView_subtitle;
+
+  /// No description provided for @settingsView_generalNav.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get settingsView_generalNav;
+
+  /// No description provided for @settingsView_appearanceNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsView_appearanceNav;
+
+  /// No description provided for @settingsView_cabinNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet Settings'**
+  String get settingsView_cabinNav;
+
+  /// No description provided for @settingsView_prescriptionNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription Settings'**
+  String get settingsView_prescriptionNav;
+
+  /// No description provided for @settingsView_developerNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get settingsView_developerNav;
+
+  /// No description provided for @settingsView_debugNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug'**
+  String get settingsView_debugNav;
+
+  /// No description provided for @settingsView_sectionComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Content for this section is coming soon.'**
+  String get settingsView_sectionComingSoon;
 }
 
 class _AppLocalizationsDelegate

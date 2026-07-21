@@ -534,6 +534,10 @@
   "@settingsGeneral_perCellExpiryDateLabel": {
     "description": "Checkbox label allowing per-cell expiry date entry for unit-dose drawers during refill"
   },
+  "settingsGeneral_collectOrderTimeLabel": "Plage horaire de consultation des détails de commande (heures)",
+  "settingsGeneral_wasteDestructionTimeLabel": "Délai de péremption/destruction (heures)",
+  "settingsGeneral_wasteOrderReactivateLabel": "Réactiver la commande après péremption/destruction",
+  "settingsGeneral_badgeCardPasswordLabel": "Exiger un mot de passe lors de la connexion par badge",
   "settingsPrescription_accessDurationLabel": "Durée d'accès à l'ordonnance (minutes)",
   "@settingsPrescription_accessDurationLabel": {
     "description": "Dropdown label for the prescription access duration setting"
@@ -4767,5 +4771,15 @@
 "drugActivity_table_movementColumn": "Mouvement",
 "rfid_notConnectedError": "Le lecteur RFID n'est pas connecté",
 "rfid_inventoryStartFailedError": "Échec du démarrage de l'inventaire RFID : {detail}",
-"rfid_inventoryStreamError": "Erreur du flux d'inventaire RFID : {detail}"
+"rfid_inventoryStreamError": "Erreur du flux d'inventaire RFID : {detail}",
+"mobileDrawer_cabinConnectionErrorMessage": "Impossible de communiquer avec l'armoire. Veuillez réessayer ou contacter le personnel autorisé.",
+"settingsView_title": "Paramètres",
+"settingsView_subtitle": "CONFIGURATION SYSTÈME",
+"settingsView_generalNav": "Général",
+"settingsView_appearanceNav": "Apparence",
+"settingsView_cabinNav": "Paramètres de l'armoire",
+"settingsView_prescriptionNav": "Paramètres de prescription",
+"settingsView_developerNav": "Développeur",
+"settingsView_debugNav": "Débogage",
+"settingsView_sectionComingSoon": "Le contenu de cette section sera bientôt disponible."
 }

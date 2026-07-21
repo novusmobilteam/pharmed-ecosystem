@@ -147,7 +147,14 @@ extension MedicineDoseConfig on Medicine {
     return self.unitMeasure?.name ?? context.l10n.common_defaultUnitFallback;
   }
 
-  String fillingUnitLocalized(BuildContext context) => context.l10n.common_defaultUnitFallback;
+  String fillingUnitLocalized(BuildContext context) {
+    final self = this;
+    if (self is! Drug) return context.l10n.common_defaultUnitFallback;
+    if (!self.isMeasureUnit) return context.l10n.common_defaultUnitFallback;
+    final doseLabel = self.unitMeasure?.name ?? 'ml';
+    final doseValue = self.dose?.toInt() ?? '';
+    return '${context.l10n.common_defaultUnitFallback} (×$doseValue$doseLabel)';
+  }
 
   /// Dolum ekranında kullanılan birim adı.
   /// isMeasureUnit true olsa bile dolumda kullanıcı Adet girer.

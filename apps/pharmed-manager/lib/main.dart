@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
 
 import 'package:pharmed_manager/features/home/notifier/home_notifier.dart';
-import 'package:pharmed_manager/features/settings/presentation/notifier/settings_notifier.dart';
+import 'package:pharmed_manager/features/settings/notifier/settings_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,7 +39,7 @@ class ManagerApp extends StatelessWidget {
           create: (ctx) => HomeNotifier(getFilteredMenusUseCase: ctx.read(), authNotifier: ctx.read()),
         ),
         ChangeNotifierProvider(
-          create: (ctx) => SettingsNotifier(repository: ctx.read(), tokenHolder: ctx.read<TokenHolder>()),
+          create: (ctx) => SettingsNotifier(repository: ctx.read(), cache: ctx.read(), tokenHolder: ctx.read()),
         ),
       ],
       child: InputFieldTheme(

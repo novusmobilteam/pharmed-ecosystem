@@ -1757,6 +1757,22 @@ class AppLocalizationsFr extends AppLocalizations {
       'Autoriser la saisie d\'une date d\'expiration distincte pour chaque compartiment des tiroirs à dose unitaire lors du remplissage.';
 
   @override
+  String get settingsGeneral_collectOrderTimeLabel =>
+      'Plage horaire de consultation des détails de commande (heures)';
+
+  @override
+  String get settingsGeneral_wasteDestructionTimeLabel =>
+      'Délai de péremption/destruction (heures)';
+
+  @override
+  String get settingsGeneral_wasteOrderReactivateLabel =>
+      'Réactiver la commande après péremption/destruction';
+
+  @override
+  String get settingsGeneral_badgeCardPasswordLabel =>
+      'Exiger un mot de passe lors de la connexion par badge';
+
+  @override
   String get settingsPrescription_accessDurationLabel =>
       'Durée d\'accès à l\'ordonnance (minutes)';
 
@@ -5297,4 +5313,36 @@ class AppLocalizationsFr extends AppLocalizations {
   String rfid_inventoryStreamError(String detail) {
     return 'Erreur du flux d\'inventaire RFID : $detail';
   }
+
+  @override
+  String get mobileDrawer_cabinConnectionErrorMessage =>
+      'Impossible de communiquer avec l\'armoire. Veuillez réessayer ou contacter le personnel autorisé.';
+
+  @override
+  String get settingsView_title => 'Paramètres';
+
+  @override
+  String get settingsView_subtitle => 'CONFIGURATION SYSTÈME';
+
+  @override
+  String get settingsView_generalNav => 'Général';
+
+  @override
+  String get settingsView_appearanceNav => 'Apparence';
+
+  @override
+  String get settingsView_cabinNav => 'Paramètres de l\'armoire';
+
+  @override
+  String get settingsView_prescriptionNav => 'Paramètres de prescription';
+
+  @override
+  String get settingsView_developerNav => 'Développeur';
+
+  @override
+  String get settingsView_debugNav => 'Débogage';
+
+  @override
+  String get settingsView_sectionComingSoon =>
+      'Le contenu de cette section sera bientôt disponible.';
 }

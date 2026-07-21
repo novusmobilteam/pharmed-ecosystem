@@ -2070,6 +2070,23 @@
   "@settingsGeneral_perCellExpiryDateLabel": {
     "description": "Checkbox label allowing per-cell expiry date entry for unit-dose drawers during refill"
   },
+  "settingsGeneral_collectOrderTimeLabel": "Order Listeleme Zaman Aralığı (saat)",
+  "@settingsGeneral_collectOrderTimeLabel": {
+    "description": "Genel Ayarlar ekranında, order detay listeleme işleminde kullanılan +/- saat aralığını belirleyen sayısal alanın etiketi (system parameter: CollectOrderTime)"
+  },
+  "settingsGeneral_wasteDestructionTimeLabel": "Fire/İmha Süresi (saat)",
+  "@settingsGeneral_wasteDestructionTimeLabel": {
+    "description": "Genel Ayarlar ekranında, ilaç alımından sonra fire/imha işleminin yapılabileceği +/- saat aralığını belirleyen sayısal alanın etiketi (system parameter: WasteDescrutionTime)"
+  },
+
+  "settingsGeneral_wasteOrderReactivateLabel": "Fire yapılan malzeme siparişe tekrar düşsün",
+  "@settingsGeneral_wasteOrderReactivateLabel": {
+    "description": "Genel Ayarlar ekranında, fire/imha yapılan malzemenin ilgili order'ı tekrar aktif hale getirip getirmeyeceğini kontrol eden checkbox etiketi (system parameter: WasteOrderMayItFall)"
+  },
+  "settingsGeneral_badgeCardPasswordLabel": "Yönetici kartı girişinde şifre istensin",
+  "@settingsGeneral_badgeCardPasswordLabel": {
+    "description": "Genel Ayarlar ekranında, yönetici kartı ile giriş yapılırken ek şifre sorulup sorulmayacağını kontrol eden checkbox etiketi (system parameter: ManageCard)"
+  },
   "settingsPrescription_accessDurationLabel": "Reçete Erişilebilirlik Süresi (dakika)",
   "@settingsPrescription_accessDurationLabel": {
     "description": "Dropdown label for the prescription access duration setting"
@@ -6299,5 +6316,50 @@
 "drugActivity_table_movementColumn": "Hareket",
 "rfid_notConnectedError": "RFID okuyucuya bağlı değil",
 "rfid_inventoryStartFailedError": "RFID tarama başlatılamadı: {detail}",
-"rfid_inventoryStreamError": "RFID tarama stream hatası: {detail}"
+"rfid_inventoryStreamError": "RFID tarama stream hatası: {detail}",
+"mobileDrawer_cabinConnectionErrorMessage": "Kabin ile iletişim kurulamadı. Lütfen tekrar deneyin veya yetkili personeli bilgilendirin.",
+"settingsView_title": "Ayarlar",
+"@settingsView_title": {
+  "description": "Ayarlar modal'ının header'ında gösterilen ana başlık"
+},
+
+"settingsView_subtitle": "SİSTEM YAPILANDIRMASI",
+"@settingsView_subtitle": {
+  "description": "Ayarlar modal'ının header'ında başlığın altında gösterilen mono, büyük harf alt başlık"
+},
+
+"settingsView_generalNav": "Genel",
+"@settingsView_generalNav": {
+  "description": "Ayarlar modal'ının sol nav'ında Genel Ayarlar section'ına geçiş yapan menü öğesinin etiketi"
+},
+
+"settingsView_appearanceNav": "Görünüm",
+"@settingsView_appearanceNav": {
+  "description": "Ayarlar modal'ının sol nav'ında Görünüm section'ına geçiş yapan menü öğesinin etiketi"
+},
+
+"settingsView_cabinNav": "Kabin Ayarları",
+"@settingsView_cabinNav": {
+  "description": "Ayarlar modal'ının sol nav'ında Kabin Ayarları section'ına geçiş yapan menü öğesinin etiketi"
+},
+
+"settingsView_prescriptionNav": "Reçete Ayarları",
+"@settingsView_prescriptionNav": {
+  "description": "Ayarlar modal'ının sol nav'ında Reçete Ayarları section'ına geçiş yapan menü öğesinin etiketi"
+},
+
+"settingsView_developerNav": "Geliştirici",
+"@settingsView_developerNav": {
+  "description": "Ayarlar modal'ının sol nav'ında Geliştirici section'ına geçiş yapan menü öğesinin etiketi (yanında ADMIN rozeti gösterilir)"
+},
+
+"settingsView_debugNav": "Debug",
+"@settingsView_debugNav": {
+  "description": "Ayarlar modal'ının sol nav'ında Debug section'ına geçiş yapan menü öğesinin etiketi (yanında DEV rozeti gösterilir, sadece debug build'lerde görünür)"
+},
+
+"settingsView_sectionComingSoon": "Bu bölüm için içerik yakında eklenecek.",
+"@settingsView_sectionComingSoon": {
+  "description": "Ayarlar modal'ında henüz içeriği yazılmamış section'lar (Görünüm, Kabin, Reçete, Geliştirici, Debug) için ortak yer tutucu metni"
+}
 }

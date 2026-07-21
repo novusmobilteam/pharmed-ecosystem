@@ -144,39 +144,54 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
 
           // EditableText + hint stack
           Expanded(
-            child: Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                // Hint
-                if (!_hasText && widget.hintText != null)
-                  Text(
-                    widget.hintText!,
-                    style: TextStyle(fontFamily: MedFonts.sans, fontSize: style.inputFontSize, color: MedColors.text4),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: widget.enabled
+                  ? () {
+                      if (!_focus.hasFocus) {
+                        _focus.requestFocus();
+                      }
+                      widget.onTap?.call();
+                    }
+                  : null,
+              child: Stack(
+                alignment: Alignment.centerLeft,
+                children: [
+                  // Hint
+                  if (!_hasText && widget.hintText != null)
+                    Text(
+                      widget.hintText!,
+                      style: TextStyle(
+                        fontFamily: MedFonts.sans,
+                        fontSize: style.inputFontSize,
+                        color: MedColors.text4,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
 
-                // Input
-                EditableText(
-                  controller: _controller,
-                  focusNode: _focus,
-                  readOnly: widget.readOnly,
-                  autofocus: widget.autoFocus,
-                  keyboardType: widget.keyboardType,
-                  maxLines: widget.obscureText ? 1 : widget.maxLines,
-                  minLines: widget.obscureText ? 1 : widget.minLines,
-                  obscureText: widget.obscureText,
-                  inputFormatters: widget.inputFormatters,
-                  onChanged: (v) {
-                    field.didChange(v);
-                    widget.onChanged?.call(v);
-                  },
-                  onSubmitted: widget.onFieldSubmitted,
-                  style: MedTextStyles.bodyMd(color: widget.enabled ? MedColors.text : MedColors.text3),
-                  cursorColor: MedColors.blue,
-                  backgroundCursorColor: MedColors.border,
-                ),
-              ],
+                  // Input
+                  EditableText(
+                    controller: _controller,
+                    focusNode: _focus,
+                    readOnly: widget.readOnly,
+                    autofocus: widget.autoFocus,
+                    keyboardType: widget.keyboardType,
+                    maxLines: widget.obscureText ? 1 : widget.maxLines,
+                    minLines: widget.obscureText ? 1 : widget.minLines,
+                    obscureText: widget.obscureText,
+                    inputFormatters: widget.inputFormatters,
+                    onChanged: (v) {
+                      field.didChange(v);
+                      widget.onChanged?.call(v);
+                    },
+                    onSubmitted: widget.onFieldSubmitted,
+                    style: MedTextStyles.bodyMd(color: widget.enabled ? MedColors.text : MedColors.text3),
+                    cursorColor: MedColors.blue,
+                    backgroundCursorColor: MedColors.border,
+                  ),
+                ],
+              ),
             ),
           ),
 

@@ -253,6 +253,9 @@ abstract final class MedTextStyles {
   static TextStyle monoXs({Color? color}) =>
       TextStyle(fontFamily: MedFonts.mono, fontSize: 9, fontWeight: FontWeight.w400, color: color ?? MedColors.text3);
 
+  static TextStyle numericMd({Color? color}) =>
+      TextStyle(fontFamily: MedFonts.sans, fontSize: 14, fontWeight: FontWeight.w600, color: color ?? MedColors.text2);
+
   /// Sayısal gösterim — stepper değeri, doz miktarı (18px).
   static TextStyle numericLg({Color? color}) =>
       TextStyle(fontFamily: MedFonts.sans, fontSize: 18, fontWeight: FontWeight.w600, color: color ?? MedColors.text);

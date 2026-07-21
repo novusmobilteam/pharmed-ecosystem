@@ -8,15 +8,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../features/settings/presentation/notifier/settings_notifier.dart';
 
 final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
-  return appSettingsCache; // mevcut global singleton
+  return appSettingsCache;
 });
 
-// Cache değeri — bir kere okunur
 final cachedDeviceModeProvider = FutureProvider<CabinType?>((ref) async {
   final raw = await ref.read(appSettingsCacheProvider).getDeviceMode();
   if (raw == null) return null;
@@ -30,7 +28,6 @@ final deviceModeProvider = FutureProvider<CabinType?>((ref) async {
     if (debugCabin != null) return debugCabin.type;
   }
   final mode = await ref.read(cachedDeviceModeProvider.future);
-  MedLogger.info(unit: '', swreq: '', message: 'deviceMode prod resolved: $mode'); // <-- buraya bak
   return mode;
 });
 
@@ -63,13 +60,6 @@ class AppSettingsCache {
     await _open();
     await _box!.put(_keySetupDone, true);
     await _box!.put(_keyDeviceMode, deviceMode);
-
-    MedLogger.info(
-      unit: 'APP-SETTINGS',
-      swreq: 'SWREQ-CORE-003',
-      message: 'Kurulum tamamlandı olarak işaretlendi',
-      context: {'deviceMode': deviceMode},
-    );
   }
 
   /// Kayıtlı cihaz modunu döndürür. null → kurulum henüz yapılmamış.

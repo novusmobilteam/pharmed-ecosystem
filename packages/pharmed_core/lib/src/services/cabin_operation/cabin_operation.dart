@@ -7,10 +7,6 @@ export 'usecase/start_master_drawer_session_usecase.dart';
 export 'usecase/open_cubic_lid_usecase.dart';
 export 'usecase/monitor_drawer_close_usecase.dart';
 
-export 'failure/cabin_connection_failure.dart';
-export 'failure/mobile_drawer_failure.dart';
-export 'failure/master_drawer_failure.dart';
-
 export 'entity/battery_level_convertor.dart';
 export 'entity/cabin_sensor_parser.dart';
 export 'entity/cabin_sensor_reading.dart';

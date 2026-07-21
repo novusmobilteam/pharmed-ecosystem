@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:provider/provider.dart';
-import '../../settings/presentation/notifier/settings_notifier.dart';
+import '../../settings/notifier/settings_notifier.dart';
 import '../notifier/auth_notifier.dart';
 import '../notifier/auth_state.dart';
 

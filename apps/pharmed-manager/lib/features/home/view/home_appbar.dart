@@ -1,27 +1,3 @@
-// PharMed Manager — Uygulama üst çubuğu.
-// Menü navigasyonu sidebar'da olduğundan bu widget sadece:
-//   - Marka / anasayfa butonu
-//   - Canlı saat
-//   - Kullanıcı bilgisi (ad + rol)
-//   - Çıkış butonu
-//   - Ayarlar butonu (opsiyonel, kDebugMode'da ek aksiyonlar için)
-//
-// KULLANIM (HomeScreen içinde):
-//   Column(
-//     children: [
-//       HomeAppBar(
-//         user: notifier.currentUser,
-//         isLoggedIn: notifier.isLoggedIn,
-//         onHomeTap: () => notifier.navigateHome(),
-//         onLogoutTap: () => context.read<AuthNotifier>().logout(),
-//         onSettingsTap: () => _openSettingsDialog(context),
-//       ),
-//       Expanded(child: Row(children: [AppSidebar(), ...])),
-//     ],
-//   )
-//
-// Sınıf: Class A
-
 part of 'home_screen.dart';
 
 class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -44,7 +20,7 @@ class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onLoginTap;
 
   @override
-  Size get preferredSize => const Size.fromHeight(62); // 52 + 10 padding üst
+  Size get preferredSize => const Size.fromHeight(62);
 
   @override
   State<HomeAppBar> createState() => _HomeAppBarState();

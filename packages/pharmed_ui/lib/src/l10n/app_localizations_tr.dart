@@ -1750,6 +1750,22 @@ class AppLocalizationsTr extends AppLocalizations {
       'İlaç dolum esnasında birim doz çekmecelerde her bölme için ayrı miad tarihi girilebilsin.';
 
   @override
+  String get settingsGeneral_collectOrderTimeLabel =>
+      'Order Listeleme Zaman Aralığı (saat)';
+
+  @override
+  String get settingsGeneral_wasteDestructionTimeLabel =>
+      'Fire/İmha Süresi (saat)';
+
+  @override
+  String get settingsGeneral_wasteOrderReactivateLabel =>
+      'Fire yapılan malzeme siparişe tekrar düşsün';
+
+  @override
+  String get settingsGeneral_badgeCardPasswordLabel =>
+      'Yönetici kartı girişinde şifre istensin';
+
+  @override
   String get settingsPrescription_accessDurationLabel =>
       'Reçete Erişilebilirlik Süresi (dakika)';
 
@@ -5164,4 +5180,36 @@ class AppLocalizationsTr extends AppLocalizations {
   String rfid_inventoryStreamError(String detail) {
     return 'RFID tarama stream hatası: $detail';
   }
+
+  @override
+  String get mobileDrawer_cabinConnectionErrorMessage =>
+      'Kabin ile iletişim kurulamadı. Lütfen tekrar deneyin veya yetkili personeli bilgilendirin.';
+
+  @override
+  String get settingsView_title => 'Ayarlar';
+
+  @override
+  String get settingsView_subtitle => 'SİSTEM YAPILANDIRMASI';
+
+  @override
+  String get settingsView_generalNav => 'Genel';
+
+  @override
+  String get settingsView_appearanceNav => 'Görünüm';
+
+  @override
+  String get settingsView_cabinNav => 'Kabin Ayarları';
+
+  @override
+  String get settingsView_prescriptionNav => 'Reçete Ayarları';
+
+  @override
+  String get settingsView_developerNav => 'Geliştirici';
+
+  @override
+  String get settingsView_debugNav => 'Debug';
+
+  @override
+  String get settingsView_sectionComingSoon =>
+      'Bu bölüm için içerik yakında eklenecek.';
 }

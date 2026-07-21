@@ -9,6 +9,7 @@ import 'package:pharmed_manager/features/reports/auth_summary/view/auth_summary_
 import 'package:pharmed_manager/features/reports/expired_items/view/expired_items_report_screen.dart';
 import 'package:pharmed_manager/features/reports/station_transaction/view/station_transaction_report_screen.dart';
 import 'package:pharmed_manager/features/role/view/role_screen.dart';
+import 'package:pharmed_manager/features/settings/view/settings_view.dart';
 import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ import '../../reports/cabin_temperature/view/cabin_temperature_report_screen.dar
 import '../../reports/hospital_stocks/view/hospital_stocks_report_screen.dart';
 import '../../reports/material_usage/view/material_usage_report_screen.dart';
 import '../../reports/patient_inventory/view/patient_inventory_report_screen.dart';
-import '../../settings/presentation/notifier/settings_notifier.dart';
+import '../../settings/notifier/settings_notifier.dart';
 import '../../station_setup/view/station_screen.dart';
 import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
 import '../../user/view/user_screen.dart';
@@ -85,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onHomeTap: () => context.read<HomeNotifier>().navigateHome(),
                   onLogoutTap: () => context.read<AuthNotifier>().logout(),
                   onLoginTap: () => _onLoginTap(context),
-                  onSettingsTap: () {},
+                  onSettingsTap: () => SettingsView.show(context),
                 ),
                 Expanded(
                   child: Container(
