@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class DosageFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<DosageForm> {
+class DosageFormNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<DosageForm> {
   final GetDosageFormsUseCase _getDosageFormsUseCase;
   final DeleteDosageFormUseCase _deleteDosageFormUseCase;
 
@@ -18,11 +18,12 @@ class DosageFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
   bool get isDeleting => isLoading(deleteOp);
   String? get statusMessage => message(fetchOp) ?? message(deleteOp);
 
-  Future<void> getDosageForms({bool forceRefresh = false}) async {
-    await execute(
-      fetchOp,
-      operation: () => _getDosageFormsUseCase.call(GetDosageFormParams()),
-      onData: (response) => allItems = response.data ?? [],
+  @override
+  Future<void> fetch({bool forceRefresh = false}) async {
+    await fetchPagedData(
+      op: fetchOp,
+      fetchMethod: (skip, take) =>
+          _getDosageFormsUseCase.call(PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery)),
     );
   }
 
@@ -31,14 +32,14 @@ class DosageFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
     Function(String? message)? onSuccess,
     Function(String? message)? onFailed,
   }) async {
-    final item = allItems.firstWhere((x) => x.id == id);
+    final item = items.firstWhere((x) => x.id == id);
 
     await executeVoid(
       deleteOp,
       operation: () => _deleteDosageFormUseCase.call(item),
       onSuccess: () {
         onSuccess?.call(contextlessL10n().dosageForm_deleteSuccessMessage);
-        getDosageForms();
+        fetch();
       },
       onFailed: (error) => onFailed?.call(error.message),
     );

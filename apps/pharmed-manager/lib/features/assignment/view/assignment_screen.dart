@@ -28,8 +28,7 @@ class AssignmentScreen extends StatelessWidget {
             mobile: MedMobileLayout(),
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? context.l10n.assignmentScreenTitle,
-              subtitle: menu.description,
+          menu: menu,
               isLoading:
                   notifier.isLoading(notifier.fetchVisualizerOp) ||
                   notifier.isLoading(notifier.fetchStationsOp) ||

@@ -3,7 +3,7 @@ import 'package:pharmed_client/widgets/widgets.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../unload.dart';
 
 class MobileUnloadPanel extends StatelessWidget {
@@ -67,7 +67,7 @@ class MobileUnloadPanel extends StatelessWidget {
             options: [null, ...PrescriptionMovementType.intakeableTypes],
             selected: ready.statusFilter,
             onChanged: notifier.onStatusFilterChanged,
-            labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+            labelBuilder: (type) => type?.label(context) ?? context.l10n.filter_all,
             bgColor: ready.statusFilter?.backgroundColor,
           ),
           MedFilterChipGroup<DateRangePreset>(

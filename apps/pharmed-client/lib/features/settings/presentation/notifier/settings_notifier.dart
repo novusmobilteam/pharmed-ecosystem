@@ -1,11 +1,9 @@
-// Sınıf: Class A
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/cache/app_settings_cache.dart';
-import '../../../../core/enums/app_language.dart';
+import '../../../../core/providers/providers.dart';
 import '../../domain/usecase/get_cabins_usecase.dart';
 import '../state/settings_state.dart';
 
@@ -27,12 +25,14 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final language = AppLanguage.fromCode(code);
     if (language == state.language) return;
     state = state.copyWith(language: language);
+    ref.read(tokenHolderProvider).setLocale(language.code);
   }
 
   /// [SWREQ-UI-SETTINGS-002] Dili değiştirir ve cache'e yazar.
   Future<void> setLanguage(AppLanguage language) async {
     await _cache.saveLanguage(language.code);
     state = state.copyWith(language: language);
+    ref.read(tokenHolderProvider).setLocale(language.code);
   }
 
   void setSection(SettingsSection section) {

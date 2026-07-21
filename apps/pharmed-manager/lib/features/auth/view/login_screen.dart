@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:provider/provider.dart';
+import '../../settings/presentation/notifier/settings_notifier.dart';
 import '../notifier/auth_notifier.dart';
 import '../notifier/auth_state.dart';
 
@@ -28,6 +29,8 @@ class LoginScreen extends StatelessWidget {
           onLogin: (email, password, onError) async {
             await authNotifier.login(email: email, password: password, onError: onError);
           },
+          currentLanguage: context.watch<SettingsNotifier>().language,
+          onLanguageChanged: (lang) => context.read<SettingsNotifier>().setLanguage(lang),
         ),
       ),
     );

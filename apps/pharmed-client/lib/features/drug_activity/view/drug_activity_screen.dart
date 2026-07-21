@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 import '../drug_activity.dart';
+
+part 'table_view.dart';
 
 class DrugActivityScreen extends ConsumerWidget {
   const DrugActivityScreen({super.key});
@@ -20,28 +23,10 @@ class DrugActivityScreen extends ConsumerWidget {
 
         body: switch (state) {
           DrugActivityLoading() => const Center(child: CircularProgressIndicator()),
-          DrugActivityLoaded(:final items, :final isLoading) => MedTable(
-            data: items,
+          DrugActivityLoaded(:final items, :final isLoading) => TableView(
+            items: items,
             isLoading: isLoading,
-            emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
-            serverTotalCount: notifier.totalCount,
-            currentPage: notifier.currentPage,
-            pageSize: notifier.pageSize,
-            enableDateFilter: true,
-            enablePagination: true,
-            onPageChanged: (page) => notifier.goToPage(page),
-            onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
-            cellBuilder: (item, colIndex, value) {
-              if (colIndex == 6) {
-                final status = (item).type;
-                return MedInfoChip(
-                  info: status.actionLabel,
-                  backgroundColor: status.backgroundColor,
-                  foregroundColor: status.foregroundColor,
-                );
-              }
-              return null;
-            },
+            notifier: notifier,
           ),
           DrugActivityError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),
         },

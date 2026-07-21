@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../intake.dart';
 import 'mobile_intake_dialog.dart';
 
@@ -81,7 +81,7 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
         MessageUtils.showErrorSnackbar(context, next.message);
         notifier.dismissError();
       } else if (next is MobileIntakeFatalError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
         notifier.dismissError();
       } else if (next is MobileIntakeSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.intake_success_completed);

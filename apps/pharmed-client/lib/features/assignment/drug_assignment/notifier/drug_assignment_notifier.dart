@@ -177,6 +177,10 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     if (current is! DrugAssignmentCellSelected) return;
     if (!current.canSave) return;
 
+    // isMeasureUnit=true olan Drug'larda kullanıcı adet girer,
+    // backend ml bekler → toFillingBackendValue ile çevir.
+    // MedicalConsumable veya isMeasureUnit=false → dönüşüm yok (multiplier=1).
+
     final updated = current.assignment.copyWith(
       medicine: current.selectedDrug,
       minQuantity: current.minQty,

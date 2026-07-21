@@ -33,6 +33,7 @@ class PrescriptionDetailView extends StatelessWidget {
             exportFileName: 'Recete_Malzemeleri',
             horizontalScroll: true,
             minTableWidth: 3000,
+            columnDefs: [],
           ),
         );
       },

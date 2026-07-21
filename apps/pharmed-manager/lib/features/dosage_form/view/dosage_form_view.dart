@@ -11,7 +11,7 @@ Future<DosageForm?> showDosageFormView(BuildContext context) async {
     builder: (context) => ChangeNotifierProvider(
       create: (context) =>
           DosageFormNotifier(getDosageFormsUseCase: context.read(), deleteDosageFormUseCase: context.read())
-            ..getDosageForms(forceRefresh: true),
+            ..fetch(forceRefresh: true),
       child: Consumer<DosageFormNotifier>(
         builder: (context, vm, Widget? child) => CustomDialog(
           title: context.l10n.dosageForm_listDialogTitle,
@@ -49,11 +49,11 @@ class _DosageFormViewState extends State<DosageFormView> {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
-    if (notifier.hasNoSearchResults) {
+    if (notifier.isEmpty) {
       return EmptyStateWidget();
     }
 
-    if (notifier.allItems.isEmpty) {
+    if (notifier.items.isEmpty) {
       return EmptyStateWidget(
         icon: Icons.science_outlined,
         variant: EmptyStateVariant.custom,
@@ -63,10 +63,10 @@ class _DosageFormViewState extends State<DosageFormView> {
     }
 
     return ListView.builder(
-      itemCount: notifier.filteredItems.length,
+      itemCount: notifier.items.length,
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        final dosageForm = notifier.filteredItems[index];
+        final dosageForm = notifier.items[index];
         return MedEditableListCard(
           title: dosageForm.title,
           subtitle: dosageForm.subtitle,
@@ -82,7 +82,7 @@ class _DosageFormViewState extends State<DosageFormView> {
 Future<void> _onEdit(BuildContext context, {DosageForm? initial}) async {
   final result = await showDosageFormRegistrationDialog(context, initial: initial);
   if (result == true && context.mounted) {
-    context.read<DosageFormNotifier>().getDosageForms(forceRefresh: true);
+    context.read<DosageFormNotifier>().fetch(forceRefresh: true);
   }
 }
 

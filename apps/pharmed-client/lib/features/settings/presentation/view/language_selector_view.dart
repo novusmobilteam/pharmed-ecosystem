@@ -6,9 +6,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/enums/app_language.dart';
 import '../notifier/settings_notifier.dart';
 
 class LanguageSelectorView extends ConsumerWidget {
@@ -49,20 +49,6 @@ class _LangRow extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  String get _nativeName => switch (lang) {
-    AppLanguage.turkish => 'Türkçe',
-    AppLanguage.english => 'English',
-    AppLanguage.french => 'Français',
-    AppLanguage.arabic => 'العربية',
-  };
-
-  String get _code => switch (lang) {
-    AppLanguage.turkish => 'TR',
-    AppLanguage.english => 'EN',
-    AppLanguage.french => 'FR',
-    AppLanguage.arabic => 'AR',
-  };
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -85,7 +71,7 @@ class _LangRow extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    _nativeName,
+                    lang.nativeName,
                     style: TextStyle(
                       fontFamily: MedFonts.sans,
                       fontSize: 13,
@@ -94,7 +80,7 @@ class _LangRow extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    _code,
+                    lang.code,
                     style: TextStyle(
                       fontFamily: MedFonts.mono,
                       fontSize: 9,

@@ -7,6 +7,7 @@ import '../../../core/core.dart';
 import '../notifier/unapplied_prescriptions_notifier.dart';
 
 part 'prescription_detail_view.dart';
+part 'table_view.dart';
 
 class UnappliedPrescriptionsScreen extends StatelessWidget {
   const UnappliedPrescriptionsScreen({super.key, required this.menu});
@@ -27,34 +28,9 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
               mobile: const MedMobileLayout(),
               tablet: const MedTabletLayout(),
               desktop: MedDesktopLayout(
-                title: menu.name ?? context.l10n.unappliedPrescription_screenTitleFallback,
-                subtitle: menu.description,
+                menu: menu,
                 showAddButton: false,
-                child: MedTable<Prescription>(
-                  data: notifier.items,
-                  isLoading: notifier.isFetching,
-                  enableExcel: true,
-                  enableDateFilter: true,
-                  enableSearch: true,
-                  onSearchChanged: notifier.search,
-                  onDateRangeChanged: notifier.setDateRange,
-
-                  // Tablo Satır Aksiyonları
-                  actions: [
-                    TableActionItem(
-                      icon: PhosphorIcons.qrCode(),
-                      tooltip: context.l10n.unappliedPrescription_viewDetailsTooltip,
-                      color: context.colorScheme.onSurface,
-                      onPressed: (item) => showPrescriptionDetailView(context, prescription: item),
-                    ),
-                  ],
-                  emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
-
-                  enablePagination: true,
-                  pageSize: notifier.pageSize,
-                  currentPage: notifier.currentPage,
-                  onPageChanged: (page) => notifier.setPage(page),
-                ),
+                child: TableView(notifier: notifier),
               ),
             );
           },

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
 import '../../refill.dart';
 
@@ -82,7 +82,7 @@ class MobileRefillPanel extends StatelessWidget {
           options: [null, ...PrescriptionMovementType.refillableTypes],
           selected: ready.statusFilter,
           onChanged: notifier.onStatusFilterChanged,
-          labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+          labelBuilder: (type) => type?.label(context) ?? context.l10n.filter_all,
           bgColor: ready.statusFilter?.backgroundColor,
         ),
         MedFilterChipGroup<DateRangePreset>(

@@ -225,7 +225,7 @@ class _RxItemRowState extends ConsumerState<_RxItemRow> {
                     if (status != null) ...[
                       const SizedBox(height: MedSpacing.xs),
                       MedInfoChip(
-                        info: status.label,
+                        info: status.label(context),
                         backgroundColor: status.backgroundColor,
                         foregroundColor: status.foregroundColor,
                       ),

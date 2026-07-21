@@ -21,7 +21,6 @@ class MobileWasteView extends ConsumerWidget {
       dashboardNotifierProvider.select(
         (s) => switch (s) {
           DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-
           _ => null,
         },
       ),

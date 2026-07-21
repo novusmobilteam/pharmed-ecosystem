@@ -22,7 +22,7 @@ class MedRxMovementChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return MedChip(
       border: Colors.transparent,
-      label: useActionLabel ? status.actionLabel : status.label,
+      label: useActionLabel ? status.actionLabel(context) : status.label(context),
       background: status.backgroundColor,
       foreground: status.foregroundColor,
     );

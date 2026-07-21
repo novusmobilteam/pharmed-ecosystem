@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -73,7 +72,7 @@ class TableColumnDef<T> {
   final double flex;
   final bool numeric;
   final Widget? Function(T item)? cellBuilder;
-  final String Function(T item)? displayValue;
+  final String? Function(T item)? displayValue;
   final Comparable? Function(T item)? sortValue;
 }
 
@@ -81,7 +80,7 @@ class TableColumnDef<T> {
 /// [colIndex]  → kolonun listedeki sırası (0-based)
 /// [value]     → item.content[contentIndex] (contentIndex null ise null)
 /// null döndürülürse varsayılan text render kullanılır.
-typedef CellBuilder<T extends TableData> = Widget? Function(T item, int colIndex, dynamic value);
+typedef CellBuilder<T extends Object> = Widget? Function(T item, int colIndex, dynamic value);
 
 class TableSideCategory {
   final String id;
@@ -92,7 +91,7 @@ class TableSideCategory {
 
 // ─── ACTION ITEM ─────────────────────────────────────────────────────────────
 
-class TableActionItem<T extends TableData> {
+class TableActionItem<T extends Object> {
   final IconData icon;
   final String tooltip;
   final Color? color;

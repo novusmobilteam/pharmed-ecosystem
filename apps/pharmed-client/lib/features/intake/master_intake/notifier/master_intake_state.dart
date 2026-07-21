@@ -27,6 +27,8 @@
 import 'package:pharmed_client/features/intake/intake.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/hardware/hardware.dart';
+
 sealed class MasterIntakeState {
   const MasterIntakeState();
 }
@@ -210,9 +212,9 @@ final class MasterIntakeExecuting extends MasterIntakeState {
 /// çekmece) oluşmuştur; kullanıcıya "ilaçları geri bırakın" yönlendirmesiyle
 /// devam/sonlandır seçeneği sunulur.
 final class MasterIntakeError extends MasterIntakeState {
-  const MasterIntakeError({required this.message, required this.previousState, this.isQueueError = false});
+  const MasterIntakeError({required this.failure, required this.previousState, this.isQueueError = false});
 
-  final String message;
+  final CabinOperationFailure failure;
   final MasterIntakeState previousState;
   final bool isQueueError;
 }

@@ -9,11 +9,9 @@ class SettingsRepository implements ISettingsRepository {
   final SettingsDataSource _remoteDataSource;
   final AppSettingsPersistence _localPersistence;
 
-  SettingsRepository({
-    required SettingsDataSource remoteDataSource,
-    required AppSettingsPersistence localPersistence,
-  })  : _remoteDataSource = remoteDataSource,
-        _localPersistence = localPersistence;
+  SettingsRepository({required SettingsDataSource remoteDataSource, required AppSettingsPersistence localPersistence})
+    : _remoteDataSource = remoteDataSource,
+      _localPersistence = localPersistence;
 
   @override
   Future<Result<List<SystemParameter>>> getSystemParameters() async {
@@ -55,4 +53,10 @@ class SettingsRepository implements ISettingsRepository {
 
   @override
   Future<void> clearSettings() => _localPersistence.clearSettings();
+
+  @override
+  AppLanguage getLanguage() => _localPersistence.getLanguage();
+
+  @override
+  Future<void> setLanguage(AppLanguage language) => _localPersistence.setLanguage(language);
 }

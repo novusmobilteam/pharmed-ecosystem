@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class WarningNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Warning> {
+class WarningNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetWarningsUseCase _getWarningsUseCase;
   final DeleteWarningUseCase _deleteWarningUseCase;
 
@@ -13,6 +13,9 @@ class WarningNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<W
   OperationKey deleteOp = OperationKey.delete();
 
   bool get isFetching => isLoading(fetchOp);
+
+  List<Warning> _items = [];
+  List<Warning> get items => _items;
 
   Warning? _selectedWarning;
   Warning? get selectedWarning => _selectedWarning;
@@ -34,7 +37,7 @@ class WarningNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<W
 
   // Functions
   Future<void> getWarnings() async {
-    await execute(fetchOp, operation: () => _getWarningsUseCase.call(), onData: (data) => allItems = data);
+    await execute(fetchOp, operation: () => _getWarningsUseCase.call(), onData: (data) => _items = data);
   }
 
   Future<void> deleteWarning(

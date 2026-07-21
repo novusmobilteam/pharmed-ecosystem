@@ -2,7 +2,7 @@
 // görüntülenmek istendiğinde kullanılan model.
 import 'package:pharmed_core/pharmed_core.dart';
 
-class RefillListDetail implements TableData {
+class RefillListDetail {
   final int? id;
   final int? fillingListId;
   final int? medicineId;
@@ -50,15 +50,6 @@ class RefillListDetail implements TableData {
   String get position => '$_address / ${cabinDrawer?.orderNo}';
 
   bool get isFilled => (quantity ?? 0) == (fillingQuantity ?? 0);
-
-  @override
-  List get content => [medicineId, medicine?.name, medicine?.barcode];
-
-  @override
-  List get rawContent => [medicineId, medicine?.name, medicine?.barcode];
-
-  @override
-  List<String?> get titles => [];
 }
 
 extension FillingDetailAdapter on RefillListDetail {

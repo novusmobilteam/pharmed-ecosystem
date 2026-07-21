@@ -16,13 +16,14 @@ import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../auth/auth.dart';
 import '../../../census/census.dart';
 import '../../../drug_activity/drug_activity.dart';
 import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
+import '../../../settings/presentation/notifier/settings_notifier.dart';
 import '../../../waste/waste.dart';
 
 import '../notifier/dashboard_notifier.dart';
@@ -131,6 +132,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 Navigator.of(ctx).pop();
               }
             },
+            currentLanguage: ref.watch(settingsNotifierProvider.select((s) => s.language)),
+            onLanguageChanged: (lang) => ref.read(settingsNotifierProvider.notifier).setLanguage(lang),
           );
         },
       ),

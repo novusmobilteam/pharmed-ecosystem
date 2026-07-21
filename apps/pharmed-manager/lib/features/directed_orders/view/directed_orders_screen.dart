@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
@@ -30,22 +29,15 @@ class DirectedOrdersScreen extends StatelessWidget {
   }
 
   Widget _buildDesktopLayout(BuildContext context, DirectedOrdersViewModel vm) {
-    return MedDesktopLayout(
-      title: context.l10n.directedOrdersScreenTitle,
-      showAddButton: false,
-      child: _buildContent(context, vm),
-    );
+    return Center();
+    // return MedDesktopLayout(
+    //   menu: menu,
+    //   showAddButton: false,
+    //   child: _buildContent(context, vm),
+    // );
   }
 
-  Widget _buildContent(BuildContext context, DirectedOrdersViewModel vm) {
-    if (vm.isFetching && vm.isEmpty) {
-      return const Center(child: CircularProgressIndicator.adaptive());
-    }
-
-    if (vm.isEmpty) {
-      return EmptyStateWidget();
-    }
-
-    return _TableView(vm: vm);
-  }
+  // Widget _buildContent(BuildContext context, DirectedOrdersViewModel vm) {
+  //   return _TableView(vm: vm);
+  // }
 }

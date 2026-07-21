@@ -1,6 +1,6 @@
 export 'data/unit_dto.dart';
 
-export 'domain/model/unit.dart';
+export 'domain/entity/unit.dart';
 export 'domain/repository/i_unit_repository.dart';
 
 export 'domain/usecase/create_unit_usecase.dart';

@@ -31,6 +31,7 @@ class StationTableView extends StatelessWidget {
           pageSize: notifier.pageSize,
           currentPage: notifier.currentPage,
           onPageChanged: (page) => notifier.setPage(page),
+          columnDefs: _buildColumnDefs(context),
         );
       },
     );
@@ -44,8 +45,32 @@ void _onDelete(BuildContext context, StationNotifier notifier, Station station) 
       await notifier.deleteStation(
         station,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
+        onSuccess: (msg) =>
+            MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
       );
     },
   );
 }
+
+List<TableColumnDef<Station>> _buildColumnDefs(BuildContext context) => [
+  TableColumnDef(title: context.l10n.tableCore_stationCodeColumn, displayValue: (item) => item.id?.toString()),
+  TableColumnDef(title: context.l10n.tableCore_stationNameColumn, displayValue: (item) => item.title),
+  TableColumnDef(
+    title: context.l10n.tableCore_serviceColumn,
+    displayValue: (item) => item.service?.name?.toString() ?? '-',
+  ),
+  TableColumnDef(
+    title: context.l10n.tableCore_stationDrugWarehouseColumn,
+    displayValue: (item) => item.materialWarehouse?.name,
+  ),
+  TableColumnDef(title: context.l10n.tableCore_stationDrugColumn, displayValue: (item) => item.drugStatus.label),
+  TableColumnDef(
+    title: context.l10n.tableCore_stationConsumableWarehouseColumn,
+    displayValue: (item) => item.medicalConsumableWarehouse?.name,
+  ),
+  TableColumnDef(
+    title: context.l10n.tableCore_stationConsumableColumn,
+    displayValue: (item) => item.medicalConsumableStatus.label,
+  ),
+  TableColumnDef(title: context.l10n.tableCore_stationWorkingTypeColumn, displayValue: (item) => item.type?.label),
+];

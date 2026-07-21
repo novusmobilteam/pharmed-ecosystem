@@ -11,7 +11,7 @@ FooterContent _refillFooter(
 
   // ── Hint ──
   final hint = switch (state) {
-    MobileRefillFatalError(:final message) => l10n.cabinOperation_hint_fatalError(message),
+    MobileRefillFatalError(:final failure) => failure.message(context),
     MobileRefillSaving() => l10n.common_action_saving,
     MobileRefillSuccess() => l10n.cabinOperation_hint_completed,
     MobileRefillError() => l10n.cabinOperation_hint_error,
@@ -38,7 +38,9 @@ FooterContent _refillFooter(
       SizedBox(width: 10),
       FooterActions.primary(l10n.session_timeout_continueButton, notifier.retryEarlyClose),
     ],
-    _ when ready.canComplete => [FooterActions.primary(l10n.cabinOperation_action_completeGeneric, notifier.completeRefill)],
+    _ when ready.canComplete => [
+      FooterActions.primary(l10n.cabinOperation_action_completeGeneric, notifier.completeRefill),
+    ],
     _ => [FooterActions.primary(l10n.cabinOperation_action_completeGeneric, null)], // disabled
   };
 

@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class Patient extends Selectable implements TableData {
+class Patient extends Selectable {
   final String? tcNo;
   final int? weight;
   final String? name;
@@ -58,22 +58,6 @@ class Patient extends Selectable implements TableData {
 
     return Patient(id: id, name: name, tcNo: tcNo, protocolNo: protocolNo);
   }
-
-  // TableData
-  @override
-  List<String?> get titles => const ['T.C NO', 'Ad', 'Soyad', 'Cinsiyet', 'Protokol No'];
-
-  @override
-  List<String?> get content => [
-    tcNo?.toString() ?? '-',
-    name ?? '-',
-    surname ?? '-',
-    gender?.label ?? '-',
-    protocolNo ?? '-',
-  ];
-
-  @override
-  List get rawContent => content;
 
   Patient copyWith({
     int? id,

@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/flavor/app_flavor.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import '../config/auth_config.dart';
+import '../flavor/auth_config.dart';
 import 'providers.dart';
 
 // ── Config ────────────────────────────────────────────────────────

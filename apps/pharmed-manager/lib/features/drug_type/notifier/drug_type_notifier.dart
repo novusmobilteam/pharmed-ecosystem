@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
 /// İlaç tipi listesi ViewModel'i.
-class DrugTypeNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<DrugType> {
+class DrugTypeNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<DrugType> {
   final GetDrugTypesUseCase _getDrugTypesUseCase;
   final DeleteDrugTypeUseCase _deleteDrugTypeUseCase;
 
@@ -17,12 +17,12 @@ class DrugTypeNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<
 
   bool get isFetching => isLoading(fetchOp);
 
-  // Functions
-  Future<void> getDrugTypes() async {
-    await execute(
-      fetchOp,
-      operation: () => _getDrugTypesUseCase.call(GetDrugTypesParams()),
-      onData: (response) => allItems = response.data ?? [],
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      op: fetchOp,
+      fetchMethod: (skip, take) =>
+          _getDrugTypesUseCase.call(PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery)),
     );
   }
 
@@ -37,7 +37,7 @@ class DrugTypeNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         onSuccess?.call(null);
-        getDrugTypes();
+        fetch();
       },
     );
   }

@@ -4,6 +4,7 @@ import '../../../../core/core.dart';
 import 'package:provider/provider.dart';
 
 import '../notifier/cabin_temperature_report_notifier.dart';
+part 'table_view.dart';
 
 class CabinTemperatureReportScreen extends StatelessWidget {
   const CabinTemperatureReportScreen({super.key, required this.menu});
@@ -20,51 +21,7 @@ class CabinTemperatureReportScreen extends StatelessWidget {
       child: MedResponsiveLayout(
         mobile: MedMobileLayout(),
         tablet: MedTabletLayout(),
-        desktop: MedDesktopLayout(
-          title: menu.name ?? context.l10n.report_stationTransactionTitleFallback,
-          subtitle: menu.description,
-          child: Consumer<CabinTemperatureReportNotifier>(
-            builder: (context, notifier, _) {
-              return MedTable(
-                data: notifier.items,
-                isLoading: notifier.isFetching,
-                enableExcel: true,
-                enableSearch: true,
-                enablePDF: true,
-                enableDateFilter: true,
-
-                // Pagination
-                enablePagination: true,
-                pageSize: notifier.pageSize,
-                currentPage: notifier.currentPage,
-                serverTotalCount: notifier.totalCount,
-                onPageChanged: notifier.setPage,
-
-                // Filter & Search
-                initialDateRange: notifier.dateRange,
-                onDateRangeChanged: notifier.setDateRange,
-                onSearchChanged: notifier.search,
-
-                // Kategori
-                categories: notifier.tableCategories,
-                selectedCategoryId: notifier.selectedCategoryId,
-                onCategoryChanged: (id) =>
-                    notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
-                categoryTitle: context.l10n.report_stationsCategoryTitle,
-                toolbarActions: [
-                  // TODO : Localization
-                  MedRectangleIconButton(
-                    tooltip: !notifier.showOutOfRange ? 'Sınırı Aşanları Göster' : 'Tümünü Göster',
-                    iconData: !notifier.showOutOfRange ? PhosphorIcons.bellRinging() : PhosphorIcons.bell(),
-                    color: MedColors.amberLight,
-                    iconColor: MedColors.amber,
-                    onPressed: notifier.toggleOutOfRange,
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
+        desktop: MedDesktopLayout(menu: menu, child: TableView()),
       ),
     );
   }

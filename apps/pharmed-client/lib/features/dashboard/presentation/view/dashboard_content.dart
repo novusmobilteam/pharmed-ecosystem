@@ -209,9 +209,9 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
             ),
             DashboardRxInfoLine(context.l10n.dashboardDoctorLabel, item.doctor?.fullName ?? '-'),
             DashboardRxInfoLine(
-              'SERVİS',
+              context.l10n.assignment_serviceLabel,
               item.prescription?.hospitalization?.physicalService?.name ?? '-',
-            ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            ),
             DashboardRxInfoLine(
               context.l10n.dashboardRoomBedLabel,
               [

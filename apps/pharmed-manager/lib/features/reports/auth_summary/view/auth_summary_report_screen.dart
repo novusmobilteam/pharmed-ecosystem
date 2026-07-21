@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../notifier/auth_summary_report_notifier.dart';
 
 part 'user_auth_summary_view.dart';
+part 'table_view.dart';
 
 class AuthSummaryReportScreen extends StatelessWidget {
   const AuthSummaryReportScreen({super.key, required this.menu});
@@ -23,35 +24,10 @@ class AuthSummaryReportScreen extends StatelessWidget {
         mobile: MedMobileLayout(),
         tablet: MedTabletLayout(),
         desktop: MedDesktopLayout(
-          title: menu.name ?? context.l10n.report_stationTransactionTitleFallback,
-          subtitle: menu.description,
+          menu: menu,
           child: Consumer<AuthSummaryReportNotifier>(
             builder: (context, notifier, _) {
-              return MedTable<UserAuthorizationSummary>(
-                data: notifier.items,
-                isLoading: notifier.isFetching,
-                enableExcel: true,
-                enableSearch: true,
-                enablePDF: true,
-
-                // Pagination
-                enablePagination: true,
-                pageSize: notifier.pageSize,
-                currentPage: notifier.currentPage,
-                serverTotalCount: notifier.totalCount,
-                onPageChanged: notifier.setPage,
-
-                onSearchChanged: notifier.search,
-                actions: [
-                  TableActionItem(
-                    icon: PhosphorIcons.dotsThreeVertical(),
-                    tooltip: 'Detayları Gör',
-                    onPressed: (summary) {
-                      showAuthSummaryView(context, summary.userId ?? 0);
-                    },
-                  ),
-                ],
-              );
+              return TableView(notifier: notifier);
             },
           ),
         ),

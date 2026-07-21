@@ -9,7 +9,7 @@ Future<Unit?> showUnitView(BuildContext context) async {
   return await showDialog<Unit?>(
     context: context,
     builder: (context) => ChangeNotifierProvider(
-      create: (context) => UnitNotifier(getUnitsUseCase: context.read(), deleteUnitUseCase: context.read())..getUnits(),
+      create: (context) => UnitNotifier(getUnitsUseCase: context.read(), deleteUnitUseCase: context.read())..fetch(),
       child: Consumer<UnitNotifier>(
         builder: (context, notifier, Widget? child) => CustomDialog(
           title: context.l10n.unitDialogTitle,
@@ -47,11 +47,7 @@ class _UnitViewState extends State<UnitView> {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
-    if (notifier.hasNoSearchResults) {
-      return EmptyStateWidget(variant: EmptyStateVariant.noResults);
-    }
-
-    if (notifier.allItems.isEmpty) {
+    if (notifier.items.isEmpty) {
       return EmptyStateWidget(
         icon: Icons.square_foot_outlined,
         variant: EmptyStateVariant.custom,
@@ -61,10 +57,10 @@ class _UnitViewState extends State<UnitView> {
     }
 
     return ListView.builder(
-      itemCount: notifier.filteredItems.length,
+      itemCount: notifier.items.length,
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        final unit = notifier.filteredItems[index];
+        final unit = notifier.items[index];
         return MedEditableListCard(
           title: unit.title,
           subtitle: unit.subtitle,
@@ -80,7 +76,7 @@ class _UnitViewState extends State<UnitView> {
 Future<void> _onEdit(BuildContext context, {Unit? initial}) async {
   final result = await showUnitFormDialog(context, initial: initial);
   if (result == true && context.mounted) {
-    context.read<UnitNotifier>().getUnits();
+    context.read<UnitNotifier>().fetch();
   }
 }
 

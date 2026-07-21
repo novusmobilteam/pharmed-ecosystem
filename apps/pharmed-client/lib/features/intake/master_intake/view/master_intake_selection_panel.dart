@@ -19,8 +19,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../core/cabin_operation/patient_gateway/master_cabin_patient_picker_panel.dart'
-    show CabinPatientPickerPanel;
+import '../../../../core/hardware/patient_gateway/master_cabin_patient_picker_panel.dart' show CabinPatientPickerPanel;
 import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
 import 'intake_operation_card.dart';
@@ -193,7 +192,10 @@ class _RunningBar extends StatelessWidget {
             children: [
               Icon(PhosphorIcons.lock(), size: 15, color: MedColors.text3),
               Expanded(
-                child: Text(context.l10n.intake_hint_selectionLocked, style: MedTextStyles.bodySm(color: MedColors.text3)),
+                child: Text(
+                  context.l10n.intake_hint_selectionLocked,
+                  style: MedTextStyles.bodySm(color: MedColors.text3),
+                ),
               ),
             ],
           ),

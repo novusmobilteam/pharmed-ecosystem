@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class RefillObject extends TableData {
+class RefillObject {
   // Birden fazla göz kaydını taşımak için liste
   // Detay modunda: her eleman bir FillingDetail.id
   // Create modunda: tek elemanlı veya boş
@@ -37,15 +37,6 @@ class RefillObject extends TableData {
       stocks: stocks ?? this.stocks,
     );
   }
-
-  @override
-  List<dynamic> get content => [medicine?.name, medicine?.barcode];
-
-  @override
-  List<dynamic> get rawContent => [medicine?.name, medicine?.barcode];
-
-  @override
-  List<String?> get titles => ['İlaç Adı', 'İlaç Barkodu'];
 }
 
 extension FillingObjectAdapter on RefillObject {

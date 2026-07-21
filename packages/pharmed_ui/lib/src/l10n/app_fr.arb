@@ -181,10 +181,14 @@
   "@common_genericErrorMessage": {
     "description": "Generic fallback error message shown when an operation fails without a specific error"
   },
+  "common_boolYes": "Oui",
+  "common_boolNo": "Non",
+  "common_action_discharge": "Sortie du patient",
   "hospitalizationCard_noDoctorFallback": "Aucun médecin spécifié",
   "@hospitalizationCard_noDoctorFallback": {
     "description": "Fallback text shown on the hospitalization card when the doctor's name is null"
   },
+
   "hospitalizationCard_nationalIdLabel": "N° d'identité nationale",
   "@hospitalizationCard_nationalIdLabel": {
     "description": "Footer info label for the patient's national ID number on the hospitalization card"
@@ -4257,6 +4261,11 @@
       }
     }
   },
+ "date_preset_today": "Aujourd'hui",
+"date_preset_tomorrow": "Demain",
+"date_preset_last_3_days": "3 derniers jours",
+"date_preset_last_7_days": "7 derniers jours",
+"date_preset_all": "Tout",
   "cabin_lockButton": "Verrouiller",
   "@cabin_lockButton": {
     "description": "Lock button label in the cabin action bar"
@@ -4512,5 +4521,251 @@
 "refill_stop_confirmYes": "Oui, arrêter",
 "@refill_stop_confirmYes": {
   "description": "Confirm button on the stop-refill confirmation dialog"
-}
+},
+"enumCore_prescriptionMovementPendingApprovalLabel": "En attente d'approbation",
+"@enumCore_prescriptionMovementPendingApprovalLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — étiquette de statut affichée dans les badges et les listes"
+},
+"enumCore_prescriptionMovementPurchasePendingLabel": "En attente d'achat",
+"@enumCore_prescriptionMovementPurchasePendingLabel": {
+  "description": "PrescriptionMovementType.purchasePending — étiquette de statut"
+},
+"enumCore_prescriptionMovementAppliedLabel": "Appliqué",
+"@enumCore_prescriptionMovementAppliedLabel": {
+  "description": "PrescriptionMovementType.applied — étiquette de statut"
+},
+"enumCore_prescriptionMovementReturnedLabel": "Retourné",
+"@enumCore_prescriptionMovementReturnedLabel": {
+  "description": "PrescriptionMovementType.returned — étiquette de statut"
+},
+"enumCore_prescriptionMovementWastagedLabel": "Gaspillé",
+"@enumCore_prescriptionMovementWastagedLabel": {
+  "description": "PrescriptionMovementType.wastaged — étiquette de statut"
+},
+"enumCore_prescriptionMovementDestructedLabel": "Détruit",
+"@enumCore_prescriptionMovementDestructedLabel": {
+  "description": "PrescriptionMovementType.destructed — étiquette de statut"
+},
+"enumCore_prescriptionMovementCancelledLabel": "Annulé",
+"@enumCore_prescriptionMovementCancelledLabel": {
+  "description": "PrescriptionMovementType.cancelled — étiquette de statut"
+},
+"enumCore_prescriptionMovementRejectedLabel": "Rejeté",
+"@enumCore_prescriptionMovementRejectedLabel": {
+  "description": "PrescriptionMovementType.rejected — étiquette de statut"
+},
+"enumCore_prescriptionMovementFilledWaitingLabel": "En attente de remplissage",
+"@enumCore_prescriptionMovementFilledWaitingLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — étiquette de statut"
+},
+"enumCore_prescriptionMovementReturnPendingLabel": "Retour en attente",
+"@enumCore_prescriptionMovementReturnPendingLabel": {
+  "description": "PrescriptionMovementType.returnPending — étiquette de statut"
+},
+"enumCore_prescriptionMovementUnloadedLabel": "Déchargé",
+"@enumCore_prescriptionMovementUnloadedLabel": {
+  "description": "PrescriptionMovementType.unloaded — étiquette de statut"
+},
+"enumCore_prescriptionMovementShortageReportedLabel": "Pénurie signalée",
+"@enumCore_prescriptionMovementShortageReportedLabel": {
+  "description": "PrescriptionMovementType.shortageReported — étiquette de statut"
+},
+"enumCore_prescriptionMovementReplenishmentPendingLabel": "Réapprovisionnement en attente",
+"@enumCore_prescriptionMovementReplenishmentPendingLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — étiquette de statut"
+},
+
+"enumCore_prescriptionMovementPendingApprovalActorLabel": "Créé par",
+"@enumCore_prescriptionMovementPendingApprovalActorLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — étiquette de l'acteur ayant effectué l'action"
+},
+"enumCore_prescriptionMovementPurchasePendingActorLabel": "Rempli par",
+"@enumCore_prescriptionMovementPurchasePendingActorLabel": {
+  "description": "PrescriptionMovementType.purchasePending — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementAppliedActorLabel": "Appliqué par",
+"@enumCore_prescriptionMovementAppliedActorLabel": {
+  "description": "PrescriptionMovementType.applied — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementReturnedActorLabel": "Retourné par",
+"@enumCore_prescriptionMovementReturnedActorLabel": {
+  "description": "PrescriptionMovementType.returned — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementWastagedActorLabel": "Gaspillé par",
+"@enumCore_prescriptionMovementWastagedActorLabel": {
+  "description": "PrescriptionMovementType.wastaged — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementDestructedActorLabel": "Détruit par",
+"@enumCore_prescriptionMovementDestructedActorLabel": {
+  "description": "PrescriptionMovementType.destructed — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementCancelledActorLabel": "Annulé par",
+"@enumCore_prescriptionMovementCancelledActorLabel": {
+  "description": "PrescriptionMovementType.cancelled — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementRejectedActorLabel": "Rejeté par",
+"@enumCore_prescriptionMovementRejectedActorLabel": {
+  "description": "PrescriptionMovementType.rejected — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementFilledWaitingActorLabel": "Approuvé par",
+"@enumCore_prescriptionMovementFilledWaitingActorLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementReturnPendingActorLabel": "Retour demandé par",
+"@enumCore_prescriptionMovementReturnPendingActorLabel": {
+  "description": "PrescriptionMovementType.returnPending — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementUnloadedActorLabel": "Déchargé par",
+"@enumCore_prescriptionMovementUnloadedActorLabel": {
+  "description": "PrescriptionMovementType.unloaded — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementShortageReportedActorLabel": "Pénurie signalée par",
+"@enumCore_prescriptionMovementShortageReportedActorLabel": {
+  "description": "PrescriptionMovementType.shortageReported — étiquette de l'acteur"
+},
+"enumCore_prescriptionMovementReplenishmentPendingActorLabel": "Réapprovisionnement approuvé par",
+"@enumCore_prescriptionMovementReplenishmentPendingActorLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — étiquette de l'acteur"
+},
+
+"enumCore_prescriptionMovementPendingApprovalActionLabel": "Créé",
+"@enumCore_prescriptionMovementPendingApprovalActionLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — étiquette de l'action ayant conduit à cet état"
+},
+"enumCore_prescriptionMovementPurchasePendingActionLabel": "Rempli",
+"@enumCore_prescriptionMovementPurchasePendingActionLabel": {
+  "description": "PrescriptionMovementType.purchasePending — étiquette de l'action"
+},
+"enumCore_prescriptionMovementAppliedActionLabel": "Appliqué",
+"@enumCore_prescriptionMovementAppliedActionLabel": {
+  "description": "PrescriptionMovementType.applied — étiquette de l'action"
+},
+"enumCore_prescriptionMovementReturnedActionLabel": "Retourné",
+"@enumCore_prescriptionMovementReturnedActionLabel": {
+  "description": "PrescriptionMovementType.returned — étiquette de l'action"
+},
+"enumCore_prescriptionMovementWastagedActionLabel": "Gaspillé",
+"@enumCore_prescriptionMovementWastagedActionLabel": {
+  "description": "PrescriptionMovementType.wastaged — étiquette de l'action"
+},
+"enumCore_prescriptionMovementDestructedActionLabel": "Détruit",
+"@enumCore_prescriptionMovementDestructedActionLabel": {
+  "description": "PrescriptionMovementType.destructed — étiquette de l'action"
+},
+"enumCore_prescriptionMovementCancelledActionLabel": "Annulé",
+"@enumCore_prescriptionMovementCancelledActionLabel": {
+  "description": "PrescriptionMovementType.cancelled — étiquette de l'action"
+},
+"enumCore_prescriptionMovementRejectedActionLabel": "Rejeté",
+"@enumCore_prescriptionMovementRejectedActionLabel": {
+  "description": "PrescriptionMovementType.rejected — étiquette de l'action"
+},
+"enumCore_prescriptionMovementFilledWaitingActionLabel": "Approuvé",
+"@enumCore_prescriptionMovementFilledWaitingActionLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — étiquette de l'action"
+},
+"enumCore_prescriptionMovementReturnPendingActionLabel": "Retour demandé",
+"@enumCore_prescriptionMovementReturnPendingActionLabel": {
+  "description": "PrescriptionMovementType.returnPending — étiquette de l'action"
+},
+"enumCore_prescriptionMovementUnloadedActionLabel": "Déchargé",
+"@enumCore_prescriptionMovementUnloadedActionLabel": {
+  "description": "PrescriptionMovementType.unloaded — étiquette de l'action"
+},
+"enumCore_prescriptionMovementShortageReportedActionLabel": "Pénurie signalée",
+"@enumCore_prescriptionMovementShortageReportedActionLabel": {
+  "description": "PrescriptionMovementType.shortageReported — étiquette de l'action"
+},
+"enumCore_prescriptionMovementReplenishmentPendingActionLabel": "Réapprovisionnement approuvé",
+"@enumCore_prescriptionMovementReplenishmentPendingActionLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — étiquette de l'action"
+},
+"userAuth_table_firstNameColumn": "Prénom",
+"userAuth_table_lastNameColumn": "Nom",
+"userAuth_table_occupationTypeColumn": "Type de profession",
+"userAuth_table_expiryDateColumn": "Date d'expiration",
+"userAuth_table_remainingDaysColumn": "Jours restants",
+"userAuth_table_statusColumn": "Statut",
+"medicine_table_barcodeColumn": "Code-barres",
+"medicine_table_atcCodeColumn": "Code ATC",
+"medicine_table_nameColumn": "Nom",
+"medicine_table_materialTypeColumn": "Type de matériel",
+"medicine_table_prescriptionTypeColumn": "Type d'ordonnance",
+"medicine_table_countTypeColumn": "Type de comptage",
+"medicine_table_purchaseTypeColumn": "Mode d'acquisition",
+"medicine_table_returnTypeColumn": "Mode de retour",
+"medicine_table_statusColumn": "Actif",
+"enumCore_medicineTypeDrug": "Médicament",
+"enumCore_medicineTypeConsumable": "Consommable médical",
+"refund_table_patientCodeColumn": "Code patient",
+"refund_table_patientColumn": "Patient",
+"refund_table_userColumn": "Utilisateur",
+"refund_table_medicineColumn": "Médicament",
+"refund_table_quantityColumn": "Quantité",
+"refund_table_dateColumn": "Date",
+"refund_table_approvedUserColumn": "Retour accepté par",
+"refund_table_approvedDateColumn": "Date d'acceptation",
+"refund_table_descriptionColumn": "Description",
+"authorization_table_userColumn": "Utilisateur",
+"authorization_table_roleColumn": "Rôle",
+"authorization_table_encryptedLoginColumn": "Connexion chiffrée",
+"authorization_table_isDeletedColumn": "Supprimé",
+"authorization_table_extraAuthCountColumn": "Autorisation supplémentaire",
+"cabinTemperature_table_dateColumn": "Date",
+"cabinTemperature_table_cabinColumn": "Armoire",
+"cabinTemperature_table_insideTempColumn": "Température intérieure",
+"cabinTemperature_table_outsideTempColumn": "Température extérieure",
+"cabinTemperature_table_humidityColumn": "Humidité",
+"cabinTemperature_action_showOutOfRange": "Afficher hors limites",
+"cabinTemperature_action_showAll": "Tout afficher",
+"expiredItems_table_barcodeColumn": "Code-barres",
+"expiredItems_table_medicineColumn": "Médicament",
+"expiredItems_table_cabinColumn": "Armoire",
+"expiredItems_table_locationColumn": "Emplacement",
+"expiredItems_table_minQuantityColumn": "Minimum",
+"expiredItems_table_maxQuantityColumn": "Maximum",
+"expiredItems_table_criticalQuantityColumn": "Critique",
+"expiredItems_table_quantityColumn": "Quantité",
+"expiredItems_table_expiryDateColumn": "Date d'exp.",
+"expiredItems_table_remainingDaysColumn": "Jours restants",
+"hospitalStock_table_serviceColumn": "Service",
+"hospitalStock_table_codeColumn": "Code",
+"hospitalStock_table_medicineColumn": "Médicament",
+"hospitalStock_table_quantityColumn": "Quantité",
+"patientInventory_table_doctorColumn": "Médecin",
+"patientInventory_table_departmentColumn": "Département",
+"patientInventory_table_barcodeColumn": "Code-barres",
+"patientInventory_table_medicineColumn": "Médicament",
+"patientInventory_table_requestedQuantityColumn": "Qté demandée",
+"patientInventory_table_processedQuantityColumn": "Qté traitée",
+"patientInventory_table_requestDateColumn": "Date de demande",
+"patientInventory_table_processDateColumn": "Date de traitement",
+"patientInventory_table_movementColumn": "Mouvement",
+"patientInventory_pdf_title": "Liste d'inventaire du patient {patientName}",
+"patientInventory_pdf_patientCode": "Code patient : {code}",
+"patientInventory_pdf_service": "Service : {name}",
+"patientInventory_pdf_bed": "Lit : {name}",
+"patientInventory_pdf_reportDate": "Date du rapport : {date}",
+"service_table_nameColumn": "Nom du service",
+"service_table_branchColumn": "Branche",
+"service_table_managerColumn": "Responsable du service",
+"service_table_statusColumn": "Statut",
+"unappliedPrescription_table_serviceColumn": "Service",
+"unappliedPrescription_table_roomColumn": "Chambre",
+"unappliedPrescription_table_bedColumn": "Lit",
+"unappliedPrescription_table_patientCodeColumn": "Code patient",
+"unappliedPrescription_table_patientColumn": "Patient",
+"unappliedPrescription_table_hospitalizationCodeColumn": "Code d'admission",
+"unappliedPrescription_table_admissionDateColumn": "Date d'admission",
+"unappliedPrescription_table_pendingCountColumn": "En attente",
+"drugActivity_table_dateColumn": "Date",
+"drugActivity_table_timeColumn": "Heure",
+"drugActivity_table_patientColumn": "Patient",
+"drugActivity_table_userColumn": "Utilisateur",
+"drugActivity_table_medicineColumn": "Médicament",
+"drugActivity_table_quantityColumn": "Quantité",
+"drugActivity_table_movementColumn": "Mouvement",
+"rfid_notConnectedError": "Le lecteur RFID n'est pas connecté",
+"rfid_inventoryStartFailedError": "Échec du démarrage de l'inventaire RFID : {detail}",
+"rfid_inventoryStreamError": "Erreur du flux d'inventaire RFID : {detail}"
 }

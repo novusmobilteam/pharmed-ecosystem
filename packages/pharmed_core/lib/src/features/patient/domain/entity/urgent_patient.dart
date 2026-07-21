@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class UrgentPatient extends TableData {
+class UrgentPatient {
   final int? id;
   final int? code;
   final int? patientId;
@@ -9,13 +9,4 @@ class UrgentPatient extends TableData {
   final DateTime? admissionDate;
 
   UrgentPatient({this.id, this.code, this.patientId, this.patient, this.prescriptionItems, this.admissionDate});
-
-  @override
-  List<dynamic> get content => [patient, prescriptionItems];
-
-  @override
-  List<dynamic> get rawContent => [patient, prescriptionItems];
-
-  @override
-  List<String?> get titles => ['Hasta Bilgileri', 'İlaçlar'];
 }

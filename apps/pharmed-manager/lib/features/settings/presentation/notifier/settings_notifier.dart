@@ -2,14 +2,19 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-
 import '../../domain/entity/system_parameter.dart';
 import '../../domain/repository/i_settings_repository.dart';
 
 class SettingsNotifier extends ChangeNotifier with ApiRequestMixin {
   final ISettingsRepository _repository;
+  final TokenHolder _tokenHolder;
 
-  SettingsNotifier({required ISettingsRepository repository}) : _repository = repository;
+  SettingsNotifier({required ISettingsRepository repository, required TokenHolder tokenHolder})
+    : _repository = repository,
+      _tokenHolder = tokenHolder {
+    _language = _repository.getLanguage();
+    _tokenHolder.setLocale(_language.code);
+  }
 
   OperationKey fetchOp = OperationKey.fetch();
   OperationKey submitOp = OperationKey.submit();
@@ -20,22 +25,30 @@ class SettingsNotifier extends ChangeNotifier with ApiRequestMixin {
   AppMode? get currentMode => _repository.currentMode;
   bool get isAdminModeActive => _repository.isAdminModeActive;
 
+  // ── Dil ──────────────────────────────────────────────────────────────────
+  late AppLanguage _language;
+  AppLanguage get language => _language;
+
+  Future<void> setLanguage(AppLanguage lang) async {
+    if (_language == lang) return;
+    _language = lang;
+    await _repository.setLanguage(lang);
+    _tokenHolder.setLocale(lang.code);
+    notifyListeners();
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   List<SystemParameter> _systemParameters = [];
   List<SystemParameter> get systemParameters => _systemParameters;
 
-  // Değişen ama henüz kaydedilmeyen ayarlar
   final Map<String, String> _draftSettings = {};
 
   SystemParameter? getParam(String key) => _systemParameters.firstWhereOrNull((p) => p.key == key);
 
-  bool get isPerCellMiadEnabled {
-    final value = getValue('MiadDate');
-    return value == '1';
-  }
+  bool get isPerCellMiadEnabled => getValue('MiadDate') == '1';
 
   void togglePerCellMiad() {
-    final newValue = isPerCellMiadEnabled ? '0' : '1';
-    _updateDraft('MiadDate', newValue);
+    _updateDraft('MiadDate', isPerCellMiadEnabled ? '0' : '1');
   }
 
   void getSettings() async {
@@ -52,22 +65,19 @@ class SettingsNotifier extends ChangeNotifier with ApiRequestMixin {
   Future<void> saveAllChanges({Function(String? message)? onSuccess, Function(String? message)? onFailed}) async {
     if (_draftSettings.isEmpty) return;
 
-    for (var entry in _draftSettings.entries) {
+    for (final entry in _draftSettings.entries) {
       final originalParam = _systemParameters.firstWhereOrNull((p) => p.key == entry.key);
-
       if (originalParam == null) continue;
-
-      final updatedParam = originalParam.copyWith(value: entry.value);
 
       await executeVoid(
         submitOp,
-        operation: () => _repository.updateSystemParameter(updatedParam),
+        operation: () => _repository.updateSystemParameter(originalParam.copyWith(value: entry.value)),
         onSuccess: () => onSuccess?.call(null),
         onFailed: (error) => onFailed?.call(error.message),
       );
     }
 
-    for (var entry in _draftSettings.entries) {
+    for (final entry in _draftSettings.entries) {
       final index = _systemParameters.indexWhere((p) => p.key == entry.key);
       if (index != -1) {
         _systemParameters[index] = _systemParameters[index].copyWith(value: entry.value);
@@ -84,9 +94,7 @@ class SettingsNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   String getValue(String key) {
-    if (_draftSettings.containsKey(key)) {
-      return _draftSettings[key]!;
-    }
+    if (_draftSettings.containsKey(key)) return _draftSettings[key]!;
     return _systemParameters.firstWhereOrNull((p) => p.key == key)?.value ?? '';
   }
 

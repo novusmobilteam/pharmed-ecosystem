@@ -7,7 +7,6 @@ import '../notifier/cabin_temperature_notifier.dart';
 
 part 'cabin_temperature_form_view.dart';
 
-// TODO : Localization
 class CabinTemperatureScreen extends StatefulWidget {
   const CabinTemperatureScreen({super.key, required this.menu});
 
@@ -34,15 +33,14 @@ class _CabinTemperatureScreenState extends State<CabinTemperatureScreen> {
             mobile: MedMobileLayout(),
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: widget.menu.name ?? context.l10n.cabinTemperatureScreenTitle,
-              subtitle: widget.menu.description,
+              menu: widget.menu,
               showAddButton: true,
               child: Container(
                 decoration: AppDimensions.cardDecoration(context),
                 child: Row(
                   children: [
                     MedSidePanel<Station>(
-                      title: 'İstasyonlar',
+                      title: context.l10n.report_stationsCategoryTitle,
                       items: notifier.stations,
                       selected: notifier.selectedStation,
                       labelBuilder: (s) => s.name ?? '-',

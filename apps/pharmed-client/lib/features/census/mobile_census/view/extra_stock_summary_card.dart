@@ -49,7 +49,7 @@ class _ExtraStockRow extends StatelessWidget {
                     style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
                   ),
                   Text(
-                    '${stock.quantity.formatFractional} ${stock.medicine.operationUnit}',
+                    '${stock.quantity.formatFractional} ${stock.medicine.operationUnitLocalized(context)}',
                     style: MedTextStyles.bodySm(color: MedColors.text2),
                   ),
                 ],

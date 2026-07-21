@@ -12,14 +12,21 @@ class KitRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-KIT';
 
-  Future<Result<List<KitDto>>> getKits() async {
-    final res = await fetchRequest<List<KitDto>>(
+  Future<Result<ApiResponse<List<KitDto>>>> getKits({int? skip, int? take, String? search}) async {
+    final res = await fetchRequest<ApiResponse<List<KitDto>>>(
       path: _base,
-      parser: BaseRemoteDataSource.listParser(KitDto.fromJson),
-      successLog: 'Kits fetched',
-      emptyLog: 'No kits',
+      skip: skip,
+      take: take,
+      searchQuery: search,
+      searchFields: ['name'],
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(KitDto.fromJson),
     );
-    return res.when(ok: (data) => Result.ok(data ?? const <KitDto>[]), error: Result.error);
+
+    return res.when(
+      ok: (data) => Result.ok(data ?? const ApiResponse(data: [], totalCount: 0)),
+      error: Result.error,
+    );
   }
 
   Future<Result<void>> createKit(KitDto dto) {

@@ -2,9 +2,9 @@ export 'dto/service_dto.dart';
 export 'dto/room_dto.dart';
 export 'dto/bed_dto.dart';
 
-export 'domain/model/hospital_service.dart';
-export 'domain/model/room.dart';
-export 'domain/model/bed.dart';
+export 'domain/entity/hospital_service.dart';
+export 'domain/entity/room.dart';
+export 'domain/entity/bed.dart';
 export 'domain/repository/i_service_repository.dart';
 
 export 'domain/usecase/create_service_usecase.dart';

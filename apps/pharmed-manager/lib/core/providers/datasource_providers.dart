@@ -1,10 +1,17 @@
 import 'package:pharmed_manager/core/core.dart';
+import 'package:pharmed_manager/features/settings/data/datasource/persistence/app_settings_persistence.dart';
+import 'package:pharmed_manager/features/settings/data/datasource/remote/settings_data_source.dart';
+import 'package:pharmed_manager/features/settings/data/datasource/remote/settings_remote_data_source.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+
+import '../../features/settings/data/datasource/persistence/local_storage_app_settings_persistence.dart';
 
 class DatasourceProviders {
   static List<SingleChildWidget> providers({bool isDev = false}) {
     return [
+      Provider<SettingsDataSource>(create: (context) => SettingsRemoteDataSource(apiManager: context.read())),
+      Provider<AppSettingsPersistence>(create: (context) => LocalStorageAppSettingsPersistence(context.read())),
       Provider(create: (context) => ActiveIngredientRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => BranchRemoteDataSource(apiManager: context.read())),
       Provider(create: (context) => DosageFormRemoteDataSource(apiManager: context.read())),

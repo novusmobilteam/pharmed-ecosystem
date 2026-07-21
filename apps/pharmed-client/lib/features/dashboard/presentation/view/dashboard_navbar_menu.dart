@@ -47,7 +47,7 @@ class DashboardNavbarMenu extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              _buildHeader(context),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 12,
@@ -66,13 +66,15 @@ class DashboardNavbarMenu extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     final parent = flattenedMenus.firstWhere((m) => m.id == parentId);
+    final locale = Localizations.localeOf(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(parent.name ?? '-', style: MedTextStyles.titleMd()),
-        Text(parent.description ?? '-', style: MedTextStyles.bodyMd()),
+        Text(parent.localizedName(locale), style: MedTextStyles.titleMd()),
+        Text(parent.localizedDescription(locale), style: MedTextStyles.bodyMd()),
       ],
     );
   }
@@ -88,6 +90,7 @@ class _SubCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconData = item.unicode?.toIcon;
     final isActive = item.isMobile ?? true;
+    final locale = Localizations.localeOf(context);
 
     return GestureDetector(
       onTap: () => isActive ? onTap(item.id ?? 0) : null,
@@ -117,16 +120,14 @@ class _SubCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(item.name ?? '-', style: MedTextStyles.titleSm()),
-                    if (item.description != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        item.description!,
-                        style: MedTextStyles.bodySm(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                    Text(item.localizedName(locale), style: MedTextStyles.titleSm()),
+                    const SizedBox(height: 2),
+                    Text(
+                      item.localizedDescription(locale),
+                      style: MedTextStyles.bodySm(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
               ),

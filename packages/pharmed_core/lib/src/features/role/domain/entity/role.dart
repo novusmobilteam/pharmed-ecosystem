@@ -1,7 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
-class Role extends Selectable implements TableData {
+class Role extends Selectable {
   final String? name;
   final bool isActive;
 
@@ -9,15 +8,6 @@ class Role extends Selectable implements TableData {
     : super(title: name ?? '-', subtitle: statusFromBool(isActive).label);
 
   Status get status => statusFromBool(isActive);
-
-  @override
-  List<String?> get content => [name ?? '-', status.label];
-
-  @override
-  List get rawContent => content;
-
-  @override
-  List<String?> get titles => [contextlessL10n().tableCore_roleNameColumn, contextlessL10n().common_statusLabel];
 
   /// Sistem sabit rolüne karşılık geliyorsa o tip, aksi halde null.
   /// Custom roller için her zaman null döner.

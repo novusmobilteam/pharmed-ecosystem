@@ -17,8 +17,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../../core/cabin_operation/cabin_operation.dart';
-import '../../../../core/cabin_operation/master_drawer/master_drawer_orchestrator.dart';
+import '../../../../core/hardware/hardware.dart';
+import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/providers/providers.dart';
 import 'master_refill_state.dart';
 
@@ -54,7 +54,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
       },
       error: (e) {
         state = MasterRefillError(
-          message: e.message,
+          failure: CabinApiFailure(message: e.message),
           previousState: MasterRefillSelection(cabinId: cabinId, medicines: const []),
         );
       },
@@ -193,7 +193,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
         error: (e) {
           failed = true;
           state = MasterRefillError(
-            message: e.message,
+            failure: CabinApiFailure(message: e.message),
             previousState: saved.copyWith(isSaving: false),
             isQueueError: true,
           );
@@ -234,8 +234,8 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
         _onDrawerOpened();
       case MasterDrawerClosed():
         _onCurrentDrawerClosed();
-      case MasterDrawerFailed(:final message):
-        _onDrawerFailed(message);
+      case MasterDrawerFailed(:final failure, :final detail):
+        _onDrawerFailed(failure, detail: detail);
       default:
         break;
     }
@@ -279,7 +279,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
           // Çekmece zaten fiziksel kapandı ama kayıt başarısız — kullanıcı
           // ilaçları geri almalı. Kuyruk hatası olarak işaretle.
           state = MasterRefillError(
-            message: e.message,
+            failure: CabinApiFailure(message: e.message),
             previousState: saved.copyWith(isSaving: false),
             isQueueError: true,
           );
@@ -308,14 +308,16 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     await _openCurrentJob();
   }
 
-  void _onDrawerFailed(String message) {
+  void _onDrawerFailed(MasterDrawerFailure failure, {String? detail}) {
     final s = state;
     if (s is MasterRefillExecuting) {
-      state = MasterRefillError(message: message, previousState: s.copyWith(isSaving: false), isQueueError: true);
+      state = MasterRefillError(
+        failure: CabinMasterDrawerFailure(failure: failure, detail: detail),
+        previousState: s.copyWith(isSaving: false),
+        isQueueError: true,
+      );
     }
   }
-
-  // ── Durdur / İptal ────────────────────────────────────────────────────────
 
   /// Kuyruğu tamamen durdurur, seçim fazına döner.
   Future<void> stopQueue() async {
@@ -380,7 +382,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     result.when(
       ok: (assignments) => state = MasterRefillSelection(cabinId: cabinId, medicines: assignments),
       error: (e) => state = MasterRefillError(
-        message: e.message,
+        failure: CabinApiFailure(message: e.message),
         previousState: MasterRefillSelection(cabinId: cabinId, medicines: const []),
       ),
     );

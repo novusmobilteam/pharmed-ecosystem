@@ -14,6 +14,7 @@ class TokenInterceptor extends Interceptor {
       options.headers['Authorization'] = 'Bearer $token';
     }
     options.headers['Content-Type'] = 'application/json';
+    options.headers['Accept-Language'] = _tokenProvider.currentLocale;
     return handler.next(options);
   }
 

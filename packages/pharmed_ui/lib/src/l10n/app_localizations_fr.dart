@@ -53,6 +53,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get common_criticalLabel => 'Critical';
 
   @override
+  String get common_boolYes => 'Oui';
+
+  @override
+  String get common_boolNo => 'Non';
+
+  @override
+  String get common_action_discharge => 'Sortie du patient';
+
+  @override
   String get auth_loginSubtitle => 'Sign in to the system';
 
   @override
@@ -1327,16 +1336,19 @@ class AppLocalizationsFr extends AppLocalizations {
       'Choose a patient from the list to view their details.';
 
   @override
-  String get date_preset_today => 'Today';
+  String get date_preset_today => 'Aujourd\'hui';
 
   @override
-  String get date_preset_last_3_days => 'Last 3 days';
+  String get date_preset_tomorrow => 'Demain';
 
   @override
-  String get date_preset_last_7_days => 'Last 7 days';
+  String get date_preset_last_3_days => '3 derniers jours';
 
   @override
-  String get date_preset_all => 'All';
+  String get date_preset_last_7_days => '7 derniers jours';
+
+  @override
+  String get date_preset_all => 'Tout';
 
   @override
   String get filter_all => 'All';
@@ -4868,4 +4880,421 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get refill_stop_confirmYes => 'Oui, arrêter';
+
+  @override
+  String get enumCore_prescriptionMovementPendingApprovalLabel =>
+      'En attente d\'approbation';
+
+  @override
+  String get enumCore_prescriptionMovementPurchasePendingLabel =>
+      'En attente d\'achat';
+
+  @override
+  String get enumCore_prescriptionMovementAppliedLabel => 'Appliqué';
+
+  @override
+  String get enumCore_prescriptionMovementReturnedLabel => 'Retourné';
+
+  @override
+  String get enumCore_prescriptionMovementWastagedLabel => 'Gaspillé';
+
+  @override
+  String get enumCore_prescriptionMovementDestructedLabel => 'Détruit';
+
+  @override
+  String get enumCore_prescriptionMovementCancelledLabel => 'Annulé';
+
+  @override
+  String get enumCore_prescriptionMovementRejectedLabel => 'Rejeté';
+
+  @override
+  String get enumCore_prescriptionMovementFilledWaitingLabel =>
+      'En attente de remplissage';
+
+  @override
+  String get enumCore_prescriptionMovementReturnPendingLabel =>
+      'Retour en attente';
+
+  @override
+  String get enumCore_prescriptionMovementUnloadedLabel => 'Déchargé';
+
+  @override
+  String get enumCore_prescriptionMovementShortageReportedLabel =>
+      'Pénurie signalée';
+
+  @override
+  String get enumCore_prescriptionMovementReplenishmentPendingLabel =>
+      'Réapprovisionnement en attente';
+
+  @override
+  String get enumCore_prescriptionMovementPendingApprovalActorLabel =>
+      'Créé par';
+
+  @override
+  String get enumCore_prescriptionMovementPurchasePendingActorLabel =>
+      'Rempli par';
+
+  @override
+  String get enumCore_prescriptionMovementAppliedActorLabel => 'Appliqué par';
+
+  @override
+  String get enumCore_prescriptionMovementReturnedActorLabel => 'Retourné par';
+
+  @override
+  String get enumCore_prescriptionMovementWastagedActorLabel => 'Gaspillé par';
+
+  @override
+  String get enumCore_prescriptionMovementDestructedActorLabel => 'Détruit par';
+
+  @override
+  String get enumCore_prescriptionMovementCancelledActorLabel => 'Annulé par';
+
+  @override
+  String get enumCore_prescriptionMovementRejectedActorLabel => 'Rejeté par';
+
+  @override
+  String get enumCore_prescriptionMovementFilledWaitingActorLabel =>
+      'Approuvé par';
+
+  @override
+  String get enumCore_prescriptionMovementReturnPendingActorLabel =>
+      'Retour demandé par';
+
+  @override
+  String get enumCore_prescriptionMovementUnloadedActorLabel => 'Déchargé par';
+
+  @override
+  String get enumCore_prescriptionMovementShortageReportedActorLabel =>
+      'Pénurie signalée par';
+
+  @override
+  String get enumCore_prescriptionMovementReplenishmentPendingActorLabel =>
+      'Réapprovisionnement approuvé par';
+
+  @override
+  String get enumCore_prescriptionMovementPendingApprovalActionLabel => 'Créé';
+
+  @override
+  String get enumCore_prescriptionMovementPurchasePendingActionLabel =>
+      'Rempli';
+
+  @override
+  String get enumCore_prescriptionMovementAppliedActionLabel => 'Appliqué';
+
+  @override
+  String get enumCore_prescriptionMovementReturnedActionLabel => 'Retourné';
+
+  @override
+  String get enumCore_prescriptionMovementWastagedActionLabel => 'Gaspillé';
+
+  @override
+  String get enumCore_prescriptionMovementDestructedActionLabel => 'Détruit';
+
+  @override
+  String get enumCore_prescriptionMovementCancelledActionLabel => 'Annulé';
+
+  @override
+  String get enumCore_prescriptionMovementRejectedActionLabel => 'Rejeté';
+
+  @override
+  String get enumCore_prescriptionMovementFilledWaitingActionLabel =>
+      'Approuvé';
+
+  @override
+  String get enumCore_prescriptionMovementReturnPendingActionLabel =>
+      'Retour demandé';
+
+  @override
+  String get enumCore_prescriptionMovementUnloadedActionLabel => 'Déchargé';
+
+  @override
+  String get enumCore_prescriptionMovementShortageReportedActionLabel =>
+      'Pénurie signalée';
+
+  @override
+  String get enumCore_prescriptionMovementReplenishmentPendingActionLabel =>
+      'Réapprovisionnement approuvé';
+
+  @override
+  String get userAuth_table_firstNameColumn => 'Prénom';
+
+  @override
+  String get userAuth_table_lastNameColumn => 'Nom';
+
+  @override
+  String get userAuth_table_occupationTypeColumn => 'Type de profession';
+
+  @override
+  String get userAuth_table_expiryDateColumn => 'Date d\'expiration';
+
+  @override
+  String get userAuth_table_remainingDaysColumn => 'Jours restants';
+
+  @override
+  String get userAuth_table_statusColumn => 'Statut';
+
+  @override
+  String get medicine_table_barcodeColumn => 'Code-barres';
+
+  @override
+  String get medicine_table_atcCodeColumn => 'Code ATC';
+
+  @override
+  String get medicine_table_nameColumn => 'Nom';
+
+  @override
+  String get medicine_table_materialTypeColumn => 'Type de matériel';
+
+  @override
+  String get medicine_table_prescriptionTypeColumn => 'Type d\'ordonnance';
+
+  @override
+  String get medicine_table_countTypeColumn => 'Type de comptage';
+
+  @override
+  String get medicine_table_purchaseTypeColumn => 'Mode d\'acquisition';
+
+  @override
+  String get medicine_table_returnTypeColumn => 'Mode de retour';
+
+  @override
+  String get medicine_table_statusColumn => 'Actif';
+
+  @override
+  String get enumCore_medicineTypeDrug => 'Médicament';
+
+  @override
+  String get enumCore_medicineTypeConsumable => 'Consommable médical';
+
+  @override
+  String get refund_table_patientCodeColumn => 'Code patient';
+
+  @override
+  String get refund_table_patientColumn => 'Patient';
+
+  @override
+  String get refund_table_userColumn => 'Utilisateur';
+
+  @override
+  String get refund_table_medicineColumn => 'Médicament';
+
+  @override
+  String get refund_table_quantityColumn => 'Quantité';
+
+  @override
+  String get refund_table_dateColumn => 'Date';
+
+  @override
+  String get refund_table_approvedUserColumn => 'Retour accepté par';
+
+  @override
+  String get refund_table_approvedDateColumn => 'Date d\'acceptation';
+
+  @override
+  String get refund_table_descriptionColumn => 'Description';
+
+  @override
+  String get authorization_table_userColumn => 'Utilisateur';
+
+  @override
+  String get authorization_table_roleColumn => 'Rôle';
+
+  @override
+  String get authorization_table_encryptedLoginColumn => 'Connexion chiffrée';
+
+  @override
+  String get authorization_table_isDeletedColumn => 'Supprimé';
+
+  @override
+  String get authorization_table_extraAuthCountColumn =>
+      'Autorisation supplémentaire';
+
+  @override
+  String get cabinTemperature_table_dateColumn => 'Date';
+
+  @override
+  String get cabinTemperature_table_cabinColumn => 'Armoire';
+
+  @override
+  String get cabinTemperature_table_insideTempColumn =>
+      'Température intérieure';
+
+  @override
+  String get cabinTemperature_table_outsideTempColumn =>
+      'Température extérieure';
+
+  @override
+  String get cabinTemperature_table_humidityColumn => 'Humidité';
+
+  @override
+  String get cabinTemperature_action_showOutOfRange => 'Afficher hors limites';
+
+  @override
+  String get cabinTemperature_action_showAll => 'Tout afficher';
+
+  @override
+  String get expiredItems_table_barcodeColumn => 'Code-barres';
+
+  @override
+  String get expiredItems_table_medicineColumn => 'Médicament';
+
+  @override
+  String get expiredItems_table_cabinColumn => 'Armoire';
+
+  @override
+  String get expiredItems_table_locationColumn => 'Emplacement';
+
+  @override
+  String get expiredItems_table_minQuantityColumn => 'Minimum';
+
+  @override
+  String get expiredItems_table_maxQuantityColumn => 'Maximum';
+
+  @override
+  String get expiredItems_table_criticalQuantityColumn => 'Critique';
+
+  @override
+  String get expiredItems_table_quantityColumn => 'Quantité';
+
+  @override
+  String get expiredItems_table_expiryDateColumn => 'Date d\'exp.';
+
+  @override
+  String get expiredItems_table_remainingDaysColumn => 'Jours restants';
+
+  @override
+  String get hospitalStock_table_serviceColumn => 'Service';
+
+  @override
+  String get hospitalStock_table_codeColumn => 'Code';
+
+  @override
+  String get hospitalStock_table_medicineColumn => 'Médicament';
+
+  @override
+  String get hospitalStock_table_quantityColumn => 'Quantité';
+
+  @override
+  String get patientInventory_table_doctorColumn => 'Médecin';
+
+  @override
+  String get patientInventory_table_departmentColumn => 'Département';
+
+  @override
+  String get patientInventory_table_barcodeColumn => 'Code-barres';
+
+  @override
+  String get patientInventory_table_medicineColumn => 'Médicament';
+
+  @override
+  String get patientInventory_table_requestedQuantityColumn => 'Qté demandée';
+
+  @override
+  String get patientInventory_table_processedQuantityColumn => 'Qté traitée';
+
+  @override
+  String get patientInventory_table_requestDateColumn => 'Date de demande';
+
+  @override
+  String get patientInventory_table_processDateColumn => 'Date de traitement';
+
+  @override
+  String get patientInventory_table_movementColumn => 'Mouvement';
+
+  @override
+  String patientInventory_pdf_title(String patientName) {
+    return 'Liste d\'inventaire du patient $patientName';
+  }
+
+  @override
+  String patientInventory_pdf_patientCode(Object code) {
+    return 'Code patient : $code';
+  }
+
+  @override
+  String patientInventory_pdf_service(String name) {
+    return 'Service : $name';
+  }
+
+  @override
+  String patientInventory_pdf_bed(String name) {
+    return 'Lit : $name';
+  }
+
+  @override
+  String patientInventory_pdf_reportDate(String date) {
+    return 'Date du rapport : $date';
+  }
+
+  @override
+  String get service_table_nameColumn => 'Nom du service';
+
+  @override
+  String get service_table_branchColumn => 'Branche';
+
+  @override
+  String get service_table_managerColumn => 'Responsable du service';
+
+  @override
+  String get service_table_statusColumn => 'Statut';
+
+  @override
+  String get unappliedPrescription_table_serviceColumn => 'Service';
+
+  @override
+  String get unappliedPrescription_table_roomColumn => 'Chambre';
+
+  @override
+  String get unappliedPrescription_table_bedColumn => 'Lit';
+
+  @override
+  String get unappliedPrescription_table_patientCodeColumn => 'Code patient';
+
+  @override
+  String get unappliedPrescription_table_patientColumn => 'Patient';
+
+  @override
+  String get unappliedPrescription_table_hospitalizationCodeColumn =>
+      'Code d\'admission';
+
+  @override
+  String get unappliedPrescription_table_admissionDateColumn =>
+      'Date d\'admission';
+
+  @override
+  String get unappliedPrescription_table_pendingCountColumn => 'En attente';
+
+  @override
+  String get drugActivity_table_dateColumn => 'Date';
+
+  @override
+  String get drugActivity_table_timeColumn => 'Heure';
+
+  @override
+  String get drugActivity_table_patientColumn => 'Patient';
+
+  @override
+  String get drugActivity_table_userColumn => 'Utilisateur';
+
+  @override
+  String get drugActivity_table_medicineColumn => 'Médicament';
+
+  @override
+  String get drugActivity_table_quantityColumn => 'Quantité';
+
+  @override
+  String get drugActivity_table_movementColumn => 'Mouvement';
+
+  @override
+  String get rfid_notConnectedError => 'Le lecteur RFID n\'est pas connecté';
+
+  @override
+  String rfid_inventoryStartFailedError(String detail) {
+    return 'Échec du démarrage de l\'inventaire RFID : $detail';
+  }
+
+  @override
+  String rfid_inventoryStreamError(String detail) {
+    return 'Erreur du flux d\'inventaire RFID : $detail';
+  }
 }

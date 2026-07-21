@@ -114,7 +114,7 @@ class _ItemCard extends StatelessWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
-                        '${(item.dosePiece ?? 0).toStringAsFixed(0)} ${item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback}',
+                        '${(item.dosePiece ?? 0).toStringAsFixed(0)} ${item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback}',
                         style: MedTextStyles.monoSm(color: MedColors.text2),
                       ),
                       Text('·', style: MedTextStyles.monoSm(color: MedColors.text4)),

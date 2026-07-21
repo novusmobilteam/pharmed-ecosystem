@@ -114,7 +114,7 @@ class WithdrawOperationCard extends StatelessWidget {
                           ignoring: isCheckSuccess,
                           child: MedDoseStepper.compact(
                             value: item.dosePiece ?? 0,
-                            unit: item.medicine?.operationUnit ?? 'Adet',
+                            unit: item.medicine?.operationUnitLocalized(context) ?? 'Adet',
                             onChanged: onQuantityChanged,
                             max: 999,
                           ),

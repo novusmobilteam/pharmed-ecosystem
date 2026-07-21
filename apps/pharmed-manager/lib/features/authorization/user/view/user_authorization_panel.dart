@@ -1,4 +1,4 @@
-part of 'user_table_view.dart';
+part of 'table_view.dart';
 
 class UserAuthorizationPanel extends StatelessWidget {
   const UserAuthorizationPanel({super.key});

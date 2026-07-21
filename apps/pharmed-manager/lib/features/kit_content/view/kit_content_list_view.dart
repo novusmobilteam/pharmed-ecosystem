@@ -31,11 +31,11 @@ class _KitContentListViewState extends State<KitContentListView> {
   Widget build(BuildContext context) {
     return Consumer<KitContentNotifier>(
       builder: (context, notifier, _) {
-        if (notifier.isFetching && notifier.isEmpty) {
+        if (notifier.isFetching && notifier.items.isEmpty) {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
 
-        if (notifier.isEmpty) {
+        if (notifier.items.isEmpty) {
           return EmptyStateWidget(
             icon: Icons.inventory_2_outlined,
             variant: EmptyStateVariant.custom,
@@ -47,11 +47,11 @@ class _KitContentListViewState extends State<KitContentListView> {
         }
 
         return ListView.builder(
-          itemCount: notifier.filteredItems.length,
+          itemCount: notifier.items.length,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            final kitContent = notifier.filteredItems.elementAt(index);
+            final kitContent = notifier.items.elementAt(index);
             return MedEditableListCard(
               title: kitContent.medicine?.title.toString() ?? "",
               subtitle: kitContent.medicine?.barcode,

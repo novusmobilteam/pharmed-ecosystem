@@ -56,6 +56,18 @@
   "@common_criticalLabel": {
     "description": "Critical quantity field label in drug assignment panel"
   },
+  "common_boolYes": "Yes",
+"@common_boolYes": {
+  "description": "Boolean true display value — used in tables and forms across the app"
+},
+"common_boolNo": "No",
+"@common_boolNo": {
+  "description": "Boolean false display value — used in tables and forms across the app"
+},
+"common_action_discharge": "Discharge",
+"@common_action_discharge": {
+  "description": "Action button label — discharge patient from hospitalization"
+},
   "auth_loginSubtitle": "Sign in to the system",
   "@auth_loginSubtitle": {
     "description": "Subtitle below the logo on the login screen"
@@ -1235,6 +1247,7 @@
   "empty_state_no_patient_selected_title": "Select a patient",
   "empty_state_no_patient_selected_description": "Choose a patient from the list to view their details.",
   "date_preset_today": "Today",
+  "date_preset_tomorrow": "Tomorrow",
   "date_preset_last_3_days": "Last 3 days",
   "date_preset_last_7_days": "Last 7 days",
   "date_preset_all": "All",
@@ -5778,5 +5791,551 @@
 "refill_stop_confirmYes": "Yes, Stop",
 "@refill_stop_confirmYes": {
   "description": "Confirm button on the stop-refill confirmation dialog"
+},
+"enumCore_prescriptionMovementPendingApprovalLabel": "Pending Approval",
+"@enumCore_prescriptionMovementPendingApprovalLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — status label shown in badges and lists"
+},
+"enumCore_prescriptionMovementPurchasePendingLabel": "Purchase Pending",
+"@enumCore_prescriptionMovementPurchasePendingLabel": {
+  "description": "PrescriptionMovementType.purchasePending — status label"
+},
+"enumCore_prescriptionMovementAppliedLabel": "Applied",
+"@enumCore_prescriptionMovementAppliedLabel": {
+  "description": "PrescriptionMovementType.applied — status label"
+},
+"enumCore_prescriptionMovementReturnedLabel": "Returned",
+"@enumCore_prescriptionMovementReturnedLabel": {
+  "description": "PrescriptionMovementType.returned — status label"
+},
+"enumCore_prescriptionMovementWastagedLabel": "Wasted",
+"@enumCore_prescriptionMovementWastagedLabel": {
+  "description": "PrescriptionMovementType.wastaged — status label"
+},
+"enumCore_prescriptionMovementDestructedLabel": "Destructed",
+"@enumCore_prescriptionMovementDestructedLabel": {
+  "description": "PrescriptionMovementType.destructed — status label"
+},
+"enumCore_prescriptionMovementCancelledLabel": "Cancelled",
+"@enumCore_prescriptionMovementCancelledLabel": {
+  "description": "PrescriptionMovementType.cancelled — status label"
+},
+"enumCore_prescriptionMovementRejectedLabel": "Rejected",
+"@enumCore_prescriptionMovementRejectedLabel": {
+  "description": "PrescriptionMovementType.rejected — status label"
+},
+"enumCore_prescriptionMovementFilledWaitingLabel": "Awaiting Fill",
+"@enumCore_prescriptionMovementFilledWaitingLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — status label"
+},
+"enumCore_prescriptionMovementReturnPendingLabel": "Return Pending",
+"@enumCore_prescriptionMovementReturnPendingLabel": {
+  "description": "PrescriptionMovementType.returnPending — status label"
+},
+"enumCore_prescriptionMovementUnloadedLabel": "Unloaded",
+"@enumCore_prescriptionMovementUnloadedLabel": {
+  "description": "PrescriptionMovementType.unloaded — status label"
+},
+"enumCore_prescriptionMovementShortageReportedLabel": "Shortage Reported",
+"@enumCore_prescriptionMovementShortageReportedLabel": {
+  "description": "PrescriptionMovementType.shortageReported — status label"
+},
+"enumCore_prescriptionMovementReplenishmentPendingLabel": "Replenishment Pending",
+"@enumCore_prescriptionMovementReplenishmentPendingLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — status label"
+},
+
+"enumCore_prescriptionMovementPendingApprovalActorLabel": "Created By",
+"@enumCore_prescriptionMovementPendingApprovalActorLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — actor label (who performed the action)"
+},
+"enumCore_prescriptionMovementPurchasePendingActorLabel": "Filled By",
+"@enumCore_prescriptionMovementPurchasePendingActorLabel": {
+  "description": "PrescriptionMovementType.purchasePending — actor label"
+},
+"enumCore_prescriptionMovementAppliedActorLabel": "Applied By",
+"@enumCore_prescriptionMovementAppliedActorLabel": {
+  "description": "PrescriptionMovementType.applied — actor label"
+},
+"enumCore_prescriptionMovementReturnedActorLabel": "Returned By",
+"@enumCore_prescriptionMovementReturnedActorLabel": {
+  "description": "PrescriptionMovementType.returned — actor label"
+},
+"enumCore_prescriptionMovementWastagedActorLabel": "Wasted By",
+"@enumCore_prescriptionMovementWastagedActorLabel": {
+  "description": "PrescriptionMovementType.wastaged — actor label"
+},
+"enumCore_prescriptionMovementDestructedActorLabel": "Destructed By",
+"@enumCore_prescriptionMovementDestructedActorLabel": {
+  "description": "PrescriptionMovementType.destructed — actor label"
+},
+"enumCore_prescriptionMovementCancelledActorLabel": "Cancelled By",
+"@enumCore_prescriptionMovementCancelledActorLabel": {
+  "description": "PrescriptionMovementType.cancelled — actor label"
+},
+"enumCore_prescriptionMovementRejectedActorLabel": "Rejected By",
+"@enumCore_prescriptionMovementRejectedActorLabel": {
+  "description": "PrescriptionMovementType.rejected — actor label"
+},
+"enumCore_prescriptionMovementFilledWaitingActorLabel": "Approved By",
+"@enumCore_prescriptionMovementFilledWaitingActorLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — actor label"
+},
+"enumCore_prescriptionMovementReturnPendingActorLabel": "Return Requested By",
+"@enumCore_prescriptionMovementReturnPendingActorLabel": {
+  "description": "PrescriptionMovementType.returnPending — actor label"
+},
+"enumCore_prescriptionMovementUnloadedActorLabel": "Unloaded By",
+"@enumCore_prescriptionMovementUnloadedActorLabel": {
+  "description": "PrescriptionMovementType.unloaded — actor label"
+},
+"enumCore_prescriptionMovementShortageReportedActorLabel": "Shortage Reported By",
+"@enumCore_prescriptionMovementShortageReportedActorLabel": {
+  "description": "PrescriptionMovementType.shortageReported — actor label"
+},
+"enumCore_prescriptionMovementReplenishmentPendingActorLabel": "Replenishment Approved By",
+"@enumCore_prescriptionMovementReplenishmentPendingActorLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — actor label"
+},
+
+"enumCore_prescriptionMovementPendingApprovalActionLabel": "Created",
+"@enumCore_prescriptionMovementPendingApprovalActionLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — action label (what was done to reach this state)"
+},
+"enumCore_prescriptionMovementPurchasePendingActionLabel": "Filled",
+"@enumCore_prescriptionMovementPurchasePendingActionLabel": {
+  "description": "PrescriptionMovementType.purchasePending — action label"
+},
+"enumCore_prescriptionMovementAppliedActionLabel": "Applied",
+"@enumCore_prescriptionMovementAppliedActionLabel": {
+  "description": "PrescriptionMovementType.applied — action label"
+},
+"enumCore_prescriptionMovementReturnedActionLabel": "Returned",
+"@enumCore_prescriptionMovementReturnedActionLabel": {
+  "description": "PrescriptionMovementType.returned — action label"
+},
+"enumCore_prescriptionMovementWastagedActionLabel": "Wasted",
+"@enumCore_prescriptionMovementWastagedActionLabel": {
+  "description": "PrescriptionMovementType.wastaged — action label"
+},
+"enumCore_prescriptionMovementDestructedActionLabel": "Destructed",
+"@enumCore_prescriptionMovementDestructedActionLabel": {
+  "description": "PrescriptionMovementType.destructed — action label"
+},
+"enumCore_prescriptionMovementCancelledActionLabel": "Cancelled",
+"@enumCore_prescriptionMovementCancelledActionLabel": {
+  "description": "PrescriptionMovementType.cancelled — action label"
+},
+"enumCore_prescriptionMovementRejectedActionLabel": "Rejected",
+"@enumCore_prescriptionMovementRejectedActionLabel": {
+  "description": "PrescriptionMovementType.rejected — action label"
+},
+"enumCore_prescriptionMovementFilledWaitingActionLabel": "Approved",
+"@enumCore_prescriptionMovementFilledWaitingActionLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — action label"
+},
+"enumCore_prescriptionMovementReturnPendingActionLabel": "Return Requested",
+"@enumCore_prescriptionMovementReturnPendingActionLabel": {
+  "description": "PrescriptionMovementType.returnPending — action label"
+},
+"enumCore_prescriptionMovementUnloadedActionLabel": "Unloaded",
+"@enumCore_prescriptionMovementUnloadedActionLabel": {
+  "description": "PrescriptionMovementType.unloaded — action label"
+},
+"enumCore_prescriptionMovementShortageReportedActionLabel": "Shortage Reported",
+"@enumCore_prescriptionMovementShortageReportedActionLabel": {
+  "description": "PrescriptionMovementType.shortageReported — action label"
+},
+"enumCore_prescriptionMovementReplenishmentPendingActionLabel": "Replenishment Approved",
+"@enumCore_prescriptionMovementReplenishmentPendingActionLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — action label"
+},
+"userAuth_table_firstNameColumn": "First Name",
+"@userAuth_table_firstNameColumn": {
+  "description": "Table column header — user's first name, user auth management screen"
+},
+"userAuth_table_lastNameColumn": "Last Name",
+"@userAuth_table_lastNameColumn": {
+  "description": "Table column header — user's last name, user auth management screen"
+},
+"userAuth_table_occupationTypeColumn": "Occupation Type",
+"@userAuth_table_occupationTypeColumn": {
+  "description": "Table column header — user's profession/occupation type, user auth management screen"
+},
+"userAuth_table_expiryDateColumn": "Expiry Date",
+"@userAuth_table_expiryDateColumn": {
+  "description": "Table column header — certificate/auth expiry date, user auth management screen"
+},
+"userAuth_table_remainingDaysColumn": "Remaining Days",
+"@userAuth_table_remainingDaysColumn": {
+  "description": "Table column header — days remaining until expiry, user auth management screen"
+},
+"userAuth_table_statusColumn": "Status",
+"@userAuth_table_statusColumn": {
+  "description": "Table column header — current auth status of the user, user auth management screen"
+},
+"medicine_table_barcodeColumn": "Barcode",
+"@medicine_table_barcodeColumn": {
+  "description": "Table column header — medicine barcode, medicine management screen"
+},
+"medicine_table_atcCodeColumn": "ATC Code",
+"@medicine_table_atcCodeColumn": {
+  "description": "Table column header — ATC code (drugs only, consumables show dash), medicine management screen"
+},
+"medicine_table_nameColumn": "Name",
+"@medicine_table_nameColumn": {
+  "description": "Table column header — medicine name, medicine management screen"
+},
+"medicine_table_materialTypeColumn": "Material Type",
+"@medicine_table_materialTypeColumn": {
+  "description": "Table column header — drug or medical consumable type label, medicine management screen"
+},
+"medicine_table_prescriptionTypeColumn": "Prescription Type",
+"@medicine_table_prescriptionTypeColumn": {
+  "description": "Table column header — prescription type (drugs only, consumables show dash), medicine management screen"
+},
+"medicine_table_countTypeColumn": "Count Type",
+"@medicine_table_countTypeColumn": {
+  "description": "Table column header — counting method type, medicine management screen"
+},
+"medicine_table_purchaseTypeColumn": "Purchase Type",
+"@medicine_table_purchaseTypeColumn": {
+  "description": "Table column header — acquisition/purchase method, medicine management screen"
+},
+"medicine_table_returnTypeColumn": "Return Type",
+"@medicine_table_returnTypeColumn": {
+  "description": "Table column header — return method type, medicine management screen"
+},
+"medicine_table_statusColumn": "Active",
+"@medicine_table_statusColumn": {
+  "description": "Table column header — active/inactive status, medicine management screen"
+},
+"enumCore_medicineTypeDrug": "Drug",
+"@enumCore_medicineTypeDrug": {
+  "description": "Label for Medicine union type — drug variant"
+},
+"enumCore_medicineTypeConsumable": "Medical Consumable",
+"@enumCore_medicineTypeConsumable": {
+  "description": "Label for Medicine union type — medical consumable variant"
+},
+"refund_table_patientCodeColumn": "Patient Code",
+"@refund_table_patientCodeColumn": {
+  "description": "Table column header — patient ID/code, refund management screen"
+},
+"refund_table_patientColumn": "Patient",
+"@refund_table_patientColumn": {
+  "description": "Table column header — patient full name, refund management screen"
+},
+"refund_table_userColumn": "User",
+"@refund_table_userColumn": {
+  "description": "Table column header — user who created the refund record, refund management screen"
+},
+"refund_table_medicineColumn": "Medicine",
+"@refund_table_medicineColumn": {
+  "description": "Table column header — medicine/material name, refund management screen"
+},
+"refund_table_quantityColumn": "Quantity",
+"@refund_table_quantityColumn": {
+  "description": "Table column header — refund quantity (numeric), refund management screen"
+},
+"refund_table_dateColumn": "Date",
+"@refund_table_dateColumn": {
+  "description": "Table column header — refund creation date, refund management screen"
+},
+"refund_table_approvedUserColumn": "Approved By",
+"@refund_table_approvedUserColumn": {
+  "description": "Table column header — user who accepted/approved the refund, refund management screen"
+},
+"refund_table_approvedDateColumn": "Approval Date",
+"@refund_table_approvedDateColumn": {
+  "description": "Table column header — date the refund was approved, refund management screen"
+},
+"refund_table_descriptionColumn": "Description",
+"@refund_table_descriptionColumn": {
+  "description": "Table column header — refund description/note, completed refunds table"
+},
+"authorization_table_userColumn": "User",
+"@authorization_table_userColumn": {
+  "description": "Table column header — full name of the user, authorization management screen"
+},
+"authorization_table_roleColumn": "Role",
+"@authorization_table_roleColumn": {
+  "description": "Table column header — role name assigned to user, authorization management screen"
+},
+"authorization_table_encryptedLoginColumn": "Encrypted Login",
+"@authorization_table_encryptedLoginColumn": {
+  "description": "Table column header — whether the user uses encrypted login, authorization management screen"
+},
+"authorization_table_isDeletedColumn": "Deleted",
+"@authorization_table_isDeletedColumn": {
+  "description": "Table column header — whether the user record is soft-deleted, authorization management screen"
+},
+"authorization_table_extraAuthCountColumn": "Extra Authorization",
+"@authorization_table_extraAuthCountColumn": {
+  "description": "Table column header — count of extra authorizations granted to user, authorization management screen"
+},
+"cabinTemperature_table_dateColumn": "Date",
+"@cabinTemperature_table_dateColumn": {
+  "description": "Table column header — record date and time, cabin temperature screen"
+},
+"cabinTemperature_table_cabinColumn": "Cabin",
+"@cabinTemperature_table_cabinColumn": {
+  "description": "Table column header — cabin name, cabin temperature screen"
+},
+"cabinTemperature_table_insideTempColumn": "Inside Temperature",
+"@cabinTemperature_table_insideTempColumn": {
+  "description": "Table column header — inside temperature value in °C, cabin temperature screen"
+},
+"cabinTemperature_table_outsideTempColumn": "Outside Temperature",
+"@cabinTemperature_table_outsideTempColumn": {
+  "description": "Table column header — outside temperature value in °C, cabin temperature screen"
+},
+"cabinTemperature_table_humidityColumn": "Humidity",
+"@cabinTemperature_table_humidityColumn": {
+  "description": "Table column header — humidity percentage, cabin temperature screen"
+},
+"cabinTemperature_action_showOutOfRange": "Show Out of Range",
+"@cabinTemperature_action_showOutOfRange": {
+  "description": "Tooltip — filter button to show only records exceeding thresholds, cabin temperature screen"
+},
+"cabinTemperature_action_showAll": "Show All",
+"@cabinTemperature_action_showAll": {
+  "description": "Tooltip — filter button to show all records (reset out-of-range filter), cabin temperature screen"
+},
+"expiredItems_table_barcodeColumn": "Barcode",
+"@expiredItems_table_barcodeColumn": {
+  "description": "Table column header — medicine barcode, expired items screen"
+},
+"expiredItems_table_medicineColumn": "Medicine",
+"@expiredItems_table_medicineColumn": {
+  "description": "Table column header — medicine/material name, expired items screen"
+},
+"expiredItems_table_cabinColumn": "Cabin",
+"@expiredItems_table_cabinColumn": {
+  "description": "Table column header — cabin name, expired items screen"
+},
+"expiredItems_table_locationColumn": "Location",
+"@expiredItems_table_locationColumn": {
+  "description": "Table column header — shelf/compartment location, expired items screen"
+},
+"expiredItems_table_minQuantityColumn": "Minimum",
+"@expiredItems_table_minQuantityColumn": {
+  "description": "Table column header — minimum stock quantity with unit, expired items screen"
+},
+"expiredItems_table_maxQuantityColumn": "Maximum",
+"@expiredItems_table_maxQuantityColumn": {
+  "description": "Table column header — maximum stock quantity with unit, expired items screen"
+},
+"expiredItems_table_criticalQuantityColumn": "Critical",
+"@expiredItems_table_criticalQuantityColumn": {
+  "description": "Table column header — critical stock threshold quantity with unit, expired items screen"
+},
+"expiredItems_table_quantityColumn": "Quantity",
+"@expiredItems_table_quantityColumn": {
+  "description": "Table column header — current stock quantity with unit, expired items screen"
+},
+"expiredItems_table_expiryDateColumn": "Exp. Date",
+"@expiredItems_table_expiryDateColumn": {
+  "description": "Table column header — medicine expiry date (S.K.T), expired items screen"
+},
+"expiredItems_table_remainingDaysColumn": "Remaining Days",
+"@expiredItems_table_remainingDaysColumn": {
+  "description": "Table column header — days remaining until expiry, expired items screen"
+},
+"hospitalStock_table_serviceColumn": "Service",
+"@hospitalStock_table_serviceColumn": {
+  "description": "Table column header — service name, hospital stock screen"
+},
+"hospitalStock_table_codeColumn": "Code",
+"@hospitalStock_table_codeColumn": {
+  "description": "Table column header — stock code, hospital stock screen"
+},
+"hospitalStock_table_medicineColumn": "Medicine",
+"@hospitalStock_table_medicineColumn": {
+  "description": "Table column header — medicine/material name, hospital stock screen"
+},
+"hospitalStock_table_quantityColumn": "Quantity",
+"@hospitalStock_table_quantityColumn": {
+  "description": "Table column header — current stock quantity, hospital stock screen"
+},
+"patientInventory_table_doctorColumn": "Doctor",
+"@patientInventory_table_doctorColumn": {
+  "description": "Table column header — doctor full name, patient inventory screen"
+},
+"patientInventory_table_departmentColumn": "Department",
+"@patientInventory_table_departmentColumn": {
+  "description": "Table column header — physical service/department name, patient inventory screen"
+},
+"patientInventory_table_barcodeColumn": "Barcode",
+"@patientInventory_table_barcodeColumn": {
+  "description": "Table column header — medicine barcode, patient inventory screen"
+},
+"patientInventory_table_medicineColumn": "Medicine",
+"@patientInventory_table_medicineColumn": {
+  "description": "Table column header — medicine/material name, patient inventory screen"
+},
+"patientInventory_table_requestedQuantityColumn": "Requested Qty",
+"@patientInventory_table_requestedQuantityColumn": {
+  "description": "Table column header — requested dose/quantity, patient inventory screen"
+},
+"patientInventory_table_processedQuantityColumn": "Processed Qty",
+"@patientInventory_table_processedQuantityColumn": {
+  "description": "Table column header — last movement/processed quantity, patient inventory screen"
+},
+"patientInventory_table_requestDateColumn": "Request Date",
+"@patientInventory_table_requestDateColumn": {
+  "description": "Table column header — prescription/request date, patient inventory screen"
+},
+"patientInventory_table_processDateColumn": "Process Date",
+"@patientInventory_table_processDateColumn": {
+  "description": "Table column header — transaction/process date, patient inventory screen"
+},
+"patientInventory_table_movementColumn": "Movement",
+"@patientInventory_table_movementColumn": {
+  "description": "Table column header — last movement type shown as chip, patient inventory screen"
+},
+"patientInventory_pdf_title": "{patientName} adlı hastaya ait Hasta Envanter Listesi",
+"@patientInventory_pdf_title": {
+  "description": "PDF report title — patient inventory list header, includes patient full name",
+  "placeholders": {
+    "patientName": {
+      "type": "String"
+    }
+  }
+},
+"patientInventory_pdf_patientCode": "Hasta Kodu: {code}",
+"@patientInventory_pdf_patientCode": {
+  "description": "PDF report info line — patient ID/code",
+  "placeholders": {
+    "code": {
+      "type": "Object"
+    }
+  }
+},
+"patientInventory_pdf_service": "Servis: {name}",
+"@patientInventory_pdf_service": {
+  "description": "PDF report info line — physical service name",
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+},
+"patientInventory_pdf_bed": "Yatak: {name}",
+"@patientInventory_pdf_bed": {
+  "description": "PDF report info line — bed name",
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+},
+"patientInventory_pdf_reportDate": "Rapor Tarihi: {date}",
+"@patientInventory_pdf_reportDate": {
+  "description": "PDF report info line — report generation date",
+  "placeholders": {
+    "date": {
+      "type": "String"
+    }
+  }
+},
+"service_table_nameColumn": "Service Name",
+"@service_table_nameColumn": {
+  "description": "Table column header — service name, service management screen"
+},
+"service_table_branchColumn": "Branch",
+"@service_table_branchColumn": {
+  "description": "Table column header — branch name, service management screen"
+},
+"service_table_managerColumn": "Service Manager",
+"@service_table_managerColumn": {
+  "description": "Table column header — service responsible/manager name, service management screen"
+},
+"service_table_statusColumn": "Status",
+"@service_table_statusColumn": {
+  "description": "Table column header — service status, service management screen"
+},
+"unappliedPrescription_table_serviceColumn": "Service",
+"@unappliedPrescription_table_serviceColumn": {
+  "description": "Table column header — physical service name, unapplied prescriptions screen"
+},
+"unappliedPrescription_table_roomColumn": "Room",
+"@unappliedPrescription_table_roomColumn": {
+  "description": "Table column header — room name, unapplied prescriptions screen"
+},
+"unappliedPrescription_table_bedColumn": "Bed",
+"@unappliedPrescription_table_bedColumn": {
+  "description": "Table column header — bed name, unapplied prescriptions screen"
+},
+"unappliedPrescription_table_patientCodeColumn": "Patient Code",
+"@unappliedPrescription_table_patientCodeColumn": {
+  "description": "Table column header — patient protocol number, unapplied prescriptions screen"
+},
+"unappliedPrescription_table_patientColumn": "Patient",
+"@unappliedPrescription_table_patientColumn": {
+  "description": "Table column header — patient full name, unapplied prescriptions screen"
+},
+"unappliedPrescription_table_hospitalizationCodeColumn": "Admission Code",
+"@unappliedPrescription_table_hospitalizationCodeColumn": {
+  "description": "Table column header — hospitalization ID/code, unapplied prescriptions screen"
+},
+"unappliedPrescription_table_admissionDateColumn": "Admission Date",
+"@unappliedPrescription_table_admissionDateColumn": {
+  "description": "Table column header — hospitalization date, unapplied prescriptions screen"
+},
+"unappliedPrescription_table_pendingCountColumn": "Pending",
+"@unappliedPrescription_table_pendingCountColumn": {
+  "description": "Table column header — number of pending unapplied prescription items, unapplied prescriptions screen"
+},
+"drugActivity_table_dateColumn": "Date",
+"@drugActivity_table_dateColumn": {
+  "description": "Table column header — activity date, drug activity screen"
+},
+"drugActivity_table_timeColumn": "Time",
+"@drugActivity_table_timeColumn": {
+  "description": "Table column header — activity time, drug activity screen"
+},
+"drugActivity_table_patientColumn": "Patient",
+"@drugActivity_table_patientColumn": {
+  "description": "Table column header — patient full name, drug activity screen"
+},
+"drugActivity_table_userColumn": "User",
+"@drugActivity_table_userColumn": {
+  "description": "Table column header — user who performed the action, drug activity screen"
+},
+"drugActivity_table_medicineColumn": "Medicine",
+"@drugActivity_table_medicineColumn": {
+  "description": "Table column header — medicine/material name, drug activity screen"
+},
+"drugActivity_table_quantityColumn": "Quantity",
+"@drugActivity_table_quantityColumn": {
+  "description": "Table column header — movement quantity, drug activity screen"
+},
+"drugActivity_table_movementColumn": "Movement",
+"@drugActivity_table_movementColumn": {
+  "description": "Table column header — movement/transaction type action label, drug activity screen"
+},
+"rfid_notConnectedError": "RFID reader is not connected",
+"@rfid_notConnectedError": {
+  "description": "Error message — RFID reader not connected when inventory start attempted"
+},
+"rfid_inventoryStartFailedError": "Failed to start RFID inventory: {detail}",
+"@rfid_inventoryStartFailedError": {
+  "description": "Error message — RFID inventory start failed with detail",
+  "placeholders": {
+    "detail": {
+      "type": "String"
+    }
+  }
+},
+"rfid_inventoryStreamError": "RFID inventory stream error: {detail}",
+"@rfid_inventoryStreamError": {
+  "description": "Error message — RFID inventory stream error with detail",
+  "placeholders": {
+    "detail": {
+      "type": "String"
+    }
+  }
 }
+
 }

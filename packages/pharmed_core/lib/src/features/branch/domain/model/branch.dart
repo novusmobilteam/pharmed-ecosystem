@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-class Branch extends Selectable implements TableData {
+class Branch extends Selectable {
   final String? name;
   final bool isActive;
 
@@ -12,15 +12,6 @@ class Branch extends Selectable implements TableData {
       );
 
   Status get status => statusFromBool(isActive);
-
-  @override
-  List<String?> get content => [title, subtitle];
-
-  @override
-  List<String?> get titles => [contextlessL10n().tableCore_dosageFormBranchColumn, contextlessL10n().common_statusLabel];
-
-  @override
-  List get rawContent => content;
 
   // Update metodları
   Branch updateName(String? newName) {

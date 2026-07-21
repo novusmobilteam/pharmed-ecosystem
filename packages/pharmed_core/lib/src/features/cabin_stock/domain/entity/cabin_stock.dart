@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
-class CabinStock implements TableData {
+class CabinStock {
   final int? id;
   final int? cabinId;
   final int? cabinDrawerId;
@@ -23,28 +20,6 @@ class CabinStock implements TableData {
     final now = DateTime.now();
     // Zaman farkını gün cinsinden hesapla
     return miadDate?.difference(now).inDays ?? 0;
-  }
-
-  /// UI'da direkt göstermek için anlamlı bir metin döndüren getter
-  String get expirationStatusText {
-    final days = daysUntilExpiration;
-
-    if (days < 0) {
-      return "${days.abs()} gün önce bitti"; // Tarihi geçmiş
-    } else if (days == 0) {
-      return "Bugün son gün!";
-    } else if (days <= 7) {
-      return "$days gün kaldı (Kritik)";
-    } else {
-      return "$days gün kaldı";
-    }
-  }
-
-  Color get statusColor {
-    final days = daysUntilExpiration;
-    if (days < 0) return Colors.red;
-    if (days <= 7) return Colors.orange;
-    return Colors.green;
   }
 
   CabinStock({
@@ -91,48 +66,6 @@ class CabinStock implements TableData {
       cabinDrawerDetail: cabinDrawerDetail ?? this.cabinDrawerDetail,
     );
   }
-
-  @override
-  List get content => [
-    medicine?.barcode,
-    medicine?.name,
-    assignment?.cabin?.name,
-    '$shelfNo/$corpartmentNo',
-    ' ${assignment?.minQuantity} ${medicine?.operationUnit}',
-    ' ${assignment?.maxQuantity} ${medicine?.operationUnit}',
-    ' ${assignment?.criticalQuantity} ${medicine?.operationUnit}',
-    '${quantity?.formatFractional} ${medicine?.operationUnit}',
-    miadDate?.formattedDate,
-    remainingDay,
-  ];
-
-  @override
-  List<String?> get titles => [
-    'Barkod',
-    'Malzeme',
-    'Kabin',
-    'Konum',
-    'Minimum',
-    'Maksimum',
-    'Kritik',
-    'Miktar',
-    'S.K.T',
-    'Kalan Gün',
-  ];
-
-  @override
-  List<dynamic> get rawContent => [
-    medicine?.barcode,
-    medicine?.name,
-    assignment?.cabin?.name,
-    assignment?.drawerUnit?.compartmentNo,
-    assignment?.drawerUnit?.orderNo,
-    assignment?.minQuantity,
-    assignment?.maxQuantity,
-    quantity,
-    miadDate?.formattedDate,
-    remainingDayText,
-  ];
 
   factory CabinStock.empty({required int cabinId, required int unitId}) {
     return CabinStock(cabinId: cabinId, cabinDrawerId: unitId, medicine: null, quantity: null, assignment: null);

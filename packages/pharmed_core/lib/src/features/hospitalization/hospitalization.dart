@@ -9,3 +9,4 @@ export 'domain/usecase/get_hospitalizations_by_service_usecase.dart';
 export 'domain/usecase/get_hospitalizations_usecase.dart';
 export 'domain/usecase/get_active_hospitalizations_usecase.dart';
 export 'domain/usecase/update_hospitalization_usecase.dart';
+export 'domain/usecase/discharge_hospitalization_usecase.dart';

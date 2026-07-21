@@ -18,18 +18,17 @@ class InconsistencyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => InconsistencyNotifier(getInconsistenciesUseCase: context.read())..getInconsistencies(),
+      create: (context) => InconsistencyNotifier(getInconsistenciesUseCase: context.read())..fetch(),
       child: Consumer<InconsistencyNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
             mobile: MedMobileLayout(),
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? context.l10n.inconsistency_screenTitleFallback,
-              subtitle: menu.description,
+              menu: menu,
               showAddButton: false,
               child: MedTable<Inconsistency>(
-                data: notifier.filteredItems,
+                data: notifier.items,
                 enableExcel: true,
                 enableSearch: true,
                 onSearchChanged: notifier.search,
@@ -45,6 +44,7 @@ class InconsistencyScreen extends StatelessWidget {
                     onPressed: (_) {},
                   ),
                 ],
+                columnDefs: [],
               ),
             ),
           );

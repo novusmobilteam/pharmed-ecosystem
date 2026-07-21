@@ -303,7 +303,7 @@ Widget _drugTypeField() {
         labelBuilder: (value) => value.name,
         onSelected: vm.updateDrugType,
         dataSource: (skip, take, search) =>
-            context.read<GetDrugTypesUseCase>().call(GetDrugTypesParams(skip: skip, take: take, search: search)),
+            context.read<GetDrugTypesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
         validator: (value) => Validators.cannotBlankValidator(value?.name),
       );
     },
@@ -385,7 +385,7 @@ Widget _drugClassField() {
         initialValue: vm.drug.drugClass,
         labelBuilder: (value) => value.name,
         dataSource: (skip, take, search) =>
-            context.read<GetDrugClassUseCase>().call(GetDrugClassParams(skip: skip, take: take, search: search)),
+            context.read<GetDrugClassUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
         onSelected: vm.updateDrugClass,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
       );
@@ -705,7 +705,7 @@ Widget _buildActiveIngredientField() {
           }
         },
         dataSource: (skip, take, search) => context.read<GetActiveIngredientsUseCase>().call(
-          GetActiveIngredientsParams(skip: skip, take: take, search: search),
+          PagedQueryParams(skip: skip, take: take, searchQuery: search),
         ),
         onSelected: vm.updateActiveIngredients,
       );

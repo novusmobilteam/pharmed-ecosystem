@@ -53,6 +53,15 @@ class AppLocalizationsTr extends AppLocalizations {
   String get common_criticalLabel => 'Kritik';
 
   @override
+  String get common_boolYes => 'Evet';
+
+  @override
+  String get common_boolNo => 'Hayır';
+
+  @override
+  String get common_action_discharge => 'Taburcu Et';
+
+  @override
   String get auth_loginSubtitle => 'Sisteme giriş yapın';
 
   @override
@@ -1328,6 +1337,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get date_preset_today => 'Bugün';
+
+  @override
+  String get date_preset_tomorrow => 'Yarın';
 
   @override
   String get date_preset_last_3_days => 'Son 3 gün';
@@ -4736,4 +4748,420 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refill_stop_confirmYes => 'Evet, Durdur';
+
+  @override
+  String get enumCore_prescriptionMovementPendingApprovalLabel =>
+      'Onay Bekliyor';
+
+  @override
+  String get enumCore_prescriptionMovementPurchasePendingLabel =>
+      'Alım Bekliyor';
+
+  @override
+  String get enumCore_prescriptionMovementAppliedLabel => 'Uygulandı';
+
+  @override
+  String get enumCore_prescriptionMovementReturnedLabel => 'İade Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementWastagedLabel => 'Fire Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementDestructedLabel => 'İmha Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementCancelledLabel => 'İptal Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementRejectedLabel => 'Reddedildi';
+
+  @override
+  String get enumCore_prescriptionMovementFilledWaitingLabel =>
+      'Dolum Bekliyor';
+
+  @override
+  String get enumCore_prescriptionMovementReturnPendingLabel =>
+      'İade Onayı Bekliyor';
+
+  @override
+  String get enumCore_prescriptionMovementUnloadedLabel => 'Boşaltıldı';
+
+  @override
+  String get enumCore_prescriptionMovementShortageReportedLabel =>
+      'Eksik Bildirildi';
+
+  @override
+  String get enumCore_prescriptionMovementReplenishmentPendingLabel =>
+      'İkmal Bekliyor';
+
+  @override
+  String get enumCore_prescriptionMovementPendingApprovalActorLabel =>
+      'Oluşturan';
+
+  @override
+  String get enumCore_prescriptionMovementPurchasePendingActorLabel =>
+      'Dolum Yapan';
+
+  @override
+  String get enumCore_prescriptionMovementAppliedActorLabel => 'Uygulayan';
+
+  @override
+  String get enumCore_prescriptionMovementReturnedActorLabel => 'İade Eden';
+
+  @override
+  String get enumCore_prescriptionMovementWastagedActorLabel => 'Fire Eden';
+
+  @override
+  String get enumCore_prescriptionMovementDestructedActorLabel => 'İmha Eden';
+
+  @override
+  String get enumCore_prescriptionMovementCancelledActorLabel => 'İptal Eden';
+
+  @override
+  String get enumCore_prescriptionMovementRejectedActorLabel => 'Reddeden';
+
+  @override
+  String get enumCore_prescriptionMovementFilledWaitingActorLabel =>
+      'Onaylayan';
+
+  @override
+  String get enumCore_prescriptionMovementReturnPendingActorLabel =>
+      'İade Talep Eden';
+
+  @override
+  String get enumCore_prescriptionMovementUnloadedActorLabel => 'Boşaltan';
+
+  @override
+  String get enumCore_prescriptionMovementShortageReportedActorLabel =>
+      'Eksik Bildiren';
+
+  @override
+  String get enumCore_prescriptionMovementReplenishmentPendingActorLabel =>
+      'İkmal Onaylayan';
+
+  @override
+  String get enumCore_prescriptionMovementPendingApprovalActionLabel =>
+      'Oluşturuldu';
+
+  @override
+  String get enumCore_prescriptionMovementPurchasePendingActionLabel =>
+      'Dolum Yapıldı';
+
+  @override
+  String get enumCore_prescriptionMovementAppliedActionLabel => 'Uygulandı';
+
+  @override
+  String get enumCore_prescriptionMovementReturnedActionLabel => 'İade Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementWastagedActionLabel => 'Fire Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementDestructedActionLabel =>
+      'İmha Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementCancelledActionLabel =>
+      'İptal Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementRejectedActionLabel => 'Reddedildi';
+
+  @override
+  String get enumCore_prescriptionMovementFilledWaitingActionLabel =>
+      'Onaylandı';
+
+  @override
+  String get enumCore_prescriptionMovementReturnPendingActionLabel =>
+      'İade Talep Edildi';
+
+  @override
+  String get enumCore_prescriptionMovementUnloadedActionLabel => 'Boşaltıldı';
+
+  @override
+  String get enumCore_prescriptionMovementShortageReportedActionLabel =>
+      'Eksik Bildirildi';
+
+  @override
+  String get enumCore_prescriptionMovementReplenishmentPendingActionLabel =>
+      'İkmal Onaylandı';
+
+  @override
+  String get userAuth_table_firstNameColumn => 'Adı';
+
+  @override
+  String get userAuth_table_lastNameColumn => 'Soyadı';
+
+  @override
+  String get userAuth_table_occupationTypeColumn => 'Meslek Tipi';
+
+  @override
+  String get userAuth_table_expiryDateColumn => 'Son Geçerlilik Tarihi';
+
+  @override
+  String get userAuth_table_remainingDaysColumn => 'Kalan Gün';
+
+  @override
+  String get userAuth_table_statusColumn => 'Durumu';
+
+  @override
+  String get medicine_table_barcodeColumn => 'Barkod';
+
+  @override
+  String get medicine_table_atcCodeColumn => 'ATC Kodu';
+
+  @override
+  String get medicine_table_nameColumn => 'Adı';
+
+  @override
+  String get medicine_table_materialTypeColumn => 'Malzeme Türü';
+
+  @override
+  String get medicine_table_prescriptionTypeColumn => 'Reçete Tipi';
+
+  @override
+  String get medicine_table_countTypeColumn => 'Sayım Tipi';
+
+  @override
+  String get medicine_table_purchaseTypeColumn => 'Alım Şekli';
+
+  @override
+  String get medicine_table_returnTypeColumn => 'İade Şekli';
+
+  @override
+  String get medicine_table_statusColumn => 'Aktif';
+
+  @override
+  String get enumCore_medicineTypeDrug => 'İlaç';
+
+  @override
+  String get enumCore_medicineTypeConsumable => 'Tıbbi Sarf';
+
+  @override
+  String get refund_table_patientCodeColumn => 'Hasta Kodu';
+
+  @override
+  String get refund_table_patientColumn => 'Hasta';
+
+  @override
+  String get refund_table_userColumn => 'Kullanıcı';
+
+  @override
+  String get refund_table_medicineColumn => 'Malzeme';
+
+  @override
+  String get refund_table_quantityColumn => 'Miktar';
+
+  @override
+  String get refund_table_dateColumn => 'Tarih';
+
+  @override
+  String get refund_table_approvedUserColumn => 'İade Alan Kullanıcı';
+
+  @override
+  String get refund_table_approvedDateColumn => 'İade Alma Tarihi';
+
+  @override
+  String get refund_table_descriptionColumn => 'Açıklama';
+
+  @override
+  String get authorization_table_userColumn => 'Kullanıcı';
+
+  @override
+  String get authorization_table_roleColumn => 'Rol';
+
+  @override
+  String get authorization_table_encryptedLoginColumn => 'Şifreli Giriş';
+
+  @override
+  String get authorization_table_isDeletedColumn => 'Silinmiş';
+
+  @override
+  String get authorization_table_extraAuthCountColumn => 'Yetki Fazlası';
+
+  @override
+  String get cabinTemperature_table_dateColumn => 'Tarih';
+
+  @override
+  String get cabinTemperature_table_cabinColumn => 'Kabin';
+
+  @override
+  String get cabinTemperature_table_insideTempColumn => 'İç Sıcaklık';
+
+  @override
+  String get cabinTemperature_table_outsideTempColumn => 'Dış Sıcaklık';
+
+  @override
+  String get cabinTemperature_table_humidityColumn => 'Nem';
+
+  @override
+  String get cabinTemperature_action_showOutOfRange => 'Sınırı Aşanları Göster';
+
+  @override
+  String get cabinTemperature_action_showAll => 'Tümünü Göster';
+
+  @override
+  String get expiredItems_table_barcodeColumn => 'Barkod';
+
+  @override
+  String get expiredItems_table_medicineColumn => 'Malzeme';
+
+  @override
+  String get expiredItems_table_cabinColumn => 'Kabin';
+
+  @override
+  String get expiredItems_table_locationColumn => 'Konum';
+
+  @override
+  String get expiredItems_table_minQuantityColumn => 'Minimum';
+
+  @override
+  String get expiredItems_table_maxQuantityColumn => 'Maksimum';
+
+  @override
+  String get expiredItems_table_criticalQuantityColumn => 'Kritik';
+
+  @override
+  String get expiredItems_table_quantityColumn => 'Miktar';
+
+  @override
+  String get expiredItems_table_expiryDateColumn => 'S.K.T';
+
+  @override
+  String get expiredItems_table_remainingDaysColumn => 'Kalan Gün';
+
+  @override
+  String get hospitalStock_table_serviceColumn => 'Servis';
+
+  @override
+  String get hospitalStock_table_codeColumn => 'Kod';
+
+  @override
+  String get hospitalStock_table_medicineColumn => 'Malzeme';
+
+  @override
+  String get hospitalStock_table_quantityColumn => 'Miktar';
+
+  @override
+  String get patientInventory_table_doctorColumn => 'Doktor';
+
+  @override
+  String get patientInventory_table_departmentColumn => 'Bölüm';
+
+  @override
+  String get patientInventory_table_barcodeColumn => 'Barkod';
+
+  @override
+  String get patientInventory_table_medicineColumn => 'Malzeme';
+
+  @override
+  String get patientInventory_table_requestedQuantityColumn => 'İstenen Miktar';
+
+  @override
+  String get patientInventory_table_processedQuantityColumn => 'İşlem Miktarı';
+
+  @override
+  String get patientInventory_table_requestDateColumn => 'İstem Tarihi';
+
+  @override
+  String get patientInventory_table_processDateColumn => 'İşlem Tarihi';
+
+  @override
+  String get patientInventory_table_movementColumn => 'İşlem';
+
+  @override
+  String patientInventory_pdf_title(String patientName) {
+    return '$patientName adlı hastaya ait Hasta Envanter Listesi';
+  }
+
+  @override
+  String patientInventory_pdf_patientCode(Object code) {
+    return 'Hasta Kodu: $code';
+  }
+
+  @override
+  String patientInventory_pdf_service(String name) {
+    return 'Servis: $name';
+  }
+
+  @override
+  String patientInventory_pdf_bed(String name) {
+    return 'Yatak: $name';
+  }
+
+  @override
+  String patientInventory_pdf_reportDate(String date) {
+    return 'Rapor Tarihi: $date';
+  }
+
+  @override
+  String get service_table_nameColumn => 'Servis Adı';
+
+  @override
+  String get service_table_branchColumn => 'Branş';
+
+  @override
+  String get service_table_managerColumn => 'Servis Sorumlusu';
+
+  @override
+  String get service_table_statusColumn => 'Durum';
+
+  @override
+  String get unappliedPrescription_table_serviceColumn => 'Servis';
+
+  @override
+  String get unappliedPrescription_table_roomColumn => 'Oda';
+
+  @override
+  String get unappliedPrescription_table_bedColumn => 'Yatak';
+
+  @override
+  String get unappliedPrescription_table_patientCodeColumn => 'Hasta Kodu';
+
+  @override
+  String get unappliedPrescription_table_patientColumn => 'Hasta';
+
+  @override
+  String get unappliedPrescription_table_hospitalizationCodeColumn =>
+      'Yatış Kodu';
+
+  @override
+  String get unappliedPrescription_table_admissionDateColumn => 'Yatış Tarihi';
+
+  @override
+  String get unappliedPrescription_table_pendingCountColumn => 'Bekleyen Adet';
+
+  @override
+  String get drugActivity_table_dateColumn => 'Tarih';
+
+  @override
+  String get drugActivity_table_timeColumn => 'Saat';
+
+  @override
+  String get drugActivity_table_patientColumn => 'Hasta';
+
+  @override
+  String get drugActivity_table_userColumn => 'Kullanıcı';
+
+  @override
+  String get drugActivity_table_medicineColumn => 'Malzeme';
+
+  @override
+  String get drugActivity_table_quantityColumn => 'Miktar';
+
+  @override
+  String get drugActivity_table_movementColumn => 'Hareket';
+
+  @override
+  String get rfid_notConnectedError => 'RFID okuyucuya bağlı değil';
+
+  @override
+  String rfid_inventoryStartFailedError(String detail) {
+    return 'RFID tarama başlatılamadı: $detail';
+  }
+
+  @override
+  String rfid_inventoryStreamError(String detail) {
+    return 'RFID tarama stream hatası: $detail';
+  }
 }

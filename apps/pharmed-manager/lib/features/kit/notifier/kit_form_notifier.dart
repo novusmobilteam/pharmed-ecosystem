@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 
-class KitFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Kit> {
+class KitFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateKitUseCase _createKitUseCase;
   final UpdateKitUseCase _updateKitUseCase;
 

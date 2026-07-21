@@ -12,7 +12,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/cabin_operation_dialog/cabin_operation_dialog.dart';
 import '../../intake.dart';
 

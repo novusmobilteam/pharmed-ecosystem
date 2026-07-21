@@ -1,9 +1,8 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// Patient ve (opsiyonel) PatientHospitalization birleşmiş satır modeli
 /// TableData için kullanılır
-class PatientHospitalizationRow extends Selectable implements TableData {
+class PatientHospitalizationRow extends Selectable {
   final Patient patient;
   final Hospitalization? hospitalization;
   final HospitalService? physicalService;
@@ -18,36 +17,6 @@ class PatientHospitalizationRow extends Selectable implements TableData {
     this.inpatientService,
     this.doctor,
   }) : super(title: patient.fullName, subtitle: physicalService?.name);
-
-  @override
-  List<String> get titles => [
-    contextlessL10n().tableCore_serviceColumn,
-    contextlessL10n().tableCore_patientRowNationalIdColumn,
-    contextlessL10n().tableCore_patientRowFullNameColumn,
-    contextlessL10n().tableCore_admissionDateColumn,
-    contextlessL10n().tableCore_dischargeDateColumn,
-  ];
-
-  @override
-  List<String?> get content {
-    final h = hospitalization;
-    final p = patient;
-    final identity = p.tcNo;
-    final service = inpatientService?.name;
-    final admissionDate = h?.admissionDate != null ? Formatter.dateFormatter.format(h!.admissionDate!) : '-';
-    final exitDate = h?.exitDate != null ? Formatter.dateFormatter.format(h!.exitDate!) : '-';
-
-    return [service, identity, patient.fullName, admissionDate, exitDate];
-  }
-
-  @override
-  List get rawContent => [
-    inpatientService?.name,
-    patient.tcNo,
-    patient.fullName,
-    hospitalization?.admissionDate,
-    hospitalization?.exitDate,
-  ];
 
   PatientHospitalizationRow copyWith({
     Patient? patient,

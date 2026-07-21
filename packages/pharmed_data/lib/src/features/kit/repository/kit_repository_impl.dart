@@ -15,9 +15,26 @@ class KitRepositoryImpl implements IKitRepository {
   final KitMapper _mapper;
 
   @override
-  Future<Result<List<Kit>>> getKits() async {
-    final result = await _dataSource.getKits();
-    return result.when(ok: (stationDto) => Result.ok(_mapper.toEntityList(stationDto)), error: (e) => Result.error(e));
+  Future<Result<ApiResponse<List<Kit>>>> getKits({int? skip, int? take, String? search}) async {
+    final res = await _dataSource.getKits(skip: skip, take: take, search: search);
+    return res.when(
+      ok: (response) {
+        List<Kit> entities = [];
+        if (response.data != null) {
+          entities = response.data!.map((d) => _mapper.toEntity(d)).toList();
+        }
+        return Result.ok(
+          ApiResponse<List<Kit>>(
+            data: entities,
+            statusCode: response.statusCode,
+            isSuccess: response.isSuccess,
+            totalCount: response.totalCount,
+            groupCount: response.groupCount,
+          ),
+        );
+      },
+      error: (e) => Result.error(e),
+    );
   }
 
   @override

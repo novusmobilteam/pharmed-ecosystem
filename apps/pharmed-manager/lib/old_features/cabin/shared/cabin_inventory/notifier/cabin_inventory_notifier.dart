@@ -388,7 +388,6 @@ class CabinInventoryNotifier extends ChangeNotifier with ApiRequestMixin {
             return false;
           }
         case CabinInventoryType.intake:
-          // TODO: Handle this case.
           throw UnimplementedError();
       }
     } else {

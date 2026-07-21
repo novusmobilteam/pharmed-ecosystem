@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class RoleDrugAuthorization implements TableData {
+class RoleDrugAuthorization {
   final int? id;
   final Role? role;
   final Medicine? medicine;
@@ -46,13 +46,4 @@ class RoleDrugAuthorization implements TableData {
       pendingOps: pendingOps ?? this.pendingOps,
     );
   }
-
-  @override
-  List<dynamic> get content => [medicine, role];
-
-  @override
-  List<dynamic> get rawContent => [medicine, role];
-
-  @override
-  List<String?> get titles => ['İlaç', 'Rol'];
 }

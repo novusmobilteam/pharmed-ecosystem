@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class ActiveIngredientNotifier extends ChangeNotifier with SearchMixin<ActiveIngredient>, ApiRequestMixin {
+class ActiveIngredientNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<ActiveIngredient> {
   final GetActiveIngredientsUseCase _getActiveIngredientsUseCase;
   final DeleteActiveIngredientUseCase _deleteActiveIngredientUseCase;
 
@@ -18,12 +18,11 @@ class ActiveIngredientNotifier extends ChangeNotifier with SearchMixin<ActiveIng
   bool get isFetching => isLoading(fetchOp);
   bool get isDeleting => isLoading(deleteOp);
 
-  // Functions
-  Future<void> getActiveIngredients() async {
-    await execute(
-      fetchOp,
-      operation: () => _getActiveIngredientsUseCase.call(GetActiveIngredientsParams()),
-      onData: (response) => allItems = response.data ?? [],
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) =>
+          _getActiveIngredientsUseCase.call(PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery)),
     );
   }
 
@@ -32,7 +31,7 @@ class ActiveIngredientNotifier extends ChangeNotifier with SearchMixin<ActiveIng
     Function(String? msg)? onFailed,
     Function(String? msg)? onSuccess,
   }) async {
-    final item = allItems.firstWhere((x) => x.id == id);
+    final item = items.firstWhere((x) => x.id == id);
 
     await executeVoid(
       deleteOp,
@@ -40,7 +39,7 @@ class ActiveIngredientNotifier extends ChangeNotifier with SearchMixin<ActiveIng
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         onSuccess?.call(null);
-        getActiveIngredients();
+        fetch();
       },
     );
   }

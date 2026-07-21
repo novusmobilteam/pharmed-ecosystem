@@ -25,7 +25,7 @@ class PrescriptionStatusBadge extends StatelessWidget {
           Icon(status.icon, size: 12, color: status.foregroundColor),
           const SizedBox(width: 4),
           Text(
-            status.label,
+            status.label(context),
             style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: status.foregroundColor),
           ),
         ],

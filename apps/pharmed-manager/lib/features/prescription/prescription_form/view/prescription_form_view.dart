@@ -59,7 +59,7 @@ class PrescriptionFormViewState extends State<PrescriptionFormView> {
                   platform: DoseStepperPlatform.desktop,
                   value: selected.dosePiece?.toDouble() ?? 0,
                   step: selected.medicine?.operationStep ?? 1.0,
-                  unit: selected.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback,
+                  unit: selected.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback,
                   onChanged: notifier.updateDosePiece,
                 ),
               ),

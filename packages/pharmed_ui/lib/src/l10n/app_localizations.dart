@@ -186,6 +186,24 @@ abstract class AppLocalizations {
   /// **'Critical'**
   String get common_criticalLabel;
 
+  /// Boolean true display value — used in tables and forms across the app
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get common_boolYes;
+
+  /// Boolean false display value — used in tables and forms across the app
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get common_boolNo;
+
+  /// Action button label — discharge patient from hospitalization
+  ///
+  /// In en, this message translates to:
+  /// **'Discharge'**
+  String get common_action_discharge;
+
   /// Subtitle below the logo on the login screen
   ///
   /// In en, this message translates to:
@@ -2495,6 +2513,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today'**
   String get date_preset_today;
+
+  /// No description provided for @date_preset_tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get date_preset_tomorrow;
 
   /// No description provided for @date_preset_last_3_days.
   ///
@@ -8458,6 +8482,768 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, Stop'**
   String get refill_stop_confirmYes;
+
+  /// PrescriptionMovementType.pendingApproval — status label shown in badges and lists
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Approval'**
+  String get enumCore_prescriptionMovementPendingApprovalLabel;
+
+  /// PrescriptionMovementType.purchasePending — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Pending'**
+  String get enumCore_prescriptionMovementPurchasePendingLabel;
+
+  /// PrescriptionMovementType.applied — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Applied'**
+  String get enumCore_prescriptionMovementAppliedLabel;
+
+  /// PrescriptionMovementType.returned — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get enumCore_prescriptionMovementReturnedLabel;
+
+  /// PrescriptionMovementType.wastaged — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Wasted'**
+  String get enumCore_prescriptionMovementWastagedLabel;
+
+  /// PrescriptionMovementType.destructed — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Destructed'**
+  String get enumCore_prescriptionMovementDestructedLabel;
+
+  /// PrescriptionMovementType.cancelled — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get enumCore_prescriptionMovementCancelledLabel;
+
+  /// PrescriptionMovementType.rejected — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get enumCore_prescriptionMovementRejectedLabel;
+
+  /// PrescriptionMovementType.filledWaiting — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting Fill'**
+  String get enumCore_prescriptionMovementFilledWaitingLabel;
+
+  /// PrescriptionMovementType.returnPending — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Return Pending'**
+  String get enumCore_prescriptionMovementReturnPendingLabel;
+
+  /// PrescriptionMovementType.unloaded — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Unloaded'**
+  String get enumCore_prescriptionMovementUnloadedLabel;
+
+  /// PrescriptionMovementType.shortageReported — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Shortage Reported'**
+  String get enumCore_prescriptionMovementShortageReportedLabel;
+
+  /// PrescriptionMovementType.replenishmentPending — status label
+  ///
+  /// In en, this message translates to:
+  /// **'Replenishment Pending'**
+  String get enumCore_prescriptionMovementReplenishmentPendingLabel;
+
+  /// PrescriptionMovementType.pendingApproval — actor label (who performed the action)
+  ///
+  /// In en, this message translates to:
+  /// **'Created By'**
+  String get enumCore_prescriptionMovementPendingApprovalActorLabel;
+
+  /// PrescriptionMovementType.purchasePending — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Filled By'**
+  String get enumCore_prescriptionMovementPurchasePendingActorLabel;
+
+  /// PrescriptionMovementType.applied — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Applied By'**
+  String get enumCore_prescriptionMovementAppliedActorLabel;
+
+  /// PrescriptionMovementType.returned — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Returned By'**
+  String get enumCore_prescriptionMovementReturnedActorLabel;
+
+  /// PrescriptionMovementType.wastaged — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Wasted By'**
+  String get enumCore_prescriptionMovementWastagedActorLabel;
+
+  /// PrescriptionMovementType.destructed — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Destructed By'**
+  String get enumCore_prescriptionMovementDestructedActorLabel;
+
+  /// PrescriptionMovementType.cancelled — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled By'**
+  String get enumCore_prescriptionMovementCancelledActorLabel;
+
+  /// PrescriptionMovementType.rejected — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected By'**
+  String get enumCore_prescriptionMovementRejectedActorLabel;
+
+  /// PrescriptionMovementType.filledWaiting — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Approved By'**
+  String get enumCore_prescriptionMovementFilledWaitingActorLabel;
+
+  /// PrescriptionMovementType.returnPending — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Return Requested By'**
+  String get enumCore_prescriptionMovementReturnPendingActorLabel;
+
+  /// PrescriptionMovementType.unloaded — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Unloaded By'**
+  String get enumCore_prescriptionMovementUnloadedActorLabel;
+
+  /// PrescriptionMovementType.shortageReported — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Shortage Reported By'**
+  String get enumCore_prescriptionMovementShortageReportedActorLabel;
+
+  /// PrescriptionMovementType.replenishmentPending — actor label
+  ///
+  /// In en, this message translates to:
+  /// **'Replenishment Approved By'**
+  String get enumCore_prescriptionMovementReplenishmentPendingActorLabel;
+
+  /// PrescriptionMovementType.pendingApproval — action label (what was done to reach this state)
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get enumCore_prescriptionMovementPendingApprovalActionLabel;
+
+  /// PrescriptionMovementType.purchasePending — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Filled'**
+  String get enumCore_prescriptionMovementPurchasePendingActionLabel;
+
+  /// PrescriptionMovementType.applied — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Applied'**
+  String get enumCore_prescriptionMovementAppliedActionLabel;
+
+  /// PrescriptionMovementType.returned — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get enumCore_prescriptionMovementReturnedActionLabel;
+
+  /// PrescriptionMovementType.wastaged — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Wasted'**
+  String get enumCore_prescriptionMovementWastagedActionLabel;
+
+  /// PrescriptionMovementType.destructed — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Destructed'**
+  String get enumCore_prescriptionMovementDestructedActionLabel;
+
+  /// PrescriptionMovementType.cancelled — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get enumCore_prescriptionMovementCancelledActionLabel;
+
+  /// PrescriptionMovementType.rejected — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get enumCore_prescriptionMovementRejectedActionLabel;
+
+  /// PrescriptionMovementType.filledWaiting — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get enumCore_prescriptionMovementFilledWaitingActionLabel;
+
+  /// PrescriptionMovementType.returnPending — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Return Requested'**
+  String get enumCore_prescriptionMovementReturnPendingActionLabel;
+
+  /// PrescriptionMovementType.unloaded — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Unloaded'**
+  String get enumCore_prescriptionMovementUnloadedActionLabel;
+
+  /// PrescriptionMovementType.shortageReported — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Shortage Reported'**
+  String get enumCore_prescriptionMovementShortageReportedActionLabel;
+
+  /// PrescriptionMovementType.replenishmentPending — action label
+  ///
+  /// In en, this message translates to:
+  /// **'Replenishment Approved'**
+  String get enumCore_prescriptionMovementReplenishmentPendingActionLabel;
+
+  /// Table column header — user's first name, user auth management screen
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get userAuth_table_firstNameColumn;
+
+  /// Table column header — user's last name, user auth management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get userAuth_table_lastNameColumn;
+
+  /// Table column header — user's profession/occupation type, user auth management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Occupation Type'**
+  String get userAuth_table_occupationTypeColumn;
+
+  /// Table column header — certificate/auth expiry date, user auth management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get userAuth_table_expiryDateColumn;
+
+  /// Table column header — days remaining until expiry, user auth management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Days'**
+  String get userAuth_table_remainingDaysColumn;
+
+  /// Table column header — current auth status of the user, user auth management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get userAuth_table_statusColumn;
+
+  /// Table column header — medicine barcode, medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get medicine_table_barcodeColumn;
+
+  /// Table column header — ATC code (drugs only, consumables show dash), medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'ATC Code'**
+  String get medicine_table_atcCodeColumn;
+
+  /// Table column header — medicine name, medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get medicine_table_nameColumn;
+
+  /// Table column header — drug or medical consumable type label, medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Material Type'**
+  String get medicine_table_materialTypeColumn;
+
+  /// Table column header — prescription type (drugs only, consumables show dash), medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription Type'**
+  String get medicine_table_prescriptionTypeColumn;
+
+  /// Table column header — counting method type, medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Count Type'**
+  String get medicine_table_countTypeColumn;
+
+  /// Table column header — acquisition/purchase method, medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Type'**
+  String get medicine_table_purchaseTypeColumn;
+
+  /// Table column header — return method type, medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Return Type'**
+  String get medicine_table_returnTypeColumn;
+
+  /// Table column header — active/inactive status, medicine management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get medicine_table_statusColumn;
+
+  /// Label for Medicine union type — drug variant
+  ///
+  /// In en, this message translates to:
+  /// **'Drug'**
+  String get enumCore_medicineTypeDrug;
+
+  /// Label for Medicine union type — medical consumable variant
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Consumable'**
+  String get enumCore_medicineTypeConsumable;
+
+  /// Table column header — patient ID/code, refund management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Code'**
+  String get refund_table_patientCodeColumn;
+
+  /// Table column header — patient full name, refund management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get refund_table_patientColumn;
+
+  /// Table column header — user who created the refund record, refund management screen
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get refund_table_userColumn;
+
+  /// Table column header — medicine/material name, refund management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get refund_table_medicineColumn;
+
+  /// Table column header — refund quantity (numeric), refund management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get refund_table_quantityColumn;
+
+  /// Table column header — refund creation date, refund management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get refund_table_dateColumn;
+
+  /// Table column header — user who accepted/approved the refund, refund management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Approved By'**
+  String get refund_table_approvedUserColumn;
+
+  /// Table column header — date the refund was approved, refund management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Approval Date'**
+  String get refund_table_approvedDateColumn;
+
+  /// Table column header — refund description/note, completed refunds table
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get refund_table_descriptionColumn;
+
+  /// Table column header — full name of the user, authorization management screen
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get authorization_table_userColumn;
+
+  /// Table column header — role name assigned to user, authorization management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get authorization_table_roleColumn;
+
+  /// Table column header — whether the user uses encrypted login, authorization management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted Login'**
+  String get authorization_table_encryptedLoginColumn;
+
+  /// Table column header — whether the user record is soft-deleted, authorization management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get authorization_table_isDeletedColumn;
+
+  /// Table column header — count of extra authorizations granted to user, authorization management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Extra Authorization'**
+  String get authorization_table_extraAuthCountColumn;
+
+  /// Table column header — record date and time, cabin temperature screen
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get cabinTemperature_table_dateColumn;
+
+  /// Table column header — cabin name, cabin temperature screen
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin'**
+  String get cabinTemperature_table_cabinColumn;
+
+  /// Table column header — inside temperature value in °C, cabin temperature screen
+  ///
+  /// In en, this message translates to:
+  /// **'Inside Temperature'**
+  String get cabinTemperature_table_insideTempColumn;
+
+  /// Table column header — outside temperature value in °C, cabin temperature screen
+  ///
+  /// In en, this message translates to:
+  /// **'Outside Temperature'**
+  String get cabinTemperature_table_outsideTempColumn;
+
+  /// Table column header — humidity percentage, cabin temperature screen
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity'**
+  String get cabinTemperature_table_humidityColumn;
+
+  /// Tooltip — filter button to show only records exceeding thresholds, cabin temperature screen
+  ///
+  /// In en, this message translates to:
+  /// **'Show Out of Range'**
+  String get cabinTemperature_action_showOutOfRange;
+
+  /// Tooltip — filter button to show all records (reset out-of-range filter), cabin temperature screen
+  ///
+  /// In en, this message translates to:
+  /// **'Show All'**
+  String get cabinTemperature_action_showAll;
+
+  /// Table column header — medicine barcode, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get expiredItems_table_barcodeColumn;
+
+  /// Table column header — medicine/material name, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get expiredItems_table_medicineColumn;
+
+  /// Table column header — cabin name, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin'**
+  String get expiredItems_table_cabinColumn;
+
+  /// Table column header — shelf/compartment location, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get expiredItems_table_locationColumn;
+
+  /// Table column header — minimum stock quantity with unit, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum'**
+  String get expiredItems_table_minQuantityColumn;
+
+  /// Table column header — maximum stock quantity with unit, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum'**
+  String get expiredItems_table_maxQuantityColumn;
+
+  /// Table column header — critical stock threshold quantity with unit, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get expiredItems_table_criticalQuantityColumn;
+
+  /// Table column header — current stock quantity with unit, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get expiredItems_table_quantityColumn;
+
+  /// Table column header — medicine expiry date (S.K.T), expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Exp. Date'**
+  String get expiredItems_table_expiryDateColumn;
+
+  /// Table column header — days remaining until expiry, expired items screen
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Days'**
+  String get expiredItems_table_remainingDaysColumn;
+
+  /// Table column header — service name, hospital stock screen
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get hospitalStock_table_serviceColumn;
+
+  /// Table column header — stock code, hospital stock screen
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get hospitalStock_table_codeColumn;
+
+  /// Table column header — medicine/material name, hospital stock screen
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get hospitalStock_table_medicineColumn;
+
+  /// Table column header — current stock quantity, hospital stock screen
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get hospitalStock_table_quantityColumn;
+
+  /// Table column header — doctor full name, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get patientInventory_table_doctorColumn;
+
+  /// Table column header — physical service/department name, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get patientInventory_table_departmentColumn;
+
+  /// Table column header — medicine barcode, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get patientInventory_table_barcodeColumn;
+
+  /// Table column header — medicine/material name, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get patientInventory_table_medicineColumn;
+
+  /// Table column header — requested dose/quantity, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Requested Qty'**
+  String get patientInventory_table_requestedQuantityColumn;
+
+  /// Table column header — last movement/processed quantity, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Processed Qty'**
+  String get patientInventory_table_processedQuantityColumn;
+
+  /// Table column header — prescription/request date, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Request Date'**
+  String get patientInventory_table_requestDateColumn;
+
+  /// Table column header — transaction/process date, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Process Date'**
+  String get patientInventory_table_processDateColumn;
+
+  /// Table column header — last movement type shown as chip, patient inventory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get patientInventory_table_movementColumn;
+
+  /// PDF report title — patient inventory list header, includes patient full name
+  ///
+  /// In en, this message translates to:
+  /// **'{patientName} adlı hastaya ait Hasta Envanter Listesi'**
+  String patientInventory_pdf_title(String patientName);
+
+  /// PDF report info line — patient ID/code
+  ///
+  /// In en, this message translates to:
+  /// **'Hasta Kodu: {code}'**
+  String patientInventory_pdf_patientCode(Object code);
+
+  /// PDF report info line — physical service name
+  ///
+  /// In en, this message translates to:
+  /// **'Servis: {name}'**
+  String patientInventory_pdf_service(String name);
+
+  /// PDF report info line — bed name
+  ///
+  /// In en, this message translates to:
+  /// **'Yatak: {name}'**
+  String patientInventory_pdf_bed(String name);
+
+  /// PDF report info line — report generation date
+  ///
+  /// In en, this message translates to:
+  /// **'Rapor Tarihi: {date}'**
+  String patientInventory_pdf_reportDate(String date);
+
+  /// Table column header — service name, service management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Service Name'**
+  String get service_table_nameColumn;
+
+  /// Table column header — branch name, service management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get service_table_branchColumn;
+
+  /// Table column header — service responsible/manager name, service management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Service Manager'**
+  String get service_table_managerColumn;
+
+  /// Table column header — service status, service management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get service_table_statusColumn;
+
+  /// Table column header — physical service name, unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get unappliedPrescription_table_serviceColumn;
+
+  /// Table column header — room name, unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get unappliedPrescription_table_roomColumn;
+
+  /// Table column header — bed name, unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Bed'**
+  String get unappliedPrescription_table_bedColumn;
+
+  /// Table column header — patient protocol number, unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Code'**
+  String get unappliedPrescription_table_patientCodeColumn;
+
+  /// Table column header — patient full name, unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get unappliedPrescription_table_patientColumn;
+
+  /// Table column header — hospitalization ID/code, unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Code'**
+  String get unappliedPrescription_table_hospitalizationCodeColumn;
+
+  /// Table column header — hospitalization date, unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Date'**
+  String get unappliedPrescription_table_admissionDateColumn;
+
+  /// Table column header — number of pending unapplied prescription items, unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get unappliedPrescription_table_pendingCountColumn;
+
+  /// Table column header — activity date, drug activity screen
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get drugActivity_table_dateColumn;
+
+  /// Table column header — activity time, drug activity screen
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get drugActivity_table_timeColumn;
+
+  /// Table column header — patient full name, drug activity screen
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get drugActivity_table_patientColumn;
+
+  /// Table column header — user who performed the action, drug activity screen
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get drugActivity_table_userColumn;
+
+  /// Table column header — medicine/material name, drug activity screen
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get drugActivity_table_medicineColumn;
+
+  /// Table column header — movement quantity, drug activity screen
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get drugActivity_table_quantityColumn;
+
+  /// Table column header — movement/transaction type action label, drug activity screen
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get drugActivity_table_movementColumn;
+
+  /// Error message — RFID reader not connected when inventory start attempted
+  ///
+  /// In en, this message translates to:
+  /// **'RFID reader is not connected'**
+  String get rfid_notConnectedError;
+
+  /// Error message — RFID inventory start failed with detail
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to start RFID inventory: {detail}'**
+  String rfid_inventoryStartFailedError(String detail);
+
+  /// Error message — RFID inventory stream error with detail
+  ///
+  /// In en, this message translates to:
+  /// **'RFID inventory stream error: {detail}'**
+  String rfid_inventoryStreamError(String detail);
 }
 
 class _AppLocalizationsDelegate

@@ -15,6 +15,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/hardware/hardware.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -67,8 +68,8 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
           context: context,
           action: ConfirmAction.custom,
           customTitle: context.l10n.refill_error_queueTitle,
-          customMessage: next.message.isNotEmpty
-              ? '${context.l10n.refill_error_queueMessage}\n\n${next.message}'
+          customMessage: next.failure.message(context).isNotEmpty
+              ? '${context.l10n.refill_error_queueMessage}\n\n${next.failure.message(context)}'
               : context.l10n.refill_error_queueMessage,
           iconData: PhosphorIcons.warning(),
           color: MedColors.amber,
@@ -78,7 +79,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
           onCancel: notifier.abortAfterError,
         );
       } else if (next is MasterRefillError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
         ref.read(masterRefillNotifierProvider.notifier).dismissError();
       }
     });
@@ -103,7 +104,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 250),
         child: isExecuting
-            ? const MasterRefillExecutionPanel(key: ValueKey('execution'))
+            ? MasterRefillExecutionPanel(key: ValueKey('execution'), allGroups: widget.data?.groups ?? [])
             : const MasterRefillSelectionPanel(key: ValueKey('selection')),
       ),
     );

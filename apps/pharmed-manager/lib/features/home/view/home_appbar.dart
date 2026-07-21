@@ -1,5 +1,3 @@
-// lib/shared/widgets/manager_app_bar.dart
-//
 // PharMed Manager — Uygulama üst çubuğu.
 // Menü navigasyonu sidebar'da olduğundan bu widget sadece:
 //   - Marka / anasayfa butonu
@@ -53,11 +51,14 @@ class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _HomeAppBarState extends State<HomeAppBar> {
-  String _formatTime(DateTime dt) {
-    final h = dt.hour.toString().padLeft(2, '0');
-    final m = dt.minute.toString().padLeft(2, '0');
-    final s = dt.second.toString().padLeft(2, '0');
-    return '$h:$m:$s';
+  late String _timeStr;
+  late final Stream<String> _clockStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _timeStr = DateTime.now().formattedTime;
+    _clockStream = Stream.periodic(const Duration(seconds: 1), (_) => _timeStr);
   }
 
   @override
@@ -75,11 +76,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
         ),
         child: Row(
           children: [
-            // ── Marka ───────────────────────────────────────────
             _AppLogo(onTap: widget.onHomeTap),
-            _Divider(),
-
-            // ── Uygulama etiketi ─────────────────────────────────
+            SizedBox(width: 10),
             Text(
               context.l10n.home_appBarBadgeLabel,
               style: TextStyle(
@@ -90,43 +88,44 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 letterSpacing: 1.2,
               ),
             ),
-
             const Spacer(),
-
-            // ── Canlı saat ───────────────────────────────────────
             StreamBuilder<String>(
-              stream: Stream.periodic(const Duration(seconds: 1), (_) => _formatTime(DateTime.now())),
-              initialData: _formatTime(DateTime.now()),
-              builder: (_, snap) => _ClockLabel(time: snap.data!),
+              stream: _clockStream,
+              initialData: _timeStr,
+              builder: (_, snap) => _ClockLabel(time: snap.data ?? _timeStr),
             ),
 
-            _Divider(),
+            SizedBox(width: 10),
 
-            // ── Kullanıcı alanı ──────────────────────────────────
             if (!widget.isLoggedIn)
-              _LoginButton(onTap: widget.onLoginTap) // 🆕 artık çalışıyor
+              MedRectangleIconButton(
+                iconData: PhosphorIcons.signIn(),
+                color: MedColors.blue,
+                iconColor: Colors.white,
+                onPressed: widget.onLoginTap,
+              )
             else if (widget.user != null)
               _UserInfo(user: widget.user!),
 
             const SizedBox(width: 10),
 
-            // ── Debug ayarlar ────────────────────────────────────
             if (kDebugMode && widget.isLoggedIn) ...[
-              _BarIconButton(
-                icon: PhosphorIcons.wrench(),
+              MedRectangleIconButton(
+                iconData: PhosphorIcons.gear(),
+                borderColor: MedColors.border,
                 tooltip: context.l10n.home_devSettingsTooltip,
-                onTap: widget.onSettingsTap,
+                onPressed: widget.onSettingsTap,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 5),
             ],
 
-            // ── Çıkış ────────────────────────────────────────────
             if (widget.isLoggedIn)
-              _BarIconButton(
-                icon: PhosphorIcons.signOut(),
+              MedRectangleIconButton(
+                iconData: PhosphorIcons.signOut(),
+                iconColor: Colors.white,
                 tooltip: context.l10n.dashboard_logoutTooltip,
-                danger: true,
-                onTap: widget.onLogoutTap,
+                color: MedColors.red,
+                onPressed: widget.onLogoutTap,
               ),
           ],
         ),
@@ -134,8 +133,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
     );
   }
 }
-
-// ── Alt bileşenler (değişmeyen) ───────────────────────────────────────────────
 
 class _AppLogo extends StatelessWidget {
   const _AppLogo({this.onTap});
@@ -256,83 +253,6 @@ class _UserInfo extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class _LoginButton extends StatelessWidget {
-  const _LoginButton({this.onTap});
-
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.mdAll),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(PhosphorIcons.signIn(), size: 13, color: Colors.white),
-            const SizedBox(width: 6),
-            Text(
-              context.l10n.dashboard_loginBarButton,
-              style: const TextStyle(
-                fontFamily: MedFonts.sans,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BarIconButton extends StatelessWidget {
-  const _BarIconButton({required this.icon, required this.tooltip, this.onTap, this.danger = false});
-
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback? onTap;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = danger ? MedColors.red : MedColors.text2;
-
-    return Tooltip(
-      message: tooltip,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: MedRadius.mdAll,
-        child: Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            color: danger ? MedColors.redLight : Colors.transparent,
-            border: Border.all(color: danger ? const Color(0x33DC2626) : MedColors.border),
-            borderRadius: MedRadius.mdAll,
-          ),
-          child: Icon(icon, size: 14, color: color),
-        ),
-      ),
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 20,
-      color: MedColors.border2,
-      margin: const EdgeInsets.symmetric(horizontal: 14),
     );
   }
 }

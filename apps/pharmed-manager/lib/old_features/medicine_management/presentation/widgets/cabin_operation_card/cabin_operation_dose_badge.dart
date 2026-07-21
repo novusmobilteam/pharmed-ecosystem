@@ -27,7 +27,10 @@ class CabinOperationDoseBadge extends StatelessWidget {
               color: context.colorScheme.primary,
             ),
           ),
-          Text(item.medicine?.operationUnit ?? 'Adet', style: context.textTheme.labelSmall?.copyWith(fontSize: 9)),
+          Text(
+            item.medicine?.operationUnitLocalized(context) ?? 'Adet',
+            style: context.textTheme.labelSmall?.copyWith(fontSize: 9),
+          ),
         ],
       ),
     );

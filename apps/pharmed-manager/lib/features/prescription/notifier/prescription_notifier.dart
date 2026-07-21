@@ -5,8 +5,7 @@ import 'package:pharmed_manager/core/core.dart';
 // Reçete listesi + panel koordinasyon notifier'ı.
 // Sınıf: Class B
 
-class PrescriptionNotifier extends ChangeNotifier
-    with ApiRequestMixin, SearchMixin<Hospitalization>, PaginationMixin<Hospitalization> {
+class PrescriptionNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Hospitalization> {
   final GetActiveHospitalizationsUseCase _getActiveHospitalizationsUseCase;
   final GetHospitalizationsUseCase _getHospitalizationsUseCase;
 

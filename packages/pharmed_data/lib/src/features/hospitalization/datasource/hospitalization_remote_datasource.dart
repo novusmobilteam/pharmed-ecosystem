@@ -81,7 +81,9 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> updateHospitalization(HospitalizationDto dto) {
     if (dto.id == null) {
-      return Future.value(Result.error(CustomException(message: contextlessL10n().dataGuard_updateHospitalizationIdEmpty)));
+      return Future.value(
+        Result.error(CustomException(message: contextlessL10n().dataGuard_updateHospitalizationIdEmpty)),
+      );
     }
     return putRequest(
       path: '$_basePath/${dto.id}',
@@ -121,5 +123,15 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
     );
     return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
+  }
+
+  Future<Result<void>> discharge(int hospitalizationId) async {
+    final res = await putRequest(
+      path: '/Patient/hospitalizationExit/$hospitalizationId',
+      parser: BaseRemoteDataSource.voidParser(),
+      successLog: 'PatientHospitalization discharged',
+    );
+
+    return res.when(ok: (_) => Result.ok(null), error: (error) => Result.error(error));
   }
 }

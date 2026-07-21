@@ -13,10 +13,12 @@ Future<T?> showActiveIngredientDialog<T>(BuildContext context, {bool forSelectio
       create: (context) => ActiveIngredientNotifier(
         getActiveIngredientsUseCase: context.read(),
         deleteActiveIngredientUseCase: context.read(),
-      )..getActiveIngredients(),
+      )..fetch(),
       child: Consumer<ActiveIngredientNotifier>(
         builder: (context, vm, Widget? child) => CustomDialog(
-          title: forSelection ? context.l10n.activeIngredientDialogSelectTitle : context.l10n.activeIngredientDialogTitle,
+          title: forSelection
+              ? context.l10n.activeIngredientDialogSelectTitle
+              : context.l10n.activeIngredientDialogTitle,
           showSearch: true,
           showAdd: true,
           onSearchChanged: (query) => vm.search(query),
@@ -35,6 +37,6 @@ Future<T?> showActiveIngredientDialog<T>(BuildContext context, {bool forSelectio
 Future<void> _showFormDialog(BuildContext context) async {
   final result = await showActiveIngredientFormDialog(context);
   if (result == true && context.mounted) {
-    context.read<ActiveIngredientNotifier>().getActiveIngredients();
+    context.read<ActiveIngredientNotifier>().fetch();
   }
 }

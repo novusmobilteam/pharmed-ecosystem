@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class KitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Kit> {
+class KitNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Kit> {
   final GetKitsUseCase _getKitsUseCase;
   final DeleteKitUseCase _deleteKitUseCase;
 
@@ -14,8 +14,13 @@ class KitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Kit> 
 
   bool get isFetching => isLoading(fetchOp);
 
-  Future<void> getKits() async {
-    await execute(fetchOp, operation: () => _getKitsUseCase.call(), onData: (data) => allItems = data);
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      op: fetchOp,
+      fetchMethod: (skip, take) =>
+          _getKitsUseCase.call(PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery)),
+    );
   }
 
   Future<void> deleteKit(Kit kit, {Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
@@ -25,7 +30,7 @@ class KitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Kit> 
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         onSuccess?.call(null);
-        getKits();
+        fetch();
       },
     );
   }

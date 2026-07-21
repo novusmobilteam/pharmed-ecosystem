@@ -1,9 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
-class PrescriptionItemMovement implements TableData {
+class PrescriptionItemMovement {
   final int id;
   final int? prescriptionItemId;
   final int? cabinDrawerDetailId;
@@ -25,33 +22,4 @@ class PrescriptionItemMovement implements TableData {
     this.stationId,
     this.prescriptionItem,
   });
-
-  @override
-  List<dynamic> get content => [
-    createdAt.formattedDate,
-    createdAt.formattedTime,
-    prescriptionItem?.prescription?.hospitalization?.patient?.fullName,
-    performedBy?.fullName,
-    prescriptionItem?.medicine?.name,
-    quantity.formatFractional,
-    type.actionLabel,
-  ];
-
-  @override
-  List<dynamic> get rawContent => [
-    createdAt.formattedDate,
-    createdAt.formattedTime,
-    prescriptionItem?.prescription?.hospitalization?.patient?.fullName,
-    performedBy?.fullName,
-    prescriptionItem?.medicine?.name,
-    quantity.formatFractional,
-    type.actionLabel,
-  ];
-
-  @override
-  List<String?> get titles => ['Tarih', 'Saat', 'Hasta', 'Kullanıcı', 'Malzeme', 'Miktar', 'Hareket'];
-
-  @override
-  String toString() =>
-      'Type: ${type.label} - createdAt: ${createdAt.formattedDate} - item: ${PrescriptionItemMapper().toDtoOrNull(prescriptionItem)?.toJson()}';
 }

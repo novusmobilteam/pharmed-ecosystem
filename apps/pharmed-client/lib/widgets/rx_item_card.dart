@@ -100,13 +100,6 @@ class RxItemCard extends StatelessWidget {
             _TopRow(item: item, isSelected: isSelected),
             MedDottedDivider(),
             RxMovementBlock(lastMovement: item.lastMovement, medicine: item.medicine),
-            const SizedBox(height: MedSpacing.lg),
-            if (showStepper && isSelected) ...[
-              const SizedBox(height: MedSpacing.lg),
-              Divider(height: 1),
-              const SizedBox(height: MedSpacing.lg),
-              _StepperRow(item: item, quantity: quantity, maxQuantity: maxQuantity, onChanged: onQuantityChanged!),
-            ],
           ],
         ),
       ),
@@ -122,8 +115,8 @@ class _TopRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dose = '${item.dosePiece?.formatFractional} ${item.medicine?.operationUnit}';
-    final hour = item.prescription?.prescriptionDate?.shortRelativeLabel ?? '-';
+    final dose = '${item.dosePiece?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}';
+    final hour = item.time?.shortRelativeLabelOf(context) ?? '-';
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -145,47 +138,10 @@ class _TopRow extends StatelessWidget {
         ),
         Spacer(),
         MedInfoChip(
-          info: item.status?.label,
+          info: item.status?.label(context),
           backgroundColor: item.status?.backgroundColor,
           foregroundColor: item.status?.foregroundColor,
         ),
-      ],
-    );
-  }
-}
-
-class _StepperRow extends StatelessWidget {
-  const _StepperRow({required this.item, required this.quantity, required this.maxQuantity, required this.onChanged});
-
-  final PrescriptionItem item;
-  final double quantity;
-  final double? maxQuantity;
-  final ValueChanged<double> onChanged;
-
-  String _unit(BuildContext context) => item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback;
-
-  @override
-  Widget build(BuildContext context) {
-    final unit = _unit(context);
-    return Row(
-      children: [
-        Text(context.l10n.movement_quantityLabel, style: MedTextStyles.bodySm(color: MedColors.text3)),
-        const SizedBox(width: MedSpacing.lg),
-        MedDoseStepper.compact(
-          value: quantity,
-          onChanged: onChanged,
-          unit: unit,
-          min: 0,
-          max: maxQuantity,
-          platform: DoseStepperPlatform.touch,
-        ),
-        if (maxQuantity != null) ...[
-          const SizedBox(width: MedSpacing.md),
-          Text(
-            context.l10n.rxItemCard_maxQuantitySuffix(maxQuantity!.formatFractional, unit),
-            style: MedTextStyles.monoXs(color: MedColors.text4),
-          ),
-        ],
       ],
     );
   }

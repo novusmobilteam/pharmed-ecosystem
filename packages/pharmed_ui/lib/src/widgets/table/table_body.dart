@@ -1,6 +1,6 @@
 part of 'med_table_view.dart';
 
-class _TableBody<T extends TableData> extends StatelessWidget {
+class _TableBody<T extends Object> extends StatelessWidget {
   const _TableBody({
     required this.data,
     required this.cols,
@@ -17,7 +17,6 @@ class _TableBody<T extends TableData> extends StatelessWidget {
     required this.actions,
     required this.horizontalScroll,
     this.minRowWidth,
-    this.cellBuilder,
   });
 
   final List<T> data;
@@ -35,7 +34,6 @@ class _TableBody<T extends TableData> extends StatelessWidget {
   final List<TableActionItem<T>> actions;
   final bool horizontalScroll;
   final double? minRowWidth;
-  final CellBuilder<T>? cellBuilder;
 
   static const double _multiColW = 44.0;
   static const double _singleColW = 32.0;
@@ -149,7 +147,6 @@ class _TableBody<T extends TableData> extends StatelessWidget {
                         selColW: _selColW,
                         actionColW: _actionColW,
                         btnW: _btnW,
-                        cellBuilder: cellBuilder,
                       ),
                     ),
             ),
@@ -171,7 +168,7 @@ class _TableBody<T extends TableData> extends StatelessWidget {
 
 // ─── HEADER HÜCRESİ ──────────────────────────────────────────────────────────
 
-class _HeaderCell<T extends TableData> extends StatefulWidget {
+class _HeaderCell<T extends Object> extends StatefulWidget {
   const _HeaderCell({
     required this.col,
     required this.width,
@@ -192,7 +189,7 @@ class _HeaderCell<T extends TableData> extends StatefulWidget {
   State<_HeaderCell<T>> createState() => _HeaderCellState<T>();
 }
 
-class _HeaderCellState<T extends TableData> extends State<_HeaderCell<T>> {
+class _HeaderCellState<T extends Object> extends State<_HeaderCell<T>> {
   bool _hovered = false;
 
   @override
@@ -272,7 +269,7 @@ class _HeaderCellState<T extends TableData> extends State<_HeaderCell<T>> {
 }
 // ─── TABLO SATIRI ─────────────────────────────────────────────────────────────
 
-class _TableRow<T extends TableData> extends StatefulWidget {
+class _TableRow<T extends Object> extends StatefulWidget {
   const _TableRow({
     required this.item,
     required this.cols,
@@ -285,7 +282,6 @@ class _TableRow<T extends TableData> extends StatefulWidget {
     required this.selColW,
     required this.actionColW,
     required this.btnW,
-    this.cellBuilder,
   });
 
   final T item;
@@ -299,13 +295,12 @@ class _TableRow<T extends TableData> extends StatefulWidget {
   final double selColW;
   final double actionColW;
   final double btnW;
-  final CellBuilder<T>? cellBuilder;
 
   @override
   State<_TableRow<T>> createState() => _TableRowState<T>();
 }
 
-class _TableRowState<T extends TableData> extends State<_TableRow<T>> {
+class _TableRowState<T extends Object> extends State<_TableRow<T>> {
   bool _hovered = false;
 
   bool get _selectable => widget.selectionMode != TableSelectionMode.none;
@@ -321,8 +316,6 @@ class _TableRowState<T extends TableData> extends State<_TableRow<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final content = widget.item.content; // legacy cellBuilder + fallback için
-
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -377,17 +370,7 @@ class _TableRowState<T extends TableData> extends State<_TableRow<T>> {
 
                     // 1) Kolonun kendi cellBuilder'ı (yeni yol)
                     Widget? custom = col.cellBuilder?.call(widget.item);
-
-                    // 2) Geriye dönük: widget seviyesindeki eski cellBuilder
-                    if (custom == null && widget.cellBuilder != null) {
-                      final ci = col.contentIndex;
-                      final legacyValue = ci < content.length ? content[ci] : null;
-                      custom = widget.cellBuilder!.call(widget.item, col.index, legacyValue);
-                    }
-
-                    // 3) Görünür string — displayValue öncelikli, yoksa content
-                    final text = col.valueOf(widget.item, (it) => it.content);
-
+                    final text = col.valueOf(widget.item);
                     final cellStyle = TextStyle(
                       fontSize: 13,
                       color: i == 0 ? const Color(0xFF111827) : const Color(0xFF4B5563),
@@ -501,7 +484,7 @@ class _ActionBtnState extends State<_ActionBtn> {
 
 // ─── AKTİF FİLTRE ÇUBUĞU ─────────────────────────────────────────────────────
 
-class _ActiveFilterBar<T extends TableData> extends StatelessWidget {
+class _ActiveFilterBar<T extends Object> extends StatelessWidget {
   const _ActiveFilterBar({
     required this.colFilters,
     required this.cols,

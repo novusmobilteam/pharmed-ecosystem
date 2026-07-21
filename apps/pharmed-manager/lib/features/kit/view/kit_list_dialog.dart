@@ -10,7 +10,7 @@ Future<T?> showKitDialog<T>(BuildContext context, {bool forSelection = false}) a
   return showDialog<T>(
     context: context,
     builder: (context) => ChangeNotifierProvider(
-      create: (context) => KitNotifier(getKitsUseCase: context.read(), deleteKitUseCase: context.read())..getKits(),
+      create: (context) => KitNotifier(getKitsUseCase: context.read(), deleteKitUseCase: context.read())..fetch(),
       child: Consumer<KitNotifier>(
         builder: (context, notifier, _) => CustomDialog(
           title: forSelection ? context.l10n.kitDialogSelectTitle : context.l10n.kitDialogTitle,
@@ -29,6 +29,6 @@ Future<T?> showKitDialog<T>(BuildContext context, {bool forSelection = false}) a
 Future<void> _showFormDialog(BuildContext context, KitNotifier notifier) async {
   final result = await showKitFormDialog(context);
   if (result == true && context.mounted) {
-    notifier.getKits();
+    notifier.fetch();
   }
 }

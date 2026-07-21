@@ -62,6 +62,12 @@ class OperationItemCard extends StatelessWidget {
                       style: MedTextStyles.bodyMd(color: textColor, weight: FontWeight.bold),
                     ),
                     const SizedBox(height: 2),
+                    if (item.time != null)
+                      Text(
+                        item.time!.shortRelativeLabelOf(context),
+                        style: MedTextStyles.bodyMd(color: textColor, weight: FontWeight.bold),
+                      ),
+                    const SizedBox(height: 2),
                     Text(item.medicine?.barcode ?? '', style: MedTextStyles.monoXs(color: mutedColor)),
                   ],
                 ),

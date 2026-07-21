@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../unload.dart';
 import 'mobile_unload_dialog.dart';
 
@@ -71,7 +71,7 @@ class _MobileUnloadViewState extends ConsumerState<MobileUnloadView> {
           notifier.dismissError();
         }
       } else if (next is MobileUnloadFatalError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
         notifier.dismissError();
       } else if (next is MobileUnloadSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.unload_success_completed);

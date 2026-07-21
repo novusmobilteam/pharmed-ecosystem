@@ -3,6 +3,8 @@ import '../../../../core/core.dart';
 import '../notifier/station_transaction_report_notifier.dart';
 import 'package:provider/provider.dart';
 
+part 'table_view.dart';
+
 class StationTransactionReportScreen extends StatelessWidget {
   const StationTransactionReportScreen({super.key, required this.menu});
 
@@ -19,37 +21,10 @@ class StationTransactionReportScreen extends StatelessWidget {
         mobile: MedMobileLayout(),
         tablet: MedTabletLayout(),
         desktop: MedDesktopLayout(
-          title: menu.name ?? context.l10n.report_stationTransactionTitleFallback,
-          subtitle: menu.description,
+          menu: menu,
           child: Consumer<StationTransactionReportNotifier>(
             builder: (context, notifier, _) {
-              return MedTable(
-                data: notifier.items,
-                isLoading: notifier.isFetching,
-                enableExcel: true,
-                enableSearch: true,
-                enablePDF: true,
-                enableDateFilter: true,
-
-                // Pagination
-                enablePagination: true,
-                pageSize: notifier.pageSize,
-                currentPage: notifier.currentPage,
-                serverTotalCount: notifier.totalCount,
-                onPageChanged: notifier.setPage,
-
-                // Filter & Search
-                initialDateRange: notifier.dateRange,
-                onDateRangeChanged: notifier.setDateRange,
-                onSearchChanged: notifier.search,
-
-                // Kategori
-                categories: notifier.tableCategories,
-                selectedCategoryId: notifier.selectedCategoryId,
-                onCategoryChanged: (id) =>
-                    notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
-                categoryTitle: context.l10n.report_stationsCategoryTitle,
-              );
+              return TableView(notifier: notifier);
             },
           ),
         ),

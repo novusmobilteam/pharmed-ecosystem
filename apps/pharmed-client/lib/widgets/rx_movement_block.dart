@@ -77,6 +77,7 @@ class _MovementBlockRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final type = movement.type;
+    final dose = '${movement.quantity?.formatFractional} ${medicine?.operationUnitLocalized(context)}';
 
     return Padding(
       padding: const EdgeInsets.all(MedSpacing.xl2),
@@ -85,17 +86,13 @@ class _MovementBlockRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 8.0,
         children: [
-          Text(type.actorLabel.toUpperCase(), style: MedTextStyles.titleMd(color: type.backgroundColor)),
+          Text(type.actorLabel(context).toUpperCase(), style: MedTextStyles.titleMd(color: type.backgroundColor)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _FieldColumn(label: context.l10n.movement_performedBy, value: movement.performedBy?.fullName),
               _FieldColumn(label: context.l10n.movement_dateLabel, value: movement.createdAt.formattedDateTime),
-              if (movement.quantity != null)
-                _FieldColumn(
-                  label: context.l10n.movement_quantityLabel,
-                  value: '${movement.quantity!.formatFractional} ${medicine?.operationUnit ?? ''}',
-                ),
+              if (movement.quantity != null) _FieldColumn(label: context.l10n.movement_quantityLabel, value: dose),
             ],
           ),
         ],

@@ -148,7 +148,7 @@ class _HistoryGroupCardState extends State<_HistoryGroupCard> {
                           ),
                         ),
                         Text(
-                          '${(it.dosePiece ?? 0).toStringAsFixed(0)} ${it.medicine?.operationUnit ?? ''}',
+                          '${(it.dosePiece ?? 0).toStringAsFixed(0)} ${it.medicine?.operationUnitLocalized(context) ?? ''}',
                           style: MedTextStyles.bodySm(color: MedColors.text3),
                         ),
                       ],

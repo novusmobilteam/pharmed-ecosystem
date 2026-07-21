@@ -31,6 +31,7 @@ class ServiceTableView extends StatelessWidget {
           pageSize: notifier.pageSize,
           currentPage: notifier.currentPage,
           onPageChanged: (page) => notifier.setPage(page),
+          columnDefs: _buildColumnDefs(context),
         );
       },
     );
@@ -44,8 +45,16 @@ void _onDelete(BuildContext context, ServiceNotifier notifier, HospitalService s
       await notifier.deleteService(
         service,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
+        onSuccess: (msg) =>
+            MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
       );
     },
   );
 }
+
+List<TableColumnDef<HospitalService>> _buildColumnDefs(BuildContext context) => [
+  TableColumnDef(title: context.l10n.service_table_nameColumn, displayValue: (item) => item.name ?? '-'),
+  TableColumnDef(title: context.l10n.service_table_branchColumn, displayValue: (item) => item.branch?.name ?? '-'),
+  TableColumnDef(title: context.l10n.service_table_managerColumn, displayValue: (item) => item.user?.name ?? '-'),
+  TableColumnDef(title: context.l10n.service_table_statusColumn, displayValue: (item) => item.status.label),
+];

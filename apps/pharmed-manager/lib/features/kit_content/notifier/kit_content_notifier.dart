@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class KitContentNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<KitContent> {
+class KitContentNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetKitContentUseCase _getKitContentUseCase;
   final DeleteKitContentUseCase _deleteKitContentUseCase;
 
@@ -17,13 +17,16 @@ class KitContentNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
   OperationKey fetchOp = OperationKey.fetch();
   OperationKey deleteOp = OperationKey.delete();
 
+  List<KitContent> _items = [];
+  List<KitContent> get items => _items;
+
   bool get isFetching => isLoading(fetchOp);
 
   // Functions
   Future<void> getKitContents(int kitId) async {
     _kitId = kitId;
     notifyListeners();
-    await execute(fetchOp, operation: () => _getKitContentUseCase.call(kitId), onData: (data) => allItems = data);
+    await execute(fetchOp, operation: () => _getKitContentUseCase.call(kitId), onData: (data) => _items = data);
   }
 
   Future<void> deleteKitContent(
@@ -32,7 +35,7 @@ class KitContentNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
     Function(String? msg)? onFailed,
     Function(String? msg)? onSuccess,
   }) async {
-    final item = allItems.firstWhere((x) => x.id == id, orElse: () => KitContent(id: id));
+    final item = _items.firstWhere((x) => x.id == id, orElse: () => KitContent(id: id));
 
     await executeVoid(
       deleteOp,

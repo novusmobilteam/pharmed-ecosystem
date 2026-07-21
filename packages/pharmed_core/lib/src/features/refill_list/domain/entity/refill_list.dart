@@ -1,7 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
-class RefillList implements TableData {
+class RefillList {
   final int? id;
   final Station? station;
   final User? user;
@@ -9,33 +8,6 @@ class RefillList implements TableData {
   final bool isCancel;
   final bool isFilled;
   final DateTime? date;
-
-  @override
-  List<dynamic> get content => [
-    //station?.name,
-    user?.fullName,
-    date?.formattedDate,
-    status?.label,
-    isCancel,
-  ];
-
-  @override
-  List get rawContent => [
-    //station?.name,
-    user?.fullName,
-    date,
-    status?.label,
-    isCancel,
-  ];
-
-  @override
-  List<String?> get titles => [
-    //'İstasyon',
-    'Kullanıcı',
-    'Tarih',
-    'Durum',
-    'İptal',
-  ];
 
   RefillList({this.id, this.station, this.user, this.status, this.isCancel = false, this.isFilled = false, this.date});
 

@@ -1,8 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
-class StationStock implements TableData {
+class StationStock {
   final int? id;
   final Station? station;
   final Medicine? medicine;
@@ -12,33 +11,6 @@ class StationStock implements TableData {
   final num? reservedQuantity;
   final num? remainingQuantity;
   final num? fillingQuantity;
-
-  @override
-  List<String?> get content => [
-    code,
-    medicine?.barcode,
-    medicine?.name,
-    maxQuantity?.formatFractional,
-    currentQuantity?.formatFractional,
-    reservedQuantity?.formatFractional,
-    remainingQuantity?.formatFractional,
-    fillingQuantity?.formatFractional,
-  ];
-
-  @override
-  List get rawContent => [
-    code,
-    medicine?.barcode,
-    medicine?.name,
-    maxQuantity.formatFractional,
-    currentQuantity.formatFractional,
-    reservedQuantity.formatFractional,
-    remainingQuantity.formatFractional,
-    fillingQuantity.formatFractional,
-  ];
-
-  @override
-  List<String?> get titles => ['Kod', 'Barkod', 'Malzeme', 'Maks.', 'Mevcut', 'Rezerve', 'Kalan', 'Dolum'];
 
   const StationStock({
     this.id,

@@ -20,7 +20,7 @@ class MedDoseChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final text =
         '${item.dosePiece?.formatFractional ?? '-'} '
-        '${item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback}';
+        '${item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback}';
     return MedChip(label: text, style: MedChipStyle.neutral);
   }
 }

@@ -64,7 +64,7 @@ class WithdrawCountView extends StatelessWidget {
                             child: _SlotCountCard(
                               index: entry.key,
                               detail: entry.value,
-                              doseUnit: medicine?.operationUnit ?? 'Adet',
+                              doseUnit: medicine?.operationUnitLocalized(context) ?? 'Adet',
                               showCensus: (medicine as Drug?)?.countType != CountType.noCount,
                               onCountTap: (index) async {
                                 final result = await showNumpadView(context);
@@ -115,9 +115,9 @@ class _MedicineHeader extends StatelessWidget {
                 medicine?.name ?? '-',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-              if (medicine?.operationUnit != null)
+              if (medicine?.operationUnitLocalized(context) != null)
                 Text(
-                  medicine?.operationUnit ?? 'Adet',
+                  medicine?.operationUnitLocalized(context) ?? 'Adet',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                 ),
             ],

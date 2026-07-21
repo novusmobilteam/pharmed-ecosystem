@@ -1,8 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
-class PrescriptionItem implements TableData, Selectable {
+class PrescriptionItem implements Selectable {
   @override
   final int? id;
   final int? prescriptionId;
@@ -152,39 +150,6 @@ class PrescriptionItem implements TableData, Selectable {
       lastMovement: lastMovement ?? this.lastMovement,
     );
   }
-
-  @override
-  List<dynamic> get content => [
-    activityDate?.formattedDate ?? '', // 0 - Tarih
-    activityDate?.formattedTime ?? '', // 1 - Saat
-    prescription?.hospitalization?.patient?.fullName ?? '', // 2 - Hasta
-    activityUser?.fullName ?? '', // 3 - Kullanıcı
-    medicine?.name ?? '', // 4 - Malzeme
-    '${dosePiece?.formatFractional} ${medicine?.operationUnit}', // 5 - Miktar
-    status?.label ?? '', // 6 - Hareket
-  ];
-
-  @override
-  List get rawContent => [
-    activityDate, // 0
-    activityDate, // 1
-    patientName, // 2
-    activityUser, // 3
-    medicine, // 4
-    dosePiece, // 5
-    status, // 6
-  ];
-
-  @override
-  List<String> get titles => [
-    'Tarih', // 0
-    'Saat', // 1
-    'Hasta', // 2
-    'İşlemi Yapan', // 3
-    'Malzeme', // 4
-    'Miktar', // 5
-    'Hareket', // 6
-  ];
 
   @override
   String? get subtitle => medicine?.barcode ?? '-';

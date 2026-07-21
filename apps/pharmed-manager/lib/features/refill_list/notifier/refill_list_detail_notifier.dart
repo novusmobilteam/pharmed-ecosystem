@@ -4,7 +4,7 @@ import '../../../core/core.dart';
 
 import '../../../old_features/cabin/domain/entity/cabin_input_data.dart';
 
-class RefillListDetailNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<RefillList> {
+class RefillListDetailNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetCurrentStationRefillListsUseCase _getCurrentStationRefillList;
   final GetRefillListDetailUseCase _getRefillListDetail;
   final RefillListRefillUseCase _refill;
@@ -26,12 +26,16 @@ class RefillListDetailNotifier extends ChangeNotifier with ApiRequestMixin, Sear
   List<RefillObject> _details = [];
   List<RefillObject> get details => _details;
 
+  List<RefillList> _items = [];
+  List<RefillList> get items => _items;
+
   void getRefillLists() async {
     await execute(
       fetchOp,
       operation: () => _getCurrentStationRefillList.call(),
       onData: (data) {
-        allItems = data;
+        _items = data;
+        notifyListeners();
       },
     );
   }

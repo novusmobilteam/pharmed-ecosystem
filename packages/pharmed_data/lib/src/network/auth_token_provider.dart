@@ -1,15 +1,20 @@
 abstract interface class AuthTokenProvider {
   String? get accessToken;
   void onUnauthorized();
+  String get currentLocale;
 }
 
 class TokenHolder implements AuthTokenProvider {
   String? _token;
+  String _locale = 'tr';
 
   void setToken(String? token) => _token = token;
 
   @override
   String? get accessToken => _token;
+
+  @override
+  String get currentLocale => _locale;
 
   @override
   void onUnauthorized() {
@@ -21,5 +26,9 @@ class TokenHolder implements AuthTokenProvider {
 
   void setOnUnauthorized(void Function() callback) {
     _onUnauthorized = callback;
+  }
+
+  void setLocale(String locale) {
+    _locale = locale;
   }
 }

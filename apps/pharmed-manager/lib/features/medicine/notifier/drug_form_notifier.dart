@@ -60,7 +60,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> _getActiveIngredients() async {
-    final res = await _getActiveIngredientsUseCase.call(GetActiveIngredientsParams());
+    final res = await _getActiveIngredientsUseCase.call(PagedQueryParams());
 
     res.when(
       ok: (response) {

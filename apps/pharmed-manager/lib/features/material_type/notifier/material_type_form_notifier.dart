@@ -2,7 +2,7 @@ import 'package:flutter/material.dart' hide MaterialType;
 
 import '../../../../core/core.dart';
 
-class MaterialTypeFormNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MaterialType> {
+class MaterialTypeFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateMaterialTypeUseCase _createMaterialTypeUseCase;
   final UpdateMaterialTypeUseCase _updateMaterialTypeUseCase;
 

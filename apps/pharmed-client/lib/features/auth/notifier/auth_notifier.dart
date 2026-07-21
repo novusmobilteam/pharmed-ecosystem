@@ -6,7 +6,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/config/auth_config.dart';
+import 'package:pharmed_client/core/flavor/auth_config.dart';
 import 'package:pharmed_client/core/providers/auth_providers.dart';
 import 'package:pharmed_client/core/providers/network_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';

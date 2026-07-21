@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 
 // [SWREQ-CLI-REFILL-003] [IEC 62304 §5.5]
 // Mobil kabin dolum ekranı state tanımları.
@@ -387,9 +387,9 @@ final class MobileRefillError extends MobileRefillState {
 ///   - Dialog kapatıldığında (dismiss), [previousState] içinden ayıklanan
 ///     temiz bir state'e (örneğin Idle) geri dönülür.
 final class MobileRefillFatalError extends MobileRefillState {
-  const MobileRefillFatalError({required this.message, required this.previousState});
+  const MobileRefillFatalError({required this.failure, required this.previousState});
 
-  final String message;
+  final CabinOperationFailure failure;
   final MobileRefillState previousState;
 }
 

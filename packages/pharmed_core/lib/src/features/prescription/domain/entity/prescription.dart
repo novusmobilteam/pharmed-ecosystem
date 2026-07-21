@@ -1,8 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
-class Prescription extends TableData {
+class Prescription {
   final int? id;
   final int? code;
   final String? name;
@@ -34,39 +32,4 @@ class Prescription extends TableData {
       prescriptionDate: prescriptionDate ?? this.prescriptionDate,
     );
   }
-
-  @override
-  List get content => [
-    hospitalization?.physicalService?.name,
-    hospitalization?.room?.name,
-    hospitalization?.bed?.name,
-    hospitalization?.patient?.protocolNo,
-    hospitalization?.patient?.fullName,
-    hospitalizationId?.toCustomString(),
-    hospitalizationDate?.formattedDate,
-    remainingCount?.toCustomString(),
-  ];
-
-  @override
-  List get rawContent => [
-    hospitalization?.physicalService,
-    hospitalization?.room?.name,
-    hospitalization?.patient?.protocolNo,
-    hospitalization?.patient?.fullName,
-    hospitalizationId,
-    hospitalizationDate,
-    remainingCount,
-  ];
-
-  @override
-  List<String?> get titles => [
-    'Servis',
-    'Oda',
-    'Yatak',
-    'Hasta Kodu',
-    'Hasta',
-    'Yatış Kodu',
-    'Yatış Tarihi',
-    'Bekleyen Adet',
-  ];
 }

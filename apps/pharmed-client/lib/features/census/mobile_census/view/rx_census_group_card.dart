@@ -98,7 +98,7 @@ class _CensusItemRow extends StatelessWidget {
 
   String _doseText(BuildContext context) {
     final piece = item.dosePiece?.formatFractional ?? '-';
-    final unit = item.medicine?.operationUnit ?? context.l10n.refillList_defaultUnitFallback;
+    final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.refillList_defaultUnitFallback;
     return '$piece $unit';
   }
 
@@ -111,7 +111,7 @@ class _CensusItemRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final time = item.time?.shortRelativeLabel;
+    final time = item.time?.shortRelativeLabelOf(context);
     final c = _colors;
 
     return Container(

@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../cabin_operation/cabin_operation.dart';
 import '../cache/app_settings_cache.dart';
 import 'providers.dart';
 
@@ -177,14 +176,6 @@ final scanCabinUseCaseProvider = Provider((ref) {
 
 final getUnassignedStationsUseCaseProvider = Provider((ref) {
   return GetUnassignedStationsUseCase(ref.read(stationRepositoryProvider));
-});
-
-final startMobileDrawerSessionUseCaseProvider = Provider((ref) {
-  return StartMobileDrawerSessionUseCase(cabinOperationService: ref.read(cabinOperationServiceProvider));
-});
-
-final startMasterDrawerSessionUseCaseProvider = Provider((ref) {
-  return StartMasterDrawerSessionUseCase(ref.read(cabinOperationServiceProvider));
 });
 
 final testRfidConnectionUseCaseProvider = Provider((ref) {
@@ -378,3 +369,27 @@ final getCabinThresholdsUseCaseProvider = Provider<GetCabinThresholdsUseCase>(
     ref.read(getCurrentStationUseCaseProvider),
   ),
 );
+
+final scanManagerUseCaseProvider = Provider<ScanManagerUseCase>(
+  (ref) => ScanManagerUseCase(ref.read(cabinOperationServiceProvider)),
+);
+
+final streamCabinSensorsUseCaseProvider = Provider<StreamCabinSensorsUseCase>(
+  (ref) => StreamCabinSensorsUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider)),
+);
+
+final startMobileDrawerSessionUseCaseProvider = Provider((ref) {
+  return StartMobileDrawerSessionUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider));
+});
+
+final startMasterDrawerSessionUseCaseProvider = Provider((ref) {
+  return StartMasterDrawerSessionUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider));
+});
+
+final openCubicLidUseCaseProvider = Provider((ref) {
+  return OpenCubicLidUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider));
+});
+
+final monitorDrawerCloseUseCaseProvider = Provider((ref) {
+  return MonitorDrawerCloseUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider));
+});

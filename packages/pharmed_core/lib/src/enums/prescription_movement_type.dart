@@ -114,39 +114,46 @@ enum PrescriptionMovementType {
     );
   }
 
-  String get label => switch (this) {
-    PrescriptionMovementType.pendingApproval => 'Onay Bekliyor',
-    PrescriptionMovementType.purchasePending => 'Alım Bekliyor',
-    PrescriptionMovementType.applied => 'Uygulandı',
-    PrescriptionMovementType.returned => 'İade Edildi',
-    PrescriptionMovementType.wastaged => 'Fire Edildi',
-    PrescriptionMovementType.destructed => 'İmha Edildi',
-    PrescriptionMovementType.cancelled => 'İptal Edildi',
-    PrescriptionMovementType.rejected => 'Reddedildi',
-    PrescriptionMovementType.filledWaiting => 'Dolum Bekliyor',
-    PrescriptionMovementType.returnPending => 'İade Onayı Bekliyor',
-    PrescriptionMovementType.unloaded => 'Boşaltıldı',
-    PrescriptionMovementType.shortageReported => 'Eksik Bildirildi',
-    PrescriptionMovementType.replenishmentPending => 'Dolum Bekliyor',
-  };
+  String label(BuildContext context) {
+    final l = context.l10n;
+
+    return switch (this) {
+      PrescriptionMovementType.pendingApproval => l.enumCore_prescriptionMovementPendingApprovalLabel,
+      PrescriptionMovementType.purchasePending => l.enumCore_prescriptionMovementPurchasePendingLabel,
+      PrescriptionMovementType.applied => l.enumCore_prescriptionMovementAppliedLabel,
+      PrescriptionMovementType.returned => l.enumCore_prescriptionMovementReturnedLabel,
+      PrescriptionMovementType.wastaged => l.enumCore_prescriptionMovementWastagedLabel,
+      PrescriptionMovementType.destructed => l.enumCore_prescriptionMovementDestructedLabel,
+      PrescriptionMovementType.cancelled => l.enumCore_prescriptionMovementCancelledLabel,
+      PrescriptionMovementType.rejected => l.enumCore_prescriptionMovementRejectedLabel,
+      PrescriptionMovementType.filledWaiting => l.enumCore_prescriptionMovementFilledWaitingLabel,
+      PrescriptionMovementType.returnPending => l.enumCore_prescriptionMovementReturnPendingLabel,
+      PrescriptionMovementType.unloaded => l.enumCore_prescriptionMovementUnloadedLabel,
+      PrescriptionMovementType.shortageReported => l.enumCore_prescriptionMovementShortageReportedLabel,
+      PrescriptionMovementType.replenishmentPending => l.enumCore_prescriptionMovementReplenishmentPendingLabel,
+    };
+  }
 
   /// Hareketi gerçekleştiren kişiyi betimleyen etiket.
   /// UI'da "Oluşturan", "Onaylayan" gibi gösterilir.
-  String get actorLabel => switch (this) {
-    PrescriptionMovementType.pendingApproval => 'Oluşturan',
-    PrescriptionMovementType.filledWaiting => 'Onaylayan',
-    PrescriptionMovementType.purchasePending => 'Dolum Yapan',
-    PrescriptionMovementType.applied => 'Uygulayan',
-    PrescriptionMovementType.returned => 'İade Eden',
-    PrescriptionMovementType.wastaged => 'Fire Eden',
-    PrescriptionMovementType.destructed => 'İmha Eden',
-    PrescriptionMovementType.cancelled => 'İptal Eden',
-    PrescriptionMovementType.rejected => 'Reddeden',
-    PrescriptionMovementType.returnPending => 'İade Talep Eden',
-    PrescriptionMovementType.unloaded => 'Boşaltan',
-    PrescriptionMovementType.shortageReported => 'Eksik Bildiren',
-    PrescriptionMovementType.replenishmentPending => 'İkmal Onaylayan',
-  };
+  String actorLabel(BuildContext context) {
+    final l = context.l10n;
+    return switch (this) {
+      PrescriptionMovementType.pendingApproval => l.enumCore_prescriptionMovementPendingApprovalActorLabel,
+      PrescriptionMovementType.purchasePending => l.enumCore_prescriptionMovementPurchasePendingActorLabel,
+      PrescriptionMovementType.applied => l.enumCore_prescriptionMovementAppliedActorLabel,
+      PrescriptionMovementType.returned => l.enumCore_prescriptionMovementReturnedActorLabel,
+      PrescriptionMovementType.wastaged => l.enumCore_prescriptionMovementWastagedActorLabel,
+      PrescriptionMovementType.destructed => l.enumCore_prescriptionMovementDestructedActorLabel,
+      PrescriptionMovementType.cancelled => l.enumCore_prescriptionMovementCancelledActorLabel,
+      PrescriptionMovementType.rejected => l.enumCore_prescriptionMovementRejectedActorLabel,
+      PrescriptionMovementType.filledWaiting => l.enumCore_prescriptionMovementFilledWaitingActorLabel,
+      PrescriptionMovementType.returnPending => l.enumCore_prescriptionMovementReturnPendingActorLabel,
+      PrescriptionMovementType.unloaded => l.enumCore_prescriptionMovementUnloadedActorLabel,
+      PrescriptionMovementType.shortageReported => l.enumCore_prescriptionMovementShortageReportedActorLabel,
+      PrescriptionMovementType.replenishmentPending => l.enumCore_prescriptionMovementReplenishmentPendingActorLabel,
+    };
+  }
 
   /// Bu duruma **geçişi sağlayan eylem**i betimler.
   ///
@@ -156,21 +163,24 @@ enum PrescriptionMovementType {
   /// Not: Bazı durumlara birden fazla eylemle gelinebilir (ör. purchasePending
   /// hem onaylama hem dolum ile). Burada iş akışındaki **baskın/temsili** eylem
   /// seçilmiştir; actorLabel ile tutarlıdır.
-  String get actionLabel => switch (this) {
-    PrescriptionMovementType.pendingApproval => 'Oluşturuldu',
-    PrescriptionMovementType.purchasePending => 'Dolum Yapıldı',
-    PrescriptionMovementType.applied => 'Uygulandı',
-    PrescriptionMovementType.returned => 'İade Edildi',
-    PrescriptionMovementType.wastaged => 'Fire Edildi',
-    PrescriptionMovementType.destructed => 'İmha Edildi',
-    PrescriptionMovementType.cancelled => 'İptal Edildi',
-    PrescriptionMovementType.rejected => 'Reddedildi',
-    PrescriptionMovementType.filledWaiting => 'Onaylandı',
-    PrescriptionMovementType.returnPending => 'İade Talep Edildi',
-    PrescriptionMovementType.unloaded => 'Boşaltıldı',
-    PrescriptionMovementType.shortageReported => 'Eksik Bildirildi',
-    PrescriptionMovementType.replenishmentPending => 'İkmal Onaylandı',
-  };
+  String actionLabel(BuildContext context) {
+    final l = context.l10n;
+    return switch (this) {
+      PrescriptionMovementType.pendingApproval => l.enumCore_prescriptionMovementPendingApprovalActionLabel,
+      PrescriptionMovementType.purchasePending => l.enumCore_prescriptionMovementPurchasePendingActionLabel,
+      PrescriptionMovementType.applied => l.enumCore_prescriptionMovementAppliedActionLabel,
+      PrescriptionMovementType.returned => l.enumCore_prescriptionMovementReturnedActionLabel,
+      PrescriptionMovementType.wastaged => l.enumCore_prescriptionMovementWastagedActionLabel,
+      PrescriptionMovementType.destructed => l.enumCore_prescriptionMovementDestructedActionLabel,
+      PrescriptionMovementType.cancelled => l.enumCore_prescriptionMovementCancelledActionLabel,
+      PrescriptionMovementType.rejected => l.enumCore_prescriptionMovementRejectedActionLabel,
+      PrescriptionMovementType.filledWaiting => l.enumCore_prescriptionMovementFilledWaitingActionLabel,
+      PrescriptionMovementType.returnPending => l.enumCore_prescriptionMovementReturnPendingActionLabel,
+      PrescriptionMovementType.unloaded => l.enumCore_prescriptionMovementUnloadedActionLabel,
+      PrescriptionMovementType.shortageReported => l.enumCore_prescriptionMovementShortageReportedActionLabel,
+      PrescriptionMovementType.replenishmentPending => l.enumCore_prescriptionMovementReplenishmentPendingActionLabel,
+    };
+  }
 
   static List<PrescriptionMovementType> get refillableTypes => const [
     PrescriptionMovementType.filledWaiting,

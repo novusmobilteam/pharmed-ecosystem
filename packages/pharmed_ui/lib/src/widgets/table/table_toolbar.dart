@@ -1,6 +1,6 @@
 part of 'med_table_view.dart';
 
-class _TableToolbar<T extends TableData> extends StatelessWidget {
+class _TableToolbar<T extends Object> extends StatelessWidget {
   const _TableToolbar({
     required this.searchController,
     required this.enableSearch,

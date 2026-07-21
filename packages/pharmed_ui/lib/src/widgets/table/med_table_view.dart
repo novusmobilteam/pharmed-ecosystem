@@ -19,17 +19,15 @@ part 'table_date_filter.dart';
 
 class _ColMeta<T> {
   final int index;
-  final int contentIndex;
   final String title;
   final double flex;
   final bool numeric;
   final Widget? Function(T)? cellBuilder;
-  final String Function(T)? displayValue;
+  final String? Function(T)? displayValue;
   final Comparable? Function(T)? sortValue;
 
   const _ColMeta({
     required this.index,
-    required this.contentIndex,
     required this.title,
     required this.flex,
     required this.numeric,
@@ -41,27 +39,22 @@ class _ColMeta<T> {
   bool get filterable => displayValue != null || !numeric;
   bool get sortable => sortValue != null || displayValue != null || numeric;
 
-  /// Bir item'ın bu kolondaki görünür string değeri — TEK KAYNAK.
-  /// Filtre, export ve fallback text hep bunu çağırır.
-  String valueOf(T item, List<dynamic> Function(T) contentOf) {
-    if (displayValue != null) return displayValue!(item);
-    final content = contentOf(item);
-    return contentIndex < content.length ? content[contentIndex]?.toString() ?? '' : '';
+  /// Filtre, export ve fallback text için tek kaynak.
+  String valueOf(T item) {
+    return displayValue?.call(item) ?? '-';
   }
 
   /// Sıralama için karşılaştırılabilir değer.
-  Comparable? sortKeyOf(T item, List<dynamic> Function(T) rawOf) {
+  Comparable? sortKeyOf(T item) {
     if (sortValue != null) return sortValue!(item);
     if (displayValue != null) return displayValue!(item);
-    final raw = rawOf(item);
-    final v = contentIndex < raw.length ? raw[contentIndex] : null;
-    return v is Comparable ? v : v?.toString();
+    return null;
   }
 }
 
 // ─── UNIFIED TABLE VIEW ───────────────────────────────────────────────────────
 
-class MedTable<T extends TableData> extends StatefulWidget {
+class MedTable<T extends Object> extends StatefulWidget {
   const MedTable({
     super.key,
     required this.data,
@@ -72,7 +65,7 @@ class MedTable<T extends TableData> extends StatefulWidget {
     // Kolon tanımları — ikisinden biri kullanılır:
     //   1) columnDefs → tam kontrol (başlık, flex, tip, contentIndex)
     //   2) item.titles + numericColumnIndices + columnFlexes → eski yöntem
-    this.columnDefs,
+    required this.columnDefs,
     this.numericColumnIndices = const {},
     this.columnFlexes,
     // Yatay kaydırma
@@ -126,7 +119,7 @@ class MedTable<T extends TableData> extends StatefulWidget {
   // ── Kolon ────────────────────────────────────────────────────────────────────
   /// Verilirse item.titles / numericColumnIndices / columnFlexes yerine geçer.
   /// Tab/index'e göre farklı kolonlar göstermek için idealdir.
-  final List<TableColumnDef<T>>? columnDefs;
+  final List<TableColumnDef<T>> columnDefs;
 
   /// columnDefs verilmemişse: hangi content index'leri numeric (sıralanabilir)
   final Set<int> numericColumnIndices;
@@ -200,7 +193,7 @@ class MedTable<T extends TableData> extends StatefulWidget {
   State<MedTable<T>> createState() => _MedTableState<T>();
 }
 
-class _MedTableState<T extends TableData> extends State<MedTable<T>> {
+class _MedTableState<T extends Object> extends State<MedTable<T>> {
   final _searchController = TextEditingController();
   int? _sortColIndex;
   bool _sortAsc = true;
@@ -250,37 +243,18 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
 
   // ── Kolon meta ───────────────────────────────────────────────────────────────
 
-  List<_ColMeta<T>> get _cols {
-    if (widget.columnDefs != null) {
-      return List.generate(widget.columnDefs!.length, (i) {
-        final def = widget.columnDefs![i];
-        return _ColMeta<T>(
-          index: i,
-          contentIndex: def.contentIndex ?? i,
-          title: def.title,
-          flex: def.flex,
-          numeric: def.numeric,
-          cellBuilder: def.cellBuilder,
-          displayValue: def.displayValue,
-          sortValue: def.sortValue,
-        );
-      });
-    }
-    // klasik content yolu — değişmedi
-    if (widget.data.isEmpty) return [];
-    final titles = widget.data.first.titles;
-    final flexes = widget.columnFlexes;
-    return List.generate(
-      titles.length,
-      (i) => _ColMeta<T>(
-        index: i,
-        contentIndex: i,
-        title: titles[i] ?? context.l10n.table_columnFallback(i + 1),
-        flex: (flexes != null && i < flexes.length) ? flexes[i] : 1.0,
-        numeric: widget.numericColumnIndices.contains(i),
-      ),
+  List<_ColMeta<T>> get _cols => List.generate(widget.columnDefs.length, (i) {
+    final def = widget.columnDefs[i];
+    return _ColMeta<T>(
+      index: i,
+      title: def.title,
+      flex: def.flex,
+      numeric: def.numeric,
+      cellBuilder: def.cellBuilder,
+      displayValue: def.displayValue,
+      sortValue: def.sortValue,
     );
-  }
+  });
 
   double get _totalFlex {
     final cols = _cols;
@@ -294,26 +268,23 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
     var data = List<T>.from(widget.data);
     final cols = _cols;
 
-    // Client-side arama
+    // Client-side arama (onSearchChanged verilmemişse)
     if (widget.onSearchChanged == null) {
       final q = _searchController.text.toLowerCase();
       if (q.isNotEmpty) {
         data = data.where((item) {
-          // displayValue kolonları + ham content birlikte taranır
-          final inCols = cols.any((c) => c.valueOf(item, (i) => i.content).toLowerCase().contains(q));
-          final inContent = item.content.any((cell) => cell?.toString().toLowerCase().contains(q) ?? false);
-          return inCols || inContent;
+          return cols.any((c) => c.valueOf(item).toLowerCase().contains(q));
         }).toList();
       }
     }
 
-    // Kolon filtreleri (col.index bazında)
+    // Kolon filtreleri
     for (final entry in _colFilters.entries) {
       if (entry.value.isEmpty) continue;
       final matches = cols.where((c) => c.index == entry.key);
       if (matches.isEmpty) continue;
       final col = matches.first;
-      data = data.where((item) => entry.value.contains(col.valueOf(item, (i) => i.content))).toList();
+      data = data.where((item) => entry.value.contains(col.valueOf(item))).toList();
     }
 
     // Sıralama
@@ -321,8 +292,8 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
       final col = cols[_sortColIndex!];
       if (col.sortable) {
         data.sort((a, b) {
-          final va = col.sortKeyOf(a, (i) => i.rawContent);
-          final vb = col.sortKeyOf(b, (i) => i.rawContent);
+          final va = col.sortKeyOf(a);
+          final vb = col.sortKeyOf(b);
           if (va == null && vb == null) return 0;
           if (va == null) return 1;
           if (vb == null) return -1;
@@ -338,8 +309,7 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
   List<T> get _exportData => _selectedItems.isNotEmpty ? _selectedItems.toList() : _filtered;
 
   List<String> _uniqueValuesFor(_ColMeta<T> col) {
-    return widget.data.map((item) => col.valueOf(item, (i) => i.content)).where((v) => v.isNotEmpty).toSet().toList()
-      ..sort();
+    return widget.data.map((item) => col.valueOf(item)).where((v) => v.isNotEmpty && v != '-').toSet().toList()..sort();
   }
 
   bool get _hasActiveFilters =>
@@ -355,7 +325,6 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
     });
   }
 
-  // async/await → parent context'inde setState güvenli
   Future<void> _showColFilterDialog(int colIndex) async {
     final cols = _cols;
     if (colIndex >= cols.length) return;
@@ -440,7 +409,7 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
 
   List<List<String>> _buildExportRows() {
     final cols = _cols;
-    return _exportData.map((item) => cols.map((c) => c.valueOf(item, (i) => i.content)).toList()).toList();
+    return _exportData.map((item) => cols.map((c) => c.valueOf(item)).toList()).toList();
   }
 
   Future<void> _handleExcel() async {
@@ -580,7 +549,6 @@ class _MedTableState<T extends TableData> extends State<MedTable<T>> {
       onToggleItem: _toggleItem,
       onToggleAll: _toggleAll,
       actions: widget.actions,
-      cellBuilder: widget.cellBuilder,
       horizontalScroll: widget.horizontalScroll,
       minRowWidth: widget.minTableWidth,
       onSort: (i) => setState(() {

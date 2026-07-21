@@ -1,0 +1,66 @@
+import 'package:flutter/material.dart';
+import '../../../../../widgets/side_panel.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../core/core.dart';
+import '../../../../../widgets/menu_browser_view.dart';
+
+import '../../authorization_notifier.dart';
+import '../notifier/user_authorization_notifier.dart';
+import '../notifier/user_table_notifier.dart';
+
+part 'user_authorization_panel.dart';
+
+class UserTableView extends StatelessWidget {
+  const UserTableView({super.key, required this.onEdit});
+
+  final Function(User user) onEdit;
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: context.read<UserTableNotifier>(),
+      child: Consumer<UserTableNotifier>(
+        builder: (context, notifier, child) {
+          return MedTable<User>(
+            data: notifier.items,
+            isLoading: notifier.isFetching,
+            enableSearch: true,
+            enableExcel: true,
+            enablePDF: true,
+            onSearchChanged: notifier.search,
+            enablePagination: true,
+            pageSize: notifier.pageSize,
+            currentPage: notifier.currentPage,
+            serverTotalCount: notifier.totalCount,
+
+            onPageChanged: (page) {
+              notifier.setPage(page);
+              notifier.fetch();
+            },
+            actions: [
+              TableActionItem(icon: PhosphorIcons.pen(), tooltip: context.l10n.common_editTooltip, onPressed: onEdit),
+            ],
+            columnDefs: _buildColumnDefs(context),
+          );
+        },
+      ),
+    );
+  }
+}
+
+List<TableColumnDef<User>> _buildColumnDefs(BuildContext context) => [
+  TableColumnDef(title: context.l10n.userAuth_table_firstNameColumn, displayValue: (item) => item.name ?? "-"),
+  TableColumnDef(title: context.l10n.userAuth_table_lastNameColumn, displayValue: (item) => item.surname ?? "-"),
+  TableColumnDef(title: context.l10n.userAuth_table_occupationTypeColumn, displayValue: (item) => item.role?.name),
+  TableColumnDef(
+    title: context.l10n.userAuth_table_expiryDateColumn,
+    displayValue: (item) => item.validUntil.formattedDate,
+  ),
+  TableColumnDef(
+    title: context.l10n.userAuth_table_remainingDaysColumn,
+    displayValue: (item) => item.remainingDay?.toCustomString(),
+  ),
+  TableColumnDef(title: context.l10n.userAuth_table_statusColumn, displayValue: (item) => item.status.label),
+];

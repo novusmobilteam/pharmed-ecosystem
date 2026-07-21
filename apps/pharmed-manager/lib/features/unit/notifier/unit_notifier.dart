@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class UnitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Unit> {
+class UnitNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Unit> {
   final GetUnitsUseCase _getUnitsUseCase;
   final DeleteUnitUseCase _deleteUnitUseCase;
 
@@ -15,12 +15,12 @@ class UnitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Unit
   // Getters
   bool get isFetching => isLoading(fetchOp);
 
-  // Functions
-  Future<void> getUnits() async {
-    await execute(
-      fetchOp,
-      operation: () => _getUnitsUseCase.call(GetUnitsParams()),
-      onData: (response) => allItems = response.data ?? [],
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      op: fetchOp,
+      fetchMethod: (int skip, int take) =>
+          _getUnitsUseCase.call(PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery)),
     );
   }
 
@@ -31,7 +31,7 @@ class UnitNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<Unit
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         onSuccess?.call(null);
-        getUnits();
+        fetch();
       },
     );
   }

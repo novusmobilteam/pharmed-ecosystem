@@ -4,8 +4,6 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../../core/enums/app_language.dart';
-
 enum SettingsSection { general, appearance, debug }
 
 class SettingsState {

@@ -81,7 +81,9 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   @override
   Future<Result<void>> deleteHospitalization(Hospitalization entity) async {
     if (entity.id == null) {
-      return Result.error(ValidationException(message: contextlessL10n().dataGuard_deleteHospitalizationIdEmpty, field: 'id'));
+      return Result.error(
+        ValidationException(message: contextlessL10n().dataGuard_deleteHospitalizationIdEmpty, field: 'id'),
+      );
     }
     final result = await _dataSource.deleteHospitalization(entity.id!);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
@@ -103,5 +105,11 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   Future<Result<List<Hospitalization>>> getHospitalizationsByService(int serviceId) async {
     final r = await _dataSource.getHospitalizationsByService(serviceId);
     return r.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos)), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> discharge(int hospitalizationId) async {
+    final result = await _dataSource.discharge(hospitalizationId);
+    return result.when(ok: (dtos) => Result.ok(null), error: (e) => Result.error(e));
   }
 }

@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
-class Hospitalization extends Selectable implements TableData {
+class Hospitalization extends Selectable {
   final int? code;
   final Patient? patient;
   final int? physicalServiceId;
@@ -80,60 +77,5 @@ class Hospitalization extends Selectable implements TableData {
       exitDate: exitDate ?? this.exitDate,
       isBaby: isBaby ?? this.isBaby,
     );
-  }
-
-  @override
-  List get content => [
-    physicalService?.name,
-    patient?.protocolNo,
-    patient?.tcNo,
-    patient?.fullName,
-    admissionDate?.formattedDate,
-    exitDate?.formattedDate,
-    // waitingQuantity,
-    // lastApproveDate?.formattedDate,
-  ];
-
-  @override
-  List get rawContent => [
-    physicalService?.name,
-    patient?.protocolNo,
-    patient?.tcNo,
-    patient?.fullName,
-    admissionDate?.formattedDate,
-    // waitingQuantity,
-    // lastApproveDate?.formattedDate,
-  ];
-
-  @override
-  List<String?> get titles => [
-    contextlessL10n().tableCore_serviceColumn,
-    contextlessL10n().tableCore_hospitalizationProtocolNoColumn,
-    contextlessL10n().tableCore_hospitalizationNationalIdColumn,
-    contextlessL10n().tableCore_hospitalizationPatientColumn,
-    contextlessL10n().tableCore_admissionDateColumn,
-    contextlessL10n().tableCore_dischargeDateColumn,
-    // 'Bekleyen Adet',
-    // 'Son Onay Tarihi',
-  ];
-
-  // TODO : Düzelt
-  Color get statusColor {
-    switch (colorId) {
-      // Lüzum Halinde
-      case 1:
-        return Color(0xFFF2A65A);
-      // Lüzum Halinde + Normal
-      case 2:
-        return Color(0xFFE6501B);
-      // Normal
-      case 3:
-        return Color(0xFF249E94);
-      // Yönlendirilmiş Order
-      case 4:
-        return Color(0xFF2D3C59);
-      default:
-        return Color(0xFF2D3C59);
-    }
   }
 }

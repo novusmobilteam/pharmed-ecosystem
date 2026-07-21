@@ -298,7 +298,7 @@ abstract class BaseRemoteDataSource {
                 MedLogger.warn(unit: logUnit, swreq: logSwreq, message: apiError.message ?? 'Hata');
                 return Result.error(
                   ServiceException(
-                    message: apiError.message ?? contextlessL10n().dataError_envelopeErrorFallback,
+                    message: apiError.message ?? apiError.error ?? contextlessL10n().dataError_envelopeErrorFallback,
                     statusCode: apiError.statusCode ?? 0,
                   ),
                 );
@@ -317,6 +317,7 @@ abstract class BaseRemoteDataSource {
           }
         },
         error: (failure) {
+          print('❌ ERROR BRANCH - message: ${failure.message}');
           MedLogger.error(unit: logUnit, swreq: logSwreq, message: 'İstek Hatası', error: failure);
           return Result.error(failure);
         },

@@ -63,7 +63,7 @@ class UserDto {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
+    //'id': id,
     'registrationNumber': registrationNumber.toString(),
     'name': name,
     'surname': surname,

@@ -31,8 +31,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
-import '../../../../core/cabin_operation/master_drawer/master_drawer_orchestrator.dart';
+import '../../../../core/hardware/hardware.dart';
+import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../auth/auth.dart';
 import '../../intake.dart';
@@ -135,7 +135,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         items: items,
       ),
       error: (e) => state = MasterIntakeError(
-        message: e.message,
+        failure: CabinApiFailure(message: e.message),
         previousState: MasterIntakeSelection(
           cabinId: _cabinId,
           hospitalization: hospitalization,
@@ -301,10 +301,12 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       (it) => it.needsWitness(currentStation: _currentStation) && it.witness == null,
     );
     if (missingWitness != null) {
-      state = MasterIntakeError(message: contextlessL10n().intake_error_witnessRequired, previousState: s);
+      state = MasterIntakeError(
+        failure: const CabinValidationFailure(reason: CabinValidationReason.witnessRequired),
+        previousState: s,
+      );
       return;
     }
-
     // 2. Toplu check — UI kilitlenir.
     state = s.copyWith(isChecking: true);
     final userId = ref.read(authNotifierProvider.notifier).currentUser?.id ?? 0;
@@ -355,7 +357,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     // Hiç geçerli hedef yoksa hata göster, Selection'a dön.
     if (targets.isEmpty) {
       state = MasterIntakeError(
-        message: contextlessL10n().intake_error_noValidTargets,
+        failure: const CabinValidationFailure(reason: CabinValidationReason.noValidTargets),
         previousState: s.copyWith(isChecking: false, checkStatuses: statuses),
       );
       return;
@@ -365,7 +367,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     final jobs = IntakeQueueBuilder.build(targets);
     if (jobs.isEmpty) {
       state = MasterIntakeError(
-        message: contextlessL10n().intake_error_noDrawerFound,
+        failure: const CabinValidationFailure(reason: CabinValidationReason.noDrawerFound),
         previousState: s.copyWith(isChecking: false, checkStatuses: statuses),
       );
       return;
@@ -587,7 +589,11 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         );
         final s = state;
         if (s is MasterIntakeExecuting) {
-          state = MasterIntakeError(message: e.message, previousState: s.copyWith(isSaving: false), isQueueError: true);
+          state = MasterIntakeError(
+            failure: CabinApiFailure(message: e.message),
+            previousState: s.copyWith(isSaving: false),
+            isQueueError: true,
+          );
         }
       },
     );
@@ -622,8 +628,8 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         _onDrawerOpened();
       case MasterDrawerClosed():
         _onCurrentDrawerClosed();
-      case MasterDrawerFailed(:final message):
-        _onDrawerFailed(message);
+      case MasterDrawerFailed(:final failure, :final detail):
+        _onDrawerFailed(failure, detail: detail);
       default:
         break;
     }
@@ -679,10 +685,14 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     await _openCurrentJob();
   }
 
-  void _onDrawerFailed(String message) {
+  void _onDrawerFailed(MasterDrawerFailure failure, {String? detail}) {
     final s = state;
     if (s is MasterIntakeExecuting) {
-      state = MasterIntakeError(message: message, previousState: s.copyWith(isSaving: false), isQueueError: true);
+      state = MasterIntakeError(
+        failure: CabinMasterDrawerFailure(failure: failure, detail: detail),
+        previousState: s.copyWith(isSaving: false),
+        isQueueError: true,
+      );
     }
   }
 

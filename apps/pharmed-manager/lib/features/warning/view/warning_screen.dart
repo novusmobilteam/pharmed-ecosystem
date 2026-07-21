@@ -24,8 +24,7 @@ class WarningScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? context.l10n.warningScreenTitle,
-              subtitle: menu.description,
+              menu: menu,
               actions: [
                 MedButton(
                   onPressed: () => notifier.openPanel(),
@@ -38,11 +37,11 @@ class WarningScreen extends StatelessWidget {
                 width: 480,
                 panel: WarningFormPanel(),
                 child: MedTable<Warning>(
-                  data: notifier.filteredItems,
+                  data: notifier.items,
                   isLoading: notifier.isLoading(notifier.deleteOp),
                   enableExcel: true,
                   enableSearch: true,
-                  onSearchChanged: notifier.search,
+                  //onSearchChanged: notifier.search,
                   actions: [
                     TableActionItem.edit(
                       context: context,
@@ -58,6 +57,7 @@ class WarningScreen extends StatelessWidget {
                       ),
                     ),
                   ],
+                  columnDefs: [],
                 ),
               ),
             ),

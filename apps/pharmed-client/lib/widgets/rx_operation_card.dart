@@ -127,7 +127,7 @@ class RxOperationCard extends StatelessWidget {
 
   String _doseText(BuildContext context) {
     final piece = item.dosePiece?.formatFractional ?? '-';
-    final unit = item.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback;
+    final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
     return '$piece $unit';
   }
 

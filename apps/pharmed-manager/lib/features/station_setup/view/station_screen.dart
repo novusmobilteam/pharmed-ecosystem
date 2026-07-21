@@ -54,8 +54,7 @@ class StationSetupScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? context.l10n.stationSetup_screen_stationTabTitle,
-              subtitle: menu.description,
+              menu: menu,
               actions: [
                 MedButton(
                   onPressed: () => _onAdd(context, notifier.activeIndex),

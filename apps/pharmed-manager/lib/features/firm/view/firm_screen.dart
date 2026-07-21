@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 
 import '../notifier/firm_notifier.dart';
+part 'table_view.dart';
 
 class FirmScreen extends StatelessWidget {
   const FirmScreen({super.key, required this.menu});
@@ -22,8 +23,7 @@ class FirmScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? context.l10n.firm_screenDefaultTitle,
-              subtitle: menu.description,
+              menu: menu,
               actions: [
                 MedButton(
                   onPressed: () => notifier.openPanel(),
@@ -35,21 +35,7 @@ class FirmScreen extends StatelessWidget {
                 isOpen: notifier.isPanelOpen,
                 width: 480,
                 panel: FirmFormPanel(),
-                child: MedTable<Firm>(
-                  data: notifier.items,
-                  isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.deleteOp),
-                  enableExcel: true,
-                  enableSearch: true,
-                  onSearchChanged: notifier.search,
-                  actions: [
-                    TableActionItem.edit(context: context, onPressed: (firm) => notifier.openPanel(firm: firm)),
-                    TableActionItem.delete(context: context, onPressed: (firm) => _onDelete(context, notifier, firm)),
-                  ],
-                  enablePagination: true,
-                  pageSize: notifier.pageSize,
-                  currentPage: notifier.currentPage,
-                  onPageChanged: (page) => notifier.setPage(page),
-                ),
+                child: TableView(notifier: notifier),
               ),
             ),
           );
@@ -57,17 +43,4 @@ class FirmScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-void _onDelete(BuildContext context, FirmNotifier notifier, Firm item) {
-  MessageUtils.showConfirmDeleteDialog(
-    context: context,
-    onConfirm: () async {
-      await notifier.deleteFirm(
-        item,
-        onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg),
-      );
-    },
-  );
 }

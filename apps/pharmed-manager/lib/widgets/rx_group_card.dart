@@ -354,7 +354,8 @@ class _RxDrugBlockState extends State<_RxDrugBlock> {
       widget.interactive &&
       ((widget.item.status?.canApprove ?? false) ||
           (widget.item.status?.canReject ?? false) ||
-          (widget.item.status?.canCancel ?? false));
+          (widget.item.status?.canCancel ?? false) ||
+          (widget.item.status?.canFill ?? false));
 
   Future<void> _loadMovements() async {
     if (_hasLoaded || _isLoading) return;

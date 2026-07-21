@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
 import '../../census.dart';
 
@@ -692,7 +692,10 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
         MobileCensusClosedEarly(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
         _ => current,
       };
-      state = MobileCensusFatalError(message: next.message, previousState: cleaned);
+      state = MobileCensusFatalError(
+        failure: CabinDrawerFailure(failure: next.failure, detail: next.detail),
+        previousState: cleaned,
+      );
     }
   }
 

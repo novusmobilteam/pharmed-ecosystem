@@ -20,15 +20,11 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
   Widget build(BuildContext context) {
     return Consumer<ActiveIngredientNotifier>(
       builder: (context, vm, _) {
-        if (vm.isFetching && vm.allItems.isEmpty) {
+        if (vm.isFetching && vm.items.isEmpty) {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
 
-        if (vm.hasNoSearchResults) {
-          return EmptyStateWidget(variant: EmptyStateVariant.error);
-        }
-
-        if (vm.allItems.isEmpty) {
+        if (vm.items.isEmpty) {
           return EmptyStateWidget(
             icon: Icons.science_outlined,
             variant: EmptyStateVariant.custom,
@@ -40,10 +36,10 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
         }
 
         return ListView.builder(
-          itemCount: vm.filteredItems.length,
+          itemCount: vm.items.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            final activeIngredient = vm.filteredItems[index];
+            final activeIngredient = vm.items[index];
             return MedEditableListCard(
               title: activeIngredient.title,
               subtitle: activeIngredient.subtitle,
@@ -65,7 +61,7 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
   Future<void> _onEdit(BuildContext context, {ActiveIngredient? initial}) async {
     final result = await showActiveIngredientFormDialog(context, initial: initial);
     if (result == true && context.mounted) {
-      context.read<ActiveIngredientNotifier>().getActiveIngredients();
+      context.read<ActiveIngredientNotifier>().fetch();
     }
   }
 

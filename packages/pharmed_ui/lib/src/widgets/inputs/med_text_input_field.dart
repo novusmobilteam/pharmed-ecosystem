@@ -67,23 +67,36 @@ class MedTextInputField extends StatefulWidget {
 
 class _MedTextInputFieldState extends State<MedTextInputField> {
   late final FocusNode _focus;
+  late final TextEditingController _controller;
   bool _focused = false;
+  bool _hasText = false;
 
   bool get _isMultiline => (widget.maxLines ?? 1) > 1;
+  bool get _isExternalController => widget.controller != null;
 
   @override
   void initState() {
     super.initState();
     _focus = FocusNode()..addListener(_onFocus);
+    _controller = widget.controller ?? TextEditingController(text: widget.initialValue);
+    _hasText = _controller.text.isNotEmpty;
+    _controller.addListener(_onTextChanged);
   }
 
   void _onFocus() => setState(() => _focused = _focus.hasFocus);
+
+  void _onTextChanged() {
+    final has = _controller.text.isNotEmpty;
+    if (has != _hasText) setState(() => _hasText = has);
+  }
 
   @override
   void dispose() {
     _focus
       ..removeListener(_onFocus)
       ..dispose();
+    _controller.removeListener(_onTextChanged);
+    if (!_isExternalController) _controller.dispose();
     super.dispose();
   }
 
@@ -103,69 +116,85 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
           enabled: widget.enabled,
           isFocused: _focused,
           applyPadding: false,
-          child: IgnorePointer(
-            ignoring: !widget.enabled,
-            child: SizedBox(
-              height: !_isMultiline ? style.minHeight : null,
-              child: TextFormField(
-                focusNode: _focus,
-                readOnly: widget.readOnly,
-                autofocus: widget.autoFocus,
-                initialValue: widget.controller == null ? widget.initialValue : null,
-                enabled: widget.enabled,
-                textAlignVertical: _isMultiline ? TextAlignVertical.top : TextAlignVertical.center,
-                keyboardType: widget.keyboardType,
-                maxLines: widget.obscureText ? 1 : widget.maxLines,
-                minLines: widget.obscureText ? 1 : widget.minLines,
-                maxLength: widget.maxLength,
-                obscureText: widget.obscureText,
-                inputFormatters: widget.inputFormatters,
-                controller: widget.controller,
-                onTap: widget.onTap,
-                onFieldSubmitted: widget.onFieldSubmitted,
-                onChanged: (v) {
-                  field.didChange(v);
-                  widget.onChanged?.call(v);
-                },
-                style: MedTextStyles.bodyMd(color: MedColors.text),
-                decoration: InputDecoration(
-                  suffix: widget.suffix,
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  filled: false,
-                  isDense: true,
-                  contentPadding: !_isMultiline
-                      ? EdgeInsets.only(
-                          left: style.contentPadding.horizontal / 2,
-                          top: style.minHeight / 2,
-                          bottom: style.minHeight / 2,
-                        )
-                      : null,
-                  counterText: '',
-                  hintText: widget.hintText,
-                  hintStyle: TextStyle(
-                    fontFamily: MedFonts.sans,
-                    fontSize: style.inputFontSize,
-                    color: MedColors.text4,
-                  ),
-
-                  prefixIcon: widget.prefixIcon != null
-                      ? IconTheme(
-                          data: IconThemeData(size: 16, color: _focused ? MedColors.blue : MedColors.text3),
-                          child: widget.prefixIcon!,
-                        )
-                      : null,
-                  suffixIcon: widget.suffixIcon,
-                  suffixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 0),
-                ),
-              ),
-            ),
-          ),
+          child: _buildInner(style, field),
         );
       },
+    );
+  }
+
+  Widget _buildInner(InputFieldStyle style, FormFieldState<String> field) {
+    final hPad = style.contentPadding.horizontal / 2;
+
+    return SizedBox(
+      height: !_isMultiline ? style.minHeight : null,
+      child: Row(
+        crossAxisAlignment: _isMultiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        children: [
+          // Prefix icon
+          if (widget.prefixIcon != null)
+            Padding(
+              padding: EdgeInsets.only(left: hPad, right: hPad / 2),
+              child: IconTheme(
+                data: IconThemeData(size: 16, color: _focused ? MedColors.blue : MedColors.text3),
+                child: widget.prefixIcon!,
+              ),
+            )
+          else
+            SizedBox(width: hPad),
+
+          // EditableText + hint stack
+          Expanded(
+            child: Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                // Hint
+                if (!_hasText && widget.hintText != null)
+                  Text(
+                    widget.hintText!,
+                    style: TextStyle(fontFamily: MedFonts.sans, fontSize: style.inputFontSize, color: MedColors.text4),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                // Input
+                EditableText(
+                  controller: _controller,
+                  focusNode: _focus,
+                  readOnly: widget.readOnly,
+                  autofocus: widget.autoFocus,
+                  keyboardType: widget.keyboardType,
+                  maxLines: widget.obscureText ? 1 : widget.maxLines,
+                  minLines: widget.obscureText ? 1 : widget.minLines,
+                  obscureText: widget.obscureText,
+                  inputFormatters: widget.inputFormatters,
+                  onChanged: (v) {
+                    field.didChange(v);
+                    widget.onChanged?.call(v);
+                  },
+                  onSubmitted: widget.onFieldSubmitted,
+                  style: MedTextStyles.bodyMd(color: widget.enabled ? MedColors.text : MedColors.text3),
+                  cursorColor: MedColors.blue,
+                  backgroundCursorColor: MedColors.border,
+                ),
+              ],
+            ),
+          ),
+
+          // Suffix / suffix icon
+          if (widget.suffix != null)
+            Padding(
+              padding: EdgeInsets.only(right: hPad),
+              child: widget.suffix!,
+            )
+          else if (widget.suffixIcon != null)
+            Padding(
+              padding: EdgeInsets.only(right: hPad / 2),
+              child: SizedBox(width: 32, child: widget.suffixIcon!),
+            )
+          else
+            SizedBox(width: hPad),
+        ],
+      ),
     );
   }
 }

@@ -11,6 +11,8 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../../../core/hardware/hardware.dart';
+
 sealed class MasterRefillState {
   const MasterRefillState();
 }
@@ -150,30 +152,34 @@ final class MasterRefillExecuting extends MasterRefillState {
 /// veya çekmece) oluşmuştur; kullanıcıya "ilaçları alın" yönlendirmesiyle
 /// devam/sonlandır seçeneği sunulur.
 final class MasterRefillError extends MasterRefillState {
-  const MasterRefillError({required this.message, required this.previousState, this.isQueueError = false});
+  const MasterRefillError({required this.failure, required this.previousState, this.isQueueError = false});
 
-  final String message;
+  final CabinOperationFailure failure;
   final MasterRefillState previousState;
   final bool isQueueError;
 }
 
 extension MasterRefillExecutingLocationX on MasterRefillExecuting {
-  List<DrawerQueueItem> toLocationItems() {
-    final result = <DrawerQueueItem>[];
-
+  /// [allGroups] → CabinVisualizerData.groups (tüm kabin çekmeceleri)
+  List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) {
+    // Job'ları slotId → job index ile hızlı erişim için index'le.
+    final jobBySlotId = <int, (int index, RefillDrawerJob job)>{};
     for (int i = 0; i < jobs.length; i++) {
-      final job = jobs[i];
-      final isActive = i == currentIndex;
+      final slotId = jobs[i].representativeAssignment.drawerUnit?.drawerSlotId;
+      if (slotId != null) jobBySlotId[slotId] = (i, jobs[i]);
+    }
 
-      // DrawerSlot null gelirse bu job'ı atla (veri eksikliği).
-      final slot = job.representativeAssignment.drawerUnit?.drawerSlot;
-      if (slot == null) continue;
+    return allGroups.map((group) {
+      final slotId = group.slot.id;
+      final entry = slotId != null ? jobBySlotId[slotId] : null;
 
-      // Job'daki tüm target assignment'larından DrawerUnit listesi derle.
-      // Birim dozda tek target → tek unit; kübikte her target ayrı göz → N unit.
-      final units = job.targets.map((t) => t.assignment.drawerUnit).whereType<DrawerUnit>().toList();
+      if (entry == null) {
+        // Bu çekmece kuyruğa girmedi.
+        return DrawerQueueItem(group: group, status: DrawerQueueStatus.notInQueue);
+      }
 
-      final group = DrawerGroup(slot: slot, units: units);
+      final (jobIndex, job) = entry;
+      final isActive = jobIndex == currentIndex;
 
       final status = switch (job.status) {
         RefillJobStatus.completed => DrawerQueueStatus.completed,
@@ -182,7 +188,7 @@ extension MasterRefillExecutingLocationX on MasterRefillExecuting {
         RefillJobStatus.pending => isActive ? DrawerQueueStatus.active : DrawerQueueStatus.pending,
       };
 
-      // Kübik: currentTargetIndex öncesindeki tüm lid'ler tamamlandı sayılır.
+      // Kübik: currentTargetIndex öncesindeki lid'ler tamamlandı.
       final completedIndexes = <int>{};
       if (isActive && job.isKubik) {
         for (int t = 0; t < currentTargetIndex; t++) {
@@ -190,16 +196,25 @@ extension MasterRefillExecutingLocationX on MasterRefillExecuting {
         }
       }
 
-      result.add(
-        DrawerQueueItem(
-          group: group,
-          status: status,
-          activeTargetIndex: isActive && job.isKubik ? currentTargetIndex : null,
-          completedTargetIndexes: completedIndexes,
-        ),
-      );
-    }
+      // Birim doz: hedef unit index'lerini job'daki target assignment'larından türet.
+      // Her target'ın drawerUnit'i group.units içindeki index'iyle eşleştirilir.
+      final activeUnitIndexes = <int>{};
+      if (!job.isKubik && isActive) {
+        for (final target in job.targets) {
+          final unitId = target.assignment.drawerUnit?.id;
+          if (unitId == null) continue;
+          final idx = group.units.indexWhere((u) => u.id == unitId);
+          if (idx >= 0) activeUnitIndexes.add(idx);
+        }
+      }
 
-    return result;
+      return DrawerQueueItem(
+        group: group,
+        status: status,
+        activeTargetIndex: isActive && job.isKubik ? currentTargetIndex : null,
+        completedTargetIndexes: completedIndexes,
+        activeUnitIndexes: activeUnitIndexes,
+      );
+    }).toList();
   }
 }

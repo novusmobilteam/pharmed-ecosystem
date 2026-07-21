@@ -1,9 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
-// TODO : Localization
-class Refund implements TableData {
+class Refund {
   final int? id;
   final int? type;
   final double? quantity;
@@ -31,31 +28,6 @@ class Refund implements TableData {
   final bool? isDeleted;
 
   Patient? get patient => prescriptionDetail?.prescription?.hospitalization?.patient;
-
-  @override
-  List<String?> get content => [
-    patient?.id?.toCustomString(),
-    patient?.fullName,
-    createdUser?.fullName,
-    medicine?.name,
-    quantity?.formatFractional,
-    createdDate?.formattedDateTime,
-    description,
-  ];
-
-  @override
-  List<String?> get titles => ['Hasta Kodu', 'Hasta', 'Kullanıcı', 'Malzeme', 'Miktar', 'Tarih', 'Açıklama'];
-
-  @override
-  List get rawContent => [
-    patient?.id?.toCustomString(),
-    patient?.fullName,
-    createdUser?.fullName,
-    medicine?.name,
-    quantity?.formatFractional,
-    createdDate?.formattedDate,
-    description,
-  ];
 
   Refund({
     this.id,

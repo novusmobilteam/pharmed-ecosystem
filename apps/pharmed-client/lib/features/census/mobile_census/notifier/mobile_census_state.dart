@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 
 sealed class MobileCensusState {
   const MobileCensusState();
@@ -342,9 +342,9 @@ final class MobileCensusError extends MobileCensusState {
 ///   - Dialog kapatıldığında (dismiss), [previousState] içinden ayıklanan
 ///     temiz bir state'e (örneğin Idle) geri dönülür.
 final class MobileCensusFatalError extends MobileCensusState {
-  const MobileCensusFatalError({required this.message, required this.previousState});
+  const MobileCensusFatalError({required this.failure, required this.previousState});
 
-  final String message;
+  final CabinOperationFailure failure;
   final MobileCensusState previousState;
 }
 

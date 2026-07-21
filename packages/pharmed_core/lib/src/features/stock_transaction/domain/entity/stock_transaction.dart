@@ -1,8 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
-class StockTransaction implements TableData {
+class StockTransaction {
   final int? id;
   final int? warehouseId;
   final Warehouse? warehouse;
@@ -40,39 +38,6 @@ class StockTransaction implements TableData {
     this.medicine,
     this.service,
   });
-
-  @override
-  List get content => [
-    startDate?.formattedDate,
-    medicine?.name.toString(),
-    medicine?.barcode,
-    transactionKind?.label,
-    '${quantity?.formatFractional} ${medicine?.operationUnit}',
-    '${beforeQuantity?.formatFractional} ${medicine?.operationUnit}',
-    user?.fullName,
-  ];
-
-  @override
-  List<String?> get titles => [
-    contextlessL10n().tableCore_stockTransactionDateColumn,
-    contextlessL10n().tableCore_materialColumn,
-    contextlessL10n().tableCore_stockTransactionBarcodeColumn,
-    contextlessL10n().tableCore_stockTransactionTypeColumn,
-    contextlessL10n().tableCore_stockTransactionQuantityColumn,
-    contextlessL10n().tableCore_stockTransactionPreviousQuantityColumn,
-    contextlessL10n().tableCore_stockTransactionActorColumn,
-  ];
-
-  @override
-  List get rawContent => [
-    sendDate?.formattedDate,
-    medicine?.name.toString(),
-    medicine?.barcode,
-    transactionKind?.label,
-    '${quantity?.formatFractional} ${medicine?.operationUnit}',
-    '${beforeQuantity?.formatFractional} ${medicine?.operationUnit}',
-    user?.fullName,
-  ];
 
   StockTransaction copyWith({
     int? id,

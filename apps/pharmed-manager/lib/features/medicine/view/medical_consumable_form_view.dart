@@ -191,7 +191,7 @@ Widget _buildMaterialTypeField() {
         labelBuilder: (value) => value.name,
         validator: (value) => Validators.cannotBlankValidator(value?.name),
         dataSource: (skip, take, search) =>
-            context.read<GetMaterialTypesUseCase>().call(GetMaterialTypeParams(skip: skip, take: take, search: search)),
+            context.read<GetMaterialTypesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
         onSelected: vm.updateMaterialType,
       );
     },

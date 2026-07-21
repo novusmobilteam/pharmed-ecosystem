@@ -56,6 +56,7 @@ class _SidebarParentItemState extends State<_SidebarParentItem> {
   Widget build(BuildContext context) {
     final hasChildren = widget.menu.children.isNotEmpty;
     final activeChild = context.watch<HomeNotifier>().activeChildMenu;
+    final locale = Localizations.localeOf(context);
 
     return Column(
       children: [
@@ -80,7 +81,8 @@ class _SidebarParentItemState extends State<_SidebarParentItem> {
                 // İsim
                 Expanded(
                   child: Text(
-                    widget.menu.name ?? '-',
+                    widget.menu.localizedName(locale),
+
                     style: MedTextStyles.bodyMd(color: MedColors.text2, weight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -124,6 +126,8 @@ class _SidebarChildItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+
     return InkWell(
       onTap: () => context.read<HomeNotifier>().selectChild(child),
       borderRadius: MedRadius.mdAll,
@@ -147,7 +151,8 @@ class _SidebarChildItem extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                child.name ?? '-',
+                child.localizedName(locale),
+
                 style: MedTextStyles.bodySm(
                   color: isActive ? MedColors.blue : MedColors.text3,
                   weight: isActive ? FontWeight.w600 : FontWeight.w400,

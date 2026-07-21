@@ -196,6 +196,13 @@ class NumpadView extends StatelessWidget {
 
     if (myText == '.' && text.contains('.')) return;
 
+    // Mevcut değer "0" ise ve rakam girildiyse sıfırı temizle, üzerine yaz.
+    if (text == '0' && myText != '.') {
+      controller.text = myText;
+      controller.selection = TextSelection.collapsed(offset: myText.length);
+      return;
+    }
+
     String newText;
     int newCursorPosition;
 

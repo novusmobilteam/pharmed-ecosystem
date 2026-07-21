@@ -18,6 +18,7 @@ class HospitalizationPanel extends StatelessWidget {
         updateHospitalizationUseCase: context.read(),
         hospitalization: selectedHospitalization,
         patient: selectedHospitalization?.patient ?? hospNotifier.patient,
+        dischargeUseCase: context.read(),
       ),
       child: Consumer<HospitalizationFormNotifier>(
         builder: (context, notifier, child) {
@@ -55,12 +56,26 @@ class HospitalizationPanel extends StatelessWidget {
                       children: [_PhysicalServiceField(), _InpatientServiceField()],
                     ),
                     Row(spacing: AppDimensions.registrationDialogSpacing, children: [_RoomField(), _BedField()]),
-                    Row(
-                      spacing: AppDimensions.registrationDialogSpacing,
-                      children: [_AdmissionDateField(), _ExitDateField()],
-                    ),
+                    _AdmissionDateField(),
                     _DescriptionField(),
                     _BabyToggle(),
+                    if (!notifier.isCreate)
+                      SizedBox(
+                        width: context.width,
+                        child: MedButton(
+                          label: context.l10n.common_action_discharge,
+                          isLoading: notifier.isLoading(notifier.dischargeOp),
+                          onPressed: () => notifier.discharge(
+                            onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+                            onSuccess: () {
+                              MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
+                              hospNotifier.closePanel();
+                              hospNotifier.fetch();
+                            },
+                          ),
+                          variant: MedButtonVariant.secondary,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -254,38 +269,15 @@ class _AdmissionDateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Consumer<HospitalizationFormNotifier>(
-        builder: (context, notifier, _) {
-          return MedDateInputField(
-            label: context.l10n.hospitalization_fieldAdmissionDate,
-            firstDate: DateTime.now(),
-            initialValue: notifier.hospitalization?.admissionDate,
-            onDateSelected: notifier.updateAdmissionDate,
-          );
-        },
-      ),
-    );
-  }
-}
-
-// * Çıkış Tarihi (hospitalization.exitDate)
-class _ExitDateField extends StatelessWidget {
-  const _ExitDateField();
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Consumer<HospitalizationFormNotifier>(
-        builder: (context, notifier, _) {
-          return MedDateInputField(
-            label: context.l10n.hospitalization_fieldExitDate,
-            onDateSelected: (date) {
-              notifier.updateExitDate(date);
-            },
-          );
-        },
-      ),
+    return Consumer<HospitalizationFormNotifier>(
+      builder: (context, notifier, _) {
+        return MedDateInputField(
+          label: context.l10n.hospitalization_fieldAdmissionDate,
+          firstDate: DateTime.now(),
+          initialValue: notifier.hospitalization?.admissionDate,
+          onDateSelected: notifier.updateAdmissionDate,
+        );
+      },
     );
   }
 }

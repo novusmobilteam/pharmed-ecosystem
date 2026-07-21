@@ -151,8 +151,6 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
       child: Row(
         children: [
           _AppLogo(onTap: widget.onHomeTap),
-          _Separator(),
-
           ...widget.menuTree.map((item) {
             final id = item.id ?? 0;
             final key = _itemKeys.putIfAbsent(id, () => GlobalKey());
@@ -173,32 +171,41 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
             initialData: _timeStr,
             builder: (_, snap) => _ClockLabel(time: snap.data ?? _timeStr),
           ),
-          _Separator(),
+
+          SizedBox(width: 10),
 
           if (!widget.isLoggedIn)
-            _LoginButton(onTap: widget.onLoginTap)
+            MedRectangleIconButton(
+              iconData: PhosphorIcons.signIn(),
+              color: MedColors.blue,
+              iconColor: Colors.white,
+              onPressed: widget.onLoginTap,
+              size: 40,
+            )
           else if (widget.user != null)
-            _UserChip(user: widget.user!, onTap: widget.onUserTap),
+            _UserInfo(user: widget.user!),
 
-          const SizedBox(width: 6),
+          const SizedBox(width: 16),
 
           if (widget.isLoggedIn) ...[
-            MedRectangleIconButton(
-              tooltip: context.l10n.dashboard_logoutTooltip,
-              iconData: PhosphorIcons.signOut(),
-              color: MedColors.red,
-              iconColor: Colors.white,
-              onPressed: widget.onLogoutTap,
-            ),
-            const SizedBox(width: 4),
-          ],
-
-          if (widget.isLoggedIn)
             MedRectangleIconButton(
               iconData: PhosphorIcons.gearSix(),
               tooltip: context.l10n.settings_title,
               onPressed: widget.onSettingsTap,
+              borderColor: MedColors.border,
+              size: 40,
             ),
+            const SizedBox(width: 10),
+            MedRectangleIconButton(
+              tooltip: context.l10n.dashboard_logoutTooltip,
+              borderColor: MedColors.red,
+              iconData: PhosphorIcons.signOut(),
+              color: MedColors.red,
+              iconColor: Colors.white,
+              onPressed: widget.onLogoutTap,
+              size: 40,
+            ),
+          ],
         ],
       ),
     );
@@ -268,6 +275,8 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool highlight = isActive || isMenuOpen;
+    final locale = Localizations.localeOf(context);
+    final localizedName = item.localizedName(locale);
 
     return Opacity(
       opacity: isLoggedIn ? 1.0 : 0.3,
@@ -280,7 +289,7 @@ class _NavItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                item.name ?? '',
+                localizedName,
                 style: TextStyle(
                   fontFamily: MedFonts.sans,
                   fontSize: 13,
@@ -320,92 +329,57 @@ class _ClockLabel extends StatelessWidget {
   }
 }
 
-class _UserChip extends StatelessWidget {
-  const _UserChip({required this.user, this.onTap});
+class _UserInfo extends StatelessWidget {
+  const _UserInfo({required this.user});
 
   final AppUser user;
-  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-        decoration: BoxDecoration(
-          color: MedColors.surface2,
-          border: Border.all(color: MedColors.border),
-          borderRadius: BorderRadius.circular(10),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 26,
+          height: 26,
+          decoration: const BoxDecoration(color: MedColors.blue, shape: BoxShape.circle),
+          alignment: Alignment.center,
+          child: Text(
+            user.initials,
+            style: const TextStyle(
+              fontFamily: MedFonts.sans,
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+        const SizedBox(width: 8),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               user.fullName,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: MedFonts.sans,
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: MedColors.text,
               ),
             ),
-            const SizedBox(width: 6),
             Text(
-              user.roleName,
-              style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LoginButton extends StatelessWidget {
-  const _LoginButton({this.onTap});
-
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: MedColors.blue,
-          borderRadius: MedRadius.mdAll,
-          boxShadow: const [BoxShadow(color: Color(0x4D1A6BD8), blurRadius: 8, offset: Offset(0, 2))],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(PhosphorIcons.signIn(), size: 14, color: Colors.white),
-            const SizedBox(width: 6),
-            Text(
-              context.l10n.dashboard_loginBarButton,
-              style: TextStyle(
-                fontFamily: MedFonts.sans,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+              user.roleName.toUpperCase(),
+              style: const TextStyle(
+                fontFamily: MedFonts.mono,
+                fontSize: 9,
+                color: MedColors.text3,
+                letterSpacing: 0.6,
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _Separator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 24,
-      color: MedColors.border2,
-      margin: const EdgeInsets.symmetric(horizontal: 12),
+      ],
     );
   }
 }

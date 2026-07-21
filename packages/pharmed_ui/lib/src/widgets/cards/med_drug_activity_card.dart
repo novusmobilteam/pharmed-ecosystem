@@ -10,7 +10,8 @@ class MedDrugActivityCard extends StatelessWidget {
 
   String _doseText(BuildContext context) {
     final piece = movement.quantity?.formatFractional ?? '-';
-    final unit = movement.prescriptionItem?.medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback;
+    final unit =
+        movement.prescriptionItem?.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
     return '$piece $unit';
   }
 
@@ -62,13 +63,13 @@ class MedDrugActivityCard extends StatelessWidget {
           const SizedBox(height: 12),
 
           // Bilgi satırları
-          const MedInfoRow(label: 'HASTA', value: '').runtimeType == Null
+          MedInfoRow(label: context.l10n.assignment_patientLabel, value: '').runtimeType == Null
               ? const SizedBox()
               : const SizedBox(), // placeholder kaldırılacak
           MedInfoRow(label: context.l10n.assignment_patientLabel, value: _patient),
           const SizedBox(height: 6),
           MedInfoRow(
-            label: 'İŞLEMİ YAPAN',
+            label: context.l10n.movement_performedBy,
             value: _performedBy,
           ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
           const SizedBox(height: 6),

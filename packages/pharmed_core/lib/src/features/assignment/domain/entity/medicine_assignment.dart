@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
-class MedicineAssignment implements TableData {
+class MedicineAssignment {
   final int? id;
   final int? cabinDrawerId;
   final num? minQuantity;
@@ -150,19 +150,4 @@ class MedicineAssignment implements TableData {
       maxQuantity: null,
     );
   }
-
-  @override
-  List get content => [
-    medicine?.barcode,
-    medicine?.name,
-    minQuantity?.toCustomString(),
-    maxQuantity?.toCustomString(),
-    criticalQuantity?.toCustomString(),
-  ];
-
-  @override
-  List<String?> get titles => ['Barkod', 'Malzeme', 'Minimum', 'Maksimum', 'Kritik'];
-
-  @override
-  List<dynamic> get rawContent => [medicine?.barcode, medicine?.name, minQuantity, maxQuantity, criticalQuantity];
 }

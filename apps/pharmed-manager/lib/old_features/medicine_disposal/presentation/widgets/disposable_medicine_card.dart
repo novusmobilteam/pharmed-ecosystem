@@ -53,7 +53,7 @@ class DisposableMedicineCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                _buildDoseBadge(theme, medicine),
+                _buildDoseBadge(context, theme, medicine),
               ],
             ),
 
@@ -79,7 +79,7 @@ class DisposableMedicineCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDoseBadge(ThemeData theme, Medicine? medicine) {
+  Widget _buildDoseBadge(BuildContext context, ThemeData theme, Medicine? medicine) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -92,7 +92,10 @@ class DisposableMedicineCard extends StatelessWidget {
             '${item.dosePiece?.formatFractional}',
             style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
           ),
-          Text(medicine?.operationUnit ?? 'Adet', style: theme.textTheme.labelSmall?.copyWith(fontSize: 9)),
+          Text(
+            medicine?.operationUnitLocalized(context) ?? 'Adet',
+            style: theme.textTheme.labelSmall?.copyWith(fontSize: 9),
+          ),
         ],
       ),
     );

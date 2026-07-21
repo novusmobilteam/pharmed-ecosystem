@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../core/core.dart';
 import 'role/notifier/role_table_notifier.dart';
-import 'role/view/role_table_view.dart';
+import 'role/view/table_view.dart';
 import 'user/notifier/user_table_notifier.dart';
-import 'user/view/user_table_view.dart';
+import 'user/view/table_view.dart';
 
 class AuthorizationScreen extends StatelessWidget {
   const AuthorizationScreen({super.key, required this.menu});
@@ -29,8 +29,7 @@ class AuthorizationScreen extends StatelessWidget {
             mobile: SizedBox(),
             tablet: SizedBox(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? context.l10n.authorization_screenTitleFallback,
-              subtitle: menu.description,
+              menu: menu,
               child: SidePanelWrapper(
                 isOpen: notifier.isPanelOpen,
                 width: 880,

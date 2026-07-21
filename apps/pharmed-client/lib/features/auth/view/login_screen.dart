@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../settings/presentation/notifier/settings_notifier.dart';
 import '../notifier/auth_notifier.dart';
 import '../notifier/auth_state.dart';
 
@@ -23,6 +24,8 @@ class LoginScreen extends ConsumerWidget {
           onLoginWithBadge: (cardData, onError) async {
             await ref.read(authNotifierProvider.notifier).loginWithBadge(cardData: cardData, onError: onError);
           },
+          currentLanguage: ref.watch(settingsNotifierProvider.select((s) => s.language)),
+          onLanguageChanged: (lang) => ref.read(settingsNotifierProvider.notifier).setLanguage(lang),
         ),
       ),
     );

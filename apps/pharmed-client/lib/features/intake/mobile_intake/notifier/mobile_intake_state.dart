@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 
 sealed class MobileIntakeState {
   const MobileIntakeState();
@@ -333,9 +333,9 @@ final class MobileIntakeError extends MobileIntakeState {
 ///   - Dialog kapatıldığında (dismiss), [previousState] içinden ayıklanan
 ///     temiz bir state'e (örneğin Idle) geri dönülür.
 final class MobileIntakeFatalError extends MobileIntakeState {
-  const MobileIntakeFatalError({required this.message, required this.previousState});
+  const MobileIntakeFatalError({required this.failure, required this.previousState});
 
-  final String message;
+  final CabinOperationFailure failure;
   final MobileIntakeState previousState;
 }
 

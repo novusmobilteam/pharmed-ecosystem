@@ -54,7 +54,7 @@ class _MovementGroup extends StatelessWidget {
 
   String _doseText(BuildContext context) {
     if (movement.quantity == null) return '-';
-    return '${movement.quantity!.formatFractional} ${medicine?.operationUnit ?? context.l10n.common_defaultUnitFallback}';
+    return '${movement.quantity!.formatFractional} ${medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback}';
   }
 
   @override
@@ -64,7 +64,7 @@ class _MovementGroup extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _DetailGroupTitle(label: type.actorLabel),
+        _DetailGroupTitle(label: type.actorLabel(context)),
         const SizedBox(height: 6),
         _DetailRow(
           fields: [

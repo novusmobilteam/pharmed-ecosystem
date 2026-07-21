@@ -1,8 +1,4 @@
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-
-/// TODO : Localization
-class CabinTemperatureValue implements TableData {
+class CabinTemperatureValue {
   final int? id;
   final DateTime? createdDate;
   final int? stationId;
@@ -44,25 +40,4 @@ class CabinTemperatureValue implements TableData {
     this.isHumidityOutOfRange,
     this.isOutOfRange,
   });
-
-  @override
-  List<dynamic> get content => [
-    createdDate.formattedDateTime,
-    cabinName,
-    '${insideTemperature?.toStringAsFixed(2)}°C',
-    '${outsideTemperature?.toStringAsFixed(2)}°C',
-    '${humidity?.toStringAsFixed(2)}%',
-  ];
-
-  @override
-  List<dynamic> get rawContent => [
-    createdDate.formattedDateTime,
-    cabinName,
-    insideTemperature?.toStringAsFixed(2),
-    outsideTemperature?.toStringAsFixed(2),
-    humidity?.toStringAsFixed(2),
-  ];
-
-  @override
-  List<String?> get titles => ['Tarih', 'Kabin', 'İç Sıcaklık', 'Dış Sıcaklık', 'Nem'];
 }

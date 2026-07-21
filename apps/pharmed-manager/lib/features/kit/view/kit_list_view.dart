@@ -38,11 +38,11 @@ class _KitListViewState extends State<KitListView> {
         }
 
         return ListView.builder(
-          itemCount: notifier.filteredItems.length,
+          itemCount: notifier.items.length,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            final kit = notifier.filteredItems[index];
+            final kit = notifier.items[index];
             return MedEditableListCard(
               title: kit.name ?? '-',
               onEdit: () => _onEdit(context, notifier, initial: kit),
@@ -65,7 +65,7 @@ class _KitListViewState extends State<KitListView> {
   Future<void> _onEdit(BuildContext context, KitNotifier notifier, {Kit? initial}) async {
     final result = await showKitFormDialog(context, initial: initial);
     if (result == true && context.mounted) {
-      notifier.getKits();
+      notifier.fetch();
     }
   }
 

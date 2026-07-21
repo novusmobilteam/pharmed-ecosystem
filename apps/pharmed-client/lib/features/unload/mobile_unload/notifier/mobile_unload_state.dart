@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 
 sealed class MobileUnloadState {
   const MobileUnloadState();
@@ -324,9 +324,9 @@ final class MobileUnloadSuccess extends MobileUnloadState {
 
 /// Çekmece donanım hatası — kurtarılamaz. Kullanıcı yalnızca dismiss edebilir.
 final class MobileUnloadFatalError extends MobileUnloadState {
-  const MobileUnloadFatalError({required this.message, required this.previousState});
+  const MobileUnloadFatalError({required this.failure, required this.previousState});
 
-  final String message;
+  final CabinOperationFailure failure;
   final MobileUnloadState previousState;
 }
 

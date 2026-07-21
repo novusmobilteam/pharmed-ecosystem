@@ -30,6 +30,7 @@ class WarehouseTableView extends StatelessWidget {
           pageSize: notifier.pageSize,
           currentPage: notifier.currentPage,
           onPageChanged: (page) => notifier.setPage(page),
+          columnDefs: _buildColumnDefs(context),
         );
       },
     );
@@ -43,8 +44,22 @@ void _onDelete(BuildContext context, WarehouseNotifier notifier, Warehouse wareh
       await notifier.deleteWarehouse(
         warehouse,
         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-        onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
+        onSuccess: (msg) =>
+            MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
       );
     },
   );
 }
+
+List<TableColumnDef<Warehouse>> _buildColumnDefs(BuildContext context) => [
+  TableColumnDef(
+    title: context.l10n.tableCore_warehouseCodeColumn,
+    displayValue: (item) => item.code?.toString() ?? '-',
+  ),
+  TableColumnDef(title: context.l10n.tableCore_warehouseNameColumn, displayValue: (item) => item.name ?? '-'),
+  TableColumnDef(
+    title: context.l10n.tableCore_warehouseManagerColumn,
+    displayValue: (item) => item.user?.fullName.toString() ?? '-',
+  ),
+  TableColumnDef(title: context.l10n.common_statusLabel, displayValue: (item) => item.status.label),
+];

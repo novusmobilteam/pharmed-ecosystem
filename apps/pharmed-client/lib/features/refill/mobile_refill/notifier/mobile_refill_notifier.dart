@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
 import '../../refill.dart';
 
@@ -639,9 +639,9 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
   ///   - Failed                → tüm RFID + seçim state'i sıfırla, Error state
   ///
   /// SWREQ-CLI-REFILL-001
-  void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage drawerStage) {
+  void _onDrawerStageChange(MobileDrawerStage? prev, MobileDrawerStage next) {
     // ── Çekmece açıldı → sahneye geç, baseline tara ──────────────────────
-    if (drawerStage is MobileDrawerOpened) {
+    if (next is MobileDrawerOpened) {
       final current = state;
       if (current is MobileRefillDrawerOpening) {
         state = current.ready;
@@ -650,7 +650,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     }
 
     // ── Çekmece kapandı ──────────────────────────────────────────────────
-    if (drawerStage is MobileDrawerClosed) {
+    if (next is MobileDrawerClosed) {
       final current = state;
       switch (current) {
         // Normal akış: kayıt gitti, kapanış bekleniyordu → bildir + Success
@@ -672,7 +672,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
     }
 
     // ── Çekmece donanım hatası → kurtarılamaz, FatalError ────────────────
-    if (drawerStage is MobileDrawerFailed) {
+    if (next is MobileDrawerFailed) {
       _resetExpectedMap();
       final current = state;
       final cleaned = switch (current) {
@@ -682,7 +682,10 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
         MobileRefillSaving(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
         _ => current,
       };
-      state = MobileRefillFatalError(message: drawerStage.message, previousState: cleaned);
+      state = MobileRefillFatalError(
+        failure: CabinDrawerFailure(failure: next.failure, detail: next.detail),
+        previousState: cleaned,
+      );
     }
   }
 

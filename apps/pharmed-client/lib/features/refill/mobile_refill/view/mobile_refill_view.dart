@@ -16,7 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../refill.dart';
 import 'mobile_refill_dialog.dart';
 
@@ -92,7 +92,7 @@ class _MobileRefillViewState extends ConsumerState<MobileRefillView> {
           notifier.dismissError();
         }
       } else if (next is MobileRefillFatalError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
         notifier.dismissError();
       } else if (next is MobileRefillSuccess) {
         MessageUtils.showSuccessSnackbar(context, context.l10n.refill_success_completedMobile);

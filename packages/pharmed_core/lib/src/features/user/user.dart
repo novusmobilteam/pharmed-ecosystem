@@ -1,5 +1,5 @@
 export 'dto/user_dto.dart';
-export 'domain/model/user.dart';
+export 'domain/entity/user.dart';
 export 'domain/repository/i_user_manager.dart';
 export 'domain/repository/i_user_reader.dart';
 export 'domain/usecase/change_password_usecase.dart';

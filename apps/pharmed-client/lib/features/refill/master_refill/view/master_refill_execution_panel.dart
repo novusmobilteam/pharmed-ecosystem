@@ -15,8 +15,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/cabin_operation/master_drawer/master_drawer_session_notifier.dart';
-import 'package:pharmed_client/core/cabin_operation/master_drawer/master_drawer_stage.dart';
+import 'package:pharmed_client/core/hardware/cabin/master_drawer/master_drawer_session_notifier.dart';
+import 'package:pharmed_client/core/hardware/cabin/master_drawer/master_drawer_stage.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
@@ -26,7 +26,10 @@ import '../notifier/master_refill_notifier.dart';
 import '../notifier/master_refill_state.dart';
 
 class MasterRefillExecutionPanel extends ConsumerWidget {
-  const MasterRefillExecutionPanel({super.key});
+  const MasterRefillExecutionPanel({super.key, required this.allGroups});
+
+  // CabinVisualizerData.groups — tüm kabin çekmeceleri, notInQueue için lazım.
+  final List<DrawerGroup> allGroups;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,13 +61,16 @@ class MasterRefillExecutionPanel extends ConsumerWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Sol: konum rehberi (sabit genişlik)
+              // Sol: konum rehberi
               SizedBox(
-                width: 260,
-                child: CabinLocationGuide(items: executing.toLocationItems(), activeIndex: executing.currentIndex),
+                width: 300,
+                child: CabinLocationGuide(
+                  items: executing.toLocationItems(allGroups),
+                  activeIndex: executing.currentIndex,
+                ),
               ),
               const SizedBox(width: 20),
-              // Sağ: açılma bekleme ekranı veya dolum formu
+              // Sağ: açılma ekranı veya dolum formu
               Expanded(
                 child: isOpened
                     ? _FillForm(state: executing, job: job, notifier: notifier)
@@ -96,19 +102,25 @@ class _TopStrip extends StatelessWidget {
           style: MedTextStyles.bodySm(color: MedColors.text2),
         ),
         Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: state.progress,
-              minHeight: 8,
-              backgroundColor: MedColors.border2,
-              valueColor: const AlwaysStoppedAnimation(MedColors.blue),
-            ),
+          child: MedProgressBar(
+            value: state.progress,
+            color: MedColors.blue,
+            height: 10,
+            backgroundColor: MedColors.border2,
           ),
+          // child: ClipRRect(
+          //   borderRadius: BorderRadius.circular(999),
+          //   child: LinearProgressIndicator(
+          //     value: state.progress,
+          //     minHeight: 8,
+          //     backgroundColor: MedColors.border2,
+          //     valueColor: const AlwaysStoppedAnimation(MedColors.blue),
+          //   ),
+          // ),
         ),
         MedButton(
           label: context.l10n.refill_action_stop,
-          variant: MedButtonVariant.secondary,
+          variant: MedButtonVariant.danger,
           size: MedButtonSize.sm,
           onPressed: () => _confirmStop(context),
         ),

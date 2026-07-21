@@ -45,21 +45,9 @@ class TwoColumnLayout extends StatelessWidget {
             children: [
               SizedBox(
                 width: leftWidth,
-                child: Container(
-                  color: Colors.white,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _PanelHeader.withIcon(icon: leftIcon, title: leftTitle, subtitle: leftSubtitle),
-                      const Divider(height: 1, thickness: 1, color: MedColors.border),
-                      Expanded(child: left),
-                    ],
-                  ),
-                ),
+                child: Container(color: Colors.white, child: left),
               ),
-
               const VerticalDivider(width: 1, thickness: 1, color: MedColors.border),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,11 +56,7 @@ class TwoColumnLayout extends StatelessWidget {
                       color: Colors.white,
                       child: Column(
                         children: [
-                          _PanelHeader.withUnicode(
-                            unicode: menuItem.unicode,
-                            title: menuItem.name ?? '',
-                            subtitle: menuItem.description,
-                          ),
+                          _PanelHeader.withUnicode(unicode: menuItem.unicode, menu: menuItem),
                           const Divider(height: 1, thickness: 1, color: MedColors.border),
                         ],
                       ),
@@ -94,25 +78,20 @@ class TwoColumnLayout extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 class _PanelHeader extends StatelessWidget {
-  const _PanelHeader._({required this.icon, required this.title, this.subtitle});
-
-  /// Sol panel — IconData doğrudan verilir.
-  factory _PanelHeader.withIcon({required IconData? icon, required String title, String? subtitle}) =>
-      _PanelHeader._(icon: icon, title: title, subtitle: subtitle);
+  const _PanelHeader._({required this.icon, required this.menu});
 
   /// Sağ panel — unicode string'den IconData üretilir.
-  factory _PanelHeader.withUnicode({required String? unicode, required String title, String? subtitle}) =>
-      _PanelHeader._(icon: unicode != null ? iconDataFromUnicode(unicode) : null, title: title, subtitle: subtitle);
+  factory _PanelHeader.withUnicode({required String? unicode, required MenuItem menu}) =>
+      _PanelHeader._(icon: unicode != null ? iconDataFromUnicode(unicode) : null, menu: menu);
 
   final IconData? icon;
-  final String title;
-  final String? subtitle;
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+
     return Padding(
       padding: const EdgeInsets.only(
         left: MedSpacing.xl,
@@ -130,8 +109,8 @@ class _PanelHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 4,
             children: [
-              Text(title, style: MedTextStyles.titleMd()),
-              if (subtitle != null) Text(subtitle!, style: MedTextStyles.monoMd(color: MedColors.text3)),
+              Text(menu.localizedName(locale), style: MedTextStyles.titleMd()),
+              Text(menu.localizedDescription(locale), style: MedTextStyles.monoMd(color: MedColors.text3)),
             ],
           ),
         ],

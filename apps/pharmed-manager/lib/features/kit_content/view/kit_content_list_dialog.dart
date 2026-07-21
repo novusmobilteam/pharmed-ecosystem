@@ -22,7 +22,6 @@ class KitContentListDialog extends StatelessWidget {
           title: context.l10n.kitContentDialogTitle,
           showSearch: true,
           showAdd: true,
-          onSearchChanged: vm.search,
           onAddPressed: () => _showFormDialog(context, vm),
           onClose: () => Navigator.of(context).pop(),
           child: KitContentListView(isDialog: true, kit: kit),

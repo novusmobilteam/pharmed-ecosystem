@@ -18,26 +18,28 @@ class MedicineTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DirectedOrdersDetailViewModel>(
       builder: (context, vm, child) {
-        return CustomDialog(
-          title: context.l10n.directedOrdersScreenTitle,
-          showSearch: true,
-          onSearchChanged: vm.search,
-          width: context.width * 0.7,
-          child: SizedBox(
-            height: 600,
-            child: MedTable(
-              data: vm.filteredItems,
-              isLoading: vm.isFetching,
-              // DirectedOrder.titles context'e erişimi olmayan bir entity
-              // getter'ı olduğundan, kolon başlıkları burada l10n ile override edilir.
-              // columnDefs: [
-              //   TableColumnDef(title: context.l10n.wizard_summaryLabelStation, contentIndex: 0),
-              //   TableColumnDef(title: context.l10n.directedOrdersColumnBarcode, contentIndex: 1),
-              //   TableColumnDef(title: context.l10n.drugActivity_column_material, contentIndex: 2),
-              // ],
-            ),
-          ),
-        );
+        return Center();
+        // return CustomDialog(
+        //   title: context.l10n.directedOrdersScreenTitle,
+        //   showSearch: true,
+        //   onSearchChanged: vm.search,
+        //   width: context.width * 0.7,
+        //   child: SizedBox(
+        //     height: 600,
+        //     child: MedTable<Object>(
+        //       data: vm.filteredItems,
+        //       isLoading: vm.isFetching,
+        //       columnDefs: [],
+        //       // DirectedOrder.titles context'e erişimi olmayan bir entity
+        //       // getter'ı olduğundan, kolon başlıkları burada l10n ile override edilir.
+        //       // columnDefs: [
+        //       //   TableColumnDef(title: context.l10n.wizard_summaryLabelStation, contentIndex: 0),
+        //       //   TableColumnDef(title: context.l10n.directedOrdersColumnBarcode, contentIndex: 1),
+        //       //   TableColumnDef(title: context.l10n.drugActivity_column_material, contentIndex: 2),
+        //       // ],
+        //     ),
+        //   ),
+        // );
       },
     );
   }

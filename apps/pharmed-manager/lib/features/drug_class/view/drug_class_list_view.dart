@@ -37,10 +37,10 @@ class _DrugClassListViewState extends State<DrugClassListView> {
         }
 
         return ListView.builder(
-          itemCount: notifier.filteredItems.length,
+          itemCount: notifier.items.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            final drugClass = notifier.filteredItems[index];
+            final drugClass = notifier.items[index];
             return MedEditableListCard(
               title: drugClass.title,
               subtitle: drugClass.subtitle,
@@ -57,7 +57,7 @@ class _DrugClassListViewState extends State<DrugClassListView> {
   Future<void> _onEdit(BuildContext context, DrugClassNotifier notifier, {DrugClass? initial}) async {
     final result = await showDrugClassFormDialog(context, initial: initial);
     if (result == true && context.mounted) {
-      notifier.getDrugClasses();
+      notifier.fetch();
     }
   }
 

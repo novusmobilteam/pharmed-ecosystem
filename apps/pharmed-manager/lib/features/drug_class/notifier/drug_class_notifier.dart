@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class DrugClassNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<DrugClass> {
+class DrugClassNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<DrugClass> {
   final GetDrugClassUseCase _getDrugClassUseCase;
   final DeleteDrugClassUseCase _deleteDrugClassUseCase;
 
@@ -16,16 +16,16 @@ class DrugClassNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin
 
   bool get isFetching => isLoading(fetchOp);
 
-  Future<void> getDrugClasses() async {
-    await execute(
-      fetchOp,
-      operation: () => _getDrugClassUseCase.call(GetDrugClassParams()),
-      onData: (response) => allItems = response.data ?? [],
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) =>
+          _getDrugClassUseCase.call(PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery)),
     );
   }
 
   Future<void> deleteDrugClass(int id, {Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
-    final item = allItems.firstWhere((x) => x.id == id, orElse: () => DrugClass(id: id));
+    final item = items.firstWhere((x) => x.id == id, orElse: () => DrugClass(id: id));
 
     await executeVoid(
       deleteOp,
@@ -33,7 +33,7 @@ class DrugClassNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         onSuccess?.call(null);
-        getDrugClasses();
+        fetch();
       },
     );
   }

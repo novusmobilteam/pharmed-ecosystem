@@ -1,7 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 
-class CabinTemperature implements TableData {
+class CabinTemperature {
   final int? id;
   final Station? station;
   final Cabin? cabin;
@@ -23,39 +22,6 @@ class CabinTemperature implements TableData {
     this.bottomLimitHumidity,
     this.topLimitHumidity,
   });
-
-  @override
-  List get content => [
-    cabin?.name,
-    bottomTemperatureInside?.toCustomString(),
-    topTemperatureInside?.toCustomString(),
-    bottomTemperatureOutside?.toCustomString(),
-    topTemperatureOutside?.toCustomString(),
-    bottomLimitHumidity?.toCustomString(),
-    topLimitHumidity?.toCustomString(),
-  ];
-
-  @override
-  List get rawContent => [
-    cabin?.name,
-    bottomTemperatureInside,
-    topTemperatureInside,
-    bottomTemperatureOutside,
-    topTemperatureOutside,
-    bottomLimitHumidity,
-    topLimitHumidity,
-  ];
-
-  @override
-  List<String?> get titles => [
-    'Kabin',
-    'İç Alt Sıcaklık',
-    'İç Üst Sıcaklık',
-    'Dış Alt Sıcaklık',
-    'Dış Üst Sıcaklık',
-    'Nem Alt Sınır',
-    'Nem Üst Sınır',
-  ];
 
   CabinTemperature copyWith({
     int? id,

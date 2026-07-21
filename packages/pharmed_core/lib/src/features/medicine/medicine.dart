@@ -1,6 +1,6 @@
 export 'data/medicine_dto.dart';
 
-export 'domain/model/medicine.dart';
+export 'domain/entity/medicine.dart';
 export 'domain/repository/i_medicine_repository.dart';
 export 'domain/usecase/create_medicine_usecase.dart';
 export 'domain/usecase/delete_medicine_usecase.dart';

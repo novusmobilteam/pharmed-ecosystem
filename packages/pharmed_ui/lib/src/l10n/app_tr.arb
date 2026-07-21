@@ -56,6 +56,8 @@
   "@common_criticalLabel": {
     "description": "Critical quantity field label in drug assignment panel"
   },
+  "common_boolYes": "Evet",
+  "common_boolNo": "Hayır",
   "auth_loginSubtitle": "Sisteme giriş yapın",
   "@auth_loginSubtitle": {
     "description": "Subtitle below the logo on the login screen"
@@ -1528,6 +1530,7 @@
   "empty_state_no_patient_selected_title": "Bir hasta seçin",
   "empty_state_no_patient_selected_description": "Detayları görüntülemek için listeden bir hasta seçin.",
   "date_preset_today": "Bugün",
+  "date_preset_tomorrow": "Yarın",
   "date_preset_last_3_days": "Son 3 gün",
   "date_preset_last_7_days": "Son 7 gün",
   "date_preset_all": "Tümü",
@@ -3713,6 +3716,7 @@
       }
     }
   },
+  "common_action_discharge": "Taburcu Et",
   "common_action_lockOpening": "Kilit açılıyor...",
   "@common_action_lockOpening": {
     "description": "Status message shown while the drawer lock is being opened"
@@ -6050,5 +6054,250 @@
 "refill_stop_confirmYes": "Evet, Durdur",
 "@refill_stop_confirmYes": {
   "description": "Confirm button on the stop-refill confirmation dialog"
-}
+},
+"enumCore_prescriptionMovementPendingApprovalLabel": "Onay Bekliyor",
+"@enumCore_prescriptionMovementPendingApprovalLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — durum etiketi, rozet ve listelerde gösterilir"
+},
+"enumCore_prescriptionMovementPurchasePendingLabel": "Alım Bekliyor",
+"@enumCore_prescriptionMovementPurchasePendingLabel": {
+  "description": "PrescriptionMovementType.purchasePending — durum etiketi"
+},
+"enumCore_prescriptionMovementAppliedLabel": "Uygulandı",
+"@enumCore_prescriptionMovementAppliedLabel": {
+  "description": "PrescriptionMovementType.applied — durum etiketi"
+},
+"enumCore_prescriptionMovementReturnedLabel": "İade Edildi",
+"@enumCore_prescriptionMovementReturnedLabel": {
+  "description": "PrescriptionMovementType.returned — durum etiketi"
+},
+"enumCore_prescriptionMovementWastagedLabel": "Fire Edildi",
+"@enumCore_prescriptionMovementWastagedLabel": {
+  "description": "PrescriptionMovementType.wastaged — durum etiketi"
+},
+"enumCore_prescriptionMovementDestructedLabel": "İmha Edildi",
+"@enumCore_prescriptionMovementDestructedLabel": {
+  "description": "PrescriptionMovementType.destructed — durum etiketi"
+},
+"enumCore_prescriptionMovementCancelledLabel": "İptal Edildi",
+"@enumCore_prescriptionMovementCancelledLabel": {
+  "description": "PrescriptionMovementType.cancelled — durum etiketi"
+},
+"enumCore_prescriptionMovementRejectedLabel": "Reddedildi",
+"@enumCore_prescriptionMovementRejectedLabel": {
+  "description": "PrescriptionMovementType.rejected — durum etiketi"
+},
+"enumCore_prescriptionMovementFilledWaitingLabel": "Dolum Bekliyor",
+"@enumCore_prescriptionMovementFilledWaitingLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — durum etiketi"
+},
+"enumCore_prescriptionMovementReturnPendingLabel": "İade Onayı Bekliyor",
+"@enumCore_prescriptionMovementReturnPendingLabel": {
+  "description": "PrescriptionMovementType.returnPending — durum etiketi"
+},
+"enumCore_prescriptionMovementUnloadedLabel": "Boşaltıldı",
+"@enumCore_prescriptionMovementUnloadedLabel": {
+  "description": "PrescriptionMovementType.unloaded — durum etiketi"
+},
+"enumCore_prescriptionMovementShortageReportedLabel": "Eksik Bildirildi",
+"@enumCore_prescriptionMovementShortageReportedLabel": {
+  "description": "PrescriptionMovementType.shortageReported — durum etiketi"
+},
+"enumCore_prescriptionMovementReplenishmentPendingLabel": "İkmal Bekliyor",
+"@enumCore_prescriptionMovementReplenishmentPendingLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — durum etiketi"
+},
+
+"enumCore_prescriptionMovementPendingApprovalActorLabel": "Oluşturan",
+"@enumCore_prescriptionMovementPendingApprovalActorLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementPurchasePendingActorLabel": "Dolum Yapan",
+"@enumCore_prescriptionMovementPurchasePendingActorLabel": {
+  "description": "PrescriptionMovementType.purchasePending — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementAppliedActorLabel": "Uygulayan",
+"@enumCore_prescriptionMovementAppliedActorLabel": {
+  "description": "PrescriptionMovementType.applied — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementReturnedActorLabel": "İade Eden",
+"@enumCore_prescriptionMovementReturnedActorLabel": {
+  "description": "PrescriptionMovementType.returned — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementWastagedActorLabel": "Fire Eden",
+"@enumCore_prescriptionMovementWastagedActorLabel": {
+  "description": "PrescriptionMovementType.wastaged — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementDestructedActorLabel": "İmha Eden",
+"@enumCore_prescriptionMovementDestructedActorLabel": {
+  "description": "PrescriptionMovementType.destructed — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementCancelledActorLabel": "İptal Eden",
+"@enumCore_prescriptionMovementCancelledActorLabel": {
+  "description": "PrescriptionMovementType.cancelled — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementRejectedActorLabel": "Reddeden",
+"@enumCore_prescriptionMovementRejectedActorLabel": {
+  "description": "PrescriptionMovementType.rejected — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementFilledWaitingActorLabel": "Onaylayan",
+"@enumCore_prescriptionMovementFilledWaitingActorLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementReturnPendingActorLabel": "İade Talep Eden",
+"@enumCore_prescriptionMovementReturnPendingActorLabel": {
+  "description": "PrescriptionMovementType.returnPending — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementUnloadedActorLabel": "Boşaltan",
+"@enumCore_prescriptionMovementUnloadedActorLabel": {
+  "description": "PrescriptionMovementType.unloaded — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementShortageReportedActorLabel": "Eksik Bildiren",
+"@enumCore_prescriptionMovementShortageReportedActorLabel": {
+  "description": "PrescriptionMovementType.shortageReported — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementReplenishmentPendingActorLabel": "İkmal Onaylayan",
+"@enumCore_prescriptionMovementReplenishmentPendingActorLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — işlemi yapan kişi etiketi"
+},
+"enumCore_prescriptionMovementPendingApprovalActionLabel": "Oluşturuldu",
+"@enumCore_prescriptionMovementPendingApprovalActionLabel": {
+  "description": "PrescriptionMovementType.pendingApproval — bu duruma geçişi sağlayan eylem etiketi"
+},
+"enumCore_prescriptionMovementPurchasePendingActionLabel": "Dolum Yapıldı",
+"@enumCore_prescriptionMovementPurchasePendingActionLabel": {
+  "description": "PrescriptionMovementType.purchasePending — eylem etiketi"
+},
+"enumCore_prescriptionMovementAppliedActionLabel": "Uygulandı",
+"@enumCore_prescriptionMovementAppliedActionLabel": {
+  "description": "PrescriptionMovementType.applied — eylem etiketi"
+},
+"enumCore_prescriptionMovementReturnedActionLabel": "İade Edildi",
+"@enumCore_prescriptionMovementReturnedActionLabel": {
+  "description": "PrescriptionMovementType.returned — eylem etiketi"
+},
+"enumCore_prescriptionMovementWastagedActionLabel": "Fire Edildi",
+"@enumCore_prescriptionMovementWastagedActionLabel": {
+  "description": "PrescriptionMovementType.wastaged — eylem etiketi"
+},
+"enumCore_prescriptionMovementDestructedActionLabel": "İmha Edildi",
+"@enumCore_prescriptionMovementDestructedActionLabel": {
+  "description": "PrescriptionMovementType.destructed — eylem etiketi"
+},
+"enumCore_prescriptionMovementCancelledActionLabel": "İptal Edildi",
+"@enumCore_prescriptionMovementCancelledActionLabel": {
+  "description": "PrescriptionMovementType.cancelled — eylem etiketi"
+},
+"enumCore_prescriptionMovementRejectedActionLabel": "Reddedildi",
+"@enumCore_prescriptionMovementRejectedActionLabel": {
+  "description": "PrescriptionMovementType.rejected — eylem etiketi"
+},
+"enumCore_prescriptionMovementFilledWaitingActionLabel": "Onaylandı",
+"@enumCore_prescriptionMovementFilledWaitingActionLabel": {
+  "description": "PrescriptionMovementType.filledWaiting — eylem etiketi"
+},
+"enumCore_prescriptionMovementReturnPendingActionLabel": "İade Talep Edildi",
+"@enumCore_prescriptionMovementReturnPendingActionLabel": {
+  "description": "PrescriptionMovementType.returnPending — eylem etiketi"
+},
+"enumCore_prescriptionMovementUnloadedActionLabel": "Boşaltıldı",
+"@enumCore_prescriptionMovementUnloadedActionLabel": {
+  "description": "PrescriptionMovementType.unloaded — eylem etiketi"
+},
+"enumCore_prescriptionMovementShortageReportedActionLabel": "Eksik Bildirildi",
+"@enumCore_prescriptionMovementShortageReportedActionLabel": {
+  "description": "PrescriptionMovementType.shortageReported — eylem etiketi"
+},
+"enumCore_prescriptionMovementReplenishmentPendingActionLabel": "İkmal Onaylandı",
+"@enumCore_prescriptionMovementReplenishmentPendingActionLabel": {
+  "description": "PrescriptionMovementType.replenishmentPending — eylem etiketi"
+},
+"userAuth_table_firstNameColumn": "Adı",
+"userAuth_table_lastNameColumn": "Soyadı",
+"userAuth_table_occupationTypeColumn": "Meslek Tipi",
+"userAuth_table_expiryDateColumn": "Son Geçerlilik Tarihi",
+"userAuth_table_remainingDaysColumn": "Kalan Gün",
+"userAuth_table_statusColumn": "Durumu",
+"medicine_table_barcodeColumn": "Barkod",
+"medicine_table_atcCodeColumn": "ATC Kodu",
+"medicine_table_nameColumn": "Adı",
+"medicine_table_materialTypeColumn": "Malzeme Türü",
+"medicine_table_prescriptionTypeColumn": "Reçete Tipi",
+"medicine_table_countTypeColumn": "Sayım Tipi",
+"medicine_table_purchaseTypeColumn": "Alım Şekli",
+"medicine_table_returnTypeColumn": "İade Şekli",
+"medicine_table_statusColumn": "Aktif",
+"enumCore_medicineTypeDrug": "İlaç",
+"enumCore_medicineTypeConsumable": "Tıbbi Sarf",
+"refund_table_patientCodeColumn": "Hasta Kodu",
+"refund_table_patientColumn": "Hasta",
+"refund_table_userColumn": "Kullanıcı",
+"refund_table_medicineColumn": "Malzeme",
+"refund_table_quantityColumn": "Miktar",
+"refund_table_dateColumn": "Tarih",
+"refund_table_approvedUserColumn": "İade Alan Kullanıcı",
+"refund_table_approvedDateColumn": "İade Alma Tarihi",
+"refund_table_descriptionColumn": "Açıklama",
+"authorization_table_userColumn": "Kullanıcı",
+"authorization_table_roleColumn": "Rol",
+"authorization_table_encryptedLoginColumn": "Şifreli Giriş",
+"authorization_table_isDeletedColumn": "Silinmiş",
+"authorization_table_extraAuthCountColumn": "Yetki Fazlası",
+"cabinTemperature_table_dateColumn": "Tarih",
+"cabinTemperature_table_cabinColumn": "Kabin",
+"cabinTemperature_table_insideTempColumn": "İç Sıcaklık",
+"cabinTemperature_table_outsideTempColumn": "Dış Sıcaklık",
+"cabinTemperature_table_humidityColumn": "Nem",
+"cabinTemperature_action_showOutOfRange": "Sınırı Aşanları Göster",
+"cabinTemperature_action_showAll": "Tümünü Göster",
+"expiredItems_table_barcodeColumn": "Barkod",
+"expiredItems_table_medicineColumn": "Malzeme",
+"expiredItems_table_cabinColumn": "Kabin",
+"expiredItems_table_locationColumn": "Konum",
+"expiredItems_table_minQuantityColumn": "Minimum",
+"expiredItems_table_maxQuantityColumn": "Maksimum",
+"expiredItems_table_criticalQuantityColumn": "Kritik",
+"expiredItems_table_quantityColumn": "Miktar",
+"expiredItems_table_expiryDateColumn": "S.K.T",
+"expiredItems_table_remainingDaysColumn": "Kalan Gün",
+"hospitalStock_table_serviceColumn": "Servis",
+"hospitalStock_table_codeColumn": "Kod",
+"hospitalStock_table_medicineColumn": "Malzeme",
+"hospitalStock_table_quantityColumn": "Miktar",
+"patientInventory_table_doctorColumn": "Doktor",
+"patientInventory_table_departmentColumn": "Bölüm",
+"patientInventory_table_barcodeColumn": "Barkod",
+"patientInventory_table_medicineColumn": "Malzeme",
+"patientInventory_table_requestedQuantityColumn": "İstenen Miktar",
+"patientInventory_table_processedQuantityColumn": "İşlem Miktarı",
+"patientInventory_table_requestDateColumn": "İstem Tarihi",
+"patientInventory_table_processDateColumn": "İşlem Tarihi",
+"patientInventory_table_movementColumn": "İşlem",
+"patientInventory_pdf_title": "{patientName} adlı hastaya ait Hasta Envanter Listesi",
+"patientInventory_pdf_patientCode": "Hasta Kodu: {code}",
+"patientInventory_pdf_service": "Servis: {name}",
+"patientInventory_pdf_bed": "Yatak: {name}",
+"patientInventory_pdf_reportDate": "Rapor Tarihi: {date}",
+"service_table_nameColumn": "Servis Adı",
+"service_table_branchColumn": "Branş",
+"service_table_managerColumn": "Servis Sorumlusu",
+"service_table_statusColumn": "Durum",
+"unappliedPrescription_table_serviceColumn": "Servis",
+"unappliedPrescription_table_roomColumn": "Oda",
+"unappliedPrescription_table_bedColumn": "Yatak",
+"unappliedPrescription_table_patientCodeColumn": "Hasta Kodu",
+"unappliedPrescription_table_patientColumn": "Hasta",
+"unappliedPrescription_table_hospitalizationCodeColumn": "Yatış Kodu",
+"unappliedPrescription_table_admissionDateColumn": "Yatış Tarihi",
+"unappliedPrescription_table_pendingCountColumn": "Bekleyen Adet",
+"drugActivity_table_dateColumn": "Tarih",
+"drugActivity_table_timeColumn": "Saat",
+"drugActivity_table_patientColumn": "Hasta",
+"drugActivity_table_userColumn": "Kullanıcı",
+"drugActivity_table_medicineColumn": "Malzeme",
+"drugActivity_table_quantityColumn": "Miktar",
+"drugActivity_table_movementColumn": "Hareket",
+"rfid_notConnectedError": "RFID okuyucuya bağlı değil",
+"rfid_inventoryStartFailedError": "RFID tarama başlatılamadı: {detail}",
+"rfid_inventoryStreamError": "RFID tarama stream hatası: {detail}"
 }

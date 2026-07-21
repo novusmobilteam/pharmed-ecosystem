@@ -83,28 +83,6 @@ class PdfExportService {
     );
   }
 
-  /// Geriye dönük: content tabanlı eski çağrılar için korunur.
-  static Future<void> exportTableData<T extends TableData>({
-    required String fileName,
-    required List<String> columns,
-    required List<T> data,
-    required BuildContext context,
-    String title = 'Tablo Raporu',
-    PdfHeaderBuilder? headerBuilder,
-    ExportBehavior exportBehavior = ExportBehavior.saveDialog,
-  }) async {
-    final rows = data.map((item) => item.content.map((c) => c?.toString() ?? '').toList()).toList();
-    await exportRows(
-      fileName: fileName,
-      columns: columns,
-      rows: rows,
-      context: context,
-      title: title,
-      headerBuilder: headerBuilder,
-      exportBehavior: exportBehavior,
-    );
-  }
-
   // === PRIVATE ===
 
   static Future<pw.Document> _generateDocument(

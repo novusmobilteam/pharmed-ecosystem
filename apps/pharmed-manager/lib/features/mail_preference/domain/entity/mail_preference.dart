@@ -1,7 +1,6 @@
-import '../../../../core/core.dart';
 import '../../data/model/mail_preference_dto.dart';
 
-class MailPreference implements TableData {
+class MailPreference {
   final String? id;
 
   // SMTP / Gönderici Bilgileri
@@ -49,16 +48,6 @@ class MailPreference implements TableData {
       sent: sent ?? this.sent,
     );
   }
-
-  /// TableData
-  @override
-  List<String?> get titles => ['Başlık', 'Gönderen Kullanıcı'];
-
-  @override
-  List<String?> get content => [title, senderName];
-
-  @override
-  List<String?> get rawContent => content;
 
   MailPreferenceDTO toDTO() => MailPreferenceDTO(
     id: id,

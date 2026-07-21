@@ -162,9 +162,8 @@ class APIManager {
     final msg = _extractResponseMessage(e) ?? e.message;
 
     final exception = switch (e.type) {
-      DioExceptionType.connectionTimeout ||
-      DioExceptionType.receiveTimeout ||
-      DioExceptionType.sendTimeout => TimeoutException(message: msg ?? contextlessL10n().dataError_requestTimeout, cause: e),
+      DioExceptionType.connectionTimeout || DioExceptionType.receiveTimeout || DioExceptionType.sendTimeout =>
+        TimeoutException(message: msg ?? contextlessL10n().dataError_requestTimeout, cause: e),
       DioExceptionType.connectionError => NetworkUnavailableException(
         message: msg ?? contextlessL10n().dataError_networkUnavailable,
         cause: e,
@@ -175,11 +174,11 @@ class APIManager {
         traceId: e.response?.headers.value('x-trace-id'),
         cause: e,
       ),
-      DioExceptionType.cancel => UnexpectedException(message: msg ?? contextlessL10n().dataError_requestCancelled, cause: e),
-      _ => UnexpectedException(
-        message: msg ?? contextlessL10n().dataError_genericApiError,
+      DioExceptionType.cancel => UnexpectedException(
+        message: msg ?? contextlessL10n().dataError_requestCancelled,
         cause: e,
       ),
+      _ => UnexpectedException(message: msg ?? contextlessL10n().dataError_genericApiError, cause: e),
     };
 
     MedLogger.error(

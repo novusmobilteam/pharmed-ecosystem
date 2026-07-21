@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class Cabin extends Selectable implements TableData {
+class Cabin extends Selectable {
   final dynamic stationId;
   final int? no;
   final String? name;
@@ -99,13 +99,4 @@ class Cabin extends Selectable implements TableData {
       station: station ?? this.station,
     );
   }
-
-  @override
-  List get content => [name, type?.label, no?.toString()];
-
-  @override
-  List<String?> get titles => ['Kabin Adı', 'Kabin Tipi', 'Kabin No'];
-
-  @override
-  List get rawContent => [name, type?.label, no];
 }

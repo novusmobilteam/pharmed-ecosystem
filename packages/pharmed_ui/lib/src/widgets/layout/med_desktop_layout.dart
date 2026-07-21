@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 class MedDesktopLayout extends StatelessWidget {
   const MedDesktopLayout({
     super.key,
-    required this.title,
-    this.subtitle,
+    required this.menu,
     required this.child,
     this.showAddButton = false,
     this.onAddLabel,
@@ -14,8 +14,7 @@ class MedDesktopLayout extends StatelessWidget {
     this.isLoading = false,
   });
 
-  final String title;
-  final String? subtitle;
+  final MenuItem menu;
   final Widget child;
   final bool showAddButton;
   final VoidCallback? onAddPressed;
@@ -25,6 +24,8 @@ class MedDesktopLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -35,8 +36,8 @@ class MedDesktopLayout extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: MedTextStyles.titleLg()),
-                if (subtitle != null) Text(subtitle!, style: MedTextStyles.bodyMd()),
+                Text(menu.localizedName(locale), style: MedTextStyles.titleLg()),
+                Text(menu.localizedDescription(locale), style: MedTextStyles.bodyMd()),
               ],
             ),
             Row(spacing: 8, children: [...actions]),

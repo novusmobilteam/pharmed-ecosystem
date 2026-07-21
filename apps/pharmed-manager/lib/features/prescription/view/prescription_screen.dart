@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/core.dart';
 import '../../../widgets/widgets.dart';
 import '../prescription.dart';
+part 'table_view.dart';
 
 // [SWREQ-MGR-RX-003] [IEC 62304 §5.5]
 // Reçete listesi ekranı.
@@ -43,8 +44,7 @@ class PrescriptionScreen extends StatelessWidget {
             mobile: const MedMobileLayout(),
             tablet: const MedTabletLayout(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? context.l10n.prescriptionScreenTitleFallback,
-              subtitle: menu.description,
+              menu: menu,
               actions: [
                 MedButton(
                   label: context.l10n.prescriptionNewTitle,
@@ -56,48 +56,7 @@ class PrescriptionScreen extends StatelessWidget {
                 isOpen: notifier.isPanelOpen,
                 width: 700,
                 panel: PrescriptionDetailPanel(key: ValueKey(notifier.selectedHospitalization?.id ?? 'detail')),
-                child: MedTable<Hospitalization>(
-                  data: notifier.items,
-                  enableExcel: true,
-                  enableSearch: true,
-                  enablePDF: true,
-
-                  isLoading: notifier.isFetching,
-                  onSearchChanged: notifier.search,
-                  enableDateFilter: true,
-
-                  initialDateRange: notifier.dateRange,
-                  onDateRangeChanged: notifier.setDateRange,
-                  actions: [
-                    TableActionItem<Hospitalization>(
-                      icon: PhosphorIcons.receipt(),
-                      tooltip: context.l10n.prescriptionContentTooltip,
-                      color: context.colorScheme.onSurface,
-                      onPressed: notifier.openPanel,
-                    ),
-                    TableActionItem<Hospitalization>(
-                      icon: PhosphorIcons.plus(),
-                      tooltip: context.l10n.prescriptionNewTitle,
-                      onPressed: (hosp) => showPrescriptionFormDialog(context, hospitalization: hosp),
-                    ),
-                  ],
-                  toolbarActions: [
-                    MedRectangleIconButton(
-                      tooltip: notifier.showDischarged
-                          ? context.l10n.prescriptionShowActiveButton
-                          : context.l10n.prescriptionShowDischargedButton,
-                      iconData: notifier.showDischarged ? PhosphorIcons.userMinus() : PhosphorIcons.userCheck(),
-                      color: MedColors.amberLight,
-                      iconColor: MedColors.amber,
-                      onPressed: notifier.toggleDischarged,
-                    ),
-                  ],
-
-                  enablePagination: true,
-                  pageSize: notifier.pageSize,
-                  currentPage: notifier.currentPage,
-                  onPageChanged: (page) => notifier.setPage(page),
-                ),
+                child: TableView(notifier: notifier),
               ),
             ),
           );

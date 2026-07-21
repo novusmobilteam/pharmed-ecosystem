@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' hide MaterialType;
 import 'package:pharmed_manager/core/core.dart';
 
-class MaterialTypeNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<MaterialType> {
+class MaterialTypeNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<MaterialType> {
   final GetMaterialTypesUseCase _getMaterialTypesUseCase;
   final DeleteMaterialTypeUseCase _deleteMaterialTypeUseCase;
 
@@ -16,11 +16,12 @@ class MaterialTypeNotifier extends ChangeNotifier with ApiRequestMixin, SearchMi
 
   bool get isFetching => isLoading(fetchOp);
 
-  Future<void> getMaterialTypes() async {
-    await execute(
-      fetchOp,
-      operation: () => _getMaterialTypesUseCase.call(GetMaterialTypeParams()),
-      onData: (response) => allItems = response.data ?? [],
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      op: fetchOp,
+      fetchMethod: (skip, take) =>
+          _getMaterialTypesUseCase.call(PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery)),
     );
   }
 
@@ -35,7 +36,7 @@ class MaterialTypeNotifier extends ChangeNotifier with ApiRequestMixin, SearchMi
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         onSuccess?.call('İşleminiz başarıyla tamamlandı.');
-        getMaterialTypes();
+        fetch();
       },
     );
   }

@@ -1,4 +1,4 @@
-part of 'role_table_view.dart';
+part of 'table_view.dart';
 
 class RoleAuthorizationPanel extends StatefulWidget {
   const RoleAuthorizationPanel({super.key});
@@ -34,7 +34,7 @@ class _RoleAuthorizationPanelState extends State<RoleAuthorizationPanel> {
         ChangeNotifierProvider(
           create: (context) =>
               RoleDrugAuthNotifier(role: selectedRole, getAuthUseCase: context.read(), saveAuthUseCase: context.read())
-                ..initialize(),
+                ..fetch(),
         ),
         ChangeNotifierProvider(
           create: (context) =>
@@ -53,11 +53,6 @@ class _RoleAuthorizationPanelState extends State<RoleAuthorizationPanel> {
             disableScroll: true,
             onClose: authNotifier.closePanel,
             isLoading: isLoading,
-            // onSearchChanged: (value) {
-            //   if (_activeTab == 1) {
-            //     context.read<RoleDrugAuthNotifier>().onSearch(value);
-            //   }
-            // },
             onSave: () => _onSave(ctx),
             title: ctx.l10n.authorization_rolePanelTitle(selectedRole.name ?? ''),
             child: Column(
@@ -106,17 +101,20 @@ class _RoleAuthorizationPanelState extends State<RoleAuthorizationPanel> {
       case 0:
         context.read<RoleMenuAuthNotifier>().submit(
           onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
+          onSuccess: (msg) =>
+              MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
         );
       case 1:
         context.read<RoleDrugAuthNotifier>().submit(
           onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
+          onSuccess: (msg) =>
+              MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
         );
       case 2:
         context.read<RoleMcAuthNotifier>().submit(
           onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-          onSuccess: (msg) => MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
+          onSuccess: (msg) =>
+              MessageUtils.showSuccessSnackbar(context, msg ?? context.l10n.common_operationSuccessMessage),
         );
     }
   }

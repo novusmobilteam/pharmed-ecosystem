@@ -104,25 +104,6 @@ class ExcelExportService {
     }
   }
 
-  /// Geriye dönük: content tabanlı eski çağrılar için korunur.
-  static Future<void> exportTableData<T extends TableData>({
-    required String fileName,
-    required List<String> columns,
-    required List<T> data,
-    required BuildContext context,
-    bool showSaveDialog = true,
-    ExportBehavior exportBehavior = ExportBehavior.saveDialog,
-  }) async {
-    final rows = data.map((item) => item.content.map((c) => c?.toString() ?? '').toList()).toList();
-    await exportRows(
-      fileName: fileName,
-      columns: columns,
-      rows: rows,
-      context: context,
-      exportBehavior: exportBehavior,
-    );
-  }
-
   static String _getExcelColumnName(int index) {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     if (index < letters.length) {

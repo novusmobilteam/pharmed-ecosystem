@@ -31,8 +31,7 @@ class UserScreen extends StatelessWidget {
             mobile: SizedBox(),
             tablet: SizedBox(),
             desktop: MedDesktopLayout(
-              title: menu.name ?? context.l10n.userScreenTitle,
-              subtitle: menu.description,
+              menu: menu,
               showAddButton: true,
               onAddPressed: notifier.openPanel,
               actions: [
@@ -77,7 +76,10 @@ void _showValidDateDialog(BuildContext context, UserNotifier vm) {
           MessageUtils.showSuccessSnackbar(context, vm.message(vm.updateValidDateOp));
           Navigator.pop(ctx);
         } else if (ctx.mounted && vm.isFailed(vm.updateValidDateOp)) {
-          MessageUtils.showErrorSnackbar(context, vm.message(vm.updateValidDateOp) ?? context.l10n.common_genericErrorMessage);
+          MessageUtils.showErrorSnackbar(
+            context,
+            vm.message(vm.updateValidDateOp) ?? context.l10n.common_genericErrorMessage,
+          );
         }
       },
       child: MedDateInputField(

@@ -29,4 +29,7 @@ abstract interface class IHospitalizationRepository {
   Future<Result<List<Hospitalization>>> getFilteredHospitalizations(PatientFilterType filter);
 
   Future<Result<List<Hospitalization>>> getHospitalizationsByService(int serviceId);
+
+  /// Taburcu etme servisi
+  Future<Result<void>> discharge(int hospitalizationId);
 }

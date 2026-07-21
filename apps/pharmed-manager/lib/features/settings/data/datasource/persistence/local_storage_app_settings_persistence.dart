@@ -13,6 +13,7 @@ class LocalStorageAppSettingsPersistence implements AppSettingsPersistence {
   static const _keyIsFirstRun = 'is_first_run';
   static const _keyAppMode = 'app_mode';
   static const _keyIsAdminMode = 'is_admin_mode';
+  static const _langKey = 'app_language';
 
   @override
   bool get isFirstRun => _prefs.getBool(_keyIsFirstRun) ?? true;
@@ -46,5 +47,16 @@ class LocalStorageAppSettingsPersistence implements AppSettingsPersistence {
   @override
   Future<void> clearSettings() async {
     await _prefs.clear();
+  }
+
+  @override
+  AppLanguage getLanguage() {
+    final code = _prefs.getString(_langKey);
+    return AppLanguage.fromCode(code);
+  }
+
+  @override
+  Future<void> setLanguage(AppLanguage language) async {
+    await _prefs.setString(_langKey, language.code);
   }
 }

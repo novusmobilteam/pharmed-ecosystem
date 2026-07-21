@@ -11,8 +11,7 @@ Future<T?> showDrugClassDialog<T>(BuildContext context, {bool forSelection = fal
     context: context,
     builder: (context) => ChangeNotifierProvider(
       create: (context) =>
-          DrugClassNotifier(getDrugClassUseCase: context.read(), deleteDrugClassUseCase: context.read())
-            ..getDrugClasses(),
+          DrugClassNotifier(getDrugClassUseCase: context.read(), deleteDrugClassUseCase: context.read())..fetch(),
       child: Consumer<DrugClassNotifier>(
         builder: (context, vm, _) => CustomDialog(
           title: forSelection ? context.l10n.drugClassDialogSelectTitle : context.l10n.drugClassDialogTitle,
@@ -34,6 +33,6 @@ Future<T?> showDrugClassDialog<T>(BuildContext context, {bool forSelection = fal
 Future<void> _showFormDialog(BuildContext context, DrugClassNotifier vm) async {
   final result = await showDrugClassFormDialog(context);
   if (result == true && context.mounted) {
-    vm.getDrugClasses();
+    vm.fetch();
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:pharmed_manager/core/core.dart';
 
-class RefillListNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<RefillList> {
+class RefillListNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetRefillListsUseCase _getRefillLists;
   final UpdateRefillListStatusUseCase _updateRefillListStatus;
   final CancelRefillListUseCase _cancelRefillList;
@@ -31,6 +31,9 @@ class RefillListNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
   List<Station> _stations = [];
   List<Station> get stations => _stations;
 
+  List<RefillList> _items = [];
+  List<RefillList> get items => _items;
+
   // Station
   Station? _selectedStation;
   Station? get selectedStation => _selectedStation;
@@ -59,7 +62,7 @@ class RefillListNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixi
   // Dolum listelerini getirme işlemi
   Future<void> getRefillLists() async {
     final stationId = _selectedStation?.id ?? 0;
-    await execute(fetchRecordsOp, operation: () => _getRefillLists.call(stationId), onData: (data) => allItems = data);
+    await execute(fetchRecordsOp, operation: () => _getRefillLists.call(stationId), onData: (data) => _items = data);
   }
 
   // Dolum listesi iptal etme işlemi

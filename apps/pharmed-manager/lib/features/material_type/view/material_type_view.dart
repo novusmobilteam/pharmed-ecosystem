@@ -12,7 +12,7 @@ Future<T?> showMaterialTypeDialog<T>(BuildContext context, {bool forSelection = 
     builder: (context) => ChangeNotifierProvider(
       create: (context) =>
           MaterialTypeNotifier(getMaterialTypesUseCase: context.read(), deleteMaterialTypeUseCase: context.read())
-            ..getMaterialTypes(),
+            ..fetch(),
       child: Consumer<MaterialTypeNotifier>(
         builder: (context, vm, _) => CustomDialog(
           title: forSelection ? context.l10n.materialTypeDialogSelectTitle : context.l10n.materialTypeDialogTitle,
@@ -35,7 +35,7 @@ Future<T?> showMaterialTypeDialog<T>(BuildContext context, {bool forSelection = 
 Future<void> _showFormDialog(BuildContext context, MaterialTypeNotifier vm) async {
   final result = await showMaterialTypeFormDialog(context);
   if (result == true && context.mounted) {
-    vm.getMaterialTypes();
+    vm.fetch();
   }
 }
 
@@ -70,10 +70,10 @@ class _MaterialTypeListViewState extends State<MaterialTypeListView> {
         }
 
         return ListView.builder(
-          itemCount: notifier.filteredItems.length,
+          itemCount: notifier.items.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            final materialType = notifier.filteredItems[index];
+            final materialType = notifier.items[index];
             return MedEditableListCard(
               title: materialType.title,
               subtitle: materialType.subtitle,
@@ -90,7 +90,7 @@ class _MaterialTypeListViewState extends State<MaterialTypeListView> {
   Future<void> _onEdit(BuildContext context, MaterialTypeNotifier notifier, {MaterialType? initial}) async {
     final result = await showMaterialTypeFormDialog(context, initial: initial);
     if (result == true && context.mounted) {
-      notifier.getMaterialTypes();
+      notifier.fetch();
     }
   }
 

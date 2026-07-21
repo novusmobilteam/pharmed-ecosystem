@@ -8,12 +8,14 @@ import 'package:pharmed_manager/core/core.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/rfid/rfid_service.dart';
 
 class CoreProviders {
-  static List<SingleChildWidget> providers() {
+  static List<SingleChildWidget> providers({required SharedPreferences prefs}) {
     return [
+      Provider<SharedPreferences>.value(value: prefs),
       Provider<TokenHolder>(create: (_) => TokenHolder()),
       Provider<IRfidService>(create: (_) => RfidService()),
 

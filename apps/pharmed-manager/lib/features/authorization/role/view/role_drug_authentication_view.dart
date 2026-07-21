@@ -13,11 +13,11 @@ class RoleDrugAuthenticationView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RoleDrugAuthNotifier>(
       builder: (context, notifier, child) {
-        if (notifier.isFetching && notifier.isEmpty) {
+        if (notifier.isFetching && notifier.items.isEmpty) {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
 
-        if (notifier.isEmpty) {
+        if (notifier.items.isEmpty) {
           return Center(child: EmptyStateWidget(variant: EmptyStateVariant.error));
         }
 
@@ -157,7 +157,7 @@ class _HeaderCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allSelected = notifier.allItems.every((auth) => auth.pendingOps.contains(operation));
+    final allSelected = notifier.items.every((auth) => auth.pendingOps.contains(operation));
 
     return Checkbox(
       value: allSelected,
@@ -177,7 +177,7 @@ class _HeaderAllCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allSelected = notifier.allItems.every((auth) => auth.pendingOps.length == DrugOp.values.length);
+    final allSelected = notifier.items.every((auth) => auth.pendingOps.length == DrugOp.values.length);
 
     return Checkbox(
       value: allSelected,

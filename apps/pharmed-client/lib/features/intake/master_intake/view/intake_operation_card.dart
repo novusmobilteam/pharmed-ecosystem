@@ -102,7 +102,9 @@ class IntakeOperationCard extends StatelessWidget {
                     if (isSelected && !_hasNoStock)
                       MedDoseStepper.compact(
                         value: item.dosePiece ?? 0,
-                        unit: item.medicine?.operationUnit ?? context.l10n.refillList_defaultUnitFallback,
+                        unit:
+                            item.medicine?.operationUnitLocalized(context) ??
+                            context.l10n.refillList_defaultUnitFallback,
                         onChanged: onDoseChanged,
                         max: doseMax,
                       ),
@@ -161,7 +163,9 @@ class _WitnessRow extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                hasWitness ? context.l10n.intake_label_witnessName(witness.fullName) : context.l10n.intake_hint_witnessRequired,
+                hasWitness
+                    ? context.l10n.intake_label_witnessName(witness.fullName)
+                    : context.l10n.intake_hint_witnessRequired,
                 style: MedTextStyles.bodyMd(color: hasWitness ? MedColors.green : MedColors.amber),
               ),
             ),

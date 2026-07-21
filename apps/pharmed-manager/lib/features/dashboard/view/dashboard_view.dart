@@ -173,14 +173,8 @@ class MissingStockPanel extends StatelessWidget {
               context.l10n.assignment_patientLabel,
               item.prescription?.hospitalization?.patient?.fullName ?? '-',
             ),
-            DashboardRxInfoLine(
-              'SERVİS',
-              item.physicalService?.name ?? '-',
-            ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
-            DashboardRxInfoLine(
-              'İŞLEMİ YAPAN',
-              item.activityUser?.fullName ?? '-',
-            ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            DashboardRxInfoLine(context.l10n.assignment_serviceLabel, item.physicalService?.name ?? '-'),
+            DashboardRxInfoLine(context.l10n.movement_performedBy, item.activityUser?.fullName ?? '-'),
             DashboardRxInfoLine(
               context.l10n.dashboardMissingStockTimeLabel,
               item.activityDate?.formattedDateTime ?? '-',
@@ -244,7 +238,7 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
             ),
             DashboardRxInfoLine(context.l10n.dashboardDoctorLabel, item.doctor?.fullName ?? '-'),
             DashboardRxInfoLine(
-              'SERVİS',
+              context.l10n.assignment_serviceLabel,
               item.prescription?.hospitalization?.physicalService?.name ?? '-',
             ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
             DashboardRxInfoLine(

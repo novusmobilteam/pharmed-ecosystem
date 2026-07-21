@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../notifier/expired_items_report_notifier.dart';
 
+part 'table_view.dart';
+
 class ExpiredItemsReportScreen extends StatelessWidget {
   const ExpiredItemsReportScreen({super.key, required this.menu});
 
@@ -23,43 +25,9 @@ class ExpiredItemsReportScreen extends StatelessWidget {
               mobile: const MedMobileLayout(),
               tablet: const MedTabletLayout(),
               desktop: MedDesktopLayout(
-                title: menu.name ?? context.l10n.report_expiredItemsTitleFallback,
-                subtitle: menu.description,
+                menu: menu,
                 showAddButton: false,
-                child: MedTable<CabinStock>(
-                  data: notifier.items,
-                  isLoading: notifier.isFetching,
-                  enableExcel: true,
-                  enableSearch: true,
-                  enablePDF: true,
-                  enableDateFilter: true,
-                  // Pagination
-                  enablePagination: true,
-                  pageSize: notifier.pageSize,
-                  currentPage: notifier.currentPage,
-                  serverTotalCount: notifier.totalCount,
-                  onPageChanged: notifier.setPage,
-
-                  // Filter & Search
-                  initialDateRange: notifier.dateRange,
-                  onDateRangeChanged: notifier.setDateRange,
-                  onSearchChanged: notifier.search,
-
-                  // Kategori
-                  categories: notifier.tableCategories,
-                  selectedCategoryId: notifier.selectedCategoryId,
-                  onCategoryChanged: (id) =>
-                      notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
-                  categoryTitle: context.l10n.report_stationsCategoryTitle,
-
-                  // Cell
-                  cellBuilder: (item, colIndex, value) {
-                    if (colIndex == 9) {
-                      return RemainingDayChip(days: item.remainingDay ?? 0);
-                    }
-                    return null;
-                  },
-                ),
+                child: TableView(notifier: notifier),
               ),
             );
           },

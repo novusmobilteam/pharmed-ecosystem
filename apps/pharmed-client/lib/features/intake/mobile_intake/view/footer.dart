@@ -11,7 +11,7 @@ FooterContent _intakeFooter(
 
   // ── Hint ──
   final hint = switch (state) {
-    MobileIntakeFatalError(:final message) => l10n.cabinOperation_hint_fatalError(message),
+    MobileIntakeFatalError(:final failure) => failure.message(context),
     MobileIntakeSaving() => l10n.common_action_saving,
     MobileIntakeSuccess() => l10n.cabinOperation_hint_completed,
     MobileIntakeError() => l10n.cabinOperation_hint_error,
@@ -38,7 +38,9 @@ FooterContent _intakeFooter(
       SizedBox(width: 10),
       FooterActions.primary(l10n.session_timeout_continueButton, notifier.retryEarlyClose),
     ],
-    _ when ready.canComplete => [FooterActions.primary(l10n.cabinOperation_action_completeGeneric, notifier.completeIntake)],
+    _ when ready.canComplete => [
+      FooterActions.primary(l10n.cabinOperation_action_completeGeneric, notifier.completeIntake),
+    ],
     _ => [FooterActions.primary(l10n.cabinOperation_action_completeGeneric, null)], // disabled
   };
   return FooterContent(hint: hint, actions: actions);

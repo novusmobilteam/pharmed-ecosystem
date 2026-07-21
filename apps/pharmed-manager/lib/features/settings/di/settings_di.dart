@@ -1,3 +1,5 @@
+import 'package:pharmed_manager/core/core.dart';
+
 import '../data/datasource/remote/settings_data_source.dart';
 import '../data/datasource/remote/settings_remote_data_source.dart';
 import 'package:provider/provider.dart';
@@ -20,23 +22,17 @@ class SettingsProviders {
         },
       ),
 
-      Provider<AppSettingsPersistence>(
-        create: (_) => LocalStorageAppSettingsPersistence(prefs),
-      ),
+      Provider<AppSettingsPersistence>(create: (_) => LocalStorageAppSettingsPersistence(prefs)),
 
       // 3. Repository
       Provider<ISettingsRepository>(
-        create: (context) => SettingsRepository(
-          remoteDataSource: context.read(),
-          localPersistence: context.read(),
-        ),
+        create: (context) => SettingsRepository(remoteDataSource: context.read(), localPersistence: context.read()),
       ),
 
       // 4. Use Cases
       ChangeNotifierProvider<SettingsNotifier>(
-        create: (context) => SettingsNotifier(
-          repository: context.read(),
-        )..getSettings(),
+        create: (context) =>
+            SettingsNotifier(repository: context.read(), tokenHolder: context.read<TokenHolder>())..getSettings(),
       ),
     ];
   }

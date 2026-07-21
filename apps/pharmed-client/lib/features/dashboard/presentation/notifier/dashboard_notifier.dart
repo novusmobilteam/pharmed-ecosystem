@@ -17,7 +17,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../settings/presentation/notifier/settings_notifier.dart';
 import 'dashboard_state.dart';

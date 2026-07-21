@@ -19,7 +19,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../intake.dart';
 
 class MasterIntakeExecutionPanel extends ConsumerWidget {
@@ -259,7 +259,7 @@ class _TargetCountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unit = target.medicine?.operationUnit ?? context.l10n.refillList_defaultUnitFallback;
+    final unit = target.medicine?.operationUnitLocalized(context) ?? context.l10n.refillList_defaultUnitFallback;
     final showCensus = target.needsCount;
 
     return Container(
@@ -355,7 +355,9 @@ class _FormFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = (isKubik && !isLastCubicCell) ? context.l10n.refill_action_nextCell : context.l10n.intake_action_complete;
+    final label = (isKubik && !isLastCubicCell)
+        ? context.l10n.refill_action_nextCell
+        : context.l10n.intake_action_complete;
     final hint = (isKubik && !isLastCubicCell)
         ? context.l10n.intake_hint_nextCellOpens
         : context.l10n.intake_hint_confirmCloses;

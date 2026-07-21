@@ -5,6 +5,7 @@ import 'package:pharmed_manager/core/core.dart';
 class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateHospitalizationUseCase _createHospitalizationUseCase;
   final UpdateHospitalizationUseCase _updateHospitalizationUseCase;
+  final DischargeHospitalizationUseCase _dischargeUseCase;
   final GetRoomsUseCase _getRoomsUseCase;
   final GetBedsUseCase _getBedsUseCase;
 
@@ -16,10 +17,12 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
     required GetBedsUseCase getBedsUseCase,
     required CreateHospitalizationUseCase createHospitalizationUseCase,
     required UpdateHospitalizationUseCase updateHospitalizationUseCase,
+    required DischargeHospitalizationUseCase dischargeUseCase,
   }) : _createHospitalizationUseCase = createHospitalizationUseCase,
        _updateHospitalizationUseCase = updateHospitalizationUseCase,
        _getRoomsUseCase = getRoomsUseCase,
-       _getBedsUseCase = getBedsUseCase {
+       _getBedsUseCase = getBedsUseCase,
+       _dischargeUseCase = dischargeUseCase {
     _patient = patient;
     if (hospitalization == null) {
       _hospitalization = Hospitalization(patient: _patient, code: createRandomText(9), admissionDate: DateTime.now());
@@ -40,6 +43,7 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final OperationKey submitOp = OperationKey.submit();
   final OperationKey _roomsOp = OperationKey.fetch();
   final OperationKey _bedsOp = OperationKey.fetch();
+  final OperationKey dischargeOp = OperationKey.custom('discharge');
 
   Hospitalization? _hospitalization;
   Hospitalization? get hospitalization => _hospitalization;
@@ -77,6 +81,21 @@ class HospitalizationFormNotifier extends ChangeNotifier with ApiRequestMixin {
       operation: () async => isCreate
           ? await _createHospitalizationUseCase.call(_hospitalization!)
           : await _updateHospitalizationUseCase.call(_hospitalization!),
+      onFailed: (error) => onFailed?.call(error.message),
+      onSuccess: () => onSuccess?.call(),
+    );
+  }
+
+  Future<void> discharge({Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
+    final hospitalizationId = _hospitalization?.id;
+
+    if (hospitalizationId == null) {
+      return;
+    }
+
+    await executeVoid(
+      dischargeOp,
+      operation: () => _dischargeUseCase.call(hospitalizationId),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () => onSuccess?.call(),
     );

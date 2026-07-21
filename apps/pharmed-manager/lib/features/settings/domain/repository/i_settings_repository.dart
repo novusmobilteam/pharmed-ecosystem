@@ -17,4 +17,7 @@ abstract class ISettingsRepository {
   Future<void> setAdminMode(bool isActive);
 
   Future<void> clearSettings();
+
+  AppLanguage getLanguage();
+  Future<void> setLanguage(AppLanguage language);
 }

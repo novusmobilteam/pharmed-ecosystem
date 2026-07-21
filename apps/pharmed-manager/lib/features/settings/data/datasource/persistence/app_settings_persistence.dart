@@ -11,4 +11,7 @@ abstract class AppSettingsPersistence {
   Future<void> setAdminMode(bool isActive);
 
   Future<void> clearSettings(); // Tüm ayarları sıfırlamak için
+
+  AppLanguage getLanguage();
+  Future<void> setLanguage(AppLanguage language);
 }

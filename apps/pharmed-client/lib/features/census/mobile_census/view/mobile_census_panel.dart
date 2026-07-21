@@ -6,7 +6,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../core/cabin_operation/cabin_operation.dart';
+import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
 import '../../census.dart';
 
@@ -72,7 +72,7 @@ class MobileCensusPanel extends StatelessWidget {
           options: [null, ...PrescriptionMovementType.intakeableTypes],
           selected: ready.statusFilter,
           onChanged: notifier.onStatusFilterChanged,
-          labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+          labelBuilder: (type) => type?.label(context) ?? context.l10n.filter_all,
           bgColor: ready.statusFilter?.backgroundColor,
         ),
         MedFilterChipGroup<DateRangePreset>(

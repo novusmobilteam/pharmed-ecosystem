@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class MyPatient implements TableData {
+class MyPatient {
   final int? id;
   final int? userId;
   final User? user;
@@ -16,13 +16,4 @@ class MyPatient implements TableData {
       hospitalization: hospitalization ?? this.hospitalization,
     );
   }
-
-  @override
-  List get content => hospitalization?.content ?? [];
-
-  @override
-  List get rawContent => hospitalization?.rawContent ?? [];
-
-  @override
-  List<String?> get titles => hospitalization?.titles ?? [];
 }

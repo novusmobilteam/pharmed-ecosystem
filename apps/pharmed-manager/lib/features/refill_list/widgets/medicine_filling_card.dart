@@ -81,7 +81,7 @@ class MedicineFillingCard extends StatelessWidget {
             // Sağ: Modern Stepper
             MedDoseStepper.compact(
               value: selectedQuantity,
-              unit: object.medicine?.operationUnit ?? context.l10n.refillList_defaultUnitFallback,
+              unit: object.medicine?.operationUnitLocalized(context) ?? context.l10n.refillList_defaultUnitFallback,
               // onChanged doğrudan yeni değeri (double) döndürür
               onChanged: (newVal) => onQuantityChanged(newVal),
               // Minimum ve adım değerlerini de buradan kontrol edebilirsin (Opsiyonel)

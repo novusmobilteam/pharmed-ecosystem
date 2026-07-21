@@ -78,7 +78,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
               onChanged: (v) {
                 detailNotifier.selectPrescriptionType(v);
               },
-              labelBuilder: (type) => type?.label ?? context.l10n.filter_all,
+              labelBuilder: (type) => type?.label(context) ?? context.l10n.filter_all,
               label: context.l10n.prescriptionDetailStatusLabel,
             ),
             _buildContent(context, detailNotifier, listNotifier),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-class InconsistencyNotifier extends ChangeNotifier with SearchMixin<Inconsistency>, ApiRequestMixin {
+class InconsistencyNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Inconsistency> {
   final GetInconsistenciesUseCase _getInconsistenciesUseCase;
 
   InconsistencyNotifier({required GetInconsistenciesUseCase getInconsistenciesUseCase})
@@ -14,11 +14,12 @@ class InconsistencyNotifier extends ChangeNotifier with SearchMixin<Inconsistenc
   // Getters
   bool get isFetching => isLoading(fetchOp);
 
-  Future<void> getInconsistencies() async {
-    await execute(
-      fetchOp,
-      operation: () => _getInconsistenciesUseCase.call(),
-      onData: (response) => allItems = response.data ?? [],
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      op: fetchOp,
+      fetchMethod: (skip, take) =>
+          _getInconsistenciesUseCase.call(PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery)),
     );
   }
 }

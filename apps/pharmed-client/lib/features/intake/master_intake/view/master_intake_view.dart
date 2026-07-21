@@ -16,11 +16,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/hardware/hardware.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../core/cabin_operation/master_drawer/master_drawer_operation_wrapper.dart';
 import '../../intake.dart';
 
 class MasterIntakeView extends ConsumerStatefulWidget {
@@ -84,8 +84,8 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
           context: context,
           action: ConfirmAction.custom,
           customTitle: context.l10n.intake_error_queueTitle,
-          customMessage: next.message.isNotEmpty
-              ? '${context.l10n.intake_error_queueMessage}\n\n${next.message}'
+          customMessage: next.failure.message(context).isNotEmpty
+              ? '${context.l10n.intake_error_queueMessage}\n\n${next.failure.message(context)}'
               : context.l10n.intake_error_queueMessage,
           iconData: PhosphorIcons.warning(),
           color: MedColors.amber,
@@ -95,7 +95,7 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
           onCancel: notifier.abortAfterError,
         );
       } else if (next is MasterIntakeError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
         ref.read(masterIntakeNotifierProvider.notifier).dismissError();
       }
     });
@@ -104,32 +104,30 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return MasterDrawerOperationWrapper(
-      child: Padding(
-        padding: MedSpacing.insetLg,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Sol panel kendi OperationPanelBase'ini (kutu + header) taşır.
-            Expanded(
-              flex: 4,
-              child: MasterIntakeSelectionPanel(currentStation: currentStation, onWitnessTap: _openWitnessDialog),
-            ),
-            const SizedBox(width: 24),
-            Expanded(
-              flex: 8,
-              child: Container(
-                padding: MedSpacing.insetXl,
-                decoration: BoxDecoration(
-                  boxShadow: MedShadows.sm,
-                  color: MedColors.surface,
-                  borderRadius: MedRadius.lgAll,
-                ),
-                child: const MasterIntakeExecutionPanel(),
+    return Padding(
+      padding: MedSpacing.insetLg,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Sol panel kendi OperationPanelBase'ini (kutu + header) taşır.
+          Expanded(
+            flex: 4,
+            child: MasterIntakeSelectionPanel(currentStation: currentStation, onWitnessTap: _openWitnessDialog),
+          ),
+          const SizedBox(width: 24),
+          Expanded(
+            flex: 8,
+            child: Container(
+              padding: MedSpacing.insetXl,
+              decoration: BoxDecoration(
+                boxShadow: MedShadows.sm,
+                color: MedColors.surface,
+                borderRadius: MedRadius.lgAll,
               ),
+              child: const MasterIntakeExecutionPanel(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
