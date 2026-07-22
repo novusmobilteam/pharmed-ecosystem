@@ -19,7 +19,7 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
-import '../../../settings/presentation/notifier/settings_notifier.dart';
+import '../../../settings/notifier/settings_notifier.dart';
 import 'dashboard_state.dart';
 
 final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardState>(DashboardNotifier.new);

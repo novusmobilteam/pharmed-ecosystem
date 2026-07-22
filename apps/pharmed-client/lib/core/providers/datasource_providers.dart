@@ -7,6 +7,10 @@ final userRemoteDataSourceProvider = Provider<UserRemoteDataSource>((ref) {
   return UserRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
 
+final settingsRemoteDataSourceProvider = Provider<SettingsRemoteDataSource>((ref) {
+  return SettingsRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});
+
 final cabinStockRemoteDataSourceProvider = Provider<CabinStockRemoteDataSource>((ref) {
   return CabinStockRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });

@@ -5,7 +5,14 @@ class AppearanceSettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _SettingsSectionPlaceholder();
+    final settings = context.watch<SettingsNotifier>();
+
+    return MedLanguageSelector(
+      title: context.l10n.settings_languageTitle,
+      languages: AppLanguage.values,
+      selected: settings.language,
+      onChanged: settings.setLanguage,
+    );
   }
 }
 

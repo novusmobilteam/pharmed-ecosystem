@@ -13,6 +13,19 @@ final userManagerProvider = Provider<IUserManager>((ref) {
   return UserRepositoryImpl(dataSource: ref.read(userRemoteDataSourceProvider), mapper: ref.read(userMapperProvider));
 });
 
+final settingsRepositoryProvider = Provider<ISettingsRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => SettingsRepositoryImpl(
+      mapper: SystemParameterMapper(),
+      dataSource: ref.read(settingsRemoteDataSourceProvider),
+    ),
+    AppFlavor.dev || AppFlavor.prod => SettingsRepositoryImpl(
+      mapper: SystemParameterMapper(),
+      dataSource: ref.read(settingsRemoteDataSourceProvider),
+    ),
+  };
+});
+
 final cabinStockRepositoryProvider = Provider<ICabinStockRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
     AppFlavor.mock => MockCabinStockRepository(),

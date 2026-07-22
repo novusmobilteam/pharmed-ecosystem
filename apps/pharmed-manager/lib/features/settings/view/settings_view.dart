@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +40,7 @@ class _SettingsModalBody extends StatefulWidget {
           MedSettingsNavItem(
             id: SettingsSectionIds.appearance,
             label: context.l10n.settingsView_appearanceNav,
-            icon: PhosphorIcons.paintRoller(),
+            icon: PhosphorIcons.slidersHorizontal(),
           ),
         ],
       ),
@@ -93,7 +92,6 @@ class _SettingsModalBodyState extends State<_SettingsModalBody> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final settings = context.read<SettingsNotifier>();

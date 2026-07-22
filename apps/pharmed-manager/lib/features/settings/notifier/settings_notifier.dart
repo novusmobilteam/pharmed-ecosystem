@@ -5,15 +5,18 @@ import '../../../core/core.dart';
 import 'section_ids.dart';
 
 class SettingsNotifier extends ChangeNotifier with ApiRequestMixin {
-  final ISettingsRepository _repository;
+  final GetSystemParametersUseCase _getSystemParametersUseCase;
+  final UpdateSystemParametersUseCase _updateSystemParametersUseCase;
   final AppSettingsCache _cache;
   final TokenHolder _tokenHolder;
 
   SettingsNotifier({
-    required ISettingsRepository repository,
+    required GetSystemParametersUseCase getSystemParametersUseCase,
+    required UpdateSystemParametersUseCase updateSystemParametersUseCase,
     required AppSettingsCache cache,
     required TokenHolder tokenHolder,
-  }) : _repository = repository,
+  }) : _getSystemParametersUseCase = getSystemParametersUseCase,
+       _updateSystemParametersUseCase = updateSystemParametersUseCase,
        _cache = cache,
        _tokenHolder = tokenHolder {
     _language = _cache.getLanguage();
@@ -90,7 +93,7 @@ class SettingsNotifier extends ChangeNotifier with ApiRequestMixin {
   void getSettings() async {
     await execute(
       fetchOp,
-      operation: () => _repository.getSystemParameters(),
+      operation: () => _getSystemParametersUseCase.call(),
       onData: (data) {
         _systemParameters = data;
         notifyListeners();
@@ -107,7 +110,7 @@ class SettingsNotifier extends ChangeNotifier with ApiRequestMixin {
 
       await executeVoid(
         submitOp,
-        operation: () => _repository.updateSystemParameter(originalParam.copyWith(value: entry.value)),
+        operation: () => _updateSystemParametersUseCase.call(originalParam.copyWith(value: entry.value)),
         onSuccess: () => onSuccess?.call(null),
         onFailed: (error) => onFailed?.call(error.message),
       );

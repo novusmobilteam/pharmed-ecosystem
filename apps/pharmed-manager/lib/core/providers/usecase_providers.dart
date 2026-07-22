@@ -261,6 +261,10 @@ class UsecaseProviders {
       Provider(create: (context) => CreateCabinTemperatureUseCase(context.read())),
       Provider(create: (context) => UpdateCabinTemperatureUseCase(context.read())),
       Provider(create: (context) => GetCabinsByStationUseCase(context.read())),
+
+      /// Settings
+      Provider(create: (context) => GetSystemParametersUseCase(context.read())),
+      Provider(create: (context) => UpdateSystemParametersUseCase(context.read())),
     ];
   }
 }

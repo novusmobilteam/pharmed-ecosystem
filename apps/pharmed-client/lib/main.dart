@@ -6,7 +6,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'core/providers/providers.dart';
 import 'core/router/app_router.dart';
 import 'core/services/service.dart';
-import 'features/settings/presentation/notifier/settings_notifier.dart';
+import 'features/settings/notifier/settings_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +55,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [Locale('tr'), Locale('en'), Locale('fr'), Locale('ar')],
+        supportedLocales: const [Locale('tr'), Locale('en'), Locale('fr')],
         home: const AppRouter(),
       ),
     );

@@ -810,7 +810,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get census_cancelDialog_message => 'Cancel the census operation?';
 
   @override
-  String get census_action_start => 'Start census';
+  String get census_action_start => 'Démarrer l\'inventaire';
 
   @override
   String get census_action_drawerOpen => 'Count medications';
@@ -5345,4 +5345,69 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settingsView_sectionComingSoon =>
       'Le contenu de cette section sera bientôt disponible.';
+
+  @override
+  String get census_hint_noMedicines => 'Aucun médicament à compter';
+
+  @override
+  String census_label_queueProgress(Object current, Object total) {
+    return '$current / $total tiroirs';
+  }
+
+  @override
+  String get census_action_stop => 'Arrêter';
+
+  @override
+  String get census_stop_confirmTitle =>
+      'Voulez-vous vraiment arrêter l\'inventaire ?';
+
+  @override
+  String get census_stop_confirmMessage =>
+      'Le processus d\'inventaire sera arrêté ; les comptages déjà effectués resteront enregistrés.';
+
+  @override
+  String get census_stop_confirmYes => 'Oui, arrêter';
+
+  @override
+  String get census_status_waitingPullTitle => 'En attente du tiroir';
+
+  @override
+  String get census_status_waitingPullBody => 'Veuillez tirer le tiroir';
+
+  @override
+  String get census_status_openingLidTitle => 'Ouverture de la case';
+
+  @override
+  String get census_status_openingLidBody =>
+      'Veuillez patienter, la case s\'ouvre';
+
+  @override
+  String get census_status_openingTitle => 'Ouverture du tiroir';
+
+  @override
+  String get census_status_openingBody =>
+      'Veuillez patienter, le tiroir s\'ouvre';
+
+  @override
+  String get census_action_nextCell => 'Case suivante';
+
+  @override
+  String get census_action_completeCensus => 'Terminer l\'inventaire';
+
+  @override
+  String get census_error_queueTitle =>
+      'Une erreur s\'est produite pendant l\'inventaire';
+
+  @override
+  String get census_error_queueMessage =>
+      'Vous pouvez retirer les médicaments du tiroir et continuer, ou terminer le processus ici.';
+
+  @override
+  String get census_error_continueNext => 'Continuer';
+
+  @override
+  String get census_error_endProcess => 'Terminer';
+
+  @override
+  String get census_label_countQty => 'Comptage';
 }

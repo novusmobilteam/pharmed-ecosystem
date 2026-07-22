@@ -1581,7 +1581,7 @@ abstract class AppLocalizations {
   /// No description provided for @census_action_start.
   ///
   /// In en, this message translates to:
-  /// **'Start census'**
+  /// **'Start Census'**
   String get census_action_start;
 
   /// No description provided for @census_action_drawerOpen.
@@ -9328,6 +9328,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Content for this section is coming soon.'**
   String get settingsView_sectionComingSoon;
+
+  /// No description provided for @census_hint_noMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines found to count'**
+  String get census_hint_noMedicines;
+
+  /// No description provided for @census_label_queueProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} / {total} drawers'**
+  String census_label_queueProgress(Object current, Object total);
+
+  /// No description provided for @census_action_stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get census_action_stop;
+
+  /// No description provided for @census_stop_confirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to stop the census?'**
+  String get census_stop_confirmTitle;
+
+  /// No description provided for @census_stop_confirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The census process will be stopped; counts completed so far will remain saved.'**
+  String get census_stop_confirmMessage;
+
+  /// No description provided for @census_stop_confirmYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Stop'**
+  String get census_stop_confirmYes;
+
+  /// No description provided for @census_status_waitingPullTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for drawer'**
+  String get census_status_waitingPullTitle;
+
+  /// No description provided for @census_status_waitingPullBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please pull the drawer'**
+  String get census_status_waitingPullBody;
+
+  /// No description provided for @census_status_openingLidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening cell'**
+  String get census_status_openingLidTitle;
+
+  /// No description provided for @census_status_openingLidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait, the cell is opening'**
+  String get census_status_openingLidBody;
+
+  /// No description provided for @census_status_openingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening drawer'**
+  String get census_status_openingTitle;
+
+  /// No description provided for @census_status_openingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait, the drawer is opening'**
+  String get census_status_openingBody;
+
+  /// No description provided for @census_action_nextCell.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Cell'**
+  String get census_action_nextCell;
+
+  /// No description provided for @census_action_completeCensus.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Census'**
+  String get census_action_completeCensus;
+
+  /// No description provided for @census_error_queueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred during the census'**
+  String get census_error_queueTitle;
+
+  /// No description provided for @census_error_queueMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can remove the medicines from the drawer and continue, or end the process here.'**
+  String get census_error_queueMessage;
+
+  /// No description provided for @census_error_continueNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get census_error_continueNext;
+
+  /// No description provided for @census_error_endProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get census_error_endProcess;
+
+  /// No description provided for @census_label_countQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Count'**
+  String get census_label_countQty;
 }
 
 class _AppLocalizationsDelegate

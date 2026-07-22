@@ -18,12 +18,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/hardware/hardware.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../widgets/widgets.dart';
+import '../../../settings/notifier/settings_notifier.dart';
 import '../notifier/master_refill_notifier.dart';
 import '../notifier/master_refill_state.dart';
-import 'master_refill_selection_panel.dart';
-import 'master_refill_execution_panel.dart';
+
+part 'master_refill_selection_panel.dart';
+part 'master_refill_execution_panel.dart';
+part 'refill_cell_card.dart';
+part 'refill_fill_form.dart';
 
 class MasterRefillView extends ConsumerStatefulWidget {
   const MasterRefillView({super.key, this.data});

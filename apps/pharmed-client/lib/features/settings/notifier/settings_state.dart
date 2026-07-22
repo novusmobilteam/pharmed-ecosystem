@@ -8,12 +8,15 @@ enum SettingsSection { general, appearance, debug }
 
 class SettingsState {
   const SettingsState({
-    this.activeSection = SettingsSection.debug,
+    this.activeSection = SettingsSection.general,
     this.debugCabin,
     this.cabins = const [],
     this.isLoadingCabins = false,
     this.cabinsError,
     this.language = AppLanguage.turkish,
+    this.systemParameters = const [],
+    this.isLoadingSystemParameters = false,
+    this.systemParametersError,
   });
 
   final SettingsSection activeSection;
@@ -26,6 +29,9 @@ class SettingsState {
   final bool isLoadingCabins;
   final String? cabinsError;
   final AppLanguage language;
+  final List<SystemParameter> systemParameters;
+  final bool isLoadingSystemParameters;
+  final String? systemParametersError;
 
   SettingsState copyWith({
     SettingsSection? activeSection,
@@ -36,6 +42,10 @@ class SettingsState {
     bool? isLoadingCabins,
     String? cabinsError,
     bool clearCabinsError = false,
+    List<SystemParameter>? systemParameters,
+    bool? isLoadingSystemParameters,
+    String? systemParametersError,
+    bool clearSystemParametersError = false,
   }) {
     return SettingsState(
       activeSection: activeSection ?? this.activeSection,
@@ -44,6 +54,9 @@ class SettingsState {
       cabins: cabins ?? this.cabins,
       isLoadingCabins: isLoadingCabins ?? this.isLoadingCabins,
       cabinsError: clearCabinsError ? null : (cabinsError ?? this.cabinsError),
+      systemParameters: systemParameters ?? this.systemParameters,
+      isLoadingSystemParameters: isLoadingSystemParameters ?? this.isLoadingSystemParameters,
+      systemParametersError: clearSystemParametersError ? null : (systemParametersError ?? this.systemParametersError),
     );
   }
 }

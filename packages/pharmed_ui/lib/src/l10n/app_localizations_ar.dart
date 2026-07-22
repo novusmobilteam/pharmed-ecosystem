@@ -5254,4 +5254,66 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get settingsView_sectionComingSoon =>
       'Content for this section is coming soon.';
+
+  @override
+  String get census_hint_noMedicines => 'No medicines found to count';
+
+  @override
+  String census_label_queueProgress(Object current, Object total) {
+    return '$current / $total drawers';
+  }
+
+  @override
+  String get census_action_stop => 'Stop';
+
+  @override
+  String get census_stop_confirmTitle =>
+      'Are you sure you want to stop the census?';
+
+  @override
+  String get census_stop_confirmMessage =>
+      'The census process will be stopped; counts completed so far will remain saved.';
+
+  @override
+  String get census_stop_confirmYes => 'Yes, Stop';
+
+  @override
+  String get census_status_waitingPullTitle => 'Waiting for drawer';
+
+  @override
+  String get census_status_waitingPullBody => 'Please pull the drawer';
+
+  @override
+  String get census_status_openingLidTitle => 'Opening cell';
+
+  @override
+  String get census_status_openingLidBody => 'Please wait, the cell is opening';
+
+  @override
+  String get census_status_openingTitle => 'Opening drawer';
+
+  @override
+  String get census_status_openingBody => 'Please wait, the drawer is opening';
+
+  @override
+  String get census_action_nextCell => 'Next Cell';
+
+  @override
+  String get census_action_completeCensus => 'Complete Census';
+
+  @override
+  String get census_error_queueTitle => 'An error occurred during the census';
+
+  @override
+  String get census_error_queueMessage =>
+      'You can remove the medicines from the drawer and continue, or end the process here.';
+
+  @override
+  String get census_error_continueNext => 'Continue';
+
+  @override
+  String get census_error_endProcess => 'End';
+
+  @override
+  String get census_label_countQty => 'Count';
 }

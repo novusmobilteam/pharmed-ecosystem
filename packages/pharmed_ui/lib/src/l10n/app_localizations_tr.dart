@@ -809,7 +809,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get census_cancelDialog_message => 'Sayım işlemi iptal edilsin mi?';
 
   @override
-  String get census_action_start => 'Sayıma başla';
+  String get census_action_start => 'Sayımı Başlat';
 
   @override
   String get census_action_drawerOpen => 'İlaçları sayın';
@@ -5212,4 +5212,66 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get settingsView_sectionComingSoon =>
       'Bu bölüm için içerik yakında eklenecek.';
+
+  @override
+  String get census_hint_noMedicines => 'Sayılacak ilaç bulunamadı';
+
+  @override
+  String census_label_queueProgress(Object current, Object total) {
+    return '$current / $total çekmece';
+  }
+
+  @override
+  String get census_action_stop => 'Dur';
+
+  @override
+  String get census_stop_confirmTitle =>
+      'Sayımı durdurmak istediğinize emin misiniz?';
+
+  @override
+  String get census_stop_confirmMessage =>
+      'Sayım işlemi durdurulacak, o ana kadar tamamlanan sayımlar kaydedilmiş olarak kalacak.';
+
+  @override
+  String get census_stop_confirmYes => 'Evet, Durdur';
+
+  @override
+  String get census_status_waitingPullTitle => 'Çekmece bekleniyor';
+
+  @override
+  String get census_status_waitingPullBody => 'Lütfen çekmeceyi çekin';
+
+  @override
+  String get census_status_openingLidTitle => 'Göz açılıyor';
+
+  @override
+  String get census_status_openingLidBody => 'Lütfen bekleyin, göz açılıyor';
+
+  @override
+  String get census_status_openingTitle => 'Çekmece açılıyor';
+
+  @override
+  String get census_status_openingBody => 'Lütfen bekleyin, çekmece açılıyor';
+
+  @override
+  String get census_action_nextCell => 'Sonraki Göz';
+
+  @override
+  String get census_action_completeCensus => 'Sayımı Tamamla';
+
+  @override
+  String get census_error_queueTitle => 'Sayım sırasında bir hata oluştu';
+
+  @override
+  String get census_error_queueMessage =>
+      'İlaçları çekmeceden alıp devam edebilir ya da işlemi burada sonlandırabilirsiniz.';
+
+  @override
+  String get census_error_continueNext => 'Devam Et';
+
+  @override
+  String get census_error_endProcess => 'Sonlandır';
+
+  @override
+  String get census_label_countQty => 'Sayım';
 }

@@ -6361,5 +6361,103 @@
 "settingsView_sectionComingSoon": "Bu bölüm için içerik yakında eklenecek.",
 "@settingsView_sectionComingSoon": {
   "description": "Ayarlar modal'ında henüz içeriği yazılmamış section'lar (Görünüm, Kabin, Reçete, Geliştirici, Debug) için ortak yer tutucu metni"
+},
+
+"census_hint_noMedicines": "Sayılacak ilaç bulunamadı",
+"@census_hint_noMedicines": {
+  "description": "Sayım seçim ekranında, filtreye/kabin durumuna uyan ilaç olmadığında gösterilen boş durum metni"
+},
+
+"census_action_start": "Sayımı Başlat",
+"@census_action_start": {
+  "description": "Sayım seçim ekranının footer butonu — seçilen ilaçlarla sayım kuyruğunu başlatır"
+},
+
+"census_label_queueProgress": "{current} / {total} çekmece",
+
+
+"census_action_stop": "Dur",
+"@census_action_stop": {
+  "description": "Sayım yürütme ekranında kuyruğu durduran buton"
+},
+
+"census_stop_confirmTitle": "Sayımı durdurmak istediğinize emin misiniz?",
+"@census_stop_confirmTitle": {
+  "description": "Dur butonuna basınca çıkan onay dialogunun başlığı"
+},
+
+"census_stop_confirmMessage": "Sayım işlemi durdurulacak, o ana kadar tamamlanan sayımlar kaydedilmiş olarak kalacak.",
+"@census_stop_confirmMessage": {
+  "description": "Dur onay dialogunun açıklama metni"
+},
+
+"census_stop_confirmYes": "Evet, Durdur",
+"@census_stop_confirmYes": {
+  "description": "Dur onay dialogunun onay butonu"
+},
+
+"census_status_waitingPullTitle": "Çekmece bekleniyor",
+"@census_status_waitingPullTitle": {
+  "description": "Çekmece açılma bekleme ekranı — kullanıcı çekmeceyi henüz çekmedi"
+},
+
+"census_status_waitingPullBody": "Lütfen çekmeceyi çekin",
+"@census_status_waitingPullBody": {
+  "description": "Çekmece çekme bekleme ekranının alt metni"
+},
+
+"census_status_openingLidTitle": "Göz açılıyor",
+"@census_status_openingLidTitle": {
+  "description": "Kübik çekmecede lid/göz açılırken gösterilen başlık"
+},
+
+"census_status_openingLidBody": "Lütfen bekleyin, göz açılıyor",
+"@census_status_openingLidBody": {
+  "description": "Lid açılma bekleme ekranının alt metni"
+},
+
+"census_status_openingTitle": "Çekmece açılıyor",
+"@census_status_openingTitle": {
+  "description": "Çekmece fiziksel olarak açılırken gösterilen genel başlık"
+},
+
+"census_status_openingBody": "Lütfen bekleyin, çekmece açılıyor",
+"@census_status_openingBody": {
+  "description": "Çekmece açılma bekleme ekranının alt metni"
+},
+
+"census_action_nextCell": "Sonraki Göz",
+"@census_action_nextCell": {
+  "description": "Kübik sayımda son göz değilken footer butonunun etiketi"
+},
+
+"census_action_completeCensus": "Sayımı Tamamla",
+"@census_action_completeCensus": {
+  "description": "Birim doz sayımında ya da kübikte son gözde footer butonunun etiketi"
+},
+
+"census_error_queueTitle": "Sayım sırasında bir hata oluştu",
+"@census_error_queueTitle": {
+  "description": "Kuyruk işlerken oluşan hatada çıkan devam/sonlandır dialogunun başlığı"
+},
+
+"census_error_queueMessage": "İlaçları çekmeceden alıp devam edebilir ya da işlemi burada sonlandırabilirsiniz.",
+"@census_error_queueMessage": {
+  "description": "Kuyruk hatası dialogunun açıklama metni (failure.message boşsa fallback olarak kullanılır)"
+},
+
+"census_error_continueNext": "Devam Et",
+"@census_error_continueNext": {
+  "description": "Kuyruk hatası dialogunda sıradaki çekmeceye geçme butonu"
+},
+
+"census_error_endProcess": "Sonlandır",
+"@census_error_endProcess": {
+  "description": "Kuyruk hatası dialogunda işlemi bitirme butonu"
+},
+
+"census_label_countQty": "Sayım",
+"@census_label_countQty": {
+  "description": "CensusCellCard'da sayım miktarı giriş alanının etiketi"
 }
 }

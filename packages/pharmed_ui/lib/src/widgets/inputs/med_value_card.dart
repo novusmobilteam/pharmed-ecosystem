@@ -80,7 +80,10 @@ class MedValueCard extends StatelessWidget {
                 Expanded(
                   child: Text(value, style: valueStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
                 ),
-                if (suffix != null) ...[const SizedBox(width: 6), Text(suffix!, style: suffixStyle)],
+                if (suffix != null && value.isNotEmpty) ...[
+                  const SizedBox(width: 6),
+                  Text(suffix!, style: suffixStyle),
+                ],
                 if (trailingIcon != null) ...[
                   const SizedBox(width: 6),
                   Icon(trailingIcon, size: _isCompact ? 16 : 18, color: MedColors.text3),

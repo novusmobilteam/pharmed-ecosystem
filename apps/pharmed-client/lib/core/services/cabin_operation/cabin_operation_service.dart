@@ -148,6 +148,7 @@ class CabinOperationService implements ICabinOperationService {
           CommandBuilder.buildManagementCommand(addressIndex: 1, row: 0),
           timeout: const Duration(milliseconds: 800),
         );
+        debugPrint(response);
         if (response != null && response.trim() == '+ok-') {
           MedLogger.info(
             unit: 'CabinOps',

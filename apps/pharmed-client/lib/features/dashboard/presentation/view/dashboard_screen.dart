@@ -10,7 +10,6 @@ import 'package:pharmed_client/features/fault/fault_view.dart';
 import 'package:pharmed_client/features/my_patients/view/my_patients_screen.dart';
 import 'package:pharmed_client/features/prescription/view/prescription_view.dart';
 import 'package:pharmed_client/features/refund/refund_view.dart';
-import 'package:pharmed_client/features/settings/presentation/view/settings_modal.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';
 import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -23,7 +22,8 @@ import '../../../census/census.dart';
 import '../../../drug_activity/drug_activity.dart';
 import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
-import '../../../settings/presentation/notifier/settings_notifier.dart';
+import '../../../settings/notifier/settings_notifier.dart';
+import '../../../settings/view/settings_view.dart';
 import '../../../waste/waste.dart';
 
 import '../notifier/dashboard_notifier.dart';
@@ -140,5 +140,5 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  void _showSettingsPopup(BuildContext context) => showSettingsModal(context);
+  void _showSettingsPopup(BuildContext context) => SettingsView.show(context);
 }

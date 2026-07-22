@@ -1,17 +1,4 @@
-// lib/features/settings/presentation/view/debug_settings_view.dart
-//
-// [DEBUG ONLY] Geliştirici ayarları ekranı.
-// Kabin listesi SettingsNotifier üzerinden yönetilir.
-//
-// Sınıf: Class A
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-
-import '../notifier/settings_notifier.dart';
+part of 'settings_view.dart';
 
 class DebugSettingsView extends ConsumerStatefulWidget {
   const DebugSettingsView({super.key});

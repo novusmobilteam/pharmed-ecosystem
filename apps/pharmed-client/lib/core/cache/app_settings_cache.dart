@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../features/settings/presentation/notifier/settings_notifier.dart';
+import '../../features/settings/notifier/settings_notifier.dart';
 
 final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
   return appSettingsCache;

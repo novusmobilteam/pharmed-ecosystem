@@ -11,3 +11,4 @@ export 'rx_movement_block.dart';
 export 'session_timeout_banner.dart';
 export 'cabin_operation_dialog/cabin_operation_dialog.dart';
 export 'cabin_status_panel.dart';
+export 'cabin_operation_panel/cabin_operation_panel.dart';

@@ -39,7 +39,12 @@ class ManagerApp extends StatelessWidget {
           create: (ctx) => HomeNotifier(getFilteredMenusUseCase: ctx.read(), authNotifier: ctx.read()),
         ),
         ChangeNotifierProvider(
-          create: (ctx) => SettingsNotifier(repository: ctx.read(), cache: ctx.read(), tokenHolder: ctx.read()),
+          create: (ctx) => SettingsNotifier(
+            cache: ctx.read(),
+            tokenHolder: ctx.read(),
+            getSystemParametersUseCase: ctx.read(),
+            updateSystemParametersUseCase: ctx.read(),
+          )..getSettings(),
         ),
       ],
       child: InputFieldTheme(

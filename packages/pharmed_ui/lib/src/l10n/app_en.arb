@@ -6353,6 +6353,26 @@
 "settingsView_prescriptionNav": "Prescription Settings",
 "settingsView_developerNav": "Developer",
 "settingsView_debugNav": "Debug",
-"settingsView_sectionComingSoon": "Content for this section is coming soon."
+"settingsView_sectionComingSoon": "Content for this section is coming soon.",
+"census_hint_noMedicines": "No medicines found to count",
+"census_action_start": "Start Census",
+"census_label_queueProgress": "{current} / {total} drawers",
+"census_action_stop": "Stop",
+"census_stop_confirmTitle": "Are you sure you want to stop the census?",
+"census_stop_confirmMessage": "The census process will be stopped; counts completed so far will remain saved.",
+"census_stop_confirmYes": "Yes, Stop",
+"census_status_waitingPullTitle": "Waiting for drawer",
+"census_status_waitingPullBody": "Please pull the drawer",
+"census_status_openingLidTitle": "Opening cell",
+"census_status_openingLidBody": "Please wait, the cell is opening",
+"census_status_openingTitle": "Opening drawer",
+"census_status_openingBody": "Please wait, the drawer is opening",
+"census_action_nextCell": "Next Cell",
+"census_action_completeCensus": "Complete Census",
+"census_error_queueTitle": "An error occurred during the census",
+"census_error_queueMessage": "You can remove the medicines from the drawer and continue, or end the process here.",
+"census_error_continueNext": "Continue",
+"census_error_endProcess": "End",
+"census_label_countQty": "Count"
 
 }
