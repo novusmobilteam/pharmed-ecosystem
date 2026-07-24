@@ -39,23 +39,20 @@ class CabinOperationScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Sol panel — sabit genişlik
-          SizedBox(width: leftPanelWidth, child: leftPanel),
-          SizedBox(width: spacing),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Sol panel — sabit genişlik
+        SizedBox(width: leftPanelWidth, child: leftPanel),
+        SizedBox(width: spacing),
 
-          // Orta panel — kalan alanı kaplar
-          Expanded(child: centerPanel),
-          SizedBox(width: spacing),
+        // Orta panel — kalan alanı kaplar
+        Expanded(child: centerPanel),
+        SizedBox(width: spacing),
 
-          // Sağ panel — sabit genişlik
-          SizedBox(width: rightPanelWidth, child: rightPanel),
-        ],
-      ),
+        // Sağ panel — sabit genişlik
+        SizedBox(width: rightPanelWidth, child: rightPanel),
+      ],
     );
   }
 }

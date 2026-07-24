@@ -330,10 +330,6 @@ final getHospitalizationsByServiceUseCaseProvider = Provider((ref) {
   return GetHospitalizationsByServiceUseCase(ref.read(hospitalizationRepositoryProvider));
 });
 
-final getFilteredHospitalizationsUseCaseProvider = Provider((ref) {
-  return GetFilteredHospitalizationsUseCase(ref.read(hospitalizationRepositoryProvider));
-});
-
 final createUrgentPatientUseCaseProvider = Provider((ref) {
   return CreateUrgentPatientUseCase(ref.read(patientRepositoryProvider));
 });
@@ -396,4 +392,12 @@ final getCabinsUseCaseProvider = Provider((ref) {
 
 final getSystemParametersUseCaseProvider = Provider((ref) {
   return GetSystemParametersUseCase(ref.read(settingsRepositoryProvider));
+});
+
+final getMasterRefundablesUseCaseProvider = Provider((ref) {
+  return GetMasterRefundablesUseCase(ref.read(refundRepositoryProvider));
+});
+
+final checkMasterRefundStatusUseCaseProvider = Provider((ref) {
+  return CheckMasterRefundStatusUseCase(ref.read(refundRepositoryProvider), ref.read(cabinRepositoryProvider));
 });

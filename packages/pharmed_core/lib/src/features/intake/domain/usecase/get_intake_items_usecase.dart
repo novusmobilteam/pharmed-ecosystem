@@ -172,6 +172,9 @@ class GetIntakeItemsUseCase {
           stations: stations,
           prescriptionItem: task.lastMovement?.prescriptionItem,
           lastMovement: task.lastMovement,
+          firstDoseEmergency: task.firstDoseEmergency,
+          inCaseOfNecessity: task.inCaseOfNecessity,
+          askDoctor: task.askDoctor,
         ),
       );
     }

@@ -6373,6 +6373,154 @@
 "census_error_queueMessage": "You can remove the medicines from the drawer and continue, or end the process here.",
 "census_error_continueNext": "Continue",
 "census_error_endProcess": "End",
-"census_label_countQty": "Count"
+"census_label_countQty": "Count",
+"intake_screenTitle": "Medication Intake",
+"@intake_screenTitle": { "description": "Breadcrumb module title for the intake screen" },
 
+"intake_phase_patientLabel": "Patient Selection",
+"@intake_phase_patientLabel": { "description": "Breadcrumb label for the patient selection phase of the intake flow" },
+
+"intake_phase_medicineLabel": "Medication Selection",
+"@intake_phase_medicineLabel": { "description": "Breadcrumb label for the medication selection phase of the intake flow" },
+
+"intake_phase_executingLabel": "Intake Process",
+"@intake_phase_executingLabel": { "description": "Breadcrumb label for the executing phase of the intake flow" },
+
+"patientPicker_roomLabel": "Room {room}",
+"@patientPicker_roomLabel": {
+  "description": "Room info shown on a patient card",
+  "placeholders": { "room": { "type": "String" } }
+},
+
+"patientPicker_bedLabel": "Bed {bed}",
+"@patientPicker_bedLabel": {
+  "description": "Bed info shown on a patient card",
+  "placeholders": { "bed": { "type": "String" } }
+},
+"intake_label_countFieldLabelIndexed": "Count {index} ({unit})",
+"@intake_label_countFieldLabelIndexed": {
+  "description": "Census/count field label when a target has multiple stock lots",
+  "placeholders": { "unit": { "type": "String" }, "index": { "type": "int" } }
+},
+"patientListPanel_filter_patientStatusLabel": "Patient Status",
+"@patientListPanel_filter_patientStatusLabel": {
+  "description": "Label for the patient-status filter field (all patients vs my patients) in the patient selection panel's filter dialog"
+},
+"patientListPanel_filter_orderStatusLabel": "Order Status",
+"@patientListPanel_filter_orderStatusLabel": {
+  "description": "Label for the ordered/orderless toggle filter field in the patient selection panel's filter dialog"
+},
+"masterDrawer_status_devicePreparingTitle": "Preparing",
+"@masterDrawer_status_devicePreparingTitle": {
+  "description": "Title shown while the master cabin drawer hardware is preparing to open (MasterDrawerOpening/devicePreparing stage), shared across all master cabin operation screens (refill, census, intake, etc.)"
+},
+"masterDrawer_status_devicePreparingSubtitle": "The system is getting ready. Please wait a moment.",
+"@masterDrawer_status_devicePreparingSubtitle": {
+  "description": "Subtitle shown while the master cabin drawer hardware is preparing to open"
+},
+
+"masterDrawer_status_lockOpeningTitle": "Unlocking",
+"@masterDrawer_status_lockOpeningTitle": {
+  "description": "Title shown while the master cabin drawer lock is being released (MasterDrawerOpening/lockOpening stage)"
+},
+"masterDrawer_status_lockOpeningSubtitle": "The drawer lock is opening. Please wait a moment.",
+"@masterDrawer_status_lockOpeningSubtitle": {
+  "description": "Subtitle shown while the master cabin drawer lock is being released"
+},
+
+"masterDrawer_status_waitingPullTitle": "Please Pull the Drawer",
+"@masterDrawer_status_waitingPullTitle": {
+  "description": "Title shown when the drawer lock has released and the user needs to physically pull the drawer open (MasterDrawerWaitingForPull stage)"
+},
+"masterDrawer_status_waitingPullSubtitle": "The lock has been released. Pull the drawer open to continue.",
+"@masterDrawer_status_waitingPullSubtitle": {
+  "description": "Subtitle shown when waiting for the user to physically pull the drawer open"
+},
+
+"masterDrawer_status_openingLidTitle": "Opening Compartment Lid",
+"@masterDrawer_status_openingLidTitle": {
+  "description": "Title shown while a cubic drawer's individual cell lid is opening (MasterDrawerOpeningLid stage)"
+},
+"masterDrawer_status_openingLidSubtitle": "The compartment lid is opening. Please wait a moment.",
+"@masterDrawer_status_openingLidSubtitle": {
+  "description": "Subtitle shown while a cubic drawer's individual cell lid is opening"
+},
+
+"masterDrawer_status_waitingCloseTitle": "Please Close the Drawer",
+"@masterDrawer_status_waitingCloseTitle": {
+  "description": "Title shown after the user confirms completion and the system is waiting for the physical drawer to be closed (MasterDrawerWaitingForClose stage)"
+},
+"masterDrawer_status_waitingCloseSubtitle": "Close the drawer to continue to the next step.",
+"@masterDrawer_status_waitingCloseSubtitle": {
+  "description": "Subtitle shown while waiting for the physical drawer to be closed"
+},
+
+"masterDrawer_status_failedTitle": "A Problem Occurred",
+"@masterDrawer_status_failedTitle": {
+  "description": "Title shown when the drawer hardware reports a failure (MasterDrawerFailed stage), before the queue-error confirmation dialog is shown"
+},
+"masterDrawer_status_failedSubtitle": "Please wait, the system is checking the drawer status.",
+"@masterDrawer_status_failedSubtitle": {
+  "description": "Subtitle shown when the drawer hardware reports a failure"
+},
+
+"masterDrawer_status_openingTitle": "Opening Drawer",
+"@masterDrawer_status_openingTitle": {
+  "description": "Fallback title for drawer stages without a dedicated message (Idle/Closed transitional states, or any unmapped stage)"
+},
+"masterDrawer_status_openingSubtitle": "The drawer is opening. Please wait a moment.",
+"@masterDrawer_status_openingSubtitle": {
+  "description": "Fallback subtitle for drawer stages without a dedicated message"
+},
+
+"masterDrawer_stop_waitingCloseTitle": "Please Close the Open Drawer",
+"@masterDrawer_stop_waitingCloseTitle": {
+  "description": "Title shown after the user confirms stopping the queue while a drawer is still physically open — the stop will be applied once the drawer is closed"
+},
+"masterDrawer_stop_waitingCloseSubtitle": "Please close the open drawer. The process will stop once it is closed.",
+"@masterDrawer_stop_waitingCloseSubtitle": {
+  "description": "Subtitle shown after the user confirms stopping the queue while a drawer is still physically open"
+},
+"intake_label_queueProgress": "Drawer {done} of {total}",
+"@intake_label_queueProgress": {
+  "description": "Progress label shown in the top strip during intake execution, indicating which drawer in the queue is currently active",
+  "placeholders": {
+    "done": {
+      "type": "int"
+    },
+    "total": {
+      "type": "int"
+    }
+  }
+},
+
+"intake_action_stop": "Stop",
+"@intake_action_stop": {
+  "description": "Button label to stop the intake queue mid-execution, shown in the top strip"
+},
+
+"intake_stop_confirmTitle": "Stop Intake?",
+"@intake_stop_confirmTitle": {
+  "description": "Title of the confirmation dialog shown when the user taps stop during intake execution"
+},
+
+"intake_stop_confirmMessage": "The current intake process will be stopped. Completed drawers will be preserved.",
+"@intake_stop_confirmMessage": {
+  "description": "Message body of the confirmation dialog shown when the user taps stop during intake execution"
+},
+
+"intake_stop_confirmYes": "Yes, Stop",
+"@intake_stop_confirmYes": {
+  "description": "Confirm button label in the stop-intake confirmation dialog"
+},
+"intake_hint_mergedFromMultiplePrescriptions": "{count, plural, one{Combined from {count} prescription} other{Combined from {count} prescriptions}}",
+"@intake_hint_mergedFromMultiplePrescriptions": {
+  "description": "Shown on an intake cell card when multiple prescription details (e.g. different times) draw from the same physical stock/cell, indicating the count is merged",
+  "placeholders": {
+    "count": {
+      "type": "num",
+      "format": "compact"
+    }
+  }
+}
 }

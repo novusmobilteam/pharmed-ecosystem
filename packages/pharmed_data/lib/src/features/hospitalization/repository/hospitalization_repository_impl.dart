@@ -96,14 +96,16 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   }
 
   @override
-  Future<Result<List<Hospitalization>>> getFilteredHospitalizations(PatientFilterType filter) async {
-    final r = await _dataSource.getFilteredHospitalizations(filter);
-    return r.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos)), error: (e) => Result.error(e));
-  }
-
-  @override
-  Future<Result<List<Hospitalization>>> getHospitalizationsByService(int serviceId) async {
-    final r = await _dataSource.getHospitalizationsByService(serviceId);
+  Future<Result<List<Hospitalization>>> getHospitalizationsByService({
+    required int serviceId,
+    required PatientFilterType filter,
+    bool myPatients = false,
+  }) async {
+    final r = await _dataSource.getHospitalizationsByService(
+      serviceId: serviceId,
+      filter: filter,
+      myPatients: myPatients,
+    );
     return r.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos)), error: (e) => Result.error(e));
   }
 

@@ -5,7 +5,11 @@ class GetHospitalizationsByServiceUseCase {
 
   GetHospitalizationsByServiceUseCase(this._repository);
 
-  Future<Result<List<Hospitalization>>> call(int serviceId) {
-    return _repository.getHospitalizationsByService(serviceId);
+  Future<Result<List<Hospitalization>>> call({
+    required int serviceId,
+    required PatientFilterType filter,
+    bool myPatients = false,
+  }) {
+    return _repository.getHospitalizationsByService(serviceId: serviceId, filter: filter, myPatients: myPatients);
   }
 }

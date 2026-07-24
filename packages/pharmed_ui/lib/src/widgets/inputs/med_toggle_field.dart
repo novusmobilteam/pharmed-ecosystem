@@ -20,6 +20,7 @@ class MedToggleField extends StatelessWidget {
     required this.label,
     this.enabled = true,
     this.textStyle,
+    this.showBorder = false,
   });
 
   final bool value;
@@ -27,14 +28,33 @@ class MedToggleField extends StatelessWidget {
   final String label;
   final bool enabled;
   final TextStyle? textStyle;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context) {
+    if (showBorder) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: MedSpacing.insetXl.left, vertical: MedSpacing.insetMd.bottom),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: value ? MedColors.blue : MedColors.border, width: 1),
+          borderRadius: MedRadius.mdAll,
+          //boxShadow: MedShadows.md,
+        ),
+        child: _toggleBody(),
+      );
+    } else {
+      return _toggleBody();
+    }
+  }
+
+  Widget _toggleBody() {
     return Row(
-      spacing: MedSpacing.xs,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: MedSpacing.md,
       children: [
+        Text(label, style: textStyle ?? MedTextStyles.bodySm(weight: FontWeight.w700)),
         MedToggle(value: value, onChanged: onChanged, enabled: enabled),
-        Text(label, style: MedTextStyles.bodySm(weight: FontWeight.w700)),
       ],
     );
   }
@@ -65,8 +85,8 @@ class MedToggle extends StatelessWidget {
       child: Opacity(
         opacity: enabled ? 1.0 : 0.4,
         child: Container(
-          constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+          //onstraints: const BoxConstraints(minHeight: 44),
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -95,7 +115,7 @@ class _TrackWidget extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       width: 50,
-      height: 28,
+      height: 24,
       decoration: BoxDecoration(
         color: value ? color ?? MedColors.blue : MedColors.border,
         borderRadius: BorderRadius.circular(14),

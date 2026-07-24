@@ -1,26 +1,22 @@
 // [SWREQ-CLI-MINTAKE-001] [IEC 62304 §5.5]
 // İlaç-merkezli master kabin İLAÇ ALIM ekranının state hiyerarşisi.
 //
-// Master dolumdaki MasterRefillState'in alım karşılığıdır. Hasta seçimi artık
-// ekran ÖNÜNDEKİ bir modal/gateway ile değil, SOL PANELDE (OperationPanelBase)
-// yapılır. Bu yüzden faz akışı:
-//   FAZ 0 — NoPatient: hasta seçim listesi (PatientSelectionNotifier'a bağlı).
-//           Hasta seçilince selectPatient → Selection.
-//   FAZ 1 — Selection: alım item listesi (GetIntakeItemsUseCase), çoklu seçim,
-//           her item için doz (dosePiece) ve gerekiyorsa şahit (witness).
-//   FAZ 2 — Executing: toplu CheckIntake sonrası üretilen çekmece kuyruğu
-//           sırayla işlenir; her çekmece açıkken CountType'a göre sayım yapılır.
+// 3 fazlı akış (master-cabin-operations doktrinindeki 2 fazın hasta bağlamı
+// eklenmiş hâli):
+//   FAZ 1 — PatientSelection: hasta seçimi. Liste/filtre/servis/Hastalarım/
+//           arama mantığı BU STATE'TE DEĞİL, ortak CabinPatientPickerPanel'in
+//           arkasındaki PatientSelectionNotifier'da yaşar. Bu state yalnızca
+//           "hasta seçilmemiş" fazını işaretler.
+//   FAZ 2 — MedicineSelection: alım item listesi (GetIntakeItemsUseCase),
+//           çoklu seçim, her item için doz (dosePiece) ve gerekiyorsa şahit.
+//   FAZ 3 — Executing: toplu CheckIntake sonrası üretilen çekmece kuyruğu
+//           sırayla işlenir.
 //
-// Hasta bağlamı (hospitalization + intakeType) Selection ve Executing içinde
-// taşınır; "Hastayı değiştir" → NoPatient'a dönülür.
+// Hasta bağlamı (hospitalization + intakeType) MedicineSelection ve Executing
+// içinde taşınır; "Hastayı değiştir" → PatientSelection'a dönülür.
 //
-// Dolumdan farkları:
-//   - Hasta seçim fazı (NoPatient) var.
-//   - Selection'da doz stepper + şahit alanları var (dolumda yok).
-//   - startIntake → önce toplu check (CheckIntakeUseCase) → kuyruk kurulur.
-//     Check loading'i Selection.isChecking ile gösterilir (ayrı state yok;
-//     böylece panel görünümü korunur).
-//   - Executing'de "dolum" yerine "sayım" (censusQuantity) girilir.
+// Ayrı bir "başarılı" ekranı yoktur — kuyruk bitince MedicineSelection'a
+// (ilaçlar yeniden çekilerek) dönülür (bkz. master-cabin-operations §1).
 //
 // Sınıf: Class B
 
@@ -43,24 +39,24 @@ final class MasterIntakeLoading extends MasterIntakeState {
   const MasterIntakeLoading();
 }
 
-// ── FAZ 0: Hasta seçimi ─────────────────────────────────────────────────────────
+// ── FAZ 1: Hasta seçimi ─────────────────────────────────────────────────────
 
-/// Henüz hasta seçilmedi — sol panelde hasta seçim listesi gösterilir.
+/// Henüz hasta seçilmedi — view bu fazda `CabinPatientPickerPanel`'i gösterir.
 ///
 /// Hasta listesi/filtre/arama durumu burada DEĞİL, ayrı
-/// [PatientSelectionNotifier]'da yaşar. Bu state yalnızca "hasta seçilmemiş"
-/// fazını temsil eder; panel o notifier'ı izleyerek listeyi çizer.
-final class MasterIntakeNoPatient extends MasterIntakeState {
-  const MasterIntakeNoPatient({required this.cabinId});
+/// [PatientSelectionNotifier]'da yaşar (ortak, generalize edilebilir bileşen).
+/// Bu state yalnızca "hasta seçilmemiş" fazını temsil eder.
+final class MasterIntakePatientSelection extends MasterIntakeState {
+  const MasterIntakePatientSelection({required this.cabinId});
 
   final int cabinId;
 }
 
-// ── FAZ 1: Seçim ──────────────────────────────────────────────────────────────
+// ── FAZ 2: İlaç seçimi ───────────────────────────────────────────────────────
 
 /// İlaç listesi gösteriliyor; kullanıcı seçim + doz + şahit yapıyor.
-final class MasterIntakeSelection extends MasterIntakeState {
-  const MasterIntakeSelection({
+final class MasterIntakeMedicineSelection extends MasterIntakeState {
+  const MasterIntakeMedicineSelection({
     required this.cabinId,
     required this.hospitalization,
     required this.intakeType,
@@ -114,14 +110,14 @@ final class MasterIntakeSelection extends MasterIntakeState {
 
   List<IntakeItem> get selectedItems => items.where((a) => selectedItemIds.contains(a.id)).toList();
 
-  MasterIntakeSelection copyWith({
+  MasterIntakeMedicineSelection copyWith({
     List<IntakeItem>? items,
     Set<int>? selectedItemIds,
     String? search,
     Map<int, IntakeCheckStatus>? checkStatuses,
     bool? isChecking,
   }) {
-    return MasterIntakeSelection(
+    return MasterIntakeMedicineSelection(
       cabinId: cabinId,
       hospitalization: hospitalization,
       intakeType: intakeType,
@@ -134,7 +130,7 @@ final class MasterIntakeSelection extends MasterIntakeState {
   }
 }
 
-// ── FAZ 2: Yürütme ──────────────────────────────────────────────────────────────
+// ── FAZ 3: Yürütme ──────────────────────────────────────────────────────────
 
 /// Alım kuyruğu işleniyor (sırayla çekmece açılır, sayım yapılır).
 final class MasterIntakeExecuting extends MasterIntakeState {
@@ -224,25 +220,85 @@ final class MasterIntakeError extends MasterIntakeState {
 extension MasterIntakeStateX on MasterIntakeState {
   /// Hasta bağlamı taşıyan tüm state'lerden cabinId.
   int get cabinId => switch (this) {
-    MasterIntakeNoPatient(:final cabinId) => cabinId,
-    MasterIntakeSelection(:final cabinId) => cabinId,
+    MasterIntakePatientSelection(:final cabinId) => cabinId,
+    MasterIntakeMedicineSelection(:final cabinId) => cabinId,
     MasterIntakeExecuting(:final cabinId) => cabinId,
     MasterIntakeError(:final previousState) => previousState.cabinId,
     _ => 0,
   };
 
-  /// Seçili hasta (varsa). NoPatient / Loading / Uninitialized'da null.
+  /// Seçili hasta (varsa). PatientSelection / Loading / Uninitialized'da null.
   Hospitalization? get hospitalization => switch (this) {
-    MasterIntakeSelection(:final hospitalization) => hospitalization,
+    MasterIntakeMedicineSelection(:final hospitalization) => hospitalization,
     MasterIntakeExecuting(:final hospitalization) => hospitalization,
     MasterIntakeError(:final previousState) => previousState.hospitalization,
     _ => null,
   };
 
   IntakeType? get intakeType => switch (this) {
-    MasterIntakeSelection(:final intakeType) => intakeType,
+    MasterIntakeMedicineSelection(:final intakeType) => intakeType,
     MasterIntakeExecuting(:final intakeType) => intakeType,
     MasterIntakeError(:final previousState) => previousState.intakeType,
     _ => null,
   };
+}
+
+extension MasterIntakeExecutingLocationX on MasterIntakeExecuting {
+  /// [allGroups] → CabinVisualizerData.groups (tüm kabin çekmeceleri)
+  List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) {
+    // Job'ları slotId → job index ile hızlı erişim için index'le.
+    final jobBySlotId = <int, (int index, IntakeDrawerJob job)>{};
+    for (int i = 0; i < jobs.length; i++) {
+      final slotId = jobs[i].representativeAssignment.drawerUnit?.drawerSlotId;
+      if (slotId != null) jobBySlotId[slotId] = (i, jobs[i]);
+    }
+
+    return allGroups.map((group) {
+      final slotId = group.slot.id;
+      final entry = slotId != null ? jobBySlotId[slotId] : null;
+
+      if (entry == null) {
+        // Bu çekmece kuyruğa girmedi.
+        return DrawerQueueItem(group: group, status: DrawerQueueStatus.notInQueue);
+      }
+
+      final (jobIndex, job) = entry;
+      final isActive = jobIndex == currentIndex;
+
+      final status = switch (job.status) {
+        RefillJobStatus.completed => DrawerQueueStatus.completed,
+        RefillJobStatus.failed => DrawerQueueStatus.failed,
+        RefillJobStatus.active => DrawerQueueStatus.active,
+        RefillJobStatus.pending => isActive ? DrawerQueueStatus.active : DrawerQueueStatus.pending,
+      };
+
+      // Kübik: currentTargetIndex öncesindeki lid'ler tamamlandı.
+      final completedIndexes = <int>{};
+      if (isActive && job.isKubik) {
+        for (int t = 0; t < currentTargetIndex; t++) {
+          completedIndexes.add(t);
+        }
+      }
+
+      // Birim doz: hedef unit index'lerini job'daki target assignment'larından türet.
+      // NOT: IntakeTarget.assignment refill'in aksine NULLABLE — null-safe erişim.
+      final activeUnitIndexes = <int>{};
+      if (!job.isKubik && isActive) {
+        for (final target in job.targets) {
+          final unitId = target.assignment?.drawerUnit?.id;
+          if (unitId == null) continue;
+          final idx = group.units.indexWhere((u) => u.id == unitId);
+          if (idx >= 0) activeUnitIndexes.add(idx);
+        }
+      }
+
+      return DrawerQueueItem(
+        group: group,
+        status: status,
+        activeTargetIndex: isActive && job.isKubik ? currentTargetIndex : null,
+        completedTargetIndexes: completedIndexes,
+        activeUnitIndexes: activeUnitIndexes,
+      );
+    }).toList();
+  }
 }

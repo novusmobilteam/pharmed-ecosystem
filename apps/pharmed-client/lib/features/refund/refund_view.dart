@@ -16,7 +16,7 @@ class RefundView extends ConsumerWidget {
 
     return switch (deviceModeAsync) {
       AsyncData(:final value) => switch (value) {
-        CabinType.master => const MasterRefundView(),
+        CabinType.master => MobileRefundView(menu: menu),
         CabinType.mobile => MobileRefundView(menu: menu),
         _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       },

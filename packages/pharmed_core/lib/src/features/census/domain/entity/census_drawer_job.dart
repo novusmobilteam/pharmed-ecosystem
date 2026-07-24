@@ -9,8 +9,6 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-import 'census_target.dart';
-
 enum CensusJobStatus { pending, active, completed, failed }
 
 class CensusDrawerJob {

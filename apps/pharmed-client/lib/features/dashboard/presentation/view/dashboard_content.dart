@@ -25,7 +25,7 @@ class DashboardContentFactory {
 
             'drug-assignment' => const AssignmentView(),
             'drug-refill' => const RefillView(),
-            'drug-intake' => const IntakeView(),
+            'drug-intake' => IntakeView(menu: activeMenu!),
             'drug-activity' => const DrugActivityScreen(),
             'drug-unload' => const UnloadView(),
             'drug-census' => const CensusView(),
@@ -74,52 +74,51 @@ class _DashboardBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = state.data;
 
-    return Padding(
-      padding: MedSpacing.insetXl * 2,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Row(
-              spacing: MedSpacing.lg,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: data.upcomingTreatments.showError
-                      ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
-                      : UpcomingTreatmentPanel(section: data.upcomingTreatments),
-                ),
-                Expanded(
-                  child: data.drugActivities.showError
-                      ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
-                      : DrugActivityPanel(section: data.drugActivities),
-                ),
-                Expanded(
-                  child: data.unappliedPrescriptions.showError
-                      ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
-                      : UnappliedPrescriptionPanel(section: data.unappliedPrescriptions),
-                ),
-              ],
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Row(
+            spacing: MedSpacing.lg,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: data.upcomingTreatments.showError
+                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                    : UpcomingTreatmentPanel(section: data.upcomingTreatments),
+              ),
+              Expanded(
+                child: data.drugActivities.showError
+                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                    : DrugActivityPanel(section: data.drugActivities),
+              ),
+              Expanded(
+                child: data.unappliedPrescriptions.showError
+                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                    : UnappliedPrescriptionPanel(section: data.unappliedPrescriptions),
+              ),
+            ],
           ),
+        ),
 
-          const SizedBox(width: MedSpacing.xl3),
+        const SizedBox(width: MedSpacing.xl3),
 
-          SizedBox(
-            width: 300,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                data.hasCabinData
-                    ? CabinStatusPanel(cabin: data.cabinVisualizerData!)
-                    : EmptyStateWidget(variant: EmptyStateVariant.error, onRetry: notifier.refresh),
-                const SizedBox(height: MedSpacing.lg),
-                const CabinTelemetryPanel(),
-              ],
-            ),
+        SizedBox(
+          width: 300,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              data.hasCabinData
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: CabinStatusPanel(cabin: data.cabinVisualizerData!),
+                    )
+                  : SizedBox.shrink(),
+              const CabinTelemetryPanel(),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

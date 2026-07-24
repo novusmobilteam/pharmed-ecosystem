@@ -144,10 +144,7 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
     return Container(
       height: 62,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border(bottom: BorderSide(color: MedColors.border2)),
-      ),
+      decoration: BoxDecoration(color: MedColors.surface, borderRadius: MedRadius.lgAll, boxShadow: MedShadows.md),
       child: Row(
         children: [
           _AppLogo(onTap: widget.onHomeTap),
@@ -175,12 +172,12 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
           SizedBox(width: 10),
 
           if (!widget.isLoggedIn)
-            MedRectangleIconButton(
-              iconData: PhosphorIcons.signIn(),
-              color: MedColors.blue,
-              iconColor: Colors.white,
+            MedButton(
+              prefixIcon: Icon(PhosphorIcons.signIn()),
+              variant: MedButtonVariant.primary,
               onPressed: widget.onLoginTap,
-              size: 40,
+              label: context.l10n.auth_loginButton,
+              size: MedButtonSize.sm,
             )
           else if (widget.user != null)
             _UserInfo(user: widget.user!),

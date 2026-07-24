@@ -6459,5 +6459,59 @@
 "census_label_countQty": "Sayım",
 "@census_label_countQty": {
   "description": "CensusCellCard'da sayım miktarı giriş alanının etiketi"
-}
+},
+"intake_screenTitle": "İlaç Alım",
+"@intake_screenTitle": { "description": "Breadcrumb'da alım ekranının modül başlığı" },
+
+"intake_phase_patientLabel": "Hasta Seçimi",
+"@intake_phase_patientLabel": { "description": "Breadcrumb'da alım akışının hasta seçim fazı etiketi" },
+
+"intake_phase_medicineLabel": "İlaç Seçimi",
+"@intake_phase_medicineLabel": { "description": "Breadcrumb'da alım akışının ilaç seçim fazı etiketi" },
+
+"intake_phase_executingLabel": "Alım İşlemi",
+"@intake_phase_executingLabel": { "description": "Breadcrumb'da alım akışının yürütme fazı etiketi" },
+
+"patientPicker_roomLabel": "Oda {room}",
+"@patientPicker_roomLabel": { "description": "Hasta kartında oda bilgisi", "placeholders": { "room": { "type": "String" } } },
+
+"patientPicker_bedLabel": "Yatak {bed}",
+"@patientPicker_bedLabel": { "description": "Hasta kartında yatak bilgisi", "placeholders": { "bed": { "type": "String" } } },
+
+"intake_label_countFieldLabelIndexed": "Sayım {index} ({unit})",
+"patientListPanel_filter_patientStatusLabel": "Hasta Durumu",
+"patientListPanel_filter_orderStatusLabel": "Order Durumu",
+"masterDrawer_status_devicePreparingTitle": "Hazırlanıyor",
+"masterDrawer_status_devicePreparingSubtitle": "Sistem hazırlanıyor. Lütfen bir süre bekleyin.",
+
+"masterDrawer_status_lockOpeningTitle": "Kilit Açılıyor",
+"masterDrawer_status_lockOpeningSubtitle": "Çekmece kilidi açılıyor. Lütfen bir süre bekleyin.",
+
+"masterDrawer_status_waitingPullTitle": "Çekmeceyi Çekiniz",
+"masterDrawer_status_waitingPullSubtitle": "Kilit açıldı. Devam etmek için çekmeceyi çekerek açın.",
+
+"masterDrawer_status_openingLidTitle": "Göz Kapağı Açılıyor",
+"masterDrawer_status_openingLidSubtitle": "Göz kapağı açılıyor. Lütfen bir süre bekleyin.",
+
+"masterDrawer_status_waitingCloseTitle": "Çekmeceyi Kapatınız",
+"masterDrawer_status_waitingCloseSubtitle": "Sonraki adıma geçmek için çekmeceyi kapatın.",
+
+"masterDrawer_status_failedTitle": "Bir Sorun Oluştu",
+"masterDrawer_status_failedSubtitle": "Lütfen bekleyin, çekmece durumu kontrol ediliyor.",
+
+"masterDrawer_status_openingTitle": "Çekmece Açılıyor",
+"masterDrawer_status_openingSubtitle": "Çekmece açılıyor. Lütfen bir süre bekleyin.",
+
+"masterDrawer_stop_waitingCloseTitle": "Açık Çekmeceyi Kapatınız",
+"masterDrawer_stop_waitingCloseSubtitle": "Lütfen açık olan çekmeceyi kapatınız. Çekmece kapandıktan sonra işlem durdurulacaktır.",
+"intake_label_queueProgress": "Çekmece {done}/{total}",
+
+"intake_action_stop": "Durdur",
+
+"intake_stop_confirmTitle": "Alım Durdurulsun mu?",
+
+"intake_stop_confirmMessage": "Devam eden alım işlemi durdurulacak. Tamamlanan çekmeceler korunacaktır.",
+
+"intake_stop_confirmYes": "Evet, Durdur",
+"intake_hint_mergedFromMultiplePrescriptions": "{count, plural, other{{count} reçeteden birleştirildi}}"
 }

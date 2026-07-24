@@ -5316,4 +5316,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get census_label_countQty => 'Count';
+
+  @override
+  String get intake_screenTitle => 'Medication Intake';
+
+  @override
+  String get intake_phase_patientLabel => 'Patient Selection';
+
+  @override
+  String get intake_phase_medicineLabel => 'Medication Selection';
+
+  @override
+  String get intake_phase_executingLabel => 'Intake Process';
+
+  @override
+  String patientPicker_roomLabel(String room) {
+    return 'Room $room';
+  }
+
+  @override
+  String patientPicker_bedLabel(String bed) {
+    return 'Bed $bed';
+  }
+
+  @override
+  String intake_label_countFieldLabelIndexed(String unit, int index) {
+    return 'Count $index ($unit)';
+  }
+
+  @override
+  String get patientListPanel_filter_patientStatusLabel => 'Patient Status';
+
+  @override
+  String get patientListPanel_filter_orderStatusLabel => 'Order Status';
+
+  @override
+  String get masterDrawer_status_devicePreparingTitle => 'Preparing';
+
+  @override
+  String get masterDrawer_status_devicePreparingSubtitle =>
+      'The system is getting ready. Please wait a moment.';
+
+  @override
+  String get masterDrawer_status_lockOpeningTitle => 'Unlocking';
+
+  @override
+  String get masterDrawer_status_lockOpeningSubtitle =>
+      'The drawer lock is opening. Please wait a moment.';
+
+  @override
+  String get masterDrawer_status_waitingPullTitle => 'Please Pull the Drawer';
+
+  @override
+  String get masterDrawer_status_waitingPullSubtitle =>
+      'The lock has been released. Pull the drawer open to continue.';
+
+  @override
+  String get masterDrawer_status_openingLidTitle => 'Opening Compartment Lid';
+
+  @override
+  String get masterDrawer_status_openingLidSubtitle =>
+      'The compartment lid is opening. Please wait a moment.';
+
+  @override
+  String get masterDrawer_status_waitingCloseTitle => 'Please Close the Drawer';
+
+  @override
+  String get masterDrawer_status_waitingCloseSubtitle =>
+      'Close the drawer to continue to the next step.';
+
+  @override
+  String get masterDrawer_status_failedTitle => 'A Problem Occurred';
+
+  @override
+  String get masterDrawer_status_failedSubtitle =>
+      'Please wait, the system is checking the drawer status.';
+
+  @override
+  String get masterDrawer_status_openingTitle => 'Opening Drawer';
+
+  @override
+  String get masterDrawer_status_openingSubtitle =>
+      'The drawer is opening. Please wait a moment.';
+
+  @override
+  String get masterDrawer_stop_waitingCloseTitle =>
+      'Please Close the Open Drawer';
+
+  @override
+  String get masterDrawer_stop_waitingCloseSubtitle =>
+      'Please close the open drawer. The process will stop once it is closed.';
+
+  @override
+  String intake_label_queueProgress(int done, int total) {
+    return 'Drawer $done of $total';
+  }
+
+  @override
+  String get intake_action_stop => 'Stop';
+
+  @override
+  String get intake_stop_confirmTitle => 'Stop Intake?';
+
+  @override
+  String get intake_stop_confirmMessage =>
+      'The current intake process will be stopped. Completed drawers will be preserved.';
+
+  @override
+  String get intake_stop_confirmYes => 'Yes, Stop';
+
+  @override
+  String intake_hint_mergedFromMultiplePrescriptions(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Combined from $countString prescriptions',
+      one: 'Combined from $countString prescription',
+    );
+    return '$_temp0';
+  }
 }

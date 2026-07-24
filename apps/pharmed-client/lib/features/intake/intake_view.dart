@@ -8,7 +8,9 @@ import '../dashboard/presentation/notifier/dashboard_state.dart';
 import 'intake.dart';
 
 class IntakeView extends ConsumerWidget {
-  const IntakeView({super.key});
+  const IntakeView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +26,7 @@ class IntakeView extends ConsumerWidget {
 
     return switch (deviceModeAsync) {
       AsyncData(:final value) => switch (value) {
-        CabinType.master => MasterIntakeView(data: cabinData),
+        CabinType.master => MasterIntakeView(data: cabinData, menu: menu),
         CabinType.mobile => MobileIntakeView(data: cabinData),
         _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       },

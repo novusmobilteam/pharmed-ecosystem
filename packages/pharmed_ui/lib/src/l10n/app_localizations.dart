@@ -9442,6 +9442,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Count'**
   String get census_label_countQty;
+
+  /// Breadcrumb module title for the intake screen
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Intake'**
+  String get intake_screenTitle;
+
+  /// Breadcrumb label for the patient selection phase of the intake flow
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Selection'**
+  String get intake_phase_patientLabel;
+
+  /// Breadcrumb label for the medication selection phase of the intake flow
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Selection'**
+  String get intake_phase_medicineLabel;
+
+  /// Breadcrumb label for the executing phase of the intake flow
+  ///
+  /// In en, this message translates to:
+  /// **'Intake Process'**
+  String get intake_phase_executingLabel;
+
+  /// Room info shown on a patient card
+  ///
+  /// In en, this message translates to:
+  /// **'Room {room}'**
+  String patientPicker_roomLabel(String room);
+
+  /// Bed info shown on a patient card
+  ///
+  /// In en, this message translates to:
+  /// **'Bed {bed}'**
+  String patientPicker_bedLabel(String bed);
+
+  /// Census/count field label when a target has multiple stock lots
+  ///
+  /// In en, this message translates to:
+  /// **'Count {index} ({unit})'**
+  String intake_label_countFieldLabelIndexed(String unit, int index);
+
+  /// Label for the patient-status filter field (all patients vs my patients) in the patient selection panel's filter dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Status'**
+  String get patientListPanel_filter_patientStatusLabel;
+
+  /// Label for the ordered/orderless toggle filter field in the patient selection panel's filter dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Order Status'**
+  String get patientListPanel_filter_orderStatusLabel;
+
+  /// Title shown while the master cabin drawer hardware is preparing to open (MasterDrawerOpening/devicePreparing stage), shared across all master cabin operation screens (refill, census, intake, etc.)
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing'**
+  String get masterDrawer_status_devicePreparingTitle;
+
+  /// Subtitle shown while the master cabin drawer hardware is preparing to open
+  ///
+  /// In en, this message translates to:
+  /// **'The system is getting ready. Please wait a moment.'**
+  String get masterDrawer_status_devicePreparingSubtitle;
+
+  /// Title shown while the master cabin drawer lock is being released (MasterDrawerOpening/lockOpening stage)
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocking'**
+  String get masterDrawer_status_lockOpeningTitle;
+
+  /// Subtitle shown while the master cabin drawer lock is being released
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer lock is opening. Please wait a moment.'**
+  String get masterDrawer_status_lockOpeningSubtitle;
+
+  /// Title shown when the drawer lock has released and the user needs to physically pull the drawer open (MasterDrawerWaitingForPull stage)
+  ///
+  /// In en, this message translates to:
+  /// **'Please Pull the Drawer'**
+  String get masterDrawer_status_waitingPullTitle;
+
+  /// Subtitle shown when waiting for the user to physically pull the drawer open
+  ///
+  /// In en, this message translates to:
+  /// **'The lock has been released. Pull the drawer open to continue.'**
+  String get masterDrawer_status_waitingPullSubtitle;
+
+  /// Title shown while a cubic drawer's individual cell lid is opening (MasterDrawerOpeningLid stage)
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Compartment Lid'**
+  String get masterDrawer_status_openingLidTitle;
+
+  /// Subtitle shown while a cubic drawer's individual cell lid is opening
+  ///
+  /// In en, this message translates to:
+  /// **'The compartment lid is opening. Please wait a moment.'**
+  String get masterDrawer_status_openingLidSubtitle;
+
+  /// Title shown after the user confirms completion and the system is waiting for the physical drawer to be closed (MasterDrawerWaitingForClose stage)
+  ///
+  /// In en, this message translates to:
+  /// **'Please Close the Drawer'**
+  String get masterDrawer_status_waitingCloseTitle;
+
+  /// Subtitle shown while waiting for the physical drawer to be closed
+  ///
+  /// In en, this message translates to:
+  /// **'Close the drawer to continue to the next step.'**
+  String get masterDrawer_status_waitingCloseSubtitle;
+
+  /// Title shown when the drawer hardware reports a failure (MasterDrawerFailed stage), before the queue-error confirmation dialog is shown
+  ///
+  /// In en, this message translates to:
+  /// **'A Problem Occurred'**
+  String get masterDrawer_status_failedTitle;
+
+  /// Subtitle shown when the drawer hardware reports a failure
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait, the system is checking the drawer status.'**
+  String get masterDrawer_status_failedSubtitle;
+
+  /// Fallback title for drawer stages without a dedicated message (Idle/Closed transitional states, or any unmapped stage)
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Drawer'**
+  String get masterDrawer_status_openingTitle;
+
+  /// Fallback subtitle for drawer stages without a dedicated message
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer is opening. Please wait a moment.'**
+  String get masterDrawer_status_openingSubtitle;
+
+  /// Title shown after the user confirms stopping the queue while a drawer is still physically open — the stop will be applied once the drawer is closed
+  ///
+  /// In en, this message translates to:
+  /// **'Please Close the Open Drawer'**
+  String get masterDrawer_stop_waitingCloseTitle;
+
+  /// Subtitle shown after the user confirms stopping the queue while a drawer is still physically open
+  ///
+  /// In en, this message translates to:
+  /// **'Please close the open drawer. The process will stop once it is closed.'**
+  String get masterDrawer_stop_waitingCloseSubtitle;
+
+  /// Progress label shown in the top strip during intake execution, indicating which drawer in the queue is currently active
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {done} of {total}'**
+  String intake_label_queueProgress(int done, int total);
+
+  /// Button label to stop the intake queue mid-execution, shown in the top strip
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get intake_action_stop;
+
+  /// Title of the confirmation dialog shown when the user taps stop during intake execution
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Intake?'**
+  String get intake_stop_confirmTitle;
+
+  /// Message body of the confirmation dialog shown when the user taps stop during intake execution
+  ///
+  /// In en, this message translates to:
+  /// **'The current intake process will be stopped. Completed drawers will be preserved.'**
+  String get intake_stop_confirmMessage;
+
+  /// Confirm button label in the stop-intake confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Stop'**
+  String get intake_stop_confirmYes;
+
+  /// Shown on an intake cell card when multiple prescription details (e.g. different times) draw from the same physical stock/cell, indicating the count is merged
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Combined from {count} prescription} other{Combined from {count} prescriptions}}'**
+  String intake_hint_mergedFromMultiplePrescriptions(num count);
 }
 
 class _AppLocalizationsDelegate

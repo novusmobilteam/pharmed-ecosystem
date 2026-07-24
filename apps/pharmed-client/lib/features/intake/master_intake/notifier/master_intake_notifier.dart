@@ -1,12 +1,12 @@
 // [SWREQ-CLI-MINTAKE-002] [IEC 62304 §5.5]
 // İlaç-merkezli master kabin İLAÇ ALIM akışını yöneten notifier.
 //
-// FAZ 0 (NoPatient): init istasyonu çözer, hastasız NoPatient'a düşer. Hasta
-//   seçimi sol panelde (PatientSelectionNotifier) yapılır; seçilince
-//   selectPatient(hospitalization, intakeType) çağrılır.
-// FAZ 1 (Selection): GetIntakeItemsUseCase ile alım kalemlerini çeker,
+// FAZ 1 (PatientSelection): init istasyonu çözer, hastasız PatientSelection'a
+//   düşer. Hasta seçimi CabinPatientPickerPanel (ortak bileşen) üzerinden
+//   yapılır; seçilince selectPatient(hospitalization, intakeType) çağrılır.
+// FAZ 2 (MedicineSelection): GetIntakeItemsUseCase ile alım kalemlerini çeker,
 //   kullanıcının seçim / doz / şahit girişini yönetir.
-// FAZ 2 (Executing): startIntake → seçili tüm kalemler için TOPLU CheckIntake
+// FAZ 3 (Executing): startIntake → seçili tüm kalemler için TOPLU CheckIntake
 //   → dönen planlardan IntakeQueueBuilder ile çekmece kuyruğu üretir → kuyruğu
 //   MasterDrawerOrchestrator üzerinden sırayla işler:
 //     - currentJob'ı aç (open)
@@ -20,9 +20,9 @@
 //
 // Aynı anda yalnızca TEK fiziksel çekmece açıktır.
 //
-// Hasta bağlamı (hospitalization + intakeType) Selection/Executing içinde
-// taşınır; "Hastayı değiştir" → changePatient → NoPatient'a döner ve açık
-// kuyruk/çekmece temizlenir.
+// Hasta bağlamı (hospitalization + intakeType) MedicineSelection/Executing
+// içinde taşınır; "Hastayı değiştir" → changePatient → PatientSelection'a
+// döner ve açık kuyruk/çekmece temizlenir.
 //
 // Sınıf: Class B
 
@@ -73,12 +73,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     return const MasterIntakeUninitialized();
   }
 
-  // ── FAZ 0: Init & Hasta seçimi ──────────────────────────────────────────
-
-  /// Ekran açılışında çağrılır — istasyonu çözer, hastasız NoPatient'a düşer.
-  ///
-  /// Artık tip/hasta init parametresi DEĞİLDİR; bunlar hasta seçildiğinde
-  /// (selectPatient) belirlenir.
+  /// Ekran açılışında çağrılır — istasyonu çözer, hastasız PatientSelection'a düşer.
   Future<void> init(CabinVisualizerData data) async {
     _cabinId = data.cabinId;
     _hospitalization = null;
@@ -92,11 +87,11 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     final stationResult = await _getStation.call();
     stationResult.when(ok: (s) => _currentStation = s, error: (_) => _currentStation = null);
 
-    state = MasterIntakeNoPatient(cabinId: _cabinId);
+    state = MasterIntakePatientSelection(cabinId: _cabinId);
   }
 
-  /// Sol panelde hasta seçildiğinde çağrılır. Tip, hasta seçim modundan
-  /// (orderless/ordered) türetilip dışarıdan geçirilir (patient-gateway kuralı).
+  /// `CabinPatientPickerPanel` üzerinden hasta seçildiğinde çağrılır. Tip,
+  /// hasta seçim modundan (orderless/ordered) türetilip dışarıdan geçirilir.
   Future<void> selectPatient(Hospitalization hospitalization, IntakeType type) async {
     _type = type;
     _hospitalization = hospitalization;
@@ -109,18 +104,10 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     await _loadItems();
   }
 
-  /// "Hastayı değiştir" → açık kuyruğu kapat, NoPatient'a dön.
-  Future<void> changePatient() async {
-    _hospitalization = null;
-    _hospitalizationId = null;
-    await _orchestrator.stop();
-    state = MasterIntakeNoPatient(cabinId: _cabinId);
-  }
-
   Future<void> _loadItems({bool refreshAssignments = false}) async {
     final hospitalization = _hospitalization;
     if (hospitalization == null) {
-      state = MasterIntakeNoPatient(cabinId: _cabinId);
+      state = MasterIntakePatientSelection(cabinId: _cabinId);
       return;
     }
 
@@ -128,7 +115,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       GetIntakeItemsParams(type: _type, hospitalizationId: _hospitalizationId, refreshAssignments: refreshAssignments),
     );
     result.when(
-      ok: (items) => state = MasterIntakeSelection(
+      ok: (items) => state = MasterIntakeMedicineSelection(
         cabinId: _cabinId,
         hospitalization: hospitalization,
         intakeType: _type,
@@ -136,7 +123,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       ),
       error: (e) => state = MasterIntakeError(
         failure: CabinApiFailure(message: e.message),
-        previousState: MasterIntakeSelection(
+        previousState: MasterIntakeMedicineSelection(
           cabinId: _cabinId,
           hospitalization: hospitalization,
           intakeType: _type,
@@ -148,14 +135,14 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
   void onSearchChanged(String value) {
     final s = state;
-    if (s is! MasterIntakeSelection || s.isChecking) return;
+    if (s is! MasterIntakeMedicineSelection || s.isChecking) return;
     state = s.copyWith(search: value);
   }
 
   /// Bir kalemi seçer/çıkarır. Seçimde doz 0/null ise 1'e çekilir.
   void toggleItem(int itemId) {
     final s = state;
-    if (s is! MasterIntakeSelection || s.isChecking) return;
+    if (s is! MasterIntakeMedicineSelection || s.isChecking) return;
 
     final next = Set<int>.from(s.selectedItemIds);
     if (next.contains(itemId)) {
@@ -176,8 +163,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
   /// Bir kalemin alım dozunu günceller (limit validasyonu ile).
   ///
-  /// Eski `WithdrawNotifier.updateWithdrawAmount` limit mantığı birebir taşındı:
-  ///
   /// [MedicalConsumable] için:
   /// - Miktar 1'in altına düşemez.
   /// - Kabindeki fiziksel stok miktarını aşamaz.
@@ -188,7 +173,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   ///   en küçüğü olarak hesaplanır.
   void updateDose(int itemId, double dose) {
     final s = state;
-    if (s is! MasterIntakeSelection || s.isChecking) return;
+    if (s is! MasterIntakeMedicineSelection || s.isChecking) return;
 
     final item = s.items.firstWhereOrNull((i) => i.id == itemId);
     if (item == null) return;
@@ -233,7 +218,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   ///     diğer kalemlere yalnızca uygunsa ve henüz şahidi yoksa atanır.
   void addWitness(int itemId, User user) {
     final s = state;
-    if (s is! MasterIntakeSelection) return;
+    if (s is! MasterIntakeMedicineSelection) return;
 
     // Aktif kullanıcı kendi işlemine şahit olamaz.
     final currentUserId = ref.read(authNotifierProvider.notifier).currentUser?.id;
@@ -267,7 +252,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   /// kaleme de şahit olabilen bir kullanıcı.
   User? resolveExistingWitness(int itemId) {
     final s = state;
-    if (s is! MasterIntakeSelection) return null;
+    if (s is! MasterIntakeMedicineSelection) return null;
     final target = s.items.firstWhereOrNull((i) => i.id == itemId);
     if (target == null) return null;
 
@@ -286,13 +271,13 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     return null;
   }
 
-  // ── FAZ 2: Toplu Check → Kuyruk ─────────────────────────────────────────
+  // ── FAZ 3: Toplu Check → Kuyruk ─────────────────────────────────────────
 
   /// "Alıma Başla" — seçili kalemleri toplu check eder, kuyruğu kurar, ilk
   /// çekmeceyi açar. Şahit gereken ama şahidi olmayan kalem varsa engellenir.
   Future<void> startIntake() async {
     final s = state;
-    if (s is! MasterIntakeSelection || !s.canStart) return;
+    if (s is! MasterIntakeMedicineSelection || !s.canStart) return;
 
     final selected = s.selectedItems;
 
@@ -354,7 +339,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       }
     }
 
-    // Hiç geçerli hedef yoksa hata göster, Selection'a dön.
+    // Hiç geçerli hedef yoksa hata göster, MedicineSelection'a dön.
     if (targets.isEmpty) {
       state = MasterIntakeError(
         failure: const CabinValidationFailure(reason: CabinValidationReason.noValidTargets),
@@ -384,7 +369,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   }
 
   /// CountType'a göre IntakeDetail başlangıç sayım değerlerini belirler.
-  /// (Eski WithdrawNotifier._prepareCounting birebir taşındı.)
   List<IntakeDetail> _prepareCounting(IntakeItem item, List<IntakeDetail> details) {
     final drug = item.medicine as Drug?;
     final countType = drug?.countType;
@@ -420,6 +404,25 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         return t.withCountAt(detailIndex, value);
       });
 
+  /// [group] içindeki TÜM (targetIndex, detailIndex) referanslarına aynı
+  /// sayım değerini yazar — aynı fiziksel stok birden fazla target'tan
+  /// (farklı prescriptionDetail/saat) referans veriliyorsa hepsi senkron kalır.
+  void onGroupCountChanged(IntakeCellGroup group, double? value) {
+    final s = state;
+    if (s is! MasterIntakeExecuting) return;
+    final job = s.currentJob;
+    if (job == null) return;
+
+    final newTargets = List<IntakeTarget>.from(job.targets);
+    for (final (ti, di) in group.refs) {
+      newTargets[ti] = newTargets[ti].withCountAt(di, value);
+    }
+
+    final newJobs = List<IntakeDrawerJob>.from(s.jobs);
+    newJobs[s.currentIndex] = job.copyWith(targets: newTargets);
+    state = s.copyWith(jobs: newJobs);
+  }
+
   /// Birim doz/standart: targetIndex'teki hedefin belirli detayının sayımı.
   void onStepCountChanged(int targetIndex, int detailIndex, double? value) =>
       _updateTarget(targetIndex, (t) => t.withCountAt(detailIndex, value));
@@ -446,90 +449,19 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   ///   - Birim doz/standart: çekmece kapanışı tetiklenir; kayıt Closed'da yapılır.
   Future<void> confirmCurrent() async {
     final s = state;
-    MedLogger.error(
-      unit: 'MasterIntakeNotifier',
-      swreq: 'SWREQ-CLI-MINTAKE-002',
-      message: 'confirmCurrent çağrıldı',
-      context: {'stateType': s.runtimeType.toString()},
-    );
-    if (s is! MasterIntakeExecuting) {
-      MedLogger.error(
-        unit: 'MasterIntakeNotifier',
-        swreq: 'SWREQ-CLI-MINTAKE-002',
-        message: 'GUARD: state Executing değil → çıkıldı',
-        context: {'stateType': s.runtimeType.toString()},
-      );
-      return;
-    }
+    if (s is! MasterIntakeExecuting) return;
     final job = s.currentJob;
-    if (job == null) {
-      MedLogger.error(
-        unit: 'MasterIntakeNotifier',
-        swreq: 'SWREQ-CLI-MINTAKE-002',
-        message: 'GUARD: currentJob null → çıkıldı',
-        context: {'currentIndex': s.currentIndex, 'jobsLen': s.jobs.length},
-      );
-      return;
-    }
-
-    MedLogger.error(
-      unit: 'MasterIntakeNotifier',
-      swreq: 'SWREQ-CLI-MINTAKE-002',
-      message: 'confirmCurrent: job çözüldü',
-      context: {
-        'isKubik': job.isKubik,
-        'currentTargetIndex': s.currentTargetIndex,
-        'targetsLen': job.targets.length,
-        'canComplete': job.canComplete,
-      },
-    );
+    if (job == null) return;
 
     if (!job.isKubik) {
-      if (!job.canComplete) {
-        MedLogger.error(
-          unit: 'MasterIntakeNotifier',
-          swreq: 'SWREQ-CLI-MINTAKE-002',
-          message: 'GUARD: birim doz job.canComplete false → çıkıldı',
-          context: {
-            'targetsValid': job.targets.map((t) => t.isValid).toList(),
-            'needsCount': job.targets.map((t) => t.needsCount).toList(),
-          },
-        );
-        return;
-      }
-      MedLogger.error(
-        unit: 'MasterIntakeNotifier',
-        swreq: 'SWREQ-CLI-MINTAKE-002',
-        message: 'birim doz: confirmClose çağrılıyor (kayıt Closed\'da)',
-        context: const {},
-      );
+      if (!job.canComplete) return;
       _orchestrator.confirmClose();
       return;
     }
 
     // Kübik — aktif gözü kaydet.
     final target = s.currentTarget;
-    if (target == null || !target.isValid) {
-      MedLogger.error(
-        unit: 'MasterIntakeNotifier',
-        swreq: 'SWREQ-CLI-MINTAKE-002',
-        message: 'GUARD: kübik target null/invalid → çıkıldı',
-        context: {
-          'targetNull': target == null,
-          'isValid': target?.isValid,
-          'needsCount': target?.needsCount,
-          'detailsLen': target?.details.length,
-        },
-      );
-      return;
-    }
-
-    MedLogger.error(
-      unit: 'MasterIntakeNotifier',
-      swreq: 'SWREQ-CLI-MINTAKE-002',
-      message: 'kübik: _saveTarget çağrılıyor',
-      context: {'detailsLen': target.details.length, 'prescriptionDetailId': target.item.prescriptionItem?.id},
-    );
+    if (target == null || !target.isValid) return;
 
     state = s.copyWith(isSaving: true);
     final ok = await _saveTarget(target);
@@ -544,21 +476,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   /// MasterIntakeError(isQueueError) yapar ve false döner.
   Future<bool> _saveTarget(IntakeTarget target) async {
     final item = target.item;
-    MedLogger.error(
-      unit: 'MasterIntakeNotifier',
-      swreq: 'SWREQ-CLI-MINTAKE-002',
-      message: '_saveTarget: completeIntake.call ÖNCESİ',
-      context: {
-        'type': _type.toString(),
-        'prescriptionDetailId': item.prescriptionItem?.id,
-        'hospitalizationId': _hospitalizationId,
-        'witnessUserId': item.witness?.id,
-        'detailsLen': target.details.length,
-        'details': target.details
-            .map((d) => {'stockId': d.stockId, 'dose': d.dosePiece, 'census': d.censusQuantity})
-            .toList(),
-      },
-    );
     final result = await _completeIntake.call(
       IntakeParams(
         type: _type,
@@ -571,22 +488,9 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
     var ok = true;
     result.when(
-      ok: (_) {
-        MedLogger.error(
-          unit: 'MasterIntakeNotifier',
-          swreq: 'SWREQ-CLI-MINTAKE-002',
-          message: '_saveTarget: completeIntake OK',
-          context: const {},
-        );
-      },
+      ok: (_) {},
       error: (e) {
         ok = false;
-        MedLogger.error(
-          unit: 'MasterIntakeNotifier',
-          swreq: 'SWREQ-CLI-MINTAKE-002',
-          message: '_saveTarget: completeIntake HATA',
-          context: {'error': e.message},
-        );
         final s = state;
         if (s is MasterIntakeExecuting) {
           state = MasterIntakeError(
@@ -619,8 +523,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     final cellAssignment = job.targets[nextTarget].assignment;
     if (cellAssignment != null) await _orchestrator.openCubicLid(cellAssignment);
   }
-
-  // ── Orchestrator stage geçişleri ──────────────────────────────────────────
 
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
     switch (current) {
@@ -696,8 +598,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     }
   }
 
-  // ── Durdur / Hata kurtarma ────────────────────────────────────────────────
-
   Future<void> stopQueue() async {
     final s = state;
     await _orchestrator.stop();
@@ -750,22 +650,21 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   void dismissError() {
     final s = state;
     if (s is! MasterIntakeError) return;
-    // Selection'a dönerken check loading bayrağını temizle.
+    // MedicineSelection'a dönerken check loading bayrağını temizle.
     final prev = s.previousState;
-    if (prev is MasterIntakeSelection) {
+    if (prev is MasterIntakeMedicineSelection) {
       state = prev.copyWith(isChecking: false);
     } else {
       state = prev;
     }
   }
 
-  // ── Helper ────────────────────────────────────────────────────────────────
-
   /// Kuyruk bittiğinde: alım kalemlerini yeniden çek (stoklar değişti) ve temiz
-  /// Selection fazına dön. Ayrı "başarılı" ekranı yoktur. Hasta yoksa NoPatient.
+  /// MedicineSelection fazına dön. Ayrı "başarılı" ekranı yoktur. Hasta yoksa
+  /// PatientSelection'a döner.
   Future<void> _reloadSelectionAfterQueue() async {
     if (_hospitalization == null) {
-      state = MasterIntakeNoPatient(cabinId: _cabinId);
+      state = MasterIntakePatientSelection(cabinId: _cabinId);
       return;
     }
     state = const MasterIntakeLoading();

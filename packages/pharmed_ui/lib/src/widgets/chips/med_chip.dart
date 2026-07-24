@@ -29,7 +29,7 @@ enum MedChipStyle { neutral, info, success, warning, danger }
 enum MedChipShape { rounded, pill }
 
 /// Yoğunluk. md = standart, sm = sıkı (eski MedBadge.sm).
-enum MedChipSize { sm, md }
+enum MedChipSize { sm, md, lg }
 
 class MedChip extends StatelessWidget {
   const MedChip({
@@ -47,6 +47,7 @@ class MedChip extends StatelessWidget {
     this.showBorder = true,
     this.fullWidth = false,
     this.onTap,
+    this.onDeleted,
   });
 
   final String label;
@@ -83,6 +84,11 @@ class MedChip extends StatelessWidget {
   /// Tıklanabilir yapmak için. null → statik etiket.
   final VoidCallback? onTap;
 
+  /// Verilirse chip'in sağında bir "x" butonu render edilir (aktif filtre
+  /// gösterimi gibi kaldırılabilir etiketler için). [onTap]'ten bağımsız
+  /// çalışır — silme ikonuna tıklamak [onTap]'i tetiklemez.
+  final VoidCallback? onDeleted;
+
   @override
   Widget build(BuildContext context) {
     final preset = _presetColors(style);
@@ -91,11 +97,12 @@ class MedChip extends StatelessWidget {
     final borderColor = border ?? preset.border ?? fg.withValues(alpha: 0.22);
 
     final radius = shape == MedChipShape.pill ? MedRadius.xlAll : MedRadius.smAll;
-    final (padX, padY, textStyle) = switch (size) {
+    final (padX, padY, textStyle, deleteIconSize) = switch (size) {
       MedChipSize.sm => (
         MedSpacing.sm + 1,
         1.0,
         mono ? MedTextStyles.monoXs(color: fg) : MedTextStyles.bodySm(color: fg, weight: FontWeight.w600),
+        12.0,
       ),
       MedChipSize.md => (
         MedSpacing.md.toDouble(),
@@ -103,6 +110,16 @@ class MedChip extends StatelessWidget {
         mono
             ? MedTextStyles.monoSm(color: fg, weight: FontWeight.w600)
             : MedTextStyles.bodySm(color: fg, weight: FontWeight.w600),
+        14.0,
+      ),
+
+      MedChipSize.lg => (
+        MedSpacing.md.toDouble(),
+        MedSpacing.md + 1,
+        mono
+            ? MedTextStyles.monoSm(color: fg, weight: FontWeight.w600)
+            : MedTextStyles.bodySm(color: fg, weight: FontWeight.w600),
+        16.0,
       ),
     };
 
@@ -129,6 +146,20 @@ class MedChip extends StatelessWidget {
             Text(
               '$count',
               style: MedTextStyles.monoSm(color: fg, weight: FontWeight.w700),
+            ),
+          ],
+
+          if (onDeleted != null) ...[
+            const SizedBox(width: MedSpacing.xs),
+            GestureDetector(
+              onTap: onDeleted,
+              behavior: HitTestBehavior.opaque,
+              // Dokunmatik hedefi ikonun görsel boyutundan büyük tutuyoruz
+              // (44px kuralı chip boyutuna sığmaz, bu yüzden sadece padding ile yaklaşıyoruz).
+              child: Padding(
+                padding: const EdgeInsets.all(MedSpacing.xs),
+                child: Icon(Icons.close, size: deleteIconSize, color: fg),
+              ),
             ),
           ],
         ],

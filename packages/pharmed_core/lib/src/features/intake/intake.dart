@@ -8,6 +8,7 @@ export 'domain/entity/intake_params.dart';
 export 'domain/entity/mobile_intake_params.dart';
 export 'domain/entity/intake_drawer_job.dart';
 export 'domain/entity/intake_target.dart';
+export 'domain/entity/intake_cell_group.dart';
 
 export 'domain/repository/i_intake_repository.dart';
 export 'domain/usecase/check_intake_usecase.dart';

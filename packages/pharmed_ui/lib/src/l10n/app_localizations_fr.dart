@@ -5410,4 +5410,129 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get census_label_countQty => 'Comptage';
+
+  @override
+  String get intake_screenTitle => 'Prise de Médicament';
+
+  @override
+  String get intake_phase_patientLabel => 'Sélection du Patient';
+
+  @override
+  String get intake_phase_medicineLabel => 'Sélection des Médicaments';
+
+  @override
+  String get intake_phase_executingLabel => 'Processus de Prise';
+
+  @override
+  String patientPicker_roomLabel(String room) {
+    return 'Chambre $room';
+  }
+
+  @override
+  String patientPicker_bedLabel(String bed) {
+    return 'Lit $bed';
+  }
+
+  @override
+  String intake_label_countFieldLabelIndexed(String unit, int index) {
+    return 'Comptage $index ($unit)';
+  }
+
+  @override
+  String get patientListPanel_filter_patientStatusLabel => 'Statut du Patient';
+
+  @override
+  String get patientListPanel_filter_orderStatusLabel => 'Statut de Commande';
+
+  @override
+  String get masterDrawer_status_devicePreparingTitle => 'Préparation';
+
+  @override
+  String get masterDrawer_status_devicePreparingSubtitle =>
+      'Le système se prépare. Veuillez patienter un instant.';
+
+  @override
+  String get masterDrawer_status_lockOpeningTitle => 'Déverrouillage';
+
+  @override
+  String get masterDrawer_status_lockOpeningSubtitle =>
+      'Le verrou du tiroir s\'ouvre. Veuillez patienter un instant.';
+
+  @override
+  String get masterDrawer_status_waitingPullTitle => 'Veuillez Tirer le Tiroir';
+
+  @override
+  String get masterDrawer_status_waitingPullSubtitle =>
+      'Le verrou a été libéré. Tirez le tiroir pour l\'ouvrir et continuer.';
+
+  @override
+  String get masterDrawer_status_openingLidTitle => 'Ouverture du Compartiment';
+
+  @override
+  String get masterDrawer_status_openingLidSubtitle =>
+      'Le couvercle du compartiment s\'ouvre. Veuillez patienter un instant.';
+
+  @override
+  String get masterDrawer_status_waitingCloseTitle =>
+      'Veuillez Fermer le Tiroir';
+
+  @override
+  String get masterDrawer_status_waitingCloseSubtitle =>
+      'Fermez le tiroir pour passer à l\'étape suivante.';
+
+  @override
+  String get masterDrawer_status_failedTitle => 'Un Problème est Survenu';
+
+  @override
+  String get masterDrawer_status_failedSubtitle =>
+      'Veuillez patienter, l\'état du tiroir est en cours de vérification.';
+
+  @override
+  String get masterDrawer_status_openingTitle => 'Ouverture du Tiroir';
+
+  @override
+  String get masterDrawer_status_openingSubtitle =>
+      'Le tiroir s\'ouvre. Veuillez patienter un instant.';
+
+  @override
+  String get masterDrawer_stop_waitingCloseTitle =>
+      'Veuillez Fermer le Tiroir Ouvert';
+
+  @override
+  String get masterDrawer_stop_waitingCloseSubtitle =>
+      'Veuillez fermer le tiroir ouvert. Le processus s\'arrêtera une fois celui-ci fermé.';
+
+  @override
+  String intake_label_queueProgress(int done, int total) {
+    return 'Tiroir $done/$total';
+  }
+
+  @override
+  String get intake_action_stop => 'Arrêter';
+
+  @override
+  String get intake_stop_confirmTitle => 'Arrêter la Prise ?';
+
+  @override
+  String get intake_stop_confirmMessage =>
+      'Le processus de prise en cours sera arrêté. Les tiroirs terminés seront conservés.';
+
+  @override
+  String get intake_stop_confirmYes => 'Oui, Arrêter';
+
+  @override
+  String intake_hint_mergedFromMultiplePrescriptions(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Combiné à partir de $countString prescriptions',
+      one: 'Combiné à partir de $countString prescription',
+    );
+    return '$_temp0';
+  }
 }

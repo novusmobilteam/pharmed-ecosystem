@@ -353,4 +353,14 @@ abstract final class MedSpacing {
 
   /// Büyük chip iç boşluğu — RxStatusChip, MedBadge large.
   static const EdgeInsets chipPaddingLg = EdgeInsets.symmetric(horizontal: 10, vertical: 5);
+
+  static const EdgeInsets panelInsetPadding = EdgeInsets.all(xl);
+}
+
+abstract final class MedDecoration {
+  static const BoxDecoration panelDecoration = BoxDecoration(
+    color: Colors.white,
+    borderRadius: MedRadius.lgAll,
+    boxShadow: MedShadows.md,
+  );
 }

@@ -57,7 +57,6 @@ class UsecaseProviders {
       /// Hospitalization
       Provider(create: (context) => CreateHospitalizationUseCase(context.read())),
       Provider(create: (context) => DeleteHospitalizationUseCase(context.read())),
-      Provider(create: (context) => GetFilteredHospitalizationsUseCase(context.read())),
       Provider(create: (context) => GetHospitalizationsUseCase(context.read())),
       Provider(create: (context) => GetActiveHospitalizationsUseCase(context.read())),
       Provider(create: (context) => UpdateHospitalizationUseCase(context.read())),
@@ -133,16 +132,11 @@ class UsecaseProviders {
 
       /// Refund
       Provider(create: (context) => GetMasterRefundablesUseCase(context.read())),
-      Provider(create: (context) => CompleteRefundUseCase(context.read())),
       Provider(create: (context) => CompletePharmacyRefundUseCase(context.read())),
       Provider(create: (context) => GetCompletedPharmacyRefundsUseCase(context.read())),
       Provider(create: (context) => GetPharmacyRefundsUseCase(context.read())),
       Provider(create: (context) => GetDrawerRefundsUseCase(context.read())),
       Provider(create: (context) => DeletePharmacyRefundUseCase(context.read())),
-      Provider(
-        create: (context) =>
-            CheckMasterRefundStatusUseCase(refundRepository: context.read(), cabinRepository: context.read()),
-      ),
 
       /// Role
       Provider(create: (context) => GetRolesUseCase(context.read<IRoleRepository>())),

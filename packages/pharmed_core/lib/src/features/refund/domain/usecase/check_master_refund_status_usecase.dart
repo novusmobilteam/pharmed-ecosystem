@@ -21,11 +21,7 @@ class CheckRefundStatusParams {
 }
 
 class CheckMasterRefundStatusUseCase {
-  CheckMasterRefundStatusUseCase({
-    required IRefundRepository refundRepository,
-    required ICabinRepository cabinRepository,
-  }) : _refundRepository = refundRepository,
-       _cabinRepository = cabinRepository;
+  CheckMasterRefundStatusUseCase(this._refundRepository, this._cabinRepository);
 
   final IRefundRepository _refundRepository;
   final ICabinRepository _cabinRepository;

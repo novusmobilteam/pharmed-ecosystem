@@ -5274,4 +5274,126 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get census_label_countQty => 'Sayım';
+
+  @override
+  String get intake_screenTitle => 'İlaç Alım';
+
+  @override
+  String get intake_phase_patientLabel => 'Hasta Seçimi';
+
+  @override
+  String get intake_phase_medicineLabel => 'İlaç Seçimi';
+
+  @override
+  String get intake_phase_executingLabel => 'Alım İşlemi';
+
+  @override
+  String patientPicker_roomLabel(String room) {
+    return 'Oda $room';
+  }
+
+  @override
+  String patientPicker_bedLabel(String bed) {
+    return 'Yatak $bed';
+  }
+
+  @override
+  String intake_label_countFieldLabelIndexed(String unit, int index) {
+    return 'Sayım $index ($unit)';
+  }
+
+  @override
+  String get patientListPanel_filter_patientStatusLabel => 'Hasta Durumu';
+
+  @override
+  String get patientListPanel_filter_orderStatusLabel => 'Order Durumu';
+
+  @override
+  String get masterDrawer_status_devicePreparingTitle => 'Hazırlanıyor';
+
+  @override
+  String get masterDrawer_status_devicePreparingSubtitle =>
+      'Sistem hazırlanıyor. Lütfen bir süre bekleyin.';
+
+  @override
+  String get masterDrawer_status_lockOpeningTitle => 'Kilit Açılıyor';
+
+  @override
+  String get masterDrawer_status_lockOpeningSubtitle =>
+      'Çekmece kilidi açılıyor. Lütfen bir süre bekleyin.';
+
+  @override
+  String get masterDrawer_status_waitingPullTitle => 'Çekmeceyi Çekiniz';
+
+  @override
+  String get masterDrawer_status_waitingPullSubtitle =>
+      'Kilit açıldı. Devam etmek için çekmeceyi çekerek açın.';
+
+  @override
+  String get masterDrawer_status_openingLidTitle => 'Göz Kapağı Açılıyor';
+
+  @override
+  String get masterDrawer_status_openingLidSubtitle =>
+      'Göz kapağı açılıyor. Lütfen bir süre bekleyin.';
+
+  @override
+  String get masterDrawer_status_waitingCloseTitle => 'Çekmeceyi Kapatınız';
+
+  @override
+  String get masterDrawer_status_waitingCloseSubtitle =>
+      'Sonraki adıma geçmek için çekmeceyi kapatın.';
+
+  @override
+  String get masterDrawer_status_failedTitle => 'Bir Sorun Oluştu';
+
+  @override
+  String get masterDrawer_status_failedSubtitle =>
+      'Lütfen bekleyin, çekmece durumu kontrol ediliyor.';
+
+  @override
+  String get masterDrawer_status_openingTitle => 'Çekmece Açılıyor';
+
+  @override
+  String get masterDrawer_status_openingSubtitle =>
+      'Çekmece açılıyor. Lütfen bir süre bekleyin.';
+
+  @override
+  String get masterDrawer_stop_waitingCloseTitle => 'Açık Çekmeceyi Kapatınız';
+
+  @override
+  String get masterDrawer_stop_waitingCloseSubtitle =>
+      'Lütfen açık olan çekmeceyi kapatınız. Çekmece kapandıktan sonra işlem durdurulacaktır.';
+
+  @override
+  String intake_label_queueProgress(int done, int total) {
+    return 'Çekmece $done/$total';
+  }
+
+  @override
+  String get intake_action_stop => 'Durdur';
+
+  @override
+  String get intake_stop_confirmTitle => 'Alım Durdurulsun mu?';
+
+  @override
+  String get intake_stop_confirmMessage =>
+      'Devam eden alım işlemi durdurulacak. Tamamlanan çekmeceler korunacaktır.';
+
+  @override
+  String get intake_stop_confirmYes => 'Evet, Durdur';
+
+  @override
+  String intake_hint_mergedFromMultiplePrescriptions(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString reçeteden birleştirildi',
+    );
+    return '$_temp0';
+  }
 }

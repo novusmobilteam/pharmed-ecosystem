@@ -69,26 +69,38 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       onTap: authNotif.onUserActivity,
       child: Scaffold(
         backgroundColor: MedColors.bg,
-        appBar: DashboardAppBar(
-          menuTree: menuTree,
-          flattenedMenus: flattenedMenus,
-          currentRoute: currentRoute,
-          isLoggedIn: isLoggedIn,
-          user: currentUser,
-          onHomeTap: () => notifier.navigateTo('dashboard'),
-          onLoginTap: () => _showLoginModal(context, ref),
-          onLogoutTap: authNotif.logout,
-          onSettingsTap: () => _showSettingsPopup(context),
-          onMenuItemTap: (id) => isLoggedIn ? notifier.navigateTo(id) : null,
-        ),
+        //appBar:,
         body: Stack(
           children: [
             Column(
               children: [
-                if (!isLoggedIn && _wasLoggedIn(authState))
-                  LockedBanner(onLoginTap: () => _showLoginModal(context, ref)),
-
-                Expanded(child: DashboardContentFactory.buildContent(context, ref, dashState, notifier, isLoggedIn)),
+                // if (!isLoggedIn && _wasLoggedIn(authState))
+                //   LockedBanner(onLoginTap: () => _showLoginModal(context, ref)),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MedSpacing.insetXl.top,
+                    right: MedSpacing.insetXl.right,
+                    left: MedSpacing.insetXl.left,
+                  ),
+                  child: DashboardAppBar(
+                    menuTree: menuTree,
+                    flattenedMenus: flattenedMenus,
+                    currentRoute: currentRoute,
+                    isLoggedIn: isLoggedIn,
+                    user: currentUser,
+                    onHomeTap: () => notifier.navigateTo('dashboard'),
+                    onLoginTap: () => _showLoginModal(context, ref),
+                    onLogoutTap: authNotif.logout,
+                    onSettingsTap: () => _showSettingsPopup(context),
+                    onMenuItemTap: (id) => isLoggedIn ? notifier.navigateTo(id) : null,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: MedSpacing.insetXl,
+                    child: DashboardContentFactory.buildContent(context, ref, dashState, notifier, isLoggedIn),
+                  ),
+                ),
               ],
             ),
 
@@ -106,8 +118,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
     );
   }
-
-  bool _wasLoggedIn(AuthState state) => state is AuthLoggedOut;
 
   void _showLoginModal(BuildContext context, WidgetRef ref) {
     showDialog<void>(

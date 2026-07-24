@@ -26,9 +26,11 @@ abstract interface class IHospitalizationRepository {
   /// bu servis ile başlıyor.
   Future<Result<List<Hospitalization>>> getPatientsWithActivePrescription();
 
-  Future<Result<List<Hospitalization>>> getFilteredHospitalizations(PatientFilterType filter);
-
-  Future<Result<List<Hospitalization>>> getHospitalizationsByService(int serviceId);
+  Future<Result<List<Hospitalization>>> getHospitalizationsByService({
+    required int serviceId,
+    required PatientFilterType filter,
+    bool myPatients = false,
+  });
 
   /// Taburcu etme servisi
   Future<Result<void>> discharge(int hospitalizationId);

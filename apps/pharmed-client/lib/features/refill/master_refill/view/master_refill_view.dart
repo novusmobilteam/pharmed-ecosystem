@@ -18,18 +18,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/hardware/hardware.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
-import '../../../settings/notifier/settings_notifier.dart';
-import '../notifier/master_refill_notifier.dart';
-import '../notifier/master_refill_state.dart';
-
-part 'master_refill_selection_panel.dart';
-part 'master_refill_execution_panel.dart';
-part 'refill_cell_card.dart';
-part 'refill_fill_form.dart';
+import '../../refill.dart';
 
 class MasterRefillView extends ConsumerStatefulWidget {
   const MasterRefillView({super.key, this.data});
@@ -42,34 +34,12 @@ class MasterRefillView extends ConsumerStatefulWidget {
 
 class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
   @override
-  void initState() {
-    super.initState();
-    _initialize(widget.data);
-  }
-
-  @override
-  void didUpdateWidget(MasterRefillView old) {
-    super.didUpdateWidget(old);
-    if (widget.data?.cabinId != old.data?.cabinId) {
-      _initialize(widget.data);
-    }
-  }
-
-  void _initialize(CabinVisualizerData? data) {
-    if (data == null) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ref.read(masterRefillNotifierProvider.notifier).init(data);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final state = ref.watch(masterRefillNotifierProvider);
+    final notifier = ref.read(masterRefillNotifierProvider.notifier);
 
     ref.listen(masterRefillNotifierProvider, (_, next) {
       if (next is MasterRefillError && next.isQueueError) {
-        final notifier = ref.read(masterRefillNotifierProvider.notifier);
         MessageUtils.showConfirmDialog(
           context: context,
           action: ConfirmAction.custom,
@@ -86,33 +56,23 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
         );
       } else if (next is MasterRefillError) {
         MessageUtils.showErrorSnackbar(context, next.failure.message(context));
-        ref.read(masterRefillNotifierProvider.notifier).dismissError();
+        notifier.dismissError();
       }
     });
 
-    if (widget.data == null || state is MasterRefillUninitialized) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
-    }
-
-    if (state is MasterRefillLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-    }
-
-    // Yürütme fazı mı? (hata durumunda previousState'e bakılır)
-    final isExecuting = switch (state) {
-      MasterRefillExecuting() => true,
-      MasterRefillError(previousState: MasterRefillExecuting()) => true,
-      _ => false,
-    };
-
-    return Padding(
-      padding: MedSpacing.insetXl * 2,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        child: isExecuting
-            ? MasterRefillExecutionPanel(key: ValueKey('execution'), allGroups: widget.data?.groups ?? [])
-            : const MasterRefillSelectionPanel(key: ValueKey('selection')),
-      ),
+    return MasterCabinRootScaffold<CabinVisualizerData, MasterRefillState>(
+      data: widget.data,
+      cabinIdOf: (d) => d.cabinId,
+      onInit: (d) => notifier.init(d),
+      state: state,
+      phaseOf: (s) => switch (s) {
+        MasterRefillUninitialized() || MasterRefillLoading() => const RootBooting(),
+        MasterRefillExecuting() => const RootExecuting(),
+        MasterRefillError(previousState: MasterRefillExecuting()) => const RootExecuting(),
+        _ => const RootSelection(),
+      },
+      selectionBuilder: (_) => MasterRefillSelectionPanel(allGroups: widget.data?.groups ?? const []),
+      executionBuilder: (_) => MasterRefillExecutionPanel(allGroups: widget.data?.groups ?? const []),
     );
   }
 }

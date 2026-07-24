@@ -4801,5 +4801,47 @@
 "census_error_queueMessage": "Vous pouvez retirer les médicaments du tiroir et continuer, ou terminer le processus ici.",
 "census_error_continueNext": "Continuer",
 "census_error_endProcess": "Terminer",
-"census_label_countQty": "Comptage"
+"census_label_countQty": "Comptage",
+"intake_screenTitle": "Prise de Médicament",
+"intake_phase_patientLabel": "Sélection du Patient",
+"intake_phase_medicineLabel": "Sélection des Médicaments",
+"intake_phase_executingLabel": "Processus de Prise",
+"patientPicker_roomLabel": "Chambre {room}",
+"patientPicker_bedLabel": "Lit {bed}",
+"intake_label_countFieldLabelIndexed": "Comptage {index} ({unit})",
+"patientListPanel_filter_patientStatusLabel": "Statut du Patient",
+"patientListPanel_filter_orderStatusLabel": "Statut de Commande",
+"masterDrawer_status_devicePreparingTitle": "Préparation",
+"masterDrawer_status_devicePreparingSubtitle": "Le système se prépare. Veuillez patienter un instant.",
+
+"masterDrawer_status_lockOpeningTitle": "Déverrouillage",
+"masterDrawer_status_lockOpeningSubtitle": "Le verrou du tiroir s'ouvre. Veuillez patienter un instant.",
+
+"masterDrawer_status_waitingPullTitle": "Veuillez Tirer le Tiroir",
+"masterDrawer_status_waitingPullSubtitle": "Le verrou a été libéré. Tirez le tiroir pour l'ouvrir et continuer.",
+
+"masterDrawer_status_openingLidTitle": "Ouverture du Compartiment",
+"masterDrawer_status_openingLidSubtitle": "Le couvercle du compartiment s'ouvre. Veuillez patienter un instant.",
+
+"masterDrawer_status_waitingCloseTitle": "Veuillez Fermer le Tiroir",
+"masterDrawer_status_waitingCloseSubtitle": "Fermez le tiroir pour passer à l'étape suivante.",
+
+"masterDrawer_status_failedTitle": "Un Problème est Survenu",
+"masterDrawer_status_failedSubtitle": "Veuillez patienter, l'état du tiroir est en cours de vérification.",
+
+"masterDrawer_status_openingTitle": "Ouverture du Tiroir",
+"masterDrawer_status_openingSubtitle": "Le tiroir s'ouvre. Veuillez patienter un instant.",
+
+"masterDrawer_stop_waitingCloseTitle": "Veuillez Fermer le Tiroir Ouvert",
+"masterDrawer_stop_waitingCloseSubtitle": "Veuillez fermer le tiroir ouvert. Le processus s'arrêtera une fois celui-ci fermé.",
+"intake_label_queueProgress": "Tiroir {done}/{total}",
+
+"intake_action_stop": "Arrêter",
+
+"intake_stop_confirmTitle": "Arrêter la Prise ?",
+
+"intake_stop_confirmMessage": "Le processus de prise en cours sera arrêté. Les tiroirs terminés seront conservés.",
+
+"intake_stop_confirmYes": "Oui, Arrêter",
+"intake_hint_mergedFromMultiplePrescriptions": "{count, plural, one{Combiné à partir de {count} prescription} other{Combiné à partir de {count} prescriptions}}"
 }

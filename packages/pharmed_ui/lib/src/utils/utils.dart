@@ -3,3 +3,5 @@ export 'formatters.dart';
 export 'icon_from_unicode.dart';
 export 'message_utils.dart';
 export 'show_loading.dart';
+export 'horizontal_mouse_scrollable.dart';
+export 'filter_field.dart';

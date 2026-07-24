@@ -91,7 +91,7 @@ class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
-    return TwoColumnLayout(
+    return CabinOperationPanelLayout(
       menuItem: widget.menu,
       leftTitle: context.l10n.common_patientListTitle,
       leftSubtitle: context.l10n.common_patientCountSubtitle(state.allPatients.length),
@@ -152,7 +152,7 @@ class _AllPatientsPanel extends StatelessWidget {
 
                     return Opacity(
                       opacity: isAlreadyMine ? 0.4 : 1.0,
-                      child: HospitalizationCard(
+                      child: PatientSelectionCard(
                         hospitalization: h,
                         onTap: () {},
                         showChevron: false,
@@ -202,7 +202,7 @@ class _MyPatientsPanel extends StatelessWidget {
                     final hospId = h.id;
                     final isPending = hospId != null && state.isPending(hospId);
 
-                    return HospitalizationCard(
+                    return PatientSelectionCard(
                       hospitalization: h,
                       onTap: () {},
                       showChevron: false,

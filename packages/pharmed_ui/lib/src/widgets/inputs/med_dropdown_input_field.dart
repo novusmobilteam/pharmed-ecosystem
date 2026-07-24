@@ -68,6 +68,7 @@ class _MedDropdownInputFieldState<T> extends State<MedDropdownInputField<T>> {
             builder: (context, constraints) {
               return PopupMenuButton<Object>(
                 enabled: widget.enabled,
+                color: Colors.white,
                 initialValue: _toMenuValue(value),
                 onSelected: (Object selected) {
                   final newValue = _fromMenuValue(selected);

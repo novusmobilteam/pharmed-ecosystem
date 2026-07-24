@@ -74,6 +74,29 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     state = s.copyWith(selectedUnitIds: next);
   }
 
+  /// Bir çekmecenin TÜM ilaçlarını toggle eder — sol taraftaki
+  /// CabinDrawerSelectionGuide'a dokunma.
+  void toggleDrawer(DrawerGroup group) {
+    final s = state;
+    if (s is! MasterRefillSelection) return;
+
+    final unitIdsInGroup = group.units.map((u) => u.id).whereType<int>().toSet();
+    final drawerAssignmentUnitIds = s.medicines
+        .where((a) => a.cabinDrawerId != null && unitIdsInGroup.contains(a.cabinDrawerId))
+        .map((a) => a.cabinDrawerId!)
+        .toSet();
+    if (drawerAssignmentUnitIds.isEmpty) return;
+
+    final allAlreadySelected = drawerAssignmentUnitIds.every(s.selectedUnitIds.contains);
+    final next = Set<int>.from(s.selectedUnitIds);
+    if (allAlreadySelected) {
+      next.removeAll(drawerAssignmentUnitIds);
+    } else {
+      next.addAll(drawerAssignmentUnitIds);
+    }
+    state = s.copyWith(selectedUnitIds: next);
+  }
+
   /// Bir ilacın tüm gözlerini topluca seçer/çıkarır.
   void toggleMedicine(int medicineId) {
     final s = state;

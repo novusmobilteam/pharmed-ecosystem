@@ -41,6 +41,10 @@ class IntakeItem {
   /// Şahit gereken istasyonların listesi
   final List<Station> stations;
 
+  final bool firstDoseEmergency;
+  final bool askDoctor;
+  final bool inCaseOfNecessity;
+
   IntakeItem({
     required this.id,
     this.dosePiece,
@@ -53,6 +57,9 @@ class IntakeItem {
     this.witnesses = const [],
     this.witness,
     this.stations = const [],
+    this.firstDoseEmergency = false,
+    this.askDoctor = false,
+    this.inCaseOfNecessity = false,
   });
 
   /// İlacın son hareket tipi (kart durum chip'i için).
@@ -65,13 +72,14 @@ class IntakeItem {
     List<Station>? stations,
     MedicineAssignment? assignment,
     PrescriptionItemMovement? lastMovement,
+    PrescriptionItem? prescriptionItem,
   }) {
     return IntakeItem(
       id: id,
       type: type,
       assignment: assignment ?? this.assignment,
       medicine: medicine,
-      prescriptionItem: prescriptionItem,
+      prescriptionItem: prescriptionItem ?? this.prescriptionItem,
       lastMovement: lastMovement ?? this.lastMovement,
       dosePiece: dosePiece ?? this.dosePiece,
       prescriptionDose: prescriptionDose,

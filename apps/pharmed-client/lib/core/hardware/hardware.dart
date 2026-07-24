@@ -11,8 +11,8 @@ export 'cabin/mobile_drawer/mobile_drawer_stage.dart';
 export 'cabin/master_drawer/master_drawer_session_notifier.dart';
 export 'cabin/master_drawer/master_drawer_stage.dart';
 
-export 'patient_gateway/patient_selection_notifier.dart';
-export 'patient_gateway/patient_selection_state.dart';
+export '../../widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_notifier.dart';
+export '../../widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_state.dart';
 
 export 'cabin/sensor/cabin_sensor_notifier.dart';
 export 'cabin/sensor/cabin_sensor_state.dart';

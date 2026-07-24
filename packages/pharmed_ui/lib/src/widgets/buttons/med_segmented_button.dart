@@ -26,7 +26,7 @@ class MedSegmentedButton extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: trackColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: MedRadius.mdAll,
         border: Border.all(color: borderColor, width: 1.5),
       ),
       child: LayoutBuilder(

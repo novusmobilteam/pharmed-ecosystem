@@ -98,12 +98,12 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
       );
     }
 
-    return TwoColumnLayout(
+    return CabinOperationPanelLayout(
       menuItem: widget.menu,
       leftTitle: context.l10n.common_patientListTitle,
       leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
       leftIcon: PhosphorIcons.users(),
-      left: PatientListPanel(
+      left: PatientSelectionGuide(
         patients: state.hospitalizations,
         selectedPatient: state.selectedPatient,
         isPatientLoading: state.isPrescriptionsLoading,
