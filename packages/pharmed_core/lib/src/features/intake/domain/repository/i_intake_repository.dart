@@ -3,7 +3,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 abstract interface class IIntakeRepository {
   // İlaç Alım Ekranı
   // Reçete ID'sine göre alınacakları getirir
-  Future<Result<List<MedicineIntakeItem>>> getIntakeItems({required int hospitalizationId});
+  Future<Result<List<CabinTargetedPrescriptionItem>>> getIntakeItems({required int hospitalizationId});
 
   /// İlaç Alım İşlemi - Kontrol
   /// Alım yaparken önce alım türüne göre (IntakeType) alım işlemini kontrol

@@ -91,11 +91,7 @@ class _CabinStockBodyViewState extends ConsumerState<_CabinStockBodyView> {
       );
     }
 
-    return CabinOperationPanelLayout(
-      menuItem: widget.menu,
-      leftTitle: context.l10n.common_patientListTitle,
-      leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
-      leftIcon: PhosphorIcons.users(),
+    return CabinOperationSelectionLayout(
       left: PatientSelectionGuide(
         patients: state.hospitalizations,
         selectedPatient: state.selectedPatient,

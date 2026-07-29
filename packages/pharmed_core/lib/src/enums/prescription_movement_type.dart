@@ -264,6 +264,15 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.shortageReported => PhosphorIcons.warningOctagon(PhosphorIconsStyle.fill),
     PrescriptionMovementType.replenishmentPending => PhosphorIcons.package(PhosphorIconsStyle.fill),
   };
+
+  MedTone get movementTone => switch (this) {
+    // TODO: enum değerlerini kendi tipine göre eşle
+    PrescriptionMovementType.purchasePending => MedTone.success, // alım
+    PrescriptionMovementType.filledWaiting => MedTone.info, // dolum
+    PrescriptionMovementType.wastaged => MedTone.warning, // iade
+    PrescriptionMovementType.returned => MedTone.error, // fire/imha
+    _ => MedTone.info,
+  };
 }
 
 extension PrescriptionMovementTypeActions on PrescriptionMovementType {

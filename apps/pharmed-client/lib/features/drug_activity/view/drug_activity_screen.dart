@@ -16,21 +16,16 @@ class DrugActivityScreen extends ConsumerWidget {
     final state = ref.watch(drugActivityNotifierProvider);
     final notifier = ref.read(drugActivityNotifierProvider.notifier);
 
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Scaffold(
-        backgroundColor: MedColors.bg,
-
-        body: switch (state) {
-          DrugActivityLoading() => const Center(child: CircularProgressIndicator()),
-          DrugActivityLoaded(:final items, :final isLoading) => TableView(
-            items: items,
-            isLoading: isLoading,
-            notifier: notifier,
-          ),
-          DrugActivityError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),
-        },
-      ),
+    return Scaffold(
+      body: switch (state) {
+        DrugActivityLoading() => const Center(child: CircularProgressIndicator()),
+        DrugActivityLoaded(:final items, :final isLoading) => TableView(
+          items: items,
+          isLoading: isLoading,
+          notifier: notifier,
+        ),
+        DrugActivityError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),
+      },
     );
   }
 }

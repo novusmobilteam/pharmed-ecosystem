@@ -2,8 +2,6 @@
 // Sınıf: Class B
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../rfid.dart';
-
 class TestRfidConnectionUseCase {
   const TestRfidConnectionUseCase(this._rfidService);
 

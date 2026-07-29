@@ -10,10 +10,22 @@ class StartMasterDrawerSessionUseCase {
   final ScanManagerUseCase _scanManager;
   final ICabinOperationService _cabinOps;
 
-  Stream<DrawerSessionEvent> call({required MedicineAssignment assignment}) async* {
+  /// [requestedQuantity]/[explicitTargetStep]: bkz. calculateAddressFromAssignment.
+  /// İkisi de opsiyonel + varsayılan null/0 — mevcut çağıranlar (dolum/sayım/
+  /// boşaltma) hiçbir şey geçmediği için davranışları DEĞİŞMEZ, her zaman tam
+  /// açılış olur.
+  Stream<DrawerSessionEvent> call({
+    required MedicineAssignment assignment,
+    double requestedQuantity = 0.0,
+    int? explicitTargetStep,
+  }) async* {
     final isKubik = assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
     final isSerum = assignment.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false;
-    final address = calculateAddressFromAssignment(assignment);
+    final address = calculateAddressFromAssignment(
+      assignment,
+      requestedQuantity: requestedQuantity,
+      explicitTargetStep: explicitTargetStep,
+    );
     final portName = assignment.cabin?.comPort?.name;
 
     yield const DrawerOpeningWithStep(step: MasterDrawerOpeningStep.devicePreparing);
@@ -54,7 +66,6 @@ class StartMasterDrawerSessionUseCase {
 
     yield const DrawerWaitingForPull();
 
-    // ── 3. Sensor stream — çekmecenin açılmasını bekle ───────────────────
     final Stream<DrawerPhysicalStatus> sensorStream;
     if (isSerum) {
       sensorStream = _cabinOps.streamMasterSerumDrawerStatus(manager: manager, row: address.row);

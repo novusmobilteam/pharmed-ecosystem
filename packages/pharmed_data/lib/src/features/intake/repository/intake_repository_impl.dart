@@ -4,14 +4,14 @@ import 'package:pharmed_data/pharmed_data.dart';
 class IntakeRepositoryImpl implements IIntakeRepository {
   const IntakeRepositoryImpl({
     required IntakeRemoteDataSource dataSource,
-    required IntakeItemMapper intakeItemMapper,
+    required CabinTargetedRxItemMapper intakeItemMapper,
     required PatientIntakeItemMapper patientIntakeItemMapper,
   }) : _dataSource = dataSource,
        _intakeItemMapper = intakeItemMapper,
        _patientIntakeItemMapper = patientIntakeItemMapper;
 
   final IntakeRemoteDataSource _dataSource;
-  final IntakeItemMapper _intakeItemMapper;
+  final CabinTargetedRxItemMapper _intakeItemMapper;
   final PatientIntakeItemMapper _patientIntakeItemMapper;
 
   @override
@@ -54,7 +54,7 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   }
 
   @override
-  Future<Result<List<MedicineIntakeItem>>> getIntakeItems({required int hospitalizationId}) async {
+  Future<Result<List<CabinTargetedPrescriptionItem>>> getIntakeItems({required int hospitalizationId}) async {
     final res = await _dataSource.getIntakeItems(hospitalizationId: hospitalizationId);
     return res.when(ok: (dtos) => Result.ok(_intakeItemMapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
   }

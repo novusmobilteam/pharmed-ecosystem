@@ -2064,10 +2064,10 @@ abstract class AppLocalizations {
   /// **'No medication removed yet. Cancel the unload?'**
   String get unload_cancelDialog_message;
 
-  /// No description provided for @unload_action_start.
+  /// Button to start the master cabin unload queue after selecting medicines
   ///
   /// In en, this message translates to:
-  /// **'Start unload'**
+  /// **'Start Unloading'**
   String get unload_action_start;
 
   /// No description provided for @unload_action_drawerOpen.
@@ -2100,16 +2100,16 @@ abstract class AppLocalizations {
   /// **'Wasteable/Destructible Medications'**
   String get waste_panel_title;
 
-  /// No description provided for @waste_action_wastage.
+  /// Master waste/destruction screen — segment label and submit button text for the wastage (fire) mode
   ///
   /// In en, this message translates to:
-  /// **'Waste'**
+  /// **'Wastage'**
   String get waste_action_wastage;
 
-  /// No description provided for @waste_action_destruction.
+  /// Master waste/destruction screen — segment label and submit button text for the destruction mode
   ///
   /// In en, this message translates to:
-  /// **'Destroy'**
+  /// **'Destruction'**
   String get waste_action_destruction;
 
   /// No description provided for @wastage_success_title.
@@ -9628,6 +9628,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{Combined from {count} prescription} other{Combined from {count} prescriptions}}'**
   String intake_hint_mergedFromMultiplePrescriptions(num count);
+
+  /// Placeholder text for the medicine search field in the master refund medicine selection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Search medicine'**
+  String get refund_hint_searchMedicine;
+
+  /// Empty-state message shown in the medicine selection panel when no patient has been selected yet, on the master refund screen
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient first'**
+  String get refund_hint_selectPatientFirst;
+
+  /// Empty-state message shown when the selected patient has no refundable medicines
+  ///
+  /// In en, this message translates to:
+  /// **'No refundable medicine found'**
+  String get refund_hint_noMedicineFound;
+
+  /// Button label to start the check/refund process for the selected medicines on the master refund screen
+  ///
+  /// In en, this message translates to:
+  /// **'Start Refund'**
+  String get refund_action_start;
+
+  /// Button label shown in a cubic drawer's refund confirmation form when there are more cells (lids) left to process in the current drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Next Cell'**
+  String get refund_action_nextCell;
+
+  /// Button label shown in the refund confirmation form to confirm and record the refund for the current drawer/cell, shown when it's the last cell or a unit-dose drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Refund'**
+  String get refund_action_completeRefund;
+
+  /// Button label to stop the refund queue mid-execution, on the master refund execution screen
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get refund_action_stop;
+
+  /// Confirmation dialog title shown when the user presses stop during the master refund execution queue
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Refund?'**
+  String get refund_action_stopConfirmTitle;
+
+  /// Confirmation dialog message explaining the consequence of stopping the refund queue mid-execution
+  ///
+  /// In en, this message translates to:
+  /// **'Completed refunds will be kept, remaining drawers will not be processed.'**
+  String get refund_action_stopConfirmMessage;
+
+  /// Confirm button label inside the stop confirmation dialog on the master refund execution screen
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Stop'**
+  String get refund_action_stopConfirmYes;
+
+  /// Label prefix shown before the maximum refundable quantity on a refund medicine card
+  ///
+  /// In en, this message translates to:
+  /// **'Max. Refundable'**
+  String get refund_field_maxAmount;
+
+  /// Label prefix shown before the medicine's return note (Drug.returnNote) on a refund medicine card, if present
+  ///
+  /// In en, this message translates to:
+  /// **'Return Note'**
+  String get refund_field_returnNote;
+
+  /// Status label shown on a refund medicine card while its refund eligibility check is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get refund_status_checking;
+
+  /// Status label shown on a refund medicine card once its refund eligibility check succeeded
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get refund_status_ready;
+
+  /// Fallback status message shown on a refund medicine card when its refund eligibility check fails without a specific server message
+  ///
+  /// In en, this message translates to:
+  /// **'Check failed'**
+  String get refund_status_checkFailed;
+
+  /// Dialog title shown when a hardware/queue error occurs mid-refund, asking the user whether to continue with the next drawer or end the process
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Error'**
+  String get refund_error_queueTitle;
+
+  /// Confirm button label in the refund queue-error dialog, to skip the failed drawer and continue with the next one
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Next'**
+  String get refund_error_continueNext;
+
+  /// Cancel button label in the refund queue-error dialog, to stop the refund queue entirely
+  ///
+  /// In en, this message translates to:
+  /// **'End Process'**
+  String get refund_error_endProcess;
+
+  /// Validation error shown when the user tries to set a refund amount of 0 or less for a medicine on the master refund screen
+  ///
+  /// In en, this message translates to:
+  /// **'Refund amount cannot be 0'**
+  String get refund_error_amountZero;
+
+  /// Validation error shown when the user tries to set a refund amount greater than the medicine's originally received quantity (dosePiece) on the master refund screen
+  ///
+  /// In en, this message translates to:
+  /// **'Refund amount cannot exceed the received amount'**
+  String get refund_error_amountExceedsMax;
+
+  /// Progress label shown at the top of the master refund execution screen, indicating how many drawers have been processed out of the total queue
+  ///
+  /// In en, this message translates to:
+  /// **'{done} / {total} drawers'**
+  String refund_label_progress(int done, int total);
+
+  /// Master waste/destruction screen — search field placeholder for filtering the medicine list
+  ///
+  /// In en, this message translates to:
+  /// **'Search medicine'**
+  String get waste_hint_searchMedicine;
+
+  /// Master waste/destruction screen — empty state message shown in the medicine panel before a patient is selected
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient to continue'**
+  String get waste_hint_selectPatientFirst;
+
+  /// Master waste/destruction screen — empty state message when the selected patient has no disposable items
+  ///
+  /// In en, this message translates to:
+  /// **'No disposable medicine found'**
+  String get waste_hint_noMedicineFound;
+
+  /// Master waste/destruction screen — shows the maximum disposable amount on an item card
+  ///
+  /// In en, this message translates to:
+  /// **'Available amount: {amount}'**
+  String waste_label_availableAmount(String amount);
+
+  /// Shared witness login dialog — title, used by intake and waste/destruction screens
+  ///
+  /// In en, this message translates to:
+  /// **'Witness Verification'**
+  String get witnessDialog_title;
+
+  /// Shared witness login dialog — username field label
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get witnessDialog_usernameLabel;
+
+  /// Shared witness login dialog — validation message when the username field is left empty
+  ///
+  /// In en, this message translates to:
+  /// **'Username is required'**
+  String get witnessDialog_usernameRequired;
+
+  /// Shared witness login dialog — password field label
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get witnessDialog_passwordLabel;
+
+  /// Shared witness login dialog — validation message when the password field is left empty
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get witnessDialog_passwordRequired;
+
+  /// Shared witness login dialog — submit button text
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get witnessDialog_confirmButton;
+
+  /// Shared witness login dialog — info banner shown when the item has no restricted witness list
+  ///
+  /// In en, this message translates to:
+  /// **'Any user may act as a witness for this item.'**
+  String get witnessDialog_anyoneInfo;
+
+  /// Shared witness login dialog — heading above the chip list of users authorized to witness this item
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} authorized witness} other{{count} authorized witnesses}}'**
+  String witnessDialog_authorizedWitnesses(num count);
+
+  /// Shared witness login dialog — error shown when the currently logged-in user tries to log in as the witness
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot witness your own operation.'**
+  String get witnessDialog_error_selfWitness;
+
+  /// Shared witness login dialog — success message after a witness successfully logs in
+  ///
+  /// In en, this message translates to:
+  /// **'{witnessName} confirmed as witness.'**
+  String witnessDialog_success_confirmed(String witnessName);
+
+  /// Inline witness row on an item card — shown when a witness has already been assigned to this item
+  ///
+  /// In en, this message translates to:
+  /// **'Witness: {witnessName}'**
+  String witnessDialog_assignedLabel(String witnessName);
+
+  /// Inline witness row on an item card — shown when this item still needs a witness, tappable to open the witness dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Witness confirmation required'**
+  String get witnessDialog_requiredHint;
+
+  /// Info snackbar shown when an already-selected witness is automatically reused for another item without reopening the dialog
+  ///
+  /// In en, this message translates to:
+  /// **'{witnessName} was automatically assigned as witness for this item.'**
+  String witnessDialog_autoAssigned(String witnessName);
+
+  /// Search field placeholder on the master cabin unload selection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Search medicine or barcode'**
+  String get unload_hint_searchMedicine;
+
+  /// Empty state message when no medicine matches the unload selection list/search
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine found'**
+  String get unload_hint_noMedicineFound;
+
+  /// Button in the unload execution top strip to stop the queue mid-way
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get unload_action_stop;
+
+  /// Footer button label in a cubic unload drawer when the current lid is not the last one, opens the next cell
+  ///
+  /// In en, this message translates to:
+  /// **'Next Cell'**
+  String get unload_action_nextCell;
+
+  /// Footer button label to finish the current drawer's unload: last cubic cell, or unit-dose/standard drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Unloading'**
+  String get unload_action_completeUnloading;
+
+  /// Title of the confirmation dialog shown when the user taps Stop during the unload queue
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Unloading?'**
+  String get unload_stop_confirmTitle;
+
+  /// Body text of the confirmation dialog shown when the user taps Stop during the unload queue
+  ///
+  /// In en, this message translates to:
+  /// **'The remaining drawers in the queue will not be unloaded. Are you sure you want to stop?'**
+  String get unload_stop_confirmMessage;
+
+  /// Confirm button label in the stop-unload confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Stop'**
+  String get unload_stop_confirmYes;
+
+  /// Title of the confirm dialog shown when an unload API/drawer error occurs after the drawer physically closed (isQueueError)
+  ///
+  /// In en, this message translates to:
+  /// **'Unload Failed'**
+  String get unload_error_queueTitle;
+
+  /// Confirm button in the unload queue error dialog: mark current drawer failed and move to the next one
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Next Drawer'**
+  String get unload_error_continueNext;
+
+  /// Cancel button in the unload queue error dialog: stop the queue, keep already completed drawers
+  ///
+  /// In en, this message translates to:
+  /// **'End Process'**
+  String get unload_error_endProcess;
+
+  /// Progress label shown in the unload execution top strip
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {done} of {total}'**
+  String unload_label_queueProgress(int done, int total);
+
+  /// Field label for the counted (current physical) quantity in the master unload execution cell card
+  ///
+  /// In en, this message translates to:
+  /// **'Count'**
+  String get unload_label_countQty;
+
+  /// Field label for the quantity being removed from the cell in the master unload execution cell card
+  ///
+  /// In en, this message translates to:
+  /// **'Unload Qty'**
+  String get unload_label_unloadQty;
+
+  /// Field label for the return quantity shown in the master refund execution cell card
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get refund_label_quantity;
 }
 
 class _AppLocalizationsDelegate

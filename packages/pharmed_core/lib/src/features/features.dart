@@ -37,3 +37,4 @@ export 'prescription_template/prescription_template.dart';
 export 'report/report.dart';
 export 'cabin_temperature/cabin_temperature.dart';
 export 'settings/settings.dart';
+export 'cabin_operation/cabin_operation.dart';

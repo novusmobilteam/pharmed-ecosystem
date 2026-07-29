@@ -5440,4 +5440,193 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get refund_hint_searchMedicine => 'Search medicine';
+
+  @override
+  String get refund_hint_selectPatientFirst => 'Select a patient first';
+
+  @override
+  String get refund_hint_noMedicineFound => 'No refundable medicine found';
+
+  @override
+  String get refund_action_start => 'Start Refund';
+
+  @override
+  String get refund_action_nextCell => 'Next Cell';
+
+  @override
+  String get refund_action_completeRefund => 'Complete Refund';
+
+  @override
+  String get refund_action_stop => 'Stop';
+
+  @override
+  String get refund_action_stopConfirmTitle => 'Stop Refund?';
+
+  @override
+  String get refund_action_stopConfirmMessage =>
+      'Completed refunds will be kept, remaining drawers will not be processed.';
+
+  @override
+  String get refund_action_stopConfirmYes => 'Yes, Stop';
+
+  @override
+  String get refund_field_maxAmount => 'Max. Refundable';
+
+  @override
+  String get refund_field_returnNote => 'Return Note';
+
+  @override
+  String get refund_status_checking => 'Checking...';
+
+  @override
+  String get refund_status_ready => 'Ready';
+
+  @override
+  String get refund_status_checkFailed => 'Check failed';
+
+  @override
+  String get refund_error_queueTitle => 'Refund Error';
+
+  @override
+  String get refund_error_continueNext => 'Continue with Next';
+
+  @override
+  String get refund_error_endProcess => 'End Process';
+
+  @override
+  String get refund_error_amountZero => 'Refund amount cannot be 0';
+
+  @override
+  String get refund_error_amountExceedsMax =>
+      'Refund amount cannot exceed the received amount';
+
+  @override
+  String refund_label_progress(int done, int total) {
+    return '$done / $total drawers';
+  }
+
+  @override
+  String get waste_hint_searchMedicine => 'Search medicine';
+
+  @override
+  String get waste_hint_selectPatientFirst => 'Select a patient to continue';
+
+  @override
+  String get waste_hint_noMedicineFound => 'No disposable medicine found';
+
+  @override
+  String waste_label_availableAmount(String amount) {
+    return 'Available amount: $amount';
+  }
+
+  @override
+  String get witnessDialog_title => 'Witness Verification';
+
+  @override
+  String get witnessDialog_usernameLabel => 'Username';
+
+  @override
+  String get witnessDialog_usernameRequired => 'Username is required';
+
+  @override
+  String get witnessDialog_passwordLabel => 'Password';
+
+  @override
+  String get witnessDialog_passwordRequired => 'Password is required';
+
+  @override
+  String get witnessDialog_confirmButton => 'Confirm';
+
+  @override
+  String get witnessDialog_anyoneInfo =>
+      'Any user may act as a witness for this item.';
+
+  @override
+  String witnessDialog_authorizedWitnesses(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString authorized witnesses',
+      one: '$countString authorized witness',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get witnessDialog_error_selfWitness =>
+      'You cannot witness your own operation.';
+
+  @override
+  String witnessDialog_success_confirmed(String witnessName) {
+    return '$witnessName confirmed as witness.';
+  }
+
+  @override
+  String witnessDialog_assignedLabel(String witnessName) {
+    return 'Witness: $witnessName';
+  }
+
+  @override
+  String get witnessDialog_requiredHint => 'Witness confirmation required';
+
+  @override
+  String witnessDialog_autoAssigned(String witnessName) {
+    return '$witnessName was automatically assigned as witness for this item.';
+  }
+
+  @override
+  String get unload_hint_searchMedicine => 'Search medicine or barcode';
+
+  @override
+  String get unload_hint_noMedicineFound => 'No medicine found';
+
+  @override
+  String get unload_action_stop => 'Stop';
+
+  @override
+  String get unload_action_nextCell => 'Next Cell';
+
+  @override
+  String get unload_action_completeUnloading => 'Complete Unloading';
+
+  @override
+  String get unload_stop_confirmTitle => 'Stop Unloading?';
+
+  @override
+  String get unload_stop_confirmMessage =>
+      'The remaining drawers in the queue will not be unloaded. Are you sure you want to stop?';
+
+  @override
+  String get unload_stop_confirmYes => 'Yes, Stop';
+
+  @override
+  String get unload_error_queueTitle => 'Unload Failed';
+
+  @override
+  String get unload_error_continueNext => 'Continue to Next Drawer';
+
+  @override
+  String get unload_error_endProcess => 'End Process';
+
+  @override
+  String unload_label_queueProgress(int done, int total) {
+    return 'Drawer $done of $total';
+  }
+
+  @override
+  String get unload_label_countQty => 'Count';
+
+  @override
+  String get unload_label_unloadQty => 'Unload Qty';
+
+  @override
+  String get refund_label_quantity => 'Quantity';
 }

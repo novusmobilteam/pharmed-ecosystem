@@ -98,11 +98,7 @@ class _MobileWasteBodyViewState extends ConsumerState<_MobileWasteBodyView> {
       );
     }
 
-    return CabinOperationPanelLayout(
-      menuItem: widget.menu,
-      leftTitle: context.l10n.common_patientListTitle,
-      leftIcon: PhosphorIcons.users(),
-      leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
+    return CabinOperationSelectionLayout(
       left: PatientSelectionGuide(
         patients: state.hospitalizations,
         selectedPatient: state.selectedPatient,

@@ -14,13 +14,22 @@
 // Sıralama: fiziksel konuma göre üstten alta (DrawerSlot.orderNumber) — en az
 // çekmece açılışı ve ergonomik akış.
 //
+// Kısmi açma: her job'un requiredStepNo'su, o job'daki target'ların
+// CheckIntake planında (IntakeDetail.stockId) referans verdiği stokların
+// (CabinStock.cabinDrawerDetail.stepNo) EN DERİNİ olarak hesaplanır — hangi
+// stoktan alınacağı zaten check aşamasında (ordered: servis, orderless/free:
+// FIFO) belirlendiği için burada YENİDEN kümülatif stok hesabı yapılmaz.
+//
 // Saf domain — Flutter bağımsız.
 //
 // Sınıf: Class B
 
+import 'package:collection/collection.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract final class IntakeQueueBuilder {
+  static int? resolveStepNoForTarget(IntakeTarget target) => _resolveRequiredStepNo([target]);
+
   /// [targets] içindeki her hedef bir item'ın alım planıdır. Bunları fiziksel
   /// çekmece bazında gruplayıp sıralı kuyruk döndürür.
   ///
@@ -46,6 +55,7 @@ abstract final class IntakeQueueBuilder {
           cabinDrawerId: physicalId,
           representativeAssignment: jobTargets.first.assignment!,
           targets: jobTargets,
+          requiredStepNo: _resolveRequiredStepNo(jobTargets),
         ),
       );
     });
@@ -75,5 +85,39 @@ abstract final class IntakeQueueBuilder {
     final byOrder = (ua?.orderNo ?? 0).compareTo(ub?.orderNo ?? 0);
     if (byOrder != 0) return byOrder;
     return (ua?.compartmentNo ?? ua?.id ?? 0).compareTo(ub?.compartmentNo ?? ub?.id ?? 0);
+  }
+
+  /// Bir job'daki tüm hedeflerin check planı (IntakeDetail.stockId) üzerinden
+  /// çekmecenin en az kaç göze kadar açılması gerektiğini bulur.
+  ///
+  ///   - Ordered: item.stock zaten CheckIntake'e resolvedStock olarak
+  ///     verilmişti (bkz. CheckIntakeUseCase._resolveDetails) — detail.stockId
+  ///     bu stoğa eşittir, cabinDrawerDetail doğrudan item.stock'tan okunur.
+  ///   - Orderless/free: item.stock null'dur — detail.stockId, FIFO ile
+  ///     assignment.stocks listesinden seçilmiş bir kayda işaret eder, o
+  ///     listede aranır.
+  ///
+  /// Hiçbir detail stepNo'ya çözülemezse null döner — donanım katmanı bu
+  /// durumda tam açılışa düşer (bkz. calculateAddressFromAssignment).
+  static int? _resolveRequiredStepNo(List<IntakeTarget> jobTargets) {
+    int? deepest;
+
+    for (final target in jobTargets) {
+      final assignment = target.assignment;
+      if (assignment == null) continue;
+
+      for (final detail in target.details) {
+        final itemStock = target.item.stock;
+        final stock = (itemStock != null && itemStock.id == detail.stockId)
+            ? itemStock
+            : assignment.stocks?.firstWhereOrNull((s) => s.id == detail.stockId);
+
+        final stepNo = stock?.cabinDrawerDetail?.stepNo;
+        if (stepNo == null) continue;
+        if (deepest == null || stepNo > deepest) deepest = stepNo;
+      }
+    }
+
+    return deepest;
   }
 }

@@ -115,7 +115,7 @@ class EmptyStateWidget extends StatelessWidget {
             // FIX: content.icon kullanılıyor — preset varyantların ikonu
             // artık görünüyor (önceden widget.icon'du, sadece custom'da doluydu).
             Icon(content.icon, size: spec.iconSize, color: MedColors.text3),
-            SizedBox(height: spec.iconBottomGap),
+            SizedBox(height: spec.iconBottomGap / 2),
             Text(
               content.title,
               style: TextStyle(
@@ -127,7 +127,6 @@ class EmptyStateWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             if (hasDescription) ...[
-              SizedBox(height: spec.titleBottomGap),
               Text(
                 content.description,
                 style: MedTextStyles.bodySm(color: MedColors.text3),

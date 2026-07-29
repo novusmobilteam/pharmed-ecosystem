@@ -35,13 +35,14 @@ final class PatientSelectionReady extends PatientSelectionState {
     required this.station,
     required this.viewOrderStatus,
     required this.userOrderStatus,
-    required this.viewType,
+    this.viewType = PatientViewType.allPatients,
     required this.hospitalizations,
     this.selectedService,
     this.filter = PatientFilterType.ordersDue,
     this.search = '',
     this.isFetching = false,
     this.isCreatingUrgent = false,
+    this.showFilters = true,
   });
 
   final Station? station;
@@ -66,6 +67,7 @@ final class PatientSelectionReady extends PatientSelectionState {
   final String search;
   final bool isFetching;
   final bool isCreatingUrgent;
+  final bool showFilters;
 
   // ── Türetilen ──────────────────────────────────────────────────────────
 

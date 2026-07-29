@@ -8,9 +8,6 @@
 //   - openCubicLid() ile kübik çekmecede TEK bir gözün kapağını açar (lid-by-lid)
 //   - reopen / stop API'leri sunar
 //
-// DEĞİŞİKLİK: Kübik lid açma artık burada — start() tüm lid'leri açmaz, sadece
-// ana çekmeceyi açar. Lid'ler feature notifier'ın talebiyle tek tek açılır.
-//
 // Sınıf: Class B
 
 import 'dart:async';
@@ -32,6 +29,8 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
   StreamSubscription<DrawerSessionEvent>? _sensorSub;
 
   MedicineAssignment? _lastAssignment;
+  double _lastRequestedQuantity = 0.0;
+  int? _lastExplicitTargetStep;
 
   StartMasterDrawerSessionUseCase get _startSession => ref.read(startMasterDrawerSessionUseCaseProvider);
   OpenCubicLidUseCase get _openCubicLid => ref.read(openCubicLidUseCaseProvider);
@@ -44,12 +43,20 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
   }
 
   /// Yeni bir çekmece oturumu başlatır (ana çekmece açılır, kübikte lid açılmaz).
-  Future<void> start({required MedicineAssignment assignment}) async {
+  ///
+  /// [requestedQuantity]/[explicitTargetStep]: bkz. StartMasterDrawerSessionUseCase.call.
+  Future<void> start({
+    required MedicineAssignment assignment,
+    double requestedQuantity = 0.0,
+    int? explicitTargetStep,
+  }) async {
     await _cancelAll();
     _lastAssignment = assignment;
+    _lastRequestedQuantity = requestedQuantity;
+    _lastExplicitTargetStep = explicitTargetStep;
 
     _sessionSub = _startSession
-        .call(assignment: assignment)
+        .call(assignment: assignment, requestedQuantity: requestedQuantity, explicitTargetStep: explicitTargetStep)
         .listen(
           _onEvent,
           onError: (e, _) {
@@ -68,10 +75,6 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
   }
 
   /// Kübik çekmecede TEK bir gözün kapağını açar.
-  ///
-  /// [cellAssignment] açılacak göze ait atamadır (kendi orderNo/compartmentNo
-  /// ile lid adresi hesaplanır). Lid kapanma sensörü donanımda olmadığından
-  /// kapanma takip edilmez; akış yazılımsal ilerler.
   Future<void> openCubicLid(MedicineAssignment cellAssignment) async {
     try {
       await _openCubicLid(cellAssignment: cellAssignment);
@@ -91,27 +94,28 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
     }
   }
 
-  /// Kullanıcı dolumu tamamladı — çekmece kapanması bekleniyor.
-  /// Sadece [MasterDrawerOpened] state'inde çağrılabilir.
   void confirmClose() {
     if (state.stage is! MasterDrawerOpened) return;
     state = state.copyWith(stage: const MasterDrawerWaitingForClose());
     _startCloseMonitoring();
   }
 
-  /// Aynı assignment ile oturumu yeniden başlatır.
+  /// Son assignment VE son requestedQuantity/explicitTargetStep ile oturumu
+  /// yeniden başlatır.
   Future<void> reopen() async {
     if (_lastAssignment == null) return;
-    await start(assignment: _lastAssignment!);
+    await start(
+      assignment: _lastAssignment!,
+      requestedQuantity: _lastRequestedQuantity,
+      explicitTargetStep: _lastExplicitTargetStep,
+    );
   }
 
-  /// Oturumu sonlandırır, tüm subscription'ları iptal eder.
   Future<void> stop() async {
     await _cancelAll();
     state = const MasterDrawerSessionState.initial();
   }
 
-  /// [MasterDrawerWaitingForClose] sonrası sensor stream'i başlatır.
   void _startCloseMonitoring() {
     _sensorSub?.cancel();
 
@@ -147,7 +151,6 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
     _sensorSub = null;
   }
 
-  // Event → Stage map
   void _onEvent(DrawerSessionEvent event) {
     final stage = switch (event) {
       DrawerOpeningWithStep(:final step) => MasterDrawerOpening(step: step),

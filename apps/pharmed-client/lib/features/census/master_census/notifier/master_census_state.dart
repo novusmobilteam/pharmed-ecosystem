@@ -21,7 +21,7 @@ final class MasterCensusLoading extends MasterCensusState {
   const MasterCensusLoading();
 }
 
-// ── FAZ 1: Seçim ──────────────────────────────────────────────────────────────
+// ── FAZ 1: Seçim ──────────────────────────────────────────────────────────
 
 final class MasterCensusSelection extends MasterCensusState {
   const MasterCensusSelection({
@@ -32,16 +32,10 @@ final class MasterCensusSelection extends MasterCensusState {
   });
 
   final int cabinId;
-
-  /// NOT: allGroups burada YOK — refill'deki gibi, CabinVisualizerData.groups
-  /// View'dan (widget.data.groups) doğrudan panel'e geçiriliyor, state
-  /// taşımıyor. Böylece kuyruk bitince reload'da groups kaybolma riski de
-  /// hiç oluşmuyor (widget.data ekran açıkken sabit kalıyor).
   final List<MedicineAssignment> medicines;
 
-  /// Sayım için seçilen unit id'leri (cabinDrawerId). Varsayılan: hepsi
-  /// seçili (init() sırasında hesaplanır) — refill'in aksine, sayımda
-  /// "hiç seçim yapmadan devam" tüm kabini saymak anlamına geliyor.
+  /// Varsayılan: hepsi seçili (init() sırasında hesaplanır) — "hiç seçim
+  /// yapmadan devam" tüm kabini saymak anlamına gelir.
   final Set<int> selectedUnitIds;
 
   final String search;
@@ -72,7 +66,7 @@ final class MasterCensusSelection extends MasterCensusState {
   }
 }
 
-// ── FAZ 2: Yürütme ──────────────────────────────────────────────────────────────
+// ── FAZ 2: Yürütme ──────────────────────────────────────────────────────────
 
 final class MasterCensusExecuting extends MasterCensusState {
   const MasterCensusExecuting({
@@ -84,14 +78,15 @@ final class MasterCensusExecuting extends MasterCensusState {
   });
 
   final int cabinId;
-  final List<CensusDrawerJob> jobs;
+  final List<CabinOperationDrawerJob> jobs;
   final int currentIndex;
   final int currentTargetIndex;
   final bool isSaving;
 
-  CensusDrawerJob? get currentJob => (currentIndex >= 0 && currentIndex < jobs.length) ? jobs[currentIndex] : null;
+  CabinOperationDrawerJob? get currentJob =>
+      (currentIndex >= 0 && currentIndex < jobs.length) ? jobs[currentIndex] : null;
 
-  CensusTarget? get currentTarget {
+  CabinOperationTarget? get currentTarget {
     final job = currentJob;
     if (job == null) return null;
     if (currentTargetIndex < 0 || currentTargetIndex >= job.targets.length) return null;
@@ -99,12 +94,12 @@ final class MasterCensusExecuting extends MasterCensusState {
   }
 
   int get totalJobs => jobs.length;
-  int get completedJobs => jobs.where((j) => j.status == CensusJobStatus.completed).length;
+  int get completedJobs => jobs.where((j) => j.status == CabinOperationJobStatus.completed).length;
   bool get isQueueFinished => currentIndex >= jobs.length;
   double get progress => totalJobs == 0 ? 0 : completedJobs / totalJobs;
 
   MasterCensusExecuting copyWith({
-    List<CensusDrawerJob>? jobs,
+    List<CabinOperationDrawerJob>? jobs,
     int? currentIndex,
     int? currentTargetIndex,
     bool? isSaving,
@@ -119,7 +114,7 @@ final class MasterCensusExecuting extends MasterCensusState {
   }
 }
 
-// ── Hata ────────────────────────────────────────────────────────────────────
+// ── Hata ──────────────────────────────────────────────────────────────────
 
 final class MasterCensusError extends MasterCensusState {
   const MasterCensusError({required this.failure, required this.previousState, this.isQueueError = false});
@@ -130,59 +125,14 @@ final class MasterCensusError extends MasterCensusState {
 }
 
 extension MasterCensusExecutingLocationX on MasterCensusExecuting {
-  /// [allGroups] → CabinVisualizerData.groups (tüm kabin çekmeceleri).
-  /// MasterRefillExecutingLocationX.toLocationItems ile birebir aynı mantık.
-  List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) {
-    final jobBySlotId = <int, (int index, CensusDrawerJob job)>{};
-    for (int i = 0; i < jobs.length; i++) {
-      // job.cabinDrawerId zaten CensusQueueBuilder'da doğru fiziksel id
-      // olarak (drawerSlot.id öncelikli) hesaplandı — representativeAssignment
-      // üzerinden tekrar (bazen null gelen) drawerSlotId'ye düşmeye gerek yok.
-      jobBySlotId[jobs[i].cabinDrawerId] = (i, jobs[i]);
-    }
-
-    return allGroups.map((group) {
-      final slotId = group.slot.id;
-      final entry = slotId != null ? jobBySlotId[slotId] : null;
-
-      if (entry == null) {
-        return DrawerQueueItem(group: group, status: DrawerQueueStatus.notInQueue);
-      }
-
-      final (jobIndex, job) = entry;
-      final isActive = jobIndex == currentIndex;
-
-      final status = switch (job.status) {
-        CensusJobStatus.completed => DrawerQueueStatus.completed,
-        CensusJobStatus.failed => DrawerQueueStatus.failed,
-        CensusJobStatus.active => DrawerQueueStatus.active,
-        CensusJobStatus.pending => isActive ? DrawerQueueStatus.active : DrawerQueueStatus.pending,
-      };
-
-      final completedIndexes = <int>{};
-      if (isActive && job.isKubik) {
-        for (int t = 0; t < currentTargetIndex; t++) {
-          completedIndexes.add(t);
-        }
-      }
-
-      final activeUnitIndexes = <int>{};
-      if (!job.isKubik && isActive) {
-        for (final target in job.targets) {
-          final unitId = target.assignment.drawerUnit?.id;
-          if (unitId == null) continue;
-          final idx = group.units.indexWhere((u) => u.id == unitId);
-          if (idx >= 0) activeUnitIndexes.add(idx);
-        }
-      }
-
-      return DrawerQueueItem(
-        group: group,
-        status: status,
-        activeTargetIndex: isActive && job.isKubik ? currentTargetIndex : null,
-        completedTargetIndexes: completedIndexes,
-        activeUnitIndexes: activeUnitIndexes,
-      );
-    }).toList();
-  }
+  List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) => buildCabinExecutionLocationItems(
+    allGroups: allGroups,
+    jobs: jobs,
+    currentIndex: currentIndex,
+    currentTargetIndex: currentTargetIndex,
+    cabinDrawerIdOf: (job) => job.cabinDrawerId,
+    statusOf: (job) => job.status,
+    targetCountOf: (job) => job.targets.length,
+    assignmentAt: (job, i) => job.targets[i].assignment,
+  );
 }

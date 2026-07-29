@@ -71,8 +71,8 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
         MasterRefillError(previousState: MasterRefillExecuting()) => const RootExecuting(),
         _ => const RootSelection(),
       },
-      selectionBuilder: (_) => MasterRefillSelectionPanel(allGroups: widget.data?.groups ?? const []),
-      executionBuilder: (_) => MasterRefillExecutionPanel(allGroups: widget.data?.groups ?? const []),
+      selectionBuilder: (_) => MasterRefillSelectionView(allGroups: widget.data?.groups ?? const []),
+      executionBuilder: (_) => MasterRefillExecutionView(allGroups: widget.data?.groups ?? const []),
     );
   }
 }

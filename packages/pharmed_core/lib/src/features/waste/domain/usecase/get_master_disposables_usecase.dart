@@ -1,5 +1,4 @@
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_data/pharmed_data.dart';
 
 class GetMasterDisposablesUseCase {
   final IWasteRepository _repository;
@@ -7,16 +6,25 @@ class GetMasterDisposablesUseCase {
 
   GetMasterDisposablesUseCase(this._repository, this._medicineRepository);
 
-  Future<Result<List<CabinOperationItem>>> call(int hospitalizationId) async {
+  Future<Result<List<DisposableItem>>> call(int hospitalizationId) async {
     final result = await _repository.getMasterDisposables(hospitalizationId: hospitalizationId);
 
     return result.when(
       ok: (items) async {
-        final List<CabinOperationItem> mapped = [];
+        final List<DisposableItem> mapped = [];
 
         for (final item in items) {
-          var (witnesses, stations) = await _fetchWitnesses(item);
-          mapped.add(item.toCabinOperationItem(witnesses: witnesses, stations: stations));
+          final witnessContext = await _fetchWitnessContext(item);
+          mapped.add(
+            DisposableItem(
+              id: item.id ?? 0,
+              medicine: item.medicine,
+              dosePiece: item.dosePiece ?? 0,
+              hospitalization: item.hospitalization,
+              lastMovement: item.lastMovement,
+              witnessContext: witnessContext,
+            ),
+          );
         }
 
         return Result.ok(mapped);
@@ -27,12 +35,12 @@ class GetMasterDisposablesUseCase {
 
   /// İlacın şahitli imha gerektirip gerektirmediğini kontrol eder.
   /// Gerektiriyorsa şahit kullanıcı ve istasyon listesini çeker.
-  Future<(List<User>, List<Station>)> _fetchWitnesses(PrescriptionItem item) async {
+  Future<WitnessContext> _fetchWitnessContext(PrescriptionItem item) async {
     final medicine = item.medicine;
-    if (medicine == null || medicine is! Drug) return (<User>[], <Station>[]);
+    if (medicine == null || medicine is! Drug) return const WitnessContext();
 
     final drug = medicine;
-    if (!drug.isWastageWitnessedPurchase) return (<User>[], <Station>[]);
+    if (!drug.isWastageWitnessedPurchase) return const WitnessContext();
 
     List<User> witnesses = [];
     List<Station> stations = [];
@@ -46,6 +54,6 @@ class GetMasterDisposablesUseCase {
       },
     );
 
-    return (witnesses, stations);
+    return WitnessContext(witnesses: witnesses, stations: stations);
   }
 }

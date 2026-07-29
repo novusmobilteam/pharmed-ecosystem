@@ -54,19 +54,25 @@ class GetIntakeItemsUseCase {
             return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
           }
 
-          var (witnesses, stations) = await _fetchWitnesses(d.medicine!);
           items.add(
             IntakeItem(
               id: d.id ?? 0,
               type: IntakeType.orderless,
               assignment: d,
               medicine: d.medicine!,
-              witnesses: witnesses,
-              stations: stations,
+              witnessContext: await _fetchWitnessContext(d.medicine!),
             ),
           );
         }
-        return Result.ok(_groupByMedicine(items));
+        // _groupByMedicine KALDIRILDI — aynı ilacın farklı fiziksel çekmecelerdeki
+        // karşılıkları artık ayrı kart olarak gösteriliyor. Gruplama, farklı
+        // assignment'ların stoklarını tek karta sıkıştırıp birini kaybediyordu
+        // (copyWith yalnızca dosePiece'i topluyor, ikinci assignment'ı atıyordu) —
+        // bu da kısmi-açma hesabının (calculateAddressFromAssignment) yanlış
+        // çekmece üzerinden yapılmasına yol açabilirdi. İlaç bazlı gruplama +
+        // "hangi çekmeceden alınacağına biz karar verelim" (SKT öncelikli, FEFO)
+        // ayrı bir iş kalemi — şimdilik kapsam dışı.
+        return Result.ok(items);
       },
       error: Result.error,
     );
@@ -82,20 +88,18 @@ class GetIntakeItemsUseCase {
             return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
           }
 
-          var (witnesses, stations) = await _fetchWitnesses(d.medicine!);
-
           items.add(
             IntakeItem(
               id: d.id ?? 0,
               type: IntakeType.free,
               assignment: d,
               medicine: d.medicine!,
-              witnesses: witnesses,
-              stations: stations,
+              witnessContext: await _fetchWitnessContext(d.medicine!),
             ),
           );
         }
-        return Result.ok(_groupByMedicine(items));
+        // Aynı gerekçe — bkz. _getOrderless.
+        return Result.ok(items);
       },
       error: Result.error,
     );
@@ -141,7 +145,7 @@ class GetIntakeItemsUseCase {
       _assignmentRepository.getCabinAssignments(),
     ]);
 
-    final tasksResult = results[0] as Result<List<MedicineIntakeItem>>;
+    final tasksResult = results[0] as Result<List<CabinTargetedPrescriptionItem>>;
     final assignmentsResult = results[1] as Result<List<MedicineAssignment>>;
 
     if (tasksResult is! Ok || assignmentsResult is! Ok) {
@@ -151,14 +155,12 @@ class GetIntakeItemsUseCase {
     final allTasks = (tasksResult as Ok).value;
     final List<MedicineAssignment> allAssignments = (assignmentsResult as Ok).value;
 
-    for (MedicineIntakeItem task in allTasks) {
-      final assignment = allAssignments.firstWhereOrNull((a) => a.cabinDrawerId == task.cabinAssignment.cabinDrawerId);
+    for (CabinTargetedPrescriptionItem task in allTasks) {
+      final assignment = _resolveAssignment(task, allAssignments);
 
       if (task.medicine == null) {
         return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
       }
-
-      var (witnesses, stations) = await _fetchWitnesses(task.medicine!);
 
       items.add(
         IntakeItem(
@@ -168,13 +170,12 @@ class GetIntakeItemsUseCase {
           medicine: assignment?.medicine ?? task.medicine, // Fallback mekanizması
           dosePiece: task.dosePiece.toDouble(),
           prescriptionDose: task.dosePiece.toDouble(),
-          witnesses: witnesses,
-          stations: stations,
-          prescriptionItem: task.lastMovement?.prescriptionItem,
+          witnessContext: await _fetchWitnessContext(task.medicine!),
           lastMovement: task.lastMovement,
           firstDoseEmergency: task.firstDoseEmergency,
           inCaseOfNecessity: task.inCaseOfNecessity,
           askDoctor: task.askDoctor,
+          stock: task.stock,
         ),
       );
     }
@@ -182,43 +183,46 @@ class GetIntakeItemsUseCase {
     return Result.ok(items);
   }
 
-  Future<(List<User>, List<Station>)> _fetchWitnesses(Medicine medicine) async {
+  /// [task]'ı GÖZE ÖZEL doğru assignment'a eşler.
+  ///
+  /// task.cabinAssignment.cabinDrawerId, materyal+fiziksel-çekmece bazlı bir
+  /// AGREGAT kimliktir (aynı çekmecedeki her göz için AYNI değeri taşır) — bu
+  /// yüzden birden fazla göz aynı materyale sahipse yanlış (her zaman ilk) göze
+  /// eşleşmeye sebep olur. Doğru anahtar task.stock.cabinDrawerDetailId
+  /// (DrawerCell.id, göze özel) — allAssignments'taki her assignment'ın kendi
+  /// cabinDrawerDetail listesinde bu id'yi arayarak GERÇEK gözü buluyoruz.
+  MedicineAssignment? _resolveAssignment(CabinTargetedPrescriptionItem task, List<MedicineAssignment> allAssignments) {
+    final targetDetailId = task.stock?.cabinDrawerDetailId;
+
+    if (targetDetailId != null) {
+      final byDetail = allAssignments.firstWhereOrNull(
+        (a) => a.cabinDrawerDetail?.any((cell) => cell.id == targetDetailId) ?? false,
+      );
+      if (byDetail != null) return byDetail;
+    }
+
+    // Fallback: stok bilgisi yoksa (ör. noCount ilaç, tekil göz) eski davranış.
+    return allAssignments.firstWhereOrNull((a) => a.cabinDrawerId == task.cabinAssignment.cabinDrawerId);
+  }
+
+  Future<WitnessContext> _fetchWitnessContext(Medicine medicine) async {
+    if (!medicine.isDrug) return const WitnessContext();
+
+    final drug = medicine as Drug?;
+    if (!(drug?.isWitnessedPurchase ?? false)) return const WitnessContext();
+
     List<User> witnesses = [];
     List<Station> stations = [];
 
-    if (medicine.isDrug) {
-      final drug = medicine as Drug?;
-      if (drug?.isWitnessedPurchase ?? false) {
-        final res = await _medicineRepository.getDrug(medicine.id ?? 0);
-        res.when(
-          error: Result.error,
-          ok: (data) {
-            witnesses = data?.witnessedPurchaseUsers ?? [];
-            stations = data?.witnessedPurchaseStations ?? [];
-          },
-        );
-      }
-    } else {
-      witnesses = [];
-    }
+    final res = await _medicineRepository.getDrug(medicine.id ?? 0);
+    res.when(
+      error: Result.error,
+      ok: (data) {
+        witnesses = data?.witnessedPurchaseUsers ?? [];
+        stations = data?.witnessedPurchaseStations ?? [];
+      },
+    );
 
-    return (witnesses, stations);
-  }
-
-  List<IntakeItem> _groupByMedicine(List<IntakeItem> items) {
-    final Map<int, IntakeItem> grouped = {};
-
-    for (final item in items) {
-      final medicineId = item.medicine?.id ?? item.id;
-
-      if (grouped.containsKey(medicineId)) {
-        final existing = grouped[medicineId]!;
-        grouped[medicineId] = existing.copyWith(dosePiece: (existing.dosePiece ?? 0) + (item.dosePiece ?? 0));
-      } else {
-        grouped[medicineId] = item;
-      }
-    }
-
-    return grouped.values.toList();
+    return WitnessContext(witnesses: witnesses, stations: stations);
   }
 }

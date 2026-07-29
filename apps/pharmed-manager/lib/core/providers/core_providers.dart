@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../cache/app_settings_cache.dart';
 import '../services/rfid/rfid_service.dart';
 
 class CoreProviders {

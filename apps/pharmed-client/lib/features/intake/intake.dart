@@ -7,9 +7,8 @@ export 'mobile_intake/notifier/mobile_intake_state.dart';
 
 export 'master_intake/notifier/master_intake_notifier.dart';
 export 'master_intake/notifier/master_intake_state.dart';
-export 'master_intake/notifier/intake_check_status.dart';
 
-export 'master_intake/view/execution/master_intake_execution_panel.dart';
-export 'master_intake/view/selection/master_intake_selection_panel.dart';
+export 'master_intake/view/master_intake_execution_view.dart';
+export 'master_intake/view/master_intake_selection_view.dart';
 
 export 'master_intake/view/master_intake_view.dart';

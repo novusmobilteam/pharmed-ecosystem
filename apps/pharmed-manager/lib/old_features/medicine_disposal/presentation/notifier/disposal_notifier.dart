@@ -1,213 +1,213 @@
-import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/core.dart';
+// import 'package:flutter/material.dart';
+// import 'package:pharmed_manager/core/core.dart';
 
-enum DisposeType {
-  wastage('Fire'),
-  destruction('İmha');
+// enum DisposeType {
+//   wastage('Fire'),
+//   destruction('İmha');
 
-  final String label;
-  const DisposeType(this.label);
-}
+//   final String label;
+//   const DisposeType(this.label);
+// }
 
-class DisposalNotifier extends ChangeNotifier with ApiRequestMixin {
-  final Hospitalization? _hospitalization;
-  final GetMasterDisposablesUseCase _getDisposablesUseCase;
-  final GetCurrentStationUseCase _getCurrentStationUseCase;
-  final MasterDestructionUseCase _destructionUseCase;
-  final MasterWastageUseCase _wastageUseCase;
+// class DisposalNotifier extends ChangeNotifier with ApiRequestMixin {
+//   final Hospitalization? _hospitalization;
+//   final GetMasterDisposablesUseCase _getDisposablesUseCase;
+//   final GetCurrentStationUseCase _getCurrentStationUseCase;
+//   final MasterDestructionUseCase _destructionUseCase;
+//   final MasterWastageUseCase _wastageUseCase;
 
-  /// Doğrulama tamamlandığında (şahit onaylandı veya şahit gerekmiyorsa)
-  /// tetiklenen callback. DisposalInputView bu callback üzerinden açılır.
-  final Future<void> Function(DisposalNotifier notifier) onVerificationCompleted;
+//   /// Doğrulama tamamlandığında (şahit onaylandı veya şahit gerekmiyorsa)
+//   /// tetiklenen callback. DisposalInputView bu callback üzerinden açılır.
+//   final Future<void> Function(DisposalNotifier notifier) onVerificationCompleted;
 
-  DisposalNotifier({
-    required GetMasterDisposablesUseCase getDisposablesUseCase,
-    required GetCurrentStationUseCase getCurrentStationUseCase,
-    required MasterDestructionUseCase destructionUseCase,
-    required MasterWastageUseCase wastageUseCase,
-    required this.onVerificationCompleted,
-    Hospitalization? hospitalization,
-  }) : _getDisposablesUseCase = getDisposablesUseCase,
-       _getCurrentStationUseCase = getCurrentStationUseCase,
-       _destructionUseCase = destructionUseCase,
-       _wastageUseCase = wastageUseCase,
-       _hospitalization = hospitalization;
+//   DisposalNotifier({
+//     required GetMasterDisposablesUseCase getDisposablesUseCase,
+//     required GetCurrentStationUseCase getCurrentStationUseCase,
+//     required MasterDestructionUseCase destructionUseCase,
+//     required MasterWastageUseCase wastageUseCase,
+//     required this.onVerificationCompleted,
+//     Hospitalization? hospitalization,
+//   }) : _getDisposablesUseCase = getDisposablesUseCase,
+//        _getCurrentStationUseCase = getCurrentStationUseCase,
+//        _destructionUseCase = destructionUseCase,
+//        _wastageUseCase = wastageUseCase,
+//        _hospitalization = hospitalization;
 
-  OperationKey fetchOp = OperationKey.fetch();
-  OperationKey fetchStationOp = OperationKey.fetch();
-  OperationKey submitOp = OperationKey.custom('submit');
+//   OperationKey fetchOp = OperationKey.fetch();
+//   OperationKey fetchStationOp = OperationKey.fetch();
+//   OperationKey submitOp = OperationKey.custom('submit');
 
-  bool get isFetching => isLoading(fetchOp);
-  bool get isEmpty => _items.isEmpty;
+//   bool get isFetching => isLoading(fetchOp);
+//   bool get isEmpty => _items.isEmpty;
 
-  Station? _currentStation;
-  Station? get currentStation => _currentStation;
+//   Station? _currentStation;
+//   Station? get currentStation => _currentStation;
 
-  List<CabinOperationItem> _items = [];
-  List<CabinOperationItem> get items => _items;
+//   List<CabinOperationItem> _items = [];
+//   List<CabinOperationItem> get items => _items;
 
-  CabinOperationItem? _selectedItem;
-  CabinOperationItem? get selectedItem => _selectedItem;
+//   CabinOperationItem? _selectedItem;
+//   CabinOperationItem? get selectedItem => _selectedItem;
 
-  Set<int> _completedItemIds = {};
-  Set<int> get completedItemIds => _completedItemIds;
+//   Set<int> _completedItemIds = {};
+//   Set<int> get completedItemIds => _completedItemIds;
 
-  DisposeType _type = DisposeType.wastage;
-  DisposeType get type => _type;
-  int get selectedTypeIndex => DisposeType.values.indexOf(_type);
+//   DisposeType _type = DisposeType.wastage;
+//   DisposeType get type => _type;
+//   int get selectedTypeIndex => DisposeType.values.indexOf(_type);
 
-  double? _disposableAmount;
-  double? get disposableAmount => _disposableAmount ?? _selectedItem?.dosePiece;
+//   double? _disposableAmount;
+//   double? get disposableAmount => _disposableAmount ?? _selectedItem?.dosePiece;
 
-  String get doseUnit => (_selectedItem?.medicine as Drug?)?.doseUnit?.name ?? 'Adet';
+//   String get doseUnit => (_selectedItem?.medicine as Drug?)?.doseUnit?.name ?? 'Adet';
 
-  String? get destructionNote => (_selectedItem?.medicine as Drug?)?.destructionNote;
+//   String? get destructionNote => (_selectedItem?.medicine as Drug?)?.destructionNote;
 
-  void initialize() async {
-    await execute(
-      fetchStationOp,
-      operation: () => _getCurrentStationUseCase.call(),
-      onData: (station) {
-        _currentStation = station;
-        _getDisposables();
-      },
-      onFailed: (_) => _getDisposables(),
-    );
-  }
+//   void initialize() async {
+//     await execute(
+//       fetchStationOp,
+//       operation: () => _getCurrentStationUseCase.call(),
+//       onData: (station) {
+//         _currentStation = station;
+//         _getDisposables();
+//       },
+//       onFailed: (_) => _getDisposables(),
+//     );
+//   }
 
-  void _getDisposables() async {
-    await execute(
-      fetchOp,
-      operation: () => _getDisposablesUseCase.call(_hospitalization?.id ?? 0),
-      onData: (data) {
-        // GetDisposablesUseCase artık List<CabinOperationItem> döndürüyor
-        _items = data;
-        notifyListeners();
-      },
-    );
-  }
+//   void _getDisposables() async {
+//     await execute(
+//       fetchOp,
+//       operation: () => _getDisposablesUseCase.call(_hospitalization?.id ?? 0),
+//       onData: (data) {
+//         // GetDisposablesUseCase artık List<CabinOperationItem> döndürüyor
+//         _items = data;
+//         notifyListeners();
+//       },
+//     );
+//   }
 
-  void selectItem(CabinOperationItem item) {
-    if (_selectedItem?.id == item.id) {
-      _selectedItem = null;
-    } else {
-      _selectedItem = item;
-    }
-    notifyListeners();
-  }
+//   void selectItem(CabinOperationItem item) {
+//     if (_selectedItem?.id == item.id) {
+//       _selectedItem = null;
+//     } else {
+//       _selectedItem = item;
+//     }
+//     notifyListeners();
+//   }
 
-  /// Şahit havuzuna yeni bir kullanıcı ekler.
-  /// WithdrawNotifier.addWitness ile aynı mantık:
-  /// - Seçili item'a doğrudan atar
-  /// - Diğer itemlara witnesses listesi uygunsa otomatik atar
-  void addWitness(CabinOperationItem selectedItem, User user) {
-    _items = _items.map((item) {
-      if (item.id == selectedItem.id) {
-        return item.copyWith(witness: user);
-      }
+//   /// Şahit havuzuna yeni bir kullanıcı ekler.
+//   /// WithdrawNotifier.addWitness ile aynı mantık:
+//   /// - Seçili item'a doğrudan atar
+//   /// - Diğer itemlara witnesses listesi uygunsa otomatik atar
+//   void addWitness(CabinOperationItem selectedItem, User user) {
+//     _items = _items.map((item) {
+//       if (item.id == selectedItem.id) {
+//         return item.copyWith(witness: user);
+//       }
 
-      final canWitness = item.witnesses.isEmpty || item.witnesses.any((w) => w.id == user.id);
+//       final canWitness = item.witnesses.isEmpty || item.witnesses.any((w) => w.id == user.id);
 
-      if (canWitness && item.witness == null) {
-        return item.copyWith(witness: user);
-      }
+//       if (canWitness && item.witness == null) {
+//         return item.copyWith(witness: user);
+//       }
 
-      return item;
-    }).toList();
+//       return item;
+//     }).toList();
 
-    // selectedItem referansını güncelle
-    _selectedItem = _items.firstWhere((i) => i.id == selectedItem.id, orElse: () => selectedItem);
+//     // selectedItem referansını güncelle
+//     _selectedItem = _items.firstWhere((i) => i.id == selectedItem.id, orElse: () => selectedItem);
 
-    notifyListeners();
-  }
+//     notifyListeners();
+//   }
 
-  /// Fire/imha işlemini başlatan metod.
-  /// - İstasyon bu işlem için yetkisizse hata döner.
-  /// - Şahit gerekiyorsa ve henüz atanmamışsa hata döner.
-  /// - Her şey uygunsa [onVerificationCompleted] tetiklenir.
-  void startOperation({Function(String msg)? onFailed}) async {
-    if (_selectedItem == null) return;
+//   /// Fire/imha işlemini başlatan metod.
+//   /// - İstasyon bu işlem için yetkisizse hata döner.
+//   /// - Şahit gerekiyorsa ve henüz atanmamışsa hata döner.
+//   /// - Her şey uygunsa [onVerificationCompleted] tetiklenir.
+//   void startOperation({Function(String msg)? onFailed}) async {
+//     if (_selectedItem == null) return;
 
-    // İstasyon kontrolü
-    final stations = _selectedItem!.stations;
-    final stationAllowed = stations.isEmpty || stations.any((s) => s.id == _currentStation?.id);
+//     // İstasyon kontrolü
+//     final stations = _selectedItem!.stations;
+//     final stationAllowed = stations.isEmpty || stations.any((s) => s.id == _currentStation?.id);
 
-    if (!stationAllowed) {
-      onFailed?.call('Seçili ilaç için istasyonun Fire/İmha yetkisi bulunmamaktadır.');
-      return;
-    }
+//     if (!stationAllowed) {
+//       onFailed?.call('Seçili ilaç için istasyonun Fire/İmha yetkisi bulunmamaktadır.');
+//       return;
+//     }
 
-    // Şahit kontrolü
-    if (_selectedItem!.needsWitness(currentStation: _currentStation) && _selectedItem!.witness == null) {
-      onFailed?.call('Şahit girişi yapılması gerekmektedir.');
-      return;
-    }
+//     // Şahit kontrolü
+//     if (_selectedItem!.needsWitness(currentStation: _currentStation) && _selectedItem!.witness == null) {
+//       onFailed?.call('Şahit girişi yapılması gerekmektedir.');
+//       return;
+//     }
 
-    _disposableAmount = null;
-    await onVerificationCompleted(this);
-  }
+//     _disposableAmount = null;
+//     await onVerificationCompleted(this);
+//   }
 
-  Future<void> submit({Function(String? message)? onSuccess, Function(String? message)? onFailed}) async {
-    if (disposableAmount == null || disposableAmount == 0) {
-      onFailed?.call('Lütfen geçerli bir miktar giriniz.');
-      return;
-    }
+//   Future<void> submit({Function(String? message)? onSuccess, Function(String? message)? onFailed}) async {
+//     if (disposableAmount == null || disposableAmount == 0) {
+//       onFailed?.call('Lütfen geçerli bir miktar giriniz.');
+//       return;
+//     }
 
-    await executeVoid(
-      submitOp,
-      operation: () {
-        if (_type == DisposeType.wastage) {
-          return _wastageUseCase.call(
-            WasteParams(
-              prescriptionItemId: _selectedItem?.id ?? 0,
-              witnessId: _selectedItem?.witness?.id,
-              quantity: disposableAmount ?? 0.0,
-            ),
-          );
-        } else {
-          return _destructionUseCase.call(
-            WasteParams(
-              prescriptionItemId: _selectedItem?.id ?? 0,
-              witnessId: _selectedItem?.witness?.id,
-              quantity: disposableAmount ?? 0.0,
-            ),
-          );
-        }
-      },
-      onSuccess: () {
-        onSuccess?.call('Fire/İmha işlemi başarılı.');
-        if (_selectedItem != null) {
-          _completedItemIds.add(_selectedItem!.id);
-        }
-        _selectedItem = null;
-        _disposableAmount = null;
-        _getDisposables();
-      },
-      onFailed: (error) => onFailed?.call(error.message),
-    );
-  }
+//     await executeVoid(
+//       submitOp,
+//       operation: () {
+//         if (_type == DisposeType.wastage) {
+//           return _wastageUseCase.call(
+//             WasteParams(
+//               prescriptionItemId: _selectedItem?.id ?? 0,
+//               witnessId: _selectedItem?.witness?.id,
+//               quantity: disposableAmount ?? 0.0,
+//             ),
+//           );
+//         } else {
+//           return _destructionUseCase.call(
+//             WasteParams(
+//               prescriptionItemId: _selectedItem?.id ?? 0,
+//               witnessId: _selectedItem?.witness?.id,
+//               quantity: disposableAmount ?? 0.0,
+//             ),
+//           );
+//         }
+//       },
+//       onSuccess: () {
+//         onSuccess?.call('Fire/İmha işlemi başarılı.');
+//         if (_selectedItem != null) {
+//           _completedItemIds.add(_selectedItem!.id);
+//         }
+//         _selectedItem = null;
+//         _disposableAmount = null;
+//         _getDisposables();
+//       },
+//       onFailed: (error) => onFailed?.call(error.message),
+//     );
+//   }
 
-  void changeType(int index) {
-    _type = DisposeType.values.elementAt(index);
-    notifyListeners();
-  }
+//   void changeType(int index) {
+//     _type = DisposeType.values.elementAt(index);
+//     notifyListeners();
+//   }
 
-  void changeAmount(String? value, {Function(String msg)? onFailed}) {
-    if (value == null) return;
-    final parsed = double.tryParse(value);
-    if (parsed == null) return;
+//   void changeAmount(String? value, {Function(String msg)? onFailed}) {
+//     if (value == null) return;
+//     final parsed = double.tryParse(value);
+//     if (parsed == null) return;
 
-    final dosePiece = _selectedItem?.dosePiece;
-    if (parsed > (dosePiece ?? 1000000)) {
-      onFailed?.call('${_type.label} edilecek miktar alım miktarından fazla olamaz.');
-      return;
-    }
-    if (parsed <= 0) {
-      onFailed?.call('Miktar 0 olamaz.');
-      return;
-    }
+//     final dosePiece = _selectedItem?.dosePiece;
+//     if (parsed > (dosePiece ?? 1000000)) {
+//       onFailed?.call('${_type.label} edilecek miktar alım miktarından fazla olamaz.');
+//       return;
+//     }
+//     if (parsed <= 0) {
+//       onFailed?.call('Miktar 0 olamaz.');
+//       return;
+//     }
 
-    _disposableAmount = parsed;
-    notifyListeners();
-  }
-}
+//     _disposableAmount = parsed;
+//     notifyListeners();
+//   }
+// }

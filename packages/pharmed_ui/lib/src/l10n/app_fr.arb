@@ -4843,5 +4843,161 @@
 "intake_stop_confirmMessage": "Le processus de prise en cours sera arrêté. Les tiroirs terminés seront conservés.",
 
 "intake_stop_confirmYes": "Oui, Arrêter",
-"intake_hint_mergedFromMultiplePrescriptions": "{count, plural, one{Combiné à partir de {count} prescription} other{Combiné à partir de {count} prescriptions}}"
+"intake_hint_mergedFromMultiplePrescriptions": "{count, plural, one{Combiné à partir de {count} prescription} other{Combiné à partir de {count} prescriptions}}",
+"refund_hint_searchMedicine": "Rechercher un médicament",
+"refund_hint_selectPatientFirst": "Sélectionnez d'abord un patient",
+"refund_hint_noMedicineFound": "Aucun médicament remboursable trouvé",
+"refund_action_start": "Démarrer le retour",
+"refund_action_nextCell": "Cellule suivante",
+"refund_action_completeRefund": "Terminer le retour",
+"refund_action_stop": "Arrêter",
+"refund_action_stopConfirmTitle": "Arrêter le retour ?",
+"refund_action_stopConfirmMessage": "Les retours terminés seront conservés, les tiroirs restants ne seront pas traités.",
+"refund_action_stopConfirmYes": "Oui, arrêter",
+"refund_field_maxAmount": "Max. remboursable",
+"refund_field_returnNote": "Note de retour",
+"refund_status_checking": "Vérification en cours...",
+"refund_status_ready": "Prêt",
+"refund_status_checkFailed": "Échec de la vérification",
+"refund_error_queueTitle": "Erreur de retour",
+"refund_error_continueNext": "Continuer avec le suivant",
+"refund_error_endProcess": "Terminer le processus",
+"refund_error_amountZero": "Le montant du retour ne peut pas être 0",
+"refund_error_amountExceedsMax": "Le montant du retour ne peut pas dépasser la quantité reçue",
+"refund_label_progress": "{done} / {total} tiroirs",
+"waste_hint_searchMedicine": "Rechercher un médicament",
+"@waste_hint_searchMedicine": {
+  "description": "Master waste/destruction screen — search field placeholder for filtering the medicine list"
+},
+
+"waste_hint_selectPatientFirst": "Sélectionnez un patient pour continuer",
+"@waste_hint_selectPatientFirst": {
+  "description": "Master waste/destruction screen — empty state message shown in the medicine panel before a patient is selected"
+},
+
+"waste_hint_noMedicineFound": "Aucun médicament à jeter/détruire trouvé",
+"@waste_hint_noMedicineFound": {
+  "description": "Master waste/destruction screen — empty state message when the selected patient has no disposable items"
+},
+
+"waste_action_wastage": "Perte",
+"@waste_action_wastage": {
+  "description": "Master waste/destruction screen — segment label and submit button text for the wastage (fire) mode"
+},
+
+"waste_action_destruction": "Destruction",
+"@waste_action_destruction": {
+  "description": "Master waste/destruction screen — segment label and submit button text for the destruction mode"
+},
+
+"waste_label_availableAmount": "Quantité disponible : {amount}",
+"@waste_label_availableAmount": {
+  "description": "Master waste/destruction screen — shows the maximum disposable amount on an item card",
+  "placeholders": {
+    "amount": {
+      "type": "String"
+    }
+  }
+},
+"witnessDialog_title": "Vérification du témoin",
+"@witnessDialog_title": {
+  "description": "Shared witness login dialog — title, used by intake and waste/destruction screens"
+},
+
+"witnessDialog_usernameLabel": "Nom d'utilisateur",
+"@witnessDialog_usernameLabel": {
+  "description": "Shared witness login dialog — username field label"
+},
+
+"witnessDialog_usernameRequired": "Le nom d'utilisateur est requis",
+"@witnessDialog_usernameRequired": {
+  "description": "Shared witness login dialog — validation message when the username field is left empty"
+},
+
+"witnessDialog_passwordLabel": "Mot de passe",
+"@witnessDialog_passwordLabel": {
+  "description": "Shared witness login dialog — password field label"
+},
+
+"witnessDialog_passwordRequired": "Le mot de passe est requis",
+"@witnessDialog_passwordRequired": {
+  "description": "Shared witness login dialog — validation message when the password field is left empty"
+},
+
+"witnessDialog_confirmButton": "Confirmer",
+"@witnessDialog_confirmButton": {
+  "description": "Shared witness login dialog — submit button text"
+},
+
+"witnessDialog_anyoneInfo": "N'importe quel utilisateur peut témoigner pour cet élément.",
+"@witnessDialog_anyoneInfo": {
+  "description": "Shared witness login dialog — info banner shown when the item has no restricted witness list"
+},
+
+"witnessDialog_authorizedWitnesses": "{count, plural, one{{count} témoin autorisé} other{{count} témoins autorisés}}",
+"@witnessDialog_authorizedWitnesses": {
+  "description": "Shared witness login dialog — heading above the chip list of users authorized to witness this item",
+  "placeholders": {
+    "count": {
+      "type": "num",
+      "format": "compact"
+    }
+  }
+},
+
+"witnessDialog_error_selfWitness": "Vous ne pouvez pas témoigner de votre propre opération.",
+"@witnessDialog_error_selfWitness": {
+  "description": "Shared witness login dialog — error shown when the currently logged-in user tries to log in as the witness"
+},
+
+"witnessDialog_success_confirmed": "{witnessName} confirmé comme témoin.",
+"@witnessDialog_success_confirmed": {
+  "description": "Shared witness login dialog — success message after a witness successfully logs in",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+
+"witnessDialog_assignedLabel": "Témoin : {witnessName}",
+"@witnessDialog_assignedLabel": {
+  "description": "Inline witness row on an item card — shown when a witness has already been assigned to this item",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+
+"witnessDialog_requiredHint": "Confirmation du témoin requise",
+"@witnessDialog_requiredHint": {
+  "description": "Inline witness row on an item card — shown when this item still needs a witness, tappable to open the witness dialog"
+},
+
+"witnessDialog_autoAssigned": "{witnessName} a été automatiquement assigné comme témoin pour cet élément.",
+"@witnessDialog_autoAssigned": {
+  "description": "Info snackbar shown when an already-selected witness is automatically reused for another item without reopening the dialog",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+"unload_hint_searchMedicine": "Rechercher un médicament ou un code-barres",
+"unload_hint_noMedicineFound": "Aucun médicament trouvé",
+"unload_action_start": "Démarrer le déchargement",
+"unload_action_stop": "Arrêter",
+"unload_action_nextCell": "Cellule suivante",
+"unload_action_completeUnloading": "Terminer le déchargement",
+"unload_stop_confirmTitle": "Arrêter le déchargement ?",
+"unload_stop_confirmMessage": "Les tiroirs restants dans la file d'attente ne seront pas déchargés. Voulez-vous vraiment arrêter ?",
+"unload_stop_confirmYes": "Oui, arrêter",
+"unload_error_queueTitle": "Échec du déchargement",
+"unload_error_continueNext": "Continuer au tiroir suivant",
+"unload_error_endProcess": "Terminer le processus",
+"unload_label_queueProgress": "Tiroir {done} sur {total}",
+"unload_label_countQty": "Comptage",
+"unload_label_unloadQty": "Qté à retirer",
+"refund_label_quantity": "Quantité"
 }

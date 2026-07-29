@@ -1,7 +1,5 @@
-export 'dto/medicine_intake_item_dto.dart';
 export 'dto/patient_medicine_intake_item_dto.dart';
 
-export 'domain/entity/medicine_intake_item.dart';
 export 'domain/entity/patient_medicine_intake_item.dart';
 export 'domain/entity/intake_item.dart';
 export 'domain/entity/intake_params.dart';
@@ -9,6 +7,8 @@ export 'domain/entity/mobile_intake_params.dart';
 export 'domain/entity/intake_drawer_job.dart';
 export 'domain/entity/intake_target.dart';
 export 'domain/entity/intake_cell_group.dart';
+export 'domain/entity/intake_check_status.dart';
+export 'domain/entity/witness_context.dart';
 
 export 'domain/repository/i_intake_repository.dart';
 export 'domain/usecase/check_intake_usecase.dart';

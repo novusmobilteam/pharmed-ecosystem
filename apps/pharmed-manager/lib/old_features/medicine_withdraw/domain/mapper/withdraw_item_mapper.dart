@@ -1,25 +1,25 @@
-import 'package:pharmed_core/pharmed_core.dart';
+// import 'package:pharmed_core/pharmed_core.dart';
 
-/// WithdrawItem → CabinOperationItem dönüşümü.
-/// Alım akışında kullanılır.
-extension WithdrawItemMapper on IntakeItem {
-  CabinOperationItem toCabinOperationItem() {
-    return CabinOperationItem(
-      id: id,
-      operationType: CabinOperationType.withdraw,
-      medicine: medicine,
-      dosePiece: dosePiece,
-      assignment: assignment,
-      prescriptionItem: prescriptionItem,
-      prescriptionDose: prescriptionDose,
-      withdrawType: type,
-      witnesses: witnesses,
-      stations: stations,
-      witness: witness,
-      // Alımda geçmiş işlem bilgisi yoktur
-      applicationDate: null,
-      applicationUser: null,
-      status: prescriptionItem?.status,
-    );
-  }
-}
+// /// WithdrawItem → CabinOperationItem dönüşümü.
+// /// Alım akışında kullanılır.
+// extension WithdrawItemMapper on IntakeItem {
+//   CabinOperationItem toCabinOperationItem() {
+//     return CabinOperationItem(
+//       id: id,
+//       operationType: CabinOperationType.withdraw,
+//       medicine: medicine,
+//       dosePiece: dosePiece,
+//       assignment: assignment,
+//       prescriptionItem: prescriptionItem,
+//       prescriptionDose: prescriptionDose,
+//       withdrawType: type,
+//       witnesses: witnesses,
+//       stations: stations,
+//       witness: witness,
+//       // Alımda geçmiş işlem bilgisi yoktur
+//       applicationDate: null,
+//       applicationUser: null,
+//       status: prescriptionItem?.status,
+//     );
+//   }
+// }

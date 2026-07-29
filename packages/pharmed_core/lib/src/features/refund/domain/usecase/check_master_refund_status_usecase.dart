@@ -6,44 +6,46 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:collection/collection.dart';
 
-class CheckRefundStatusParams {
-  const CheckRefundStatusParams({
-    required this.id,
-    required this.quantity,
-    required this.returnType,
-    required this.medicineId,
-  });
-
-  final int id;
-  final double quantity;
-  final ReturnType returnType;
-  final int medicineId;
-}
-
 class CheckMasterRefundStatusUseCase {
   CheckMasterRefundStatusUseCase(this._refundRepository, this._cabinRepository);
 
   final IRefundRepository _refundRepository;
   final ICabinRepository _cabinRepository;
 
-  Future<Result<MedicineIntakeItem?>> call(CheckRefundStatusParams params) async {
-    final checkResult = await _refundRepository.checkMasterRefundStatus(id: params.id, quantity: params.quantity);
+  /// [item]: kullanıcının seçtiği kalem (source zaten dolu). [returnType]/
+  /// [quantity]: kullanıcının bu adımda seçtiği/girdiği değerler.
+  /// Döner: aynı item'ın returnType/returnQuantity/resolvedTarget alanları
+  /// doldurulmuş hâli — hedef göz artık item'ın İÇİNDE, ayrı bir
+  /// MedicineAssignment? dönmüyoruz, çağıran taraf tek bir nesneyle ilgilenir.
+  Future<Result<RefundableItem>> call({
+    required RefundableItem item,
+    required ReturnType returnType,
+    required double quantity,
+  }) async {
+    final checkResult = await _refundRepository.checkMasterRefundStatus(id: item.id, quantity: quantity);
 
     if (checkResult.isError) {
       return Result.error((checkResult as Error).error);
     }
 
-    return switch (params.returnType) {
-      ReturnType.toPharmacy || ReturnType.toReturnBox => Result.ok(null),
-      ReturnType.toDrawer => _handleDrawer(),
-      ReturnType.toOrigin => Result.ok(checkResult.data),
+    final Result<MedicineAssignment?> targetResult = switch (returnType) {
+      ReturnType.toPharmacy => Result.ok(null),
+      ReturnType.toReturnBox || ReturnType.toDrawer => await _handleDrawer(),
+      ReturnType.toOrigin => Result.ok(checkResult.data?.cabinAssignment),
     };
+
+    if (targetResult.isError) {
+      return Result.error((targetResult as Error).error);
+    }
+
+    return Result.ok(
+      item.copyWith(returnQuantity: quantity, returnType: returnType, resolvedTarget: targetResult.data),
+    );
   }
 
-  Future<Result<MedicineIntakeItem?>> _handleDrawer() async {
+  Future<Result<MedicineAssignment?>> _handleDrawer() async {
     final cabinResult = await _cabinRepository.getCabins();
 
-    // RepoResult → veri çıkar (success veya stale), failure → hata döndür
     final cabins = cabinResult.data;
     if (cabins == null) {
       return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
@@ -52,7 +54,7 @@ class CheckMasterRefundStatusUseCase {
     return _findCubicSlot(cabins);
   }
 
-  Future<Result<MedicineIntakeItem?>> _findCubicSlot(List<Cabin> cabins) async {
+  Future<Result<MedicineAssignment?>> _findCubicSlot(List<Cabin> cabins) async {
     if (cabins.isEmpty) {
       return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
     }
@@ -62,8 +64,6 @@ class CheckMasterRefundStatusUseCase {
       if (cabinId == null) continue;
 
       final slotsResult = await _cabinRepository.getCabinSlots(cabinId);
-
-      // RepoResult → veri çıkar (success veya stale), failure → atla
       final slots = slotsResult.data;
       if (slots == null) continue;
 
@@ -71,11 +71,9 @@ class CheckMasterRefundStatusUseCase {
 
       if (cubicSlot != null) {
         return Result.ok(
-          MedicineIntakeItem.empty(
-            MedicineAssignment(
-              drawerUnit: DrawerUnit(drawerSlotId: cubicSlot.id, drawerSlot: cubicSlot),
-              cabin: cabin,
-            ),
+          MedicineAssignment(
+            drawerUnit: DrawerUnit(drawerSlotId: cubicSlot.id, drawerSlot: cubicSlot),
+            cabin: cabin,
           ),
         );
       }

@@ -11,12 +11,11 @@ class DrawerAddress {
     if (port < 1 || port > 8) throw ArgumentError("Port 1-8 arasında olmalı.");
   }
 
-  // Kübik Ana Kilidi için özel bir factory
   factory DrawerAddress.cubicMaster(int row) {
     return DrawerAddress(
       row: row,
-      port: DeviceConstants.masterLockPort, // Sabit Port 1
-      index: DeviceConstants.cubicMasterDrawerId, // Sabit ID 30
+      port: DeviceConstants.masterLockPort,
+      index: DeviceConstants.cubicMasterDrawerId,
       isCubic: true,
     );
   }
@@ -25,7 +24,22 @@ class DrawerAddress {
   String toString() => "Row:$row, Port:$port, Index:$index";
 }
 
-DrawerAddress calculateAddressFromAssignment(MedicineAssignment item, {double requestedQuantity = 0}) {
+/// [explicitTargetStep]: hedef göz ZATEN ÇÖZÜLMÜŞ akışlar için (alım/iade —
+/// CheckIntake/CheckRefund planı hangi stoktan alınacağını/konacağını zaten
+/// belirledi). Verildiğinde [_calculatePartialStep]'in kümülatif stok
+/// toplama mantığına HİÇ girilmez — bu iki farklı "hedef göz kararı"
+/// mekanizmasının (FIFO burada vs FIFO check'te) çakışmasını/tekrar
+/// hesaplanmasını önlemek için kasıtlı bir kısayoldur.
+///
+/// [requestedQuantity]: hedef göz henüz çözülmemiş akışlar için (dolumda
+/// hiç kullanılmaz — sabit 0, tam açılış; orderless/free alımda ileride
+/// kullanılacak — kullanıcı miktar girer, sistem kümülatif stoktan göz
+/// hesaplar).
+DrawerAddress calculateAddressFromAssignment(
+  MedicineAssignment item, {
+  double requestedQuantity = 0,
+  int? explicitTargetStep,
+}) {
   final slot = item.drawerUnit?.drawerSlot;
   final config = slot?.drawerConfig;
 
@@ -38,16 +52,21 @@ DrawerAddress calculateAddressFromAssignment(MedicineAssignment item, {double re
 
   if (isKubik) {
     targetIndex = item.drawerUnit?.orderNo ?? 1;
+  } else if (explicitTargetStep != null) {
+    // Hedef göz zaten çözülmüş (check/FIFO sonucu) — kümülatif hesaba hiç
+    // girilmez, doğrudan bu adıma gidilir.
+    targetIndex = explicitTargetStep;
+  } else if (requestedQuantity > 0 && item.stocks != null && item.cabinDrawerDetail != null) {
+    // KISMİ AÇILMA MANTIĞI (Standart Çekmece) — hedef henüz bilinmiyor,
+    // kümülatif stoktan hesapla.
+    targetIndex = _calculatePartialStep(item, requestedQuantity);
   } else {
-    // KISMİ AÇILMA MANTIĞI (Standart Çekmece)
-    if (requestedQuantity > 0 && item.stocks != null && item.cabinDrawerDetail != null) {
-      targetIndex = _calculatePartialStep(item, requestedQuantity);
-    } else {
-      // Adet belirtilmemişse veya stok verisi yoksa tam aç (eski mantık)
-      final numberOfSteps = config?.numberOfSteps ?? 1;
-      targetIndex = numberOfSteps;
-    }
+    // Adet belirtilmemişse veya stok verisi yoksa tam aç (eski mantık)
+    final numberOfSteps = config?.numberOfSteps ?? 1;
+    targetIndex = numberOfSteps;
+  }
 
+  if (!isKubik) {
     // Donanımın anlayacağı gerçek adım sayısına çevir (step * multiplier)
     targetIndex = targetIndex * stepMultiplier;
     if (targetIndex > 16) targetIndex = 16;
@@ -60,21 +79,18 @@ int _calculatePartialStep(MedicineAssignment item, double requestedQuantity) {
   double accumulatedStock = 0;
   int targetStep = 1;
 
-  // 1. Gözleri stepNo'ya göre sıralıyoruz (1, 2, 3...)
   final sortedDetails = List<DrawerCell>.from(item.cabinDrawerDetail!)
     ..sort((a, b) => (a.stepNo ?? 0).compareTo(b.stepNo ?? 0));
 
   for (var detail in sortedDetails) {
     targetStep = detail.stepNo ?? targetStep;
 
-    // 2. Bu göze ait stok miktarını buluyoruz
     final stockInThisCell = item.stocks!
         .where((s) => s.cabinDrawerDetailId == detail.id)
         .fold<double>(0, (sum, s) => sum + (s.quantity ?? 0));
 
     accumulatedStock += stockInThisCell;
 
-    // 3. İstenen adete ulaştıysak döngüden çıkıyoruz
     if (accumulatedStock >= requestedQuantity) {
       break;
     }

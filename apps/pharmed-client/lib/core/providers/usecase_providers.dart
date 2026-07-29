@@ -401,3 +401,7 @@ final getMasterRefundablesUseCaseProvider = Provider((ref) {
 final checkMasterRefundStatusUseCaseProvider = Provider((ref) {
   return CheckMasterRefundStatusUseCase(ref.read(refundRepositoryProvider), ref.read(cabinRepositoryProvider));
 });
+
+final completeRefundUseCaseProvider = Provider((ref) {
+  return CompleteRefundUseCase(ref.read(refundRepositoryProvider));
+});

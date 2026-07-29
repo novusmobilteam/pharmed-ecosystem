@@ -3,13 +3,13 @@ import 'package:pharmed_data/pharmed_data.dart';
 
 abstract class IRefundRepository {
   // Yatış ID'sine göre master kabinde iade edilebilecekleri getirir
-  Future<Result<List<MedicineIntakeItem>>> getMasterRefundables({required int hospitalizationId});
+  Future<Result<List<CabinTargetedPrescriptionItem>>> getMasterRefundables({required int hospitalizationId});
 
   // Yatış ID'sine göre mobil kabinde iade edilebilecekleri getirir
   Future<Result<List<PrescriptionItem>>> getMobileRefundables({required int hospitalizationId});
 
   // İlgili ilaç için iade durumunu kontrol eder
-  Future<Result<MedicineIntakeItem?>> checkMasterRefundStatus({required int id, required double quantity});
+  Future<Result<CabinTargetedPrescriptionItem?>> checkMasterRefundStatus({required int id, required double quantity});
 
   // İlgili ilaç için iade durumunu kontrol eder
   Future<Result<void>> checkMobileRefundStatus({required int id, required double quantity});

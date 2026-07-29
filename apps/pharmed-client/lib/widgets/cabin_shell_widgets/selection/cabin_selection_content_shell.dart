@@ -51,22 +51,15 @@ class CabinSelectionContentShell extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     if (isLoading) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 12,
-          children: [
-            const CircularProgressIndicator(strokeWidth: 2),
-            if (loadingMessage != null) Text(loadingMessage!, style: MedTextStyles.bodyMd(color: MedColors.text3)),
-          ],
-        ),
-      );
+      return Center(child: MedLoadingIndicator());
     }
 
-    if (isEmpty) {
-      return Center(
-        child: EmptyStateWidget(variant: EmptyStateVariant.noData, title: emptyMessage),
-      );
+    if (isEmpty && searchQuery.isEmpty) {
+      return Center(child: EmptyStateWidget(title: emptyMessage));
+    }
+
+    if (isEmpty && searchQuery.isNotEmpty) {
+      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults));
     }
 
     return content!;
@@ -74,21 +67,16 @@ class CabinSelectionContentShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      padding: MedSpacing.panelInsetPadding,
-      decoration: MedDecoration.panelDecoration,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          ?header,
-          if (header != null) const SizedBox(height: 16.0),
-          CabinOperationSearchField(onChanged: onSearchQueryChanged, hintText: searchHint),
-          const SizedBox(height: 16.0),
-          Expanded(child: _buildBody(context)),
-          if (footer != null) ...[const SizedBox(height: 16.0), footer!],
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ?header,
+        if (header != null) const SizedBox(height: 16.0),
+        CabinOperationSearchField(onChanged: onSearchQueryChanged, hintText: searchHint),
+        const SizedBox(height: 16.0),
+        Expanded(child: _buildBody(context)),
+        if (footer != null) ...[const SizedBox(height: 16.0), footer!],
+      ],
     );
   }
 }

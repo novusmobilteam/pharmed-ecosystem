@@ -29,7 +29,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
@@ -229,15 +228,20 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
     final items = s.items.map((item) {
       // Hedef kalem → doğrudan ata.
-      if (item.id == itemId) return item.copyWith(witness: user);
+      if (item.id == itemId) {
+        return item.copyWith(witnessContext: item.witnessContext.copyWith(witness: user));
+      }
 
       // Sadece seçili ve henüz şahidi olmayan kalemlere yay.
       final isSelected = s.selectedItemIds.contains(item.id);
-      if (!isSelected || item.witness != null) return item;
+      if (!isSelected || item.witnessContext.witness != null) return item;
 
       // user bu kaleme şahit olabilir mi?
-      final canWitness = item.witnesses.isEmpty || item.witnesses.any((w) => w.id == user.id);
-      if (canWitness) return item.copyWith(witness: user);
+      final canWitness =
+          item.witnessContext.witnesses.isEmpty || item.witnessContext.witnesses.any((w) => w.id == user.id);
+      if (canWitness) {
+        return item.copyWith(witnessContext: item.witnessContext.copyWith(witness: user));
+      }
 
       return item;
     }).toList();
@@ -261,16 +265,16 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     // Hâlihazırda seçili kalemlere atanmış tüm şahitler arasında ara.
     for (final item in s.items) {
       if (!s.selectedItemIds.contains(item.id)) continue;
-      final w = item.witness;
+      final w = item.witnessContext.witness;
       if (w == null) continue;
       if (currentUserId != null && w.id == currentUserId) continue;
 
-      final canWitness = target.witnesses.isEmpty || target.witnesses.any((x) => x.id == w.id);
+      final targetWitnesses = target.witnessContext.witnesses;
+      final canWitness = targetWitnesses.isEmpty || targetWitnesses.any((x) => x.id == w.id);
       if (canWitness) return w;
     }
     return null;
   }
-
   // ── FAZ 3: Toplu Check → Kuyruk ─────────────────────────────────────────
 
   /// "Alıma Başla" — seçili kalemleri toplu check eder, kuyruğu kurar, ilk
@@ -281,9 +285,8 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
     final selected = s.selectedItems;
 
-    // 1. Şahit kontrolü.
     final missingWitness = selected.firstWhereOrNull(
-      (it) => it.needsWitness(currentStation: _currentStation) && it.witness == null,
+      (it) => it.needsWitness(currentStation: _currentStation) && it.witnessContext.witness == null,
     );
     if (missingWitness != null) {
       state = MasterIntakeError(
@@ -292,68 +295,36 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       );
       return;
     }
-    // 2. Toplu check — UI kilitlenir.
+
     state = s.copyWith(isChecking: true);
     final userId = ref.read(authNotifierProvider.notifier).currentUser?.id ?? 0;
 
-    final targets = <IntakeTarget>[];
-    final statuses = Map<int, IntakeCheckStatus>.from(s.checkStatuses);
+    final batchResult = await _checkIntake.callBatch(
+      type: _type,
+      userId: userId,
+      hospitalizationId: _hospitalizationId,
+      items: selected,
+      onItemStatusChanged: (itemId, status) {
+        final current = state;
+        if (current is! MasterIntakeMedicineSelection) return;
+        final statuses = Map<int, IntakeCheckStatus>.from(current.checkStatuses)..[itemId] = status;
+        state = current.copyWith(isChecking: true, checkStatuses: statuses);
+      },
+    );
 
-    for (final item in selected) {
-      statuses[item.id] = const CheckLoading();
-      state = s.copyWith(isChecking: true, checkStatuses: statuses);
-
-      final result = await _checkIntake.call(
-        CheckIntakeParams(
-          type: _type,
-          userId: userId,
-          hospitalizationId: _hospitalizationId,
-          prescriptionDetailId: item.prescriptionItem?.id,
-          assignment: item.assignment ?? MedicineAssignment(),
-          dosePiece: item.dosePiece ?? 0,
-        ),
-      );
-
-      var failed = false;
-      String? failMsg;
-      result.when(
-        ok: (details) {
-          statuses[item.id] = const CheckSuccess();
-          targets.add(IntakeTarget(item: item, details: _prepareCounting(item, details)));
-        },
-        error: (e) {
-          failed = true;
-          failMsg = e.message;
-          statuses[item.id] = CheckFailed(message: e.message);
-        },
-      );
-
-      // Bir kalem check'te düşerse: o kalemi seçimden çıkar, diğerleriyle devam et.
-      if (failed) {
-        MedLogger.error(
-          unit: 'MasterIntakeNotifier',
-          swreq: 'SWREQ-CLI-MINTAKE-002',
-          message: 'Kalem check başarısız, kuyruğa alınmadı',
-          context: {'itemId': item.id, 'error': failMsg},
-        );
-      }
-    }
-
-    // Hiç geçerli hedef yoksa hata göster, MedicineSelection'a dön.
-    if (targets.isEmpty) {
+    if (batchResult.targets.isEmpty) {
       state = MasterIntakeError(
         failure: const CabinValidationFailure(reason: CabinValidationReason.noValidTargets),
-        previousState: s.copyWith(isChecking: false, checkStatuses: statuses),
+        previousState: s.copyWith(isChecking: false, checkStatuses: batchResult.statuses),
       );
       return;
     }
 
-    // 3. Kuyruğu kur.
-    final jobs = IntakeQueueBuilder.build(targets);
+    final jobs = IntakeQueueBuilder.build(batchResult.targets);
     if (jobs.isEmpty) {
       state = MasterIntakeError(
         failure: const CabinValidationFailure(reason: CabinValidationReason.noDrawerFound),
-        previousState: s.copyWith(isChecking: false, checkStatuses: statuses),
+        previousState: s.copyWith(isChecking: false, checkStatuses: batchResult.statuses),
       );
       return;
     }
@@ -365,35 +336,34 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       jobs: jobs,
       currentIndex: 0,
     );
-    await _openCurrentJob();
+    await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
 
-  /// CountType'a göre IntakeDetail başlangıç sayım değerlerini belirler.
-  List<IntakeDetail> _prepareCounting(IntakeItem item, List<IntakeDetail> details) {
-    final drug = item.medicine as Drug?;
-    final countType = drug?.countType;
-
-    for (final detail in details) {
-      if (countType == CountType.normalCount) {
-        final rawStock =
-            item.assignment?.stocks?.firstWhereOrNull((s) => s.id == detail.stockId)?.quantity?.toDouble() ?? 0.0;
-        detail.censusQuantity = item.assignment?.toDisplayQuantity(rawStock) ?? rawStock;
-      } else {
-        // noCount + blindCount: boş başlar.
-        detail.censusQuantity = null;
-      }
-    }
-    return details;
-  }
-
-  Future<void> _openCurrentJob() async {
+  Future<void> _openJobAt({required int jobIndex, required int targetIndex}) async {
     final s = state;
     if (s is! MasterIntakeExecuting) return;
-    final job = s.currentJob;
-    if (job == null) return;
+    if (jobIndex < 0 || jobIndex >= s.jobs.length) return;
+    final job = s.jobs[jobIndex];
 
-    state = s.copyWith(jobs: _withStatus(s.jobs, s.currentIndex, RefillJobStatus.active), currentTargetIndex: 0);
-    await _orchestrator.open(assignment: job.representativeAssignment);
+    state = s.copyWith(
+      jobs: _withStatus(s.jobs, jobIndex, CabinOperationJobStatus.active),
+      currentIndex: jobIndex,
+      currentTargetIndex: targetIndex,
+      isSaving: false,
+    );
+
+    if (job.isKubik) {
+      await _orchestrator.open(assignment: job.representativeAssignment);
+      return;
+    }
+
+    final target = job.targets[targetIndex];
+    final assignment = target.assignment;
+    if (assignment == null) return; // beklenmez — ordered/orderless'ta assignment her zaman resolve edilmiş olmalı
+    await _orchestrator.open(
+      assignment: assignment,
+      explicitTargetStep: IntakeQueueBuilder.resolveStepNoForTarget(target),
+    );
   }
 
   // ── Sayım güncelleme (aktif job içinde) ──────────────────────────────────
@@ -453,23 +423,21 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     final job = s.currentJob;
     if (job == null) return;
 
-    if (!job.isKubik) {
-      if (!job.canComplete) return;
-      _orchestrator.confirmClose();
-      return;
-    }
-
-    // Kübik — aktif gözü kaydet.
     final target = s.currentTarget;
     if (target == null || !target.isValid) return;
 
     state = s.copyWith(isSaving: true);
     final ok = await _saveTarget(target);
     final saved = state;
-    if (saved is! MasterIntakeExecuting) return; // hata → MasterIntakeError'a geçti
+    if (saved is! MasterIntakeExecuting) return;
     if (!ok) return;
 
-    await _advanceCubicLid();
+    if (job.isKubik) {
+      await _advanceCubicLid();
+    } else {
+      state = saved.copyWith(isSaving: false);
+      _orchestrator.confirmClose();
+    }
   }
 
   /// Tek bir hedefin CompleteIntake isteğini atar. Hata olursa state'i
@@ -481,7 +449,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         type: _type,
         prescriptionDetailId: item.prescriptionItem?.id,
         hospitalizationId: _hospitalizationId,
-        userId: item.witness?.id,
+        userId: item.witnessContext.witness?.id,
         details: target.details,
       ),
     );
@@ -558,15 +526,15 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     if (job == null) return;
 
     if (!job.isKubik) {
-      state = s.copyWith(isSaving: true);
-      for (final target in job.targets) {
-        final ok = await _saveTarget(target);
-        if (!ok) return; // hata → MasterIntakeError(isQueueError)
+      final nextTarget = s.currentTargetIndex + 1;
+      if (nextTarget < job.targets.length) {
+        await _orchestrator.stop();
+        await _openJobAt(jobIndex: s.currentIndex, targetIndex: nextTarget);
+        return;
       }
     }
 
-    // Job'ı completed işaretle, orchestrator'ı sıfırla, sıradaki job'a geç.
-    final completedJobs = _withStatus(s.jobs, s.currentIndex, RefillJobStatus.completed);
+    final completedJobs = _withStatus(s.jobs, s.currentIndex, CabinOperationJobStatus.completed);
     final nextIndex = s.currentIndex + 1;
     await _orchestrator.stop();
 
@@ -584,7 +552,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       currentTargetIndex: 0,
       isSaving: false,
     );
-    await _openCurrentJob();
+    await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
   void _onDrawerFailed(MasterDrawerFailure failure, {String? detail}) {
@@ -613,7 +581,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     final prev = s.previousState;
     if (prev is! MasterIntakeExecuting) return;
 
-    final markedJobs = _withStatus(prev.jobs, prev.currentIndex, RefillJobStatus.failed);
+    final markedJobs = _withStatus(prev.jobs, prev.currentIndex, CabinOperationJobStatus.failed);
     final nextIndex = prev.currentIndex + 1;
     await _orchestrator.stop();
 
@@ -630,7 +598,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       currentIndex: nextIndex,
       isSaving: false,
     );
-    await _openCurrentJob();
+    await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
   /// Kuyruk hatası sonrası "Sonlandır": kuyruğu bitir (tamamlananlar korunur).
@@ -671,7 +639,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     await _loadItems(refreshAssignments: false);
   }
 
-  List<IntakeDrawerJob> _withStatus(List<IntakeDrawerJob> jobs, int index, RefillJobStatus status) {
+  List<IntakeDrawerJob> _withStatus(List<IntakeDrawerJob> jobs, int index, CabinOperationJobStatus status) {
     final next = List<IntakeDrawerJob>.from(jobs);
     next[index] = next[index].copyWith(status: status);
     return next;

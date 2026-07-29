@@ -3,6 +3,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
+// KULLANILMIYOR — StartMasterDrawerSessionUseCase.call ile requestedQuantity desteği eklendi, bkz. SWREQ-CLI-CABIN-OP-011. Bu use case'in çağrı noktası kalmadıysa kaldırılmalı
 class OpenDrawerUseCase {
   final ICabinOperationService _service;
 

@@ -6522,5 +6522,318 @@
       "format": "compact"
     }
   }
+},
+
+"refund_hint_searchMedicine": "Search medicine",
+"@refund_hint_searchMedicine": {
+  "description": "Placeholder text for the medicine search field in the master refund medicine selection screen"
+},
+
+"refund_hint_selectPatientFirst": "Select a patient first",
+"@refund_hint_selectPatientFirst": {
+  "description": "Empty-state message shown in the medicine selection panel when no patient has been selected yet, on the master refund screen"
+},
+
+"refund_hint_noMedicineFound": "No refundable medicine found",
+"@refund_hint_noMedicineFound": {
+  "description": "Empty-state message shown when the selected patient has no refundable medicines"
+},
+
+"refund_action_start": "Start Refund",
+"@refund_action_start": {
+  "description": "Button label to start the check/refund process for the selected medicines on the master refund screen"
+},
+
+"refund_action_nextCell": "Next Cell",
+"@refund_action_nextCell": {
+  "description": "Button label shown in a cubic drawer's refund confirmation form when there are more cells (lids) left to process in the current drawer"
+},
+
+"refund_action_completeRefund": "Complete Refund",
+"@refund_action_completeRefund": {
+  "description": "Button label shown in the refund confirmation form to confirm and record the refund for the current drawer/cell, shown when it's the last cell or a unit-dose drawer"
+},
+
+"refund_action_stop": "Stop",
+"@refund_action_stop": {
+  "description": "Button label to stop the refund queue mid-execution, on the master refund execution screen"
+},
+
+"refund_action_stopConfirmTitle": "Stop Refund?",
+"@refund_action_stopConfirmTitle": {
+  "description": "Confirmation dialog title shown when the user presses stop during the master refund execution queue"
+},
+
+"refund_action_stopConfirmMessage": "Completed refunds will be kept, remaining drawers will not be processed.",
+"@refund_action_stopConfirmMessage": {
+  "description": "Confirmation dialog message explaining the consequence of stopping the refund queue mid-execution"
+},
+
+"refund_action_stopConfirmYes": "Yes, Stop",
+"@refund_action_stopConfirmYes": {
+  "description": "Confirm button label inside the stop confirmation dialog on the master refund execution screen"
+},
+
+"refund_field_maxAmount": "Max. Refundable",
+"@refund_field_maxAmount": {
+  "description": "Label prefix shown before the maximum refundable quantity on a refund medicine card"
+},
+
+"refund_field_returnNote": "Return Note",
+"@refund_field_returnNote": {
+  "description": "Label prefix shown before the medicine's return note (Drug.returnNote) on a refund medicine card, if present"
+},
+
+"refund_status_checking": "Checking...",
+"@refund_status_checking": {
+  "description": "Status label shown on a refund medicine card while its refund eligibility check is in progress"
+},
+
+"refund_status_ready": "Ready",
+"@refund_status_ready": {
+  "description": "Status label shown on a refund medicine card once its refund eligibility check succeeded"
+},
+
+"refund_status_checkFailed": "Check failed",
+"@refund_status_checkFailed": {
+  "description": "Fallback status message shown on a refund medicine card when its refund eligibility check fails without a specific server message"
+},
+
+"refund_error_queueTitle": "Refund Error",
+"@refund_error_queueTitle": {
+  "description": "Dialog title shown when a hardware/queue error occurs mid-refund, asking the user whether to continue with the next drawer or end the process"
+},
+
+"refund_error_continueNext": "Continue with Next",
+"@refund_error_continueNext": {
+  "description": "Confirm button label in the refund queue-error dialog, to skip the failed drawer and continue with the next one"
+},
+
+"refund_error_endProcess": "End Process",
+"@refund_error_endProcess": {
+  "description": "Cancel button label in the refund queue-error dialog, to stop the refund queue entirely"
+},
+
+"refund_error_amountZero": "Refund amount cannot be 0",
+"@refund_error_amountZero": {
+  "description": "Validation error shown when the user tries to set a refund amount of 0 or less for a medicine on the master refund screen"
+},
+
+"refund_error_amountExceedsMax": "Refund amount cannot exceed the received amount",
+"@refund_error_amountExceedsMax": {
+  "description": "Validation error shown when the user tries to set a refund amount greater than the medicine's originally received quantity (dosePiece) on the master refund screen"
+},
+
+"refund_label_progress": "{done} / {total} drawers",
+"@refund_label_progress": {
+  "description": "Progress label shown at the top of the master refund execution screen, indicating how many drawers have been processed out of the total queue",
+  "placeholders": {
+    "done": { "type": "int" },
+    "total": { "type": "int" }
+  }
+},
+"waste_hint_searchMedicine": "Search medicine",
+"@waste_hint_searchMedicine": {
+  "description": "Master waste/destruction screen — search field placeholder for filtering the medicine list"
+},
+
+"waste_hint_selectPatientFirst": "Select a patient to continue",
+"@waste_hint_selectPatientFirst": {
+  "description": "Master waste/destruction screen — empty state message shown in the medicine panel before a patient is selected"
+},
+
+"waste_hint_noMedicineFound": "No disposable medicine found",
+"@waste_hint_noMedicineFound": {
+  "description": "Master waste/destruction screen — empty state message when the selected patient has no disposable items"
+},
+
+"waste_action_wastage": "Wastage",
+"@waste_action_wastage": {
+  "description": "Master waste/destruction screen — segment label and submit button text for the wastage (fire) mode"
+},
+
+"waste_action_destruction": "Destruction",
+"@waste_action_destruction": {
+  "description": "Master waste/destruction screen — segment label and submit button text for the destruction mode"
+},
+
+"waste_label_availableAmount": "Available amount: {amount}",
+"@waste_label_availableAmount": {
+  "description": "Master waste/destruction screen — shows the maximum disposable amount on an item card",
+  "placeholders": {
+    "amount": {
+      "type": "String"
+    }
+  }
+},
+"witnessDialog_title": "Witness Verification",
+"@witnessDialog_title": {
+  "description": "Shared witness login dialog — title, used by intake and waste/destruction screens"
+},
+
+"witnessDialog_usernameLabel": "Username",
+"@witnessDialog_usernameLabel": {
+  "description": "Shared witness login dialog — username field label"
+},
+
+"witnessDialog_usernameRequired": "Username is required",
+"@witnessDialog_usernameRequired": {
+  "description": "Shared witness login dialog — validation message when the username field is left empty"
+},
+
+"witnessDialog_passwordLabel": "Password",
+"@witnessDialog_passwordLabel": {
+  "description": "Shared witness login dialog — password field label"
+},
+
+"witnessDialog_passwordRequired": "Password is required",
+"@witnessDialog_passwordRequired": {
+  "description": "Shared witness login dialog — validation message when the password field is left empty"
+},
+
+"witnessDialog_confirmButton": "Confirm",
+"@witnessDialog_confirmButton": {
+  "description": "Shared witness login dialog — submit button text"
+},
+
+"witnessDialog_anyoneInfo": "Any user may act as a witness for this item.",
+"@witnessDialog_anyoneInfo": {
+  "description": "Shared witness login dialog — info banner shown when the item has no restricted witness list"
+},
+
+"witnessDialog_authorizedWitnesses": "{count, plural, one{{count} authorized witness} other{{count} authorized witnesses}}",
+"@witnessDialog_authorizedWitnesses": {
+  "description": "Shared witness login dialog — heading above the chip list of users authorized to witness this item",
+  "placeholders": {
+    "count": {
+      "type": "num",
+      "format": "compact"
+    }
+  }
+},
+
+"witnessDialog_error_selfWitness": "You cannot witness your own operation.",
+"@witnessDialog_error_selfWitness": {
+  "description": "Shared witness login dialog — error shown when the currently logged-in user tries to log in as the witness"
+},
+
+"witnessDialog_success_confirmed": "{witnessName} confirmed as witness.",
+"@witnessDialog_success_confirmed": {
+  "description": "Shared witness login dialog — success message after a witness successfully logs in",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+
+"witnessDialog_assignedLabel": "Witness: {witnessName}",
+"@witnessDialog_assignedLabel": {
+  "description": "Inline witness row on an item card — shown when a witness has already been assigned to this item",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+
+"witnessDialog_requiredHint": "Witness confirmation required",
+"@witnessDialog_requiredHint": {
+  "description": "Inline witness row on an item card — shown when this item still needs a witness, tappable to open the witness dialog"
+},
+
+"witnessDialog_autoAssigned": "{witnessName} was automatically assigned as witness for this item.",
+"@witnessDialog_autoAssigned": {
+  "description": "Info snackbar shown when an already-selected witness is automatically reused for another item without reopening the dialog",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+"unload_hint_searchMedicine": "Search medicine or barcode",
+"@unload_hint_searchMedicine": {
+  "description": "Search field placeholder on the master cabin unload selection screen"
+},
+
+"unload_hint_noMedicineFound": "No medicine found",
+"@unload_hint_noMedicineFound": {
+  "description": "Empty state message when no medicine matches the unload selection list/search"
+},
+
+"unload_action_start": "Start Unloading",
+"@unload_action_start": {
+  "description": "Button to start the master cabin unload queue after selecting medicines"
+},
+
+"unload_action_stop": "Stop",
+"@unload_action_stop": {
+  "description": "Button in the unload execution top strip to stop the queue mid-way"
+},
+
+"unload_action_nextCell": "Next Cell",
+"@unload_action_nextCell": {
+  "description": "Footer button label in a cubic unload drawer when the current lid is not the last one, opens the next cell"
+},
+
+"unload_action_completeUnloading": "Complete Unloading",
+"@unload_action_completeUnloading": {
+  "description": "Footer button label to finish the current drawer's unload: last cubic cell, or unit-dose/standard drawer"
+},
+
+"unload_stop_confirmTitle": "Stop Unloading?",
+"@unload_stop_confirmTitle": {
+  "description": "Title of the confirmation dialog shown when the user taps Stop during the unload queue"
+},
+
+"unload_stop_confirmMessage": "The remaining drawers in the queue will not be unloaded. Are you sure you want to stop?",
+"@unload_stop_confirmMessage": {
+  "description": "Body text of the confirmation dialog shown when the user taps Stop during the unload queue"
+},
+
+"unload_stop_confirmYes": "Yes, Stop",
+"@unload_stop_confirmYes": {
+  "description": "Confirm button label in the stop-unload confirmation dialog"
+},
+
+"unload_error_queueTitle": "Unload Failed",
+"@unload_error_queueTitle": {
+  "description": "Title of the confirm dialog shown when an unload API/drawer error occurs after the drawer physically closed (isQueueError)"
+},
+
+"unload_error_continueNext": "Continue to Next Drawer",
+"@unload_error_continueNext": {
+  "description": "Confirm button in the unload queue error dialog: mark current drawer failed and move to the next one"
+},
+
+"unload_error_endProcess": "End Process",
+"@unload_error_endProcess": {
+  "description": "Cancel button in the unload queue error dialog: stop the queue, keep already completed drawers"
+},
+
+"unload_label_queueProgress": "Drawer {done} of {total}",
+"@unload_label_queueProgress": {
+  "description": "Progress label shown in the unload execution top strip",
+  "placeholders": {
+    "done": {
+      "type": "int"
+    },
+    "total": {
+      "type": "int"
+    }
+  }
+},
+"unload_label_countQty": "Count",
+"@unload_label_countQty": {
+  "description": "Field label for the counted (current physical) quantity in the master unload execution cell card"
+},
+
+"unload_label_unloadQty": "Unload Qty",
+"@unload_label_unloadQty": {
+  "description": "Field label for the quantity being removed from the cell in the master unload execution cell card"
+},
+"refund_label_quantity": "Quantity",
+"@refund_label_quantity": {
+  "description": "Field label for the return quantity shown in the master refund execution cell card"
 }
 }

@@ -78,8 +78,8 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
         MasterIntakeError(previousState: MasterIntakeExecuting()) => const RootExecuting(replacesEverything: true),
         _ => const RootSelection(),
       },
-      selectionBuilder: (_) => const MasterIntakeSelectionPanel(),
-      executionBuilder: (_) => MasterIntakeExecutionPanel(allGroups: widget.data?.groups ?? const []),
+      selectionBuilder: (_) => const MasterIntakeSelectionView(),
+      executionBuilder: (_) => MasterIntakeExecutionView(allGroups: widget.data?.groups ?? const []),
     );
   }
 }

@@ -91,10 +91,7 @@ class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
-    return CabinOperationPanelLayout(
-      menuItem: widget.menu,
-      leftTitle: context.l10n.common_patientListTitle,
-      leftSubtitle: context.l10n.common_patientCountSubtitle(state.allPatients.length),
+    return CabinOperationSelectionLayout(
       left: _AllPatientsPanel(state: state, notifier: notifier),
       right: _MyPatientsPanel(state: state, notifier: notifier),
     );

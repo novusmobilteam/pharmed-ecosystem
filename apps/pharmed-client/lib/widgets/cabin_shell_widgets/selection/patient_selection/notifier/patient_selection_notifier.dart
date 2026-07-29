@@ -26,14 +26,13 @@ final patientSelectionNotifierProvider = NotifierProvider<PatientSelectionNotifi
 class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
   GetCurrentStationUseCase get _getStation => ref.read(getCurrentStationUseCaseProvider);
   GetHospitalizationsByServiceUseCase get _getHospitalizations => ref.read(getHospitalizationsByServiceUseCaseProvider);
+  GetHospitalizationsUseCase get _getHospitalizationsSimple => ref.read(getHospitalizationsUseCaseProvider);
   CreateUrgentPatientUseCase get _createUrgent => ref.read(createUrgentPatientUseCaseProvider);
 
   @override
   PatientSelectionState build() => const PatientSelectionLoading();
 
-  // ── Init ─────────────────────────────────────────────────────────────────
-
-  Future<void> init() async {
+  Future<void> init({bool showFilters = true}) async {
     state = const PatientSelectionLoading();
 
     final stationResult = await _getStation.call();
@@ -51,9 +50,6 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
         ? OrderStatus.orderless
         : OrderStatus.ordered;
 
-    // Varsayılan servis filtresi artık "Tümü" (serviceId 0 / selectedService null).
-    // Eskiden orderless modda ilk servis otomatik seçiliyordu; servis ve filtre
-    // artık birbirinden bağımsız eksenler olduğu için bu otomatik seçim kaldırıldı.
     state = PatientSelectionReady(
       station: station,
       viewOrderStatus: viewOrderStatus,
@@ -61,6 +57,7 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
       viewType: PatientViewType.allPatients,
       hospitalizations: const [],
       selectedService: null,
+      showFilters: showFilters,
     );
 
     await _fetchPatients();
@@ -75,19 +72,24 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
     if (s is! PatientSelectionReady) return;
 
     state = s.copyWith(isFetching: true);
-    final result = await _getHospitalizations.call(
-      serviceId: s.selectedService?.id ?? 0,
-      filter: s.filter,
-      myPatients: s.viewType == PatientViewType.myPatients,
-    );
+
+    final Result<List<Hospitalization>> result;
+    if (s.showFilters) {
+      result = await _getHospitalizations.call(
+        serviceId: s.selectedService?.id ?? 0,
+        filter: s.filter,
+        myPatients: s.viewType == PatientViewType.myPatients,
+      );
+    } else {
+      final apiResult = await _getHospitalizationsSimple.call(const PagedQueryParams());
+      result = apiResult.when(ok: (response) => Result.ok(response.data ?? const []), error: (e) => Result.error(e));
+    }
+
     final cur = state;
     if (cur is! PatientSelectionReady) return;
 
     result.when(
       ok: (data) {
-        // NOT: acil hastaları orderless listeden dışlama davranışı eski
-        // ayrı-endpoint döneminden kalma bir kural — API artık birleşik
-        // olduğu için bunun hâlâ gerekli olup olmadığını teyit etmemiz lazım.
         final filtered = cur.isOrderless ? data.where((d) => !(d.isUrgent)).toList() : data;
         state = cur.copyWith(hospitalizations: filtered, isFetching: false);
       },

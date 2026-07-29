@@ -47,9 +47,13 @@ class MasterDrawerOrchestrator {
   }
 
   /// Verilen [assignment] için yeni bir çekmece oturumu başlatır (ana çekmece).
-  Future<void> open({required MedicineAssignment assignment}) async {
-    await ref.read(masterDrawerSessionProvider.notifier).start(assignment: assignment);
-  }
+  Future<void> open({
+    required MedicineAssignment assignment,
+    double requestedQuantity = 0.0,
+    int? explicitTargetStep,
+  }) => ref
+      .read(masterDrawerSessionProvider.notifier)
+      .start(assignment: assignment, requestedQuantity: requestedQuantity, explicitTargetStep: explicitTargetStep);
 
   /// Kübik çekmecede tek bir gözün kapağını açar (lid-by-lid akış).
   Future<void> openCubicLid(MedicineAssignment cellAssignment) async {

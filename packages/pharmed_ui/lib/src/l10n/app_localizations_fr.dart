@@ -1096,7 +1096,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'No medication removed yet. Cancel the unload?';
 
   @override
-  String get unload_action_start => 'Start unload';
+  String get unload_action_start => 'Démarrer le déchargement';
 
   @override
   String get unload_action_drawerOpen => 'Remove medications';
@@ -1114,10 +1114,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get waste_panel_title => 'Wasteable/Destructible Medications';
 
   @override
-  String get waste_action_wastage => 'Waste';
+  String get waste_action_wastage => 'Perte';
 
   @override
-  String get waste_action_destruction => 'Destroy';
+  String get waste_action_destruction => 'Destruction';
 
   @override
   String get wastage_success_title => 'Wastage recorded';
@@ -5535,4 +5535,200 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get refund_hint_searchMedicine => 'Rechercher un médicament';
+
+  @override
+  String get refund_hint_selectPatientFirst =>
+      'Sélectionnez d\'abord un patient';
+
+  @override
+  String get refund_hint_noMedicineFound =>
+      'Aucun médicament remboursable trouvé';
+
+  @override
+  String get refund_action_start => 'Démarrer le retour';
+
+  @override
+  String get refund_action_nextCell => 'Cellule suivante';
+
+  @override
+  String get refund_action_completeRefund => 'Terminer le retour';
+
+  @override
+  String get refund_action_stop => 'Arrêter';
+
+  @override
+  String get refund_action_stopConfirmTitle => 'Arrêter le retour ?';
+
+  @override
+  String get refund_action_stopConfirmMessage =>
+      'Les retours terminés seront conservés, les tiroirs restants ne seront pas traités.';
+
+  @override
+  String get refund_action_stopConfirmYes => 'Oui, arrêter';
+
+  @override
+  String get refund_field_maxAmount => 'Max. remboursable';
+
+  @override
+  String get refund_field_returnNote => 'Note de retour';
+
+  @override
+  String get refund_status_checking => 'Vérification en cours...';
+
+  @override
+  String get refund_status_ready => 'Prêt';
+
+  @override
+  String get refund_status_checkFailed => 'Échec de la vérification';
+
+  @override
+  String get refund_error_queueTitle => 'Erreur de retour';
+
+  @override
+  String get refund_error_continueNext => 'Continuer avec le suivant';
+
+  @override
+  String get refund_error_endProcess => 'Terminer le processus';
+
+  @override
+  String get refund_error_amountZero =>
+      'Le montant du retour ne peut pas être 0';
+
+  @override
+  String get refund_error_amountExceedsMax =>
+      'Le montant du retour ne peut pas dépasser la quantité reçue';
+
+  @override
+  String refund_label_progress(int done, int total) {
+    return '$done / $total tiroirs';
+  }
+
+  @override
+  String get waste_hint_searchMedicine => 'Rechercher un médicament';
+
+  @override
+  String get waste_hint_selectPatientFirst =>
+      'Sélectionnez un patient pour continuer';
+
+  @override
+  String get waste_hint_noMedicineFound =>
+      'Aucun médicament à jeter/détruire trouvé';
+
+  @override
+  String waste_label_availableAmount(String amount) {
+    return 'Quantité disponible : $amount';
+  }
+
+  @override
+  String get witnessDialog_title => 'Vérification du témoin';
+
+  @override
+  String get witnessDialog_usernameLabel => 'Nom d\'utilisateur';
+
+  @override
+  String get witnessDialog_usernameRequired =>
+      'Le nom d\'utilisateur est requis';
+
+  @override
+  String get witnessDialog_passwordLabel => 'Mot de passe';
+
+  @override
+  String get witnessDialog_passwordRequired => 'Le mot de passe est requis';
+
+  @override
+  String get witnessDialog_confirmButton => 'Confirmer';
+
+  @override
+  String get witnessDialog_anyoneInfo =>
+      'N\'importe quel utilisateur peut témoigner pour cet élément.';
+
+  @override
+  String witnessDialog_authorizedWitnesses(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString témoins autorisés',
+      one: '$countString témoin autorisé',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get witnessDialog_error_selfWitness =>
+      'Vous ne pouvez pas témoigner de votre propre opération.';
+
+  @override
+  String witnessDialog_success_confirmed(String witnessName) {
+    return '$witnessName confirmé comme témoin.';
+  }
+
+  @override
+  String witnessDialog_assignedLabel(String witnessName) {
+    return 'Témoin : $witnessName';
+  }
+
+  @override
+  String get witnessDialog_requiredHint => 'Confirmation du témoin requise';
+
+  @override
+  String witnessDialog_autoAssigned(String witnessName) {
+    return '$witnessName a été automatiquement assigné comme témoin pour cet élément.';
+  }
+
+  @override
+  String get unload_hint_searchMedicine =>
+      'Rechercher un médicament ou un code-barres';
+
+  @override
+  String get unload_hint_noMedicineFound => 'Aucun médicament trouvé';
+
+  @override
+  String get unload_action_stop => 'Arrêter';
+
+  @override
+  String get unload_action_nextCell => 'Cellule suivante';
+
+  @override
+  String get unload_action_completeUnloading => 'Terminer le déchargement';
+
+  @override
+  String get unload_stop_confirmTitle => 'Arrêter le déchargement ?';
+
+  @override
+  String get unload_stop_confirmMessage =>
+      'Les tiroirs restants dans la file d\'attente ne seront pas déchargés. Voulez-vous vraiment arrêter ?';
+
+  @override
+  String get unload_stop_confirmYes => 'Oui, arrêter';
+
+  @override
+  String get unload_error_queueTitle => 'Échec du déchargement';
+
+  @override
+  String get unload_error_continueNext => 'Continuer au tiroir suivant';
+
+  @override
+  String get unload_error_endProcess => 'Terminer le processus';
+
+  @override
+  String unload_label_queueProgress(int done, int total) {
+    return 'Tiroir $done sur $total';
+  }
+
+  @override
+  String get unload_label_countQty => 'Comptage';
+
+  @override
+  String get unload_label_unloadQty => 'Qté à retirer';
+
+  @override
+  String get refund_label_quantity => 'Quantité';
 }

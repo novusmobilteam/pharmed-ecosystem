@@ -24,7 +24,8 @@ class IntakeDrawerJob {
     required this.cabinDrawerId,
     required this.representativeAssignment,
     required this.targets,
-    this.status = RefillJobStatus.pending,
+    this.status = CabinOperationJobStatus.pending,
+    this.requiredStepNo,
   });
 
   /// Bu işin açtığı fiziksel çekmecenin id'si (DrawerSlot.id).
@@ -37,7 +38,15 @@ class IntakeDrawerJob {
   final List<IntakeTarget> targets;
 
   /// Kuyruktaki durumu.
-  final RefillJobStatus status;
+  final CabinOperationJobStatus status;
+
+  /// Bu çekmecenin fiziksel olarak en az kaç göze kadar açılması gerektiği —
+  /// job'daki tüm target'ların details'lerinde referans verdiği stokların
+  /// (CabinStock.cabinDrawerDetail.stepNo) en derini. null → hesaplanamadı
+  /// (ör. kübik çekmece — kübikte bu kavram yok, lid-by-lid zaten kendi
+  /// gözünü açıyor) ya da hiçbir detail stepNo taşımıyor; bu durumda
+  /// donanım katmanı tam açılışa düşer.
+  final int? requiredStepNo;
 
   // ── Türetilen ──────────────────────────────────────────────────────────
 
@@ -51,12 +60,13 @@ class IntakeDrawerJob {
   /// Tüm hedefler tamamlamaya hazır mı? (sayım gereken her hedefte sayım girilmiş mi)
   bool get canComplete => targets.every((t) => t.isValid);
 
-  IntakeDrawerJob copyWith({List<IntakeTarget>? targets, RefillJobStatus? status}) {
+  IntakeDrawerJob copyWith({List<IntakeTarget>? targets, CabinOperationJobStatus? status}) {
     return IntakeDrawerJob(
       cabinDrawerId: cabinDrawerId,
       representativeAssignment: representativeAssignment,
       targets: targets ?? this.targets,
       status: status ?? this.status,
+      requiredStepNo: requiredStepNo,
     );
   }
 }

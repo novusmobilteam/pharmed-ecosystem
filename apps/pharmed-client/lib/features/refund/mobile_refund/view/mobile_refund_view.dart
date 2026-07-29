@@ -96,11 +96,7 @@ class _MobileRefundBodyViewState extends ConsumerState<_MobileRefundBodyView> {
       );
     }
 
-    return CabinOperationPanelLayout(
-      menuItem: widget.menu,
-      leftIcon: PhosphorIcons.users(),
-      leftSubtitle: context.l10n.common_patientCountSubtitle(state.hospitalizations.length),
-      leftTitle: context.l10n.common_patientListTitle,
+    return CabinOperationSelectionLayout(
       left: PatientSelectionGuide(
         patients: state.hospitalizations,
         selectedPatient: state.selectedPatient,

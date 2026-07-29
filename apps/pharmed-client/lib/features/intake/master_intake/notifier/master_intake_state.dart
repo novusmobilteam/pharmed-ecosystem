@@ -176,7 +176,7 @@ final class MasterIntakeExecuting extends MasterIntakeState {
   }
 
   int get totalJobs => jobs.length;
-  int get completedJobs => jobs.where((j) => j.status == RefillJobStatus.completed).length;
+  int get completedJobs => jobs.where((j) => j.status == CabinOperationJobStatus.completed).length;
 
   bool get isQueueFinished => currentIndex >= jobs.length;
 
@@ -244,61 +244,16 @@ extension MasterIntakeStateX on MasterIntakeState {
 }
 
 extension MasterIntakeExecutingLocationX on MasterIntakeExecuting {
-  /// [allGroups] → CabinVisualizerData.groups (tüm kabin çekmeceleri)
-  List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) {
-    // Job'ları slotId → job index ile hızlı erişim için index'le.
-    final jobBySlotId = <int, (int index, IntakeDrawerJob job)>{};
-    for (int i = 0; i < jobs.length; i++) {
-      final slotId = jobs[i].representativeAssignment.drawerUnit?.drawerSlotId;
-      if (slotId != null) jobBySlotId[slotId] = (i, jobs[i]);
-    }
-
-    return allGroups.map((group) {
-      final slotId = group.slot.id;
-      final entry = slotId != null ? jobBySlotId[slotId] : null;
-
-      if (entry == null) {
-        // Bu çekmece kuyruğa girmedi.
-        return DrawerQueueItem(group: group, status: DrawerQueueStatus.notInQueue);
-      }
-
-      final (jobIndex, job) = entry;
-      final isActive = jobIndex == currentIndex;
-
-      final status = switch (job.status) {
-        RefillJobStatus.completed => DrawerQueueStatus.completed,
-        RefillJobStatus.failed => DrawerQueueStatus.failed,
-        RefillJobStatus.active => DrawerQueueStatus.active,
-        RefillJobStatus.pending => isActive ? DrawerQueueStatus.active : DrawerQueueStatus.pending,
-      };
-
-      // Kübik: currentTargetIndex öncesindeki lid'ler tamamlandı.
-      final completedIndexes = <int>{};
-      if (isActive && job.isKubik) {
-        for (int t = 0; t < currentTargetIndex; t++) {
-          completedIndexes.add(t);
-        }
-      }
-
-      // Birim doz: hedef unit index'lerini job'daki target assignment'larından türet.
-      // NOT: IntakeTarget.assignment refill'in aksine NULLABLE — null-safe erişim.
-      final activeUnitIndexes = <int>{};
-      if (!job.isKubik && isActive) {
-        for (final target in job.targets) {
-          final unitId = target.assignment?.drawerUnit?.id;
-          if (unitId == null) continue;
-          final idx = group.units.indexWhere((u) => u.id == unitId);
-          if (idx >= 0) activeUnitIndexes.add(idx);
-        }
-      }
-
-      return DrawerQueueItem(
-        group: group,
-        status: status,
-        activeTargetIndex: isActive && job.isKubik ? currentTargetIndex : null,
-        completedTargetIndexes: completedIndexes,
-        activeUnitIndexes: activeUnitIndexes,
-      );
-    }).toList();
-  }
+  List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) => buildCabinExecutionLocationItems(
+    allGroups: allGroups,
+    jobs: jobs,
+    currentIndex: currentIndex,
+    currentTargetIndex: currentTargetIndex,
+    cabinDrawerIdOf: (job) => job.cabinDrawerId,
+    statusOf: (job) => job.status,
+    targetCountOf: (job) => job.targets.length,
+    // IntakeTarget.assignment nullable — assignmentAt zaten MedicineAssignment?
+    // döndürüyor, ekstra bir şey gerekmiyor.
+    assignmentAt: (job, i) => job.targets[i].assignment,
+  );
 }

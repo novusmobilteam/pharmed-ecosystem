@@ -24,6 +24,7 @@ class PatientSelectionPanel extends ConsumerStatefulWidget {
     required this.onPatientSelected,
     required this.selectedPatient,
     this.isLocked = false,
+    this.showFilters = true,
   });
 
   /// Hasta seçildiğinde (veya acil hasta oluşturulduğunda) tetiklenir.
@@ -37,6 +38,11 @@ class PatientSelectionPanel extends ConsumerStatefulWidget {
   /// true iken liste tamamen etkileşimsiz (execution fazı gibi).
   final bool isLocked;
 
+  /// false ise servis/durum/sipariş filtreleri hiç gösterilmez — sadece arama
+  /// ve (varsa) acil hasta oluşturma kalır. İade gibi filtre gerektirmeyen
+  /// ekranlarda kullanılır.
+  final bool showFilters;
+
   @override
   ConsumerState<PatientSelectionPanel> createState() => _PatientSelectionPanelState();
 }
@@ -46,7 +52,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) ref.read(patientSelectionNotifierProvider.notifier).init();
+      if (mounted) ref.read(patientSelectionNotifierProvider.notifier).init(showFilters: widget.showFilters);
     });
   }
 
@@ -83,56 +89,60 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
       onPatientTap: (h) => widget.onPatientSelected(h, ready.isOrderless),
       isLocked: widget.isLocked || ready.isFetching,
       //title: context.l10n.patientSelectionGuide_title,
-      filterFields: [
-        SegmentedFilterField<PatientViewType>(
-          key: 'viewType',
-          label: context.l10n.patientListPanel_filter_patientStatusLabel,
-          initialValue: ready.viewType,
-          options: PatientViewType.values,
-          labelBuilder: (p) => p == PatientViewType.allPatients
-              ? context.l10n.enumCore_patientFilterAll
-              : context.l10n.patientPicker_myPatientsToggleLabel,
-          defaultValue: PatientViewType.allPatients,
-        ),
-        if (ready.isStatusButtonVisible)
-          ToggleFilterField(
-            key: 'isOrdered',
-            label: context.l10n.patientListPanel_filter_orderStatusLabel,
-            initialValue: ready.viewOrderStatus.isOrdered,
-            trueLabel: context.l10n.patientPicker_orderedToggleLabel,
-            falseLabel: context.l10n.patientPicker_orderlessToggleLabel,
-            defaultValue: true,
-          ),
-        DropdownFilterField<HospitalService?>(
-          key: 'service',
-          label: context.l10n.assignment_serviceLabel,
-          initialValue: ready.selectedService,
-          options: [null, ...ready.availableServices],
-          labelBuilder: (s) => s?.name ?? context.l10n.filter_all,
-          defaultValue: null,
-        ),
-        DropdownFilterField<PatientFilterType>(
-          key: 'filter',
-          label: context.l10n.prescriptionDetailStatusLabel,
-          initialValue: ready.filter,
-          options: PatientFilterType.values,
-          labelBuilder: (f) => f?.label,
-          defaultValue: PatientFilterType.all,
-        ),
-      ],
-      onFilterApply: (result) {
-        if (result['viewType'] != ready.viewType) notifier.togglePatientView();
-        if (result['service'] != ready.selectedService) {
-          notifier.toggleService(result['service'] as HospitalService?);
-        }
-        if (result.containsKey('isOrdered') && result['isOrdered'] != ready.viewOrderStatus.isOrdered) {
-          notifier.toggleOrderlessStatus();
-        }
-        if (result['filter'] != ready.filter) {
-          notifier.changeFilter(result['filter'] as PatientFilterType);
-        }
-      },
-      footer: ready.isUrgentPatientButtonVisible
+      filterFields: widget.showFilters
+          ? [
+              SegmentedFilterField<PatientViewType>(
+                key: 'viewType',
+                label: context.l10n.patientListPanel_filter_patientStatusLabel,
+                initialValue: ready.viewType,
+                options: PatientViewType.values,
+                labelBuilder: (p) => p == PatientViewType.allPatients
+                    ? context.l10n.enumCore_patientFilterAll
+                    : context.l10n.patientPicker_myPatientsToggleLabel,
+                defaultValue: PatientViewType.allPatients,
+              ),
+              if (ready.isStatusButtonVisible)
+                ToggleFilterField(
+                  key: 'isOrdered',
+                  label: context.l10n.patientListPanel_filter_orderStatusLabel,
+                  initialValue: ready.viewOrderStatus.isOrdered,
+                  trueLabel: context.l10n.patientPicker_orderedToggleLabel,
+                  falseLabel: context.l10n.patientPicker_orderlessToggleLabel,
+                  defaultValue: true,
+                ),
+              DropdownFilterField<HospitalService?>(
+                key: 'service',
+                label: context.l10n.assignment_serviceLabel,
+                initialValue: ready.selectedService,
+                options: [null, ...ready.availableServices],
+                labelBuilder: (s) => s?.name ?? context.l10n.filter_all,
+                defaultValue: null,
+              ),
+              DropdownFilterField<PatientFilterType>(
+                key: 'filter',
+                label: context.l10n.prescriptionDetailStatusLabel,
+                initialValue: ready.filter,
+                options: PatientFilterType.values,
+                labelBuilder: (f) => f?.label,
+                defaultValue: PatientFilterType.all,
+              ),
+            ]
+          : const [],
+      onFilterApply: widget.showFilters
+          ? (result) {
+              if (result['viewType'] != ready.viewType) notifier.togglePatientView();
+              if (result['service'] != ready.selectedService) {
+                notifier.toggleService(result['service'] as HospitalService?);
+              }
+              if (result.containsKey('isOrdered') && result['isOrdered'] != ready.viewOrderStatus.isOrdered) {
+                notifier.toggleOrderlessStatus();
+              }
+              if (result['filter'] != ready.filter) {
+                notifier.changeFilter(result['filter'] as PatientFilterType);
+              }
+            }
+          : null,
+      footer: ready.isUrgentPatientButtonVisible && widget.showFilters
           ? _UrgentPatientFooter(state: ready, notifier: notifier, onCreated: (h) => widget.onPatientSelected(h, true))
           : null,
     );

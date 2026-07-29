@@ -5,7 +5,7 @@ class RefundRepositoryImpl implements IRefundRepository {
   RefundRepositoryImpl({
     required RefundRemoteDataSource dataSource,
     required RefundMapper refundMapper,
-    required IntakeItemMapper withdrawItemMapper,
+    required CabinTargetedRxItemMapper withdrawItemMapper,
     required PrescriptionItemMapper prescriptionMapper,
   }) : _dataSource = dataSource,
        _refundMapper = refundMapper,
@@ -14,11 +14,11 @@ class RefundRepositoryImpl implements IRefundRepository {
 
   final RefundRemoteDataSource _dataSource;
   final RefundMapper _refundMapper;
-  final IntakeItemMapper _intakeItemMapper;
+  final CabinTargetedRxItemMapper _intakeItemMapper;
   final PrescriptionItemMapper _prescriptionMapper;
 
   @override
-  Future<Result<List<MedicineIntakeItem>>> getMasterRefundables({required int hospitalizationId}) async {
+  Future<Result<List<CabinTargetedPrescriptionItem>>> getMasterRefundables({required int hospitalizationId}) async {
     final result = await _dataSource.getMasterRefundables(hospitalizationId: hospitalizationId);
     return result.when(ok: (dtos) => Result.ok(_intakeItemMapper.toEntityList(dtos)), error: (e) => Result.error(e));
   }
@@ -30,7 +30,10 @@ class RefundRepositoryImpl implements IRefundRepository {
   }
 
   @override
-  Future<Result<MedicineIntakeItem?>> checkMasterRefundStatus({required int id, required double quantity}) async {
+  Future<Result<CabinTargetedPrescriptionItem?>> checkMasterRefundStatus({
+    required int id,
+    required double quantity,
+  }) async {
     final res = await _dataSource.checkMasterRefundStatus(id: id, quantity: quantity);
     return res.when(ok: (dto) => Result.ok(_intakeItemMapper.toEntityOrNull(dto)), error: (e) => Result.error(e));
   }

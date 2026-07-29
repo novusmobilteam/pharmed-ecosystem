@@ -1,11 +1,9 @@
 // [SWREQ-CLI-MCENSUS-002] [IEC 62304 §5.5]
 // Sayım akışını yöneten notifier — MasterRefillNotifier ile BİREBİR AYNI
 // donanım sıralaması (çekmece aç → gözleri say → kapat → sıradaki çekmece).
-// Farklar sadece: fillingQuantity yok, tek SKT (singleMiad) toggle'ı yok
-// (sayımda SKT her zaman per-cell).
-//
-// CensusQueueBuilder ve MasterCensusParams/CompleteMasterCensusUseCase artık
-// gerçek kaynaklara göre bağlandı.
+// Farklar sadece: secondary alan yok (config: censusTargetConfig,
+// hasSecondaryField=false), quantity backend'e hiç gönderilmez
+// (censusParamsOps).
 //
 // Sınıf: Class B
 
@@ -36,7 +34,6 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     return const MasterCensusUninitialized();
   }
 
-  /// Ekran açılışında view tarafından çağrılır (initState + addPostFrameCallback).
   Future<void> init(CabinVisualizerData data) async {
     final cabinId = data.cabinId;
     state = const MasterCensusLoading();
@@ -45,12 +42,7 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     result.when(
       ok: (assignments) {
         final allUnitIds = assignments.map((a) => a.cabinDrawerId).whereType<int>().toSet();
-        state = MasterCensusSelection(
-          cabinId: cabinId,
-          medicines: assignments,
-          // Varsayılan: hepsi seçili (tüm kabin sayımı) — refill'in aksine.
-          selectedUnitIds: allUnitIds,
-        );
+        state = MasterCensusSelection(cabinId: cabinId, medicines: assignments, selectedUnitIds: allUnitIds);
       },
       error: (e) {
         state = MasterCensusError(
@@ -67,7 +59,6 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     state = s.copyWith(search: value);
   }
 
-  /// Tek bir ilacı (unit'i) toggle eder — CabinSelectionGridCard'a dokunma.
   void toggleUnit(int cabinDrawerId) {
     final s = state;
     if (s is! MasterCensusSelection) return;
@@ -76,8 +67,6 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     state = s.copyWith(selectedUnitIds: next);
   }
 
-  /// Bir çekmecenin TÜM ilaçlarını toggle eder — sol taraftaki
-  /// CabinDrawerSelectionGuide'a dokunma.
   void toggleDrawer(DrawerGroup group) {
     final s = state;
     if (s is! MasterCensusSelection) return;
@@ -99,94 +88,105 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     state = s.copyWith(selectedUnitIds: next);
   }
 
-  /// "Sayımı Başlat" — seçimlerden kuyruk üretir, ilk çekmeceyi açar.
   Future<void> startCensus() async {
     final s = state;
     if (s is! MasterCensusSelection || !s.canStart) return;
 
-    final jobs = CensusQueueBuilder.build(s.selectedAssignments);
+    final jobs = CabinOperationQueueBuilder.build(
+      selectedAssignments: s.selectedAssignments,
+      config: censusTargetConfig,
+    );
     if (jobs.isEmpty) return;
 
     state = MasterCensusExecuting(cabinId: s.cabinId, jobs: jobs, currentIndex: 0);
-    await _openCurrentJob();
+    await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
 
-  Future<void> _openCurrentJob() async {
+  Future<void> _openJobAt({required int jobIndex, required int targetIndex}) async {
     final s = state;
     if (s is! MasterCensusExecuting) return;
-    final job = s.currentJob;
-    if (job == null) return;
+    if (jobIndex < 0 || jobIndex >= s.jobs.length) return;
+    final job = s.jobs[jobIndex];
 
-    state = s.copyWith(jobs: _withStatus(s.jobs, s.currentIndex, CensusJobStatus.active), currentTargetIndex: 0);
+    state = s.copyWith(
+      jobs: _withStatus(s.jobs, jobIndex, CabinOperationJobStatus.active),
+      currentIndex: jobIndex,
+      currentTargetIndex: targetIndex,
+      isSaving: false,
+    );
 
-    await _orchestrator.open(assignment: job.representativeAssignment);
+    final openAssignment = job.isKubik ? job.representativeAssignment : job.targets[targetIndex].assignment;
+    await _orchestrator.open(assignment: openAssignment);
   }
 
-  // Kübik çekmece
   void onCubicCountChanged(int targetIndex, double value) => _updateTarget(targetIndex, (t) => t.withCubicCount(value));
 
   void onCubicMiadChanged(int targetIndex, DateTime? date) => _updateTarget(targetIndex, (t) => t.withCubicMiad(date));
 
-  // Birim doz çekmece
   void onStepCountChanged(int targetIndex, int stepIndex, double value) =>
       _updateTarget(targetIndex, (t) => t.withStepCount(stepIndex, value));
 
   void onStepMiadChanged(int targetIndex, int stepIndex, DateTime? date) =>
       _updateTarget(targetIndex, (t) => t.withStepMiad(stepIndex, date));
 
-  void _updateTarget(int targetIndex, CensusTarget Function(CensusTarget) update) {
+  void _updateTarget(int targetIndex, CabinOperationTarget Function(CabinOperationTarget) update) {
     final s = state;
     if (s is! MasterCensusExecuting) return;
     final job = s.currentJob;
     if (job == null || targetIndex < 0 || targetIndex >= job.targets.length) return;
 
-    final newTargets = List<CensusTarget>.from(job.targets);
+    final newTargets = List<CabinOperationTarget>.from(job.targets);
     newTargets[targetIndex] = update(newTargets[targetIndex]);
 
-    final newJobs = List<CensusDrawerJob>.from(s.jobs);
+    final newJobs = List<CabinOperationDrawerJob>.from(s.jobs);
     newJobs[s.currentIndex] = job.copyWith(targets: newTargets);
     state = s.copyWith(jobs: newJobs);
   }
 
-  /// "Sayımı tamamla" — RefillNotifier.confirmCurrent ile birebir aynı akış.
   Future<void> confirmCurrent() async {
     final s = state;
     if (s is! MasterCensusExecuting) return;
     final job = s.currentJob;
     if (job == null) return;
 
-    if (!job.isKubik) {
-      if (!job.canComplete) return;
-      _orchestrator.confirmClose();
-      return;
-    }
-
     final target = s.currentTarget;
     if (target == null || !target.isValid) return;
 
-    if (target.hasEntry) {
-      state = s.copyWith(isSaving: true);
-      final params = CensusJobParamsMapper.toParamsForTarget(target);
-      final result = await _completeCensus(params);
-      final saved = state;
-      if (saved is! MasterCensusExecuting) return;
+    state = s.copyWith(isSaving: true);
+    final ok = await _saveTarget(target);
+    final saved = state;
+    if (saved is! MasterCensusExecuting) return;
+    if (!ok) return;
 
-      bool failed = false;
-      result.when(
-        ok: (_) {},
-        error: (e) {
-          failed = true;
-          state = MasterCensusError(
-            failure: CabinApiFailure(message: e.message),
-            previousState: saved.copyWith(isSaving: false),
-            isQueueError: true,
-          );
-        },
-      );
-      if (failed) return;
+    if (job.isKubik) {
+      await _advanceCubicLid();
+    } else {
+      state = saved.copyWith(isSaving: false);
+      _orchestrator.confirmClose();
     }
+  }
 
-    await _advanceCubicLid();
+  Future<bool> _saveTarget(CabinOperationTarget target) async {
+    if (!target.hasEntry) return true;
+
+    final params = CabinOperationParamsMapper.toParamsForTarget(target, censusParamsOps);
+    final result = await _completeCensus(params);
+    final saved = state;
+    if (saved is! MasterCensusExecuting) return false;
+
+    var ok = true;
+    result.when(
+      ok: (_) {},
+      error: (e) {
+        ok = false;
+        state = MasterCensusError(
+          failure: CabinApiFailure(message: e.message),
+          previousState: saved.copyWith(isSaving: false),
+          isQueueError: true,
+        );
+      },
+    );
+    return ok;
   }
 
   Future<void> _advanceCubicLid() async {
@@ -206,8 +206,6 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     final cellAssignment = job.targets[nextTarget].assignment;
     await _orchestrator.openCubicLid(cellAssignment);
   }
-
-  // ── Orchestrator stage geçişleri (RefillNotifier ile birebir aynı) ────────
 
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
     switch (current) {
@@ -239,29 +237,16 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     final job = s.currentJob;
     if (job == null) return;
 
-    if (!job.isKubik && job.hasAnyEntry) {
-      state = s.copyWith(isSaving: true);
-      final params = CensusJobParamsMapper.toParams(job);
-      final result = await _completeCensus(params);
-      final saved = state;
-      if (saved is! MasterCensusExecuting) return;
-
-      bool failed = false;
-      result.when(
-        ok: (_) {},
-        error: (e) {
-          failed = true;
-          state = MasterCensusError(
-            failure: CabinApiFailure(message: e.message),
-            previousState: saved.copyWith(isSaving: false),
-            isQueueError: true,
-          );
-        },
-      );
-      if (failed) return;
+    if (!job.isKubik) {
+      final nextTarget = s.currentTargetIndex + 1;
+      if (nextTarget < job.targets.length) {
+        await _orchestrator.stop();
+        await _openJobAt(jobIndex: s.currentIndex, targetIndex: nextTarget);
+        return;
+      }
     }
 
-    final completedJobs = _withStatus(s.jobs, s.currentIndex, CensusJobStatus.completed);
+    final completedJobs = _withStatus(s.jobs, s.currentIndex, CabinOperationJobStatus.completed);
     final nextIndex = s.currentIndex + 1;
     await _orchestrator.stop();
 
@@ -277,7 +262,7 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
       currentTargetIndex: 0,
       isSaving: false,
     );
-    await _openCurrentJob();
+    await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
   void _onDrawerFailed(MasterDrawerFailure failure, {String? detail}) {
@@ -305,7 +290,7 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     final prev = s.previousState;
     if (prev is! MasterCensusExecuting) return;
 
-    final markedJobs = _withStatus(prev.jobs, prev.currentIndex, CensusJobStatus.failed);
+    final markedJobs = _withStatus(prev.jobs, prev.currentIndex, CabinOperationJobStatus.failed);
     final nextIndex = prev.currentIndex + 1;
     await _orchestrator.stop();
 
@@ -315,7 +300,7 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     }
 
     state = MasterCensusExecuting(cabinId: prev.cabinId, jobs: markedJobs, currentIndex: nextIndex, isSaving: false);
-    await _openCurrentJob();
+    await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
   Future<void> abortAfterError() async {
@@ -336,12 +321,6 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     if (s is MasterCensusError) state = s.previousState;
   }
 
-  // ── Helper ────────────────────────────────────────────────────────────────
-
-  /// Kuyruk bittiğinde çağrılır: ilaç listesini yeniden çeker (stoklar
-  /// değişti) ve temiz (hepsi-seçili) Selection fazına döner. allGroups'a
-  /// hiç ihtiyaç yok artık — View zaten widget.data.groups'u panel'lere
-  /// sabit olarak geçiriyor, state'in taşımasına gerek kalmadı.
   Future<void> _reloadSelectionAfterQueue(int cabinId) async {
     state = const MasterCensusLoading();
     final result = await _getAssignments();
@@ -358,8 +337,12 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     );
   }
 
-  List<CensusDrawerJob> _withStatus(List<CensusDrawerJob> jobs, int index, CensusJobStatus status) {
-    final next = List<CensusDrawerJob>.from(jobs);
+  List<CabinOperationDrawerJob> _withStatus(
+    List<CabinOperationDrawerJob> jobs,
+    int index,
+    CabinOperationJobStatus status,
+  ) {
+    final next = List<CabinOperationDrawerJob>.from(jobs);
     next[index] = next[index].copyWith(status: status);
     return next;
   }

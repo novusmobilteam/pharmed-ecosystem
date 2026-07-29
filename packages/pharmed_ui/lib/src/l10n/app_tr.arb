@@ -6513,5 +6513,161 @@
 "intake_stop_confirmMessage": "Devam eden alım işlemi durdurulacak. Tamamlanan çekmeceler korunacaktır.",
 
 "intake_stop_confirmYes": "Evet, Durdur",
-"intake_hint_mergedFromMultiplePrescriptions": "{count, plural, other{{count} reçeteden birleştirildi}}"
+"intake_hint_mergedFromMultiplePrescriptions": "{count, plural, other{{count} reçeteden birleştirildi}}",
+"refund_hint_searchMedicine": "İlaç ara",
+"refund_hint_selectPatientFirst": "Önce bir hasta seçin",
+"refund_hint_noMedicineFound": "İade edilebilir ilaç bulunamadı",
+"refund_action_start": "İadeyi Başlat",
+"refund_action_nextCell": "Sonraki Göz",
+"refund_action_completeRefund": "İadeyi Tamamla",
+"refund_action_stop": "Durdur",
+"refund_action_stopConfirmTitle": "İade Durdurulsun mu?",
+"refund_action_stopConfirmMessage": "Tamamlanan iadeler korunacak, kalan çekmeceler işlenmeyecek.",
+"refund_action_stopConfirmYes": "Evet, Durdur",
+"refund_field_maxAmount": "Maks. İade Edilebilir",
+"refund_field_returnNote": "İade Notu",
+"refund_status_checking": "Kontrol ediliyor...",
+"refund_status_ready": "Hazır",
+"refund_status_checkFailed": "Kontrol başarısız",
+"refund_error_queueTitle": "İade Hatası",
+"refund_error_continueNext": "Sonrakiyle Devam Et",
+"refund_error_endProcess": "İşlemi Sonlandır",
+"refund_error_amountZero": "İade miktarı 0 olamaz",
+"refund_error_amountExceedsMax": "İade edilecek miktar alım miktarını aşamaz",
+"refund_label_progress": "{done} / {total} çekmece",
+"waste_hint_searchMedicine": "İlaç ara",
+"@waste_hint_searchMedicine": {
+  "description": "Master waste/destruction screen — search field placeholder for filtering the medicine list"
+},
+
+"waste_hint_selectPatientFirst": "Devam etmek için önce bir hasta seçin",
+"@waste_hint_selectPatientFirst": {
+  "description": "Master waste/destruction screen — empty state message shown in the medicine panel before a patient is selected"
+},
+
+"waste_hint_noMedicineFound": "Fire/imha edilebilecek ilaç bulunamadı",
+"@waste_hint_noMedicineFound": {
+  "description": "Master waste/destruction screen — empty state message when the selected patient has no disposable items"
+},
+
+"waste_action_wastage": "Fire",
+"@waste_action_wastage": {
+  "description": "Master waste/destruction screen — segment label and submit button text for the wastage (fire) mode"
+},
+
+"waste_action_destruction": "İmha",
+"@waste_action_destruction": {
+  "description": "Master waste/destruction screen — segment label and submit button text for the destruction mode"
+},
+
+"waste_label_availableAmount": "Mevcut miktar: {amount}",
+"@waste_label_availableAmount": {
+  "description": "Master waste/destruction screen — shows the maximum disposable amount on an item card",
+  "placeholders": {
+    "amount": {
+      "type": "String"
+    }
+  }
+},
+"witnessDialog_title": "Şahit Doğrulama",
+"@witnessDialog_title": {
+  "description": "Shared witness login dialog — title, used by intake and waste/destruction screens"
+},
+
+"witnessDialog_usernameLabel": "Kullanıcı Adı",
+"@witnessDialog_usernameLabel": {
+  "description": "Shared witness login dialog — username field label"
+},
+
+"witnessDialog_usernameRequired": "Kullanıcı adı gereklidir",
+"@witnessDialog_usernameRequired": {
+  "description": "Shared witness login dialog — validation message when the username field is left empty"
+},
+
+"witnessDialog_passwordLabel": "Şifre",
+"@witnessDialog_passwordLabel": {
+  "description": "Shared witness login dialog — password field label"
+},
+
+"witnessDialog_passwordRequired": "Şifre gereklidir",
+"@witnessDialog_passwordRequired": {
+  "description": "Shared witness login dialog — validation message when the password field is left empty"
+},
+
+"witnessDialog_confirmButton": "Onayla",
+"@witnessDialog_confirmButton": {
+  "description": "Shared witness login dialog — submit button text"
+},
+
+"witnessDialog_anyoneInfo": "Bu kalem için herhangi bir kullanıcı şahitlik yapabilir.",
+"@witnessDialog_anyoneInfo": {
+  "description": "Shared witness login dialog — info banner shown when the item has no restricted witness list"
+},
+
+"witnessDialog_authorizedWitnesses": "{count, plural, one{Yetkili {count} şahit} other{Yetkili {count} şahit}}",
+"@witnessDialog_authorizedWitnesses": {
+  "description": "Shared witness login dialog — heading above the chip list of users authorized to witness this item",
+  "placeholders": {
+    "count": {
+      "type": "num",
+      "format": "compact"
+    }
+  }
+},
+
+"witnessDialog_error_selfWitness": "Kendi işleminize şahit olamazsınız.",
+"@witnessDialog_error_selfWitness": {
+  "description": "Shared witness login dialog — error shown when the currently logged-in user tries to log in as the witness"
+},
+
+"witnessDialog_success_confirmed": "{witnessName} şahit olarak onaylandı.",
+"@witnessDialog_success_confirmed": {
+  "description": "Shared witness login dialog — success message after a witness successfully logs in",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+
+"witnessDialog_assignedLabel": "Şahit: {witnessName}",
+"@witnessDialog_assignedLabel": {
+  "description": "Inline witness row on an item card — shown when a witness has already been assigned to this item",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+
+"witnessDialog_requiredHint": "Şahit girişi yapılması gerekmektedir",
+"@witnessDialog_requiredHint": {
+  "description": "Inline witness row on an item card — shown when this item still needs a witness, tappable to open the witness dialog"
+},
+
+"witnessDialog_autoAssigned": "{witnessName} bu kalem için şahit olarak otomatik atandı.",
+"@witnessDialog_autoAssigned": {
+  "description": "Info snackbar shown when an already-selected witness is automatically reused for another item without reopening the dialog",
+  "placeholders": {
+    "witnessName": {
+      "type": "String"
+    }
+  }
+},
+"unload_hint_searchMedicine": "İlaç veya barkod ara",
+"unload_hint_noMedicineFound": "İlaç bulunamadı",
+"unload_action_start": "Boşaltmayı Başlat",
+"unload_action_stop": "Durdur",
+"unload_action_nextCell": "Sonraki Göz",
+"unload_action_completeUnloading": "Boşaltmayı Tamamla",
+"unload_stop_confirmTitle": "Boşaltma Durdurulsun mu?",
+"unload_stop_confirmMessage": "Kuyruktaki kalan çekmeceler boşaltılmayacak. Durdurmak istediğinize emin misiniz?",
+"unload_stop_confirmYes": "Evet, Durdur",
+"unload_error_queueTitle": "Boşaltma Başarısız",
+"unload_error_continueNext": "Sonraki Çekmeceye Devam Et",
+"unload_error_endProcess": "İşlemi Sonlandır",
+"unload_label_queueProgress": "{total} çekmeceden {done}.",
+"unload_label_countQty": "Sayım",
+"unload_label_unloadQty": "Boşaltım Miktarı",
+"refund_label_quantity": "Miktar"
 }

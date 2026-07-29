@@ -58,8 +58,8 @@ class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
         MasterCensusError(previousState: MasterCensusExecuting()) => const RootExecuting(),
         _ => const RootSelection(),
       },
-      selectionBuilder: (_) => MasterCensusSelectionPanel(allGroups: widget.data?.groups ?? const []),
-      executionBuilder: (_) => MasterCensusExecutionPanel(allGroups: widget.data?.groups ?? const []),
+      selectionBuilder: (_) => MasterCensusSelectionView(allGroups: widget.data?.groups ?? const []),
+      executionBuilder: (_) => MasterCensusExecutionView(allGroups: widget.data?.groups ?? const []),
     );
   }
 }

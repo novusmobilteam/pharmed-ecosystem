@@ -187,12 +187,12 @@ final intakeRepositoryProvider = Provider<IIntakeRepository>((ref) {
   return switch (FlavorConfig.instance.flavor) {
     AppFlavor.mock => IntakeRepositoryImpl(
       dataSource: ref.read(intakeDataSourceProvider),
-      intakeItemMapper: IntakeItemMapper(),
+      intakeItemMapper: CabinTargetedRxItemMapper(),
       patientIntakeItemMapper: PatientIntakeItemMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => IntakeRepositoryImpl(
       dataSource: ref.read(intakeDataSourceProvider),
-      intakeItemMapper: IntakeItemMapper(),
+      intakeItemMapper: CabinTargetedRxItemMapper(),
       patientIntakeItemMapper: PatientIntakeItemMapper(),
     ),
   };
@@ -203,13 +203,13 @@ final refundRepositoryProvider = Provider<IRefundRepository>((ref) {
     AppFlavor.mock => RefundRepositoryImpl(
       dataSource: ref.read(refundDataSourceProvider),
       refundMapper: RefundMapper(),
-      withdrawItemMapper: IntakeItemMapper(),
+      withdrawItemMapper: CabinTargetedRxItemMapper(),
       prescriptionMapper: PrescriptionItemMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => RefundRepositoryImpl(
       dataSource: ref.read(refundDataSourceProvider),
       refundMapper: RefundMapper(),
-      withdrawItemMapper: IntakeItemMapper(),
+      withdrawItemMapper: CabinTargetedRxItemMapper(),
       prescriptionMapper: PrescriptionItemMapper(),
     ),
   };

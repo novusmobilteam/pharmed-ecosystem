@@ -1094,7 +1094,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Henüz ilaç çıkarılmadı. Boşaltma işlemi iptal edilsin mi?';
 
   @override
-  String get unload_action_start => 'Boşaltmaya başla';
+  String get unload_action_start => 'Boşaltmayı Başlat';
 
   @override
   String get unload_action_drawerOpen => 'İlaçları çıkarın';
@@ -1113,10 +1113,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get waste_panel_title => 'Fire/İmha Edilebilir İlaçlar';
 
   @override
-  String get waste_action_wastage => 'Fire Et';
+  String get waste_action_wastage => 'Fire';
 
   @override
-  String get waste_action_destruction => 'İmha Et';
+  String get waste_action_destruction => 'İmha';
 
   @override
   String get wastage_success_title => 'Fire kaydedildi';
@@ -5396,4 +5396,196 @@ class AppLocalizationsTr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get refund_hint_searchMedicine => 'İlaç ara';
+
+  @override
+  String get refund_hint_selectPatientFirst => 'Önce bir hasta seçin';
+
+  @override
+  String get refund_hint_noMedicineFound => 'İade edilebilir ilaç bulunamadı';
+
+  @override
+  String get refund_action_start => 'İadeyi Başlat';
+
+  @override
+  String get refund_action_nextCell => 'Sonraki Göz';
+
+  @override
+  String get refund_action_completeRefund => 'İadeyi Tamamla';
+
+  @override
+  String get refund_action_stop => 'Durdur';
+
+  @override
+  String get refund_action_stopConfirmTitle => 'İade Durdurulsun mu?';
+
+  @override
+  String get refund_action_stopConfirmMessage =>
+      'Tamamlanan iadeler korunacak, kalan çekmeceler işlenmeyecek.';
+
+  @override
+  String get refund_action_stopConfirmYes => 'Evet, Durdur';
+
+  @override
+  String get refund_field_maxAmount => 'Maks. İade Edilebilir';
+
+  @override
+  String get refund_field_returnNote => 'İade Notu';
+
+  @override
+  String get refund_status_checking => 'Kontrol ediliyor...';
+
+  @override
+  String get refund_status_ready => 'Hazır';
+
+  @override
+  String get refund_status_checkFailed => 'Kontrol başarısız';
+
+  @override
+  String get refund_error_queueTitle => 'İade Hatası';
+
+  @override
+  String get refund_error_continueNext => 'Sonrakiyle Devam Et';
+
+  @override
+  String get refund_error_endProcess => 'İşlemi Sonlandır';
+
+  @override
+  String get refund_error_amountZero => 'İade miktarı 0 olamaz';
+
+  @override
+  String get refund_error_amountExceedsMax =>
+      'İade edilecek miktar alım miktarını aşamaz';
+
+  @override
+  String refund_label_progress(int done, int total) {
+    return '$done / $total çekmece';
+  }
+
+  @override
+  String get waste_hint_searchMedicine => 'İlaç ara';
+
+  @override
+  String get waste_hint_selectPatientFirst =>
+      'Devam etmek için önce bir hasta seçin';
+
+  @override
+  String get waste_hint_noMedicineFound =>
+      'Fire/imha edilebilecek ilaç bulunamadı';
+
+  @override
+  String waste_label_availableAmount(String amount) {
+    return 'Mevcut miktar: $amount';
+  }
+
+  @override
+  String get witnessDialog_title => 'Şahit Doğrulama';
+
+  @override
+  String get witnessDialog_usernameLabel => 'Kullanıcı Adı';
+
+  @override
+  String get witnessDialog_usernameRequired => 'Kullanıcı adı gereklidir';
+
+  @override
+  String get witnessDialog_passwordLabel => 'Şifre';
+
+  @override
+  String get witnessDialog_passwordRequired => 'Şifre gereklidir';
+
+  @override
+  String get witnessDialog_confirmButton => 'Onayla';
+
+  @override
+  String get witnessDialog_anyoneInfo =>
+      'Bu kalem için herhangi bir kullanıcı şahitlik yapabilir.';
+
+  @override
+  String witnessDialog_authorizedWitnesses(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Yetkili $countString şahit',
+      one: 'Yetkili $countString şahit',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get witnessDialog_error_selfWitness =>
+      'Kendi işleminize şahit olamazsınız.';
+
+  @override
+  String witnessDialog_success_confirmed(String witnessName) {
+    return '$witnessName şahit olarak onaylandı.';
+  }
+
+  @override
+  String witnessDialog_assignedLabel(String witnessName) {
+    return 'Şahit: $witnessName';
+  }
+
+  @override
+  String get witnessDialog_requiredHint =>
+      'Şahit girişi yapılması gerekmektedir';
+
+  @override
+  String witnessDialog_autoAssigned(String witnessName) {
+    return '$witnessName bu kalem için şahit olarak otomatik atandı.';
+  }
+
+  @override
+  String get unload_hint_searchMedicine => 'İlaç veya barkod ara';
+
+  @override
+  String get unload_hint_noMedicineFound => 'İlaç bulunamadı';
+
+  @override
+  String get unload_action_stop => 'Durdur';
+
+  @override
+  String get unload_action_nextCell => 'Sonraki Göz';
+
+  @override
+  String get unload_action_completeUnloading => 'Boşaltmayı Tamamla';
+
+  @override
+  String get unload_stop_confirmTitle => 'Boşaltma Durdurulsun mu?';
+
+  @override
+  String get unload_stop_confirmMessage =>
+      'Kuyruktaki kalan çekmeceler boşaltılmayacak. Durdurmak istediğinize emin misiniz?';
+
+  @override
+  String get unload_stop_confirmYes => 'Evet, Durdur';
+
+  @override
+  String get unload_error_queueTitle => 'Boşaltma Başarısız';
+
+  @override
+  String get unload_error_continueNext => 'Sonraki Çekmeceye Devam Et';
+
+  @override
+  String get unload_error_endProcess => 'İşlemi Sonlandır';
+
+  @override
+  String unload_label_queueProgress(int done, int total) {
+    return '$total çekmeceden $done.';
+  }
+
+  @override
+  String get unload_label_countQty => 'Sayım';
+
+  @override
+  String get unload_label_unloadQty => 'Boşaltım Miktarı';
+
+  @override
+  String get refund_label_quantity => 'Miktar';
 }
