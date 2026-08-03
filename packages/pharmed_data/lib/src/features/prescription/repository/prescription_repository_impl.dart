@@ -39,7 +39,7 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getUnscannedBarcodes() async {
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getUnscannedBarcodes({PagedQueryParams? params}) async {
     final result = await _dataSource.getUnscannedBarcodes();
     return result.when(
       ok: (apiResponse) => Result.ok(
@@ -224,8 +224,8 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<List<PrescriptionItem>>> getDailyJobList() async {
-    final result = await _dataSource.getDailyJobList();
+  Future<Result<List<PrescriptionItem>>> getDailyJobList(int hospitalizationId) async {
+    final result = await _dataSource.getDailyJobList(hospitalizationId);
     return result.when(
       ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])),
       error: (e) => Result.error(e),

@@ -5629,4 +5629,35 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get refund_label_quantity => 'Quantity';
+
+  @override
+  String destruction_label_queueProgress(int current, int total) {
+    return '$current of $total';
+  }
+
+  @override
+  String get destruction_action_stop => 'Stop';
+
+  @override
+  String get destruction_stop_confirmTitle => 'Stop destruction?';
+
+  @override
+  String get destruction_stop_confirmMessage =>
+      'The destruction process will be stopped. Items already processed will be kept.';
+
+  @override
+  String get destruction_stop_confirmYes => 'Yes, stop';
+
+  @override
+  String get destruction_label_quantity => 'Destroy Qty';
+
+  @override
+  String get destruction_action_nextCell => 'Next cell';
+
+  @override
+  String get destruction_action_completeDestruction => 'Complete destruction';
+
+  @override
+  String get waste_hint_notAuthorized =>
+      'You are not authorized to destroy this medicine';
 }

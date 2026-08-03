@@ -82,7 +82,7 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<List<MyPatientDTO>?>> getMyPatients() async {
     return await fetchRequest(
-      path: '/MyPatient',
+      path: '/MyPatient/currentUser',
       parser: BaseRemoteDataSource.listParser(MyPatientDTO.fromJson),
       successLog: 'My patients fetched',
       emptyLog: 'No patient',

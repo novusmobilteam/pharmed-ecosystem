@@ -1,6 +1,7 @@
 // [SWREQ-DATA-CABINSTOCK-001]
 // Sınıf: Class B
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_data/src/network/base_remote_datasource.dart';
 
 class CabinStockRemoteDataSource extends BaseRemoteDataSource {
@@ -27,15 +28,17 @@ class CabinStockRemoteDataSource extends BaseRemoteDataSource {
   }
 
   /// Son kullanma tarihi yaklaşan (örneğin 14 gün) ürünleri sayfalı olarak getirir.
-  Future<Result<List<CabinStockDTO>>> getExpiringStocks() async {
-    final res = await fetchRequest<List<CabinStockDTO>>(
+  Future<Result<ApiResponse<List<CabinStockDTO>>?>> getExpiringStocks({PagedQueryParams? params}) async {
+    return await fetchRequest(
       path: '$_base/expirationDate/14',
-      parser: BaseRemoteDataSource.listParser(CabinStockDTO.fromJson),
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+
+      parser: BaseRemoteDataSource.apiResponseListParser(CabinStockDTO.fromJson),
       successLog: 'Expiring materials fetched',
       emptyLog: 'No expiring materials found',
     );
-
-    return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);
   }
 
   /// Tekil bir ilacın dolum/stok bilgisini getirir.

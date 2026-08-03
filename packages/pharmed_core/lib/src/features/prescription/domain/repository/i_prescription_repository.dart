@@ -28,7 +28,7 @@ abstract interface class IPrescriptionRepository {
   Future<Result<void>> deletePrescription(int prescriptionId);
 
   // Okutulmayan Karekodlar
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getUnscannedBarcodes();
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getUnscannedBarcodes({PagedQueryParams? params});
 
   // Okutulan Karekodlar
   Future<Result<ApiResponse<List<PrescriptionItem>>?>> getScannedBarcodes();
@@ -71,7 +71,7 @@ abstract interface class IPrescriptionRepository {
   Future<Result<List<PrescriptionItem>>> getEmergencyPatientMedicines(int hospitalizationId);
 
   /// Hastalarım'a gün içinde yazılmış olan ilaçları getiren servis(Günlük İş Listesi).
-  Future<Result<List<PrescriptionItem>>> getDailyJobList();
+  Future<Result<List<PrescriptionItem>>> getDailyJobList(int hospitalizationId);
 
   /// Reçete kalemine RFID etiketi atar.
   ///

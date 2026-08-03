@@ -45,9 +45,18 @@ class CabinStockRepositoryImpl implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<List<CabinStock>>> getExpiringStocks() async {
-    final result = await _dataSource.getExpiringStocks();
-    return result.when(ok: (dtos) => Result.ok(_cabinMapper.toEntityList(dtos)), error: (e) => Result.error(e));
+  Future<Result<ApiResponse<List<CabinStock>>?>> getExpiringStocks({PagedQueryParams? params}) async {
+    final result = await _dataSource.getExpiringStocks(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<CabinStock>>(
+          data: apiResponse?.data != null ? _cabinMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
   }
 
   @override

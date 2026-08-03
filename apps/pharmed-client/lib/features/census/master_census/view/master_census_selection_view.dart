@@ -28,6 +28,7 @@ class MasterCensusSelectionView extends ConsumerWidget {
     if (selection == null) return const SizedBox.shrink();
 
     return CabinOperationSelectionLayout(
+      leftWidth: 320,
       isLoading: state is MasterCensusLoading,
       left: CabinOverviewPanel.selection(
         groups: allGroups,

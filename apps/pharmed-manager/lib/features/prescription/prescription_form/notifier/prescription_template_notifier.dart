@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_manager/core/mixins/api_request_mixin.dart';
+
+import '../../../../core/core.dart';
 
 class PrescriptionTemplatesNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetPrescriptionTemplatesUseCase _listUseCase;

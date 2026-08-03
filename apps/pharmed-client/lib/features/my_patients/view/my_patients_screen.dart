@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
@@ -65,7 +64,7 @@ class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
   @override
   void didUpdateWidget(_MyPatientsBodyView old) {
     super.didUpdateWidget(old);
-    if (widget.cabinId != old.cabinId) _initialize(widget.cabinId);
+    _initialize(widget.cabinId);
   }
 
   void _initialize(int cabinId) {
@@ -92,6 +91,7 @@ class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
     }
 
     return CabinOperationSelectionLayout(
+      leftWidth: 440,
       left: _AllPatientsPanel(state: state, notifier: notifier),
       right: _MyPatientsPanel(state: state, notifier: notifier),
     );
@@ -119,48 +119,49 @@ class _AllPatientsPanel extends StatelessWidget {
     final myIds = state.myPatientHospitalizationIds;
     final filtered = _filtered;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Arama
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
-          child: MedTextInputField(
-            hintText: context.l10n.myPatients_search_hint,
-            prefixIcon: Icon(PhosphorIcons.magnifyingGlass()),
-            initialValue: state.search,
-            onChanged: (q) => notifier.onSearchChanged(q ?? ''),
+    return Container(
+      padding: MedSpacing.panelInsetPadding,
+      decoration: MedDecoration.panelDecoration,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Arama
+          CabinOperationSearchField(
+            onChanged: notifier.onSearchChanged,
+            hintText: context.l10n.patientPicker_searchHint,
           ),
-        ),
 
-        // Liste
-        Expanded(
-          child: filtered.isEmpty
-              ? const EmptyStateWidget(variant: EmptyStateVariant.noResults)
-              : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
-                  itemCount: filtered.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
-                  itemBuilder: (context, index) {
-                    final h = filtered[index];
-                    final hospId = h.id;
-                    final isAlreadyMine = hospId != null && myIds.contains(hospId);
-                    final isPending = hospId != null && state.isPending(hospId);
+          SizedBox(height: MedSpacing.sm),
 
-                    return Opacity(
-                      opacity: isAlreadyMine ? 0.4 : 1.0,
-                      child: PatientSelectionCard(
-                        hospitalization: h,
-                        onTap: () {},
-                        showChevron: false,
-                        trailing: isPending ? const Center(child: MedLoadingIndicator()) : null,
-                        onAdd: (!isAlreadyMine && !isPending) ? () => notifier.addPatient(h) : null,
-                      ),
-                    );
-                  },
-                ),
-        ),
-      ],
+          // Liste
+          Expanded(
+            child: filtered.isEmpty
+                ? const EmptyStateWidget(variant: EmptyStateVariant.noResults)
+                : ListView.separated(
+                    //padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
+                    itemCount: filtered.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
+                    itemBuilder: (context, index) {
+                      final h = filtered[index];
+                      final hospId = h.id;
+                      final isAlreadyMine = hospId != null && myIds.contains(hospId);
+                      final isPending = hospId != null && state.isPending(hospId);
+
+                      return Opacity(
+                        opacity: isAlreadyMine ? 0.4 : 1.0,
+                        child: PatientSelectionCard(
+                          hospitalization: h,
+                          onTap: () {},
+                          showChevron: false,
+                          trailing: isPending ? const Center(child: MedLoadingIndicator()) : null,
+                          onAdd: (!isAlreadyMine && !isPending) ? () => notifier.addPatient(h) : null,
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -174,42 +175,24 @@ class _MyPatientsPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final myPatients = state.myPatients;
+    return CabinOperationGrid(
+      maxColumns: 3,
+      itemCount: myPatients.length,
+      itemBuilder: (context, index) {
+        final mp = myPatients[index];
+        final h = mp.hospitalization;
+        //if (h == null) return const SizedBox.shrink();
+        final hospId = h?.id;
+        final isPending = hospId != null && state.isPending(hospId);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: myPatients.isEmpty
-              ? EmptyStateWidget(
-                  variant: EmptyStateVariant.custom,
-
-                  icon: PhosphorIcons.userPlus(),
-                  title: context.l10n.myPatients_empty_title,
-                  description: context.l10n.myPatients_empty_description,
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(MedSpacing.xl),
-                  itemCount: myPatients.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
-                  itemBuilder: (context, index) {
-                    final mp = myPatients[index];
-                    final h = mp.hospitalization;
-                    if (h == null) return const SizedBox.shrink();
-
-                    final hospId = h.id;
-                    final isPending = hospId != null && state.isPending(hospId);
-
-                    return PatientSelectionCard(
-                      hospitalization: h,
-                      onTap: () {},
-                      showChevron: false,
-                      trailing: isPending ? const Center(child: MedLoadingIndicator()) : null,
-                      onRemove: isPending ? null : () => notifier.removePatient(mp),
-                    );
-                  },
-                ),
-        ),
-      ],
+        return PatientSelectionCard(
+          hospitalization: h ?? Hospitalization(),
+          onTap: () {},
+          showChevron: false,
+          trailing: isPending ? const Center(child: MedLoadingIndicator()) : null,
+          onRemove: isPending ? null : () => notifier.removePatient(mp),
+        );
+      },
     );
   }
 }

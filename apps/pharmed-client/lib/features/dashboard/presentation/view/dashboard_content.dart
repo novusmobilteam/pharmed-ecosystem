@@ -38,6 +38,10 @@ class DashboardContentFactory {
             'unapplied-prescriptions' =>
               activeMenu != null ? UnappliedPrescriptionScreen(menu: activeMenu) : const SizedBox.shrink(),
             'my-patients' => activeMenu != null ? MyPatientsScreen(menu: activeMenu) : const SizedBox.shrink(),
+            'drug-destruction' => DestructionView(),
+            'daily-job-list' => activeMenu != null ? JobListScreen(menu: activeMenu) : const SizedBox.shrink(),
+            'expiring-materials' => ExpiringItemsScreen(),
+            'unscanned-barcodes' => UnscannedBarcodesScreen(),
 
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },

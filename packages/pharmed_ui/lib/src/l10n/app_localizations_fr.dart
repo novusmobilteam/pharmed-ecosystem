@@ -5731,4 +5731,36 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get refund_label_quantity => 'Quantité';
+
+  @override
+  String destruction_label_queueProgress(int current, int total) {
+    return '$current / $total';
+  }
+
+  @override
+  String get destruction_action_stop => 'Arrêter';
+
+  @override
+  String get destruction_stop_confirmTitle => 'Arrêter la destruction ?';
+
+  @override
+  String get destruction_stop_confirmMessage =>
+      'Le processus de destruction sera arrêté. Les éléments déjà traités seront conservés.';
+
+  @override
+  String get destruction_stop_confirmYes => 'Oui, arrêter';
+
+  @override
+  String get destruction_label_quantity => 'Qté à détruire';
+
+  @override
+  String get destruction_action_nextCell => 'Cellule suivante';
+
+  @override
+  String get destruction_action_completeDestruction =>
+      'Terminer la destruction';
+
+  @override
+  String get waste_hint_notAuthorized =>
+      'Vous n\'êtes pas autorisé à détruire ce médicament';
 }

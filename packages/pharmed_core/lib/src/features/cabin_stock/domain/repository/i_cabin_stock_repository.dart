@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 abstract class ICabinStockRepository {
   Future<Result<List<CabinStock>>> getStocks(int cabinId);
@@ -10,7 +11,7 @@ abstract class ICabinStockRepository {
   /// dolumunun yapılacağı veren servis.
   Future<Result<CabinStock?>> getMedicineInfo(int medicineId);
 
-  Future<Result<List<CabinStock>>> getExpiringStocks();
+  Future<Result<ApiResponse<List<CabinStock>>?>> getExpiringStocks({PagedQueryParams? params});
 
   /// Master kabin dolum işlemi
   Future<Result<void>> refillMasterCabin(List<dynamic> data);

@@ -8,16 +8,20 @@ class MedQuantityValueCard extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
-    required this.onChanged,
+    this.onChanged,
     this.suffix,
     this.density = MedValueCardDensity.compact,
   });
 
   final String label;
   final double? value;
-  final ValueChanged<double> onChanged;
+
+  /// null → salt-okunur: dokunma hiçbir şey açmaz.
+  final ValueChanged<double>? onChanged;
   final String? suffix;
   final MedValueCardDensity density;
+
+  bool get _readOnly => onChanged == null;
 
   static double _parseQty(String? raw) {
     if (raw == null || raw.trim().isEmpty) return 0;
@@ -25,8 +29,10 @@ class MedQuantityValueCard extends StatelessWidget {
   }
 
   Future<void> _open(BuildContext context) async {
+    final callback = onChanged;
+    if (callback == null) return;
     final result = await showNumpadView(context, initialValue: value.formatFractional);
-    if (result != null) onChanged(_parseQty(result));
+    if (result != null) callback(_parseQty(result));
   }
 
   @override
@@ -37,7 +43,7 @@ class MedQuantityValueCard extends StatelessWidget {
       value: value.formatFractional,
       placeholder: (value ?? 0) == 0,
       suffix: suffix,
-      onTap: () => _open(context),
+      onTap: _readOnly ? () {} : () => _open(context),
     );
   }
 }

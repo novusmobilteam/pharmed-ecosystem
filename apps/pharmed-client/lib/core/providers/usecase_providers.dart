@@ -8,6 +8,10 @@ final getHospitalizationsUseCaseProvider = Provider((ref) {
   return GetHospitalizationsUseCase(ref.read(hospitalizationRepositoryProvider));
 });
 
+final getActiveHospitalizationsUseCaseProvider = Provider((ref) {
+  return GetActiveHospitalizationsUseCase(ref.read(hospitalizationRepositoryProvider));
+});
+
 final getDrugsUseCaseProvider = Provider((ref) {
   return GetDrugsUseCase(ref.read(medicineRepositoryProvider));
 });
@@ -263,7 +267,7 @@ final getMasterDisposablesUseCaseProvider = Provider((ref) {
 });
 
 final getMasterDisposableMaterialsUseCaseProvider = Provider((ref) {
-  return GetMasterDisposableMaterialsUseCase(ref.read(wasteRepositoryProvider));
+  return GetMasterDisposableMaterialsUseCase(ref.read(wasteRepositoryProvider), ref.read(medicineRepositoryProvider));
 });
 
 final getMyPatientsUseCaseProvider = Provider((ref) {
@@ -404,4 +408,16 @@ final checkMasterRefundStatusUseCaseProvider = Provider((ref) {
 
 final completeRefundUseCaseProvider = Provider((ref) {
   return CompleteRefundUseCase(ref.read(refundRepositoryProvider));
+});
+
+final getExpiringStocksUseCaseProvider = Provider((ref) {
+  return GetExpiringStocksUseCase(ref.read(cabinStockRepositoryProvider));
+});
+
+final getDailyJobListUseCaseProvider = Provider((ref) {
+  return GetDailyJobListUseCase(ref.read(prescriptionRepositoryProvider));
+});
+
+final getUnscannedBarcodesUseCaseProvider = Provider((ref) {
+  return GetUnscannedBarcodesUseCase(ref.read(prescriptionRepositoryProvider));
 });

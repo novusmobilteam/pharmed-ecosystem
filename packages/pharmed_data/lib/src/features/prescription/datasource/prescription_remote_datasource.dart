@@ -46,17 +46,15 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getUnscannedBarcodes({
-    int? skip,
-    int? take,
-    String? search,
-  }) async {
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getUnscannedBarcodes({PagedQueryParams? params}) async {
     return await fetchRequest(
       path: '/Prescription/detail/unReadQrCode',
-      skip: skip,
-      take: take,
-      searchQuery: search,
-      searchFields: ['barcode'],
+      skip: params?.skip,
+      take: params?.take,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      searchQuery: params?.searchQuery,
+      searchFields: ['barcode', 'medicine.name'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );
@@ -237,9 +235,10 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<PrescriptionItemDto>?>> getDailyJobList() async {
+  Future<Result<List<PrescriptionItemDto>?>> getDailyJobList(int hospitalizationId) async {
     return await fetchRequest(
       path: '/MyPatient/dailyJobList',
+      query: {'patientHospitalizationId': hospitalizationId},
       parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
     );
   }

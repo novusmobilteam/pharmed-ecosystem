@@ -33,6 +33,8 @@ class PrescriptionItemMapper {
       protocolNo: dto.protocolNo,
       patientName: _parsePatientName(dto),
       rfidTag: dto.rfidTag,
+      applicationDate: dto.applicationDate,
+      applicationUser: const UserMapper().toEntityOrNull(dto.applicationUser),
 
       // Enum Dönüşümleri
       requestType: RequestType.fromId(dto.requestType),

@@ -9,7 +9,9 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
+import '../../../core/cache/app_settings_cache.dart';
 import '../../../core/providers/providers.dart';
 import 'unapplied_prescription_state.dart';
 
@@ -18,6 +20,7 @@ final unappliedPrescriptionNotifierProvider =
 
 class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState> {
   GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
+  GetActiveHospitalizationsUseCase get _getHospitalizations => ref.read(getActiveHospitalizationsUseCaseProvider);
   GetPatientPrescriptionHistoryUseCase get _getPrescriptionHistory =>
       ref.read(getPatientPrescriptionHistoryUseCaseProvider);
 
@@ -26,11 +29,16 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
 
   Future<void> init(int cabinId) async {
     state = UnappliedPrescriptionLoading(cabinId: cabinId);
-    final result = await _getBedAssignments.call(cabinId);
+
+    final cabinType = await ref.read(deviceModeProvider.future);
+    final isMobile = cabinType == CabinType.mobile;
+
+    final result = isMobile
+        ? _fromBedAssignments(await _getBedAssignments.call(cabinId))
+        : _fromApiResponse(await _getHospitalizations.call(const PagedQueryParams()));
 
     await result.when(
-      ok: (assignments) async {
-        final hospitalizations = _toHospitalizations(assignments);
+      ok: (hospitalizations) async {
         state = UnappliedPrescriptionIdle(cabinId: cabinId, hospitalizations: hospitalizations);
         if (hospitalizations.isEmpty) return;
 
@@ -108,6 +116,17 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
   void dismissError() {
     final current = state;
     if (current is UnappliedPrescriptionError) state = current.previousState;
+  }
+
+  /// Mobil akış — BedAssignment listesini Hospitalization'a indirger.
+  Result<List<Hospitalization>> _fromBedAssignments(Result<List<BedAssignment>> result) {
+    return result.when(ok: (assignments) => Result.ok(_toHospitalizations(assignments)), error: (e) => Result.error(e));
+  }
+
+  /// Master/diğer cihazlar akışı — ApiResponse sarmalını burada çözüyoruz,
+  /// yukarıdaki shared `.when` bloğu artık hangi kaynaktan geldiğini bilmiyor.
+  Result<List<Hospitalization>> _fromApiResponse(Result<ApiResponse<List<Hospitalization>>> result) {
+    return result.when(ok: (response) => Result.ok(response.data ?? const []), error: (e) => Result.error(e));
   }
 
   List<Hospitalization> _toHospitalizations(List<BedAssignment> assignments) {

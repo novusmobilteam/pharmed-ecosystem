@@ -4,8 +4,11 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart' hide MaterialType;
 import 'package:pharmed_ui/pharmed_ui.dart';
+
+import '../../../../core/cache/app_settings_cache.dart';
 
 class DashboardNavbarMenu extends StatelessWidget {
   const DashboardNavbarMenu({
@@ -29,7 +32,7 @@ class DashboardNavbarMenu extends StatelessWidget {
     return Material(
       type: MaterialType.transparency,
       child: Container(
-        width: 650,
+        width: 750,
         decoration: BoxDecoration(
           color: MedColors.surface,
           border: Border.all(color: MedColors.border),
@@ -54,7 +57,7 @@ class DashboardNavbarMenu extends StatelessWidget {
                 runSpacing: 12,
                 children: children.map((item) {
                   return SizedBox(
-                    width: 300,
+                    width: 350,
                     child: _SubCard(item: item, onTap: (id) => onCardTap?.call(id)),
                   );
                 }).toList(),
@@ -80,17 +83,19 @@ class DashboardNavbarMenu extends StatelessWidget {
   }
 }
 
-class _SubCard extends StatelessWidget {
+class _SubCard extends ConsumerWidget {
   const _SubCard({required this.item, required this.onTap});
 
   final MenuItem item;
   final void Function(int id) onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final iconData = item.unicode?.toIcon;
-    final isActive = item.isMobile ?? true;
     final locale = Localizations.localeOf(context);
+    final CabinType? cabinType = ref.watch(deviceModeProvider).value;
+    final isMobileItem = item.isMobile ?? false;
+    final isActive = cabinType != CabinType.mobile || isMobileItem;
 
     return GestureDetector(
       onTap: () => isActive ? onTap(item.id ?? 0) : null,

@@ -36,6 +36,8 @@ class PrescriptionItem implements Selectable {
   final String? rfidTag;
   final PrescriptionItemMovement? lastMovement;
   final Hospitalization? hospitalization;
+  final DateTime? applicationDate;
+  final User? applicationUser;
 
   PrescriptionMovementType? get status => lastMovement?.type;
   User? get activityUser => lastMovement?.performedBy;
@@ -76,6 +78,8 @@ class PrescriptionItem implements Selectable {
     this.rfidTag,
     this.lastMovement,
     this.hospitalization,
+    this.applicationDate,
+    this.applicationUser,
   });
 
   PrescriptionItem copyWith({

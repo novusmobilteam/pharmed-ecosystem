@@ -6550,15 +6550,7 @@
   "description": "Master waste/destruction screen — empty state message when the selected patient has no disposable items"
 },
 
-"waste_action_wastage": "Fire",
-"@waste_action_wastage": {
-  "description": "Master waste/destruction screen — segment label and submit button text for the wastage (fire) mode"
-},
 
-"waste_action_destruction": "İmha",
-"@waste_action_destruction": {
-  "description": "Master waste/destruction screen — segment label and submit button text for the destruction mode"
-},
 
 "waste_label_availableAmount": "Mevcut miktar: {amount}",
 "@waste_label_availableAmount": {
@@ -6669,5 +6661,14 @@
 "unload_label_queueProgress": "{total} çekmeceden {done}.",
 "unload_label_countQty": "Sayım",
 "unload_label_unloadQty": "Boşaltım Miktarı",
-"refund_label_quantity": "Miktar"
+"refund_label_quantity": "Miktar",
+"destruction_label_queueProgress": "{current} / {total}",
+"destruction_action_stop": "Durdur",
+"destruction_stop_confirmTitle": "İmha durdurulsun mu?",
+"destruction_stop_confirmMessage": "İmha işlemi durdurulacak. Şu ana kadar işlenen kayıtlar korunacak.",
+"destruction_stop_confirmYes": "Evet, durdur",
+"destruction_label_quantity": "İmha Miktarı",
+"destruction_action_nextCell": "Sonraki Göz",
+"destruction_action_completeDestruction": "İmhayı Tamamla",
+"waste_hint_notAuthorized": "Bu ilacı imha etmeniz için yetkiniz yoktur"
 }

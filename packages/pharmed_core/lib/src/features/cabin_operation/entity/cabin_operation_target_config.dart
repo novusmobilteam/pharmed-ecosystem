@@ -25,3 +25,7 @@ const censusTargetConfig = CabinOperationTargetConfig(hasSecondaryField: false);
 
 /// Boşaltma: kullanıcı hem sayım hem çıkarılacak miktarı girer.
 const unloadTargetConfig = CabinOperationTargetConfig(hasSecondaryField: true);
+
+/// İmha: sayım gibi tek alan (hasSecondaryField: false) ama stoktan hiç
+/// ön-doldurma yapılmaz — kullanıcı her gözde miktarı bilinçli girmeli.
+const destructionTargetConfig = CabinOperationTargetConfig(hasSecondaryField: false);

@@ -1113,10 +1113,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get waste_panel_title => 'Fire/İmha Edilebilir İlaçlar';
 
   @override
-  String get waste_action_wastage => 'Fire';
+  String get waste_action_wastage => 'Fire Et';
 
   @override
-  String get waste_action_destruction => 'İmha';
+  String get waste_action_destruction => 'İmha Et';
 
   @override
   String get wastage_success_title => 'Fire kaydedildi';
@@ -5588,4 +5588,35 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refund_label_quantity => 'Miktar';
+
+  @override
+  String destruction_label_queueProgress(int current, int total) {
+    return '$current / $total';
+  }
+
+  @override
+  String get destruction_action_stop => 'Durdur';
+
+  @override
+  String get destruction_stop_confirmTitle => 'İmha durdurulsun mu?';
+
+  @override
+  String get destruction_stop_confirmMessage =>
+      'İmha işlemi durdurulacak. Şu ana kadar işlenen kayıtlar korunacak.';
+
+  @override
+  String get destruction_stop_confirmYes => 'Evet, durdur';
+
+  @override
+  String get destruction_label_quantity => 'İmha Miktarı';
+
+  @override
+  String get destruction_action_nextCell => 'Sonraki Göz';
+
+  @override
+  String get destruction_action_completeDestruction => 'İmhayı Tamamla';
+
+  @override
+  String get waste_hint_notAuthorized =>
+      'Bu ilacı imha etmeniz için yetkiniz yoktur';
 }

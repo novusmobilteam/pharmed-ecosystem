@@ -80,7 +80,7 @@ class _PaginationFooter extends StatelessWidget {
 
   int get _totalPages => totalCount == 0 ? 1 : (totalCount / pageSize).ceil();
   int get _startRecord => totalCount == 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  int get _endRecord => (currentPage * pageSize).clamp(0, totalCount);
+  int get _endRecord => totalCount <= 0 ? 0 : (currentPage * pageSize).clamp(1, totalCount);
   bool get _canGoPrev => currentPage > 1;
   bool get _canGoNext => currentPage < _totalPages;
 

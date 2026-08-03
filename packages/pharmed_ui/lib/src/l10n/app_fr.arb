@@ -4999,5 +4999,14 @@
 "unload_label_queueProgress": "Tiroir {done} sur {total}",
 "unload_label_countQty": "Comptage",
 "unload_label_unloadQty": "Qté à retirer",
-"refund_label_quantity": "Quantité"
+"refund_label_quantity": "Quantité",
+"destruction_label_queueProgress": "{current} / {total}",
+"destruction_action_stop": "Arrêter",
+"destruction_stop_confirmTitle": "Arrêter la destruction ?",
+"destruction_stop_confirmMessage": "Le processus de destruction sera arrêté. Les éléments déjà traités seront conservés.",
+"destruction_stop_confirmYes": "Oui, arrêter",
+"destruction_label_quantity": "Qté à détruire",
+"destruction_action_nextCell": "Cellule suivante",
+"destruction_action_completeDestruction": "Terminer la destruction",
+"waste_hint_notAuthorized": "Vous n'êtes pas autorisé à détruire ce médicament"
 }

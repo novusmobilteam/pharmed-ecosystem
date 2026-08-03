@@ -37,6 +37,8 @@ class PrescriptionItemDto {
   final ServiceDto? inpatientService;
   final PrescriptionDto? prescription;
   final PrescriptionItemMovementDto? lastMovement;
+  final DateTime? applicationDate;
+  final UserDto? applicationUser;
 
   const PrescriptionItemDto({
     this.id,
@@ -75,6 +77,8 @@ class PrescriptionItemDto {
     this.patientName,
     this.protocolNo,
     this.rfidTag,
+    this.applicationDate,
+    this.applicationUser,
   });
 
   factory PrescriptionItemDto.fromJson(Map<String, dynamic> json) {
@@ -134,6 +138,8 @@ class PrescriptionItemDto {
       protocolNo: json['protocolNo'] as String?,
       rfidTag: json['rfidCardTag'] as String?,
       lastMovement: json['lastMovement'] != null ? PrescriptionItemMovementDto.fromJson(json['lastMovement']) : null,
+      applicationDate: json['applicationDate'] != null ? DateTime.tryParse(json['applicationDate']) : null,
+      applicationUser: json['applicationUser'] != null ? UserDto.fromJson(json['applicationUser']) : null,
     );
   }
 

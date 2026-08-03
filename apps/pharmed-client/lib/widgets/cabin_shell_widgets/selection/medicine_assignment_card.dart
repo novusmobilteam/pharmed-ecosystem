@@ -7,11 +7,20 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 /// kabine atanmış ilaçları kullanmak için gösterilen widget.
 
 class MedicineAssignmentCard extends StatelessWidget {
-  const MedicineAssignmentCard({super.key, this.selected = false, this.onTap, required this.assignment});
+  const MedicineAssignmentCard({
+    super.key,
+    this.selected = false,
+    this.onTap,
+    required this.assignment,
+    this.isActive = true,
+    this.extra = const [],
+  });
 
   final MedicineAssignment assignment;
   final bool selected;
   final VoidCallback? onTap;
+  final bool isActive;
+  final List<Widget> extra;
 
   Color get _statusBg => switch (_level) {
     MedCellStockLevel.ok => MedColors.greenLight,
@@ -42,6 +51,8 @@ class MedicineAssignmentCard extends StatelessWidget {
     final color = _level.color;
     final pct = _ratio(_current, _maxQty);
 
+    final bool isSelected = isActive == false ? false : selected;
+
     String addressLabel = _isKubik
         ? context.l10n.refill_chip_drawerCell(_address, '${_cellNo ?? '-'}')
         : context.l10n.refill_chip_drawer(_address);
@@ -50,55 +61,68 @@ class MedicineAssignmentCard extends StatelessWidget {
         ? context.l10n.refill_status_stockCritical
         : (_current <= _minQty ? context.l10n.refill_status_stockLow : context.l10n.refill_status_stockOk);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: MedRadius.xl2All,
-      child: Container(
-        padding: MedSpacing.insetXl,
-        decoration: BoxDecoration(
-          color: MedColors.surface,
-          border: Border.all(color: selected ? MedColors.blue : MedColors.border, width: selected ? 2 : 1),
-          borderRadius: MedRadius.midAll,
-          boxShadow: MedShadows.sm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 12,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 2,
-                    children: [
-                      Text(_name, style: MedTextStyles.titleMd(), maxLines: 1, overflow: TextOverflow.ellipsis),
-                      Text(addressLabel, style: MedTextStyles.bodyMd(color: MedColors.text3)),
-                    ],
+    return Opacity(
+      opacity: isActive ? 1.0 : 1,
+      child: InkWell(
+        onTap: isActive ? onTap : null,
+        borderRadius: MedRadius.xl2All,
+        child: Container(
+          padding: MedSpacing.insetXl,
+          decoration: BoxDecoration(
+            color: MedColors.surface,
+            border: Border.all(color: isSelected ? MedColors.blue : MedColors.border, width: isSelected ? 2 : 1),
+            borderRadius: MedRadius.midAll,
+            boxShadow: MedShadows.sm,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 12,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 2,
+                      children: [
+                        Text(_name, style: MedTextStyles.titleMd(), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        Text(addressLabel, style: MedTextStyles.bodyMd(color: MedColors.text3)),
+                      ],
+                    ),
                   ),
+                  if (isActive)
+                    MedCheckbox(
+                      value: isSelected,
+                      onChanged: (_) => isActive ? onTap!() : null,
+                      size: MedCheckboxSize.md,
+                    ),
+                ],
+              ),
+              Row(
+                spacing: 8,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(color: _statusBg, borderRadius: MedRadius.smAll),
+                    child: Text(statusLabel, style: MedTextStyles.monoSm(color: color)),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${_current.formatFractional} / ${_maxQty.formatFractional}',
+                    style: MedTextStyles.monoSm(color: MedColors.text2),
+                  ),
+                ],
+              ),
+              _StockBar(pct: pct, minPct: _ratio(_minQty, _maxQty), critPct: _ratio(_critQty, _maxQty), color: color),
+              if (extra.isNotEmpty)
+                SizedBox(
+                  width: context.width,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: extra),
                 ),
-                MedCheckbox(value: selected, onChanged: (_) => onTap!(), size: MedCheckboxSize.md),
-              ],
-            ),
-            Row(
-              spacing: 8,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(color: _statusBg, borderRadius: MedRadius.smAll),
-                  child: Text(statusLabel, style: MedTextStyles.monoSm(color: color)),
-                ),
-                const Spacer(),
-                Text(
-                  '${_current.formatFractional} / ${_maxQty.formatFractional}',
-                  style: MedTextStyles.monoSm(color: MedColors.text2),
-                ),
-              ],
-            ),
-            _StockBar(pct: pct, minPct: _ratio(_minQty, _maxQty), critPct: _ratio(_critQty, _maxQty), color: color),
-          ],
+            ],
+          ),
         ),
       ),
     );

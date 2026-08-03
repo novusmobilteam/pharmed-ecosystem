@@ -9946,6 +9946,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quantity'**
   String get refund_label_quantity;
+
+  /// Queue progress label shown in the master destruction execution top strip
+  ///
+  /// In en, this message translates to:
+  /// **'{current} of {total}'**
+  String destruction_label_queueProgress(int current, int total);
+
+  /// Button label to stop the master destruction queue
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get destruction_action_stop;
+
+  /// Confirmation dialog title when stopping the master destruction queue
+  ///
+  /// In en, this message translates to:
+  /// **'Stop destruction?'**
+  String get destruction_stop_confirmTitle;
+
+  /// Confirmation dialog message when stopping the master destruction queue
+  ///
+  /// In en, this message translates to:
+  /// **'The destruction process will be stopped. Items already processed will be kept.'**
+  String get destruction_stop_confirmMessage;
+
+  /// Confirmation button label to confirm stopping the master destruction queue
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, stop'**
+  String get destruction_stop_confirmYes;
+
+  /// Field label for the quantity to destroy in the master destruction execution cell card
+  ///
+  /// In en, this message translates to:
+  /// **'Destroy Qty'**
+  String get destruction_label_quantity;
+
+  /// Button label to advance to the next cell during master destruction execution
+  ///
+  /// In en, this message translates to:
+  /// **'Next cell'**
+  String get destruction_action_nextCell;
+
+  /// Button label to complete the current master destruction target
+  ///
+  /// In en, this message translates to:
+  /// **'Complete destruction'**
+  String get destruction_action_completeDestruction;
+
+  /// Chip shown on a medicine card in the destruction (imha) screen when the current user is not in the medicine's list of authorized destroyers
+  ///
+  /// In en, this message translates to:
+  /// **'You are not authorized to destroy this medicine'**
+  String get waste_hint_notAuthorized;
 }
 
 class _AppLocalizationsDelegate

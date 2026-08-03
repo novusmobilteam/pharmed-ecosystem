@@ -1231,7 +1231,16 @@
     "unload_label_queueProgress",
     "unload_label_countQty",
     "unload_label_unloadQty",
-    "refund_label_quantity"
+    "refund_label_quantity",
+    "destruction_label_queueProgress",
+    "destruction_action_stop",
+    "destruction_stop_confirmTitle",
+    "destruction_stop_confirmMessage",
+    "destruction_stop_confirmYes",
+    "destruction_label_quantity",
+    "destruction_action_nextCell",
+    "destruction_action_completeDestruction",
+    "waste_hint_notAuthorized"
   ],
 
   "fr": [

@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 class MockCabinStockRepository implements ICabinStockRepository {
   static const _delay = Duration(milliseconds: 800);
@@ -66,10 +67,9 @@ class MockCabinStockRepository implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<List<CabinStock>>> getExpiringStocks() async {
+  Future<Result<ApiResponse<List<CabinStock>>?>> getExpiringStocks({PagedQueryParams? params}) async {
     await Future.delayed(_delay);
-    final expiring = _mockStocks.where((s) => (s.daysUntilExpiration) <= 30).toList();
-    return Result.ok(expiring);
+    return const Result.ok(null);
   }
 
   @override

@@ -6,7 +6,7 @@ class GetUnscannedBarcodesUseCase {
 
   GetUnscannedBarcodesUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> call() {
-    return _repository.getUnscannedBarcodes();
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> call({PagedQueryParams? params}) {
+    return _repository.getUnscannedBarcodes(params: params);
   }
 }

@@ -6835,5 +6835,50 @@
 "refund_label_quantity": "Quantity",
 "@refund_label_quantity": {
   "description": "Field label for the return quantity shown in the master refund execution cell card"
+},
+"destruction_label_queueProgress": "{current} of {total}",
+"@destruction_label_queueProgress": {
+  "description": "Queue progress label shown in the master destruction execution top strip",
+  "placeholders": {
+    "current": {"type": "int"},
+    "total": {"type": "int"}
+  }
+},
+
+"destruction_action_stop": "Stop",
+"@destruction_action_stop": {
+  "description": "Button label to stop the master destruction queue"
+},
+
+"destruction_stop_confirmTitle": "Stop destruction?",
+"@destruction_stop_confirmTitle": {
+  "description": "Confirmation dialog title when stopping the master destruction queue"
+},
+
+"destruction_stop_confirmMessage": "The destruction process will be stopped. Items already processed will be kept.",
+"@destruction_stop_confirmMessage": {
+  "description": "Confirmation dialog message when stopping the master destruction queue"
+},
+
+"destruction_stop_confirmYes": "Yes, stop",
+"@destruction_stop_confirmYes": {
+  "description": "Confirmation button label to confirm stopping the master destruction queue"
+},
+"destruction_label_quantity": "Destroy Qty",
+"@destruction_label_quantity": {
+  "description": "Field label for the quantity to destroy in the master destruction execution cell card"
+},
+"destruction_action_nextCell": "Next cell",
+"@destruction_action_nextCell": {
+  "description": "Button label to advance to the next cell during master destruction execution"
+},
+
+"destruction_action_completeDestruction": "Complete destruction",
+"@destruction_action_completeDestruction": {
+  "description": "Button label to complete the current master destruction target"
+},
+"waste_hint_notAuthorized": "You are not authorized to destroy this medicine",
+"@waste_hint_notAuthorized": {
+  "description": "Chip shown on a medicine card in the destruction (imha) screen when the current user is not in the medicine's list of authorized destroyers"
 }
 }

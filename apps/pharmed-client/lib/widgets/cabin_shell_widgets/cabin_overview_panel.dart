@@ -182,6 +182,7 @@ class CabinOverviewPanel extends StatelessWidget {
   }
 
   static MedCabinLocationDetail _executionLocationDetail(DrawerQueueItem item) {
+    // ignore: unused_local_variable
     final hasPartialUnitFocus =
         item.units.length > 1 && item.activeUnitIndexes.isNotEmpty && item.activeUnitIndexes.length < item.units.length;
 

@@ -3,7 +3,9 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
+import '../../../core/cache/app_settings_cache.dart';
 import '../../../core/providers/providers.dart';
 import '../../auth/notifier/auth_notifier.dart';
 import 'my_patients_state.dart';
@@ -12,6 +14,7 @@ final myPatientsNotifierProvider = NotifierProvider<MyPatientsNotifier, MyPatien
 
 class MyPatientsNotifier extends Notifier<MyPatientsState> {
   GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
+  GetActiveHospitalizationsUseCase get _getHospitalizations => ref.read(getActiveHospitalizationsUseCaseProvider);
   GetMyPatientsUseCase get _getMyPatients => ref.read(getMyPatientsUseCaseProvider);
   AddPatientUseCase get _addPatient => ref.read(addPatientUseCaseProvider);
   RemovePatientsUseCase get _removePatients => ref.read(removePatientsUseCaseProvider);
@@ -23,19 +26,36 @@ class MyPatientsNotifier extends Notifier<MyPatientsState> {
   MyPatientsState build() => const MyPatientsUninitialized();
 
   Future<void> init(int cabinId) async {
-    if (state.cabinId == cabinId && state is! MyPatientsUninitialized) return;
-
     state = MyPatientsLoading(cabinId: cabinId);
 
-    // Her iki listeyi paralel çek.
-    final results = await Future.wait([_getBedAssignments.call(cabinId), _getMyPatients.call()]);
+    final cabinType = await ref.read(deviceModeProvider.future);
+    final isMobile = cabinType == CabinType.mobile;
 
-    final bedResult = results[0] as Result<List<BedAssignment>>;
+    final Future<dynamic> patientsFuture = isMobile
+        ? _getBedAssignments.call(cabinId)
+        : _getHospitalizations.call(const PagedQueryParams());
+
+    final results = await Future.wait([patientsFuture, _getMyPatients.call()]);
+
     final myResult = results[1] as Result<List<MyPatient>>;
 
-    if (bedResult is Error) {
+    late final Result<List<Hospitalization>> patientsResult;
+
+    if (isMobile) {
+      final bedResult = results[0] as Result<List<BedAssignment>>;
+      patientsResult = bedResult is Error
+          ? Result.error((bedResult as Error).error)
+          : Result.ok(_toHospitalizations((bedResult as Ok<List<BedAssignment>>).data ?? []));
+    } else {
+      final hospResult = results[0] as Result<ApiResponse<List<Hospitalization>>>;
+      patientsResult = hospResult is Error
+          ? Result.error((hospResult as Error).error)
+          : Result.ok((hospResult as Ok<ApiResponse<List<Hospitalization>>>).data?.data ?? const []);
+    }
+
+    if (patientsResult is Error) {
       state = MyPatientsError(
-        message: (bedResult as Error).error.message,
+        message: (patientsResult as Error).error.message,
         previousState: MyPatientsIdle(cabinId: cabinId, allPatients: const [], myPatients: const []),
       );
       return;
@@ -48,14 +68,10 @@ class MyPatientsNotifier extends Notifier<MyPatientsState> {
       return;
     }
 
-    final assignments = (bedResult as Ok<List<BedAssignment>>).data;
+    final allPatients = (patientsResult as Ok<List<Hospitalization>>).data ?? [];
     final myPatients = (myResult as Ok<List<MyPatient>>).data;
 
-    state = MyPatientsIdle(
-      cabinId: cabinId,
-      allPatients: _toHospitalizations(assignments ?? []),
-      myPatients: myPatients ?? [],
-    );
+    state = MyPatientsIdle(cabinId: cabinId, allPatients: allPatients, myPatients: myPatients ?? []);
   }
 
   Future<void> addPatient(Hospitalization hospitalization) async {
