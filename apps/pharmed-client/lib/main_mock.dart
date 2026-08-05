@@ -17,8 +17,7 @@ void main() async {
 
   // Mock test için cache'i temizle
   final container = ProviderContainer();
-  //await container.read(cabinLocaleDataSourceProvider).clearAll();
-  //await appSettingsCache.resetSetup();
+
   container.dispose();
 
   runApp(

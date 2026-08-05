@@ -210,6 +210,10 @@ final getCabinAssignmentsUseCaseProvider = Provider((ref) {
   return GetCabinAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
+final getCabinAssignmentsWitCabinUseCaseProvider = Provider((ref) {
+  return GetCabinAssignmentsWithCabinUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
 final getCabinStocksUseCaseProvider = Provider((ref) {
   return GetCabinStockUseCase(ref.read(cabinStockRepositoryProvider));
 });
@@ -420,4 +424,40 @@ final getDailyJobListUseCaseProvider = Provider((ref) {
 
 final getUnscannedBarcodesUseCaseProvider = Provider((ref) {
   return GetUnscannedBarcodesUseCase(ref.read(prescriptionRepositoryProvider));
+});
+
+final getEquivalentMedicinesUseCaseProvider = Provider((ref) {
+  return GetEquivalentMedicinesUseCase(ref.read(intakeRepositoryProvider), ref.read(medicineRepositoryProvider));
+});
+
+final checkEquivalentIntakeUseCaseProvider = Provider((ref) {
+  return CheckEquivalentIntakeUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final completeEquivalentIntakeUseCaseProvider = Provider((ref) {
+  return CompleteEquivalentIntakeUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final getOtherStationMedicinesUseCaseProvider = Provider((ref) {
+  return GetOtherStationMedicinesUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final redirectIntakeUseCaseProvider = Provider((ref) {
+  return RedirectIntakeUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final getPrescriptionDetailUseCaseProvider = Provider((ref) {
+  return GetPrescriptionDetailUseCase(ref.read(prescriptionRepositoryProvider));
+});
+
+final getRedirectedIntakeOrdersUseCaseProvider = Provider((ref) {
+  return GetRedirectedIntakeOrdersUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final checkRedirectedIntakeUseCaseProvider = Provider((ref) {
+  return CheckRedirectedIntakeUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final completeRedirectedIntakeUseCaseProvider = Provider((ref) {
+  return CompleteRedirectedIntakeUseCase(ref.read(intakeRepositoryProvider));
 });

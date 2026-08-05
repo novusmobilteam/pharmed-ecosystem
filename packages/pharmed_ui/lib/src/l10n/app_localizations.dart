@@ -8663,6 +8663,24 @@ abstract class AppLocalizations {
   /// **'Replenishment Approved By'**
   String get enumCore_prescriptionMovementReplenishmentPendingActorLabel;
 
+  /// Status label for a prescription item that has been redirected to another station's cabin for intake
+  ///
+  /// In en, this message translates to:
+  /// **'Redirected'**
+  String get enumCore_prescriptionMovementRedirectedLabel;
+
+  /// Actor label describing who performed the redirect action, shown in the movement history block
+  ///
+  /// In en, this message translates to:
+  /// **'Redirected by'**
+  String get enumCore_prescriptionMovementRedirectedActorLabel;
+
+  /// Action label describing the redirect transition, shown in the movement history block
+  ///
+  /// In en, this message translates to:
+  /// **'Redirected'**
+  String get enumCore_prescriptionMovementRedirectedActionLabel;
+
   /// PrescriptionMovementType.pendingApproval — action label (what was done to reach this state)
   ///
   /// In en, this message translates to:
@@ -10000,6 +10018,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are not authorized to destroy this medicine'**
   String get waste_hint_notAuthorized;
+
+  /// Button on an out-of-stock intake item card, triggers the equivalent medicine lookup for that prescription item
+  ///
+  /// In en, this message translates to:
+  /// **'Check Equivalent'**
+  String get intake_action_checkEquivalent;
+
+  /// Shown on an intake item card when the equivalent medicine check returns an empty list
+  ///
+  /// In en, this message translates to:
+  /// **'No equivalent medicine found'**
+  String get intake_hint_noEquivalentFound;
+
+  /// Label above the list of equivalent medicine options returned for an out-of-stock intake item
+  ///
+  /// In en, this message translates to:
+  /// **'Available equivalents'**
+  String get intake_label_equivalentOptions;
+
+  /// Loading text shown while checking if the medicine or its equivalent exists in another station's cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Searching other cabins...'**
+  String get intake_hint_searchingOtherStations;
+
+  /// Shown when neither the medicine nor an equivalent was found in this or any other station's cabin
+  ///
+  /// In en, this message translates to:
+  /// **'This medicine was not found in any cabin'**
+  String get intake_hint_noStockAnywhere;
+
+  /// Label above the list of other stations where the medicine or its equivalent is available
+  ///
+  /// In en, this message translates to:
+  /// **'Available in other cabins'**
+  String get intake_label_otherStationOptions;
+
+  /// Button to redirect an out-of-stock prescription item's intake to another station's cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Redirect'**
+  String get intake_action_redirect;
+
+  /// Confirmation shown on an intake item card after it has been successfully redirected to another station
+  ///
+  /// In en, this message translates to:
+  /// **'Redirected to {stationName} cabin'**
+  String intake_hint_redirectedTo(String stationName);
+
+  /// Status chip label for an intake item that has been redirected to another station
+  ///
+  /// In en, this message translates to:
+  /// **'Redirected'**
+  String get intake_status_redirected;
+
+  /// Tab label for the default prescription-based intake list in the master intake selection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Prescriptions'**
+  String get intake_tab_prescriptions;
+
+  /// Tab label for the list of prescription items redirected to this station's cabin from another station
+  ///
+  /// In en, this message translates to:
+  /// **'Redirected Orders'**
+  String get intake_tab_redirectedOrders;
+
+  /// Empty state shown when there are no pending redirected intake orders for any patient
+  ///
+  /// In en, this message translates to:
+  /// **'No redirected orders'**
+  String get intake_hint_noRedirectedOrders;
+
+  /// Status chip on a redirected order card showing which station it was redirected from
+  ///
+  /// In en, this message translates to:
+  /// **'Redirected from {stationName}'**
+  String intake_status_redirectedFrom(String stationName);
+
+  /// Shown on a redirected order card, naming the user who performed the redirect
+  ///
+  /// In en, this message translates to:
+  /// **'Redirected by {userName}'**
+  String intake_label_redirectedBy(String userName);
 }
 
 class _AppLocalizationsDelegate

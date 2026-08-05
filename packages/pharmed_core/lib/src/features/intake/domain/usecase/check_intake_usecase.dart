@@ -47,7 +47,7 @@ class CheckIntakeParams {
 class IntakeBatchCheckResult {
   const IntakeBatchCheckResult({required this.targets, required this.statuses});
   final List<IntakeTarget> targets;
-  final Map<int, IntakeCheckStatus> statuses;
+  final Map<int, IntakeCheckState> statuses;
 }
 
 class CheckIntakeUseCase {
@@ -87,10 +87,10 @@ class CheckIntakeUseCase {
     required int userId,
     int? hospitalizationId,
     required List<IntakeItem> items,
-    void Function(int itemId, IntakeCheckStatus status)? onItemStatusChanged,
+    void Function(int itemId, IntakeCheckState status)? onItemStatusChanged,
   }) async {
     final targets = <IntakeTarget>[];
-    final statuses = <int, IntakeCheckStatus>{};
+    final statuses = <int, IntakeCheckState>{};
 
     for (final item in items) {
       onItemStatusChanged?.call(item.id, const CheckLoading());
@@ -111,7 +111,7 @@ class CheckIntakeUseCase {
           type: type,
           userId: userId,
           hospitalizationId: hospitalizationId,
-          prescriptionDetailId: item.prescriptionItem?.id,
+          prescriptionDetailId: item.id,
           assignment: item.assignment ?? MedicineAssignment(),
           resolvedStock: item.stock,
           dosePiece: item.dosePiece ?? 0,

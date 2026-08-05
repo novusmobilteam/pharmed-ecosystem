@@ -1018,6 +1018,9 @@
     "enumCore_prescriptionMovementUnloadedActorLabel",
     "enumCore_prescriptionMovementShortageReportedActorLabel",
     "enumCore_prescriptionMovementReplenishmentPendingActorLabel",
+    "enumCore_prescriptionMovementRedirectedLabel",
+    "enumCore_prescriptionMovementRedirectedActorLabel",
+    "enumCore_prescriptionMovementRedirectedActionLabel",
     "enumCore_prescriptionMovementPendingApprovalActionLabel",
     "enumCore_prescriptionMovementPurchasePendingActionLabel",
     "enumCore_prescriptionMovementAppliedActionLabel",
@@ -1240,7 +1243,21 @@
     "destruction_label_quantity",
     "destruction_action_nextCell",
     "destruction_action_completeDestruction",
-    "waste_hint_notAuthorized"
+    "waste_hint_notAuthorized",
+    "intake_action_checkEquivalent",
+    "intake_hint_noEquivalentFound",
+    "intake_label_equivalentOptions",
+    "intake_hint_searchingOtherStations",
+    "intake_hint_noStockAnywhere",
+    "intake_label_otherStationOptions",
+    "intake_action_redirect",
+    "intake_hint_redirectedTo",
+    "intake_status_redirected",
+    "intake_tab_prescriptions",
+    "intake_tab_redirectedOrders",
+    "intake_hint_noRedirectedOrders",
+    "intake_status_redirectedFrom",
+    "intake_label_redirectedBy"
   ],
 
   "fr": [

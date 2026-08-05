@@ -5,6 +5,9 @@ abstract interface class IIntakeRepository {
   // Reçete ID'sine göre alınacakları getirir
   Future<Result<List<CabinTargetedPrescriptionItem>>> getIntakeItems({required int hospitalizationId});
 
+  /// GET /Prescription/detail/equivalentCheck/{prescriptionDetailId}
+  Future<Result<List<EquivalentMedicine>>> getEquivalentMedicines({required int prescriptionDetailId});
+
   /// İlaç Alım İşlemi - Kontrol
   /// Alım yaparken önce alım türüne göre (IntakeType) alım işlemini kontrol
   /// ediyoruz. Eğer bu alım işlemi yapılabilecekse (Günlük maks. kullanım miktarı vb)
@@ -13,12 +16,18 @@ abstract interface class IIntakeRepository {
   Future<Result<void>> checkOrderlessIntake(Map<String, dynamic> data);
   Future<Result<void>> checkFreeIntake(Map<String, dynamic> data);
 
+  /// POST /Prescription/detail/equivalent/checkCollect
+  Future<Result<void>> checkEquivalentIntake(Map<String, dynamic> data);
+
   /// İlaç Alım İşlemi - Tamamlama
   /// Kontrol işlemleri başarılı olursa alım türüne göre ilgili servis ile
   /// alım işlemini tamamlıyoruz.
   Future<Result<void>> completeOrderedIntake(Map<String, dynamic> data);
   Future<Result<void>> completeOrderlessIntake(Map<String, dynamic> data);
   Future<Result<void>> completeFreeIntake(Map<String, dynamic> data);
+
+  /// POST /Prescription/detail/equivalent/collect
+  Future<Result<void>> completeEquivalentIntake(Map<String, dynamic> data);
 
   Future<Result<void>> definePatientMedicine(Map<String, dynamic> data);
 
@@ -31,4 +40,11 @@ abstract interface class IIntakeRepository {
   /// Mobil kabin ilaç kontrol ve alım işlemleri
   Future<Result<void>> checkMobileIntake(List<Map<String, dynamic>> data);
   Future<Result<void>> completeMobileIntake(List<Map<String, dynamic>> data);
+
+  Future<Result<List<OtherStationMedicine>>> getOtherStationMedicines({required int prescriptionDetailId});
+  Future<Result<void>> redirectIntake(Map<String, dynamic> data);
+
+  Future<Result<List<RedirectedIntakeOrder>>> getRedirectedIntakeOrders(int hospitalizationId);
+  Future<Result<void>> checkRedirectedIntake(int referralId);
+  Future<Result<void>> completeRedirectedIntake({required int referralId, double? censusQuantity});
 }

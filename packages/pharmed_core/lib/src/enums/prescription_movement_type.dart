@@ -101,7 +101,12 @@ enum PrescriptionMovementType {
   shortageReported(12),
 
   /// İkmal Bekliyor — eksik onaylandı, dolum yapılabilir.
-  replenishmentPending(13);
+  replenishmentPending(13),
+
+  /// Order Yönlendirildi — bu kalem, kabinde ve muadilinde stok bulunamadığı
+  /// için başka bir istasyona yönlendirildi. Bu kabinde artık hiçbir aksiyon
+  /// alınamaz (terminal-benzeri).
+  redirected(14);
 
   final int id;
 
@@ -131,6 +136,7 @@ enum PrescriptionMovementType {
       PrescriptionMovementType.unloaded => l.enumCore_prescriptionMovementUnloadedLabel,
       PrescriptionMovementType.shortageReported => l.enumCore_prescriptionMovementShortageReportedLabel,
       PrescriptionMovementType.replenishmentPending => l.enumCore_prescriptionMovementReplenishmentPendingLabel,
+      PrescriptionMovementType.redirected => l.enumCore_prescriptionMovementRedirectedLabel,
     };
   }
 
@@ -152,6 +158,7 @@ enum PrescriptionMovementType {
       PrescriptionMovementType.unloaded => l.enumCore_prescriptionMovementUnloadedActorLabel,
       PrescriptionMovementType.shortageReported => l.enumCore_prescriptionMovementShortageReportedActorLabel,
       PrescriptionMovementType.replenishmentPending => l.enumCore_prescriptionMovementReplenishmentPendingActorLabel,
+      PrescriptionMovementType.redirected => l.enumCore_prescriptionMovementRedirectedActorLabel,
     };
   }
 
@@ -179,6 +186,7 @@ enum PrescriptionMovementType {
       PrescriptionMovementType.unloaded => l.enumCore_prescriptionMovementUnloadedActionLabel,
       PrescriptionMovementType.shortageReported => l.enumCore_prescriptionMovementShortageReportedActionLabel,
       PrescriptionMovementType.replenishmentPending => l.enumCore_prescriptionMovementReplenishmentPendingActionLabel,
+      PrescriptionMovementType.redirected => l.enumCore_prescriptionMovementRedirectedActionLabel,
     };
   }
 
@@ -214,6 +222,7 @@ enum PrescriptionMovementType {
     PrescriptionMovementType.unloaded,
     PrescriptionMovementType.shortageReported,
     PrescriptionMovementType.replenishmentPending,
+    PrescriptionMovementType.redirected,
   ];
 }
 
@@ -231,6 +240,7 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.unloaded => MedColors.text3,
     PrescriptionMovementType.shortageReported => MedColors.amber,
     PrescriptionMovementType.replenishmentPending => MedColors.blue,
+    PrescriptionMovementType.redirected => MedColors.text3,
   };
 
   Color get foregroundColor => switch (this) {
@@ -247,6 +257,7 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.unloaded => MedColors.surface3,
     PrescriptionMovementType.shortageReported => MedColors.amberLight,
     PrescriptionMovementType.replenishmentPending => MedColors.blueLight,
+    PrescriptionMovementType.redirected => MedColors.surface3,
   };
 
   IconData get icon => switch (this) {
@@ -263,6 +274,7 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.unloaded => PhosphorIcons.tray(PhosphorIconsStyle.fill),
     PrescriptionMovementType.shortageReported => PhosphorIcons.warningOctagon(PhosphorIconsStyle.fill),
     PrescriptionMovementType.replenishmentPending => PhosphorIcons.package(PhosphorIconsStyle.fill),
+    PrescriptionMovementType.redirected => PhosphorIcons.arrowBendUpRight(PhosphorIconsStyle.fill),
   };
 
   MedTone get movementTone => switch (this) {
@@ -271,6 +283,7 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.filledWaiting => MedTone.info, // dolum
     PrescriptionMovementType.wastaged => MedTone.warning, // iade
     PrescriptionMovementType.returned => MedTone.error, // fire/imha
+    PrescriptionMovementType.redirected => MedTone.info,
     _ => MedTone.info,
   };
 }
@@ -310,7 +323,8 @@ extension PrescriptionMovementTypeActions on PrescriptionMovementType {
       this == PrescriptionMovementType.destructed ||
       this == PrescriptionMovementType.cancelled ||
       this == PrescriptionMovementType.rejected ||
-      this == PrescriptionMovementType.unloaded;
+      this == PrescriptionMovementType.unloaded ||
+      this == PrescriptionMovementType.redirected;
 
   /// Eğer durumu "Onay Bekliyor" ise hareket geçmişi olamaz.
   bool get canShowHistory => this != PrescriptionMovementType.pendingApproval;

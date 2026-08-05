@@ -5,7 +5,7 @@ class GetPrescriptionDetailUseCase {
 
   GetPrescriptionDetailUseCase(this._repository);
 
-  Future<Result<List<PrescriptionItem>>> call(int prescriptionId) {
+  Future<Result<PrescriptionItem?>> call(int prescriptionId) {
     return _repository.getPrescriptionDetail(prescriptionId);
   }
 }

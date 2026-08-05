@@ -6,7 +6,7 @@ class CabinOperationSelectionLayout extends StatelessWidget {
     super.key,
     required this.left,
     required this.right,
-    this.leftWidth = 440,
+    this.leftWidth = 320,
     this.footer,
     this.isLoading = false,
   });

@@ -36,6 +36,7 @@ class AppSettingsCache {
   static const _keySetupDone = 'setup_done';
   static const _keyDeviceMode = 'device_mode';
   static const _keyCurrentCabinId = 'current_cabin_id';
+  static const _keyCurrentStationId = 'current_station_id';
   static const _keyLanguage = 'language';
   static const _keyComPort = 'com_port';
   static const _keyManualRts = 'manual_rts';
@@ -69,14 +70,20 @@ class AppSettingsCache {
     return type;
   }
 
-  Future<void> saveCurrentCabinId(int cabinId) async {
+  Future<void> saveCurrentCabinId(int cabinId, {int? stationId}) async {
     await _open();
     await _box!.put(_keyCurrentCabinId, cabinId);
+    await _box!.put(_keyCurrentStationId, stationId);
   }
 
   Future<int?> getCurrentCabinId() async {
     await _open();
     return _box!.get(_keyCurrentCabinId) as int?;
+  }
+
+  Future<int?> getCurrentStationId() async {
+    await _open();
+    return _box!.get(_keyCurrentStationId) as int?;
   }
 
   Future<void> resetSetup() async {

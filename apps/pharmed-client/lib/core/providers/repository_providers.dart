@@ -189,11 +189,17 @@ final intakeRepositoryProvider = Provider<IIntakeRepository>((ref) {
       dataSource: ref.read(intakeDataSourceProvider),
       intakeItemMapper: CabinTargetedRxItemMapper(),
       patientIntakeItemMapper: PatientIntakeItemMapper(),
+      eqMapper: EquivalentMedicineMapper(),
+      otherMapper: OtherStationMedicineMapper(),
+      redirectMapper: RedirectedIntakeOrderMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => IntakeRepositoryImpl(
       dataSource: ref.read(intakeDataSourceProvider),
       intakeItemMapper: CabinTargetedRxItemMapper(),
       patientIntakeItemMapper: PatientIntakeItemMapper(),
+      eqMapper: EquivalentMedicineMapper(),
+      otherMapper: OtherStationMedicineMapper(),
+      redirectMapper: RedirectedIntakeOrderMapper(),
     ),
   };
 });

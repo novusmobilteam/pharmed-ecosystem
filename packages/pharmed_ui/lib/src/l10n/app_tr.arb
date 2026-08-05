@@ -6229,6 +6229,10 @@
 "@enumCore_prescriptionMovementReplenishmentPendingActionLabel": {
   "description": "PrescriptionMovementType.replenishmentPending — eylem etiketi"
 },
+"enumCore_prescriptionMovementRedirectedLabel": "Yönlendirildi",
+"enumCore_prescriptionMovementRedirectedActorLabel": "Yönlendiren",
+"enumCore_prescriptionMovementRedirectedActionLabel": "Yönlendirdi",
+
 "userAuth_table_firstNameColumn": "Adı",
 "userAuth_table_lastNameColumn": "Soyadı",
 "userAuth_table_occupationTypeColumn": "Meslek Tipi",
@@ -6670,5 +6674,64 @@
 "destruction_label_quantity": "İmha Miktarı",
 "destruction_action_nextCell": "Sonraki Göz",
 "destruction_action_completeDestruction": "İmhayı Tamamla",
-"waste_hint_notAuthorized": "Bu ilacı imha etmeniz için yetkiniz yoktur"
+"waste_hint_notAuthorized": "Bu ilacı imha etmeniz için yetkiniz yoktur",
+"intake_action_checkEquivalent": "Muadil Kontrol Et",
+"@intake_action_checkEquivalent": {
+  "description": "Button on an out-of-stock intake item card, triggers the equivalent medicine lookup for that prescription item"
+},
+
+"intake_hint_noEquivalentFound": "Muadil ilaç bulunamadı",
+"@intake_hint_noEquivalentFound": {
+  "description": "Shown on an intake item card when the equivalent medicine check returns an empty list"
+},
+
+"intake_label_equivalentOptions": "Mevcut muadiller",
+"@intake_label_equivalentOptions": {
+  "description": "Label above the list of equivalent medicine options returned for an out-of-stock intake item"
+},
+"intake_hint_searchingOtherStations": "Diğer kabinlerde aranıyor...",
+"@intake_hint_searchingOtherStations": { "description": "Loading text shown while checking if the medicine or its equivalent exists in another station's cabin" },
+
+"intake_hint_noStockAnywhere": "Bu ilaç hiçbir kabinde bulunamadı",
+"@intake_hint_noStockAnywhere": { "description": "Shown when neither the medicine nor an equivalent was found in this or any other station's cabin" },
+
+"intake_label_otherStationOptions": "Diğer kabinlerde mevcut",
+"@intake_label_otherStationOptions": { "description": "Label above the list of other stations where the medicine or its equivalent is available" },
+
+"intake_action_redirect": "Yönlendir",
+"@intake_action_redirect": { "description": "Button to redirect an out-of-stock prescription item's intake to another station's cabin" },
+
+"intake_hint_redirectedTo": "{stationName} kabinine yönlendirildi",
+"@intake_hint_redirectedTo": {
+  "description": "Confirmation shown on an intake item card after it has been successfully redirected to another station",
+  "placeholders": { "stationName": { "type": "String" } }
+},
+
+"intake_status_redirected": "Yönlendirildi",
+"@intake_status_redirected": { "description": "Status chip label for an intake item that has been redirected to another station" },
+"intake_tab_prescriptions": "Reçeteler",
+"@intake_tab_prescriptions": {
+  "description": "Tab label for the default prescription-based intake list in the master intake selection screen"
+},
+
+"intake_tab_redirectedOrders": "Yönlendirilen Alımlar",
+"@intake_tab_redirectedOrders": {
+  "description": "Tab label for the list of prescription items redirected to this station's cabin from another station"
+},
+
+"intake_hint_noRedirectedOrders": "Yönlendirilen alım bulunmuyor",
+"@intake_hint_noRedirectedOrders": {
+  "description": "Empty state shown when there are no pending redirected intake orders for any patient"
+},
+
+"intake_status_redirectedFrom": "{stationName} kabininden yönlendirildi",
+"@intake_status_redirectedFrom": {
+  "description": "Status chip on a redirected order card showing which station it was redirected from",
+  "placeholders": { "stationName": { "type": "String" } }
+},
+"intake_label_redirectedBy": "{userName} yönlendirdi",
+"@intake_label_redirectedBy": {
+  "description": "Shown on a redirected order card, naming the user who performed the redirect",
+  "placeholders": { "userName": { "type": "String" } }
+}
 }

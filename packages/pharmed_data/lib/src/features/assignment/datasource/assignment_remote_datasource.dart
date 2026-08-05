@@ -68,7 +68,8 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
   }
 
   /// Giriş yapılan kabine ataması yapılmış ilaçları getirir.
-  Future<Result<List<MedicineAssignmentDto>>> getCabinAssignments() async {
+  Future<Result<List<MedicineAssignmentDto>>> getCabinAssignments({int? cabinId}) async {
+    // final path = cabinId != null ? '$_medicineBase/cabinInMaterialsTest/${cabinId}' : '$_medicineBase/cabinInMaterials';
     final res = await fetchRequest<List<MedicineAssignmentDto>>(
       path: '$_medicineBase/cabinInMaterials',
       parser: BaseRemoteDataSource.listParser(MedicineAssignmentDto.fromJson),

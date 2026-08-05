@@ -5,6 +5,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/cache/app_settings_cache.dart';
 import '../../../../core/providers/providers.dart';
+import '../../auth/auth.dart';
 import 'settings_state.dart';
 
 /// Birim doz çekmecelerde hücre bazlı SKT girişi açık mı (MiadDate system
@@ -84,9 +85,30 @@ class SettingsNotifier extends Notifier<SettingsState> {
   // ─────────────────────────────────────────────────────────────────────────
 
   /// [DEBUG ONLY] Kabin override'ını set eder.
-  /// null → cache'deki kabine dön.
-  void setDebugCabin(Cabin? cabin) {
-    state = cabin == null ? state.copyWith(clearDebugCabin: true) : state.copyWith(debugCabin: cabin);
+  /// null → cache'deki (gerçek) kabine dön.
+  ///
+  /// Bazı servisler istasyon MAC adresine göre veri döndürdüğü ve login
+  /// akışı cache'deki stationId'yi parametre olarak gönderdiği için, debug
+  /// kabini değiştirmek tek başına yetmez: yeni kabinin stationId'sini de
+  /// cache'e yazıp kullanıcıyı logout edip yeniden login'e zorlamamız
+  /// gerekiyor — böylece yeni istasyon id'siyle giriş yapılır.
+  Future<void> setDebugCabin(Cabin? cabin) async {
+    assert(kDebugMode, 'setDebugCabin sadece debug modda çağrılabilir');
+
+    if (cabin == null) {
+      state = state.copyWith(clearDebugCabin: true);
+      return;
+    }
+
+    // 1) Yeni kabin + istasyon id'sini cache'e yaz (sadece debug modda
+    //    tetiklendiği için prod akışını etkilemez).
+    await _cache.saveCurrentCabinId(cabin.id ?? 0, stationId: cabin.stationId);
+
+    state = state.copyWith(debugCabin: cabin);
+
+    // 2) Kullanıcıyı çıkışa zorla — yeniden login olurken cache'deki
+    //    stationId parametre olarak gönderilecek.
+    await ref.read(authNotifierProvider.notifier).logout();
   }
 
   /// [DEBUG ONLY] Kabin listesini API'den çeker.

@@ -13,7 +13,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 abstract interface class IAuthRemoteDataSource {
-  Future<String> login({required String email, required String password, String? macAddress});
+  Future<String> login({required String email, required String password, String? macAddress, int? stationId});
   Future<String> loginWithBadge({required String cardData, String? macAddress});
 }
 
@@ -23,10 +23,15 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
   final Dio _dio;
 
   @override
-  Future<String> login({required String email, required String password, String? macAddress}) async {
+  Future<String> login({required String email, required String password, String? macAddress, int? stationId}) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/Login/login',
-      data: {'email': email, 'password': password, if (macAddress != null) 'macAddress': macAddress},
+      data: {
+        'email': email,
+        'password': password,
+        if (macAddress != null) 'macAddress': macAddress,
+        if (stationId != null) 'stationId': stationId,
+      },
     );
 
     // ApiResponse<String> yapısı: { "isSuccess": true, "data": "<token>" }

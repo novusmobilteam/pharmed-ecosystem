@@ -4856,6 +4856,16 @@ class AppLocalizationsTr extends AppLocalizations {
       'İkmal Onaylayan';
 
   @override
+  String get enumCore_prescriptionMovementRedirectedLabel => 'Yönlendirildi';
+
+  @override
+  String get enumCore_prescriptionMovementRedirectedActorLabel => 'Yönlendiren';
+
+  @override
+  String get enumCore_prescriptionMovementRedirectedActionLabel =>
+      'Yönlendirdi';
+
+  @override
   String get enumCore_prescriptionMovementPendingApprovalActionLabel =>
       'Oluşturuldu';
 
@@ -5619,4 +5629,53 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get waste_hint_notAuthorized =>
       'Bu ilacı imha etmeniz için yetkiniz yoktur';
+
+  @override
+  String get intake_action_checkEquivalent => 'Muadil Kontrol Et';
+
+  @override
+  String get intake_hint_noEquivalentFound => 'Muadil ilaç bulunamadı';
+
+  @override
+  String get intake_label_equivalentOptions => 'Mevcut muadiller';
+
+  @override
+  String get intake_hint_searchingOtherStations =>
+      'Diğer kabinlerde aranıyor...';
+
+  @override
+  String get intake_hint_noStockAnywhere => 'Bu ilaç hiçbir kabinde bulunamadı';
+
+  @override
+  String get intake_label_otherStationOptions => 'Diğer kabinlerde mevcut';
+
+  @override
+  String get intake_action_redirect => 'Yönlendir';
+
+  @override
+  String intake_hint_redirectedTo(String stationName) {
+    return '$stationName kabinine yönlendirildi';
+  }
+
+  @override
+  String get intake_status_redirected => 'Yönlendirildi';
+
+  @override
+  String get intake_tab_prescriptions => 'Reçeteler';
+
+  @override
+  String get intake_tab_redirectedOrders => 'Yönlendirilen Alımlar';
+
+  @override
+  String get intake_hint_noRedirectedOrders => 'Yönlendirilen alım bulunmuyor';
+
+  @override
+  String intake_status_redirectedFrom(String stationName) {
+    return '$stationName kabininden yönlendirildi';
+  }
+
+  @override
+  String intake_label_redirectedBy(String userName) {
+    return '$userName yönlendirdi';
+  }
 }

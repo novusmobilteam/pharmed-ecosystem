@@ -63,26 +63,41 @@ class _IntakeForm extends StatelessWidget {
   final MasterIntakeNotifier notifier;
 
   bool get _canConfirm {
-    final t = state.currentTarget;
-    return t != null && t.isValid;
+    if (job.isKubik) {
+      final t = state.currentTarget;
+      return t != null && t.isValid;
+    }
+    return job.targets.every((t) => t.isValid); // birim doz: TÜM hedefler geçerli olmalı
   }
 
   /// Sadece aktif target'a (ti) ait gruplar — itemBuilder(context, 0) tek
   /// çağrılır, içine bu kartların tamamını Column olarak koyuyoruz.
   Widget _activeContent(BuildContext context, int ti) {
     final groups = IntakeCellGrouper.group(job.targets);
-    final activeGroups = groups.where((g) => g.refs.any((r) => r.$1 == ti)).toList();
-    if (activeGroups.isEmpty) return const SizedBox.shrink();
 
+    if (job.isKubik) {
+      if (ti < 0 || ti >= groups.length) return const SizedBox.shrink();
+      final group = groups[ti];
+      return IntakeCellCard(
+        group: group,
+        targets: job.targets,
+        stepLabel: context.l10n.refill_label_cellProgress(ti + 1, groups.length),
+        onCountChanged: (v) => notifier.onGroupCountChanged(group, v),
+      );
+    }
+
+    // Birim doz/standart — tek açılış, kaç fiziksel grup varsa hepsi birden.
     return Column(
       spacing: 8,
-      children: activeGroups
+      children: groups
+          .asMap()
+          .entries
           .map(
-            (group) => IntakeCellCard(
-              group: group,
+            (e) => IntakeCellCard(
+              group: e.value,
               targets: job.targets,
-              stepLabel: context.l10n.refill_label_cellProgress(ti + 1, job.targets.length),
-              onCountChanged: (v) => notifier.onGroupCountChanged(group, v),
+              stepLabel: context.l10n.refill_label_cellProgress(e.key + 1, groups.length),
+              onCountChanged: (v) => notifier.onGroupCountChanged(e.value, v),
             ),
           )
           .toList(),
@@ -96,9 +111,9 @@ class _IntakeForm extends StatelessWidget {
     final confirmLabel = !isLastTarget ? context.l10n.refill_action_nextCell : context.l10n.intake_action_complete;
 
     return CabinExecutionGrid(
-      maxWidth: job.isKubik ? 420 : 640,
+      maxWidth: 640,
       isLocked: state.isSaving,
-      isKubik: job.isKubik,
+      isKubik: true,
       itemCount: 1,
       itemBuilder: (context, _) => _activeContent(context, ti),
       header: null,

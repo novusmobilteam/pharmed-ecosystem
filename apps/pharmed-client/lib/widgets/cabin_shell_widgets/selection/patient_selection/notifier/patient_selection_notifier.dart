@@ -26,7 +26,7 @@ final patientSelectionNotifierProvider = NotifierProvider<PatientSelectionNotifi
 class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
   GetCurrentStationUseCase get _getStation => ref.read(getCurrentStationUseCaseProvider);
   GetHospitalizationsByServiceUseCase get _getHospitalizations => ref.read(getHospitalizationsByServiceUseCaseProvider);
-  GetHospitalizationsUseCase get _getHospitalizationsSimple => ref.read(getHospitalizationsUseCaseProvider);
+  GetActiveHospitalizationsUseCase get _getHospitalizationsSimple => ref.read(getActiveHospitalizationsUseCaseProvider);
   CreateUrgentPatientUseCase get _createUrgent => ref.read(createUrgentPatientUseCaseProvider);
 
   @override

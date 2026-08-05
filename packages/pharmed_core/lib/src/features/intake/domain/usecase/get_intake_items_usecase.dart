@@ -28,14 +28,14 @@ class GetIntakeItemsUseCase {
        _assignmentRepository = assignmentRepository,
        _medicineRepository = medicineRepository;
 
-  Future<Result<List<IntakeItem>>> call(GetIntakeItemsParams params) async {
+  Future<Result<List<IntakeItem>>> call(GetIntakeItemsParams params, {int? cabinId}) async {
     final type = params.type;
     final refreshAssignments = params.refreshAssignments;
     final hospitalizationId = params.hospitalizationId ?? 0;
 
     switch (type) {
       case IntakeType.ordered:
-        return await _getOrdered(hospitalizationId, refreshAssignments);
+        return await _getOrdered(hospitalizationId, refreshAssignments, cabinId: cabinId);
       case IntakeType.orderless:
       case IntakeType.urgent:
         return await _getOrderless();
@@ -45,33 +45,27 @@ class GetIntakeItemsUseCase {
   }
 
   Future<Result<List<IntakeItem>>> _getOrderless() async {
-    List<IntakeItem> items = [];
     final result = await _assignmentRepository.getOrderlessCabinAssignments();
     return result.when(
       ok: (data) async {
-        for (var d in data) {
-          if (d.medicine == null) {
-            return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
-          }
-
-          items.add(
-            IntakeItem(
-              id: d.id ?? 0,
-              type: IntakeType.orderless,
-              assignment: d,
-              medicine: d.medicine!,
-              witnessContext: await _fetchWitnessContext(d.medicine!),
-            ),
-          );
+        if (data.any((d) => d.medicine == null)) {
+          return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
         }
-        // _groupByMedicine KALDIRILDI — aynı ilacın farklı fiziksel çekmecelerdeki
-        // karşılıkları artık ayrı kart olarak gösteriliyor. Gruplama, farklı
-        // assignment'ların stoklarını tek karta sıkıştırıp birini kaybediyordu
-        // (copyWith yalnızca dosePiece'i topluyor, ikinci assignment'ı atıyordu) —
-        // bu da kısmi-açma hesabının (calculateAddressFromAssignment) yanlış
-        // çekmece üzerinden yapılmasına yol açabilirdi. İlaç bazlı gruplama +
-        // "hangi çekmeceden alınacağına biz karar verelim" (SKT öncelikli, FEFO)
-        // ayrı bir iş kalemi — şimdilik kapsam dışı.
+
+        final witnessMap = await _resolveWitnessContexts(data.map<Medicine?>((d) => d.medicine));
+
+        final items = data
+            .map(
+              (d) => IntakeItem(
+                id: d.id ?? 0,
+                type: IntakeType.orderless,
+                assignment: d,
+                medicine: d.medicine!,
+                witnessContext: _witnessContextFor(d.medicine, witnessMap),
+              ),
+            )
+            .toList();
+
         return Result.ok(items);
       },
       error: Result.error,
@@ -79,36 +73,37 @@ class GetIntakeItemsUseCase {
   }
 
   Future<Result<List<IntakeItem>>> _getFree() async {
-    List<IntakeItem> items = [];
     final result = await _assignmentRepository.getIndependentMaterials();
     return result.when(
       ok: (data) async {
-        for (var d in data) {
-          if (d.medicine == null) {
-            return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
-          }
-
-          items.add(
-            IntakeItem(
-              id: d.id ?? 0,
-              type: IntakeType.free,
-              assignment: d,
-              medicine: d.medicine!,
-              witnessContext: await _fetchWitnessContext(d.medicine!),
-            ),
-          );
+        if (data.any((d) => d.medicine == null)) {
+          return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
         }
-        // Aynı gerekçe — bkz. _getOrderless.
+
+        final witnessMap = await _resolveWitnessContexts(data.map<Medicine?>((d) => d.medicine));
+
+        final items = data
+            .map(
+              (d) => IntakeItem(
+                id: d.id ?? 0,
+                type: IntakeType.free,
+                assignment: d,
+                medicine: d.medicine!,
+                witnessContext: _witnessContextFor(d.medicine, witnessMap),
+              ),
+            )
+            .toList();
+
         return Result.ok(items);
       },
       error: Result.error,
     );
   }
 
-  Future<Result<List<IntakeItem>>> _getOrdered(int hospitalizationId, bool refreshAssignments) async {
+  Future<Result<List<IntakeItem>>> _getOrdered(int hospitalizationId, bool refreshAssignments, {int? cabinId}) async {
     // İlk yükleme: her iki istek paralel çalışır
     if (!refreshAssignments) {
-      final result = await _fetchOrdered(hospitalizationId);
+      final result = await _fetchOrdered(hospitalizationId, cabinId: cabinId);
       // İlk yüklemede cache'i doldur
       if (result is Ok) {
         _cachedItems = (result as Ok<List<IntakeItem>>).value;
@@ -117,7 +112,7 @@ class GetIntakeItemsUseCase {
     }
 
     // Sonraki alımlar: sadece assignment güncellenir, tasks tekrar çekilmez
-    final assignmentsResult = await _assignmentRepository.getCabinAssignments();
+    final assignmentsResult = await _assignmentRepository.getCabinAssignments(cabinId: cabinId);
     if (assignmentsResult is! Ok) {
       return Result.error(CustomException(message: contextlessL10n().core_genericErrorShortMessage));
     }
@@ -137,48 +132,45 @@ class GetIntakeItemsUseCase {
     return Result.ok(_cachedItems);
   }
 
-  Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId) async {
-    List<IntakeItem> items = [];
-
+  Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId, {int? cabinId}) async {
     final results = await Future.wait([
       _intakeRepository.getIntakeItems(hospitalizationId: hospitalizationId),
-      _assignmentRepository.getCabinAssignments(),
+      _assignmentRepository.getCabinAssignments(cabinId: cabinId),
     ]);
 
     final tasksResult = results[0] as Result<List<CabinTargetedPrescriptionItem>>;
     final assignmentsResult = results[1] as Result<List<MedicineAssignment>>;
 
-    if (tasksResult is! Ok || assignmentsResult is! Ok) {
+    if (tasksResult is! Ok<List<CabinTargetedPrescriptionItem>> || assignmentsResult is! Ok<List<MedicineAssignment>>) {
       return Result.error(CustomException(message: contextlessL10n().core_genericErrorShortMessage));
     }
 
-    final allTasks = (tasksResult as Ok).value;
-    final List<MedicineAssignment> allAssignments = (assignmentsResult as Ok).value;
+    final List<CabinTargetedPrescriptionItem> allTasks = tasksResult.value;
+    final List<MedicineAssignment> allAssignments = assignmentsResult.value;
 
-    for (CabinTargetedPrescriptionItem task in allTasks) {
-      final assignment = _resolveAssignment(task, allAssignments);
-
-      if (task.medicine == null) {
-        return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
-      }
-
-      items.add(
-        IntakeItem(
-          id: task.id,
-          type: IntakeType.ordered,
-          assignment: assignment, // null olsa bile ekliyoruz
-          medicine: assignment?.medicine ?? task.medicine, // Fallback mekanizması
-          dosePiece: task.dosePiece.toDouble(),
-          prescriptionDose: task.dosePiece.toDouble(),
-          witnessContext: await _fetchWitnessContext(task.medicine!),
-          lastMovement: task.lastMovement,
-          firstDoseEmergency: task.firstDoseEmergency,
-          inCaseOfNecessity: task.inCaseOfNecessity,
-          askDoctor: task.askDoctor,
-          stock: task.stock,
-        ),
-      );
+    if (allTasks.any((t) => t.medicine == null)) {
+      return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
     }
+
+    final witnessMap = await _resolveWitnessContexts(allTasks.map<Medicine?>((t) => t.medicine));
+
+    final items = allTasks.map((task) {
+      final assignment = _resolveAssignment(task, allAssignments);
+      return IntakeItem(
+        id: task.id,
+        type: IntakeType.ordered,
+        assignment: assignment,
+        medicine: assignment?.medicine ?? task.medicine,
+        dosePiece: task.dosePiece.toDouble(),
+        prescriptionDose: task.dosePiece.toDouble(),
+        witnessContext: _witnessContextFor(task.medicine, witnessMap),
+        lastMovement: task.lastMovement,
+        firstDoseEmergency: task.firstDoseEmergency,
+        inCaseOfNecessity: task.inCaseOfNecessity,
+        askDoctor: task.askDoctor,
+        stock: task.stock,
+      );
+    }).toList();
 
     return Result.ok(items);
   }
@@ -205,24 +197,40 @@ class GetIntakeItemsUseCase {
     return allAssignments.firstWhereOrNull((a) => a.cabinDrawerId == task.cabinAssignment.cabinDrawerId);
   }
 
-  Future<WitnessContext> _fetchWitnessContext(Medicine medicine) async {
-    if (!medicine.isDrug) return const WitnessContext();
+  /// [medicines] içindeki BENZERSİZ, isWitnessedPurchase=true olan Drug'lar
+  /// için PARALEL ve TEK SEFERLİK getDrug isteği atar. Aynı ilaç birden fazla
+  /// kalemde geçse bile (örn. aynı ilaç farklı saatlerde) tek istek yeterli.
+  Future<Map<int, WitnessContext>> _resolveWitnessContexts(Iterable<Medicine?> medicines) async {
+    final uniqueDrugIds = medicines
+        .whereType<Drug>()
+        .where((d) => d.isWitnessedPurchase)
+        .map((d) => d.id)
+        .whereType<int>()
+        .toSet();
 
-    final drug = medicine as Drug?;
-    if (!(drug?.isWitnessedPurchase ?? false)) return const WitnessContext();
+    if (uniqueDrugIds.isEmpty) return {};
 
-    List<User> witnesses = [];
-    List<Station> stations = [];
-
-    final res = await _medicineRepository.getDrug(medicine.id ?? 0);
-    res.when(
-      error: Result.error,
-      ok: (data) {
-        witnesses = data?.witnessedPurchaseUsers ?? [];
-        stations = data?.witnessedPurchaseStations ?? [];
-      },
+    final entries = await Future.wait(
+      uniqueDrugIds.map((id) async {
+        final res = await _medicineRepository.getDrug(id);
+        return res.when(
+          ok: (data) => MapEntry(
+            id,
+            WitnessContext(
+              witnesses: data?.witnessedPurchaseUsers ?? [],
+              stations: data?.witnessedPurchaseStations ?? [],
+            ),
+          ),
+          error: (_) => MapEntry(id, const WitnessContext()),
+        );
+      }),
     );
 
-    return WitnessContext(witnesses: witnesses, stations: stations);
+    return Map.fromEntries(entries);
+  }
+
+  WitnessContext _witnessContextFor(Medicine? medicine, Map<int, WitnessContext> resolved) {
+    if (medicine is! Drug || !medicine.isWitnessedPurchase) return const WitnessContext();
+    return resolved[medicine.id] ?? const WitnessContext();
   }
 }

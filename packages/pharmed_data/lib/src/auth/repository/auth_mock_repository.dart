@@ -40,7 +40,12 @@ class AuthMockRepository implements IAuthRepository {
   };
 
   @override
-  Future<Result<AuthToken>> login({required String email, required String password, String? macAddress}) async {
+  Future<Result<AuthToken>> login({
+    required String email,
+    required String password,
+    String? macAddress,
+    int? stationId,
+  }) async {
     await Future.delayed(_delay);
 
     final u = email.trim().toLowerCase();

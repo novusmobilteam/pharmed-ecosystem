@@ -8,7 +8,7 @@ class DeviceInfo {
     // ignore: unused_local_variable
     final macAddressRaw = deviceInfo.data['systemGUID'] ?? deviceInfo.data['deviceId'];
     //String macResult = macAddressRaw.toString().replaceAll(RegExp(r'^\{|\}$'), '');
-    String macResult = 'ASKDJFHHAJS-1245123-ASDFAS231';
+    String macResult = 'ASKDJFHJS-1245123-ASDFAS231';
     return macResult;
   }
 }

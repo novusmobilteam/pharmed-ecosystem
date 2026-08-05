@@ -19,10 +19,14 @@ class IntakeItem {
     this.prescriptionItem,
     this.lastMovement,
     this.witnessContext = const WitnessContext(),
+    this.equivalentWitnessContext = const WitnessContext(),
     this.firstDoseEmergency = false,
     this.askDoctor = false,
     this.inCaseOfNecessity = false,
     this.stock,
+    this.selectedEquivalent,
+    this.redirectedStation,
+    this.redirectedOrder,
   });
 
   final int id;
@@ -56,30 +60,60 @@ class IntakeItem {
   /// Şahit listesi/seçimi — isWitnessedPurchase ilaçlarda anlamlı.
   final WitnessContext witnessContext;
 
+  /// Muadil seçildiğinde muadilin şahit gereksinimi (witnesses/stations) —
+  /// ayrı tutulur ki orijinal medicine'in witnessContext'i kaybolmasın
+  /// (kullanıcı muadil seçimini geri alırsa orijinale dönebilelim).
+  final WitnessContext equivalentWitnessContext;
+
   final bool firstDoseEmergency;
   final bool askDoctor;
   final bool inCaseOfNecessity;
+
+  /// Kullanıcının bu kalem için seçtiği muadil ilaç (stok yoksa ve muadil
+  /// seçildiyse dolu). Doluysa alım, normal check/complete yerine
+  /// equivalent check/complete servislerinden yapılır.
+  final EquivalentMedicine? selectedEquivalent;
+
+  final OtherStationMedicine? redirectedStation;
+
+  final RedirectedIntakeOrder? redirectedOrder;
+
+  bool get isEquivalentIntake => selectedEquivalent != null;
+
+  bool get isRedirected => lastMovement?.type == PrescriptionMovementType.redirected;
+  bool get isRedirectedIntake => redirectedOrder != null;
+
+  /// Şahit kararları için kullanılacak GERÇEK context — muadil seçiliyse
+  /// muadilin, değilse orijinal ilacın context'i.
+  WitnessContext get activeWitnessContext => isEquivalentIntake ? equivalentWitnessContext : witnessContext;
+
+  Medicine? get _witnessSubjectMedicine => selectedEquivalent?.medicine ?? medicine;
 
   /// İlacın son hareket tipi (kart durum chip'i için).
   PrescriptionMovementType? get movementType => lastMovement?.type;
 
   /// Bu kalem için şahit gerekir mi? — WitnessContext'e devrediliyor,
   /// yalnızca "hangi drug flag'i" (isWitnessedPurchase) sorusuna cevap verir.
-  bool get _requiresWitnessFlag => medicine is Drug && (medicine as Drug).isWitnessedPurchase;
+  bool get _requiresWitnessFlag =>
+      _witnessSubjectMedicine is Drug && (_witnessSubjectMedicine as Drug).isWitnessedPurchase;
 
   bool needsWitness({Station? currentStation}) =>
-      witnessContext.needsWitness(requiresWitness: _requiresWitnessFlag, currentStation: currentStation);
+      activeWitnessContext.needsWitness(requiresWitness: _requiresWitnessFlag, currentStation: currentStation);
 
   bool isWitnessApproved({Station? currentStation}) =>
-      witnessContext.isApproved(requiresWitness: _requiresWitnessFlag, currentStation: currentStation);
+      activeWitnessContext.isApproved(requiresWitness: _requiresWitnessFlag, currentStation: currentStation);
 
   IntakeItem copyWith({
     double? dosePiece,
     WitnessContext? witnessContext,
+    WitnessContext? equivalentWitnessContext,
     MedicineAssignment? assignment,
     PrescriptionItemMovement? lastMovement,
     PrescriptionItem? prescriptionItem,
     CabinStock? stock,
+    EquivalentMedicine? selectedEquivalent,
+    bool clearSelectedEquivalent = false,
+    OtherStationMedicine? redirectedStation,
   }) {
     return IntakeItem(
       id: id,
@@ -91,10 +125,16 @@ class IntakeItem {
       dosePiece: dosePiece ?? this.dosePiece,
       prescriptionDose: prescriptionDose,
       witnessContext: witnessContext ?? this.witnessContext,
+      equivalentWitnessContext: clearSelectedEquivalent
+          ? const WitnessContext()
+          : (equivalentWitnessContext ?? this.equivalentWitnessContext),
       stock: stock ?? this.stock,
       firstDoseEmergency: firstDoseEmergency,
       askDoctor: askDoctor,
       inCaseOfNecessity: inCaseOfNecessity,
+      selectedEquivalent: clearSelectedEquivalent ? null : (selectedEquivalent ?? this.selectedEquivalent),
+      redirectedStation: redirectedStation ?? this.redirectedStation,
+      redirectedOrder: redirectedOrder,
     );
   }
 }

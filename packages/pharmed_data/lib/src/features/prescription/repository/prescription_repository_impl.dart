@@ -24,10 +24,10 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<List<PrescriptionItem>>> getPrescriptionDetail(int registrationId) async {
+  Future<Result<PrescriptionItem?>> getPrescriptionDetail(int registrationId) async {
     final result = await _dataSource.getPrescriptionDetail(registrationId);
     return result.when(
-      ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])),
+      ok: (dto) => Result.ok(_prescriptionItemMapper.toEntityOrNull(dto)),
       error: (e) => Result.error(e),
     );
   }

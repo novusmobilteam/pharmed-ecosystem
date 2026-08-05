@@ -26,10 +26,10 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<PrescriptionItemDto>?>> getPrescriptionDetail(int prescriptionId) {
-    return fetchRequest<List<PrescriptionItemDto>>(
-      path: '$_base/detail/$prescriptionId/getAll',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
+  Future<Result<PrescriptionItemDto?>> getPrescriptionDetail(int prescriptionId) {
+    return fetchRequest(
+      path: '$_base/detail/$prescriptionId',
+      parser: BaseRemoteDataSource.singleParser(PrescriptionItemDto.fromJson),
       successLog: 'Prescription items fetched',
       emptyLog: 'No prescription items',
     );

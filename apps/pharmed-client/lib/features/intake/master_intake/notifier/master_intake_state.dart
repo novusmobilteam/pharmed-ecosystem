@@ -63,7 +63,9 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
     required this.items,
     this.selectedItemIds = const {},
     this.search = '',
-    this.checkStatuses = const {},
+    this.checkStates = const {},
+    this.equivalentStates = const {},
+    this.otherStationStates = const {},
     this.isChecking = false,
   });
 
@@ -85,7 +87,11 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
   final String search;
 
   /// Item bazlı check durumu (idle/loading/success/failed) — kart üstü gösterim.
-  final Map<int, IntakeCheckStatus> checkStatuses;
+  final Map<int, IntakeCheckState> checkStates;
+
+  final Map<int, EquivalentCheckState> equivalentStates;
+
+  final Map<int, OtherStationCheckState> otherStationStates;
 
   /// Toplu check sürüyor mu? (Başlat butonu loading + seçim kilidi)
   final bool isChecking;
@@ -114,8 +120,10 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
     List<IntakeItem>? items,
     Set<int>? selectedItemIds,
     String? search,
-    Map<int, IntakeCheckStatus>? checkStatuses,
+    Map<int, IntakeCheckState>? checkStates,
     bool? isChecking,
+    Map<int, EquivalentCheckState>? equivalentStates,
+    Map<int, OtherStationCheckState>? otherStationStates,
   }) {
     return MasterIntakeMedicineSelection(
       cabinId: cabinId,
@@ -124,8 +132,10 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
       items: items ?? this.items,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
       search: search ?? this.search,
-      checkStatuses: checkStatuses ?? this.checkStatuses,
+      checkStates: checkStates ?? this.checkStates,
       isChecking: isChecking ?? this.isChecking,
+      equivalentStates: equivalentStates ?? this.equivalentStates,
+      otherStationStates: otherStationStates ?? this.otherStationStates,
     );
   }
 }
@@ -171,6 +181,14 @@ final class MasterIntakeExecuting extends MasterIntakeState {
   IntakeTarget? get currentTarget {
     final job = currentJob;
     if (job == null) return null;
+
+    if (job.isKubik) {
+      final steps = IntakeCellGrouper.group(job.targets);
+      if (currentTargetIndex < 0 || currentTargetIndex >= steps.length) return null;
+      final (ti, _) = steps[currentTargetIndex].refs.first;
+      return job.targets[ti];
+    }
+
     if (currentTargetIndex < 0 || currentTargetIndex >= job.targets.length) return null;
     return job.targets[currentTargetIndex];
   }

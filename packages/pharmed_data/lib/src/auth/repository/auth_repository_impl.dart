@@ -36,10 +36,15 @@ class AuthRepositoryImpl implements IAuthRepository {
   final TokenHolder _tokenHolder;
 
   @override
-  Future<Result<AuthToken>> login({required String email, required String password, String? macAddress}) async {
+  Future<Result<AuthToken>> login({
+    required String email,
+    required String password,
+    String? macAddress,
+    int? stationId,
+  }) async {
     try {
       // 1. Token al
-      final token = await _remote.login(email: email, password: password, macAddress: macAddress);
+      final token = await _remote.login(email: email, password: password, macAddress: macAddress, stationId: stationId);
 
       // 2. Token'ı cache'e yaz — interceptor bir sonraki istekte bunu okur
       await _cache.saveToken(token);

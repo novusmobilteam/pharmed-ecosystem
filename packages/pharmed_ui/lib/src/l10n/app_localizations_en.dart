@@ -4899,6 +4899,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Replenishment Approved By';
 
   @override
+  String get enumCore_prescriptionMovementRedirectedLabel => 'Redirected';
+
+  @override
+  String get enumCore_prescriptionMovementRedirectedActorLabel =>
+      'Redirected by';
+
+  @override
+  String get enumCore_prescriptionMovementRedirectedActionLabel => 'Redirected';
+
+  @override
   String get enumCore_prescriptionMovementPendingApprovalActionLabel =>
       'Created';
 
@@ -5660,4 +5670,53 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get waste_hint_notAuthorized =>
       'You are not authorized to destroy this medicine';
+
+  @override
+  String get intake_action_checkEquivalent => 'Check Equivalent';
+
+  @override
+  String get intake_hint_noEquivalentFound => 'No equivalent medicine found';
+
+  @override
+  String get intake_label_equivalentOptions => 'Available equivalents';
+
+  @override
+  String get intake_hint_searchingOtherStations => 'Searching other cabins...';
+
+  @override
+  String get intake_hint_noStockAnywhere =>
+      'This medicine was not found in any cabin';
+
+  @override
+  String get intake_label_otherStationOptions => 'Available in other cabins';
+
+  @override
+  String get intake_action_redirect => 'Redirect';
+
+  @override
+  String intake_hint_redirectedTo(String stationName) {
+    return 'Redirected to $stationName cabin';
+  }
+
+  @override
+  String get intake_status_redirected => 'Redirected';
+
+  @override
+  String get intake_tab_prescriptions => 'Prescriptions';
+
+  @override
+  String get intake_tab_redirectedOrders => 'Redirected Orders';
+
+  @override
+  String get intake_hint_noRedirectedOrders => 'No redirected orders';
+
+  @override
+  String intake_status_redirectedFrom(String stationName) {
+    return 'Redirected from $stationName';
+  }
+
+  @override
+  String intake_label_redirectedBy(String userName) {
+    return 'Redirected by $userName';
+  }
 }

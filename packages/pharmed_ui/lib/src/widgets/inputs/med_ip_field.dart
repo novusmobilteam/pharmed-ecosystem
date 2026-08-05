@@ -149,45 +149,52 @@ class _OctetField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        textAlign: TextAlign.center,
-        textAlignVertical: TextAlignVertical.center,
-        keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly, _OctetFormatter()],
-        style: TextStyle(
-          fontFamily: MedFonts.mono,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w500,
-          color: MedColors.text,
-        ),
-        decoration: InputDecoration(
-          hintText: placeholder,
-          hintStyle: TextStyle(fontFamily: MedFonts.mono, fontSize: fontSize, color: MedColors.text4),
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-            border: InputBorder.none,
-  enabledBorder: InputBorder.none,
-  focusedBorder: InputBorder.none,
-  disabledBorder: InputBorder.none,
-  errorBorder: InputBorder.none,
-  focusedErrorBorder: InputBorder.none,
-  fillColor: Colors.transparent,
-  hoverColor: Colors.transparent,
-  filled: false,
-        ),
-        onChanged: (val) {
-          onChanged?.call(val);
-          if (val.length >= 3 && nextFocus != null) {
-            nextFocus!.requestFocus();
-          }
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          if (!focusNode.hasFocus) focusNode.requestFocus();
         },
-        onEditingComplete: () {
-          if (nextFocus != null) {
-            nextFocus!.requestFocus();
-          }
-        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Hint
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller,
+              builder: (context, value, _) {
+                if (value.text.isNotEmpty) return const SizedBox.shrink();
+                return Text(
+                  placeholder,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontFamily: MedFonts.mono, fontSize: fontSize, color: MedColors.text4),
+                );
+              },
+            ),
+            // Input — EditableText, MedTextInputField'daki gibi dikey
+            // hizalama sorununu InputDecorator'ı atlayarak çözer.
+            EditableText(
+              controller: controller,
+              focusNode: focusNode,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, _OctetFormatter()],
+              style: TextStyle(
+                fontFamily: MedFonts.mono,
+                fontSize: fontSize,
+                fontWeight: FontWeight.w500,
+                color: MedColors.text,
+              ),
+              cursorColor: MedColors.blue,
+              backgroundCursorColor: MedColors.border,
+              onChanged: (val) {
+                onChanged?.call(val);
+                if (val.length >= 3 && nextFocus != null) {
+                  nextFocus!.requestFocus();
+                }
+              },
+              onSubmitted: (_) => nextFocus?.requestFocus(),
+            ),
+          ],
+        ),
       ),
     );
   }

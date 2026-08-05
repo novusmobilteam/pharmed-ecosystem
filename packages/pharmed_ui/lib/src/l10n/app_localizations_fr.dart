@@ -4988,6 +4988,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'Réapprovisionnement approuvé par';
 
   @override
+  String get enumCore_prescriptionMovementRedirectedLabel => 'Redirigé';
+
+  @override
+  String get enumCore_prescriptionMovementRedirectedActorLabel =>
+      'Redirigé par';
+
+  @override
+  String get enumCore_prescriptionMovementRedirectedActionLabel => 'A redirigé';
+
+  @override
   String get enumCore_prescriptionMovementPendingApprovalActionLabel => 'Créé';
 
   @override
@@ -5763,4 +5773,56 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get waste_hint_notAuthorized =>
       'Vous n\'êtes pas autorisé à détruire ce médicament';
+
+  @override
+  String get intake_action_checkEquivalent => 'Vérifier l\'équivalent';
+
+  @override
+  String get intake_hint_noEquivalentFound =>
+      'Aucun médicament équivalent trouvé';
+
+  @override
+  String get intake_label_equivalentOptions => 'Équivalents disponibles';
+
+  @override
+  String get intake_hint_searchingOtherStations =>
+      'Recherche dans d\'autres armoires...';
+
+  @override
+  String get intake_hint_noStockAnywhere =>
+      'Ce médicament est introuvable dans toutes les armoires';
+
+  @override
+  String get intake_label_otherStationOptions =>
+      'Disponible dans d\'autres armoires';
+
+  @override
+  String get intake_action_redirect => 'Rediriger';
+
+  @override
+  String intake_hint_redirectedTo(String stationName) {
+    return 'Redirigé vers l\'armoire $stationName';
+  }
+
+  @override
+  String get intake_status_redirected => 'Redirigé';
+
+  @override
+  String get intake_tab_prescriptions => 'Prescriptions';
+
+  @override
+  String get intake_tab_redirectedOrders => 'Commandes redirigées';
+
+  @override
+  String get intake_hint_noRedirectedOrders => 'Aucune commande redirigée';
+
+  @override
+  String intake_status_redirectedFrom(String stationName) {
+    return 'Redirigé depuis $stationName';
+  }
+
+  @override
+  String intake_label_redirectedBy(String userName) {
+    return 'Redirigé par $userName';
+  }
 }

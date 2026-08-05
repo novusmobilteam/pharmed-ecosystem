@@ -6,6 +6,27 @@ class CabinStockMapper {
   const CabinStockMapper();
 
   CabinStock toEntity(CabinStockDTO dto) {
+    final cell = dto.cabinDrawerDetail != null ? const DrawerCellMapper().toEntity(dto.cabinDrawerDetail!) : null;
+    final medicine = dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null;
+
+    // Gerçek bir assignment (cabinDrawerQuantity) varsa onu kullan — bazı
+    // servisler bunu dolu döndürüyor olabilir. Yoksa cabinDrawrDetail
+    // zincirinden SENTETİK bir MedicineAssignment kur (equivalentCheck ve
+    // redirected-order yanıtları gibi, yalnızca DrawerCell zinciri veren
+    // servisler için). min/max/critical gibi atama-seviyesi alanlar bu
+    // durumda bilinmez, null bırakılır — yalnızca kuyruk kurulumu
+    // (cabinDrawerId, drawerUnit, cabinDrawerDetail) için yeterli.
+    final assignment = dto.cabinDrawerQuantity != null
+        ? const MedicineAssignmentMapper().toEntity(dto.cabinDrawerQuantity!)
+        : (cell == null
+              ? null
+              : MedicineAssignment(
+                  cabinDrawerId: cell.drawerUnit?.id,
+                  medicine: medicine,
+                  drawerUnit: cell.drawerUnit,
+                  cabinDrawerDetail: [cell],
+                ));
+
     return CabinStock(
       id: dto.id,
       cabinId: dto.cabinId,
@@ -17,9 +38,7 @@ class CabinStockMapper {
       miadDate: dto.miadDate,
       // Alt modeller için ilgili mapper'lar
       medicine: dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null,
-      assignment: dto.cabinDrawerQuantity != null
-          ? const MedicineAssignmentMapper().toEntity(dto.cabinDrawerQuantity!)
-          : null,
+      assignment: assignment,
       cabinDrawerDetail: dto.cabinDrawerDetail != null
           ? const DrawerCellMapper().toEntity(dto.cabinDrawerDetail!)
           : null,

@@ -4,8 +4,10 @@
 // Sınıf: Class B
 
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_client/core/flavor/auth_config.dart';
 import 'package:pharmed_client/core/providers/auth_providers.dart';
 import 'package:pharmed_client/core/providers/network_providers.dart';
@@ -57,13 +59,14 @@ class AuthNotifier extends Notifier<AuthState> {
     return const AuthLoggedOut();
   }
 
-  // ───────────────────────────── Public API
-
   Future<void> login({required String email, required String password, required ValueChanged<String> onError}) async {
     state = const AuthLoading();
     final macAddress = await DeviceInfo.getMacAddress();
+    final debugStationId = kDebugMode ? await ref.read(appSettingsCacheProvider).getCurrentStationId() : null;
 
-    final result = await _loginUseCase(LoginParams(email: email, password: password, macAddress: macAddress));
+    final result = await _loginUseCase(
+      LoginParams(email: email, password: password, macAddress: macAddress, stationId: debugStationId),
+    );
 
     result.when(
       ok: (authToken) {

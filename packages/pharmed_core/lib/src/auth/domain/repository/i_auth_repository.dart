@@ -6,7 +6,12 @@ import 'package:pharmed_core/pharmed_core.dart';
 abstract interface class IAuthRepository {
   /// Login + getCurrentUser zinciri.
   /// Başarılıysa token ve user'ı cache'e yazar, AuthToken döndürür.
-  Future<Result<AuthToken>> login({required String email, required String password, String? macAddress});
+  Future<Result<AuthToken>> login({
+    required String email,
+    required String password,
+    String? macAddress,
+    int? stationId,
+  });
 
   Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress});
 

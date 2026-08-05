@@ -22,7 +22,7 @@ class TableView extends StatelessWidget {
 
       onPageChanged: (page) => notifier.goToPage(page),
       onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
-      cellBuilder: (item, colIndex, value) {},
+      //cellBuilder: (item, colIndex, value) {},
       columnDefs: _buildColumnDefs(context),
     );
   }

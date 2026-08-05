@@ -11,7 +11,7 @@ class CabinOperationGrid extends StatelessWidget {
     super.key,
     required this.itemCount,
     required this.itemBuilder,
-    this.singleColumnThreshold = 1,
+    this.singleColumnThreshold = 0,
     this.targetItemWidth = 300,
     this.gap = 12,
     this.minColumns = 1,

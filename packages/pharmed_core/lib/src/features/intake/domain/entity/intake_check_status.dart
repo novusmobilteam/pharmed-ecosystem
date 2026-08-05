@@ -1,20 +1,20 @@
-sealed class IntakeCheckStatus {
-  const IntakeCheckStatus();
+sealed class IntakeCheckState {
+  const IntakeCheckState();
 }
 
-class CheckIdle extends IntakeCheckStatus {
+class CheckIdle extends IntakeCheckState {
   const CheckIdle();
 }
 
-class CheckLoading extends IntakeCheckStatus {
+class CheckLoading extends IntakeCheckState {
   const CheckLoading();
 }
 
-class CheckSuccess extends IntakeCheckStatus {
+class CheckSuccess extends IntakeCheckState {
   const CheckSuccess();
 }
 
-class CheckFailed extends IntakeCheckStatus {
+class CheckFailed extends IntakeCheckState {
   final String? message;
   const CheckFailed({this.message});
 }

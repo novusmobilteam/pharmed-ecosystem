@@ -3,7 +3,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 
 abstract interface class IPrescriptionRepository {
   Future<Result<Prescription?>> createPrescription(Prescription prescription);
-  Future<Result<List<PrescriptionItem>>> getPrescriptionDetail(int prescriptionId);
+  Future<Result<PrescriptionItem?>> getPrescriptionDetail(int prescriptionId);
   Future<Result<List<Prescription>>> getPatientPrescriptions(int hospitalizationId);
 
   Future<Result<ApiResponse<List<PrescriptionItem>>?>> getPatientPrescriptionHistory(

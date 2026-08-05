@@ -4684,6 +4684,20 @@
 "@enumCore_prescriptionMovementReplenishmentPendingActionLabel": {
   "description": "PrescriptionMovementType.replenishmentPending — étiquette de l'action"
 },
+"enumCore_prescriptionMovementRedirectedLabel": "Redirigé",
+"@enumCore_prescriptionMovementRedirectedLabel": {
+  "description": "Status label for a prescription item that has been redirected to another station's cabin for intake"
+},
+
+"enumCore_prescriptionMovementRedirectedActorLabel": "Redirigé par",
+"@enumCore_prescriptionMovementRedirectedActorLabel": {
+  "description": "Actor label describing who performed the redirect action, shown in the movement history block"
+},
+
+"enumCore_prescriptionMovementRedirectedActionLabel": "A redirigé",
+"@enumCore_prescriptionMovementRedirectedActionLabel": {
+  "description": "Action label describing the redirect transition, shown in the movement history block"
+},
 "userAuth_table_firstNameColumn": "Prénom",
 "userAuth_table_lastNameColumn": "Nom",
 "userAuth_table_occupationTypeColumn": "Type de profession",
@@ -5008,5 +5022,74 @@
 "destruction_label_quantity": "Qté à détruire",
 "destruction_action_nextCell": "Cellule suivante",
 "destruction_action_completeDestruction": "Terminer la destruction",
-"waste_hint_notAuthorized": "Vous n'êtes pas autorisé à détruire ce médicament"
+"waste_hint_notAuthorized": "Vous n'êtes pas autorisé à détruire ce médicament",
+"intake_action_checkEquivalent": "Vérifier l'équivalent",
+"@intake_action_checkEquivalent": {
+  "description": "Button on an out-of-stock intake item card, triggers the equivalent medicine lookup for that prescription item"
+},
+
+"intake_hint_noEquivalentFound": "Aucun médicament équivalent trouvé",
+"@intake_hint_noEquivalentFound": {
+  "description": "Shown on an intake item card when the equivalent medicine check returns an empty list"
+},
+
+"intake_label_equivalentOptions": "Équivalents disponibles",
+"@intake_label_equivalentOptions": {
+  "description": "Label above the list of equivalent medicine options returned for an out-of-stock intake item"
+},
+"intake_hint_searchingOtherStations": "Recherche dans d'autres armoires...",
+"@intake_hint_searchingOtherStations": {
+  "description": "Loading text shown while checking if the medicine or its equivalent exists in another station's cabin"
+},
+
+"intake_hint_noStockAnywhere": "Ce médicament est introuvable dans toutes les armoires",
+"@intake_hint_noStockAnywhere": {
+  "description": "Shown when neither the medicine nor an equivalent was found in this or any other station's cabin"
+},
+
+"intake_label_otherStationOptions": "Disponible dans d'autres armoires",
+"@intake_label_otherStationOptions": {
+  "description": "Label above the list of other stations where the medicine or its equivalent is available"
+},
+
+"intake_action_redirect": "Rediriger",
+"@intake_action_redirect": {
+  "description": "Button to redirect an out-of-stock prescription item's intake to another station's cabin"
+},
+
+"intake_hint_redirectedTo": "Redirigé vers l'armoire {stationName}",
+"@intake_hint_redirectedTo": {
+  "description": "Confirmation shown on an intake item card after it has been successfully redirected to another station",
+  "placeholders": { "stationName": { "type": "String" } }
+},
+
+"intake_status_redirected": "Redirigé",
+"@intake_status_redirected": {
+  "description": "Status chip label for an intake item that has been redirected to another station"
+},
+"intake_tab_prescriptions": "Prescriptions",
+"@intake_tab_prescriptions": {
+  "description": "Tab label for the default prescription-based intake list in the master intake selection screen"
+},
+
+"intake_tab_redirectedOrders": "Commandes redirigées",
+"@intake_tab_redirectedOrders": {
+  "description": "Tab label for the list of prescription items redirected to this station's cabin from another station"
+},
+
+"intake_hint_noRedirectedOrders": "Aucune commande redirigée",
+"@intake_hint_noRedirectedOrders": {
+  "description": "Empty state shown when there are no pending redirected intake orders for any patient"
+},
+
+"intake_status_redirectedFrom": "Redirigé depuis {stationName}",
+"@intake_status_redirectedFrom": {
+  "description": "Status chip on a redirected order card showing which station it was redirected from",
+  "placeholders": { "stationName": { "type": "String" } }
+},
+"intake_label_redirectedBy": "Redirigé par {userName}",
+"@intake_label_redirectedBy": {
+  "description": "Shown on a redirected order card, naming the user who performed the redirect",
+  "placeholders": { "userName": { "type": "String" } }
+}
 }

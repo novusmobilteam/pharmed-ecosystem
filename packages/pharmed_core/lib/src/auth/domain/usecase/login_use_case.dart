@@ -6,11 +6,12 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 class LoginParams {
-  const LoginParams({required this.email, required this.password, this.macAddress});
+  const LoginParams({required this.email, required this.password, this.macAddress, this.stationId});
 
   final String email;
   final String password;
   final String? macAddress;
+  final int? stationId;
 }
 
 class LoginUseCase {
@@ -18,6 +19,10 @@ class LoginUseCase {
 
   final IAuthRepository _repository;
 
-  Future<Result<AuthToken>> call(LoginParams params) =>
-      _repository.login(email: params.email, password: params.password, macAddress: params.macAddress);
+  Future<Result<AuthToken>> call(LoginParams params) => _repository.login(
+    email: params.email,
+    password: params.password,
+    macAddress: params.macAddress,
+    stationId: params.stationId,
+  );
 }

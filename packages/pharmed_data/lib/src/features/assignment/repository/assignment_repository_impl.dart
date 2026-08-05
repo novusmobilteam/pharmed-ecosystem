@@ -59,8 +59,8 @@ class AssignmentRepositoryImpl implements IAssignmentRepository {
   }
 
   @override
-  Future<Result<List<MedicineAssignment>>> getCabinAssignments() async {
-    final result = await _dataSource.getCabinAssignments();
+  Future<Result<List<MedicineAssignment>>> getCabinAssignments({int? cabinId}) async {
+    final result = await _dataSource.getCabinAssignments(cabinId: cabinId);
     return result.when(
       ok: (data) => Result.ok(_medicineAssignmentMapper.toEntityList(data)),
       error: (e) => Result.error(e),
