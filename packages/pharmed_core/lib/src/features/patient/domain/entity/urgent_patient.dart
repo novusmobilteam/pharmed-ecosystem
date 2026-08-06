@@ -7,6 +7,17 @@ class UrgentPatient {
   final Patient? patient;
   final List<PrescriptionItem>? prescriptionItems;
   final DateTime? admissionDate;
+  final HospitalService? physicalService;
+  final HospitalService? inpatientService;
 
-  UrgentPatient({this.id, this.code, this.patientId, this.patient, this.prescriptionItems, this.admissionDate});
+  UrgentPatient({
+    this.id,
+    this.code,
+    this.patientId,
+    this.patient,
+    this.prescriptionItems,
+    this.admissionDate,
+    this.physicalService,
+    this.inpatientService,
+  });
 }

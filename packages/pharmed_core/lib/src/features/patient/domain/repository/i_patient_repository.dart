@@ -28,5 +28,5 @@ abstract interface class IPatientRepository {
   Future<Result<Hospitalization?>> createUrgentPatient(int serviceId);
 
   /// Acil hastaları getiren servis
-  Future<Result<List<UrgentPatient>>> getUrgentPatients();
+  Future<Result<List<Hospitalization>>> getUrgentPatients();
 }

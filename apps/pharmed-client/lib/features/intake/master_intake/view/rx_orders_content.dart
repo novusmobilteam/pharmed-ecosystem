@@ -49,6 +49,9 @@ class RxOrdersContent extends ConsumerWidget {
     final Set<int> selectedItemIds = selection?.selectedItemIds ?? const {};
     final Map<int, IntakeCheckState> checkStatuses = selection?.checkStates ?? const {};
 
+    // RxOrdersContent.build() içinde, selection çözüldükten hemen sonra:
+    final bool isOrderlessFlow = selection?.intakeType.isOrderless ?? false;
+
     return CabinSelectionContentShell(
       searchQuery: selection?.search ?? '',
       onSearchQueryChanged: notifier.onSearchChanged,
@@ -77,7 +80,11 @@ class RxOrdersContent extends ConsumerWidget {
 
                 return RxOperationCard2(
                   title: item.medicine?.name ?? '—',
-                  subtitle: time != null ? '$dose $unit (${time.shortRelativeLabelOf(context)})' : '$dose $unit',
+                  subtitle: !isOrderlessFlow
+                      ? time != null
+                            ? '$dose $unit (${time.shortRelativeLabelOf(context)})'
+                            : '$dose $unit'
+                      : null,
                   barcode: item.medicine?.barcode,
                   isSelected: isSelected,
 
@@ -85,10 +92,12 @@ class RxOrdersContent extends ConsumerWidget {
                   //isDimmed: item.hasNoStock,
                   onTap: (item.hasNoStock || item.isRedirected) ? null : () => notifier.toggleItem(item.id),
 
-                  statusChip: RxCardChip(
-                    label: item.lastMovement?.type.label(context) ?? '—',
-                    tone: item.lastMovement!.type.movementTone,
-                  ),
+                  statusChip: item.lastMovement != null
+                      ? RxCardChip(
+                          label: item.lastMovement?.type.label(context) ?? '—',
+                          tone: item.lastMovement!.type.movementTone,
+                        )
+                      : null,
 
                   // CheckStatus → durum satırı
                   statusRow: switch (checkStatus) {
@@ -112,7 +121,7 @@ class RxOrdersContent extends ConsumerWidget {
 
                   witness:
                       (item.needsWitness(currentStation: notifier.currentStation) &&
-                          isSelected &&
+                          (isSelected || isOrderlessFlow) &&
                           (!item.hasNoStock || item.isEquivalentIntake))
                       ? RxCardWitness(
                           isConfirmed: item.activeWitnessContext.witness != null,
@@ -141,14 +150,14 @@ class RxOrdersContent extends ConsumerWidget {
                       ),
                   ],
 
-                  // stepper: (isSelected && !item.hasNoStock)
-                  //     ? RxCardStepper(
-                  //         value: item.dosePiece ?? 0,
-                  //         unit: unit,
-                  //         max: 999,
-                  //         onChanged: (v) => notifier.updateDose(item.id, v),
-                  //       )
-                  //     : null,
+                  stepper: ((isSelected || isOrderlessFlow) && !item.hasNoStock)
+                      ? RxCardStepper(
+                          value: item.dosePiece ?? 1,
+                          unit: unit,
+                          max: 999,
+                          onChanged: (v) => notifier.updateDose(item.id, v),
+                        )
+                      : null,
                   movements: [
                     if (item.lastMovement case final m?)
                       RxCardMovement(

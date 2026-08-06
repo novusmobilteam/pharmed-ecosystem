@@ -5,7 +5,7 @@ class GetUrgentPatientsUseCase {
 
   GetUrgentPatientsUseCase(this._repository);
 
-  Future<Result<List<UrgentPatient>>> call() async {
+  Future<Result<List<Hospitalization>>> call() async {
     return await _repository.getUrgentPatients();
   }
 }

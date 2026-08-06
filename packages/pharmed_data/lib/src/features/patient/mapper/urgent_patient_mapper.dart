@@ -17,6 +17,8 @@ class UrgentPatientMapper {
       prescriptionItems: dto.prescriptionItems != null
           ? const PrescriptionItemMapper().toEntityList(dto.prescriptionItems!)
           : null,
+      physicalService: ServiceMapper().toEntityOrNull(dto.physicalService),
+      inpatientService: ServiceMapper().toEntityOrNull(dto.inpatientService),
     );
   }
 

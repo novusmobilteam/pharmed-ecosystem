@@ -1017,4 +1017,13 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       details: [IntakeDetail(stockId: stock.id!, dosePiece: neededDose)],
     );
   }
+
+  /// Sekme değişiminde (Reçeteler'den ayrılırken) çağrılır — seçili hasta ve
+  /// tüm item state'ini temizler, PatientSelection fazına döner. Böylece
+  /// sağ panel, sol panelin (fresh reload sonrası) durumuyla senkron kalır.
+  void resetToPatientSelection() {
+    _hospitalization = null;
+    _hospitalizationId = null;
+    state = MasterIntakePatientSelection(cabinId: _cabinId);
+  }
 }

@@ -66,6 +66,7 @@ class AuthRepositoryImpl implements IAuthRepository {
         return Result.error(ServiceException(message: contextlessL10n().authError_userInfoEmpty, statusCode: 404));
       }
 
+      print(userDto.toString());
       // 4. Slim AppUser'a dönüştür
       final appUser = AppUser(
         id: userDto.id ?? 0,

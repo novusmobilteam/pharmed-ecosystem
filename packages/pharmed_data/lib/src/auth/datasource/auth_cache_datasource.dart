@@ -41,6 +41,7 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
   @override
   Future<void> saveUser(AppUser user) async {
     final box = await Hive.openBox<dynamic>(_userBoxName);
+
     await box.put(_userKey, {
       'id': user.id,
       'email': user.email,

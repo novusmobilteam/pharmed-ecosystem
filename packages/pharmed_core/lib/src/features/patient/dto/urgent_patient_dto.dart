@@ -7,8 +7,19 @@ class UrgentPatientDTO {
   final PatientDto? patient;
   final List<PrescriptionItemDto>? prescriptionItems;
   final DateTime? admissionDate;
+  final ServiceDto? physicalService;
+  final ServiceDto? inpatientService;
 
-  UrgentPatientDTO({this.id, this.code, this.patientId, this.patient, this.prescriptionItems, this.admissionDate});
+  UrgentPatientDTO({
+    this.id,
+    this.code,
+    this.patientId,
+    this.patient,
+    this.prescriptionItems,
+    this.admissionDate,
+    this.physicalService,
+    this.inpatientService,
+  });
 
   factory UrgentPatientDTO.fromJson(Map<String, dynamic> json) {
     return UrgentPatientDTO(
@@ -22,6 +33,8 @@ class UrgentPatientDTO {
                 .toList()
           : null,
       admissionDate: json['admissionDate'] != null ? DateTime.tryParse(json['admissionDate']) : null,
+      physicalService: json['physicalService'] != null ? ServiceDto.fromJson(json['physicalService']) : null,
+      inpatientService: json['inpatientService'] != null ? ServiceDto.fromJson(json['inpatientService']) : null,
     );
   }
 }

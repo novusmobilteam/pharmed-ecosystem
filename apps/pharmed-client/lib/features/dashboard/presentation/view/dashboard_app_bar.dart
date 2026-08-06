@@ -170,7 +170,6 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
           ),
 
           SizedBox(width: 10),
-
           if (!widget.isLoggedIn)
             MedButton(
               prefixIcon: Icon(PhosphorIcons.signIn()),

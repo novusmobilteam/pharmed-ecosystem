@@ -108,10 +108,10 @@ class PatientRepositoryImpl implements IPatientRepository {
   }
 
   @override
-  Future<Result<List<UrgentPatient>>> getUrgentPatients() async {
+  Future<Result<List<Hospitalization>>> getUrgentPatients() async {
     final result = await _dataSource.getUrgentPatients();
     return result.when(
-      ok: (dtos) => Result.ok(_urgentPatientMapper.toEntityList(dtos ?? [])),
+      ok: (dtos) => Result.ok(_hospitalizationMapper.toEntityList(dtos ?? [])),
       error: (e) => Result.error(e),
     );
   }

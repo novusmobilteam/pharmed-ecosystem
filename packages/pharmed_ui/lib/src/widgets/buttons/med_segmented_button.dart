@@ -76,6 +76,9 @@ class MedSegmentedButton extends StatelessWidget {
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
+                            style: MedTextStyles.bodyMd(
+                              color: isSelected ? MedColors.surface : MedColors.text,
+                            ).copyWith(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                           ),
                         ),
                       ),

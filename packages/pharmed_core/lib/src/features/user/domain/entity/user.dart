@@ -95,4 +95,7 @@ class User extends Selectable {
       rfidCardData: rfidCardData ?? this.rfidCardData,
     );
   }
+
+  @override
+  String toString() => '{name: $name, isNotOrdered: $isNotOrdered}';
 }

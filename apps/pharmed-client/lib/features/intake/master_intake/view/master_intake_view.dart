@@ -2,10 +2,11 @@
 // İlaç-merkezli master kabin İLAÇ ALIM ekranının root view'ı.
 //
 // İki bağımsız provider senkron boot olmalı: masterIntakeNotifierProvider
-// (bu ekranın kendi state'i) + patientSelectionNotifierProvider (ortak hasta
-// seçim çatısı, PatientSelectionPanel içinde kullanılıyor). Bu yüzden
-// extraBootGate ile ikincisinin de hazır olması bekleniyor — bkz.
-// MasterCabinRootScaffold.
+// (bu ekranın kendi state'i) + intakePatientSelectionNotifierProvider
+// (alım ekranına özel hasta seçim çatısı, IntakePatientSelectionPanel
+// içinde kullanılıyor — artık iade/imha ile PAYLAŞILMIYOR, bkz.
+// patient-gateway skill notu). Bu yüzden extraBootGate ile ikincisinin de
+// hazır olması bekleniyor — bkz. MasterCabinRootScaffold.
 //
 // Executing fazında (ve ondan doğan hatada) patient list dahil hiçbir şey
 // ekranda kalmaz — replacesEverything: true.
@@ -22,6 +23,9 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
 
+import '../patient_selection/notifier/patient_selection_notifier.dart';
+import '../patient_selection/notifier/patient_selection_state.dart';
+
 class MasterIntakeView extends ConsumerStatefulWidget {
   const MasterIntakeView({super.key, this.data, required this.menu});
 
@@ -33,9 +37,9 @@ class MasterIntakeView extends ConsumerStatefulWidget {
 }
 
 class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
-  bool _isPatientReady(PatientSelectionState s) => switch (s) {
-    PatientSelectionReady() => true,
-    PatientSelectionError(previousState: PatientSelectionReady()) => true,
+  bool _isPatientReady(IntakePatientSelectionState s) => switch (s) {
+    IntakePatientSelectionReady() => true,
+    IntakePatientSelectionError() => true,
     _ => false,
   };
 
@@ -71,7 +75,7 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
       cabinIdOf: (d) => d.cabinId,
       onInit: (d) => notifier.init(d),
       state: state,
-      extraBootGate: () => !_isPatientReady(ref.watch(patientSelectionNotifierProvider)),
+      extraBootGate: () => !_isPatientReady(ref.watch(intakePatientSelectionNotifierProvider)),
       phaseOf: (s) => switch (s) {
         MasterIntakeUninitialized() || MasterIntakeLoading() => const RootBooting(),
         MasterIntakeExecuting() => const RootExecuting(replacesEverything: true),

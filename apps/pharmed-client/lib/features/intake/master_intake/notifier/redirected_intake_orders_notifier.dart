@@ -68,4 +68,8 @@ class RedirectedIntakeOrdersNotifier extends Notifier<RedirectedIntakeOrdersStat
       state = current.copyWith(checkStates: updated);
     }
   }
+
+  void resetToPatientSelection() {
+    state = const RedirectedOrdersNoPatient();
+  }
 }

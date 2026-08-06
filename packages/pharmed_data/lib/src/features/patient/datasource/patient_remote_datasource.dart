@@ -111,10 +111,10 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<UrgentPatientDTO>?>> getUrgentPatients() async {
+  Future<Result<List<HospitalizationDto>?>> getUrgentPatients() async {
     return await fetchRequest(
       path: '$_base/urgent',
-      parser: BaseRemoteDataSource.listParser(UrgentPatientDTO.fromJson),
+      parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
     );
   }
 

@@ -14,7 +14,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import 'package:pharmed_client/widgets/rx_operation_card/rx_operation_card_2.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -25,60 +24,68 @@ import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
 import '../notifier/redirected_intake_orders_notifier.dart';
 import '../notifier/redirected_intake_orders_state.dart';
+import '../patient_selection/notifier/patient_selection_notifier.dart';
+import '../patient_selection/notifier/patient_selection_state.dart';
+import '../patient_selection/view/patient_selection_panel.dart';
 part 'redirected_orders_content.dart';
 part 'rx_orders_content.dart';
 
-final masterIntakeActiveTabProvider = StateProvider<bool>((ref) => false);
+// [SWREQ-CLI-MINTAKE-004] güncellendi — masterIntakeActiveTabProvider kaldırıldı,
+// tab artık IntakePatientSelectionPanel içinde yaşıyor.
 
-class MasterIntakeSelectionView extends ConsumerStatefulWidget {
+class MasterIntakeSelectionView extends ConsumerWidget {
   const MasterIntakeSelectionView({super.key});
 
   @override
-  ConsumerState<MasterIntakeSelectionView> createState() => _MasterIntakeSelectionViewState();
-}
-
-class _MasterIntakeSelectionViewState extends ConsumerState<MasterIntakeSelectionView> {
-  @override
-  Widget build(BuildContext context) {
-    final showRedirected = ref.watch(masterIntakeActiveTabProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(masterIntakeNotifierProvider.notifier);
     final redirectedNotifier = ref.read(redirectedIntakeOrdersNotifierProvider.notifier);
-    ref.watch(redirectedIntakeOrdersNotifierProvider);
+
+    ref.listen(intakePatientSelectionNotifierProvider, (previous, next) {
+      final prev = (previous is IntakePatientSelectionReady) ? previous : null;
+      final nxt = (next is IntakePatientSelectionReady) ? next : null;
+      if (prev == null || nxt == null) return;
+
+      final tabChanged = prev.tab != nxt.tab;
+      final orderStatusChanged = prev.viewOrderStatus != nxt.viewOrderStatus;
+
+      if (tabChanged || orderStatusChanged) {
+        notifier.resetToPatientSelection();
+        redirectedNotifier.resetToPatientSelection();
+      }
+    });
+
+    final patientState = ref.watch(intakePatientSelectionNotifierProvider);
+    final currentTab = switch (patientState) {
+      IntakePatientSelectionReady r => r.tab,
+      IntakePatientSelectionError(previousState: final r) => r.tab,
+      _ => IntakePatientTab.prescriptions,
+    };
+    final showRedirected = currentTab == IntakePatientTab.redirected;
+
+    final redirectedState = ref.watch(redirectedIntakeOrdersNotifierProvider);
+    final Hospitalization? redirectedSelected = switch (redirectedState) {
+      RedirectedOrdersLoading(:final hospitalization) => hospitalization,
+      RedirectedOrdersLoaded(:final hospitalization) => hospitalization,
+      RedirectedOrdersError(:final hospitalization) => hospitalization,
+      _ => null,
+    };
 
     final Hospitalization? selectedPatient = showRedirected
-        ? redirectedNotifier.selectedHospitalization
+        ? redirectedSelected
         : ref.watch(masterIntakeNotifierProvider).hospitalization;
 
     return CabinOperationSelectionLayout(
       leftWidth: 440,
-      left: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          MedSegmentedButton(
-            selectedIndex: showRedirected ? 1 : 0,
-            onChanged: (index) => ref.read(masterIntakeActiveTabProvider.notifier).state = index == 1,
-            labels: [context.l10n.intake_tab_prescriptions, context.l10n.intake_tab_redirectedOrders],
-          ),
-          SizedBox(height: 12.0),
-          Expanded(
-            child: PatientSelectionPanel(
-              // Sekme değişince filtre görünürlüğü değiştiği için panel
-              // yeniden kurulmalı — showFilters, initState'te bir kez
-              // notifier.init()'e geçiyor (bkz. PatientSelectionPanel),
-              // sonradan değişmiyor.
-              key: ValueKey(showRedirected),
-              selectedPatient: selectedPatient,
-              showFilters: !showRedirected,
-              onPatientSelected: (hospitalization, isOrderless) {
-                if (showRedirected) {
-                  redirectedNotifier.selectPatient(hospitalization);
-                } else {
-                  notifier.selectPatient(hospitalization, isOrderless ? IntakeType.orderless : IntakeType.ordered);
-                }
-              },
-            ),
-          ),
-        ],
+      left: IntakePatientSelectionPanel(
+        selectedPatient: selectedPatient,
+        onPatientSelected: (hospitalization, tab, isOrderless) {
+          if (tab == IntakePatientTab.redirected) {
+            redirectedNotifier.selectPatient(hospitalization);
+          } else {
+            notifier.selectPatient(hospitalization, isOrderless ? IntakeType.orderless : IntakeType.ordered);
+          }
+        },
       ),
       right: showRedirected ? const RedirectedOrdersContent() : const RxOrdersContent(),
     );
