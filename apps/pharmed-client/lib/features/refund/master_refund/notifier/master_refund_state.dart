@@ -75,7 +75,15 @@ final class MasterRefundMedicineSelection extends MasterRefundState {
     return item?.appliedQuantity.toDouble() ?? 0;
   }
 
-  bool get canStart => selectedItemIds.isNotEmpty && !isChecking;
+  /// Footer'daki "İadeyi Başlat" butonu SADECE donanım gerektiren
+  /// (toOrigin/toDrawer) seçili item varsa anlamlıdır — toReturnBox/
+  /// toPharmacy kendi kart butonundan (completeDirectRefund) tamamlanır.
+  bool get hasHardwareSelection => selectedItems.any((it) {
+    final drug = it.medicine?.when(drug: (d) => d, consumable: (_) => null);
+    return drug?.returnType?.requiresCabinHardware ?? false;
+  });
+
+  bool get canStart => hasHardwareSelection && !isChecking;
   List<RefundableItem> get selectedItems => items.where((a) => selectedItemIds.contains(a.id)).toList();
 
   MasterRefundMedicineSelection copyWith({

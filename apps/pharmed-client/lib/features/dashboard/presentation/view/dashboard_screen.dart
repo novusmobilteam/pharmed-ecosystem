@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/assignment/assignment_view.dart';
+import 'package:pharmed_client/features/cabin_design/view/cabin_design_dialog.dart';
 import 'package:pharmed_client/features/cabin_stock/cabin_stock.dart';
 import 'package:pharmed_client/features/fault/fault_view.dart';
 import 'package:pharmed_client/features/job_list/view/job_list_screen.dart';

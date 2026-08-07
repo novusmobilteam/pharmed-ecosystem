@@ -12,18 +12,15 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 class RefundTarget {
-  const RefundTarget({required this.item});
+  const RefundTarget({required this.item, this.isReturnDrawerTarget = false});
 
-  /// Check tamamlanmış RefundableItem — returnType/returnQuantity/
-  /// resolvedTarget dolu (toPharmacy dışında).
   final RefundableItem item;
+  final bool isReturnDrawerTarget;
 
-  /// Çekmece açma için kullanılacak hedef adres. toPharmacy'de bu targetın
-  /// hiç job'a girmemesi gerekir (bkz. requiresCabinTarget) — burada null
-  /// gelirse çağıran hata sayar.
   MedicineAssignment get assignment => item.resolvedTarget ?? MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0);
 
-  bool get isKubik => assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
+  bool get isKubik =>
+      !isReturnDrawerTarget && (assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false);
 
   bool get isValid => item.isReadyForExecution;
 }

@@ -113,6 +113,8 @@ class MedCabinLocationDetail {
     required this.isKubik,
     required this.cellStates,
     this.legendItems = const [],
+    this.mergedTrailingState,
+    this.mergedTrailingLabel,
   });
 
   final String address;
@@ -125,6 +127,11 @@ class MedCabinLocationDetail {
   /// Birim doz: her göz için bir eleman (soldan sağa sütun).
   final List<MedCellState> cellStates;
   final List<MedLegendItem> legendItems;
+
+  /// null → normal 4 sütunlu grid (mevcut davranış).
+  /// non-null → en sağ sütun TEK bir uzun kutu olarak, bu durumla çizilir.
+  final MedCellState? mergedTrailingState;
+  final String? mergedTrailingLabel;
 }
 
 /// Tek, mod-agnostik "kabin genel bakış" paneli.
@@ -357,7 +364,13 @@ class _LocationSection extends StatelessWidget {
           const SizedBox(height: 4),
           Text(detail.address, style: MedTextStyles.titleLg()),
           const SizedBox(height: 14),
-          detail.isKubik ? _KubikGrid(cellStates: detail.cellStates) : _UnitDoseTopView(cellStates: detail.cellStates),
+          detail.isKubik
+              ? _KubikGrid(
+                  cellStates: detail.cellStates,
+                  mergedTrailingState: detail.mergedTrailingState,
+                  mergedTrailingLabel: detail.mergedTrailingLabel,
+                )
+              : _UnitDoseTopView(cellStates: detail.cellStates),
           if (detail.legendItems.isNotEmpty) ...[
             const SizedBox(height: 12),
             Column(
@@ -376,16 +389,50 @@ class _LocationSection extends StatelessWidget {
   }
 }
 
-/// Kübik çekmece — 4×N grid, her lid [MedCellState]'e göre boyanır.
 class _KubikGrid extends StatelessWidget {
-  const _KubikGrid({required this.cellStates});
+  const _KubikGrid({required this.cellStates, this.mergedTrailingState, this.mergedTrailingLabel});
 
   final List<MedCellState> cellStates;
+  final MedCellState? mergedTrailingState;
+  final String? mergedTrailingLabel;
 
   static const int _cols = 4;
+  static const double _cellHeight = 48;
+  static const double _spacing = 5;
 
   @override
   Widget build(BuildContext context) {
+    final merged = mergedTrailingState;
+
+    if (merged == null) {
+      return Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFDCE8F5),
+          border: Border.all(color: const Color(0xFFA8BEDB), width: 1.5),
+          borderRadius: MedRadius.mdAll,
+        ),
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _cols,
+            crossAxisSpacing: _spacing,
+            mainAxisSpacing: _spacing,
+            mainAxisExtent: _cellHeight,
+          ),
+          itemCount: cellStates.length,
+          itemBuilder: (_, i) => _CellBox(index: i, state: cellStates[i]),
+        ),
+      );
+    }
+
+    // 12 göz normal 3 sütunlu grid + en sağda tüm yüksekliği kaplayan
+    // TEK uzun kutu (fiziksel iade kutusu).
+    const normalCols = _cols - 1; // 3
+    final rows = (cellStates.length / normalCols).ceil();
+    final gridHeight = rows * _cellHeight + (rows - 1) * _spacing;
+
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -393,17 +440,33 @@ class _KubikGrid extends StatelessWidget {
         border: Border.all(color: const Color(0xFFA8BEDB), width: 1.5),
         borderRadius: MedRadius.mdAll,
       ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: _cols,
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 5,
-          mainAxisExtent: 48,
-        ),
-        itemCount: cellStates.length,
-        itemBuilder: (_, i) => _CellBox(index: i, state: cellStates[i]),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: normalCols,
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: normalCols,
+                crossAxisSpacing: _spacing,
+                mainAxisSpacing: _spacing,
+                mainAxisExtent: _cellHeight,
+              ),
+              itemCount: cellStates.length,
+              itemBuilder: (_, i) => _CellBox(index: i, state: cellStates[i]),
+            ),
+          ),
+          const SizedBox(width: _spacing),
+          Expanded(
+            flex: 1,
+            child: SizedBox(
+              height: gridHeight,
+              child: _CellBox(index: cellStates.length, state: merged, label: mergedTrailingLabel ?? 'İADE'),
+            ),
+          ),
+        ],
       ),
     );
   }

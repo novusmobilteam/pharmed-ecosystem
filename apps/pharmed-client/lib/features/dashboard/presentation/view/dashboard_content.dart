@@ -42,6 +42,10 @@ class DashboardContentFactory {
             'daily-job-list' => activeMenu != null ? JobListScreen(menu: activeMenu) : const SizedBox.shrink(),
             'expiring-materials' => ExpiringItemsScreen(),
             'unscanned-barcodes' => UnscannedBarcodesScreen(),
+            'cabin-design' => _CabinDesignRouteHandler(
+              cabinId: loaded?.data.cabinVisualizerData?.cabinId ?? 0,
+              notifier: notifier,
+            ),
 
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
@@ -60,6 +64,30 @@ class DashboardContentFactory {
     DashboardError() => EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh),
     DashboardLoaded s => _DashboardBody(state: s, notifier: notifier, isLoggedIn: isLoggedIn),
   };
+}
+
+class _CabinDesignRouteHandler extends StatefulWidget {
+  const _CabinDesignRouteHandler({required this.cabinId, required this.notifier});
+
+  final int cabinId;
+  final DashboardNotifier notifier;
+
+  @override
+  State<_CabinDesignRouteHandler> createState() => _CabinDesignRouteHandlerState();
+}
+
+class _CabinDesignRouteHandlerState extends State<_CabinDesignRouteHandler> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await CabinDesignDialog.show(context, cabinId: widget.cabinId);
+      if (mounted) widget.notifier.navigateTo('dashboard');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }
 
 /// Ana sayfa yerleşimi.

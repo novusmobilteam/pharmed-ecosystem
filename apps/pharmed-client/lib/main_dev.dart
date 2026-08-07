@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pharmed_client/core/cache/app_settings_cache.dart';
-import 'package:pharmed_client/core/providers/datasource_providers.dart';
 
 import 'package:pharmed_client/main.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';

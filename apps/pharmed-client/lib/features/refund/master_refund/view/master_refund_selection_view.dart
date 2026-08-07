@@ -42,7 +42,16 @@ class MasterRefundSelectionView extends ConsumerWidget {
     final bool noPatientSelected = selection == null && state is MasterRefundPatientSelection;
     final bool isItemsLoading = selection == null && !noPatientSelected;
 
-    final items = selection?.visibleItems ?? const [];
+    final items = List<RefundableItem>.from(selection?.visibleItems ?? const [])
+      ..sort((a, b) {
+        final aDate = a.lastMovement?.createdAt;
+        final bDate = b.lastMovement?.createdAt;
+        if (aDate == null && bDate == null) return 0;
+        if (aDate == null) return 1;
+        if (bDate == null) return -1;
+        return bDate.compareTo(aDate);
+      });
+
     final selectedItemIds = selection?.selectedItemIds ?? const {};
     final checkStatuses = selection?.checkStatuses ?? const {};
 
@@ -63,16 +72,21 @@ class MasterRefundSelectionView extends ConsumerWidget {
               itemCount: items.length,
               itemBuilder: (BuildContext context, int i) {
                 final item = items.elementAt(i);
+
                 final bool isSelected = selectedItemIds.contains(item.id);
                 final checkStatus = checkStatuses[item.id] ?? const RefundCheckIdle();
 
                 final drug = item.medicine?.when(drug: (Drug d) => d, consumable: (_) => null);
+                final returnType = drug?.returnType;
+                final isHardwareType = returnType?.requiresCabinHardware ?? false;
                 final refundNote = drug?.returnNote?.trim();
 
                 final time = item.time;
                 final currentAmount = item.returnQuantity ?? item.appliedQuantity;
                 final dose = currentAmount.toDouble().formatFractional;
                 final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
+
+                final isSubmitting = checkStatus is RefundCheckLoading;
 
                 return RxOperationCard2(
                   title: item.medicine?.name ?? '—',
@@ -81,6 +95,7 @@ class MasterRefundSelectionView extends ConsumerWidget {
                   isSelected: isSelected,
                   onTap: () => notifier.toggleItem(item.id),
 
+                  //onTap: () => print(isHardwareType),
                   statusRow: switch (checkStatus) {
                     RefundCheckIdle() => null,
                     RefundCheckLoading() => RxCardStatusRow(
@@ -104,15 +119,14 @@ class MasterRefundSelectionView extends ConsumerWidget {
                       ? RxCardNote(label: context.l10n.medicine_fieldReturnNote, text: refundNote)
                       : null,
 
-                  stepper: (isSelected)
-                      ? RxCardStepper(
-                          value: currentAmount.toDouble(),
-                          unit: unit,
-                          max: item.appliedQuantity.toDouble(),
-                          onChanged: (v) => notifier.updateAmount(item.id, v),
-                        )
-                      : null,
-
+                  // stepper: (isSelected)
+                  //     ? RxCardStepper(
+                  //         value: currentAmount.toDouble(),
+                  //         unit: unit,
+                  //         max: item.appliedQuantity.toDouble(),
+                  //         onChanged: (v) => notifier.updateAmount(item.id, v),
+                  //       )
+                  //     : null,
                   movements: [
                     if (item.lastMovement case final m?)
                       RxCardMovement(
@@ -123,11 +137,29 @@ class MasterRefundSelectionView extends ConsumerWidget {
                         date: m.createdAt?.shortRelativeLabelOf(context) ?? '—',
                       ),
                   ],
+                  extras: [
+                    if (isSelected && !isHardwareType)
+                      Padding(
+                        padding: const EdgeInsets.only(top: MedSpacing.sm),
+                        child: MedButton(
+                          label: context.l10n.refund_action_completeDirect,
+                          isLoading: isSubmitting,
+                          onPressed: isSubmitting
+                              ? null
+                              : () async {
+                                  final success = await notifier.completeDirectRefund(item.id);
+                                  if (success && context.mounted && returnType != null) {
+                                    _showDeliveryDialog(context, returnType);
+                                  }
+                                },
+                        ),
+                      ),
+                  ],
                 );
               },
             ),
 
-      footer: (selection != null && selection.selectedItems.isNotEmpty)
+      footer: (selection != null && selection.hasHardwareSelection)
           ? MedButton(
               label: context.l10n.refund_action_start,
               isLoading: selection.isChecking,
@@ -135,6 +167,21 @@ class MasterRefundSelectionView extends ConsumerWidget {
               onPressed: selection.canStart ? notifier.startRefund : null,
             )
           : null,
+    );
+  }
+
+  void _showDeliveryDialog(BuildContext context, ReturnType type) {
+    final message = type == ReturnType.toPharmacy
+        ? context.l10n.refund_success_toPharmacyMessage
+        : context.l10n.refund_success_toReturnBoxMessage;
+
+    MessageUtils.showConfirmDialog(
+      context: context,
+      action: ConfirmAction.custom,
+      customTitle: context.l10n.refund_success_dialogTitle,
+      customMessage: message,
+      confirmButtonText: context.l10n.common_okButton,
+      onConfirm: () {},
     );
   }
 }

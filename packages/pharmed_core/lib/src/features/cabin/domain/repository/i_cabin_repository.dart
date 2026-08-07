@@ -75,4 +75,6 @@ abstract interface class ICabinRepository {
   /// Motor ayarları ve cihaz tipi bilgilerini içeren konfigürasyonları getirir.
   /// [forceRefresh]: true ise cache atlanır, API'ye gidilir.
   Future<Result<List<DrawerConfig>>> getDrawerConfigs({bool forceRefresh = false});
+
+  Future<Result<void>> updateReturnDrawer(int id, bool status);
 }

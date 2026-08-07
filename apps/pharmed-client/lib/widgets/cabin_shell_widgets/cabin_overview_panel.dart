@@ -182,6 +182,43 @@ class CabinOverviewPanel extends StatelessWidget {
   }
 
   static MedCabinLocationDetail _executionLocationDetail(DrawerQueueItem item) {
+    final isReturnJob = item.group.isReturnDrawer; // ya da job bazlı bilgi — aşağıdaki soruya bağlı
+
+    if (isReturnJob && item.isKubik) {
+      const mergedCount = 4; // en sağdaki sütun — sabit varsayım, gerekirse parametrik yaparız
+      final normalCount = (item.units.length - mergedCount).clamp(0, item.units.length);
+
+      final normalStates = [
+        for (int i = 0; i < normalCount; i++)
+          item.completedTargetIndexes.contains(i)
+              ? MedCellState.completed
+              : item.activeTargetIndex == i
+              ? MedCellState.active
+              : MedCellState.idle,
+      ];
+
+      final mergedIndexes = List.generate(mergedCount, (i) => normalCount + i);
+      final mergedState = mergedIndexes.any((i) => item.activeTargetIndex == i)
+          ? MedCellState.active
+          : mergedIndexes.every((i) => item.completedTargetIndexes.contains(i))
+          ? MedCellState.completed
+          : MedCellState.idle;
+
+      return MedCabinLocationDetail(
+        address: item.address,
+        typeLabel: 'KÜBİK',
+        isKubik: true,
+        cellStates: normalStates,
+        mergedTrailingState: mergedState,
+        mergedTrailingLabel: 'İADE',
+        legendItems: const [
+          MedLegendItem(color: MedColors.blue, background: MedColors.blueLight, label: 'Şu an dolduruluyor'),
+          MedLegendItem(color: MedColors.green, background: MedColors.greenLight, label: 'Tamamlandı'),
+          MedLegendItem(color: MedColors.border, background: MedColors.surface, label: 'Sırada'),
+        ],
+      );
+    }
+
     // ignore: unused_local_variable
     final hasPartialUnitFocus =
         item.units.length > 1 && item.activeUnitIndexes.isNotEmpty && item.activeUnitIndexes.length < item.units.length;

@@ -10102,6 +10102,290 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Redirected by {userName}'**
   String intake_label_redirectedBy(String userName);
+
+  /// Master refund screen: per-card button for hardware-less return types (return box / pharmacy) to complete the refund for a single item immediately
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get refund_action_completeDirect;
+
+  /// Title of the dialog shown after a hardware-less refund (return box / pharmacy) completes successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Return Completed'**
+  String get refund_success_dialogTitle;
+
+  /// Shown after completing a ReturnType.toPharmacy refund, instructing the user to hand the medicine to the pharmacist
+  ///
+  /// In en, this message translates to:
+  /// **'The return has been completed. Please hand the medicine to the pharmacist.'**
+  String get refund_success_toPharmacyMessage;
+
+  /// Shown after completing a ReturnType.toReturnBox refund, instructing the user to place the medicine in the return box
+  ///
+  /// In en, this message translates to:
+  /// **'The return has been completed. Please place the medicine in the return box.'**
+  String get refund_success_toReturnBoxMessage;
+
+  /// Drawer panel header type label shown when the selected DrawerSlot is designated as the return drawer (isReturnDrawerHere)
+  ///
+  /// In en, this message translates to:
+  /// **'Return Drawer'**
+  String get cabin_returnDrawerName;
+
+  /// Drawer panel header subtitle shown when the selected DrawerSlot is the return drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Return Box'**
+  String get cabin_returnDrawerView;
+
+  /// Placeholder title shown instead of the cell grid when the selected drawer is designated as the return drawer
+  ///
+  /// In en, this message translates to:
+  /// **'This drawer is designated as the return box'**
+  String get cabin_returnDrawerViewTitle;
+
+  /// Placeholder subtitle explaining that medicine assignment/refill is disabled for the return drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine assignment/refill is not available for this drawer'**
+  String get cabin_returnDrawerViewSubtitle;
+
+  /// No description provided for @cabinDesign_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin Design'**
+  String get cabinDesign_dialogTitle;
+
+  /// No description provided for @cabinDesign_syncBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'SYNCED'**
+  String get cabinDesign_syncBadge;
+
+  /// No description provided for @cabinDesign_basicSettings_sectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Settings'**
+  String get cabinDesign_basicSettings_sectionTitle;
+
+  /// No description provided for @cabinDesign_basicSettings_nameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin Name'**
+  String get cabinDesign_basicSettings_nameLabel;
+
+  /// No description provided for @cabinDesign_basicSettings_stationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get cabinDesign_basicSettings_stationLabel;
+
+  /// No description provided for @cabinDesign_basicSettings_comPortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'COM Port'**
+  String get cabinDesign_basicSettings_comPortLabel;
+
+  /// No description provided for @cabinDesign_basicSettings_dvrIpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DVR IP'**
+  String get cabinDesign_basicSettings_dvrIpLabel;
+
+  /// No description provided for @cabinDesign_detail_sectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer Detail'**
+  String get cabinDesign_detail_sectionTitle;
+
+  /// No description provided for @cabinDesign_detail_typeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get cabinDesign_detail_typeLabel;
+
+  /// Value shown for a cubic drawer's type, formatted as rows x columns
+  ///
+  /// In en, this message translates to:
+  /// **'Cubic {rows}×{cols}'**
+  String cabinDesign_detail_typeKubik(int rows, int cols);
+
+  /// No description provided for @cabinDesign_detail_cellCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cell Count'**
+  String get cabinDesign_detail_cellCountLabel;
+
+  /// No description provided for @cabinDesign_detail_addressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get cabinDesign_detail_addressLabel;
+
+  /// No description provided for @cabinDesign_detail_configLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration'**
+  String get cabinDesign_detail_configLabel;
+
+  /// No description provided for @cabinDesign_returnDrawer_toggleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Return drawer'**
+  String get cabinDesign_returnDrawer_toggleLabel;
+
+  /// No description provided for @cabinDesign_returnDrawer_toggleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This drawer will be reserved for return operations'**
+  String get cabinDesign_returnDrawer_toggleHint;
+
+  /// Info text showing the address of the currently designated return drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Only one return drawer can be designated per cabinet. Currently: {address}'**
+  String cabinDesign_returnDrawer_currentInfo(String address);
+
+  /// No description provided for @cabinDesign_returnDrawer_noneInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Only one return drawer can be designated per cabinet. None designated yet.'**
+  String get cabinDesign_returnDrawer_noneInfo;
+
+  /// No description provided for @cabinDesign_serum_sectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal Layout'**
+  String get cabinDesign_serum_sectionTitle;
+
+  /// No description provided for @cabinDesign_serum_manualBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'MANUAL SETUP'**
+  String get cabinDesign_serum_manualBadge;
+
+  /// No description provided for @cabinDesign_serum_infoBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'The internal layout of a serum cabinet is not read from the card; define its drawers and equipment placement here.'**
+  String get cabinDesign_serum_infoBanner;
+
+  /// No description provided for @cabinDesign_serum_drawerCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer count'**
+  String get cabinDesign_serum_drawerCountLabel;
+
+  /// Title of a single serum drawer's expandable config card
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {index}'**
+  String cabinDesign_serum_drawerCardTitle(int index);
+
+  /// Collapsed summary of a serum drawer's equipment layout
+  ///
+  /// In en, this message translates to:
+  /// **'{sideBySide}×{frontToBack} = {total} equipment'**
+  String cabinDesign_serum_drawerCardSummary(
+    int sideBySide,
+    int frontToBack,
+    int total,
+  );
+
+  /// No description provided for @cabinDesign_serum_equipmentLayoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment Layout'**
+  String get cabinDesign_serum_equipmentLayoutTitle;
+
+  /// Compact badge identifying which serum drawer is currently being edited
+  ///
+  /// In en, this message translates to:
+  /// **'S-0{index}'**
+  String cabinDesign_serum_drawerBadge(int index);
+
+  /// No description provided for @cabinDesign_serum_sideBySideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Side by side'**
+  String get cabinDesign_serum_sideBySideLabel;
+
+  /// No description provided for @cabinDesign_serum_frontToBackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Front to back'**
+  String get cabinDesign_serum_frontToBackLabel;
+
+  /// No description provided for @cabinDesign_serum_topViewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Top View'**
+  String get cabinDesign_serum_topViewLabel;
+
+  /// Summary text next to the top-down equipment grid preview
+  ///
+  /// In en, this message translates to:
+  /// **'{sideBySide} × {frontToBack} = {total} equipment'**
+  String cabinDesign_serum_totalEquipmentLabel(
+    int sideBySide,
+    int frontToBack,
+    int total,
+  );
+
+  /// No description provided for @cabinDesign_serum_frontLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'← front'**
+  String get cabinDesign_serum_frontLabel;
+
+  /// No description provided for @cabinDesign_serum_backLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'back →'**
+  String get cabinDesign_serum_backLabel;
+
+  /// No description provided for @cabinDesign_serum_applyToAllButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply this layout to all drawers'**
+  String get cabinDesign_serum_applyToAllButton;
+
+  /// Warning shown when not all serum drawers have their equipment layout defined yet
+  ///
+  /// In en, this message translates to:
+  /// **'The design cannot be saved until every drawer\'s layout is defined. Missing: {missingDrawerLabel}'**
+  String cabinDesign_serum_incompleteWarning(String missingDrawerLabel);
+
+  /// No description provided for @cabinDesign_noSelectionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a drawer to see its details.'**
+  String get cabinDesign_noSelectionHint;
+
+  /// No description provided for @cabinDesign_scanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Device'**
+  String get cabinDesign_scanButton;
+
+  /// No description provided for @cabinDesign_saveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Design'**
+  String get cabinDesign_saveButton;
+
+  /// No description provided for @cabinDesign_returnBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'RETURN'**
+  String get cabinDesign_returnBadge;
+
+  /// No description provided for @cabin_returnBoxLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'RETURN BOX'**
+  String get cabin_returnBoxLabel;
 }
 
 class _AppLocalizationsDelegate

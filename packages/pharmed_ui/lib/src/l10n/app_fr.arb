@@ -5091,5 +5091,105 @@
 "@intake_label_redirectedBy": {
   "description": "Shown on a redirected order card, naming the user who performed the redirect",
   "placeholders": { "userName": { "type": "String" } }
-}
+},
+"refund_action_completeDirect": "Retourner",
+"@refund_action_completeDirect": {
+  "description": "Master refund screen: per-card button for hardware-less return types (return box / pharmacy) to complete the refund for a single item immediately"
+},
+"refund_success_dialogTitle": "Retour terminé",
+"@refund_success_dialogTitle": {
+  "description": "Title of the dialog shown after a hardware-less refund (return box / pharmacy) completes successfully"
+},
+"refund_success_toPharmacyMessage": "Le retour a été effectué. Veuillez remettre le médicament au pharmacien.",
+"@refund_success_toPharmacyMessage": {
+  "description": "Shown after completing a ReturnType.toPharmacy refund, instructing the user to hand the medicine to the pharmacist"
+},
+"refund_success_toReturnBoxMessage": "Le retour a été effectué. Veuillez placer le médicament dans la boîte de retour.",
+"@refund_success_toReturnBoxMessage": {
+  "description": "Shown after completing a ReturnType.toReturnBox refund, instructing the user to place the medicine in the return box"
+},
+"cabin_returnDrawerName": "Tiroir de retour",
+"@cabin_returnDrawerName": {
+  "description": "Drawer panel header type label shown when the selected DrawerSlot is designated as the return drawer (isReturnDrawerHere)"
+},
+"cabin_returnDrawerView": "Boîte de retour",
+"@cabin_returnDrawerView": {
+  "description": "Drawer panel header subtitle shown when the selected DrawerSlot is the return drawer"
+},
+"cabin_returnDrawerViewTitle": "Ce tiroir est désigné comme boîte de retour",
+"@cabin_returnDrawerViewTitle": {
+  "description": "Placeholder title shown instead of the cell grid when the selected drawer is designated as the return drawer"
+},
+"cabin_returnDrawerViewSubtitle": "L'attribution/le remplissage de médicaments n'est pas disponible pour ce tiroir",
+"@cabin_returnDrawerViewSubtitle": {
+  "description": "Placeholder subtitle explaining that medicine assignment/refill is disabled for the return drawer"
+},
+"cabinDesign_dialogTitle": "Conception de l'armoire",
+"cabinDesign_syncBadge": "SYNCHRONISÉ",
+"cabinDesign_basicSettings_sectionTitle": "Paramètres de base",
+"cabinDesign_basicSettings_nameLabel": "Nom de l'armoire",
+"cabinDesign_basicSettings_stationLabel": "Station",
+"cabinDesign_basicSettings_comPortLabel": "Port COM",
+"cabinDesign_basicSettings_dvrIpLabel": "IP DVR",
+"cabinDesign_detail_sectionTitle": "Détail du tiroir",
+"cabinDesign_detail_typeLabel": "Type",
+"cabinDesign_detail_typeKubik": "Cubique {rows}×{cols}",
+"@cabinDesign_detail_typeKubik": {
+  "description": "Value shown for a cubic drawer's type, formatted as rows x columns",
+  "placeholders": { "rows": { "type": "int" }, "cols": { "type": "int" } }
+},
+"cabinDesign_detail_cellCountLabel": "Nombre de cases",
+"cabinDesign_detail_addressLabel": "Adresse",
+"cabinDesign_detail_configLabel": "Configuration",
+"cabinDesign_returnDrawer_toggleLabel": "Tiroir de retour",
+"cabinDesign_returnDrawer_toggleHint": "Ce tiroir sera réservé aux opérations de retour",
+"cabinDesign_returnDrawer_currentInfo": "Un seul tiroir de retour peut être désigné par armoire. Actuellement : {address}",
+"@cabinDesign_returnDrawer_currentInfo": {
+  "description": "Info text showing the address of the currently designated return drawer",
+  "placeholders": { "address": { "type": "String" } }
+},
+"cabinDesign_returnDrawer_noneInfo": "Un seul tiroir de retour peut être désigné par armoire. Aucun désigné pour le moment.",
+"cabinDesign_serum_sectionTitle": "Disposition interne",
+"cabinDesign_serum_manualBadge": "CONFIGURATION MANUELLE",
+"cabinDesign_serum_infoBanner": "La disposition interne d'une armoire à sérum n'est pas lue depuis la carte ; définissez ici ses tiroirs et la disposition du matériel.",
+"cabinDesign_serum_drawerCountLabel": "Nombre de tiroirs",
+"cabinDesign_serum_drawerCardTitle": "Tiroir {index}",
+"@cabinDesign_serum_drawerCardTitle": {
+  "description": "Title of a single serum drawer's expandable config card",
+  "placeholders": { "index": { "type": "int" } }
+},
+"cabinDesign_serum_drawerCardSummary": "{sideBySide}×{frontToBack} = {total} équipements",
+"@cabinDesign_serum_drawerCardSummary": {
+  "description": "Collapsed summary of a serum drawer's equipment layout",
+  "placeholders": { "sideBySide": { "type": "int" }, "frontToBack": { "type": "int" }, "total": { "type": "int" } }
+},
+
+"cabinDesign_serum_equipmentLayoutTitle": "Disposition du matériel",
+"cabinDesign_serum_drawerBadge": "S-0{index}",
+"@cabinDesign_serum_drawerBadge": {
+  "description": "Compact badge identifying which serum drawer is currently being edited",
+  "placeholders": { "index": { "type": "int" } }
+},
+"cabinDesign_serum_sideBySideLabel": "Côte à côte",
+"cabinDesign_serum_frontToBackLabel": "D'avant en arrière",
+"cabinDesign_serum_topViewLabel": "Vue de dessus",
+"cabinDesign_serum_totalEquipmentLabel": "{sideBySide} × {frontToBack} = {total} équipements",
+"@cabinDesign_serum_totalEquipmentLabel": {
+  "description": "Summary text next to the top-down equipment grid preview",
+  "placeholders": { "sideBySide": { "type": "int" }, "frontToBack": { "type": "int" }, "total": { "type": "int" } }
+},
+
+"cabinDesign_serum_frontLabel": "← avant",
+"cabinDesign_serum_backLabel": "arrière →",
+"cabinDesign_serum_applyToAllButton": "Appliquer cette disposition à tous les tiroirs",
+"cabinDesign_serum_incompleteWarning": "La conception ne peut pas être enregistrée tant que la disposition de chaque tiroir n'est pas définie. Manquant : {missingDrawerLabel}",
+"@cabinDesign_serum_incompleteWarning": {
+  "description": "Warning shown when not all serum drawers have their equipment layout defined yet",
+  "placeholders": { "missingDrawerLabel": { "type": "String" } }
+},
+"cabinDesign_noSelectionHint": "Sélectionnez un tiroir pour voir ses détails.",
+"cabinDesign_scanButton": "Scanner l'appareil",
+"cabinDesign_saveButton": "Enregistrer la conception",
+"cabinDesign_returnBadge": "RETOUR",
+"cabin_returnBoxLabel": "BOÎTE DE RETOUR"
 }

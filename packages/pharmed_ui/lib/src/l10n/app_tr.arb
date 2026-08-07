@@ -6733,5 +6733,165 @@
 "@intake_label_redirectedBy": {
   "description": "Shown on a redirected order card, naming the user who performed the redirect",
   "placeholders": { "userName": { "type": "String" } }
-}
+},
+"refund_action_completeDirect": "İade Et",
+"@refund_action_completeDirect": {
+  "description": "Master refund screen: per-card button for hardware-less return types (return box / pharmacy) to complete the refund for a single item immediately"
+},
+"refund_success_dialogTitle": "İade Tamamlandı",
+"@refund_success_dialogTitle": {
+  "description": "Title of the dialog shown after a hardware-less refund (return box / pharmacy) completes successfully"
+},
+"refund_success_toPharmacyMessage": "İade işlemi tamamlandı. Lütfen ilacı eczacıya teslim ediniz.",
+"@refund_success_toPharmacyMessage": {
+  "description": "Shown after completing a ReturnType.toPharmacy refund, instructing the user to hand the medicine to the pharmacist"
+},
+"refund_success_toReturnBoxMessage": "İade işlemi tamamlandı. Lütfen ilacı iade kutusuna yerleştiriniz.",
+"@refund_success_toReturnBoxMessage": {
+  "description": "Shown after completing a ReturnType.toReturnBox refund, instructing the user to place the medicine in the return box"
+},
+"cabin_returnDrawerName": "İade Çekmecesi",
+"@cabin_returnDrawerName": { "description": "Drawer panel header type label shown when the selected DrawerSlot is designated as the return drawer (isReturnDrawerHere)" },
+
+"cabin_returnDrawerView": "İade Kutusu",
+"@cabin_returnDrawerView": { "description": "Drawer panel header subtitle shown when the selected DrawerSlot is the return drawer" },
+
+"cabin_returnDrawerViewTitle": "Bu çekmece iade kutusu olarak ayrıldı",
+"@cabin_returnDrawerViewTitle": { "description": "Placeholder title shown instead of the cell grid when the selected drawer is designated as the return drawer" },
+
+"cabin_returnDrawerViewSubtitle": "Bu alana ilaç ataması/dolumu yapılamaz",
+"@cabin_returnDrawerViewSubtitle": { "description": "Placeholder subtitle explaining that medicine assignment/refill is disabled for the return drawer" },
+
+"cabinDesign_dialogTitle": "Kabin Dizaynı",
+"@cabinDesign_dialogTitle": { "description": "Cabin design dialog header title" },
+
+"cabinDesign_syncBadge": "SENKRON",
+"@cabinDesign_syncBadge": { "description": "Badge shown in the cabin design dialog header indicating the shown layout is in sync with the device" },
+
+"cabinDesign_basicSettings_sectionTitle": "Temel Ayarlar",
+"@cabinDesign_basicSettings_sectionTitle": { "description": "Section header for the read-only basic cabin settings panel" },
+
+"cabinDesign_basicSettings_nameLabel": "Kabin Adı",
+"@cabinDesign_basicSettings_nameLabel": { "description": "Label for the cabin name field in basic settings" },
+
+"cabinDesign_basicSettings_stationLabel": "İstasyon",
+"@cabinDesign_basicSettings_stationLabel": { "description": "Label for the station field in basic settings" },
+
+"cabinDesign_basicSettings_comPortLabel": "COM Port",
+"@cabinDesign_basicSettings_comPortLabel": { "description": "Label for the COM port field in basic settings" },
+
+"cabinDesign_basicSettings_dvrIpLabel": "DVR IP",
+"@cabinDesign_basicSettings_dvrIpLabel": { "description": "Label for the DVR IP field in basic settings" },
+
+"cabinDesign_detail_sectionTitle": "Çekmece Detayı",
+"@cabinDesign_detail_sectionTitle": { "description": "Section header for the selected drawer's detail panel" },
+
+"cabinDesign_detail_typeLabel": "Tip",
+"@cabinDesign_detail_typeLabel": { "description": "Label for the drawer type field in the drawer detail panel" },
+
+"cabinDesign_detail_typeKubik": "Kübik {rows}×{cols}",
+"@cabinDesign_detail_typeKubik": {
+  "description": "Value shown for a cubic drawer's type, formatted as rows x columns",
+  "placeholders": { "rows": { "type": "int" }, "cols": { "type": "int" } }
+},
+
+"cabinDesign_detail_cellCountLabel": "Göz Sayısı",
+"@cabinDesign_detail_cellCountLabel": { "description": "Label for the cell/compartment count field in the drawer detail panel" },
+
+"cabinDesign_detail_addressLabel": "Adres",
+"@cabinDesign_detail_addressLabel": { "description": "Label for the physical communication address field in the drawer detail panel" },
+
+"cabinDesign_detail_configLabel": "Konfigürasyon",
+"@cabinDesign_detail_configLabel": { "description": "Label for the hardware configuration field in the drawer detail panel" },
+
+"cabinDesign_returnDrawer_toggleLabel": "İade çekmecesi",
+"@cabinDesign_returnDrawer_toggleLabel": { "description": "Label for the toggle that designates the selected drawer as the cabinet's return drawer" },
+
+"cabinDesign_returnDrawer_toggleHint": "Bu çekmece iade işlemleri için ayrılır",
+"@cabinDesign_returnDrawer_toggleHint": { "description": "Hint text explaining what enabling the return drawer toggle does" },
+
+"cabinDesign_returnDrawer_currentInfo": "Kabin başına yalnızca bir iade çekmecesi tanımlanabilir. Şu an: {address}",
+"@cabinDesign_returnDrawer_currentInfo": {
+  "description": "Info text showing the address of the currently designated return drawer",
+  "placeholders": { "address": { "type": "String" } }
+},
+
+"cabinDesign_returnDrawer_noneInfo": "Kabin başına yalnızca bir iade çekmecesi tanımlanabilir. Henüz tanımlanmadı.",
+"@cabinDesign_returnDrawer_noneInfo": { "description": "Info text shown when no return drawer has been designated yet" },
+
+"cabinDesign_serum_sectionTitle": "İç Dizayn",
+"@cabinDesign_serum_sectionTitle": { "description": "Section header for the serum cabinet's manual internal layout panel" },
+
+"cabinDesign_serum_manualBadge": "MANUEL TANIM",
+"@cabinDesign_serum_manualBadge": { "description": "Badge indicating the serum internal layout is manually defined, not read from the card" },
+
+"cabinDesign_serum_infoBanner": "Serum kabininde iç dizayn karttan okunmaz; çekmece ve avadanlık yerleşimini burada tanımlayın.",
+"@cabinDesign_serum_infoBanner": { "description": "Info banner explaining why serum internal layout must be manually configured" },
+
+"cabinDesign_serum_drawerCountLabel": "Çekmece sayısı",
+"@cabinDesign_serum_drawerCountLabel": { "description": "Label for the serum cabinet's physical drawer count stepper" },
+
+"cabinDesign_serum_drawerCardTitle": "Çekmece {index}",
+"@cabinDesign_serum_drawerCardTitle": {
+  "description": "Title of a single serum drawer's expandable config card",
+  "placeholders": { "index": { "type": "int" } }
+},
+
+"cabinDesign_serum_drawerCardSummary": "{sideBySide}×{frontToBack} = {total} avadanlık",
+"@cabinDesign_serum_drawerCardSummary": {
+  "description": "Collapsed summary of a serum drawer's equipment layout",
+  "placeholders": { "sideBySide": { "type": "int" }, "frontToBack": { "type": "int" }, "total": { "type": "int" } }
+},
+
+"cabinDesign_serum_equipmentLayoutTitle": "Avadanlık Yerleşimi",
+"@cabinDesign_serum_equipmentLayoutTitle": { "description": "Section header for a single serum drawer's equipment layout editor" },
+
+"cabinDesign_serum_drawerBadge": "S-0{index}",
+"@cabinDesign_serum_drawerBadge": {
+  "description": "Compact badge identifying which serum drawer is currently being edited",
+  "placeholders": { "index": { "type": "int" } }
+},
+
+"cabinDesign_serum_sideBySideLabel": "Yan yana",
+"@cabinDesign_serum_sideBySideLabel": { "description": "Label for the side-by-side equipment count stepper" },
+
+"cabinDesign_serum_frontToBackLabel": "Arka arkaya",
+"@cabinDesign_serum_frontToBackLabel": { "description": "Label for the front-to-back equipment count stepper" },
+
+"cabinDesign_serum_topViewLabel": "Üstten Görünüm",
+"@cabinDesign_serum_topViewLabel": { "description": "Label above the top-down equipment grid preview" },
+
+"cabinDesign_serum_totalEquipmentLabel": "{sideBySide} × {frontToBack} = {total} avadanlık",
+"@cabinDesign_serum_totalEquipmentLabel": {
+  "description": "Summary text next to the top-down equipment grid preview",
+  "placeholders": { "sideBySide": { "type": "int" }, "frontToBack": { "type": "int" }, "total": { "type": "int" } }
+},
+
+"cabinDesign_serum_frontLabel": "← ön",
+"@cabinDesign_serum_frontLabel": { "description": "Label marking the front side of the equipment grid preview" },
+
+"cabinDesign_serum_backLabel": "arka →",
+"@cabinDesign_serum_backLabel": { "description": "Label marking the back side of the equipment grid preview" },
+
+"cabinDesign_serum_applyToAllButton": "Bu yerleşimi tüm çekmecelere uygula",
+"@cabinDesign_serum_applyToAllButton": { "description": "Button that copies the current drawer's equipment layout to all other serum drawers" },
+
+"cabinDesign_serum_incompleteWarning": "Tüm çekmecelerin yerleşimi tanımlanmadan dizayn kaydedilemez. Eksik: {missingDrawerLabel}",
+"@cabinDesign_serum_incompleteWarning": {
+  "description": "Warning shown when not all serum drawers have their equipment layout defined yet",
+  "placeholders": { "missingDrawerLabel": { "type": "String" } }
+},
+
+"cabinDesign_noSelectionHint": "Detayları görmek için bir çekmece seçin.",
+"@cabinDesign_noSelectionHint": { "description": "Placeholder shown in the right panel before any drawer is selected" },
+
+"cabinDesign_scanButton": "Cihazı Tara",
+"@cabinDesign_scanButton": { "description": "Button to rescan the physical cabin device (not yet wired up)" },
+
+"cabinDesign_saveButton": "Dizaynı Kaydet",
+"@cabinDesign_saveButton": { "description": "Button that saves the current cabin design changes" },
+
+"cabinDesign_returnBadge": "İADE",
+"@cabinDesign_returnBadge": { "description": "Small badge shown on the drawer visual marking it as the return drawer" },
+"cabin_returnBoxLabel": "İADE KUTUSU"
 }

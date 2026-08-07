@@ -1,5 +1,7 @@
 // pharmed_data/src/cabin/dto/drawer_slot_dto.dart
 
+import 'package:pharmed_core/pharmed_core.dart';
+
 import 'drawer_config_dto.dart';
 
 /// ÇEKMECE YUVASI DTO
@@ -19,9 +21,10 @@ class DrawerSlotDTO {
   final int? compartmentNo;
   final int? drawerOrderNumber;
   final DrawerConfigDTO? drawerConfig;
-  // final CabinDTO? cabin;
+  final CabinDTO? cabin;
   final bool? isDeleted;
   final DateTime? createdDate;
+  final bool? isReturnDrawerHere;
 
   const DrawerSlotDTO({
     this.id,
@@ -32,9 +35,10 @@ class DrawerSlotDTO {
     this.compartmentNo,
     this.drawerOrderNumber,
     this.drawerConfig,
-    // this.cabin,
+    this.cabin,
     this.isDeleted,
     this.createdDate,
+    this.isReturnDrawerHere,
   });
 
   factory DrawerSlotDTO.fromJson(Map<String, dynamic> json) {
@@ -49,9 +53,10 @@ class DrawerSlotDTO {
       drawerConfig: json['drawrDetail'] != null
           ? DrawerConfigDTO.fromJson(json['drawrDetail'] as Map<String, dynamic>)
           : null,
-      // cabin: json['cabin'] != null ? CabinDTO.fromJson(json['cabin'] as Map<String, dynamic>) : null,
+      cabin: json['cabin'] != null ? CabinDTO.fromJson(json['cabin'] as Map<String, dynamic>) : null,
       isDeleted: json['isDeleted'] as bool?,
       createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate'] as String) : null,
+      isReturnDrawerHere: json['isReturnDrawerHere'] as bool?,
     );
   }
 

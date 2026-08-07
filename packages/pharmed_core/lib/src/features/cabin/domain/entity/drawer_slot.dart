@@ -28,6 +28,7 @@ class DrawerSlot {
     this.drawerOrderNumber,
     this.drawerConfig,
     this.cabin,
+    this.isReturnDrawerHere,
   });
 
   final int? id;
@@ -40,6 +41,13 @@ class DrawerSlot {
   final DrawerConfig? drawerConfig; // İlişkili donanım konfigürasyonu (nested)
   final Cabin? cabin; // Bağlı olduğu kabin (nested, opsiyonel)
 
+  /// Bu fiziksel çekmece (DrawerSlot) iade çekmecesi olarak tanımlı mı.
+  /// true ise: alttaki tüm DrawerUnit'ler (gözler) artık bireysel
+  /// ilaç ataması/dolum hedefi DEĞİLDİR — çekmece tek bir sanal iade
+  /// kutusu olarak görselleştirilir ve açılışta kübik lid komutu
+  /// GÖNDERİLMEZ, sadece çekmece açılır (bkz. master-drawer-operation).
+  final bool? isReturnDrawerHere;
+
   DrawerSlot copyWith({
     int? id,
     int? drawerConfigId,
@@ -50,6 +58,7 @@ class DrawerSlot {
     int? drawerOrderNumber,
     DrawerConfig? drawerConfig,
     Cabin? cabin,
+    bool? isReturnDrawerHere,
   }) {
     return DrawerSlot(
       id: id ?? this.id,
@@ -61,6 +70,7 @@ class DrawerSlot {
       drawerOrderNumber: drawerOrderNumber ?? this.drawerOrderNumber,
       drawerConfig: drawerConfig ?? this.drawerConfig,
       // cabin: cabin ?? this.cabin,
+      isReturnDrawerHere: isReturnDrawerHere ?? this.isReturnDrawerHere,
     );
   }
 

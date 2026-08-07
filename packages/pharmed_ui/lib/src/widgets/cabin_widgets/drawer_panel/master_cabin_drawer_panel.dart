@@ -108,12 +108,14 @@ class _MasterDrawerHeader extends StatelessWidget {
   }
 
   String _typeLabel(BuildContext context, DrawerGroup g) {
+    if (g.isReturnDrawer) return context.l10n.cabin_returnDrawerName;
     if (g.isSerum) return context.l10n.cabin_serumDrawerName;
     if (g.isKubik) return context.l10n.cabin_kubikDrawerName;
     return context.l10n.cabin_unitDoseDrawerName;
   }
 
   String _subLabel(BuildContext context, DrawerGroup g) {
+    if (g.isReturnDrawer) return context.l10n.cabin_returnDrawerView;
     if (g.isKubik) {
       final count = g.units.length;
       const cols = 4;
@@ -238,10 +240,17 @@ class _MasterKubicView extends StatelessWidget {
   final int? selectedUnitId;
   final void Function(DrawerUnit unit)? onCellTap;
 
+  static const int _returnCellCount = 4;
+  static const double _cellHeight = 120;
+  static const double _spacing = 5;
+
   @override
   Widget build(BuildContext context) {
-    final units = group.units;
+    final allUnits = group.units;
     const crossAxisCount = 4;
+    final hasReturnBox = group.isReturnDrawer && allUnits.length > _returnCellCount;
+
+    final normalUnits = hasReturnBox ? allUnits.sublist(0, allUnits.length - _returnCellCount) : allUnits;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,37 +263,106 @@ class _MasterKubicView extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: const [BoxShadow(color: Color(0x1F1E3C64), blurRadius: 8, offset: Offset(0, 2))],
           ),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
-              mainAxisExtent: 120,
-            ),
-            itemCount: units.length,
-            itemBuilder: (context, i) {
-              final unit = units[i];
-              return _MasterCabinCell(
-                unit: unit,
-                stock: stockByUnitId[unit.id],
-                fault: faultByUnitId[unit.id],
-                assignment: assignmentByUnitId[unit.id],
-                mode: mode,
-                code: '',
-                isSelected: selectedUnitId == unit.id,
-                isKubik: true,
-                onTap: unit.workingStatus == CabinWorkingStatus.working || mode == CabinOperationMode.fault
-                    ? () => onCellTap?.call(unit)
-                    : null,
-              );
-            },
-          ),
+          child: hasReturnBox
+              ? _hybridGrid(context, normalUnits, crossAxisCount)
+              : _plainGrid(normalUnits, crossAxisCount),
         ),
         const SizedBox(height: 12),
         _MasterCellLegend(mode: mode),
       ],
+    );
+  }
+
+  Widget _plainGrid(List<DrawerUnit> units, int crossAxisCount) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: _spacing,
+        mainAxisSpacing: _spacing,
+        mainAxisExtent: _cellHeight,
+      ),
+      itemCount: units.length,
+      itemBuilder: (context, i) => _cell(units[i]),
+    );
+  }
+
+  Widget _hybridGrid(BuildContext context, List<DrawerUnit> normalUnits, int crossAxisCount) {
+    final normalCols = crossAxisCount - 1; // 3
+    final rowCount = (normalUnits.length / normalCols).ceil();
+    final gridHeight = rowCount * _cellHeight + (rowCount - 1) * _spacing;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: normalCols,
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: normalCols,
+              crossAxisSpacing: _spacing,
+              mainAxisSpacing: _spacing,
+              mainAxisExtent: _cellHeight,
+            ),
+            itemCount: normalUnits.length,
+            itemBuilder: (context, i) => _cell(normalUnits[i]),
+          ),
+        ),
+        const SizedBox(width: _spacing),
+        Expanded(
+          flex: 1,
+          child: SizedBox(height: gridHeight, child: _returnBox(context)),
+        ),
+      ],
+    );
+  }
+
+  Widget _cell(DrawerUnit unit) {
+    return _MasterCabinCell(
+      unit: unit,
+      stock: stockByUnitId[unit.id],
+      fault: faultByUnitId[unit.id],
+      assignment: assignmentByUnitId[unit.id],
+      mode: mode,
+      code: '',
+      isSelected: selectedUnitId == unit.id,
+      isKubik: true,
+      onTap: unit.workingStatus == CabinWorkingStatus.working || mode == CabinOperationMode.fault
+          ? () => onCellTap?.call(unit)
+          : null,
+    );
+  }
+
+  /// Birleşik iade gözü — tıklanamaz, ilaç ataması/dolumu buraya asla
+  /// yapılamaz. Fiziksel olarak son 4 gözün yerini alan manuel kapaklı kutu.
+  Widget _returnBox(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: MedColors.amberLight,
+        border: Border.all(color: MedColors.amber, width: 1.5),
+        borderRadius: BorderRadius.circular(7),
+      ),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(PhosphorIcons.arrowUDownLeft(), size: 20, color: MedColors.amber),
+          const SizedBox(height: 6),
+          Text(
+            context.l10n.cabin_returnBoxLabel,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: MedFonts.mono,
+              fontSize: 10,
+              color: MedColors.amber,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

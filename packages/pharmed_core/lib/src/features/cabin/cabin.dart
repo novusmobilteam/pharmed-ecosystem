@@ -38,6 +38,8 @@ export 'domain/usecase/save_cabin_design_usecase.dart';
 export 'domain/usecase/save_mobile_cabin_design_usecase.dart';
 export 'domain/usecase/scan_cabin_usecase.dart';
 export 'domain/usecase/get_cabins_usecase.dart';
+export 'domain/usecase/set_return_drawer_usecase.dart';
+export 'domain/usecase/update_cabin_usecase.dart';
 
 export 'domain/entity/drawer_slot_visual.dart';
 export 'domain/entity/cabin_visualizer_data.dart';

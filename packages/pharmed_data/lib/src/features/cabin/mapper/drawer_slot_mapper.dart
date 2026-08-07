@@ -1,6 +1,7 @@
 // pharmed_data/src/cabin/mapper/drawer_slot_mapper.dart
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/src/features/cabin/mapper/cabin_mapper.dart';
 import 'drawer_config_mapper.dart';
 
 /// DrawerSlot ↔ DrawerSlotDTO dönüşümleri.
@@ -19,6 +20,8 @@ class DrawerSlotMapper {
       compartmentNo: dto.compartmentNo,
       drawerOrderNumber: dto.drawerOrderNumber,
       drawerConfig: drawerConfigMapper.toEntityOrNull(dto.drawerConfig),
+      isReturnDrawerHere: dto.isReturnDrawerHere,
+      cabin: CabinMapper().toEntityOrNull(dto.cabin),
     );
   }
 
@@ -36,6 +39,7 @@ class DrawerSlotMapper {
       compartmentNo: entity.compartmentNo,
       drawerOrderNumber: entity.drawerOrderNumber,
       drawerConfig: entity.drawerConfig != null ? drawerConfigMapper.toDto(entity.drawerConfig!) : null,
+      isReturnDrawerHere: entity.isReturnDrawerHere,
     );
   }
 

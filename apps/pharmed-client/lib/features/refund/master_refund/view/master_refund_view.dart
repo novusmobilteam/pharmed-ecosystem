@@ -20,6 +20,8 @@ class MasterRefundView extends ConsumerStatefulWidget {
 }
 
 class _MasterRefundViewState extends ConsumerState<MasterRefundView> {
+  bool _isPatientReady(PatientSelectionState state) => state is PatientSelectionReady;
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(masterRefundNotifierProvider);
@@ -47,6 +49,7 @@ class _MasterRefundViewState extends ConsumerState<MasterRefundView> {
       cabinIdOf: (d) => d.cabinId,
       onInit: (d) => notifier.init(d),
       state: state,
+      extraBootGate: () => !_isPatientReady(ref.watch(patientSelectionNotifierProvider)),
       phaseOf: (s) => switch (s) {
         MasterRefundUninitialized() || MasterRefundLoading() => const RootBooting(),
         MasterRefundExecuting() => const RootExecuting(),

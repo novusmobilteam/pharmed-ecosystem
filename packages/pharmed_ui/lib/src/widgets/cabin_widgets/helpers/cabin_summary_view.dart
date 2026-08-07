@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 // CabinSummaryView
 // [SWREQ-UI-001] [HAZ-003]
@@ -82,13 +83,29 @@ class _KubicSlotView extends StatelessWidget {
   const _KubicSlotView({required this.slot});
   final KubicSlotVisual slot;
 
+  static const double _cellHeight = 14;
+  static const double _spacing = 3;
+
   @override
   Widget build(BuildContext context) {
-    // Düz listeyi satırlara böl
-    final rows = <List<DrawerStatus>>[];
-    for (int i = 0; i < slot.cells.length; i += slot.columnCount) {
-      rows.add(slot.cells.sublist(i, (i + slot.columnCount).clamp(0, slot.cells.length)));
+    final merged = slot.mergedReturnStatus;
+
+    if (merged == null) {
+      return Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: const Color(0xFFDCE8F5),
+          border: Border.all(color: const Color(0xFFA8BEDB), width: 1.5),
+          borderRadius: MedRadius.smAll,
+          boxShadow: const [BoxShadow(color: Color(0x1F1E3C64), blurRadius: 8, offset: Offset(0, 2))],
+        ),
+        child: _grid(slot.cells, slot.columnCount),
+      );
     }
+
+    final normalCols = (slot.columnCount - 1).clamp(1, slot.columnCount);
+    final rowCount = (slot.cells.length / normalCols).ceil();
+    final gridHeight = rowCount * _cellHeight + (rowCount - 1) * _spacing;
 
     return Container(
       padding: const EdgeInsets.all(5),
@@ -98,22 +115,49 @@ class _KubicSlotView extends StatelessWidget {
         borderRadius: MedRadius.smAll,
         boxShadow: const [BoxShadow(color: Color(0x1F1E3C64), blurRadius: 8, offset: Offset(0, 2))],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (int r = 0; r < rows.length; r++) ...[
-            Row(
-              children: [
-                for (int c = 0; c < rows[r].length; c++) ...[
-                  Expanded(child: _KubicCell(status: rows[r][c])),
-                  if (c < rows[r].length - 1) const SizedBox(width: 3),
-                ],
-              ],
+          Expanded(flex: normalCols, child: _grid(slot.cells, normalCols)),
+          const SizedBox(width: _spacing),
+          Expanded(
+            flex: 1,
+            child: SizedBox(
+              height: gridHeight,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _StatusColors.of(merged).bg,
+                  border: Border.all(color: _StatusColors.of(merged).border),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
             ),
-            if (r < rows.length - 1) const SizedBox(height: 3),
-          ],
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _grid(List<DrawerStatus> cells, int columnCount) {
+    final rows = <List<DrawerStatus>>[];
+    for (int i = 0; i < cells.length; i += columnCount) {
+      rows.add(cells.sublist(i, (i + columnCount).clamp(0, cells.length)));
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (int r = 0; r < rows.length; r++) ...[
+          Row(
+            children: [
+              for (int c = 0; c < rows[r].length; c++) ...[
+                Expanded(child: _KubicCell(status: rows[r][c])),
+                if (c < rows[r].length - 1) const SizedBox(width: _spacing),
+              ],
+            ],
+          ),
+          if (r < rows.length - 1) const SizedBox(height: _spacing),
+        ],
+      ],
     );
   }
 }

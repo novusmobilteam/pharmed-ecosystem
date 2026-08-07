@@ -5678,4 +5678,173 @@ class AppLocalizationsTr extends AppLocalizations {
   String intake_label_redirectedBy(String userName) {
     return '$userName yönlendirdi';
   }
+
+  @override
+  String get refund_action_completeDirect => 'İade Et';
+
+  @override
+  String get refund_success_dialogTitle => 'İade Tamamlandı';
+
+  @override
+  String get refund_success_toPharmacyMessage =>
+      'İade işlemi tamamlandı. Lütfen ilacı eczacıya teslim ediniz.';
+
+  @override
+  String get refund_success_toReturnBoxMessage =>
+      'İade işlemi tamamlandı. Lütfen ilacı iade kutusuna yerleştiriniz.';
+
+  @override
+  String get cabin_returnDrawerName => 'İade Çekmecesi';
+
+  @override
+  String get cabin_returnDrawerView => 'İade Kutusu';
+
+  @override
+  String get cabin_returnDrawerViewTitle =>
+      'Bu çekmece iade kutusu olarak ayrıldı';
+
+  @override
+  String get cabin_returnDrawerViewSubtitle =>
+      'Bu alana ilaç ataması/dolumu yapılamaz';
+
+  @override
+  String get cabinDesign_dialogTitle => 'Kabin Dizaynı';
+
+  @override
+  String get cabinDesign_syncBadge => 'SENKRON';
+
+  @override
+  String get cabinDesign_basicSettings_sectionTitle => 'Temel Ayarlar';
+
+  @override
+  String get cabinDesign_basicSettings_nameLabel => 'Kabin Adı';
+
+  @override
+  String get cabinDesign_basicSettings_stationLabel => 'İstasyon';
+
+  @override
+  String get cabinDesign_basicSettings_comPortLabel => 'COM Port';
+
+  @override
+  String get cabinDesign_basicSettings_dvrIpLabel => 'DVR IP';
+
+  @override
+  String get cabinDesign_detail_sectionTitle => 'Çekmece Detayı';
+
+  @override
+  String get cabinDesign_detail_typeLabel => 'Tip';
+
+  @override
+  String cabinDesign_detail_typeKubik(int rows, int cols) {
+    return 'Kübik $rows×$cols';
+  }
+
+  @override
+  String get cabinDesign_detail_cellCountLabel => 'Göz Sayısı';
+
+  @override
+  String get cabinDesign_detail_addressLabel => 'Adres';
+
+  @override
+  String get cabinDesign_detail_configLabel => 'Konfigürasyon';
+
+  @override
+  String get cabinDesign_returnDrawer_toggleLabel => 'İade çekmecesi';
+
+  @override
+  String get cabinDesign_returnDrawer_toggleHint =>
+      'Bu çekmece iade işlemleri için ayrılır';
+
+  @override
+  String cabinDesign_returnDrawer_currentInfo(String address) {
+    return 'Kabin başına yalnızca bir iade çekmecesi tanımlanabilir. Şu an: $address';
+  }
+
+  @override
+  String get cabinDesign_returnDrawer_noneInfo =>
+      'Kabin başına yalnızca bir iade çekmecesi tanımlanabilir. Henüz tanımlanmadı.';
+
+  @override
+  String get cabinDesign_serum_sectionTitle => 'İç Dizayn';
+
+  @override
+  String get cabinDesign_serum_manualBadge => 'MANUEL TANIM';
+
+  @override
+  String get cabinDesign_serum_infoBanner =>
+      'Serum kabininde iç dizayn karttan okunmaz; çekmece ve avadanlık yerleşimini burada tanımlayın.';
+
+  @override
+  String get cabinDesign_serum_drawerCountLabel => 'Çekmece sayısı';
+
+  @override
+  String cabinDesign_serum_drawerCardTitle(int index) {
+    return 'Çekmece $index';
+  }
+
+  @override
+  String cabinDesign_serum_drawerCardSummary(
+    int sideBySide,
+    int frontToBack,
+    int total,
+  ) {
+    return '$sideBySide×$frontToBack = $total avadanlık';
+  }
+
+  @override
+  String get cabinDesign_serum_equipmentLayoutTitle => 'Avadanlık Yerleşimi';
+
+  @override
+  String cabinDesign_serum_drawerBadge(int index) {
+    return 'S-0$index';
+  }
+
+  @override
+  String get cabinDesign_serum_sideBySideLabel => 'Yan yana';
+
+  @override
+  String get cabinDesign_serum_frontToBackLabel => 'Arka arkaya';
+
+  @override
+  String get cabinDesign_serum_topViewLabel => 'Üstten Görünüm';
+
+  @override
+  String cabinDesign_serum_totalEquipmentLabel(
+    int sideBySide,
+    int frontToBack,
+    int total,
+  ) {
+    return '$sideBySide × $frontToBack = $total avadanlık';
+  }
+
+  @override
+  String get cabinDesign_serum_frontLabel => '← ön';
+
+  @override
+  String get cabinDesign_serum_backLabel => 'arka →';
+
+  @override
+  String get cabinDesign_serum_applyToAllButton =>
+      'Bu yerleşimi tüm çekmecelere uygula';
+
+  @override
+  String cabinDesign_serum_incompleteWarning(String missingDrawerLabel) {
+    return 'Tüm çekmecelerin yerleşimi tanımlanmadan dizayn kaydedilemez. Eksik: $missingDrawerLabel';
+  }
+
+  @override
+  String get cabinDesign_noSelectionHint =>
+      'Detayları görmek için bir çekmece seçin.';
+
+  @override
+  String get cabinDesign_scanButton => 'Cihazı Tara';
+
+  @override
+  String get cabinDesign_saveButton => 'Dizaynı Kaydet';
+
+  @override
+  String get cabinDesign_returnBadge => 'İADE';
+
+  @override
+  String get cabin_returnBoxLabel => 'İADE KUTUSU';
 }

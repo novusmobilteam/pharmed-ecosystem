@@ -54,11 +54,15 @@ class _RefundConfirmForm extends StatelessWidget {
   /// target aynı fiziksel göze düşüyorsa (RefundCellGrouper) toplam miktar
   /// tek kartta gösterilir.
   Widget _cellCard(BuildContext context, RefundDrawerJob job, int ti) {
-    final target = executing.currentTarget;
-    if (target == null) return const SizedBox.shrink();
+    if (ti < 0 || ti >= job.targets.length) return const SizedBox.shrink();
+    final target = job.targets[ti];
 
-    final groups = RefundCellGrouper.group(job.targets);
-    final myGroup = groups.firstWhereOrNull((g) => g.targetIndexes.contains(ti));
+    // RefundCellGrouper SADECE toOrigin hedefleri için anlamlıdır (bkz.
+    // grouper dokümantasyonu). İade çekmecesi (toDrawer) job'larında her
+    // target kendi ayrı kartında gösterilir, gruplama YAPILMAZ.
+    final RefundCellGroup? myGroup = job.isReturnDrawer
+        ? null
+        : RefundCellGrouper.group(job.targets).firstWhereOrNull((g) => g.targetIndexes.contains(ti));
 
     final representative = myGroup != null ? job.targets[myGroup.targetIndexes.first] : target;
     final totalQuantity = myGroup != null
@@ -71,7 +75,7 @@ class _RefundConfirmForm extends StatelessWidget {
     return CabinExecutionGridCard(
       assignment: representative.assignment,
       current: representative.assignment.toDisplayQuantity(representative.assignment.totalQuantity),
-      density: job.isKubik ? MedValueCardDensity.comfortable : MedValueCardDensity.compact,
+      density: (job.isKubik || job.isReturnDrawer) ? MedValueCardDensity.comfortable : MedValueCardDensity.compact,
       fields: [
         MedValueCard(
           label: context.l10n.refund_label_quantity,
@@ -88,6 +92,21 @@ class _RefundConfirmForm extends StatelessWidget {
     final job = executing.currentJob;
     if (job == null) return const SizedBox.shrink();
 
+    if (job.isReturnDrawer) {
+      return CabinExecutionGrid(
+        maxWidth: 640,
+        isLocked: executing.isSaving,
+        isKubik: false,
+        itemCount: job.targets.length,
+        itemBuilder: (context, i) => _cellCard(context, job, i),
+        header: null,
+        canConfirm: job.targets.isNotEmpty,
+        isSaving: executing.isSaving,
+        confirmLabel: context.l10n.refund_action_completeRefund,
+        onConfirm: notifier.confirmCurrent,
+      );
+    }
+
     final ti = executing.currentTargetIndex;
     final isLastTarget = ti >= job.targets.length - 1;
     final confirmLabel = !isLastTarget
@@ -97,7 +116,7 @@ class _RefundConfirmForm extends StatelessWidget {
     return CabinExecutionGrid(
       maxWidth: 640,
       isLocked: executing.isSaving,
-      isKubik: job.isKubik,
+      isKubik: true,
       itemCount: 1,
       itemBuilder: (context, _) => _cellCard(context, job, ti),
       header: null,

@@ -5825,4 +5825,174 @@ class AppLocalizationsFr extends AppLocalizations {
   String intake_label_redirectedBy(String userName) {
     return 'Redirigé par $userName';
   }
+
+  @override
+  String get refund_action_completeDirect => 'Retourner';
+
+  @override
+  String get refund_success_dialogTitle => 'Retour terminé';
+
+  @override
+  String get refund_success_toPharmacyMessage =>
+      'Le retour a été effectué. Veuillez remettre le médicament au pharmacien.';
+
+  @override
+  String get refund_success_toReturnBoxMessage =>
+      'Le retour a été effectué. Veuillez placer le médicament dans la boîte de retour.';
+
+  @override
+  String get cabin_returnDrawerName => 'Tiroir de retour';
+
+  @override
+  String get cabin_returnDrawerView => 'Boîte de retour';
+
+  @override
+  String get cabin_returnDrawerViewTitle =>
+      'Ce tiroir est désigné comme boîte de retour';
+
+  @override
+  String get cabin_returnDrawerViewSubtitle =>
+      'L\'attribution/le remplissage de médicaments n\'est pas disponible pour ce tiroir';
+
+  @override
+  String get cabinDesign_dialogTitle => 'Conception de l\'armoire';
+
+  @override
+  String get cabinDesign_syncBadge => 'SYNCHRONISÉ';
+
+  @override
+  String get cabinDesign_basicSettings_sectionTitle => 'Paramètres de base';
+
+  @override
+  String get cabinDesign_basicSettings_nameLabel => 'Nom de l\'armoire';
+
+  @override
+  String get cabinDesign_basicSettings_stationLabel => 'Station';
+
+  @override
+  String get cabinDesign_basicSettings_comPortLabel => 'Port COM';
+
+  @override
+  String get cabinDesign_basicSettings_dvrIpLabel => 'IP DVR';
+
+  @override
+  String get cabinDesign_detail_sectionTitle => 'Détail du tiroir';
+
+  @override
+  String get cabinDesign_detail_typeLabel => 'Type';
+
+  @override
+  String cabinDesign_detail_typeKubik(int rows, int cols) {
+    return 'Cubique $rows×$cols';
+  }
+
+  @override
+  String get cabinDesign_detail_cellCountLabel => 'Nombre de cases';
+
+  @override
+  String get cabinDesign_detail_addressLabel => 'Adresse';
+
+  @override
+  String get cabinDesign_detail_configLabel => 'Configuration';
+
+  @override
+  String get cabinDesign_returnDrawer_toggleLabel => 'Tiroir de retour';
+
+  @override
+  String get cabinDesign_returnDrawer_toggleHint =>
+      'Ce tiroir sera réservé aux opérations de retour';
+
+  @override
+  String cabinDesign_returnDrawer_currentInfo(String address) {
+    return 'Un seul tiroir de retour peut être désigné par armoire. Actuellement : $address';
+  }
+
+  @override
+  String get cabinDesign_returnDrawer_noneInfo =>
+      'Un seul tiroir de retour peut être désigné par armoire. Aucun désigné pour le moment.';
+
+  @override
+  String get cabinDesign_serum_sectionTitle => 'Disposition interne';
+
+  @override
+  String get cabinDesign_serum_manualBadge => 'CONFIGURATION MANUELLE';
+
+  @override
+  String get cabinDesign_serum_infoBanner =>
+      'La disposition interne d\'une armoire à sérum n\'est pas lue depuis la carte ; définissez ici ses tiroirs et la disposition du matériel.';
+
+  @override
+  String get cabinDesign_serum_drawerCountLabel => 'Nombre de tiroirs';
+
+  @override
+  String cabinDesign_serum_drawerCardTitle(int index) {
+    return 'Tiroir $index';
+  }
+
+  @override
+  String cabinDesign_serum_drawerCardSummary(
+    int sideBySide,
+    int frontToBack,
+    int total,
+  ) {
+    return '$sideBySide×$frontToBack = $total équipements';
+  }
+
+  @override
+  String get cabinDesign_serum_equipmentLayoutTitle =>
+      'Disposition du matériel';
+
+  @override
+  String cabinDesign_serum_drawerBadge(int index) {
+    return 'S-0$index';
+  }
+
+  @override
+  String get cabinDesign_serum_sideBySideLabel => 'Côte à côte';
+
+  @override
+  String get cabinDesign_serum_frontToBackLabel => 'D\'avant en arrière';
+
+  @override
+  String get cabinDesign_serum_topViewLabel => 'Vue de dessus';
+
+  @override
+  String cabinDesign_serum_totalEquipmentLabel(
+    int sideBySide,
+    int frontToBack,
+    int total,
+  ) {
+    return '$sideBySide × $frontToBack = $total équipements';
+  }
+
+  @override
+  String get cabinDesign_serum_frontLabel => '← avant';
+
+  @override
+  String get cabinDesign_serum_backLabel => 'arrière →';
+
+  @override
+  String get cabinDesign_serum_applyToAllButton =>
+      'Appliquer cette disposition à tous les tiroirs';
+
+  @override
+  String cabinDesign_serum_incompleteWarning(String missingDrawerLabel) {
+    return 'La conception ne peut pas être enregistrée tant que la disposition de chaque tiroir n\'est pas définie. Manquant : $missingDrawerLabel';
+  }
+
+  @override
+  String get cabinDesign_noSelectionHint =>
+      'Sélectionnez un tiroir pour voir ses détails.';
+
+  @override
+  String get cabinDesign_scanButton => 'Scanner l\'appareil';
+
+  @override
+  String get cabinDesign_saveButton => 'Enregistrer la conception';
+
+  @override
+  String get cabinDesign_returnBadge => 'RETOUR';
+
+  @override
+  String get cabin_returnBoxLabel => 'BOÎTE DE RETOUR';
 }

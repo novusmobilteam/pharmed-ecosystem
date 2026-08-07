@@ -48,7 +48,9 @@ class GetCabinVisualizerDataUseCase {
     final slots = slotResult.when(ok: (data) => data, error: (_) => null);
 
     if (slots == null || slots.isEmpty) {
-      return Result.error(ServiceException(message: contextlessL10n().cabinCore_mobileCabinDesignNotFound, statusCode: 404));
+      return Result.error(
+        ServiceException(message: contextlessL10n().cabinCore_mobileCabinDesignNotFound, statusCode: 404),
+      );
     }
 
     final mobileFaults = faultResult.when(
@@ -166,10 +168,27 @@ class GetCabinVisualizerDataUseCase {
       final isKubik = type?.isKubik ?? false;
       final isSerum = deviceNo == 250;
       const colCount = 4;
+      const returnCellCount = 4;
 
       if (isSerum) {
         final allStocks = group.units.expand((u) => stocksByUnitId[u.id] ?? <CabinStock>[]).toList();
         return SerumSlotVisual(slotId: slot.id ?? 0, status: _resolveStatus(allStocks), heightFactor: 2);
+      }
+
+      if (isKubik && group.isReturnDrawer && group.units.length > returnCellCount) {
+        final normalUnits = group.units.sublist(0, group.units.length - returnCellCount);
+        final returnUnits = group.units.sublist(group.units.length - returnCellCount);
+
+        final normalCells = normalUnits.map((unit) => _resolveStatus(stocksByUnitId[unit.id] ?? [])).toList();
+        // İade gözlerinde normalde stok olmaz ama savunma amaçlı resolve ediyoruz.
+        final returnStocks = returnUnits.expand((u) => stocksByUnitId[u.id] ?? <CabinStock>[]).toList();
+
+        return KubicSlotVisual(
+          slotId: slot.id ?? 0,
+          cells: normalCells,
+          columnCount: colCount,
+          mergedReturnStatus: _resolveStatus(returnStocks),
+        );
       }
 
       final cells = group.units.map((unit) => _resolveStatus(stocksByUnitId[unit.id] ?? [])).toList();

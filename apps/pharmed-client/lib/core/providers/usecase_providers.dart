@@ -465,3 +465,7 @@ final checkRedirectedIntakeUseCaseProvider = Provider((ref) {
 final completeRedirectedIntakeUseCaseProvider = Provider((ref) {
   return CompleteRedirectedIntakeUseCase(ref.read(intakeRepositoryProvider));
 });
+
+final setReturnDrawerUseCaseProvider = Provider((ref) {
+  return SetReturnDrawerUseCase(ref.read(cabinRepositoryProvider));
+});

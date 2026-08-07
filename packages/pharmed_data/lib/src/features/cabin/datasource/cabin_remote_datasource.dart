@@ -163,4 +163,15 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
 
     return res.when(ok: (list) => Result.ok(list ?? const <DrawerUnitDTO>[]), error: Result.error);
   }
+
+  /// Verilen [id] (DrawerSlot.id) iade çekmecesi olarak işaretlenir.
+  /// Kabin başına tek iade çekmecesi olduğu varsayımıyla, backend'in
+  /// önceki işaretli slot'u otomatik kaldırdığı varsayılıyor (teyit
+  /// edilmeli — bkz. aşağıdaki soru).
+  Future<Result<void>> updateReturnDrawer(int id, bool status) {
+    return putRequest(
+      path: '/CabinDesign/updateReturnDrawer/$id?isReturnDrawerHere=$status',
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+  }
 }

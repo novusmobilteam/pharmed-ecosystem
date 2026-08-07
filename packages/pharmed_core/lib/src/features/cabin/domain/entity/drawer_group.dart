@@ -18,6 +18,7 @@ class DrawerGroup {
   bool get isSerum => slot.drawerConfig?.deviceTypeNo == 250;
 
   String get name {
+    if (isReturnDrawer) return 'İade Çekmecesi';
     if (isSerum) return 'Serum Kabini';
     return isKubik ? 'Kübik Çekmece' : 'Birim Doz Çekmece (${drawerType?.compartmentCount} Göz)';
   }
@@ -32,6 +33,11 @@ class DrawerGroup {
 
   /// Standard kabin (master/slave) mi?
   bool get isMaster => cabinType == CabinType.master;
+
+  /// Bu fiziksel çekmece iade çekmecesi olarak tanımlı mı — true ise
+  /// gözler artık bireysel hedef değildir, tek sanal kutu olarak render
+  /// edilir (bkz. ReturnSlotVisual / _MasterReturnDrawerView).
+  bool get isReturnDrawer => slot.isReturnDrawerHere ?? false;
 
   /// Görsel yükseklik hesapla
   double get visualHeight {

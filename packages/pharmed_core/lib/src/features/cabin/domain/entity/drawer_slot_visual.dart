@@ -7,10 +7,21 @@ sealed class DrawerSlotVisual {
 }
 
 final class KubicSlotVisual extends DrawerSlotVisual {
-  const KubicSlotVisual({required super.slotId, required this.cells, required this.columnCount});
+  const KubicSlotVisual({
+    required super.slotId,
+    required this.cells,
+    required this.columnCount,
+    this.mergedReturnStatus,
+  });
 
+  /// Normal atanabilir gözler (iade kutusu hariç).
   final List<DrawerStatus> cells;
   final int columnCount;
+
+  /// null → bu slot'ta iade kutusu yok, normal 4 sütunlu grid.
+  /// non-null → son 4 göz birleşip bu durumla TEK kutu olarak çizilir.
+  final DrawerStatus? mergedReturnStatus;
+
   int get rowCount => (cells.length / columnCount).ceil();
 }
 
@@ -48,13 +59,7 @@ final class MobileSlotVisual extends DrawerSlotVisual {
   /// doğrulandı (kapanış-bekleme akışıyla, 5 çekmece tek tek test edildi).
   ///
   /// [SWREQ-CLI-CABIN-OP-005] Kart rev.2 çekmece→port haritası.
-  static const Map<int, int> _drawerToPort = {
-    1: 5,
-    2: 1,
-    3: 2,
-    4: 3,
-    5: 4,
-  };
+  static const Map<int, int> _drawerToPort = {1: 5, 2: 1, 3: 2, 4: 3, 5: 4};
 
   /// Verilen [slot]'un fiziksel kontrol kartı portunu döner (1-tabanlı).
   ///

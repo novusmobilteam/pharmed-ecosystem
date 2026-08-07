@@ -269,4 +269,9 @@ class CabinRepositoryImpl implements ICabinRepository {
       error: Result.error,
     );
   }
+
+  @override
+  Future<Result<void>> updateReturnDrawer(int id, bool status) {
+    return _remote.updateReturnDrawer(id, status);
+  }
 }

@@ -5719,4 +5719,173 @@ class AppLocalizationsEn extends AppLocalizations {
   String intake_label_redirectedBy(String userName) {
     return 'Redirected by $userName';
   }
+
+  @override
+  String get refund_action_completeDirect => 'Return';
+
+  @override
+  String get refund_success_dialogTitle => 'Return Completed';
+
+  @override
+  String get refund_success_toPharmacyMessage =>
+      'The return has been completed. Please hand the medicine to the pharmacist.';
+
+  @override
+  String get refund_success_toReturnBoxMessage =>
+      'The return has been completed. Please place the medicine in the return box.';
+
+  @override
+  String get cabin_returnDrawerName => 'Return Drawer';
+
+  @override
+  String get cabin_returnDrawerView => 'Return Box';
+
+  @override
+  String get cabin_returnDrawerViewTitle =>
+      'This drawer is designated as the return box';
+
+  @override
+  String get cabin_returnDrawerViewSubtitle =>
+      'Medicine assignment/refill is not available for this drawer';
+
+  @override
+  String get cabinDesign_dialogTitle => 'Cabin Design';
+
+  @override
+  String get cabinDesign_syncBadge => 'SYNCED';
+
+  @override
+  String get cabinDesign_basicSettings_sectionTitle => 'Basic Settings';
+
+  @override
+  String get cabinDesign_basicSettings_nameLabel => 'Cabin Name';
+
+  @override
+  String get cabinDesign_basicSettings_stationLabel => 'Station';
+
+  @override
+  String get cabinDesign_basicSettings_comPortLabel => 'COM Port';
+
+  @override
+  String get cabinDesign_basicSettings_dvrIpLabel => 'DVR IP';
+
+  @override
+  String get cabinDesign_detail_sectionTitle => 'Drawer Detail';
+
+  @override
+  String get cabinDesign_detail_typeLabel => 'Type';
+
+  @override
+  String cabinDesign_detail_typeKubik(int rows, int cols) {
+    return 'Cubic $rows×$cols';
+  }
+
+  @override
+  String get cabinDesign_detail_cellCountLabel => 'Cell Count';
+
+  @override
+  String get cabinDesign_detail_addressLabel => 'Address';
+
+  @override
+  String get cabinDesign_detail_configLabel => 'Configuration';
+
+  @override
+  String get cabinDesign_returnDrawer_toggleLabel => 'Return drawer';
+
+  @override
+  String get cabinDesign_returnDrawer_toggleHint =>
+      'This drawer will be reserved for return operations';
+
+  @override
+  String cabinDesign_returnDrawer_currentInfo(String address) {
+    return 'Only one return drawer can be designated per cabinet. Currently: $address';
+  }
+
+  @override
+  String get cabinDesign_returnDrawer_noneInfo =>
+      'Only one return drawer can be designated per cabinet. None designated yet.';
+
+  @override
+  String get cabinDesign_serum_sectionTitle => 'Internal Layout';
+
+  @override
+  String get cabinDesign_serum_manualBadge => 'MANUAL SETUP';
+
+  @override
+  String get cabinDesign_serum_infoBanner =>
+      'The internal layout of a serum cabinet is not read from the card; define its drawers and equipment placement here.';
+
+  @override
+  String get cabinDesign_serum_drawerCountLabel => 'Drawer count';
+
+  @override
+  String cabinDesign_serum_drawerCardTitle(int index) {
+    return 'Drawer $index';
+  }
+
+  @override
+  String cabinDesign_serum_drawerCardSummary(
+    int sideBySide,
+    int frontToBack,
+    int total,
+  ) {
+    return '$sideBySide×$frontToBack = $total equipment';
+  }
+
+  @override
+  String get cabinDesign_serum_equipmentLayoutTitle => 'Equipment Layout';
+
+  @override
+  String cabinDesign_serum_drawerBadge(int index) {
+    return 'S-0$index';
+  }
+
+  @override
+  String get cabinDesign_serum_sideBySideLabel => 'Side by side';
+
+  @override
+  String get cabinDesign_serum_frontToBackLabel => 'Front to back';
+
+  @override
+  String get cabinDesign_serum_topViewLabel => 'Top View';
+
+  @override
+  String cabinDesign_serum_totalEquipmentLabel(
+    int sideBySide,
+    int frontToBack,
+    int total,
+  ) {
+    return '$sideBySide × $frontToBack = $total equipment';
+  }
+
+  @override
+  String get cabinDesign_serum_frontLabel => '← front';
+
+  @override
+  String get cabinDesign_serum_backLabel => 'back →';
+
+  @override
+  String get cabinDesign_serum_applyToAllButton =>
+      'Apply this layout to all drawers';
+
+  @override
+  String cabinDesign_serum_incompleteWarning(String missingDrawerLabel) {
+    return 'The design cannot be saved until every drawer\'s layout is defined. Missing: $missingDrawerLabel';
+  }
+
+  @override
+  String get cabinDesign_noSelectionHint =>
+      'Select a drawer to see its details.';
+
+  @override
+  String get cabinDesign_scanButton => 'Scan Device';
+
+  @override
+  String get cabinDesign_saveButton => 'Save Design';
+
+  @override
+  String get cabinDesign_returnBadge => 'RETURN';
+
+  @override
+  String get cabin_returnBoxLabel => 'RETURN BOX';
 }

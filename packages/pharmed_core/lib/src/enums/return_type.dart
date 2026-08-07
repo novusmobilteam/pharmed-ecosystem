@@ -19,10 +19,7 @@ enum ReturnType {
   const ReturnType(this.id);
 
   static ReturnType? fromId(int? id) {
-    return ReturnType.values.firstWhere(
-      (e) => e.id == id,
-      orElse: () => ReturnType.toOrigin,
-    );
+    return ReturnType.values.firstWhere((e) => e.id == id, orElse: () => ReturnType.toOrigin);
   }
 
   String get label {
@@ -37,4 +34,11 @@ enum ReturnType {
         return contextlessL10n().enumCore_returnTypeToPharmacy;
     }
   }
+}
+
+extension ReturnTypeX on ReturnType {
+  /// toOrigin ve toDrawer kabin çekmecesi (donanım) gerektirir.
+  /// toReturnBox ve toPharmacy donanımsızdır, kart üzerindeki tekil
+  /// aksiyonla (completeDirectRefund) tamamlanır.
+  bool get requiresCabinHardware => this == ReturnType.toOrigin || this == ReturnType.toDrawer;
 }

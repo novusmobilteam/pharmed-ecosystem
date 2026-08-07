@@ -6963,5 +6963,105 @@
 "@intake_label_redirectedBy": {
   "description": "Shown on a redirected order card, naming the user who performed the redirect",
   "placeholders": { "userName": { "type": "String" } }
-}
+},
+"refund_action_completeDirect": "Return",
+"@refund_action_completeDirect": {
+  "description": "Master refund screen: per-card button for hardware-less return types (return box / pharmacy) to complete the refund for a single item immediately"
+},
+"refund_success_dialogTitle": "Return Completed",
+"@refund_success_dialogTitle": {
+  "description": "Title of the dialog shown after a hardware-less refund (return box / pharmacy) completes successfully"
+},
+"refund_success_toPharmacyMessage": "The return has been completed. Please hand the medicine to the pharmacist.",
+"@refund_success_toPharmacyMessage": {
+  "description": "Shown after completing a ReturnType.toPharmacy refund, instructing the user to hand the medicine to the pharmacist"
+},
+"refund_success_toReturnBoxMessage": "The return has been completed. Please place the medicine in the return box.",
+"@refund_success_toReturnBoxMessage": {
+  "description": "Shown after completing a ReturnType.toReturnBox refund, instructing the user to place the medicine in the return box"
+},
+"cabin_returnDrawerName": "Return Drawer",
+"@cabin_returnDrawerName": {
+  "description": "Drawer panel header type label shown when the selected DrawerSlot is designated as the return drawer (isReturnDrawerHere)"
+},
+"cabin_returnDrawerView": "Return Box",
+"@cabin_returnDrawerView": {
+  "description": "Drawer panel header subtitle shown when the selected DrawerSlot is the return drawer"
+},
+"cabin_returnDrawerViewTitle": "This drawer is designated as the return box",
+"@cabin_returnDrawerViewTitle": {
+  "description": "Placeholder title shown instead of the cell grid when the selected drawer is designated as the return drawer"
+},
+"cabin_returnDrawerViewSubtitle": "Medicine assignment/refill is not available for this drawer",
+"@cabin_returnDrawerViewSubtitle": {
+  "description": "Placeholder subtitle explaining that medicine assignment/refill is disabled for the return drawer"
+},
+"cabinDesign_dialogTitle": "Cabin Design",
+"cabinDesign_syncBadge": "SYNCED",
+"cabinDesign_basicSettings_sectionTitle": "Basic Settings",
+"cabinDesign_basicSettings_nameLabel": "Cabin Name",
+"cabinDesign_basicSettings_stationLabel": "Station",
+"cabinDesign_basicSettings_comPortLabel": "COM Port",
+"cabinDesign_basicSettings_dvrIpLabel": "DVR IP",
+"cabinDesign_detail_sectionTitle": "Drawer Detail",
+"cabinDesign_detail_typeLabel": "Type",
+"cabinDesign_detail_typeKubik": "Cubic {rows}×{cols}",
+"@cabinDesign_detail_typeKubik": {
+  "description": "Value shown for a cubic drawer's type, formatted as rows x columns",
+  "placeholders": { "rows": { "type": "int" }, "cols": { "type": "int" } }
+},
+"cabinDesign_detail_cellCountLabel": "Cell Count",
+"cabinDesign_detail_addressLabel": "Address",
+"cabinDesign_detail_configLabel": "Configuration",
+"cabinDesign_returnDrawer_toggleLabel": "Return drawer",
+"cabinDesign_returnDrawer_toggleHint": "This drawer will be reserved for return operations",
+"cabinDesign_returnDrawer_currentInfo": "Only one return drawer can be designated per cabinet. Currently: {address}",
+"@cabinDesign_returnDrawer_currentInfo": {
+  "description": "Info text showing the address of the currently designated return drawer",
+  "placeholders": { "address": { "type": "String" } }
+},
+"cabinDesign_returnDrawer_noneInfo": "Only one return drawer can be designated per cabinet. None designated yet.",
+"cabinDesign_serum_sectionTitle": "Internal Layout",
+"cabinDesign_serum_manualBadge": "MANUAL SETUP",
+"cabinDesign_serum_infoBanner": "The internal layout of a serum cabinet is not read from the card; define its drawers and equipment placement here.",
+"cabinDesign_serum_drawerCountLabel": "Drawer count",
+"cabinDesign_serum_drawerCardTitle": "Drawer {index}",
+"@cabinDesign_serum_drawerCardTitle": {
+  "description": "Title of a single serum drawer's expandable config card",
+  "placeholders": { "index": { "type": "int" } }
+},
+"cabinDesign_serum_drawerCardSummary": "{sideBySide}×{frontToBack} = {total} equipment",
+"@cabinDesign_serum_drawerCardSummary": {
+  "description": "Collapsed summary of a serum drawer's equipment layout",
+  "placeholders": { "sideBySide": { "type": "int" }, "frontToBack": { "type": "int" }, "total": { "type": "int" } }
+},
+
+"cabinDesign_serum_equipmentLayoutTitle": "Equipment Layout",
+"cabinDesign_serum_drawerBadge": "S-0{index}",
+"@cabinDesign_serum_drawerBadge": {
+  "description": "Compact badge identifying which serum drawer is currently being edited",
+  "placeholders": { "index": { "type": "int" } }
+},
+"cabinDesign_serum_sideBySideLabel": "Side by side",
+"cabinDesign_serum_frontToBackLabel": "Front to back",
+"cabinDesign_serum_topViewLabel": "Top View",
+"cabinDesign_serum_totalEquipmentLabel": "{sideBySide} × {frontToBack} = {total} equipment",
+"@cabinDesign_serum_totalEquipmentLabel": {
+  "description": "Summary text next to the top-down equipment grid preview",
+  "placeholders": { "sideBySide": { "type": "int" }, "frontToBack": { "type": "int" }, "total": { "type": "int" } }
+},
+
+"cabinDesign_serum_frontLabel": "← front",
+"cabinDesign_serum_backLabel": "back →",
+"cabinDesign_serum_applyToAllButton": "Apply this layout to all drawers",
+"cabinDesign_serum_incompleteWarning": "The design cannot be saved until every drawer's layout is defined. Missing: {missingDrawerLabel}",
+"@cabinDesign_serum_incompleteWarning": {
+  "description": "Warning shown when not all serum drawers have their equipment layout defined yet",
+  "placeholders": { "missingDrawerLabel": { "type": "String" } }
+},
+"cabinDesign_noSelectionHint": "Select a drawer to see its details.",
+"cabinDesign_scanButton": "Scan Device",
+"cabinDesign_saveButton": "Save Design",
+"cabinDesign_returnBadge": "RETURN",
+"cabin_returnBoxLabel": "RETURN BOX"
 }

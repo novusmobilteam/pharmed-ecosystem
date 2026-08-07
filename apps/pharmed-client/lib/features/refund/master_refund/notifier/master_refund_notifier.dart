@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
@@ -14,6 +15,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
   late final MasterDrawerOrchestrator _orchestrator;
   int _cabinId = 0;
   Hospitalization? _hospitalization;
+  CabinVisualizerData? _visualizerData;
 
   GetMasterRefundablesUseCase get _getRefundables => ref.read(getMasterRefundablesUseCaseProvider);
   CheckMasterRefundStatusUseCase get _checkStatus => ref.read(checkMasterRefundStatusUseCaseProvider);
@@ -30,7 +32,25 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
   Future<void> init(CabinVisualizerData data) async {
     _cabinId = data.cabinId;
     _hospitalization = null;
+    _visualizerData = data;
     state = MasterRefundPatientSelection(cabinId: _cabinId);
+  }
+
+  /// CabinDesign'da işaretlenmiş iade çekmecesinin herhangi bir DrawerUnit'i
+  /// üzerinden bir MedicineAssignment üretir — hangi unit olduğu önemsiz,
+  /// çekmece tek bir sanal kutu (bkz. isReturnDrawer). [checkedItem]'ın
+  /// medicine'i buraya taşınır ki execution kartı "—" göstermesin
+  /// (CabinExecutionGridCard ilaç adını assignment.medicine'den okuyor,
+  /// item.medicine'den DEĞİL). null → iade çekmecesi tanımlı değil.
+  MedicineAssignment? _resolveReturnDrawerAssignment(RefundableItem checkedItem) {
+    final group = _visualizerData?.groups.firstWhereOrNull((g) => g.isReturnDrawer);
+    final unit = group?.units.firstOrNull;
+    if (group == null || unit == null) return null;
+
+    return MedicineAssignment.empty(
+      cabinId: _cabinId,
+      cabinDrawerId: unit.id ?? 0,
+    ).copyWith(drawerUnit: unit, medicine: checkedItem.medicine);
   }
 
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
@@ -56,7 +76,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     final s = state;
     if (s is! MasterRefundExecuting) return;
     if (jobIndex < 0 || jobIndex >= s.jobs.length) {
-      await _loadItems(); // kuyruk bitti — temiz Selection'a dön
+      await _loadItems();
       return;
     }
     final job = s.jobs[jobIndex];
@@ -65,7 +85,9 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     updatedJobs[jobIndex] = job.copyWith(status: CabinOperationJobStatus.active);
     state = s.copyWith(jobs: updatedJobs, currentIndex: jobIndex, currentTargetIndex: targetIndex, isSaving: false);
 
-    final openAssignment = job.isKubik ? job.representativeTarget.assignment : job.targets[targetIndex].assignment;
+    final openAssignment = job.staysOpenAcrossTargets
+        ? job.representativeTarget.assignment
+        : job.targets[targetIndex].assignment;
     await _orchestrator.open(assignment: openAssignment);
   }
 
@@ -73,14 +95,30 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     final s = state;
     if (s is! MasterRefundExecuting || s.isSaving) return;
     final job = s.currentJob;
+    if (job == null) return;
+
+    if (job.isReturnDrawer) {
+      state = s.copyWith(isSaving: true);
+      for (final target in job.targets) {
+        final ok = await _completeTarget(target);
+        if (!ok) return; // _completeTarget zaten hata state'ini set etti
+      }
+      final current = state;
+      if (current is MasterRefundExecuting) {
+        state = current.copyWith(isSaving: false);
+      }
+      _orchestrator.confirmClose();
+      return;
+    }
+
     final target = s.currentTarget;
-    if (job == null || target == null) return;
+    if (target == null) return;
 
     if (job.isKubik) {
       state = s.copyWith(isSaving: true);
       final ok = await _completeTarget(target);
       if (!ok) return;
-      await _advanceCubicLid();
+      await _advanceWithinOpenDrawer();
     } else {
       _orchestrator.confirmClose();
     }
@@ -94,9 +132,11 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     if (job.isKubik) {
       _orchestrator.openCubicLid(job.targets[s.currentTargetIndex].assignment);
     }
+    // isReturnDrawer: hiçbir lid komutu gönderilmez, doğrudan
+    // confirmCurrent beklenir (kullanıcı manuel kapaklı kutuya bırakır).
   }
 
-  Future<void> _advanceCubicLid() async {
+  Future<void> _advanceWithinOpenDrawer() async {
     final s = state;
     if (s is! MasterRefundExecuting) return;
     final job = s.currentJob;
@@ -105,7 +145,11 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     final nextIndex = s.currentTargetIndex + 1;
     if (nextIndex < job.targets.length) {
       state = s.copyWith(currentTargetIndex: nextIndex, isSaving: false);
-      await _orchestrator.openCubicLid(job.targets[nextIndex].assignment);
+      if (job.isKubik) {
+        await _orchestrator.openCubicLid(job.targets[nextIndex].assignment);
+      }
+      // isReturnDrawer: donanıma komut yok, kullanıcı aynı açık çekmeceye
+      // bir sonraki ilacı bırakıp tekrar "Onayla"ya basar.
     } else {
       state = s.copyWith(isSaving: false);
       _orchestrator.confirmClose();
@@ -118,7 +162,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     final job = s.currentJob;
     if (job == null) return;
 
-    if (!job.isKubik) {
+    if (!job.staysOpenAcrossTargets) {
       final nextTarget = s.currentTargetIndex + 1;
       if (nextTarget < job.targets.length) {
         await _orchestrator.stop();
@@ -159,6 +203,11 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
             failure: CabinApiFailure(message: e.message),
             previousState: current.copyWith(isSaving: false),
             isQueueError: true,
+          );
+        } else if (current is MasterRefundMedicineSelection) {
+          state = current.copyWith(
+            checkStatuses: Map<int, RefundCheckStatus>.from(current.checkStatuses)
+              ..[item.id] = RefundCheckFailed(message: e.message),
           );
         }
         return false;
@@ -268,7 +317,16 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
 
     state = s.copyWith(isChecking: true);
 
-    final selected = s.selectedItems;
+    final selected = s.selectedItems.where((it) {
+      final drug = it.medicine?.when(drug: (d) => d, consumable: (_) => null);
+      return drug?.returnType?.requiresCabinHardware ?? false;
+    }).toList();
+
+    if (selected.isEmpty) {
+      state = s.copyWith(isChecking: false);
+      return;
+    }
+
     final hardwareEntries = <RefundTarget>[];
     final nonHardwareEntries = <RefundTarget>[];
     final checkStatuses = Map<int, RefundCheckStatus>.from(s.checkStatuses);
@@ -295,11 +353,30 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
 
       final failed = result.when(
         ok: (checkedItem) {
+          var resolved = checkedItem;
+
+          if (resolved.returnType == ReturnType.toDrawer) {
+            // Backend'in resolvedTarget'ına GÜVENME — dolu gelse bile
+            // medicine/drawerUnit eksik olabiliyor (bkz. toReturnBox'taki
+            // requiresCabinTarget deneyimiyle aynı ders). Koşulsuz kendi
+            // çözümümüzle üzerine yaz.
+            final returnAssignment = _resolveReturnDrawerAssignment(resolved);
+            if (returnAssignment == null) {
+              checkStatuses[item.id] = const RefundCheckFailed(
+                message: 'İade çekmecesi tanımlı değil. Lütfen Kabin Dizaynı ekranından tanımlayın.',
+              );
+              return true;
+            }
+            resolved = resolved.copyWith(resolvedTarget: returnAssignment);
+          }
+
           checkStatuses[item.id] = const RefundCheckSuccess();
-          if (checkedItem.requiresCabinTarget) {
-            hardwareEntries.add(RefundTarget(item: checkedItem));
+          if (resolved.requiresCabinTarget) {
+            hardwareEntries.add(
+              RefundTarget(item: resolved, isReturnDrawerTarget: resolved.returnType == ReturnType.toDrawer),
+            );
           } else {
-            nonHardwareEntries.add(RefundTarget(item: checkedItem));
+            nonHardwareEntries.add(RefundTarget(item: resolved));
           }
           return false;
         },
@@ -339,6 +416,71 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     }
 
     await _startExecuting(hardwareEntries);
+  }
+
+  /// Donanım gerektirmeyen iade tiplerinde (İade Kutusu / Eczane) kart
+  /// üzerindeki "İade Et" butonundan çağrılır. Seçim ekranını terk etmeden
+  /// tek item için check + complete akışını yürütür.
+  /// Dönüş `true` ise View, tipe göre teslim mesajını gösterir.
+  Future<bool> completeDirectRefund(int itemId) async {
+    final s = state;
+    if (s is! MasterRefundMedicineSelection) return false;
+
+    final item = s.items.firstWhereOrNull((it) => it.id == itemId);
+    if (item == null) return false;
+
+    state = s.copyWith(
+      checkStatuses: Map<int, RefundCheckStatus>.from(s.checkStatuses)..[itemId] = const RefundCheckLoading(),
+    );
+
+    final quantity = s.amountFor(itemId);
+    final drug = item.medicine?.when(drug: (d) => d, consumable: (_) => null);
+    final returnType = drug?.returnType;
+
+    if (item.medicine?.id == null || returnType == null) {
+      final current = state;
+      if (current is MasterRefundMedicineSelection) {
+        state = current.copyWith(
+          checkStatuses: Map<int, RefundCheckStatus>.from(current.checkStatuses)
+            ..[itemId] = const RefundCheckFailed(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.'),
+        );
+      }
+      return false;
+    }
+
+    final result = await _checkStatus.call(item: item, returnType: returnType, quantity: quantity);
+
+    RefundableItem? checkedItem;
+    final failed = result.when(
+      ok: (c) {
+        checkedItem = c;
+        return false;
+      },
+      error: (e) {
+        final current = state;
+        if (current is MasterRefundMedicineSelection) {
+          state = current.copyWith(
+            checkStatuses: Map<int, RefundCheckStatus>.from(current.checkStatuses)
+              ..[itemId] = RefundCheckFailed(message: e.message),
+          );
+        }
+        return true;
+      },
+    );
+
+    if (failed || checkedItem == null) return false;
+
+    final checked = checkedItem!;
+
+    // Bu metod SADECE donanımsız (toReturnBox/toPharmacy) kart butonundan
+    // çağrılır — checkedItem.requiresCabinTarget'a bakılmaz, her koşulda
+    // doğrudan tamamlanır. (Önceki "requiresCabinTarget true ise kuyruğa
+    // devret" fallback'i KALDIRILDI: server'daki bu alan returnType ile
+    // birebir örtüşmüyor ve iade kutusu/eczane akışını yanlışlıkla çekmece
+    // açılışına yönlendiriyordu.)
+    final ok = await _completeTarget(RefundTarget(item: checked));
+    if (ok) await _loadItems();
+    return ok;
   }
 
   void dismissError() {
