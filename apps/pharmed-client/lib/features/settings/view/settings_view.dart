@@ -42,19 +42,29 @@ class _SettingsModalBody extends ConsumerWidget {
           ),
         ],
       ),
+      MedSettingsNavGroup(
+        items: [
+          MedSettingsNavItem(
+            id: SettingsSection.debug.name,
+            label: context.l10n.settingsView_debugNav,
+            icon: PhosphorIcons.bug(),
+            badge: MedSettingsNavBadge(text: 'DEV', color: MedColors.amber, background: MedColors.amberLight),
+          ),
+        ],
+      ),
       // Debug section sadece debug build'lerde görünür (DebugSettingsView
       // içindeki assert(kDebugMode) ile de tutarlı).
-      if (kDebugMode)
-        MedSettingsNavGroup(
-          items: [
-            MedSettingsNavItem(
-              id: SettingsSection.debug.name,
-              label: context.l10n.settingsView_debugNav,
-              icon: PhosphorIcons.bug(),
-              badge: MedSettingsNavBadge(text: 'DEV', color: MedColors.amber, background: MedColors.amberLight),
-            ),
-          ],
-        ),
+      // if (kDebugMode)
+      //   MedSettingsNavGroup(
+      //     items: [
+      //       MedSettingsNavItem(
+      //         id: SettingsSection.debug.name,
+      //         label: context.l10n.settingsView_debugNav,
+      //         icon: PhosphorIcons.bug(),
+      //         badge: MedSettingsNavBadge(text: 'DEV', color: MedColors.amber, background: MedColors.amberLight),
+      //       ),
+      //     ],
+      //   ),
     ];
   }
 

@@ -1303,7 +1303,19 @@
     "cabinDesign_scanButton",
     "cabinDesign_saveButton",
     "cabinDesign_returnBadge",
-    "cabin_returnBoxLabel"
+    "cabin_returnBoxLabel",
+    "unload_segment_returnDrawer",
+    "unload_segment_returnBox",
+    "unload_hint_noDrawerMedicineFound",
+    "unload_hint_noBoxMedicineFound",
+    "unload_fieldReturnedBy",
+    "unload_action_startDrawerUnload",
+    "unload_action_completeBoxUnload",
+    "unload_label_drawerInProgress",
+    "unload_action_stopConfirmTitle",
+    "unload_action_stopConfirmMessage",
+    "unload_action_stopConfirmYes",
+    "unload_action_completeDrawerUnload"
   ],
 
   "fr": [

@@ -5618,7 +5618,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unload_stop_confirmYes => 'Yes, Stop';
 
   @override
-  String get unload_error_queueTitle => 'Unload Failed';
+  String get unload_error_queueTitle => 'Unload Error';
 
   @override
   String get unload_error_continueNext => 'Continue to Next Drawer';
@@ -5888,4 +5888,44 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cabin_returnBoxLabel => 'RETURN BOX';
+
+  @override
+  String get unload_segment_returnDrawer => 'Return Drawer';
+
+  @override
+  String get unload_segment_returnBox => 'Return Box';
+
+  @override
+  String get unload_hint_noDrawerMedicineFound =>
+      'No medicines found in the return drawer';
+
+  @override
+  String get unload_hint_noBoxMedicineFound =>
+      'No medicines found in the return box';
+
+  @override
+  String get unload_fieldReturnedBy => 'Returned By';
+
+  @override
+  String get unload_action_startDrawerUnload => 'Start Drawer Unload';
+
+  @override
+  String get unload_action_completeBoxUnload => 'Complete Box Unload';
+
+  @override
+  String get unload_label_drawerInProgress =>
+      'Return Drawer Unload In Progress';
+
+  @override
+  String get unload_action_stopConfirmTitle => 'Stop Drawer Unload?';
+
+  @override
+  String get unload_action_stopConfirmMessage =>
+      'The drawer will close and the unload will not be completed. Do you want to continue?';
+
+  @override
+  String get unload_action_stopConfirmYes => 'Yes, Stop';
+
+  @override
+  String get unload_action_completeDrawerUnload => 'Complete Drawer Unload';
 }

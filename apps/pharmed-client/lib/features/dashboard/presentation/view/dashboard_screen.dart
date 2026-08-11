@@ -29,6 +29,7 @@ import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
 import '../../../settings/notifier/settings_notifier.dart';
 import '../../../settings/view/settings_view.dart';
+import '../../../unload_drawer/view/unload_drawer_view.dart';
 import '../../../waste/waste.dart';
 
 import '../notifier/dashboard_notifier.dart';

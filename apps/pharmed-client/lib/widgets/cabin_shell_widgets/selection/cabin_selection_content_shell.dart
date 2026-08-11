@@ -21,6 +21,7 @@ class CabinSelectionContentShell extends StatelessWidget {
     this.isEmpty = false,
     this.loadingMessage,
     this.emptyMessage,
+    this.showSearch = true,
   }) : assert(isLoading || isEmpty || content != null, 'content is required unless isLoading or isEmpty is true');
 
   /// Genelde [CabinSelectionHeader].
@@ -48,6 +49,7 @@ class CabinSelectionContentShell extends StatelessWidget {
 
   final String? loadingMessage;
   final String? emptyMessage;
+  final bool showSearch;
 
   Widget _buildBody(BuildContext context) {
     if (isLoading) {
@@ -72,7 +74,7 @@ class CabinSelectionContentShell extends StatelessWidget {
       children: [
         ?header,
         if (header != null) const SizedBox(height: 16.0),
-        CabinOperationSearchField(onChanged: onSearchQueryChanged, hintText: searchHint),
+        if (showSearch) CabinOperationSearchField(onChanged: onSearchQueryChanged, hintText: searchHint),
         const SizedBox(height: 16.0),
         Expanded(child: _buildBody(context)),
         if (footer != null) ...[const SizedBox(height: 16.0), footer!],

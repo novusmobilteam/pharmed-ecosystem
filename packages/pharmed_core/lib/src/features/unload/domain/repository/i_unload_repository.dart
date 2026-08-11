@@ -6,4 +6,12 @@ abstract interface class IUnloadRepository {
 
   /// Mobil kabin ilaç boşaltma servisi
   Future<Result<void>> mobileUnload(List<Map<String, dynamic>> data);
+
+  Future<Result<List<ReturnDrawerMedicine>?>> getReturnDrawerMedicines();
+
+  Future<Result<List<ReturnDrawerMedicine>?>> getReturnBoxMedicines();
+
+  Future<Result<void>> unloadReturnDrawer(List<int> medicineIds);
+
+  Future<Result<void>> unloadReturnBox(List<int> medicineIds);
 }

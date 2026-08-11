@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../core/cache/app_settings_cache.dart';
 import '../dashboard/presentation/notifier/dashboard_notifier.dart';
@@ -26,9 +27,9 @@ class UnloadView extends ConsumerWidget {
       AsyncData(:final value) => switch (value) {
         CabinType.master => MasterUnloadView(data: cabinData),
         CabinType.mobile => MobileUnloadView(data: cabinData),
-        _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        _ => const Center(child: MedLoadingIndicator()),
       },
-      _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      _ => const Center(child: MedLoadingIndicator()),
     };
   }
 }

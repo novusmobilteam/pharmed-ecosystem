@@ -5191,5 +5191,19 @@
 "cabinDesign_scanButton": "Scanner l'appareil",
 "cabinDesign_saveButton": "Enregistrer la conception",
 "cabinDesign_returnBadge": "RETOUR",
-"cabin_returnBoxLabel": "BOÎTE DE RETOUR"
+"cabin_returnBoxLabel": "BOÎTE DE RETOUR",
+"unload_segment_returnDrawer": "Tiroir de Retour",
+"unload_segment_returnBox": "Boîte de Retour",
+"unload_hint_noDrawerMedicineFound": "Aucun médicament trouvé dans le tiroir de retour",
+"unload_hint_noBoxMedicineFound": "Aucun médicament trouvé dans la boîte de retour",
+"unload_fieldReturnedBy": "Retourné Par",
+"unload_action_startDrawerUnload": "Démarrer le Vidage du Tiroir",
+"unload_action_completeBoxUnload": "Terminer le Vidage de la Boîte",
+"unload_error_queueTitle": "Erreur de Vidage",
+"unload_label_drawerInProgress": "Vidage du Tiroir de Retour en Cours",
+"unload_action_stop": "Arrêter",
+"unload_action_stopConfirmTitle": "Arrêter le Vidage du Tiroir ?",
+"unload_action_stopConfirmMessage": "Le tiroir se fermera et le vidage ne sera pas terminé. Voulez-vous continuer ?",
+"unload_action_stopConfirmYes": "Oui, Arrêter",
+"unload_action_completeDrawerUnload": "Terminer le Vidage du Tiroir"
 }

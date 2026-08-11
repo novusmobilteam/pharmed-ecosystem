@@ -46,6 +46,7 @@ class DashboardContentFactory {
               cabinId: loaded?.data.cabinVisualizerData?.cabinId ?? 0,
               notifier: notifier,
             ),
+            'return-box-unload' => activeMenu != null ? UnloadDrawerView(menu: activeMenu) : const SizedBox.shrink(),
 
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },

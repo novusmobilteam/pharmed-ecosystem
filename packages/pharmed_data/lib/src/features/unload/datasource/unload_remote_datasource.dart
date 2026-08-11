@@ -29,4 +29,36 @@ class UnloadRemoteDataSource extends BaseRemoteDataSource {
       successLog: 'Unload process completed',
     );
   }
+
+  Future<Result<List<ReturnDrawerMedicineDTO>?>> getReturnDrawerMedicines() async {
+    return await fetchRequest(
+      path: '/ReturnDrawerMaterial',
+      parser: BaseRemoteDataSource.listParser(ReturnDrawerMedicineDTO.fromJson),
+    );
+  }
+
+  Future<Result<void>> unloadReturnDrawer(List<int> medicineIds) async {
+    return await postRequest(
+      path: '/ReturnDrawerMaterial/empty',
+      parser: BaseRemoteDataSource.voidParser(),
+      body: {"returnDrawerMaterialIds": medicineIds},
+      successLog: 'Unload process completed',
+    );
+  }
+
+  Future<Result<List<ReturnDrawerMedicineDTO>?>> getReturnBoxMedicines() async {
+    return await fetchRequest(
+      path: '/ReturnBoxMaterial',
+      parser: BaseRemoteDataSource.listParser(ReturnDrawerMedicineDTO.fromJson),
+    );
+  }
+
+  Future<Result<void>> unloadReturnBox(List<int> medicineIds) async {
+    return await postRequest(
+      path: '/ReturnBoxMaterial/empty',
+      parser: BaseRemoteDataSource.voidParser(),
+      body: {"returnBoxMaterialIds": medicineIds},
+      successLog: 'Unload process completed',
+    );
+  }
 }

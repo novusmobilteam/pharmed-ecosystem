@@ -7063,5 +7063,72 @@
 "cabinDesign_scanButton": "Scan Device",
 "cabinDesign_saveButton": "Save Design",
 "cabinDesign_returnBadge": "RETURN",
-"cabin_returnBoxLabel": "RETURN BOX"
+"cabin_returnBoxLabel": "RETURN BOX",
+"unload_segment_returnDrawer": "Return Drawer",
+"@unload_segment_returnDrawer": {
+  "description": "Segmented button label for switching to the return-drawer unload mode on the Unload screen"
+},
+
+"unload_segment_returnBox": "Return Box",
+"@unload_segment_returnBox": {
+  "description": "Segmented button label for switching to the return-box unload mode on the Unload screen"
+},
+
+"unload_hint_noDrawerMedicineFound": "No medicines found in the return drawer",
+"@unload_hint_noDrawerMedicineFound": {
+  "description": "Empty-state message shown when the return-drawer unload list has no items"
+},
+
+"unload_hint_noBoxMedicineFound": "No medicines found in the return box",
+"@unload_hint_noBoxMedicineFound": {
+  "description": "Empty-state message shown when the return-box unload list has no items"
+},
+
+"unload_fieldReturnedBy": "Returned By",
+"@unload_fieldReturnedBy": {
+  "description": "Field label on a medicine card showing which user returned the medicine; shared across return-drawer and return-box unload modes"
+},
+
+"unload_action_startDrawerUnload": "Start Drawer Unload",
+"@unload_action_startDrawerUnload": {
+  "description": "Footer button on the return-drawer unload selection screen; opens the physical return drawer"
+},
+
+"unload_action_completeBoxUnload": "Complete Box Unload",
+"@unload_action_completeBoxUnload": {
+  "description": "Footer button on the return-box unload selection screen; submits selected medicines for unload without opening hardware"
+},
+
+"unload_error_queueTitle": "Unload Error",
+"@unload_error_queueTitle": {
+  "description": "Dialog title shown when a hardware error occurs during return-drawer unload"
+},
+"unload_label_drawerInProgress": "Return Drawer Unload In Progress",
+"@unload_label_drawerInProgress": {
+  "description": "Progress label shown on the execution screen while the return drawer is open and waiting for the user to confirm the unload"
+},
+
+"unload_action_stop": "Stop",
+"@unload_action_stop": {
+  "description": "Button label to stop the in-progress return-drawer unload and close the drawer without completing"
+},
+
+"unload_action_stopConfirmTitle": "Stop Drawer Unload?",
+"@unload_action_stopConfirmTitle": {
+  "description": "Confirmation dialog title shown when the user taps Stop during return-drawer unload"
+},
+
+"unload_action_stopConfirmMessage": "The drawer will close and the unload will not be completed. Do you want to continue?",
+"@unload_action_stopConfirmMessage": {
+  "description": "Confirmation dialog message shown when the user taps Stop during return-drawer unload"
+},
+
+"unload_action_stopConfirmYes": "Yes, Stop",
+"@unload_action_stopConfirmYes": {
+  "description": "Confirm button label in the stop-confirmation dialog for return-drawer unload"
+},
+"unload_action_completeDrawerUnload": "Complete Drawer Unload",
+"@unload_action_completeDrawerUnload": {
+  "description": "Confirm button label on the execution screen; submits the unload request for the return drawer and closes it"
+}
 }

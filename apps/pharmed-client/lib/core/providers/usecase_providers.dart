@@ -469,3 +469,19 @@ final completeRedirectedIntakeUseCaseProvider = Provider((ref) {
 final setReturnDrawerUseCaseProvider = Provider((ref) {
   return SetReturnDrawerUseCase(ref.read(cabinRepositoryProvider));
 });
+
+final getReturnDrawerMedicinesUseCaseProvider = Provider((ref) {
+  return GetReturnDrawerMedicinesUseCase(ref.read(unloadRepositoryProvider));
+});
+
+final unloadReturnDrawerUseCaseProvider = Provider((ref) {
+  return UnloadReturnDrawerUseCase(ref.read(unloadRepositoryProvider));
+});
+
+final getReturnBoxMedicinesUseCaseProvider = Provider((ref) {
+  return GetReturnBoxMedicinesUseCase(ref.read(unloadRepositoryProvider));
+});
+
+final unloadReturnBoxUseCaseProvider = Provider((ref) {
+  return UnloadReturnBoxUseCase(ref.read(unloadRepositoryProvider));
+});

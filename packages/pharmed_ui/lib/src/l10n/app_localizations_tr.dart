@@ -5577,7 +5577,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unload_stop_confirmYes => 'Evet, Durdur';
 
   @override
-  String get unload_error_queueTitle => 'Boşaltma Başarısız';
+  String get unload_error_queueTitle => 'Boşaltma Hatası';
 
   @override
   String get unload_error_continueNext => 'Sonraki Çekmeceye Devam Et';
@@ -5847,4 +5847,44 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabin_returnBoxLabel => 'İADE KUTUSU';
+
+  @override
+  String get unload_segment_returnDrawer => 'İade Çekmecesi';
+
+  @override
+  String get unload_segment_returnBox => 'İade Kutusu';
+
+  @override
+  String get unload_hint_noDrawerMedicineFound =>
+      'İade çekmecesinde ilaç bulunamadı';
+
+  @override
+  String get unload_hint_noBoxMedicineFound => 'İade kutusunda ilaç bulunamadı';
+
+  @override
+  String get unload_fieldReturnedBy => 'İade Eden';
+
+  @override
+  String get unload_action_startDrawerUnload => 'Çekmece Boşaltmayı Başlat';
+
+  @override
+  String get unload_action_completeBoxUnload => 'Kutu Boşaltmayı Tamamla';
+
+  @override
+  String get unload_label_drawerInProgress =>
+      'İade Çekmecesi Boşaltma Devam Ediyor';
+
+  @override
+  String get unload_action_stopConfirmTitle =>
+      'Çekmece Boşaltma Durdurulsun mu?';
+
+  @override
+  String get unload_action_stopConfirmMessage =>
+      'Çekmece kapanacak ve boşaltma tamamlanmayacak. Devam etmek istiyor musunuz?';
+
+  @override
+  String get unload_action_stopConfirmYes => 'Evet, Durdur';
+
+  @override
+  String get unload_action_completeDrawerUnload => 'Çekmece Boşaltmayı Tamamla';
 }

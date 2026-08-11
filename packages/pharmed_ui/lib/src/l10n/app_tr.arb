@@ -6893,5 +6893,19 @@
 
 "cabinDesign_returnBadge": "İADE",
 "@cabinDesign_returnBadge": { "description": "Small badge shown on the drawer visual marking it as the return drawer" },
-"cabin_returnBoxLabel": "İADE KUTUSU"
+"cabin_returnBoxLabel": "İADE KUTUSU",
+"unload_segment_returnDrawer": "İade Çekmecesi",
+"unload_segment_returnBox": "İade Kutusu",
+"unload_hint_noDrawerMedicineFound": "İade çekmecesinde ilaç bulunamadı",
+"unload_hint_noBoxMedicineFound": "İade kutusunda ilaç bulunamadı",
+"unload_fieldReturnedBy": "İade Eden",
+"unload_action_startDrawerUnload": "Çekmece Boşaltmayı Başlat",
+"unload_action_completeBoxUnload": "Kutu Boşaltmayı Tamamla",
+"unload_error_queueTitle": "Boşaltma Hatası",
+"unload_label_drawerInProgress": "İade Çekmecesi Boşaltma Devam Ediyor",
+"unload_action_stop": "Durdur",
+"unload_action_stopConfirmTitle": "Çekmece Boşaltma Durdurulsun mu?",
+"unload_action_stopConfirmMessage": "Çekmece kapanacak ve boşaltma tamamlanmayacak. Devam etmek istiyor musunuz?",
+"unload_action_stopConfirmYes": "Evet, Durdur",
+"unload_action_completeDrawerUnload": "Çekmece Boşaltmayı Tamamla"
 }

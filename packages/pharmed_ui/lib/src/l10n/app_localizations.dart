@@ -9887,7 +9887,7 @@ abstract class AppLocalizations {
   /// **'No medicine found'**
   String get unload_hint_noMedicineFound;
 
-  /// Button in the unload execution top strip to stop the queue mid-way
+  /// Button label to stop the in-progress return-drawer unload and close the drawer without completing
   ///
   /// In en, this message translates to:
   /// **'Stop'**
@@ -9923,10 +9923,10 @@ abstract class AppLocalizations {
   /// **'Yes, Stop'**
   String get unload_stop_confirmYes;
 
-  /// Title of the confirm dialog shown when an unload API/drawer error occurs after the drawer physically closed (isQueueError)
+  /// Dialog title shown when a hardware error occurs during return-drawer unload
   ///
   /// In en, this message translates to:
-  /// **'Unload Failed'**
+  /// **'Unload Error'**
   String get unload_error_queueTitle;
 
   /// Confirm button in the unload queue error dialog: mark current drawer failed and move to the next one
@@ -10386,6 +10386,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'RETURN BOX'**
   String get cabin_returnBoxLabel;
+
+  /// Segmented button label for switching to the return-drawer unload mode on the Unload screen
+  ///
+  /// In en, this message translates to:
+  /// **'Return Drawer'**
+  String get unload_segment_returnDrawer;
+
+  /// Segmented button label for switching to the return-box unload mode on the Unload screen
+  ///
+  /// In en, this message translates to:
+  /// **'Return Box'**
+  String get unload_segment_returnBox;
+
+  /// Empty-state message shown when the return-drawer unload list has no items
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines found in the return drawer'**
+  String get unload_hint_noDrawerMedicineFound;
+
+  /// Empty-state message shown when the return-box unload list has no items
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines found in the return box'**
+  String get unload_hint_noBoxMedicineFound;
+
+  /// Field label on a medicine card showing which user returned the medicine; shared across return-drawer and return-box unload modes
+  ///
+  /// In en, this message translates to:
+  /// **'Returned By'**
+  String get unload_fieldReturnedBy;
+
+  /// Footer button on the return-drawer unload selection screen; opens the physical return drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Start Drawer Unload'**
+  String get unload_action_startDrawerUnload;
+
+  /// Footer button on the return-box unload selection screen; submits selected medicines for unload without opening hardware
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Box Unload'**
+  String get unload_action_completeBoxUnload;
+
+  /// Progress label shown on the execution screen while the return drawer is open and waiting for the user to confirm the unload
+  ///
+  /// In en, this message translates to:
+  /// **'Return Drawer Unload In Progress'**
+  String get unload_label_drawerInProgress;
+
+  /// Confirmation dialog title shown when the user taps Stop during return-drawer unload
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Drawer Unload?'**
+  String get unload_action_stopConfirmTitle;
+
+  /// Confirmation dialog message shown when the user taps Stop during return-drawer unload
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer will close and the unload will not be completed. Do you want to continue?'**
+  String get unload_action_stopConfirmMessage;
+
+  /// Confirm button label in the stop-confirmation dialog for return-drawer unload
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Stop'**
+  String get unload_action_stopConfirmYes;
+
+  /// Confirm button label on the execution screen; submits the unload request for the return drawer and closes it
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Drawer Unload'**
+  String get unload_action_completeDrawerUnload;
 }
 
 class _AppLocalizationsDelegate

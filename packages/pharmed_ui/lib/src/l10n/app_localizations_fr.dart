@@ -5720,7 +5720,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unload_stop_confirmYes => 'Oui, arrêter';
 
   @override
-  String get unload_error_queueTitle => 'Échec du déchargement';
+  String get unload_error_queueTitle => 'Erreur de Vidage';
 
   @override
   String get unload_error_continueNext => 'Continuer au tiroir suivant';
@@ -5995,4 +5995,46 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cabin_returnBoxLabel => 'BOÎTE DE RETOUR';
+
+  @override
+  String get unload_segment_returnDrawer => 'Tiroir de Retour';
+
+  @override
+  String get unload_segment_returnBox => 'Boîte de Retour';
+
+  @override
+  String get unload_hint_noDrawerMedicineFound =>
+      'Aucun médicament trouvé dans le tiroir de retour';
+
+  @override
+  String get unload_hint_noBoxMedicineFound =>
+      'Aucun médicament trouvé dans la boîte de retour';
+
+  @override
+  String get unload_fieldReturnedBy => 'Retourné Par';
+
+  @override
+  String get unload_action_startDrawerUnload => 'Démarrer le Vidage du Tiroir';
+
+  @override
+  String get unload_action_completeBoxUnload =>
+      'Terminer le Vidage de la Boîte';
+
+  @override
+  String get unload_label_drawerInProgress =>
+      'Vidage du Tiroir de Retour en Cours';
+
+  @override
+  String get unload_action_stopConfirmTitle => 'Arrêter le Vidage du Tiroir ?';
+
+  @override
+  String get unload_action_stopConfirmMessage =>
+      'Le tiroir se fermera et le vidage ne sera pas terminé. Voulez-vous continuer ?';
+
+  @override
+  String get unload_action_stopConfirmYes => 'Oui, Arrêter';
+
+  @override
+  String get unload_action_completeDrawerUnload =>
+      'Terminer le Vidage du Tiroir';
 }
