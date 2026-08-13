@@ -22,6 +22,7 @@ export 'domain/entity/mobile_drawer_unit.dart';
 export 'domain/entity/cabin_setup_config.dart';
 export 'domain/entity/scan_log_entry.dart';
 export 'domain/entity/wizard_mobile_layout.dart';
+export 'domain/entity/drawer_group_visual_order.dart';
 
 export 'domain/repository/i_cabin_repository.dart';
 

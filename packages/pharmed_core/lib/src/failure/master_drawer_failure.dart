@@ -9,4 +9,5 @@ enum MasterDrawerFailure {
   lidOpenFailed,
   lockOpenTimeout,
   sensorCommunicationLost,
+  unexpectedlyClosed,
 }

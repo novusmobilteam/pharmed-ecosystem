@@ -6061,4 +6061,8 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get masterDrawer_error_sensorCommunicationLost =>
       'La communication avec le matériel a été perdue. Vérifiez la connexion et réessayez.';
+
+  @override
+  String get masterDrawer_error_unexpectedlyClosed =>
+      'Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer.';
 }

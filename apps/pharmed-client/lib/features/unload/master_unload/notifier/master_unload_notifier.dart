@@ -4,6 +4,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
@@ -106,15 +107,21 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
 
   // ── Kuyruk kurulumu ──────────────────────────────────────────────────────
 
+  /// Kullanıcının FAZ 1'de seçtiği göz/çekmece kombinasyonlarından fiziksel
+  /// çekmece kuyruğunu üretir ve boşaltma yürütmesini (FAZ 2) başlatır.
+  /// Boş kuyruk durumunda zaten önceden AÇIK bir hata gösteriliyordu
+  /// (noDrawerFound) — bu davranış korunuyor, sadece builder'ın yeni
+  /// (jobs, skipped) dönüş şekline uyarlanıyor.
   Future<void> startUnload() async {
     final s = state;
     if (s is! MasterUnloadSelection || !s.canStart) return;
 
-    final jobs = CabinOperationQueueBuilder.build(
+    final result = CabinOperationQueueBuilder.build(
       selectedAssignments: s.selectedAssignments,
       config: unloadTargetConfig,
     );
-    if (jobs.isEmpty) {
+
+    if (result.jobs.isEmpty) {
       state = MasterUnloadError(
         failure: const CabinValidationFailure(reason: CabinValidationReason.noDrawerFound),
         previousState: s,
@@ -122,7 +129,19 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
       return;
     }
 
-    state = MasterUnloadExecuting(cabinId: s.cabinId, jobs: jobs, currentIndex: 0);
+    if (result.skipped.isNotEmpty) {
+      MedLogger.warn(
+        unit: 'MasterUnload',
+        swreq: 'SWREQ-CLI-UNLOAD-002',
+        message: 'Bazı seçimler fiziksel çekmece kimliği çözülemediği için kuyruğa alınamadı',
+        context: {
+          'skippedCount': result.skipped.length,
+          'skippedMedicineIds': result.skipped.map((a) => a.medicine?.id).toList(),
+        },
+      );
+    }
+
+    state = MasterUnloadExecuting(cabinId: s.cabinId, jobs: result.jobs, currentIndex: 0);
     await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
 

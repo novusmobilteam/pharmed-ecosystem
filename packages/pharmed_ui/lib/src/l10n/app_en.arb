@@ -7154,5 +7154,6 @@
   "masterDrawer_error_sensorCommunicationLost": "Communication with the hardware was lost. Check the connection and try again.",
   "@masterDrawer_error_sensorCommunicationLost": {
     "description": "Shown when the drawer status sensor stops responding for multiple consecutive polls during open or close monitoring."
-  }
+  },
+  "masterDrawer_error_unexpectedlyClosed": "The drawer was closed unexpectedly while still in use. Please reopen and try again."
 }

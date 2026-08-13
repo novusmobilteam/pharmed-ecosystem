@@ -6,19 +6,29 @@
 // toplanır (en az çekmece açılışı garantisi). Job'lar fiziksel konuma göre
 // üstten alta sıralanır.
 //
+// [skipped]: fiziksel çekmece kimliği (drawerSlot.id / drawerSlotId) hiç
+// çözülemeyen atamalar — eksik/bozuk ilişkisel veri anlamına gelir. Bunlar
+// SESSİZCE atılmaz, çağırana bildirilir; aksi halde kullanıcı bir ilacı
+// "seçtim" sanıp aslında hiç kuyruğa girmediğini fark edemez.
+//
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract final class CabinOperationQueueBuilder {
-  static List<CabinOperationDrawerJob> build({
+  static ({List<CabinOperationDrawerJob> jobs, List<MedicineAssignment> skipped}) build({
     required List<MedicineAssignment> selectedAssignments,
     required CabinOperationTargetConfig config,
   }) {
     final Map<int, List<MedicineAssignment>> grouped = {};
+    final skipped = <MedicineAssignment>[];
+
     for (final a in selectedAssignments) {
       final physicalId = _physicalDrawerId(a);
-      if (physicalId == null) continue;
+      if (physicalId == null) {
+        skipped.add(a);
+        continue;
+      }
       grouped.putIfAbsent(physicalId, () => []).add(a);
     }
 
@@ -36,7 +46,7 @@ abstract final class CabinOperationQueueBuilder {
     });
 
     jobs.sort((a, b) => _compareByDrawerPosition(a.representativeAssignment, b.representativeAssignment));
-    return jobs;
+    return (jobs: jobs, skipped: skipped);
   }
 
   static int? _physicalDrawerId(MedicineAssignment a) => a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId;

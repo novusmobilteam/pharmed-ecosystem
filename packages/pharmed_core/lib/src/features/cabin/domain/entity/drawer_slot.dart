@@ -29,6 +29,7 @@ class DrawerSlot {
     this.drawerConfig,
     this.cabin,
     this.isReturnDrawerHere,
+    this.isPortReversed,
   });
 
   final int? id;
@@ -48,6 +49,24 @@ class DrawerSlot {
   /// GÖNDERİLMEZ, sadece çekmece açılır (bkz. master-drawer-operation).
   final bool? isReturnDrawerHere;
 
+  /// Bu fiziksel çekmecenin (DrawerSlot) port kablolaması TERS bağlı mı.
+  ///
+  /// Normalde port numarası soldan sağa 1,2,3... artar. Bazı kurulumlarda
+  /// (gözlemlenen: belirli birim doz kartları) fiziksel kablolama bunun
+  /// TERSİNE yapılmış olabilir — port=1 komutu fiziksel olarak EN SAĞDAKİ
+  /// gözü açar. Bu kurulum-özgü bir donanım gerçeğidir (aynı DrawerType/
+  /// DrawerConfig farklı kabinlerde farklı yönde kablolanmış olabilir),
+  /// bu yüzden DrawerType/DrawerConfig'te DEĞİL, burada (fiziksel slot
+  /// seviyesinde) tutulur.
+  ///
+  /// true ise [calculateAddressFromAssignment], donanıma gönderilecek
+  /// gerçek port numarasını `compartmentCount + 1 - rawPort` formülüyle
+  /// çevirir — kullanıcı ekranda soldan sağa doğal sırayla görür/tıklar,
+  /// donanıma giden komut kablolamaya göre otomatik düzeltilir.
+  ///
+  /// null/false → normal (ters çevirmeden).
+  final bool? isPortReversed;
+
   DrawerSlot copyWith({
     int? id,
     int? drawerConfigId,
@@ -59,6 +78,7 @@ class DrawerSlot {
     DrawerConfig? drawerConfig,
     Cabin? cabin,
     bool? isReturnDrawerHere,
+    bool? isPortReversed,
   }) {
     return DrawerSlot(
       id: id ?? this.id,
@@ -71,6 +91,7 @@ class DrawerSlot {
       drawerConfig: drawerConfig ?? this.drawerConfig,
       // cabin: cabin ?? this.cabin,
       isReturnDrawerHere: isReturnDrawerHere ?? this.isReturnDrawerHere,
+      isPortReversed: isPortReversed ?? this.isPortReversed,
     );
   }
 

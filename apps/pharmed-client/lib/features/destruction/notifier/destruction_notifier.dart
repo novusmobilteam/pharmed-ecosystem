@@ -11,6 +11,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
@@ -102,17 +103,38 @@ class DestructionNotifier extends Notifier<DestructionState> {
     return medicine.destroyableUsers.any((u) => u.id == currentUserId);
   }
 
+  /// Kullanıcının FAZ 1'de seçtiği göz/çekmece kombinasyonlarından fiziksel
+  /// çekmece kuyruğunu üretir ve fire/imha yürütmesini (FAZ 2) başlatır.
   Future<void> startDestruction() async {
     final s = state;
     if (s is! DestructionSelection || !s.canStart) return;
 
-    final jobs = CabinOperationQueueBuilder.build(
+    final result = CabinOperationQueueBuilder.build(
       selectedAssignments: s.selectedAssignments,
       config: destructionTargetConfig,
     );
-    if (jobs.isEmpty) return;
 
-    state = DestructionExecuting(cabinId: s.cabinId, jobs: jobs, currentIndex: 0);
+    if (result.jobs.isEmpty) {
+      state = DestructionError(
+        failure: const CabinValidationFailure(reason: CabinValidationReason.noValidTargets),
+        previousState: s,
+      );
+      return;
+    }
+
+    if (result.skipped.isNotEmpty) {
+      MedLogger.warn(
+        unit: 'Destruction',
+        swreq: 'SWREQ-CLI-DESTRUCTION-002',
+        message: 'Bazı seçimler fiziksel çekmece kimliği çözülemediği için kuyruğa alınamadı',
+        context: {
+          'skippedCount': result.skipped.length,
+          'skippedMedicineIds': result.skipped.map((a) => a.medicine?.id).toList(),
+        },
+      );
+    }
+
+    state = DestructionExecuting(cabinId: s.cabinId, jobs: result.jobs, currentIndex: 0);
     await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
 

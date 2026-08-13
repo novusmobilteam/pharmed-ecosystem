@@ -40,6 +40,7 @@ class CabinExecutionGridCard extends StatelessWidget {
     final critQty = assignment.critQuantityFromBackend;
     final minQty = assignment.minQuantityFromBackend;
     final maxQty = assignment.maxQuantityFromBackend;
+    final bool isComfortable = density == MedValueCardDensity.comfortable;
 
     final MedCellStockLevel level;
     if (current <= critQty) {
@@ -61,23 +62,15 @@ class CabinExecutionGridCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 10,
-        children: [_header(maxQty, level), _layoutFields()],
+        children: [_header(maxQty, level, isComfortable), _layoutFields()],
       ),
     );
   }
 
-  Widget _header(double maxQty, MedCellStockLevel level) {
+  Widget _header(double maxQty, MedCellStockLevel level, bool isComfortable) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (stepLabel != null) ...[
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: MedRadius.smAll),
-            child: Text(stepLabel!, style: MedTextStyles.monoSm(color: MedColors.blue)),
-          ),
-          const SizedBox(width: 8),
-        ],
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,6 +90,13 @@ class CabinExecutionGridCard extends StatelessWidget {
             ],
           ),
         ),
+        if (stepLabel != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: MedRadius.smAll),
+            child: Text(stepLabel!, style: MedTextStyles.monoSm(color: MedColors.blue)),
+          ),
+
         // Text(
         //   '${current.formatFractional} / ${maxQty.formatFractional}',
         //   style: MedTextStyles.monoMd(color: level.color),

@@ -5911,4 +5911,8 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get masterDrawer_error_sensorCommunicationLost =>
       'Donanımla iletişim kesildi. Bağlantıyı kontrol edip tekrar deneyin.';
+
+  @override
+  String get masterDrawer_error_unexpectedlyClosed =>
+      'Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin.';
 }

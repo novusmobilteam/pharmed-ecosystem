@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/hardware/cabin/master_drawer/master_drawer_session_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -40,6 +41,7 @@ class MasterRefillExecutionView extends ConsumerWidget {
       locationItems: executing.toLocationItems(allGroups),
       activeIndex: executing.currentIndex,
       openedBuilder: (_) => _FillForm(state: executing, job: job, notifier: notifier),
+      onRequestClose: () => ref.read(masterDrawerSessionProvider.notifier).confirmClose(),
     );
   }
 }
@@ -50,6 +52,9 @@ class _FillForm extends ConsumerWidget {
   final MasterRefillExecuting state;
   final CabinOperationDrawerJob job;
   final MasterRefillNotifier notifier;
+
+  static const double _maxWidth = 720.0;
+  static const double _stackSpacing = 8;
 
   bool get _canConfirm {
     final t = state.currentTarget;
@@ -120,9 +125,6 @@ class _FillForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWideGrid = !job.isKubik && job.targets.isNotEmpty && job.targets.first.steps.length > 6;
-    final maxWidth = isWideGrid ? 1100.0 : 640.0;
-
     final target = state.currentTarget;
     // Artık kübik/birim doz farkı gözetmeksizin — currentTargetIndex her iki
     // durumda da job.targets içindeki gerçek aktif hedefi gösterir (bkz.
@@ -142,19 +144,64 @@ class _FillForm extends ConsumerWidget {
         ? context.l10n.refill_action_nextCell
         : context.l10n.refill_action_completeFilling;
 
-    return CabinExecutionGrid(
-      maxWidth: maxWidth,
-      isLocked: state.isSaving,
-      isKubik: job.isKubik,
-      itemCount: itemCount,
-      itemBuilder: target == null
-          ? (_, _) => const SizedBox.shrink()
-          : (context, index) => _cellCard(context, ref, target, index, ti, isPerCellMiadEnabled),
-      header: (!isPerCellMiadEnabled && target != null) ? (ctx) => _singleMiadHeader(ctx, target, ti) : null,
-      canConfirm: _canConfirm,
-      isSaving: state.isSaving,
-      confirmLabel: confirmLabel,
-      onConfirm: notifier.confirmCurrent,
+    Widget content;
+
+    if (target == null) {
+      content = const SizedBox.shrink();
+    } else if (job.isKubik) {
+      content = SingleChildScrollView(child: _cellCard(context, ref, target, 0, ti, isPerCellMiadEnabled));
+    } else {
+      // Fiziksel çekmecenin ÜSTTEN GÖRÜNÜMÜ: en yüksek göz numarası EN
+      // ÜSTTE, göz 1 EN ALTTA render edilir — sadece görsel sıra ters
+      // çevrilir, _cellCard'a giden [index] her zaman gerçek (0-tabanlı)
+      // step index'idir, callback'ler dokunulmadan doğru hedefi alır.
+      final stack = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (int i = itemCount - 1; i >= 0; i--) ...[
+            _cellCard(context, ref, target, i, ti, isPerCellMiadEnabled),
+            if (i > 0) const SizedBox(height: _stackSpacing),
+          ],
+        ],
+      );
+
+      content = !isPerCellMiadEnabled
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 12,
+              children: [
+                _singleMiadHeader(context, target, ti),
+                Expanded(child: SingleChildScrollView(child: stack)),
+              ],
+            )
+          : SingleChildScrollView(child: stack);
+    }
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxWidth),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Opacity(
+                opacity: state.isSaving ? 0.55 : 1.0,
+                child: IgnorePointer(ignoring: state.isSaving, child: content),
+              ),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: MedButton(
+                label: confirmLabel,
+                size: MedButtonSize.lg,
+                isLoading: state.isSaving,
+                onPressed: _canConfirm ? () => notifier.confirmCurrent() : null,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

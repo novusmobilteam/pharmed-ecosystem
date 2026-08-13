@@ -47,6 +47,7 @@ class CabinOperationExecutionLayout extends ConsumerStatefulWidget {
     required this.locationItems,
     required this.activeIndex,
     required this.openedBuilder,
+    this.onRequestClose,
   });
 
   final String progressLabel;
@@ -72,26 +73,52 @@ class CabinOperationExecutionLayout extends ConsumerStatefulWidget {
   /// Çekmece Opened durumundayken gösterilecek form (ör. _FillForm, _CensusForm).
   final WidgetBuilder openedBuilder;
 
+  /// "Durdur" onaylandığında, çekmece hâlâ Opened durumundaysa çağrılır
+  /// (genelde notifier'ın orchestrator.confirmClose'u). Bu çağrılmazsa
+  /// kullanıcı "lütfen kapatın" ekranında sonsuza kadar bekler — hiçbir
+  /// yerde sensör izlemesi resmi olarak başlamadığı için (bkz.
+  /// master-drawer-operation skill: sensör izleme SADECE confirmClose
+  /// sonrası "resmi" kapanış sayılır).
+  final VoidCallback? onRequestClose;
+
   @override
   ConsumerState<CabinOperationExecutionLayout> createState() => _MasterCabinExecutionScaffoldState();
 }
 
 class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExecutionLayout> {
   bool _stopRequested = false;
+  bool _closeRequested = false;
 
   Future<void> _handleStopConfirmed() async {
     final stage = ref.read(masterDrawerSessionProvider).stage;
-    if (!stage.isActive) {
-      // Çekmece zaten kapalı/boşta/hata durumunda — hemen durdur.
+    final canStopImmediately = !stage.isActive || stage is MasterDrawerLidFailed;
+    if (canStopImmediately) {
       await widget.onStopConfirmed();
       return;
     }
     setState(() => _stopRequested = true);
+    _tryRequestClose(stage);
+  }
+
+  /// stage Opened olur olmaz confirmClose'u TEK SEFER tetikler. Durdur
+  /// tam OpeningLid/geçiş anında basılmışsa (çekmece henüz Opened değilse)
+  /// burada no-op kalır, build() her stage değişiminde tekrar çağırdığı
+  /// için stage Opened'a ulaştığı an otomatik yakalanır.
+  void _tryRequestClose(MasterDrawerStage stage) {
+    if (_closeRequested) return;
+    if (stage is MasterDrawerOpened) {
+      _closeRequested = true;
+      widget.onRequestClose?.call();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final drawerStage = ref.watch(masterDrawerSessionProvider).stage;
+
+    if (_stopRequested) {
+      _tryRequestClose(drawerStage);
+    }
 
     // Durdurma bekleniyorken çekmece kapanırsa (isActive false olursa) gerçek
     // durdurmayı tetikle. addPostFrameCallback: build ortasında state

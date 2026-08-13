@@ -250,7 +250,14 @@ class _MasterKubicView extends StatelessWidget {
     const crossAxisCount = 4;
     final hasReturnBox = group.isReturnDrawer && allUnits.length > _returnCellCount;
 
-    final normalUnits = hasReturnBox ? allUnits.sublist(0, allUnits.length - _returnCellCount) : allUnits;
+    final rawNormalUnits = hasReturnBox ? allUnits.sublist(0, allUnits.length - _returnCellCount) : allUnits;
+    // Aynı görsel sıralama mantığı burada da uygulanıyor — kullanıcının
+    // ekranda tıkladığı hücre ile donanıma gönderilen port/lidIndex artık
+    // tutarlı (bkz. GetCabinVisualizerDataUseCase, aynı kubikUnitsInVisualOrder
+    // fonksiyonu). İade kutusu ayrımı (rawNormalUnits'in "son 4" varsayımı)
+    // henüz visual-order'dan ÖNCEKİ ham sırayı kullanıyor — test sırasında
+    // ayrıca gözden geçirilecek.
+    final normalUnits = kubikUnitsInVisualOrder(rawNormalUnits);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

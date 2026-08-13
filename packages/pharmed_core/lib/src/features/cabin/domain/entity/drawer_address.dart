@@ -45,7 +45,20 @@ DrawerAddress calculateAddressFromAssignment(
 
   final rowStr = slot?.address ?? "0";
   final isKubik = config?.drawerType?.isKubik ?? false;
-  final port = item.drawerUnit?.compartmentNo ?? 1;
+  final rawPort = item.drawerUnit?.compartmentNo ?? 1;
+  final port = isKubik
+      ? rawPort // kübikte port sabit 1-4 aralığında, ters çevirme henüz gözlemlenmedi/uygulanmıyor
+      : _resolvePhysicalPort(
+          rawPort: rawPort,
+          totalPorts: config?.drawerType?.compartmentCount,
+          // TODO(GEÇİCİ - TEST): backend'de isPortReversed alanı/kurulum
+          // ekranı toggle'ı henüz yok. Şu an TÜM birim doz çekmeceleri için
+          // sabit true zorlanıyor - kurulum ekranına toggle eklenene veya
+          // backend'den gerçek değer okunana kadar SADECE test ortamında
+          // kullanılmalı, bu haliyle production'a alınmamalı (diğer normal
+          // kablolu kabinleri de yanlışlıkla ters çevirir).
+          isReversed: true, // slot?.isPortReversed ?? false,
+        );
   final stepMultiplier = config?.stepMultiplier ?? 1;
 
   int targetIndex;
@@ -73,6 +86,18 @@ DrawerAddress calculateAddressFromAssignment(
   }
 
   return DrawerAddress(row: int.tryParse(rowStr) ?? 0, port: port, index: targetIndex, isCubic: isKubik);
+}
+
+/// [rawPort]'u fiziksel kablolamaya göre gerçek donanım port numarasına
+/// çevirir. [isReversed] false/[totalPorts] null-veya-0 ise değişiklik
+/// yapılmaz (aynen döner).
+///
+/// Formül: `totalPorts + 1 - rawPort` — basit ayna simetrisi. Donanım
+/// testiyle doğrulandı (5 gözlü çekmecede port=2↔4 karşılıklı test edildi,
+/// bkz. hardware-services skill).
+int _resolvePhysicalPort({required int rawPort, int? totalPorts, required bool isReversed}) {
+  if (!isReversed || totalPorts == null || totalPorts <= 0) return rawPort;
+  return totalPorts + 1 - rawPort;
 }
 
 int _calculatePartialStep(MedicineAssignment item, double requestedQuantity) {

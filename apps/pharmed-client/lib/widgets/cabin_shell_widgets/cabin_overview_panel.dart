@@ -182,13 +182,14 @@ class CabinOverviewPanel extends StatelessWidget {
   }
 
   static MedCabinLocationDetail _executionLocationDetail(DrawerQueueItem item) {
-    final isReturnJob = item.group.isReturnDrawer; // ya da job bazlı bilgi — aşağıdaki soruya bağlı
+    final isReturnJob = item.group.isReturnDrawer;
 
     if (isReturnJob && item.isKubik) {
-      const mergedCount = 4; // en sağdaki sütun — sabit varsayım, gerekirse parametrik yaparız
+      const mergedCount = 4;
       final normalCount = (item.units.length - mergedCount).clamp(0, item.units.length);
+      final normalUnits = item.units.sublist(0, normalCount);
 
-      final normalStates = [
+      final rawNormalStates = [
         for (int i = 0; i < normalCount; i++)
           item.completedTargetIndexes.contains(i)
               ? MedCellState.completed
@@ -196,6 +197,11 @@ class CabinOverviewPanel extends StatelessWidget {
               ? MedCellState.active
               : MedCellState.idle,
       ];
+
+      // İade kutulu kübikte normal grid alanı 3 sütun (4. sütun iade kutusuna
+      // ayrılmış) — bkz. MasterCabinDrawerPanel._hybridGrid normalCols=3 ve
+      // GetCabinVisualizerDataUseCase._buildSlots (aynı ayrım orada da var).
+      final normalStates = reorderParallelToVisual(normalUnits, rawNormalStates, columnCount: 3);
 
       final mergedIndexes = List.generate(mergedCount, (i) => normalCount + i);
       final mergedState = mergedIndexes.any((i) => item.activeTargetIndex == i)
@@ -219,11 +225,7 @@ class CabinOverviewPanel extends StatelessWidget {
       );
     }
 
-    // ignore: unused_local_variable
-    final hasPartialUnitFocus =
-        item.units.length > 1 && item.activeUnitIndexes.isNotEmpty && item.activeUnitIndexes.length < item.units.length;
-
-    final cellStates = [
+    final rawCellStates = [
       for (int i = 0; i < item.units.length; i++)
         item.completedTargetIndexes.contains(i)
             ? MedCellState.completed
@@ -233,6 +235,14 @@ class CabinOverviewPanel extends StatelessWidget {
             ? MedCellState.excluded
             : MedCellState.idle,
     ];
+
+    // SADECE kübikte eksen düzeltmesi uygulanır — birim doz zaten fiziksel
+    // olarak tek satır/sütun mantığında (_UnitDoseTopView), transpozisyon
+    // riski yok.
+    final cellStates = item.isKubik
+        ? reorderParallelToVisual(item.units, rawCellStates, columnCount: 4)
+        : rawCellStates;
+
     return MedCabinLocationDetail(
       address: item.address,
       typeLabel: item.isKubik ? 'KÜBİK' : 'BİRİM DOZ',

@@ -5952,4 +5952,8 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get masterDrawer_error_sensorCommunicationLost =>
       'Communication with the hardware was lost. Check the connection and try again.';
+
+  @override
+  String get masterDrawer_error_unexpectedlyClosed =>
+      'The drawer was closed unexpectedly while still in use. Please reopen and try again.';
 }

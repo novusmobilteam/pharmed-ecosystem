@@ -6913,5 +6913,6 @@
 "masterDrawer_error_lockOpenFailed": "Çekmece kilidi açılamadı. Donanımı kontrol edin.",
 "masterDrawer_error_lidOpenFailed": "Kapak açılamadı. Çekmecenin tam açık olduğundan emin olun.",
 "masterDrawer_error_lockOpenTimeout": "Çekmece zamanında tam açılamadı. Lütfen çekmeceyi elle sonuna kadar çekin.",
-"masterDrawer_error_sensorCommunicationLost": "Donanımla iletişim kesildi. Bağlantıyı kontrol edip tekrar deneyin."
+"masterDrawer_error_sensorCommunicationLost": "Donanımla iletişim kesildi. Bağlantıyı kontrol edip tekrar deneyin.",
+"masterDrawer_error_unexpectedlyClosed": "Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin."
 }

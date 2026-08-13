@@ -9,6 +9,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
@@ -88,17 +89,41 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     state = s.copyWith(selectedUnitIds: next);
   }
 
+  /// Kullanıcının FAZ 1'de seçtiği göz/çekmece kombinasyonlarından fiziksel
+  /// çekmece kuyruğunu üretir ve sayım yürütmesini (FAZ 2) başlatır.
+  /// Davranış MasterRefillNotifier.startAutoRefill ile birebir aynıdır
+  /// (bkz. master-refill-flow / master-census-flow skill'leri: sayım,
+  /// dolumun bilinçli paralel kopyasıdır).
   Future<void> startCensus() async {
     final s = state;
     if (s is! MasterCensusSelection || !s.canStart) return;
 
-    final jobs = CabinOperationQueueBuilder.build(
+    final result = CabinOperationQueueBuilder.build(
       selectedAssignments: s.selectedAssignments,
       config: censusTargetConfig,
     );
-    if (jobs.isEmpty) return;
 
-    state = MasterCensusExecuting(cabinId: s.cabinId, jobs: jobs, currentIndex: 0);
+    if (result.jobs.isEmpty) {
+      state = MasterCensusError(
+        failure: const CabinValidationFailure(reason: CabinValidationReason.noValidTargets),
+        previousState: s,
+      );
+      return;
+    }
+
+    if (result.skipped.isNotEmpty) {
+      MedLogger.warn(
+        unit: 'MasterCensus',
+        swreq: 'SWREQ-CLI-MCENSUS-002',
+        message: 'Bazı seçimler fiziksel çekmece kimliği çözülemediği için kuyruğa alınamadı',
+        context: {
+          'skippedCount': result.skipped.length,
+          'skippedMedicineIds': result.skipped.map((a) => a.medicine?.id).toList(),
+        },
+      );
+    }
+
+    state = MasterCensusExecuting(cabinId: s.cabinId, jobs: result.jobs, currentIndex: 0);
     await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
 

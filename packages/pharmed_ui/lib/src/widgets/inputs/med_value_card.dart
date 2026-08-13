@@ -59,12 +59,16 @@ class MedValueCard extends StatelessWidget {
         : MedTextStyles.numericXl(color: placeholder ? MedColors.text3 : MedColors.text);
 
     final suffixStyle = MedTextStyles.numericMd();
+    final padding = EdgeInsets.symmetric(
+      vertical: _isCompact ? 6 : MedSpacing.insetLg.bottom,
+      horizontal: MedSpacing.insetLg.left,
+    );
 
     return InkWell(
       onTap: onTap,
       borderRadius: MedRadius.lgAll,
       child: Container(
-        padding: MedSpacing.insetLg,
+        padding: padding,
         decoration: BoxDecoration(
           color: MedColors.surface,
           border: Border.all(color: hasError ? MedColors.red : MedColors.border),

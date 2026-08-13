@@ -179,8 +179,13 @@ class GetCabinVisualizerDataUseCase {
         final normalUnits = group.units.sublist(0, group.units.length - returnCellCount);
         final returnUnits = group.units.sublist(group.units.length - returnCellCount);
 
-        final normalCells = normalUnits.map((unit) => _resolveStatus(stocksByUnitId[unit.id] ?? [])).toList();
-        // İade gözlerinde normalde stok olmaz ama savunma amaçlı resolve ediyoruz.
+        // GEÇİCİ NOT: iade kutusu ayrımı hâlâ "listenin son 4 elemanı" varsayımına
+        // dayanıyor — bu, units'i visual sıraya çevirmeden ÖNCE, ham API sırasında
+        // yapılmalı (aksi halde port=4 elemanları artık ardışık durmuyor, her
+        // satırın son elemanı olarak dağılıyor). İade kutusu senaryosunu test
+        // ederken bu bölümü ayrıca gözden geçireceğiz — bkz. sohbet notu.
+        final orderedNormalUnits = kubikUnitsInVisualOrder(normalUnits);
+        final normalCells = orderedNormalUnits.map((unit) => _resolveStatus(stocksByUnitId[unit.id] ?? [])).toList();
         final returnStocks = returnUnits.expand((u) => stocksByUnitId[u.id] ?? <CabinStock>[]).toList();
 
         return KubicSlotVisual(
@@ -191,7 +196,8 @@ class GetCabinVisualizerDataUseCase {
         );
       }
 
-      final cells = group.units.map((unit) => _resolveStatus(stocksByUnitId[unit.id] ?? [])).toList();
+      final orderedCells = isKubik ? kubikUnitsInVisualOrder(group.units) : group.units;
+      final cells = orderedCells.map((unit) => _resolveStatus(stocksByUnitId[unit.id] ?? [])).toList();
 
       if (isKubik) {
         return KubicSlotVisual(slotId: slot.id ?? 0, cells: cells, columnCount: colCount);

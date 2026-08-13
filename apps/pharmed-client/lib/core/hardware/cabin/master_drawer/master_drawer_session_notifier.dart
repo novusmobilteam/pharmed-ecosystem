@@ -33,7 +33,7 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
 
   StartMasterDrawerSessionUseCase get _startSession => ref.read(startMasterDrawerSessionUseCaseProvider);
   OpenCubicLidUseCase get _openCubicLid => ref.read(openCubicLidUseCaseProvider);
-  MonitorDrawerClosureUseCase get _monitorClose => ref.read(monitorDrawerClosureUseCaseProvider);
+  MonitorDrawerClosureUseCase get _monitorClosure => ref.read(monitorDrawerClosureUseCaseProvider);
 
   @override
   MasterDrawerSessionState build() {
@@ -67,6 +67,31 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
         );
   }
 
+  Future<void> stop() async {
+    await _cancelAll();
+    state = const MasterDrawerSessionState.initial();
+  }
+
+  /// Kullanıcı işlemi tamamladı — mevcut (Opened'dan beri zaten çalışan)
+  /// sensör takibi artık "resmi" kapanışı bekliyor sayılır. Yeni bir
+  /// subscription BAŞLATILMAZ — _startPassiveCloseWatch'ın Opened anında
+  /// kurduğu subscription buradan itibaren WaitingForClose yorumuna geçer.
+  void confirmClose() {
+    if (state.stage is! MasterDrawerOpened) return;
+    state = state.copyWith(stage: const MasterDrawerWaitingForClose());
+  }
+
+  /// Son assignment VE son requestedQuantity/explicitTargetStep ile oturumu
+  /// yeniden başlatır.
+  Future<void> reopen() async {
+    if (_lastAssignment == null) return;
+    await start(
+      assignment: _lastAssignment!,
+      requestedQuantity: _lastRequestedQuantity,
+      explicitTargetStep: _lastExplicitTargetStep,
+    );
+  }
+
   /// Kübik çekmecede TEK bir gözün kapağını açar.
   Future<void> openCubicLid(MedicineAssignment cellAssignment) async {
     state = state.copyWith(stage: const MasterDrawerOpeningLid());
@@ -95,42 +120,31 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
     }
   }
 
-  void confirmClose() {
-    if (state.stage is! MasterDrawerOpened) return;
-    state = state.copyWith(stage: const MasterDrawerWaitingForClose());
-    _startCloseMonitoring();
-  }
-
-  /// Son assignment VE son requestedQuantity/explicitTargetStep ile oturumu
-  /// yeniden başlatır.
-  Future<void> reopen() async {
-    if (_lastAssignment == null) return;
-    await start(
-      assignment: _lastAssignment!,
-      requestedQuantity: _lastRequestedQuantity,
-      explicitTargetStep: _lastExplicitTargetStep,
-    );
-  }
-
-  Future<void> stop() async {
-    await _cancelAll();
-    state = const MasterDrawerSessionState.initial();
-  }
-
-  void _startCloseMonitoring() {
+  /// Ana çekmece fiziksel olarak tam açıldığı (Opened) andan itibaren
+  /// çekmecenin kapanışını SÜREKLİ izler — confirmClose() çağrılıp
+  /// çağrılmadığına bakılmaksızın. Aynı subscription iki farklı anlama
+  /// gelir:
+  ///   - confirmClose() ÇAĞRILMADAN "locked" gelirse → kullanıcı işlemi
+  ///     onaylamadan çekmeceyi fiziksel olarak kapattı → BEKLENMEDİK,
+  ///     terminal MasterDrawerFailed(unexpectedlyClosed).
+  ///   - confirmClose() ÇAĞRILDIKTAN SONRA (stage=WaitingForClose iken)
+  ///     "locked" gelirse → BEKLENEN kapanış → MasterDrawerClosed.
+  /// OpeningLid/LidFailed geçişleri sırasında bu subscription KESİLMEZ —
+  /// kübik gözler arası geçişte de beklenmedik kapanma tespit edilir.
+  void _startPassiveCloseWatch() {
     _sensorSub?.cancel();
 
     final assignment = _lastAssignment;
     if (assignment == null) return;
 
-    _sensorSub = _monitorClose(assignment: assignment).listen((event) {
-      if (state.stage is! MasterDrawerWaitingForClose) {
-        _sensorSub?.cancel();
-        return;
-      }
+    _sensorSub = _monitorClosure(assignment: assignment).listen((event) {
       switch (event) {
         case DrawerClosed():
-          state = state.copyWith(stage: const MasterDrawerClosed());
+          if (state.stage is MasterDrawerWaitingForClose) {
+            state = state.copyWith(stage: const MasterDrawerClosed());
+          } else {
+            state = state.copyWith(stage: const MasterDrawerFailed(failure: MasterDrawerFailure.unexpectedlyClosed));
+          }
           _sensorSub?.cancel();
           _sensorSub = null;
         case DrawerFailed(:final failure, :final detail):
@@ -165,5 +179,16 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
       DrawerOpening() => const MasterDrawerOpening(step: MasterDrawerOpeningStep.devicePreparing),
     };
     state = state.copyWith(stage: stage);
+
+    // Ana çekmece ilk kez fiziksel olarak tam açıldığında pasif izlemeyi
+    // başlat. openCubicLid'in ürettiği Opened event'leri BU akıştan
+    // GELMEZ (StartMasterDrawerSessionUseCase'in stream'i değil,
+    // openCubicLid kendi state güncellemesini doğrudan yapıyor) - yani
+    // bu callback yalnızca gerçek ana çekmece açılışında tetiklenir,
+    // her kapak açılışında YENİDEN BAŞLATILMAZ (zaten gerek de yok,
+    // subscription hâlâ canlı).
+    if (event is DrawerOpened) {
+      _startPassiveCloseWatch();
+    }
   }
 }

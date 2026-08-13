@@ -10494,6 +10494,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Communication with the hardware was lost. Check the connection and try again.'**
   String get masterDrawer_error_sensorCommunicationLost;
+
+  /// No description provided for @masterDrawer_error_unexpectedlyClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer was closed unexpectedly while still in use. Please reopen and try again.'**
+  String get masterDrawer_error_unexpectedlyClosed;
 }
 
 class _AppLocalizationsDelegate

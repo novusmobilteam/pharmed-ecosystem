@@ -5211,5 +5211,7 @@
   "masterDrawer_error_lockOpenFailed": "Le verrou du tiroir n'a pas pu être ouvert. Vérifiez le matériel.",
   "masterDrawer_error_lidOpenFailed": "Le couvercle n'a pas pu être ouvert. Assurez-vous que le tiroir est complètement ouvert.",
   "masterDrawer_error_lockOpenTimeout": "Le tiroir ne s'est pas complètement ouvert à temps. Veuillez tirer le tiroir jusqu'au bout.",
-  "masterDrawer_error_sensorCommunicationLost": "La communication avec le matériel a été perdue. Vérifiez la connexion et réessayez."
+  "masterDrawer_error_sensorCommunicationLost": "La communication avec le matériel a été perdue. Vérifiez la connexion et réessayez.",
+    "masterDrawer_error_unexpectedlyClosed": "Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer."
+
 }
