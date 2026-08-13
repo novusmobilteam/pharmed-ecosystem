@@ -369,12 +369,40 @@ class CabinOperationService implements ICabinOperationService {
   }) async* {
     final statusCommand = CommandBuilder.buildDrawerCommand(action: DeviceAction.status, port: port, drawer: drawer);
 
+    const maxConsecutiveFailures = 6;
+    int consecutiveFailures = 0;
+
     while (true) {
       try {
         final response = await sendRawCommand(manager: manager, targetRow: row, commandPayload: statusCommand);
-        yield _parseMasterDrawerStatus(response);
+        final status = _parseMasterDrawerStatus(response);
+
+        if (status == DrawerPhysicalStatus.unknown) {
+          consecutiveFailures++;
+          if (consecutiveFailures >= maxConsecutiveFailures) {
+            MedLogger.warn(
+              unit: 'CabinOps',
+              swreq: 'SWREQ-CABIN-OP-003',
+              message: 'Durum sorgusu art arda $consecutiveFailures kez basarisiz - timeoutError',
+              context: {'row': row, 'port': port, 'drawer': drawer},
+            );
+            yield DrawerPhysicalStatus.timeoutError;
+            consecutiveFailures = 0;
+          } else {
+            yield status;
+          }
+        } else {
+          consecutiveFailures = 0;
+          yield status;
+        }
       } catch (_) {
-        yield DrawerPhysicalStatus.unknown;
+        consecutiveFailures++;
+        if (consecutiveFailures >= maxConsecutiveFailures) {
+          yield DrawerPhysicalStatus.timeoutError;
+          consecutiveFailures = 0;
+        } else {
+          yield DrawerPhysicalStatus.unknown;
+        }
       }
 
       await Future.delayed(DeviceConstants.statusPollingInterval);

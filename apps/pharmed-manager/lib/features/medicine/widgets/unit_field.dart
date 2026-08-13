@@ -17,6 +17,7 @@ class UnitField extends StatelessWidget {
       initialValue: unit?.name,
       validator: (value) => (isRequired ?? false) ? Validators.cannotBlankValidator(value) : null,
       onChanged: (String? value) {},
+      readOnly: true,
       onTap: () async {
         final unit = await showUnitView(context);
         onChanged(unit);

@@ -17,6 +17,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../core/cache/app_settings_cache.dart';
 import '../../../core/providers/providers.dart';
@@ -25,8 +26,17 @@ import '../setup_wizard.dart';
 final setupWizardNotifierProvider = NotifierProvider<SetupWizardNotifier, SetupWizardState>(SetupWizardNotifier.new);
 
 class SetupWizardNotifier extends Notifier<SetupWizardState> {
+  String? macAddress;
+
   @override
-  SetupWizardState build() => const WizardActive(currentStep: 1, completedSteps: {});
+  SetupWizardState build() {
+    init();
+    return WizardActive(currentStep: 1, completedSteps: {});
+  }
+
+  Future<void> init() async {
+    macAddress = await DeviceInfo.getMacAddress();
+  }
 
   WizardActive? get _active => state is WizardActive ? state as WizardActive : null;
 

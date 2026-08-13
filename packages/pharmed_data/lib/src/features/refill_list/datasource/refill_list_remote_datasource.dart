@@ -23,9 +23,9 @@ class RefillListRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data ?? []), error: Result.error);
   }
 
-  Future<Result<List<CabinStockDTO>>> getRefillCandidates({required FillingType type, required int stationId}) async {
+  Future<Result<List<CabinStockDTO>>> getRefillCandidates({required RefillType type, required int stationId}) async {
     final res = await fetchRequest<List<CabinStockDTO>>(
-      path: '$_basePath/decreasingQuantityMaterial/',
+      path: '$_basePath/decreasingQuantityMaterial',
       parser: BaseRemoteDataSource.listParser(CabinStockDTO.fromJson),
       successLog: 'Refill record detail fetched',
       emptyLog: 'No refill record detail',

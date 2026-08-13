@@ -4,13 +4,13 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/core.dart';
 
-class MedicineFillingCard extends StatelessWidget {
+class RefillObjectCard extends StatelessWidget {
   final RefillObject object;
   final double selectedQuantity;
   final Function(double) onQuantityChanged;
   final VoidCallback onTap;
 
-  const MedicineFillingCard({
+  const RefillObjectCard({
     super.key,
     required this.object,
     required this.selectedQuantity,
@@ -44,19 +44,6 @@ class MedicineFillingCard extends StatelessWidget {
               Icon(PhosphorIcons.circle(), color: context.colorScheme.outline),
 
             const SizedBox(width: 12),
-            // Sol: Durum ve İkon
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: isCritical ? Colors.red : context.colorScheme.primaryContainer.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                PhosphorIcons.pill(),
-                color: isCritical ? context.colorScheme.onPrimary : context.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(width: 12),
 
             // Orta: İsim ve Bilgiler
             Expanded(
@@ -65,7 +52,7 @@ class MedicineFillingCard extends StatelessWidget {
                 children: [
                   Text(
                     object.medicine?.name ?? '-',
-                    style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                    style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   _infoText(
@@ -95,6 +82,6 @@ class MedicineFillingCard extends StatelessWidget {
   }
 
   Widget _infoText(BuildContext context, String text, Color? color) {
-    return Text(text, style: context.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold));
+    return Text(text, style: context.textTheme.bodySmall?.copyWith());
   }
 }

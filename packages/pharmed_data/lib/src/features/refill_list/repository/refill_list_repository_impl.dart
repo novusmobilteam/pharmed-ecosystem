@@ -24,7 +24,7 @@ class RefillListRepositoryImpl implements IRefillListRepository {
   }
 
   @override
-  Future<Result<List<CabinStock>>> getRefillCandidates({required FillingType type, required int stationId}) async {
+  Future<Result<List<CabinStock>>> getRefillCandidates({required RefillType type, required int stationId}) async {
     final res = await _dataSource.getRefillCandidates(type: type, stationId: stationId);
     return res.when(ok: (dtos) => Result.ok(_cabinStockMapper.toEntityList(dtos)), error: (e) => Result.error(e));
   }

@@ -169,6 +169,7 @@ class GetIntakeItemsUseCase {
         inCaseOfNecessity: task.inCaseOfNecessity,
         askDoctor: task.askDoctor,
         stock: task.stock,
+        time: task.time,
       );
     }).toList();
 
@@ -184,7 +185,7 @@ class GetIntakeItemsUseCase {
   /// (DrawerCell.id, göze özel) — allAssignments'taki her assignment'ın kendi
   /// cabinDrawerDetail listesinde bu id'yi arayarak GERÇEK gözü buluyoruz.
   MedicineAssignment? _resolveAssignment(CabinTargetedPrescriptionItem task, List<MedicineAssignment> allAssignments) {
-    final targetDetailId = task.stock?.cabinDrawerDetailId;
+    final targetDetailId = task.cabinAssignment.cabinDrawerId;
 
     if (targetDetailId != null) {
       final byDetail = allAssignments.firstWhereOrNull(

@@ -44,6 +44,13 @@ final class MasterDrawerClosed extends MasterDrawerStage {
   const MasterDrawerClosed();
 }
 
+final class MasterDrawerLidFailed extends MasterDrawerStage {
+  const MasterDrawerLidFailed({required this.failure, this.detail});
+
+  final MasterDrawerFailure failure;
+  final String? detail;
+}
+
 final class MasterDrawerFailed extends MasterDrawerStage {
   const MasterDrawerFailed({required this.failure, this.detail});
 

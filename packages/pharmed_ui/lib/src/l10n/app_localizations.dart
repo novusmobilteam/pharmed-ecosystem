@@ -10458,6 +10458,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete Drawer Unload'**
   String get unload_action_completeDrawerUnload;
+
+  /// Shown when the RS485 management card cannot be located during any master drawer session (open or close monitoring).
+  ///
+  /// In en, this message translates to:
+  /// **'Management card not found. Check the cabin connection.'**
+  String get masterDrawer_error_managerNotFound;
+
+  /// Shown when the app fails to establish a serial connection to the cabin's management card.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the cabin. Check the connection and try again.'**
+  String get masterDrawer_error_managerConnectFailed;
+
+  /// Shown when the hardware actively rejects the drawer/lid open command (non-ok response).
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer lock could not be opened. Check the hardware.'**
+  String get masterDrawer_error_lockOpenFailed;
+
+  /// Shown when a cubic lid open command is rejected by the hardware, most commonly because the outer drawer is not fully open.
+  ///
+  /// In en, this message translates to:
+  /// **'The lid could not be opened. Make sure the drawer is fully open.'**
+  String get masterDrawer_error_lidOpenFailed;
+
+  /// Shown when the drawer sensor never reaches the fully-open state within the allotted time, despite the open command being accepted (e.g. mechanical jam).
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer did not fully open in time. Please pull the drawer all the way out.'**
+  String get masterDrawer_error_lockOpenTimeout;
+
+  /// Shown when the drawer status sensor stops responding for multiple consecutive polls during open or close monitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication with the hardware was lost. Check the connection and try again.'**
+  String get masterDrawer_error_sensorCommunicationLost;
 }
 
 class _AppLocalizationsDelegate

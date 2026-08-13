@@ -1,7 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 class GetRefillCandidatesParams {
-  final FillingType type;
+  final RefillType type;
   final int stationId;
 
   GetRefillCandidatesParams({required this.type, required this.stationId});

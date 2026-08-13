@@ -2,4 +2,11 @@
 // Master kabin çekmece oturumu hata nedenleri.
 // Sınıf: Class B
 
-enum MasterDrawerFailure { managerNotFound, managerConnectFailed, lockOpenFailed, lidOpenFailed }
+enum MasterDrawerFailure {
+  managerNotFound,
+  managerConnectFailed,
+  lockOpenFailed,
+  lidOpenFailed,
+  lockOpenTimeout,
+  sensorCommunicationLost,
+}

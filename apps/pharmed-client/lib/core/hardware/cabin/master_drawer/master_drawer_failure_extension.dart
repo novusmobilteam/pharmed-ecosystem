@@ -4,7 +4,14 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 extension MasterDrawerFailureX on MasterDrawerFailure {
   String message(BuildContext context, {String? detail}) {
-    return context.l10n.mobileDrawer_cabinConnectionErrorMessage;
+    return switch (this) {
+      MasterDrawerFailure.managerNotFound => context.l10n.masterDrawer_error_managerNotFound,
+      MasterDrawerFailure.managerConnectFailed => context.l10n.masterDrawer_error_managerConnectFailed,
+      MasterDrawerFailure.lockOpenFailed => context.l10n.masterDrawer_error_lockOpenFailed,
+      MasterDrawerFailure.lidOpenFailed => context.l10n.masterDrawer_error_lidOpenFailed,
+      MasterDrawerFailure.lockOpenTimeout => context.l10n.masterDrawer_error_lockOpenTimeout,
+      MasterDrawerFailure.sensorCommunicationLost => context.l10n.masterDrawer_error_sensorCommunicationLost,
+    };
   }
 }
 

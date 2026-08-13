@@ -94,7 +94,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     currentRoute: currentRoute,
                     isLoggedIn: isLoggedIn,
                     user: currentUser,
-                    onHomeTap: () => notifier.navigateTo('dashboard'),
+                    onHomeTap: () {
+                      notifier.navigateTo('dashboard');
+                      notifier.refresh();
+                    },
                     onLoginTap: () => _showLoginModal(context, ref),
                     onLogoutTap: authNotif.logout,
                     onSettingsTap: () => _showSettingsPopup(context),

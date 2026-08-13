@@ -1,5 +1,4 @@
 class DeviceConstants {
-  // --- Protokol Parametreleri ---
   /// Kübik ana kilidini açmak için gönderilen özel çekmece numarası.
   static const int cubicMasterDrawerId = 30;
 

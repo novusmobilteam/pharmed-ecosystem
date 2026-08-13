@@ -5928,4 +5928,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unload_action_completeDrawerUnload => 'Complete Drawer Unload';
+
+  @override
+  String get masterDrawer_error_managerNotFound =>
+      'Management card not found. Check the cabin connection.';
+
+  @override
+  String get masterDrawer_error_managerConnectFailed =>
+      'Could not connect to the cabin. Check the connection and try again.';
+
+  @override
+  String get masterDrawer_error_lockOpenFailed =>
+      'The drawer lock could not be opened. Check the hardware.';
+
+  @override
+  String get masterDrawer_error_lidOpenFailed =>
+      'The lid could not be opened. Make sure the drawer is fully open.';
+
+  @override
+  String get masterDrawer_error_lockOpenTimeout =>
+      'The drawer did not fully open in time. Please pull the drawer all the way out.';
+
+  @override
+  String get masterDrawer_error_sensorCommunicationLost =>
+      'Communication with the hardware was lost. Check the connection and try again.';
 }

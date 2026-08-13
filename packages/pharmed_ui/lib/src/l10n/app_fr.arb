@@ -5205,5 +5205,11 @@
 "unload_action_stopConfirmTitle": "Arrêter le Vidage du Tiroir ?",
 "unload_action_stopConfirmMessage": "Le tiroir se fermera et le vidage ne sera pas terminé. Voulez-vous continuer ?",
 "unload_action_stopConfirmYes": "Oui, Arrêter",
-"unload_action_completeDrawerUnload": "Terminer le Vidage du Tiroir"
+"unload_action_completeDrawerUnload": "Terminer le Vidage du Tiroir",
+  "masterDrawer_error_managerNotFound": "Carte de gestion introuvable. Vérifiez la connexion de l'armoire.",
+  "masterDrawer_error_managerConnectFailed": "Impossible de se connecter à l'armoire. Vérifiez la connexion et réessayez.",
+  "masterDrawer_error_lockOpenFailed": "Le verrou du tiroir n'a pas pu être ouvert. Vérifiez le matériel.",
+  "masterDrawer_error_lidOpenFailed": "Le couvercle n'a pas pu être ouvert. Assurez-vous que le tiroir est complètement ouvert.",
+  "masterDrawer_error_lockOpenTimeout": "Le tiroir ne s'est pas complètement ouvert à temps. Veuillez tirer le tiroir jusqu'au bout.",
+  "masterDrawer_error_sensorCommunicationLost": "La communication avec le matériel a été perdue. Vérifiez la connexion et réessayez."
 }

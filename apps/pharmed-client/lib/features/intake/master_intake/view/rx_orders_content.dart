@@ -74,7 +74,7 @@ class RxOrdersContent extends ConsumerWidget {
                 final drug = item.prescriptionItem?.medicine?.when(drug: (Drug d) => d, consumable: (_) => null);
                 final collectNote = drug?.collectNote?.trim();
 
-                final time = item.prescriptionItem?.time;
+                final time = item.time;
                 final dose = item.prescriptionDose.formatFractional;
                 final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
 
@@ -82,7 +82,7 @@ class RxOrdersContent extends ConsumerWidget {
                   title: item.medicine?.name ?? '—',
                   subtitle: !isOrderlessFlow
                       ? time != null
-                            ? '$dose $unit (${time.shortRelativeLabelOf(context)})'
+                            ? '$dose $unit'
                             : '$dose $unit'
                       : null,
                   barcode: item.medicine?.barcode,
@@ -92,11 +92,8 @@ class RxOrdersContent extends ConsumerWidget {
                   //isDimmed: item.hasNoStock,
                   onTap: (item.hasNoStock || item.isRedirected) ? null : () => notifier.toggleItem(item.id),
 
-                  statusChip: item.lastMovement != null
-                      ? RxCardChip(
-                          label: item.lastMovement?.type.label(context) ?? '—',
-                          tone: item.lastMovement!.type.movementTone,
-                        )
+                  statusChip: time != null
+                      ? RxCardChip(label: time.shortRelativeLabelOf(context), tone: MedTone.info)
                       : null,
 
                   // CheckStatus → durum satırı
@@ -161,7 +158,7 @@ class RxOrdersContent extends ConsumerWidget {
                   movements: [
                     if (item.lastMovement case final m?)
                       RxCardMovement(
-                        label: m.type.actorLabel(context),
+                        label: m.type.actorLabel(context, isMobile: false),
                         tone: m.type.movementTone,
                         performedBy: m.performedBy?.fullName ?? '—',
                         quantity: '${m.quantity?.formatFractional ?? '-'} $unit',

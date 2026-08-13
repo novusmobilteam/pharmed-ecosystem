@@ -287,6 +287,7 @@ class WizardErrorView extends ConsumerWidget {
                   style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
                   textAlign: TextAlign.center,
                 ),
+                if (notifier.macAddress != null) Text(notifier.macAddress!, style: MedTextStyles.monoSm()),
                 const SizedBox(height: 24),
                 MedButton(
                   label: context.l10n.wizard_retryButton,

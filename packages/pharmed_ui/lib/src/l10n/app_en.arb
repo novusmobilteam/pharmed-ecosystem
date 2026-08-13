@@ -7130,5 +7130,29 @@
 "unload_action_completeDrawerUnload": "Complete Drawer Unload",
 "@unload_action_completeDrawerUnload": {
   "description": "Confirm button label on the execution screen; submits the unload request for the return drawer and closes it"
-}
+},
+  "masterDrawer_error_managerNotFound": "Management card not found. Check the cabin connection.",
+  "@masterDrawer_error_managerNotFound": {
+    "description": "Shown when the RS485 management card cannot be located during any master drawer session (open or close monitoring)."
+  },
+  "masterDrawer_error_managerConnectFailed": "Could not connect to the cabin. Check the connection and try again.",
+  "@masterDrawer_error_managerConnectFailed": {
+    "description": "Shown when the app fails to establish a serial connection to the cabin's management card."
+  },
+  "masterDrawer_error_lockOpenFailed": "The drawer lock could not be opened. Check the hardware.",
+  "@masterDrawer_error_lockOpenFailed": {
+    "description": "Shown when the hardware actively rejects the drawer/lid open command (non-ok response)."
+  },
+  "masterDrawer_error_lidOpenFailed": "The lid could not be opened. Make sure the drawer is fully open.",
+  "@masterDrawer_error_lidOpenFailed": {
+    "description": "Shown when a cubic lid open command is rejected by the hardware, most commonly because the outer drawer is not fully open."
+  },
+  "masterDrawer_error_lockOpenTimeout": "The drawer did not fully open in time. Please pull the drawer all the way out.",
+  "@masterDrawer_error_lockOpenTimeout": {
+    "description": "Shown when the drawer sensor never reaches the fully-open state within the allotted time, despite the open command being accepted (e.g. mechanical jam)."
+  },
+  "masterDrawer_error_sensorCommunicationLost": "Communication with the hardware was lost. Check the connection and try again.",
+  "@masterDrawer_error_sensorCommunicationLost": {
+    "description": "Shown when the drawer status sensor stops responding for multiple consecutive polls during open or close monitoring."
+  }
 }

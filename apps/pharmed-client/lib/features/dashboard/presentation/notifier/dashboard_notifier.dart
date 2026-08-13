@@ -25,7 +25,7 @@ import 'dashboard_state.dart';
 final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardState>(DashboardNotifier.new);
 
 class DashboardNotifier extends Notifier<DashboardState> {
-  static const _refreshInterval = Duration(minutes: 60);
+  static const _refreshInterval = Duration(minutes: 5);
 
   Timer? _timer;
 
@@ -60,14 +60,9 @@ class DashboardNotifier extends Notifier<DashboardState> {
     _startPeriodicRefresh();
   }
 
-  /// Manuel yenileme — pull-to-refresh veya panel içi retry.
   Future<void> refresh() => _load();
 
-  // ------------------------------------------------------------------ fetch
-
   Future<void> _load({int? cabinId}) async {
-    MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard yükleniyor');
-
     final mac = await DeviceInfo.getMacAddress();
     final setupDone = await _settings.isSetupComplete();
 
@@ -94,7 +89,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
         treatmentsSection.data == null && activitiesSection.data == null && (setupDone && cabinVisualizer == null);
 
     if (allFailed) {
-      MedLogger.warn(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard: tüm kaynaklar başarısız');
       state = DashboardError(message: contextlessL10n().dashboard_allSectionsLoadError);
       return;
     }
@@ -108,8 +102,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
     final current = state;
     state = current is DashboardLoaded ? current.copyWith(data: data) : DashboardLoaded(data: data);
-
-    MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard yüklendi');
   }
 
   DashboardSection<T> _toSection<T>(Result<T> result) {
@@ -127,7 +119,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
     return _unwrap(result);
   }
 
-  /// Kabin işlemi sonrası yalnızca görselleştirmeyi tazeler.
   Future<void> refreshCabinVisualizer() async {
     if (!await _settings.isSetupComplete()) return;
 
@@ -140,16 +131,12 @@ class DashboardNotifier extends Notifier<DashboardState> {
     state = current.copyWith(data: current.data.copyWith(cabinVisualizerData: cabin), cabinFailed: false);
   }
 
-  // ------------------------------------------------------------------- menü
-
   Future<void> _fetchMenus() async {
     final user = ref.read(authNotifierProvider.notifier).currentUser;
     final result = await ref.read(getFilteredMenusUseCaseProvider)(userId: user?.id);
 
     final menus = _unwrap(result);
     if (menus == null) {
-      // Menü olmadan da dashboard gösterilebilir — state'e dokunma
-      MedLogger.warn(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Menü yüklenemedi');
       return;
     }
 
@@ -172,16 +159,11 @@ class DashboardNotifier extends Notifier<DashboardState> {
     };
 
     state = current.copyWith(activeRoute: route);
-
-    MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Navigasyon: $route');
   }
-
-  // --------------------------------------------------------------- yardımcı
 
   void _startPeriodicRefresh() {
     _timer?.cancel();
     _timer = Timer.periodic(_refreshInterval, (_) {
-      MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-DASH-003', message: 'Dashboard periyodik yenileme');
       unawaited(_load());
     });
   }

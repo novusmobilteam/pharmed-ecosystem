@@ -21,7 +21,7 @@ abstract class IRefillListRepository {
   });
 
   /// Dolum listesi oluşturulabilecek malzemeleri getirir
-  Future<Result<List<CabinStock>>> getRefillCandidates({required FillingType type, required int stationId});
+  Future<Result<List<CabinStock>>> getRefillCandidates({required RefillType type, required int stationId});
 
   // Oluşturulan dolum kaydının detayını getiren istek
   Future<Result<List<RefillListDetail>>> getFillingListDetail(int fillingListId);

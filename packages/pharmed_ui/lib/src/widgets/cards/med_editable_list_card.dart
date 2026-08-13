@@ -65,6 +65,7 @@ class MedEditableListCard extends StatelessWidget {
             ),
           ),
           Row(
+            spacing: 4.0,
             mainAxisSize: MainAxisSize.min,
             children: [
               ...additionalActions,
@@ -74,6 +75,8 @@ class MedEditableListCard extends StatelessWidget {
                 tooltip: editTooltip,
                 size: 28,
                 iconSize: 14,
+                color: MedColors.blue,
+                iconColor: Colors.white,
               ),
               if (onDelete != null)
                 MedRectangleIconButton(
@@ -82,7 +85,8 @@ class MedEditableListCard extends StatelessWidget {
                   tooltip: deleteTooltip,
                   size: 28,
                   iconSize: 14,
-                  iconColor: MedColors.red.withValues(alpha: 0.7),
+                  color: MedColors.red,
+                  iconColor: Colors.white,
                 ),
             ],
           ),

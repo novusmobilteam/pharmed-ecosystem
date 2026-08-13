@@ -14,7 +14,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../providers/providers.dart';
 import 'master_drawer_session_state.dart';
@@ -34,7 +33,7 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
 
   StartMasterDrawerSessionUseCase get _startSession => ref.read(startMasterDrawerSessionUseCaseProvider);
   OpenCubicLidUseCase get _openCubicLid => ref.read(openCubicLidUseCaseProvider);
-  MonitorDrawerCloseUseCase get _monitorClose => ref.read(monitorDrawerCloseUseCaseProvider);
+  MonitorDrawerClosureUseCase get _monitorClose => ref.read(monitorDrawerClosureUseCaseProvider);
 
   @override
   MasterDrawerSessionState build() {
@@ -60,12 +59,6 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
         .listen(
           _onEvent,
           onError: (e, _) {
-            MedLogger.error(
-              unit: 'MasterDrawerSessionNotifier',
-              swreq: 'SWREQ-CLI-CABIN-OP-012',
-              message: 'Session stream hatası',
-              context: {'error': e.toString()},
-            );
             state = state.copyWith(
               stage: MasterDrawerFailed(failure: MasterDrawerFailure.managerConnectFailed, detail: e.toString()),
             );
@@ -76,9 +69,14 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
 
   /// Kübik çekmecede TEK bir gözün kapağını açar.
   Future<void> openCubicLid(MedicineAssignment cellAssignment) async {
+    state = state.copyWith(stage: const MasterDrawerOpeningLid());
     try {
       await _openCubicLid(cellAssignment: cellAssignment);
+      state = state.copyWith(stage: const MasterDrawerOpened());
     } on CabinConnectionException catch (e) {
+      // Yönetim kartına HİÇ ulaşılamadı - bu, tek bir kapağın sorunu değil,
+      // bağlantının kendisi kopmuş demektir. Oturumun devamı anlamsız,
+      // terminal Failed'a düşüyoruz (çekmece durumu artık bilinmiyor).
       state = state.copyWith(
         stage: MasterDrawerFailed(
           failure: e.failure == CabinConnectionFailure.managerNotFound
@@ -88,8 +86,11 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
         ),
       );
     } on MasterDrawerException catch (e) {
+      // Bağlantı sağlamdı, SADECE bu kapağın açma komutu reddedildi (örn.
+      // "ht"). Çekmece fiziksel olarak hâlâ açık - oturum aktif kalır,
+      // kullanıcı aynı/başka bir gözü tekrar deneyebilir.
       state = state.copyWith(
-        stage: MasterDrawerFailed(failure: e.failure, detail: e.detail),
+        stage: MasterDrawerLidFailed(failure: e.failure, detail: e.detail),
       );
     }
   }

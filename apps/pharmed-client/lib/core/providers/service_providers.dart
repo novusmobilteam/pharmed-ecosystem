@@ -12,15 +12,15 @@ import '../services/serial_communication/serial_communication_service.dart';
 
 final serialServiceProvider = Provider<ISerialCommunicationService>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock || AppFlavor.dev => MockSerialCommunicationService(),
-    AppFlavor.mock || AppFlavor.prod => SerialCommunicationService(),
+    AppFlavor.mock => MockSerialCommunicationService(),
+    AppFlavor.mock || AppFlavor.prod || AppFlavor.dev => SerialCommunicationService(),
   };
 });
 
 final cabinOperationServiceProvider = Provider<ICabinOperationService>((ref) {
   return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock || AppFlavor.dev => MockCabinOperationService(),
-    AppFlavor.mock || AppFlavor.prod => CabinOperationService(
+    AppFlavor.mock => MockCabinOperationService(),
+    AppFlavor.mock || AppFlavor.prod || AppFlavor.dev => CabinOperationService(
       serialService: ref.read(serialServiceProvider),
       appSettingsCache: ref.read(appSettingsCacheProvider),
     ),

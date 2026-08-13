@@ -2,8 +2,6 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-import 'drawer_config_dto.dart';
-
 /// ÇEKMECE YUVASI DTO
 /// ------------------
 /// Kabindeki her bir çekmece pozisyonunu temsil eder.
@@ -62,16 +60,17 @@ class DrawerSlotDTO {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'drawrDetailId': drawerConfigId,
       'cabinId': cabinId,
       'orderNumber': orderNumber,
       'address': address,
-      'compartmentNo': compartmentNo,
-      'drawrOrderNumber': drawerOrderNumber,
-      if (drawerConfig != null) 'drawrDetail': drawerConfig!.toJson(),
-      'isDeleted': isDeleted,
-      if (createdDate != null) 'createdDate': createdDate!.toIso8601String(),
+      'isReturnDrawerHere': isReturnDrawerHere,
+      // 'id': id,
+      // 'drawrOrderNumber': drawerOrderNumber,
+      // if (drawerConfig != null) 'drawrDetail': drawerConfig!.toJson(),
+      // 'isDeleted': isDeleted,
+      // if (createdDate != null) 'createdDate': createdDate!.toIso8601String(),
+      //   'compartmentNo': compartmentNo,
     };
   }
 }

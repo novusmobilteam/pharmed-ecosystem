@@ -6907,5 +6907,11 @@
 "unload_action_stopConfirmTitle": "Çekmece Boşaltma Durdurulsun mu?",
 "unload_action_stopConfirmMessage": "Çekmece kapanacak ve boşaltma tamamlanmayacak. Devam etmek istiyor musunuz?",
 "unload_action_stopConfirmYes": "Evet, Durdur",
-"unload_action_completeDrawerUnload": "Çekmece Boşaltmayı Tamamla"
+"unload_action_completeDrawerUnload": "Çekmece Boşaltmayı Tamamla",
+"masterDrawer_error_managerNotFound": "Yönetim kartı bulunamadı. Kabin bağlantısını kontrol edin.",
+"masterDrawer_error_managerConnectFailed": "Kabine bağlanılamadı. Bağlantıyı kontrol edip tekrar deneyin.",
+"masterDrawer_error_lockOpenFailed": "Çekmece kilidi açılamadı. Donanımı kontrol edin.",
+"masterDrawer_error_lidOpenFailed": "Kapak açılamadı. Çekmecenin tam açık olduğundan emin olun.",
+"masterDrawer_error_lockOpenTimeout": "Çekmece zamanında tam açılamadı. Lütfen çekmeceyi elle sonuna kadar çekin.",
+"masterDrawer_error_sensorCommunicationLost": "Donanımla iletişim kesildi. Bağlantıyı kontrol edip tekrar deneyin."
 }

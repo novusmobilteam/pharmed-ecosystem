@@ -1001,8 +1001,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       currentIndex: 0,
     );
     await _openJobAt(jobIndex: 0, targetIndex: 0);
-
-    print(state.runtimeType);
   }
 
   IntakeTarget? _buildRedirectedTarget(RedirectedIntakeOrder order) {

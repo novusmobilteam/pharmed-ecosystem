@@ -6037,4 +6037,28 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get unload_action_completeDrawerUnload =>
       'Terminer le Vidage du Tiroir';
+
+  @override
+  String get masterDrawer_error_managerNotFound =>
+      'Carte de gestion introuvable. Vérifiez la connexion de l\'armoire.';
+
+  @override
+  String get masterDrawer_error_managerConnectFailed =>
+      'Impossible de se connecter à l\'armoire. Vérifiez la connexion et réessayez.';
+
+  @override
+  String get masterDrawer_error_lockOpenFailed =>
+      'Le verrou du tiroir n\'a pas pu être ouvert. Vérifiez le matériel.';
+
+  @override
+  String get masterDrawer_error_lidOpenFailed =>
+      'Le couvercle n\'a pas pu être ouvert. Assurez-vous que le tiroir est complètement ouvert.';
+
+  @override
+  String get masterDrawer_error_lockOpenTimeout =>
+      'Le tiroir ne s\'est pas complètement ouvert à temps. Veuillez tirer le tiroir jusqu\'au bout.';
+
+  @override
+  String get masterDrawer_error_sensorCommunicationLost =>
+      'La communication avec le matériel a été perdue. Vérifiez la connexion et réessayez.';
 }

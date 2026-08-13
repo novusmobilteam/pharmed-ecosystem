@@ -1,5 +1,3 @@
-// pharmed-client/lib/core/cabin_operation/master_drawer_orchestrator.dart
-//
 // [SWREQ-CLI-CABIN-OP-013] [IEC 62304 §5.5]
 // Master kabin çekmece oturumunu feature notifier'larla birleştiren helper.
 //

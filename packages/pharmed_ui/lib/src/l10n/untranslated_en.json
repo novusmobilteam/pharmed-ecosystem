@@ -1315,7 +1315,13 @@
     "unload_action_stopConfirmTitle",
     "unload_action_stopConfirmMessage",
     "unload_action_stopConfirmYes",
-    "unload_action_completeDrawerUnload"
+    "unload_action_completeDrawerUnload",
+    "masterDrawer_error_managerNotFound",
+    "masterDrawer_error_managerConnectFailed",
+    "masterDrawer_error_lockOpenFailed",
+    "masterDrawer_error_lidOpenFailed",
+    "masterDrawer_error_lockOpenTimeout",
+    "masterDrawer_error_sensorCommunicationLost"
   ],
 
   "fr": [

@@ -27,6 +27,7 @@ class IntakeItem {
     this.selectedEquivalent,
     this.redirectedStation,
     this.redirectedOrder,
+    this.time,
   });
 
   final int id;
@@ -78,6 +79,8 @@ class IntakeItem {
 
   final RedirectedIntakeOrder? redirectedOrder;
 
+  final DateTime? time;
+
   bool get isEquivalentIntake => selectedEquivalent != null;
 
   bool get isRedirected => lastMovement?.type == PrescriptionMovementType.redirected;
@@ -114,6 +117,7 @@ class IntakeItem {
     EquivalentMedicine? selectedEquivalent,
     bool clearSelectedEquivalent = false,
     OtherStationMedicine? redirectedStation,
+    DateTime? time,
   }) {
     return IntakeItem(
       id: id,
@@ -135,6 +139,7 @@ class IntakeItem {
       selectedEquivalent: clearSelectedEquivalent ? null : (selectedEquivalent ?? this.selectedEquivalent),
       redirectedStation: redirectedStation ?? this.redirectedStation,
       redirectedOrder: redirectedOrder,
+      time: time ?? this.time,
     );
   }
 }

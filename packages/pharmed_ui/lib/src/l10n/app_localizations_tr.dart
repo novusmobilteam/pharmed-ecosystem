@@ -5887,4 +5887,28 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get unload_action_completeDrawerUnload => 'Çekmece Boşaltmayı Tamamla';
+
+  @override
+  String get masterDrawer_error_managerNotFound =>
+      'Yönetim kartı bulunamadı. Kabin bağlantısını kontrol edin.';
+
+  @override
+  String get masterDrawer_error_managerConnectFailed =>
+      'Kabine bağlanılamadı. Bağlantıyı kontrol edip tekrar deneyin.';
+
+  @override
+  String get masterDrawer_error_lockOpenFailed =>
+      'Çekmece kilidi açılamadı. Donanımı kontrol edin.';
+
+  @override
+  String get masterDrawer_error_lidOpenFailed =>
+      'Kapak açılamadı. Çekmecenin tam açık olduğundan emin olun.';
+
+  @override
+  String get masterDrawer_error_lockOpenTimeout =>
+      'Çekmece zamanında tam açılamadı. Lütfen çekmeceyi elle sonuna kadar çekin.';
+
+  @override
+  String get masterDrawer_error_sensorCommunicationLost =>
+      'Donanımla iletişim kesildi. Bağlantıyı kontrol edip tekrar deneyin.';
 }

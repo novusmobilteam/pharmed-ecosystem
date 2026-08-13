@@ -142,11 +142,14 @@ enum PrescriptionMovementType {
 
   /// Hareketi gerçekleştiren kişiyi betimleyen etiket.
   /// UI'da "Oluşturan", "Onaylayan" gibi gösterilir.
-  String actorLabel(BuildContext context) {
+  String actorLabel(BuildContext context, {bool isMobile = true}) {
     final l = context.l10n;
     return switch (this) {
       PrescriptionMovementType.pendingApproval => l.enumCore_prescriptionMovementPendingApprovalActorLabel,
-      PrescriptionMovementType.purchasePending => l.enumCore_prescriptionMovementPurchasePendingActorLabel,
+      PrescriptionMovementType.purchasePending =>
+        isMobile
+            ? l.enumCore_prescriptionMovementPurchasePendingActorLabel
+            : l.enumCore_prescriptionMovementPendingApprovalActorLabel,
       PrescriptionMovementType.applied => l.enumCore_prescriptionMovementAppliedActorLabel,
       PrescriptionMovementType.returned => l.enumCore_prescriptionMovementReturnedActorLabel,
       PrescriptionMovementType.wastaged => l.enumCore_prescriptionMovementWastagedActorLabel,

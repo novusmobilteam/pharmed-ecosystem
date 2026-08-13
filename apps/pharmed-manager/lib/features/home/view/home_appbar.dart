@@ -85,7 +85,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
             const SizedBox(width: 10),
 
-            if (kDebugMode && widget.isLoggedIn) ...[
+            if (widget.isLoggedIn) ...[
               MedRectangleIconButton(
                 iconData: PhosphorIcons.gear(),
                 borderColor: MedColors.border,

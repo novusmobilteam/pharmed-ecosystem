@@ -171,24 +171,27 @@ class _MedTextInputFieldState extends State<MedTextInputField> {
                     ),
 
                   // Input
-                  EditableText(
-                    controller: _controller,
-                    focusNode: _focus,
-                    readOnly: widget.readOnly,
-                    autofocus: widget.autoFocus,
-                    keyboardType: widget.keyboardType,
-                    maxLines: widget.obscureText ? 1 : widget.maxLines,
-                    minLines: widget.obscureText ? 1 : widget.minLines,
-                    obscureText: widget.obscureText,
-                    inputFormatters: widget.inputFormatters,
-                    onChanged: (v) {
-                      field.didChange(v);
-                      widget.onChanged?.call(v);
-                    },
-                    onSubmitted: widget.onFieldSubmitted,
-                    style: MedTextStyles.bodyMd(color: widget.enabled ? MedColors.text : MedColors.text3),
-                    cursorColor: MedColors.blue,
-                    backgroundCursorColor: MedColors.border,
+                  IgnorePointer(
+                    ignoring: widget.readOnly,
+                    child: EditableText(
+                      controller: _controller,
+                      focusNode: _focus,
+                      readOnly: widget.readOnly,
+                      autofocus: widget.autoFocus,
+                      keyboardType: widget.keyboardType,
+                      maxLines: widget.obscureText ? 1 : widget.maxLines,
+                      minLines: widget.obscureText ? 1 : widget.minLines,
+                      obscureText: widget.obscureText,
+                      inputFormatters: widget.inputFormatters,
+                      onChanged: (v) {
+                        field.didChange(v);
+                        widget.onChanged?.call(v);
+                      },
+                      onSubmitted: widget.onFieldSubmitted,
+                      style: MedTextStyles.bodyMd(color: widget.enabled ? MedColors.text : MedColors.text3),
+                      cursorColor: MedColors.blue,
+                      backgroundCursorColor: MedColors.border,
+                    ),
                   ),
                 ],
               ),

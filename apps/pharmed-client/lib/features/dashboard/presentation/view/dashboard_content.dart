@@ -22,7 +22,6 @@ class DashboardContentFactory {
           key: ValueKey(route),
           child: switch (route) {
             'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
-
             'drug-assignment' => const AssignmentView(),
             'drug-refill' => const RefillView(),
             'drug-intake' => IntakeView(menu: activeMenu!),
