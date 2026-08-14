@@ -177,20 +177,18 @@ final class MasterIntakeExecuting extends MasterIntakeState {
 
   IntakeDrawerJob? get currentJob => (currentIndex >= 0 && currentIndex < jobs.length) ? jobs[currentIndex] : null;
 
-  /// Kübik akışta o an açık olan gözün hedefi.
+  /// Aktif step'in (aynı stockId'yi paylaşan hedef grubunun) temsilci hedefi.
+  /// Kübik ve birim doz artık AYNI step-bazlı indekslemeyi kullanıyor —
+  /// currentTargetIndex her iki tipte de job.targets index'i DEĞİL,
+  /// IntakeCellGrouper.group(job.targets) step index'idir.
   IntakeTarget? get currentTarget {
     final job = currentJob;
     if (job == null) return null;
 
-    if (job.isKubik) {
-      final steps = IntakeCellGrouper.group(job.targets);
-      if (currentTargetIndex < 0 || currentTargetIndex >= steps.length) return null;
-      final (ti, _) = steps[currentTargetIndex].refs.first;
-      return job.targets[ti];
-    }
-
-    if (currentTargetIndex < 0 || currentTargetIndex >= job.targets.length) return null;
-    return job.targets[currentTargetIndex];
+    final steps = IntakeCellGrouper.group(job.targets);
+    if (currentTargetIndex < 0 || currentTargetIndex >= steps.length) return null;
+    final (ti, _) = steps[currentTargetIndex].refs.first;
+    return job.targets[ti];
   }
 
   int get totalJobs => jobs.length;

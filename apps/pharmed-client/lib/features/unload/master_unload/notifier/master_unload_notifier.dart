@@ -281,9 +281,22 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
     switch (current) {
       case MasterDrawerOpened():
-        _onDrawerOpened();
+        // SADECE ana çekmece yeni fiziksel olarak açıldıysa ilk gözü otomatik
+        // aç - openCubicLid'in kendi Opened event'ini tekrar işlemek "aynı
+        // gözü sonsuza kadar yeniden aç" döngüsüne yol açar (bkz.
+        // master-refill-flow skill §6).
+        if (previous is MasterDrawerWaitingForPull) {
+          _onDrawerOpened();
+        }
       case MasterDrawerClosed():
         _onCurrentDrawerClosed();
+      case MasterDrawerLidFailed(:final failure, :final detail):
+        MedLogger.warn(
+          unit: 'MasterUnload',
+          swreq: 'SWREQ-CLI-MUNLOAD-003',
+          message: 'Kübik kapak açma reddedildi',
+          context: {'failure': failure.name, 'detail': detail},
+        );
       case MasterDrawerFailed(:final failure, :final detail):
         _onDrawerFailed(failure, detail: detail);
       default:

@@ -52,6 +52,9 @@ class _UnloadForm extends StatelessWidget {
   final CabinOperationDrawerJob job;
   final MasterUnloadNotifier notifier;
 
+  static const double _maxWidth = 720.0;
+  static const double _stackSpacing = 8;
+
   bool get _canConfirm {
     final t = state.currentTarget;
     return t != null && t.isValid;
@@ -112,32 +115,51 @@ class _UnloadForm extends StatelessWidget {
     final isLastTarget = ti >= job.targets.length - 1;
     final confirmLabel = !isLastTarget ? context.l10n.unload_action_nextCell : context.l10n.unload_action_complete;
 
+    final Widget content;
     if (job.isKubik) {
-      return CabinExecutionGrid(
-        maxWidth: 420,
-        isLocked: state.isSaving,
-        isKubik: true,
-        itemCount: 1,
-        itemBuilder: (context, _) => _kubikCard(context, target),
-        header: null,
-        canConfirm: _canConfirm,
-        isSaving: state.isSaving,
-        confirmLabel: confirmLabel,
-        onConfirm: notifier.confirmCurrent,
+      content = SingleChildScrollView(child: _kubikCard(context, target));
+    } else {
+      final itemCount = target.steps.length;
+      // Fiziksel çekmecenin ÜSTTEN GÖRÜNÜMÜ: en yüksek göz numarası EN
+      // ÜSTTE, göz 1 EN ALTTA — bkz. master-refill-flow skill §10.1.
+      content = SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (int i = itemCount - 1; i >= 0; i--) ...[
+              _stepCard(context, target, ti, i),
+              if (i > 0) const SizedBox(height: _stackSpacing),
+            ],
+          ],
+        ),
       );
     }
 
-    return CabinExecutionGrid(
-      maxWidth: target.numberOfSteps > 6 ? 1100 : 640,
-      isLocked: state.isSaving,
-      isKubik: false,
-      itemCount: target.steps.length,
-      itemBuilder: (context, index) => _stepCard(context, target, ti, index),
-      header: null,
-      canConfirm: _canConfirm,
-      isSaving: state.isSaving,
-      confirmLabel: confirmLabel,
-      onConfirm: notifier.confirmCurrent,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxWidth),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Opacity(
+                opacity: state.isSaving ? 0.55 : 1.0,
+                child: IgnorePointer(ignoring: state.isSaving, child: content),
+              ),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: MedButton(
+                label: confirmLabel,
+                size: MedButtonSize.lg,
+                isLoading: state.isSaving,
+                onPressed: _canConfirm ? () => notifier.confirmCurrent() : null,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

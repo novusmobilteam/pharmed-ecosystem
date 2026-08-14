@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../core/cache/app_settings_cache.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
@@ -34,7 +35,7 @@ class DestructionView extends ConsumerWidget {
         CabinType.master => MasterDestructionView(data: cabinData),
         _ => const SizedBox.shrink(),
       },
-      _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      _ => const Center(child: MedLoadingIndicator()),
     };
   }
 }

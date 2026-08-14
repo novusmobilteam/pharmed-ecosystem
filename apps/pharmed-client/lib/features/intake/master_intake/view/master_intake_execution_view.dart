@@ -62,6 +62,8 @@ class _IntakeForm extends StatelessWidget {
   final IntakeDrawerJob job;
   final MasterIntakeNotifier notifier;
 
+  static const double _maxWidth = 720.0;
+
   bool get _canConfirm {
     if (job.isKubik) {
       final t = state.currentTarget;
@@ -70,57 +72,57 @@ class _IntakeForm extends StatelessWidget {
     return job.targets.every((t) => t.isValid); // birim doz: TÜM hedefler geçerli olmalı
   }
 
-  /// Sadece aktif target'a (ti) ait gruplar — itemBuilder(context, 0) tek
-  /// çağrılır, içine bu kartların tamamını Column olarak koyuyoruz.
-  Widget _activeContent(BuildContext context, int ti) {
-    final groups = IntakeCellGrouper.group(job.targets);
-
-    if (job.isKubik) {
-      if (ti < 0 || ti >= groups.length) return const SizedBox.shrink();
-      final group = groups[ti];
-      return IntakeCellCard(
-        group: group,
-        targets: job.targets,
-        stepLabel: context.l10n.refill_label_cellProgress(ti + 1, groups.length),
-        onCountChanged: (v) => notifier.onGroupCountChanged(group, v),
-      );
-    }
-
-    // Birim doz/standart — tek açılış, kaç fiziksel grup varsa hepsi birden.
-    return Column(
-      spacing: 8,
-      children: groups
-          .asMap()
-          .entries
-          .map(
-            (e) => IntakeCellCard(
-              group: e.value,
-              targets: job.targets,
-              stepLabel: context.l10n.refill_label_cellProgress(e.key + 1, groups.length),
-              onCountChanged: (v) => notifier.onGroupCountChanged(e.value, v),
-            ),
-          )
-          .toList(),
+  /// Artık kübik/birim doz farkı YOK - ikisi de aktif STEP'i (currentTargetIndex)
+  /// tek kart olarak gösterir. Birim dozda farklı ilaçlar (farklı portlar)
+  /// artık ASLA aynı ekranda birlikte gösterilmez - sırayla, port kapanınca
+  /// bir sonraki açılır (2026 düzeltmesi).
+  Widget _activeContent(BuildContext context, int stepIndex) {
+    final steps = IntakeCellGrouper.group(job.targets);
+    if (stepIndex < 0 || stepIndex >= steps.length) return const SizedBox.shrink();
+    final step = steps[stepIndex];
+    return IntakeCellCard(
+      group: step,
+      targets: job.targets,
+      stepLabel: context.l10n.refill_label_cellProgress(stepIndex + 1, steps.length),
+      onCountChanged: (v) => notifier.onGroupCountChanged(step, v),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final ti = state.currentTargetIndex;
-    final isLastTarget = ti >= job.targets.length - 1;
+    final steps = IntakeCellGrouper.group(job.targets);
+    final isLastTarget = ti >= steps.length - 1;
     final confirmLabel = !isLastTarget ? context.l10n.refill_action_nextCell : context.l10n.intake_action_complete;
 
-    return CabinExecutionGrid(
-      maxWidth: 640,
-      isLocked: state.isSaving,
-      isKubik: true,
-      itemCount: 1,
-      itemBuilder: (context, _) => _activeContent(context, ti),
-      header: null,
-      canConfirm: _canConfirm,
-      isSaving: state.isSaving,
-      confirmLabel: confirmLabel,
-      onConfirm: notifier.confirmCurrent,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxWidth),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Opacity(
+                opacity: state.isSaving ? 0.55 : 1.0,
+                child: IgnorePointer(
+                  ignoring: state.isSaving,
+                  child: SingleChildScrollView(child: _activeContent(context, ti)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: MedButton(
+                label: confirmLabel,
+                size: MedButtonSize.lg,
+                isLoading: state.isSaving,
+                onPressed: _canConfirm ? () => notifier.confirmCurrent() : null,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

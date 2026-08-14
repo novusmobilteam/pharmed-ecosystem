@@ -235,9 +235,23 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
     switch (current) {
       case MasterDrawerOpened():
-        _onDrawerOpened();
+        // SADECE ana çekmece yeni fiziksel olarak açıldıysa ilk gözü otomatik
+        // aç. openCubicLid'in kendi başarı sonrası ürettiği Opened event'i
+        // previous=OpeningLid ile gelir - bunu tekrar işlemek "aynı gözü
+        // sonsuza kadar yeniden aç" döngüsüne yol açar (bkz.
+        // master-refill-flow skill §6, aynı bug burada da vardı).
+        if (previous is MasterDrawerWaitingForPull) {
+          _onDrawerOpened();
+        }
       case MasterDrawerClosed():
         _onCurrentDrawerClosed();
+      case MasterDrawerLidFailed(:final failure, :final detail):
+        MedLogger.warn(
+          unit: 'MasterCensus',
+          swreq: 'SWREQ-CLI-MCENSUS-002',
+          message: 'Kübik kapak açma reddedildi',
+          context: {'failure': failure.name, 'detail': detail},
+        );
       case MasterDrawerFailed(:final failure, :final detail):
         _onDrawerFailed(failure, detail: detail);
       default:

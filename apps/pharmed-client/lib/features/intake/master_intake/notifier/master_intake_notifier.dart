@@ -31,6 +31,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
@@ -398,6 +399,11 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
 
+  /// job.targets'ı fiziksel adım (aynı stockId'yi paylaşan hedef grubu)
+  /// bazında gruplar. Kübik VE birim doz için ORTAK — tek fark, aralarındaki
+  /// geçişin yazılımsal (lid) mi yoksa fiziksel (açma/kapama) mı olduğu.
+  List<IntakeCellGroup> _jobSteps(IntakeDrawerJob job) => IntakeCellGrouper.group(job.targets);
+
   Future<void> _openJobAt({required int jobIndex, required int targetIndex}) async {
     final s = state;
     if (s is! MasterIntakeExecuting) return;
@@ -416,9 +422,21 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       return;
     }
 
-    // Birim doz/standart: TEK açılış — job'un tüm hedeflerini kapsayacak en
-    // derin step'e kadar (requiredStepNo zaten bunun için hesaplanmış).
-    await _orchestrator.open(assignment: job.representativeAssignment, explicitTargetStep: job.requiredStepNo);
+    // Birim doz: her fiziksel PORT kendi aç→işle→kapat döngüsünü yaşar (aynı
+    // satırda farklı ilaçlar farklı portlarda olabilir - dolumdaki per-target
+    // açma deseniyle tutarlı, bkz. master-refill-flow skill). [targetIndex]
+    // burada STEP index'idir (job.targets index'i DEĞİL) - aynı stockId'yi
+    // paylaşan hedefler (aynı fiziksel göz, farklı reçete kalemleri) doğal
+    // olarak tek adımda birlikte açılır/kaydedilir, ekstra bir gruplamaya
+    // gerek kalmadı (2026 düzeltmesi).
+    final steps = _jobSteps(job);
+    if (targetIndex < 0 || targetIndex >= steps.length) return;
+    final (ti, _) = steps[targetIndex].refs.first;
+    final target = job.targets[ti];
+    final assignment = target.assignment;
+    if (assignment == null) return;
+    final stepNo = IntakeQueueBuilder.resolveStepNoForTarget(target);
+    await _orchestrator.open(assignment: assignment, explicitTargetStep: stepNo);
   }
 
   // ── Sayım güncelleme (aktif job içinde) ──────────────────────────────────
@@ -469,43 +487,41 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   // ── Alımı tamamla ────────────────────────────────────────────────────────
 
   /// "Alımı tamamla" / "Sonraki göz":
-  ///   - Kübik: aktif gözün CompleteIntake'i HEMEN atılır; başarılıysa sıradaki
-  ///     lid açılır, son göz ise çekmece kapanışı tetiklenir.
-  ///   - Birim doz/standart: çekmece kapanışı tetiklenir; kayıt Closed'da yapılır.
+  ///   - Kübik: aktif STEP'in kaydı HEMEN atılır, sıradaki lid yazılımsal
+  ///     açılır (fiziksel kapanma yok).
+  ///   - Birim doz: aktif STEP'in (yani aktif PORTUN) kaydı HEMEN atılır,
+  ///     ardından fiziksel kapanış tetiklenir - sıradaki port (varsa)
+  ///     _onCurrentDrawerClosed'da yeni bir open() ile açılır.
   Future<void> confirmCurrent() async {
     final s = state;
     if (s is! MasterIntakeExecuting) return;
     final job = s.currentJob;
     if (job == null) return;
 
-    if (job.isKubik) {
-      final target = s.currentTarget;
-      if (target == null || !target.isValid) return;
+    final target = s.currentTarget;
+    if (target == null || !target.isValid) return;
 
-      state = s.copyWith(isSaving: true);
-      final ok = await _saveCurrentCubicStep(job, s);
-      final saved = state;
-      if (saved is! MasterIntakeExecuting || !ok) return;
-
-      await _advanceCubicLid();
-      return;
-    }
-
-    // Birim doz/standart: burada HİÇ kayıt atılmaz — gerçek CompleteIntake
-    // istekleri fiziksel kapanış onaylandıktan sonra (_onCurrentDrawerClosed)
-    // gönderilir. Burada sadece validasyon + kapanışı tetikleme var.
-    if (!job.targets.every((t) => t.isValid)) return;
     state = s.copyWith(isSaving: true);
-    _orchestrator.confirmClose();
+    final ok = await _saveCurrentStep(job, s);
+    final saved = state;
+    if (saved is! MasterIntakeExecuting || !ok) return;
+
+    if (job.isKubik) {
+      await _advanceCubicLid();
+    } else {
+      state = saved.copyWith(isSaving: false);
+      _orchestrator.confirmClose();
+    }
   }
 
-  /// Kübik akışta aktif fiziksel adımdaki (aynı stockId'yi paylaşan) TÜM
-  /// hedefleri kaydeder. Her hedef için AYRI complete-intake isteği atılır
-  /// (backend her prescriptionDetailId'yi ayrı reçete kalemi sayıyor), ama
-  /// sayım miktarı yalnızca İLK hedefte gerçek kullanıcı girdisini taşır —
-  /// diğerleri aynı fiziksel sayımı tekrar raporlamaz.
-  Future<bool> _saveCurrentCubicStep(IntakeDrawerJob job, MasterIntakeExecuting s) async {
-    final steps = _cubicSteps(job);
+  /// Aktif STEP'teki (aynı stockId'yi paylaşan) TÜM hedefleri kaydeder. Her
+  /// hedef için AYRI complete-intake isteği atılır (backend her
+  /// prescriptionDetailId'yi ayrı reçete kalemi sayıyor), ama sayım miktarı
+  /// yalnızca İLK hedefte gerçek kullanıcı girdisini taşır - diğerleri aynı
+  /// fiziksel sayımı tekrar raporlamaz. Kübik/birim doz FARKI YOK - eskiden
+  /// "_saveCurrentCubicStep" adındaydı, artık ikisi için de kullanılıyor.
+  Future<bool> _saveCurrentStep(IntakeDrawerJob job, MasterIntakeExecuting s) async {
+    final steps = _jobSteps(job);
     if (s.currentTargetIndex < 0 || s.currentTargetIndex >= steps.length) return false;
     final step = steps[s.currentTargetIndex];
 
@@ -570,14 +586,14 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     return ok;
   }
 
-  /// Kübik job içinde sıradaki lid'e geçer; son lid ise çekmece kapanışını başlatır.
+  /// SADECE kübik: sıradaki lid'e yazılımsal geçer (fiziksel kapanma yok).
   Future<void> _advanceCubicLid() async {
     final s = state;
     if (s is! MasterIntakeExecuting) return;
     final job = s.currentJob;
     if (job == null) return;
 
-    final steps = _cubicSteps(job);
+    final steps = _jobSteps(job);
     final nextStep = s.currentTargetIndex + 1;
 
     if (nextStep >= steps.length) {
@@ -595,14 +611,41 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
     switch (current) {
       case MasterDrawerOpened():
-        _onDrawerOpened();
+        // SADECE ana çekmece yeni fiziksel olarak açıldıysa ilk gözü otomatik
+        // aç - openCubicLid'in kendi Opened event'ini tekrar işlemek "aynı
+        // gözü sonsuza kadar yeniden aç" döngüsüne yol açar (bkz.
+        // master-refill-flow skill §6).
+        if (previous is MasterDrawerWaitingForPull) {
+          _onDrawerOpened();
+        }
       case MasterDrawerClosed():
         _onCurrentDrawerClosed();
+      case MasterDrawerLidFailed(:final failure, :final detail):
+        MedLogger.warn(
+          unit: 'MasterIntake',
+          swreq: 'SWREQ-CLI-MINTAKE-002',
+          message: 'Kübik kapak açma reddedildi',
+          context: {'failure': failure.name, 'detail': detail},
+        );
       case MasterDrawerFailed(:final failure, :final detail):
         _onDrawerFailed(failure, detail: detail);
       default:
         break;
     }
+  }
+
+  /// Reddedilen (LidFailed) bir kübik gözü aynı hedefle tekrar dener.
+  Future<void> retryCurrentLid() async {
+    final s = state;
+    if (s is! MasterIntakeExecuting) return;
+    final job = s.currentJob;
+    if (job == null || !job.isKubik) return;
+
+    final steps = _cubicSteps(job);
+    if (steps.isEmpty || s.currentTargetIndex < 0 || s.currentTargetIndex >= steps.length) return;
+    final (ti, _) = steps[s.currentTargetIndex].refs.first;
+    final cellAssignment = job.targets[ti].assignment;
+    if (cellAssignment != null) await _orchestrator.openCubicLid(cellAssignment);
   }
 
   List<IntakeCellGroup> _cubicSteps(IntakeDrawerJob job) => IntakeCellGrouper.group(job.targets);
@@ -622,8 +665,13 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   }
 
   /// Aktif çekmece fiziksel olarak kapandı.
-  ///   - Birim doz/standart: tüm hedefleri şimdi kaydet (her biri ayrı istek).
-  ///   - Kübik: kayıt zaten lid bazlı yapıldı → doğrudan sıradaki job.
+  ///   - Kübik: kayıt zaten step bazlı yapıldı (confirmCurrent'ta) → job
+  ///     tamamlandı, sıradaki job'a geç.
+  ///   - Birim doz: bu PORTUN kaydı zaten confirmCurrent'ta yapıldı. Job'da
+  ///     başka step (başka port) varsa YENİ bir open() ile onu aç; yoksa job
+  ///     tamamlandı, sıradaki job'a geç. ARTIK burada toplu kayıt YAPILMAZ
+  ///     (eski _saveAllGroups çağrısı kaldırıldı - kayıt tek yerde,
+  ///     confirmCurrent'te, kübikle aynı desende).
   Future<void> _onCurrentDrawerClosed() async {
     final s = state;
     if (s is! MasterIntakeExecuting) return;
@@ -631,10 +679,13 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     if (job == null) return;
 
     if (!job.isKubik) {
-      final ok = await _saveAllGroups(job);
-      final saved = state;
-      if (saved is! MasterIntakeExecuting) return;
-      if (!ok) return; // hata zaten _saveTarget içinde MasterIntakeError'a düşürüldü
+      final steps = _jobSteps(job);
+      final nextStep = s.currentTargetIndex + 1;
+      if (nextStep < steps.length) {
+        await _orchestrator.stop();
+        await _openJobAt(jobIndex: s.currentIndex, targetIndex: nextStep);
+        return;
+      }
     }
 
     final completedJobs = _withStatus(s.jobs, s.currentIndex, CabinOperationJobStatus.completed);
@@ -656,21 +707,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       isSaving: false,
     );
     await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
-  }
-
-  /// Birim doz/standart job'daki TÜM fiziksel grupları (stockId bazlı) kaydeder.
-  /// Aynı fiziksel gözü paylaşan target'lardan yalnızca İLKİ gerçek sayım
-  /// miktarını taşır — kübikteki _saveCurrentCubicStep ile aynı ilke.
-  Future<bool> _saveAllGroups(IntakeDrawerJob job) async {
-    final groups = IntakeCellGrouper.group(job.targets);
-    for (final group in groups) {
-      final targetIndices = group.refs.map((r) => r.$1).toSet().toList()..sort();
-      for (var i = 0; i < targetIndices.length; i++) {
-        final ok = await _saveTarget(job.targets[targetIndices[i]], suppressCensusQuantity: i != 0);
-        if (!ok) return false;
-      }
-    }
-    return true;
   }
 
   void _onDrawerFailed(MasterDrawerFailure failure, {String? detail}) {

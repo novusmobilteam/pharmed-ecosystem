@@ -54,6 +54,9 @@ class _DestructionForm extends ConsumerWidget {
   final CabinOperationDrawerJob job;
   final DestructionNotifier notifier;
 
+  static const double _maxWidth = 720.0;
+  static const double _stackSpacing = 8;
+
   bool get _canConfirm {
     final t = state.currentTarget;
     return t != null && t.isValid;
@@ -77,6 +80,7 @@ class _DestructionForm extends ConsumerWidget {
 
     final hasEntry = (count ?? 0) > 0;
     final miadHasError = isPerCellMiadEnabled && ((hasEntry && miad == null) || miad.isExpiredMiad);
+    final unitSuffix = target.assignment.medicine?.operationUnitLocalized(context);
 
     return CabinExecutionGridCard(
       assignment: target.assignment,
@@ -85,10 +89,11 @@ class _DestructionForm extends ConsumerWidget {
       density: job.isKubik ? MedValueCardDensity.comfortable : MedValueCardDensity.compact,
       hasError: miadHasError,
       fields: [
-        MedQuantityValueCard(label: context.l10n.refund_label_quantity, value: currentStock),
+        MedQuantityValueCard(label: context.l10n.refund_label_quantity, value: currentStock, suffix: unitSuffix),
         MedQuantityValueCard(
           label: context.l10n.destruction_label_quantity,
           value: destroyQty,
+          suffix: unitSuffix,
           onChanged: (v) =>
               job.isKubik ? notifier.onCubicSecondaryChanged(ti, v) : notifier.onStepSecondaryChanged(ti, index, v),
         ),
@@ -106,14 +111,10 @@ class _DestructionForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWideGrid = !job.isKubik && job.targets.isNotEmpty && job.targets.first.steps.length > 6;
-    final maxWidth = isWideGrid ? 1100.0 : 640.0;
-
     final target = state.currentTarget;
     final ti = state.currentTargetIndex;
 
     final isPerCellMiadEnabled = job.isKubik || ref.watch(isPerCellMiadEnabledProvider);
-
     final itemCount = job.isKubik ? 1 : (target?.steps.length ?? 0);
 
     final isLastTarget = ti >= job.targets.length - 1;
@@ -121,19 +122,61 @@ class _DestructionForm extends ConsumerWidget {
         ? context.l10n.destruction_action_nextCell
         : context.l10n.destruction_action_completeDestruction;
 
-    return CabinExecutionGrid(
-      maxWidth: maxWidth,
-      isLocked: state.isSaving,
-      isKubik: job.isKubik,
-      itemCount: itemCount,
-      itemBuilder: target == null
-          ? (_, _) => const SizedBox.shrink()
-          : (context, index) => _cellCard(context, ref, target, index, ti, isPerCellMiadEnabled),
-      header: (!isPerCellMiadEnabled && target != null) ? (ctx) => _singleMiadHeader(ctx, target) : null,
-      canConfirm: _canConfirm,
-      isSaving: state.isSaving,
-      confirmLabel: confirmLabel,
-      onConfirm: notifier.confirmCurrent,
+    Widget content;
+    if (target == null) {
+      content = const SizedBox.shrink();
+    } else if (job.isKubik) {
+      content = SingleChildScrollView(child: _cellCard(context, ref, target, 0, ti, isPerCellMiadEnabled));
+    } else {
+      // Fiziksel çekmecenin ÜSTTEN GÖRÜNÜMÜ: en yüksek göz numarası EN
+      // ÜSTTE, göz 1 EN ALTTA — bkz. master-refill-flow skill §10.1.
+      final stack = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (int i = itemCount - 1; i >= 0; i--) ...[
+            _cellCard(context, ref, target, i, ti, isPerCellMiadEnabled),
+            if (i > 0) const SizedBox(height: _stackSpacing),
+          ],
+        ],
+      );
+
+      content = !isPerCellMiadEnabled
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 12,
+              children: [
+                _singleMiadHeader(context, target),
+                Expanded(child: SingleChildScrollView(child: stack)),
+              ],
+            )
+          : SingleChildScrollView(child: stack);
+    }
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxWidth),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Opacity(
+                opacity: state.isSaving ? 0.55 : 1.0,
+                child: IgnorePointer(ignoring: state.isSaving, child: content),
+              ),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: MedButton(
+                label: confirmLabel,
+                size: MedButtonSize.lg,
+                isLoading: state.isSaving,
+                onPressed: _canConfirm ? () => notifier.confirmCurrent() : null,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
