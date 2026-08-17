@@ -13,20 +13,14 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-HOSPITALIZATON';
 
-  Future<Result<ApiResponse<List<HospitalizationDto>>?>> getHospitalizations({
-    int? skip,
-    int? take,
-    String? searchQuery,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+  Future<Result<ApiResponse<List<HospitalizationDto>>?>> getHospitalizations(PagedQueryParams params) async {
     final res = await fetchRequest<ApiResponse<List<HospitalizationDto>>>(
       path: '$_basePath/all',
-      skip: skip,
-      take: take,
-      searchQuery: searchQuery,
-      startDate: startDate,
-      endDate: endDate,
+      skip: params.skip,
+      take: params.take,
+      searchQuery: params.searchQuery,
+      startDate: params.startDate,
+      endDate: params.endDate,
       dateField: 'admissionDate',
       searchFields: ['patientName'],
       envelope: ResponseEnvelope.raw,
@@ -41,22 +35,46 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<HospitalizationDto>>?>> getActiveHospitalizations({
-    int? skip,
-    int? take,
-    String? searchQuery,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+  Future<Result<ApiResponse<List<HospitalizationDto>>?>> getActiveHospitalizations(PagedQueryParams params) async {
     final res = await fetchRequest<ApiResponse<List<HospitalizationDto>>>(
       path: '$_basePath/currentAll',
-      skip: skip,
-      take: take,
-      searchQuery: searchQuery,
+      skip: params.skip,
+      take: params.take,
+      searchQuery: params.searchQuery,
+      startDate: params.startDate,
+      endDate: params.endDate,
       searchFields: ['patientName'],
       dateField: 'admissionDate',
-      startDate: startDate,
-      endDate: endDate,
+
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(HospitalizationDto.fromJson),
+      successLog: 'PatientHospitalization list fetched',
+      emptyLog: 'No patient hospitalizations',
+    );
+
+    return res.when(
+      ok: (data) => Result.ok(data ?? const ApiResponse(data: [], totalCount: 0)),
+      error: Result.error,
+    );
+  }
+
+  Future<Result<ApiResponse<List<HospitalizationDto>>?>> getHospitalizationsByService(
+    PagedQueryParams params, {
+    required int serviceId,
+    required PatientFilterType filter,
+    bool myPatients = false,
+  }) async {
+    final res = await fetchRequest<ApiResponse<List<HospitalizationDto>>>(
+      path: '$_basePath/service/$serviceId',
+      query: {'typeId': filter.id, 'myPatient': myPatients},
+      skip: params.skip,
+      take: params.take,
+      searchQuery: params.searchQuery,
+      startDate: params.startDate,
+      endDate: params.endDate,
+      searchFields: ['patientName'],
+      dateField: 'admissionDate',
+
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(HospitalizationDto.fromJson),
       successLog: 'PatientHospitalization list fetched',
@@ -104,31 +122,6 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<List<HospitalizationDto>>> getPatientsWithActivePrescription() async {
     final res = await fetchRequest<List<HospitalizationDto>>(
       path: '$_basePath/materialCollect',
-      parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
-    );
-    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
-  }
-
-  // Future<Result<List<HospitalizationDto>>> getFilteredHospitalizations({
-  //   required PatientFilterType filter,
-  //   int? serviceId,
-  //   bool? myPatients,
-  // }) async {
-  //   final res = await fetchRequest<List<HospitalizationDto>>(
-  //     path: '/Patient/myHospitalization/${filter.id}',
-  //     parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
-  //   );
-  //   return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
-  // }
-
-  Future<Result<List<HospitalizationDto>>> getHospitalizationsByService({
-    required int serviceId,
-    required PatientFilterType filter,
-    bool myPatients = false,
-  }) async {
-    final res = await fetchRequest<List<HospitalizationDto>>(
-      path: '$_basePath/service/$serviceId',
-      query: {'typeId': filter.id, 'myPatient': myPatients},
       parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
     );
     return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);

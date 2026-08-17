@@ -1,65 +1,84 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/hardware/hardware.dart';
+import 'package:pharmed_client/features/settings/notifier/settings_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator_2.dart';
+import '../../../../widgets/cabin_operation_selection_view.dart';
+import '../../../../widgets/cabin_operation_widget.dart';
+import '../../../../widgets/med_rectangle_button.dart';
 import '../../../../widgets/widgets.dart';
-import '../../census.dart';
 import '../notifier/master_census_notifier.dart';
-import '../notifier/master_census_state.dart';
 
-class MasterCensusView extends ConsumerStatefulWidget {
-  const MasterCensusView({super.key, this.data});
+part 'selection_view.dart';
+part 'execution_view.dart';
 
-  final CabinVisualizerData? data;
+class MasterCensusView extends StatefulWidget {
+  const MasterCensusView({super.key, required this.data});
+
+  final CabinVisualizerData data;
 
   @override
-  ConsumerState<MasterCensusView> createState() => _MasterCensusViewState();
+  State<MasterCensusView> createState() => _MasterCensusViewState();
 }
 
-class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
+class _MasterCensusViewState extends State<MasterCensusView> {
+  late final MasterCensusNotifier _notifier;
+  bool _snackbarScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _notifier = MasterCensusNotifier(
+      getAssignments: context.read(),
+      orchestrator: MasterDrawerOrchestrator(
+        startSession: context.read(),
+        openCubicLid: context.read(),
+        monitorClosure: context.read(),
+      ),
+      completeCensus: context.read(),
+    )..init(widget.data);
+    _notifier.addListener(_onNotifierChanged);
+  }
+
+  @override
+  void dispose() {
+    _notifier.removeListener(_onNotifierChanged);
+    _notifier.dispose();
+    super.dispose();
+  }
+
+  void _onNotifierChanged() {
+    final error = _notifier.transientSaveError;
+    if (error == null || _snackbarScheduled) return;
+    _snackbarScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _snackbarScheduled = false;
+      if (!mounted) return;
+      MessageUtils.showErrorSnackbar(context, error.message);
+      _notifier.dismissTransientSaveError();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(masterCensusNotifierProvider);
-    final notifier = ref.read(masterCensusNotifierProvider.notifier);
+    return ChangeNotifierProvider<MasterCensusNotifier>.value(
+      value: _notifier,
+      child: Consumer<MasterCensusNotifier>(
+        builder: (context, notifier, child) {
+          if (notifier.isLoading(notifier.fetchAssignmentOp) && notifier.assignments.isEmpty) {
+            return Center(child: MedLoadingIndicator());
+          }
 
-    ref.listen(masterCensusNotifierProvider, (_, next) {
-      if (next is MasterCensusError && next.isQueueError) {
-        MessageUtils.showConfirmDialog(
-          context: context,
-          action: ConfirmAction.custom,
-          customTitle: context.l10n.census_error_queueTitle,
-          customMessage: next.failure.message(context).isNotEmpty
-              ? next.failure.message(context)
-              : context.l10n.census_error_queueMessage,
-          iconData: PhosphorIcons.warning(),
-          color: MedColors.amber,
-          confirmButtonText: context.l10n.census_error_continueNext,
-          cancelButtonText: context.l10n.census_error_endProcess,
-          onConfirm: notifier.continueAfterError,
-          onCancel: notifier.abortAfterError,
-        );
-      } else if (next is MasterCensusError) {
-        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
-        notifier.dismissError();
-      }
-    });
+          if (notifier.isExecuting) {
+            return MasterCensusExecutionView(allGroups: widget.data.groups);
+          }
 
-    return MasterCabinRootScaffold<CabinVisualizerData, MasterCensusState>(
-      data: widget.data,
-      cabinIdOf: (d) => d.cabinId,
-      onInit: (d) => notifier.init(d),
-      state: state,
-      phaseOf: (s) => switch (s) {
-        MasterCensusUninitialized() || MasterCensusLoading() => const RootBooting(),
-        MasterCensusExecuting() => const RootExecuting(),
-        MasterCensusError(previousState: MasterCensusExecuting()) => const RootExecuting(),
-        _ => const RootSelection(),
-      },
-      selectionBuilder: (_) => MasterCensusSelectionView(allGroups: widget.data?.groups ?? const []),
-      executionBuilder: (_) => MasterCensusExecutionView(allGroups: widget.data?.groups ?? const []),
+          return MasterCensusSelectionView();
+        },
+      ),
     );
   }
 }

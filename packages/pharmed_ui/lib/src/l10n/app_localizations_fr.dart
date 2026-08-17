@@ -6065,4 +6065,80 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get masterDrawer_error_unexpectedlyClosed =>
       'Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer.';
+
+  @override
+  String get patientPicker_urgentPatientActiveDescription =>
+      'Pour un patient urgent, vous ne pouvez retirer que les médicaments disponibles sans prescription. Vous pourrez ensuite associer ce patient à un patient admis depuis l\'écran \"Terminer patient urgent\" et poursuivre vos opérations.\nPour continuer les opérations de retrait standard, appuyez sur \"Supprimer\" pour clôturer cet enregistrement et reprendre là où vous vous étiez arrêté.';
+
+  @override
+  String get intake_action_witnessLogin => 'Connexion du témoin';
+
+  @override
+  String get intake_witness_dialogTitle => 'Approbation du témoin requise';
+
+  @override
+  String intake_witness_dialogSubtitle(int done, int total) {
+    return 'La connexion d\'un témoin est requise avant le retrait des médicaments contrôlés — $done/$total approbations terminées';
+  }
+
+  @override
+  String get intake_witness_stepsHeader => 'Étapes d\'approbation';
+
+  @override
+  String intake_witness_stepTitle(int index, int count) {
+    return 'Étape témoin $index — $count médicament(s)';
+  }
+
+  @override
+  String get intake_witness_candidatesHeader => 'Témoins autorisés';
+
+  @override
+  String get intake_witness_candidatesDescription =>
+      'L\'un des membres du personnel suivants doit se connecter en tant que témoin';
+
+  @override
+  String get intake_witness_offShiftBadge => 'Hors service';
+
+  @override
+  String get intake_witness_loginHeader => 'Connexion du témoin';
+
+  @override
+  String get intake_witness_loginDescription =>
+      'Saisissez votre mot de passe — le clavier virtuel s\'ouvre automatiquement';
+
+  @override
+  String get intake_witness_usernameLabel => 'Nom d\'utilisateur';
+
+  @override
+  String get intake_witness_passwordLabel => 'Mot de passe';
+
+  @override
+  String get intake_witness_confirmButton => 'Se connecter et confirmer';
+
+  @override
+  String get intake_witness_cancelButton => 'Annuler le retrait';
+
+  @override
+  String intake_witness_remainingLabel(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString approbations restantes',
+      one: '$countString approbation restante',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get intake_witness_startButton => 'Démarrer le retrait';
+
+  @override
+  String intake_witness_confirmedMessage(String witnessName) {
+    return 'Témoin confirmé : $witnessName';
+  }
 }

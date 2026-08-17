@@ -1,13 +1,13 @@
 part of 'dashboard_screen.dart';
 
-class CabinTelemetryPanel extends ConsumerWidget {
+class CabinTelemetryPanel extends StatelessWidget {
   const CabinTelemetryPanel({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(cabinSensorProvider);
-    final thresholds = state.thresholds;
-    final reading = state.reading;
+  Widget build(BuildContext context) {
+    final sensor = context.watch<CabinSensorNotifier>();
+    final thresholds = sensor.thresholds;
+    final reading = sensor.reading;
 
     final tempStatus = thresholds.temperatureStatus(reading?.temperature);
     final humidityStatus = thresholds.humidityStatus(reading?.humidity);
@@ -26,7 +26,7 @@ class CabinTelemetryPanel extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _TelemetryHeader(isPaused: state.isPaused, hasAlert: hasAlert),
+          _TelemetryHeader(isPaused: sensor.isPaused, hasAlert: hasAlert),
           Padding(
             padding: const EdgeInsets.all(MedSpacing.xl),
             child: Column(
@@ -39,7 +39,7 @@ class CabinTelemetryPanel extends ConsumerWidget {
                   label: context.l10n.dashboard_sensor_temperature,
                   status: tempStatus,
                   normalColor: MedColors.amber,
-                  history: state.tempHistory,
+                  history: sensor.tempHistory,
                   rangeText:
                       '${thresholds.tempMin?.toStringAsFixed(0)}–'
                       '${thresholds.tempMax?.toStringAsFixed(0)} °C',
@@ -56,7 +56,7 @@ class CabinTelemetryPanel extends ConsumerWidget {
                   label: context.l10n.dashboard_sensor_humidity,
                   status: humidityStatus,
                   normalColor: MedColors.blue,
-                  history: state.humidityHistory,
+                  history: sensor.humidityHistory,
                   rangeText:
                       '%${thresholds.humidityMin?.toStringAsFixed(0)}–'
                       '${thresholds.humidityMax?.toStringAsFixed(0)}',
@@ -78,6 +78,8 @@ class CabinTelemetryPanel extends ConsumerWidget {
     );
   }
 }
+
+// _TelemetryHeader, _SensorMetric, _BatteryRow — hiç değişmedi, aynen kalıyor
 
 class _TelemetryHeader extends StatelessWidget {
   const _TelemetryHeader({required this.isPaused, required this.hasAlert});

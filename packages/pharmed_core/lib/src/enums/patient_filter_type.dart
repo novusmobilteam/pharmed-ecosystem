@@ -28,7 +28,7 @@ enum PatientFilterType {
       case PatientFilterType.ordersDue:
         return contextlessL10n().enumCore_patientFilterOrderTimeReached;
       case PatientFilterType.all:
-        return contextlessL10n().enumCore_patientFilterAll;
+        return contextlessL10n().filter_all;
       case PatientFilterType.upcoming:
         return contextlessL10n().enumCore_patientFilterTimeNotReached;
       case PatientFilterType.overdue:

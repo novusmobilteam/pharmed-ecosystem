@@ -1,89 +1,129 @@
-// [SWREQ-CLI-MINTAKE-004] [IEC 62304 §5.5]
-// İlaç-merkezli master kabin İLAÇ ALIM ekranının root view'ı.
-//
-// İki bağımsız provider senkron boot olmalı: masterIntakeNotifierProvider
-// (bu ekranın kendi state'i) + intakePatientSelectionNotifierProvider
-// (alım ekranına özel hasta seçim çatısı, IntakePatientSelectionPanel
-// içinde kullanılıyor — artık iade/imha ile PAYLAŞILMIYOR, bkz.
-// patient-gateway skill notu). Bu yüzden extraBootGate ile ikincisinin de
-// hazır olması bekleniyor — bkz. MasterCabinRootScaffold.
-//
-// Executing fazında (ve ondan doğan hatada) patient list dahil hiçbir şey
-// ekranda kalmaz — replacesEverything: true.
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/hardware/hardware.dart';
+import 'package:pharmed_client/widgets/med_rectangle_button.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../widgets/widgets.dart';
-import '../../intake.dart';
+import '../../../auth/auth.dart';
+import '../notifier/master_intake_notifier.dart';
 
-import '../patient_selection/notifier/patient_selection_notifier.dart';
-import '../patient_selection/notifier/patient_selection_state.dart';
+part 'selection_view.dart';
+part 'witness_confirmation_view.dart';
+part 'check_failures_dialog.dart';
 
-class MasterIntakeView extends ConsumerStatefulWidget {
-  const MasterIntakeView({super.key, this.data, required this.menu});
+class MasterIntakeView extends StatefulWidget {
+  const MasterIntakeView({super.key, required this.data});
 
-  final CabinVisualizerData? data;
-  final MenuItem menu;
+  final CabinVisualizerData data;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MasterIntakeViewState();
+  State<MasterIntakeView> createState() => _MasterIntakeViewState();
 }
 
-class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
-  bool _isPatientReady(IntakePatientSelectionState s) => switch (s) {
-    IntakePatientSelectionReady() => true,
-    IntakePatientSelectionError() => true,
-    _ => false,
-  };
+class _MasterIntakeViewState extends State<MasterIntakeView> {
+  late final PatientSelectionNotifier _patientSelection;
+  late final MasterIntakeNotifier _intakeNotifier;
+  bool _checkFailuresDialogShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _patientSelection = PatientSelectionNotifier(
+      config: const PatientSelectionConfig(
+        showIntakeTabs: true,
+        showViewTypeSelector: true,
+        showOrderStatusToggle: true,
+        showFilterRow: true,
+      ),
+      authNotifier: context.read(),
+      getStation: context.read(),
+      getHospitalizations: context.read(),
+      getActiveHospitalizations: context.read(),
+      createUrgent: context.read(),
+      getServices: context.read(),
+    )..init();
+
+    _intakeNotifier = MasterIntakeNotifier(
+      patientSelection: _patientSelection,
+      getItems: context.read(),
+      getStation: context.read(),
+      checkIntake: context.read(),
+      authNotifier: context.read(),
+      checkEquivalentIntake: context.read(),
+      getOtherStations: context.read(),
+      getEquivalents: context.read(),
+      redirectIntake: context.read(),
+      getPrescriptionDetail: context.read(),
+    );
+    _intakeNotifier.addListener(_onIntakeNotifierChanged);
+  }
+
+  @override
+  void dispose() {
+    _intakeNotifier.removeListener(_onIntakeNotifierChanged);
+    _intakeNotifier.dispose();
+    _patientSelection.dispose();
+    super.dispose();
+  }
+
+  void _onIntakeNotifierChanged() {
+    if (_intakeNotifier.hasPendingCheckFailures && !_checkFailuresDialogShown) {
+      _checkFailuresDialogShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        await showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => CheckFailuresDialog(
+            failures: _intakeNotifier.failedCheckItems,
+            onCancel: () {
+              Navigator.of(context).pop();
+              _intakeNotifier.dismissCheckFailures();
+            },
+            onProceed: () {
+              Navigator.of(context).pop();
+              _intakeNotifier.confirmProceedDespiteCheckFailures();
+            },
+          ),
+        );
+        _checkFailuresDialogShown = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(masterIntakeNotifierProvider);
-    final notifier = ref.read(masterIntakeNotifierProvider.notifier);
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PatientSelectionNotifier>.value(value: _patientSelection),
+        ChangeNotifierProvider<MasterIntakeNotifier>.value(value: _intakeNotifier),
+      ],
+      child: const _MasterIntakeContent(),
+    );
+  }
+}
 
-    ref.listen(masterIntakeNotifierProvider, (_, next) {
-      if (next is MasterIntakeError && next.isQueueError) {
-        MessageUtils.showConfirmDialog(
-          context: context,
-          action: ConfirmAction.custom,
-          customTitle: context.l10n.intake_error_queueTitle,
-          customMessage: next.failure.message(context).isNotEmpty
-              ? next.failure.message(context)
-              : context.l10n.intake_error_queueMessage,
-          iconData: PhosphorIcons.warning(),
-          color: MedColors.amber,
-          confirmButtonText: context.l10n.refill_error_continueNext,
-          cancelButtonText: context.l10n.refill_error_endProcess,
-          onConfirm: notifier.continueAfterError,
-          onCancel: notifier.abortAfterError,
-        );
-      } else if (next is MasterIntakeError) {
-        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
-        notifier.dismissError();
-      }
-    });
+class _MasterIntakeContent extends StatelessWidget {
+  const _MasterIntakeContent();
 
-    return MasterCabinRootScaffold<CabinVisualizerData, MasterIntakeState>(
-      data: widget.data,
-      cabinIdOf: (d) => d.cabinId,
-      onInit: (d) => notifier.init(d),
-      state: state,
-      extraBootGate: () => !_isPatientReady(ref.watch(intakePatientSelectionNotifierProvider)),
-      phaseOf: (s) => switch (s) {
-        MasterIntakeUninitialized() || MasterIntakeLoading() => const RootBooting(),
-        MasterIntakeExecuting() => const RootExecuting(replacesEverything: true),
-        MasterIntakeError(previousState: MasterIntakeExecuting()) => const RootExecuting(replacesEverything: true),
-        _ => const RootSelection(),
-      },
-      selectionBuilder: (_) => const MasterIntakeSelectionView(),
-      executionBuilder: (_) => MasterIntakeExecutionView(allGroups: widget.data?.groups ?? const []),
+  @override
+  Widget build(BuildContext context) {
+    final intakeTab = context.select<PatientSelectionNotifier, IntakePatientTab>((n) => n.intakeTab);
+
+    return Stack(
+      children: [
+        Row(
+          children: [
+            Expanded(flex: 3, child: PatientSelectionPanel()),
+            VerticalDivider(color: MedColors.text3, width: 1, thickness: 1),
+            Expanded(flex: 7, child: MasterIntakeSelectionView(mode: intakeTab.label(context))),
+          ],
+        ),
+        if (context.select<MasterIntakeNotifier, bool>((n) => n.isWitnessFlowOpen)) const WitnessConfirmationOverlay(),
+      ],
     );
   }
 }

@@ -5956,4 +5956,80 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get masterDrawer_error_unexpectedlyClosed =>
       'The drawer was closed unexpectedly while still in use. Please reopen and try again.';
+
+  @override
+  String get patientPicker_urgentPatientActiveDescription =>
+      'For an urgent patient, you can only take medicines available without an order. You can later assign this patient to an admitted patient from the \"End Urgent Patient\" screen and continue your operations.\nTo continue with standard intake operations, press \"Delete\" to end this record and resume where you left off.';
+
+  @override
+  String get intake_action_witnessLogin => 'Witness Login';
+
+  @override
+  String get intake_witness_dialogTitle => 'Witness Approval Required';
+
+  @override
+  String intake_witness_dialogSubtitle(int done, int total) {
+    return 'Witness entry is required before intake for controlled medicines — $done/$total approvals completed';
+  }
+
+  @override
+  String get intake_witness_stepsHeader => 'Approval Steps';
+
+  @override
+  String intake_witness_stepTitle(int index, int count) {
+    return 'Witness Step $index — $count Medicine';
+  }
+
+  @override
+  String get intake_witness_candidatesHeader => 'Authorized Witnesses';
+
+  @override
+  String get intake_witness_candidatesDescription =>
+      'One of the following personnel must log in as a witness';
+
+  @override
+  String get intake_witness_offShiftBadge => 'Off Shift';
+
+  @override
+  String get intake_witness_loginHeader => 'Witness Login';
+
+  @override
+  String get intake_witness_loginDescription =>
+      'Enter your password — the on-screen keyboard opens automatically';
+
+  @override
+  String get intake_witness_usernameLabel => 'Username';
+
+  @override
+  String get intake_witness_passwordLabel => 'Password';
+
+  @override
+  String get intake_witness_confirmButton => 'Log In and Confirm';
+
+  @override
+  String get intake_witness_cancelButton => 'Cancel Intake';
+
+  @override
+  String intake_witness_remainingLabel(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString approvals remaining',
+      one: '$countString approval remaining',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get intake_witness_startButton => 'Start Intake';
+
+  @override
+  String intake_witness_confirmedMessage(String witnessName) {
+    return 'Witness confirmed: $witnessName';
+  }
 }

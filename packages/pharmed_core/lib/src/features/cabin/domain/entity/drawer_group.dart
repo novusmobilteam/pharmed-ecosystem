@@ -17,10 +17,13 @@ class DrawerGroup {
   /// Tip no 250 ise Serumdur
   bool get isSerum => slot.drawerConfig?.deviceTypeNo == 250;
 
+  // TODO : Localization
   String get name {
     if (isReturnDrawer) return 'İade Çekmecesi';
     if (isSerum) return 'Serum Kabini';
-    return isKubik ? 'Kübik Çekmece' : 'Birim Doz Çekmece (${drawerType?.compartmentCount} Göz)';
+    return isKubik
+        ? 'Kübik Çekmece (${compartmentCount == 16 ? '4x4' : '5x4'})'
+        : 'Birim Doz Çekmece (${drawerType?.compartmentCount} Göz - ${slot.drawerConfig?.numberOfSteps} Bölme )';
   }
 
   CabinType? get cabinType => slot.cabin?.type;
@@ -82,5 +85,22 @@ class DrawerGroup {
     result.sort((a, b) => a.orderNumber.compareTo(b.orderNumber));
 
     return result;
+  }
+}
+
+extension DrawerGroupListX on List<DrawerGroup> {
+  /// selectedUnitId'ye sahip unit'i ve onun ait olduğu group'u bulur.
+  /// Bulamazsa null döner.
+  ({DrawerGroup group, DrawerUnit unit})? findByUnitId(int? selectedUnitId) {
+    if (selectedUnitId == null) return null;
+
+    for (final group in this) {
+      for (final unit in group.units) {
+        if (unit.id == selectedUnitId) {
+          return (group: group, unit: unit);
+        }
+      }
+    }
+    return null;
   }
 }

@@ -11,44 +11,30 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../notifier/bed_assignment_state.dart';
+import '../notifier/bed_assignment_notifier.dart';
 
 part '../widgets/bed_card.dart';
 part '../widgets/action_buttons.dart';
 part '../widgets/bed_selector.dart';
 
 class BedAssignmentPanel extends StatelessWidget {
-  const BedAssignmentPanel({
-    super.key,
-    required this.state,
-    required this.onServiceSelected,
-    required this.onRoomSelected,
-    required this.onBedSelected,
-    required this.onSave,
-    required this.onDelete,
-  });
+  const BedAssignmentPanel({super.key, required this.notifier});
 
-  final BedAssignmentState state;
-  final ValueChanged<HospitalService?> onServiceSelected;
-  final ValueChanged<Room?> onRoomSelected;
-  final ValueChanged<Bed?> onBedSelected;
-  final VoidCallback onSave;
-  final VoidCallback onDelete;
+  final BedAssignmentNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    return switch (state) {
-      BedAssignmentCellSelected s => _CellSelectedContent(
-        state: s,
-        onServiceSelected: onServiceSelected,
-        onRoomSelected: onRoomSelected,
-        onBedSelected: onBedSelected,
-        onSave: onSave,
-        onDelete: onDelete,
-      ),
-      BedAssignmentSaving _ => const _SavingContent(),
-      _ => const _PlaceholderContent(),
-    };
+    final isSaving = notifier.isLoading(notifier.saveOp);
+
+    if (isSaving) {
+      return const _SavingContent();
+    }
+
+    if (!notifier.isCellSelected) {
+      return const _PlaceholderContent();
+    }
+
+    return _CellSelectedContent(notifier: notifier);
   }
 }
 
@@ -105,21 +91,9 @@ class _SavingContent extends StatelessWidget {
 }
 
 class _CellSelectedContent extends StatelessWidget {
-  const _CellSelectedContent({
-    required this.state,
-    required this.onServiceSelected,
-    required this.onRoomSelected,
-    required this.onBedSelected,
-    required this.onSave,
-    required this.onDelete,
-  });
+  const _CellSelectedContent({required this.notifier});
 
-  final BedAssignmentCellSelected state;
-  final ValueChanged<HospitalService?> onServiceSelected;
-  final ValueChanged<Room?> onRoomSelected;
-  final ValueChanged<Bed?> onBedSelected;
-  final VoidCallback onSave;
-  final VoidCallback onDelete;
+  final BedAssignmentNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
@@ -127,20 +101,14 @@ class _CellSelectedContent extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (state.existingAssignment == null)
-          _BedSelector(
-            state: state,
-            onServiceSelected: onServiceSelected,
-            onRoomSelected: onRoomSelected,
-            onBedSelected: onBedSelected,
-          ),
-        if (state.selectedBed != null) _BedCard(state: state),
+        if (notifier.existingAssignment == null) _BedSelector(notifier: notifier),
+        if (notifier.selectedBed != null) _BedCard(notifier: notifier),
         const SizedBox(height: 20),
         _ActionButtons(
-          existingAssignment: state.existingAssignment,
-          selectedBed: state.selectedBed,
-          onSave: onSave,
-          onDelete: onDelete,
+          existingAssignment: notifier.existingAssignment,
+          selectedBed: notifier.selectedBed,
+          onSave: notifier.saveAssignment,
+          onDelete: notifier.deleteAssignment,
         ),
       ],
     );

@@ -144,15 +144,15 @@ class MockCabinOperationService implements ICabinOperationService {
     _shouldFastForward = false;
     _statusPollCount = 0;
 
-    yield DrawerPhysicalStatus.locked;
-    await Future.delayed(const Duration(seconds: 2));
-    if (_shouldFastForward) return;
+    // yield DrawerPhysicalStatus.locked;
+    // await Future.delayed(const Duration(seconds: 2));
+    // if (_shouldFastForward) return;
 
     debugPrint('MOCK SENSOR (Master row:$row): Kullanıcı çekmeceyi çekti!');
     yield DrawerPhysicalStatus.fullyOpen;
 
     int elapsed = 0;
-    while (elapsed < 60000) {
+    while (elapsed < 40000) {
       await Future.delayed(const Duration(milliseconds: 500));
       elapsed += 500;
       if (_shouldFastForward) break;

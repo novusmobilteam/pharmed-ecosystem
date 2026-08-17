@@ -66,13 +66,11 @@ class MedValueCard extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: MedRadius.lgAll,
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
           color: MedColors.surface,
-          border: Border.all(color: hasError ? MedColors.red : MedColors.border),
-          borderRadius: MedRadius.mdAll,
+          border: Border.all(color: hasError ? MedColors.red : MedColors.border, width: 2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

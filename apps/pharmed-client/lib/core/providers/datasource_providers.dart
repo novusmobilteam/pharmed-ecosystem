@@ -1,88 +1,50 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
-import 'providers.dart';
-
-final userRemoteDataSourceProvider = Provider<UserRemoteDataSource>((ref) {
-  return UserRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final settingsRemoteDataSourceProvider = Provider<SettingsRemoteDataSource>((ref) {
-  return SettingsRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final cabinStockRemoteDataSourceProvider = Provider<CabinStockRemoteDataSource>((ref) {
-  return CabinStockRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final cabinStockLocalDataSourceProvider = Provider<CabinStockLocalDataSource>((ref) {
-  return CabinStockLocalDataSource();
-});
-
-final hospitalizationRemoteDataSourceProvider = Provider<HospitalizationRemoteDataSource>((ref) {
-  return HospitalizationRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final medicineRemoteDataSourceProvider = Provider<MedicineRemoteDataSource>((ref) {
-  return MedicineRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final prescriptionRemoteDataSourceProvider = Provider<PrescriptionRemoteDataSource>((ref) {
-  return PrescriptionRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final stationRemoteDataSourceProvider = Provider<StationRemoteDataSource>((ref) {
-  return StationRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final serviceRemoteDataSourceProvider = Provider<ServiceRemoteDataSource>((ref) {
-  return ServiceRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final dashboardRemoteDataSourceProvider = Provider<DashboardRemoteDataSource>((ref) {
-  return DashboardRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final faultRemoteDataSourceProvider = Provider<FaultRemoteDataSource>((ref) {
-  return FaultRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final assignmentRemoteDataSourceProvider = Provider<AssignmentRemoteDataSource>((ref) {
-  return AssignmentRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final cabinRemoteDataSourceProvider = Provider<CabinRemoteDataSource>((ref) {
-  return CabinRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final cabinLocaleDataSourceProvider = Provider<ICabinLocalDataSource>((ref) {
-  return CabinLocalDataSource();
-});
-
-final intakeDataSourceProvider = Provider((ref) {
-  return IntakeRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final refundDataSourceProvider = Provider((ref) {
-  return RefundRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final wasteDataSourceProvider = Provider((ref) {
-  return WasteRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final patientDataSourceProvider = Provider((ref) {
-  return PatientRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final censusDataSourceProvider = Provider((ref) {
-  return CensusRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final unloadDataSourceProvider = Provider((ref) {
-  return UnloadRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
-
-final cabinTemperatureDataSourceProvider = Provider((ref) {
-  return CabinTemperatureRemoteDataSource(apiManager: ref.read(apiManagerProvider));
-});
+class DatasourceProviders {
+  static List<SingleChildWidget> providers({bool isDev = false}) {
+    return [
+      Provider(create: (context) => ActiveIngredientRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => BranchRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => DosageFormRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => DrugClassRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => DrugTypeRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => FirmRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => HospitalizationRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => InconsistencyRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => KitContentRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => KitRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => MaterialTypeRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => MedicineRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => DashboardRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => PatientRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => PrescriptionRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => RefundRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => RoleRemoteDataSource(apiManager: context.read<APIManager>())),
+      Provider(create: (context) => ServiceRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => StationRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => CabinStockRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => CabinStockLocalDataSource()),
+      Provider(create: (context) => UnitRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => UserRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => WarehouseRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => WarningRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => RoleAuthorizationRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => UserAuthorizationRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => StockTransactionRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => CabinRemoteDataSource(apiManager: context.read())),
+      Provider<ICabinLocalDataSource>(create: (context) => CabinLocalDataSource()),
+      Provider(create: (context) => RefillListRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => PrescriptionTemplateRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => FaultRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => AssignmentRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => ReportRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => CabinTemperatureRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => SettingsRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => CensusRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => UnloadRemoteDataSource(apiManager: context.read())),
+      Provider(create: (context) => IntakeRemoteDataSource(apiManager: context.read())),
+    ];
+  }
+}

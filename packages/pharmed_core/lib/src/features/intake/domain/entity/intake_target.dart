@@ -16,7 +16,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-class IntakeTarget {
+class IntakeTarget implements CabinDrawerTarget {
   const IntakeTarget({required this.item, required this.details});
 
   /// Alımı yapılacak ilaç kalemi (doz, şahit, assignment, prescriptionItem).
@@ -69,4 +69,10 @@ class IntakeTarget {
       ..censusQuantity = value;
     return copyWith(details: next);
   }
+
+  /// Intake'te "girdi" kavramı miktar değil — plan zaten check aşamasında
+  /// kesinleşti (details her zaman dolu gelir). hasAnyEntry/job seviyesinde
+  /// anlamlı bir ayrım olmadığı için her zaman true.
+  @override
+  bool get hasEntry => true;
 }

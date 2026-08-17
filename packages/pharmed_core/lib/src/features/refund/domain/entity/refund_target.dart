@@ -11,7 +11,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-class RefundTarget {
+class RefundTarget implements CabinDrawerTarget {
   const RefundTarget({required this.item, this.isReturnDrawerTarget = false});
 
   final RefundableItem item;
@@ -23,4 +23,9 @@ class RefundTarget {
       !isReturnDrawerTarget && (assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false);
 
   bool get isValid => item.isReadyForExecution;
+
+  /// Miktar zaten Selection fazında (RefundableItem.returnQuantity)
+  /// belirlendi — Executing'de ayrıca "girdi" kavramı yok.
+  @override
+  bool get hasEntry => true;
 }

@@ -5,109 +5,97 @@
 //
 // Sol : AllPatientsPanel  — kabindeki tüm hastalar, + butonu
 // Sağ : MyPatientsPanel   — benim hastalarım, — butonu
-//
-// Sağ listede olan bir hasta sol listede Opacity(0.4) + onAdd:null ile
-// pasif gösterilir; tıklanamaz.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
+import '../../settings/notifier/settings_notifier.dart';
 import '../notifier/my_patients_notifier.dart';
-import '../notifier/my_patients_state.dart';
 
-class MyPatientsScreen extends ConsumerWidget {
+class MyPatientsScreen extends StatelessWidget {
   const MyPatientsScreen({super.key, required this.menu});
 
   final MenuItem menu;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
+  Widget build(BuildContext context) {
+    final cabinId = context.watch<DashboardNotifier>().cabinVisualizerData?.cabinId;
 
     if (cabinId == null) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _MyPatientsBodyView(cabinId: cabinId, menu: menu);
+    return ChangeNotifierProvider<MyPatientsNotifier>(
+      create: (ctx) => MyPatientsNotifier(
+        getBedAssignments: ctx.read(),
+        getHospitalizations: ctx.read(),
+        getMyPatients: ctx.read(),
+        addPatient: ctx.read(),
+        removePatients: ctx.read(),
+        authNotifier: ctx.read(),
+        getDeviceMode: ctx.read<SettingsNotifier>().getDeviceMode,
+      )..init(cabinId),
+      child: _MyPatientsBodyView(cabinId: cabinId, menu: menu),
+    );
   }
 }
 
-class _MyPatientsBodyView extends ConsumerStatefulWidget {
+class _MyPatientsBodyView extends StatefulWidget {
   const _MyPatientsBodyView({required this.cabinId, required this.menu});
 
   final int cabinId;
   final MenuItem menu;
 
   @override
-  ConsumerState<_MyPatientsBodyView> createState() => _MyPatientsBodyViewState();
+  State<_MyPatientsBodyView> createState() => _MyPatientsBodyViewState();
 }
 
-class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
-  @override
-  void initState() {
-    super.initState();
-    _initialize(widget.cabinId);
-  }
-
+class _MyPatientsBodyViewState extends State<_MyPatientsBodyView> {
   @override
   void didUpdateWidget(_MyPatientsBodyView old) {
     super.didUpdateWidget(old);
-    _initialize(widget.cabinId);
-  }
-
-  void _initialize(int cabinId) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ref.read(myPatientsNotifierProvider.notifier).init(cabinId);
-    });
+    if (widget.cabinId != old.cabinId) {
+      context.read<MyPatientsNotifier>().init(widget.cabinId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(myPatientsNotifierProvider);
-    final notifier = ref.read(myPatientsNotifierProvider.notifier);
+    final notifier = context.watch<MyPatientsNotifier>();
 
-    ref.listen(myPatientsNotifierProvider, (_, next) {
-      if (next is MyPatientsError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+    if (notifier.errorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        MessageUtils.showErrorSnackbar(context, notifier.errorMessage!);
         notifier.dismissError();
-      }
-    });
+      });
+    }
 
-    if (state is MyPatientsUninitialized || state is MyPatientsLoading) {
+    if (notifier.isInitialLoading) {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
     }
 
     return CabinOperationSelectionLayout(
       leftWidth: 440,
-      left: _AllPatientsPanel(state: state, notifier: notifier),
-      right: _MyPatientsPanel(state: state, notifier: notifier),
+      left: _AllPatientsPanel(notifier: notifier),
+      right: _MyPatientsPanel(notifier: notifier),
     );
   }
 }
 
 class _AllPatientsPanel extends StatelessWidget {
-  const _AllPatientsPanel({required this.state, required this.notifier});
+  const _AllPatientsPanel({required this.notifier});
 
-  final MyPatientsState state;
   final MyPatientsNotifier notifier;
 
   List<Hospitalization> get _filtered {
-    final q = state.search.toLowerCase();
-    if (q.isEmpty) return state.allPatients;
-    return state.allPatients.where((h) {
+    final q = notifier.search.toLowerCase();
+    if (q.isEmpty) return notifier.allPatients;
+    return notifier.allPatients.where((h) {
       final name = h.patient?.fullName.toLowerCase() ?? '';
       final room = h.bed?.room?.name?.toLowerCase() ?? h.room?.name?.toLowerCase() ?? '';
       return name.contains(q) || room.contains(q);
@@ -116,7 +104,7 @@ class _AllPatientsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myIds = state.myPatientHospitalizationIds;
+    final myIds = notifier.myPatientHospitalizationIds;
     final filtered = _filtered;
 
     return Container(
@@ -125,7 +113,6 @@ class _AllPatientsPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Arama
           CabinOperationSearchField(
             onChanged: notifier.onSearchChanged,
             hintText: context.l10n.patientPicker_searchHint,
@@ -133,30 +120,30 @@ class _AllPatientsPanel extends StatelessWidget {
 
           SizedBox(height: MedSpacing.sm),
 
-          // Liste
           Expanded(
             child: filtered.isEmpty
                 ? const EmptyStateWidget(variant: EmptyStateVariant.noResults)
                 : ListView.separated(
-                    //padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
                     itemCount: filtered.length,
                     separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
                     itemBuilder: (context, index) {
                       final h = filtered[index];
                       final hospId = h.id;
                       final isAlreadyMine = hospId != null && myIds.contains(hospId);
-                      final isPending = hospId != null && state.isPending(hospId);
+                      final isPending = hospId != null && notifier.isPending(hospId);
 
-                      return Opacity(
-                        opacity: isAlreadyMine ? 0.4 : 1.0,
-                        child: PatientSelectionCard(
-                          hospitalization: h,
-                          onTap: () {},
-                          showChevron: false,
-                          trailing: isPending ? const Center(child: MedLoadingIndicator()) : null,
-                          onAdd: (!isAlreadyMine && !isPending) ? () => notifier.addPatient(h) : null,
-                        ),
-                      );
+                      return Center();
+
+                      // return Opacity(
+                      //   opacity: isAlreadyMine ? 0.4 : 1.0,
+                      //   child: PatientSelectionCard(
+                      //     hospitalization: h,
+                      //     onTap: () {},
+                      //     showChevron: false,
+                      //     trailing: isPending ? const Center(child: MedLoadingIndicator()) : null,
+                      //     onAdd: (!isAlreadyMine && !isPending) ? () => notifier.addPatient(h) : null,
+                      //   ),
+                      // );
                     },
                   ),
           ),
@@ -167,31 +154,31 @@ class _AllPatientsPanel extends StatelessWidget {
 }
 
 class _MyPatientsPanel extends StatelessWidget {
-  const _MyPatientsPanel({required this.state, required this.notifier});
+  const _MyPatientsPanel({required this.notifier});
 
-  final MyPatientsState state;
   final MyPatientsNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    final myPatients = state.myPatients;
+    final myPatients = notifier.myPatients;
     return CabinOperationGrid(
       maxColumns: 3,
       itemCount: myPatients.length,
       itemBuilder: (context, index) {
         final mp = myPatients[index];
         final h = mp.hospitalization;
-        //if (h == null) return const SizedBox.shrink();
         final hospId = h?.id;
-        final isPending = hospId != null && state.isPending(hospId);
+        final isPending = hospId != null && notifier.isPending(hospId);
 
-        return PatientSelectionCard(
-          hospitalization: h ?? Hospitalization(),
-          onTap: () {},
-          showChevron: false,
-          trailing: isPending ? const Center(child: MedLoadingIndicator()) : null,
-          onRemove: isPending ? null : () => notifier.removePatient(mp),
-        );
+        return Center();
+
+        // return PatientSelectionCard(
+        //   hospitalization: h ?? Hospitalization(),
+        //   onTap: () {},
+        //   showChevron: false,
+        //   trailing: isPending ? const Center(child: MedLoadingIndicator()) : null,
+        //   onRemove: isPending ? null : () => notifier.removePatient(mp),
+        // );
       },
     );
   }

@@ -55,9 +55,7 @@ class CabinExecutionGridCard extends StatelessWidget {
       padding: MedSpacing.insetXl,
       decoration: BoxDecoration(
         color: MedColors.surface,
-        border: Border.all(color: hasError ? MedColors.amber : MedColors.border),
-        borderRadius: MedRadius.mdAll,
-        boxShadow: MedShadows.sm,
+        border: Border.all(color: hasError ? MedColors.red : MedColors.border, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

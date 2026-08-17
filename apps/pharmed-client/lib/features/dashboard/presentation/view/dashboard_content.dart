@@ -1,36 +1,31 @@
 part of 'dashboard_screen.dart';
 
 class DashboardContentFactory {
-  static Widget buildContent(
-    BuildContext context,
-    WidgetRef ref,
-    DashboardState state,
-    DashboardNotifier notifier,
-    bool isLoggedIn,
-  ) {
-    final loaded = state is DashboardLoaded ? state : null;
-    final route = loaded?.activeRoute ?? 'dashboard';
-    final activeMenu = loaded?.flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
+  static Widget buildContent(BuildContext context, DashboardNotifier notifier, bool isLoggedIn) {
+    final route = notifier.activeRoute;
+    final activeMenu = notifier.flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
+    final cabinData = notifier.cabinVisualizerData;
+    final auth = context.read<AuthNotifier>();
 
     return Listener(
       behavior: HitTestBehavior.translucent,
-      onPointerDown: (_) => ref.read(authNotifierProvider.notifier).onUserActivity(),
+      onPointerDown: (_) => auth.onUserActivity(),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 250),
         reverseDuration: Duration.zero,
         child: KeyedSubtree(
           key: ValueKey(route),
           child: switch (route) {
-            'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
-            'drug-assignment' => const AssignmentView(),
-            'drug-refill' => const RefillView(),
-            'drug-intake' => IntakeView(menu: activeMenu!),
+            'dashboard' => _buildMainDashboard(context, notifier, isLoggedIn),
+            'drug-assignment' => AssignmentView(),
+            'drug-refill' => RefillView(cabinData: cabinData),
+            'drug-intake' => IntakeView(cabinData: cabinData),
             'drug-activity' => const DrugActivityScreen(),
-            'drug-unload' => const UnloadView(),
-            'drug-census' => const CensusView(),
+            'drug-unload' => UnloadView(cabinData: cabinData),
+            'drug-census' => CensusView(cabinData: cabinData),
             'drawer-malfunction' => const FaultView(),
-            'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
-            'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
+            //'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
+            //'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
             'cabin-stock' => activeMenu != null ? CabinStockView(menu: activeMenu) : const SizedBox.shrink(),
             'patient-request-review' =>
               activeMenu != null ? PrescriptionView(menu: activeMenu) : const SizedBox.shrink(),
@@ -41,12 +36,9 @@ class DashboardContentFactory {
             'daily-job-list' => activeMenu != null ? JobListScreen(menu: activeMenu) : const SizedBox.shrink(),
             'expiring-materials' => ExpiringItemsScreen(),
             'unscanned-barcodes' => UnscannedBarcodesScreen(),
-            'cabin-design' => _CabinDesignRouteHandler(
-              cabinId: loaded?.data.cabinVisualizerData?.cabinId ?? 0,
-              notifier: notifier,
-            ),
-            'return-box-unload' => activeMenu != null ? UnloadDrawerView(menu: activeMenu) : const SizedBox.shrink(),
+            'cabin-design' => _CabinDesignRouteHandler(cabinId: cabinData?.cabinId ?? 0, notifier: notifier),
 
+            //'return-box-unload' => activeMenu != null ? UnloadDrawerView(menu: activeMenu) : const SizedBox.shrink(),
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
         ),
@@ -54,16 +46,15 @@ class DashboardContentFactory {
     );
   }
 
-  static Widget _buildMainDashboard(
-    BuildContext context,
-    DashboardState state,
-    DashboardNotifier notifier,
-    bool isLoggedIn,
-  ) => switch (state) {
-    DashboardLoading() => const Center(child: MedLoadingIndicator()),
-    DashboardError() => EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh),
-    DashboardLoaded s => _DashboardBody(state: s, notifier: notifier, isLoggedIn: isLoggedIn),
-  };
+  static Widget _buildMainDashboard(BuildContext context, DashboardNotifier notifier, bool isLoggedIn) {
+    if (notifier.isInitialLoading && notifier.menuTree.isEmpty) {
+      return const Center(child: MedLoadingIndicator());
+    }
+    if (notifier.globalErrorMessage != null) {
+      return EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh);
+    }
+    return _DashboardBody(notifier: notifier, isLoggedIn: isLoggedIn);
+  }
 }
 
 class _CabinDesignRouteHandler extends StatefulWidget {
@@ -96,60 +87,31 @@ class _CabinDesignRouteHandlerState extends State<_CabinDesignRouteHandler> {
 /// Sağ (sabit 300): telemetri → kabin
 /// Alt (tam genişlik): KPI şeridi — servis hazır olunca görünür
 class _DashboardBody extends StatelessWidget {
-  const _DashboardBody({required this.state, required this.notifier, required this.isLoggedIn});
+  const _DashboardBody({required this.notifier, required this.isLoggedIn});
 
-  final DashboardLoaded state;
   final DashboardNotifier notifier;
   final bool isLoggedIn;
 
   @override
   Widget build(BuildContext context) {
-    final data = state.data;
-
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Expanded(flex: 3, child: MenuView(isLoggedIn: isLoggedIn)),
+        VerticalDivider(width: 1),
         Expanded(
-          child: Row(
-            spacing: MedSpacing.lg,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: data.upcomingTreatments.showError
-                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
-                    : UpcomingTreatmentPanel(section: data.upcomingTreatments),
-              ),
-              Expanded(
-                child: data.drugActivities.showError
-                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
-                    : DrugActivityPanel(section: data.drugActivities),
-              ),
-              Expanded(
-                child: data.unappliedPrescriptions.showError
-                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
-                    : UnappliedPrescriptionPanel(section: data.unappliedPrescriptions),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(width: MedSpacing.xl3),
-
-        SizedBox(
-          width: 300,
+          flex: 7,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              data.hasCabinData
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: CabinStatusPanel(cabin: data.cabinVisualizerData!),
-                    )
-                  : SizedBox.shrink(),
-              const CabinTelemetryPanel(),
+              // Kpi Section
+              KpiView(),
+              Divider(height: 1),
+              Expanded(child: TablesView()),
+              // Tables
             ],
           ),
         ),
+        VerticalDivider(width: 1),
+        Expanded(flex: 2, child: Column(children: [])),
       ],
     );
   }

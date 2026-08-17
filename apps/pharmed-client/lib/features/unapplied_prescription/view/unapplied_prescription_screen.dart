@@ -6,91 +6,81 @@
 // Sol: PatientListPanel (hasta listesi)
 // Sağ: HospitalizationDetailBanner + RxCarousel
 //
-// prescriptionItems notifier katmanında filtrelenmiştir (pendingPickup).
-// View hiç filtre uygulamaz; RxCarousel'e direkt state.prescriptionItems geçilir.
+// prescriptionItems notifier katmanında filtrelenmiştir (purchasePending).
+// View hiç filtre uygulamaz.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/features/settings/notifier/settings_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
 import '../unapplied_prescription.dart';
 
-class UnappliedPrescriptionScreen extends ConsumerWidget {
+class UnappliedPrescriptionScreen extends StatelessWidget {
   const UnappliedPrescriptionScreen({super.key, required this.menu});
 
   final MenuItem menu;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
+  Widget build(BuildContext context) {
+    final cabinId = context.watch<DashboardNotifier>().cabinVisualizerData?.cabinId;
 
     if (cabinId == null) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _UnappliedPrescriptionBodyView(cabinId: cabinId, menu: menu);
+    return ChangeNotifierProvider<UnappliedPrescriptionNotifier>(
+      create: (ctx) => UnappliedPrescriptionNotifier(
+        getBedAssignments: ctx.read(),
+        getHospitalizations: ctx.read(),
+        getPrescriptionHistory: ctx.read(),
+        getDeviceMode: ctx.read<SettingsNotifier>().getDeviceMode, // GEÇİCİ köprü
+      )..init(cabinId),
+      child: _UnappliedPrescriptionBodyView(cabinId: cabinId, menu: menu),
+    );
   }
 }
 
-class _UnappliedPrescriptionBodyView extends ConsumerStatefulWidget {
+class _UnappliedPrescriptionBodyView extends StatefulWidget {
   const _UnappliedPrescriptionBodyView({required this.cabinId, required this.menu});
 
   final int cabinId;
   final MenuItem menu;
 
   @override
-  ConsumerState<_UnappliedPrescriptionBodyView> createState() => _UnappliedPrescriptionBodyViewState();
+  State<_UnappliedPrescriptionBodyView> createState() => _UnappliedPrescriptionBodyViewState();
 }
 
-class _UnappliedPrescriptionBodyViewState extends ConsumerState<_UnappliedPrescriptionBodyView> {
-  @override
-  void initState() {
-    super.initState();
-    _initialize(widget.cabinId);
-  }
-
+class _UnappliedPrescriptionBodyViewState extends State<_UnappliedPrescriptionBodyView> {
   @override
   void didUpdateWidget(_UnappliedPrescriptionBodyView old) {
     super.didUpdateWidget(old);
-    _initialize(widget.cabinId);
-  }
-
-  void _initialize(int cabinId) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ref.read(unappliedPrescriptionNotifierProvider.notifier).init(cabinId);
-    });
+    if (widget.cabinId != old.cabinId) {
+      context.read<UnappliedPrescriptionNotifier>().init(widget.cabinId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(unappliedPrescriptionNotifierProvider);
-    final notifier = ref.read(unappliedPrescriptionNotifierProvider.notifier);
+    final notifier = context.watch<UnappliedPrescriptionNotifier>();
 
-    ref.listen(unappliedPrescriptionNotifierProvider, (_, next) {
-      if (next is UnappliedPrescriptionError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+    if (notifier.errorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        MessageUtils.showErrorSnackbar(context, notifier.errorMessage!);
         notifier.dismissError();
-      }
-    });
+      });
+    }
 
-    if (state is UnappliedPrescriptionUninitialized || state is UnappliedPrescriptionLoading) {
+    if (notifier.isInitialLoading) {
       return const Center(child: MedLoadingIndicator());
     }
 
-    if (state.hospitalizations.isEmpty) {
+    if (notifier.hospitalizations.isEmpty) {
       return EmptyStateWidget(
         icon: PhosphorIcons.usersThree(),
         size: EmptyStateSize.normal,
@@ -100,36 +90,37 @@ class _UnappliedPrescriptionBodyViewState extends ConsumerState<_UnappliedPrescr
     }
 
     return CabinOperationSelectionLayout(
-      left: PatientSelectionGuide(
-        patients: state.hospitalizations,
-        selectedPatient: state.selectedPatient,
-        isPatientLoading: state.isPrescriptionsLoading,
-        search: state.search,
-        onPatientTap: notifier.onPatientTap,
-        onSearchChanged: notifier.onSearchChanged,
-        title: context.l10n.unappliedPrescription_panel_patientTitle,
-      ),
-      right: _UnappliedPrescriptionRightPanel(state: state),
+      left: SizedBox(),
+      // left: PatientSelectionGuide(
+      //   patients: notifier.hospitalizations,
+      //   selectedPatient: notifier.selectedPatient,
+      //   isPatientLoading: notifier.isPrescriptionsLoading,
+      //   search: notifier.search,
+      //   onPatientTap: notifier.onPatientTap,
+      //   onSearchChanged: notifier.onSearchChanged,
+      //   title: context.l10n.unappliedPrescription_panel_patientTitle,
+      // ),
+      right: _UnappliedPrescriptionRightPanel(notifier: notifier),
     );
   }
 }
 
 class _UnappliedPrescriptionRightPanel extends StatelessWidget {
-  const _UnappliedPrescriptionRightPanel({required this.state});
+  const _UnappliedPrescriptionRightPanel({required this.notifier});
 
-  final UnappliedPrescriptionState state;
+  final UnappliedPrescriptionNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    if (state.isPrescriptionsLoading) {
+    if (notifier.isPrescriptionsLoading) {
       return Center(child: MedLoadingIndicator());
     }
 
-    if (!state.isPatientSelected) {
+    if (!notifier.isPatientSelected) {
       return const EmptyStateWidget(variant: EmptyStateVariant.noPatientSelected);
     }
 
-    if (state.prescriptionItems.isEmpty) {
+    if (notifier.prescriptionItems.isEmpty) {
       return EmptyStateWidget(
         icon: PhosphorIcons.receiptX(),
         title: context.l10n.unadministered_prescriptions_empty_title,
@@ -137,6 +128,6 @@ class _UnappliedPrescriptionRightPanel extends StatelessWidget {
       );
     }
 
-    return RxCarousel(items: state.prescriptionItems, emptyVariant: EmptyStateVariant.error);
+    return RxCarousel(items: notifier.prescriptionItems, emptyVariant: EmptyStateVariant.error);
   }
 }

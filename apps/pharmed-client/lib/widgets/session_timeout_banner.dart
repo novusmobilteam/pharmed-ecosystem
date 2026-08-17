@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 // ═════════════════════════════════════════════════════════════════
 // SessionTimeoutBanner
@@ -16,17 +17,16 @@ class SessionTimeoutBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: MedSpacing.insetXl,
       decoration: BoxDecoration(
         color: MedColors.surface,
-        border: Border.all(color: const Color(0xFFF5D79E)),
-        borderRadius: MedRadius.mdAll,
+        border: Border.all(color: MedColors.red, width: 2),
         boxShadow: MedShadows.md,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.access_time_rounded, size: 20, color: MedColors.amber),
+          Icon(PhosphorIcons.clock(), size: 20, color: MedColors.red),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,16 +60,11 @@ class SessionTimeoutBanner extends StatelessWidget {
           GestureDetector(
             onTap: onExtend,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.smAll),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(color: MedColors.blue),
               child: Text(
                 context.l10n.session_timeout_continueButton,
-                style: const TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+                style: MedTextStyles.bodyMd(color: Colors.white, weight: FontWeight.bold),
               ),
             ),
           ),
@@ -107,7 +102,10 @@ class LockedBanner extends StatelessWidget {
               text: TextSpan(
                 style: MedTextStyles.bodySm(color: MedColors.text2),
                 children: [
-                  TextSpan(text: context.l10n.session_locked_prefix, style: TextStyle(color: MedColors.text2)),
+                  TextSpan(
+                    text: context.l10n.session_locked_prefix,
+                    style: TextStyle(color: MedColors.text2),
+                  ),
                   TextSpan(
                     text: context.l10n.session_locked_reason,
                     style: const TextStyle(color: MedColors.amber, fontWeight: FontWeight.w600),

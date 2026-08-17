@@ -1,78 +1,84 @@
-// [SWREQ-CLI-MREFILL-004] [IEC 62304 §5.5]
-// İlaç-merkezli master kabin dolum ekranının root view'ı.
-//
-// HMI tek-iş prensibi: her an ekranda TEK panel tam ekran gösterilir.
-//   - Selection fazı → MasterRefillSelectionPanel
-//   - Executing fazı → MasterRefillExecutionPanel (çekmece açılıyor / form)
-// Panel geçişi state tipine göre yapılır; iki panel asla yan yana durmaz.
-//
-// Sorumluluk:
-//   - CabinVisualizerData ile MasterRefillNotifier'ı initialize eder
-//   - Kuyruk hatası dialog'unu yönetir
-//   - MasterDrawerOperationWrapper ile sarar (sol alt köşe çekmece banner'ı)
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/hardware/hardware.dart';
+import 'package:pharmed_client/core/hardware/cabin/master_drawer/master_drawer_orchestrator_2.dart';
+import 'package:pharmed_client/widgets/cabin_operation_widget.dart';
+import 'package:pharmed_client/widgets/cabin_operation_selection_view.dart';
+import 'package:pharmed_client/widgets/med_rectangle_button.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../widgets/widgets.dart';
-import '../../refill.dart';
+import '../../../settings/notifier/settings_notifier.dart';
+import '../notifier/master_refill_notifier.dart';
 
-class MasterRefillView extends ConsumerStatefulWidget {
-  const MasterRefillView({super.key, this.data});
+part 'selection_view.dart';
+part 'execution_view.dart';
 
-  final CabinVisualizerData? data;
+class MasterRefillView extends StatefulWidget {
+  const MasterRefillView({super.key, required this.data});
+
+  final CabinVisualizerData data;
 
   @override
-  ConsumerState<MasterRefillView> createState() => _MasterRefillViewState();
+  State<MasterRefillView> createState() => _MasterRefillViewState();
 }
 
-class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
+class _MasterRefillViewState extends State<MasterRefillView> {
+  late final MasterRefillNotifier _notifier;
+  bool _snackbarScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _notifier = MasterRefillNotifier(
+      getAssignments: context.read(),
+      orchestrator: MasterDrawerOrchestrator(
+        startSession: context.read(),
+        openCubicLid: context.read(),
+        monitorClosure: context.read(),
+      ),
+      refillCabin: context.read(),
+    )..init(widget.data);
+    _notifier.addListener(_onNotifierChanged);
+  }
+
+  @override
+  void dispose() {
+    _notifier.removeListener(_onNotifierChanged);
+    _notifier.dispose();
+    super.dispose();
+  }
+
+  void _onNotifierChanged() {
+    final error = _notifier.transientSaveError;
+    if (error == null || _snackbarScheduled) return;
+    _snackbarScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _snackbarScheduled = false;
+      if (!mounted) return;
+      MessageUtils.showErrorSnackbar(context, error.message);
+      _notifier.dismissTransientSaveError();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(masterRefillNotifierProvider);
-    final notifier = ref.read(masterRefillNotifierProvider.notifier);
+    return ChangeNotifierProvider<MasterRefillNotifier>.value(
+      value: _notifier,
+      child: Consumer<MasterRefillNotifier>(
+        builder: (context, notifier, child) {
+          if (notifier.isLoading(notifier.fetchAssignmentOp) && notifier.assignments.isEmpty) {
+            return Center(child: MedLoadingIndicator());
+          }
 
-    ref.listen(masterRefillNotifierProvider, (_, next) {
-      if (next is MasterRefillError && next.isQueueError) {
-        MessageUtils.showConfirmDialog(
-          context: context,
-          action: ConfirmAction.custom,
-          customTitle: context.l10n.refill_error_queueTitle,
-          customMessage: next.failure.message(context).isNotEmpty
-              ? next.failure.message(context)
-              : context.l10n.refill_error_queueMessage,
-          iconData: PhosphorIcons.warning(),
-          color: MedColors.amber,
-          confirmButtonText: context.l10n.refill_error_continueNext,
-          cancelButtonText: context.l10n.refill_error_endProcess,
-          onConfirm: notifier.continueAfterError,
-          onCancel: notifier.abortAfterError,
-        );
-      } else if (next is MasterRefillError) {
-        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
-        notifier.dismissError();
-      }
-    });
+          if (notifier.isExecuting) {
+            return MasterRefillExecutionView(allGroups: widget.data.groups);
+          }
 
-    return MasterCabinRootScaffold<CabinVisualizerData, MasterRefillState>(
-      data: widget.data,
-      cabinIdOf: (d) => d.cabinId,
-      onInit: (d) => notifier.init(d),
-      state: state,
-      phaseOf: (s) => switch (s) {
-        MasterRefillUninitialized() || MasterRefillLoading() => const RootBooting(),
-        MasterRefillExecuting() => const RootExecuting(),
-        MasterRefillError(previousState: MasterRefillExecuting()) => const RootExecuting(),
-        _ => const RootSelection(),
-      },
-      selectionBuilder: (_) => MasterRefillSelectionView(allGroups: widget.data?.groups ?? const []),
-      executionBuilder: (_) => MasterRefillExecutionView(allGroups: widget.data?.groups ?? const []),
+          return MasterRefillSelectionView();
+        },
+      ),
     );
   }
 }

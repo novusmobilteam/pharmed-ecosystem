@@ -7155,5 +7155,103 @@
   "@masterDrawer_error_sensorCommunicationLost": {
     "description": "Shown when the drawer status sensor stops responding for multiple consecutive polls during open or close monitoring."
   },
-  "masterDrawer_error_unexpectedlyClosed": "The drawer was closed unexpectedly while still in use. Please reopen and try again."
+  "masterDrawer_error_unexpectedlyClosed": "The drawer was closed unexpectedly while still in use. Please reopen and try again.",
+  "patientPicker_urgentPatientActiveDescription": "For an urgent patient, you can only take medicines available without an order. You can later assign this patient to an admitted patient from the \"End Urgent Patient\" screen and continue your operations.\nTo continue with standard intake operations, press \"Delete\" to end this record and resume where you left off.",
+  "intake_action_witnessLogin": "Witness Login",
+"@intake_action_witnessLogin": {
+  "description": "Footer button on the intake medicine selection screen, shown instead of 'Start Intake' when at least one selected item requires a witness"
+},
+
+"intake_witness_dialogTitle": "Witness Approval Required",
+"@intake_witness_dialogTitle": {
+  "description": "Title of the witness confirmation modal opened before starting a controlled-substance intake"
+},
+
+"intake_witness_dialogSubtitle": "Witness entry is required before intake for controlled medicines — {done}/{total} approvals completed",
+"@intake_witness_dialogSubtitle": {
+  "description": "Subtitle under the witness dialog title, showing how many witness steps have been confirmed out of the total",
+  "placeholders": {
+    "done": {"type": "int"},
+    "total": {"type": "int"}
+  }
+},
+
+"intake_witness_stepsHeader": "Approval Steps",
+"@intake_witness_stepsHeader": {
+  "description": "Header above the list of witness steps in the left column of the witness confirmation modal"
+},
+
+"intake_witness_stepTitle": "Witness Step {index} — {count} Medicine",
+"@intake_witness_stepTitle": {
+  "description": "Title of a single witness step card, showing its order and how many medicines belong to it",
+  "placeholders": {
+    "index": {"type": "int"},
+    "count": {"type": "int"}
+  }
+},
+
+"intake_witness_candidatesHeader": "Authorized Witnesses",
+"@intake_witness_candidatesHeader": {
+  "description": "Header above the list of eligible witness candidates for the currently active witness step"
+},
+
+"intake_witness_candidatesDescription": "One of the following personnel must log in as a witness",
+"@intake_witness_candidatesDescription": {
+  "description": "Helper text under the authorized witnesses header, instructing the user to pick and authenticate one candidate"
+},
+
+"intake_witness_offShiftBadge": "Off Shift",
+"@intake_witness_offShiftBadge": {
+  "description": "Badge shown next to a witness candidate who is not currently on shift and therefore cannot be selected"
+},
+
+"intake_witness_loginHeader": "Witness Login",
+"@intake_witness_loginHeader": {
+  "description": "Header above the username/password fields in the right column of the witness confirmation modal"
+},
+
+"intake_witness_loginDescription": "Enter your password — the on-screen keyboard opens automatically",
+"@intake_witness_loginDescription": {
+  "description": "Helper text under the witness login header, explaining the password field behavior on the touchscreen kiosk"
+},
+
+"intake_witness_usernameLabel": "Username",
+"@intake_witness_usernameLabel": {
+  "description": "Label for the username field in the witness identity verification form"
+},
+
+"intake_witness_passwordLabel": "Password",
+"@intake_witness_passwordLabel": {
+  "description": "Label for the password field in the witness identity verification form"
+},
+
+"intake_witness_confirmButton": "Log In and Confirm",
+"@intake_witness_confirmButton": {
+  "description": "Button that submits the witness's credentials to confirm their identity for the current witness step"
+},
+
+"intake_witness_cancelButton": "Cancel Intake",
+"@intake_witness_cancelButton": {
+  "description": "Button in the witness dialog footer that cancels the entire intake and closes the witness flow"
+},
+
+"intake_witness_remainingLabel": "{count, plural, one{{count} approval remaining} other{{count} approvals remaining}}",
+"@intake_witness_remainingLabel": {
+  "description": "Label showing how many witness approval steps are still pending in the dialog footer",
+  "placeholders": {
+    "count": {"type": "num", "format": "compact"}
+  }
+},
+
+"intake_witness_startButton": "Start Intake",
+"@intake_witness_startButton": {
+  "description": "Primary button in the witness dialog footer, enabled only once all witness steps are completed; triggers startIntake"
+},
+"intake_witness_confirmedMessage": "Witness confirmed: {witnessName}",
+"@intake_witness_confirmedMessage": {
+  "description": "Success snackbar shown after a witness successfully authenticates for the current witness step in the intake witness confirmation modal",
+  "placeholders": {
+    "witnessName": {"type": "String"}
+  }
+}
 }

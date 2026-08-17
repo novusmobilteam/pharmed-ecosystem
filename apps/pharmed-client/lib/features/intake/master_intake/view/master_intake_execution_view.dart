@@ -1,128 +1,129 @@
-// [SWREQ-CLI-MINTAKE-006] [IEC 62304 §5.5]
-// FAZ 3 — Alım kuyruğunun işlendiği panel. Kübik/birim-doz ayrımı YOK —
-// ikisi de artık aynı sıralı akışla ilerliyor (tek target aç → işle →
-// kapat). Ekranda her zaman SADECE aktif target'a (currentTargetIndex) ait
-// hücreler gösterilir; aynı gözün detayları birden fazla stockId'ye
-// bölünmüşse (FIFO split) birden fazla kart görünebilir.
-//
-// Sınıf: Class B
+// // [SWREQ-CLI-MINTAKE-006] [IEC 62304 §5.5]
+// // FAZ 3 — Alım kuyruğunun işlendiği panel. Kübik/birim-doz ayrımı YOK —
+// // ikisi de artık aynı sıralı akışla ilerliyor (tek target aç → işle →
+// // kapat). Ekranda her zaman SADECE aktif target'a (currentTargetIndex) ait
+// // hücreler gösterilir; aynı gözün detayları birden fazla stockId'ye
+// // bölünmüşse (FIFO split) birden fazla kart görünebilir.
+// //
+// // Sınıf: Class B
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:pharmed_core/pharmed_core.dart';
+// import 'package:pharmed_ui/pharmed_ui.dart';
+// import 'package:pharmed_utils/pharmed_utils.dart';
 
-import '../../../../widgets/widgets.dart';
-import '../../intake.dart';
+// import '../../../../widgets/widgets.dart';
+// import '../../intake.dart';
 
-part 'intake_cell_card.dart';
+// part 'intake_cell_card.dart';
 
-class MasterIntakeExecutionView extends ConsumerWidget {
-  const MasterIntakeExecutionView({super.key, required this.allGroups});
+// class MasterIntakeExecutionView extends ConsumerWidget {
+//   const MasterIntakeExecutionView({super.key, required this.allGroups});
 
-  final List<DrawerGroup> allGroups;
+//   final List<DrawerGroup> allGroups;
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(masterIntakeNotifierProvider);
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final state = ref.watch(masterIntakeNotifierProvider);
 
-    final executing = switch (state) {
-      MasterIntakeExecuting e => e,
-      MasterIntakeError(previousState: MasterIntakeExecuting e) => e,
-      _ => null,
-    };
-    if (executing == null) return const SizedBox.shrink();
+//     final executing = switch (state) {
+//       MasterIntakeExecuting e => e,
+//       MasterIntakeError(previousState: MasterIntakeExecuting e) => e,
+//       _ => null,
+//     };
+//     if (executing == null) return const SizedBox.shrink();
 
-    final job = executing.currentJob;
-    if (job == null) return const SizedBox.shrink();
+//     final job = executing.currentJob;
+//     if (job == null) return const SizedBox.shrink();
 
-    final notifier = ref.read(masterIntakeNotifierProvider.notifier);
+//     final notifier = ref.read(masterIntakeNotifierProvider.notifier);
 
-    return CabinOperationExecutionLayout(
-      progressLabel: context.l10n.intake_label_queueProgress(executing.completedJobs + 1, executing.totalJobs),
-      progress: executing.progress,
-      onStopConfirmed: notifier.stopQueue,
-      stopLabel: context.l10n.intake_action_stop,
-      stopConfirmTitle: context.l10n.intake_stop_confirmTitle,
-      stopConfirmMessage: context.l10n.intake_stop_confirmMessage,
-      stopConfirmYesLabel: context.l10n.intake_stop_confirmYes,
-      cancelLabel: context.l10n.common_cancelButton,
-      locationItems: executing.toLocationItems(allGroups),
-      activeIndex: executing.currentIndex,
-      openedBuilder: (_) => _IntakeForm(state: executing, job: job, notifier: notifier),
-    );
-  }
-}
+//     return CabinOperationExecutionLayout(
+//       progressLabel: context.l10n.intake_label_queueProgress(executing.completedJobs + 1, executing.totalJobs),
+//       progress: executing.progress,
+//       onStopConfirmed: notifier.stopQueue,
+//       stopLabel: context.l10n.intake_action_stop,
+//       stopConfirmTitle: context.l10n.intake_stop_confirmTitle,
+//       stopConfirmMessage: context.l10n.intake_stop_confirmMessage,
+//       stopConfirmYesLabel: context.l10n.intake_stop_confirmYes,
+//       cancelLabel: context.l10n.common_cancelButton,
+//       locationItems: executing.toLocationItems(allGroups),
+//       activeIndex: executing.currentIndex,
+//       openedBuilder: (_) => _IntakeForm(state: executing, job: job, notifier: notifier),
+//       stage: notifier.orchestrator.stage,
+//     );
+//   }
+// }
 
-class _IntakeForm extends StatelessWidget {
-  const _IntakeForm({required this.state, required this.job, required this.notifier});
+// class _IntakeForm extends StatelessWidget {
+//   const _IntakeForm({required this.state, required this.job, required this.notifier});
 
-  final MasterIntakeExecuting state;
-  final IntakeDrawerJob job;
-  final MasterIntakeNotifier notifier;
+//   final MasterIntakeExecuting state;
+//   final IntakeDrawerJob job;
+//   final MasterIntakeNotifier notifier;
 
-  static const double _maxWidth = 720.0;
+//   static const double _maxWidth = 720.0;
 
-  bool get _canConfirm {
-    if (job.isKubik) {
-      final t = state.currentTarget;
-      return t != null && t.isValid;
-    }
-    return job.targets.every((t) => t.isValid); // birim doz: TÜM hedefler geçerli olmalı
-  }
+//   bool get _canConfirm {
+//     if (job.isKubik) {
+//       final t = state.currentTarget;
+//       return t != null && t.isValid;
+//     }
+//     return job.targets.every((t) => t.isValid); // birim doz: TÜM hedefler geçerli olmalı
+//   }
 
-  /// Artık kübik/birim doz farkı YOK - ikisi de aktif STEP'i (currentTargetIndex)
-  /// tek kart olarak gösterir. Birim dozda farklı ilaçlar (farklı portlar)
-  /// artık ASLA aynı ekranda birlikte gösterilmez - sırayla, port kapanınca
-  /// bir sonraki açılır (2026 düzeltmesi).
-  Widget _activeContent(BuildContext context, int stepIndex) {
-    final steps = IntakeCellGrouper.group(job.targets);
-    if (stepIndex < 0 || stepIndex >= steps.length) return const SizedBox.shrink();
-    final step = steps[stepIndex];
-    return IntakeCellCard(
-      group: step,
-      targets: job.targets,
-      stepLabel: context.l10n.refill_label_cellProgress(stepIndex + 1, steps.length),
-      onCountChanged: (v) => notifier.onGroupCountChanged(step, v),
-    );
-  }
+//   /// Artık kübik/birim doz farkı YOK - ikisi de aktif STEP'i (currentTargetIndex)
+//   /// tek kart olarak gösterir. Birim dozda farklı ilaçlar (farklı portlar)
+//   /// artık ASLA aynı ekranda birlikte gösterilmez - sırayla, port kapanınca
+//   /// bir sonraki açılır (2026 düzeltmesi).
+//   Widget _activeContent(BuildContext context, int stepIndex) {
+//     final steps = IntakeCellGrouper.group(job.targets);
+//     if (stepIndex < 0 || stepIndex >= steps.length) return const SizedBox.shrink();
+//     final step = steps[stepIndex];
+//     return IntakeCellCard(
+//       group: step,
+//       targets: job.targets,
+//       stepLabel: context.l10n.refill_label_cellProgress(stepIndex + 1, steps.length),
+//       onCountChanged: (v) => notifier.onGroupCountChanged(step, v),
+//     );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    final ti = state.currentTargetIndex;
-    final steps = IntakeCellGrouper.group(job.targets);
-    final isLastTarget = ti >= steps.length - 1;
-    final confirmLabel = !isLastTarget ? context.l10n.refill_action_nextCell : context.l10n.intake_action_complete;
+//   @override
+//   Widget build(BuildContext context) {
+//     final ti = state.currentTargetIndex;
+//     final steps = IntakeCellGrouper.group(job.targets);
+//     final isLastTarget = ti >= steps.length - 1;
+//     final confirmLabel = !isLastTarget ? context.l10n.refill_action_nextCell : context.l10n.intake_action_complete;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: _maxWidth),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Opacity(
-                opacity: state.isSaving ? 0.55 : 1.0,
-                child: IgnorePointer(
-                  ignoring: state.isSaving,
-                  child: SingleChildScrollView(child: _activeContent(context, ti)),
-                ),
-              ),
-            ),
-            const SizedBox(height: 18),
-            SizedBox(
-              width: double.infinity,
-              child: MedButton(
-                label: confirmLabel,
-                size: MedButtonSize.lg,
-                isLoading: state.isSaving,
-                onPressed: _canConfirm ? () => notifier.confirmCurrent() : null,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//     return Center(
+//       child: ConstrainedBox(
+//         constraints: const BoxConstraints(maxWidth: _maxWidth),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.stretch,
+//           children: [
+//             Expanded(
+//               child: Opacity(
+//                 opacity: state.isSaving ? 0.55 : 1.0,
+//                 child: IgnorePointer(
+//                   ignoring: state.isSaving,
+//                   child: SingleChildScrollView(child: _activeContent(context, ti)),
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(height: 18),
+//             SizedBox(
+//               width: double.infinity,
+//               child: MedButton(
+//                 label: confirmLabel,
+//                 size: MedButtonSize.lg,
+//                 isLoading: state.isSaving,
+//                 onPressed: _canConfirm ? () => notifier.confirmCurrent() : null,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

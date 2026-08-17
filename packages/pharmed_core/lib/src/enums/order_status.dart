@@ -5,6 +5,8 @@ import 'intake_type.dart';
 enum OrderStatus { ordered, orderless }
 
 extension OrderStatusExtension on OrderStatus {
+  bool get isOrderless => this == OrderStatus.orderless;
+
   String get label {
     switch (this) {
       case OrderStatus.ordered:
@@ -31,10 +33,6 @@ extension OrderStatusExtension on OrderStatus {
 
   bool get isActive {
     return this == OrderStatus.ordered;
-  }
-
-  bool get isOrderless {
-    return this == OrderStatus.orderless;
   }
 
   bool get isOrdered {

@@ -5915,4 +5915,80 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get masterDrawer_error_unexpectedlyClosed =>
       'Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin.';
+
+  @override
+  String get patientPicker_urgentPatientActiveDescription =>
+      'Acil hasta için sadece ordersız alınabilen ilaçları alabilirsiniz. Daha sonra \"Acil Hasta Sonlandır\" ekranından bu hastayı yatışı yapılmış bir hastaya atayabilir ve işlemlerinize devam edebilirsiniz.\nStandart alım işlemlerine devam etmek için \"Sil\" butonuna basarak kaydı sonlandırabilir ve işleminize kaldığınız yerden devam edebilirsiniz.';
+
+  @override
+  String get intake_action_witnessLogin => 'Şahit Girişi Yap';
+
+  @override
+  String get intake_witness_dialogTitle => 'Şahit Onayı Gerekli';
+
+  @override
+  String intake_witness_dialogSubtitle(int done, int total) {
+    return 'Kontrole tabi ilaçlar için alım öncesi şahit girişi zorunludur — $done/$total onay tamamlandı';
+  }
+
+  @override
+  String get intake_witness_stepsHeader => 'Onay Adımları';
+
+  @override
+  String intake_witness_stepTitle(int index, int count) {
+    return 'Şahit Adımı $index — $count İlaç';
+  }
+
+  @override
+  String get intake_witness_candidatesHeader => 'Yetkili Şahitler';
+
+  @override
+  String get intake_witness_candidatesDescription =>
+      'Aşağıdaki personelden biri şahit olarak giriş yapmalıdır';
+
+  @override
+  String get intake_witness_offShiftBadge => 'Vardiya Dışı';
+
+  @override
+  String get intake_witness_loginHeader => 'Şahit Girişi';
+
+  @override
+  String get intake_witness_loginDescription =>
+      'Şifrenizi girin — ekran klavyesi otomatik açılır';
+
+  @override
+  String get intake_witness_usernameLabel => 'Kullanıcı Adı';
+
+  @override
+  String get intake_witness_passwordLabel => 'Şifre';
+
+  @override
+  String get intake_witness_confirmButton => 'Giriş Yap ve Onayla';
+
+  @override
+  String get intake_witness_cancelButton => 'Alımı İptal Et';
+
+  @override
+  String intake_witness_remainingLabel(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Kalan onay: $countString',
+      one: 'Kalan onay: $countString',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get intake_witness_startButton => 'Alımı Başlat';
+
+  @override
+  String intake_witness_confirmedMessage(String witnessName) {
+    return 'Şahit onaylandı: $witnessName';
+  }
 }

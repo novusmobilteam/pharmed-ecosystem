@@ -1,18 +1,18 @@
 part of '../view/bed_assignment_panel.dart';
 
 class _BedCard extends StatelessWidget {
-  const _BedCard({required this.state});
+  const _BedCard({required this.notifier});
 
-  final BedAssignmentCellSelected state;
+  final BedAssignmentNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    final bed = state.selectedBed!;
-    final room = state.selectedRoom;
-    final service = state.selectedService;
+    final bed = notifier.selectedBed!;
+    final room = notifier.selectedRoom;
+    final service = notifier.selectedService;
 
     // Mevcut atamada yatış bilgisi varsa göster
-    final hospitalization = state.existingAssignment?.hospitalization;
+    final hospitalization = notifier.existingAssignment?.hospitalization;
     final patientName = hospitalization?.patient?.fullName;
 
     return Container(

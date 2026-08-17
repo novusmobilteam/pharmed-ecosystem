@@ -3,33 +3,7 @@
 // HiveCache wrapper'ından bağımsız; tüm flavor'larda yazar.
 // Sınıf: Class B
 
-import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-
-import '../../features/settings/notifier/settings_notifier.dart';
-
-final appSettingsCacheProvider = Provider<AppSettingsCache>((ref) {
-  return appSettingsCache;
-});
-
-final cachedDeviceModeProvider = FutureProvider<CabinType?>((ref) async {
-  final raw = await ref.read(appSettingsCacheProvider).getDeviceMode();
-  if (raw == null) return null;
-  return CabinType.values.firstWhereOrNull((t) => t.name == raw || 'CabinType.${t.name}' == raw);
-});
-
-// Efektif mod — debug override varsa onu kullan
-final deviceModeProvider = FutureProvider<CabinType?>((ref) async {
-  if (kDebugMode) {
-    final debugCabin = ref.watch(settingsNotifierProvider).debugCabin;
-    if (debugCabin != null) return debugCabin.type;
-  }
-  final mode = await ref.read(cachedDeviceModeProvider.future);
-  return mode;
-});
 
 class AppSettingsCache {
   static const _boxName = 'app_settings';
@@ -128,6 +102,3 @@ class AppSettingsCache {
     return _box!.get(_keyManualRts, defaultValue: false) as bool;
   }
 }
-
-/// Global singleton — notifier ve router tarafından paylaşılır.
-final appSettingsCache = AppSettingsCache();

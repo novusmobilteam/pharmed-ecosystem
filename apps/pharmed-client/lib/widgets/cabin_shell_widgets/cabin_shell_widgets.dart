@@ -3,11 +3,6 @@ export 'cabin_operation_grid.dart';
 export 'cabin_operation_search_field.dart';
 export 'cabin_operation_execution_layout.dart';
 
-/// Patient
-export 'selection/patient_selection/view/patient_selection_guide.dart';
-export 'selection/patient_selection/notifier/patient_selection_notifier.dart';
-export 'selection/patient_selection/notifier/patient_selection_state.dart';
-
 /// Genel
 export 'selection/cabin_selection_content_shell.dart';
 export 'cabin_operation_selection_layout.dart';

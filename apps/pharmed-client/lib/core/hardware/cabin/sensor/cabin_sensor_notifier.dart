@@ -11,57 +11,96 @@
 // Sınıf: Class B
 
 import 'dart:async';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../providers/providers.dart';
 import 'cabin_sensor_logger.dart';
-import 'cabin_sensor_state.dart';
-
-final cabinSensorProvider = NotifierProvider<CabinSensorNotifier, CabinSensorState>(CabinSensorNotifier.new);
 
 /// Sparkline'da tutulacak nokta sayısı.
 const _historyLength = 40;
 
-class CabinSensorNotifier extends Notifier<CabinSensorState> {
+class CabinSensorNotifier extends ChangeNotifier {
+  CabinSensorNotifier({
+    required StreamCabinSensorsUseCase streamSensors,
+    required CabinSensorLogger logger,
+    required AppSettingsCache settings,
+    required GetCabinThresholdsUseCase getCabinThresholds,
+  }) : _streamSensors = streamSensors,
+       _logger = logger,
+       _settings = settings,
+       _getCabinThresholds = getCabinThresholds {
+    unawaited(_init());
+  }
+
+  final StreamCabinSensorsUseCase _streamSensors;
+  final CabinSensorLogger _logger;
+  final AppSettingsCache _settings;
+  final GetCabinThresholdsUseCase _getCabinThresholds;
+
   StreamSubscription<CabinSensorReading>? _sub;
   int _pauseCount = 0;
 
-  StreamCabinSensorsUseCase get _streamSensors => ref.read(streamCabinSensorsUseCaseProvider);
-  CabinSensorLogger get _logger => ref.read(cabinSensorLoggerProvider);
-  AppSettingsCache get _settings => ref.read(appSettingsCacheProvider);
+  bool _isDisposed = false;
 
-  @override
-  CabinSensorState build() {
-    ref.onDispose(() => _sub?.cancel());
-    unawaited(_init());
-    return const CabinSensorState();
+  void _notify() {
+    if (_isDisposed) return;
+    notifyListeners();
   }
 
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _sub?.cancel();
+    super.dispose();
+  }
+
+  // ── State ────────────────────────────────────────────────────────
+
+  CabinSensorReading? _reading;
+  CabinSensorReading? get reading => _reading;
+
+  /// Servisten gelen ısı/nem eşikleri. Çekilene kadar (veya hata durumunda)
+  /// fallback değerler kullanılır.
+  CabinSensorThresholds _thresholds = CabinSensorThresholds.fallback;
+  CabinSensorThresholds get thresholds => _thresholds;
+
+  bool _isPaused = false;
+  bool get isPaused => _isPaused;
+
+  /// Sparkline için son N okuma. Null okumalar geçmişe girmez.
+  List<double> _tempHistory = const [];
+  List<double> get tempHistory => _tempHistory;
+
+  List<double> _humidityHistory = const [];
+  List<double> get humidityHistory => _humidityHistory;
+
+  // TODO : Düzelecek.
   Future<void> _init() async {
     // Kurulum tamamlanmadıysa ne kabin var ne eşik — donanıma hiç dokunma.
-    if (!await _settings.isSetupComplete()) {
-      return;
-    }
+    // if (!await _settings.isSetupComplete()) {
+    //   return;
+    // }
 
-    // Eşikler ve stream paralel — biri diğerini bekletmesin.
-    await Future.wait([_loadThresholds(), _start()]);
+    // // Eşikler ve stream paralel — biri diğerini bekletmesin.
+    // await Future.wait([_loadThresholds(), _start()]);
   }
 
   // ------------------------------------------------------------------- eşik
 
   Future<void> _loadThresholds() async {
     final cabinId = await _settings.getCurrentCabinId();
+    if (_isDisposed) return;
     if (cabinId == null) return;
 
-    final result = await ref.read(getCabinThresholdsUseCaseProvider)(cabinId: cabinId);
+    final result = await _getCabinThresholds(cabinId: cabinId);
+    if (_isDisposed) return;
 
     switch (result) {
       case Ok(:final value):
-        state = state.copyWith(thresholds: value);
+        _thresholds = value;
+        _notify();
       case Error():
     }
   }
@@ -73,6 +112,7 @@ class CabinSensorNotifier extends Notifier<CabinSensorState> {
     if (_pauseCount > 0) return;
 
     await _sub?.cancel();
+    if (_isDisposed) return;
 
     try {
       _sub = _streamSensors().listen(
@@ -94,11 +134,10 @@ class CabinSensorNotifier extends Notifier<CabinSensorState> {
   }
 
   void _onReading(CabinSensorReading reading) {
-    state = state.copyWith(
-      reading: reading,
-      tempHistory: _push(state.tempHistory, reading.temperature),
-      humidityHistory: _push(state.humidityHistory, reading.humidity),
-    );
+    _reading = reading;
+    _tempHistory = _push(_tempHistory, reading.temperature);
+    _humidityHistory = _push(_humidityHistory, reading.humidity);
+    _notify();
 
     _logger.record(reading);
   }
@@ -120,7 +159,8 @@ class CabinSensorNotifier extends Notifier<CabinSensorState> {
     if (_pauseCount == 1) {
       _sub?.cancel();
       _sub = null;
-      state = state.copyWith(isPaused: true);
+      _isPaused = true;
+      _notify();
 
       MedLogger.info(unit: 'CabinSensor', swreq: 'SWREQ-HW-SENSOR-001', message: 'Sensör polling duraklatıldı');
     }
@@ -132,7 +172,8 @@ class CabinSensorNotifier extends Notifier<CabinSensorState> {
 
     _pauseCount--;
     if (_pauseCount == 0) {
-      state = state.copyWith(isPaused: false);
+      _isPaused = false;
+      _notify();
       unawaited(_start());
 
       MedLogger.info(unit: 'CabinSensor', swreq: 'SWREQ-HW-SENSOR-001', message: 'Sensör polling devam ediyor');

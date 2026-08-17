@@ -1,8 +1,8 @@
 // [SWREQ-UI-DASH-003] [IEC 62304 §5.5]
 // Anasayfa state yöneticisi — fetch grubu + menü/rota.
-// Sensör telemetrisi (cabinSensorProvider) ve kabin bağlantısı
-// (cabinConnectionProvider) bağımsız yaşam döngüsüne sahiptir; bu notifier
-// onları yönetmez.
+// Sensör telemetrisi (CabinSensorNotifier) ve kabin bağlantısı
+// (CabinConnectionNotifier) bağımsız yaşam döngüsüne sahiptir; bu notifier
+// onları yönetmez, sadece connect() tetikler.
 // Repository'yi bilir, Dio/Hive'ı bilmez.
 // Sınıf: Class B
 
@@ -10,166 +10,260 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
+import 'package:pharmed_client/core/mixins/api_request_mixin.dart';
 import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../../core/hardware/hardware.dart';
-import '../../../../core/providers/providers.dart';
 import '../../../settings/notifier/settings_notifier.dart';
-import 'dashboard_state.dart';
 
-final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardState>(DashboardNotifier.new);
-
-class DashboardNotifier extends Notifier<DashboardState> {
-  static const _refreshInterval = Duration(minutes: 5);
-
-  Timer? _timer;
-
-  GetUpcomingTreatmentsUseCase get _getUpcomingTreatments => ref.read(getUpcomingTreatmensUseCaseProvider);
-  GetDrugActivitiesUseCase get _getDrugActivities => ref.read(getDrugActivitiesUseCaseProvider);
-  GetDashboardUnappliedPrescriptionsUseCase get _getUnapplied => ref.read(getUnappliedPrescriptionsUseCaseProvider);
-  GetCabinVisualizerDataUseCase get _getCabinVisualizer => ref.read(getCabinVisualizerDataUseCaseProvider);
-  AppSettingsCache get _settings => ref.read(appSettingsCacheProvider);
-
-  @override
-  DashboardState build() {
-    ref.onDispose(() => _timer?.cancel());
-
+class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
+  DashboardNotifier({
+    required GetUpcomingTreatmentsUseCase getUpcomingTreatments,
+    required GetDrugActivitiesUseCase getDrugActivities,
+    required GetDashboardUnappliedPrescriptionsUseCase getUnapplied,
+    required GetCabinVisualizerDataUseCase getCabinVisualizer,
+    required GetFilteredMenusUseCase getFilteredMenus,
+    required GetAllRoomsUseCase getAllRooms,
+    required GetAllBedsUseCase getAllBeds,
+    required GetAllServicesUseCase getAllServices,
+    required Future<CabinType?> Function() getDeviceMode,
+    required AppSettingsCache settings,
+    required AuthNotifier authNotifier,
+    required SettingsNotifier settingsNotifier,
+    required CabinConnectionNotifier cabinConnection,
+  }) : _getUpcomingTreatments = getUpcomingTreatments,
+       _getDrugActivities = getDrugActivities,
+       _getUnapplied = getUnapplied,
+       _getCabinVisualizer = getCabinVisualizer,
+       _getFilteredMenus = getFilteredMenus,
+       _getAllRooms = getAllRooms,
+       _getAllBeds = getAllBeds,
+       _getAllServices = getAllServices,
+       _getDeviceMode = getDeviceMode,
+       _settings = settings,
+       _authNotifier = authNotifier,
+       _settingsNotifier = settingsNotifier,
+       _cabinConnection = cabinConnection {
     if (kDebugMode) {
-      ref.listen(settingsNotifierProvider, (prev, next) {
-        if (prev?.debugCabin?.id != next.debugCabin?.id) {
-          unawaited(_load(cabinId: next.debugCabin?.id));
-        }
-      });
+      _settingsNotifier.addListener(_onSettingsChanged);
     }
-
-    return const DashboardLoading();
   }
 
+  //static const _refreshInterval = Duration(minutes: 5);
+
+  final GetUpcomingTreatmentsUseCase _getUpcomingTreatments;
+  final GetDrugActivitiesUseCase _getDrugActivities;
+  final GetDashboardUnappliedPrescriptionsUseCase _getUnapplied;
+  final GetCabinVisualizerDataUseCase _getCabinVisualizer;
+  final GetFilteredMenusUseCase _getFilteredMenus;
+  final GetAllRoomsUseCase _getAllRooms;
+  final GetAllBedsUseCase _getAllBeds;
+  final GetAllServicesUseCase _getAllServices;
+  final Future<CabinType?> Function() _getDeviceMode;
+  final AppSettingsCache _settings;
+  final AuthNotifier _authNotifier;
+  final SettingsNotifier _settingsNotifier;
+  final CabinConnectionNotifier _cabinConnection;
+
+  Timer? _timer;
+  bool _isDisposed = false;
+  int? _debugCabinIdWatched;
+
+  void _notify() {
+    if (_isDisposed) return;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _timer?.cancel();
+    if (kDebugMode) {
+      _settingsNotifier.removeListener(_onSettingsChanged);
+    }
+    super.dispose();
+  }
+
+  void _onSettingsChanged() {
+    final nextDebugCabinId = _settingsNotifier.debugCabin?.id;
+    if (_debugCabinIdWatched == nextDebugCabinId) return;
+    _debugCabinIdWatched = nextDebugCabinId;
+    unawaited(_load(cabinId: nextDebugCabinId));
+  }
+
+  bool _isInitialLoading = true;
+  bool get isInitialLoading => _isInitialLoading;
+
+  CabinType? _cabinType;
+  CabinType? get cabinType => _cabinType;
+
+  String? _globalErrorMessage;
+  String? get globalErrorMessage => _globalErrorMessage;
+
+  List<MenuItem> _menuTree = [];
+  List<MenuItem> get menuTree => _menuTree;
+
+  List<MenuItem>? _flattenedMenus;
+  List<MenuItem>? get flattenedMenus => _flattenedMenus;
+
+  String _activeRoute = 'dashboard';
+  String get activeRoute => _activeRoute;
+
+  bool get isLoaded => !_isInitialLoading && _globalErrorMessage == null;
+
+  List<PrescriptionItemMovement> _activities = const [];
+  List<PrescriptionItemMovement> get activities => _activities;
+
+  List<PrescriptionItem> _treatments = const [];
+  List<PrescriptionItem> get treatments => _treatments;
+
+  List<PrescriptionItem> _unapplieds = const [];
+  List<PrescriptionItem> get unapplieds => _unapplieds;
+
+  CabinVisualizerData? _cabinVisualizerData;
+  CabinVisualizerData? get cabinVisualizerData => _cabinVisualizerData;
+
+  final activitiesOp = OperationKey.custom('fetch-activities');
+  final treatmentsOp = OperationKey.custom('fetch-treatments');
+  final unappliedOp = OperationKey.custom('fetch-unapplied');
+  final cabinVisualizerOp = OperationKey.custom('fetch-cabin-visualizer');
+
+  bool get isActiveRouteDashboard => _activeRoute == 'dashboard';
+
   Future<void> initialize() async {
+    _cabinType = await _getDeviceMode();
+    if (_isDisposed) return;
+
     await Future.wait([_fetchMenus(), _load()]);
+    if (_isDisposed) return;
 
     if (await _settings.isSetupComplete()) {
-      ref.read(cabinConnectionProvider.notifier).connect();
+      if (_isDisposed) return;
+      unawaited(_cabinConnection.connect());
     }
 
-    _startPeriodicRefresh();
+    //_startPeriodicRefresh();
   }
 
   Future<void> refresh() => _load();
 
   Future<void> _load({int? cabinId}) async {
-    final mac = await DeviceInfo.getMacAddress();
-    final setupDone = await _settings.isSetupComplete();
+    if (_isDisposed) return;
+    _isInitialLoading = true;
+    _notify();
 
-    final results = await Future.wait([
-      _getUpcomingTreatments.call(mac: mac),
-      _getDrugActivities.call(mac: mac),
-      _getUnapplied.call(),
-      ref.read(allRoomsProvider.future),
-      ref.read(allBedsProvider.future),
-      ref.read(allServicesProvider.future),
+    if (_isDisposed) return;
+
+    await Future.wait([
+      _getAllRooms.call(),
+      _getAllBeds.call(),
+      _getAllServices.call(),
+      fetchActivities(),
+      fetchTreatments(),
+      fetchUnapplied(),
+      _fetchCabinVisualizer(debugCabinId: cabinId),
     ]);
 
-    final treatmentsResult = results[0] as Result<List<PrescriptionItem>>;
-    final activitiesResult = results[1] as Result<List<PrescriptionItemMovement>?>;
-    final unappliedResult = results[2] as Result<List<PrescriptionItem>>;
+    if (_isDisposed) return;
+    _isInitialLoading = false;
+    _notify();
+  }
 
-    final treatmentsSection = _toSection<List<PrescriptionItem>?>(treatmentsResult);
-    final activitiesSection = _toSection<List<PrescriptionItemMovement>?>(activitiesResult);
-    final unappliedSection = _toSection<List<PrescriptionItem>?>(unappliedResult);
-    final cabinVisualizer = setupDone ? await _loadCabinVisualizer(debugCabinId: cabinId) : null;
-
-    // Hiçbir kaynakta gösterilecek veri yoksa global hata
-    final allFailed =
-        treatmentsSection.data == null && activitiesSection.data == null && (setupDone && cabinVisualizer == null);
-
-    if (allFailed) {
-      state = DashboardError(message: contextlessL10n().dashboard_allSectionsLoadError);
-      return;
-    }
-
-    final data = DashboardData(
-      upcomingTreatments: treatmentsSection,
-      drugActivities: activitiesSection,
-      unappliedPrescriptions: unappliedSection,
-      cabinVisualizerData: cabinVisualizer,
+  Future<void> fetchActivities() async {
+    final mac = await DeviceInfo.getMacAddress();
+    await execute(
+      activitiesOp,
+      operation: () => _getDrugActivities.call(mac: mac),
+      onData: (data) {
+        _activities = data ?? const [];
+        _notify();
+      },
     );
-
-    final current = state;
-    state = current is DashboardLoaded ? current.copyWith(data: data) : DashboardLoaded(data: data);
   }
 
-  DashboardSection<T> _toSection<T>(Result<T> result) {
-    return switch (result) {
-      Ok(:final value) => DashboardSection<T>(data: value),
-      Error(:final error) => DashboardSection<T>(error: error.message),
-    };
+  Future<void> fetchTreatments() async {
+    final mac = await DeviceInfo.getMacAddress();
+    await execute(
+      treatmentsOp,
+      operation: () => _getUpcomingTreatments.call(mac: mac),
+      onData: (data) {
+        _treatments = data;
+        _notify();
+      },
+    );
   }
 
-  Future<CabinVisualizerData?> _loadCabinVisualizer({int? debugCabinId}) async {
-    final deviceMode = await ref.read(deviceModeProvider.future);
-    final cabinId = debugCabinId ?? await _settings.getCurrentCabinId();
-
-    final result = await _getCabinVisualizer.call(deviceMode: deviceMode, cabinId: cabinId);
-    return _unwrap(result);
+  Future<void> fetchUnapplied() async {
+    await execute(
+      unappliedOp,
+      operation: () => _getUnapplied.call(),
+      onData: (data) {
+        _unapplieds = data;
+        _notify();
+      },
+    );
   }
 
-  Future<void> refreshCabinVisualizer() async {
+  Future<void> _fetchCabinVisualizer({int? debugCabinId}) async {
     if (!await _settings.isSetupComplete()) return;
+    if (_isDisposed) return;
+    if (_cabinVisualizerData != null) return;
 
-    final cabin = await _loadCabinVisualizer();
-    if (cabin == null) return; // hata → mevcut görseli koru
+    await execute(
+      cabinVisualizerOp,
+      operation: () async {
+        final cabinId = debugCabinId ?? await _settings.getCurrentCabinId();
+        return _getCabinVisualizer.call(deviceMode: _cabinType, cabinId: cabinId);
+      },
+      onData: (cabin) {
+        _cabinVisualizerData = cabin;
+        _notify();
+      },
+    );
+  }
 
-    final current = state;
-    if (current is! DashboardLoaded) return;
-
-    state = current.copyWith(data: current.data.copyWith(cabinVisualizerData: cabin), cabinFailed: false);
+  /// Kabin görselini bağımsız olarak yeniden çeker (ör. donanım event'i
+  /// sonrası) — tüm dashboard'u yeniden yüklemeden.
+  Future<void> refreshCabinVisualizer() async {
+    if (_isInitialLoading) return;
+    await _fetchCabinVisualizer();
   }
 
   Future<void> _fetchMenus() async {
-    final user = ref.read(authNotifierProvider.notifier).currentUser;
-    final result = await ref.read(getFilteredMenusUseCaseProvider)(userId: user?.id);
+    final user = _authNotifier.currentUser;
+    final result = await _getFilteredMenus.call(userId: user?.id);
+    if (_isDisposed) return;
 
-    final menus = _unwrap(result);
-    if (menus == null) {
-      return;
-    }
-
-    final current = state;
-    state = current is DashboardLoaded
-        ? current.copyWith(menuTree: menus.tree, flattenedMenus: menus.flattened)
-        // _load henüz bitmedi — boş data ile Loaded'a geç, _load üzerine yazar
-        : DashboardLoaded(menuTree: menus.tree, flattenedMenus: menus.flattened);
+    result.when(
+      ok: (menus) {
+        _menuTree = menus.tree;
+        _flattenedMenus = menus.flattened;
+        _notify();
+      },
+      error: (_) {},
+    );
   }
 
-  /// [destination] int ise menuId, String ise doğrudan rota.
   void navigateTo(dynamic destination) {
-    final current = state;
-    if (current is! DashboardLoaded) return;
+    if (_isInitialLoading) return;
 
     final route = switch (destination) {
-      int id => current.flattenedMenus?.firstWhereOrNull((m) => m.id == id)?.slug ?? 'dashboard',
+      int id => _flattenedMenus?.firstWhereOrNull((m) => m.id == id)?.slug ?? 'dashboard',
       String path => path,
       _ => 'dashboard',
     };
 
-    state = current.copyWith(activeRoute: route);
+    _activeRoute = route;
+    _notify();
   }
 
-  void _startPeriodicRefresh() {
-    _timer?.cancel();
-    _timer = Timer.periodic(_refreshInterval, (_) {
-      unawaited(_load());
-    });
-  }
-
-  T? _unwrap<T>(Result<T> result) => switch (result) {
-    Ok(:final value) => value,
-    Error() => null,
-  };
+  // void _startPeriodicRefresh() {
+  //   _timer?.cancel();
+  //   _timer = Timer.periodic(_refreshInterval, (_) {
+  //     //_load();
+  //   });
+  // }
 }

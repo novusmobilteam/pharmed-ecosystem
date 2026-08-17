@@ -13,20 +13,8 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   final HospitalizationMapper _mapper;
 
   @override
-  Future<Result<ApiResponse<List<Hospitalization>>>> getHospitalizations({
-    int? skip,
-    int? take,
-    String? searchQuery,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
-    final result = await _dataSource.getHospitalizations(
-      skip: skip,
-      take: take,
-      searchQuery: searchQuery,
-      startDate: startDate,
-      endDate: endDate,
-    );
+  Future<Result<ApiResponse<List<Hospitalization>>>> getHospitalizations(PagedQueryParams params) async {
+    final result = await _dataSource.getHospitalizations(params);
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<Hospitalization>>(
@@ -40,19 +28,32 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<Hospitalization>>>> getActiveHospitalizations({
-    int? skip,
-    int? take,
-    String? searchQuery,
-    DateTime? startDate,
-    DateTime? endDate,
+  Future<Result<ApiResponse<List<Hospitalization>>>> getActiveHospitalizations(PagedQueryParams params) async {
+    final result = await _dataSource.getActiveHospitalizations(params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<Hospitalization>>(
+          data: apiResponse?.data != null ? _mapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess ?? true,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<Hospitalization>>>> getHospitalizationsByService(
+    PagedQueryParams params, {
+    required int serviceId,
+    required PatientFilterType filter,
+    bool myPatients = false,
   }) async {
-    final result = await _dataSource.getActiveHospitalizations(
-      skip: skip,
-      take: take,
-      searchQuery: searchQuery,
-      startDate: startDate,
-      endDate: endDate,
+    final result = await _dataSource.getHospitalizationsByService(
+      params,
+      filter: filter,
+      serviceId: serviceId,
+      myPatients: myPatients,
     );
     return result.when(
       ok: (apiResponse) => Result.ok(
@@ -92,20 +93,6 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   @override
   Future<Result<List<Hospitalization>>> getPatientsWithActivePrescription() async {
     final r = await _dataSource.getPatientsWithActivePrescription();
-    return r.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos)), error: (e) => Result.error(e));
-  }
-
-  @override
-  Future<Result<List<Hospitalization>>> getHospitalizationsByService({
-    required int serviceId,
-    required PatientFilterType filter,
-    bool myPatients = false,
-  }) async {
-    final r = await _dataSource.getHospitalizationsByService(
-      serviceId: serviceId,
-      filter: filter,
-      myPatients: myPatients,
-    );
     return r.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos)), error: (e) => Result.error(e));
   }
 

@@ -42,3 +42,19 @@ class WitnessContext {
   WitnessContext copyWith({User? witness}) =>
       WitnessContext(witnesses: witnesses, stations: stations, witness: witness ?? this.witness);
 }
+
+class WitnessStep {
+  const WitnessStep({required this.itemIds, required this.eligibleWitnesses, this.confirmedWitness});
+
+  final List<int> itemIds;
+  final List<User> eligibleWitnesses;
+  final User? confirmedWitness;
+
+  bool get isCompleted => confirmedWitness != null;
+
+  WitnessStep copyWith({User? confirmedWitness}) => WitnessStep(
+    itemIds: itemIds,
+    eligibleWitnesses: eligibleWitnesses,
+    confirmedWitness: confirmedWitness ?? this.confirmedWitness,
+  );
+}

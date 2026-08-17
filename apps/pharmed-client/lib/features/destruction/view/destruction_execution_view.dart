@@ -2,85 +2,92 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../widgets/widgets.dart';
+import '../../../widgets/cabin_shell_widgets/cabin_operation_execution_layout.dart';
 import '../../settings/notifier/settings_notifier.dart';
 import '../notifier/destruction_notifier.dart';
-import '../notifier/destruction_state.dart';
 
-class DestructionExecutionView extends ConsumerWidget {
+class DestructionExecutionView extends StatelessWidget {
   const DestructionExecutionView({super.key, required this.allGroups});
 
   final List<DrawerGroup> allGroups;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(destructionNotifierProvider);
-    final notifier = ref.read(destructionNotifierProvider.notifier);
+  Widget build(BuildContext context) {
+    final notifier = context.watch<DestructionNotifier>();
 
-    final executing = switch (state) {
-      DestructionExecuting e => e,
-      DestructionError(previousState: DestructionExecuting e) => e,
-      _ => null,
-    };
-    if (executing == null) return const SizedBox.shrink();
-
-    final job = executing.currentJob;
+    final job = notifier.currentJob;
     if (job == null) return const SizedBox.shrink();
 
     return CabinOperationExecutionLayout(
-      progressLabel: context.l10n.destruction_label_queueProgress(executing.completedJobs + 1, executing.totalJobs),
-      progress: executing.progress,
+      stage: notifier.orchestrator.stage,
+      progressLabel: context.l10n.destruction_label_queueProgress(_completedJobs(notifier) + 1, notifier.jobs.length),
+      progress: _progress(notifier),
       onStopConfirmed: notifier.stopQueue,
       stopLabel: context.l10n.destruction_action_stop,
       stopConfirmTitle: context.l10n.destruction_stop_confirmTitle,
       stopConfirmMessage: context.l10n.destruction_stop_confirmMessage,
       stopConfirmYesLabel: context.l10n.destruction_stop_confirmYes,
       cancelLabel: context.l10n.common_cancelButton,
-      locationItems: executing.toLocationItems(allGroups),
-      activeIndex: executing.currentIndex,
-      openedBuilder: (_) => _DestructionForm(state: executing, job: job, notifier: notifier),
+      locationItems: _toLocationItems(notifier, allGroups),
+      activeIndex: notifier.currentIndex,
+      openedBuilder: (_) => _DestructionForm(job: job, notifier: notifier),
+      onRequestClose: notifier.orchestrator.confirmClose,
+    );
+  }
+
+  int _completedJobs(DestructionNotifier notifier) =>
+      notifier.jobs.where((j) => j.status == CabinOperationJobStatus.completed).length;
+
+  double _progress(DestructionNotifier notifier) {
+    final total = notifier.jobs.length;
+    return total == 0 ? 0 : _completedJobs(notifier) / total;
+  }
+
+  List<DrawerQueueItem> _toLocationItems(DestructionNotifier notifier, List<DrawerGroup> allGroups) {
+    return buildCabinExecutionLocationItems(
+      allGroups: allGroups,
+      jobs: notifier.jobs,
+      currentIndex: notifier.currentIndex,
+      currentTargetIndex: notifier.currentTargetIndex,
+      cabinDrawerIdOf: (job) => job.cabinDrawerId,
+      statusOf: (job) => job.status,
+      targetCountOf: (job) => job.targets.length,
+      assignmentAt: (job, i) => job.targets[i].assignment,
     );
   }
 }
 
-class _DestructionForm extends ConsumerWidget {
-  const _DestructionForm({required this.state, required this.job, required this.notifier});
+class _DestructionForm extends StatelessWidget {
+  const _DestructionForm({required this.job, required this.notifier});
 
-  final DestructionExecuting state;
-  final CabinOperationDrawerJob job;
+  final CabinDrawerJob<CabinOperationTarget> job;
   final DestructionNotifier notifier;
 
   static const double _maxWidth = 720.0;
   static const double _stackSpacing = 8;
 
   bool get _canConfirm {
-    final t = state.currentTarget;
+    final t = notifier.currentTarget;
     return t != null && t.isValid;
   }
 
-  Widget _cellCard(
-    BuildContext context,
-    WidgetRef ref,
-    CabinOperationTarget target,
-    int index,
-    int ti,
-    bool isPerCellMiadEnabled,
-  ) {
+  Widget _cellCard(BuildContext context, CabinOperationTarget target, int index, bool isPerCellMiadEnabled) {
     final step = job.isKubik ? null : target.steps[index];
     final currentStock = job.isKubik
         ? target.currentQuantity
-        : target.assignment.toDisplayQuantity(step!.countQuantity);
+        : target.assignment?.toDisplayQuantity(step!.countQuantity ?? 0) ?? 0;
     final count = job.isKubik ? target.cubicCount : step!.countQuantity;
-    final destroyQty = job.isKubik ? target.cubicSecondary : step!.secondaryQuantity; // imha miktarı — kullanıcı girer
+    final destroyQty = job.isKubik ? target.cubicSecondary : step!.secondaryQuantity;
     final miad = job.isKubik ? target.cubicMiad : step!.miadDate;
 
     final hasEntry = (count ?? 0) > 0;
     final miadHasError = isPerCellMiadEnabled && ((hasEntry && miad == null) || miad.isExpiredMiad);
-    final unitSuffix = target.assignment.medicine?.operationUnitLocalized(context);
+    final unitSuffix = target.assignment?.medicine?.operationUnitLocalized(context);
 
     return CabinExecutionGridCard(
       assignment: target.assignment,
@@ -95,7 +102,7 @@ class _DestructionForm extends ConsumerWidget {
           value: destroyQty,
           suffix: unitSuffix,
           onChanged: (v) =>
-              job.isKubik ? notifier.onCubicSecondaryChanged(ti, v) : notifier.onStepSecondaryChanged(ti, index, v),
+              job.isKubik ? notifier.onCubicSecondaryChanged(v) : notifier.onStepSecondaryChanged(index, v),
         ),
         if (isPerCellMiadEnabled)
           MedDateValueCard(label: context.l10n.refill_label_expiryDate, date: miad, hasError: miadHasError),
@@ -110,11 +117,11 @@ class _DestructionForm extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final target = state.currentTarget;
-    final ti = state.currentTargetIndex;
+  Widget build(BuildContext context) {
+    final target = notifier.currentTarget;
+    final ti = notifier.currentTargetIndex;
 
-    final isPerCellMiadEnabled = job.isKubik || ref.watch(isPerCellMiadEnabledProvider);
+    final isPerCellMiadEnabled = job.isKubik || context.watch<SettingsNotifier>().isPerCellMiadEnabled;
     final itemCount = job.isKubik ? 1 : (target?.steps.length ?? 0);
 
     final isLastTarget = ti >= job.targets.length - 1;
@@ -126,15 +133,13 @@ class _DestructionForm extends ConsumerWidget {
     if (target == null) {
       content = const SizedBox.shrink();
     } else if (job.isKubik) {
-      content = SingleChildScrollView(child: _cellCard(context, ref, target, 0, ti, isPerCellMiadEnabled));
+      content = SingleChildScrollView(child: _cellCard(context, target, 0, isPerCellMiadEnabled));
     } else {
-      // Fiziksel çekmecenin ÜSTTEN GÖRÜNÜMÜ: en yüksek göz numarası EN
-      // ÜSTTE, göz 1 EN ALTTA — bkz. master-refill-flow skill §10.1.
       final stack = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (int i = itemCount - 1; i >= 0; i--) ...[
-            _cellCard(context, ref, target, i, ti, isPerCellMiadEnabled),
+            _cellCard(context, target, i, isPerCellMiadEnabled),
             if (i > 0) const SizedBox(height: _stackSpacing),
           ],
         ],
@@ -152,6 +157,8 @@ class _DestructionForm extends ConsumerWidget {
           : SingleChildScrollView(child: stack);
     }
 
+    final isSaving = notifier.isLoading(notifier.submitTargetOp);
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: _maxWidth),
@@ -160,8 +167,8 @@ class _DestructionForm extends ConsumerWidget {
           children: [
             Expanded(
               child: Opacity(
-                opacity: state.isSaving ? 0.55 : 1.0,
-                child: IgnorePointer(ignoring: state.isSaving, child: content),
+                opacity: isSaving ? 0.55 : 1.0,
+                child: IgnorePointer(ignoring: isSaving, child: content),
               ),
             ),
             const SizedBox(height: 18),
@@ -170,8 +177,8 @@ class _DestructionForm extends ConsumerWidget {
               child: MedButton(
                 label: confirmLabel,
                 size: MedButtonSize.lg,
-                isLoading: state.isSaving,
-                onPressed: _canConfirm ? () => notifier.confirmCurrent() : null,
+                isLoading: isSaving,
+                onPressed: _canConfirm ? notifier.confirmCurrent : null,
               ),
             ),
           ],

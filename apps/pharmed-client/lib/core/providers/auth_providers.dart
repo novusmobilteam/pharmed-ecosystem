@@ -1,64 +1,60 @@
 // [SWREQ-UI-AUTH-001]
-// Auth katmanı provider'ları.
+// Auth katmanı provider'ları — pharmed-client.
 // Sınıf: Class B
 
-import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/flavor/app_flavor.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import '../flavor/auth_config.dart';
-import 'providers.dart';
+import 'package:pharmed_client/core/flavor/auth_config.dart';
+import 'package:pharmed_client/core/cache/app_settings_cache.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
-// ── Config ────────────────────────────────────────────────────────
+import '../../features/auth/notifier/auth_notifier.dart';
 
-final authConfigProvider = Provider<AuthConfig>((ref) {
-  return AuthConfig(inactivityTimeoutMinutes: 10, warningSeconds: 60);
-});
+class AuthProviders {
+  static List<SingleChildWidget> providers() => [
+    Provider<AuthConfig>(create: (_) => AuthConfig(inactivityTimeoutMinutes: 5, warningSeconds: 60)),
 
-// ── Plain Dio — login endpoint'i token gerektirmez ────────────────
+    Provider<AuthCacheDataSource>(create: (_) => AuthCacheDataSource(boxPrefix: 'client_')),
+    Provider<AuthRemoteDataSource>(create: (ctx) => AuthRemoteDataSource(dio: ctx.read())),
 
-final plainDioProvider = Provider<Dio>((ref) {
-  final config = FlavorConfig.instance;
-  return Dio(
-    BaseOptions(
-      baseUrl: config.baseUrl,
-      connectTimeout: Duration(milliseconds: config.connectTimeoutMs),
-      receiveTimeout: Duration(milliseconds: config.receiveTimeoutMs),
-      headers: {'Content-Type': 'application/json'},
+    Provider<UserRemoteDataSource>(create: (ctx) => UserRemoteDataSource(apiManager: ctx.read<APIManager>())),
+    Provider<UserMapper>(create: (_) => const UserMapper()),
+
+    Provider<IUserReader>(
+      create: (ctx) => UserRepositoryImpl(dataSource: ctx.read<UserRemoteDataSource>(), mapper: ctx.read<UserMapper>()),
     ),
-  );
-});
 
-// ── Auth datasource'ları ──────────────────────────────────────────
+    Provider<IAuthRepository>(
+      create: (ctx) => AuthRepositoryImpl(
+        remoteDataSource: ctx.read<AuthRemoteDataSource>(),
+        cacheDataSource: ctx.read<AuthCacheDataSource>(),
+        userReader: ctx.read<IUserReader>(),
+        tokenHolder: ctx.read<TokenHolder>(),
+      ),
+    ),
 
-final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
-  return AuthRemoteDataSource(dio: ref.read(plainDioProvider));
-});
+    Provider<LoginUseCase>(create: (ctx) => LoginUseCase(ctx.read<IAuthRepository>())),
+    Provider<LoginWithBadgeUseCase>(create: (ctx) => LoginWithBadgeUseCase(ctx.read<IAuthRepository>())),
+    Provider<LogoutUseCase>(create: (ctx) => LogoutUseCase(ctx.read<IAuthRepository>())),
 
-final authRepositoryProvider = Provider<IAuthRepository>((ref) {
-  return AuthRepositoryImpl(
-    remoteDataSource: ref.read(authRemoteDataSourceProvider),
-    cacheDataSource: ref.read(authCacheProvider),
-    userReader: ref.read(userRepositoryProvider),
-    tokenHolder: ref.read(tokenHolderProvider),
-  );
-});
-
-final userMapperProvider = Provider<UserMapper>((ref) {
-  return const UserMapper();
-});
-
-// ── Use case'ler ──────────────────────────────────────────────────
-
-final loginUseCaseProvider = Provider<LoginUseCase>((ref) {
-  return LoginUseCase(ref.read(authRepositoryProvider));
-});
-
-final loginWithBadgeUseCaseProvider = Provider<LoginWithBadgeUseCase>((ref) {
-  return LoginWithBadgeUseCase(ref.read(authRepositoryProvider));
-});
-
-final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
-  return LogoutUseCase(ref.read(authRepositoryProvider));
-});
+    ChangeNotifierProvider<AuthNotifier>(
+      create: (ctx) {
+        final notifier = AuthNotifier(
+          config: ctx.read<AuthConfig>(),
+          loginUseCase: ctx.read<LoginUseCase>(),
+          loginWithBadge: ctx.read<LoginWithBadgeUseCase>(),
+          logoutUseCase: ctx.read<LogoutUseCase>(),
+          cache: ctx.read<AuthCacheDataSource>(),
+          tokenHolder: ctx.read<TokenHolder>(),
+          appSettingsCache: ctx.read<AppSettingsCache>(),
+        );
+        // 401 callback'i — APIManager zaten NetworkProviders'da TokenHolder
+        // ile kuruldu, burada TokenHolder'a "kim dinleyecek" bilgisini
+        // veriyoruz. AuthNotifier kurulduktan hemen sonra, tek noktada.
+        ctx.read<TokenHolder>().setOnUnauthorized(notifier.onUnauthorized);
+        return notifier;
+      },
+    ),
+  ];
+}

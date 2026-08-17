@@ -2,87 +2,73 @@
 // Sınıf : Class A
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
 import '../cabin_stock.dart';
 
-class CabinStockView extends ConsumerWidget {
+class CabinStockView extends StatelessWidget {
   const CabinStockView({super.key, required this.menu});
 
   final MenuItem menu;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
+  Widget build(BuildContext context) {
+    final dashboard = context.watch<DashboardNotifier>();
+    final cabinId = dashboard.cabinVisualizerData?.cabinId;
 
     if (cabinId == null) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _CabinStockBodyView(cabinId: cabinId, menu: menu);
+    return ChangeNotifierProvider<CabinStockNotifier>(
+      create: (ctx) =>
+          CabinStockNotifier(getBedAssignments: ctx.read(), getPrescriptionHistory: ctx.read())..init(cabinId),
+      child: _CabinStockBodyView(cabinId: cabinId, menu: menu),
+    );
   }
 }
 
-class _CabinStockBodyView extends ConsumerStatefulWidget {
+class _CabinStockBodyView extends StatefulWidget {
   const _CabinStockBodyView({required this.cabinId, required this.menu});
 
   final int cabinId;
   final MenuItem menu;
 
   @override
-  ConsumerState<_CabinStockBodyView> createState() => _CabinStockBodyViewState();
+  State<_CabinStockBodyView> createState() => _CabinStockBodyViewState();
 }
 
-class _CabinStockBodyViewState extends ConsumerState<_CabinStockBodyView> {
-  @override
-  void initState() {
-    super.initState();
-    _initialize(widget.cabinId);
-  }
-
+class _CabinStockBodyViewState extends State<_CabinStockBodyView> {
   @override
   void didUpdateWidget(_CabinStockBodyView old) {
     super.didUpdateWidget(old);
-    _initialize(widget.cabinId);
-  }
-
-  void _initialize(int cabinId) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ref.read(cabinStockNotifierProvider.notifier).init(cabinId);
-    });
+    if (widget.cabinId != old.cabinId) {
+      context.read<CabinStockNotifier>().init(widget.cabinId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(cabinStockNotifierProvider);
-    final notifier = ref.read(cabinStockNotifierProvider.notifier);
+    final notifier = context.watch<CabinStockNotifier>();
 
-    ref.listen(cabinStockNotifierProvider, (_, next) {
-      if (next is CabinStockError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+    if (notifier.errorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        MessageUtils.showErrorSnackbar(context, notifier.errorMessage!);
         notifier.dismissError();
-      }
-    });
+      });
+    }
 
-    if (state is CabinStockUninitialized || state is CabinStockLoading) {
+    if (notifier.isLoading(notifier.initOp) && notifier.hospitalizations.isEmpty) {
       return const Center(child: MedLoadingIndicator());
     }
 
-    if (state.hospitalizations.isEmpty) {
+    if (notifier.hospitalizations.isEmpty) {
       return EmptyStateWidget(
         icon: PhosphorIcons.usersThree(),
         size: EmptyStateSize.normal,
@@ -92,36 +78,37 @@ class _CabinStockBodyViewState extends ConsumerState<_CabinStockBodyView> {
     }
 
     return CabinOperationSelectionLayout(
-      left: PatientSelectionGuide(
-        patients: state.hospitalizations,
-        selectedPatient: state.selectedPatient,
-        isPatientLoading: state.isPrescriptionsLoading,
-        search: state.search,
-        onPatientTap: notifier.onPatientTap,
-        onSearchChanged: notifier.onSearchChanged,
-        title: context.l10n.unappliedPrescription_panel_patientTitle,
-      ),
-      right: _StockRightPanel(state: state),
+      left: SizedBox(),
+      // left: PatientSelectionGuide(
+      //   patients: notifier.hospitalizations,
+      //   selectedPatient: notifier.selectedPatient,
+      //   isPatientLoading: notifier.isPrescriptionsLoading,
+      //   search: notifier.search,
+      //   onPatientTap: notifier.onPatientTap,
+      //   onSearchChanged: notifier.onSearchChanged,
+      //   title: context.l10n.unappliedPrescription_panel_patientTitle,
+      // ),
+      right: _StockRightPanel(notifier: notifier),
     );
   }
 }
 
 class _StockRightPanel extends StatelessWidget {
-  const _StockRightPanel({required this.state});
+  const _StockRightPanel({required this.notifier});
 
-  final CabinStockState state;
+  final CabinStockNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    if (state.isPrescriptionsLoading) {
+    if (notifier.isPrescriptionsLoading) {
       return Center(child: MedLoadingIndicator());
     }
 
-    if (!state.isPatientSelected) {
+    if (!notifier.isPatientSelected) {
       return const EmptyStateWidget(variant: EmptyStateVariant.noPatientSelected);
     }
 
-    if (state.prescriptionItems.isEmpty) {
+    if (notifier.prescriptionItems.isEmpty) {
       return EmptyStateWidget(
         icon: PhosphorIcons.package(),
         title: context.l10n.cabin_stock_empty_title,
@@ -129,9 +116,9 @@ class _StockRightPanel extends StatelessWidget {
       );
     }
     return RxDrugPanel(
-      items: state.prescriptionItems,
-      selectedItem: state.selectedItem,
-      isBusy: state.isBusy,
+      items: notifier.prescriptionItems,
+      selectedItem: notifier.selectedItem,
+      isBusy: notifier.isBusy,
       onDrugTap: (_) {},
     );
   }

@@ -6,11 +6,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_client/core/flavor/auth_config.dart';
-import 'package:pharmed_client/core/providers/auth_providers.dart';
-import 'package:pharmed_client/core/providers/network_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -18,19 +15,54 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 
 import 'auth_state.dart';
 
-final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+class AuthNotifier extends ChangeNotifier {
+  AuthNotifier({
+    required AuthConfig config,
+    required LoginUseCase loginUseCase,
+    required LoginWithBadgeUseCase loginWithBadge,
+    required LogoutUseCase logoutUseCase,
+    required AuthCacheDataSource cache,
+    required TokenHolder tokenHolder,
+    required AppSettingsCache appSettingsCache,
+  }) : _config = config,
+       _loginUseCase = loginUseCase,
+       _loginWithBadge = loginWithBadge,
+       _logoutUseCase = logoutUseCase,
+       _cache = cache,
+       _tokenHolder = tokenHolder,
+       _appSettingsCache = appSettingsCache {
+    unawaited(_restoreSession());
+  }
 
-class AuthNotifier extends Notifier<AuthState> {
-  AuthConfig get _config => ref.read(authConfigProvider);
-  LoginUseCase get _loginUseCase => ref.read(loginUseCaseProvider);
-  LoginWithBadgeUseCase get _loginWithBadge => ref.read(loginWithBadgeUseCaseProvider);
-  LogoutUseCase get _logoutUseCase => ref.read(logoutUseCaseProvider);
-  AuthCacheDataSource get _cache => ref.read(authCacheProvider);
-  TokenHolder get _tokenHolder => ref.read(tokenHolderProvider);
+  final AuthConfig _config;
+  final LoginUseCase _loginUseCase;
+  final LoginWithBadgeUseCase _loginWithBadge;
+  final LogoutUseCase _logoutUseCase;
+  final AuthCacheDataSource _cache;
+  final TokenHolder _tokenHolder;
+  final AppSettingsCache _appSettingsCache;
 
-  Timer? _sessionTimer;
-  Timer? _countdownTimer;
-  int _countdown = 0;
+  bool _isDisposed = false;
+
+  void _notify() {
+    if (_isDisposed) return;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _cancelTimers();
+    super.dispose();
+  }
+
+  AuthState _state = const AuthLoggedOut();
+  AuthState get state => _state;
+
+  void _setState(AuthState next) {
+    _state = next;
+    _notify();
+  }
 
   // Activity throttle: AuthLoggedIn'deyken peş peşe gelen pointer event'leri
   // saniyede en fazla bir kez işle. AuthSessionExpiring'de throttle uygulanmaz.
@@ -44,29 +76,29 @@ class AuthNotifier extends Notifier<AuthState> {
 
   bool _hasAccessedDashboard = false;
   bool get hasAccessedDashboard => _hasAccessedDashboard;
-  bool get isLoggedIn => state is AuthLoggedIn || state is AuthSessionExpiring;
+  bool get isLoggedIn => _state is AuthLoggedIn || _state is AuthSessionExpiring;
 
-  AppUser? get currentUser => switch (state) {
+  AppUser? get currentUser => switch (_state) {
     AuthLoggedIn(:final user) => user,
     AuthSessionExpiring(:final user) => user,
     _ => null,
   };
 
-  @override
-  AuthState build() {
-    ref.onDispose(_cancelTimers);
-    _restoreSession();
-    return const AuthLoggedOut();
-  }
+  Timer? _sessionTimer;
+  Timer? _countdownTimer;
+  int _countdown = 0;
 
   Future<void> login({required String email, required String password, required ValueChanged<String> onError}) async {
-    state = const AuthLoading();
+    _setState(const AuthLoading());
     final macAddress = await DeviceInfo.getMacAddress();
-    final debugStationId = kDebugMode ? await ref.read(appSettingsCacheProvider).getCurrentStationId() : null;
+    if (_isDisposed) return;
+    final debugStationId = kDebugMode ? await _appSettingsCache.getCurrentStationId() : null;
+    if (_isDisposed) return;
 
     final result = await _loginUseCase(
       LoginParams(email: email, password: password, macAddress: macAddress, stationId: debugStationId),
     );
+    if (_isDisposed) return;
 
     result.when(
       ok: (authToken) {
@@ -77,17 +109,19 @@ class AuthNotifier extends Notifier<AuthState> {
       error: (failure) {
         final rawMsg = failure is ServiceException ? failure.message : null;
         final msg = rawMsg ?? contextlessL10n().auth_genericError;
-        state = AuthError(message: msg);
+        _setState(AuthError(message: msg));
         onError(msg);
       },
     );
   }
 
   Future<void> loginWithBadge({required String cardData, required ValueChanged<String> onError}) async {
-    state = const AuthLoading();
+    _setState(const AuthLoading());
     final macAddress = await DeviceInfo.getMacAddress();
+    if (_isDisposed) return;
 
     final result = await _loginWithBadge.call(cardData: cardData, macAddress: macAddress);
+    if (_isDisposed) return;
 
     result.when(
       ok: (authToken) {
@@ -98,7 +132,7 @@ class AuthNotifier extends Notifier<AuthState> {
       error: (failure) {
         final rawMsg = failure is ServiceException ? failure.message : null;
         final msg = rawMsg ?? contextlessL10n().auth_genericError;
-        state = AuthError(message: msg);
+        _setState(AuthError(message: msg));
         onError(msg);
       },
     );
@@ -110,7 +144,8 @@ class AuthNotifier extends Notifier<AuthState> {
     _lastActivityAt = null;
     _tokenHolder.setToken(null);
     await _cache.clear();
-    state = AuthLoggedOut(showLockedDashboard: locked);
+    if (_isDisposed) return;
+    _setState(AuthLoggedOut(showLockedDashboard: locked));
   }
 
   void onUnauthorized() {
@@ -118,8 +153,8 @@ class AuthNotifier extends Notifier<AuthState> {
     _pauseCount = 0;
     _lastActivityAt = null;
     _tokenHolder.setToken(null);
-    _logoutUseCase();
-    state = const AuthLoggedOut(showLockedDashboard: true);
+    unawaited(_logoutUseCase());
+    _setState(const AuthLoggedOut(showLockedDashboard: true));
   }
 
   /// UI'da herhangi bir etkileşim. Dashboard'daki kök [Listener] tarafından
@@ -129,9 +164,7 @@ class AuthNotifier extends Notifier<AuthState> {
   void onUserActivity() {
     if (_isPaused) return;
 
-    // AuthSessionExpiring kritik: throttle BYPASS — countdown banner'ı
-    // gördükten sonra hemen dokunduğunda iptal etmek istiyoruz.
-    final isExpiring = state is AuthSessionExpiring;
+    final isExpiring = _state is AuthSessionExpiring;
 
     if (!isExpiring) {
       final now = DateTime.now();
@@ -141,7 +174,7 @@ class AuthNotifier extends Notifier<AuthState> {
       _lastActivityAt = now;
     }
 
-    switch (state) {
+    switch (_state) {
       case AuthLoggedIn():
         // Sessiz yenile: state'e dokunma, sadece timer'ı sıfırla.
         _startSessionTimer();
@@ -167,20 +200,15 @@ class AuthNotifier extends Notifier<AuthState> {
   void resumeInactivityTimer() {
     if (_pauseCount == 0) return;
     _pauseCount--;
-    if (_pauseCount == 0 && state is AuthLoggedIn) {
+    if (_pauseCount == 0 && _state is AuthLoggedIn) {
       _startSessionTimer();
     }
   }
 
-  /// Eski isim — yeni kod [onUserActivity] kullanmalı.
-  @Deprecated('Use onUserActivity()')
-  void extendSession() => onUserActivity();
-
-  // ───────────────────────────── Internal
-
   Future<void> _restoreSession() async {
     final token = await _cache.readToken();
     final user = await _cache.readUser();
+    if (_isDisposed) return;
 
     if (token != null && user != null) {
       _tokenHolder.setToken(token);
@@ -189,9 +217,11 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   void _setLoggedIn(AppUser user) {
-    state = AuthLoggedIn(
-      user: user,
-      sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+    _setState(
+      AuthLoggedIn(
+        user: user,
+        sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
+      ),
     );
     _startSessionTimer();
   }
@@ -208,20 +238,20 @@ class AuthNotifier extends Notifier<AuthState> {
     if (user == null) return;
 
     _countdown = _config.warningSeconds;
-    state = AuthSessionExpiring(user: user, secondsRemaining: _countdown);
+    _setState(AuthSessionExpiring(user: user, secondsRemaining: _countdown));
 
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       _countdown--;
 
       if (_countdown <= 0) {
         t.cancel();
-        logout(locked: true);
+        unawaited(logout(locked: true));
         return;
       }
 
       final u = currentUser;
       if (u != null) {
-        state = AuthSessionExpiring(user: u, secondsRemaining: _countdown);
+        _setState(AuthSessionExpiring(user: u, secondsRemaining: _countdown));
       }
     });
   }

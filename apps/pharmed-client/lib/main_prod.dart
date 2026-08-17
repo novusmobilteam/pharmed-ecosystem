@@ -9,5 +9,5 @@ void main() async {
   //await initWindowManager();
   FlavorConfig.initialize(AppFlavor.prod);
   await Hive.initFlutter();
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: ClientApp()));
 }

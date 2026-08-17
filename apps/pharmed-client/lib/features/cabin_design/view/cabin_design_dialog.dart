@@ -12,21 +12,20 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../../widgets/widgets.dart';
 import '../notifier/cabin_design_notifier.dart';
-import '../notifier/cabin_design_state.dart';
 
 part 'basic_settings_panel.dart';
 part 'drawer_detail_panel.dart';
 part 'serum_layout_panel.dart';
 part 'cabin_design_visual.dart';
 
-class CabinDesignDialog extends ConsumerStatefulWidget {
+class CabinDesignDialog extends StatelessWidget {
   const CabinDesignDialog({super.key, required this.cabinId});
 
   final int cabinId;
@@ -39,35 +38,35 @@ class CabinDesignDialog extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<CabinDesignDialog> createState() => _CabinDesignDialogState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<CabinDesignNotifier>(
+      create: (ctx) => CabinDesignNotifier(getVisualizerData: ctx.read(), setReturnDrawer: ctx.read())..init(cabinId),
+      child: const _CabinDesignDialogContent(),
+    );
+  }
 }
 
-class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(cabinDesignNotifierProvider.notifier).init(widget.cabinId);
-    });
-  }
+class _CabinDesignDialogContent extends StatefulWidget {
+  const _CabinDesignDialogContent();
 
+  @override
+  State<_CabinDesignDialogContent> createState() => _CabinDesignDialogContentState();
+}
+
+class _CabinDesignDialogContentState extends State<_CabinDesignDialogContent> {
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(cabinDesignNotifierProvider);
-    final notifier = ref.read(cabinDesignNotifierProvider.notifier);
+    final notifier = context.watch<CabinDesignNotifier>();
 
-    ref.listen(cabinDesignNotifierProvider, (_, next) {
-      if (next is CabinDesignError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
+    // ref.listen'ın eşdeğeri: hata mesajı doluysa post-frame'de göster,
+    // sonra temizle. build sırasında showSnackbar çağırmamak için.
+    if (notifier.errorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        MessageUtils.showErrorSnackbar(context, notifier.errorMessage!);
         notifier.dismissError();
-      }
-    });
-
-    final ready = switch (state) {
-      CabinDesignReady s => s,
-      CabinDesignError(previousState: CabinDesignReady s) => s,
-      _ => null,
-    };
+      });
+    }
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: MedRadius.lgAll),
@@ -77,17 +76,15 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _Header(cabin: ready?.cabin),
+            _Header(cabin: notifier.cabin),
             const Divider(height: 1, color: MedColors.border2),
             Expanded(
-              child: ready == null
-                  ? const Center(child: MedLoadingIndicator())
-                  : _Body(ready: ready, notifier: notifier),
+              child: !notifier.isReady ? const Center(child: MedLoadingIndicator()) : _Body(notifier: notifier),
             ),
             const Divider(height: 1, color: MedColors.border2),
             Padding(
               padding: MedSpacing.insetXl,
-              child: _BottomBar(ready: ready, notifier: notifier),
+              child: _BottomBar(notifier: notifier),
             ),
           ],
         ),
@@ -138,16 +135,14 @@ class _Header extends StatelessWidget {
 }
 
 class _Body extends StatelessWidget {
-  const _Body({required this.ready, required this.notifier});
+  const _Body({required this.notifier});
 
-  final CabinDesignReady ready;
   final CabinDesignNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: MedColors.surface2,
-
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -157,8 +152,8 @@ class _Body extends StatelessWidget {
               child: SingleChildScrollView(
                 padding: MedSpacing.insetXl * 2,
                 child: CabinDesignVisual(
-                  groups: ready.groups,
-                  selectedSlotId: ready.selectedSlotId,
+                  groups: notifier.groups,
+                  selectedSlotId: notifier.selectedSlotId,
                   onSlotTap: (g) {
                     final id = g.slot.id;
                     if (id != null) notifier.selectSlot(id);
@@ -179,19 +174,19 @@ class _Body extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (ready.selectedGroup?.isSerum != true) ...[
-                      _BasicSettingsPanel(cabin: ready.cabin),
+                    if (notifier.selectedGroup?.isSerum != true) ...[
+                      _BasicSettingsPanel(cabin: notifier.cabin!),
                       const SizedBox(height: MedSpacing.xl2),
                       const Divider(color: MedColors.border2, height: 1),
                       const SizedBox(height: MedSpacing.xl2),
                     ],
-                    switch (ready.selectedGroup) {
+                    switch (notifier.selectedGroup) {
                       null => Text(
                         context.l10n.cabinDesign_noSelectionHint,
                         style: MedTextStyles.bodySm(color: MedColors.text4),
                       ),
                       final g when g.isSerum => _SerumManualLayoutPanel(group: g),
-                      final g => _DrawerDetailPanel(group: g, ready: ready, notifier: notifier),
+                      final g => _DrawerDetailPanel(group: g, notifier: notifier),
                     },
                     const SizedBox(height: MedSpacing.xl),
                   ],
@@ -206,9 +201,8 @@ class _Body extends StatelessWidget {
 }
 
 class _BottomBar extends StatelessWidget {
-  const _BottomBar({required this.ready, required this.notifier});
+  const _BottomBar({required this.notifier});
 
-  final CabinDesignReady? ready;
   final CabinDesignNotifier notifier;
 
   @override
@@ -225,8 +219,8 @@ class _BottomBar extends StatelessWidget {
         const SizedBox(width: MedSpacing.sm),
         MedButton(
           label: context.l10n.cabinDesign_saveButton,
-          isLoading: ready?.isSaving ?? false,
-          onPressed: (ready?.canSave ?? false)
+          isLoading: notifier.isSaving,
+          onPressed: notifier.canSave
               ? () async {
                   final ok = await notifier.save();
                   if (ok && context.mounted) {

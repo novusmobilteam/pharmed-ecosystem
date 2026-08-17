@@ -20,8 +20,8 @@ class TableView extends StatelessWidget {
       currentPage: notifier.currentPage,
       serverTotalCount: notifier.totalCount,
 
-      onPageChanged: (page) => notifier.goToPage(page),
-      onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
+      onPageChanged: (page) => notifier.setPage(page),
+      onDateRangeChanged: (range) => notifier.setDateRange(range),
       //cellBuilder: (item, colIndex, value) {},
       columnDefs: _buildColumnDefs(context),
     );

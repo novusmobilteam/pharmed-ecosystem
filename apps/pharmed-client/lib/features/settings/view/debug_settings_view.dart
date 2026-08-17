@@ -1,19 +1,21 @@
 part of 'settings_view.dart';
 
-class DebugSettingsView extends ConsumerStatefulWidget {
+class DebugSettingsView extends StatefulWidget {
   const DebugSettingsView({super.key});
 
   @override
-  ConsumerState<DebugSettingsView> createState() => _DebugSettingsViewState();
+  State<DebugSettingsView> createState() => _DebugSettingsViewState();
 }
 
-class _DebugSettingsViewState extends ConsumerState<DebugSettingsView> {
+class _DebugSettingsViewState extends State<DebugSettingsView> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (ref.read(settingsNotifierProvider).cabins.isEmpty) {
-        ref.read(settingsNotifierProvider.notifier).loadCabins();
+      if (!mounted) return;
+      final notifier = context.read<SettingsNotifier>();
+      if (notifier.cabins.isEmpty) {
+        notifier.loadCabins();
       }
     });
   }
@@ -22,8 +24,7 @@ class _DebugSettingsViewState extends ConsumerState<DebugSettingsView> {
   Widget build(BuildContext context) {
     assert(kDebugMode, 'DebugSettingsView sadece debug modda kullanılabilir');
 
-    final state = ref.watch(settingsNotifierProvider);
-    final notifier = ref.read(settingsNotifierProvider.notifier);
+    final notifier = context.watch<SettingsNotifier>();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -47,10 +48,10 @@ class _DebugSettingsViewState extends ConsumerState<DebugSettingsView> {
             label: 'Aktif Kabin',
             description: 'Seçilen kabin dashboard\'da gösterilir — cache değişmez',
             trailing: _CabinSelector(
-              cabins: state.cabins,
-              isLoading: state.isLoadingCabins,
-              error: state.cabinsError,
-              selected: state.debugCabin,
+              cabins: notifier.cabins,
+              isLoading: notifier.isLoadingCabins,
+              error: notifier.cabinsError,
+              selected: notifier.debugCabin,
               onSelected: (cabin) => notifier.setDebugCabin(cabin),
               onRetry: () => notifier.loadCabins(),
             ),

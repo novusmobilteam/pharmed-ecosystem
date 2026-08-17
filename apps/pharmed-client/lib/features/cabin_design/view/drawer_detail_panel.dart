@@ -1,13 +1,12 @@
 part of 'cabin_design_dialog.dart';
 
 class _DrawerDetailPanel extends StatelessWidget {
-  const _DrawerDetailPanel({required this.group, required this.ready, required this.notifier});
+  const _DrawerDetailPanel({required this.group, required this.notifier});
 
   final DrawerGroup group;
-  final CabinDesignReady ready;
   final CabinDesignNotifier notifier;
 
-  bool get _isReturnDrawer => ready.effectiveReturnSlotId == group.slot.id;
+  bool get _isReturnDrawer => notifier.effectiveReturnSlotId == group.slot.id;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class _DrawerDetailPanel extends StatelessWidget {
             Expanded(
               child: _InfoField(
                 label: context.l10n.cabinDesign_detail_configLabel,
-                value: group.slot.drawerConfig?.drawerType?.name ?? '—', // alan adı farklıysa düzeltilecek
+                value: group.slot.drawerConfig?.drawerType?.name ?? '—',
               ),
             ),
           ],
@@ -54,8 +53,8 @@ class _DrawerDetailPanel extends StatelessWidget {
           const SizedBox(height: MedSpacing.xl),
           _ReturnDrawerToggle(
             isOn: _isReturnDrawer,
-            disabled: ready.isSaving,
-            onChanged: (v) => notifier.toggleReturnDrawer(v),
+            disabled: notifier.isSaving,
+            onChanged: notifier.toggleReturnDrawer,
           ),
           const SizedBox(height: MedSpacing.sm),
           Row(
@@ -65,9 +64,9 @@ class _DrawerDetailPanel extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  ready.effectiveReturnSlotId != null
+                  notifier.effectiveReturnSlotId != null
                       ? context.l10n.cabinDesign_returnDrawer_currentInfo(
-                          _addressOf(ready, ready.effectiveReturnSlotId!),
+                          _addressOf(notifier, notifier.effectiveReturnSlotId!),
                         )
                       : context.l10n.cabinDesign_returnDrawer_noneInfo,
                   style: MedTextStyles.bodySm(color: MedColors.text4),
@@ -80,8 +79,8 @@ class _DrawerDetailPanel extends StatelessWidget {
     );
   }
 
-  String _addressOf(CabinDesignReady ready, int slotId) =>
-      ready.groups.firstWhereOrNull((g) => g.slot.id == slotId)?.address ?? '—';
+  String _addressOf(CabinDesignNotifier notifier, int slotId) =>
+      notifier.groups.firstWhereOrNull((g) => g.slot.id == slotId)?.address ?? '—';
 }
 
 class _InfoField extends StatelessWidget {

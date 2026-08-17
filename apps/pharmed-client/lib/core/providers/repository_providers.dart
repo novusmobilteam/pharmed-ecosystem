@@ -1,298 +1,505 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/flavor/app_flavor.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
-import 'providers.dart';
+import '../flavor/app_flavor.dart';
 
-final userRepositoryProvider = Provider<IUserReader>((ref) {
-  return UserRepositoryImpl(dataSource: ref.read(userRemoteDataSourceProvider), mapper: ref.read(userMapperProvider));
-});
+class RepositoryProviders {
+  static List<SingleChildWidget> providers({bool isDev = false}) {
+    return [
+      /// Settings
+      Provider<ISettingsRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => SettingsRepositoryImpl(dataSource: context.read(), mapper: SystemParameterMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => SettingsRepositoryImpl(dataSource: context.read(), mapper: SystemParameterMapper()),
+        },
+      ),
 
-final userManagerProvider = Provider<IUserManager>((ref) {
-  return UserRepositoryImpl(dataSource: ref.read(userRemoteDataSourceProvider), mapper: ref.read(userMapperProvider));
-});
+      /// Active Ingredient
+      Provider<IActiveIngredientRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => ActiveIngredientRepositoryImpl(
+            dataSource: context.read(),
+            mapper: ActiveIngredientMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => ActiveIngredientRepositoryImpl(
+            dataSource: context.read(),
+            mapper: ActiveIngredientMapper(),
+          ),
+        },
+      ),
 
-final settingsRepositoryProvider = Provider<ISettingsRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => SettingsRepositoryImpl(
-      mapper: SystemParameterMapper(),
-      dataSource: ref.read(settingsRemoteDataSourceProvider),
-    ),
-    AppFlavor.dev || AppFlavor.prod => SettingsRepositoryImpl(
-      mapper: SystemParameterMapper(),
-      dataSource: ref.read(settingsRemoteDataSourceProvider),
-    ),
-  };
-});
+      /// Branch
+      Provider<IBranchRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => BranchRepositoryImpl(dataSource: context.read(), mapper: BranchMapper()),
+          AppFlavor.dev || AppFlavor.prod => BranchRepositoryImpl(dataSource: context.read(), mapper: BranchMapper()),
+        },
+      ),
 
-final cabinStockRepositoryProvider = Provider<ICabinStockRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => MockCabinStockRepository(),
-    AppFlavor.dev || AppFlavor.prod => CabinStockRepositoryImpl(
-      dataSource: ref.read(cabinStockRemoteDataSourceProvider),
-      localDataSource: ref.read(cabinStockLocalDataSourceProvider),
-      cabinMapper: CabinStockMapper(),
-      stationMapper: StationStockMapper(),
-      epcMapper: CabinExpectedEpcMapper(),
-    ),
-  };
-});
+      /// Role Authorization
+      Provider<IRoleAuthorizationRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => RoleAuthorizationRepositoryImpl(
+            dataSource: context.read(),
+            menuMapper: RoleMenuAuthorizationMapper(),
+            drugMapper: RoleDrugAuthorizationMapper(),
+            consumableMapper: RoleMedicalConsumableAuthorizationMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => RoleAuthorizationRepositoryImpl(
+            dataSource: context.read(),
+            menuMapper: RoleMenuAuthorizationMapper(),
+            drugMapper: RoleDrugAuthorizationMapper(),
+            consumableMapper: RoleMedicalConsumableAuthorizationMapper(),
+          ),
+        },
+      ),
 
-final hospitalizationRepositoryProvider = Provider<IHospitalizationRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => HospitalizationRepositoryImpl(
-      mapper: HospitalizationMapper(),
-      dataSource: ref.read(hospitalizationRemoteDataSourceProvider),
-    ),
-    AppFlavor.dev || AppFlavor.prod => HospitalizationRepositoryImpl(
-      mapper: HospitalizationMapper(),
-      dataSource: ref.read(hospitalizationRemoteDataSourceProvider),
-    ),
-  };
-});
+      /// User Authorization
+      Provider<IUserAuthorizationRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => UserAuthorizationRepositoryImpl(
+            dataSource: context.read(),
+            mapper: UserMenuAuthorizationMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => UserAuthorizationRepositoryImpl(
+            dataSource: context.read(),
+            mapper: UserMenuAuthorizationMapper(),
+          ),
+        },
+      ),
 
-final medicineRepositoryProvider = Provider<IMedicineRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => MedicineRepositoryImpl(
-      dataSource: ref.read(medicineRemoteDataSourceProvider),
-      mapper: MedicineMapper(),
-      drugMapper: DrugMapper(),
-      mcMapper: MedicalConsumableMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => MedicineRepositoryImpl(
-      dataSource: ref.read(medicineRemoteDataSourceProvider),
-      mapper: MedicineMapper(),
-      drugMapper: DrugMapper(),
-      mcMapper: MedicalConsumableMapper(),
-    ),
-  };
-});
+      /// Dosage Form
+      Provider<IDosageFormRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => DosageFormRepositoryImpl(dataSource: context.read(), mapper: DosageFormMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => DosageFormRepositoryImpl(dataSource: context.read(), mapper: DosageFormMapper()),
+        },
+      ),
 
-final prescriptionRepositoryProvider = Provider<IPrescriptionRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => PrescriptionRepositoryImpl(
-      prescriptionItemMapper: PrescriptionItemMapper(),
-      prescriptionMapper: PrescriptionMapper(),
-      prescriptionItemMovementMapper: PrescriptionItemMovementMapper(),
-      dataSource: ref.read(prescriptionRemoteDataSourceProvider),
-    ),
-    AppFlavor.dev || AppFlavor.prod => PrescriptionRepositoryImpl(
-      prescriptionItemMapper: PrescriptionItemMapper(),
-      prescriptionMapper: PrescriptionMapper(),
-      prescriptionItemMovementMapper: PrescriptionItemMovementMapper(),
-      dataSource: ref.read(prescriptionRemoteDataSourceProvider),
-    ),
-  };
-});
+      /// Drug Class
+      Provider<IDrugClassRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => DrugClassRepositoryImpl(dataSource: context.read(), mapper: DrugClassMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => DrugClassRepositoryImpl(dataSource: context.read(), mapper: DrugClassMapper()),
+        },
+      ),
 
-final stationRepositoryProvider = Provider<IStationRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => MockStationRepository(),
-    AppFlavor.dev || AppFlavor.prod => StationRepositoryImpl(
-      dataSource: ref.read(stationRemoteDataSourceProvider),
-      mapper: StationMapper(),
-    ),
-  };
-});
+      /// Drug Type
+      Provider<IDrugTypeRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => DrugTypeRepositoryImpl(dataSource: context.read(), mapper: DrugTypeMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => DrugTypeRepositoryImpl(dataSource: context.read(), mapper: DrugTypeMapper()),
+        },
+      ),
 
-final serviceRepositoryProvider = Provider<IServiceRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => ServiceRepositoryImpl(
-      dataSource: ref.read(serviceRemoteDataSourceProvider),
-      mapper: ServiceMapper(),
-      roomMapper: RoomMapper(),
-      bedMapper: BedMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => ServiceRepositoryImpl(
-      dataSource: ref.read(serviceRemoteDataSourceProvider),
-      mapper: ServiceMapper(),
-      roomMapper: RoomMapper(),
-      bedMapper: BedMapper(),
-    ),
-  };
-});
+      /// Firm
+      Provider<IFirmRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => FirmRepositoryImpl(dataSource: context.read(), mapper: FirmMapper()),
+          AppFlavor.dev || AppFlavor.prod => FirmRepositoryImpl(dataSource: context.read(), mapper: FirmMapper()),
+        },
+      ),
 
-final dashboardRepositoryProvider = Provider<IDashboardRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => MockDashboardRepository(),
-    AppFlavor.dev || AppFlavor.prod => DashboardRepositoryImpl(
-      dataSource: ref.read(dashboardRemoteDataSourceProvider),
-      cabinStockMapper: CabinStockMapper(),
-      prescriptionItemMapper: PrescriptionItemMapper(),
-      refundMapper: RefundMapper(),
-      menuMapper: MenuTreeMapper(),
-      cabinMapper: CabinMapper(),
-      itemMovementMapper: PrescriptionItemMovementMapper(),
-    ),
-  };
-});
+      /// Hospitalization
+      Provider<IHospitalizationRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => HospitalizationRepositoryImpl(dataSource: context.read(), mapper: HospitalizationMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => HospitalizationRepositoryImpl(dataSource: context.read(), mapper: HospitalizationMapper()),
+        },
+      ),
 
-final cabinAssignmentRepositoryProvider = Provider<IAssignmentRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => AssignmentRepositoryImpl(
-      dataSource: ref.read(assignmentRemoteDataSourceProvider),
-      medicineAssignmentMapper: MedicineAssignmentMapper(),
-      patientAssignmentMapper: PatientAssignmentMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => AssignmentRepositoryImpl(
-      dataSource: ref.read(assignmentRemoteDataSourceProvider),
-      medicineAssignmentMapper: MedicineAssignmentMapper(),
-      patientAssignmentMapper: PatientAssignmentMapper(),
-    ),
-  };
-});
+      /// Inconsistency
+      Provider<IInconsistencyRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => InconsistencyRepositoryImpl(dataSource: context.read(), mapper: InconsistencyMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => InconsistencyRepositoryImpl(dataSource: context.read(), mapper: InconsistencyMapper()),
+        },
+      ),
 
-final faultRepositoryProvider = Provider<IFaultRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => FaultRepositoryImpl(
-      dataSource: ref.read(faultRemoteDataSourceProvider),
-      masterFaultMapper: MasterFaultMapper(),
-      mobileFaultMapper: MobileFaultMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => FaultRepositoryImpl(
-      dataSource: ref.read(faultRemoteDataSourceProvider),
-      masterFaultMapper: MasterFaultMapper(),
-      mobileFaultMapper: MobileFaultMapper(),
-    ),
-  };
-});
+      /// KitContent
+      Provider<IKitContentRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => KitContentRepositoryImpl(dataSource: context.read(), mapper: KitContentMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => KitContentRepositoryImpl(dataSource: context.read(), mapper: KitContentMapper()),
+        },
+      ),
 
-final cabinRepositoryProvider = Provider<ICabinRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => CabinRepositoryImpl(
-      cabinMapper: CabinMapper(),
-      drawerSlotMapper: DrawerSlotMapper(),
-      drawerConfigMapper: DrawerConfigMapper(),
-      drawerUnitMapper: DrawerUnitMapper(),
-      drawerTypeMapper: DrawerTypeMapper(),
-      mobileDrawerSlotMapper: MobileDrawerSlotMapper(),
-      remoteDataSource: ref.read(cabinRemoteDataSourceProvider),
-      localDataSource: ref.read(cabinLocaleDataSourceProvider),
-    ),
-    AppFlavor.dev || AppFlavor.prod => CabinRepositoryImpl(
-      cabinMapper: CabinMapper(),
-      drawerSlotMapper: DrawerSlotMapper(),
-      drawerConfigMapper: DrawerConfigMapper(),
-      drawerUnitMapper: DrawerUnitMapper(),
-      drawerTypeMapper: DrawerTypeMapper(),
-      mobileDrawerSlotMapper: MobileDrawerSlotMapper(),
-      remoteDataSource: ref.read(cabinRemoteDataSourceProvider),
-      localDataSource: ref.read(cabinLocaleDataSourceProvider),
-    ),
-  };
-});
+      /// Kit
+      Provider<IKitRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => KitRepositoryImpl(dataSource: context.read(), mapper: KitMapper()),
+          AppFlavor.dev || AppFlavor.prod => KitRepositoryImpl(dataSource: context.read(), mapper: KitMapper()),
+        },
+      ),
 
-final intakeRepositoryProvider = Provider<IIntakeRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => IntakeRepositoryImpl(
-      dataSource: ref.read(intakeDataSourceProvider),
-      intakeItemMapper: CabinTargetedRxItemMapper(),
-      patientIntakeItemMapper: PatientIntakeItemMapper(),
-      eqMapper: EquivalentMedicineMapper(),
-      otherMapper: OtherStationMedicineMapper(),
-      redirectMapper: RedirectedIntakeOrderMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => IntakeRepositoryImpl(
-      dataSource: ref.read(intakeDataSourceProvider),
-      intakeItemMapper: CabinTargetedRxItemMapper(),
-      patientIntakeItemMapper: PatientIntakeItemMapper(),
-      eqMapper: EquivalentMedicineMapper(),
-      otherMapper: OtherStationMedicineMapper(),
-      redirectMapper: RedirectedIntakeOrderMapper(),
-    ),
-  };
-});
+      /// MaterialType
+      Provider<IMaterialTypeRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => MaterialTypeRepositoryImpl(dataSource: context.read(), mapper: MaterialTypeMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => MaterialTypeRepositoryImpl(dataSource: context.read(), mapper: MaterialTypeMapper()),
+        },
+      ),
 
-final refundRepositoryProvider = Provider<IRefundRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => RefundRepositoryImpl(
-      dataSource: ref.read(refundDataSourceProvider),
-      refundMapper: RefundMapper(),
-      withdrawItemMapper: CabinTargetedRxItemMapper(),
-      prescriptionMapper: PrescriptionItemMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => RefundRepositoryImpl(
-      dataSource: ref.read(refundDataSourceProvider),
-      refundMapper: RefundMapper(),
-      withdrawItemMapper: CabinTargetedRxItemMapper(),
-      prescriptionMapper: PrescriptionItemMapper(),
-    ),
-  };
-});
+      /// Medicine
+      Provider<IMedicineRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => MedicineRepositoryImpl(
+            dataSource: context.read(),
+            mapper: MedicineMapper(),
+            drugMapper: DrugMapper(),
+            mcMapper: MedicalConsumableMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => MedicineRepositoryImpl(
+            dataSource: context.read(),
+            mapper: MedicineMapper(),
+            drugMapper: DrugMapper(),
+            mcMapper: MedicalConsumableMapper(),
+          ),
+        },
+      ),
 
-final wasteRepositoryProvider = Provider<IWasteRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => WasteRepositoryImpl(
-      dataSource: ref.read(wasteDataSourceProvider),
-      assignmentMapper: MedicineAssignmentMapper(),
-      prescriptionItemMapper: PrescriptionItemMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => WasteRepositoryImpl(
-      dataSource: ref.read(wasteDataSourceProvider),
-      assignmentMapper: MedicineAssignmentMapper(),
-      prescriptionItemMapper: PrescriptionItemMapper(),
-    ),
-  };
-});
+      /// Dashboard
+      Provider<IDashboardRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => MockDashboardRepository(),
+          AppFlavor.dev || AppFlavor.prod => DashboardRepositoryImpl(
+            dataSource: context.read(),
+            cabinStockMapper: CabinStockMapper(),
+            prescriptionItemMapper: PrescriptionItemMapper(),
+            refundMapper: RefundMapper(),
+            menuMapper: MenuTreeMapper(),
+            cabinMapper: CabinMapper(),
+            itemMovementMapper: PrescriptionItemMovementMapper(),
+          ),
+        },
+      ),
 
-final patientRepositoryProvider = Provider<IPatientRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => PatientRepositoryImpl(
-      dataSource: ref.read(patientDataSourceProvider),
-      patientMapper: PatientMapper(),
-      myPatientMapper: MyPatientMapper(),
-      urgentPatientMapper: UrgentPatientMapper(),
-      hospitalizationMapper: HospitalizationMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => PatientRepositoryImpl(
-      dataSource: ref.read(patientDataSourceProvider),
-      patientMapper: PatientMapper(),
-      myPatientMapper: MyPatientMapper(),
-      urgentPatientMapper: UrgentPatientMapper(),
-      hospitalizationMapper: HospitalizationMapper(),
-    ),
-  };
-});
+      /// Patient
+      Provider<IPatientRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => PatientRepositoryImpl(
+            dataSource: context.read(),
+            patientMapper: PatientMapper(),
+            myPatientMapper: MyPatientMapper(),
+            urgentPatientMapper: UrgentPatientMapper(),
+            hospitalizationMapper: HospitalizationMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => PatientRepositoryImpl(
+            dataSource: context.read(),
+            patientMapper: PatientMapper(),
+            myPatientMapper: MyPatientMapper(),
+            urgentPatientMapper: UrgentPatientMapper(),
+            hospitalizationMapper: HospitalizationMapper(),
+          ),
+        },
+      ),
 
-final censusRepositoryProvider = Provider<ICensusRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => CensusRepositoryImpl(dataSource: ref.read(censusDataSourceProvider)),
-    AppFlavor.dev || AppFlavor.prod => CensusRepositoryImpl(dataSource: ref.read(censusDataSourceProvider)),
-  };
-});
+      Provider<IPrescriptionRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => PrescriptionRepositoryImpl(
+            dataSource: context.read(),
+            prescriptionMapper: PrescriptionMapper(),
+            prescriptionItemMapper: PrescriptionItemMapper(),
+            prescriptionItemMovementMapper: PrescriptionItemMovementMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => PrescriptionRepositoryImpl(
+            dataSource: context.read(),
+            prescriptionMapper: PrescriptionMapper(),
+            prescriptionItemMapper: PrescriptionItemMapper(),
+            prescriptionItemMovementMapper: PrescriptionItemMovementMapper(),
+          ),
+        },
+      ),
 
-final unloadRepositoryProvider = Provider<IUnloadRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => UnloadRepositoryImpl(dataSource: ref.read(unloadDataSourceProvider)),
-    AppFlavor.dev || AppFlavor.prod => UnloadRepositoryImpl(dataSource: ref.read(unloadDataSourceProvider)),
-  };
-});
+      /// Refund
+      Provider<IRefundRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => RefundRepositoryImpl(
+            dataSource: context.read(),
+            refundMapper: RefundMapper(),
+            withdrawItemMapper: CabinTargetedRxItemMapper(),
+            prescriptionMapper: PrescriptionItemMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => RefundRepositoryImpl(
+            dataSource: context.read(),
+            refundMapper: RefundMapper(),
+            withdrawItemMapper: CabinTargetedRxItemMapper(),
+            prescriptionMapper: PrescriptionItemMapper(),
+          ),
+        },
+      ),
 
-final assignmentRepositoryProvider = Provider<IAssignmentRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => AssignmentRepositoryImpl(
-      dataSource: ref.read(assignmentRemoteDataSourceProvider),
-      medicineAssignmentMapper: MedicineAssignmentMapper(),
-      patientAssignmentMapper: PatientAssignmentMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => AssignmentRepositoryImpl(
-      dataSource: ref.read(assignmentRemoteDataSourceProvider),
-      medicineAssignmentMapper: MedicineAssignmentMapper(),
-      patientAssignmentMapper: PatientAssignmentMapper(),
-    ),
-  };
-});
+      /// Role
+      Provider<IRoleRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => RoleRepositoryImpl(dataSource: context.read(), mapper: RoleMapper()),
+          AppFlavor.dev || AppFlavor.prod => RoleRepositoryImpl(dataSource: context.read(), mapper: RoleMapper()),
+        },
+      ),
 
-final cabinTemperatureRepositoryProvider = Provider<ICabinTemperatureRepository>((ref) {
-  return switch (FlavorConfig.instance.flavor) {
-    AppFlavor.mock => CabinTemperatureRepositoryImpl(
-      dataSource: ref.read(cabinTemperatureDataSourceProvider),
-      cabinTemperatureMapper: CabinTemperatureMapper(),
-    ),
-    AppFlavor.dev || AppFlavor.prod => CabinTemperatureRepositoryImpl(
-      dataSource: ref.read(cabinTemperatureDataSourceProvider),
-      cabinTemperatureMapper: CabinTemperatureMapper(),
-    ),
-  };
-});
+      /// Service
+      Provider<IServiceRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => ServiceRepositoryImpl(
+            dataSource: context.read(),
+            mapper: ServiceMapper(),
+            roomMapper: RoomMapper(),
+            bedMapper: BedMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => ServiceRepositoryImpl(
+            dataSource: context.read(),
+            mapper: ServiceMapper(),
+            roomMapper: RoomMapper(),
+            bedMapper: BedMapper(),
+          ),
+        },
+      ),
+
+      /// Station
+      Provider<IStationRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => MockStationRepository(),
+          AppFlavor.dev || AppFlavor.prod => StationRepositoryImpl(dataSource: context.read(), mapper: StationMapper()),
+        },
+      ),
+
+      /// Cabin Stock
+      Provider<ICabinStockRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => MockCabinStockRepository(),
+          AppFlavor.dev || AppFlavor.prod => CabinStockRepositoryImpl(
+            dataSource: context.read(),
+            localDataSource: context.read(),
+            cabinMapper: CabinStockMapper(),
+            stationMapper: StationStockMapper(),
+            epcMapper: CabinExpectedEpcMapper(),
+          ),
+        },
+      ),
+
+      /// Unit
+      Provider<IUnitRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => UnitRepositoryImpl(dataSource: context.read(), mapper: UnitMapper()),
+          AppFlavor.dev || AppFlavor.prod => UnitRepositoryImpl(dataSource: context.read(), mapper: UnitMapper()),
+        },
+      ),
+
+      /// User
+      Provider<IUserManager>(
+        create: (context) => UserRepositoryImpl(dataSource: context.read(), mapper: UserMapper()),
+      ),
+
+      /// Warehouse
+      Provider<IWarehouseRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => WarehouseRepositoryImpl(dataSource: context.read(), mapper: WarehouseMapper()),
+          AppFlavor.dev ||
+          AppFlavor.prod => WarehouseRepositoryImpl(dataSource: context.read(), mapper: WarehouseMapper()),
+        },
+      ),
+
+      /// Warning
+      Provider<IWarningRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => WarningRepositoryImpl(dataSource: context.read(), mapper: WarningMapper()),
+          AppFlavor.dev || AppFlavor.prod => WarningRepositoryImpl(dataSource: context.read(), mapper: WarningMapper()),
+        },
+      ),
+
+      /// Stock Transaction
+      Provider<IStockTransactionRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => StockTransactionRepositoryImpl(
+            dataSource: context.read(),
+            mapper: StockTransactionMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => StockTransactionRepositoryImpl(
+            dataSource: context.read(),
+            mapper: StockTransactionMapper(),
+          ),
+        },
+      ),
+
+      /// Cabin
+      Provider<ICabinRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => CabinRepositoryImpl(
+            remoteDataSource: context.read(),
+            localDataSource: context.read(),
+            cabinMapper: CabinMapper(),
+            drawerSlotMapper: DrawerSlotMapper(),
+            drawerConfigMapper: DrawerConfigMapper(),
+            drawerUnitMapper: DrawerUnitMapper(),
+            drawerTypeMapper: DrawerTypeMapper(),
+            mobileDrawerSlotMapper: MobileDrawerSlotMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => CabinRepositoryImpl(
+            remoteDataSource: context.read(),
+            localDataSource: context.read(),
+            cabinMapper: CabinMapper(),
+            drawerSlotMapper: DrawerSlotMapper(),
+            drawerConfigMapper: DrawerConfigMapper(),
+            drawerUnitMapper: DrawerUnitMapper(),
+            drawerTypeMapper: DrawerTypeMapper(),
+            mobileDrawerSlotMapper: MobileDrawerSlotMapper(),
+          ),
+        },
+      ),
+
+      /// Refill List
+      Provider<IRefillListRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => RefillListRepositoryImpl(
+            dataSource: context.read(),
+            refillListMapper: RefillListMapper(),
+            detailMapper: RefillListDetailMapper(),
+            cabinStockMapper: CabinStockMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => RefillListRepositoryImpl(
+            dataSource: context.read(),
+            refillListMapper: RefillListMapper(),
+            detailMapper: RefillListDetailMapper(),
+            cabinStockMapper: CabinStockMapper(),
+          ),
+        },
+      ),
+
+      /// PrescriptionTemplate
+      Provider<IPrescriptionTemplateRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => PrescriptionTemplateRepositoryImpl(
+            dataSource: context.read(),
+            templateMapper: PrescriptionTemplateMapper(),
+            itemMapper: PrescriptionTemplateItemMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => PrescriptionTemplateRepositoryImpl(
+            dataSource: context.read(),
+            templateMapper: PrescriptionTemplateMapper(),
+            itemMapper: PrescriptionTemplateItemMapper(),
+          ),
+        },
+      ),
+
+      /// Fault
+      Provider<IFaultRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => FaultRepositoryImpl(
+            dataSource: context.read(),
+            masterFaultMapper: MasterFaultMapper(),
+            mobileFaultMapper: MobileFaultMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => FaultRepositoryImpl(
+            dataSource: context.read(),
+            masterFaultMapper: MasterFaultMapper(),
+            mobileFaultMapper: MobileFaultMapper(),
+          ),
+        },
+      ),
+
+      /// Assignment
+      Provider<IAssignmentRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => AssignmentRepositoryImpl(
+            dataSource: context.read(),
+            medicineAssignmentMapper: MedicineAssignmentMapper(),
+            patientAssignmentMapper: PatientAssignmentMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => AssignmentRepositoryImpl(
+            dataSource: context.read(),
+            medicineAssignmentMapper: MedicineAssignmentMapper(),
+            patientAssignmentMapper: PatientAssignmentMapper(),
+          ),
+        },
+      ),
+
+      /// Report
+      Provider<IReportRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => ReportRepositoryImpl(
+            dataSource: context.read(),
+            cabinStockMapper: CabinStockMapper(),
+            stockTransactionMapper: StockTransactionMapper(),
+            hospitalStockMapper: HospitalStockMapper(),
+            prescriptionItemMapper: PrescriptionItemMapper(),
+            summaryMapper: UserAuthorizationSummaryMapper(),
+            authorizationDetailMapper: UserAuthorizationDetailMapper(),
+            cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
+            dataSource: context.read(),
+            cabinStockMapper: CabinStockMapper(),
+            stockTransactionMapper: StockTransactionMapper(),
+            hospitalStockMapper: HospitalStockMapper(),
+            prescriptionItemMapper: PrescriptionItemMapper(),
+            summaryMapper: UserAuthorizationSummaryMapper(),
+            authorizationDetailMapper: UserAuthorizationDetailMapper(),
+            cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
+          ),
+        },
+      ),
+
+      /// Cabin Temperature
+      Provider<ICabinTemperatureRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => CabinTemperatureRepositoryImpl(
+            dataSource: context.read(),
+            cabinTemperatureMapper: CabinTemperatureMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => CabinTemperatureRepositoryImpl(
+            dataSource: context.read(),
+            cabinTemperatureMapper: CabinTemperatureMapper(),
+          ),
+        },
+      ),
+
+      /// Census
+      Provider<ICensusRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => CensusRepositoryImpl(dataSource: context.read()),
+          AppFlavor.dev || AppFlavor.prod => CensusRepositoryImpl(dataSource: context.read()),
+        },
+      ),
+
+      /// Census
+      Provider<IUnloadRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => UnloadRepositoryImpl(dataSource: context.read()),
+          AppFlavor.dev || AppFlavor.prod => UnloadRepositoryImpl(dataSource: context.read()),
+        },
+      ),
+
+      /// Intakse
+      Provider<IIntakeRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => IntakeRepositoryImpl(
+            dataSource: context.read(),
+            intakeItemMapper: CabinTargetedRxItemMapper(),
+            patientIntakeItemMapper: PatientIntakeItemMapper(),
+            eqMapper: EquivalentMedicineMapper(),
+            otherMapper: OtherStationMedicineMapper(),
+            redirectMapper: RedirectedIntakeOrderMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => IntakeRepositoryImpl(
+            dataSource: context.read(),
+            intakeItemMapper: CabinTargetedRxItemMapper(),
+            patientIntakeItemMapper: PatientIntakeItemMapper(),
+            eqMapper: EquivalentMedicineMapper(),
+            otherMapper: OtherStationMedicineMapper(),
+            redirectMapper: RedirectedIntakeOrderMapper(),
+          ),
+        },
+      ),
+    ];
+  }
+}

@@ -9,7 +9,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class MasterDrawerStatusView extends StatelessWidget {
   const MasterDrawerStatusView({super.key, required this.title, required this.subtitle, this.isError = false});
@@ -26,33 +25,63 @@ class MasterDrawerStatusView extends StatelessWidget {
   Widget build(BuildContext context) {
     final accentColor = isError ? MedColors.amber : MedColors.blue;
 
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 110,
-            height: 90,
-            margin: const EdgeInsets.only(bottom: 16.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: accentColor, width: 2.5),
-              borderRadius: MedRadius.lgAll,
-            ),
-            alignment: Alignment.center,
-            child: Icon(isError ? PhosphorIcons.warning() : PhosphorIcons.dresser(), size: 46, color: accentColor),
-          ),
-          Text(title, style: MedTextStyles.titleLg()),
-          const SizedBox(height: 6.0),
-          Text(
-            subtitle,
-            style: MedTextStyles.bodyLg(color: MedColors.text3),
-            textAlign: TextAlign.center,
-          ),
-          if (!isError) ...[
-            const SizedBox(height: 8),
-            const SizedBox(width: 28, height: 28, child: CircularProgressIndicator(strokeWidth: 2)),
-          ],
-        ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!isError) ...[_BlinkingSquare(size: 15, color: accentColor), const SizedBox(height: 8)],
+        Text(title, style: MedTextStyles.titleLg()),
+        const SizedBox(height: 6.0),
+        Text(
+          subtitle,
+          style: MedTextStyles.bodyLg(color: MedColors.text3),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}
+
+/// Sürekli tekrar eden opaklık animasyonuyla yanıp sönen kare —
+/// MedLoadingIndicator yerine, "işlem devam ediyor" göstergesi.
+class _BlinkingSquare extends StatefulWidget {
+  const _BlinkingSquare({required this.size, this.color});
+
+  final double size;
+  final Color? color;
+
+  @override
+  State<_BlinkingSquare> createState() => _BlinkingSquareState();
+}
+
+class _BlinkingSquareState extends State<_BlinkingSquare> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 700))..repeat(reverse: true);
+    _opacity = Tween<double>(
+      begin: 0.25,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: Container(
+        width: widget.size,
+        height: widget.size,
+        decoration: BoxDecoration(color: widget.color ?? MedColors.blue),
       ),
     );
   }

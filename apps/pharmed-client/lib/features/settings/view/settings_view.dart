@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../notifier/settings_notifier.dart';
-import '../notifier/settings_state.dart';
 
 part 'general_settings_view.dart';
 part 'appearance_settings_view.dart';
@@ -23,7 +22,7 @@ class SettingsView {
   }
 }
 
-class _SettingsModalBody extends ConsumerWidget {
+class _SettingsModalBody extends StatelessWidget {
   const _SettingsModalBody();
 
   static List<MedSettingsNavGroup> _navGroups(BuildContext context) {
@@ -77,17 +76,16 @@ class _SettingsModalBody extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(settingsNotifierProvider);
-    final notifier = ref.read(settingsNotifierProvider.notifier);
+  Widget build(BuildContext context) {
+    final notifier = context.watch<SettingsNotifier>();
 
     return MedSettingsModal(
       title: context.l10n.settingsView_title,
       subtitle: context.l10n.settingsView_subtitle,
       navGroups: _navGroups(context),
-      activeSectionId: state.activeSection.name,
+      activeSectionId: notifier.activeSection.name,
       onSectionSelected: (id) => notifier.setSection(SettingsSection.values.byName(id)),
-      content: _content(state.activeSection),
+      content: _content(notifier.activeSection),
       onClose: () => Navigator.of(context).pop(),
       // Client'ta henüz taslak/kaydet akışı yok — dil değişikliği zaten
       // setLanguage() içinde anında cache'e yazılıyor. Debug'daki kabin

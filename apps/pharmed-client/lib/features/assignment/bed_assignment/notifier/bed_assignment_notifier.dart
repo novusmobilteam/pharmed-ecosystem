@@ -9,341 +9,377 @@
 //
 // Sınıf: Class B
 
+import 'dart:async';
 import 'package:collection/collection.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
+import 'package:pharmed_client/core/mixins/api_request_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/providers/providers.dart';
-import '../../assignment.dart';
+class BedAssignmentNotifier extends ChangeNotifier with ApiRequestMixin {
+  BedAssignmentNotifier({
+    required GetBedAssignmentsUseCase getAssignments,
+    required CreateBedAssignmentUseCase createAssignment,
+    required DeleteBedAssignmentUseCase deleteAssignment,
+    required UpdateBedAssignmentUseCase updateAssignment,
+    required GetCabinUseCase getCabin,
+    required GetStationUseCase getStation,
+    required GetServiceUseCase getService,
+  }) : _getAssignments = getAssignments,
+       _createAssignment = createAssignment,
+       _deleteAssignment = deleteAssignment,
+       _updateAssignment = updateAssignment,
+       _getCabin = getCabin,
+       _getStation = getStation,
+       _getService = getService;
 
-final bedAssignmentNotifierProvider = NotifierProvider<BedAssignmentNotifier, BedAssignmentState>(
-  BedAssignmentNotifier.new,
-);
+  final GetBedAssignmentsUseCase _getAssignments;
+  final CreateBedAssignmentUseCase _createAssignment;
+  final DeleteBedAssignmentUseCase _deleteAssignment;
+  final UpdateBedAssignmentUseCase _updateAssignment;
+  final GetCabinUseCase _getCabin;
+  final GetStationUseCase _getStation;
+  final GetServiceUseCase _getService;
 
-class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
+  final OperationKey initOp = OperationKey.custom('init');
+  final OperationKey saveOp = OperationKey.custom('save-assignment');
+  final OperationKey serviceOp = OperationKey.custom('load-service');
+
+  bool _isDisposed = false;
+
+  void _notify() {
+    if (_isDisposed) return;
+    notifyListeners();
+  }
+
   @override
-  BedAssignmentState build() => const BedAssignmentUninitialized();
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
 
-  GetBedAssignmentsUseCase get _getAssignments => ref.read(getBedAssignmentsUseCaseProvider);
-  CreateBedAssignmentUseCase get _createAssignment => ref.read(createBedAssignmentUseCaseProvider);
-  DeleteBedAssignmentUseCase get _deleteAssignment => ref.read(deleteBedAssignmentUseCaseProvider);
-  UpdateBedAssignmentUseCase get _updateAssignment => ref.read(updateBedAssignmentUseCaseProvider);
-  GetCabinUseCase get _getCabin => ref.read(getCabinUseCaseProvider);
-  GetStationUseCase get _getStation => ref.read(getStationUseCaseProvider);
-  GetServiceUseCase get _getService => ref.read(getServiceUseCaseProvider);
+  // ── Kabin/bağlam ─────────────────────────────────────────────────
 
-  // In-memory servis listesi — oturum boyunca geçerli
+  int _cabinId = 0;
+  int get cabinId => _cabinId;
+
+  List<MobileSlotVisual> _slots = const [];
+  List<MobileSlotVisual> get slots => _slots;
+
+  List<MobileDrawerSlot> _mobileSlots = const [];
+  List<MobileDrawerSlot> get mobileSlots => _mobileSlots;
+
+  List<BedAssignment> _assignments = const [];
+  List<BedAssignment> get assignments => _assignments;
+
+  /// In-memory servis listesi — oturum boyunca geçerli (istasyondan bir kez çekilir).
   List<HospitalService> _services = const [];
+  List<HospitalService> get services => _services;
 
-  // Init
+  // ── Seçim ────────────────────────────────────────────────────────
+
+  MobileSlotVisual? _selectedSlot;
+  MobileSlotVisual? get selectedSlot => _selectedSlot;
+  int? get selectedSlotId => _selectedSlot?.slotId;
+
+  MobileCellCoord? _selectedCell;
+  MobileCellCoord? get selectedCell => _selectedCell;
+
+  BedAssignment? _existingAssignment;
+  BedAssignment? get existingAssignment => _existingAssignment;
+
+  HospitalService? _selectedService;
+  HospitalService? get selectedService => _selectedService;
+
+  List<Room> _rooms = const [];
+  List<Room> get rooms => _rooms;
+
+  Room? _selectedRoom;
+  Room? get selectedRoom => _selectedRoom;
+
+  List<Bed> _beds = const [];
+  List<Bed> get beds => _beds;
+
+  Bed? _selectedBed;
+  Bed? get selectedBed => _selectedBed;
+
+  // ── Hata ─────────────────────────────────────────────────────────
+
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
+  // ── Başarı bildirimi (bir kerelik banner) ───────────────────────
+
+  bool _isCreated = false;
+  bool _showSuccess = false;
+  bool get showSuccess => _showSuccess;
+  bool get isCreated => _isCreated;
+
+  // ── Türetilen ────────────────────────────────────────────────────
+
+  bool get isCellSelected => _selectedCell != null;
+  bool get isSlotSelected => _selectedSlot != null;
+  bool get canSave => _selectedBed != null;
+  bool get isAssigned => _existingAssignment != null;
+
+  Map<MobileCellCoord, BedAssignment> get assignmentByCoord {
+    final map = <MobileCellCoord, BedAssignment>{};
+    for (final a in _assignments) {
+      if (a.cellId == null) continue;
+      final coord = _resolveCoord(cellId: a.cellId!);
+      if (coord != null) map[coord] = a;
+    }
+    return map;
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────
+
   Future<void> init(CabinVisualizerData data) async {
-    final slots = data.slots.whereType<MobileSlotVisual>().toList();
-    state = BedAssignmentLoading(slots: slots, cabinId: data.cabinId);
+    _cabinId = data.cabinId;
+    _slots = data.slots.whereType<MobileSlotVisual>().toList();
+    _notify();
 
-    // 1. Kabin + atamalar paralel çek
-    final results = await Future.wait([_getCabin.call(data.cabinId), _getAssignments.call(data.cabinId)]);
+    await execute(
+      initOp,
+      operation: () async {
+        // 1. Kabin + atamalar paralel çek
+        final results = await Future.wait([_getCabin.call(data.cabinId), _getAssignments.call(data.cabinId)]);
+        final cabinResult = results[0] as Result<Cabin?>;
+        final assignmentResult = results[1] as Result<List<BedAssignment>>;
 
-    final cabinResult = results[0] as Result<Cabin?>;
-    final assignmentResult = results[1] as Result<List<BedAssignment>>;
+        final cabin = cabinResult.when(ok: (c) => c, error: (_) => null);
+        if (cabin == null || cabin.stationId == null) {
+          return Result<List<BedAssignment>>.error(
+            CustomException(message: contextlessL10n().assignment_error_stationLoadFailed),
+          );
+        }
 
-    // 2. Kabin başarısız → hata
-    final Cabin? cabin = cabinResult.when(ok: (data) => data, error: (_) => null);
+        // 2. İstasyon çek → services
+        final stationResult = await _getStation.call(cabin.stationId!);
+        stationResult.when(
+          ok: (station) => _services = station?.services ?? const [],
+          error: (_) => _services = const [],
+        );
 
-    if (cabin == null || cabin.stationId == null) {
-      state = BedAssignmentError(
-        message: contextlessL10n().assignment_error_stationLoadFailed,
-        previousState: BedAssignmentIdle(
-          slots: slots,
-          mobileSlots: data.mobileSlots,
-          assignments: const [],
-          cabinId: data.cabinId,
-        ),
-      );
-      return;
-    }
-
-    // 3. İstasyon çek → services
-    final stationResult = await _getStation.call(cabin.stationId!);
-
-    stationResult.when(
-      ok: (station) {
-        _services = station?.services ?? const [];
+        return assignmentResult;
       },
-      error: (_) {
-        _services = const [];
+      onData: (assignments) {
+        _mobileSlots = data.mobileSlots;
+        _assignments = assignments;
+        _notify();
       },
-    );
-
-    // 4. Atama sonucunu işle
-    state = assignmentResult.when(
-      ok: (assignments) => BedAssignmentIdle(
-        slots: slots,
-        mobileSlots: data.mobileSlots,
-        assignments: assignments,
-        cabinId: data.cabinId,
-      ),
-      error: (e) => BedAssignmentError(
-        message: e.message,
-        previousState: BedAssignmentIdle(
-          slots: slots,
-          mobileSlots: data.mobileSlots,
-          assignments: const [],
-          cabinId: data.cabinId,
-        ),
-      ),
     );
   }
 
-  // Slot seçimi
+  // ── Seçim ────────────────────────────────────────────────────────
+
   void onSlotTap(MobileSlotVisual slot) {
-    final current = state;
-    final currentSlotId = switch (current) {
-      BedAssignmentSlotSelected s => s.selectedSlotId,
-      BedAssignmentCellSelected s => s.selectedSlotId,
-      _ => null,
-    };
-
-    if (currentSlotId == slot.slotId) {
-      state = BedAssignmentIdle(
-        slots: state.slots,
-        mobileSlots: state.mobileSlots,
-        assignments: state.assignments,
-        cabinId: current.cabinId,
-      );
+    if (_selectedSlot?.slotId == slot.slotId) {
+      clearSelection();
       return;
     }
 
-    state = BedAssignmentSlotSelected(
-      slots: state.slots,
-      mobileSlots: state.mobileSlots,
-      assignments: state.assignments,
-      selectedSlot: slot,
-      cabinId: current.cabinId,
-    );
+    _selectedSlot = slot;
+    _clearCellSelection();
+    _notify();
   }
 
-  // Hücre seçimi
   void onCellTap(MobileCellCoord coord) {
-    final current = state;
-    final selectedSlot = state.selectedSlot;
+    final selectedSlot = _selectedSlot;
     if (selectedSlot == null) return;
 
-    if (current is BedAssignmentCellSelected && current.selectedCell == coord) {
-      state = BedAssignmentSlotSelected(
-        slots: state.slots,
-        mobileSlots: state.mobileSlots,
-        assignments: state.assignments,
-        selectedSlot: selectedSlot,
-        cabinId: current.cabinId,
-      );
+    if (_selectedCell == coord) {
+      _clearCellSelection();
+      _notify();
       return;
     }
 
-    final cellId = _resolveCellId(mobileSlots: state.mobileSlots, coord: coord);
-    final existingAssignment = cellId != null ? state.assignments.firstWhereOrNull((a) => a.cellId == cellId) : null;
+    final cellId = _resolveCellId(coord: coord);
+    final existingAssignment = cellId != null ? _assignments.firstWhereOrNull((a) => a.cellId == cellId) : null;
 
-    state = BedAssignmentCellSelected(
-      slots: state.slots,
-      mobileSlots: state.mobileSlots,
-      assignments: state.assignments,
-      selectedSlot: selectedSlot,
-      selectedCell: coord,
-      cabinId: current.cabinId,
-      services: _services,
-      existingAssignment: existingAssignment,
-      selectedBed: existingAssignment?.bed,
-      selectedRoom: existingAssignment?.bed?.room,
-      selectedService: existingAssignment?.hospitalization?.physicalService ?? existingAssignment?.bed?.room?.service,
-    );
+    _selectedCell = coord;
+    _existingAssignment = existingAssignment;
+    _selectedBed = existingAssignment?.bed;
+    _selectedRoom = existingAssignment?.bed?.room;
+    _selectedService = existingAssignment?.hospitalization?.physicalService ?? existingAssignment?.bed?.room?.service;
+    _rooms = const [];
+    _beds = const [];
+    _notify();
+  }
+
+  /// Seçimi tamamen temizler.
+  void clearSelection() {
+    _selectedSlot = null;
+    _clearCellSelection();
+    _notify();
+  }
+
+  void _clearCellSelection() {
+    _selectedCell = null;
+    _existingAssignment = null;
+    _selectedService = null;
+    _rooms = const [];
+    _selectedRoom = null;
+    _beds = const [];
+    _selectedBed = null;
   }
 
   Future<void> onServiceSelected(HospitalService? service) async {
-    final current = state;
-    if (current is! BedAssignmentCellSelected) return;
+    if (!isCellSelected) return;
 
     // Önce servisi seç, oda+yatak sıfırla, loading göster
-    state = current.copyWith(selectedService: service, rooms: null, selectedRoom: null, beds: null, selectedBed: null);
+    _selectedService = service;
+    _rooms = const [];
+    _selectedRoom = null;
+    _beds = const [];
+    _selectedBed = null;
+    _notify();
 
-    final result = await _getService.call(service?.id! ?? 0);
-
-    result.when(
-      ok: (fullService) {
-        final current = state;
-        if (current is! BedAssignmentCellSelected) return;
-        state = current.copyWith(
-          selectedService: fullService ?? service,
-          rooms: fullService?.rooms ?? const [],
-          selectedRoom: null,
-          beds: null,
-          selectedBed: null,
-        );
+    await execute(
+      serviceOp,
+      operation: () => _getService.call(service?.id! ?? 0),
+      onData: (fullService) {
+        if (!isCellSelected) return;
+        _selectedService = fullService ?? service;
+        _rooms = fullService?.rooms ?? const [];
+        _selectedRoom = null;
+        _beds = const [];
+        _selectedBed = null;
+        _notify();
       },
-      error: (e) {
-        final current = state;
-        if (current is! BedAssignmentCellSelected) return;
-        state = BedAssignmentError(message: e.message, previousState: current);
+      onFailed: (e) {
+        _errorMessage = e.message;
+        _notify();
       },
     );
   }
 
   void onRoomSelected(Room? room) {
-    final current = state;
-    if (current is! BedAssignmentCellSelected) return;
-
-    state = current.copyWith(selectedRoom: room, beds: room?.beds, selectedBed: null);
+    if (!isCellSelected) return;
+    _selectedRoom = room;
+    _beds = room?.beds ?? const [];
+    _selectedBed = null;
+    _notify();
   }
 
   void onBedSelected(Bed? bed) {
-    final current = state;
-    if (current is! BedAssignmentCellSelected) return;
-
-    state = current.copyWith(selectedBed: bed);
+    if (!isCellSelected) return;
+    _selectedBed = bed;
+    _notify();
   }
 
-  // Kaydet
-  Future<void> saveAssignment() async {
-    final current = state;
-    if (current is! BedAssignmentCellSelected) return;
-    if (!current.canSave) return;
+  // ── Kaydet / Sil ─────────────────────────────────────────────────
 
-    final cellId = _resolveCellId(mobileSlots: current.mobileSlots, coord: current.selectedCell);
+  Future<void> saveAssignment() async {
+    if (!isCellSelected || !canSave) return;
+    final coord = _selectedCell;
+    final bed = _selectedBed;
+    if (coord == null || bed == null) return;
+
+    final cellId = _resolveCellId(coord: coord);
     if (cellId == null) {
-      state = BedAssignmentError(message: contextlessL10n().assignment_cellNotFoundError, previousState: current);
+      _errorMessage = contextlessL10n().assignment_cellNotFoundError;
+      _notify();
       return;
     }
 
-    state = BedAssignmentSaving(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      assignments: current.assignments,
-      selectedSlot: current.selectedSlot,
-      cabinId: current.cabinId,
-    );
+    final existing = _existingAssignment;
 
-    final Result<void> result;
-
-    if (current.existingAssignment != null) {
-      final entity = current.existingAssignment!.copyWith(bedId: current.selectedBed!.id);
-      result = await _updateAssignment.call(entity);
-    } else {
-      final entity = BedAssignment(cellId: cellId, bedId: current.selectedBed!.id);
-      result = await _createAssignment.call(entity);
-    }
-
-    result.when(
-      ok: (_) => _refreshAssignments(
-        slots: current.slots,
-        mobileSlots: current.mobileSlots,
-        selectedSlot: current.selectedSlot,
-        cabinId: current.cabinId,
-        selectedCell: current.selectedCell,
-        isCreated: true,
-      ),
-      error: (e) {
-        state = BedAssignmentError(message: e.message, previousState: current);
+    await executeVoid(
+      saveOp,
+      operation: () {
+        if (existing != null) {
+          final entity = existing.copyWith(bedId: bed.id);
+          return _updateAssignment.call(entity);
+        }
+        final entity = BedAssignment(cellId: cellId, bedId: bed.id);
+        return _createAssignment.call(entity);
+      },
+      onSuccess: () => unawaited(_refreshAssignments(isCreated: true)),
+      onFailed: (e) {
+        _errorMessage = e.message;
+        _notify();
       },
     );
   }
 
   Future<void> deleteAssignment() async {
-    final current = state;
-    if (current is! BedAssignmentCellSelected) return;
-    if (current.existingAssignment == null) return;
+    if (!isCellSelected) return;
+    final existing = _existingAssignment;
+    if (existing == null) return;
 
-    state = BedAssignmentSaving(
-      slots: current.slots,
-      mobileSlots: current.mobileSlots,
-      assignments: current.assignments,
-      selectedSlot: current.selectedSlot,
-      cabinId: current.cabinId,
-    );
-
-    final result = await _deleteAssignment.call(current.existingAssignment!);
-
-    result.when(
-      ok: (_) => _refreshAssignments(
-        slots: current.slots,
-        mobileSlots: current.mobileSlots,
-        selectedSlot: current.selectedSlot,
-        cabinId: current.cabinId,
-        selectedCell: current.selectedCell,
-        isCreated: false,
-      ),
-      error: (e) {
-        state = BedAssignmentError(message: e.message, previousState: current);
+    await executeVoid(
+      saveOp,
+      operation: () => _deleteAssignment.call(existing),
+      onSuccess: () => unawaited(_refreshAssignments(isCreated: false)),
+      onFailed: (e) {
+        _errorMessage = e.message;
+        _notify();
       },
     );
   }
 
-  Future<void> _refreshAssignments({
-    required List<MobileSlotVisual> slots,
-    required List<MobileDrawerSlot> mobileSlots,
-    required MobileSlotVisual selectedSlot,
-    required MobileCellCoord selectedCell,
-    required int cabinId,
-    required bool isCreated,
-  }) async {
-    final result = await _getAssignments.call(cabinId);
-
-    state = result.when(
-      ok: (assignments) => BedAssignmentSuccess(
-        slots: slots,
-        mobileSlots: mobileSlots,
-        selectedSlot: selectedSlot,
-        selectedCell: selectedCell,
-        assignments: assignments,
-        cabinId: cabinId,
-        message: '',
-        isCreated: isCreated,
-      ),
-      error: (e) => BedAssignmentError(
-        message: e.message,
-        previousState: BedAssignmentSlotSelected(
-          slots: slots,
-          mobileSlots: mobileSlots,
-          assignments: const [],
-          selectedSlot: selectedSlot,
-          cabinId: cabinId,
-        ),
-      ),
+  Future<void> _refreshAssignments({required bool isCreated}) async {
+    await execute(
+      initOp,
+      operation: () => _getAssignments.call(_cabinId),
+      onData: (assignments) {
+        _assignments = assignments;
+        _isCreated = isCreated;
+        _showSuccess = true;
+        _notify();
+      },
+      onFailed: (e) {
+        _errorMessage = e.message;
+        _notify();
+      },
     );
   }
 
   void dismissError() {
-    if (state is BedAssignmentError) {
-      state = (state as BedAssignmentError).previousState;
-    }
+    if (_errorMessage == null) return;
+    _errorMessage = null;
+    _notify();
   }
 
   void dismissSuccess() {
-    final current = state;
-    if (current is! BedAssignmentSuccess) return;
+    if (!_showSuccess) return;
+    _showSuccess = false;
 
-    final cellId = _resolveCellId(mobileSlots: current.mobileSlots, coord: current.selectedCell);
-    final existingAssignment = cellId != null ? current.assignments.firstWhereOrNull((a) => a.cellId == cellId) : null;
-
-    state = BedAssignmentCellSelected(
-      slots: current.slots,
-      cabinId: current.cabinId,
-      mobileSlots: current.mobileSlots,
-      assignments: current.assignments,
-      selectedSlot: current.selectedSlot,
-      selectedCell: current.selectedCell,
-      services: _services,
-      existingAssignment: existingAssignment,
-      selectedBed: existingAssignment?.bed,
-      selectedRoom: existingAssignment?.bed?.room,
-      selectedService: existingAssignment?.hospitalization?.physicalService ?? existingAssignment?.bed?.room?.service,
-    );
+    // Başarı sonrası hücre seçili kalır — mevcut atamayı yeniden çözüp
+    // formu güncel veriyle tazeler (orijinaldeki dismissSuccess davranışı).
+    final coord = _selectedCell;
+    if (coord != null) {
+      final cellId = _resolveCellId(coord: coord);
+      final existingAssignment = cellId != null ? _assignments.firstWhereOrNull((a) => a.cellId == cellId) : null;
+      _existingAssignment = existingAssignment;
+      _selectedBed = existingAssignment?.bed;
+      _selectedRoom = existingAssignment?.bed?.room;
+      _selectedService = existingAssignment?.hospitalization?.physicalService ?? existingAssignment?.bed?.room?.service;
+    }
+    _notify();
   }
 
-  int? _resolveCellId({required List<MobileDrawerSlot> mobileSlots, required MobileCellCoord coord}) {
-    final slot = mobileSlots.where((s) => s.id == coord.$1).firstOrNull;
+  int? _resolveCellId({required MobileCellCoord coord}) {
+    final slot = _mobileSlots.where((s) => s.id == coord.$1).firstOrNull;
     if (slot == null) return null;
     if (coord.$2 >= slot.units.length) return null;
     final unit = slot.units[coord.$2];
     if (coord.$3 >= unit.cells.length) return null;
     return unit.cells[coord.$3].id;
+  }
+
+  MobileCellCoord? _resolveCoord({required int cellId}) {
+    for (final slot in _mobileSlots) {
+      for (int uIdx = 0; uIdx < slot.units.length; uIdx++) {
+        final unit = slot.units[uIdx];
+        for (int cIdx = 0; cIdx < unit.cells.length; cIdx++) {
+          if (unit.cells[cIdx].id == cellId) {
+            return (slot.id, uIdx, cIdx);
+          }
+        }
+      }
+    }
+    return null;
   }
 }

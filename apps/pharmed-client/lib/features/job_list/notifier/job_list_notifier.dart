@@ -1,85 +1,112 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/features/job_list/notifier/job_list_state.dart';
+import 'package:flutter/foundation.dart';
+import 'package:pharmed_client/core/mixins/api_request_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../core/providers/providers.dart';
+class JobListNotifier extends ChangeNotifier with ApiRequestMixin {
+  JobListNotifier({required GetMyPatientsUseCase getMyPatients, required GetDailyJobListUseCase getJobList})
+    : _getMyPatients = getMyPatients,
+      _getJobList = getJobList;
 
-final jobListNotifierProvider = NotifierProvider<JobListNotifier, JobListState>(JobListNotifier.new);
+  final GetMyPatientsUseCase _getMyPatients;
+  final GetDailyJobListUseCase _getJobList;
 
-class JobListNotifier extends Notifier<JobListState> {
-  GetMyPatientsUseCase get _getMyPatients => ref.read(getMyPatientsUseCaseProvider);
-  GetDailyJobListUseCase get _getJobList => ref.read(getDailyJobListUseCaseProvider);
+  final OperationKey initOp = OperationKey.custom('init');
+  final OperationKey jobListOp = OperationKey.custom('load-job-list');
 
-  @override
-  JobListState build() => const JobListUninitialized();
+  // ── State ────────────────────────────────────────────────────────
+
+  int? _cabinId;
+  int? get cabinId => _cabinId;
+
+  List<Hospitalization> _allPatients = const [];
+  List<Hospitalization> get allPatients => _allPatients;
+
+  Hospitalization? _selectedHospitalization;
+  Hospitalization? get selectedHospitalization => _selectedHospitalization;
+
+  List<PrescriptionItem> _jobList = const [];
+  List<PrescriptionItem> get jobList => _jobList;
+
+  String _search = '';
+  String get search => _search;
+
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
+  /// Fetch sürerken kullanıcı başka bir hastaya tıklarsa, eski isteğin
+  /// sonucu görmezden gelinir — sadece bu id'ye ait sonuç uygulanır.
+  int? _pendingHospitalizationId;
+
+  bool get isInitialized => _cabinId != null;
+  bool get isInitialLoading => isLoading(initOp) && !isInitialized;
+  bool get isJobListLoading => isLoading(jobListOp);
+
+  // ── Init ─────────────────────────────────────────────────────────
 
   Future<void> init(int cabinId) async {
-    if (state.cabinId == cabinId && state is! JobListUninitialized) return;
+    if (_cabinId == cabinId && isInitialized) return;
 
-    state = JobListLoading(cabinId: cabinId);
+    await execute(
+      initOp,
+      operation: () => _getMyPatients.call(),
+      onData: (myPatients) async {
+        _cabinId = cabinId;
+        _allPatients = _toHospitalizations(myPatients);
+        _selectedHospitalization = null;
+        _jobList = const [];
+        notifyListeners();
 
-    final myResult = await _getMyPatients.call();
-
-    if (myResult is Error) {
-      state = JobListError(
-        message: (myResult as Error).error.message,
-        previousState: JobListIdle(
-          cabinId: cabinId,
-          allPatients: const [],
-          selectedHospitalization: null,
-          jobList: const [],
-        ),
-      );
-      return;
-    }
-
-    final myPatients = (myResult as Ok<List<MyPatient>>).data ?? [];
-    final allPatients = _toHospitalizations(myPatients);
-
-    state = JobListIdle(cabinId: cabinId, allPatients: allPatients, selectedHospitalization: null, jobList: const []);
-
-    // Liste boş değilse ilk eleman otomatik seçilir.
-    if (allPatients.isNotEmpty) {
-      await selectPatient(allPatients.first);
-    }
+        // Liste boş değilse ilk eleman otomatik seçilir.
+        if (_allPatients.isNotEmpty) {
+          await selectPatient(_allPatients.first);
+        }
+      },
+      onFailed: (e) {
+        _cabinId = cabinId;
+        _allPatients = const [];
+        _errorMessage = e.message;
+        notifyListeners();
+      },
+    );
   }
 
   Future<void> selectPatient(Hospitalization hospitalization) async {
     final hospId = hospitalization.id;
     if (hospId == null) return;
+    if (!isInitialized) return;
 
-    final current = state;
-    if (current is! JobListIdle) return;
+    _selectedHospitalization = hospitalization;
+    _pendingHospitalizationId = hospId;
+    notifyListeners();
 
-    state = current.copyWith(selectedHospitalization: hospitalization, isJobListLoading: true);
-
-    final result = await _getJobList.call(hospId);
-
-    final afterFetch = state;
-    if (afterFetch is! JobListIdle) return;
-    // Fetch sürerken kullanıcı başka bir hastaya tıkladıysa, eski sonucu uygulama.
-    if (afterFetch.selectedHospitalizationId != hospId) return;
-
-    result.when(
-      ok: (jobList) {
-        state = afterFetch.copyWith(jobList: jobList, isJobListLoading: false);
+    await execute(
+      jobListOp,
+      operation: () => _getJobList.call(hospId),
+      onData: (jobList) {
+        // Fetch sürerken kullanıcı başka bir hastaya tıkladıysa, eski
+        // sonucu uygulama.
+        if (_pendingHospitalizationId != hospId) return;
+        _jobList = jobList;
+        notifyListeners();
       },
-      error: (e) {
-        state = JobListError(message: e.message, previousState: afterFetch.copyWith(isJobListLoading: false));
+      onFailed: (e) {
+        if (_pendingHospitalizationId != hospId) return;
+        _errorMessage = e.message;
+        notifyListeners();
       },
     );
   }
 
   void onSearchChanged(String value) {
-    final current = state;
-    if (current is JobListIdle) {
-      state = current.copyWith(search: value);
-    }
+    if (!isInitialized) return;
+    _search = value;
+    notifyListeners();
   }
 
   void dismissError() {
-    final current = state;
-    if (current is JobListError) state = current.previousState;
+    if (_errorMessage == null) return;
+    _errorMessage = null;
+    notifyListeners();
   }
 
   List<Hospitalization> _toHospitalizations(List<MyPatient> patients) {

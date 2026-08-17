@@ -21,7 +21,7 @@ class DirectedOrdersViewModel extends ChangeNotifier with ApiRequestMixin {
   Future<void> fetchHospitalizations() async {
     await execute(
       fetch,
-      operation: () => _hospitalizationRepository.getHospitalizations(),
+      operation: () => _hospitalizationRepository.getHospitalizations(PagedQueryParams()),
       onData: (response) {
         _items = response.data ?? [];
       },

@@ -6,5 +6,3 @@ export 'rfid/rfid_service.dart';
 
 export 'serial_communication/mock_serial_communication_service.dart';
 export 'serial_communication/serial_communication_service.dart';
-
-export 'serial_communication/serial_port_lifecycle_observer.dart';

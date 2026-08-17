@@ -7,12 +7,6 @@ class GetHospitalizationsUseCase {
   GetHospitalizationsUseCase(this._repository);
 
   Future<Result<ApiResponse<List<Hospitalization>>>> call(PagedQueryParams params) async {
-    return _repository.getHospitalizations(
-      skip: params.skip,
-      take: params.take,
-      searchQuery: params.searchQuery,
-      startDate: params.startDate,
-      endDate: params.endDate,
-    );
+    return _repository.getHospitalizations(params);
   }
 }

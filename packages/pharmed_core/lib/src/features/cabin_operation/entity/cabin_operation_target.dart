@@ -62,7 +62,7 @@ class CabinOperationStepEntry {
   }
 }
 
-class CabinOperationTarget {
+class CabinOperationTarget implements CabinDrawerTarget {
   CabinOperationTarget._({
     required this.config,
     required this.assignment,

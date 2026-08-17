@@ -4,11 +4,12 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart' hide MaterialType;
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../core/cache/app_settings_cache.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../features/settings/notifier/settings_notifier.dart';
 
 class DashboardNavbarMenu extends StatelessWidget {
   const DashboardNavbarMenu({
@@ -28,6 +29,8 @@ class DashboardNavbarMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final children = flattenedMenus.where((m) => m.parentId == parentId).toList();
     if (children.isEmpty) return const SizedBox.shrink();
+
+    final settings = context.watch<SettingsNotifier>();
 
     return Material(
       type: MaterialType.transparency,
@@ -52,15 +55,24 @@ class DashboardNavbarMenu extends StatelessWidget {
             children: [
               _buildHeader(context),
               const SizedBox(height: 16),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: children.map((item) {
-                  return SizedBox(
-                    width: 350,
-                    child: _SubCard(item: item, onTap: (id) => onCardTap?.call(id)),
+              // cabinType tüm kartlar için TEK bir FutureBuilder'da çözülür
+              // — her _SubCard kendi başına getDeviceMode() çağırmaz.
+              FutureBuilder<CabinType?>(
+                key: ValueKey(settings.debugCabin?.id),
+                future: settings.getDeviceMode(),
+                builder: (context, snapshot) {
+                  final cabinType = snapshot.data;
+                  return Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: children.map((item) {
+                      return SizedBox(
+                        width: 350,
+                        child: _SubCard(item: item, cabinType: cabinType, onTap: (id) => onCardTap?.call(id)),
+                      );
+                    }).toList(),
                   );
-                }).toList(),
+                },
               ),
             ],
           ),
@@ -83,17 +95,17 @@ class DashboardNavbarMenu extends StatelessWidget {
   }
 }
 
-class _SubCard extends ConsumerWidget {
-  const _SubCard({required this.item, required this.onTap});
+class _SubCard extends StatelessWidget {
+  const _SubCard({required this.item, required this.cabinType, required this.onTap});
 
   final MenuItem item;
+  final CabinType? cabinType;
   final void Function(int id) onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final iconData = item.unicode?.toIcon;
     final locale = Localizations.localeOf(context);
-    final CabinType? cabinType = ref.watch(deviceModeProvider).value;
     final isMobileItem = item.isMobile ?? false;
     final isActive = cabinType != CabinType.mobile || isMobileItem;
 
@@ -119,7 +131,6 @@ class _SubCard extends ConsumerWidget {
                 decoration: BoxDecoration(color: MedColors.surface3, borderRadius: MedRadius.mdAll),
                 child: Icon(iconData, size: 16, color: MedColors.text2),
               ),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

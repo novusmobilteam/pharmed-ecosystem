@@ -1322,7 +1322,25 @@
     "masterDrawer_error_lidOpenFailed",
     "masterDrawer_error_lockOpenTimeout",
     "masterDrawer_error_sensorCommunicationLost",
-    "masterDrawer_error_unexpectedlyClosed"
+    "masterDrawer_error_unexpectedlyClosed",
+    "patientPicker_urgentPatientActiveDescription",
+    "intake_action_witnessLogin",
+    "intake_witness_dialogTitle",
+    "intake_witness_dialogSubtitle",
+    "intake_witness_stepsHeader",
+    "intake_witness_stepTitle",
+    "intake_witness_candidatesHeader",
+    "intake_witness_candidatesDescription",
+    "intake_witness_offShiftBadge",
+    "intake_witness_loginHeader",
+    "intake_witness_loginDescription",
+    "intake_witness_usernameLabel",
+    "intake_witness_passwordLabel",
+    "intake_witness_confirmButton",
+    "intake_witness_cancelButton",
+    "intake_witness_remainingLabel",
+    "intake_witness_startButton",
+    "intake_witness_confirmedMessage"
   ],
 
   "fr": [

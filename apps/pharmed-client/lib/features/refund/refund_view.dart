@@ -1,36 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/cache/app_settings_cache.dart';
+
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../dashboard/presentation/notifier/dashboard_state.dart';
-import 'refund.dart';
+import '../settings/notifier/settings_notifier.dart';
 
-class RefundView extends ConsumerWidget {
-  const RefundView({super.key, required this.menu});
-
-  final MenuItem menu;
+class RefundView extends StatelessWidget {
+  const RefundView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final deviceModeAsync = ref.watch(deviceModeProvider);
-    final cabinData = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData,
-          _ => null,
-        },
-      ),
-    );
+  Widget build(BuildContext context) {
+    final cabinData = context.watch<DashboardNotifier>().cabinVisualizerData;
+    final settings = context.watch<SettingsNotifier>();
 
-    return switch (deviceModeAsync) {
-      AsyncData(:final value) => switch (value) {
-        CabinType.master => MasterRefundView(data: cabinData),
-        CabinType.mobile => MobileRefundView(menu: menu),
-        _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+    return FutureBuilder<CabinType?>(
+      key: ValueKey(settings.debugCabin?.id),
+      future: settings.getDeviceMode(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: MedLoadingIndicator());
+        }
+
+        return Center();
+
+        // return switch (snapshot.data) {
+        //   CabinType.master =>
+        //     cabinData != null ? MasterRefundView(data: cabinData) : const Center(child: MedLoadingIndicator()),
+        //   CabinType.mobile => MobileRefundView(data: cabinData),
+        //   _ => const Center(child: MedLoadingIndicator()),
+        // };
       },
-      _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-    };
+    );
   }
 }

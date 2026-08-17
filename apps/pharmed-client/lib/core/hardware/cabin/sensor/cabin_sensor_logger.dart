@@ -8,15 +8,9 @@
 
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
-import 'package:pharmed_client/core/providers/providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-
-final cabinSensorLoggerProvider = Provider<CabinSensorLogger>(
-  (ref) => CabinSensorLogger(ref.read(saveSensorValuesUseCaseProvider), ref.read(appSettingsCacheProvider)),
-);
 
 class CabinSensorLogger {
   CabinSensorLogger(this._saveSensorValues, this._settings);

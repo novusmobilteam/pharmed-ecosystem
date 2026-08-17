@@ -1,9 +1,5 @@
-// [SWREQ-UI-DASH-004] [HAZ-003] [HAZ-007] [HAZ-009]
-// Sınıf: Class B
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/assignment/assignment_view.dart';
 import 'package:pharmed_client/features/cabin_design/view/cabin_design_dialog.dart';
 import 'package:pharmed_client/features/cabin_stock/cabin_stock.dart';
@@ -11,13 +7,13 @@ import 'package:pharmed_client/features/fault/fault_view.dart';
 import 'package:pharmed_client/features/job_list/view/job_list_screen.dart';
 import 'package:pharmed_client/features/my_patients/view/my_patients_screen.dart';
 import 'package:pharmed_client/features/prescription/view/prescription_view.dart';
-import 'package:pharmed_client/features/refund/refund_view.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';
-import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_client/features/unscanned_barcodes/view/unscanned_barcodes_screen.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
+
 import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../auth/auth.dart';
@@ -29,135 +25,189 @@ import '../../../intake/intake.dart';
 import '../../../refill/refill.dart';
 import '../../../settings/notifier/settings_notifier.dart';
 import '../../../settings/view/settings_view.dart';
-import '../../../unload_drawer/view/unload_drawer_view.dart';
-import '../../../waste/waste.dart';
 
+import '../../../unload/unload.dart';
 import '../notifier/dashboard_notifier.dart';
-import '../notifier/dashboard_state.dart';
 import 'dashboard_app_bar.dart';
 
 part 'dashboard_content.dart';
 part 'cabin_telemetry_panel.dart';
+part 'tables_view.dart';
+part 'kpi_view.dart';
+part 'menu_view.dart';
 
-class DashboardScreen extends ConsumerStatefulWidget {
+class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
-  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<DashboardNotifier>(
+      create: (ctx) => DashboardNotifier(
+        getUpcomingTreatments: ctx.read(),
+        getDrugActivities: ctx.read(),
+        getUnapplied: ctx.read(),
+        getCabinVisualizer: ctx.read(),
+        getFilteredMenus: ctx.read(),
+        getAllRooms: ctx.read(),
+        getAllBeds: ctx.read(),
+        getAllServices: ctx.read(),
+        getDeviceMode: ctx.read<SettingsNotifier>().getDeviceMode,
+        settings: ctx.read(),
+        authNotifier: ctx.read<AuthNotifier>(),
+        settingsNotifier: ctx.read<SettingsNotifier>(),
+        cabinConnection: ctx.read<CabinConnectionNotifier>(),
+      )..initialize(),
+      child: const _DashboardScreenContent(),
+    );
+  }
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => ref.read(dashboardNotifierProvider.notifier).initialize());
-  }
+class _DashboardScreenContent extends StatelessWidget {
+  const _DashboardScreenContent();
 
   @override
   Widget build(BuildContext context) {
-    final dashState = ref.watch(dashboardNotifierProvider);
-    final notifier = ref.read(dashboardNotifierProvider.notifier);
-    final authNotif = ref.read(authNotifierProvider.notifier);
-    final authState = ref.watch(authNotifierProvider);
+    final notifier = context.watch<DashboardNotifier>();
 
-    // AuthSessionExpiring de "logged in" sayılır — countdown sırasında menüler
-    // aktif kalsın ki kullanıcı dokunsun, oturum uzasın.
-    final isLoggedIn = authState is AuthLoggedIn || authState is AuthSessionExpiring;
-    final isExpiring = authState is AuthSessionExpiring;
-    final currentUser = authNotif.currentUser;
+    final menuTree = notifier.menuTree;
+    final flattenedMenus = notifier.flattenedMenus ?? const <MenuItem>[];
+    final currentRoute = notifier.activeRoute;
 
-    final loaded = dashState is DashboardLoaded ? dashState : null;
-    final menuTree = loaded?.menuTree ?? const <MenuItem>[];
-    final flattenedMenus = loaded?.flattenedMenus ?? const <MenuItem>[];
-    final currentRoute = loaded?.activeRoute ?? 'dashboard';
-
-    return GestureDetector(
-      onTap: authNotif.onUserActivity,
-      child: Scaffold(
-        backgroundColor: MedColors.bg,
-        //appBar:,
-        body: Stack(
+    return Material(
+      child: GestureDetector(
+        onTap: () => context.read<AuthNotifier>().onUserActivity(),
+        child: Stack(
           children: [
-            Column(
-              children: [
-                // if (!isLoggedIn && _wasLoggedIn(authState))
-                //   LockedBanner(onLoginTap: () => _showLoginModal(context, ref)),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: MedSpacing.insetXl.top,
-                    right: MedSpacing.insetXl.right,
-                    left: MedSpacing.insetXl.left,
-                  ),
-                  child: DashboardAppBar(
+            Scaffold(
+              backgroundColor: Colors.white,
+              body: Column(
+                children: [
+                  _DashboardAppBarSection(
+                    notifier: notifier,
                     menuTree: menuTree,
                     flattenedMenus: flattenedMenus,
                     currentRoute: currentRoute,
-                    isLoggedIn: isLoggedIn,
-                    user: currentUser,
-                    onHomeTap: () {
-                      notifier.navigateTo('dashboard');
-                      notifier.refresh();
-                    },
-                    onLoginTap: () => _showLoginModal(context, ref),
-                    onLogoutTap: authNotif.logout,
-                    onSettingsTap: () => _showSettingsPopup(context),
-                    onMenuItemTap: (id) => isLoggedIn ? notifier.navigateTo(id) : null,
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: MedSpacing.insetXl,
-                    child: DashboardContentFactory.buildContent(context, ref, dashState, notifier, isLoggedIn),
-                  ),
-                ),
-              ],
-            ),
-
-            if (isExpiring)
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: SessionTimeoutBanner(
-                  secondsRemaining: authState.secondsRemaining,
-                  onExtend: authNotif.onUserActivity,
-                ),
+                  Expanded(child: _DashboardRouteContent(notifier: notifier)),
+                ],
               ),
+            ),
+            const _SessionTimeoutOverlay(),
           ],
         ),
       ),
     );
   }
+}
 
-  void _showLoginModal(BuildContext context, WidgetRef ref) {
+class _DashboardAppBarSection extends StatelessWidget {
+  const _DashboardAppBarSection({
+    required this.notifier,
+    required this.menuTree,
+    required this.flattenedMenus,
+    required this.currentRoute,
+  });
+
+  final DashboardNotifier notifier;
+  final List<MenuItem> menuTree;
+  final List<MenuItem> flattenedMenus;
+  final String currentRoute;
+
+  @override
+  Widget build(BuildContext context) {
+    // isLoggedIn ve currentUser countdown tick'inde DEĞİŞMEZ — sadece gerçek
+    // login/logout/session-timeout anında değişir. select() bu yüzden
+    // saniyede bir değil, sadece o an gerçekten tetikler.
+    final isLoggedIn = context.select<AuthNotifier, bool>(
+      (auth) => auth.state is AuthLoggedIn || auth.state is AuthSessionExpiring,
+    );
+    final currentUser = context.select<AuthNotifier, AppUser?>((auth) => auth.currentUser);
+
+    return DashboardAppBar(
+      menuTree: menuTree,
+      flattenedMenus: flattenedMenus,
+      currentRoute: currentRoute,
+      isLoggedIn: isLoggedIn,
+      isActiveRouteDashboard: notifier.isActiveRouteDashboard,
+      onHomeTap: () {
+        notifier.navigateTo('dashboard');
+        notifier.refresh();
+      },
+      onLoginTap: () => _showLoginModal(context),
+      onLogoutTap: () => context.read<AuthNotifier>().logout(),
+      onSettingsTap: () => SettingsView.show(context),
+      user: currentUser,
+    );
+  }
+
+  void _showLoginModal(BuildContext context) {
+    final auth = context.read<AuthNotifier>();
+    final settings = context.read<SettingsNotifier>();
+
     showDialog<void>(
       context: context,
       barrierDismissible: true,
-      builder: (ctx) => Consumer(
-        builder: (ctx, ref, _) {
-          final isLoading = ref.watch(authNotifierProvider) is AuthLoading;
+      builder: (ctx) => AnimatedBuilder(
+        animation: auth,
+        builder: (ctx, _) {
+          final isLoading = auth.state is AuthLoading;
           return LoginModal(
             isLoading: isLoading,
             onLogin: (username, password, onError) async {
-              await ref
-                  .read(authNotifierProvider.notifier)
-                  .login(email: username, password: password, onError: onError);
-              if (ref.read(authNotifierProvider) is AuthLoggedIn && ctx.mounted) {
+              await auth.login(email: username, password: password, onError: onError);
+              if (auth.state is AuthLoggedIn && ctx.mounted) {
                 Navigator.of(ctx).pop();
               }
             },
             onLoginWithBadge: (cardData, onError) async {
-              await ref.read(authNotifierProvider.notifier).loginWithBadge(cardData: cardData, onError: onError);
-              if (ref.read(authNotifierProvider) is AuthLoggedIn && ctx.mounted) {
+              await auth.loginWithBadge(cardData: cardData, onError: onError);
+              if (auth.state is AuthLoggedIn && ctx.mounted) {
                 Navigator.of(ctx).pop();
               }
             },
-            currentLanguage: ref.watch(settingsNotifierProvider.select((s) => s.language)),
-            onLanguageChanged: (lang) => ref.read(settingsNotifierProvider.notifier).setLanguage(lang),
+            currentLanguage: settings.language,
+            onLanguageChanged: settings.setLanguage,
           );
         },
       ),
     );
   }
+}
 
-  void _showSettingsPopup(BuildContext context) => SettingsView.show(context);
+class _DashboardRouteContent extends StatelessWidget {
+  const _DashboardRouteContent({required this.notifier});
+
+  final DashboardNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    // IntakeView/RefillView/vb. burada üretiliyor — isLoggedIn nadiren
+    // değiştiği için bu widget artık saniyede bir DEĞİL, sadece gerçek
+    // login/logout/timeout anında rebuild olur.
+    final isLoggedIn = context.select<AuthNotifier, bool>(
+      (auth) => auth.state is AuthLoggedIn || auth.state is AuthSessionExpiring,
+    );
+    return DashboardContentFactory.buildContent(context, notifier, isLoggedIn);
+  }
+}
+
+class _SessionTimeoutOverlay extends StatelessWidget {
+  const _SessionTimeoutOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    // Countdown tick'i SADECE bu küçük widget'ı etkiler — appbar ve route
+    // content bu değişiklikten tamamen izole.
+    final authState = context.select<AuthNotifier, AuthState>((auth) => auth.state);
+    if (authState is! AuthSessionExpiring) return const SizedBox.shrink();
+
+    return Positioned(
+      bottom: 20,
+      right: 20,
+      child: SessionTimeoutBanner(
+        secondsRemaining: authState.secondsRemaining,
+        onExtend: () => context.read<AuthNotifier>().onUserActivity(),
+      ),
+    );
+  }
 }

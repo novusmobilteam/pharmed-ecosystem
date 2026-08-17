@@ -5,117 +5,131 @@
 //
 // PrescriptionNotifier ile aynı API çağrıları — fark:
 //   onPatientTap içinde API'den gelen tüm items'a
-//   PrescriptionItemStatus.pendingPickup filtresi uygulanır.
+//   PrescriptionMovementType.purchasePending filtresi uygulanır.
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
+import 'package:pharmed_client/core/mixins/api_request_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-import '../../../core/cache/app_settings_cache.dart';
-import '../../../core/providers/providers.dart';
-import 'unapplied_prescription_state.dart';
+class UnappliedPrescriptionNotifier extends ChangeNotifier with ApiRequestMixin {
+  UnappliedPrescriptionNotifier({
+    required GetBedAssignmentsUseCase getBedAssignments,
+    required GetActiveHospitalizationsUseCase getHospitalizations,
+    required GetPatientPrescriptionHistoryUseCase getPrescriptionHistory,
+    // GEÇİCİ — DeviceMode henüz Riverpod'dan taşınmadı.
+    required Future<CabinType?> Function() getDeviceMode,
+  }) : _getBedAssignments = getBedAssignments,
+       _getHospitalizations = getHospitalizations,
+       _getPrescriptionHistory = getPrescriptionHistory,
+       _getDeviceMode = getDeviceMode;
 
-final unappliedPrescriptionNotifierProvider =
-    NotifierProvider<UnappliedPrescriptionNotifier, UnappliedPrescriptionState>(UnappliedPrescriptionNotifier.new);
+  final GetBedAssignmentsUseCase _getBedAssignments;
+  final GetActiveHospitalizationsUseCase _getHospitalizations;
+  final GetPatientPrescriptionHistoryUseCase _getPrescriptionHistory;
+  final Future<CabinType?> Function() _getDeviceMode;
 
-class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState> {
-  GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
-  GetActiveHospitalizationsUseCase get _getHospitalizations => ref.read(getActiveHospitalizationsUseCaseProvider);
-  GetPatientPrescriptionHistoryUseCase get _getPrescriptionHistory =>
-      ref.read(getPatientPrescriptionHistoryUseCaseProvider);
+  final OperationKey initOp = OperationKey.custom('init');
+  final OperationKey prescriptionsOp = OperationKey.custom('load-prescriptions');
 
-  @override
-  UnappliedPrescriptionState build() => const UnappliedPrescriptionUninitialized();
+  // ── State ────────────────────────────────────────────────────────
+
+  int? _cabinId;
+  int? get cabinId => _cabinId;
+
+  List<Hospitalization> _hospitalizations = const [];
+  List<Hospitalization> get hospitalizations => _hospitalizations;
+
+  String _search = '';
+  String get search => _search;
+
+  Hospitalization? _selectedPatient;
+  Hospitalization? get selectedPatient => _selectedPatient;
+
+  /// Yalnızca PrescriptionMovementType.purchasePending olanlar.
+  List<PrescriptionItem> _prescriptionItems = const [];
+  List<PrescriptionItem> get prescriptionItems => _prescriptionItems;
+
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
+  bool get isInitialized => _cabinId != null;
+  bool get isInitialLoading => isLoading(initOp) && !isInitialized;
+  bool get isPrescriptionsLoading => isLoading(prescriptionsOp);
+  bool get isPatientSelected => _selectedPatient != null;
+
+  // ── Init ─────────────────────────────────────────────────────────
 
   Future<void> init(int cabinId) async {
-    state = UnappliedPrescriptionLoading(cabinId: cabinId);
+    await execute(
+      initOp,
+      operation: () async {
+        final cabinType = await _getDeviceMode();
+        final isMobile = cabinType == CabinType.mobile;
 
-    final cabinType = await ref.read(deviceModeProvider.future);
-    final isMobile = cabinType == CabinType.mobile;
+        return isMobile
+            ? _fromBedAssignments(await _getBedAssignments.call(cabinId))
+            : _fromApiResponse(await _getHospitalizations.call(const PagedQueryParams()));
+      },
+      onData: (hospitalizations) async {
+        _cabinId = cabinId;
+        _hospitalizations = hospitalizations;
+        _selectedPatient = null;
+        _prescriptionItems = const [];
+        notifyListeners();
 
-    final result = isMobile
-        ? _fromBedAssignments(await _getBedAssignments.call(cabinId))
-        : _fromApiResponse(await _getHospitalizations.call(const PagedQueryParams()));
-
-    await result.when(
-      ok: (hospitalizations) async {
-        state = UnappliedPrescriptionIdle(cabinId: cabinId, hospitalizations: hospitalizations);
         if (hospitalizations.isEmpty) return;
-
         await onPatientTap(hospitalizations.first);
       },
-      error: (error) {
-        state = UnappliedPrescriptionError(
-          message: error.message,
-          previousState: UnappliedPrescriptionIdle(cabinId: cabinId, hospitalizations: const []),
-        );
+      onFailed: (e) {
+        _cabinId = cabinId;
+        _hospitalizations = const [];
+        _errorMessage = e.message;
+        notifyListeners();
       },
     );
   }
 
   Future<void> onPatientTap(Hospitalization hospitalization) async {
     final patientId = hospitalization.patient?.id;
-    if (patientId == null) return;
+    if (patientId == null || !isInitialized) return;
 
-    // Toggle — aynı hasta tekrar seçilirse Idle'a dön
-    if (state.selectedPatient?.patient?.id == patientId) {
-      state = UnappliedPrescriptionIdle(
-        cabinId: state.cabinId!,
-        hospitalizations: state.hospitalizations,
-        search: state.search,
-      );
+    // Toggle — aynı hasta tekrar seçilirse seçim kaldırılır
+    if (_selectedPatient?.patient?.id == patientId) {
+      _selectedPatient = null;
+      _prescriptionItems = const [];
+      notifyListeners();
       return;
     }
 
-    state = UnappliedPrescriptionPatientSelected(
-      cabinId: state.cabinId!,
-      hospitalizations: state.hospitalizations,
-      selectedPatient: hospitalization,
-      prescriptionItems: const [],
-      search: state.search,
-      isPrescriptionsLoading: true,
-    );
+    _selectedPatient = hospitalization;
+    _prescriptionItems = const [];
+    notifyListeners();
 
-    final result = await _getPrescriptionHistory.call(patientId);
-
-    state = result.when(
-      ok: (items) => UnappliedPrescriptionPatientSelected(
-        cabinId: state.cabinId!,
-        hospitalizations: state.hospitalizations,
-        selectedPatient: hospitalization,
-        prescriptionItems: items.where((item) => item.status == PrescriptionMovementType.purchasePending).toList(),
-        search: state.search,
-        isPrescriptionsLoading: false,
-      ),
-      error: (e) => UnappliedPrescriptionError(
-        message: e.message,
-        previousState: UnappliedPrescriptionPatientSelected(
-          cabinId: state.cabinId!,
-          hospitalizations: state.hospitalizations,
-          selectedPatient: hospitalization,
-          prescriptionItems: const [],
-          search: state.search,
-          isPrescriptionsLoading: false,
-        ),
-      ),
+    await execute(
+      prescriptionsOp,
+      operation: () => _getPrescriptionHistory.call(patientId),
+      onData: (items) {
+        _prescriptionItems = items.where((item) => item.status == PrescriptionMovementType.purchasePending).toList();
+        notifyListeners();
+      },
+      onFailed: (e) {
+        _errorMessage = e.message;
+        notifyListeners();
+      },
     );
   }
 
   void onSearchChanged(String value) {
-    state = switch (state) {
-      UnappliedPrescriptionIdle s => UnappliedPrescriptionIdle(
-        cabinId: s.cabinId,
-        hospitalizations: s.hospitalizations,
-        search: value,
-      ),
-      UnappliedPrescriptionPatientSelected s => s.copyWith(search: value),
-      _ => state,
-    };
+    if (!isInitialized) return;
+    _search = value;
+    notifyListeners();
   }
 
   void dismissError() {
-    final current = state;
-    if (current is UnappliedPrescriptionError) state = current.previousState;
+    if (_errorMessage == null) return;
+    _errorMessage = null;
+    notifyListeners();
   }
 
   /// Mobil akış — BedAssignment listesini Hospitalization'a indirger.
@@ -123,8 +137,7 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
     return result.when(ok: (assignments) => Result.ok(_toHospitalizations(assignments)), error: (e) => Result.error(e));
   }
 
-  /// Master/diğer cihazlar akışı — ApiResponse sarmalını burada çözüyoruz,
-  /// yukarıdaki shared `.when` bloğu artık hangi kaynaktan geldiğini bilmiyor.
+  /// Master/diğer cihazlar akışı — ApiResponse sarmalını burada çözüyoruz.
   Result<List<Hospitalization>> _fromApiResponse(Result<ApiResponse<List<Hospitalization>>> result) {
     return result.when(ok: (response) => Result.ok(response.data ?? const []), error: (e) => Result.error(e));
   }

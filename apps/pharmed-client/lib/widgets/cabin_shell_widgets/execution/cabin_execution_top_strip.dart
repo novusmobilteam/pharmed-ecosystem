@@ -2,6 +2,7 @@
 // şerit: kuyruk ilerlemesi + "Dur" butonu.
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/widgets/med_rectangle_button.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -34,20 +35,66 @@ class CabinExecutionTopStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 16,
-      children: [
-        Text(progressLabel, style: MedTextStyles.bodySm(color: MedColors.text2)),
-        Expanded(
-          child: MedProgressBar(value: progress, color: MedColors.blue, height: 10, backgroundColor: MedColors.border2),
-        ),
-        MedButton(
-          label: stopLabel,
-          variant: MedButtonVariant.danger,
-          size: MedButtonSize.sm,
-          onPressed: () => _confirmStop(context),
-        ),
-      ],
+    return Container(
+      padding: MedSpacing.insetXl,
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(width: 2, color: MedColors.text3)),
+      ),
+      child: Row(
+        spacing: 32,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Yürütme', style: MedTextStyles.monoMd(color: MedColors.blue)),
+              Text('İlaç Dolum', style: MedTextStyles.titleLg()),
+            ],
+          ),
+          SizedBox(
+            width: 500,
+            child: Column(
+              spacing: 6.0,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Kuyruk İlerlemesi', style: MedTextStyles.monoMd()),
+                    Text(
+                      progressLabel,
+                      style: MedTextStyles.monoMd(color: MedColors.text2, weight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 500,
+                  child: MedProgressBar(
+                    value: progress,
+                    color: MedColors.blue,
+                    height: 10,
+                    backgroundColor: MedColors.border2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Spacer(),
+          MedRectangleButton(
+            label: stopLabel,
+            height: 40,
+            width: 150,
+            backgroundColor: MedColors.red,
+            foregroundColor: Colors.white,
+            onTap: () => _confirmStop(context),
+            suffixIcon: PhosphorIconsFill.stop,
+          ),
+          // MedButton(
+          //   label: stopLabel,
+          //   variant: MedButtonVariant.danger,
+          //   size: MedButtonSize.sm,
+          //   onPressed: () => _confirmStop(context),
+          // ),
+        ],
+      ),
     );
   }
 

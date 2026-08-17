@@ -1,40 +1,73 @@
 // [SWREQ-UI-STOCK-NOTIFIER-001]
 // Sınıf : Class A
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
+import 'package:pharmed_client/core/mixins/api_request_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../core/providers/providers.dart';
-import 'cabin_stock_state.dart';
+class CabinStockNotifier extends ChangeNotifier with ApiRequestMixin {
+  CabinStockNotifier({
+    required GetBedAssignmentsUseCase getBedAssignments,
+    required GetPatientPrescriptionHistoryUseCase getPrescriptionHistory,
+  }) : _getBedAssignments = getBedAssignments,
+       _getPrescriptionHistory = getPrescriptionHistory;
 
-final cabinStockNotifierProvider = NotifierProvider<CabinStockNotifier, CabinStockState>(CabinStockNotifier.new);
+  final GetBedAssignmentsUseCase _getBedAssignments;
+  final GetPatientPrescriptionHistoryUseCase _getPrescriptionHistory;
 
-class CabinStockNotifier extends Notifier<CabinStockState> {
-  GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
-  GetPatientPrescriptionHistoryUseCase get _getPrescriptionHistory =>
-      ref.read(getPatientPrescriptionHistoryUseCaseProvider);
+  final OperationKey initOp = OperationKey.custom('init');
+  final OperationKey prescriptionsOp = OperationKey.custom('load-prescriptions');
 
-  @override
-  CabinStockState build() => const CabinStockUninitialized();
+  // ── State ────────────────────────────────────────────────────────
+
+  int? _cabinId;
+  int? get cabinId => _cabinId;
+
+  List<Hospitalization> _hospitalizations = const [];
+  List<Hospitalization> get hospitalizations => _hospitalizations;
+
+  String _search = '';
+  String get search => _search;
+
+  Hospitalization? _selectedPatient;
+  Hospitalization? get selectedPatient => _selectedPatient;
+
+  /// Yalnızca PrescriptionStatus.purchasePending olanlar.
+  List<PrescriptionItem> _prescriptionItems = const [];
+  List<PrescriptionItem> get prescriptionItems => _prescriptionItems;
+
+  PrescriptionItem? _selectedItem;
+  PrescriptionItem? get selectedItem => _selectedItem;
+
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
+  // ── Türetilen ────────────────────────────────────────────────────
+
+  bool get isPrescriptionsLoading => isLoading(prescriptionsOp);
+  bool get isPatientSelected => _selectedPatient != null;
+
+  /// RxDrugPanel.isBusy — bu ekranda kayıt işlemi yok
+  bool get isBusy => false;
+
+  // ── Init ─────────────────────────────────────────────────────────
 
   Future<void> init(int cabinId) async {
-    state = CabinStockLoading(cabinId: cabinId);
+    _cabinId = cabinId;
 
-    final result = await _getBedAssignments.call(cabinId);
-
-    await result.when(
-      ok: (assignments) async {
-        final hospitalizations = _toHospitalizations(assignments);
-        state = CabinStockIdle(cabinId: cabinId, hospitalizations: hospitalizations);
-        if (hospitalizations.isEmpty) return;
-
-        await onPatientTap(hospitalizations.first);
+    await execute(
+      initOp,
+      operation: () => _getBedAssignments.call(cabinId),
+      onData: (assignments) async {
+        _hospitalizations = _toHospitalizations(assignments);
+        notifyListeners();
+        if (_hospitalizations.isEmpty) return;
+        await onPatientTap(_hospitalizations.first);
       },
-      error: (error) {
-        state = CabinStockError(
-          message: error.message,
-          previousState: CabinStockIdle(cabinId: cabinId, hospitalizations: const []),
-        );
+      onFailed: (e) {
+        _hospitalizations = const [];
+        _errorMessage = e.message;
+        notifyListeners();
       },
     );
   }
@@ -43,106 +76,58 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
     final patientId = hospitalization.patient?.id;
     if (patientId == null) return;
 
-    if (state.selectedPatient?.patient?.id == patientId) {
-      state = CabinStockIdle(cabinId: state.cabinId!, hospitalizations: state.hospitalizations, search: state.search);
+    if (_selectedPatient?.patient?.id == patientId) {
+      _selectedPatient = null;
+      _prescriptionItems = const [];
+      _selectedItem = null;
+      notifyListeners();
       return;
     }
 
-    state = CabinStockPatientSelected(
-      cabinId: state.cabinId!,
-      hospitalizations: state.hospitalizations,
-      selectedPatient: hospitalization,
-      prescriptionItems: const [],
-      search: state.search,
-      isPrescriptionsLoading: true,
-    );
+    _selectedPatient = hospitalization;
+    _prescriptionItems = const [];
+    _selectedItem = null;
+    notifyListeners();
 
-    final result = await _getPrescriptionHistory.call(patientId);
-
-    state = result.when(
-      ok: (items) => CabinStockPatientSelected(
-        cabinId: state.cabinId!,
-        hospitalizations: state.hospitalizations,
-        selectedPatient: hospitalization,
+    await execute(
+      prescriptionsOp,
+      operation: () => _getPrescriptionHistory.call(patientId),
+      onData: (items) {
         // Yalnızca stokta olan (purchasePending) ilaçları göster
-        prescriptionItems: _filterStockItems(items),
-        search: state.search,
-        isPrescriptionsLoading: false,
-      ),
-      error: (e) => CabinStockError(
-        message: e.message,
-        previousState: CabinStockPatientSelected(
-          cabinId: state.cabinId!,
-          hospitalizations: state.hospitalizations,
-          selectedPatient: hospitalization,
-          prescriptionItems: const [],
-          search: state.search,
-          isPrescriptionsLoading: false,
-        ),
-      ),
+        _prescriptionItems = _filterStockItems(items);
+        notifyListeners();
+      },
+      onFailed: (e) {
+        _prescriptionItems = const [];
+        _errorMessage = e.message;
+        notifyListeners();
+      },
     );
   }
 
   void onDrugTap(PrescriptionItem item) {
-    final current = state;
-
-    final (patient, items) = switch (current) {
-      CabinStockPatientSelected(:final selectedPatient, :final prescriptionItems) => (
-        selectedPatient,
-        prescriptionItems,
-      ),
-      CabinStockDrugSelected(:final selectedPatient, :final prescriptionItems) => (selectedPatient, prescriptionItems),
-      _ => (null, null),
-    };
-
-    if (patient == null || items == null) return;
+    if (_selectedPatient == null) return;
 
     // Toggle
-    if (state.selectedItem?.id == item.id) {
-      state = CabinStockPatientSelected(
-        cabinId: state.cabinId!,
-        hospitalizations: state.hospitalizations,
-        selectedPatient: patient,
-        prescriptionItems: items,
-        search: state.search,
-      );
+    if (_selectedItem?.id == item.id) {
+      _selectedItem = null;
+      notifyListeners();
       return;
     }
 
-    state = CabinStockDrugSelected(
-      cabinId: state.cabinId!,
-      hospitalizations: state.hospitalizations,
-      selectedPatient: patient,
-      prescriptionItems: items,
-      selectedItem: item,
-      search: state.search,
-    );
+    _selectedItem = item;
+    notifyListeners();
   }
 
   void onSearchChanged(String value) {
-    final current = state;
-    state = switch (current) {
-      CabinStockIdle() => CabinStockIdle(
-        cabinId: current.cabinId,
-        hospitalizations: current.hospitalizations,
-        search: value,
-      ),
-      CabinStockPatientSelected() => current.copyWith(search: value),
-      CabinStockDrugSelected() => CabinStockDrugSelected(
-        cabinId: current.cabinId,
-        hospitalizations: current.hospitalizations,
-        selectedPatient: current.selectedPatient,
-        prescriptionItems: current.prescriptionItems,
-        selectedItem: current.selectedItem,
-        search: value,
-      ),
-      _ => current,
-    };
+    _search = value;
+    notifyListeners();
   }
 
   void dismissError() {
-    final current = state;
-    if (current is CabinStockError) state = current.previousState;
+    if (_errorMessage == null) return;
+    _errorMessage = null;
+    notifyListeners();
   }
 
   /// BedAssignment listesinden null olmayan Hospitalization'ları çıkarır.

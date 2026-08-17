@@ -1,49 +1,35 @@
-// lib/features/cabin/presentation/screen/assignment_view.dart
-//
-// [SWREQ-UI-CAB-003]
-// İlaç atama ekranı router'ı.
-//
-// AppSettingsCache'den cihaz modunu okur:
-//   "mobile"  → PatientAssignmentView (ilerleyen sprint)
-//   "master"  → DrugAssignmentView
-//   null      → EmptyStateWidget
-//
-// Bu widget veri taşımaz — doğru view'ı seçmekten sorumludur.
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/cache/app_settings_cache.dart';
+import 'package:pharmed_client/features/assignment/drug_assignment/view/drug_assignment_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../dashboard/presentation/notifier/dashboard_state.dart';
-import 'drug_assignment/view/drug_assignment_view.dart';
-import 'bed_assignment/view/bed_assignment_view.dart';
+import '../settings/notifier/settings_notifier.dart';
 
-class AssignmentView extends ConsumerWidget {
+class AssignmentView extends StatelessWidget {
   const AssignmentView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cabinData = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData,
-          _ => null,
-        },
-      ),
-    );
-    final deviceModeAsync = ref.watch(deviceModeProvider);
+  Widget build(BuildContext context) {
+    final cabinData = context.watch<DashboardNotifier>().cabinVisualizerData;
+    final settings = context.watch<SettingsNotifier>();
 
-    return switch (deviceModeAsync) {
-      AsyncData(:final value) => switch (value) {
-        CabinType.master => DrugAssignmentView(data: cabinData),
-        CabinType.mobile => BedAssignmentView(data: cabinData),
-        _ => SizedBox(),
+    return FutureBuilder<CabinType?>(
+      key: ValueKey(settings.debugCabin?.id),
+      future: settings.getDeviceMode(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: MedLoadingIndicator());
+        }
+
+        return switch (snapshot.data) {
+          CabinType.master =>
+            cabinData != null ? DrugAssignmentView(data: cabinData) : const Center(child: MedLoadingIndicator()),
+          // CabinType.mobile => MobileAssignmentView(data: cabinData),
+          _ => const Center(child: MedLoadingIndicator()),
+        };
       },
-      _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-    };
+    );
   }
 }

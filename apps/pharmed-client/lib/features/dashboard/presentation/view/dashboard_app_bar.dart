@@ -4,12 +4,10 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_client/widgets/med_rectangle_button.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:collection/collection.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-
-import 'dashboard_navbar_menu.dart';
 
 class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   const DashboardAppBar({
@@ -25,6 +23,7 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onUserTap,
     this.onSettingsTap,
     this.onMenuItemTap,
+    required this.isActiveRouteDashboard,
   });
 
   final List<MenuItem> menuTree;
@@ -39,6 +38,7 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onUserTap;
   final VoidCallback? onSettingsTap;
   final void Function(int id)? onMenuItemTap;
+  final bool isActiveRouteDashboard;
 
   @override
   Size get preferredSize => const Size.fromHeight(62);
@@ -50,9 +50,8 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _DashboardAppBarState extends State<DashboardAppBar> {
   late String _timeStr;
   late final Stream<String> _clockStream;
-  final Map<int, GlobalKey> _itemKeys = {};
+
   OverlayEntry? _overlay;
-  int? _openMenuId;
 
   @override
   void initState() {
@@ -67,101 +66,18 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
     super.dispose();
   }
 
-  void _toggleMenu(int id) {
-    if (!widget.isLoggedIn) return;
-
-    final item = widget.menuTree.firstWhereOrNull((m) => m.id == id);
-
-    if (item != null && item.children.isEmpty) {
-      if (_openMenuId != null) _closeMenu();
-      widget.onMenuItemTap?.call(id);
-      return;
-    }
-
-    if (_openMenuId == id) {
-      _closeMenu();
-    } else {
-      if (_openMenuId != null) _closeMenu();
-      _openMenu(id);
-    }
-  }
-
-  void _openMenu(int id) {
-    final key = _itemKeys[id];
-    final ctx = key?.currentContext;
-    if (ctx == null) return;
-
-    final box = ctx.findRenderObject() as RenderBox;
-    final pos = box.localToGlobal(Offset.zero);
-
-    setState(() => _openMenuId = id);
-
-    _overlay = OverlayEntry(
-      builder: (_) => Stack(
-        children: [
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: _closeMenu,
-              behavior: HitTestBehavior.translucent,
-              child: const SizedBox.expand(),
-            ),
-          ),
-          Positioned(
-            top: pos.dy + box.size.height + 2,
-            left: pos.dx,
-            child: DashboardNavbarMenu(
-              parentId: id,
-              flattenedMenus: widget.flattenedMenus,
-              onCardTap: (childId) {
-                _closeMenu();
-                widget.onMenuItemTap?.call(childId);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-
-    Overlay.of(context).insert(_overlay!);
-  }
-
-  void _closeMenu() {
-    _overlay?.remove();
-    _overlay = null;
-    if (mounted) setState(() => _openMenuId = null);
-  }
-
-  bool _isMenuOrChildActive(MenuItem item) {
-    if (item.route == widget.currentRoute) return true;
-    if (item.children.isNotEmpty) {
-      return item.children.any(_isMenuOrChildActive);
-    }
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 62,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(color: MedColors.surface, borderRadius: MedRadius.lgAll, boxShadow: MedShadows.md),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: MedColors.border, width: 1.5)),
+        color: Colors.white,
+      ),
       child: Row(
         children: [
           _AppLogo(onTap: widget.onHomeTap),
-          ...widget.menuTree.map((item) {
-            final id = item.id ?? 0;
-            final key = _itemKeys.putIfAbsent(id, () => GlobalKey());
-            return KeyedSubtree(
-              key: key,
-              child: _NavItem(
-                item: item,
-                isActive: _isMenuOrChildActive(item),
-                isMenuOpen: _openMenuId == id,
-                isLoggedIn: widget.isLoggedIn,
-                onTap: () => _toggleMenu(id),
-              ),
-            );
-          }),
           const Spacer(),
           StreamBuilder<String>(
             stream: _clockStream,
@@ -170,20 +86,21 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
           ),
 
           SizedBox(width: 10),
-          if (!widget.isLoggedIn)
-            MedButton(
-              prefixIcon: Icon(PhosphorIcons.signIn()),
-              variant: MedButtonVariant.primary,
-              onPressed: widget.onLoginTap,
+          if (!widget.isLoggedIn && widget.isActiveRouteDashboard)
+            MedRectangleButton(
+              height: 35,
+              width: 150,
+              foregroundColor: Colors.white,
+              suffixIcon: PhosphorIcons.signIn(),
+              onTap: widget.onLoginTap,
               label: context.l10n.auth_loginButton,
-              size: MedButtonSize.sm,
             )
           else if (widget.user != null)
             _UserInfo(user: widget.user!),
 
           const SizedBox(width: 16),
 
-          if (widget.isLoggedIn) ...[
+          if (widget.isLoggedIn && widget.isActiveRouteDashboard) ...[
             MedRectangleIconButton(
               iconData: PhosphorIcons.gearSix(),
               tooltip: context.l10n.settings_title,
@@ -247,58 +164,6 @@ class _AppLogo extends StatelessWidget {
               style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3, letterSpacing: 0.8),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  const _NavItem({
-    required this.item,
-    required this.isActive,
-    required this.isMenuOpen,
-    required this.isLoggedIn,
-    this.onTap,
-  });
-
-  final MenuItem item;
-  final bool isActive;
-  final bool isMenuOpen;
-  final bool isLoggedIn;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool highlight = isActive || isMenuOpen;
-    final locale = Localizations.localeOf(context);
-    final localizedName = item.localizedName(locale);
-
-    return Opacity(
-      opacity: isLoggedIn ? 1.0 : 0.3,
-      child: GestureDetector(
-        onTap: isLoggedIn ? onTap : null,
-        child: Container(
-          height: 62,
-          padding: const EdgeInsets.symmetric(horizontal: 13),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                localizedName,
-                style: TextStyle(
-                  fontFamily: MedFonts.sans,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: highlight ? MedColors.blue : MedColors.text3,
-                ),
-              ),
-              if (!isLoggedIn) ...[
-                const SizedBox(width: 4),
-                Icon(Icons.lock_outline_rounded, size: 10, color: MedColors.text3),
-              ],
-            ],
-          ),
         ),
       ),
     );

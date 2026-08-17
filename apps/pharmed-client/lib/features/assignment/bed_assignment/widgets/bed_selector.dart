@@ -1,17 +1,9 @@
 part of '../view/bed_assignment_panel.dart';
 
 class _BedSelector extends StatelessWidget {
-  const _BedSelector({
-    required this.state,
-    required this.onServiceSelected,
-    required this.onRoomSelected,
-    required this.onBedSelected,
-  });
+  const _BedSelector({required this.notifier});
 
-  final BedAssignmentCellSelected state;
-  final ValueChanged<HospitalService?> onServiceSelected;
-  final ValueChanged<Room?> onRoomSelected;
-  final ValueChanged<Bed?> onBedSelected;
+  final BedAssignmentNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
@@ -21,32 +13,32 @@ class _BedSelector extends StatelessWidget {
         // Servis dropdown
         MedDropdownInputField<HospitalService>(
           label: context.l10n.assignment_serviceSelectorHint,
-          initialValue: state.selectedService,
-          options: state.services,
+          initialValue: notifier.selectedService,
+          options: notifier.services,
           labelBuilder: (s) => s?.name,
-          onChanged: (service) => onServiceSelected(service),
+          onChanged: notifier.onServiceSelected,
         ),
         const SizedBox(height: 6),
 
         // Oda dropdown — servis seçilince aktif
         MedDropdownInputField<Room>(
           label: context.l10n.assignment_roomSelectorHint,
-          initialValue: state.selectedRoom,
-          options: state.rooms,
+          initialValue: notifier.selectedRoom,
+          options: notifier.rooms,
           labelBuilder: (r) => r?.name,
-          enabled: state.selectedService != null && state.rooms.isNotEmpty,
-          onChanged: (room) => onRoomSelected(room),
+          enabled: notifier.selectedService != null && notifier.rooms.isNotEmpty,
+          onChanged: notifier.onRoomSelected,
         ),
         const SizedBox(height: 6),
 
         // Yatak dropdown — oda seçilince aktif
         MedDropdownInputField<Bed>(
           label: context.l10n.assignment_bedSelectorHint,
-          initialValue: state.selectedBed,
-          options: state.beds,
+          initialValue: notifier.selectedBed,
+          options: notifier.beds,
           labelBuilder: (b) => b?.name,
-          enabled: state.selectedRoom != null && state.beds.isNotEmpty,
-          onChanged: (bed) => onBedSelected(bed),
+          enabled: notifier.selectedRoom != null && notifier.beds.isNotEmpty,
+          onChanged: notifier.onBedSelected,
         ),
 
         const SizedBox(height: 12),

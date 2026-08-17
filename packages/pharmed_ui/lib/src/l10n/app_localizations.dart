@@ -10500,6 +10500,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The drawer was closed unexpectedly while still in use. Please reopen and try again.'**
   String get masterDrawer_error_unexpectedlyClosed;
+
+  /// No description provided for @patientPicker_urgentPatientActiveDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'For an urgent patient, you can only take medicines available without an order. You can later assign this patient to an admitted patient from the \"End Urgent Patient\" screen and continue your operations.\nTo continue with standard intake operations, press \"Delete\" to end this record and resume where you left off.'**
+  String get patientPicker_urgentPatientActiveDescription;
+
+  /// Footer button on the intake medicine selection screen, shown instead of 'Start Intake' when at least one selected item requires a witness
+  ///
+  /// In en, this message translates to:
+  /// **'Witness Login'**
+  String get intake_action_witnessLogin;
+
+  /// Title of the witness confirmation modal opened before starting a controlled-substance intake
+  ///
+  /// In en, this message translates to:
+  /// **'Witness Approval Required'**
+  String get intake_witness_dialogTitle;
+
+  /// Subtitle under the witness dialog title, showing how many witness steps have been confirmed out of the total
+  ///
+  /// In en, this message translates to:
+  /// **'Witness entry is required before intake for controlled medicines — {done}/{total} approvals completed'**
+  String intake_witness_dialogSubtitle(int done, int total);
+
+  /// Header above the list of witness steps in the left column of the witness confirmation modal
+  ///
+  /// In en, this message translates to:
+  /// **'Approval Steps'**
+  String get intake_witness_stepsHeader;
+
+  /// Title of a single witness step card, showing its order and how many medicines belong to it
+  ///
+  /// In en, this message translates to:
+  /// **'Witness Step {index} — {count} Medicine'**
+  String intake_witness_stepTitle(int index, int count);
+
+  /// Header above the list of eligible witness candidates for the currently active witness step
+  ///
+  /// In en, this message translates to:
+  /// **'Authorized Witnesses'**
+  String get intake_witness_candidatesHeader;
+
+  /// Helper text under the authorized witnesses header, instructing the user to pick and authenticate one candidate
+  ///
+  /// In en, this message translates to:
+  /// **'One of the following personnel must log in as a witness'**
+  String get intake_witness_candidatesDescription;
+
+  /// Badge shown next to a witness candidate who is not currently on shift and therefore cannot be selected
+  ///
+  /// In en, this message translates to:
+  /// **'Off Shift'**
+  String get intake_witness_offShiftBadge;
+
+  /// Header above the username/password fields in the right column of the witness confirmation modal
+  ///
+  /// In en, this message translates to:
+  /// **'Witness Login'**
+  String get intake_witness_loginHeader;
+
+  /// Helper text under the witness login header, explaining the password field behavior on the touchscreen kiosk
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password — the on-screen keyboard opens automatically'**
+  String get intake_witness_loginDescription;
+
+  /// Label for the username field in the witness identity verification form
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get intake_witness_usernameLabel;
+
+  /// Label for the password field in the witness identity verification form
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get intake_witness_passwordLabel;
+
+  /// Button that submits the witness's credentials to confirm their identity for the current witness step
+  ///
+  /// In en, this message translates to:
+  /// **'Log In and Confirm'**
+  String get intake_witness_confirmButton;
+
+  /// Button in the witness dialog footer that cancels the entire intake and closes the witness flow
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Intake'**
+  String get intake_witness_cancelButton;
+
+  /// Label showing how many witness approval steps are still pending in the dialog footer
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} approval remaining} other{{count} approvals remaining}}'**
+  String intake_witness_remainingLabel(num count);
+
+  /// Primary button in the witness dialog footer, enabled only once all witness steps are completed; triggers startIntake
+  ///
+  /// In en, this message translates to:
+  /// **'Start Intake'**
+  String get intake_witness_startButton;
+
+  /// Success snackbar shown after a witness successfully authenticates for the current witness step in the intake witness confirmation modal
+  ///
+  /// In en, this message translates to:
+  /// **'Witness confirmed: {witnessName}'**
+  String intake_witness_confirmedMessage(String witnessName);
 }
 
 class _AppLocalizationsDelegate

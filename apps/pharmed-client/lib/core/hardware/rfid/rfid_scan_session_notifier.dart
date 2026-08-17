@@ -13,19 +13,22 @@
 // Sınıf: Class B
 
 import 'dart:async';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../providers/providers.dart';
-import 'rfid_scan_session_state.dart';
+class RfidScanSessionNotifier extends ChangeNotifier {
+  RfidScanSessionNotifier({required IRfidService rfid}) : _rfid = rfid;
 
-final rfidScanSessionProvider = NotifierProvider<RfidScanSessionNotifier, RfidScanSessionState>(
-  RfidScanSessionNotifier.new,
-);
+  final IRfidService _rfid;
 
-class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
+  bool _isDisposed = false;
+
+  void _notify() {
+    if (_isDisposed) return;
+    notifyListeners();
+  }
+
   StreamSubscription<RfidTag>? _inventorySub;
   final _epcController = StreamController<String>.broadcast();
   final _lostController = StreamController<String>.broadcast();
@@ -40,8 +43,6 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
   Stream<String> get epcStream => _epcController.stream;
   Stream<String> get epcLostStream => _lostController.stream;
 
-  IRfidService get _rfid => ref.read(rfidServiceProvider);
-
   /// Aktif snapshot işlemleri. Birden çok aynı anda başlatılabilse de
   /// pratikte tek bir feature snapshot bekler; liste defensive kalır.
   final _baselineCompleters = <Completer<Set<String>>>[];
@@ -50,11 +51,34 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
   /// Çekmece açıkken her an çağrılabilir; immutable bir kopya döner.
   Set<String> get presentEpcs => Set.unmodifiable(_presentEpcs);
 
-  @override
-  RfidScanSessionState build() {
-    ref.onDispose(_dispose);
-    return const RfidScanSessionState.initial();
+  // ── State ────────────────────────────────────────────────────────
+
+  bool _isScanning = false;
+  bool get isScanning => _isScanning;
+
+  RfidFailure? _failure;
+  RfidFailure? get failure => _failure;
+
+  bool get hasError => _failure != null;
+
+  void _setScanning(bool value, {RfidFailure? failure, bool clearError = false}) {
+    _isScanning = value;
+    _failure = clearError ? null : (failure ?? _failure);
+    _notify();
   }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _completePendingSnapshots();
+    unawaited(_inventorySub?.cancel());
+    unawaited(_epcController.close());
+    unawaited(_lostController.close());
+    _presenceTimer?.cancel();
+    super.dispose();
+  }
+
+  // ── API ──────────────────────────────────────────────────────────
 
   /// İnventory başlat. RFID service Real-time mode'a geçer ve tag'ler
   /// stream üzerinden gelmeye başlar.
@@ -74,13 +98,14 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
         swreq: 'SWREQ-CLI-RFID-SCAN-002',
         message: 'start() iptal — RFID bağlı değil',
       );
-      state = state.copyWith(failure: RfidFailure.notConnected);
+      _failure = RfidFailure.notConnected;
+      _notify();
       return;
     }
 
     _lastSeen.clear();
     _presentEpcs.clear();
-    state = state.copyWith(isScanning: true, clearError: true);
+    _setScanning(true, clearError: true);
 
     MedLogger.info(
       unit: 'RfidScanSessionNotifier',
@@ -97,7 +122,7 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
         message: 'startInventory başarısız',
         context: {'error': e.message},
       );
-      state = state.copyWith(isScanning: false, failure: RfidFailure.inventoryStartFailed);
+      _setScanning(false, failure: RfidFailure.inventoryStartFailed);
     }
 
     _startPresenceTimer();
@@ -115,11 +140,14 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
       // cancel() öncesi RfidService'teki _inventoryController'ı kapat —
       // böylece onCancel tetiklenmez, stopInventory() tek komut gönderir.
       await _rfid.stopInventory(); // Answer Mode'a dön + controller.close()
+      if (_isDisposed) return;
       await sub.cancel(); // artık onCancel'da _setWorkingMode gitmez
+      if (_isDisposed) return;
     }
 
-    if (state.isScanning) {
-      state = state.copyWith(isScanning: false);
+    if (_isScanning) {
+      _isScanning = false;
+      _notify();
     }
 
     MedLogger.info(
@@ -132,11 +160,6 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
 
   /// Çekmece açıldıktan sonra çağrılır.
   /// [window] süresince stream'i dinler, biriken EPC'leri snapshot olarak döner.
-  /// Stream çalışmaya devam eder; sonraki [epcStream] ve [epcLostStream]
-  /// event'leri normal akışta çalışır.
-  ///
-  /// Inventory aktif değilse boş set döner (yanlış kullanımı sessizce kabul eder
-  /// ama log'lar; çağıran tarafın start() sonrası bu metodu çağırması beklenir).
   Future<Set<String>> snapshot({
     Duration settleTime = const Duration(milliseconds: 500),
     Duration maxWindow = const Duration(milliseconds: 2500),
@@ -161,15 +184,14 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
     int lastCount = -1;
     DateTime lastChange = DateTime.now();
 
-    // Set büyümeyi durdurana kadar (settleTime) VEYA maxWindow'a kadar bekle
     while (DateTime.now().isBefore(deadline)) {
       await Future.delayed(const Duration(milliseconds: 100));
+      if (_isDisposed) return const {};
       final now = _presentEpcs.length;
       if (now != lastCount) {
         lastCount = now;
         lastChange = DateTime.now();
       } else if (DateTime.now().difference(lastChange) >= settleTime && now > 0) {
-        // settleTime boyunca değişmedi ve en az 1 tag var → oturdu
         break;
       }
     }
@@ -184,13 +206,12 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
     return result;
   }
 
-  // ── Internal handlers ────────────────────────────────────────────────────
+  // ── Internal handlers ────────────────────────────────────────────
 
   void _onTagRead(RfidTag tag) {
     final now = DateTime.now();
     _lastSeen[tag.epc] = now;
 
-    // İlk kez görüldü → yayınla
     if (_presentEpcs.add(tag.epc)) {
       _epcController.add(tag.epc);
       MedLogger.info(
@@ -200,7 +221,6 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
         context: {'epc': tag.epc, 'rssi': tag.rssi, 'antenna': tag.antenna},
       );
     }
-    // _seenEpcs artık kullanılmıyor
   }
 
   void _onInventoryError(Object e, StackTrace _) {
@@ -210,13 +230,15 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
       message: 'Inventory stream hatası',
       context: {'error': e.toString()},
     );
-    state = state.copyWith(failure: RfidFailure.inventoryStreamError);
+    _failure = RfidFailure.inventoryStreamError;
+    _notify();
   }
 
   void _onInventoryDone() {
     _inventorySub = null;
-    if (state.isScanning) {
-      state = state.copyWith(isScanning: false);
+    if (_isScanning) {
+      _isScanning = false;
+      _notify();
     }
   }
 
@@ -247,13 +269,6 @@ class RfidScanSessionNotifier extends Notifier<RfidScanSessionState> {
     _presenceTimer = null;
     _presentEpcs.clear();
     _lastSeen.clear();
-  }
-
-  Future<void> _dispose() async {
-    _completePendingSnapshots();
-    await _inventorySub?.cancel();
-    await _epcController.close();
-    await _lostController.close(); // mevcut kodda kapatılmıyordu, ekledim
   }
 
   void _completePendingSnapshots() {

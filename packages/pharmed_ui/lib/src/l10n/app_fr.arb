@@ -5212,6 +5212,24 @@
   "masterDrawer_error_lidOpenFailed": "Le couvercle n'a pas pu être ouvert. Assurez-vous que le tiroir est complètement ouvert.",
   "masterDrawer_error_lockOpenTimeout": "Le tiroir ne s'est pas complètement ouvert à temps. Veuillez tirer le tiroir jusqu'au bout.",
   "masterDrawer_error_sensorCommunicationLost": "La communication avec le matériel a été perdue. Vérifiez la connexion et réessayez.",
-    "masterDrawer_error_unexpectedlyClosed": "Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer."
+    "masterDrawer_error_unexpectedlyClosed": "Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer.",
+    "patientPicker_urgentPatientActiveDescription": "Pour un patient urgent, vous ne pouvez retirer que les médicaments disponibles sans prescription. Vous pourrez ensuite associer ce patient à un patient admis depuis l'écran \"Terminer patient urgent\" et poursuivre vos opérations.\nPour continuer les opérations de retrait standard, appuyez sur \"Supprimer\" pour clôturer cet enregistrement et reprendre là où vous vous étiez arrêté.",
+    "intake_action_witnessLogin": "Connexion du témoin",
+"intake_witness_dialogTitle": "Approbation du témoin requise",
+"intake_witness_dialogSubtitle": "La connexion d'un témoin est requise avant le retrait des médicaments contrôlés — {done}/{total} approbations terminées",
+"intake_witness_stepsHeader": "Étapes d'approbation",
+"intake_witness_stepTitle": "Étape témoin {index} — {count} médicament(s)",
+"intake_witness_candidatesHeader": "Témoins autorisés",
+"intake_witness_candidatesDescription": "L'un des membres du personnel suivants doit se connecter en tant que témoin",
+"intake_witness_offShiftBadge": "Hors service",
+"intake_witness_loginHeader": "Connexion du témoin",
+"intake_witness_loginDescription": "Saisissez votre mot de passe — le clavier virtuel s'ouvre automatiquement",
+"intake_witness_usernameLabel": "Nom d'utilisateur",
+"intake_witness_passwordLabel": "Mot de passe",
+"intake_witness_confirmButton": "Se connecter et confirmer",
+"intake_witness_cancelButton": "Annuler le retrait",
+"intake_witness_remainingLabel": "{count, plural, one{{count} approbation restante} other{{count} approbations restantes}}",
+"intake_witness_startButton": "Démarrer le retrait",
+"intake_witness_confirmedMessage": "Témoin confirmé : {witnessName}"
 
 }

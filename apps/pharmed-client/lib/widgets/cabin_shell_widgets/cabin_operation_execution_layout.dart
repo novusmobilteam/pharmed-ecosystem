@@ -48,6 +48,7 @@ class CabinOperationExecutionLayout extends ConsumerStatefulWidget {
     required this.activeIndex,
     required this.openedBuilder,
     this.onRequestClose,
+    required this.stage,
   });
 
   final String progressLabel;
@@ -81,6 +82,8 @@ class CabinOperationExecutionLayout extends ConsumerStatefulWidget {
   /// sonrası "resmi" kapanış sayılır).
   final VoidCallback? onRequestClose;
 
+  final MasterDrawerStage stage;
+
   @override
   ConsumerState<CabinOperationExecutionLayout> createState() => _MasterCabinExecutionScaffoldState();
 }
@@ -90,7 +93,7 @@ class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExe
   bool _closeRequested = false;
 
   Future<void> _handleStopConfirmed() async {
-    final stage = ref.read(masterDrawerSessionProvider).stage;
+    final stage = widget.stage;
     final canStopImmediately = !stage.isActive || stage is MasterDrawerLidFailed;
     if (canStopImmediately) {
       await widget.onStopConfirmed();
@@ -114,7 +117,7 @@ class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExe
 
   @override
   Widget build(BuildContext context) {
-    final drawerStage = ref.watch(masterDrawerSessionProvider).stage;
+    final drawerStage = widget.stage;
 
     if (_stopRequested) {
       _tryRequestClose(drawerStage);
@@ -130,7 +133,6 @@ class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExe
         await widget.onStopConfirmed();
       });
     }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -144,11 +146,24 @@ class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExe
           stopConfirmYesLabel: widget.stopConfirmYesLabel,
           cancelLabel: widget.cancelLabel,
         ),
-        const SizedBox(height: 20),
         Expanded(
-          child: CabinOperationSelectionLayout(
-            left: CabinOverviewPanel.execution(items: widget.locationItems, activeIndex: widget.activeIndex),
-            right: _buildContent(context, drawerStage),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 400,
+                child: CabinOverviewPanel.execution(items: widget.locationItems, activeIndex: widget.activeIndex),
+              ),
+              VerticalDivider(width: 2, color: MedColors.text3),
+              Spacer(),
+              SizedBox(
+                width: 800,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: _buildContent(context, drawerStage),
+                ),
+              ),
+              Spacer(),
+            ],
           ),
         ),
       ],

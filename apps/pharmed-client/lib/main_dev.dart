@@ -4,9 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:pharmed_client/main.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'core/cache/app_settings_cache.dart';
 import 'core/flavor/app_flavor.dart';
-import 'core/providers/providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,5 +17,5 @@ void main() async {
   // await appSettingsCache.resetSetup();
   MedLogger.configure(verboseLogging: true);
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: ClientApp()));
 }

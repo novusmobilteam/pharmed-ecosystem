@@ -25,6 +25,7 @@ import 'package:pharmed_client/core/providers/usecase_providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets.dart';
 
@@ -174,7 +175,7 @@ class _RxItemRowState extends ConsumerState<_RxItemRow> {
 
     setState(() => _isLoading = true);
 
-    final useCase = ref.read(getPrescriptionItemMovementsUseCaseProvider);
+    final useCase = context.read<GetPrescriptionItemMovementsUseCase>();
     final result = await useCase.call(itemId);
 
     result.when(

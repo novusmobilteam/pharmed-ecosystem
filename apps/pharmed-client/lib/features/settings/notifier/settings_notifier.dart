@@ -1,80 +1,162 @@
+// [SWREQ-UI-SETTINGS-001] [IEC 62304 §5.5]
+// Uygulama ayarları ve salt-okunur sistem parametreleri.
+// Sınıf: Class B
+
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 import '../../../../core/cache/app_settings_cache.dart';
-import '../../../../core/providers/providers.dart';
 import '../../auth/auth.dart';
-import 'settings_state.dart';
 
-/// Birim doz çekmecelerde hücre bazlı SKT girişi açık mı (MiadDate system
-/// parameter). Refill/sayım ekranları bu provider'ı `ref.watch` ederek
-/// SystemParameterKeys'i bilmeden, sadece ilgili değer değiştiğinde
-/// rebuild olur (SettingsState'in tamamını watch etmenin aksine).
-final isPerCellMiadEnabledProvider = Provider<bool>((ref) {
-  final value = ref.watch(
-    settingsNotifierProvider.select(
-      (s) => s.systemParameters.firstWhereOrNull((p) => p.key == SystemParameterKeys.miadDate)?.value,
-    ),
-  );
-  return value == '1';
-});
+enum SettingsSection { general, appearance, debug }
 
-final settingsNotifierProvider = NotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);
+class SettingsNotifier extends ChangeNotifier {
+  SettingsNotifier({
+    required AppSettingsCache cache,
+    required TokenHolder tokenHolder,
+    required GetSystemParametersUseCase getSystemParameters,
+    required GetCabinsUseCase getCabins,
+    required AuthNotifier authNotifier,
+  }) : _cache = cache,
+       _tokenHolder = tokenHolder,
+       _getSystemParameters = getSystemParameters,
+       _getCabins = getCabins,
+       _authNotifier = authNotifier {
+    unawaited(_restoreLanguage());
+    unawaited(_loadSystemParameters());
+  }
 
-class SettingsNotifier extends Notifier<SettingsState> {
-  AppSettingsCache get _cache => ref.read(appSettingsCacheProvider);
+  final AppSettingsCache _cache;
+  final TokenHolder _tokenHolder;
+  final GetSystemParametersUseCase _getSystemParameters;
+  final GetCabinsUseCase _getCabins;
+  final AuthNotifier _authNotifier;
+
+  bool _isDisposed = false;
+
+  void _notify() {
+    if (_isDisposed) return;
+    notifyListeners();
+  }
 
   @override
-  SettingsState build() {
-    _restoreLanguage();
-    Future.microtask(_loadSystemParameters);
-    return const SettingsState();
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
+
+  SettingsSection _activeSection = SettingsSection.general;
+  SettingsSection get activeSection => _activeSection;
+
+  /// [DEBUG ONLY] Runtime kabin override — cache'e dokunulmaz.
+  Cabin? _debugCabin;
+  Cabin? get debugCabin => _debugCabin;
+
+  /// [DEBUG ONLY] API'den çekilen kabin listesi.
+  List<Cabin> _cabins = const [];
+  List<Cabin> get cabins => _cabins;
+
+  bool _isLoadingCabins = false;
+  bool get isLoadingCabins => _isLoadingCabins;
+
+  String? _cabinsError;
+  String? get cabinsError => _cabinsError;
+
+  AppLanguage _language = AppLanguage.turkish;
+  AppLanguage get language => _language;
+
+  List<SystemParameter> _systemParameters = const [];
+  List<SystemParameter> get systemParameters => _systemParameters;
+
+  bool _isLoadingSystemParameters = false;
+  bool get isLoadingSystemParameters => _isLoadingSystemParameters;
+
+  String? _systemParametersError;
+  String? get systemParametersError => _systemParametersError;
+
+  /// Efektif cihaz modu — debug override varsa (debug modda) onu, yoksa
+  /// cache'teki kayıtlı modu döner. null → kurulum henüz yapılmamış.
+  ///
+  /// Önceki deviceModeProvider/cachedDeviceModeProvider'ın (Riverpod) yerine
+  /// geçer — debugCabin zaten bu notifier'ın kendi state'inde olduğu için
+  /// ayrı bir "watch" mekanizmasına gerek kalmadı.
+  Future<CabinType?> getDeviceMode() async {
+    if (kDebugMode) {
+      final debugCabin = _debugCabin;
+      if (debugCabin != null) return debugCabin.type;
+    }
+    return _getCachedDeviceMode();
+  }
+
+  Future<CabinType?> _getCachedDeviceMode() async {
+    final raw = await _cache.getDeviceMode();
+    if (raw == null) return null;
+    return CabinType.values.firstWhereOrNull((t) => t.name == raw || 'CabinType.${t.name}' == raw);
+  }
+
+  // ── Dil ──────────────────────────────────────────────────────────
 
   /// Cache'den dili okuyup state'e uygular.
   Future<void> _restoreLanguage() async {
     final code = await _cache.getLanguage();
+    if (_isDisposed) return;
     if (code == null) return; // kayıt yok → default AppLanguage.turkish
     final language = AppLanguage.fromCode(code);
-    if (language == state.language) return;
-    state = state.copyWith(language: language);
-    ref.read(tokenHolderProvider).setLocale(language.code);
+    if (language == _language) return;
+    _language = language;
+    _tokenHolder.setLocale(language.code);
+    _notify();
   }
 
   /// [SWREQ-UI-SETTINGS-002] Dili değiştirir ve cache'e yazar.
   Future<void> setLanguage(AppLanguage language) async {
     await _cache.saveLanguage(language.code);
-    state = state.copyWith(language: language);
-    ref.read(tokenHolderProvider).setLocale(language.code);
+    if (_isDisposed) return;
+    _language = language;
+    _tokenHolder.setLocale(language.code);
+    _notify();
   }
 
   void setSection(SettingsSection section) {
-    state = state.copyWith(activeSection: section);
+    _activeSection = section;
+    _notify();
   }
 
-  // ── Sistem parametreleri (salt okunur) ──────────────────────────────────
+  // ── Sistem parametreleri (salt okunur) ──────────────────────────
   // Client bu parametreleri DÜZENLEMEZ — sadece uygulama açılışında bir kere
   // çekip, dolum/sayım gibi akışlarda okumak için tutar (ör. MiadDate: hücre
   // bazlı SKT girişi açık mı). Yazma/kaydetme sorumluluğu manager'da.
   Future<void> _loadSystemParameters() async {
-    if (state.isLoadingSystemParameters) return;
+    if (_isLoadingSystemParameters) return;
 
-    state = state.copyWith(isLoadingSystemParameters: true, clearSystemParametersError: true);
+    _isLoadingSystemParameters = true;
+    _systemParametersError = null;
+    _notify();
 
-    final result = await ref.read(getSystemParametersUseCaseProvider).call();
+    final result = await _getSystemParameters.call();
+    if (_isDisposed) return;
 
     result.when(
-      ok: (value) => state = state.copyWith(systemParameters: value, isLoadingSystemParameters: false),
-      error: (error) => state = state.copyWith(isLoadingSystemParameters: false, systemParametersError: error.message),
+      ok: (value) {
+        _systemParameters = value;
+        _isLoadingSystemParameters = false;
+      },
+      error: (error) {
+        _isLoadingSystemParameters = false;
+        _systemParametersError = error.message;
+      },
     );
+    _notify();
   }
 
   /// Ağ hatası, cihaz uyanınca vb. durumlarda manuel yeniden çekmek için.
   Future<void> refreshSystemParameters() => _loadSystemParameters();
 
-  String? getParamValue(String key) => state.systemParameters.firstWhereOrNull((p) => p.key == key)?.value;
+  String? getParamValue(String key) => _systemParameters.firstWhereOrNull((p) => p.key == key)?.value;
 
   bool getBool(String key) => getParamValue(key) == '1';
 
@@ -82,48 +164,56 @@ class SettingsNotifier extends Notifier<SettingsState> {
   /// Dolum akışında (master-refill-flow / cabin-inventory) bu flag'e göre
   /// her bölme için ayrı SKT istenip istenmeyeceği belirlenir.
   bool get isPerCellMiadEnabled => getBool(SystemParameterKeys.miadDate);
-  // ─────────────────────────────────────────────────────────────────────────
+
+  // ── Debug ────────────────────────────────────────────────────────
 
   /// [DEBUG ONLY] Kabin override'ını set eder.
   /// null → cache'deki (gerçek) kabine dön.
-  ///
-  /// Bazı servisler istasyon MAC adresine göre veri döndürdüğü ve login
-  /// akışı cache'deki stationId'yi parametre olarak gönderdiği için, debug
-  /// kabini değiştirmek tek başına yetmez: yeni kabinin stationId'sini de
-  /// cache'e yazıp kullanıcıyı logout edip yeniden login'e zorlamamız
-  /// gerekiyor — böylece yeni istasyon id'siyle giriş yapılır.
   Future<void> setDebugCabin(Cabin? cabin) async {
     assert(kDebugMode, 'setDebugCabin sadece debug modda çağrılabilir');
 
     if (cabin == null) {
-      state = state.copyWith(clearDebugCabin: true);
+      _debugCabin = null;
+      _notify();
       return;
     }
 
     // 1) Yeni kabin + istasyon id'sini cache'e yaz (sadece debug modda
     //    tetiklendiği için prod akışını etkilemez).
     await _cache.saveCurrentCabinId(cabin.id ?? 0, stationId: cabin.stationId);
+    if (_isDisposed) return;
 
-    state = state.copyWith(debugCabin: cabin);
+    _debugCabin = cabin;
+    _notify();
 
     // 2) Kullanıcıyı çıkışa zorla — yeniden login olurken cache'deki
     //    stationId parametre olarak gönderilecek.
-    await ref.read(authNotifierProvider.notifier).logout();
+    await _authNotifier.logout();
   }
 
   /// [DEBUG ONLY] Kabin listesini API'den çeker.
   /// Settings ekranı açıldığında çağrılır.
   Future<void> loadCabins() async {
     assert(kDebugMode, 'loadCabins sadece debug modda çağrılabilir');
-    if (state.isLoadingCabins) return;
+    if (_isLoadingCabins) return;
 
-    state = state.copyWith(isLoadingCabins: true, clearCabinsError: true);
+    _isLoadingCabins = true;
+    _cabinsError = null;
+    _notify();
 
-    final result = await ref.read(getCabinsUseCaseProvider).call();
+    final result = await _getCabins.call();
+    if (_isDisposed) return;
 
     result.when(
-      ok: (value) => state = state.copyWith(cabins: value, isLoadingCabins: false),
-      error: (error) => state = state.copyWith(isLoadingCabins: false, cabinsError: error.message),
+      ok: (value) {
+        _cabins = value;
+        _isLoadingCabins = false;
+      },
+      error: (error) {
+        _isLoadingCabins = false;
+        _cabinsError = error.message;
+      },
     );
+    _notify();
   }
 }

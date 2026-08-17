@@ -184,12 +184,7 @@ class MedCabinOverviewPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        border: Border.all(color: MedColors.border),
-        borderRadius: MedRadius.lgAll,
-        boxShadow: MedShadows.sm,
-      ),
+      padding: MedSpacing.insetLg,
       child: Column(
         children: [
           _OverviewSection(
@@ -199,21 +194,7 @@ class MedCabinOverviewPanel extends StatelessWidget {
             focusedRowId: focusedRowId,
             maxListHeight: maxListHeight,
           ),
-          if (hint != null) ...[
-            Divider(height: 1, thickness: 1, color: MedColors.border),
-            Padding(
-              padding: MedSpacing.insetMd,
-              child: Text(hint!, style: MedTextStyles.bodySm(color: MedColors.text3)),
-            ),
-          ],
-          if (locationDetail != null) ...[
-            Divider(height: 1, thickness: 1, color: MedColors.border),
-            Flexible(child: _LocationSection(detail: locationDetail!)),
-          ],
-          if (footer != null) ...[
-            Divider(height: 1, thickness: 1, color: MedColors.border),
-            Padding(padding: MedSpacing.insetMd, child: footer!),
-          ],
+          if (locationDetail != null) Flexible(child: _LocationSection(detail: locationDetail!)),
         ],
       ),
     );
@@ -257,11 +238,8 @@ class _OverviewSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(title, style: MedTextStyles.bodyMd(color: MedColors.text3)),
-              if (countLabel != null) ...[
-                const Spacer(),
-                Text(countLabel!, style: MedTextStyles.monoMd(color: MedColors.text3)),
-              ],
+              Text(title, style: MedTextStyles.titleSm()),
+              if (countLabel != null) ...[const Spacer(), Text(countLabel!, style: MedTextStyles.titleSm())],
             ],
           ),
           const SizedBox(height: 12.0),
@@ -295,7 +273,6 @@ class _RowTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: row.backgroundColor,
           border: Border.all(color: row.borderColor, width: isFocused ? row.borderWidth + 0.5 : row.borderWidth),
-          borderRadius: MedRadius.mdAll,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +284,7 @@ class _RowTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(row.title, style: MedTextStyles.titleSm(color: row.textColor)),
-                      Text(row.subtitle, style: MedTextStyles.monoXs(color: MedColors.text3)),
+                      Text(row.subtitle, style: MedTextStyles.monoMd(color: MedColors.text3)),
                     ],
                   ),
                 ),
@@ -356,7 +333,7 @@ class _LocationSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('KONUM REHBERİ', style: MedTextStyles.monoXs(color: MedColors.text3)),
+              Text('KONUM REHBERİ', style: MedTextStyles.titleSm()),
               const Spacer(),
               Text(detail.typeLabel, style: MedTextStyles.monoXs(color: MedColors.text3)),
             ],
@@ -406,11 +383,10 @@ class _KubikGrid extends StatelessWidget {
 
     if (merged == null) {
       return Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: const Color(0xFFDCE8F5),
           border: Border.all(color: const Color(0xFFA8BEDB), width: 1.5),
-          borderRadius: MedRadius.mdAll,
         ),
         child: GridView.builder(
           shrinkWrap: true,
@@ -438,7 +414,6 @@ class _KubikGrid extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFDCE8F5),
         border: Border.all(color: const Color(0xFFA8BEDB), width: 1.5),
-        borderRadius: MedRadius.mdAll,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,11 +458,10 @@ class _UnitDoseTopView extends StatelessWidget {
     if (cellStates.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFFD8E4F0),
         border: Border.all(color: const Color(0xFFA0B8D0), width: 1.5),
-        borderRadius: MedRadius.mdAll,
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -495,11 +469,7 @@ class _UnitDoseTopView extends StatelessWidget {
           children: [
             for (int i = 0; i < cellStates.length; i++) ...[
               Expanded(
-                child: _CellBox(
-                  index: i,
-                  state: cellStates[i],
-                  label: String.fromCharCode(65 + i), // A, B, C...
-                ),
+                child: _CellBox(index: i, state: cellStates[i], label: String.fromCharCode(65 + i)),
               ),
               if (i < cellStates.length - 1)
                 Container(
@@ -584,11 +554,10 @@ class _CellBox extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         border: Border.all(color: border, width: borderWidth),
-        borderRadius: BorderRadius.circular(6),
         boxShadow: shadow,
       ),
       child: Center(
-        child: icon ?? Text(label ?? '${index + 1}', style: MedTextStyles.monoXs(color: textColor)),
+        child: icon ?? Text(label ?? '${index + 1}', style: MedTextStyles.monoMd(color: textColor)),
       ),
     );
   }

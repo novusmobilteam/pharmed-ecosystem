@@ -1,38 +1,76 @@
-import 'dart:async';
+// [SWREQ-CLI-CABIN-CONN-001] [IEC 62304 §5.5]
+// Kabin yönetim kartı bağlantı durumunu yönetir.
+// Sınıf: Class B
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../providers/providers.dart';
-import 'cabin_connection.dart';
+enum CabinConnectionStatus { disconnected, connecting, connected, error }
 
-final cabinConnectionProvider = NotifierProvider<CabinConnectionNotifier, CabinConnectionState>(
-  CabinConnectionNotifier.new,
-);
+class CabinConnectionNotifier extends ChangeNotifier {
+  CabinConnectionNotifier({required ScanManagerUseCase scanManager}) : _scanManager = scanManager;
 
-class CabinConnectionNotifier extends Notifier<CabinConnectionState> {
+  final ScanManagerUseCase _scanManager;
+
+  bool _isDisposed = false;
+
+  void _notify() {
+    if (_isDisposed) return;
+    notifyListeners();
+  }
+
   @override
-  CabinConnectionState build() => const CabinConnectionState(status: CabinConnectionStatus.disconnected);
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
 
-  ScanManagerUseCase get _scanManager => ref.read(scanManagerUseCaseProvider);
+  CabinConnectionStatus _status = CabinConnectionStatus.disconnected;
+  CabinConnectionStatus get status => _status;
+
+  int? _managerAddress;
+  int? get managerAddress => _managerAddress;
+
+  CabinConnectionFailure? _failure;
+  CabinConnectionFailure? get failure => _failure;
+
+  String? _errorDetail;
+  String? get errorDetail => _errorDetail;
+
+  bool get isConnected => _status == CabinConnectionStatus.connected;
+  bool get isError => _status == CabinConnectionStatus.error;
+  bool get isConnecting => _status == CabinConnectionStatus.connecting;
 
   Future<void> connect() async {
-    if (state.status == CabinConnectionStatus.connecting) return;
-    state = const CabinConnectionState(status: CabinConnectionStatus.connecting);
+    if (_status == CabinConnectionStatus.connecting) return;
+
+    _status = CabinConnectionStatus.connecting;
+    _failure = null;
+    _errorDetail = null;
+    _notify();
 
     try {
       final manager = await _scanManager.call();
-      state = CabinConnectionState(status: CabinConnectionStatus.connected, managerAddress: manager.addressIndex);
+      if (_isDisposed) return;
+      _status = CabinConnectionStatus.connected;
+      _managerAddress = manager.addressIndex;
+      _failure = null;
+      _errorDetail = null;
+      _notify();
     } on CabinConnectionException catch (e) {
-      state = CabinConnectionState(status: CabinConnectionStatus.error, failure: e.failure, errorDetail: e.detail);
+      if (_isDisposed) return;
+      _status = CabinConnectionStatus.error;
+      _failure = e.failure;
+      _errorDetail = e.detail;
+      _notify();
     }
   }
 
   void markDisconnected() {
-    state = const CabinConnectionState(
-      status: CabinConnectionStatus.error,
-      failure: CabinConnectionFailure.disconnected,
-    );
+    _status = CabinConnectionStatus.error;
+    _failure = CabinConnectionFailure.disconnected;
+    _errorDetail = null;
+    _notify();
   }
 
   Future<void> reconnect() => connect();

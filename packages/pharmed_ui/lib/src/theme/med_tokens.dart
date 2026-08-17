@@ -183,7 +183,7 @@ abstract final class MedTextStyles {
   // Title ailesi
   static TextStyle titleXl({Color? color}) => TextStyle(
     fontFamily: MedFonts.title,
-    fontSize: 38,
+    fontSize: 30,
     fontWeight: FontWeight.w800,
     height: 1,
     color: color ?? MedColors.text,
