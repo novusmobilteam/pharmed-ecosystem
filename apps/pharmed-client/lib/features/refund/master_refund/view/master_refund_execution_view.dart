@@ -37,6 +37,7 @@ class MasterRefundExecutionView extends ConsumerWidget {
       cancelLabel: context.l10n.common_cancelButton,
       locationItems: executing.toLocationItems(allGroups),
       activeIndex: executing.currentIndex,
+      isLastJob: executing.currentIndex >= executing.jobs.length - 1,
       openedBuilder: (_) => _RefundConfirmForm(executing: executing, notifier: notifier),
     );
   }

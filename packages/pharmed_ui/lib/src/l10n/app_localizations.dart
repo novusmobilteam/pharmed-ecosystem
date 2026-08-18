@@ -10500,6 +10500,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The drawer was closed unexpectedly while still in use. Please reopen and try again.'**
   String get masterDrawer_error_unexpectedlyClosed;
+
+  /// Title shown after the last job in the queue finishes and the drawer closes, informing the user the operation is finishing up.
+  ///
+  /// In en, this message translates to:
+  /// **'Completing Your Operation'**
+  String get masterDrawer_status_completingTitle;
+
+  /// Subtitle for the Completing Your Operation title.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait'**
+  String get masterDrawer_status_completingSubtitle;
 }
 
 class _AppLocalizationsDelegate

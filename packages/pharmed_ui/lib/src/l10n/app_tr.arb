@@ -6914,5 +6914,13 @@
 "masterDrawer_error_lidOpenFailed": "Kapak açılamadı. Çekmecenin tam açık olduğundan emin olun.",
 "masterDrawer_error_lockOpenTimeout": "Çekmece zamanında tam açılamadı. Lütfen çekmeceyi elle sonuna kadar çekin.",
 "masterDrawer_error_sensorCommunicationLost": "Donanımla iletişim kesildi. Bağlantıyı kontrol edip tekrar deneyin.",
-"masterDrawer_error_unexpectedlyClosed": "Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin."
+"masterDrawer_error_unexpectedlyClosed": "Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin.",
+"masterDrawer_status_completingTitle": "İşleminiz Tamamlanıyor",
+"@masterDrawer_status_completingTitle": {
+  "description": "Kuyruktaki son iş bitip çekmece kapandıktan sonra, kullanıcıya işlemin sonlandığını bildiren başlık."
+},
+"masterDrawer_status_completingSubtitle": "Lütfen bekleyiniz",
+"@masterDrawer_status_completingSubtitle": {
+  "description": "İşleminiz Tamamlanıyor başlığının alt metni."
+}
 }

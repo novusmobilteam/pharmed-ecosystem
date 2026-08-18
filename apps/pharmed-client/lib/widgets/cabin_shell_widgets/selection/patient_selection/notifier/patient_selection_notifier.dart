@@ -17,6 +17,7 @@ import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../../../core/providers/providers.dart';
+import 'patient_selection_config.dart';
 import 'patient_selection_state.dart';
 
 final patientSelectionNotifierProvider = NotifierProvider<PatientSelectionNotifier, PatientSelectionState>(
@@ -26,47 +27,45 @@ final patientSelectionNotifierProvider = NotifierProvider<PatientSelectionNotifi
 class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
   GetCurrentStationUseCase get _getStation => ref.read(getCurrentStationUseCaseProvider);
   GetHospitalizationsByServiceUseCase get _getHospitalizations => ref.read(getHospitalizationsByServiceUseCaseProvider);
-  GetActiveHospitalizationsUseCase get _getHospitalizationsSimple => ref.read(getActiveHospitalizationsUseCaseProvider);
+  GetActiveHospitalizationsUseCase get _getActiveHospitalizations => ref.read(getActiveHospitalizationsUseCaseProvider);
   CreateUrgentPatientUseCase get _createUrgent => ref.read(createUrgentPatientUseCaseProvider);
+  DeleteUrgentPatientUseCase get _deleteUrgent => ref.read(deleteUrgentPatientUseCaseProvider);
+
+  PatientSelectionConfig _config = const PatientSelectionConfig(showFilters: false);
+  PatientSelectionConfig get config => _config;
 
   @override
   PatientSelectionState build() => const PatientSelectionLoading();
 
-  Future<void> init({bool showFilters = true}) async {
+  Future<void> init(PatientSelectionConfig config) async {
+    _config = config;
     state = const PatientSelectionLoading();
 
     final stationResult = await _getStation.call();
     Station? station;
     stationResult.when(ok: (s) => station = s, error: (_) => station = null);
 
-    final userOrderStatus = orderStatusFromBool(
-      ref.read(authNotifierProvider.notifier).currentUser?.isNotOrdered ?? false,
-    );
+    final isNotOrdered = ref.read(authNotifierProvider.notifier).currentUser?.isNotOrdered ?? false;
+    final userOrderStatus = orderStatusFromBool(!isNotOrdered);
     final stationOrderStatus = station?.drugStatus ?? OrderStatus.ordered;
 
-    final viewOrderStatus = stationOrderStatus.isOrderless
-        ? OrderStatus.orderless
-        : userOrderStatus.isOrderless
-        ? OrderStatus.orderless
-        : OrderStatus.ordered;
+    final viewOrderStatus = stationOrderStatus.isOrderless ? OrderStatus.orderless : OrderStatus.ordered;
 
     state = PatientSelectionReady(
       station: station,
       viewOrderStatus: viewOrderStatus,
       userOrderStatus: userOrderStatus,
-      viewType: PatientViewType.allPatients,
       hospitalizations: const [],
-      selectedService: null,
-      showFilters: showFilters,
     );
 
     await _fetchPatients();
   }
 
-  // ── Liste çekme ────────────────────────────────────────────────────────────
-
-  /// Birleşik fetch: serviceId (0 = Tümü), filter ve myPatients her zaman
-  /// birlikte gönderilir — orderless/ordered ayrımı artık fetch'i dallandırmıyor.
+  // Öncelik sırası (yalnızca BİRİ uygulanır) — urgentCreate dalı KALKTI:
+  //   1. enableTabs + redirected tab → myPatients ise birleşik use case,
+  //      değilse GetActiveHospitalizationsUseCase (basit liste)
+  //   2. !showFilters                → GetActiveHospitalizationsUseCase
+  //   3. varsayılan                  → GetHospitalizationsByServiceUseCase
   Future<void> _fetchPatients() async {
     final s = state;
     if (s is! PatientSelectionReady) return;
@@ -74,15 +73,23 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
     state = s.copyWith(isFetching: true);
 
     final Result<List<Hospitalization>> result;
-    if (s.showFilters) {
+
+    if (config.enableTabs && s.tab == PatientSelectionTab.redirected) {
+      if (s.viewType == PatientViewType.myPatients) {
+        result = await _getHospitalizations.call(serviceId: 0, filter: PatientFilterType.all, myPatients: true);
+      } else {
+        final apiResult = await _getActiveHospitalizations.call(const PagedQueryParams());
+        result = apiResult.when(ok: (r) => Result.ok(r.data ?? const []), error: (e) => Result.error(e));
+      }
+    } else if (!config.showFilters) {
+      final apiResult = await _getActiveHospitalizations.call(const PagedQueryParams());
+      result = apiResult.when(ok: (r) => Result.ok(r.data ?? const []), error: (e) => Result.error(e));
+    } else {
       result = await _getHospitalizations.call(
         serviceId: s.selectedService?.id ?? 0,
-        filter: s.filter,
+        filter: s.isOrderless ? PatientFilterType.all : s.filter,
         myPatients: s.viewType == PatientViewType.myPatients,
       );
-    } else {
-      final apiResult = await _getHospitalizationsSimple.call(const PagedQueryParams());
-      result = apiResult.when(ok: (response) => Result.ok(response.data ?? const []), error: (e) => Result.error(e));
     }
 
     final cur = state;
@@ -90,11 +97,18 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
 
     result.when(
       ok: (data) {
-        final filtered = cur.isOrderless ? data.where((d) => !(d.isUrgent)).toList() : data;
+        final filtered = cur.isOrderless ? data.where((d) => !d.isUrgent).toList() : data;
         state = cur.copyWith(hospitalizations: filtered, isFetching: false);
       },
       error: (e) => state = PatientSelectionError(message: e.message, previousState: cur.copyWith(isFetching: false)),
     );
+  }
+
+  Future<void> switchTab(PatientSelectionTab tab) async {
+    final s = state;
+    if (!config.enableTabs || s is! PatientSelectionReady || s.tab == tab) return;
+    state = s.copyWith(tab: tab);
+    await _fetchPatients();
   }
 
   /// "Hastalarım" ↔ "Tüm hastalar".
@@ -111,9 +125,8 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
   Future<void> toggleOrderlessStatus() async {
     final s = state;
     if (s is! PatientSelectionReady) return;
-
     final next = s.viewOrderStatus.isOrderless ? OrderStatus.ordered : OrderStatus.orderless;
-    state = s.copyWith(viewOrderStatus: next);
+    state = s.copyWith(viewOrderStatus: next, filter: next.isOrderless ? PatientFilterType.all : s.filter);
     await _fetchPatients();
   }
 
@@ -125,7 +138,7 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
   Future<void> toggleService(HospitalService? service) async {
     final s = state;
     if (s is! PatientSelectionReady) return;
-    if (s.selectedService?.id == service?.id) return; // zaten seçili, no-op.
+    if (s.selectedService?.id == service?.id) return;
 
     state = s.copyWith(selectedService: service, clearSelectedService: service == null);
     await _fetchPatients();
@@ -145,15 +158,13 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
     state = s.copyWith(search: value);
   }
 
-  /// Acil hasta oluştur. Başarılıysa onSuccess ile oluşan hospitalization döner
-  /// (shell doğrudan alım ekranına geçebilir).
   Future<void> createUrgentPatient({
+    required int serviceId,
     void Function(Hospitalization patient)? onSuccess,
     void Function(String message)? onFailed,
   }) async {
     final s = state;
     if (s is! PatientSelectionReady) return;
-    final serviceId = s.selectedService?.id ?? 0;
 
     state = s.copyWith(isCreatingUrgent: true);
     final result = await _createUrgent.call(serviceId);
@@ -162,12 +173,38 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
 
     result.when(
       ok: (hospitalization) {
-        state = cur.copyWith(isCreatingUrgent: false);
-        onSuccess?.call(hospitalization!);
-        _fetchPatients();
+        state = cur.copyWith(isCreatingUrgent: false, createdUrgentPatient: hospitalization);
+        if (hospitalization != null) onSuccess?.call(hospitalization);
       },
       error: (e) {
         state = cur.copyWith(isCreatingUrgent: false);
+        onFailed?.call(e.message);
+      },
+    );
+  }
+
+  /// Onay kartındaki "Sil" — normal akışa döner. Başarılıysa liste tazelenir
+  /// ve `onDeleted` ile üst kabuğa bildirilir (çağıran taraf `selectedPatient`
+  /// olarak hâlâ bu hastayı tutuyorsa temizleyebilsin diye).
+  Future<void> deleteUrgentPatient({void Function()? onDeleted, void Function(String message)? onFailed}) async {
+    final s = state;
+    if (s is! PatientSelectionReady) return;
+    final patient = s.createdUrgentPatient;
+    if (patient == null) return;
+
+    state = s.copyWith(isDeletingUrgent: true);
+    final result = await _deleteUrgent.call(patient.patient!.id!);
+    final cur = state;
+    if (cur is! PatientSelectionReady) return;
+
+    await result.when(
+      ok: (_) async {
+        state = cur.copyWith(isDeletingUrgent: false, clearCreatedUrgentPatient: true);
+        onDeleted?.call();
+        await _fetchPatients();
+      },
+      error: (e) async {
+        state = cur.copyWith(isDeletingUrgent: false);
         onFailed?.call(e.message);
       },
     );
@@ -177,5 +214,13 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
     final s = state;
     if (s is! PatientSelectionError) return;
     state = s.previousState;
+  }
+
+  /// Dışarıdan (örn. bir alım/iade/fire-imha kuyruğu tamamlandıktan sonra)
+  /// listeyi tazelemek için. Mevcut filtre/tab/arama durumunu KORUR — sadece
+  /// _fetchPatients'ı tekrar çalıştırır, state'i sıfırlamaz.
+  Future<void> refresh() async {
+    if (state is! PatientSelectionReady) return;
+    await _fetchPatients();
   }
 }

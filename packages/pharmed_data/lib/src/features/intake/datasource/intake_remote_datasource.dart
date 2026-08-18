@@ -78,10 +78,14 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
     return await postRequest(path: '/Patient/otherDrug', parser: BaseRemoteDataSource.voidParser(), body: data);
   }
 
-  Future<Result<List<CabinTargetedPrescriptionItemDto>?>> getIntakeItems({required int hospitalizationId}) async {
+  Future<Result<List<CabinTargetedPrescriptionItemDto>?>> getIntakeItems({
+    required int hospitalizationId,
+    required PatientFilterType type,
+  }) async {
     return await fetchRequest(
       path: '/Prescription/detail/getCollect/$hospitalizationId',
       parser: BaseRemoteDataSource.listParser(CabinTargetedPrescriptionItemDto.fromJson),
+      query: {'typeId': type.id},
     );
   }
 

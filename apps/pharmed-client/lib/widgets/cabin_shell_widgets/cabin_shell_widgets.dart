@@ -2,9 +2,11 @@ export 'master_cabin_root_scaffold.dart';
 export 'cabin_operation_grid.dart';
 export 'cabin_operation_search_field.dart';
 export 'cabin_operation_execution_layout.dart';
+export 'cabin_overview_execution_panel.dart';
+export 'cabin_overview_selection_panel.dart';
+export 'selection/cabin_assignment_list_view.dart';
 
 /// Patient
-export 'selection/patient_selection/view/patient_selection_guide.dart';
 export 'selection/patient_selection/notifier/patient_selection_notifier.dart';
 export 'selection/patient_selection/notifier/patient_selection_state.dart';
 

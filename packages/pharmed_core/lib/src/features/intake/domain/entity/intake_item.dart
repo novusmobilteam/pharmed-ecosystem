@@ -118,12 +118,13 @@ class IntakeItem {
     bool clearSelectedEquivalent = false,
     OtherStationMedicine? redirectedStation,
     DateTime? time,
+    Medicine? medicine,
   }) {
     return IntakeItem(
       id: id,
       type: type,
       assignment: assignment ?? this.assignment,
-      medicine: medicine,
+      medicine: medicine ?? this.medicine,
       prescriptionItem: prescriptionItem ?? this.prescriptionItem,
       lastMovement: lastMovement ?? this.lastMovement,
       dosePiece: dosePiece ?? this.dosePiece,

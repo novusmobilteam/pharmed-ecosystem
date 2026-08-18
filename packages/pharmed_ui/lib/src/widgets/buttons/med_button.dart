@@ -109,7 +109,7 @@ class _MedButtonState extends State<MedButton> {
               ],
               Text(widget.label, style: sizing.textStyle(colors.foreground)),
               if (!widget.isLoading && widget.suffixIcon != null) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: 28),
                 IconTheme(
                   data: IconThemeData(color: colors.foreground, size: 16),
                   child: widget.suffixIcon!,
@@ -178,19 +178,19 @@ _ButtonSizing _resolveSizing(MedButtonSize s) {
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       minHeight: 36,
       fontSize: 12,
-      radius: 8,
+      radius: 4,
     ),
     MedButtonSize.md => const _ButtonSizing(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       minHeight: 40,
       fontSize: 14,
-      radius: 8,
+      radius: 4,
     ),
     MedButtonSize.lg => const _ButtonSizing(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       minHeight: 44,
       fontSize: 15,
-      radius: 10,
+      radius: 6,
     ),
   };
 }

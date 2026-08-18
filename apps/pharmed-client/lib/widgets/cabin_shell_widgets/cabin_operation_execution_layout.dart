@@ -26,7 +26,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/cabin_overview_panel.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -48,6 +47,7 @@ class CabinOperationExecutionLayout extends ConsumerStatefulWidget {
     required this.activeIndex,
     required this.openedBuilder,
     this.onRequestClose,
+    this.isLastJob = false,
   });
 
   final String progressLabel;
@@ -80,6 +80,11 @@ class CabinOperationExecutionLayout extends ConsumerStatefulWidget {
   /// master-drawer-operation skill: sensör izleme SADECE confirmClose
   /// sonrası "resmi" kapanış sayılır).
   final VoidCallback? onRequestClose;
+
+  /// true ise kuyrukta bu işten sonra BAŞKA bir iş YOK. Idle/Closed ara
+  /// durumunda (bir işten diğerine geçiş / kuyruk bitişi) gösterilen mesaj
+  /// buna göre değişir — "çekmece açılıyor" yerine "işleminiz tamamlanıyor".
+  final bool isLastJob;
 
   @override
   ConsumerState<CabinOperationExecutionLayout> createState() => _MasterCabinExecutionScaffoldState();
@@ -147,7 +152,8 @@ class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExe
         const SizedBox(height: 20),
         Expanded(
           child: CabinOperationSelectionLayout(
-            left: CabinOverviewPanel.execution(items: widget.locationItems, activeIndex: widget.activeIndex),
+            flex: 2,
+            left: CabinOverviewExecutionPanel(items: widget.locationItems, activeIndex: widget.activeIndex),
             right: _buildContent(context, drawerStage),
           ),
         ),
@@ -175,6 +181,15 @@ class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExe
 
   /// Çekmecenin fiziksel durumuna ait, ekrandan bağımsız mesaj çifti.
   (String, String) _stageInfo(BuildContext context, MasterDrawerStage stage) {
+    // Idle/Closed: bir işten diğerine geçiş YA DA kuyruk bitişi. Son işse
+    // "açılıyor" yanlış olur — kuyruk zaten bitiyor, sıradaki iş yok.
+    if (stage is MasterDrawerIdle || stage is MasterDrawerClosed) {
+      if (widget.isLastJob) {
+        return (context.l10n.masterDrawer_status_completingTitle, context.l10n.masterDrawer_status_completingSubtitle);
+      }
+      return (context.l10n.masterDrawer_status_openingTitle, context.l10n.masterDrawer_status_openingSubtitle);
+    }
+
     return switch (stage) {
       MasterDrawerOpening(step: MasterDrawerOpeningStep.lockOpening) => (
         context.l10n.masterDrawer_status_lockOpeningTitle,

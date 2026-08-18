@@ -125,4 +125,8 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
       body: {"serviceId": serviceId},
     );
   }
+
+  Future<Result<void>> deleteUrgentPatient(int patientId) async {
+    return await deleteRequest(path: '$_base/urgent/$patientId', parser: BaseRemoteDataSource.voidParser());
+  }
 }

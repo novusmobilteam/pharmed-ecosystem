@@ -54,6 +54,24 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     );
   }
 
+  /// Sayım granülaritesini değiştirir.
+  /// - allCabin'e geçiş: TÜM assignment'lar seçilir (kilitli seçim).
+  /// - allCabin'DEN çıkış (byDrawer/byMedicine'e geçiş): seçim SIFIRLANIR
+  ///   — kullanıcı temiz başlasın diye.
+  /// - byDrawer ↔ byMedicine arası: seçim KORUNUR — ikisi de aynı
+  ///   selectedUnitIds kümesini farklı arayüzden düzenler.
+  void setCensusMode(CensusMode mode) {
+    final s = state;
+    if (s is! MasterCensusSelection || s.censusMode == mode) return;
+
+    final nextSelectedUnitIds = switch (mode) {
+      CensusMode.allCabin => s.medicines.map((a) => a.cabinDrawerId).whereType<int>().toSet(),
+      CensusMode.byDrawer || CensusMode.byMedicine => s.censusMode == CensusMode.allCabin ? <int>{} : s.selectedUnitIds,
+    };
+
+    state = s.copyWith(censusMode: mode, selectedUnitIds: nextSelectedUnitIds);
+  }
+
   void onSearchChanged(String value) {
     final s = state;
     if (s is! MasterCensusSelection) return;
@@ -62,7 +80,8 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
 
   void toggleUnit(int cabinDrawerId) {
     final s = state;
-    if (s is! MasterCensusSelection) return;
+    // allCabin modunda seçim KİLİTLİ — hiçbir toggle etkili olmamalı.
+    if (s is! MasterCensusSelection || s.censusMode == CensusMode.allCabin) return;
     final next = Set<int>.from(s.selectedUnitIds);
     next.contains(cabinDrawerId) ? next.remove(cabinDrawerId) : next.add(cabinDrawerId);
     state = s.copyWith(selectedUnitIds: next);
@@ -70,7 +89,7 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
 
   void toggleDrawer(DrawerGroup group) {
     final s = state;
-    if (s is! MasterCensusSelection) return;
+    if (s is! MasterCensusSelection || s.censusMode == CensusMode.allCabin) return;
 
     final unitIdsInGroup = group.units.map((u) => u.id).whereType<int>().toSet();
     final drawerAssignmentUnitIds = s.medicines
@@ -368,6 +387,7 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
         cabinId: cabinId,
         medicines: assignments,
         selectedUnitIds: assignments.map((a) => a.cabinDrawerId).whereType<int>().toSet(),
+        censusMode: CensusMode.allCabin,
       ),
       error: (e) => state = MasterCensusError(
         failure: CabinApiFailure(message: e.message),

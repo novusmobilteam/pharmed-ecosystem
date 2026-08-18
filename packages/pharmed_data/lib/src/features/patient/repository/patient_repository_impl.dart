@@ -124,4 +124,10 @@ class PatientRepositoryImpl implements IPatientRepository {
       error: (e) => Result.error(e),
     );
   }
+
+  @override
+  Future<Result<void>> deleteUrgentPatient(int patientId) async {
+    final result = await _dataSource.deleteUrgentPatient(patientId);
+    return result.when(ok: (dto) => Result.ok(null), error: (e) => Result.error(e));
+  }
 }

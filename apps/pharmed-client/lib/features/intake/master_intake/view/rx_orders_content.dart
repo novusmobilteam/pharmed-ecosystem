@@ -1,7 +1,9 @@
 part of 'master_intake_selection_view.dart';
 
 class RxOrdersContent extends ConsumerWidget {
-  const RxOrdersContent({super.key});
+  const RxOrdersContent({super.key, required this.menu});
+
+  final MenuItem menu;
 
   void _openWitnessDialog(BuildContext context, WidgetRef ref, IntakeItem item) {
     final notifier = ref.read(masterIntakeNotifierProvider.notifier);
@@ -43,7 +45,7 @@ class RxOrdersContent extends ConsumerWidget {
     // Hasta henüz seçilmedi — bu bir yükleme değil, gerçek bir boş durum.
     final bool noPatientSelected = selection == null && state is MasterIntakePatientSelection;
     // Hasta seçildi, item'lar backend'den geliyor — gerçek loading burası.
-    final bool isItemsLoading = selection == null && !noPatientSelected;
+    final bool isItemsLoading = (selection == null && !noPatientSelected) || (selection?.isFetching ?? false);
 
     final List<IntakeItem> items = selection?.visibleItems ?? const [];
     final Set<int> selectedItemIds = selection?.selectedItemIds ?? const {};
@@ -52,7 +54,13 @@ class RxOrdersContent extends ConsumerWidget {
     // RxOrdersContent.build() içinde, selection çözüldükten hemen sonra:
     final bool isOrderlessFlow = selection?.intakeType.isOrderless ?? false;
 
+    final patientSelectionState = ref.watch(patientSelectionNotifierProvider);
+    final currentFilter = patientSelectionState is PatientSelectionReady
+        ? patientSelectionState.filter
+        : PatientFilterType.ordersDue;
+
     return CabinSelectionContentShell(
+      menu: menu,
       searchQuery: selection?.search ?? '',
       onSearchQueryChanged: notifier.onSearchChanged,
       searchHint: context.l10n.intake_hint_searchMedicine,
@@ -89,8 +97,12 @@ class RxOrdersContent extends ConsumerWidget {
                   isSelected: isSelected,
 
                   // Stok yok → soluk + kilitli (eski _hasNoStock davranışı)
-                  //isDimmed: item.hasNoStock,
-                  onTap: (item.hasNoStock || item.isRedirected) ? null : () => notifier.toggleItem(item.id),
+                  isDimmed: (isOrderlessFlow && currentFilter != PatientFilterType.ordersDue),
+                  onTap: (isOrderlessFlow && currentFilter != PatientFilterType.ordersDue)
+                      ? null
+                      : (item.hasNoStock || item.isRedirected)
+                      ? null
+                      : () => notifier.toggleItem(item.id),
 
                   statusChip: time != null
                       ? RxCardChip(label: time.shortRelativeLabelOf(context), tone: MedTone.info)

@@ -11,9 +11,10 @@ import '../notifier/master_census_notifier.dart';
 import '../notifier/master_census_state.dart';
 
 class MasterCensusView extends ConsumerStatefulWidget {
-  const MasterCensusView({super.key, this.data});
+  const MasterCensusView({super.key, this.data, required this.menu});
 
   final CabinVisualizerData? data;
+  final MenuItem menu;
 
   @override
   ConsumerState<MasterCensusView> createState() => _MasterCensusViewState();
@@ -58,7 +59,7 @@ class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
         MasterCensusError(previousState: MasterCensusExecuting()) => const RootExecuting(),
         _ => const RootSelection(),
       },
-      selectionBuilder: (_) => MasterCensusSelectionView(allGroups: widget.data?.groups ?? const []),
+      selectionBuilder: (_) => MasterCensusSelectionView(allGroups: widget.data?.groups ?? const [], menu: widget.menu),
       executionBuilder: (_) => MasterCensusExecutionView(allGroups: widget.data?.groups ?? const []),
     );
   }

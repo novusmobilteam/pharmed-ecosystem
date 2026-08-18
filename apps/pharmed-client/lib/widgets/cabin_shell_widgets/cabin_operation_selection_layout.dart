@@ -9,6 +9,7 @@ class CabinOperationSelectionLayout extends StatelessWidget {
     this.leftWidth = 320,
     this.footer,
     this.isLoading = false,
+    this.flex,
   });
 
   final double leftWidth;
@@ -16,6 +17,7 @@ class CabinOperationSelectionLayout extends StatelessWidget {
   final Widget right;
   final Widget? footer;
   final bool isLoading;
+  final int? flex;
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +28,10 @@ class CabinOperationSelectionLayout extends StatelessWidget {
       children: [
         Expanded(
           child: Row(
+            spacing: 12.0,
             children: [
-              SizedBox(width: leftWidth, child: left),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Padding(padding: const EdgeInsets.only(left: 24.0), child: right),
-                    ),
-                  ],
-                ),
-              ),
+              Expanded(flex: flex ?? 3, child: left),
+              Expanded(flex: 7, child: right),
             ],
           ),
         ),

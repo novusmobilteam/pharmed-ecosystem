@@ -63,8 +63,11 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   }
 
   @override
-  Future<Result<List<CabinTargetedPrescriptionItem>>> getIntakeItems({required int hospitalizationId}) async {
-    final res = await _dataSource.getIntakeItems(hospitalizationId: hospitalizationId);
+  Future<Result<List<CabinTargetedPrescriptionItem>>> getIntakeItems({
+    required int hospitalizationId,
+    required PatientFilterType type,
+  }) async {
+    final res = await _dataSource.getIntakeItems(hospitalizationId: hospitalizationId, type: type);
     return res.when(ok: (dtos) => Result.ok(_intakeItemMapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
   }
 

@@ -38,10 +38,10 @@ class _UrgentPatientCreateSheetContentState extends ConsumerState<_UrgentPatient
   Future<void> _submit() async {
     final selected = _selected;
     if (selected?.id == null) return;
-    final notifier = ref.read(intakePatientSelectionNotifierProvider.notifier);
+    final notifier = ref.read(patientSelectionNotifierProvider.notifier);
     await notifier.createUrgentPatient(
       serviceId: selected!.id!,
-      onCreated: widget.onCreated,
+      onSuccess: widget.onCreated,
       onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
     );
   }
@@ -49,9 +49,7 @@ class _UrgentPatientCreateSheetContentState extends ConsumerState<_UrgentPatient
   @override
   Widget build(BuildContext context) {
     final isCreating = ref.watch(
-      intakePatientSelectionNotifierProvider.select(
-        (s) => s is IntakePatientSelectionReady ? s.isCreatingUrgent : false,
-      ),
+      patientSelectionNotifierProvider.select((s) => s is PatientSelectionReady ? s.isCreatingUrgent : false),
     );
 
     return Material(
@@ -100,7 +98,6 @@ class _UrgentPatientCreateSheetContentState extends ConsumerState<_UrgentPatient
                     onPressed: widget.onCancel,
                   ),
                 ),
-
                 Expanded(
                   flex: 3,
                   child: MedButton(

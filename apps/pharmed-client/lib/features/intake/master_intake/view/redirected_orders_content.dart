@@ -1,7 +1,9 @@
 part of 'master_intake_selection_view.dart';
 
 class RedirectedOrdersContent extends ConsumerWidget {
-  const RedirectedOrdersContent({super.key});
+  const RedirectedOrdersContent({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,6 +18,7 @@ class RedirectedOrdersContent extends ConsumerWidget {
     final checkStates = state is RedirectedOrdersLoaded ? state.checkStates : const <int, IntakeCheckState>{};
 
     return CabinSelectionContentShell(
+      menu: menu,
       searchQuery: '',
       onSearchQueryChanged: (_) {},
       searchHint: '',

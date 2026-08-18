@@ -1,4 +1,6 @@
-part of 'patient_selection_guide.dart';
+import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// Bir [Hospitalization] kaydını liste satırı olarak gösteren genel
 /// amaçlı widget.

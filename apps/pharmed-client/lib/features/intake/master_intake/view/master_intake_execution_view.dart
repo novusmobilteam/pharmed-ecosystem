@@ -50,6 +50,7 @@ class MasterIntakeExecutionView extends ConsumerWidget {
       cancelLabel: context.l10n.common_cancelButton,
       locationItems: executing.toLocationItems(allGroups),
       activeIndex: executing.currentIndex,
+      isLastJob: executing.currentIndex >= executing.jobs.length - 1,
       openedBuilder: (_) => _IntakeForm(state: executing, job: job, notifier: notifier),
     );
   }
@@ -65,11 +66,12 @@ class _IntakeForm extends StatelessWidget {
   static const double _maxWidth = 720.0;
 
   bool get _canConfirm {
-    if (job.isKubik) {
-      final t = state.currentTarget;
-      return t != null && t.isValid;
-    }
-    return job.targets.every((t) => t.isValid); // birim doz: TÜM hedefler geçerli olmalı
+    final steps = IntakeCellGrouper.group(job.targets);
+    final ti = state.currentTargetIndex;
+    if (ti < 0 || ti >= steps.length) return false;
+
+    final step = steps[ti];
+    return step.refs.every((ref) => job.targets[ref.$1].isValid);
   }
 
   /// Artık kübik/birim doz farkı YOK - ikisi de aktif STEP'i (currentTargetIndex)

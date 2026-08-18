@@ -19,3 +19,4 @@ export 'domain/usecase/update_patient_usecase.dart';
 export 'domain/usecase/create_urgent_patient_usecase.dart';
 export 'domain/usecase/get_urgent_patients_usecase.dart';
 export 'domain/usecase/get_hospitalized_and_recent_exits_usecase.dart';
+export 'domain/usecase/delete_urgent_patient_usecase.dart';

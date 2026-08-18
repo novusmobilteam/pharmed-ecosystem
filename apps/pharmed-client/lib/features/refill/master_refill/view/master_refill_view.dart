@@ -24,9 +24,10 @@ import '../../../../widgets/widgets.dart';
 import '../../refill.dart';
 
 class MasterRefillView extends ConsumerStatefulWidget {
-  const MasterRefillView({super.key, this.data});
+  const MasterRefillView({super.key, this.data, required this.menu});
 
   final CabinVisualizerData? data;
+  final MenuItem menu;
 
   @override
   ConsumerState<MasterRefillView> createState() => _MasterRefillViewState();
@@ -71,7 +72,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
         MasterRefillError(previousState: MasterRefillExecuting()) => const RootExecuting(),
         _ => const RootSelection(),
       },
-      selectionBuilder: (_) => MasterRefillSelectionView(allGroups: widget.data?.groups ?? const []),
+      selectionBuilder: (_) => MasterRefillSelectionView(allGroups: widget.data?.groups ?? const [], menu: widget.menu),
       executionBuilder: (_) => MasterRefillExecutionView(allGroups: widget.data?.groups ?? const []),
     );
   }

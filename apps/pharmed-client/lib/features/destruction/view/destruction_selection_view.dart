@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/cabin_overview_panel.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -31,11 +30,12 @@ class DestructionSelectionView extends ConsumerWidget {
     return CabinOperationSelectionLayout(
       leftWidth: 320,
       isLoading: state is DestructionLoading,
-      left: CabinOverviewPanel.selection(
+      left: CabinOverviewSelectionPanel(
         groups: allGroups,
         assignments: selection.medicines,
         selectedUnitIds: selection.selectedUnitIds,
-        onToggleDrawer: notifier.toggleDrawer,
+        //onToggleDrawer: notifier.toggleDrawer,
+        //onToggleUnit: (DrawerUnit unit) {},
       ),
       right: CabinSelectionContentShell(
         onSearchQueryChanged: notifier.onSearchChanged,

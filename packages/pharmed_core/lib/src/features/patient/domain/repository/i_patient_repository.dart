@@ -29,4 +29,5 @@ abstract interface class IPatientRepository {
 
   /// Acil hastaları getiren servis
   Future<Result<List<Hospitalization>>> getUrgentPatients();
+  Future<Result<void>> deleteUrgentPatient(int patientId);
 }

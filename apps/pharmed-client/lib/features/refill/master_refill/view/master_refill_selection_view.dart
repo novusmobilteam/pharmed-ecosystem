@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/cabin_overview_panel.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -9,9 +8,10 @@ import '../../../../widgets/widgets.dart';
 import '../../refill.dart';
 
 class MasterRefillSelectionView extends ConsumerWidget {
-  const MasterRefillSelectionView({super.key, required this.allGroups});
+  const MasterRefillSelectionView({super.key, required this.allGroups, required this.menu});
 
   final List<DrawerGroup> allGroups;
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,15 +27,21 @@ class MasterRefillSelectionView extends ConsumerWidget {
     if (selection == null) return const SizedBox.shrink();
 
     return CabinOperationSelectionLayout(
-      leftWidth: 320,
       isLoading: state is MasterRefillLoading,
-      left: CabinOverviewPanel.selection(
+      left: CabinOverviewSelectionPanel(
         groups: allGroups,
         assignments: selection.medicines,
         selectedUnitIds: selection.selectedUnitIds,
-        onToggleDrawer: notifier.toggleDrawer,
+        onDrawerTap: notifier.toggleDrawer,
+        onCellTap: (unit) {
+          final id = unit.id;
+          if (id == null) return;
+          notifier.toggleUnit(id);
+        },
       ),
+
       right: CabinSelectionContentShell(
+        menu: menu,
         searchQuery: selection.search,
         onSearchQueryChanged: notifier.onSearchChanged,
         isEmpty: selection.visibleMedicines.isEmpty,
@@ -43,7 +49,7 @@ class MasterRefillSelectionView extends ConsumerWidget {
         emptyMessage: context.l10n.refill_hint_noMedicines,
         content: selection.visibleMedicines.isEmpty
             ? null
-            : _GridView(
+            : CabinAssignmentListView(
                 items: selection.visibleMedicines,
                 selectedItemIds: selection.selectedUnitIds,
                 onToggle: notifier.toggleUnit,
@@ -53,45 +59,11 @@ class MasterRefillSelectionView extends ConsumerWidget {
                 label: context.l10n.refill_action_startAuto,
                 onPressed: notifier.startAutoRefill,
                 suffixIcon: Icon(PhosphorIcons.arrowRight()),
-                size: MedButtonSize.md,
+                size: MedButtonSize.lg,
                 variant: MedButtonVariant.primary,
               )
             : null,
       ),
-    );
-  }
-}
-
-class _GridView extends StatelessWidget {
-  const _GridView({required this.items, required this.selectedItemIds, required this.onToggle});
-
-  final List<MedicineAssignment> items;
-  final Set<int> selectedItemIds;
-  final ValueChanged<int>? onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    final ordered = <MedicineAssignment>[];
-    final seen = <int>{};
-    for (final a in items) {
-      final mid = a.medicine?.id;
-      if (mid == null) continue;
-      if (!seen.contains(mid)) {
-        seen.add(mid);
-        ordered.addAll(items.where((x) => x.medicine?.id == mid));
-      }
-    }
-
-    return CabinOperationGrid(itemCount: ordered.length, itemBuilder: (context, i) => _slotCard(context, ordered[i]));
-  }
-
-  Widget _slotCard(BuildContext context, MedicineAssignment a) {
-    final id = a.cabinDrawerId;
-
-    return MedicineAssignmentCard(
-      assignment: a,
-      selected: id != null && selectedItemIds.contains(id),
-      onTap: (id == null || onToggle == null) ? null : () => onToggle!(id),
     );
   }
 }

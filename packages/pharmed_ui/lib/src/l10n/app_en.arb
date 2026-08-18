@@ -7155,5 +7155,13 @@
   "@masterDrawer_error_sensorCommunicationLost": {
     "description": "Shown when the drawer status sensor stops responding for multiple consecutive polls during open or close monitoring."
   },
-  "masterDrawer_error_unexpectedlyClosed": "The drawer was closed unexpectedly while still in use. Please reopen and try again."
+  "masterDrawer_error_unexpectedlyClosed": "The drawer was closed unexpectedly while still in use. Please reopen and try again.",
+"masterDrawer_status_completingTitle": "Completing Your Operation",
+"@masterDrawer_status_completingTitle": {
+  "description": "Title shown after the last job in the queue finishes and the drawer closes, informing the user the operation is finishing up."
+},
+"masterDrawer_status_completingSubtitle": "Please wait",
+"@masterDrawer_status_completingSubtitle": {
+  "description": "Subtitle for the Completing Your Operation title."
+}
 }

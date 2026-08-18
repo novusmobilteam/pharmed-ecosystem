@@ -17,7 +17,8 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-/// Liste görünümü: tüm hastalar mı, sadece bana atanmış hastalar mı.
+enum PatientSelectionTab { prescriptions, redirected }
+
 enum PatientViewType { allPatients, myPatients }
 
 sealed class PatientSelectionState {
@@ -29,12 +30,12 @@ final class PatientSelectionLoading extends PatientSelectionState {
   const PatientSelectionLoading();
 }
 
-/// Hasta listesi hazır.
 final class PatientSelectionReady extends PatientSelectionState {
   const PatientSelectionReady({
     required this.station,
     required this.viewOrderStatus,
     required this.userOrderStatus,
+    this.tab = PatientSelectionTab.prescriptions,
     this.viewType = PatientViewType.allPatients,
     required this.hospitalizations,
     this.selectedService,
@@ -42,61 +43,53 @@ final class PatientSelectionReady extends PatientSelectionState {
     this.search = '',
     this.isFetching = false,
     this.isCreatingUrgent = false,
-    this.showFilters = true,
+    this.isDeletingUrgent = false,
+    // Acil hasta oluşturulunca dolar — dolu olduğu sürece liste yerine
+    // onay kartı gösterilir. Silinince (veya hiç oluşturulmadıysa) null.
+    this.createdUrgentPatient,
   });
 
   final Station? station;
-
-  /// Ekranın o anki order modu (ordered/orderless).
   final OrderStatus viewOrderStatus;
-
-  /// Kullanıcının ordersız yetkisi (toggle görünürlüğü için).
   final OrderStatus userOrderStatus;
-
+  final PatientSelectionTab tab;
   final PatientViewType viewType;
-
-  /// Ham hasta listesi (arama uygulanmadan).
   final List<Hospitalization> hospitalizations;
-
-  /// orderless modda seçili servis (filtre).
   final HospitalService? selectedService;
-
-  /// ordered modda reçete filtresi.
   final PatientFilterType filter;
-
   final String search;
   final bool isFetching;
   final bool isCreatingUrgent;
-  final bool showFilters;
+  final bool isDeletingUrgent;
+  final Hospitalization? createdUrgentPatient;
 
-  // ── Türetilen ──────────────────────────────────────────────────────────
+  // ── Türetilenler ──────────────────────────────────────────────────────
 
   bool get isOrderless => viewOrderStatus.isOrderless;
-
   OrderStatus get stationOrderStatus => station?.drugStatus ?? OrderStatus.ordered;
-
   List<HospitalService> get availableServices => station?.services ?? const [];
+  bool get isStatusToggleVisible => userOrderStatus.isOrderless;
 
-  /// Toggle butonu: istasyon orderlı VE kullanıcı ordersız yetkisine sahipse.
-  bool get isStatusButtonVisible => stationOrderStatus.isOrdered && userOrderStatus.isOrderless;
+  /// Acil hasta oluştur BUTONU (config.enableUrgentPatient ile birlikte
+  /// çalışır — bkz. PatientSelectionPanel). Sadece Reçeteler sekmesinde +
+  /// orderless modda anlamlı; bir acil hasta zaten oluşturulmuşken de
+  /// gizlenir (onun yerine onay kartı gösterilir).
+  bool get isUrgentActionVisible => tab == PatientSelectionTab.prescriptions && createdUrgentPatient == null;
 
-  /// Acil hasta oluştur: kullanıcı o an ordersız modda işlem yapabiliyorsa.
-  bool get isUrgentPatientButtonVisible => viewOrderStatus.isOrderless;
+  bool get isOrderedFilterActive => tab == PatientSelectionTab.prescriptions && !isOrderless;
+  bool get isMyPatientsToggleEnabled => tab == PatientSelectionTab.prescriptions;
 
-  /// Arama uygulanmış görünür liste.
   List<Hospitalization> get visiblePatients {
     if (search.trim().isEmpty) return hospitalizations;
     final q = search.toLowerCase().trim();
-    return hospitalizations.where((h) {
-      final name = h.patient?.fullName.toLowerCase() ?? '';
-      return name.contains(q);
-    }).toList();
+    return hospitalizations.where((h) => (h.patient?.fullName.toLowerCase() ?? '').contains(q)).toList();
   }
 
   PatientSelectionReady copyWith({
     Station? station,
     OrderStatus? viewOrderStatus,
     OrderStatus? userOrderStatus,
+    PatientSelectionTab? tab,
     PatientViewType? viewType,
     List<Hospitalization>? hospitalizations,
     HospitalService? selectedService,
@@ -105,11 +98,15 @@ final class PatientSelectionReady extends PatientSelectionState {
     String? search,
     bool? isFetching,
     bool? isCreatingUrgent,
+    bool? isDeletingUrgent,
+    Hospitalization? createdUrgentPatient,
+    bool clearCreatedUrgentPatient = false,
   }) {
     return PatientSelectionReady(
       station: station ?? this.station,
       viewOrderStatus: viewOrderStatus ?? this.viewOrderStatus,
       userOrderStatus: userOrderStatus ?? this.userOrderStatus,
+      tab: tab ?? this.tab,
       viewType: viewType ?? this.viewType,
       hospitalizations: hospitalizations ?? this.hospitalizations,
       selectedService: clearSelectedService ? null : (selectedService ?? this.selectedService),
@@ -117,6 +114,8 @@ final class PatientSelectionReady extends PatientSelectionState {
       search: search ?? this.search,
       isFetching: isFetching ?? this.isFetching,
       isCreatingUrgent: isCreatingUrgent ?? this.isCreatingUrgent,
+      isDeletingUrgent: isDeletingUrgent ?? this.isDeletingUrgent,
+      createdUrgentPatient: clearCreatedUrgentPatient ? null : (createdUrgentPatient ?? this.createdUrgentPatient),
     );
   }
 }
@@ -126,5 +125,5 @@ final class PatientSelectionError extends PatientSelectionState {
   const PatientSelectionError({required this.message, required this.previousState});
 
   final String message;
-  final PatientSelectionState previousState;
+  final PatientSelectionReady previousState;
 }

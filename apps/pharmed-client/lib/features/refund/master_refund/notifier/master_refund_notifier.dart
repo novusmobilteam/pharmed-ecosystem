@@ -47,10 +47,12 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     final unit = group?.units.firstOrNull;
     if (group == null || unit == null) return null;
 
+    final resolvedUnit = unit.drawerSlot == null ? unit.copyWith(drawerSlot: group.slot) : unit;
+
     return MedicineAssignment.empty(
       cabinId: _cabinId,
       cabinDrawerId: unit.id ?? 0,
-    ).copyWith(drawerUnit: unit, medicine: checkedItem.medicine);
+    ).copyWith(drawerUnit: resolvedUnit, medicine: checkedItem.medicine);
   }
 
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
@@ -132,6 +134,8 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     if (job.isKubik) {
       _orchestrator.openCubicLid(job.targets[s.currentTargetIndex].assignment);
     }
+
+    if (job.isReturnDrawer) return;
     // isReturnDrawer: hiçbir lid komutu gönderilmez, doğrudan
     // confirmCurrent beklenir (kullanıcı manuel kapaklı kutuya bırakır).
   }

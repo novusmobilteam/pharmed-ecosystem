@@ -39,6 +39,7 @@ class UnloadDrawerExecutionView extends ConsumerWidget {
       cancelLabel: context.l10n.common_cancelButton,
       locationItems: executing.toLocationItems(allGroups),
       activeIndex: 0,
+
       openedBuilder: (_) => _DrawerUnloadConfirmForm(executing: executing, notifier: notifier),
     );
   }

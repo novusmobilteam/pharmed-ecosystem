@@ -1,4 +1,4 @@
-part of 'patient_selection_guide.dart';
+part of 'patient_selection_panel.dart';
 
 class PatientSelectionFilterDialog extends StatefulWidget {
   const PatientSelectionFilterDialog({super.key, required this.fields});

@@ -5956,4 +5956,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get masterDrawer_error_unexpectedlyClosed =>
       'The drawer was closed unexpectedly while still in use. Please reopen and try again.';
+
+  @override
+  String get masterDrawer_status_completingTitle => 'Completing Your Operation';
+
+  @override
+  String get masterDrawer_status_completingSubtitle => 'Please wait';
 }

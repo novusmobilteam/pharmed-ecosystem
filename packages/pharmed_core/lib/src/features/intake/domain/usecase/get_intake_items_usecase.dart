@@ -11,7 +11,14 @@ class GetIntakeItemsParams {
   // gözlerden almaya çalışıyor. Bu da stokların eksiye düşmesine sebep oluyor.
   final bool refreshAssignments;
 
-  GetIntakeItemsParams({required this.type, this.hospitalizationId, required this.refreshAssignments});
+  final PatientFilterType filter;
+
+  GetIntakeItemsParams({
+    required this.type,
+    this.hospitalizationId,
+    this.filter = PatientFilterType.ordersDue,
+    required this.refreshAssignments,
+  });
 }
 
 class GetIntakeItemsUseCase {
@@ -35,7 +42,7 @@ class GetIntakeItemsUseCase {
 
     switch (type) {
       case IntakeType.ordered:
-        return await _getOrdered(hospitalizationId, refreshAssignments, cabinId: cabinId);
+        return await _getOrdered(hospitalizationId, refreshAssignments, params.filter, cabinId: cabinId);
       case IntakeType.orderless:
       case IntakeType.urgent:
         return await _getOrderless();
@@ -100,10 +107,15 @@ class GetIntakeItemsUseCase {
     );
   }
 
-  Future<Result<List<IntakeItem>>> _getOrdered(int hospitalizationId, bool refreshAssignments, {int? cabinId}) async {
+  Future<Result<List<IntakeItem>>> _getOrdered(
+    int hospitalizationId,
+    bool refreshAssignments,
+    PatientFilterType type, {
+    int? cabinId,
+  }) async {
     // İlk yükleme: her iki istek paralel çalışır
     if (!refreshAssignments) {
-      final result = await _fetchOrdered(hospitalizationId, cabinId: cabinId);
+      final result = await _fetchOrdered(hospitalizationId, type, cabinId: cabinId);
       // İlk yüklemede cache'i doldur
       if (result is Ok) {
         _cachedItems = (result as Ok<List<IntakeItem>>).value;
@@ -132,9 +144,9 @@ class GetIntakeItemsUseCase {
     return Result.ok(_cachedItems);
   }
 
-  Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId, {int? cabinId}) async {
+  Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId, PatientFilterType type, {int? cabinId}) async {
     final results = await Future.wait([
-      _intakeRepository.getIntakeItems(hospitalizationId: hospitalizationId),
+      _intakeRepository.getIntakeItems(hospitalizationId: hospitalizationId, type: type),
       _assignmentRepository.getCabinAssignments(cabinId: cabinId),
     ]);
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
 import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import 'package:pharmed_client/widgets/rx_operation_card/rx_operation_card_2.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -19,11 +20,11 @@ class MasterRefundSelectionView extends ConsumerWidget {
     final notifier = ref.read(masterRefundNotifierProvider.notifier);
 
     return CabinOperationSelectionLayout(
-      leftWidth: 440,
+      flex: 2,
       left: PatientSelectionPanel(
-        showFilters: false,
         selectedPatient: ref.watch(masterRefundNotifierProvider).hospitalization,
-        onPatientSelected: (hospitalization, _) => notifier.selectPatient(hospitalization),
+        onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
+        config: PatientSelectionConfig(showFilters: false, enableTabs: false),
       ),
       right: _buildMedicineContent(context, ref),
     );

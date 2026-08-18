@@ -9,7 +9,9 @@ import '../dashboard/presentation/notifier/dashboard_state.dart';
 import 'unload.dart';
 
 class UnloadView extends ConsumerWidget {
-  const UnloadView({super.key});
+  const UnloadView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,7 +27,7 @@ class UnloadView extends ConsumerWidget {
 
     return switch (deviceModeAsync) {
       AsyncData(:final value) => switch (value) {
-        CabinType.master => MasterUnloadView(data: cabinData),
+        CabinType.master => MasterUnloadView(data: cabinData, menu: menu),
         CabinType.mobile => MobileUnloadView(data: cabinData),
         _ => const Center(child: MedLoadingIndicator()),
       },

@@ -11,10 +11,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import '../../../widgets/widgets.dart';
 import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../dashboard/presentation/notifier/dashboard_state.dart';
@@ -100,14 +102,10 @@ class _UnappliedPrescriptionBodyViewState extends ConsumerState<_UnappliedPrescr
     }
 
     return CabinOperationSelectionLayout(
-      left: PatientSelectionGuide(
-        patients: state.hospitalizations,
+      left: PatientSelectionPanel(
         selectedPatient: state.selectedPatient,
-        isPatientLoading: state.isPrescriptionsLoading,
-        search: state.search,
-        onPatientTap: notifier.onPatientTap,
-        onSearchChanged: notifier.onSearchChanged,
-        title: context.l10n.unappliedPrescription_panel_patientTitle,
+        onPatientSelected: (patient, tab, isOrderless) => notifier.onPatientTap(patient),
+        config: PatientSelectionConfig(showFilters: false),
       ),
       right: _UnappliedPrescriptionRightPanel(state: state),
     );

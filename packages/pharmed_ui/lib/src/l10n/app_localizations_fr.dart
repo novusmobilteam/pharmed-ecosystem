@@ -6065,4 +6065,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get masterDrawer_error_unexpectedlyClosed =>
       'Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer.';
+
+  @override
+  String get masterDrawer_status_completingTitle =>
+      'Finalisation de votre opération';
+
+  @override
+  String get masterDrawer_status_completingSubtitle => 'Veuillez patienter';
 }

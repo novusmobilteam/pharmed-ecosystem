@@ -8,7 +8,9 @@ import '../dashboard/presentation/notifier/dashboard_state.dart';
 import 'census.dart';
 
 class CensusView extends ConsumerWidget {
-  const CensusView({super.key});
+  const CensusView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +26,7 @@ class CensusView extends ConsumerWidget {
 
     return switch (deviceModeAsync) {
       AsyncData(:final value) => switch (value) {
-        CabinType.master => MasterCensusView(data: cabinData),
+        CabinType.master => MasterCensusView(data: cabinData, menu: menu),
         CabinType.mobile => MobileCensusView(data: cabinData),
         _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       },

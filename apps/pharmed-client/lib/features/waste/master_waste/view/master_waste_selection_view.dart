@@ -1,6 +1,7 @@
 // [SWREQ-CLI-MWASTE-003] [IEC 62304 §5.5]
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
 import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -22,9 +23,9 @@ class MasterWasteSelectionView extends ConsumerWidget {
     return CabinOperationSelectionLayout(
       leftWidth: 440,
       left: PatientSelectionPanel(
-        showFilters: false,
         selectedPatient: ref.watch(masterWasteNotifierProvider).hospitalization,
-        onPatientSelected: (hospitalization, _) => notifier.selectPatient(hospitalization),
+        onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
+        config: PatientSelectionConfig(showFilters: false),
       ),
       right: _buildMedicineContent(context, ref),
     );

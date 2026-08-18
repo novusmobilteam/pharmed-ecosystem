@@ -5915,4 +5915,10 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get masterDrawer_error_unexpectedlyClosed =>
       'Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin.';
+
+  @override
+  String get masterDrawer_status_completingTitle => 'İşleminiz Tamamlanıyor';
+
+  @override
+  String get masterDrawer_status_completingSubtitle => 'Lütfen bekleyiniz';
 }

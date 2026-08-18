@@ -67,6 +67,7 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
     this.equivalentStates = const {},
     this.otherStationStates = const {},
     this.isChecking = false,
+    this.isFetching = false,
   });
 
   final int cabinId;
@@ -96,6 +97,8 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
   /// Toplu check sürüyor mu? (Başlat butonu loading + seçim kilidi)
   final bool isChecking;
 
+  final bool isFetching;
+
   /// İşlem öznesi hasta — aktif hasta kartı için.
   Patient? get patient => hospitalization.patient;
 
@@ -122,6 +125,7 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
     String? search,
     Map<int, IntakeCheckState>? checkStates,
     bool? isChecking,
+    bool? isFetching,
     Map<int, EquivalentCheckState>? equivalentStates,
     Map<int, OtherStationCheckState>? otherStationStates,
   }) {
@@ -130,6 +134,7 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
       hospitalization: hospitalization,
       intakeType: intakeType,
       items: items ?? this.items,
+      isFetching: isFetching ?? this.isFetching,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
       search: search ?? this.search,
       checkStates: checkStates ?? this.checkStates,
@@ -271,5 +276,6 @@ extension MasterIntakeExecutingLocationX on MasterIntakeExecuting {
     // IntakeTarget.assignment nullable — assignmentAt zaten MedicineAssignment?
     // döndürüyor, ekstra bir şey gerekmiyor.
     assignmentAt: (job, i) => job.targets[i].assignment,
+    stockIdAt: (job, i) => job.targets[i].details.firstOrNull?.stockId,
   );
 }

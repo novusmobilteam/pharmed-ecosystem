@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/cabin_overview_panel.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -10,9 +9,10 @@ import '../notifier/master_census_notifier.dart';
 import '../notifier/master_census_state.dart';
 
 class MasterCensusSelectionView extends ConsumerWidget {
-  const MasterCensusSelectionView({super.key, required this.allGroups});
+  const MasterCensusSelectionView({super.key, required this.allGroups, required this.menu});
 
   final List<DrawerGroup> allGroups;
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,26 +27,49 @@ class MasterCensusSelectionView extends ConsumerWidget {
 
     if (selection == null) return const SizedBox.shrink();
 
+    final isDrawerMode = selection.censusMode == CensusMode.byDrawer;
+    final isMedicineMode = selection.censusMode == CensusMode.byMedicine;
+
     return CabinOperationSelectionLayout(
       leftWidth: 320,
       isLoading: state is MasterCensusLoading,
-      left: CabinOverviewPanel.selection(
+      left: CabinOverviewSelectionPanel(
         groups: allGroups,
         assignments: selection.medicines,
         selectedUnitIds: selection.selectedUnitIds,
-        onToggleDrawer: notifier.toggleDrawer,
+        onDrawerTap: isDrawerMode ? notifier.toggleDrawer : null,
+        onCellTap: (unit) {
+          final id = unit.id;
+          if (id == null) return;
+          notifier.toggleUnit(id);
+        },
       ),
+
+      // TODO : Localization
       right: CabinSelectionContentShell(
+        menu: menu,
+        extra: Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: SizedBox(
+            width: 600,
+            child: MedSegmentedButton(
+              labels: const ['Tüm Kabin', 'Çekmece Bazlı', 'İlaç Bazlı'],
+              selectedIndex: CensusMode.values.indexOf(selection.censusMode),
+              onChanged: (index) => notifier.setCensusMode(CensusMode.values[index]),
+            ),
+          ),
+        ),
         onSearchQueryChanged: notifier.onSearchChanged,
         searchQuery: selection.search,
+        searchHint: context.l10n.intake_hint_searchMedicine,
         isEmpty: selection.visibleMedicines.isEmpty,
         emptyMessage: context.l10n.census_hint_noMedicines,
         content: selection.visibleMedicines.isEmpty
             ? null
-            : _GridView(
+            : CabinAssignmentListView(
                 items: selection.visibleMedicines,
                 selectedItemIds: selection.selectedUnitIds,
-                onToggle: notifier.toggleUnit,
+                onToggle: isMedicineMode ? notifier.toggleUnit : null,
               ),
         footer: selection.selectedAssignments.isNotEmpty
             ? MedButton(
@@ -58,40 +81,6 @@ class MasterCensusSelectionView extends ConsumerWidget {
               )
             : null,
       ),
-    );
-  }
-}
-
-class _GridView extends StatelessWidget {
-  const _GridView({required this.items, required this.selectedItemIds, required this.onToggle});
-
-  final List<MedicineAssignment> items;
-  final Set<int> selectedItemIds;
-  final ValueChanged<int> onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    final ordered = <MedicineAssignment>[];
-    final seen = <int>{};
-    for (final a in items) {
-      final mid = a.medicine?.id;
-      if (mid == null) continue;
-      if (!seen.contains(mid)) {
-        seen.add(mid);
-        ordered.addAll(items.where((x) => x.medicine?.id == mid));
-      }
-    }
-
-    return CabinOperationGrid(itemCount: ordered.length, itemBuilder: (context, i) => _slotCard(context, ordered[i]));
-  }
-
-  Widget _slotCard(BuildContext context, MedicineAssignment a) {
-    final id = a.cabinDrawerId;
-
-    return MedicineAssignmentCard(
-      assignment: a,
-      selected: id != null && selectedItemIds.contains(id),
-      onTap: id == null ? null : () => onToggle(id),
     );
   }
 }

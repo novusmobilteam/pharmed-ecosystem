@@ -5212,6 +5212,14 @@
   "masterDrawer_error_lidOpenFailed": "Le couvercle n'a pas pu être ouvert. Assurez-vous que le tiroir est complètement ouvert.",
   "masterDrawer_error_lockOpenTimeout": "Le tiroir ne s'est pas complètement ouvert à temps. Veuillez tirer le tiroir jusqu'au bout.",
   "masterDrawer_error_sensorCommunicationLost": "La communication avec le matériel a été perdue. Vérifiez la connexion et réessayez.",
-    "masterDrawer_error_unexpectedlyClosed": "Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer."
+    "masterDrawer_error_unexpectedlyClosed": "Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer.",
+"masterDrawer_status_completingTitle": "Finalisation de votre opération",
+"@masterDrawer_status_completingTitle": {
+  "description": "Titre affiché après la fin du dernier travail de la file d'attente et la fermeture du tiroir, informant l'utilisateur que l'opération se termine."
+},
+"masterDrawer_status_completingSubtitle": "Veuillez patienter",
+"@masterDrawer_status_completingSubtitle": {
+  "description": "Sous-titre du titre Finalisation de votre opération."
+}
 
 }

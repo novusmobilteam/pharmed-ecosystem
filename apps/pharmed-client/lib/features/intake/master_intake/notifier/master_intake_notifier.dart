@@ -72,6 +72,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   GetPrescriptionDetailUseCase get _getPrescriptionDetail => ref.read(getPrescriptionDetailUseCaseProvider);
   CheckRedirectedIntakeUseCase get _checkRedirectedIntake => ref.read(checkRedirectedIntakeUseCaseProvider);
   CompleteRedirectedIntakeUseCase get _completeRedirectedIntake => ref.read(completeRedirectedIntakeUseCaseProvider);
+  GetCabinAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
 
   Station? _currentStation;
 
@@ -83,6 +84,20 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     _orchestrator = MasterDrawerOrchestrator(ref: ref);
     _orchestrator.init(onStageChange: _onDrawerStage);
     ref.onDispose(_orchestrator.dispose);
+
+    // Hasta seçim notifier'ındaki filtre değişince (sadece MedicineSelection
+    // fazındayken, hasta zaten seçiliyken) alım kalemlerini yeniden çeker.
+    // Diğer PatientSelectionReady alan değişimleri (search, viewType, tab vb.)
+    // bu ekranı İLGİLENDİRMEZ — sadece filter.
+    ref.listen(patientSelectionNotifierProvider, (previous, next) {
+      final prevFilter = previous is PatientSelectionReady ? previous.filter : null;
+      final nextFilter = next is PatientSelectionReady ? next.filter : null;
+
+      if (prevFilter == null || nextFilter == null || prevFilter == nextFilter) return;
+      if (state is! MasterIntakeMedicineSelection) return;
+      unawaited(_loadItems());
+    });
+
     return const MasterIntakeUninitialized();
   }
 
@@ -124,8 +139,22 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       return;
     }
 
+    final cur = state;
+    if (cur is MasterIntakeMedicineSelection) {
+      state = cur.copyWith(isFetching: true);
+    }
+
+    final patientState = ref.read(patientSelectionNotifierProvider);
+    final filter = patientState is PatientSelectionReady ? patientState.filter : PatientFilterType.all;
+
     final result = await _getItems.call(
-      GetIntakeItemsParams(type: _type, hospitalizationId: _hospitalizationId, refreshAssignments: refreshAssignments),
+      GetIntakeItemsParams(
+        type: _type,
+        hospitalizationId: _hospitalizationId,
+        refreshAssignments: refreshAssignments,
+        filter: filter,
+      ),
+
       cabinId: _cabinId,
     );
     result.when(
@@ -328,6 +357,13 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
     // ── Muadilli itemlar: checkEquivalentIntake ayrı ayrı çağrılır ──
     final equivalentTargets = <IntakeTarget>[];
+    List<MedicineAssignment> allAssignments = const [];
+
+    if (equivalentItems.isNotEmpty) {
+      final assignmentsResult = await _getAssignments();
+      assignmentsResult.when(ok: (list) => allAssignments = list, error: (_) => allAssignments = const []);
+    }
+
     for (final item in equivalentItems) {
       final prescriptionDetailId = item.id;
       final materialId = item.selectedEquivalent?.materialId;
@@ -353,7 +389,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
       result.when(
         ok: (_) {
-          final target = _buildEquivalentTarget(item);
+          final target = _buildEquivalentTarget(item, allAssignments);
           if (target != null) {
             equivalentTargets.add(target);
             statuses[item.id] = const CheckSuccess();
@@ -785,6 +821,11 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   /// MedicineSelection fazına dön. Ayrı "başarılı" ekranı yoktur. Hasta yoksa
   /// PatientSelection'a döner.
   Future<void> _reloadSelectionAfterQueue() async {
+    // Alım tamamlandı — sol paneldeki hasta listesi de tazelenmeli (order/
+    // reçete durumu değişmiş olabilir). Redirected/normal akış ayrımından
+    // ÖNCE, her durumda tetiklenir.
+    unawaited(ref.read(patientSelectionNotifierProvider.notifier).refresh());
+
     if (_isRedirectedQueue) {
       _isRedirectedQueue = false;
       // Redirected akışın kendi state'i MasterIntakeNotifier'da değil,
@@ -840,17 +881,30 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     state = s.copyWith(items: items, equivalentStates: states, selectedItemIds: selectedIds);
   }
 
-  IntakeTarget? _buildEquivalentTarget(IntakeItem item) {
+  IntakeTarget? _buildEquivalentTarget(IntakeItem item, List<MedicineAssignment> allAssignments) {
     final equivalent = item.selectedEquivalent;
     if (equivalent == null) return null;
 
-    final neededDose = item.dosePiece ?? equivalent.purchaseQuantity ?? 0;
+    final resolvedMedicine = equivalent.medicine;
+    if (resolvedMedicine == null) return null;
 
+    final neededDose = item.dosePiece ?? equivalent.purchaseQuantity ?? 0;
     final stock =
         equivalent.stocks.firstWhereOrNull((s) => (s.quantity ?? 0) >= neededDose) ?? equivalent.stocks.firstOrNull;
-    if (stock == null || stock.id == null || stock.assignment == null) return null;
+    if (stock == null || stock.id == null) return null;
 
-    final resolvedItem = item.copyWith(assignment: stock.assignment, stock: stock);
+    // stock.assignment BU ENDPOINT'TE HER ZAMAN NULL (backend cabinDrawrQuantity
+    // nest etmiyor) — göze özel gerçek assignment'ı cabinDrawerDetail.id
+    // üzerinden ayrıca çözüyoruz.
+    final cellId = stock.cabinDrawerDetail?.id;
+    if (cellId == null) return null;
+
+    final assignment = allAssignments.firstWhereOrNull(
+      (a) => a.cabinDrawerDetail?.any((cell) => cell.id == cellId) ?? false,
+    );
+    if (assignment == null) return null;
+
+    final resolvedItem = item.copyWith(assignment: assignment, stock: stock, medicine: resolvedMedicine);
 
     return IntakeTarget(
       item: resolvedItem,

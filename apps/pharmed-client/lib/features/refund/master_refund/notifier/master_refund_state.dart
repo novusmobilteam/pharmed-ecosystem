@@ -179,5 +179,7 @@ extension MasterRefundExecutingLocationX on MasterRefundExecuting {
     statusOf: (job) => job.status,
     targetCountOf: (job) => job.targets.length,
     assignmentAt: (job, i) => job.targets[i].assignment,
+    stockIdAt: (job, i) => job.targets[i].item.source.stock?.id,
+    isReturnDrawerTargetOf: (job) => job.isReturnDrawer,
   );
 }

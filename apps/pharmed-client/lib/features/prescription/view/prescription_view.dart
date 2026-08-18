@@ -9,6 +9,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
+import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -99,14 +101,12 @@ class _PrescriptionBodyViewState extends ConsumerState<_PrescriptionBodyView> {
     }
 
     return CabinOperationSelectionLayout(
-      left: PatientSelectionGuide(
-        patients: state.hospitalizations,
+      left: PatientSelectionPanel(
         selectedPatient: state.selectedPatient,
-        isPatientLoading: state.isPrescriptionsLoading,
-        search: state.search,
-        onPatientTap: notifier.onPatientTap,
-        onSearchChanged: notifier.onSearchChanged,
-        title: context.l10n.common_patientListTitle,
+        config: PatientSelectionConfig(showFilters: false),
+        onPatientSelected: (Hospitalization patient, PatientSelectionTab tab, bool isOrderless) {
+          notifier.onPatientTap(patient);
+        },
       ),
       right: _PrescriptionRightPanel(state: state),
     );

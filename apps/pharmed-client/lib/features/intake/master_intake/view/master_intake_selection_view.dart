@@ -6,9 +6,9 @@
 // provider da hazırken build edilir, kendi _hasBooted/Offstage mantığına
 // ihtiyaç duymaz.
 //
-// SOL: PatientSelectionPanel — hasta listesi + filtreler + acil hasta barı.
-// SAĞ: seçili hastaya ait ilaç listesi (dolum/sayım'daki CabinSelection
-//      panelleriyle aynı CabinSelectionContentShell iskeleti kullanılıyor).
+// SOL: ORTAK PatientSelectionPanel (bkz. cabin_shell_widgets/patient_selection)
+//      — PatientSelectionConfigs.intake ile sekmeler + acil hasta akışı açık.
+// SAĞ: seçili hastaya ait ilaç listesi.
 //
 // Sınıf: Class B
 
@@ -20,30 +20,28 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
+import '../../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
 import '../notifier/redirected_intake_orders_notifier.dart';
 import '../notifier/redirected_intake_orders_state.dart';
-import '../patient_selection/notifier/patient_selection_notifier.dart';
-import '../patient_selection/notifier/patient_selection_state.dart';
-import '../patient_selection/view/patient_selection_panel.dart';
 part 'redirected_orders_content.dart';
 part 'rx_orders_content.dart';
 
-// [SWREQ-CLI-MINTAKE-004] güncellendi — masterIntakeActiveTabProvider kaldırıldı,
-// tab artık IntakePatientSelectionPanel içinde yaşıyor.
-
 class MasterIntakeSelectionView extends ConsumerWidget {
-  const MasterIntakeSelectionView({super.key});
+  const MasterIntakeSelectionView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(masterIntakeNotifierProvider.notifier);
     final redirectedNotifier = ref.read(redirectedIntakeOrdersNotifierProvider.notifier);
 
-    ref.listen(intakePatientSelectionNotifierProvider, (previous, next) {
-      final prev = (previous is IntakePatientSelectionReady) ? previous : null;
-      final nxt = (next is IntakePatientSelectionReady) ? next : null;
+    ref.listen(patientSelectionNotifierProvider, (previous, next) {
+      final prev = (previous is PatientSelectionReady) ? previous : null;
+      final nxt = (next is PatientSelectionReady) ? next : null;
       if (prev == null || nxt == null) return;
 
       final tabChanged = prev.tab != nxt.tab;
@@ -55,13 +53,14 @@ class MasterIntakeSelectionView extends ConsumerWidget {
       }
     });
 
-    final patientState = ref.watch(intakePatientSelectionNotifierProvider);
+    final patientState = ref.watch(patientSelectionNotifierProvider);
     final currentTab = switch (patientState) {
-      IntakePatientSelectionReady r => r.tab,
-      IntakePatientSelectionError(previousState: final r) => r.tab,
-      _ => IntakePatientTab.prescriptions,
+      PatientSelectionReady r => r.tab,
+      // ignore: unnecessary_type_check
+      PatientSelectionError(previousState: final p) when p is PatientSelectionReady => p.tab,
+      _ => PatientSelectionTab.prescriptions,
     };
-    final showRedirected = currentTab == IntakePatientTab.redirected;
+    final showRedirected = currentTab == PatientSelectionTab.redirected;
 
     final redirectedState = ref.watch(redirectedIntakeOrdersNotifierProvider);
     final Hospitalization? redirectedSelected = switch (redirectedState) {
@@ -77,17 +76,19 @@ class MasterIntakeSelectionView extends ConsumerWidget {
 
     return CabinOperationSelectionLayout(
       leftWidth: 440,
-      left: IntakePatientSelectionPanel(
+      flex: 2,
+      left: PatientSelectionPanel(
+        config: PatientSelectionConfigs.intake,
         selectedPatient: selectedPatient,
         onPatientSelected: (hospitalization, tab, isOrderless) {
-          if (tab == IntakePatientTab.redirected) {
+          if (tab == PatientSelectionTab.redirected) {
             redirectedNotifier.selectPatient(hospitalization);
           } else {
             notifier.selectPatient(hospitalization, isOrderless ? IntakeType.orderless : IntakeType.ordered);
           }
         },
       ),
-      right: showRedirected ? const RedirectedOrdersContent() : const RxOrdersContent(),
+      right: showRedirected ? RedirectedOrdersContent(menu: menu) : RxOrdersContent(menu: menu),
     );
   }
 }

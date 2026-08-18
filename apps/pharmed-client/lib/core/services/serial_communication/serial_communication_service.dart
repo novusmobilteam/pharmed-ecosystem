@@ -84,12 +84,12 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
   @override
   Future<void> connectToPort(String portName, {Function(String message)? onStatusChanged}) async {
-    MedLogger.info(
-      unit: 'SW-UNIT-SER',
-      swreq: 'SWREQ-HW-SER-002',
-      message: 'Bağlanma denemesi',
-      context: {'istenen': portName},
-    );
+    // MedLogger.info(
+    //   unit: 'SW-UNIT-SER',
+    //   swreq: 'SWREQ-HW-SER-002',
+    //   message: 'Bağlanma denemesi',
+    //   context: {'istenen': portName},
+    // );
 
     await _forceCleanup();
     await _reclaimStalePort(portName);
@@ -98,19 +98,19 @@ class SerialCommunicationService implements ISerialCommunicationService {
       onStatusChanged?.call(contextlessL10n().core_serialConnectingStatus(portName));
       await _attemptConnection(portName);
       onStatusChanged?.call(contextlessL10n().core_serialConnectSuccessStatus(portName));
-      MedLogger.info(
-        unit: 'SW-UNIT-SER',
-        swreq: 'SWREQ-HW-SER-002',
-        message: 'Bağlantı başarılı',
-        context: {'port': portName},
-      );
+      // MedLogger.info(
+      //   unit: 'SW-UNIT-SER',
+      //   swreq: 'SWREQ-HW-SER-002',
+      //   message: 'Bağlantı başarılı',
+      //   context: {'port': portName},
+      // );
     } catch (e) {
-      MedLogger.error(
-        unit: 'SW-UNIT-SER',
-        swreq: 'SWREQ-HW-SER-002',
-        message: 'Bağlantı başarısız',
-        context: {'port': portName, 'error': e.toString()},
-      );
+      // MedLogger.error(
+      //   unit: 'SW-UNIT-SER',
+      //   swreq: 'SWREQ-HW-SER-002',
+      //   message: 'Bağlantı başarısız',
+      //   context: {'port': portName, 'error': e.toString()},
+      // );
       throw SerialPortException(message: contextlessL10n().hw_serial_connectFailedDetailedError(portName));
     }
   }
@@ -118,12 +118,12 @@ class SerialCommunicationService implements ISerialCommunicationService {
   Future<void> _attemptConnection(String portName) async {
     await _forceCleanup();
 
-    MedLogger.info(
-      unit: 'SW-UNIT-SER',
-      swreq: 'SWREQ-HW-SER-002',
-      message: 'Port nesnesi oluşturuluyor',
-      context: {'port': portName},
-    );
+    // MedLogger.info(
+    //   unit: 'SW-UNIT-SER',
+    //   swreq: 'SWREQ-HW-SER-002',
+    //   message: 'Port nesnesi oluşturuluyor',
+    //   context: {'port': portName},
+    // );
 
     SerialPort? port;
     try {
@@ -191,7 +191,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
     if (!isConnected) {
       throw SerialPortException(message: contextlessL10n().core_serialNoConnectionError);
     }
-    debugPrint(command);
+    // debugPrint(command);
 
     await _waitForAvailability();
     _isBusy = true;
@@ -208,12 +208,12 @@ class SerialCommunicationService implements ISerialCommunicationService {
           _setTransmitMode();
           final written = _port?.write(bytes);
 
-          MedLogger.info(
-            unit: 'SW-UNIT-SER',
-            swreq: 'SWREQ-HW-SER-001',
-            message: 'TX',
-            context: {'komut': command, 'bytes': written, 'attempt': attempt + 1},
-          );
+          // MedLogger.info(
+          //   unit: 'SW-UNIT-SER',
+          //   swreq: 'SWREQ-HW-SER-001',
+          //   message: 'TX',
+          //   context: {'komut': command, 'bytes': written, 'attempt': attempt + 1},
+          // );
 
           if (written == null || written <= 0) {
             throw SerialPortException(message: contextlessL10n().core_serialWriteFailedError);
@@ -232,21 +232,21 @@ class SerialCommunicationService implements ISerialCommunicationService {
           final effectiveTimeout = timeout ?? const Duration(milliseconds: 1000);
           final response = await _completer!.future.timeout(effectiveTimeout);
 
-          MedLogger.info(
-            unit: 'SW-UNIT-SER',
-            swreq: 'SWREQ-HW-SER-001',
-            message: 'RX',
-            context: {'komut': command, 'yanit': response, 'attempt': attempt + 1},
-          );
+          // MedLogger.info(
+          //   unit: 'SW-UNIT-SER',
+          //   swreq: 'SWREQ-HW-SER-001',
+          //   message: 'RX',
+          //   context: {'komut': command, 'yanit': response, 'attempt': attempt + 1},
+          // );
 
           return response;
         } on TimeoutException {
-          MedLogger.warn(
-            unit: 'SW-UNIT-SER',
-            swreq: 'SWREQ-HW-SER-001',
-            message: 'TIMEOUT — yanıt gelmedi',
-            context: {'komut': command, 'attempt': attempt + 1, 'bufferAnlik': _buffer.toString()},
-          );
+          // MedLogger.warn(
+          //   unit: 'SW-UNIT-SER',
+          //   swreq: 'SWREQ-HW-SER-001',
+          //   message: 'TIMEOUT — yanıt gelmedi',
+          //   context: {'komut': command, 'attempt': attempt + 1, 'bufferAnlik': _buffer.toString()},
+          // );
 
           if (attempt < retryCount) {
             _buffer.clear();
@@ -275,7 +275,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
       await Future.delayed(const Duration(milliseconds: 50));
       waitCount++;
       if (waitCount > maxWait) {
-        debugPrint('⚠️ Mutex timeout — kilit zorla kırılıyor.');
+        // debugPrint('⚠️ Mutex timeout — kilit zorla kırılıyor.');
         _cancelPendingCompleter(contextlessL10n().core_serialPortBusyTimeoutError);
         _isBusy = false;
         break;
@@ -326,21 +326,21 @@ class SerialCommunicationService implements ISerialCommunicationService {
       final current = _buffer.toString().trim();
 
       if (current.endsWith('-') || current.endsWith(',') || current.endsWith(';') || current.endsWith(']')) {
-        MedLogger.info(
-          unit: 'SW-UNIT-SER',
-          swreq: 'SWREQ-HW-SER-001',
-          message: 'Yanıt tamamlandı',
-          context: {'raw': current},
-        );
+        // MedLogger.info(
+        //   unit: 'SW-UNIT-SER',
+        //   swreq: 'SWREQ-HW-SER-001',
+        //   message: 'Yanıt tamamlandı',
+        //   context: {'raw': current},
+        // );
         _completer?.complete(current);
         _buffer.clear();
       } else {
-        MedLogger.info(
-          unit: 'SW-UNIT-SER',
-          swreq: 'SWREQ-HW-SER-001',
-          message: 'Parçalı veri birikiyor',
-          context: {'chunk': chunk, 'buffer': current},
-        );
+        // MedLogger.info(
+        //   unit: 'SW-UNIT-SER',
+        //   swreq: 'SWREQ-HW-SER-001',
+        //   message: 'Parçalı veri birikiyor',
+        //   context: {'chunk': chunk, 'buffer': current},
+        // );
       }
     } catch (e) {
       debugPrint('⚠️ Veri parse hatası: $e');

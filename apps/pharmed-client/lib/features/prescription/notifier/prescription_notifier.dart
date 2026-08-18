@@ -92,14 +92,6 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
     );
   }
 
-  void onSearchChanged(String value) {
-    state = switch (state) {
-      PrescriptionIdle s => PrescriptionIdle(cabinId: s.cabinId, hospitalizations: s.hospitalizations, search: value),
-      PrescriptionPatientSelected s => s.copyWith(search: value),
-      _ => state,
-    };
-  }
-
   void dismissError() {
     final current = state;
     if (current is PrescriptionError) state = current.previousState;

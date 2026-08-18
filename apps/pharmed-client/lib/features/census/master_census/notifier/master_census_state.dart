@@ -9,6 +9,15 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/hardware/hardware.dart';
 
+/// Sayım FAZ 1'inde kullanıcının seçim granülaritesi.
+///   - allCabin:   tüm kabin önceden seçili, seçim KİLİTLİ (kullanıcı
+///     dokunamaz) — varsayılan, önceki (tek modlu) davranışla birebir aynı.
+///   - byDrawer:   sol CabinOverviewSelectionPanel açık — çekmece başlığı
+///     veya tek tek göz seçilebilir.
+///   - byMedicine: sağ CabinAssignmentListView açık — sadece ilaç listesi
+///     satırından seçim yapılabilir.
+enum CensusMode { allCabin, byDrawer, byMedicine }
+
 sealed class MasterCensusState {
   const MasterCensusState();
 }
@@ -29,16 +38,19 @@ final class MasterCensusSelection extends MasterCensusState {
     required this.medicines,
     required this.selectedUnitIds,
     this.search = '',
+    this.censusMode = CensusMode.allCabin,
   });
 
   final int cabinId;
   final List<MedicineAssignment> medicines;
 
-  /// Varsayılan: hepsi seçili (init() sırasında hesaplanır) — "hiç seçim
-  /// yapmadan devam" tüm kabini saymak anlamına gelir.
+  /// allCabin modunda: hepsi seçili ve KİLİTLİ. byDrawer/byMedicine
+  /// modunda: kullanıcının elle seçtiği alt küme.
   final Set<int> selectedUnitIds;
 
   final String search;
+
+  final CensusMode censusMode;
 
   List<MedicineAssignment> get visibleMedicines {
     if (search.trim().isEmpty) return medicines;
@@ -56,12 +68,18 @@ final class MasterCensusSelection extends MasterCensusState {
   List<MedicineAssignment> get selectedAssignments =>
       medicines.where((a) => selectedUnitIds.contains(a.cabinDrawerId)).toList();
 
-  MasterCensusSelection copyWith({List<MedicineAssignment>? medicines, Set<int>? selectedUnitIds, String? search}) {
+  MasterCensusSelection copyWith({
+    List<MedicineAssignment>? medicines,
+    Set<int>? selectedUnitIds,
+    String? search,
+    CensusMode? censusMode,
+  }) {
     return MasterCensusSelection(
       cabinId: cabinId,
       medicines: medicines ?? this.medicines,
       selectedUnitIds: selectedUnitIds ?? this.selectedUnitIds,
       search: search ?? this.search,
+      censusMode: censusMode ?? this.censusMode,
     );
   }
 }

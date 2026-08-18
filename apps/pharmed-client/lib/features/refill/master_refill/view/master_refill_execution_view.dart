@@ -40,6 +40,7 @@ class MasterRefillExecutionView extends ConsumerWidget {
       cancelLabel: context.l10n.common_cancelButton,
       locationItems: executing.toLocationItems(allGroups),
       activeIndex: executing.currentIndex,
+      isLastJob: executing.currentIndex >= executing.jobs.length - 1,
       openedBuilder: (_) => _FillForm(state: executing, job: job, notifier: notifier),
       onRequestClose: () => ref.read(masterDrawerSessionProvider.notifier).confirmClose(),
     );

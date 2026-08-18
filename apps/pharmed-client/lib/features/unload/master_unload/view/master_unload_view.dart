@@ -10,11 +10,11 @@ import '../notifier/master_unload_state.dart';
 import 'master_unload_execution_view.dart';
 import 'master_unload_selection_view.dart';
 
-// view/master_unload_view.dart
 class MasterUnloadView extends ConsumerWidget {
-  const MasterUnloadView({super.key, required this.data});
+  const MasterUnloadView({super.key, required this.data, required this.menu});
 
   final CabinVisualizerData? data;
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,7 +49,7 @@ class MasterUnloadView extends ConsumerWidget {
         MasterUnloadError(previousState: MasterUnloadExecuting()) => const RootExecuting(),
         _ => const RootSelection(),
       },
-      selectionBuilder: (_) => MasterUnloadSelectionView(allGroups: data?.groups ?? const []),
+      selectionBuilder: (_) => MasterUnloadSelectionView(allGroups: data?.groups ?? const [], menu: menu),
       executionBuilder: (_) => MasterUnloadExecutionView(allGroups: data?.groups ?? const []),
     );
   }

@@ -4,6 +4,7 @@
 // tamamen slot tabanlı.
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../widgets.dart';
@@ -11,7 +12,7 @@ import '../../widgets.dart';
 class CabinSelectionContentShell extends StatelessWidget {
   const CabinSelectionContentShell({
     super.key,
-    this.header,
+    this.extra,
     this.content,
     this.footer,
     required this.searchQuery,
@@ -21,11 +22,12 @@ class CabinSelectionContentShell extends StatelessWidget {
     this.isEmpty = false,
     this.loadingMessage,
     this.emptyMessage,
+    this.menu,
     this.showSearch = true,
   }) : assert(isLoading || isEmpty || content != null, 'content is required unless isLoading or isEmpty is true');
 
   /// Genelde [CabinSelectionHeader].
-  final Widget? header;
+  final Widget? extra;
 
   /// Asıl seçim alanı: ilaç grid'i, boş durum, ya da (sayımda) sol
   /// CabinLocationGuide + sağ grid kombinasyonu — tamamen çağıranın kararı.
@@ -50,6 +52,7 @@ class CabinSelectionContentShell extends StatelessWidget {
   final String? loadingMessage;
   final String? emptyMessage;
   final bool showSearch;
+  final MenuItem? menu;
 
   Widget _buildBody(BuildContext context) {
     if (isLoading) {
@@ -69,16 +72,41 @@ class CabinSelectionContentShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ?header,
-        if (header != null) const SizedBox(height: 16.0),
-        if (showSearch) CabinOperationSearchField(onChanged: onSearchQueryChanged, hintText: searchHint),
-        const SizedBox(height: 16.0),
-        Expanded(child: _buildBody(context)),
-        if (footer != null) ...[const SizedBox(height: 16.0), footer!],
-      ],
+    return Container(
+      padding: MedSpacing.insetXl * 1.5,
+      decoration: BoxDecoration(
+        border: Border.all(width: 2, color: MedColors.border),
+        color: MedColors.surface,
+        borderRadius: MedRadius.mdAll,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (menu != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(menu!.name ?? '-', style: MedTextStyles.titleLg()),
+                  Text(menu!.description ?? '-', style: MedTextStyles.bodyMd()),
+                  SizedBox(height: 4.0),
+                  Divider(thickness: 2),
+                ],
+              ),
+            ),
+
+          ?extra,
+
+          if (showSearch) CabinOperationSearchField(onChanged: onSearchQueryChanged, hintText: searchHint),
+          const SizedBox(height: 16.0),
+          Expanded(child: _buildBody(context)),
+          if (footer != null) ...[
+            const SizedBox(height: 16.0),
+            Align(alignment: Alignment.centerRight, child: footer!),
+          ],
+        ],
+      ),
     );
   }
 }

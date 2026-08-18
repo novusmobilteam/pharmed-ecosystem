@@ -1322,7 +1322,9 @@
     "masterDrawer_error_lidOpenFailed",
     "masterDrawer_error_lockOpenTimeout",
     "masterDrawer_error_sensorCommunicationLost",
-    "masterDrawer_error_unexpectedlyClosed"
+    "masterDrawer_error_unexpectedlyClosed",
+    "masterDrawer_status_completingTitle",
+    "masterDrawer_status_completingSubtitle"
   ],
 
   "fr": [
