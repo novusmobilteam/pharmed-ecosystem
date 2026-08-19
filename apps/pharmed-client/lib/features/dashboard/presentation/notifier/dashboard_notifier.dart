@@ -25,7 +25,7 @@ import 'dashboard_state.dart';
 final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardState>(DashboardNotifier.new);
 
 class DashboardNotifier extends Notifier<DashboardState> {
-  static const _refreshInterval = Duration(minutes: 5);
+  //static const _refreshInterval = Duration(minutes: 5);
 
   Timer? _timer;
 
@@ -57,7 +57,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
       ref.read(cabinConnectionProvider.notifier).connect();
     }
 
-    _startPeriodicRefresh();
+    //_startPeriodicRefresh();
   }
 
   Future<void> refresh() => _load();
@@ -161,12 +161,12 @@ class DashboardNotifier extends Notifier<DashboardState> {
     state = current.copyWith(activeRoute: route);
   }
 
-  void _startPeriodicRefresh() {
-    _timer?.cancel();
-    _timer = Timer.periodic(_refreshInterval, (_) {
-      unawaited(_load());
-    });
-  }
+  // void _startPeriodicRefresh() {
+  //   _timer?.cancel();
+  //   _timer = Timer.periodic(_refreshInterval, (_) {
+  //     unawaited(_load());
+  //   });
+  // }
 
   T? _unwrap<T>(Result<T> result) => switch (result) {
     Ok(:final value) => value,

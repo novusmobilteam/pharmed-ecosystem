@@ -4275,7 +4275,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Waste/Disposal Available';
 
   @override
-  String get enumCore_cabinTypeStandard => 'Standard Cabinet';
+  String get enumCore_cabinTypeStandard => 'Master Cabinet';
 
   @override
   String get enumCore_cabinTypeCloset => 'Closet';
@@ -5962,4 +5962,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get masterDrawer_status_completingSubtitle => 'Please wait';
+
+  @override
+  String get cabinDesign_cabinList_sectionTitle => 'Defined Cabinets';
+
+  @override
+  String cabinDesign_cabinList_countBadge(int count) {
+    return '$count Cabinets';
+  }
+
+  @override
+  String get cabinDesign_cabinList_addCabinButton => 'Define New Cabinet';
+
+  @override
+  String get cabinDesign_cabinList_noPortLabel => 'No Port';
+
+  @override
+  String get cabinDesign_cabinList_passiveBadge => 'Inactive';
+
+  @override
+  String get cabinDesign_newCabin_typeLabel => 'Cabinet Type';
+
+  @override
+  String get cabinDesign_newCabin_addressLabel => 'Address';
+
+  @override
+  String get cabinDesign_newCabin_noAddressAvailableWarning =>
+      'No address left to assign in this station (all 15 addresses B-P are in use).';
+
+  @override
+  String get cabinDesign_newCabin_saveAndScanButton => 'Save & Scan';
+
+  @override
+  String get cabinDesign_newCabin_invalidAddressError =>
+      'The selected address is invalid.';
+
+  @override
+  String get cabinDesign_basicSettings_rescanButton => 'Rescan';
 }

@@ -8,6 +8,7 @@ class CabinMapper {
   Cabin toEntity(CabinDTO dto) {
     return Cabin(
       id: dto.id,
+      no: dto.no,
       name: dto.name,
       stationId: dto.stationId,
       station: StationMapper().toEntityOrNull(dto.station),
@@ -28,13 +29,14 @@ class CabinMapper {
   CabinDTO toDto(Cabin entity) {
     return CabinDTO(
       id: entity.id,
+      no: entity.no,
       name: entity.name,
       type: entity.type?.id,
       stationId: entity.stationId,
       station: StationMapper().toDtoOrNull(entity.station),
       comPortsId: entity.comPort?.id,
       dvrIp: entity.dvrIp,
-      isActive: entity.status?.isActive,
+      isActive: entity.status?.isActive ?? true,
       isRfidEnabled: entity.isRfidEnabled,
       rfidIp: entity.rfidIp,
       rfidPort: entity.rfidPort,

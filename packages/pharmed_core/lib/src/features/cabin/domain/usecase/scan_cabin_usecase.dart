@@ -21,13 +21,18 @@ class ScanCabinUseCase {
 
   /// Kabini fiziksel olarak tarar ve çekmece yapısını döner.
   ///
-  /// [portName]        : Bağlanılacak seri port (ör. "COM3"). null ise varsayılan port kullanılır.
-  /// [cabinType]       : Taranacak kabin tipi — serum kartı filtrelemesi için gerekli.
-  /// [onStatusChanged] : Her adımda tetiklenen callback.
-  ///                     [status] adımın türünü, [detail] opsiyonel ek bilgiyi taşır.
+  /// [portName]           : Bağlanılacak seri port (ör. "COM3"). null ise varsayılan port kullanılır.
+  /// [cabinType]           : Taranacak kabin tipi — serum kartı filtrelemesi için gerekli.
+  /// [targetAddressIndex]  : Bu kabinin yönetim kartı adresi (1-16). null ise eski davranış —
+  ///                         önce A denenir, bulunamazsa 1-16 tam taranır. Çoklu kabin senaryosunda
+  ///                         [Cabin.no] alanından [ManagementCard.indexFromAddressChar] ile üretilip
+  ///                         geçilmelidir; aksi halde yanlış kabin bulunabilir.
+  /// [onStatusChanged]     : Her adımda tetiklenen callback.
+  ///                         [status] adımın türünü, [detail] opsiyonel ek bilgiyi taşır.
   Future<Result<List<DrawerGroup>>> call({
     String? portName,
     required CabinType cabinType,
+    int? targetAddressIndex,
     void Function(ScanStatus status, {String? detail})? onStatusChanged,
   }) async {
     try {
@@ -61,9 +66,9 @@ class ScanCabinUseCase {
       onStatusChanged?.call(ScanStatus.metadataReady, detail: '${allConfigs.length} konfigürasyon');
 
       // ── 3. Yönetim Kartı ───────────────────────────────────────
-      onStatusChanged?.call(ScanStatus.searchingManager);
+      onStatusChanged?.call(ScanStatus.searchingManager, detail: targetAddressIndex?.toString());
 
-      final manager = await _cabinOperationService.scanManagementCard();
+      final manager = await _cabinOperationService.scanManagementCard(targetAddressIndex: targetAddressIndex);
       if (manager == null) {
         onStatusChanged?.call(ScanStatus.managerNotFound);
         return Result.error(CustomException(message: contextlessL10n().core_cabinConn_managerNotFoundError));

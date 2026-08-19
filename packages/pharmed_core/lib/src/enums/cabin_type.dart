@@ -38,10 +38,12 @@ enum CabinType {
         return contextlessL10n().enumCore_cabinTypeSerum;
     }
   }
+
+  static List<CabinType> get creatableTypes =>
+      CabinType.values.where((t) => t != CabinType.master && t != CabinType.mobile).toList();
 }
 
 extension CabinTypeExt on CabinType {
   bool get isMobile => this == CabinType.mobile;
-
   bool get isVisualizable => this == CabinType.master || this == CabinType.mobile;
 }

@@ -1,10 +1,11 @@
 part of 'cabin_design_dialog.dart';
 
 class _DrawerDetailPanel extends StatelessWidget {
-  const _DrawerDetailPanel({required this.group, required this.ready, required this.notifier});
+  const _DrawerDetailPanel({required this.group, required this.ready, required this.cabin, required this.notifier});
 
   final DrawerGroup group;
   final CabinDesignReady ready;
+  final Cabin cabin;
   final CabinDesignNotifier notifier;
 
   bool get _isReturnDrawer => ready.effectiveReturnSlotId == group.slot.id;
@@ -45,12 +46,12 @@ class _DrawerDetailPanel extends StatelessWidget {
             Expanded(
               child: _InfoField(
                 label: context.l10n.cabinDesign_detail_configLabel,
-                value: group.slot.drawerConfig?.drawerType?.name ?? '—', // alan adı farklıysa düzeltilecek
+                value: group.slot.drawerConfig?.drawerType?.name ?? '—',
               ),
             ),
           ],
         ),
-        if (group.isKubik) ...[
+        if (group.isKubik && cabin.type == CabinType.master) ...[
           const SizedBox(height: MedSpacing.xl),
           _ReturnDrawerToggle(
             isOn: _isReturnDrawer,

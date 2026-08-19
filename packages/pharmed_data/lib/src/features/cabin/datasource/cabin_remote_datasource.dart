@@ -60,11 +60,11 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<CabinDTO?>> updateCabin(CabinDTO dto) {
+  Future<Result<void>> updateCabin(CabinDTO dto) {
     return putRequest(
-      path: _base,
+      path: '$_base/${dto.id}',
       body: dto.toJson(),
-      parser: BaseRemoteDataSource.singleParser(CabinDTO.fromJson),
+      parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Kabin güncellendi',
     );
   }
@@ -125,7 +125,7 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> updateDrawerSlots(List<DrawerSlotDTO> dtos) {
-    return putBulkRequest(path: '$_base/bulk', body: dtos.map((d) => d.toJson()).toList(), parser: null);
+    return putBulkRequest(path: '/CabinDesign/bulk', body: dtos.map((d) => d.toJson()).toList(), parser: null);
   }
 
   Future<Result<List<DrawerSlotDTO>>> getSerumCabins() async {

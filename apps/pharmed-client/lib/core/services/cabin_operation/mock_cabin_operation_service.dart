@@ -45,13 +45,30 @@ class MockCabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<ManagementCard?> scanManagementCard() async {
-    debugPrint('MOCK: Yönetim kartı taranıyor...');
+  Future<ManagementCard?> scanManagementCard({String? targetPort, int? targetAddressIndex}) async {
+    debugPrint('MOCK: Yönetim kartı taranıyor... (hedef adres: $targetAddressIndex)');
     await Future.delayed(const Duration(milliseconds: 500));
-    debugPrint('MOCK: ✅ Yönetim kartı bulundu: Adres 1 (a)');
-    return const ManagementCard(addressIndex: 1);
-  }
 
+    // targetAddressIndex verilmemişse: eski davranış — her zaman adres 1 (A) bulunur.
+    if (targetAddressIndex == null) {
+      debugPrint('MOCK: ✅ Yönetim kartı bulundu: Adres 1 (a)');
+      return const ManagementCard(addressIndex: 1);
+    }
+
+    // Çoklu kabin senaryosunu simüle etmek için: sahada "var" kabul ettiğimiz
+    // adresler. Gerçek cihaz gelene kadar burayı elle güncelleyerek farklı
+    // senaryoları (yeni kabin bulundu / bulunamadı) test edebiliriz.
+    const mockExistingAddresses = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // A ve B "takılı" varsayılıyor
+
+    if (mockExistingAddresses.contains(targetAddressIndex)) {
+      final card = ManagementCard(addressIndex: targetAddressIndex);
+      debugPrint('MOCK: ✅ Yönetim kartı bulundu: Adres $targetAddressIndex (${card.addressChar})');
+      return card;
+    }
+
+    debugPrint('MOCK: ❌ Hedef adreste (${targetAddressIndex}) yönetim kartı bulunamadı');
+    return null;
+  }
   // ════════════════════════════════════════════════════════════════
   // KONTROL KARTLARI (MASTER KABİN)
   // ════════════════════════════════════════════════════════════════

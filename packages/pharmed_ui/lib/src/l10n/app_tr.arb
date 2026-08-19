@@ -5312,7 +5312,7 @@
   "@enumCore_patientFilterWasteDisposable": {
     "description": "PatientFilterType enum label for patients eligible for waste/disposal entry"
   },
-  "enumCore_cabinTypeStandard": "Standart Kabin",
+  "enumCore_cabinTypeStandard": "Master Kabin",
   "@enumCore_cabinTypeStandard": {
     "description": "CabinType enum label for the standard cabinet type"
   },
@@ -6922,5 +6922,57 @@
 "masterDrawer_status_completingSubtitle": "Lütfen bekleyiniz",
 "@masterDrawer_status_completingSubtitle": {
   "description": "İşleminiz Tamamlanıyor başlığının alt metni."
+},
+"cabinDesign_cabinList_sectionTitle": "Tanımlı Kabinler",
+"@cabinDesign_cabinList_sectionTitle": {
+  "description": "Section title for the list of cabins defined in the current station, shown in the left panel of the cabin design dialog"
+},
+
+"cabinDesign_cabinList_countBadge": "{count} Kabin",
+"@cabinDesign_cabinList_countBadge": {
+  "description": "Badge showing the total number of cabins defined in the station, next to the cabin list title",
+  "placeholders": { "count": { "type": "int" } }
+},
+
+"cabinDesign_cabinList_addCabinButton": "Yeni Kabin Tanımla",
+"@cabinDesign_cabinList_addCabinButton": {
+  "description": "Button at the bottom of the cabin list panel to start defining a new cabin"
+},
+
+"cabinDesign_cabinList_noPortLabel": "Port Yok",
+"@cabinDesign_cabinList_noPortLabel": {
+  "description": "Shown in place of the COM port in the cabin list item when the cabin has no assigned port (e.g. openCabinet, returnCabin types)"
+},
+
+"cabinDesign_cabinList_passiveBadge": "Pasif",
+"@cabinDesign_cabinList_passiveBadge": {
+  "description": "Badge shown on a cabin list item when the cabin's status is passive/inactive"
+},
+"cabinDesign_newCabin_typeLabel": "Kabin Tipi",
+"@cabinDesign_newCabin_typeLabel": {
+  "description": "Label above the cabin type selector in the new cabin creation form"
+},
+
+"cabinDesign_newCabin_addressLabel": "Adres",
+"@cabinDesign_newCabin_addressLabel": {
+  "description": "Label above the management card address (letter) selector in the new cabin creation form"
+},
+
+"cabinDesign_newCabin_noAddressAvailableWarning": "Bu istasyonda tanımlanabilecek adres kalmadı (B-P arası 15 adres kullanımda).",
+"@cabinDesign_newCabin_noAddressAvailableWarning": {
+  "description": "Shown instead of the address selector when all 15 non-master addresses (B-P) are already assigned to cabins in this station"
+},
+"cabinDesign_newCabin_saveAndScanButton": "Kaydet ve Tara",
+"@cabinDesign_newCabin_saveAndScanButton": {
+  "description": "Button below the address selector in the new cabin form — verifies the address, scans the drawer layout, and creates the cabin in one action"
+},
+
+"cabinDesign_newCabin_invalidAddressError": "Seçilen adres geçersiz.",
+"@cabinDesign_newCabin_invalidAddressError": {
+  "description": "Error shown if the selected address letter cannot be converted to a management card index (should not normally happen since options come from a validated list)"
+},
+"cabinDesign_basicSettings_rescanButton": "Tekrar Tara",
+"@cabinDesign_basicSettings_rescanButton": {
+  "description": "Button shown next to the COM port / address selector in the basic settings panel when a pending connection change (master port or slave address) exists — verifies the new address and re-scans the drawer layout"
 }
 }

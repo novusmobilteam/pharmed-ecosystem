@@ -4234,7 +4234,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_patientFilterWasteDisposable => 'Fire/İmha Girilebilir';
 
   @override
-  String get enumCore_cabinTypeStandard => 'Standart Kabin';
+  String get enumCore_cabinTypeStandard => 'Master Kabin';
 
   @override
   String get enumCore_cabinTypeCloset => 'Dolap';
@@ -5921,4 +5921,41 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get masterDrawer_status_completingSubtitle => 'Lütfen bekleyiniz';
+
+  @override
+  String get cabinDesign_cabinList_sectionTitle => 'Tanımlı Kabinler';
+
+  @override
+  String cabinDesign_cabinList_countBadge(int count) {
+    return '$count Kabin';
+  }
+
+  @override
+  String get cabinDesign_cabinList_addCabinButton => 'Yeni Kabin Tanımla';
+
+  @override
+  String get cabinDesign_cabinList_noPortLabel => 'Port Yok';
+
+  @override
+  String get cabinDesign_cabinList_passiveBadge => 'Pasif';
+
+  @override
+  String get cabinDesign_newCabin_typeLabel => 'Kabin Tipi';
+
+  @override
+  String get cabinDesign_newCabin_addressLabel => 'Adres';
+
+  @override
+  String get cabinDesign_newCabin_noAddressAvailableWarning =>
+      'Bu istasyonda tanımlanabilecek adres kalmadı (B-P arası 15 adres kullanımda).';
+
+  @override
+  String get cabinDesign_newCabin_saveAndScanButton => 'Kaydet ve Tara';
+
+  @override
+  String get cabinDesign_newCabin_invalidAddressError =>
+      'Seçilen adres geçersiz.';
+
+  @override
+  String get cabinDesign_basicSettings_rescanButton => 'Tekrar Tara';
 }

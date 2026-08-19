@@ -8,7 +8,7 @@ class UpdateCabinUseCase {
 
   UpdateCabinUseCase(this._repository);
 
-  Future<Result<Cabin?>> call(Cabin cabin) async {
+  Future<Result<void>> call(Cabin cabin) async {
     return await _repository.updateCabin(cabin.copyWith());
   }
 }

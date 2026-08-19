@@ -34,91 +34,93 @@ class _SerumManualLayoutPanelState extends State<_SerumManualLayoutPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(context.l10n.cabinDesign_serum_sectionTitle, style: MedTextStyles.titleSm(color: MedColors.text3)),
-            const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(color: MedColors.surface3, borderRadius: MedRadius.smAll),
-              child: Text(
-                context.l10n.cabinDesign_serum_manualBadge,
-                style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3, letterSpacing: 0.5),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(context.l10n.cabinDesign_serum_sectionTitle, style: MedTextStyles.titleSm(color: MedColors.text3)),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(color: MedColors.surface3, borderRadius: MedRadius.smAll),
+                child: Text(
+                  context.l10n.cabinDesign_serum_manualBadge,
+                  style: TextStyle(fontFamily: MedFonts.mono, fontSize: 9, color: MedColors.text3, letterSpacing: 0.5),
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: MedSpacing.md),
+          Container(
+            padding: MedSpacing.insetMd,
+            decoration: BoxDecoration(
+              color: MedColors.blueLight,
+              border: Border.all(color: MedColors.border2),
+              borderRadius: MedRadius.mdAll,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline_rounded, size: 16, color: MedColors.blue),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    context.l10n.cabinDesign_serum_infoBanner,
+                    style: MedTextStyles.bodySm(color: MedColors.text2),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: MedSpacing.xl2),
+          Text(context.l10n.cabinDesign_serum_drawerCountLabel, style: MedTextStyles.bodyMd(color: MedColors.text)),
+          const SizedBox(height: MedSpacing.sm),
+          MedCounter(
+            value: _drawerCount,
+            min: 1,
+            max: 8,
+            onDecrement: () => _setDrawerCount(_drawerCount - 1),
+            onIncrement: () => _setDrawerCount(_drawerCount + 1),
+          ),
+          const SizedBox(height: MedSpacing.xl2),
+          for (final drawer in _drawers)
+            ExpandableIndexedConfigCard(
+              index: drawer.index,
+              title: context.l10n.cabinDesign_serum_drawerCardTitle(drawer.index + 1),
+              summary: context.l10n.cabinDesign_serum_drawerCardSummary(
+                drawer.sideBySide,
+                drawer.frontToBack,
+                drawer.total,
+              ),
+              initiallyExpanded: drawer.index == 0,
+              body: _SerumDrawerBody(
+                drawer: drawer,
+                onChanged: (updated) => _updateDrawer(drawer.index, updated),
+                onApplyToAll: () => _applyToAll(drawer),
+              ),
+            ),
+          if (_drawers.length > 1) ...[
+            const SizedBox(height: MedSpacing.sm),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline_rounded, size: 14, color: MedColors.amber),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    context.l10n.cabinDesign_serum_incompleteWarning(
+                      context.l10n.cabinDesign_serum_drawerCardTitle(_drawers.length),
+                    ),
+                    style: MedTextStyles.bodySm(color: MedColors.text3),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-        const SizedBox(height: MedSpacing.md),
-        Container(
-          padding: MedSpacing.insetMd,
-          decoration: BoxDecoration(
-            color: MedColors.blueLight,
-            border: Border.all(color: MedColors.border2),
-            borderRadius: MedRadius.mdAll,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.info_outline_rounded, size: 16, color: MedColors.blue),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  context.l10n.cabinDesign_serum_infoBanner,
-                  style: MedTextStyles.bodySm(color: MedColors.text2),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: MedSpacing.xl2),
-        Text(context.l10n.cabinDesign_serum_drawerCountLabel, style: MedTextStyles.bodyMd(color: MedColors.text)),
-        const SizedBox(height: MedSpacing.sm),
-        MedCounter(
-          value: _drawerCount,
-          min: 1,
-          max: 8,
-          onDecrement: () => _setDrawerCount(_drawerCount - 1),
-          onIncrement: () => _setDrawerCount(_drawerCount + 1),
-        ),
-        const SizedBox(height: MedSpacing.xl2),
-        for (final drawer in _drawers)
-          ExpandableIndexedConfigCard(
-            index: drawer.index,
-            title: context.l10n.cabinDesign_serum_drawerCardTitle(drawer.index + 1),
-            summary: context.l10n.cabinDesign_serum_drawerCardSummary(
-              drawer.sideBySide,
-              drawer.frontToBack,
-              drawer.total,
-            ),
-            initiallyExpanded: drawer.index == 0,
-            body: _SerumDrawerBody(
-              drawer: drawer,
-              onChanged: (updated) => _updateDrawer(drawer.index, updated),
-              onApplyToAll: () => _applyToAll(drawer),
-            ),
-          ),
-        if (_drawers.length > 1) ...[
-          const SizedBox(height: MedSpacing.sm),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.info_outline_rounded, size: 14, color: MedColors.amber),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  context.l10n.cabinDesign_serum_incompleteWarning(
-                    context.l10n.cabinDesign_serum_drawerCardTitle(_drawers.length),
-                  ),
-                  style: MedTextStyles.bodySm(color: MedColors.text3),
-                ),
-              ),
-            ],
-          ),
         ],
-      ],
+      ),
     );
   }
 }

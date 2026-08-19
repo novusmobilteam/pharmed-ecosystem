@@ -127,7 +127,7 @@ class CabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<ManagementCard?> scanManagementCard() async {
+  Future<ManagementCard?> scanManagementCard({String? targetPort, int? targetAddressIndex}) async {
     debugPrint('🔍 Yönetim kartı aranıyor...');
 
     // Warmup — hattı uyandır
@@ -139,6 +139,39 @@ class CabinOperationService implements ICabinOperationService {
         );
       } catch (_) {}
       await Future.delayed(const Duration(milliseconds: 200));
+    }
+
+    // Hedef adres belirtilmişse: SADECE o adresi dene, çoklu-adres taramasına düşme.
+    // Çoklu kabin senaryosunda "önce A'yı dene, sonra hepsini tara" mantığı yanlış
+    // kabini bulabilir — burada hangi kabini arayacağımızı zaten biliyoruz.
+    if (targetAddressIndex != null) {
+      for (int attempt = 0; attempt < 4; attempt++) {
+        try {
+          final response = await _serialService.sendAndReceive(
+            CommandBuilder.buildManagementCommand(addressIndex: targetAddressIndex, row: 0),
+            timeout: const Duration(milliseconds: 800),
+          );
+          debugPrint(response);
+          if (response != null && response.trim() == '+ok-') {
+            MedLogger.info(
+              unit: 'CabinOps',
+              swreq: 'SWREQ-CABIN-OP-003',
+              message: 'Yönetim kartı bulundu (hedef adres)',
+              context: {'adres': targetAddressIndex, 'deneme': attempt + 1},
+            );
+            return ManagementCard(addressIndex: targetAddressIndex);
+          }
+        } catch (_) {}
+        await Future.delayed(const Duration(milliseconds: 150));
+      }
+
+      MedLogger.error(
+        unit: 'CabinOps',
+        swreq: 'SWREQ-CABIN-OP-003',
+        message: 'Hedef adreste yönetim kartı bulunamadı',
+        context: {'adres': targetAddressIndex},
+      );
+      return null;
     }
 
     // 1. ÖNCE adres 1'i (A) birkaç kez dene — yeni cihazların varsayılanı

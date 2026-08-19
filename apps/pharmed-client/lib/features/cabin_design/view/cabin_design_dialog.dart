@@ -25,17 +25,15 @@ part 'basic_settings_panel.dart';
 part 'drawer_detail_panel.dart';
 part 'serum_layout_panel.dart';
 part 'cabin_design_visual.dart';
+part 'cabin_list_panel.dart';
+part 'new_cabin_panel.dart';
+part 'cabin_settings_view.dart';
 
 class CabinDesignDialog extends ConsumerStatefulWidget {
-  const CabinDesignDialog({super.key, required this.cabinId});
-
-  final int cabinId;
+  const CabinDesignDialog({super.key});
 
   static Future<void> show(BuildContext context, {required int cabinId}) {
-    return showDialog<void>(
-      context: context,
-      builder: (_) => CabinDesignDialog(cabinId: cabinId),
-    );
+    return showDialog<void>(context: context, builder: (_) => CabinDesignDialog());
   }
 
   @override
@@ -47,7 +45,7 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(cabinDesignNotifierProvider.notifier).init(widget.cabinId);
+      ref.read(cabinDesignNotifierProvider.notifier).init();
     });
   }
 
@@ -69,20 +67,51 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
       _ => null,
     };
 
+    final creating = switch (state) {
+      CabinDesignCreating s => s,
+      CabinDesignError(previousState: CabinDesignCreating s) => s,
+      _ => null,
+    };
+
+    final sidebarCabins = ready?.stationCabins ?? creating?.stationCabins ?? const <Cabin>[];
+    final selectedCabinId = creating != null ? null : ready?.cabin.id;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: MedRadius.lgAll),
       insetPadding: MedSpacing.insetXl * 2,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1200, maxHeight: 950),
+        constraints: const BoxConstraints(maxWidth: 1600, maxHeight: 950),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _Header(cabin: ready?.cabin),
             const Divider(height: 1, color: MedColors.border2),
             Expanded(
-              child: ready == null
+              child: ready == null && creating == null
                   ? const Center(child: MedLoadingIndicator())
-                  : _Body(ready: ready, notifier: notifier),
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: _CabinListPanel(
+                            cabins: sidebarCabins,
+                            selectedCabinId: selectedCabinId,
+                            onCabinTap: notifier.selectCabin,
+                            onAddCabinTap: notifier.startAddCabin,
+                          ),
+                        ),
+                        VerticalDivider(width: 1),
+                        Expanded(
+                          flex: 6,
+                          child: creating != null
+                              ? _NewCabinPanel(creating: creating, notifier: notifier)
+                              : ready!.isSwitchingCabin
+                              ? Center(child: MedLoadingIndicator())
+                              : _Body(ready: ready, notifier: notifier),
+                        ),
+                      ],
+                    ),
             ),
             const Divider(height: 1, color: MedColors.border2),
             Padding(
@@ -147,17 +176,16 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: MedColors.surface2,
-
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            flex: 4,
+            flex: 7,
             child: Center(
               child: SingleChildScrollView(
-                padding: MedSpacing.insetXl * 2,
+                padding: MedSpacing.insetXl * 3,
                 child: CabinDesignVisual(
-                  groups: ready.groups,
+                  groups: ready.pendingScanGroups ?? ready.groups,
                   selectedSlotId: ready.selectedSlotId,
                   onSlotTap: (g) {
                     final id = g.slot.id;
@@ -167,37 +195,10 @@ class _Body extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 24),
-          Container(width: 1, color: MedColors.border2),
+          VerticalDivider(width: 1),
           Expanded(
             flex: 5,
-            child: Container(
-              padding: MedSpacing.insetXl * 2,
-              alignment: Alignment.topCenter,
-              color: MedColors.surface,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (ready.selectedGroup?.isSerum != true) ...[
-                      _BasicSettingsPanel(cabin: ready.cabin),
-                      const SizedBox(height: MedSpacing.xl2),
-                      const Divider(color: MedColors.border2, height: 1),
-                      const SizedBox(height: MedSpacing.xl2),
-                    ],
-                    switch (ready.selectedGroup) {
-                      null => Text(
-                        context.l10n.cabinDesign_noSelectionHint,
-                        style: MedTextStyles.bodySm(color: MedColors.text4),
-                      ),
-                      final g when g.isSerum => _SerumManualLayoutPanel(group: g),
-                      final g => _DrawerDetailPanel(group: g, ready: ready, notifier: notifier),
-                    },
-                    const SizedBox(height: MedSpacing.xl),
-                  ],
-                ),
-              ),
-            ),
+            child: CabinSettingsView(notifier: notifier, ready: ready),
           ),
         ],
       ),
@@ -206,7 +207,7 @@ class _Body extends StatelessWidget {
 }
 
 class _BottomBar extends StatelessWidget {
-  const _BottomBar({required this.ready, required this.notifier});
+  const _BottomBar({this.ready, required this.notifier});
 
   final CabinDesignReady? ready;
   final CabinDesignNotifier notifier;
@@ -214,27 +215,14 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        MedButton(
-          label: context.l10n.cabinDesign_scanButton,
-          prefixIcon: Icon(PhosphorIcons.arrowsClockwise()),
-          onPressed: null, // kapsam dışı — bağlı değil
-        ),
-        const Spacer(),
         TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.common_cancelButton)),
         const SizedBox(width: MedSpacing.sm),
         MedButton(
-          label: context.l10n.cabinDesign_saveButton,
+          label: context.l10n.common_saveButton,
           isLoading: ready?.isSaving ?? false,
-          onPressed: (ready?.canSave ?? false)
-              ? () async {
-                  final ok = await notifier.save();
-                  if (ok && context.mounted) {
-                    MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
-                    Navigator.of(context).pop();
-                  }
-                }
-              : null,
+          onPressed: (ready?.canSave ?? false) ? () => notifier.save() : null,
         ),
       ],
     );

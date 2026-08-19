@@ -164,14 +164,14 @@ extension AppExceptionUiMessage on AppException {
     return switch (this) {
       NetworkUnavailableException() => contextlessL10n().appException_networkUnavailable,
       TimeoutException() => contextlessL10n().appException_timeout,
-      ServiceException(:final statusCode) =>
-        statusCode >= 500
-            ? contextlessL10n().appException_serviceError5xx(statusCode)
-            : contextlessL10n().appException_serviceErrorOther(statusCode),
+      ServiceException(:final statusCode, :final message) =>
+        statusCode >= 500 ? contextlessL10n().appException_serviceError5xx(statusCode) : message,
       MalformedDataException() => contextlessL10n().appException_malformedData,
       EmptyResponseException() => contextlessL10n().appException_emptyResponse,
       ValidationException(:final field) =>
-        field != null ? contextlessL10n().appException_validationField(field) : contextlessL10n().appException_validationGeneric,
+        field != null
+            ? contextlessL10n().appException_validationField(field)
+            : contextlessL10n().appException_validationGeneric,
       MappingException() => contextlessL10n().appException_mapping,
       CacheException() => contextlessL10n().appException_cache,
       StaleCacheException() => contextlessL10n().appException_staleCache,

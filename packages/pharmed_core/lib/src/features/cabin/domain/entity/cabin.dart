@@ -2,7 +2,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 class Cabin extends Selectable {
   final dynamic stationId;
-  final int? no;
+  final String? no;
   final String? name;
   final int? sequenceNo;
   final int? cameraNo;
@@ -63,7 +63,7 @@ class Cabin extends Selectable {
   Cabin copyWith({
     int? id,
     int? stationId,
-    int? no,
+    String? no,
     String? name,
     Status? status,
     CabinType? type,

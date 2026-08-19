@@ -3762,7 +3762,7 @@
   "@enumCore_patientFilterWasteDisposable": {
     "description": "PatientFilterType enum label for patients eligible for waste/disposal entry"
   },
-  "enumCore_cabinTypeStandard": "Cabine standard",
+ "enumCore_cabinTypeStandard": "Armoire Maître",
   "@enumCore_cabinTypeStandard": {
     "description": "CabinType enum label for the standard cabinet type"
   },
@@ -5220,6 +5220,50 @@
 "masterDrawer_status_completingSubtitle": "Veuillez patienter",
 "@masterDrawer_status_completingSubtitle": {
   "description": "Sous-titre du titre Finalisation de votre opération."
-}
+},
+"cabinDesign_cabinList_sectionTitle": "Armoires Définies",
+"@cabinDesign_cabinList_sectionTitle": {
+  "description": "Section title for the list of cabins defined in the current station, shown in the left panel of the cabin design dialog"
+},
 
+"cabinDesign_cabinList_countBadge": "{count} Armoires",
+"@cabinDesign_cabinList_countBadge": {
+  "description": "Badge showing the total number of cabins defined in the station, next to the cabin list title",
+  "placeholders": { "count": { "type": "int" } }
+},
+
+"cabinDesign_cabinList_addCabinButton": "Définir une Nouvelle Armoire",
+"@cabinDesign_cabinList_addCabinButton": {
+  "description": "Button at the bottom of the cabin list panel to start defining a new cabin"
+},
+
+"cabinDesign_cabinList_noPortLabel": "Aucun Port",
+"@cabinDesign_cabinList_noPortLabel": {
+  "description": "Shown in place of the COM port in the cabin list item when the cabin has no assigned port (e.g. openCabinet, returnCabin types)"
+},
+
+"cabinDesign_cabinList_passiveBadge": "Inactif",
+"@cabinDesign_cabinList_passiveBadge": {
+  "description": "Badge shown on a cabin list item when the cabin's status is passive/inactive"
+},
+"cabinDesign_newCabin_typeLabel": "Type d'Armoire",
+"@cabinDesign_newCabin_typeLabel": {
+  "description": "Label above the cabin type selector in the new cabin creation form"
+},
+
+"cabinDesign_newCabin_addressLabel": "Adresse",
+"@cabinDesign_newCabin_addressLabel": {
+  "description": "Label above the management card address (letter) selector in the new cabin creation form"
+},
+
+"cabinDesign_newCabin_noAddressAvailableWarning": "Aucune adresse disponible dans cette station (les 15 adresses B-P sont déjà utilisées).",
+"@cabinDesign_newCabin_noAddressAvailableWarning": {
+  "description": "Shown instead of the address selector when all 15 non-master addresses (B-P) are already assigned to cabins in this station"
+},
+"cabinDesign_newCabin_saveAndScanButton": "Enregistrer et Scanner",
+"cabinDesign_newCabin_invalidAddressError": "L'adresse sélectionnée n'est pas valide.",
+"cabinDesign_basicSettings_rescanButton": "Rescanner",
+"@cabinDesign_basicSettings_rescanButton": {
+  "description": "Button shown next to the COM port / address selector in the basic settings panel when a pending connection change (master port or slave address) exists — verifies the new address and re-scans the drawer layout"
+}
 }

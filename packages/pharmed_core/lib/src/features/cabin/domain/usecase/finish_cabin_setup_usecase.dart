@@ -38,6 +38,7 @@ class FinishCabinSetupUseCase {
     final cabin = Cabin(
       name: config.basicInfo.cabinName,
       type: config.cabinType,
+      no: config.cabinType == CabinType.master ? 'a' : null,
       comPort: ComPortX.fromLabel(config.basicInfo.comPort),
       dvrIp: config.basicInfo.dvrIp,
       status: Status.active,
@@ -59,7 +60,9 @@ class FinishCabinSetupUseCase {
         final cabinId = createdCabin?.id;
 
         if (cabinId == null) {
-          return Result.error(ServiceException(message: contextlessL10n().cabinCore_createdButIdMissing, statusCode: 500));
+          return Result.error(
+            ServiceException(message: contextlessL10n().cabinCore_createdButIdMissing, statusCode: 500),
+          );
         }
 
         await _appSettingsCache.saveCurrentCabinId(cabinId);

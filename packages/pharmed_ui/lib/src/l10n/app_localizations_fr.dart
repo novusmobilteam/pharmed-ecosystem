@@ -4362,7 +4362,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Perte/élimination possible';
 
   @override
-  String get enumCore_cabinTypeStandard => 'Cabine standard';
+  String get enumCore_cabinTypeStandard => 'Armoire Maître';
 
   @override
   String get enumCore_cabinTypeCloset => 'Armoire';
@@ -6072,4 +6072,42 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get masterDrawer_status_completingSubtitle => 'Veuillez patienter';
+
+  @override
+  String get cabinDesign_cabinList_sectionTitle => 'Armoires Définies';
+
+  @override
+  String cabinDesign_cabinList_countBadge(int count) {
+    return '$count Armoires';
+  }
+
+  @override
+  String get cabinDesign_cabinList_addCabinButton =>
+      'Définir une Nouvelle Armoire';
+
+  @override
+  String get cabinDesign_cabinList_noPortLabel => 'Aucun Port';
+
+  @override
+  String get cabinDesign_cabinList_passiveBadge => 'Inactif';
+
+  @override
+  String get cabinDesign_newCabin_typeLabel => 'Type d\'Armoire';
+
+  @override
+  String get cabinDesign_newCabin_addressLabel => 'Adresse';
+
+  @override
+  String get cabinDesign_newCabin_noAddressAvailableWarning =>
+      'Aucune adresse disponible dans cette station (les 15 adresses B-P sont déjà utilisées).';
+
+  @override
+  String get cabinDesign_newCabin_saveAndScanButton => 'Enregistrer et Scanner';
+
+  @override
+  String get cabinDesign_newCabin_invalidAddressError =>
+      'L\'adresse sélectionnée n\'est pas valide.';
+
+  @override
+  String get cabinDesign_basicSettings_rescanButton => 'Rescanner';
 }

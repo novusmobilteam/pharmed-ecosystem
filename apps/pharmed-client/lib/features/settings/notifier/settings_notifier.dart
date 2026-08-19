@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cache/app_settings_cache.dart';
 import '../../../../core/providers/providers.dart';
@@ -41,6 +44,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     if (language == state.language) return;
     state = state.copyWith(language: language);
     ref.read(tokenHolderProvider).setLocale(language.code);
+    setCurrentLocale(Locale(language.code));
   }
 
   /// [SWREQ-UI-SETTINGS-002] Dili değiştirir ve cache'e yazar.
@@ -48,6 +52,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _cache.saveLanguage(language.code);
     state = state.copyWith(language: language);
     ref.read(tokenHolderProvider).setLocale(language.code);
+    setCurrentLocale(Locale(language.code)); // YENİ — contextlessL10n() de senkron olsun
   }
 
   void setSection(SettingsSection section) {

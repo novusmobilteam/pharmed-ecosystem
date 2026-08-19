@@ -1324,7 +1324,18 @@
     "masterDrawer_error_sensorCommunicationLost",
     "masterDrawer_error_unexpectedlyClosed",
     "masterDrawer_status_completingTitle",
-    "masterDrawer_status_completingSubtitle"
+    "masterDrawer_status_completingSubtitle",
+    "cabinDesign_cabinList_sectionTitle",
+    "cabinDesign_cabinList_countBadge",
+    "cabinDesign_cabinList_addCabinButton",
+    "cabinDesign_cabinList_noPortLabel",
+    "cabinDesign_cabinList_passiveBadge",
+    "cabinDesign_newCabin_typeLabel",
+    "cabinDesign_newCabin_addressLabel",
+    "cabinDesign_newCabin_noAddressAvailableWarning",
+    "cabinDesign_newCabin_saveAndScanButton",
+    "cabinDesign_newCabin_invalidAddressError",
+    "cabinDesign_basicSettings_rescanButton"
   ],
 
   "fr": [

@@ -30,8 +30,6 @@ class SaveCabinDesignUseCase {
       return slot.copyWith(cabinId: cabinId, orderNumber: i + 1, isReturnDrawerHere: false);
     }).toList();
 
-    print(slots);
-
     final result = isUpdate
         ? await _cabinRepository.updateDrawerSlots(slots)
         : await _cabinRepository.createDrawerSlots(slots);

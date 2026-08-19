@@ -85,7 +85,7 @@ abstract interface class ICabinOperationService {
   /// Returns: Bulunan [ManagementCard], hiçbir adreste yanıt yoksa null.
   ///
   /// HATA: Seri port bağlı değilse [SerialPortException] fırlatır.
-  Future<ManagementCard?> scanManagementCard();
+  Future<ManagementCard?> scanManagementCard({String? targetPort, int? targetAddressIndex});
 
   // ════════════════════════════════════════════════════════════════
   // KONTROL KARTLARI (MASTER KABİN)
@@ -333,18 +333,12 @@ abstract interface class ICabinOperationService {
     required String commandPayload,
   });
 
-
   /// Yönetim kartından ısı ve nem okur (row 50).
-Future<({double temperature, double humidity})?> readTempHumidity({
-  required ManagementCard manager,
-});
+  Future<({double temperature, double humidity})?> readTempHumidity({required ManagementCard manager});
 
-/// Yönetim kartından akü voltajını okur (row 49).
-Future<double?> readBatteryVoltage({required ManagementCard manager});
+  /// Yönetim kartından akü voltajını okur (row 49).
+  Future<double?> readBatteryVoltage({required ManagementCard manager});
 
-/// Isı, nem ve akü değerlerini periyodik yayınlar.
-Stream<CabinSensorReading> streamCabinSensors({
-  required ManagementCard manager,
-  Duration? interval,
-});
+  /// Isı, nem ve akü değerlerini periyodik yayınlar.
+  Stream<CabinSensorReading> streamCabinSensors({required ManagementCard manager, Duration? interval});
 }

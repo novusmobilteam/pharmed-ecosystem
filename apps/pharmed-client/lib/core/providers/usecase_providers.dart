@@ -147,6 +147,10 @@ final createCabinUseCaseProvider = Provider((ref) {
   return CreateCabinUseCase(ref.read(cabinRepositoryProvider), ref.read(stationRepositoryProvider));
 });
 
+final updateCabinUseCaseProvider = Provider((ref) {
+  return UpdateCabinUseCase(ref.read(cabinRepositoryProvider));
+});
+
 final saveCabinDesignUseCaseProvider = Provider((ref) {
   return SaveCabinDesignUseCase(
     cabinRepository: ref.read(cabinRepositoryProvider),

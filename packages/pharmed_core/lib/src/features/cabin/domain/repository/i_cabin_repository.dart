@@ -30,7 +30,7 @@ abstract interface class ICabinRepository {
   Future<Result<Cabin?>> createCabin(Cabin cabin);
 
   /// Mevcut bir kabinin temel bilgilerini günceller.
-  Future<Result<Cabin?>> updateCabin(Cabin cabin);
+  Future<Result<void>> updateCabin(Cabin cabin);
 
   /// Kabini sistemden kaldırır.
   Future<Result<void>> deleteCabin(Cabin cabin);

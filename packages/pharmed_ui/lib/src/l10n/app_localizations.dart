@@ -7574,7 +7574,7 @@ abstract class AppLocalizations {
   /// CabinType enum label for the standard cabinet type
   ///
   /// In en, this message translates to:
-  /// **'Standard Cabinet'**
+  /// **'Master Cabinet'**
   String get enumCore_cabinTypeStandard;
 
   /// CabinType enum label for a closet cabinet
@@ -10512,6 +10512,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please wait'**
   String get masterDrawer_status_completingSubtitle;
+
+  /// Section title for the list of cabins defined in the current station, shown in the left panel of the cabin design dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Defined Cabinets'**
+  String get cabinDesign_cabinList_sectionTitle;
+
+  /// Badge showing the total number of cabins defined in the station, next to the cabin list title
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Cabinets'**
+  String cabinDesign_cabinList_countBadge(int count);
+
+  /// Button at the bottom of the cabin list panel to start defining a new cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Define New Cabinet'**
+  String get cabinDesign_cabinList_addCabinButton;
+
+  /// Shown in place of the COM port in the cabin list item when the cabin has no assigned port (e.g. openCabinet, returnCabin types)
+  ///
+  /// In en, this message translates to:
+  /// **'No Port'**
+  String get cabinDesign_cabinList_noPortLabel;
+
+  /// Badge shown on a cabin list item when the cabin's status is passive/inactive
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get cabinDesign_cabinList_passiveBadge;
+
+  /// Label above the cabin type selector in the new cabin creation form
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet Type'**
+  String get cabinDesign_newCabin_typeLabel;
+
+  /// Label above the management card address (letter) selector in the new cabin creation form
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get cabinDesign_newCabin_addressLabel;
+
+  /// Shown instead of the address selector when all 15 non-master addresses (B-P) are already assigned to cabins in this station
+  ///
+  /// In en, this message translates to:
+  /// **'No address left to assign in this station (all 15 addresses B-P are in use).'**
+  String get cabinDesign_newCabin_noAddressAvailableWarning;
+
+  /// No description provided for @cabinDesign_newCabin_saveAndScanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Scan'**
+  String get cabinDesign_newCabin_saveAndScanButton;
+
+  /// No description provided for @cabinDesign_newCabin_invalidAddressError.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected address is invalid.'**
+  String get cabinDesign_newCabin_invalidAddressError;
+
+  /// Button shown next to the COM port / address selector in the basic settings panel when a pending connection change (master port or slave address) exists — verifies the new address and re-scans the drawer layout
+  ///
+  /// In en, this message translates to:
+  /// **'Rescan'**
+  String get cabinDesign_basicSettings_rescanButton;
 }
 
 class _AppLocalizationsDelegate

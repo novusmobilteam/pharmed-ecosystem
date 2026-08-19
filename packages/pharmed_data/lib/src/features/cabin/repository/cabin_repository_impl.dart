@@ -103,13 +103,12 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
-  Future<Result<Cabin?>> updateCabin(Cabin entity) async {
+  Future<Result<void>> updateCabin(Cabin entity) async {
     final result = await _remote.updateCabin(_cabinMapper.toDto(entity));
     return result.when(
       ok: (dto) async {
         await _local.clearCabins();
-        final updated = dto != null ? _cabinMapper.toEntity(dto) : null;
-        return Result.ok(updated);
+        return Result.ok(null);
       },
       error: Result.error,
     );

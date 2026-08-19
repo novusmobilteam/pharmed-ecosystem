@@ -3,7 +3,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 class CabinDTO {
   final int? id;
   final dynamic stationId;
-  final int? no;
+  final String? no;
   final String? name;
   final bool? isActive;
   final int? type;
@@ -50,7 +50,7 @@ class CabinDTO {
   CabinDTO copyWith({
     int? id,
     int? stationId,
-    int? no,
+    String? no,
     String? name,
     bool? isActive,
     int? type,
@@ -138,7 +138,7 @@ class CabinDTO {
       'cardTypesId': cardTypesIds,
       'cameraNo': cameraNo,
       'dvrIp': dvrIp,
-      'stationId': station?.id.toString(),
+      'stationId': stationId,
       'isRfidEnabled': isRfidEnabled,
       'rfidIp': rfidIp,
       'rfidPort': rfidPort,
