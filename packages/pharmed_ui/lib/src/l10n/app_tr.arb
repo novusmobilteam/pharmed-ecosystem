@@ -5839,11 +5839,11 @@
   "@cabin_legendFillUrgent": {
     "description": "Legend entry for a drawer needing urgent refill in the master cabin drawer panel"
   },
-  "cabin_serumTypeLabel": "SERUM",
+  "cabin_serumTypeLabel": "Serum",
   "@cabin_serumTypeLabel": {
     "description": "Type badge for a serum drug group on the master cabin overview panel"
   },
-  "cabin_unitDoseTypeLabel": "B.DOZ",
+  "cabin_unitDoseTypeLabel": "Birim Doz",
   "@cabin_unitDoseTypeLabel": {
     "description": "Type badge abbreviation for a unit-dose drug group on the master cabin overview panel"
   },
@@ -6974,5 +6974,14 @@
 "cabinDesign_basicSettings_rescanButton": "Tekrar Tara",
 "@cabinDesign_basicSettings_rescanButton": {
   "description": "Button shown next to the COM port / address selector in the basic settings panel when a pending connection change (master port or slave address) exists — verifies the new address and re-scans the drawer layout"
+},
+"cabinDesign_basicSettings_deactivateButton": "Pasife Al",
+"@cabinDesign_basicSettings_deactivateButton": {
+  "description": "Button in cabin design basic settings that sets the selected non-master cabin's status to passive"
+},
+
+"cabinDesign_basicSettings_activateButton": "Etkinleştir",
+"@cabinDesign_basicSettings_activateButton": {
+  "description": "Button in cabin design basic settings that sets the selected non-master cabin's status back to active, shown instead of the deactivate button when the cabin is already passive"
 }
 }

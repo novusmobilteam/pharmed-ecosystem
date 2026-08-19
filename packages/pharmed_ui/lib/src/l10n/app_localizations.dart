@@ -8228,13 +8228,13 @@ abstract class AppLocalizations {
   /// Type badge for a serum drug group on the master cabin overview panel
   ///
   /// In en, this message translates to:
-  /// **'SERUM'**
+  /// **'Serum'**
   String get cabin_serumTypeLabel;
 
   /// Type badge abbreviation for a unit-dose drug group on the master cabin overview panel
   ///
   /// In en, this message translates to:
-  /// **'U.DOSE'**
+  /// **'Unit Dose'**
   String get cabin_unitDoseTypeLabel;
 
   /// Tooltip for the toggle on the refund screen that filters the list to show completed refund records
@@ -10578,6 +10578,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rescan'**
   String get cabinDesign_basicSettings_rescanButton;
+
+  /// No description provided for @cabinDesign_basicSettings_deactivateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get cabinDesign_basicSettings_deactivateButton;
+
+  /// No description provided for @cabinDesign_basicSettings_activateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate'**
+  String get cabinDesign_basicSettings_activateButton;
 }
 
 class _AppLocalizationsDelegate

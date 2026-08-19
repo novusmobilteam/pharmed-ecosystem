@@ -24,7 +24,6 @@ import '../notifier/cabin_design_state.dart';
 part 'basic_settings_panel.dart';
 part 'drawer_detail_panel.dart';
 part 'serum_layout_panel.dart';
-part 'cabin_design_visual.dart';
 part 'cabin_list_panel.dart';
 part 'new_cabin_panel.dart';
 part 'cabin_settings_view.dart';
@@ -174,6 +173,7 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMaster = ready.cabin.type == CabinType.master;
     return Container(
       color: MedColors.surface2,
       child: Row(
@@ -184,9 +184,10 @@ class _Body extends StatelessWidget {
             child: Center(
               child: SingleChildScrollView(
                 padding: MedSpacing.insetXl * 3,
-                child: CabinDesignVisual(
+                child: MasterCabinDeviceVisual(
                   groups: ready.pendingScanGroups ?? ready.groups,
                   selectedSlotId: ready.selectedSlotId,
+                  isMaster: isMaster,
                   onSlotTap: (g) {
                     final id = g.slot.id;
                     if (id != null) notifier.selectSlot(id);

@@ -4600,10 +4600,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabin_legendFillUrgent => 'Acil dolum';
 
   @override
-  String get cabin_serumTypeLabel => 'SERUM';
+  String get cabin_serumTypeLabel => 'Serum';
 
   @override
-  String get cabin_unitDoseTypeLabel => 'B.DOZ';
+  String get cabin_unitDoseTypeLabel => 'Birim Doz';
 
   @override
   String get refund_showCompletedTooltip => 'Tamamlananları Göster';
@@ -5958,4 +5958,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabinDesign_basicSettings_rescanButton => 'Tekrar Tara';
+
+  @override
+  String get cabinDesign_basicSettings_deactivateButton => 'Pasife Al';
+
+  @override
+  String get cabinDesign_basicSettings_activateButton => 'Etkinleştir';
 }

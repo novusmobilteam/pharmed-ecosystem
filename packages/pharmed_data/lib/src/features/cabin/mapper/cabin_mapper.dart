@@ -19,6 +19,7 @@ class CabinMapper {
       rfidPort: dto.rfidPort,
       bedIds: dto.bedIds,
       type: CabinType.fromId(dto.type),
+      status: (dto.isActive ?? true) ? Status.active : Status.passive,
     );
   }
 

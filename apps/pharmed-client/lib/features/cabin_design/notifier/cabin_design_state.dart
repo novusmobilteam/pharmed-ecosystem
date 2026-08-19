@@ -34,6 +34,7 @@ final class CabinDesignReady extends CabinDesignState {
     this.isSaving = false,
     this.isSwitchingCabin = false,
     this.isScanning = false,
+    this.isTogglingStatus = false,
     this.error,
   });
 
@@ -78,6 +79,10 @@ final class CabinDesignReady extends CabinDesignState {
   /// "Tekrar Tara" sırasında true — SADECE kabin görselinin (visual pane)
   /// üzerinde loading gösterilir.
   final bool isScanning;
+
+  /// true → "Pasife Al/Etkinleştir" işlemi sürüyor. SADECE o butonda
+  /// spinner gösterilir, tüm sayfa/görsel etkilenmez.
+  final bool isTogglingStatus;
 
   /// Tarama/kayıt sırasında oluşan herhangi bir hata (bağlantı, güncelleme,
   /// tasarım kaydı) — hepsi aynı yoldan (.userMessage) UI'da gösterilir.
@@ -138,6 +143,7 @@ final class CabinDesignReady extends CabinDesignState {
     AppException? error,
     bool clearError = false,
     bool clearPendingName = false,
+    bool? isTogglingStatus,
   }) {
     return CabinDesignReady(
       station: station ?? this.station,
@@ -156,6 +162,7 @@ final class CabinDesignReady extends CabinDesignState {
       isScanning: isScanning ?? this.isScanning,
       error: clearError ? null : (error ?? this.error),
       pendingName: clearPendingName ? null : (pendingName ?? this.pendingName),
+      isTogglingStatus: isTogglingStatus ?? this.isTogglingStatus,
     );
   }
 }

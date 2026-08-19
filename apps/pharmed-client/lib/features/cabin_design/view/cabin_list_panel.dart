@@ -56,16 +56,15 @@ class _CabinListPanel extends StatelessWidget {
               },
             ),
           ),
-          const Divider(height: 1, color: MedColors.border2),
+
           Padding(
-            padding: MedSpacing.insetLg,
-            child: SizedBox(
-              width: double.infinity,
-              child: TextButton.icon(
-                onPressed: onAddCabinTap,
-                icon: Icon(PhosphorIcons.plus(), size: 16),
-                label: Text(context.l10n.cabinDesign_cabinList_addCabinButton),
-              ),
+            padding: MedSpacing.insetXl * 1.5,
+            child: MedButton(
+              fullWidth: true,
+              label: context.l10n.cabinDesign_cabinList_addCabinButton,
+              prefixIcon: Icon(PhosphorIcons.plus()),
+              onPressed: onAddCabinTap,
+              variant: MedButtonVariant.secondary,
             ),
           ),
         ],

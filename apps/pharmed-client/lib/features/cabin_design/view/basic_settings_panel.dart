@@ -10,11 +10,52 @@ class _BasicSettingsPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final cabin = ready.cabin;
     final isMaster = cabin.type == CabinType.master;
+    final errorText = ready.error?.userMessage;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(context.l10n.cabinDesign_basicSettings_sectionTitle, style: MedTextStyles.titleSm(color: MedColors.text3)),
+        Row(
+          children: [
+            Text(
+              context.l10n.cabinDesign_basicSettings_sectionTitle,
+              style: MedTextStyles.titleSm(color: MedColors.text3),
+            ),
+            Spacer(),
+            if (ready.hasPendingConnectionChange && ready.selectedGroup?.isSerum != true) ...[
+              MedButton(
+                label: context.l10n.cabinDesign_basicSettings_rescanButton,
+                onPressed: ready.isScanning ? null : notifier.rescanCabin,
+                isLoading: ready.isScanning,
+                size: MedButtonSize.sm,
+                variant: MedButtonVariant.secondary,
+              ),
+              SizedBox(width: 4.0),
+            ],
+            if (!isMaster)
+              MedButton(
+                label: ready.cabin.status == Status.passive
+                    ? context.l10n.cabinDesign_basicSettings_activateButton
+                    : context.l10n.cabinDesign_basicSettings_deactivateButton,
+                onPressed: ready.isTogglingStatus ? null : notifier.toggleCabinActiveStatus,
+                isLoading: ready.isTogglingStatus,
+                size: MedButtonSize.sm,
+                variant: MedButtonVariant.ghost,
+              ),
+          ],
+        ),
+        if (errorText != null) ...[
+          const SizedBox(height: MedSpacing.md),
+          MedChip(
+            label: errorText,
+            style: MedChipStyle.danger,
+            // child: Text(
+            //   errorText,
+            //   style: MedTextStyles.bodyMd(color: MedColors.red, weight: FontWeight.bold),
+            // ),
+          ),
+        ],
+
         const SizedBox(height: MedSpacing.lg),
         MedTextInputField(
           onChanged: (value) => notifier.updatePendingName(value),

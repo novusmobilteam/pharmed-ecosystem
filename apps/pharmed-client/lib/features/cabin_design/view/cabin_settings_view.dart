@@ -9,7 +9,6 @@ class CabinSettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (ready == null) return SizedBox.shrink();
-    final errorText = ready?.error?.userMessage;
 
     return Container(
       padding: MedSpacing.insetXl * 2,
@@ -25,32 +24,6 @@ class CabinSettingsView extends StatelessWidget {
             final g => _DrawerDetailPanel(group: g, ready: ready!, cabin: ready!.cabin, notifier: notifier),
           },
           Spacer(),
-
-          if (errorText != null) ...[
-            Text(
-              errorText,
-              style: MedTextStyles.bodyMd(color: MedColors.red, weight: FontWeight.bold),
-            ),
-            const SizedBox(height: MedSpacing.md),
-          ],
-
-          if (ready!.hasPendingConnectionChange && ready?.selectedGroup?.isSerum != true) ...[
-            GestureDetector(
-              onTap: ready!.isScanning ? null : notifier.rescanCabin,
-              child: Row(
-                spacing: 8.0,
-                children: [
-                  ready!.isScanning
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : Icon(PhosphorIcons.arrowsClockwise(), size: 16, color: MedColors.blue),
-                  Text(
-                    context.l10n.cabinDesign_basicSettings_rescanButton,
-                    style: MedTextStyles.titleSm(color: MedColors.blue),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );

@@ -4294,11 +4294,11 @@
   "@cabin_legendFillUrgent": {
     "description": "Legend entry for a drawer needing urgent refill in the master cabin drawer panel"
   },
-  "cabin_serumTypeLabel": "SÉRUM",
+  "cabin_serumTypeLabel": "Serum",
   "@cabin_serumTypeLabel": {
     "description": "Type badge for a serum drug group on the master cabin overview panel"
   },
-  "cabin_unitDoseTypeLabel": "D.UNIT",
+ "cabin_unitDoseTypeLabel": "Dose Unitaire",
   "@cabin_unitDoseTypeLabel": {
     "description": "Type badge abbreviation for a unit-dose drug group on the master cabin overview panel"
   },
@@ -5265,5 +5265,7 @@
 "cabinDesign_basicSettings_rescanButton": "Rescanner",
 "@cabinDesign_basicSettings_rescanButton": {
   "description": "Button shown next to the COM port / address selector in the basic settings panel when a pending connection change (master port or slave address) exists — verifies the new address and re-scans the drawer layout"
-}
+},
+"cabinDesign_basicSettings_deactivateButton": "Désactiver",
+"cabinDesign_basicSettings_activateButton": "Activer"
 }

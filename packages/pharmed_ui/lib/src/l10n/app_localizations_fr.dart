@@ -4728,10 +4728,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabin_legendFillUrgent => 'Remplissage urgent';
 
   @override
-  String get cabin_serumTypeLabel => 'SÉRUM';
+  String get cabin_serumTypeLabel => 'Serum';
 
   @override
-  String get cabin_unitDoseTypeLabel => 'D.UNIT';
+  String get cabin_unitDoseTypeLabel => 'Dose Unitaire';
 
   @override
   String get refund_showCompletedTooltip => 'Afficher les Terminés';
@@ -6110,4 +6110,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cabinDesign_basicSettings_rescanButton => 'Rescanner';
+
+  @override
+  String get cabinDesign_basicSettings_deactivateButton => 'Désactiver';
+
+  @override
+  String get cabinDesign_basicSettings_activateButton => 'Activer';
 }

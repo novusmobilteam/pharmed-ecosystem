@@ -222,6 +222,52 @@ class CabinDesignNotifier extends Notifier<CabinDesignState> {
     );
   }
 
+  /// Seçili kabinin status'unu (active <-> passive) değiştirir. Sadece
+  /// butonda loading gösterilir (isTogglingStatus). Başarılı olursa
+  /// istasyonun TÜM kabin listesi yeniden çekilir — sol listedeki
+  /// rozet/renk güncel kalsın diye.
+  Future<void> toggleCabinActiveStatus() async {
+    final s = state;
+    if (s is! CabinDesignReady || s.isTogglingStatus) return;
+
+    final isCurrentlyPassive = s.cabin.status == Status.passive;
+    final newStatus = isCurrentlyPassive ? Status.active : Status.passive;
+
+    state = s.copyWith(isTogglingStatus: true, clearError: true);
+
+    final candidate = s.cabin.copyWith(status: newStatus);
+    final updateResult = await _updateCabin.call(candidate);
+    final updateOk = updateResult.when(ok: (_) => true, error: (_) => false);
+
+    if (!updateOk) {
+      final error = updateResult.when(ok: (_) => null, error: (e) => e);
+      state = s.copyWith(isTogglingStatus: false, error: error);
+      return;
+    }
+
+    // Kabin listesini istasyondan yeniden çek — sol listedeki badge/renk
+    // güncel olsun.
+    final stationResult = await _getCurrentStation.call();
+    final refreshedStation = stationResult.when(ok: (st) => st, error: (_) => null);
+
+    if (refreshedStation == null) {
+      // İstasyon yeniden çekilemedi ama update başarılıydı — yerelde
+      // güncelleyip devam ediyoruz, kullanıcı en azından güncel durumu görsün.
+      final updatedCabins = s.stationCabins.map((c) => c.id == candidate.id ? candidate : c).toList();
+      state = s.copyWith(isTogglingStatus: false, cabin: candidate, stationCabins: updatedCabins);
+      return;
+    }
+
+    final refreshedCabin = refreshedStation.cabins.firstWhereOrNull((c) => c.id == candidate.id) ?? candidate;
+
+    state = s.copyWith(
+      isTogglingStatus: false,
+      station: refreshedStation,
+      stationCabins: refreshedStation.cabins,
+      cabin: refreshedCabin,
+    );
+  }
+
   /// Temel Ayarlar panelindeki tek "Kaydet" butonu — tüm bekleyen
   /// değişiklikleri (bağlantı, tasarım, iade çekmecesi) tek akışta uygular.
   Future<bool> save() async {

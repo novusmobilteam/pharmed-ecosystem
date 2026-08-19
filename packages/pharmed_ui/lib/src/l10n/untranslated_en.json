@@ -1335,7 +1335,9 @@
     "cabinDesign_newCabin_noAddressAvailableWarning",
     "cabinDesign_newCabin_saveAndScanButton",
     "cabinDesign_newCabin_invalidAddressError",
-    "cabinDesign_basicSettings_rescanButton"
+    "cabinDesign_basicSettings_rescanButton",
+    "cabinDesign_basicSettings_deactivateButton",
+    "cabinDesign_basicSettings_activateButton"
   ],
 
   "fr": [
