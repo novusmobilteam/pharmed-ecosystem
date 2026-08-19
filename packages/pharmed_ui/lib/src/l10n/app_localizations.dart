@@ -10614,6 +10614,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Cabinet'**
   String get cabinOperation_changeCabinButton;
+
+  /// Small kicker label above the title on the drug assignment idle screen
+  ///
+  /// In en, this message translates to:
+  /// **'CABINET CONFIGURATION'**
+  String get assignment_idle_kicker;
+
+  /// Title of the drug assignment screen shown when no cell is selected
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Assignment'**
+  String get assignment_idle_title;
+
+  /// Instructional description shown below the title on the drug assignment idle screen
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a cell on the cabinet to the left; choose a drug from the list for that cell and enter minimum, critical, and maximum quantities. Tap a filled cell to edit its existing assignment.'**
+  String get assignment_idle_description;
+
+  /// Title above the table listing all existing drug assignments in the cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'Current Assignments'**
+  String get assignment_idle_tableTitle;
+
+  /// Column header for the drawer/cell location in the assignments table
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get assignment_idle_columnLocation;
+
+  /// Column header for the drug name in the assignments table
+  ///
+  /// In en, this message translates to:
+  /// **'Drug'**
+  String get assignment_idle_columnDrug;
+
+  /// Column header for minimum quantity in the assignments table
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get assignment_idle_columnMin;
+
+  /// Column header for critical quantity in the assignments table
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get assignment_idle_columnCritical;
+
+  /// Column header for maximum quantity in the assignments table
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get assignment_idle_columnMax;
+
+  /// Link/button in each row of the assignments table that opens that assignment for editing
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get assignment_idle_editLink;
+
+  /// Location label combining drawer address and cell/step number, shown in the assignments table
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {drawer} — Cell {cell}'**
+  String assignment_idle_locationLabel(String drawer, int cell);
+
+  /// Title of the drug assignment editing screen shown when a cell is selected
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Assignment'**
+  String get assignment_edit_title;
+
+  /// Button that discards unsaved changes and returns to the assignments table
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get assignment_edit_cancelButton;
+
+  /// Step label above the paginated drug search list on the assignment editing screen
+  ///
+  /// In en, this message translates to:
+  /// **'1 — Select Drug'**
+  String get assignment_edit_selectDrugStep;
+
+  /// Step label above the quantity form on the assignment editing screen
+  ///
+  /// In en, this message translates to:
+  /// **'2 — Enter Quantities'**
+  String get assignment_edit_quantityStep;
+
+  /// Placeholder text for the drug search input on the assignment editing screen
+  ///
+  /// In en, this message translates to:
+  /// **'Search drug name...'**
+  String get assignment_edit_searchHint;
+
+  /// Badge shown next to a drug in the search list when that drug is already assigned to another cell in the same cabinet
+  ///
+  /// In en, this message translates to:
+  /// **'In Cabinet'**
+  String get assignment_edit_inCabinBadge;
+
+  /// Label for the minimum quantity field in the assignment quantity form
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Quantity'**
+  String get assignment_edit_minQuantityLabel;
+
+  /// Helper text next to the minimum quantity field explaining what it triggers
+  ///
+  /// In en, this message translates to:
+  /// **'Orders are suggested below this level'**
+  String get assignment_edit_minQuantityHint;
+
+  /// Label for the critical quantity field in the assignment quantity form
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Quantity'**
+  String get assignment_edit_criticalQuantityLabel;
+
+  /// Helper text next to the critical quantity field explaining what it triggers
+  ///
+  /// In en, this message translates to:
+  /// **'A critical alert is raised at this level'**
+  String get assignment_edit_criticalQuantityHint;
+
+  /// Label for the maximum quantity field in the assignment quantity form
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum Quantity'**
+  String get assignment_edit_maxQuantityLabel;
+
+  /// Helper text next to the maximum quantity field explaining its meaning
+  ///
+  /// In en, this message translates to:
+  /// **'The most the cell can hold'**
+  String get assignment_edit_maxQuantityHint;
+
+  /// Link/button that deletes the current cell's drug assignment entirely
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Assignment'**
+  String get assignment_edit_removeLink;
+
+  /// Primary button that saves the current assignment (drug + quantities) for the selected cell
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get assignment_edit_saveButton;
+
+  /// Button label to go to the previous page of the paginated drug search list
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get assignment_edit_previousPage;
+
+  /// Button label to go to the next page of the paginated drug search list
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get assignment_edit_nextPage;
+
+  /// Current page indicator shown between the previous/next pagination buttons
+  ///
+  /// In en, this message translates to:
+  /// **'Page {current} / {total}'**
+  String assignment_edit_pageIndicator(int current, int total);
 }
 
 class _AppLocalizationsDelegate

@@ -11,6 +11,8 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
     required this.selectedUnitIds,
     this.onCellTap,
     this.onDrawerTap,
+    this.onChangeCabin,
+    this.cabin,
   });
 
   final List<DrawerGroup> groups;
@@ -26,6 +28,9 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
   /// tüm atanmış gözleri toplu seç/kaldır). Verilmezse başlık statik kalır.
   final void Function(DrawerGroup)? onDrawerTap;
 
+  final VoidCallback? onChangeCabin;
+  final Cabin? cabin;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,7 +40,23 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
         borderRadius: MedRadius.mdAll,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (cabin != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(cabin!.name.toString(), style: MedTextStyles.titleMd()),
+                  TextButton.icon(
+                    onPressed: onChangeCabin,
+                    label: Text(context.l10n.cabinOperation_changeCabinButton),
+                    icon: Icon(PhosphorIcons.arrowLeft()),
+                  ),
+                ],
+              ),
+            ),
           Expanded(
             child: ListView.separated(
               itemCount: groups.length,

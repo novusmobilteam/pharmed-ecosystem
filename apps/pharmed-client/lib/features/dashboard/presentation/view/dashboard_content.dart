@@ -33,6 +33,7 @@ class DashboardContentFactory {
     final cabinId = loaded?.activeCabinId;
     final cabinData = cabinId != null ? loaded?.data.cabinVisualizerDataByCabinId[cabinId] : null;
     final deviceMode = loaded?.deviceMode;
+    final cabin = cabinId != null ? loaded?.data.stationCabins.firstWhereOrNull((c) => c.id == cabinId) : null;
 
     return Listener(
       behavior: HitTestBehavior.translucent,
@@ -46,7 +47,7 @@ class DashboardContentFactory {
             'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
             'drug-assignment' =>
               activeMenu != null
-                  ? AssignmentView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  ? AssignmentView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode, cabin: cabin)
                   : SizedBox.shrink(),
             'drug-refill' =>
               activeMenu != null

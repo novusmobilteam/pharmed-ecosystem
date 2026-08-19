@@ -5976,4 +5976,96 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabinOperation_changeCabinButton => 'Kabin Seçimi';
+
+  @override
+  String get assignment_idle_kicker => 'KABİN YAPILANDIRMA';
+
+  @override
+  String get assignment_idle_title => 'İlaç Atama';
+
+  @override
+  String get assignment_idle_description =>
+      'Soldaki kabinden bir göze dokunun; o göze ilaç listesinden seçim yapıp minimum, kritik ve maksimum miktarları girin. Dolu bir göze dokunarak mevcut atamayı düzenleyebilirsiniz.';
+
+  @override
+  String get assignment_idle_tableTitle => 'Mevcut Atamalar';
+
+  @override
+  String get assignment_idle_columnLocation => 'Konum';
+
+  @override
+  String get assignment_idle_columnDrug => 'İlaç';
+
+  @override
+  String get assignment_idle_columnMin => 'Min';
+
+  @override
+  String get assignment_idle_columnCritical => 'Kritik';
+
+  @override
+  String get assignment_idle_columnMax => 'Maks';
+
+  @override
+  String get assignment_idle_editLink => 'Düzenle';
+
+  @override
+  String assignment_idle_locationLabel(String drawer, int cell) {
+    return 'Çekmece $drawer — Göz $cell';
+  }
+
+  @override
+  String get assignment_edit_title => 'Atamayı Düzenle';
+
+  @override
+  String get assignment_edit_cancelButton => 'Vazgeç';
+
+  @override
+  String get assignment_edit_selectDrugStep => '1 — İlaç Seçin';
+
+  @override
+  String get assignment_edit_quantityStep => '2 — Miktarları Girin';
+
+  @override
+  String get assignment_edit_searchHint => 'İlaç adı ara...';
+
+  @override
+  String get assignment_edit_inCabinBadge => 'Kabinde Var';
+
+  @override
+  String get assignment_edit_minQuantityLabel => 'Minimum Miktar';
+
+  @override
+  String get assignment_edit_minQuantityHint =>
+      'Bu seviyenin altı sipariş önerir';
+
+  @override
+  String get assignment_edit_criticalQuantityLabel => 'Kritik Miktar';
+
+  @override
+  String get assignment_edit_criticalQuantityHint =>
+      'Bu seviyede kritik uyarı verilir';
+
+  @override
+  String get assignment_edit_maxQuantityLabel => 'Maksimum Miktar';
+
+  @override
+  String get assignment_edit_maxQuantityHint =>
+      'Gözün alabileceği en fazla adet';
+
+  @override
+  String get assignment_edit_removeLink => 'Atamayı Kaldır';
+
+  @override
+  String get assignment_edit_saveButton => 'Değişiklikleri Kaydet';
+
+  @override
+  String get assignment_edit_previousPage => 'Önceki';
+
+  @override
+  String get assignment_edit_nextPage => 'Sonraki';
+
+  @override
+  String assignment_edit_pageIndicator(int current, int total) {
+    return 'Sayfa $current / $total';
+  }
 }

@@ -6128,4 +6128,95 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cabinOperation_changeCabinButton => 'Sélectionner une Armoire';
+
+  @override
+  String get assignment_idle_kicker => 'CONFIGURATION DE L\'ARMOIRE';
+
+  @override
+  String get assignment_idle_title => 'Attribution de Médicaments';
+
+  @override
+  String get assignment_idle_description =>
+      'Touchez une case de l\'armoire à gauche ; choisissez un médicament dans la liste pour cette case et saisissez les quantités minimale, critique et maximale. Touchez une case remplie pour modifier son attribution existante.';
+
+  @override
+  String get assignment_idle_tableTitle => 'Attributions Actuelles';
+
+  @override
+  String get assignment_idle_columnLocation => 'Emplacement';
+
+  @override
+  String get assignment_idle_columnDrug => 'Médicament';
+
+  @override
+  String get assignment_idle_columnMin => 'Min';
+
+  @override
+  String get assignment_idle_columnCritical => 'Critique';
+
+  @override
+  String get assignment_idle_columnMax => 'Max';
+
+  @override
+  String get assignment_idle_editLink => 'Modifier';
+
+  @override
+  String assignment_idle_locationLabel(String drawer, int cell) {
+    return 'Tiroir $drawer — Case $cell';
+  }
+
+  @override
+  String get assignment_edit_title => 'Modifier l\'Attribution';
+
+  @override
+  String get assignment_edit_cancelButton => 'Annuler';
+
+  @override
+  String get assignment_edit_selectDrugStep => '1 — Sélectionner un Médicament';
+
+  @override
+  String get assignment_edit_quantityStep => '2 — Saisir les Quantités';
+
+  @override
+  String get assignment_edit_searchHint => 'Rechercher un médicament...';
+
+  @override
+  String get assignment_edit_inCabinBadge => 'Dans l\'Armoire';
+
+  @override
+  String get assignment_edit_minQuantityLabel => 'Quantité Minimale';
+
+  @override
+  String get assignment_edit_minQuantityHint =>
+      'Une commande est suggérée en dessous de ce niveau';
+
+  @override
+  String get assignment_edit_criticalQuantityLabel => 'Quantité Critique';
+
+  @override
+  String get assignment_edit_criticalQuantityHint =>
+      'Une alerte critique est déclenchée à ce niveau';
+
+  @override
+  String get assignment_edit_maxQuantityLabel => 'Quantité Maximale';
+
+  @override
+  String get assignment_edit_maxQuantityHint => 'Capacité maximale de la case';
+
+  @override
+  String get assignment_edit_removeLink => 'Supprimer l\'Attribution';
+
+  @override
+  String get assignment_edit_saveButton => 'Enregistrer les Modifications';
+
+  @override
+  String get assignment_edit_previousPage => 'Précédent';
+
+  @override
+  String get assignment_edit_nextPage => 'Suivant';
+
+  @override
+  String assignment_edit_pageIndicator(int current, int total) {
+    return 'Page $current / $total';
+  }
 }

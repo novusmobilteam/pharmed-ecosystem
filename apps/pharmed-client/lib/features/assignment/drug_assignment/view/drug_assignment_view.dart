@@ -18,11 +18,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../../../../widgets/widgets.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../assignment.dart';
 
-class DrugAssignmentView extends ConsumerStatefulWidget {
-  const DrugAssignmentView({super.key, this.data});
+part 'assignment_idle_panel.dart';
+part 'assignment_edit_panel.dart';
 
+class DrugAssignmentView extends ConsumerStatefulWidget {
+  const DrugAssignmentView({super.key, this.data, required this.menu, this.cabin});
+
+  final MenuItem menu;
+  final Cabin? cabin;
   final CabinVisualizerData? data;
 
   @override
@@ -57,7 +66,6 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     final state = ref.watch(drugAssignmentNotifierProvider);
     final notifier = ref.read(drugAssignmentNotifierProvider.notifier);
 
-    // Hata state'ini dinle — snackbar göster, önceki state'e dön
     ref.listen(drugAssignmentNotifierProvider, (_, next) {
       if (next is DrugAssignmentError) {
         MessageUtils.showErrorSnackbar(context, next.message);
@@ -71,42 +79,41 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
 
     // Yükleniyor — atamalar çekiliyor
     if (state is DrugAssignmentLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return const Center(child: MedLoadingIndicator());
     }
 
     final groups = _extractGroups(state);
-    final selectedSlotId = _extractSelectedSlotId(state);
-    final selectedGroup = _extractSelectedGroup(state);
-    final selectedUnitId = _extractSelectedUnitId(state);
+    final assignments = _extractAssignments(state);
+    final selectedUnitId = state is DrugAssignmentCellSelected ? state.selectedUnitId : null;
 
-    return CabinOperationScaffold(
-      leftPanel: MasterCabinOverviewPanel(
-        groups: groups,
-        selectedSlotId: selectedSlotId,
-        mode: CabinOperationMode.assign,
-        onDrawerTap: notifier.onDrawerTap,
+    return CabinOperationSelectionLayout(
+      isLoading: state is DrugAssignmentLoading,
+      left: Column(
+        spacing: 6.0,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: CabinOverviewSelectionPanel(
+              cabin: widget.cabin,
+              onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+              groups: groups,
+              assignments: assignments,
+              selectedUnitIds: selectedUnitId != null ? {selectedUnitId} : const {},
+              onCellTap: (unit) => notifier.onCellTap(unit, null),
+            ),
+          ),
+        ],
       ),
-      centerPanel: MasterCabinDrawerPanel(
-        mode: CabinOperationMode.assign,
-        group: selectedGroup,
-        assignments: _extractAssignments(state),
-        stocks: const [], // assign modunda stok rengi yok
-        selectedUnitId: selectedUnitId,
-        selectedStepNo: extractSelectedStepNo(state),
-        onCellTap: notifier.onCellTap,
-      ),
-      rightPanel: OperationPanelBase(
-        mode: CabinOperationMode.assign,
-        child: DrugAssignmentPanel(
-          state: state,
-          onSelectDrug: notifier.onDrugSelected,
-          onMinChanged: notifier.onMinQtyChanged,
-          onMaxChanged: notifier.onMaxQtyChanged,
-          onCriticalChanged: notifier.onCriticalQtyChanged,
-          onSave: notifier.saveAssignment,
-          onDelete: notifier.deleteAssignment,
+      right: switch (state) {
+        DrugAssignmentCellSelected s => _AssignmentEditPanel(state: s, notifier: notifier),
+        DrugAssignmentSaving() => const Center(child: MedLoadingIndicator()),
+        _ => _AssignmentIdlePanel(
+          assignments: assignments,
+          groups: groups,
+          onEdit: notifier.editAssignment,
+          menu: widget.menu,
         ),
-      ),
+      },
     );
   }
 
@@ -115,38 +122,17 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     _ => null,
   };
 
-  List<MedicineAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
-    DrugAssignmentIdle(:final assignments) => assignments,
-    DrugAssignmentDrawerSelected(:final assignments) => assignments,
-    DrugAssignmentCellSelected(:final assignments) => assignments,
-    DrugAssignmentSaving(:final assignments) => assignments,
-    _ => const [],
-  };
-
   List<DrawerGroup> _extractGroups(DrugAssignmentUiState s) => switch (s) {
     DrugAssignmentIdle(:final groups) => groups,
-    DrugAssignmentDrawerSelected(:final groups) => groups,
     DrugAssignmentCellSelected(:final groups) => groups,
     DrugAssignmentSaving(:final groups) => groups,
     _ => const [],
   };
 
-  int? _extractSelectedSlotId(DrugAssignmentUiState s) => switch (s) {
-    DrugAssignmentDrawerSelected(:final selectedSlotId) => selectedSlotId,
-    DrugAssignmentCellSelected(:final selectedSlotId) => selectedSlotId,
-    DrugAssignmentSaving(:final selectedGroup) => selectedGroup.slot.id,
-    _ => null,
-  };
-
-  DrawerGroup? _extractSelectedGroup(DrugAssignmentUiState s) => switch (s) {
-    DrugAssignmentDrawerSelected(:final selectedGroup) => selectedGroup,
-    DrugAssignmentCellSelected(:final selectedGroup) => selectedGroup,
-    DrugAssignmentSaving(:final selectedGroup) => selectedGroup,
-    _ => null,
-  };
-
-  int? _extractSelectedUnitId(DrugAssignmentUiState s) => switch (s) {
-    DrugAssignmentCellSelected(:final selectedUnitId) => selectedUnitId,
-    _ => null,
+  List<MedicineAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
+    DrugAssignmentIdle(:final assignments) => assignments,
+    DrugAssignmentCellSelected(:final assignments) => assignments,
+    DrugAssignmentSaving(:final assignments) => assignments,
+    _ => const [],
   };
 }

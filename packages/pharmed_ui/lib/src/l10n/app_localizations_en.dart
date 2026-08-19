@@ -6017,4 +6017,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cabinOperation_changeCabinButton => 'Select Cabinet';
+
+  @override
+  String get assignment_idle_kicker => 'CABINET CONFIGURATION';
+
+  @override
+  String get assignment_idle_title => 'Drug Assignment';
+
+  @override
+  String get assignment_idle_description =>
+      'Tap a cell on the cabinet to the left; choose a drug from the list for that cell and enter minimum, critical, and maximum quantities. Tap a filled cell to edit its existing assignment.';
+
+  @override
+  String get assignment_idle_tableTitle => 'Current Assignments';
+
+  @override
+  String get assignment_idle_columnLocation => 'Location';
+
+  @override
+  String get assignment_idle_columnDrug => 'Drug';
+
+  @override
+  String get assignment_idle_columnMin => 'Min';
+
+  @override
+  String get assignment_idle_columnCritical => 'Critical';
+
+  @override
+  String get assignment_idle_columnMax => 'Max';
+
+  @override
+  String get assignment_idle_editLink => 'Edit';
+
+  @override
+  String assignment_idle_locationLabel(String drawer, int cell) {
+    return 'Drawer $drawer — Cell $cell';
+  }
+
+  @override
+  String get assignment_edit_title => 'Edit Assignment';
+
+  @override
+  String get assignment_edit_cancelButton => 'Cancel';
+
+  @override
+  String get assignment_edit_selectDrugStep => '1 — Select Drug';
+
+  @override
+  String get assignment_edit_quantityStep => '2 — Enter Quantities';
+
+  @override
+  String get assignment_edit_searchHint => 'Search drug name...';
+
+  @override
+  String get assignment_edit_inCabinBadge => 'In Cabinet';
+
+  @override
+  String get assignment_edit_minQuantityLabel => 'Minimum Quantity';
+
+  @override
+  String get assignment_edit_minQuantityHint =>
+      'Orders are suggested below this level';
+
+  @override
+  String get assignment_edit_criticalQuantityLabel => 'Critical Quantity';
+
+  @override
+  String get assignment_edit_criticalQuantityHint =>
+      'A critical alert is raised at this level';
+
+  @override
+  String get assignment_edit_maxQuantityLabel => 'Maximum Quantity';
+
+  @override
+  String get assignment_edit_maxQuantityHint => 'The most the cell can hold';
+
+  @override
+  String get assignment_edit_removeLink => 'Remove Assignment';
+
+  @override
+  String get assignment_edit_saveButton => 'Save Changes';
+
+  @override
+  String get assignment_edit_previousPage => 'Previous';
+
+  @override
+  String get assignment_edit_nextPage => 'Next';
+
+  @override
+  String assignment_edit_pageIndicator(int current, int total) {
+    return 'Page $current / $total';
+  }
 }
