@@ -5964,4 +5964,16 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabinDesign_basicSettings_activateButton => 'Etkinleştir';
+
+  @override
+  String get cabinSelection_screenTitle => 'Kabin Seçin';
+
+  @override
+  String get cabinSelection_continueButton => 'Devam Et';
+
+  @override
+  String get cabinSelection_dataUnavailableLabel => 'Veri Yok';
+
+  @override
+  String get cabinOperation_changeCabinButton => 'Kabin Seçimi';
 }

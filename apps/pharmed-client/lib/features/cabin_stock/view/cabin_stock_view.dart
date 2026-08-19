@@ -10,55 +10,24 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
-import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
+
 import '../cabin_stock.dart';
 
-class CabinStockView extends ConsumerWidget {
-  const CabinStockView({super.key, required this.menu});
+class CabinStockView extends ConsumerStatefulWidget {
+  const CabinStockView({super.key, required this.cabinData, required this.menu});
 
+  final CabinVisualizerData cabinData;
   final MenuItem menu;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
-
-    if (cabinId == null) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
-    }
-
-    return _CabinStockBodyView(cabinId: cabinId, menu: menu);
-  }
+  ConsumerState<CabinStockView> createState() => CabinStockViewState();
 }
 
-class _CabinStockBodyView extends ConsumerStatefulWidget {
-  const _CabinStockBodyView({required this.cabinId, required this.menu});
-
-  final int cabinId;
-  final MenuItem menu;
-
-  @override
-  ConsumerState<_CabinStockBodyView> createState() => _CabinStockBodyViewState();
-}
-
-class _CabinStockBodyViewState extends ConsumerState<_CabinStockBodyView> {
+class CabinStockViewState extends ConsumerState<CabinStockView> {
   @override
   void initState() {
     super.initState();
-    _initialize(widget.cabinId);
-  }
-
-  @override
-  void didUpdateWidget(_CabinStockBodyView old) {
-    super.didUpdateWidget(old);
-    _initialize(widget.cabinId);
+    _initialize(widget.cabinData.cabinId);
   }
 
   void _initialize(int cabinId) {

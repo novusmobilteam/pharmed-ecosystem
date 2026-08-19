@@ -1,5 +1,3 @@
-// lib/features/job_list/view/job_list_screen.dart
-//
 // [SWREQ-UI-JOBLIST-VIEW-001]
 // Sınıf : Class A
 //
@@ -17,32 +15,26 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_card.dart';
 import '../../../widgets/widgets.dart';
-import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
+
 import '../notifier/job_list_notifier.dart';
 import '../notifier/job_list_state.dart';
 
 class JobListScreen extends ConsumerWidget {
-  const JobListScreen({super.key, required this.menu});
+  const JobListScreen({super.key, required this.menu, this.cabinData, this.deviceMode});
 
   final MenuItem menu;
+  final CabinVisualizerData? cabinData;
+  final CabinType? deviceMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
+    final cabinId = cabinData?.cabinId;
 
     if (cabinId == null) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _JobListBodyView(cabinId: cabinId, menu: menu);
+    return _JobListBodyView(cabinId: cabinData!.cabinId, menu: menu);
   }
 }
 
@@ -89,7 +81,7 @@ class _JobListBodyViewState extends ConsumerState<_JobListBodyView> {
     });
 
     if (state is JobListUninitialized || state is JobListLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return const Center(child: MedLoadingIndicator());
     }
 
     return CabinOperationSelectionLayout(

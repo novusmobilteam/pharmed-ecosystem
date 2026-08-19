@@ -214,10 +214,7 @@ class UsecaseProviders {
       Provider(create: (context) => GetDrugActivitiesUseCase(context.read())),
       Provider(create: (context) => GetMasterCabinFaultRecordsUseCase(context.read())),
       Provider(create: (context) => GetMobileCabinFaultRecordsUseCase(context.read())),
-      Provider(
-        create: (context) =>
-            GetCabinVisualizerDataUseCase(context.read(), context.read(), context.read(), context.read()),
-      ),
+      Provider(create: (context) => GetCabinVisualizerDataUseCase(context.read(), context.read(), context.read())),
 
       /// Refill List
       Provider(create: (context) => CancelRefillListUseCase(context.read())),

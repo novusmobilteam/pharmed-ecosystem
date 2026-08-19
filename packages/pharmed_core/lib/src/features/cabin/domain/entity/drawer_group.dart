@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class DrawerGroup {
   final DrawerSlot slot;
@@ -18,9 +19,8 @@ class DrawerGroup {
   bool get isSerum => slot.drawerConfig?.deviceTypeNo == 250;
 
   String get name {
-    if (isReturnDrawer) return 'İade Çekmecesi';
-    if (isSerum) return 'Serum Kabini';
-    return isKubik ? 'Kübik Çekmece' : 'Birim Doz Çekmece (${drawerType?.compartmentCount} Göz)';
+    if (isSerum) return contextlessL10n().enumCore_cabinTypeSerum;
+    return isKubik ? contextlessL10n().cabin_kubikDrawerName : contextlessL10n().cabin_unitDoseDrawerName;
   }
 
   CabinType? get cabinType => slot.cabin?.type;

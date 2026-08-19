@@ -10590,6 +10590,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Activate'**
   String get cabinDesign_basicSettings_activateButton;
+
+  /// No description provided for @cabinSelection_screenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Cabinet'**
+  String get cabinSelection_screenTitle;
+
+  /// No description provided for @cabinSelection_continueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get cabinSelection_continueButton;
+
+  /// No description provided for @cabinSelection_dataUnavailableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'No Data'**
+  String get cabinSelection_dataUnavailableLabel;
+
+  /// No description provided for @cabinOperation_changeCabinButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Cabinet'**
+  String get cabinOperation_changeCabinButton;
 }
 
 class _AppLocalizationsDelegate

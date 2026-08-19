@@ -13,6 +13,7 @@ class _BasicSettingsPanel extends StatelessWidget {
     final errorText = ready.error?.userMessage;
 
     return Column(
+      key: ValueKey(cabin.id),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(

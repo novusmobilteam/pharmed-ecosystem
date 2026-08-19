@@ -77,7 +77,7 @@ class CabinDesignNotifier extends Notifier<CabinDesignState> {
       state = previous.copyWith(isSwitchingCabin: true);
     }
 
-    final result = await _getVisualizerData.call(cabinId: cabinId);
+    final result = await _getVisualizerData.call(cabinId: cabinId, deviceMode: cabin.type, forceRefresh: true);
 
     result.when(
       ok: (data) {

@@ -10,37 +10,29 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // Sınıf: Class B
 
 class GetCabinVisualizerDataUseCase {
-  const GetCabinVisualizerDataUseCase(
-    this._cabinRepository,
-    this._getMasterFaults,
-    this._getMobileFaults,
-    this._getCabinStocks,
-  );
+  const GetCabinVisualizerDataUseCase(this._cabinRepository, this._getMasterFaults, this._getMobileFaults);
 
   final ICabinRepository _cabinRepository;
-
   final GetMasterCabinFaultRecordsUseCase _getMasterFaults;
   final GetMobileCabinFaultRecordsUseCase _getMobileFaults;
-  final GetCabinStockUseCase _getCabinStocks;
 
-  /// [cabin] sadece kDebugMode'da geçilir.
-  /// null → normal akış (cache'deki cabinId + deviceMode).
-  /// non-null → debugCabin.id ve debugCabin.type kullanılır.
-  Future<Result<CabinVisualizerData>> call({CabinType? deviceMode, int? cabinId}) async {
+  Future<Result<CabinVisualizerData>> call({CabinType? deviceMode, int? cabinId, bool forceRefresh = false}) async {
     if (cabinId == null) {
       return Result.error(ServiceException(message: contextlessL10n().cabinCore_activeCabinNotFound, statusCode: 404));
     }
 
     if (deviceMode == CabinType.mobile) {
-      return _buildMobileVisualizer(cabinId);
+      return _buildMobileVisualizer(cabinId, forceRefresh: forceRefresh);
     }
 
-    return _buildStandardVisualizer(cabinId);
+    return _buildStandardVisualizer(cabinId, forceRefresh: forceRefresh);
   }
 
-  // Mobil kabin akışı
-  Future<Result<CabinVisualizerData>> _buildMobileVisualizer(int cabinId) async {
-    final results = await Future.wait([_cabinRepository.getMobileCabinSlots(cabinId), _getMobileFaults.call(cabinId)]);
+  Future<Result<CabinVisualizerData>> _buildMobileVisualizer(int cabinId, {required bool forceRefresh}) async {
+    final results = await Future.wait([
+      _cabinRepository.getMobileCabinSlots(cabinId, forceRefresh: forceRefresh),
+      _getMobileFaults.call(cabinId),
+    ]);
 
     final slotResult = results[0] as Result<List<MobileDrawerSlot>>;
     final faultResult = results[1] as Result<List<MobileFault>>;
@@ -80,11 +72,9 @@ class GetCabinVisualizerDataUseCase {
     return Result.ok(data);
   }
 
-  // Standart kabin akışı
-  Future<Result<CabinVisualizerData>> _buildStandardVisualizer(int cabinId) async {
-    final (slotResult, stockResult, faultResult) = await (
-      _cabinRepository.getCabinSlots(cabinId),
-      _getCabinStocks.call(cabinId),
+  Future<Result<CabinVisualizerData>> _buildStandardVisualizer(int cabinId, {required bool forceRefresh}) async {
+    final (slotResult, faultResult) = await (
+      _cabinRepository.getCabinSlots(cabinId, forceRefresh: forceRefresh),
       _getMasterFaults.call(cabinId),
     ).wait;
 
@@ -102,7 +92,7 @@ class GetCabinVisualizerDataUseCase {
     final faultByUnitId = {for (final f in masterFaults) f.slotId: f};
 
     final unitResults = await Future.wait(
-      slots.where((s) => s.id != null).map((s) => _cabinRepository.getDrawerUnits(s.id!)),
+      slots.where((s) => s.id != null).map((s) => _cabinRepository.getDrawerUnits(s.id!, forceRefresh: forceRefresh)),
     );
 
     final groups = <DrawerGroup>[];
@@ -112,7 +102,6 @@ class GetCabinVisualizerDataUseCase {
       final unitResult = unitResults[i];
       final units = unitResult.when(ok: (data) => data, error: (_) => <DrawerUnit>[]);
 
-      // Fault durumunu DrawerUnit'e yansıt
       final enrichedUnits = units.map((u) {
         final fault = faultByUnitId[u.id];
         if (fault == null) return u;
@@ -124,42 +113,23 @@ class GetCabinVisualizerDataUseCase {
 
     groups.sort((a, b) => a.orderNumber.compareTo(b.orderNumber));
 
-    final stocks = stockResult.when(ok: (data) => data, error: (_) => <CabinStock>[]);
-
-    final slotVisuals = _buildSlots(groups, stocks);
+    final slotVisuals = _buildSlots(groups);
 
     final data = CabinVisualizerData(
       cabinId: cabinId,
       slots: slotVisuals,
       groups: groups,
-      stocks: stocks,
+      stocks: const [],
       masterFaults: masterFaults,
     );
 
     return Result.ok(data);
   }
 
-  // Slot builder
-
-  List<DrawerSlotVisual> _buildSlots(List<DrawerGroup> groups, List<CabinStock> stocks) {
-    final stocksByUnitId = <int, List<CabinStock>>{};
-    for (final stock in stocks) {
-      final unitId = stock.cabinDrawerDetail?.drawerUnit?.id;
-      if (unitId != null) {
-        stocksByUnitId.putIfAbsent(unitId, () => []).add(stock);
-      }
-    }
-
-    MedLogger.info(
-      unit: 'SW-UNIT-UI',
-      swreq: 'SWREQ-UI-DASH-003',
-      message: 'Stock lookup',
-      context: {
-        'stocksByUnitId keys': stocksByUnitId.keys.toList(),
-        'group units': groups.map((g) => g.units.map((u) => u.id).toList()).toList(),
-      },
-    );
-
+  // Stock kaldırıldı — renk artık her zaman nötr (empty). Yapı (Kubic/UnitDose/
+  // Serum ayrımı, iade kutusu birleşimi) korunuyor; başka bir tüketicisi varsa
+  // kırılmasın diye.
+  List<DrawerSlotVisual> _buildSlots(List<DrawerGroup> groups) {
     return groups.where((g) => g.units.isNotEmpty).map((group) {
       final slot = group.slot;
       final config = slot.drawerConfig;
@@ -171,71 +141,32 @@ class GetCabinVisualizerDataUseCase {
       const returnCellCount = 4;
 
       if (isSerum) {
-        final allStocks = group.units.expand((u) => stocksByUnitId[u.id] ?? <CabinStock>[]).toList();
-        return SerumSlotVisual(slotId: slot.id ?? 0, status: _resolveStatus(allStocks), heightFactor: 2);
+        return SerumSlotVisual(slotId: slot.id ?? 0, status: DrawerStatus.empty, heightFactor: 2);
       }
 
       if (isKubik && group.isReturnDrawer && group.units.length > returnCellCount) {
         final normalUnits = group.units.sublist(0, group.units.length - returnCellCount);
-        final returnUnits = group.units.sublist(group.units.length - returnCellCount);
-
-        // GEÇİCİ NOT: iade kutusu ayrımı hâlâ "listenin son 4 elemanı" varsayımına
-        // dayanıyor — bu, units'i visual sıraya çevirmeden ÖNCE, ham API sırasında
-        // yapılmalı (aksi halde port=4 elemanları artık ardışık durmuyor, her
-        // satırın son elemanı olarak dağılıyor). İade kutusu senaryosunu test
-        // ederken bu bölümü ayrıca gözden geçireceğiz — bkz. sohbet notu.
         final orderedNormalUnits = kubikUnitsInVisualOrder(normalUnits);
-        final normalCells = orderedNormalUnits.map((unit) => _resolveStatus(stocksByUnitId[unit.id] ?? [])).toList();
-        final returnStocks = returnUnits.expand((u) => stocksByUnitId[u.id] ?? <CabinStock>[]).toList();
 
         return KubicSlotVisual(
           slotId: slot.id ?? 0,
-          cells: normalCells,
+          cells: List.filled(orderedNormalUnits.length, DrawerStatus.empty),
           columnCount: colCount,
-          mergedReturnStatus: _resolveStatus(returnStocks),
+          mergedReturnStatus: DrawerStatus.empty,
         );
       }
 
       final orderedCells = isKubik ? kubikUnitsInVisualOrder(group.units) : group.units;
-      final cells = orderedCells.map((unit) => _resolveStatus(stocksByUnitId[unit.id] ?? [])).toList();
 
       if (isKubik) {
-        return KubicSlotVisual(slotId: slot.id ?? 0, cells: cells, columnCount: colCount);
+        return KubicSlotVisual(
+          slotId: slot.id ?? 0,
+          cells: List.filled(orderedCells.length, DrawerStatus.empty),
+          columnCount: colCount,
+        );
       }
 
-      return UnitDoseSlotVisual(slotId: slot.id ?? 0, cells: cells);
+      return UnitDoseSlotVisual(slotId: slot.id ?? 0, cells: List.filled(orderedCells.length, DrawerStatus.empty));
     }).toList();
   }
-
-  DrawerStatus _resolveStatus(List<CabinStock> stocks) {
-    if (stocks.isEmpty) return DrawerStatus.empty;
-
-    var worst = DrawerStatus.full;
-
-    for (final stock in stocks) {
-      final qty = stock.quantity?.toDouble() ?? 0;
-      final critical = stock.assignment?.criticalQuantity?.toDouble() ?? 0;
-      final min = stock.assignment?.minQuantity?.toDouble() ?? 0;
-
-      final status = switch (qty) {
-        0 => DrawerStatus.empty,
-        _ when qty <= critical => DrawerStatus.critical,
-        _ when qty <= min => DrawerStatus.low,
-        _ => DrawerStatus.full,
-      };
-
-      if (status._severity > worst._severity) worst = status;
-    }
-
-    return worst;
-  }
-}
-
-extension _DrawerStatusSeverity on DrawerStatus {
-  int get _severity => switch (this) {
-    DrawerStatus.empty => 3,
-    DrawerStatus.critical => 2,
-    DrawerStatus.low => 1,
-    DrawerStatus.full => 0,
-  };
 }

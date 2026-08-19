@@ -139,7 +139,6 @@ final getCabinVisualizerDataUseCaseProvider = Provider((ref) {
     ref.read(cabinRepositoryProvider),
     ref.read(getMasterCabinFaultRecordsProvider),
     ref.read(getMobileCabinFaultRecordsProvider),
-    ref.read(getCabinStocksUseCaseProvider),
   );
 });
 

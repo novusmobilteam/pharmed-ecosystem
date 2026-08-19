@@ -18,25 +18,19 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import '../../../widgets/widgets.dart';
-import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
+
 import '../unapplied_prescription.dart';
 
 class UnappliedPrescriptionScreen extends ConsumerWidget {
-  const UnappliedPrescriptionScreen({super.key, required this.menu});
+  const UnappliedPrescriptionScreen({super.key, required this.menu, this.cabinData, this.deviceMode});
 
   final MenuItem menu;
+  final CabinVisualizerData? cabinData;
+  final CabinType? deviceMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
+    final cabinId = cabinData?.cabinId;
 
     if (cabinId == null) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);

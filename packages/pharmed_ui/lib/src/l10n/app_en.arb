@@ -7210,5 +7210,9 @@
   "description": "Button shown next to the COM port / address selector in the basic settings panel when a pending connection change (master port or slave address) exists — verifies the new address and re-scans the drawer layout"
 },
 "cabinDesign_basicSettings_deactivateButton": "Deactivate",
-"cabinDesign_basicSettings_activateButton": "Activate"
+"cabinDesign_basicSettings_activateButton": "Activate",
+"cabinSelection_screenTitle": "Select Cabinet",
+"cabinSelection_continueButton": "Continue",
+"cabinSelection_dataUnavailableLabel": "No Data",
+"cabinOperation_changeCabinButton": "Select Cabinet"
 }

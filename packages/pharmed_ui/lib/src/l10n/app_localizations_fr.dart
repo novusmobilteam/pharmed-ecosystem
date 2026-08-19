@@ -6116,4 +6116,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cabinDesign_basicSettings_activateButton => 'Activer';
+
+  @override
+  String get cabinSelection_screenTitle => 'Sélectionner une Armoire';
+
+  @override
+  String get cabinSelection_continueButton => 'Continuer';
+
+  @override
+  String get cabinSelection_dataUnavailableLabel => 'Aucune Donnée';
+
+  @override
+  String get cabinOperation_changeCabinButton => 'Sélectionner une Armoire';
 }

@@ -9,7 +9,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract interface class ICabinLocalDataSource {
-  // ── Kabin ──────────────────────────────────────────────────────
   Future<void> saveCabins(List<CabinDTO> cabins);
   Future<List<CabinDTO>?> readCabins();
   Future<DateTime?> cabinsSavedAt();
@@ -18,29 +17,24 @@ abstract interface class ICabinLocalDataSource {
   Future<DateTime?> cabinSavedAt(int cabinId);
   Future<void> clearCabin(int cabinId);
 
-  // ── Slot ───────────────────────────────────────────────────────
   Future<void> saveSlots(int cabinId, List<DrawerSlotDTO> slots);
   Future<List<DrawerSlotDTO>?> readSlots(int cabinId);
   Future<DateTime?> slotsSavedAt(int cabinId);
 
-  // ── Unit ───────────────────────────────────────────────────────
   Future<void> saveUnits(int slotId, List<DrawerUnitDTO> units);
   Future<List<DrawerUnitDTO>?> readUnits(int slotId);
   Future<DateTime?> unitsSavedAt(int slotId);
   Future<void> clearUnits(int slotId);
 
-  // ── Meta (DrawerConfig + DrawerType) ──────────────────────────
   Future<void> saveDrawerConfigs(List<DrawerConfigDTO> configs);
   Future<List<DrawerConfigDTO>?> readDrawerConfigs();
   Future<void> saveDrawerTypes(List<DrawerTypeDTO> types);
   Future<List<DrawerTypeDTO>?> readDrawerTypes();
 
-  // ── Mobil Çekmece ──────────────────────────────────────────────
   Future<void> saveMobileDrawers(int cabinId, List<MobileDrawerSlotDTO> drawers);
   Future<List<MobileDrawerSlotDTO>?> readMobileDrawers(int cabinId);
   Future<DateTime?> mobileDrawersSavedAt(int cabinId);
 
-  // ── Temizlik ───────────────────────────────────────────────────
   Future<void> clearCabins();
   Future<void> clearSlots(int cabinId);
   Future<void> clearAll();
@@ -70,14 +64,10 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
   static String _cabinKey(int cabinId) => 'cabin_$cabinId';
   static String _cabinSavedAtKey(int cabinId) => 'cabin_saved_at_$cabinId';
 
-  // ── Box açma ──────────────────────────────────────────────────
-
   Future<Box> _cabinBox() => Hive.openBox(_cabinBoxName);
   Future<Box> _slotBox() => Hive.openBox(_slotBoxName);
   Future<Box> _metaBox() => Hive.openBox(_metaBoxName);
   Future<Box> _unitBox() => Hive.openBox(_unitBoxName);
-
-  // ── Kabin ──────────────────────────────────────────────────────
 
   @override
   Future<void> saveCabins(List<CabinDTO> cabins) async {

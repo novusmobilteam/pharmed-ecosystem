@@ -13,6 +13,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -31,7 +32,7 @@ part 'cabin_settings_view.dart';
 class CabinDesignDialog extends ConsumerStatefulWidget {
   const CabinDesignDialog({super.key});
 
-  static Future<void> show(BuildContext context, {required int cabinId}) {
+  static Future<void> show(BuildContext context) {
     return showDialog<void>(context: context, builder: (_) => CabinDesignDialog());
   }
 
@@ -50,6 +51,7 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final authNotif = ref.read(authNotifierProvider.notifier);
     final state = ref.watch(cabinDesignNotifierProvider);
     final notifier = ref.read(cabinDesignNotifierProvider.notifier);
 
@@ -75,49 +77,52 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
     final sidebarCabins = ready?.stationCabins ?? creating?.stationCabins ?? const <Cabin>[];
     final selectedCabinId = creating != null ? null : ready?.cabin.id;
 
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: MedRadius.lgAll),
-      insetPadding: MedSpacing.insetXl * 2,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1600, maxHeight: 950),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _Header(cabin: ready?.cabin),
-            const Divider(height: 1, color: MedColors.border2),
-            Expanded(
-              child: ready == null && creating == null
-                  ? const Center(child: MedLoadingIndicator())
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: _CabinListPanel(
-                            cabins: sidebarCabins,
-                            selectedCabinId: selectedCabinId,
-                            onCabinTap: notifier.selectCabin,
-                            onAddCabinTap: notifier.startAddCabin,
+    return GestureDetector(
+      onTap: authNotif.onUserActivity,
+      child: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: MedRadius.lgAll),
+        insetPadding: MedSpacing.insetXl * 2,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1600, maxHeight: 950),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _Header(cabin: ready?.cabin),
+              const Divider(height: 1, color: MedColors.border2),
+              Expanded(
+                child: ready == null && creating == null
+                    ? const Center(child: MedLoadingIndicator())
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: _CabinListPanel(
+                              cabins: sidebarCabins,
+                              selectedCabinId: selectedCabinId,
+                              onCabinTap: notifier.selectCabin,
+                              onAddCabinTap: notifier.startAddCabin,
+                            ),
                           ),
-                        ),
-                        VerticalDivider(width: 1),
-                        Expanded(
-                          flex: 6,
-                          child: creating != null
-                              ? _NewCabinPanel(creating: creating, notifier: notifier)
-                              : ready!.isSwitchingCabin
-                              ? Center(child: MedLoadingIndicator())
-                              : _Body(ready: ready, notifier: notifier),
-                        ),
-                      ],
-                    ),
-            ),
-            const Divider(height: 1, color: MedColors.border2),
-            Padding(
-              padding: MedSpacing.insetXl,
-              child: _BottomBar(ready: ready, notifier: notifier),
-            ),
-          ],
+                          VerticalDivider(width: 1),
+                          Expanded(
+                            flex: 6,
+                            child: creating != null
+                                ? _NewCabinPanel(creating: creating, notifier: notifier)
+                                : ready!.isSwitchingCabin
+                                ? Center(child: MedLoadingIndicator())
+                                : _Body(ready: ready, notifier: notifier),
+                          ),
+                        ],
+                      ),
+              ),
+              const Divider(height: 1, color: MedColors.border2),
+              Padding(
+                padding: MedSpacing.insetXl,
+                child: _BottomBar(ready: ready, notifier: notifier),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -16,26 +16,20 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
-import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
+
 import '../notifier/prescription_notifier.dart';
 import '../notifier/prescription_state.dart';
 
 class PrescriptionView extends ConsumerWidget {
-  const PrescriptionView({super.key, required this.menu});
+  const PrescriptionView({super.key, required this.menu, this.cabinData, this.deviceMode});
 
   final MenuItem menu;
+  final CabinVisualizerData? cabinData;
+  final CabinType? deviceMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
+    final cabinId = cabinData?.cabinId;
 
     if (cabinId == null) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);

@@ -16,32 +16,26 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_card.dart';
 import '../../../widgets/widgets.dart';
-import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
+
 import '../notifier/my_patients_notifier.dart';
 import '../notifier/my_patients_state.dart';
 
 class MyPatientsScreen extends ConsumerWidget {
-  const MyPatientsScreen({super.key, required this.menu});
+  const MyPatientsScreen({super.key, required this.menu, this.cabinData, this.deviceMode});
 
   final MenuItem menu;
+  final CabinVisualizerData? cabinData;
+  final CabinType? deviceMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
+    final cabinId = cabinData?.cabinId;
 
     if (cabinId == null) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
-    return _MyPatientsBodyView(cabinId: cabinId, menu: menu);
+    return _MyPatientsBodyView(cabinId: cabinData!.cabinId, menu: menu);
   }
 }
 
@@ -88,7 +82,7 @@ class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
     });
 
     if (state is MyPatientsUninitialized || state is MyPatientsLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return const Center(child: MedLoadingIndicator());
     }
 
     return CabinOperationSelectionLayout(

@@ -183,7 +183,7 @@ class MobileFaultNotifier extends Notifier<MobileFaultState> {
           description: null,
         );
 
-        ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer();
+        ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer(cabinId);
         return MobileFaultSuccess(message: '', previous: nextSelected, isNewRecord: isNewRecord);
       },
       error: (e) => MobileFaultError(

@@ -1,36 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../core/cache/app_settings_cache.dart';
-import '../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../dashboard/presentation/notifier/dashboard_state.dart';
 import 'refill.dart';
 
 class RefillView extends ConsumerWidget {
-  const RefillView({super.key, required this.menu});
+  const RefillView({super.key, required this.menu, this.cabinData, this.deviceMode});
 
   final MenuItem menu;
+  final CabinVisualizerData? cabinData;
+  final CabinType? deviceMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cabinData = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData,
-          _ => null,
-        },
-      ),
-    );
-    final deviceModeAsync = ref.watch(deviceModeProvider);
-
-    return switch (deviceModeAsync) {
-      AsyncData(:final value) => switch (value) {
-        CabinType.master => MasterRefillView(data: cabinData, menu: menu),
-        CabinType.mobile => MobileRefillView(data: cabinData),
-        _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      },
-      _ => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+    return switch (deviceMode) {
+      CabinType.master => MasterRefillView(data: cabinData, menu: menu),
+      CabinType.mobile => MobileRefillView(data: cabinData),
+      _ => const Center(child: MedLoadingIndicator()),
     };
   }
 }

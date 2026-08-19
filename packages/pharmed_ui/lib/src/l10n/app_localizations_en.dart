@@ -6005,4 +6005,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cabinDesign_basicSettings_activateButton => 'Activate';
+
+  @override
+  String get cabinSelection_screenTitle => 'Select Cabinet';
+
+  @override
+  String get cabinSelection_continueButton => 'Continue';
+
+  @override
+  String get cabinSelection_dataUnavailableLabel => 'No Data';
+
+  @override
+  String get cabinOperation_changeCabinButton => 'Select Cabinet';
 }

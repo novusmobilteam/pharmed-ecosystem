@@ -17,8 +17,8 @@ class APIManager {
   APIManager({
     required String baseUrl,
     required AuthTokenProvider tokenProvider,
-    Duration connectTimeout = const Duration(seconds: 10),
-    Duration receiveTimeout = const Duration(seconds: 10),
+    Duration connectTimeout = const Duration(seconds: 60),
+    Duration receiveTimeout = const Duration(seconds: 0),
     List<Interceptor>? extraInterceptors,
   }) : _dio = Dio(
          BaseOptions(

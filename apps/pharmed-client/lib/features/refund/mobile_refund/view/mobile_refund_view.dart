@@ -6,25 +6,18 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_guide.dart';
 import '../../../../widgets/widgets.dart';
-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../../dashboard/presentation/notifier/dashboard_state.dart';
+
 import '../../refund.dart';
 
 class MobileRefundView extends ConsumerWidget {
-  const MobileRefundView({super.key, required this.menu});
+  const MobileRefundView({super.key, required this.menu, this.cabinData});
 
   final MenuItem menu;
+  final CabinVisualizerData? cabinData;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData?.cabinId,
-          _ => null,
-        },
-      ),
-    );
+    final cabinId = cabinData?.cabinId;
 
     if (cabinId == null) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);

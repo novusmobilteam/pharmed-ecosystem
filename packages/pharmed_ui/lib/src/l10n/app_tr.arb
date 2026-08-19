@@ -6983,5 +6983,23 @@
 "cabinDesign_basicSettings_activateButton": "Etkinleştir",
 "@cabinDesign_basicSettings_activateButton": {
   "description": "Button in cabin design basic settings that sets the selected non-master cabin's status back to active, shown instead of the deactivate button when the cabin is already passive"
+},
+"cabinSelection_screenTitle": "Kabin Seçin",
+"@cabinSelection_screenTitle": {
+  "description": "Title of the cabin selection screen shown before entering any cabin-scoped operation (refill, census, intake, etc.) in a multi-cabin (master-type) station"
+},
+
+"cabinSelection_continueButton": "Devam Et",
+"@cabinSelection_continueButton": {
+  "description": "Button at the bottom of the cabin selection screen — confirms the highlighted cabin and navigates to the originally requested operation screen. Disabled until a selectable cabin is tapped"
+},
+
+"cabinSelection_dataUnavailableLabel": "Veri Yok",
+"@cabinSelection_dataUnavailableLabel": {
+  "description": "Badge shown on a cabin card in the selection screen when that cabin's visualizer data failed to load — the card is dimmed and not selectable"
+},
+"cabinOperation_changeCabinButton": "Kabin Seçimi",
+"@cabinOperation_changeCabinButton": {
+  "description": "Back button shown at the top of a cabin-scoped operation screen (refill, census, intake, etc.) — returns to the cabin selection screen so the user can pick a different cabin for the same operation"
 }
 }

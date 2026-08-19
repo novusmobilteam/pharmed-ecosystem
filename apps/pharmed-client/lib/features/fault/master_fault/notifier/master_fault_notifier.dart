@@ -222,7 +222,7 @@ class MasterFaultNotifier extends Notifier<MasterFaultState> {
           description: null,
         );
 
-        ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer();
+        ref.read(dashboardNotifierProvider.notifier).refreshCabinVisualizer(cabinId);
         return MasterFaultSuccess(message: '', previous: nextSelected, isNewRecord: isNewRecord);
       },
       error: (e) => MasterFaultError(

@@ -34,6 +34,7 @@ import '../../../waste/waste.dart';
 
 import '../notifier/dashboard_notifier.dart';
 import '../notifier/dashboard_state.dart';
+import 'cabin_selection_view.dart';
 import 'dashboard_app_bar.dart';
 
 part 'dashboard_content.dart';

@@ -41,8 +41,6 @@ class CabinRepositoryImpl implements ICabinRepository {
   final DrawerTypeMapper _drawerTypeMapper;
   final MobileDrawerSlotMapper _mobileDrawerSlotMapper;
 
-  // ── Kabin CRUD ─────────────────────────────────────────────────
-
   @override
   Future<Result<List<Cabin>>> getCabins() async {
     final result = await _remote.getCabins();
@@ -131,7 +129,12 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
-  Future<Result<List<DrawerSlot>>> getCabinSlots(int cabinId) async {
+  Future<Result<List<DrawerSlot>>> getCabinSlots(int cabinId, {bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      final cached = await _local.readSlots(cabinId);
+      if (cached != null) return Result.ok(_drawerSlotMapper.toEntityList(cached));
+    }
+
     final result = await _remote.getCabinSlots(cabinId);
 
     return result.when(
@@ -144,7 +147,12 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
-  Future<Result<List<MobileDrawerSlot>>> getMobileCabinSlots(int cabinId) async {
+  Future<Result<List<MobileDrawerSlot>>> getMobileCabinSlots(int cabinId, {bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      final cached = await _local.readMobileDrawers(cabinId);
+      if (cached != null) return Result.ok(_mobileDrawerSlotMapper.toEntityList(cached));
+    }
+
     final result = await _remote.getMobileCabinSlots(cabinId);
 
     return result.when(
@@ -157,7 +165,12 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
-  Future<Result<List<DrawerUnit>>> getDrawerUnits(int slotId) async {
+  Future<Result<List<DrawerUnit>>> getDrawerUnits(int slotId, {bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      final cached = await _local.readUnits(slotId);
+      if (cached != null) return Result.ok(_drawerUnitMapper.toEntityList(cached));
+    }
+
     final result = await _remote.getDrawerUnits(slotId);
 
     return result.when(
@@ -174,9 +187,14 @@ class CabinRepositoryImpl implements ICabinRepository {
     final result = await _remote.createDrawerSlots(_drawerSlotMapper.toDtoList(slots));
     return result.when(
       ok: (_) async {
-        // Etkilenen kabin ID'lerinin slot cache'ini invalidate et
         final cabinIds = slots.map((s) => s.cabinId).whereType<int>().toSet();
         await Future.wait(cabinIds.map(_local.clearSlots));
+
+        // Bu slot'ların unit cache'i de artık stale olabilir (yeni oluşturulan
+        // slot'larda henüz unit yok ama tutarlılık için temizliyoruz).
+        final slotIds = slots.map((s) => s.id).whereType<int>().toSet();
+        await Future.wait(slotIds.map(_local.clearUnits));
+
         return const Result.ok(null);
       },
       error: Result.error,
@@ -190,6 +208,15 @@ class CabinRepositoryImpl implements ICabinRepository {
       ok: (_) async {
         final cabinIds = slots.map((s) => s.cabinId).whereType<int>().toSet();
         await Future.wait(cabinIds.map(_local.clearSlots));
+
+        // Kritik: slot.id'ler UPDATE'te korunuyor (SaveCabinDesignUseCase
+        // isUpdate:true ile var olan slot'ları düzenliyor), yani bu slot'ların
+        // unit cache'i (hücre sayısı/tipi değişmiş olabilir) STALE kalır —
+        // slot cache'i temizlemek units'e dokunmaz (ayrı box/key). Bu yüzden
+        // burada ayrıca temizliyoruz.
+        final slotIds = slots.map((s) => s.id).whereType<int>().toSet();
+        await Future.wait(slotIds.map(_local.clearUnits));
+
         return const Result.ok(null);
       },
       error: Result.error,

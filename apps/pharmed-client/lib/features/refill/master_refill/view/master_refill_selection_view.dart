@@ -5,6 +5,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../refill.dart';
 
 class MasterRefillSelectionView extends ConsumerWidget {
@@ -28,16 +29,29 @@ class MasterRefillSelectionView extends ConsumerWidget {
 
     return CabinOperationSelectionLayout(
       isLoading: state is MasterRefillLoading,
-      left: CabinOverviewSelectionPanel(
-        groups: allGroups,
-        assignments: selection.medicines,
-        selectedUnitIds: selection.selectedUnitIds,
-        onDrawerTap: notifier.toggleDrawer,
-        onCellTap: (unit) {
-          final id = unit.id;
-          if (id == null) return;
-          notifier.toggleUnit(id);
-        },
+      left: Column(
+        spacing: 6.0,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextButton.icon(
+            onPressed: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+            label: Text(context.l10n.cabinOperation_changeCabinButton),
+            icon: Icon(PhosphorIcons.arrowLeft()),
+          ),
+          Expanded(
+            child: CabinOverviewSelectionPanel(
+              groups: allGroups,
+              assignments: selection.medicines,
+              selectedUnitIds: selection.selectedUnitIds,
+              onDrawerTap: notifier.toggleDrawer,
+              onCellTap: (unit) {
+                final id = unit.id;
+                if (id == null) return;
+                notifier.toggleUnit(id);
+              },
+            ),
+          ),
+        ],
       ),
 
       right: CabinSelectionContentShell(

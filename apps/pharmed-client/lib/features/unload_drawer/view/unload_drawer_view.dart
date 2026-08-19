@@ -7,34 +7,20 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
-import '../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../dashboard/presentation/notifier/dashboard_state.dart';
+
 import '../notifier/unload_drawer_notifier.dart';
 import '../notifier/unload_drawer_state.dart';
 import 'unload_drawer_execution_view.dart';
 import 'unload_drawer_selection_view.dart';
 
-/// Menü/dashboard tarafından çağrılan giriş noktası — RefundView'daki gibi
-/// device-mode switch YOK, çünkü bu feature'ın mobil karşılığı yok
-/// (bkz. cabin-domain: mobile cabin'de iade çekmecesi/kutusu kavramı
-/// tanımlı değil). Sadece cabinVisualizerData'yı dashboard'dan çekip
-/// _UnloadDrawerScaffold'a devrediyor.
 class UnloadDrawerView extends ConsumerWidget {
-  const UnloadDrawerView({super.key, required this.menu});
+  const UnloadDrawerView({super.key, required this.menu, this.cabinData});
 
   final MenuItem menu;
+  final CabinVisualizerData? cabinData;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cabinData = ref.watch(
-      dashboardNotifierProvider.select(
-        (s) => switch (s) {
-          DashboardLoaded(:final data) => data.cabinVisualizerData,
-          _ => null,
-        },
-      ),
-    );
-
     return _UnloadDrawerScaffold(data: cabinData);
   }
 }

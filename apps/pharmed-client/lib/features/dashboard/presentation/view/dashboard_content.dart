@@ -9,8 +9,30 @@ class DashboardContentFactory {
     bool isLoggedIn,
   ) {
     final loaded = state is DashboardLoaded ? state : null;
+
+    // Kabin verisi tamamen yoksa (hiç kabin çekilemediyse) — TÜM ekranı
+    // kaplayan blok. Uygulama genelinde kabin verisi olmadan işlem
+    // yapılamıyor, bu yüzden route'a bakılmaksızın burada durulur.
+    if (loaded != null && loaded.data.cabinDataFailed && loaded.data.cabinVisualizerDataByCabinId.isEmpty) {
+      return Center(
+        child: EmptyStateWidget(variant: EmptyStateVariant.cabinData, onRetry: notifier.retryCabinData),
+      );
+    }
+
+    if (loaded != null && loaded.pendingCabinRoute != null) {
+      return CabinSelectionView(
+        cabins: loaded.data.stationCabins,
+        cabinDataByCabinId: loaded.data.cabinVisualizerDataByCabinId,
+        onCabinSelected: notifier.selectCabinForPendingRoute,
+      );
+    }
+
     final route = loaded?.activeRoute ?? 'dashboard';
     final activeMenu = loaded?.flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
+
+    final cabinId = loaded?.activeCabinId;
+    final cabinData = cabinId != null ? loaded?.data.cabinVisualizerDataByCabinId[cabinId] : null;
+    final deviceMode = loaded?.deviceMode;
 
     return Listener(
       behavior: HitTestBehavior.translucent,
@@ -22,30 +44,63 @@ class DashboardContentFactory {
           key: ValueKey(route),
           child: switch (route) {
             'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
-            'drug-assignment' => const AssignmentView(),
-            'drug-refill' => activeMenu != null ? RefillView(menu: activeMenu) : const SizedBox.shrink(),
-            'drug-intake' => IntakeView(menu: activeMenu!),
+            'drug-assignment' =>
+              activeMenu != null
+                  ? AssignmentView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : SizedBox.shrink(),
+            'drug-refill' =>
+              activeMenu != null
+                  ? RefillView(menu: activeMenu, deviceMode: deviceMode, cabinData: cabinData)
+                  : const SizedBox.shrink(),
+            'drug-intake' =>
+              activeMenu != null
+                  ? IntakeView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : SizedBox.shrink(),
             'drug-activity' => const DrugActivityScreen(),
-            'drug-unload' => activeMenu != null ? UnloadView(menu: activeMenu) : const SizedBox.shrink(),
-            'drug-census' => activeMenu != null ? CensusView(menu: activeMenu) : const SizedBox.shrink(),
-            'drawer-malfunction' => const FaultView(),
-            'drug-return' => activeMenu != null ? RefundView(menu: activeMenu) : const SizedBox.shrink(),
-            'drug-waste' => activeMenu != null ? WasteView(menu: activeMenu) : const SizedBox.shrink(),
-            'cabin-stock' => activeMenu != null ? CabinStockView(menu: activeMenu) : const SizedBox.shrink(),
+            'drug-unload' =>
+              activeMenu != null
+                  ? UnloadView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : SizedBox.shrink(),
+            'drug-census' =>
+              activeMenu != null
+                  ? CensusView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : SizedBox.shrink(),
+            'drawer-malfunction' =>
+              activeMenu != null
+                  ? FaultView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : SizedBox.shrink(),
+            'drug-return' =>
+              activeMenu != null
+                  ? RefundView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : SizedBox.shrink(),
+            'drug-waste' =>
+              activeMenu != null
+                  ? WasteView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : SizedBox.shrink(),
+            'cabin-stock' =>
+              activeMenu != null ? CabinStockView(menu: activeMenu, cabinData: cabinData!) : SizedBox.shrink(),
             'patient-request-review' =>
-              activeMenu != null ? PrescriptionView(menu: activeMenu) : const SizedBox.shrink(),
+              activeMenu != null
+                  ? PrescriptionView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : const SizedBox.shrink(),
             'unapplied-prescriptions' =>
-              activeMenu != null ? UnappliedPrescriptionScreen(menu: activeMenu) : const SizedBox.shrink(),
+              activeMenu != null
+                  ? UnappliedPrescriptionScreen(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : const SizedBox.shrink(),
             'my-patients' => activeMenu != null ? MyPatientsScreen(menu: activeMenu) : const SizedBox.shrink(),
-            'drug-destruction' => DestructionView(),
-            'daily-job-list' => activeMenu != null ? JobListScreen(menu: activeMenu) : const SizedBox.shrink(),
+            'drug-destruction' =>
+              activeMenu != null
+                  ? DestructionView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : const SizedBox.shrink(),
+            'daily-job-list' =>
+              activeMenu != null
+                  ? JobListScreen(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+                  : const SizedBox.shrink(),
             'expiring-materials' => ExpiringItemsScreen(),
             'unscanned-barcodes' => UnscannedBarcodesScreen(),
-            'cabin-design' => _CabinDesignRouteHandler(
-              cabinId: loaded?.data.cabinVisualizerData?.cabinId ?? 0,
-              notifier: notifier,
-            ),
-            'return-box-unload' => activeMenu != null ? UnloadDrawerView(menu: activeMenu) : const SizedBox.shrink(),
+            'cabin-design' => _CabinDesignRouteHandler(notifier: notifier),
+            'return-box-unload' =>
+              activeMenu != null ? UnloadDrawerView(menu: activeMenu, cabinData: cabinData) : const SizedBox.shrink(),
 
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
@@ -67,9 +122,8 @@ class DashboardContentFactory {
 }
 
 class _CabinDesignRouteHandler extends StatefulWidget {
-  const _CabinDesignRouteHandler({required this.cabinId, required this.notifier});
+  const _CabinDesignRouteHandler({required this.notifier});
 
-  final int cabinId;
   final DashboardNotifier notifier;
 
   @override
@@ -81,7 +135,7 @@ class _CabinDesignRouteHandlerState extends State<_CabinDesignRouteHandler> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await CabinDesignDialog.show(context, cabinId: widget.cabinId);
+      await CabinDesignDialog.show(context);
       if (mounted) widget.notifier.navigateTo('dashboard');
     });
   }
@@ -140,18 +194,28 @@ class _DashboardBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              data.hasCabinData
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: CabinStatusPanel(cabin: data.cabinVisualizerData!),
-                    )
-                  : SizedBox.shrink(),
+              if (_primaryCabinData(state, data) case final cabinData?)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: CabinStatusPanel(cabin: cabinData),
+                ),
               const CabinTelemetryPanel(),
             ],
           ),
         ),
       ],
     );
+  }
+
+  /// Dashboard özetinde gösterilecek TEK kabin — master istasyonda master
+  /// kabin, mobil istasyonda (zaten tek kabin olduğu için) o kabin.
+  CabinVisualizerData? _primaryCabinData(DashboardLoaded state, DashboardData data) {
+    final targetCabin = state.deviceMode == CabinType.mobile
+        ? data.stationCabins.firstOrNull
+        : data.stationCabins.firstWhereOrNull((c) => c.type == CabinType.master);
+
+    if (targetCabin?.id == null) return null;
+    return data.cabinVisualizerDataByCabinId[targetCabin!.id];
   }
 }
 

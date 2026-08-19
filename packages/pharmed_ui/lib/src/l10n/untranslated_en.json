@@ -1337,7 +1337,11 @@
     "cabinDesign_newCabin_invalidAddressError",
     "cabinDesign_basicSettings_rescanButton",
     "cabinDesign_basicSettings_deactivateButton",
-    "cabinDesign_basicSettings_activateButton"
+    "cabinDesign_basicSettings_activateButton",
+    "cabinSelection_screenTitle",
+    "cabinSelection_continueButton",
+    "cabinSelection_dataUnavailableLabel",
+    "cabinOperation_changeCabinButton"
   ],
 
   "fr": [
