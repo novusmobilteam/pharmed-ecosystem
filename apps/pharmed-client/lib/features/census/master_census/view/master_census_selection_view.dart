@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
+import '../../../dashboard/dashboard.dart';
 import '../notifier/master_census_notifier.dart';
 import '../notifier/master_census_state.dart';
 
 class MasterCensusSelectionView extends ConsumerWidget {
-  const MasterCensusSelectionView({super.key, required this.allGroups, required this.menu});
+  const MasterCensusSelectionView({super.key, required this.cabinContext});
 
-  final List<DrawerGroup> allGroups;
-  final MenuItem menu;
+  final CabinRouteContext cabinContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(masterCensusNotifierProvider);
     final notifier = ref.read(masterCensusNotifierProvider.notifier);
+    final cabin = cabinContext.cabin;
+    final groups = cabinContext.cabinData?.groups;
+    final menu = cabinContext.menu;
 
     final selection = switch (state) {
       MasterCensusSelection s => s,
@@ -31,10 +33,10 @@ class MasterCensusSelectionView extends ConsumerWidget {
     final isMedicineMode = selection.censusMode == CensusMode.byMedicine;
 
     return CabinOperationSelectionLayout(
-      leftWidth: 320,
       isLoading: state is MasterCensusLoading,
       left: CabinOverviewSelectionPanel(
-        groups: allGroups,
+        cabin: cabin,
+        groups: groups ?? [],
         assignments: selection.medicines,
         selectedUnitIds: selection.selectedUnitIds,
         onDrawerTap: isDrawerMode ? notifier.toggleDrawer : null,

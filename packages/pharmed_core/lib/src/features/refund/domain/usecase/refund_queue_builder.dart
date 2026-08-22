@@ -1,8 +1,8 @@
-// refund_queue_builder.dart — master-cabin-operations §2'deki desenle birebir
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract final class RefundQueueBuilder {
+  static int? _cabinId(MedicineAssignment? a) => a?.drawerUnit?.drawerSlot?.cabinId;
+
   static List<RefundDrawerJob> build(List<RefundTarget> targets) {
     final byDrawer = <int, List<RefundTarget>>{};
     for (final t in targets) {
@@ -13,7 +13,12 @@ abstract final class RefundQueueBuilder {
     final jobs = byDrawer.entries.map((e) {
       final sorted = e.value.toList()
         ..sort((a, b) => (a.assignment.drawerUnit?.orderNo ?? 0).compareTo(b.assignment.drawerUnit?.orderNo ?? 0));
-      return RefundDrawerJob(cabinDrawerId: e.key, representativeTarget: sorted.first, targets: sorted);
+      return RefundDrawerJob(
+        cabinDrawerId: e.key,
+        representativeTarget: sorted.first,
+        targets: sorted,
+        cabinId: _cabinId(sorted.first.assignment),
+      );
     }).toList();
 
     jobs.sort((a, b) {

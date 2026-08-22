@@ -26,6 +26,7 @@ class IntakeDrawerJob {
     required this.targets,
     this.status = CabinOperationJobStatus.pending,
     this.requiredStepNo,
+    this.cabinId,
   });
 
   /// Bu işin açtığı fiziksel çekmecenin id'si (DrawerSlot.id).
@@ -48,6 +49,8 @@ class IntakeDrawerJob {
   /// donanım katmanı tam açılışa düşer.
   final int? requiredStepNo;
 
+  final int? cabinId;
+
   // ── Türetilen ──────────────────────────────────────────────────────────
 
   bool get isKubik => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
@@ -67,6 +70,7 @@ class IntakeDrawerJob {
       targets: targets ?? this.targets,
       status: status ?? this.status,
       requiredStepNo: requiredStepNo,
+      cabinId: cabinId,
     );
   }
 }

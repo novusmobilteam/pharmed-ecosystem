@@ -21,7 +21,7 @@ class RefundNotifier extends Notifier<MobileRefundState> {
 
   Future<void> init(int cabinId) async {
     state = const MobileRefundLoading();
-    final result = await _getBedAssignments.call(cabinId);
+    final result = await _getBedAssignments.call();
 
     await result.when(
       ok: (assignments) async {

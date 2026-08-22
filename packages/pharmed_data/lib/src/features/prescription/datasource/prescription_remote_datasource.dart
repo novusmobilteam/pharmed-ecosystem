@@ -124,6 +124,21 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  Future<Result<ApiResponse<List<PrescriptionItemMovementDto>>?>> getCurrentStationDrugActivity(
+    PagedQueryParams params,
+  ) async {
+    return await fetchRequest<ApiResponse<List<PrescriptionItemMovementDto>>>(
+      path: '$_base/detail/materialActivityCurrentStation',
+      skip: params.skip,
+      take: params.take,
+      startDate: params.startDate,
+      endDate: params.endDate,
+      dateField: 'createdDate',
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemMovementDto.fromJson),
+    );
+  }
+
   Future<Result<List<PrescriptionItemDto>?>> getUnappliedPrescriptionDetail(int prescriptionId) async {
     return await fetchRequest(
       path: _unappliedDetail(prescriptionId),
@@ -207,24 +222,6 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     return await fetchRequest(
       path: '$_base/detail/materialActivity',
       parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
-    );
-  }
-
-  Future<Result<ApiResponse<List<PrescriptionItemMovementDto>>?>> getCurrentStationDrugActivity({
-    int? skip,
-    int? take,
-    String? search,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
-    return await fetchRequest(
-      path: '$_base/detail/materialActivityCurrentStation',
-      skip: skip,
-      take: take,
-      startDate: startDate,
-      endDate: endDate,
-      envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemMovementDto.fromJson),
     );
   }
 

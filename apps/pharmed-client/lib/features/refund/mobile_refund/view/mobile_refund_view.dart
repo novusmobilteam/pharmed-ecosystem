@@ -4,7 +4,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_guide.dart';
 import '../../../../widgets/widgets.dart';
 
 import '../../refund.dart';

@@ -32,11 +32,13 @@ final class UnloadDrawerSelection extends UnloadDrawerState {
     required this.items,
     this.selectedIds = const {},
     this.isSubmitting = false,
+    this.search = '',
   });
 
   final int cabinId;
   final UnloadDrawerMode mode;
   final List<ReturnDrawerMedicine> items;
+  final String search;
 
   /// Artık HER iki modda da anlamlı — hem drawer hem box tarafında
   /// kullanıcı hangi iadelerin boşaltılacağını kendisi seçer.
@@ -50,13 +52,29 @@ final class UnloadDrawerSelection extends UnloadDrawerState {
   /// mode'a göre belirlenir) sadece seçim var mı / gönderim sürüyor mu bakar.
   bool get canConfirm => selectedIds.isNotEmpty && !isSubmitting;
 
-  UnloadDrawerSelection copyWith({List<ReturnDrawerMedicine>? items, Set<int>? selectedIds, bool? isSubmitting}) {
+  List<ReturnDrawerMedicine> get visibleMedicines {
+    if (search.trim().isEmpty) return items;
+    final q = search.toLowerCase().trim();
+    return items.where((a) {
+      final name = a.material?.name?.toLowerCase() ?? '';
+      final barcode = a.material?.barcode?.toLowerCase() ?? '';
+      return name.contains(q) || barcode.contains(q);
+    }).toList();
+  }
+
+  UnloadDrawerSelection copyWith({
+    List<ReturnDrawerMedicine>? items,
+    Set<int>? selectedIds,
+    bool? isSubmitting,
+    String? search,
+  }) {
     return UnloadDrawerSelection(
       cabinId: cabinId,
       mode: mode,
       items: items ?? this.items,
       selectedIds: selectedIds ?? this.selectedIds,
       isSubmitting: isSubmitting ?? this.isSubmitting,
+      search: search ?? this.search,
     );
   }
 }
@@ -117,17 +135,26 @@ extension UnloadDrawerStateX on UnloadDrawerState {
 }
 
 extension UnloadDrawerExecutingLocationX on UnloadDrawerExecuting {
-  /// Queue'suz tek-job senaryo: kendisi tek elemanlı "job listesi" olarak
-  /// besleniyor, currentIndex/currentTargetIndex sabit 0.
   List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) =>
       buildCabinExecutionLocationItems<UnloadDrawerExecuting>(
         allGroups: allGroups,
         jobs: [this],
         currentIndex: 0,
         currentTargetIndex: 0,
-        cabinDrawerIdOf: (job) => job.assignment.cabinDrawerId ?? 0,
+        // Diğer tüm ekranlarla (Refund/Census/Refill) TUTARLI olması için
+        // unit id değil SLOT id gönderilmeli — buildCabinExecutionLocationItems
+        // allGroups'u slot bazlı eşliyor (DrawerGroup = DrawerSlot + units).
+        // assignment.cabinDrawerId burada yanlışlıkla unit.id'yi taşıyor
+        // (bkz. _resolveReturnDrawerAssignment: cabinDrawerId: unit.id).
+        cabinDrawerIdOf: (job) =>
+            job.assignment.drawerUnit?.drawerSlot?.id ?? job.assignment.drawerUnit?.drawerSlotId ?? 0,
         statusOf: (job) => job.status,
         targetCountOf: (job) => 1,
         assignmentAt: (job, _) => job.assignment,
+        // Unload akışının TEK hedefi zaten fiziksel iade çekmecesinin kendisi
+        // (bkz. UnloadDrawerNotifier._resolveReturnDrawerAssignment) — bu
+        // yüzden koşulsuz true. Refund'daki gibi toOrigin/toDrawer ayrımı
+        // burada yok, her Unload job'ı iade kutusunu hedefler.
+        isReturnDrawerTargetOf: (job) => true,
       );
 }

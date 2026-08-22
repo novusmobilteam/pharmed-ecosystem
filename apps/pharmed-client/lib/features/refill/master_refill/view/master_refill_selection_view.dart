@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+import '../../../dashboard/dashboard.dart';
 import '../../refill.dart';
 
 class MasterRefillSelectionView extends ConsumerWidget {
-  const MasterRefillSelectionView({super.key, required this.allGroups, required this.menu});
+  const MasterRefillSelectionView({super.key, required this.cabinContext});
 
-  final List<DrawerGroup> allGroups;
-  final MenuItem menu;
+  final CabinRouteContext cabinContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(masterRefillNotifierProvider);
     final notifier = ref.read(masterRefillNotifierProvider.notifier);
+    final cabin = cabinContext.cabin;
+    final groups = cabinContext.cabinData?.groups;
+    final menu = cabinContext.menu;
 
     final selection = switch (state) {
       MasterRefillSelection s => s,
@@ -30,17 +31,12 @@ class MasterRefillSelectionView extends ConsumerWidget {
     return CabinOperationSelectionLayout(
       isLoading: state is MasterRefillLoading,
       left: Column(
-        spacing: 6.0,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextButton.icon(
-            onPressed: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
-            label: Text(context.l10n.cabinOperation_changeCabinButton),
-            icon: Icon(PhosphorIcons.arrowLeft()),
-          ),
           Expanded(
             child: CabinOverviewSelectionPanel(
-              groups: allGroups,
+              cabin: cabin,
+              onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+              groups: groups ?? [],
               assignments: selection.medicines,
               selectedUnitIds: selection.selectedUnitIds,
               onDrawerTap: notifier.toggleDrawer,

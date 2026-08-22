@@ -66,7 +66,7 @@ class MockCabinOperationService implements ICabinOperationService {
       return card;
     }
 
-    debugPrint('MOCK: ❌ Hedef adreste (${targetAddressIndex}) yönetim kartı bulunamadı');
+    debugPrint('MOCK: ❌ Hedef adreste ($targetAddressIndex) yönetim kartı bulunamadı');
     return null;
   }
   // ════════════════════════════════════════════════════════════════

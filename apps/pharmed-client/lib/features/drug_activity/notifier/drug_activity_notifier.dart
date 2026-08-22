@@ -48,7 +48,10 @@ class DrugActivityNotifier extends Notifier<DrugActivityState> {
 
   Future<void> _load() async {
     final skip = (_currentPage - 1) * _pageSize;
-    final result = await _useCase.call(skip: skip, take: _pageSize, startDate: _startDate, endDate: _endDate);
+    final result = await _useCase.call(
+      PagedQueryParams(skip: skip, take: _pageSize, startDate: _startDate, endDate: _endDate),
+    );
+
     result.when(
       ok: (response) {
         _totalCount = response?.totalCount ?? 0;
@@ -67,6 +70,7 @@ class DrugActivityNotifier extends Notifier<DrugActivityState> {
     _startDate = start ?? _startDate;
     _endDate = end ?? _endDate;
     _currentPage = 1;
+
     _enterLoading();
     await _load();
   }

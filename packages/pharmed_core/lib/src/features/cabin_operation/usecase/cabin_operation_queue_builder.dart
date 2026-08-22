@@ -16,6 +16,8 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract final class CabinOperationQueueBuilder {
+  static int? _cabinId(MedicineAssignment? a) => a?.drawerUnit?.drawerSlot?.cabinId;
+
   static ({List<CabinOperationDrawerJob> jobs, List<MedicineAssignment> skipped}) build({
     required List<MedicineAssignment> selectedAssignments,
     required CabinOperationTargetConfig config,
@@ -41,6 +43,7 @@ abstract final class CabinOperationQueueBuilder {
           cabinDrawerId: physicalId,
           representativeAssignment: assignments.first,
           targets: targets,
+          cabinId: _cabinId(assignments.first),
         ),
       );
     });

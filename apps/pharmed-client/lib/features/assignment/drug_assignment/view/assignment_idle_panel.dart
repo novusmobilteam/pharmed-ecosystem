@@ -6,12 +6,14 @@ class _AssignmentIdlePanel extends StatelessWidget {
     required this.groups,
     required this.onEdit,
     required this.menu,
+    required this.onAssignmentSearchChanged,
   });
 
   final MenuItem menu;
   final List<MedicineAssignment> assignments;
   final List<DrawerGroup> groups;
   final ValueChanged<int> onEdit;
+  final Function(String? query) onAssignmentSearchChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +21,12 @@ class _AssignmentIdlePanel extends StatelessWidget {
       menu: menu,
       searchQuery: '',
       showSearch: true,
-      onSearchQueryChanged: (String value) {
-        print('aaaa');
-      },
+      onSearchQueryChanged: (value) => onAssignmentSearchChanged(value),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (assignments.where((a) => a.medicine != null).isEmpty)
-            EmptyStateWidget(variant: EmptyStateVariant.noResults)
+            SizedBox()
           else
             Expanded(
               child: SingleChildScrollView(

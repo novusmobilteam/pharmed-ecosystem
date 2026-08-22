@@ -2,7 +2,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 class CabinVisualizerData {
   const CabinVisualizerData({
-    required this.cabinId,
+    required this.cabin,
     required this.slots,
     required this.groups,
     required this.stocks,
@@ -11,13 +11,20 @@ class CabinVisualizerData {
     this.mobileFaults = const [],
   });
 
-  final int cabinId;
+  final Cabin cabin;
   final List<DrawerSlotVisual> slots;
   final List<DrawerGroup> groups;
   final List<CabinStock> stocks;
   final List<MobileDrawerSlot> mobileSlots;
   final List<MasterFault> masterFaults;
   final List<MobileFault> mobileFaults;
+
+  /// `cabin.id` her zaman non-null'dır — bu veri, `GetCabinVisualizerDataUseCase`
+  /// içinde YALNIZCA `cabinId != null` garantisiyle inşa edilir (bkz. use case
+  /// başındaki guard + DashboardNotifier._loadAllCabinVisualizers'daki
+  /// `station.cabins.where((c) => c.id != null)` filtresi). Bu yüzden burada
+  /// ayrı bir nullable `cabinId` alanı tutmuyoruz — tek kaynak `cabin.id!`.
+  int get cabinId => cabin.id!;
 
   List<DrawerStatus> get _allCells => slots
       .expand(

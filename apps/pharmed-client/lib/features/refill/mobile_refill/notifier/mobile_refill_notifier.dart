@@ -86,7 +86,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
 
     state = MobileRefillLoading(slots: slots, cabinId: data.cabinId);
 
-    final assignmentResult = await _getAssignments.call(data.cabinId);
+    final assignmentResult = await _getAssignments.call();
 
     state = assignmentResult.when(
       ok: (assignments) =>

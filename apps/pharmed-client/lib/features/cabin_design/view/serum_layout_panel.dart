@@ -256,7 +256,7 @@ class _SerumDrawerBody extends StatelessWidget {
                   mainAxisExtent: 56,
                 ),
                 itemCount: drawer.total,
-                itemBuilder: (_, __) => Container(
+                itemBuilder: (_, _) => Container(
                   decoration: BoxDecoration(
                     color: MedColors.blueLight,
                     border: Border.all(color: MedColors.border2),

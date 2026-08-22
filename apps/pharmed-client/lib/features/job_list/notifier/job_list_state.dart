@@ -12,21 +12,17 @@ final class JobListUninitialized extends JobListState {
 }
 
 final class JobListLoading extends JobListState {
-  const JobListLoading({required this.cabinId});
-  final int cabinId;
+  const JobListLoading();
 }
 
 final class JobListIdle extends JobListState {
   const JobListIdle({
-    required this.cabinId,
     required this.allPatients,
     required this.selectedHospitalization,
     required this.jobList,
     this.search = '',
     this.isJobListLoading = false,
   });
-
-  final int cabinId;
 
   /// Sol liste — GetMyPatients'tan türetilen hastalar.
   final List<Hospitalization> allPatients;
@@ -52,7 +48,6 @@ final class JobListIdle extends JobListState {
     bool? isJobListLoading,
   }) {
     return JobListIdle(
-      cabinId: cabinId,
       allPatients: allPatients ?? this.allPatients,
       selectedHospitalization: selectedHospitalization ?? this.selectedHospitalization,
       jobList: jobList ?? this.jobList,
@@ -70,13 +65,6 @@ final class JobListError extends JobListState {
 }
 
 extension JobListStateX on JobListState {
-  int? get cabinId => switch (this) {
-    JobListLoading(:final cabinId) => cabinId,
-    JobListIdle(:final cabinId) => cabinId,
-    JobListError(:final previousState) => previousState.cabinId,
-    _ => null,
-  };
-
   List<Hospitalization> get allPatients => switch (this) {
     JobListIdle(:final allPatients) => allPatients,
     JobListError(:final previousState) => previousState.allPatients,

@@ -1,12 +1,3 @@
-// [SWREQ-CLI-MINTAKE-006] [IEC 62304 §5.5]
-// FAZ 3 — Alım kuyruğunun işlendiği panel. Kübik/birim-doz ayrımı YOK —
-// ikisi de artık aynı sıralı akışla ilerliyor (tek target aç → işle →
-// kapat). Ekranda her zaman SADECE aktif target'a (currentTargetIndex) ait
-// hücreler gösterilir; aynı gözün detayları birden fazla stockId'ye
-// bölünmüşse (FIFO split) birden fazla kart görünebilir.
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -19,13 +10,14 @@ import '../../intake.dart';
 part 'intake_cell_card.dart';
 
 class MasterIntakeExecutionView extends ConsumerWidget {
-  const MasterIntakeExecutionView({super.key, required this.allGroups});
+  const MasterIntakeExecutionView({super.key, required this.cabinDataByCabinId});
 
-  final List<DrawerGroup> allGroups;
+  final Map<int, CabinVisualizerData> cabinDataByCabinId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(masterIntakeNotifierProvider);
+    final notifier = ref.read(masterIntakeNotifierProvider.notifier);
 
     final executing = switch (state) {
       MasterIntakeExecuting e => e,
@@ -37,7 +29,14 @@ class MasterIntakeExecutionView extends ConsumerWidget {
     final job = executing.currentJob;
     if (job == null) return const SizedBox.shrink();
 
-    final notifier = ref.read(masterIntakeNotifierProvider.notifier);
+    // Şu an işlenen job'ın hedef kabini — her job farklı fiziksel kabine ait
+    // olabilir (bkz. IntakeQueueBuilder.build → MedicineAssignment.drawerUnit
+    // ?.drawerSlot?.cabinId), bu yüzden allGroups SABİT değil, currentCabinId
+    // değiştikçe yeniden çözülür.
+    final cabinId = executing.currentCabinId;
+    final allGroups = cabinId != null
+        ? (cabinDataByCabinId[cabinId]?.groups ?? const <DrawerGroup>[])
+        : const <DrawerGroup>[];
 
     return CabinOperationExecutionLayout(
       progressLabel: context.l10n.intake_label_queueProgress(executing.completedJobs + 1, executing.totalJobs),

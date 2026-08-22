@@ -1,17 +1,3 @@
-// [SWREQ-CLI-MINTAKE-004] [IEC 62304 §5.5]
-// İlaç-merkezli master kabin İLAÇ ALIM ekranının seçim paneli.
-//
-// RootScaffold artık booting (masterIntake + patientSelection senkron hazır
-// olma) mekaniğini merkezi olarak yönetiyor — bu panel yalnızca her iki
-// provider da hazırken build edilir, kendi _hasBooted/Offstage mantığına
-// ihtiyaç duymaz.
-//
-// SOL: ORTAK PatientSelectionPanel (bkz. cabin_shell_widgets/patient_selection)
-//      — PatientSelectionConfigs.intake ile sekmeler + acil hasta akışı açık.
-// SAĞ: seçili hastaya ait ilaç listesi.
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/widgets/rx_operation_card/rx_operation_card_2.dart';
@@ -20,8 +6,6 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
-import '../../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import '../../../../widgets/widgets.dart';
 import '../../intake.dart';
 import '../notifier/redirected_intake_orders_notifier.dart';
@@ -78,7 +62,7 @@ class MasterIntakeSelectionView extends ConsumerWidget {
       leftWidth: 440,
       flex: 2,
       left: PatientSelectionPanel(
-        config: PatientSelectionConfigs.intake,
+        config: PatientSelectionConfig.intake,
         selectedPatient: selectedPatient,
         onPatientSelected: (hospitalization, tab, isOrderless) {
           if (tab == PatientSelectionTab.redirected) {

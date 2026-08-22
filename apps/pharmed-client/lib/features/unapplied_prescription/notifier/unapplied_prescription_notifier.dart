@@ -1,17 +1,7 @@
-// lib/features/unapplied_prescription_screen/unapplied_prescription_notifier.dart
-//
-// [SWREQ-UI-UNAPP-NOTIFIER-001]
-// Sınıf : Class A
-//
-// PrescriptionNotifier ile aynı API çağrıları — fark:
-//   onPatientTap içinde API'den gelen tüm items'a
-//   PrescriptionItemStatus.pendingPickup filtresi uygulanır.
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-import '../../../core/cache/app_settings_cache.dart';
 import '../../../core/providers/providers.dart';
 import 'unapplied_prescription_state.dart';
 
@@ -27,19 +17,19 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
   @override
   UnappliedPrescriptionState build() => const UnappliedPrescriptionUninitialized();
 
-  Future<void> init(int cabinId) async {
-    state = UnappliedPrescriptionLoading(cabinId: cabinId);
+  Future<void> init(CabinType? deviceMode) async {
+    state = UnappliedPrescriptionLoading();
 
-    final cabinType = await ref.read(deviceModeProvider.future);
-    final isMobile = cabinType == CabinType.mobile;
+    final isMobile = deviceMode == CabinType.mobile;
 
+    // TODO : cabinId'siz çalışacak versiyonu yazılacak
     final result = isMobile
-        ? _fromBedAssignments(await _getBedAssignments.call(cabinId))
+        ? _fromBedAssignments(await _getBedAssignments.call())
         : _fromApiResponse(await _getHospitalizations.call(const PagedQueryParams()));
 
     await result.when(
       ok: (hospitalizations) async {
-        state = UnappliedPrescriptionIdle(cabinId: cabinId, hospitalizations: hospitalizations);
+        state = UnappliedPrescriptionIdle(hospitalizations: hospitalizations);
         if (hospitalizations.isEmpty) return;
 
         await onPatientTap(hospitalizations.first);
@@ -47,7 +37,7 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
       error: (error) {
         state = UnappliedPrescriptionError(
           message: error.message,
-          previousState: UnappliedPrescriptionIdle(cabinId: cabinId, hospitalizations: const []),
+          previousState: UnappliedPrescriptionIdle(hospitalizations: const []),
         );
       },
     );
@@ -59,16 +49,11 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
 
     // Toggle — aynı hasta tekrar seçilirse Idle'a dön
     if (state.selectedPatient?.patient?.id == patientId) {
-      state = UnappliedPrescriptionIdle(
-        cabinId: state.cabinId!,
-        hospitalizations: state.hospitalizations,
-        search: state.search,
-      );
+      state = UnappliedPrescriptionIdle(hospitalizations: state.hospitalizations, search: state.search);
       return;
     }
 
     state = UnappliedPrescriptionPatientSelected(
-      cabinId: state.cabinId!,
       hospitalizations: state.hospitalizations,
       selectedPatient: hospitalization,
       prescriptionItems: const [],
@@ -80,7 +65,6 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
 
     state = result.when(
       ok: (items) => UnappliedPrescriptionPatientSelected(
-        cabinId: state.cabinId!,
         hospitalizations: state.hospitalizations,
         selectedPatient: hospitalization,
         prescriptionItems: items.where((item) => item.status == PrescriptionMovementType.purchasePending).toList(),
@@ -90,7 +74,6 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
       error: (e) => UnappliedPrescriptionError(
         message: e.message,
         previousState: UnappliedPrescriptionPatientSelected(
-          cabinId: state.cabinId!,
           hospitalizations: state.hospitalizations,
           selectedPatient: hospitalization,
           prescriptionItems: const [],
@@ -103,11 +86,7 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
 
   void onSearchChanged(String value) {
     state = switch (state) {
-      UnappliedPrescriptionIdle s => UnappliedPrescriptionIdle(
-        cabinId: s.cabinId,
-        hospitalizations: s.hospitalizations,
-        search: value,
-      ),
+      UnappliedPrescriptionIdle s => UnappliedPrescriptionIdle(hospitalizations: s.hospitalizations, search: value),
       UnappliedPrescriptionPatientSelected s => s.copyWith(search: value),
       _ => state,
     };

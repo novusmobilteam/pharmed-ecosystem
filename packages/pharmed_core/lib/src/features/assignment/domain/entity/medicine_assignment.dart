@@ -30,10 +30,6 @@ class MedicineAssignment {
     this.fillingQuantity,
   });
 
-  // ---------------------------------------------------------------------------
-  // Birim etiketleri
-  // ---------------------------------------------------------------------------
-
   String get operationUnit => medicine?.operationUnit ?? 'Adet';
   String get fillingUnit => medicine?.fillingUnit ?? 'Adet';
 

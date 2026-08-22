@@ -15,6 +15,7 @@ import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/providers/providers.dart';
 
+import '../../../dashboard/dashboard.dart';
 import 'master_census_state.dart';
 
 final masterCensusNotifierProvider = NotifierProvider<MasterCensusNotifier, MasterCensusState>(
@@ -24,7 +25,7 @@ final masterCensusNotifierProvider = NotifierProvider<MasterCensusNotifier, Mast
 class MasterCensusNotifier extends Notifier<MasterCensusState> {
   late final MasterDrawerOrchestrator _orchestrator;
 
-  GetCabinAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
+  GetStationAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
   CompleteMasterCensusUseCase get _completeCensus => ref.read(completeMasterCensusUseCaseProvider);
 
   @override
@@ -35,8 +36,11 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
     return const MasterCensusUninitialized();
   }
 
-  Future<void> init(CabinVisualizerData data) async {
-    final cabinId = data.cabinId;
+  Future<void> init(CabinRouteContext ctx) async {
+    final cabinId = ctx.cabin?.id;
+    if (cabinId == null) {
+      return;
+    }
     state = const MasterCensusLoading();
 
     final result = await _getAssignments();

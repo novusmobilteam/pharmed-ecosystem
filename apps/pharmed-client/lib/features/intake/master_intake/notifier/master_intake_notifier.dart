@@ -1,35 +1,10 @@
 // [SWREQ-CLI-MINTAKE-002] [IEC 62304 §5.5]
-// İlaç-merkezli master kabin İLAÇ ALIM akışını yöneten notifier.
-//
-// FAZ 1 (PatientSelection): init istasyonu çözer, hastasız PatientSelection'a
-//   düşer. Hasta seçimi CabinPatientPickerPanel (ortak bileşen) üzerinden
-//   yapılır; seçilince selectPatient(hospitalization, intakeType) çağrılır.
-// FAZ 2 (MedicineSelection): GetIntakeItemsUseCase ile alım kalemlerini çeker,
-//   kullanıcının seçim / doz / şahit girişini yönetir.
-// FAZ 3 (Executing): startIntake → seçili tüm kalemler için TOPLU CheckIntake
-//   → dönen planlardan IntakeQueueBuilder ile çekmece kuyruğu üretir → kuyruğu
-//   MasterDrawerOrchestrator üzerinden sırayla işler:
-//     - currentJob'ı aç (open)
-//     - Opened → (kübikse ilk gözün lid'i açılır) → kullanıcı CountType'a göre sayar
-//     - confirmCurrent →
-//         · kübik: aktif gözün CompleteIntake'i HEMEN atılır → sıradaki lid
-//                  (son göz ise çekmece kapanışı tetiklenir)
-//         · birim doz/standart: çekmece kapanışı tetiklenir, tüm hedefler
-//                  Closed'da tek tek kaydedilir
-//     - Closed → aktif job tamamlandı → sıradaki job açılır
-//
-// Aynı anda yalnızca TEK fiziksel çekmece açıktır.
-//
-// Hasta bağlamı (hospitalization + intakeType) MedicineSelection/Executing
-// içinde taşınır; "Hastayı değiştir" → changePatient → PatientSelection'a
-// döner ve açık kuyruk/çekmece temizlenir.
-//
-// Sınıf: Class B
 
 import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/features/dashboard/dashboard.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -47,8 +22,6 @@ final masterIntakeNotifierProvider = NotifierProvider<MasterIntakeNotifier, Mast
 class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   late final MasterDrawerOrchestrator _orchestrator;
 
-  int _cabinId = 0;
-
   /// Aktif alımın tipi (ordered/orderless/urgent/free) — selectPatient'ta set.
   IntakeType _type = IntakeType.orderless;
 
@@ -63,7 +36,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   GetIntakeItemsUseCase get _getItems => ref.read(getIntakeItemsUseCaseProvider);
   CheckIntakeUseCase get _checkIntake => ref.read(checkIntakeUseCaseProvider);
   CompleteIntakeUseCase get _completeIntake => ref.read(completeIntakeUseCaseProvider);
-  GetCurrentStationUseCase get _getStation => ref.read(getCurrentStationUseCaseProvider);
   GetEquivalentMedicinesUseCase get _getEquivalents => ref.read(getEquivalentMedicinesUseCaseProvider);
   CheckEquivalentIntakeUseCase get _checkEquivalentIntake => ref.read(checkEquivalentIntakeUseCaseProvider);
   CompleteEquivalentIntakeUseCase get _completeEquivalentIntake => ref.read(completeEquivalentIntakeUseCaseProvider);
@@ -72,7 +44,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   GetPrescriptionDetailUseCase get _getPrescriptionDetail => ref.read(getPrescriptionDetailUseCaseProvider);
   CheckRedirectedIntakeUseCase get _checkRedirectedIntake => ref.read(checkRedirectedIntakeUseCaseProvider);
   CompleteRedirectedIntakeUseCase get _completeRedirectedIntake => ref.read(completeRedirectedIntakeUseCaseProvider);
-  GetCabinAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
+  GetStationAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
 
   Station? _currentStation;
 
@@ -101,21 +73,16 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     return const MasterIntakeUninitialized();
   }
 
-  /// Ekran açılışında çağrılır — istasyonu çözer, hastasız PatientSelection'a düşer.
-  Future<void> init(CabinVisualizerData data) async {
-    _cabinId = data.cabinId;
+  Future<void> init(StationCabinsContext ctx) async {
     _hospitalization = null;
     _hospitalizationId = null;
+    _currentStation = ctx.station;
+
     state = const MasterIntakeLoading();
 
-    // Önceki açık kuyruk/çekmece kalmışsa temizle.
     await _orchestrator.stop();
 
-    // İstasyon (şahit gerekliliği kararı için) — hata olsa da akış devam eder.
-    final stationResult = await _getStation.call();
-    stationResult.when(ok: (s) => _currentStation = s, error: (_) => _currentStation = null);
-
-    state = MasterIntakePatientSelection(cabinId: _cabinId);
+    state = MasterIntakePatientSelection();
   }
 
   /// `CabinPatientPickerPanel` üzerinden hasta seçildiğinde çağrılır. Tip,
@@ -125,7 +92,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     _hospitalization = hospitalization;
     _hospitalizationId = hospitalization.id;
 
-    // Hasta değişiminde önceki açık kuyruk/çekmece kalmışsa temizle.
     await _orchestrator.stop();
 
     state = const MasterIntakeLoading();
@@ -135,7 +101,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   Future<void> _loadItems({bool refreshAssignments = false}) async {
     final hospitalization = _hospitalization;
     if (hospitalization == null) {
-      state = MasterIntakePatientSelection(cabinId: _cabinId);
+      state = MasterIntakePatientSelection();
       return;
     }
 
@@ -154,20 +120,28 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         refreshAssignments: refreshAssignments,
         filter: filter,
       ),
-
-      cabinId: _cabinId,
     );
     result.when(
-      ok: (items) => state = MasterIntakeMedicineSelection(
-        cabinId: _cabinId,
-        hospitalization: hospitalization,
-        intakeType: _type,
-        items: items,
-      ),
+      ok: (items) {
+        // Filtre "Order Saati Gelenler" (ordersDue) ise, alınabilir tüm
+        // kalemler OTOMATİK seçili gelir — kullanıcı tek tek işaretlemek
+        // zorunda kalmaz. Diğer filtrelerde (all/upcoming/overdue/...) hiç
+        // otomatik seçim yapılmaz; o kalemler zaten UI'da seçilemez hale
+        // getirilir (bkz. RxOrdersContent onTap koşulu).
+        final autoSelectedIds = (_type.isOrderless || filter == PatientFilterType.ordersDue)
+            ? items.where((it) => !it.hasNoStock && !it.isRedirected).map((it) => it.id).toSet()
+            : const <int>{};
+
+        state = MasterIntakeMedicineSelection(
+          hospitalization: hospitalization,
+          intakeType: _type,
+          items: items,
+          selectedItemIds: autoSelectedIds,
+        );
+      },
       error: (e) => state = MasterIntakeError(
         failure: CabinApiFailure(message: e.message),
         previousState: MasterIntakeMedicineSelection(
-          cabinId: _cabinId,
           hospitalization: hospitalization,
           intakeType: _type,
           items: const [],
@@ -426,7 +400,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     }
 
     state = MasterIntakeExecuting(
-      cabinId: s.cabinId,
       hospitalization: s.hospitalization,
       intakeType: s.intakeType,
       jobs: jobs,
@@ -647,10 +620,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
     switch (current) {
       case MasterDrawerOpened():
-        // SADECE ana çekmece yeni fiziksel olarak açıldıysa ilk gözü otomatik
-        // aç - openCubicLid'in kendi Opened event'ini tekrar işlemek "aynı
-        // gözü sonsuza kadar yeniden aç" döngüsüne yol açar (bkz.
-        // master-refill-flow skill §6).
         if (previous is MasterDrawerWaitingForPull) {
           _onDrawerOpened();
         }
@@ -734,7 +703,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     }
 
     state = MasterIntakeExecuting(
-      cabinId: s.cabinId,
       hospitalization: s.hospitalization,
       intakeType: s.intakeType,
       jobs: completedJobs,
@@ -781,7 +749,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     }
 
     state = MasterIntakeExecuting(
-      cabinId: prev.cabinId,
       hospitalization: prev.hospitalization,
       intakeType: prev.intakeType,
       jobs: markedJobs,
@@ -835,12 +802,12 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       if (selectedHospitalization != null) {
         await ref.read(redirectedIntakeOrdersNotifierProvider.notifier).selectPatient(selectedHospitalization);
       }
-      state = MasterIntakePatientSelection(cabinId: _cabinId);
+      state = MasterIntakePatientSelection();
       return;
     }
 
     if (_hospitalization == null) {
-      state = MasterIntakePatientSelection(cabinId: _cabinId);
+      state = MasterIntakePatientSelection();
       return;
     }
     state = const MasterIntakeLoading();
@@ -1084,7 +1051,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     if (representativeHospitalization == null) return;
 
     state = MasterIntakeExecuting(
-      cabinId: state.cabinId,
       hospitalization: representativeHospitalization,
       intakeType: IntakeType.ordered,
       jobs: jobs,
@@ -1112,6 +1078,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   void resetToPatientSelection() {
     _hospitalization = null;
     _hospitalizationId = null;
-    state = MasterIntakePatientSelection(cabinId: _cabinId);
+    state = MasterIntakePatientSelection();
   }
 }

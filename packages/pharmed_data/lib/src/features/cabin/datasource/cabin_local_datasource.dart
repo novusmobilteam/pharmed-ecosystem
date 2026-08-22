@@ -166,8 +166,17 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
     final raw = box.get(_slotsKey(cabinId)) as String?;
     if (raw == null) return null;
 
-    final list = jsonDecode(raw) as List;
-    return list.map((e) => DrawerSlotDTO.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+    try {
+      final list = jsonDecode(raw) as List;
+      return list.map((e) => DrawerSlotDTO.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+    } catch (_) {
+      // Cache bozuk/eski şemadan kalma (örn. DTO alanları migrasyon sonrası
+      // değişmiş) — sessizce cache-miss'e düş, çağıran taraf remote'a gider.
+      // Bozuk kaydı da sil ki bir daha aynı hatayı vermesin.
+      await box.delete(_slotsKey(cabinId));
+      await box.delete(_slotsSavedAtKey(cabinId));
+      return null;
+    }
   }
 
   @override
@@ -192,8 +201,15 @@ class CabinLocalDataSource implements ICabinLocalDataSource {
     final box = await _unitBox();
     final raw = box.get(_unitsKey(slotId)) as String?;
     if (raw == null) return null;
-    final list = jsonDecode(raw) as List;
-    return list.map((e) => DrawerUnitDTO.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+
+    try {
+      final list = jsonDecode(raw) as List;
+      return list.map((e) => DrawerUnitDTO.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+    } catch (_) {
+      await box.delete(_unitsKey(slotId));
+      await box.delete(_unitsSavedAtKey(slotId));
+      return null;
+    }
   }
 
   @override

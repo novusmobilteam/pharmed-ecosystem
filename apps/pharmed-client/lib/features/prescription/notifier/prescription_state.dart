@@ -1,12 +1,3 @@
-// lib/features/prescription_screen/prescription_screen_state.dart
-//
-// [SWREQ-UI-PRESC-STATE-001]
-// Sınıf : Class A
-//
-// CabinStockState ile aynı hasta seçim akışı — fark:
-//   - prescriptionItems filtresiz (tüm statusler)
-//   - selectedItem yok (bu ekranda ilaç seçimi olmaz)
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 sealed class PrescriptionState {
@@ -18,21 +9,18 @@ final class PrescriptionUninitialized extends PrescriptionState {
 }
 
 final class PrescriptionLoading extends PrescriptionState {
-  const PrescriptionLoading({required this.cabinId});
-  final int cabinId;
+  const PrescriptionLoading();
 }
 
 final class PrescriptionIdle extends PrescriptionState {
-  const PrescriptionIdle({required this.cabinId, required this.hospitalizations, this.search = ''});
+  const PrescriptionIdle({required this.hospitalizations, this.search = ''});
 
-  final int cabinId;
   final List<Hospitalization> hospitalizations;
   final String search;
 }
 
 final class PrescriptionPatientSelected extends PrescriptionState {
   const PrescriptionPatientSelected({
-    required this.cabinId,
     required this.hospitalizations,
     required this.selectedPatient,
     required this.prescriptionItems,
@@ -40,7 +28,6 @@ final class PrescriptionPatientSelected extends PrescriptionState {
     this.isPrescriptionsLoading = false,
   });
 
-  final int cabinId;
   final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
 
@@ -58,7 +45,6 @@ final class PrescriptionPatientSelected extends PrescriptionState {
     Object? isPrescriptionsLoading = _sentinel,
   }) {
     return PrescriptionPatientSelected(
-      cabinId: cabinId,
       hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
@@ -82,14 +68,6 @@ final class PrescriptionError extends PrescriptionState {
 // ─────────────────────────────────────────────────────────────────────────────
 
 extension PrescriptionStateX on PrescriptionState {
-  int? get cabinId => switch (this) {
-    PrescriptionLoading(:final cabinId) => cabinId,
-    PrescriptionIdle(:final cabinId) => cabinId,
-    PrescriptionPatientSelected(:final cabinId) => cabinId,
-    PrescriptionError(:final previousState) => previousState.cabinId,
-    _ => null,
-  };
-
   List<Hospitalization> get hospitalizations => switch (this) {
     PrescriptionIdle(:final hospitalizations) => hospitalizations,
     PrescriptionPatientSelected(:final hospitalizations) => hospitalizations,

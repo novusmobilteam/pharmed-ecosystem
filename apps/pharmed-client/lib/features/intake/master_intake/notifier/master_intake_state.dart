@@ -47,9 +47,7 @@ final class MasterIntakeLoading extends MasterIntakeState {
 /// [PatientSelectionNotifier]'da yaşar (ortak, generalize edilebilir bileşen).
 /// Bu state yalnızca "hasta seçilmemiş" fazını temsil eder.
 final class MasterIntakePatientSelection extends MasterIntakeState {
-  const MasterIntakePatientSelection({required this.cabinId});
-
-  final int cabinId;
+  const MasterIntakePatientSelection();
 }
 
 // ── FAZ 2: İlaç seçimi ───────────────────────────────────────────────────────
@@ -57,7 +55,6 @@ final class MasterIntakePatientSelection extends MasterIntakeState {
 /// İlaç listesi gösteriliyor; kullanıcı seçim + doz + şahit yapıyor.
 final class MasterIntakeMedicineSelection extends MasterIntakeState {
   const MasterIntakeMedicineSelection({
-    required this.cabinId,
     required this.hospitalization,
     required this.intakeType,
     required this.items,
@@ -69,8 +66,6 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
     this.isChecking = false,
     this.isFetching = false,
   });
-
-  final int cabinId;
 
   /// Seçilen hasta (yatış). Orderless/urgent akışta da taşınır.
   final Hospitalization hospitalization;
@@ -130,7 +125,6 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
     Map<int, OtherStationCheckState>? otherStationStates,
   }) {
     return MasterIntakeMedicineSelection(
-      cabinId: cabinId,
       hospitalization: hospitalization,
       intakeType: intakeType,
       items: items ?? this.items,
@@ -150,7 +144,6 @@ final class MasterIntakeMedicineSelection extends MasterIntakeState {
 /// Alım kuyruğu işleniyor (sırayla çekmece açılır, sayım yapılır).
 final class MasterIntakeExecuting extends MasterIntakeState {
   const MasterIntakeExecuting({
-    required this.cabinId,
     required this.hospitalization,
     required this.intakeType,
     required this.jobs,
@@ -159,7 +152,6 @@ final class MasterIntakeExecuting extends MasterIntakeState {
     this.isSaving = false,
   });
 
-  final int cabinId;
   final Hospitalization hospitalization;
   final IntakeType intakeType;
 
@@ -181,6 +173,8 @@ final class MasterIntakeExecuting extends MasterIntakeState {
   // ── Türetilen ──────────────────────────────────────────────────────────
 
   IntakeDrawerJob? get currentJob => (currentIndex >= 0 && currentIndex < jobs.length) ? jobs[currentIndex] : null;
+
+  int? get currentCabinId => currentJob?.cabinId;
 
   /// Aktif step'in (aynı stockId'yi paylaşan hedef grubunun) temsilci hedefi.
   /// Kübik ve birim doz artık AYNI step-bazlı indekslemeyi kullanıyor —
@@ -210,7 +204,6 @@ final class MasterIntakeExecuting extends MasterIntakeState {
     bool? isSaving,
   }) {
     return MasterIntakeExecuting(
-      cabinId: cabinId,
       hospitalization: hospitalization,
       intakeType: intakeType,
       jobs: jobs ?? this.jobs,
@@ -239,15 +232,6 @@ final class MasterIntakeError extends MasterIntakeState {
 // ── Ortak erişim ────────────────────────────────────────────────────────────
 
 extension MasterIntakeStateX on MasterIntakeState {
-  /// Hasta bağlamı taşıyan tüm state'lerden cabinId.
-  int get cabinId => switch (this) {
-    MasterIntakePatientSelection(:final cabinId) => cabinId,
-    MasterIntakeMedicineSelection(:final cabinId) => cabinId,
-    MasterIntakeExecuting(:final cabinId) => cabinId,
-    MasterIntakeError(:final previousState) => previousState.cabinId,
-    _ => 0,
-  };
-
   /// Seçili hasta (varsa). PatientSelection / Loading / Uninitialized'da null.
   Hospitalization? get hospitalization => switch (this) {
     MasterIntakeMedicineSelection(:final hospitalization) => hospitalization,

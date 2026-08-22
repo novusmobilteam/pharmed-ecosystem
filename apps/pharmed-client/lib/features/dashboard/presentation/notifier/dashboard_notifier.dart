@@ -32,17 +32,16 @@ class DashboardNotifier extends Notifier<DashboardState> {
   GetCabinVisualizerDataUseCase get _getCabinVisualizer => ref.read(getCabinVisualizerDataUseCaseProvider);
   AppSettingsCache get _settings => ref.read(appSettingsCacheProvider);
 
+  bool _cabinDesignsVerifiedThisSession = false;
+
   /// Kabin seçimi gerektiren route'lar — bu listedeki bir hedefe navigateTo
   /// çağrıldığında doğrudan gidilmez, önce CabinSelectionView gösterilir.
   static const _cabinScopedRoutes = {
     'drug-assignment',
     'drug-refill',
-    'drug-intake',
     'drug-unload',
     'drug-census',
     'drawer-malfunction',
-    'drug-return',
-    'drug-waste',
     'cabin-stock',
     'drug-destruction',
     'return-box-unload',
@@ -56,20 +55,64 @@ class DashboardNotifier extends Notifier<DashboardState> {
   }
 
   Future<void> initialize() async {
-    await Future.wait([_fetchMenus(), _load()]);
+    final shouldForceRefresh = !_cabinDesignsVerifiedThisSession;
+
+    await Future.wait([_fetchMenus(), _loadPrimary(forceRefresh: shouldForceRefresh)]);
+    _cabinDesignsVerifiedThisSession = true;
 
     if (await _settings.isSetupComplete()) {
       ref.read(cabinConnectionProvider.notifier).connect();
     }
+
+    unawaited(_loadSecondary());
   }
 
-  Future<void> refresh() => _load();
+  Future<void> refresh({required bool forceRefresh}) =>
+      Future.wait([_loadPrimary(forceRefresh: forceRefresh), _loadSecondary()]);
 
-  Future<void> _load() async {
-    final mac = await DeviceInfo.getMacAddress();
+  /// Dashboard'un İLK RENDER'I için gereken veri: kurulum durumu, cihaz modu
+  /// ve istasyondaki kabinlerin görselleştirme verisi. Diğer section'lar
+  /// BURADA ÇEKİLMEZ.
+  Future<void> _loadPrimary({required bool forceRefresh}) async {
     final setupDone = await _settings.isSetupComplete();
-
     final deviceMode = setupDone ? await _resolveDeviceMode() : null;
+
+    final (station, stationCabins, cabinData, cabinFailed) = setupDone
+        ? await _loadAllCabinVisualizers(forceRefresh: forceRefresh)
+        : (null, <Cabin>[], <int, CabinVisualizerData>{}, false);
+
+    // İstasyonun kendisi çekilemediyse (kabin listesi boş + failed=true) → hard error.
+    if (setupDone && stationCabins.isEmpty && cabinFailed) {
+      state = DashboardError(message: contextlessL10n().dashboard_allSectionsLoadError);
+      return;
+    }
+
+    final current = state;
+    state = current is DashboardLoaded
+        ? current.copyWith(
+            data: current.data.copyWith(
+              station: station,
+              stationCabins: stationCabins,
+              cabinVisualizerDataByCabinId: cabinData,
+              cabinDataFailed: cabinFailed,
+            ),
+            deviceMode: deviceMode,
+          )
+        : DashboardLoaded(
+            data: DashboardData(
+              station: station!,
+              stationCabins: stationCabins,
+              cabinVisualizerDataByCabinId: cabinData,
+              cabinDataFailed: cabinFailed,
+            ),
+            deviceMode: deviceMode,
+          );
+  }
+
+  /// İkincil section'lar: tedavi listesi, ilaç aktiviteleri, bekleyen
+  /// reçeteler, oda/yatak/servis. _loadPrimary() bitmeden bunlara başlanmaz.
+  Future<void> _loadSecondary() async {
+    final mac = await DeviceInfo.getMacAddress();
 
     final results = await Future.wait([
       _getUpcomingTreatments.call(mac: mac),
@@ -80,38 +123,22 @@ class DashboardNotifier extends Notifier<DashboardState> {
       ref.read(allServicesProvider.future),
     ]);
 
-    final treatmentsResult = results[0] as Result<List<PrescriptionItem>>;
-    final activitiesResult = results[1] as Result<List<PrescriptionItemMovement>?>;
-    final unappliedResult = results[2] as Result<List<PrescriptionItem>>;
-
-    final treatmentsSection = _toSection<List<PrescriptionItem>?>(treatmentsResult);
-    final activitiesSection = _toSection<List<PrescriptionItemMovement>?>(activitiesResult);
-    final unappliedSection = _toSection<List<PrescriptionItem>?>(unappliedResult);
-
-    final (stationCabins, cabinData, cabinFailed) = setupDone
-        ? await _loadAllCabinVisualizers()
-        : (<Cabin>[], <int, CabinVisualizerData>{}, false);
-
-    final allFailed = treatmentsSection.data == null && activitiesSection.data == null && (setupDone && cabinFailed);
-
-    if (allFailed) {
-      state = DashboardError(message: contextlessL10n().dashboard_allSectionsLoadError);
-      return;
-    }
-
-    final data = DashboardData(
-      upcomingTreatments: treatmentsSection,
-      drugActivities: activitiesSection,
-      unappliedPrescriptions: unappliedSection,
-      stationCabins: stationCabins,
-      cabinVisualizerDataByCabinId: cabinData,
-      cabinDataFailed: cabinFailed,
+    final treatmentsSection = _toSection<List<PrescriptionItem>?>(results[0] as Result<List<PrescriptionItem>>);
+    final activitiesSection = _toSection<List<PrescriptionItemMovement>?>(
+      results[1] as Result<List<PrescriptionItemMovement>?>,
     );
+    final unappliedSection = _toSection<List<PrescriptionItem>?>(results[2] as Result<List<PrescriptionItem>>);
 
     final current = state;
-    state = current is DashboardLoaded
-        ? current.copyWith(data: data, deviceMode: deviceMode)
-        : DashboardLoaded(data: data, deviceMode: deviceMode);
+    if (current is! DashboardLoaded) return; // primary hataya düştüyse burada duracak bir şey yok
+
+    state = current.copyWith(
+      data: current.data.copyWith(
+        upcomingTreatments: treatmentsSection,
+        drugActivities: activitiesSection,
+        unappliedPrescriptions: unappliedSection,
+      ),
+    );
   }
 
   /// [cachedDeviceModeProvider] ile aynı parse mantığı — notifier'ın kendi
@@ -129,29 +156,40 @@ class DashboardNotifier extends Notifier<DashboardState> {
   ///
   /// Dönüş: (cabinId->data haritası, en az bir kabin başarısız oldu mu).
   /// İstasyon çekilemezse (kendisi de başarısız) → boş harita + failed=true.
-  Future<(List<Cabin>, Map<int, CabinVisualizerData>, bool)> _loadAllCabinVisualizers() async {
+  Future<(Station?, List<Cabin>, Map<int, CabinVisualizerData>, bool)> _loadAllCabinVisualizers({
+    bool forceRefresh = true,
+  }) async {
     final stationResult = await _getCurrentStation.call();
     final station = stationResult.when(ok: (s) => s, error: (_) => null);
 
     if (station == null || station.cabins.isEmpty) {
-      return (<Cabin>[], <int, CabinVisualizerData>{}, true);
+      return (null, <Cabin>[], <int, CabinVisualizerData>{}, true);
     }
-
-    final results = await Future.wait(
-      station.cabins.where((c) => c.id != null).map((cabin) async {
-        final result = await _getCabinVisualizer.call(deviceMode: cabin.type, cabinId: cabin.id, forceRefresh: true);
-        return (cabin.id!, result);
-      }),
-    );
 
     final map = <int, CabinVisualizerData>{};
     var anyFailed = false;
 
-    for (final (cabinId, result) in results) {
-      result.when(ok: (data) => map[cabinId] = data, error: (_) => anyFailed = true);
+    // Tüm kabinleri aynı anda değil, 2'şerli gruplar halinde çek —
+    // Dio connection pool'unu tek seferde doldurmamak için.
+    final cabinsWithId = station.cabins.where((c) => c.id != null).toList();
+    for (var i = 0; i < cabinsWithId.length; i += 2) {
+      final batch = cabinsWithId.skip(i).take(2);
+      final batchResults = await Future.wait(
+        batch.map((cabin) async {
+          final result = await _getCabinVisualizer.call(
+            deviceMode: cabin.type,
+            cabin: cabin,
+            forceRefresh: forceRefresh,
+          );
+          return (cabin.id!, result);
+        }),
+      );
+      for (final (cabinId, result) in batchResults) {
+        result.when(ok: (data) => map[cabinId] = data, error: (_) => anyFailed = true);
+      }
     }
 
-    return (station.cabins, map, anyFailed);
+    return (station, station.cabins, map, anyFailed);
   }
 
   /// Sadece kabin verisini yeniden çeker — diğer section'lara dokunmaz.
@@ -160,10 +198,11 @@ class DashboardNotifier extends Notifier<DashboardState> {
     final current = state;
     if (current is! DashboardLoaded) return;
 
-    final (stationCabins, cabinData, cabinFailed) = await _loadAllCabinVisualizers();
+    final (station, stationCabins, cabinData, cabinFailed) = await _loadAllCabinVisualizers();
 
     state = current.copyWith(
       data: current.data.copyWith(
+        station: station,
         stationCabins: stationCabins,
         cabinVisualizerDataByCabinId: cabinData,
         cabinDataFailed: cabinFailed,
@@ -182,7 +221,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
     final cabin = current.data.stationCabins.firstWhereOrNull((c) => c.id == cabinId);
     if (cabin == null) return;
 
-    final result = await _getCabinVisualizer.call(deviceMode: cabin.type, cabinId: cabinId, forceRefresh: true);
+    final result = await _getCabinVisualizer.call(deviceMode: cabin.type, cabin: cabin, forceRefresh: true);
 
     final data = result.when(ok: (d) => d, error: (_) => null);
     if (data == null) return; // hata → mevcut (eski) veriyi koru, sessizce geç

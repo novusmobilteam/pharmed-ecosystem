@@ -234,7 +234,7 @@ class _KubikPreviewGrid extends StatelessWidget {
           mainAxisExtent: _cellExtent,
         ),
         itemCount: compartmentCount,
-        itemBuilder: (_, __) => Container(
+        itemBuilder: (_, _) => Container(
           decoration: BoxDecoration(
             color: MedColors.surface2,
             border: Border.all(color: MedColors.border2),

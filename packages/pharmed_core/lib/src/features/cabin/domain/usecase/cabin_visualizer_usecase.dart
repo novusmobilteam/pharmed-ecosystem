@@ -16,19 +16,29 @@ class GetCabinVisualizerDataUseCase {
   final GetMasterCabinFaultRecordsUseCase _getMasterFaults;
   final GetMobileCabinFaultRecordsUseCase _getMobileFaults;
 
-  Future<Result<CabinVisualizerData>> call({CabinType? deviceMode, int? cabinId, bool forceRefresh = false}) async {
+  Future<Result<CabinVisualizerData>> call({
+    required Cabin cabin,
+    CabinType? deviceMode,
+    bool forceRefresh = false,
+  }) async {
+    final cabinId = cabin.id;
+
     if (cabinId == null) {
       return Result.error(ServiceException(message: contextlessL10n().cabinCore_activeCabinNotFound, statusCode: 404));
     }
 
     if (deviceMode == CabinType.mobile) {
-      return _buildMobileVisualizer(cabinId, forceRefresh: forceRefresh);
+      return _buildMobileVisualizer(cabin, cabinId, forceRefresh: forceRefresh);
     }
 
-    return _buildStandardVisualizer(cabinId, forceRefresh: forceRefresh);
+    return _buildStandardVisualizer(cabin, cabinId, forceRefresh: forceRefresh);
   }
 
-  Future<Result<CabinVisualizerData>> _buildMobileVisualizer(int cabinId, {required bool forceRefresh}) async {
+  Future<Result<CabinVisualizerData>> _buildMobileVisualizer(
+    Cabin cabin,
+    int cabinId, {
+    required bool forceRefresh,
+  }) async {
     final results = await Future.wait([
       _cabinRepository.getMobileCabinSlots(cabinId, forceRefresh: forceRefresh),
       _getMobileFaults.call(cabinId),
@@ -61,7 +71,7 @@ class GetCabinVisualizerDataUseCase {
     }).toList();
 
     final data = CabinVisualizerData(
-      cabinId: cabinId,
+      cabin: cabin,
       slots: slotVisuals,
       mobileSlots: slots,
       groups: const [],
@@ -72,7 +82,11 @@ class GetCabinVisualizerDataUseCase {
     return Result.ok(data);
   }
 
-  Future<Result<CabinVisualizerData>> _buildStandardVisualizer(int cabinId, {required bool forceRefresh}) async {
+  Future<Result<CabinVisualizerData>> _buildStandardVisualizer(
+    Cabin cabin,
+    int cabinId, {
+    required bool forceRefresh,
+  }) async {
     final (slotResult, faultResult) = await (
       _cabinRepository.getCabinSlots(cabinId, forceRefresh: forceRefresh),
       _getMasterFaults.call(cabinId),
@@ -116,7 +130,7 @@ class GetCabinVisualizerDataUseCase {
     final slotVisuals = _buildSlots(groups);
 
     final data = CabinVisualizerData(
-      cabinId: cabinId,
+      cabin: cabin,
       slots: slotVisuals,
       groups: groups,
       stocks: const [],

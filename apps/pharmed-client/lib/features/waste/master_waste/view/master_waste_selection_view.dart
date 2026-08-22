@@ -1,8 +1,6 @@
-// [SWREQ-CLI-MWASTE-003] [IEC 62304 §5.5]
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
+
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
@@ -20,14 +18,19 @@ class MasterWasteSelectionView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(masterWasteNotifierProvider.notifier);
 
-    return CabinOperationSelectionLayout(
-      leftWidth: 440,
-      left: PatientSelectionPanel(
-        selectedPatient: ref.watch(masterWasteNotifierProvider).hospitalization,
-        onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
-        config: PatientSelectionConfig(showFilters: false),
-      ),
-      right: _buildMedicineContent(context, ref),
+    return Row(
+      spacing: 12.0,
+      children: [
+        Expanded(
+          flex: 2,
+          child: PatientSelectionPanel(
+            selectedPatient: ref.watch(masterWasteNotifierProvider).hospitalization,
+            onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
+            config: PatientSelectionConfig(showFilters: false),
+          ),
+        ),
+        Expanded(flex: 7, child: _buildMedicineContent(context, ref)),
+      ],
     );
   }
 
@@ -86,7 +89,7 @@ class MasterWasteSelectionView extends ConsumerWidget {
 
                   stepper: (isSelected)
                       ? RxCardStepper(
-                          value: item.dosePiece.toDouble(),
+                          value: (selection!.amounts[item.id] ?? item.dosePiece).toDouble(),
                           unit: unit,
                           max: item.dosePiece.toDouble(),
                           onChanged: (v) => notifier.updateAmount(item.id, v),
@@ -120,11 +123,12 @@ class MasterWasteSelectionView extends ConsumerWidget {
             ),
       footer: (selection != null && selection.selectedItems.isNotEmpty)
           ? Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               spacing: 12.0,
               children: [
                 MedButton(
                   label: context.l10n.waste_action_wastage,
-                  isLoading: selection.isSubmitting,
+                  isLoading: selection.submittingType == DisposeType.wastage,
                   suffixIcon: Icon(PhosphorIcons.arrowRight()),
                   variant: MedButtonVariant.secondary,
                   onPressed: selection.canStart
@@ -136,7 +140,7 @@ class MasterWasteSelectionView extends ConsumerWidget {
                 ),
                 MedButton(
                   label: context.l10n.waste_action_destruction,
-                  isLoading: selection.isSubmitting,
+                  isLoading: selection.submittingType == DisposeType.destruction,
                   variant: MedButtonVariant.secondary,
                   suffixIcon: Icon(PhosphorIcons.arrowRight()),
                   onPressed: selection.canStart

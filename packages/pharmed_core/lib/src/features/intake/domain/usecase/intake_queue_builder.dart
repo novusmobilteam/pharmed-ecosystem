@@ -29,6 +29,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 abstract final class IntakeQueueBuilder {
   static int? resolveStepNoForTarget(IntakeTarget target) => _resolveRequiredStepNo([target]);
+  static int? _cabinId(MedicineAssignment? a) => a?.drawerUnit?.drawerSlot?.cabinId;
 
   /// [targets] içindeki her hedef bir item'ın alım planıdır. Bunları fiziksel
   /// çekmece bazında gruplayıp sıralı kuyruk döndürür.
@@ -56,6 +57,7 @@ abstract final class IntakeQueueBuilder {
           representativeAssignment: jobTargets.first.assignment!,
           targets: jobTargets,
           requiredStepNo: _resolveRequiredStepNo(jobTargets),
+          cabinId: _cabinId(jobTargets.first.assignment),
         ),
       );
     });

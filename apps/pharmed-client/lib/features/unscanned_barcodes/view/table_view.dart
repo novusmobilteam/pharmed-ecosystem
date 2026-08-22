@@ -9,7 +9,7 @@ class TableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedTable(
+    return MedTable<PrescriptionItem>(
       data: items,
       isLoading: isLoading,
       emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
@@ -22,6 +22,7 @@ class TableView extends StatelessWidget {
       onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
 
       columnDefs: _buildColumnDefs(context),
+      actions: [TableActionItem(icon: PhosphorIcons.qrCode(), tooltip: 'Karekod Okut', onPressed: print)],
     );
   }
 }

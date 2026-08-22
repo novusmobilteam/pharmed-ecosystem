@@ -16,15 +16,15 @@ import 'package:pharmed_core/pharmed_core.dart';
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../auth/auth.dart';
+import '../../../dashboard/dashboard.dart';
 import 'master_waste_state.dart';
 
 final masterWasteNotifierProvider = NotifierProvider<MasterWasteNotifier, MasterWasteState>(MasterWasteNotifier.new);
 
 class MasterWasteNotifier extends Notifier<MasterWasteState> {
-  int _cabinId = 0;
   Hospitalization? _hospitalization;
-  Station? _currentStation;
 
+  Station? _currentStation;
   Station? get currentStation => _currentStation;
 
   GetMasterDisposablesUseCase get _getDisposables => ref.read(getMasterDisposablesUseCaseProvider);
@@ -35,15 +35,16 @@ class MasterWasteNotifier extends Notifier<MasterWasteState> {
   @override
   MasterWasteState build() => const MasterWasteUninitialized();
 
-  Future<void> init(CabinVisualizerData data) async {
-    _cabinId = data.cabinId;
+  Future<void> init(StationCabinsContext ctx) async {
     _hospitalization = null;
+    _currentStation = ctx.station;
+
     state = const MasterWasteLoading();
 
     final stationResult = await _getStation.call();
     stationResult.when(ok: (s) => _currentStation = s, error: (_) => _currentStation = null);
 
-    state = MasterWastePatientSelection(cabinId: _cabinId);
+    state = MasterWastePatientSelection();
   }
 
   Future<void> selectPatient(Hospitalization hospitalization) async {
@@ -55,21 +56,16 @@ class MasterWasteNotifier extends Notifier<MasterWasteState> {
   Future<void> _loadItems() async {
     final hospitalization = _hospitalization;
     if (hospitalization == null) {
-      state = MasterWastePatientSelection(cabinId: _cabinId);
+      state = MasterWastePatientSelection();
       return;
     }
 
     final result = await _getDisposables.call(hospitalization.id ?? 0);
     result.when(
-      ok: (items) =>
-          state = MasterWasteMedicineSelection(cabinId: _cabinId, hospitalization: hospitalization, items: items),
+      ok: (items) => state = MasterWasteMedicineSelection(hospitalization: hospitalization, items: items),
       error: (e) => state = MasterWasteError(
         failure: CabinApiFailure(message: e.message),
-        previousState: MasterWasteMedicineSelection(
-          cabinId: _cabinId,
-          hospitalization: hospitalization,
-          items: const [],
-        ),
+        previousState: MasterWasteMedicineSelection(hospitalization: hospitalization, items: const []),
       ),
     );
   }
@@ -184,7 +180,7 @@ class MasterWasteNotifier extends Notifier<MasterWasteState> {
       return;
     }
 
-    state = s.copyWith(isSubmitting: true);
+    state = s.copyWith(submittingType: type);
 
     for (final item in selected) {
       final ok = await _submitOne(item, type, s.amountFor(item.id));

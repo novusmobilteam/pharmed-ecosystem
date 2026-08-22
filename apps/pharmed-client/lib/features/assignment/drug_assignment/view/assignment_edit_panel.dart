@@ -67,7 +67,7 @@ class _MedicineSelectionPanel extends StatelessWidget {
               ? const EmptyStateWidget(variant: EmptyStateVariant.noResults, size: EmptyStateSize.compact)
               : ListView.separated(
                   itemCount: page.items.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1, color: MedColors.border2),
+                  separatorBuilder: (_, _) => const Divider(height: 1, color: MedColors.border2),
                   itemBuilder: (context, index) {
                     final medicine = page.items[index];
                     return _MedicineListItem(

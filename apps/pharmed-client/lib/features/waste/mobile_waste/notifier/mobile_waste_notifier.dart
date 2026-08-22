@@ -23,7 +23,7 @@ class MobileWasteNotifier extends Notifier<MobileWasteState> {
   Future<void> init(int cabinId) async {
     state = const MobileWasteLoading();
 
-    final result = await _getBedAssignments.call(cabinId);
+    final result = await _getBedAssignments.call();
 
     await result.when(
       ok: (assignments) async {

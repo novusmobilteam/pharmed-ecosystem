@@ -138,7 +138,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
     // kullanmıyoruz.
     final state = switch (rawState) {
       PatientSelectionReady r => r,
-      PatientSelectionError(previousState: final p) when p is PatientSelectionReady => p,
+      PatientSelectionError(previousState: final p) => p,
       _ => null,
     };
 

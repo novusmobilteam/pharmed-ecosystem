@@ -24,13 +24,11 @@ final class MasterRefundLoading extends MasterRefundState {
 }
 
 final class MasterRefundPatientSelection extends MasterRefundState {
-  const MasterRefundPatientSelection({required this.cabinId});
-  final int cabinId;
+  const MasterRefundPatientSelection();
 }
 
 final class MasterRefundMedicineSelection extends MasterRefundState {
   const MasterRefundMedicineSelection({
-    required this.cabinId,
     required this.hospitalization,
     required this.items,
     this.selectedItemIds = const {},
@@ -39,7 +37,6 @@ final class MasterRefundMedicineSelection extends MasterRefundState {
     this.isChecking = false,
   });
 
-  final int cabinId;
   final Hospitalization hospitalization;
 
   /// Kullanıcının GİRDİĞİ iade miktarı artık item'ın kendi returnQuantity
@@ -94,7 +91,6 @@ final class MasterRefundMedicineSelection extends MasterRefundState {
     bool? isChecking,
   }) {
     return MasterRefundMedicineSelection(
-      cabinId: cabinId,
       hospitalization: hospitalization,
       items: items ?? this.items,
       selectedItemIds: selectedItemIds ?? this.selectedItemIds,
@@ -107,14 +103,12 @@ final class MasterRefundMedicineSelection extends MasterRefundState {
 
 final class MasterRefundExecuting extends MasterRefundState {
   const MasterRefundExecuting({
-    required this.cabinId,
     required this.jobs,
     this.currentIndex = 0,
     this.currentTargetIndex = 0,
     this.isSaving = false,
   });
 
-  final int cabinId;
   final List<RefundDrawerJob> jobs;
   final int currentIndex;
   final int currentTargetIndex;
@@ -129,6 +123,8 @@ final class MasterRefundExecuting extends MasterRefundState {
 
   double get progress => jobs.isEmpty ? 0 : currentIndex / jobs.length;
 
+  int? get currentCabinId => currentJob?.cabinId;
+
   MasterRefundExecuting copyWith({
     List<RefundDrawerJob>? jobs,
     int? currentIndex,
@@ -136,7 +132,6 @@ final class MasterRefundExecuting extends MasterRefundState {
     bool? isSaving,
   }) {
     return MasterRefundExecuting(
-      cabinId: cabinId,
       jobs: jobs ?? this.jobs,
       currentIndex: currentIndex ?? this.currentIndex,
       currentTargetIndex: currentTargetIndex ?? this.currentTargetIndex,

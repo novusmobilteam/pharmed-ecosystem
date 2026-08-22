@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
+
 import 'package:pharmed_client/widgets/rx_operation_card/rx_operation_card_2.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -13,7 +12,9 @@ import '../notifier/master_refund_notifier.dart';
 import '../notifier/master_refund_state.dart';
 
 class MasterRefundSelectionView extends ConsumerWidget {
-  const MasterRefundSelectionView({super.key});
+  const MasterRefundSelectionView({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,6 +58,7 @@ class MasterRefundSelectionView extends ConsumerWidget {
     final checkStatuses = selection?.checkStatuses ?? const {};
 
     return CabinSelectionContentShell(
+      menu: menu,
       searchQuery: selection?.search ?? '',
       onSearchQueryChanged: notifier.onSearchChanged,
       searchHint: context.l10n.refund_hint_searchMedicine,
@@ -95,6 +97,7 @@ class MasterRefundSelectionView extends ConsumerWidget {
                   barcode: item.medicine?.barcode,
                   isSelected: isSelected,
                   onTap: () => notifier.toggleItem(item.id),
+                  statusChip: returnType != null ? RxCardChip(label: returnType.label, tone: MedTone.info) : null,
 
                   //onTap: () => print(isHardwareType),
                   statusRow: switch (checkStatus) {
@@ -120,14 +123,14 @@ class MasterRefundSelectionView extends ConsumerWidget {
                       ? RxCardNote(label: context.l10n.medicine_fieldReturnNote, text: refundNote)
                       : null,
 
-                  // stepper: (isSelected)
-                  //     ? RxCardStepper(
-                  //         value: currentAmount.toDouble(),
-                  //         unit: unit,
-                  //         max: item.appliedQuantity.toDouble(),
-                  //         onChanged: (v) => notifier.updateAmount(item.id, v),
-                  //       )
-                  //     : null,
+                  stepper: (isSelected)
+                      ? RxCardStepper(
+                          value: currentAmount.toDouble(),
+                          unit: unit,
+                          max: item.appliedQuantity.toDouble(),
+                          onChanged: (v) => notifier.updateAmount(item.id, v),
+                        )
+                      : null,
                   movements: [
                     if (item.lastMovement case final m?)
                       RxCardMovement(

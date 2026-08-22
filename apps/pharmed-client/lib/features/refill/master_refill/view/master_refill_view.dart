@@ -1,33 +1,16 @@
-// [SWREQ-CLI-MREFILL-004] [IEC 62304 §5.5]
-// İlaç-merkezli master kabin dolum ekranının root view'ı.
-//
-// HMI tek-iş prensibi: her an ekranda TEK panel tam ekran gösterilir.
-//   - Selection fazı → MasterRefillSelectionPanel
-//   - Executing fazı → MasterRefillExecutionPanel (çekmece açılıyor / form)
-// Panel geçişi state tipine göre yapılır; iki panel asla yan yana durmaz.
-//
-// Sorumluluk:
-//   - CabinVisualizerData ile MasterRefillNotifier'ı initialize eder
-//   - Kuyruk hatası dialog'unu yönetir
-//   - MasterDrawerOperationWrapper ile sarar (sol alt köşe çekmece banner'ı)
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/hardware/hardware.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../widgets/widgets.dart';
+import '../../../dashboard/dashboard.dart';
 import '../../refill.dart';
 
 class MasterRefillView extends ConsumerStatefulWidget {
-  const MasterRefillView({super.key, this.data, required this.menu});
+  const MasterRefillView({super.key, required this.cabinContext});
 
-  final CabinVisualizerData? data;
-  final MenuItem menu;
+  final CabinRouteContext cabinContext;
 
   @override
   ConsumerState<MasterRefillView> createState() => _MasterRefillViewState();
@@ -35,9 +18,24 @@ class MasterRefillView extends ConsumerStatefulWidget {
 
 class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
   @override
+  void initState() {
+    super.initState();
+
+    final notifier = ref.read(masterRefillNotifierProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      notifier.init(widget.cabinContext);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(masterRefillNotifierProvider);
     final notifier = ref.read(masterRefillNotifierProvider.notifier);
+    final isExecuting =
+        state is MasterRefillExecuting || (state is MasterRefillError && state.previousState is MasterRefillExecuting);
+    final isLoading = state is MasterRefillLoading;
+    final cabinData = widget.cabinContext.cabinData;
 
     ref.listen(masterRefillNotifierProvider, (_, next) {
       if (next is MasterRefillError && next.isQueueError) {
@@ -61,19 +59,18 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
       }
     });
 
-    return MasterCabinRootScaffold<CabinVisualizerData, MasterRefillState>(
-      data: widget.data,
-      cabinIdOf: (d) => d.cabinId,
-      onInit: (d) => notifier.init(d),
-      state: state,
-      phaseOf: (s) => switch (s) {
-        MasterRefillUninitialized() || MasterRefillLoading() => const RootBooting(),
-        MasterRefillExecuting() => const RootExecuting(),
-        MasterRefillError(previousState: MasterRefillExecuting()) => const RootExecuting(),
-        _ => const RootSelection(),
-      },
-      selectionBuilder: (_) => MasterRefillSelectionView(allGroups: widget.data?.groups ?? const [], menu: widget.menu),
-      executionBuilder: (_) => MasterRefillExecutionView(allGroups: widget.data?.groups ?? const []),
-    );
+    if (cabinData == null) {
+      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
+    }
+
+    if (isLoading) {
+      return Center(child: MedLoadingIndicator());
+    }
+
+    if (isExecuting) {
+      return MasterRefillExecutionView(allGroups: cabinData.groups);
+    }
+
+    return MasterRefillSelectionView(cabinContext: widget.cabinContext);
   }
 }

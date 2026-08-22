@@ -42,7 +42,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
     state = BedAssignmentLoading(slots: slots, cabinId: data.cabinId);
 
     // 1. Kabin + atamalar paralel çek
-    final results = await Future.wait([_getCabin.call(data.cabinId), _getAssignments.call(data.cabinId)]);
+    final results = await Future.wait([_getCabin.call(data.cabinId), _getAssignments.call()]);
 
     final cabinResult = results[0] as Result<Cabin?>;
     final assignmentResult = results[1] as Result<List<BedAssignment>>;
@@ -284,7 +284,7 @@ class BedAssignmentNotifier extends Notifier<BedAssignmentState> {
     required int cabinId,
     required bool isCreated,
   }) async {
-    final result = await _getAssignments.call(cabinId);
+    final result = await _getAssignments.call();
 
     state = result.when(
       ok: (assignments) => BedAssignmentSuccess(

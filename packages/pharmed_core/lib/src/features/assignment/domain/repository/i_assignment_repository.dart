@@ -16,8 +16,8 @@ abstract class IAssignmentRepository {
   /// Belirtilen ilaca ait tüm kabin atamalarını getirir.
   Future<Result<List<MedicineAssignment>>> getMaterialAssignment(int materialId);
 
-  /// Giriş yapılan kabine ataması yapılmış ilaçları getirir.
-  Future<Result<List<MedicineAssignment>>> getCabinAssignments({int? cabinId});
+  /// Giriş yapılan istasyona ataması yapılmış ilaçları getirir.
+  Future<Result<List<MedicineAssignment>>> getStationAssignments();
 
   /// Belirtilen kabine ataması yapılmış ilaçları getirir.
   Future<Result<List<MedicineAssignment>>> getCabinAssignmentsWithCabinId(int cabinId);
@@ -29,7 +29,7 @@ abstract class IAssignmentRepository {
   Future<Result<List<MedicineAssignment>>> getIndependentMaterials();
 
   /// Belirtilen kabindeki tüm yatak atamalarını getirir.
-  Future<Result<List<BedAssignment>>> getBedAssignments(int cabinId);
+  Future<Result<List<BedAssignment>>> getBedAssignments();
 
   /// Mobil kabin gözüne yatak ataması yapar.
   Future<Result<void>> createBedAssignment(BedAssignment entity);

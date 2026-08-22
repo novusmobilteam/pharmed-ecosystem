@@ -1,71 +1,34 @@
-// lib/features/my_patients/view/my_patients_screen.dart
-//
-// [SWREQ-UI-MYPATIENTS-VIEW-001]
-// Sınıf : Class A
-//
-// Sol : AllPatientsPanel  — kabindeki tüm hastalar, + butonu
-// Sağ : MyPatientsPanel   — benim hastalarım, — butonu
-//
-// Sağ listede olan bir hasta sol listede Opacity(0.4) + onAdd:null ile
-// pasif gösterilir; tıklanamaz.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_card.dart';
 import '../../../widgets/widgets.dart';
 
+import '../../dashboard/dashboard.dart';
 import '../notifier/my_patients_notifier.dart';
 import '../notifier/my_patients_state.dart';
 
-class MyPatientsScreen extends ConsumerWidget {
-  const MyPatientsScreen({super.key, required this.menu, this.cabinData, this.deviceMode});
+class MyPatientsScreen extends ConsumerStatefulWidget {
+  const MyPatientsScreen({super.key, this.cabinRouteContext});
 
-  final MenuItem menu;
-  final CabinVisualizerData? cabinData;
-  final CabinType? deviceMode;
+  final CabinRouteContext? cabinRouteContext;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = cabinData?.cabinId;
-
-    if (cabinId == null) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
-    }
-
-    return _MyPatientsBodyView(cabinId: cabinData!.cabinId, menu: menu);
-  }
+  ConsumerState<MyPatientsScreen> createState() => MyPatientsScreenState();
 }
 
-class _MyPatientsBodyView extends ConsumerStatefulWidget {
-  const _MyPatientsBodyView({required this.cabinId, required this.menu});
-
-  final int cabinId;
-  final MenuItem menu;
-
-  @override
-  ConsumerState<_MyPatientsBodyView> createState() => _MyPatientsBodyViewState();
-}
-
-class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
+class MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
   @override
   void initState() {
     super.initState();
-    _initialize(widget.cabinId);
+    _initialize(widget.cabinRouteContext);
   }
 
-  @override
-  void didUpdateWidget(_MyPatientsBodyView old) {
-    super.didUpdateWidget(old);
-    _initialize(widget.cabinId);
-  }
-
-  void _initialize(int cabinId) {
+  void _initialize(CabinRouteContext? cabinRouteContext) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(myPatientsNotifierProvider.notifier).init(cabinId);
+      ref.read(myPatientsNotifierProvider.notifier).init(cabinRouteContext);
     });
   }
 
@@ -85,10 +48,18 @@ class _MyPatientsBodyViewState extends ConsumerState<_MyPatientsBodyView> {
       return const Center(child: MedLoadingIndicator());
     }
 
-    return CabinOperationSelectionLayout(
-      leftWidth: 440,
-      left: _AllPatientsPanel(state: state, notifier: notifier),
-      right: _MyPatientsPanel(state: state, notifier: notifier),
+    return Row(
+      spacing: 12.0,
+      children: [
+        Expanded(
+          flex: 2,
+          child: _AllPatientsPanel(state: state, notifier: notifier),
+        ),
+        Expanded(
+          flex: 7,
+          child: _MyPatientsPanel(state: state, notifier: notifier),
+        ),
+      ],
     );
   }
 }
@@ -170,16 +141,23 @@ class _MyPatientsPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final myPatients = state.myPatients;
-    return CabinOperationGrid(
-      maxColumns: 3,
+
+    if (myPatients.isEmpty) {
+      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noData));
+    }
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisExtent: 150,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+      ),
       itemCount: myPatients.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (BuildContext context, int index) {
         final mp = myPatients[index];
         final h = mp.hospitalization;
-        //if (h == null) return const SizedBox.shrink();
         final hospId = h?.id;
         final isPending = hospId != null && state.isPending(hospId);
-
         return PatientSelectionCard(
           hospitalization: h ?? Hospitalization(),
           onTap: () {},

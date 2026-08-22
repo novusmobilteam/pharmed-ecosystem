@@ -1,19 +1,3 @@
-// lib/features/cabin/presentation/screen/drug_assignment_view.dart
-//
-// [SWREQ-UI-CAB-005]
-// İlaç bazlı atama ekranı.
-//
-// Sol panel:  CabinOverviewPanel    — çekmece listesi
-// Orta panel: DrawerDetailPanel     — seçili çekmece içeriği
-// Sağ panel:  OperationPanelBase
-//               └── DrugAssignmentPanel
-//
-// ConsumerStatefulWidget kullanım sebebi:
-//   initState      → notifier.init(data) çağrılır
-//   didUpdateWidget → data değişirse notifier.init(data) tekrar çağrılır
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -83,8 +67,14 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     }
 
     final groups = _extractGroups(state);
-    final assignments = _extractAssignments(state);
     final selectedUnitId = state is DrugAssignmentCellSelected ? state.selectedUnitId : null;
+    final assignments = _assignments(state);
+
+    final idle = switch (state) {
+      DrugAssignmentIdle s => s,
+      DrugAssignmentError(previous: DrugAssignmentIdle s) => s,
+      _ => null,
+    };
 
     return CabinOperationSelectionLayout(
       isLoading: state is DrugAssignmentLoading,
@@ -108,10 +98,11 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
         DrugAssignmentCellSelected s => _AssignmentEditPanel(state: s, notifier: notifier),
         DrugAssignmentSaving() => const Center(child: MedLoadingIndicator()),
         _ => _AssignmentIdlePanel(
-          assignments: assignments,
+          assignments: idle?.visibleAssignments ?? [],
           groups: groups,
           onEdit: notifier.editAssignment,
           menu: widget.menu,
+          onAssignmentSearchChanged: (value) => notifier.onAssignmentSearchChanged(value),
         ),
       },
     );
@@ -129,7 +120,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     _ => const [],
   };
 
-  List<MedicineAssignment> _extractAssignments(DrugAssignmentUiState s) => switch (s) {
+  List<MedicineAssignment> _assignments(DrugAssignmentUiState s) => switch (s) {
     DrugAssignmentIdle(:final assignments) => assignments,
     DrugAssignmentCellSelected(:final assignments) => assignments,
     DrugAssignmentSaving(:final assignments) => assignments,

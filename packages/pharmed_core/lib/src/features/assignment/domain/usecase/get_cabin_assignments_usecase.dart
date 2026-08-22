@@ -3,13 +3,13 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-class GetCabinAssignmentsUseCase {
+class GetStationAssignmentsUseCase {
   final IAssignmentRepository _assignmentRepository;
 
-  GetCabinAssignmentsUseCase(this._assignmentRepository);
+  GetStationAssignmentsUseCase(this._assignmentRepository);
 
   Future<Result<List<MedicineAssignment>>> call() async {
-    return await _assignmentRepository.getCabinAssignments();
+    return await _assignmentRepository.getStationAssignments();
   }
 }
 

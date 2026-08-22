@@ -1,6 +1,3 @@
-// [SWREQ-UI-STOCK-NOTIFIER-001]
-// Sınıf : Class A
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
@@ -20,7 +17,7 @@ class CabinStockNotifier extends Notifier<CabinStockState> {
   Future<void> init(int cabinId) async {
     state = CabinStockLoading(cabinId: cabinId);
 
-    final result = await _getBedAssignments.call(cabinId);
+    final result = await _getBedAssignments.call();
 
     await result.when(
       ok: (assignments) async {

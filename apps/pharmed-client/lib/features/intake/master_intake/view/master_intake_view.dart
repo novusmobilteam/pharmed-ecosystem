@@ -1,37 +1,25 @@
-// [SWREQ-CLI-MINTAKE-004] [IEC 62304 §5.5]
-// İlaç-merkezli master kabin İLAÇ ALIM ekranının root view'ı.
-//
-// İki bağımsız provider senkron boot olmalı: masterIntakeNotifierProvider
-// (bu ekranın kendi state'i) + patientSelectionNotifierProvider (artık
-// ORTAK hasta seçim çatısı — bkz. cabin_shell_widgets/patient_selection).
-// extraBootGate ile ikincisinin de hazır olması bekleniyor.
-//
-// Executing fazında (ve ondan doğan hatada) patient list dahil hiçbir şey
-// ekranda kalmaz — replacesEverything: true.
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/hardware/hardware.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../widgets/widgets.dart';
+import '../../../dashboard/dashboard.dart';
 import '../../intake.dart';
 
 class MasterIntakeView extends ConsumerStatefulWidget {
-  const MasterIntakeView({super.key, this.data, required this.menu});
+  const MasterIntakeView({super.key, required this.stationContext});
 
-  final CabinVisualizerData? data;
-  final MenuItem menu;
+  final StationCabinsContext stationContext;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MasterIntakeViewState();
 }
 
 class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
+  // Hasta seçimi değiştiğinde tekrar terkar loading göstermemek için kullanılan flag.
+  bool _hasBooted = false;
+
   bool _isPatientReady(PatientSelectionState s) => switch (s) {
     PatientSelectionReady() => true,
     PatientSelectionError() => true,
@@ -39,9 +27,24 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
   };
 
   @override
+  void initState() {
+    super.initState();
+
+    final notifier = ref.read(masterIntakeNotifierProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      notifier.init(widget.stationContext);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(masterIntakeNotifierProvider);
+    final patientState = ref.watch(patientSelectionNotifierProvider);
     final notifier = ref.read(masterIntakeNotifierProvider.notifier);
+    final isExecuting =
+        state is MasterIntakeExecuting ||
+        (state is MasterIntakeError && (state).previousState is MasterIntakeExecuting);
 
     ref.listen(masterIntakeNotifierProvider, (_, next) {
       if (next is MasterIntakeError && next.isQueueError) {
@@ -65,20 +68,30 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
       }
     });
 
-    return MasterCabinRootScaffold<CabinVisualizerData, MasterIntakeState>(
-      data: widget.data,
-      cabinIdOf: (d) => d.cabinId,
-      onInit: (d) => notifier.init(d),
-      state: state,
-      extraBootGate: () => !_isPatientReady(ref.watch(patientSelectionNotifierProvider)),
-      phaseOf: (s) => switch (s) {
-        MasterIntakeUninitialized() || MasterIntakeLoading() => const RootBooting(),
-        MasterIntakeExecuting() => const RootExecuting(replacesEverything: true),
-        MasterIntakeError(previousState: MasterIntakeExecuting()) => const RootExecuting(replacesEverything: true),
-        _ => const RootSelection(),
-      },
-      selectionBuilder: (_) => MasterIntakeSelectionView(menu: widget.menu),
-      executionBuilder: (_) => MasterIntakeExecutionView(allGroups: widget.data?.groups ?? const []),
-    );
+    final selectionView = MasterIntakeSelectionView(menu: widget.stationContext.menu);
+
+    if (!_hasBooted) {
+      if (!_isPatientReady(patientState)) {
+        // selectionView'ı (ve içindeki patient-selection init tetikleyicisini)
+        // Offstage ile MOUNT EDİLMİŞ tutuyoruz — aksi halde
+        // PatientSelectionNotifier'ın initState'teki init() çağrısı hiç
+        // tetiklenmez ve _isPatientReady sonsuza kadar false kalır.
+        return Stack(
+          children: [
+            Offstage(offstage: true, child: selectionView),
+            const Center(child: MedLoadingIndicator()),
+          ],
+        );
+      }
+      _hasBooted = true;
+    }
+
+    _hasBooted = true;
+
+    if (isExecuting) {
+      return MasterIntakeExecutionView(cabinDataByCabinId: widget.stationContext.cabinDataByCabinId);
+    }
+
+    return selectionView;
   }
 }

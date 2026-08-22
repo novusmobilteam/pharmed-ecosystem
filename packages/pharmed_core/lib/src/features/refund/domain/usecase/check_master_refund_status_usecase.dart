@@ -3,14 +3,11 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:collection/collection.dart';
 
 class CheckMasterRefundStatusUseCase {
-  CheckMasterRefundStatusUseCase(this._refundRepository, this._cabinRepository);
+  CheckMasterRefundStatusUseCase(this._refundRepository);
 
   final IRefundRepository _refundRepository;
-  final ICabinRepository _cabinRepository;
 
   /// [item]: kullanıcının seçtiği kalem (source zaten dolu). [returnType]/
   /// [quantity]: kullanıcının bu adımda seçtiği/girdiği değerler.
@@ -29,8 +26,7 @@ class CheckMasterRefundStatusUseCase {
     }
 
     final Result<MedicineAssignment?> targetResult = switch (returnType) {
-      ReturnType.toPharmacy => Result.ok(null),
-      ReturnType.toReturnBox || ReturnType.toDrawer => await _handleDrawer(),
+      ReturnType.toPharmacy || ReturnType.toReturnBox || ReturnType.toDrawer => Result.ok(null),
       ReturnType.toOrigin => Result.ok(checkResult.data?.cabinAssignment),
     };
 
@@ -41,44 +37,5 @@ class CheckMasterRefundStatusUseCase {
     return Result.ok(
       item.copyWith(returnQuantity: quantity, returnType: returnType, resolvedTarget: targetResult.data),
     );
-  }
-
-  Future<Result<MedicineAssignment?>> _handleDrawer() async {
-    final cabinResult = await _cabinRepository.getCabins();
-
-    final cabins = cabinResult.data;
-    if (cabins == null) {
-      return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
-    }
-
-    return _findCubicSlot(cabins);
-  }
-
-  Future<Result<MedicineAssignment?>> _findCubicSlot(List<Cabin> cabins) async {
-    if (cabins.isEmpty) {
-      return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
-    }
-
-    for (final cabin in cabins) {
-      final cabinId = cabin.id;
-      if (cabinId == null) continue;
-
-      final slotsResult = await _cabinRepository.getCabinSlots(cabinId);
-      final slots = slotsResult.data;
-      if (slots == null) continue;
-
-      final cubicSlot = slots.firstWhereOrNull((slot) => slot.drawerConfig?.drawerType?.isKubik ?? false);
-
-      if (cubicSlot != null) {
-        return Result.ok(
-          MedicineAssignment(
-            drawerUnit: DrawerUnit(drawerSlotId: cubicSlot.id, drawerSlot: cubicSlot),
-            cabin: cabin,
-          ),
-        );
-      }
-    }
-
-    return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
   }
 }

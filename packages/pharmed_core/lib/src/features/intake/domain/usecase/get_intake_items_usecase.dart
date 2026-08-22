@@ -35,14 +35,14 @@ class GetIntakeItemsUseCase {
        _assignmentRepository = assignmentRepository,
        _medicineRepository = medicineRepository;
 
-  Future<Result<List<IntakeItem>>> call(GetIntakeItemsParams params, {int? cabinId}) async {
+  Future<Result<List<IntakeItem>>> call(GetIntakeItemsParams params) async {
     final type = params.type;
     final refreshAssignments = params.refreshAssignments;
     final hospitalizationId = params.hospitalizationId ?? 0;
 
     switch (type) {
       case IntakeType.ordered:
-        return await _getOrdered(hospitalizationId, refreshAssignments, params.filter, cabinId: cabinId);
+        return await _getOrdered(hospitalizationId, refreshAssignments, params.filter);
       case IntakeType.orderless:
       case IntakeType.urgent:
         return await _getOrderless();
@@ -110,12 +110,11 @@ class GetIntakeItemsUseCase {
   Future<Result<List<IntakeItem>>> _getOrdered(
     int hospitalizationId,
     bool refreshAssignments,
-    PatientFilterType type, {
-    int? cabinId,
-  }) async {
+    PatientFilterType type,
+  ) async {
     // İlk yükleme: her iki istek paralel çalışır
     if (!refreshAssignments) {
-      final result = await _fetchOrdered(hospitalizationId, type, cabinId: cabinId);
+      final result = await _fetchOrdered(hospitalizationId, type);
       // İlk yüklemede cache'i doldur
       if (result is Ok) {
         _cachedItems = (result as Ok<List<IntakeItem>>).value;
@@ -124,7 +123,7 @@ class GetIntakeItemsUseCase {
     }
 
     // Sonraki alımlar: sadece assignment güncellenir, tasks tekrar çekilmez
-    final assignmentsResult = await _assignmentRepository.getCabinAssignments(cabinId: cabinId);
+    final assignmentsResult = await _assignmentRepository.getOrderlessCabinAssignments();
     if (assignmentsResult is! Ok) {
       return Result.error(CustomException(message: contextlessL10n().core_genericErrorShortMessage));
     }
@@ -144,10 +143,10 @@ class GetIntakeItemsUseCase {
     return Result.ok(_cachedItems);
   }
 
-  Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId, PatientFilterType type, {int? cabinId}) async {
+  Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId, PatientFilterType type) async {
     final results = await Future.wait([
       _intakeRepository.getIntakeItems(hospitalizationId: hospitalizationId, type: type),
-      _assignmentRepository.getCabinAssignments(cabinId: cabinId),
+      _assignmentRepository.getStationAssignments(),
     ]);
 
     final tasksResult = results[0] as Result<List<CabinTargetedPrescriptionItem>>;

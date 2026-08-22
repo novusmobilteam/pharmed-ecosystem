@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/features/assignment/view/assignment_screen.dart';
 import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';

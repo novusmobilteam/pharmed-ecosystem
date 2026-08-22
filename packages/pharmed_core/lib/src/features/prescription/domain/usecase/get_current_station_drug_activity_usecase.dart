@@ -6,19 +6,7 @@ class GetCurrentStationDrugActivityUseCase {
 
   GetCurrentStationDrugActivityUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> call({
-    int? skip,
-    int? take,
-    String? search,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) {
-    return _repository.getCurrentStationDrugActivity(
-      search: search,
-      skip: skip,
-      take: take,
-      startDate: startDate,
-      endDate: endDate,
-    );
+  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> call(PagedQueryParams params) {
+    return _repository.getCurrentStationDrugActivity(params);
   }
 }

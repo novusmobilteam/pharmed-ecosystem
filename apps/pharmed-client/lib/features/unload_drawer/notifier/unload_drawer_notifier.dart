@@ -1,5 +1,3 @@
-// features/unload_drawer/notifier/unload_drawer_notifier.dart
-
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -61,16 +59,18 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
     );
   }
 
-  // ---------------------------------------------------------------------
-  // BOX MODU — donanımsız, seçimli
-  // ---------------------------------------------------------------------
-
   void toggleItem(int itemId) {
     final s = state;
     if (s is! UnloadDrawerSelection || s.isSubmitting) return;
     final next = Set<int>.from(s.selectedIds);
     next.contains(itemId) ? next.remove(itemId) : next.add(itemId);
     state = s.copyWith(selectedIds: next);
+  }
+
+  void onSearchChanged(String value) {
+    final s = state;
+    if (s is! UnloadDrawerSelection) return;
+    state = s.copyWith(search: value);
   }
 
   Future<void> confirmBoxUnload() async {
@@ -102,7 +102,10 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
     final group = _visualizerData?.groups.firstWhereOrNull((g) => g.isReturnDrawer);
     final unit = group?.units.firstOrNull;
     if (group == null || unit == null) return null;
-    return MedicineAssignment.empty(cabinId: _cabinId, cabinDrawerId: unit.id ?? 0).copyWith(drawerUnit: unit);
+
+    final resolvedUnit = unit.drawerSlot == null ? unit.copyWith(drawerSlot: group.slot) : unit;
+
+    return MedicineAssignment.empty(cabinId: _cabinId, cabinDrawerId: unit.id ?? 0).copyWith(drawerUnit: resolvedUnit);
   }
 
   Future<void> startDrawerUnload() async {

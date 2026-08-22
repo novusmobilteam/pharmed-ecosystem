@@ -67,9 +67,8 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (list) => Result.ok(list ?? const <MedicineAssignmentDto>[]), error: Result.error);
   }
 
-  /// Giriş yapılan kabine ataması yapılmış ilaçları getirir.
-  Future<Result<List<MedicineAssignmentDto>>> getCabinAssignments({int? cabinId}) async {
-    // final path = cabinId != null ? '$_medicineBase/cabinInMaterialsTest/${cabinId}' : '$_medicineBase/cabinInMaterials';
+  /// Giriş yapılan istasyona ataması yapılmış ilaçları getirir.
+  Future<Result<List<MedicineAssignmentDto>>> getStationAssignments() async {
     final res = await fetchRequest<List<MedicineAssignmentDto>>(
       path: '$_medicineBase/cabinInMaterials',
       parser: BaseRemoteDataSource.listParser(MedicineAssignmentDto.fromJson),
@@ -115,9 +114,9 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
   }
 
   /// Belirtilen kabindeki tüm yatak atamalarını getirir.
-  Future<Result<List<BedAssignmentDto>>> getBedAssignments(int cabinId) async {
+  Future<Result<List<BedAssignmentDto>>> getBedAssignments() async {
     final res = await fetchRequest<List<BedAssignmentDto>>(
-      path: '$_patientBase/cabin/$cabinId',
+      path: '$_patientBase/currentStation',
       parser: BaseRemoteDataSource.listParser(BedAssignmentDto.fromJson),
       successLog: 'Atamalar getirildi',
       emptyLog: 'Atama bulunamadı',

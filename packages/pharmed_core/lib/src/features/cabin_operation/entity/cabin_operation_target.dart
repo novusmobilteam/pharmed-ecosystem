@@ -146,8 +146,6 @@ class CabinOperationTarget {
     );
   }
 
-  // ── Türetilen ──────────────────────────────────────────────────────────
-
   DrawerUnit? get unit => assignment.drawerUnit;
   int? get unitId => assignment.cabinDrawerId;
 

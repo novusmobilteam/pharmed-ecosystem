@@ -1,70 +1,32 @@
-// [SWREQ-UI-JOBLIST-VIEW-001]
-// Sınıf : Class A
-//
-// Sol : PatientListPanel — GetMyPatients'tan gelen hastalar, satır seçimi
-// Sağ : RxCarousel        — seçili hastanın reçete/iş listesi
-//
-// AllPatientsPanel'in aksine burada + / — butonu yok; satıra tıklamak
-// doğrudan seçim demek (radio-button gibi), sağ panel o hastaya göre yenilenir.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_card.dart';
 import '../../../widgets/widgets.dart';
-
+import '../../dashboard/dashboard.dart';
 import '../notifier/job_list_notifier.dart';
 import '../notifier/job_list_state.dart';
 
-class JobListScreen extends ConsumerWidget {
-  const JobListScreen({super.key, required this.menu, this.cabinData, this.deviceMode});
+class JobListScreen extends ConsumerStatefulWidget {
+  const JobListScreen({super.key, this.cabinRouteContext});
 
-  final MenuItem menu;
-  final CabinVisualizerData? cabinData;
-  final CabinType? deviceMode;
+  final CabinRouteContext? cabinRouteContext;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = cabinData?.cabinId;
-
-    if (cabinId == null) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
-    }
-
-    return _JobListBodyView(cabinId: cabinData!.cabinId, menu: menu);
-  }
+  ConsumerState<JobListScreen> createState() => JobListScreenState();
 }
 
-class _JobListBodyView extends ConsumerStatefulWidget {
-  const _JobListBodyView({required this.cabinId, required this.menu});
-
-  final int cabinId;
-  final MenuItem menu;
-
-  @override
-  ConsumerState<_JobListBodyView> createState() => _JobListBodyViewState();
-}
-
-class _JobListBodyViewState extends ConsumerState<_JobListBodyView> {
+class JobListScreenState extends ConsumerState<JobListScreen> {
   @override
   void initState() {
     super.initState();
-    _initialize(widget.cabinId);
+    _initialize();
   }
 
-  @override
-  void didUpdateWidget(_JobListBodyView old) {
-    super.didUpdateWidget(old);
-    _initialize(widget.cabinId);
-  }
-
-  void _initialize(int cabinId) {
+  void _initialize() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(jobListNotifierProvider.notifier).init(cabinId);
+      ref.read(jobListNotifierProvider.notifier).init();
     });
   }
 
@@ -85,72 +47,12 @@ class _JobListBodyViewState extends ConsumerState<_JobListBodyView> {
     }
 
     return CabinOperationSelectionLayout(
-      leftWidth: 440,
-      left: _PatientListPanel(state: state, notifier: notifier),
-      right: _PrescriptionPanel(state: state),
-    );
-  }
-}
-
-class _PatientListPanel extends StatelessWidget {
-  const _PatientListPanel({required this.state, required this.notifier});
-
-  final JobListState state;
-  final JobListNotifier notifier;
-
-  List<Hospitalization> get _filtered {
-    final q = state.search.toLowerCase();
-    if (q.isEmpty) return state.allPatients;
-    return state.allPatients.where((h) {
-      final name = h.patient?.fullName.toLowerCase() ?? '';
-      final room = h.bed?.room?.name?.toLowerCase() ?? h.room?.name?.toLowerCase() ?? '';
-      return name.contains(q) || room.contains(q);
-    }).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final selectedId = state.selectedHospitalization?.id;
-    final filtered = _filtered;
-
-    return Container(
-      padding: MedSpacing.panelInsetPadding,
-      decoration: MedDecoration.panelDecoration,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MedTextInputField(
-            hintText: context.l10n.myPatients_search_hint,
-            prefixIcon: Icon(PhosphorIcons.magnifyingGlass()),
-            initialValue: state.search,
-            onChanged: (q) => notifier.onSearchChanged(q ?? ''),
-          ),
-          SizedBox(height: MedSpacing.sm),
-          Expanded(
-            child: filtered.isEmpty
-                ? const EmptyStateWidget(variant: EmptyStateVariant.noResults)
-                : ListView.separated(
-                    itemCount: filtered.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
-                    itemBuilder: (context, index) {
-                      final h = filtered[index];
-                      final hospId = h.id;
-                      final isSelected = hospId != null && hospId == selectedId;
-                      //final isRowLoading = isSelected && state.isPrescriptionItemsLoading;
-
-                      return PatientSelectionCard(
-                        hospitalization: h,
-                        showChevron: false,
-                        isSelected: isSelected,
-                        //trailing: isRowLoading ? const Center(child: MedLoadingIndicator()) : null,
-                        onTap: () => notifier.selectPatient(h),
-                        // onTap: (hospId == null || isSelected) ? null : () => notifier.selectPatient(h),
-                      );
-                    },
-                  ),
-          ),
-        ],
+      left: PatientSelectionPanel(
+        config: PatientSelectionConfig.empty,
+        onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
+        selectedPatient: state.selectedHospitalization,
       ),
+      right: _PrescriptionPanel(state: state),
     );
   }
 }

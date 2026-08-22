@@ -95,6 +95,12 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     );
   }
 
+  void onAssignmentSearchChanged(String? value) {
+    final s = state;
+    if (s is! DrugAssignmentIdle) return;
+    state = s.copyWith(searchQuery: value);
+  }
+
   /// "MEVCUT ATAMALAR" tablosundaki "Düzenle" linkinden çağrılır.
   void editAssignment(int unitId) {
     final current = state;

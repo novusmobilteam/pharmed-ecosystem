@@ -1,5 +1,3 @@
-// features/unload_drawer/view/unload_drawer_execution_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';

@@ -188,20 +188,10 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> getCurrentStationDrugActivity({
-    int? skip,
-    int? take,
-    String? search,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
-    final result = await _dataSource.getCurrentStationDrugActivity(
-      search: search,
-      skip: skip,
-      take: take,
-      startDate: startDate,
-      endDate: endDate,
-    );
+  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> getCurrentStationDrugActivity(
+    PagedQueryParams params,
+  ) async {
+    final result = await _dataSource.getCurrentStationDrugActivity(params);
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<PrescriptionItemMovement>>(

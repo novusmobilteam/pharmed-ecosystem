@@ -4,9 +4,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import 'patient_selection_card.dart';
-import 'patient_selection_panel.dart';
-
 /// Genel amaçlı hasta listesi paneli.
 ///
 /// Sol panel olarak tasarlanmıştır; arama alanı, hasta sayısı chip'i

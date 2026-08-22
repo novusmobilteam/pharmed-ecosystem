@@ -95,7 +95,7 @@ class BedAssignmentNotifier extends ChangeNotifier with ApiRequestMixin {
 
     await execute(
       fetchOp,
-      operation: () => _getBedAssignmentsUseCase.call(_cabin!.id!),
+      operation: () => _getBedAssignmentsUseCase.call(),
       onData: (data) {
         _assignments = data;
         notifyListeners();

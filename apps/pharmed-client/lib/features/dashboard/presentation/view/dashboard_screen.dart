@@ -10,7 +10,6 @@ import 'package:pharmed_client/features/cabin_stock/cabin_stock.dart';
 import 'package:pharmed_client/features/fault/fault_view.dart';
 import 'package:pharmed_client/features/job_list/view/job_list_screen.dart';
 import 'package:pharmed_client/features/my_patients/view/my_patients_screen.dart';
-import 'package:pharmed_client/features/prescription/view/prescription_view.dart';
 import 'package:pharmed_client/features/refund/refund_view.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';
 import 'package:pharmed_client/features/unload/unload_view.dart';
@@ -26,16 +25,15 @@ import '../../../destruction/view/destruction_view.dart';
 import '../../../drug_activity/drug_activity.dart';
 import '../../../expiring_items/view/expiring_items_screen.dart';
 import '../../../intake/intake.dart';
+import '../../../prescription/view/prescription_screen.dart';
 import '../../../refill/refill.dart';
 import '../../../settings/notifier/settings_notifier.dart';
 import '../../../settings/view/settings_view.dart';
-import '../../../unload_drawer/view/unload_drawer_view.dart';
+import '../../../unload_drawer/view/unload_drawer_screen.dart';
 import '../../../waste/waste.dart';
 
-import '../notifier/dashboard_notifier.dart';
-import '../notifier/dashboard_state.dart';
+import '../../dashboard.dart';
 import 'cabin_selection_view.dart';
-import 'dashboard_app_bar.dart';
 
 part 'dashboard_content.dart';
 part 'cabin_telemetry_panel.dart';
@@ -97,7 +95,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     user: currentUser,
                     onHomeTap: () {
                       notifier.navigateTo('dashboard');
-                      notifier.refresh();
+                      notifier.refresh(forceRefresh: false);
                     },
                     onLoginTap: () => _showLoginModal(context, ref),
                     onLogoutTap: authNotif.logout,

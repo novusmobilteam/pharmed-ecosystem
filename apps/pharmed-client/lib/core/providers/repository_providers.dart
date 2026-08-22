@@ -242,14 +242,12 @@ final patientRepositoryProvider = Provider<IPatientRepository>((ref) {
       dataSource: ref.read(patientDataSourceProvider),
       patientMapper: PatientMapper(),
       myPatientMapper: MyPatientMapper(),
-      urgentPatientMapper: UrgentPatientMapper(),
       hospitalizationMapper: HospitalizationMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => PatientRepositoryImpl(
       dataSource: ref.read(patientDataSourceProvider),
       patientMapper: PatientMapper(),
       myPatientMapper: MyPatientMapper(),
-      urgentPatientMapper: UrgentPatientMapper(),
       hospitalizationMapper: HospitalizationMapper(),
     ),
   };

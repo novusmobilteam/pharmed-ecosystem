@@ -31,9 +31,23 @@ class DashboardContentFactory {
     final activeMenu = loaded?.flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
 
     final cabinId = loaded?.activeCabinId;
-    final cabinData = cabinId != null ? loaded?.data.cabinVisualizerDataByCabinId[cabinId] : null;
+    final station = loaded?.data.station;
     final deviceMode = loaded?.deviceMode;
-    final cabin = cabinId != null ? loaded?.data.stationCabins.firstWhereOrNull((c) => c.id == cabinId) : null;
+    final cabinData = cabinId != null ? loaded?.data.cabinVisualizerDataByCabinId[cabinId] : null;
+
+    final cabinRouteContext = activeMenu != null
+        ? CabinRouteContext(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+        : null;
+
+    final stationCabinsContext = activeMenu != null && loaded != null
+        ? StationCabinsContext(
+            menu: activeMenu,
+            cabinDataByCabinId: loaded.data.cabinVisualizerDataByCabinId,
+            cabins: loaded.data.stationCabins,
+            station: station,
+            deviceMode: deviceMode,
+          )
+        : null;
 
     return Listener(
       behavior: HitTestBehavior.translucent,
@@ -46,62 +60,49 @@ class DashboardContentFactory {
           child: switch (route) {
             'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
             'drug-assignment' =>
-              activeMenu != null
-                  ? AssignmentView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode, cabin: cabin)
-                  : SizedBox.shrink(),
+              cabinRouteContext != null ? AssignmentView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'drug-refill' =>
-              activeMenu != null
-                  ? RefillView(menu: activeMenu, deviceMode: deviceMode, cabinData: cabinData)
-                  : const SizedBox.shrink(),
+              cabinRouteContext != null ? RefillView(cabinRouteContext: cabinRouteContext) : const SizedBox.shrink(),
             'drug-intake' =>
-              activeMenu != null
-                  ? IntakeView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
-                  : SizedBox.shrink(),
+              stationCabinsContext != null ? IntakeView(stationContext: stationCabinsContext) : SizedBox.shrink(),
             'drug-activity' => const DrugActivityScreen(),
             'drug-unload' =>
-              activeMenu != null
-                  ? UnloadView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
-                  : SizedBox.shrink(),
+              cabinRouteContext != null ? UnloadView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'drug-census' =>
-              activeMenu != null
-                  ? CensusView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
-                  : SizedBox.shrink(),
+              cabinRouteContext != null ? CensusView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'drawer-malfunction' =>
-              activeMenu != null
-                  ? FaultView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
-                  : SizedBox.shrink(),
+              cabinRouteContext != null ? FaultView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'drug-return' =>
-              activeMenu != null
-                  ? RefundView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
-                  : SizedBox.shrink(),
+              stationCabinsContext != null ? RefundView(stationContext: stationCabinsContext) : SizedBox.shrink(),
             'drug-waste' =>
-              activeMenu != null
-                  ? WasteView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
-                  : SizedBox.shrink(),
+              stationCabinsContext != null ? WasteView(stationContext: stationCabinsContext) : SizedBox.shrink(),
             'cabin-stock' =>
-              activeMenu != null ? CabinStockView(menu: activeMenu, cabinData: cabinData!) : SizedBox.shrink(),
+              cabinRouteContext != null ? CabinStockView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'patient-request-review' =>
-              activeMenu != null
-                  ? PrescriptionView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+              cabinRouteContext != null
+                  ? PrescriptionScreen(cabinRouteContext: cabinRouteContext)
                   : const SizedBox.shrink(),
             'unapplied-prescriptions' =>
-              activeMenu != null
-                  ? UnappliedPrescriptionScreen(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+              cabinRouteContext != null
+                  ? UnappliedPrescriptionScreen(cabinRouteContext: cabinRouteContext)
                   : const SizedBox.shrink(),
-            'my-patients' => activeMenu != null ? MyPatientsScreen(menu: activeMenu) : const SizedBox.shrink(),
+            'my-patients' =>
+              cabinRouteContext != null
+                  ? MyPatientsScreen(cabinRouteContext: cabinRouteContext)
+                  : const SizedBox.shrink(),
             'drug-destruction' =>
-              activeMenu != null
-                  ? DestructionView(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+              cabinRouteContext != null
+                  ? DestructionView(cabinRouteContext: cabinRouteContext)
                   : const SizedBox.shrink(),
             'daily-job-list' =>
-              activeMenu != null
-                  ? JobListScreen(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
-                  : const SizedBox.shrink(),
+              cabinRouteContext != null ? JobListScreen(cabinRouteContext: cabinRouteContext) : const SizedBox.shrink(),
             'expiring-materials' => ExpiringItemsScreen(),
             'unscanned-barcodes' => UnscannedBarcodesScreen(),
             'cabin-design' => _CabinDesignRouteHandler(notifier: notifier),
             'return-box-unload' =>
-              activeMenu != null ? UnloadDrawerView(menu: activeMenu, cabinData: cabinData) : const SizedBox.shrink(),
+              cabinRouteContext != null
+                  ? UnloadDrawerScreen(cabinRouteContext: cabinRouteContext)
+                  : const SizedBox.shrink(),
 
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
@@ -117,7 +118,10 @@ class DashboardContentFactory {
     bool isLoggedIn,
   ) => switch (state) {
     DashboardLoading() => const Center(child: MedLoadingIndicator()),
-    DashboardError() => EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh),
+    DashboardError() => EmptyStateWidget(
+      variant: EmptyStateVariant.networkError,
+      onRetry: () => notifier.refresh(forceRefresh: false),
+    ),
     DashboardLoaded s => _DashboardBody(state: s, notifier: notifier, isLoggedIn: isLoggedIn),
   };
 }
@@ -171,17 +175,26 @@ class _DashboardBody extends StatelessWidget {
             children: [
               Expanded(
                 child: data.upcomingTreatments.showError
-                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                    ? EmptyStateWidget(
+                        variant: EmptyStateVariant.networkError,
+                        onRetry: () => notifier.refresh(forceRefresh: false),
+                      )
                     : UpcomingTreatmentPanel(section: data.upcomingTreatments),
               ),
               Expanded(
                 child: data.drugActivities.showError
-                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                    ? EmptyStateWidget(
+                        variant: EmptyStateVariant.networkError,
+                        onRetry: () => notifier.refresh(forceRefresh: false),
+                      )
                     : DrugActivityPanel(section: data.drugActivities),
               ),
               Expanded(
                 child: data.unappliedPrescriptions.showError
-                    ? EmptyStateWidget(variant: EmptyStateVariant.networkError, onRetry: notifier.refresh)
+                    ? EmptyStateWidget(
+                        variant: EmptyStateVariant.networkError,
+                        onRetry: () => notifier.refresh(forceRefresh: false),
+                      )
                     : UnappliedPrescriptionPanel(section: data.unappliedPrescriptions),
               ),
             ],

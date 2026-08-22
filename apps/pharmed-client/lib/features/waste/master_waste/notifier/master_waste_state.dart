@@ -28,15 +28,13 @@ final class MasterWasteLoading extends MasterWasteState {
 }
 
 final class MasterWastePatientSelection extends MasterWasteState {
-  const MasterWastePatientSelection({required this.cabinId});
-  final int cabinId;
+  const MasterWastePatientSelection();
 }
 
 /// FAZ 2 — hasta seçili, kalem listesi geldi. Donanım/kuyruk YOK, bu yüzden
 /// ayrı bir Executing fazı hiç yok — submit doğrudan buradan yapılır.
 final class MasterWasteMedicineSelection extends MasterWasteState {
   const MasterWasteMedicineSelection({
-    required this.cabinId,
     required this.hospitalization,
     required this.items,
     this.type = DisposeType.wastage,
@@ -44,9 +42,9 @@ final class MasterWasteMedicineSelection extends MasterWasteState {
     this.amounts = const {},
     this.search = '',
     this.isSubmitting = false,
+    this.submittingType,
   });
 
-  final int cabinId;
   final Hospitalization hospitalization;
   final List<DisposableItem> items;
   final DisposeType type;
@@ -54,6 +52,7 @@ final class MasterWasteMedicineSelection extends MasterWasteState {
   final Map<int, double> amounts;
   final String search;
   final bool isSubmitting;
+  final DisposeType? submittingType;
 
   List<DisposableItem> get visibleItems {
     if (search.isEmpty) return items;
@@ -76,9 +75,10 @@ final class MasterWasteMedicineSelection extends MasterWasteState {
     Map<int, double>? amounts,
     String? search,
     bool? isSubmitting,
+    DisposeType? submittingType,
+    bool clearSubmittingType = false,
   }) {
     return MasterWasteMedicineSelection(
-      cabinId: cabinId,
       hospitalization: hospitalization,
       items: items ?? this.items,
       type: type ?? this.type,
@@ -86,12 +86,14 @@ final class MasterWasteMedicineSelection extends MasterWasteState {
       amounts: amounts ?? this.amounts,
       search: search ?? this.search,
       isSubmitting: isSubmitting ?? this.isSubmitting,
+      submittingType: clearSubmittingType ? null : (submittingType ?? this.submittingType),
     );
   }
 }
 
 final class MasterWasteError extends MasterWasteState {
   const MasterWasteError({required this.failure, required this.previousState});
+
   final CabinOperationFailure failure;
   final MasterWasteState previousState;
 }

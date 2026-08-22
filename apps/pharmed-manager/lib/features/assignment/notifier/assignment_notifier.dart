@@ -81,7 +81,7 @@ class AssignmentNotifier extends ChangeNotifier with ApiRequestMixin {
     }
     await execute(
       fetchVisualizerOp,
-      operation: () => _getCabinVisualizerDataUseCase.call(cabinId: cabin!.id, deviceMode: cabin?.type),
+      operation: () => _getCabinVisualizerDataUseCase.call(cabin: cabin!, deviceMode: cabin?.type),
       onData: (data) {
         _cabinVisualizer = data;
         notifyListeners();

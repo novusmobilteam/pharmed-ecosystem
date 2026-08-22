@@ -9,6 +9,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/providers/providers.dart';
+import '../../../dashboard/dashboard.dart';
 import 'master_unload_state.dart';
 
 final masterUnloadNotifierProvider = NotifierProvider<MasterUnloadNotifier, MasterUnloadState>(
@@ -17,9 +18,8 @@ final masterUnloadNotifierProvider = NotifierProvider<MasterUnloadNotifier, Mast
 
 class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
   late final MasterDrawerOrchestrator _orchestrator;
-  int _cabinId = 0;
 
-  GetCabinAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
+  GetCabinAssignmentsWithCabinUseCase get _getAssignments => ref.read(getCabinAssignmentsWitCabinUseCaseProvider);
   CompleteMasterUnloadUseCase get _completeUnload => ref.read(completeMasterUnloadUseCaseProvider);
 
   @override
@@ -30,21 +30,24 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
     return const MasterUnloadUninitialized();
   }
 
-  Future<void> init(CabinVisualizerData data) async {
-    _cabinId = data.cabinId;
+  Future<void> init(CabinRouteContext ctx) async {
+    final cabinId = ctx.cabin?.id;
+    if (cabinId == null) {
+      return;
+    }
     state = const MasterUnloadLoading();
-    await _orchestrator.stop();
-    await _loadMedicines();
-  }
 
-  Future<void> _loadMedicines() async {
-    final result = await _getAssignments.call();
+    final result = await _getAssignments.call(cabinId);
     result.when(
-      ok: (assignments) => state = MasterUnloadSelection(cabinId: _cabinId, medicines: assignments),
-      error: (e) => state = MasterUnloadError(
-        failure: CabinApiFailure(message: e.message),
-        previousState: MasterUnloadSelection(cabinId: _cabinId, medicines: const []),
-      ),
+      ok: (assignments) {
+        state = MasterUnloadSelection(cabinId: cabinId, medicines: assignments);
+      },
+      error: (e) {
+        state = MasterUnloadError(
+          failure: CabinApiFailure(message: e.message),
+          previousState: MasterUnloadSelection(cabinId: cabinId, medicines: const []),
+        );
+      },
     );
   }
 
@@ -162,8 +165,7 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
     await _orchestrator.open(assignment: openAssignment);
   }
 
-  //
-  // Kübik: currentTargetIndex'teki hedefe yazılır (lid-by-lid — intake/refill
+  // Kübik: currentTargetIndex'teki hedefe yazılır (lid-by-lid — intake/Unload
   // ile aynı desen). Birim doz: targetIndex/stepIndex ile herhangi bir
   // hedefin herhangi bir gözüne doğrudan yazılır.
 
@@ -209,8 +211,6 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
     newJobs[s.currentIndex] = job.copyWith(targets: newTargets);
     state = s.copyWith(jobs: newJobs);
   }
-
-  // ── Boşaltmayı tamamla ───────────────────────────────────────────────────
 
   Future<void> confirmCurrent() async {
     final s = state;
@@ -284,7 +284,7 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
         // SADECE ana çekmece yeni fiziksel olarak açıldıysa ilk gözü otomatik
         // aç - openCubicLid'in kendi Opened event'ini tekrar işlemek "aynı
         // gözü sonsuza kadar yeniden aç" döngüsüne yol açar (bkz.
-        // master-refill-flow skill §6).
+        // master-Unload-flow skill §6).
         if (previous is MasterDrawerWaitingForPull) {
           _onDrawerOpened();
         }
@@ -335,7 +335,7 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
     await _orchestrator.stop();
 
     if (nextIndex >= s.jobs.length) {
-      await _reloadSelectionAfterQueue();
+      await _reloadSelectionAfterQueue(s.cabinId);
       return;
     }
 
@@ -363,7 +363,7 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
   Future<void> stopQueue() async {
     final s = state;
     await _orchestrator.stop();
-    if (s is MasterUnloadExecuting) await _reloadSelectionAfterQueue();
+    if (s is MasterUnloadExecuting) await _reloadSelectionAfterQueue(s.cabinId);
   }
 
   Future<void> continueAfterError() async {
@@ -377,7 +377,7 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
     await _orchestrator.stop();
 
     if (nextIndex >= markedJobs.length) {
-      await _reloadSelectionAfterQueue();
+      await _reloadSelectionAfterQueue(prev.cabinId);
       return;
     }
 
@@ -391,7 +391,7 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
     final prev = s.previousState;
     await _orchestrator.stop();
     if (prev is MasterUnloadExecuting) {
-      await _reloadSelectionAfterQueue();
+      await _reloadSelectionAfterQueue(prev.cabinId);
     } else {
       state = prev;
     }
@@ -403,9 +403,16 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
     state = s.previousState;
   }
 
-  Future<void> _reloadSelectionAfterQueue() async {
+  Future<void> _reloadSelectionAfterQueue(int cabinId) async {
     state = const MasterUnloadLoading();
-    await _loadMedicines();
+    final result = await _getAssignments.call(cabinId);
+    result.when(
+      ok: (assignments) => state = MasterUnloadSelection(cabinId: cabinId, medicines: assignments),
+      error: (e) => state = MasterUnloadError(
+        failure: CabinApiFailure(message: e.message),
+        previousState: MasterUnloadSelection(cabinId: cabinId, medicines: const []),
+      ),
+    );
   }
 
   List<CabinOperationDrawerJob> _withStatus(

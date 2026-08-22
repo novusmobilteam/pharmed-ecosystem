@@ -1,6 +1,3 @@
-// [SWREQ-CLI-MCENSUS-008] [IEC 62304 §5.5]
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';

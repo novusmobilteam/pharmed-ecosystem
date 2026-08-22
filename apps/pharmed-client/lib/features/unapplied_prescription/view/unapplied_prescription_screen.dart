@@ -1,72 +1,34 @@
-// lib/features/unapplied_prescription_screen/unapplied_prescription_screen.dart
-//
-// [SWREQ-UI-UNAPP-VIEW-001]
-// Sınıf : Class A
-//
-// Sol: PatientListPanel (hasta listesi)
-// Sağ: HospitalizationDetailBanner + RxCarousel
-//
-// prescriptionItems notifier katmanında filtrelenmiştir (pendingPickup).
-// View hiç filtre uygulamaz; RxCarousel'e direkt state.prescriptionItems geçilir.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
 import '../../../widgets/widgets.dart';
 
+import '../../dashboard/dashboard.dart';
 import '../unapplied_prescription.dart';
 
-class UnappliedPrescriptionScreen extends ConsumerWidget {
-  const UnappliedPrescriptionScreen({super.key, required this.menu, this.cabinData, this.deviceMode});
+class UnappliedPrescriptionScreen extends ConsumerStatefulWidget {
+  const UnappliedPrescriptionScreen({super.key, this.cabinRouteContext});
 
-  final MenuItem menu;
-  final CabinVisualizerData? cabinData;
-  final CabinType? deviceMode;
+  final CabinRouteContext? cabinRouteContext;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cabinId = cabinData?.cabinId;
-
-    if (cabinId == null) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
-    }
-
-    return _UnappliedPrescriptionBodyView(cabinId: cabinId, menu: menu);
-  }
+  ConsumerState<UnappliedPrescriptionScreen> createState() => UnappliedPrescriptionScreenState();
 }
 
-class _UnappliedPrescriptionBodyView extends ConsumerStatefulWidget {
-  const _UnappliedPrescriptionBodyView({required this.cabinId, required this.menu});
-
-  final int cabinId;
-  final MenuItem menu;
-
-  @override
-  ConsumerState<_UnappliedPrescriptionBodyView> createState() => _UnappliedPrescriptionBodyViewState();
-}
-
-class _UnappliedPrescriptionBodyViewState extends ConsumerState<_UnappliedPrescriptionBodyView> {
+class UnappliedPrescriptionScreenState extends ConsumerState<UnappliedPrescriptionScreen> {
   @override
   void initState() {
     super.initState();
-    _initialize(widget.cabinId);
+    _initialize();
   }
 
-  @override
-  void didUpdateWidget(_UnappliedPrescriptionBodyView old) {
-    super.didUpdateWidget(old);
-    _initialize(widget.cabinId);
-  }
-
-  void _initialize(int cabinId) {
+  void _initialize() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(unappliedPrescriptionNotifierProvider.notifier).init(cabinId);
+      final deviceMode = widget.cabinRouteContext?.deviceMode;
+      ref.read(unappliedPrescriptionNotifierProvider.notifier).init(deviceMode);
     });
   }
 

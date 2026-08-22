@@ -6,12 +6,14 @@ class RefundDrawerJob {
     required this.representativeTarget,
     required this.targets,
     this.status = CabinOperationJobStatus.pending,
+    this.cabinId,
   });
 
   final int cabinDrawerId;
   final RefundTarget representativeTarget;
   final List<RefundTarget> targets;
   final CabinOperationJobStatus status;
+  final int? cabinId;
 
   bool get isKubik => representativeTarget.isKubik;
 
@@ -31,6 +33,7 @@ class RefundDrawerJob {
       representativeTarget: representativeTarget,
       targets: targets ?? this.targets,
       status: status ?? this.status,
+      cabinId: cabinId,
     );
   }
 }

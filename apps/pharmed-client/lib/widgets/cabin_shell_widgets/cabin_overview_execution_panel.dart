@@ -551,22 +551,6 @@ class _UnitDoseDepthGrid extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const SizedBox(width: 20),
-              for (int c = 0; c < colCount; c++) ...[
-                if (c > 0) const SizedBox(width: _spacing),
-                Expanded(
-                  child: Text(
-                    String.fromCharCode(65 + c),
-                    textAlign: TextAlign.center,
-                    style: MedTextStyles.monoXs(color: MedColors.text3),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 6),
           for (int r = 0; r < rowCount; r++) ...[
             if (r > 0) const SizedBox(height: _spacing),
             Row(
@@ -574,16 +558,24 @@ class _UnitDoseDepthGrid extends StatelessWidget {
               children: [
                 SizedBox(
                   width: 20,
-                  child: Text('${r + 1}', style: MedTextStyles.monoXs(color: MedColors.text3)),
+                  child: Text('${rowCount - r}', style: MedTextStyles.monoXs(color: MedColors.text3)),
                 ),
-                for (int c = 0; c < colCount; c++) ...[
-                  if (c > 0) const SizedBox(width: _spacing),
-                  SizedBox(
-                    width: _cellSize * 2,
-                    height: _cellSize,
-                    child: _CellBox(index: r * colCount + c, state: grid[r][c], padded: false),
+                const SizedBox(width: 20, child: SizedBox.shrink()),
+                Expanded(
+                  child: Row(
+                    children: [
+                      for (int c = 0; c < colCount; c++) ...[
+                        if (c > 0) const SizedBox(width: _spacing),
+                        Expanded(
+                          child: SizedBox(
+                            height: _cellSize,
+                            child: _CellBox(index: r * colCount + c, state: grid[r][c], padded: false),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                ],
+                ),
               ],
             ),
           ],

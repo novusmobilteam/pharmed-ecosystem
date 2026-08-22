@@ -6,18 +6,22 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
 import '../../auth/auth.dart';
+import '../../dashboard/dashboard.dart';
 import '../notifier/destruction_notifier.dart';
 import '../notifier/destruction_state.dart';
 
 class DestructionSelectionView extends ConsumerWidget {
-  const DestructionSelectionView({super.key, required this.allGroups});
+  const DestructionSelectionView({super.key, required this.cabinContext});
 
-  final List<DrawerGroup> allGroups;
+  final CabinRouteContext cabinContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(destructionNotifierProvider);
     final notifier = ref.read(destructionNotifierProvider.notifier);
+    final cabin = cabinContext.cabin;
+    final groups = cabinContext.cabinData?.groups;
+    final menu = cabinContext.menu;
 
     final selection = switch (state) {
       DestructionSelection s => s,
@@ -28,16 +32,17 @@ class DestructionSelectionView extends ConsumerWidget {
     if (selection == null) return const SizedBox.shrink();
 
     return CabinOperationSelectionLayout(
-      leftWidth: 320,
       isLoading: state is DestructionLoading,
       left: CabinOverviewSelectionPanel(
-        groups: allGroups,
+        cabin: cabin,
+        groups: groups ?? [],
         assignments: selection.medicines,
         selectedUnitIds: selection.selectedUnitIds,
         //onToggleDrawer: notifier.toggleDrawer,
         //onToggleUnit: (DrawerUnit unit) {},
       ),
       right: CabinSelectionContentShell(
+        menu: menu,
         onSearchQueryChanged: notifier.onSearchChanged,
         searchQuery: selection.search,
         isEmpty: selection.visibleMedicines.isEmpty,
@@ -86,6 +91,7 @@ class _GridView extends ConsumerWidget {
     }
 
     return CabinOperationGrid(
+      maxColumns: 3,
       itemCount: ordered.length,
       itemBuilder: (context, i) => _slotCard(context, ordered[i], currentUserId),
     );

@@ -16,21 +16,17 @@ final class MyPatientsUninitialized extends MyPatientsState {
 
 /// Sol liste (BedAssignments) + sağ liste (MyPatients) yükleniyor.
 final class MyPatientsLoading extends MyPatientsState {
-  const MyPatientsLoading({required this.cabinId});
-  final int cabinId;
+  const MyPatientsLoading();
 }
 
 /// Her iki liste de yüklenmiş, idle.
 final class MyPatientsIdle extends MyPatientsState {
   const MyPatientsIdle({
-    required this.cabinId,
     required this.allPatients,
     required this.myPatients,
     this.search = '',
     this.pendingIds = const {},
   });
-
-  final int cabinId;
 
   /// Sol liste — kabindeki tüm yatışlar.
   final List<Hospitalization> allPatients;
@@ -55,7 +51,6 @@ final class MyPatientsIdle extends MyPatientsState {
     Set<int>? pendingIds,
   }) {
     return MyPatientsIdle(
-      cabinId: cabinId,
       allPatients: allPatients ?? this.allPatients,
       myPatients: myPatients ?? this.myPatients,
       search: search ?? this.search,
@@ -72,13 +67,6 @@ final class MyPatientsError extends MyPatientsState {
 }
 
 extension MyPatientsStateX on MyPatientsState {
-  int? get cabinId => switch (this) {
-    MyPatientsLoading(:final cabinId) => cabinId,
-    MyPatientsIdle(:final cabinId) => cabinId,
-    MyPatientsError(:final previousState) => previousState.cabinId,
-    _ => null,
-  };
-
   List<Hospitalization> get allPatients => switch (this) {
     MyPatientsIdle(:final allPatients) => allPatients,
     MyPatientsError(:final previousState) => previousState.allPatients,

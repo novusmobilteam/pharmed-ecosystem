@@ -69,7 +69,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
 
     state = MobileUnloadLoading(slots: slots, cabinId: data.cabinId);
 
-    final assignmentResult = await _getAssignments.call(data.cabinId);
+    final assignmentResult = await _getAssignments.call();
 
     state = assignmentResult.when(
       ok: (assignments) =>

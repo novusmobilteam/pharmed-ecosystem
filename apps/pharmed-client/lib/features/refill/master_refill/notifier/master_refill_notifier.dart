@@ -27,6 +27,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/providers/providers.dart';
+import '../../../dashboard/dashboard.dart';
 import 'master_refill_state.dart';
 
 final masterRefillNotifierProvider = NotifierProvider<MasterRefillNotifier, MasterRefillState>(
@@ -47,8 +48,11 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
     return const MasterRefillUninitialized();
   }
 
-  Future<void> init(CabinVisualizerData data) async {
-    final cabinId = data.cabinId;
+  Future<void> init(CabinRouteContext ctx) async {
+    final cabinId = ctx.cabin?.id;
+    if (cabinId == null) {
+      return;
+    }
     state = const MasterRefillLoading();
 
     final result = await _getAssignments.call(cabinId);

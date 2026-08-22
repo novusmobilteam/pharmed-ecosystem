@@ -19,7 +19,7 @@ class ExpiringItemsScreen extends ConsumerWidget {
 
     return Scaffold(
       body: switch (state) {
-        ExpiringItemsLoading() => const Center(child: CircularProgressIndicator()),
+        ExpiringItemsLoading() => const Center(child: MedLoadingIndicator()),
         ExpiringItemsLoaded(:final items, :final isLoading) => TableView(
           items: items,
           isLoading: isLoading,

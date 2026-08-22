@@ -6,6 +6,6 @@ class MasterDestructionUseCase {
   MasterDestructionUseCase(this._repository);
 
   Future<Result<void>> call(WasteParams params) async {
-    return _repository.masterWastage(params.toJson());
+    return _repository.masterDestruction(params.toJson());
   }
 }

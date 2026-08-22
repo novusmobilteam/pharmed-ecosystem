@@ -210,7 +210,7 @@ final refillMasterCabinUseCaseProvider = Provider((ref) {
 });
 
 final getCabinAssignmentsUseCaseProvider = Provider((ref) {
-  return GetCabinAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
+  return GetStationAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
 final getCabinAssignmentsWitCabinUseCaseProvider = Provider((ref) {
@@ -418,7 +418,7 @@ final getMasterRefundablesUseCaseProvider = Provider((ref) {
 });
 
 final checkMasterRefundStatusUseCaseProvider = Provider((ref) {
-  return CheckMasterRefundStatusUseCase(ref.read(refundRepositoryProvider), ref.read(cabinRepositoryProvider));
+  return CheckMasterRefundStatusUseCase(ref.read(refundRepositoryProvider));
 });
 
 final completeRefundUseCaseProvider = Provider((ref) {

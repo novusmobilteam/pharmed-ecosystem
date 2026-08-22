@@ -31,7 +31,7 @@ class CabinOperationSearchField extends StatelessWidget {
                 focusedBorder: InputBorder.none,
                 errorBorder: InputBorder.none,
                 border: InputBorder.none,
-                hintText: hintText,
+                hintText: hintText ?? context.l10n.refill_hint_searchMedicine,
                 // hintText: context.l10n.patientListPanel_searchHint,
                 hintStyle: MedTextStyles.titleSm().copyWith(fontWeight: FontWeight.normal, color: MedColors.text4),
               ),

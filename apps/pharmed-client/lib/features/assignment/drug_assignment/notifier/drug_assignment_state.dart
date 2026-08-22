@@ -15,16 +15,43 @@ final class DrugAssignmentUninitialized extends DrugAssignmentUiState {
 
 final class DrugAssignmentLoading extends DrugAssignmentUiState {
   const DrugAssignmentLoading({required this.groups, required this.cabinId});
+
   final List<DrawerGroup> groups;
   final int cabinId;
 }
 
 /// Göz seçili değil — sağda "MEVCUT ATAMALAR" tablosu gösterilir.
 final class DrugAssignmentIdle extends DrugAssignmentUiState {
-  const DrugAssignmentIdle({required this.groups, required this.assignments, required this.cabinId});
+  const DrugAssignmentIdle({
+    required this.groups,
+    required this.assignments,
+    required this.cabinId,
+    this.searchQuery = '',
+  });
+
   final List<DrawerGroup> groups;
   final List<MedicineAssignment> assignments;
   final int cabinId;
+  final String searchQuery;
+
+  List<MedicineAssignment> get visibleAssignments {
+    if (searchQuery.trim().isEmpty) return assignments;
+    final q = searchQuery.toLowerCase().trim();
+    return assignments.where((a) {
+      final name = a.medicine?.name?.toLowerCase() ?? '';
+      final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
+      return name.contains(q) || barcode.contains(q);
+    }).toList();
+  }
+
+  DrugAssignmentIdle copyWith({String? searchQuery}) {
+    return DrugAssignmentIdle(
+      groups: groups,
+      assignments: assignments,
+      cabinId: cabinId,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
+  }
 }
 
 /// Göz seçildi (boş ya da dolu) — sağda ilaç listesi + miktar formu.
@@ -112,6 +139,7 @@ final class DrugAssignmentSaving extends DrugAssignmentUiState {
 
 final class DrugAssignmentError extends DrugAssignmentUiState {
   const DrugAssignmentError({required this.message, required this.previous});
+
   final String message;
   final DrugAssignmentUiState previous;
 }

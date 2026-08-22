@@ -28,6 +28,7 @@ class CabinAssignmentListView extends StatelessWidget {
             SizedBox(width: 100, child: Text('Doluluk', style: textStyle)),
           ],
         ),
+        // TODO : Localization
         SizedBox(height: 12.0),
         Divider(height: 1, thickness: 2),
         Expanded(
@@ -42,26 +43,23 @@ class CabinAssignmentListView extends StatelessWidget {
               final konum = assignment.isKubikType
                   ? 'Çekmece ${assignment.drawerUnit?.drawerSlot?.address} - Sütun ${assignment.drawerUnit?.compartmentNo} - Satır ${assignment.drawerUnit?.orderNo}'
                   : 'Çekmece ${assignment.drawerUnit?.drawerSlot?.orderNumber} - Göz ${assignment.drawerUnit?.compartmentNo}';
-              // String addressLabel = _isKubik
-              //     ? context.l10n.refill_chip_drawerCell(_address, '${_cellNo ?? '-'}')
-              //     : context.l10n.refill_chip_drawer(_address);
 
-              double _current = assignment.toDisplayQuantity(assignment.totalQuantity);
-              double _maxQty = assignment.maxQuantityFromBackend;
-              double _critQty = assignment.critQuantityFromBackend;
-              double _minQty = assignment.minQuantityFromBackend;
+              double current = assignment.toDisplayQuantity(assignment.totalQuantity);
+              double maxQty = assignment.maxQuantityFromBackend;
+              double critQty = assignment.critQuantityFromBackend;
+              double minQty = assignment.minQuantityFromBackend;
               final id = assignment.cabinDrawerId;
               bool isSelected = id != null && selectedItemIds.contains(id);
 
-              MedCellStockLevel _level = _current <= _critQty
+              MedCellStockLevel level = current <= critQty
                   ? MedCellStockLevel.critical
-                  : (_current <= _minQty ? MedCellStockLevel.low : MedCellStockLevel.ok);
+                  : (current <= minQty ? MedCellStockLevel.low : MedCellStockLevel.ok);
 
-              final color = _level.color;
+              final color = level.color;
 
-              String stock = '${_current.formatFractional}/${_maxQty.formatFractional}';
+              String stock = '${current.formatFractional}/${maxQty.formatFractional}';
 
-              final pct = _ratio(_current, _maxQty);
+              final pct = _ratio(current, maxQty);
 
               return GestureDetector(
                 onTap: (id == null || onToggle == null) ? null : () => onToggle!(id),
@@ -87,8 +85,8 @@ class CabinAssignmentListView extends StatelessWidget {
                         width: 100,
                         child: _StockBar(
                           pct: pct,
-                          minPct: _ratio(_minQty, _maxQty),
-                          critPct: _ratio(_critQty, _maxQty),
+                          minPct: _ratio(minQty, maxQty),
+                          critPct: _ratio(critQty, maxQty),
                           color: color,
                         ),
                       ),

@@ -14,11 +14,14 @@ class DashboardData {
     this.stationCabins = const [],
     this.cabinVisualizerDataByCabinId = const {},
     this.cabinDataFailed = false,
+    this.station,
   });
 
   final DashboardSection<List<PrescriptionItem>?> upcomingTreatments;
   final DashboardSection<List<PrescriptionItem>?> unappliedPrescriptions;
   final DashboardSection<List<PrescriptionItemMovement>?> drugActivities;
+
+  final Station? station;
 
   /// İstasyondaki tüm kabinler — kabin seçim ekranında isim/tip/adres
   /// göstermek için (CabinVisualizerData bu bilgileri taşımıyor).
@@ -36,7 +39,9 @@ class DashboardData {
     List<Cabin>? stationCabins,
     Map<int, CabinVisualizerData>? cabinVisualizerDataByCabinId,
     bool? cabinDataFailed,
+    Station? station,
   }) => DashboardData(
+    station: station ?? this.station,
     upcomingTreatments: upcomingTreatments ?? this.upcomingTreatments,
     drugActivities: drugActivities ?? this.drugActivities,
     unappliedPrescriptions: unappliedPrescriptions ?? this.unappliedPrescriptions,

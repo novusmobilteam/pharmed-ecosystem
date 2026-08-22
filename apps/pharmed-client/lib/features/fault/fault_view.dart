@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../dashboard/dashboard.dart';
 import 'master_fault/notifier/master_fault_notifier.dart';
 import 'mobile_fault/notifier/mobile_fault_notifier.dart';
 import 'fault_panel_state.dart';
@@ -14,14 +15,15 @@ part 'mobile_fault/view/mobile_fault_view.dart';
 part 'fault_panel.dart';
 
 class FaultView extends StatelessWidget {
-  const FaultView({super.key, required this.cabinData, required this.deviceMode, required this.menu});
+  const FaultView({super.key, this.cabinRouteContext});
 
-  final MenuItem menu;
-  final CabinVisualizerData? cabinData;
-  final CabinType? deviceMode;
+  final CabinRouteContext? cabinRouteContext;
 
   @override
   Widget build(BuildContext context) {
+    final deviceMode = cabinRouteContext?.deviceMode;
+    final cabinData = cabinRouteContext?.cabinData;
+
     return switch (deviceMode) {
       CabinType.master => MasterFaultView(data: cabinData),
       CabinType.mobile => MobileFaultView(data: cabinData),

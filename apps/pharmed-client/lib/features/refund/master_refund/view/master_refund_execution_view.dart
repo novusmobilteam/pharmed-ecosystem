@@ -10,8 +10,9 @@ import '../notifier/master_refund_notifier.dart';
 import '../notifier/master_refund_state.dart';
 
 class MasterRefundExecutionView extends ConsumerWidget {
-  const MasterRefundExecutionView({super.key, required this.allGroups});
-  final List<DrawerGroup> allGroups;
+  const MasterRefundExecutionView({super.key, required this.cabinDataByCabinId});
+
+  final Map<int, CabinVisualizerData> cabinDataByCabinId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,6 +26,18 @@ class MasterRefundExecutionView extends ConsumerWidget {
     };
 
     if (executing == null) return const SizedBox.shrink();
+
+    final job = executing.currentJob;
+    if (job == null) return const SizedBox.shrink();
+
+    final cabinId = executing.currentCabinId;
+    final allGroups = cabinId != null
+        ? (cabinDataByCabinId[cabinId]?.groups ?? const <DrawerGroup>[])
+        : const <DrawerGroup>[];
+
+    debugPrint(
+      'REFUND DEBUG: currentCabinId=$cabinId, cabinDataByCabinId keys=${cabinDataByCabinId.keys}, allGroups.length=${allGroups.length}',
+    );
 
     return CabinOperationExecutionLayout(
       progressLabel: context.l10n.refund_label_progress(executing.currentIndex + 1, executing.jobs.length),

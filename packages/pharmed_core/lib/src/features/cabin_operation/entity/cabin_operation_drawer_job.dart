@@ -22,6 +22,7 @@ class CabinOperationDrawerJob {
     required this.cabinDrawerId,
     required this.representativeAssignment,
     required this.targets,
+    this.cabinId,
     this.status = CabinOperationJobStatus.pending,
   });
 
@@ -35,6 +36,8 @@ class CabinOperationDrawerJob {
   final List<CabinOperationTarget> targets;
 
   final CabinOperationJobStatus status;
+
+  final int? cabinId;
 
   bool get isKubik => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
   bool get isSerum => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false;
@@ -54,6 +57,7 @@ class CabinOperationDrawerJob {
       representativeAssignment: representativeAssignment,
       targets: targets ?? this.targets,
       status: status ?? this.status,
+      cabinId: cabinId,
     );
   }
 }

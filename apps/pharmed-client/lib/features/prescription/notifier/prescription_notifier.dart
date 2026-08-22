@@ -22,19 +22,19 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
   @override
   PrescriptionState build() => const PrescriptionUninitialized();
 
-  Future<void> init(int cabinId) async {
-    state = PrescriptionLoading(cabinId: cabinId);
+  Future<void> init() async {
+    state = PrescriptionLoading();
 
     final cabinType = await ref.read(deviceModeProvider.future);
     final isMobile = cabinType == CabinType.mobile;
 
     final result = isMobile
-        ? _fromBedAssignments(await _getBedAssignments.call(cabinId))
+        ? _fromBedAssignments(await _getBedAssignments.call())
         : _fromApiResponse(await _getHospitalizations.call(const PagedQueryParams()));
 
     await result.when(
       ok: (hospitalizations) async {
-        state = PrescriptionIdle(cabinId: cabinId, hospitalizations: hospitalizations);
+        state = PrescriptionIdle(hospitalizations: hospitalizations);
         if (hospitalizations.isEmpty) return;
 
         await onPatientTap(hospitalizations.first);
@@ -42,7 +42,7 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
       error: (error) {
         state = PrescriptionError(
           message: error.message,
-          previousState: PrescriptionIdle(cabinId: cabinId, hospitalizations: const []),
+          previousState: PrescriptionIdle(hospitalizations: const []),
         );
       },
     );
@@ -53,12 +53,11 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
     if (patientId == null) return;
 
     if (state.selectedPatient?.patient?.id == patientId) {
-      state = PrescriptionIdle(cabinId: state.cabinId!, hospitalizations: state.hospitalizations, search: state.search);
+      state = PrescriptionIdle(hospitalizations: state.hospitalizations, search: state.search);
       return;
     }
 
     state = PrescriptionPatientSelected(
-      cabinId: state.cabinId!,
       hospitalizations: state.hospitalizations,
       selectedPatient: hospitalization,
       prescriptionItems: const [],
@@ -70,10 +69,9 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
 
     state = result.when(
       ok: (items) => PrescriptionPatientSelected(
-        cabinId: state.cabinId!,
         hospitalizations: state.hospitalizations,
         selectedPatient: hospitalization,
-        // Filtre yok — tüm statusler gösterilir
+
         prescriptionItems: items,
         search: state.search,
         isPrescriptionsLoading: false,
@@ -81,7 +79,6 @@ class PrescriptionNotifier extends Notifier<PrescriptionState> {
       error: (e) => PrescriptionError(
         message: e.message,
         previousState: PrescriptionPatientSelected(
-          cabinId: state.cabinId!,
           hospitalizations: state.hospitalizations,
           selectedPatient: hospitalization,
           prescriptionItems: const [],

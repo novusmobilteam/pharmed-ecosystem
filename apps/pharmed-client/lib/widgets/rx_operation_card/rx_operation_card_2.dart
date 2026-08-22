@@ -202,9 +202,10 @@ class RxOperationCard2 extends StatelessWidget {
                     if (witness != null) _WitnessRow(data: witness!),
                     if (movements.isNotEmpty) _MovementsBlock(movements: movements),
                     if (note != null) _NoteBlock(note: note!),
-                    ...extras,
+
                     if (stepper != null) _StepperRow(data: stepper!),
                     if (hasMeta) _MetaRow(time: metaTime, location: metaLocation),
+                    ...extras,
                   ],
                 ),
               ),

@@ -16,21 +16,18 @@ final class UnappliedPrescriptionUninitialized extends UnappliedPrescriptionStat
 }
 
 final class UnappliedPrescriptionLoading extends UnappliedPrescriptionState {
-  const UnappliedPrescriptionLoading({required this.cabinId});
-  final int cabinId;
+  const UnappliedPrescriptionLoading();
 }
 
 final class UnappliedPrescriptionIdle extends UnappliedPrescriptionState {
-  const UnappliedPrescriptionIdle({required this.cabinId, required this.hospitalizations, this.search = ''});
+  const UnappliedPrescriptionIdle({required this.hospitalizations, this.search = ''});
 
-  final int cabinId;
   final List<Hospitalization> hospitalizations;
   final String search;
 }
 
 final class UnappliedPrescriptionPatientSelected extends UnappliedPrescriptionState {
   const UnappliedPrescriptionPatientSelected({
-    required this.cabinId,
     required this.hospitalizations,
     required this.selectedPatient,
     required this.prescriptionItems,
@@ -38,7 +35,6 @@ final class UnappliedPrescriptionPatientSelected extends UnappliedPrescriptionSt
     this.isPrescriptionsLoading = false,
   });
 
-  final int cabinId;
   final List<Hospitalization> hospitalizations;
   final Hospitalization selectedPatient;
 
@@ -56,7 +52,6 @@ final class UnappliedPrescriptionPatientSelected extends UnappliedPrescriptionSt
     Object? isPrescriptionsLoading = _sentinel,
   }) {
     return UnappliedPrescriptionPatientSelected(
-      cabinId: cabinId,
       hospitalizations: hospitalizations,
       selectedPatient: selectedPatient,
       prescriptionItems: prescriptionItems ?? this.prescriptionItems,
@@ -76,14 +71,6 @@ final class UnappliedPrescriptionError extends UnappliedPrescriptionState {
 }
 
 extension UnappliedPrescriptionStateX on UnappliedPrescriptionState {
-  int? get cabinId => switch (this) {
-    UnappliedPrescriptionLoading(:final cabinId) => cabinId,
-    UnappliedPrescriptionIdle(:final cabinId) => cabinId,
-    UnappliedPrescriptionPatientSelected(:final cabinId) => cabinId,
-    UnappliedPrescriptionError(:final previousState) => previousState.cabinId,
-    _ => null,
-  };
-
   List<Hospitalization> get hospitalizations => switch (this) {
     UnappliedPrescriptionIdle(:final hospitalizations) => hospitalizations,
     UnappliedPrescriptionPatientSelected(:final hospitalizations) => hospitalizations,

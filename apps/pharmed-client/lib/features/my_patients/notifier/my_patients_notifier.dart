@@ -1,13 +1,10 @@
-// [SWREQ-UI-MYPATIENTS-NOTIFIER-001]
-// Sınıf : Class A
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
-import '../../../core/cache/app_settings_cache.dart';
 import '../../../core/providers/providers.dart';
 import '../../auth/notifier/auth_notifier.dart';
+import '../../dashboard/dashboard.dart';
 import 'my_patients_state.dart';
 
 final myPatientsNotifierProvider = NotifierProvider<MyPatientsNotifier, MyPatientsState>(MyPatientsNotifier.new);
@@ -19,20 +16,19 @@ class MyPatientsNotifier extends Notifier<MyPatientsState> {
   AddPatientUseCase get _addPatient => ref.read(addPatientUseCaseProvider);
   RemovePatientsUseCase get _removePatients => ref.read(removePatientsUseCaseProvider);
 
-  /// Oturum açmış kullanıcının ID'si.
   int get _currentUserId => ref.read(authNotifierProvider.notifier).currentUser?.id ?? 0;
 
   @override
   MyPatientsState build() => const MyPatientsUninitialized();
 
-  Future<void> init(int cabinId) async {
-    state = MyPatientsLoading(cabinId: cabinId);
+  Future<void> init(CabinRouteContext? ctx) async {
+    state = MyPatientsLoading();
 
-    final cabinType = await ref.read(deviceModeProvider.future);
+    final cabinType = ctx?.deviceMode;
     final isMobile = cabinType == CabinType.mobile;
 
     final Future<dynamic> patientsFuture = isMobile
-        ? _getBedAssignments.call(cabinId)
+        ? _getBedAssignments.call()
         : _getHospitalizations.call(const PagedQueryParams());
 
     final results = await Future.wait([patientsFuture, _getMyPatients.call()]);
@@ -56,14 +52,14 @@ class MyPatientsNotifier extends Notifier<MyPatientsState> {
     if (patientsResult is Error) {
       state = MyPatientsError(
         message: (patientsResult as Error).error.message,
-        previousState: MyPatientsIdle(cabinId: cabinId, allPatients: const [], myPatients: const []),
+        previousState: MyPatientsIdle(allPatients: const [], myPatients: const []),
       );
       return;
     }
     if (myResult is Error) {
       state = MyPatientsError(
         message: (myResult as Error).error.message,
-        previousState: MyPatientsIdle(cabinId: cabinId, allPatients: const [], myPatients: const []),
+        previousState: MyPatientsIdle(allPatients: const [], myPatients: const []),
       );
       return;
     }
@@ -71,7 +67,7 @@ class MyPatientsNotifier extends Notifier<MyPatientsState> {
     final allPatients = (patientsResult as Ok<List<Hospitalization>>).data ?? [];
     final myPatients = (myResult as Ok<List<MyPatient>>).data;
 
-    state = MyPatientsIdle(cabinId: cabinId, allPatients: allPatients, myPatients: myPatients ?? []);
+    state = MyPatientsIdle(allPatients: allPatients, myPatients: myPatients ?? []);
   }
 
   Future<void> addPatient(Hospitalization hospitalization) async {

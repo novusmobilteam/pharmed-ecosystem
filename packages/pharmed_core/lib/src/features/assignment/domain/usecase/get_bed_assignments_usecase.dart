@@ -8,7 +8,7 @@ class GetBedAssignmentsUseCase {
 
   GetBedAssignmentsUseCase(this._assignmentRepository);
 
-  Future<Result<List<BedAssignment>>> call(int cabinId) async {
-    return await _assignmentRepository.getBedAssignments(cabinId);
+  Future<Result<List<BedAssignment>>> call() async {
+    return await _assignmentRepository.getBedAssignments();
   }
 }

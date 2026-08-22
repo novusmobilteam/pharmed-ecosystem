@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/features/dashboard/dashboard.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/hardware/hardware.dart';
@@ -13,9 +15,9 @@ final masterRefundNotifierProvider = NotifierProvider<MasterRefundNotifier, Mast
 
 class MasterRefundNotifier extends Notifier<MasterRefundState> {
   late final MasterDrawerOrchestrator _orchestrator;
-  int _cabinId = 0;
+
   Hospitalization? _hospitalization;
-  CabinVisualizerData? _visualizerData;
+  StationCabinsContext? _stationContext;
 
   GetMasterRefundablesUseCase get _getRefundables => ref.read(getMasterRefundablesUseCaseProvider);
   CheckMasterRefundStatusUseCase get _checkStatus => ref.read(checkMasterRefundStatusUseCaseProvider);
@@ -29,38 +31,64 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     return const MasterRefundUninitialized();
   }
 
-  Future<void> init(CabinVisualizerData data) async {
-    _cabinId = data.cabinId;
+  Future<void> init(StationCabinsContext ctx) async {
     _hospitalization = null;
-    _visualizerData = data;
-    state = MasterRefundPatientSelection(cabinId: _cabinId);
+    _stationContext = ctx;
+    state = MasterRefundPatientSelection();
   }
 
-  /// CabinDesign'da işaretlenmiş iade çekmecesinin herhangi bir DrawerUnit'i
-  /// üzerinden bir MedicineAssignment üretir — hangi unit olduğu önemsiz,
-  /// çekmece tek bir sanal kutu (bkz. isReturnDrawer). [checkedItem]'ın
-  /// medicine'i buraya taşınır ki execution kartı "—" göstermesin
-  /// (CabinExecutionGridCard ilaç adını assignment.medicine'den okuyor,
-  /// item.medicine'den DEĞİL). null → iade çekmecesi tanımlı değil.
   MedicineAssignment? _resolveReturnDrawerAssignment(RefundableItem checkedItem) {
-    final group = _visualizerData?.groups.firstWhereOrNull((g) => g.isReturnDrawer);
-    final unit = group?.units.firstOrNull;
-    if (group == null || unit == null) return null;
+    final ctx = _stationContext;
+    if (ctx == null) return null;
 
-    final resolvedUnit = unit.drawerSlot == null ? unit.copyWith(drawerSlot: group.slot) : unit;
+    // İade çekmecesi, kaynak item'ın kabininden BAĞIMSIZ — istasyonda tek bir
+    // fiziksel konumda tanımlı (genelde ayrı bir CabinType.returnCabin).
+    // Backend'in resolvedTarget'ı eksik/güvenilmez olabildiği için item'ın
+    // kendi kabin bilgisine hiç bakmıyoruz — istasyondaki TÜM kabinleri
+    // tarayıp isReturnDrawer grubunu buluyoruz.
+    for (final data in ctx.cabinDataByCabinId.values) {
+      final group = data.groups.firstWhereOrNull((g) => g.isReturnDrawer);
+      if (group == null) continue;
 
-    return MedicineAssignment.empty(
-      cabinId: _cabinId,
-      cabinDrawerId: unit.id ?? 0,
-    ).copyWith(drawerUnit: resolvedUnit, medicine: checkedItem.medicine);
+      final unit = group.units.firstOrNull;
+      if (unit == null) continue;
+
+      final resolvedUnit = unit.drawerSlot == null ? unit.copyWith(drawerSlot: group.slot) : unit;
+
+      // CabinOperationCellGeometry.forKubik, detailId'yi
+      // assignment.cabinDrawerDetail?.firstOrNull?.id'den okuyor — bu yüzden
+      // sentetik assignment'a bu alanı MUTLAKA doldurmamız gerekiyor, aksi
+      // halde detailId hep 0 gider (bkz. startRefund'daki bug). Kaynak:
+      // CabinVisualizerData.stocks içinde, cabinDrawerId == unit.id olan
+      // CabinStock kaydının kendi cabinDrawerDetail'i (DrawerCell).
+      final matchingStock = data.stocks.firstWhereOrNull((s) => s.cabinDrawerId == unit.id);
+      final detail = matchingStock?.cabinDrawerDetail;
+
+      return MedicineAssignment.empty(cabinId: data.cabin.id ?? 0, cabinDrawerId: unit.id ?? 0).copyWith(
+        drawerUnit: resolvedUnit,
+        medicine: checkedItem.medicine,
+        cabinDrawerDetail: detail != null ? [detail] : null,
+      );
+    }
+
+    return null;
   }
 
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
     switch (current) {
       case MasterDrawerOpened():
-        _onDrawerOpened();
+        if (previous is MasterDrawerWaitingForPull) {
+          _onDrawerOpened();
+        }
       case MasterDrawerClosed():
         _onCurrentDrawerClosed();
+      case MasterDrawerLidFailed(:final failure, :final detail):
+        MedLogger.warn(
+          unit: 'MasterRefund',
+          swreq: 'SWREQ-CLI-MREFUND-002', // gerçek SWREQ tag'ini kendi dosyandan doğrula
+          message: 'Kübik kapak açma reddedildi',
+          context: {'failure': failure.name, 'detail': detail},
+        );
       case MasterDrawerFailed(:final failure, :final detail):
         _onDrawerFailed(failure, detail);
       default:
@@ -70,7 +98,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
 
   Future<void> _startExecuting(List<RefundTarget> hardwareTargets) async {
     final jobs = RefundQueueBuilder.build(hardwareTargets);
-    state = MasterRefundExecuting(cabinId: _cabinId, jobs: jobs);
+    state = MasterRefundExecuting(jobs: jobs);
     await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
 
@@ -103,7 +131,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
       state = s.copyWith(isSaving: true);
       for (final target in job.targets) {
         final ok = await _completeTarget(target);
-        if (!ok) return; // _completeTarget zaten hata state'ini set etti
+        if (!ok) return;
       }
       final current = state;
       if (current is MasterRefundExecuting) {
@@ -118,12 +146,50 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
 
     if (job.isKubik) {
       state = s.copyWith(isSaving: true);
-      final ok = await _completeTarget(target);
+      // Aynı fiziksel göze (drawerUnit.id) ait, currentTargetIndex'ten
+      // başlayan ARDIŞIK tüm target'lar (RefundQueueBuilder sıralaması
+      // orderNo'ya göre olduğu için bunlar garanti bitişiktir) TEK tıklamada
+      // tamamlanır — kullanıcı her kayıt için ayrı ayrı "sonraki göz"e
+      // basmak zorunda kalmaz. Kapak fiziksel olarak değişmediği sürece
+      // (aynı gözdeyken) hepsi arka arkaya backend'e gönderilir.
+      final ok = await _completeCurrentCellTargets();
       if (!ok) return;
       await _advanceWithinOpenDrawer();
     } else {
       _orchestrator.confirmClose();
     }
+  }
+
+  /// currentTargetIndex'ten başlayarak aynı göze ait tüm target'ları
+  /// tamamlar, currentTargetIndex'i bu grubun SON elemanına ilerletir.
+  /// _advanceWithinOpenDrawer bir sonraki çağrıldığında artık gerçek bir
+  /// sonraki FİZİKSEL göze geçmiş olur (aynı gözde tekrar lid komutu
+  /// göndermez — bkz. mevcut sameCellAsCurrent guard'ı).
+  Future<bool> _completeCurrentCellTargets() async {
+    final s = state;
+    if (s is! MasterRefundExecuting) return false;
+    final job = s.currentJob;
+    if (job == null) return false;
+
+    var index = s.currentTargetIndex;
+    final cellId = job.targets[index].assignment.drawerUnit?.id;
+
+    while (true) {
+      final ok = await _completeTarget(job.targets[index]);
+      if (!ok) return false; // _completeTarget zaten hata state'ini set etti
+
+      final nextIndex = index + 1;
+      final sameCell = nextIndex < job.targets.length && job.targets[nextIndex].assignment.drawerUnit?.id == cellId;
+      if (!sameCell) break;
+
+      index = nextIndex;
+      final current = state;
+      if (current is MasterRefundExecuting) {
+        state = current.copyWith(currentTargetIndex: index);
+      }
+    }
+
+    return true;
   }
 
   void _onDrawerOpened() {
@@ -148,12 +214,20 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
 
     final nextIndex = s.currentTargetIndex + 1;
     if (nextIndex < job.targets.length) {
+      // Aynı fiziksel göze (DrawerUnit) ait birden fazla target olabilir —
+      // örn. aynı ilaçtan farklı zamanlarda ayrı ayrı alınmış kayıtlar hepsi
+      // aynı kübik gözden çıkıyor. Bu durumda kapak zaten AÇIK, tekrar
+      // openCubicLid göndermek gereksiz/hatalı bir donanım komutu üretir —
+      // hedef göz değişmediyse (drawerUnit.id aynıysa) komut atlanır.
+      final currentCellId = job.targets[s.currentTargetIndex].assignment.drawerUnit?.id;
+      final nextCellId = job.targets[nextIndex].assignment.drawerUnit?.id;
+      final sameCellAsCurrent = currentCellId != null && currentCellId == nextCellId;
+
       state = s.copyWith(currentTargetIndex: nextIndex, isSaving: false);
-      if (job.isKubik) {
+      if (job.isKubik && !sameCellAsCurrent) {
         await _orchestrator.openCubicLid(job.targets[nextIndex].assignment);
       }
-      // isReturnDrawer: donanıma komut yok, kullanıcı aynı açık çekmeceye
-      // bir sonraki ilacı bırakıp tekrar "Onayla"ya basar.
+      // isReturnDrawer: donanıma zaten hiç komut yok (mevcut davranış korunuyor).
     } else {
       state = s.copyWith(isSaving: false);
       _orchestrator.confirmClose();
@@ -180,16 +254,13 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     await _orchestrator.stop();
 
     final nextIndex = s.currentIndex + 1;
-    state = MasterRefundExecuting(cabinId: s.cabinId, jobs: updatedJobs, currentIndex: nextIndex);
+    state = MasterRefundExecuting(jobs: updatedJobs, currentIndex: nextIndex);
     await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
-  /// TODO: cabinDrawerDetailId kaynağı doğrulanmalı — item.source.stock
-  /// (toOrigin: orijinal alım stoğunun detayı) doğru mu, yoksa toDrawer/
-  /// toReturnBox için ayrı bir kaynak mı gerekiyor (bkz. RefundQueueBuilder/
-  /// CompleteRefundParams görülmeden netleşmedi).
   Future<bool> _completeTarget(RefundTarget target) async {
     final item = target.item;
+
     final result = await _completeRefund.call(
       CompleteRefundParams(
         type: item.returnType!,
@@ -239,7 +310,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     updatedJobs[exec.currentIndex] = job.copyWith(status: CabinOperationJobStatus.failed);
     await _orchestrator.stop();
     final nextIndex = exec.currentIndex + 1;
-    state = MasterRefundExecuting(cabinId: exec.cabinId, jobs: updatedJobs, currentIndex: nextIndex);
+    state = MasterRefundExecuting(jobs: updatedJobs, currentIndex: nextIndex);
     await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
@@ -259,7 +330,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
   Future<void> _loadItems() async {
     final hospitalization = _hospitalization;
     if (hospitalization == null) {
-      state = MasterRefundPatientSelection(cabinId: _cabinId);
+      state = MasterRefundPatientSelection();
       return;
     }
 
@@ -267,15 +338,11 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     result.when(
       ok: (sourceItems) {
         final items = sourceItems.map((s) => RefundableItem(source: s, appliedQuantity: s.dosePiece)).toList();
-        state = MasterRefundMedicineSelection(cabinId: _cabinId, hospitalization: hospitalization, items: items);
+        state = MasterRefundMedicineSelection(hospitalization: hospitalization, items: items);
       },
       error: (e) => state = MasterRefundError(
         failure: CabinApiFailure(message: e.message),
-        previousState: MasterRefundMedicineSelection(
-          cabinId: _cabinId,
-          hospitalization: hospitalization,
-          items: const [],
-        ),
+        previousState: MasterRefundMedicineSelection(hospitalization: hospitalization, items: const []),
       ),
     );
   }

@@ -13,22 +13,15 @@ class JobListNotifier extends Notifier<JobListState> {
   @override
   JobListState build() => const JobListUninitialized();
 
-  Future<void> init(int cabinId) async {
-    if (state.cabinId == cabinId && state is! JobListUninitialized) return;
-
-    state = JobListLoading(cabinId: cabinId);
+  Future<void> init() async {
+    state = JobListLoading();
 
     final myResult = await _getMyPatients.call();
 
     if (myResult is Error) {
       state = JobListError(
         message: (myResult as Error).error.message,
-        previousState: JobListIdle(
-          cabinId: cabinId,
-          allPatients: const [],
-          selectedHospitalization: null,
-          jobList: const [],
-        ),
+        previousState: JobListIdle(allPatients: const [], selectedHospitalization: null, jobList: const []),
       );
       return;
     }
@@ -36,7 +29,7 @@ class JobListNotifier extends Notifier<JobListState> {
     final myPatients = (myResult as Ok<List<MyPatient>>).data ?? [];
     final allPatients = _toHospitalizations(myPatients);
 
-    state = JobListIdle(cabinId: cabinId, allPatients: allPatients, selectedHospitalization: null, jobList: const []);
+    state = JobListIdle(allPatients: allPatients, selectedHospitalization: null, jobList: const []);
 
     // Liste boş değilse ilk eleman otomatik seçilir.
     if (allPatients.isNotEmpty) {

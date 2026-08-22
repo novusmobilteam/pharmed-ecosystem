@@ -59,13 +59,7 @@ abstract interface class IPrescriptionRepository {
   Future<Result<List<PrescriptionItem>>> getDrugActivity();
 
   /// İşlem yapılan kabine ait hareketlerini(dolum,alım,iade,fire/imha) getiren servis.
-  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> getCurrentStationDrugActivity({
-    int? skip,
-    int? take,
-    String? search,
-    DateTime? startDate,
-    DateTime? endDate,
-  });
+  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> getCurrentStationDrugActivity(PagedQueryParams params);
 
   /// Acil Hasta'ya ataması yapılmış ilaçları getiren servis.
   Future<Result<List<PrescriptionItem>>> getEmergencyPatientMedicines(int hospitalizationId);

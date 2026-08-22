@@ -86,6 +86,16 @@ class RxOrdersContent extends ConsumerWidget {
                 final dose = item.prescriptionDose.formatFractional;
                 final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
 
+                // isDimmed: SADECE ordered akışta filtre "Order Saati Gelenler" değilse
+                // true — stok durumu isDimmed'i ETKİLEMEZ, çünkü stoksuz kalemler hâlâ
+                // etkileşimli kalmalı (muadil sorgula / başka istasyona yönlendir).
+                final bool isFilterBlocked = !isOrderlessFlow && currentFilter != PatientFilterType.ordersDue;
+
+                // onTap (seçim toggle'ı): stok yoksa VEYA yönlendirilmişse HER ZAMAN
+                // engellenir (o durumda zaten seçim değil, çözüm akışı - muadil/redirect -
+                // kullanılır). Bunun dışında ordered akışta filtre uyuşmazlığı da engeller.
+                final bool canToggleSelection = !item.hasNoStock && !item.isRedirected && !isFilterBlocked;
+
                 return RxOperationCard2(
                   title: item.medicine?.name ?? '—',
                   subtitle: !isOrderlessFlow
@@ -96,13 +106,8 @@ class RxOrdersContent extends ConsumerWidget {
                   barcode: item.medicine?.barcode,
                   isSelected: isSelected,
 
-                  // Stok yok → soluk + kilitli (eski _hasNoStock davranışı)
-                  isDimmed: (isOrderlessFlow && currentFilter != PatientFilterType.ordersDue),
-                  onTap: (isOrderlessFlow && currentFilter != PatientFilterType.ordersDue)
-                      ? null
-                      : (item.hasNoStock || item.isRedirected)
-                      ? null
-                      : () => notifier.toggleItem(item.id),
+                  isDimmed: isFilterBlocked,
+                  onTap: canToggleSelection ? () => notifier.toggleItem(item.id) : null,
 
                   statusChip: time != null
                       ? RxCardChip(label: time.shortRelativeLabelOf(context), tone: MedTone.info)

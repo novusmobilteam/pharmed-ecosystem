@@ -16,6 +16,20 @@ class PatientSelectionConfig {
     this.enableOrderlessToggle = false,
   });
 
+  static const empty = PatientSelectionConfig(
+    showFilters: false,
+    enableTabs: false,
+    enableUrgentPatient: false,
+    enableOrderlessToggle: false,
+  );
+
+  static const intake = PatientSelectionConfig(
+    showFilters: true,
+    enableTabs: true,
+    enableUrgentPatient: true,
+    enableOrderlessToggle: true,
+  );
+
   /// false → servis/durum/"Hastalarım" filtreleri hiç gösterilmez, liste
   /// her zaman GetActiveHospitalizationsUseCase (basit, filtresiz) ile
   /// çekilir.
@@ -46,13 +60,4 @@ class PatientSelectionConfig {
 
   @override
   int get hashCode => Object.hash(showFilters, enableTabs, enableUrgentPatient, enableOrderlessToggle);
-}
-
-abstract final class PatientSelectionConfigs {
-  static const intake = PatientSelectionConfig(
-    showFilters: true,
-    enableTabs: true,
-    enableUrgentPatient: true,
-    enableOrderlessToggle: true,
-  );
 }

@@ -1,23 +1,19 @@
-// [SWREQ-UI-STOCK-VIEW-001]
-// Sınıf : Class A
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/notifier/patient_selection_config.dart';
-import 'package:pharmed_client/widgets/cabin_shell_widgets/selection/patient_selection/view/patient_selection_panel.dart';
+
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/widgets.dart';
 
+import '../../dashboard/dashboard.dart';
 import '../cabin_stock.dart';
 
 class CabinStockView extends ConsumerStatefulWidget {
-  const CabinStockView({super.key, required this.cabinData, required this.menu});
+  const CabinStockView({super.key, this.cabinRouteContext});
 
-  final CabinVisualizerData cabinData;
-  final MenuItem menu;
+  final CabinRouteContext? cabinRouteContext;
 
   @override
   ConsumerState<CabinStockView> createState() => CabinStockViewState();
@@ -27,7 +23,8 @@ class CabinStockViewState extends ConsumerState<CabinStockView> {
   @override
   void initState() {
     super.initState();
-    _initialize(widget.cabinData.cabinId);
+    final cabinId = widget.cabinRouteContext?.cabin?.id ?? 0;
+    _initialize(cabinId);
   }
 
   void _initialize(int cabinId) {
