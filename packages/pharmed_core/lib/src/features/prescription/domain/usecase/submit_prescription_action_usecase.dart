@@ -1,14 +1,18 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum PrescriptionActionType {
-  approve('Seçili Talepleri Onayla'),
-  cancel('Seçili Talepleri İptal Et'),
-  reject('Seçili Talepleri Reddet'),
-  rejectAfterApprove('Seçili Talepleri Reddet');
+  approve,
+  cancel,
+  reject,
+  rejectAfterApprove;
 
-  final String title;
-
-  const PrescriptionActionType(this.title);
+  String get title => switch (this) {
+    PrescriptionActionType.approve => contextlessL10n().prescriptionCore_actionApproveTitle,
+    PrescriptionActionType.cancel => contextlessL10n().prescriptionCore_actionCancelTitle,
+    PrescriptionActionType.reject => contextlessL10n().prescriptionCore_actionRejectTitle,
+    PrescriptionActionType.rejectAfterApprove => contextlessL10n().prescriptionCore_actionRejectAfterApproveTitle,
+  };
 }
 
 class SubmitActionParams {

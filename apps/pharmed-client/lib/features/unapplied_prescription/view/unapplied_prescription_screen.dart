@@ -86,8 +86,8 @@ class _UnappliedPrescriptionRightPanel extends StatelessWidget {
     if (state.prescriptionItems.isEmpty) {
       return EmptyStateWidget(
         icon: PhosphorIcons.receiptX(),
-        title: context.l10n.unadministered_prescriptions_empty_title,
-        description: context.l10n.unadministered_prescriptions_empty_description,
+        title: context.l10n.prescription_unadministeredEmptyTitle,
+        description: context.l10n.prescription_unadministeredEmptyDescription,
       );
     }
 

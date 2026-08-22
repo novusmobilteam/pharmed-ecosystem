@@ -15,7 +15,7 @@ Future<T?> showMaterialTypeDialog<T>(BuildContext context, {bool forSelection = 
             ..fetch(),
       child: Consumer<MaterialTypeNotifier>(
         builder: (context, vm, _) => CustomDialog(
-          title: forSelection ? context.l10n.materialTypeDialogSelectTitle : context.l10n.materialTypeDialogTitle,
+          title: forSelection ? context.l10n.materialType_dialogSelectTitle : context.l10n.materialType_dialogTitle,
           showSearch: true,
           showAdd: !forSelection,
           isLoading: vm.isFetching,
@@ -62,9 +62,9 @@ class _MaterialTypeListViewState extends State<MaterialTypeListView> {
           return EmptyStateWidget(
             icon: Icons.category_outlined,
             variant: EmptyStateVariant.custom,
-            title: context.l10n.materialTypeListEmptyTitle,
+            title: context.l10n.materialType_listEmptyTitle,
             description: widget.isDialog
-                ? context.l10n.common_addItemHint('malzeme tipi')
+                ? context.l10n.common_addItemHint(context.l10n.materialType_itemNameLabel)
                 : context.l10n.common_emptyListMessage,
           );
         }

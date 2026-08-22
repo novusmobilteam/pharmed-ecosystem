@@ -25,7 +25,7 @@ class TableView extends StatelessWidget {
         TableActionItem(
           icon: PhosphorIcons.trash(),
           tooltip: context.l10n.common_deleteTooltip,
-          onPressed: (role) => notifier.deleteRole(role, successMessage: context.l10n.roleDeleteSuccessMessage),
+          onPressed: (role) => notifier.deleteRole(role, successMessage: context.l10n.role_deleteSuccessMessage),
           isVisible: (role) => role.type == null,
         ),
         TableActionItem(

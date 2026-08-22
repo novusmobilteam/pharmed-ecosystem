@@ -300,7 +300,7 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
 
     return MedDashboardPanel(
       key: const ValueKey('unapplied_panel'),
-      title: context.l10n.dashboardUnappliedPrescriptionsPanelTitle,
+      title: context.l10n.dashboard_unappliedPrescriptionsPanelTitle,
       section: section,
       itemCount: items.length,
       itemBuilder: (context, index) {
@@ -316,13 +316,13 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
               context.l10n.assignment_patientLabel,
               item.prescription?.hospitalization?.patient?.fullName ?? '-',
             ),
-            DashboardRxInfoLine(context.l10n.dashboardDoctorLabel, item.doctor?.fullName ?? '-'),
+            DashboardRxInfoLine(context.l10n.dashboard_doctorLabel, item.doctor?.fullName ?? '-'),
             DashboardRxInfoLine(
               context.l10n.assignment_serviceLabel,
               item.prescription?.hospitalization?.physicalService?.name ?? '-',
             ),
             DashboardRxInfoLine(
-              context.l10n.dashboardRoomBedLabel,
+              context.l10n.dashboard_roomBedLabel,
               [
                 item.prescription?.hospitalization?.room?.name,
                 item.prescription?.hospitalization?.bed?.name,

@@ -19,6 +19,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class CheckIntakeParams {
   final IntakeType type;
@@ -100,7 +101,7 @@ class CheckIntakeUseCase {
       // hiç çözülememiş demektir, sessizce boş istek göndermek yerine
       // burada hata üret.
       if (item.stock == null && item.assignment == null) {
-        const failure = CheckFailed(message: 'Hedef çekmece/göz bulunamadı');
+        final failure = CheckFailed(message: contextlessL10n().cabinCore_targetDrawerNotFound);
         statuses[item.id] = failure;
         onItemStatusChanged?.call(item.id, failure);
         continue;

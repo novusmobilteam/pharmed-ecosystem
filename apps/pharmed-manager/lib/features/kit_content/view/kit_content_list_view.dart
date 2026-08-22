@@ -39,9 +39,9 @@ class _KitContentListViewState extends State<KitContentListView> {
           return EmptyStateWidget(
             icon: Icons.inventory_2_outlined,
             variant: EmptyStateVariant.custom,
-            title: context.l10n.kitContentListEmptyTitle,
+            title: context.l10n.kitContent_listEmptyTitle,
             description: widget.isDialog
-                ? context.l10n.common_addItemHint('içerik')
+                ? context.l10n.common_addItemHint(context.l10n.kitContent_itemNameLabel)
                 : context.l10n.common_emptyListMessage,
           );
         }

@@ -42,7 +42,7 @@ class PrescriptionFormViewState extends State<PrescriptionFormView> {
         children: [
           MedSelectionField<Medicine>(
             key: ValueKey(notifier.selectedItem),
-            label: context.l10n.prescriptionMedicineFieldLabel,
+            label: context.l10n.prescription_medicineFieldLabel,
             initialValue: selected.medicine,
             labelBuilder: (d) => d.name,
             onSelected: notifier.updateMedicine,
@@ -81,7 +81,7 @@ class PrescriptionFormViewState extends State<PrescriptionFormView> {
           _TimesGrid(item: selected),
           const SizedBox(height: 12),
           MedTextInputField(
-            label: context.l10n.prescriptionDescriptionFieldLabel,
+            label: context.l10n.prescription_descriptionFieldLabel,
             controller: _descriptionController,
             maxLines: 5,
             maxLength: 3000,
@@ -139,8 +139,8 @@ class _TimesGrid extends StatelessWidget {
     final today = DateTime(now.year, now.month, now.day);
     final target = DateTime(dt.year, dt.month, dt.day);
     final diff = target.difference(today).inDays;
-    if (diff == 0) return context.l10n.date_preset_today;
-    if (diff == 1) return context.l10n.prescriptionTomorrowLabel;
+    if (diff == 0) return context.l10n.dateFilter_todayPreset;
+    if (diff == 1) return context.l10n.prescription_tomorrowLabel;
     // Aktif locale'e göre kısaltılmış gün adı (ör. tr: "Pzt", en: "Mon").
     // DateTime.weekday (Pzt=1..Paz=7) ile aynı sırayı korur.
     final locale = Localizations.localeOf(context).toString();
@@ -161,7 +161,7 @@ class _TimesGrid extends StatelessWidget {
         Row(
           children: [
             Text(
-              context.l10n.prescriptionTimesLabel,
+              context.l10n.prescription_timesLabel,
               style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
             ),
             const SizedBox(width: 6),
@@ -280,7 +280,7 @@ class _AddRow extends StatelessWidget {
             Icon(PhosphorIcons.plus(), size: 14, color: MedColors.blue),
             const SizedBox(width: 8),
             Text(
-              context.l10n.prescriptionAddTimeButton,
+              context.l10n.prescription_addTimeButton,
               style: MedTextStyles.bodySm(color: MedColors.blue, weight: FontWeight.w600),
             ),
           ],

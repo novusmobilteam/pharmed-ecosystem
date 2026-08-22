@@ -14,6 +14,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class CabinTargetedPrescriptionItem {
   const CabinTargetedPrescriptionItem({
@@ -51,7 +52,7 @@ class CabinTargetedPrescriptionItem {
   /// medicine null gelirse (ör. malzeme silinmiş) kullanıcıya gösterilecek
   /// güvenli varsayılan — medicine ile her zaman senkron, ayrı bir alan
   /// olarak SAKLANMAZ.
-  String get medicineName => medicine?.name ?? 'Bilinmeyen İlaç';
+  String get medicineName => medicine?.name ?? contextlessL10n().cabinCore_unknownMedicineFallback;
   String get medicineBarcode => medicine?.barcode ?? '';
 
   factory CabinTargetedPrescriptionItem.empty(MedicineAssignment? assignment) {

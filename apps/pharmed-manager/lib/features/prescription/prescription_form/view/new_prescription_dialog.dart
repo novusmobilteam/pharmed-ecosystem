@@ -21,8 +21,8 @@ part 'prescription_dialog_widgets.dart';
 /// dışa tıklama ile kapanmaz.
 Future<void> showPrescriptionFormDialog(BuildContext context, {Hospitalization? hospitalization}) {
   final initial = hospitalization ?? context.read<PrescriptionNotifier>().selectedHospitalization;
-  final creatingLoadingMessage = context.l10n.prescriptionCreatingLoadingMessage;
-  final templateSavingLoadingMessage = context.l10n.prescriptionTemplateSavingLoadingMessage;
+  final creatingLoadingMessage = context.l10n.prescription_creatingLoadingMessage;
+  final templateSavingLoadingMessage = context.l10n.prescription_templateSavingLoadingMessage;
 
   return showMedDialog(
     context: context,
@@ -62,8 +62,8 @@ class _NewPrescriptionDialog extends StatelessWidget {
     final width = (size.width * 0.85).clamp(1200.0, 1600.0);
 
     return MedDialog(
-      title: context.l10n.prescriptionNewTitle,
-      subtitle: context.l10n.prescriptionNewDialogSubtitle,
+      title: context.l10n.prescription_newTitle,
+      subtitle: context.l10n.prescription_newDialogSubtitle,
       icon: PhosphorIcons.notepad(),
       width: width,
       maxHeightFactor: 0.85,
@@ -102,13 +102,13 @@ class _ThreeColumnBody extends StatelessWidget {
                   tabs: [
                     Tab(
                       child: Text(
-                        context.l10n.prescriptionTabHistory,
+                        context.l10n.prescription_tabHistory,
                         style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     Tab(
                       child: Text(
-                        context.l10n.prescriptionTabTemplates,
+                        context.l10n.prescription_tabTemplates,
                         style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),

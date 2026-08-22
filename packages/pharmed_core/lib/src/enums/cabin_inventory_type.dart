@@ -1,3 +1,5 @@
+import 'package:pharmed_ui/pharmed_ui.dart';
+
 /// CabinInventoryView'ı açarken kullanılan tip.
 enum CabinInventoryType {
   refill(1),
@@ -11,81 +13,81 @@ enum CabinInventoryType {
 
   const CabinInventoryType(this.id);
 
-  /// Banner/mesaj bağlamı için Türkçe etiket.
+  /// Banner/mesaj bağlamı için kısa işlem etiketi.
   String get operationLabel => switch (this) {
-    CabinInventoryType.refill => 'Dolum',
-    CabinInventoryType.intake => 'Alım',
-    CabinInventoryType.unload => 'Boşaltma',
-    CabinInventoryType.census => 'Sayım',
-    CabinInventoryType.disposal => 'İmha',
-    CabinInventoryType.refillList => 'Dolum',
+    CabinInventoryType.refill => contextlessL10n().enumCore_cabinInventoryTypeRefillOperationLabel,
+    CabinInventoryType.intake => contextlessL10n().enumCore_cabinInventoryTypeIntakeOperationLabel,
+    CabinInventoryType.unload => contextlessL10n().enumCore_cabinInventoryTypeUnloadOperationLabel,
+    CabinInventoryType.census => contextlessL10n().enumCore_cabinInventoryTypeCensusOperationLabel,
+    CabinInventoryType.disposal => contextlessL10n().enumCore_cabinInventoryTypeDisposalOperationLabel,
+    CabinInventoryType.refillList => contextlessL10n().enumCore_cabinInventoryTypeRefillListOperationLabel,
   };
 
   String get title {
     switch (this) {
       case CabinInventoryType.refill:
-        return 'İlaç Dolum';
+        return contextlessL10n().enumCore_cabinInventoryTypeRefillTitle;
       case CabinInventoryType.refillList:
-        return 'İlaç Dolum Listesi';
+        return contextlessL10n().enumCore_cabinInventoryTypeRefillListTitle;
       case CabinInventoryType.census:
-        return 'İlaç Sayım';
+        return contextlessL10n().enumCore_cabinInventoryTypeCensusTitle;
       case CabinInventoryType.disposal:
-        return 'İlaç İmha';
+        return contextlessL10n().enumCore_cabinInventoryTypeDisposalTitle;
       case CabinInventoryType.unload:
-        return 'İlaç Boşaltma';
+        return contextlessL10n().enumCore_cabinInventoryTypeUnloadTitle;
       case CabinInventoryType.intake:
-        return 'İlaç Alım';
+        return contextlessL10n().enumCore_cabinInventoryTypeIntakeTitle;
     }
   }
 
   String get buttonText {
     switch (this) {
       case CabinInventoryType.refill:
-        return 'Dolum Yap';
+        return contextlessL10n().enumCore_cabinInventoryTypeRefillButtonText;
       case CabinInventoryType.refillList:
-        return 'Dolum Yap';
+        return contextlessL10n().enumCore_cabinInventoryTypeRefillListButtonText;
       case CabinInventoryType.census:
-        return 'Sayım Yap';
+        return contextlessL10n().enumCore_cabinInventoryTypeCensusButtonText;
       case CabinInventoryType.disposal:
-        return 'İmha Et';
+        return contextlessL10n().enumCore_cabinInventoryTypeDisposalButtonText;
       case CabinInventoryType.unload:
-        return 'İlaç Boşalt';
+        return contextlessL10n().enumCore_cabinInventoryTypeUnloadButtonText;
       case CabinInventoryType.intake:
-        return 'İlaç Al';
+        return contextlessL10n().enumCore_cabinInventoryTypeIntakeButtonText;
     }
   }
 
   String get fieldText {
     switch (this) {
       case CabinInventoryType.refill:
-        return 'Dolum Miktarı';
+        return contextlessL10n().enumCore_cabinInventoryTypeRefillFieldText;
       case CabinInventoryType.refillList:
-        return 'Dolum Miktarı';
+        return contextlessL10n().enumCore_cabinInventoryTypeRefillListFieldText;
       case CabinInventoryType.census:
-        return 'Sayım Miktarı';
+        return contextlessL10n().enumCore_cabinInventoryTypeCensusFieldText;
       case CabinInventoryType.disposal:
-        return 'İmha Miktarı';
+        return contextlessL10n().enumCore_cabinInventoryTypeDisposalFieldText;
       case CabinInventoryType.unload:
-        return 'Boşaltım Miktarı';
+        return contextlessL10n().enumCore_cabinInventoryTypeUnloadFieldText;
       case CabinInventoryType.intake:
-        return 'Alım Miktarı';
+        return contextlessL10n().enumCore_cabinInventoryTypeIntakeFieldText;
     }
   }
 
   String get sequentialText {
     switch (this) {
       case CabinInventoryType.refill:
-        return 'Otomatik Dolumu Başlat';
+        return contextlessL10n().enumCore_cabinInventoryTypeRefillSequentialText;
       case CabinInventoryType.refillList:
-        return 'Otomatik Dolumu Başlat';
+        return contextlessL10n().enumCore_cabinInventoryTypeRefillListSequentialText;
       case CabinInventoryType.census:
-        return 'Otomatik Sayımı Başlat';
+        return contextlessL10n().enumCore_cabinInventoryTypeCensusSequentialText;
       case CabinInventoryType.disposal:
-        return 'Otomatik İmhayı Başlat';
+        return contextlessL10n().enumCore_cabinInventoryTypeDisposalSequentialText;
       case CabinInventoryType.unload:
-        return 'Otomatik Boşaltmayı Başlat';
+        return contextlessL10n().enumCore_cabinInventoryTypeUnloadSequentialText;
       case CabinInventoryType.intake:
-        return 'Otomatik Alım Başlat';
+        return contextlessL10n().enumCore_cabinInventoryTypeIntakeSequentialText;
     }
   }
 

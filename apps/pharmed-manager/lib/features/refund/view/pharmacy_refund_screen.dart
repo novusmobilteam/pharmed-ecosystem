@@ -59,9 +59,9 @@ class DeleteDescriptionView extends StatelessWidget {
     return Consumer<PharmacyRefundNotifier>(
       builder: (context, notifier, _) {
         return RegistrationDialog(
-          title: 'Açıklama',
+          title: context.l10n.refund_deleteDialog_title,
           maxHeight: 350,
-          saveButtonText: 'Sil',
+          saveButtonText: context.l10n.refund_deleteDialog_saveButton,
           onSave: () {
             MessageUtils.showConfirmDeleteDialog(
               context: context,
@@ -81,7 +81,7 @@ class DeleteDescriptionView extends StatelessWidget {
             children: [
               MedTextInputField(
                 maxLines: 3,
-                label: 'Silme nedeninizi açıklayınız',
+                label: context.l10n.refund_deleteDialog_reasonLabel,
                 onChanged: (value) => notifier.description = value ?? '',
               ),
             ],

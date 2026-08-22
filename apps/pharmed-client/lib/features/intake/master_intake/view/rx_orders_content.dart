@@ -66,7 +66,7 @@ class RxOrdersContent extends ConsumerWidget {
       searchHint: context.l10n.intake_hint_searchMedicine,
       isLoading: isItemsLoading,
       isEmpty: noPatientSelected || (!isItemsLoading && items.isEmpty),
-      emptyMessage: noPatientSelected ? context.l10n.wasteSelectPatient : context.l10n.appException_notFoundGeneric,
+      emptyMessage: noPatientSelected ? context.l10n.waste_selectPatient : context.l10n.appException_notFoundGeneric,
       content: (isItemsLoading || noPatientSelected)
           ? null
           : CabinOperationGrid(

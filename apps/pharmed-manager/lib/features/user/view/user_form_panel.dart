@@ -18,7 +18,7 @@ class UserFormPanel extends StatelessWidget {
       ),
       child: Consumer<UserFormNotifier>(
         builder: (context, notifier, _) {
-          final title = userNotifier.isEditing ? context.l10n.userFormEditTitle : context.l10n.userFormCreateTitle;
+          final title = userNotifier.isEditing ? context.l10n.user_formEditTitle : context.l10n.user_formCreateTitle;
           return SidePanel(
             title: title,
             isLoading: notifier.isLoading(notifier.submitOp),
@@ -99,7 +99,7 @@ class _RegistrationNumberField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.userRegistrationNumberLabel,
+          label: context.l10n.user_registrationNumberLabel,
           initialValue: notifier.user.registrationNumber,
           onChanged: (text) => notifier.changeRegistrationNumber(text),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -118,7 +118,7 @@ class _NameField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.userNameLabel,
+          label: context.l10n.user_nameLabel,
           initialValue: notifier.user.name,
           onChanged: (v) => notifier.changeName(v),
           validator: Validators.cannotBlankValidator,
@@ -137,7 +137,7 @@ class _SurnameField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.userSurnameLabel,
+          label: context.l10n.user_surnameLabel,
           initialValue: notifier.user.surname,
           onChanged: (v) => notifier.changeSurname(v),
           validator: Validators.cannotBlankValidator,
@@ -156,7 +156,7 @@ class _RoleField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedSelectionField<Role>(
           key: key,
-          label: context.l10n.userRoleTypeLabel,
+          label: context.l10n.user_roleTypeLabel,
           initialValue: notifier.user.role,
           labelBuilder: (r) => r.name,
           dataSource: (skip, take, search) =>
@@ -197,7 +197,7 @@ class _UsageKindField extends StatelessWidget {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<UserType>(
-          label: context.l10n.userUsageTypeLabel,
+          label: context.l10n.user_usageTypeLabel,
           options: UserType.values,
           initialValue: notifier.user.type,
           labelBuilder: (t) => t?.label,
@@ -217,7 +217,7 @@ class _ExpirationDateField extends StatelessWidget {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
         return MedDateInputField(
-          label: context.l10n.userValidUntilLabel,
+          label: context.l10n.user_validUntilLabel,
           firstDate: DateTime.now(),
           initialValue: notifier.user.validUntil,
           onDateSelected: (value) => notifier.changeValidUntil(value),
@@ -236,7 +236,7 @@ class _EmailField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.userEmailLabel,
+          label: context.l10n.user_emailLabel,
           initialValue: notifier.user.email,
           onChanged: (value) => notifier.changeEmail(value),
           validator: Validators.emailValidator,
@@ -254,7 +254,7 @@ class _OrderStatusField extends StatelessWidget {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<PermissionStatus>(
-          label: context.l10n.userOrderPermissionLabel,
+          label: context.l10n.user_orderPermissionLabel,
           options: PermissionStatus.values,
           initialValue: permissionStatusFromBool(notifier.user.isNotOrdered),
           labelBuilder: (s) => s?.label,
@@ -274,7 +274,7 @@ class _WitnessedStationField extends StatelessWidget {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<PermissionStatus>(
-          label: context.l10n.userWitnessedStationEntryLabel,
+          label: context.l10n.user_witnessedStationEntryLabel,
           options: PermissionStatus.values,
           initialValue: permissionStatusFromBool(notifier.user.isWitnessedStationEntry),
           labelBuilder: (s) => s?.label,
@@ -294,7 +294,7 @@ class _PurchaseKitField extends StatelessWidget {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<PermissionStatus>(
-          label: context.l10n.userKitPurchaseLabel,
+          label: context.l10n.user_kitPurchaseLabel,
           options: PermissionStatus.values,
           initialValue: permissionStatusFromBool(notifier.user.kitPurchase),
           labelBuilder: (s) => s?.label,
@@ -315,7 +315,7 @@ class _StationsField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedMultiSelectionField<Station>(
           key: ValueKey(notifier.selectedStations.length),
-          label: context.l10n.userAuthorizedStationsLabel,
+          label: context.l10n.user_authorizedStationsLabel,
           initialValue: notifier.selectedStations,
           dataSource: (skip, take, search) =>
               context.read<GetStationsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
@@ -338,7 +338,7 @@ class _UsernameField extends StatelessWidget {
     return Consumer<UserFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: context.l10n.userUsernameLabel,
+          label: context.l10n.user_usernameLabel,
           initialValue: notifier.user.userName,
           onChanged: (value) => notifier.changeUsername(value),
         );

@@ -44,7 +44,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
               _buildOption(
                 context,
                 icon: Icons.today_outlined,
-                label: context.l10n.date_preset_today,
+                label: context.l10n.dateFilter_todayPreset,
                 isSelected: _isSameRange(todayStart, todayEnd),
                 onTap: () => _select(context, todayStart, todayEnd),
               ),

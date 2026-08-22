@@ -39,7 +39,9 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
       return _OverviewRow(
         id: item.address,
         title: item.address,
-        subtitle: item.isKubik ? 'Kübik Çekmece' : 'Birim Doz Çekmece',
+        subtitle: item.isKubik
+            ? context.l10n.cabinOverview_cubicDrawerSubtitle
+            : context.l10n.cabinOverview_unitDoseDrawerSubtitle,
         segmentCount: item.isKubik ? 1 : item.units.length,
         borderColor: border,
         backgroundColor: bg,
@@ -59,7 +61,7 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
       child: Column(
         children: [
           _OverviewSection(
-            title: 'KABİN GENEL BAKIŞ',
+            title: context.l10n.cabinOverview_panelTitle,
             countLabel: '$completed/$inQueue',
             rows: rows,
             focusedRowId: activeItem?.address,
@@ -67,7 +69,7 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
           ),
           if (activeItem != null) ...[
             Divider(height: 1, thickness: 1, color: MedColors.border),
-            Flexible(child: _LocationSection(detail: _locationDetailFor(activeItem))),
+            Flexible(child: _LocationSection(detail: _locationDetailFor(activeItem, context))),
           ],
         ],
       ),
@@ -104,7 +106,7 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
     };
   }
 
-  static _LocationDetail _locationDetailFor(DrawerQueueItem item) {
+  static _LocationDetail _locationDetailFor(DrawerQueueItem item, BuildContext context) {
     final isReturnBoxTarget = item.isReturnDrawerTarget;
 
     if (isReturnBoxTarget && item.isKubik) {
@@ -126,15 +128,27 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
 
       return _LocationDetail(
         address: item.address,
-        typeLabel: 'KÜBİK',
+        typeLabel: context.l10n.cabinOverview_cubicTypeLabel,
         isKubik: true,
         cellStates: normalStates,
         mergedTrailingState: _CellState.active,
-        mergedTrailingLabel: 'İADE',
-        legendItems: const [
-          _LegendItem(color: MedColors.blue, background: MedColors.blueLight, label: 'Şu an dolduruluyor'),
-          _LegendItem(color: MedColors.green, background: MedColors.greenLight, label: 'Tamamlandı'),
-          _LegendItem(color: MedColors.border, background: MedColors.surface, label: 'Sırada'),
+        mergedTrailingLabel: context.l10n.cabinOverview_returnMergedCellLabel,
+        legendItems: [
+          _LegendItem(
+            color: MedColors.blue,
+            background: MedColors.blueLight,
+            label: context.l10n.cabinOverview_legendFillingLabel,
+          ),
+          _LegendItem(
+            color: MedColors.green,
+            background: MedColors.greenLight,
+            label: context.l10n.cabinOverview_legendCompletedLabel,
+          ),
+          _LegendItem(
+            color: MedColors.border,
+            background: MedColors.surface,
+            label: context.l10n.cabinOverview_legendQueuedLabel,
+          ),
         ],
       );
     }
@@ -154,13 +168,25 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
 
       return _LocationDetail(
         address: item.address,
-        typeLabel: 'KÜBİK',
+        typeLabel: context.l10n.cabinOverview_cubicTypeLabel,
         isKubik: true,
         cellStates: cellStates,
-        legendItems: const [
-          _LegendItem(color: MedColors.blue, background: MedColors.blueLight, label: 'Şu an dolduruluyor'),
-          _LegendItem(color: MedColors.green, background: MedColors.greenLight, label: 'Tamamlandı'),
-          _LegendItem(color: MedColors.border, background: MedColors.surface, label: 'Sırada'),
+        legendItems: [
+          _LegendItem(
+            color: MedColors.blue,
+            background: MedColors.blueLight,
+            label: context.l10n.cabinOverview_legendFillingLabel,
+          ),
+          _LegendItem(
+            color: MedColors.green,
+            background: MedColors.greenLight,
+            label: context.l10n.cabinOverview_legendCompletedLabel,
+          ),
+          _LegendItem(
+            color: MedColors.border,
+            background: MedColors.surface,
+            label: context.l10n.cabinOverview_legendQueuedLabel,
+          ),
         ],
       );
     }
@@ -206,14 +232,26 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
 
     return _LocationDetail(
       address: item.address,
-      typeLabel: 'BİRİM DOZ',
+      typeLabel: context.l10n.cabinOverview_unitDoseTypeLabel,
       isKubik: false,
       cellStates: const [],
       depthGrid: grid,
-      legendItems: const [
-        _LegendItem(color: MedColors.blue, background: MedColors.blueLight, label: 'Şu an dolduruluyor'),
-        _LegendItem(color: MedColors.green, background: MedColors.greenLight, label: 'Tamamlandı'),
-        _LegendItem(color: MedColors.border, background: MedColors.surface, label: 'Sırada'),
+      legendItems: [
+        _LegendItem(
+          color: MedColors.blue,
+          background: MedColors.blueLight,
+          label: context.l10n.cabinOverview_legendFillingLabel,
+        ),
+        _LegendItem(
+          color: MedColors.green,
+          background: MedColors.greenLight,
+          label: context.l10n.cabinOverview_legendCompletedLabel,
+        ),
+        _LegendItem(
+          color: MedColors.border,
+          background: MedColors.surface,
+          label: context.l10n.cabinOverview_legendQueuedLabel,
+        ),
       ],
     );
   }
@@ -408,7 +446,7 @@ class _LocationSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('KONUM REHBERİ', style: MedTextStyles.monoXs(color: MedColors.text3)),
+              Text(context.l10n.cabinOverview_locationGuideLabel, style: MedTextStyles.monoXs(color: MedColors.text3)),
               const Spacer(),
               Text(detail.typeLabel, style: MedTextStyles.monoXs(color: MedColors.text3)),
             ],
@@ -513,7 +551,11 @@ class _KubikGrid extends StatelessWidget {
             flex: 1,
             child: SizedBox(
               height: gridHeight,
-              child: _CellBox(index: cellStates.length, state: merged, label: mergedTrailingLabel ?? 'İADE'),
+              child: _CellBox(
+                index: cellStates.length,
+                state: merged,
+                label: mergedTrailingLabel ?? context.l10n.cabinOverview_returnMergedCellLabel,
+              ),
             ),
           ),
         ],

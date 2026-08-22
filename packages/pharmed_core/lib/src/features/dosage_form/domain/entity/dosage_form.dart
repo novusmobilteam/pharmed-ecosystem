@@ -28,7 +28,7 @@ class DosageForm extends Selectable {
   // Validasyon metodları
   bool get isValid => name?.trim().isNotEmpty == true;
   String? get nameError {
-    if (name == null || name!.trim().isEmpty) return 'Branş adı zorunludur';
+    if (name == null || name!.trim().isEmpty) return contextlessL10n().dataGuard_dosageFormNameRequired;
     return null;
   }
 

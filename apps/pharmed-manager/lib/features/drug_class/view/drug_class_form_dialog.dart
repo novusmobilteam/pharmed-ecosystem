@@ -36,8 +36,8 @@ class _DrugClassFormDialogState extends State<DrugClassFormDialog> {
     return Consumer<DrugClassFormNotifier>(
       builder: (context, notifier, _) {
         final String title = notifier.isCreate
-            ? context.l10n.drugClassFormAddTitle
-            : context.l10n.drugClassFormEditTitle;
+            ? context.l10n.drugClass_formAddTitle
+            : context.l10n.drugClass_formEditTitle;
         return RegistrationDialog(
           title: title,
           maxHeight: 400,
@@ -76,7 +76,7 @@ class _NameField extends StatelessWidget {
     return Consumer<DrugClassFormNotifier>(
       builder: (context, vm, _) {
         return MedTextInputField(
-          label: context.l10n.drugClassFormNameLabel,
+          label: context.l10n.drugClass_formNameLabel,
           initialValue: vm.drugClass.name,
           validator: (v) => Validators.cannotBlankValidator(v),
           onChanged: vm.updateName,

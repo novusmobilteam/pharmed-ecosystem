@@ -72,7 +72,7 @@ class MedDashboardPanel<T> extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              section.error ?? context.l10n.dashboardListPanelLoadErrorFallback,
+              section.error ?? context.l10n.dashboard_listPanelLoadErrorFallback,
               style: MedTextStyles.bodySm(color: MedColors.text3),
               textAlign: TextAlign.center,
             ),

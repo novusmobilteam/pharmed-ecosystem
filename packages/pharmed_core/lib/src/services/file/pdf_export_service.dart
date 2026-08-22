@@ -19,12 +19,13 @@ class PdfExportService {
     required List<String> columnNames,
     required List<List<dynamic>> data,
     required BuildContext context,
-    String title = 'Rapor',
+    String? title,
     PdfHeaderBuilder? headerBuilder,
     bool showSaveDialog = true,
   }) async {
+    final resolvedTitle = title ?? context.l10n.common_defaultReportTitle;
     try {
-      final doc = await _generateDocument(title, columnNames, data, headerBuilder);
+      final doc = await _generateDocument(resolvedTitle, columnNames, data, headerBuilder);
       final bytes = await doc.save();
 
       if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
@@ -35,13 +36,13 @@ class PdfExportService {
           savedFile = await DesktopFileService.saveToDesktop(bytes: bytes, fileName: fileName, extension: 'pdf');
         }
         if (savedFile != null) {
-          MessageUtils.showSuccessSnackbar(context, 'Dosya kaydedildi: ${savedFile.path}');
+          MessageUtils.showSuccessSnackbar(context, context.l10n.fileExport_savedMessage(savedFile.path));
         }
       } else {
         await Printing.sharePdf(bytes: bytes, filename: '$fileName.pdf');
       }
     } catch (e) {
-      MessageUtils.showErrorSnackbar(context, 'PDF kaydetme hatası: $e');
+      MessageUtils.showErrorSnackbar(context, context.l10n.fileExport_pdfSaveErrorMessage(e));
       rethrow;
     }
   }
@@ -50,14 +51,15 @@ class PdfExportService {
     required List<String> columnNames,
     required List<List<dynamic>> data,
     required BuildContext context,
-    String title = 'Rapor',
+    String? title,
     PdfHeaderBuilder? headerBuilder,
   }) async {
+    final resolvedTitle = title ?? context.l10n.common_defaultReportTitle;
     try {
-      final doc = await _generateDocument(title, columnNames, data, headerBuilder);
-      await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => doc.save(), name: title);
+      final doc = await _generateDocument(resolvedTitle, columnNames, data, headerBuilder);
+      await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => doc.save(), name: resolvedTitle);
     } catch (e) {
-      MessageUtils.showErrorSnackbar(context, 'Yazdırma hatası: $e');
+      MessageUtils.showErrorSnackbar(context, context.l10n.fileExport_printErrorMessage(e));
       rethrow;
     }
   }
@@ -68,7 +70,7 @@ class PdfExportService {
     required List<String> columns,
     required List<List<String>> rows,
     required BuildContext context,
-    String title = 'Tablo Raporu',
+    String? title,
     PdfHeaderBuilder? headerBuilder,
     ExportBehavior exportBehavior = ExportBehavior.saveDialog,
   }) async {
@@ -77,7 +79,7 @@ class PdfExportService {
       columnNames: columns,
       data: rows,
       context: context,
-      title: title,
+      title: title ?? context.l10n.table_defaultPdfReportTitle,
       headerBuilder: headerBuilder,
       showSaveDialog: exportBehavior == ExportBehavior.saveDialog,
     );

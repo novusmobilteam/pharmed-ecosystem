@@ -37,7 +37,7 @@ class TableView extends StatelessWidget {
         if (!notifier.showCompleted)
           TableActionItem(
             icon: PhosphorIcons.arrowFatDown(),
-            tooltip: 'İade Al',
+            tooltip: context.l10n.refund_takeTooltip,
             onPressed: (refund) => notifier.completeRefund(
               refund,
               onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
@@ -62,13 +62,16 @@ class TableView extends StatelessWidget {
 
       columnDefs: notifier.showCompleted ? _buildCompletedColumnDefs(context) : _buildColumnDefs(context),
 
-      pdfTitle: 'Eczane İade Raporu',
+      pdfTitle: context.l10n.refund_pdf_title,
       pdfHeaderBuilder: PdfReportHeader.build(
-        title: 'Eczane İade Raporu',
+        title: context.l10n.refund_pdf_title,
         infoLines: [
-          if (notifier.selectedStation != null) 'İstasyon: ${notifier.selectedStation!.name}',
+          if (notifier.selectedStation != null) context.l10n.refund_pdf_station(notifier.selectedStation!.name ?? ''),
           if (notifier.dateRange != null)
-            'Tarih: ${notifier.dateRange?.start.formattedDate} - ${notifier.dateRange?.end.formattedDate}',
+            context.l10n.refund_pdf_dateRange(
+              notifier.dateRange!.start.formattedDate,
+              notifier.dateRange!.end.formattedDate,
+            ),
         ],
       ),
     );

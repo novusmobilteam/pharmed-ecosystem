@@ -35,7 +35,7 @@ class MaterialTypeNotifier extends ChangeNotifier with ApiRequestMixin, Paginati
       operation: () => _deleteMaterialTypeUseCase.call(type),
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
-        onSuccess?.call('İşleminiz başarıyla tamamlandı.');
+        onSuccess?.call(contextlessL10n().common_operationSuccessMessage);
         fetch();
       },
     );

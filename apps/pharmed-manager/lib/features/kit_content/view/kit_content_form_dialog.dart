@@ -39,8 +39,8 @@ class _KitContentFormDialogState extends State<KitContentFormDialog> {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
         final String title = notifier.isCreate
-            ? context.l10n.kitContentFormAddTitle
-            : context.l10n.kitContentFormEditTitle;
+            ? context.l10n.kitContent_formAddTitle
+            : context.l10n.kitContent_formEditTitle;
         return RegistrationDialog(
           title: title,
           width: 600,
@@ -78,8 +78,8 @@ class _MaterialField extends StatelessWidget {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
         return MedSelectionField<Medicine>(
-          label: context.l10n.kitContentFormMaterialLabel,
-          title: context.l10n.kitContentFormMaterialLabel,
+          label: context.l10n.kitContent_formMaterialLabel,
+          title: context.l10n.kitContent_formMaterialLabel,
           initialValue: notifier.kitContent.medicine,
           labelBuilder: (medicine) => medicine.name ?? '-',
           dataSource: (skip, take, search) =>
@@ -100,7 +100,7 @@ class _PieceField extends StatelessWidget {
     return Consumer<KitContentFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: context.l10n.kitContentFormPieceLabel,
+          label: context.l10n.kitContent_formPieceLabel,
           initialValue: notifier.kitContent.piece.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: (v) => Validators.cannotBlankValidator(v),

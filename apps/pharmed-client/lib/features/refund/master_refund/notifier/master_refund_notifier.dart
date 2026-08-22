@@ -366,13 +366,13 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
     if (s is! MasterRefundMedicineSelection || s.isChecking) return;
 
     if (amount <= 0) {
-      onFailed?.call('İade miktarı 0 olamaz');
+      onFailed?.call(contextlessL10n().refund_error_amountZero);
       return;
     }
 
     final max = s.maxAmountFor(itemId);
     if (amount > max) {
-      onFailed?.call('İade edilecek miktar alım miktarından fazla olamaz');
+      onFailed?.call(contextlessL10n().refund_error_amountExceeded);
       return;
     }
 
@@ -410,9 +410,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
       final returnType = (item.medicine is Drug) ? (item.medicine as Drug).returnType : null;
 
       if (item.medicine?.id == null || returnType == null) {
-        checkStatuses[item.id] = const RefundCheckFailed(
-          message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
-        );
+        checkStatuses[item.id] = RefundCheckFailed(message: contextlessL10n().refund_error_genericCheckFailed);
         state = MasterRefundError(
           failure: const CabinValidationFailure(reason: CabinValidationReason.noValidTargets),
           previousState: s.copyWith(checkStatuses: Map.of(checkStatuses), isChecking: false),
@@ -433,8 +431,8 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
             // çözümümüzle üzerine yaz.
             final returnAssignment = _resolveReturnDrawerAssignment(resolved);
             if (returnAssignment == null) {
-              checkStatuses[item.id] = const RefundCheckFailed(
-                message: 'İade çekmecesi tanımlı değil. Lütfen Kabin Dizaynı ekranından tanımlayın.',
+              checkStatuses[item.id] = RefundCheckFailed(
+                message: contextlessL10n().refund_error_returnDrawerNotDefined,
               );
               return true;
             }
@@ -473,7 +471,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
         final reloaded = state;
         if (reloaded is MasterRefundMedicineSelection) {
           state = MasterRefundError(
-            failure: const CabinApiFailure(message: 'İade sırasında bir hata oluştu.'),
+            failure: CabinApiFailure(message: contextlessL10n().refund_error_completeFailed),
             previousState: reloaded,
           );
         }
@@ -513,7 +511,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
       if (current is MasterRefundMedicineSelection) {
         state = current.copyWith(
           checkStatuses: Map<int, RefundCheckStatus>.from(current.checkStatuses)
-            ..[itemId] = const RefundCheckFailed(message: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.'),
+            ..[itemId] = RefundCheckFailed(message: contextlessL10n().refund_error_genericCheckFailed),
         );
       }
       return false;

@@ -17,8 +17,8 @@ Future<T?> showActiveIngredientDialog<T>(BuildContext context, {bool forSelectio
       child: Consumer<ActiveIngredientNotifier>(
         builder: (context, vm, Widget? child) => CustomDialog(
           title: forSelection
-              ? context.l10n.activeIngredientDialogSelectTitle
-              : context.l10n.activeIngredientDialogTitle,
+              ? context.l10n.activeIngredient_dialogSelectTitle
+              : context.l10n.activeIngredient_dialogTitle,
           showSearch: true,
           showAdd: true,
           onSearchChanged: (query) => vm.search(query),

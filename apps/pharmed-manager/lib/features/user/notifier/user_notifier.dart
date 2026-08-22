@@ -39,17 +39,17 @@ class UserNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<
   List<TableSideCategory> tableCategories(BuildContext context) => [
     TableSideCategory(
       id: UserType.normal.name,
-      label: context.l10n.userCategoryNormalLabel,
+      label: context.l10n.user_categoryNormalLabel,
       count: _totalCountByType[UserType.normal] ?? 0,
     ),
     TableSideCategory(
       id: UserType.timeBased.name,
-      label: context.l10n.userCategoryTimeBasedLabel,
+      label: context.l10n.user_categoryTimeBasedLabel,
       count: _totalCountByType[UserType.timeBased] ?? 0,
     ),
     TableSideCategory(
       id: UserType.temporary.name,
-      label: context.l10n.userCategoryTemporaryLabel,
+      label: context.l10n.user_categoryTemporaryLabel,
       count: _totalCountByType[UserType.temporary] ?? 0,
     ),
   ];

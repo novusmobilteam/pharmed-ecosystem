@@ -10,8 +10,8 @@ class PrescriptionHistoryView extends StatelessWidget {
 
     if (!hasPatient) {
       return EmptyStateWidget(
-        title: context.l10n.prescriptionHistorySelectPatientTitle,
-        description: context.l10n.prescriptionHistorySelectPatientDescription,
+        title: context.l10n.prescription_historySelectPatientTitle,
+        description: context.l10n.prescription_historySelectPatientDescription,
       );
     }
 
@@ -19,8 +19,8 @@ class PrescriptionHistoryView extends StatelessWidget {
         ? const Center(child: MedLoadingIndicator())
         : history.items.isEmpty
         ? EmptyStateWidget(
-            title: context.l10n.emptyStateNoPrescriptionTitle,
-            description: context.l10n.prescriptionHistoryEmptyDescription,
+            title: context.l10n.emptyState_noPrescriptionTitle,
+            description: context.l10n.prescription_historyEmptyDescription,
           )
         : _HistoryList(items: history.items);
   }
@@ -179,7 +179,7 @@ class _HistoryGroupCardState extends State<_HistoryGroupCard> {
                       children: [
                         Icon(PhosphorIcons.plus(), size: 16, color: MedColors.blueLight),
                         Text(
-                          context.l10n.prescriptionAddToRxButton(count),
+                          context.l10n.prescription_addToRxButton(count),
                           style: MedTextStyles.bodyMd().copyWith(
                             color: MedColors.blueLight,
                             fontWeight: FontWeight.bold,

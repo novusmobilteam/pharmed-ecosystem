@@ -26,8 +26,8 @@ class WarningFormPanel extends StatelessWidget {
       child: Consumer<WarningFormNotifier>(
         builder: (context, formNotifier, _) {
           return SidePanel(
-            title: isNew ? context.l10n.warningFormAddTitle : context.l10n.warningFormEditTitle,
-            subtitle: isNew ? context.l10n.warningFormAddSubtitle : context.l10n.warningFormEditSubtitle,
+            title: isNew ? context.l10n.warning_formAddTitle : context.l10n.warning_formEditTitle,
+            subtitle: isNew ? context.l10n.warning_formAddSubtitle : context.l10n.warning_formEditSubtitle,
             isLoading: formNotifier.isSubmitting,
             onClose: warningNotifier.closePanel,
             onSave: () async {
@@ -66,7 +66,7 @@ class _SubjectField extends StatelessWidget {
     return Consumer<WarningFormNotifier>(
       builder: (context, notifier, _) {
         return MedDropdownInputField<WarningSubject>(
-          label: context.l10n.warningFormSubjectLabel,
+          label: context.l10n.warning_formSubjectLabel,
           options: WarningSubject.values,
           initialValue: notifier.warning.subject,
           labelBuilder: (s) => s?.label,
@@ -86,7 +86,7 @@ class _TextField extends StatelessWidget {
     return Consumer<WarningFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: context.l10n.warningFormTextLabel,
+          label: context.l10n.warning_formTextLabel,
           autoFocus: notifier.isCreate,
           initialValue: notifier.warning.text,
           validator: Validators.cannotBlankValidator,

@@ -101,7 +101,7 @@ class _TelemetryHeader extends StatelessWidget {
           Text(context.l10n.dashboard_climate_title, style: MedTextStyles.titleSm()),
           const Spacer(),
           if (isPaused)
-            Text('context.l10n.dashboard_sensor_paused', style: MedTextStyles.bodySm(color: MedColors.text4))
+            Text(context.l10n.dashboard_sensor_paused, style: MedTextStyles.bodySm(color: MedColors.text4))
           else if (hasAlert)
             Icon(PhosphorIcons.warning(PhosphorIconsStyle.fill), size: 16, color: MedColors.red),
         ],

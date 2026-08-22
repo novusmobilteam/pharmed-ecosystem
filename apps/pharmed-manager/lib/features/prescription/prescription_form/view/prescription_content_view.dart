@@ -22,8 +22,8 @@ class PrescriptionContentView extends StatelessWidget {
           Expanded(
             child: notifier.items.isEmpty
                 ? EmptyStateWidget(
-                    title: context.l10n.prescriptionContentEmptyTitle,
-                    description: context.l10n.prescriptionContentEmptyDescription,
+                    title: context.l10n.prescription_contentEmptyTitle,
+                    description: context.l10n.prescription_contentEmptyDescription,
                   )
                 : ListView.separated(
                     itemCount: notifier.items.length,
@@ -43,7 +43,7 @@ class _ItemCard extends StatelessWidget {
   final int index;
 
   String _timesSummary(BuildContext context, List<DateTime>? times) {
-    if (times == null || times.isEmpty) return context.l10n.prescriptionItemNoTimesLabel;
+    if (times == null || times.isEmpty) return context.l10n.prescription_itemNoTimesLabel;
     final first = times.first.toTimeOfDay;
     final firstStr = first != null
         ? '${first.hour.toString().padLeft(2, '0')}:${first.minute.toString().padLeft(2, '0')}'
@@ -99,7 +99,7 @@ class _ItemCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.medicine?.name ?? context.l10n.prescriptionItemNoMedicineSelected,
+                    item.medicine?.name ?? context.l10n.prescription_itemNoMedicineSelected,
                     style: MedTextStyles.bodyLg(
                       weight: FontWeight.w600,
                       color: item.medicine == null ? MedColors.text3 : MedColors.text,

@@ -32,7 +32,7 @@ class _KitFormDialogState extends State<KitFormDialog> {
   Widget build(BuildContext context) {
     return Consumer<KitFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? context.l10n.kitFormAddTitle : context.l10n.kitFormEditTitle;
+        final String title = notifier.isCreate ? context.l10n.kit_formAddTitle : context.l10n.kit_formEditTitle;
 
         return RegistrationDialog(
           title: title,
@@ -72,7 +72,7 @@ class _NameField extends StatelessWidget {
     return Consumer<KitFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: context.l10n.kitFormNameLabel,
+          label: context.l10n.kit_formNameLabel,
           initialValue: notifier.kit.name,
           validator: (v) => Validators.cannotBlankValidator(v),
           onChanged: notifier.updateName,

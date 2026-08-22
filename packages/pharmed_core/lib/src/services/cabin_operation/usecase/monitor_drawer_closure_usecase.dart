@@ -2,6 +2,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// Çekmecenin FİZİKSEL olarak kapandığını sensör stream'i üzerinden izler.
 ///
@@ -79,7 +80,7 @@ class MonitorDrawerClosureUseCase {
       if (status == DrawerPhysicalStatus.timeoutError) {
         yield DrawerFailed(
           failure: MasterDrawerFailure.sensorCommunicationLost,
-          detail: 'Donanımla iletişim kesildi (kapanış izlenirken sensör yanıt vermiyor).',
+          detail: contextlessL10n().hw_cabinOps_sensorLostDuringCloseDetail,
         );
         return;
       }

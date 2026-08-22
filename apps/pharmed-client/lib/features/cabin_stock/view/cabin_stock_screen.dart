@@ -90,8 +90,8 @@ class _StockRightPanel extends StatelessWidget {
     if (state.prescriptionItems.isEmpty) {
       return EmptyStateWidget(
         icon: PhosphorIcons.package(),
-        title: context.l10n.cabin_stock_empty_title,
-        description: context.l10n.cabin_stock_empty_description,
+        title: context.l10n.cabinStock_emptyTitle,
+        description: context.l10n.cabinStock_emptyDescription,
       );
     }
     return RxDrugPanel(

@@ -29,7 +29,7 @@ class ActiveIngredient extends Selectable {
   // Validasyon metodları
   bool get isValid => name?.trim().isNotEmpty == true;
   String? get nameError {
-    if (name == null || name!.trim().isEmpty) return 'İsim alanı zorunludur';
+    if (name == null || name!.trim().isEmpty) return contextlessL10n().dataGuard_activeIngredientNameRequired;
     return null;
   }
 

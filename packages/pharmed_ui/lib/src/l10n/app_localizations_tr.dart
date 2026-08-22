@@ -682,88 +682,88 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settings_languageSubtitle => 'Arayüz dili';
 
   @override
-  String get emptyStateCabinDataTitle => 'Kabin verisi bulunamadı';
+  String get emptyState_cabinDataTitle => 'Kabin verisi bulunamadı';
 
   @override
-  String get emptyStateCabinDataDescription =>
+  String get emptyState_cabinDataDescription =>
       'Kabin henüz yapılandırılmamış olabilir\nveya bağlantı kurulamadı.';
 
   @override
-  String get emptyStateNoResultsTitle => 'Sonuç bulunamadı';
+  String get emptyState_noResultsTitle => 'Sonuç bulunamadı';
 
   @override
-  String get emptyStateNoResultsDescription =>
+  String get emptyState_noResultsDescription =>
       'Arama kriterlerinizi değiştirmeyi deneyin.';
 
   @override
-  String get emptyStateNoCellSelectedTitle => 'Göz seçilmedi';
+  String get emptyState_noCellSelectedTitle => 'Göz seçilmedi';
 
   @override
-  String get emptyStateNoCellSelectedDescription =>
+  String get emptyState_noCellSelectedDescription =>
       'Dolum yapmak için önce bir göz seçin.';
 
   @override
-  String get emptyStateNoPatientTitle => 'Hasta atanmamış';
+  String get emptyState_noPatientTitle => 'Hasta atanmamış';
 
   @override
-  String get emptyStateNoPatientDescription =>
+  String get emptyState_noPatientDescription =>
       'Bu göze henüz hasta ataması yapılmamış.';
 
   @override
-  String get emptyStateNoPrescriptionTitle => 'Reçete bulunamadı';
+  String get emptyState_noPrescriptionTitle => 'Reçete bulunamadı';
 
   @override
-  String get emptyStateNoPrescriptionDescription =>
+  String get emptyState_noPrescriptionDescription =>
       'Bu hastaya ait aktif reçete bulunmuyor.';
 
   @override
-  String get emptyStateNoCabinTitle => 'Kabin Bulunamadı';
+  String get emptyState_noCabinTitle => 'Kabin Bulunamadı';
 
   @override
-  String get emptyStateNoCabinDescription =>
+  String get emptyState_noCabinDescription =>
       'Henüz tanımlı bir kabin bulunmuyor. Devam edebilmek için lütfen bir kabin tanımlayın.';
 
   @override
-  String get emptyStateNetworkErrorTitle => 'İnternet Bağlantısı Yok';
+  String get emptyState_networkErrorTitle => 'İnternet Bağlantısı Yok';
 
   @override
-  String get emptyStateNetworkErrorDescription =>
+  String get emptyState_networkErrorDescription =>
       'Lütfen ağ bağlantınızı kontrol edip tekrar deneyin.';
 
   @override
-  String get emptyStateServerErrorTitle => 'Sunucuya Erişilemiyor';
+  String get emptyState_serverErrorTitle => 'Sunucuya Erişilemiyor';
 
   @override
-  String get emptyStateServerErrorDescription =>
+  String get emptyState_serverErrorDescription =>
       'Sunucuya bağlanılamıyor. Lütfen daha sonra tekrar deneyin.';
 
   @override
-  String get emptyStateErrorTitle => 'Bir Hata Oluştu';
+  String get emptyState_errorTitle => 'Bir Hata Oluştu';
 
   @override
-  String get emptyStateErrorDescription =>
+  String get emptyState_errorDescription =>
       'Beklenmeyen bir hata meydana geldi. Lütfen tekrar deneyin veya sistem yöneticinize başvurun.';
 
   @override
-  String get emptyStateNoDataTitle => 'Veri Yok';
+  String get emptyState_noDataTitle => 'Veri Yok';
 
   @override
-  String get emptyStateNoDataDescription =>
+  String get emptyState_noDataDescription =>
       'Henüz görüntülenecek veri bulunmuyor.';
 
   @override
-  String get refundNoRefundableDrugs =>
+  String get refund_noRefundableDrugs =>
       'Bu hastaya ait iade edilebilir ilaç bulunamadı.';
 
   @override
-  String get refundSelectPatient =>
+  String get refund_selectPatient =>
       'İade işlemi başlatmak için sol listeden bir hasta seçin.';
 
   @override
-  String get wasteNoWastableDrugs => 'Fire/imha edilebilir ilaç bulunamadı.';
+  String get waste_noWastableDrugs => 'Fire/imha edilebilir ilaç bulunamadı.';
 
   @override
-  String get wasteSelectPatient => 'İşlem yapmak için hasta seçin.';
+  String get waste_selectPatient => 'İşlem yapmak için hasta seçin.';
 
   @override
   String get common_confirmCancelButton => 'İptal Et';
@@ -1315,58 +1315,58 @@ class AppLocalizationsTr extends AppLocalizations {
       'Soldaki listeden hasta seçerek kendi hasta listenize ekleyebilirsiniz. Seçtiğiniz hastalar burada görünür.';
 
   @override
-  String get cabin_stock_empty_title => 'Bu hastaya ait stok yok';
+  String get cabinStock_emptyTitle => 'Bu hastaya ait stok yok';
 
   @override
-  String get cabin_stock_empty_description =>
+  String get cabinStock_emptyDescription =>
       'Seçili hastaya ait bu kabinde henüz stoklanmış ilaç bulunmuyor.';
 
   @override
-  String get unadministered_prescriptions_empty_title => 'Bekleyen reçete yok';
+  String get prescription_unadministeredEmptyTitle => 'Bekleyen reçete yok';
 
   @override
-  String get unadministered_prescriptions_empty_description =>
+  String get prescription_unadministeredEmptyDescription =>
       'Bu hastaya uygulanmayı bekleyen reçete bulunmuyor.';
 
   @override
-  String get empty_state_no_patient_selected_title => 'Bir hasta seçin';
+  String get emptyState_noPatientSelectedTitle => 'Bir hasta seçin';
 
   @override
-  String get empty_state_no_patient_selected_description =>
+  String get emptyState_noPatientSelectedDescription =>
       'Detayları görüntülemek için listeden bir hasta seçin.';
 
   @override
-  String get date_preset_today => 'Bugün';
+  String get dateFilter_todayPreset => 'Bugün';
 
   @override
-  String get date_preset_tomorrow => 'Yarın';
+  String get dateFilter_tomorrowPreset => 'Yarın';
 
   @override
-  String get date_preset_last_3_days => 'Son 3 gün';
+  String get dateFilter_last3DaysPreset => 'Son 3 gün';
 
   @override
-  String get date_preset_last_7_days => 'Son 7 gün';
+  String get dateFilter_last7DaysPreset => 'Son 7 gün';
 
   @override
-  String get date_preset_all => 'Tümü';
+  String get dateFilter_allPreset => 'Tümü';
 
   @override
   String get filter_all => 'Tümü';
 
   @override
-  String get census_action_report_extra_stock => 'Fazla Stok Bildir';
+  String get census_action_reportExtraStock => 'Fazla Stok Bildir';
 
   @override
-  String get census_extra_stock_dialog_title => 'Fazla Stok Bildir';
+  String get census_extraStockDialogTitle => 'Fazla Stok Bildir';
 
   @override
-  String get census_extra_stock_quantity_label => 'Adet';
+  String get census_extraStockQuantityLabel => 'Adet';
 
   @override
   String get common_action_add => 'Ekle';
 
   @override
-  String get census_extra_stock_summary_title => 'Bildirilen Fazla Stoklar';
+  String get census_extraStockSummaryTitle => 'Bildirilen Fazla Stoklar';
 
   @override
   String get core_serialPortDisconnectedLabel => 'Bağlı Değil';
@@ -1993,10 +1993,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unappliedPrescription_viewDetailsTooltip => 'Detayları Görüntüle';
 
   @override
-  String get dashboardCabinsLoadErrorFallback => 'Kabinler yüklenemedi';
+  String get dashboard_cabinsLoadErrorFallback => 'Kabinler yüklenemedi';
 
   @override
-  String get dashboardCabinListStaleLabel => 'Kabin listesi güncel değil';
+  String get dashboard_cabinListStaleLabel => 'Kabin listesi güncel değil';
 
   @override
   String get dashboardDrugActivityPanelTitle => 'İLAÇ HAREKETLERİ';
@@ -2005,40 +2005,40 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashboardDrugActivityEmptyTitle => 'Hareket yok';
 
   @override
-  String get dashboardDrugActivityDateTimeLabel => 'TARİH / SAAT';
+  String get dashboard_drugActivityDateTimeLabel => 'TARİH / SAAT';
 
   @override
-  String get dashboardMissingStockPanelTitle => 'EKSİK STOK BİLDİRİMLERİ';
+  String get dashboard_missingStockPanelTitle => 'EKSİK STOK BİLDİRİMLERİ';
 
   @override
-  String get dashboardMissingStockEmptyTitle => 'Eksik stok bildirimi yok';
+  String get dashboard_missingStockEmptyTitle => 'Eksik stok bildirimi yok';
 
   @override
-  String get dashboardMissingStockTimeLabel => 'SAAT';
+  String get dashboard_missingStockTimeLabel => 'SAAT';
 
   @override
-  String get dashboardMissingStockApproveButton => 'Onayla';
+  String get dashboard_missingStockApproveButton => 'Onayla';
 
   @override
-  String get dashboardMissingStockRejectButton => 'Reddet';
+  String get dashboard_missingStockRejectButton => 'Reddet';
 
   @override
-  String get dashboardOtherCabinPlaceholderText =>
+  String get dashboard_otherCabinPlaceholderText =>
       'SKT geçmiş malzemeler & kritik stoklar (sonraki tur)';
 
   @override
-  String get dashboardUnappliedPrescriptionsPanelTitle =>
+  String get dashboard_unappliedPrescriptionsPanelTitle =>
       'UYGULANMAMIŞ REÇETELER';
 
   @override
-  String get dashboardUnappliedPrescriptionsEmptyTitle =>
+  String get dashboard_unappliedPrescriptionsEmptyTitle =>
       'Uygulanmamış reçete yok';
 
   @override
-  String get dashboardDoctorLabel => 'DOKTOR';
+  String get dashboard_doctorLabel => 'DOKTOR';
 
   @override
-  String get dashboardRoomBedLabel => 'ODA / YATAK';
+  String get dashboard_roomBedLabel => 'ODA / YATAK';
 
   @override
   String get dashboardUpcomingTreatmentsPanelTitle => 'YAKLAŞAN TEDAVİLER';
@@ -2047,225 +2047,226 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashboardUpcomingTreatmentsEmptyTitle => 'Yaklaşan tedavi yok';
 
   @override
-  String get dashboardListPanelLoadErrorFallback => 'Yüklenemedi';
+  String get dashboard_listPanelLoadErrorFallback => 'Yüklenemedi';
 
   @override
-  String get prescriptionActionCompletedSuccess =>
+  String get prescription_actionCompletedSuccess =>
       'İşlem başarıyla tamamlandı.';
 
   @override
-  String get prescriptionApprovedSuccess => 'Reçete başarıyla onaylandı.';
+  String get prescription_approvedSuccess => 'Reçete başarıyla onaylandı.';
 
   @override
-  String get prescriptionDetailPanelPatientFallback => 'Hasta';
+  String get prescription_detailPanelPatientFallback => 'Hasta';
 
   @override
-  String get prescriptionDetailPanelSubtitle => 'Reçete Geçmişi';
+  String get prescription_detailPanelSubtitle => 'Reçete Geçmişi';
 
   @override
-  String get prescriptionDetailStartDateLabel => 'Başlangıç Tarihi';
+  String get prescription_detailStartDateLabel => 'Başlangıç Tarihi';
 
   @override
-  String get prescriptionDetailEndDateLabel => 'Bitiş Tarihi';
+  String get prescription_detailEndDateLabel => 'Bitiş Tarihi';
 
   @override
-  String get prescriptionDetailStatusLabel => 'Durum';
+  String get prescription_detailStatusLabel => 'Durum';
 
   @override
-  String get prescriptionCheckWarningDialogTitle => 'Kontrol Uyarısı';
+  String get prescription_checkWarningDialogTitle => 'Kontrol Uyarısı';
 
   @override
-  String get prescriptionSaveWithTemplateSuccess =>
+  String get prescription_saveWithTemplateSuccess =>
       'Reçete ve şablon başarıyla kaydedildi.';
 
   @override
-  String get prescriptionSavedTemplateFailedMessage =>
+  String get prescription_savedTemplateFailedMessage =>
       'Reçete kaydedildi ancak şablon kaydedilemedi.';
 
   @override
-  String get prescriptionSavedSuccess => 'Reçete başarıyla kaydedildi.';
+  String get prescription_savedSuccess => 'Reçete başarıyla kaydedildi.';
 
   @override
-  String get prescriptionCreatingLoadingMessage =>
+  String get prescription_creatingLoadingMessage =>
       'Reçete oluşturuluyor. Lütfen bekleyiniz.';
 
   @override
-  String get prescriptionTemplateSavingLoadingMessage => 'Şablon kaydediliyor.';
+  String get prescription_templateSavingLoadingMessage =>
+      'Şablon kaydediliyor.';
 
   @override
-  String get prescriptionNewTitle => 'Yeni Reçete';
+  String get prescription_newTitle => 'Yeni Reçete';
 
   @override
-  String get prescriptionNewDialogSubtitle =>
+  String get prescription_newDialogSubtitle =>
       'Reçete oluştur veya geçmiş reçeteden içe aktar';
 
   @override
-  String get prescriptionTabHistory => 'Geçmiş';
+  String get prescription_tabHistory => 'Geçmiş';
 
   @override
-  String get prescriptionTabTemplates => 'Şablonlar';
+  String get prescription_tabTemplates => 'Şablonlar';
 
   @override
-  String get prescriptionContentEmptyTitle =>
+  String get prescription_contentEmptyTitle =>
       'Reçeteye henüz ilaç eklemediniz.';
 
   @override
-  String get prescriptionContentEmptyDescription =>
+  String get prescription_contentEmptyDescription =>
       'Eklediğiniz ilaçlar burada görüntülenecektir.';
 
   @override
-  String get prescriptionItemNoTimesLabel => 'Saat eklenmedi';
+  String get prescription_itemNoTimesLabel => 'Saat eklenmedi';
 
   @override
-  String get prescriptionItemNoMedicineSelected => 'Henüz ilaç seçilmedi';
+  String get prescription_itemNoMedicineSelected => 'Henüz ilaç seçilmedi';
 
   @override
-  String get prescriptionPatientFieldLabel => 'Hasta';
+  String get prescription_patientFieldLabel => 'Hasta';
 
   @override
-  String get prescriptionDoctorFieldLabel => 'Doktor';
+  String get prescription_doctorFieldLabel => 'Doktor';
 
   @override
-  String get prescriptionSaveButton => 'Reçeteyi Kaydet';
+  String get prescription_saveButton => 'Reçeteyi Kaydet';
 
   @override
-  String get prescriptionSaveAsTemplateCheckboxLabel =>
+  String get prescription_saveAsTemplateCheckboxLabel =>
       'Şablon olarak da kaydet';
 
   @override
-  String get prescriptionTemplateNameHint => 'Şablon Adı';
+  String get prescription_templateNameHint => 'Şablon Adı';
 
   @override
-  String get prescriptionMedicineFieldLabel => 'İlaç / Malzeme';
+  String get prescription_medicineFieldLabel => 'İlaç / Malzeme';
 
   @override
-  String get prescriptionDescriptionFieldLabel => 'Açıklama';
+  String get prescription_descriptionFieldLabel => 'Açıklama';
 
   @override
-  String get prescriptionTomorrowLabel => 'Yarın';
+  String get prescription_tomorrowLabel => 'Yarın';
 
   @override
-  String get prescriptionTimesLabel => 'Saatler';
+  String get prescription_timesLabel => 'Saatler';
 
   @override
-  String get prescriptionAddTimeButton => 'Saat ekle';
+  String get prescription_addTimeButton => 'Saat ekle';
 
   @override
-  String get prescriptionHistorySelectPatientTitle => 'Hasta seçin';
+  String get prescription_historySelectPatientTitle => 'Hasta seçin';
 
   @override
-  String get prescriptionHistorySelectPatientDescription =>
+  String get prescription_historySelectPatientDescription =>
       'Geçmiş reçeteleri görmek için önce hasta seçimi yapın';
 
   @override
-  String get prescriptionHistoryEmptyDescription =>
+  String get prescription_historyEmptyDescription =>
       'Bu hasta için geçmiş reçete yok';
 
   @override
-  String prescriptionAddToRxButton(int count) {
+  String prescription_addToRxButton(int count) {
     return 'Reçeteye Ekle ($count)';
   }
 
   @override
-  String get prescriptionTemplateEmptyTitle => 'Şablon bulunamadı';
+  String get prescription_templateEmptyTitle => 'Şablon bulunamadı';
 
   @override
-  String get prescriptionTemplateEmptyDescription =>
+  String get prescription_templateEmptyDescription =>
       'Kaydedilmiş bir reçete şablonu yok';
 
   @override
-  String get prescriptionTemplateNoItemsMessage => 'Bu şablonda kalem yok';
+  String get prescription_templateNoItemsMessage => 'Bu şablonda kalem yok';
 
   @override
-  String get prescriptionScreenTitleFallback => 'Reçete İşlemleri';
+  String get prescription_screenTitleFallback => 'Reçete İşlemleri';
 
   @override
-  String get prescriptionContentTooltip => 'Reçete İçeriği';
+  String get prescription_contentTooltip => 'Reçete İçeriği';
 
   @override
-  String get prescriptionShowActiveButton => 'Aktif yatışları getir';
+  String get prescription_showActiveButton => 'Aktif yatışları getir';
 
   @override
-  String get prescriptionShowDischargedButton => 'Taburcu olanları göster';
+  String get prescription_showDischargedButton => 'Taburcu olanları göster';
 
   @override
-  String get cabinTemperatureScreenTitle => 'Kabin Isı Kontrol';
+  String get cabinTemperature_screenTitle => 'Kabin Isı Kontrol';
 
   @override
-  String get cabinTemperatureFormDialogTitle => 'Kabin Düzenleme';
+  String get cabinTemperature_formDialogTitle => 'Kabin Düzenleme';
 
   @override
-  String get cabinTemperatureInsideBottomLabel => 'İç Alt Sıcaklık';
+  String get cabinTemperature_insideBottomLabel => 'İç Alt Sıcaklık';
 
   @override
-  String get cabinTemperatureInsideTopLabel => 'İç Üst Sıcaklık';
+  String get cabinTemperature_insideTopLabel => 'İç Üst Sıcaklık';
 
   @override
-  String get cabinTemperatureOutsideBottomLabel => 'Dış Alt Sıcaklık';
+  String get cabinTemperature_outsideBottomLabel => 'Dış Alt Sıcaklık';
 
   @override
-  String get cabinTemperatureOutsideTopLabel => 'Dış Üst Sıcaklık';
+  String get cabinTemperature_outsideTopLabel => 'Dış Üst Sıcaklık';
 
   @override
-  String get cabinTemperatureHumidityBottomLabel => 'Nem Alt Sınır';
+  String get cabinTemperature_humidityBottomLabel => 'Nem Alt Sınır';
 
   @override
-  String get cabinTemperatureHumidityTopLabel => 'Nem Üst Sınır';
+  String get cabinTemperature_humidityTopLabel => 'Nem Üst Sınır';
 
   @override
-  String cabinTemperatureGenericErrorMessage(String error) {
+  String cabinTemperature_genericErrorMessage(String error) {
     return 'Bir hata oluştu: $error';
   }
 
   @override
-  String get cabinTemperatureStationNotSelectedError => 'İstasyon seçilmedi';
+  String get cabinTemperature_stationNotSelectedError => 'İstasyon seçilmedi';
 
   @override
-  String get cabinTemperatureCreateSuccess =>
+  String get cabinTemperature_createSuccess =>
       'Kabin sıcaklık ayarı başarıyla oluşturuldu.';
 
   @override
-  String get cabinTemperatureUpdateRecordNotFoundError =>
+  String get cabinTemperature_updateRecordNotFoundError =>
       'Güncellenecek kayıt bulunamadı';
 
   @override
-  String get cabinTemperatureUpdateSuccess =>
+  String get cabinTemperature_updateSuccess =>
       'Kabin sıcaklık ayarı başarıyla güncellendi.';
 
   @override
-  String get cabinTemperatureUnnamedStationFallback => 'İsimsiz İstasyon';
+  String get cabinTemperature_unnamedStationFallback => 'İsimsiz İstasyon';
 
   @override
-  String get cabinTemperatureStationsLoadingMessage =>
+  String get cabinTemperature_stationsLoadingMessage =>
       'İstasyonlar yükleniyor...';
 
   @override
-  String get cabinTemperatureDetailsLoadingMessage =>
+  String get cabinTemperature_detailsLoadingMessage =>
       'Sıcaklık detayları yükleniyor...';
 
   @override
-  String get cabinTemperatureColumnCabin => 'Kabin';
+  String get cabinTemperature_columnCabin => 'Kabin';
 
   @override
-  String get directedOrdersScreenTitle => 'Yönlendirilmiş Order Listesi';
+  String get directedOrders_screenTitle => 'Yönlendirilmiş Order Listesi';
 
   @override
-  String get directedOrdersColumnProtocolNo => 'Protokol No';
+  String get directedOrders_columnProtocolNo => 'Protokol No';
 
   @override
-  String get directedOrdersColumnBed => 'Yatak';
+  String get directedOrders_columnBed => 'Yatak';
 
   @override
-  String get directedOrdersColumnRoom => 'Oda';
+  String get directedOrders_columnRoom => 'Oda';
 
   @override
-  String get directedOrdersMedicinesTooltip => 'İlaçlar';
+  String get directedOrders_medicinesTooltip => 'İlaçlar';
 
   @override
-  String get directedOrdersPatientsLoadingMessage => 'Hastalar yükleniyor...';
+  String get directedOrders_patientsLoadingMessage => 'Hastalar yükleniyor...';
 
   @override
-  String get directedOrdersColumnBarcode => 'Barkod';
+  String get directedOrders_columnBarcode => 'Barkod';
 
   @override
   String get medicine_successCreated => 'İlaç oluşturuldu';
@@ -2631,200 +2632,221 @@ class AppLocalizationsTr extends AppLocalizations {
   String get patient_fieldProtocolNo => 'Protokol No';
 
   @override
-  String get activeIngredientDialogSelectTitle => 'Etken Madde Seç';
+  String get activeIngredient_dialogSelectTitle => 'Etken Madde Seç';
 
   @override
-  String get activeIngredientDialogTitle => 'Etken Madde Tanımlama';
+  String get activeIngredient_dialogTitle => 'Etken Madde Tanımlama';
 
   @override
-  String get activeIngredientFormAddTitle => 'Etken Madde Ekle';
+  String get activeIngredient_formAddTitle => 'Etken Madde Ekle';
 
   @override
-  String get activeIngredientFormEditTitle => 'Etken Madde Düzenle';
+  String get activeIngredient_formEditTitle => 'Etken Madde Düzenle';
 
   @override
-  String get activeIngredientListEmptyTitle => 'Henüz etken madde bulunmuyor';
+  String get activeIngredient_listEmptyTitle => 'Henüz etken madde bulunmuyor';
 
   @override
-  String get assignmentScreenTitle => 'İstasyon Malzeme Atama';
+  String get activeIngredient_itemNameLabel => 'etken madde';
 
   @override
-  String get assignmentStationSelectPlaceholder => 'İstasyon seçiniz';
+  String get assignment_screenTitle => 'İstasyon Malzeme Atama';
 
   @override
-  String get drugClassDialogSelectTitle => 'İlaç Sınıfı Seç';
+  String get assignment_stationSelectPlaceholder => 'İstasyon seçiniz';
 
   @override
-  String get drugClassDialogTitle => 'İlaç Sınıfı Tanımlama';
+  String get drugClass_dialogSelectTitle => 'İlaç Sınıfı Seç';
 
   @override
-  String get drugClassFormAddTitle => 'İlaç Sınıfı Ekle';
+  String get drugClass_dialogTitle => 'İlaç Sınıfı Tanımlama';
 
   @override
-  String get drugClassFormEditTitle => 'İlaç Sınıfı Düzenle';
+  String get drugClass_formAddTitle => 'İlaç Sınıfı Ekle';
 
   @override
-  String get drugClassFormNameLabel => 'İlaç Sınıfı Adı';
+  String get drugClass_formEditTitle => 'İlaç Sınıfı Düzenle';
 
   @override
-  String get drugClassListEmptyTitle => 'Henüz ilaç sınıfı bulunmuyor';
+  String get drugClass_formNameLabel => 'İlaç Sınıfı Adı';
 
   @override
-  String get drugTypeDialogSelectTitle => 'İlaç Tipi Seç';
+  String get drugClass_listEmptyTitle => 'Henüz ilaç sınıfı bulunmuyor';
 
   @override
-  String get drugTypeDialogTitle => 'İlaç Tipi Tanımlama';
+  String get drugClass_itemNameLabel => 'ilaç sınıfı';
 
   @override
-  String get drugTypeFormAddTitle => 'İlaç Tipi Ekle';
+  String get drugType_dialogSelectTitle => 'İlaç Tipi Seç';
 
   @override
-  String get drugTypeFormEditTitle => 'İlaç Tipi Düzenle';
+  String get drugType_dialogTitle => 'İlaç Tipi Tanımlama';
 
   @override
-  String get drugTypeFormNameLabel => 'İlaç Tipi Adı';
+  String get drugType_formAddTitle => 'İlaç Tipi Ekle';
 
   @override
-  String get drugTypeListEmptyTitle => 'Henüz ilaç tipi bulunmuyor';
+  String get drugType_formEditTitle => 'İlaç Tipi Düzenle';
 
   @override
-  String get kitFormAddTitle => 'Yeni Kit';
+  String get drugType_formNameLabel => 'İlaç Tipi Adı';
 
   @override
-  String get kitFormEditTitle => 'Kit Düzenle';
+  String get drugType_listEmptyTitle => 'Henüz ilaç tipi bulunmuyor';
 
   @override
-  String get kitFormNameLabel => 'Kit Adı';
+  String get drugType_itemNameLabel => 'ilaç tipi';
 
   @override
-  String get kitDialogSelectTitle => 'Kit Seç';
+  String get kit_formAddTitle => 'Yeni Kit';
 
   @override
-  String get kitDialogTitle => 'Kit Tanımlama';
+  String get kit_formEditTitle => 'Kit Düzenle';
 
   @override
-  String get kitListEmptyTitle => 'Henüz kit bulunmuyor';
+  String get kit_formNameLabel => 'Kit Adı';
 
   @override
-  String get kitListManageContentTooltip => 'Kit İçeriğini Yönet';
+  String get kit_dialogSelectTitle => 'Kit Seç';
 
   @override
-  String get kitContentFormAddTitle => 'Kit İçeriği Ekle';
+  String get kit_dialogTitle => 'Kit Tanımlama';
 
   @override
-  String get kitContentFormEditTitle => 'Kit İçeriği Düzenle';
+  String get kit_listEmptyTitle => 'Henüz kit bulunmuyor';
 
   @override
-  String get kitContentFormMaterialLabel => 'Malzeme';
+  String get kit_listManageContentTooltip => 'Kit İçeriğini Yönet';
 
   @override
-  String get kitContentFormPieceLabel => 'Adet';
+  String get kit_itemNameLabel => 'kit';
 
   @override
-  String get kitContentDialogTitle => 'Kit İçerik Tanımlama';
+  String get kitContent_formAddTitle => 'Kit İçeriği Ekle';
 
   @override
-  String get kitContentListEmptyTitle => 'Henüz kit içeriği bulunmuyor';
+  String get kitContent_formEditTitle => 'Kit İçeriği Düzenle';
 
   @override
-  String get materialTypeFormAddTitle => 'Yeni Malzeme Tipi';
+  String get kitContent_formMaterialLabel => 'Malzeme';
 
   @override
-  String get materialTypeFormEditTitle => 'Malzeme Tipi Düzenle';
+  String get kitContent_formPieceLabel => 'Adet';
 
   @override
-  String get materialTypeFormNameLabel => 'Malzeme Tipi Adı';
+  String get kitContent_dialogTitle => 'Kit İçerik Tanımlama';
 
   @override
-  String get materialTypeDialogSelectTitle => 'Malzeme Tipi Seç';
+  String get kitContent_listEmptyTitle => 'Henüz kit içeriği bulunmuyor';
 
   @override
-  String get materialTypeDialogTitle => 'Malzeme Tipi Tanımlama';
+  String get kitContent_itemNameLabel => 'içerik';
 
   @override
-  String get materialTypeListEmptyTitle => 'Henüz malzeme tipi bulunmuyor';
+  String get materialType_formAddTitle => 'Yeni Malzeme Tipi';
 
   @override
-  String get roleFormEditTitle => 'Rol Düzenle';
+  String get materialType_formEditTitle => 'Malzeme Tipi Düzenle';
 
   @override
-  String get roleFormAddTitle => 'Rol Ekle';
+  String get materialType_formNameLabel => 'Malzeme Tipi Adı';
 
   @override
-  String get roleFormNameLabel => 'Rol Adı';
+  String get materialType_dialogSelectTitle => 'Malzeme Tipi Seç';
 
   @override
-  String get roleScreenTitle => 'Rol Tanımlama';
+  String get materialType_dialogTitle => 'Malzeme Tipi Tanımlama';
 
   @override
-  String get roleScreenAddButton => 'Yeni Rol';
+  String get materialType_listEmptyTitle => 'Henüz malzeme tipi bulunmuyor';
 
   @override
-  String get roleDeleteSuccessMessage => 'Rol başarıyla silindi';
+  String get materialType_itemNameLabel => 'malzeme tipi';
 
   @override
-  String get unitFormAddTitle => 'Yeni Birim Oluştur';
+  String get role_formEditTitle => 'Rol Düzenle';
 
   @override
-  String get unitFormEditTitle => 'Birim Düzenle';
+  String get role_formAddTitle => 'Rol Ekle';
 
   @override
-  String get unitDialogTitle => 'Birim';
+  String get role_formNameLabel => 'Rol Adı';
 
   @override
-  String get unitListEmptyTitle => 'Henüz birim bulunmuyor';
+  String get role_screenTitle => 'Rol Tanımlama';
 
   @override
-  String get userCategoryNormalLabel => 'Normal';
+  String get role_screenAddButton => 'Yeni Rol';
 
   @override
-  String get userCategoryTimeBasedLabel => 'Süreli';
+  String get role_deleteSuccessMessage => 'Rol başarıyla silindi';
 
   @override
-  String get userCategoryTemporaryLabel => 'Geçici';
+  String get unit_formAddTitle => 'Yeni Birim Oluştur';
 
   @override
-  String get userDeleteSuccessMessage => 'Kullanıcı başarıyla silindi';
+  String get unit_formEditTitle => 'Birim Düzenle';
 
   @override
-  String get userValidDateUpdateSuccessMessage =>
+  String get unit_dialogTitle => 'Birim';
+
+  @override
+  String get unit_itemNameLabel => 'birim';
+
+  @override
+  String get unit_listEmptyTitle => 'Henüz birim bulunmuyor';
+
+  @override
+  String get user_categoryNormalLabel => 'Normal';
+
+  @override
+  String get user_categoryTimeBasedLabel => 'Süreli';
+
+  @override
+  String get user_categoryTemporaryLabel => 'Geçici';
+
+  @override
+  String get user_deleteSuccessMessage => 'Kullanıcı başarıyla silindi';
+
+  @override
+  String get user_validDateUpdateSuccessMessage =>
       'Son geçerlilik tarihi güncellendi';
 
   @override
-  String get userFormEditTitle => 'Kullanıcı Düzenle';
+  String get user_formEditTitle => 'Kullanıcı Düzenle';
 
   @override
-  String get userFormCreateTitle => 'Kullanıcı Oluştur';
+  String get user_formCreateTitle => 'Kullanıcı Oluştur';
 
   @override
-  String get userRegistrationNumberLabel => 'Kurum Sicil No';
+  String get user_registrationNumberLabel => 'Kurum Sicil No';
 
   @override
-  String get userNameLabel => 'Adı';
+  String get user_nameLabel => 'Adı';
 
   @override
-  String get userSurnameLabel => 'Soyadı';
+  String get user_surnameLabel => 'Soyadı';
 
   @override
-  String get userRoleTypeLabel => 'Meslek Tipi';
+  String get user_roleTypeLabel => 'Meslek Tipi';
 
   @override
-  String get userUsageTypeLabel => 'Kullanım Türü';
+  String get user_usageTypeLabel => 'Kullanım Türü';
 
   @override
-  String get userValidUntilLabel => 'Son Geçerlilik Tarihi';
+  String get user_validUntilLabel => 'Son Geçerlilik Tarihi';
 
   @override
-  String get userEmailLabel => 'E-posta';
+  String get user_emailLabel => 'E-posta';
 
   @override
-  String get userOrderPermissionLabel => 'Ordersız Alım';
+  String get user_orderPermissionLabel => 'Ordersız Alım';
 
   @override
-  String get userWitnessedStationEntryLabel => 'İstasyon Şahitli Giriş';
+  String get user_witnessedStationEntryLabel => 'İstasyon Şahitli Giriş';
 
   @override
-  String get userKitPurchaseLabel => 'Kit Alım';
+  String get user_kitPurchaseLabel => 'Kit Alım';
 
   @override
   String get user_badgeCardLabel => 'Yaka Kartı';
@@ -2833,52 +2855,52 @@ class AppLocalizationsTr extends AppLocalizations {
   String get user_badgeCardHint => 'Kartı okutun';
 
   @override
-  String get userAuthorizedStationsLabel => 'Yetki İstasyonlar';
+  String get user_authorizedStationsLabel => 'Yetki İstasyonlar';
 
   @override
-  String get userUsernameLabel => 'Kullanıcı Adı';
+  String get user_usernameLabel => 'Kullanıcı Adı';
 
   @override
-  String get userScreenTitle => 'Kullanıcı Listesi';
+  String get user_screenTitle => 'Kullanıcı Listesi';
 
   @override
-  String get userScreenAddButton => 'Yeni Kullanıcı';
+  String get user_screenAddButton => 'Yeni Kullanıcı';
 
   @override
-  String get userBulkUpdateValidDateButton => 'Son Geçerlilik Tarihi Güncelle';
+  String get user_bulkUpdateValidDateButton => 'Son Geçerlilik Tarihi Güncelle';
 
   @override
-  String get userValidDateDialogTitle => 'Tarih Güncelle';
+  String get user_validDateDialogTitle => 'Tarih Güncelle';
 
   @override
-  String get userValidDateDialogSaveButton => 'Güncelle';
+  String get user_validDateDialogSaveButton => 'Güncelle';
 
   @override
-  String get userNewValidUntilLabel => 'Yeni Son Geçerlilik Tarihi';
+  String get user_newValidUntilLabel => 'Yeni Son Geçerlilik Tarihi';
 
   @override
-  String get userNationalIdColumnHeader => 'T.C Kimlik No';
+  String get user_nationalIdColumnHeader => 'T.C Kimlik No';
 
   @override
-  String get warningFormAddTitle => 'Yeni Uyarı';
+  String get warning_formAddTitle => 'Yeni Uyarı';
 
   @override
-  String get warningFormEditTitle => 'Uyarı Düzenle';
+  String get warning_formEditTitle => 'Uyarı Düzenle';
 
   @override
-  String get warningFormAddSubtitle => 'Uyarı bilgilerini doldurun';
+  String get warning_formAddSubtitle => 'Uyarı bilgilerini doldurun';
 
   @override
-  String get warningFormEditSubtitle => 'Uyarı bilgilerini güncelleyin';
+  String get warning_formEditSubtitle => 'Uyarı bilgilerini güncelleyin';
 
   @override
-  String get warningFormSubjectLabel => 'Uyarı Konusu';
+  String get warning_formSubjectLabel => 'Uyarı Konusu';
 
   @override
-  String get warningFormTextLabel => 'Uyarı Metni';
+  String get warning_formTextLabel => 'Uyarı Metni';
 
   @override
-  String get warningScreenTitle => 'Uyarı Tanımlama';
+  String get warning_screenTitle => 'Uyarı Tanımlama';
 
   @override
   String get dashboard_allSectionsLoadError =>
@@ -3097,6 +3119,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'Acil hasta oluşturuldu.';
 
   @override
+  String get patientPicker_urgentPatientCardDescription =>
+      'Acil hasta oluşturuldu, normal akışa dönmek istiyorsanız acil hastayı silmeniz gerekiyor.';
+
+  @override
   String get hw_cabinOps_serumSlaveModeError =>
       'Serum kartı slave moda alınamadı...';
 
@@ -3123,6 +3149,19 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String hw_cabinOps_masterSerumOpenFailedError(Object row, Object response) {
     return 'Master serum çekmecesi açılamadı (row=$row). Yanıt: $response';
+  }
+
+  @override
+  String get hw_cabinOps_sensorLostDuringCloseDetail =>
+      'Donanımla iletişim kesildi (kapanış izlenirken sensör yanıt vermiyor).';
+
+  @override
+  String get hw_cabinOps_sensorLostDuringOpenDetail =>
+      'Donanımla iletişim kesildi (sensör yanıt vermiyor).';
+
+  @override
+  String hw_cabinOps_fullyOpenTimeoutDetail(Object timeout) {
+    return 'Çekmece $timeout içinde tam açık duruma ulaşamadı.';
   }
 
   @override
@@ -3897,11 +3936,83 @@ class AppLocalizationsTr extends AppLocalizations {
       'Güncellenecek yatışın id\'si boş olamaz';
 
   @override
+  String get dataGuard_dosageFormNameRequired => 'Branş adı zorunludur';
+
+  @override
+  String get dataGuard_roleNameRequired => 'Rol adı zorunludur';
+
+  @override
+  String get dataGuard_branchNameRequired => 'Branş adı zorunludur';
+
+  @override
+  String get dataGuard_warehouseNameRequired => 'Depo adı zorunludur';
+
+  @override
+  String get dataGuard_warningTextRequired => 'Uyarı adı zorunludur';
+
+  @override
+  String get dataGuard_activeIngredientNameRequired => 'İsim alanı zorunludur';
+
+  @override
   String get core_genericErrorRetryMessage =>
       'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.';
 
   @override
   String get core_genericErrorShortMessage => 'Bir hata oluştu.';
+
+  @override
+  String get common_defaultReportTitle => 'Rapor';
+
+  @override
+  String fileExport_savedMessage(String path) {
+    return 'Dosya kaydedildi: $path';
+  }
+
+  @override
+  String fileExport_pdfSaveErrorMessage(Object error) {
+    return 'PDF kaydetme hatası: $error';
+  }
+
+  @override
+  String fileExport_printErrorMessage(Object error) {
+    return 'Yazdırma hatası: $error';
+  }
+
+  @override
+  String get fileExport_saveDialogTitle => 'Dosyayı Kaydet';
+
+  @override
+  String fileExport_saveErrorMessage(Object error) {
+    return 'Dosya kaydetme hatası: $error';
+  }
+
+  @override
+  String fileExport_saveToDesktopErrorMessage(Object error) {
+    return 'Masaüstüne kaydetme hatası: $error';
+  }
+
+  @override
+  String fileExport_savedSuccessMessage(String path) {
+    return 'Dosya başarıyla kaydedildi: $path';
+  }
+
+  @override
+  String get fileExport_saveCancelledMessage =>
+      'Dosya kaydetme işlemi iptal edildi';
+
+  @override
+  String get fileExport_excelCreateFailedMessage =>
+      'Excel dosyası oluşturulamadı';
+
+  @override
+  String fileExport_excelExportFailedMessage(Object error) {
+    return 'Excel export işlemi başarısız: $error';
+  }
+
+  @override
+  String fileExport_tableExportFailedMessage(Object error) {
+    return 'Tablo export işlemi başarısız: $error';
+  }
 
   @override
   String get cabinCore_createError =>
@@ -3934,6 +4045,71 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinCore_designDataNotFound => 'Kaydedilecek veri bulunamadı.';
 
   @override
+  String get cabinCore_targetDrawerNotFound => 'Hedef çekmece/göz bulunamadı';
+
+  @override
+  String get cabinCore_unknownMedicineFallback => 'Bilinmeyen İlaç';
+
+  @override
+  String get cabinAssignmentList_selectColumn => 'Seç';
+
+  @override
+  String get cabinAssignmentList_medicineColumn => 'İlaç';
+
+  @override
+  String get cabinAssignmentList_locationColumn => 'Konum';
+
+  @override
+  String get cabinAssignmentList_stockColumn => 'Stok';
+
+  @override
+  String get cabinAssignmentList_fillLevelColumn => 'Doluluk';
+
+  @override
+  String cabinAssignmentList_cubicLocationLabel(
+    Object drawer,
+    Object column,
+    Object row,
+  ) {
+    return 'Çekmece $drawer - Sütun $column - Satır $row';
+  }
+
+  @override
+  String cabinAssignmentList_unitLocationLabel(Object drawer, Object cell) {
+    return 'Çekmece $drawer - Göz $cell';
+  }
+
+  @override
+  String get cabinOverview_panelTitle => 'KABİN GENEL BAKIŞ';
+
+  @override
+  String get cabinOverview_cubicDrawerSubtitle => 'Kübik Çekmece';
+
+  @override
+  String get cabinOverview_unitDoseDrawerSubtitle => 'Birim Doz Çekmece';
+
+  @override
+  String get cabinOverview_cubicTypeLabel => 'KÜBİK';
+
+  @override
+  String get cabinOverview_unitDoseTypeLabel => 'BİRİM DOZ';
+
+  @override
+  String get cabinOverview_returnMergedCellLabel => 'İADE';
+
+  @override
+  String get cabinOverview_legendFillingLabel => 'Şu an dolduruluyor';
+
+  @override
+  String get cabinOverview_legendCompletedLabel => 'Tamamlandı';
+
+  @override
+  String get cabinOverview_legendQueuedLabel => 'Sırada';
+
+  @override
+  String get cabinOverview_locationGuideLabel => 'KONUM REHBERİ';
+
+  @override
   String get prescriptionCore_createError =>
       'Reçete oluşturulurken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.';
 
@@ -3945,6 +4121,19 @@ class AppLocalizationsTr extends AppLocalizations {
   String prescriptionCore_rfidReadErrorWithDetail(Object error) {
     return 'RFID etiketi okunurken hata oluştu: $error';
   }
+
+  @override
+  String get prescriptionCore_actionApproveTitle => 'Seçili Talepleri Onayla';
+
+  @override
+  String get prescriptionCore_actionCancelTitle => 'Seçili Talepleri İptal Et';
+
+  @override
+  String get prescriptionCore_actionRejectTitle => 'Seçili Talepleri Reddet';
+
+  @override
+  String get prescriptionCore_actionRejectAfterApproveTitle =>
+      'Seçili Talepleri Reddet';
 
   @override
   String get tableCore_roleNameColumn => 'Rol Adı';
@@ -4081,6 +4270,45 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get tableCore_materialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_prescriptionMedicineColumn => 'İlaç';
+
+  @override
+  String get tableCore_prescriptionDoseColumn => 'Doz';
+
+  @override
+  String get tableCore_prescriptionApplicationUserColumn => 'Uygulayan';
+
+  @override
+  String get tableCore_prescriptionAppliedQuantityColumn => 'Uygulanan Miktar';
+
+  @override
+  String get tableCore_prescriptionApplicationDateColumn => 'Uygulama Tarihi';
+
+  @override
+  String get tableCore_prescriptionReturnUserColumn => 'İade Eden';
+
+  @override
+  String get tableCore_prescriptionReturnQuantityColumn => 'İade Edilen Miktar';
+
+  @override
+  String get tableCore_prescriptionReturnDateColumn => 'İade Tarihi';
+
+  @override
+  String get tableCore_prescriptionWastageUserColumn => 'Fire Eden';
+
+  @override
+  String get tableCore_prescriptionWastageDateColumn => 'Fire Tarihi';
+
+  @override
+  String get tableCore_prescriptionDestructionUserColumn => 'İmha Eden';
+
+  @override
+  String get tableCore_prescriptionDestructionDateColumn => 'İmha Tarihi';
+
+  @override
+  String get tableCore_prescriptionStatusColumn => 'Durum';
 
   @override
   String get enumCore_statusActive => 'Aktif';
@@ -4276,6 +4504,102 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_cabinOpModeUnload => 'İlaç Boşaltma';
 
   @override
+  String get enumCore_cabinInventoryTypeRefillOperationLabel => 'Dolum';
+
+  @override
+  String get enumCore_cabinInventoryTypeIntakeOperationLabel => 'Alım';
+
+  @override
+  String get enumCore_cabinInventoryTypeUnloadOperationLabel => 'Boşaltma';
+
+  @override
+  String get enumCore_cabinInventoryTypeCensusOperationLabel => 'Sayım';
+
+  @override
+  String get enumCore_cabinInventoryTypeDisposalOperationLabel => 'İmha';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillListOperationLabel => 'Dolum';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillTitle => 'İlaç Dolum';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillListTitle => 'İlaç Dolum Listesi';
+
+  @override
+  String get enumCore_cabinInventoryTypeCensusTitle => 'İlaç Sayım';
+
+  @override
+  String get enumCore_cabinInventoryTypeDisposalTitle => 'İlaç İmha';
+
+  @override
+  String get enumCore_cabinInventoryTypeUnloadTitle => 'İlaç Boşaltma';
+
+  @override
+  String get enumCore_cabinInventoryTypeIntakeTitle => 'İlaç Alım';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillButtonText => 'Dolum Yap';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillListButtonText => 'Dolum Yap';
+
+  @override
+  String get enumCore_cabinInventoryTypeCensusButtonText => 'Sayım Yap';
+
+  @override
+  String get enumCore_cabinInventoryTypeDisposalButtonText => 'İmha Et';
+
+  @override
+  String get enumCore_cabinInventoryTypeUnloadButtonText => 'İlaç Boşalt';
+
+  @override
+  String get enumCore_cabinInventoryTypeIntakeButtonText => 'İlaç Al';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillFieldText => 'Dolum Miktarı';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillListFieldText => 'Dolum Miktarı';
+
+  @override
+  String get enumCore_cabinInventoryTypeCensusFieldText => 'Sayım Miktarı';
+
+  @override
+  String get enumCore_cabinInventoryTypeDisposalFieldText => 'İmha Miktarı';
+
+  @override
+  String get enumCore_cabinInventoryTypeUnloadFieldText => 'Boşaltım Miktarı';
+
+  @override
+  String get enumCore_cabinInventoryTypeIntakeFieldText => 'Alım Miktarı';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillSequentialText =>
+      'Otomatik Dolumu Başlat';
+
+  @override
+  String get enumCore_cabinInventoryTypeRefillListSequentialText =>
+      'Otomatik Dolumu Başlat';
+
+  @override
+  String get enumCore_cabinInventoryTypeCensusSequentialText =>
+      'Otomatik Sayımı Başlat';
+
+  @override
+  String get enumCore_cabinInventoryTypeDisposalSequentialText =>
+      'Otomatik İmhayı Başlat';
+
+  @override
+  String get enumCore_cabinInventoryTypeUnloadSequentialText =>
+      'Otomatik Boşaltmayı Başlat';
+
+  @override
+  String get enumCore_cabinInventoryTypeIntakeSequentialText =>
+      'Otomatik Alım Başlat';
+
+  @override
   String get enumCore_permissionCan => 'Yapabilir';
 
   @override
@@ -4348,6 +4672,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get common_confirmButton => 'Onayla';
 
   @override
+  String get common_viewInPreparationMessage => 'Görünüm hazırlanıyor...';
+
+  @override
   String get common_warningTitle => 'Uyarı!';
 
   @override
@@ -4384,7 +4711,35 @@ class AppLocalizationsTr extends AppLocalizations {
       'Hesabınızdan çıkış yapmak istediğinize emin misiniz?';
 
   @override
+  String get dialog_exitTitle => 'Çıkış';
+
+  @override
+  String get dialog_exitMessage =>
+      'Kaydetmediğiniz değişiklikler kaybolabilir.';
+
+  @override
+  String get dialog_saveTitle => 'Kaydet';
+
+  @override
+  String get dialog_saveMessage => 'Değişiklikleri kaydetmek istiyor musunuz?';
+
+  @override
+  String get dialog_discardTitle => 'İptal Et';
+
+  @override
+  String get dialog_discardMessage => 'Yapılan değişiklikler geri alınacak.';
+
+  @override
+  String get dialog_customConfirmTitle => 'Onay';
+
+  @override
+  String get dialog_customConfirmMessage => 'İşlemi onaylıyor musunuz?';
+
+  @override
   String get table_noDataTitle => 'Veri bulunamadı';
+
+  @override
+  String get table_defaultPdfReportTitle => 'Tablo Raporu';
 
   @override
   String get table_actionsColumnHeader => 'İşlemler';
@@ -4612,6 +4967,31 @@ class AppLocalizationsTr extends AppLocalizations {
   String get refund_showIncompleteTooltip => 'Tamamlanmayanları Göster';
 
   @override
+  String get refund_takeTooltip => 'İade Al';
+
+  @override
+  String get refund_deleteDialog_title => 'Açıklama';
+
+  @override
+  String get refund_deleteDialog_saveButton => 'Sil';
+
+  @override
+  String get refund_deleteDialog_reasonLabel => 'Silme nedeninizi açıklayınız';
+
+  @override
+  String get refund_pdf_title => 'Eczane İade Raporu';
+
+  @override
+  String refund_pdf_station(String station) {
+    return 'İstasyon: $station';
+  }
+
+  @override
+  String refund_pdf_dateRange(String startDate, String endDate) {
+    return 'Tarih: $startDate - $endDate';
+  }
+
+  @override
   String get dashboard_sensor_title => 'Sensörler';
 
   @override
@@ -4628,6 +5008,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get dashboard_sensor_outOfRange => 'Aralık dışı';
+
+  @override
+  String get dashboard_sensor_paused => 'Duraklatıldı';
 
   @override
   String get dashboard_upcomingTreatmentsPanelTitle => 'Yaklaşan Tedaviler';
@@ -5006,6 +5389,27 @@ class AppLocalizationsTr extends AppLocalizations {
   String get authorization_table_extraAuthCountColumn => 'Yetki Fazlası';
 
   @override
+  String get authorization_summary_viewDetailsTooltip => 'Detayları Gör';
+
+  @override
+  String get authorization_summary_dialogTitle => 'Kullanıcı Yetki Özeti';
+
+  @override
+  String get authorization_summary_roleMenusTitle =>
+      'Rol Bazlı Yetkili Menüler';
+
+  @override
+  String get authorization_summary_roleMenusEmptyLabel =>
+      'Rol bazlı yetki bulunmuyor';
+
+  @override
+  String get authorization_summary_extraMenusTitle => 'Yetki Dışı Menüler';
+
+  @override
+  String get authorization_summary_extraMenusEmptyLabel =>
+      'Ek yetki bulunmuyor';
+
+  @override
   String get cabinTemperature_table_dateColumn => 'Tarih';
 
   @override
@@ -5025,6 +5429,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabinTemperature_action_showAll => 'Tümünü Göster';
+
+  @override
+  String get cabinTemperature_currentStationNotFoundError =>
+      'Aktif istasyon bulunamadı';
 
   @override
   String get expiredItems_table_barcodeColumn => 'Barkod';
@@ -5224,6 +5632,15 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bu bölüm için içerik yakında eklenecek.';
 
   @override
+  String get census_mode_allCabin => 'Tüm Kabin';
+
+  @override
+  String get census_mode_byDrawer => 'Çekmece Bazlı';
+
+  @override
+  String get census_mode_byMedicine => 'İlaç Bazlı';
+
+  @override
   String get census_hint_noMedicines => 'Sayılacak ilaç bulunamadı';
 
   @override
@@ -5317,6 +5734,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get patientListPanel_filter_orderStatusLabel => 'Order Durumu';
+
+  @override
+  String get patientListPanel_filter_dialogTitle => 'Filtreler';
 
   @override
   String get masterDrawer_status_devicePreparingTitle => 'Hazırlanıyor';
@@ -5489,6 +5909,20 @@ class AppLocalizationsTr extends AppLocalizations {
   String waste_label_availableAmount(String amount) {
     return 'Mevcut miktar: $amount';
   }
+
+  @override
+  String get waste_error_amountZero => 'Miktar 0 olamaz.';
+
+  @override
+  String get waste_error_wastageAmountExceeded =>
+      'Fire edilecek miktar alım miktarından fazla olamaz.';
+
+  @override
+  String get waste_error_destructionAmountExceeded =>
+      'İmha edilecek miktar alım miktarından fazla olamaz.';
+
+  @override
+  String get waste_success_operationCompleted => 'Fire/İmha işlemi başarılı.';
 
   @override
   String get witnessDialog_title => 'Şahit Doğrulama';
@@ -5692,6 +6126,21 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get refund_success_toReturnBoxMessage =>
       'İade işlemi tamamlandı. Lütfen ilacı iade kutusuna yerleştiriniz.';
+
+  @override
+  String get refund_error_amountExceeded =>
+      'İade edilecek miktar alım miktarından fazla olamaz';
+
+  @override
+  String get refund_error_genericCheckFailed =>
+      'Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.';
+
+  @override
+  String get refund_error_returnDrawerNotDefined =>
+      'İade çekmecesi tanımlı değil. Lütfen Kabin Dizaynı ekranından tanımlayın.';
+
+  @override
+  String get refund_error_completeFailed => 'İade sırasında bir hata oluştu.';
 
   @override
   String get cabin_returnDrawerName => 'İade Çekmecesi';

@@ -45,15 +45,15 @@ class ExcelExportService {
         }
 
         if (savedFile != null && context.mounted) {
-          MessageUtils.showSuccessSnackbar(context, 'Dosya başarıyla kaydedildi: ${savedFile.path}');
+          MessageUtils.showSuccessSnackbar(context, context.l10n.fileExport_savedSuccessMessage(savedFile.path));
         } else {
-          if (context.mounted) MessageUtils.showInfoSnackbar(context, 'Dosya kaydetme işlemi iptal edildi');
+          if (context.mounted) MessageUtils.showInfoSnackbar(context, context.l10n.fileExport_saveCancelledMessage);
         }
       } else {
-        MessageUtils.showErrorSnackbar(context, 'Excel dosyası oluşturulamadı');
+        MessageUtils.showErrorSnackbar(context, context.l10n.fileExport_excelCreateFailedMessage);
       }
     } catch (e) {
-      if (context.mounted) MessageUtils.showErrorSnackbar(context, 'Excel export işlemi başarısız: $e');
+      if (context.mounted) MessageUtils.showErrorSnackbar(context, context.l10n.fileExport_excelExportFailedMessage(e));
       rethrow;
     }
   }
@@ -99,7 +99,7 @@ class ExcelExportService {
         showSaveDialog: exportBehavior == ExportBehavior.saveDialog,
       );
     } catch (e) {
-      if (context.mounted) MessageUtils.showErrorSnackbar(context, 'Tablo export işlemi başarısız: $e');
+      if (context.mounted) MessageUtils.showErrorSnackbar(context, context.l10n.fileExport_tableExportFailedMessage(e));
       rethrow;
     }
   }

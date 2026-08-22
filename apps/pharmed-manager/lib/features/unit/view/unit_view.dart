@@ -12,7 +12,7 @@ Future<Unit?> showUnitView(BuildContext context) async {
       create: (context) => UnitNotifier(getUnitsUseCase: context.read(), deleteUnitUseCase: context.read())..fetch(),
       child: Consumer<UnitNotifier>(
         builder: (context, notifier, Widget? child) => CustomDialog(
-          title: context.l10n.unitDialogTitle,
+          title: context.l10n.unit_dialogTitle,
           showSearch: true,
           showAdd: true,
           onSearchChanged: (query) => notifier.search(query),
@@ -51,8 +51,8 @@ class _UnitViewState extends State<UnitView> {
       return EmptyStateWidget(
         icon: Icons.square_foot_outlined,
         variant: EmptyStateVariant.custom,
-        title: context.l10n.unitListEmptyTitle,
-        description: context.l10n.common_addItemHint('birim'),
+        title: context.l10n.unit_listEmptyTitle,
+        description: context.l10n.common_addItemHint(context.l10n.unit_itemNameLabel),
       );
     }
 

@@ -9,7 +9,7 @@ class UserAuthSummaryView extends StatelessWidget {
       builder: (context, notifier, _) {
         final auth = notifier.userAuth;
         return CustomDialog(
-          title: 'Kullanıcı Yetki Özeti',
+          title: context.l10n.authorization_summary_dialogTitle,
           maxHeight: 700,
           height: 700,
           isLoading: notifier.isLoading(notifier.fetchDetailOp),
@@ -18,23 +18,23 @@ class UserAuthSummaryView extends StatelessWidget {
             children: [
               Expanded(
                 child: _MenuColumn(
-                  title: 'Rol Bazlı Yetkili Menüler',
+                  title: context.l10n.authorization_summary_roleMenusTitle,
                   icon: PhosphorIcons.shieldCheck(),
                   accent: MedColors.blue,
                   accentLight: MedColors.blueLight,
                   items: auth?.roleAuthorizations ?? const [],
-                  emptyLabel: 'Rol bazlı yetki bulunmuyor',
+                  emptyLabel: context.l10n.authorization_summary_roleMenusEmptyLabel,
                 ),
               ),
               const SizedBox(width: MedSpacing.xl),
               Expanded(
                 child: _MenuColumn(
-                  title: 'Yetki Dışı Menüler',
+                  title: context.l10n.authorization_summary_extraMenusTitle,
                   icon: PhosphorIcons.plusCircle(),
                   accent: MedColors.amber,
                   accentLight: MedColors.amberLight,
                   items: auth?.extraAuthorizations ?? const [],
-                  emptyLabel: 'Ek yetki bulunmuyor',
+                  emptyLabel: context.l10n.authorization_summary_extraMenusEmptyLabel,
                 ),
               ),
             ],

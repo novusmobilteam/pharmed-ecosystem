@@ -409,7 +409,7 @@ class _StepperRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Text(context.l10n.census_extra_stock_quantity_label, style: MedTextStyles.monoXs(color: MedColors.text3)),
+            Text(context.l10n.census_extraStockQuantityLabel, style: MedTextStyles.monoXs(color: MedColors.text3)),
             const Spacer(),
             MedDoseStepper.compact(value: data.value, unit: data.unit, onChanged: data.onChanged, max: data.max ?? 999),
           ],

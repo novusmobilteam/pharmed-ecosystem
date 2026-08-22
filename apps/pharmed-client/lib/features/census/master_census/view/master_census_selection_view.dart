@@ -47,7 +47,6 @@ class MasterCensusSelectionView extends ConsumerWidget {
         },
       ),
 
-      // TODO : Localization
       right: CabinSelectionContentShell(
         menu: menu,
         extra: Padding(
@@ -55,7 +54,11 @@ class MasterCensusSelectionView extends ConsumerWidget {
           child: SizedBox(
             width: 600,
             child: MedSegmentedButton(
-              labels: const ['Tüm Kabin', 'Çekmece Bazlı', 'İlaç Bazlı'],
+              labels: [
+                context.l10n.census_mode_allCabin,
+                context.l10n.census_mode_byDrawer,
+                context.l10n.census_mode_byMedicine,
+              ],
               selectedIndex: CensusMode.values.indexOf(selection.censusMode),
               onChanged: (index) => notifier.setCensusMode(CensusMode.values[index]),
             ),

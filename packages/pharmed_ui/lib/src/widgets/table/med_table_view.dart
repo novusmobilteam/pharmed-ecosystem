@@ -429,7 +429,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
       columns: _cols.map((c) => c.title).toList(),
       rows: _buildExportRows(),
       context: context,
-      title: widget.pdfTitle ?? 'Tablo Raporu',
+      title: widget.pdfTitle ?? context.l10n.table_defaultPdfReportTitle,
       headerBuilder: widget.pdfHeaderBuilder,
     );
   }

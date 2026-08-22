@@ -21,14 +21,14 @@ class CabinAssignmentListView extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (onToggle != null) SizedBox(width: 100, child: Text('Seç', style: textStyle)),
-            Expanded(child: Text('İlaç', style: textStyle)),
-            Expanded(child: Text('Konum', style: textStyle)),
-            Expanded(child: Text('Stok', style: textStyle)),
-            SizedBox(width: 100, child: Text('Doluluk', style: textStyle)),
+            if (onToggle != null)
+              SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_selectColumn, style: textStyle)),
+            Expanded(child: Text(context.l10n.cabinAssignmentList_medicineColumn, style: textStyle)),
+            Expanded(child: Text(context.l10n.cabinAssignmentList_locationColumn, style: textStyle)),
+            Expanded(child: Text(context.l10n.cabinAssignmentList_stockColumn, style: textStyle)),
+            SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_fillLevelColumn, style: textStyle)),
           ],
         ),
-        // TODO : Localization
         SizedBox(height: 12.0),
         Divider(height: 1, thickness: 2),
         Expanded(
@@ -41,8 +41,15 @@ class CabinAssignmentListView extends StatelessWidget {
               final assignment = items.elementAt(index);
               final name = assignment.medicine?.name ?? '-';
               final konum = assignment.isKubikType
-                  ? 'Çekmece ${assignment.drawerUnit?.drawerSlot?.address} - Sütun ${assignment.drawerUnit?.compartmentNo} - Satır ${assignment.drawerUnit?.orderNo}'
-                  : 'Çekmece ${assignment.drawerUnit?.drawerSlot?.orderNumber} - Göz ${assignment.drawerUnit?.compartmentNo}';
+                  ? context.l10n.cabinAssignmentList_cubicLocationLabel(
+                      assignment.drawerUnit?.drawerSlot?.address ?? '-',
+                      assignment.drawerUnit?.compartmentNo ?? '-',
+                      assignment.drawerUnit?.orderNo ?? '-',
+                    )
+                  : context.l10n.cabinAssignmentList_unitLocationLabel(
+                      assignment.drawerUnit?.drawerSlot?.orderNumber ?? '-',
+                      assignment.drawerUnit?.compartmentNo ?? '-',
+                    );
 
               double current = assignment.toDisplayQuantity(assignment.totalQuantity);
               double maxQty = assignment.maxQuantityFromBackend;
