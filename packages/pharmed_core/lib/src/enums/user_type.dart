@@ -14,9 +14,9 @@ enum UserType {
       case UserType.normal:
         return contextlessL10n().enumCore_userTypeUnlimited;
       case UserType.timeBased:
-        return contextlessL10n().userCategoryTimeBasedLabel;
+        return contextlessL10n().user_categoryTimeBasedLabel;
       case UserType.temporary:
-        return contextlessL10n().userCategoryTemporaryLabel;
+        return contextlessL10n().user_categoryTemporaryLabel;
     }
   }
 

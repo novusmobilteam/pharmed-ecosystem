@@ -38,12 +38,12 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
     final listNotifier = context.watch<PrescriptionNotifier>();
     final detailNotifier = context.watch<PrescriptionDetailNotifier>();
     final hosp = listNotifier.selectedHospitalization;
-    final patientName = hosp?.patient?.fullName ?? context.l10n.prescriptionDetailPanelPatientFallback;
+    final patientName = hosp?.patient?.fullName ?? context.l10n.prescription_detailPanelPatientFallback;
 
     return SidePanel(
       title: patientName,
       disableScroll: true,
-      subtitle: context.l10n.prescriptionDetailPanelSubtitle,
+      subtitle: context.l10n.prescription_detailPanelSubtitle,
       onClose: listNotifier.closePanel,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -56,7 +56,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
                 Expanded(
                   child: MedDateInputField(
                     key: ValueKey(detailNotifier.startDate),
-                    label: context.l10n.prescriptionDetailStartDateLabel,
+                    label: context.l10n.prescription_detailStartDateLabel,
                     initialValue: detailNotifier.startDate,
                     onDateSelected: detailNotifier.selectStartDate,
                   ),
@@ -64,7 +64,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
                 Expanded(
                   child: MedDateInputField(
                     key: ValueKey(detailNotifier.endDate),
-                    label: context.l10n.prescriptionDetailEndDateLabel,
+                    label: context.l10n.prescription_detailEndDateLabel,
                     initialValue: detailNotifier.endDate,
                     onDateSelected: detailNotifier.selectEndDate,
                   ),
@@ -79,7 +79,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
                 detailNotifier.selectPrescriptionType(v);
               },
               labelBuilder: (type) => type?.label(context) ?? context.l10n.filter_all,
-              label: context.l10n.prescriptionDetailStatusLabel,
+              label: context.l10n.prescription_detailStatusLabel,
             ),
             _buildContent(context, detailNotifier, listNotifier),
           ],
@@ -135,7 +135,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
                   MessageUtils.showConfirmDialog(
                     context: context,
                     action: ConfirmAction.custom,
-                    customTitle: context.l10n.prescriptionCheckWarningDialogTitle,
+                    customTitle: context.l10n.prescription_checkWarningDialogTitle,
                     customMessage: message,
                     confirmButtonText: context.l10n.session_timeout_continueButton,
                     cancelButtonText: context.l10n.common_dismissButton,
@@ -145,7 +145,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
                   );
                 },
                 onSuccess: (message) {
-                  MessageUtils.showSuccessSnackbar(context, message ?? context.l10n.prescriptionApprovedSuccess);
+                  MessageUtils.showSuccessSnackbar(context, message ?? context.l10n.prescription_approvedSuccess);
                 },
                 onFailed: (message) {
                   MessageUtils.showErrorSnackbar(context, message);
@@ -185,7 +185,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
       },
       onSuccess: (message) {
         hideLoading(context);
-        MessageUtils.showSuccessSnackbar(context, message ?? context.l10n.prescriptionActionCompletedSuccess);
+        MessageUtils.showSuccessSnackbar(context, message ?? context.l10n.prescription_actionCompletedSuccess);
       },
     );
   }

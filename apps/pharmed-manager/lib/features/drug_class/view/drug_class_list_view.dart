@@ -29,9 +29,9 @@ class _DrugClassListViewState extends State<DrugClassListView> {
           return EmptyStateWidget(
             icon: Icons.category_outlined,
             variant: EmptyStateVariant.custom,
-            title: context.l10n.drugClassListEmptyTitle,
+            title: context.l10n.drugClass_listEmptyTitle,
             description: widget.isDialog
-                ? context.l10n.common_addItemHint('ilaç sınıfı')
+                ? context.l10n.common_addItemHint(context.l10n.drugClass_itemNameLabel)
                 : context.l10n.common_emptyListMessage,
           );
         }

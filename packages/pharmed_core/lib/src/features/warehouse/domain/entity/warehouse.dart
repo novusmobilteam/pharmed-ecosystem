@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Warehouse extends Selectable {
   final int? code;
@@ -40,7 +41,7 @@ class Warehouse extends Selectable {
   // Validasyon metodları
   bool get isValid => name?.trim().isNotEmpty == true;
   String? get nameError {
-    if (name == null || name!.trim().isEmpty) return 'Depo adı zorunludur';
+    if (name == null || name!.trim().isEmpty) return contextlessL10n().dataGuard_warehouseNameRequired;
     return null;
   }
 

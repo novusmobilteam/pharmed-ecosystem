@@ -34,7 +34,9 @@ class MedicalConsumableFormNotifier extends ChangeNotifier with ApiRequestMixin 
 
         return result;
       },
-      successMessage: isCreate ? 'Tıbbi sarf oluşturuldu' : 'Tıbbi sarf güncellendi',
+      successMessage: isCreate
+          ? contextlessL10n().medicalConsumable_successCreated
+          : contextlessL10n().medicalConsumable_successUpdated,
     );
   }
 

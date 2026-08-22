@@ -7,6 +7,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class SaveSensorValuesUseCase {
   const SaveSensorValuesUseCase(this._repo, this._getCurrentStation);
@@ -23,7 +24,9 @@ class SaveSensorValuesUseCase {
     };
 
     if (stationId == null) {
-      return Result.error(ServiceException(message: '', statusCode: 400));
+      return Result.error(
+        ServiceException(message: contextlessL10n().cabinTemperature_currentStationNotFoundError, statusCode: 400),
+      );
     }
 
     final result = await _repo.saveSensorValues(data: reading, stationId: stationId, cabinId: cabinId);

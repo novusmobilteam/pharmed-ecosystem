@@ -30,7 +30,7 @@ class RoleScreen extends StatelessWidget {
               isLoading: notifier.isFetching,
               actions: [
                 MedButton(
-                  label: context.l10n.roleScreenAddButton,
+                  label: context.l10n.role_screenAddButton,
                   size: MedButtonSize.sm,
                   onPressed: () => notifier.openPanel(),
                 ),

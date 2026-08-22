@@ -387,8 +387,8 @@ class MessageUtils {
         );
       case ConfirmAction.exit:
         return _ConfirmDialogContent(
-          title: 'Çıkış',
-          message: 'Kaydetmediğiniz değişiklikler kaybolabilir.',
+          title: context.l10n.dialog_exitTitle,
+          message: context.l10n.dialog_exitMessage,
           icon: PhosphorIcons.signOut(),
           iconColor: MedColors.amber,
           iconBgColor: MedColors.amberLight,
@@ -396,8 +396,8 @@ class MessageUtils {
         );
       case ConfirmAction.save:
         return _ConfirmDialogContent(
-          title: 'Kaydet',
-          message: 'Değişiklikleri kaydetmek istiyor musunuz?',
+          title: context.l10n.dialog_saveTitle,
+          message: context.l10n.dialog_saveMessage,
           icon: PhosphorIcons.floppyDisk(),
           iconColor: MedColors.blue,
           iconBgColor: MedColors.blueLight,
@@ -405,8 +405,8 @@ class MessageUtils {
         );
       case ConfirmAction.discard:
         return _ConfirmDialogContent(
-          title: 'İptal Et',
-          message: 'Yapılan değişiklikler geri alınacak.',
+          title: context.l10n.dialog_discardTitle,
+          message: context.l10n.dialog_discardMessage,
           icon: PhosphorIcons.xCircle(),
           iconColor: MedColors.amber,
           iconBgColor: MedColors.amberLight,
@@ -414,8 +414,8 @@ class MessageUtils {
         );
       case ConfirmAction.custom:
         return _ConfirmDialogContent(
-          title: 'Onay',
-          message: 'İşlemi onaylıyor musunuz?',
+          title: context.l10n.dialog_customConfirmTitle,
+          message: context.l10n.dialog_customConfirmMessage,
           icon: PhosphorIcons.question(),
           iconColor: MedColors.blue,
           iconBgColor: MedColors.blueLight,

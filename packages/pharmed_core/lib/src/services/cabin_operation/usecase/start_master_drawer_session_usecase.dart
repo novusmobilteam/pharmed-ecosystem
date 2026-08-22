@@ -3,6 +3,7 @@
 
 import 'dart:async';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// Master kabin çekmece oturumunu BAŞLATIR: yönetim kartını bulur, ilgili
 /// çekmece/kübik ana kilidini açma komutunu gönderir ve fiziksel sensör
@@ -159,7 +160,7 @@ class StartMasterDrawerSessionUseCase {
         if (status == DrawerPhysicalStatus.timeoutError) {
           yield DrawerFailed(
             failure: MasterDrawerFailure.sensorCommunicationLost,
-            detail: 'Donanımla iletişim kesildi (sensör yanıt vermiyor).',
+            detail: contextlessL10n().hw_cabinOps_sensorLostDuringOpenDetail,
           );
           return;
         }
@@ -180,7 +181,7 @@ class StartMasterDrawerSessionUseCase {
       // ama bu son bir güvenlik ağı) buraya düşer.
       yield DrawerFailed(
         failure: MasterDrawerFailure.lockOpenTimeout,
-        detail: 'Çekmece $_fullyOpenTimeout içinde tam açık duruma ulaşamadı.',
+        detail: contextlessL10n().hw_cabinOps_fullyOpenTimeoutDetail(_fullyOpenTimeout),
       );
       return;
     }

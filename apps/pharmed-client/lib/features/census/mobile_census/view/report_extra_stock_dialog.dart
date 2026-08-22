@@ -23,7 +23,7 @@ class _ReportExtraStockDialogState extends ConsumerState<ReportExtraStockDialog>
   Widget build(BuildContext context) {
     return MedDialog(
       width: 350,
-      title: context.l10n.census_extra_stock_dialog_title,
+      title: context.l10n.census_extraStockDialogTitle,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -43,7 +43,7 @@ class _ReportExtraStockDialogState extends ConsumerState<ReportExtraStockDialog>
             max: 999,
             step: 1,
             onChanged: (v) => setState(() => _quantity = v),
-            unit: context.l10n.census_extra_stock_quantity_label,
+            unit: context.l10n.census_extraStockQuantityLabel,
           ),
           SizedBox(height: 20),
           Row(

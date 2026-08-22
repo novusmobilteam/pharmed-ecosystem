@@ -36,13 +36,13 @@ class UserScreen extends StatelessWidget {
               onAddPressed: notifier.openPanel,
               actions: [
                 MedButton(
-                  label: context.l10n.userScreenAddButton,
+                  label: context.l10n.user_screenAddButton,
                   size: MedButtonSize.sm,
                   onPressed: () => notifier.openPanel(),
                 ),
                 if (notifier.showValidDateIcon)
                   MedButton(
-                    label: context.l10n.userBulkUpdateValidDateButton,
+                    label: context.l10n.user_bulkUpdateValidDateButton,
                     size: MedButtonSize.sm,
                     onPressed: () => _showValidDateDialog(context, notifier),
                   ),
@@ -67,11 +67,11 @@ void _showValidDateDialog(BuildContext context, UserNotifier vm) {
     builder: (ctx) => RegistrationDialog(
       maxHeight: 350,
       width: 400,
-      title: context.l10n.userValidDateDialogTitle,
-      saveButtonText: context.l10n.userValidDateDialogSaveButton,
+      title: context.l10n.user_validDateDialogTitle,
+      saveButtonText: context.l10n.user_validDateDialogSaveButton,
       isLoading: vm.isLoading(vm.updateValidDateOp),
       onSave: () async {
-        await vm.updateValidDate(successMessage: context.l10n.userValidDateUpdateSuccessMessage);
+        await vm.updateValidDate(successMessage: context.l10n.user_validDateUpdateSuccessMessage);
         if (ctx.mounted && vm.isSuccess(vm.updateValidDateOp)) {
           MessageUtils.showSuccessSnackbar(context, vm.message(vm.updateValidDateOp));
           Navigator.pop(ctx);
@@ -83,7 +83,7 @@ void _showValidDateDialog(BuildContext context, UserNotifier vm) {
         }
       },
       child: MedDateInputField(
-        label: context.l10n.userNewValidUntilLabel,
+        label: context.l10n.user_newValidUntilLabel,
         initialValue: vm.validDate,
         onDateSelected: (date) => vm.validDate = date,
       ),
@@ -96,7 +96,7 @@ void _onDelete(BuildContext context, UserNotifier vm, User user) {
     context: context,
     onConfirm: () async {
       showLoading(context);
-      await vm.deleteUser(user, successMessage: context.l10n.userDeleteSuccessMessage);
+      await vm.deleteUser(user, successMessage: context.l10n.user_deleteSuccessMessage);
       if (context.mounted) {
         hideLoading(context);
         if (vm.isSuccess(vm.deleteOp)) {

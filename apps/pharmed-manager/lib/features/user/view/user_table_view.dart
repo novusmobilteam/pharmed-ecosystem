@@ -11,17 +11,17 @@ class UserTableView extends StatelessWidget {
     return [
       TableColumnDef<User>(
         title: type == UserType.normal
-            ? context.l10n.userNationalIdColumnHeader
-            : context.l10n.userRegistrationNumberLabel,
+            ? context.l10n.user_nationalIdColumnHeader
+            : context.l10n.user_registrationNumberLabel,
         displayValue: (u) => u.registrationNumber ?? '-',
       ),
-      TableColumnDef<User>(title: context.l10n.userNameLabel, displayValue: (u) => u.name ?? '-'),
-      TableColumnDef<User>(title: context.l10n.userSurnameLabel, displayValue: (u) => u.surname ?? '-'),
+      TableColumnDef<User>(title: context.l10n.user_nameLabel, displayValue: (u) => u.name ?? '-'),
+      TableColumnDef<User>(title: context.l10n.user_surnameLabel, displayValue: (u) => u.surname ?? '-'),
       if (isNormalOrAll)
-        TableColumnDef<User>(title: context.l10n.userRoleTypeLabel, displayValue: (u) => u.role?.name ?? '-')
+        TableColumnDef<User>(title: context.l10n.user_roleTypeLabel, displayValue: (u) => u.role?.name ?? '-')
       else
         TableColumnDef<User>(
-          title: context.l10n.userValidUntilLabel,
+          title: context.l10n.user_validUntilLabel,
           displayValue: (u) => u.validUntil.formattedDate,
           sortValue: (u) => u.validUntil,
         ),

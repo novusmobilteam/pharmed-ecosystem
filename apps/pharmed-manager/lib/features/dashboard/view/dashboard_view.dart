@@ -43,7 +43,7 @@ class _DashboardViewState extends State<DashboardView> {
           // Tam ekran hata — gösterecek kabin yok
           if (notifier.showFullScreenError) {
             return _FullScreenError(
-              message: notifier.cabinsError ?? context.l10n.dashboardCabinsLoadErrorFallback,
+              message: notifier.cabinsError ?? context.l10n.dashboard_cabinsLoadErrorFallback,
               onRetry: () => context.read<DashboardNotifier>().fetchCabins(),
             );
           }
@@ -55,7 +55,7 @@ class _DashboardViewState extends State<DashboardView> {
                 cabins: notifier.cabins,
                 selectedId: notifier.selectedCabinId,
                 onSelect: (id) => context.read<DashboardNotifier>().selectCabin(id),
-                lastUpdatedLabel: notifier.cabinsStale ? context.l10n.dashboardCabinListStaleLabel : context.read(),
+                lastUpdatedLabel: notifier.cabinsStale ? context.l10n.dashboard_cabinListStaleLabel : context.read(),
               ),
               const SizedBox(height: 12),
 
@@ -68,7 +68,7 @@ class _DashboardViewState extends State<DashboardView> {
                     Expanded(
                       child: notifier.isMobileSelected
                           ? MissingStockPanel(isLoggedIn: isLoggedIn)
-                          : Center(child: Text(context.l10n.dashboardOtherCabinPlaceholderText)),
+                          : Center(child: Text(context.l10n.dashboard_otherCabinPlaceholderText)),
                     ),
 
                     Expanded(
@@ -156,7 +156,7 @@ class MissingStockPanel extends StatelessWidget {
     final items = section.data ?? const <PrescriptionItem>[];
 
     return MedDashboardPanel<List<PrescriptionItem>>(
-      title: context.l10n.dashboardMissingStockPanelTitle,
+      title: context.l10n.dashboard_missingStockPanelTitle,
       section: section,
       itemCount: items.length,
       onRetry: () => context.read<DashboardNotifier>().retryShortage(),
@@ -176,14 +176,14 @@ class MissingStockPanel extends StatelessWidget {
             DashboardRxInfoLine(context.l10n.assignment_serviceLabel, item.physicalService?.name ?? '-'),
             DashboardRxInfoLine(context.l10n.movement_performedBy, item.activityUser?.fullName ?? '-'),
             DashboardRxInfoLine(
-              context.l10n.dashboardMissingStockTimeLabel,
+              context.l10n.dashboard_missingStockTimeLabel,
               item.activityDate?.formattedDateTime ?? '-',
             ),
           ],
           actionButtons: (isLoggedIn && item.status == PrescriptionMovementType.shortageReported)
               ? [
                   MedButton(
-                    label: context.l10n.dashboardMissingStockApproveButton,
+                    label: context.l10n.dashboard_missingStockApproveButton,
                     size: MedButtonSize.sm,
                     variant: MedButtonVariant.success,
                     fullWidth: true,
@@ -193,7 +193,7 @@ class MissingStockPanel extends StatelessWidget {
                         : () => context.read<DashboardNotifier>().approveMissingStock(id),
                   ),
                   MedButton(
-                    label: context.l10n.dashboardMissingStockRejectButton,
+                    label: context.l10n.dashboard_missingStockRejectButton,
                     size: MedButtonSize.sm,
                     variant: MedButtonVariant.danger,
                     fullWidth: true,
@@ -220,7 +220,7 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
 
     return MedDashboardPanel<List<PrescriptionItem>>(
       key: const ValueKey('unapplied_panel'),
-      title: context.l10n.dashboardUnappliedPrescriptionsPanelTitle,
+      title: context.l10n.dashboard_unappliedPrescriptionsPanelTitle,
       section: section,
       itemCount: items.length,
       itemBuilder: (context, index) {
@@ -236,13 +236,13 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
               context.l10n.assignment_patientLabel,
               item.prescription?.hospitalization?.patient?.fullName ?? '-',
             ),
-            DashboardRxInfoLine(context.l10n.dashboardDoctorLabel, item.doctor?.fullName ?? '-'),
+            DashboardRxInfoLine(context.l10n.dashboard_doctorLabel, item.doctor?.fullName ?? '-'),
             DashboardRxInfoLine(
               context.l10n.assignment_serviceLabel,
               item.prescription?.hospitalization?.physicalService?.name ?? '-',
             ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
             DashboardRxInfoLine(
-              context.l10n.dashboardRoomBedLabel,
+              context.l10n.dashboard_roomBedLabel,
               [
                 item.prescription?.hospitalization?.room?.name,
                 item.prescription?.hospitalization?.bed?.name,
@@ -282,7 +282,10 @@ class UpcomingTreatmentPanel extends StatelessWidget {
               context.l10n.assignment_patientLabel,
               item.prescription?.hospitalization?.patient?.fullName ?? '-',
             ),
-            DashboardRxInfoLine('SERVİS', item.prescription?.hospitalization?.physicalService?.name ?? '-'),
+            DashboardRxInfoLine(
+              context.l10n.assignment_serviceLabel,
+              item.prescription?.hospitalization?.physicalService?.name ?? '-',
+            ),
           ],
         );
       },

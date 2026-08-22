@@ -130,7 +130,7 @@ class _ReportExtraStockButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: MedButton(
-        label: context.l10n.census_action_report_extra_stock,
+        label: context.l10n.census_action_reportExtraStock,
         size: MedButtonSize.md,
         variant: MedButtonVariant.danger,
 

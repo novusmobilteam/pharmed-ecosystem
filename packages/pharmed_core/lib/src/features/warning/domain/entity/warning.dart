@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Warning {
   final int? id;
@@ -27,7 +28,7 @@ class Warning {
   // Validasyon metodları
   bool get isValid => text?.trim().isNotEmpty == true;
   String? get textError {
-    if (text == null || text!.trim().isEmpty) return 'Uyarı adı zorunludur';
+    if (text == null || text!.trim().isEmpty) return contextlessL10n().dataGuard_warningTextRequired;
     return null;
   }
 

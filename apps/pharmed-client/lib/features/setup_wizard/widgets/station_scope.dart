@@ -46,7 +46,7 @@ class _StationsLoading extends StatelessWidget {
             const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MedColors.blue), strokeWidth: 2.5),
             const SizedBox(height: 14),
             Text(
-              context.l10n.cabinTemperatureStationsLoadingMessage,
+              context.l10n.cabinTemperature_stationsLoadingMessage,
               style: const TextStyle(fontFamily: MedFonts.sans, fontSize: 13, color: MedColors.text3),
             ),
           ],

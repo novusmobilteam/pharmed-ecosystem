@@ -34,7 +34,7 @@ class PatientSelectionFilterDialogState extends State<PatientSelectionFilterDial
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Filtreler', style: MedTextStyles.titleMd()),
+                  Text(context.l10n.patientListPanel_filter_dialogTitle, style: MedTextStyles.titleMd()),
                   Align(alignment: Alignment.topRight, child: CloseButton()),
                 ],
               ),

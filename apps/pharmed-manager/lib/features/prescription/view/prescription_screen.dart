@@ -47,7 +47,7 @@ class PrescriptionScreen extends StatelessWidget {
               menu: menu,
               actions: [
                 MedButton(
-                  label: context.l10n.prescriptionNewTitle,
+                  label: context.l10n.prescription_newTitle,
                   size: MedButtonSize.sm,
                   onPressed: () => showPrescriptionFormDialog(context),
                 ),

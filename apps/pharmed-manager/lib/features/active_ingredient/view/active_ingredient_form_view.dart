@@ -36,8 +36,8 @@ class _ActiveIngredientFormDialogState extends State<ActiveIngredientFormDialog>
     return Consumer<ActiveIngredientFormNotifier>(
       builder: (context, notifier, _) {
         final String title = notifier.isCreate
-            ? context.l10n.activeIngredientFormAddTitle
-            : context.l10n.activeIngredientFormEditTitle;
+            ? context.l10n.activeIngredient_formAddTitle
+            : context.l10n.activeIngredient_formEditTitle;
         return RegistrationDialog(
           title: title,
           maxHeight: 400,

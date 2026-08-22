@@ -80,7 +80,7 @@ class _InsideBottomTempField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.cabinTemperatureInsideBottomLabel,
+          label: context.l10n.cabinTemperature_insideBottomLabel,
           initialValue: notifier.temperature.bottomTemperatureInside?.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureNotifier>().updateInsideBottomTemp(value),
@@ -99,7 +99,7 @@ class _InsideTopTempField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.cabinTemperatureInsideTopLabel,
+          label: context.l10n.cabinTemperature_insideTopLabel,
           initialValue: notifier.temperature.topTemperatureInside?.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureNotifier>().updateInsideTopTemp(value),
@@ -118,7 +118,7 @@ class _OutsideBottomTempField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.cabinTemperatureOutsideBottomLabel,
+          label: context.l10n.cabinTemperature_outsideBottomLabel,
           initialValue: notifier.temperature.bottomTemperatureOutside?.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureNotifier>().updateOutsideBottomTemp(value),
@@ -137,7 +137,7 @@ class _OutsideTopTempField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.cabinTemperatureOutsideTopLabel,
+          label: context.l10n.cabinTemperature_outsideTopLabel,
           initialValue: notifier.temperature.topTemperatureOutside?.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureNotifier>().updateOutsideTopTemp(value),
@@ -156,7 +156,7 @@ class _BottomHumidityField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.cabinTemperatureHumidityBottomLabel,
+          label: context.l10n.cabinTemperature_humidityBottomLabel,
           initialValue: notifier.temperature.bottomLimitHumidity.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureNotifier>().updateBottomHumidity(value),
@@ -175,7 +175,7 @@ class _TopHumidityField extends StatelessWidget {
       builder: (context, notifier, _) {
         return MedTextInputField(
           key: key,
-          label: context.l10n.cabinTemperatureHumidityTopLabel,
+          label: context.l10n.cabinTemperature_humidityTopLabel,
           initialValue: notifier.temperature.topLimitHumidity.toCustomString(),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) => context.read<CabinTemperatureNotifier>().updateTopHumidity(value),

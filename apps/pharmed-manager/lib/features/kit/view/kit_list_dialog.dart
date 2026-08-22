@@ -13,7 +13,7 @@ Future<T?> showKitDialog<T>(BuildContext context, {bool forSelection = false}) a
       create: (context) => KitNotifier(getKitsUseCase: context.read(), deleteKitUseCase: context.read())..fetch(),
       child: Consumer<KitNotifier>(
         builder: (context, notifier, _) => CustomDialog(
-          title: forSelection ? context.l10n.kitDialogSelectTitle : context.l10n.kitDialogTitle,
+          title: forSelection ? context.l10n.kit_dialogSelectTitle : context.l10n.kit_dialogTitle,
           showSearch: true,
           showAdd: !forSelection,
           onSearchChanged: notifier.search,

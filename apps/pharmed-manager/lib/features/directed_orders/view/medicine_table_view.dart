@@ -20,7 +20,7 @@ class MedicineTableView extends StatelessWidget {
       builder: (context, vm, child) {
         return Center();
         // return CustomDialog(
-        //   title: context.l10n.directedOrdersScreenTitle,
+        //   title: context.l10n.directedOrders_screenTitle,
         //   showSearch: true,
         //   onSearchChanged: vm.search,
         //   width: context.width * 0.7,
@@ -34,7 +34,7 @@ class MedicineTableView extends StatelessWidget {
         //       // getter'ı olduğundan, kolon başlıkları burada l10n ile override edilir.
         //       // columnDefs: [
         //       //   TableColumnDef(title: context.l10n.wizard_summaryLabelStation, contentIndex: 0),
-        //       //   TableColumnDef(title: context.l10n.directedOrdersColumnBarcode, contentIndex: 1),
+        //       //   TableColumnDef(title: context.l10n.directedOrders_columnBarcode, contentIndex: 1),
         //       //   TableColumnDef(title: context.l10n.drugActivity_column_material, contentIndex: 2),
         //       // ],
         //     ),

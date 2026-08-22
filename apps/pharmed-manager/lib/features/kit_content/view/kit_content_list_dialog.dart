@@ -19,7 +19,7 @@ class KitContentListDialog extends StatelessWidget {
           KitContentNotifier(getKitContentUseCase: context.read(), deleteKitContentUseCase: context.read()),
       child: Consumer<KitContentNotifier>(
         builder: (context, vm, _) => CustomDialog(
-          title: context.l10n.kitContentDialogTitle,
+          title: context.l10n.kitContent_dialogTitle,
           showSearch: true,
           showAdd: true,
           onAddPressed: () => _showFormDialog(context, vm),

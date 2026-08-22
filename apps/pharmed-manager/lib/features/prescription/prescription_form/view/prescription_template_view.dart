@@ -10,8 +10,8 @@ class PrescriptionTemplateView extends StatelessWidget {
     if (n.isFetching) return const Center(child: MedLoadingIndicator());
     if (n.templates.isEmpty) {
       return EmptyStateWidget(
-        title: context.l10n.prescriptionTemplateEmptyTitle,
-        description: context.l10n.prescriptionTemplateEmptyDescription,
+        title: context.l10n.prescription_templateEmptyTitle,
+        description: context.l10n.prescription_templateEmptyDescription,
       );
     }
 
@@ -109,7 +109,7 @@ class _TemplateGroupCardState extends State<_TemplateGroupCard> {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  context.l10n.prescriptionTemplateNoItemsMessage,
+                  context.l10n.prescription_templateNoItemsMessage,
                   style: MedTextStyles.bodySm(color: MedColors.text3),
                 ),
               )
@@ -177,7 +177,7 @@ class _TemplateItemsList extends StatelessWidget {
               children: [
                 Icon(PhosphorIcons.plus(), size: 16, color: MedColors.blueLight),
                 Text(
-                  context.l10n.prescriptionAddToRxButton(items.length),
+                  context.l10n.prescription_addToRxButton(items.length),
                   style: MedTextStyles.bodyMd().copyWith(color: MedColors.blueLight, fontWeight: FontWeight.bold),
                 ),
               ],

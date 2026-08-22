@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class PrescriptionItem implements Selectable {
   @override
@@ -202,19 +203,19 @@ enum PrescriptionColumn {
 
 extension PrescriptionColumnX on PrescriptionColumn {
   String get label => switch (this) {
-    PrescriptionColumn.medicine => 'İlaç',
-    PrescriptionColumn.dose => 'Doz',
-    PrescriptionColumn.applicationUser => 'Uygulayan',
-    PrescriptionColumn.appliedQuantity => 'Uygulanan Miktar',
-    PrescriptionColumn.applicationDate => 'Uygulama Tarihi',
-    PrescriptionColumn.returnUser => 'İade Eden',
-    PrescriptionColumn.returnQuantity => 'İade Edilen Miktar',
-    PrescriptionColumn.returnDate => 'İade Tarihi',
-    PrescriptionColumn.wastageUser => 'Fire Eden',
-    PrescriptionColumn.wastageDate => 'Fire Tarihi',
-    PrescriptionColumn.destructionUser => 'İmha Eden',
-    PrescriptionColumn.destructionDate => 'İmha Tarihi',
-    PrescriptionColumn.status => 'Durum',
+    PrescriptionColumn.medicine => contextlessL10n().tableCore_prescriptionMedicineColumn,
+    PrescriptionColumn.dose => contextlessL10n().tableCore_prescriptionDoseColumn,
+    PrescriptionColumn.applicationUser => contextlessL10n().tableCore_prescriptionApplicationUserColumn,
+    PrescriptionColumn.appliedQuantity => contextlessL10n().tableCore_prescriptionAppliedQuantityColumn,
+    PrescriptionColumn.applicationDate => contextlessL10n().tableCore_prescriptionApplicationDateColumn,
+    PrescriptionColumn.returnUser => contextlessL10n().tableCore_prescriptionReturnUserColumn,
+    PrescriptionColumn.returnQuantity => contextlessL10n().tableCore_prescriptionReturnQuantityColumn,
+    PrescriptionColumn.returnDate => contextlessL10n().tableCore_prescriptionReturnDateColumn,
+    PrescriptionColumn.wastageUser => contextlessL10n().tableCore_prescriptionWastageUserColumn,
+    PrescriptionColumn.wastageDate => contextlessL10n().tableCore_prescriptionWastageDateColumn,
+    PrescriptionColumn.destructionUser => contextlessL10n().tableCore_prescriptionDestructionUserColumn,
+    PrescriptionColumn.destructionDate => contextlessL10n().tableCore_prescriptionDestructionDateColumn,
+    PrescriptionColumn.status => contextlessL10n().tableCore_prescriptionStatusColumn,
   };
 
   int get flex => switch (this) {

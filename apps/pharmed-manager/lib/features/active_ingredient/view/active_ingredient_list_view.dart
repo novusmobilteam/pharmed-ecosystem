@@ -28,9 +28,9 @@ class _ActiveIngredientListViewState extends State<ActiveIngredientListView> {
           return EmptyStateWidget(
             icon: Icons.science_outlined,
             variant: EmptyStateVariant.custom,
-            title: context.l10n.activeIngredientListEmptyTitle,
+            title: context.l10n.activeIngredient_listEmptyTitle,
             description: widget.isDialog
-                ? context.l10n.common_addItemHint('etken madde')
+                ? context.l10n.common_addItemHint(context.l10n.activeIngredient_itemNameLabel)
                 : context.l10n.common_emptyListMessage,
           );
         }

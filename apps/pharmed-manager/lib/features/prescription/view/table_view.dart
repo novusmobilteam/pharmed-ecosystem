@@ -22,21 +22,21 @@ class TableView extends StatelessWidget {
       actions: [
         TableActionItem<Hospitalization>(
           icon: PhosphorIcons.receipt(),
-          tooltip: context.l10n.prescriptionContentTooltip,
+          tooltip: context.l10n.prescription_contentTooltip,
           color: context.colorScheme.onSurface,
           onPressed: notifier.openPanel,
         ),
         TableActionItem<Hospitalization>(
           icon: PhosphorIcons.plus(),
-          tooltip: context.l10n.prescriptionNewTitle,
+          tooltip: context.l10n.prescription_newTitle,
           onPressed: (hosp) => showPrescriptionFormDialog(context, hospitalization: hosp),
         ),
       ],
       toolbarActions: [
         MedRectangleIconButton(
           tooltip: notifier.showDischarged
-              ? context.l10n.prescriptionShowActiveButton
-              : context.l10n.prescriptionShowDischargedButton,
+              ? context.l10n.prescription_showActiveButton
+              : context.l10n.prescription_showDischargedButton,
           iconData: notifier.showDischarged ? PhosphorIcons.userMinus() : PhosphorIcons.userCheck(),
           color: MedColors.amberLight,
           iconColor: MedColors.amber,

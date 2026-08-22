@@ -28,7 +28,7 @@ part of 'directed_orders_screen.dart';
 //       actions: [
 //         TableActionItem(
 //           icon: PhosphorIcons.dotsThreeVertical(),
-//           tooltip: context.l10n.directedOrdersMedicinesTooltip,
+//           tooltip: context.l10n.directedOrders_medicinesTooltip,
 //           onPressed: (hosp) => showMedicineTableDialog(context, hosp),
 //         ),
 //       ],

@@ -50,48 +50,48 @@ final class EmptyStateResolver {
       switch (variant) {
         EmptyStateVariant.cabinData => EmptyStateContent(
           icon: PhosphorIcons.dresser(),
-          title: _l10n.emptyStateCabinDataTitle,
-          description: _l10n.emptyStateCabinDataDescription,
+          title: _l10n.emptyState_cabinDataTitle,
+          description: _l10n.emptyState_cabinDataDescription,
         ),
         EmptyStateVariant.noResults => EmptyStateContent(
           icon: PhosphorIcons.magnifyingGlass(),
-          title: _l10n.emptyStateNoResultsTitle,
-          description: _l10n.emptyStateNoResultsDescription,
+          title: _l10n.emptyState_noResultsTitle,
+          description: _l10n.emptyState_noResultsDescription,
         ),
         EmptyStateVariant.noCellSelected => EmptyStateContent(
           icon: PhosphorIcons.gridFour(),
-          title: _l10n.emptyStateNoCellSelectedTitle,
-          description: _l10n.emptyStateNoCellSelectedDescription,
+          title: _l10n.emptyState_noCellSelectedTitle,
+          description: _l10n.emptyState_noCellSelectedDescription,
         ),
         EmptyStateVariant.noPatient => EmptyStateContent(
           icon: PhosphorIcons.userFocus(),
-          title: _l10n.emptyStateNoPatientTitle,
-          description: _l10n.emptyStateNoPatientDescription,
+          title: _l10n.emptyState_noPatientTitle,
+          description: _l10n.emptyState_noPatientDescription,
         ),
         EmptyStateVariant.noPrescription => EmptyStateContent(
           icon: PhosphorIcons.receipt(),
-          title: _l10n.emptyStateNoPrescriptionTitle,
-          description: _l10n.emptyStateNoPrescriptionDescription,
+          title: _l10n.emptyState_noPrescriptionTitle,
+          description: _l10n.emptyState_noPrescriptionDescription,
         ),
         EmptyStateVariant.noCabin => EmptyStateContent(
           icon: PhosphorIcons.dresser(),
-          title: _l10n.emptyStateNoCabinTitle,
-          description: _l10n.emptyStateNoCabinDescription,
+          title: _l10n.emptyState_noCabinTitle,
+          description: _l10n.emptyState_noCabinDescription,
         ),
         EmptyStateVariant.networkError => EmptyStateContent(
           icon: PhosphorIcons.wifiSlash(),
-          title: _l10n.emptyStateNetworkErrorTitle,
-          description: _l10n.emptyStateNetworkErrorDescription,
+          title: _l10n.emptyState_networkErrorTitle,
+          description: _l10n.emptyState_networkErrorDescription,
         ),
         EmptyStateVariant.serverError => EmptyStateContent(
           icon: PhosphorIcons.cloudSlash(),
-          title: _l10n.emptyStateServerErrorTitle,
-          description: _l10n.emptyStateServerErrorDescription,
+          title: _l10n.emptyState_serverErrorTitle,
+          description: _l10n.emptyState_serverErrorDescription,
         ),
         EmptyStateVariant.error => EmptyStateContent(
           icon: PhosphorIcons.warningCircle(),
-          title: _l10n.emptyStateErrorTitle,
-          description: _l10n.emptyStateErrorDescription,
+          title: _l10n.emptyState_errorTitle,
+          description: _l10n.emptyState_errorDescription,
         ),
         EmptyStateVariant.custom => EmptyStateContent(
           icon: icon ?? PhosphorIcons.info(),
@@ -100,37 +100,37 @@ final class EmptyStateResolver {
         ),
         EmptyStateVariant.noRefundableDrugs => EmptyStateContent(
           icon: icon ?? PhosphorIcons.info(),
-          title: _l10n.refundNoRefundableDrugs,
+          title: _l10n.refund_noRefundableDrugs,
           description: '',
         ),
 
-        EmptyStateVariant.refundSelectPatient => EmptyStateContent(
+        EmptyStateVariant.refund_selectPatient => EmptyStateContent(
           icon: icon ?? PhosphorIcons.info(),
-          title: _l10n.refundSelectPatient,
+          title: _l10n.refund_selectPatient,
           description: '',
         ),
 
         EmptyStateVariant.noWastableDrugs => EmptyStateContent(
           icon: icon ?? PhosphorIcons.info(),
-          title: _l10n.wasteNoWastableDrugs,
+          title: _l10n.waste_noWastableDrugs,
           description: '',
         ),
 
-        EmptyStateVariant.wasteSelectPatient => EmptyStateContent(
+        EmptyStateVariant.waste_selectPatient => EmptyStateContent(
           icon: icon ?? PhosphorIcons.info(),
-          title: _l10n.wasteSelectPatient,
+          title: _l10n.waste_selectPatient,
           description: '',
         ),
 
         EmptyStateVariant.noData => EmptyStateContent(
           icon: PhosphorIcons.tray(),
-          title: _l10n.emptyStateNoDataTitle,
-          description: _l10n.emptyStateNoDataDescription,
+          title: _l10n.emptyState_noDataTitle,
+          description: _l10n.emptyState_noDataDescription,
         ),
         EmptyStateVariant.noPatientSelected => EmptyStateContent(
           icon: PhosphorIcons.userList(),
-          title: _l10n.empty_state_no_patient_selected_title,
-          description: _l10n.empty_state_no_patient_selected_description,
+          title: _l10n.emptyState_noPatientSelectedTitle,
+          description: _l10n.emptyState_noPatientSelectedDescription,
         ),
       };
 }

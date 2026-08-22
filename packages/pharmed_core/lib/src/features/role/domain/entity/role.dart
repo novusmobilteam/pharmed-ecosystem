@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class Role extends Selectable {
   final String? name;
@@ -29,7 +30,7 @@ class Role extends Selectable {
   // Validasyon metodları
   bool get isValid => name?.trim().isNotEmpty == true;
   String? get nameError {
-    if (name == null || name!.trim().isEmpty) return 'Rol adı zorunludur';
+    if (name == null || name!.trim().isEmpty) return contextlessL10n().dataGuard_roleNameRequired;
     return null;
   }
 

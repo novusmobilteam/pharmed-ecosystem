@@ -24,7 +24,7 @@ class RedirectedOrdersContent extends ConsumerWidget {
       searchHint: '',
       isLoading: isLoading,
       isEmpty: noPatientSelected || (!isLoading && orders.isEmpty),
-      emptyMessage: noPatientSelected ? context.l10n.wasteSelectPatient : context.l10n.intake_hint_noRedirectedOrders,
+      emptyMessage: noPatientSelected ? context.l10n.waste_selectPatient : context.l10n.intake_hint_noRedirectedOrders,
       content: (isLoading || noPatientSelected)
           ? null
           : CabinOperationGrid(

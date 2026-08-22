@@ -73,7 +73,7 @@ class MedDrugActivityCard extends StatelessWidget {
             value: _performedBy,
           ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
           const SizedBox(height: 6),
-          MedInfoRow(label: context.l10n.dashboardDrugActivityDateTimeLabel, value: _dateTime),
+          MedInfoRow(label: context.l10n.dashboard_drugActivityDateTimeLabel, value: _dateTime),
           const SizedBox(height: 12),
 
           // Hareket tipi chip'i — eylem etiketiyle

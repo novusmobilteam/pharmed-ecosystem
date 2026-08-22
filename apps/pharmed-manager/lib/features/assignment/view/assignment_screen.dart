@@ -45,7 +45,7 @@ class AssignmentScreen extends StatelessWidget {
                       onChanged: notifier.selectStation,
                       initialValue: notifier.selectedStation,
                       labelBuilder: (station) => station?.name,
-                      placeholder: context.l10n.assignmentStationSelectPlaceholder,
+                      placeholder: context.l10n.assignment_stationSelectPlaceholder,
                     ),
                   ),
                   if (notifier.cabin != null && notifier.cabinVisualizer != null) _buildView(notifier),

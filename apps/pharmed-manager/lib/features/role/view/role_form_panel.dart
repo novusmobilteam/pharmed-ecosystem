@@ -15,7 +15,7 @@ class RoleFormPanel extends StatelessWidget {
           RoleFormNotifier(createRoleUseCase: context.read(), updateRoleUseCase: context.read(), role: selectedRole),
       child: Consumer<RoleFormNotifier>(
         builder: (context, notifier, _) {
-          final String title = roleNotifier.isEditing ? context.l10n.roleFormEditTitle : context.l10n.roleFormAddTitle;
+          final String title = roleNotifier.isEditing ? context.l10n.role_formEditTitle : context.l10n.role_formAddTitle;
           return SidePanel(
             title: title,
             isLoading: notifier.isLoading(notifier.submitOp),
@@ -55,7 +55,7 @@ class _NameField extends StatelessWidget {
     return Consumer<RoleFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: context.l10n.roleFormNameLabel,
+          label: context.l10n.role_formNameLabel,
           autoFocus: notifier.isCreate,
           initialValue: notifier.role.name,
           validator: Validators.cannotBlankValidator,

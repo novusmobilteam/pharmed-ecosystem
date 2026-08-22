@@ -28,7 +28,7 @@ class _PatientSelector extends StatelessWidget {
     return IgnorePointer(
       ignoring: !form.isPatientSelectionEnabled,
       child: MedSelectionField<Hospitalization>(
-        label: context.l10n.prescriptionPatientFieldLabel,
+        label: context.l10n.prescription_patientFieldLabel,
         initialValue: form.hospitalization,
         labelBuilder: (h) => h.patient?.fullName,
         onSelected: (h) {
@@ -48,7 +48,7 @@ class _DoctorSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = context.watch<PrescriptionFormNotifier>();
     return MedSelectionField<User>(
-      label: context.l10n.prescriptionDoctorFieldLabel,
+      label: context.l10n.prescription_doctorFieldLabel,
       initialValue: notifier.doctor,
       labelBuilder: (u) => u.fullName,
       onSelected: notifier.updateDoctor,
@@ -80,7 +80,7 @@ class Footer extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           MedButton(
-            label: context.l10n.prescriptionSaveButton,
+            label: context.l10n.prescription_saveButton,
             variant: MedButtonVariant.primary,
             prefixIcon: Icon(PhosphorIcons.check()),
             isActive: notifier.canSave,
@@ -105,9 +105,9 @@ class Footer extends StatelessWidget {
       onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
       onSuccess: (outcome) {
         final message = switch (outcome) {
-          PrescriptionSaveOutcome.savedWithTemplate => context.l10n.prescriptionSaveWithTemplateSuccess,
-          PrescriptionSaveOutcome.templateSaveFailed => context.l10n.prescriptionSavedTemplateFailedMessage,
-          PrescriptionSaveOutcome.savedOnly => context.l10n.prescriptionSavedSuccess,
+          PrescriptionSaveOutcome.savedWithTemplate => context.l10n.prescription_saveWithTemplateSuccess,
+          PrescriptionSaveOutcome.templateSaveFailed => context.l10n.prescription_savedTemplateFailedMessage,
+          PrescriptionSaveOutcome.savedOnly => context.l10n.prescription_savedSuccess,
         };
         MessageUtils.showSuccessSnackbar(context, message);
         Navigator.of(context).pop();
@@ -127,7 +127,7 @@ class _TemplateToggle extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         MedCheckboxField(
-          label: context.l10n.prescriptionSaveAsTemplateCheckboxLabel,
+          label: context.l10n.prescription_saveAsTemplateCheckboxLabel,
           value: notifier.saveAsTemplate,
           onChanged: (_) => notifier.toggleSaveAsTemplate(),
           size: MedCheckboxSize.sm,
@@ -137,7 +137,7 @@ class _TemplateToggle extends StatelessWidget {
           SizedBox(
             width: 240,
             child: MedTextInputField(
-              hintText: context.l10n.prescriptionTemplateNameHint,
+              hintText: context.l10n.prescription_templateNameHint,
               initialValue: notifier.templateName,
               onChanged: (name) => notifier.updateTemplateName(name),
             ),

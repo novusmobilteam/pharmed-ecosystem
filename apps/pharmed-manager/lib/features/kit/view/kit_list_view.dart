@@ -30,9 +30,9 @@ class _KitListViewState extends State<KitListView> {
           return EmptyStateWidget(
             icon: Icons.medical_services_outlined,
             variant: EmptyStateVariant.custom,
-            title: context.l10n.kitListEmptyTitle,
+            title: context.l10n.kit_listEmptyTitle,
             description: widget.isDialog
-                ? context.l10n.common_addItemHint('kit')
+                ? context.l10n.common_addItemHint(context.l10n.kit_itemNameLabel)
                 : context.l10n.common_emptyListMessage,
           );
         }
@@ -52,7 +52,7 @@ class _KitListViewState extends State<KitListView> {
                 AdditionalActionButton(
                   icon: PhosphorIcons.gear(),
                   onPressed: () => _onManageContent(context, kit),
-                  tooltip: context.l10n.kitListManageContentTooltip,
+                  tooltip: context.l10n.kit_listManageContentTooltip,
                 ),
               ],
             );

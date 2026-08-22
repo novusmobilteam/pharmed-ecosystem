@@ -84,7 +84,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
       if (state.isOrderedFilterActive)
         DropdownFilterField<PatientFilterType>(
           key: 'filter',
-          label: context.l10n.prescriptionDetailStatusLabel,
+          label: context.l10n.prescription_detailStatusLabel,
           initialValue: state.filter,
           options: PatientFilterType.values,
           labelBuilder: (f) => f?.label,
@@ -367,8 +367,7 @@ class _UrgentPatientCreatedCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: MedSpacing.lg),
             child: Text(
-              // TODO(Feyzullah): gerçek ARB key'ini oluştur.
-              'Acil hasta oluşturuldu, normal akışa dönmek istiyorsanız acil hastayı silmeniz gerekiyor.',
+              context.l10n.patientPicker_urgentPatientCardDescription,
               style: MedTextStyles.bodySm(color: MedColors.text3),
               textAlign: TextAlign.center,
             ),

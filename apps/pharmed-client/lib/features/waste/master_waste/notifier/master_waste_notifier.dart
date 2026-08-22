@@ -12,6 +12,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
@@ -103,15 +104,15 @@ class MasterWasteNotifier extends Notifier<MasterWasteState> {
     if (s is! MasterWasteMedicineSelection || s.isSubmitting) return;
 
     if (amount <= 0) {
-      onFailed?.call('Miktar 0 olamaz.');
+      onFailed?.call(contextlessL10n().waste_error_amountZero);
       return;
     }
     final max = s.maxAmountFor(itemId);
     if (amount > max) {
       onFailed?.call(
         s.type == DisposeType.wastage
-            ? 'Fire edilecek miktar alım miktarından fazla olamaz.'
-            : 'İmha edilecek miktar alım miktarından fazla olamaz.',
+            ? contextlessL10n().waste_error_wastageAmountExceeded
+            : contextlessL10n().waste_error_destructionAmountExceeded,
       );
       return;
     }
@@ -187,7 +188,7 @@ class MasterWasteNotifier extends Notifier<MasterWasteState> {
       if (!ok) return;
     }
 
-    onSuccess?.call('Fire/İmha işlemi başarılı.');
+    onSuccess?.call(contextlessL10n().waste_success_operationCompleted);
     await _loadItems();
   }
 

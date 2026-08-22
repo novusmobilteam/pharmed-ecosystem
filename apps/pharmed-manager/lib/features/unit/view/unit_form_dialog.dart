@@ -33,7 +33,7 @@ class _UnitFormDialogState extends State<UnitFormDialog> {
   Widget build(BuildContext context) {
     return Consumer<UnitFormNotifier>(
       builder: (context, notifier, _) {
-        final String title = notifier.isCreate ? context.l10n.unitFormAddTitle : context.l10n.unitFormEditTitle;
+        final String title = notifier.isCreate ? context.l10n.unit_formAddTitle : context.l10n.unit_formEditTitle;
 
         return RegistrationDialog(
           title: title,

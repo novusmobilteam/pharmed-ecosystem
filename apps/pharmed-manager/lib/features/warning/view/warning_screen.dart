@@ -29,7 +29,7 @@ class WarningScreen extends StatelessWidget {
                 MedButton(
                   onPressed: () => notifier.openPanel(),
                   size: MedButtonSize.sm,
-                  label: context.l10n.warningFormAddTitle,
+                  label: context.l10n.warning_formAddTitle,
                 ),
               ],
               child: SidePanelWrapper(

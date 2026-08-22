@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class DesktopFileService {
   /// Dosya kaydetme dialog'u açar (Generic)
@@ -11,7 +12,7 @@ class DesktopFileService {
     required List<int> bytes,
     required String fileName,
     required String extension, // Örn: 'pdf', 'xlsx' (noktasız)
-    String? dialogTitle = 'Dosyayı Kaydet',
+    String? dialogTitle,
   }) async {
     try {
       // Uzantıdaki noktayı temizle (örn: .pdf -> pdf)
@@ -19,7 +20,7 @@ class DesktopFileService {
 
       // Kaydetme dialog'unu aç
       String? outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: dialogTitle,
+        dialogTitle: dialogTitle ?? contextlessL10n().fileExport_saveDialogTitle,
         fileName: '$fileName.$cleanExtension',
         type: FileType.custom,
         allowedExtensions: [cleanExtension], // Sadece ilgili uzantıya izin ver
@@ -37,7 +38,7 @@ class DesktopFileService {
       }
       return null;
     } catch (e) {
-      throw Exception('Dosya kaydetme hatası: $e');
+      throw Exception(contextlessL10n().fileExport_saveErrorMessage(e));
     }
   }
 
@@ -58,7 +59,7 @@ class DesktopFileService {
       await file.writeAsBytes(bytes);
       return file;
     } catch (e) {
-      throw Exception('Masaüstüne kaydetme hatası: $e');
+      throw Exception(contextlessL10n().fileExport_saveToDesktopErrorMessage(e));
     }
   }
 

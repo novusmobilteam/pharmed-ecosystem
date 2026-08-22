@@ -25,7 +25,7 @@ class TableView extends StatelessWidget {
       actions: [
         TableActionItem(
           icon: PhosphorIcons.dotsThreeVertical(),
-          tooltip: 'Detayları Gör',
+          tooltip: context.l10n.authorization_summary_viewDetailsTooltip,
           onPressed: (summary) {
             showAuthSummaryView(context, summary.userId ?? 0);
           },

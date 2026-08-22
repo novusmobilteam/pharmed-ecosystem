@@ -29,7 +29,7 @@ class DirectedOrdersDetailViewModel extends ChangeNotifier with ApiRequestMixin 
       fetch,
       operation: () => _orderRepository.getDirectedOrders(),
       onData: (response) => _items = response.data ?? [],
-      loadingMessage: _l10n.directedOrdersPatientsLoadingMessage,
+      loadingMessage: _l10n.directedOrders_patientsLoadingMessage,
     );
   }
 }

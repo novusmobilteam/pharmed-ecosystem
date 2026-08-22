@@ -37,8 +37,8 @@ class _MaterialTypeFormDialogState extends State<MaterialTypeFormDialog> {
     return Consumer<MaterialTypeFormNotifier>(
       builder: (context, notifier, _) {
         final String title = notifier.isCreate
-            ? context.l10n.materialTypeFormAddTitle
-            : context.l10n.materialTypeFormEditTitle;
+            ? context.l10n.materialType_formAddTitle
+            : context.l10n.materialType_formEditTitle;
 
         return RegistrationDialog(
           title: title,
@@ -78,7 +78,7 @@ class _NameField extends StatelessWidget {
     return Consumer<MaterialTypeFormNotifier>(
       builder: (context, notifier, _) {
         return MedTextInputField(
-          label: context.l10n.materialTypeFormNameLabel,
+          label: context.l10n.materialType_formNameLabel,
           initialValue: notifier.materialType.name,
           validator: (v) => Validators.cannotBlankValidator(v),
           onChanged: notifier.updateName,

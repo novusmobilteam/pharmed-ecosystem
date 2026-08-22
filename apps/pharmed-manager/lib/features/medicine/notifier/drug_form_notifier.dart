@@ -81,7 +81,9 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
         return result;
       },
       onSuccess: () {
-        final msg = isCreate ? 'İlaç oluşturuldu' : 'İlaç güncellendi';
+        final msg = isCreate
+            ? contextlessL10n().medicine_successCreated
+            : contextlessL10n().medicine_successUpdated;
         onSuccess?.call(msg);
       },
       onFailed: (error) => onFailed?.call(error.message),

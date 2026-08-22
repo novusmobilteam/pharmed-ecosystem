@@ -14,7 +14,7 @@ Future<T?> showDrugClassDialog<T>(BuildContext context, {bool forSelection = fal
           DrugClassNotifier(getDrugClassUseCase: context.read(), deleteDrugClassUseCase: context.read())..fetch(),
       child: Consumer<DrugClassNotifier>(
         builder: (context, vm, _) => CustomDialog(
-          title: forSelection ? context.l10n.drugClassDialogSelectTitle : context.l10n.drugClassDialogTitle,
+          title: forSelection ? context.l10n.drugClass_dialogSelectTitle : context.l10n.drugClass_dialogTitle,
           showSearch: true,
           showAdd: !forSelection,
           onSearchChanged: vm.search,
