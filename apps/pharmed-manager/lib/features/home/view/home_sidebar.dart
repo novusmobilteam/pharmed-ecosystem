@@ -129,7 +129,7 @@ class _SidebarChildItem extends StatelessWidget {
     final locale = Localizations.localeOf(context);
 
     return InkWell(
-      onTap: () => context.read<HomeNotifier>().selectChild(child),
+      onTap: () => _onTap(context),
       borderRadius: MedRadius.mdAll,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
@@ -164,5 +164,17 @@ class _SidebarChildItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Bazı route'lar bir "sayfa" değil, bir "aksiyon" (dialog) temsil eder —
+  // bunlar activeChildMenu'ye HİÇ yazılmaz, ana içerik değişmeden kalır.
+  void _onTap(BuildContext context) {
+    switch (child.route) {
+      case 'changePassword':
+        ChangePasswordView.show(context);
+        return;
+      default:
+        context.read<HomeNotifier>().selectChild(child);
+    }
   }
 }

@@ -82,8 +82,12 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
         result = apiResult.when(ok: (r) => Result.ok(r.data ?? const []), error: (e) => Result.error(e));
       }
     } else if (!config.showFilters) {
-      final apiResult = await _getActiveHospitalizations.call(const PagedQueryParams());
-      result = apiResult.when(ok: (r) => Result.ok(r.data ?? const []), error: (e) => Result.error(e));
+      if (s.viewType == PatientViewType.myPatients) {
+        result = await _getHospitalizations.call(serviceId: 0, filter: PatientFilterType.all, myPatients: true);
+      } else {
+        final apiResult = await _getActiveHospitalizations.call(const PagedQueryParams());
+        result = apiResult.when(ok: (r) => Result.ok(r.data ?? const []), error: (e) => Result.error(e));
+      }
     } else {
       result = await _getHospitalizations.call(
         serviceId: s.selectedService?.id ?? 0,

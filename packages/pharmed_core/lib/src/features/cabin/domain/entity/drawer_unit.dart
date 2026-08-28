@@ -1,5 +1,3 @@
-// pharmed_core/src/cabin/entity/drawer_unit.dart
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 /// ÇEKMECE BİRİMİ ENTITY'Sİ

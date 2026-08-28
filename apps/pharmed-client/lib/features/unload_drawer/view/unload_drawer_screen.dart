@@ -21,12 +21,22 @@ class UnloadDrawerScreen extends ConsumerStatefulWidget {
 
 class UnloadDrawerScreenState extends ConsumerState<UnloadDrawerScreen> {
   @override
+  void initState() {
+    super.initState();
+
+    final notifier = ref.read(unloadDrawerNotifierProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      notifier.init(widget.cabinRouteContext);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(unloadDrawerNotifierProvider);
     final notifier = ref.read(unloadDrawerNotifierProvider.notifier);
     final isExecuting =
         state is UnloadDrawerExecuting || (state is UnloadDrawerError && state.previousState is UnloadDrawerExecuting);
-    final isLoading = state is UnloadDrawerLoading;
     final cabinData = widget.cabinRouteContext.cabinData;
 
     ref.listen(unloadDrawerNotifierProvider, (_, next) {

@@ -5,6 +5,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
+import '../../dashboard/dashboard.dart';
 import 'unload_drawer_state.dart';
 
 final unloadDrawerNotifierProvider = NotifierProvider<UnloadDrawerNotifier, UnloadDrawerState>(
@@ -30,9 +31,9 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
     return const UnloadDrawerUninitialized();
   }
 
-  Future<void> init(CabinVisualizerData data) async {
-    _cabinId = data.cabinId;
-    _visualizerData = data;
+  Future<void> init(CabinRouteContext ctx) async {
+    _cabinId = ctx.cabin?.id ?? 0;
+    _visualizerData = ctx.cabinData;
     _mode = UnloadDrawerMode.drawer;
     state = UnloadDrawerLoading(mode: _mode);
     await _loadItems();
@@ -110,7 +111,7 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
 
   Future<void> startDrawerUnload() async {
     final s = state;
-    if (s is! UnloadDrawerSelection || s.mode != UnloadDrawerMode.drawer || !s.canConfirm) return;
+    if (s is! UnloadDrawerSelection || s.mode != UnloadDrawerMode.drawer || s.items.isEmpty) return;
 
     final assignment = _resolveReturnDrawerAssignment();
     if (assignment == null) {
@@ -121,8 +122,19 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
       return;
     }
 
-    state = UnloadDrawerExecuting(cabinId: _cabinId, items: s.selectedItems, assignment: assignment);
+    // ÖN SEÇİM kalktı — kullanıcı hangi ilaçları fiziksel çekmecede
+    // gördüyse execution ekranında işaretleyecek. Bu yüzden s.items'ın
+    // TAMAMI execution state'ine taşınır, selectedIds boş başlar.
+    state = UnloadDrawerExecuting(cabinId: _cabinId, items: s.items, assignment: assignment);
     await _orchestrator.open(assignment: assignment);
+  }
+
+  void toggleExecutingItem(int itemId) {
+    final s = state;
+    if (s is! UnloadDrawerExecuting || s.isSaving) return;
+    final next = Set<int>.from(s.selectedIds);
+    next.contains(itemId) ? next.remove(itemId) : next.add(itemId);
+    state = s.copyWith(selectedIds: next);
   }
 
   void _onDrawerStage(MasterDrawerStage? previous, MasterDrawerStage current) {
@@ -138,10 +150,11 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
 
   Future<void> confirmDrawerUnload() async {
     final s = state;
-    if (s is! UnloadDrawerExecuting || s.isSaving) return;
+    if (s is! UnloadDrawerExecuting || s.isSaving || s.selectedIds.isEmpty) return;
     state = s.copyWith(isSaving: true);
 
-    final ids = s.items.map((e) => e.id).whereType<int>().toList();
+    // Artık s.items (tümü) değil, kullanıcının işaretlediği s.selectedItems.
+    final ids = s.selectedItems.map((e) => e.id).whereType<int>().toList();
     final result = await _unloadDrawer.call(ids);
 
     result.when(

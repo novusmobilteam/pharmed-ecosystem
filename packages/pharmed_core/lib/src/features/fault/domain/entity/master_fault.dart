@@ -45,9 +45,9 @@ class MasterFault implements IFaultRecord {
   }
 
   CabinWorkingStatus get effectiveStatus {
-    if (endDate == null) {
-      return CabinWorkingStatus.working;
+    if (endDate != null) {
+      return CabinWorkingStatus.working; // arıza kapanmış → normale dönmüş
     }
-    return workingStatus ?? CabinWorkingStatus.working;
+    return workingStatus ?? CabinWorkingStatus.working; // hâlâ açık → kayıtlı durum geçerli
   }
 }

@@ -62,8 +62,8 @@ class DashboardNotifier extends ChangeNotifier {
   DashboardSection<List<PrescriptionItem>> _unappliedPrescriptions = const DashboardSection();
   DashboardSection<List<PrescriptionItem>> get unappliedPrescriptions => _unappliedPrescriptions;
 
-  DashboardSection<List<PrescriptionItem>> _upcomingTreatments = const DashboardSection();
-  DashboardSection<List<PrescriptionItem>> get upcomingTreatments => _upcomingTreatments;
+  DashboardSection<List<UpcomingTreatment>> _upcomingTreatments = const DashboardSection();
+  DashboardSection<List<UpcomingTreatment>> get upcomingTreatments => _upcomingTreatments;
 
   DashboardSection<List<PrescriptionItemMovement>> _drugActivities = const DashboardSection();
   DashboardSection<List<PrescriptionItemMovement>> get drugActivities => _drugActivities;

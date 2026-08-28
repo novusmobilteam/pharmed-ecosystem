@@ -17,15 +17,6 @@ class MasterIntakeView extends ConsumerStatefulWidget {
 }
 
 class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
-  // Hasta seçimi değiştiğinde tekrar terkar loading göstermemek için kullanılan flag.
-  bool _hasBooted = false;
-
-  bool _isPatientReady(PatientSelectionState s) => switch (s) {
-    PatientSelectionReady() => true,
-    PatientSelectionError() => true,
-    _ => false,
-  };
-
   @override
   void initState() {
     super.initState();
@@ -40,7 +31,6 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(masterIntakeNotifierProvider);
-    final patientState = ref.watch(patientSelectionNotifierProvider);
     final notifier = ref.read(masterIntakeNotifierProvider.notifier);
     final isExecuting =
         state is MasterIntakeExecuting ||
@@ -68,30 +58,14 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
       }
     });
 
-    final selectionView = MasterIntakeSelectionView(menu: widget.stationContext.menu);
-
-    if (!_hasBooted) {
-      if (!_isPatientReady(patientState)) {
-        // selectionView'ı (ve içindeki patient-selection init tetikleyicisini)
-        // Offstage ile MOUNT EDİLMİŞ tutuyoruz — aksi halde
-        // PatientSelectionNotifier'ın initState'teki init() çağrısı hiç
-        // tetiklenmez ve _isPatientReady sonsuza kadar false kalır.
-        return Stack(
-          children: [
-            Offstage(offstage: true, child: selectionView),
-            const Center(child: MedLoadingIndicator()),
-          ],
-        );
-      }
-      _hasBooted = true;
+    if (state is MasterIntakeUninitialized) {
+      return const Center(child: MedLoadingIndicator());
     }
-
-    _hasBooted = true;
 
     if (isExecuting) {
       return MasterIntakeExecutionView(cabinDataByCabinId: widget.stationContext.cabinDataByCabinId);
     }
 
-    return selectionView;
+    return MasterIntakeSelectionView(menu: widget.stationContext.menu);
   }
 }

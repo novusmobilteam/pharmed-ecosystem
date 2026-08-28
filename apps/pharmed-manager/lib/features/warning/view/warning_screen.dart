@@ -57,7 +57,7 @@ class WarningScreen extends StatelessWidget {
                       ),
                     ),
                   ],
-                  columnDefs: [],
+                  columnDefs: _buildColumnDefs(context),
                 ),
               ),
             ),
@@ -67,3 +67,9 @@ class WarningScreen extends StatelessWidget {
     );
   }
 }
+
+List<TableColumnDef<Warning>> _buildColumnDefs(BuildContext context) => [
+  TableColumnDef(title: context.l10n.movement_dateLabel, displayValue: (item) => item.createdDate?.formattedDate),
+  TableColumnDef(title: context.l10n.warning_formSubjectLabel, displayValue: (item) => item.subject?.label),
+  TableColumnDef(title: context.l10n.warning_formTextLabel, displayValue: (item) => item.text),
+];

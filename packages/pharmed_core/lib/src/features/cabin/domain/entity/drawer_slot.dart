@@ -1,5 +1,3 @@
-// pharmed_core/src/cabin/entity/drawer_slot.dart
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 /// ÇEKMECE YUVASI ENTITY'Sİ

@@ -38,7 +38,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get common_retryButton => 'Réessayer';
 
   @override
+  String get common_completeButton => 'Terminer';
+
+  @override
   String get common_cancelButton => 'Annuler';
+
+  @override
+  String get common_barcodeLabel => 'Code-barres';
 
   @override
   String get common_pageNotFound => 'Page introuvable';
@@ -6425,23 +6431,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'La disposition interne d\'une armoire à sérum n\'est pas lue depuis la carte ; définissez ici ses tiroirs et la disposition du matériel.';
 
   @override
-  String get cabinDesign_serum_drawerCountLabel => 'Nombre de tiroirs';
-
-  @override
-  String cabinDesign_serum_drawerCardTitle(int index) {
-    return 'Tiroir $index';
-  }
-
-  @override
-  String cabinDesign_serum_drawerCardSummary(
-    int sideBySide,
-    int frontToBack,
-    int total,
-  ) {
-    return '$sideBySide×$frontToBack = $total équipements';
-  }
-
-  @override
   String get cabinDesign_serum_equipmentLayoutTitle =>
       'Disposition du matériel';
 
@@ -6451,37 +6440,58 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_serum_sideBySideLabel => 'Côte à côte';
-
-  @override
-  String get cabinDesign_serum_frontToBackLabel => 'D\'avant en arrière';
-
-  @override
   String get cabinDesign_serum_topViewLabel => 'Vue de dessus';
 
   @override
-  String cabinDesign_serum_totalEquipmentLabel(
-    int sideBySide,
-    int frontToBack,
-    int total,
-  ) {
-    return '$sideBySide × $frontToBack = $total équipements';
+  String cabinDesign_serum_shelfCardTitle(int index) {
+    return 'Étagère $index';
   }
 
   @override
-  String get cabinDesign_serum_frontLabel => '← avant';
-
-  @override
-  String get cabinDesign_serum_backLabel => 'arrière →';
-
-  @override
-  String get cabinDesign_serum_applyToAllButton =>
-      'Appliquer cette disposition à tous les tiroirs';
-
-  @override
-  String cabinDesign_serum_incompleteWarning(String missingDrawerLabel) {
-    return 'La conception ne peut pas être enregistrée tant que la disposition de chaque tiroir n\'est pas définie. Manquant : $missingDrawerLabel';
+  String cabinDesign_serum_shelfCardSummary(int used, int total, int count) {
+    return '$used/$total emplacements • $count plateaux';
   }
+
+  @override
+  String get cabinDesign_serum_lockToggleLabel => 'Verrou électromagnétique';
+
+  @override
+  String get cabinDesign_serum_addSmallButton => 'Petit';
+
+  @override
+  String get cabinDesign_serum_addMediumButton => 'Moyen';
+
+  @override
+  String get cabinDesign_serum_addLargeButton => 'Grand';
+
+  @override
+  String get cabinDesign_serum_traySizeSmallLabel => 'Petit';
+
+  @override
+  String get cabinDesign_serum_traySizeMediumLabel => 'Moyen';
+
+  @override
+  String get cabinDesign_serum_traySizeLargeLabel => 'Grand';
+
+  @override
+  String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
+    return '$index. Plateau • $sizeLabel';
+  }
+
+  @override
+  String cabinDesign_serum_areaUsedLabel(int used, int total) {
+    return '$used/$total emplacements utilisés';
+  }
+
+  @override
+  String get cabinDesign_serum_capacityFullWarning =>
+      'Étagère pleine, impossible d\'ajouter un plateau';
+
+  @override
+  String get cabinDesign_serum_leftLabel => 'Gauche';
+
+  @override
+  String get cabinDesign_serum_rightLabel => 'Droite';
 
   @override
   String get cabinDesign_noSelectionHint =>
@@ -6721,5 +6731,32 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String assignment_edit_pageIndicator(int current, int total) {
     return 'Page $current / $total';
+  }
+
+  @override
+  String get unscannedBarcode_scan_actionLabel => 'Scanner le code-barres';
+
+  @override
+  String dashboard_delayMinutesLabel(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String dashboard_delayHoursMinutesLabel(int hours, int minutes) {
+    return '${hours}h ${minutes}m';
+  }
+
+  @override
+  String get dashboard_upcomingTreatmentsDelayedTitle => 'En Retard';
+
+  @override
+  String get dashboard_upcomingTreatmentsDueSoonTitle => 'Dans les 20 Minutes';
+
+  @override
+  String get dashboard_upcomingTreatmentsUpcomingTitle => '20-60 Min';
+
+  @override
+  String dashboard_upcomingTreatmentsDueInMinutesLabel(int minutes) {
+    return 'DANS $minutes MIN';
   }
 }

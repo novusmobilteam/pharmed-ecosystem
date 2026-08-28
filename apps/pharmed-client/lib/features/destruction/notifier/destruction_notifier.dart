@@ -17,6 +17,7 @@ import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/providers/providers.dart';
 import '../../auth/auth.dart';
+import '../../dashboard/dashboard.dart';
 import 'destruction_state.dart';
 
 final destructionNotifierProvider = NotifierProvider<DestructionNotifier, DestructionState>(DestructionNotifier.new);
@@ -35,8 +36,11 @@ class DestructionNotifier extends Notifier<DestructionState> {
     return const DestructionUninitialized();
   }
 
-  Future<void> init(CabinVisualizerData data) async {
-    final cabinId = data.cabinId;
+  Future<void> init(CabinRouteContext ctx) async {
+    final cabinId = ctx.cabin?.id;
+    if (cabinId == null) {
+      return;
+    }
     state = const DestructionLoading();
 
     final result = await _getAssignments();

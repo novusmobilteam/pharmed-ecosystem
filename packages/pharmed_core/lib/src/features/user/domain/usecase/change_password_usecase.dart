@@ -1,9 +1,3 @@
-// [SWREQ-CORE-USER-UC-002]
-// Her iki app tarafından kullanılır.
-// IUserManager bağımlılığı — changePassword IUserReader'da yok.
-// Sınıf: Class B
-// ─────────────────────────────────────────────────────────────────────────────
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 class ChangePasswordParams {

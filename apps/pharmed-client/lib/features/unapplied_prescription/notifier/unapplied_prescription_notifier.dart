@@ -22,7 +22,6 @@ class UnappliedPrescriptionNotifier extends Notifier<UnappliedPrescriptionState>
 
     final isMobile = deviceMode == CabinType.mobile;
 
-    // TODO : cabinId'siz çalışacak versiyonu yazılacak
     final result = isMobile
         ? _fromBedAssignments(await _getBedAssignments.call())
         : _fromApiResponse(await _getHospitalizations.call(const PagedQueryParams()));

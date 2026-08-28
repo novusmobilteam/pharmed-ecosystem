@@ -1,5 +1,3 @@
-// pharmed_data/src/cabin/dto/drawer_cell_dto.dart
-
 import 'drawer_unit_dto.dart';
 
 /// ÇEKMECE GÖZÜ DTO

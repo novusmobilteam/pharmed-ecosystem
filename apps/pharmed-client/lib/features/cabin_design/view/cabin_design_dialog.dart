@@ -18,6 +18,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../core/enums/tray_size.dart';
 import '../../../widgets/widgets.dart';
 import '../notifier/cabin_design_notifier.dart';
 import '../notifier/cabin_design_state.dart';

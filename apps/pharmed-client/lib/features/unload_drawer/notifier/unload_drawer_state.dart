@@ -1,12 +1,3 @@
-// features/unload_drawer/notifier/unload_drawer_state.dart
-//
-// İade Kutusu Boşaltma ekranının state hiyerarşisi. Refund'dan farklı olarak
-// hasta seçimi ve queue builder YOK — tek cabin, iki mod arasında segmented
-// button ile geçiş: drawer (donanımlı, tek adım) / box (donanımsız, seçimli).
-// Mobilde karşılığı olmadığı için "Master" öneki kullanılmıyor.
-//
-// Sınıf: Class B
-
 import 'package:pharmed_core/pharmed_core.dart';
 import '../../../../core/hardware/hardware.dart';
 
@@ -82,20 +73,30 @@ final class UnloadDrawerSelection extends UnloadDrawerState {
 final class UnloadDrawerExecuting extends UnloadDrawerState {
   const UnloadDrawerExecuting({
     required this.cabinId,
-    required this.items, // seçilen (tüm değil) item'lar
+    required this.items, // artık TÜM yüklenen item'lar — ön seçim yok
     required this.assignment,
+    this.selectedIds = const {},
     this.status = CabinOperationJobStatus.active,
     this.isSaving = false,
   });
 
   final int cabinId;
   final List<ReturnDrawerMedicine> items;
+  final Set<int> selectedIds;
   final MedicineAssignment assignment;
   final CabinOperationJobStatus status;
   final bool isSaving;
 
+  /// Kullanıcının fiziksel çekmecede GÖRÜP işaretlediği item'lar —
+  /// confirmDrawerUnload'a giden gerçek liste bu.
+  List<ReturnDrawerMedicine> get selectedItems =>
+      items.where((it) => it.id != null && selectedIds.contains(it.id)).toList();
+
+  bool get canConfirm => selectedIds.isNotEmpty && !isSaving;
+
   UnloadDrawerExecuting copyWith({
     List<ReturnDrawerMedicine>? items,
+    Set<int>? selectedIds,
     MedicineAssignment? assignment,
     CabinOperationJobStatus? status,
     bool? isSaving,
@@ -103,6 +104,7 @@ final class UnloadDrawerExecuting extends UnloadDrawerState {
     return UnloadDrawerExecuting(
       cabinId: cabinId,
       items: items ?? this.items,
+      selectedIds: selectedIds ?? this.selectedIds,
       assignment: assignment ?? this.assignment,
       status: status ?? this.status,
       isSaving: isSaving ?? this.isSaving,

@@ -20,10 +20,12 @@ class GetMasterDisposablesUseCase {
 
         for (final item in items) {
           final witnessContext = await _resolveWitnessContext(item, witnessCache);
+
           mapped.add(
             DisposableItem(
               id: item.id ?? 0,
               medicine: item.medicine,
+              time: item.time,
               dosePiece: item.dosePiece ?? 0,
               hospitalization: item.hospitalization,
               lastMovement: item.lastMovement,
@@ -31,6 +33,16 @@ class GetMasterDisposablesUseCase {
             ),
           );
         }
+
+        mapped.sort((a, b) {
+          final aTime = a.time;
+          final bTime = b.time;
+          if (aTime == null && bTime == null) return 0;
+          if (aTime == null) return 1;
+          if (bTime == null) return -1;
+          return bTime.compareTo(aTime);
+        });
+        mapped.sort((a, b) => (b.time ?? DateTime(0)).compareTo(a.time ?? DateTime(0)));
 
         return Result.ok(mapped);
       },

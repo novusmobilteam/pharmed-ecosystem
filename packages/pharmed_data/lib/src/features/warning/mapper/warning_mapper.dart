@@ -9,6 +9,7 @@ class WarningMapper {
       subject: WarningSubject.fromId(dto.warningSubjectId),
       text: dto.text,
       isActive: dto.isActive,
+      createdDate: dto.createdDate,
     );
   }
 

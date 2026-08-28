@@ -18,29 +18,30 @@ class ChangePasswordNotifier extends ChangeNotifier with ApiRequestMixin {
   String _currentPassword = '';
   String get currentPassword => _currentPassword;
 
-  set currentPassword(String value) {
-    _newPassword = value;
-    notifyListeners(); // Bu çok önemli!
-  }
-
   String _newPassword = '';
   String get newPassword => _newPassword;
-
-  set newPassword(String value) {
-    _newPassword = value;
-    notifyListeners();
-  }
 
   bool get isSubmitting => isLoading(submitOp);
   String? get statusMessage => message(submitOp);
 
+  void changeCurrent(String value) {
+    _currentPassword = value;
+    notifyListeners();
+  }
+
+  void changeNew(String value) {
+    _newPassword = value;
+    notifyListeners();
+  }
+
   Future<void> changePassword() async {
-    if (currentPassword.isNotEmpty && newPassword.isNotEmpty) return;
+    if (_currentPassword.isEmpty && _newPassword.isEmpty) return;
 
     await executeVoid(
       submitOp,
-      operation: () =>
-          _changePasswordUseCase.call(ChangePasswordParams(currentPassword: currentPassword, newPassword: newPassword)),
+      operation: () => _changePasswordUseCase.call(
+        ChangePasswordParams(currentPassword: _currentPassword, newPassword: _newPassword),
+      ),
     );
   }
 

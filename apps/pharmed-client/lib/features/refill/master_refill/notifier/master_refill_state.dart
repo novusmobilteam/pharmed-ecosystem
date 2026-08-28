@@ -1,14 +1,3 @@
-// [SWREQ-CLI-MREFILL-001] [IEC 62304 §5.5]
-// İlaç-merkezli master kabin dolum ekranının state hiyerarşisi.
-//
-// Akış iki faza ayrılır:
-//   FAZ 1 — Selection: kabine atanmış ilaç listesi, çoklu ilaç seçimi,
-//           her ilaç için hangi gözlere dolum yapılacağının seçimi.
-//   FAZ 2 — Executing: seçimlerden üretilen çekmece kuyruğu sırayla işlenir.
-//           Her adımda tek fiziksel çekmece açılır, gözleri doldurulur.
-//
-// Sınıf: Class B
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/hardware/hardware.dart';
@@ -24,8 +13,6 @@ final class MasterRefillUninitialized extends MasterRefillState {
 final class MasterRefillLoading extends MasterRefillState {
   const MasterRefillLoading();
 }
-
-// ── FAZ 1: Seçim ──────────────────────────────────────────────────────────
 
 final class MasterRefillSelection extends MasterRefillState {
   const MasterRefillSelection({
@@ -65,8 +52,6 @@ final class MasterRefillSelection extends MasterRefillState {
     );
   }
 }
-
-// ── FAZ 2: Yürütme ──────────────────────────────────────────────────────────
 
 final class MasterRefillExecuting extends MasterRefillState {
   const MasterRefillExecuting({
@@ -122,8 +107,6 @@ final class MasterRefillExecuting extends MasterRefillState {
     );
   }
 }
-
-// ── Hata ──────────────────────────────────────────────────────────────────
 
 final class MasterRefillError extends MasterRefillState {
   const MasterRefillError({required this.failure, required this.previousState, this.isQueueError = false});

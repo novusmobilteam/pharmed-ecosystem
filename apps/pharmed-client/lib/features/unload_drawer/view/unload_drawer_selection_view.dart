@@ -81,7 +81,8 @@ class UnloadDrawerSelectionView extends ConsumerWidget {
                               '${patientName != null ? ' • $patientName' : ''}',
                           barcode: item.material?.barcode,
                           isSelected: isSelected,
-                          onTap: item.id != null ? () => notifier.toggleItem(item.id!) : null,
+                          showCheckbox: isBoxMode,
+                          onTap: (isBoxMode && item.id != null) ? () => notifier.toggleItem(item.id!) : null,
                           note: RxCardNote(
                             label: context.l10n.unload_fieldReturnedBy,
                             text: item.returnUser?.fullName ?? '—',
@@ -99,7 +100,7 @@ class UnloadDrawerSelectionView extends ConsumerWidget {
                     )
                   : MedButton(
                       label: context.l10n.unload_action_startDrawerUnload,
-                      onPressed: selection.canConfirm ? notifier.startDrawerUnload : null,
+                      onPressed: selection.items.isNotEmpty ? notifier.startDrawerUnload : null,
                     ),
             ),
           ),

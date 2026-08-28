@@ -1,22 +1,37 @@
-// import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// import 'package:pharmed_manager/core/core.dart';
+import '../../../core/providers/providers.dart';
+import 'inventory_state.dart';
 
-// class InventoryNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<CabinStock> {
-//   // ignore: unused_field
-//   final GetCurrentCabinStockUseCase _getCurrentCabinStockUseCase;
+final inventoryNotifierProvider = NotifierProvider<InventoryNotifier, InventoryState>(InventoryNotifier.new);
 
-//   InventoryNotifier({required GetCurrentCabinStockUseCase getCurrentCabinStockUseCase})
-//     : _getCurrentCabinStockUseCase = getCurrentCabinStockUseCase;
+class InventoryNotifier extends Notifier<InventoryState> {
+  GetStationAssignmentsUseCase get _getAssignments => ref.read(getStationAssignmentsUseCaseProvider);
 
-//   OperationKey fetchOp = OperationKey.fetch();
+  @override
+  InventoryState build() {
+    _load();
+    return const InventoryLoading();
+  }
 
-//   bool get isFetching => isLoading(fetchOp);
+  void _enterLoading() {
+    final current = state;
+    state = current is InventoryLoaded ? current.copyWith(isLoading: true) : const InventoryLoading();
+  }
 
-//   List<CabinStock> get inventory => filteredItems;
+  Future<void> _load() async {
+    final result = await _getAssignments.call();
+    result.when(
+      ok: (items) {
+        state = InventoryLoaded(items: items);
+      },
+      error: (e) => state = InventoryError(message: e.message),
+    );
+  }
 
-//   // Functions
-//   Future<void> getInventory() async {
-//     // await execute(fetchOp, operation: () => _getCurrentCabinStockUseCase.call(), onData: (data) => allItems = data);
-//   }
-// }
+  Future<void> refresh() async {
+    _enterLoading();
+    await _load();
+  }
+}

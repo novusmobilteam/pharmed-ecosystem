@@ -1,5 +1,3 @@
-// pharmed_data/src/cabin/dto/drawer_config_dto.dart
-
 import 'drawer_type_dto.dart';
 
 /// ÇEKMECE KONFİGÜRASYONU DTO

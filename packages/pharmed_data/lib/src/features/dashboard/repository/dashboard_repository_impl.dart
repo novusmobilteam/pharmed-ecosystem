@@ -20,6 +20,7 @@ class DashboardRepositoryImpl implements IDashboardRepository {
     required RefundMapper refundMapper,
     required MenuTreeMapper menuMapper,
     required PrescriptionItemMovementMapper itemMovementMapper,
+    required UpcomingTreatmentMapper upcomingMapper,
     Duration cacheTtl = const Duration(minutes: 5),
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
@@ -27,7 +28,8 @@ class DashboardRepositoryImpl implements IDashboardRepository {
        _prescriptionItemMapper = prescriptionItemMapper,
        _refundMapper = refundMapper,
        _menuMapper = menuMapper,
-       _itemMovementMapper = itemMovementMapper;
+       _itemMovementMapper = itemMovementMapper,
+       _upcomingMapper = upcomingMapper;
 
   final DashboardRemoteDataSource _dataSource;
   final CabinStockMapper _cabinStockMapper;
@@ -36,6 +38,7 @@ class DashboardRepositoryImpl implements IDashboardRepository {
   final RefundMapper _refundMapper;
   final MenuTreeMapper _menuMapper;
   final PrescriptionItemMovementMapper _itemMovementMapper;
+  final UpcomingTreatmentMapper _upcomingMapper;
 
   @override
   Future<Result<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false}) async {
@@ -74,9 +77,12 @@ class DashboardRepositoryImpl implements IDashboardRepository {
   }
 
   @override
-  Future<Result<List<PrescriptionItem>>> getUpcomingTreatments({bool forceRefresh = false, required String mac}) async {
+  Future<Result<List<UpcomingTreatment>>> getUpcomingTreatments({
+    bool forceRefresh = false,
+    required String mac,
+  }) async {
     final result = await _dataSource.getUpcomingTreatments(mac: mac);
-    return result.when(ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])), error: Result.error);
+    return result.when(ok: (dtos) => Result.ok(_upcomingMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 
   @override

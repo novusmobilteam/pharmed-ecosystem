@@ -1,6 +1,3 @@
-// [SWREQ-CORE-STOCK-UC-002]
-// Sınıf: Class B
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 class GetCabinStockUseCase {

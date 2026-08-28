@@ -11,6 +11,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/hardware/cabin/master_drawer/master_drawer_orchestrator.dart';
 import '../../../../core/providers/providers.dart';
+import '../../../../widgets/widgets.dart';
 import '../../../auth/auth.dart';
 import '../../intake.dart';
 import 'redirected_intake_orders_notifier.dart';
@@ -44,7 +45,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   GetPrescriptionDetailUseCase get _getPrescriptionDetail => ref.read(getPrescriptionDetailUseCaseProvider);
   CheckRedirectedIntakeUseCase get _checkRedirectedIntake => ref.read(checkRedirectedIntakeUseCaseProvider);
   CompleteRedirectedIntakeUseCase get _completeRedirectedIntake => ref.read(completeRedirectedIntakeUseCaseProvider);
-  GetStationAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
+  GetStationAssignmentsUseCase get _getAssignments => ref.read(getStationAssignmentsUseCaseProvider);
 
   Station? _currentStation;
 
@@ -57,17 +58,28 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     _orchestrator.init(onStageChange: _onDrawerStage);
     ref.onDispose(_orchestrator.dispose);
 
-    // Hasta seçim notifier'ındaki filtre değişince (sadece MedicineSelection
-    // fazındayken, hasta zaten seçiliyken) alım kalemlerini yeniden çeker.
-    // Diğer PatientSelectionReady alan değişimleri (search, viewType, tab vb.)
-    // bu ekranı İLGİLENDİRMEZ — sadece filter.
+    // Hasta seçim notifier'ındaki filtre veya görünüm tipi değişince (sadece
+    // MedicineSelection fazındayken, hasta zaten seçiliyken) tepki veririz.
+    // İlk boot senkronizasyonu BURADA DEĞİL, init()'te — bkz. aşağı.
     ref.listen(patientSelectionNotifierProvider, (previous, next) {
-      final prevFilter = previous is PatientSelectionReady ? previous.filter : null;
-      final nextFilter = next is PatientSelectionReady ? next.filter : null;
+      final prev = previous is PatientSelectionReady ? previous : null;
+      final nxt = next is PatientSelectionReady ? next : null;
+      if (prev == null || nxt == null) return;
 
-      if (prevFilter == null || nextFilter == null || prevFilter == nextFilter) return;
-      if (state is! MasterIntakeMedicineSelection) return;
-      unawaited(_loadItems());
+      final s = state;
+      if (s is! MasterIntakeMedicineSelection) return;
+
+      if (prev.filter != nxt.filter) {
+        unawaited(_loadItems());
+        return;
+      }
+
+      if (prev.viewType != nxt.viewType) {
+        _hospitalization = null;
+        _hospitalizationId = null;
+        unawaited(_orchestrator.stop());
+        state = const MasterIntakePatientSelection();
+      }
     });
 
     return const MasterIntakeUninitialized();
@@ -78,11 +90,13 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     _hospitalizationId = null;
     _currentStation = ctx.station;
 
-    state = const MasterIntakeLoading();
-
     await _orchestrator.stop();
 
-    state = MasterIntakePatientSelection();
+    await ref.read(patientSelectionNotifierProvider.notifier).init(PatientSelectionConfig.intake);
+
+    if (state is MasterIntakeUninitialized) {
+      state = const MasterIntakePatientSelection();
+    }
   }
 
   /// `CabinPatientPickerPanel` üzerinden hasta seçildiğinde çağrılır. Tip,
@@ -129,7 +143,10 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         // otomatik seçim yapılmaz; o kalemler zaten UI'da seçilemez hale
         // getirilir (bkz. RxOrdersContent onTap koşulu).
         final autoSelectedIds = (_type.isOrderless || filter == PatientFilterType.ordersDue)
-            ? items.where((it) => !it.hasNoStock && !it.isRedirected).map((it) => it.id).toSet()
+            ? items
+                  .where((it) => !it.hasNoStock && !it.isRedirected && !it.inCaseOfNecessity)
+                  .map((it) => it.id)
+                  .toSet()
             : const <int>{};
 
         state = MasterIntakeMedicineSelection(
@@ -209,7 +226,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
       final double minLimit = (isOrdered && !canLower) ? upperLimitFromOrder : 1.0;
 
-      final double physicalLimit = item.assignment?.toDisplayQuantity(item.assignment?.totalQuantity ?? 0) ?? 0.0;
+      final double physicalLimit = item.assignment?.totalQuantity ?? 0.0;
       final double dailyMax = (medicine.dailyMaxUsage ?? 0) > 0 ? medicine.dailyMaxUsage!.toDouble() : physicalLimit;
       final double safetyLimit = physicalLimit < dailyMax ? physicalLimit : dailyMax;
       final double finalUpperLimit = isOrdered
@@ -587,7 +604,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
           state = MasterIntakeError(
             failure: CabinApiFailure(message: e.message),
             previousState: s.copyWith(isSaving: false),
-            isQueueError: true,
+            //isQueueError: true,
           );
         }
       },

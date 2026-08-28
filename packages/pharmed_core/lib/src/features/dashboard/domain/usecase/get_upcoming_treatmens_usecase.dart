@@ -5,7 +5,7 @@ class GetUpcomingTreatmentsUseCase {
 
   GetUpcomingTreatmentsUseCase(this._repository);
 
-  Future<Result<List<PrescriptionItem>>> call({bool forceRefresh = false, required String mac}) {
+  Future<Result<List<UpcomingTreatment>>> call({bool forceRefresh = false, required String mac}) {
     return _repository.getUpcomingTreatments(forceRefresh: forceRefresh, mac: mac);
   }
 }

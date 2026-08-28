@@ -124,6 +124,7 @@ final dashboardRepositoryProvider = Provider<IDashboardRepository>((ref) {
       menuMapper: MenuTreeMapper(),
       cabinMapper: CabinMapper(),
       itemMovementMapper: PrescriptionItemMovementMapper(),
+      upcomingMapper: UpcomingTreatmentMapper(),
     ),
   };
 });

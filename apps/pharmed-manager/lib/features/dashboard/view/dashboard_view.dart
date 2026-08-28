@@ -78,7 +78,8 @@ class _DashboardViewState extends State<DashboardView> {
                       ),
                     ),
                     Expanded(child: UnappliedPrescriptionPanel(section: notifier.unappliedPrescriptions)),
-                    Expanded(child: UpcomingTreatmentPanel(section: notifier.upcomingTreatments)),
+                    // TODO : Düzelt
+                    //Expanded(child: UpcomingTreatmentPanel(section: notifier.upcomingTreatments)),
                   ],
                 ),
               ),
@@ -255,40 +256,40 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
   }
 }
 
-class UpcomingTreatmentPanel extends StatelessWidget {
-  const UpcomingTreatmentPanel({super.key, required this.section});
+// class UpcomingTreatmentPanel extends StatelessWidget {
+//   const UpcomingTreatmentPanel({super.key, required this.section});
 
-  final DashboardSection<List<PrescriptionItem>> section;
+//   final DashboardSection<List<UpcomingTreatment>> section;
 
-  @override
-  Widget build(BuildContext context) {
-    final items = section.data ?? const <PrescriptionItem>[];
+//   @override
+//   Widget build(BuildContext context) {
+//     final items = section.data ?? const <PrescriptionItem>[];
 
-    return MedDashboardPanel(
-      key: const ValueKey('upcoming_panel'),
-      title: context.l10n.dashboardUpcomingTreatmentsPanelTitle,
-      section: section,
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return MedDashboardRxCard(
-          item: item,
-          showFlags: true,
-          showStatusChip: true,
-          showTimeChip: true,
-          tone: MedTone.neutral,
-          infoLines: [
-            DashboardRxInfoLine(
-              context.l10n.assignment_patientLabel,
-              item.prescription?.hospitalization?.patient?.fullName ?? '-',
-            ),
-            DashboardRxInfoLine(
-              context.l10n.assignment_serviceLabel,
-              item.prescription?.hospitalization?.physicalService?.name ?? '-',
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
+//     return MedDashboardPanel(
+//       key: const ValueKey('upcoming_panel'),
+//       title: context.l10n.dashboardUpcomingTreatmentsPanelTitle,
+//       section: section,
+//       itemCount: items.length,
+//       itemBuilder: (context, index) {
+//         final item = items[index];
+//         return MedDashboardRxCard(
+//           item: item,
+//           showFlags: true,
+//           showStatusChip: true,
+//           showTimeChip: true,
+//           tone: MedTone.neutral,
+//           infoLines: [
+//             DashboardRxInfoLine(
+//               context.l10n.assignment_patientLabel,
+//               item.prescription?.hospitalization?.patient?.fullName ?? '-',
+//             ),
+//             DashboardRxInfoLine(
+//               context.l10n.assignment_serviceLabel,
+//               item.prescription?.hospitalization?.physicalService?.name ?? '-',
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }

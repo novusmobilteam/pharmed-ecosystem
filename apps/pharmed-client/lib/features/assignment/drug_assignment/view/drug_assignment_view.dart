@@ -5,18 +5,16 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../widgets/widgets.dart';
-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+import '../../../dashboard/dashboard.dart';
 import '../../assignment.dart';
 
 part 'assignment_idle_panel.dart';
 part 'assignment_edit_panel.dart';
 
 class DrugAssignmentView extends ConsumerStatefulWidget {
-  const DrugAssignmentView({super.key, this.data, required this.menu, this.cabin});
+  const DrugAssignmentView({super.key, required this.cabinContext});
 
-  final MenuItem menu;
-  final Cabin? cabin;
-  final CabinVisualizerData? data;
+  final CabinRouteContext cabinContext;
 
   @override
   ConsumerState<DrugAssignmentView> createState() => _DrugAssignmentViewState();
@@ -26,22 +24,11 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
   @override
   void initState() {
     super.initState();
-    _initialize(widget.data);
-  }
 
-  @override
-  void didUpdateWidget(DrugAssignmentView old) {
-    super.didUpdateWidget(old);
-    if (widget.data?.cabinId != old.data?.cabinId) {
-      _initialize(widget.data);
-    }
-  }
-
-  void _initialize(CabinVisualizerData? data) {
-    if (data == null) return;
+    final notifier = ref.read(drugAssignmentNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(drugAssignmentNotifierProvider.notifier).init(data);
+      notifier.init(widget.cabinContext);
     });
   }
 
@@ -57,7 +44,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
       }
     });
 
-    if (widget.data == null || state is DrugAssignmentUninitialized) {
+    if (widget.cabinContext.cabinData == null || state is DrugAssignmentUninitialized) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
@@ -84,7 +71,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
         children: [
           Expanded(
             child: CabinOverviewSelectionPanel(
-              cabin: widget.cabin,
+              cabin: widget.cabinContext.cabin,
               onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
               groups: groups,
               assignments: assignments,
@@ -101,7 +88,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
           assignments: idle?.visibleAssignments ?? [],
           groups: groups,
           onEdit: notifier.editAssignment,
-          menu: widget.menu,
+          menu: widget.cabinContext.menu,
           onAssignmentSearchChanged: (value) => notifier.onAssignmentSearchChanged(value),
         ),
       },

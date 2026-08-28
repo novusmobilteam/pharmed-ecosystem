@@ -15,6 +15,7 @@ class PrescriptionItemMapper {
       doctorId: dto.doctorId,
       medicineId: dto.medicineId,
       dosePiece: dto.dosePiece,
+      receiveDosePiece: dto.receiveDosePiece,
       firstDoseEmergency: dto.firstDoseEmergency,
       askDoctor: dto.askDoctor,
       inCaseOfNecessity: dto.inCaseOfNecessity,

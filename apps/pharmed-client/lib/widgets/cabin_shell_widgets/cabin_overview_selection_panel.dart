@@ -119,24 +119,33 @@ class _DrawerView extends StatelessWidget {
       final label = medicine != null ? medicine.name.toString() : context.l10n.drawerStatus_empty;
       final bool isEmpty = medicine == null;
       final bool isSelected = unit.id != null && selectedUnitIds.contains(unit.id);
-      final Color cellcolor = isSelected
+      final status = unit.workingStatus;
+      final bool isFaulty = status != CabinWorkingStatus.working;
+
+      final Color cellcolor = isFaulty
+          ? status.color.withAlpha(30)
+          : isSelected
           ? MedColors.blue
           : isEmpty
           ? MedColors.surface3
           : MedColors.blueLight;
-      final Color? textColor = isSelected
+      final Color? textColor = isFaulty
+          ? status.color
+          : isSelected
           ? Colors.white
           : isEmpty
           ? null
           : MedColors.text;
-      final Color borderColor = isSelected
+      final Color borderColor = isFaulty
+          ? status.color
+          : isSelected
           ? Colors.transparent
           : isEmpty
           ? MedColors.border
           : MedColors.blue;
 
       return GestureDetector(
-        onTap: onCellTap != null ? () => onCellTap!(unit) : null,
+        onTap: (isFaulty || onCellTap == null) ? null : () => onCellTap!(unit),
         child: Container(
           height: _cellHeight,
           padding: MedSpacing.insetMd,

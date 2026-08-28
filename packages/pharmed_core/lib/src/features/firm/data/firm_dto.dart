@@ -18,7 +18,7 @@ class FirmDTO {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
+    //'id': id,
     'name': name,
     'taxOffice': taxOffice,
     'taxNo': taxNo,

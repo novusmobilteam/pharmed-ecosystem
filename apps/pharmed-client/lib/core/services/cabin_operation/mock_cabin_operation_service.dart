@@ -29,15 +29,14 @@ class MockCabinOperationService implements ICabinOperationService {
   int _statusPollCount = 0;
   final _rng = Random();
 
+  bool _masterDrawerIsOpen = false;
+
   @override
   void triggerManualClose() {
     _shouldFastForward = true;
+    _masterDrawerIsOpen = false;
     debugPrint('MOCK: Manuel kapatma tetiklendi.');
   }
-
-  // ════════════════════════════════════════════════════════════════
-  // YÖNETİM KARTI
-  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<ManagementCard?> getOrScanManager({String? targetPort}) async {
@@ -69,9 +68,6 @@ class MockCabinOperationService implements ICabinOperationService {
     debugPrint('MOCK: ❌ Hedef adreste ($targetAddressIndex) yönetim kartı bulunamadı');
     return null;
   }
-  // ════════════════════════════════════════════════════════════════
-  // KONTROL KARTLARI (MASTER KABİN)
-  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<List<ControlCard>> discoverControlCards(ManagementCard manager) async {
@@ -85,10 +81,6 @@ class MockCabinOperationService implements ICabinOperationService {
       ControlCard(rowAddress: 5, rawTypeResponse: '.250,'), // Serum
     ];
   }
-
-  // ════════════════════════════════════════════════════════════════
-  // MOBİL KABİN — ÇEKMECE OPERASYONLARI
-  // ════════════════════════════════════════════════════════════════
 
   @override
   Future<void> openMobileDrawer({required ManagementCard manager, required int port}) async {
@@ -123,10 +115,6 @@ class MockCabinOperationService implements ICabinOperationService {
     yield DrawerPhysicalStatus.locked;
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // MASTER KABİN — ÇEKMECE OPERASYONLARI
-  // ════════════════════════════════════════════════════════════════
-
   @override
   Future<void> openMasterDrawer({
     required ManagementCard manager,
@@ -136,6 +124,7 @@ class MockCabinOperationService implements ICabinOperationService {
   }) async {
     debugPrint('MOCK: Master çekmece açılıyor (row:$row, port:$port, drawer:$drawer)...');
     await Future.delayed(const Duration(seconds: 1));
+    _masterDrawerIsOpen = true;
     debugPrint('MOCK: ✅ Master çekmece AÇILDI 🔓');
   }
 
@@ -161,12 +150,22 @@ class MockCabinOperationService implements ICabinOperationService {
     _shouldFastForward = false;
     _statusPollCount = 0;
 
-    yield DrawerPhysicalStatus.locked;
-    await Future.delayed(const Duration(seconds: 2));
-    if (_shouldFastForward) return;
-
-    debugPrint('MOCK SENSOR (Master row:$row): Kullanıcı çekmeceyi çekti!');
-    yield DrawerPhysicalStatus.fullyOpen;
+    if (_masterDrawerIsOpen) {
+      // Yeni abonelik açıldığında çekmece ZATEN açıksa (örn. passive close
+      // watch, Opened'dan hemen sonra), sahte "locked → bekle → open"
+      // senaryosunu tekrar OYNAMA — anlık gerçek durumu yayınla.
+      yield DrawerPhysicalStatus.fullyOpen;
+    } else {
+      yield DrawerPhysicalStatus.locked;
+      await Future.delayed(const Duration(seconds: 2));
+      if (_shouldFastForward) {
+        _masterDrawerIsOpen = false;
+        yield DrawerPhysicalStatus.locked;
+        return;
+      }
+      _masterDrawerIsOpen = true;
+      yield DrawerPhysicalStatus.fullyOpen;
+    }
 
     int elapsed = 0;
     while (elapsed < 60000) {
@@ -175,7 +174,8 @@ class MockCabinOperationService implements ICabinOperationService {
       if (_shouldFastForward) break;
     }
 
-    debugPrint('MOCK SENSOR (Master row:$row): Çekmece kapandı 🔒');
+    _masterDrawerIsOpen = false;
+    debugPrint('MOCK SENSOR (Master): Çekmece kapandı 🔒');
     yield DrawerPhysicalStatus.locked;
   }
 

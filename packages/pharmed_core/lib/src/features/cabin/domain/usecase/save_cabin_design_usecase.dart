@@ -1,6 +1,3 @@
-// [SWREQ-CORE-CABIN-UC-009]
-// Sınıf: Class B
-
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -37,17 +34,8 @@ class SaveCabinDesignUseCase {
     return result.when(
       error: Result.error,
       ok: (_) async {
-        // ── Cache'e yaz ──────────────────────────────────────
-        // DTO dönüşümü mapper ile
         final dtos = slots.map((s) => const DrawerSlotMapper().toDto(s)).toList();
         await _localDataSource.saveSlots(cabinId, dtos);
-
-        MedLogger.info(
-          unit: 'SW-UNIT-DATA',
-          swreq: 'SWREQ-DATA-CABIN-003',
-          message: 'Slot tasarımı cache\'e yazıldı',
-          context: {'cabinId': cabinId, 'slotCount': slots.length},
-        );
 
         return const Result.ok(null);
       },

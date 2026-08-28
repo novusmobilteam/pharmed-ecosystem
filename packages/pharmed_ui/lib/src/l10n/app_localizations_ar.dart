@@ -37,7 +37,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get common_retryButton => 'إعادة المحاولة';
 
   @override
+  String get common_completeButton => 'Complete';
+
+  @override
   String get common_cancelButton => 'إلغاء';
+
+  @override
+  String get common_barcodeLabel => 'Barcode';
 
   @override
   String get common_pageNotFound => 'الصفحة غير موجودة';
@@ -6274,23 +6280,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'The internal layout of a serum cabinet is not read from the card; define its drawers and equipment placement here.';
 
   @override
-  String get cabinDesign_serum_drawerCountLabel => 'Drawer count';
-
-  @override
-  String cabinDesign_serum_drawerCardTitle(int index) {
-    return 'Drawer $index';
-  }
-
-  @override
-  String cabinDesign_serum_drawerCardSummary(
-    int sideBySide,
-    int frontToBack,
-    int total,
-  ) {
-    return '$sideBySide×$frontToBack = $total equipment';
-  }
-
-  @override
   String get cabinDesign_serum_equipmentLayoutTitle => 'Equipment Layout';
 
   @override
@@ -6299,37 +6288,58 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_serum_sideBySideLabel => 'Side by side';
-
-  @override
-  String get cabinDesign_serum_frontToBackLabel => 'Front to back';
-
-  @override
   String get cabinDesign_serum_topViewLabel => 'Top View';
 
   @override
-  String cabinDesign_serum_totalEquipmentLabel(
-    int sideBySide,
-    int frontToBack,
-    int total,
-  ) {
-    return '$sideBySide × $frontToBack = $total equipment';
+  String cabinDesign_serum_shelfCardTitle(int index) {
+    return 'Shelf $index';
   }
 
   @override
-  String get cabinDesign_serum_frontLabel => '← front';
-
-  @override
-  String get cabinDesign_serum_backLabel => 'back →';
-
-  @override
-  String get cabinDesign_serum_applyToAllButton =>
-      'Apply this layout to all drawers';
-
-  @override
-  String cabinDesign_serum_incompleteWarning(String missingDrawerLabel) {
-    return 'The design cannot be saved until every drawer\'s layout is defined. Missing: $missingDrawerLabel';
+  String cabinDesign_serum_shelfCardSummary(int used, int total, int count) {
+    return '$used/$total slots • $count trays';
   }
+
+  @override
+  String get cabinDesign_serum_lockToggleLabel => 'Electromagnetic Lock';
+
+  @override
+  String get cabinDesign_serum_addSmallButton => 'Small';
+
+  @override
+  String get cabinDesign_serum_addMediumButton => 'Medium';
+
+  @override
+  String get cabinDesign_serum_addLargeButton => 'Large';
+
+  @override
+  String get cabinDesign_serum_traySizeSmallLabel => 'Small';
+
+  @override
+  String get cabinDesign_serum_traySizeMediumLabel => 'Medium';
+
+  @override
+  String get cabinDesign_serum_traySizeLargeLabel => 'Large';
+
+  @override
+  String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
+    return '$index. Tray • $sizeLabel';
+  }
+
+  @override
+  String cabinDesign_serum_areaUsedLabel(int used, int total) {
+    return '$used/$total slots used';
+  }
+
+  @override
+  String get cabinDesign_serum_capacityFullWarning =>
+      'Shelf is full, no more trays can be added';
+
+  @override
+  String get cabinDesign_serum_leftLabel => 'Left';
+
+  @override
+  String get cabinDesign_serum_rightLabel => 'Right';
 
   @override
   String get cabinDesign_noSelectionHint =>
@@ -6565,5 +6575,32 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String assignment_edit_pageIndicator(int current, int total) {
     return 'Page $current / $total';
+  }
+
+  @override
+  String get unscannedBarcode_scan_actionLabel => 'Scan Barcode';
+
+  @override
+  String dashboard_delayMinutesLabel(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String dashboard_delayHoursMinutesLabel(int hours, int minutes) {
+    return '${hours}h ${minutes}m';
+  }
+
+  @override
+  String get dashboard_upcomingTreatmentsDelayedTitle => 'Delayed';
+
+  @override
+  String get dashboard_upcomingTreatmentsDueSoonTitle => 'Within 20 Minutes';
+
+  @override
+  String get dashboard_upcomingTreatmentsUpcomingTitle => '20-60 Min';
+
+  @override
+  String dashboard_upcomingTreatmentsDueInMinutesLabel(int minutes) {
+    return '$minutes MIN LEFT';
   }
 }

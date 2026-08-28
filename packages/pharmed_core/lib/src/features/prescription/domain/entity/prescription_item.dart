@@ -14,7 +14,10 @@ class PrescriptionItem implements Selectable {
   final User? doctor;
   final int? medicineId;
   final Medicine? medicine;
+  // Reçete edilen miktar
   final num? dosePiece;
+  // Uygulanan miktar
+  final num? receiveDosePiece;
   final RequestType? requestType;
   final bool? firstDoseEmergency;
   final bool? askDoctor;
@@ -57,6 +60,7 @@ class PrescriptionItem implements Selectable {
     this.medicineId,
     this.medicine,
     this.dosePiece,
+    this.receiveDosePiece,
     this.requestType,
     this.firstDoseEmergency,
     this.askDoctor,

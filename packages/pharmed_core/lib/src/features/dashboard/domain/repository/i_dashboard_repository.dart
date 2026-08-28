@@ -30,7 +30,7 @@ abstract interface class IDashboardRepository {
   Future<Result<List<CabinStock>>> getGeneralStocks({bool forceRefresh = false});
 
   /// Yaklaşan tedavi zamanlarını listeler.
-  Future<Result<List<PrescriptionItem>>> getUpcomingTreatments({bool forceRefresh = false, required String mac});
+  Future<Result<List<UpcomingTreatment>>> getUpcomingTreatments({bool forceRefresh = false, required String mac});
 
   /// Eksik bildirilen stokları listeler.
   Future<Result<List<PrescriptionItem>>> getMissingStocks({bool forceRefresh = false, required String mac});

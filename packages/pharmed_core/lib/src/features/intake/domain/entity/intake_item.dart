@@ -171,7 +171,15 @@ extension WithdrawItemExtensions on IntakeItem {
   bool get hasNoStock {
     final stocks = assignment?.stocks ?? const [];
     if (stocks.isEmpty) return true;
+
     final total = stocks.fold<double>(0, (sum, s) => sum + (s.quantity ?? 0).toDouble());
+    final requested = dosePiece ?? 0;
+
+    // İstenen miktar biliniyorsa (ordered alım): stok istenenden AZSA da
+    // yetersiz say — "stok var ama talebi karşılamıyor" durumu.
+    // İstenen miktar yoksa (orderless/free, dosePiece null gelir): eski
+    // davranış — sadece toplam stok sıfır mı diye bak.
+    if (requested > 0) return total < requested;
     return total <= 0;
   }
 

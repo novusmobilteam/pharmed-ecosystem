@@ -1,22 +1,5 @@
-// [SWREQ-SETUP-UI-002] [IEC 62304 §5.5]
-// Setup Wizard ana state yöneticisi.
-//
-// SORUMLULUK:
-//   - Adım navigasyonu (currentStep, completedSteps)
-//   - finish() — tüm step notifier'lardan veri toplayıp kayıt
-//
-// HER ADIMIN KENDİ NOTIFIER'I VAR:
-//   Step1Notifier  → cabinType
-//   Step2Notifier  → basicInfo, rfid/kart testi
-//   Step3Notifier  → istasyon, servis, oda seçimi
-//   Step4MasterNotifier → cihaz taraması
-//   Step4MobileNotifier → çekmece config + port tarama
-//
-// Sınıf: Class B
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../core/cache/app_settings_cache.dart';
@@ -98,25 +81,12 @@ class SetupWizardNotifier extends Notifier<SetupWizardState> {
       scannedLayout: scannedLayout,
     );
 
-    MedLogger.info(
-      unit: 'SW-UNIT-SETUP',
-      swreq: 'SWREQ-SETUP-UC-001',
-      message: 'Kabin kurulumu kaydediliyor',
-      context: {'cabinName': config.basicInfo.cabinName, 'type': config.cabinType.name},
-    );
-
     state = WizardSaving(currentStep: current.currentStep);
 
     final result = await ref.read(finishCabinSetupUseCaseProvider).call(config);
 
     switch (result) {
       case Ok(value: final cabinId):
-        MedLogger.info(
-          unit: 'SW-UNIT-SETUP',
-          swreq: 'SWREQ-SETUP-UC-001',
-          message: 'Kabin kurulumu tamamlandı',
-          context: {'cabinId': cabinId},
-        );
         await appSettingsCache.markSetupComplete(deviceMode: config.cabinType.name);
         await appSettingsCache.saveCurrentCabinId(cabinId);
 
@@ -129,12 +99,6 @@ class SetupWizardNotifier extends Notifier<SetupWizardState> {
         state = WizardSaved(cabinId: cabinId, cabinName: config.basicInfo.cabinName);
 
       case Error(error: final error):
-        MedLogger.error(
-          unit: 'SW-UNIT-SETUP',
-          swreq: 'SWREQ-SETUP-UC-001',
-          message: 'Kabin kurulum hatası',
-          error: error,
-        );
         state = WizardSaveError(message: error.message, currentStep: current.currentStep);
     }
   }

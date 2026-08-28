@@ -64,10 +64,10 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<PrescriptionItemDto>?>> getUpcomingTreatments({required String mac}) async {
-    return await fetchRequest<List<PrescriptionItemDto>>(
+  Future<Result<List<UpcomingTreatmentDto>?>> getUpcomingTreatments({required String mac}) async {
+    return await fetchRequest<List<UpcomingTreatmentDto>>(
       path: '$_basePath/upcomingTreatments',
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
+      parser: BaseRemoteDataSource.listParser(UpcomingTreatmentDto.fromJson),
       query: {"mac": mac},
     );
   }

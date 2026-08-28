@@ -1,5 +1,3 @@
-// lib/features/drug_activity/presentation/notifier/drug_activity_notifier.dart
-
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,7 +9,7 @@ final unscannedBarcodesNotifierProvider = NotifierProvider<UnscannedBarcodesNoti
 );
 
 class UnscannedBarcodesNotifier extends Notifier<UnscannedBarcodesState> {
-  GetUnscannedBarcodesUseCase get _useCase => ref.read(getUnscannedBarcodesUseCaseProvider);
+  GetUnscannedBarcodesUseCase get _getUnscannedBarcodes => ref.read(getUnscannedBarcodesUseCaseProvider);
 
   DateTime? _startDate;
   DateTime? get startDate => _startDate;
@@ -36,11 +34,9 @@ class UnscannedBarcodesNotifier extends Notifier<UnscannedBarcodesState> {
   @override
   UnscannedBarcodesState build() {
     _load();
-
     return const UnscannedBarcodesLoading();
   }
 
-  /// Tablo varsa koru + tablo-içi loading; yoksa (ilk yükleme) tam ekran Loading.
   void _enterLoading() {
     final current = state;
     state = current is UnscannedBarcodesLoaded ? current.copyWith(isLoading: true) : const UnscannedBarcodesLoading();
@@ -48,7 +44,7 @@ class UnscannedBarcodesNotifier extends Notifier<UnscannedBarcodesState> {
 
   Future<void> _load() async {
     final skip = (_currentPage - 1) * _pageSize;
-    final result = await _useCase.call(
+    final result = await _getUnscannedBarcodes.call(
       params: PagedQueryParams(skip: skip, take: _pageSize, startDate: _startDate, endDate: _endDate),
     );
     result.when(

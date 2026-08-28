@@ -47,13 +47,17 @@ class _BasicSettingsPanel extends StatelessWidget {
         ),
         if (errorText != null) ...[
           const SizedBox(height: MedSpacing.md),
-          MedChip(
-            label: errorText,
-            style: MedChipStyle.danger,
-            // child: Text(
-            //   errorText,
-            //   style: MedTextStyles.bodyMd(color: MedColors.red, weight: FontWeight.bold),
-            // ),
+          Container(
+            padding: MedSpacing.insetMd,
+            decoration: BoxDecoration(
+              color: MedColors.redLight,
+              borderRadius: MedRadius.mdAll,
+              border: Border.all(color: MedColors.red),
+            ),
+            child: Text(
+              errorText,
+              style: MedTextStyles.bodyMd(color: MedColors.red, weight: FontWeight.bold),
+            ),
           ),
         ],
 

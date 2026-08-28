@@ -1,6 +1,3 @@
-// [SWREQ-UI-DASH-004] [HAZ-003] [HAZ-007] [HAZ-009]
-// Sınıf: Class B
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +13,7 @@ import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_client/features/unscanned_barcodes/view/unscanned_barcodes_screen.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
@@ -25,6 +23,7 @@ import '../../../destruction/view/destruction_view.dart';
 import '../../../drug_activity/drug_activity.dart';
 import '../../../expiring_items/view/expiring_items_screen.dart';
 import '../../../intake/intake.dart';
+import '../../../inventory/view/inventory_screen.dart';
 import '../../../prescription/view/prescription_screen.dart';
 import '../../../refill/refill.dart';
 import '../../../settings/notifier/settings_notifier.dart';
@@ -37,6 +36,7 @@ import 'cabin_selection_view.dart';
 
 part 'dashboard_content.dart';
 part 'cabin_telemetry_panel.dart';
+part 'upcoming_treatment_panel.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -79,8 +79,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           children: [
             Column(
               children: [
-                // if (!isLoggedIn && _wasLoggedIn(authState))
-                //   LockedBanner(onLoginTap: () => _showLoginModal(context, ref)),
                 Padding(
                   padding: EdgeInsets.only(
                     top: MedSpacing.insetXl.top,

@@ -182,7 +182,7 @@ class CheckIntakeUseCase {
       if (countType == CountType.normalCount) {
         final rawStock =
             item.assignment?.stocks?.where((s) => s.id == detail.stockId).firstOrNull?.quantity?.toDouble() ?? 0.0;
-        detail.censusQuantity = item.assignment?.toDisplayQuantity(rawStock) ?? rawStock;
+        detail.censusQuantity = rawStock;
       } else {
         detail.censusQuantity = null;
       }

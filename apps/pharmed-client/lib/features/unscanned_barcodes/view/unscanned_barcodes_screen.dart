@@ -8,6 +8,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../notifier/unscanned_barcodes_notifier.dart';
 import '../notifier/unscanned_barcodes_state.dart';
+import 'scan_barcode_dialog.dart';
 
 part 'table_view.dart';
 

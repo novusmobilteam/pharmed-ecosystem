@@ -92,7 +92,12 @@ class _CensusForm extends ConsumerWidget {
               job.isKubik ? notifier.onCubicCountChanged(ti, v) : notifier.onStepCountChanged(ti, index, v),
         ),
         if (isPerCellMiadEnabled)
-          MedDateValueCard(label: context.l10n.refill_label_expiryDate, date: miad, hasError: miadHasError),
+          MedDateValueCard(
+            label: context.l10n.refill_label_expiryDate,
+            date: miad,
+            hasError: miadHasError,
+            onChanged: (date) => notifier.onStepMiadChanged(ti, index, date),
+          ),
       ],
     );
   }

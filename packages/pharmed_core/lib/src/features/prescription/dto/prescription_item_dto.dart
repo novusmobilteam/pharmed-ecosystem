@@ -28,6 +28,7 @@ class PrescriptionItemDto {
   final DateTime? prescriptionDate;
   final String? doctor;
   final num? dosePiece;
+  final num? receiveDosePiece;
   final bool? removed;
   final DateTime? time;
   final List<DateTime>? times;
@@ -55,6 +56,7 @@ class PrescriptionItemDto {
     this.medicineId,
     this.medicine,
     this.dosePiece,
+    this.receiveDosePiece,
     this.requestType,
     this.firstDoseEmergency = false,
     this.askDoctor = false,
@@ -115,6 +117,7 @@ class PrescriptionItemDto {
       medicineId: json['materialId'] as int?,
       medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
       dosePiece: json['dosePiece'] as num?,
+      receiveDosePiece: json['receiveDosePiece'] as num?,
       requestType: json['requestType'] as int?,
       firstDoseEmergency: (json['firstDoseEmergency'] as bool?) ?? false,
       askDoctor: json['askDoctor'] as bool?,

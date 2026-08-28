@@ -103,7 +103,7 @@ class DashboardContentFactory {
               cabinRouteContext != null
                   ? UnloadDrawerScreen(cabinRouteContext: cabinRouteContext)
                   : const SizedBox.shrink(),
-
+            'station-inventory' => InventoryScreen(),
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
         ),
@@ -122,6 +122,7 @@ class DashboardContentFactory {
       variant: EmptyStateVariant.networkError,
       onRetry: () => notifier.refresh(forceRefresh: false),
     ),
+    DashboardLoaded(:final initialLoadComplete) when !initialLoadComplete => const Center(child: MedLoadingIndicator()),
     DashboardLoaded s => _DashboardBody(state: s, notifier: notifier, isLoggedIn: isLoggedIn),
   };
 }
@@ -149,11 +150,6 @@ class _CabinDesignRouteHandlerState extends State<_CabinDesignRouteHandler> {
   Widget build(BuildContext context) => const SizedBox.shrink();
 }
 
-/// Ana sayfa yerleşimi.
-///
-/// Sol (esnek): yaklaşan tedaviler → ilaç aktiviteleri
-/// Sağ (sabit 300): telemetri → kabin
-/// Alt (tam genişlik): KPI şeridi — servis hazır olunca görünür
 class _DashboardBody extends StatelessWidget {
   const _DashboardBody({required this.state, required this.notifier, required this.isLoggedIn});
 
@@ -166,54 +162,20 @@ class _DashboardBody extends StatelessWidget {
     final data = state.data;
 
     return Row(
+      spacing: MedSpacing.lg,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Expanded(flex: 4, child: UpcomingTreatmentPanel(section: data.upcomingTreatments)),
+        Expanded(flex: 2, child: DrugActivityPanel(section: data.drugActivities)),
         Expanded(
-          child: Row(
-            spacing: MedSpacing.lg,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: data.upcomingTreatments.showError
-                    ? EmptyStateWidget(
-                        variant: EmptyStateVariant.networkError,
-                        onRetry: () => notifier.refresh(forceRefresh: false),
-                      )
-                    : UpcomingTreatmentPanel(section: data.upcomingTreatments),
-              ),
-              Expanded(
-                child: data.drugActivities.showError
-                    ? EmptyStateWidget(
-                        variant: EmptyStateVariant.networkError,
-                        onRetry: () => notifier.refresh(forceRefresh: false),
-                      )
-                    : DrugActivityPanel(section: data.drugActivities),
-              ),
-              Expanded(
-                child: data.unappliedPrescriptions.showError
-                    ? EmptyStateWidget(
-                        variant: EmptyStateVariant.networkError,
-                        onRetry: () => notifier.refresh(forceRefresh: false),
-                      )
-                    : UnappliedPrescriptionPanel(section: data.unappliedPrescriptions),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(width: MedSpacing.xl3),
-
-        SizedBox(
-          width: 300,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (_primaryCabinData(state, data) case final cabinData?)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: CabinStatusPanel(cabin: cabinData),
                 ),
-              const CabinTelemetryPanel(),
+              CabinTelemetryPanel(),
             ],
           ),
         ),
@@ -249,87 +211,6 @@ class DrugActivityPanel extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final movement = movements[index];
         return MedDrugActivityCard(movement: movement);
-      },
-    );
-  }
-}
-
-class UpcomingTreatmentPanel extends StatelessWidget {
-  const UpcomingTreatmentPanel({super.key, required this.section});
-
-  final DashboardSection<List<PrescriptionItem>?> section;
-
-  @override
-  Widget build(BuildContext context) {
-    final items = section.data ?? const <PrescriptionItem>[];
-
-    return MedDashboardPanel(
-      key: const ValueKey('upcoming_panel'),
-      title: context.l10n.dashboardUpcomingTreatmentsPanelTitle,
-      section: section,
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return MedDashboardRxCard(
-          item: item,
-          showFlags: true,
-          showStatusChip: true,
-          showTimeChip: true,
-          tone: MedTone.neutral,
-          infoLines: [
-            DashboardRxInfoLine(
-              context.l10n.assignment_patientLabel,
-              item.prescription?.hospitalization?.patient?.fullName ?? '-',
-            ),
-            DashboardRxInfoLine('SERVİS', item.prescription?.hospitalization?.physicalService?.name ?? '-'),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class UnappliedPrescriptionPanel extends StatelessWidget {
-  const UnappliedPrescriptionPanel({super.key, required this.section});
-
-  final DashboardSection<List<PrescriptionItem>?> section;
-
-  @override
-  Widget build(BuildContext context) {
-    final items = section.data ?? const <PrescriptionItem>[];
-
-    return MedDashboardPanel(
-      key: const ValueKey('unapplied_panel'),
-      title: context.l10n.dashboard_unappliedPrescriptionsPanelTitle,
-      section: section,
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return MedDashboardRxCard(
-          item: item,
-          showFlags: true,
-          showStatusChip: false,
-          showTimeChip: true,
-          tone: MedTone.warning,
-          infoLines: [
-            DashboardRxInfoLine(
-              context.l10n.assignment_patientLabel,
-              item.prescription?.hospitalization?.patient?.fullName ?? '-',
-            ),
-            DashboardRxInfoLine(context.l10n.dashboard_doctorLabel, item.doctor?.fullName ?? '-'),
-            DashboardRxInfoLine(
-              context.l10n.assignment_serviceLabel,
-              item.prescription?.hospitalization?.physicalService?.name ?? '-',
-            ),
-            DashboardRxInfoLine(
-              context.l10n.dashboard_roomBedLabel,
-              [
-                item.prescription?.hospitalization?.room?.name,
-                item.prescription?.hospitalization?.bed?.name,
-              ].whereType<String>().join(' / '),
-            ),
-          ],
-        );
       },
     );
   }

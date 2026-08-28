@@ -1,8 +1,3 @@
-// [SWREQ-UI-CAB-005]
-// DrugAssignmentView için sealed UI state.
-//
-// Sınıf: Class B
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 sealed class DrugAssignmentUiState {
@@ -14,10 +9,7 @@ final class DrugAssignmentUninitialized extends DrugAssignmentUiState {
 }
 
 final class DrugAssignmentLoading extends DrugAssignmentUiState {
-  const DrugAssignmentLoading({required this.groups, required this.cabinId});
-
-  final List<DrawerGroup> groups;
-  final int cabinId;
+  const DrugAssignmentLoading();
 }
 
 /// Göz seçili değil — sağda "MEVCUT ATAMALAR" tablosu gösterilir.

@@ -51,8 +51,8 @@ class CabinAssignmentListView extends StatelessWidget {
                       assignment.drawerUnit?.compartmentNo ?? '-',
                     );
 
-              double current = assignment.toDisplayQuantity(assignment.totalQuantity);
-              double maxQty = assignment.maxQuantityFromBackend;
+              double current = assignment.totalQuantity;
+              double maxQty = assignment.maxQuantity?.toDouble() ?? 0.0;
               double critQty = assignment.critQuantityFromBackend;
               double minQty = assignment.minQuantityFromBackend;
               final id = assignment.cabinDrawerId;
@@ -64,7 +64,7 @@ class CabinAssignmentListView extends StatelessWidget {
 
               final color = level.color;
 
-              String stock = '${current.formatFractional}/${maxQty.formatFractional}';
+              String stock = '${current.formatFractional}/${maxQty.formatFractional} (${assignment.operationUnit})';
 
               final pct = _ratio(current, maxQty);
 

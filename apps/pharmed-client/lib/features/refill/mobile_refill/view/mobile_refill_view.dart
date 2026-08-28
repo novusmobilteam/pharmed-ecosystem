@@ -1,16 +1,3 @@
-// [SWREQ-CLI-REFILL-005] [IEC 62304 §5.5]
-// Mobil kabin dolum ekranının root view'ı.
-//
-// Sorumluluk:
-//   - CabinVisualizerData ile MobileRefillNotifier'ı initialize eder
-//   - Drawer session stage'ini izler ve panel'e geçirir
-//   - Üç-panel scaffold'unu MobileDrawerOperationWrapper ile sarar
-//     (sol alt köşede çekmece durum banner'ı için)
-//   - Çekmece aktif iken MobileRefillDialog'u açar/kapatır (_syncDialog)
-//   - Error / Success state'lerini snackbar olarak gösterir
-//
-// Sınıf: Class B
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';

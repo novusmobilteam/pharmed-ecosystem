@@ -94,8 +94,8 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<void>> scanBarcode({required int prescriptionItemId, required String qrCode}) {
     return putRequest<void>(
-      path: '/Prescription/detail/$prescriptionItemId/qrCode',
-      body: {'prescriptionDetailId ': prescriptionItemId, 'qrCode': qrCode},
+      path: '/Prescription/detail/$prescriptionItemId/qrCode?qrCode=$qrCode',
+      //query: {'qrCode': qrCode},
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'QR marked as scanned',
     );

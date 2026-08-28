@@ -130,21 +130,21 @@ class _TableDataRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              '${assignment.minQuantityFromBackend.toInt()} ${assignment.operationUnit}',
+              '${assignment.minQuantity} ${assignment.operationUnit}',
               style: MedTextStyles.bodySm(color: MedColors.text3),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
-              '${assignment.critQuantityFromBackend.toInt()} ${assignment.operationUnit}',
+              '${assignment.criticalQuantity} ${assignment.operationUnit}',
               style: MedTextStyles.bodySm(color: MedColors.text3),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
-              '${assignment.maxQuantityFromBackend.toInt()} ${assignment.operationUnit}',
+              '${assignment.maxQuantity} ${assignment.operationUnit}',
               style: MedTextStyles.bodySm(color: MedColors.text3),
             ),
           ),

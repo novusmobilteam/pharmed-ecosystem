@@ -96,8 +96,10 @@ class UserRepositoryImpl implements IUserManager {
   Future<Result<void>> bulkUpdateValidDate(DateTime date, List<int> ids) => _dataSource.bulkUpdateValidDate(date, ids);
 
   @override
-  Future<Result<void>> changePassword({required String currentPassword, required String newPassword}) =>
-      _dataSource.changePassword(currentPassword: currentPassword, newPassword: newPassword);
+  Future<Result<void>> changePassword({required String currentPassword, required String newPassword}) async {
+    print('repo:$currentPassword');
+    return await _dataSource.changePassword(currentPassword: currentPassword, newPassword: newPassword);
+  }
 
   @override
   Future<Result<User?>> witnessUserLogin({

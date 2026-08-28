@@ -30,7 +30,7 @@ class MedicineAssignment {
     this.fillingQuantity,
   });
 
-  String get operationUnit => medicine?.operationUnit ?? 'Adet';
+  String? operationUnit(context) => medicine?.operationUnitLocalized(context);
   String get fillingUnit => medicine?.fillingUnit ?? 'Adet';
 
   // ---------------------------------------------------------------------------

@@ -21,6 +21,17 @@ class MasterDestructionView extends ConsumerStatefulWidget {
 
 class _MasterDestructionViewState extends ConsumerState<MasterDestructionView> {
   @override
+  void initState() {
+    super.initState();
+
+    final notifier = ref.read(destructionNotifierProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      notifier.init(widget.cabinContext);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(destructionNotifierProvider);
     final notifier = ref.read(destructionNotifierProvider.notifier);

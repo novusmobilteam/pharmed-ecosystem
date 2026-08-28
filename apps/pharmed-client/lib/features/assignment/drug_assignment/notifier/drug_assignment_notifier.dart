@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/providers/providers.dart';
+import '../../../dashboard/dashboard.dart';
 import '../../assignment.dart';
 
 final drugAssignmentNotifierProvider = NotifierProvider<DrugAssignmentNotifier, DrugAssignmentUiState>(
@@ -47,18 +48,22 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     return const DrugAssignmentUninitialized();
   }
 
-  Future<void> init(CabinVisualizerData data) async {
-    _cachedMedicinePage = null;
-    final cabinId = data.cabinId;
-    state = DrugAssignmentLoading(groups: data.groups, cabinId: cabinId);
+  Future<void> init(CabinRouteContext ctx) async {
+    final cabinId = ctx.cabin?.id;
+    final groups = ctx.cabinData?.groups;
+    if (cabinId == null || groups == null) {
+      return;
+    }
 
-    final result = await _getAssignments.call(data.cabinId);
+    state = DrugAssignmentLoading();
+
+    final result = await _getAssignments.call(cabinId);
 
     state = result.when(
-      ok: (assignments) => DrugAssignmentIdle(groups: data.groups, assignments: assignments, cabinId: cabinId),
+      ok: (assignments) => DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId),
       error: (e) => DrugAssignmentError(
         message: e.message,
-        previous: DrugAssignmentIdle(groups: data.groups, assignments: const [], cabinId: cabinId),
+        previous: DrugAssignmentIdle(groups: groups, assignments: const [], cabinId: cabinId),
       ),
     );
   }
@@ -351,7 +356,6 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   }
 
   List<DrawerGroup> _extractGroups(DrugAssignmentUiState s) => switch (s) {
-    DrugAssignmentLoading(:final groups) => groups,
     DrugAssignmentIdle(:final groups) => groups,
     DrugAssignmentCellSelected(:final groups) => groups,
     DrugAssignmentSaving(:final groups) => groups,
@@ -368,7 +372,6 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   };
 
   int _extractCabinId(DrugAssignmentUiState s) => switch (s) {
-    DrugAssignmentLoading(:final cabinId) => cabinId,
     DrugAssignmentIdle(:final cabinId) => cabinId,
     DrugAssignmentCellSelected(:final cabinId) => cabinId,
     DrugAssignmentSaving(:final cabinId) => cabinId,

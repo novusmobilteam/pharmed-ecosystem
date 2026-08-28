@@ -64,12 +64,12 @@ final class MasterRefundMedicineSelection extends MasterRefundState {
   double amountFor(int itemId) {
     final item = items.firstWhereOrNull((it) => it.id == itemId);
     if (item == null) return 0;
-    return (item.returnQuantity ?? item.appliedQuantity).toDouble();
+    return (item.returnQuantity ?? item.lastMovement?.prescriptionItem?.receiveDosePiece ?? 0).toDouble();
   }
 
   double maxAmountFor(int itemId) {
     final item = items.firstWhereOrNull((it) => it.id == itemId);
-    return item?.appliedQuantity.toDouble() ?? 0;
+    return item?.lastMovement?.prescriptionItem?.receiveDosePiece?.toDouble() ?? 0;
   }
 
   /// Footer'daki "İadeyi Başlat" butonu SADECE donanım gerektiren

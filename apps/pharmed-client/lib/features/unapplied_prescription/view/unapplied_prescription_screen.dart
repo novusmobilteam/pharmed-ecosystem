@@ -57,13 +57,19 @@ class UnappliedPrescriptionScreenState extends ConsumerState<UnappliedPrescripti
       );
     }
 
-    return CabinOperationSelectionLayout(
-      left: PatientSelectionPanel(
-        selectedPatient: state.selectedPatient,
-        onPatientSelected: (patient, tab, isOrderless) => notifier.onPatientTap(patient),
-        config: PatientSelectionConfig(showFilters: false),
-      ),
-      right: _UnappliedPrescriptionRightPanel(state: state),
+    return Row(
+      spacing: 12.0,
+      children: [
+        Expanded(
+          flex: 2,
+          child: PatientSelectionPanel(
+            selectedPatient: state.selectedPatient,
+            onPatientSelected: (patient, tab, isOrderless) => notifier.onPatientTap(patient),
+            config: PatientSelectionConfig(showFilters: false),
+          ),
+        ),
+        Expanded(flex: 7, child: _UnappliedPrescriptionRightPanel(state: state)),
+      ],
     );
   }
 }

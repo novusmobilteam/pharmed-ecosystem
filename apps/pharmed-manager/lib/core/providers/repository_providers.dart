@@ -178,6 +178,7 @@ class RepositoryProviders {
             menuMapper: MenuTreeMapper(),
             cabinMapper: CabinMapper(),
             itemMovementMapper: PrescriptionItemMovementMapper(),
+            upcomingMapper: UpcomingTreatmentMapper(),
           ),
         },
       ),

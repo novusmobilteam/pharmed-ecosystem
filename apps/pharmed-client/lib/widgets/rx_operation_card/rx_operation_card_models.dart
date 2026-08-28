@@ -134,10 +134,11 @@ class RxCardNote {
 /// adet-giren ekranlar (atama/dolum) adet, ml-giren ekranlar
 /// (sayım/boşaltma/iade/fire-imha) ml değeri geçirir.
 class RxCardStepper {
-  const RxCardStepper({required this.value, required this.unit, required this.onChanged, this.max});
+  const RxCardStepper({required this.value, required this.unit, required this.onChanged, this.max, this.step = 1.0});
 
   final double value;
   final String unit;
   final double? max;
+  final double step;
   final ValueChanged<double> onChanged;
 }

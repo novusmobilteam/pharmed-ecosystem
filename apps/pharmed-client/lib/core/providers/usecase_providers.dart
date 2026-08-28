@@ -209,7 +209,7 @@ final refillMasterCabinUseCaseProvider = Provider((ref) {
   return RefillMasterCabinUseCase(ref.read(cabinStockRepositoryProvider));
 });
 
-final getCabinAssignmentsUseCaseProvider = Provider((ref) {
+final getStationAssignmentsUseCaseProvider = Provider((ref) {
   return GetStationAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
@@ -435,6 +435,10 @@ final getDailyJobListUseCaseProvider = Provider((ref) {
 
 final getUnscannedBarcodesUseCaseProvider = Provider((ref) {
   return GetUnscannedBarcodesUseCase(ref.read(prescriptionRepositoryProvider));
+});
+
+final scanBarcodeUseCaseProvider = Provider((ref) {
+  return ScanBarcodeUseCase(ref.read(prescriptionRepositoryProvider));
 });
 
 final getEquivalentMedicinesUseCaseProvider = Provider((ref) {

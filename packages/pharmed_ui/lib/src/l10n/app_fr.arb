@@ -10,6 +10,8 @@
   "common_noResultsDescription": "Essayez de modifier vos critères de recherche.",
   "common_retryButton": "Réessayer",
   "common_cancelButton": "Annuler",
+  "common_barcodeLabel": "Code-barres",
+  "common_completeButton": "Terminer",
   "common_pageNotFound": "Page introuvable",
   "common_minLabel": "Min",
   "common_maxLabel": "Max",
@@ -4012,29 +4014,6 @@
   "cabinDesign_serum_sectionTitle": "Disposition interne",
   "cabinDesign_serum_manualBadge": "CONFIGURATION MANUELLE",
   "cabinDesign_serum_infoBanner": "La disposition interne d'une armoire à sérum n'est pas lue depuis la carte ; définissez ici ses tiroirs et la disposition du matériel.",
-  "cabinDesign_serum_drawerCountLabel": "Nombre de tiroirs",
-  "cabinDesign_serum_drawerCardTitle": "Tiroir {index}",
-  "@cabinDesign_serum_drawerCardTitle": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      }
-    }
-  },
-  "cabinDesign_serum_drawerCardSummary": "{sideBySide}×{frontToBack} = {total} équipements",
-  "@cabinDesign_serum_drawerCardSummary": {
-    "placeholders": {
-      "sideBySide": {
-        "type": "int"
-      },
-      "frontToBack": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
   "cabinDesign_serum_equipmentLayoutTitle": "Disposition du matériel",
   "cabinDesign_serum_drawerBadge": "S-0{index}",
   "@cabinDesign_serum_drawerBadge": {
@@ -4044,34 +4023,33 @@
       }
     }
   },
-  "cabinDesign_serum_sideBySideLabel": "Côte à côte",
-  "cabinDesign_serum_frontToBackLabel": "D'avant en arrière",
   "cabinDesign_serum_topViewLabel": "Vue de dessus",
-  "cabinDesign_serum_totalEquipmentLabel": "{sideBySide} × {frontToBack} = {total} équipements",
-  "@cabinDesign_serum_totalEquipmentLabel": {
-    "placeholders": {
-      "sideBySide": {
-        "type": "int"
-      },
-      "frontToBack": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
+  "cabinDesign_serum_shelfCardTitle": "Étagère {index}",
+  "@cabinDesign_serum_shelfCardTitle": {
+    "placeholders": { "index": { "type": "int" } }
   },
-  "cabinDesign_serum_frontLabel": "← avant",
-  "cabinDesign_serum_backLabel": "arrière →",
-  "cabinDesign_serum_applyToAllButton": "Appliquer cette disposition à tous les tiroirs",
-  "cabinDesign_serum_incompleteWarning": "La conception ne peut pas être enregistrée tant que la disposition de chaque tiroir n'est pas définie. Manquant : {missingDrawerLabel}",
-  "@cabinDesign_serum_incompleteWarning": {
-    "placeholders": {
-      "missingDrawerLabel": {
-        "type": "String"
-      }
-    }
+  "cabinDesign_serum_shelfCardSummary": "{used}/{total} emplacements • {count} plateaux",
+  "@cabinDesign_serum_shelfCardSummary": {
+    "placeholders": { "used": { "type": "int" }, "total": { "type": "int" }, "count": { "type": "int" } }
   },
+  "cabinDesign_serum_lockToggleLabel": "Verrou électromagnétique",
+  "cabinDesign_serum_addSmallButton": "Petit",
+  "cabinDesign_serum_addMediumButton": "Moyen",
+  "cabinDesign_serum_addLargeButton": "Grand",
+  "cabinDesign_serum_traySizeSmallLabel": "Petit",
+  "cabinDesign_serum_traySizeMediumLabel": "Moyen",
+  "cabinDesign_serum_traySizeLargeLabel": "Grand",
+  "cabinDesign_serum_trayListItemLabel": "{index}. Plateau • {sizeLabel}",
+  "@cabinDesign_serum_trayListItemLabel": {
+    "placeholders": { "index": { "type": "int" }, "sizeLabel": { "type": "String" } }
+  },
+  "cabinDesign_serum_areaUsedLabel": "{used}/{total} emplacements utilisés",
+  "@cabinDesign_serum_areaUsedLabel": {
+    "placeholders": { "used": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "cabinDesign_serum_capacityFullWarning": "Étagère pleine, impossible d'ajouter un plateau",
+  "cabinDesign_serum_leftLabel": "Gauche",
+  "cabinDesign_serum_rightLabel": "Droite",
   "cabinDesign_noSelectionHint": "Sélectionnez un tiroir pour voir ses détails.",
   "cabinDesign_scanButton": "Scanner l'appareil",
   "cabinDesign_saveButton": "Enregistrer la conception",
@@ -4179,5 +4157,28 @@
         "type": "int"
       }
     }
+  },
+  "unscannedBarcode_scan_actionLabel": "Scanner le code-barres",
+  "dashboard_delayMinutesLabel": "{minutes} min",
+  "@dashboard_delayMinutesLabel": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+
+  "dashboard_delayHoursMinutesLabel": "{hours}h {minutes}m",
+  "@dashboard_delayHoursMinutesLabel": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "dashboard_upcomingTreatmentsDelayedTitle": "En Retard",
+  "dashboard_upcomingTreatmentsDueSoonTitle": "Dans les 20 Minutes",
+  "dashboard_upcomingTreatmentsUpcomingTitle": "20-60 Min",
+  "dashboard_upcomingTreatmentsDueInMinutesLabel": "DANS {minutes} MIN",
+  "@dashboard_upcomingTreatmentsDueInMinutesLabel": {
+    "description": "Upcoming treatments panel — relative time label under the clock for non-delayed patients, e.g. '4 DK SONRA'",
+    "placeholders": { "minutes": { "type": "int" } }
   }
 }

@@ -60,7 +60,7 @@ class _MasterWasteViewState extends ConsumerState<MasterWasteView> {
         // tetiklenmez ve _isPatientReady sonsuza kadar false kalır.
         return Stack(
           children: [
-            Offstage(offstage: true, child: MasterWasteSelectionView()),
+            Offstage(offstage: true, child: MasterWasteSelectionView(stationContext: widget.stationContext)),
             const Center(child: MedLoadingIndicator()),
           ],
         );
@@ -68,6 +68,6 @@ class _MasterWasteViewState extends ConsumerState<MasterWasteView> {
       _hasBooted = true;
     }
 
-    return MasterWasteSelectionView();
+    return MasterWasteSelectionView(stationContext: widget.stationContext);
   }
 }

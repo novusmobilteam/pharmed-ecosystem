@@ -1,14 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-// [SWREQ-UI-DASH-003]
-// Kabin görselleştirme verisi use case.
-//
-// debugCabin != null ise cache'e dokunulmadan bu kabinin
-// id ve type'ı kullanılır.
-//
-// Sınıf: Class B
-
 class GetCabinVisualizerDataUseCase {
   const GetCabinVisualizerDataUseCase(this._cabinRepository, this._getMasterFaults, this._getMobileFaults);
 

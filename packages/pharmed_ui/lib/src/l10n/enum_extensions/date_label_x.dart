@@ -15,10 +15,10 @@ extension DateTimeLabelX on DateTime {
     if (thisDay == today) {
       // intl'de built-in "today" yok, bunu l10n'dan almak gerekiyor
       // ama weekday label'ları için intl yeterli
-      return '${context.l10n.date_preset_today} $timeStr';
+      return '${context.l10n.dateFilter_todayPreset} $timeStr';
     }
     if (thisDay == tomorrow) {
-      return '${context.l10n.date_preset_tomorrow} $timeStr';
+      return '${context.l10n.dateFilter_tomorrowPreset} $timeStr';
     }
 
     final dayLabel = DateFormat.E(locale).format(this); // "Mon", "Lun", "Pzt"

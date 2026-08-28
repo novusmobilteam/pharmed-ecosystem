@@ -1,10 +1,3 @@
-// [SWREQ-CLI-MCENSUS-001] [IEC 62304 §5.5]
-// Sayım (census) akışının tam state hiyerarşisi — MasterRefillState ile
-// birebir aynı desende (Uninitialized → Loading → Selection → Executing,
-// hata her zaman previousState taşıyan bir sarmalayıcı).
-//
-// Sınıf: Class B
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/hardware/hardware.dart';
@@ -16,7 +9,7 @@ import '../../../../core/hardware/hardware.dart';
 ///     veya tek tek göz seçilebilir.
 ///   - byMedicine: sağ CabinAssignmentListView açık — sadece ilaç listesi
 ///     satırından seçim yapılabilir.
-enum CensusMode { allCabin, byDrawer, byMedicine }
+enum CensusMode { byMedicine, byDrawer, allCabin }
 
 sealed class MasterCensusState {
   const MasterCensusState();

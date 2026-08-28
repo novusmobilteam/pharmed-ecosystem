@@ -24,14 +24,8 @@ enum EmptyStateVariant {
   /// İade edilebilecek ilaç bulunamadı.
   noRefundableDrugs,
 
-  /// İade hasta seçimi
-  refundSelectPatient,
-
   /// Fire/imha edilebilir ilaç bulunamadı.
   noWastableDrugs,
-
-  /// Fire/imha için hasta seçimi bekleniyor.
-  wasteSelectPatient,
 
   /// Ağ bağlantısı yok.
   networkError,

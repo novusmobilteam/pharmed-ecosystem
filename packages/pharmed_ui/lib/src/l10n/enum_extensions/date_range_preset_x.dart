@@ -3,9 +3,9 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 extension DateRangePresetL10n on DateRangePreset {
   String label(AppLocalizations l10n) => switch (this) {
-    DateRangePreset.today => l10n.date_preset_today,
-    DateRangePreset.last3Days => l10n.date_preset_last_3_days,
-    DateRangePreset.last7Days => l10n.date_preset_last_7_days,
-    DateRangePreset.all => l10n.date_preset_all,
+    DateRangePreset.today => l10n.dateFilter_tomorrowPreset,
+    DateRangePreset.last3Days => l10n.dateFilter_last3DaysPreset,
+    DateRangePreset.last7Days => l10n.dateFilter_last7DaysPreset,
+    DateRangePreset.all => l10n.dateFilter_allPreset,
   };
 }

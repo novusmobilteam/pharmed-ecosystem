@@ -1,25 +1,3 @@
-// [SWREQ-CLI-MREFILL-002] [IEC 62304 §5.5]
-// İlaç-merkezli master kabin dolum akışını yöneten notifier.
-//
-// FAZ 1 (Selection): GetCabinAssignmentsUseCase ile atanmış ilaçları çeker,
-//   kullanıcının ilaç/göz seçimini yönetir.
-// FAZ 2 (Executing): CabinOperationQueueBuilder ile çekmece kuyruğu üretir,
-//   kuyruğu MasterDrawerOrchestrator üzerinden sırayla işler.
-//
-//   ÖNEMLİ — hedef (target) ilerleme iki farklı mekanizmayla çalışır:
-//     - Kübik: ana çekmece TEK sefer açılır (open), hedefler arası geçiş
-//       YAZILIMSAL (openCubicLid) — fiziksel kapanma sensörü yoktur, ana
-//       çekmece son hedefte confirmClose ile kapanır.
-//     - Birim doz: aynı fiziksel çekmecede BİRDEN FAZLA ilaç atanmışsa, her
-//       ilaç KENDİ PORTUNA/kilidine sahiptir — hedefler arası geçiş
-//       DONANIMSAL (her hedef kendi open→confirmClose→Closed döngüsünü
-//       yaşar). Tek hedefli birim doz job'larında bu döngü sadece bir kez
-//       çalışır, eski davranıştan farkı yoktur.
-//
-// Aynı anda yalnızca TEK fiziksel çekmece/port açıktır.
-//
-// Sınıf: Class B
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -283,7 +261,7 @@ class MasterRefillNotifier extends Notifier<MasterRefillState> {
       error: (e) => state = MasterRefillError(
         failure: CabinApiFailure(message: e.message),
         previousState: saved.copyWith(isSaving: false),
-        isQueueError: true,
+        //isQueueError: true,
       ),
     );
   }

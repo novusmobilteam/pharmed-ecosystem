@@ -20,6 +20,7 @@
 //
 // Sınıf: Class B
 
+import 'package:flutter/foundation.dart';
 import 'package:pharmed_client/features/intake/intake.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
@@ -29,8 +30,13 @@ sealed class MasterIntakeState {
   const MasterIntakeState();
 }
 
-/// Henüz init edilmedi (CabinVisualizerData yok).
-final class MasterIntakeUninitialized extends MasterIntakeState {
+/// İLK AÇILIŞ fazı — hasta listesi (patientSelectionNotifierProvider) HENÜZ
+/// ilk kez Ready/Error olmadı. Widget bu state'te TEK bir tam ekran loading
+/// gösterir (MasterIntakeView.build). init() içinde hasta listesi hazır
+/// olduğunda MasterIntakePatientSelection'a geçilir ve BİR DAHA ASLA bu
+/// state'e dönülmez — sonraki tüm filtre/tab/viewType değişimleri kendi
+/// (daha ince taneli) loading göstergelerini kendi panelleri içinde yönetir.
+class MasterIntakeUninitialized extends MasterIntakeState {
   const MasterIntakeUninitialized();
 }
 
@@ -256,10 +262,28 @@ extension MasterIntakeExecutingLocationX on MasterIntakeExecuting {
     currentTargetIndex: currentTargetIndex,
     cabinDrawerIdOf: (job) => job.cabinDrawerId,
     statusOf: (job) => job.status,
-    targetCountOf: (job) => job.targets.length,
-    // IntakeTarget.assignment nullable — assignmentAt zaten MedicineAssignment?
-    // döndürüyor, ekstra bir şey gerekmiyor.
-    assignmentAt: (job, i) => job.targets[i].assignment,
-    stockIdAt: (job, i) => job.targets[i].details.firstOrNull?.stockId,
+    // currentTargetIndex STEP index'i (job.targets index'i DEĞİL) — bkz.
+    // MasterIntakeExecuting.currentTarget / notifier._jobSteps ile AYNI
+    // kaynak. targetCountOf/assignmentAt/stockIdAt bu yüzden artık ham
+    // target listesini değil, IntakeCellGrouper.group(job.targets) step
+    // listesini indeksliyor; önceki hâli (doğrudan job.targets[i]) aynı
+    // fiziksel göze birden fazla hedef düşen job'larda yanlış/fazla
+    // hücrenin aktif/tamamlanmış görünmesine yol açıyordu.
+    targetCountOf: (job) => IntakeCellGrouper.group(job.targets).length,
+    assignmentAt: (job, stepIndex) {
+      final steps = IntakeCellGrouper.group(job.targets);
+      if (stepIndex < 0 || stepIndex >= steps.length) return null;
+      final (ti, _) = steps[stepIndex].refs.first;
+      return job.targets[ti].assignment;
+    },
+    stockIdAt: (job, stepIndex) {
+      final steps = IntakeCellGrouper.group(job.targets);
+      if (stepIndex < 0 || stepIndex >= steps.length) return null;
+      final (ti, _) = steps[stepIndex].refs.first;
+      final stockId = job.targets[ti].details.firstOrNull?.stockId;
+      debugPrint('[intake-loc] step=$stepIndex ti=$ti stockId=$stockId');
+
+      return stockId;
+    },
   );
 }

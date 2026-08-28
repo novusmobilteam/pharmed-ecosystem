@@ -42,36 +42,38 @@ class _CabinSelectionViewState extends State<CabinSelectionView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 24.0,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: MedSpacing.xl,
-          children: widget.cabins.map((cabin) {
-            return SizedBox(
-              width: 300,
-              child: _CabinSelectionCard(
-                cabin: cabin,
-                data: cabin.id != null ? widget.cabinDataByCabinId[cabin.id] : null,
-                isSelectable: _isSelectable(cabin),
-                isSelected: cabin.id != null && cabin.id == _selectedCabinId,
-                onTap: () => setState(() => _selectedCabinId = cabin.id),
-              ),
-            );
-          }).toList(),
-        ),
-        SizedBox(
-          width: 300,
-          child: MedButton(
-            label: context.l10n.cabinSelection_continueButton,
-            onPressed: _selectedCabinId != null ? () => widget.onCabinSelected(_selectedCabinId!) : null,
+    return SingleChildScrollView(
+      child: Column(
+        spacing: 24.0,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: MedSpacing.xl,
+            children: widget.cabins.map((cabin) {
+              return SizedBox(
+                width: 300,
+                child: _CabinSelectionCard(
+                  cabin: cabin,
+                  data: cabin.id != null ? widget.cabinDataByCabinId[cabin.id] : null,
+                  isSelectable: _isSelectable(cabin),
+                  isSelected: cabin.id != null && cabin.id == _selectedCabinId,
+                  onTap: () => setState(() => _selectedCabinId = cabin.id),
+                ),
+              );
+            }).toList(),
           ),
-        ),
-      ],
+          SizedBox(
+            width: 300,
+            child: MedButton(
+              label: context.l10n.cabinSelection_continueButton,
+              onPressed: _selectedCabinId != null ? () => widget.onCabinSelected(_selectedCabinId!) : null,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

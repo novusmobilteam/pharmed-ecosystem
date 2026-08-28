@@ -95,6 +95,8 @@ class RxOrdersContent extends ConsumerWidget {
                 // engellenir (o durumda zaten seçim değil, çözüm akışı - muadil/redirect -
                 // kullanılır). Bunun dışında ordered akışta filtre uyuşmazlığı da engeller.
                 final bool canToggleSelection = !item.hasNoStock && !item.isRedirected && !isFilterBlocked;
+                final bool isMeasureUnit = drug?.isMeasureUnit ?? false;
+                final double stepValue = isMeasureUnit ? (drug?.doseMeasureUnit?.toDouble() ?? 1.0) : 1.0;
 
                 return RxOperationCard2(
                   title: item.medicine?.name ?? '—',
@@ -153,7 +155,32 @@ class RxOrdersContent extends ConsumerWidget {
                       : null,
 
                   extras: [
-                    if (item.prescriptionItem != null) RxFlagChips(item: item.prescriptionItem!),
+                    Row(
+                      spacing: 6.0,
+                      children: [
+                        if (item.askDoctor)
+                          MedChip(
+                            label: context.l10n.common_flagAskDoctor,
+                            background: MedColors.purple,
+                            foreground: Colors.white,
+                            showBorder: false,
+                          ),
+                        if (item.firstDoseEmergency)
+                          MedChip(
+                            label: context.l10n.common_flagFirstDoseEmergency,
+                            background: MedColors.red,
+                            foreground: Colors.white,
+                            showBorder: false,
+                          ),
+                        if (item.inCaseOfNecessity)
+                          MedChip(
+                            label: context.l10n.common_flagInCaseOfNecessity,
+                            background: MedColors.blue,
+                            foreground: Colors.white,
+                            showBorder: false,
+                          ),
+                      ],
+                    ),
                     if (item.hasNoStock && !item.isRedirected)
                       _StockResolutionSection(
                         equivalentState: equivalentState,
@@ -169,6 +196,7 @@ class RxOrdersContent extends ConsumerWidget {
                           value: item.dosePiece ?? 1,
                           unit: unit,
                           max: 999,
+                          step: stepValue,
                           onChanged: (v) => notifier.updateDose(item.id, v),
                         )
                       : null,

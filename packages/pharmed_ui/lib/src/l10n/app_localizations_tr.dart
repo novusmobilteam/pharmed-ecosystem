@@ -38,7 +38,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get common_retryButton => 'Tekrar Dene';
 
   @override
+  String get common_completeButton => 'Tamamla';
+
+  @override
   String get common_cancelButton => 'İptal';
+
+  @override
+  String get common_barcodeLabel => 'Karekod';
 
   @override
   String get common_pageNotFound => 'Sayfa bulunamadı';
@@ -6224,23 +6230,6 @@ class AppLocalizationsTr extends AppLocalizations {
       'Serum kabininde iç dizayn karttan okunmaz; çekmece ve avadanlık yerleşimini burada tanımlayın.';
 
   @override
-  String get cabinDesign_serum_drawerCountLabel => 'Çekmece sayısı';
-
-  @override
-  String cabinDesign_serum_drawerCardTitle(int index) {
-    return 'Çekmece $index';
-  }
-
-  @override
-  String cabinDesign_serum_drawerCardSummary(
-    int sideBySide,
-    int frontToBack,
-    int total,
-  ) {
-    return '$sideBySide×$frontToBack = $total avadanlık';
-  }
-
-  @override
   String get cabinDesign_serum_equipmentLayoutTitle => 'Avadanlık Yerleşimi';
 
   @override
@@ -6249,37 +6238,58 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_serum_sideBySideLabel => 'Yan yana';
-
-  @override
-  String get cabinDesign_serum_frontToBackLabel => 'Arka arkaya';
-
-  @override
   String get cabinDesign_serum_topViewLabel => 'Üstten Görünüm';
 
   @override
-  String cabinDesign_serum_totalEquipmentLabel(
-    int sideBySide,
-    int frontToBack,
-    int total,
-  ) {
-    return '$sideBySide × $frontToBack = $total avadanlık';
+  String cabinDesign_serum_shelfCardTitle(int index) {
+    return 'Raf $index';
   }
 
   @override
-  String get cabinDesign_serum_frontLabel => '← ön';
-
-  @override
-  String get cabinDesign_serum_backLabel => 'arka →';
-
-  @override
-  String get cabinDesign_serum_applyToAllButton =>
-      'Bu yerleşimi tüm çekmecelere uygula';
-
-  @override
-  String cabinDesign_serum_incompleteWarning(String missingDrawerLabel) {
-    return 'Tüm çekmecelerin yerleşimi tanımlanmadan dizayn kaydedilemez. Eksik: $missingDrawerLabel';
+  String cabinDesign_serum_shelfCardSummary(int used, int total, int count) {
+    return '$used/$total alan • $count avadanlık';
   }
+
+  @override
+  String get cabinDesign_serum_lockToggleLabel => 'Elektromanyetik Kilit';
+
+  @override
+  String get cabinDesign_serum_addSmallButton => 'Küçük';
+
+  @override
+  String get cabinDesign_serum_addMediumButton => 'Orta';
+
+  @override
+  String get cabinDesign_serum_addLargeButton => 'Büyük';
+
+  @override
+  String get cabinDesign_serum_traySizeSmallLabel => 'Küçük';
+
+  @override
+  String get cabinDesign_serum_traySizeMediumLabel => 'Orta';
+
+  @override
+  String get cabinDesign_serum_traySizeLargeLabel => 'Büyük';
+
+  @override
+  String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
+    return '$index. Avadanlık • $sizeLabel';
+  }
+
+  @override
+  String cabinDesign_serum_areaUsedLabel(int used, int total) {
+    return '$used/$total alan kullanıldı';
+  }
+
+  @override
+  String get cabinDesign_serum_capacityFullWarning =>
+      'Raf dolu, yeni avadanlık eklenemez';
+
+  @override
+  String get cabinDesign_serum_leftLabel => 'Sol';
+
+  @override
+  String get cabinDesign_serum_rightLabel => 'Sağ';
 
   @override
   String get cabinDesign_noSelectionHint =>
@@ -6516,5 +6526,32 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String assignment_edit_pageIndicator(int current, int total) {
     return 'Sayfa $current / $total';
+  }
+
+  @override
+  String get unscannedBarcode_scan_actionLabel => 'Karekod Okut';
+
+  @override
+  String dashboard_delayMinutesLabel(int minutes) {
+    return '$minutes dk';
+  }
+
+  @override
+  String dashboard_delayHoursMinutesLabel(int hours, int minutes) {
+    return '${hours}s ${minutes}dk';
+  }
+
+  @override
+  String get dashboard_upcomingTreatmentsDelayedTitle => 'Gecikmiş';
+
+  @override
+  String get dashboard_upcomingTreatmentsDueSoonTitle => '20 Dakika İçinde';
+
+  @override
+  String get dashboard_upcomingTreatmentsUpcomingTitle => '20-60 DK';
+
+  @override
+  String dashboard_upcomingTreatmentsDueInMinutesLabel(int minutes) {
+    return '$minutes DK SONRA';
   }
 }

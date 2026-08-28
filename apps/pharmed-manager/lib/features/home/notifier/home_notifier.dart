@@ -74,7 +74,6 @@ class HomeNotifier extends ChangeNotifier with ApiRequestMixin {
     final index = parentMenuItems.indexOf(menu);
     if (index == -1 || _activeTab == index) return;
     _activeTab = index;
-    _activeChildMenu = null; // parent değişince child sıfırlanır
     notifyListeners();
   }
 

@@ -1,5 +1,3 @@
-// pharmed_data/src/cabin/dto/drawer_unit_dto.dart
-
 import 'drawer_slot_dto.dart';
 
 /// ÇEKMECE BİRİMİ DTO

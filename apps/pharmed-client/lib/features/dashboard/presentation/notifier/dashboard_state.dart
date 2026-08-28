@@ -17,7 +17,7 @@ class DashboardData {
     this.station,
   });
 
-  final DashboardSection<List<PrescriptionItem>?> upcomingTreatments;
+  final DashboardSection<List<UpcomingTreatment>?> upcomingTreatments;
   final DashboardSection<List<PrescriptionItem>?> unappliedPrescriptions;
   final DashboardSection<List<PrescriptionItemMovement>?> drugActivities;
 
@@ -33,7 +33,7 @@ class DashboardData {
   bool get hasCabinData => cabinVisualizerDataByCabinId.isNotEmpty;
 
   DashboardData copyWith({
-    DashboardSection<List<PrescriptionItem>?>? upcomingTreatments,
+    DashboardSection<List<UpcomingTreatment>?>? upcomingTreatments,
     DashboardSection<List<PrescriptionItemMovement>?>? drugActivities,
     DashboardSection<List<PrescriptionItem>?>? unappliedPrescriptions,
     List<Cabin>? stationCabins,
@@ -79,6 +79,7 @@ class DashboardLoaded extends DashboardState {
     this.activeCabinId,
     this.pendingCabinRoute,
     this.deviceMode,
+    this.initialLoadComplete = false,
   });
 
   final DashboardData data;
@@ -93,6 +94,15 @@ class DashboardLoaded extends DashboardState {
   /// mobil istasyonlarda seçim ekranı HİÇ gösterilmez.
   final CabinType? deviceMode;
 
+  /// İlk açılışta primary (kabin) + secondary (tedavi/aktivite/reçete)
+  /// verilerinin İKİSİ de gelene kadar false. Dashboard body'si bu flag
+  /// false iken hiçbir paneli (kabin paneli dahil) göstermez, tam ekran
+  /// loading gösterir — panellerin parça parça belirmesini engellemek
+  /// için. Bir kez true olduktan sonra hep true kalır (copyWith varsayılan
+  /// olarak korur); sonraki refresh()'lerde progressive güncelleme
+  /// davranışı bozulmaz.
+  final bool initialLoadComplete;
+
   DashboardLoaded copyWith({
     DashboardData? data,
     List<MenuItem>? menuTree,
@@ -103,6 +113,7 @@ class DashboardLoaded extends DashboardState {
     String? pendingCabinRoute,
     bool clearPendingCabinRoute = false,
     CabinType? deviceMode,
+    bool? initialLoadComplete,
   }) => DashboardLoaded(
     data: data ?? this.data,
     menuTree: menuTree ?? this.menuTree,
@@ -111,5 +122,6 @@ class DashboardLoaded extends DashboardState {
     activeCabinId: clearActiveCabinId ? null : (activeCabinId ?? this.activeCabinId),
     pendingCabinRoute: clearPendingCabinRoute ? null : (pendingCabinRoute ?? this.pendingCabinRoute),
     deviceMode: deviceMode ?? this.deviceMode,
+    initialLoadComplete: initialLoadComplete ?? this.initialLoadComplete,
   );
 }

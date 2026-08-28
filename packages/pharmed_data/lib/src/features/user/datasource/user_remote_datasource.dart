@@ -97,6 +97,7 @@ class UserRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> changePassword({required String currentPassword, required String newPassword}) {
+    print('current$currentPassword');
     return postRequest(
       path: '$_base/change-password',
       body: {'currentPassword': currentPassword, 'newPassword': newPassword},

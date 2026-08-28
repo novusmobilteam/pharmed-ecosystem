@@ -1,6 +1,3 @@
-// [SWREQ-CLI-CABIN-DESIGN-001] [IEC 62304 §5.5]
-// Sınıf: Class B
-
 import 'package:collection/collection.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 

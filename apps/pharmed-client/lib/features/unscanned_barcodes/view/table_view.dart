@@ -22,7 +22,16 @@ class TableView extends StatelessWidget {
       onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
 
       columnDefs: _buildColumnDefs(context),
-      actions: [TableActionItem(icon: PhosphorIcons.qrCode(), tooltip: 'Karekod Okut', onPressed: print)],
+      actions: [
+        TableActionItem(
+          icon: PhosphorIcons.qrCode(),
+          tooltip: 'Karekod Okut',
+          onPressed: (item) => showDialog(
+            context: context,
+            builder: (_) => ScanBarcodeDialog(prescriptionItemId: item.id ?? 0),
+          ),
+        ),
+      ],
     );
   }
 }

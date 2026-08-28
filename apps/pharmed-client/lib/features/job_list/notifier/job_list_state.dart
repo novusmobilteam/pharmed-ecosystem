@@ -1,6 +1,3 @@
-// [SWREQ-UI-JobList-STATE-001]
-// Sınıf : Class A
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 sealed class JobListState {

@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/core.dart';
 import '../../auth/notifier/auth_state.dart';
 import '../../authorization/authorization_screen.dart';
+import '../../change_password/view/change_password_view.dart';
 import '../../dashboard/view/dashboard_view.dart';
 import '../../hospitalization/view/hospitalization_screen.dart';
 import '../../medicine/view/medicine_screen.dart';

@@ -201,7 +201,7 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
     final hasPreciseData = item.completedCells.isNotEmpty || item.activeStepNo != null;
 
     for (final (unitIdx, stepNo) in item.completedCells) {
-      final r = stepNo - 1;
+      final r = steps - stepNo;
       if (r >= 0 && r < steps && unitIdx >= 0 && unitIdx < unitCount) {
         grid[r][unitIdx] = _CellState.completed;
       }
@@ -221,7 +221,11 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
     final activeUnit = item.activeTargetIndex;
     if (activeUnit != null && activeUnit >= 0 && activeUnit < unitCount) {
       if (item.activeStepNo != null) {
-        final r = item.activeStepNo! - 1;
+        final r = steps - item.activeStepNo!;
+        debugPrint(
+          '[loc-orientation] activeStepNo=${item.activeStepNo} -> r=$r, steps=$steps, gridLabel(bu r için)=${steps - r}',
+        );
+
         if (r >= 0 && r < steps) grid[r][activeUnit] = _CellState.active;
       } else {
         for (final row in grid) {
@@ -237,21 +241,21 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
       cellStates: const [],
       depthGrid: grid,
       legendItems: [
-        _LegendItem(
-          color: MedColors.blue,
-          background: MedColors.blueLight,
-          label: context.l10n.cabinOverview_legendFillingLabel,
-        ),
-        _LegendItem(
-          color: MedColors.green,
-          background: MedColors.greenLight,
-          label: context.l10n.cabinOverview_legendCompletedLabel,
-        ),
-        _LegendItem(
-          color: MedColors.border,
-          background: MedColors.surface,
-          label: context.l10n.cabinOverview_legendQueuedLabel,
-        ),
+        // _LegendItem(
+        //   color: MedColors.blue,
+        //   background: MedColors.blueLight,
+        //   label: context.l10n.cabinOverview_legendFillingLabel,
+        // ),
+        // _LegendItem(
+        //   color: MedColors.green,
+        //   background: MedColors.greenLight,
+        //   label: context.l10n.cabinOverview_legendCompletedLabel,
+        // ),
+        // _LegendItem(
+        //   color: MedColors.border,
+        //   background: MedColors.surface,
+        //   label: context.l10n.cabinOverview_legendQueuedLabel,
+        // ),
       ],
     );
   }
@@ -595,30 +599,43 @@ class _UnitDoseDepthGrid extends StatelessWidget {
         children: [
           for (int r = 0; r < rowCount; r++) ...[
             if (r > 0) const SizedBox(height: _spacing),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 20,
-                  child: Text('${rowCount - r}', style: MedTextStyles.monoXs(color: MedColors.text3)),
-                ),
-                const SizedBox(width: 20, child: SizedBox.shrink()),
-                Expanded(
-                  child: Row(
-                    children: [
-                      for (int c = 0; c < colCount; c++) ...[
-                        if (c > 0) const SizedBox(width: _spacing),
-                        Expanded(
-                          child: SizedBox(
-                            height: _cellSize,
-                            child: _CellBox(index: r * colCount + c, state: grid[r][c], padded: false),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
+            Builder(
+              builder: (_) {
+                final label = rowCount - r;
+                final hasActive = grid[r].any((s) => s == _CellState.active);
+                final hasCompleted = grid[r].any((s) => s == _CellState.completed);
+                if (hasActive || hasCompleted) {
+                  debugPrint(
+                    '[loc-orientation] EKRAN: r=$r, gösterilen göz etiketi=$label, '
+                    'active=$hasActive, completed=$hasCompleted',
+                  );
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      child: Text('$label', style: MedTextStyles.monoXs(color: MedColors.text3)),
+                    ),
+                    const SizedBox(width: 20, child: SizedBox.shrink()),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          for (int c = 0; c < colCount; c++) ...[
+                            if (c > 0) const SizedBox(width: _spacing),
+                            Expanded(
+                              child: SizedBox(
+                                height: _cellSize,
+                                child: _CellBox(index: r * colCount + c, state: grid[r][c], padded: false),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ],

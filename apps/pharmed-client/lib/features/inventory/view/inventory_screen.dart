@@ -1,49 +1,32 @@
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
 
-// import '../../../../../pharmed-manager/lib/core/core.dart';
-// import '../../../../../pharmed-manager/lib/core/widgets/unified_table/unified_table_view.dart';
-// import '../notifier/inventory_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
-// class InventoryScreen extends StatelessWidget {
-//   const InventoryScreen({super.key});
+import '../notifier/inventory_notifier.dart';
+import '../notifier/inventory_state.dart';
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return ChangeNotifierProvider(
-//       create: (context) => InventoryNotifier(getCurrentCabinStockUseCase: context.read())..getInventory(),
-//       child: ResponsiveLayout(
-//         mobile: const SizedBox(),
-//         tablet: const SizedBox(),
-//         desktop: DesktopLayout(title: 'İlaç Envanter', child: _buildChild()),
-//       ),
-//     );
-//   }
+part 'table_view.dart';
 
-//   Widget _buildChild() {
-//     return Consumer<InventoryNotifier>(
-//       builder: (context, vm, _) {
-//         if (vm.isFetching && vm.inventory.isEmpty) {
-//           return const Center(child: CircularProgressIndicator.adaptive());
-//         }
+class InventoryScreen extends ConsumerWidget {
+  const InventoryScreen({super.key});
 
-//         if (vm.isEmpty) {
-//           return CommonEmptyStates.noData();
-//         }
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(inventoryNotifierProvider);
+    final notifier = ref.read(inventoryNotifierProvider.notifier);
 
-//         return UnifiedTableView<CabinStock>(
-//           data: vm.filteredItems,
-//           numericColumnIndices: const {4, 5, 6, 7, 9},
-//           enableSearch: true,
-//           onSearchChanged: vm.search,
-//           enableExcel: true,
-//           isLoading: vm.isFetching,
-//           cellBuilder: (item, colIndex, value) {
-//             if (colIndex == 9) return RemainingDayChip(days: item.remainingDay ?? 0);
-//             return null; // varsayılan text render
-//           },
-//         );
-//       },
-//     );
-//   }
-// }
+    return Scaffold(
+      body: switch (state) {
+        InventoryLoading() => const Center(child: MedLoadingIndicator()),
+        InventoryLoaded(:final items, :final isLoading) => TableView(
+          items: items,
+          isLoading: isLoading,
+          notifier: notifier,
+        ),
+        InventoryError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),
+      },
+    );
+  }
+}

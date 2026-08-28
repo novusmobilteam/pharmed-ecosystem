@@ -1,12 +1,3 @@
-// [SWREQ-CLI-MCENSUS-002] [IEC 62304 §5.5]
-// Sayım akışını yöneten notifier — MasterRefillNotifier ile BİREBİR AYNI
-// donanım sıralaması (çekmece aç → gözleri say → kapat → sıradaki çekmece).
-// Farklar sadece: secondary alan yok (config: censusTargetConfig,
-// hasSecondaryField=false), quantity backend'e hiç gönderilmez
-// (censusParamsOps).
-//
-// Sınıf: Class B
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -25,7 +16,7 @@ final masterCensusNotifierProvider = NotifierProvider<MasterCensusNotifier, Mast
 class MasterCensusNotifier extends Notifier<MasterCensusState> {
   late final MasterDrawerOrchestrator _orchestrator;
 
-  GetStationAssignmentsUseCase get _getAssignments => ref.read(getCabinAssignmentsUseCaseProvider);
+  GetStationAssignmentsUseCase get _getAssignments => ref.read(getStationAssignmentsUseCaseProvider);
   CompleteMasterCensusUseCase get _completeCensus => ref.read(completeMasterCensusUseCaseProvider);
 
   @override
@@ -230,7 +221,7 @@ class MasterCensusNotifier extends Notifier<MasterCensusState> {
         state = MasterCensusError(
           failure: CabinApiFailure(message: e.message),
           previousState: saved.copyWith(isSaving: false),
-          isQueueError: true,
+          //isQueueError: true,
         );
       },
     );

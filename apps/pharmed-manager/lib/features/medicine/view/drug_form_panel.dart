@@ -452,8 +452,8 @@ Widget _measurementUnitField() {
                   child: IgnorePointer(
                     ignoring: !isRequired,
                     child: UnitField(
-                      key: ObjectKey(vm.drug.doseMeasureUnit),
-                      unit: vm.drug.unitMeasure,
+                      key: ObjectKey(vm.drug.doseUnit),
+                      unit: vm.drug.doseUnit,
                       enabled: vm.drug.isMeasureUnit,
                       onChanged: (value) => vm.updateDoseUnit(value),
                       isRequired: isRequired,

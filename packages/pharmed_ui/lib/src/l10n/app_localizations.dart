@@ -156,11 +156,23 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get common_retryButton;
 
+  /// No description provided for @common_completeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get common_completeButton;
+
   /// No description provided for @common_cancelButton.
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get common_cancelButton;
+
+  /// No description provided for @common_barcodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get common_barcodeLabel;
 
   /// No description provided for @common_pageNotFound.
   ///
@@ -11067,28 +11079,6 @@ abstract class AppLocalizations {
   /// **'The internal layout of a serum cabinet is not read from the card; define its drawers and equipment placement here.'**
   String get cabinDesign_serum_infoBanner;
 
-  /// No description provided for @cabinDesign_serum_drawerCountLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Drawer count'**
-  String get cabinDesign_serum_drawerCountLabel;
-
-  /// No description provided for @cabinDesign_serum_drawerCardTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Drawer {index}'**
-  String cabinDesign_serum_drawerCardTitle(int index);
-
-  /// No description provided for @cabinDesign_serum_drawerCardSummary.
-  ///
-  /// In en, this message translates to:
-  /// **'{sideBySide}×{frontToBack} = {total} equipment'**
-  String cabinDesign_serum_drawerCardSummary(
-    int sideBySide,
-    int frontToBack,
-    int total,
-  );
-
   /// No description provided for @cabinDesign_serum_equipmentLayoutTitle.
   ///
   /// In en, this message translates to:
@@ -11101,57 +11091,95 @@ abstract class AppLocalizations {
   /// **'S-0{index}'**
   String cabinDesign_serum_drawerBadge(int index);
 
-  /// No description provided for @cabinDesign_serum_sideBySideLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Side by side'**
-  String get cabinDesign_serum_sideBySideLabel;
-
-  /// No description provided for @cabinDesign_serum_frontToBackLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Front to back'**
-  String get cabinDesign_serum_frontToBackLabel;
-
   /// No description provided for @cabinDesign_serum_topViewLabel.
   ///
   /// In en, this message translates to:
   /// **'Top View'**
   String get cabinDesign_serum_topViewLabel;
 
-  /// No description provided for @cabinDesign_serum_totalEquipmentLabel.
+  /// No description provided for @cabinDesign_serum_shelfCardTitle.
   ///
   /// In en, this message translates to:
-  /// **'{sideBySide} × {frontToBack} = {total} equipment'**
-  String cabinDesign_serum_totalEquipmentLabel(
-    int sideBySide,
-    int frontToBack,
-    int total,
-  );
+  /// **'Shelf {index}'**
+  String cabinDesign_serum_shelfCardTitle(int index);
 
-  /// No description provided for @cabinDesign_serum_frontLabel.
+  /// No description provided for @cabinDesign_serum_shelfCardSummary.
   ///
   /// In en, this message translates to:
-  /// **'← front'**
-  String get cabinDesign_serum_frontLabel;
+  /// **'{used}/{total} slots • {count} trays'**
+  String cabinDesign_serum_shelfCardSummary(int used, int total, int count);
 
-  /// No description provided for @cabinDesign_serum_backLabel.
+  /// No description provided for @cabinDesign_serum_lockToggleLabel.
   ///
   /// In en, this message translates to:
-  /// **'back →'**
-  String get cabinDesign_serum_backLabel;
+  /// **'Electromagnetic Lock'**
+  String get cabinDesign_serum_lockToggleLabel;
 
-  /// No description provided for @cabinDesign_serum_applyToAllButton.
+  /// No description provided for @cabinDesign_serum_addSmallButton.
   ///
   /// In en, this message translates to:
-  /// **'Apply this layout to all drawers'**
-  String get cabinDesign_serum_applyToAllButton;
+  /// **'Small'**
+  String get cabinDesign_serum_addSmallButton;
 
-  /// No description provided for @cabinDesign_serum_incompleteWarning.
+  /// No description provided for @cabinDesign_serum_addMediumButton.
   ///
   /// In en, this message translates to:
-  /// **'The design cannot be saved until every drawer\'s layout is defined. Missing: {missingDrawerLabel}'**
-  String cabinDesign_serum_incompleteWarning(String missingDrawerLabel);
+  /// **'Medium'**
+  String get cabinDesign_serum_addMediumButton;
+
+  /// No description provided for @cabinDesign_serum_addLargeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get cabinDesign_serum_addLargeButton;
+
+  /// No description provided for @cabinDesign_serum_traySizeSmallLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get cabinDesign_serum_traySizeSmallLabel;
+
+  /// No description provided for @cabinDesign_serum_traySizeMediumLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get cabinDesign_serum_traySizeMediumLabel;
+
+  /// No description provided for @cabinDesign_serum_traySizeLargeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get cabinDesign_serum_traySizeLargeLabel;
+
+  /// No description provided for @cabinDesign_serum_trayListItemLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{index}. Tray • {sizeLabel}'**
+  String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel);
+
+  /// No description provided for @cabinDesign_serum_areaUsedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{used}/{total} slots used'**
+  String cabinDesign_serum_areaUsedLabel(int used, int total);
+
+  /// No description provided for @cabinDesign_serum_capacityFullWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Shelf is full, no more trays can be added'**
+  String get cabinDesign_serum_capacityFullWarning;
+
+  /// No description provided for @cabinDesign_serum_leftLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get cabinDesign_serum_leftLabel;
+
+  /// No description provided for @cabinDesign_serum_rightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Right'**
+  String get cabinDesign_serum_rightLabel;
 
   /// No description provided for @cabinDesign_noSelectionHint.
   ///
@@ -11578,6 +11606,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Page {current} / {total}'**
   String assignment_edit_pageIndicator(int current, int total);
+
+  /// No description provided for @unscannedBarcode_scan_actionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Barcode'**
+  String get unscannedBarcode_scan_actionLabel;
+
+  /// No description provided for @dashboard_delayMinutesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String dashboard_delayMinutesLabel(int minutes);
+
+  /// No description provided for @dashboard_delayHoursMinutesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h {minutes}m'**
+  String dashboard_delayHoursMinutesLabel(int hours, int minutes);
+
+  /// No description provided for @dashboard_upcomingTreatmentsDelayedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delayed'**
+  String get dashboard_upcomingTreatmentsDelayedTitle;
+
+  /// No description provided for @dashboard_upcomingTreatmentsDueSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Within 20 Minutes'**
+  String get dashboard_upcomingTreatmentsDueSoonTitle;
+
+  /// No description provided for @dashboard_upcomingTreatmentsUpcomingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'20-60 Min'**
+  String get dashboard_upcomingTreatmentsUpcomingTitle;
+
+  /// Upcoming treatments panel — relative time label under the clock for non-delayed patients, e.g. '4 DK SONRA'
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} MIN LEFT'**
+  String dashboard_upcomingTreatmentsDueInMinutesLabel(int minutes);
 }
 
 class _AppLocalizationsDelegate

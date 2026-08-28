@@ -38,8 +38,12 @@ class DestructionSelectionView extends ConsumerWidget {
         groups: groups ?? [],
         assignments: selection.medicines,
         selectedUnitIds: selection.selectedUnitIds,
-        //onToggleDrawer: notifier.toggleDrawer,
-        //onToggleUnit: (DrawerUnit unit) {},
+        onDrawerTap: notifier.toggleDrawer,
+        onCellTap: (unit) {
+          final id = unit.id;
+          if (id == null) return;
+          notifier.toggleUnit(id);
+        },
       ),
       right: CabinSelectionContentShell(
         menu: menu,
@@ -105,11 +109,12 @@ class _GridView extends ConsumerWidget {
     final isActive = medicine is! Drug || currentUserId == null
         ? true
         : medicine.destroyableUsers.any((u) => u.id == currentUserId);
+    final isTappable = id != null && isActive && a.toDisplayQuantity(a.totalQuantity) > 0;
 
     return MedicineAssignmentCard(
       assignment: a,
       selected: id != null && selectedItemIds.contains(id),
-      onTap: (id == null || !isActive) ? null : () => onToggle(id),
+      onTap: !isTappable ? null : () => onToggle(id),
       isActive: isActive,
       extra: isActive
           ? const []

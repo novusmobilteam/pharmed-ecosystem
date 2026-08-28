@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/features/dashboard/dashboard.dart';
 
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -12,7 +13,9 @@ import '../notifier/master_waste_notifier.dart';
 import '../notifier/master_waste_state.dart';
 
 class MasterWasteSelectionView extends ConsumerWidget {
-  const MasterWasteSelectionView({super.key});
+  const MasterWasteSelectionView({super.key, required this.stationContext});
+
+  final StationCabinsContext stationContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,6 +54,7 @@ class MasterWasteSelectionView extends ConsumerWidget {
     final selectedItemIds = selection?.selectedItemIds ?? const {};
 
     return CabinSelectionContentShell(
+      menu: stationContext.menu,
       searchQuery: selection?.search ?? '',
       onSearchQueryChanged: notifier.onSearchChanged,
       searchHint: context.l10n.waste_hint_searchMedicine,
@@ -85,6 +89,10 @@ class MasterWasteSelectionView extends ConsumerWidget {
 
                   note: (wasteNote != null && wasteNote.isNotEmpty)
                       ? RxCardNote(label: context.l10n.medicine_fieldDestructionNote, text: wasteNote)
+                      : null,
+
+                  statusChip: time != null
+                      ? RxCardChip(label: time.shortRelativeLabelOf(context), tone: MedTone.info)
                       : null,
 
                   stepper: (isSelected)

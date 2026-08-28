@@ -1,4 +1,4 @@
-export 'data/warning_dto.dart';
+export 'dto/warning_dto.dart';
 export 'domain/entity/warning.dart';
 export 'domain/repository/i_warning_repository.dart';
 export 'domain/usecase/create_warning_usecase.dart';

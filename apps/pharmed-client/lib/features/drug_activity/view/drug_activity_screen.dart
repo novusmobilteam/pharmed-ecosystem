@@ -24,7 +24,7 @@ class DrugActivityScreen extends ConsumerWidget {
           isLoading: isLoading,
           notifier: notifier,
         ),
-        DrugActivityError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),
+        DrugActivityError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noData)),
       },
     );
   }

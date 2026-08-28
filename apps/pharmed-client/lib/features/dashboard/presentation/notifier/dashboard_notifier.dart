@@ -1,14 +1,7 @@
-// [SWREQ-UI-DASH-003] [IEC 62304 §5.5]
-// Anasayfa state yöneticisi — fetch grubu + menü/rota.
-// Sensör telemetrisi (cabinSensorProvider) ve kabin bağlantısı
-// (cabinConnectionProvider) bağımsız yaşam döngüsüne sahiptir; bu notifier
-// onları yönetmez.
-// Repository'yi bilir, Dio/Hive'ı bilmez.
-// Sınıf: Class B
-
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
@@ -118,12 +111,13 @@ class DashboardNotifier extends Notifier<DashboardState> {
       _getUpcomingTreatments.call(mac: mac),
       _getDrugActivities.call(mac: mac),
       _getUnapplied.call(),
-      ref.read(allRoomsProvider.future),
-      ref.read(allBedsProvider.future),
-      ref.read(allServicesProvider.future),
+      // TODO : Mobil kabin için kontrol et
+      // ref.read(allRoomsProvider.future),
+      // ref.read(allBedsProvider.future),
+      // ref.read(allServicesProvider.future),
     ]);
 
-    final treatmentsSection = _toSection<List<PrescriptionItem>?>(results[0] as Result<List<PrescriptionItem>>);
+    final treatmentsSection = _toSection<List<UpcomingTreatment>?>(results[0] as Result<List<UpcomingTreatment>>);
     final activitiesSection = _toSection<List<PrescriptionItemMovement>?>(
       results[1] as Result<List<PrescriptionItemMovement>?>,
     );
@@ -138,6 +132,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
         drugActivities: activitiesSection,
         unappliedPrescriptions: unappliedSection,
       ),
+      initialLoadComplete: true,
     );
   }
 
@@ -232,7 +227,7 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
   DashboardSection<T> _toSection<T>(Result<T> result) {
     return switch (result) {
-      Ok(:final value) => DashboardSection<T>(data: value),
+      Ok(:final value) => DashboardSection<T>(data: value, savedAt: DateTime.now()),
       Error(:final error) => DashboardSection<T>(error: error.message),
     };
   }
@@ -259,6 +254,8 @@ class DashboardNotifier extends Notifier<DashboardState> {
       String path => path,
       _ => 'dashboard',
     };
+
+    debugPrint(route);
 
     if (route == 'dashboard') {
       state = current.copyWith(activeRoute: 'dashboard', clearActiveCabinId: true, clearPendingCabinRoute: true);

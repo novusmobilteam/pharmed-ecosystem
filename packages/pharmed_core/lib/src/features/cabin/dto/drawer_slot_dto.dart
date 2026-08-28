@@ -1,5 +1,3 @@
-// pharmed_data/src/cabin/dto/drawer_slot_dto.dart
-
 import 'package:pharmed_core/pharmed_core.dart';
 
 /// ÇEKMECE YUVASI DTO

@@ -918,6 +918,14 @@
   "@common_confirmCancelButton": {
     "description": "Confirm cancel button label inside danger/exit dialogs"
   },
+  "common_barcodeLabel": "Karekod",
+  "@common_barcodeLabel": {
+  "description": "Generic field label for barcode/QR code text input, used wherever a barcode value is entered"
+  },
+  "common_completeButton": "Tamamla",
+  "@common_completeButton": {
+  "description": "Generic confirm/complete button used across dialogs to finalize an action (e.g. scan barcode dialog)"
+  },
   "common_dismissButton": "Vazgeç",
   "@common_dismissButton": {
     "description": "Dismiss/clear button label used in action bars"
@@ -7424,34 +7432,6 @@
   "@cabinDesign_serum_infoBanner": {
     "description": "Info banner explaining why serum internal layout must be manually configured"
   },
-  "cabinDesign_serum_drawerCountLabel": "Çekmece sayısı",
-  "@cabinDesign_serum_drawerCountLabel": {
-    "description": "Label for the serum cabinet's physical drawer count stepper"
-  },
-  "cabinDesign_serum_drawerCardTitle": "Çekmece {index}",
-  "@cabinDesign_serum_drawerCardTitle": {
-    "description": "Title of a single serum drawer's expandable config card",
-    "placeholders": {
-      "index": {
-        "type": "int"
-      }
-    }
-  },
-  "cabinDesign_serum_drawerCardSummary": "{sideBySide}×{frontToBack} = {total} avadanlık",
-  "@cabinDesign_serum_drawerCardSummary": {
-    "description": "Collapsed summary of a serum drawer's equipment layout",
-    "placeholders": {
-      "sideBySide": {
-        "type": "int"
-      },
-      "frontToBack": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
   "cabinDesign_serum_equipmentLayoutTitle": "Avadanlık Yerleşimi",
   "@cabinDesign_serum_equipmentLayoutTitle": {
     "description": "Section header for a single serum drawer's equipment layout editor"
@@ -7465,54 +7445,70 @@
       }
     }
   },
-  "cabinDesign_serum_sideBySideLabel": "Yan yana",
-  "@cabinDesign_serum_sideBySideLabel": {
-    "description": "Label for the side-by-side equipment count stepper"
-  },
-  "cabinDesign_serum_frontToBackLabel": "Arka arkaya",
-  "@cabinDesign_serum_frontToBackLabel": {
-    "description": "Label for the front-to-back equipment count stepper"
-  },
   "cabinDesign_serum_topViewLabel": "Üstten Görünüm",
   "@cabinDesign_serum_topViewLabel": {
     "description": "Label above the top-down equipment grid preview"
   },
-  "cabinDesign_serum_totalEquipmentLabel": "{sideBySide} × {frontToBack} = {total} avadanlık",
-  "@cabinDesign_serum_totalEquipmentLabel": {
-    "description": "Summary text next to the top-down equipment grid preview",
-    "placeholders": {
-      "sideBySide": {
-        "type": "int"
-      },
-      "frontToBack": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "cabinDesign_serum_frontLabel": "← ön",
-  "@cabinDesign_serum_frontLabel": {
-    "description": "Label marking the front side of the equipment grid preview"
-  },
-  "cabinDesign_serum_backLabel": "arka →",
-  "@cabinDesign_serum_backLabel": {
-    "description": "Label marking the back side of the equipment grid preview"
-  },
-  "cabinDesign_serum_applyToAllButton": "Bu yerleşimi tüm çekmecelere uygula",
-  "@cabinDesign_serum_applyToAllButton": {
-    "description": "Button that copies the current drawer's equipment layout to all other serum drawers"
-  },
-  "cabinDesign_serum_incompleteWarning": "Tüm çekmecelerin yerleşimi tanımlanmadan dizayn kaydedilemez. Eksik: {missingDrawerLabel}",
-  "@cabinDesign_serum_incompleteWarning": {
-    "description": "Warning shown when not all serum drawers have their equipment layout defined yet",
-    "placeholders": {
-      "missingDrawerLabel": {
-        "type": "String"
-      }
-    }
-  },
+  "cabinDesign_serum_shelfCardTitle": "Raf {index}",
+"@cabinDesign_serum_shelfCardTitle": {
+  "description": "Shelf card title in the serum cabinet design screen",
+  "placeholders": { "index": { "type": "int" } }
+},
+"cabinDesign_serum_shelfCardSummary": "{used}/{total} alan • {count} avadanlık",
+"@cabinDesign_serum_shelfCardSummary": {
+  "description": "Collapsed shelf card summary showing area usage and tray count",
+  "placeholders": { "used": { "type": "int" }, "total": { "type": "int" }, "count": { "type": "int" } }
+},
+"cabinDesign_serum_lockToggleLabel": "Elektromanyetik Kilit",
+"@cabinDesign_serum_lockToggleLabel": {
+  "description": "Toggle label for enabling/disabling the electromagnetic lock on a serum shelf"
+},
+"cabinDesign_serum_addSmallButton": "Küçük",
+"@cabinDesign_serum_addSmallButton": {
+  "description": "Button to add a small-size tray to a serum shelf"
+},
+"cabinDesign_serum_addMediumButton": "Orta",
+"@cabinDesign_serum_addMediumButton": {
+  "description": "Button to add a medium-size tray to a serum shelf"
+},
+"cabinDesign_serum_addLargeButton": "Büyük",
+"@cabinDesign_serum_addLargeButton": {
+  "description": "Button to add a large-size tray to a serum shelf"
+},
+"cabinDesign_serum_traySizeSmallLabel": "Küçük",
+"@cabinDesign_serum_traySizeSmallLabel": {
+  "description": "Tray size label — small (1 area unit)"
+},
+"cabinDesign_serum_traySizeMediumLabel": "Orta",
+"@cabinDesign_serum_traySizeMediumLabel": {
+  "description": "Tray size label — medium (2 area units)"
+},
+"cabinDesign_serum_traySizeLargeLabel": "Büyük",
+"@cabinDesign_serum_traySizeLargeLabel": {
+  "description": "Tray size label — large (4 area units)"
+},
+"cabinDesign_serum_trayListItemLabel": "{index}. Avadanlık • {sizeLabel}",
+"@cabinDesign_serum_trayListItemLabel": {
+  "description": "List row label representing one tray placed on a shelf",
+  "placeholders": { "index": { "type": "int" }, "sizeLabel": { "type": "String" } }
+},
+"cabinDesign_serum_areaUsedLabel": "{used}/{total} alan kullanıldı",
+"@cabinDesign_serum_areaUsedLabel": {
+  "description": "Area usage indicator shown in the shelf top-view panel",
+  "placeholders": { "used": { "type": "int" }, "total": { "type": "int" } }
+},
+"cabinDesign_serum_capacityFullWarning": "Raf dolu, yeni avadanlık eklenemez",
+"@cabinDesign_serum_capacityFullWarning": {
+  "description": "Warning shown when all 8 area units of a shelf are occupied"
+},
+"cabinDesign_serum_leftLabel": "Sol",
+"@cabinDesign_serum_leftLabel": {
+  "description": "Left side label in the serum shelf top-view panel"
+},
+"cabinDesign_serum_rightLabel": "Sağ",
+"@cabinDesign_serum_rightLabel": {
+  "description": "Right side label in the serum shelf top-view panel"
+},
   "cabinDesign_noSelectionHint": "Detayları görmek için bir çekmece seçin.",
   "@cabinDesign_noSelectionHint": {
     "description": "Placeholder shown in the right panel before any drawer is selected"
@@ -8570,5 +8566,42 @@
   },
   "@assignment_edit_nextPage": {
     "description": "Button label to go to the next page of the paginated drug search list"
+  },
+  "unscannedBarcode_scan_actionLabel": "Karekod Okut",
+  "@unscannedBarcode_scan_actionLabel": {
+  "description": "Table action tooltip and dialog title for scanning a missing barcode on a prescription item, shown on the Unscanned Barcodes screen"
+  },
+  "dashboard_delayMinutesLabel": "{minutes} dk",
+  "@dashboard_delayMinutesLabel": {
+    "description": "Upcoming treatment delay shown when under 60 minutes (dashboard delay indicator)",
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+
+  "dashboard_delayHoursMinutesLabel": "{hours}s {minutes}dk",
+  "@dashboard_delayHoursMinutesLabel": {
+    "description": "Upcoming treatment delay shown when 60 minutes or more (dashboard delay indicator), combined hours+minutes format",
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "dashboard_upcomingTreatmentsDelayedTitle": "Gecikmiş",
+  "@dashboard_upcomingTreatmentsDelayedTitle": {
+    "description": "Upcoming treatments panel — section header for patients whose first treatment time has already passed"
+  },
+  "dashboard_upcomingTreatmentsDueSoonTitle": "20 Dakika İçinde",
+  "@dashboard_upcomingTreatmentsDueSoonTitle": {
+    "description": "Upcoming treatments panel — section header for patients whose first treatment is due within 20 minutes"
+  },
+  "dashboard_upcomingTreatmentsUpcomingTitle": "20-60 DK",
+  "@dashboard_upcomingTreatmentsUpcomingTitle": {
+    "description": "Upcoming treatments panel — section header for patients whose first treatment is due between 20 and 60 minutes from now"
+  },
+  "dashboard_upcomingTreatmentsDueInMinutesLabel": "{minutes} DK SONRA",
+  "@dashboard_upcomingTreatmentsDueInMinutesLabel": {
+    "description": "Upcoming treatments panel — relative time label under the clock for non-delayed patients, e.g. '4 DK SONRA'",
+    "placeholders": { "minutes": { "type": "int" } }
   }
 }

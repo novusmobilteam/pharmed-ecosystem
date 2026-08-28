@@ -6,12 +6,11 @@ class Warning {
   final WarningSubject? subject;
   final String? text;
   final bool isActive;
+  final DateTime? createdDate;
 
-  const Warning({this.id, this.subject, this.text, this.isActive = true});
+  const Warning({this.id, this.subject, this.text, this.isActive = true, this.createdDate});
 
   Status get status => isActive ? Status.active : Status.passive;
-
-  // Update metodları
 
   Warning updateText(String? text) {
     return copyWith(text: text);

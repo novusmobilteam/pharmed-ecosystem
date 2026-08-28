@@ -23,7 +23,6 @@ class CabinSettingsView extends StatelessWidget {
             final g when g.isSerum => _SerumManualLayoutPanel(group: g),
             final g => _DrawerDetailPanel(group: g, ready: ready!, cabin: ready!.cabin, notifier: notifier),
           },
-          Spacer(),
         ],
       ),
     );

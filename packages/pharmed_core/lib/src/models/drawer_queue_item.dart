@@ -132,7 +132,27 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
     if (stockId == null) return null;
     final assignment = assignmentAt(job, targetIndex);
     final stock = assignment?.stocks?.firstWhereOrNull((s) => s.id == stockId);
-    return stock?.cabinDrawerDetail?.stepNo;
+    if (stock == null) return null;
+
+    // Öncelik: stock'un kendi nested cabinDrawerDetail'ı (bazı endpoint'ler dolduruyor).
+    final direct = stock.cabinDrawerDetail?.stepNo;
+    if (direct != null) {
+      print('[loc-orientation] stockId=$stockId -> stepNo=$direct (direct/nested)');
+      return direct;
+    }
+
+    // Fallback: nested boşsa (intake'in assignment response'u gibi),
+    // cabinDrawerDetailId ile assignment seviyesindeki listeden eşleştir.
+    // CheckIntakeUseCase._prepareWithdrawDetails zaten bu listeye güveniyor,
+    // yani her zaman dolu geldiği doğrulanmış.
+    final detailId = stock.cabinDrawerDetailId;
+    if (detailId == null) {
+      print('[loc-orientation] stockId=$stockId -> detailId de null, stepNo bulunamadı');
+      return null;
+    }
+    final stepNo = assignment?.cabinDrawerDetail?.firstWhereOrNull((d) => d.id == detailId)?.stepNo;
+    print('[loc-orientation] stockId=$stockId, detailId=$detailId -> stepNo=$stepNo (fallback)');
+    return stepNo;
   }
 
   return allGroups.map((group) {

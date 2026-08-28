@@ -277,7 +277,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
           state = MasterRefundError(
             failure: CabinApiFailure(message: e.message),
             previousState: current.copyWith(isSaving: false),
-            isQueueError: true,
+            //isQueueError: true,
           );
         } else if (current is MasterRefundMedicineSelection) {
           state = current.copyWith(
@@ -407,6 +407,7 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
       state = s.copyWith(checkStatuses: Map.of(checkStatuses), isChecking: true);
 
       final quantity = s.amountFor(item.id);
+      print('Quantity: $quantity');
       final returnType = (item.medicine is Drug) ? (item.medicine as Drug).returnType : null;
 
       if (item.medicine?.id == null || returnType == null) {

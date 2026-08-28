@@ -44,6 +44,7 @@ class FinishCabinSetupUseCase {
       status: Status.active,
       station: config.stationScope.station,
       rfidIp: config.basicInfo.rfidIpAddress,
+      stationId: config.stationScope.station.id,
       rfidPort: config.basicInfo.rfidPort,
       isRfidEnabled: config.basicInfo.rfidEnable,
       bedIds: config.stationScope is MobileScope

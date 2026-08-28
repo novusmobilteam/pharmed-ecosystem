@@ -5,6 +5,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../../widgets/widgets.dart';
+import '../../../widgets/rx_operation_card/rx_operation_card_2.dart';
 import '../notifier/unload_drawer_notifier.dart';
 import '../notifier/unload_drawer_state.dart';
 
@@ -51,33 +52,53 @@ class _DrawerUnloadConfirmForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Assignment üzerinden tek fiziksel çekmece açık — kartlar burada
-    // birer "hedef" değil, sadece o çekmecede biriken iadelerin dökümü.
-    // Refund'un CabinExecutionGridCard'ı assignment bazlı tek target
-    // gösterdiği için burada uygun değil; ReturnDrawerMedicine listesini
-    // düz bir grid'de bilgi amaçlı listeliyoruz.
+    // Artık salt-bilgi değil — kullanıcı fiziksel çekmecede GÖRDÜĞÜ ilacı
+    // burada işaretler. Sadece işaretlenenler confirmDrawerUnload'a gider.
     return CabinExecutionGrid(
-      maxWidth: 640,
+      maxWidth: 820,
       isLocked: executing.isSaving,
       isKubik: false,
       itemCount: executing.items.length,
-      itemBuilder: (context, i) => _medicineInfoCard(context, executing.items[i]),
+      itemBuilder: (context, i) => _medicineSelectCard(context, executing.items[i], executing),
       header: null,
-      canConfirm: executing.items.isNotEmpty,
+      canConfirm: executing.canConfirm,
       isSaving: executing.isSaving,
       confirmLabel: context.l10n.unload_action_completeDrawerUnload,
       onConfirm: notifier.confirmDrawerUnload,
     );
   }
 
-  Widget _medicineInfoCard(BuildContext context, ReturnDrawerMedicine item) {
+  Widget _medicineSelectCard(BuildContext context, ReturnDrawerMedicine item, UnloadDrawerExecuting executing) {
     final unit = item.material?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
+    final isSelected = item.id != null && executing.selectedIds.contains(item.id);
+    final time = item.returnDate;
+    final drug = item.prescriptionItem?.medicine?.when(drug: (Drug d) => d, consumable: (_) => null);
 
-    return MedValueCard(
-      label: item.material?.name ?? '—',
-      value: (item.quantity ?? 0).formatFractional,
-      suffix: unit,
-      onTap: () {},
+    final returnNote = drug?.returnNote?.trim();
+
+    return RxOperationCard2(
+      title: item.material?.name ?? '—',
+      subtitle: '${(item.quantity ?? 0).formatFractional} $unit',
+      barcode: item.material?.barcode,
+      statusChip: time != null ? RxCardChip(label: time.shortRelativeLabelOf(context), tone: MedTone.info) : null,
+      isSelected: isSelected,
+
+      note: (returnNote != null && returnNote.isNotEmpty)
+          ? RxCardNote(label: context.l10n.medicine_fieldReturnNote, text: returnNote)
+          : null,
+
+      movements: [
+        if (item.returnUser case final m?)
+          RxCardMovement(
+            label: PrescriptionMovementType.returned.actorLabel(context),
+            tone: PrescriptionMovementType.returned.movementTone,
+            performedBy: item.returnUser?.fullName ?? '',
+            quantity: '${(item.quantity ?? 0).formatFractional} $unit',
+            date: item.returnDate?.shortRelativeLabelOf(context) ?? '—',
+          ),
+      ],
+
+      onTap: (item.id != null && !executing.isSaving) ? () => notifier.toggleExecutingItem(item.id!) : null,
     );
   }
 }

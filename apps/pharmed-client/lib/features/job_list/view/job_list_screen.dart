@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../widgets/widgets.dart';
@@ -20,12 +21,9 @@ class JobListScreenState extends ConsumerState<JobListScreen> {
   @override
   void initState() {
     super.initState();
-    _initialize();
-  }
-
-  void _initialize() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+
       ref.read(jobListNotifierProvider.notifier).init();
     });
   }
@@ -46,13 +44,23 @@ class JobListScreenState extends ConsumerState<JobListScreen> {
       return const Center(child: MedLoadingIndicator());
     }
 
-    return CabinOperationSelectionLayout(
-      left: PatientSelectionPanel(
-        config: PatientSelectionConfig.empty,
-        onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
-        selectedPatient: state.selectedHospitalization,
-      ),
-      right: _PrescriptionPanel(state: state),
+    return Row(
+      spacing: 12.0,
+      children: [
+        Expanded(
+          flex: 2,
+          child: PatientSelectionGuide(
+            selectedPatient: state.selectedHospitalization,
+            patients: state.allPatients,
+            isPatientLoading: state.isJobListLoading,
+            search: '',
+            onPatientTap: (Hospitalization hospitalization) => notifier.selectPatient(hospitalization),
+            onSearchChanged: (String value) => notifier.onSearchChanged(value),
+          ),
+        ),
+
+        Expanded(flex: 7, child: _PrescriptionPanel(state: state)),
+      ],
     );
   }
 }

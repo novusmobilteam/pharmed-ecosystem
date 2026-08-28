@@ -110,7 +110,7 @@ class AuthNotifier extends Notifier<AuthState> {
     _lastActivityAt = null;
     _tokenHolder.setToken(null);
     await _cache.clear();
-    state = AuthLoggedOut(showLockedDashboard: locked);
+    state = AuthLoggedOut(showLockedDashboard: true);
   }
 
   void onUnauthorized() {

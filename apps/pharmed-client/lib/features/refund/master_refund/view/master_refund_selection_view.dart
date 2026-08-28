@@ -85,7 +85,8 @@ class MasterRefundSelectionView extends ConsumerWidget {
                 final refundNote = drug?.returnNote?.trim();
 
                 final time = item.time;
-                final currentAmount = item.returnQuantity ?? item.appliedQuantity;
+                final originalAmount = item.lastMovement?.prescriptionItem?.receiveDosePiece ?? 0;
+                final currentAmount = item.returnQuantity ?? originalAmount;
                 final dose = currentAmount.toDouble().formatFractional;
                 final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
 
