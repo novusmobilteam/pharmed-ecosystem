@@ -27,7 +27,9 @@ class StationFormPanel extends StatelessWidget {
       child: Consumer<StationFormNotifier>(
         builder: (context, formNotifier, _) {
           return SidePanel(
-            title: isNew ? context.l10n.stationSetup_station_formTitleNew : context.l10n.stationSetup_station_formTitleEdit,
+            title: isNew
+                ? context.l10n.stationSetup_station_formTitleNew
+                : context.l10n.stationSetup_station_formTitleEdit,
             subtitle: isNew
                 ? context.l10n.stationSetup_station_formSubtitleNew
                 : context.l10n.stationSetup_station_formSubtitleEdit,
@@ -87,6 +89,7 @@ class StationFormPanel extends StatelessWidget {
           _ServiceField(),
           _ProvidedServices(),
           _StationTypeField(),
+          _EmergenyAccessField(),
         ],
       ),
     );
@@ -261,6 +264,23 @@ class _StationTypeField extends StatelessWidget {
             ),
           ],
           onChanged: notifier.updateType,
+        );
+      },
+    );
+  }
+}
+
+class _EmergenyAccessField extends StatelessWidget {
+  const _EmergenyAccessField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<StationFormNotifier>(
+      builder: (context, notifier, _) {
+        return MedToggleField(
+          label: context.l10n.user_emergencyAccessLabel,
+          value: notifier.station?.canCreateEmergencyPatient ?? false,
+          onChanged: (value) => notifier.toggleEmergencyAccess(value),
         );
       },
     );

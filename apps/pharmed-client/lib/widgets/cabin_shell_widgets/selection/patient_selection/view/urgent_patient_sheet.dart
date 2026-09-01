@@ -10,11 +10,17 @@ class UrgentPatientSheet extends StatelessWidget {
 }
 
 class _UrgentPatientCreateSheetContent extends ConsumerStatefulWidget {
-  const _UrgentPatientCreateSheetContent({required this.services, required this.onCancel, required this.onCreated});
+  const _UrgentPatientCreateSheetContent({
+    required this.services,
+    required this.scope,
+    required this.onCancel,
+    required this.onCreated,
+  });
 
   final List<HospitalService> services;
   final VoidCallback onCancel;
-  final ValueChanged<Hospitalization> onCreated;
+  final UrgentPatientMedicineScope scope;
+  final void Function(Hospitalization patient, UrgentPatientMedicineScope scope) onCreated;
 
   @override
   ConsumerState<_UrgentPatientCreateSheetContent> createState() => _UrgentPatientCreateSheetContentState();
@@ -41,7 +47,7 @@ class _UrgentPatientCreateSheetContentState extends ConsumerState<_UrgentPatient
     final notifier = ref.read(patientSelectionNotifierProvider.notifier);
     await notifier.createUrgentPatient(
       serviceId: selected!.id!,
-      onSuccess: widget.onCreated,
+      onSuccess: (h) => widget.onCreated(h, widget.scope),
       onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
     );
   }

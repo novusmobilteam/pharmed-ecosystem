@@ -17,15 +17,22 @@ class MasterIntakeView extends ConsumerStatefulWidget {
 }
 
 class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
+  late final MasterIntakeNotifier _notifier;
+
   @override
   void initState() {
     super.initState();
-
-    final notifier = ref.read(masterIntakeNotifierProvider.notifier);
+    _notifier = ref.read(masterIntakeNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      notifier.init(widget.stationContext);
+      _notifier.init(widget.stationContext);
     });
+  }
+
+  @override
+  void dispose() {
+    _notifier.resetAll();
+    super.dispose();
   }
 
   @override
@@ -66,6 +73,6 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
       return MasterIntakeExecutionView(cabinDataByCabinId: widget.stationContext.cabinDataByCabinId);
     }
 
-    return MasterIntakeSelectionView(menu: widget.stationContext.menu);
+    return MasterIntakeSelectionView(stationContext: widget.stationContext);
   }
 }

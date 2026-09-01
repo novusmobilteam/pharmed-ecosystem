@@ -12,6 +12,7 @@ class StationDTO {
   final List<ServiceDto> stationProvidedServices;
   final int? workingMethod;
   final List<CabinDTO>? cabins;
+  final bool canCreateEmergencyPatient;
 
   const StationDTO({
     this.id,
@@ -25,6 +26,7 @@ class StationDTO {
     this.stationProvidedServices = const [],
     this.workingMethod,
     this.cabins,
+    this.canCreateEmergencyPatient = false,
   });
 
   factory StationDTO.fromJson(Map<String, dynamic> json) => StationDTO(
@@ -45,6 +47,7 @@ class StationDTO {
     cabins: json['cabins'] != null
         ? (json['cabins'] as List).map((e) => CabinDTO.fromJson(e as Map<String, dynamic>)).toList()
         : const [],
+    canCreateEmergencyPatient: (json['canCreateEmergencyPatient'] as bool?) ?? false,
   );
 
   Map<String, dynamic> toJson() => {
@@ -57,6 +60,7 @@ class StationDTO {
     'medicalConsumableWarehouseId': medicalConsumableWarehouse?.id,
     'stationProvidedServiceIds': stationProvidedServices.map((s) => s.id).toList(),
     'workingMethod': workingMethod,
+    'canCreateEmergencyPatient': canCreateEmergencyPatient,
     //'macAddress': '',
   };
 }

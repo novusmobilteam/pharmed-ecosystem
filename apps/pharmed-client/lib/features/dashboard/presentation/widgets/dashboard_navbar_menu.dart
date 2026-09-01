@@ -1,14 +1,4 @@
-// [SWREQ-UI-NAV-KABIN-001]
-// "Kabin Yönetimi" menü öğesine tıklandığında açılan mega menü paneli.
-// Sol sidebar → kategori seçimi  |  Sağ → 2×2 kart grid + hızlı butonlar.
-// Sınıf: Class B
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart' hide MaterialType;
-import 'package:pharmed_ui/pharmed_ui.dart';
-
-import '../../../../core/cache/app_settings_cache.dart';
+part of 'dashboard_app_bar.dart';
 
 class DashboardNavbarMenu extends StatelessWidget {
   const DashboardNavbarMenu({

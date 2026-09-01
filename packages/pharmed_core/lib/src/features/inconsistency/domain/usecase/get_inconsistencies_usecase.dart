@@ -6,7 +6,7 @@ class GetInconsistenciesUseCase {
 
   GetInconsistenciesUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<Inconsistency>>>> call(PagedQueryParams params) {
-    return _repository.getInconsistencies(skip: params.skip, take: params.take, search: params.searchQuery);
+  Future<Result<ApiResponse<List<Inconsistency>>>> call(int stationId, {PagedQueryParams? params}) {
+    return _repository.getInconsistencies(stationId, params: params);
   }
 }

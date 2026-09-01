@@ -13,13 +13,17 @@ class InconsistencyRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-INCONSISTENCY';
 
-  Future<Result<ApiResponse<List<InconsistencyDTO>>>> getInconsistencies({int? skip, int? take, String? search}) async {
+  Future<Result<ApiResponse<List<InconsistencyDTO>>>> getInconsistencies(
+    int stationId, {
+    PagedQueryParams? params,
+  }) async {
     final res = await fetchRequest<ApiResponse<List<InconsistencyDTO>>>(
       path: _base,
-      skip: skip,
-      take: take,
-      searchQuery: search,
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
       searchFields: ['drugName'],
+      query: {'stationId': stationId},
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(InconsistencyDTO.fromJson),
       successLog: 'Inconsistencies fetched',

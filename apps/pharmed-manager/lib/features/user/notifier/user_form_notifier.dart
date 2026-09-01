@@ -144,4 +144,9 @@ class UserFormNotifier extends ChangeNotifier with ApiRequestMixin {
     _user = _user.copyWith(validUntil: value);
     notifyListeners();
   }
+
+  void toggleEmergencyAccess(bool? value) {
+    _user = _user.copyWith(canCreateEmergencyPatient: value);
+    notifyListeners();
+  }
 }

@@ -7,6 +7,7 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
+import '../../../dashboard/dashboard.dart';
 import '../../intake.dart';
 import '../notifier/redirected_intake_orders_notifier.dart';
 import '../notifier/redirected_intake_orders_state.dart';
@@ -14,9 +15,9 @@ part 'redirected_orders_content.dart';
 part 'rx_orders_content.dart';
 
 class MasterIntakeSelectionView extends ConsumerWidget {
-  const MasterIntakeSelectionView({super.key, required this.menu});
+  const MasterIntakeSelectionView({super.key, required this.stationContext});
 
-  final MenuItem menu;
+  final StationCabinsContext stationContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -63,16 +64,28 @@ class MasterIntakeSelectionView extends ConsumerWidget {
       flex: 2,
       left: PatientSelectionPanel(
         config: PatientSelectionConfig.intake,
+        currentStation: stationContext.station!,
         selectedPatient: selectedPatient,
-        onPatientSelected: (hospitalization, tab, isOrderless) {
+        onPatientSelected: (hospitalization, tab, mode) {
           if (tab == PatientSelectionTab.redirected) {
             redirectedNotifier.selectPatient(hospitalization);
-          } else {
-            notifier.selectPatient(hospitalization, isOrderless ? IntakeType.orderless : IntakeType.ordered);
+            return;
           }
+          final intakeType = switch (mode) {
+            PatientIntakeMode.ordered => IntakeType.ordered,
+            PatientIntakeMode.orderless => IntakeType.orderless,
+            PatientIntakeMode.free => IntakeType.free,
+          };
+          notifier.selectPatient(hospitalization, intakeType);
+        },
+        onUrgentPatientCreated: (hospitalization, scope) {
+          final intakeType = scope == UrgentPatientMedicineScope.allMedicines ? IntakeType.urgent : IntakeType.free;
+          notifier.selectPatient(hospitalization, intakeType);
         },
       ),
-      right: showRedirected ? RedirectedOrdersContent(menu: menu) : RxOrdersContent(menu: menu),
+      right: showRedirected
+          ? RedirectedOrdersContent(menu: stationContext.menu)
+          : RxOrdersContent(menu: stationContext.menu),
     );
   }
 }

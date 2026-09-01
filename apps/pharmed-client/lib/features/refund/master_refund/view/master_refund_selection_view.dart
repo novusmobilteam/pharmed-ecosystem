@@ -8,13 +8,14 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
+import '../../../dashboard/dashboard.dart';
 import '../notifier/master_refund_notifier.dart';
 import '../notifier/master_refund_state.dart';
 
 class MasterRefundSelectionView extends ConsumerWidget {
-  const MasterRefundSelectionView({super.key, required this.menu});
+  const MasterRefundSelectionView({super.key, required this.stationContext});
 
-  final MenuItem menu;
+  final StationCabinsContext stationContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,6 +24,7 @@ class MasterRefundSelectionView extends ConsumerWidget {
     return CabinOperationSelectionLayout(
       flex: 2,
       left: PatientSelectionPanel(
+        currentStation: stationContext.station!,
         selectedPatient: ref.watch(masterRefundNotifierProvider).hospitalization,
         onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
         config: PatientSelectionConfig(showFilters: false, enableTabs: false),
@@ -58,7 +60,7 @@ class MasterRefundSelectionView extends ConsumerWidget {
     final checkStatuses = selection?.checkStatuses ?? const {};
 
     return CabinSelectionContentShell(
-      menu: menu,
+      menu: stationContext.menu,
       searchQuery: selection?.search ?? '',
       onSearchQueryChanged: notifier.onSearchChanged,
       searchHint: context.l10n.refund_hint_searchMedicine,

@@ -4,10 +4,11 @@ import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
 
+import '../../../widgets/widgets.dart';
 import '../notifier/unapplied_prescriptions_notifier.dart';
 
-part 'prescription_detail_view.dart';
 part 'table_view.dart';
+part 'detail_panel.dart';
 
 class UnappliedPrescriptionsScreen extends StatelessWidget {
   const UnappliedPrescriptionsScreen({super.key, required this.menu});
@@ -20,6 +21,7 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
       create: (context) => UnappliedPrescriptionsNotifier(
         getUnappliedPrescriptionsUseCase: context.read(),
         getUnappliedPrescriptionDetailUseCase: context.read(),
+        getOverduePrescriptionsUseCase: context.read(),
       )..fetch(),
       builder: (context, child) {
         return Consumer<UnappliedPrescriptionsNotifier>(
@@ -30,7 +32,12 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
               desktop: MedDesktopLayout(
                 menu: menu,
                 showAddButton: false,
-                child: TableView(notifier: notifier),
+                child: SidePanelWrapper(
+                  isOpen: notifier.isPanelOpen,
+                  width: 700,
+                  panel: DetailPanel(key: ValueKey(notifier.selectedPrescription?.id ?? 'detail')),
+                  child: TableView(notifier: notifier),
+                ),
               ),
             );
           },

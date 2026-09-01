@@ -3,7 +3,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 
 class StationStock {
   final int? id;
-  final Station? station;
+  final Cabin? cabin;
   final Medicine? medicine;
   final String? code;
   final num? maxQuantity;
@@ -14,7 +14,7 @@ class StationStock {
 
   const StationStock({
     this.id,
-    this.station,
+    this.cabin,
     this.medicine,
     this.code,
     this.maxQuantity,
@@ -26,7 +26,7 @@ class StationStock {
 
   StationStock copyWith({
     int? id,
-    Station? station,
+    Cabin? cabin,
     String? code,
     Medicine? medicine,
     int? maxQuantity,
@@ -37,7 +37,7 @@ class StationStock {
   }) {
     return StationStock(
       id: id ?? this.id,
-      station: station ?? this.station,
+      cabin: cabin ?? this.cabin,
       medicine: medicine ?? this.medicine,
       code: code ?? this.code,
       maxQuantity: maxQuantity ?? this.maxQuantity,
@@ -50,8 +50,7 @@ class StationStock {
 
   StationStockDTO toDTO() => StationStockDTO(
     id: id,
-    stationId: station?.id,
-    station: StationMapper().toDtoOrNull(station),
+    cabin: CabinMapper().toDtoOrNull(cabin),
     code: code,
     barcode: medicine?.barcode,
     medicineId: medicine?.id,

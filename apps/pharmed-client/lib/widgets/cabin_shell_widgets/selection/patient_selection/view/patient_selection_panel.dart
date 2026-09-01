@@ -35,6 +35,8 @@ class PatientSelectionPanel extends ConsumerStatefulWidget {
     required this.onPatientSelected,
     required this.selectedPatient,
     this.isLocked = false,
+    required this.currentStation,
+    this.onUrgentPatientCreated,
   });
 
   final PatientSelectionConfig config;
@@ -43,12 +45,19 @@ class PatientSelectionPanel extends ConsumerStatefulWidget {
   /// tetiklenir. `tab`, config.enableTabs=false olan ekranlarda her zaman
   /// [PatientSelectionTab.prescriptions] gelir — çağıran taraf gerekmiyorsa
   /// yok sayabilir.
-  final void Function(Hospitalization patient, PatientSelectionTab tab, bool isOrderless) onPatientSelected;
+  final void Function(Hospitalization patient, PatientSelectionTab tab, PatientIntakeMode mode) onPatientSelected;
 
   final Hospitalization? selectedPatient;
 
   /// true iken panel tamamen etkileşimsiz (execution fazı gibi).
   final bool isLocked;
+
+  final Station currentStation;
+
+  /// Acil hasta oluşturulduğunda tetiklenir. [scope], hangi buton tetiklediyse
+  /// ona göre free/allCabinMedicines. config.enableUrgentPatient=false ise
+  /// hiç tetiklenmez (butonlar zaten gösterilmiyor).
+  final void Function(Hospitalization patient, UrgentPatientMedicineScope scope)? onUrgentPatientCreated;
 
   @override
   ConsumerState<PatientSelectionPanel> createState() => _PatientSelectionPanelState();
@@ -56,16 +65,20 @@ class PatientSelectionPanel extends ConsumerStatefulWidget {
 
 class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
   bool _isCreateSheetOpen = false;
+  UrgentPatientMedicineScope _pendingUrgentScope = UrgentPatientMedicineScope.free;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) ref.read(patientSelectionNotifierProvider.notifier).init(widget.config);
+      if (mounted) ref.read(patientSelectionNotifierProvider.notifier).init(widget.config, widget.currentStation);
     });
   }
 
-  void _openCreateSheet() => setState(() => _isCreateSheetOpen = true);
+  void _openCreateSheet(UrgentPatientMedicineScope scope) => setState(() {
+    _pendingUrgentScope = scope;
+    _isCreateSheetOpen = true;
+  });
   void _closeCreateSheet() => setState(() => _isCreateSheetOpen = false);
 
   List<FilterField> _filterFields(BuildContext context, PatientSelectionReady state) {
@@ -147,7 +160,6 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
     if (state == null) return const SizedBox.shrink();
 
     final hasCreatedUrgentPatient = widget.config.enableUrgentPatient && state.createdUrgentPatient != null;
-    final showUrgentAction = widget.config.enableUrgentPatient && state.isUrgentActionVisible;
     final fields = _filterFields(context, state);
 
     return Stack(
@@ -221,12 +233,14 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
                               bgColor: MedColors.blue,
                             ),
                           ),
-                          if (widget.config.enableOrderlessToggle && state.isStatusToggleVisible)
+                          if (widget.config.enableOrderlessToggle && state.isStatusToggleVisible || true) // aşağıya bak
                             MedToggleButton(
-                              label: state.viewOrderStatus.isOrdered
-                                  ? context.l10n.patientPicker_orderedToggleLabel
-                                  : context.l10n.patientPicker_orderlessToggleLabel,
-                              onTap: notifier.toggleOrderlessStatus,
+                              label: switch (state.intakeMode) {
+                                PatientIntakeMode.ordered => context.l10n.patientPicker_orderedToggleLabel,
+                                PatientIntakeMode.orderless => context.l10n.patientPicker_orderlessToggleLabel,
+                                PatientIntakeMode.free => context.l10n.medicine_checkboxIndependentMaterial,
+                              },
+                              onTap: notifier.cycleIntakeMode,
                               selected: true,
                             ),
                         ],
@@ -280,7 +294,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
                                     return PatientSelectionCard(
                                       hospitalization: h,
                                       isSelected: isSelected,
-                                      onTap: () => widget.onPatientSelected(h, state.tab, state.isOrderless),
+                                      onTap: () => widget.onPatientSelected(h, state.tab, state.intakeMode),
                                     );
                                   },
                                 ),
@@ -298,14 +312,32 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
                       ),
                     ),
 
-                    if (showUrgentAction) ...[
+                    if (state.isUrgentActionVisible) ...[
                       const SizedBox(height: 12.0),
-                      MedButton(
-                        fullWidth: true,
-                        label: context.l10n.patientPicker_createUrgentPatientButton,
-                        variant: MedButtonVariant.danger,
-                        prefixIcon: const Icon(PhosphorIconsBold.plus),
-                        onPressed: _openCreateSheet,
+                      Row(
+                        spacing: MedSpacing.sm,
+                        children: [
+                          Expanded(
+                            child: MedButton(
+                              fullWidth: true,
+                              size: MedButtonSize.sm,
+                              label: context.l10n.medicine_checkboxIndependentMaterial,
+                              variant: MedButtonVariant.secondary,
+                              onPressed: () => _openCreateSheet(UrgentPatientMedicineScope.free),
+                            ),
+                          ),
+                          if (state.canCreateFullCabinUrgent)
+                            Expanded(
+                              child: MedButton(
+                                fullWidth: true,
+                                size: MedButtonSize.sm,
+                                label: context.l10n.patientPicker_createUrgentPatientButton,
+                                variant: MedButtonVariant.danger,
+                                prefixIcon: const Icon(PhosphorIconsBold.plus),
+                                onPressed: () => _openCreateSheet(UrgentPatientMedicineScope.allMedicines),
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ],
@@ -333,10 +365,11 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
               builder: (context, offset, child) => FractionalTranslation(translation: offset, child: child),
               child: _UrgentPatientCreateSheetContent(
                 services: state.availableServices,
+                scope: _pendingUrgentScope,
                 onCancel: _closeCreateSheet,
-                onCreated: (h) {
+                onCreated: (h, scope) {
                   _closeCreateSheet();
-                  widget.onPatientSelected(h, state.tab, true);
+                  widget.onUrgentPatientCreated?.call(h, scope);
                 },
               ),
             ),

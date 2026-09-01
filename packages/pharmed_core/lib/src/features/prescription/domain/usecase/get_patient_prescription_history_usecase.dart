@@ -6,15 +6,7 @@ class GetPatientPrescriptionHistoryUseCase {
   GetPatientPrescriptionHistoryUseCase(this._repository);
 
   Future<Result<List<PrescriptionItem>>> call(int patientId, {PagedQueryParams? params}) async {
-    final result = await _repository.getPatientPrescriptionHistory(
-      patientId,
-      skip: params?.skip,
-      take: params?.take,
-      searchQuery: params?.searchQuery,
-      startDate: params?.startDate,
-      endDate: params?.endDate,
-      filters: params?.filters,
-    );
+    final result = await _repository.getPatientPrescriptionHistory(patientId, params: params);
     return result.when(
       error: Result.error,
       ok: (response) {

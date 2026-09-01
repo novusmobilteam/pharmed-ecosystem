@@ -5,6 +5,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../refill.dart';
 
 class MasterRefillSelectionView extends ConsumerWidget {

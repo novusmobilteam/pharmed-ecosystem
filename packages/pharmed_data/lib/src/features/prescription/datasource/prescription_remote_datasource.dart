@@ -60,16 +60,12 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getScannedBarcodes({
-    int? skip,
-    int? take,
-    String? search,
-  }) async {
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getScannedBarcodes({PagedQueryParams? params}) async {
     return await fetchRequest<ApiResponse<List<PrescriptionItemDto>>>(
       path: '/Prescription/detail/readQrCode',
-      skip: skip,
-      take: take,
-      searchQuery: search,
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
       searchFields: ['barcode'],
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
@@ -101,20 +97,14 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionDto>>?>> getUnappliedPrescriptions({
-    int? skip,
-    int? take,
-    String? searchQuery,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+  Future<Result<ApiResponse<List<PrescriptionDto>>?>> getUnappliedPrescriptions({PagedQueryParams? params}) async {
     return await fetchRequest<ApiResponse<List<PrescriptionDto>>>(
       path: _unapplied,
-      skip: skip,
-      take: take,
-      searchQuery: searchQuery,
-      startDate: startDate,
-      endDate: endDate,
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
       searchFields: ['patientHospitalization.patient.name'],
       dateField: 'hospitalizationDate',
       envelope: ResponseEnvelope.raw,
@@ -124,15 +114,32 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemMovementDto>>?>> getCurrentStationDrugActivity(
-    PagedQueryParams params,
-  ) async {
+  Future<Result<ApiResponse<List<PrescriptionDto>>?>> getOverduePrescripitons({PagedQueryParams? params}) async {
+    return await fetchRequest<ApiResponse<List<PrescriptionDto>>>(
+      path: 'Prescription/detail/overdueApplications',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      searchFields: ['patientHospitalization.patient.name'],
+      dateField: 'hospitalizationDate',
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionDto.fromJson),
+      successLog: 'Unapplied prescriptions fetched',
+      emptyLog: 'No unapplied prescriptions',
+    );
+  }
+
+  Future<Result<ApiResponse<List<PrescriptionItemMovementDto>>?>> getCurrentStationDrugActivity({
+    PagedQueryParams? params,
+  }) async {
     return await fetchRequest<ApiResponse<List<PrescriptionItemMovementDto>>>(
       path: '$_base/detail/materialActivityCurrentStation',
-      skip: params.skip,
-      take: params.take,
-      startDate: params.startDate,
-      endDate: params.endDate,
+      skip: params?.skip,
+      take: params?.take,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
       dateField: 'createdDate',
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemMovementDto.fromJson),
@@ -242,21 +249,16 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getPatientPrescriptionHistory(
     int patientId, {
-    int? skip,
-    int? take,
-    String? search,
-    DateTime? startDate,
-    DateTime? endDate,
-    List<Object>? filters,
+    PagedQueryParams? params,
   }) async {
     return await fetchRequest(
       path: '$_base/prescriptionByPatientId/$patientId',
-      skip: skip,
-      take: take,
-      startDate: startDate,
-      endDate: endDate,
+      skip: params?.skip,
+      take: params?.take,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
       dateField: 'prescription.prescriptionDate',
-      filters: filters,
+      filters: params?.filters,
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );

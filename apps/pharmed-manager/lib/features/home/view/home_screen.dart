@@ -20,6 +20,7 @@ import '../../authorization/authorization_screen.dart';
 import '../../change_password/view/change_password_view.dart';
 import '../../dashboard/view/dashboard_view.dart';
 import '../../hospitalization/view/hospitalization_screen.dart';
+import '../../inconsistency/view/inconsistency_screen.dart';
 import '../../medicine/view/medicine_screen.dart';
 
 import '../../refund/view/pharmacy_refund_screen.dart';
@@ -29,6 +30,7 @@ import '../../reports/material_usage/view/material_usage_report_screen.dart';
 import '../../reports/patient_inventory/view/patient_inventory_report_screen.dart';
 import '../../settings/notifier/settings_notifier.dart';
 import '../../station_setup/view/station_screen.dart';
+import '../../station_stock/view/station_stock_screen.dart';
 import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
 import '../../user/view/user_screen.dart';
 import '../notifier/home_notifier.dart';
@@ -181,7 +183,7 @@ class _HomeContent extends StatelessWidget {
       'authorization' => AuthorizationScreen(menu: menu!),
       'user' => UserScreen(menu: menu!),
       'unappliedPrescriptions' => UnappliedPrescriptionsScreen(menu: menu!),
-      //'inconsistency' => InconsistencyScreen(menu: menu!),
+      'inconsistency' => InconsistencyScreen(menu: menu!),
       'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),
       'cabin-transaction-report' => StationTransactionReportScreen(menu: menu!),
       'hospital-material-list' => HospitalStocksReportScreen(menu: menu!),
@@ -192,6 +194,7 @@ class _HomeContent extends StatelessWidget {
       'authorization-list' => AuthSummaryReportScreen(menu: menu!),
       'heatControl' => CabinTemperatureScreen(menu: menu!),
       'station-temperature-list' => CabinTemperatureReportScreen(menu: menu!),
+      'stationStock' => StationStockScreen(menu: menu!),
       'refill' => RefillListScreen(menu: menu!),
 
       _ => const _NotFoundView(),

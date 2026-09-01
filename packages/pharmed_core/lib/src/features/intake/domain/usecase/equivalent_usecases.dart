@@ -14,8 +14,8 @@ class EquivalentIntakeParams {
   };
 }
 
-class GetEquivalentMedicinesUseCase {
-  const GetEquivalentMedicinesUseCase(this._repository, this._medicineRepository);
+class GetEquivalentIntakesUseCase {
+  const GetEquivalentIntakesUseCase(this._repository, this._medicineRepository);
 
   final IIntakeRepository _repository;
   final IMedicineRepository _medicineRepository;

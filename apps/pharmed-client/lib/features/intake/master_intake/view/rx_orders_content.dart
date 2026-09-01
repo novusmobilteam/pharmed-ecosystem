@@ -79,7 +79,7 @@ class RxOrdersContent extends ConsumerWidget {
                 final checkStatus = checkStatuses[item.id] ?? const CheckIdle();
                 final equivalentState = selection?.equivalentStates[item.id] ?? const EquivalentIdle();
 
-                final drug = item.prescriptionItem?.medicine?.when(drug: (Drug d) => d, consumable: (_) => null);
+                final drug = item.medicine?.when(drug: (Drug d) => d, consumable: (_) => null);
                 final collectNote = drug?.collectNote?.trim();
 
                 final time = item.time;
@@ -193,7 +193,7 @@ class RxOrdersContent extends ConsumerWidget {
 
                   stepper: ((isSelected || isOrderlessFlow) && !item.hasNoStock)
                       ? RxCardStepper(
-                          value: item.dosePiece ?? 1,
+                          value: item.dosePiece ?? stepValue,
                           unit: unit,
                           max: 999,
                           step: stepValue,

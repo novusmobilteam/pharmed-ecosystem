@@ -63,9 +63,10 @@ class MobileCabinStockScreenState extends ConsumerState<MobileCabinStockScreen> 
       left: PatientSelectionPanel(
         selectedPatient: state.selectedPatient,
         config: PatientSelectionConfig(showFilters: false),
-        onPatientSelected: (Hospitalization patient, PatientSelectionTab tab, bool isOrderless) {
+        onPatientSelected: (Hospitalization patient, PatientSelectionTab tab, _) {
           notifier.onPatientTap(patient);
         },
+        currentStation: widget.cabinRouteContext!.station!,
       ),
       right: _StockRightPanel(state: state),
     );

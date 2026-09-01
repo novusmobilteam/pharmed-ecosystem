@@ -44,8 +44,9 @@ class GetIntakeItemsUseCase {
       case IntakeType.ordered:
         return await _getOrdered(hospitalizationId, refreshAssignments, params.filter);
       case IntakeType.orderless:
-      case IntakeType.urgent:
         return await _getOrderless();
+      case IntakeType.urgent:
+        return await _getUrgent();
       case IntakeType.free:
         return await _getFree();
     }
@@ -141,6 +142,34 @@ class GetIntakeItemsUseCase {
     _cachedItems = updatedItems;
 
     return Result.ok(_cachedItems);
+  }
+
+  Future<Result<List<IntakeItem>>> _getUrgent() async {
+    final result = await _assignmentRepository.getStationAssignments();
+    return result.when(
+      ok: (data) async {
+        if (data.any((d) => d.medicine == null)) {
+          return Result.error(CustomException(message: contextlessL10n().core_genericErrorRetryMessage));
+        }
+
+        final witnessMap = await _resolveWitnessContexts(data.map<Medicine?>((d) => d.medicine));
+
+        final items = data
+            .map(
+              (d) => IntakeItem(
+                id: d.id ?? 0,
+                type: IntakeType.urgent,
+                assignment: d,
+                medicine: d.medicine!,
+                witnessContext: _witnessContextFor(d.medicine, witnessMap),
+              ),
+            )
+            .toList();
+
+        return Result.ok(items);
+      },
+      error: Result.error,
+    );
   }
 
   Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId, PatientFilterType type) async {

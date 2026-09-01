@@ -6,13 +6,17 @@ class GetUnappliedPrescriptionsUseCase {
 
   GetUnappliedPrescriptionsUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<Prescription>>?>> call(PagedQueryParams params) {
-    return _repository.getUnappliedPrescriptions(
-      skip: params.skip,
-      take: params.take,
-      searchQuery: params.searchQuery,
-      startDate: params.startDate,
-      endDate: params.endDate,
-    );
+  Future<Result<ApiResponse<List<Prescription>>?>> call({PagedQueryParams? params}) {
+    return _repository.getUnappliedPrescriptions(params: params);
+  }
+}
+
+class GetOverduePrescriptionsUseCase {
+  final IPrescriptionRepository _repository;
+
+  GetOverduePrescriptionsUseCase(this._repository);
+
+  Future<Result<ApiResponse<List<Prescription>>?>> call({PagedQueryParams? params}) {
+    return _repository.getOverduePrescripitons(params: params);
   }
 }

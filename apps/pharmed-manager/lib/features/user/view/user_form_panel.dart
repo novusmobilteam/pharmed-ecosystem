@@ -79,6 +79,7 @@ class UserFormPanel extends StatelessWidget {
                     _UsernameField(),
                     if (notifier.isCreate) _PasswordField(),
                     _RfidCardField(),
+                    _EmergenyAccessField(),
                   ],
                 ),
               ),
@@ -377,6 +378,23 @@ class _RfidCardField extends StatelessWidget {
           initialValue: notifier.user.rfidCardData,
           obscureText: true,
           onChanged: (value) => notifier.changeRfidCardData(value),
+        );
+      },
+    );
+  }
+}
+
+class _EmergenyAccessField extends StatelessWidget {
+  const _EmergenyAccessField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserFormNotifier>(
+      builder: (context, notifier, _) {
+        return MedToggleField(
+          label: context.l10n.user_emergencyAccessLabel,
+          value: notifier.user.canCreateEmergencyPatient,
+          onChanged: (value) => notifier.toggleEmergencyAccess(value),
         );
       },
     );

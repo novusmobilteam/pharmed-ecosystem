@@ -8,12 +8,7 @@ abstract interface class IPrescriptionRepository {
 
   Future<Result<ApiResponse<List<PrescriptionItem>>?>> getPatientPrescriptionHistory(
     int patientId, {
-    int? skip,
-    int? take,
-    String? searchQuery,
-    DateTime? startDate,
-    DateTime? endDate,
-    List<Object>? filters,
+    PagedQueryParams? params,
   });
 
   Future<Result<void>> createPrescriptionDetail(List<PrescriptionItem> items);
@@ -46,20 +41,18 @@ abstract interface class IPrescriptionRepository {
   Future<Result<void>> deleteUnscannedBarcode({required int prescriptionItemId, required String description});
 
   // Uygulanmamış Reçeteler
-  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({
-    int? skip,
-    int? take,
-    String? searchQuery,
-    DateTime? startDate,
-    DateTime? endDate,
-  });
+  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({PagedQueryParams? params});
   Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptionDetail(int prescriptionId);
+  // Geciken uygulamalar
+  Future<Result<ApiResponse<List<Prescription>>?>> getOverduePrescripitons({PagedQueryParams? params});
 
   /// İlaç hareketlerini(dolum,alım,iade,fire/imha) getiren servis.
   Future<Result<List<PrescriptionItem>>> getDrugActivity();
 
   /// İşlem yapılan kabine ait hareketlerini(dolum,alım,iade,fire/imha) getiren servis.
-  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> getCurrentStationDrugActivity(PagedQueryParams params);
+  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> getCurrentStationDrugActivity({
+    PagedQueryParams? params,
+  });
 
   /// Acil Hasta'ya ataması yapılmış ilaçları getiren servis.
   Future<Result<List<PrescriptionItem>>> getEmergencyPatientMedicines(int hospitalizationId);

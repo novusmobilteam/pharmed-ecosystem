@@ -7,10 +7,11 @@ import 'package:pharmed_core/pharmed_core.dart';
 /// bilgisi) TÜM view constructor'larını değiştirmek yerine sadece burası
 /// güncellenir.
 class CabinRouteContext {
-  const CabinRouteContext({required this.menu, required this.cabinData, required this.deviceMode});
+  const CabinRouteContext({required this.menu, required this.cabinData, required this.deviceMode, this.station});
 
   final MenuItem menu;
   final CabinVisualizerData? cabinData;
+  final Station? station;
 
   /// Bu FİZİKSEL CİHAZIN kendi tipi (master/mobile) — navigasyon kararları
   /// için kullanılır (bkz. DashboardNotifier.navigateTo mobile-skip mantığı).

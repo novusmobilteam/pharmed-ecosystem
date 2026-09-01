@@ -500,6 +500,7 @@
     "user_witnessedStationEntryLabel",
     "user_kitPurchaseLabel",
     "user_badgeCardLabel",
+    "user_emergencyAccessLabel",
     "user_badgeCardHint",
     "user_authorizedStationsLabel",
     "user_usernameLabel",
@@ -1552,6 +1553,16 @@
     "dashboard_upcomingTreatmentsDelayedTitle",
     "dashboard_upcomingTreatmentsDueSoonTitle",
     "dashboard_upcomingTreatmentsUpcomingTitle",
-    "dashboard_upcomingTreatmentsDueInMinutesLabel"
+    "dashboard_upcomingTreatmentsDueInMinutesLabel",
+    "assignment_edit_equivalentMedicinesSegment",
+    "assignment_edit_allMedicinesSegment",
+    "unapplied_showUnappliedTooltip",
+    "unapplied_showOverdueTooltip",
+    "stationStock_table_cabinNameColumn",
+    "stationStock_table_maxQuantityColumn",
+    "stationStock_table_currentQuantityColumn",
+    "stationStock_table_reservedColumn",
+    "urgentPatient_intakeCompletedMessage",
+    "urgentPatient_intakeCompletedDescription"
   ]
 }

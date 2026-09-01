@@ -213,6 +213,10 @@ final getStationAssignmentsUseCaseProvider = Provider((ref) {
   return GetStationAssignmentsUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
 
+final getIndependentMaterialsUseCaseProvider = Provider((ref) {
+  return GetIndependentMaterialsUseCase(ref.read(cabinAssignmentRepositoryProvider));
+});
+
 final getCabinAssignmentsWitCabinUseCaseProvider = Provider((ref) {
   return GetCabinAssignmentsWithCabinUseCase(ref.read(cabinAssignmentRepositoryProvider));
 });
@@ -329,6 +333,10 @@ final completeIntakeUseCaseProvider = Provider((ref) {
   return CompleteIntakeUseCase(ref.read(intakeRepositoryProvider));
 });
 
+final getEquivalentIntakesUseCaseProvider = Provider((ref) {
+  return GetEquivalentIntakesUseCase(ref.read(intakeRepositoryProvider), ref.read(medicineRepositoryProvider));
+});
+
 final getCurrentStationUseCaseProvider = Provider((ref) {
   return GetCurrentStationUseCase(ref.read(stationRepositoryProvider));
 });
@@ -355,6 +363,10 @@ final getUrgentPatientsUseCaseProvider = Provider((ref) {
 
 final getMedicinesUseCaseProvider = Provider((ref) {
   return GetMedicinesUseCase(ref.read(medicineRepositoryProvider));
+});
+
+final getEquivalentMedicinesUseCaseProvider = Provider((ref) {
+  return GetEquivalentMedicinesUseCase(ref.read(medicineRepositoryProvider));
 });
 
 final getCabinExpectedEpcsUseCaseProvider = Provider((ref) {
@@ -439,10 +451,6 @@ final getUnscannedBarcodesUseCaseProvider = Provider((ref) {
 
 final scanBarcodeUseCaseProvider = Provider((ref) {
   return ScanBarcodeUseCase(ref.read(prescriptionRepositoryProvider));
-});
-
-final getEquivalentMedicinesUseCaseProvider = Provider((ref) {
-  return GetEquivalentMedicinesUseCase(ref.read(intakeRepositoryProvider), ref.read(medicineRepositoryProvider));
 });
 
 final checkEquivalentIntakeUseCaseProvider = Provider((ref) {

@@ -64,7 +64,8 @@ class CabinAssignmentListView extends StatelessWidget {
 
               final color = level.color;
 
-              String stock = '${current.formatFractional}/${maxQty.formatFractional} (${assignment.operationUnit})';
+              String stock =
+                  '${current.formatFractional}/${maxQty.formatFractional} (${assignment.operationUnit(context)})';
 
               final pct = _ratio(current, maxQty);
 

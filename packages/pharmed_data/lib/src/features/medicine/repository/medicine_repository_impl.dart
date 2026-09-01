@@ -72,7 +72,7 @@ class MedicineRepositoryImpl implements IMedicineRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<Medicine>>>> getEquivalentMedicines(int id) async {
+  Future<Result<ApiResponse<List<Medicine>>>> getEquivalentMedicines(int id, {PagedQueryParams? params}) async {
     final result = await _dataSource.getEquivalentMedicines(id);
     return result.when(
       ok: (apiResponse) => Result.ok(

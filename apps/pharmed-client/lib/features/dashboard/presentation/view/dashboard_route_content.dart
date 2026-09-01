@@ -1,50 +1,32 @@
 part of 'dashboard_screen.dart';
 
-class DashboardContentFactory {
-  static Widget buildContent(
-    BuildContext context,
-    WidgetRef ref,
-    DashboardState state,
-    DashboardNotifier notifier,
-    bool isLoggedIn,
-  ) {
-    final loaded = state is DashboardLoaded ? state : null;
+class DashboardRouteContent extends ConsumerWidget {
+  const DashboardRouteContent({super.key});
 
-    // Kabin verisi tamamen yoksa (hiç kabin çekilemediyse) — TÜM ekranı
-    // kaplayan blok. Uygulama genelinde kabin verisi olmadan işlem
-    // yapılamıyor, bu yüzden route'a bakılmaksızın burada durulur.
-    if (loaded != null && loaded.data.cabinDataFailed && loaded.data.cabinVisualizerDataByCabinId.isEmpty) {
-      return Center(
-        child: EmptyStateWidget(variant: EmptyStateVariant.cabinData, onRetry: notifier.retryCabinData),
-      );
-    }
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifier = ref.watch(dashboardNotifierProvider);
+    final currentRoute = notifier.activeRoute;
+    final activeMenu = notifier.flattenedMenus?.firstWhereOrNull((m) => m.slug == currentRoute);
+    final activeCabin = notifier.activeCabin;
+    final cabinData = activeCabin != null ? notifier.cabinVisualizerDataByCabin[activeCabin] : null;
+    final deviceMode = notifier.deviceMode;
 
-    if (loaded != null && loaded.pendingCabinRoute != null) {
-      return CabinSelectionView(
-        cabins: loaded.data.stationCabins,
-        cabinDataByCabinId: loaded.data.cabinVisualizerDataByCabinId,
-        onCabinSelected: notifier.selectCabinForPendingRoute,
-      );
-    }
-
-    final route = loaded?.activeRoute ?? 'dashboard';
-    final activeMenu = loaded?.flattenedMenus?.firstWhereOrNull((m) => m.slug == route);
-
-    final cabinId = loaded?.activeCabinId;
-    final station = loaded?.data.station;
-    final deviceMode = loaded?.deviceMode;
-    final cabinData = cabinId != null ? loaded?.data.cabinVisualizerDataByCabinId[cabinId] : null;
+    final cabinDataByCabinId = <int, CabinVisualizerData>{
+      for (final entry in notifier.cabinVisualizerDataByCabin.entries)
+        if (entry.key.id != null) entry.key.id!: entry.value,
+    };
 
     final cabinRouteContext = activeMenu != null
         ? CabinRouteContext(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
         : null;
 
-    final stationCabinsContext = activeMenu != null && loaded != null
+    final stationCabinsContext = activeMenu != null
         ? StationCabinsContext(
             menu: activeMenu,
-            cabinDataByCabinId: loaded.data.cabinVisualizerDataByCabinId,
-            cabins: loaded.data.stationCabins,
-            station: station,
+            cabinDataByCabinId: cabinDataByCabinId,
+            cabins: notifier.cabins,
+            station: notifier.station,
             deviceMode: deviceMode,
           )
         : null;
@@ -56,9 +38,9 @@ class DashboardContentFactory {
         duration: const Duration(milliseconds: 250),
         reverseDuration: Duration.zero,
         child: KeyedSubtree(
-          key: ValueKey(route),
-          child: switch (route) {
-            'dashboard' => _buildMainDashboard(context, state, notifier, isLoggedIn),
+          key: ValueKey(currentRoute),
+          child: switch (currentRoute) {
+            'dashboard' => SizedBox.shrink(),
             'drug-assignment' =>
               cabinRouteContext != null ? AssignmentView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'drug-refill' =>
@@ -110,21 +92,6 @@ class DashboardContentFactory {
       ),
     );
   }
-
-  static Widget _buildMainDashboard(
-    BuildContext context,
-    DashboardState state,
-    DashboardNotifier notifier,
-    bool isLoggedIn,
-  ) => switch (state) {
-    DashboardLoading() => const Center(child: MedLoadingIndicator()),
-    DashboardError() => EmptyStateWidget(
-      variant: EmptyStateVariant.networkError,
-      onRetry: () => notifier.refresh(forceRefresh: false),
-    ),
-    DashboardLoaded(:final initialLoadComplete) when !initialLoadComplete => const Center(child: MedLoadingIndicator()),
-    DashboardLoaded s => _DashboardBody(state: s, notifier: notifier, isLoggedIn: isLoggedIn),
-  };
 }
 
 class _CabinDesignRouteHandler extends StatefulWidget {
@@ -148,51 +115,6 @@ class _CabinDesignRouteHandlerState extends State<_CabinDesignRouteHandler> {
 
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();
-}
-
-class _DashboardBody extends StatelessWidget {
-  const _DashboardBody({required this.state, required this.notifier, required this.isLoggedIn});
-
-  final DashboardLoaded state;
-  final DashboardNotifier notifier;
-  final bool isLoggedIn;
-
-  @override
-  Widget build(BuildContext context) {
-    final data = state.data;
-
-    return Row(
-      spacing: MedSpacing.lg,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(flex: 4, child: UpcomingTreatmentPanel(section: data.upcomingTreatments)),
-        Expanded(flex: 2, child: DrugActivityPanel(section: data.drugActivities)),
-        Expanded(
-          child: Column(
-            children: [
-              if (_primaryCabinData(state, data) case final cabinData?)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: CabinStatusPanel(cabin: cabinData),
-                ),
-              CabinTelemetryPanel(),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// Dashboard özetinde gösterilecek TEK kabin — master istasyonda master
-  /// kabin, mobil istasyonda (zaten tek kabin olduğu için) o kabin.
-  CabinVisualizerData? _primaryCabinData(DashboardLoaded state, DashboardData data) {
-    final targetCabin = state.deviceMode == CabinType.mobile
-        ? data.stationCabins.firstOrNull
-        : data.stationCabins.firstWhereOrNull((c) => c.type == CabinType.master);
-
-    if (targetCabin?.id == null) return null;
-    return data.cabinVisualizerDataByCabinId[targetCabin!.id];
-  }
 }
 
 class DrugActivityPanel extends StatelessWidget {

@@ -17,6 +17,7 @@ class User extends Selectable {
   final Role? role;
   final bool? isAdmin;
   final String? rfidCardData;
+  final bool canCreateEmergencyPatient;
 
   User({
     super.id,
@@ -36,6 +37,7 @@ class User extends Selectable {
     this.stationIds,
     this.isAdmin,
     this.rfidCardData,
+    this.canCreateEmergencyPatient = false,
   }) : super(title: '$name $surname', subtitle: email);
 
   /// id ve "Ad Soyad" stringinden güvenli şekilde User üretir.
@@ -75,6 +77,7 @@ class User extends Selectable {
     String? password,
     List<int>? stationIds,
     String? rfidCardData,
+    bool? canCreateEmergencyPatient,
   }) {
     return User(
       id: id ?? this.id,
@@ -93,6 +96,7 @@ class User extends Selectable {
       password: password ?? this.password,
       stationIds: stationIds ?? this.stationIds,
       rfidCardData: rfidCardData ?? this.rfidCardData,
+      canCreateEmergencyPatient: canCreateEmergencyPatient ?? this.canCreateEmergencyPatient,
     );
   }
 

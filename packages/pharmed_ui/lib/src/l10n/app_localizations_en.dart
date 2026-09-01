@@ -2865,6 +2865,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get user_badgeCardLabel => 'Badge Card';
 
   @override
+  String get user_emergencyAccessLabel => 'Can Create Emergency Patient?';
+
+  @override
   String get user_badgeCardHint => 'Scan card';
 
   @override
@@ -6602,4 +6605,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String dashboard_upcomingTreatmentsDueInMinutesLabel(int minutes) {
     return '$minutes MIN LEFT';
   }
+
+  @override
+  String get assignment_edit_equivalentMedicinesSegment =>
+      'Equivalent Medicines';
+
+  @override
+  String get assignment_edit_allMedicinesSegment => 'All Medicines';
+
+  @override
+  String get unapplied_showUnappliedTooltip => 'Show Unapplied';
+
+  @override
+  String get unapplied_showOverdueTooltip => 'Show Overdue';
+
+  @override
+  String get stationStock_table_cabinNameColumn => 'Cabin Name';
+
+  @override
+  String get stationStock_table_maxQuantityColumn => 'Maximum';
+
+  @override
+  String get stationStock_table_currentQuantityColumn => 'Current';
+
+  @override
+  String get stationStock_table_reservedColumn => 'Reserved';
+
+  @override
+  String get urgentPatient_intakeCompletedMessage =>
+      'Emergency patient intake completed';
+
+  @override
+  String get urgentPatient_intakeCompletedDescription =>
+      'You can close out this emergency patient from the Terminate Emergency Patient screen.';
 }

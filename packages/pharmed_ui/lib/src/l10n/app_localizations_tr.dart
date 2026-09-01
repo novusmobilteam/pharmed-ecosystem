@@ -2858,6 +2858,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get user_badgeCardLabel => 'Yaka Kartı';
 
   @override
+  String get user_emergencyAccessLabel => 'Acil Hasta Oluşturabilir mi?';
+
+  @override
   String get user_badgeCardHint => 'Kartı okutun';
 
   @override
@@ -6554,4 +6557,36 @@ class AppLocalizationsTr extends AppLocalizations {
   String dashboard_upcomingTreatmentsDueInMinutesLabel(int minutes) {
     return '$minutes DK SONRA';
   }
+
+  @override
+  String get assignment_edit_equivalentMedicinesSegment => 'Muadil İlaçlar';
+
+  @override
+  String get assignment_edit_allMedicinesSegment => 'Tüm İlaçlar';
+
+  @override
+  String get unapplied_showUnappliedTooltip => 'Uygulanmayanları Göster';
+
+  @override
+  String get unapplied_showOverdueTooltip => 'Geciken Uygulamaları Göster';
+
+  @override
+  String get stationStock_table_cabinNameColumn => 'Kabin Adı';
+
+  @override
+  String get stationStock_table_maxQuantityColumn => 'Maksimum';
+
+  @override
+  String get stationStock_table_currentQuantityColumn => 'Mevcut';
+
+  @override
+  String get stationStock_table_reservedColumn => 'Rezerve';
+
+  @override
+  String get urgentPatient_intakeCompletedMessage =>
+      'Acil hasta ilaç alımı tamamlandı';
+
+  @override
+  String get urgentPatient_intakeCompletedDescription =>
+      'Bu acil hastayı Acil Hasta Sonlandır ekranından sonlandırabilirsiniz.';
 }

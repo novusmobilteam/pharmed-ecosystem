@@ -1,5 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
+enum MedicineListMode { equivalent, all }
+
 sealed class DrugAssignmentUiState {
   const DrugAssignmentUiState();
 }
@@ -46,7 +48,6 @@ final class DrugAssignmentIdle extends DrugAssignmentUiState {
   }
 }
 
-/// Göz seçildi (boş ya da dolu) — sağda ilaç listesi + miktar formu.
 final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
   const DrugAssignmentCellSelected({
     required this.groups,
@@ -55,6 +56,8 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
     required this.selectedGroup,
     required this.assignment,
     required this.medicinePage,
+    required this.equivalentMedicinePage, // YENİ
+    this.listMode = MedicineListMode.all, // YENİ
     this.selectedStepNo,
     this.selectedDrug,
     this.minQty,
@@ -69,7 +72,9 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
   final int? selectedStepNo;
 
   final MedicineAssignment assignment;
-  final MedicinePageState medicinePage;
+  final MedicinePageState medicinePage; // "Tüm İlaçlar"
+  final MedicinePageState equivalentMedicinePage; // YENİ — "Muadil İlaçlar"
+  final MedicineListMode listMode; // YENİ
 
   final Medicine? selectedDrug;
   final int? minQty;
@@ -81,9 +86,14 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
   bool get isAssigned => assignment.id != null;
   bool get canSave => selectedDrug != null && minQty != null && minQty! > 0;
 
+  /// Aktif sekmeye göre gösterilecek sayfa.
+  MedicinePageState get selectedPage => listMode == MedicineListMode.equivalent ? equivalentMedicinePage : medicinePage;
+
   DrugAssignmentCellSelected copyWith({
     MedicineAssignment? assignment,
     MedicinePageState? medicinePage,
+    MedicinePageState? equivalentMedicinePage, // YENİ
+    MedicineListMode? listMode, // YENİ
     Medicine? selectedDrug,
     int? minQty,
     int? maxQty,
@@ -97,6 +107,8 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
       selectedStepNo: selectedStepNo,
       assignment: assignment ?? this.assignment,
       medicinePage: medicinePage ?? this.medicinePage,
+      equivalentMedicinePage: equivalentMedicinePage ?? this.equivalentMedicinePage,
+      listMode: listMode ?? this.listMode,
       selectedDrug: selectedDrug ?? this.selectedDrug,
       minQty: minQty ?? this.minQty,
       maxQty: maxQty ?? this.maxQty,

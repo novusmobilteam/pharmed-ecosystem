@@ -17,6 +17,7 @@ class UserDto {
   final List<int>? stationIds;
   final bool? isAdmin;
   final String? rfidCardData;
+  final bool canCreateEmergencyPatient;
 
   const UserDto({
     this.id,
@@ -37,6 +38,7 @@ class UserDto {
     this.stationIds,
     this.isAdmin,
     this.rfidCardData,
+    this.canCreateEmergencyPatient = false,
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
@@ -59,6 +61,9 @@ class UserDto {
       stationIds: json['stationIds'] is List ? (json['stationIds'] as List).whereType<int>().toList() : null,
       isAdmin: json['isAdmin'] is bool ? json['isAdmin'] as bool : false,
       rfidCardData: json['managerCard'] as String?,
+      canCreateEmergencyPatient: json['canCreateEmergencyPatient'] is bool
+          ? json['canCreateEmergencyPatient'] as bool
+          : false,
     );
   }
 
@@ -79,5 +84,6 @@ class UserDto {
     'password': password,
     'stationIds': stationIds,
     'managerCard': rfidCardData,
+    'canCreateEmergencyPatient': canCreateEmergencyPatient,
   };
 }

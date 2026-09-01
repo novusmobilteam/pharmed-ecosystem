@@ -10,8 +10,8 @@ class InconsistencyRepositoryImpl implements IInconsistencyRepository {
       _mapper = mapper;
 
   @override
-  Future<Result<ApiResponse<List<Inconsistency>>>> getInconsistencies({int? skip, int? take, String? search}) async {
-    final res = await _dataSource.getInconsistencies();
+  Future<Result<ApiResponse<List<Inconsistency>>>> getInconsistencies(int stationId, {PagedQueryParams? params}) async {
+    final res = await _dataSource.getInconsistencies(stationId, params: params);
     return res.when(
       ok: (response) {
         List<Inconsistency> entities = [];

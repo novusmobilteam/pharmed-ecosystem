@@ -22,5 +22,5 @@ abstract class IMedicineRepository {
   Future<Result<void>> deleteMedicine(Medicine medicine);
 
   /// ID'si verilen ilacın eşdeğer ilaçlarını getirir.
-  Future<Result<ApiResponse<List<Medicine>>>> getEquivalentMedicines(int id);
+  Future<Result<ApiResponse<List<Medicine>>>> getEquivalentMedicines(int id, {PagedQueryParams? params});
 }

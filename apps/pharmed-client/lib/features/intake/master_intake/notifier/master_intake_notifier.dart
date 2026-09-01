@@ -37,7 +37,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   GetIntakeItemsUseCase get _getItems => ref.read(getIntakeItemsUseCaseProvider);
   CheckIntakeUseCase get _checkIntake => ref.read(checkIntakeUseCaseProvider);
   CompleteIntakeUseCase get _completeIntake => ref.read(completeIntakeUseCaseProvider);
-  GetEquivalentMedicinesUseCase get _getEquivalents => ref.read(getEquivalentMedicinesUseCaseProvider);
+  GetEquivalentIntakesUseCase get _getEquivalents => ref.read(getEquivalentIntakesUseCaseProvider);
   CheckEquivalentIntakeUseCase get _checkEquivalentIntake => ref.read(checkEquivalentIntakeUseCaseProvider);
   CompleteEquivalentIntakeUseCase get _completeEquivalentIntake => ref.read(completeEquivalentIntakeUseCaseProvider);
   GetOtherStationMedicinesUseCase get _getOtherStations => ref.read(getOtherStationMedicinesUseCaseProvider);
@@ -69,12 +69,30 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       final s = state;
       if (s is! MasterIntakeMedicineSelection) return;
 
+      if (prev.createdUrgentPatient != null && nxt.createdUrgentPatient == null) {
+        _hospitalization = null;
+        _hospitalizationId = null;
+        unawaited(_orchestrator.stop());
+        state = const MasterIntakePatientSelection();
+        return;
+      }
+
+      if (prev.intakeMode != nxt.intakeMode) {
+        _type = switch (nxt.intakeMode) {
+          PatientIntakeMode.ordered => IntakeType.ordered,
+          PatientIntakeMode.orderless => IntakeType.orderless,
+          PatientIntakeMode.free => IntakeType.free,
+        };
+        unawaited(_loadItems());
+        return;
+      }
+
       if (prev.filter != nxt.filter) {
         unawaited(_loadItems());
         return;
       }
 
-      if (prev.viewType != nxt.viewType) {
+      if ((prev.viewType != nxt.viewType)) {
         _hospitalization = null;
         _hospitalizationId = null;
         unawaited(_orchestrator.stop());
@@ -92,7 +110,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
 
     await _orchestrator.stop();
 
-    await ref.read(patientSelectionNotifierProvider.notifier).init(PatientSelectionConfig.intake);
+    await ref.read(patientSelectionNotifierProvider.notifier).init(PatientSelectionConfig.intake, _currentStation!);
 
     if (state is MasterIntakeUninitialized) {
       state = const MasterIntakePatientSelection();
@@ -142,7 +160,9 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         // zorunda kalmaz. Diğer filtrelerde (all/upcoming/overdue/...) hiç
         // otomatik seçim yapılmaz; o kalemler zaten UI'da seçilemez hale
         // getirilir (bkz. RxOrdersContent onTap koşulu).
-        final autoSelectedIds = (_type.isOrderless || filter == PatientFilterType.ordersDue)
+        final bool autoSelectAll = _type == IntakeType.ordered && filter == PatientFilterType.ordersDue;
+
+        final autoSelectedIds = autoSelectAll
             ? items
                   .where((it) => !it.hasNoStock && !it.isRedirected && !it.inCaseOfNecessity)
                   .map((it) => it.id)
@@ -186,12 +206,19 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     }
 
     next.add(itemId);
-    // dosePiece 0/null ise 1 yap.
+
     final items = s.items.map((it) {
       if (it.id != itemId) return it;
       final dose = it.dosePiece;
-      return (dose == null || dose == 0) ? it.copyWith(dosePiece: 1) : it;
+      if (dose != null && dose != 0) return it;
+
+      final medicine = it.medicine;
+      final initialDose = (medicine is Drug && medicine.isMeasureUnit)
+          ? (medicine.doseMeasureUnit?.toDouble() ?? 1.0)
+          : 1.0;
+      return it.copyWith(dosePiece: initialDose);
     }).toList();
+
     state = s.copyWith(items: items, selectedItemIds: next);
   }
 
@@ -224,7 +251,8 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       final bool canLower = medicine.isCanLowerDose;
       final double upperLimitFromOrder = item.prescriptionDose ?? 0.0;
 
-      final double minLimit = (isOrdered && !canLower) ? upperLimitFromOrder : 1.0;
+      final double stepFloor = medicine.isMeasureUnit ? (medicine.doseMeasureUnit?.toDouble() ?? 1.0) : 1.0;
+      final double minLimit = (isOrdered && !canLower) ? upperLimitFromOrder : stepFloor;
 
       final double physicalLimit = item.assignment?.totalQuantity ?? 0.0;
       final double dailyMax = (medicine.dailyMaxUsage ?? 0) > 0 ? medicine.dailyMaxUsage!.toDouble() : physicalLimit;
@@ -1096,5 +1124,24 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     _hospitalization = null;
     _hospitalizationId = null;
     state = MasterIntakePatientSelection();
+  }
+
+  /// PatientSelection fazını atlayan çağıranlar için (acil hasta akışı gibi) —
+  /// yalnızca needsWitness hesaplaması için gereken istasyonu set eder.
+  /// init()'in aksine hospitalization/orchestrator sıfırlamaz, patient list'i
+  /// tetiklemez — çünkü çağıran taraf zaten selectPatient()'a gidiyo
+  void attachStation(Station station) {
+    _currentStation = station;
+  }
+
+  /// Ekrandan tamamen çıkılırken (View.dispose) çağrılır — state'i
+  /// Uninitialized'a döndürür ki bir sonraki mount'ta init() koşulsuz
+  /// PatientSelection'a geçsin, eski MedicineSelection/Executing state'i
+  /// sızmasın.
+  void resetAll() {
+    _hospitalization = null;
+    _hospitalizationId = null;
+    unawaited(_orchestrator.stop());
+    Future.microtask(() => state = const MasterIntakeUninitialized());
   }
 }

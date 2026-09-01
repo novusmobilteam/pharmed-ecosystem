@@ -21,6 +21,8 @@ enum PatientSelectionTab { prescriptions, redirected }
 
 enum PatientViewType { allPatients, myPatients }
 
+enum PatientIntakeMode { ordered, orderless, free }
+
 sealed class PatientSelectionState {
   const PatientSelectionState();
 }
@@ -47,6 +49,8 @@ final class PatientSelectionReady extends PatientSelectionState {
     // Acil hasta oluşturulunca dolar — dolu olduğu sürece liste yerine
     // onay kartı gösterilir. Silinince (veya hiç oluşturulmadıysa) null.
     this.createdUrgentPatient,
+    required this.intakeMode,
+    required this.canCreateFullCabinUrgent,
   });
 
   final Station? station;
@@ -62,10 +66,14 @@ final class PatientSelectionReady extends PatientSelectionState {
   final bool isCreatingUrgent;
   final bool isDeletingUrgent;
   final Hospitalization? createdUrgentPatient;
+  final PatientIntakeMode intakeMode;
+  final bool canCreateFullCabinUrgent;
 
   // ── Türetilenler ──────────────────────────────────────────────────────
 
   bool get isOrderless => viewOrderStatus.isOrderless;
+  bool get isFreeMode => intakeMode == PatientIntakeMode.free;
+
   OrderStatus get stationOrderStatus => station?.drugStatus ?? OrderStatus.ordered;
   List<HospitalService> get availableServices => station?.services ?? const [];
   bool get isStatusToggleVisible => userOrderStatus.isOrderless;
@@ -101,6 +109,8 @@ final class PatientSelectionReady extends PatientSelectionState {
     bool? isDeletingUrgent,
     Hospitalization? createdUrgentPatient,
     bool clearCreatedUrgentPatient = false,
+    PatientIntakeMode? intakeMode,
+    bool? canCreateFullCabinUrgent,
   }) {
     return PatientSelectionReady(
       station: station ?? this.station,
@@ -116,6 +126,8 @@ final class PatientSelectionReady extends PatientSelectionState {
       isCreatingUrgent: isCreatingUrgent ?? this.isCreatingUrgent,
       isDeletingUrgent: isDeletingUrgent ?? this.isDeletingUrgent,
       createdUrgentPatient: clearCreatedUrgentPatient ? null : (createdUrgentPatient ?? this.createdUrgentPatient),
+      intakeMode: intakeMode ?? this.intakeMode,
+      canCreateFullCabinUrgent: canCreateFullCabinUrgent ?? this.canCreateFullCabinUrgent,
     );
   }
 }

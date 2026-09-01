@@ -63,6 +63,7 @@ class UnappliedPrescriptionScreenState extends ConsumerState<UnappliedPrescripti
         Expanded(
           flex: 2,
           child: PatientSelectionPanel(
+            currentStation: widget.cabinRouteContext!.station!,
             selectedPatient: state.selectedPatient,
             onPatientSelected: (patient, tab, isOrderless) => notifier.onPatientTap(patient),
             config: PatientSelectionConfig(showFilters: false),

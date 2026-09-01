@@ -6,7 +6,7 @@ class GetCurrentStationDrugActivityUseCase {
 
   GetCurrentStationDrugActivityUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> call(PagedQueryParams params) {
-    return _repository.getCurrentStationDrugActivity(params);
+  Future<Result<ApiResponse<List<PrescriptionItemMovement>>?>> call({PagedQueryParams? params}) {
+    return _repository.getCurrentStationDrugActivity(params: params);
   }
 }

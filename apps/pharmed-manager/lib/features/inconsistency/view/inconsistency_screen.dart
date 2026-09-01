@@ -8,6 +8,7 @@ import '../notifier/inconsistency_notifier.dart';
 
 // part 'inconsistency_detail_view.dart';
 // part 'inconsistency_summary_view.dart';
+part 'table_view.dart';
 part 'stock_movements_table_view.dart';
 
 class InconsistencyScreen extends StatelessWidget {
@@ -18,7 +19,9 @@ class InconsistencyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => InconsistencyNotifier(getInconsistenciesUseCase: context.read())..fetch(),
+      create: (context) =>
+          InconsistencyNotifier(getInconsistenciesUseCase: context.read(), getStationsUseCase: context.read())
+            ..getStations(),
       child: Consumer<InconsistencyNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
@@ -26,25 +29,45 @@ class InconsistencyScreen extends StatelessWidget {
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
               menu: menu,
+              isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.fetchStationsOp),
               showAddButton: false,
-              child: MedTable<Inconsistency>(
-                data: notifier.items,
-                enableExcel: true,
-                enableSearch: true,
-                onSearchChanged: notifier.search,
-                actions: [
-                  TableActionItem(
-                    icon: PhosphorIcons.qrCode(),
-                    tooltip: context.l10n.inconsistency_viewTooltip,
-                    onPressed: (data) {},
+              child: Column(
+                spacing: 6.0,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 260,
+                    child: MedDropdownInputField(
+                      key: ValueKey(notifier.selectedStation),
+                      options: notifier.stations,
+                      onChanged: notifier.selectStation,
+                      initialValue: notifier.selectedStation,
+                      labelBuilder: (station) => station?.name,
+                      placeholder: context.l10n.assignment_stationSelectPlaceholder,
+                    ),
                   ),
-                  TableActionItem(
-                    icon: PhosphorIcons.camera(),
-                    tooltip: context.l10n.inconsistency_photoTooltip,
-                    onPressed: (_) {},
+                  Expanded(
+                    child: MedTable<Inconsistency>(
+                      data: notifier.items,
+                      enableExcel: true,
+                      enableSearch: true,
+                      onSearchChanged: notifier.search,
+                      actions: [
+                        TableActionItem(
+                          icon: PhosphorIcons.qrCode(),
+                          tooltip: context.l10n.inconsistency_viewTooltip,
+                          onPressed: (data) {},
+                        ),
+                        TableActionItem(
+                          icon: PhosphorIcons.camera(),
+                          tooltip: context.l10n.inconsistency_photoTooltip,
+                          onPressed: (_) {},
+                        ),
+                      ],
+                      columnDefs: [],
+                    ),
                   ),
                 ],
-                columnDefs: [],
               ),
             ),
           );
@@ -53,15 +76,3 @@ class InconsistencyScreen extends StatelessWidget {
     );
   }
 }
-
-// void _onShow(BuildContext context, Inconsistency data) {
-//   showDialog(
-//     context: context,
-//     builder: (context) => ChangeNotifierProvider(
-//       create: (context) => InconsistencyDetailViewModel(
-//         repository: context.read(),
-//       )..getInconsistencyDetail(data.id ?? 0),
-//       child: const InconsistencyDetailView(),
-//     ),
-//   );
-// }

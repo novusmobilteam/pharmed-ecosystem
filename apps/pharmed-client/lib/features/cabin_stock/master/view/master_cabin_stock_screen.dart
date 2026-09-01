@@ -76,7 +76,7 @@ class MasterCabinStockIdleView extends ConsumerWidget {
           Expanded(
             child: CabinOverviewSelectionPanel(
               cabin: cabin,
-              onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+              //onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
               groups: groups ?? [],
               assignments: idle.stocks,
               selectedUnitIds: {},

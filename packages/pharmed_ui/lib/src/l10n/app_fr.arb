@@ -1634,7 +1634,8 @@
   "user_kitPurchaseLabel": "Achat de kit",
   "@user_kitPurchaseLabel": {},
   "user_badgeCardLabel": "Badge",
-  "@user_badgeCardLabel": {},
+   "@user_badgeCardLabel": {},
+  "user_emergencyAccessLabel": "Peut créer un patient d'urgence ?",
   "user_badgeCardHint": "Scannez la carte",
   "@user_badgeCardHint": {},
   "user_authorizedStationsLabel": "Stations autorisées",
@@ -4180,5 +4181,15 @@
   "@dashboard_upcomingTreatmentsDueInMinutesLabel": {
     "description": "Upcoming treatments panel — relative time label under the clock for non-delayed patients, e.g. '4 DK SONRA'",
     "placeholders": { "minutes": { "type": "int" } }
-  }
+  },
+  "assignment_edit_equivalentMedicinesSegment": "Médicaments équivalents",
+  "assignment_edit_allMedicinesSegment": "Tous les médicaments",
+  "unapplied_showUnappliedTooltip": "Afficher les non appliqués",
+  "unapplied_showOverdueTooltip": "Afficher les retards",
+  "stationStock_table_cabinNameColumn": "Nom de l'armoire",
+  "stationStock_table_maxQuantityColumn": "Maximum",
+  "stationStock_table_currentQuantityColumn": "Actuel",
+  "stationStock_table_reservedColumn": "Réservé",
+  "urgentPatient_intakeCompletedMessage": "Prise en charge du patient urgent terminée",
+  "urgentPatient_intakeCompletedDescription": "Vous pouvez clôturer ce patient urgent depuis l'écran Clôturer le patient urgent."
 }

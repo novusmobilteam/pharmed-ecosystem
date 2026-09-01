@@ -6,6 +6,7 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../assignment.dart';
 
 part 'assignment_idle_panel.dart';

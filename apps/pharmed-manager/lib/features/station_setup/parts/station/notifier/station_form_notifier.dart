@@ -88,6 +88,11 @@ class StationFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
+  void toggleEmergencyAccess(bool? value) {
+    _station = _station?.copyWith(canCreateEmergencyPatient: value);
+    notifyListeners();
+  }
+
   Future<void> submit() async {
     if (_station == null) return;
     await executeVoid(

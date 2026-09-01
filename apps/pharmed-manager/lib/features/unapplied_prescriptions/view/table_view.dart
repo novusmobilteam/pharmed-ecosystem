@@ -15,17 +15,29 @@ class TableView extends StatelessWidget {
       enableSearch: true,
       onSearchChanged: notifier.search,
       onDateRangeChanged: notifier.setDateRange,
+      emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noData),
 
       // Tablo Satır Aksiyonları
       actions: [
-        TableActionItem(
-          icon: PhosphorIcons.qrCode(),
+        TableActionItem<Prescription>(
+          icon: PhosphorIcons.receipt(),
           tooltip: context.l10n.unappliedPrescription_viewDetailsTooltip,
           color: context.colorScheme.onSurface,
-          onPressed: (item) => showPrescriptionDetailView(context, prescription: item),
+          onPressed: notifier.openPanel,
         ),
       ],
-      emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
+
+      toolbarActions: [
+        MedRectangleIconButton(
+          tooltip: notifier.showOverdue
+              ? context.l10n.unapplied_showUnappliedTooltip
+              : context.l10n.unapplied_showOverdueTooltip,
+          iconData: notifier.showOverdue ? PhosphorIcons.clockCounterClockwise() : PhosphorIcons.clockClockwise(),
+          color: MedColors.amberLight,
+          iconColor: MedColors.amber,
+          onPressed: notifier.toggleOverdue,
+        ),
+      ],
 
       enablePagination: true,
       pageSize: notifier.pageSize,
@@ -43,7 +55,7 @@ List<TableColumnDef<Prescription>> _buildColumnDefs(BuildContext context) => [
   ),
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_roomColumn,
-    displayValue: (item) => item.hospitalization?.room?.name,
+    displayValue: (item) => item.hospitalization?.bed?.room?.name,
   ),
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_bedColumn,

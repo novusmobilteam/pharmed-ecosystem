@@ -32,9 +32,11 @@ import '../../../unload_drawer/view/unload_drawer_screen.dart';
 import '../../../waste/waste.dart';
 
 import '../../dashboard.dart';
+import '../notifier/dashboard_notifier.dart';
+import '../widgets/dashboard_app_bar.dart';
 import 'cabin_selection_view.dart';
 
-part 'dashboard_content.dart';
+part 'dashboard_route_content.dart';
 part 'cabin_telemetry_panel.dart';
 part 'upcoming_treatment_panel.dart';
 
@@ -54,28 +56,34 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dashState = ref.watch(dashboardNotifierProvider);
-    final notifier = ref.read(dashboardNotifierProvider.notifier);
+    final notifier = ref.watch(dashboardNotifierProvider);
     final authNotif = ref.read(authNotifierProvider.notifier);
     final authState = ref.watch(authNotifierProvider);
 
-    // AuthSessionExpiring de "logged in" sayılır — countdown sırasında menüler
-    // aktif kalsın ki kullanıcı dokunsun, oturum uzasın.
     final isLoggedIn = authState is AuthLoggedIn || authState is AuthSessionExpiring;
     final isExpiring = authState is AuthSessionExpiring;
     final currentUser = authNotif.currentUser;
 
-    final loaded = dashState is DashboardLoaded ? dashState : null;
-    final menuTree = loaded?.menuTree ?? const <MenuItem>[];
-    final flattenedMenus = loaded?.flattenedMenus ?? const <MenuItem>[];
-    final currentRoute = loaded?.activeRoute ?? 'dashboard';
+    final menuTree = notifier.menuTree ?? const <MenuItem>[];
+    final flattenedMenus = notifier.flattenedMenus ?? const <MenuItem>[];
+    final currentRoute = notifier.activeRoute;
 
-    return GestureDetector(
-      onTap: authNotif.onUserActivity,
-      child: Scaffold(
-        backgroundColor: MedColors.bg,
-        //appBar:,
-        body: Stack(
+    ref.listen(authNotifierProvider, (previous, next) {
+      final wasActive = previous is AuthLoggedIn || previous is AuthSessionExpiring;
+      final isNowLoggedOut = next is AuthLoggedOut;
+      if (wasActive && isNowLoggedOut) {
+        ref.read(dashboardNotifierProvider.notifier).navigateTo('dashboard');
+      }
+    });
+
+    if (notifier.isMainDataLoading) {
+      return const Scaffold(body: Center(child: MedLoadingIndicator()));
+    }
+
+    return Scaffold(
+      body: GestureDetector(
+        onTap: authNotif.onUserActivity,
+        child: Stack(
           children: [
             Column(
               children: [
@@ -104,7 +112,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 Expanded(
                   child: Padding(
                     padding: MedSpacing.insetXl,
-                    child: DashboardContentFactory.buildContent(context, ref, dashState, notifier, isLoggedIn),
+                    child: _DashboardBody(isLoggedIn: isLoggedIn),
                   ),
                 ),
               ],
@@ -157,4 +165,59 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void _showSettingsPopup(BuildContext context) => SettingsView.show(context);
+}
+
+class _DashboardBody extends ConsumerWidget {
+  const _DashboardBody({required this.isLoggedIn});
+
+  final bool isLoggedIn;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifier = ref.watch(dashboardNotifierProvider);
+
+    final cabinDataByCabinId = <int, CabinVisualizerData>{
+      for (final entry in notifier.cabinVisualizerDataByCabin.entries)
+        if (entry.key.id != null) entry.key.id!: entry.value,
+    };
+
+    if (notifier.pendingCabinRoute != null) {
+      return CabinSelectionView(
+        cabins: notifier.cabins,
+        cabinDataByCabinId: cabinDataByCabinId,
+        onCabinSelected: notifier.selectCabinForPendingRoute,
+      );
+    }
+
+    if (notifier.isActiveRouteDashboard) {
+      return Row(
+        spacing: MedSpacing.lg,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 3,
+            child: UpcomingTreatmentPanel(section: DashboardSection(data: notifier.upcomingTreatments)),
+          ),
+          Expanded(
+            flex: 2,
+            child: DrugActivityPanel(section: DashboardSection(data: notifier.drugActivities)),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                if (notifier.primaryCabinData() case final cabinData?)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: CabinStatusPanel(cabin: cabinData),
+                  ),
+                CabinTelemetryPanel(),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    return DashboardRouteContent();
+  }
 }

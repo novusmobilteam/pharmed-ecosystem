@@ -18,6 +18,7 @@ class AppUser extends Equatable {
     required this.roleId,
     this.isNotOrdered = false,
     this.isAdmin = false,
+    this.canCreateEmergencyPatient = false,
   });
 
   final int id;
@@ -29,6 +30,7 @@ class AppUser extends Equatable {
   final int roleId;
   final bool isNotOrdered;
   final bool isAdmin;
+  final bool canCreateEmergencyPatient;
 
   String get initials {
     // Boşlukları temizle ve her ihtimale karşı null/empty kontrolü yap

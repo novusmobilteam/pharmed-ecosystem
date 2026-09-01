@@ -15,7 +15,7 @@ class StationStockMapper {
       remainingQuantity: dto.remainingQuantity,
       fillingQuantity: dto.fillingQuantity,
       // Alt modeller için ilgili mapper'lar
-      station: const StationMapper().toEntityOrNull(dto.station),
+      cabin: const CabinMapper().toEntityOrNull(dto.cabin),
       medicine: dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null,
     );
   }
@@ -23,8 +23,7 @@ class StationStockMapper {
   StationStockDTO toDto(StationStock entity) {
     return StationStockDTO(
       id: entity.id,
-      stationId: entity.station?.id,
-      station: const StationMapper().toDtoOrNull(entity.station),
+      cabin: const CabinMapper().toDtoOrNull(entity.cabin),
       code: entity.code,
       barcode: entity.medicine?.barcode,
       medicineId: entity.medicine?.id,

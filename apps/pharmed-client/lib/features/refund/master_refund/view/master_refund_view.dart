@@ -71,7 +71,7 @@ class _MasterRefundViewState extends ConsumerState<MasterRefundView> {
       }
     });
 
-    final selectionView = MasterRefundSelectionView(menu: widget.stationContext.menu);
+    final selectionView = MasterRefundSelectionView(stationContext: widget.stationContext);
 
     if (!_hasBooted) {
       if (!_isPatientReady(patientState)) {

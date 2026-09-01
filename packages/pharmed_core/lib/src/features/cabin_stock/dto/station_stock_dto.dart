@@ -3,7 +3,7 @@ import 'package:pharmed_manager/core/core.dart';
 class StationStockDTO {
   final int? id;
   final int? stationId;
-  final StationDTO? station;
+  final CabinDTO? cabin;
   final String? code;
   final String? barcode;
   final int? medicineId;
@@ -17,7 +17,7 @@ class StationStockDTO {
   const StationStockDTO({
     this.id,
     this.stationId,
-    this.station,
+    this.cabin,
     this.code,
     this.barcode,
     this.medicineId,
@@ -33,7 +33,7 @@ class StationStockDTO {
     return StationStockDTO(
       id: json['id'] as int?,
       stationId: json['stationId'] as int?,
-      station: json['station'] != null ? StationDTO.fromJson(json['station']) : null,
+      cabin: json['cabin'] != null ? CabinDTO.fromJson(json['cabin']) : null,
       code: json['code'] as String?,
       barcode: json['barcode'] as String?,
       medicineId: json['materialId'] as int?,
@@ -49,7 +49,6 @@ class StationStockDTO {
   Map<String, dynamic> toJson() => {
     'id': id,
     'stationId': stationId,
-    'station': station,
     'code': code,
     'barcode': barcode,
     'materialId': medicineId,
@@ -64,7 +63,7 @@ class StationStockDTO {
   StationStockDTO copyWith({
     int? id,
     int? stationId,
-    StationDTO? station,
+    CabinDTO? cabin,
     String? code,
     String? barcode,
     int? medicineId,
@@ -78,7 +77,7 @@ class StationStockDTO {
     return StationStockDTO(
       id: id ?? this.id,
       stationId: stationId ?? this.stationId,
-      station: station ?? this.station,
+      cabin: cabin ?? this.cabin,
       code: code ?? this.code,
       barcode: barcode ?? this.barcode,
       medicineId: medicineId ?? this.medicineId,

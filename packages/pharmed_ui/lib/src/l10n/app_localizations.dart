@@ -5322,6 +5322,12 @@ abstract class AppLocalizations {
   /// **'Badge Card'**
   String get user_badgeCardLabel;
 
+  /// No description provided for @user_emergencyAccessLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Can Create Emergency Patient?'**
+  String get user_emergencyAccessLabel;
+
   /// No description provided for @user_badgeCardHint.
   ///
   /// In en, this message translates to:
@@ -11648,6 +11654,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes} MIN LEFT'**
   String dashboard_upcomingTreatmentsDueInMinutesLabel(int minutes);
+
+  /// No description provided for @assignment_edit_equivalentMedicinesSegment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equivalent Medicines'**
+  String get assignment_edit_equivalentMedicinesSegment;
+
+  /// No description provided for @assignment_edit_allMedicinesSegment.
+  ///
+  /// In en, this message translates to:
+  /// **'All Medicines'**
+  String get assignment_edit_allMedicinesSegment;
+
+  /// No description provided for @unapplied_showUnappliedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Unapplied'**
+  String get unapplied_showUnappliedTooltip;
+
+  /// No description provided for @unapplied_showOverdueTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Overdue'**
+  String get unapplied_showOverdueTooltip;
+
+  /// No description provided for @stationStock_table_cabinNameColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin Name'**
+  String get stationStock_table_cabinNameColumn;
+
+  /// No description provided for @stationStock_table_maxQuantityColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum'**
+  String get stationStock_table_maxQuantityColumn;
+
+  /// No description provided for @stationStock_table_currentQuantityColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get stationStock_table_currentQuantityColumn;
+
+  /// No description provided for @stationStock_table_reservedColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Reserved'**
+  String get stationStock_table_reservedColumn;
+
+  /// No description provided for @urgentPatient_intakeCompletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency patient intake completed'**
+  String get urgentPatient_intakeCompletedMessage;
+
+  /// No description provided for @urgentPatient_intakeCompletedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You can close out this emergency patient from the Terminate Emergency Patient screen.'**
+  String get urgentPatient_intakeCompletedDescription;
 }
 
 class _AppLocalizationsDelegate

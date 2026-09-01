@@ -9,3 +9,4 @@ export 'domain/usecase/get_drugs_usecase.dart';
 export 'domain/usecase/get_medical_consumables_usecase.dart';
 export 'domain/usecase/get_medicines_usecase.dart';
 export 'domain/usecase/update_medicine_usecase.dart';
+export 'domain/usecase/get_equivalent_medicines_usecase.dart';

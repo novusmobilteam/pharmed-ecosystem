@@ -1,31 +1,122 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/cache/app_settings_cache.dart';
-import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
+import '../../../../core/cache/app_settings_cache.dart';
 import '../../../../core/hardware/hardware.dart';
+import '../../../../core/mixins/api_request_mixin.dart';
 import '../../../../core/providers/providers.dart';
-import 'dashboard_state.dart';
+import '../../../auth/auth.dart';
 
-final dashboardNotifierProvider = NotifierProvider<DashboardNotifier, DashboardState>(DashboardNotifier.new);
+final dashboardNotifierProvider = ChangeNotifierProvider<DashboardNotifier>((ref) {
+  return DashboardNotifier(
+    getFilteredMenus: ref.read(getFilteredMenusUseCaseProvider),
+    getUpcomingTreatments: ref.read(getUpcomingTreatmensUseCaseProvider),
+    getDrugActivities: ref.read(getDrugActivitiesUseCaseProvider),
+    getUnappliedPrescriptions: ref.read(getUnappliedPrescriptionsUseCaseProvider),
+    getCurrentStation: ref.read(getCurrentStationUseCaseProvider),
+    getCabinVisualizer: ref.read(getCabinVisualizerDataUseCaseProvider),
+    settings: ref.read(appSettingsCacheProvider),
+    authNotifier: ref.read(authNotifierProvider.notifier),
+    cabinConnectionNotifier: ref.read(cabinConnectionProvider.notifier),
+  );
+});
 
-class DashboardNotifier extends Notifier<DashboardState> {
-  Timer? _timer;
+class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
+  DashboardNotifier({
+    required GetFilteredMenusUseCase getFilteredMenus,
+    required GetUpcomingTreatmentsUseCase getUpcomingTreatments,
+    required GetDrugActivitiesUseCase getDrugActivities,
+    required GetDashboardUnappliedPrescriptionsUseCase getUnappliedPrescriptions,
+    required GetCurrentStationUseCase getCurrentStation,
+    required GetCabinVisualizerDataUseCase getCabinVisualizer,
+    required AppSettingsCache settings,
+    required AuthNotifier authNotifier,
+    required CabinConnectionNotifier cabinConnectionNotifier,
+  }) : _getFilteredMenus = getFilteredMenus,
+       _getUpcomingTreatments = getUpcomingTreatments,
+       _getDrugActivities = getDrugActivities,
+       _getUnapplied = getUnappliedPrescriptions,
+       _getCurrentStation = getCurrentStation,
+       _getCabinVisualizer = getCabinVisualizer,
+       _settings = settings,
+       _authNotifier = authNotifier,
+       _cabinConnectionNotifier = cabinConnectionNotifier;
 
-  GetUpcomingTreatmentsUseCase get _getUpcomingTreatments => ref.read(getUpcomingTreatmensUseCaseProvider);
-  GetDrugActivitiesUseCase get _getDrugActivities => ref.read(getDrugActivitiesUseCaseProvider);
-  GetDashboardUnappliedPrescriptionsUseCase get _getUnapplied => ref.read(getUnappliedPrescriptionsUseCaseProvider);
-  GetCurrentStationUseCase get _getCurrentStation => ref.read(getCurrentStationUseCaseProvider);
-  GetCabinVisualizerDataUseCase get _getCabinVisualizer => ref.read(getCabinVisualizerDataUseCaseProvider);
-  AppSettingsCache get _settings => ref.read(appSettingsCacheProvider);
+  final GetFilteredMenusUseCase _getFilteredMenus;
+  final GetUpcomingTreatmentsUseCase _getUpcomingTreatments;
+  final GetDrugActivitiesUseCase _getDrugActivities;
+  final GetDashboardUnappliedPrescriptionsUseCase _getUnapplied;
+  final GetCurrentStationUseCase _getCurrentStation;
+  final GetCabinVisualizerDataUseCase _getCabinVisualizer;
+  final AuthNotifier _authNotifier;
+  final AppSettingsCache _settings;
+  final CabinConnectionNotifier _cabinConnectionNotifier;
 
-  bool _cabinDesignsVerifiedThisSession = false;
+  String _activeRoute = 'dashboard';
+  String get activeRoute => _activeRoute;
+
+  int? _activeCabinId;
+  int? get activeCabinId => _activeCabinId;
+
+  String? _pendingCabinRoute;
+  String? get pendingCabinRoute => _pendingCabinRoute;
+
+  CabinType? _deviceMode;
+  CabinType? get deviceMode => _deviceMode;
+
+  FilteredMenus? _menus;
+  FilteredMenus? get menus => _menus;
+
+  List<MenuItem>? _menuTree;
+  List<MenuItem>? get menuTree => _menuTree;
+
+  List<MenuItem>? _flattenedMenus;
+  List<MenuItem>? get flattenedMenus => _flattenedMenus;
+
+  Station? _station;
+  Station? get station => _station;
+
+  List<Cabin> get cabins => _station?.cabins ?? [];
+
+  Map<Cabin, CabinVisualizerData> _cabinVisualizerDataByCabin = {};
+  Map<Cabin, CabinVisualizerData> get cabinVisualizerDataByCabin => _cabinVisualizerDataByCabin;
+
+  Cabin? get activeCabin =>
+      _cabinVisualizerDataByCabin.entries.firstWhereOrNull((e) => e.key.id == _activeCabinId)?.key;
+
+  List<UpcomingTreatment>? _upcomingTreatments;
+  List<UpcomingTreatment>? get upcomingTreatments => _upcomingTreatments;
+
+  List<PrescriptionItemMovement>? _drugActivities;
+  List<PrescriptionItemMovement>? get drugActivities => _drugActivities;
+
+  List<PrescriptionItem>? _unappliedPrescriptions;
+  List<PrescriptionItem>? get unappliedPrescriptions => _unappliedPrescriptions;
+
+  AppUser? get currentUser => _authNotifier.currentUser;
+
+  OperationKey fetchMenusKey = OperationKey.custom('fetch-menus');
+  OperationKey fetchCurrentStationKey = OperationKey.custom('fetch-current-station');
+  OperationKey fetchCabinVisualizerDataKey = OperationKey.custom('fetch-cabin-visualizer-data');
+
+  bool get isMainDataLoading =>
+      isLoading(fetchMenusKey) || isLoading(fetchCurrentStationKey) || isLoading(fetchCabinVisualizerDataKey);
+
+  bool get isActiveRouteDashboard => _activeRoute == 'dashboard';
+
+  CabinVisualizerData? primaryCabinData() {
+    final targetCabin = _deviceMode == CabinType.mobile
+        ? cabins.firstOrNull
+        : cabins.firstWhereOrNull((c) => c.type == CabinType.master);
+
+    if (targetCabin == null) return null;
+    return cabinVisualizerDataByCabin[targetCabin];
+  }
 
   /// Kabin seçimi gerektiren route'lar — bu listedeki bir hedefe navigateTo
   /// çağrıldığında doğrudan gidilmez, önce CabinSelectionView gösterilir.
@@ -40,217 +131,142 @@ class DashboardNotifier extends Notifier<DashboardState> {
     'return-box-unload',
   };
 
-  @override
-  DashboardState build() {
-    ref.onDispose(() => _timer?.cancel());
-
-    return const DashboardLoading();
-  }
-
+  /// Dashboard'un İLK RENDER'I için gereken veri: kurulum durumu, cihaz
+  /// modu, menüler ve istasyon+kabin görselleştirme verisi. Kabin verisi
+  /// istasyon geldikten SONRA tetiklenir (bkz. _fetchCurrentStation).
   Future<void> initialize() async {
-    final shouldForceRefresh = !_cabinDesignsVerifiedThisSession;
+    final isSetupComplete = await _settings.isSetupComplete();
+    _deviceMode = isSetupComplete ? await _resolveDeviceMode() : null;
+    notifyListeners();
 
-    await Future.wait([_fetchMenus(), _loadPrimary(forceRefresh: shouldForceRefresh)]);
-    _cabinDesignsVerifiedThisSession = true;
-
-    if (await _settings.isSetupComplete()) {
-      ref.read(cabinConnectionProvider.notifier).connect();
+    if (isSetupComplete) {
+      unawaited(_cabinConnectionNotifier.connect());
     }
 
-    unawaited(_loadSecondary());
+    await Future.wait([_fetchMenus(), if (isSetupComplete) _fetchCurrentStation()]);
+
+    // Tedavi/aktivite/reçete section'ları primary veriyi bloklamasın diye
+    // arka planda, beklenmeden başlatılır.
+    unawaited(_loadSecondaryData());
   }
 
-  Future<void> refresh({required bool forceRefresh}) =>
-      Future.wait([_loadPrimary(forceRefresh: forceRefresh), _loadSecondary()]);
+  Future<void> refresh({bool forceRefresh = true}) async {
+    final isSetupComplete = await _settings.isSetupComplete();
+    _deviceMode = isSetupComplete ? await _resolveDeviceMode() : null;
 
-  /// Dashboard'un İLK RENDER'I için gereken veri: kurulum durumu, cihaz modu
-  /// ve istasyondaki kabinlerin görselleştirme verisi. Diğer section'lar
-  /// BURADA ÇEKİLMEZ.
-  Future<void> _loadPrimary({required bool forceRefresh}) async {
-    final setupDone = await _settings.isSetupComplete();
-    final deviceMode = setupDone ? await _resolveDeviceMode() : null;
-
-    final (station, stationCabins, cabinData, cabinFailed) = setupDone
-        ? await _loadAllCabinVisualizers(forceRefresh: forceRefresh)
-        : (null, <Cabin>[], <int, CabinVisualizerData>{}, false);
-
-    // İstasyonun kendisi çekilemediyse (kabin listesi boş + failed=true) → hard error.
-    if (setupDone && stationCabins.isEmpty && cabinFailed) {
-      state = DashboardError(message: contextlessL10n().dashboard_allSectionsLoadError);
+    if (!forceRefresh) {
+      await _loadSecondaryData();
       return;
     }
 
-    final current = state;
-    state = current is DashboardLoaded
-        ? current.copyWith(
-            data: current.data.copyWith(
-              station: station,
-              stationCabins: stationCabins,
-              cabinVisualizerDataByCabinId: cabinData,
-              cabinDataFailed: cabinFailed,
-            ),
-            deviceMode: deviceMode,
-          )
-        : DashboardLoaded(
-            data: DashboardData(
-              station: station!,
-              stationCabins: stationCabins,
-              cabinVisualizerDataByCabinId: cabinData,
-              cabinDataFailed: cabinFailed,
-            ),
-            deviceMode: deviceMode,
-          );
+    await Future.wait([_fetchMenus(), if (isSetupComplete) _fetchCurrentStation(forceRefreshCabins: forceRefresh)]);
+
+    await _loadSecondaryData();
   }
 
-  /// İkincil section'lar: tedavi listesi, ilaç aktiviteleri, bekleyen
-  /// reçeteler, oda/yatak/servis. _loadPrimary() bitmeden bunlara başlanmaz.
-  Future<void> _loadSecondary() async {
+  Future<void> _fetchMenus() => execute(
+    fetchMenusKey,
+    operation: () => _getFilteredMenus.call(userId: currentUser?.id),
+    onData: (data) {
+      _menus = data;
+      _menuTree = data.tree;
+      _flattenedMenus = data.flattened;
+      notifyListeners();
+    },
+  );
+
+  /// İstasyonu çeker; başarılı olursa kabin görselleştirme verisini de
+  /// hemen tetikler — station olmadan cabin visualizer istekleri anlamsız.
+  Future<void> _fetchCurrentStation({bool forceRefreshCabins = true}) => execute(
+    fetchCurrentStationKey,
+    operation: () => _getCurrentStation.call(),
+    onData: (data) {
+      _station = data;
+      notifyListeners();
+      _loadAllCabinData(forceRefresh: forceRefreshCabins);
+    },
+  );
+
+  /// İstasyondaki tüm kabinlerin görselleştirme verisini paralel çeker.
+  /// Her kabin kendi OperationKey'i ile izlenir — biri hata verse diğerleri
+  /// etkilenmez, geldikçe haritaya eklenir.
+  void _loadAllCabinData({bool forceRefresh = true}) {
+    final currentStation = _station;
+    final mode = _deviceMode;
+    if (currentStation == null || mode == null) return;
+
+    for (final cabin in currentStation.cabins.where((c) => c.id != null)) {
+      execute(
+        fetchCabinVisualizerDataKey,
+        operation: () => _getCabinVisualizer.call(deviceMode: mode, cabin: cabin, forceRefresh: forceRefresh),
+        onData: (data) {
+          _cabinVisualizerDataByCabin = {..._cabinVisualizerDataByCabin, cabin: data};
+          notifyListeners();
+        },
+      );
+    }
+  }
+
+  /// Tüm kabinlerin görselleştirme verisini yeniden çeker — "Tekrar Dene"
+  /// butonu bunu çağırır (bkz. dashboard_content.dart).
+  void refreshCabinData({bool forceRefresh = true}) => _loadAllCabinData(forceRefresh: forceRefresh);
+
+  /// Tek bir kabinin görselleştirme verisini yeniden çeker — diğer
+  /// kabinlere dokunmaz. Kabin ekranından "yenile" tetiklendiğinde kullanılır.
+  Future<void> refreshCabinVisualizer(int cabinId) async {
+    final mode = _deviceMode;
+    final cabin = cabins.firstWhereOrNull((c) => c.id == cabinId);
+    if (mode == null || cabin == null) return;
+
+    await execute(
+      OperationKey.custom('fetch-cabin-visualizer-$cabinId'),
+      operation: () => _getCabinVisualizer.call(deviceMode: mode, cabin: cabin, forceRefresh: true),
+      onData: (data) {
+        _cabinVisualizerDataByCabin = {..._cabinVisualizerDataByCabin, cabin: data};
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> _loadSecondaryData() async {
     final mac = await DeviceInfo.getMacAddress();
-
-    final results = await Future.wait([
-      _getUpcomingTreatments.call(mac: mac),
-      _getDrugActivities.call(mac: mac),
-      _getUnapplied.call(),
-      // TODO : Mobil kabin için kontrol et
-      // ref.read(allRoomsProvider.future),
-      // ref.read(allBedsProvider.future),
-      // ref.read(allServicesProvider.future),
-    ]);
-
-    final treatmentsSection = _toSection<List<UpcomingTreatment>?>(results[0] as Result<List<UpcomingTreatment>>);
-    final activitiesSection = _toSection<List<PrescriptionItemMovement>?>(
-      results[1] as Result<List<PrescriptionItemMovement>?>,
-    );
-    final unappliedSection = _toSection<List<PrescriptionItem>?>(results[2] as Result<List<PrescriptionItem>>);
-
-    final current = state;
-    if (current is! DashboardLoaded) return; // primary hataya düştüyse burada duracak bir şey yok
-
-    state = current.copyWith(
-      data: current.data.copyWith(
-        upcomingTreatments: treatmentsSection,
-        drugActivities: activitiesSection,
-        unappliedPrescriptions: unappliedSection,
+    Future.wait([
+      execute(
+        OperationKey.custom('fetch-upcoming-treatments'),
+        operation: () => _getUpcomingTreatments.call(mac: mac),
+        onData: (data) {
+          _upcomingTreatments = data;
+          notifyListeners();
+        },
       ),
-      initialLoadComplete: true,
-    );
+      execute(
+        OperationKey.custom('fetch-drug-activities'),
+        operation: () => _getDrugActivities.call(mac: mac),
+        onData: (data) {
+          _drugActivities = data;
+          notifyListeners();
+        },
+      ),
+      execute(
+        OperationKey.custom('fetch-unapplied-prescriptions'),
+        operation: () => _getUnapplied.call(),
+        onData: (data) {
+          _unappliedPrescriptions = data;
+          notifyListeners();
+        },
+      ),
+    ]);
   }
 
-  /// [cachedDeviceModeProvider] ile aynı parse mantığı — notifier'ın kendi
-  /// state'inde bir kere tutulur ki navigateTo() SENKRON karar verebilsin
-  /// (async provider'a her seferinde bağımlı kalmasın).
   Future<CabinType?> _resolveDeviceMode() async {
     final raw = await _settings.getDeviceMode();
     if (raw == null) return null;
     return CabinType.values.firstWhereOrNull((t) => t.name == raw || 'CabinType.${t.name}' == raw);
   }
 
-  /// İstasyondaki TÜM kabinler için görselleştirme verisini PARALEL ve
-  /// HER ZAMAN TAZE (forceRefresh: true) çeker — dashboard uygulamanın
-  /// girişi olduğu için burada cache'e güvenilmez.
-  ///
-  /// Dönüş: (cabinId->data haritası, en az bir kabin başarısız oldu mu).
-  /// İstasyon çekilemezse (kendisi de başarısız) → boş harita + failed=true.
-  Future<(Station?, List<Cabin>, Map<int, CabinVisualizerData>, bool)> _loadAllCabinVisualizers({
-    bool forceRefresh = true,
-  }) async {
-    final stationResult = await _getCurrentStation.call();
-    final station = stationResult.when(ok: (s) => s, error: (_) => null);
-
-    if (station == null || station.cabins.isEmpty) {
-      return (null, <Cabin>[], <int, CabinVisualizerData>{}, true);
-    }
-
-    final map = <int, CabinVisualizerData>{};
-    var anyFailed = false;
-
-    // Tüm kabinleri aynı anda değil, 2'şerli gruplar halinde çek —
-    // Dio connection pool'unu tek seferde doldurmamak için.
-    final cabinsWithId = station.cabins.where((c) => c.id != null).toList();
-    for (var i = 0; i < cabinsWithId.length; i += 2) {
-      final batch = cabinsWithId.skip(i).take(2);
-      final batchResults = await Future.wait(
-        batch.map((cabin) async {
-          final result = await _getCabinVisualizer.call(
-            deviceMode: cabin.type,
-            cabin: cabin,
-            forceRefresh: forceRefresh,
-          );
-          return (cabin.id!, result);
-        }),
-      );
-      for (final (cabinId, result) in batchResults) {
-        result.when(ok: (data) => map[cabinId] = data, error: (_) => anyFailed = true);
-      }
-    }
-
-    return (station, station.cabins, map, anyFailed);
-  }
-
-  /// Sadece kabin verisini yeniden çeker — diğer section'lara dokunmaz.
-  /// "Tekrar Dene" butonu bunu çağırır.
-  Future<void> retryCabinData() async {
-    final current = state;
-    if (current is! DashboardLoaded) return;
-
-    final (station, stationCabins, cabinData, cabinFailed) = await _loadAllCabinVisualizers();
-
-    state = current.copyWith(
-      data: current.data.copyWith(
-        station: station,
-        stationCabins: stationCabins,
-        cabinVisualizerDataByCabinId: cabinData,
-        cabinDataFailed: cabinFailed,
-      ),
-    );
-  }
-
-  /// Tek bir kabinin görselleştirme verisini yeniden çeker ve haritada
-  /// günceller. Diğer kabinlere/section'lara dokunmaz — refreshCabinVisualizer()
-  /// yerine geçer (artık "tek aktif kabin" kavramı olmadığı için hangi
-  /// kabinin yenileneceği çağıran taraftan gelmeli).
-  Future<void> refreshCabinVisualizer(int cabinId) async {
-    final current = state;
-    if (current is! DashboardLoaded) return;
-
-    final cabin = current.data.stationCabins.firstWhereOrNull((c) => c.id == cabinId);
-    if (cabin == null) return;
-
-    final result = await _getCabinVisualizer.call(deviceMode: cabin.type, cabin: cabin, forceRefresh: true);
-
-    final data = result.when(ok: (d) => d, error: (_) => null);
-    if (data == null) return; // hata → mevcut (eski) veriyi koru, sessizce geç
-
-    final updatedMap = {...current.data.cabinVisualizerDataByCabinId, cabinId: data};
-    state = current.copyWith(data: current.data.copyWith(cabinVisualizerDataByCabinId: updatedMap));
-  }
-
-  DashboardSection<T> _toSection<T>(Result<T> result) {
-    return switch (result) {
-      Ok(:final value) => DashboardSection<T>(data: value, savedAt: DateTime.now()),
-      Error(:final error) => DashboardSection<T>(error: error.message),
-    };
-  }
-
-  Future<void> _fetchMenus() async {
-    final user = ref.read(authNotifierProvider.notifier).currentUser;
-    final result = await ref.read(getFilteredMenusUseCaseProvider)(userId: user?.id);
-
-    final menus = _unwrap(result);
-    if (menus == null) return;
-
-    final current = state;
-    state = current is DashboardLoaded
-        ? current.copyWith(menuTree: menus.tree, flattenedMenus: menus.flattened)
-        : DashboardLoaded(menuTree: menus.tree, flattenedMenus: menus.flattened);
-  }
-
   void navigateTo(dynamic destination) {
-    final current = state;
-    if (current is! DashboardLoaded) return;
-
     final route = switch (destination) {
-      int id => current.flattenedMenus?.firstWhereOrNull((m) => m.id == id)?.slug ?? 'dashboard',
+      int id => _flattenedMenus?.firstWhereOrNull((m) => m.id == id)?.slug ?? 'dashboard',
       String path => path,
       _ => 'dashboard',
     };
@@ -258,50 +274,58 @@ class DashboardNotifier extends Notifier<DashboardState> {
     debugPrint(route);
 
     if (route == 'dashboard') {
-      state = current.copyWith(activeRoute: 'dashboard', clearActiveCabinId: true, clearPendingCabinRoute: true);
+      _activeRoute = 'dashboard';
+      _activeCabinId = null;
+      _pendingCabinRoute = null;
+      notifyListeners();
       return;
     }
 
     if (_cabinScopedRoutes.contains(route)) {
       // Mobil istasyonda çoklu-kabin/adresleme mimarisi hiç yok — seçim
       // ekranı atlanır, istasyonun tek (mobil) kabinine doğrudan gidilir.
-      if (current.deviceMode == CabinType.mobile) {
-        final cabinId = current.data.stationCabins.firstOrNull?.id;
-        state = current.copyWith(activeRoute: route, activeCabinId: cabinId, clearPendingCabinRoute: true);
+      if (_deviceMode == CabinType.mobile) {
+        _activeRoute = route;
+        _activeCabinId = _station?.cabins.firstOrNull?.id;
+        _pendingCabinRoute = null;
+        notifyListeners();
         return;
       }
 
-      state = current.copyWith(pendingCabinRoute: route, clearActiveCabinId: true);
+      _pendingCabinRoute = route;
+      _activeCabinId = null;
+      notifyListeners();
       return;
     }
 
-    state = current.copyWith(activeRoute: route, clearPendingCabinRoute: true, clearActiveCabinId: true);
+    // Kabin gerektirmeyen düz bir route — eski taslakta bu dal eksikti,
+    // yani menüden normal bir sayfaya geçiş hiçbir şey yapmıyordu.
+    _activeRoute = route;
+    _pendingCabinRoute = null;
+    _activeCabinId = null;
+    notifyListeners();
   }
 
   /// Kabin seçim ekranından bir kabine tıklanınca çağrılır — bekleyen route'a
   /// kabin ID'siyle birlikte geçilir.
   void selectCabinForPendingRoute(int cabinId) {
-    final current = state;
-    if (current is! DashboardLoaded) return;
-    final target = current.pendingCabinRoute;
+    final target = _pendingCabinRoute;
     if (target == null) return;
 
-    state = current.copyWith(activeRoute: target, activeCabinId: cabinId, clearPendingCabinRoute: true);
+    _activeRoute = target;
+    _activeCabinId = cabinId;
+    _pendingCabinRoute = null;
+    notifyListeners();
   }
 
   /// Operasyon ekranı içinden "kabin değiştir" tetiklenince — aynı hedef
   /// route için seçim ekranına geri döner.
   void changeCabin() {
-    final current = state;
-    if (current is! DashboardLoaded) return;
-    if (current.deviceMode == CabinType.mobile) return;
-    if (!_cabinScopedRoutes.contains(current.activeRoute)) return;
+    if (_deviceMode == CabinType.mobile) return;
+    if (!_cabinScopedRoutes.contains(_activeRoute)) return;
 
-    state = current.copyWith(pendingCabinRoute: current.activeRoute, clearActiveCabinId: true);
+    _pendingCabinRoute = _activeRoute;
+    _activeCabinId = null;
+    notifyListeners();
   }
-
-  T? _unwrap<T>(Result<T> result) => switch (result) {
-    Ok(:final value) => value,
-    Error() => null,
-  };
 }

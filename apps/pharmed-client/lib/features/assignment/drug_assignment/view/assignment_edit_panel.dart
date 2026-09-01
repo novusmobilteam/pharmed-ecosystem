@@ -48,13 +48,24 @@ class _MedicineSelectionPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final page = state.medicinePage;
+    final page = state.selectedPage;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (state.isAssigned) ...[
+          MedSegmentedButton(
+            selectedIndex: state.listMode.index,
+            onChanged: notifier.onListModeChanged,
+            labels: [
+              context.l10n.assignment_edit_equivalentMedicinesSegment,
+              context.l10n.assignment_edit_allMedicinesSegment,
+            ],
+          ),
+          const SizedBox(height: MedSpacing.md),
+        ],
         MedTextInputField(
-          onChanged: (value) => notifier.onMedicineSearchChanged(value),
+          onChanged: (value) => notifier.onSearchChanged(value),
           hintText: context.l10n.assignment_edit_searchHint,
         ),
         const SizedBox(height: MedSpacing.md),
@@ -81,7 +92,7 @@ class _MedicineSelectionPanel extends StatelessWidget {
         ),
         if (page.totalCount > page.pageSize) ...[
           const SizedBox(height: MedSpacing.sm),
-          _PaginationBar(page: page, onPrevious: notifier.onMedicinePreviousPage, onNext: notifier.onMedicineNextPage),
+          _PaginationBar(page: page, onPrevious: notifier.onPreviousPage, onNext: notifier.onNextPage),
         ],
       ],
     );

@@ -20,6 +20,7 @@ class StationMapper {
       services: ServiceMapper().toEntityList(dto.stationProvidedServices),
       type: StationType.fromId(dto.workingMethod),
       cabins: CabinMapper().toEntityList(dto.cabins ?? []),
+      canCreateEmergencyPatient: dto.canCreateEmergencyPatient,
     );
   }
 
@@ -39,6 +40,7 @@ class StationMapper {
       macAddress: entity.macAddress,
       stationProvidedServices: ServiceMapper().toDtoList(entity.services),
       workingMethod: entity.type?.id,
+      canCreateEmergencyPatient: entity.canCreateEmergencyPatient,
     );
   }
 

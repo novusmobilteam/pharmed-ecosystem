@@ -4,12 +4,15 @@
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_core/pharmed_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart' hide MaterialType;
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:collection/collection.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import 'dashboard_navbar_menu.dart';
+import '../../../../core/cache/app_settings_cache.dart';
+
+part 'dashboard_navbar_menu.dart';
 
 class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   const DashboardAppBar({

@@ -28,6 +28,7 @@ class UserMapper {
     stationIds: dto.stationIds,
     isAdmin: dto.isAdmin,
     rfidCardData: dto.rfidCardData,
+    canCreateEmergencyPatient: dto.canCreateEmergencyPatient,
   );
 
   User? toEntityOrNull(UserDto? dto) => dto == null ? null : toEntity(dto);
@@ -54,6 +55,7 @@ class UserMapper {
     password: entity.password,
     stationIds: entity.stationIds,
     rfidCardData: entity.rfidCardData,
+    canCreateEmergencyPatient: entity.canCreateEmergencyPatient,
   );
 
   User fromAppUser(AppUser appUser) => User(

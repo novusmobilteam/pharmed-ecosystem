@@ -7,6 +7,8 @@
 
 import 'package:flutter/foundation.dart';
 
+enum UrgentPatientMedicineScope { free, allMedicines }
+
 @immutable
 class PatientSelectionConfig {
   const PatientSelectionConfig({

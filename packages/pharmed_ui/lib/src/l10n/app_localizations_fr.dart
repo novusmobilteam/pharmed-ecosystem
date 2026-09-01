@@ -2949,6 +2949,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get user_badgeCardLabel => 'Badge';
 
   @override
+  String get user_emergencyAccessLabel => 'Peut créer un patient d\'urgence ?';
+
+  @override
   String get user_badgeCardHint => 'Scannez la carte';
 
   @override
@@ -6759,4 +6762,37 @@ class AppLocalizationsFr extends AppLocalizations {
   String dashboard_upcomingTreatmentsDueInMinutesLabel(int minutes) {
     return 'DANS $minutes MIN';
   }
+
+  @override
+  String get assignment_edit_equivalentMedicinesSegment =>
+      'Médicaments équivalents';
+
+  @override
+  String get assignment_edit_allMedicinesSegment => 'Tous les médicaments';
+
+  @override
+  String get unapplied_showUnappliedTooltip => 'Afficher les non appliqués';
+
+  @override
+  String get unapplied_showOverdueTooltip => 'Afficher les retards';
+
+  @override
+  String get stationStock_table_cabinNameColumn => 'Nom de l\'armoire';
+
+  @override
+  String get stationStock_table_maxQuantityColumn => 'Maximum';
+
+  @override
+  String get stationStock_table_currentQuantityColumn => 'Actuel';
+
+  @override
+  String get stationStock_table_reservedColumn => 'Réservé';
+
+  @override
+  String get urgentPatient_intakeCompletedMessage =>
+      'Prise en charge du patient urgent terminée';
+
+  @override
+  String get urgentPatient_intakeCompletedDescription =>
+      'Vous pouvez clôturer ce patient urgent depuis l\'écran Clôturer le patient urgent.';
 }

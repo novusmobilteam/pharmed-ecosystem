@@ -1,17 +1,3 @@
-// [SWREQ-UI-CAB-005]
-// İlaç bazlı atama ekranı state yönetimi.
-//
-// Sorumluluk:
-//   - CabinVisualizerData'dan groups alır (ekstra istek yok)
-//   - init() → GetAssignmentsUseCase ile atamaları çeker
-//   - Çekmece / göz seçimi → bellekte lookup, istek atılmaz
-//   - onDrugSelected() → dialog'dan gelen ilacı state'e yazar
-//   - saveAssignment() → UpdateAssignmentUseCase
-//   - deleteAssignment() → DeleteAssignmentUseCase
-//   - İşlem sonrası atamaları yeniler
-//
-// Sınıf: Class B
-
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,8 +17,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   UpdateMedicineAssignmentUseCase get _updateAssignment => ref.read(updateMedicineAssignmentUseCaseProvider);
   DeleteMedicineAssignmentUseCase get _deleteAssignment => ref.read(deleteAssignmentUseCaseProvider);
   GetMedicinesUseCase get _getMedicines => ref.read(getMedicinesUseCaseProvider);
+  GetEquivalentMedicinesUseCase get _getEquivalentMedicines => ref.read(getEquivalentMedicinesUseCaseProvider);
 
-  static const _medicinePageSize = 10;
+  static const _medicinePageSize = 15;
   static const _searchDebounce = Duration(milliseconds: 400);
 
   /// Son çekilen ilaç sayfası — göz değiştirildiğinde YENİDEN ÇEKİLMEZ,
@@ -67,8 +54,6 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       ),
     );
   }
-
-  // ── Göz seçimi ──────────────────────────────────────────────────
 
   /// Sol panelden bir göze dokunulduğunda çağrılır (boş ya da dolu fark
   /// etmez). Aynı göze tekrar dokunulursa Idle'a döner (toggle).
@@ -135,10 +120,13 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     _searchDebounceTimer?.cancel();
 
     final assignment = _findAssignment(unitId: unitId, cabinId: cabinId, assignments: assignments);
+    final hasExistingAssignment = assignment.id != null;
 
-    // Daha önce bir ilaç listesi çekilmişse (başka bir göz düzenlenirken)
-    // onu aynen kullan — kabin/göz değişimi ilaç listesini etkilemez.
     final medicinePage = _cachedMedicinePage ?? const MedicinePageState(pageSize: _medicinePageSize, isLoading: true);
+
+    // Boş gözde muadil kavramı anlamsız (referans ilaç yok) — doğrudan Tüm İlaçlar.
+    // Atanmış gözde varsayılan sekme Muadil İlaçlar.
+    final initialMode = hasExistingAssignment ? MedicineListMode.equivalent : MedicineListMode.all;
 
     state = DrugAssignmentCellSelected(
       groups: groups,
@@ -152,10 +140,13 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       maxQty: assignment.maxQuantityFromBackend.toInt(),
       criticalQty: assignment.critQuantityFromBackend.toInt(),
       medicinePage: medicinePage,
+      equivalentMedicinePage: const MedicinePageState(pageSize: _medicinePageSize),
+      listMode: initialMode,
     );
 
-    // Sadece hiç çekilmemişse (ekrana ilk giriş) fetch et.
-    if (_cachedMedicinePage == null) {
+    if (initialMode == MedicineListMode.equivalent) {
+      unawaited(_fetchEquivalentPage(page: 0, search: ''));
+    } else if (_cachedMedicinePage == null) {
       unawaited(_fetchMedicinePage(page: 0, search: ''));
     }
   }
@@ -174,6 +165,23 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       if (group.units.any((u) => u.id == unitId)) return group;
     }
     return null;
+  }
+
+  void onListModeChanged(int index) {
+    final current = state;
+    if (current is! DrugAssignmentCellSelected) return;
+
+    final mode = MedicineListMode.values[index];
+    if (mode == current.listMode) return;
+
+    state = current.copyWith(listMode: mode);
+
+    // Bu sekmeye ilk kez geçiliyorsa (henüz veri çekilmemiş) lazy fetch.
+    if (mode == MedicineListMode.all) {
+      _fetchMedicinePage(page: 0, search: '');
+    } else if (mode == MedicineListMode.equivalent) {
+      _fetchEquivalentPage(page: 0, search: '');
+    }
   }
 
   // ── İlaç listesi (sayfalı) ───────────────────────────────────────
@@ -212,25 +220,78 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     );
   }
 
-  void onMedicineSearchChanged(String? query) {
+  Future<void> _fetchEquivalentPage({required int page, String? search}) async {
+    final current = state;
+    if (current is! DrugAssignmentCellSelected) return;
+
+    final medicineId = current.assignment.medicine?.id;
+    if (medicineId == null) return;
+
+    state = current.copyWith(
+      equivalentMedicinePage: current.equivalentMedicinePage.copyWith(isLoading: true, error: null),
+    );
+
+    final result = await _getEquivalentMedicines.execute(
+      medicineId,
+      params: PagedQueryParams(
+        skip: page * _medicinePageSize,
+        take: _medicinePageSize,
+        searchQuery: (search?.isEmpty ?? false) ? null : search,
+      ),
+    );
+
+    final latest = state;
+    if (latest is! DrugAssignmentCellSelected) return;
+
+    state = result.when(
+      ok: (response) => latest.copyWith(
+        equivalentMedicinePage: latest.equivalentMedicinePage.copyWith(
+          items: response.data ?? [],
+          page: page,
+          totalCount: response.totalCount ?? 0,
+          search: search,
+          isLoading: false,
+        ),
+      ),
+      error: (e) => latest.copyWith(
+        equivalentMedicinePage: latest.equivalentMedicinePage.copyWith(isLoading: false, error: e.message),
+      ),
+    );
+  }
+
+  void onSearchChanged(String? query) {
     _searchDebounceTimer?.cancel();
     _searchDebounceTimer = Timer(_searchDebounce, () {
-      unawaited(_fetchMedicinePage(page: 0, search: query));
+      final current = state;
+      if (current is! DrugAssignmentCellSelected) return;
+      if (current.listMode == MedicineListMode.equivalent) {
+        unawaited(_fetchEquivalentPage(page: 0, search: query));
+      } else {
+        unawaited(_fetchMedicinePage(page: 0, search: query));
+      }
     });
   }
 
-  void onMedicineNextPage() {
+  void onNextPage() {
     _searchDebounceTimer?.cancel();
     final current = state;
-    if (current is! DrugAssignmentCellSelected || !current.medicinePage.hasNextPage) return;
-    unawaited(_fetchMedicinePage(page: current.medicinePage.page + 1, search: current.medicinePage.search));
+    if (current is! DrugAssignmentCellSelected) return;
+    final page = current.selectedPage;
+    if (!page.hasNextPage) return;
+    current.listMode == MedicineListMode.equivalent
+        ? unawaited(_fetchEquivalentPage(page: page.page + 1, search: page.search))
+        : unawaited(_fetchMedicinePage(page: page.page + 1, search: page.search));
   }
 
-  void onMedicinePreviousPage() {
+  void onPreviousPage() {
     _searchDebounceTimer?.cancel();
     final current = state;
-    if (current is! DrugAssignmentCellSelected || !current.medicinePage.hasPreviousPage) return;
-    unawaited(_fetchMedicinePage(page: current.medicinePage.page - 1, search: current.medicinePage.search));
+    if (current is! DrugAssignmentCellSelected) return;
+    final page = current.selectedPage;
+    if (!page.hasPreviousPage) return;
+    current.listMode == MedicineListMode.equivalent
+        ? unawaited(_fetchEquivalentPage(page: page.page - 1, search: page.search))
+        : unawaited(_fetchMedicinePage(page: page.page - 1, search: page.search));
   }
 
   /// Bu ilaç kabinde (başka bir gözde) zaten atanmış mı — "KABİNDE VAR" rozeti.

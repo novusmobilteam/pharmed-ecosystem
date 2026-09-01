@@ -11,6 +11,7 @@ class Station extends Selectable {
   final List<HospitalService> services;
   final StationType? type;
   final List<Cabin> cabins;
+  final bool canCreateEmergencyPatient;
 
   Cabin? get activeCabin => cabins.isNotEmpty ? cabins.first : null;
 
@@ -26,6 +27,7 @@ class Station extends Selectable {
     this.services = const [],
     this.type,
     this.cabins = const [],
+    this.canCreateEmergencyPatient = false,
   }) : super(title: name.toString());
 
   static Station? fromIdAndName({int? id, String? name}) {
@@ -46,6 +48,7 @@ class Station extends Selectable {
     Warehouse? medicalConsumableWarehouse,
     List<HospitalService>? services,
     StationType? type,
+    bool? canCreateEmergencyPatient,
   }) {
     return Station(
       id: id ?? this.id,
@@ -57,6 +60,7 @@ class Station extends Selectable {
       medicalConsumableWarehouse: medicalConsumableWarehouse ?? this.medicalConsumableWarehouse,
       services: services ?? this.services,
       type: type ?? this.type,
+      canCreateEmergencyPatient: canCreateEmergencyPatient ?? this.canCreateEmergencyPatient,
     );
   }
 }

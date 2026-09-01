@@ -78,6 +78,7 @@ class AuthRepositoryImpl implements IAuthRepository {
         isAdmin: userDto.isAdmin ?? false,
         isNotOrdered: userDto.isNotOrdered,
         roleId: userDto.role?.id ?? 0,
+        canCreateEmergencyPatient: userDto.canCreateEmergencyPatient,
       );
 
       // 5. User'ı cache'e yaz

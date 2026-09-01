@@ -27,6 +27,7 @@ class MasterWasteSelectionView extends ConsumerWidget {
         Expanded(
           flex: 2,
           child: PatientSelectionPanel(
+            currentStation: stationContext.station!,
             selectedPatient: ref.watch(masterWasteNotifierProvider).hospitalization,
             onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
             config: PatientSelectionConfig(showFilters: false),

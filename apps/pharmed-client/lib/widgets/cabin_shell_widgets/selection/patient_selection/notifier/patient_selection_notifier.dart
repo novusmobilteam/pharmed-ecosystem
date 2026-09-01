@@ -12,6 +12,8 @@
 //
 // Sınıf: Class B
 
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -25,7 +27,6 @@ final patientSelectionNotifierProvider = NotifierProvider<PatientSelectionNotifi
 );
 
 class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
-  GetCurrentStationUseCase get _getStation => ref.read(getCurrentStationUseCaseProvider);
   GetHospitalizationsByServiceUseCase get _getHospitalizations => ref.read(getHospitalizationsByServiceUseCaseProvider);
   GetActiveHospitalizationsUseCase get _getActiveHospitalizations => ref.read(getActiveHospitalizationsUseCaseProvider);
   CreateUrgentPatientUseCase get _createUrgent => ref.read(createUrgentPatientUseCaseProvider);
@@ -34,31 +35,72 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
   PatientSelectionConfig _config = const PatientSelectionConfig(showFilters: false);
   PatientSelectionConfig get config => _config;
 
+  List<PatientIntakeMode> _availableIntakeModes(PatientSelectionReady s) {
+    final canToggleOrderStatus = _config.enableOrderlessToggle && s.isStatusToggleVisible;
+    if (canToggleOrderStatus) {
+      return const [PatientIntakeMode.ordered, PatientIntakeMode.orderless, PatientIntakeMode.free];
+    }
+    final fixed = s.viewOrderStatus.isOrderless ? PatientIntakeMode.orderless : PatientIntakeMode.ordered;
+    return [fixed, PatientIntakeMode.free];
+  }
+
   @override
   PatientSelectionState build() => const PatientSelectionLoading();
 
-  Future<void> init(PatientSelectionConfig config) async {
+  Future<void> init(PatientSelectionConfig config, Station station) async {
     _config = config;
     state = const PatientSelectionLoading();
 
-    final stationResult = await _getStation.call();
-    Station? station;
-    stationResult.when(ok: (s) => station = s, error: (_) => station = null);
+    final currentUser = ref.read(authNotifierProvider.notifier).currentUser;
 
-    final isNotOrdered = ref.read(authNotifierProvider.notifier).currentUser?.isNotOrdered ?? false;
+    final isNotOrdered = currentUser?.isNotOrdered ?? false;
     final userOrderStatus = orderStatusFromBool(!isNotOrdered);
-    final stationOrderStatus = station?.drugStatus ?? OrderStatus.ordered;
-
+    final stationOrderStatus = station.drugStatus;
     final viewOrderStatus = stationOrderStatus.isOrderless ? OrderStatus.orderless : OrderStatus.ordered;
+
+    final canCreateFullCabinUrgent =
+        (currentUser?.canCreateEmergencyPatient ?? false) && station.canCreateEmergencyPatient;
+
+    // "Hastalarım" sekmesinde hasta varsa varsayılan görünüm ona göre başlar —
+    // ilk fetch'ten ÖNCE bir prob sorgusu atıp bunu kontrol ediyoruz.
+    final probeResult = await _fetchMyPatientsProbe(isOrderless: viewOrderStatus.isOrderless);
+    final rawMyPatients = probeResult.when(ok: (data) => data, error: (_) => const <Hospitalization>[]);
+    // _fetchPatients'taki filtreyle tutarlı: orderless modda acil hastalar hariç.
+    final myPatientsList = viewOrderStatus.isOrderless
+        ? rawMyPatients.where((d) => !d.isUrgent).toList()
+        : rawMyPatients;
+    final initialViewType = myPatientsList.isNotEmpty ? PatientViewType.myPatients : PatientViewType.allPatients;
 
     state = PatientSelectionReady(
       station: station,
       viewOrderStatus: viewOrderStatus,
       userOrderStatus: userOrderStatus,
-      hospitalizations: const [],
+      intakeMode: viewOrderStatus.isOrderless ? PatientIntakeMode.orderless : PatientIntakeMode.ordered,
+      canCreateFullCabinUrgent: canCreateFullCabinUrgent,
+      viewType: initialViewType,
+      // myPatients ise probe sonucunu doğrudan reuse ediyoruz — allPatients ise
+      // aşağıdaki _fetchPatients() dolduracak.
+      hospitalizations: initialViewType == PatientViewType.myPatients ? myPatientsList : const [],
     );
 
-    await _fetchPatients();
+    if (initialViewType == PatientViewType.allPatients) {
+      await _fetchPatients();
+    }
+  }
+
+  /// init()'te "Hastalarım" sekmesinin varsayılan olup olmayacağını belirlemek
+  /// için atılan tek seferlik sorgu. _fetchPatients()'taki myPatients=true
+  /// dallarıyla AYNI çağrı şeklini kullanır (redirected tab hariç — init
+  /// her zaman prescriptions sekmesiyle başlar, bu yüzden o dal burada yok).
+  Future<Result<List<Hospitalization>>> _fetchMyPatientsProbe({required bool isOrderless}) async {
+    if (!config.showFilters) {
+      return _getHospitalizations.call(serviceId: 0, filter: PatientFilterType.all, myPatients: true);
+    }
+    return _getHospitalizations.call(
+      serviceId: 0,
+      filter: isOrderless ? PatientFilterType.all : PatientFilterType.ordersDue,
+      myPatients: true,
+    );
   }
 
   // Öncelik sırası (yalnızca BİRİ uygulanır) — urgentCreate dalı KALKTI:
@@ -126,11 +168,26 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
 
   /// ordered ↔ orderless mod değişimi (sadece yetki varsa view'da gösterilir).
   /// Servis seçimine artık dokunmuyor — servis/filtre modundan bağımsız.
-  Future<void> toggleOrderlessStatus() async {
+  Future<void> cycleIntakeMode() async {
     final s = state;
     if (s is! PatientSelectionReady) return;
-    final next = s.viewOrderStatus.isOrderless ? OrderStatus.ordered : OrderStatus.orderless;
-    state = s.copyWith(viewOrderStatus: next, filter: next.isOrderless ? PatientFilterType.all : s.filter);
+
+    final modes = _availableIntakeModes(s);
+    final currentIndex = modes.indexOf(s.intakeMode);
+    final next = modes[(currentIndex + 1) % modes.length];
+
+    final nextIsOrderStatus = next == PatientIntakeMode.ordered || next == PatientIntakeMode.orderless;
+    final nextOrderStatus = next == PatientIntakeMode.orderless
+        ? OrderStatus.orderless
+        : next == PatientIntakeMode.ordered
+        ? OrderStatus.ordered
+        : s.viewOrderStatus; // free'ye geçerken viewOrderStatus'a dokunma
+
+    state = s.copyWith(
+      intakeMode: next,
+      viewOrderStatus: nextOrderStatus,
+      filter: nextIsOrderStatus && nextOrderStatus.isOrderless ? PatientFilterType.all : s.filter,
+    );
     await _fetchPatients();
   }
 
@@ -154,6 +211,16 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
     if (s is! PatientSelectionReady) return;
     state = s.copyWith(filter: filter);
     await _fetchPatients();
+  }
+
+  void selectIntakeMode(PatientIntakeMode mode) {
+    final s = state;
+    if (s is! PatientSelectionReady) return;
+    state = s.copyWith(intakeMode: mode);
+    // free ↔ ordered/orderless arası geçişte hasta listesi DEĞİŞMİYOR — aynı
+    // hospitalization listesi kalıyor, sadece seçimde IntakeType farklılaşıyor.
+    // ordered ⟷ orderless arası geçişte ise mevcut _fetchPatients tetiklenmeli.
+    if (mode != PatientIntakeMode.free) unawaited(_fetchPatients());
   }
 
   void onSearchChanged(String value) {

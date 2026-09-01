@@ -3507,6 +3507,10 @@
   "@user_badgeCardLabel": {
     "description": "Field label in the user form showing the badge (RFID) card value read from the card reader"
   },
+  "user_emergencyAccessLabel": "Acil Hasta Oluşturabilir mi?",
+  "@user_emergencyAccessLabel": {
+    "description": "Kullanıcı/rol formunda, kullanıcının acil hasta oluşturma yetkisine sahip olup olmadığını gösteren alan etiketi"
+  },
   "user_badgeCardHint": "Kartı okutun",
   "@user_badgeCardHint": {
     "description": "Placeholder shown in the user form badge card field before a card is scanned"
@@ -8603,5 +8607,45 @@
   "@dashboard_upcomingTreatmentsDueInMinutesLabel": {
     "description": "Upcoming treatments panel — relative time label under the clock for non-delayed patients, e.g. '4 DK SONRA'",
     "placeholders": { "minutes": { "type": "int" } }
+  },
+  "assignment_edit_equivalentMedicinesSegment": "Muadil İlaçlar",
+  "@assignment_edit_equivalentMedicinesSegment": {
+    "description": "Segmented button tab label — shows equivalent medicines for the currently assigned drug when editing a cell assignment"
+  },
+  "assignment_edit_allMedicinesSegment": "Tüm İlaçlar",
+  "@assignment_edit_allMedicinesSegment": {
+    "description": "Segmented button tab label — shows the full medicine list when editing a cell assignment"
+  },
+  "unapplied_showUnappliedTooltip": "Uygulanmayanları Göster",
+  "@unapplied_showUnappliedTooltip": {
+    "description": "Toggle tooltip — switches the list to show medications that have not been applied yet"
+  },
+  "unapplied_showOverdueTooltip": "Geciken Uygulamaları Göster",
+  "@unapplied_showOverdueTooltip": {
+    "description": "Toggle tooltip — switches the list to show medications that are overdue for application"
+  },
+  "stationStock_table_cabinNameColumn": "Kabin Adı",
+  "@stationStock_table_cabinNameColumn": {
+    "description": "Table column header — shows the cabin name in the station stock list screen"
+  },
+  "stationStock_table_maxQuantityColumn": "Maksimum",
+  "@stationStock_table_maxQuantityColumn": {
+    "description": "Table column header — shows the maximum quantity threshold in the station stock list screen"
+  },
+  "stationStock_table_currentQuantityColumn": "Mevcut",
+  "@stationStock_table_currentQuantityColumn": {
+    "description": "Table column header — shows the current stock quantity in the station stock list screen"
+  },
+  "stationStock_table_reservedColumn": "Rezerve",
+  "@stationStock_table_reservedColumn": {
+    "description": "Table column header — shows the reserved (allocated but not yet dispensed) quantity in the station stock list screen"
+  },
+  "urgentPatient_intakeCompletedMessage": "Acil hasta ilaç alımı tamamlandı",
+  "@urgentPatient_intakeCompletedMessage": {
+    "description": "Success dialog message (MessageUtils.showSuccessDialog) shown on the dashboard after finishing medicine intake for an urgent patient. No name placeholder — the urgent patient's display name is always fixed (\"Acil Hasta\")."
+  },
+  "urgentPatient_intakeCompletedDescription": "Bu acil hastayı Acil Hasta Sonlandır ekranından sonlandırabilirsiniz.",
+  "@urgentPatient_intakeCompletedDescription": {
+    "description": "Secondary description text under the success message, hinting the user to close out the urgent patient record from the termination screen (UrgentPatientTerminationView)."
   }
 }

@@ -1862,6 +1862,7 @@
   "@user_kitPurchaseLabel": {},
   "user_badgeCardLabel": "Badge Card",
   "@user_badgeCardLabel": {},
+  "user_emergencyAccessLabel": "Can Create Emergency Patient?",
   "user_badgeCardHint": "Scan card",
   "@user_badgeCardHint": {},
   "user_authorizedStationsLabel": "Authorized Stations",
@@ -4725,5 +4726,15 @@
   "@dashboard_upcomingTreatmentsDueInMinutesLabel": {
     "description": "Upcoming treatments panel — relative time label under the clock for non-delayed patients, e.g. '4 DK SONRA'",
     "placeholders": { "minutes": { "type": "int" } }
-  }
+  },
+  "assignment_edit_equivalentMedicinesSegment": "Equivalent Medicines",
+  "assignment_edit_allMedicinesSegment": "All Medicines",
+  "unapplied_showUnappliedTooltip": "Show Unapplied",
+  "unapplied_showOverdueTooltip": "Show Overdue",
+  "stationStock_table_cabinNameColumn": "Cabin Name",
+  "stationStock_table_maxQuantityColumn": "Maximum",
+  "stationStock_table_currentQuantityColumn": "Current",
+  "stationStock_table_reservedColumn": "Reserved",
+  "urgentPatient_intakeCompletedMessage": "Emergency patient intake completed",
+  "urgentPatient_intakeCompletedDescription": "You can close out this emergency patient from the Terminate Emergency Patient screen."
 }
