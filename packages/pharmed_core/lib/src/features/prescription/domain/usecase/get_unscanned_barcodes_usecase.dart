@@ -10,3 +10,13 @@ class GetUnscannedBarcodesUseCase {
     return _repository.getUnscannedBarcodes(params: params);
   }
 }
+
+class GetUnscannedBarcodesWithStationIdUseCase {
+  final IPrescriptionRepository _repository;
+
+  GetUnscannedBarcodesWithStationIdUseCase(this._repository);
+
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> call({PagedQueryParams? params, required int stationId}) {
+    return _repository.getUnscannedBarcodesWithStationId(params: params, stationId: stationId);
+  }
+}

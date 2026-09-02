@@ -833,16 +833,29 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   /// MedicineSelection fazına dön. Ayrı "başarılı" ekranı yoktur. Hasta yoksa
   /// PatientSelection'a döner.
   Future<void> _reloadSelectionAfterQueue() async {
-    // Alım tamamlandı — sol paneldeki hasta listesi de tazelenmeli (order/
-    // reçete durumu değişmiş olabilir). Redirected/normal akış ayrımından
-    // ÖNCE, her durumda tetiklenir.
+    final isOneOffUrgentFlow = _type == IntakeType.urgent || _type == IntakeType.free;
+
+    if (isOneOffUrgentFlow) {
+      // Acil/serbest akış tek seferliktir — hasta kaydı SİLİNMİYOR (backend'de
+      // kalıyor, alım zaten işlendi), sadece bu ekranın state'i ve sol
+      // paneldeki "oluşturulan acil hasta" kartı birlikte temizlenip normal
+      // hasta listesine dönülüyor. Aksi halde sağ panel eski acil hastanın
+      // ilaç listesini göstermeye devam ederken sol panel farklı bir
+      // duruma geçmiş oluyor (senkronsuzluk).
+      _hospitalization = null;
+      _hospitalizationId = null;
+      ref.read(patientSelectionNotifierProvider.notifier)
+        ..clearCreatedUrgentPatient()
+        ..refresh();
+      state = const MasterIntakePatientSelection();
+      return;
+    }
+
+    // Ordered/orderless — mevcut davranış: aynı hastada kalınır, liste tazelenir.
     unawaited(ref.read(patientSelectionNotifierProvider.notifier).refresh());
 
     if (_isRedirectedQueue) {
       _isRedirectedQueue = false;
-      // Redirected akışın kendi state'i MasterIntakeNotifier'da değil,
-      // RedirectedIntakeOrdersNotifier'da — burada yalnızca "hangi hasta
-      // seçiliydi" bilgisini alıp onu tazeleriz.
       final selectedHospitalization = ref.read(redirectedIntakeOrdersNotifierProvider.notifier).selectedHospitalization;
       if (selectedHospitalization != null) {
         await ref.read(redirectedIntakeOrdersNotifierProvider.notifier).selectPatient(selectedHospitalization);

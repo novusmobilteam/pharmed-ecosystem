@@ -137,10 +137,21 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<RefundDTO>?>> getDrawerRefunds() async {
+  Future<Result<ApiResponse<List<RefundDTO>>?>> getDrawerRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
     return await fetchRequest(
       path: '/RefundWasteDescrutionTransaction/refundDrawr',
-      parser: BaseRemoteDataSource.listParser(RefundDTO.fromJson),
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      dateField: 'createdDate',
+      query: {'stationId': stationId},
+      parser: BaseRemoteDataSource.apiResponseListParser(RefundDTO.fromJson),
     );
   }
 

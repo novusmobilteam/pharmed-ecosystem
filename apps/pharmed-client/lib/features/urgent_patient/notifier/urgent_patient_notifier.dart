@@ -1,116 +1,107 @@
-// import 'package:flutter/material.dart';
-// import 'package:pharmed_manager/core/core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
-// class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin, SearchMixin<UrgentPatient> {
-//   final GetPatientsUseCase _getPatientsUseCase;
-//   final GetUrgentPatientsUseCase _getUrgentPatientsUseCase;
-//   final EndEmergencyPatientUseCase _emergencyPatientUseCase;
+import '../../../core/mixins/api_request_mixin.dart';
+import '../../../core/providers/providers.dart';
 
-//   UrgentPatientNotifier({
-//     required GetUrgentPatientsUseCase getUrgentPatientsUseCase,
-//     required GetPatientsUseCase getPatientsUseCase,
-//     required EndEmergencyPatientUseCase emergencyPatientUseCase,
-//   }) : _getUrgentPatientsUseCase = getUrgentPatientsUseCase,
-//        _getPatientsUseCase = getPatientsUseCase,
-//        _emergencyPatientUseCase = emergencyPatientUseCase;
+final urgentPatientNotifierProvider = ChangeNotifierProvider.autoDispose<UrgentPatientNotifier>(
+  (ref) => UrgentPatientNotifier(
+    deleteUrgentPatientUseCase: ref.read(deleteUrgentPatientUseCaseProvider),
+    emergencyPatientUseCase: ref.read(endUrgentPatientUseCaseProvider),
+    getUrgentPatientsUseCase: ref.read(getUrgentPatientsUseCaseProvider),
+  )..getUrgentPatients(),
+);
 
-//   OperationKey fetchOp = OperationKey.fetch();
-//   OperationKey fetchHospOp = OperationKey.fetch();
-//   OperationKey submitOp = OperationKey.submit();
+class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
+  final GetUrgentPatientsUseCase _getUrgentPatientsUseCase;
+  final EndUrgentPatientUseCase _emergencyPatientUseCase;
+  final DeleteUrgentPatientUseCase _deleteUrgentPatientUseCase;
 
-//   List<Patient> _patients = [];
-//   List<Patient> get patients => _patients;
+  UrgentPatientNotifier({
+    required GetUrgentPatientsUseCase getUrgentPatientsUseCase,
+    required DeleteUrgentPatientUseCase deleteUrgentPatientUseCase,
+    required EndUrgentPatientUseCase emergencyPatientUseCase,
+  }) : _getUrgentPatientsUseCase = getUrgentPatientsUseCase,
+       _emergencyPatientUseCase = emergencyPatientUseCase,
+       _deleteUrgentPatientUseCase = deleteUrgentPatientUseCase {
+    // getUrgentPatients();
+  }
 
-//   UrgentPatient? _selectedUrgentPatient;
-//   UrgentPatient? get selectedUrgentPatient => _selectedUrgentPatient;
+  final OperationKey _fetchUrgentOp = OperationKey.custom('fetch-urgent');
+  final OperationKey _submitOp = OperationKey.custom('submit-emergency');
+  final OperationKey _deleteOp = OperationKey.delete();
 
-//   Patient? _selectedPatient;
-//   Patient? get selectedPatient => _selectedPatient;
+  List<Hospitalization> _hospitalization = [];
+  List<Hospitalization> get hospitalization => _hospitalization;
 
-//   bool get isFetching => isLoading(fetchOp);
+  List<UrgentPatient> _urgentPatients = [];
+  List<UrgentPatient> get urgentPatients => _urgentPatients;
 
-//   Set<int> _selectedItemIds = {};
-//   Set<int> get selectedItemIds => _selectedItemIds;
+  Hospitalization? _selectedPatient;
+  Hospitalization? get selectedPatient => _selectedPatient;
 
-//   Future<void> getUrgentPatients() async {
-//     await execute(
-//       fetchOp,
-//       operation: () => _getUrgentPatientsUseCase.call(),
-//       onData: (data) {
-//         allItems = data;
-//       },
-//     );
-//   }
+  UrgentPatient? _selectedUrgentPatient;
+  UrgentPatient? get selectedUrgentPatient => _selectedUrgentPatient;
 
-//   Future<void> getPatients() async {
-//     await execute(
-//       fetchHospOp,
-//       operation: () => _getPatientsUseCase.call(GetPatientsParams()),
-//       onData: (response) {
-//         _patients = response.data ?? [];
-//       },
-//     );
-//   }
+  bool get isFetching => isLoading(_fetchUrgentOp);
+  bool get isSubmitting => isLoading(_submitOp);
+  bool get isDeleting => isLoading(_deleteOp);
 
-//   Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {
-//     final params = EndEmergencyPatientParams(
-//       hospitalizationId: _selectedUrgentPatient?.id ?? 0,
-//       patientId: _selectedPatient?.id ?? 0,
-//       prescriptionItemIds: _selectedItemIds.toList(),
-//     );
+  Future<void> getUrgentPatients() async {
+    await execute(
+      _fetchUrgentOp,
+      operation: () => _getUrgentPatientsUseCase.call(),
+      onData: (data) {
+        _urgentPatients = data;
+        notifyListeners();
+      },
+    );
+  }
 
-//     await executeVoid(
-//       submitOp,
-//       operation: () => _emergencyPatientUseCase.call(params),
-//       onFailed: (error) => onFailed?.call(error.message),
-//       onSuccess: () {
-//         onSuccess?.call('İşleminiz başarıyla tamamlandı.');
-//         _selectedPatient = null;
-//         getUrgentPatients();
-//       },
-//     );
-//   }
+  Future<void> submit({Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
+    if (_selectedUrgentPatient?.prescriptionItems == null) return;
 
-//   void selectPatient(Patient patient) {
-//     _selectedPatient = patient;
-//     notifyListeners();
-//   }
+    final params = EndUrgentPatientParams(
+      hospitalizationId: _selectedUrgentPatient?.id ?? 0,
+      patientId: _selectedPatient?.id ?? 0,
+      prescriptionItemIds: _selectedUrgentPatient!.prescriptionItems!.map((m) => m.id ?? 0).toList(),
+    );
 
-//   void selectUrgentPatient(UrgentPatient patient) {
-//     if (_selectedUrgentPatient?.id == patient.id) {
-//       // Aynı hastaya tekrar basıldıysa seçimi kaldır
-//       _selectedUrgentPatient = null;
-//       _selectedItemIds.clear();
-//     } else {
-//       // Yeni hasta seçildi → tüm ilaçları otomatik seç
-//       _selectedUrgentPatient = patient;
-//       _selectedItemIds.clear();
-//       patient.prescriptionItems?.forEach((p) {
-//         _selectedItemIds.add(p.id ?? 0);
-//       });
-//     }
+    await executeVoid(
+      _submitOp,
+      operation: () => _emergencyPatientUseCase.call(params),
+      onFailed: (error) => onFailed?.call(error.message),
+      onSuccess: () {
+        onSuccess?.call();
+        _selectedPatient = null;
+        getUrgentPatients();
+      },
+    );
+  }
 
-//     notifyListeners();
-//   }
+  Future<void> deleteUrgentPatient({Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
+    final patientId = _selectedUrgentPatient?.id;
+    if (patientId == null) return;
+    await executeVoid(
+      _deleteOp,
+      operation: () => _deleteUrgentPatientUseCase.call(patientId),
+      onFailed: (error) => onFailed?.call(error.message),
+      onSuccess: () {
+        onSuccess?.call();
+        _selectedPatient = null;
+        getUrgentPatients();
+      },
+    );
+  }
 
-//   void selectItem(PrescriptionItem item, UrgentPatient patientData) {
-//     // Seçili hasta yoksa veya farklı hastaya aitse önce hastayı seç
-//     if (_selectedUrgentPatient?.id != patientData.id) {
-//       _selectedUrgentPatient = patientData;
-//       _selectedItemIds.clear();
-//     }
+  void selectPatient(Hospitalization patient) {
+    _selectedPatient = patient;
+    notifyListeners();
+  }
 
-//     if (_selectedItemIds.contains(item.id)) {
-//       _selectedItemIds.remove(item.id);
-
-//       // Tüm ilaçlar kaldırılırsa hastayı da kaldır
-//       if (_selectedItemIds.isEmpty) {
-//         _selectedUrgentPatient = null;
-//       }
-//     } else {
-//       _selectedItemIds.add(item.id ?? 0);
-//     }
-
-//     notifyListeners();
-//   }
-// }
+  void selectUrgentPatient(UrgentPatient patient) {
+    _selectedUrgentPatient = patient;
+    notifyListeners();
+  }
+}

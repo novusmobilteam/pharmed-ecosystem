@@ -25,10 +25,12 @@ import '../../../expiring_items/view/expiring_items_screen.dart';
 import '../../../intake/intake.dart';
 import '../../../inventory/view/inventory_screen.dart';
 import '../../../prescription/view/prescription_screen.dart';
+import '../../../redirected_orders/view/redirected_orders_screen.dart';
 import '../../../refill/refill.dart';
 import '../../../settings/notifier/settings_notifier.dart';
 import '../../../settings/view/settings_view.dart';
 import '../../../unload_drawer/view/unload_drawer_screen.dart';
+import '../../../urgent_patient/urgent_patient.dart';
 import '../../../waste/waste.dart';
 
 import '../../dashboard.dart';

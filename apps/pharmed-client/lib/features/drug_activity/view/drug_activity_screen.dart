@@ -9,23 +9,18 @@ import '../drug_activity.dart';
 part 'table_view.dart';
 
 class DrugActivityScreen extends ConsumerWidget {
-  const DrugActivityScreen({super.key});
+  const DrugActivityScreen({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(drugActivityNotifierProvider);
-    final notifier = ref.read(drugActivityNotifierProvider.notifier);
+ 
 
-    return Scaffold(
-      body: switch (state) {
-        DrugActivityLoading() => const Center(child: CircularProgressIndicator()),
-        DrugActivityLoaded(:final items, :final isLoading) => TableView(
-          items: items,
-          isLoading: isLoading,
-          notifier: notifier,
-        ),
-        DrugActivityError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noData)),
-      },
+    return MedResponsiveLayout(
+      mobile: MedMobileLayout(),
+      tablet: MedTabletLayout(),
+      desktop: Scaffold(body: TableView()),
     );
   }
 }

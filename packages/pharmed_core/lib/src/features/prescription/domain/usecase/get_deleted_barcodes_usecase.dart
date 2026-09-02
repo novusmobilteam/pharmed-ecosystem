@@ -6,7 +6,7 @@ class GetDeletedBarcodesUseCase {
 
   GetDeletedBarcodesUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> call() {
-    return _repository.getDeletedBarcodes();
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> call({PagedQueryParams? params, required int stationId}) {
+    return _repository.getDeletedBarcodes(params: params, stationId: stationId);
   }
 }

@@ -1,25 +1,24 @@
 part of 'drug_activity_screen.dart';
 
-class TableView extends StatelessWidget {
-  const TableView({super.key, required this.items, required this.isLoading, required this.notifier});
-
-  final DrugActivityNotifier notifier;
-  final List<PrescriptionItemMovement> items;
-  final bool isLoading;
+class TableView extends ConsumerWidget {
+  const TableView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(drugActivityNotifierProvider);
+    final notifier = ref.read(drugActivityNotifierProvider.notifier);
+
     return MedTable(
-      data: items,
-      isLoading: isLoading,
+      data: notifier.items,
+      isLoading: notifier.isLoading(notifier.fetchOp),
       emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
       serverTotalCount: notifier.totalCount,
       currentPage: notifier.currentPage,
       pageSize: notifier.pageSize,
       enableDateFilter: true,
       enablePagination: true,
-      onPageChanged: (page) => notifier.goToPage(page),
-      onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
+      onPageChanged: (page) => notifier.setPage(page),
+      onDateRangeChanged: (range) => notifier.setDateRange(range),
       cellBuilder: (item, colIndex, value) {
         if (colIndex == 6) {
           final status = (item).type;

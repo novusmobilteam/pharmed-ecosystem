@@ -193,6 +193,7 @@ final intakeRepositoryProvider = Provider<IIntakeRepository>((ref) {
       eqMapper: EquivalentMedicineMapper(),
       otherMapper: OtherStationMedicineMapper(),
       redirectMapper: RedirectedIntakeOrderMapper(),
+      redirectOrderMapper: RedirectedOrderMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => IntakeRepositoryImpl(
       dataSource: ref.read(intakeDataSourceProvider),
@@ -201,6 +202,7 @@ final intakeRepositoryProvider = Provider<IIntakeRepository>((ref) {
       eqMapper: EquivalentMedicineMapper(),
       otherMapper: OtherStationMedicineMapper(),
       redirectMapper: RedirectedIntakeOrderMapper(),
+      redirectOrderMapper: RedirectedOrderMapper(),
     ),
   };
 });
@@ -244,12 +246,14 @@ final patientRepositoryProvider = Provider<IPatientRepository>((ref) {
       patientMapper: PatientMapper(),
       myPatientMapper: MyPatientMapper(),
       hospitalizationMapper: HospitalizationMapper(),
+      urgentPatientMapper: UrgentPatientMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => PatientRepositoryImpl(
       dataSource: ref.read(patientDataSourceProvider),
       patientMapper: PatientMapper(),
       myPatientMapper: MyPatientMapper(),
       hospitalizationMapper: HospitalizationMapper(),
+      urgentPatientMapper: UrgentPatientMapper(),
     ),
   };
 });

@@ -78,9 +78,21 @@ class RefundRepositoryImpl implements IRefundRepository {
   }
 
   @override
-  Future<Result<List<Refund>>> getDrawerRefunds() async {
-    final result = await _dataSource.getDrawerRefunds();
-    return result.when(ok: (dtos) => Result.ok(_refundMapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
+  Future<Result<ApiResponse<List<Refund>>?>> getDrawerRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getDrawerRefunds(params: params, stationId: stationId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<Refund>>(
+          data: apiResponse?.data != null ? _refundMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
   }
 
   @override

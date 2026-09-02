@@ -8647,5 +8647,114 @@
   "urgentPatient_intakeCompletedDescription": "Bu acil hastayı Acil Hasta Sonlandır ekranından sonlandırabilirsiniz.",
   "@urgentPatient_intakeCompletedDescription": {
     "description": "Secondary description text under the success message, hinting the user to close out the urgent patient record from the termination screen (UrgentPatientTerminationView)."
+  },
+  "directedOrders_table_dateColumn": "Tarih",
+"@directedOrders_table_dateColumn": {
+  "description": "Column header — date the redirected order was received, in the redirected orders table (RedirectedOrder.receivedDate)."
+},
+"directedOrders_table_materialColumn": "Malzeme",
+"@directedOrders_table_materialColumn": {
+  "description": "Column header — material/medicine name of the redirected order (RedirectedOrder.materialName)."
+},
+"directedOrders_table_quantityColumn": "Miktar",
+"@directedOrders_table_quantityColumn": {
+  "description": "Column header — quantity of the redirected order (RedirectedOrder.quantity)."
+},
+"directedOrders_table_targetServiceColumn": "Servis",
+"@directedOrders_table_targetServiceColumn": {
+  "description": "Column header — the service the order was redirected TO (RedirectedOrder.serviceName, not sendServiceName)."
+},
+"directedOrders_table_targetStationColumn": "İstasyon",
+"@directedOrders_table_targetStationColumn": {
+  "description": "Column header — the station the order was redirected TO (RedirectedOrder.stationName, not sendStationName)."
+},
+"directedOrders_table_sentByColumn": "Gönderen",
+"@directedOrders_table_sentByColumn": {
+  "description": "Column header — the user who sent/redirected the order (RedirectedOrder.sendUserName)."
+},
+"directedOrders_table_cancelledColumn": "İptal Durumu",
+"@directedOrders_table_cancelledColumn": {
+  "description": "Column header — whether the redirected order was cancelled; cell rendered as a chip via cellBuilder, see directedOrders_table_cancelledYes/No (RedirectedOrder.isCancel)."
+},
+"directedOrders_table_cancelledYes": "İptal Edildi",
+"@directedOrders_table_cancelledYes": {
+  "description": "Chip label shown in the cancelled column when RedirectedOrder.isCancel is true."
+},
+"directedOrders_table_cancelledNo": "Aktif",
+"@directedOrders_table_cancelledNo": {
+  "description": "Chip label shown in the cancelled column when RedirectedOrder.isCancel is false."
+},
+"unscannedBarcodes_action_showScanned": "Okutulan Karekodları Göster",
+"@unscannedBarcodes_action_showScanned": {
+  "description": "Toolbar toggle button tooltip on the Unscanned Barcodes table — shown while in 'unscanned' mode, tapping switches the table to show scanned barcodes."
+},
+"unscannedBarcodes_action_showDeleted": "Silinen Karekodları Göster",
+"@unscannedBarcodes_action_showDeleted": {
+  "description": "Toolbar toggle button tooltip — shown while in 'scanned' mode, tapping switches the table to show deleted barcodes."
+},
+"unscannedBarcodes_action_showUnscanned": "Okutulmayan Karekodları Göster",
+"@unscannedBarcodes_action_showUnscanned": {
+  "description": "Toolbar toggle button tooltip — shown while in 'deleted' mode, tapping switches the table back to unscanned barcodes."
+},
+"urgentPatientTermination_listTitle": "Acil Hastalar",
+"@urgentPatientTermination_listTitle": {
+  "description": "Section title above the list of still-open urgent patient records (middle column of the termination screen)."
+},
+"urgentPatientTermination_selectHint": "Devam etmek için bir acil hasta seçin",
+"@urgentPatientTermination_selectHint": {
+  "description": "Placeholder shown in the detail panel (right column) when no urgent patient is selected yet."
+},
+"urgentPatientTermination_takenMedicinesTitle": "Alınan İlaçlar",
+"@urgentPatientTermination_takenMedicinesTitle": {
+  "description": "Section title above the list of medicines already taken for the selected urgent patient, in the detail panel."
+},
+"urgentPatientTermination_defaultPatientLabel": "Acil Hasta",
+"@urgentPatientTermination_defaultPatientLabel": {
+  "description": "Fixed display name shown in the detail panel header for an urgent patient record — urgent patients are never given a real name, this label is always the same regardless of which record is selected."
+},
+"urgentPatientTermination_openRecordChip": "Kayıt Açık",
+"@urgentPatientTermination_openRecordChip": {
+  "description": "Status chip in the detail panel header — indicates the urgent patient record is still open (not yet finalized/matched)."
+},
+"urgentPatientTermination_serviceLabel": "Servis",
+"@urgentPatientTermination_serviceLabel": {
+  "description": "Field label in the detail panel header, above the urgent patient's service name."
+},
+"urgentPatientTermination_sourceLabel": "Acil Kayıt",
+"@urgentPatientTermination_sourceLabel": {
+  "description": "Field label in the bottom finalize bar, above the source (urgent patient) identifier being matched."
+},
+"urgentPatientTermination_sourceValue": "Acil Hasta #{code}",
+"@urgentPatientTermination_sourceValue": {
+  "description": "Value shown under urgentPatientTermination_sourceLabel — the urgent patient's display code.",
+  "placeholders": {
+    "code": {
+      "type": "String"
+    }
   }
+},
+"urgentPatientTermination_targetLabel": "Eşleştirilecek Hasta",
+"@urgentPatientTermination_targetLabel": {
+  "description": "Field label in the bottom finalize bar, above the real (admitted) patient the urgent record will be matched to."
+},
+"urgentPatientTermination_finalizeButton": "Eşleştir ve Sonlandır",
+"@urgentPatientTermination_finalizeButton": {
+  "description": "Primary button in the bottom finalize bar — submits the match between the urgent patient record and the selected real hospitalization, closing the urgent record."
+},
+"urgentPatientTermination_medicineTakenChip": "İlaç Alındı",
+"@urgentPatientTermination_medicineTakenChip": {
+  "description": "Status chip on an urgent patient list item — shown when at least one medicine has been taken for that urgent patient record."
+},
+"urgentPatientTermination_medicineNotTakenChip": "İlaç Yok",
+"@urgentPatientTermination_medicineNotTakenChip": {
+  "description": "Status chip on an urgent patient list item — shown when no medicine has been taken yet for that urgent patient record."
+},
+"urgentPatientTermination_noMedicineEmptyTitle": "Bu acil kayıt üzerinden ilaç alınmamış",
+"@urgentPatientTermination_noMedicineEmptyTitle": {
+  "description": "Empty state title in the detail panel's medicine list — shown when the selected urgent patient record has no taken medicines yet."
+},
+"urgentPatientTermination_noMedicineEmptyDescription": "İlaç alınmadığı için kaydı sonlandırma işlemi gerçekleştirilemez; ancak kaydı silme işlemi yapılabilir.",
+"@urgentPatientTermination_noMedicineEmptyDescription": {
+  "description": "Empty state description shown under urgentPatientTermination_noMedicineEmptyTitle — explains that finalize/match is blocked without any taken medicine, but deletion is still available."
+}
 }

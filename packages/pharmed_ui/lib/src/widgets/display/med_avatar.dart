@@ -9,7 +9,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // Sınıf: Class A
 // ─────────────────────────────────────────────────────────────────
 
-enum AvatarPalette { blue, green, amber, purple, rose }
+enum AvatarPalette { blue, green, amber, purple, rose, red }
 
 /// Hasta baş harfi avatarı — 5 renk paleti.
 ///
@@ -78,6 +78,11 @@ class MedAvatar extends StatelessWidget {
       AvatarPalette.rose => const _AvatarColors(
         background: Color(0xFFFFF1F2),
         text: Color(0xFFE11D48),
+        border: Color(0xFFFECDD3),
+      ),
+      AvatarPalette.red => const _AvatarColors(
+        background: MedColors.red,
+        text: Colors.white,
         border: Color(0xFFFECDD3),
       ),
     };

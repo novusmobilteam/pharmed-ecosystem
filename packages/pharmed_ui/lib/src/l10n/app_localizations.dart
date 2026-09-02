@@ -11714,6 +11714,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You can close out this emergency patient from the Terminate Emergency Patient screen.'**
   String get urgentPatient_intakeCompletedDescription;
+
+  /// No description provided for @directedOrders_table_dateColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get directedOrders_table_dateColumn;
+
+  /// No description provided for @directedOrders_table_materialColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get directedOrders_table_materialColumn;
+
+  /// No description provided for @directedOrders_table_quantityColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get directedOrders_table_quantityColumn;
+
+  /// No description provided for @directedOrders_table_targetServiceColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get directedOrders_table_targetServiceColumn;
+
+  /// No description provided for @directedOrders_table_targetStationColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get directedOrders_table_targetStationColumn;
+
+  /// No description provided for @directedOrders_table_sentByColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent By'**
+  String get directedOrders_table_sentByColumn;
+
+  /// No description provided for @directedOrders_table_cancelledColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation Status'**
+  String get directedOrders_table_cancelledColumn;
+
+  /// No description provided for @directedOrders_table_cancelledYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get directedOrders_table_cancelledYes;
+
+  /// No description provided for @directedOrders_table_cancelledNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get directedOrders_table_cancelledNo;
+
+  /// No description provided for @unscannedBarcodes_action_showScanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Scanned Barcodes'**
+  String get unscannedBarcodes_action_showScanned;
+
+  /// No description provided for @unscannedBarcodes_action_showDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Deleted Barcodes'**
+  String get unscannedBarcodes_action_showDeleted;
+
+  /// No description provided for @unscannedBarcodes_action_showUnscanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Unscanned Barcodes'**
+  String get unscannedBarcodes_action_showUnscanned;
+
+  /// No description provided for @urgentPatientTermination_listTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Patients'**
+  String get urgentPatientTermination_listTitle;
+
+  /// No description provided for @urgentPatientTermination_selectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an emergency patient to continue'**
+  String get urgentPatientTermination_selectHint;
+
+  /// No description provided for @urgentPatientTermination_takenMedicinesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines Taken'**
+  String get urgentPatientTermination_takenMedicinesTitle;
+
+  /// No description provided for @urgentPatientTermination_defaultPatientLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Patient'**
+  String get urgentPatientTermination_defaultPatientLabel;
+
+  /// No description provided for @urgentPatientTermination_openRecordChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Open'**
+  String get urgentPatientTermination_openRecordChip;
+
+  /// No description provided for @urgentPatientTermination_serviceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get urgentPatientTermination_serviceLabel;
+
+  /// No description provided for @urgentPatientTermination_sourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Record'**
+  String get urgentPatientTermination_sourceLabel;
+
+  /// Value shown under urgentPatientTermination_sourceLabel — the urgent patient's display code.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Patient #{code}'**
+  String urgentPatientTermination_sourceValue(String code);
+
+  /// No description provided for @urgentPatientTermination_targetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient to Match'**
+  String get urgentPatientTermination_targetLabel;
+
+  /// No description provided for @urgentPatientTermination_finalizeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Match and Finalize'**
+  String get urgentPatientTermination_finalizeButton;
+
+  /// No description provided for @urgentPatientTermination_medicineTakenChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine Taken'**
+  String get urgentPatientTermination_medicineTakenChip;
+
+  /// No description provided for @urgentPatientTermination_medicineNotTakenChip.
+  ///
+  /// In en, this message translates to:
+  /// **'No Medicine'**
+  String get urgentPatientTermination_medicineNotTakenChip;
+
+  /// No description provided for @urgentPatientTermination_noMedicineEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine has been taken under this emergency record'**
+  String get urgentPatientTermination_noMedicineEmptyTitle;
+
+  /// No description provided for @urgentPatientTermination_noMedicineEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The record cannot be finalized because no medicine has been taken; however, the record may still be deleted.'**
+  String get urgentPatientTermination_noMedicineEmptyDescription;
 }
 
 class _AppLocalizationsDelegate

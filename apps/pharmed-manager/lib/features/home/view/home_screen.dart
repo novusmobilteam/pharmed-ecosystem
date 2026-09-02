@@ -23,6 +23,7 @@ import '../../hospitalization/view/hospitalization_screen.dart';
 import '../../inconsistency/view/inconsistency_screen.dart';
 import '../../medicine/view/medicine_screen.dart';
 
+import '../../refund/view/drawer_refund_screen.dart';
 import '../../refund/view/pharmacy_refund_screen.dart';
 import '../../reports/cabin_temperature/view/cabin_temperature_report_screen.dart';
 import '../../reports/hospital_stocks/view/hospital_stocks_report_screen.dart';
@@ -32,6 +33,7 @@ import '../../settings/notifier/settings_notifier.dart';
 import '../../station_setup/view/station_screen.dart';
 import '../../station_stock/view/station_stock_screen.dart';
 import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
+import '../../unscanned_barcodes/view/unscanned_barcodes_screen.dart';
 import '../../user/view/user_screen.dart';
 import '../notifier/home_notifier.dart';
 
@@ -196,6 +198,8 @@ class _HomeContent extends StatelessWidget {
       'station-temperature-list' => CabinTemperatureReportScreen(menu: menu!),
       'stationStock' => StationStockScreen(menu: menu!),
       'refill' => RefillListScreen(menu: menu!),
+      'refundDrawer' => DrawerRefundScreen(menu: menu!),
+      'unReadQrCode' => UnscannedBarcodesScreen(menu: menu!),
 
       _ => const _NotFoundView(),
     };

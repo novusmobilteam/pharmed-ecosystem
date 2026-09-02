@@ -294,4 +294,15 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
     if (state is! PatientSelectionReady) return;
     await _fetchPatients();
   }
+
+  /// İntake kuyruğu tamamlandığında (acil/serbest tek seferlik akış) çağrılır.
+  /// deleteUrgentPatient()'tan farkı: backend'e SİLME isteği ATMAZ (alım zaten
+  /// tamamlandı, kayıt geçerliliğini korumalı) — sadece panel'in yerelde
+  /// tuttuğu "oluşturulan acil hasta" referansını temizleyip normal listeye
+  /// döner.
+  void clearCreatedUrgentPatient() {
+    final s = state;
+    if (s is! PatientSelectionReady) return;
+    state = s.copyWith(clearCreatedUrgentPatient: true);
+  }
 }

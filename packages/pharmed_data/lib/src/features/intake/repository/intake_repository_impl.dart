@@ -9,12 +9,14 @@ class IntakeRepositoryImpl implements IIntakeRepository {
     required EquivalentMedicineMapper eqMapper,
     required OtherStationMedicineMapper otherMapper,
     required RedirectedIntakeOrderMapper redirectMapper,
+    required RedirectedOrderMapper redirectOrderMapper,
   }) : _dataSource = dataSource,
        _intakeItemMapper = intakeItemMapper,
        _patientIntakeItemMapper = patientIntakeItemMapper,
        _eqMapper = eqMapper,
        _otherMapper = otherMapper,
-       _redirectMapper = redirectMapper;
+       _redirectMapper = redirectMapper,
+       _redirectOrderMapper = redirectOrderMapper;
 
   final IntakeRemoteDataSource _dataSource;
   final CabinTargetedRxItemMapper _intakeItemMapper;
@@ -22,6 +24,7 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   final EquivalentMedicineMapper _eqMapper;
   final OtherStationMedicineMapper _otherMapper;
   final RedirectedIntakeOrderMapper _redirectMapper;
+  final RedirectedOrderMapper _redirectOrderMapper;
 
   @override
   Future<Result<void>> checkFreeIntake(Map<String, dynamic> data) async {
@@ -39,6 +42,11 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   }
 
   @override
+  Future<Result<void>> checkUrgentIntake(Map<String, dynamic> data) async {
+    return await _dataSource.checkUrgentIntake(data);
+  }
+
+  @override
   Future<Result<void>> completeFreeIntake(Map<String, dynamic> data) async {
     return await _dataSource.completeFreeIntake(data);
   }
@@ -51,6 +59,11 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   @override
   Future<Result<void>> completeOrderlessIntake(Map<String, dynamic> data) async {
     return await _dataSource.completeOrderlessIntake(data);
+  }
+
+  @override
+  Future<Result<void>> completeUrgentIntake(Map<String, dynamic> data) async {
+    return await _dataSource.completeUrgentIntake(data);
   }
 
   @override
@@ -125,6 +138,15 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   }
 
   @override
+  Future<Result<List<RedirectedOrder>>> getRedirectedOrders() async {
+    final res = await _dataSource.getRedirectedOrders();
+    return res.when(
+      ok: (dtos) => Result.ok(_redirectOrderMapper.toEntityList(dtos ?? [])),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
   Future<Result<void>> checkRedirectedIntake(int referralId) async {
     return await _dataSource.checkRedirectedIntake(referralId);
   }
@@ -132,5 +154,10 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   @override
   Future<Result<void>> completeRedirectedIntake({required int referralId, double? censusQuantity}) async {
     return await _dataSource.completeRedirectedIntake(referralId: referralId, censusQuantity: censusQuantity);
+  }
+
+  @override
+  Future<Result<void>> cancelRedirectedOrder(int redirectedOrderId) async {
+    return await _dataSource.cancelRedirectedOrder(redirectedOrderId);
   }
 }

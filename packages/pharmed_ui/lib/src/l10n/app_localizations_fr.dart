@@ -6795,4 +6795,91 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get urgentPatient_intakeCompletedDescription =>
       'Vous pouvez clôturer ce patient urgent depuis l\'écran Clôturer le patient urgent.';
+
+  @override
+  String get directedOrders_table_dateColumn => 'Date';
+
+  @override
+  String get directedOrders_table_materialColumn => 'Matériel';
+
+  @override
+  String get directedOrders_table_quantityColumn => 'Quantité';
+
+  @override
+  String get directedOrders_table_targetServiceColumn => 'Service';
+
+  @override
+  String get directedOrders_table_targetStationColumn => 'Station';
+
+  @override
+  String get directedOrders_table_sentByColumn => 'Envoyé par';
+
+  @override
+  String get directedOrders_table_cancelledColumn => 'Statut d\'annulation';
+
+  @override
+  String get directedOrders_table_cancelledYes => 'Annulée';
+
+  @override
+  String get directedOrders_table_cancelledNo => 'Active';
+
+  @override
+  String get unscannedBarcodes_action_showScanned =>
+      'Afficher les codes scannés';
+
+  @override
+  String get unscannedBarcodes_action_showDeleted =>
+      'Afficher les codes supprimés';
+
+  @override
+  String get unscannedBarcodes_action_showUnscanned =>
+      'Afficher les codes non scannés';
+
+  @override
+  String get urgentPatientTermination_listTitle => 'Patients urgents';
+
+  @override
+  String get urgentPatientTermination_selectHint =>
+      'Sélectionnez un patient urgent pour continuer';
+
+  @override
+  String get urgentPatientTermination_takenMedicinesTitle => 'Médicaments pris';
+
+  @override
+  String get urgentPatientTermination_defaultPatientLabel => 'Patient urgent';
+
+  @override
+  String get urgentPatientTermination_openRecordChip => 'Dossier ouvert';
+
+  @override
+  String get urgentPatientTermination_serviceLabel => 'Service';
+
+  @override
+  String get urgentPatientTermination_sourceLabel => 'Dossier urgent';
+
+  @override
+  String urgentPatientTermination_sourceValue(String code) {
+    return 'Patient urgent #$code';
+  }
+
+  @override
+  String get urgentPatientTermination_targetLabel => 'Patient à associer';
+
+  @override
+  String get urgentPatientTermination_finalizeButton => 'Associer et clôturer';
+
+  @override
+  String get urgentPatientTermination_medicineTakenChip => 'Médicament pris';
+
+  @override
+  String get urgentPatientTermination_medicineNotTakenChip =>
+      'Aucun médicament';
+
+  @override
+  String get urgentPatientTermination_noMedicineEmptyTitle =>
+      'Aucun médicament n\'a été pris pour ce dossier urgent';
+
+  @override
+  String get urgentPatientTermination_noMedicineEmptyDescription =>
+      'Le dossier ne peut pas être clôturé car aucun médicament n\'a été pris ; il peut néanmoins être supprimé.';
 }

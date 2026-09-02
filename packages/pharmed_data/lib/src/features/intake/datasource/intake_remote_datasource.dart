@@ -50,6 +50,14 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  Future<Result<void>> checkUrgentIntake(Map<String, dynamic> data) async {
+    return await postRequest(
+      path: '/Prescription/detail/UrgentOrderlessCollectCheck',
+      parser: BaseRemoteDataSource.voidParser(),
+      body: data,
+    );
+  }
+
   Future<Result<void>> completeFreeIntake(Map<String, dynamic> data) async {
     return await postRequest(
       path: '/PatientIndependentMaterial',
@@ -69,6 +77,14 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
   Future<Result<void>> completeOrderlessIntake(Map<String, dynamic> data) async {
     return await postRequest(
       path: '/Prescription/detail/OrderlessCollect',
+      parser: BaseRemoteDataSource.voidParser(),
+      body: data,
+    );
+  }
+
+  Future<Result<void>> completeUrgentIntake(Map<String, dynamic> data) async {
+    return await postRequest(
+      path: '/Prescription/detail/UrgentOrderlessCollect',
       parser: BaseRemoteDataSource.voidParser(),
       body: data,
     );
@@ -153,6 +169,20 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
       path: '/Prescription/referral/collect/$referralId',
       parser: BaseRemoteDataSource.voidParser(),
       query: {'censusQuantity': censusQuantity},
+    );
+  }
+
+  Future<Result<List<RedirectedOrderDto>?>> getRedirectedOrders() async {
+    return fetchRequest<List<RedirectedOrderDto>>(
+      path: '/Prescription/referral/sent/pending',
+      parser: BaseRemoteDataSource.listParser(RedirectedOrderDto.fromJson),
+    );
+  }
+
+  Future<Result<void>> cancelRedirectedOrder(int redirectedOrderId) {
+    return deleteRequest(
+      path: '/Prescription/referral/sent/pending/$redirectedOrderId',
+      parser: BaseRemoteDataSource.voidParser(),
     );
   }
 }

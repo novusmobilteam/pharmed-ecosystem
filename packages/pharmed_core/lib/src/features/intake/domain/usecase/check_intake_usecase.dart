@@ -69,8 +69,9 @@ class CheckIntakeUseCase {
 
     final result = switch (params.type) {
       IntakeType.ordered => await _repository.checkOrderedIntake(withdrawParams.toJson()),
-      IntakeType.orderless || IntakeType.urgent => await _repository.checkOrderlessIntake(withdrawParams.toJson()),
+      IntakeType.orderless => await _repository.checkOrderlessIntake(withdrawParams.toJson()),
       IntakeType.free => await _repository.checkFreeIntake(withdrawParams.toJson()),
+      IntakeType.urgent => await _repository.checkUrgentIntake(withdrawParams.toJson()),
     };
 
     // Sunucu yalnızca doğrulama sonucu döner, tahsis bilgisi taşımaz — bu

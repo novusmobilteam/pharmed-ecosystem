@@ -54,8 +54,11 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getScannedBarcodes() async {
-    final result = await _dataSource.getScannedBarcodes();
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getUnscannedBarcodesWithStationId({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getUnscannedBarcodesWithStationId(params: params, stationId: stationId);
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<PrescriptionItem>>(
@@ -69,8 +72,29 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getDeletedBarcodes() async {
-    final result = await _dataSource.getDeletedBarcodes();
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getScannedBarcodes({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getScannedBarcodes(params: params, stationId: stationId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<PrescriptionItem>>(
+          data: apiResponse?.data != null ? _prescriptionItemMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess ?? true,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getDeletedBarcodes({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getDeletedBarcodes(params: params, stationId: stationId);
     return result.when(
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<PrescriptionItem>>(

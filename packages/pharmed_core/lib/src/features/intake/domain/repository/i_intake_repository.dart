@@ -18,6 +18,7 @@ abstract interface class IIntakeRepository {
   Future<Result<void>> checkOrderedIntake(Map<String, dynamic> data);
   Future<Result<void>> checkOrderlessIntake(Map<String, dynamic> data);
   Future<Result<void>> checkFreeIntake(Map<String, dynamic> data);
+  Future<Result<void>> checkUrgentIntake(Map<String, dynamic> data);
 
   /// POST /Prescription/detail/equivalent/checkCollect
   Future<Result<void>> checkEquivalentIntake(Map<String, dynamic> data);
@@ -28,6 +29,7 @@ abstract interface class IIntakeRepository {
   Future<Result<void>> completeOrderedIntake(Map<String, dynamic> data);
   Future<Result<void>> completeOrderlessIntake(Map<String, dynamic> data);
   Future<Result<void>> completeFreeIntake(Map<String, dynamic> data);
+  Future<Result<void>> completeUrgentIntake(Map<String, dynamic> data);
 
   /// POST /Prescription/detail/equivalent/collect
   Future<Result<void>> completeEquivalentIntake(Map<String, dynamic> data);
@@ -50,4 +52,7 @@ abstract interface class IIntakeRepository {
   Future<Result<List<RedirectedIntakeOrder>>> getRedirectedIntakeOrders(int hospitalizationId);
   Future<Result<void>> checkRedirectedIntake(int referralId);
   Future<Result<void>> completeRedirectedIntake({required int referralId, double? censusQuantity});
+
+  Future<Result<List<RedirectedOrder>>> getRedirectedOrders();
+  Future<Result<void>> cancelRedirectedOrder(int redirectedOrderId);
 }

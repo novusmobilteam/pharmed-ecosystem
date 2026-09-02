@@ -48,7 +48,7 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
 
   Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getUnscannedBarcodes({PagedQueryParams? params}) async {
     return await fetchRequest(
-      path: '/Prescription/detail/unReadQrCode',
+      path: '/Prescription/detail/unReadQrCodeCurrentStation',
       skip: params?.skip,
       take: params?.take,
       startDate: params?.startDate,
@@ -60,29 +60,50 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getScannedBarcodes({PagedQueryParams? params}) async {
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getUnscannedBarcodesWithStationId({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    return await fetchRequest(
+      path: '/Prescription/detail/unReadQrCodeByStation/$stationId',
+      skip: params?.skip,
+      take: params?.take,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      searchQuery: params?.searchQuery,
+      searchFields: ['barcode', 'material.name'],
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getScannedBarcodes({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
     return await fetchRequest<ApiResponse<List<PrescriptionItemDto>>>(
       path: '/Prescription/detail/readQrCode',
       skip: params?.skip,
       take: params?.take,
       searchQuery: params?.searchQuery,
-      searchFields: ['barcode'],
+      searchFields: ['barcode', 'material.name'],
+      query: {'stationId': stationId},
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );
   }
 
   Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getDeletedBarcodes({
-    int? skip,
-    int? take,
-    String? search,
+    PagedQueryParams? params,
+    required int stationId,
   }) async {
     return await fetchRequest<ApiResponse<List<PrescriptionItemDto>>>(
       path: '/Prescription/detail/QrCodeDelete',
-      skip: skip,
-      take: take,
-      searchQuery: search,
-      searchFields: ['barcode'],
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: ['barcode', 'material.name'],
+      query: {'stationId': stationId},
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
     );

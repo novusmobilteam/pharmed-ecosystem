@@ -18,7 +18,7 @@ class DashboardRouteContent extends ConsumerWidget {
     };
 
     final cabinRouteContext = activeMenu != null
-        ? CabinRouteContext(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode)
+        ? CabinRouteContext(menu: activeMenu, cabinData: cabinData, deviceMode: deviceMode, station: notifier.station)
         : null;
 
     final stationCabinsContext = activeMenu != null
@@ -47,7 +47,7 @@ class DashboardRouteContent extends ConsumerWidget {
               cabinRouteContext != null ? RefillView(cabinRouteContext: cabinRouteContext) : const SizedBox.shrink(),
             'drug-intake' =>
               stationCabinsContext != null ? IntakeView(stationContext: stationCabinsContext) : SizedBox.shrink(),
-            'drug-activity' => const DrugActivityScreen(),
+            'drug-activity' => DrugActivityScreen(menu: activeMenu!),
             'drug-unload' =>
               cabinRouteContext != null ? UnloadView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'drug-census' =>
@@ -86,6 +86,11 @@ class DashboardRouteContent extends ConsumerWidget {
                   ? UnloadDrawerScreen(cabinRouteContext: cabinRouteContext)
                   : const SizedBox.shrink(),
             'station-inventory' => InventoryScreen(),
+            'directed-orders' => RedirectedOrdersScreen(),
+            'emergency-patient-end' =>
+              stationCabinsContext != null
+                  ? UrgentPatientScreen(stationContext: stationCabinsContext)
+                  : const SizedBox.shrink(),
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
         ),

@@ -6589,4 +6589,90 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get urgentPatient_intakeCompletedDescription =>
       'Bu acil hastayı Acil Hasta Sonlandır ekranından sonlandırabilirsiniz.';
+
+  @override
+  String get directedOrders_table_dateColumn => 'Tarih';
+
+  @override
+  String get directedOrders_table_materialColumn => 'Malzeme';
+
+  @override
+  String get directedOrders_table_quantityColumn => 'Miktar';
+
+  @override
+  String get directedOrders_table_targetServiceColumn => 'Servis';
+
+  @override
+  String get directedOrders_table_targetStationColumn => 'İstasyon';
+
+  @override
+  String get directedOrders_table_sentByColumn => 'Gönderen';
+
+  @override
+  String get directedOrders_table_cancelledColumn => 'İptal Durumu';
+
+  @override
+  String get directedOrders_table_cancelledYes => 'İptal Edildi';
+
+  @override
+  String get directedOrders_table_cancelledNo => 'Aktif';
+
+  @override
+  String get unscannedBarcodes_action_showScanned =>
+      'Okutulan Karekodları Göster';
+
+  @override
+  String get unscannedBarcodes_action_showDeleted =>
+      'Silinen Karekodları Göster';
+
+  @override
+  String get unscannedBarcodes_action_showUnscanned =>
+      'Okutulmayan Karekodları Göster';
+
+  @override
+  String get urgentPatientTermination_listTitle => 'Acil Hastalar';
+
+  @override
+  String get urgentPatientTermination_selectHint =>
+      'Devam etmek için bir acil hasta seçin';
+
+  @override
+  String get urgentPatientTermination_takenMedicinesTitle => 'Alınan İlaçlar';
+
+  @override
+  String get urgentPatientTermination_defaultPatientLabel => 'Acil Hasta';
+
+  @override
+  String get urgentPatientTermination_openRecordChip => 'Kayıt Açık';
+
+  @override
+  String get urgentPatientTermination_serviceLabel => 'Servis';
+
+  @override
+  String get urgentPatientTermination_sourceLabel => 'Acil Kayıt';
+
+  @override
+  String urgentPatientTermination_sourceValue(String code) {
+    return 'Acil Hasta #$code';
+  }
+
+  @override
+  String get urgentPatientTermination_targetLabel => 'Eşleştirilecek Hasta';
+
+  @override
+  String get urgentPatientTermination_finalizeButton => 'Eşleştir ve Sonlandır';
+
+  @override
+  String get urgentPatientTermination_medicineTakenChip => 'İlaç Alındı';
+
+  @override
+  String get urgentPatientTermination_medicineNotTakenChip => 'İlaç Yok';
+
+  @override
+  String get urgentPatientTermination_noMedicineEmptyTitle =>
+      'Bu acil kayıt üzerinden ilaç alınmamış';
+
+  @override
+  String get urgentPatientTermination_noMedicineEmptyDescription =>
+      'İlaç alınmadığı için kaydı sonlandırma işlemi gerçekleştirilemez; ancak kaydı silme işlemi yapılabilir.';
 }

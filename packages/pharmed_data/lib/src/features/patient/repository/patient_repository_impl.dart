@@ -7,18 +7,19 @@ class PatientRepositoryImpl implements IPatientRepository {
     required PatientRemoteDataSource dataSource,
     required PatientMapper patientMapper,
     required MyPatientMapper myPatientMapper,
+    required UrgentPatientMapper urgentPatientMapper,
 
     required HospitalizationMapper hospitalizationMapper,
   }) : _dataSource = dataSource,
        _patientMapper = patientMapper,
        _myPatientMapper = myPatientMapper,
-
+       _urgentPatientMapper = urgentPatientMapper,
        _hospitalizationMapper = hospitalizationMapper;
 
   final PatientRemoteDataSource _dataSource;
   final PatientMapper _patientMapper;
   final MyPatientMapper _myPatientMapper;
-
+  final UrgentPatientMapper _urgentPatientMapper;
   final HospitalizationMapper _hospitalizationMapper;
 
   @override
@@ -108,10 +109,10 @@ class PatientRepositoryImpl implements IPatientRepository {
   }
 
   @override
-  Future<Result<List<Hospitalization>>> getUrgentPatients() async {
+  Future<Result<List<UrgentPatient>>> getUrgentPatients() async {
     final result = await _dataSource.getUrgentPatients();
     return result.when(
-      ok: (dtos) => Result.ok(_hospitalizationMapper.toEntityList(dtos ?? [])),
+      ok: (dtos) => Result.ok(_urgentPatientMapper.toEntityList(dtos ?? [])),
       error: (e) => Result.error(e),
     );
   }

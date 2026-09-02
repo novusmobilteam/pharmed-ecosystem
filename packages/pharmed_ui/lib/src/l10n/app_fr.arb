@@ -4191,5 +4191,39 @@
   "stationStock_table_currentQuantityColumn": "Actuel",
   "stationStock_table_reservedColumn": "Réservé",
   "urgentPatient_intakeCompletedMessage": "Prise en charge du patient urgent terminée",
-  "urgentPatient_intakeCompletedDescription": "Vous pouvez clôturer ce patient urgent depuis l'écran Clôturer le patient urgent."
+  "urgentPatient_intakeCompletedDescription": "Vous pouvez clôturer ce patient urgent depuis l'écran Clôturer le patient urgent.",
+  "directedOrders_table_dateColumn": "Date",
+"directedOrders_table_materialColumn": "Matériel",
+"directedOrders_table_quantityColumn": "Quantité",
+"directedOrders_table_targetServiceColumn": "Service",
+"directedOrders_table_targetStationColumn": "Station",
+"directedOrders_table_sentByColumn": "Envoyé par",
+"directedOrders_table_cancelledColumn": "Statut d'annulation",
+"directedOrders_table_cancelledYes": "Annulée",
+"directedOrders_table_cancelledNo": "Active",
+"unscannedBarcodes_action_showScanned": "Afficher les codes scannés",
+"unscannedBarcodes_action_showDeleted": "Afficher les codes supprimés",
+"unscannedBarcodes_action_showUnscanned": "Afficher les codes non scannés",
+"urgentPatientTermination_listTitle": "Patients urgents",
+"urgentPatientTermination_selectHint": "Sélectionnez un patient urgent pour continuer",
+"urgentPatientTermination_takenMedicinesTitle": "Médicaments pris",
+"urgentPatientTermination_defaultPatientLabel": "Patient urgent",
+"urgentPatientTermination_openRecordChip": "Dossier ouvert",
+"urgentPatientTermination_serviceLabel": "Service",
+"urgentPatientTermination_sourceLabel": "Dossier urgent",
+"urgentPatientTermination_sourceValue": "Patient urgent #{code}",
+"@urgentPatientTermination_sourceValue": {
+  "description": "Value shown under urgentPatientTermination_sourceLabel — the urgent patient's display code.",
+  "placeholders": {
+    "code": {
+      "type": "String"
+    }
+  }
+},
+"urgentPatientTermination_targetLabel": "Patient à associer",
+"urgentPatientTermination_finalizeButton": "Associer et clôturer",
+"urgentPatientTermination_medicineTakenChip": "Médicament pris",
+"urgentPatientTermination_medicineNotTakenChip": "Aucun médicament",
+"urgentPatientTermination_noMedicineEmptyTitle": "Aucun médicament n'a été pris pour ce dossier urgent",
+"urgentPatientTermination_noMedicineEmptyDescription": "Le dossier ne peut pas être clôturé car aucun médicament n'a été pris ; il peut néanmoins être supprimé."
 }

@@ -160,6 +160,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
     if (state == null) return const SizedBox.shrink();
 
     final hasCreatedUrgentPatient = widget.config.enableUrgentPatient && state.createdUrgentPatient != null;
+    final showUrgentAction = widget.config.enableUrgentPatient && state.isUrgentActionVisible;
     final fields = _filterFields(context, state);
 
     return Stack(
@@ -171,13 +172,15 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
             child: Container(
               padding: MedSpacing.panelInsetPadding,
               decoration: BoxDecoration(
-                border: Border.all(width: 2, color: MedColors.border),
+                border: Border.all(width: 1, color: MedColors.border),
                 color: MedColors.surface,
                 borderRadius: MedRadius.mdAll,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(context.l10n.unappliedPrescription_panel_patientTitle, style: MedTextStyles.titleSm()),
+                  Divider(),
                   if (widget.config.enableTabs) ...[
                     MedSegmentedButton(
                       selectedIndex: state.tab.index,
@@ -233,7 +236,8 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
                               bgColor: MedColors.blue,
                             ),
                           ),
-                          if (widget.config.enableOrderlessToggle && state.isStatusToggleVisible || true) // aşağıya bak
+                          if (widget.config.enableOrderlessToggle && state.isStatusToggleVisible ||
+                              true && widget.config.enableUrgentPatient)
                             MedToggleButton(
                               label: switch (state.intakeMode) {
                                 PatientIntakeMode.ordered => context.l10n.patientPicker_orderedToggleLabel,
@@ -312,7 +316,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
                       ),
                     ),
 
-                    if (state.isUrgentActionVisible) ...[
+                    if (showUrgentAction) ...[
                       const SizedBox(height: 12.0),
                       Row(
                         spacing: MedSpacing.sm,

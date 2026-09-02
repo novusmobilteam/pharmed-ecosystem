@@ -361,6 +361,10 @@ final getUrgentPatientsUseCaseProvider = Provider((ref) {
   return GetUrgentPatientsUseCase(ref.read(patientRepositoryProvider));
 });
 
+final endUrgentPatientUseCaseProvider = Provider((ref) {
+  return EndUrgentPatientUseCase(ref.read(patientRepositoryProvider));
+});
+
 final getMedicinesUseCaseProvider = Provider((ref) {
   return GetMedicinesUseCase(ref.read(medicineRepositoryProvider));
 });
@@ -475,6 +479,14 @@ final getPrescriptionDetailUseCaseProvider = Provider((ref) {
 
 final getRedirectedIntakeOrdersUseCaseProvider = Provider((ref) {
   return GetRedirectedIntakeOrdersUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final getRedirectedOrdersUseCaseProvider = Provider((ref) {
+  return GetRedirectedOrdersUseCase(ref.read(intakeRepositoryProvider));
+});
+
+final cancelRedirectedOrderUseCaseProvider = Provider((ref) {
+  return CancelRedirectedOrderUseCase(ref.read(intakeRepositoryProvider));
 });
 
 final checkRedirectedIntakeUseCaseProvider = Provider((ref) {

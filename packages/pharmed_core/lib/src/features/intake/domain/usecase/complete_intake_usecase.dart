@@ -12,10 +12,11 @@ class CompleteIntakeUseCase {
       case IntakeType.ordered:
         return await _completeOrdered(params);
       case IntakeType.orderless:
-      case IntakeType.urgent:
         return await _completeOrderless(params);
       case IntakeType.free:
         return await _completeFree(params);
+      case IntakeType.urgent:
+        return await _completeUrgent(params);
     }
   }
 
@@ -29,5 +30,9 @@ class CompleteIntakeUseCase {
 
   Future<Result<void>> _completeFree(IntakeParams params) async {
     return _repository.completeFreeIntake(params.toJson());
+  }
+
+  Future<Result<void>> _completeUrgent(IntakeParams params) async {
+    return _repository.completeUrgentIntake(params.toJson());
   }
 }

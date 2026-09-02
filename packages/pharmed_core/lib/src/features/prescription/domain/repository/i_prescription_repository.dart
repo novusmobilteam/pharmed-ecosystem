@@ -25,11 +25,22 @@ abstract interface class IPrescriptionRepository {
   // Okutulmayan Karekodlar
   Future<Result<ApiResponse<List<PrescriptionItem>>?>> getUnscannedBarcodes({PagedQueryParams? params});
 
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getUnscannedBarcodesWithStationId({
+    PagedQueryParams? params,
+    required int stationId,
+  });
+
   // Okutulan Karekodlar
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getScannedBarcodes();
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getScannedBarcodes({
+    PagedQueryParams? params,
+    required int stationId,
+  });
 
   // Silinen Karekodlar
-  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getDeletedBarcodes();
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getDeletedBarcodes({
+    PagedQueryParams? params,
+    required int stationId,
+  });
 
   // Karekod uyarı aç/kapat
   Future<Result<void>> toggleWarning(int id);

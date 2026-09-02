@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../notifier/pharmacy_refund_notifier.dart';
 
-part 'table_view.dart';
+part 'pharmacy_table_view.dart';
 
 class PharmacyRefundScreen extends StatelessWidget {
   const PharmacyRefundScreen({super.key, required this.menu});

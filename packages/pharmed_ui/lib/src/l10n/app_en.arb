@@ -4736,5 +4736,39 @@
   "stationStock_table_currentQuantityColumn": "Current",
   "stationStock_table_reservedColumn": "Reserved",
   "urgentPatient_intakeCompletedMessage": "Emergency patient intake completed",
-  "urgentPatient_intakeCompletedDescription": "You can close out this emergency patient from the Terminate Emergency Patient screen."
+  "urgentPatient_intakeCompletedDescription": "You can close out this emergency patient from the Terminate Emergency Patient screen.",
+  "directedOrders_table_dateColumn": "Date",
+"directedOrders_table_materialColumn": "Material",
+"directedOrders_table_quantityColumn": "Quantity",
+"directedOrders_table_targetServiceColumn": "Service",
+"directedOrders_table_targetStationColumn": "Station",
+"directedOrders_table_sentByColumn": "Sent By",
+"directedOrders_table_cancelledColumn": "Cancellation Status",
+"directedOrders_table_cancelledYes": "Cancelled",
+"directedOrders_table_cancelledNo": "Active",
+"unscannedBarcodes_action_showScanned": "Show Scanned Barcodes",
+"unscannedBarcodes_action_showDeleted": "Show Deleted Barcodes",
+"unscannedBarcodes_action_showUnscanned": "Show Unscanned Barcodes",
+"urgentPatientTermination_listTitle": "Emergency Patients",
+"urgentPatientTermination_selectHint": "Select an emergency patient to continue",
+"urgentPatientTermination_takenMedicinesTitle": "Medicines Taken",
+"urgentPatientTermination_defaultPatientLabel": "Emergency Patient",
+"urgentPatientTermination_openRecordChip": "Record Open",
+"urgentPatientTermination_serviceLabel": "Service",
+"urgentPatientTermination_sourceLabel": "Emergency Record",
+"urgentPatientTermination_sourceValue": "Emergency Patient #{code}",
+"@urgentPatientTermination_sourceValue": {
+  "description": "Value shown under urgentPatientTermination_sourceLabel — the urgent patient's display code.",
+  "placeholders": {
+    "code": {
+      "type": "String"
+    }
+  }
+},
+"urgentPatientTermination_targetLabel": "Patient to Match",
+"urgentPatientTermination_finalizeButton": "Match and Finalize",
+"urgentPatientTermination_medicineTakenChip": "Medicine Taken",
+"urgentPatientTermination_medicineNotTakenChip": "No Medicine",
+"urgentPatientTermination_noMedicineEmptyTitle": "No medicine has been taken under this emergency record",
+"urgentPatientTermination_noMedicineEmptyDescription": "The record cannot be finalized because no medicine has been taken; however, the record may still be deleted."
 }

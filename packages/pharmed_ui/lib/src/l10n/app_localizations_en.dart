@@ -6638,4 +6638,89 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get urgentPatient_intakeCompletedDescription =>
       'You can close out this emergency patient from the Terminate Emergency Patient screen.';
+
+  @override
+  String get directedOrders_table_dateColumn => 'Date';
+
+  @override
+  String get directedOrders_table_materialColumn => 'Material';
+
+  @override
+  String get directedOrders_table_quantityColumn => 'Quantity';
+
+  @override
+  String get directedOrders_table_targetServiceColumn => 'Service';
+
+  @override
+  String get directedOrders_table_targetStationColumn => 'Station';
+
+  @override
+  String get directedOrders_table_sentByColumn => 'Sent By';
+
+  @override
+  String get directedOrders_table_cancelledColumn => 'Cancellation Status';
+
+  @override
+  String get directedOrders_table_cancelledYes => 'Cancelled';
+
+  @override
+  String get directedOrders_table_cancelledNo => 'Active';
+
+  @override
+  String get unscannedBarcodes_action_showScanned => 'Show Scanned Barcodes';
+
+  @override
+  String get unscannedBarcodes_action_showDeleted => 'Show Deleted Barcodes';
+
+  @override
+  String get unscannedBarcodes_action_showUnscanned =>
+      'Show Unscanned Barcodes';
+
+  @override
+  String get urgentPatientTermination_listTitle => 'Emergency Patients';
+
+  @override
+  String get urgentPatientTermination_selectHint =>
+      'Select an emergency patient to continue';
+
+  @override
+  String get urgentPatientTermination_takenMedicinesTitle => 'Medicines Taken';
+
+  @override
+  String get urgentPatientTermination_defaultPatientLabel =>
+      'Emergency Patient';
+
+  @override
+  String get urgentPatientTermination_openRecordChip => 'Record Open';
+
+  @override
+  String get urgentPatientTermination_serviceLabel => 'Service';
+
+  @override
+  String get urgentPatientTermination_sourceLabel => 'Emergency Record';
+
+  @override
+  String urgentPatientTermination_sourceValue(String code) {
+    return 'Emergency Patient #$code';
+  }
+
+  @override
+  String get urgentPatientTermination_targetLabel => 'Patient to Match';
+
+  @override
+  String get urgentPatientTermination_finalizeButton => 'Match and Finalize';
+
+  @override
+  String get urgentPatientTermination_medicineTakenChip => 'Medicine Taken';
+
+  @override
+  String get urgentPatientTermination_medicineNotTakenChip => 'No Medicine';
+
+  @override
+  String get urgentPatientTermination_noMedicineEmptyTitle =>
+      'No medicine has been taken under this emergency record';
+
+  @override
+  String get urgentPatientTermination_noMedicineEmptyDescription =>
+      'The record cannot be finalized because no medicine has been taken; however, the record may still be deleted.';
 }
