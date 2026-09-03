@@ -86,10 +86,28 @@ class TableSideCategory {
   final String id;
   final String label;
   final int? count;
-  const TableSideCategory({required this.id, required this.label, this.count});
-}
 
-// ─── ACTION ITEM ─────────────────────────────────────────────────────────────
+  /// İkinci satırda gösterilecek kısa alt bilgi (örn. "Master · 8 atama").
+  final String? subtitle;
+
+  /// Satırın solundaki küçük durum noktası (örn. bağlı/bağlı değil).
+  final Color? statusColor;
+
+  /// Verilirse bu kategori seçilemeyen bir GRUP BAŞLIĞI olur, sadece
+  /// expand/collapse edilir; asıl seçim çocuklardan yapılır.
+  final List<TableSideCategory>? children;
+
+  const TableSideCategory({
+    required this.id,
+    required this.label,
+    this.count,
+    this.subtitle,
+    this.statusColor,
+    this.children,
+  });
+
+  bool get hasChildren => children != null && children!.isNotEmpty;
+}
 
 class TableActionItem<T extends Object> {
   final IconData icon;

@@ -1,13 +1,13 @@
 part of 'urgent_patient_screen.dart';
 
 class UrgentPatientDetailPanel extends StatelessWidget {
-  const UrgentPatientDetailPanel({super.key, required this.urgentPatient});
+  const UrgentPatientDetailPanel({super.key, required this.notifier});
 
-  final UrgentPatient? urgentPatient;
+  final UrgentPatientNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    final patient = urgentPatient;
+    final patient = notifier.selectedUrgentPatient;
     final bool isMedicineTaken = patient?.prescriptionItems?.isNotEmpty ?? false;
 
     if (patient == null) {
@@ -19,44 +19,66 @@ class UrgentPatientDetailPanel extends StatelessWidget {
       );
     }
 
-    return Container(
-      //padding: MedSpacing.panelInsetPadding,
-      decoration: BoxDecoration(
-        border: Border.all(width: 1, color: MedColors.border),
-        color: MedColors.surface,
-        borderRadius: MedRadius.mdAll,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _UrgentPatientDetailHeader(patient: patient),
-          const SizedBox(height: MedSpacing.lg),
-          if (isMedicineTaken)
-            Expanded(
-              child: Padding(
-                padding: MedSpacing.panelInsetPadding,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.l10n.urgentPatientTermination_takenMedicinesTitle.toUpperCase(),
-                      style: MedTextStyles.bodySm(color: MedColors.text3),
+    return Column(
+      spacing: 6.0,
+      children: [
+        Expanded(
+          child: Container(
+            //padding: MedSpacing.panelInsetPadding,
+            decoration: BoxDecoration(
+              border: Border.all(width: 1, color: MedColors.border),
+              color: MedColors.surface,
+              borderRadius: MedRadius.mdAll,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _UrgentPatientDetailHeader(patient: patient),
+                const SizedBox(height: MedSpacing.lg),
+                if (isMedicineTaken)
+                  Expanded(
+                    child: Padding(
+                      padding: MedSpacing.panelInsetPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            context.l10n.urgentPatientTermination_takenMedicinesTitle.toUpperCase(),
+                            style: MedTextStyles.bodySm(color: MedColors.text3),
+                          ),
+                          const SizedBox(height: MedSpacing.sm),
+                          Expanded(child: _UrgentPatientMedicineList(items: patient.prescriptionItems!)),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: MedSpacing.sm),
-                    Expanded(child: _UrgentPatientMedicineList(items: patient.prescriptionItems!)),
-                  ],
-                ),
-              ),
+                  ),
+                if (!isMedicineTaken)
+                  Center(
+                    child: EmptyStateWidget(
+                      title: context.l10n.urgentPatientTermination_noMedicineEmptyTitle,
+                      description: context.l10n.urgentPatientTermination_noMedicineEmptyDescription,
+                    ),
+                  ),
+              ],
             ),
-          if (!isMedicineTaken)
-            Center(
-              child: EmptyStateWidget(
-                title: context.l10n.urgentPatientTermination_noMedicineEmptyTitle,
-                description: context.l10n.urgentPatientTermination_noMedicineEmptyDescription,
-              ),
-            ),
-        ],
-      ),
+          ),
+        ),
+        // if (notifier.selectedUrgentPatient != null && notifier.selectedPatient != null)
+        UrgentPatientFooter(
+          urgentPatient: notifier.selectedUrgentPatient!,
+          targetPatient: notifier.selectedPatient,
+          isSubmitting: notifier.isSubmitting,
+          onSubmit: () => notifier.submit(
+            onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+            onSuccess: () => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
+          ),
+          isDeleting: notifier.isDeleting,
+          onDelete: () => notifier.deleteUrgentPatient(
+            onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+            onSuccess: () => MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -221,7 +243,7 @@ class UrgentPatientFooter extends StatelessWidget {
   const UrgentPatientFooter({
     super.key,
     required this.urgentPatient,
-    required this.targetPatient,
+    this.targetPatient,
     required this.isSubmitting,
     required this.onSubmit,
     required this.isDeleting,
@@ -229,7 +251,7 @@ class UrgentPatientFooter extends StatelessWidget {
   });
 
   final UrgentPatient urgentPatient;
-  final Hospitalization targetPatient;
+  final Hospitalization? targetPatient;
 
   final bool isSubmitting;
   final VoidCallback onSubmit;
@@ -271,27 +293,28 @@ class UrgentPatientFooter extends StatelessWidget {
             ],
           ),
         ),
-
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.l10n.urgentPatientTermination_targetLabel,
-                style: MedTextStyles.titleSm(color: MedColors.text3),
-              ),
-              Text(
-                '${targetPatient.patient?.fullName ?? '—'} · ${targetPatient.inpatientService?.name ?? '—'}',
-                style: MedTextStyles.monoMd(),
-              ),
-            ],
+        if (targetPatient != null)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.l10n.urgentPatientTermination_targetLabel,
+                  style: MedTextStyles.titleSm(color: MedColors.text3),
+                ),
+                Text(
+                  '${targetPatient!.patient?.fullName ?? '—'} · ${targetPatient!.inpatientService?.name ?? '—'}',
+                  style: MedTextStyles.monoMd(),
+                ),
+              ],
+            ),
           ),
-        ),
         MedButton(
           label: context.l10n.urgentPatientTermination_finalizeButton,
           variant: MedButtonVariant.danger,
           isLoading: isSubmitting,
           onPressed: onSubmit,
+          isActive: targetPatient != null,
         ),
       ],
     );

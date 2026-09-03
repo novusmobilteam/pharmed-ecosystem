@@ -32,9 +32,6 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
   final OperationKey _submitOp = OperationKey.custom('submit-emergency');
   final OperationKey _deleteOp = OperationKey.delete();
 
-  List<Hospitalization> _hospitalization = [];
-  List<Hospitalization> get hospitalization => _hospitalization;
-
   List<UrgentPatient> _urgentPatients = [];
   List<UrgentPatient> get urgentPatients => _urgentPatients;
 
@@ -44,7 +41,7 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
   UrgentPatient? _selectedUrgentPatient;
   UrgentPatient? get selectedUrgentPatient => _selectedUrgentPatient;
 
-  bool get isFetching => isLoading(_fetchUrgentOp);
+  bool get isFetching => isLoading(_fetchUrgentOp) && _urgentPatients.isNotEmpty;
   bool get isSubmitting => isLoading(_submitOp);
   bool get isDeleting => isLoading(_deleteOp);
 
@@ -54,6 +51,9 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
       operation: () => _getUrgentPatientsUseCase.call(),
       onData: (data) {
         _urgentPatients = data;
+        if (_urgentPatients.isNotEmpty) {
+          selectUrgentPatient(_urgentPatients.first);
+        }
         notifyListeners();
       },
     );
@@ -63,8 +63,8 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
     if (_selectedUrgentPatient?.prescriptionItems == null) return;
 
     final params = EndUrgentPatientParams(
-      hospitalizationId: _selectedUrgentPatient?.id ?? 0,
-      patientId: _selectedPatient?.id ?? 0,
+      hospitalizationId: _selectedPatient?.id ?? 0,
+      patientId: _selectedUrgentPatient?.patientId ?? 0,
       prescriptionItemIds: _selectedUrgentPatient!.prescriptionItems!.map((m) => m.id ?? 0).toList(),
     );
 
@@ -81,7 +81,7 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> deleteUrgentPatient({Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
-    final patientId = _selectedUrgentPatient?.id;
+    final patientId = _selectedUrgentPatient?.patientId;
     if (patientId == null) return;
     await executeVoid(
       _deleteOp,
@@ -90,6 +90,7 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
       onSuccess: () {
         onSuccess?.call();
         _selectedPatient = null;
+        _selectedUrgentPatient = null;
         getUrgentPatients();
       },
     );

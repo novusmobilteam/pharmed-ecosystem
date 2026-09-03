@@ -18,6 +18,8 @@
 //
 // Sınıf: Class B
 
+import 'package:pharmed_core/pharmed_core.dart';
+
 import 'drawer_unit.dart';
 
 /// [units] ham (API) sırasındaki kübik göz listesi.
@@ -65,4 +67,41 @@ List<T> reorderParallelToVisual<T>(List<DrawerUnit> units, List<T> parallel, {in
   assert(parallel.length == units.length, 'reorderParallelToVisual: liste uzunlukları eşleşmiyor');
   final indexes = kubikVisualOrderIndexes(units, columnCount: columnCount);
   return indexes.map((i) => parallel[i]).toList();
+}
+
+class DrawerGroupLayout {
+  const DrawerGroupLayout({required this.normalUnits, required this.returnUnitIds, required this.isReturnDrawer});
+
+  final List<DrawerUnit> normalUnits;
+  final Set<int> returnUnitIds;
+  final bool isReturnDrawer;
+}
+
+/// [hardwareColumnCount] — kübik grid'in FİZİKSEL/donanımsal sütun sayısı.
+/// UI'da kaç sütun gösterileceğiyle (Wrap/GridView düzeni) KARIŞTIRILMAMALI —
+/// bu değer sadece kubikUnitsInVisualOrder'ın doğru reshape yapabilmesi ve
+/// iade çekmecesinin gerçek son sütununu doğru ayırabilmesi için gerekli.
+/// Codebase'in geri kalanında (bkz. _DrawerView, GetCabinVisualizerDataUseCase)
+/// bu değer sabit 4.
+DrawerGroupLayout resolveDrawerGroupLayout(DrawerGroup group, {int hardwareColumnCount = 4}) {
+  final isKubik = group.isKubik;
+  final visualUnits = isKubik ? kubikUnitsInVisualOrder(group.units, columnCount: hardwareColumnCount) : group.units;
+
+  final isReturnDrawer = isKubik && group.isReturnDrawer;
+  if (!isReturnDrawer) {
+    return DrawerGroupLayout(normalUnits: visualUnits, returnUnitIds: const {}, isReturnDrawer: false);
+  }
+
+  final normal = <DrawerUnit>[];
+  final returned = <DrawerUnit>[];
+  for (var i = 0; i < visualUnits.length; i++) {
+    final isLastColumn = (i % hardwareColumnCount) == hardwareColumnCount - 1;
+    (isLastColumn ? returned : normal).add(visualUnits.elementAt(i));
+  }
+
+  return DrawerGroupLayout(
+    normalUnits: normal,
+    returnUnitIds: returned.map((u) => u.id).whereType<int>().toSet(),
+    isReturnDrawer: true,
+  );
 }

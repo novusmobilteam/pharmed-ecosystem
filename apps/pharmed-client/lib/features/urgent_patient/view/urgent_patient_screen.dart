@@ -61,30 +61,7 @@ class UrgentPatientScreen extends ConsumerWidget {
                     flex: 5,
                     child: Column(
                       spacing: 12.0,
-                      children: [
-                        Expanded(child: UrgentPatientDetailPanel(urgentPatient: notifier.selectedUrgentPatient)),
-                        if (notifier.selectedUrgentPatient != null && notifier.selectedPatient != null)
-                          UrgentPatientFooter(
-                            urgentPatient: notifier.selectedUrgentPatient!,
-                            targetPatient: notifier.selectedPatient!,
-                            isSubmitting: notifier.isSubmitting,
-                            onSubmit: () => notifier.submit(
-                              onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                              onSuccess: () => MessageUtils.showSuccessSnackbar(
-                                context,
-                                context.l10n.common_operationSuccessMessage,
-                              ),
-                            ),
-                            isDeleting: notifier.isDeleting,
-                            onDelete: () => notifier.deleteUrgentPatient(
-                              onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                              onSuccess: () => MessageUtils.showSuccessSnackbar(
-                                context,
-                                context.l10n.common_operationSuccessMessage,
-                              ),
-                            ),
-                          ),
-                      ],
+                      children: [Expanded(child: UrgentPatientDetailPanel(notifier: notifier))],
                     ),
                   ),
                 ],
