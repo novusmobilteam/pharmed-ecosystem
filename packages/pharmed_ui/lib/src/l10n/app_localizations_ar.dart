@@ -6779,4 +6779,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fault_cellValueUnsolved => 'Unsolved';
+
+  @override
+  String get cabinAssignmentList_actionsColumn => 'Actions';
+
+  @override
+  String get cabinAssignmentList_deleteTooltip => 'Delete Assignment';
+
+  @override
+  String get cabinAssignmentList_replaceTooltip => 'Replace Medicine';
+
+  @override
+  String get unload_replaceMedicine_dialogTitle => 'Select Equivalent Medicine';
+
+  @override
+  String get unload_replaceMedicine_allMedicinesButton => 'All Medicines List';
 }

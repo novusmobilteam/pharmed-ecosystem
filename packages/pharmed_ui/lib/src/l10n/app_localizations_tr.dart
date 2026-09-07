@@ -6730,4 +6730,19 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fault_cellValueUnsolved => 'Çözülmedi';
+
+  @override
+  String get cabinAssignmentList_actionsColumn => 'İşlemler';
+
+  @override
+  String get cabinAssignmentList_deleteTooltip => 'Atamayı Sil';
+
+  @override
+  String get cabinAssignmentList_replaceTooltip => 'İlacı Değiştir';
+
+  @override
+  String get unload_replaceMedicine_dialogTitle => 'Muadil İlaç Seç';
+
+  @override
+  String get unload_replaceMedicine_allMedicinesButton => 'Tüm İlaç Listesi';
 }

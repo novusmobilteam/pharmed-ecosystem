@@ -2,6 +2,7 @@
 // Sınıf: Class B
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -21,6 +22,8 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
 
   GetCabinAssignmentsWithCabinUseCase get _getAssignments => ref.read(getCabinAssignmentsWitCabinUseCaseProvider);
   CompleteMasterUnloadUseCase get _completeUnload => ref.read(completeMasterUnloadUseCaseProvider);
+  DeleteMedicineAssignmentUseCase get _deleteAssignment => ref.read(deleteAssignmentUseCaseProvider);
+  UpdateMedicineAssignmentUseCase get _updateAssignment => ref.read(updateMedicineAssignmentUseCaseProvider);
 
   @override
   MasterUnloadState build() {
@@ -423,5 +426,73 @@ class MasterUnloadNotifier extends Notifier<MasterUnloadState> {
     final next = List<CabinOperationDrawerJob>.from(jobs);
     next[index] = next[index].copyWith(status: status);
     return next;
+  }
+
+  /// "Sil": atama tamamen kaldırılır, liste yeniden çekilir.
+  Future<void> deleteAssignment(
+    MedicineAssignment assignment, {
+    ValueChanged<void>? onSuccess,
+    ValueChanged<String?>? onFailed,
+  }) async {
+    final s = state;
+    if (s is! MasterUnloadSelection) return;
+    final id = assignment.cabinDrawerId;
+    if (id == null) return;
+
+    state = s.copyWith(pendingAssignmentActionIds: {...s.pendingAssignmentActionIds, id});
+
+    final result = await _deleteAssignment.call(id);
+
+    result.when(
+      ok: (_) async {
+        onSuccess?.call(null);
+        await _reloadSelectionAfterQueue(s.cabinId);
+      },
+      error: (e) async {
+        final failure = CabinApiFailure(message: e.message);
+        final current = state;
+        if (current is MasterUnloadSelection) {
+          final cleared = {...current.pendingAssignmentActionIds}..remove(id);
+          state = current.copyWith(pendingAssignmentActionIds: cleared);
+        }
+        onFailed?.call(failure.message);
+      },
+    );
+  }
+
+  /// "Değiştir": mevcut atama, seçilen yeni ilaçla güncellenir
+  /// (muadil listesinden veya "Tüm İlaç Listesi"nden seçilmiş olabilir —
+  /// ikisi de aynı Medicine tipini döner, notifier ayrım yapmaz).
+  Future<void> replaceAssignment(
+    MedicineAssignment assignment,
+    Medicine newMedicine, {
+    ValueChanged<void>? onSuccess,
+    ValueChanged<String?>? onFailed,
+  }) async {
+    final s = state;
+    if (s is! MasterUnloadSelection) return;
+    final id = assignment.id;
+    if (id == null) return;
+
+    state = s.copyWith(pendingAssignmentActionIds: {...s.pendingAssignmentActionIds, id});
+
+    final updated = assignment.copyWith(medicine: newMedicine);
+    final result = await _updateAssignment.call(updated);
+
+    result.when(
+      ok: (_) async {
+        onSuccess?.call(null);
+        await _reloadSelectionAfterQueue(s.cabinId);
+      },
+      error: (e) {
+        final failure = CabinApiFailure(message: e.message);
+        final current = state;
+        if (current is MasterUnloadSelection) {
+          final cleared = {...current.pendingAssignmentActionIds}..remove(id);
+          state = current.copyWith(pendingAssignmentActionIds: cleared);
+        }
+        onFailed?.call(failure.message);
+      },
+    );
   }
 }

@@ -4797,5 +4797,10 @@
 "refillList_column_targetQuantity": "Target Quantity",
 "refillList_column_filledQuantity": "Filled Quantity",
 "fault_cellValueSolved": "Solved",
-"fault_cellValueUnsolved": "Unsolved"
+"fault_cellValueUnsolved": "Unsolved",
+"cabinAssignmentList_actionsColumn": "Actions",
+"cabinAssignmentList_deleteTooltip": "Delete Assignment",
+"cabinAssignmentList_replaceTooltip": "Replace Medicine",
+"unload_replaceMedicine_dialogTitle": "Select Equivalent Medicine",
+"unload_replaceMedicine_allMedicinesButton": "All Medicines List"
 }

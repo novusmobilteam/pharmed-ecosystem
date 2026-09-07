@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../core/providers/providers.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
 import '../notifier/master_unload_notifier.dart';
@@ -29,6 +31,27 @@ class MasterUnloadSelectionView extends ConsumerWidget {
     if (selection == null) return const SizedBox.shrink();
 
     final items = selection.visibleMedicines;
+
+    SearchDataSource<Medicine> _equivalentsSource(int medicineId) {
+      return (skip, take, search) async {
+        final result = await ref
+            .read(getEquivalentMedicinesUseCaseProvider)
+            .execute(
+              medicineId,
+              params: PagedQueryParams(skip: skip, take: take, searchQuery: search),
+            );
+        return result.when(ok: (response) => Result.ok(response), error: (e) => Result.error(e));
+      };
+    }
+
+    SearchDataSource<Medicine> _allMedicinesSource() {
+      return (skip, take, search) async {
+        final result = await ref
+            .read(getMedicinesUseCaseProvider)
+            .call(PagedQueryParams(skip: skip, take: take, searchQuery: search));
+        return result.when(ok: (response) => Result.ok(response), error: (e) => Result.error(e));
+      };
+    }
 
     return CabinOperationSelectionLayout(
       left: CabinOverviewSelectionPanel(
@@ -57,6 +80,49 @@ class MasterUnloadSelectionView extends ConsumerWidget {
                 items: items,
                 selectedItemIds: selection.selectedUnitIds,
                 onToggle: notifier.toggleUnit,
+                onDelete: (assignment) => MessageUtils.showConfirmDeleteDialog(
+                  context: context,
+                  itemName: assignment.medicine?.name,
+                  onConfirm: () => notifier.deleteAssignment(
+                    assignment,
+                    onSuccess: (_) {
+                      if (!context.mounted) return;
+                      MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
+                    },
+                    onFailed: (msg) {
+                      if (!context.mounted) return;
+                      MessageUtils.showErrorSnackbar(context, msg);
+                    },
+                  ),
+                ),
+
+                onReplace: (assignment) async {
+                  final medicineId = assignment.medicine?.id;
+                  if (medicineId == null) return;
+
+                  final selected = await SelectionDialog.showWithFallback<Medicine>(
+                    context,
+                    title: context.l10n.unload_replaceMedicine_dialogTitle,
+                    primaryDataSource: _equivalentsSource(medicineId),
+                    secondaryDataSource: _allMedicinesSource(),
+                    secondaryToggleLabel: context.l10n.unload_replaceMedicine_allMedicinesButton,
+                    labelBuilder: (m) => m.name,
+                  );
+
+                  if (selected == null || !context.mounted) return;
+                  notifier.replaceAssignment(
+                    assignment,
+                    selected,
+                    onSuccess: (_) {
+                      if (!context.mounted) return;
+                      MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
+                    },
+                    onFailed: (msg) {
+                      if (!context.mounted) return;
+                      MessageUtils.showErrorSnackbar(context, msg);
+                    },
+                  );
+                },
               ),
         footer: selection.selectedAssignments.isNotEmpty
             ? MedButton(

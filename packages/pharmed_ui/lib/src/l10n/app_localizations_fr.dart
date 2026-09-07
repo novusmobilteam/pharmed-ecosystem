@@ -6938,4 +6938,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fault_cellValueUnsolved => 'Non résolu';
+
+  @override
+  String get cabinAssignmentList_actionsColumn => 'Actions';
+
+  @override
+  String get cabinAssignmentList_deleteTooltip => 'Supprimer L\'Affectation';
+
+  @override
+  String get cabinAssignmentList_replaceTooltip => 'Remplacer Le Médicament';
+
+  @override
+  String get unload_replaceMedicine_dialogTitle =>
+      'Sélectionner Un Médicament Équivalent';
+
+  @override
+  String get unload_replaceMedicine_allMedicinesButton =>
+      'Liste De Tous Les Médicaments';
 }
