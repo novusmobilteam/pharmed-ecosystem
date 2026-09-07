@@ -137,7 +137,6 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
     // Öncelik: stock'un kendi nested cabinDrawerDetail'ı (bazı endpoint'ler dolduruyor).
     final direct = stock.cabinDrawerDetail?.stepNo;
     if (direct != null) {
-      print('[loc-orientation] stockId=$stockId -> stepNo=$direct (direct/nested)');
       return direct;
     }
 
@@ -147,11 +146,9 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
     // yani her zaman dolu geldiği doğrulanmış.
     final detailId = stock.cabinDrawerDetailId;
     if (detailId == null) {
-      print('[loc-orientation] stockId=$stockId -> detailId de null, stepNo bulunamadı');
       return null;
     }
     final stepNo = assignment?.cabinDrawerDetail?.firstWhereOrNull((d) => d.id == detailId)?.stepNo;
-    print('[loc-orientation] stockId=$stockId, detailId=$detailId -> stepNo=$stepNo (fallback)');
     return stepNo;
   }
 

@@ -20,7 +20,6 @@
 //
 // Sınıf: Class B
 
-import 'package:flutter/foundation.dart';
 import 'package:pharmed_client/features/intake/intake.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
@@ -281,7 +280,6 @@ extension MasterIntakeExecutingLocationX on MasterIntakeExecuting {
       if (stepIndex < 0 || stepIndex >= steps.length) return null;
       final (ti, _) = steps[stepIndex].refs.first;
       final stockId = job.targets[ti].details.firstOrNull?.stockId;
-      debugPrint('[intake-loc] step=$stepIndex ti=$ti stockId=$stockId');
 
       return stockId;
     },
