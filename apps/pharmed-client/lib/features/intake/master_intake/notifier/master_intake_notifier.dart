@@ -67,6 +67,22 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     _orchestrator.init(onStageChange: _onDrawerStage);
     ref.onDispose(_orchestrator.dispose);
 
+    // [Madde 5] Güvenlik: oturum sahibi değişirse (çıkış yapıldı veya farklı
+    // bir kullanıcı giriş yaptı) birikmiş şahit listesi TEMİZLENİR —
+    // _recentWitnesses bir sonraki kullanıcının ekranına sızmamalı.
+    // AuthSessionExpiring'de user aynı kaldığı için (countdown sırasında)
+    // temizlik TETİKLENMEZ — yalnızca gerçek login/logout/kullanıcı değişimi.
+    ref.listen(authNotifierProvider, (previous, next) {
+      AppUser? userOf(AuthState? s) => switch (s) {
+        AuthLoggedIn(:final user) => user,
+        AuthSessionExpiring(:final user) => user,
+        _ => null,
+      };
+      if (userOf(previous)?.id != userOf(next)?.id) {
+        _recentWitnesses.clear();
+      }
+    });
+
     // Hasta seçim notifier'ındaki filtre veya görünüm tipi değişince (sadece
     // MedicineSelection fazındayken, hasta zaten seçiliyken) tepki veririz.
     // İlk boot senkronizasyonu BURADA DEĞİL, init()'te — bkz. aşağı.
