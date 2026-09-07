@@ -90,6 +90,7 @@ class RefillListRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> fill(List<CabinRefillParams> data) async {
+    print(data.map((e) => e.toJson()).toList());
     return await postRequest(
       path: '$_basePath/fiilingDetail/fill',
       parser: BaseRemoteDataSource.voidParser(),

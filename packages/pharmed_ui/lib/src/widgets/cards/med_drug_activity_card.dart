@@ -68,10 +68,7 @@ class MedDrugActivityCard extends StatelessWidget {
               : const SizedBox(), // placeholder kaldırılacak
           MedInfoRow(label: context.l10n.assignment_patientLabel, value: _patient),
           const SizedBox(height: 6),
-          MedInfoRow(
-            label: context.l10n.movement_performedBy,
-            value: _performedBy,
-          ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+          MedInfoRow(label: context.l10n.movement_performedBy, value: _performedBy),
           const SizedBox(height: 6),
           MedInfoRow(label: context.l10n.dashboard_drugActivityDateTimeLabel, value: _dateTime),
           const SizedBox(height: 12),

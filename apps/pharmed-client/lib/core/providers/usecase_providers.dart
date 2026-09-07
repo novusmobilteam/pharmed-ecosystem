@@ -516,3 +516,15 @@ final getReturnBoxMedicinesUseCaseProvider = Provider((ref) {
 final unloadReturnBoxUseCaseProvider = Provider((ref) {
   return UnloadReturnBoxUseCase(ref.read(unloadRepositoryProvider));
 });
+
+final getRefillListsUseCaseProvider = Provider((ref) {
+  return GetRefillListsUseCase(ref.read(refillListRepositoryProvider));
+});
+
+final getRefillListFillDetailUseCaseProvider = Provider((ref) {
+  return GetRefillListFillDetailUseCase(ref.read(refillListRepositoryProvider));
+});
+
+final refillListRefillUseCaseProvider = Provider((ref) {
+  return RefillListRefillUseCase(ref.read(refillListRepositoryProvider));
+});

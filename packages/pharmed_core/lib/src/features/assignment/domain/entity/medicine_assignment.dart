@@ -30,7 +30,7 @@ class MedicineAssignment {
     this.fillingQuantity,
   });
 
-  String? operationUnit(context) => medicine?.operationUnitLocalized(context);
+  String operationUnit(context) => medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
   String get fillingUnit => medicine?.fillingUnit ?? 'Adet';
 
   // ---------------------------------------------------------------------------
@@ -98,10 +98,19 @@ class MedicineAssignment {
     return '${adet.formatFractional} Adet';
   }
 
-  String get quantityText =>
-      'Min: ${minQuantityFromBackend.formatFractional} Adet - '
-      'Maks: ${maxQuantityFromBackend.formatFractional} Adet - '
-      'Kritik: ${critQuantityFromBackend.formatFractional} Adet';
+  String quantityWithDoseLabel(context, num? backendQuantity) {
+    final displayQuantity = toDisplayQuantity(backendQuantity);
+    final base = '${displayQuantity.formatFractional} Adet';
+
+    final med = medicine;
+    if (med is Drug && med.isMeasureUnit && med.fillingMultiplier > 1) {
+      final doseLabel = med.fillingMultiplier.formatFractional;
+      final doseUnit = med.doseUnit?.name ?? 'ml';
+      return '$base(x$doseLabel$doseUnit)';
+    }
+
+    return base;
+  }
 
   bool get isKubikType => drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? true;
 

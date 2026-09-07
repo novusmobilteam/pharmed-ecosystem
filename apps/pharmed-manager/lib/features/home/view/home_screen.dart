@@ -3,6 +3,7 @@ import 'package:pharmed_manager/features/assignment/view/assignment_screen.dart'
 import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_manager/features/cabin_temperature/view/cabin_temperature_screen.dart';
 import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
+import 'package:pharmed_manager/features/mail_preference/view/mail_preference_screen.dart';
 import 'package:pharmed_manager/features/prescription/view/prescription_screen.dart';
 import 'package:pharmed_manager/features/refill_list/view/refill_list_screen.dart';
 import 'package:pharmed_manager/features/reports/auth_summary/view/auth_summary_report_screen.dart';
@@ -200,6 +201,7 @@ class _HomeContent extends StatelessWidget {
       'refill' => RefillListScreen(menu: menu!),
       'refundDrawer' => DrawerRefundScreen(menu: menu!),
       'unReadQrCode' => UnscannedBarcodesScreen(menu: menu!),
+      'mailPreference' => MailPreferenceScreen(menu: menu!),
 
       _ => const _NotFoundView(),
     };

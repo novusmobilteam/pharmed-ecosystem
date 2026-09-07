@@ -24,7 +24,14 @@ class StationStockNotifier extends ChangeNotifier with ApiRequestMixin {
   List<StationStock> _items = [];
   List<StationStock> get items => _items;
 
-  bool get isFetching => isLoading(fetchOp);
+  bool get isFetching => areLoading([fetchOp, fetchStationsOp]);
+
+  List<TableSideCategory> get tableCategories => [
+    ..._stations.map((s) => TableSideCategory(id: s.id.toString(), label: s.name ?? '-')),
+  ];
+
+  String get selectedCategoryId => _selectedStation?.id.toString() ?? '-1';
+  int get activeIndex => !stations.contains(_selectedStation) ? 0 : stations.indexOf(_selectedStation!);
 
   Future<void> getStations() async {
     await execute(

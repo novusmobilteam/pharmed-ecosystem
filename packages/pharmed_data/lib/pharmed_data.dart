@@ -48,3 +48,4 @@ export 'src/features/prescription_template/prescription_template.dart';
 export 'src/features/report/report.dart';
 export 'src/features/cabin_temperature/cabin_temperature.dart';
 export 'src/features/settings/settings.dart';
+export 'src/features/mail_preference/mail_preference.dart';

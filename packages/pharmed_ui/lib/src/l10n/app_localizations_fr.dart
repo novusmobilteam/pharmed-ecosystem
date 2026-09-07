@@ -6882,4 +6882,60 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get urgentPatientTermination_noMedicineEmptyDescription =>
       'Le dossier ne peut pas être clôturé car aucun médicament n\'a été pris ; il peut néanmoins être supprimé.';
+
+  @override
+  String get table_inconsistency_currentColumn => 'Actuel';
+
+  @override
+  String get table_inconsistency_expectedColumn => 'Attendu';
+
+  @override
+  String get table_inconsistency_differenceColumn => 'Différence';
+
+  @override
+  String get table_inconsistency_handledByColumn => 'Traité par';
+
+  @override
+  String get table_inconsistency_dateColumn => 'Date';
+
+  @override
+  String get refillList_hint_searchList => 'Rechercher des listes';
+
+  @override
+  String get refillList_hint_noLists =>
+      'Aucune liste de réapprovisionnement trouvée pour cette station';
+
+  @override
+  String get refillList_badge_cancelled => 'Annulée';
+
+  @override
+  String get refillList_badge_filled => 'Remplie';
+
+  @override
+  String refillList_label_plannedQuantity(String quantity, String unit) {
+    return 'Objectif : $quantity $unit';
+  }
+
+  @override
+  String get refillList_hint_selectListFirst =>
+      'Sélectionnez une liste à gauche pour la remplir';
+
+  @override
+  String get refillList_hint_noRows =>
+      'Aucun enregistrement trouvé dans cette liste';
+
+  @override
+  String get refillList_action_startFilling => 'Commencer le remplissage';
+
+  @override
+  String get refillList_column_targetQuantity => 'Quantité cible';
+
+  @override
+  String get refillList_column_filledQuantity => 'Quantité remplie';
+
+  @override
+  String get fault_cellValueSolved => 'Résolu';
+
+  @override
+  String get fault_cellValueUnsolved => 'Non résolu';
 }

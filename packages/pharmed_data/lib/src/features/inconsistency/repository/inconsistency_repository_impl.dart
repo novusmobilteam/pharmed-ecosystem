@@ -31,4 +31,9 @@ class InconsistencyRepositoryImpl implements IInconsistencyRepository {
       error: (e) => Result.error(e),
     );
   }
+
+  @override
+  Future<Result<void>> solveInconsistency(int inconsistencyId, {required String description}) async {
+    return await _dataSource.solveInconsistency(inconsistencyId, description: description);
+  }
 }

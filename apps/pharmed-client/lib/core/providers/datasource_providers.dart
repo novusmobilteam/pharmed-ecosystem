@@ -86,3 +86,7 @@ final unloadDataSourceProvider = Provider((ref) {
 final cabinTemperatureDataSourceProvider = Provider((ref) {
   return CabinTemperatureRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
+
+final refillListDataSourceProvider = Provider((ref) {
+  return RefillListRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});

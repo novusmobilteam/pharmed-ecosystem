@@ -130,5 +130,5 @@ List<TableColumnDef<MedicineAssignment>> _buildColumnDefs(BuildContext context, 
 }
 
 String _quantityLabel(BuildContext context, num? quantity, MedicineAssignment assignment) {
-  return '${quantity.formatFractional} ${assignment.operationUnit(context)}';
+  return assignment.quantityWithDoseLabel(context, quantity);
 }

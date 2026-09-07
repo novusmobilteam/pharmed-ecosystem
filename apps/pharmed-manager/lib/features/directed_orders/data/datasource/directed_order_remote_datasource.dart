@@ -9,10 +9,10 @@ class DirectedOrderRemoteDataSource extends BaseRemoteDataSource implements Dire
   final String _basePath = '/DirectedOrder';
 
   @override
-  String get logSwreq => throw UnimplementedError();
+  String get logSwreq => 'SWREQ-DATA-DIRECTED-001';
 
   @override
-  String get logUnit => throw UnimplementedError();
+  String get logUnit => 'SW-UNIT-DIRECTED';
 
   @override
   Future<Result<ApiResponse<List<DirectedOrderDTO>>>> getDirectedOrders({int? skip, int? take, String? search}) async {

@@ -6675,4 +6675,59 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get urgentPatientTermination_noMedicineEmptyDescription =>
       'İlaç alınmadığı için kaydı sonlandırma işlemi gerçekleştirilemez; ancak kaydı silme işlemi yapılabilir.';
+
+  @override
+  String get table_inconsistency_currentColumn => 'Mevcut';
+
+  @override
+  String get table_inconsistency_expectedColumn => 'Olması Gereken';
+
+  @override
+  String get table_inconsistency_differenceColumn => 'Fark';
+
+  @override
+  String get table_inconsistency_handledByColumn => 'İşlemi Yapan';
+
+  @override
+  String get table_inconsistency_dateColumn => 'Tarih';
+
+  @override
+  String get refillList_hint_searchList => 'Listelerde ara';
+
+  @override
+  String get refillList_hint_noLists =>
+      'Bu istasyon için dolum listesi bulunamadı';
+
+  @override
+  String get refillList_badge_cancelled => 'İptal Edildi';
+
+  @override
+  String get refillList_badge_filled => 'Dolduruldu';
+
+  @override
+  String refillList_label_plannedQuantity(String quantity, String unit) {
+    return 'Hedef: $quantity $unit';
+  }
+
+  @override
+  String get refillList_hint_selectListFirst =>
+      'Doldurmak için soldan bir liste seçin';
+
+  @override
+  String get refillList_hint_noRows => 'Bu listede kayıt bulunamadı';
+
+  @override
+  String get refillList_action_startFilling => 'Doldurmaya Başla';
+
+  @override
+  String get refillList_column_targetQuantity => 'Hedef Miktar';
+
+  @override
+  String get refillList_column_filledQuantity => 'Doldurulan Miktar';
+
+  @override
+  String get fault_cellValueSolved => 'Çözüldü';
+
+  @override
+  String get fault_cellValueUnsolved => 'Çözülmedi';
 }

@@ -75,7 +75,7 @@ class _CensusForm extends ConsumerWidget {
 
     final hasEntry = (count ?? 0) > 0;
     final miadHasError = isPerCellMiadEnabled && ((hasEntry && miad == null) || miad.isExpiredMiad);
-    final unitSuffix = target.assignment.medicine?.operationUnitLocalized(context);
+    final unitSuffix = target.assignment.medicine?.fillingUnitLocalized(context);
 
     return CabinExecutionGridCard(
       assignment: target.assignment,

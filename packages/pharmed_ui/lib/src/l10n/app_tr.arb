@@ -8756,5 +8756,81 @@
 "urgentPatientTermination_noMedicineEmptyDescription": "İlaç alınmadığı için kaydı sonlandırma işlemi gerçekleştirilemez; ancak kaydı silme işlemi yapılabilir.",
 "@urgentPatientTermination_noMedicineEmptyDescription": {
   "description": "Empty state description shown under urgentPatientTermination_noMedicineEmptyTitle — explains that finalize/match is blocked without any taken medicine, but deletion is still available."
+},
+"table_inconsistency_currentColumn": "Mevcut",
+"@table_inconsistency_currentColumn": {
+  "description": "Inconsistency table column header showing the currently recorded/required quantity"
+},
+
+"table_inconsistency_expectedColumn": "Olması Gereken",
+"@table_inconsistency_expectedColumn": {
+  "description": "Inconsistency table column header showing the quantity that should be present according to system records"
+},
+
+"table_inconsistency_differenceColumn": "Fark",
+"@table_inconsistency_differenceColumn": {
+  "description": "Inconsistency table column header showing the numeric difference between current and expected quantity"
+},
+
+"table_inconsistency_handledByColumn": "İşlemi Yapan",
+"@table_inconsistency_handledByColumn": {
+  "description": "Inconsistency table column header showing the name of the user who performed the stock operation"
+},
+
+"table_inconsistency_dateColumn": "Tarih",
+"@table_inconsistency_dateColumn": {
+  "description": "Inconsistency table column header showing the date/time the stock operation was performed"
+},
+"refillList_hint_searchList": "Listelerde ara",
+"@refillList_hint_searchList": {
+  "description": "Search field placeholder in the refill list picker screen (client), filters by assigned user or status"
+},
+"refillList_hint_noLists": "Bu istasyon için dolum listesi bulunamadı",
+"@refillList_hint_noLists": {
+  "description": "Empty state message shown in the refill list picker screen (client) when no filling lists exist for the selected station"
+},
+"refillList_badge_cancelled": "İptal Edildi",
+"@refillList_badge_cancelled": {
+  "description": "Badge shown on a refill list card (client picker) when the list's isCancel flag is true"
+},
+"refillList_badge_filled": "Dolduruldu",
+"@refillList_badge_filled": {
+  "description": "Badge shown on a refill list card (client picker) when the list's isFilled flag is true, meaning filling is already complete"
+},
+"refillList_label_plannedQuantity": "Hedef: {quantity} {unit}",
+"@refillList_label_plannedQuantity": {
+  "description": "Small info chip on a cabin execution cell card (client refill list flow) showing the manager-planned target fill quantity, purely informational and does not restrict the entered value",
+  "placeholders": {
+    "quantity": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"refillList_hint_selectListFirst": "Doldurmak için soldan bir liste seçin",
+"@refillList_hint_selectListFirst": {
+  "description": "Empty state message on the right panel of the refill list selection screen (client), shown before the user has selected any list from the left panel"
+},
+"refillList_hint_noRows": "Bu listede kayıt bulunamadı",
+"@refillList_hint_noRows": {
+  "description": "Empty state message on the right panel of the refill list selection screen (client), shown when the selected list has no detail rows"
+},
+"refillList_action_startFilling": "Doldurmaya Başla",
+"@refillList_action_startFilling": {
+  "description": "Button on the refill list selection screen (client) that starts the fill queue for the checked rows"
+},
+"refillList_column_targetQuantity": "Hedef Miktar",
+"@refillList_column_targetQuantity": {
+  "description": "Column header on the refill list selection screen's right panel table, showing the manager-planned target fill quantity for each row"
+},
+"refillList_column_filledQuantity": "Doldurulan Miktar",
+"@refillList_column_filledQuantity": {
+  "description": "Column header on the refill list selection screen's right panel table, showing how much has actually been filled so far for each row (only populated for rows that have been partially or fully filled)"
+},
+"fault_cellValueSolved": "Çözüldü",
+"@fault_cellValueSolved": {
+  "description": "Table cell value shown for the status column when a fault/malfunction record's isSolved flag is true"
+},
+"fault_cellValueUnsolved": "Çözülmedi",
+"@fault_cellValueUnsolved": {
+  "description": "Table cell value shown for the status column when a fault/malfunction record's isSolved flag is false"
 }
 }

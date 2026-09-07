@@ -27,6 +27,7 @@ import '../../../inventory/view/inventory_screen.dart';
 import '../../../prescription/view/prescription_screen.dart';
 import '../../../redirected_orders/view/redirected_orders_screen.dart';
 import '../../../refill/refill.dart';
+import '../../../refill_list/view/refill_list_view.dart';
 import '../../../settings/notifier/settings_notifier.dart';
 import '../../../settings/view/settings_view.dart';
 import '../../../unload_drawer/view/unload_drawer_screen.dart';

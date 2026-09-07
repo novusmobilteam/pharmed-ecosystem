@@ -38,3 +38,4 @@ export 'report/report.dart';
 export 'cabin_temperature/cabin_temperature.dart';
 export 'settings/settings.dart';
 export 'cabin_operation/cabin_operation.dart';
+export 'mail_preference/mail_preference.dart';

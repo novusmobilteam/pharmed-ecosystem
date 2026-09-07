@@ -299,3 +299,20 @@ final cabinTemperatureRepositoryProvider = Provider<ICabinTemperatureRepository>
     ),
   };
 });
+
+final refillListRepositoryProvider = Provider<IRefillListRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => RefillListRepositoryImpl(
+      dataSource: ref.read(refillListDataSourceProvider),
+      refillListMapper: RefillListMapper(),
+      detailMapper: RefillListDetailMapper(),
+      cabinStockMapper: CabinStockMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => RefillListRepositoryImpl(
+      dataSource: ref.read(refillListDataSourceProvider),
+      refillListMapper: RefillListMapper(),
+      detailMapper: RefillListDetailMapper(),
+      cabinStockMapper: CabinStockMapper(),
+    ),
+  };
+});

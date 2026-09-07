@@ -17,55 +17,51 @@ class TableView extends StatelessWidget {
       onDateRangeChanged: notifier.setDateRange,
       emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noData),
 
-      // Tablo Satır Aksiyonları
-      // actions: [
-      //   TableActionItem<Inconsistency>(
-      //     icon: PhosphorIcons.receipt(),
-      //     tooltip: context.l10n.unappliedPrescription_viewDetailsTooltip,
-      //     color: context.colorScheme.onSurface,
-      //     onPressed: notifier.openPanel,
-      //   ),
-      // ],
+      // Pagination
       enablePagination: true,
       pageSize: notifier.pageSize,
       currentPage: notifier.currentPage,
+      serverTotalCount: notifier.totalCount,
       onPageChanged: (page) => notifier.setPage(page),
-      columnDefs: [],
+
+      // Category
+      categories: notifier.tableCategories,
+      onCategoryChanged: (id) => notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
+      selectedCategoryId: notifier.selectedCategoryId,
+
+      columnDefs: _buildColumnDefs(context),
+
+      actions: [
+        TableActionItem(
+          icon: PhosphorIcons.pen(),
+          tooltip: context.l10n.enumCore_warningSubjectInconsistencyResolution,
+          onPressed: (item) => showSolveInconsistencyView(context, item),
+        ),
+      ],
     );
   }
 }
 
-// List<TableColumnDef<Inconsistency>> _buildColumnDefs(BuildContext context) => [
-//   TableColumnDef(
-//     title: context.l10n.unappliedPrescription_table_serviceColumn,
-//     displayValue: (item) => item.
-//   ),
-//   TableColumnDef(
-//     title: context.l10n.unappliedPrescription_table_roomColumn,
-//     displayValue: (item) => item.hospitalization?.bed?.room?.name,
-//   ),
-//   TableColumnDef(
-//     title: context.l10n.unappliedPrescription_table_bedColumn,
-//     displayValue: (item) => item.hospitalization?.bed?.name,
-//   ),
-//   TableColumnDef(
-//     title: context.l10n.unappliedPrescription_table_patientCodeColumn,
-//     displayValue: (item) => item.hospitalization?.patient?.protocolNo,
-//   ),
-//   TableColumnDef(
-//     title: context.l10n.unappliedPrescription_table_patientColumn,
-//     displayValue: (item) => item.hospitalization?.patient?.fullName,
-//   ),
-//   TableColumnDef(
-//     title: context.l10n.unappliedPrescription_table_hospitalizationCodeColumn,
-//     displayValue: (item) => item.hospitalizationId?.toCustomString(),
-//   ),
-//   TableColumnDef(
-//     title: context.l10n.unappliedPrescription_table_admissionDateColumn,
-//     displayValue: (item) => item.hospitalizationDate?.formattedDate,
-//   ),
-//   TableColumnDef(
-//     title: context.l10n.unappliedPrescription_table_pendingCountColumn,
-//     displayValue: (item) => item.remainingCount?.toCustomString(),
-//   ),
-// ];
+List<TableColumnDef<Inconsistency>> _buildColumnDefs(BuildContext context) {
+  String dose(Medicine? medicine, num? quantity) =>
+      '${quantity.formatFractional} ${medicine?.operationUnitLocalized(context)}';
+  return [
+    TableColumnDef(title: context.l10n.drugActivity_column_material, displayValue: (item) => item.medicine?.name),
+    TableColumnDef(
+      title: context.l10n.table_inconsistency_currentColumn,
+      displayValue: (item) => dose(item.medicine, item.quantity),
+    ),
+    TableColumnDef(
+      title: context.l10n.table_inconsistency_expectedColumn,
+      displayValue: (item) => dose(item.medicine, item.requiredQuantity),
+    ),
+    TableColumnDef(
+      title: context.l10n.table_inconsistency_handledByColumn,
+      displayValue: (item) => item.user?.fullName ?? '-',
+    ),
+    TableColumnDef(
+      title: context.l10n.common_statusLabel,
+      displayValue: (item) => item.isSolved ? context.l10n.fault_cellValueSolved : context.l10n.fault_cellValueUnsolved,
+    ),
+  ];
+}

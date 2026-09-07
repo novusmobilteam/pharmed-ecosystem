@@ -67,35 +67,6 @@ class RefillListFormPanel extends StatelessWidget {
       ),
     );
   }
-
-  // Widget _buildContent(BuildContext context, NewRefillListNotifier notifier) {
-  //   return RegistrationDialog(
-  //     onClose: () => _onClose(context, notifier),
-  //     isLoading: notifier.isLoading(notifier.submitOp),
-  //     isButtonActive: notifier.objects.isNotEmpty,
-  //     saveButtonText: notifier.isCreate ? 'Oluştur' : 'Güncelle',
-  //     showSearch: true,
-  //     onSearchChanged: notifier.search,
-  //     onSave: () {
-  //       notifier.submit(
-  //         onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-  //         onSuccess: (msg) {
-  //           MessageUtils.showSuccessSnackbar(context, msg);
-  //           context.pop(true);
-  //         },
-  //       );
-  //     },
-  //     actions: [
-  //       if (notifier.fillingType != FillingType.all)
-  //         RectangleIconButton(
-  //           iconData: PhosphorIcons.upload(),
-  //           tooltip: 'Seçime Göre Otomatik Hazırla',
-  //           onPressed: notifier.autoFill,
-  //         ),
-  //     ],
-  //     child: ,
-  //   );
-  // }
 }
 
 class _UserField extends StatelessWidget {

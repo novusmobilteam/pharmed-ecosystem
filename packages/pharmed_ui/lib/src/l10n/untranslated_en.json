@@ -1589,6 +1589,23 @@
     "urgentPatientTermination_medicineTakenChip",
     "urgentPatientTermination_medicineNotTakenChip",
     "urgentPatientTermination_noMedicineEmptyTitle",
-    "urgentPatientTermination_noMedicineEmptyDescription"
+    "urgentPatientTermination_noMedicineEmptyDescription",
+    "table_inconsistency_currentColumn",
+    "table_inconsistency_expectedColumn",
+    "table_inconsistency_differenceColumn",
+    "table_inconsistency_handledByColumn",
+    "table_inconsistency_dateColumn",
+    "refillList_hint_searchList",
+    "refillList_hint_noLists",
+    "refillList_badge_cancelled",
+    "refillList_badge_filled",
+    "refillList_label_plannedQuantity",
+    "refillList_hint_selectListFirst",
+    "refillList_hint_noRows",
+    "refillList_action_startFilling",
+    "refillList_column_targetQuantity",
+    "refillList_column_filledQuantity",
+    "fault_cellValueSolved",
+    "fault_cellValueUnsolved"
   ]
 }

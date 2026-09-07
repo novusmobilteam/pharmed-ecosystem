@@ -60,7 +60,6 @@ class MasterIntakeSelectionView extends ConsumerWidget {
         : ref.watch(masterIntakeNotifierProvider).hospitalization;
 
     return CabinOperationSelectionLayout(
-      leftWidth: 440,
       flex: 2,
       left: PatientSelectionPanel(
         config: PatientSelectionConfig.intake,

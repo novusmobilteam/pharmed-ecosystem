@@ -21,7 +21,7 @@ class RefillObjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isSelected = selectedQuantity > 0;
-    final current = object.medicine?.fromFillingBackendValue(object.quantity) ?? 0.0;
+    final current = object.quantity;
     final isCritical = current <= (object.assignment?.minQuantityFromBackend ?? 0);
 
     return Container(
@@ -60,7 +60,7 @@ class RefillObjectCard extends StatelessWidget {
                     context.l10n.refill_label_current(current.formatFractional),
                     isCritical ? Colors.orange : null,
                   ),
-                  _infoText(context, object.assignment?.quantityText ?? '-', null),
+                  _infoText(context, _quantity(context), null),
                 ],
               ),
             ),
@@ -68,10 +68,8 @@ class RefillObjectCard extends StatelessWidget {
             // Sağ: Modern Stepper
             MedDoseStepper.compact(
               value: selectedQuantity,
-              unit: object.medicine?.operationUnitLocalized(context) ?? context.l10n.refillList_defaultUnitFallback,
-              // onChanged doğrudan yeni değeri (double) döndürür
+              unit: object.medicine?.fillingUnit ?? context.l10n.refillList_defaultUnitFallback,
               onChanged: (newVal) => onQuantityChanged(newVal),
-              // Minimum ve adım değerlerini de buradan kontrol edebilirsin (Opsiyonel)
               min: 0,
               step: 1.0,
             ),
@@ -83,5 +81,14 @@ class RefillObjectCard extends StatelessWidget {
 
   Widget _infoText(BuildContext context, String text, Color? color) {
     return Text(text, style: context.textTheme.bodySmall?.copyWith());
+  }
+
+  String _quantity(BuildContext context) {
+    final assignment = object.assignment;
+    if (assignment == null) return '-';
+
+    return '${context.l10n.common_minLabel}: ${assignment.quantityWithDoseLabel(context, assignment.minQuantity)} - '
+        '${context.l10n.common_maxLabel} ${assignment.quantityWithDoseLabel(context, assignment.maxQuantity)} - '
+        '${context.l10n.common_criticalLabel}: ${assignment.quantityWithDoseLabel(context, assignment.criticalQuantity)}';
   }
 }

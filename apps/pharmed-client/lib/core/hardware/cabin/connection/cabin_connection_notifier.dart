@@ -17,7 +17,6 @@ class CabinConnectionNotifier extends Notifier<CabinConnectionState> {
   ScanManagerUseCase get _scanManager => ref.read(scanManagerUseCaseProvider);
 
   Future<void> connect() async {
-    print('CabinConnectionNotifier.connect()');
     if (state.status == CabinConnectionStatus.connecting) return;
     state = const CabinConnectionState(status: CabinConnectionStatus.connecting);
 
@@ -27,8 +26,6 @@ class CabinConnectionNotifier extends Notifier<CabinConnectionState> {
     } on CabinConnectionException catch (e) {
       state = CabinConnectionState(status: CabinConnectionStatus.error, failure: e.failure, errorDetail: e.detail);
     }
-
-    print('CabinConnectionNotifier.connect() done, state: $state');
   }
 
   void markDisconnected() {

@@ -113,7 +113,7 @@ extension MedicineDoseConfig on Medicine {
   bool get isUnitPiece {
     final self = this;
     if (self is! Drug) return true;
-    if (!self.isMeasureUnit) return true;
+    if (self.isMeasureUnit) return true;
     return false;
   }
 
@@ -213,13 +213,6 @@ extension MedicineDoseConfig on Medicine {
   // ---------------------------------------------------------------------------
   // Gösterim
   // ---------------------------------------------------------------------------
-
-  /// Miktarı birim ile birlikte gösterir.
-  /// Örn: "50 ml", "3 Adet"
-  String formatAmount(double amount) {
-    final formatted = amount == amount.toInt() ? amount.toInt().toString() : amount.toString();
-    return '$formatted $operationUnit';
-  }
 
   /// Dolum adet girişini backend değerine çevirir.
   /// Örn: 3 adet × 100ml = 300ml

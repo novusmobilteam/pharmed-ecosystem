@@ -65,6 +65,7 @@ class UsecaseProviders {
 
       /// Inconsistency
       Provider(create: (context) => GetInconsistenciesUseCase(context.read())),
+      Provider(create: (context) => SolveInconsistencyUseCase(context.read())),
 
       /// Kit Content
       Provider(create: (context) => GetKitContentUseCase(context.read())),
@@ -262,6 +263,12 @@ class UsecaseProviders {
       /// Settings
       Provider(create: (context) => GetSystemParametersUseCase(context.read())),
       Provider(create: (context) => UpdateSystemParametersUseCase(context.read())),
+
+      /// Mail Preference
+      Provider(create: (context) => GetMailPreferencesUseCase(context.read())),
+      Provider(create: (context) => CreateMailPreferenceUsecase(context.read())),
+      Provider(create: (context) => UpdateMailPreferenceUsecase(context.read())),
+      Provider(create: (context) => DeleteMailPreferenceUsecase(context.read())),
     ];
   }
 }

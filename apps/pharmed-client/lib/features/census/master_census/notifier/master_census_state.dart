@@ -2,14 +2,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/hardware/hardware.dart';
 
-/// Sayım FAZ 1'inde kullanıcının seçim granülaritesi.
-///   - allCabin:   tüm kabin önceden seçili, seçim KİLİTLİ (kullanıcı
-///     dokunamaz) — varsayılan, önceki (tek modlu) davranışla birebir aynı.
-///   - byDrawer:   sol CabinOverviewSelectionPanel açık — çekmece başlığı
-///     veya tek tek göz seçilebilir.
-///   - byMedicine: sağ CabinAssignmentListView açık — sadece ilaç listesi
-///     satırından seçim yapılabilir.
-enum CensusMode { byMedicine, byDrawer, allCabin }
+enum CensusMode { allCabin, byDrawer, byMedicine }
 
 sealed class MasterCensusState {
   const MasterCensusState();

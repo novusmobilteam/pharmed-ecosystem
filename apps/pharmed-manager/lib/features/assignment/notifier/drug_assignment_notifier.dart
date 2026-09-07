@@ -56,9 +56,6 @@ class DrugAssignmentNotifier extends ChangeNotifier with ApiRequestMixin {
 
   String? get selectedCategoryId => _selectedCabinId != null ? 'cabin-$_selectedCabinId' : null;
 
-  // Kabin değişince eski cevabın geç gelip yeni seçimi ezmesini önlemek için.
-  int _assignmentsRequestToken = 0;
-
   bool get isFetching => areLoading([_getVisualizerOp, _getAssignmentsOp]);
   bool get isSaving => isLoading(_deleteAssignmentOp);
 

@@ -57,6 +57,11 @@ class RefillListFormNotifier extends ChangeNotifier with ApiRequestMixin {
   /// quantity alanı burada "dolum miktarı" anlamına gelir.
   Map<int, RefillObject> _selections = {};
 
+  /// _autoCalculateFillQuantities tarafından doldurulmuş, kullanıcının
+  /// henüz elle dokunmadığı seçimlerin id'leri. Tip değişince bunlar
+  /// silinip yeniden hesaplanır; manuel seçimler buraya girmez.
+  final Set<int> _autoFilledIds = {};
+
   bool get isCreate => _initial == null;
 
   void initalize() {
@@ -148,7 +153,7 @@ class RefillListFormNotifier extends ChangeNotifier with ApiRequestMixin {
       }
 
       if (target > 0) {
-        _setSelection(candidate, target.toDouble());
+        _setSelection(candidate, target.toDouble(), isAuto: true);
       }
     }
   }
@@ -162,6 +167,12 @@ class RefillListFormNotifier extends ChangeNotifier with ApiRequestMixin {
     if (_fillingType == type) return;
     _fillingType = type;
     _candidates = [];
+
+    for (final id in _autoFilledIds) {
+      _selections.remove(id);
+    }
+    _autoFilledIds.clear();
+
     notifyListeners();
     getRefillCandidates();
   }
@@ -170,6 +181,50 @@ class RefillListFormNotifier extends ChangeNotifier with ApiRequestMixin {
   /// (ör. bir "yeniden hesapla" aksiyonu istenirse kullanılabilir).
   void autoFill() {
     _autoCalculateFillQuantities();
+    notifyListeners();
+  }
+
+  void toggleSelection(RefillObject candidate) {
+    final id = candidate.medicine?.id;
+    if (id == null) return;
+
+    if (_selections.containsKey(id)) {
+      _selections.remove(id);
+      _autoFilledIds.remove(id);
+    } else {
+      _setSelection(candidate, 1);
+    }
+    notifyListeners();
+  }
+
+  void updateSelectedQuantity(RefillObject candidate, double newQuantity) {
+    _setSelection(candidate, newQuantity);
+    notifyListeners();
+  }
+
+  void _setSelection(RefillObject candidate, double newQuantity, {bool isAuto = false}) {
+    final id = candidate.medicine?.id;
+    if (id == null) return;
+
+    if (newQuantity > 0) {
+      final existing = _selections[id];
+      _selections[id] = candidate.copyWith(quantity: newQuantity, detailIds: existing?.detailIds);
+      if (isAuto) {
+        _autoFilledIds.add(id);
+      } else {
+        _autoFilledIds.remove(id); // kullanıcı elle değiştirdiyse artık "otomatik" değil
+      }
+    } else {
+      _selections.remove(id);
+      _autoFilledIds.remove(id);
+    }
+  }
+
+  void removeMaterial(RefillObject candidate) {
+    final id = candidate.medicine?.id;
+    if (id == null) return;
+    _selections.remove(id);
+    _autoFilledIds.remove(id);
     notifyListeners();
   }
 
@@ -182,42 +237,6 @@ class RefillListFormNotifier extends ChangeNotifier with ApiRequestMixin {
   bool isSelected(RefillObject candidate) {
     final id = candidate.medicine?.id;
     return id != null && _selections.containsKey(id);
-  }
-
-  void toggleSelection(RefillObject candidate) {
-    final id = candidate.medicine?.id;
-    if (id == null) return;
-
-    if (_selections.containsKey(id)) {
-      _selections.remove(id);
-    } else {
-      _setSelection(candidate, 1);
-    }
-    notifyListeners();
-  }
-
-  void updateSelectedQuantity(RefillObject candidate, double newQuantity) {
-    _setSelection(candidate, newQuantity);
-    notifyListeners();
-  }
-
-  void _setSelection(RefillObject candidate, double newQuantity) {
-    final id = candidate.medicine?.id;
-    if (id == null) return;
-
-    if (newQuantity > 0) {
-      final existing = _selections[id];
-      _selections[id] = candidate.copyWith(quantity: newQuantity, detailIds: existing?.detailIds);
-    } else {
-      _selections.remove(id);
-    }
-  }
-
-  void removeMaterial(RefillObject candidate) {
-    final id = candidate.medicine?.id;
-    if (id == null) return;
-    _selections.remove(id);
-    notifyListeners();
   }
 
   Future<void> submit({Function(String? msg)? onFailed, Function(String? msg)? onSuccess}) async {

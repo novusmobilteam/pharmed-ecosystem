@@ -5,7 +5,8 @@
 // Her operation MedLogger ile izlenir.
 
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/core/core.dart';
+import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum OperationType { fetch, create, update, delete, submit, custom }
 

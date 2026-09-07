@@ -6723,4 +6723,59 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get urgentPatientTermination_noMedicineEmptyDescription =>
       'The record cannot be finalized because no medicine has been taken; however, the record may still be deleted.';
+
+  @override
+  String get table_inconsistency_currentColumn => 'Current';
+
+  @override
+  String get table_inconsistency_expectedColumn => 'Expected';
+
+  @override
+  String get table_inconsistency_differenceColumn => 'Difference';
+
+  @override
+  String get table_inconsistency_handledByColumn => 'Handled By';
+
+  @override
+  String get table_inconsistency_dateColumn => 'Date';
+
+  @override
+  String get refillList_hint_searchList => 'Search lists';
+
+  @override
+  String get refillList_hint_noLists =>
+      'No refill lists found for this station';
+
+  @override
+  String get refillList_badge_cancelled => 'Cancelled';
+
+  @override
+  String get refillList_badge_filled => 'Filled';
+
+  @override
+  String refillList_label_plannedQuantity(String quantity, String unit) {
+    return 'Target: $quantity $unit';
+  }
+
+  @override
+  String get refillList_hint_selectListFirst =>
+      'Select a list on the left to fill';
+
+  @override
+  String get refillList_hint_noRows => 'No records found in this list';
+
+  @override
+  String get refillList_action_startFilling => 'Start Filling';
+
+  @override
+  String get refillList_column_targetQuantity => 'Target Quantity';
+
+  @override
+  String get refillList_column_filledQuantity => 'Filled Quantity';
+
+  @override
+  String get fault_cellValueSolved => 'Solved';
+
+  @override
+  String get fault_cellValueUnsolved => 'Unsolved';
 }

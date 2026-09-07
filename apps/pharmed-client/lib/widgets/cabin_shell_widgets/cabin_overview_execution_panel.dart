@@ -602,14 +602,7 @@ class _UnitDoseDepthGrid extends StatelessWidget {
             Builder(
               builder: (_) {
                 final label = rowCount - r;
-                final hasActive = grid[r].any((s) => s == _CellState.active);
-                final hasCompleted = grid[r].any((s) => s == _CellState.completed);
-                if (hasActive || hasCompleted) {
-                  debugPrint(
-                    '[loc-orientation] EKRAN: r=$r, gösterilen göz etiketi=$label, '
-                    'active=$hasActive, completed=$hasCompleted',
-                  );
-                }
+
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

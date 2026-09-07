@@ -53,15 +53,21 @@ class RefillListDetail {
 }
 
 extension FillingDetailAdapter on RefillListDetail {
-  /// Bu fonksiyon, FillingDetail nesnesini alıp, View'ın anlayacağı
-  /// eksiksiz bir CabinDrawerQuantity nesnesine dönüştürür.
   MedicineAssignment toCompatibleQuantity() {
     final baseQuantity = cabinAssignment ?? MedicineAssignment();
+    return baseQuantity.copyWith(medicine: medicine, cabinDrawerDetail: cabinDrawerDetail);
+  }
 
-    return baseQuantity.copyWith(
-      // JSON B'de material üstteydi, onu alta indiriyoruz
-      medicine: medicine,
-      cabinDrawerDetail: cabinDrawerDetail,
-    );
+  String plannedQuantityLabel(context) {
+    return toCompatibleQuantity().quantityWithDoseLabel(context, quantity);
+  }
+
+  /// Bu kayıt için şu ana kadar YAPILMIŞ dolum miktarını (varsa) aynı
+  /// adet/doz formatında gösterir. fillingQuantity null/0 ise null döner —
+  /// çağıran taraf bu durumda ilgili kolonu/hücreyi hiç göstermemeli.
+  String? filledQuantityLabel(context) {
+    final filled = fillingQuantity;
+    if (filled == null || filled == 0) return null;
+    return toCompatibleQuantity().quantityWithDoseLabel(context, filled);
   }
 }

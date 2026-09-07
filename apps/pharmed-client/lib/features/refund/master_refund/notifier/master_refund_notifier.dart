@@ -407,7 +407,6 @@ class MasterRefundNotifier extends Notifier<MasterRefundState> {
       state = s.copyWith(checkStatuses: Map.of(checkStatuses), isChecking: true);
 
       final quantity = s.amountFor(item.id);
-      print('Quantity: $quantity');
       final returnType = (item.medicine is Drug) ? (item.medicine as Drug).returnType : null;
 
       if (item.medicine?.id == null || returnType == null) {

@@ -34,7 +34,7 @@ class CabinOperationParamsOps {
 }
 
 const refillParamsOps = CabinOperationParamsOps(
-  convertCountQuantity: false,
+  convertCountQuantity: true,
   sendQuantityField: true,
   convertQuantityField: true,
 );

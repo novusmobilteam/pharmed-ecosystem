@@ -461,6 +461,20 @@ class RepositoryProviders {
           ),
         },
       ),
+
+      /// Mail Preferences
+      Provider<IMailPreferenceRepository>(
+        create: (context) => switch (FlavorConfig.instance.flavor) {
+          AppFlavor.mock => MailPreferenceRepositoryImpl(
+            dataSource: context.read(),
+            mailPreferenceMapper: MailPreferenceMapper(),
+          ),
+          AppFlavor.dev || AppFlavor.prod => MailPreferenceRepositoryImpl(
+            dataSource: context.read(),
+            mailPreferenceMapper: MailPreferenceMapper(),
+          ),
+        },
+      ),
     ];
   }
 }

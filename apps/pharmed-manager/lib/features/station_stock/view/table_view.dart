@@ -12,6 +12,10 @@ class TableView extends StatelessWidget {
       enableExcel: true,
       enableSearch: false,
 
+      categories: notifier.tableCategories,
+      onCategoryChanged: (id) => notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
+      selectedCategoryId: notifier.selectedCategoryId,
+
       columnDefs: _buildColumnDefs(context),
     );
   }

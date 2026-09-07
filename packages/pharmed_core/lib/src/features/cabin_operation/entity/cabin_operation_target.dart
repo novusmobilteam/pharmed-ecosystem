@@ -73,6 +73,8 @@ class CabinOperationTarget {
     required this.cubicMiad,
     required this.steps,
     required this.singleMiad,
+    this.plannedQuantity,
+    this.refillListDetailId,
   });
 
   /// Bu hedefin hangi işlem (dolum/sayım/boşaltma) davranışını izleyeceği.
@@ -98,10 +100,26 @@ class CabinOperationTarget {
   /// miad boşsa buna bakılır.
   final DateTime? singleMiad;
 
+  /// Manager'ın önceden belirlediği hedef dolum miktarı. Ad-hoc refill
+  /// akışında (serbest seçim) her zaman null — sadece liste bazlı dolumda
+  /// (RefillList) doludur. UI'da salt bilgi amaçlı gösterilir, girilen
+  /// değeri KISITLAMAZ / otomatik doldurmaz.
+  final double? plannedQuantity;
+
+  /// Bu hedefin kaynaklandığı RefillListDetail.id — backend'in
+  /// /fiilingDetail/fill endpoint'i kaydı bu id ile eşleştiriyor.
+  /// Ad-hoc refill akışında her zaman null.
+  final int? refillListDetailId;
+
   /// Mevcut stoktan bu hedefin başlangıç değerlerini yükler. Kübik çekmecede
   /// tek stok kaydından, birim dozda her gözün kendi stok kaydından
   /// (`corpartmentNo` eşlemesiyle) okur.
-  factory CabinOperationTarget.fromAssignment(MedicineAssignment assignment, CabinOperationTargetConfig config) {
+  factory CabinOperationTarget.fromAssignment(
+    MedicineAssignment assignment,
+    CabinOperationTargetConfig config, {
+    double? plannedQuantity,
+    int? refillListDetailId,
+  }) {
     final isKubik = assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
     final numberOfSteps = assignment.drawerUnit?.drawerSlot?.drawerConfig?.numberOfSteps ?? 0;
     final medicine = assignment.medicine;
@@ -120,6 +138,8 @@ class CabinOperationTarget {
         cubicMiad: kubik.miadDate,
         steps: const [],
         singleMiad: kubik.miadDate,
+        plannedQuantity: plannedQuantity,
+        refillListDetailId: refillListDetailId,
       );
     }
 
@@ -143,6 +163,8 @@ class CabinOperationTarget {
       cubicMiad: null,
       steps: entries,
       singleMiad: earliestMiad,
+      plannedQuantity: plannedQuantity,
+      refillListDetailId: refillListDetailId,
     );
   }
 
@@ -186,6 +208,8 @@ class CabinOperationTarget {
     List<CabinOperationStepEntry>? steps,
     DateTime? singleMiad,
     bool clearSingleMiad = false,
+    double? plannedQuantity,
+    int? refillListDetailId,
   }) {
     return CabinOperationTarget._(
       config: config,
@@ -197,6 +221,8 @@ class CabinOperationTarget {
       cubicMiad: clearCubicMiad ? null : (cubicMiad ?? this.cubicMiad),
       steps: steps ?? this.steps,
       singleMiad: clearSingleMiad ? null : (singleMiad ?? this.singleMiad),
+      plannedQuantity: plannedQuantity ?? this.plannedQuantity,
+      refillListDetailId: refillListDetailId ?? this.refillListDetailId,
     );
   }
 

@@ -33,7 +33,7 @@ class _SerumManualLayoutPanel extends StatefulWidget {
 class _SerumManualLayoutPanelState extends State<_SerumManualLayoutPanel> {
   static const int _shelfCount = 3;
 
-  late List<_SerumShelfConfig> _shelves = List.generate(_shelfCount, (i) => _SerumShelfConfig(index: i));
+  late final List<_SerumShelfConfig> _shelves = List.generate(_shelfCount, (i) => _SerumShelfConfig(index: i));
 
   void _updateShelf(int index, _SerumShelfConfig updated) => setState(() => _shelves[index] = updated);
 

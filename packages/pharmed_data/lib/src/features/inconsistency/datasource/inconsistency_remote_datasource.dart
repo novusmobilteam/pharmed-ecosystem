@@ -36,17 +36,11 @@ class InconsistencyRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  // Future<Result<InconsistencyDetailDTO?>> getInconsistencyDetail(int id) async {
-  //   final res = await fetchRequest<InconsistencyDetailDTO>(
-  //     path: '$_basePath/detail/$id',
-  //     parser: singleParser(InconsistencyDetailDTO.fromJson),
-  //     successLog: 'Inconsistency detail fetched',
-  //     emptyLog: 'No detail',
-  //   );
-
-  //   return res.when(
-  //     ok: (data) => Result.ok(data),
-  //     error: Result.error,
-  //   );
-  // }
+  Future<Result<void>> solveInconsistency(int inconsistencyId, {required String description}) async {
+    return await putRequest(
+      path: '/CabinDrawrStock/inconsistencySolve',
+      parser: BaseRemoteDataSource.voidParser(),
+      body: {'inconsistencyId': inconsistencyId, 'description': description},
+    );
+  }
 }

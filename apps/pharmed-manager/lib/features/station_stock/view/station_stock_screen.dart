@@ -24,26 +24,8 @@ class StationStockScreen extends StatelessWidget {
             tablet: MedTabletLayout(),
             desktop: MedDesktopLayout(
               menu: menu,
-              isLoading: notifier.isLoading(notifier.fetchOp) || notifier.isLoading(notifier.fetchStationsOp),
-              showAddButton: false,
-              child: Column(
-                spacing: 6.0,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 260,
-                    child: MedDropdownInputField(
-                      key: ValueKey(notifier.selectedStation),
-                      options: notifier.stations,
-                      onChanged: notifier.selectStation,
-                      initialValue: notifier.selectedStation,
-                      labelBuilder: (station) => station?.name,
-                      placeholder: context.l10n.assignment_stationSelectPlaceholder,
-                    ),
-                  ),
-                  Expanded(child: TableView(notifier: notifier)),
-                ],
-              ),
+              isLoading: notifier.isFetching,
+              child: TableView(notifier: notifier),
             ),
           );
         },

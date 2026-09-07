@@ -18,10 +18,6 @@ class CabinAssignmentMiniPanel extends StatelessWidget {
   /// tıklandı (mevcut atamayı düzenle/seç).
   final void Function(DrawerUnit unit, {required bool isEmpty}) onCellTap;
 
-  static const double _cellSize = 58;
-  static const double _spacing = 4;
-  static const int _crossAxisCount = 3;
-
   Map<int, MedicineAssignment> get _assignmentByUnitId {
     final map = <int, MedicineAssignment>{};
     for (final a in assignments) {
@@ -53,7 +49,7 @@ class CabinAssignmentMiniPanel extends StatelessWidget {
             child: ListView.separated(
               padding: MedSpacing.insetLg,
               itemCount: groups.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
+              separatorBuilder: (_, _) => const SizedBox(height: 16),
               itemBuilder: (context, index) => _MiniDrawerView(
                 group: groups[index],
                 assignmentByUnitId: byUnit,
@@ -99,7 +95,7 @@ class _MiniDrawerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final header = (int filled, int total) => Row(
+    Row header(int filled, int total) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(group.name, style: MedTextStyles.bodyMd().copyWith(fontWeight: FontWeight.w600)),
@@ -231,7 +227,7 @@ class _MiniCell extends StatelessWidget {
         : isSelected || !isEmpty
         ? MedColors.blue
         : MedColors.border;
-    final Color? textColor = isFaulty
+    final Color textColor = isFaulty
         ? status.color
         : isSelected
         ? Colors.white
@@ -264,65 +260,6 @@ class _MiniCell extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// class _MiniLegend extends StatelessWidget {
-//   const _MiniLegend();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         _LegendRow(
-//           color: MedColors.blueLight,
-//           borderColor: MedColors.blue,
-//           label: context.l10n.cabinOperation_legendAssignedLabel,
-//         ),
-//         _LegendRow(
-//           color: MedColors.surface,
-//           borderColor: MedColors.border,
-//           label: context.l10n.cabinOperation_legendEmptyLabel,
-//         ),
-//         _LegendRow(
-//           color: MedColors.amberLight,
-//           borderColor: MedColors.amber,
-//           label: context.l10n.cabinDesign_returnBadge,
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-class _LegendRow extends StatelessWidget {
-  const _LegendRow({required this.color, required this.borderColor, required this.label});
-  final Color color;
-  final Color borderColor;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              border: Border.all(color: borderColor),
-              borderRadius: BorderRadius.circular(3),
-            ),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(label, style: MedTextStyles.bodySm(color: MedColors.text3)),
-          ),
-        ],
       ),
     );
   }

@@ -26,6 +26,7 @@ class CabinExecutionGridCard extends StatelessWidget {
     this.hasError = false, // true → dış çerçeve kenarı amber
     this.stepLabel,
     this.density = MedValueCardDensity.compact,
+    this.trailingLabel,
   });
 
   final MedicineAssignment assignment;
@@ -34,6 +35,7 @@ class CabinExecutionGridCard extends StatelessWidget {
   final bool hasError;
   final String? stepLabel;
   final MedValueCardDensity density;
+  final String? trailingLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +92,12 @@ class CabinExecutionGridCard extends StatelessWidget {
             ],
           ),
         ),
+        if (trailingLabel != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(color: MedColors.surface, borderRadius: MedRadius.smAll),
+            child: Text(trailingLabel!, style: MedTextStyles.monoSm(color: MedColors.text3)),
+          ),
         if (stepLabel != null)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

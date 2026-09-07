@@ -27,6 +27,7 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:collection/collection.dart';
 
 class CabinOperationCellGeometry {
   const CabinOperationCellGeometry({required this.detailId, required this.shelfNo, required this.compartmentNo});
@@ -50,12 +51,15 @@ class CabinOperationCellGeometry {
   /// Birim doz çekmecesinin [index]'inci gözü için adresi çözer.
   static CabinOperationCellGeometry forStep(MedicineAssignment assignment, int index) {
     final unit = assignment.drawerUnit;
-    final details = assignment.cabinDrawerDetail;
-    final hasDetail = details != null && index < details.length;
+    final details = assignment.cabinDrawerDetail ?? const <DrawerCell>[];
+    final targetStepNo = index + 1;
+
+    final detail = details.firstWhereOrNull((d) => d.stepNo == targetStepNo);
+
     return CabinOperationCellGeometry(
-      detailId: hasDetail ? (details[index].id ?? 0) : 0,
+      detailId: detail?.id ?? 0,
       shelfNo: unit?.compartmentNo ?? 0,
-      compartmentNo: hasDetail ? (details[index].stepNo ?? 0) : 0,
+      compartmentNo: detail?.stepNo ?? targetStepNo,
     );
   }
 }

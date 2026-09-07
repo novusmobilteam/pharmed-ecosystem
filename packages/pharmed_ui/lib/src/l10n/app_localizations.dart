@@ -11870,6 +11870,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The record cannot be finalized because no medicine has been taken; however, the record may still be deleted.'**
   String get urgentPatientTermination_noMedicineEmptyDescription;
+
+  /// Inconsistency table column header showing the currently recorded/required quantity
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get table_inconsistency_currentColumn;
+
+  /// No description provided for @table_inconsistency_expectedColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected'**
+  String get table_inconsistency_expectedColumn;
+
+  /// No description provided for @table_inconsistency_differenceColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Difference'**
+  String get table_inconsistency_differenceColumn;
+
+  /// No description provided for @table_inconsistency_handledByColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Handled By'**
+  String get table_inconsistency_handledByColumn;
+
+  /// No description provided for @table_inconsistency_dateColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get table_inconsistency_dateColumn;
+
+  /// No description provided for @refillList_hint_searchList.
+  ///
+  /// In en, this message translates to:
+  /// **'Search lists'**
+  String get refillList_hint_searchList;
+
+  /// No description provided for @refillList_hint_noLists.
+  ///
+  /// In en, this message translates to:
+  /// **'No refill lists found for this station'**
+  String get refillList_hint_noLists;
+
+  /// No description provided for @refillList_badge_cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get refillList_badge_cancelled;
+
+  /// No description provided for @refillList_badge_filled.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled'**
+  String get refillList_badge_filled;
+
+  /// Small info chip on a cabin execution cell card (client refill list flow) showing the manager-planned target fill quantity, purely informational and does not restrict the entered value
+  ///
+  /// In en, this message translates to:
+  /// **'Target: {quantity} {unit}'**
+  String refillList_label_plannedQuantity(String quantity, String unit);
+
+  /// No description provided for @refillList_hint_selectListFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a list on the left to fill'**
+  String get refillList_hint_selectListFirst;
+
+  /// No description provided for @refillList_hint_noRows.
+  ///
+  /// In en, this message translates to:
+  /// **'No records found in this list'**
+  String get refillList_hint_noRows;
+
+  /// No description provided for @refillList_action_startFilling.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Filling'**
+  String get refillList_action_startFilling;
+
+  /// No description provided for @refillList_column_targetQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Quantity'**
+  String get refillList_column_targetQuantity;
+
+  /// No description provided for @refillList_column_filledQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled Quantity'**
+  String get refillList_column_filledQuantity;
+
+  /// No description provided for @fault_cellValueSolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Solved'**
+  String get fault_cellValueSolved;
+
+  /// No description provided for @fault_cellValueUnsolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsolved'**
+  String get fault_cellValueUnsolved;
 }
 
 class _AppLocalizationsDelegate

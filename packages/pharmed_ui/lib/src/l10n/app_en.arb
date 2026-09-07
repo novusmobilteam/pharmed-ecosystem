@@ -4770,5 +4770,32 @@
 "urgentPatientTermination_medicineTakenChip": "Medicine Taken",
 "urgentPatientTermination_medicineNotTakenChip": "No Medicine",
 "urgentPatientTermination_noMedicineEmptyTitle": "No medicine has been taken under this emergency record",
-"urgentPatientTermination_noMedicineEmptyDescription": "The record cannot be finalized because no medicine has been taken; however, the record may still be deleted."
+"urgentPatientTermination_noMedicineEmptyDescription": "The record cannot be finalized because no medicine has been taken; however, the record may still be deleted.",
+"table_inconsistency_currentColumn": "Current",
+"@table_inconsistency_currentColumn": {
+  "description": "Inconsistency table column header showing the currently recorded/required quantity"
+},
+"table_inconsistency_expectedColumn": "Expected",
+"table_inconsistency_differenceColumn": "Difference",
+"table_inconsistency_handledByColumn": "Handled By",
+"table_inconsistency_dateColumn": "Date",
+"refillList_hint_searchList": "Search lists",
+"refillList_hint_noLists": "No refill lists found for this station",
+"refillList_badge_cancelled": "Cancelled",
+"refillList_badge_filled": "Filled",
+"refillList_label_plannedQuantity": "Target: {quantity} {unit}",
+"@refillList_label_plannedQuantity": {
+  "description": "Small info chip on a cabin execution cell card (client refill list flow) showing the manager-planned target fill quantity, purely informational and does not restrict the entered value",
+  "placeholders": {
+    "quantity": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"refillList_hint_selectListFirst": "Select a list on the left to fill",
+"refillList_hint_noRows": "No records found in this list",
+"refillList_action_startFilling": "Start Filling",
+"refillList_column_targetQuantity": "Target Quantity",
+"refillList_column_filledQuantity": "Filled Quantity",
+"fault_cellValueSolved": "Solved",
+"fault_cellValueUnsolved": "Unsolved"
 }

@@ -91,6 +91,10 @@ class DashboardRouteContent extends ConsumerWidget {
               stationCabinsContext != null
                   ? UrgentPatientScreen(stationContext: stationCabinsContext)
                   : const SizedBox.shrink(),
+            'drug-refill-list' =>
+              stationCabinsContext != null
+                  ? RefillListView(stationContext: stationCabinsContext)
+                  : const SizedBox.shrink(),
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
         ),

@@ -29,17 +29,6 @@ class DrawerRefundNotifier extends ChangeNotifier with ApiRequestMixin, Paginati
 
   bool get isFetching => isLoading(fetchRefundsOp);
 
-  @override
-  Future<void> fetch() async {
-    await fetchPagedData(
-      op: fetchRefundsOp,
-      fetchMethod: (skip, take) => _getRefundsUseCase.call(
-        stationId: _selectedStation?.id ?? 0,
-        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
-      ),
-    );
-  }
-
   Future<void> getStations() async {
     await execute(
       fetchStationsOp,
@@ -58,5 +47,16 @@ class DrawerRefundNotifier extends ChangeNotifier with ApiRequestMixin, Paginati
     _selectedStation = station;
     fetch();
     notifyListeners();
+  }
+
+  @override
+  Future<void> fetch() async {
+    await fetchPagedData(
+      op: fetchRefundsOp,
+      fetchMethod: (skip, take) => _getRefundsUseCase.call(
+        stationId: _selectedStation?.id ?? 0,
+        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, startDate: startDate, endDate: endDate),
+      ),
+    );
   }
 }

@@ -43,26 +43,4 @@ List<TableColumnDef<CabinStock>> _buildColumnDefs(BuildContext context) => [
     title: context.l10n.expiredItems_table_quantityColumn,
     displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
   ),
-
-  // TableColumnDef(
-  //   title: context.l10n.drugActivity_table_dateColumn,
-  //   displayValue: (item) => item.createdAt.formattedDate,
-  // ),
-  // TableColumnDef(
-  //   title: context.l10n.drugActivity_table_patientColumn,
-  //   displayValue: (item) => item.prescriptionItem?.prescription?.hospitalization?.patient?.fullName,
-  // ),
-  // TableColumnDef(title: context.l10n.drugActivity_table_userColumn, displayValue: (item) => item.performedBy?.fullName),
-  // TableColumnDef(
-  //   title: context.l10n.drugActivity_table_medicineColumn,
-  //   displayValue: (item) => item.prescriptionItem?.medicine?.name,
-  // ),
-  // TableColumnDef(
-  //   title: context.l10n.drugActivity_table_quantityColumn,
-  //   displayValue: (item) => item.quantity.formatFractional,
-  // ),
-  // TableColumnDef(
-  //   title: context.l10n.drugActivity_table_movementColumn,
-  //   displayValue: (item) => item.type.actionLabel(context),
-  // ),
 ];

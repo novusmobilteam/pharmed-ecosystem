@@ -75,7 +75,7 @@ class CabinSelectionContentShell extends StatelessWidget {
     return Container(
       padding: MedSpacing.insetXl * 1.5,
       decoration: BoxDecoration(
-        border: Border.all(width: 2, color: MedColors.border),
+        border: Border.all(width: 1, color: MedColors.border),
         color: MedColors.surface,
         borderRadius: MedRadius.mdAll,
       ),
@@ -91,7 +91,7 @@ class CabinSelectionContentShell extends StatelessWidget {
                   Text(menu!.name ?? '-', style: MedTextStyles.titleLg()),
                   Text(menu!.description ?? '-', style: MedTextStyles.bodyMd()),
                   SizedBox(height: 4.0),
-                  Divider(thickness: 2),
+                  Divider(thickness: 1),
                 ],
               ),
             ),
