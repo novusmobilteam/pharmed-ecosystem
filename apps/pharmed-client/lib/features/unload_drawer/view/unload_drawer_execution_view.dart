@@ -88,7 +88,7 @@ class _DrawerUnloadConfirmForm extends StatelessWidget {
           : null,
 
       movements: [
-        if (item.returnUser case final m?)
+        if (item.returnUser case final _?)
           RxCardMovement(
             label: PrescriptionMovementType.returned.actorLabel(context),
             tone: PrescriptionMovementType.returned.movementTone,

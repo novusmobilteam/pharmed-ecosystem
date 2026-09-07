@@ -14,7 +14,6 @@ final refillListNotifierProvider = NotifierProvider<RefillListNotifier, RefillLi
 
 class RefillListNotifier extends Notifier<RefillListState> {
   late final MasterDrawerOrchestrator _orchestrator;
-  late int _stationId;
 
   GetRefillListsUseCase get _getLists => ref.read(getRefillListsUseCaseProvider);
   GetRefillListFillDetailUseCase get _getDetail => ref.read(getRefillListFillDetailUseCaseProvider);

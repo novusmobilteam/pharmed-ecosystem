@@ -222,9 +222,6 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
     if (activeUnit != null && activeUnit >= 0 && activeUnit < unitCount) {
       if (item.activeStepNo != null) {
         final r = steps - item.activeStepNo!;
-        debugPrint(
-          '[loc-orientation] activeStepNo=${item.activeStepNo} -> r=$r, steps=$steps, gridLabel(bu r için)=${steps - r}',
-        );
 
         if (r >= 0 && r < steps) grid[r][activeUnit] = _CellState.active;
       } else {
