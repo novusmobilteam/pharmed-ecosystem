@@ -35,6 +35,8 @@ class SelectionDialog<T extends Selectable> extends StatefulWidget {
     this.pageSize = 20,
     this.multi = false,
     this.initiallySelected,
+    this.secondaryDataSource,
+    this.secondaryToggleLabel,
   });
 
   final String title;
@@ -44,6 +46,8 @@ class SelectionDialog<T extends Selectable> extends StatefulWidget {
   final int pageSize;
   final bool multi;
   final List<T>? initiallySelected;
+  final SearchDataSource<T>? secondaryDataSource;
+  final String? secondaryToggleLabel;
 
   static Future<T?> show<T extends Selectable>(
     BuildContext context, {
@@ -91,6 +95,32 @@ class SelectionDialog<T extends Selectable> extends StatefulWidget {
     );
   }
 
+  static Future<T?> showWithFallback<T extends Selectable>(
+    BuildContext context, {
+    required String title,
+    required SearchDataSource<T> primaryDataSource,
+    required SearchDataSource<T> secondaryDataSource,
+    required String secondaryToggleLabel,
+    required String? Function(T item) labelBuilder,
+    String? Function(T item)? subtitleBuilder,
+    int pageSize = 20,
+  }) {
+    return showDialog<T>(
+      context: context,
+      barrierColor: const Color(0x800F192D),
+      builder: (_) => SelectionDialog<T>(
+        title: title,
+        dataSource: primaryDataSource,
+        secondaryDataSource: secondaryDataSource,
+        secondaryToggleLabel: secondaryToggleLabel,
+        labelBuilder: labelBuilder,
+        subtitleBuilder: subtitleBuilder,
+        pageSize: pageSize,
+        multi: false,
+      ),
+    );
+  }
+
   @override
   State<SelectionDialog<T>> createState() => _SelectionDialogState<T>();
 }
@@ -105,10 +135,14 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
   String _search = '';
   T? _selected;
   late Set<Object?> _selectedIds;
+  bool _useSecondary = false;
 
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   Timer? _debounce;
+
+  SearchDataSource<T> get _activeDataSource =>
+      (_useSecondary && widget.secondaryDataSource != null) ? widget.secondaryDataSource! : widget.dataSource;
 
   @override
   void initState() {
@@ -149,7 +183,7 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
     });
 
     try {
-      final result = await widget.dataSource(skip, widget.pageSize, _search.isEmpty ? null : _search);
+      final result = await _activeDataSource(skip, widget.pageSize, _search.isEmpty ? null : _search);
       if (!mounted) return;
 
       result.when(
@@ -182,6 +216,19 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
       _isFetchingMore = true;
       _fetch();
     }
+  }
+
+  void _toggleSource() {
+    setState(() {
+      _useSecondary = !_useSecondary;
+      _items.clear();
+      _totalCount = -1;
+      _selected = null;
+      _selectedIds = {};
+      _searchController.clear();
+      _search = '';
+    });
+    _fetch(reset: true);
   }
 
   void _onSearchChanged(String value) {
@@ -248,7 +295,14 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
             _DialogHeader(
               title: widget.title,
               onClose: () => Navigator.of(context).pop(),
-              action: widget.multi
+              action: widget.secondaryDataSource != null
+                  ? MedButton(
+                      label: _useSecondary ? (widget.title) : widget.secondaryToggleLabel!,
+                      variant: MedButtonVariant.ghost,
+                      size: MedButtonSize.sm,
+                      onPressed: _toggleSource,
+                    )
+                  : widget.multi
                   ? MedButton(
                       label: (_selectedIds.length == _items.length && _items.isNotEmpty)
                           ? context.l10n.common_deselectAllButton
@@ -335,9 +389,6 @@ class _SelectionDialogState<T extends Selectable> extends State<SelectionDialog<
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Header — gradient token'a bağlandı, kapat butonu MedRectangleIconButton
-// ─────────────────────────────────────────────────────────────────
 class _DialogHeader extends StatelessWidget {
   const _DialogHeader({required this.title, required this.onClose, this.action});
 

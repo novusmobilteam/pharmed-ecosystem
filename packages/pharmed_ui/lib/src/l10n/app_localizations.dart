@@ -11972,6 +11972,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unsolved'**
   String get fault_cellValueUnsolved;
+
+  /// No description provided for @cabinAssignmentList_actionsColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get cabinAssignmentList_actionsColumn;
+
+  /// No description provided for @cabinAssignmentList_deleteTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Assignment'**
+  String get cabinAssignmentList_deleteTooltip;
+
+  /// No description provided for @cabinAssignmentList_replaceTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace Medicine'**
+  String get cabinAssignmentList_replaceTooltip;
+
+  /// No description provided for @unload_replaceMedicine_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Equivalent Medicine'**
+  String get unload_replaceMedicine_dialogTitle;
+
+  /// No description provided for @unload_replaceMedicine_allMedicinesButton.
+  ///
+  /// In en, this message translates to:
+  /// **'All Medicines List'**
+  String get unload_replaceMedicine_allMedicinesButton;
 }
 
 class _AppLocalizationsDelegate

@@ -28,12 +28,17 @@ final class MasterUnloadSelection extends MasterUnloadState {
     required this.medicines,
     this.selectedUnitIds = const {},
     this.search = '',
+    this.pendingAssignmentActionIds = const {},
   });
 
   final int cabinId;
   final List<MedicineAssignment> medicines;
   final Set<int> selectedUnitIds;
   final String search;
+
+  /// Sil/Değiştir isteği devam eden assignment id'leri —
+  /// ilgili satırın butonlarını kilitlemek/spinner göstermek için.
+  final Set<int> pendingAssignmentActionIds;
 
   List<MedicineAssignment> get visibleMedicines {
     if (search.trim().isEmpty) return medicines;
@@ -50,12 +55,18 @@ final class MasterUnloadSelection extends MasterUnloadState {
   List<MedicineAssignment> get selectedAssignments =>
       medicines.where((a) => selectedUnitIds.contains(a.cabinDrawerId)).toList();
 
-  MasterUnloadSelection copyWith({List<MedicineAssignment>? medicines, Set<int>? selectedUnitIds, String? search}) {
+  MasterUnloadSelection copyWith({
+    List<MedicineAssignment>? medicines,
+    Set<int>? selectedUnitIds,
+    String? search,
+    Set<int>? pendingAssignmentActionIds,
+  }) {
     return MasterUnloadSelection(
       cabinId: cabinId,
       medicines: medicines ?? this.medicines,
       selectedUnitIds: selectedUnitIds ?? this.selectedUnitIds,
       search: search ?? this.search,
+      pendingAssignmentActionIds: pendingAssignmentActionIds ?? this.pendingAssignmentActionIds,
     );
   }
 }

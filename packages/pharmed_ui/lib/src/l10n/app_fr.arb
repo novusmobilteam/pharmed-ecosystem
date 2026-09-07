@@ -4249,5 +4249,10 @@
 "refillList_column_targetQuantity": "Quantité cible",
 "refillList_column_filledQuantity": "Quantité remplie",
 "fault_cellValueSolved": "Résolu",
-"fault_cellValueUnsolved": "Non résolu"
+"fault_cellValueUnsolved": "Non résolu",
+"cabinAssignmentList_actionsColumn": "Actions",
+"cabinAssignmentList_deleteTooltip": "Supprimer L'Affectation",
+"cabinAssignmentList_replaceTooltip": "Remplacer Le Médicament",
+"unload_replaceMedicine_dialogTitle": "Sélectionner Un Médicament Équivalent",
+"unload_replaceMedicine_allMedicinesButton": "Liste De Tous Les Médicaments"
 }
