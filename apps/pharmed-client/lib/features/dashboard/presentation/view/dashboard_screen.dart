@@ -51,6 +51,8 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  bool _isLoginModalOpen = false; // aynı anda birden fazla modal açılmasın
+
   @override
   void initState() {
     super.initState();
@@ -85,7 +87,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     return Scaffold(
       body: GestureDetector(
-        onTap: authNotif.onUserActivity,
+        // Çıkış yapılmışken ekrana herhangi bir yere tıklamak
+        // giriş formunu açar; giriş yapılmışken davranış değişmedi (sadece
+        // oturum aktivitesi yenilenir).
+        onTap: () {
+          if (isLoggedIn) {
+            authNotif.onUserActivity();
+          } else {
+            _showLoginModal(context, ref);
+          }
+        },
         child: Stack(
           children: [
             Column(
@@ -137,6 +148,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void _showLoginModal(BuildContext context, WidgetRef ref) {
+    if (_isLoginModalOpen) return; // ardışık hızlı dokunuşlarda çift dialog açılmasın
+    _isLoginModalOpen = true;
+
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -164,7 +178,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           );
         },
       ),
-    );
+    ).whenComplete(() => _isLoginModalOpen = false);
   }
 
   void _showSettingsPopup(BuildContext context) => SettingsView.show(context);
