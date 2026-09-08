@@ -1,0 +1,67 @@
+# .github/workflows/build-and-attach-release.yml
+name: Build Windows release artifacts
+
+on:
+  release:
+    types: [published]   # siz "Publish release"e bastığınız an tetiklenir
+
+jobs:
+  build-client:
+    runs-on: windows-latest   # flutter build windows, Windows runner gerektirir
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Get dependencies
+        run: flutter pub get
+        working-directory: apps/pharmed-client   # gerçek yolu kendi repo yapınıza göre düzeltin
+
+      - name: Build client (dev flavor)
+        run: flutter build windows --release -t lib/main_dev.dart
+        working-directory: apps/pharmed-client
+
+      - name: Zip release folder
+        run: |
+          Compress-Archive -Path apps/pharmed-client/build/windows/x64/runner/Release/* `
+            -DestinationPath pharmed-client-${{ github.event.release.tag_name }}-windows.zip
+
+      - name: Attach to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: pharmed-client-${{ github.event.release.tag_name }}-windows.zip
+
+  build-manager:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Get dependencies
+        run: flutter pub get
+        working-directory: apps/pharmed-manager
+
+      - name: Build manager (dev flavor)
+        run: flutter build windows --release -t lib/main_dev.dart
+        working-directory: apps/pharmed-manager
+
+      - name: Zip release folder
+        run: |
+          Compress-Archive -Path apps/pharmed-manager/build/windows/x64/runner/Release/* `
+            -DestinationPath pharmed-manager-${{ github.event.release.tag_name }}-windows.zip
+
+      - name: Attach to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: pharmed-manager-${{ github.event.release.tag_name }}-windows.zip
