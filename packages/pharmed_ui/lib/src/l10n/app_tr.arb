@@ -8861,5 +8861,10 @@
   }
 },
 "intake_qrCode_skipButton": "Okutmadan Devam Et",
-"intake_qrCode_submitErrorFallback": "Bu ilaç için karekod kaydedilemedi."
+"intake_qrCode_submitErrorFallback": "Bu ilaç için karekod kaydedilemedi.",
+"waste_label_groupRecordCount": "{count, plural, one{{count} kayıt} other{{count} kayıt}}",
+"@waste_label_groupRecordCount": {
+  "description": "Badge on a grouped medicine header in the waste/destruction screen showing how many pending records are inside the group",
+  "placeholders": { "count": { "type": "int" } }
+}
 }

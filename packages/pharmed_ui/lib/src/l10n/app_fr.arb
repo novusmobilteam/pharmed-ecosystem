@@ -4263,5 +4263,9 @@
   }
 },
 "intake_qrCode_skipButton": "Continuer sans scanner",
-"intake_qrCode_submitErrorFallback": "Le code QR n'a pas pu être enregistré pour ce médicament."
+"intake_qrCode_submitErrorFallback": "Le code QR n'a pas pu être enregistré pour ce médicament.",
+"waste_label_groupRecordCount": "{count, plural, one{{count} enregistrement} other{{count} enregistrements}}",
+"@waste_label_groupRecordCount": {
+  "placeholders": { "count": { "type": "int" } }
+}
 }

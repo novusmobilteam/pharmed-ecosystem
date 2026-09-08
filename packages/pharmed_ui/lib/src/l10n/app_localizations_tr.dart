@@ -6760,4 +6760,15 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get intake_qrCode_submitErrorFallback =>
       'Bu ilaç için karekod kaydedilemedi.';
+
+  @override
+  String waste_label_groupRecordCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kayıt',
+      one: '$count kayıt',
+    );
+    return '$_temp0';
+  }
 }

@@ -12026,6 +12026,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'QR code could not be saved for this medicine.'**
   String get intake_qrCode_submitErrorFallback;
+
+  /// No description provided for @waste_label_groupRecordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} record} other{{count} records}}'**
+  String waste_label_groupRecordCount(int count);
 }
 
 class _AppLocalizationsDelegate
