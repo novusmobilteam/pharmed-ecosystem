@@ -6808,4 +6808,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get intake_qrCode_submitErrorFallback =>
       'QR code could not be saved for this medicine.';
+
+  @override
+  String waste_label_groupRecordCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records',
+      one: '$count record',
+    );
+    return '$_temp0';
+  }
 }

@@ -4811,5 +4811,9 @@
   }
 },
 "intake_qrCode_skipButton": "Continue Without Scanning",
-"intake_qrCode_submitErrorFallback": "QR code could not be saved for this medicine."
+"intake_qrCode_submitErrorFallback": "QR code could not be saved for this medicine.",
+"waste_label_groupRecordCount": "{count, plural, one{{count} record} other{{count} records}}",
+"@waste_label_groupRecordCount": {
+  "placeholders": { "count": { "type": "int" } }
+}
 }

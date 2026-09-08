@@ -6971,4 +6971,15 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get intake_qrCode_submitErrorFallback =>
       'Le code QR n\'a pas pu être enregistré pour ce médicament.';
+
+  @override
+  String waste_label_groupRecordCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count enregistrements',
+      one: '$count enregistrement',
+    );
+    return '$_temp0';
+  }
 }
