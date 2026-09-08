@@ -5,11 +5,20 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CabinAssignmentListView extends StatelessWidget {
-  const CabinAssignmentListView({super.key, required this.items, required this.selectedItemIds, this.onToggle});
+  const CabinAssignmentListView({
+    super.key,
+    required this.items,
+    required this.selectedItemIds,
+    this.onToggle,
+    this.onDelete,
+    this.onReplace,
+  });
 
   final List<MedicineAssignment> items;
   final Set<int> selectedItemIds;
   final ValueChanged<int>? onToggle;
+  final ValueChanged<MedicineAssignment>? onDelete;
+  final ValueChanged<MedicineAssignment>? onReplace;
 
   double _ratio(double v, double max) => max > 0 ? (v / max).clamp(0.0, 1.0) : 0.0;
 
@@ -27,6 +36,8 @@ class CabinAssignmentListView extends StatelessWidget {
             Expanded(child: Text(context.l10n.cabinAssignmentList_locationColumn, style: textStyle)),
             Expanded(child: Text(context.l10n.cabinAssignmentList_stockColumn, style: textStyle)),
             SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_fillLevelColumn, style: textStyle)),
+            if (onDelete != null || onReplace != null)
+              SizedBox(width: 96, child: Text(context.l10n.cabinAssignmentList_actionsColumn, style: textStyle)),
           ],
         ),
         SizedBox(height: 12.0),
@@ -98,6 +109,31 @@ class CabinAssignmentListView extends StatelessWidget {
                           color: color,
                         ),
                       ),
+                      if (onDelete != null || onReplace != null)
+                        SizedBox(
+                          width: 96,
+                          child:
+                              assignment.totalQuantity <=
+                                  0 // [Madde 10] sadece stok 0'ken
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    if (onReplace != null)
+                                      IconButton(
+                                        icon: Icon(PhosphorIcons.arrowsClockwise(), size: 18, color: MedColors.blue),
+                                        tooltip: context.l10n.cabinAssignmentList_replaceTooltip,
+                                        onPressed: () => onReplace!(assignment),
+                                      ),
+                                    if (onDelete != null)
+                                      IconButton(
+                                        icon: Icon(PhosphorIcons.trash(), size: 18, color: MedColors.red),
+                                        tooltip: context.l10n.cabinAssignmentList_deleteTooltip,
+                                        onPressed: () => onDelete!(assignment),
+                                      ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
                     ],
                   ),
                 ),

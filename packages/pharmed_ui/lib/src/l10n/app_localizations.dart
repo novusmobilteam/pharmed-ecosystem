@@ -11972,6 +11972,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unsolved'**
   String get fault_cellValueUnsolved;
+
+  /// No description provided for @cabinAssignmentList_actionsColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get cabinAssignmentList_actionsColumn;
+
+  /// No description provided for @cabinAssignmentList_deleteTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Assignment'**
+  String get cabinAssignmentList_deleteTooltip;
+
+  /// No description provided for @cabinAssignmentList_replaceTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace Medicine'**
+  String get cabinAssignmentList_replaceTooltip;
+
+  /// No description provided for @unload_replaceMedicine_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Equivalent Medicine'**
+  String get unload_replaceMedicine_dialogTitle;
+
+  /// No description provided for @unload_replaceMedicine_allMedicinesButton.
+  ///
+  /// In en, this message translates to:
+  /// **'All Medicines List'**
+  String get unload_replaceMedicine_allMedicinesButton;
+
+  /// No description provided for @intake_qrCode_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Medicine QR Codes'**
+  String get intake_qrCode_dialogTitle;
+
+  /// No description provided for @intake_qrCode_fieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code {index}'**
+  String intake_qrCode_fieldHint(int index);
+
+  /// No description provided for @intake_qrCode_skipButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Without Scanning'**
+  String get intake_qrCode_skipButton;
+
+  /// No description provided for @intake_qrCode_submitErrorFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code could not be saved for this medicine.'**
+  String get intake_qrCode_submitErrorFallback;
+
+  /// No description provided for @waste_label_groupRecordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} record} other{{count} records}}'**
+  String waste_label_groupRecordCount(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/hardware/hardware.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../dashboard/dashboard.dart';
 import '../../intake.dart';
+
+part 'intake_qr_code_dialog.dart';
 
 class MasterIntakeView extends ConsumerStatefulWidget {
   const MasterIntakeView({super.key, required this.stationContext});
@@ -43,7 +46,13 @@ class _MasterIntakeViewState extends ConsumerState<MasterIntakeView> {
         state is MasterIntakeExecuting ||
         (state is MasterIntakeError && (state).previousState is MasterIntakeExecuting);
 
-    ref.listen(masterIntakeNotifierProvider, (_, next) {
+    ref.listen(masterIntakeNotifierProvider, (previous, next) {
+      final prevQrJob = previous is MasterIntakeExecuting ? previous.qrCodeJob : null;
+      final nextQrJob = next is MasterIntakeExecuting ? next.qrCodeJob : null;
+      if (prevQrJob == null && nextQrJob != null) {
+        showMedDialog<void>(context: context, barrierDismissible: false, builder: (_) => const IntakeQrCodeDialog());
+      }
+
       if (next is MasterIntakeError && next.isQueueError) {
         MessageUtils.showConfirmDialog(
           context: context,

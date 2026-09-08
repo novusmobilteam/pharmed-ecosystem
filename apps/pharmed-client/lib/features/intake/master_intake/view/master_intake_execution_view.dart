@@ -73,19 +73,26 @@ class _IntakeForm extends StatelessWidget {
     return step.refs.every((ref) => job.targets[ref.$1].isValid);
   }
 
-  /// Artık kübik/birim doz farkı YOK - ikisi de aktif STEP'i (currentTargetIndex)
-  /// tek kart olarak gösterir. Birim dozda farklı ilaçlar (farklı portlar)
-  /// artık ASLA aynı ekranda birlikte gösterilmez - sırayla, port kapanınca
-  /// bir sonraki açılır (2026 düzeltmesi).
   Widget _activeContent(BuildContext context, int stepIndex) {
     final steps = IntakeCellGrouper.group(job.targets);
     if (stepIndex < 0 || stepIndex >= steps.length) return const SizedBox.shrink();
     final step = steps[stepIndex];
-    return IntakeCellCard(
-      group: step,
-      targets: job.targets,
-      stepLabel: context.l10n.refill_label_cellProgress(stepIndex + 1, steps.length),
-      onCountChanged: (v) => notifier.onGroupCountChanged(step, v),
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 12,
+      children: [
+        for (var i = 0; i < step.refs.length; i++)
+          IntakeCellCard(
+            group: IntakeCellGroup(
+              stockId: job.targets[step.refs[i].$1].details[step.refs[i].$2].stockId,
+              refs: [step.refs[i]],
+            ),
+            targets: job.targets,
+            stepLabel: step.refs.length > 1 ? context.l10n.refill_label_cellProgress(i + 1, step.refs.length) : null,
+            onCountChanged: (v) => notifier.onStepCountChanged(step.refs[i].$1, step.refs[i].$2, v),
+          ),
+      ],
     );
   }
 

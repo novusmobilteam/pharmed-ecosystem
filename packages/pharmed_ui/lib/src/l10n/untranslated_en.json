@@ -1606,6 +1606,16 @@
     "refillList_column_targetQuantity",
     "refillList_column_filledQuantity",
     "fault_cellValueSolved",
-    "fault_cellValueUnsolved"
+    "fault_cellValueUnsolved",
+    "cabinAssignmentList_actionsColumn",
+    "cabinAssignmentList_deleteTooltip",
+    "cabinAssignmentList_replaceTooltip",
+    "unload_replaceMedicine_dialogTitle",
+    "unload_replaceMedicine_allMedicinesButton",
+    "intake_qrCode_dialogTitle",
+    "intake_qrCode_fieldHint",
+    "intake_qrCode_skipButton",
+    "intake_qrCode_submitErrorFallback",
+    "waste_label_groupRecordCount"
   ]
 }

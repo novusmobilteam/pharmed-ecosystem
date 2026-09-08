@@ -4249,5 +4249,23 @@
 "refillList_column_targetQuantity": "Quantité cible",
 "refillList_column_filledQuantity": "Quantité remplie",
 "fault_cellValueSolved": "Résolu",
-"fault_cellValueUnsolved": "Non résolu"
+"fault_cellValueUnsolved": "Non résolu",
+"cabinAssignmentList_actionsColumn": "Actions",
+"cabinAssignmentList_deleteTooltip": "Supprimer L'Affectation",
+"cabinAssignmentList_replaceTooltip": "Remplacer Le Médicament",
+"unload_replaceMedicine_dialogTitle": "Sélectionner Un Médicament Équivalent",
+"unload_replaceMedicine_allMedicinesButton": "Liste De Tous Les Médicaments",
+"intake_qrCode_dialogTitle": "Scanner les codes QR des médicaments",
+"intake_qrCode_fieldHint": "Code QR {index}",
+"@intake_qrCode_fieldHint": {
+  "placeholders": {
+    "index": { "type": "int" }
+  }
+},
+"intake_qrCode_skipButton": "Continuer sans scanner",
+"intake_qrCode_submitErrorFallback": "Le code QR n'a pas pu être enregistré pour ce médicament.",
+"waste_label_groupRecordCount": "{count, plural, one{{count} enregistrement} other{{count} enregistrements}}",
+"@waste_label_groupRecordCount": {
+  "placeholders": { "count": { "type": "int" } }
+}
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -9,7 +8,6 @@ import '../../dashboard/dashboard.dart';
 import '../notifier/refill_list_notifier.dart';
 import '../notifier/refill_list_state.dart';
 import 'refill_list_assignment_list_view.dart';
-import 'refill_list_detail_row.dart';
 import 'refill_lists_side_panel.dart';
 
 class RefillListSelectionView extends ConsumerWidget {
@@ -28,17 +26,6 @@ class RefillListSelectionView extends ConsumerWidget {
       _ => null,
     };
     if (selection == null) return const SizedBox.shrink();
-
-    final displayItems = selection.visibleRows
-        .map((r) => r.toCompatibleQuantity())
-        .whereType<MedicineAssignment>()
-        .toList();
-
-    final labelByDrawerId = <int, String>{
-      for (final r in selection.visibleRows)
-        if (r.cabinAssignment?.cabinDrawerId != null)
-          r.cabinAssignment!.cabinDrawerId!: r.plannedQuantityLabel(context),
-    };
 
     return CabinOperationSelectionLayout(
       flex: 2,

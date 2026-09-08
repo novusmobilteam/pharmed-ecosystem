@@ -8832,5 +8832,39 @@
 "fault_cellValueUnsolved": "Çözülmedi",
 "@fault_cellValueUnsolved": {
   "description": "Table cell value shown for the status column when a fault/malfunction record's isSolved flag is false"
+},
+"cabinAssignmentList_actionsColumn": "İşlemler",
+"@cabinAssignmentList_actionsColumn": {
+  "description": "Column header in the cabin assignment list for the delete/replace action buttons, shown only when the row's stock is zero"
+},
+"cabinAssignmentList_deleteTooltip": "Atamayı Sil",
+"@cabinAssignmentList_deleteTooltip": {
+  "description": "Tooltip for the delete icon button on a zero-stock assignment row in the cabin assignment list"
+},
+"cabinAssignmentList_replaceTooltip": "İlacı Değiştir",
+"@cabinAssignmentList_replaceTooltip": {
+  "description": "Tooltip for the replace icon button on a zero-stock assignment row in the cabin assignment list"
+},
+"unload_replaceMedicine_dialogTitle": "Muadil İlaç Seç",
+"@unload_replaceMedicine_dialogTitle": {
+  "description": "Title of the dialog shown when replacing a zero-stock assignment; initially lists equivalent medicines, can be toggled to the full medicine list"
+},
+"unload_replaceMedicine_allMedicinesButton": "Tüm İlaç Listesi",
+"@unload_replaceMedicine_allMedicinesButton": {
+  "description": "Toggle button inside the replace-medicine dialog that switches from the equivalent-medicines list to the full medicine list"
+},
+"intake_qrCode_dialogTitle": "İlaç Karekodlarını Okutun",
+"intake_qrCode_fieldHint": "Karekod {index}",
+"@intake_qrCode_fieldHint": {
+  "placeholders": {
+    "index": { "type": "int" }
+  }
+},
+"intake_qrCode_skipButton": "Okutmadan Devam Et",
+"intake_qrCode_submitErrorFallback": "Bu ilaç için karekod kaydedilemedi.",
+"waste_label_groupRecordCount": "{count, plural, one{{count} kayıt} other{{count} kayıt}}",
+"@waste_label_groupRecordCount": {
+  "description": "Badge on a grouped medicine header in the waste/destruction screen showing how many pending records are inside the group",
+  "placeholders": { "count": { "type": "int" } }
 }
 }

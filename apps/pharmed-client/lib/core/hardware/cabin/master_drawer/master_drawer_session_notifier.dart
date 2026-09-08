@@ -34,6 +34,7 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
   StartMasterDrawerSessionUseCase get _startSession => ref.read(startMasterDrawerSessionUseCaseProvider);
   OpenCubicLidUseCase get _openCubicLid => ref.read(openCubicLidUseCaseProvider);
   MonitorDrawerClosureUseCase get _monitorClosure => ref.read(monitorDrawerClosureUseCaseProvider);
+  ICabinOperationService get _cabinOperationService => ref.read(cabinOperationServiceProvider);
 
   @override
   MasterDrawerSessionState build() {
@@ -79,6 +80,7 @@ class MasterDrawerSessionNotifier extends Notifier<MasterDrawerSessionState> {
   void confirmClose() {
     if (state.stage is! MasterDrawerOpened) return;
     state = state.copyWith(stage: const MasterDrawerWaitingForClose());
+    _cabinOperationService.triggerManualClose();
   }
 
   /// Son assignment VE son requestedQuantity/explicitTargetStep ile oturumu

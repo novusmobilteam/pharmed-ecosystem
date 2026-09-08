@@ -53,69 +53,84 @@ class _HomeScreenState extends State<HomeScreen> {
   /// yeniden çekilir. Kalıcı token (Loading→LoggedIn) ve modal login
   /// (LoggedOut→LoggedIn) geçişlerini tek noktadan kapsar.
   bool _menusFetchedForSession = false;
+  bool _isLoginModalOpen = false; // ardışık dokunuşlarda çift modal açılmasın
 
   @override
   Widget build(BuildContext context) {
+    // GestureDetector'ın onTap kararı için Consumer2'nin dışında,
+    // build başında hesaplanıyor — içerideki hesaplama da kalabilir
+    // (aynı provider'ı izliyor), tekrar aynı sonucu üretir, zararsız.
+    final isLoggedInForTap = context.watch<AuthNotifier>().state is AuthLoggedIn;
+
     return Scaffold(
-      body: Consumer2<HomeNotifier, AuthNotifier>(
-        builder: (context, notifier, authNotifier, _) {
-          final isLoggedIn = authNotifier.state is AuthLoggedIn;
+      body: GestureDetector(
+        // Giriş yapılmışken davranış değişmiyor (null → child kendi
+        // gesture'larını normal işler). Çıkış yapılmışken herhangi bir
+        // yere tıklamak giriş modalını açar.
+        onTap: isLoggedInForTap ? null : () => _onLoginTap(context),
+        child: Consumer2<HomeNotifier, AuthNotifier>(
+          builder: (context, notifier, authNotifier, _) {
+            final isLoggedIn = authNotifier.state is AuthLoggedIn;
 
-          // Login'e geçiş yakalandı + bu oturumda henüz çekilmedi → menüleri çek
-          if (isLoggedIn && !_menusFetchedForSession) {
-            _menusFetchedForSession = true;
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) context.read<HomeNotifier>().fetchMenus();
-            });
-          } else if (!isLoggedIn && _menusFetchedForSession) {
-            // Logout → bayrağı sıfırla (sonraki login'de yeniden çekilsin)
-            _menusFetchedForSession = false;
-          }
+            // Login'e geçiş yakalandı + bu oturumda henüz çekilmedi → menüleri çek
+            if (isLoggedIn && !_menusFetchedForSession) {
+              _menusFetchedForSession = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) context.read<HomeNotifier>().fetchMenus();
+              });
+            } else if (!isLoggedIn && _menusFetchedForSession) {
+              // Logout → bayrağı sıfırla (sonraki login'de yeniden çekilsin)
+              _menusFetchedForSession = false;
+            }
 
-          // Login olduğunda menü yükleniyorsa spinner (mevcut davranış)
-          if (isLoggedIn && notifier.isFetching && notifier.isEmpty) {
-            return const Center(child: CircularProgressIndicator.adaptive());
-          }
+            // Login olduğunda menü yükleniyorsa spinner (mevcut davranış)
+            if (isLoggedIn && notifier.isFetching && notifier.isEmpty) {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            }
 
-          // Login olmuş ama yetkili menü yok → mevcut boş durum ekranı
-          if (isLoggedIn && notifier.isEmpty) {
-            return _NoMenuContent();
-          }
+            // Login olmuş ama yetkili menü yok → mevcut boş durum ekranı
+            if (isLoggedIn && notifier.isEmpty) {
+              return _NoMenuContent();
+            }
 
-          return Padding(
-            padding: AppDimensions.pagePadding,
-            child: Column(
-              children: [
-                HomeAppBar(
-                  isLoggedIn: isLoggedIn,
-                  user: notifier.currentUser,
-                  onHomeTap: () => context.read<HomeNotifier>().navigateHome(),
-                  onLogoutTap: () => context.read<AuthNotifier>().logout(),
-                  onLoginTap: () => _onLoginTap(context),
-                  onSettingsTap: () => SettingsView.show(context),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: AppDimensions.pagePadding.top),
-                    color: MedColors.bg,
-                    child: Row(
-                      spacing: 16.0,
-                      children: [
-                        if (isLoggedIn) HomeSidebar(),
-                        Expanded(child: _HomeContent()),
-                      ],
+            return Padding(
+              padding: AppDimensions.pagePadding,
+              child: Column(
+                children: [
+                  HomeAppBar(
+                    isLoggedIn: isLoggedIn,
+                    user: notifier.currentUser,
+                    onHomeTap: () => context.read<HomeNotifier>().navigateHome(),
+                    onLogoutTap: () => context.read<AuthNotifier>().logout(),
+                    onLoginTap: () => _onLoginTap(context),
+                    onSettingsTap: () => SettingsView.show(context),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: AppDimensions.pagePadding.top),
+                      color: MedColors.bg,
+                      child: Row(
+                        spacing: 16.0,
+                        children: [
+                          if (isLoggedIn) HomeSidebar(),
+                          Expanded(child: _HomeContent()),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
   Future<void> _onLoginTap(BuildContext context) async {
+    if (_isLoginModalOpen) return;
+    _isLoginModalOpen = true;
+
     final authNotifier = context.read<AuthNotifier>();
 
     await showDialog<void>(
@@ -152,6 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+    _isLoginModalOpen = false;
   }
 }
 

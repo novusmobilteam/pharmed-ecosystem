@@ -63,17 +63,21 @@ class CabinOperationGrid extends StatelessWidget {
         final columns = (constraints.maxWidth / (targetItemWidth + gap)).floor().clamp(minColumns, maxColumns);
         final cardWidth = (constraints.maxWidth - gap * (columns - 1)) / columns;
 
-        return SingleChildScrollView(
-          padding: EdgeInsets.zero,
-          child: Wrap(
-            spacing: gap,
-            runSpacing: gap,
-            children: [
-              for (var index = 0; index < itemCount; index++)
-                SizedBox(width: cardWidth, child: itemBuilder(context, index)),
-            ],
-          ),
+        final grid = Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            for (var index = 0; index < itemCount; index++)
+              SizedBox(width: cardWidth, child: itemBuilder(context, index)),
+          ],
         );
+
+        // shrinkWrap: true → çağıran taraf zaten kendi (tek) scrollable'ının
+        // içine koyuyor demektir; burada ikinci bir scroll bölgesi AÇILMAZ,
+        // grid içerik kadar yükseklik kaplar (Wrap zaten intrinsic boyutlu).
+        if (shrinkWrap) return grid;
+
+        return SingleChildScrollView(padding: EdgeInsets.zero, physics: physics, child: grid);
       },
     );
   }

@@ -52,7 +52,7 @@ class RefillListAssignmentListView extends StatelessWidget {
 
               final id = row.cabinAssignment?.cabinDrawerId;
               final isSelected = id != null && selectedDrawerIds.contains(id);
-              final isFilled = row.isFilled;
+
               final filledLabel = row.filledQuantityLabel(context);
 
               return GestureDetector(

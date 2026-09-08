@@ -6938,4 +6938,48 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fault_cellValueUnsolved => 'Non résolu';
+
+  @override
+  String get cabinAssignmentList_actionsColumn => 'Actions';
+
+  @override
+  String get cabinAssignmentList_deleteTooltip => 'Supprimer L\'Affectation';
+
+  @override
+  String get cabinAssignmentList_replaceTooltip => 'Remplacer Le Médicament';
+
+  @override
+  String get unload_replaceMedicine_dialogTitle =>
+      'Sélectionner Un Médicament Équivalent';
+
+  @override
+  String get unload_replaceMedicine_allMedicinesButton =>
+      'Liste De Tous Les Médicaments';
+
+  @override
+  String get intake_qrCode_dialogTitle =>
+      'Scanner les codes QR des médicaments';
+
+  @override
+  String intake_qrCode_fieldHint(int index) {
+    return 'Code QR $index';
+  }
+
+  @override
+  String get intake_qrCode_skipButton => 'Continuer sans scanner';
+
+  @override
+  String get intake_qrCode_submitErrorFallback =>
+      'Le code QR n\'a pas pu être enregistré pour ce médicament.';
+
+  @override
+  String waste_label_groupRecordCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count enregistrements',
+      one: '$count enregistrement',
+    );
+    return '$_temp0';
+  }
 }

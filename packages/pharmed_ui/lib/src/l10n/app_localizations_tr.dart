@@ -6730,4 +6730,45 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fault_cellValueUnsolved => 'Çözülmedi';
+
+  @override
+  String get cabinAssignmentList_actionsColumn => 'İşlemler';
+
+  @override
+  String get cabinAssignmentList_deleteTooltip => 'Atamayı Sil';
+
+  @override
+  String get cabinAssignmentList_replaceTooltip => 'İlacı Değiştir';
+
+  @override
+  String get unload_replaceMedicine_dialogTitle => 'Muadil İlaç Seç';
+
+  @override
+  String get unload_replaceMedicine_allMedicinesButton => 'Tüm İlaç Listesi';
+
+  @override
+  String get intake_qrCode_dialogTitle => 'İlaç Karekodlarını Okutun';
+
+  @override
+  String intake_qrCode_fieldHint(int index) {
+    return 'Karekod $index';
+  }
+
+  @override
+  String get intake_qrCode_skipButton => 'Okutmadan Devam Et';
+
+  @override
+  String get intake_qrCode_submitErrorFallback =>
+      'Bu ilaç için karekod kaydedilemedi.';
+
+  @override
+  String waste_label_groupRecordCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kayıt',
+      one: '$count kayıt',
+    );
+    return '$_temp0';
+  }
 }

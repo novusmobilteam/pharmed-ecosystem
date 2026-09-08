@@ -20,7 +20,6 @@
 //
 // Sınıf: Class B
 
-import 'package:flutter/foundation.dart';
 import 'package:pharmed_client/features/intake/intake.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
@@ -156,6 +155,9 @@ final class MasterIntakeExecuting extends MasterIntakeState {
     required this.currentIndex,
     this.currentTargetIndex = 0,
     this.isSaving = false,
+    this.qrCodeJob,
+    this.isSubmittingQrCodes = false,
+    this.qrCodeErrors = const {},
   });
 
   final Hospitalization hospitalization;
@@ -174,13 +176,24 @@ final class MasterIntakeExecuting extends MasterIntakeState {
   /// Aktif kaydın (CompleteIntake) işlemi sürüyor mu?
   final bool isSaving;
 
-  Patient? get patient => hospitalization.patient;
+  /// Aktif job'ın tüm step'leri bitti (çekmece kapandı) VE qrCode-zorunlu
+  /// hedefleri var — dialog açık olmalı. null ise dialog kapalı, akış normal.
+  final IntakeDrawerJob? qrCodeJob;
 
-  // ── Türetilen ──────────────────────────────────────────────────────────
+  /// Submit istekleri sürüyor mu? (dialog'da loading göstergesi/kilit)
+  final bool isSubmittingQrCodes;
+
+  /// Son submit denemesinde hata alan hedefler (prescriptionDetailId → mesaj).
+  final Map<int, String> qrCodeErrors;
+
+  Patient? get patient => hospitalization.patient;
 
   IntakeDrawerJob? get currentJob => (currentIndex >= 0 && currentIndex < jobs.length) ? jobs[currentIndex] : null;
 
   int? get currentCabinId => currentJob?.cabinId;
+
+  List<IntakeQrCodeRequirement> get qrCodeRequirements =>
+      qrCodeJob != null ? intakeQrCodeRequirementsOf(qrCodeJob!) : const [];
 
   /// Aktif step'in (aynı stockId'yi paylaşan hedef grubunun) temsilci hedefi.
   /// Kübik ve birim doz artık AYNI step-bazlı indekslemeyi kullanıyor —
@@ -208,6 +221,10 @@ final class MasterIntakeExecuting extends MasterIntakeState {
     int? currentIndex,
     int? currentTargetIndex,
     bool? isSaving,
+    IntakeDrawerJob? qrCodeJob,
+    bool clearQrCodeJob = false,
+    bool? isSubmittingQrCodes,
+    Map<int, String>? qrCodeErrors,
   }) {
     return MasterIntakeExecuting(
       hospitalization: hospitalization,
@@ -216,6 +233,9 @@ final class MasterIntakeExecuting extends MasterIntakeState {
       currentIndex: currentIndex ?? this.currentIndex,
       currentTargetIndex: currentTargetIndex ?? this.currentTargetIndex,
       isSaving: isSaving ?? this.isSaving,
+      qrCodeJob: clearQrCodeJob ? null : (qrCodeJob ?? this.qrCodeJob),
+      isSubmittingQrCodes: isSubmittingQrCodes ?? this.isSubmittingQrCodes,
+      qrCodeErrors: qrCodeErrors ?? this.qrCodeErrors,
     );
   }
 }
@@ -262,13 +282,6 @@ extension MasterIntakeExecutingLocationX on MasterIntakeExecuting {
     currentTargetIndex: currentTargetIndex,
     cabinDrawerIdOf: (job) => job.cabinDrawerId,
     statusOf: (job) => job.status,
-    // currentTargetIndex STEP index'i (job.targets index'i DEĞİL) — bkz.
-    // MasterIntakeExecuting.currentTarget / notifier._jobSteps ile AYNI
-    // kaynak. targetCountOf/assignmentAt/stockIdAt bu yüzden artık ham
-    // target listesini değil, IntakeCellGrouper.group(job.targets) step
-    // listesini indeksliyor; önceki hâli (doğrudan job.targets[i]) aynı
-    // fiziksel göze birden fazla hedef düşen job'larda yanlış/fazla
-    // hücrenin aktif/tamamlanmış görünmesine yol açıyordu.
     targetCountOf: (job) => IntakeCellGrouper.group(job.targets).length,
     assignmentAt: (job, stepIndex) {
       final steps = IntakeCellGrouper.group(job.targets);
@@ -276,14 +289,21 @@ extension MasterIntakeExecutingLocationX on MasterIntakeExecuting {
       final (ti, _) = steps[stepIndex].refs.first;
       return job.targets[ti].assignment;
     },
+    // Geriye dönük uyumluluk için hâlâ veriliyor (activeStepNo tekil fallback'i
+    // için) — ama artık asıl işi stockIdsAt yapıyor.
     stockIdAt: (job, stepIndex) {
       final steps = IntakeCellGrouper.group(job.targets);
       if (stepIndex < 0 || stepIndex >= steps.length) return null;
+      final (ti, di) = steps[stepIndex].refs.first;
+      return job.targets[ti].details[di].stockId;
+    },
+    // YENİ — bir step (=target) BİRDEN FAZLA stockId'ye (aynı fiziksel
+    // unit'in farklı derinliklerine/gözlerine) yayılabiliyor, hepsini döner.
+    stockIdsAt: (job, stepIndex) {
+      final steps = IntakeCellGrouper.group(job.targets);
+      if (stepIndex < 0 || stepIndex >= steps.length) return const [];
       final (ti, _) = steps[stepIndex].refs.first;
-      final stockId = job.targets[ti].details.firstOrNull?.stockId;
-      debugPrint('[intake-loc] step=$stepIndex ti=$ti stockId=$stockId');
-
-      return stockId;
+      return job.targets[ti].details.map((d) => d.stockId).toList();
     },
   );
 }

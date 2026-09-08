@@ -1,5 +1,3 @@
-// apps/pharmed-client/lib/core/hardware/service/mock_cabin_operation_service.dart
-//
 // [SWREQ-HW-001] [IEC 62304 §5.5]
 // Kabin operasyon servisi — mock implementasyon.
 //

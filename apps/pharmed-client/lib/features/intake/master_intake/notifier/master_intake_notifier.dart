@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/dashboard/dashboard.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -46,17 +47,43 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   CheckRedirectedIntakeUseCase get _checkRedirectedIntake => ref.read(checkRedirectedIntakeUseCaseProvider);
   CompleteRedirectedIntakeUseCase get _completeRedirectedIntake => ref.read(completeRedirectedIntakeUseCaseProvider);
   GetStationAssignmentsUseCase get _getAssignments => ref.read(getStationAssignmentsUseCaseProvider);
+  SubmitIntakeQrCodesUseCase get _submitQrCodes => ref.read(submitIntakeQrCodesUseCaseProvider);
 
   Station? _currentStation;
 
   /// needsWitness kararı için çözülmüş kullanıcı istasyonu (init'te bir kez set edilir).
   Station? get currentStation => _currentStation;
 
+  /// [Madde 5] Bu oturumda şahit olarak giriş yapmış kullanıcılar, en son
+  /// kullanılan başta olacak şekilde. Tek bir alan yerine liste kullanılır
+  /// çünkü aynı alım içinde birden fazla FARKLI şahit gerekebilir (kalemlerin
+  /// şahitlik listeleri birbirinden bağımsız olabilir) — yalnızca son şahidi
+  /// tutmak, diğerlerinin geçerliliğini kaybetmesine yol açardı.
+  final List<User> _recentWitnesses = [];
+
+  int? get _currentUserId => ref.read(authNotifierProvider.notifier).currentUser?.id;
+
   @override
   MasterIntakeState build() {
     _orchestrator = MasterDrawerOrchestrator(ref: ref);
     _orchestrator.init(onStageChange: _onDrawerStage);
     ref.onDispose(_orchestrator.dispose);
+
+    // [Madde 5] Güvenlik: oturum sahibi değişirse (çıkış yapıldı veya farklı
+    // bir kullanıcı giriş yaptı) birikmiş şahit listesi TEMİZLENİR —
+    // _recentWitnesses bir sonraki kullanıcının ekranına sızmamalı.
+    // AuthSessionExpiring'de user aynı kaldığı için (countdown sırasında)
+    // temizlik TETİKLENMEZ — yalnızca gerçek login/logout/kullanıcı değişimi.
+    ref.listen(authNotifierProvider, (previous, next) {
+      AppUser? userOf(AuthState? s) => switch (s) {
+        AuthLoggedIn(:final user) => user,
+        AuthSessionExpiring(:final user) => user,
+        _ => null,
+      };
+      if (userOf(previous)?.id != userOf(next)?.id) {
+        _recentWitnesses.clear();
+      }
+    });
 
     // Hasta seçim notifier'ındaki filtre veya görünüm tipi değişince (sadece
     // MedicineSelection fazındayken, hasta zaten seçiliyken) tepki veririz.
@@ -172,7 +199,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
         state = MasterIntakeMedicineSelection(
           hospitalization: hospitalization,
           intakeType: _type,
-          items: items,
+          items: _applyPersistedWitnesses(items),
           selectedItemIds: autoSelectedIds,
         );
       },
@@ -269,66 +296,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     state = s.copyWith(items: items);
   }
 
-  /// Bir kaleme şahit atar ve aynı şahidin uygun olduğu DİĞER seçili kalemlere
-  /// de otomatik yayar (aynı şahit için tekrar tekrar giriş istenmez).
-  ///
-  /// Kurallar:
-  ///   - Aktif (login) kullanıcı şahit OLAMAZ — sessizce reddedilir.
-  ///   - Bir kalem için şahit uygunluğu: o kalemin witnesses listesi boşsa
-  ///     (herkes şahit olabilir) VEYA user o kalemin witnesses listesindeyse.
-  ///   - Hedef kaleme her durumda atanır (zaten dialog o kalem için açıldı);
-  ///     diğer kalemlere yalnızca uygunsa ve henüz şahidi yoksa atanır.
-  void addWitness(int itemId, User user) {
-    final s = state;
-    if (s is! MasterIntakeMedicineSelection) return;
-
-    final currentUserId = ref.read(authNotifierProvider.notifier).currentUser?.id;
-    if (currentUserId != null && user.id == currentUserId) return;
-
-    IntakeItem assignTo(IntakeItem item) => item.isEquivalentIntake
-        ? item.copyWith(equivalentWitnessContext: item.activeWitnessContext.copyWith(witness: user))
-        : item.copyWith(witnessContext: item.activeWitnessContext.copyWith(witness: user));
-
-    final items = s.items.map((item) {
-      if (item.id == itemId) return assignTo(item);
-
-      final isSelected = s.selectedItemIds.contains(item.id);
-      if (!isSelected || item.activeWitnessContext.witness != null) return item;
-
-      final canWitness =
-          item.activeWitnessContext.witnesses.isEmpty ||
-          item.activeWitnessContext.witnesses.any((w) => w.id == user.id);
-      return canWitness ? assignTo(item) : item;
-    }).toList();
-
-    state = s.copyWith(items: items);
-  }
-
-  /// [itemId] kalemi için zaten uygun bir şahit atanmış mı? (Dialog açmadan önce
-  /// view bunu kontrol eder; uygunsa tekrar giriş istemeden o şahidi kullanır.)
-  ///
-  /// "Uygun" = seçili kalemlerden birine atanmış, aktif kullanıcı olmayan ve bu
-  /// kaleme de şahit olabilen bir kullanıcı.
-  User? resolveExistingWitness(int itemId) {
-    final s = state;
-    if (s is! MasterIntakeMedicineSelection) return null;
-    final target = s.items.firstWhereOrNull((i) => i.id == itemId);
-    if (target == null) return null;
-
-    final currentUserId = ref.read(authNotifierProvider.notifier).currentUser?.id;
-
-    for (final item in s.items) {
-      if (!s.selectedItemIds.contains(item.id)) continue;
-      final w = item.activeWitnessContext.witness;
-      if (w == null) continue;
-      if (currentUserId != null && w.id == currentUserId) continue;
-
-      final targetWitnesses = target.activeWitnessContext.witnesses;
-      final canWitness = targetWitnesses.isEmpty || targetWitnesses.any((x) => x.id == w.id);
-      if (canWitness) return w;
-    }
-    return null;
-  }
   // ── FAZ 3: Toplu Check → Kuyruk ─────────────────────────────────────────
 
   /// "Alıma Başla" — seçili kalemleri toplu check eder, kuyruğu kurar, ilk
@@ -492,8 +459,6 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     final stepNo = IntakeQueueBuilder.resolveStepNoForTarget(target);
     await _orchestrator.open(assignment: assignment, explicitTargetStep: stepNo);
   }
-
-  // ── Sayım güncelleme (aktif job içinde) ──────────────────────────────────
 
   /// Kübik: aktif gözün belirli detayının sayımını günceller.
   void onCubicCountChanged(int detailIndex, double? value) =>
@@ -739,10 +704,27 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     }
 
     final completedJobs = _withStatus(s.jobs, s.currentIndex, CabinOperationJobStatus.completed);
-    final nextIndex = s.currentIndex + 1;
     await _orchestrator.stop();
 
-    if (nextIndex >= s.jobs.length) {
+    final finishedJob = completedJobs[s.currentIndex];
+    final qrRequirements = intakeQrCodeRequirementsOf(finishedJob);
+    debugPrint(
+      'QR check: job=${finishedJob.cabinDrawerId} targets=${finishedJob.targets.length} qrReq=${qrRequirements.length}',
+    );
+    if (qrRequirements.isNotEmpty) {
+      state = s.copyWith(jobs: completedJobs, qrCodeJob: finishedJob, qrCodeErrors: const {});
+      return; // sıradaki job'a geçiş dialog kapanınca _advanceQueue ile devam eder
+    }
+
+    await _advanceQueue(s, completedJobs);
+  }
+
+  /// Eskiden _onCurrentDrawerClosed'ın son bloğuydu — artık hem qrCode'suz
+  /// hem de qrCode dialog'u kapandıktan sonraki devam noktası.
+  Future<void> _advanceQueue(MasterIntakeExecuting s, List<IntakeDrawerJob> completedJobs) async {
+    final nextIndex = s.currentIndex + 1;
+
+    if (nextIndex >= completedJobs.length) {
       await _reloadSelectionAfterQueue();
       return;
     }
@@ -895,9 +877,16 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     final items = s.items.map((it) {
       if (it.id != itemId) return it;
       if (isSameSelected) return it.copyWith(clearSelectedEquivalent: true);
+
+      // [Madde 5] equivalent.witnessContext ham gelir (witness: null); muadil
+      // değişince önceden otomatik atanmış şahidin sıfırlanmaması için, uygunsa
+      // oturumdaki şahitlerden birini burada da dene.
+      final rawContext = equivalent.witnessContext;
+      final resolvedWitness = _resolvePersistedWitnessFor(rawContext.witnesses);
+
       return it.copyWith(
         selectedEquivalent: equivalent,
-        equivalentWitnessContext: equivalent.witnessContext,
+        equivalentWitnessContext: resolvedWitness != null ? rawContext.copyWith(witness: resolvedWitness) : rawContext,
         dosePiece: equivalent.purchaseQuantity ?? it.dosePiece,
       );
     }).toList();
@@ -1156,5 +1145,168 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     _hospitalizationId = null;
     unawaited(_orchestrator.stop());
     Future.microtask(() => state = const MasterIntakeUninitialized());
+  }
+
+  /// Şahit İşlemleri
+  ///
+  /// [candidateId] bu şahit listesine göre şahit olabilir mi? Liste boşsa
+  /// (kısıt yok) herkes olabilir; id null ise asla olamaz.
+  bool _canWitness(List<User> allowedWitnesses, int? candidateId) {
+    if (candidateId == null) return false;
+    return allowedWitnesses.isEmpty || allowedWitnesses.any((w) => w.id == candidateId);
+  }
+
+  void _rememberWitness(User user) {
+    _recentWitnesses.removeWhere((w) => w.id == user.id);
+    _recentWitnesses.insert(0, user);
+    if (_recentWitnesses.length > 10) _recentWitnesses.removeLast();
+  }
+
+  /// Oturumdaki geçmiş şahitler arasından [allowedWitnesses] kısıtına uyan
+  /// İLK (en yeni) şahidi döner; aktif kullanıcı asla döndürülmez.
+  User? _resolvePersistedWitnessFor(List<User> allowedWitnesses) {
+    for (final w in _recentWitnesses) {
+      if (w.id != null && w.id == _currentUserId) continue;
+      if (_canWitness(allowedWitnesses, w.id)) return w;
+    }
+    return null;
+  }
+
+  /// Bir kaleme şahit atar ve aynı şahidin uygun olduğu DİĞER seçili kalemlere
+  /// de otomatik yayar (aynı şahit için tekrar tekrar giriş istenmez).
+  ///
+  /// Kurallar:
+  ///   - Aktif (login) kullanıcı şahit OLAMAZ — sessizce reddedilir.
+  ///   - Bir kalem için şahit uygunluğu: o kalemin witnesses listesi boşsa
+  ///     (herkes şahit olabilir) VEYA user o kalemin witnesses listesindeyse.
+  ///   - Hedef kaleme her durumda atanır (zaten dialog o kalem için açıldı);
+  ///     diğer kalemlere yalnızca uygunsa ve henüz şahidi yoksa atanır.
+  ///   - [Madde 5] Atanan şahit, hasta değişse dahi kullanılabilmesi için
+  ///     oturum belleğine (_recentWitnesses) kaydedilir.
+  void addWitness(int itemId, User user) {
+    final s = state;
+    if (s is! MasterIntakeMedicineSelection) return;
+
+    if (user.id != null && user.id == _currentUserId) return;
+
+    _rememberWitness(user);
+
+    IntakeItem assignTo(IntakeItem item) => item.isEquivalentIntake
+        ? item.copyWith(equivalentWitnessContext: item.activeWitnessContext.copyWith(witness: user))
+        : item.copyWith(witnessContext: item.activeWitnessContext.copyWith(witness: user));
+
+    final items = s.items.map((item) {
+      if (item.id == itemId) return assignTo(item);
+
+      final isSelected = s.selectedItemIds.contains(item.id);
+      if (!isSelected || item.activeWitnessContext.witness != null) return item;
+
+      return _canWitness(item.activeWitnessContext.witnesses, user.id) ? assignTo(item) : item;
+    }).toList();
+
+    state = s.copyWith(items: items);
+  }
+
+  /// [Madde 5] Yeni yüklenen kalemler arasında şahit gerektirip henüz şahidi
+  /// olmayanlara, bu oturumda daha önce giriş yapmış (ve bu kalem için hâlâ
+  /// uygun olan) bir şahit varsa otomatik atar. Kullanıcının kalemi seçip
+  /// dialog açmasını BEKLEMEZ — hasta değişiminde bile liste zaten dolu gelir.
+  List<IntakeItem> _applyPersistedWitnesses(List<IntakeItem> items) {
+    if (_recentWitnesses.isEmpty) return items;
+
+    return items.map((item) {
+      if (!item.needsWitness(currentStation: _currentStation)) return item;
+      if (item.activeWitnessContext.witness != null) return item;
+
+      final resolved = _resolvePersistedWitnessFor(item.activeWitnessContext.witnesses);
+      if (resolved == null) return item;
+
+      return item.isEquivalentIntake
+          ? item.copyWith(equivalentWitnessContext: item.activeWitnessContext.copyWith(witness: resolved))
+          : item.copyWith(witnessContext: item.activeWitnessContext.copyWith(witness: resolved));
+    }).toList();
+  }
+
+  /// [itemId] kalemi için zaten uygun bir şahit atanmış mı? (Dialog açmadan önce
+  /// view bunu kontrol eder; uygunsa tekrar giriş istemeden o şahidi kullanır.)
+  ///
+  /// "Uygun" = seçili kalemlerden birine atanmış, aktif kullanıcı olmayan ve bu
+  /// kaleme de şahit olabilen bir kullanıcı. — Aynı listedeki canlı yayılım
+  /// içindir; oturum geneli (_recentWitnesses) fallback'i buraya EKLENMEZ,
+  /// çünkü _applyPersistedWitnesses zaten yüklemede bunu tüketmiştir.
+  User? resolveExistingWitness(int itemId) {
+    final s = state;
+    if (s is! MasterIntakeMedicineSelection) return null;
+    final target = s.items.firstWhereOrNull((i) => i.id == itemId);
+    if (target == null) return null;
+
+    for (final item in s.items) {
+      if (!s.selectedItemIds.contains(item.id)) continue;
+      final w = item.activeWitnessContext.witness;
+      if (w == null) continue;
+      if (w.id != null && w.id == _currentUserId) continue;
+      if (_canWitness(target.activeWitnessContext.witnesses, w.id)) return w;
+    }
+    return null;
+  }
+
+  /// Karekod İşlemleri
+  ///
+  /// "İşlemi Tamamla" — yalnızca DOLU girilen hedefler için istek atar; boş
+  /// bırakılanlar backend'de otomatik "okutulmadı" sayılır (hiç istek gitmez).
+  /// Hata alan hedef olsa dahi kuyruk İLERLER — hata yalnızca dialog'da
+  /// gösterilir, akışı durdurmaz.
+  Future<void> submitQrCodesAndContinue(Map<int, List<String>> codesByPrescriptionDetailId) async {
+    final s = state;
+    if (s is! MasterIntakeExecuting || s.qrCodeJob == null) return;
+
+    final toSubmit = s.qrCodeRequirements
+        .where((r) => (codesByPrescriptionDetailId[r.prescriptionDetailId] ?? const []).isNotEmpty)
+        .toList();
+
+    if (toSubmit.isEmpty) {
+      await _finishQrCodeDialog(s);
+      return;
+    }
+
+    state = s.copyWith(isSubmittingQrCodes: true);
+
+    final errors = <int, String>{};
+    for (final req in toSubmit) {
+      final codes = codesByPrescriptionDetailId[req.prescriptionDetailId]!;
+      final result = await _submitQrCodes(
+        SubmitIntakeQrCodesParams(
+          details: [IntakeQrCodeDetail(prescriptionDetailId: req.prescriptionDetailId, qrCode: codes)],
+        ),
+      );
+      result.when(ok: (_) {}, error: (e) => errors[req.prescriptionDetailId] = e.message);
+    }
+
+    final afterSubmit = state;
+    if (afterSubmit is! MasterIntakeExecuting) return;
+
+    if (errors.isEmpty) {
+      await _finishQrCodeDialog(afterSubmit);
+    } else {
+      // Hatalar dialog'da gösterilir; kullanıcı "Tamam" diyene kadar açık kalır.
+      state = afterSubmit.copyWith(isSubmittingQrCodes: false, qrCodeErrors: errors);
+    }
+  }
+
+  /// "Karekod Okutmadan Devam Et" — dialogdaki TÜM girdileri yok sayar, hiç
+  /// istek atmadan kuyruğa devam eder.
+  Future<void> skipQrCodesAndContinue() async {
+    final s = state;
+    if (s is! MasterIntakeExecuting || s.qrCodeJob == null) return;
+    await _finishQrCodeDialog(s);
+  }
+
+  /// Hatalar gösterildikten sonra kullanıcının "Tamam" demesiyle çağrılır.
+  Future<void> acknowledgeQrCodeErrorsAndContinue() => skipQrCodesAndContinue();
+
+  Future<void> _finishQrCodeDialog(MasterIntakeExecuting s) async {
+    final jobsSnapshot = s.jobs;
+    state = s.copyWith(clearQrCodeJob: true, isSubmittingQrCodes: false, qrCodeErrors: const {});
+    await _advanceQueue(s, jobsSnapshot);
   }
 }
