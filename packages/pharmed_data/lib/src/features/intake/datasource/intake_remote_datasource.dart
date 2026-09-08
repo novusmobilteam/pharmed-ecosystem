@@ -185,4 +185,12 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.voidParser(),
     );
   }
+
+  Future<Result<void>> submitIntakeQrCodes(Map<String, dynamic> body) {
+    return postRequest(
+      path: '/Prescription/detail/collectQrCodes',
+      body: body,
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+  }
 }

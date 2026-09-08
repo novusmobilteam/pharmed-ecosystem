@@ -6794,4 +6794,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unload_replaceMedicine_allMedicinesButton => 'All Medicines List';
+
+  @override
+  String get intake_qrCode_dialogTitle => 'Scan Medicine QR Codes';
+
+  @override
+  String intake_qrCode_fieldHint(int index) {
+    return 'QR code $index';
+  }
+
+  @override
+  String get intake_qrCode_skipButton => 'Continue Without Scanning';
+
+  @override
+  String get intake_qrCode_submitErrorFallback =>
+      'QR code could not be saved for this medicine.';
 }

@@ -20,8 +20,10 @@ export 'domain/entity/other_station_check_state.dart';
 export 'domain/entity/redirected_intake_order.dart';
 export 'domain/entity/redirected_patient_group.dart';
 export 'domain/entity/redirected_order.dart';
+export 'domain/entity/intake_qr_code_requirement.dart';
 
 export 'domain/repository/i_intake_repository.dart';
+
 export 'domain/usecase/check_intake_usecase.dart';
 export 'domain/usecase/complete_intake_usecase.dart';
 export 'domain/usecase/define_patient_medicine_usecase.dart';
@@ -36,3 +38,4 @@ export 'domain/usecase/get_other_station_medicines_usecase.dart';
 export 'domain/usecase/redirect_usecases.dart';
 export 'domain/usecase/get_redirected_orders_usecase.dart';
 export 'domain/usecase/cancel_redirected_order_usecase.dart';
+export 'domain/usecase/submit_intake_qr_codes_usecase.dart';

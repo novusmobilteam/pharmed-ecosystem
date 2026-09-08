@@ -31,6 +31,8 @@ abstract interface class IIntakeRepository {
   Future<Result<void>> completeFreeIntake(Map<String, dynamic> data);
   Future<Result<void>> completeUrgentIntake(Map<String, dynamic> data);
 
+  Future<Result<void>> submitIntakeQrCodes(SubmitIntakeQrCodesParams params);
+
   /// POST /Prescription/detail/equivalent/collect
   Future<Result<void>> completeEquivalentIntake(Map<String, dynamic> data);
 

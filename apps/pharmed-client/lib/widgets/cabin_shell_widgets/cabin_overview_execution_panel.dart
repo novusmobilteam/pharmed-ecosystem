@@ -114,15 +114,6 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
       final normalCount = (item.units.length - mergedCount).clamp(0, item.units.length);
       final normalUnits = item.units.sublist(0, normalCount);
 
-      // İade çekmecesinde (ReturnType.toDrawer) TÜM hedefler TEK ADIMDA
-      // tamamlanır (bkz. MasterRefundNotifier.confirmCurrent, job.isReturnDrawer
-      // dalı) — kübikteki gibi lid-by-lid bir "aktif hücre" kavramı YOK.
-      // item.activeTargetIndex, donanım adresi için seçilen RASTGELE unit'e
-      // (bkz. _resolveReturnDrawerAssignment) bağımlıydı ve bu genelde bir
-      // NORMAL hücreyi yanlışlıkla aktif gösteriyordu. Gerçek hedef HER ZAMAN
-      // birleşik son-4-hücre İADE kutusudur — normal hücreler hep idle kalır,
-      // kutu bu fonksiyon zaten SADECE aktif item için çağrıldığı için
-      // (bkz. build()'teki activeItem filtresi) doğrudan active kabul edilir.
       final rawNormalStates = List<_CellState>.filled(normalCount, _CellState.idle);
       final normalStates = reorderParallelToVisual(normalUnits, rawNormalStates, columnCount: 3);
 
@@ -196,9 +187,10 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
 
     final grid = List.generate(steps, (_) => List<_CellState>.filled(unitCount, _CellState.idle, growable: false));
 
-    // Hassas mod: en az bir completedCell VEYA activeStepNo varsa (bu ekran
-    // stockIdAt sağlıyor demektir) — o zaman TAM hücre bazlı işaretleriz.
-    final hasPreciseData = item.completedCells.isNotEmpty || item.activeStepNo != null;
+    // Hassas mod: en az bir completedCell VEYA activeStepNo VEYA activeCells
+    // varsa (bu ekran stockIdAt/stockIdsAt sağlıyor demektir) — TAM hücre
+    // bazlı işaretleriz.
+    final hasPreciseData = item.completedCells.isNotEmpty || item.activeStepNo != null || item.activeCells.isNotEmpty;
 
     for (final (unitIdx, stepNo) in item.completedCells) {
       final r = steps - stepNo;
@@ -218,15 +210,30 @@ class CabinOverviewExecutionPanel extends StatelessWidget {
       }
     }
 
-    final activeUnit = item.activeTargetIndex;
-    if (activeUnit != null && activeUnit >= 0 && activeUnit < unitCount) {
-      if (item.activeStepNo != null) {
-        final r = steps - item.activeStepNo!;
+    // ÇOKLU AKTİF HÜCRE: bir target/step BİRDEN FAZLA fiziksel göze
+    // yayılıyorsa (örn. intake'te aynı prescriptionDetailId'nin FIFO ile 2
+    // farklı stoktan/gözden alınması), activeCells'teki TÜM (unit, step)
+    // çiftleri aktif işaretlenir. Bu, tek-hücreli eski davranışın (aşağıdaki
+    // else dalı — activeStepNo/activeTargetIndex) YERİNE geçer, onunla
+    // birlikte kullanılmaz.
+    if (item.activeCells.isNotEmpty) {
+      for (final (unitIdx, stepNo) in item.activeCells) {
+        final r = steps - stepNo;
+        if (r >= 0 && r < steps && unitIdx >= 0 && unitIdx < unitCount) {
+          grid[r][unitIdx] = _CellState.active;
+        }
+      }
+    } else {
+      final activeUnit = item.activeTargetIndex;
+      if (activeUnit != null && activeUnit >= 0 && activeUnit < unitCount) {
+        if (item.activeStepNo != null) {
+          final r = steps - item.activeStepNo!;
 
-        if (r >= 0 && r < steps) grid[r][activeUnit] = _CellState.active;
-      } else {
-        for (final row in grid) {
-          row[activeUnit] = _CellState.active;
+          if (r >= 0 && r < steps) grid[r][activeUnit] = _CellState.active;
+        } else {
+          for (final row in grid) {
+            row[activeUnit] = _CellState.active;
+          }
         }
       }
     }
@@ -568,9 +575,6 @@ class _KubikGrid extends StatelessWidget {
 class _UnitDoseDepthGrid extends StatelessWidget {
   const _UnitDoseDepthGrid({required this.grid});
 
-  /// [row][col] — row 0 = step 1 (çekmecenin ÖNÜ). Bu yön varsayımı
-  /// donanım dokümantasyonundaki stepNo artışına dayanıyor — hardware
-  /// testiyle teyit edilmeli, yanlışsa satırları ters çevirmek yeterli.
   final List<List<_CellState>> grid;
 
   static const double _cellSize = 28;
@@ -639,10 +643,6 @@ class _CellBox extends StatelessWidget {
   final int index;
   final _CellState state;
   final String? label;
-
-  /// false ise (dış boyutu zaten sabitlenmiş, satır/sütun başlıklı grid'ler
-  /// gibi) dikey padding UYGULANMAZ — sabit küçük hücrelerde padding
-  /// content'i eziyordu (bkz. _UnitDoseDepthGrid, 32px hücre + 32px padding).
   final bool padded;
 
   @override

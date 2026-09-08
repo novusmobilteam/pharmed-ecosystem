@@ -160,4 +160,9 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   Future<Result<void>> cancelRedirectedOrder(int redirectedOrderId) async {
     return await _dataSource.cancelRedirectedOrder(redirectedOrderId);
   }
+
+  @override
+  Future<Result<void>> submitIntakeQrCodes(SubmitIntakeQrCodesParams params) async {
+    return await _dataSource.submitIntakeQrCodes(params.toJson());
+  }
 }

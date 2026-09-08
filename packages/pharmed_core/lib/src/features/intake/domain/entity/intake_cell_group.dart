@@ -39,15 +39,17 @@ abstract final class IntakeCellGrouper {
   /// [targets] (genelde `job.targets`) içindeki tüm detayları stockId'ye göre
   /// gruplar. Sıralama: ilk görülme sırası korunur.
   static List<IntakeCellGroup> group(List<IntakeTarget> targets) {
-    final Map<int, List<(int, int)>> byStock = {};
-
+    final result = <IntakeCellGroup>[];
     for (var ti = 0; ti < targets.length; ti++) {
       final details = targets[ti].details;
-      for (var di = 0; di < details.length; di++) {
-        byStock.putIfAbsent(details[di].stockId, () => []).add((ti, di));
-      }
+      if (details.isEmpty) continue;
+      result.add(
+        IntakeCellGroup(
+          stockId: details.first.stockId, // artık "temsilci" — bkz. not
+          refs: [for (var di = 0; di < details.length; di++) (ti, di)],
+        ),
+      );
     }
-
-    return byStock.entries.map((e) => IntakeCellGroup(stockId: e.key, refs: e.value)).toList();
+    return result;
   }
 }
