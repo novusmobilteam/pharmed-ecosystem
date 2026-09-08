@@ -8852,5 +8852,14 @@
 "unload_replaceMedicine_allMedicinesButton": "Tüm İlaç Listesi",
 "@unload_replaceMedicine_allMedicinesButton": {
   "description": "Toggle button inside the replace-medicine dialog that switches from the equivalent-medicines list to the full medicine list"
-}
+},
+"intake_qrCode_dialogTitle": "İlaç Karekodlarını Okutun",
+"intake_qrCode_fieldHint": "Karekod {index}",
+"@intake_qrCode_fieldHint": {
+  "placeholders": {
+    "index": { "type": "int" }
+  }
+},
+"intake_qrCode_skipButton": "Okutmadan Devam Et",
+"intake_qrCode_submitErrorFallback": "Bu ilaç için karekod kaydedilemedi."
 }

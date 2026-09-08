@@ -6745,4 +6745,19 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get unload_replaceMedicine_allMedicinesButton => 'Tüm İlaç Listesi';
+
+  @override
+  String get intake_qrCode_dialogTitle => 'İlaç Karekodlarını Okutun';
+
+  @override
+  String intake_qrCode_fieldHint(int index) {
+    return 'Karekod $index';
+  }
+
+  @override
+  String get intake_qrCode_skipButton => 'Okutmadan Devam Et';
+
+  @override
+  String get intake_qrCode_submitErrorFallback =>
+      'Bu ilaç için karekod kaydedilemedi.';
 }

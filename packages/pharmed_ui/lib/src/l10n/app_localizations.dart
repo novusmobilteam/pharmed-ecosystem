@@ -12002,6 +12002,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All Medicines List'**
   String get unload_replaceMedicine_allMedicinesButton;
+
+  /// No description provided for @intake_qrCode_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Medicine QR Codes'**
+  String get intake_qrCode_dialogTitle;
+
+  /// No description provided for @intake_qrCode_fieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code {index}'**
+  String intake_qrCode_fieldHint(int index);
+
+  /// No description provided for @intake_qrCode_skipButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Without Scanning'**
+  String get intake_qrCode_skipButton;
+
+  /// No description provided for @intake_qrCode_submitErrorFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code could not be saved for this medicine.'**
+  String get intake_qrCode_submitErrorFallback;
 }
 
 class _AppLocalizationsDelegate

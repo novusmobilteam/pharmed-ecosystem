@@ -333,6 +333,10 @@ final completeIntakeUseCaseProvider = Provider((ref) {
   return CompleteIntakeUseCase(ref.read(intakeRepositoryProvider));
 });
 
+final submitIntakeQrCodesUseCaseProvider = Provider((ref) {
+  return SubmitIntakeQrCodesUseCase(ref.read(intakeRepositoryProvider));
+});
+
 final getEquivalentIntakesUseCaseProvider = Provider((ref) {
   return GetEquivalentIntakesUseCase(ref.read(intakeRepositoryProvider), ref.read(medicineRepositoryProvider));
 });

@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/dashboard/dashboard.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -46,6 +47,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   CheckRedirectedIntakeUseCase get _checkRedirectedIntake => ref.read(checkRedirectedIntakeUseCaseProvider);
   CompleteRedirectedIntakeUseCase get _completeRedirectedIntake => ref.read(completeRedirectedIntakeUseCaseProvider);
   GetStationAssignmentsUseCase get _getAssignments => ref.read(getStationAssignmentsUseCaseProvider);
+  SubmitIntakeQrCodesUseCase get _submitQrCodes => ref.read(submitIntakeQrCodesUseCaseProvider);
 
   Station? _currentStation;
 
@@ -702,10 +704,27 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
     }
 
     final completedJobs = _withStatus(s.jobs, s.currentIndex, CabinOperationJobStatus.completed);
-    final nextIndex = s.currentIndex + 1;
     await _orchestrator.stop();
 
-    if (nextIndex >= s.jobs.length) {
+    final finishedJob = completedJobs[s.currentIndex];
+    final qrRequirements = intakeQrCodeRequirementsOf(finishedJob);
+    debugPrint(
+      'QR check: job=${finishedJob.cabinDrawerId} targets=${finishedJob.targets.length} qrReq=${qrRequirements.length}',
+    );
+    if (qrRequirements.isNotEmpty) {
+      state = s.copyWith(jobs: completedJobs, qrCodeJob: finishedJob, qrCodeErrors: const {});
+      return; // sıradaki job'a geçiş dialog kapanınca _advanceQueue ile devam eder
+    }
+
+    await _advanceQueue(s, completedJobs);
+  }
+
+  /// Eskiden _onCurrentDrawerClosed'ın son bloğuydu — artık hem qrCode'suz
+  /// hem de qrCode dialog'u kapandıktan sonraki devam noktası.
+  Future<void> _advanceQueue(MasterIntakeExecuting s, List<IntakeDrawerJob> completedJobs) async {
+    final nextIndex = s.currentIndex + 1;
+
+    if (nextIndex >= completedJobs.length) {
       await _reloadSelectionAfterQueue();
       return;
     }
@@ -1129,7 +1148,7 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
   }
 
   /// Şahit İşlemleri
-
+  ///
   /// [candidateId] bu şahit listesine göre şahit olabilir mi? Liste boşsa
   /// (kısıt yok) herkes olabilir; id null ise asla olamaz.
   bool _canWitness(List<User> allowedWitnesses, int? candidateId) {
@@ -1229,5 +1248,65 @@ class MasterIntakeNotifier extends Notifier<MasterIntakeState> {
       if (_canWitness(target.activeWitnessContext.witnesses, w.id)) return w;
     }
     return null;
+  }
+
+  /// Karekod İşlemleri
+  ///
+  /// "İşlemi Tamamla" — yalnızca DOLU girilen hedefler için istek atar; boş
+  /// bırakılanlar backend'de otomatik "okutulmadı" sayılır (hiç istek gitmez).
+  /// Hata alan hedef olsa dahi kuyruk İLERLER — hata yalnızca dialog'da
+  /// gösterilir, akışı durdurmaz.
+  Future<void> submitQrCodesAndContinue(Map<int, List<String>> codesByPrescriptionDetailId) async {
+    final s = state;
+    if (s is! MasterIntakeExecuting || s.qrCodeJob == null) return;
+
+    final toSubmit = s.qrCodeRequirements
+        .where((r) => (codesByPrescriptionDetailId[r.prescriptionDetailId] ?? const []).isNotEmpty)
+        .toList();
+
+    if (toSubmit.isEmpty) {
+      await _finishQrCodeDialog(s);
+      return;
+    }
+
+    state = s.copyWith(isSubmittingQrCodes: true);
+
+    final errors = <int, String>{};
+    for (final req in toSubmit) {
+      final codes = codesByPrescriptionDetailId[req.prescriptionDetailId]!;
+      final result = await _submitQrCodes(
+        SubmitIntakeQrCodesParams(
+          details: [IntakeQrCodeDetail(prescriptionDetailId: req.prescriptionDetailId, qrCode: codes)],
+        ),
+      );
+      result.when(ok: (_) {}, error: (e) => errors[req.prescriptionDetailId] = e.message);
+    }
+
+    final afterSubmit = state;
+    if (afterSubmit is! MasterIntakeExecuting) return;
+
+    if (errors.isEmpty) {
+      await _finishQrCodeDialog(afterSubmit);
+    } else {
+      // Hatalar dialog'da gösterilir; kullanıcı "Tamam" diyene kadar açık kalır.
+      state = afterSubmit.copyWith(isSubmittingQrCodes: false, qrCodeErrors: errors);
+    }
+  }
+
+  /// "Karekod Okutmadan Devam Et" — dialogdaki TÜM girdileri yok sayar, hiç
+  /// istek atmadan kuyruğa devam eder.
+  Future<void> skipQrCodesAndContinue() async {
+    final s = state;
+    if (s is! MasterIntakeExecuting || s.qrCodeJob == null) return;
+    await _finishQrCodeDialog(s);
+  }
+
+  /// Hatalar gösterildikten sonra kullanıcının "Tamam" demesiyle çağrılır.
+  Future<void> acknowledgeQrCodeErrorsAndContinue() => skipQrCodesAndContinue();
+
+  Future<void> _finishQrCodeDialog(MasterIntakeExecuting s) async {
+    final jobsSnapshot = s.jobs;
+    state = s.copyWith(clearQrCodeJob: true, isSubmittingQrCodes: false, qrCodeErrors: const {});
+    await _advanceQueue(s, jobsSnapshot);
   }
 }

@@ -6955,4 +6955,20 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get unload_replaceMedicine_allMedicinesButton =>
       'Liste De Tous Les Médicaments';
+
+  @override
+  String get intake_qrCode_dialogTitle =>
+      'Scanner les codes QR des médicaments';
+
+  @override
+  String intake_qrCode_fieldHint(int index) {
+    return 'Code QR $index';
+  }
+
+  @override
+  String get intake_qrCode_skipButton => 'Continuer sans scanner';
+
+  @override
+  String get intake_qrCode_submitErrorFallback =>
+      'Le code QR n\'a pas pu être enregistré pour ce médicament.';
 }

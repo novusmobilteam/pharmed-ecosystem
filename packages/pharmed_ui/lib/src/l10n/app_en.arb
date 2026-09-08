@@ -4802,5 +4802,14 @@
 "cabinAssignmentList_deleteTooltip": "Delete Assignment",
 "cabinAssignmentList_replaceTooltip": "Replace Medicine",
 "unload_replaceMedicine_dialogTitle": "Select Equivalent Medicine",
-"unload_replaceMedicine_allMedicinesButton": "All Medicines List"
+"unload_replaceMedicine_allMedicinesButton": "All Medicines List",
+"intake_qrCode_dialogTitle": "Scan Medicine QR Codes",
+"intake_qrCode_fieldHint": "QR code {index}",
+"@intake_qrCode_fieldHint": {
+  "placeholders": {
+    "index": { "type": "int" }
+  }
+},
+"intake_qrCode_skipButton": "Continue Without Scanning",
+"intake_qrCode_submitErrorFallback": "QR code could not be saved for this medicine."
 }

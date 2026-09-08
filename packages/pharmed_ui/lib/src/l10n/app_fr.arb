@@ -4254,5 +4254,14 @@
 "cabinAssignmentList_deleteTooltip": "Supprimer L'Affectation",
 "cabinAssignmentList_replaceTooltip": "Remplacer Le Médicament",
 "unload_replaceMedicine_dialogTitle": "Sélectionner Un Médicament Équivalent",
-"unload_replaceMedicine_allMedicinesButton": "Liste De Tous Les Médicaments"
+"unload_replaceMedicine_allMedicinesButton": "Liste De Tous Les Médicaments",
+"intake_qrCode_dialogTitle": "Scanner les codes QR des médicaments",
+"intake_qrCode_fieldHint": "Code QR {index}",
+"@intake_qrCode_fieldHint": {
+  "placeholders": {
+    "index": { "type": "int" }
+  }
+},
+"intake_qrCode_skipButton": "Continuer sans scanner",
+"intake_qrCode_submitErrorFallback": "Le code QR n'a pas pu être enregistré pour ce médicament."
 }

@@ -1,7 +1,7 @@
 // [SWREQ-CORE-DRAWERQUEUE-001] [IEC 62304 §5.5]
 // Kabin konum rehberi widget'ının kullandığı ekrandan bağımsız kuyruk öğesi.
 //
-// Her ekran (dolum, alım, sayım, iade, imha) kendi job modelinden
+// Her ekran (dolum, sayım, alım, iade, imha) kendi job modelinden
 // [DrawerQueueItem] listesi üretir; [CabinLocationGuide] yalnızca bu modeli bilir.
 //
 // Sınıf: Class B
@@ -49,6 +49,7 @@ class DrawerQueueItem {
     this.activeStepNo,
     this.completedCells = const {},
     this.isReturnDrawerTarget = false,
+    this.activeCells = const {},
   });
 
   final DrawerGroup group;
@@ -66,7 +67,10 @@ class DrawerQueueItem {
 
   /// Birim doz: aktif hedefin DERİNLİK (step) numarası — 1-tabanlı,
   /// DrawerCell.stepNo ile birebir. stockIdAt sağlanmayan ekranlarda null
-  /// kalır (fallback: tüm sütun aktif gösterilir).
+  /// kalır (fallback: tüm sütun aktif gösterilir). Bir target BİRDEN FAZLA
+  /// stockId'ye yayılıyorsa (bkz. [activeCells]) bu alan İLK stockId'nin
+  /// step'idir — geriye dönük uyumluluk için korunuyor, çoklu hücreli
+  /// ekranlar [activeCells]'i kullanmalı.
   final int? activeStepNo;
 
   /// Birim doz: (ön göz index'i, step numarası) çiftleri — tamamlanan
@@ -79,6 +83,13 @@ class DrawerQueueItem {
   /// yapılıyorsa bu false kalmalı, aksi halde konum rehberi yanlışlıkla
   /// birleşik İADE kutusunu aktif gösterir.
   final bool isReturnDrawerTarget;
+
+  /// Birim doz: şu an işlenen TÜM (unitIndex, stepNo) hücreleri — bir target
+  /// birden fazla stoktan/gözden alınıyorsa (örn. aynı prescriptionDetailId
+  /// 2 farklı stockId'den besleniyorsa) hepsi burada. [stockIdsAt] verilmeyen
+  /// ekranlarda boş kalır — o ekranlar [activeStepNo]/[activeTargetIndex]'i
+  /// kullanmaya devam eder, davranış değişmez.
+  final Set<(int unitIndex, int stepNo)> activeCells;
 
   // ── Türetilen ─────────────────────────────────────────────────────────────
 
@@ -117,6 +128,14 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
   /// çağıran kırılmaz.
   int? Function(TJob job, int targetIndex)? stockIdAt,
 
+  /// YENİ, opsiyonel. Bir target (step) BİRDEN FAZLA stockId'ye yayılıyorsa
+  /// (aynı fiziksel unit'ten farklı derinliklerde/gözlerde alınıyorsa, örn.
+  /// intake'in FIFO bölünmesi) TÜM stockId'leri döndürür — [assignmentAt]'in
+  /// döndürdüğü TEK assignment/unit üzerinden her biri ayrı bir (unitIndex,
+  /// stepNo) hücresine çözülür. Verilmezse eski tek-stockId davranışı
+  /// ([activeStepNo]/[stockIdAt]) korunur, refill/census/waste kırılmaz.
+  List<int> Function(TJob job, int targetIndex)? stockIdsAt,
+
   /// YENİ, opsiyonel. Sadece iade gibi "aynı fiziksel çekmece hem normal
   /// göz hem birleşik kutu hedefi olabiliyor" ekranlarda verilir.
   bool Function(TJob job)? isReturnDrawerTargetOf,
@@ -126,12 +145,9 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
     jobBySlotId[cabinDrawerIdOf(jobs[i])] = (i, jobs[i]);
   }
 
-  int? stepNoFor(TJob job, int targetIndex) {
-    if (stockIdAt == null) return null;
-    final stockId = stockIdAt(job, targetIndex);
-    if (stockId == null) return null;
-    final assignment = assignmentAt(job, targetIndex);
-    final stock = assignment?.stocks?.firstWhereOrNull((s) => s.id == stockId);
+  int? stepNoForStock(MedicineAssignment? assignment, int? stockId) {
+    if (stockId == null || assignment == null) return null;
+    final stock = assignment.stocks?.firstWhereOrNull((s) => s.id == stockId);
     if (stock == null) return null;
 
     // Öncelik: stock'un kendi nested cabinDrawerDetail'ı (bazı endpoint'ler dolduruyor).
@@ -148,8 +164,12 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
     if (detailId == null) {
       return null;
     }
-    final stepNo = assignment?.cabinDrawerDetail?.firstWhereOrNull((d) => d.id == detailId)?.stepNo;
-    return stepNo;
+    return assignment.cabinDrawerDetail?.firstWhereOrNull((d) => d.id == detailId)?.stepNo;
+  }
+
+  int? stepNoFor(TJob job, int targetIndex) {
+    if (stockIdAt == null) return null;
+    return stepNoForStock(assignmentAt(job, targetIndex), stockIdAt(job, targetIndex));
   }
 
   return allGroups.map((group) {
@@ -172,6 +192,7 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
 
     final completedIndexes = <int>{};
     final completedCells = <(int, int)>{};
+    final activeCells = <(int, int)>{};
     int? activeUnitIndex;
     int? activeStepNo;
 
@@ -182,17 +203,43 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
         final idx = group.units.indexWhere((u) => u.id == unitId);
         if (idx < 0) continue;
         completedIndexes.add(idx);
-        final step = stepNoFor(job, t);
-        if (step != null) completedCells.add((idx, step));
+
+        // Geçmiş target'lar da birden fazla stockId taşıyabilir — hepsini
+        // tamamlanmış hücre olarak işaretle (verilmezse eski tek-stockId
+        // davranışı).
+        final stockIds = stockIdsAt?.call(job, t) ?? const <int>[];
+        if (stockIds.isNotEmpty) {
+          final assignment = assignmentAt(job, t);
+          for (final stockId in stockIds) {
+            final step = stepNoForStock(assignment, stockId);
+            if (step != null) completedCells.add((idx, step));
+          }
+        } else {
+          final step = stepNoFor(job, t);
+          if (step != null) completedCells.add((idx, step));
+        }
       }
+
       final targetCount = targetCountOf(job);
       if (currentTargetIndex >= 0 && currentTargetIndex < targetCount) {
-        final activeId = assignmentAt(job, currentTargetIndex)?.drawerUnit?.id;
+        final assignment = assignmentAt(job, currentTargetIndex);
+        final activeId = assignment?.drawerUnit?.id;
         if (activeId != null) {
           final idx = group.units.indexWhere((u) => u.id == activeId);
           if (idx >= 0) {
             activeUnitIndex = idx;
-            activeStepNo = stepNoFor(job, currentTargetIndex);
+
+            final stockIds = stockIdsAt?.call(job, currentTargetIndex) ?? const <int>[];
+            if (stockIds.isNotEmpty) {
+              for (final stockId in stockIds) {
+                final step = stepNoForStock(assignment, stockId);
+                if (step != null) activeCells.add((idx, step));
+              }
+              // Geriye dönük uyumluluk: activeStepNo'yu ilk hücreye eşitle.
+              activeStepNo = activeCells.isNotEmpty ? activeCells.first.$2 : null;
+            } else {
+              activeStepNo = stepNoFor(job, currentTargetIndex);
+            }
           }
         }
       }
@@ -206,6 +253,7 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
       activeUnitIndexes: const {},
       activeStepNo: isActive ? activeStepNo : null,
       completedCells: completedCells,
+      activeCells: isActive ? activeCells : const {},
       isReturnDrawerTarget: isReturnDrawerTargetOf?.call(job) ?? false,
     );
   }).toList();
