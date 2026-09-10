@@ -1,16 +1,23 @@
 part of 'cabin_design_dialog.dart';
 
-class _BasicSettingsPanel extends StatelessWidget {
-  const _BasicSettingsPanel({required this.ready, required this.notifier});
+class BasicSettingsView extends StatelessWidget {
+  const BasicSettingsView({super.key, required this.notifier});
 
-  final CabinDesignReady ready;
   final CabinDesignNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    final cabin = ready.cabin;
+    final cabin = notifier.selectedCabin;
     final isMaster = cabin.type == CabinType.master;
-    final errorText = ready.error?.userMessage;
+
+    const rescanKey = OperationKey.custom('rescanCabin');
+    const toggleStatusKey = OperationKey.custom('toggleStatus');
+
+    final errorText = notifier.isFailed(rescanKey)
+        ? notifier.message(rescanKey)
+        : notifier.isFailed(toggleStatusKey)
+        ? notifier.message(toggleStatusKey)
+        : null;
 
     return Column(
       key: ValueKey(cabin.id),
@@ -23,26 +30,16 @@ class _BasicSettingsPanel extends StatelessWidget {
               style: MedTextStyles.titleSm(color: MedColors.text3),
             ),
             Spacer(),
-            if (ready.hasPendingConnectionChange && ready.selectedGroup?.isSerum != true) ...[
+            if (notifier.hasPendingConnectionChange && notifier.selectedGroup?.isSerum != true) ...[
               MedButton(
                 label: context.l10n.cabinDesign_basicSettings_rescanButton,
-                onPressed: ready.isScanning ? null : notifier.rescanCabin,
-                isLoading: ready.isScanning,
+                onPressed: notifier.isScanning ? null : notifier.rescanCabin,
+                isLoading: notifier.isScanning,
                 size: MedButtonSize.sm,
                 variant: MedButtonVariant.secondary,
               ),
               SizedBox(width: 4.0),
             ],
-            if (!isMaster)
-              MedButton(
-                label: ready.cabin.status == Status.passive
-                    ? context.l10n.cabinDesign_basicSettings_activateButton
-                    : context.l10n.cabinDesign_basicSettings_deactivateButton,
-                onPressed: ready.isTogglingStatus ? null : notifier.toggleCabinActiveStatus,
-                isLoading: ready.isTogglingStatus,
-                size: MedButtonSize.sm,
-                variant: MedButtonVariant.ghost,
-              ),
           ],
         ),
         if (errorText != null) ...[
@@ -63,7 +60,7 @@ class _BasicSettingsPanel extends StatelessWidget {
 
         const SizedBox(height: MedSpacing.lg),
         MedTextInputField(
-          onChanged: (value) => notifier.updatePendingName(value),
+          onChanged: (value) => notifier.updateCabinName(value),
           initialValue: cabin.name,
           label: context.l10n.cabinDesign_basicSettings_nameLabel,
         ),
@@ -71,9 +68,9 @@ class _BasicSettingsPanel extends StatelessWidget {
         if (isMaster) ...[
           MedDropdownInputField(
             onChanged: (value) {
-              if (value != null) notifier.updatePendingComPort(value);
+              if (value != null) notifier.updateCabinComPort(value);
             },
-            initialValue: ready.pendingComPort?.label ?? cabin.comPort?.label,
+            initialValue: cabin.comPort?.label,
             label: context.l10n.cabinDesign_basicSettings_comPortLabel,
             options: SerialPort.availablePorts,
             labelBuilder: (port) => port,
@@ -81,11 +78,11 @@ class _BasicSettingsPanel extends StatelessWidget {
         ] else ...[
           MedDropdownInputField(
             onChanged: (address) {
-              if (address != null && !ready.isScanning) notifier.updatePendingAddressChar(address);
+              if (address != null && !notifier.isScanning) notifier.updateCabinAddress(address);
             },
-            initialValue: ready.pendingAddressChar ?? cabin.no?.toUpperCase(),
+            initialValue: cabin.no?.toUpperCase(),
             label: context.l10n.cabinDesign_newCabin_addressLabel,
-            options: ready.availableAddressCharsForEdit,
+            options: notifier.availableAddressCharsForEdit,
             labelBuilder: (address) => address,
           ),
         ],

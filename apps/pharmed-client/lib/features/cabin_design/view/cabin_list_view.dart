@@ -10,7 +10,7 @@ class _CabinListPanel extends StatelessWidget {
 
   final List<Cabin> cabins;
   final int? selectedCabinId;
-  final ValueChanged<int> onCabinTap;
+  final ValueChanged<Cabin> onCabinTap;
   final VoidCallback onAddCabinTap;
 
   @override
@@ -51,7 +51,7 @@ class _CabinListPanel extends StatelessWidget {
                 return _CabinListItem(
                   cabin: cabin,
                   isSelected: id != null && id == selectedCabinId,
-                  onTap: id != null ? () => onCabinTap(id) : null,
+                  onTap: id != null ? () => onCabinTap(cabin) : null,
                 );
               },
             ),

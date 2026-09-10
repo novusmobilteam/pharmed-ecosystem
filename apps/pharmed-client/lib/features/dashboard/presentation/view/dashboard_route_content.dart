@@ -80,7 +80,10 @@ class DashboardRouteContent extends ConsumerWidget {
               cabinRouteContext != null ? JobListScreen(cabinRouteContext: cabinRouteContext) : const SizedBox.shrink(),
             'expiring-materials' => ExpiringItemsScreen(),
             'unscanned-barcodes' => UnscannedBarcodesScreen(),
-            'cabin-design' => _CabinDesignRouteHandler(notifier: notifier),
+            'cabin-design' =>
+              stationCabinsContext != null
+                  ? _CabinDesignRouteHandler(notifier: notifier, stationContext: stationCabinsContext)
+                  : const SizedBox.shrink(),
             'return-box-unload' =>
               cabinRouteContext != null
                   ? UnloadDrawerScreen(cabinRouteContext: cabinRouteContext)
@@ -104,9 +107,10 @@ class DashboardRouteContent extends ConsumerWidget {
 }
 
 class _CabinDesignRouteHandler extends StatefulWidget {
-  const _CabinDesignRouteHandler({required this.notifier});
+  const _CabinDesignRouteHandler({required this.notifier, required this.stationContext});
 
   final DashboardNotifier notifier;
+  final StationCabinsContext stationContext;
 
   @override
   State<_CabinDesignRouteHandler> createState() => _CabinDesignRouteHandlerState();
@@ -117,7 +121,7 @@ class _CabinDesignRouteHandlerState extends State<_CabinDesignRouteHandler> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await CabinDesignDialog.show(context);
+      await CabinDesignDialog.show(context, widget.stationContext);
       if (mounted) widget.notifier.navigateTo('dashboard');
     });
   }

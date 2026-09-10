@@ -1,14 +1,17 @@
 part of 'cabin_design_dialog.dart';
 
 class _NewCabinPanel extends StatelessWidget {
-  const _NewCabinPanel({required this.creating, required this.notifier});
+  const _NewCabinPanel({required this.notifier});
 
-  final CabinDesignCreating creating;
   final CabinDesignNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    final errorText = creating.error?.userMessage;
+    final draft = notifier.newCabin;
+    if (draft == null) return const SizedBox.shrink();
+
+    const createKey = OperationKey.create();
+    final errorText = notifier.isFailed(createKey) ? notifier.message(createKey) : null;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: MedSpacing.insetXl.top * 2, horizontal: MedSpacing.insetXl.left * 6),
@@ -34,7 +37,7 @@ class _NewCabinPanel extends StatelessWidget {
               for (final type in CabinType.creatableTypes)
                 _CabinTypeContainer(
                   type: type,
-                  isSelected: type == creating.selectedType,
+                  isSelected: type == draft.type,
                   onTap: () => notifier.selectNewCabinType(type),
                 ),
             ],
@@ -43,7 +46,7 @@ class _NewCabinPanel extends StatelessWidget {
             context.l10n.cabinDesign_newCabin_addressLabel,
             style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
           ),
-          if (creating.availableAddressChars.isEmpty)
+          if (notifier.availableAddressCharsForNewCabin.isEmpty)
             Text(
               context.l10n.cabinDesign_newCabin_noAddressAvailableWarning,
               style: MedTextStyles.bodySm(color: MedColors.red),
@@ -55,10 +58,10 @@ class _NewCabinPanel extends StatelessWidget {
               direction: Axis.horizontal,
               alignment: WrapAlignment.start,
               children: [
-                for (final address in creating.availableAddressChars)
+                for (final address in notifier.availableAddressCharsForNewCabin)
                   _CabinAddressContainer(
                     address: address,
-                    isSelected: address == creating.selectedAddressChar,
+                    isSelected: address == draft.no,
                     onTap: () => notifier.selectNewCabinAddress(address),
                   ),
               ],
@@ -79,8 +82,8 @@ class _NewCabinPanel extends StatelessWidget {
           MedButton(
             label: context.l10n.cabinDesign_newCabin_saveAndScanButton,
             prefixIcon: Icon(PhosphorIcons.arrowsClockwise()),
-            isLoading: creating.isSaving,
-            onPressed: creating.canSave ? notifier.saveNewCabin : null,
+            isLoading: notifier.isSavingNewCabin,
+            onPressed: notifier.canSaveNewCabin ? notifier.saveNewCabin : null,
           ),
         ],
       ),

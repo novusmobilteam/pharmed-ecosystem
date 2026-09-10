@@ -40,3 +40,5 @@ export 'role_type.dart';
 export 'date_range_preset.dart';
 export 'cabin_operation_mode.dart';
 export 'app_language.dart';
+export 'drawer_cell_tool_size.dart';
+export 'drawer_unit_lock_type.dart';
