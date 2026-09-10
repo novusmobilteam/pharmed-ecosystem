@@ -16,6 +16,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
+import '../../service_selection/notifier/active_service_notifier.dart';
 import 'auth_state.dart';
 
 final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
@@ -27,6 +28,7 @@ class AuthNotifier extends Notifier<AuthState> {
   LogoutUseCase get _logoutUseCase => ref.read(logoutUseCaseProvider);
   AuthCacheDataSource get _cache => ref.read(authCacheProvider);
   TokenHolder get _tokenHolder => ref.read(tokenHolderProvider);
+  ActiveServiceNotifier get _activeServiceNotifier => ref.read(activeServiceNotifierProvider);
 
   Timer? _sessionTimer;
   Timer? _countdownTimer;
@@ -110,6 +112,7 @@ class AuthNotifier extends Notifier<AuthState> {
     _lastActivityAt = null;
     _tokenHolder.setToken(null);
     await _cache.clear();
+    _activeServiceNotifier.reset();
     state = AuthLoggedOut(showLockedDashboard: true);
   }
 

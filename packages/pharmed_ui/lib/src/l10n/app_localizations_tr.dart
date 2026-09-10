@@ -6771,4 +6771,32 @@ class AppLocalizationsTr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceSelection_screenTitle => 'Servis Seçimi';
+
+  @override
+  String serviceSelection_subtitle(String stationName) {
+    return '$stationName istasyonu birden fazla servise hizmet veriyor. Devam etmek için işlem yapacağınız servisi seçin.';
+  }
+
+  @override
+  String get serviceSelection_confirmButton => 'Tamam';
+
+  @override
+  String get serviceSelection_loadErrorMessage =>
+      'İstasyon için servis bilgisi alınamadı.';
+
+  @override
+  String dashboard_activeStationLabel(String stationName) {
+    return 'İstasyon: $stationName';
+  }
+
+  @override
+  String dashboard_activeServiceLabel(String serviceName) {
+    return 'Servis: $serviceName';
+  }
+
+  @override
+  String get dashboard_changeServiceButton => 'Servis Değiştir';
 }

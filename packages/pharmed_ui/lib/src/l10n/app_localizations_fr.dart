@@ -6982,4 +6982,32 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceSelection_screenTitle => 'Sélection du service';
+
+  @override
+  String serviceSelection_subtitle(String stationName) {
+    return 'La station $stationName dessert plusieurs services. Sélectionnez le service avec lequel vous allez travailler pour continuer.';
+  }
+
+  @override
+  String get serviceSelection_confirmButton => 'Confirmer';
+
+  @override
+  String get serviceSelection_loadErrorMessage =>
+      'Impossible de charger les informations de service pour cette station.';
+
+  @override
+  String dashboard_activeStationLabel(String stationName) {
+    return 'Station: $stationName';
+  }
+
+  @override
+  String dashboard_activeServiceLabel(String serviceName) {
+    return 'Service: $serviceName';
+  }
+
+  @override
+  String get dashboard_changeServiceButton => 'Changer de service';
 }

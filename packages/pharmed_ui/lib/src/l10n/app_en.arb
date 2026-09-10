@@ -4815,5 +4815,23 @@
 "waste_label_groupRecordCount": "{count, plural, one{{count} record} other{{count} records}}",
 "@waste_label_groupRecordCount": {
   "placeholders": { "count": { "type": "int" } }
-}
+},
+"serviceSelection_screenTitle": "Service Selection",
+"serviceSelection_subtitle": "Station {stationName} serves multiple services. Select the service you'll work with to continue.",
+"@serviceSelection_subtitle": {
+  "placeholders": {
+    "stationName": { "type": "String" }
+  }
+},
+"serviceSelection_confirmButton": "Confirm",
+"serviceSelection_loadErrorMessage": "Couldn't load service information for this station.",
+"dashboard_activeStationLabel": "Station: {stationName}",
+"@dashboard_activeStationLabel": {
+  "placeholders": { "stationName": { "type": "String" } }
+},
+"dashboard_activeServiceLabel": "Service: {serviceName}",
+"@dashboard_activeServiceLabel": {
+  "placeholders": { "serviceName": { "type": "String" } }
+},
+"dashboard_changeServiceButton": "Change service"
 }

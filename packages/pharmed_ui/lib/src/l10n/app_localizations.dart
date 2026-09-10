@@ -12032,6 +12032,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{{count} record} other{{count} records}}'**
   String waste_label_groupRecordCount(int count);
+
+  /// No description provided for @serviceSelection_screenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Selection'**
+  String get serviceSelection_screenTitle;
+
+  /// No description provided for @serviceSelection_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Station {stationName} serves multiple services. Select the service you\'ll work with to continue.'**
+  String serviceSelection_subtitle(String stationName);
+
+  /// No description provided for @serviceSelection_confirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get serviceSelection_confirmButton;
+
+  /// No description provided for @serviceSelection_loadErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load service information for this station.'**
+  String get serviceSelection_loadErrorMessage;
+
+  /// No description provided for @dashboard_activeStationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Station: {stationName}'**
+  String dashboard_activeStationLabel(String stationName);
+
+  /// No description provided for @dashboard_activeServiceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service: {serviceName}'**
+  String dashboard_activeServiceLabel(String serviceName);
+
+  /// No description provided for @dashboard_changeServiceButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Change service'**
+  String get dashboard_changeServiceButton;
 }
 
 class _AppLocalizationsDelegate

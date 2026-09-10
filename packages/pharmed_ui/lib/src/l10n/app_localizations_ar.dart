@@ -6820,4 +6820,32 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceSelection_screenTitle => 'Service Selection';
+
+  @override
+  String serviceSelection_subtitle(String stationName) {
+    return 'Station $stationName serves multiple services. Select the service you\'ll work with to continue.';
+  }
+
+  @override
+  String get serviceSelection_confirmButton => 'Confirm';
+
+  @override
+  String get serviceSelection_loadErrorMessage =>
+      'Couldn\'t load service information for this station.';
+
+  @override
+  String dashboard_activeStationLabel(String stationName) {
+    return 'Station: $stationName';
+  }
+
+  @override
+  String dashboard_activeServiceLabel(String serviceName) {
+    return 'Service: $serviceName';
+  }
+
+  @override
+  String get dashboard_changeServiceButton => 'Change service';
 }

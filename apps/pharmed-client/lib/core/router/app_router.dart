@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/auth/auth.dart';
 import '../../features/dashboard/dashboard.dart';
+import '../../features/service_selection/notifier/active_service_gate.dart';
 import '../setup/app_setup_notifier.dart';
 import '../../features/setup_wizard/view/setup_wizard_screen.dart';
 
@@ -20,27 +21,12 @@ class AppRouter extends ConsumerWidget {
     final setupState = ref.watch(appSetupStatusProvider);
 
     // ──────────────────────────────────────────────────────────────
-    // [GEÇİCİ - DEV] Setup wizard geliştirmesi için: login olunca
-    // setup durumundan bağımsız olarak her zaman SetupWizard'a git.
-    // Geliştirme bitince aşağıdaki blok silinip alttaki orijinal
-    // switch yorumdan çıkarılacak.
-    // ──────────────────────────────────────────────────────────────
-    // return switch (authState) {
-    //   AuthLoggedOut() => const LoginScreen(),
-    //   AuthError() => const LoginScreen(),
-    //   AuthLoading() => const LoginScreen(),
-    //   AuthLoggedIn() => const SetupWizardScreen(),
-    //   AuthSessionExpiring() => const SetupWizardScreen(),
-    //   _ => const LoginScreen(),
-    // };
-
-    // ──────────────────────────────────────────────────────────────
     // [ORİJİNAL AKIŞ] Dev geçici blok kaldırılınca aşağısı aktif edilecek.
     // ──────────────────────────────────────────────────────────────
     return switch ((authState, setupState)) {
       (AuthLoggedIn(), AsyncLoading()) => const LoginScreen(),
       (AuthLoggedIn(), AsyncData(value: false)) => const SetupWizardScreen(),
-      (AuthLoggedIn(), AsyncData(value: true)) => const DashboardScreen(),
+      (AuthLoggedIn(), AsyncData(value: true)) => const ActiveServiceGate(),
       (AuthLoggedIn(), AsyncError()) => const SetupWizardScreen(),
 
       // Countdown sırasında dashboard'da kal, banner gösterilir

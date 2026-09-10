@@ -8866,5 +8866,41 @@
 "@waste_label_groupRecordCount": {
   "description": "Badge on a grouped medicine header in the waste/destruction screen showing how many pending records are inside the group",
   "placeholders": { "count": { "type": "int" } }
+},
+"serviceSelection_screenTitle": "Servis Seçimi",
+"@serviceSelection_screenTitle": {
+  "description": "Title of the mandatory service selection screen shown after login when a station serves more than one service (Madde 75)."
+},
+
+"serviceSelection_subtitle": "{stationName} istasyonu birden fazla servise hizmet veriyor. Devam etmek için işlem yapacağınız servisi seçin.",
+"@serviceSelection_subtitle": {
+  "description": "Subtitle explaining why service selection is required, shown below the screen title.",
+  "placeholders": {
+    "stationName": { "type": "String" }
+  }
+},
+
+"serviceSelection_confirmButton": "Tamam",
+"@serviceSelection_confirmButton": {
+  "description": "Button that confirms the selected service and proceeds past the service selection screen; disabled until a service is chosen."
+},
+
+"serviceSelection_loadErrorMessage": "İstasyon için servis bilgisi alınamadı.",
+"@serviceSelection_loadErrorMessage": {
+  "description": "Shown on the service selection screen when fetching the station's service list fails."
+},
+"dashboard_activeStationLabel": "İstasyon: {stationName}",
+"@dashboard_activeStationLabel": {
+  "description": "Label showing the currently active station on the dashboard's active station/service card (Madde 72).",
+  "placeholders": { "stationName": { "type": "String" } }
+},
+"dashboard_activeServiceLabel": "Servis: {serviceName}",
+"@dashboard_activeServiceLabel": {
+  "description": "Label showing the currently active service on the dashboard's active station/service card (Madde 72).",
+  "placeholders": { "serviceName": { "type": "String" } }
+},
+"dashboard_changeServiceButton": "Servis Değiştir",
+"@dashboard_changeServiceButton": {
+  "description": "Button on the dashboard's active station/service card that lets the user switch to a different service served by the station (Madde 75); only shown when the station serves more than one service."
 }
 }
