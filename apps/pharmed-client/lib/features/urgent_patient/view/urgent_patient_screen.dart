@@ -24,7 +24,7 @@ class UrgentPatientScreen extends ConsumerWidget {
     final notifier = ref.watch(urgentPatientNotifierProvider);
 
     if (notifier.isError) {
-      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.networkError));
+      return Center(child: EmptyStateWidget(title: notifier.errorMessage));
     }
     return Column(
       spacing: 16.0,
