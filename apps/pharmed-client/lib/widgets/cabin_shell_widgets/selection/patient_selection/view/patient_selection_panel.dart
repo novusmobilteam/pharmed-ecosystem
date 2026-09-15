@@ -1,5 +1,3 @@
-// widgets/cabin_shell_widgets/patient_selection/patient_selection_panel.dart
-//
 // [SWREQ-CLI-PATIENT-003] [IEC 62304 §5.5]
 // Master kabin işlemlerinde (alım/iade/fire-imha) kullanılan TEK, ORTAK hasta
 // seçim paneli. PatientSelectionConfig hangi opsiyonel akışların (sekmeler,
@@ -118,7 +116,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
     );
     if (result == null) return;
 
-    if (result.containsKey('service')) notifier.toggleService(result['service'] as HospitalService?);
+    //if (result.containsKey('service')) notifier.toggleService(result['service'] as HospitalService?);
     if (result.containsKey('filter')) notifier.changeFilter(result['filter'] as PatientFilterType);
   }
 

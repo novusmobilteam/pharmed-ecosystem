@@ -8902,5 +8902,37 @@
 "dashboard_changeServiceButton": "Servis Değiştir",
 "@dashboard_changeServiceButton": {
   "description": "Button on the dashboard's active station/service card that lets the user switch to a different service served by the station (Madde 75); only shown when the station serves more than one service."
+},
+"myPatients_activeHospitalizationsPanelTitle": "Aktif Yatışlar",
+"@myPatients_activeHospitalizationsPanelTitle": {
+  "description": "Header title of the left panel listing all patients with an active hospitalization, on My Patients screen."
+},
+"myPatients_myPatientsPanelTitle": "Hastalarım",
+"@myPatients_myPatientsPanelTitle": {
+  "description": "Header title of the right panel listing patients the current user has assigned to themselves, on My Patients screen."
+},
+"myPatients_emptyTitle": "Henüz tanımlı hastanız bulunmamaktadır.",
+"@myPatients_emptyTitle": {
+  "description": "Title of the empty state shown in the My Patients panel when the current user has no assigned patients yet."
+},
+"myPatients_emptyDescription": "Sorumlu olduğunuz hastaları ekleyin; tedavi planı, kabin işlemleri ve iş listesi bu hastalar üzerinden açılır.",
+"@myPatients_emptyDescription": {
+  "description": "Descriptive text below the empty-state title in the My Patients panel, explaining why patients should be added."
+},
+"myPatients_chip_step1": "1.Soldan hastayı arayın",
+"@myPatients_chip_step1": {
+  "description": "First of three instructional chips in the My Patients empty state, guiding the user through the add-patient flow."
+},
+"myPatients_chip_step2": "2.Yeşil + düğmesine dokunun",
+"@myPatients_chip_step2": {
+  "description": "Second of three instructional chips in the My Patients empty state, guiding the user through the add-patient flow."
+},
+"myPatients_chip_step3": "3.Hasta bu listede görünür",
+"@myPatients_chip_step3": {
+  "description": "Third of three instructional chips in the My Patients empty state, guiding the user through the add-patient flow."
+},
+"myPatients_screenDescription": "Aktif yatışı bulunan hastalar arasından kendinize hasta tanımlayın. Soldaki listeden eklediğiniz hastalar, tedavi ve kabin işlemlerinde sizin sorumluluğunuzda görünür.",
+"@myPatients_screenDescription": {
+  "description": "Explanatory paragraph shown below the screen title on My Patients screen, describing how to assign patients to yourself."
 }
 }

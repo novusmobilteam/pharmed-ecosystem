@@ -1623,6 +1623,14 @@
     "serviceSelection_loadErrorMessage",
     "dashboard_activeStationLabel",
     "dashboard_activeServiceLabel",
-    "dashboard_changeServiceButton"
+    "dashboard_changeServiceButton",
+    "myPatients_activeHospitalizationsPanelTitle",
+    "myPatients_myPatientsPanelTitle",
+    "myPatients_emptyTitle",
+    "myPatients_emptyDescription",
+    "myPatients_chip_step1",
+    "myPatients_chip_step2",
+    "myPatients_chip_step3",
+    "myPatients_screenDescription"
   ]
 }

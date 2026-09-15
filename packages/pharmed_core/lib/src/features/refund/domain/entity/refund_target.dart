@@ -11,16 +11,15 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-class RefundTarget {
+class RefundTarget implements DrawerJobTarget {
   const RefundTarget({required this.item, this.isReturnDrawerTarget = false});
-
   final RefundableItem item;
   final bool isReturnDrawerTarget;
 
+  @override
   MedicineAssignment get assignment => item.resolvedTarget ?? MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0);
 
   bool get isKubik =>
       !isReturnDrawerTarget && (assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false);
-
   bool get isValid => item.isReadyForExecution;
 }

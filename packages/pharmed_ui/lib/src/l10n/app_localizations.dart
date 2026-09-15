@@ -12074,6 +12074,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change service'**
   String get dashboard_changeServiceButton;
+
+  /// No description provided for @myPatients_activeHospitalizationsPanelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Admissions'**
+  String get myPatients_activeHospitalizationsPanelTitle;
+
+  /// No description provided for @myPatients_myPatientsPanelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Patients'**
+  String get myPatients_myPatientsPanelTitle;
+
+  /// No description provided for @myPatients_emptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any assigned patients yet.'**
+  String get myPatients_emptyTitle;
+
+  /// No description provided for @myPatients_emptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the patients you\'re responsible for; the treatment plan, cabin operations, and task list open from these patients.'**
+  String get myPatients_emptyDescription;
+
+  /// No description provided for @myPatients_chip_step1.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Search the patient on the left'**
+  String get myPatients_chip_step1;
+
+  /// No description provided for @myPatients_chip_step2.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Tap the green + button'**
+  String get myPatients_chip_step2;
+
+  /// No description provided for @myPatients_chip_step3.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Patient appears in this list'**
+  String get myPatients_chip_step3;
+
+  /// No description provided for @myPatients_screenDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign patients to yourself from among those with an active admission. Patients you add from the list on the left appear under your responsibility in treatment and cabin operations.'**
+  String get myPatients_screenDescription;
 }
 
 class _AppLocalizationsDelegate

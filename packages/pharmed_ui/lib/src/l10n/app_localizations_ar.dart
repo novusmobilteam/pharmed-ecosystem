@@ -6848,4 +6848,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dashboard_changeServiceButton => 'Change service';
+
+  @override
+  String get myPatients_activeHospitalizationsPanelTitle => 'Active Admissions';
+
+  @override
+  String get myPatients_myPatientsPanelTitle => 'My Patients';
+
+  @override
+  String get myPatients_emptyTitle =>
+      'You don\'t have any assigned patients yet.';
+
+  @override
+  String get myPatients_emptyDescription =>
+      'Add the patients you\'re responsible for; the treatment plan, cabin operations, and task list open from these patients.';
+
+  @override
+  String get myPatients_chip_step1 => '1. Search the patient on the left';
+
+  @override
+  String get myPatients_chip_step2 => '2. Tap the green + button';
+
+  @override
+  String get myPatients_chip_step3 => '3. Patient appears in this list';
+
+  @override
+  String get myPatients_screenDescription =>
+      'Assign patients to yourself from among those with an active admission. Patients you add from the list on the left appear under your responsibility in treatment and cabin operations.';
 }

@@ -6799,4 +6799,30 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get dashboard_changeServiceButton => 'Servis Değiştir';
+
+  @override
+  String get myPatients_activeHospitalizationsPanelTitle => 'Aktif Yatışlar';
+
+  @override
+  String get myPatients_myPatientsPanelTitle => 'Hastalarım';
+
+  @override
+  String get myPatients_emptyTitle => 'Henüz tanımlı hastanız bulunmamaktadır.';
+
+  @override
+  String get myPatients_emptyDescription =>
+      'Sorumlu olduğunuz hastaları ekleyin; tedavi planı, kabin işlemleri ve iş listesi bu hastalar üzerinden açılır.';
+
+  @override
+  String get myPatients_chip_step1 => '1.Soldan hastayı arayın';
+
+  @override
+  String get myPatients_chip_step2 => '2.Yeşil + düğmesine dokunun';
+
+  @override
+  String get myPatients_chip_step3 => '3.Hasta bu listede görünür';
+
+  @override
+  String get myPatients_screenDescription =>
+      'Aktif yatışı bulunan hastalar arasından kendinize hasta tanımlayın. Soldaki listeden eklediğiniz hastalar, tedavi ve kabin işlemlerinde sizin sorumluluğunuzda görünür.';
 }

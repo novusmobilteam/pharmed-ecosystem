@@ -1,12 +1,20 @@
-import 'package:flutter/widgets.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/widgets/empty_widgets/no_data_view.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../core/hardware/hardware.dart';
+import '../../../../widgets/empty_widgets/no_selected_hospitalization_view.dart';
+import '../../../../widgets/hospitalization_panel/hospitalization_panel.dart';
+import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
-import '../notifier/master_waste_notifier.dart';
-import '../notifier/master_waste_state.dart';
-import 'master_waste_selection_view.dart';
+import '../notifier/master_waste_selection_notifier.dart';
+import '../notifier/waste_medicine_group.dart';
+
+part 'master_waste_selection_view.dart';
 
 class MasterWasteView extends ConsumerStatefulWidget {
   const MasterWasteView({super.key, required this.stationContext});
@@ -18,20 +26,24 @@ class MasterWasteView extends ConsumerStatefulWidget {
 }
 
 class _MasterWasteViewState extends ConsumerState<MasterWasteView> {
-  // Hasta seçimi değiştiğinde tekrar terkar loading göstermemek için kullanılan flag.
-  bool _hasBooted = false;
-
-  bool _isPatientReady(PatientSelectionState s) => switch (s) {
-    PatientSelectionReady() => true,
-    PatientSelectionError() => true,
-    _ => false,
-  };
-
   @override
   void initState() {
     super.initState();
 
-    final notifier = ref.read(masterWasteNotifierProvider.notifier);
+    final notifier = ref.read(masterWasteSelectionNotifierProvider.notifier);
+
+    notifier.setCallbacks(
+      key: notifier.submitOp,
+      onError: (msg) {
+        if (!mounted) return;
+        MessageUtils.showErrorSnackbar(context, msg);
+      },
+      onSuccess: (msg) {
+        if (!mounted) return;
+        MessageUtils.showSuccessSnackbar(context, msg);
+      },
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       notifier.init(widget.stationContext);
@@ -40,34 +52,8 @@ class _MasterWasteViewState extends ConsumerState<MasterWasteView> {
 
   @override
   Widget build(BuildContext context) {
-    final patientState = ref.watch(patientSelectionNotifierProvider);
-    final notifier = ref.read(masterWasteNotifierProvider.notifier);
+    final notifier = ref.watch(masterWasteSelectionNotifierProvider);
 
-    ref.listen(masterWasteNotifierProvider, (_, next) {
-      // Donanım kuyruğu yok → isQueueError dalı gerekmiyor, refund/intake'in
-      // aksine tek tip hata dinleme yeterli.
-      if (next is MasterWasteError) {
-        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
-        notifier.dismissError();
-      }
-    });
-
-    if (!_hasBooted) {
-      if (!_isPatientReady(patientState)) {
-        // selectionView'ı (ve içindeki patient-selection init tetikleyicisini)
-        // Offstage ile MOUNT EDİLMİŞ tutuyoruz — aksi halde
-        // PatientSelectionNotifier'ın initState'teki init() çağrısı hiç
-        // tetiklenmez ve _isPatientReady sonsuza kadar false kalır.
-        return Stack(
-          children: [
-            Offstage(offstage: true, child: MasterWasteSelectionView(stationContext: widget.stationContext)),
-            const Center(child: MedLoadingIndicator()),
-          ],
-        );
-      }
-      _hasBooted = true;
-    }
-
-    return MasterWasteSelectionView(stationContext: widget.stationContext);
+    return MasterWasteSelectionView2(menu: widget.stationContext.menu, notifier: notifier);
   }
 }

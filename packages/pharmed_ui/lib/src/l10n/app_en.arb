@@ -4833,5 +4833,14 @@
 "@dashboard_activeServiceLabel": {
   "placeholders": { "serviceName": { "type": "String" } }
 },
-"dashboard_changeServiceButton": "Change service"
+"dashboard_changeServiceButton": "Change service",
+"myPatients_activeHospitalizationsPanelTitle": "Active Admissions",
+"myPatients_myPatientsPanelTitle": "My Patients",
+"myPatients_emptyTitle": "You don't have any assigned patients yet.",
+"myPatients_emptyDescription": "Add the patients you're responsible for; the treatment plan, cabin operations, and task list open from these patients.",
+"myPatients_chip_step1": "1. Search the patient on the left",
+"myPatients_chip_step2": "2. Tap the green + button",
+"myPatients_chip_step3": "3. Patient appears in this list",
+"myPatients_screenDescription": "Assign patients to yourself from among those with an active admission. Patients you add from the list on the left appear under your responsibility in treatment and cabin operations."
+
 }
