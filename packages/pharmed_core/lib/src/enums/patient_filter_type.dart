@@ -1,11 +1,14 @@
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum PatientFilterType {
+  /// 0 - Tüm Hastalar
+  all(0),
+
   /// 1 - Order Saati Gelenler
   ordersDue(1),
 
-  /// 2 - Tüm Hastalar
-  all(2),
+  /// 2 - Tüm Hastalar (Reçetesi olan)
+  allWithRx(2),
 
   /// 3 - Zamanı Gelmemiş
   upcoming(3),
@@ -25,10 +28,12 @@ enum PatientFilterType {
 
   String get label {
     switch (this) {
-      case PatientFilterType.ordersDue:
-        return contextlessL10n().enumCore_patientFilterOrderTimeReached;
       case PatientFilterType.all:
         return contextlessL10n().enumCore_patientFilterAll;
+      case PatientFilterType.ordersDue:
+        return contextlessL10n().enumCore_patientFilterOrderTimeReached;
+      case PatientFilterType.allWithRx:
+        return contextlessL10n().dashboard_kpiPendingPrescriptions;
       case PatientFilterType.upcoming:
         return contextlessL10n().enumCore_patientFilterTimeNotReached;
       case PatientFilterType.overdue:

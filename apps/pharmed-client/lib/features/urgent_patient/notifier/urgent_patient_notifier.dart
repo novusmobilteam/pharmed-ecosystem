@@ -35,15 +35,16 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
   List<UrgentPatient> _urgentPatients = [];
   List<UrgentPatient> get urgentPatients => _urgentPatients;
 
-  Hospitalization? _selectedPatient;
-  Hospitalization? get selectedPatient => _selectedPatient;
+  Hospitalization? _selectedHospitalization;
+  Hospitalization? get selectedHospitalization => _selectedHospitalization;
 
   UrgentPatient? _selectedUrgentPatient;
   UrgentPatient? get selectedUrgentPatient => _selectedUrgentPatient;
 
-  bool get isFetching => isLoading(_fetchUrgentOp) && _urgentPatients.isNotEmpty;
+  bool get isFetching => isLoading(_fetchUrgentOp);
   bool get isSubmitting => isLoading(_submitOp);
   bool get isDeleting => isLoading(_deleteOp);
+  bool get isError => isFailed(_fetchUrgentOp);
 
   Future<void> getUrgentPatients() async {
     await execute(
@@ -63,10 +64,14 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
     if (_selectedUrgentPatient?.prescriptionItems == null) return;
 
     final params = EndUrgentPatientParams(
-      hospitalizationId: _selectedPatient?.id ?? 0,
-      patientId: _selectedUrgentPatient?.patientId ?? 0,
+      hospitalizationId: _selectedHospitalization?.patient?.id ?? 0,
+      patientId: _selectedUrgentPatient?.id ?? 0,
       prescriptionItemIds: _selectedUrgentPatient!.prescriptionItems!.map((m) => m.id ?? 0).toList(),
     );
+
+    print(_selectedHospitalization?.patient?.id);
+    print('Urgent');
+    print(_selectedUrgentPatient?.id);
 
     await executeVoid(
       _submitOp,
@@ -74,7 +79,7 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         onSuccess?.call();
-        _selectedPatient = null;
+        _selectedHospitalization = null;
         getUrgentPatients();
       },
     );
@@ -89,15 +94,20 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
       onFailed: (error) => onFailed?.call(error.message),
       onSuccess: () {
         onSuccess?.call();
-        _selectedPatient = null;
+        _selectedHospitalization = null;
         _selectedUrgentPatient = null;
         getUrgentPatients();
       },
     );
   }
 
-  void selectPatient(Hospitalization patient) {
-    _selectedPatient = patient;
+  void selectHospitalization(Hospitalization patient) {
+    _selectedHospitalization = patient;
+    notifyListeners();
+  }
+
+  void clearSelection() {
+    _selectedHospitalization = null;
     notifyListeners();
   }
 

@@ -169,11 +169,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
             opacity: widget.isLocked ? 0.6 : 1.0,
             child: Container(
               padding: MedSpacing.panelInsetPadding,
-              decoration: BoxDecoration(
-                border: Border.all(width: 1, color: MedColors.border),
-                color: MedColors.surface,
-                borderRadius: MedRadius.mdAll,
-              ),
+              decoration: MedDecoration.panelDecoration,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -334,7 +330,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
                                 fullWidth: true,
                                 size: MedButtonSize.sm,
                                 label: context.l10n.patientPicker_createUrgentPatientButton,
-                                variant: MedButtonVariant.danger,
+                                variant: MedButtonVariant.error,
                                 prefixIcon: const Icon(PhosphorIconsBold.plus),
                                 onPressed: () => _openCreateSheet(UrgentPatientMedicineScope.allMedicines),
                               ),

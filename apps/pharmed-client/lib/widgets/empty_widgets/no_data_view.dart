@@ -33,8 +33,8 @@ class NoDataView extends StatelessWidget {
               Container(
                 width: 60,
                 height: 100,
-                decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: MedRadius.midAll),
-                child: Center(child: Icon(iconData, color: MedColors.blue)),
+                decoration: BoxDecoration(color: MedColors.redLight, borderRadius: MedRadius.midAll),
+                child: Center(child: Icon(iconData, color: MedColors.red)),
               ),
               Container(
                 width: 60,
