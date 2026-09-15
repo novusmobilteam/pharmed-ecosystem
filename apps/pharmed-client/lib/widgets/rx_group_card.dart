@@ -57,10 +57,9 @@ class _RxGroupCardState extends State<RxGroupCard> {
       decoration: BoxDecoration(
         color: MedColors.surface,
         border: Border.all(color: MedColors.border, width: 1),
-        borderRadius: MedRadius.lgAll,
-        boxShadow: MedShadows.sm,
+        borderRadius: MedRadius.mdAll,
       ),
-      clipBehavior: Clip.hardEdge,
+
       child: Column(
         children: [
           _RxCardHeader(
@@ -81,7 +80,7 @@ class _RxGroupCardState extends State<RxGroupCard> {
                       for (int i = 0; i < widget.items.length; i++) ...[
                         if (i > 0)
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl4),
+                            padding: const EdgeInsets.symmetric(horizontal: MedSpacing.lg),
                             child: MedDottedDivider(),
                           ),
                         _RxItemRow(item: widget.items[i]),
@@ -116,16 +115,15 @@ class _RxCardHeader extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl4, vertical: MedSpacing.xl),
+        padding: const EdgeInsets.symmetric(horizontal: MedSpacing.lg, vertical: MedSpacing.md),
         decoration: BoxDecoration(
-          color: MedColors.surface2,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(MedRadius.lgAll.topLeft.x),
-            topRight: Radius.circular(MedRadius.lgAll.topLeft.x),
-          ),
-          border: Border(bottom: BorderSide(color: MedColors.border2, width: 1)),
+          //color: MedColors.surface2,
+          // borderRadius: BorderRadius.only(
+          //   topLeft: Radius.circular(MedRadius.lgAll.topLeft.x),
+          //   topRight: Radius.circular(MedRadius.lgAll.topLeft.x),
+          // ),
+          border: expanded ? Border(bottom: BorderSide(color: MedColors.border2, width: 1)) : null,
         ),
         child: Row(
           spacing: 12,
@@ -134,6 +132,7 @@ class _RxCardHeader extends StatelessWidget {
               color: MedColors.blueLight,
               iconColor: MedColors.blue,
               iconData: PhosphorIcons.prescription(),
+              size: 35,
             ),
             Expanded(
               child: Column(
@@ -197,7 +196,7 @@ class _RxItemRowState extends ConsumerState<_RxItemRow> {
     final status = item.status;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl4, vertical: MedSpacing.xl2),
+      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl, vertical: MedSpacing.md),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -212,7 +211,7 @@ class _RxItemRowState extends ConsumerState<_RxItemRow> {
                     spacing: 2.0,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item.medicine?.name ?? '—', style: MedTextStyles.titleLg()),
+                      Text(item.medicine?.name ?? '—', style: MedTextStyles.titleSm()),
                       if (item.medicine?.barcode != null)
                         Text(item.medicine!.barcode!, style: MedTextStyles.monoMd(color: MedColors.text4)),
                     ],

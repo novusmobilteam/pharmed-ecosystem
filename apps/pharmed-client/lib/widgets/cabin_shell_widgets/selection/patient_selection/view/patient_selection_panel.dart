@@ -1,5 +1,3 @@
-// widgets/cabin_shell_widgets/patient_selection/patient_selection_panel.dart
-//
 // [SWREQ-CLI-PATIENT-003] [IEC 62304 §5.5]
 // Master kabin işlemlerinde (alım/iade/fire-imha) kullanılan TEK, ORTAK hasta
 // seçim paneli. PatientSelectionConfig hangi opsiyonel akışların (sekmeler,
@@ -118,7 +116,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
     );
     if (result == null) return;
 
-    if (result.containsKey('service')) notifier.toggleService(result['service'] as HospitalService?);
+    //if (result.containsKey('service')) notifier.toggleService(result['service'] as HospitalService?);
     if (result.containsKey('filter')) notifier.changeFilter(result['filter'] as PatientFilterType);
   }
 
@@ -171,11 +169,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
             opacity: widget.isLocked ? 0.6 : 1.0,
             child: Container(
               padding: MedSpacing.panelInsetPadding,
-              decoration: BoxDecoration(
-                border: Border.all(width: 1, color: MedColors.border),
-                color: MedColors.surface,
-                borderRadius: MedRadius.mdAll,
-              ),
+              decoration: MedDecoration.panelDecoration,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -336,7 +330,7 @@ class _PatientSelectionPanelState extends ConsumerState<PatientSelectionPanel> {
                                 fullWidth: true,
                                 size: MedButtonSize.sm,
                                 label: context.l10n.patientPicker_createUrgentPatientButton,
-                                variant: MedButtonVariant.danger,
+                                variant: MedButtonVariant.error,
                                 prefixIcon: const Icon(PhosphorIconsBold.plus),
                                 onPressed: () => _openCreateSheet(UrgentPatientMedicineScope.allMedicines),
                               ),

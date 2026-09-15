@@ -74,11 +74,7 @@ class CabinSelectionContentShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: MedSpacing.insetXl * 1.5,
-      decoration: BoxDecoration(
-        border: Border.all(width: 1, color: MedColors.border),
-        color: MedColors.surface,
-        borderRadius: MedRadius.mdAll,
-      ),
+      decoration: MedDecoration.panelDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

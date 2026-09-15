@@ -88,7 +88,7 @@ class RxCarousel extends StatelessWidget {
 
     return ListView.separated(
       itemCount: groups.length,
-      separatorBuilder: (_, _) => SizedBox(height: itemSpacing),
+      separatorBuilder: (_, _) => SizedBox(height: 6),
       itemBuilder: (context, index) {
         final group = groups[index];
         return RxGroupCard(

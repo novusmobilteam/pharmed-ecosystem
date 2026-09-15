@@ -1,194 +1,274 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+part of 'master_refund_view.dart';
 
-import 'package:pharmed_client/widgets/rx_operation_card/rx_operation_card_2.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+class MasterRefundSelectionView extends StatelessWidget {
+  const MasterRefundSelectionView({super.key, required this.notifier, required this.menu, required this.onStartRefund});
 
-import '../../../../widgets/widgets.dart';
-import '../../../dashboard/dashboard.dart';
-import '../notifier/master_refund_notifier.dart';
-import '../notifier/master_refund_state.dart';
-
-class MasterRefundSelectionView extends ConsumerWidget {
-  const MasterRefundSelectionView({super.key, required this.stationContext});
-
-  final StationCabinsContext stationContext;
+  final MenuItem menu;
+  final MasterRefundSelectionNotifier notifier;
+  final VoidCallback onStartRefund;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(masterRefundNotifierProvider.notifier);
-
-    return CabinOperationSelectionLayout(
-      flex: 2,
-      left: PatientSelectionPanel(
-        currentStation: stationContext.station!,
-        selectedPatient: ref.watch(masterRefundNotifierProvider).hospitalization,
-        onPatientSelected: (hospitalization, _, _) => notifier.selectPatient(hospitalization),
-        config: PatientSelectionConfig(showFilters: false, enableTabs: false),
-      ),
-      right: _buildMedicineContent(context, ref),
-    );
-  }
-
-  Widget _buildMedicineContent(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(masterRefundNotifierProvider);
-    final notifier = ref.read(masterRefundNotifierProvider.notifier);
-
-    final selection = switch (state) {
-      MasterRefundMedicineSelection s => s,
-      MasterRefundError(previousState: MasterRefundMedicineSelection s) => s,
-      _ => null,
-    };
-
-    final bool noPatientSelected = selection == null && state is MasterRefundPatientSelection;
-    final bool isItemsLoading = selection == null && !noPatientSelected;
-
-    final items = List<RefundableItem>.from(selection?.visibleItems ?? const [])
-      ..sort((a, b) {
-        final aDate = a.lastMovement?.createdAt;
-        final bDate = b.lastMovement?.createdAt;
-        if (aDate == null && bDate == null) return 0;
-        if (aDate == null) return 1;
-        if (bDate == null) return -1;
-        return bDate.compareTo(aDate);
-      });
-
-    final selectedItemIds = selection?.selectedItemIds ?? const {};
-    final checkStatuses = selection?.checkStatuses ?? const {};
-
-    return CabinSelectionContentShell(
-      menu: stationContext.menu,
-      searchQuery: selection?.search ?? '',
-      onSearchQueryChanged: notifier.onSearchChanged,
-      searchHint: context.l10n.refund_hint_searchMedicine,
-      isLoading: isItemsLoading,
-      isEmpty: noPatientSelected || (!isItemsLoading && items.isEmpty),
-      emptyMessage: noPatientSelected
-          ? context.l10n.refund_hint_selectPatientFirst
-          : context.l10n.refund_hint_noMedicineFound,
-      content: (isItemsLoading || noPatientSelected)
-          ? null
-          : CabinOperationGrid(
-              singleColumnThreshold: 0,
-              maxColumns: 3,
-              itemCount: items.length,
-              itemBuilder: (BuildContext context, int i) {
-                final item = items.elementAt(i);
-
-                final bool isSelected = selectedItemIds.contains(item.id);
-                final checkStatus = checkStatuses[item.id] ?? const RefundCheckIdle();
-
-                final drug = item.medicine?.when(drug: (Drug d) => d, consumable: (_) => null);
-                final returnType = drug?.returnType;
-                final isHardwareType = returnType?.requiresCabinHardware ?? false;
-                final refundNote = drug?.returnNote?.trim();
-
-                final time = item.time;
-                final originalAmount = item.lastMovement?.prescriptionItem?.receiveDosePiece ?? 0;
-                final currentAmount = item.returnQuantity ?? originalAmount;
-                final dose = currentAmount.toDouble().formatFractional;
-                final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
-
-                final isSubmitting = checkStatus is RefundCheckLoading;
-
-                return RxOperationCard2(
-                  title: item.medicine?.name ?? '—',
-                  subtitle: time != null ? '$dose $unit (${time.shortRelativeLabelOf(context)})' : '$dose $unit',
-                  barcode: item.medicine?.barcode,
-                  isSelected: isSelected,
-                  onTap: () => notifier.toggleItem(item.id),
-                  statusChip: returnType != null ? RxCardChip(label: returnType.label, tone: MedTone.info) : null,
-
-                  //onTap: () => print(isHardwareType),
-                  statusRow: switch (checkStatus) {
-                    RefundCheckIdle() => null,
-                    RefundCheckLoading() => RxCardStatusRow(
-                      leadingText: context.l10n.intake_status_checking,
-                      indicator: RxCardIndicator.spinner,
-                    ),
-                    RefundCheckSuccess() => RxCardStatusRow(
-                      leadingText: context.l10n.intake_status_readyToTake,
-                      tone: MedTone.success,
-                      indicator: RxCardIndicator.check,
-                    ),
-                    RefundCheckFailed(:final message) => RxCardStatusRow(
-                      leadingText: message ?? context.l10n.intake_status_checkFailed,
-                      tone: MedTone.error,
-                      indicator: RxCardIndicator.warn,
-                    ),
-                  },
-
-                  isDanger: checkStatus is RefundCheckFailed,
-                  note: (refundNote != null && refundNote.isNotEmpty)
-                      ? RxCardNote(label: context.l10n.medicine_fieldReturnNote, text: refundNote)
-                      : null,
-
-                  stepper: (isSelected)
-                      ? RxCardStepper(
-                          value: currentAmount.toDouble(),
-                          unit: unit,
-                          max: item.appliedQuantity.toDouble(),
-                          onChanged: (v) => notifier.updateAmount(item.id, v),
-                        )
-                      : null,
-                  movements: [
-                    if (item.lastMovement case final m?)
-                      RxCardMovement(
-                        label: m.type.actorLabel(context),
-                        tone: m.type.movementTone,
-                        performedBy: m.performedBy?.fullName ?? '—',
-                        quantity: '${m.quantity?.formatFractional ?? '-'} $unit',
-                        date: m.createdAt?.shortRelativeLabelOf(context) ?? '—',
-                      ),
-                  ],
-                  extras: [
-                    if (isSelected && !isHardwareType)
-                      Padding(
-                        padding: const EdgeInsets.only(top: MedSpacing.sm),
-                        child: MedButton(
-                          label: context.l10n.refund_action_completeDirect,
-                          isLoading: isSubmitting,
-                          onPressed: isSubmitting
-                              ? null
-                              : () async {
-                                  final success = await notifier.completeDirectRefund(item.id);
-                                  if (success && context.mounted && returnType != null) {
-                                    _showDeliveryDialog(context, returnType);
-                                  }
-                                },
-                        ),
-                      ),
-                  ],
-                );
-              },
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 16.0,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          spacing: 4.0,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              spacing: 4.0,
+              children: [
+                Container(
+                  width: 4,
+                  height: 25,
+                  decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.mdAll),
+                ),
+                Text(menu.name.toString(), style: MedTextStyles.titleLg()),
+              ],
             ),
-
-      footer: (selection != null && selection.hasHardwareSelection)
-          ? MedButton(
-              label: context.l10n.refund_action_start,
-              isLoading: selection.isChecking,
-              suffixIcon: Icon(PhosphorIcons.arrowRight()),
-              onPressed: selection.canStart ? notifier.startRefund : null,
-            )
-          : null,
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Text(menu.description ?? '', style: MedTextStyles.bodyMd()),
+            ),
+          ],
+        ),
+        Expanded(
+          child: Row(
+            spacing: 12.0,
+            children: [
+              Expanded(flex: 2, child: _LeftPanel(notifier: notifier)),
+              Expanded(flex: 7, child: _RightPanel(notifier, onStartRefund)),
+            ],
+          ),
+        ),
+      ],
     );
   }
+}
 
-  void _showDeliveryDialog(BuildContext context, ReturnType type) {
-    final message = type == ReturnType.toPharmacy
-        ? context.l10n.refund_success_toPharmacyMessage
-        : context.l10n.refund_success_toReturnBoxMessage;
+class _LeftPanel extends StatelessWidget {
+  const _LeftPanel({required this.notifier});
 
-    MessageUtils.showConfirmDialog(
-      context: context,
-      action: ConfirmAction.custom,
-      customTitle: context.l10n.refund_success_dialogTitle,
-      customMessage: message,
-      confirmButtonText: context.l10n.common_okButton,
-      onConfirm: () {},
+  final MasterRefundSelectionNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    // final myIds = notifier.myPatientHospitalizationIds;
+    return HospitalizationPanel(
+      cellBuilder: (hosp) {
+        final hospId = hosp.id;
+        bool isSelected = notifier.selectedHospitalization?.id == hospId;
+        return PatientSelectionCard(
+          hospitalization: hosp,
+          onTap: () => notifier.selectHospitalization(hosp),
+          showChevron: false,
+          isSelected: isSelected,
+        );
+      },
+      onTypeChanged: () => notifier.clearSelection(),
+    );
+  }
+}
+
+class _RightPanel extends StatelessWidget {
+  const _RightPanel(this.notifier, this.onStartRefund);
+
+  final MasterRefundSelectionNotifier notifier;
+  final VoidCallback onStartRefund;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = notifier.selectedHospitalization != null
+        ? notifier.selectedHospitalization?.patient?.fullName ?? '-'
+        : 'Hasta Seçilmedi';
+    return Container(
+      alignment: Alignment.center,
+      decoration: MedDecoration.panelDecoration,
+      child: Builder(
+        builder: (context) {
+          if (notifier.isLoading(notifier.fetchRefundablesOp)) return Center(child: MedLoadingIndicator());
+          if (notifier.selectedHospitalization == null) return Center(child: NoSelectedHospitalizationView());
+          if (notifier.selectedHospitalization != null && notifier.refundables.isEmpty) {
+            return Center(
+              child: NoDataView(
+                title: context.l10n.refund_noRefundableDrugs,
+                subtitle: context.l10n.refund_selectPatient,
+                iconData: PhosphorIcons.arrowUUpLeft(),
+              ),
+            );
+          }
+
+          return Column(
+            spacing: 4.0,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: MedSpacing.insetXl,
+                child: Text(title, style: MedTextStyles.titleSm()),
+              ),
+              Divider(height: 0),
+
+              Expanded(child: _RefundablesListView(notifier)),
+              // Footer
+              if (notifier.refundables.isNotEmpty)
+                Container(
+                  alignment: Alignment.centerRight,
+                  height: 60,
+                  decoration: BoxDecoration(color: MedColors.surface2),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: MedButton(
+                      label: notifier.isStartingRefund ? 'Başlatılıyor...' : 'İadeyi Başlat',
+                      size: MedButtonSize.sm,
+                      suffixIcon: Icon(PhosphorIcons.arrowRight()),
+                      isLoading: notifier.isStartingRefund,
+                      onPressed: notifier.selectedItems.isEmpty || notifier.isStartingRefund
+                          ? null
+                          : () => onStartRefund(),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _RefundablesListView extends StatelessWidget {
+  const _RefundablesListView(this.notifier);
+
+  final MasterRefundSelectionNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      itemCount: notifier.refundables.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return Divider(height: 1, color: MedColors.border);
+      },
+      itemBuilder: (BuildContext context, int index) {
+        final item = notifier.refundables.elementAt(index);
+        final bool isSelected = notifier.selectedItems.contains(item);
+        final foreground = isSelected ? Colors.white : MedColors.text;
+        final refundType = item.medicine?.returnType;
+        final bool showCheckbox = (refundType?.requiresCabinHardware ?? false);
+
+        final currentAmount = notifier.amountFor(item.id);
+        final maxAmount = notifier.maxAmountFor(item.id);
+        final directStatus = notifier.itemStatuses[item.id];
+        final isDirectLoading = directStatus is RefundCheckLoading;
+
+        return GestureDetector(
+          onTap: () => notifier.selectRefundableItem(item),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              spacing: 12.0,
+              children: [
+                if (showCheckbox)
+                  MedCheckbox(value: isSelected, onChanged: (_) {}, size: MedCheckboxSize.md)
+                else
+                  MedRectangleIconButton(
+                    iconData: PhosphorIcons.lightning(),
+                    size: 22,
+                    color: MedColors.greenLight,
+                    iconColor: MedColors.green,
+                  ),
+
+                // Doz
+                Container(
+                  height: 45,
+                  width: 45,
+                  //padding: MedSpacing.insetLg,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected ? MedColors.blue : MedColors.surface2,
+                    borderRadius: MedRadius.lgAll,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(item.dosePiece.formatFractional.toString(), style: MedTextStyles.titleMd(color: foreground)),
+                      Text(
+                        item.medicine?.operationUnitLocalized(context) ?? '',
+                        style: MedTextStyles.bodySm(color: foreground),
+                      ),
+                    ],
+                  ),
+                ),
+                // İlaç Bilgileri
+                Column(
+                  spacing: 4.0,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item.medicineName, style: MedTextStyles.titleSm()),
+                    Row(
+                      spacing: 6.0,
+                      children: [
+                        Text(item.medicineBarcode, style: MedTextStyles.monoSm()),
+                        Text('-', style: MedTextStyles.monoSm()),
+                        Text('Uygulama Tarihi: ${item.time.formattedDateTime}', style: MedTextStyles.monoSm()),
+                        Text('-', style: MedTextStyles.monoSm()),
+                        Text('Uygulayan: ${item.lastMovement?.performedBy?.fullName}', style: MedTextStyles.monoSm()),
+                      ],
+                    ),
+                    MedChip(
+                      label: refundType?.label ?? '-',
+                      background: refundType?.bakcgroundColor,
+                      foreground: refundType?.foregroundColor,
+                      showBorder: false,
+                      //size: MedChipSize.sm,
+                      shape: MedChipShape.pill,
+                    ),
+                  ],
+                ),
+                Spacer(),
+                SizedBox(
+                  width: 130,
+                  child: MedDoseStepper(
+                    type: DoseStepperType.compact,
+                    value: currentAmount.toDouble(),
+                    min: 0.01,
+                    max: maxAmount.toDouble(),
+                    onChanged: (v) => notifier.updateAmount(
+                      item.id,
+                      v,
+                      onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+                    ),
+                    unit: item.medicine?.operationUnitLocalized(context) ?? '',
+                  ),
+                ),
+
+                if (!showCheckbox)
+                  MedButton(
+                    label: isDirectLoading ? 'Gönderiliyor...' : 'İade Et',
+                    size: MedButtonSize.sm,
+                    variant: MedButtonVariant.success,
+                    prefixIcon: Icon(PhosphorIcons.arrowUUpLeft()),
+                    isLoading: isDirectLoading,
+                    onPressed: isDirectLoading
+                        ? null
+                        : () async {
+                            notifier.completeDirectRefund(
+                              item.id,
+                              onSuccess: () => MessageUtils.showSuccessSnackbar(
+                                context,
+                                context.l10n.common_operationSuccessMessage,
+                              ),
+                              onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+                            );
+                          },
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

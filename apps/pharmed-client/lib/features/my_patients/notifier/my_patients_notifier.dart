@@ -1,162 +1,185 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/mixins/api_request_mixin.dart';
+import 'package:pharmed_client/features/auth/auth.dart';
+import 'package:pharmed_client/features/dashboard/dashboard.dart';
+import 'package:pharmed_client/features/service_selection/notifier/active_service_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_data/pharmed_data.dart';
 
 import '../../../core/providers/providers.dart';
-import '../../auth/notifier/auth_notifier.dart';
-import '../../dashboard/dashboard.dart';
-import 'my_patients_state.dart';
 
-final myPatientsNotifierProvider = NotifierProvider<MyPatientsNotifier, MyPatientsState>(MyPatientsNotifier.new);
+final myPatientsNotifierProvider = ChangeNotifierProvider<MyPatientsNotifier>((ref) {
+  return MyPatientsNotifier(
+    authNotifier: ref.read(authNotifierProvider.notifier),
+    getBedAssignmentsUseCase: ref.read(getBedAssignmentsUseCaseProvider),
+    getActiveHospitalizationsUseCase: ref.read(getHospitalizationsByServiceUseCaseProvider),
+    getMyPatientsUseCase: ref.read(getMyPatientsUseCaseProvider),
+    addPatientUseCase: ref.read(addPatientUseCaseProvider),
+    removePatientsUseCase: ref.read(removePatientsUseCaseProvider),
+    activeServiceNotifier: ref.read(activeServiceNotifierProvider),
+  );
+});
 
-class MyPatientsNotifier extends Notifier<MyPatientsState> {
-  GetBedAssignmentsUseCase get _getBedAssignments => ref.read(getBedAssignmentsUseCaseProvider);
-  GetActiveHospitalizationsUseCase get _getHospitalizations => ref.read(getActiveHospitalizationsUseCaseProvider);
-  GetMyPatientsUseCase get _getMyPatients => ref.read(getMyPatientsUseCaseProvider);
-  AddPatientUseCase get _addPatient => ref.read(addPatientUseCaseProvider);
-  RemovePatientsUseCase get _removePatients => ref.read(removePatientsUseCaseProvider);
+class MyPatientsNotifier extends ChangeNotifier with ApiRequestMixin {
+  final AuthNotifier _authNotifier;
+  final GetBedAssignmentsUseCase _getBedAssignmentsUseCase;
+  final GetHospitalizationsByServiceUseCase _getActiveHospitalizationsUseCase;
+  final GetMyPatientsUseCase _getMyPatientsUseCase;
+  final AddPatientUseCase _addPatientUseCase;
+  final RemovePatientsUseCase _removePatientsUseCase;
+  final ActiveServiceNotifier _activeServiceNotifier;
 
-  int get _currentUserId => ref.read(authNotifierProvider.notifier).currentUser?.id ?? 0;
+  MyPatientsNotifier({
+    required AuthNotifier authNotifier,
+    required GetBedAssignmentsUseCase getBedAssignmentsUseCase,
+    required GetHospitalizationsByServiceUseCase getActiveHospitalizationsUseCase,
+    required GetMyPatientsUseCase getMyPatientsUseCase,
+    required AddPatientUseCase addPatientUseCase,
+    required RemovePatientsUseCase removePatientsUseCase,
+    required ActiveServiceNotifier activeServiceNotifier,
+  }) : _authNotifier = authNotifier,
+       _getBedAssignmentsUseCase = getBedAssignmentsUseCase,
+       _getActiveHospitalizationsUseCase = getActiveHospitalizationsUseCase,
+       _getMyPatientsUseCase = getMyPatientsUseCase,
+       _addPatientUseCase = addPatientUseCase,
+       _removePatientsUseCase = removePatientsUseCase,
+       _activeServiceNotifier = activeServiceNotifier;
 
-  @override
-  MyPatientsState build() => const MyPatientsUninitialized();
+  final OperationKey fetchHospitalizationsOp = OperationKey.custom('fetch-hospitalizations');
+  final OperationKey fetchMyPatientsOp = OperationKey.custom('fetch-my-patients');
+  final OperationKey addPatientOp = OperationKey.custom('add-patient');
+  final OperationKey removePatientOp = OperationKey.custom('remove-patient');
+
+  int get _currentUserId => _authNotifier.currentUser?.id ?? 0;
+  int get _activeServiceId => _activeServiceNotifier.activeService?.id ?? 0;
+
+  List<Hospitalization> _hospitalizations = [];
+  List<Hospitalization> get hospitalizations => _hospitalizations;
+
+  List<MyPatient> _myPatients = [];
+  List<MyPatient> get myPatients => _myPatients;
+
+  String _search = '';
+  String get search => _search;
+
+  Set<int> get myPatientHospitalizationIds => myPatients.map((p) => p.hospitalization?.id).whereType<int>().toSet();
+
+  bool get isInitiallyLoading =>
+      (isLoading(fetchHospitalizationsOp) && _hospitalizations.isEmpty) ||
+      (isLoading(fetchMyPatientsOp) && _myPatients.isEmpty);
+
+  bool get isError => isFailed(fetchHospitalizationsOp) || isFailed(fetchMyPatientsOp);
+
+  Set<int> _pendingIds = {};
+  bool isPending(int hospitalizationId) => _pendingIds.contains(hospitalizationId);
+
+  List<Hospitalization> get filteredHospitalizations {
+    final q = _search.toLowerCase();
+    if (q.isEmpty) return _hospitalizations;
+    return _hospitalizations.where((h) {
+      final name = h.patient?.fullName.toLowerCase() ?? '';
+      final room = h.bed?.room?.name?.toLowerCase() ?? h.room?.name?.toLowerCase() ?? '';
+      return name.contains(q) || room.contains(q);
+    }).toList();
+  }
 
   Future<void> init(CabinRouteContext? ctx) async {
-    state = MyPatientsLoading();
-
     final cabinType = ctx?.deviceMode;
     final isMobile = cabinType == CabinType.mobile;
 
-    final Future<dynamic> patientsFuture = isMobile
-        ? _getBedAssignments.call()
-        : _getHospitalizations.call(const PagedQueryParams());
-
-    final results = await Future.wait([patientsFuture, _getMyPatients.call()]);
-
-    final myResult = results[1] as Result<List<MyPatient>>;
-
-    late final Result<List<Hospitalization>> patientsResult;
-
-    if (isMobile) {
-      final bedResult = results[0] as Result<List<BedAssignment>>;
-      patientsResult = bedResult is Error
-          ? Result.error((bedResult as Error).error)
-          : Result.ok(_toHospitalizations((bedResult as Ok<List<BedAssignment>>).data ?? []));
-    } else {
-      final hospResult = results[0] as Result<ApiResponse<List<Hospitalization>>>;
-      patientsResult = hospResult is Error
-          ? Result.error((hospResult as Error).error)
-          : Result.ok((hospResult as Ok<ApiResponse<List<Hospitalization>>>).data?.data ?? const []);
-    }
-
-    if (patientsResult is Error) {
-      state = MyPatientsError(
-        message: (patientsResult as Error).error.message,
-        previousState: MyPatientsIdle(allPatients: const [], myPatients: const []),
-      );
-      return;
-    }
-    if (myResult is Error) {
-      state = MyPatientsError(
-        message: (myResult as Error).error.message,
-        previousState: MyPatientsIdle(allPatients: const [], myPatients: const []),
-      );
-      return;
-    }
-
-    final allPatients = (patientsResult as Ok<List<Hospitalization>>).data ?? [];
-    final myPatients = (myResult as Ok<List<MyPatient>>).data;
-
-    state = MyPatientsIdle(allPatients: allPatients, myPatients: myPatients ?? []);
+    await Future.wait([isMobile ? _getBedAssignments() : _getActiveHospitalizations(), _getMyPatients()]);
   }
 
-  Future<void> addPatient(Hospitalization hospitalization) async {
-    final hospId = hospitalization.id;
-    if (hospId == null) return;
-
-    final current = state;
-    if (current is! MyPatientsIdle) return;
-
-    // Zaten bende varsa işlem yapma.
-    if (current.myPatientHospitalizationIds.contains(hospId)) return;
-
-    // Butonu spinner'a çevir.
-    state = current.copyWith(pendingIds: {...current.pendingIds, hospId});
-
-    final result = await _addPatient.call(AddPatientParams(userId: _currentUserId, hospitalizationId: hospId));
-
-    final afterPending = state;
-    if (afterPending is! MyPatientsIdle) return;
-
-    final updatedPending = {...afterPending.pendingIds}..remove(hospId);
-
-    result.when(
-      ok: (_) async {
-        final refreshResult = await _getMyPatients.call();
-        refreshResult.when(
-          ok: (myPatients) {
-            state = afterPending.copyWith(myPatients: myPatients, pendingIds: updatedPending);
-          },
-          error: (_) {
-            // Refresh hata verse bile pending'i kaldır,
-            // mevcut listeyle devam et
-            state = afterPending.copyWith(pendingIds: updatedPending);
-          },
-        );
-      },
-      error: (e) {
-        state = MyPatientsError(
-          message: e.message,
-          previousState: afterPending.copyWith(pendingIds: updatedPending),
-        );
+  Future<void> _getBedAssignments() async {
+    await execute(
+      fetchHospitalizationsOp,
+      operation: () => _getBedAssignmentsUseCase.call(),
+      onData: (assignments) {
+        _hospitalizations = _toHospitalizations(assignments);
+        notifyListeners();
       },
     );
   }
 
-  Future<void> removePatient(MyPatient patient) async {
+  Future<void> _getActiveHospitalizations() async {
+    await execute(
+      fetchHospitalizationsOp,
+      operation: () =>
+          _getActiveHospitalizationsUseCase.call(serviceId: _activeServiceId, filter: PatientFilterType.all),
+      onData: (hospitalizations) {
+        _hospitalizations = hospitalizations;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> _getMyPatients() async {
+    await execute(
+      fetchMyPatientsOp,
+      operation: () => _getMyPatientsUseCase.call(),
+      onData: (patients) {
+        _myPatients = patients;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> addPatient(
+    Hospitalization hospitalization, {
+    Function(String? msg)? onFailed,
+    VoidCallback? onSuccess,
+  }) async {
+    final hospId = hospitalization.id;
+    if (hospId == null) return;
+
+    if (myPatientHospitalizationIds.contains(hospId)) return;
+
+    _pendingIds = {..._pendingIds, hospId};
+    notifyListeners();
+
+    await executeVoid(
+      addPatientOp,
+      operation: () => _addPatientUseCase.call(AddPatientParams(userId: _currentUserId, hospitalizationId: hospId)),
+      onFailed: (error) {
+        _pendingIds = {..._pendingIds}..remove(hospId);
+        notifyListeners();
+        onFailed?.call(error.message);
+      },
+      onSuccess: () {
+        _pendingIds = {..._pendingIds}..remove(hospId);
+        onSuccess?.call();
+        _getMyPatients();
+      },
+    );
+  }
+
+  Future<void> removePatient(MyPatient patient, {Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
     final myPatientId = patient.id;
     final hospId = patient.hospitalization?.id;
     if (myPatientId == null || hospId == null) return;
 
-    final current = state;
-    if (current is! MyPatientsIdle) return;
+    _pendingIds = {..._pendingIds, hospId};
+    notifyListeners();
 
-    // Butonu spinner'a çevir.
-    state = current.copyWith(pendingIds: {...current.pendingIds, hospId});
-
-    final result = await _removePatients.call([myPatientId]);
-
-    final afterPending = state;
-    if (afterPending is! MyPatientsIdle) return;
-
-    final updatedPending = {...afterPending.pendingIds}..remove(hospId);
-
-    result.when(
-      ok: (_) {
-        state = afterPending.copyWith(
-          myPatients: afterPending.myPatients.where((p) => p.id != myPatientId).toList(),
-          pendingIds: updatedPending,
-        );
+    await executeVoid(
+      removePatientOp,
+      operation: () => _removePatientsUseCase.call([myPatientId]),
+      onFailed: (error) {
+        _pendingIds = {..._pendingIds}..remove(hospId);
+        notifyListeners();
+        onFailed?.call(error.message);
       },
-      error: (e) {
-        state = MyPatientsError(
-          message: e.message,
-          previousState: afterPending.copyWith(pendingIds: updatedPending),
-        );
+      onSuccess: () {
+        _pendingIds = {..._pendingIds}..remove(hospId);
+        onSuccess?.call();
+        _getMyPatients();
       },
     );
   }
 
   void onSearchChanged(String value) {
-    final current = state;
-    if (current is MyPatientsIdle) {
-      state = current.copyWith(search: value);
-    }
-  }
-
-  void dismissError() {
-    final current = state;
-    if (current is MyPatientsError) state = current.previousState;
+    _search = value;
+    notifyListeners();
   }
 
   List<Hospitalization> _toHospitalizations(List<BedAssignment> assignments) {

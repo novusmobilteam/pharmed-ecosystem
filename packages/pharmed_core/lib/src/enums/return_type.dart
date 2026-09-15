@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// İade Tipi
@@ -32,6 +34,32 @@ enum ReturnType {
         return contextlessL10n().enumCore_returnTypeToReturnBox;
       case ReturnType.toPharmacy:
         return contextlessL10n().enumCore_returnTypeToPharmacy;
+    }
+  }
+
+  Color get bakcgroundColor {
+    switch (this) {
+      case ReturnType.toOrigin:
+        return MedColors.amberLight;
+      case ReturnType.toDrawer:
+        return MedColors.blueLight;
+      case ReturnType.toReturnBox:
+        return MedColors.greenLight;
+      case ReturnType.toPharmacy:
+        return MedColors.greenLight;
+    }
+  }
+
+  Color get foregroundColor {
+    switch (this) {
+      case ReturnType.toOrigin:
+        return MedColors.amber;
+      case ReturnType.toDrawer:
+        return MedColors.blue;
+      case ReturnType.toReturnBox:
+        return MedColors.green;
+      case ReturnType.toPharmacy:
+        return MedColors.green;
     }
   }
 }

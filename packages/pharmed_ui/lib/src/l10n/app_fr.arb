@@ -4267,5 +4267,31 @@
 "waste_label_groupRecordCount": "{count, plural, one{{count} enregistrement} other{{count} enregistrements}}",
 "@waste_label_groupRecordCount": {
   "placeholders": { "count": { "type": "int" } }
-}
+},
+"serviceSelection_screenTitle": "Sélection du service",
+"serviceSelection_subtitle": "La station {stationName} dessert plusieurs services. Sélectionnez le service avec lequel vous allez travailler pour continuer.",
+"@serviceSelection_subtitle": {
+  "placeholders": {
+    "stationName": { "type": "String" }
+  }
+},
+"serviceSelection_confirmButton": "Confirmer",
+"serviceSelection_loadErrorMessage": "Impossible de charger les informations de service pour cette station.",
+"dashboard_activeStationLabel": "Station: {stationName}",
+"@dashboard_activeStationLabel": {
+  "placeholders": { "stationName": { "type": "String" } }
+},
+"dashboard_activeServiceLabel": "Service: {serviceName}",
+"@dashboard_activeServiceLabel": {
+  "placeholders": { "serviceName": { "type": "String" } }
+},
+"dashboard_changeServiceButton": "Changer de service",
+"myPatients_activeHospitalizationsPanelTitle": "Hospitalisations actives",
+"myPatients_myPatientsPanelTitle": "Mes patients",
+"myPatients_emptyTitle": "You don't have any assigned patients yet.",
+"myPatients_emptyDescription": "Sorumlu olduğunuz hastaları ekleyin; tedavi planı, kabin işlemleri ve iş listesi bu hastalar üzerinden açılır.",
+"myPatients_chip_step1": "1. Recherchez le patient à gauche",
+"myPatients_chip_step2": "2. Appuyez sur le bouton vert +",
+"myPatients_chip_step3": "3. Le patient apparaît dans cette liste",
+"myPatients_screenDescription": "Attribuez-vous des patients parmi ceux ayant une hospitalisation active. Les patients que vous ajoutez depuis la liste de gauche apparaissent sous votre responsabilité dans les opérations de traitement et de cabine."
 }

@@ -17,7 +17,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 enum CabinOperationJobStatus { pending, active, completed, failed }
 
-class CabinOperationDrawerJob {
+class CabinOperationDrawerJob implements DrawerJob<CabinOperationTarget> {
   const CabinOperationDrawerJob({
     required this.cabinDrawerId,
     required this.representativeAssignment,
@@ -26,29 +26,26 @@ class CabinOperationDrawerJob {
     this.status = CabinOperationJobStatus.pending,
   });
 
-  /// Bu işin açtığı fiziksel çekmecenin id'si.
   final int cabinDrawerId;
-
-  /// Çekmece açma operasyonu için temsilci assignment.
+  @override
   final MedicineAssignment representativeAssignment;
-
-  /// Bu çekmecede işlenecek gözler.
+  @override
   final List<CabinOperationTarget> targets;
-
+  @override
   final CabinOperationJobStatus status;
-
   final int? cabinId;
 
+  @override
   bool get isKubik => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
+
+  /// Census/Refill/Unload'da kübik dışında hiçbir job "aynı açık çekmecede
+  /// kalma" ihtiyacı duymuyor — birim doz her zaman target başına aç/kapa.
+  @override
+  bool get staysOpenAcrossTargets => isKubik;
+
   bool get isSerum => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false;
-
-  /// Bu çekmecedeki kaç farklı ilaç var (başlıkta göstermek için).
   int get distinctMedicineCount => targets.map((t) => t.assignment.medicine?.id).whereType<int>().toSet().length;
-
-  /// Kaydetmeye değer en az bir girdi var mı.
   bool get hasAnyEntry => targets.any((t) => t.hasEntry);
-
-  /// Tüm hedefler geçerli mi.
   bool get canComplete => targets.every((t) => t.isValid);
 
   CabinOperationDrawerJob copyWith({List<CabinOperationTarget>? targets, CabinOperationJobStatus? status}) {
@@ -60,4 +57,7 @@ class CabinOperationDrawerJob {
       cabinId: cabinId,
     );
   }
+
+  @override
+  CabinOperationDrawerJob copyWithStatus(CabinOperationJobStatus status) => copyWith(status: status);
 }

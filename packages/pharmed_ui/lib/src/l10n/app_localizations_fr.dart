@@ -6982,4 +6982,60 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceSelection_screenTitle => 'Sélection du service';
+
+  @override
+  String serviceSelection_subtitle(String stationName) {
+    return 'La station $stationName dessert plusieurs services. Sélectionnez le service avec lequel vous allez travailler pour continuer.';
+  }
+
+  @override
+  String get serviceSelection_confirmButton => 'Confirmer';
+
+  @override
+  String get serviceSelection_loadErrorMessage =>
+      'Impossible de charger les informations de service pour cette station.';
+
+  @override
+  String dashboard_activeStationLabel(String stationName) {
+    return 'Station: $stationName';
+  }
+
+  @override
+  String dashboard_activeServiceLabel(String serviceName) {
+    return 'Service: $serviceName';
+  }
+
+  @override
+  String get dashboard_changeServiceButton => 'Changer de service';
+
+  @override
+  String get myPatients_activeHospitalizationsPanelTitle =>
+      'Hospitalisations actives';
+
+  @override
+  String get myPatients_myPatientsPanelTitle => 'Mes patients';
+
+  @override
+  String get myPatients_emptyTitle =>
+      'You don\'t have any assigned patients yet.';
+
+  @override
+  String get myPatients_emptyDescription =>
+      'Sorumlu olduğunuz hastaları ekleyin; tedavi planı, kabin işlemleri ve iş listesi bu hastalar üzerinden açılır.';
+
+  @override
+  String get myPatients_chip_step1 => '1. Recherchez le patient à gauche';
+
+  @override
+  String get myPatients_chip_step2 => '2. Appuyez sur le bouton vert +';
+
+  @override
+  String get myPatients_chip_step3 => '3. Le patient apparaît dans cette liste';
+
+  @override
+  String get myPatients_screenDescription =>
+      'Attribuez-vous des patients parmi ceux ayant une hospitalisation active. Les patients que vous ajoutez depuis la liste de gauche apparaissent sous votre responsabilité dans les opérations de traitement et de cabine.';
 }
