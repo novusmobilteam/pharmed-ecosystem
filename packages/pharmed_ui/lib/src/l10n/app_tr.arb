@@ -6618,7 +6618,7 @@
   "@enumCore_prescriptionMovementAppliedLabel": {
     "description": "PrescriptionMovementType.applied — durum etiketi"
   },
-  "enumCore_prescriptionMovementReturnedLabel": "İade Edildi",
+  "enumCore_prescriptionMovementReturnedLabel": "İade Onaylandı",
   "@enumCore_prescriptionMovementReturnedLabel": {
     "description": "PrescriptionMovementType.returned — durum etiketi"
   },
@@ -6722,7 +6722,7 @@
   "@enumCore_prescriptionMovementAppliedActionLabel": {
     "description": "PrescriptionMovementType.applied — eylem etiketi"
   },
-  "enumCore_prescriptionMovementReturnedActionLabel": "İade Edildi",
+  "enumCore_prescriptionMovementReturnedActionLabel": "İade Onaylandı",
   "@enumCore_prescriptionMovementReturnedActionLabel": {
     "description": "PrescriptionMovementType.returned — eylem etiketi"
   },

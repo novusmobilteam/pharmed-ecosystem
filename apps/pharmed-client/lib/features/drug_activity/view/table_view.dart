@@ -55,10 +55,12 @@ List<TableColumnDef<PrescriptionItemMovement>> _buildColumnDefs(BuildContext con
   ),
   TableColumnDef(
     title: context.l10n.drugActivity_table_quantityColumn,
-    displayValue: (item) => item.quantity.formatFractional,
+    displayValue: (item) =>
+        '${item.quantity.formatFractional} ${item.prescriptionItem?.medicine?.operationUnitLocalized(context)}',
   ),
   TableColumnDef(
     title: context.l10n.drugActivity_table_movementColumn,
-    displayValue: (item) => item.type.actionLabel(context),
+    //displayValue: (item) => item.type.actionLabel(context),
+    cellBuilder: (item) => Text(item.type.actionLabel(context), style: MedTextStyles.bodyMd(weight: FontWeight.bold)),
   ),
 ];
