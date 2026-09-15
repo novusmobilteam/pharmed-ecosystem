@@ -45,27 +45,8 @@ class MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
       spacing: 16.0,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          spacing: 4.0,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              spacing: 4.0,
-              children: [
-                Container(
-                  width: 4,
-                  height: 25,
-                  decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.mdAll),
-                ),
-                Text(widget.cabinRouteContext?.menu.name.toString() ?? '-', style: MedTextStyles.titleLg()),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Text(context.l10n.myPatients_screenDescription, style: MedTextStyles.bodyMd()),
-            ),
-          ],
-        ),
+        ScreenTitle(menu: widget.cabinRouteContext!.menu),
+
         Expanded(
           child: Row(
             spacing: 12.0,

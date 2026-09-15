@@ -22,7 +22,6 @@ class JobListScreen extends ConsumerStatefulWidget {
 class JobListScreenState extends ConsumerState<JobListScreen> {
   @override
   Widget build(BuildContext context) {
-    final menu = widget.cabinRouteContext?.menu;
     final notifier = ref.watch(jobListNotifierProvider);
 
     if (notifier.isError) {
@@ -33,27 +32,7 @@ class JobListScreenState extends ConsumerState<JobListScreen> {
       spacing: 16.0,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          spacing: 4.0,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              spacing: 4.0,
-              children: [
-                Container(
-                  width: 4,
-                  height: 25,
-                  decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.mdAll),
-                ),
-                Text(menu!.name.toString(), style: MedTextStyles.titleLg()),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Text(menu.description ?? '', style: MedTextStyles.bodyMd()),
-            ),
-          ],
-        ),
+        ScreenTitle(menu: widget.cabinRouteContext!.menu),
         Expanded(
           child: Row(
             spacing: 12.0,

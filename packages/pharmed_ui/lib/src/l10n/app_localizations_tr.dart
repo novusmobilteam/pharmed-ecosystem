@@ -5169,7 +5169,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_prescriptionMovementAppliedLabel => 'Uygulandı';
 
   @override
-  String get enumCore_prescriptionMovementReturnedLabel => 'İade Edildi';
+  String get enumCore_prescriptionMovementReturnedLabel => 'İade Onaylandı';
 
   @override
   String get enumCore_prescriptionMovementWastagedLabel => 'Fire Edildi';
@@ -5269,7 +5269,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_prescriptionMovementAppliedActionLabel => 'Uygulandı';
 
   @override
-  String get enumCore_prescriptionMovementReturnedActionLabel => 'İade Edildi';
+  String get enumCore_prescriptionMovementReturnedActionLabel =>
+      'İade Onaylandı';
 
   @override
   String get enumCore_prescriptionMovementWastagedActionLabel => 'Fire Edildi';
