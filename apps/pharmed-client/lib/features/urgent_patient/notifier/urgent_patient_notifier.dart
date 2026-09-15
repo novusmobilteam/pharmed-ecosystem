@@ -46,6 +46,8 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isDeleting => isLoading(_deleteOp);
   bool get isError => isFailed(_fetchUrgentOp);
 
+  String? get errorMessage => message(_fetchUrgentOp);
+
   Future<void> getUrgentPatients() async {
     await execute(
       _fetchUrgentOp,

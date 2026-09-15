@@ -55,6 +55,7 @@ class UrgentPatientDetailPanel extends StatelessWidget {
                         title: context.l10n.urgentPatientTermination_noMedicineEmptyTitle,
                         subtitle: context.l10n.urgentPatientTermination_noMedicineEmptyDescription,
                         iconData: PhosphorIcons.pill(),
+                        medTone: MedTone.error,
                       ),
                     ),
                   ),

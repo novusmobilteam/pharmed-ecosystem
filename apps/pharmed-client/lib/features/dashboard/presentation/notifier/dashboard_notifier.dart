@@ -57,6 +57,8 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
   final AppSettingsCache _settings;
   final CabinConnectionNotifier _cabinConnectionNotifier;
 
+  Timer? _secondaryDataRefreshTimer;
+
   String _activeRoute = 'dashboard';
   String get activeRoute => _activeRoute;
 
@@ -118,6 +120,22 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     return cabinVisualizerDataByCabin[targetCabin];
   }
 
+  /// Order/tedavi uyarısının oturum durumundan bağımsız güncel kalması için
+  /// secondaryData periyodik olarak yenilenir (bkz. issue #32). Süre için
+  /// şimdilik 30sn seçildi, gerekirse ayarlanabilir.
+  static const _secondaryDataRefreshInterval = Duration(seconds: 30);
+
+  void _startSecondaryDataRefreshTimer() {
+    _secondaryDataRefreshTimer?.cancel();
+    _secondaryDataRefreshTimer = Timer.periodic(_secondaryDataRefreshInterval, (_) => _loadSecondaryData());
+  }
+
+  @override
+  void dispose() {
+    _secondaryDataRefreshTimer?.cancel();
+    super.dispose();
+  }
+
   /// Kabin seçimi gerektiren route'lar — bu listedeki bir hedefe navigateTo
   /// çağrıldığında doğrudan gidilmez, önce CabinSelectionView gösterilir.
   static const _cabinScopedRoutes = {
@@ -148,6 +166,10 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     // Tedavi/aktivite/reçete section'ları primary veriyi bloklamasın diye
     // arka planda, beklenmeden başlatılır.
     unawaited(_loadSecondaryData());
+
+    // Oturum durumundan bağımsız olarak (login/logout, session expiry)
+    // sürekli çalışır — order uyarısı gecikmeden yansısın diye (issue #32).
+    _startSecondaryDataRefreshTimer();
   }
 
   Future<void> refresh({bool forceRefresh = true}) async {

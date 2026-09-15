@@ -2,14 +2,18 @@ import 'package:flutter/widgets.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 class NoDataView extends StatelessWidget {
-  const NoDataView({super.key, required this.title, required this.subtitle, required this.iconData});
+  const NoDataView({super.key, required this.title, required this.subtitle, required this.iconData, this.medTone});
 
   final String title;
   final String subtitle;
   final IconData iconData;
+  final MedTone? medTone;
 
   @override
   Widget build(BuildContext context) {
+    final semantic = medTone != null
+        ? MedSemanticColors.of(medTone!)
+        : MedSemanticColors(background: MedColors.blueLight, foreground: MedColors.blue);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -33,8 +37,8 @@ class NoDataView extends StatelessWidget {
               Container(
                 width: 60,
                 height: 100,
-                decoration: BoxDecoration(color: MedColors.redLight, borderRadius: MedRadius.midAll),
-                child: Center(child: Icon(iconData, color: MedColors.red)),
+                decoration: BoxDecoration(color: semantic.background, borderRadius: MedRadius.midAll),
+                child: Center(child: Icon(iconData, color: semantic.foreground)),
               ),
               Container(
                 width: 60,

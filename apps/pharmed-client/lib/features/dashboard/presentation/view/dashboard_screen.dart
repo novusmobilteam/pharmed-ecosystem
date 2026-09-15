@@ -11,6 +11,7 @@ import 'package:pharmed_client/features/refund/refund_view.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';
 import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_client/features/unscanned_barcodes/view/unscanned_barcodes_screen.dart';
+import 'package:pharmed_client/widgets/empty_widgets/no_data_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
