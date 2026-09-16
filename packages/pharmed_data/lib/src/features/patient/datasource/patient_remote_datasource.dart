@@ -57,16 +57,16 @@ class PatientRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> endEmergencyPatient({
+    required int urgentPatientHospitalizationId,
     required int hospitalizationId,
-    required int patientId,
     required List<int> prescriptionItemIds,
   }) async {
     return await postRequest(
       path: '$_base/merge',
       parser: BaseRemoteDataSource.voidParser(),
       body: {
-        "UrgentPatientHospitalizationId": hospitalizationId.toString(),
-        "PatientId": patientId,
+        "UrgentPatientHospitalizationId": urgentPatientHospitalizationId.toString(),
+        "patientHospitalizationId": hospitalizationId,
         "PrescriptionDetailIds": prescriptionItemIds.toList(),
       },
     );

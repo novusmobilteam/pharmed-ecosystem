@@ -11,7 +11,7 @@ abstract interface class IPatientRepository {
   /// Acil hasta sonlandırma servisi
   Future<Result<void>> endEmergencyPatient({
     required int hospitalizationId,
-    required int patientId,
+    required int urgentPatientHospitalizationId,
     required List<int> prescriptionItemIds,
   });
 
