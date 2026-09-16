@@ -123,7 +123,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
   /// Order/tedavi uyarısının oturum durumundan bağımsız güncel kalması için
   /// secondaryData periyodik olarak yenilenir (bkz. issue #32). Süre için
   /// şimdilik 30sn seçildi, gerekirse ayarlanabilir.
-  static const _secondaryDataRefreshInterval = Duration(seconds: 30);
+  static const _secondaryDataRefreshInterval = Duration(seconds: 300);
 
   void _startSecondaryDataRefreshTimer() {
     _secondaryDataRefreshTimer?.cancel();
