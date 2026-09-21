@@ -14,6 +14,12 @@ abstract interface class DrawerJobTarget {
   /// Bu hedefin fiziksel adresi (çekmece/göz + stok). Non-null olmalı —
   /// nullable assignment durumu (IntakeTarget gibi) bu arayüze uymaz.
   MedicineAssignment get assignment;
+
+  /// Bu hedef açılırken çekmecenin/gözün ne kadar derine (kaç kademe)
+  /// açılacağını sınırlar — null ise tam açılır. Şu an sadece Intake'in
+  /// birim-doz akışında (güvenlik: FIFO'nun izin verdiği kadar) kullanılıyor;
+  /// diğer tüm job tipleri null döner (davranış değişmez).
+  int? get explicitTargetStep;
 }
 
 abstract interface class DrawerJob<T extends DrawerJobTarget> {
@@ -35,4 +41,8 @@ abstract interface class DrawerJob<T extends DrawerJobTarget> {
   /// copyWith(status: ...)'a yönlendiren adaptör — her concrete job kendi
   /// immutable copyWith'ini kullanır, mixin somut tipi bilmez.
   DrawerJob<T> copyWithStatus(CabinOperationJobStatus status);
+
+  /// Aktif job'ın hedef listesini değiştirir (örn. bir hedefin sayım/doz
+  /// girdisi güncellendiğinde). Status/diğer alanlar korunur.
+  DrawerJob<T> copyWithTargets(List<T> targets);
 }

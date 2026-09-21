@@ -5,6 +5,7 @@ class CabinStock {
   final int? cabinId;
   final int? cabinDrawerId;
   final int? cabinDrawerDetailId;
+  final int? materialId;
   final int? corpartmentNo;
   final int? shelfNo;
   final num? quantity;
@@ -34,6 +35,7 @@ class CabinStock {
     this.medicine,
     this.assignment,
     this.cabinDrawerDetail,
+    this.materialId,
   });
 
   int? get remainingDay => miadDate != null ? miadDate!.difference(DateTime.now()).inDays : 0;

@@ -26,6 +26,7 @@ class HospitalizationMapper {
       physicalService: const ServiceMapper().toEntityOrNull(dto.physicalService),
       inpatientService: const ServiceMapper().toEntityOrNull(dto.inpatientService),
       doctor: const UserMapper().toEntityOrNull(dto.doctor),
+      isRedirected: dto.isRedirected,
     );
   }
 

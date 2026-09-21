@@ -723,6 +723,27 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bu hastaya ait aktif reçete bulunmuyor.';
 
   @override
+  String get emptyState_noOrderlessMedicineTitle => 'Ordersız ilaç bulunamadı';
+
+  @override
+  String get emptyState_noOrderlessMedicineDescription =>
+      'Kabinde ordersız statüde tanımlı bir ilaç bulunmamaktadır.';
+
+  @override
+  String get emptyState_noFreeMedicineTitle => 'Serbest ilaç bulunamadı';
+
+  @override
+  String get emptyState_noFreeMedicineDescription =>
+      'Kabinde serbest ilaç statüsünde tanımlı bir ilaç bulunmamaktadır.';
+
+  @override
+  String get emptyState_noUrgentMedicineTitle => 'Acil durum ilacı bulunamadı';
+
+  @override
+  String get emptyState_noUrgentMedicineDescription =>
+      'Kabinde acil durumlarda alınabilecek tanımlı bir ilaç bulunmamaktadır.';
+
+  @override
   String get emptyState_noCabinTitle => 'Kabin Bulunamadı';
 
   @override
@@ -5753,49 +5774,47 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get masterDrawer_status_devicePreparingSubtitle =>
-      'Sistem hazırlanıyor. Lütfen bir süre bekleyin.';
+      'Cihaz hazırlanıyor.';
 
   @override
   String get masterDrawer_status_lockOpeningTitle => 'Kilit Açılıyor';
 
   @override
   String get masterDrawer_status_lockOpeningSubtitle =>
-      'Çekmece kilidi açılıyor. Lütfen bir süre bekleyin.';
+      'Kilit açılıyor, lütfen bekleyin.';
 
   @override
   String get masterDrawer_status_waitingPullTitle => 'Çekmeceyi Çekiniz';
 
   @override
-  String get masterDrawer_status_waitingPullSubtitle =>
-      'Kilit açıldı. Devam etmek için çekmeceyi çekerek açın.';
+  String get masterDrawer_status_waitingPullSubtitle => 'Çekmeceyi çekin.';
 
   @override
   String get masterDrawer_status_openingLidTitle => 'Göz Kapağı Açılıyor';
 
   @override
-  String get masterDrawer_status_openingLidSubtitle =>
-      'Göz kapağı açılıyor. Lütfen bir süre bekleyin.';
+  String get masterDrawer_status_openingLidSubtitle => 'Göz kapağı açılıyor.';
 
   @override
   String get masterDrawer_status_waitingCloseTitle => 'Çekmeceyi Kapatınız';
 
   @override
   String get masterDrawer_status_waitingCloseSubtitle =>
-      'Sonraki adıma geçmek için çekmeceyi kapatın.';
+      'İlacı aldıysanız çekmeceyi kapatabilirsiniz.';
 
   @override
   String get masterDrawer_status_failedTitle => 'Bir Sorun Oluştu';
 
   @override
   String get masterDrawer_status_failedSubtitle =>
-      'Lütfen bekleyin, çekmece durumu kontrol ediliyor.';
+      'Bir sorun oluştu, lütfen tekrar deneyin.';
 
   @override
   String get masterDrawer_status_openingTitle => 'Çekmece Açılıyor';
 
   @override
   String get masterDrawer_status_openingSubtitle =>
-      'Çekmece açılıyor. Lütfen bir süre bekleyin.';
+      'Çekmece açılıyor, lütfen bekleyin.';
 
   @override
   String get masterDrawer_stop_waitingCloseTitle => 'Açık Çekmeceyi Kapatınız';
@@ -6383,7 +6402,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get masterDrawer_status_completingTitle => 'İşleminiz Tamamlanıyor';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Lütfen bekleyiniz';
+  String get masterDrawer_status_completingSubtitle => 'Alım tamamlanıyor.';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Tanımlı Kabinler';
@@ -6826,4 +6845,29 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get myPatients_screenDescription =>
       'Aktif yatışı bulunan hastalar arasından kendinize hasta tanımlayın. Soldaki listeden eklediğiniz hastalar, tedavi ve kabin işlemlerinde sizin sorumluluğunuzda görünür.';
+
+  @override
+  String get cabinOverview_workingCabinBadge => 'Çalışılan kabin';
+
+  @override
+  String get cabinOverview_drawerCountSuffix => 'çekmece';
+
+  @override
+  String get cabinOverview_activeDrawerBadge => 'Aktif';
+
+  @override
+  String get masterDrawer_status_openedTitle => 'Çekmece açık';
+
+  @override
+  String get masterDrawer_status_openedSubtitle =>
+      'İlacı alın, çekmeceyi kapatın.';
+
+  @override
+  String get masterDrawer_status_openedPill => 'Çekmece kapanışı izleniyor';
+
+  @override
+  String get masterDrawer_status_workingPill => 'İşlem sürüyor';
+
+  @override
+  String get masterDrawer_status_closureMonitoredPill => 'Kapanış algılanıyor';
 }

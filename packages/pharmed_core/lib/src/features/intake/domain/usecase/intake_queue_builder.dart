@@ -37,34 +37,28 @@ abstract final class IntakeQueueBuilder {
   /// assignment'ı veya fiziksel çekmece id'si çözülemeyen hedefler atlanır
   /// (kuyruğa giremez; çağıran taraf bunu boş kuyruk olarak ele almalı).
   static List<IntakeDrawerJob> build(List<IntakeTarget> targets) {
-    // 1. Fiziksel çekmece bazında grupla.
     final Map<int, List<IntakeTarget>> grouped = {};
     for (final t in targets) {
-      final physicalId = _physicalDrawerId(t.assignment);
+      final physicalId = _physicalDrawerId(t.item.assignment);
       if (physicalId == null) continue;
       grouped.putIfAbsent(physicalId, () => []).add(t);
     }
 
-    // 2. Her grubu job'a çevir.
     final jobs = <IntakeDrawerJob>[];
     grouped.forEach((physicalId, jobTargets) {
-      // Çekmece içindeki hedefleri de göz konumuna göre sırala (kübik lid sırası).
       jobTargets.sort((a, b) => _compareByCellPosition(a.assignment, b.assignment));
 
       jobs.add(
         IntakeDrawerJob(
           cabinDrawerId: physicalId,
-          representativeAssignment: jobTargets.first.assignment!,
+          representativeAssignment: jobTargets.first.assignment, // artık bang gerekmiyor, getter zaten non-null
           targets: jobTargets,
-          requiredStepNo: _resolveRequiredStepNo(jobTargets),
           cabinId: _cabinId(jobTargets.first.assignment),
         ),
       );
     });
 
-    // 3. Job'ları fiziksel çekmece konumuna göre sırala (üstten alta).
     jobs.sort((a, b) => _compareByDrawerPosition(a.representativeAssignment, b.representativeAssignment));
-
     return jobs;
   }
 
@@ -106,7 +100,6 @@ abstract final class IntakeQueueBuilder {
 
     for (final target in jobTargets) {
       final assignment = target.assignment;
-      if (assignment == null) continue;
 
       for (final detail in target.details) {
         final itemStock = target.item.stock;

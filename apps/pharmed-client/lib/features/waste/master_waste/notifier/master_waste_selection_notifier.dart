@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/mixins/api_request_mixin.dart';
+import 'package:pharmed_client/core/mixins/witness_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -40,7 +41,7 @@ final masterWasteSelectionNotifierProvider = ChangeNotifierProvider<MasterWasteN
   );
 });
 
-class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin {
+class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMixin<DisposableItem> {
   MasterWasteNotifier({
     required Ref ref,
     required GetMasterDisposablesUseCase getDisposables,
@@ -78,17 +79,6 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin {
   bool isSelected(int itemId) => _selectedItemIds.contains(itemId);
 
   final Map<int, double> _wasteQuantities = {};
-
-  // Bu hospitalization seçimi süresince giriş yapmış (login olmuş) tüm şahitler.
-  // Item id'leri fetch'ler arası KARARLI olmayabileceği için (backend disposed
-  // item'ları düşürüp kalanları yeniden hesaplayabilir), şahit ataması id eşleşmesiyle
-  // değil, her fetch sonrası bu havuz item'lara YENİDEN uygulanarak korunur.
-  final List<User> _confirmedWitnesses = [];
-
-  bool _canWitnessItem(DisposableItem item, User user) {
-    final witnesses = item.witnessContext.witnesses;
-    return witnesses.isEmpty || witnesses.any((w) => w.id == user.id);
-  }
 
   num amountFor(int itemId) {
     final item = _disposables.firstWhereOrNull((it) => it.id == itemId);
@@ -139,7 +129,7 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin {
       fetchDisposablesOp,
       operation: () => _getDisposables.call(id),
       onData: (items) {
-        _disposables = _applyConfirmedWitnesses(items);
+        _disposables = reapplyConfirmedWitnesses(items);
         notifyListeners();
       },
     );
@@ -168,26 +158,6 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin {
     }
     _wasteQuantities[itemId] = amount;
     notifyListeners();
-  }
-
-  bool itemNeedsWitness(DisposableItem item) => item.needsWitness(currentStation: _currentStation);
-
-  void addWitness(int itemId, User user) {
-    final currentUserId = _ref.read(authNotifierProvider.notifier).currentUser?.id;
-    if (currentUserId != null && user.id == currentUserId) return;
-
-    if (!_confirmedWitnesses.any((w) => w.id == user.id)) {
-      _confirmedWitnesses.add(user);
-    }
-
-    _disposables = _applyConfirmedWitnesses(_disposables);
-    notifyListeners();
-  }
-
-  User? resolveExistingWitness(int itemId) {
-    final target = _disposables.firstWhereOrNull((i) => i.id == itemId);
-    if (target == null) return null;
-    return _confirmedWitnesses.firstWhereOrNull((w) => _canWitnessItem(target, w));
   }
 
   Future<void> disposeGroup(
@@ -266,17 +236,26 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin {
     );
   }
 
-  List<DisposableItem> _applyConfirmedWitnesses(List<DisposableItem> items) {
-    if (_confirmedWitnesses.isEmpty) return items;
+  @override
+  int? get currentWitnessUserId => _ref.read(authNotifierProvider.notifier).currentUser?.id;
 
-    return items.map((item) {
-      if (item.witnessContext.witness != null) return item;
-      if (!itemNeedsWitness(item)) return item;
+  @override
+  int idOf(DisposableItem item) => item.id;
 
-      final matching = _confirmedWitnesses.firstWhereOrNull((w) => _canWitnessItem(item, w));
-      if (matching == null) return item;
+  @override
+  bool needsWitness(DisposableItem item) => item.needsWitness(currentStation: _currentStation);
 
-      return item.copyWith(witnessContext: item.witnessContext.copyWith(witness: matching));
-    }).toList();
+  @override
+  DisposableItem withWitness(DisposableItem item, User witness) =>
+      item.copyWith(witnessContext: item.witnessContext.copyWith(witness: witness));
+
+  @override
+  WitnessContext witnessContextOf(DisposableItem item) => item.witnessContext;
+
+  void addWitness(int itemId, User user) {
+    final target = _disposables.firstWhereOrNull((i) => i.id == itemId);
+    if (target == null) return;
+    _disposables = applyWitness(target: target, user: user, pool: _disposables);
+    notifyListeners();
   }
 }

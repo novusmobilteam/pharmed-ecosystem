@@ -32,7 +32,7 @@ class MasterUnloadSelectionView extends ConsumerWidget {
 
     final items = selection.visibleMedicines;
 
-    SearchDataSource<Medicine> _equivalentsSource(int medicineId) {
+    SearchDataSource<Medicine> equivalentsSource(int medicineId) {
       return (skip, take, search) async {
         final result = await ref
             .read(getEquivalentMedicinesUseCaseProvider)
@@ -44,7 +44,7 @@ class MasterUnloadSelectionView extends ConsumerWidget {
       };
     }
 
-    SearchDataSource<Medicine> _allMedicinesSource() {
+    SearchDataSource<Medicine> allMedicinesSource() {
       return (skip, take, search) async {
         final result = await ref
             .read(getMedicinesUseCaseProvider)
@@ -103,8 +103,8 @@ class MasterUnloadSelectionView extends ConsumerWidget {
                   final selected = await SelectionDialog.showWithFallback<Medicine>(
                     context,
                     title: context.l10n.unload_replaceMedicine_dialogTitle,
-                    primaryDataSource: _equivalentsSource(medicineId),
-                    secondaryDataSource: _allMedicinesSource(),
+                    primaryDataSource: equivalentsSource(medicineId),
+                    secondaryDataSource: allMedicinesSource(),
                     secondaryToggleLabel: context.l10n.unload_replaceMedicine_allMedicinesButton,
                     labelBuilder: (m) => m.name,
                   );

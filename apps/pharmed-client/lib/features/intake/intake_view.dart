@@ -5,6 +5,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../dashboard/dashboard.dart';
 import 'intake.dart';
+import 'master_intake/view/master_intake_view.dart';
 
 class IntakeView extends ConsumerWidget {
   const IntakeView({super.key, this.stationContext});

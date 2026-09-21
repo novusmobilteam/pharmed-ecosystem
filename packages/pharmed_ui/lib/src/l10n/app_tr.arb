@@ -894,6 +894,12 @@
   "emptyState_noPatientDescription": "Bu göze henüz hasta ataması yapılmamış.",
   "emptyState_noPrescriptionTitle": "Reçete bulunamadı",
   "emptyState_noPrescriptionDescription": "Bu hastaya ait aktif reçete bulunmuyor.",
+  "emptyState_noOrderlessMedicineTitle": "Ordersız ilaç bulunamadı",
+  "emptyState_noOrderlessMedicineDescription": "Kabinde ordersız statüde tanımlı bir ilaç bulunmamaktadır.",
+  "emptyState_noFreeMedicineTitle": "Serbest ilaç bulunamadı",
+  "emptyState_noFreeMedicineDescription": "Kabinde serbest ilaç statüsünde tanımlı bir ilaç bulunmamaktadır.",
+  "emptyState_noUrgentMedicineTitle": "Acil durum ilacı bulunamadı",
+  "emptyState_noUrgentMedicineDescription": "Kabinde acil durumlarda alınabilecek tanımlı bir ilaç bulunmamaktadır.",
   "emptyState_noCabinTitle": "Kabin Bulunamadı",
   "emptyState_noCabinDescription": "Henüz tanımlı bir kabin bulunmuyor. Devam edebilmek için lütfen bir kabin tanımlayın.",
   "emptyState_networkErrorTitle": "İnternet Bağlantısı Yok",
@@ -8934,5 +8940,69 @@
 "myPatients_screenDescription": "Aktif yatışı bulunan hastalar arasından kendinize hasta tanımlayın. Soldaki listeden eklediğiniz hastalar, tedavi ve kabin işlemlerinde sizin sorumluluğunuzda görünür.",
 "@myPatients_screenDescription": {
   "description": "Explanatory paragraph shown below the screen title on My Patients screen, describing how to assign patients to yourself."
-}
+},
+"cabinOverview_workingCabinBadge": "Çalışılan kabin",
+"@cabinOverview_workingCabinBadge": {
+    "description": "Badge label on the active cabin card in the execution screen's cabin overview panel, indicating this is the cabin currently being worked on."
+  },
+  "cabinOverview_drawerCountSuffix": "çekmece",
+  "@cabinOverview_drawerCountSuffix": {
+    "description": "Unit suffix shown after the drawer count in the cabin overview panel, e.g. '5 çekmece'."
+  },
+  "cabinOverview_activeDrawerBadge": "Aktif",
+  "@cabinOverview_activeDrawerBadge": {
+    "description": "Badge label on the currently active drawer row in the cabin overview panel's drawer list."
+  },
+  "masterDrawer_status_openedTitle": "Çekmece açık",
+  "@masterDrawer_status_openedTitle": {
+    "description": "Title shown when the master drawer is fully open and ready for the user to take the medicine."
+  },
+  "masterDrawer_status_openedSubtitle": "İlacı alın, çekmeceyi kapatın.",
+  "@masterDrawer_status_openedSubtitle": {
+    "description": "Instructional subtitle shown when the master drawer is fully open — tells the user the only remaining action is to take the medicine and close the drawer."
+  },
+  "masterDrawer_status_openedPill": "Çekmece kapanışı izleniyor",
+  "@masterDrawer_status_openedPill": {
+    "description": "Right-aligned status pill shown while the drawer is open, indicating the system is passively monitoring for the physical closure sensor event."
+  },
+  "masterDrawer_status_workingPill": "İşlem sürüyor",
+  "@masterDrawer_status_workingPill": {
+    "description": "Generic right-aligned status pill shown during transient hardware transitions (opening, lock opening, lid opening, waiting for pull) to indicate the system is actively working."
+  },
+  "masterDrawer_status_closureMonitoredPill": "Kapanış algılanıyor",
+  "@masterDrawer_status_closureMonitoredPill": {
+    "description": "Right-aligned status pill shown specifically while waiting for the drawer to physically close after the user confirmed completion."
+  },
+  "masterDrawer_status_openingSubtitle": "Çekmece açılıyor, lütfen bekleyin.",
+  "@masterDrawer_status_openingSubtitle": {
+    "description": "Subtitle shown while the drawer is transitioning open between two consecutive intake jobs."
+  },
+  "masterDrawer_status_completingSubtitle": "Alım tamamlanıyor.",
+  "@masterDrawer_status_completingSubtitle": {
+    "description": "Subtitle shown when the last job in the intake queue is finishing and no further drawer will open."
+  },
+  "masterDrawer_status_lockOpeningSubtitle": "Kilit açılıyor, lütfen bekleyin.",
+  "@masterDrawer_status_lockOpeningSubtitle": {
+    "description": "Subtitle shown while the physical lock mechanism of the drawer is being released."
+  },
+  "masterDrawer_status_devicePreparingSubtitle": "Cihaz hazırlanıyor.",
+  "@masterDrawer_status_devicePreparingSubtitle": {
+    "description": "Subtitle shown while the hardware device is initializing before the drawer can open."
+  },
+  "masterDrawer_status_waitingPullSubtitle": "Çekmeceyi çekin.",
+  "@masterDrawer_status_waitingPullSubtitle": {
+    "description": "Subtitle shown when the lock has released and the user is expected to physically pull the drawer open."
+  },
+  "masterDrawer_status_openingLidSubtitle": "Göz kapağı açılıyor.",
+  "@masterDrawer_status_openingLidSubtitle": {
+    "description": "Subtitle shown while a cubic drawer's individual cell lid is being opened."
+  },
+  "masterDrawer_status_waitingCloseSubtitle": "İlacı aldıysanız çekmeceyi kapatabilirsiniz.",
+  "@masterDrawer_status_waitingCloseSubtitle": {
+    "description": "Subtitle shown after the user confirmed completion, while the system waits for the physical close sensor event."
+  },
+  "masterDrawer_status_failedSubtitle": "Bir sorun oluştu, lütfen tekrar deneyin.",
+  "@masterDrawer_status_failedSubtitle": {
+    "description": "Subtitle shown when the drawer hardware reports a failure state."
+  }
 }

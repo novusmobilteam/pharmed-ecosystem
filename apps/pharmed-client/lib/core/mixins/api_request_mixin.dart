@@ -158,8 +158,8 @@ mixin ApiRequestMixin on ChangeNotifier {
 
     response.when(
       ok: (data) {
-        setSuccess(key, message: successMessage);
         onData(data);
+        setSuccess(key, message: successMessage);
       },
       error: (error) {
         // [HAZ-004] Hata her zaman loglanır, sessiz geçmez

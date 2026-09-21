@@ -18,7 +18,14 @@ enum AvatarPalette { blue, green, amber, purple, rose, red }
 /// MedAvatar(initials: 'SE', palette: AvatarPalette.blue, showBorder: false)
 /// ```
 class MedAvatar extends StatelessWidget {
-  const MedAvatar({super.key, required this.initials, required this.palette, this.size = 24, this.showBorder = true});
+  const MedAvatar({
+    super.key,
+    required this.initials,
+    required this.palette,
+    this.size = 24,
+    this.showBorder = true,
+    this.shape = BoxShape.circle,
+  });
 
   final String initials;
   final AvatarPalette palette;
@@ -26,6 +33,7 @@ class MedAvatar extends StatelessWidget {
 
   /// false → çevre çizgisi gösterilmez; düz arka plan üzerinde daha temiz görünür.
   final bool showBorder;
+  final BoxShape shape;
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +44,9 @@ class MedAvatar extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         color: colors.background,
-        shape: BoxShape.circle,
+        shape: shape,
         border: showBorder ? Border.all(color: colors.border, width: 1.5) : null,
+        borderRadius: MedRadius.lgAll,
       ),
       alignment: Alignment.center,
       child: Text(

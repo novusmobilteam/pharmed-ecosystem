@@ -724,6 +724,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'There are no active prescriptions for this patient.';
 
   @override
+  String get emptyState_noOrderlessMedicineTitle =>
+      'No orderless medicines found';
+
+  @override
+  String get emptyState_noOrderlessMedicineDescription =>
+      'No medicine is defined in the cabin under the orderless status.';
+
+  @override
+  String get emptyState_noFreeMedicineTitle => 'No free-use medicines found';
+
+  @override
+  String get emptyState_noFreeMedicineDescription =>
+      'No medicine is defined in the cabin under the free/independent status.';
+
+  @override
+  String get emptyState_noUrgentMedicineTitle => 'No emergency medicines found';
+
+  @override
+  String get emptyState_noUrgentMedicineDescription =>
+      'No medicine is defined in the cabin for emergency use.';
+
+  @override
   String get emptyState_noCabinTitle => 'No Cabinet Found';
 
   @override
@@ -5799,50 +5821,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get masterDrawer_status_devicePreparingTitle => 'Preparing';
 
   @override
-  String get masterDrawer_status_devicePreparingSubtitle =>
-      'The system is getting ready. Please wait a moment.';
+  String get masterDrawer_status_devicePreparingSubtitle => 'Preparing device.';
 
   @override
   String get masterDrawer_status_lockOpeningTitle => 'Unlocking';
 
   @override
   String get masterDrawer_status_lockOpeningSubtitle =>
-      'The drawer lock is opening. Please wait a moment.';
+      'Unlocking, please wait.';
 
   @override
   String get masterDrawer_status_waitingPullTitle => 'Please Pull the Drawer';
 
   @override
-  String get masterDrawer_status_waitingPullSubtitle =>
-      'The lock has been released. Pull the drawer open to continue.';
+  String get masterDrawer_status_waitingPullSubtitle => 'Pull the drawer open.';
 
   @override
   String get masterDrawer_status_openingLidTitle => 'Opening Compartment Lid';
 
   @override
-  String get masterDrawer_status_openingLidSubtitle =>
-      'The compartment lid is opening. Please wait a moment.';
+  String get masterDrawer_status_openingLidSubtitle => 'Opening cell lid.';
 
   @override
   String get masterDrawer_status_waitingCloseTitle => 'Please Close the Drawer';
 
   @override
   String get masterDrawer_status_waitingCloseSubtitle =>
-      'Close the drawer to continue to the next step.';
+      'If you\'ve taken the medicine, you can close the drawer.';
 
   @override
   String get masterDrawer_status_failedTitle => 'A Problem Occurred';
 
   @override
   String get masterDrawer_status_failedSubtitle =>
-      'Please wait, the system is checking the drawer status.';
+      'Something went wrong, please try again.';
 
   @override
   String get masterDrawer_status_openingTitle => 'Opening Drawer';
 
   @override
   String get masterDrawer_status_openingSubtitle =>
-      'The drawer is opening. Please wait a moment.';
+      'Drawer opening, please wait.';
 
   @override
   String get masterDrawer_stop_waitingCloseTitle =>
@@ -6431,7 +6450,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get masterDrawer_status_completingTitle => 'Completing Your Operation';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Please wait';
+  String get masterDrawer_status_completingSubtitle => 'Finishing intake.';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Defined Cabinets';
@@ -6874,4 +6893,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get myPatients_screenDescription =>
       'Assign patients to yourself from among those with an active admission. Patients you add from the list on the left appear under your responsibility in treatment and cabin operations.';
+
+  @override
+  String get cabinOverview_workingCabinBadge => 'Working cabin';
+
+  @override
+  String get cabinOverview_drawerCountSuffix => 'drawers';
+
+  @override
+  String get cabinOverview_activeDrawerBadge => 'Active';
+
+  @override
+  String get masterDrawer_status_openedTitle => 'Drawer open';
+
+  @override
+  String get masterDrawer_status_openedSubtitle =>
+      'Take the medicine, close the drawer — that\'s it.';
+
+  @override
+  String get masterDrawer_status_openedPill => 'Watching for closure';
+
+  @override
+  String get masterDrawer_status_workingPill => 'In progress';
+
+  @override
+  String get masterDrawer_status_closureMonitoredPill => 'Detecting closure';
 }

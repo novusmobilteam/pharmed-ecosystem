@@ -36,6 +36,7 @@ class CabinStockMapper {
       shelfNo: dto.shelfNo,
       quantity: dto.quantity,
       miadDate: dto.miadDate,
+      materialId: dto.materialId,
       // Alt modeller için ilgili mapper'lar
       medicine: dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null,
       assignment: assignment,

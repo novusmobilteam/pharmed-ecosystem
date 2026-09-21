@@ -22,6 +22,7 @@ class HospitalizationDto {
   final bool? isBaby;
   final int? colorId;
   final bool? isUrgent;
+  final bool isRedirected;
 
   HospitalizationDto({
     this.id,
@@ -45,6 +46,7 @@ class HospitalizationDto {
     this.isBaby,
     this.colorId,
     this.isUrgent,
+    this.isRedirected = false,
   });
 
   factory HospitalizationDto.fromJson(Map<String, dynamic> json) {
@@ -70,6 +72,7 @@ class HospitalizationDto {
       isBaby: json['isBaby'] as bool?,
       colorId: json['colorId'] as int?,
       isUrgent: json['isUrgent'] as bool?,
+      isRedirected: json['hasReferredPrescriptionDetail'] as bool? ?? false,
     );
   }
 
