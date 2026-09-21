@@ -22,4 +22,7 @@ class RefundTarget implements DrawerJobTarget {
   bool get isKubik =>
       !isReturnDrawerTarget && (assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false);
   bool get isValid => item.isReadyForExecution;
+
+  @override
+  int? get explicitTargetStep => null;
 }

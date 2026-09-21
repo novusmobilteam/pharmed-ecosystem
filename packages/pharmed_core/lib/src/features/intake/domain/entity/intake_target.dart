@@ -16,7 +16,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-class IntakeTarget {
+class IntakeTarget implements DrawerJobTarget {
   const IntakeTarget({required this.item, required this.details});
 
   /// Alımı yapılacak ilaç kalemi (doz, şahit, assignment, prescriptionItem).
@@ -26,15 +26,16 @@ class IntakeTarget {
   /// censusQuantity). Sayım değerleri burada güncellenir.
   final List<IntakeDetail> details;
 
-  // ── Türetilen ──────────────────────────────────────────────────────────
-
-  MedicineAssignment? get assignment => item.assignment;
+  @override
+  MedicineAssignment get assignment => item.assignment!;
 
   Medicine? get medicine => item.medicine;
 
-  DrawerUnit? get unit => assignment?.drawerUnit;
+  DrawerUnit? get unit => assignment.drawerUnit;
 
-  bool get isKubik => assignment?.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
+  bool get isKubik => assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
+
+  int? get explicitTargetStep => IntakeQueueBuilder.resolveStepNoForTarget(this);
 
   /// Bu hedefin sayım tipi (Drug ise countType, değilse noCount kabul edilir).
   CountType get countType {

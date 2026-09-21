@@ -25,7 +25,6 @@ class GetIntakeItemsUseCase {
   final IIntakeRepository _intakeRepository;
   final IAssignmentRepository _assignmentRepository;
   final IMedicineRepository _medicineRepository;
-  List<IntakeItem> _cachedItems = [];
 
   GetIntakeItemsUseCase({
     required IIntakeRepository intakeRepository,
@@ -37,12 +36,11 @@ class GetIntakeItemsUseCase {
 
   Future<Result<List<IntakeItem>>> call(GetIntakeItemsParams params) async {
     final type = params.type;
-    final refreshAssignments = params.refreshAssignments;
     final hospitalizationId = params.hospitalizationId ?? 0;
 
     switch (type) {
       case IntakeType.ordered:
-        return await _getOrdered(hospitalizationId, refreshAssignments, params.filter);
+        return await _getOrdered(hospitalizationId, params.filter);
       case IntakeType.orderless:
         return await _getOrderless();
       case IntakeType.urgent:
@@ -108,42 +106,6 @@ class GetIntakeItemsUseCase {
     );
   }
 
-  Future<Result<List<IntakeItem>>> _getOrdered(
-    int hospitalizationId,
-    bool refreshAssignments,
-    PatientFilterType type,
-  ) async {
-    // İlk yükleme: her iki istek paralel çalışır
-    if (!refreshAssignments) {
-      final result = await _fetchOrdered(hospitalizationId, type);
-      // İlk yüklemede cache'i doldur
-      if (result is Ok) {
-        _cachedItems = (result as Ok<List<IntakeItem>>).value;
-      }
-      return result;
-    }
-
-    // Sonraki alımlar: sadece assignment güncellenir, tasks tekrar çekilmez
-    final assignmentsResult = await _assignmentRepository.getOrderlessCabinAssignments();
-    if (assignmentsResult is! Ok) {
-      return Result.error(CustomException(message: contextlessL10n().core_genericErrorShortMessage));
-    }
-
-    final List<MedicineAssignment> freshAssignments = (assignmentsResult as Ok).value;
-
-    // Mevcut item listesindeki assignmentları güncelle
-    final updatedItems = _cachedItems.map((item) {
-      final freshAssignment = freshAssignments.firstWhereOrNull(
-        (a) => a.cabinDrawerId == item.assignment?.cabinDrawerId,
-      );
-      return item.copyWith(assignment: freshAssignment ?? item.assignment);
-    }).toList();
-
-    _cachedItems = updatedItems;
-
-    return Result.ok(_cachedItems);
-  }
-
   Future<Result<List<IntakeItem>>> _getUrgent() async {
     final result = await _assignmentRepository.getStationAssignments();
     return result.when(
@@ -172,7 +134,7 @@ class GetIntakeItemsUseCase {
     );
   }
 
-  Future<Result<List<IntakeItem>>> _fetchOrdered(int hospitalizationId, PatientFilterType type) async {
+  Future<Result<List<IntakeItem>>> _getOrdered(int hospitalizationId, PatientFilterType type) async {
     final results = await Future.wait([
       _intakeRepository.getIntakeItems(hospitalizationId: hospitalizationId, type: type),
       _assignmentRepository.getStationAssignments(),
@@ -195,12 +157,16 @@ class GetIntakeItemsUseCase {
     final witnessMap = await _resolveWitnessContexts(allTasks.map<Medicine?>((t) => t.medicine));
 
     final items = allTasks.map((task) {
-      final assignment = _resolveAssignment(task, allAssignments);
+      final resolvedAssignment = _resolveAssignment(task, allAssignments);
+      final filteredAssignment = resolvedAssignment?.copyWith(
+        stocks: resolvedAssignment.stocks?.where((s) => s.materialId == task.medicine?.id).toList(),
+      );
+
       return IntakeItem(
         id: task.id,
         type: IntakeType.ordered,
-        assignment: assignment,
-        medicine: assignment?.medicine ?? task.medicine,
+        assignment: filteredAssignment,
+        medicine: task.medicine,
         dosePiece: task.dosePiece.toDouble(),
         prescriptionDose: task.dosePiece.toDouble(),
         witnessContext: _witnessContextFor(task.medicine, witnessMap),
@@ -225,7 +191,7 @@ class GetIntakeItemsUseCase {
   /// (DrawerCell.id, göze özel) — allAssignments'taki her assignment'ın kendi
   /// cabinDrawerDetail listesinde bu id'yi arayarak GERÇEK gözü buluyoruz.
   MedicineAssignment? _resolveAssignment(CabinTargetedPrescriptionItem task, List<MedicineAssignment> allAssignments) {
-    final targetDetailId = task.cabinAssignment.cabinDrawerId;
+    final targetDetailId = task.stock?.cabinDrawerDetailId; // ← göze özel, doğru anahtar
 
     if (targetDetailId != null) {
       final byDetail = allAssignments.firstWhereOrNull(
@@ -234,7 +200,6 @@ class GetIntakeItemsUseCase {
       if (byDetail != null) return byDetail;
     }
 
-    // Fallback: stok bilgisi yoksa (ör. noCount ilaç, tekil göz) eski davranış.
     return allAssignments.firstWhereOrNull((a) => a.cabinDrawerId == task.cabinAssignment.cabinDrawerId);
   }
 

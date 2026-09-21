@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../core/providers/providers.dart';
+import '../../service_selection/service_selection.dart';
 import 'cabin_design_state.dart';
 
 final cabinDesignNotifierProvider = NotifierProvider<CabinDesignNotifier, CabinDesignState>(CabinDesignNotifier.new);
@@ -18,6 +19,7 @@ class CabinDesignNotifier extends Notifier<CabinDesignState> {
   CreateCabinUseCase get _createCabin => ref.read(createCabinUseCaseProvider);
   SaveCabinDesignUseCase get _saveCabinDesign => ref.read(saveCabinDesignUseCaseProvider);
   UpdateCabinUseCase get _updateCabin => ref.read(updateCabinUseCaseProvider);
+  ActiveServiceNotifier get _activeServiceNotifier => ref.read(activeServiceNotifierProvider);
 
   @override
   CabinDesignState build() => const CabinDesignLoading();
@@ -451,6 +453,7 @@ class CabinDesignNotifier extends Notifier<CabinDesignState> {
       comPort: ComPortX.fromLabel(portName),
       status: Status.active,
       station: s.station,
+      stationId: _activeServiceNotifier.station?.id,
     );
 
     final createResult = await _createCabin.call(newCabin);

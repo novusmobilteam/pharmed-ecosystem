@@ -71,6 +71,16 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     notifyListeners();
   }
 
+  @protected
+  void replaceCurrentJobTargets(List<TTarget> newTargets) {
+    final job = currentJob;
+    if (job == null) return;
+    final next = List<TJob>.from(_jobs);
+    next[_currentIndex] = job.copyWithTargets(newTargets) as TJob;
+    _jobs = next;
+    notifyListeners();
+  }
+
   Future<void> startQueue(List<TJob> jobs) async {
     if (jobs.isEmpty) {
       setQueueFailure(const CabinValidationFailure(reason: CabinValidationReason.noValidTargets));
@@ -102,7 +112,12 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     final openAssignment = job.staysOpenAcrossTargets
         ? job.representativeAssignment
         : job.targets[targetIndex].assignment;
-    await openDrawer(assignment: openAssignment);
+
+    // staysOpenAcrossTargets (kübik) her zaman tam açılır — kısmi açma
+    // kavramı orada yok, sadece birim-doz hedefler kendi derinliğini taşır.
+    final explicitStep = job.staysOpenAcrossTargets ? null : job.targets[targetIndex].explicitTargetStep;
+
+    await openDrawer(assignment: openAssignment, explicitTargetStep: explicitStep);
   }
 
   @override
@@ -146,6 +161,10 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
       }
     }
 
+    await _completeCurrentJobAndAdvance();
+  }
+
+  Future<void> _completeCurrentJobAndAdvance() async {
     _jobs = _withStatus(_currentIndex, CabinOperationJobStatus.completed);
     await stopDrawer();
 
@@ -235,10 +254,12 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   /// currentTargetIndex/status/targets/assignment gibi ORTAK alanları
   /// burada bir kere doldurur, sadece cabinDrawerId/stockId/isReturnDrawer
   /// gibi job'a özgü çıkarımları çağırana bırakır.
+  // CabinDrawerQueueMixin içinde:
   List<DrawerQueueItem> locationItemsUsing({
     required List<DrawerGroup> allGroups,
     required int Function(TJob job) cabinDrawerIdOf,
     required int? Function(TJob job, int targetIndex) stockIdAt,
+    List<int> Function(TJob job, int targetIndex)? stockIdsAt,
     bool Function(TJob job)? isReturnDrawerTargetOf,
   }) => buildCabinExecutionLocationItems(
     allGroups: allGroups,
@@ -250,6 +271,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     targetCountOf: (job) => job.targets.length,
     assignmentAt: (job, i) => job.targets[i].assignment,
     stockIdAt: stockIdAt,
+    stockIdsAt: stockIdsAt,
     isReturnDrawerTargetOf: isReturnDrawerTargetOf ?? (_) => false,
   );
 
@@ -269,4 +291,10 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     notifyListeners(); // önce UI'ı "boş kuyruk" durumuna getir
     onQueueFinished?.call(); // sonra dışarıya haber ver
   }
+
+  /// onBeforeAdvanceAfterClose false döndüğünde (kuyruk askıya alındığında —
+  /// örn. QR kod dialog'u açıkken) engel ortadan kalkınca kuyruğu elle devam
+  /// ettirmek için. onBeforeAdvanceAfterClose TEKRAR çağrılmaz — çağıran taraf
+  /// ilerlemeye izin verildiğini garanti eder.
+  Future<void> resumeAfterBlockedAdvance() => _completeCurrentJobAndAdvance();
 }

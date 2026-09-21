@@ -60,4 +60,7 @@ class CabinOperationDrawerJob implements DrawerJob<CabinOperationTarget> {
 
   @override
   CabinOperationDrawerJob copyWithStatus(CabinOperationJobStatus status) => copyWith(status: status);
+
+  @override
+  DrawerJob<CabinOperationTarget> copyWithTargets(List<CabinOperationTarget> targets) => copyWith(targets: targets);
 }

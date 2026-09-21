@@ -118,6 +118,7 @@ class _RightPanel extends StatelessWidget {
   }
 }
 
+// TODO : Localization
 class _RefundablesListView extends StatelessWidget {
   const _RefundablesListView(this.notifier);
 

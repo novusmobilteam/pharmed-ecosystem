@@ -19,49 +19,44 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-class IntakeDrawerJob {
+class IntakeDrawerJob implements DrawerJob<IntakeTarget> {
   const IntakeDrawerJob({
     required this.cabinDrawerId,
     required this.representativeAssignment,
     required this.targets,
     this.status = CabinOperationJobStatus.pending,
-    this.requiredStepNo,
     this.cabinId,
   });
 
-  /// Bu işin açtığı fiziksel çekmecenin id'si (DrawerSlot.id).
   final int cabinDrawerId;
 
-  /// Çekmece açma operasyonu için temsilci assignment (ilk hedefin ataması).
+  @override
   final MedicineAssignment representativeAssignment;
 
-  /// Bu çekmecede alınacak hedefler (her biri ayrı ilaç olabilir).
+  @override
   final List<IntakeTarget> targets;
 
-  /// Kuyruktaki durumu.
+  @override
   final CabinOperationJobStatus status;
-
-  /// Bu çekmecenin fiziksel olarak en az kaç göze kadar açılması gerektiği —
-  /// job'daki tüm target'ların details'lerinde referans verdiği stokların
-  /// (CabinStock.cabinDrawerDetail.stepNo) en derini. null → hesaplanamadı
-  /// (ör. kübik çekmece — kübikte bu kavram yok, lid-by-lid zaten kendi
-  /// gözünü açıyor) ya da hiçbir detail stepNo taşımıyor; bu durumda
-  /// donanım katmanı tam açılışa düşer.
-  final int? requiredStepNo;
 
   final int? cabinId;
 
-  // ── Türetilen ──────────────────────────────────────────────────────────
-
+  @override
   bool get isKubik => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
+
+  /// Kübik: bir kez açılır, lid'ler yazılımsal geçer (fiziksel kapanma yok).
+  /// Birim doz: her fiziksel port kendi aç/kapa döngüsünü yaşar.
+  @override
+  bool get staysOpenAcrossTargets => isKubik;
 
   bool get isSerum => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false;
 
-  /// Bu çekmecede kaç farklı ilaç var (başlıkta göstermek için).
   int get distinctMedicineCount => targets.map((t) => t.medicine?.id).whereType<int>().toSet().length;
 
-  /// Tüm hedefler tamamlamaya hazır mı? (sayım gereken her hedefte sayım girilmiş mi)
   bool get canComplete => targets.every((t) => t.isValid);
+
+  @override
+  IntakeDrawerJob copyWithStatus(CabinOperationJobStatus status) => copyWith(status: status);
 
   IntakeDrawerJob copyWith({List<IntakeTarget>? targets, CabinOperationJobStatus? status}) {
     return IntakeDrawerJob(
@@ -69,8 +64,10 @@ class IntakeDrawerJob {
       representativeAssignment: representativeAssignment,
       targets: targets ?? this.targets,
       status: status ?? this.status,
-      requiredStepNo: requiredStepNo,
       cabinId: cabinId,
     );
   }
+
+  @override
+  IntakeDrawerJob copyWithTargets(List<IntakeTarget> targets) => copyWith(targets: targets);
 }

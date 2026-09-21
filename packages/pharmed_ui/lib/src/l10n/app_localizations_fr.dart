@@ -733,6 +733,29 @@ class AppLocalizationsFr extends AppLocalizations {
       'Il n\'y a aucune ordonnance active pour ce patient.';
 
   @override
+  String get emptyState_noOrderlessMedicineTitle =>
+      'Aucun médicament sans ordonnance trouvé';
+
+  @override
+  String get emptyState_noOrderlessMedicineDescription =>
+      'Aucun médicament n\'est défini dans le cabinet sous le statut sans ordonnance.';
+
+  @override
+  String get emptyState_noFreeMedicineTitle => 'Aucun médicament libre trouvé';
+
+  @override
+  String get emptyState_noFreeMedicineDescription =>
+      'Aucun médicament n\'est défini dans le cabinet sous le statut libre/indépendant.';
+
+  @override
+  String get emptyState_noUrgentMedicineTitle =>
+      'Aucun médicament d\'urgence trouvé';
+
+  @override
+  String get emptyState_noUrgentMedicineDescription =>
+      'Aucun médicament n\'est défini dans le cabinet pour une utilisation d\'urgence.';
+
+  @override
   String get emptyState_noCabinTitle => 'Aucune cabine trouvée';
 
   @override
@@ -5940,28 +5963,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get masterDrawer_status_devicePreparingSubtitle =>
-      'Le système se prépare. Veuillez patienter un instant.';
+      'Préparation de l\'appareil.';
 
   @override
   String get masterDrawer_status_lockOpeningTitle => 'Déverrouillage';
 
   @override
   String get masterDrawer_status_lockOpeningSubtitle =>
-      'Le verrou du tiroir s\'ouvre. Veuillez patienter un instant.';
+      'Déverrouillage, veuillez patienter.';
 
   @override
   String get masterDrawer_status_waitingPullTitle => 'Veuillez Tirer le Tiroir';
 
   @override
   String get masterDrawer_status_waitingPullSubtitle =>
-      'Le verrou a été libéré. Tirez le tiroir pour l\'ouvrir et continuer.';
+      'Tirez le tiroir pour l\'ouvrir.';
 
   @override
   String get masterDrawer_status_openingLidTitle => 'Ouverture du Compartiment';
 
   @override
   String get masterDrawer_status_openingLidSubtitle =>
-      'Le couvercle du compartiment s\'ouvre. Veuillez patienter un instant.';
+      'Ouverture du couvercle.';
 
   @override
   String get masterDrawer_status_waitingCloseTitle =>
@@ -5969,21 +5992,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get masterDrawer_status_waitingCloseSubtitle =>
-      'Fermez le tiroir pour passer à l\'étape suivante.';
+      'Si vous avez pris le médicament, vous pouvez fermer le tiroir.';
 
   @override
   String get masterDrawer_status_failedTitle => 'Un Problème est Survenu';
 
   @override
   String get masterDrawer_status_failedSubtitle =>
-      'Veuillez patienter, l\'état du tiroir est en cours de vérification.';
+      'Une erreur s\'est produite, veuillez réessayer.';
 
   @override
   String get masterDrawer_status_openingTitle => 'Ouverture du Tiroir';
 
   @override
   String get masterDrawer_status_openingSubtitle =>
-      'Le tiroir s\'ouvre. Veuillez patienter un instant.';
+      'Ouverture du tiroir, veuillez patienter.';
 
   @override
   String get masterDrawer_stop_waitingCloseTitle =>
@@ -6587,7 +6610,8 @@ class AppLocalizationsFr extends AppLocalizations {
       'Finalisation de votre opération';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Veuillez patienter';
+  String get masterDrawer_status_completingSubtitle =>
+      'Finalisation de la prise.';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Armoires Définies';
@@ -7038,4 +7062,30 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get myPatients_screenDescription =>
       'Attribuez-vous des patients parmi ceux ayant une hospitalisation active. Les patients que vous ajoutez depuis la liste de gauche apparaissent sous votre responsabilité dans les opérations de traitement et de cabine.';
+
+  @override
+  String get cabinOverview_workingCabinBadge => 'Cabinet en cours';
+
+  @override
+  String get cabinOverview_drawerCountSuffix => 'tiroirs';
+
+  @override
+  String get cabinOverview_activeDrawerBadge => 'Actif';
+
+  @override
+  String get masterDrawer_status_openedTitle => 'Tiroir ouvert';
+
+  @override
+  String get masterDrawer_status_openedSubtitle =>
+      'Prenez le médicament, fermez le tiroir — c\'est tout.';
+
+  @override
+  String get masterDrawer_status_openedPill => 'Surveillance de la fermeture';
+
+  @override
+  String get masterDrawer_status_workingPill => 'En cours';
+
+  @override
+  String get masterDrawer_status_closureMonitoredPill =>
+      'Détection de la fermeture';
 }

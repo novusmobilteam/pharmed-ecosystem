@@ -243,4 +243,10 @@ class CabinOperationTarget implements DrawerJobTarget {
     next[index] = update(next[index]);
     return _copy(steps: next);
   }
+
+  /// Dolum/sayım/boşaltmada göz her zaman sonuna kadar (tam) açılır —
+  /// kısmi açma kavramı bu üç işlemde yok. Sadece Intake'in birim-doz
+  /// akışı (güvenlik amaçlı FIFO kısıtı) bunu null'dan farklı döner.
+  @override
+  int? get explicitTargetStep => null;
 }

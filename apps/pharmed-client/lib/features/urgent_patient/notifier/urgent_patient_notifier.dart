@@ -71,10 +71,6 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
       prescriptionItemIds: _selectedUrgentPatient!.prescriptionItems!.map((m) => m.id ?? 0).toList(),
     );
 
-    print(_selectedHospitalization?.patient?.id);
-    print('Urgent');
-    print(_selectedUrgentPatient?.id);
-
     await executeVoid(
       _submitOp,
       operation: () => _emergencyPatientUseCase.call(params),

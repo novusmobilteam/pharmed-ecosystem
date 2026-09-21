@@ -15,6 +15,12 @@
     "emptyState_noPatientDescription",
     "emptyState_noPrescriptionTitle",
     "emptyState_noPrescriptionDescription",
+    "emptyState_noOrderlessMedicineTitle",
+    "emptyState_noOrderlessMedicineDescription",
+    "emptyState_noFreeMedicineTitle",
+    "emptyState_noFreeMedicineDescription",
+    "emptyState_noUrgentMedicineTitle",
+    "emptyState_noUrgentMedicineDescription",
     "emptyState_noCabinTitle",
     "emptyState_noCabinDescription",
     "emptyState_networkErrorTitle",
@@ -1631,6 +1637,14 @@
     "myPatients_chip_step1",
     "myPatients_chip_step2",
     "myPatients_chip_step3",
-    "myPatients_screenDescription"
+    "myPatients_screenDescription",
+    "cabinOverview_workingCabinBadge",
+    "cabinOverview_drawerCountSuffix",
+    "cabinOverview_activeDrawerBadge",
+    "masterDrawer_status_openedTitle",
+    "masterDrawer_status_openedSubtitle",
+    "masterDrawer_status_openedPill",
+    "masterDrawer_status_workingPill",
+    "masterDrawer_status_closureMonitoredPill"
   ]
 }

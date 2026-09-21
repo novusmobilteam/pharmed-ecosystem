@@ -7,8 +7,8 @@ enum PatientFilterType {
   /// 1 - Order Saati Gelenler
   ordersDue(1),
 
-  /// 2 - Tüm Hastalar (Reçetesi olan)
-  allWithRx(2),
+  // /// 2 - Tüm Hastalar (Reçetesi olan)
+  // allWithRx(2),
 
   /// 3 - Zamanı Gelmemiş
   upcoming(3),
@@ -32,8 +32,8 @@ enum PatientFilterType {
         return contextlessL10n().enumCore_patientFilterAll;
       case PatientFilterType.ordersDue:
         return contextlessL10n().enumCore_patientFilterOrderTimeReached;
-      case PatientFilterType.allWithRx:
-        return contextlessL10n().dashboard_kpiPendingPrescriptions;
+      // case PatientFilterType.allWithRx:
+      //   return contextlessL10n().dashboard_kpiPendingPrescriptions;
       case PatientFilterType.upcoming:
         return contextlessL10n().enumCore_patientFilterTimeNotReached;
       case PatientFilterType.overdue:

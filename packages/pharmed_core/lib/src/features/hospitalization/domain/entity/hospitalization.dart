@@ -20,6 +20,8 @@ class Hospitalization extends Selectable {
   final bool? isBaby;
   final int? colorId;
   final bool isUrgent;
+  // Alım ekranında hastanın yönlendirilip yönlendirilmediğini göstermek için kullanılır.
+  final bool isRedirected;
 
   Hospitalization({
     super.id,
@@ -42,6 +44,7 @@ class Hospitalization extends Selectable {
     this.lastApproveDate,
     this.isBaby,
     this.colorId,
+    this.isRedirected = false,
     this.isUrgent = false,
   }) : super(title: patient?.fullName ?? '', subtitle: patient?.tcNo ?? '');
 

@@ -36,25 +36,18 @@ class _IntakeQrCodeDialogState extends ConsumerState<IntakeQrCodeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(masterIntakeNotifierProvider);
-    final notifier = ref.read(masterIntakeNotifierProvider.notifier);
+    final notifier = ref.watch(masterIntakeExecutionNotifierProvider);
 
-    final executing = switch (state) {
-      MasterIntakeExecuting e => e,
-      MasterIntakeError(previousState: MasterIntakeExecuting e) => e,
-      _ => null,
-    };
-
-    if (executing?.qrCodeJob == null) {
+    if (notifier.qrCodeJob == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
       });
       return const SizedBox.shrink();
     }
 
-    final requirements = executing!.qrCodeRequirements;
-    final errors = executing.qrCodeErrors;
-    final isSubmitting = executing.isSubmittingQrCodes;
+    final requirements = notifier.qrCodeRequirements;
+    final errors = notifier.qrCodeErrors;
+    final isSubmitting = notifier.isSubmittingQrCodes;
     final hasErrors = errors.isNotEmpty;
 
     return Dialog(

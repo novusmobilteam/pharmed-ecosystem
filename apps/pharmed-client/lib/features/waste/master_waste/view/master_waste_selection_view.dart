@@ -147,14 +147,10 @@ class _MedicineGroupCardState extends State<_MedicineGroupCard> {
 
     final selectedItems = group.items.where((i) => notifier.selectedItemIds.contains(i.id)).toList();
     final itemsMissingWitness = selectedItems
-        .where((i) => notifier.itemNeedsWitness(i) && i.witnessContext.witness == null)
+        .where((i) => notifier.needsWitness(i) && i.witnessContext.witness == null)
         .toList();
     final missingWitness = itemsMissingWitness.isNotEmpty;
     final witnessTarget = itemsMissingWitness.firstOrNull ?? headerItem;
-    final existingPartialWitness = selectedItems
-        .firstWhereOrNull((i) => i.witnessContext.witness != null)
-        ?.witnessContext
-        .witness;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -196,8 +192,13 @@ class _MedicineGroupCardState extends State<_MedicineGroupCard> {
                 ),
               Spacer(),
               if (missingWitness)
-                _WitnessChip(
-                  witness: existingPartialWitness,
+                MedChip(
+                  icon: PhosphorIcons.userPlus(),
+                  label: context.l10n.intake_hint_witnessRequired,
+                  shape: MedChipShape.pill,
+                  background: MedColors.amberLight,
+                  foreground: MedColors.amber,
+                  showBorder: false,
                   onTap: () => _openWitnessDialog(context, notifier, witnessTarget),
                 )
               else ...[
@@ -294,29 +295,8 @@ class _DisposableItemRow extends StatelessWidget {
   }
 }
 
-class _WitnessChip extends StatelessWidget {
-  const _WitnessChip({required this.witness, required this.onTap});
-
-  final User? witness;
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return MedChip(
-      label: witness != null ? witness!.fullName : context.l10n.intake_hint_witnessRequired,
-      background: witness == null ? MedColors.amber : MedColors.green,
-      foreground: Colors.white,
-      shape: MedChipShape.pill,
-      onTap: onTap,
-      size: MedChipSize.lg,
-      showBorder: false,
-    );
-  }
-}
-
 void _openWitnessDialog(BuildContext context, MasterWasteNotifier notifier, DisposableItem item) {
-  final existing = notifier.resolveExistingWitness(item.id);
+  final existing = notifier.resolveExistingWitness(item);
   if (existing != null) {
     notifier.addWitness(item.id, existing);
     MessageUtils.showInfoSnackbar(context, context.l10n.witnessDialog_autoAssigned(existing.fullName));

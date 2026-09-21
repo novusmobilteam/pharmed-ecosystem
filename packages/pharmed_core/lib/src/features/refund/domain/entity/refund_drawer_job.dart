@@ -42,4 +42,7 @@ class RefundDrawerJob implements DrawerJob<RefundTarget> {
 
   @override
   RefundDrawerJob copyWithStatus(CabinOperationJobStatus status) => copyWith(status: status);
+
+  @override
+  DrawerJob<RefundTarget> copyWithTargets(List<RefundTarget> targets) => copyWith(targets: targets);
 }
