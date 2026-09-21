@@ -383,7 +383,7 @@ class MessageUtils {
           icon: PhosphorIcons.trash(),
           iconColor: MedColors.red,
           iconBgColor: MedColors.redLight,
-          buttonVariant: MedButtonVariant.danger,
+          buttonVariant: MedButtonVariant.error,
         );
       case ConfirmAction.exit:
         return _ConfirmDialogContent(

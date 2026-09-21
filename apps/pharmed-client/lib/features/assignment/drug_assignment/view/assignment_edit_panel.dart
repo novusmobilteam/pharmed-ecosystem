@@ -255,7 +255,7 @@ class _QuantityFormPanel extends StatelessWidget {
           MedButton(
             label: context.l10n.assignment_edit_removeLink,
             fullWidth: true,
-            variant: MedButtonVariant.danger,
+            variant: MedButtonVariant.error,
             onPressed: notifier.deleteAssignment,
           ),
           const SizedBox(height: MedSpacing.sm),

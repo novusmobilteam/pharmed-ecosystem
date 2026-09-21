@@ -66,8 +66,8 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
     if (_selectedUrgentPatient?.prescriptionItems == null) return;
 
     final params = EndUrgentPatientParams(
-      hospitalizationId: _selectedHospitalization?.patient?.id ?? 0,
-      patientId: _selectedUrgentPatient?.id ?? 0,
+      hospitalizationId: _selectedHospitalization?.id ?? 0,
+      urgentHospitalizationId: _selectedUrgentPatient?.id ?? 0,
       prescriptionItemIds: _selectedUrgentPatient!.prescriptionItems!.map((m) => m.id ?? 0).toList(),
     );
 
