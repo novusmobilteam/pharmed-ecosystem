@@ -61,7 +61,7 @@ class _UrgentPatientListItem extends StatelessWidget {
     final label = isMedicineTaken
         ? context.l10n.urgentPatientTermination_medicineTakenChip
         : context.l10n.urgentPatientTermination_medicineNotTakenChip;
-    final chipColor = isMedicineTaken ? MedColors.amber : MedColors.border;
+    final chipColor = isMedicineTaken ? MedColors.red : MedColors.border;
     final foregroundColor = isMedicineTaken ? MedColors.amberLight : MedColors.text3;
 
     return InkWell(

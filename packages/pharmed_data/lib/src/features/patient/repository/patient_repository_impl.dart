@@ -65,8 +65,8 @@ class PatientRepositoryImpl implements IPatientRepository {
     required List<int> prescriptionItemIds,
   }) {
     return _dataSource.endEmergencyPatient(
-      urgentPatientHospitalizationId: hospitalizationId,
-      hospitalizationId: urgentPatientHospitalizationId,
+      urgentPatientHospitalizationId: urgentPatientHospitalizationId,
+      hospitalizationId: hospitalizationId,
       prescriptionItemIds: prescriptionItemIds,
     );
   }

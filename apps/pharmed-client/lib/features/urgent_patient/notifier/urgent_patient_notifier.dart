@@ -65,6 +65,9 @@ class UrgentPatientNotifier extends ChangeNotifier with ApiRequestMixin {
   Future<void> submit({Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
     if (_selectedUrgentPatient?.prescriptionItems == null) return;
 
+    print('hospID:${_selectedHospitalization?.id}');
+    print('urgnetId:${_selectedUrgentPatient?.id}');
+
     final params = EndUrgentPatientParams(
       hospitalizationId: _selectedHospitalization?.id ?? 0,
       urgentHospitalizationId: _selectedUrgentPatient?.id ?? 0,
