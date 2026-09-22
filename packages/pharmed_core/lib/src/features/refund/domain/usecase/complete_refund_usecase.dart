@@ -29,6 +29,9 @@ class CompleteRefundUseCase {
         return _repository.refundToPharmacy(id: params.id, quantity: params.quantity);
       case ReturnType.toReturnBox:
         return _repository.refundToBox(id: params.id, quantity: params.quantity);
+      // Hiçbir zaman buraya düşmeyecek. UI'da engelleyeceğiz
+      case ReturnType.nonRefundable:
+        return Result.error(CustomException(message: 'Bu ilaç iade edilemez.'));
     }
   }
 }

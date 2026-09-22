@@ -6923,4 +6923,23 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get masterDrawer_status_closureMonitoredPill => 'Kapanış algılanıyor';
+
+  @override
+  String refund_appliedDateLabel(String date) {
+    return 'Uygulama Tarihi: $date';
+  }
+
+  @override
+  String refund_performedByLabel(String performedBy) {
+    return 'Uygulayan: $performedBy';
+  }
+
+  @override
+  String get refund_directReturnButton => 'İade Et';
+
+  @override
+  String get refund_directReturnSendingLabel => 'Gönderiliyor...';
+
+  @override
+  String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';
 }

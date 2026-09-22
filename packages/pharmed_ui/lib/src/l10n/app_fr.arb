@@ -4332,5 +4332,29 @@
   "masterDrawer_status_waitingPullSubtitle": "Tirez le tiroir pour l'ouvrir.",
   "masterDrawer_status_openingLidSubtitle": "Ouverture du couvercle.",
   "masterDrawer_status_waitingCloseSubtitle": "Si vous avez pris le médicament, vous pouvez fermer le tiroir.",
-  "masterDrawer_status_failedSubtitle": "Une erreur s'est produite, veuillez réessayer."
+  "masterDrawer_status_failedSubtitle": "Une erreur s'est produite, veuillez réessayer.",
+   "refund_appliedDateLabel": "Date d'application : {date}",
+  "@refund_appliedDateLabel": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "refund_performedByLabel": "Effectué par : {performedBy}",
+  "@refund_performedByLabel": {
+    "placeholders": {
+      "performedBy": { "type": "String" }
+    }
+  },
+  "refund_directReturnButton": "İade Et",
+  "@refund_directReturnButton": {
+    "description": "Button to directly complete a refund for a non-hardware-required refundable item in the master refund list"
+  },
+  "refund_directReturnSendingLabel": "Gönderiliyor...",
+  "@refund_directReturnSendingLabel": {
+    "description": "Loading state label shown on the direct return button while the refund request is in flight"
+  },
+  "enumCore_returnTypeNotReturnable": "İade Yapılamaz",
+  "@enumCore_returnTypeNotReturnable": {
+    "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
+  }
 }

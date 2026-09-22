@@ -86,7 +86,7 @@ class HospitalizationPanelNotifier extends ChangeNotifier with ApiRequestMixin {
         myPatients: _type == HospitalizationType.myPatients,
       ),
       onData: (hospitalizations) {
-        _hospitalizations = hospitalizations;
+        _hospitalizations = hospitalizations.where((h) => !h.isRedirected && !h.isUrgent).toList();
         notifyListeners();
       },
     );

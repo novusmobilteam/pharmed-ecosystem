@@ -12308,6 +12308,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Detecting closure'**
   String get masterDrawer_status_closureMonitoredPill;
+
+  /// No description provided for @refund_appliedDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Application Date: {date}'**
+  String refund_appliedDateLabel(String date);
+
+  /// No description provided for @refund_performedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Performed By: {performedBy}'**
+  String refund_performedByLabel(String performedBy);
+
+  /// Button to directly complete a refund for a non-hardware-required refundable item in the master refund list
+  ///
+  /// In en, this message translates to:
+  /// **'İade Et'**
+  String get refund_directReturnButton;
+
+  /// Loading state label shown on the direct return button while the refund request is in flight
+  ///
+  /// In en, this message translates to:
+  /// **'Gönderiliyor...'**
+  String get refund_directReturnSendingLabel;
+
+  /// ReturnType enum value label — indicates the medicine's return type does not allow returning it at all
+  ///
+  /// In en, this message translates to:
+  /// **'İade Yapılamaz'**
+  String get enumCore_returnTypeNotReturnable;
 }
 
 class _AppLocalizationsDelegate

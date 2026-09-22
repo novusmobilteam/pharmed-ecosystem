@@ -28,6 +28,8 @@ class CheckMasterRefundStatusUseCase {
     final Result<MedicineAssignment?> targetResult = switch (returnType) {
       ReturnType.toPharmacy || ReturnType.toReturnBox || ReturnType.toDrawer => Result.ok(null),
       ReturnType.toOrigin => Result.ok(checkResult.data?.cabinAssignment),
+      // Hiçbir zaman bu duruma düşmemeli. UI'da engelleyeceğiz.
+      ReturnType.nonRefundable => Result.error(CustomException(message: 'Bu ilaç iade edilemez.')),
     };
 
     if (targetResult.isError) {

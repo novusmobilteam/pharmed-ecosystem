@@ -258,4 +258,15 @@ extension MedicineDoseConfig on Medicine {
     }
     return 'Adet';
   }
+
+  bool get canRefundable {
+    final self = this;
+    if (self is MedicalConsumable) return false;
+    if (self is Drug) {
+      if (self.returnType == ReturnType.nonRefundable || self.isMeasureUnit) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
