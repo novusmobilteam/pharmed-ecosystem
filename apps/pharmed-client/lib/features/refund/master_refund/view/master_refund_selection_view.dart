@@ -118,7 +118,6 @@ class _RightPanel extends StatelessWidget {
   }
 }
 
-// TODO : Localization
 class _RefundablesListView extends StatelessWidget {
   const _RefundablesListView(this.notifier);
 
@@ -137,12 +136,16 @@ class _RefundablesListView extends StatelessWidget {
         final bool isSelected = notifier.selectedItems.contains(item);
         final foreground = isSelected ? Colors.white : MedColors.text;
         final refundType = item.medicine?.returnType;
-        final bool showCheckbox = (refundType?.requiresCabinHardware ?? false);
+        final bool showCheckbox =
+            (refundType?.requiresCabinHardware ?? false) && (item.medicine?.canRefundable ?? false);
 
         final currentAmount = notifier.amountFor(item.id);
         final maxAmount = notifier.maxAmountFor(item.id);
         final directStatus = notifier.itemStatuses[item.id];
         final isDirectLoading = directStatus is RefundCheckLoading;
+
+        final bool isRefundable = item.medicine?.canRefundable ?? false;
+        final displayReturnType = isRefundable ? refundType : ReturnType.nonRefundable;
 
         return GestureDetector(
           onTap: () => notifier.selectRefundableItem(item),
@@ -193,41 +196,51 @@ class _RefundablesListView extends StatelessWidget {
                       children: [
                         Text(item.medicineBarcode, style: MedTextStyles.monoSm()),
                         Text('-', style: MedTextStyles.monoSm()),
-                        Text('Uygulama Tarihi: ${item.time.formattedDateTime}', style: MedTextStyles.monoSm()),
+                        Text(
+                          context.l10n.refund_appliedDateLabel(item.time.formattedDateTime),
+                          style: MedTextStyles.monoSm(),
+                        ),
+
                         Text('-', style: MedTextStyles.monoSm()),
-                        Text('Uygulayan: ${item.lastMovement?.performedBy?.fullName}', style: MedTextStyles.monoSm()),
+                        Text(
+                          context.l10n.refund_performedByLabel(item.lastMovement?.performedBy?.fullName ?? ''),
+                          style: MedTextStyles.monoSm(),
+                        ),
                       ],
                     ),
+
                     MedChip(
-                      label: refundType?.label ?? '-',
-                      background: refundType?.bakcgroundColor,
-                      foreground: refundType?.foregroundColor,
+                      label: displayReturnType?.label ?? '-',
+                      background: displayReturnType?.bakcgroundColor,
+                      foreground: displayReturnType?.foregroundColor,
                       showBorder: false,
-                      //size: MedChipSize.sm,
                       shape: MedChipShape.pill,
                     ),
                   ],
                 ),
                 Spacer(),
-                SizedBox(
-                  width: 130,
-                  child: MedDoseStepper(
-                    type: DoseStepperType.compact,
-                    value: currentAmount.toDouble(),
-                    min: 0.01,
-                    max: maxAmount.toDouble(),
-                    onChanged: (v) => notifier.updateAmount(
-                      item.id,
-                      v,
-                      onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+                if (isRefundable)
+                  SizedBox(
+                    width: 130,
+                    child: MedDoseStepper(
+                      type: DoseStepperType.compact,
+                      value: currentAmount.toDouble(),
+                      min: 0.01,
+                      max: maxAmount.toDouble(),
+                      onChanged: (v) => notifier.updateAmount(
+                        item.id,
+                        v,
+                        onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
+                      ),
+                      unit: item.medicine?.operationUnitLocalized(context) ?? '',
                     ),
-                    unit: item.medicine?.operationUnitLocalized(context) ?? '',
                   ),
-                ),
 
-                if (!showCheckbox)
+                if (!showCheckbox && isRefundable)
                   MedButton(
-                    label: isDirectLoading ? 'Gönderiliyor...' : 'İade Et',
+                    label: isDirectLoading
+                        ? context.l10n.refund_directReturnSendingLabel
+                        : context.l10n.refund_directReturnButton,
                     size: MedButtonSize.sm,
                     variant: MedButtonVariant.success,
                     prefixIcon: Icon(PhosphorIcons.arrowUUpLeft()),

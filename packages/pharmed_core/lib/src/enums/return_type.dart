@@ -14,7 +14,10 @@ enum ReturnType {
   toReturnBox(3),
 
   /// Eczaneye İade
-  toPharmacy(4);
+  toPharmacy(4),
+
+  /// İade Edilemez
+  nonRefundable(5);
 
   final int id;
 
@@ -34,6 +37,8 @@ enum ReturnType {
         return contextlessL10n().enumCore_returnTypeToReturnBox;
       case ReturnType.toPharmacy:
         return contextlessL10n().enumCore_returnTypeToPharmacy;
+      case ReturnType.nonRefundable:
+        return contextlessL10n().enumCore_returnTypeNotReturnable;
     }
   }
 
@@ -47,6 +52,8 @@ enum ReturnType {
         return MedColors.greenLight;
       case ReturnType.toPharmacy:
         return MedColors.greenLight;
+      case ReturnType.nonRefundable:
+        return MedColors.text3;
     }
   }
 
@@ -60,6 +67,8 @@ enum ReturnType {
         return MedColors.green;
       case ReturnType.toPharmacy:
         return MedColors.green;
+      case ReturnType.nonRefundable:
+        return MedColors.surface;
     }
   }
 }

@@ -9084,5 +9084,31 @@
   "masterDrawer_status_failedSubtitle": "Bir sorun oluştu, lütfen tekrar deneyin.",
   "@masterDrawer_status_failedSubtitle": {
     "description": "Subtitle shown when the drawer hardware reports a failure state."
+  },
+    "refund_appliedDateLabel": "Uygulama Tarihi: {date}",
+  "@refund_appliedDateLabel": {
+    "description": "Application date label shown next to each refundable item in the master refund list",
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "refund_performedByLabel": "Uygulayan: {performedBy}",
+  "@refund_performedByLabel": {
+    "description": "Label showing who performed the movement, shown next to each refundable item in the master refund list",
+    "placeholders": {
+      "performedBy": { "type": "String" }
+    }
+  },
+  "refund_directReturnButton": "İade Et",
+  "@refund_directReturnButton": {
+    "description": "Button to directly complete a refund for a non-hardware-required refundable item in the master refund list"
+  },
+  "refund_directReturnSendingLabel": "Gönderiliyor...",
+  "@refund_directReturnSendingLabel": {
+    "description": "Loading state label shown on the direct return button while the refund request is in flight"
+  },
+  "enumCore_returnTypeNotReturnable": "İade Yapılamaz",
+  "@enumCore_returnTypeNotReturnable": {
+    "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
   }
 }

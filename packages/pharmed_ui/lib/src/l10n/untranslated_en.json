@@ -1662,6 +1662,11 @@
     "masterDrawer_status_openedSubtitle",
     "masterDrawer_status_openedPill",
     "masterDrawer_status_workingPill",
-    "masterDrawer_status_closureMonitoredPill"
+    "masterDrawer_status_closureMonitoredPill",
+    "refund_appliedDateLabel",
+    "refund_performedByLabel",
+    "refund_directReturnButton",
+    "refund_directReturnSendingLabel",
+    "enumCore_returnTypeNotReturnable"
   ]
 }
