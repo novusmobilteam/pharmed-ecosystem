@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/widgets/empty_widgets/no_data_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../../../widgets/hospitalization_panel/hospitalization_panel.dart';
 import '../../../widgets/widgets.dart';
 import '../../dashboard/dashboard.dart';
 import '../notifier/urgent_patient_notifier.dart';
@@ -17,59 +20,65 @@ class UrgentPatientScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final menu = stationContext.menu;
     final notifier = ref.watch(urgentPatientNotifierProvider);
 
-    if (notifier.isFetching) {
-      return Center(child: MedLoadingIndicator());
+    if (notifier.isError) {
+      return Center(child: EmptyStateWidget(title: notifier.errorMessage));
     }
-
-    return MedResponsiveLayout(
-      mobile: MedMobileLayout(),
-      tablet: MedTabletLayout(),
-      desktop: Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: PatientSelectionPanel(
-                      config: const PatientSelectionConfig(
-                        showFilters: false,
-                        enableTabs: false,
-                        enableUrgentPatient: false,
-                        enableOrderlessToggle: false,
-                      ),
-                      onPatientSelected: (patient, tab, mode) => notifier.selectPatient(patient),
-                      selectedPatient: notifier.selectedPatient,
-                      currentStation: stationContext.station!,
-                    ),
-                  ),
-                  SizedBox(width: MedSpacing.md),
-                  Expanded(
-                    flex: 2,
-                    child: UrgentPatientPanel(
-                      urgentPatients: notifier.urgentPatients,
-                      selected: notifier.selectedUrgentPatient,
-                      isLoading: notifier.isFetching,
-                      onSelected: notifier.selectUrgentPatient,
-                    ),
-                  ),
-                  SizedBox(width: MedSpacing.md),
-                  Expanded(
-                    flex: 5,
-                    child: Column(
-                      spacing: 12.0,
-                      children: [Expanded(child: UrgentPatientDetailPanel(notifier: notifier))],
-                    ),
-                  ),
-                ],
+    return Column(
+      spacing: 16.0,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ScreenTitle(menu: menu),
+        Expanded(
+          child: Row(
+            spacing: 12.0,
+            children: [
+              Expanded(flex: 2, child: _LeftPanel(notifier)),
+              Expanded(
+                flex: 2,
+                child: UrgentPatientPanel(
+                  urgentPatients: notifier.urgentPatients,
+                  selected: notifier.selectedUrgentPatient,
+                  isLoading: notifier.isFetching,
+                  onSelected: notifier.selectUrgentPatient,
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                flex: 5,
+                child: Column(
+                  spacing: 12.0,
+                  children: [Expanded(child: UrgentPatientDetailPanel(notifier: notifier))],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
+    );
+  }
+}
+
+class _LeftPanel extends StatelessWidget {
+  const _LeftPanel(this.notifier);
+
+  final UrgentPatientNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return HospitalizationPanel(
+      cellBuilder: (hosp) {
+        final hospId = hosp.id;
+        bool isSelected = notifier.selectedHospitalization?.id == hospId;
+        return PatientSelectionCard(
+          hospitalization: hosp,
+          onTap: () => notifier.selectHospitalization(hosp),
+          showChevron: false,
+          isSelected: isSelected,
+        );
+      },
+      onTypeChanged: () => notifier.clearSelection(),
     );
   }
 }

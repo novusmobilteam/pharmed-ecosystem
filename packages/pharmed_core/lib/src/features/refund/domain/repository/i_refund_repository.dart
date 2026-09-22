@@ -44,6 +44,9 @@ abstract class IRefundRepository {
   // Çekmeceye iade edilen ilaçları getirir
   Future<Result<ApiResponse<List<Refund>>?>> getDrawerRefunds({PagedQueryParams? params, required int stationId});
 
+  // İade kutusuna iade edilen ilaçları getirir
+  Future<Result<ApiResponse<List<Refund>>?>> getReturnBoxRefunds({PagedQueryParams? params, required int stationId});
+
   // İade silme işlemi
   Future<Result<void>> deletePharmacyRefund(int refundId, String? description);
 }

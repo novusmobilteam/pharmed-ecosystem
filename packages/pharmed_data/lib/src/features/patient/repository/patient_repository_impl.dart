@@ -61,12 +61,12 @@ class PatientRepositoryImpl implements IPatientRepository {
   @override
   Future<Result<void>> endEmergencyPatient({
     required int hospitalizationId,
-    required int patientId,
+    required int urgentPatientHospitalizationId,
     required List<int> prescriptionItemIds,
   }) {
     return _dataSource.endEmergencyPatient(
+      urgentPatientHospitalizationId: urgentPatientHospitalizationId,
       hospitalizationId: hospitalizationId,
-      patientId: patientId,
       prescriptionItemIds: prescriptionItemIds,
     );
   }

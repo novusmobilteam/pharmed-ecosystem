@@ -28,6 +28,9 @@ class CabinTargetedPrescriptionItemDto {
     this.cabinAssignment,
     this.cabinDrawerStock,
     this.lastMovement,
+    this.collectStationId,
+    this.collectStationName,
+    this.isCollectedAtCurrentStation = false,
   });
 
   final int? id;
@@ -51,6 +54,11 @@ class CabinTargetedPrescriptionItemDto {
 
   final PrescriptionItemMovementDto? lastMovement;
 
+  /// Alım yapılan istasyon bilgileri
+  final int? collectStationId;
+  final String? collectStationName;
+  final bool isCollectedAtCurrentStation;
+
   factory CabinTargetedPrescriptionItemDto.fromJson(Map<String, dynamic> json) {
     return CabinTargetedPrescriptionItemDto(
       id: json['id'] as int?,
@@ -73,6 +81,9 @@ class CabinTargetedPrescriptionItemDto {
       lastMovement: json['lastMovement'] != null
           ? PrescriptionItemMovementDto.fromJson(json['lastMovement'] as Map<String, dynamic>)
           : null,
+      collectStationId: json['collectionStationId'] as int?,
+      collectStationName: json['collectionStationName'] as String?,
+      isCollectedAtCurrentStation: json['isCollectedAtCurrentStation'] as bool? ?? false,
     );
   }
 

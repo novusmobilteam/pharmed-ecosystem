@@ -135,4 +135,22 @@ class RefundRepositoryImpl implements IRefundRepository {
       error: (e) => Result.error(e),
     );
   }
+
+  @override
+  Future<Result<ApiResponse<List<Refund>>?>> getReturnBoxRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getReturnBoxRefunds(params: params, stationId: stationId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<Refund>>(
+          data: apiResponse?.data != null ? _refundMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
 }

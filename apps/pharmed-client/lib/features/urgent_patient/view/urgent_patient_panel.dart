@@ -18,27 +18,12 @@ class UrgentPatientPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: MedSpacing.panelInsetPadding,
-      decoration: BoxDecoration(
-        border: Border.all(width: 1, color: MedColors.border),
-        color: MedColors.surface,
-        borderRadius: MedRadius.mdAll,
-      ),
+      decoration: MedDecoration.panelDecoration,
       child: Column(
+        spacing: 12.0,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(context.l10n.urgentPatientTermination_listTitle, style: MedTextStyles.titleSm()),
-              const Spacer(),
-              MedChip(
-                label: '${urgentPatients.length}',
-                size: MedChipSize.sm,
-                style: MedChipStyle.danger,
-                showBorder: false,
-              ),
-            ],
-          ),
-          Divider(),
+          Text(context.l10n.urgentPatientTermination_listTitle, style: MedTextStyles.titleSm()),
           Expanded(
             child: isLoading
                 ? const Center(child: MedLoadingIndicator())
@@ -76,7 +61,7 @@ class _UrgentPatientListItem extends StatelessWidget {
     final label = isMedicineTaken
         ? context.l10n.urgentPatientTermination_medicineTakenChip
         : context.l10n.urgentPatientTermination_medicineNotTakenChip;
-    final chipColor = isMedicineTaken ? MedColors.amber : MedColors.border;
+    final chipColor = isMedicineTaken ? MedColors.red : MedColors.border;
     final foregroundColor = isMedicineTaken ? MedColors.amberLight : MedColors.text3;
 
     return InkWell(

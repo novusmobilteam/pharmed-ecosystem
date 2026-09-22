@@ -20,8 +20,6 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-import 'drawer_unit.dart';
-
 /// [units] ham (API) sırasındaki kübik göz listesi.
 /// [columnCount] görsel gridin sütun sayısı — iade kutulu kübiklerde 3,
 /// normal kübiklerde 4 (bkz. MasterCabinDrawerPanel._hybridGrid / _KubikGrid).

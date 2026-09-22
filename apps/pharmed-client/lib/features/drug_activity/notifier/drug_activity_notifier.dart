@@ -6,7 +6,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import '../../../core/mixins/api_request_mixin.dart';
 import '../../../core/mixins/pagination_mixin.dart';
 
-final drugActivityNotifierProvider = ChangeNotifierProvider<DrugActivityNotifier>((ref) {
+final drugActivityNotifierProvider = ChangeNotifierProvider.autoDispose<DrugActivityNotifier>((ref) {
   return DrugActivityNotifier(
     getCurrentStationDrugActivityUseCase: ref.watch(getCurrentStationDrugActivityUseCaseProvider),
   );

@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../widgets/empty_widgets/no_data_view.dart';
+import '../../../widgets/empty_widgets/no_selected_hospitalization_view.dart';
+import '../../../widgets/hospitalization_panel/hospitalization_panel.dart';
 import '../../../widgets/widgets.dart';
 
 import '../../dashboard/dashboard.dart';
@@ -19,85 +22,124 @@ class UnappliedPrescriptionScreen extends ConsumerStatefulWidget {
 
 class UnappliedPrescriptionScreenState extends ConsumerState<UnappliedPrescriptionScreen> {
   @override
-  void initState() {
-    super.initState();
-    _initialize();
-  }
-
-  void _initialize() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final deviceMode = widget.cabinRouteContext?.deviceMode;
-      ref.read(unappliedPrescriptionNotifierProvider.notifier).init(deviceMode);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final state = ref.watch(unappliedPrescriptionNotifierProvider);
-    final notifier = ref.read(unappliedPrescriptionNotifierProvider.notifier);
+    final menu = widget.cabinRouteContext?.menu;
+    final notifier = ref.watch(unappliedPrescriptionNotifierProvider);
 
-    ref.listen(unappliedPrescriptionNotifierProvider, (_, next) {
-      if (next is UnappliedPrescriptionError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
-        notifier.dismissError();
-      }
-    });
-
-    if (state is UnappliedPrescriptionUninitialized || state is UnappliedPrescriptionLoading) {
-      return const Center(child: MedLoadingIndicator());
+    if (notifier.isError) {
+      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.networkError));
     }
 
-    if (state.hospitalizations.isEmpty) {
-      return EmptyStateWidget(
-        icon: PhosphorIcons.usersThree(),
-        size: EmptyStateSize.normal,
-        title: context.l10n.prescription_noPatients_title,
-        description: context.l10n.prescription_noPatients_message,
-      );
-    }
-
-    return Row(
-      spacing: 12.0,
+    return Column(
+      spacing: 16.0,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Column(
+          spacing: 4.0,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              spacing: 4.0,
+              children: [
+                Container(
+                  width: 4,
+                  height: 25,
+                  decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.mdAll),
+                ),
+                Text(menu!.name.toString(), style: MedTextStyles.titleLg()),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Text(menu.description ?? '', style: MedTextStyles.bodyMd()),
+            ),
+          ],
+        ),
         Expanded(
-          flex: 2,
-          child: PatientSelectionPanel(
-            currentStation: widget.cabinRouteContext!.station!,
-            selectedPatient: state.selectedPatient,
-            onPatientSelected: (patient, tab, isOrderless) => notifier.onPatientTap(patient),
-            config: PatientSelectionConfig(showFilters: false),
+          child: Row(
+            spacing: 12.0,
+            children: [
+              Expanded(flex: 2, child: _LeftPanel(notifier)),
+              Expanded(flex: 7, child: _RightPanel(notifier)),
+            ],
           ),
         ),
-        Expanded(flex: 7, child: _UnappliedPrescriptionRightPanel(state: state)),
       ],
     );
   }
 }
 
-class _UnappliedPrescriptionRightPanel extends StatelessWidget {
-  const _UnappliedPrescriptionRightPanel({required this.state});
+class _LeftPanel extends StatelessWidget {
+  const _LeftPanel(this.notifier);
 
-  final UnappliedPrescriptionState state;
+  final UnappliedPrescriptionNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    if (state.isPrescriptionsLoading) {
-      return Center(child: MedLoadingIndicator());
-    }
+    return HospitalizationPanel(
+      cellBuilder: (hosp) {
+        final hospId = hosp.id;
+        bool isSelected = notifier.selectedHospitalization?.id == hospId;
+        return PatientSelectionCard(
+          hospitalization: hosp,
+          onTap: () => notifier.selectHospitalization(hosp),
+          showChevron: false,
+          isSelected: isSelected,
+        );
+      },
+      onTypeChanged: () => notifier.clearSelection(),
+    );
+  }
+}
 
-    if (!state.isPatientSelected) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.noPatientSelected);
-    }
+class _RightPanel extends StatelessWidget {
+  const _RightPanel(this.notifier);
 
-    if (state.prescriptionItems.isEmpty) {
-      return EmptyStateWidget(
-        icon: PhosphorIcons.receiptX(),
-        title: context.l10n.prescription_unadministeredEmptyTitle,
-        description: context.l10n.prescription_unadministeredEmptyDescription,
-      );
-    }
+  final UnappliedPrescriptionNotifier notifier;
 
-    return RxCarousel(items: state.prescriptionItems, emptyVariant: EmptyStateVariant.error);
+  @override
+  Widget build(BuildContext context) {
+    final title = notifier.selectedHospitalization != null
+        ? notifier.selectedHospitalization?.patient?.fullName ?? '-'
+        : 'Hasta Seçilmedi';
+
+    return Container(
+      alignment: Alignment.center,
+      decoration: MedDecoration.panelDecoration,
+      child: Builder(
+        builder: (context) {
+          if (notifier.isLoading(notifier.fetchOp)) return Center(child: MedLoadingIndicator());
+          if (notifier.selectedHospitalization == null) return Center(child: NoSelectedHospitalizationView());
+          if (notifier.selectedHospitalization != null && notifier.items.isEmpty) {
+            return Center(
+              child: NoDataView(
+                title: context.l10n.emptyState_noPrescriptionTitle,
+                subtitle: context.l10n.emptyState_noPrescriptionDescription,
+                iconData: PhosphorIcons.receiptX(),
+              ),
+            );
+          }
+
+          return Column(
+            spacing: 4.0,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: MedSpacing.insetXl,
+                child: Text(title, style: MedTextStyles.titleSm()),
+              ),
+              Divider(height: 0),
+
+              Expanded(
+                child: Padding(
+                  padding: MedSpacing.insetMd,
+                  child: RxCarousel(items: notifier.items),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 }

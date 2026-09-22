@@ -19,10 +19,15 @@ List<IntakeQrCodeRequirement> intakeQrCodeRequirementsOf(IntakeDrawerJob job) {
   final byPrescriptionDetailId = <int, IntakeQrCodeRequirement>{};
 
   for (final target in job.targets) {
-    final drug = target.item.medicine?.when(drug: (Drug d) => d, consumable: (_) => null);
+    final medicine = target.item.medicine;
+    final drug = medicine?.when(drug: (Drug d) => d, consumable: (_) => null);
     if (drug == null || !drug.isQrCode) continue;
 
-    final requiredCount = target.details.fold<int>(0, (sum, d) => sum + d.dosePiece.round());
+    final totalDose = target.details.fold<double>(0, (sum, d) => sum + d.dosePiece);
+    // dosePiece backend değeri (ml/mg) — fromFillingBackendValue ile paket/
+    // flakon adedine (kullanıcı-yüzü "adet") çeviriyoruz. isMeasureUnit=false
+    // olan ilaçlarda fillingMultiplier=1, yani totalDose zaten adet demektir.
+    final requiredCount = medicine!.fromFillingBackendValue(totalDose).ceil();
     if (requiredCount <= 0) continue;
 
     final existing = byPrescriptionDetailId[target.item.id];

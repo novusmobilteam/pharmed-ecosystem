@@ -11,6 +11,7 @@ import 'package:pharmed_client/features/refund/refund_view.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';
 import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_client/features/unscanned_barcodes/view/unscanned_barcodes_screen.dart';
+import 'package:pharmed_client/widgets/empty_widgets/no_data_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
@@ -28,6 +29,7 @@ import '../../../prescription/view/prescription_screen.dart';
 import '../../../redirected_orders/view/redirected_orders_screen.dart';
 import '../../../refill/refill.dart';
 import '../../../refill_list/view/refill_list_view.dart';
+import '../../../service_selection/service_selection.dart';
 import '../../../settings/notifier/settings_notifier.dart';
 import '../../../settings/view/settings_view.dart';
 import '../../../unload_drawer/view/unload_drawer_screen.dart';
@@ -222,6 +224,7 @@ class _DashboardBody extends ConsumerWidget {
           Expanded(
             child: Column(
               children: [
+                ActiveStationServiceCard(),
                 if (notifier.primaryCabinData() case final cabinData?)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
@@ -236,5 +239,26 @@ class _DashboardBody extends ConsumerWidget {
     }
 
     return DashboardRouteContent();
+  }
+}
+
+class DrugActivityPanel extends StatelessWidget {
+  const DrugActivityPanel({super.key, required this.section});
+
+  final DashboardSection<List<PrescriptionItemMovement>?> section;
+
+  @override
+  Widget build(BuildContext context) {
+    final movements = section.data ?? const <PrescriptionItemMovement>[];
+
+    return MedDashboardPanel(
+      title: context.l10n.dashboard_drugActivityPanelTitle.toUpperCase(),
+      section: section,
+      itemCount: movements.length,
+      itemBuilder: (BuildContext context, int index) {
+        final movement = movements[index];
+        return MedDrugActivityCard(movement: movement);
+      },
+    );
   }
 }

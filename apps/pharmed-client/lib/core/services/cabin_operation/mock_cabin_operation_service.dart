@@ -149,9 +149,6 @@ class MockCabinOperationService implements ICabinOperationService {
     _statusPollCount = 0;
 
     if (_masterDrawerIsOpen) {
-      // Yeni abonelik açıldığında çekmece ZATEN açıksa (örn. passive close
-      // watch, Opened'dan hemen sonra), sahte "locked → bekle → open"
-      // senaryosunu tekrar OYNAMA — anlık gerçek durumu yayınla.
       yield DrawerPhysicalStatus.fullyOpen;
     } else {
       yield DrawerPhysicalStatus.locked;
@@ -165,11 +162,13 @@ class MockCabinOperationService implements ICabinOperationService {
       yield DrawerPhysicalStatus.fullyOpen;
     }
 
-    int elapsed = 0;
-    while (elapsed < 60000) {
+    // Geliştirme sırasında: kullanıcı manuel kapatmadıkça (triggerManualClose)
+    // mock çekmeceyi kendiliğinden kapatmasın — gerçek kabinlerde otomatik
+    // kapanma zaman aşımı yok, bu sadece o senaryoyu test etmek isteyenler
+    // için opsiyonel bir simülasyondu. Test etmek istersen aşağıdaki bloğu
+    // geri aç.
+    while (!_shouldFastForward) {
       await Future.delayed(const Duration(milliseconds: 500));
-      elapsed += 500;
-      if (_shouldFastForward) break;
     }
 
     _masterDrawerIsOpen = false;

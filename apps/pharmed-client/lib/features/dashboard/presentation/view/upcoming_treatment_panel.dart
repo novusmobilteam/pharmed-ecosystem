@@ -151,7 +151,13 @@ class UpcomingTreatmentPanel extends StatelessWidget {
           ),
 
           if (groups.isEmpty)
-            Center(child: const EmptyStateWidget(variant: EmptyStateVariant.noData))
+            Expanded(
+              child: NoDataView(
+                title: context.l10n.dashboardUpcomingTreatmentsEmptyTitle,
+                subtitle: context.l10n.dashboard_allSectionsLoadError,
+                iconData: PhosphorIcons.clock(),
+              ),
+            )
           else
             Expanded(
               child: ListView(

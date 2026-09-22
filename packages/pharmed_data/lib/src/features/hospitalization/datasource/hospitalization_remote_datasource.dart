@@ -109,18 +109,6 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
   }
 
-  // Future<Result<List<HospitalizationDto>>> getFilteredHospitalizations({
-  //   required PatientFilterType filter,
-  //   int? serviceId,
-  //   bool? myPatients,
-  // }) async {
-  //   final res = await fetchRequest<List<HospitalizationDto>>(
-  //     path: '/Patient/myHospitalization/${filter.id}',
-  //     parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
-  //   );
-  //   return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
-  // }
-
   Future<Result<List<HospitalizationDto>>> getHospitalizationsByService({
     required int serviceId,
     required PatientFilterType filter,

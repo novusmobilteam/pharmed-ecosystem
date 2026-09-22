@@ -125,24 +125,3 @@ class _CabinDesignRouteHandlerState extends State<_CabinDesignRouteHandler> {
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();
 }
-
-class DrugActivityPanel extends StatelessWidget {
-  const DrugActivityPanel({super.key, required this.section});
-
-  final DashboardSection<List<PrescriptionItemMovement>?> section;
-
-  @override
-  Widget build(BuildContext context) {
-    final movements = section.data ?? const <PrescriptionItemMovement>[];
-
-    return MedDashboardPanel(
-      title: context.l10n.dashboard_drugActivityPanelTitle.toUpperCase(),
-      section: section,
-      itemCount: movements.length,
-      itemBuilder: (BuildContext context, int index) {
-        final movement = movements[index];
-        return MedDrugActivityCard(movement: movement);
-      },
-    );
-  }
-}

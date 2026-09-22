@@ -16,7 +16,11 @@ class InconsistencyMapper {
       corpartmentNo: dto.corpartmentNo,
       activeIngredients: dto.activeIngredients,
       user: UserMapper().toEntityOrNull(dto.user),
+      createdDate: dto.createdDate,
       isSolved: dto.isSolved,
+      solvedUser: UserMapper().toEntityOrNull(dto.solvedUser),
+      solvedDate: dto.solvedDate,
+      description: dto.description,
     );
   }
 

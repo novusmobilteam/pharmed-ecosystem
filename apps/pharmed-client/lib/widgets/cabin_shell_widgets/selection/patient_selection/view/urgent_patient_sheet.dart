@@ -108,7 +108,7 @@ class _UrgentPatientCreateSheetContentState extends ConsumerState<_UrgentPatient
                   flex: 3,
                   child: MedButton(
                     label: context.l10n.patientPicker_createUrgentPatientButton,
-                    variant: MedButtonVariant.danger,
+                    variant: MedButtonVariant.error,
                     isLoading: isCreating,
                     onPressed: _selected == null ? null : _submit,
                   ),

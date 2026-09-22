@@ -2,14 +2,18 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 class EndUrgentPatientParams {
   final int hospitalizationId;
-  final int patientId;
+  final int urgentHospitalizationId;
   final List<int> prescriptionItemIds;
 
   /// Acil hasta sonlandırma servisi
   /// - [hospitalizationId] : Acil hastaya ait yatış id
   /// - [patientId] : Eşleştirilen hastaya ait id
   /// - [prescriptionItemIds] : Hasta üzerine çekilen ilaçların id'leri
-  EndUrgentPatientParams({required this.hospitalizationId, required this.patientId, required this.prescriptionItemIds});
+  EndUrgentPatientParams({
+    required this.hospitalizationId,
+    required this.urgentHospitalizationId,
+    required this.prescriptionItemIds,
+  });
 }
 
 class EndUrgentPatientUseCase {
@@ -19,7 +23,7 @@ class EndUrgentPatientUseCase {
   Future<Result<void>> call(EndUrgentPatientParams params) {
     return _repository.endEmergencyPatient(
       hospitalizationId: params.hospitalizationId,
-      patientId: params.patientId,
+      urgentPatientHospitalizationId: params.urgentHospitalizationId,
       prescriptionItemIds: params.prescriptionItemIds,
     );
   }

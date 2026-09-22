@@ -212,7 +212,7 @@ class _SidePanelFooter extends StatelessWidget {
             label: context.l10n.common_cancelButton,
             onPressed: () => onClose != null ? onClose!() : null,
             size: MedButtonSize.sm,
-            variant: MedButtonVariant.danger,
+            variant: MedButtonVariant.error,
           ),
           const SizedBox(width: 6),
           if (onSave != null)

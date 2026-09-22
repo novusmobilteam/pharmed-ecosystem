@@ -10,6 +10,7 @@ class CabinStockDTO {
   final int? shelfNo;
   final num? quantity;
   final DateTime? miadDate;
+  final int? materialId;
   final MedicineDto? medicine;
   final MedicineAssignmentDto? cabinDrawerQuantity;
   final DrawerCellDTO? cabinDrawerDetail;
@@ -26,6 +27,7 @@ class CabinStockDTO {
     this.medicine,
     this.cabinDrawerQuantity,
     this.cabinDrawerDetail,
+    this.materialId,
   });
 
   factory CabinStockDTO.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class CabinStockDTO {
       cabinId: json['cabinId'],
       cabinDrawerId: json['cabinDrawrId'],
       cabinDrawerDetailId: json['cabinDrawrDetailId'],
+      materialId: json['materialId'],
       corpartmentNo: json['corpartmentNo'],
       quantity: json['quantity'],
       shelfNo: json['shelfNo'],

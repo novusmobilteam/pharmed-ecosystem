@@ -24,12 +24,7 @@ class UrgentPatientDetailPanel extends StatelessWidget {
       children: [
         Expanded(
           child: Container(
-            //padding: MedSpacing.panelInsetPadding,
-            decoration: BoxDecoration(
-              border: Border.all(width: 1, color: MedColors.border),
-              color: MedColors.surface,
-              borderRadius: MedRadius.mdAll,
-            ),
+            decoration: MedDecoration.panelDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -52,21 +47,26 @@ class UrgentPatientDetailPanel extends StatelessWidget {
                       ),
                     ),
                   ),
+
                 if (!isMedicineTaken)
-                  Center(
-                    child: EmptyStateWidget(
-                      title: context.l10n.urgentPatientTermination_noMedicineEmptyTitle,
-                      description: context.l10n.urgentPatientTermination_noMedicineEmptyDescription,
+                  Expanded(
+                    child: Center(
+                      child: NoDataView(
+                        title: context.l10n.urgentPatientTermination_noMedicineEmptyTitle,
+                        subtitle: context.l10n.urgentPatientTermination_noMedicineEmptyDescription,
+                        iconData: PhosphorIcons.pill(),
+                        medTone: MedTone.error,
+                      ),
                     ),
                   ),
               ],
             ),
           ),
         ),
-        // if (notifier.selectedUrgentPatient != null && notifier.selectedPatient != null)
+
         UrgentPatientFooter(
           urgentPatient: notifier.selectedUrgentPatient!,
-          targetPatient: notifier.selectedPatient,
+          targetPatient: notifier.selectedHospitalization,
           isSubmitting: notifier.isSubmitting,
           onSubmit: () => notifier.submit(
             onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
@@ -266,11 +266,7 @@ class UrgentPatientFooter extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       padding: MedSpacing.panelInsetPadding,
-      decoration: BoxDecoration(
-        border: Border.all(width: 1, color: MedColors.border),
-        color: MedColors.surface,
-        borderRadius: MedRadius.mdAll,
-      ),
+      decoration: MedDecoration.panelDecoration,
       child: isMedicineTaken ? buildTerminateView(context) : buildDeleteView(context),
     );
   }
@@ -311,7 +307,7 @@ class UrgentPatientFooter extends StatelessWidget {
           ),
         MedButton(
           label: context.l10n.urgentPatientTermination_finalizeButton,
-          variant: MedButtonVariant.danger,
+          variant: MedButtonVariant.success,
           isLoading: isSubmitting,
           onPressed: onSubmit,
           isActive: targetPatient != null,
@@ -325,7 +321,7 @@ class UrgentPatientFooter extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: MedButton(
         label: context.l10n.common_deleteTooltip,
-        variant: MedButtonVariant.danger,
+        variant: MedButtonVariant.error,
         isLoading: isDeleting,
         onPressed: onDelete,
       ),

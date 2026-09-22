@@ -15,3 +15,4 @@ export 'cabin_shell_widgets/cabin_shell_widgets.dart';
 export 'witness_login_view.dart';
 export 'expandable_indexed_config_card.dart';
 export 'master_cabin_device_visual.dart';
+export 'screen_title.dart';

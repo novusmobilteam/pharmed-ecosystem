@@ -1,6 +1,6 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-class RefundDrawerJob {
+class RefundDrawerJob implements DrawerJob<RefundTarget> {
   const RefundDrawerJob({
     required this.cabinDrawerId,
     required this.representativeTarget,
@@ -11,19 +11,22 @@ class RefundDrawerJob {
 
   final int cabinDrawerId;
   final RefundTarget representativeTarget;
+  @override
   final List<RefundTarget> targets;
+  @override
   final CabinOperationJobStatus status;
   final int? cabinId;
 
+  @override
   bool get isKubik => representativeTarget.isKubik;
 
-  /// İade çekmecesi hedefi mi — fiziksel lid'i yok, tek açılışta çoklu item.
   bool get isReturnDrawer => representativeTarget.isReturnDrawerTarget;
 
-  /// true ise: çekmece TEK açılışta kalır, targetlar arası kapat/aç
-  /// döngüsüne girilmez (kübik lid komutu isKubik'e göre ayrıca kontrol
-  /// edilir — isReturnDrawer'da hiç gönderilmez).
+  @override
   bool get staysOpenAcrossTargets => isKubik || isReturnDrawer;
+
+  @override
+  MedicineAssignment get representativeAssignment => representativeTarget.assignment;
 
   bool get canComplete => targets.every((t) => t.isValid);
 
@@ -36,4 +39,10 @@ class RefundDrawerJob {
       cabinId: cabinId,
     );
   }
+
+  @override
+  RefundDrawerJob copyWithStatus(CabinOperationJobStatus status) => copyWith(status: status);
+
+  @override
+  DrawerJob<RefundTarget> copyWithTargets(List<RefundTarget> targets) => copyWith(targets: targets);
 }

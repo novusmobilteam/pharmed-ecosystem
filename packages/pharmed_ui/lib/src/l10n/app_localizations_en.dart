@@ -724,6 +724,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'There are no active prescriptions for this patient.';
 
   @override
+  String get emptyState_noOrderlessMedicineTitle =>
+      'No orderless medicines found';
+
+  @override
+  String get emptyState_noOrderlessMedicineDescription =>
+      'No medicine is defined in the cabin under the orderless status.';
+
+  @override
+  String get emptyState_noFreeMedicineTitle => 'No free-use medicines found';
+
+  @override
+  String get emptyState_noFreeMedicineDescription =>
+      'No medicine is defined in the cabin under the free/independent status.';
+
+  @override
+  String get emptyState_noUrgentMedicineTitle => 'No emergency medicines found';
+
+  @override
+  String get emptyState_noUrgentMedicineDescription =>
+      'No medicine is defined in the cabin for emergency use.';
+
+  @override
   String get emptyState_noCabinTitle => 'No Cabinet Found';
 
   @override
@@ -2547,6 +2569,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get inconsistency_photoTooltip => 'Photo';
+
+  @override
+  String get inconsistency_showUnsolvedTooltip =>
+      'Show Unresolved Inconsistencies';
+
+  @override
+  String get inconsistency_showSolvedTooltip => 'Show Resolved Inconsistencies';
+
+  @override
+  String get inconsistency_resolvedByUserLabel => 'Resolved By';
+
+  @override
+  String get inconsistency_detailDialogTitle => 'Inconsistency Detail';
+
+  @override
+  String get inconsistency_medicineLabel => 'Medicine';
+
+  @override
+  String get inconsistency_quantityLabel => 'Actual Quantity';
+
+  @override
+  String get inconsistency_requiredQuantityLabel => 'Required Quantity';
+
+  @override
+  String get inconsistency_miadDateLabel => 'Expiry Date';
+
+  @override
+  String get inconsistency_shelfLabel => 'Shelf No';
+
+  @override
+  String get inconsistency_compartmentLabel => 'Compartment No';
+
+  @override
+  String get inconsistency_activeIngredientsLabel => 'Active Ingredient';
+
+  @override
+  String get inconsistency_reportedByUserLabel => 'Reported By';
+
+  @override
+  String get inconsistency_createdDateLabel => 'Created Date';
+
+  @override
+  String get inconsistency_resolvedDateLabel => 'Resolved Date';
+
+  @override
+  String get inconsistency_descriptionLabel => 'Description';
+
+  @override
+  String get inconsistency_statusSolvedBadge => 'Resolved';
+
+  @override
+  String get inconsistency_statusUnsolvedBadge => 'Unresolved';
 
   @override
   String get hospitalization_formTitleNew => 'Enter New Admission';
@@ -5799,50 +5873,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get masterDrawer_status_devicePreparingTitle => 'Preparing';
 
   @override
-  String get masterDrawer_status_devicePreparingSubtitle =>
-      'The system is getting ready. Please wait a moment.';
+  String get masterDrawer_status_devicePreparingSubtitle => 'Preparing device.';
 
   @override
   String get masterDrawer_status_lockOpeningTitle => 'Unlocking';
 
   @override
   String get masterDrawer_status_lockOpeningSubtitle =>
-      'The drawer lock is opening. Please wait a moment.';
+      'Unlocking, please wait.';
 
   @override
   String get masterDrawer_status_waitingPullTitle => 'Please Pull the Drawer';
 
   @override
-  String get masterDrawer_status_waitingPullSubtitle =>
-      'The lock has been released. Pull the drawer open to continue.';
+  String get masterDrawer_status_waitingPullSubtitle => 'Pull the drawer open.';
 
   @override
   String get masterDrawer_status_openingLidTitle => 'Opening Compartment Lid';
 
   @override
-  String get masterDrawer_status_openingLidSubtitle =>
-      'The compartment lid is opening. Please wait a moment.';
+  String get masterDrawer_status_openingLidSubtitle => 'Opening cell lid.';
 
   @override
   String get masterDrawer_status_waitingCloseTitle => 'Please Close the Drawer';
 
   @override
   String get masterDrawer_status_waitingCloseSubtitle =>
-      'Close the drawer to continue to the next step.';
+      'If you\'ve taken the medicine, you can close the drawer.';
 
   @override
   String get masterDrawer_status_failedTitle => 'A Problem Occurred';
 
   @override
   String get masterDrawer_status_failedSubtitle =>
-      'Please wait, the system is checking the drawer status.';
+      'Something went wrong, please try again.';
 
   @override
   String get masterDrawer_status_openingTitle => 'Opening Drawer';
 
   @override
   String get masterDrawer_status_openingSubtitle =>
-      'The drawer is opening. Please wait a moment.';
+      'Drawer opening, please wait.';
 
   @override
   String get masterDrawer_stop_waitingCloseTitle =>
@@ -6431,7 +6502,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get masterDrawer_status_completingTitle => 'Completing Your Operation';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Please wait';
+  String get masterDrawer_status_completingSubtitle => 'Finishing intake.';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Defined Cabinets';
@@ -6819,4 +6890,109 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceSelection_screenTitle => 'Service Selection';
+
+  @override
+  String serviceSelection_subtitle(String stationName) {
+    return 'Station $stationName serves multiple services. Select the service you\'ll work with to continue.';
+  }
+
+  @override
+  String get serviceSelection_confirmButton => 'Confirm';
+
+  @override
+  String get serviceSelection_loadErrorMessage =>
+      'Couldn\'t load service information for this station.';
+
+  @override
+  String dashboard_activeStationLabel(String stationName) {
+    return 'Station: $stationName';
+  }
+
+  @override
+  String dashboard_activeServiceLabel(String serviceName) {
+    return 'Service: $serviceName';
+  }
+
+  @override
+  String get dashboard_changeServiceButton => 'Change service';
+
+  @override
+  String get myPatients_activeHospitalizationsPanelTitle => 'Active Admissions';
+
+  @override
+  String get myPatients_myPatientsPanelTitle => 'My Patients';
+
+  @override
+  String get myPatients_emptyTitle =>
+      'You don\'t have any assigned patients yet.';
+
+  @override
+  String get myPatients_emptyDescription =>
+      'Add the patients you\'re responsible for; the treatment plan, cabin operations, and task list open from these patients.';
+
+  @override
+  String get myPatients_chip_step1 => '1. Search the patient on the left';
+
+  @override
+  String get myPatients_chip_step2 => '2. Tap the green + button';
+
+  @override
+  String get myPatients_chip_step3 => '3. Patient appears in this list';
+
+  @override
+  String get myPatients_screenDescription =>
+      'Assign patients to yourself from among those with an active admission. Patients you add from the list on the left appear under your responsibility in treatment and cabin operations.';
+
+  @override
+  String get cabinOverview_workingCabinBadge => 'Working cabin';
+
+  @override
+  String get cabinOverview_drawerCountSuffix => 'drawers';
+
+  @override
+  String get cabinOverview_activeDrawerBadge => 'Active';
+
+  @override
+  String get masterDrawer_status_openedTitle => 'Drawer open';
+
+  @override
+  String get masterDrawer_status_openedSubtitle =>
+      'Take the medicine, close the drawer — that\'s it.';
+
+  @override
+  String get masterDrawer_status_openedPill => 'Watching for closure';
+
+  @override
+  String get masterDrawer_status_workingPill => 'In progress';
+
+  @override
+  String get masterDrawer_status_closureMonitoredPill => 'Detecting closure';
+
+  @override
+  String refund_appliedDateLabel(String date) {
+    return 'Application Date: $date';
+  }
+
+  @override
+  String refund_performedByLabel(String performedBy) {
+    return 'Performed By: $performedBy';
+  }
+
+  @override
+  String get refund_directReturnButton => 'İade Et';
+
+  @override
+  String get refund_directReturnSendingLabel => 'Gönderiliyor...';
+
+  @override
+  String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';
+
+  @override
+  String get refund_showToDrawerTooltip => 'Show Drawer Returns';
+
+  @override
+  String get refund_showToReturnBoxTooltip => 'Show Return Box Returns';
 }

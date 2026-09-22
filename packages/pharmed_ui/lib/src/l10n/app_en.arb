@@ -503,6 +503,12 @@
   "emptyState_noPatientDescription": "No patient has been assigned to this cell yet.",
   "emptyState_noPrescriptionTitle": "No prescription found",
   "emptyState_noPrescriptionDescription": "There are no active prescriptions for this patient.",
+ "emptyState_noOrderlessMedicineTitle": "No orderless medicines found",
+  "emptyState_noOrderlessMedicineDescription": "No medicine is defined in the cabin under the orderless status.",
+  "emptyState_noFreeMedicineTitle": "No free-use medicines found",
+  "emptyState_noFreeMedicineDescription": "No medicine is defined in the cabin under the free/independent status.",
+  "emptyState_noUrgentMedicineTitle": "No emergency medicines found",
+  "emptyState_noUrgentMedicineDescription": "No medicine is defined in the cabin for emergency use.",
   "emptyState_noCabinTitle": "No Cabinet Found",
   "emptyState_noCabinDescription": "No cabinet has been defined yet. Please define a cabinet to continue.",
   "emptyState_networkErrorTitle": "No Internet Connection",
@@ -1652,6 +1658,23 @@
   "@inconsistency_viewTooltip": {},
   "inconsistency_photoTooltip": "Photo",
   "@inconsistency_photoTooltip": {},
+  "inconsistency_showUnsolvedTooltip": "Show Unresolved Inconsistencies",
+"inconsistency_showSolvedTooltip": "Show Resolved Inconsistencies",
+"inconsistency_resolvedByUserLabel": "Resolved By",
+"inconsistency_detailDialogTitle": "Inconsistency Detail",
+"inconsistency_medicineLabel": "Medicine",
+"inconsistency_quantityLabel": "Actual Quantity",
+"inconsistency_requiredQuantityLabel": "Required Quantity",
+"inconsistency_miadDateLabel": "Expiry Date",
+"inconsistency_shelfLabel": "Shelf No",
+"inconsistency_compartmentLabel": "Compartment No",
+"inconsistency_activeIngredientsLabel": "Active Ingredient",
+"inconsistency_reportedByUserLabel": "Reported By",
+"inconsistency_createdDateLabel": "Created Date",
+"inconsistency_resolvedDateLabel": "Resolved Date",
+"inconsistency_descriptionLabel": "Description",
+"inconsistency_statusSolvedBadge": "Resolved",
+"inconsistency_statusUnsolvedBadge": "Unresolved",
   "hospitalization_formTitleNew": "Enter New Admission",
   "@hospitalization_formTitleNew": {},
   "hospitalization_formTitleEdit": "Edit Admission",
@@ -4815,5 +4838,73 @@
 "waste_label_groupRecordCount": "{count, plural, one{{count} record} other{{count} records}}",
 "@waste_label_groupRecordCount": {
   "placeholders": { "count": { "type": "int" } }
-}
+},
+"serviceSelection_screenTitle": "Service Selection",
+"serviceSelection_subtitle": "Station {stationName} serves multiple services. Select the service you'll work with to continue.",
+"@serviceSelection_subtitle": {
+  "placeholders": {
+    "stationName": { "type": "String" }
+  }
+},
+"serviceSelection_confirmButton": "Confirm",
+"serviceSelection_loadErrorMessage": "Couldn't load service information for this station.",
+"dashboard_activeStationLabel": "Station: {stationName}",
+"@dashboard_activeStationLabel": {
+  "placeholders": { "stationName": { "type": "String" } }
+},
+"dashboard_activeServiceLabel": "Service: {serviceName}",
+"@dashboard_activeServiceLabel": {
+  "placeholders": { "serviceName": { "type": "String" } }
+},
+"dashboard_changeServiceButton": "Change service",
+"myPatients_activeHospitalizationsPanelTitle": "Active Admissions",
+"myPatients_myPatientsPanelTitle": "My Patients",
+"myPatients_emptyTitle": "You don't have any assigned patients yet.",
+"myPatients_emptyDescription": "Add the patients you're responsible for; the treatment plan, cabin operations, and task list open from these patients.",
+"myPatients_chip_step1": "1. Search the patient on the left",
+"myPatients_chip_step2": "2. Tap the green + button",
+"myPatients_chip_step3": "3. Patient appears in this list",
+"myPatients_screenDescription": "Assign patients to yourself from among those with an active admission. Patients you add from the list on the left appear under your responsibility in treatment and cabin operations.",
+"cabinOverview_workingCabinBadge": "Working cabin",
+"cabinOverview_drawerCountSuffix": "drawers",
+"cabinOverview_activeDrawerBadge": "Active",
+"masterDrawer_status_openedTitle": "Drawer open",
+ "masterDrawer_status_openedSubtitle": "Take the medicine, close the drawer — that's it.",
+  "masterDrawer_status_openedPill": "Watching for closure",
+  "masterDrawer_status_workingPill": "In progress",
+  "masterDrawer_status_closureMonitoredPill": "Detecting closure",
+  "masterDrawer_status_openingSubtitle": "Drawer opening, please wait.",
+  "masterDrawer_status_completingSubtitle": "Finishing intake.",
+  "masterDrawer_status_lockOpeningSubtitle": "Unlocking, please wait.",
+  "masterDrawer_status_devicePreparingSubtitle": "Preparing device.",
+  "masterDrawer_status_waitingPullSubtitle": "Pull the drawer open.",
+  "masterDrawer_status_openingLidSubtitle": "Opening cell lid.",
+  "masterDrawer_status_waitingCloseSubtitle": "If you've taken the medicine, you can close the drawer.",
+  "masterDrawer_status_failedSubtitle": "Something went wrong, please try again.",
+  "refund_appliedDateLabel": "Application Date: {date}",
+  "@refund_appliedDateLabel": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "refund_performedByLabel": "Performed By: {performedBy}",
+  "@refund_performedByLabel": {
+    "placeholders": {
+      "performedBy": { "type": "String" }
+    }
+  },
+  "refund_directReturnButton": "İade Et",
+  "@refund_directReturnButton": {
+    "description": "Button to directly complete a refund for a non-hardware-required refundable item in the master refund list"
+  },
+  "refund_directReturnSendingLabel": "Gönderiliyor...",
+  "@refund_directReturnSendingLabel": {
+    "description": "Loading state label shown on the direct return button while the refund request is in flight"
+  },
+  "enumCore_returnTypeNotReturnable": "İade Yapılamaz",
+  "@enumCore_returnTypeNotReturnable": {
+    "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
+  },
+    "refund_showToDrawerTooltip": "Show Drawer Returns",
+  "refund_showToReturnBoxTooltip": "Show Return Box Returns"
 }

@@ -30,6 +30,7 @@ class PatientSelectionCard extends StatelessWidget {
     this.showCheckmark = false,
     this.onAdd,
     this.onRemove,
+    this.isRedirected = false,
   });
 
   final Hospitalization hospitalization;
@@ -41,6 +42,7 @@ class PatientSelectionCard extends StatelessWidget {
   final bool showCheckmark;
   final VoidCallback? onAdd;
   final VoidCallback? onRemove;
+  final bool isRedirected;
 
   Widget? get _resolvedTrailing {
     // 1. Özel trailing her şeyin önünde gelir
@@ -172,6 +174,17 @@ class PatientSelectionCard extends StatelessWidget {
                         ],
                       ),
                     ),
+
+                    if (isRedirected)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: MedChip(
+                          label: context.l10n.intake_status_redirected,
+                          background: MedColors.green,
+                          foreground: Colors.white,
+                          showBorder: false,
+                        ),
+                      ),
                   ],
                 ),
               ),

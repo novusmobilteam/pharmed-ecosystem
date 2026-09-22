@@ -295,6 +295,12 @@
   "emptyState_noPatientDescription": "Aucun patient n'a encore été attribué à cette case.",
   "emptyState_noPrescriptionTitle": "Aucune ordonnance trouvée",
   "emptyState_noPrescriptionDescription": "Il n'y a aucune ordonnance active pour ce patient.",
+"emptyState_noOrderlessMedicineTitle": "Aucun médicament sans ordonnance trouvé",
+  "emptyState_noOrderlessMedicineDescription": "Aucun médicament n'est défini dans le cabinet sous le statut sans ordonnance.",
+  "emptyState_noFreeMedicineTitle": "Aucun médicament libre trouvé",
+  "emptyState_noFreeMedicineDescription": "Aucun médicament n'est défini dans le cabinet sous le statut libre/indépendant.",
+  "emptyState_noUrgentMedicineTitle": "Aucun médicament d'urgence trouvé",
+  "emptyState_noUrgentMedicineDescription": "Aucun médicament n'est défini dans le cabinet pour une utilisation d'urgence.",
   "emptyState_noCabinTitle": "Aucune cabine trouvée",
   "emptyState_noCabinDescription": "Aucune cabine n'a encore été définie. Veuillez définir une cabine pour continuer.",
   "emptyState_networkErrorTitle": "Pas de connexion Internet",
@@ -1425,6 +1431,23 @@
   "@inconsistency_viewTooltip": {},
   "inconsistency_photoTooltip": "Photo",
   "@inconsistency_photoTooltip": {},
+  "inconsistency_showUnsolvedTooltip": "Afficher les incohérences non résolues",
+"inconsistency_showSolvedTooltip": "Afficher les incohérences résolues",
+"inconsistency_resolvedByUserLabel": "Résolu par",
+"inconsistency_detailDialogTitle": "Détail de l'incohérence",
+"inconsistency_medicineLabel": "Médicament",
+"inconsistency_quantityLabel": "Quantité réelle",
+"inconsistency_requiredQuantityLabel": "Quantité requise",
+"inconsistency_miadDateLabel": "Date de péremption",
+"inconsistency_shelfLabel": "N° d'étagère",
+"inconsistency_compartmentLabel": "N° de compartiment",
+"inconsistency_activeIngredientsLabel": "Principe actif",
+"inconsistency_reportedByUserLabel": "Signalé par",
+"inconsistency_createdDateLabel": "Date de création",
+"inconsistency_resolvedDateLabel": "Date de résolution",
+"inconsistency_descriptionLabel": "Description",
+"inconsistency_statusSolvedBadge": "Résolu",
+"inconsistency_statusUnsolvedBadge": "Non résolu",
   "hospitalization_formTitleNew": "Saisir une nouvelle admission",
   "@hospitalization_formTitleNew": {},
   "hospitalization_formTitleEdit": "Modifier l'admission",
@@ -4267,5 +4290,73 @@
 "waste_label_groupRecordCount": "{count, plural, one{{count} enregistrement} other{{count} enregistrements}}",
 "@waste_label_groupRecordCount": {
   "placeholders": { "count": { "type": "int" } }
-}
+},
+"serviceSelection_screenTitle": "Sélection du service",
+"serviceSelection_subtitle": "La station {stationName} dessert plusieurs services. Sélectionnez le service avec lequel vous allez travailler pour continuer.",
+"@serviceSelection_subtitle": {
+  "placeholders": {
+    "stationName": { "type": "String" }
+  }
+},
+"serviceSelection_confirmButton": "Confirmer",
+"serviceSelection_loadErrorMessage": "Impossible de charger les informations de service pour cette station.",
+"dashboard_activeStationLabel": "Station: {stationName}",
+"@dashboard_activeStationLabel": {
+  "placeholders": { "stationName": { "type": "String" } }
+},
+"dashboard_activeServiceLabel": "Service: {serviceName}",
+"@dashboard_activeServiceLabel": {
+  "placeholders": { "serviceName": { "type": "String" } }
+},
+"dashboard_changeServiceButton": "Changer de service",
+"myPatients_activeHospitalizationsPanelTitle": "Hospitalisations actives",
+"myPatients_myPatientsPanelTitle": "Mes patients",
+"myPatients_emptyTitle": "You don't have any assigned patients yet.",
+"myPatients_emptyDescription": "Sorumlu olduğunuz hastaları ekleyin; tedavi planı, kabin işlemleri ve iş listesi bu hastalar üzerinden açılır.",
+"myPatients_chip_step1": "1. Recherchez le patient à gauche",
+"myPatients_chip_step2": "2. Appuyez sur le bouton vert +",
+"myPatients_chip_step3": "3. Le patient apparaît dans cette liste",
+"myPatients_screenDescription": "Attribuez-vous des patients parmi ceux ayant une hospitalisation active. Les patients que vous ajoutez depuis la liste de gauche apparaissent sous votre responsabilité dans les opérations de traitement et de cabine.",
+  "cabinOverview_workingCabinBadge": "Cabinet en cours",
+  "cabinOverview_drawerCountSuffix": "tiroirs",
+  "cabinOverview_activeDrawerBadge": "Actif",
+    "masterDrawer_status_openedTitle": "Tiroir ouvert",
+  "masterDrawer_status_openedSubtitle": "Prenez le médicament, fermez le tiroir — c'est tout.",
+  "masterDrawer_status_openedPill": "Surveillance de la fermeture",
+  "masterDrawer_status_workingPill": "En cours",
+  "masterDrawer_status_closureMonitoredPill": "Détection de la fermeture",
+  "masterDrawer_status_openingSubtitle": "Ouverture du tiroir, veuillez patienter.",
+  "masterDrawer_status_completingSubtitle": "Finalisation de la prise.",
+  "masterDrawer_status_lockOpeningSubtitle": "Déverrouillage, veuillez patienter.",
+  "masterDrawer_status_devicePreparingSubtitle": "Préparation de l'appareil.",
+  "masterDrawer_status_waitingPullSubtitle": "Tirez le tiroir pour l'ouvrir.",
+  "masterDrawer_status_openingLidSubtitle": "Ouverture du couvercle.",
+  "masterDrawer_status_waitingCloseSubtitle": "Si vous avez pris le médicament, vous pouvez fermer le tiroir.",
+  "masterDrawer_status_failedSubtitle": "Une erreur s'est produite, veuillez réessayer.",
+   "refund_appliedDateLabel": "Date d'application : {date}",
+  "@refund_appliedDateLabel": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "refund_performedByLabel": "Effectué par : {performedBy}",
+  "@refund_performedByLabel": {
+    "placeholders": {
+      "performedBy": { "type": "String" }
+    }
+  },
+  "refund_directReturnButton": "İade Et",
+  "@refund_directReturnButton": {
+    "description": "Button to directly complete a refund for a non-hardware-required refundable item in the master refund list"
+  },
+  "refund_directReturnSendingLabel": "Gönderiliyor...",
+  "@refund_directReturnSendingLabel": {
+    "description": "Loading state label shown on the direct return button while the refund request is in flight"
+  },
+  "enumCore_returnTypeNotReturnable": "İade Yapılamaz",
+  "@enumCore_returnTypeNotReturnable": {
+    "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
+  },
+  "refund_showToDrawerTooltip": "Afficher les retours en tiroir",
+  "refund_showToReturnBoxTooltip": "Afficher les retours en boîte de retour"
 }

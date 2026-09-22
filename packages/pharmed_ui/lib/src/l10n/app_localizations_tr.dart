@@ -723,6 +723,27 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bu hastaya ait aktif reçete bulunmuyor.';
 
   @override
+  String get emptyState_noOrderlessMedicineTitle => 'Ordersız ilaç bulunamadı';
+
+  @override
+  String get emptyState_noOrderlessMedicineDescription =>
+      'Kabinde ordersız statüde tanımlı bir ilaç bulunmamaktadır.';
+
+  @override
+  String get emptyState_noFreeMedicineTitle => 'Serbest ilaç bulunamadı';
+
+  @override
+  String get emptyState_noFreeMedicineDescription =>
+      'Kabinde serbest ilaç statüsünde tanımlı bir ilaç bulunmamaktadır.';
+
+  @override
+  String get emptyState_noUrgentMedicineTitle => 'Acil durum ilacı bulunamadı';
+
+  @override
+  String get emptyState_noUrgentMedicineDescription =>
+      'Kabinde acil durumlarda alınabilecek tanımlı bir ilaç bulunmamaktadır.';
+
+  @override
   String get emptyState_noCabinTitle => 'Kabin Bulunamadı';
 
   @override
@@ -2540,6 +2561,59 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get inconsistency_photoTooltip => 'Fotoğraf';
+
+  @override
+  String get inconsistency_showUnsolvedTooltip =>
+      'Çözülmeyen Tutarsızlıkları Göster';
+
+  @override
+  String get inconsistency_showSolvedTooltip =>
+      'Çözülen Tutarsızlıkları Göster';
+
+  @override
+  String get inconsistency_resolvedByUserLabel => 'Çözen Kullanıcı';
+
+  @override
+  String get inconsistency_detailDialogTitle => 'Tutarsızlık Detayı';
+
+  @override
+  String get inconsistency_medicineLabel => 'İlaç';
+
+  @override
+  String get inconsistency_quantityLabel => 'Mevcut Miktar';
+
+  @override
+  String get inconsistency_requiredQuantityLabel => 'Olması Gereken Miktar';
+
+  @override
+  String get inconsistency_miadDateLabel => 'Son Kullanma Tarihi';
+
+  @override
+  String get inconsistency_shelfLabel => 'Raf No';
+
+  @override
+  String get inconsistency_compartmentLabel => 'Göz No';
+
+  @override
+  String get inconsistency_activeIngredientsLabel => 'Etken Madde';
+
+  @override
+  String get inconsistency_reportedByUserLabel => 'Bildiren Kullanıcı';
+
+  @override
+  String get inconsistency_createdDateLabel => 'Oluşturma Tarihi';
+
+  @override
+  String get inconsistency_resolvedDateLabel => 'Çözülme Tarihi';
+
+  @override
+  String get inconsistency_descriptionLabel => 'Açıklama';
+
+  @override
+  String get inconsistency_statusSolvedBadge => 'Çözüldü';
+
+  @override
+  String get inconsistency_statusUnsolvedBadge => 'Çözülmedi';
 
   @override
   String get hospitalization_formTitleNew => 'Yeni Yatış Gir';
@@ -5169,7 +5243,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_prescriptionMovementAppliedLabel => 'Uygulandı';
 
   @override
-  String get enumCore_prescriptionMovementReturnedLabel => 'İade Edildi';
+  String get enumCore_prescriptionMovementReturnedLabel => 'İade Onaylandı';
 
   @override
   String get enumCore_prescriptionMovementWastagedLabel => 'Fire Edildi';
@@ -5269,7 +5343,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_prescriptionMovementAppliedActionLabel => 'Uygulandı';
 
   @override
-  String get enumCore_prescriptionMovementReturnedActionLabel => 'İade Edildi';
+  String get enumCore_prescriptionMovementReturnedActionLabel =>
+      'İade Onaylandı';
 
   @override
   String get enumCore_prescriptionMovementWastagedActionLabel => 'Fire Edildi';
@@ -5752,49 +5827,47 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get masterDrawer_status_devicePreparingSubtitle =>
-      'Sistem hazırlanıyor. Lütfen bir süre bekleyin.';
+      'Cihaz hazırlanıyor.';
 
   @override
   String get masterDrawer_status_lockOpeningTitle => 'Kilit Açılıyor';
 
   @override
   String get masterDrawer_status_lockOpeningSubtitle =>
-      'Çekmece kilidi açılıyor. Lütfen bir süre bekleyin.';
+      'Kilit açılıyor, lütfen bekleyin.';
 
   @override
   String get masterDrawer_status_waitingPullTitle => 'Çekmeceyi Çekiniz';
 
   @override
-  String get masterDrawer_status_waitingPullSubtitle =>
-      'Kilit açıldı. Devam etmek için çekmeceyi çekerek açın.';
+  String get masterDrawer_status_waitingPullSubtitle => 'Çekmeceyi çekin.';
 
   @override
   String get masterDrawer_status_openingLidTitle => 'Göz Kapağı Açılıyor';
 
   @override
-  String get masterDrawer_status_openingLidSubtitle =>
-      'Göz kapağı açılıyor. Lütfen bir süre bekleyin.';
+  String get masterDrawer_status_openingLidSubtitle => 'Göz kapağı açılıyor.';
 
   @override
   String get masterDrawer_status_waitingCloseTitle => 'Çekmeceyi Kapatınız';
 
   @override
   String get masterDrawer_status_waitingCloseSubtitle =>
-      'Sonraki adıma geçmek için çekmeceyi kapatın.';
+      'İlacı aldıysanız çekmeceyi kapatabilirsiniz.';
 
   @override
   String get masterDrawer_status_failedTitle => 'Bir Sorun Oluştu';
 
   @override
   String get masterDrawer_status_failedSubtitle =>
-      'Lütfen bekleyin, çekmece durumu kontrol ediliyor.';
+      'Bir sorun oluştu, lütfen tekrar deneyin.';
 
   @override
   String get masterDrawer_status_openingTitle => 'Çekmece Açılıyor';
 
   @override
   String get masterDrawer_status_openingSubtitle =>
-      'Çekmece açılıyor. Lütfen bir süre bekleyin.';
+      'Çekmece açılıyor, lütfen bekleyin.';
 
   @override
   String get masterDrawer_stop_waitingCloseTitle => 'Açık Çekmeceyi Kapatınız';
@@ -6382,7 +6455,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get masterDrawer_status_completingTitle => 'İşleminiz Tamamlanıyor';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Lütfen bekleyiniz';
+  String get masterDrawer_status_completingSubtitle => 'Alım tamamlanıyor.';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Tanımlı Kabinler';
@@ -6771,4 +6844,108 @@ class AppLocalizationsTr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceSelection_screenTitle => 'Servis Seçimi';
+
+  @override
+  String serviceSelection_subtitle(String stationName) {
+    return '$stationName istasyonu birden fazla servise hizmet veriyor. Devam etmek için işlem yapacağınız servisi seçin.';
+  }
+
+  @override
+  String get serviceSelection_confirmButton => 'Tamam';
+
+  @override
+  String get serviceSelection_loadErrorMessage =>
+      'İstasyon için servis bilgisi alınamadı.';
+
+  @override
+  String dashboard_activeStationLabel(String stationName) {
+    return 'İstasyon: $stationName';
+  }
+
+  @override
+  String dashboard_activeServiceLabel(String serviceName) {
+    return 'Servis: $serviceName';
+  }
+
+  @override
+  String get dashboard_changeServiceButton => 'Servis Değiştir';
+
+  @override
+  String get myPatients_activeHospitalizationsPanelTitle => 'Aktif Yatışlar';
+
+  @override
+  String get myPatients_myPatientsPanelTitle => 'Hastalarım';
+
+  @override
+  String get myPatients_emptyTitle => 'Henüz tanımlı hastanız bulunmamaktadır.';
+
+  @override
+  String get myPatients_emptyDescription =>
+      'Sorumlu olduğunuz hastaları ekleyin; tedavi planı, kabin işlemleri ve iş listesi bu hastalar üzerinden açılır.';
+
+  @override
+  String get myPatients_chip_step1 => '1.Soldan hastayı arayın';
+
+  @override
+  String get myPatients_chip_step2 => '2.Yeşil + düğmesine dokunun';
+
+  @override
+  String get myPatients_chip_step3 => '3.Hasta bu listede görünür';
+
+  @override
+  String get myPatients_screenDescription =>
+      'Aktif yatışı bulunan hastalar arasından kendinize hasta tanımlayın. Soldaki listeden eklediğiniz hastalar, tedavi ve kabin işlemlerinde sizin sorumluluğunuzda görünür.';
+
+  @override
+  String get cabinOverview_workingCabinBadge => 'Çalışılan kabin';
+
+  @override
+  String get cabinOverview_drawerCountSuffix => 'çekmece';
+
+  @override
+  String get cabinOverview_activeDrawerBadge => 'Aktif';
+
+  @override
+  String get masterDrawer_status_openedTitle => 'Çekmece açık';
+
+  @override
+  String get masterDrawer_status_openedSubtitle =>
+      'İlacı alın, çekmeceyi kapatın.';
+
+  @override
+  String get masterDrawer_status_openedPill => 'Çekmece kapanışı izleniyor';
+
+  @override
+  String get masterDrawer_status_workingPill => 'İşlem sürüyor';
+
+  @override
+  String get masterDrawer_status_closureMonitoredPill => 'Kapanış algılanıyor';
+
+  @override
+  String refund_appliedDateLabel(String date) {
+    return 'Uygulama Tarihi: $date';
+  }
+
+  @override
+  String refund_performedByLabel(String performedBy) {
+    return 'Uygulayan: $performedBy';
+  }
+
+  @override
+  String get refund_directReturnButton => 'İade Et';
+
+  @override
+  String get refund_directReturnSendingLabel => 'Gönderiliyor...';
+
+  @override
+  String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';
+
+  @override
+  String get refund_showToDrawerTooltip => 'Çekmeceye İadeleri Göster';
+
+  @override
+  String get refund_showToReturnBoxTooltip => 'İade Kutusuna İadeleri Göster';
 }

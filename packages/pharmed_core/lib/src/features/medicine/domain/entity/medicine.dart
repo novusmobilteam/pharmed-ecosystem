@@ -1,6 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:flutter/material.dart' hide MaterialType;
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 
 part 'drug.dart';
 part 'medical_consumable.dart';
@@ -78,6 +79,20 @@ sealed class Medicine extends Selectable {
     } else {
       return MedicalConsumable(id: id, name: name, status: Status.active, barcode: barcode);
     }
+  }
+
+  String? get dailyMax {
+    final self = this;
+    if (self is Drug) return self.dailyMaxUsage.formatFractional;
+    if (self is MedicalConsumable) return null;
+    return null;
+  }
+
+  String? get collectNote {
+    final self = this;
+    if (self is Drug) return self.collectNote;
+    if (self is MedicalConsumable) return null;
+    return null;
   }
 
   T when<T>({required T Function(Drug drug) drug, required T Function(MedicalConsumable consumable) consumable}) {
@@ -242,5 +257,16 @@ extension MedicineDoseConfig on Medicine {
       return 'adet × $doseFormatted$volumeUnit';
     }
     return 'Adet';
+  }
+
+  bool get canRefundable {
+    final self = this;
+    if (self is MedicalConsumable) return false;
+    if (self is Drug) {
+      if (self.returnType == ReturnType.nonRefundable || self.isMeasureUnit) {
+        return false;
+      }
+    }
+    return true;
   }
 }

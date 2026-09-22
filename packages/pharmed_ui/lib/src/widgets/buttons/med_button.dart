@@ -14,7 +14,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // Sınıf : Class A (görsel eylem, iş kararı notifier'da)
 // ─────────────────────────────────────────────────────────────────
 
-enum MedButtonVariant { primary, secondary, ghost, danger, success }
+enum MedButtonVariant { primary, secondary, ghost, danger, success, error }
 
 enum MedButtonSize { sm, md, lg }
 
@@ -149,9 +149,14 @@ _ButtonColors _resolveColors(MedButtonVariant v) {
       borderColor: MedColors.border,
     ),
     MedButtonVariant.danger => const _ButtonColors(
-      background: MedColors.red,
+      background: MedColors.amber,
       foreground: Colors.white,
       shadow: [BoxShadow(color: MedColors.overlayRed, blurRadius: 8, offset: Offset(0, 2))],
+    ),
+    MedButtonVariant.error => const _ButtonColors(
+      background: MedColors.red,
+      foreground: Colors.white,
+      shadow: [BoxShadow(color: MedColors.overlayBlue, blurRadius: 8, offset: Offset(0, 2))],
     ),
     MedButtonVariant.success => const _ButtonColors(
       background: MedColors.green,
@@ -178,19 +183,19 @@ _ButtonSizing _resolveSizing(MedButtonSize s) {
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       minHeight: 36,
       fontSize: 12,
-      radius: 4,
+      radius: 8,
     ),
     MedButtonSize.md => const _ButtonSizing(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       minHeight: 40,
       fontSize: 14,
-      radius: 6,
+      radius: 10,
     ),
     MedButtonSize.lg => const _ButtonSizing(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       minHeight: 44,
       fontSize: 15,
-      radius: 6,
+      radius: 10,
     ),
   };
 }

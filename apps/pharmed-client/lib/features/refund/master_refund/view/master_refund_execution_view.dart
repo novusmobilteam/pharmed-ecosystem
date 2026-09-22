@@ -1,13 +1,4 @@
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
-
-import '../../../../widgets/widgets.dart';
-import '../notifier/master_refund_notifier.dart';
-import '../notifier/master_refund_state.dart';
+part of 'master_refund_view.dart';
 
 class MasterRefundExecutionView extends ConsumerWidget {
   const MasterRefundExecutionView({super.key, required this.cabinDataByCabinId});
@@ -16,64 +7,47 @@ class MasterRefundExecutionView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(masterRefundNotifierProvider);
-    final notifier = ref.read(masterRefundNotifierProvider.notifier);
+    final execution = ref.watch(masterRefundExecutionNotifierProvider);
 
-    final executing = switch (state) {
-      MasterRefundExecuting s => s,
-      MasterRefundError(previousState: MasterRefundExecuting s) => s,
-      _ => null,
-    };
+    if (!execution.isExecuting) return const SizedBox.shrink();
 
-    if (executing == null) return const SizedBox.shrink();
-
-    final job = executing.currentJob;
+    final job = execution.currentJob;
     if (job == null) return const SizedBox.shrink();
 
-    final cabinId = executing.currentCabinId;
+    final cabinId = job.cabinId;
     final allGroups = cabinId != null
         ? (cabinDataByCabinId[cabinId]?.groups ?? const <DrawerGroup>[])
         : const <DrawerGroup>[];
 
-    debugPrint(
-      'REFUND DEBUG: currentCabinId=$cabinId, cabinDataByCabinId keys=${cabinDataByCabinId.keys}, allGroups.length=${allGroups.length}',
-    );
-
     return CabinOperationExecutionLayout(
-      progressLabel: context.l10n.refund_label_progress(executing.currentIndex + 1, executing.jobs.length),
-      progress: executing.progress,
-      onStopConfirmed: notifier.abortAfterError,
+      stage: execution.drawerStage,
+      progressLabel: context.l10n.refund_label_progress(execution.currentIndex + 1, execution.jobs.length),
+      progress: execution.progress,
+      onStopConfirmed: execution.abortAfterError,
       stopLabel: context.l10n.refund_action_stop,
       stopConfirmTitle: context.l10n.refund_action_stopConfirmTitle,
       stopConfirmMessage: context.l10n.refund_action_stopConfirmMessage,
       stopConfirmYesLabel: context.l10n.refund_action_stopConfirmYes,
       cancelLabel: context.l10n.common_cancelButton,
-      locationItems: executing.toLocationItems(allGroups),
-      activeIndex: executing.currentIndex,
-      isLastJob: executing.currentIndex >= executing.jobs.length - 1,
-      openedBuilder: (_) => _RefundConfirmForm(executing: executing, notifier: notifier),
+      locationItems: execution.toLocationItems(allGroups),
+      activeIndex: execution.currentIndex,
+      isLastJob: execution.currentIndex >= execution.jobs.length - 1,
+      openedBuilder: (_) => _RefundConfirmForm(execution: execution),
     );
   }
 }
 
 class _RefundConfirmForm extends StatelessWidget {
-  const _RefundConfirmForm({required this.executing, required this.notifier});
+  const _RefundConfirmForm({required this.execution});
 
-  final MasterRefundExecuting executing;
-  final MasterRefundNotifier notifier;
+  final MasterRefundExecutionNotifier execution;
 
-  bool get _canConfirm => executing.currentTarget != null;
+  bool get _canConfirm => execution.currentTarget != null;
 
-  /// Aktif target'ı (currentTargetIndex) içeren tek grup — birden fazla
-  /// target aynı fiziksel göze düşüyorsa (RefundCellGrouper) toplam miktar
-  /// tek kartta gösterilir.
   Widget _cellCard(BuildContext context, RefundDrawerJob job, int ti) {
     if (ti < 0 || ti >= job.targets.length) return const SizedBox.shrink();
     final target = job.targets[ti];
 
-    // RefundCellGrouper SADECE toOrigin hedefleri için anlamlıdır (bkz.
-    // grouper dokümantasyonu). İade çekmecesi (toDrawer) job'larında her
-    // target kendi ayrı kartında gösterilir, gruplama YAPILMAZ.
     final RefundCellGroup? myGroup = job.isReturnDrawer
         ? null
         : RefundCellGrouper.group(job.targets).firstWhereOrNull((g) => g.targetIndexes.contains(ti));
@@ -103,25 +77,25 @@ class _RefundConfirmForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final job = executing.currentJob;
+    final job = execution.currentJob;
     if (job == null) return const SizedBox.shrink();
 
     if (job.isReturnDrawer) {
       return CabinExecutionGrid(
         maxWidth: 640,
-        isLocked: executing.isSaving,
+        isLocked: execution.isSaving,
         isKubik: false,
         itemCount: job.targets.length,
         itemBuilder: (context, i) => _cellCard(context, job, i),
         header: null,
         canConfirm: job.targets.isNotEmpty,
-        isSaving: executing.isSaving,
+        isSaving: execution.isSaving,
         confirmLabel: context.l10n.refund_action_completeRefund,
-        onConfirm: notifier.confirmCurrent,
+        onConfirm: execution.confirmCurrent,
       );
     }
 
-    final ti = executing.currentTargetIndex;
+    final ti = execution.currentTargetIndex;
     final isLastTarget = ti >= job.targets.length - 1;
     final confirmLabel = !isLastTarget
         ? context.l10n.refund_action_nextCell
@@ -129,15 +103,15 @@ class _RefundConfirmForm extends StatelessWidget {
 
     return CabinExecutionGrid(
       maxWidth: 640,
-      isLocked: executing.isSaving,
+      isLocked: execution.isSaving,
       isKubik: true,
       itemCount: 1,
       itemBuilder: (context, _) => _cellCard(context, job, ti),
       header: null,
       canConfirm: _canConfirm,
-      isSaving: executing.isSaving,
+      isSaving: execution.isSaving,
       confirmLabel: confirmLabel,
-      onConfirm: notifier.confirmCurrent,
+      onConfirm: execution.confirmCurrent,
     );
   }
 }

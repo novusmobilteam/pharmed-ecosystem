@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:collection/collection.dart';
 
 class RedirectedIntakeOrder extends Equatable {
   const RedirectedIntakeOrder({
@@ -45,17 +46,24 @@ class RedirectedIntakeOrder extends Equatable {
   /// Mevcut intake pipeline'ına (check/complete-Redirected hariç) sokabilmek
   /// için IntakeItem'a çevirir — assignment burada VERİLMEZ (stocks'tan
   /// _buildRedirectedTarget çözer), doz/hasta/prescriptionItem bağlamı taşınır.
-  IntakeItem toIntakeItem() => IntakeItem(
-    id: id,
-    type: IntakeType.ordered,
-    medicine: medicine,
-    dosePiece: dosePiece,
-    prescriptionDose: dosePiece,
-    firstDoseEmergency: firstDoseEmergency,
-    askDoctor: askDoctor,
-    inCaseOfNecessity: inCaseOfNecessity,
-    redirectedOrder: this,
-  );
+  IntakeItem toIntakeItem() {
+    final neededDose = dosePiece ?? 0;
+    final resolvedStock = stocks.firstWhereOrNull((s) => (s.quantity ?? 0) >= neededDose) ?? stocks.firstOrNull;
+
+    return IntakeItem(
+      id: id,
+      type: IntakeType.ordered,
+      medicine: medicine,
+      dosePiece: dosePiece,
+      prescriptionDose: dosePiece,
+      firstDoseEmergency: firstDoseEmergency,
+      askDoctor: askDoctor,
+      inCaseOfNecessity: inCaseOfNecessity,
+      assignment: resolvedStock?.assignment,
+      stock: resolvedStock,
+      redirectedOrder: this,
+    );
+  }
 
   @override
   List<Object?> get props => [

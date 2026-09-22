@@ -5,10 +5,6 @@ class MailPreferenceFormPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final roleNotifier = context.watch<MailPreferenceNotifier>();
-    final selectedPreference = roleNotifier.selectedItem;
-
     return SidePanel(title: '', child: Column());
   }
 }

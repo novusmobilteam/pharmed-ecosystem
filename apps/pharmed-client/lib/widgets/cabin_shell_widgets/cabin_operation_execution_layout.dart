@@ -35,6 +35,7 @@ import '../widgets.dart';
 class CabinOperationExecutionLayout extends ConsumerStatefulWidget {
   const CabinOperationExecutionLayout({
     super.key,
+    this.stage,
     required this.progressLabel,
     required this.progress,
     required this.onStopConfirmed,
@@ -86,6 +87,8 @@ class CabinOperationExecutionLayout extends ConsumerStatefulWidget {
   /// buna göre değişir — "çekmece açılıyor" yerine "işleminiz tamamlanıyor".
   final bool isLastJob;
 
+  final MasterDrawerStage? stage;
+
   @override
   ConsumerState<CabinOperationExecutionLayout> createState() => _MasterCabinExecutionScaffoldState();
 }
@@ -95,7 +98,7 @@ class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExe
   bool _closeRequested = false;
 
   Future<void> _handleStopConfirmed() async {
-    final stage = ref.read(masterDrawerSessionProvider).stage;
+    final stage = widget.stage ?? ref.read(masterDrawerSessionProvider).stage;
     final canStopImmediately = !stage.isActive || stage is MasterDrawerLidFailed;
     if (canStopImmediately) {
       await widget.onStopConfirmed();
@@ -119,7 +122,7 @@ class _MasterCabinExecutionScaffoldState extends ConsumerState<CabinOperationExe
 
   @override
   Widget build(BuildContext context) {
-    final drawerStage = ref.watch(masterDrawerSessionProvider).stage;
+    final drawerStage = widget.stage ?? ref.watch(masterDrawerSessionProvider).stage;
 
     if (_stopRequested) {
       _tryRequestClose(drawerStage);

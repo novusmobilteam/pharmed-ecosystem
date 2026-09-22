@@ -1428,6 +1428,42 @@ abstract class AppLocalizations {
   /// **'There are no active prescriptions for this patient.'**
   String get emptyState_noPrescriptionDescription;
 
+  /// No description provided for @emptyState_noOrderlessMedicineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No orderless medicines found'**
+  String get emptyState_noOrderlessMedicineTitle;
+
+  /// No description provided for @emptyState_noOrderlessMedicineDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine is defined in the cabin under the orderless status.'**
+  String get emptyState_noOrderlessMedicineDescription;
+
+  /// No description provided for @emptyState_noFreeMedicineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No free-use medicines found'**
+  String get emptyState_noFreeMedicineTitle;
+
+  /// No description provided for @emptyState_noFreeMedicineDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine is defined in the cabin under the free/independent status.'**
+  String get emptyState_noFreeMedicineDescription;
+
+  /// No description provided for @emptyState_noUrgentMedicineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No emergency medicines found'**
+  String get emptyState_noUrgentMedicineTitle;
+
+  /// No description provided for @emptyState_noUrgentMedicineDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine is defined in the cabin for emergency use.'**
+  String get emptyState_noUrgentMedicineDescription;
+
   /// No description provided for @emptyState_noCabinTitle.
   ///
   /// In en, this message translates to:
@@ -4691,6 +4727,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photo'**
   String get inconsistency_photoTooltip;
+
+  /// No description provided for @inconsistency_showUnsolvedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Unresolved Inconsistencies'**
+  String get inconsistency_showUnsolvedTooltip;
+
+  /// No description provided for @inconsistency_showSolvedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Resolved Inconsistencies'**
+  String get inconsistency_showSolvedTooltip;
+
+  /// No description provided for @inconsistency_resolvedByUserLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved By'**
+  String get inconsistency_resolvedByUserLabel;
+
+  /// No description provided for @inconsistency_detailDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inconsistency Detail'**
+  String get inconsistency_detailDialogTitle;
+
+  /// No description provided for @inconsistency_medicineLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get inconsistency_medicineLabel;
+
+  /// No description provided for @inconsistency_quantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual Quantity'**
+  String get inconsistency_quantityLabel;
+
+  /// No description provided for @inconsistency_requiredQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Quantity'**
+  String get inconsistency_requiredQuantityLabel;
+
+  /// No description provided for @inconsistency_miadDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get inconsistency_miadDateLabel;
+
+  /// No description provided for @inconsistency_shelfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shelf No'**
+  String get inconsistency_shelfLabel;
+
+  /// No description provided for @inconsistency_compartmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Compartment No'**
+  String get inconsistency_compartmentLabel;
+
+  /// No description provided for @inconsistency_activeIngredientsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Ingredient'**
+  String get inconsistency_activeIngredientsLabel;
+
+  /// No description provided for @inconsistency_reportedByUserLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported By'**
+  String get inconsistency_reportedByUserLabel;
+
+  /// No description provided for @inconsistency_createdDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Created Date'**
+  String get inconsistency_createdDateLabel;
+
+  /// No description provided for @inconsistency_resolvedDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved Date'**
+  String get inconsistency_resolvedDateLabel;
+
+  /// No description provided for @inconsistency_descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get inconsistency_descriptionLabel;
+
+  /// No description provided for @inconsistency_statusSolvedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get inconsistency_statusSolvedBadge;
+
+  /// No description provided for @inconsistency_statusUnsolvedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Unresolved'**
+  String get inconsistency_statusUnsolvedBadge;
 
   /// No description provided for @hospitalization_formTitleNew.
   ///
@@ -10290,7 +10428,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_devicePreparingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'The system is getting ready. Please wait a moment.'**
+  /// **'Preparing device.'**
   String get masterDrawer_status_devicePreparingSubtitle;
 
   /// No description provided for @masterDrawer_status_lockOpeningTitle.
@@ -10302,7 +10440,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_lockOpeningSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'The drawer lock is opening. Please wait a moment.'**
+  /// **'Unlocking, please wait.'**
   String get masterDrawer_status_lockOpeningSubtitle;
 
   /// No description provided for @masterDrawer_status_waitingPullTitle.
@@ -10314,7 +10452,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_waitingPullSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'The lock has been released. Pull the drawer open to continue.'**
+  /// **'Pull the drawer open.'**
   String get masterDrawer_status_waitingPullSubtitle;
 
   /// No description provided for @masterDrawer_status_openingLidTitle.
@@ -10326,7 +10464,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_openingLidSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'The compartment lid is opening. Please wait a moment.'**
+  /// **'Opening cell lid.'**
   String get masterDrawer_status_openingLidSubtitle;
 
   /// No description provided for @masterDrawer_status_waitingCloseTitle.
@@ -10338,7 +10476,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_waitingCloseSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Close the drawer to continue to the next step.'**
+  /// **'If you\'ve taken the medicine, you can close the drawer.'**
   String get masterDrawer_status_waitingCloseSubtitle;
 
   /// No description provided for @masterDrawer_status_failedTitle.
@@ -10350,7 +10488,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_failedSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Please wait, the system is checking the drawer status.'**
+  /// **'Something went wrong, please try again.'**
   String get masterDrawer_status_failedSubtitle;
 
   /// No description provided for @masterDrawer_status_openingTitle.
@@ -10362,7 +10500,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_openingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'The drawer is opening. Please wait a moment.'**
+  /// **'Drawer opening, please wait.'**
   String get masterDrawer_status_openingSubtitle;
 
   /// No description provided for @masterDrawer_stop_waitingCloseTitle.
@@ -11340,7 +11478,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_completingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Please wait'**
+  /// **'Finishing intake.'**
   String get masterDrawer_status_completingSubtitle;
 
   /// No description provided for @cabinDesign_cabinList_sectionTitle.
@@ -12032,6 +12170,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{{count} record} other{{count} records}}'**
   String waste_label_groupRecordCount(int count);
+
+  /// No description provided for @serviceSelection_screenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Selection'**
+  String get serviceSelection_screenTitle;
+
+  /// No description provided for @serviceSelection_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Station {stationName} serves multiple services. Select the service you\'ll work with to continue.'**
+  String serviceSelection_subtitle(String stationName);
+
+  /// No description provided for @serviceSelection_confirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get serviceSelection_confirmButton;
+
+  /// No description provided for @serviceSelection_loadErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load service information for this station.'**
+  String get serviceSelection_loadErrorMessage;
+
+  /// No description provided for @dashboard_activeStationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Station: {stationName}'**
+  String dashboard_activeStationLabel(String stationName);
+
+  /// No description provided for @dashboard_activeServiceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service: {serviceName}'**
+  String dashboard_activeServiceLabel(String serviceName);
+
+  /// No description provided for @dashboard_changeServiceButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Change service'**
+  String get dashboard_changeServiceButton;
+
+  /// No description provided for @myPatients_activeHospitalizationsPanelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Admissions'**
+  String get myPatients_activeHospitalizationsPanelTitle;
+
+  /// No description provided for @myPatients_myPatientsPanelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Patients'**
+  String get myPatients_myPatientsPanelTitle;
+
+  /// No description provided for @myPatients_emptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any assigned patients yet.'**
+  String get myPatients_emptyTitle;
+
+  /// No description provided for @myPatients_emptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the patients you\'re responsible for; the treatment plan, cabin operations, and task list open from these patients.'**
+  String get myPatients_emptyDescription;
+
+  /// No description provided for @myPatients_chip_step1.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Search the patient on the left'**
+  String get myPatients_chip_step1;
+
+  /// No description provided for @myPatients_chip_step2.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Tap the green + button'**
+  String get myPatients_chip_step2;
+
+  /// No description provided for @myPatients_chip_step3.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Patient appears in this list'**
+  String get myPatients_chip_step3;
+
+  /// No description provided for @myPatients_screenDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign patients to yourself from among those with an active admission. Patients you add from the list on the left appear under your responsibility in treatment and cabin operations.'**
+  String get myPatients_screenDescription;
+
+  /// No description provided for @cabinOverview_workingCabinBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Working cabin'**
+  String get cabinOverview_workingCabinBadge;
+
+  /// No description provided for @cabinOverview_drawerCountSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'drawers'**
+  String get cabinOverview_drawerCountSuffix;
+
+  /// No description provided for @cabinOverview_activeDrawerBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get cabinOverview_activeDrawerBadge;
+
+  /// No description provided for @masterDrawer_status_openedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer open'**
+  String get masterDrawer_status_openedTitle;
+
+  /// No description provided for @masterDrawer_status_openedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the medicine, close the drawer — that\'s it.'**
+  String get masterDrawer_status_openedSubtitle;
+
+  /// No description provided for @masterDrawer_status_openedPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Watching for closure'**
+  String get masterDrawer_status_openedPill;
+
+  /// No description provided for @masterDrawer_status_workingPill.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get masterDrawer_status_workingPill;
+
+  /// No description provided for @masterDrawer_status_closureMonitoredPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Detecting closure'**
+  String get masterDrawer_status_closureMonitoredPill;
+
+  /// No description provided for @refund_appliedDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Application Date: {date}'**
+  String refund_appliedDateLabel(String date);
+
+  /// No description provided for @refund_performedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Performed By: {performedBy}'**
+  String refund_performedByLabel(String performedBy);
+
+  /// Button to directly complete a refund for a non-hardware-required refundable item in the master refund list
+  ///
+  /// In en, this message translates to:
+  /// **'İade Et'**
+  String get refund_directReturnButton;
+
+  /// Loading state label shown on the direct return button while the refund request is in flight
+  ///
+  /// In en, this message translates to:
+  /// **'Gönderiliyor...'**
+  String get refund_directReturnSendingLabel;
+
+  /// ReturnType enum value label — indicates the medicine's return type does not allow returning it at all
+  ///
+  /// In en, this message translates to:
+  /// **'İade Yapılamaz'**
+  String get enumCore_returnTypeNotReturnable;
+
+  /// No description provided for @refund_showToDrawerTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Drawer Returns'**
+  String get refund_showToDrawerTooltip;
+
+  /// No description provided for @refund_showToReturnBoxTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Return Box Returns'**
+  String get refund_showToReturnBoxTooltip;
 }
 
 class _AppLocalizationsDelegate

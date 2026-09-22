@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
+import 'package:pharmed_client/features/service_selection/notifier/active_service_notifier.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../../../../core/providers/providers.dart';
@@ -28,12 +29,13 @@ final patientSelectionNotifierProvider = NotifierProvider<PatientSelectionNotifi
 
 class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
   GetHospitalizationsByServiceUseCase get _getHospitalizations => ref.read(getHospitalizationsByServiceUseCaseProvider);
-  GetActiveHospitalizationsUseCase get _getActiveHospitalizations => ref.read(getActiveHospitalizationsUseCaseProvider);
   CreateUrgentPatientUseCase get _createUrgent => ref.read(createUrgentPatientUseCaseProvider);
   DeleteUrgentPatientUseCase get _deleteUrgent => ref.read(deleteUrgentPatientUseCaseProvider);
 
   PatientSelectionConfig _config = const PatientSelectionConfig(showFilters: false);
   PatientSelectionConfig get config => _config;
+
+  int get _activeServiceId => ref.read(activeServiceNotifierProvider).activeService?.id ?? 0;
 
   List<PatientIntakeMode> _availableIntakeModes(PatientSelectionReady s) {
     final canToggleOrderStatus = _config.enableOrderlessToggle && s.isStatusToggleVisible;
@@ -118,21 +120,27 @@ class PatientSelectionNotifier extends Notifier<PatientSelectionState> {
 
     if (config.enableTabs && s.tab == PatientSelectionTab.redirected) {
       if (s.viewType == PatientViewType.myPatients) {
-        result = await _getHospitalizations.call(serviceId: 0, filter: PatientFilterType.all, myPatients: true);
+        result = await _getHospitalizations.call(
+          serviceId: _activeServiceId,
+          filter: PatientFilterType.all,
+          myPatients: true,
+        );
       } else {
-        final apiResult = await _getActiveHospitalizations.call(const PagedQueryParams());
-        result = apiResult.when(ok: (r) => Result.ok(r.data ?? const []), error: (e) => Result.error(e));
+        result = await _getHospitalizations.call(serviceId: _activeServiceId, filter: PatientFilterType.all);
       }
     } else if (!config.showFilters) {
       if (s.viewType == PatientViewType.myPatients) {
-        result = await _getHospitalizations.call(serviceId: 0, filter: PatientFilterType.all, myPatients: true);
+        result = await _getHospitalizations.call(
+          serviceId: _activeServiceId,
+          filter: PatientFilterType.all,
+          myPatients: true,
+        );
       } else {
-        final apiResult = await _getActiveHospitalizations.call(const PagedQueryParams());
-        result = apiResult.when(ok: (r) => Result.ok(r.data ?? const []), error: (e) => Result.error(e));
+        result = await _getHospitalizations.call(serviceId: _activeServiceId, filter: PatientFilterType.all);
       }
     } else {
       result = await _getHospitalizations.call(
-        serviceId: s.selectedService?.id ?? 0,
+        serviceId: _activeServiceId,
         filter: s.isOrderless ? PatientFilterType.all : s.filter,
         myPatients: s.viewType == PatientViewType.myPatients,
       );
