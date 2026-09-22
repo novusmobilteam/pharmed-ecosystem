@@ -2572,6 +2572,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get inconsistency_photoTooltip => 'Photo';
 
   @override
+  String get inconsistency_showUnsolvedTooltip =>
+      'Show Unresolved Inconsistencies';
+
+  @override
+  String get inconsistency_showSolvedTooltip => 'Show Resolved Inconsistencies';
+
+  @override
+  String get inconsistency_resolvedByUserLabel => 'Resolved By';
+
+  @override
+  String get inconsistency_detailDialogTitle => 'Inconsistency Detail';
+
+  @override
+  String get inconsistency_medicineLabel => 'Medicine';
+
+  @override
+  String get inconsistency_quantityLabel => 'Actual Quantity';
+
+  @override
+  String get inconsistency_requiredQuantityLabel => 'Required Quantity';
+
+  @override
+  String get inconsistency_miadDateLabel => 'Expiry Date';
+
+  @override
+  String get inconsistency_shelfLabel => 'Shelf No';
+
+  @override
+  String get inconsistency_compartmentLabel => 'Compartment No';
+
+  @override
+  String get inconsistency_activeIngredientsLabel => 'Active Ingredient';
+
+  @override
+  String get inconsistency_reportedByUserLabel => 'Reported By';
+
+  @override
+  String get inconsistency_createdDateLabel => 'Created Date';
+
+  @override
+  String get inconsistency_resolvedDateLabel => 'Resolved Date';
+
+  @override
+  String get inconsistency_descriptionLabel => 'Description';
+
+  @override
+  String get inconsistency_statusSolvedBadge => 'Resolved';
+
+  @override
+  String get inconsistency_statusUnsolvedBadge => 'Unresolved';
+
+  @override
   String get hospitalization_formTitleNew => 'Enter New Admission';
 
   @override

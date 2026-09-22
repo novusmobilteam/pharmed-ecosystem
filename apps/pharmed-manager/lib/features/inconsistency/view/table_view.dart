@@ -29,20 +29,42 @@ class TableView extends StatelessWidget {
       onCategoryChanged: (id) => notifier.selectStation(notifier.stations.firstWhere((s) => s.id.toString() == id)),
       selectedCategoryId: notifier.selectedCategoryId,
 
-      columnDefs: _buildColumnDefs(context),
+      columnDefs: _buildColumnDefs(context, notifier),
 
       actions: [
-        TableActionItem(
-          icon: PhosphorIcons.pen(),
-          tooltip: context.l10n.enumCore_warningSubjectInconsistencyResolution,
-          onPressed: (item) => showSolveInconsistencyView(context, item),
+        if (notifier.showSolved)
+          TableActionItem(
+            icon: PhosphorIcons.pen(),
+            tooltip: context.l10n.enumCore_warningSubjectInconsistencyResolution,
+            onPressed: (item) => showSolveInconsistencyView(context, item),
+          ),
+        if (!notifier.showSolved)
+          TableActionItem(
+            icon: PhosphorIcons.note(),
+            tooltip: context.l10n.unappliedPrescription_viewDetailsTooltip,
+            onPressed: (item) => showDialog(
+              context: context,
+              builder: (context) => InconsistencyDetailDialog(inconsistency: item),
+            ),
+          ),
+      ],
+
+      toolbarActions: [
+        MedRectangleIconButton(
+          tooltip: notifier.showSolved
+              ? context.l10n.inconsistency_showSolvedTooltip
+              : context.l10n.inconsistency_showUnsolvedTooltip,
+          iconData: notifier.showSolved ? PhosphorIcons.clockCounterClockwise() : PhosphorIcons.clockClockwise(),
+          color: MedColors.amberLight,
+          iconColor: MedColors.amber,
+          onPressed: notifier.toggleSolved,
         ),
       ],
     );
   }
 }
 
-List<TableColumnDef<Inconsistency>> _buildColumnDefs(BuildContext context) {
+List<TableColumnDef<Inconsistency>> _buildColumnDefs(BuildContext context, InconsistencyNotifier notifier) {
   String dose(Medicine? medicine, num? quantity) =>
       '${quantity.formatFractional} ${medicine?.operationUnitLocalized(context)}';
   return [
@@ -59,6 +81,15 @@ List<TableColumnDef<Inconsistency>> _buildColumnDefs(BuildContext context) {
       title: context.l10n.table_inconsistency_handledByColumn,
       displayValue: (item) => item.user?.fullName ?? '-',
     ),
+    TableColumnDef(
+      title: context.l10n.drugActivity_column_date,
+      displayValue: (item) => item.createdDate.formattedDateTime,
+    ),
+    if (!notifier.showSolved)
+      TableColumnDef(
+        title: context.l10n.inconsistency_resolvedByUserLabel,
+        displayValue: (item) => item.solvedUser?.fullName,
+      ),
     TableColumnDef(
       title: context.l10n.common_statusLabel,
       displayValue: (item) => item.isSolved ? context.l10n.fault_cellValueSolved : context.l10n.fault_cellValueUnsolved,

@@ -2563,6 +2563,59 @@ class AppLocalizationsTr extends AppLocalizations {
   String get inconsistency_photoTooltip => 'Fotoğraf';
 
   @override
+  String get inconsistency_showUnsolvedTooltip =>
+      'Çözülmeyen Tutarsızlıkları Göster';
+
+  @override
+  String get inconsistency_showSolvedTooltip =>
+      'Çözülen Tutarsızlıkları Göster';
+
+  @override
+  String get inconsistency_resolvedByUserLabel => 'Çözen Kullanıcı';
+
+  @override
+  String get inconsistency_detailDialogTitle => 'Tutarsızlık Detayı';
+
+  @override
+  String get inconsistency_medicineLabel => 'İlaç';
+
+  @override
+  String get inconsistency_quantityLabel => 'Mevcut Miktar';
+
+  @override
+  String get inconsistency_requiredQuantityLabel => 'Olması Gereken Miktar';
+
+  @override
+  String get inconsistency_miadDateLabel => 'Son Kullanma Tarihi';
+
+  @override
+  String get inconsistency_shelfLabel => 'Raf No';
+
+  @override
+  String get inconsistency_compartmentLabel => 'Göz No';
+
+  @override
+  String get inconsistency_activeIngredientsLabel => 'Etken Madde';
+
+  @override
+  String get inconsistency_reportedByUserLabel => 'Bildiren Kullanıcı';
+
+  @override
+  String get inconsistency_createdDateLabel => 'Oluşturma Tarihi';
+
+  @override
+  String get inconsistency_resolvedDateLabel => 'Çözülme Tarihi';
+
+  @override
+  String get inconsistency_descriptionLabel => 'Açıklama';
+
+  @override
+  String get inconsistency_statusSolvedBadge => 'Çözüldü';
+
+  @override
+  String get inconsistency_statusUnsolvedBadge => 'Çözülmedi';
+
+  @override
   String get hospitalization_formTitleNew => 'Yeni Yatış Gir';
 
   @override

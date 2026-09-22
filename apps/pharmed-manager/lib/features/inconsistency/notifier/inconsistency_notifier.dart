@@ -28,6 +28,9 @@ class InconsistencyNotifier extends ChangeNotifier with ApiRequestMixin, Paginat
   bool get isFetching => areLoading([_fetchOp, _fetchStationsOp]);
   bool get isSolving => isLoading(_solveOp);
 
+  bool _showSolved = true;
+  bool get showSolved => _showSolved;
+
   List<TableSideCategory> get tableCategories => [
     ..._stations.map((s) => TableSideCategory(id: s.id.toString(), label: s.name ?? '-')),
   ];
@@ -69,7 +72,12 @@ class InconsistencyNotifier extends ChangeNotifier with ApiRequestMixin, Paginat
       op: _fetchOp,
       fetchMethod: (skip, take) => _getInconsistenciesUseCase.call(
         stationId,
-        params: PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery),
+        params: PagedQueryParams(
+          skip: skip,
+          take: take,
+          searchQuery: searchQuery,
+          filters: [Filter.eq('isSolved', !_showSolved)],
+        ),
       ),
     );
   }
@@ -86,12 +94,21 @@ class InconsistencyNotifier extends ChangeNotifier with ApiRequestMixin, Paginat
       _solveOp,
       operation: () => _solveUseCase.call(id, description: _description ?? ''),
       onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: onSuccess,
+      onSuccess: () {
+        onSuccess?.call();
+        fetch();
+      },
     );
   }
 
   void updateDescription(String? value) {
     _description = value;
     notifyListeners();
+  }
+
+  void toggleSolved() {
+    _showSolved = !_showSolved;
+    notifyListeners();
+    fetch();
   }
 }

@@ -3093,6 +3093,86 @@
   "@inconsistency_photoTooltip": {
     "description": "Tooltip on the table action item to view the inconsistency photo"
   },
+  "inconsistency_showUnsolvedTooltip": "Çözülmeyen Tutarsızlıkları Göster",
+"@inconsistency_showUnappliedTooltip": {
+  "description": "Tooltip shown when the current view displays resolved inconsistencies, prompting the user to switch to unresolved ones"
+},
+"inconsistency_showSolvedTooltip": "Çözülen Tutarsızlıkları Göster",
+"@inconsistency_showOverdueTooltip": {
+  "description": "Tooltip shown when the current view displays unresolved inconsistencies, prompting the user to switch to resolved ones"
+},
+"inconsistency_resolvedByUserLabel": "Çözen Kullanıcı",
+"@inconsistency_resolvedByUserLabel": {
+  "description": "Field/column label showing which user resolved the stock inconsistency"
+},
+"inconsistency_detailDialogTitle": "Tutarsızlık Detayı",
+"@inconsistency_detailDialogTitle": {
+  "description": "Title of the dialog showing the full detail of a single stock inconsistency record"
+},
+
+"inconsistency_medicineLabel": "İlaç",
+"@inconsistency_medicineLabel": {
+  "description": "Label for the medicine field in the inconsistency detail dialog"
+},
+
+"inconsistency_quantityLabel": "Mevcut Miktar",
+"@inconsistency_quantityLabel": {
+  "description": "Label for the actual/counted quantity found in the drawer, in the inconsistency detail dialog"
+},
+
+"inconsistency_requiredQuantityLabel": "Olması Gereken Miktar",
+"@inconsistency_requiredQuantityLabel": {
+  "description": "Label for the expected/required quantity, in the inconsistency detail dialog"
+},
+
+"inconsistency_miadDateLabel": "Son Kullanma Tarihi",
+"@inconsistency_miadDateLabel": {
+  "description": "Label for the medicine expiry date (miad) of the affected item, in the inconsistency detail dialog"
+},
+
+"inconsistency_shelfLabel": "Raf No",
+"@inconsistency_shelfLabel": {
+  "description": "Label for the shelf number of the affected cell, in the inconsistency detail dialog"
+},
+
+"inconsistency_compartmentLabel": "Göz No",
+"@inconsistency_compartmentLabel": {
+  "description": "Label for the compartment number of the affected cell, in the inconsistency detail dialog"
+},
+
+"inconsistency_activeIngredientsLabel": "Etken Madde",
+"@inconsistency_activeIngredientsLabel": {
+  "description": "Label for the list of active ingredients of the affected medicine, in the inconsistency detail dialog"
+},
+
+"inconsistency_reportedByUserLabel": "Bildiren Kullanıcı",
+"@inconsistency_reportedByUserLabel": {
+  "description": "Label for the user who reported/triggered the inconsistency, in the inconsistency detail dialog"
+},
+
+"inconsistency_createdDateLabel": "Oluşturma Tarihi",
+"@inconsistency_createdDateLabel": {
+  "description": "Label for the date the inconsistency was recorded, in the inconsistency detail dialog"
+},
+"inconsistency_resolvedDateLabel": "Çözülme Tarihi",
+"@inconsistency_resolvedDateLabel": {
+  "description": "Label for the date the inconsistency was marked resolved, in the inconsistency detail dialog"
+},
+
+"inconsistency_descriptionLabel": "Açıklama",
+"@inconsistency_descriptionLabel": {
+  "description": "Label for the free-text description/note field of the inconsistency, in the inconsistency detail dialog"
+},
+
+"inconsistency_statusSolvedBadge": "Çözüldü",
+"@inconsistency_statusSolvedBadge": {
+  "description": "Status badge shown in the inconsistency detail dialog when the inconsistency is resolved"
+},
+
+"inconsistency_statusUnsolvedBadge": "Çözülmedi",
+"@inconsistency_statusUnsolvedBadge": {
+  "description": "Status badge shown in the inconsistency detail dialog when the inconsistency is not yet resolved"
+},
   "hospitalization_formTitleNew": "Yeni Yatış Gir",
   "@hospitalization_formTitleNew": {
     "description": "Side panel title / tooltip / button label when creating a new hospitalization"

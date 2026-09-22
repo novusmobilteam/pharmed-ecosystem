@@ -13,6 +13,10 @@ class InconsistencyDTO {
   final List<String>? activeIngredients;
   final UserDto? user;
   final bool isSolved;
+  final DateTime? createdDate;
+  final UserDto? solvedUser;
+  final DateTime? solvedDate;
+  final String? description;
 
   InconsistencyDTO({
     this.id,
@@ -27,6 +31,10 @@ class InconsistencyDTO {
     this.activeIngredients,
     this.user,
     this.isSolved = false,
+    this.createdDate,
+    this.solvedUser,
+    this.solvedDate,
+    this.description,
   });
 
   factory InconsistencyDTO.fromJson(Map<String, dynamic> json) {
@@ -43,6 +51,10 @@ class InconsistencyDTO {
       activeIngredients: (json['activeIngredients'] as List?)?.map((j) => j as String).toList(),
       user: json['user'] != null ? UserDto.fromJson(json['user']) : null,
       isSolved: json['isSolved'] as bool,
+      createdDate: json['createDate'] != null ? DateTime.parse(json['createDate'] as String) : null,
+      solvedUser: json['solvedUser'] != null ? UserDto.fromJson(json['solvedUser']) : null,
+      description: json['solveDescription'] as String?,
+      solvedDate: json['solvedDate'] != null ? DateTime.parse(json['solvedDate'] as String) : null,
     );
   }
 }
