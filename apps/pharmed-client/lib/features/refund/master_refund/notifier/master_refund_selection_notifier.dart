@@ -8,7 +8,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/providers/usecase_providers.dart';
 
-final masterRefundSelectionNotifierProvider = ChangeNotifierProvider<MasterRefundSelectionNotifier>((ref) {
+final masterRefundSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterRefundSelectionNotifier>((ref) {
   return MasterRefundSelectionNotifier(
     getMasterRefundablesUseCase: ref.read(getMasterRefundablesUseCaseProvider),
     checkMasterRefundStatusUseCase: ref.read(checkMasterRefundStatusUseCaseProvider),

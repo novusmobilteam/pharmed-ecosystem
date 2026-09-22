@@ -163,4 +163,22 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
       successLog: 'Refund deleted',
     );
   }
+
+  Future<Result<ApiResponse<List<RefundDTO>>?>> getReturnBoxRefunds({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    return await fetchRequest(
+      path: '/RefundWasteDescrutionTransaction/refundReturnBox',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      dateField: 'createdDate',
+      query: {'stationId': stationId},
+      parser: BaseRemoteDataSource.apiResponseListParser(RefundDTO.fromJson),
+    );
+  }
 }

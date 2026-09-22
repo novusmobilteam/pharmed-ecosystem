@@ -12338,6 +12338,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'İade Yapılamaz'**
   String get enumCore_returnTypeNotReturnable;
+
+  /// No description provided for @refund_showToDrawerTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Drawer Returns'**
+  String get refund_showToDrawerTooltip;
+
+  /// No description provided for @refund_showToReturnBoxTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Return Box Returns'**
+  String get refund_showToReturnBoxTooltip;
 }
 
 class _AppLocalizationsDelegate

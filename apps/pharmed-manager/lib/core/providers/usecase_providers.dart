@@ -139,6 +139,7 @@ class UsecaseProviders {
       Provider(create: (context) => GetCompletedPharmacyRefundsUseCase(context.read())),
       Provider(create: (context) => GetPharmacyRefundsUseCase(context.read())),
       Provider(create: (context) => GetDrawerRefundsUseCase(context.read())),
+      Provider(create: (context) => GetReturnBoxRefundsUseCase(context.read())),
       Provider(create: (context) => DeletePharmacyRefundUseCase(context.read())),
 
       /// Role

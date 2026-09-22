@@ -6942,4 +6942,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';
+
+  @override
+  String get refund_showToDrawerTooltip => 'Çekmeceye İadeleri Göster';
+
+  @override
+  String get refund_showToReturnBoxTooltip => 'İade Kutusuna İadeleri Göster';
 }

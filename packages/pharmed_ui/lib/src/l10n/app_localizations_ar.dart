@@ -6990,4 +6990,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';
+
+  @override
+  String get refund_showToDrawerTooltip => 'Show Drawer Returns';
+
+  @override
+  String get refund_showToReturnBoxTooltip => 'Show Return Box Returns';
 }

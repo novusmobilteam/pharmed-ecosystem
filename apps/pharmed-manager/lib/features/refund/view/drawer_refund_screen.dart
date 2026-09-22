@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../notifier/drawer_refund_notifier.dart';
@@ -14,8 +15,11 @@ class DrawerRefundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) =>
-          DrawerRefundNotifier(getStationsUseCase: context.read(), getRefundsUseCase: context.read())..getStations(),
+      create: (context) => DrawerRefundNotifier(
+        getStationsUseCase: context.read(),
+        getDrawerRefunds: context.read(),
+        getReturnBoxRefunds: context.read(),
+      )..getStations(),
       child: Consumer<DrawerRefundNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(

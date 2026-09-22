@@ -9110,5 +9110,13 @@
   "enumCore_returnTypeNotReturnable": "İade Yapılamaz",
   "@enumCore_returnTypeNotReturnable": {
     "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
+  },
+    "refund_showToDrawerTooltip": "Çekmeceye İadeleri Göster",
+  "@refund_showToDrawerTooltip": {
+    "description": "Tooltip for the toggle that filters the drawer refund screen to show items with return type toDrawer"
+  },
+  "refund_showToReturnBoxTooltip": "İade Kutusuna İadeleri Göster",
+  "@refund_showToReturnBoxTooltip": {
+    "description": "Tooltip for the toggle that filters the drawer refund screen to show items with return type toReturnBox"
   }
 }

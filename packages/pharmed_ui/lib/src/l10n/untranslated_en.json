@@ -1667,6 +1667,8 @@
     "refund_performedByLabel",
     "refund_directReturnButton",
     "refund_directReturnSendingLabel",
-    "enumCore_returnTypeNotReturnable"
+    "enumCore_returnTypeNotReturnable",
+    "refund_showToDrawerTooltip",
+    "refund_showToReturnBoxTooltip"
   ]
 }

@@ -4356,5 +4356,7 @@
   "enumCore_returnTypeNotReturnable": "İade Yapılamaz",
   "@enumCore_returnTypeNotReturnable": {
     "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
-  }
+  },
+  "refund_showToDrawerTooltip": "Afficher les retours en tiroir",
+  "refund_showToReturnBoxTooltip": "Afficher les retours en boîte de retour"
 }

@@ -46,7 +46,7 @@ class MedAvatar extends StatelessWidget {
         color: colors.background,
         shape: shape,
         border: showBorder ? Border.all(color: colors.border, width: 1.5) : null,
-        borderRadius: MedRadius.lgAll,
+        borderRadius: shape == BoxShape.circle ? null : MedRadius.lgAll,
       ),
       alignment: Alignment.center,
       child: Text(

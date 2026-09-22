@@ -9,7 +9,7 @@ import '../../../../core/hardware/hardware.dart';
 import '../../../../core/mixins/cabin_drawer_queue_mixin.dart';
 import '../../../../core/providers/providers.dart';
 
-final masterRefundExecutionNotifierProvider = ChangeNotifierProvider<MasterRefundExecutionNotifier>((ref) {
+final masterRefundExecutionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterRefundExecutionNotifier>((ref) {
   return MasterRefundExecutionNotifier(
     drawerSession: ref.read(drawerExecutionSessionProvider),
     completeRefund: ref.read(completeRefundUseCaseProvider),
@@ -48,7 +48,7 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
       isSaving = true;
       for (final target in job.targets) {
         final ok = await _completeTarget(target);
-        if (!ok) return; // _completeTarget kendi setQueueFailure'ını çağırdı
+        if (!ok) return;
       }
       isSaving = false;
       confirmDrawerClose();
@@ -60,14 +60,14 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
 
     if (job.isKubik) {
       isSaving = true;
-      isSaving = true;
-      // Aynı fiziksel göze ait, currentTargetIndex'ten başlayan ARDIŞIK tüm
-      // target'lar (RefundQueueBuilder sıralaması orderNo'ya göre olduğu
-      // için garanti bitişik) TEK tıklamada tamamlanır.
       final ok = await _completeCurrentCellTargets();
       if (!ok) return;
       await _advanceWithinOpenDrawer();
     } else {
+      isSaving = true;
+      final ok = await _completeTarget(target);
+      if (!ok) return;
+      isSaving = false;
       confirmDrawerClose();
     }
   }
@@ -125,6 +125,7 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
 
   Future<bool> _completeTarget(RefundTarget target) async {
     final item = target.item;
+    print(item.returnType);
     final result = await _completeRefund.call(
       CompleteRefundParams(
         type: item.returnType!,
