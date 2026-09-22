@@ -24,6 +24,7 @@ class InconsistencyRemoteDataSource extends BaseRemoteDataSource {
       searchQuery: params?.searchQuery,
       searchFields: ['drugName'],
       query: {'stationId': stationId},
+      filters: params?.filters,
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(InconsistencyDTO.fromJson),
       successLog: 'Inconsistencies fetched',

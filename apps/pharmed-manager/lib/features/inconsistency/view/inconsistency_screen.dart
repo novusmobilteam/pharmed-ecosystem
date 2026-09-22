@@ -6,6 +6,7 @@ import '../notifier/inconsistency_notifier.dart';
 
 part 'table_view.dart';
 part 'solve_inconsistency_view.dart';
+part 'inconsistency_detail_dialog.dart';
 
 class InconsistencyScreen extends StatelessWidget {
   const InconsistencyScreen({super.key, required this.menu});

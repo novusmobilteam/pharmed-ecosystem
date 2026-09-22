@@ -13,6 +13,10 @@ class Inconsistency {
   final List<String>? activeIngredients;
   final User? user;
   final bool isSolved;
+  final DateTime? createdDate;
+  final User? solvedUser;
+  final DateTime? solvedDate;
+  final String? description;
 
   const Inconsistency({
     this.id,
@@ -27,6 +31,10 @@ class Inconsistency {
     this.activeIngredients,
     this.user,
     this.isSolved = false,
+    this.createdDate,
+    this.solvedUser,
+    this.solvedDate,
+    this.description,
   });
 
   Inconsistency copyWith({int? id, Station? station, List<Cabin>? cabins}) {

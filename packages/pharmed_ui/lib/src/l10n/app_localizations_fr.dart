@@ -2644,6 +2644,59 @@ class AppLocalizationsFr extends AppLocalizations {
   String get inconsistency_photoTooltip => 'Photo';
 
   @override
+  String get inconsistency_showUnsolvedTooltip =>
+      'Afficher les incohérences non résolues';
+
+  @override
+  String get inconsistency_showSolvedTooltip =>
+      'Afficher les incohérences résolues';
+
+  @override
+  String get inconsistency_resolvedByUserLabel => 'Résolu par';
+
+  @override
+  String get inconsistency_detailDialogTitle => 'Détail de l\'incohérence';
+
+  @override
+  String get inconsistency_medicineLabel => 'Médicament';
+
+  @override
+  String get inconsistency_quantityLabel => 'Quantité réelle';
+
+  @override
+  String get inconsistency_requiredQuantityLabel => 'Quantité requise';
+
+  @override
+  String get inconsistency_miadDateLabel => 'Date de péremption';
+
+  @override
+  String get inconsistency_shelfLabel => 'N° d\'étagère';
+
+  @override
+  String get inconsistency_compartmentLabel => 'N° de compartiment';
+
+  @override
+  String get inconsistency_activeIngredientsLabel => 'Principe actif';
+
+  @override
+  String get inconsistency_reportedByUserLabel => 'Signalé par';
+
+  @override
+  String get inconsistency_createdDateLabel => 'Date de création';
+
+  @override
+  String get inconsistency_resolvedDateLabel => 'Date de résolution';
+
+  @override
+  String get inconsistency_descriptionLabel => 'Description';
+
+  @override
+  String get inconsistency_statusSolvedBadge => 'Résolu';
+
+  @override
+  String get inconsistency_statusUnsolvedBadge => 'Non résolu';
+
+  @override
   String get hospitalization_formTitleNew => 'Saisir une nouvelle admission';
 
   @override

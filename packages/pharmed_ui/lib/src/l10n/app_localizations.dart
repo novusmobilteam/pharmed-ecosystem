@@ -4728,6 +4728,108 @@ abstract class AppLocalizations {
   /// **'Photo'**
   String get inconsistency_photoTooltip;
 
+  /// No description provided for @inconsistency_showUnsolvedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Unresolved Inconsistencies'**
+  String get inconsistency_showUnsolvedTooltip;
+
+  /// No description provided for @inconsistency_showSolvedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Resolved Inconsistencies'**
+  String get inconsistency_showSolvedTooltip;
+
+  /// No description provided for @inconsistency_resolvedByUserLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved By'**
+  String get inconsistency_resolvedByUserLabel;
+
+  /// No description provided for @inconsistency_detailDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inconsistency Detail'**
+  String get inconsistency_detailDialogTitle;
+
+  /// No description provided for @inconsistency_medicineLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get inconsistency_medicineLabel;
+
+  /// No description provided for @inconsistency_quantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual Quantity'**
+  String get inconsistency_quantityLabel;
+
+  /// No description provided for @inconsistency_requiredQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Quantity'**
+  String get inconsistency_requiredQuantityLabel;
+
+  /// No description provided for @inconsistency_miadDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get inconsistency_miadDateLabel;
+
+  /// No description provided for @inconsistency_shelfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shelf No'**
+  String get inconsistency_shelfLabel;
+
+  /// No description provided for @inconsistency_compartmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Compartment No'**
+  String get inconsistency_compartmentLabel;
+
+  /// No description provided for @inconsistency_activeIngredientsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Ingredient'**
+  String get inconsistency_activeIngredientsLabel;
+
+  /// No description provided for @inconsistency_reportedByUserLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported By'**
+  String get inconsistency_reportedByUserLabel;
+
+  /// No description provided for @inconsistency_createdDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Created Date'**
+  String get inconsistency_createdDateLabel;
+
+  /// No description provided for @inconsistency_resolvedDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved Date'**
+  String get inconsistency_resolvedDateLabel;
+
+  /// No description provided for @inconsistency_descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get inconsistency_descriptionLabel;
+
+  /// No description provided for @inconsistency_statusSolvedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get inconsistency_statusSolvedBadge;
+
+  /// No description provided for @inconsistency_statusUnsolvedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Unresolved'**
+  String get inconsistency_statusUnsolvedBadge;
+
   /// No description provided for @hospitalization_formTitleNew.
   ///
   /// In en, this message translates to:
