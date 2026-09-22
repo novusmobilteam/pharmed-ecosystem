@@ -21,6 +21,9 @@ class CabinTargetedRxItemMapper {
           ? const MedicineAssignmentMapper().toEntity(dto.cabinAssignment!)
           : MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0),
       stock: dto.cabinDrawerStock != null ? const CabinStockMapper().toEntity(dto.cabinDrawerStock!) : null,
+      collectStationId: dto.collectStationId,
+      collectStationName: dto.collectStationName,
+      isCollectedAtCurrentStation: dto.isCollectedAtCurrentStation,
     );
   }
 

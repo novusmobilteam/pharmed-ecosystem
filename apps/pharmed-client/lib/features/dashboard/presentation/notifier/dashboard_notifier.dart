@@ -252,6 +252,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
 
   Future<void> _loadSecondaryData() async {
     final mac = await DeviceInfo.getMacAddress();
+    print(mac);
     Future.wait([
       execute(
         OperationKey.custom('fetch-upcoming-treatments'),

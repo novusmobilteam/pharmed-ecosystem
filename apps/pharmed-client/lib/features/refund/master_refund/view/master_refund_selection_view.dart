@@ -144,7 +144,7 @@ class _RefundablesListView extends StatelessWidget {
         final directStatus = notifier.itemStatuses[item.id];
         final isDirectLoading = directStatus is RefundCheckLoading;
 
-        final bool isRefundable = item.medicine?.canRefundable ?? false;
+        final bool isRefundable = (item.medicine?.canRefundable ?? false) && item.isCollectedAtCurrentStation;
         final displayReturnType = isRefundable ? refundType : ReturnType.nonRefundable;
 
         return GestureDetector(
@@ -154,9 +154,9 @@ class _RefundablesListView extends StatelessWidget {
             child: Row(
               spacing: 12.0,
               children: [
-                if (showCheckbox)
+                if (isRefundable && showCheckbox)
                   MedCheckbox(value: isSelected, onChanged: (_) {}, size: MedCheckboxSize.md)
-                else
+                else if (isRefundable && !showCheckbox)
                   MedRectangleIconButton(
                     iconData: PhosphorIcons.lightning(),
                     size: 22,
@@ -209,12 +209,25 @@ class _RefundablesListView extends StatelessWidget {
                       ],
                     ),
 
-                    MedChip(
-                      label: displayReturnType?.label ?? '-',
-                      background: displayReturnType?.bakcgroundColor,
-                      foreground: displayReturnType?.foregroundColor,
-                      showBorder: false,
-                      shape: MedChipShape.pill,
+                    Row(
+                      spacing: 6.0,
+                      children: [
+                        MedChip(
+                          label: displayReturnType?.label ?? '-',
+                          background: displayReturnType?.bakcgroundColor,
+                          foreground: displayReturnType?.foregroundColor,
+                          showBorder: false,
+                          shape: MedChipShape.pill,
+                        ),
+                        if (item.collectStationName != null)
+                          MedChip(
+                            label: item.collectStationName!,
+                            background: MedColors.purple,
+                            foreground: Colors.white,
+                            showBorder: false,
+                            shape: MedChipShape.pill,
+                          ),
+                      ],
                     ),
                   ],
                 ),

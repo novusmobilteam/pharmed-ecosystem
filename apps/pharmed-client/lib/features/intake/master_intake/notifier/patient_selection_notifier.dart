@@ -70,7 +70,7 @@ class PatientSelectionNotifier2 extends ChangeNotifier with ApiRequestMixin {
   IntakeType _intakeType = IntakeType.free;
   IntakeType get intakeType => _intakeType;
 
-  PatientFilterType _patientFilterType = PatientFilterType.all;
+  PatientFilterType _patientFilterType = PatientFilterType.ordersDue;
   PatientFilterType get patientFilterType => _patientFilterType;
 
   int get selectedIndex => HospitalizationType.values.indexOf(_type);

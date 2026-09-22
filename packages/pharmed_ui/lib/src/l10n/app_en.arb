@@ -4904,5 +4904,7 @@
   "enumCore_returnTypeNotReturnable": "İade Yapılamaz",
   "@enumCore_returnTypeNotReturnable": {
     "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
-  }
+  },
+    "refund_showToDrawerTooltip": "Show Drawer Returns",
+  "refund_showToReturnBoxTooltip": "Show Return Box Returns"
 }

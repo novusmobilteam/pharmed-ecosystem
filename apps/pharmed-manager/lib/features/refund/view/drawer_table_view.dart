@@ -47,6 +47,18 @@ class TableView extends StatelessWidget {
             ),
         ],
       ),
+
+      toolbarActions: [
+        MedRectangleIconButton(
+          tooltip: !notifier.showReturnBox
+              ? context.l10n.refund_showToReturnBoxTooltip
+              : context.l10n.refund_showToDrawerTooltip,
+          iconData: notifier.showReturnBox ? PhosphorIcons.dresser() : PhosphorIcons.boxArrowUp(),
+          color: MedColors.amberLight,
+          iconColor: MedColors.amber,
+          onPressed: notifier.toggleView,
+        ),
+      ],
     );
   }
 }

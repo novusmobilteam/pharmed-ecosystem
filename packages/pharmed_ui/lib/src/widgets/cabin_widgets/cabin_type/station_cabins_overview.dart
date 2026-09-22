@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'cabin_type_reference_view.dart';
 

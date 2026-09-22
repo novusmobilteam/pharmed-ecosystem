@@ -18,6 +18,8 @@ export 'domain/usecase/check_mobile_refund_status_usecase.dart';
 export 'domain/usecase/complete_mobile_refund_usecase.dart';
 export 'domain/usecase/get_mobile_refundables_usecase.dart';
 export 'domain/usecase/refund_queue_builder.dart';
+export 'domain/usecase/get_return_box_refunds_usecase.dart';
+
 export 'domain/entity/refundable_item.dart';
 export 'domain/entity/refund_check_status.dart';
 export 'domain/entity/refund_cell_group.dart';

@@ -307,7 +307,7 @@ class UrgentPatientFooter extends StatelessWidget {
           ),
         MedButton(
           label: context.l10n.urgentPatientTermination_finalizeButton,
-          variant: MedButtonVariant.danger,
+          variant: MedButtonVariant.success,
           isLoading: isSubmitting,
           onPressed: onSubmit,
           isActive: targetPatient != null,
@@ -321,7 +321,7 @@ class UrgentPatientFooter extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: MedButton(
         label: context.l10n.common_deleteTooltip,
-        variant: MedButtonVariant.danger,
+        variant: MedButtonVariant.error,
         isLoading: isDeleting,
         onPressed: onDelete,
       ),

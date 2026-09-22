@@ -7160,4 +7160,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';
+
+  @override
+  String get refund_showToDrawerTooltip => 'Afficher les retours en tiroir';
+
+  @override
+  String get refund_showToReturnBoxTooltip =>
+      'Afficher les retours en boîte de retour';
 }

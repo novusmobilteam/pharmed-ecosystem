@@ -30,6 +30,9 @@ class CabinTargetedPrescriptionItem {
     this.time,
     this.stock,
     this.lastMovement,
+    this.collectStationId,
+    this.collectStationName,
+    this.isCollectedAtCurrentStation = false,
   });
 
   final int id;
@@ -48,6 +51,11 @@ class CabinTargetedPrescriptionItem {
 
   final CabinStock? stock;
   final PrescriptionItemMovement? lastMovement;
+
+  /// Alım yapılan istasyon bilgileri
+  final int? collectStationId;
+  final String? collectStationName;
+  final bool isCollectedAtCurrentStation;
 
   /// medicine null gelirse (ör. malzeme silinmiş) kullanıcıya gösterilecek
   /// güvenli varsayılan — medicine ile her zaman senkron, ayrı bir alan
