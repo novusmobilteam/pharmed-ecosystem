@@ -24,13 +24,8 @@ abstract final class RefillListJobMapper {
   /// gözlere eşit, artanlar en arka gözden öne doğru.
   static CabinOperationTarget _withDefaultFilling(CabinOperationTarget target, RefillListDetail row) {
     // Backend biriminde; kısmi dolumda daha önce doldurulan düşülür.
-    final remainingBackend = ((row.quantity ?? 0) - (row.fillingQuantity ?? 0)).toDouble();
-    if (remainingBackend <= 0) return target;
-
-    // fromAssignment'taki stok dönüşümüyle AYNI fonksiyon — sayım ve dolum
-    // alanları aynı birimde (adet) görünsün.
-    final medicine = target.assignment.medicine;
-    final remaining = medicine != null ? medicine.fromFillingBackendValue(remainingBackend) : remainingBackend;
+    final remaining = ((row.quantity ?? 0) - (row.fillingQuantity ?? 0)).toDouble();
+    if (remaining <= 0) return target;
 
     if (target.isKubik) return target.withCubicSecondary(remaining);
 

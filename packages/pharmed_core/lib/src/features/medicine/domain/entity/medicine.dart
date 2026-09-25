@@ -225,23 +225,6 @@ extension MedicineDoseConfig on Medicine {
     return (amount / operationStep).round() * operationStep;
   }
 
-  // ---------------------------------------------------------------------------
-  // Gösterim
-  // ---------------------------------------------------------------------------
-
-  /// Dolum adet girişini backend değerine çevirir.
-  /// Örn: 3 adet × 100ml = 300ml
-  double toFillingBackendValue(num pieceAmount) {
-    return pieceAmount * fillingMultiplier;
-  }
-
-  /// Backend'den gelen dolum değerini adet gösterimine çevirir.
-  /// Örn: 300ml ÷ 100ml = 3 adet
-  double fromFillingBackendValue(num backendValue) {
-    if (fillingMultiplier <= 0) return backendValue.toDouble();
-    return backendValue / fillingMultiplier;
-  }
-
   /// Boşaltma/imha ekranında sayım alanı birimi.
   ///
   /// isMeasureUnit=true → "adet × 100ml" (mevcut stok adet + doz formatında)

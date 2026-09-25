@@ -30,21 +30,26 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<StockTransactionDTO>>?>> getStationTransactions({
-    PagedQueryParams? params,
-    required int stationId,
-  }) async {
+  Future<Result<ApiResponse<List<StationTransactionDto>>?>> getStationTransactions({PagedQueryParams? params}) async {
     return await fetchRequest(
-      path: '$_basePath/cabinStockTransaction/$stationId',
+      path: '$_basePath/cabinStockTransaction',
       skip: params?.skip,
       take: params?.take,
       searchQuery: params?.searchQuery,
       searchFields: params?.searchFields,
       startDate: params?.startDate,
       endDate: params?.endDate,
-      dateField: 'transactionStartDate',
+      filters: params?.filters,
+      dateField: 'transactionDate',
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(StockTransactionDTO.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(StationTransactionDto.fromJson),
+    );
+  }
+
+  Future<Result<List<StationTransactionStepDto>?>> getTransactionSteps(int transactionId) async {
+    return await fetchRequest(
+      path: '$_basePath/cabinStockTransaction/$transactionId/steps',
+      parser: BaseRemoteDataSource.listParser(StationTransactionStepDto.fromJson),
     );
   }
 

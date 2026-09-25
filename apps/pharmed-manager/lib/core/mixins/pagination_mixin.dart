@@ -152,4 +152,7 @@ mixin PaginationMixin<T> on ApiRequestMixin {
     _currentPage = 1;
     if (notify && changed) notifyListeners();
   }
+
+  @protected
+  void resetPage() => _currentPage = 1;
 }

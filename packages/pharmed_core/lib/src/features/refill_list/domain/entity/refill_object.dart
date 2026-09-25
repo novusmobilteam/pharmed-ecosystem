@@ -38,17 +38,3 @@ class RefillObject {
     );
   }
 }
-
-extension FillingObjectAdapter on RefillObject {
-  MedicineAssignment? toCabinAssignment() {
-    if (assignment == null) return null;
-
-    return assignment!.copyWith(medicine: medicine, fillingQuantity: quantity, stocks: stocks);
-  }
-}
-
-extension FillingObjectListAdapter on List<RefillObject> {
-  List<MedicineAssignment> toCabinAssignments() {
-    return where((o) => o.assignment != null).map((o) => o.toCabinAssignment()!).toList();
-  }
-}

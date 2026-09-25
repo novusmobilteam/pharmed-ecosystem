@@ -10,6 +10,8 @@ class ReportRepositoryImpl implements IReportRepository {
   final UserAuthorizationSummaryMapper _summaryMapper;
   final UserAuthorizationDetailMapper _authorizationDetailMapper;
   final CabinTemperatureValueMapper _cabinTemperatureValueMapper;
+  final StationTransactionMapper _stationTransactionMapper;
+  final StationTransactionStepMapper _stepMapper;
 
   ReportRepositoryImpl({
     required ReportRemoteDataSource dataSource,
@@ -20,6 +22,8 @@ class ReportRepositoryImpl implements IReportRepository {
     required UserAuthorizationSummaryMapper summaryMapper,
     required UserAuthorizationDetailMapper authorizationDetailMapper,
     required CabinTemperatureValueMapper cabinTemperatureValueMapper,
+    required StationTransactionMapper stationTransactionMapper,
+    required StationTransactionStepMapper stepMapper,
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
        _stockTransactionMapper = stockTransactionMapper,
@@ -27,7 +31,9 @@ class ReportRepositoryImpl implements IReportRepository {
        _prescriptionItemMapper = prescriptionItemMapper,
        _summaryMapper = summaryMapper,
        _authorizationDetailMapper = authorizationDetailMapper,
-       _cabinTemperatureValueMapper = cabinTemperatureValueMapper;
+       _cabinTemperatureValueMapper = cabinTemperatureValueMapper,
+       _stationTransactionMapper = stationTransactionMapper,
+       _stepMapper = stepMapper;
 
   @override
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({
@@ -48,15 +54,12 @@ class ReportRepositoryImpl implements IReportRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<StockTransaction>>?>> getStationTransactions({
-    PagedQueryParams? params,
-    required int stationId,
-  }) async {
-    final result = await _dataSource.getStationTransactions(params: params, stationId: stationId);
+  Future<Result<ApiResponse<List<StationTransaction>>?>> getStationTransactions({PagedQueryParams? params}) async {
+    final result = await _dataSource.getStationTransactions(params: params);
     return result.when(
       ok: (apiResponse) => Result.ok(
-        ApiResponse<List<StockTransaction>>(
-          data: apiResponse?.data != null ? _stockTransactionMapper.toEntityList(apiResponse!.data!) : null,
+        ApiResponse<List<StationTransaction>>(
+          data: apiResponse?.data != null ? _stationTransactionMapper.toEntityList(apiResponse!.data!) : null,
           isSuccess: apiResponse?.isSuccess,
           totalCount: apiResponse?.totalCount,
         ),
@@ -162,5 +165,11 @@ class ReportRepositoryImpl implements IReportRepository {
       ),
       error: (e) => Result.error(e),
     );
+  }
+
+  @override
+  Future<Result<List<StationTransactionStep>>> getTransactionSteps(int transactionId) async {
+    final result = await _dataSource.getTransactionSteps(transactionId);
+    return result.when(ok: (dtos) => Result.ok(_stepMapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
   }
 }

@@ -25,6 +25,7 @@ class _ColMeta<T> {
   final Widget? Function(T)? cellBuilder;
   final String? Function(T)? displayValue;
   final Comparable? Function(T)? sortValue;
+  final TableServerFilter? serverFilter;
 
   const _ColMeta({
     required this.index,
@@ -34,10 +35,12 @@ class _ColMeta<T> {
     this.cellBuilder,
     this.displayValue,
     this.sortValue,
+    this.serverFilter,
   });
 
-  bool get filterable => displayValue != null || !numeric;
   bool get sortable => sortValue != null || displayValue != null || numeric;
+  bool get isServerFiltered => serverFilter != null;
+  bool get filterable => isServerFiltered || displayValue != null || !numeric;
 
   /// Filtre, export ve fallback text için tek kaynak.
   String valueOf(T item) {
@@ -107,6 +110,10 @@ class MedTable<T extends Object> extends StatefulWidget {
     this.categoryTitle,
     this.initialDateRange,
     this.toolbarActions,
+    this.selectedCategoryIds = const {},
+    this.onCategorySelectionChanged,
+    this.serverFilters = const {},
+    this.onServerFiltersChanged,
   });
 
   final List<T> data;
@@ -115,6 +122,12 @@ class MedTable<T extends Object> extends StatefulWidget {
   final List<TableSideCategory>? categories;
   final String? selectedCategoryId;
   final ValueChanged<String>? onCategoryChanged;
+
+  /// Yan paneldeki kategoriler için çoklu seçim.
+  /// Verilirse yan panel checkbox'lı çoklu moda geçer.
+  /// Satır seçimi ([onSelectionChanged]) ile ilgisi yoktur.
+  final Set<String> selectedCategoryIds;
+  final ValueChanged<Set<String>>? onCategorySelectionChanged;
 
   // ── Kolon ────────────────────────────────────────────────────────────────────
   /// Verilirse item.titles / numericColumnIndices / columnFlexes yerine geçer.
@@ -189,6 +202,12 @@ class MedTable<T extends Object> extends StatefulWidget {
 
   final List<Widget>? toolbarActions;
 
+  // ── Server-side kolon filtreleri ────────────────────────────────────────────
+  /// Key: TableServerFilter.field, value: seçili option değerleri.
+  /// Kontrollü (controlled) — state notifier'da tutulur.
+  final Map<String, Set<Object>> serverFilters;
+  final ValueChanged<Map<String, Set<Object>>>? onServerFiltersChanged;
+
   @override
   State<MedTable<T>> createState() => _MedTableState<T>();
 }
@@ -241,6 +260,34 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
     }
   }
 
+  /// Client + server filtrelerinin birleşik görünümü (sadece gösterim için).
+  Map<int, Set<String>> get _displayColFilters {
+    final merged = Map<int, Set<String>>.from(_colFilters);
+    for (final col in _cols) {
+      final sf = col.serverFilter;
+      if (sf == null) continue;
+      final selected = widget.serverFilters[sf.field];
+      if (selected == null || selected.isEmpty) continue;
+      merged[col.index] = sf.options.where((o) => selected.contains(o.value)).map((o) => o.label).toSet();
+    }
+    return merged;
+  }
+
+  void _setServerFilter(String field, Set<Object> values) {
+    final next = Map<String, Set<Object>>.from(widget.serverFilters);
+    values.isEmpty ? next.remove(field) : next[field] = values;
+    widget.onServerFiltersChanged?.call(next);
+  }
+
+  void _removeColFilter(int colIndex) {
+    final sf = _cols[colIndex].serverFilter;
+    if (sf != null) {
+      _setServerFilter(sf.field, {});
+    } else {
+      setState(() => _colFilters.remove(colIndex));
+    }
+  }
+
   // ── Kolon meta ───────────────────────────────────────────────────────────────
 
   List<_ColMeta<T>> get _cols => List.generate(widget.columnDefs.length, (i) {
@@ -253,6 +300,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
       cellBuilder: def.cellBuilder,
       displayValue: def.displayValue,
       sortValue: def.sortValue,
+      serverFilter: def.serverFilter,
     );
   });
 
@@ -313,7 +361,9 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
   }
 
   bool get _hasActiveFilters =>
-      _colFilters.values.any((s) => s.isNotEmpty) || _searchController.text.isNotEmpty || _currentDateRange != null;
+      _displayColFilters.values.any((s) => s.isNotEmpty) ||
+      _searchController.text.isNotEmpty ||
+      _currentDateRange != null;
 
   void _applyColFilter(int colIndex, Set<String> values) {
     setState(() {
@@ -329,18 +379,24 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
     final cols = _cols;
     if (colIndex >= cols.length) return;
     final col = cols[colIndex];
+    final sf = col.serverFilter;
 
     final result = await showDialog<Set<String>>(
       context: context,
       barrierColor: Colors.black26,
       builder: (_) => _ColFilterDialog(
         columnTitle: col.title,
-        uniqueValues: _uniqueValuesFor(col),
-        selected: Set.from(_colFilters[col.index] ?? {}),
+        uniqueValues: sf != null ? sf.options.map((o) => o.label).toList() : _uniqueValuesFor(col),
+        selected: Set.from(_displayColFilters[col.index] ?? {}),
       ),
     );
 
-    if (result != null && mounted) {
+    if (result == null || !mounted) return;
+
+    if (sf != null) {
+      final values = sf.options.where((o) => result.contains(o.label)).map((o) => o.value).toSet();
+      _setServerFilter(sf.field, values);
+    } else {
       _applyColFilter(col.index, result);
     }
   }
@@ -361,6 +417,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
 
   void _clearAllFilters() {
     setState(() {
+      if (widget.serverFilters.isNotEmpty) widget.onServerFiltersChanged?.call({});
       _colFilters.clear();
       _searchController.clear();
       _currentDateRange = null;
@@ -458,6 +515,8 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
                 title: widget.categoryTitle,
                 categories: widget.categories!,
                 selectedId: widget.selectedCategoryId,
+                selectedIds: widget.selectedCategoryIds,
+                onSelectionChanged: widget.onCategorySelectionChanged,
                 onSelect: (id) {
                   setState(() {
                     _colFilters.clear();
@@ -494,12 +553,12 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
                   ),
                   if (_hasActiveFilters)
                     _ActiveFilterBar<T>(
-                      colFilters: _colFilters,
+                      colFilters: _displayColFilters,
                       cols: cols,
                       searchQuery: _searchController.text,
                       currentDateRange: _currentDateRange,
                       onClearAll: _clearAllFilters,
-                      onRemoveColFilter: (ci) => setState(() => _colFilters.remove(ci)),
+                      onRemoveColFilter: _removeColFilter,
                       onClearSearch: () {
                         setState(() => _searchController.clear());
                         widget.onSearchChanged?.call('');
@@ -543,7 +602,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
       totalFlex: _totalFlex,
       sortColIndex: _sortColIndex,
       sortAsc: _sortAsc,
-      colFilters: _colFilters,
+      colFilters: _displayColFilters,
       selectionMode: widget.selectionMode,
       selectedItems: _selectedItems,
       onToggleItem: _toggleItem,

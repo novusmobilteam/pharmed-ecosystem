@@ -12607,6 +12607,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Count the items in the cell and enter the amount'**
   String get cabinEntry_blindCountHint;
+
+  /// Station transaction report table column header for the date/time the transaction occurred
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Date'**
+  String get tableCore_stationTransactionDateColumn;
+
+  /// Station transaction report table column header for the name of the cabin where the transaction occurred
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin'**
+  String get tableCore_stationTransactionCabinColumn;
+
+  /// Station transaction report table column header for the transaction type (e.g. refill, intake, return)
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction'**
+  String get tableCore_stationTransactionTypeColumn;
+
+  /// Station transaction report table column header for the material code
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get tableCore_stationTransactionCodeColumn;
+
+  /// Station transaction report table column header for the material barcode
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get tableCore_stationTransactionBarcodeColumn;
+
+  /// Station transaction report table column header for the drug/consumable name
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get tableCore_stationTransactionMaterialColumn;
+
+  /// Station transaction report table column header for the quantity processed in the transaction
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get tableCore_stationTransactionQuantityColumn;
+
+  /// Station transaction report table column header for the drawer order number within the cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get tableCore_stationTransactionOrderColumn;
+
+  /// Station transaction report table column header for the compartment (cell) number inside the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Compartment'**
+  String get tableCore_stationTransactionCompartmentColumn;
+
+  /// Station transaction report table column header for the patient the transaction was made for
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get tableCore_stationTransactionPatientColumn;
+
+  /// Station transaction report table column header for the patient's hospital protocol code
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol No.'**
+  String get tableCore_stationTransactionProtocolCodeColumn;
+
+  /// Station transaction report table column header for the user who performed the transaction
+  ///
+  /// In en, this message translates to:
+  /// **'Performed By'**
+  String get tableCore_stationTransactionPerformedByColumn;
+
+  /// Station transaction report table column header for the witness user who approved the transaction, if any
+  ///
+  /// In en, this message translates to:
+  /// **'Witness'**
+  String get tableCore_stationTransactionWitnessColumn;
+
+  /// Title of the detail dialog opened from a row in the station transaction report table
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Detail'**
+  String get report_stationTransaction_detailDialogTitle;
+
+  /// Tooltip of the row action that opens the station transaction detail dialog
+  ///
+  /// In en, this message translates to:
+  /// **'View Detail'**
+  String get report_stationTransaction_detailTooltip;
+
+  /// Section title in the station transaction detail dialog listing the drawer steps (depth positions) the transaction touched
+  ///
+  /// In en, this message translates to:
+  /// **'Compartment Steps'**
+  String get report_stationTransaction_stepsSectionTitle;
+
+  /// Summary next to the steps section title showing how many steps had a non-zero quantity
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Processed in {count} step} other{Processed in {count} steps}}'**
+  String report_stationTransaction_stepsSummary(int count);
+
+  /// Error shown in the station transaction detail dialog when the step detail request fails
+  ///
+  /// In en, this message translates to:
+  /// **'Step details could not be loaded.'**
+  String get report_stationTransaction_stepsLoadError;
+
+  /// Shown in the station transaction detail dialog when the step detail request returns an empty list
+  ///
+  /// In en, this message translates to:
+  /// **'No step details found for this transaction.'**
+  String get report_stationTransaction_stepsEmpty;
+
+  /// StationTransactionType.refill (1) — drugs filled into the cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get enumCore_stationTransactionTypeRefill;
+
+  /// StationTransactionType.stockOut (2) — stock removed from the cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Out'**
+  String get enumCore_stationTransactionTypeStockOut;
+
+  /// StationTransactionType.refund (3) — material returned from the cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get enumCore_stationTransactionTypeRefund;
+
+  /// StationTransactionType.countExcess (4) — census found more than the recorded stock
+  ///
+  /// In en, this message translates to:
+  /// **'Count Excess'**
+  String get enumCore_stationTransactionTypeCountExcess;
+
+  /// StationTransactionType.countShortage (5) — census found less than the recorded stock
+  ///
+  /// In en, this message translates to:
+  /// **'Count Shortage'**
+  String get enumCore_stationTransactionTypeCountShortage;
+
+  /// StationTransactionType.countConsistent (6) — census matched the recorded stock
+  ///
+  /// In en, this message translates to:
+  /// **'Count Consistent'**
+  String get enumCore_stationTransactionTypeCountConsistent;
+
+  /// StationTransactionType.materialPurchasing (7) — material taken from the cabin (backend name: MaterialPurchasing)
+  ///
+  /// In en, this message translates to:
+  /// **'Material Intake'**
+  String get enumCore_stationTransactionTypeMaterialPurchasing;
+
+  /// StationTransactionType.refundInward (8) — returned material received into the cabin (backend name: ReturnInward)
+  ///
+  /// In en, this message translates to:
+  /// **'Inward Return'**
+  String get enumCore_stationTransactionTypeRefundInward;
+
+  /// StationTransactionType.wastage (9) — material wasted/destroyed
+  ///
+  /// In en, this message translates to:
+  /// **'Wastage'**
+  String get enumCore_stationTransactionTypeWastage;
+
+  /// StationTransactionType.unloading (10) — drugs unloaded from the cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Unloading'**
+  String get enumCore_stationTransactionTypeUnloading;
 }
 
 class _AppLocalizationsDelegate

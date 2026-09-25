@@ -9311,5 +9311,40 @@
 "cabinEntry_blindCountHint": "Gözdeki miktarı sayıp girin",
 "@cabinEntry_blindCountHint": {
   "description": "Hint under an empty count field during blind count; the recorded quantity is intentionally not shown"
-}
+},
+"tableCore_stationTransactionDateColumn": "İşlem Tarihi",
+"tableCore_stationTransactionCabinColumn": "Kabin",
+"tableCore_stationTransactionTypeColumn": "İşlem",
+"tableCore_stationTransactionCodeColumn": "Kod",
+"tableCore_stationTransactionBarcodeColumn": "Barkod",
+"tableCore_stationTransactionMaterialColumn": "Malzeme",
+"tableCore_stationTransactionQuantityColumn": "Miktar",
+"tableCore_stationTransactionOrderColumn": "Sıra",
+"tableCore_stationTransactionCompartmentColumn": "Göz",
+"tableCore_stationTransactionPatientColumn": "Hasta",
+"tableCore_stationTransactionProtocolCodeColumn": "Protokol No",
+"tableCore_stationTransactionPerformedByColumn": "İşlemi Yapan",
+"tableCore_stationTransactionWitnessColumn": "Tanık",
+"report_stationTransaction_detailDialogTitle": "İşlem Detayı",
+"report_stationTransaction_detailTooltip": "Detayı Görüntüle",
+"report_stationTransaction_stepsSectionTitle": "Göz Detayı",
+"report_stationTransaction_stepsSummary": "{count} gözde işlem yapıldı",
+"@report_stationTransaction_stepsSummary": {
+  "description": "Summary next to the steps section title showing how many steps had a non-zero quantity",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+"report_stationTransaction_stepsLoadError": "Göz detayları yüklenemedi.",
+"report_stationTransaction_stepsEmpty": "Bu işlem için göz detayı bulunamadı.",
+"enumCore_stationTransactionTypeRefill": "Dolum",
+"enumCore_stationTransactionTypeStockOut": "Stok Çıkışı",
+"enumCore_stationTransactionTypeRefund": "İade",
+"enumCore_stationTransactionTypeCountExcess": "Sayım Fazlası",
+"enumCore_stationTransactionTypeCountShortage": "Sayım Eksiği",
+"enumCore_stationTransactionTypeCountConsistent": "Sayım Tutarlı",
+"enumCore_stationTransactionTypeMaterialPurchasing": "Alım",
+"enumCore_stationTransactionTypeRefundInward": "İade Girişi",
+"enumCore_stationTransactionTypeWastage": "Fire",
+"enumCore_stationTransactionTypeUnloading": "Boşaltma"
 }

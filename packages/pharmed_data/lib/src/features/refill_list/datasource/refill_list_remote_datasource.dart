@@ -51,7 +51,7 @@ class RefillListRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> createFillingList(List<Map<String, dynamic>> data, {required int stationId}) {
+  Future<Result<void>> createFillingList(List<Map<String, dynamic>> data, {required int stationId}) async {
     return postRequest(
       path: '$_basePath/detail/create/$stationId',
       body: data,
@@ -63,7 +63,7 @@ class RefillListRemoteDataSource extends BaseRemoteDataSource {
     List<Map<String, dynamic>> data, {
     required int stationId,
     required int fillingListId,
-  }) {
+  }) async {
     return putRequest(
       path: '$_basePath/$fillingListId/detail/edit/$stationId',
       body: data,
