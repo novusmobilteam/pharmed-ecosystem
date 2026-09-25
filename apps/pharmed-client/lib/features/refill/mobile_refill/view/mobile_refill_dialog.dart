@@ -34,7 +34,8 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
-import '../../refill.dart';
+import '../notifier/mobile_refill_notifier.dart';
+import '../notifier/mobile_refill_state.dart';
 
 part 'items_list.dart';
 part 'footer.dart';

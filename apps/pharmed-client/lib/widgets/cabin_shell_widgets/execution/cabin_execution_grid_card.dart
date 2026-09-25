@@ -39,9 +39,9 @@ class CabinExecutionGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final critQty = assignment.critQuantityFromBackend;
-    final minQty = assignment.minQuantityFromBackend;
-    final maxQty = assignment.maxQuantityFromBackend;
+    final critQty = assignment.criticalQuantity.toDouble();
+    final minQty = assignment.minQuantity.toDouble();
+    final maxQty = assignment.maxQuantity.toDouble();
     final bool isComfortable = density == MedValueCardDensity.comfortable;
 
     final MedCellStockLevel level;

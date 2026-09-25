@@ -4,7 +4,8 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
-import '../../refill.dart';
+import '../notifier/mobile_refill_notifier.dart';
+import '../notifier/mobile_refill_state.dart';
 
 // [SWREQ-CLI-REFILL-002] [IEC 62304 §5.5]
 // Mobil kabin dolum sağ paneli.

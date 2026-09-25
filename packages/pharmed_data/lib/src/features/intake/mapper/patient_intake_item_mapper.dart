@@ -30,7 +30,7 @@ class PatientIntakeItemMapper {
     final unit = const DrawerUnitMapper().toEntityOrNull(dto.cabinDrawer);
 
     if (unit == null) {
-      return MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0);
+      return MedicineAssignment.empty(cabinDrawerId: 0);
     }
 
     // 2. Mevcut hiyerarşiyi (Deep Nesting) kontrollü şekilde ayağa kaldır

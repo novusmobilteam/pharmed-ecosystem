@@ -1,13 +1,19 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
+/// Bir ilacın kabindeki bir göze ataması.
+///
+/// Tüm miktarlar (min/max/kritik, stok, dolum) ADET cinsindendir ve backend'e
+/// olduğu gibi gönderilir. Ölçü birimli ilaçlarda ml yalnızca gösterimde
+/// türetilir: "4 Adet × 100 ml".
 class MedicineAssignment {
   final int? id;
   final int? cabinDrawerId;
-  final num? minQuantity;
-  final num? criticalQuantity;
-  final num? maxQuantity;
-  final num? quantity;
+  final num minQuantity;
+  final num criticalQuantity;
+  final num maxQuantity;
+  final num quantity;
   final num? fillingQuantity;
   final Cabin? cabin;
   final Medicine? medicine;
@@ -18,10 +24,10 @@ class MedicineAssignment {
   MedicineAssignment({
     this.id,
     this.cabinDrawerId,
-    this.minQuantity,
-    this.criticalQuantity,
-    this.maxQuantity,
-    this.quantity,
+    this.minQuantity = 0.0,
+    this.criticalQuantity = 0.0,
+    this.maxQuantity = 0.0,
+    this.quantity = 0.0,
     this.cabin,
     this.medicine,
     this.drawerUnit,
@@ -30,89 +36,52 @@ class MedicineAssignment {
     this.fillingQuantity,
   });
 
-  String operationUnit(context) => medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
-  String get fillingUnit => medicine?.fillingUnit ?? 'Adet';
-
-  // ---------------------------------------------------------------------------
-  // Backend ↔ Adet dönüşümleri
-  //
-  // Kural: Atama ve Dolum (stok artıran işlemler) backend ile ml üzerinden
-  // konuşur. Diğer tüm işlemler (sayım, boşaltma, imha) değeri olduğu gibi
-  // kullanır — dönüşüm yalnızca gösterim için yapılır.
-  //
-  // isMeasureUnit=false veya MedicalConsumable → fillingMultiplier=1,
-  // dönüşüm formülleri değeri olduğu gibi döndürür.
-  // ---------------------------------------------------------------------------
-
-  /// Backend değerini kullanıcıya gösterilecek adete çevirir.
-  /// Atama ve Dolum ekranlarında kullanılır.
-  /// Örn: 40.000ml → 400 adet (dose=100ml ise)
-  double toDisplayQuantity(num? backendValue) =>
-      medicine?.fromFillingBackendValue(backendValue ?? 0) ?? (backendValue ?? 0).toDouble();
-
-  /// Kullanıcının girdiği adeti backend'e gönderilecek değere çevirir.
-  /// Örn: 400 adet → 40.000ml (dose=100ml ise)
-  int _toBackendValue(num? adet) => medicine?.toFillingBackendValue(adet ?? 0).toInt() ?? (adet ?? 0).toInt();
-
-  // ---------------------------------------------------------------------------
-  // İlaç Atama — min/max/kritik
-  // ---------------------------------------------------------------------------
-
-  /// Kullanıcıya gösterilecek adet (backend ml'den çevrilir)
-  double get minQuantityFromBackend => toDisplayQuantity(minQuantity);
-  double get maxQuantityFromBackend => toDisplayQuantity(maxQuantity);
-  double get critQuantityFromBackend => toDisplayQuantity(criticalQuantity);
-
-  /// Atama ekranında backend'e gönderilecek değer (adet → ml)
-  int get minQuantityToBackend => _toBackendValue(minQuantity);
-  int get maxQuantityToBackend => _toBackendValue(maxQuantity);
-  int get critQuantityToBackend => _toBackendValue(criticalQuantity);
-
-  // ---------------------------------------------------------------------------
-  // Stok miktarı
-  // ---------------------------------------------------------------------------
-
-  /// Stocks listesinden toplanan ham backend değeri (ml veya adet).
-  /// Atama/Dolum: ml cinsinden → _toDisplayQuantity ile adete çevrilir.
-  /// Sayım/Boşaltma/İmha: olduğu gibi kullanılır.
-  double get totalQuantity => (stocks ?? []).fold(0.0, (sum, s) => sum + (s.quantity ?? 0).toDouble());
-
-  // ---------------------------------------------------------------------------
-  // QuantityInfoCard label'ları
-  // ---------------------------------------------------------------------------
-
-  /// Min/Max/Kritik değerleri her tipte adet olarak gösterilir.
-  /// Backend'den ml geliyorsa adete çevrilir.
-  String minQuantityLabel(CabinInventoryType type) => formatWithUnit(minQuantityFromBackend, type);
-  String maxQuantityLabel(CabinInventoryType type) => formatWithUnit(maxQuantityFromBackend, type);
-  String critQuantityLabel(CabinInventoryType type) => formatWithUnit(critQuantityFromBackend, type);
-  String totalQuantityLabel(CabinInventoryType type) => formatWithUnit(toDisplayQuantity(totalQuantity), type);
-
-  String formatWithUnit(double adet, CabinInventoryType type) {
-    if (type == CabinInventoryType.refill || type == CabinInventoryType.refillList) {
-      return '${adet.formatFractional} Adet';
-    }
-    if (medicine is Drug && (medicine as Drug).isMeasureUnit) {
-      return '${adet.formatFractional} Adet x ${medicine!.fillingMultiplier.formatFractional} $operationUnit';
-    }
-    return '${adet.formatFractional} Adet';
-  }
-
-  String quantityWithDoseLabel(context, num? backendQuantity) {
-    final displayQuantity = toDisplayQuantity(backendQuantity);
-    final base = '${displayQuantity.formatFractional} Adet';
-
-    final med = medicine;
-    if (med is Drug && med.isMeasureUnit && med.fillingMultiplier > 1) {
-      final doseLabel = med.fillingMultiplier.formatFractional;
-      final doseUnit = med.doseUnit?.name ?? 'ml';
-      return '$base(x$doseLabel$doseUnit)';
-    }
-
-    return base;
-  }
+  /// Gözdeki toplam stok (adet).
+  double get totalQuantity =>
+      (stocks ?? const <CabinStock>[]).fold(0.0, (sum, s) => sum + (s.quantity ?? 0).toDouble());
 
   bool get isKubikType => drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? true;
+
+  // ── Gösterim ─────────────────────────────────────────────────────────
+
+  /// Adet miktarını ilacın birimine göre etiketler. Ölçü birimli ilaçta
+  /// "4 Adet × 100 ml", diğerlerinde "4 Adet". Tüm ekranlarda aynı format.
+  String quantityLabel(num? pieces) {
+    final count = (pieces ?? 0).toDouble().formatFractional;
+    final med = medicine;
+    if (med is Drug && med.isMeasureUnit && med.fillingMultiplier > 1) {
+      return contextlessL10n().common_quantityWithMeasure(
+        count,
+        med.fillingMultiplier.formatFractional,
+        med.doseUnit?.name ?? 'ml',
+      );
+    }
+    return contextlessL10n().common_quantityPieces(count);
+  }
+
+  String get minQuantityLabel => quantityLabel(minQuantity);
+  String get maxQuantityLabel => quantityLabel(maxQuantity);
+  String get critQuantityLabel => quantityLabel(criticalQuantity);
+  String get totalQuantityLabel => quantityLabel(totalQuantity);
+
+  // MedicineAssignment
+
+  /// Mevcut stok / maksimum kapasite — birim bir kez, sonda.
+  /// "4/36 Adet" ya da "4/36 Adet × 100 ml".
+  String get stockRatioLabel {
+    final current = totalQuantity.formatFractional;
+    final max = maxQuantity.toDouble().formatFractional;
+    final med = medicine;
+    if (med is Drug && med.isMeasureUnit && med.fillingMultiplier > 1) {
+      return contextlessL10n().common_quantityRatioWithMeasure(
+        current,
+        max,
+        med.fillingMultiplier.formatFractional,
+        med.doseUnit?.name ?? 'ml',
+      );
+    }
+    return contextlessL10n().common_quantityRatioPieces(current, max);
+  }
 
   MedicineAssignment copyWith({
     int? id,
@@ -144,15 +113,5 @@ class MedicineAssignment {
     );
   }
 
-  factory MedicineAssignment.empty({required int cabinId, required int cabinDrawerId}) {
-    return MedicineAssignment(
-      id: null,
-      cabinDrawerId: cabinDrawerId,
-      cabin: null,
-      medicine: null,
-      minQuantity: null,
-      criticalQuantity: null,
-      maxQuantity: null,
-    );
-  }
+  factory MedicineAssignment.empty({required int cabinDrawerId}) => MedicineAssignment(cabinDrawerId: cabinDrawerId);
 }

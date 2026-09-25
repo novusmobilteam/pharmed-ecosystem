@@ -22,7 +22,7 @@ class DrugAssignmentFormNotifier extends ChangeNotifier with ApiRequestMixin {
       return;
     }
     if (assignment == null && _cabinId != null && _unitId != null) {
-      _assignment = MedicineAssignment.empty(cabinId: _cabinId!, cabinDrawerId: _unitId!);
+      _assignment = MedicineAssignment.empty(cabinDrawerId: _unitId!);
       return;
     }
   }

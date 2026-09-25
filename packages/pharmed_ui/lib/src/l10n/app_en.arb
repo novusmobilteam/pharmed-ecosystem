@@ -3197,6 +3197,8 @@
   "@enumCore_refillListStatusCollected": {},
   "enumCore_refillListStatusSent": "Sent",
   "@enumCore_refillListStatusSent": {},
+  "enumCore_refillListStatusCompleted": "Completed",
+"enumCore_refillListStatusPartiallyCompleted": "Partially Completed",
   "enumCore_fillingTypeMinimum": "Minimum",
   "@enumCore_fillingTypeMinimum": {},
   "enumCore_fillingTypeCritical": "Critical",
@@ -3243,6 +3245,7 @@
   "@enumCore_cabinOpModeFault": {},
   "enumCore_cabinOpModeUnload": "Drug Unload",
   "@enumCore_cabinOpModeUnload": {},
+  "enumCore_cabinOpModeDestruction": "Drug Destruction",
   "enumCore_cabinInventoryTypeRefillOperationLabel": "Refill",
   "@enumCore_cabinInventoryTypeRefillOperationLabel": {},
   "enumCore_cabinInventoryTypeIntakeOperationLabel": "Intake",
@@ -4906,5 +4909,85 @@
     "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
   },
     "refund_showToDrawerTooltip": "Show Drawer Returns",
-  "refund_showToReturnBoxTooltip": "Show Return Box Returns"
+  "refund_showToReturnBoxTooltip": "Show Return Box Returns",
+  "common_noPatientSelectedEmptyTitle": "No Patient Selected",
+"intake_selectionEmptyDescription": "Medication intake is performed per patient. When you select a patient from the list on the left, the medications ordered for that patient and available for intake are listed here.",
+"dailyWorklist_selectionEmptyDescription": "When you select a patient from the list on the left, the administrations scheduled for that patient today are listed here.",
+"prescriptionReview_selectionEmptyDescription": "When you select a patient from the list on the left, that patient's orders are listed here for your review.",
+"refund_selectionEmptyDescription": "Returns are processed per patient. When you select a patient from the list on the left, the medications administered to that patient that can be returned are listed here.",
+"unappliedPrescription_selectionEmptyDescription": "When you select a patient from the list on the left, that patient's prescriptions that have not yet been administered are listed here.",
+"wastage_selectionEmptyDescription": "Wastage and disposal are processed per patient. When you select a patient from the list on the left, the medications that can be recorded as wastage or disposal for that patient are listed here.",
+"refillList_selectionEmptyTitle": "No Refill List Selected",
+"refillList_selectionEmptyDescription": "When you select a refill list from the left, the medications in that list and their target cells are shown here.",
+"enumCore_refillListItemFillStatusNotStarted": "Pending",
+"enumCore_refillListItemFillStatusPartial": "Partial",
+"enumCore_refillListItemFillStatusCompleted": "Completed",
+"refillList_column_status": "Status",
+"cabinExecution_queueProgress": "Drawer {current}/{total}",
+"@cabinExecution_queueProgress": {
+  "description": "Queue progress shown in the execution footer of cabin operation screens (refill, census, refill list)",
+  "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+},
+"cabinExecution_stopButton": "Stop",
+"cabinExecution_saveAndNextButton": "Save and Next Drawer",
+"cabinExecution_saveAndFinishButton": "Save and Finish",
+"cabinExecution_stopConfirmTitle": "Stop the operation?",
+"cabinExecution_stopConfirmMessage": "Saved drawers are kept; unsaved entries in this drawer will be lost.",
+"cabinExecution_stopConfirmYes": "Stop",
+"cabinExecution_errorTitle": "Could not save",
+"cabinExecution_errorSkipButton": "Skip to Next Drawer",
+"cabinExecution_errorAbortButton": "End Operation",
+"cabinEntryCard_cellBadge": "CELL {label}",
+"@cabinEntryCard_cellBadge": {
+  "description": "Badge on the cubic cell entry card showing the short grid label of the active cell (e.g. GÖZ B2)",
+  "placeholders": { "label": { "type": "String" } }
+},
+"cabinEntryCard_cellPosition": "Cell {current}/{total}",
+"@cabinEntryCard_cellPosition": {
+  "description": "Position of the active cell within the cubic drawer (e.g. Göz 5/16)",
+  "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+},
+"cabinEntryCard_miadTitle": "Expiry Date",
+"cabinEntryTable_miadPlaceholder": "Select date",
+"cabinEntryCard_miadRequired": "Expiry date is required when a quantity is entered",
+"refillList_panelTitle": "Refill Lists",
+"refillList_tab_waiting": "Pending",
+"refillList_tab_completed": "Completed",
+"refillList_listTitle": "Refill List #{id}",
+"@refillList_listTitle": {
+  "description": "Header title of the selected refill list showing its number",
+  "placeholders": { "id": { "type": "int" } }
+},
+"cabinExecution_recordedQuantity": "Recorded Quantity",
+"common_quantityPieces": "{count} pcs",
+"@common_quantityPieces": {
+  "description": "Quantity label in pieces, used for medicines without a measure unit (e.g. 4 Adet)",
+  "placeholders": { "count": { "type": "String" } }
+},
+"common_quantityWithMeasure": "{count} pcs × {dose} {unit}",
+"@common_quantityWithMeasure": {
+  "description": "Quantity label for measure-unit medicines: pieces times the amount per piece (e.g. 4 Adet × 100 ml)",
+  "placeholders": {
+    "count": { "type": "String" },
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"common_quantityRatioPieces": "{current}/{max} pcs",
+"@common_quantityRatioPieces": {
+  "description": "Current stock over maximum capacity in pieces (e.g. 4/36 Adet)",
+  "placeholders": { "current": { "type": "String" }, "max": { "type": "String" } }
+},
+"common_quantityRatioWithMeasure": "{current}/{max} pcs × {dose} {unit}",
+"@common_quantityRatioWithMeasure": {
+  "description": "Current stock over maximum capacity for measure-unit medicines, with the amount per piece (e.g. 4/36 Adet × 100 ml)",
+  "placeholders": {
+    "current": { "type": "String" },
+    "max": { "type": "String" },
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"cabinEntry_takeLabel": "To Take",
+"cabinEntry_blindCountHint": "Count the items in the cell and enter the amount"
 }

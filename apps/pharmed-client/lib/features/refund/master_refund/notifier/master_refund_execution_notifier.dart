@@ -125,7 +125,6 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
 
   Future<bool> _completeTarget(RefundTarget target) async {
     final item = target.item;
-    print(item.returnType);
     final result = await _completeRefund.call(
       CompleteRefundParams(
         type: item.returnType!,

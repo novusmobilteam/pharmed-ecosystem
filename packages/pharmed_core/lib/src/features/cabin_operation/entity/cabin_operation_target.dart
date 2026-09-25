@@ -1,204 +1,259 @@
 // [SWREQ-CORE-CABINOP-010] [IEC 62304 §5.5]
 //
-// Bir kabin işleminde (dolum/sayım/boşaltma) TEK BİR HEDEFİ temsil eder:
-// ya bir kübik çekmecenin tek gözü, ya da bir birim doz çekmecesinin tüm
-// gözleri. Kullanıcının ekranda girdiği değerleri tutar, bu değerlerin
-// backend'e gönderilmeye hazır (geçerli) olup olmadığına karar verir.
+// Bir kabin işleminde (dolum/sayım/boşaltma/imha/alım) TEK BİR HEDEF: ya bir
+// kübik çekmecenin tek gözü, ya da bir birim doz çekmecesinin gözleri.
+// Kullanıcı girdilerini tutar ve kayda hazır olup olmadığına karar verir.
 //
-// Her hedefte iki miktar alanı olabilir: "primary" (fiziksel sayım — şu an
-// çekmecede kaç adet var) ve opsiyonel "secondary" (dolumda konulacak
-// miktar, boşaltmada çıkarılacak miktar). Sayımda secondary yok — kullanıcı
-// sadece fiziksel sayımı girer, "girdi" doğrudan primary'den okunur. Bu
-// tek fark `CabinOperationTargetConfig.hasSecondaryField` ile ifade edilir;
-// dolum/sayım/boşaltma arasındaki TÜM davranış farkı burada toplanır.
+// Hangi alanların var olduğu [CabinOperationMode]'dan gelir. Tüm miktarlar
+// ADET cinsindendir — stoktan okunurken de gönderilirken de çevrim yoktur.
 //
-// SKT (miad) iki şekilde girilebilir: birim doz çekmecenin her gözünde ayrı
-// ayrı (per-cell), ya da tüm gözler için ortak tek bir tarih (singleMiad).
-// Kullanıcı hangi modu seçtiyse (bkz. isPerCellMiadEnabled — UI katmanında),
-// per-cell alan boş kaldığında singleMiad'a bakılır; bu davranış üç işlemde
-// de aynıdır.
+// Stok okuma kuralları:
+//   - Kübik: pozitif miktarlı kayıtlar arasında EN ERKEN SKT.
+//   - Birim doz: her kayıt `corpartmentNo`'suna göre göze düşer; aynı göze
+//     birden fazla kayıt gelirse miktarlar toplanır, en erken SKT alınır.
+//   - Miktarı sıfır olan kayıtların ve boş göz işaret tarihinin (2099)
+//     SKT'si yok sayılır.
 //
-// Backend'den gelen ham miktar (ml cinsinden) her zaman
-// `medicine.fromFillingBackendValue` ile gösterim değerine (adet) çevrilir;
-// `currentQuantity` de her zaman `assignment.toDisplayQuantity` kullanır —
-// üç işlemde de kullanıcı hep aynı birimi (adet) görür ve girer.
-//
-// Kullanım: `CabinOperationTarget.fromAssignment(assignment, refillTargetConfig)`
-// gibi ilgili config ile üretilir; `withCubicCount`/`withStepFilling` vb.
-// ile kullanıcı girdisi işlenir; `isValid`/`hasEntry` ile queue/job
-// katmanına geçirilecek durum sorgulanır.
+// Sayım alanı [countType]'a göre başlar: normal → kayıttaki stok, kör/yok →
+// boş. Kayıttaki stok ayrıca [CabinOperationStepEntry.recordedQuantity]'de
+// tutulur — çıkarma üst sınırı kullanıcının sayımına değil ona bakar.
 //
 // Saf domain — Flutter bağımsız.
 //
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
-/// Bir birim doz çekmecesinin tek bir gözünün (step) girdisi.
+/// Backend'in boş göz için beklediği işaret tarihi — gerçek bir SKT değildir.
+final DateTime kEmptyCellMiad = DateTime(2099, 12, 31);
+
+bool _isMeaningfulMiad(DateTime? d) => d != null && d.year < kEmptyCellMiad.year;
+
+DateTime? _earlier(DateTime? a, DateTime? b) {
+  if (a == null) return b;
+  if (b == null) return a;
+  return b.isBefore(a) ? b : a;
+}
+
+/// Birim doz çekmecesinin tek bir gözünün girdisi.
 class CabinOperationStepEntry {
-  const CabinOperationStepEntry({this.countQuantity, this.secondaryQuantity, this.miadDate});
+  const CabinOperationStepEntry({this.countQuantity, this.secondaryQuantity, this.miadDate, this.recordedQuantity = 0});
 
-  /// Fiziksel sayım (bu gözde şu an kaç adet var).
+  /// Kullanıcının sayımı. Kör sayımda / sayımsız ilaçta girilene kadar null.
   final double? countQuantity;
 
-  /// Opsiyonel ikincil miktar — dolumda konulacak, boşaltmada çıkarılacak
-  /// miktar. `config.hasSecondaryField == false` olan işlemlerde (sayım)
-  /// bu alan hiç okunmaz.
+  /// İşleme özgü miktar — dolumda konulacak, boşaltma/imhada çıkarılacak,
+  /// alımda alınacak (plandan, salt okunur).
   final double? secondaryQuantity;
 
   final DateTime? miadDate;
+
+  /// Bu gözün kayıttaki stoğu (adet) — kullanıcı değiştiremez.
+  final double recordedQuantity;
 
   CabinOperationStepEntry copyWith({
     double? countQuantity,
     double? secondaryQuantity,
     DateTime? miadDate,
     bool clearMiad = false,
-  }) {
-    return CabinOperationStepEntry(
-      countQuantity: countQuantity ?? this.countQuantity,
-      secondaryQuantity: secondaryQuantity ?? this.secondaryQuantity,
-      miadDate: clearMiad ? null : (miadDate ?? this.miadDate),
-    );
-  }
+  }) => CabinOperationStepEntry(
+    countQuantity: countQuantity ?? this.countQuantity,
+    secondaryQuantity: secondaryQuantity ?? this.secondaryQuantity,
+    miadDate: clearMiad ? null : (miadDate ?? this.miadDate),
+    recordedQuantity: recordedQuantity,
+  );
 }
 
 class CabinOperationTarget implements DrawerJobTarget {
   CabinOperationTarget._({
-    required this.config,
+    required this.mode,
     required this.assignment,
     required this.isKubik,
-    required this.numberOfSteps,
     required this.cubicCount,
     required this.cubicSecondary,
     required this.cubicMiad,
     required this.steps,
     required this.singleMiad,
+    required this.countType,
     this.plannedQuantity,
-    this.refillListDetailId,
+    this.sourceId,
+    this.openUntilStep,
+    this.activeStepIndexes,
   });
 
-  /// Bu hedefin hangi işlem (dolum/sayım/boşaltma) davranışını izleyeceği.
-  final CabinOperationTargetConfig config;
+  final CabinOperationMode mode;
 
-  /// İlaç ataması — ilaç, mevcut stok, çekmece/göz geometrisi.
+  @override
   final MedicineAssignment assignment;
 
   final bool isKubik;
 
-  /// Birim doz çekmecesinin göz/kademe sayısı (kübikte 0).
-  final int numberOfSteps;
-
-  // Kübik girdileri
-  final double cubicCount;
+  /// Kübik sayım. Kör sayımda / sayımsız ilaçta girilene kadar null.
+  final double? cubicCount;
   final double cubicSecondary;
   final DateTime? cubicMiad;
 
-  /// Birim doz girdileri (numberOfSteps uzunluğunda).
+  /// Birim doz gözleri (kübikte boş).
   final List<CabinOperationStepEntry> steps;
 
-  /// Birim doz çekmecede tüm gözlere uygulanabilecek tek miad — per-cell
-  /// miad boşsa buna bakılır.
+  /// Tek SKT modunda tüm gözlere uygulanan tarih; göz tarihi boşsa buna bakılır.
   final DateTime? singleMiad;
 
-  /// Manager'ın önceden belirlediği hedef dolum miktarı. Ad-hoc refill
-  /// akışında (serbest seçim) her zaman null — sadece liste bazlı dolumda
-  /// (RefillList) doludur. UI'da salt bilgi amaçlı gösterilir, girilen
-  /// değeri KISITLAMAZ / otomatik doldurmaz.
+  /// Sayım tipi: normal (stoktan doldurulur), kör (boş başlar, girilmesi
+  /// zorunlu), yok (sayım alanı gösterilmez). Alım dışında normalCount.
+  final CountType countType;
+
+  /// Dolum listesinde planlanan miktar (adet). Diğer akışlarda null.
   final double? plannedQuantity;
 
-  /// Bu hedefin kaynaklandığı RefillListDetail.id — backend'in
-  /// /fiilingDetail/fill endpoint'i kaydı bu id ile eşleştiriyor.
-  /// Ad-hoc refill akışında her zaman null.
-  final int? refillListDetailId;
+  /// Hedefin kaynak kaydı — dolum listesinde RefillListDetail.id, alımda
+  /// reçete detay/kalem id'si. Notifier kaynak veriye bununla döner.
+  final int? sourceId;
 
-  /// Mevcut stoktan bu hedefin başlangıç değerlerini yükler. Kübik çekmecede
-  /// tek stok kaydından, birim dozda her gözün kendi stok kaydından
-  /// (`corpartmentNo` eşlemesiyle) okur.
+  /// Birim doz çekmecenin açılacağı en arka göz (1 tabanlı) — öndeki N göz
+  /// açılır. Alımda FIFO güvenliği: planın ulaştığı gözden daha arkadaki
+  /// (daha yeni) partilere erişilemez. Diğer işlemlerde null (tam açılır).
+  final int? openUntilStep;
+
+  /// İşleme dahil gözler (0 tabanlı). null → tüm gözler. Alımda yalnızca
+  /// plandaki gözler — tablo, doğrulama ve kayıt bunlara bakar.
+  final Set<int>? activeStepIndexes;
+
+  @override
+  int? get explicitTargetStep => openUntilStep;
+
+  bool isStepActive(int index) => activeStepIndexes?.contains(index) ?? true;
+
+  Iterable<int> get _activeIndexes sync* {
+    for (var i = 0; i < steps.length; i++) {
+      if (isStepActive(i)) yield i;
+    }
+  }
+
+  bool get showsCount => mode.hasCountField && countType != CountType.noCount;
+
   factory CabinOperationTarget.fromAssignment(
     MedicineAssignment assignment,
-    CabinOperationTargetConfig config, {
+    CabinOperationMode mode, {
+    CountType countType = CountType.normalCount,
     double? plannedQuantity,
-    int? refillListDetailId,
+    int? sourceId,
   }) {
-    final isKubik = assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
-    final numberOfSteps = assignment.drawerUnit?.drawerSlot?.drawerConfig?.numberOfSteps ?? 0;
-    final medicine = assignment.medicine;
+    assert(mode.usesEntryTarget, '$mode kabin işlem target\'ı kullanmaz');
 
-    double convert(double raw) => medicine != null ? medicine.fromFillingBackendValue(raw) : raw;
+    final drawerConfig = assignment.drawerUnit?.drawerSlot?.drawerConfig;
+    final isKubik = drawerConfig?.drawerType?.isKubik ?? false;
+    final stocks = assignment.stocks ?? const <CabinStock>[];
+
+    // Kör sayımda ve sayımsız ilaçta kayıttaki miktar kullanıcıya önceden
+    // gösterilmez — sayım alanı boş başlar.
+    final prefillCount = countType == CountType.normalCount;
 
     if (isKubik) {
-      final kubik = CabinOperationStockResolver.resolveKubik(assignment: assignment, countConverter: convert);
+      DateTime? miad;
+      for (final s in stocks) {
+        if ((s.quantity ?? 0) > 0 && _isMeaningfulMiad(s.miadDate)) miad = _earlier(miad, s.miadDate);
+      }
       return CabinOperationTarget._(
-        config: config,
+        mode: mode,
         assignment: assignment,
         isKubik: true,
-        numberOfSteps: 0,
-        cubicCount: kubik.count,
+        cubicCount: prefillCount ? assignment.totalQuantity : null,
         cubicSecondary: 0,
-        cubicMiad: kubik.miadDate,
+        cubicMiad: miad,
         steps: const [],
-        singleMiad: kubik.miadDate,
+        singleMiad: miad,
+        countType: countType,
         plannedQuantity: plannedQuantity,
-        refillListDetailId: refillListDetailId,
+        sourceId: sourceId,
       );
     }
 
-    final (stockSteps, earliestMiad) = CabinOperationStockResolver.resolveSteps(
-      assignment: assignment,
-      numberOfSteps: numberOfSteps,
-      countConverter: convert,
-    );
-    final entries = List.generate(numberOfSteps, (_) => const CabinOperationStepEntry());
-    for (final s in stockSteps) {
-      entries[s.index] = entries[s.index].copyWith(countQuantity: s.count, miadDate: s.miadDate);
+    final stepCount = drawerConfig?.numberOfSteps ?? 0;
+    final quantities = List<double>.filled(stepCount, 0);
+    final miads = List<DateTime?>.filled(stepCount, null);
+
+    for (final s in stocks) {
+      final i = (s.corpartmentNo ?? 0) - 1;
+      if (i < 0 || i >= stepCount) continue; // tutarsız/eski veri
+      final qty = (s.quantity ?? 0).toDouble();
+      quantities[i] += qty;
+      if (qty > 0 && _isMeaningfulMiad(s.miadDate)) miads[i] = _earlier(miads[i], s.miadDate);
     }
 
     return CabinOperationTarget._(
-      config: config,
+      mode: mode,
       assignment: assignment,
       isKubik: false,
-      numberOfSteps: numberOfSteps,
-      cubicCount: 0,
+      cubicCount: null,
       cubicSecondary: 0,
       cubicMiad: null,
-      steps: entries,
-      singleMiad: earliestMiad,
+      steps: List.generate(
+        stepCount,
+        (i) => CabinOperationStepEntry(
+          countQuantity: prefillCount ? quantities[i] : null,
+          miadDate: miads[i],
+          recordedQuantity: quantities[i],
+        ),
+      ),
+      singleMiad: miads.fold<DateTime?>(null, _earlier),
+      countType: countType,
       plannedQuantity: plannedQuantity,
-      refillListDetailId: refillListDetailId,
+      sourceId: sourceId,
     );
   }
 
-  DrawerUnit? get unit => assignment.drawerUnit;
-  int? get unitId => assignment.cabinDrawerId;
+  int get numberOfSteps => steps.length;
 
-  /// Mevcut stok, gösterim birimi (adet) cinsinden.
-  double get currentQuantity => assignment.toDisplayQuantity(assignment.totalQuantity);
+  /// Kayıttaki mevcut stok (adet).
+  double get currentQuantity => assignment.totalQuantity;
 
-  /// Bir "girdi"nin kaydetmeye değer olup olmadığını, config'e göre doğru
-  /// alandan (secondary varsa secondary, yoksa primary) okur.
-  double _entryValue({required double count, required double secondary}) =>
-      config.hasSecondaryField ? secondary : count;
+  double _entryValue(double? count, double? secondary) => (mode.hasSecondaryField ? secondary : count) ?? 0;
 
-  /// Kaydetmeye değer en az bir girdi var mı.
+  bool hasEntryAt(int index) => _entryValue(steps[index].countQuantity, steps[index].secondaryQuantity) > 0;
+
   bool get hasEntry {
-    if (isKubik) return _entryValue(count: cubicCount, secondary: cubicSecondary) > 0;
-    return steps.any((s) => _entryValue(count: s.countQuantity ?? 0, secondary: s.secondaryQuantity ?? 0) > 0);
+    if (isKubik) return _entryValue(cubicCount, cubicSecondary) > 0;
+    return _activeIndexes.any(hasEntryAt);
   }
 
-  /// Bu hedef backend'e gönderilmeye hazır mı — girdi olan her yerde miad
-  /// (per-cell ya da singleMiad fallback'i üzerinden) girilmiş olmalı.
+  /// Kayda hazır mı:
+  ///   1. SKT isteyen işlemlerde girdi olan her yerde geçerli ve GEÇMEMİŞ SKT
+  ///      (backend'in kontrolüyle aynı kural).
+  ///   2. Kör sayımda aktif her yerde sayım girilmiş olmalı.
+  ///   3. Stoktan çıkaran işlemlerde KAYITTAKİ miktardan fazlası çıkarılamaz.
   bool get isValid {
-    if (isKubik) {
-      return _entryValue(count: cubicCount, secondary: cubicSecondary) <= 0 || cubicMiad != null;
+    if (mode.requiresMiad) {
+      if (isKubik) {
+        if (_entryValue(cubicCount, cubicSecondary) > 0 && (cubicMiad == null || cubicMiad.isExpiredMiad)) {
+          return false;
+        }
+      } else {
+        for (final i in _activeIndexes) {
+          if (!hasEntryAt(i)) continue;
+          final miad = steps[i].miadDate ?? singleMiad;
+          if (miad == null || miad.isExpiredMiad) return false;
+        }
+      }
     }
-    for (final s in steps) {
-      final entered = _entryValue(count: s.countQuantity ?? 0, secondary: s.secondaryQuantity ?? 0) > 0;
-      if (entered && s.miadDate == null && singleMiad == null) return false;
+
+    if (showsCount && countType == CountType.blindCount) {
+      final missing = isKubik ? cubicCount == null : _activeIndexes.any((i) => steps[i].countQuantity == null);
+      if (missing) return false;
     }
+
+    if (mode.removesFromStock) {
+      final exceeds = isKubik
+          ? cubicSecondary > currentQuantity
+          : _activeIndexes.any((i) => (steps[i].secondaryQuantity ?? 0) > steps[i].recordedQuantity);
+      if (exceeds) return false;
+    }
+
     return true;
   }
 
-  // ── copyWith ────────────────────────────────────────────────────────────
+  // ── Değişiklikler ────────────────────────────────────────────────────
 
   CabinOperationTarget _copy({
     double? cubicCount,
@@ -208,45 +263,49 @@ class CabinOperationTarget implements DrawerJobTarget {
     List<CabinOperationStepEntry>? steps,
     DateTime? singleMiad,
     bool clearSingleMiad = false,
-    double? plannedQuantity,
-    int? refillListDetailId,
-  }) {
-    return CabinOperationTarget._(
-      config: config,
-      assignment: assignment,
-      isKubik: isKubik,
-      numberOfSteps: numberOfSteps,
-      cubicCount: cubicCount ?? this.cubicCount,
-      cubicSecondary: cubicSecondary ?? this.cubicSecondary,
-      cubicMiad: clearCubicMiad ? null : (cubicMiad ?? this.cubicMiad),
-      steps: steps ?? this.steps,
-      singleMiad: clearSingleMiad ? null : (singleMiad ?? this.singleMiad),
-      plannedQuantity: plannedQuantity ?? this.plannedQuantity,
-      refillListDetailId: refillListDetailId ?? this.refillListDetailId,
-    );
-  }
+    int? openUntilStep,
+    Set<int>? activeStepIndexes,
+  }) => CabinOperationTarget._(
+    mode: mode,
+    assignment: assignment,
+    isKubik: isKubik,
+    cubicCount: cubicCount ?? this.cubicCount,
+    cubicSecondary: cubicSecondary ?? this.cubicSecondary,
+    cubicMiad: clearCubicMiad ? null : (cubicMiad ?? this.cubicMiad),
+    steps: steps ?? this.steps,
+    singleMiad: clearSingleMiad ? null : (singleMiad ?? this.singleMiad),
+    countType: countType,
+    plannedQuantity: plannedQuantity,
+    sourceId: sourceId,
+    openUntilStep: openUntilStep ?? this.openUntilStep,
+    activeStepIndexes: activeStepIndexes ?? this.activeStepIndexes,
+  );
 
   CabinOperationTarget withCubicCount(double v) => _copy(cubicCount: v);
   CabinOperationTarget withCubicSecondary(double v) => _copy(cubicSecondary: v);
   CabinOperationTarget withCubicMiad(DateTime? d) => _copy(cubicMiad: d, clearCubicMiad: d == null);
-  CabinOperationTarget withSingleMiad(DateTime? d) => _copy(singleMiad: d, clearSingleMiad: d == null);
 
-  CabinOperationTarget withStepCount(int index, double v) => _copyStep(index, (s) => s.copyWith(countQuantity: v));
-  CabinOperationTarget withStepSecondary(int index, double v) =>
-      _copyStep(index, (s) => s.copyWith(secondaryQuantity: v));
-  CabinOperationTarget withStepMiad(int index, DateTime? d) =>
-      _copyStep(index, (s) => s.copyWith(miadDate: d, clearMiad: d == null));
+  /// Tek SKT modu: ortak tarihi tüm gözlere (boş olanlar dahil) yazar.
+  CabinOperationTarget withSharedMiad(DateTime? d) => _copy(
+    singleMiad: d,
+    clearSingleMiad: d == null,
+    steps: [for (final s in steps) s.copyWith(miadDate: d, clearMiad: d == null)],
+  );
 
-  CabinOperationTarget _copyStep(int index, CabinOperationStepEntry Function(CabinOperationStepEntry) update) {
-    if (index < 0 || index >= steps.length) return this;
+  CabinOperationTarget withStepCount(int i, double v) => _copyStep(i, (s) => s.copyWith(countQuantity: v));
+  CabinOperationTarget withStepSecondary(int i, double v) => _copyStep(i, (s) => s.copyWith(secondaryQuantity: v));
+  CabinOperationTarget withStepMiad(int i, DateTime? d) =>
+      _copyStep(i, (s) => s.copyWith(miadDate: d, clearMiad: d == null));
+
+  /// Alım planı: yalnızca [activeSteps] gözleri işleme dahil, çekmece
+  /// [openUntilStep]'e kadar açılır.
+  CabinOperationTarget withIntakePlan({required Set<int> activeSteps, required int openUntilStep}) =>
+      _copy(activeStepIndexes: activeSteps, openUntilStep: openUntilStep);
+
+  CabinOperationTarget _copyStep(int i, CabinOperationStepEntry Function(CabinOperationStepEntry) update) {
+    if (i < 0 || i >= steps.length) return this;
     final next = List<CabinOperationStepEntry>.from(steps);
-    next[index] = update(next[index]);
+    next[i] = update(next[i]);
     return _copy(steps: next);
   }
-
-  /// Dolum/sayım/boşaltmada göz her zaman sonuna kadar (tam) açılır —
-  /// kısmi açma kavramı bu üç işlemde yok. Sadece Intake'in birim-doz
-  /// akışı (güvenlik amaçlı FIFO kısıtı) bunu null'dan farklı döner.
-  @override
-  int? get explicitTargetStep => null;
 }

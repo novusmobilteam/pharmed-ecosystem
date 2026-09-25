@@ -1,66 +1,63 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract final class RefillListJobMapper {
-  static int? _physicalDrawerId(MedicineAssignment a) => a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId;
-
   static ({List<CabinOperationDrawerJob> jobs, List<RefillListDetail> skipped}) build({
     required List<RefillListDetail> rows,
-    required CabinOperationTargetConfig config,
-  }) {
-    final Map<int, List<RefillListDetail>> grouped = {};
-    final skipped = <RefillListDetail>[];
+    List<int> cabinOrder = const [],
+  }) => CabinOperationQueueBuilder.build(
+    items: rows,
+    assignmentOf: (row) => row.toCompatibleQuantity(),
+    targetOf: (row, assignment) => _withDefaultFilling(
+      CabinOperationTarget.fromAssignment(
+        assignment,
+        CabinOperationMode.refill,
+        plannedQuantity: row.quantity?.toDouble(),
+        sourceId: row.id,
+      ),
+      row,
+    ),
+    cabinOrder: cabinOrder,
+  );
 
-    for (final row in rows) {
-      final assignment = row.toCompatibleQuantity();
-      final physicalId = _physicalDrawerId(assignment);
-      if (physicalId == null) {
-        skipped.add(row);
-        continue;
-      }
-      grouped.putIfAbsent(physicalId, () => []).add(row);
+  /// Dolum alanlarına varsayılan olarak KALAN planlanan miktarı yazar —
+  /// kullanıcı ekranda değiştirebilir. Kübik: tamamı tek göze. Birim doz:
+  /// gözlere eşit, artanlar en arka gözden öne doğru.
+  static CabinOperationTarget _withDefaultFilling(CabinOperationTarget target, RefillListDetail row) {
+    // Backend biriminde; kısmi dolumda daha önce doldurulan düşülür.
+    final remainingBackend = ((row.quantity ?? 0) - (row.fillingQuantity ?? 0)).toDouble();
+    if (remainingBackend <= 0) return target;
+
+    // fromAssignment'taki stok dönüşümüyle AYNI fonksiyon — sayım ve dolum
+    // alanları aynı birimde (adet) görünsün.
+    final medicine = target.assignment.medicine;
+    final remaining = medicine != null ? medicine.fromFillingBackendValue(remainingBackend) : remainingBackend;
+
+    if (target.isKubik) return target.withCubicSecondary(remaining);
+
+    final stepCount = target.steps.length;
+    if (stepCount == 0) return target;
+
+    final whole = remaining.floor();
+    final fraction = remaining - whole;
+    final perCell = distributeFromBack(whole, stepCount);
+
+    var result = target;
+    for (var i = 0; i < stepCount; i++) {
+      // Tam sayıya bölünemeyen kesir (nadir) en arka göze eklenir.
+      final value = perCell[i] + (i == stepCount - 1 ? fraction : 0.0);
+      if (value > 0) result = result.withStepSecondary(i, value);
     }
-
-    final jobs = <CabinOperationDrawerJob>[];
-    grouped.forEach((physicalId, rowsInDrawer) {
-      rowsInDrawer.sort(_compareByCellPosition);
-
-      final targets = rowsInDrawer
-          .map(
-            (row) => CabinOperationTarget.fromAssignment(
-              row.toCompatibleQuantity(),
-              config,
-              plannedQuantity: row.quantity?.toDouble(),
-              refillListDetailId: row.id,
-            ),
-          )
-          .toList();
-
-      final representative = rowsInDrawer.first.toCompatibleQuantity();
-      jobs.add(
-        CabinOperationDrawerJob(
-          cabinDrawerId: physicalId,
-          representativeAssignment: representative,
-          targets: targets,
-          cabinId: representative.drawerUnit?.drawerSlot?.cabinId,
-        ),
-      );
-    });
-
-    jobs.sort((a, b) => _compareByDrawerPosition(a.representativeAssignment, b.representativeAssignment));
-    return (jobs: jobs, skipped: skipped);
+    return result;
   }
 
-  static int _compareByDrawerPosition(MedicineAssignment a, MedicineAssignment b) {
-    final orderA = a.drawerUnit?.drawerSlot?.orderNumber ?? _physicalDrawerId(a) ?? 0;
-    final orderB = b.drawerUnit?.drawerSlot?.orderNumber ?? _physicalDrawerId(b) ?? 0;
-    return orderA.compareTo(orderB);
-  }
-
-  static int _compareByCellPosition(RefillListDetail a, RefillListDetail b) {
-    final ua = a.cabinAssignment?.drawerUnit;
-    final ub = b.cabinAssignment?.drawerUnit;
-    final byOrder = (ua?.orderNo ?? 0).compareTo(ub?.orderNo ?? 0);
-    if (byOrder != 0) return byOrder;
-    return (ua?.compartmentNo ?? ua?.id ?? 0).compareTo(ub?.compartmentNo ?? ub?.id ?? 0);
+  /// [total] adedi [cellCount] göze eşit dağıtır. Bölümden artan adetler en
+  /// arka gözden (en yüksek indeks) başlayarak birer birer eklenir.
+  /// Örn. 10 adet / 12 göz → [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  static List<int> distributeFromBack(int total, int cellCount) {
+    if (cellCount <= 0) return const [];
+    if (total <= 0) return List.filled(cellCount, 0);
+    final base = total ~/ cellCount;
+    final remainder = total % cellCount;
+    return List.generate(cellCount, (i) => base + (i >= cellCount - remainder ? 1 : 0));
   }
 }

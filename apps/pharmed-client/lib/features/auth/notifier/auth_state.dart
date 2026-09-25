@@ -17,27 +17,24 @@ final class AuthLoggedOut extends AuthState {
 
 /// Giriş işlemi devam ediyor.
 final class AuthLoading extends AuthState {
-  const AuthLoading();
+  /// Giriş kilitli dashboard'daki modal'dan yapılıyorsa `true` — router
+  /// bu sürede dashboard'u korur.
+  const AuthLoading({this.showLockedDashboard = false});
+
+  final bool showLockedDashboard;
 }
 
 /// Giriş başarılı, oturum aktif.
 final class AuthLoggedIn extends AuthState {
-  const AuthLoggedIn({required this.user, required this.sessionExpiresAt});
+  const AuthLoggedIn({required this.user});
 
   final AppUser user;
-  final DateTime sessionExpiresAt;
-}
-
-/// [HAZ-009] Oturum süresi bitiyor — kullanıcı uyarılmalı
-final class AuthSessionExpiring extends AuthState {
-  const AuthSessionExpiring({required this.user, required this.secondsRemaining});
-  final AppUser user;
-  final int secondsRemaining;
 }
 
 /// Login endpoint hatası — ekranda mesaj gösterilir.
 final class AuthError extends AuthState {
-  const AuthError({required this.message});
+  const AuthError({required this.message, this.showLockedDashboard = false});
 
   final String message;
+  final bool showLockedDashboard;
 }

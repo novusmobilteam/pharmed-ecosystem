@@ -137,24 +137,19 @@ class RefillListFormNotifier extends ChangeNotifier with ApiRequestMixin {
       final id = candidate.medicine?.id;
       if (id == null || _selections.containsKey(id)) continue;
 
-      final current = candidate.medicine?.fromFillingBackendValue(candidate.quantity.toDouble()) ?? 0.0;
       final limits = candidate.assignment;
-      num target = 0;
+      if (limits == null) continue; // eşik bilinmeden hedef hesaplanamaz
 
-      switch (_fillingType) {
-        case RefillType.min:
-          target = (limits?.minQuantityFromBackend ?? 0) - current;
-        case RefillType.max:
-          target = (limits?.maxQuantityFromBackend ?? 0) - current;
-        case RefillType.critic:
-          target = (limits?.critQuantityFromBackend ?? 0) - current;
-        case RefillType.all:
-          break;
-      }
+      // Stok ve eşikler adet — çevrim yok.
+      final threshold = switch (_fillingType) {
+        RefillType.min => limits.minQuantity,
+        RefillType.max => limits.maxQuantity,
+        RefillType.critic => limits.criticalQuantity,
+        RefillType.all => 0,
+      };
+      final target = threshold - candidate.quantity;
 
-      if (target > 0) {
-        _setSelection(candidate, target.toDouble(), isAuto: true);
-      }
+      if (target > 0) _setSelection(candidate, target.toDouble(), isAuto: true);
     }
   }
 

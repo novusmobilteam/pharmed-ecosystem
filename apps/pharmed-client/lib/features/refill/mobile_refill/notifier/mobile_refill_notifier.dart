@@ -7,7 +7,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
-import '../../refill.dart';
+import 'mobile_refill_state.dart';
 
 // Kabinde olan ilaçlar => Snapshottan gelir => baselineEpcs
 // Dolum yapılacak ilaçlar => Kullanıcının seçiminde gelir => expectedEpcs

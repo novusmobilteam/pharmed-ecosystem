@@ -136,9 +136,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       assignment: assignment,
       selectedStepNo: selectedStepNo,
       selectedDrug: assignment.medicine,
-      minQty: assignment.minQuantityFromBackend.toInt(),
-      maxQty: assignment.maxQuantityFromBackend.toInt(),
-      criticalQty: assignment.critQuantityFromBackend.toInt(),
+      minQty: assignment.minQuantity.toInt(),
+      maxQty: assignment.maxQuantity.toInt(),
+      criticalQty: assignment.criticalQuantity.toInt(),
       medicinePage: medicinePage,
       equivalentMedicinePage: const MedicinePageState(pageSize: _medicinePageSize),
       listMode: initialMode,
@@ -408,11 +408,11 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     required int cabinId,
     required List<MedicineAssignment> assignments,
   }) {
-    if (unitId == null) return MedicineAssignment.empty(cabinId: cabinId, cabinDrawerId: 0);
+    if (unitId == null) return MedicineAssignment.empty(cabinDrawerId: 0);
     try {
       return assignments.firstWhere((a) => a.cabinDrawerId == unitId);
     } catch (_) {
-      return MedicineAssignment.empty(cabinId: cabinId, cabinDrawerId: unitId);
+      return MedicineAssignment.empty(cabinDrawerId: unitId);
     }
   }
 

@@ -122,9 +122,10 @@ class RightPanel extends StatelessWidget {
                       context: context,
                       barrierDismissible: false,
                       builder: (_) => IntakeCheckDialog(
-                        onQueueReady: (jobs) {
+                        onQueueReady: (jobs, plans) {
                           executionNotifier.start(
                             jobs,
+                            plans: plans,
                             intakeType: intakeSelectionNotifier.intakeType,
                             hospitalizationId: intakeSelectionNotifier.hospitalization?.id,
                           );
@@ -255,7 +256,10 @@ class IntakeItemsListView extends StatelessWidget {
       return Center(child: MedLoadingIndicator());
     }
     if (notifier.hospitalization == null) {
-      return NoSelectedHospitalizationView();
+      return EmptySelectionView(
+        title: context.l10n.common_noPatientSelectedEmptyTitle,
+        description: context.l10n.intake_selectionEmptyDescription,
+      );
     }
 
     if (notifier.intakeItems.isEmpty) {

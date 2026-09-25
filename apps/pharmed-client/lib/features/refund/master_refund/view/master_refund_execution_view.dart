@@ -62,7 +62,7 @@ class _RefundConfirmForm extends StatelessWidget {
 
     return CabinExecutionGridCard(
       assignment: representative.assignment,
-      current: representative.assignment.toDisplayQuantity(representative.assignment.totalQuantity),
+      current: representative.assignment.totalQuantity,
       density: (job.isKubik || job.isReturnDrawer) ? MedValueCardDensity.comfortable : MedValueCardDensity.compact,
       fields: [
         MedValueCard(

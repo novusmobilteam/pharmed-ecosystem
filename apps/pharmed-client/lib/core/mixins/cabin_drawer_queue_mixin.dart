@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:pharmed_client/core/mixins/master_drawer_execution_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../hardware/hardware.dart';
 
@@ -64,6 +65,12 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   /// job'u gösterdiği için +1 YOK — orijinal MasterRefundExecuting.progress
   /// ile birebir aynı hesap.
   double get progress => _jobs.isEmpty ? 0 : _currentIndex / _jobs.length;
+
+  bool _stopRequested = false;
+  bool _closeRequestedForStop = false;
+
+  /// Kullanıcı durdurmayı onayladı, çekmecenin kapanması bekleniyor.
+  bool get isStopping => _stopRequested;
 
   void dismissQueueError() {
     _failure = null;
@@ -125,15 +132,6 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     final job = currentJob;
     if (job == null || !job.isKubik) return;
     openCubicLid(job.targets[_currentTargetIndex].assignment);
-  }
-
-  @override
-  void onDrawerClosed() => unawaited(_advanceAfterClose());
-
-  @override
-  void onDrawerFailed(MasterDrawerFailure failure, String? detail) {
-    if (!isExecuting) return;
-    setQueueFailure(CabinMasterDrawerFailure(failure: failure, detail: detail), isQueueError: true);
   }
 
   /// Fiziksel kapanış GERÇEKLEŞTİKTEN SONRA, kuyruk ilerlemeden HEMEN ÖNCE
@@ -233,14 +231,26 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
-  Future<void> abortAfterError() async {
-    await stopDrawer();
-    _finishQueue();
-  }
+  Future<void> stopQueue() => _stopDrawerThenFinish(reason: 'stopQueue');
 
-  Future<void> stopQueue() async {
-    await stopDrawer();
-    _finishQueue();
+  Future<void> abortAfterError() => _stopDrawerThenFinish(reason: 'abortAfterError');
+
+  /// Donanım durdurma başarısız olsa ya da hata fırlatsa bile kuyruk
+  /// SONLANDIRILIR — kullanıcının durdurma kararı donanımın cevabına bağlı
+  /// kalmamalı. Hata loglanır; oturum bir sonraki işlemde yeniden başlatılır.
+  Future<void> _stopDrawerThenFinish({required String reason}) async {
+    try {
+      await stopDrawer();
+    } catch (e) {
+      MedLogger.warn(
+        unit: 'CabinDrawerQueue',
+        swreq: 'SWREQ-CLI-DRAWER-QUEUE-MIXIN-001',
+        message: 'Çekmece durdurulamadı, kuyruk yine de sonlandırıldı',
+        context: {'reason': reason, 'error': e.toString(), 'stage': drawerStage.toString()},
+      );
+    } finally {
+      _finishQueue();
+    }
   }
 
   List<TJob> _withStatus(int index, CabinOperationJobStatus status) {
@@ -282,6 +292,8 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   VoidCallback? onQueueFinished;
 
   void _finishQueue() {
+    _stopRequested = false;
+    _closeRequestedForStop = false;
     _jobs = const [];
     _currentIndex = 0;
     _currentTargetIndex = 0;
@@ -297,4 +309,55 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   /// ettirmek için. onBeforeAdvanceAfterClose TEKRAR çağrılmaz — çağıran taraf
   /// ilerlemeye izin verildiğini garanti eder.
   Future<void> resumeAfterBlockedAdvance() => _completeCurrentJobAndAdvance();
+
+  /// Footer'ın "Durdur" onayından sonra çağrılır. Çekmece kapalıysa hemen
+  /// durdurur; açıksa önce kapanışı resmi olarak ister (confirmDrawerClose),
+  /// kapanınca durdurur. stop() açık çekmecede kapanışı beklediği için
+  /// doğrudan çağrılmaz.
+  Future<void> requestStop() async {
+    if (!isExecuting || _stopRequested) return;
+
+    final stage = drawerStage;
+    if (!stage.isActive || stage is MasterDrawerLidFailed) {
+      await stopQueue();
+      return;
+    }
+
+    _stopRequested = true;
+    notifyListeners();
+    _requestCloseForStop(stage);
+  }
+
+  /// Stage Opened olur olmaz kapanışı TEK SEFER ister. Durdurma açılma/kapak
+  /// geçişi sırasında istendiyse burada no-op kalır, Opened'a ulaşınca
+  /// onStageChanged tekrar dener.
+  void _requestCloseForStop(MasterDrawerStage stage) {
+    if (_closeRequestedForStop || stage is! MasterDrawerOpened) return;
+    _closeRequestedForStop = true;
+    confirmDrawerClose();
+  }
+
+  @override
+  void onStageChanged(MasterDrawerStage? previous, MasterDrawerStage current) {
+    if (!_stopRequested) return;
+    _requestCloseForStop(current);
+
+    // Çekmece artık aktif değil (kapandı / boşta / hata) → gerçek durdurma.
+    if (!current.isActive) {
+      _stopRequested = false; // tekrar tetiklenmesin
+      unawaited(stopQueue());
+    }
+  }
+
+  @override
+  void onDrawerClosed() {
+    if (_stopRequested) return; // durdurma onStageChanged'de ele alınıyor
+    unawaited(_advanceAfterClose());
+  }
+
+  @override
+  void onDrawerFailed(MasterDrawerFailure failure, String? detail) {
+    if (!isExecuting || _stopRequested) return; // durdururken hata dialog'u açılmasın
+    setQueueFailure(CabinMasterDrawerFailure(failure: failure, detail: detail), isQueueError: true);
+  }
 }

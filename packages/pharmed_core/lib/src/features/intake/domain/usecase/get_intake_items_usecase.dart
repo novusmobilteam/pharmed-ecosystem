@@ -162,13 +162,18 @@ class GetIntakeItemsUseCase {
         stocks: resolvedAssignment.stocks?.where((s) => s.materialId == task.medicine?.id).toList(),
       );
 
+      final medicine = task.medicine;
+      final prescribed = task.dosePiece.toDouble();
+      // Reçete dozu ölçü birimli ilaçta ml — alınacak miktar ADET'e çevrilir.
+      final pieces = medicine is Drug ? medicine.dosePieces(prescribed) : prescribed;
+
       return IntakeItem(
         id: task.id,
         type: IntakeType.ordered,
         assignment: filteredAssignment,
-        medicine: task.medicine,
-        dosePiece: task.dosePiece.toDouble(),
-        prescriptionDose: task.dosePiece.toDouble(),
+        medicine: medicine,
+        dosePiece: pieces,
+        prescriptionDose: prescribed,
         witnessContext: _witnessContextFor(task.medicine, witnessMap),
         lastMovement: task.lastMovement,
         firstDoseEmergency: task.firstDoseEmergency,

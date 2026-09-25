@@ -7,9 +7,10 @@ import '../dashboard/dashboard.dart';
 import 'unload.dart';
 
 class UnloadView extends ConsumerWidget {
-  const UnloadView({super.key, required this.cabinRouteContext});
+  const UnloadView({super.key, required this.cabinRouteContext, required this.stationContext});
 
   final CabinRouteContext cabinRouteContext;
+  final StationCabinsContext stationContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +18,7 @@ class UnloadView extends ConsumerWidget {
     final cabinData = cabinRouteContext.cabinData;
 
     return switch (deviceMode) {
-      CabinType.master => MasterUnloadView(cabinContext: cabinRouteContext),
+      CabinType.master => MasterUnloadView(cabinContext: cabinRouteContext, stationContext: stationContext),
       CabinType.mobile => MobileUnloadView(data: cabinData),
       _ => const Center(child: MedLoadingIndicator()),
     };

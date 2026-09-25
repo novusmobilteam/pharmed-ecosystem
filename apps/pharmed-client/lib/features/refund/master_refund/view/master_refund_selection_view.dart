@@ -69,7 +69,14 @@ class _RightPanel extends StatelessWidget {
       child: Builder(
         builder: (context) {
           if (notifier.isLoading(notifier.fetchRefundablesOp)) return Center(child: MedLoadingIndicator());
-          if (notifier.selectedHospitalization == null) return Center(child: NoSelectedHospitalizationView());
+          if (notifier.selectedHospitalization == null) {
+            return Center(
+              child: EmptySelectionView(
+                title: context.l10n.common_noPatientSelectedEmptyTitle,
+                description: context.l10n.refund_selectionEmptyDescription,
+              ),
+            );
+          }
           if (notifier.selectedHospitalization != null && notifier.refundables.isEmpty) {
             return Center(
               child: NoDataView(

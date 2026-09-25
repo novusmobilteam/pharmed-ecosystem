@@ -6,6 +6,7 @@ import 'package:pharmed_client/core/mixins/witness_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../../../core/cache/witness_session_store.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../auth/auth.dart';
 import '../../../dashboard/dashboard.dart';
@@ -33,7 +34,8 @@ extension DisposeTypeX on DisposeType {
 
 final masterWasteSelectionNotifierProvider = ChangeNotifierProvider<MasterWasteNotifier>((ref) {
   return MasterWasteNotifier(
-    ref: ref,
+    authNotifier: ref.read(authNotifierProvider.notifier),
+    witnessStore: ref.read(witnessSessionStoreProvider),
     getDisposables: ref.read(getMasterDisposablesUseCaseProvider),
     getStation: ref.read(getCurrentStationUseCaseProvider),
     wastage: ref.read(masterWastageUseCaseProvider),
@@ -43,22 +45,23 @@ final masterWasteSelectionNotifierProvider = ChangeNotifierProvider<MasterWasteN
 
 class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMixin<DisposableItem> {
   MasterWasteNotifier({
-    required Ref ref,
+    required AuthNotifier authNotifier,
+    required WitnessSessionStore witnessStore,
     required GetMasterDisposablesUseCase getDisposables,
     required GetCurrentStationUseCase getStation,
     required MasterWastageUseCase wastage,
     required MasterDestructionUseCase destruction,
-  }) : _ref = ref,
+  }) : _authNotifier = authNotifier,
+       _witnessStore = witnessStore,
        _getDisposables = getDisposables,
-
        _wastage = wastage,
        _destruction = destruction;
 
-  final Ref _ref;
+  final AuthNotifier _authNotifier;
   final GetMasterDisposablesUseCase _getDisposables;
-
   final MasterWastageUseCase _wastage;
   final MasterDestructionUseCase _destruction;
+  final WitnessSessionStore _witnessStore;
 
   final OperationKey fetchDisposablesOp = OperationKey.custom('fetch-disposables');
   final OperationKey submitOp = OperationKey.submit();
@@ -100,6 +103,9 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMi
   Future<void> init(StationCabinsContext ctx) async {
     _currentStation = ctx.station;
   }
+
+  @override
+  WitnessSessionStore get witnessStore => _witnessStore;
 
   void clearSelection() {
     _selectedHospitalization = null;
@@ -237,7 +243,7 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMi
   }
 
   @override
-  int? get currentWitnessUserId => _ref.read(authNotifierProvider.notifier).currentUser?.id;
+  int? get currentWitnessUserId => _authNotifier.currentUser?.id;
 
   @override
   int idOf(DisposableItem item) => item.id;

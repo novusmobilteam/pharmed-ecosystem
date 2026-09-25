@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +9,14 @@ import 'package:pharmed_client/core/providers/providers.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../../../core/cache/witness_session_store.dart';
 import '../../../../core/mixins/witness_mixin.dart';
 import '../../../auth/auth.dart';
 import '../../../dashboard/dashboard.dart';
 
 final masterIntakeSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterIntakeSelectionNotifier>((ref) {
+  ref.onDispose(() => debugPrint('MasterIntakeSelectionNotifier DISPOSED'));
+
   return MasterIntakeSelectionNotifier(
     authNotifier: ref.read(authNotifierProvider.notifier),
     getIntakeItemsUseCase: ref.read(getIntakeItemsUseCaseProvider),
@@ -24,6 +28,7 @@ final masterIntakeSelectionNotifierProvider = ChangeNotifierProvider.autoDispose
     checkIntakeUseCase: ref.read(checkIntakeUseCaseProvider),
     checkEquivalentIntakeUseCase: ref.read(checkEquivalentIntakeUseCaseProvider),
     getStationAssignmentsUseCase: ref.read(getStationAssignmentsUseCaseProvider),
+    witnessStore: ref.read(witnessSessionStoreProvider),
   );
 });
 
@@ -39,6 +44,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     required CheckIntakeUseCase checkIntakeUseCase,
     required CheckEquivalentIntakeUseCase checkEquivalentIntakeUseCase,
     required GetStationAssignmentsUseCase getStationAssignmentsUseCase,
+    required WitnessSessionStore witnessStore,
   }) : _authNotifier = authNotifier,
        _getIntakeItemsUseCase = getIntakeItemsUseCase,
        _getEquivalentsUseCase = getEquivalentsUseCase,
@@ -48,7 +54,8 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
        _getRedirectedOrdersUseCase = getRedirectedOrdersUseCase,
        _checkIntakeUseCase = checkIntakeUseCase,
        _checkEquivalentIntakeUseCase = checkEquivalentIntakeUseCase,
-       _getStationAssignmentsUseCase = getStationAssignmentsUseCase;
+       _getStationAssignmentsUseCase = getStationAssignmentsUseCase,
+       _witnessStore = witnessStore;
 
   // ── Bağımlılıklar ─────────────────────────────────────────────────────
 
@@ -86,6 +93,8 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   /// assignment'ını taşımıyor, cabinDrawerDetail.id üzerinden ayrıca
   /// aranması gerekiyor).
   final GetStationAssignmentsUseCase _getStationAssignmentsUseCase;
+
+  final WitnessSessionStore _witnessStore;
 
   /// Alım kalemlerini yeniden çekme işleminin durumunu (loading/success/failed)
   /// izlemek için — ApiRequestMixin'in genel operasyon anahtarı.
@@ -186,8 +195,11 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   /// "Serbest İlaç" toggle'ının o anki durumu — dışarıya salt-okunur.
   bool get freeDrugStatus => _freeDrugStatus;
 
+  /// Seçili kalemlerden şahit gerektirip henüz şahidi olmayan var mı.
+  bool get hasMissingWitness => selectedItems.any((it) => needsWitness(it) && witnessContextOf(it).witness == null);
+
   /// "Alıma Başla" butonu aktif olsun mu — en az bir kalem seçili olmalı.
-  bool get canStart => _selectedItemIds.isNotEmpty;
+  bool get canStart => _selectedItemIds.isNotEmpty && !hasMissingWitness;
 
   /// Bir kalem şu an seçili mi.
   bool isSelected(int itemId) => _selectedItemIds.contains(itemId);
@@ -216,20 +228,29 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   /// isLoading/isFailed/message ile birlikte kullanılır.
   OperationKey checkItemOpFor(int itemId) => OperationKey.custom('check-item-$itemId');
 
-  List<IntakeDrawerJob> _pendingJobs = const [];
+  /// Dialog'daki "Devam Et" butonu tarafından okunur — hatalı kalemler
+  /// zaten hiç bu listeye girmemişti (bkz. aşağıdaki inşa mantığı).
+  List<CabinOperationDrawerJob> _pendingJobs = const [];
+  List<CabinOperationDrawerJob> get pendingJobs => _pendingJobs;
 
   /// Hatalı kalem varken "Devam Et" butonunun aktif olup olmayacağını
   /// belirler — başarılı check'ten geçmiş hiç kalem yoksa (hepsi başarısız)
   /// devam edilecek bir şey yok.
   bool get hasSuccessfulItemsToStart => _pendingJobs.isNotEmpty;
 
-  /// Dialog'daki "Devam Et" butonu tarafından okunur — hatalı kalemler
-  /// zaten hiç bu listeye girmemişti (bkz. aşağıdaki inşa mantığı).
-  List<IntakeDrawerJob> get pendingJobs => _pendingJobs;
-
   /// WitnessMixin köprüsü — şahit kısıtı kontrolünde kullanılacak aktif kullanıcı id'si.
   @override
   int? get currentWitnessUserId => _authNotifier.currentUser?.id;
+
+  @override
+  WitnessSessionStore get witnessStore => _witnessStore;
+
+  List<IntakePlan> _pendingPlans = const [];
+  List<IntakePlan> get pendingPlans => _pendingPlans;
+
+  /// İstasyondaki kabin sırası — alım birden fazla kabine yayılabilir, kuyruk
+  /// kabin kabin ilerler.
+  List<int> _cabinOrder = const [];
 
   /// Ekran mount olduğunda bir kez çağrılır — istasyonu ve buna bağlı
   /// varsayılan ordered/orderless görünümünü set eder.
@@ -237,6 +258,10 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     final station = stationContext.station;
     _currentStation = station;
     _viewOrderStatus = (station?.drugStatus.isOrderless ?? false) ? OrderStatus.orderless : OrderStatus.ordered;
+    _cabinOrder = [
+      for (final c in stationContext.cabins)
+        if (c.id != null) c.id!,
+    ];
   }
 
   /// Ordered ↔ orderless görünüm geçişi (yalnızca `isStatusToggleVisible`
@@ -360,15 +385,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       ..clear()
       ..addAll(
         autoSelectAll
-            ? _intakeItems
-                  .where(
-                    (it) =>
-                        !it.hasNoStock &&
-                        !it.isRedirected &&
-                        !it.inCaseOfNecessity &&
-                        !(needsWitness(it) && witnessContextOf(it).witness == null),
-                  )
-                  .map((it) => it.id)
+            ? _intakeItems.where((it) => !it.hasNoStock && !it.isRedirected && !it.inCaseOfNecessity).map((it) => it.id)
             : const <int>{},
       );
 
@@ -377,8 +394,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
   /// Bir kalemi seçer/seçimden çıkarır. Stoksuz, yönlendirilmiş veya şahit
   /// gerekip henüz şahidi olmayan kalemler seçilemez. İlk seçimde dozu boş/0
-  /// olan kaleme varsayılan başlangıç dozu (1, ya da ölçü birimi ilaçlarda
-  /// `doseMeasureUnit`) atanır.
+  /// olan kaleme 1 adet atanır.
   void selectItem(int itemId) {
     if (_selectedItemIds.contains(itemId)) {
       _selectedItemIds.remove(itemId);
@@ -392,11 +408,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     if (needsWitness(item) && witnessContextOf(item).witness == null) return;
 
     if (item.dosePiece == null || item.dosePiece == 0) {
-      final medicine = item.medicine;
-      final initialDose = (medicine is Drug && medicine.isMeasureUnit)
-          ? (medicine.doseMeasureUnit?.toDouble() ?? 1.0)
-          : 1.0;
-      _intakeItems = _intakeItems.map((it) => it.id == itemId ? it.copyWith(dosePiece: initialDose) : it).toList();
+      _intakeItems = _intakeItems.map((it) => it.id == itemId ? it.copyWith(dosePiece: 1.0) : it).toList();
     }
 
     _selectedItemIds.add(itemId);
@@ -434,34 +446,29 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     notifyListeners();
   }
 
-  /// Bir kalem için geçerli olan doz aralığını (min/max) hesaplar.
-  /// `MedicalConsumable`'da yalnızca fiziksel stok limiti; `Drug`'da reçete
-  /// dozu, düşürülebilirlik (`isCanLowerDose`), günlük maks. kullanım ve
-  /// fiziksel stoğun birleşik güvenlik sınırı uygulanır.
+  /// Alım dozunun sınırları — tümü ADET cinsinden. `MedicalConsumable`'da
+  /// yalnızca stok; `Drug`'da reçete dozu, düşürülebilirlik (`isCanLowerDose`),
+  /// günlük maksimum ve stoğun birleşik sınırı. Reçete ve günlük maksimum
+  /// (ölçü birimli ilaçta ml) burada adede çevrilir; stok zaten adettir.
   ({double min, double max}) _doseBounds(IntakeItem item) {
     final medicine = item.medicine;
+    final stock = item.assignment?.totalQuantity ?? 0.0;
 
-    if (medicine is MedicalConsumable) {
-      final stockLimit = item.assignment?.toDisplayQuantity(item.assignment?.totalQuantity ?? 0) ?? 0.0;
-      return (min: 1, max: stockLimit);
-    }
+    if (medicine is MedicalConsumable) return (min: 1, max: stock);
 
     if (medicine is Drug) {
-      final bool isOrdered = _intakeType == IntakeType.ordered;
-      final bool canLower = medicine.isCanLowerDose;
-      final double upperLimitFromOrder = item.prescriptionDose ?? 0.0;
+      final isOrdered = _intakeType == IntakeType.ordered;
+      final orderedPieces = medicine.dosePieces(item.prescriptionDose ?? 0);
 
-      final double stepFloor = medicine.isMeasureUnit ? (medicine.doseMeasureUnit?.toDouble() ?? 1.0) : 1.0;
-      final double minLimit = (isOrdered && !canLower) ? upperLimitFromOrder : stepFloor;
+      final dailyMax = medicine.dailyMaxUsage ?? 0;
+      final dailyMaxPieces = dailyMax > 0 ? medicine.dosePieces(dailyMax.toDouble()) : double.infinity;
+      final safetyLimit = math.min(stock, dailyMaxPieces);
 
-      final double physicalLimit = item.assignment?.totalQuantity ?? 0.0;
-      final double dailyMax = (medicine.dailyMaxUsage ?? 0) > 0 ? medicine.dailyMaxUsage!.toDouble() : physicalLimit;
-      final double safetyLimit = physicalLimit < dailyMax ? physicalLimit : dailyMax;
-      final double finalUpperLimit = isOrdered
-          ? (upperLimitFromOrder < safetyLimit ? upperLimitFromOrder : safetyLimit)
-          : safetyLimit;
+      // Doz düşürülemiyorsa reçetedeki miktar hem alt hem üst sınırdır.
+      final minLimit = (isOrdered && !medicine.isCanLowerDose) ? orderedPieces : 1.0;
+      final maxLimit = isOrdered ? math.min(orderedPieces, safetyLimit) : safetyLimit;
 
-      return (min: minLimit, max: finalUpperLimit);
+      return (min: minLimit, max: maxLimit);
     }
 
     return (min: 0, max: double.infinity);
@@ -601,86 +608,50 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   }
 
   Future<void> startIntake({
-    required void Function(List<IntakeDrawerJob> jobs) onQueueReady,
+    required void Function(List<CabinOperationDrawerJob> jobs, List<IntakePlan> plans) onQueueReady,
     void Function(String message)? onFailed,
   }) async {
     if (!canStart || isStartingIntake) return;
 
-    final missingWitness = selectedItems.firstWhereOrNull(
-      (it) => needsWitness(it) && witnessContextOf(it).witness == null,
-    );
-    if (missingWitness != null) {
+    if (hasMissingWitness) {
       onFailed?.call(contextlessL10n().intake_error_witnessRequired);
       return;
     }
 
     setLoading(startIntakeOp);
     _pendingJobs = const [];
+    _pendingPlans = const [];
 
     final normalItems = selectedItems.where((it) => !it.isEquivalentIntake).toList();
     final equivalentItems = selectedItems.where((it) => it.isEquivalentIntake).toList();
-    final userId = _currentUser?.id ?? 0;
-    final hospitalizationId = _hospitalization?.id;
 
-    final equivalentTargets = <IntakeTarget>[];
-    List<MedicineAssignment>? allAssignments;
+    final plans = <IntakePlan>[
+      ...await _checkEquivalentItems(equivalentItems),
+      ...await _checkNormalItems(normalItems),
+    ];
 
-    for (final item in equivalentItems) {
-      setLoading(checkItemOpFor(item.id));
-
-      final result = await _checkEquivalentIntakeUseCase.call(
-        EquivalentIntakeParams(
-          prescriptionDetailId: item.id,
-          materialId: item.selectedEquivalent!.materialId ?? 0,
-          censusQuantity: item.dosePiece,
-        ),
-      );
-
-      final ok = result.when(
-        ok: (_) {
-          setSuccess(checkItemOpFor(item.id));
-          return true;
-        },
-        error: (e) {
-          setFailed(checkItemOpFor(item.id), message: e.message);
-          return false;
-        },
-      );
-
-      if (ok) {
-        allAssignments ??= (await _getStationAssignmentsUseCase.call()).when(
-          ok: (list) => list,
-          error: (_) => const <MedicineAssignment>[],
-        );
-        final target = _buildEquivalentTarget(item, allAssignments ?? []);
-        if (target != null) equivalentTargets.add(target);
+    // Plan → target. Göz çözülemeyen plan kuyruğa ALINMAZ — ya çekmece tam
+    // açılırdı (FIFO güvenliği kalkar) ya da alınmayan stok kayda giderdi.
+    final built = <({IntakePlan plan, CabinOperationTarget target})>[];
+    for (final plan in plans) {
+      final target = IntakeTargetMapper.build(plan.item, plan.details);
+      if (target == null) {
+        setFailed(checkItemOpFor(plan.item.id), message: contextlessL10n().cabinCore_targetDrawerNotFound);
+        continue;
       }
+      built.add((plan: plan, target: target));
     }
 
-    final batchResult = normalItems.isEmpty
-        ? const IntakeBatchCheckResult(targets: [], statuses: {})
-        : await _checkIntakeUseCase.callBatch(
-            type: _intakeType,
-            userId: userId,
-            hospitalizationId: hospitalizationId,
-            items: normalItems,
-            onItemStatusChanged: (itemId, status) => switch (status) {
-              CheckLoading() => setLoading(checkItemOpFor(itemId)),
-              CheckSuccess() => setSuccess(checkItemOpFor(itemId)),
-              CheckFailed(:final message) => setFailed(
-                checkItemOpFor(itemId),
-                message: message ?? contextlessL10n().intake_status_checkFailed,
-              ),
-              CheckIdle() => null,
-            },
-          );
+    _pendingPlans = [for (final b in built) b.plan];
+    _pendingJobs = CabinOperationQueueBuilder.build(
+      items: built,
+      assignmentOf: (b) => b.plan.item.assignment!,
+      targetOf: (b, _) => b.target,
+      cabinOrder: _cabinOrder,
+    ).jobs;
 
-    // Hatalı kalemler bu listeye hiç girmedi — callBatch/result.when yalnızca
-    // BAŞARILI olanı ekliyor. Yani jobs, "hatasızlarla devam et" senaryosunun
-    // tam karşılığı: ayrıca filtrelemeye gerek yok.
-    final allTargets = [...batchResult.targets, ...equivalentTargets];
-    _pendingJobs = IntakeQueueBuilder.build(allTargets);
-
+    // Hatalı kalemler kuyruğa hiç girmedi — "hatasızlarla devam et" senaryosu
+    // için ayrıca filtrelemeye gerek yok.
     final anyFailed = selectedItems.any((it) => isFailed(checkItemOpFor(it.id)));
     if (anyFailed) {
       setFailed(startIntakeOp, message: contextlessL10n().intake_status_checkFailed);
@@ -695,38 +666,103 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     }
 
     setSuccess(startIntakeOp);
-    onQueueReady(_pendingJobs);
+    onQueueReady(_pendingJobs, _pendingPlans);
   }
 
-  /// Muadil seçilmiş bir kalem için IntakeTarget inşa eder — CheckEquivalent
-  /// başarılı olduktan sonra çağrılır. [allAssignments] çağıran tarafından
-  /// (startIntake döngüsünün başında, TEK seferde) sağlanır — her muadil için
-  /// tekrar tekrar istasyon sorgusu atmamak için.
-  IntakeTarget? _buildEquivalentTarget(IntakeItem item, List<MedicineAssignment> allAssignments) {
-    final equivalent = item.selectedEquivalent;
-    if (equivalent == null) return null;
+  /// Normal kalemler — toplu kontrol, başarılı olanların planı döner.
+  Future<List<IntakePlan>> _checkNormalItems(List<IntakeItem> items) async {
+    if (items.isEmpty) return const [];
 
-    final resolvedMedicine = equivalent.medicine;
-    if (resolvedMedicine == null) return null;
+    final result = await _checkIntakeUseCase.callBatch(
+      type: _intakeType,
+      userId: _currentUser?.id ?? 0,
+      hospitalizationId: _hospitalization?.id,
+      items: items,
+      onItemStatusChanged: (itemId, status) => switch (status) {
+        CheckLoading() => setLoading(checkItemOpFor(itemId)),
+        CheckSuccess() => setSuccess(checkItemOpFor(itemId)),
+        CheckFailed(:final message) => setFailed(
+          checkItemOpFor(itemId),
+          message: message ?? contextlessL10n().intake_status_checkFailed,
+        ),
+        CheckIdle() => null,
+      },
+    );
+    return result.plans;
+  }
+
+  /// Muadil seçilmiş kalemler — tek tek kontrol. Hedef atama istasyon
+  /// atamalarından çözülür (tüm muadiller için TEK istek).
+  Future<List<IntakePlan>> _checkEquivalentItems(List<IntakeItem> items) async {
+    final plans = <IntakePlan>[];
+    List<MedicineAssignment>? allAssignments;
+
+    for (final item in items) {
+      setLoading(checkItemOpFor(item.id));
+
+      final result = await _checkEquivalentIntakeUseCase.call(
+        EquivalentIntakeParams(
+          prescriptionDetailId: item.id,
+          materialId: item.selectedEquivalent!.materialId ?? 0,
+          censusQuantity: item.dosePiece,
+        ),
+      );
+
+      final error = result.when(ok: (_) => null, error: (e) => e.message);
+      if (error != null) {
+        setFailed(checkItemOpFor(item.id), message: error);
+        continue;
+      }
+
+      allAssignments ??= (await _getStationAssignmentsUseCase.call()).when(
+        ok: (list) => list,
+        error: (_) => const <MedicineAssignment>[],
+      );
+
+      // Kontrol geçti ama hedef göz çözülemedi — sessizce atlamak yerine hata:
+      // kart "başarılı" görünüp alım yapılmaması kullanıcıyı yanıltır.
+      final plan = _buildEquivalentPlan(item, allAssignments ?? []);
+      if (plan == null) {
+        setFailed(checkItemOpFor(item.id), message: contextlessL10n().cabinCore_targetDrawerNotFound);
+        continue;
+      }
+
+      setSuccess(checkItemOpFor(item.id));
+      plans.add(plan);
+    }
+
+    return plans;
+  }
+
+  /// Muadil seçilmiş bir kalemin planı — muadilin stoğu ve o stoğun bulunduğu
+  /// gözün ataması üzerinden kurulur.
+  IntakePlan? _buildEquivalentPlan(IntakeItem item, List<MedicineAssignment> allAssignments) {
+    final equivalent = item.selectedEquivalent;
+    final resolvedMedicine = equivalent?.medicine;
+    if (equivalent == null || resolvedMedicine == null) return null;
 
     final neededDose = item.dosePiece ?? equivalent.purchaseQuantity ?? 0;
     final stock =
         equivalent.stocks.firstWhereOrNull((s) => (s.quantity ?? 0) >= neededDose) ?? equivalent.stocks.firstOrNull;
-    if (stock == null || stock.id == null) return null;
-
-    final cellId = stock.cabinDrawerDetail?.id;
-    if (cellId == null) return null;
+    final stockId = stock?.id;
+    final cellId = stock?.cabinDrawerDetail?.id;
+    if (stockId == null || cellId == null) return null;
 
     final assignment = allAssignments.firstWhereOrNull(
       (a) => a.cabinDrawerDetail?.any((cell) => cell.id == cellId) ?? false,
     );
     if (assignment == null) return null;
 
-    final resolvedItem = item.copyWith(assignment: assignment, stock: stock, medicine: resolvedMedicine);
-    return IntakeTarget(
-      item: resolvedItem,
-      details: [IntakeDetail(stockId: stock.id!, dosePiece: neededDose)],
+    // İstasyon atamaları paylaşılan çekmecelerde karışık stok döndürür —
+    // yalnızca muadil malzemenin stokları (sayım ve üst sınır buna göre).
+    final ownStocks = assignment.stocks?.where((s) => s.materialId == equivalent.materialId).toList();
+
+    final resolvedItem = item.copyWith(
+      assignment: assignment.copyWith(stocks: ownStocks),
+      stock: stock,
+      medicine: resolvedMedicine,
     );
+    return (item: resolvedItem, details: [IntakeDetail(stockId: stockId, dosePiece: neededDose)]);
   }
 
   /// Kuyruk bittiğinde (execution notifier'ın onQueueFinished'ından) çağrılır.

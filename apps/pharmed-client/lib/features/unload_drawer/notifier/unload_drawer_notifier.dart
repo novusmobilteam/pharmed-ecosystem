@@ -106,7 +106,7 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
 
     final resolvedUnit = unit.drawerSlot == null ? unit.copyWith(drawerSlot: group.slot) : unit;
 
-    return MedicineAssignment.empty(cabinId: _cabinId, cabinDrawerId: unit.id ?? 0).copyWith(drawerUnit: resolvedUnit);
+    return MedicineAssignment.empty(cabinDrawerId: unit.id ?? 0).copyWith(drawerUnit: resolvedUnit);
   }
 
   Future<void> startDrawerUnload() async {

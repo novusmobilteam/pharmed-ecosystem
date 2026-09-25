@@ -4,7 +4,9 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 enum RefillListStatus {
   toBeCollected(1), // Toplanacak
   collected(2), // Toplandı
-  send(3); // Gönderildi
+  send(3), // Gönderildi
+  completed(4), // Tamamlandı
+  partiallyCompleted(5); // Kısmen tamamlandı
 
   final int id;
 
@@ -22,6 +24,10 @@ enum RefillListStatus {
         return contextlessL10n().enumCore_refillListStatusCollected;
       case RefillListStatus.send:
         return contextlessL10n().enumCore_refillListStatusSent;
+      case RefillListStatus.completed:
+        return contextlessL10n().enumCore_refillListStatusCompleted;
+      case RefillListStatus.partiallyCompleted:
+        return contextlessL10n().enumCore_refillListStatusPartiallyCompleted;
     }
   }
 
@@ -33,6 +39,8 @@ enum RefillListStatus {
         return RefillListStatus.send;
       case RefillListStatus.send:
         return RefillListStatus.toBeCollected;
+      default:
+        return RefillListStatus.send;
     }
   }
 }

@@ -7,16 +7,17 @@ import '../../dashboard/dashboard.dart';
 import 'master_destruction_view.dart';
 
 class DestructionView extends ConsumerWidget {
-  const DestructionView({super.key, required this.cabinRouteContext});
+  const DestructionView({super.key, required this.cabinRouteContext, required this.stationContext});
 
   final CabinRouteContext cabinRouteContext;
+  final StationCabinsContext stationContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final deviceMode = cabinRouteContext.deviceMode;
 
     return switch (deviceMode) {
-      CabinType.master => MasterDestructionView(cabinContext: cabinRouteContext),
+      CabinType.master => MasterDestructionView(cabinContext: cabinRouteContext, stationContext: stationContext),
       _ => const Center(child: MedLoadingIndicator()),
     };
   }

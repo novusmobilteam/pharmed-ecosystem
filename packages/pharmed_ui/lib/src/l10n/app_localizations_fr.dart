@@ -4680,6 +4680,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get enumCore_refillListStatusSent => 'Envoyé';
 
   @override
+  String get enumCore_refillListStatusCompleted => 'Terminé';
+
+  @override
+  String get enumCore_refillListStatusPartiallyCompleted =>
+      'Partiellement terminé';
+
+  @override
   String get enumCore_fillingTypeMinimum => 'Minimum';
 
   @override
@@ -4749,6 +4756,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get enumCore_cabinOpModeUnload => 'Déchargement de médicament';
+
+  @override
+  String get enumCore_cabinOpModeDestruction => 'Destruction de médicaments';
 
   @override
   String get enumCore_cabinInventoryTypeRefillOperationLabel => 'Remplissage';
@@ -7167,4 +7177,154 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get refund_showToReturnBoxTooltip =>
       'Afficher les retours en boîte de retour';
+
+  @override
+  String get common_noPatientSelectedEmptyTitle => 'Aucun patient sélectionné';
+
+  @override
+  String get intake_selectionEmptyDescription =>
+      'Le retrait des médicaments s\'effectue par patient. Lorsque vous sélectionnez un patient dans la liste de gauche, les médicaments prescrits à ce patient et disponibles au retrait s\'affichent ici.';
+
+  @override
+  String get dailyWorklist_selectionEmptyDescription =>
+      'Lorsque vous sélectionnez un patient dans la liste de gauche, les administrations prévues aujourd\'hui pour ce patient s\'affichent ici.';
+
+  @override
+  String get prescriptionReview_selectionEmptyDescription =>
+      'Lorsque vous sélectionnez un patient dans la liste de gauche, les prescriptions de ce patient s\'affichent ici pour examen.';
+
+  @override
+  String get refund_selectionEmptyDescription =>
+      'Les retours s\'effectuent par patient. Lorsque vous sélectionnez un patient dans la liste de gauche, les médicaments administrés à ce patient et pouvant être retournés s\'affichent ici.';
+
+  @override
+  String get unappliedPrescription_selectionEmptyDescription =>
+      'Lorsque vous sélectionnez un patient dans la liste de gauche, les prescriptions de ce patient non encore administrées s\'affichent ici.';
+
+  @override
+  String get wastage_selectionEmptyDescription =>
+      'Les pertes et destructions s\'effectuent par patient. Lorsque vous sélectionnez un patient dans la liste de gauche, les médicaments pouvant être enregistrés en perte ou destruction pour ce patient s\'affichent ici.';
+
+  @override
+  String get refillList_selectionEmptyTitle =>
+      'Aucune liste de remplissage sélectionnée';
+
+  @override
+  String get refillList_selectionEmptyDescription =>
+      'Lorsque vous sélectionnez une liste de remplissage à gauche, les médicaments de la liste et leurs cases cibles s\'affichent ici.';
+
+  @override
+  String get enumCore_refillListItemFillStatusNotStarted => 'En attente';
+
+  @override
+  String get enumCore_refillListItemFillStatusPartial => 'Partiel';
+
+  @override
+  String get enumCore_refillListItemFillStatusCompleted => 'Terminé';
+
+  @override
+  String get refillList_column_status => 'Statut';
+
+  @override
+  String cabinExecution_queueProgress(int current, int total) {
+    return 'Tiroir $current/$total';
+  }
+
+  @override
+  String get cabinExecution_stopButton => 'Arrêter';
+
+  @override
+  String get cabinExecution_saveAndNextButton =>
+      'Enregistrer et tiroir suivant';
+
+  @override
+  String get cabinExecution_saveAndFinishButton => 'Enregistrer et terminer';
+
+  @override
+  String get cabinExecution_stopConfirmTitle => 'Arrêter l\'opération ?';
+
+  @override
+  String get cabinExecution_stopConfirmMessage =>
+      'Les tiroirs enregistrés sont conservés ; les saisies non enregistrées de ce tiroir seront perdues.';
+
+  @override
+  String get cabinExecution_stopConfirmYes => 'Arrêter';
+
+  @override
+  String get cabinExecution_errorTitle => 'Enregistrement impossible';
+
+  @override
+  String get cabinExecution_errorSkipButton => 'Passer au tiroir suivant';
+
+  @override
+  String get cabinExecution_errorAbortButton => 'Terminer l\'opération';
+
+  @override
+  String cabinEntryCard_cellBadge(String label) {
+    return 'CASE $label';
+  }
+
+  @override
+  String cabinEntryCard_cellPosition(int current, int total) {
+    return 'Case $current/$total';
+  }
+
+  @override
+  String get cabinEntryCard_miadTitle => 'Date de péremption';
+
+  @override
+  String get cabinEntryTable_miadPlaceholder => 'Choisir une date';
+
+  @override
+  String get cabinEntryCard_miadRequired =>
+      'La date de péremption est obligatoire lorsqu\'une quantité est saisie';
+
+  @override
+  String get refillList_panelTitle => 'Listes de remplissage';
+
+  @override
+  String get refillList_tab_waiting => 'En attente';
+
+  @override
+  String get refillList_tab_completed => 'Terminées';
+
+  @override
+  String refillList_listTitle(int id) {
+    return 'Liste de remplissage n°$id';
+  }
+
+  @override
+  String get cabinExecution_recordedQuantity => 'Quantité enregistrée';
+
+  @override
+  String common_quantityPieces(String count) {
+    return '$count unités';
+  }
+
+  @override
+  String common_quantityWithMeasure(String count, String dose, String unit) {
+    return '$count unités  × $dose $unit';
+  }
+
+  @override
+  String common_quantityRatioPieces(String current, String max) {
+    return '$current/$max unités';
+  }
+
+  @override
+  String common_quantityRatioWithMeasure(
+    String current,
+    String max,
+    String dose,
+    String unit,
+  ) {
+    return '$current/$max unités  × $dose $unit';
+  }
+
+  @override
+  String get cabinEntry_takeLabel => 'À prélever';
+
+  @override
+  String get cabinEntry_blindCountHint =>
+      'Comptez les unités dans la case et saisissez la quantité';
 }

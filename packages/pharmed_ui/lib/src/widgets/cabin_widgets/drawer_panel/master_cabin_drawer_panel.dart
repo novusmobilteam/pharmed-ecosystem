@@ -572,8 +572,8 @@ class _MasterCabinCell extends StatelessWidget {
     final s = stock;
     if (s == null) return CabinCellStatus.empty;
     final qty = s.quantity?.toDouble() ?? 0;
-    final crit = s.assignment?.criticalQuantity?.toDouble() ?? 0;
-    final min = s.assignment?.minQuantity?.toDouble() ?? 0;
+    final crit = s.assignment?.criticalQuantity.toDouble() ?? 0;
+    final min = s.assignment?.minQuantity.toDouble() ?? 0;
     if (qty == 0) return CabinCellStatus.empty;
     if (qty <= crit) return CabinCellStatus.critical;
     if (qty <= min) return CabinCellStatus.low;
@@ -653,6 +653,7 @@ class _MasterCabinCell extends StatelessWidget {
     CabinOperationMode.assign || CabinOperationMode.intake || CabinOperationMode.unload => _assignContent(),
     CabinOperationMode.census || CabinOperationMode.refill => stock != null ? _stockFillContent() : _assignContent(),
     CabinOperationMode.fault => const SizedBox.shrink(),
+    CabinOperationMode.destruction => const SizedBox.shrink(),
   };
 
   Widget _assignContent() {
@@ -687,7 +688,7 @@ class _MasterCabinCell extends StatelessWidget {
             style: TextStyle(fontFamily: MedFonts.mono, fontSize: 7, color: const Color(0xCC1A6FD8)),
           ),
         Text(
-          '${s.quantity?.toInt() ?? 0}/${s.assignment?.maxQuantity?.toInt() ?? 0}',
+          '${s.quantity?.toInt() ?? 0}/${s.assignment?.maxQuantity.toInt() ?? 0}',
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: MedFonts.mono, fontSize: 8, fontWeight: FontWeight.w600, color: _qtyColor(s)),
         ),
@@ -703,8 +704,8 @@ class _MasterCabinCell extends StatelessWidget {
 
   Color _qtyColor(CabinStock s) {
     final qty = s.quantity?.toDouble() ?? 0;
-    final crit = s.assignment?.criticalQuantity?.toDouble() ?? 0;
-    final min = s.assignment?.minQuantity?.toDouble() ?? 0;
+    final crit = s.assignment?.criticalQuantity.toDouble() ?? 0;
+    final min = s.assignment?.minQuantity.toDouble() ?? 0;
     if (qty <= crit) return MedColors.red;
     if (qty <= min) return MedColors.amber;
     return MedColors.green;
@@ -777,6 +778,8 @@ class _MasterCellLegend extends StatelessWidget {
       (CabinCellStatus.fault, context.l10n.cabin_legendAssignFault),
       (CabinCellStatus.maintenance, context.l10n.cabin_legendAssignMaintenance),
     ],
+    // TODO: Handle this case.
+    CabinOperationMode.destruction => throw UnimplementedError(),
   };
 }
 

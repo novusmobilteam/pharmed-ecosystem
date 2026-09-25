@@ -9,7 +9,7 @@ import '../notifier/master_intake_selection_notifier.dart';
 class IntakeCheckDialog extends ConsumerStatefulWidget {
   const IntakeCheckDialog({super.key, required this.onQueueReady});
 
-  final ValueChanged<List<IntakeDrawerJob>> onQueueReady;
+  final void Function(List<CabinOperationDrawerJob> jobs, List<IntakePlan> plans) onQueueReady;
 
   @override
   ConsumerState<IntakeCheckDialog> createState() => _IntakeCheckDialogState();
@@ -23,12 +23,12 @@ class _IntakeCheckDialogState extends ConsumerState<IntakeCheckDialog> {
   }
 
   Future<void> _run() async {
-    final notifier = ref.read(masterIntakeSelectionNotifierProvider.notifier);
+    final notifier = ref.read(masterIntakeSelectionNotifierProvider);
     await notifier.startIntake(
-      onQueueReady: (jobs) {
+      onQueueReady: (jobs, plans) {
         if (!mounted) return;
         Navigator.of(context).pop();
-        widget.onQueueReady(jobs);
+        widget.onQueueReady(jobs, plans);
       },
       onFailed: (_) {}, // dialog açık kalır, aşağıdaki liste zaten kırmızı satırı gösteriyor
     );
@@ -116,8 +116,9 @@ class _IntakeCheckDialogState extends ConsumerState<IntakeCheckDialog> {
                     onPressed: (hasError && notifier.hasSuccessfulItemsToStart)
                         ? () {
                             final jobs = notifier.pendingJobs;
+                            final plans = notifier.pendingPlans;
                             Navigator.of(context).pop();
-                            widget.onQueueReady(jobs);
+                            widget.onQueueReady(jobs, plans);
                           }
                         : null,
                   ),

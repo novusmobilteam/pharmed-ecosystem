@@ -11,23 +11,17 @@ class MedSegmentedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
-    final trackColor = colorScheme.surfaceContainerHighest;
-    final borderColor = colorScheme.outline.withValues(alpha: 0.5);
-    final activeColor = colorScheme.primary;
-    final activeTextColor = colorScheme.onPrimary;
-    final inactiveTextColor = colorScheme.onSurface;
+    final activeTextColor = MedColors.text;
+    final inactiveTextColor = MedColors.text3;
 
     return Container(
-      height: 45,
-      // Padding, dış container'ın içindeki boşluktur.
-      // LayoutBuilder bu padding düşüldükten sonra kalan alanı hesaplar.
-      padding: const EdgeInsets.all(4),
+      height: 50,
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        color: trackColor,
+        color: MedColors.border.withAlpha(90),
         borderRadius: MedRadius.mdAll,
-        border: Border.all(color: borderColor, width: 1.5),
+        border: Border.all(color: MedColors.border, width: 1.5),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -44,11 +38,12 @@ class MedSegmentedButton extends StatelessWidget {
                 width: itemWidth,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: activeColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 4, offset: const Offset(0, 2)),
-                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: MedColors.border),
+                    // boxShadow: [
+                    //   BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 4, offset: const Offset(0, 2)),
+                    // ],
                   ),
                 ),
               ),
@@ -77,7 +72,7 @@ class MedSegmentedButton extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: MedTextStyles.bodyMd(
-                              color: isSelected ? MedColors.surface : MedColors.text,
+                              color: isSelected ? activeTextColor : inactiveTextColor,
                             ).copyWith(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                           ),
                         ),

@@ -130,5 +130,5 @@ List<TableColumnDef<MedicineAssignment>> _buildColumnDefs(BuildContext context, 
 }
 
 String _quantityLabel(BuildContext context, num? quantity, MedicineAssignment assignment) {
-  return assignment.quantityWithDoseLabel(context, quantity);
+  return assignment.quantityLabel(quantity);
 }

@@ -172,7 +172,7 @@ class IntakeOrderedItemCard extends StatelessWidget {
                     min: notifier.doseBoundsFor(item.id).min,
                     max: notifier.doseBoundsFor(item.id).max,
                     onChanged: (v) => notifier.updateDose(item.id, v),
-                    unit: item.medicine?.operationUnitLocalized(context) ?? '',
+                    unit: context.l10n.common_defaultUnitFallback,
                   ),
                 ),
             ],

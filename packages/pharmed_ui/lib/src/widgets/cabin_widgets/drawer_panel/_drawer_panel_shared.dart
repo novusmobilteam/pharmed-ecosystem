@@ -135,6 +135,13 @@ class CabinModeBanner extends StatelessWidget {
       const Color(0xFF1256AA),
       context.l10n.cabin_bannerUnload,
     ),
+
+    CabinOperationMode.destruction => (
+      const Color(0xFFFEF2F2),
+      const Color(0xFFF9A8A8),
+      const Color(0xFF9B1C1C),
+      context.l10n.cabin_bannerFault,
+    ),
   };
 }
 

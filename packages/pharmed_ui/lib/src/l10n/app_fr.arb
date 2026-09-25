@@ -2970,6 +2970,8 @@
   "@enumCore_refillListStatusCollected": {},
   "enumCore_refillListStatusSent": "Envoyé",
   "@enumCore_refillListStatusSent": {},
+  "enumCore_refillListStatusCompleted": "Terminé",
+"enumCore_refillListStatusPartiallyCompleted": "Partiellement terminé",
   "enumCore_fillingTypeMinimum": "Minimum",
   "@enumCore_fillingTypeMinimum": {},
   "enumCore_fillingTypeCritical": "Critique",
@@ -3016,6 +3018,7 @@
   "@enumCore_cabinOpModeFault": {},
   "enumCore_cabinOpModeUnload": "Déchargement de médicament",
   "@enumCore_cabinOpModeUnload": {},
+  "enumCore_cabinOpModeDestruction": "Destruction de médicaments",
   "enumCore_cabinInventoryTypeRefillOperationLabel": "Remplissage",
   "@enumCore_cabinInventoryTypeRefillOperationLabel": {},
   "enumCore_cabinInventoryTypeIntakeOperationLabel": "Prise",
@@ -4358,5 +4361,85 @@
     "description": "ReturnType enum value label — indicates the medicine's return type does not allow returning it at all"
   },
   "refund_showToDrawerTooltip": "Afficher les retours en tiroir",
-  "refund_showToReturnBoxTooltip": "Afficher les retours en boîte de retour"
+  "refund_showToReturnBoxTooltip": "Afficher les retours en boîte de retour",
+  "common_noPatientSelectedEmptyTitle": "Aucun patient sélectionné",
+"intake_selectionEmptyDescription": "Le retrait des médicaments s'effectue par patient. Lorsque vous sélectionnez un patient dans la liste de gauche, les médicaments prescrits à ce patient et disponibles au retrait s'affichent ici.",
+"dailyWorklist_selectionEmptyDescription": "Lorsque vous sélectionnez un patient dans la liste de gauche, les administrations prévues aujourd'hui pour ce patient s'affichent ici.",
+"prescriptionReview_selectionEmptyDescription": "Lorsque vous sélectionnez un patient dans la liste de gauche, les prescriptions de ce patient s'affichent ici pour examen.",
+"refund_selectionEmptyDescription": "Les retours s'effectuent par patient. Lorsque vous sélectionnez un patient dans la liste de gauche, les médicaments administrés à ce patient et pouvant être retournés s'affichent ici.",
+"unappliedPrescription_selectionEmptyDescription": "Lorsque vous sélectionnez un patient dans la liste de gauche, les prescriptions de ce patient non encore administrées s'affichent ici.",
+"wastage_selectionEmptyDescription": "Les pertes et destructions s'effectuent par patient. Lorsque vous sélectionnez un patient dans la liste de gauche, les médicaments pouvant être enregistrés en perte ou destruction pour ce patient s'affichent ici.",
+"refillList_selectionEmptyTitle": "Aucune liste de remplissage sélectionnée",
+"refillList_selectionEmptyDescription": "Lorsque vous sélectionnez une liste de remplissage à gauche, les médicaments de la liste et leurs cases cibles s'affichent ici.",
+"enumCore_refillListItemFillStatusNotStarted": "En attente",
+"enumCore_refillListItemFillStatusPartial": "Partiel",
+"enumCore_refillListItemFillStatusCompleted": "Terminé",
+"refillList_column_status": "Statut",
+"cabinExecution_queueProgress": "Tiroir {current}/{total}",
+"@cabinExecution_queueProgress": {
+  "description": "Queue progress shown in the execution footer of cabin operation screens (refill, census, refill list)",
+  "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+},
+"cabinExecution_stopButton": "Arrêter",
+"cabinExecution_saveAndNextButton": "Enregistrer et tiroir suivant",
+"cabinExecution_saveAndFinishButton": "Enregistrer et terminer",
+"cabinExecution_stopConfirmTitle": "Arrêter l'opération ?",
+"cabinExecution_stopConfirmMessage": "Les tiroirs enregistrés sont conservés ; les saisies non enregistrées de ce tiroir seront perdues.",
+"cabinExecution_stopConfirmYes": "Arrêter",
+"cabinExecution_errorTitle": "Enregistrement impossible",
+"cabinExecution_errorSkipButton": "Passer au tiroir suivant",
+"cabinExecution_errorAbortButton": "Terminer l'opération",
+"cabinEntryCard_cellBadge": "CASE {label}",
+"@cabinEntryCard_cellBadge": {
+  "description": "Badge on the cubic cell entry card showing the short grid label of the active cell (e.g. GÖZ B2)",
+  "placeholders": { "label": { "type": "String" } }
+},
+"cabinEntryCard_cellPosition": "Case {current}/{total}",
+"@cabinEntryCard_cellPosition": {
+  "description": "Position of the active cell within the cubic drawer (e.g. Göz 5/16)",
+  "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+},
+"cabinEntryCard_miadTitle": "Date de péremption",
+"cabinEntryTable_miadPlaceholder": "Choisir une date",
+"cabinEntryCard_miadRequired": "La date de péremption est obligatoire lorsqu'une quantité est saisie",
+"refillList_panelTitle": "Listes de remplissage",
+"refillList_tab_waiting": "En attente",
+"refillList_tab_completed": "Terminées",
+"refillList_listTitle": "Liste de remplissage n°{id}",
+"@refillList_listTitle": {
+  "description": "Header title of the selected refill list showing its number",
+  "placeholders": { "id": { "type": "int" } }
+},
+"cabinExecution_recordedQuantity": "Quantité enregistrée",
+"common_quantityPieces": "{count} unités",
+"@common_quantityPieces": {
+  "description": "Quantity label in pieces, used for medicines without a measure unit (e.g. 4 Adet)",
+  "placeholders": { "count": { "type": "String" } }
+},
+"common_quantityWithMeasure": "{count} unités  × {dose} {unit}",
+"@common_quantityWithMeasure": {
+  "description": "Quantity label for measure-unit medicines: pieces times the amount per piece (e.g. 4 Adet × 100 ml)",
+  "placeholders": {
+    "count": { "type": "String" },
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"common_quantityRatioPieces": "{current}/{max} unités",
+"@common_quantityRatioPieces": {
+  "description": "Current stock over maximum capacity in pieces (e.g. 4/36 Adet)",
+  "placeholders": { "current": { "type": "String" }, "max": { "type": "String" } }
+},
+"common_quantityRatioWithMeasure": "{current}/{max} unités  × {dose} {unit}",
+"@common_quantityRatioWithMeasure": {
+  "description": "Current stock over maximum capacity for measure-unit medicines, with the amount per piece (e.g. 4/36 Adet × 100 ml)",
+  "placeholders": {
+    "current": { "type": "String" },
+    "max": { "type": "String" },
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"cabinEntry_takeLabel": "À prélever",
+"cabinEntry_blindCountHint": "Comptez les unités dans la case et saisissez la quantité"
 }
