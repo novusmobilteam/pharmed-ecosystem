@@ -6,10 +6,8 @@ abstract interface class IReportRepository {
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({PagedQueryParams? params, required int stationId});
 
   /// İstasyon Hareketleri
-  Future<Result<ApiResponse<List<StockTransaction>>?>> getStationTransactions({
-    PagedQueryParams? params,
-    required int stationId,
-  });
+  Future<Result<ApiResponse<List<StationTransaction>>?>> getStationTransactions({PagedQueryParams? params});
+  Future<Result<List<StationTransactionStep>>> getTransactionSteps(int transactionId);
 
   /// Hastane Malzeme Listesi
   Future<Result<ApiResponse<List<HospitalStock>>?>> getHospitalStocks({

@@ -7153,4 +7153,104 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get cabinEntry_blindCountHint =>
       'Count the items in the cell and enter the amount';
+
+  @override
+  String get tableCore_stationTransactionDateColumn => 'Transaction Date';
+
+  @override
+  String get tableCore_stationTransactionCabinColumn => 'Cabin';
+
+  @override
+  String get tableCore_stationTransactionTypeColumn => 'Transaction';
+
+  @override
+  String get tableCore_stationTransactionCodeColumn => 'Code';
+
+  @override
+  String get tableCore_stationTransactionBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_stationTransactionMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_stationTransactionQuantityColumn => 'Quantity';
+
+  @override
+  String get tableCore_stationTransactionOrderColumn => 'Order';
+
+  @override
+  String get tableCore_stationTransactionCompartmentColumn => 'Compartment';
+
+  @override
+  String get tableCore_stationTransactionPatientColumn => 'Patient';
+
+  @override
+  String get tableCore_stationTransactionProtocolCodeColumn => 'Protocol No.';
+
+  @override
+  String get tableCore_stationTransactionPerformedByColumn => 'Performed By';
+
+  @override
+  String get tableCore_stationTransactionWitnessColumn => 'Witness';
+
+  @override
+  String get report_stationTransaction_detailDialogTitle =>
+      'Transaction Detail';
+
+  @override
+  String get report_stationTransaction_detailTooltip => 'View Detail';
+
+  @override
+  String get report_stationTransaction_stepsSectionTitle => 'Compartment Steps';
+
+  @override
+  String report_stationTransaction_stepsSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Processed in $count steps',
+      one: 'Processed in $count step',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get report_stationTransaction_stepsLoadError =>
+      'Step details could not be loaded.';
+
+  @override
+  String get report_stationTransaction_stepsEmpty =>
+      'No step details found for this transaction.';
+
+  @override
+  String get enumCore_stationTransactionTypeRefill => 'Refill';
+
+  @override
+  String get enumCore_stationTransactionTypeStockOut => 'Stock Out';
+
+  @override
+  String get enumCore_stationTransactionTypeRefund => 'Return';
+
+  @override
+  String get enumCore_stationTransactionTypeCountExcess => 'Count Excess';
+
+  @override
+  String get enumCore_stationTransactionTypeCountShortage => 'Count Shortage';
+
+  @override
+  String get enumCore_stationTransactionTypeCountConsistent =>
+      'Count Consistent';
+
+  @override
+  String get enumCore_stationTransactionTypeMaterialPurchasing =>
+      'Material Intake';
+
+  @override
+  String get enumCore_stationTransactionTypeRefundInward => 'Inward Return';
+
+  @override
+  String get enumCore_stationTransactionTypeWastage => 'Wastage';
+
+  @override
+  String get enumCore_stationTransactionTypeUnloading => 'Unloading';
 }

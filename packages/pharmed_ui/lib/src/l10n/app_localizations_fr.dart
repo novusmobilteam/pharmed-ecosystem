@@ -7327,4 +7327,107 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get cabinEntry_blindCountHint =>
       'Comptez les unités dans la case et saisissez la quantité';
+
+  @override
+  String get tableCore_stationTransactionDateColumn => 'Date de transaction';
+
+  @override
+  String get tableCore_stationTransactionCabinColumn => 'Armoire';
+
+  @override
+  String get tableCore_stationTransactionTypeColumn => 'Opération';
+
+  @override
+  String get tableCore_stationTransactionCodeColumn => 'Code';
+
+  @override
+  String get tableCore_stationTransactionBarcodeColumn => 'Code-barres';
+
+  @override
+  String get tableCore_stationTransactionMaterialColumn => 'Matériel';
+
+  @override
+  String get tableCore_stationTransactionQuantityColumn => 'Quantité';
+
+  @override
+  String get tableCore_stationTransactionOrderColumn => 'Ordre';
+
+  @override
+  String get tableCore_stationTransactionCompartmentColumn => 'Compartiment';
+
+  @override
+  String get tableCore_stationTransactionPatientColumn => 'Patient';
+
+  @override
+  String get tableCore_stationTransactionProtocolCodeColumn =>
+      'N° de protocole';
+
+  @override
+  String get tableCore_stationTransactionPerformedByColumn => 'Effectué par';
+
+  @override
+  String get tableCore_stationTransactionWitnessColumn => 'Témoin';
+
+  @override
+  String get report_stationTransaction_detailDialogTitle =>
+      'Détail de l\'opération';
+
+  @override
+  String get report_stationTransaction_detailTooltip => 'Voir le détail';
+
+  @override
+  String get report_stationTransaction_stepsSectionTitle =>
+      'Détail des emplacements';
+
+  @override
+  String report_stationTransaction_stepsSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Opération sur $count emplacements',
+      one: 'Opération sur $count emplacement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get report_stationTransaction_stepsLoadError =>
+      'Impossible de charger le détail des emplacements.';
+
+  @override
+  String get report_stationTransaction_stepsEmpty =>
+      'Aucun détail d\'emplacement pour cette opération.';
+
+  @override
+  String get enumCore_stationTransactionTypeRefill => 'Remplissage';
+
+  @override
+  String get enumCore_stationTransactionTypeStockOut => 'Sortie de stock';
+
+  @override
+  String get enumCore_stationTransactionTypeRefund => 'Retour';
+
+  @override
+  String get enumCore_stationTransactionTypeCountExcess =>
+      'Excédent d\'inventaire';
+
+  @override
+  String get enumCore_stationTransactionTypeCountShortage =>
+      'Manque d\'inventaire';
+
+  @override
+  String get enumCore_stationTransactionTypeCountConsistent =>
+      'Inventaire conforme';
+
+  @override
+  String get enumCore_stationTransactionTypeMaterialPurchasing => 'Prélèvement';
+
+  @override
+  String get enumCore_stationTransactionTypeRefundInward => 'Retour entrant';
+
+  @override
+  String get enumCore_stationTransactionTypeWastage => 'Perte';
+
+  @override
+  String get enumCore_stationTransactionTypeUnloading => 'Déchargement';
 }

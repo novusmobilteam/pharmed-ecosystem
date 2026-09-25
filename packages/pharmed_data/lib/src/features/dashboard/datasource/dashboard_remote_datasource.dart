@@ -68,7 +68,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
     return await fetchRequest<List<UpcomingTreatmentDto>>(
       path: '$_basePath/upcomingTreatments',
       parser: BaseRemoteDataSource.listParser(UpcomingTreatmentDto.fromJson),
-      query: {"mac": mac},
+      query: {"macAdress": mac},
     );
   }
 

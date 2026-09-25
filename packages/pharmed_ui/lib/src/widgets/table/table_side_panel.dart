@@ -1,12 +1,28 @@
 part of 'med_table_view.dart';
 
 class _SidePanel extends StatefulWidget {
-  const _SidePanel({required this.categories, required this.selectedId, required this.onSelect, this.title});
+  const _SidePanel({
+    required this.categories,
+    required this.selectedId,
+    required this.onSelect,
+    this.title,
+    this.selectedIds = const {},
+    this.onSelectionChanged,
+  });
 
   final List<TableSideCategory> categories;
-  final String? selectedId;
-  final ValueChanged<String> onSelect;
+
   final String? title;
+
+  // Tekli mod
+  final String? selectedId;
+  final ValueChanged<String>? onSelect;
+
+  // Çoklu mod — onSelectionChanged verilirse aktif olur
+  final Set<String> selectedIds;
+  final ValueChanged<Set<String>>? onSelectionChanged;
+
+  bool get multiSelect => onSelectionChanged != null;
 
   @override
   State<_SidePanel> createState() => _SidePanelState();
@@ -25,10 +41,12 @@ class _SidePanelState extends State<_SidePanel> {
   @override
   void didUpdateWidget(_SidePanel oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Seçim dışarıdan değiştiyse (örn. başka bir ekrandan gelindi), seçili
-    // çocuğu barındıran grup her zaman açık kalsın.
-    if (widget.selectedId != null && widget.selectedId != oldWidget.selectedId) {
-      final parentId = _parentIdOf(widget.selectedId!);
+    // Dışarıdan yeni seçilen her çocuğun grubu açık kalsın.
+    final Set<String> newlySelected = widget.multiSelect
+        ? widget.selectedIds.difference(oldWidget.selectedIds)
+        : {if (widget.selectedId != null && widget.selectedId != oldWidget.selectedId) widget.selectedId!};
+    for (final id in newlySelected) {
+      final parentId = _parentIdOf(id);
       if (parentId != null) _expandedIds.add(parentId);
     }
   }
@@ -38,6 +56,34 @@ class _SidePanelState extends State<_SidePanel> {
       if (cat.children?.any((c) => c.id == childId) ?? false) return cat.id;
     }
     return null;
+  }
+
+  bool _isSelected(String id) => widget.multiSelect ? widget.selectedIds.contains(id) : id == widget.selectedId;
+
+  void _onItemTap(String id) {
+    if (!widget.multiSelect) {
+      widget.onSelect!(id);
+      return;
+    }
+    final next = {...widget.selectedIds};
+    next.contains(id) ? next.remove(id) : next.add(id);
+    widget.onSelectionChanged!(next);
+  }
+
+  /// true = tümü seçili, false = hiçbiri, null = kısmi
+  bool? _groupCheckState(TableSideCategory group) {
+    final childIds = group.children!.map((c) => c.id);
+    final selectedCount = childIds.where(widget.selectedIds.contains).length;
+    if (selectedCount == 0) return false;
+    if (selectedCount == group.children!.length) return true;
+    return null;
+  }
+
+  void _onGroupCheckTap(TableSideCategory group) {
+    final childIds = group.children!.map((c) => c.id).toSet();
+    final allSelected = _groupCheckState(group) == true;
+    final next = allSelected ? widget.selectedIds.difference(childIds) : widget.selectedIds.union(childIds);
+    widget.onSelectionChanged!(next);
   }
 
   void _toggleExpand(String id) =>
@@ -78,8 +124,9 @@ class _SidePanelState extends State<_SidePanel> {
             subtitle: cat.subtitle,
             statusColor: cat.statusColor,
             count: cat.count,
-            active: cat.id == widget.selectedId,
-            onTap: () => widget.onSelect(cat.id),
+            active: _isSelected(cat.id),
+            showCheckbox: widget.multiSelect,
+            onTap: () => _onItemTap(cat.id),
           ),
         );
         continue;
@@ -92,6 +139,9 @@ class _SidePanelState extends State<_SidePanel> {
           count: cat.count,
           expanded: expanded,
           onTap: () => _toggleExpand(cat.id),
+          showCheckbox: widget.multiSelect,
+          checkState: widget.multiSelect ? _groupCheckState(cat) : false,
+          onCheckTap: widget.multiSelect ? () => _onGroupCheckTap(cat) : null,
         ),
       );
       if (expanded) {
@@ -102,9 +152,10 @@ class _SidePanelState extends State<_SidePanel> {
               subtitle: child.subtitle,
               statusColor: child.statusColor,
               count: child.count,
-              active: child.id == widget.selectedId,
+              active: _isSelected(child.id),
               indented: true,
-              onTap: () => widget.onSelect(child.id),
+              showCheckbox: widget.multiSelect,
+              onTap: () => _onItemTap(child.id),
             ),
           );
         }
@@ -115,12 +166,23 @@ class _SidePanelState extends State<_SidePanel> {
 }
 
 class _SidePanelGroupHeader extends StatelessWidget {
-  const _SidePanelGroupHeader({required this.label, required this.expanded, required this.onTap, this.count});
+  const _SidePanelGroupHeader({
+    required this.label,
+    required this.expanded,
+    required this.onTap,
+    this.count,
+    this.showCheckbox = false,
+    this.checkState = false,
+    this.onCheckTap,
+  });
 
   final String label;
   final bool expanded;
   final int? count;
   final VoidCallback onTap;
+  final bool showCheckbox;
+  final bool? checkState;
+  final VoidCallback? onCheckTap;
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +199,7 @@ class _SidePanelGroupHeader extends StatelessWidget {
               child: const Icon(Icons.chevron_right, size: 14, color: Color(0xFF9CA3AF)),
             ),
             const SizedBox(width: 4),
+            if (showCheckbox) _SideCheckbox(value: checkState, onTap: onCheckTap),
             Expanded(
               child: Text(
                 label,
@@ -165,6 +228,7 @@ class _SidePanelItem extends StatefulWidget {
     this.statusColor,
     this.count,
     this.indented = false,
+    this.showCheckbox = false,
   });
 
   final String label;
@@ -174,6 +238,7 @@ class _SidePanelItem extends StatefulWidget {
   final bool active;
   final bool indented;
   final VoidCallback onTap;
+  final bool showCheckbox;
 
   @override
   State<_SidePanelItem> createState() => _SidePanelItemState();
@@ -203,7 +268,9 @@ class _SidePanelItemState extends State<_SidePanelItem> {
           ),
           child: Row(
             children: [
-              if (widget.active)
+              if (widget.showCheckbox)
+                _SideCheckbox(value: widget.active)
+              else if (widget.active)
                 Container(
                   width: 3,
                   height: widget.subtitle != null ? 24 : 14,
@@ -263,5 +330,32 @@ class _SidePanelItemState extends State<_SidePanelItem> {
         ),
       ),
     );
+  }
+}
+
+class _SideCheckbox extends StatelessWidget {
+  const _SideCheckbox({required this.value, this.onTap});
+
+  /// true = seçili, false = boş, null = kısmi
+  final bool? value;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final filled = value != false;
+    final box = AnimatedContainer(
+      duration: const Duration(milliseconds: 130),
+      width: 16,
+      height: 16,
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(
+        color: filled ? MedColors.blue : Colors.white,
+        border: Border.all(color: filled ? MedColors.blue : const Color(0xFFD1D5DB), width: 1.5),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: filled ? Icon(value == null ? Icons.remove : Icons.check, size: 12, color: Colors.white) : null,
+    );
+    if (onTap == null) return box;
+    return GestureDetector(onTap: onTap, behavior: HitTestBehavior.opaque, child: box);
   }
 }

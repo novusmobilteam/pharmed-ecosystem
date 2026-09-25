@@ -15,7 +15,7 @@ import '../../../../core/mixins/mixins.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../dashboard/dashboard.dart';
 
-enum CensusMode { allCabin, byDrawer, byMedicine }
+enum CensusMode { byMedicine, byDrawer, allCabin }
 
 final masterCensusSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterCensusSelectionNotifier>((ref) {
   return MasterCensusSelectionNotifier(getAssignments: ref.read(getStationAssignmentsUseCaseProvider));
@@ -35,14 +35,15 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   List<MedicineAssignment> _assignments = [];
   final Set<int> _selectedUnitIds = {};
   String _search = '';
-  CensusMode _censusMode = CensusMode.allCabin;
+
+  CensusMode get censusMode => _censusMode;
+  CensusMode _censusMode = CensusMode.byMedicine;
 
   // ── Getterlar ─────────────────────────────────────────────────────────
 
   List<MedicineAssignment> get assignments => _assignments;
   Set<int> get selectedUnitIds => Set.unmodifiable(_selectedUnitIds);
   String get search => _search;
-  CensusMode get censusMode => _censusMode;
 
   bool get isLoadingAssignments => isLoading(fetchAssignmentsOp);
   bool get isError => isFailed(fetchAssignmentsOp);
@@ -85,7 +86,7 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
           final slotId = a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId;
           return slotId != null && _cabinSlotIds.contains(slotId);
         }).toList();
-        _censusMode = CensusMode.allCabin;
+        _censusMode = CensusMode.byMedicine;
         _selectedUnitIds
           ..clear()
           ..addAll(_allUnitIds);

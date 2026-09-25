@@ -189,7 +189,7 @@ class _StageCard extends StatelessWidget {
     };
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 420),
+      constraints: const BoxConstraints(maxWidth: 520),
       child: Container(
         margin: MedSpacing.insetXl,
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),

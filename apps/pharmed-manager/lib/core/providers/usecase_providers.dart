@@ -205,10 +205,6 @@ class UsecaseProviders {
       Provider(create: (context) => UpdateWarningUseCase(context.read())),
       Provider(create: (context) => DeleteWarningUseCase(context.read())),
 
-      /// Stock Transaction
-      Provider(create: (context) => CreateStockTransactionUseCase(context.read())),
-      Provider(create: (context) => DeleteStockTransactionUseCase(context.read())),
-
       /// Dashboard
       Provider(create: (context) => GetMissingStocksUseCase(context.read())),
       Provider(create: (context) => GetCabinsUseCase(context.read())),
@@ -248,6 +244,7 @@ class UsecaseProviders {
       /// Reports
       Provider(create: (context) => GetExpiredStocksUseCase(context.read())),
       Provider(create: (context) => GetStationTransactionsUseCase(context.read())),
+      Provider(create: (context) => GetTransactionStepsUseCase(context.read())),
       Provider(create: (context) => GetHospitalStocksUseCase(context.read())),
       Provider(create: (context) => GetPatientInventoryUseCase(context.read())),
       Provider(create: (context) => GetMaterialUsagesUseCase(context.read())),

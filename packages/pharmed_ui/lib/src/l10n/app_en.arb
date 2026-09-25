@@ -4989,5 +4989,124 @@
   }
 },
 "cabinEntry_takeLabel": "To Take",
-"cabinEntry_blindCountHint": "Count the items in the cell and enter the amount"
+"cabinEntry_blindCountHint": "Count the items in the cell and enter the amount",
+"tableCore_stationTransactionDateColumn": "Transaction Date",
+"@tableCore_stationTransactionDateColumn": {
+  "description": "Station transaction report table column header for the date/time the transaction occurred"
+},
+"tableCore_stationTransactionCabinColumn": "Cabin",
+"@tableCore_stationTransactionCabinColumn": {
+  "description": "Station transaction report table column header for the name of the cabin where the transaction occurred"
+},
+"tableCore_stationTransactionTypeColumn": "Transaction",
+"@tableCore_stationTransactionTypeColumn": {
+  "description": "Station transaction report table column header for the transaction type (e.g. refill, intake, return)"
+},
+"tableCore_stationTransactionCodeColumn": "Code",
+"@tableCore_stationTransactionCodeColumn": {
+  "description": "Station transaction report table column header for the material code"
+},
+"tableCore_stationTransactionBarcodeColumn": "Barcode",
+"@tableCore_stationTransactionBarcodeColumn": {
+  "description": "Station transaction report table column header for the material barcode"
+},
+"tableCore_stationTransactionMaterialColumn": "Material",
+"@tableCore_stationTransactionMaterialColumn": {
+  "description": "Station transaction report table column header for the drug/consumable name"
+},
+"tableCore_stationTransactionQuantityColumn": "Quantity",
+"@tableCore_stationTransactionQuantityColumn": {
+  "description": "Station transaction report table column header for the quantity processed in the transaction"
+},
+"tableCore_stationTransactionOrderColumn": "Order",
+"@tableCore_stationTransactionOrderColumn": {
+  "description": "Station transaction report table column header for the drawer order number within the cabin"
+},
+"tableCore_stationTransactionCompartmentColumn": "Compartment",
+"@tableCore_stationTransactionCompartmentColumn": {
+  "description": "Station transaction report table column header for the compartment (cell) number inside the drawer"
+},
+"tableCore_stationTransactionPatientColumn": "Patient",
+"@tableCore_stationTransactionPatientColumn": {
+  "description": "Station transaction report table column header for the patient the transaction was made for"
+},
+"tableCore_stationTransactionProtocolCodeColumn": "Protocol No.",
+"@tableCore_stationTransactionProtocolCodeColumn": {
+  "description": "Station transaction report table column header for the patient's hospital protocol code"
+},
+"tableCore_stationTransactionPerformedByColumn": "Performed By",
+"@tableCore_stationTransactionPerformedByColumn": {
+  "description": "Station transaction report table column header for the user who performed the transaction"
+},
+"tableCore_stationTransactionWitnessColumn": "Witness",
+"@tableCore_stationTransactionWitnessColumn": {
+  "description": "Station transaction report table column header for the witness user who approved the transaction, if any"
+},
+"report_stationTransaction_detailDialogTitle": "Transaction Detail",
+"@report_stationTransaction_detailDialogTitle": {
+  "description": "Title of the detail dialog opened from a row in the station transaction report table"
+},
+"report_stationTransaction_detailTooltip": "View Detail",
+"@report_stationTransaction_detailTooltip": {
+  "description": "Tooltip of the row action that opens the station transaction detail dialog"
+},
+"report_stationTransaction_stepsSectionTitle": "Compartment Steps",
+"@report_stationTransaction_stepsSectionTitle": {
+  "description": "Section title in the station transaction detail dialog listing the drawer steps (depth positions) the transaction touched"
+},
+"report_stationTransaction_stepsSummary": "{count, plural, one{Processed in {count} step} other{Processed in {count} steps}}",
+"@report_stationTransaction_stepsSummary": {
+  "description": "Summary next to the steps section title showing how many steps had a non-zero quantity",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+"report_stationTransaction_stepsLoadError": "Step details could not be loaded.",
+"@report_stationTransaction_stepsLoadError": {
+  "description": "Error shown in the station transaction detail dialog when the step detail request fails"
+},
+"report_stationTransaction_stepsEmpty": "No step details found for this transaction.",
+"@report_stationTransaction_stepsEmpty": {
+  "description": "Shown in the station transaction detail dialog when the step detail request returns an empty list"
+},
+"enumCore_stationTransactionTypeRefill": "Refill",
+"@enumCore_stationTransactionTypeRefill": {
+  "description": "StationTransactionType.refill (1) — drugs filled into the cabin"
+},
+"enumCore_stationTransactionTypeStockOut": "Stock Out",
+"@enumCore_stationTransactionTypeStockOut": {
+  "description": "StationTransactionType.stockOut (2) — stock removed from the cabin"
+},
+"enumCore_stationTransactionTypeRefund": "Return",
+"@enumCore_stationTransactionTypeRefund": {
+  "description": "StationTransactionType.refund (3) — material returned from the cabin"
+},
+"enumCore_stationTransactionTypeCountExcess": "Count Excess",
+"@enumCore_stationTransactionTypeCountExcess": {
+  "description": "StationTransactionType.countExcess (4) — census found more than the recorded stock"
+},
+"enumCore_stationTransactionTypeCountShortage": "Count Shortage",
+"@enumCore_stationTransactionTypeCountShortage": {
+  "description": "StationTransactionType.countShortage (5) — census found less than the recorded stock"
+},
+"enumCore_stationTransactionTypeCountConsistent": "Count Consistent",
+"@enumCore_stationTransactionTypeCountConsistent": {
+  "description": "StationTransactionType.countConsistent (6) — census matched the recorded stock"
+},
+"enumCore_stationTransactionTypeMaterialPurchasing": "Material Intake",
+"@enumCore_stationTransactionTypeMaterialPurchasing": {
+  "description": "StationTransactionType.materialPurchasing (7) — material taken from the cabin (backend name: MaterialPurchasing)"
+},
+"enumCore_stationTransactionTypeRefundInward": "Inward Return",
+"@enumCore_stationTransactionTypeRefundInward": {
+  "description": "StationTransactionType.refundInward (8) — returned material received into the cabin (backend name: ReturnInward)"
+},
+"enumCore_stationTransactionTypeWastage": "Wastage",
+"@enumCore_stationTransactionTypeWastage": {
+  "description": "StationTransactionType.wastage (9) — material wasted/destroyed"
+},
+"enumCore_stationTransactionTypeUnloading": "Unloading",
+"@enumCore_stationTransactionTypeUnloading": {
+  "description": "StationTransactionType.unloading (10) — drugs unloaded from the cabin"
+}
 }

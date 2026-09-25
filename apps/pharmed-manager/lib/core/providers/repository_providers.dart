@@ -316,20 +316,6 @@ class RepositoryProviders {
         },
       ),
 
-      /// Stock Transaction
-      Provider<IStockTransactionRepository>(
-        create: (context) => switch (FlavorConfig.instance.flavor) {
-          AppFlavor.mock => StockTransactionRepositoryImpl(
-            dataSource: context.read(),
-            mapper: StockTransactionMapper(),
-          ),
-          AppFlavor.dev || AppFlavor.prod => StockTransactionRepositoryImpl(
-            dataSource: context.read(),
-            mapper: StockTransactionMapper(),
-          ),
-        },
-      ),
-
       /// Cabin
       Provider<ICabinRepository>(
         create: (context) => switch (FlavorConfig.instance.flavor) {
@@ -434,6 +420,8 @@ class RepositoryProviders {
             summaryMapper: UserAuthorizationSummaryMapper(),
             authorizationDetailMapper: UserAuthorizationDetailMapper(),
             cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
+            stationTransactionMapper: StationTransactionMapper(),
+            stepMapper: StationTransactionStepMapper(),
           ),
           AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
             dataSource: context.read(),
@@ -444,6 +432,8 @@ class RepositoryProviders {
             summaryMapper: UserAuthorizationSummaryMapper(),
             authorizationDetailMapper: UserAuthorizationDetailMapper(),
             cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
+            stationTransactionMapper: StationTransactionMapper(),
+            stepMapper: StationTransactionStepMapper(),
           ),
         },
       ),

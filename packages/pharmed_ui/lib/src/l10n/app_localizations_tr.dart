@@ -7103,4 +7103,95 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabinEntry_blindCountHint => 'Gözdeki miktarı sayıp girin';
+
+  @override
+  String get tableCore_stationTransactionDateColumn => 'İşlem Tarihi';
+
+  @override
+  String get tableCore_stationTransactionCabinColumn => 'Kabin';
+
+  @override
+  String get tableCore_stationTransactionTypeColumn => 'İşlem';
+
+  @override
+  String get tableCore_stationTransactionCodeColumn => 'Kod';
+
+  @override
+  String get tableCore_stationTransactionBarcodeColumn => 'Barkod';
+
+  @override
+  String get tableCore_stationTransactionMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_stationTransactionQuantityColumn => 'Miktar';
+
+  @override
+  String get tableCore_stationTransactionOrderColumn => 'Sıra';
+
+  @override
+  String get tableCore_stationTransactionCompartmentColumn => 'Göz';
+
+  @override
+  String get tableCore_stationTransactionPatientColumn => 'Hasta';
+
+  @override
+  String get tableCore_stationTransactionProtocolCodeColumn => 'Protokol No';
+
+  @override
+  String get tableCore_stationTransactionPerformedByColumn => 'İşlemi Yapan';
+
+  @override
+  String get tableCore_stationTransactionWitnessColumn => 'Tanık';
+
+  @override
+  String get report_stationTransaction_detailDialogTitle => 'İşlem Detayı';
+
+  @override
+  String get report_stationTransaction_detailTooltip => 'Detayı Görüntüle';
+
+  @override
+  String get report_stationTransaction_stepsSectionTitle => 'Göz Detayı';
+
+  @override
+  String report_stationTransaction_stepsSummary(int count) {
+    return '$count gözde işlem yapıldı';
+  }
+
+  @override
+  String get report_stationTransaction_stepsLoadError =>
+      'Göz detayları yüklenemedi.';
+
+  @override
+  String get report_stationTransaction_stepsEmpty =>
+      'Bu işlem için göz detayı bulunamadı.';
+
+  @override
+  String get enumCore_stationTransactionTypeRefill => 'Dolum';
+
+  @override
+  String get enumCore_stationTransactionTypeStockOut => 'Stok Çıkışı';
+
+  @override
+  String get enumCore_stationTransactionTypeRefund => 'İade';
+
+  @override
+  String get enumCore_stationTransactionTypeCountExcess => 'Sayım Fazlası';
+
+  @override
+  String get enumCore_stationTransactionTypeCountShortage => 'Sayım Eksiği';
+
+  @override
+  String get enumCore_stationTransactionTypeCountConsistent => 'Sayım Tutarlı';
+
+  @override
+  String get enumCore_stationTransactionTypeMaterialPurchasing => 'Alım';
+
+  @override
+  String get enumCore_stationTransactionTypeRefundInward => 'İade Girişi';
+
+  @override
+  String get enumCore_stationTransactionTypeWastage => 'Fire';
+
+  @override
+  String get enumCore_stationTransactionTypeUnloading => 'Boşaltma';
 }

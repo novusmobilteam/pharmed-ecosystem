@@ -4441,5 +4441,40 @@
   }
 },
 "cabinEntry_takeLabel": "À prélever",
-"cabinEntry_blindCountHint": "Comptez les unités dans la case et saisissez la quantité"
+"cabinEntry_blindCountHint": "Comptez les unités dans la case et saisissez la quantité",
+"tableCore_stationTransactionDateColumn": "Date de transaction",
+"tableCore_stationTransactionCabinColumn": "Armoire",
+"tableCore_stationTransactionTypeColumn": "Opération",
+"tableCore_stationTransactionCodeColumn": "Code",
+"tableCore_stationTransactionBarcodeColumn": "Code-barres",
+"tableCore_stationTransactionMaterialColumn": "Matériel",
+"tableCore_stationTransactionQuantityColumn": "Quantité",
+"tableCore_stationTransactionOrderColumn": "Ordre",
+"tableCore_stationTransactionCompartmentColumn": "Compartiment",
+"tableCore_stationTransactionPatientColumn": "Patient",
+"tableCore_stationTransactionProtocolCodeColumn": "N° de protocole",
+"tableCore_stationTransactionPerformedByColumn": "Effectué par",
+"tableCore_stationTransactionWitnessColumn": "Témoin",
+"report_stationTransaction_detailDialogTitle": "Détail de l'opération",
+"report_stationTransaction_detailTooltip": "Voir le détail",
+"report_stationTransaction_stepsSectionTitle": "Détail des emplacements",
+"report_stationTransaction_stepsSummary": "{count, plural, one{Opération sur {count} emplacement} other{Opération sur {count} emplacements}}",
+"@report_stationTransaction_stepsSummary": {
+  "description": "Summary next to the steps section title showing how many steps had a non-zero quantity",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+"report_stationTransaction_stepsLoadError": "Impossible de charger le détail des emplacements.",
+"report_stationTransaction_stepsEmpty": "Aucun détail d'emplacement pour cette opération.",
+"enumCore_stationTransactionTypeRefill": "Remplissage",
+"enumCore_stationTransactionTypeStockOut": "Sortie de stock",
+"enumCore_stationTransactionTypeRefund": "Retour",
+"enumCore_stationTransactionTypeCountExcess": "Excédent d'inventaire",
+"enumCore_stationTransactionTypeCountShortage": "Manque d'inventaire",
+"enumCore_stationTransactionTypeCountConsistent": "Inventaire conforme",
+"enumCore_stationTransactionTypeMaterialPurchasing": "Prélèvement",
+"enumCore_stationTransactionTypeRefundInward": "Retour entrant",
+"enumCore_stationTransactionTypeWastage": "Perte",
+"enumCore_stationTransactionTypeUnloading": "Déchargement"
 }

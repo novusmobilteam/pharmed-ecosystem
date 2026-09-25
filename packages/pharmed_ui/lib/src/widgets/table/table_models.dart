@@ -65,6 +65,8 @@ class TableColumnDef<T> {
     /// Sıralama için karşılaştırılabilir ham değer.
     /// Verilmezse displayValue string'i üzerinden sıralanır.
     this.sortValue,
+
+    this.serverFilter,
   });
 
   final String title;
@@ -74,6 +76,10 @@ class TableColumnDef<T> {
   final Widget? Function(T item)? cellBuilder;
   final String? Function(T item)? displayValue;
   final Comparable? Function(T item)? sortValue;
+
+  /// Verilirse bu kolonun filtresi server-side çalışır: seçenekler buradan gelir,
+  /// seçim MedTable.onServerFiltersChanged ile dışarı bildirilir.
+  final TableServerFilter? serverFilter;
 }
 
 /// Belirli bir hücre için özel widget döndürür.
@@ -138,4 +144,22 @@ class TableActionItem<T extends Object> {
       onPressed: onPressed,
     );
   }
+}
+
+class TableServerFilter {
+  const TableServerFilter({required this.field, required this.options});
+
+  /// Backend'deki alan adı (DevExtreme filter'daki field).
+  final String field;
+  final List<TableFilterOption> options;
+}
+
+class TableFilterOption {
+  const TableFilterOption({required this.value, required this.label});
+
+  /// Filtrede backend'e gidecek değer.
+  final Object value;
+
+  /// Diyalogda ve aktif filtre chip'inde görünen metin. Kolon içinde benzersiz olmalı.
+  final String label;
 }

@@ -127,6 +127,7 @@ class _IntakeCellCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
+                  flex: 3,
                   child: _TakeBox(target: target, take: cell.take),
                 ),
                 if (target.showsCount)

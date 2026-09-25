@@ -9,9 +9,8 @@ class GetStationTransactionsUseCase {
 
   GetStationTransactionsUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<StockTransaction>>?>> call(PagedQueryParams params, {required int stationId}) =>
+  Future<Result<ApiResponse<List<StationTransaction>>?>> call(PagedQueryParams params) =>
       _repository.getStationTransactions(
-        stationId: stationId,
         params: params.copyWith(searchFields: ['material.barcode', 'material.code', 'material.name', 'quantity']),
       );
 }

@@ -120,6 +120,7 @@ class RefillListFormNotifier extends ChangeNotifier with ApiRequestMixin {
     final updated = <int, RefillObject>{};
     _selections.forEach((medicineId, selection) {
       final candidate = _candidates.firstWhereOrNull((c) => c.medicine?.id == medicineId);
+
       updated[medicineId] = candidate != null
           ? candidate.copyWith(quantity: selection.quantity, detailIds: selection.detailIds)
           : selection;
@@ -242,11 +243,13 @@ class RefillListFormNotifier extends ChangeNotifier with ApiRequestMixin {
             userId: _user?.id ?? 0,
             stationId: stationId,
             medicineId: s.medicine?.id ?? 0,
-            quantity: s.medicine?.toFillingBackendValue(s.quantity.toDouble()) ?? s.quantity,
+            quantity: s.quantity,
             fillingListId: _initial?.id,
           ),
         )
         .toList();
+
+    //print(data.map((d) => d.toJson()));
 
     await executeVoid(
       submitOp,

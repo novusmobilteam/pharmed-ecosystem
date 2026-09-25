@@ -28,6 +28,7 @@ class CreateRefillListUseCase {
   Future<Result<void>> call(List<SubmitRefillListParams> params) async {
     final data = params.map((p) => p.toJson()).toList();
     final stationId = params.first.stationId;
+
     return _repository.createFillingList(data, stationId: stationId);
   }
 }

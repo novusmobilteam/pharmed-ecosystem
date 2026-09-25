@@ -42,9 +42,9 @@ class MasterCensusSelectionView extends ConsumerWidget {
             width: 600,
             child: MedSegmentedButton(
               labels: [
-                context.l10n.census_mode_allCabin,
-                context.l10n.census_mode_byDrawer,
                 context.l10n.census_mode_byMedicine,
+                context.l10n.census_mode_byDrawer,
+                context.l10n.census_mode_allCabin,
               ],
               selectedIndex: CensusMode.values.indexOf(selection.censusMode),
               onChanged: (index) => selection.setCensusMode(CensusMode.values[index]),

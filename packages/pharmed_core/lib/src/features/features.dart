@@ -27,7 +27,6 @@ export 'kit_content/kit_content.dart';
 export 'warning/warning.dart';
 export 'authorization/authorization.dart';
 export 'inconsistency/inconsistency.dart';
-export 'stock_transaction/stock_transaction.dart';
 export 'waste/waste.dart';
 export 'census/census.dart';
 export 'unload/unload.dart';
