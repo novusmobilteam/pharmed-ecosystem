@@ -68,7 +68,7 @@ class CabinTargetedPrescriptionItem {
       id: 0,
       prescriptionId: 0,
       dosePiece: 0,
-      cabinAssignment: assignment ?? MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0),
+      cabinAssignment: assignment ?? MedicineAssignment.empty(cabinDrawerId: 0),
     );
   }
 }

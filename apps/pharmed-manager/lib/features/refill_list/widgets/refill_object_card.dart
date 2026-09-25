@@ -22,7 +22,7 @@ class RefillObjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isSelected = selectedQuantity > 0;
     final current = object.quantity;
-    final isCritical = current <= (object.assignment?.minQuantityFromBackend ?? 0);
+    final isCritical = current <= (object.assignment?.criticalQuantity ?? 0);
 
     return Container(
       margin: EdgeInsets.only(bottom: 6.0),
@@ -57,8 +57,8 @@ class RefillObjectCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   _infoText(
                     context,
-                    context.l10n.refill_label_current(current.formatFractional),
-                    isCritical ? Colors.orange : null,
+                    context.l10n.refill_label_current(object.assignment?.quantityLabel(current) ?? '-'),
+                    isCritical ? MedColors.amber : null,
                   ),
                   _infoText(context, _quantity(context), null),
                 ],
@@ -87,8 +87,9 @@ class RefillObjectCard extends StatelessWidget {
     final assignment = object.assignment;
     if (assignment == null) return '-';
 
-    return '${context.l10n.common_minLabel}: ${assignment.quantityWithDoseLabel(context, assignment.minQuantity)} - '
-        '${context.l10n.common_maxLabel} ${assignment.quantityWithDoseLabel(context, assignment.maxQuantity)} - '
-        '${context.l10n.common_criticalLabel}: ${assignment.quantityWithDoseLabel(context, assignment.criticalQuantity)}';
+    final l10n = context.l10n;
+    return '${l10n.common_minLabel}: ${assignment.minQuantityLabel} - '
+        '${l10n.common_criticalLabel}: ${assignment.critQuantityLabel} - '
+        '${l10n.common_maxLabel}: ${assignment.maxQuantityLabel}';
   }
 }

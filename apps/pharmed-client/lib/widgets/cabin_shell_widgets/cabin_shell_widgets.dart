@@ -24,3 +24,4 @@ export 'execution/cabin_execution_grid_card.dart';
 export 'execution/cabin_execution_grid.dart';
 export 'execution/master_drawer_status_view.dart';
 export 'execution/med_quantity_value_card.dart';
+export 'execution/cabin_execution_panel.dart';

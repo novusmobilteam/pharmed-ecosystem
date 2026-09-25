@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CabinAssignmentListView extends StatelessWidget {
@@ -63,9 +62,9 @@ class CabinAssignmentListView extends StatelessWidget {
                     );
 
               double current = assignment.totalQuantity;
-              double maxQty = assignment.maxQuantity?.toDouble() ?? 0.0;
-              double critQty = assignment.critQuantityFromBackend;
-              double minQty = assignment.minQuantityFromBackend;
+              double maxQty = assignment.maxQuantity.toDouble();
+              double critQty = assignment.criticalQuantity.toDouble();
+              double minQty = assignment.minQuantity.toDouble();
               final id = assignment.cabinDrawerId;
               bool isSelected = id != null && selectedItemIds.contains(id);
 
@@ -75,8 +74,7 @@ class CabinAssignmentListView extends StatelessWidget {
 
               final color = level.color;
 
-              String stock =
-                  '${current.formatFractional}/${maxQty.formatFractional} (${assignment.operationUnit(context)})';
+              final stock = assignment.stockRatioLabel;
 
               final pct = _ratio(current, maxQty);
 

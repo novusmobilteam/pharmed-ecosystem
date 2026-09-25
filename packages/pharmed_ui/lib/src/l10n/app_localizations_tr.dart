@@ -4518,6 +4518,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_refillListStatusSent => 'Gönderildi';
 
   @override
+  String get enumCore_refillListStatusCompleted => 'Tamamlandı';
+
+  @override
+  String get enumCore_refillListStatusPartiallyCompleted => 'Kısmen Tamamlandı';
+
+  @override
   String get enumCore_fillingTypeMinimum => 'Minimum';
 
   @override
@@ -4585,6 +4591,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get enumCore_cabinOpModeUnload => 'İlaç Boşaltma';
+
+  @override
+  String get enumCore_cabinOpModeDestruction => 'İlaç İmha';
 
   @override
   String get enumCore_cabinInventoryTypeRefillOperationLabel => 'Dolum';
@@ -6948,4 +6957,150 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refund_showToReturnBoxTooltip => 'İade Kutusuna İadeleri Göster';
+
+  @override
+  String get common_noPatientSelectedEmptyTitle => 'Hasta Seçilmedi';
+
+  @override
+  String get intake_selectionEmptyDescription =>
+      'İlaç alımı hasta bazında yürütülür. Soldaki listeden bir hasta seçtiğinizde, o hastaya order edilmiş ve alınabilecek ilaçlar burada listelenir.';
+
+  @override
+  String get dailyWorklist_selectionEmptyDescription =>
+      'Soldaki listeden bir hasta seçtiğinizde, o hasta için bugün planlanan uygulamalar burada listelenir.';
+
+  @override
+  String get prescriptionReview_selectionEmptyDescription =>
+      'Soldaki listeden bir hasta seçtiğinizde, o hastaya ait istemler incelemeniz için burada listelenir.';
+
+  @override
+  String get refund_selectionEmptyDescription =>
+      'İade işlemi hasta bazında yürütülür. Soldaki listeden bir hasta seçtiğinizde, o hastaya uygulanmış ve iade edilebilir ilaçlar burada listelenir.';
+
+  @override
+  String get unappliedPrescription_selectionEmptyDescription =>
+      'Soldaki listeden bir hasta seçtiğinizde, o hastaya ait henüz uygulanmamış reçeteler burada listelenir.';
+
+  @override
+  String get wastage_selectionEmptyDescription =>
+      'Fire/imha işlemi hasta bazında yürütülür. Soldaki listeden bir hasta seçtiğinizde, o hasta için fire/imha kaydı yapılabilecek ilaçlar burada listelenir.';
+
+  @override
+  String get refillList_selectionEmptyTitle => 'Dolum Listesi Seçilmedi';
+
+  @override
+  String get refillList_selectionEmptyDescription =>
+      'Soldaki listeden bir dolum listesi seçtiğinizde, listedeki ilaçlar ve hedef gözleri burada gösterilir.';
+
+  @override
+  String get enumCore_refillListItemFillStatusNotStarted => 'Bekliyor';
+
+  @override
+  String get enumCore_refillListItemFillStatusPartial => 'Kısmi';
+
+  @override
+  String get enumCore_refillListItemFillStatusCompleted => 'Tamamlandı';
+
+  @override
+  String get refillList_column_status => 'Durum';
+
+  @override
+  String cabinExecution_queueProgress(int current, int total) {
+    return 'Çekmece $current/$total';
+  }
+
+  @override
+  String get cabinExecution_stopButton => 'Durdur';
+
+  @override
+  String get cabinExecution_saveAndNextButton => 'Kaydet ve Sonraki Çekmece';
+
+  @override
+  String get cabinExecution_saveAndFinishButton => 'Kaydet ve Tamamla';
+
+  @override
+  String get cabinExecution_stopConfirmTitle => 'İşlem durdurulsun mu?';
+
+  @override
+  String get cabinExecution_stopConfirmMessage =>
+      'Kaydedilen çekmeceler korunur, bu çekmecedeki kaydedilmemiş girişler kaybolur.';
+
+  @override
+  String get cabinExecution_stopConfirmYes => 'Durdur';
+
+  @override
+  String get cabinExecution_errorTitle => 'İşlem kaydedilemedi';
+
+  @override
+  String get cabinExecution_errorSkipButton => 'Sonraki Çekmeceye Geç';
+
+  @override
+  String get cabinExecution_errorAbortButton => 'İşlemi Sonlandır';
+
+  @override
+  String cabinEntryCard_cellBadge(String label) {
+    return 'GÖZ $label';
+  }
+
+  @override
+  String cabinEntryCard_cellPosition(int current, int total) {
+    return 'Göz $current/$total';
+  }
+
+  @override
+  String get cabinEntryCard_miadTitle => 'Son Kullanma Tarihi';
+
+  @override
+  String get cabinEntryTable_miadPlaceholder => 'Tarih seç';
+
+  @override
+  String get cabinEntryCard_miadRequired => 'Giriş yapıldığında SKT zorunludur';
+
+  @override
+  String get refillList_panelTitle => 'Dolum Listeleri';
+
+  @override
+  String get refillList_tab_waiting => 'Bekleyen';
+
+  @override
+  String get refillList_tab_completed => 'Tamamlanan';
+
+  @override
+  String refillList_listTitle(int id) {
+    return 'Dolum Listesi #$id';
+  }
+
+  @override
+  String get cabinExecution_recordedQuantity => 'Kayıttaki Miktar';
+
+  @override
+  String common_quantityPieces(String count) {
+    return '$count Adet';
+  }
+
+  @override
+  String common_quantityWithMeasure(String count, String dose, String unit) {
+    return '$count Adet × $dose $unit';
+  }
+
+  @override
+  String common_quantityRatioPieces(String current, String max) {
+    return '$current/$max Adet';
+  }
+
+  @override
+  String common_quantityRatioWithMeasure(
+    String current,
+    String max,
+    String dose,
+    String unit,
+  ) {
+    return '$current/$max Adet × $dose $unit';
+  }
+
+  @override
+  String get cabinEntry_takeLabel => 'Alınacak';
+
+  @override
+  String get cabinEntry_blindCountHint => 'Gözdeki miktarı sayıp girin';
 }

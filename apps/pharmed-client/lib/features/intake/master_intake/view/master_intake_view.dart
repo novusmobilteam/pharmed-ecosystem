@@ -1,20 +1,18 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/features/intake/master_intake/notifier/master_intake_selection_notifier.dart';
-import 'package:pharmed_client/widgets/empty_widgets/no_selected_hospitalization_view.dart';
+import 'package:pharmed_client/widgets/empty_widgets/empty_selection_view.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../core/hardware/hardware.dart';
+import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.dart';
 import '../../../../widgets/empty_widgets/no_data_view.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
 import '../notifier/master_intake_execution_notifier.dart';
 import '../notifier/patient_selection_notifier.dart';
-import '../widgets/drawer_stage_status_banner.dart';
-import '../widgets/intake_active_medicine_card.dart';
+
 import '../widgets/intake_check_dialog.dart';
 import '../widgets/intake_ordered_item_card.dart';
 import '../widgets/intake_orderless_item_card.dart';

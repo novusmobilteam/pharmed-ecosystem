@@ -32,12 +32,14 @@ class IntakeItem {
 
   final int id;
 
-  /// Kullanıcının alım yaparken değiştirebildiği miktar.
-  /// Başlangıçta prescriptionDose ile aynı değerde fakat kullanıcı isterse
-  /// bu miktarı değiştirebiliyor.
+  /// Alınacak miktar — ADET cinsinden. Ordered alımda reçete dozundan
+  /// türetilir (ölçü birimli ilaçta ml ÷ adet başına miktar), kullanıcı
+  /// sınırlar içinde değiştirebilir. Stokla karşılaştırılır ve backend'e gider.
   final double? dosePiece;
 
-  /// Reçetede yazılan miktar. Reçetesiz alımda null olacak.
+  /// Reçetede yazılan miktar — REÇETE birimi (ölçü birimli ilaçta ml).
+  /// Yalnızca gösterim ve doz sınırı hesabı için; adetle doğrudan
+  /// karşılaştırılmaz. Reçetesiz alımda null.
   final double? prescriptionDose;
 
   /// İlacın kabindeki yeri.
@@ -145,52 +147,20 @@ class IntakeItem {
   }
 }
 
-extension WithdrawItemExtensions on IntakeItem {
-  String _formatNumber(double value) {
-    return value == value.toInt() ? value.toInt().toString() : value.toString();
-  }
+extension IntakeItemExtensions on IntakeItem {
+  /// Gözdeki toplam stok (adet).
+  double get totalAmount => assignment?.totalQuantity ?? 0;
 
-  String get totalAmountLabel {
-    final medicine = this.medicine;
-    final drug = medicine is Drug ? medicine : null;
+  String get totalAmountLabel => assignment?.quantityLabel(dosePiece ?? totalAmount) ?? '-';
 
-    final double physicalQty = (assignment?.stocks ?? []).fold(
-      0.0,
-      (sum, item) => sum + (item.quantity ?? 0).toDouble(),
-    );
-
-    if (drug != null && drug.isMeasureUnit == true) {
-      final double totalDose = dosePiece ?? physicalQty;
-      final String unit = drug.doseUnit?.name ?? "birim";
-      return "${_formatNumber(totalDose)} $unit";
-    } else {
-      return "${_formatNumber(dosePiece ?? physicalQty)} Adet";
-    }
-  }
-
+  /// Stok yok ya da istenen miktarı (adet) karşılamıyor.
   bool get hasNoStock {
     final stocks = assignment?.stocks ?? const [];
     if (stocks.isEmpty) return true;
 
-    final total = stocks.fold<double>(0, (sum, s) => sum + (s.quantity ?? 0).toDouble());
+    // Ordered alımda istenen miktar bilinir — stok ondan azsa da yetersiz.
+    // Orderless/free'de dosePiece null gelir — yalnızca stok sıfır mı bakılır.
     final requested = dosePiece ?? 0;
-
-    // İstenen miktar biliniyorsa (ordered alım): stok istenenden AZSA da
-    // yetersiz say — "stok var ama talebi karşılamıyor" durumu.
-    // İstenen miktar yoksa (orderless/free, dosePiece null gelir): eski
-    // davranış — sadece toplam stok sıfır mı diye bak.
-    if (requested > 0) return total < requested;
-    return total <= 0;
-  }
-
-  double get totalAmount {
-    final medicine = this.medicine;
-    final drug = medicine is Drug ? medicine : null;
-    final double physicalQty = (assignment?.stocks ?? []).fold(0, (sum, item) => sum + (item.quantity ?? 0));
-
-    if (drug != null && drug.isMeasureUnit == true) {
-      return physicalQty;
-    }
-    return physicalQty.toDouble();
+    return requested > 0 ? totalAmount < requested : totalAmount <= 0;
   }
 }

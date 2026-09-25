@@ -59,6 +59,7 @@ mixin MasterDrawerExecutionMixin on ChangeNotifier {
         break;
     }
 
+    onStageChanged(previous, current);
     notifyListeners();
   }
 
@@ -96,4 +97,7 @@ mixin MasterDrawerExecutionMixin on ChangeNotifier {
   Future<void> reopenDrawer() => drawerSession.reopen();
 
   Future<void> stopDrawer() => drawerSession.stop();
+
+  /// Her stage değişiminde (belirli hook'lardan SONRA) çağrılır.
+  void onStageChanged(MasterDrawerStage? previous, MasterDrawerStage current) {}
 }

@@ -9,9 +9,9 @@ class MedicineAssignmentMapper {
     return MedicineAssignment(
       id: dto.id,
       cabinDrawerId: dto.cabinDrawerId,
-      minQuantity: dto.minQuantity,
-      criticalQuantity: dto.criticalQuantity,
-      maxQuantity: dto.maxQuantity,
+      minQuantity: dto.minQuantity ?? 0.0,
+      criticalQuantity: dto.criticalQuantity ?? 0.0,
+      maxQuantity: dto.maxQuantity ?? 0.0,
       // Cabin, Medicine ve DrawerUnit için ilgili mapper'ları kullanıyoruz
       cabin: const CabinMapper().toEntityOrNull(dto.cabin),
       medicine: dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null,

@@ -59,26 +59,24 @@ class DrugAssignmentFormDialog extends StatelessWidget {
                     Expanded(
                       child: MedTextInputField(
                         label: context.l10n.common_minLabel,
-                        initialValue: notifier.assignment?.minQuantityFromBackend.formatFractional,
-                        onChanged: (value) => notifier.updateMinQuantity(value),
+                        initialValue: notifier.assignment?.minQuantity.toDouble().formatFractional,
+                        onChanged: notifier.updateMinQuantity,
                         suffix: suffix,
                       ),
                     ),
-
                     Expanded(
                       child: MedTextInputField(
                         label: context.l10n.common_criticalLabel,
-                        initialValue: notifier.assignment?.critQuantityFromBackend.formatFractional,
-                        onChanged: (value) => notifier.updateCritQuantity(value),
+                        initialValue: notifier.assignment?.criticalQuantity.toDouble().formatFractional,
+                        onChanged: notifier.updateCritQuantity,
                         suffix: suffix,
                       ),
                     ),
-
                     Expanded(
                       child: MedTextInputField(
                         label: context.l10n.common_maxLabel,
-                        initialValue: notifier.assignment?.maxQuantityFromBackend.formatFractional,
-                        onChanged: (value) => notifier.updateMaxQuantity(value),
+                        initialValue: notifier.assignment?.maxQuantity.toDouble().formatFractional,
+                        onChanged: notifier.updateMaxQuantity,
                         suffix: suffix,
                       ),
                     ),

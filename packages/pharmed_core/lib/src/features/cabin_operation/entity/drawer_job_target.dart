@@ -38,6 +38,12 @@ abstract interface class DrawerJob<T extends DrawerJobTarget> {
 
   CabinOperationJobStatus get status;
 
+  /// Fiziksel çekmece kimliği — konum rehberinde aktif item'ı bulmak için.
+  int get cabinDrawerId;
+
+  /// Çekmecenin bulunduğu kabin — çoklu kabin şeridi ve kabin yerleşimi için.
+  int? get cabinId;
+
   /// copyWith(status: ...)'a yönlendiren adaptör — her concrete job kendi
   /// immutable copyWith'ini kullanır, mixin somut tipi bilmez.
   DrawerJob<T> copyWithStatus(CabinOperationJobStatus status);

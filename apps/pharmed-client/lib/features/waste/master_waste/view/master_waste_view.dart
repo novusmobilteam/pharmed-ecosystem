@@ -7,7 +7,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../../widgets/empty_widgets/no_selected_hospitalization_view.dart';
+import '../../../../widgets/empty_widgets/empty_selection_view.dart';
 import '../../../../widgets/hospitalization_panel/hospitalization_panel.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';

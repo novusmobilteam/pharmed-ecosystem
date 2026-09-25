@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
 import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
-import '../../refill.dart';
+import '../notifier/master_refill_execution_notifier.dart';
+import '../notifier/master_refill_selection_notifier.dart';
 
 class MasterRefillSelectionView extends ConsumerWidget {
   const MasterRefillSelectionView({super.key, required this.cabinContext});
@@ -15,63 +17,49 @@ class MasterRefillSelectionView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(masterRefillNotifierProvider);
-    final notifier = ref.read(masterRefillNotifierProvider.notifier);
-    final cabin = cabinContext.cabin;
-    final groups = cabinContext.cabinData?.groups;
-    final menu = cabinContext.menu;
-
-    final selection = switch (state) {
-      MasterRefillSelection s => s,
-      MasterRefillError(previousState: MasterRefillSelection s) => s,
-      _ => null,
-    };
-
-    if (selection == null) return const SizedBox.shrink();
+    final selection = ref.watch(masterRefillSelectionNotifierProvider);
+    final visible = selection.visibleAssignments;
 
     return CabinOperationSelectionLayout(
-      isLoading: state is MasterRefillLoading,
-      left: Column(
-        children: [
-          Expanded(
-            child: CabinOverviewSelectionPanel(
-              cabin: cabin,
-              onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
-              groups: groups ?? [],
-              assignments: selection.medicines,
-              selectedUnitIds: selection.selectedUnitIds,
-              onDrawerTap: notifier.toggleDrawer,
-              onCellTap: (unit) {
-                final id = unit.id;
-                if (id == null) return;
-                notifier.toggleUnit(id);
-              },
-            ),
-          ),
-        ],
+      isLoading: selection.isLoadingAssignments,
+      left: CabinOverviewSelectionPanel(
+        cabin: cabinContext.cabin,
+        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+        groups: cabinContext.cabinData?.groups ?? const [],
+        assignments: selection.assignments,
+        selectedUnitIds: selection.selectedUnitIds,
+        onDrawerTap: selection.toggleDrawer,
+        onCellTap: (unit) {
+          final id = unit.id;
+          if (id != null) selection.toggleUnit(id);
+        },
       ),
-
       right: CabinSelectionContentShell(
-        menu: menu,
+        menu: cabinContext.menu,
         searchQuery: selection.search,
-        onSearchQueryChanged: notifier.onSearchChanged,
-        isEmpty: selection.visibleMedicines.isEmpty,
+        onSearchQueryChanged: selection.onSearchChanged,
         searchHint: context.l10n.intake_hint_searchMedicine,
+        isEmpty: visible.isEmpty,
         emptyMessage: context.l10n.refill_hint_noMedicines,
-        content: selection.visibleMedicines.isEmpty
+        content: visible.isEmpty
             ? null
             : CabinAssignmentListView(
-                items: selection.visibleMedicines,
+                items: visible,
                 selectedItemIds: selection.selectedUnitIds,
-                onToggle: notifier.toggleUnit,
+                onToggle: selection.toggleUnit,
               ),
-        footer: selection.selectedAssignments.isNotEmpty
+        footer: selection.canStart
             ? MedButton(
                 label: context.l10n.refill_action_startAuto,
-                onPressed: notifier.startAutoRefill,
                 suffixIcon: Icon(PhosphorIcons.arrowRight()),
                 size: MedButtonSize.lg,
                 variant: MedButtonVariant.primary,
+                onPressed: () => selection.startRefill(
+                  onQueueReady: (jobs, skipped) {
+                    ref.read(masterRefillExecutionNotifierProvider).start(jobs);
+                  },
+                  onFailed: (failure) => MessageUtils.showErrorSnackbar(context, failure.message(context)),
+                ),
               )
             : null,
       ),

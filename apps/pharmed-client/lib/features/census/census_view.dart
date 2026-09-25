@@ -7,9 +7,10 @@ import '../dashboard/dashboard.dart';
 import 'census.dart';
 
 class CensusView extends ConsumerWidget {
-  const CensusView({super.key, required this.cabinRouteContext});
+  const CensusView({super.key, required this.cabinRouteContext, required this.stationContext});
 
   final CabinRouteContext cabinRouteContext;
+  final StationCabinsContext stationContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +18,7 @@ class CensusView extends ConsumerWidget {
     final cabinData = cabinRouteContext.cabinData;
 
     return switch (deviceMode) {
-      CabinType.master => MasterCensusView(cabinContext: cabinRouteContext),
+      CabinType.master => MasterCensusView(cabinContext: cabinRouteContext, stationContext: stationContext),
       CabinType.mobile => MobileCensusView(data: cabinData),
       _ => const Center(child: MedLoadingIndicator()),
     };

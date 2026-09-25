@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../features/auth/auth.dart';
 import '../../features/dashboard/dashboard.dart';
@@ -20,25 +21,21 @@ class AppRouter extends ConsumerWidget {
     final authState = ref.watch(authNotifierProvider);
     final setupState = ref.watch(appSetupStatusProvider);
 
-    // ──────────────────────────────────────────────────────────────
-    // [ORİJİNAL AKIŞ] Dev geçici blok kaldırılınca aşağısı aktif edilecek.
-    // ──────────────────────────────────────────────────────────────
     return switch ((authState, setupState)) {
-      (AuthLoggedIn(), AsyncLoading()) => const LoginScreen(),
-      (AuthLoggedIn(), AsyncData(value: false)) => const SetupWizardScreen(),
+      // Oturum açık — geri sayım sırasında da bu dal çalışır (countdown
+      // AuthState'te değil), ağaç yapısı sabit kalır.
       (AuthLoggedIn(), AsyncData(value: true)) => const ActiveServiceGate(),
+      (AuthLoggedIn(), AsyncData(value: false)) => const SetupWizardScreen(),
       (AuthLoggedIn(), AsyncError()) => const SetupWizardScreen(),
+      (AuthLoggedIn(), _) => const Scaffold(body: Center(child: MedLoadingIndicator())),
 
-      // Countdown sırasında dashboard'da kal, banner gösterilir
-      (AuthSessionExpiring(), _) => const DashboardScreen(),
+      // Kilitli bağlam — timeout/401 sonrası ve oradan yapılan giriş denemesi
+      // (yükleniyor/hata) boyunca dashboard korunur.
+      (AuthLoggedOut(showLockedDashboard: true), _) ||
+      (AuthLoading(showLockedDashboard: true), _) ||
+      (AuthError(showLockedDashboard: true), _) => const DashboardScreen(),
 
-      // YENİ: Locked çıkış → dashboard'da kal, appbar'da Giriş Yap butonu
-      (AuthLoggedOut(showLockedDashboard: true), _) => const DashboardScreen(),
-
-      // Diğer logout/error → login
-      (AuthLoggedOut(), _) => const LoginScreen(),
-      (AuthError(), _) => const LoginScreen(),
-      (AuthLoading(), _) => const LoginScreen(),
+      // Diğer her durum → login
       _ => const LoginScreen(),
     };
   }

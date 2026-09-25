@@ -44,14 +44,20 @@ class DashboardRouteContent extends ConsumerWidget {
             'drug-assignment' =>
               cabinRouteContext != null ? AssignmentView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'drug-refill' =>
-              cabinRouteContext != null ? RefillView(cabinRouteContext: cabinRouteContext) : const SizedBox.shrink(),
+              cabinRouteContext != null
+                  ? RefillView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
+                  : const SizedBox.shrink(),
             'drug-intake' =>
               stationCabinsContext != null ? IntakeView(stationContext: stationCabinsContext) : SizedBox.shrink(),
             'drug-activity' => DrugActivityScreen(menu: activeMenu!),
             'drug-unload' =>
-              cabinRouteContext != null ? UnloadView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
+              cabinRouteContext != null
+                  ? UnloadView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
+                  : SizedBox.shrink(),
             'drug-census' =>
-              cabinRouteContext != null ? CensusView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
+              cabinRouteContext != null
+                  ? CensusView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
+                  : SizedBox.shrink(),
             'drawer-malfunction' =>
               cabinRouteContext != null ? FaultView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
             'drug-return' =>
@@ -74,7 +80,7 @@ class DashboardRouteContent extends ConsumerWidget {
                   : const SizedBox.shrink(),
             'drug-destruction' =>
               cabinRouteContext != null
-                  ? DestructionView(cabinRouteContext: cabinRouteContext)
+                  ? DestructionView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
                   : const SizedBox.shrink(),
             'daily-job-list' =>
               cabinRouteContext != null ? JobListScreen(cabinRouteContext: cabinRouteContext) : const SizedBox.shrink(),

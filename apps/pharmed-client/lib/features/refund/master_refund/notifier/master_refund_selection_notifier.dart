@@ -93,7 +93,7 @@ class MasterRefundSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       final matchingStock = data.stocks.firstWhereOrNull((s) => s.cabinDrawerId == unit.id);
       final detail = matchingStock?.cabinDrawerDetail;
 
-      return MedicineAssignment.empty(cabinId: data.cabin.id ?? 0, cabinDrawerId: unit.id ?? 0).copyWith(
+      return MedicineAssignment.empty(cabinDrawerId: unit.id ?? 0).copyWith(
         drawerUnit: resolvedUnit,
         medicine: checkedItem.medicine,
         cabinDrawerDetail: detail != null ? [detail] : null,

@@ -41,30 +41,64 @@ class DrawerLayoutOverviewPanel extends StatelessWidget {
   }
 
   Widget _kubikGrid(BuildContext context) {
-    const crossAxisCount = 4;
+    const columnCount = 4;
+
+    // Seçim paneliyle AYNI görsel sıra — ham unit sırası fiziksel düzenle
+    // eşleşmiyor (bkz. CabinOverviewSelectionPanel / kübik transpozisyon).
+    final visualUnits = kubikUnitsInVisualOrder(item.units, columnCount: columnCount);
+
+    // İade çekmecesinde son sütun fiziksel olarak tek kutu — tek tek
+    // çizilmez, tek bir blok olarak gösterilir.
+    final isReturnDrawer = item.group.isReturnDrawer;
+    final normalColumnCount = isReturnDrawer ? columnCount - 1 : columnCount;
+
+    // Her görsel hücre için item.units'teki HAM indeks — aktif/tamamlanan
+    // işaretleri bu indekslere göre tutuluyor.
+    final normalIndices = <int>[
+      for (var i = 0; i < visualUnits.length; i++)
+        if (!isReturnDrawer || i % columnCount != columnCount - 1) item.units.indexOf(visualUnits[i]),
+    ];
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final rowCount = (item.units.length / crossAxisCount).ceil();
-        // Mevcut yüksekliği satır sayısına eşit bölüp hücre yüksekliğini
-        // TÜRETİYORUZ — sabit px değil, alana göre hesaplanan değer.
+        final rowCount = (visualUnits.length / columnCount).ceil();
         final cellHeight = rowCount > 0
             ? (constraints.maxHeight - _spacing * (rowCount - 1)) / rowCount
             : constraints.maxHeight;
 
-        return GridView.builder(
+        final grid = GridView.builder(
           physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
+            crossAxisCount: normalColumnCount,
             crossAxisSpacing: _spacing,
             mainAxisSpacing: _spacing,
             mainAxisExtent: cellHeight,
           ),
-          itemCount: item.units.length,
+          itemCount: normalIndices.length,
           itemBuilder: (context, i) {
-            final isCompleted = item.completedTargetIndexes.contains(i);
-            final isActive = item.activeTargetIndex == i;
-            return _Cell(isCompleted: isCompleted, isActive: isActive);
+            final rawIndex = normalIndices[i];
+            return _Cell(
+              isCompleted: item.completedTargetIndexes.contains(rawIndex),
+              isActive: item.activeTargetIndex == rawIndex,
+            );
           },
+        );
+
+        if (!isReturnDrawer) return grid;
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(flex: normalColumnCount, child: grid),
+            const SizedBox(width: _spacing),
+            Expanded(
+              child: _ReturnBlock(
+                isActive: item.isReturnDrawerTarget && item.status == DrawerQueueStatus.active,
+                isCompleted: item.isReturnDrawerTarget && item.status == DrawerQueueStatus.completed,
+              ),
+            ),
+          ],
         );
       },
     );
@@ -179,6 +213,37 @@ class _Cell extends StatelessWidget {
         child: isCompleted
             ? Center(child: Icon(PhosphorIcons.check(PhosphorIconsStyle.bold), size: 12, color: MedColors.green))
             : null,
+      ),
+    );
+  }
+}
+
+/// İade çekmecesinin birleşik son sütunu — fiziksel olarak tek kutu.
+class _ReturnBlock extends StatelessWidget {
+  const _ReturnBlock({required this.isActive, required this.isCompleted});
+
+  final bool isActive;
+  final bool isCompleted;
+
+  @override
+  Widget build(BuildContext context) {
+    final (Color bg, Color border, Color text) = isCompleted
+        ? (MedColors.greenLight, MedColors.green, MedColors.green)
+        : isActive
+        ? (MedColors.blueLight, MedColors.blue, MedColors.blue)
+        : (MedColors.amberLight, MedColors.amber, MedColors.amber);
+
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: bg,
+        border: Border.all(color: border, width: isActive ? 2 : 1.5),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        context.l10n.cabinDesign_returnBadge,
+        style: MedTextStyles.monoXs(color: text),
+        textAlign: TextAlign.center,
       ),
     );
   }

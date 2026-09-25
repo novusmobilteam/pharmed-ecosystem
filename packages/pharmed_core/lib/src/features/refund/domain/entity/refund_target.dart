@@ -17,7 +17,7 @@ class RefundTarget implements DrawerJobTarget {
   final bool isReturnDrawerTarget;
 
   @override
-  MedicineAssignment get assignment => item.resolvedTarget ?? MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0);
+  MedicineAssignment get assignment => item.resolvedTarget ?? MedicineAssignment.empty(cabinDrawerId: 0);
 
   bool get isKubik =>
       !isReturnDrawerTarget && (assignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false);

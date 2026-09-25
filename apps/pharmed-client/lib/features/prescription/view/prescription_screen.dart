@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/widgets/empty_widgets/empty_selection_view.dart';
 
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../widgets/empty_widgets/no_data_view.dart';
-import '../../../widgets/empty_widgets/no_selected_hospitalization_view.dart';
 import '../../../widgets/hospitalization_panel/hospitalization_panel.dart';
 import '../../../widgets/widgets.dart';
 
@@ -91,7 +91,14 @@ class _RightPanel extends StatelessWidget {
       child: Builder(
         builder: (context) {
           if (notifier.isLoading(notifier.fetchOp)) return Center(child: MedLoadingIndicator());
-          if (notifier.selectedHospitalization == null) return Center(child: NoSelectedHospitalizationView());
+          if (notifier.selectedHospitalization == null) {
+            return Center(
+              child: EmptySelectionView(
+                title: context.l10n.common_noPatientSelectedEmptyTitle,
+                description: context.l10n.prescriptionReview_selectionEmptyDescription,
+              ),
+            );
+          }
           if (notifier.selectedHospitalization != null && notifier.items.isEmpty) {
             return Center(
               child: NoDataView(

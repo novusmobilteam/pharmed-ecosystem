@@ -1,76 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/hardware/hardware.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../dashboard/dashboard.dart';
-import '../../refill.dart';
+import '../notifier/master_refill_execution_notifier.dart';
+import '../notifier/master_refill_selection_notifier.dart';
+import 'master_refill_execution_view.dart';
+import 'master_refill_selection_view.dart';
 
 class MasterRefillView extends ConsumerStatefulWidget {
-  const MasterRefillView({super.key, required this.cabinContext});
+  const MasterRefillView({super.key, required this.cabinContext, required this.stationContext});
 
   final CabinRouteContext cabinContext;
+  final StationCabinsContext stationContext;
 
   @override
   ConsumerState<MasterRefillView> createState() => _MasterRefillViewState();
 }
 
 class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
+  MasterRefillExecutionNotifier? _executionNotifier;
+
   @override
   void initState() {
     super.initState();
-
-    final notifier = ref.read(masterRefillNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      notifier.init(widget.cabinContext);
+      ref.read(masterRefillSelectionNotifierProvider).init(widget.cabinContext);
     });
+
+    _executionNotifier = ref.read(masterRefillExecutionNotifierProvider);
+    _executionNotifier!.onQueueFinished = () {
+      if (!mounted) return;
+      ref.read(masterRefillSelectionNotifierProvider).refreshAfterQueue();
+    };
+  }
+
+  @override
+  void dispose() {
+    _executionNotifier?.onQueueFinished = null;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(masterRefillNotifierProvider);
-    final notifier = ref.read(masterRefillNotifierProvider.notifier);
-    final isExecuting =
-        state is MasterRefillExecuting || (state is MasterRefillError && state.previousState is MasterRefillExecuting);
-    final isLoading = state is MasterRefillLoading;
-    final cabinData = widget.cabinContext.cabinData;
+    final selection = ref.watch(masterRefillSelectionNotifierProvider);
+    final isExecuting = ref.watch(masterRefillExecutionNotifierProvider.select((n) => n.isExecuting));
 
-    ref.listen(masterRefillNotifierProvider, (_, next) {
-      if (next is MasterRefillError && next.isQueueError) {
-        MessageUtils.showConfirmDialog(
-          context: context,
-          action: ConfirmAction.custom,
-          customTitle: context.l10n.refill_error_queueTitle,
-          customMessage: next.failure.message(context).isNotEmpty
-              ? next.failure.message(context)
-              : context.l10n.refill_error_queueMessage,
-          iconData: PhosphorIcons.warning(),
-          color: MedColors.amber,
-          confirmButtonText: context.l10n.refill_error_continueNext,
-          cancelButtonText: context.l10n.refill_error_endProcess,
-          onConfirm: notifier.continueAfterError,
-          onCancel: notifier.abortAfterError,
-        );
-      } else if (next is MasterRefillError) {
-        MessageUtils.showErrorSnackbar(context, next.failure.message(context));
-        notifier.dismissError();
-      }
-    });
-
-    if (cabinData == null) {
-      return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
+    if (widget.cabinContext.cabinData == null) {
+      return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
+    }
+    if (selection.isLoadingAssignments) return const Center(child: MedLoadingIndicator());
+    if (selection.isError) {
+      return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.networkError));
     }
 
-    if (isLoading) {
-      return Center(child: MedLoadingIndicator());
-    }
-
-    if (isExecuting) {
-      return MasterRefillExecutionView(allGroups: cabinData.groups);
-    }
-
-    return MasterRefillSelectionView(cabinContext: widget.cabinContext);
+    return isExecuting
+        ? MasterRefillExecutionView(stationContext: widget.stationContext)
+        : MasterRefillSelectionView(cabinContext: widget.cabinContext);
   }
 }

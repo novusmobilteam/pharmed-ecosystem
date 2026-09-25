@@ -19,7 +19,7 @@ class CabinTargetedRxItemMapper {
       medicine: const MedicineMapper().toEntityOrNull(dto.medicine),
       cabinAssignment: dto.cabinAssignment != null
           ? const MedicineAssignmentMapper().toEntity(dto.cabinAssignment!)
-          : MedicineAssignment.empty(cabinId: 0, cabinDrawerId: 0),
+          : MedicineAssignment.empty(cabinDrawerId: 0),
       stock: dto.cabinDrawerStock != null ? const CabinStockMapper().toEntity(dto.cabinDrawerStock!) : null,
       collectStationId: dto.collectStationId,
       collectStationName: dto.collectStationName,

@@ -67,7 +67,14 @@ class _RightPanel extends StatelessWidget {
       child: Builder(
         builder: (context) {
           if (notifier.isLoading(notifier.fetchDisposablesOp)) return Center(child: MedLoadingIndicator());
-          if (notifier.selectedHospitalization == null) return Center(child: NoSelectedHospitalizationView());
+          if (notifier.selectedHospitalization == null) {
+            return Center(
+              child: EmptySelectionView(
+                title: context.l10n.common_noPatientSelectedEmptyTitle,
+                description: context.l10n.wastage_selectionEmptyDescription,
+              ),
+            );
+          }
           if (notifier.selectedHospitalization != null && notifier.disposables.isEmpty) {
             return Center(
               child: NoDataView(

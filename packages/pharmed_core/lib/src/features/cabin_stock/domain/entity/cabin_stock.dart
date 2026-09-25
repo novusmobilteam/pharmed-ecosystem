@@ -74,27 +74,13 @@ class CabinStock {
   }
 }
 
-// extension CabinAssignmentExtension on CabinStock {
-//   // Klinik miktar gösterimi (Örn: "1000 ml" veya "10 Adet")
-//   // Sayıyı stringe çevirirken eğer .0 ise tam sayı, değilse olduğu gibi gösterir
-//   String _formatNumber(double value) {
-//     // Eğer sayı tam sayıya eşitse (örn: 76.0 == 76) küsuratsız yazdır
-//     return value == value.toInt() ? value.toInt().toString() : value.toString();
-//   }
-
-//   String get totalQuantityLabel {
-//     final medicine = this.medicine;
-//     final drug = medicine is Drug ? medicine : null;
-
-//     if (drug != null && drug.isMeasureUnit == true) {
-//       // Ölçü birimi kullanılıyorsa: Fiziksel Adet * Baz Doz
-//       final double totalDose = quantity?.toDouble() ?? 0.0;
-//       final String unit = drug.doseUnit?.name ?? "birim";
-
-//       return "${_formatNumber(totalDose)} $unit";
-//     } else {
-//       // Ölçü birimi yoksa direkt adet göster (76.0 -> 76 Adet)
-//       return "${_formatNumber(quantity?.toDouble() ?? 0)} Adet";
-//     }
-//   }
-// }
+extension CabinStockMiadX on CabinStock {
+  /// Forma başlangıç değeri olarak gösterilecek miad. Boş göz (miktar 0)
+  /// veya backend'in boş göz işaret tarihi (2099-12-31) → null.
+  DateTime? get effectiveMiad {
+    final date = miadDate;
+    if (date == null || (quantity ?? 0) <= 0) return null;
+    if (date.year >= 2099) return null;
+    return date;
+  }
+}

@@ -7,6 +7,7 @@ import 'package:pharmed_client/features/cabin_stock/cabin_stock.dart';
 import 'package:pharmed_client/features/fault/fault_view.dart';
 import 'package:pharmed_client/features/job_list/view/job_list_screen.dart';
 import 'package:pharmed_client/features/my_patients/view/my_patients_screen.dart';
+import 'package:pharmed_client/features/refill/refill_view.dart';
 import 'package:pharmed_client/features/refund/refund_view.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';
 import 'package:pharmed_client/features/unload/unload_view.dart';
@@ -27,7 +28,6 @@ import '../../../intake/intake.dart';
 import '../../../inventory/view/inventory_screen.dart';
 import '../../../prescription/view/prescription_screen.dart';
 import '../../../redirected_orders/view/redirected_orders_screen.dart';
-import '../../../refill/refill.dart';
 import '../../../refill_list/view/refill_list_view.dart';
 import '../../../service_selection/service_selection.dart';
 import '../../../settings/notifier/settings_notifier.dart';
@@ -65,21 +65,29 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget build(BuildContext context) {
     final notifier = ref.watch(dashboardNotifierProvider);
     final authNotif = ref.read(authNotifierProvider.notifier);
-    final authState = ref.watch(authNotifierProvider);
 
-    final isLoggedIn = authState is AuthLoggedIn || authState is AuthSessionExpiring;
-    final isExpiring = authState is AuthSessionExpiring;
-    final currentUser = authNotif.currentUser;
+    // Yalnızca kullanıcıyı dinle — oturum açık/kapalı ve kullanıcı değişimi
+    // bundan türer; geri sayım burayı hiç rebuild etmez.
+    final currentUser = ref.watch(authNotifierProvider.select((s) => s is AuthLoggedIn ? s.user : null));
+    final isLoggedIn = currentUser != null;
 
     final menuTree = notifier.menuTree ?? const <MenuItem>[];
     final flattenedMenus = notifier.flattenedMenus ?? const <MenuItem>[];
     final currentRoute = notifier.activeRoute;
 
-    ref.listen(authNotifierProvider, (previous, next) {
-      final wasActive = previous is AuthLoggedIn || previous is AuthSessionExpiring;
-      final isNowLoggedOut = next is AuthLoggedOut;
-      if (wasActive && isNowLoggedOut) {
-        ref.read(dashboardNotifierProvider.notifier).navigateTo('dashboard');
+    ref.listen(authNotifierProvider.select((s) => s is AuthLoggedIn ? s.user.id : null), (previousUserId, nextUserId) {
+      final dashboard = ref.read(dashboardNotifierProvider.notifier);
+
+      // Oturum kapandı (manuel, timeout, 401) — açık ekran ve içindeki
+      // hasta verisi kilitli dashboard'da kalmasın.
+      if (previousUserId != null && nextUserId == null) {
+        dashboard.navigateTo('dashboard');
+        return;
+      }
+
+      // Giriş yapıldı ve kullanıcı farklı — menü yetkileri yeniden çekilir.
+      if (nextUserId != null && nextUserId != previousUserId) {
+        dashboard.reloadMenus();
       }
     });
 
@@ -88,62 +96,56 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     }
 
     return Scaffold(
-      body: GestureDetector(
-        // Çıkış yapılmışken ekrana herhangi bir yere tıklamak
-        // giriş formunu açar; giriş yapılmışken davranış değişmedi (sadece
-        // oturum aktivitesi yenilenir).
-        onTap: () {
-          if (isLoggedIn) {
-            authNotif.onUserActivity();
-          } else {
-            _showLoginModal(context, ref);
-          }
+      body: Listener(
+        // Gesture arena'ya girmez — butonlar, menüler, kartlar dahil HER
+        // dokunuş oturum aktivitesi sayılır. Tek aktivite kaynağı burası.
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (_) {
+          if (isLoggedIn) authNotif.onUserActivity();
         },
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: MedSpacing.insetXl.top,
-                    right: MedSpacing.insetXl.right,
-                    left: MedSpacing.insetXl.left,
+        child: GestureDetector(
+          // Çıkış yapılmışken boş alana dokunmak giriş formunu açar.
+          onTap: isLoggedIn ? null : () => _showLoginModal(context, ref),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: MedSpacing.insetXl.top,
+                      right: MedSpacing.insetXl.right,
+                      left: MedSpacing.insetXl.left,
+                    ),
+                    child: DashboardAppBar(
+                      menuTree: menuTree,
+                      flattenedMenus: flattenedMenus,
+                      currentRoute: currentRoute,
+                      isLoggedIn: isLoggedIn,
+                      user: currentUser,
+                      onHomeTap: () {
+                        notifier.navigateTo('dashboard');
+                        notifier.refresh(forceRefresh: false);
+                      },
+                      onLoginTap: () => _showLoginModal(context, ref),
+                      onLogoutTap: authNotif.logout,
+                      onSettingsTap: () => _showSettingsPopup(context),
+                      onMenuItemTap: (id) => isLoggedIn ? notifier.navigateTo(id) : null,
+                    ),
                   ),
-                  child: DashboardAppBar(
-                    menuTree: menuTree,
-                    flattenedMenus: flattenedMenus,
-                    currentRoute: currentRoute,
-                    isLoggedIn: isLoggedIn,
-                    user: currentUser,
-                    onHomeTap: () {
-                      notifier.navigateTo('dashboard');
-                      notifier.refresh(forceRefresh: false);
-                    },
-                    onLoginTap: () => _showLoginModal(context, ref),
-                    onLogoutTap: authNotif.logout,
-                    onSettingsTap: () => _showSettingsPopup(context),
-                    onMenuItemTap: (id) => isLoggedIn ? notifier.navigateTo(id) : null,
+                  Expanded(
+                    child: Padding(
+                      padding: MedSpacing.insetXl,
+                      child: _DashboardBody(isLoggedIn: isLoggedIn),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: MedSpacing.insetXl,
-                    child: _DashboardBody(isLoggedIn: isLoggedIn),
-                  ),
-                ),
-              ],
-            ),
-
-            if (isExpiring)
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: SessionTimeoutBanner(
-                  secondsRemaining: authState.secondsRemaining,
-                  onExtend: authNotif.onUserActivity,
-                ),
+                ],
               ),
-          ],
+
+              // HER ZAMAN ağaçta — görünürlüğü sessionCountdownProvider'a göre
+              // kendisi yönetir.
+              const Positioned(bottom: 20, right: 20, child: SessionTimeoutBanner()),
+            ],
+          ),
         ),
       ),
     );

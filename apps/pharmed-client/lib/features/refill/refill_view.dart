@@ -4,12 +4,14 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../dashboard/dashboard.dart';
-import 'refill.dart';
+import 'master_refill/view/master_refill_view.dart';
+import 'mobile_refill/view/mobile_refill_view.dart';
 
 class RefillView extends ConsumerWidget {
-  const RefillView({super.key, required this.cabinRouteContext});
+  const RefillView({super.key, required this.cabinRouteContext, required this.stationContext});
 
   final CabinRouteContext cabinRouteContext;
+  final StationCabinsContext stationContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +19,7 @@ class RefillView extends ConsumerWidget {
     final cabinData = cabinRouteContext.cabinData;
 
     return switch (deviceMode) {
-      CabinType.master => MasterRefillView(cabinContext: cabinRouteContext),
+      CabinType.master => MasterRefillView(cabinContext: cabinRouteContext, stationContext: stationContext),
       CabinType.mobile => MobileRefillView(data: cabinData),
       _ => const Center(child: MedLoadingIndicator()),
     };

@@ -60,6 +60,13 @@ class User extends Selectable {
 
   int? get remainingDay => validUntil?.difference(DateTime.now()).inDays;
 
+  String get initials {
+    if (name == null) return '?';
+    final parts = fullName.trim().split(' ');
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+
   User copyWith({
     int? id,
     String? registrationNumber,

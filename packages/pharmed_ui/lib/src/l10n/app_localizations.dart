@@ -8067,6 +8067,18 @@ abstract class AppLocalizations {
   /// **'Sent'**
   String get enumCore_refillListStatusSent;
 
+  /// No description provided for @enumCore_refillListStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get enumCore_refillListStatusCompleted;
+
+  /// No description provided for @enumCore_refillListStatusPartiallyCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Partially Completed'**
+  String get enumCore_refillListStatusPartiallyCompleted;
+
   /// No description provided for @enumCore_fillingTypeMinimum.
   ///
   /// In en, this message translates to:
@@ -8204,6 +8216,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Drug Unload'**
   String get enumCore_cabinOpModeUnload;
+
+  /// No description provided for @enumCore_cabinOpModeDestruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Destruction'**
+  String get enumCore_cabinOpModeDestruction;
 
   /// No description provided for @enumCore_cabinInventoryTypeRefillOperationLabel.
   ///
@@ -12350,6 +12368,245 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show Return Box Returns'**
   String get refund_showToReturnBoxTooltip;
+
+  /// No description provided for @common_noPatientSelectedEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Patient Selected'**
+  String get common_noPatientSelectedEmptyTitle;
+
+  /// No description provided for @intake_selectionEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication intake is performed per patient. When you select a patient from the list on the left, the medications ordered for that patient and available for intake are listed here.'**
+  String get intake_selectionEmptyDescription;
+
+  /// No description provided for @dailyWorklist_selectionEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'When you select a patient from the list on the left, the administrations scheduled for that patient today are listed here.'**
+  String get dailyWorklist_selectionEmptyDescription;
+
+  /// No description provided for @prescriptionReview_selectionEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'When you select a patient from the list on the left, that patient\'s orders are listed here for your review.'**
+  String get prescriptionReview_selectionEmptyDescription;
+
+  /// No description provided for @refund_selectionEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Returns are processed per patient. When you select a patient from the list on the left, the medications administered to that patient that can be returned are listed here.'**
+  String get refund_selectionEmptyDescription;
+
+  /// No description provided for @unappliedPrescription_selectionEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'When you select a patient from the list on the left, that patient\'s prescriptions that have not yet been administered are listed here.'**
+  String get unappliedPrescription_selectionEmptyDescription;
+
+  /// No description provided for @wastage_selectionEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Wastage and disposal are processed per patient. When you select a patient from the list on the left, the medications that can be recorded as wastage or disposal for that patient are listed here.'**
+  String get wastage_selectionEmptyDescription;
+
+  /// No description provided for @refillList_selectionEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Refill List Selected'**
+  String get refillList_selectionEmptyTitle;
+
+  /// No description provided for @refillList_selectionEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'When you select a refill list from the left, the medications in that list and their target cells are shown here.'**
+  String get refillList_selectionEmptyDescription;
+
+  /// No description provided for @enumCore_refillListItemFillStatusNotStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get enumCore_refillListItemFillStatusNotStarted;
+
+  /// No description provided for @enumCore_refillListItemFillStatusPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial'**
+  String get enumCore_refillListItemFillStatusPartial;
+
+  /// No description provided for @enumCore_refillListItemFillStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get enumCore_refillListItemFillStatusCompleted;
+
+  /// No description provided for @refillList_column_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get refillList_column_status;
+
+  /// Queue progress shown in the execution footer of cabin operation screens (refill, census, refill list)
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer {current}/{total}'**
+  String cabinExecution_queueProgress(int current, int total);
+
+  /// No description provided for @cabinExecution_stopButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get cabinExecution_stopButton;
+
+  /// No description provided for @cabinExecution_saveAndNextButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and Next Drawer'**
+  String get cabinExecution_saveAndNextButton;
+
+  /// No description provided for @cabinExecution_saveAndFinishButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and Finish'**
+  String get cabinExecution_saveAndFinishButton;
+
+  /// No description provided for @cabinExecution_stopConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop the operation?'**
+  String get cabinExecution_stopConfirmTitle;
+
+  /// No description provided for @cabinExecution_stopConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved drawers are kept; unsaved entries in this drawer will be lost.'**
+  String get cabinExecution_stopConfirmMessage;
+
+  /// No description provided for @cabinExecution_stopConfirmYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get cabinExecution_stopConfirmYes;
+
+  /// No description provided for @cabinExecution_errorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save'**
+  String get cabinExecution_errorTitle;
+
+  /// No description provided for @cabinExecution_errorSkipButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip to Next Drawer'**
+  String get cabinExecution_errorSkipButton;
+
+  /// No description provided for @cabinExecution_errorAbortButton.
+  ///
+  /// In en, this message translates to:
+  /// **'End Operation'**
+  String get cabinExecution_errorAbortButton;
+
+  /// Badge on the cubic cell entry card showing the short grid label of the active cell (e.g. GÖZ B2)
+  ///
+  /// In en, this message translates to:
+  /// **'CELL {label}'**
+  String cabinEntryCard_cellBadge(String label);
+
+  /// Position of the active cell within the cubic drawer (e.g. Göz 5/16)
+  ///
+  /// In en, this message translates to:
+  /// **'Cell {current}/{total}'**
+  String cabinEntryCard_cellPosition(int current, int total);
+
+  /// No description provided for @cabinEntryCard_miadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get cabinEntryCard_miadTitle;
+
+  /// No description provided for @cabinEntryTable_miadPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get cabinEntryTable_miadPlaceholder;
+
+  /// No description provided for @cabinEntryCard_miadRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry date is required when a quantity is entered'**
+  String get cabinEntryCard_miadRequired;
+
+  /// No description provided for @refillList_panelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Lists'**
+  String get refillList_panelTitle;
+
+  /// No description provided for @refillList_tab_waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get refillList_tab_waiting;
+
+  /// No description provided for @refillList_tab_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get refillList_tab_completed;
+
+  /// Header title of the selected refill list showing its number
+  ///
+  /// In en, this message translates to:
+  /// **'Refill List #{id}'**
+  String refillList_listTitle(int id);
+
+  /// No description provided for @cabinExecution_recordedQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded Quantity'**
+  String get cabinExecution_recordedQuantity;
+
+  /// Quantity label in pieces, used for medicines without a measure unit (e.g. 4 Adet)
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pcs'**
+  String common_quantityPieces(String count);
+
+  /// Quantity label for measure-unit medicines: pieces times the amount per piece (e.g. 4 Adet × 100 ml)
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pcs × {dose} {unit}'**
+  String common_quantityWithMeasure(String count, String dose, String unit);
+
+  /// Current stock over maximum capacity in pieces (e.g. 4/36 Adet)
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{max} pcs'**
+  String common_quantityRatioPieces(String current, String max);
+
+  /// Current stock over maximum capacity for measure-unit medicines, with the amount per piece (e.g. 4/36 Adet × 100 ml)
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{max} pcs × {dose} {unit}'**
+  String common_quantityRatioWithMeasure(
+    String current,
+    String max,
+    String dose,
+    String unit,
+  );
+
+  /// No description provided for @cabinEntry_takeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'To Take'**
+  String get cabinEntry_takeLabel;
+
+  /// No description provided for @cabinEntry_blindCountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Count the items in the cell and enter the amount'**
+  String get cabinEntry_blindCountHint;
 }
 
 class _AppLocalizationsDelegate

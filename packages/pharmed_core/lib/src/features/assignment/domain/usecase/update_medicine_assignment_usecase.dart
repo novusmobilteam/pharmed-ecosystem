@@ -8,13 +8,5 @@ class UpdateMedicineAssignmentUseCase {
 
   UpdateMedicineAssignmentUseCase(this._repository);
 
-  Future<Result<void>> call(MedicineAssignment assignment) {
-    final ass = assignment.copyWith(
-      minQuantity: assignment.minQuantityToBackend,
-      maxQuantity: assignment.maxQuantityToBackend,
-      criticalQuantity: assignment.critQuantityToBackend,
-    );
-
-    return _repository.updateMedicineAssignment(ass);
-  }
+  Future<Result<void>> call(MedicineAssignment assignment) => _repository.updateMedicineAssignment(assignment);
 }

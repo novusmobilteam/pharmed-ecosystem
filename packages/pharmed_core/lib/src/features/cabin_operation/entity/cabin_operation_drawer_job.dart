@@ -43,11 +43,6 @@ class CabinOperationDrawerJob implements DrawerJob<CabinOperationTarget> {
   @override
   bool get staysOpenAcrossTargets => isKubik;
 
-  bool get isSerum => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false;
-  int get distinctMedicineCount => targets.map((t) => t.assignment.medicine?.id).whereType<int>().toSet().length;
-  bool get hasAnyEntry => targets.any((t) => t.hasEntry);
-  bool get canComplete => targets.every((t) => t.isValid);
-
   CabinOperationDrawerJob copyWith({List<CabinOperationTarget>? targets, CabinOperationJobStatus? status}) {
     return CabinOperationDrawerJob(
       cabinDrawerId: cabinDrawerId,

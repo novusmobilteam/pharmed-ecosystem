@@ -173,5 +173,7 @@ final class _ModeConfig {
       accentColor: MedColors.blueDark,
       badgeBg: MedColors.blueLight,
     ),
+
+    CabinOperationMode.destruction => throw UnimplementedError(),
   };
 }

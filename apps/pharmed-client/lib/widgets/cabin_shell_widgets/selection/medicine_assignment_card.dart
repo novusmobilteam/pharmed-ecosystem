@@ -35,10 +35,10 @@ class MedicineAssignmentCard extends StatelessWidget {
   String get _address => _slot?.address ?? '?';
   bool get _isKubik => assignment.isKubikType;
 
-  double get _current => assignment.toDisplayQuantity(assignment.totalQuantity);
-  double get _maxQty => assignment.maxQuantityFromBackend;
-  double get _critQty => assignment.critQuantityFromBackend;
-  double get _minQty => assignment.minQuantityFromBackend;
+  double get _current => assignment.totalQuantity;
+  double get _maxQty => assignment.maxQuantity.toDouble();
+  double get _critQty => assignment.criticalQuantity.toDouble();
+  double get _minQty => assignment.minQuantity.toDouble();
 
   String get _name => assignment.medicine?.name ?? '-';
 

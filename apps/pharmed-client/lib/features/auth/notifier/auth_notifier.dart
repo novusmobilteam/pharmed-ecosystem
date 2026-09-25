@@ -5,7 +5,6 @@
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
 import 'package:pharmed_client/core/flavor/auth_config.dart';
@@ -18,6 +17,7 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../service_selection/notifier/active_service_notifier.dart';
 import 'auth_state.dart';
+import 'session_countdown_notifier.dart';
 
 final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
 
@@ -29,10 +29,11 @@ class AuthNotifier extends Notifier<AuthState> {
   AuthCacheDataSource get _cache => ref.read(authCacheProvider);
   TokenHolder get _tokenHolder => ref.read(tokenHolderProvider);
   ActiveServiceNotifier get _activeServiceNotifier => ref.read(activeServiceNotifierProvider);
+  SessionCountdownNotifier get _countdown => ref.read(sessionCountdownProvider.notifier);
 
   Timer? _sessionTimer;
   Timer? _countdownTimer;
-  int _countdown = 0;
+  int _secondsRemaining = 0;
 
   // Activity throttle: AuthLoggedIn'deyken peş peşe gelen pointer event'leri
   // saniyede en fazla bir kez işle. AuthSessionExpiring'de throttle uygulanmaz.
@@ -44,25 +45,39 @@ class AuthNotifier extends Notifier<AuthState> {
   int _pauseCount = 0;
   bool get _isPaused => _pauseCount > 0;
 
+  /// Uyarı geri sayımı şu an aktif mi.
+  bool get _isWarning => _countdownTimer != null;
+
   bool _hasAccessedDashboard = false;
   bool get hasAccessedDashboard => _hasAccessedDashboard;
-  bool get isLoggedIn => state is AuthLoggedIn || state is AuthSessionExpiring;
+  bool get isLoggedIn => state is AuthLoggedIn;
 
   AppUser? get currentUser => switch (state) {
     AuthLoggedIn(:final user) => user,
-    AuthSessionExpiring(:final user) => user,
     _ => null,
+  };
+
+  /// Mevcut state kilitli dashboard bağlamında mı — login denemesi ve
+  /// hatası boyunca bu bilgi korunur.
+  bool get _isLockedContext => switch (state) {
+    AuthLoggedOut(:final showLockedDashboard) => showLockedDashboard,
+    AuthLoading(:final showLockedDashboard) => showLockedDashboard,
+    AuthError(:final showLockedDashboard) => showLockedDashboard,
+    _ => false,
   };
 
   @override
   AuthState build() {
-    ref.onDispose(_cancelTimers);
+    // Dispose sırasında başka bir provider'a yazılmaz.
+    ref.onDispose(() => _cancelTimers(clearCountdown: false));
     _restoreSession();
     return const AuthLoggedOut();
   }
 
   Future<void> login({required String email, required String password, required ValueChanged<String> onError}) async {
-    state = const AuthLoading();
+    final locked = _isLockedContext;
+    state = AuthLoading(showLockedDashboard: locked);
+
     final macAddress = await DeviceInfo.getMacAddress();
     final debugStationId = kDebugMode ? await ref.read(appSettingsCacheProvider).getCurrentStationId() : null;
 
@@ -79,14 +94,15 @@ class AuthNotifier extends Notifier<AuthState> {
       error: (failure) {
         final rawMsg = failure is ServiceException ? failure.message : null;
         final msg = rawMsg ?? contextlessL10n().auth_genericError;
-        state = AuthError(message: msg);
+        state = AuthError(message: msg, showLockedDashboard: locked);
         onError(msg);
       },
     );
   }
 
   Future<void> loginWithBadge({required String cardData, required ValueChanged<String> onError}) async {
-    state = const AuthLoading();
+    final locked = _isLockedContext;
+    state = AuthLoading(showLockedDashboard: locked);
     final macAddress = await DeviceInfo.getMacAddress();
 
     final result = await _loginWithBadge.call(cardData: cardData, macAddress: macAddress);
@@ -100,7 +116,7 @@ class AuthNotifier extends Notifier<AuthState> {
       error: (failure) {
         final rawMsg = failure is ServiceException ? failure.message : null;
         final msg = rawMsg ?? contextlessL10n().auth_genericError;
-        state = AuthError(message: msg);
+        state = AuthError(message: msg, showLockedDashboard: locked);
         onError(msg);
       },
     );
@@ -113,7 +129,7 @@ class AuthNotifier extends Notifier<AuthState> {
     _tokenHolder.setToken(null);
     await _cache.clear();
     _activeServiceNotifier.reset();
-    state = AuthLoggedOut(showLockedDashboard: true);
+    state = AuthLoggedOut(showLockedDashboard: locked);
   }
 
   void onUnauthorized() {
@@ -125,36 +141,19 @@ class AuthNotifier extends Notifier<AuthState> {
     state = const AuthLoggedOut(showLockedDashboard: true);
   }
 
-  /// UI'da herhangi bir etkileşim. Dashboard'daki kök [Listener] tarafından
-  /// çağrılır. `AuthLoggedIn`'deyken state DEĞİŞTİRİLMEZ (UI rebuild olmaz),
-  /// sadece sayaç sessizce yenilenir. `AuthSessionExpiring`'deyken kullanıcı
-  /// son anda dokunmuş demektir → oturum tekrar uzatılır.
+  /// UI'da herhangi bir etkileşim. State'e hiç dokunulmaz — sadece timer
+  /// sıfırlanır; uyarı aktifse geri sayım da iptal edilir (banner kaybolur).
   void onUserActivity() {
-    if (_isPaused) return;
+    if (_isPaused || state is! AuthLoggedIn) return;
 
-    // AuthSessionExpiring kritik: throttle BYPASS — countdown banner'ı
-    // gördükten sonra hemen dokunduğunda iptal etmek istiyoruz.
-    final isExpiring = state is AuthSessionExpiring;
-
-    if (!isExpiring) {
+    // Uyarı aktifken throttle BYPASS — son anda dokunuş hemen işlenmeli.
+    if (!_isWarning) {
       final now = DateTime.now();
-      if (_lastActivityAt != null && now.difference(_lastActivityAt!) < _activityThrottle) {
-        return;
-      }
+      if (_lastActivityAt != null && now.difference(_lastActivityAt!) < _activityThrottle) return;
       _lastActivityAt = now;
     }
 
-    switch (state) {
-      case AuthLoggedIn():
-        // Sessiz yenile: state'e dokunma, sadece timer'ı sıfırla.
-        _startSessionTimer();
-        break;
-      case AuthSessionExpiring(:final user):
-        _setLoggedIn(user);
-        break;
-      default:
-        break;
-    }
+    _startSessionTimer();
   }
 
   /// Çekmece açık / RFID tarama gibi uzun süren ve pointer event üretmeyen
@@ -162,17 +161,16 @@ class AuthNotifier extends Notifier<AuthState> {
   /// için bir [resumeInactivityTimer] çağrılmalıdır.
   void pauseInactivityTimer() {
     _pauseCount++;
-    if (_pauseCount == 1) {
-      _cancelTimers();
-    }
+    if (_pauseCount == 1) _cancelTimers();
   }
 
+  /// Uzun işlem bittiğinde oturum tam süreyle yeniden başlar. Pause sırasında
+  /// uyarı aktif idiyse, _cancelTimers onu zaten temizlemişti — state hep
+  /// AuthLoggedIn olduğu için "donmuş geri sayım" durumu artık oluşamaz.
   void resumeInactivityTimer() {
     if (_pauseCount == 0) return;
     _pauseCount--;
-    if (_pauseCount == 0 && state is AuthLoggedIn) {
-      _startSessionTimer();
-    }
+    if (_pauseCount == 0 && state is AuthLoggedIn) _startSessionTimer();
   }
 
   /// Eski isim — yeni kod [onUserActivity] kullanmalı.
@@ -192,10 +190,7 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   void _setLoggedIn(AppUser user) {
-    state = AuthLoggedIn(
-      user: user,
-      sessionExpiresAt: DateTime.now().add(Duration(minutes: _config.inactivityTimeoutMinutes)),
-    );
+    state = AuthLoggedIn(user: user);
     _startSessionTimer();
   }
 
@@ -207,33 +202,30 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   void _startCountdown() {
-    final user = currentUser;
-    if (user == null) return;
+    if (state is! AuthLoggedIn) return;
 
-    _countdown = _config.warningSeconds;
-    state = AuthSessionExpiring(user: user, secondsRemaining: _countdown);
+    _secondsRemaining = _config.warningSeconds;
+    _countdown.set(_secondsRemaining);
 
-    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
-      _countdown--;
-
-      if (_countdown <= 0) {
-        t.cancel();
-        logout(locked: true);
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _secondsRemaining--;
+      if (_secondsRemaining <= 0) {
+        logout(locked: true); // _cancelTimers timer'ı ve banner'ı temizler
         return;
       }
-
-      final u = currentUser;
-      if (u != null) {
-        state = AuthSessionExpiring(user: u, secondsRemaining: _countdown);
-      }
+      _countdown.set(_secondsRemaining);
     });
   }
 
-  void _cancelTimers() {
+  void _cancelTimers({bool clearCountdown = true}) {
     _sessionTimer?.cancel();
-    _countdownTimer?.cancel();
     _sessionTimer = null;
+
+    final wasWarning = _countdownTimer != null;
+    _countdownTimer?.cancel();
     _countdownTimer = null;
+
+    if (clearCountdown && wasWarning) _countdown.set(null);
   }
 
   void _markDashboardAccessed() {

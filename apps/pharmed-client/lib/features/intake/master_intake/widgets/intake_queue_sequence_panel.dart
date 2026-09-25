@@ -19,7 +19,7 @@ class IntakeQueueSequencePanel extends StatelessWidget {
         final isCurrent = ji == notifier.currentIndex && ti == notifier.currentTargetIndex;
         entries.add(
           _SequenceEntry(
-            medicineName: job.targets[ti].medicine?.name ?? '',
+            medicineName: job.targets[ti].assignment.medicine?.name ?? '',
             locationLabel: job.representativeAssignment.drawerUnit?.drawerSlot?.address ?? '',
             isCompleted: isPast,
             isCurrent: isCurrent,

@@ -50,6 +50,7 @@ class DrawerQueueItem {
     this.completedCells = const {},
     this.isReturnDrawerTarget = false,
     this.activeCells = const {},
+    this.cabinDrawerId,
   });
 
   final DrawerGroup group;
@@ -90,6 +91,10 @@ class DrawerQueueItem {
   /// ekranlarda boş kalır — o ekranlar [activeStepNo]/[activeTargetIndex]'i
   /// kullanmaya devam eder, davranış değişmez.
   final Set<(int unitIndex, int stepNo)> activeCells;
+
+  /// Bu item'ın temsil ettiği fiziksel çekmece — aktif item'ı kuyruk
+  /// indeksinden bağımsız bulmak için (çoklu kabinde indeksler hizalı değil).
+  final int? cabinDrawerId;
 
   // ── Türetilen ─────────────────────────────────────────────────────────────
 
@@ -255,6 +260,7 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
       completedCells: completedCells,
       activeCells: isActive ? activeCells : const {},
       isReturnDrawerTarget: isReturnDrawerTargetOf?.call(job) ?? false,
+      cabinDrawerId: cabinDrawerIdOf(job),
     );
   }).toList();
 }

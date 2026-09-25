@@ -129,24 +129,15 @@ class _TableDataRow extends StatelessWidget {
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              '${assignment.minQuantity} ${assignment.operationUnit(context)}',
-              style: MedTextStyles.bodySm(color: MedColors.text3),
-            ),
+            child: Text(assignment.minQuantityLabel, style: MedTextStyles.bodySm(color: MedColors.text3)),
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              '${assignment.criticalQuantity} ${assignment.operationUnit(context)}',
-              style: MedTextStyles.bodySm(color: MedColors.text3),
-            ),
+            child: Text(assignment.critQuantityLabel, style: MedTextStyles.bodySm(color: MedColors.text3)),
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              '${assignment.maxQuantity} ${assignment.operationUnit(context)}',
-              style: MedTextStyles.bodySm(color: MedColors.text3),
-            ),
+            child: Text(assignment.maxQuantityLabel, style: MedTextStyles.bodySm(color: MedColors.text3)),
           ),
           SizedBox(
             width: 100,

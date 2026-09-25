@@ -5707,6 +5707,14 @@
   "@enumCore_refillListStatusSent": {
     "description": "RefillListStatus enum label for a sent refill list"
   },
+  "enumCore_refillListStatusCompleted": "Tamamlandı",
+"@enumCore_refillListStatusCompleted": {
+  "description": "Label for the RefillListStatus.completed enum value — all items in the refill list have been filled into the cabin"
+},
+"enumCore_refillListStatusPartiallyCompleted": "Kısmen Tamamlandı",
+"@enumCore_refillListStatusPartiallyCompleted": {
+  "description": "Label for the RefillListStatus.partiallyCompleted enum value — only some items in the refill list have been filled into the cabin"
+},
   "enumCore_fillingTypeMinimum": "Minimum",
   "@enumCore_fillingTypeMinimum": {
     "description": "FillingType enum label for the minimum fill level"
@@ -5799,6 +5807,10 @@
   "@enumCore_cabinOpModeUnload": {
     "description": "CabinOperationMode enum label for the drug-unload operation"
   },
+  "enumCore_cabinOpModeDestruction": "İlaç İmha",
+"@enumCore_cabinOpModeDestruction": {
+  "description": "Label for the CabinOperationMode.destruction enum value — drugs are removed from the cabin and recorded as destroyed"
+},
   "enumCore_cabinInventoryTypeRefillOperationLabel": "Dolum",
   "@enumCore_cabinInventoryTypeRefillOperationLabel": {
     "description": "CabinInventoryType.operationLabel — refill için banner/mesaj bağlamında kısa işlem etiketi"
@@ -9118,5 +9130,186 @@
   "refund_showToReturnBoxTooltip": "İade Kutusuna İadeleri Göster",
   "@refund_showToReturnBoxTooltip": {
     "description": "Tooltip for the toggle that filters the drawer refund screen to show items with return type toReturnBox"
+  },
+  "common_noPatientSelectedEmptyTitle": "Hasta Seçilmedi",
+"@common_noPatientSelectedEmptyTitle": {
+  "description": "Shared empty state title shown on the right panel of patient-based screens (intake, daily worklist, prescription review, refund, unapplied prescriptions, wastage) before a patient is selected from the left patient list"
+},
+
+"intake_selectionEmptyDescription": "İlaç alımı hasta bazında yürütülür. Soldaki listeden bir hasta seçtiğinizde, o hastaya order edilmiş ve alınabilecek ilaçlar burada listelenir.",
+"@intake_selectionEmptyDescription": {
+  "description": "Empty state description on the intake screen's right panel, shown before a patient is selected from the left patient list"
+},
+
+"dailyWorklist_selectionEmptyDescription": "Soldaki listeden bir hasta seçtiğinizde, o hasta için bugün planlanan uygulamalar burada listelenir.",
+"@dailyWorklist_selectionEmptyDescription": {
+  "description": "Empty state description on the daily worklist screen's right panel, shown before a patient is selected from the left patient list"
+},
+
+"prescriptionReview_selectionEmptyDescription": "Soldaki listeden bir hasta seçtiğinizde, o hastaya ait istemler incelemeniz için burada listelenir.",
+"@prescriptionReview_selectionEmptyDescription": {
+  "description": "Empty state description on the patient prescription review screen's right panel, shown before a patient is selected from the left patient list"
+},
+
+"refund_selectionEmptyDescription": "İade işlemi hasta bazında yürütülür. Soldaki listeden bir hasta seçtiğinizde, o hastaya uygulanmış ve iade edilebilir ilaçlar burada listelenir.",
+"@refund_selectionEmptyDescription": {
+  "description": "Empty state description on the refund screen's right panel, shown before a patient is selected from the left patient list"
+},
+
+"unappliedPrescription_selectionEmptyDescription": "Soldaki listeden bir hasta seçtiğinizde, o hastaya ait henüz uygulanmamış reçeteler burada listelenir.",
+"@unappliedPrescription_selectionEmptyDescription": {
+  "description": "Empty state description on the unapplied prescriptions screen's right panel, shown before a patient is selected from the left patient list"
+},
+
+"wastage_selectionEmptyDescription": "Fire/imha işlemi hasta bazında yürütülür. Soldaki listeden bir hasta seçtiğinizde, o hasta için fire/imha kaydı yapılabilecek ilaçlar burada listelenir.",
+"@wastage_selectionEmptyDescription": {
+  "description": "Empty state description on the wastage/disposal screen's right panel, shown before a patient is selected from the left patient list"
+},
+
+"refillList_selectionEmptyTitle": "Dolum Listesi Seçilmedi",
+"@refillList_selectionEmptyTitle": {
+  "description": "Empty state title on the refill screen's right panel, shown before a refill list is selected from the left list"
+},
+
+"refillList_selectionEmptyDescription": "Soldaki listeden bir dolum listesi seçtiğinizde, listedeki ilaçlar ve hedef gözleri burada gösterilir.",
+"@refillList_selectionEmptyDescription": {
+  "description": "Empty state description on the refill screen's right panel, shown before a refill list is selected from the left list"
+},
+"enumCore_refillListItemFillStatusNotStarted": "Bekliyor",
+"@enumCore_refillListItemFillStatusNotStarted": {
+  "description": "Status badge for a refill list item that has not been filled at all yet (filled quantity is zero)"
+},
+"enumCore_refillListItemFillStatusPartial": "Kısmi",
+"@enumCore_refillListItemFillStatusPartial": {
+  "description": "Status badge for a refill list item that was filled below its target quantity; the item can still be selected for filling"
+},
+"enumCore_refillListItemFillStatusCompleted": "Tamamlandı",
+"@enumCore_refillListItemFillStatusCompleted": {
+  "description": "Status badge for a refill list item whose filled quantity reached or exceeded the target quantity; the item can no longer be selected"
+},
+"refillList_column_status": "Durum",
+"@refillList_column_status": {
+  "description": "Column header for the fill status badge in the refill list detail table"
+},
+"cabinExecution_queueProgress": "Çekmece {current}/{total}",
+"@cabinExecution_queueProgress": {
+  "description": "Queue progress shown in the execution footer of cabin operation screens (refill, census, refill list)",
+  "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+},
+"cabinExecution_stopButton": "Durdur",
+"@cabinExecution_stopButton": {
+  "description": "Footer button that stops the drawer queue after confirmation"
+},
+"cabinExecution_saveAndNextButton": "Kaydet ve Sonraki Çekmece",
+"@cabinExecution_saveAndNextButton": {
+  "description": "Footer confirm button while more drawers remain in the queue; saves the current drawer and moves on"
+},
+"cabinExecution_saveAndFinishButton": "Kaydet ve Tamamla",
+"@cabinExecution_saveAndFinishButton": {
+  "description": "Footer confirm button on the last drawer of the queue; saves it and finishes the operation"
+},
+"cabinExecution_stopConfirmTitle": "İşlem durdurulsun mu?",
+"@cabinExecution_stopConfirmTitle": {
+  "description": "Title of the confirmation dialog shown before stopping the drawer queue"
+},
+"cabinExecution_stopConfirmMessage": "Kaydedilen çekmeceler korunur, bu çekmecedeki kaydedilmemiş girişler kaybolur.",
+"@cabinExecution_stopConfirmMessage": {
+  "description": "Body of the stop confirmation dialog explaining that saved drawers are kept and unsaved entries of the current drawer are lost"
+},
+"cabinExecution_stopConfirmYes": "Durdur",
+"@cabinExecution_stopConfirmYes": {
+  "description": "Confirm button in the stop dialog"
+},
+"cabinExecution_errorTitle": "İşlem kaydedilemedi",
+"@cabinExecution_errorTitle": {
+  "description": "Title of the dialog shown when saving a drawer fails or a hardware error occurs during the drawer queue; also used as the fallback message when the error has no text"
+},
+"cabinExecution_errorSkipButton": "Sonraki Çekmeceye Geç",
+"@cabinExecution_errorSkipButton": {
+  "description": "Error dialog button that marks the failed drawer as failed and continues with the next drawer in the queue"
+},
+"cabinExecution_errorAbortButton": "İşlemi Sonlandır",
+"@cabinExecution_errorAbortButton": {
+  "description": "Error dialog button that stops the whole queue and returns to the selection screen"
+},
+"cabinEntryCard_cellBadge": "GÖZ {label}",
+"@cabinEntryCard_cellBadge": {
+  "description": "Badge on the cubic cell entry card showing the short grid label of the active cell (e.g. GÖZ B2)",
+  "placeholders": { "label": { "type": "String" } }
+},
+"cabinEntryCard_cellPosition": "Göz {current}/{total}",
+"@cabinEntryCard_cellPosition": {
+  "description": "Position of the active cell within the cubic drawer (e.g. Göz 5/16)",
+  "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+},
+"cabinEntryCard_miadTitle": "Son Kullanma Tarihi",
+"@cabinEntryCard_miadTitle": {
+  "description": "Title of the expiry date section on the cubic cell entry card"
+},
+"cabinEntryTable_miadPlaceholder": "Tarih seç",
+"@cabinEntryTable_miadPlaceholder": {
+  "description": "Placeholder shown in an empty expiry date field in cabin entry widgets (unit-dose table and cubic card); tapping it opens the date picker"
+},
+"cabinEntryCard_miadRequired": "Giriş yapıldığında SKT zorunludur",
+"@cabinEntryCard_miadRequired": {
+  "description": "Error shown on the cubic cell entry card when a quantity was entered but no expiry date was selected"
+},
+"refillList_panelTitle": "Dolum Listeleri",
+"@refillList_panelTitle": {
+  "description": "Title of the left panel listing refill lists on the refill list screen"
+},
+"refillList_tab_waiting": "Bekleyen",
+"@refillList_tab_waiting": {
+  "description": "Segment label for refill lists waiting to be filled (sent or partially completed)"
+},
+"refillList_tab_completed": "Tamamlanan",
+"@refillList_tab_completed": {
+  "description": "Segment label for completed refill lists (read-only)"
+},
+"refillList_listTitle": "Dolum Listesi #{id}",
+"@refillList_listTitle": {
+  "description": "Header title of the selected refill list showing its number",
+  "placeholders": { "id": { "type": "int" } }
+},
+"cabinExecution_recordedQuantity": "Kayıttaki Miktar",
+"@cabinExecution_recordedQuantity": {
+  "description": "Header label on the census execution screen showing the stock quantity currently recorded in the system for the active target"
+},
+"common_quantityPieces": "{count} Adet",
+"@common_quantityPieces": {
+  "description": "Quantity label in pieces, used for medicines without a measure unit (e.g. 4 Adet)",
+  "placeholders": { "count": { "type": "String" } }
+},
+"common_quantityWithMeasure": "{count} Adet × {dose} {unit}",
+"@common_quantityWithMeasure": {
+  "description": "Quantity label for measure-unit medicines: pieces times the amount per piece (e.g. 4 Adet × 100 ml)",
+  "placeholders": {
+    "count": { "type": "String" },
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
   }
+},
+"common_quantityRatioPieces": "{current}/{max} Adet",
+"@common_quantityRatioPieces": {
+  "description": "Current stock over maximum capacity in pieces (e.g. 4/36 Adet)",
+  "placeholders": { "current": { "type": "String" }, "max": { "type": "String" } }
+},
+"common_quantityRatioWithMeasure": "{current}/{max} Adet × {dose} {unit}",
+"@common_quantityRatioWithMeasure": {
+  "description": "Current stock over maximum capacity for measure-unit medicines, with the amount per piece (e.g. 4/36 Adet × 100 ml)",
+  "placeholders": {
+    "current": { "type": "String" },
+    "max": { "type": "String" },
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"cabinEntry_takeLabel": "Alınacak",
+"@cabinEntry_takeLabel": {
+  "description": "Label of the read-only amount the user must take from this cell during intake (from the check plan)"
+},
+"cabinEntry_blindCountHint": "Gözdeki miktarı sayıp girin",
+"@cabinEntry_blindCountHint": {
+  "description": "Hint under an empty count field during blind count; the recorded quantity is intentionally not shown"
+}
 }

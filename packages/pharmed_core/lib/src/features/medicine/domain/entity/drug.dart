@@ -242,3 +242,14 @@ class Drug extends Medicine {
     );
   }
 }
+
+extension DrugDosePiecesX on Drug {
+  /// Reçete/doz miktarını (ölçü birimli ilaçta ml) adede çevirir.
+  /// Ölçü birimsiz ilaçta doz zaten adettir, olduğu gibi döner.
+  /// Alımın ml ↔ adet arasındaki TEK sınırı — başka yerde çevrim yapılmaz.
+  double dosePieces(double doseAmount) {
+    final perPiece = doseMeasureUnit;
+    if (!isMeasureUnit || perPiece == null || perPiece <= 0) return doseAmount;
+    return doseAmount / perPiece;
+  }
+}

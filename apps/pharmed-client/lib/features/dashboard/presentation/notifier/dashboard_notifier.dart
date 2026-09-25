@@ -252,7 +252,6 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
 
   Future<void> _loadSecondaryData() async {
     final mac = await DeviceInfo.getMacAddress();
-    print(mac);
     Future.wait([
       execute(
         OperationKey.custom('fetch-upcoming-treatments'),
@@ -351,4 +350,8 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     _activeCabinId = null;
     notifyListeners();
   }
+
+  /// Kullanıcı değiştiğinde (kilitli dashboard'dan farklı biriyle giriş)
+  /// menü yetkilerini yeniden çeker — menüler userId'ye göre filtreleniyor.
+  Future<void> reloadMenus() => _fetchMenus();
 }

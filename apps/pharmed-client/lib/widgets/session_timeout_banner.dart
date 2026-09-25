@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+
+import '../features/auth/notifier/session_countdown_notifier.dart';
+
+import '../features/auth/auth.dart';
 
 // ═════════════════════════════════════════════════════════════════
 // SessionTimeoutBanner
 // [SWREQ-UI-AUTH-002] [HAZ-009]
-// Oturum dolmak üzere — sağ alt köşede floating banner.
+// Oturum dolmak üzere — sağ alt köşede floating banner. Geri sayım
+// sessionCountdownProvider'dan okunur; null ise hiçbir şey çizilmez.
+// Dashboard Stack'inde HER ZAMAN aynı konumda durmalıdır (bkz. HAZ-009
+// remount regresyonu) — görünürlüğü kendisi yönetir.
 // ═════════════════════════════════════════════════════════════════
 
-class SessionTimeoutBanner extends StatelessWidget {
-  const SessionTimeoutBanner({super.key, required this.secondsRemaining, required this.onExtend});
+class SessionTimeoutBanner extends ConsumerWidget {
+  const SessionTimeoutBanner({super.key});
 
-  final int secondsRemaining;
-  final VoidCallback onExtend;
+  /// Dokunmatik HMI minimum hedef yüksekliği.
+  static const double _minTouchTarget = 44;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final remaining = ref.watch(sessionCountdownProvider);
+    if (remaining == null) return const SizedBox.shrink();
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -42,7 +53,7 @@ class SessionTimeoutBanner extends StatelessWidget {
                   children: [
                     TextSpan(text: context.l10n.session_timeout_prefix),
                     TextSpan(
-                      text: '$secondsRemaining',
+                      text: '$remaining',
                       style: const TextStyle(
                         fontFamily: MedFonts.title,
                         fontSize: 18,
@@ -58,15 +69,20 @@ class SessionTimeoutBanner extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           GestureDetector(
-            onTap: onExtend,
+            behavior: HitTestBehavior.opaque,
+            // Banner, route içeriğini saran activity Listener'ının dışında
+            // olabileceği için uzatma açıkça tetiklenir.
+            onTap: () => ref.read(authNotifierProvider.notifier).onUserActivity(),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              constraints: const BoxConstraints(minHeight: _minTouchTarget),
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.smAll),
               child: Text(
                 context.l10n.session_timeout_continueButton,
                 style: const TextStyle(
                   fontFamily: MedFonts.sans,
-                  fontSize: 11,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -82,13 +98,11 @@ class SessionTimeoutBanner extends StatelessWidget {
 // ═════════════════════════════════════════════════════════════════
 // LockedBanner
 // [SWREQ-UI-NAV-002]
-// Oturum zaman aşımı sonrası gösterilir.
+// Oturum zaman aşımı sonrası gösterilir. Giriş aksiyonu appbar'dadır.
 // ═════════════════════════════════════════════════════════════════
 
 class LockedBanner extends StatelessWidget {
-  const LockedBanner({super.key, required this.onLoginTap});
-
-  final VoidCallback onLoginTap;
+  const LockedBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -107,15 +121,12 @@ class LockedBanner extends StatelessWidget {
               text: TextSpan(
                 style: MedTextStyles.bodySm(color: MedColors.text2),
                 children: [
-                  TextSpan(text: context.l10n.session_locked_prefix, style: TextStyle(color: MedColors.text2)),
+                  TextSpan(text: context.l10n.session_locked_prefix),
                   TextSpan(
                     text: context.l10n.session_locked_reason,
                     style: const TextStyle(color: MedColors.amber, fontWeight: FontWeight.w600),
                   ),
-                  TextSpan(
-                    text: context.l10n.session_locked_suffix,
-                    style: TextStyle(color: MedColors.text2),
-                  ),
+                  TextSpan(text: context.l10n.session_locked_suffix),
                 ],
               ),
             ),
