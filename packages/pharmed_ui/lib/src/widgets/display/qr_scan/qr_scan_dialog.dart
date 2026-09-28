@@ -30,8 +30,6 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import 'qr_scan_controller.dart';
-
 /// Ürün kartındaki bağlam çipi (konum, hasta, reçete...).
 class QrScanChip {
   const QrScanChip(this.text, {this.accent = false});

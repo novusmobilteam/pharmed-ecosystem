@@ -287,4 +287,9 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
       error: (e) => Result.error(e),
     );
   }
+
+  @override
+  Future<Result<void>> scanQrCodes(ScanQrCodeParams params) async {
+    return await _dataSource.scanQrCodes(params.toJson());
+  }
 }

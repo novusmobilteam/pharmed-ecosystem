@@ -132,6 +132,7 @@ class UsecaseProviders {
       Provider(create: (context) => CreatePrescriptionUseCase(prescriptionRepository: context.read())),
       Provider(create: (context) => GetPrescriptionItemMovementsUseCase(context.read())),
       Provider(create: (context) => GetOverduePrescriptionsUseCase(context.read())),
+      Provider(create: (context) => ScanQrCodeUseCase(context.read())),
 
       /// Refund
       Provider(create: (context) => GetMasterRefundablesUseCase(context.read())),

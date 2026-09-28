@@ -337,6 +337,10 @@ final submitIntakeQrCodesUseCaseProvider = Provider((ref) {
   return SubmitIntakeQrCodesUseCase(ref.read(intakeRepositoryProvider));
 });
 
+final scanQrCodeUseCaseProvider = Provider((ref) {
+  return ScanQrCodeUseCase(ref.read(prescriptionRepositoryProvider));
+});
+
 final getEquivalentIntakesUseCaseProvider = Provider((ref) {
   return GetEquivalentIntakesUseCase(ref.read(intakeRepositoryProvider), ref.read(medicineRepositoryProvider));
 });

@@ -72,7 +72,6 @@ class CabinOperationService implements ICabinOperationService {
     if (_cachedManager != null && _serialService.isConnected) {
       return _cachedManager;
     }
-    print(targetPort);
 
     // Zaten devam eden bir tarama varsa ONU bekle — ikinci bir bağlantı açma.
     // Dashboard'da birden fazla widget (kabin durumu + sensör) aynı anda
@@ -94,8 +93,6 @@ class CabinOperationService implements ICabinOperationService {
   /// Asıl tarama mantığı — tek seferde bir tane çalışır.
   Future<ManagementCard?> _doScan(String? targetPort) async {
     final preferredPort = targetPort ?? await _settingsCache.getComPort();
-
-    print(preferredPort);
 
     if (preferredPort == null) {
       MedLogger.error(unit: 'CabinOps', swreq: 'SWREQ-CABIN-OP-003', message: 'COM port bilinmiyor — cache boş');

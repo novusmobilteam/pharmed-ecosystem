@@ -48,6 +48,8 @@ abstract interface class IPrescriptionRepository {
   // Okutulmayan karekod barkod gir
   Future<Result<void>> scanBarcode({required int prescriptionItemId, required String qrCode});
 
+  Future<Result<void>> scanQrCodes(ScanQrCodeParams params);
+
   // Okutulmayan Karekod sil
   Future<Result<void>> deleteUnscannedBarcode({required int prescriptionItemId, required String description});
 

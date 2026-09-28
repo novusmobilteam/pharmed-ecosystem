@@ -6,30 +6,25 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../widgets/widgets.dart';
 import '../notifier/unscanned_barcodes_notifier.dart';
-import '../notifier/unscanned_barcodes_state.dart';
-import 'scan_barcode_dialog.dart';
 
 part 'table_view.dart';
 
 class UnscannedBarcodesScreen extends ConsumerWidget {
-  const UnscannedBarcodesScreen({super.key});
+  const UnscannedBarcodesScreen({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(unscannedBarcodesNotifierProvider);
-    final notifier = ref.read(unscannedBarcodesNotifierProvider.notifier);
-
-    return Scaffold(
-      body: switch (state) {
-        UnscannedBarcodesLoading() => const Center(child: MedLoadingIndicator()),
-        UnscannedBarcodesLoaded(:final items, :final isLoading) => TableView(
-          items: items,
-          isLoading: isLoading,
-          notifier: notifier,
-        ),
-        UnscannedBarcodesError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),
-      },
+    return Column(
+      spacing: 16.0,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ScreenTitle(menu: menu),
+        Expanded(child: TableView()),
+      ],
     );
   }
 }

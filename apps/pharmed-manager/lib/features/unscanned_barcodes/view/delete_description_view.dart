@@ -28,7 +28,7 @@ class DeleteDescriptionView extends StatelessWidget {
               MessageUtils.showConfirmDeleteDialog(
                 context: context,
                 onConfirm: () async {
-                  await notifier.deleteBarcode(
+                  await notifier.deleteQrCode(
                     item,
                     onSuccess: () {
                       MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
