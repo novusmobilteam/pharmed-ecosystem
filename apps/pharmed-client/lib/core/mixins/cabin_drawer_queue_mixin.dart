@@ -4,6 +4,18 @@
 // üzerine oturur — donanım mekaniğinden habersiz olmak yerine, onun hook'larını
 // override ederek kuyruk semantiğine bağlar.
 //
+// FİZİKSEL KAPANIŞLA TAMAMLAMA (completesOnPhysicalClose = true, opt-in):
+//   Hedef tamamlandı = kayıt yapıldı + fiziksel kapanış gerçekleşti.
+//     Kübik    : gözün KAPAĞI kapandı (ac → kp) — sıradaki kapak ancak
+//                bundan sonra açılır.
+//     Birim doz: ÇEKMECE kapandı (her hedef zaten ayrı bir aç/kapa döngüsü).
+//   İki yol aynı noktada birleşir:
+//     A) "Tamamla" → kayıt → kapanış beklenir → kapandı
+//     B) Tamamla'ya basılmadan kapandı → saveTargetOnPhysicalClose
+//   → onTargetCompleted (örn. alımda QR dialog'u; false → kuyruk askıda)
+//   → resumeAfterTargetCompleted → sıradaki kapak / hedef / job.
+//   Kapak açılamazsa (LidFailed) kullanıcı skipCurrentLid ile gözü atlayabilir.
+//
 // Sınıf: Class B
 import 'dart:async';
 
@@ -72,6 +84,49 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   /// Kullanıcı durdurmayı onayladı, çekmecenin kapanması bekleniyor.
   bool get isStopping => _stopRequested;
 
+  // ── Fiziksel kapanışla tamamlama ──────────────────────────────────────────
+
+  /// true ise:
+  ///  - kübikte sıradaki kapak, önceki kapak fiziksel kapanmadan açılmaz;
+  ///  - kapak (kübik) / çekmece (birim doz) kapanışı "Tamamla" yerine geçer.
+  /// Varsayılan false — girdisi kullanıcıya bağlı işlemlerde (dolum/sayım)
+  /// kapanışta otomatik kayıt yapılamayacağı için bilinçli olarak açılır.
+  bool get completesOnPhysicalClose => false;
+
+  /// Aktif hedefin kaydı yapıldı mı — A/B yollarından hangisinin kayıt
+  /// yapacağını belirler. Yeni hedef/göz açılırken sıfırlanır.
+  bool _currentTargetSaved = false;
+
+  /// onTargetCompleted false döndüğünde askıya alınan devam adımı.
+  Future<void> Function()? _blockedResume;
+
+  /// Kapağı açılamadığı için atlanan gözler — (jobIndex, targetIndex).
+  Set<(int, int)> _skippedTargets = const {};
+  Set<(int, int)> get skippedTargets => _skippedTargets;
+
+  bool isTargetSkipped(int jobIndex, int targetIndex) => _skippedTargets.contains((jobIndex, targetIndex));
+
+  /// Kullanıcı "Tamamla"ya basmadan kapak/çekmece kapandığında aktif hedefin
+  /// kaydı. [completesOnPhysicalClose] true olan feature'lar bunu override
+  /// etmek ZORUNDADIR (varsayılan kayıt yapmaz). false dönerse kuyruk
+  /// ilerlemez — hata setQueueFailure ile set edilmiş olmalı.
+  @protected
+  Future<bool> saveTargetOnPhysicalClose(TTarget target) async => true;
+
+  /// Hedef tamamlandı (kayıt + fiziksel kapanış), kuyruk ilerlemeden HEMEN
+  /// önce. false dönerse kuyruk askıya alınır — engel kalkınca
+  /// [resumeAfterTargetCompleted] çağrılmalıdır. Alım: QR dialog'u.
+  @protected
+  Future<bool> onTargetCompleted(TTarget target) async => true;
+
+  /// [onTargetCompleted] false döndüğünde, engel kalkınca kuyruğu devam
+  /// ettirir. Hook TEKRAR çağrılmaz.
+  Future<void> resumeAfterTargetCompleted() async {
+    final resume = _blockedResume;
+    _blockedResume = null;
+    if (resume != null) await resume();
+  }
+
   void dismissQueueError() {
     _failure = null;
     _isQueueError = false;
@@ -98,6 +153,8 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _currentTargetIndex = 0;
     _isSaving = false;
     _failure = null;
+    _skippedTargets = const {};
+    _blockedResume = null;
     notifyListeners();
     await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
@@ -113,6 +170,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _jobs = _withStatus(jobIndex, CabinOperationJobStatus.active);
     _currentIndex = jobIndex;
     _currentTargetIndex = targetIndex;
+    _currentTargetSaved = false;
     _isSaving = false;
     notifyListeners();
 
@@ -124,23 +182,36 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     // kavramı orada yok, sadece birim-doz hedefler kendi derinliğini taşır.
     final explicitStep = job.staysOpenAcrossTargets ? null : job.targets[targetIndex].explicitTargetStep;
 
-    await openDrawer(assignment: openAssignment, explicitTargetStep: explicitStep);
+    // Kübikte tamamlama kapak seviyesinde — çekmecenin onaysız kapanması
+    // hâlâ beklenmedik kapanıştır. Birim dozda çekmece kapanışı = tamamlama.
+    await openDrawer(
+      assignment: openAssignment,
+      explicitTargetStep: explicitStep,
+      closeCompletes: completesOnPhysicalClose && !job.staysOpenAcrossTargets,
+    );
+  }
+
+  /// Kübik gözün kapağını, kuyruğun politikasına göre açar.
+  Future<void> _openLid(MedicineAssignment cellAssignment) {
+    _currentTargetSaved = false;
+    return openCubicLid(cellAssignment, awaitLidClose: completesOnPhysicalClose);
   }
 
   @override
   void onDrawerOpened() {
     final job = currentJob;
     if (job == null || !job.isKubik) return;
-    openCubicLid(job.targets[_currentTargetIndex].assignment);
+    unawaited(_openLid(job.targets[_currentTargetIndex].assignment));
   }
 
   /// Fiziksel kapanış GERÇEKLEŞTİKTEN SONRA, kuyruk ilerlemeden HEMEN ÖNCE
   /// çağrılır. Varsayılan no-op — "kaydet, sonra kapat" deseninde (Census/
   /// Refill/Unload/Refund) kayıt zaten confirmCurrent'ta önceden yapılmış
-  /// olur. "Kapat, sonra kaydet" isteyen bir akış (bkz. bir önceki
-  /// mesajdaki senaryo) bunu override edip burada saveTarget çağırır;
-  /// false dönerse kuyruk İLERLEMEZ — hook kendi hata state'ini
+  /// olur. false dönerse kuyruk İLERLEMEZ — hook kendi hata state'ini
   /// setQueueFailure ile set etmiş olmalı.
+  ///
+  /// NOT: [completesOnPhysicalClose] kullanan feature'lar bunun yerine
+  /// [saveTargetOnPhysicalClose] / [onTargetCompleted] kullanır.
   Future<bool> onBeforeAdvanceAfterClose(TTarget? target) async => true;
 
   Future<void> _advanceAfterClose() async {
@@ -149,6 +220,23 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
 
     final ok = await onBeforeAdvanceAfterClose(currentTarget);
     if (!ok) return;
+
+    // Birim doz + fiziksel kapanışla tamamlama: hedef burada tamamlanır.
+    if (completesOnPhysicalClose && !job.staysOpenAcrossTargets) {
+      final target = currentTarget;
+      if (target == null) return;
+      final completed = await _completeTargetAfterPhysicalClose(target, then: _advanceFromClosedDrawer);
+      if (!completed) return;
+    }
+
+    await _advanceFromClosedDrawer();
+  }
+
+  /// Kapalı çekmeceden sonraki adım: birim dozda aynı job'un sıradaki hedefi,
+  /// yoksa sıradaki job.
+  Future<void> _advanceFromClosedDrawer() async {
+    final job = currentJob;
+    if (job == null) return;
 
     if (!job.staysOpenAcrossTargets) {
       final nextTarget = _currentTargetIndex + 1;
@@ -174,10 +262,30 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
+  /// Fiziksel kapanış sonrası ortak tamamlama: (B yolu ise) kayıt →
+  /// onTargetCompleted. true → çağıran hemen ilerleyebilir; false → ya kayıt
+  /// başarısız oldu (hata set edildi) ya da kuyruk askıya alındı ([then]
+  /// resumeAfterTargetCompleted ile çalıştırılacak).
+  Future<bool> _completeTargetAfterPhysicalClose(TTarget target, {required Future<void> Function() then}) async {
+    if (!_currentTargetSaved) {
+      isSaving = true;
+      final ok = await saveTargetOnPhysicalClose(target);
+      if (!isExecuting || !ok) return false; // hata saveTargetOnPhysicalClose içinde set edildi
+      _currentTargetSaved = true;
+      isSaving = false;
+    }
+
+    _blockedResume = then;
+    final proceed = await onTargetCompleted(target);
+    if (!proceed) return false; // askıda — resumeAfterTargetCompleted
+
+    _blockedResume = null;
+    return true;
+  }
+
   // ── "Kaydet, sonra kapat" deseni için hazır yardımcı ──
-  // Census/Refill/Unload'ın confirmCurrent'ı birebir buydu. Refund bunu
-  // KULLANMAZ — 3 dallı kendi confirmCurrent'ını Katman 1 primitifleriyle
-  // (openCubicLid/confirmDrawerClose/stopDrawer) yazmaya devam eder.
+  // Census/Refill/Unload/Intake'in confirmCurrent'ı. Refund bunu KULLANMAZ —
+  // 3 dallı kendi confirmCurrent'ını Katman 1 primitifleriyle yazar.
 
   Future<void> confirmSingleTarget({required Future<bool> Function(TTarget target) saveTarget}) async {
     final job = currentJob;
@@ -188,12 +296,70 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     final ok = await saveTarget(target); // hata olursa saveTarget kendi setQueueFailure'ını çağırır
     if (!isExecuting || !ok) return;
 
-    if (job.isKubik) {
-      await advanceCubicLid();
-    } else {
-      isSaving = false;
-      confirmDrawerClose();
+    await advanceAfterTargetSaved();
+  }
+
+  /// "Tamamla" yolunda (A) hedefin kaydı BAŞARIYLA yapıldıktan sonra
+  /// çağrılır. Kendi confirmCurrent'ını yazan feature'lar da kayıttan
+  /// sonra bunu çağırmalıdır.
+  ///
+  ///  - [completesOnPhysicalClose] false: eski davranış (kübik → sıradaki
+  ///    kapak, birim doz → çekmece kapanışı istenir).
+  ///  - Kayıt sürerken kapak/çekmece zaten kapandıysa: kapanış hook'u
+  ///    bilerek beklemiştir (isSaving guard'ı) — tamamlama burada yapılır.
+  ///  - Aksi halde: fiziksel kapanış beklenir; kapanınca hook devam ettirir.
+  @protected
+  Future<void> advanceAfterTargetSaved() async {
+    final job = currentJob;
+    final target = currentTarget;
+    if (job == null || target == null) return;
+
+    if (!completesOnPhysicalClose) {
+      if (job.isKubik) {
+        await advanceCubicLid();
+      } else {
+        isSaving = false;
+        confirmDrawerClose();
+      }
+      return;
     }
+
+    _currentTargetSaved = true;
+    isSaving = false;
+
+    final stage = drawerStage;
+    if (job.isKubik) {
+      if (stage is MasterDrawerLidClosed) {
+        await _continueAfterLidClosed(target);
+      } else {
+        confirmLidClose();
+      }
+    } else {
+      if (stage is MasterDrawerClosed) {
+        await _advanceAfterClose();
+      } else {
+        confirmDrawerClose();
+      }
+    }
+  }
+
+  @override
+  void onLidClosed() {
+    if (!completesOnPhysicalClose || !isExecuting || _stopRequested) return;
+
+    // "Tamamla" yolunun kaydı sürüyor — bitince advanceAfterTargetSaved
+    // stage'e bakıp devam eder. Burada ikinci bir kayıt BAŞLATILMAMALI.
+    if (_isSaving) return;
+
+    final target = currentTarget;
+    if (target == null) return;
+    unawaited(_continueAfterLidClosed(target));
+  }
+
+  Future<void> _continueAfterLidClosed(TTarget target) async {
+    final completed = await _completeTargetAfterPhysicalClose(target, then: advanceCubicLid);
+    if (!completed) return;
+    await advanceCubicLid();
   }
 
   Future<void> advanceCubicLid() async {
@@ -209,7 +375,32 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _currentTargetIndex = nextTarget;
     isSaving = false;
     notifyListeners();
-    await openCubicLid(job.targets[nextTarget].assignment);
+    await _openLid(job.targets[nextTarget].assignment);
+  }
+
+  /// LidFailed durumunda aktif gözü kayıt yapmadan atlar ve sıradaki göze
+  /// geçer (son gözse çekmece kapanışı istenir). Kapak açıldıktan sonra
+  /// sensörü kopan gözde (lidSensorLost) KULLANILAMAZ — orada kapak açılmış
+  /// ve ilaç alınmış olabilir; kullanıcı acknowledgeLidClosedManually ile
+  /// devam eder.
+  Future<void> skipCurrentLid() async {
+    final stage = drawerStage;
+    if (!isExecuting || stage is! MasterDrawerLidFailed) return;
+    if (stage.failure == MasterDrawerFailure.lidSensorLost) return;
+
+    _skippedTargets = {..._skippedTargets, (_currentIndex, _currentTargetIndex)};
+    MedLogger.warn(
+      unit: 'CabinDrawerQueue',
+      swreq: 'SWREQ-CLI-DRAWER-QUEUE-MIXIN-001',
+      message: 'Kübik göz kullanıcı tarafından atlandı (kapak açılamadı)',
+      context: {
+        'jobIndex': _currentIndex,
+        'targetIndex': _currentTargetIndex,
+        'failure': stage.failure.name,
+        'detail': stage.detail,
+      },
+    );
+    await advanceCubicLid();
   }
 
   Future<void> continueAfterError() async {
@@ -217,6 +408,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _jobs = _withStatus(_currentIndex, CabinOperationJobStatus.failed);
     _failure = null;
     _isQueueError = false;
+    _blockedResume = null;
     await stopDrawer();
 
     final nextIndex = _currentIndex + 1;
@@ -264,7 +456,6 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   /// currentTargetIndex/status/targets/assignment gibi ORTAK alanları
   /// burada bir kere doldurur, sadece cabinDrawerId/stockId/isReturnDrawer
   /// gibi job'a özgü çıkarımları çağırana bırakır.
-  // CabinDrawerQueueMixin içinde:
   List<DrawerQueueItem> locationItemsUsing({
     required List<DrawerGroup> allGroups,
     required int Function(TJob job) cabinDrawerIdOf,
@@ -297,17 +488,20 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _jobs = const [];
     _currentIndex = 0;
     _currentTargetIndex = 0;
+    _currentTargetSaved = false;
+    _blockedResume = null;
     _isSaving = false;
     _failure = null;
     _isQueueError = false;
+    // _skippedTargets BİLEREK temizlenmez — onQueueFinished içinde özet
+    // göstermek isteyen View okuyabilsin; startQueue sıfırlar.
     notifyListeners(); // önce UI'ı "boş kuyruk" durumuna getir
     onQueueFinished?.call(); // sonra dışarıya haber ver
   }
 
-  /// onBeforeAdvanceAfterClose false döndüğünde (kuyruk askıya alındığında —
-  /// örn. QR kod dialog'u açıkken) engel ortadan kalkınca kuyruğu elle devam
-  /// ettirmek için. onBeforeAdvanceAfterClose TEKRAR çağrılmaz — çağıran taraf
-  /// ilerlemeye izin verildiğini garanti eder.
+  /// onBeforeAdvanceAfterClose false döndüğünde (kuyruk askıya alındığında)
+  /// engel ortadan kalkınca kuyruğu elle devam ettirmek için.
+  /// onBeforeAdvanceAfterClose TEKRAR çağrılmaz.
   Future<void> resumeAfterBlockedAdvance() => _completeCurrentJobAndAdvance();
 
   /// Footer'ın "Durdur" onayından sonra çağrılır. Çekmece kapalıysa hemen
@@ -328,11 +522,13 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _requestCloseForStop(stage);
   }
 
-  /// Stage Opened olur olmaz kapanışı TEK SEFER ister. Durdurma açılma/kapak
-  /// geçişi sırasında istendiyse burada no-op kalır, Opened'a ulaşınca
-  /// onStageChanged tekrar dener.
+  /// Çekmece kapanışını TEK SEFER ister. Opened'da (kapak açık ya da kapak
+  /// izlenmiyor) veya LidClosed'da (kapak kapandı, çekmece hâlâ açık) istenir.
+  /// Açılma/kapak geçişi ya da WaitingForLidClose sırasında no-op kalır —
+  /// uygun stage'e ulaşınca onStageChanged tekrar dener.
   void _requestCloseForStop(MasterDrawerStage stage) {
-    if (_closeRequestedForStop || stage is! MasterDrawerOpened) return;
+    if (_closeRequestedForStop) return;
+    if (stage is! MasterDrawerOpened && stage is! MasterDrawerLidClosed) return;
     _closeRequestedForStop = true;
     confirmDrawerClose();
   }
@@ -340,6 +536,15 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   @override
   void onStageChanged(MasterDrawerStage? previous, MasterDrawerStage current) {
     if (!_stopRequested) return;
+
+    // Durdurma kapak açılırken istendi ve kapak açılamadı — beklenecek bir
+    // kapanış yok, doğrudan durdur.
+    if (current is MasterDrawerLidFailed) {
+      _stopRequested = false;
+      unawaited(stopQueue());
+      return;
+    }
+
     _requestCloseForStop(current);
 
     // Çekmece artık aktif değil (kapandı / boşta / hata) → gerçek durdurma.
@@ -352,6 +557,11 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   @override
   void onDrawerClosed() {
     if (_stopRequested) return; // durdurma onStageChanged'de ele alınıyor
+
+    // Birim doz: "Tamamla" kaydı sürerken çekmece kapandı — kayıt bitince
+    // advanceAfterTargetSaved stage'e bakıp devam eder, ikinci kayıt yok.
+    if (completesOnPhysicalClose && _isSaving) return;
+
     unawaited(_advanceAfterClose());
   }
 

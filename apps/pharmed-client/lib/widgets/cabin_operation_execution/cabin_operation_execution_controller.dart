@@ -31,6 +31,11 @@ abstract interface class CabinQueueController implements Listenable {
   Future<void> continueAfterError();
   Future<void> abortAfterError();
   void dismissQueueError();
+
+  // ── Kübik kapak hatası (LidFailed) eylemleri ──
+  Future<void> retryCubicLid();
+  Future<void> skipCurrentLid();
+  void acknowledgeLidClosedManually();
 }
 
 /// Dolum/sayım/boşaltma/imha: iskelete ek olarak CabinOperationTarget girişleri.

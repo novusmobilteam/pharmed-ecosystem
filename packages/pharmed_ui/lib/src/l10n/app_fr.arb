@@ -4476,5 +4476,180 @@
 "enumCore_stationTransactionTypeMaterialPurchasing": "Prélèvement",
 "enumCore_stationTransactionTypeRefundInward": "Retour entrant",
 "enumCore_stationTransactionTypeWastage": "Perte",
-"enumCore_stationTransactionTypeUnloading": "Déchargement"
+"enumCore_stationTransactionTypeUnloading": "Déchargement",
+"masterDrawer_error_lidDrawerNotOpen": "Le couvercle cubique n'a pas pu s'ouvrir car le tiroir n'est pas complètement ouvert. Tirez le tiroir jusqu'au bout.",
+"masterDrawer_error_lidNotOpened": "Le couvercle cubique ne s'est pas ouvert. Essayez de l'ouvrir à la main.",
+"masterDrawer_error_lidSensorLost": "L'état du couvercle cubique ne peut pas être lu. Assurez-vous que le couvercle est fermé.",
+"masterDrawer_lid_waitingCloseTitle": "Fermez le couvercle",
+"masterDrawer_lid_waitingCloseSubtitle": "Une fois le couvercle fermé, l'étape est terminée et la case suivante s'ouvre.",
+"masterDrawer_lid_failedTitle": "L'opération du couvercle n'a pas pu être terminée",
+"masterDrawer_lid_retryButton": "Réessayer",
+"masterDrawer_lid_skipButton": "Ignorer cette case",
+"masterDrawer_lid_acknowledgeClosedButton": "J'ai fermé le couvercle",
+"masterDrawer_lid_sensorLostHint": "Si la connexion revient, l'opération reprendra automatiquement.",
+"qrScan_dialogTitle": "Scanner le code QR",
+  "qrScan_subtitleSingle": "{operation} · Vérifiez le code QR du médicament",
+  "@qrScan_subtitleSingle": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_subtitleMulti": "{operation} · Scannez chaque boîte séparément",
+  "@qrScan_subtitleMulti": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_operationIntake": "Prise de médicament",
+  "qrScan_operationRefund": "Retour de médicament",
+  "qrScan_operationUnscanned": "Codes QR non scannés",
+  "qrScan_closeTooltip": "Fermer",
+  "qrScan_scannedCounterLabel": "Scannés",
+  "qrScan_boxCountSuffix": " / {total} boîtes",
+  "@qrScan_boxCountSuffix": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_progressSemantics": "{scanned} boîtes scannées sur {total}",
+  "@qrScan_progressSemantics": {
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_scanPromptTitle": "Présentez le code QR de la boîte au lecteur",
+  "qrScan_scanPromptBody": "Scannez le code QR de chaque boîte séparément. Le code apparaîtra ci-dessous une fois lu.",
+  "qrScan_readerReady": "Lecteur prêt",
+  "qrScan_readerReadyShort": "Prêt",
+  "qrScan_multiPromptTitle": "Scannez le code QR de la boîte {index}",
+  "@qrScan_multiPromptTitle": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_multiPromptBody": "Chaque boîte a un code QR unique ; ne scannez pas deux fois la même boîte.",
+  "qrScan_scannedCodeLabel": "Code QR scanné",
+  "qrScan_scannedCodesLabel": "Codes QR scannés",
+  "qrScan_waitingPlaceholder": "En attente du code QR…",
+  "qrScan_successTitle": "Code QR vérifié",
+  "qrScan_successBody": "La boîte scannée correspond à ce médicament. Vérifiez les informations et confirmez.",
+  "qrScan_allScannedTitle": "Tous les codes QR ont été scannés",
+  "qrScan_allScannedBody": "Les codes QR de {count} boîtes ont été vérifiés. Vérifiez la liste et confirmez.",
+  "@qrScan_allScannedBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_gtinLabel": "GTIN / Code-barres",
+  "qrScan_serialLabel": "N° de série",
+  "qrScan_expiryLabel": "Péremption",
+  "qrScan_lotLabel": "N° de lot",
+  "qrScan_serialValue": "SN {serial}",
+  "@qrScan_serialValue": {
+    "placeholders": {
+      "serial": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_expiryShort": "EXP {date}",
+  "@qrScan_expiryShort": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_lotShort": "Lot {lot}",
+  "@qrScan_lotShort": {
+    "placeholders": {
+      "lot": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_boxLabel": "Boîte {index}",
+  "@qrScan_boxLabel": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_duplicateRowNote": "Scanné à nouveau",
+  "qrScan_removeCodeTooltip": "Retirer le code QR de la boîte {index}",
+  "@qrScan_removeCodeTooltip": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_mismatchTitle": "Le code QR ne correspond pas à ce médicament",
+  "qrScan_mismatchBody": "La boîte scannée appartient à un autre produit. Scannez le code QR du bon médicament.",
+  "qrScan_expectedLabel": "Attendu",
+  "qrScan_duplicateTitle": "Ce code QR a déjà été scanné",
+  "qrScan_duplicateBody": "Le n° de série {serial} figure déjà comme boîte {index}. Scannez une autre boîte pour la boîte {next}.",
+  "@qrScan_duplicateBody": {
+    "placeholders": {
+      "serial": {
+        "type": "String"
+      },
+      "index": {
+        "type": "int"
+      },
+      "next": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_unreadableTitle": "Le code QR n'a pas pu être lu",
+  "qrScan_unreadableBody": "Le code scanné n'est pas un code QR de médicament valide. Scannez à nouveau le code QR de la boîte.",
+  "qrScan_errorCode": "Code d'erreur : {code}",
+  "@qrScan_errorCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_submitErrorTitle": "Les codes QR n'ont pas pu être envoyés",
+  "qrScan_resubmitButton": "Renvoyer",
+  "qrScan_manualEntryButton": "Saisir manuellement",
+  "qrScan_scannerEntryButton": "Revenir au lecteur",
+  "qrScan_manualEntryHint": "Saisissez le code QR",
+  "qrScan_manualEntryAddButton": "Ajouter",
+  "qrScan_rescanButton": "Rescanner",
+  "qrScan_retryScanButton": "Scanner à nouveau",
+  "qrScan_cancelButton": "Annuler",
+  "qrScan_confirmButton": "Confirmer",
+  "qrScan_confirmProgress": "{label} ({scanned}/{total})",
+  "@qrScan_confirmProgress": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

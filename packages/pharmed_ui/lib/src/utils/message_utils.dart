@@ -41,7 +41,7 @@ class MessageUtils {
       builder: (dialogContext) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
-          constraints: const BoxConstraints(minWidth: 320, maxWidth: 400),
+          constraints: const BoxConstraints(minWidth: 320, maxWidth: 700),
           padding: const EdgeInsets.all(24.0),
           decoration: BoxDecoration(
             color: MedColors.surface,

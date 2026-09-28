@@ -44,11 +44,12 @@ mixin MasterDrawerExecutionMixin on ChangeNotifier {
     switch (current) {
       case MasterDrawerOpened():
         // SADECE ana çekmece yeni fiziksel olarak açıldıysa tetiklenir.
-        // openCubicLid'in kendi Opened event'i previous=OpeningLid ile
-        // gelir — burada TEKRAR işlenirse "aynı gözü sonsuza kadar
-        // yeniden aç" döngüsüne yol açar (refill/census/unload'da
-        // bağımsız bulunmuş, aynı bug'ın tek noktada önlenmesi).
+        // openCubicLid'in kendi Opened event'i previous=OpeningLid (ya da
+        // LidFailed — lidNotOpened'dan kurtulma) ile gelir — burada TEKRAR
+        // işlenirse "aynı gözü sonsuza kadar yeniden aç" döngüsüne yol açar.
         if (previous is MasterDrawerWaitingForPull) onDrawerOpened();
+      case MasterDrawerLidClosed():
+        onLidClosed();
       case MasterDrawerClosed():
         onDrawerClosed();
       case MasterDrawerLidFailed(:final failure, :final detail):
@@ -66,10 +67,15 @@ mixin MasterDrawerExecutionMixin on ChangeNotifier {
   /// Ana çekmece fiziksel olarak (yeniden değil, İLK KEZ) açıldı.
   void onDrawerOpened() {}
 
+  /// Aktif kübik kapak fiziksel olarak kapandı (ac → kp) ya da kullanıcı
+  /// sensör koptuğunda kapanışı elle onayladı. Yalnızca kapak
+  /// `awaitLidClose: true` ile açıldıysa tetiklenir.
+  void onLidClosed() {}
+
   /// Aktif çekmece/port fiziksel olarak kapandı.
   void onDrawerClosed() {}
 
-  /// Kübik lid açma komutu reddedildi — bağlantı sağlam, sadece bu göz.
+  /// Kübik lid açma/izleme hatası — bağlantı sağlam, sadece bu göz.
   void onLidRejected(MasterDrawerFailure failure, String? detail) {}
 
   /// Terminal donanım hatası — bağlantı koptu ya da beklenmedik kapanış.
@@ -79,13 +85,18 @@ mixin MasterDrawerExecutionMixin on ChangeNotifier {
     required MedicineAssignment assignment,
     double requestedQuantity = 0.0,
     int? explicitTargetStep,
+    bool closeCompletes = false,
   }) => drawerSession.start(
     assignment: assignment,
     requestedQuantity: requestedQuantity,
     explicitTargetStep: explicitTargetStep,
+    closeCompletes: closeCompletes,
   );
 
-  Future<void> openCubicLid(MedicineAssignment cellAssignment) => drawerSession.openCubicLid(cellAssignment);
+  /// [awaitLidClose] true ise session kapağı izler: Opened ancak `ac`
+  /// okununca gelir, `ac → kp` geçişinde [onLidClosed] tetiklenir.
+  Future<void> openCubicLid(MedicineAssignment cellAssignment, {bool awaitLidClose = false}) =>
+      drawerSession.openCubicLid(cellAssignment, awaitLidClose: awaitLidClose);
 
   /// Kullanıcı işlemi onayladı — fiziksel kapanış bekleniyor. Adı bilerek
   /// `closeDrawer` değil `confirmDrawerClose`: donanıma "kapat" komutu
@@ -93,6 +104,17 @@ mixin MasterDrawerExecutionMixin on ChangeNotifier {
   /// artık "beklenen kapanış" yorumuna geçmesini sağlıyoruz (bkz.
   /// MasterDrawerSession.confirmClose dokümantasyonu).
   void confirmDrawerClose() => drawerSession.confirmClose();
+
+  /// Kübik: kullanıcı aktif gözü onayladı — kapağın fiziksel kapanması
+  /// bekleniyor. [confirmDrawerClose] ile aynı mantık, göz seviyesinde.
+  void confirmLidClose() => drawerSession.confirmLidClose();
+
+  /// LidFailed sonrası aynı gözün kapağını yeniden açmayı dener.
+  Future<void> retryCubicLid() => drawerSession.retryCubicLid();
+
+  /// Kapak durum sorgusu koptuğunda (lidSensorLost) kullanıcı kapağın
+  /// kapalı olduğunu elle onaylar — session loglar ve LidClosed üretir.
+  void acknowledgeLidClosedManually() => drawerSession.acknowledgeLidClosedManually();
 
   Future<void> reopenDrawer() => drawerSession.reopen();
 

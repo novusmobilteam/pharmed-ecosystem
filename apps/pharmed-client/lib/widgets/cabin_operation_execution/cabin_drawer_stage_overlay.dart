@@ -11,6 +11,14 @@
 // olunduğundan bağımsız (masterDrawer_* key'leri). Dolum/sayım/boşaltmanın
 // yanında alım ve iade de kendi gövdelerini bununla sarar.
 //
+// KÜBİK KAPAK (awaitLidClose ile açılan gözler — şu an alım):
+//   • WaitingForLidClose → "Kapağı kapatın" (kullanıcı eylemi).
+//   • LidClosed          → kart GÖSTERİLMEZ: kayıt/QR anı; form zaten
+//                          isSaving ile kilitli, QR dialog'u Navigator'da.
+//   • LidFailed          → nedene özgü mesaj + eylem butonları (callback
+//                          verilmişse). Callback verilmeyen ekranlarda eski
+//                          genel hata kartı gösterilir.
+//
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
@@ -19,6 +27,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/hardware/hardware.dart';
+import '../../core/hardware/cabin/master_drawer/master_drawer_failure_extension.dart';
 
 class CabinDrawerStageOverlay extends StatelessWidget {
   const CabinDrawerStageOverlay({
@@ -27,6 +36,9 @@ class CabinDrawerStageOverlay extends StatelessWidget {
     required this.child,
     this.isStopping = false,
     this.isLastJob = false,
+    this.onRetryLid,
+    this.onSkipLid,
+    this.onAcknowledgeLidClosed,
   });
 
   final MasterDrawerStage stage;
@@ -38,13 +50,29 @@ class CabinDrawerStageOverlay extends StatelessWidget {
   /// Idle/Closed ara anında "açılıyor" yerine "tamamlanıyor" göstermek için.
   final bool isLastJob;
 
+  // ── Kübik kapak hatası (LidFailed) eylemleri ──
+  // Verilmezse ilgili buton çizilmez; üçü de yoksa eski genel hata kartı.
+  final VoidCallback? onRetryLid;
+  final VoidCallback? onSkipLid;
+  final VoidCallback? onAcknowledgeLidClosed;
+
   static const _fade = Duration(milliseconds: 180);
 
-  bool get _isVisible => isStopping || stage is! MasterDrawerOpened;
+  bool get _isVisible => isStopping || (stage is! MasterDrawerOpened && stage is! MasterDrawerLidClosed);
 
   @override
   Widget build(BuildContext context) {
-    final info = _isVisible ? _StageInfo.of(context, stage, isStopping: isStopping, isLastJob: isLastJob) : null;
+    final info = _isVisible
+        ? _StageInfo.of(
+            context,
+            stage,
+            isStopping: isStopping,
+            isLastJob: isLastJob,
+            onRetryLid: onRetryLid,
+            onSkipLid: onSkipLid,
+            onAcknowledgeLidClosed: onAcknowledgeLidClosed,
+          )
+        : null;
 
     return Stack(
       children: [
@@ -65,7 +93,7 @@ class CabinDrawerStageOverlay extends StatelessWidget {
           Center(
             child: AnimatedSwitcher(
               duration: _fade,
-              child: _StageCard(key: ValueKey(info.title), info: info),
+              child: _StageCard(key: ValueKey(info.key), info: info),
             ),
           ),
       ],
@@ -86,19 +114,45 @@ enum _StageKind {
   error,
 }
 
+class _StageAction {
+  const _StageAction({required this.label, required this.onPressed});
+
+  final String label;
+  final VoidCallback onPressed;
+}
+
 class _StageInfo {
-  const _StageInfo({required this.kind, required this.icon, required this.title, required this.subtitle});
+  const _StageInfo({
+    required this.kind,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    this.hint,
+    this.actions = const [],
+  });
 
   final _StageKind kind;
   final IconData icon;
   final String title;
   final String subtitle;
 
+  /// Alt metnin altında vurgulu ek bilgi (örn. sensör geri gelirse devam eder).
+  final String? hint;
+
+  final List<_StageAction> actions;
+
+  /// AnimatedSwitcher anahtarı — aynı başlıklı farklı kapak hataları da
+  /// geçiş animasyonu alsın.
+  String get key => '$title|$subtitle';
+
   static _StageInfo of(
     BuildContext context,
     MasterDrawerStage stage, {
     required bool isStopping,
     required bool isLastJob,
+    VoidCallback? onRetryLid,
+    VoidCallback? onSkipLid,
+    VoidCallback? onAcknowledgeLidClosed,
   }) {
     final l10n = context.l10n;
 
@@ -153,12 +207,28 @@ class _StageInfo {
         title: l10n.masterDrawer_status_openingLidTitle,
         subtitle: l10n.masterDrawer_status_openingLidSubtitle,
       ),
+      MasterDrawerWaitingForLidClose() => _StageInfo(
+        kind: _StageKind.action,
+        icon: PhosphorIcons.lock(),
+        title: l10n.masterDrawer_lid_waitingCloseTitle,
+        subtitle: l10n.masterDrawer_lid_waitingCloseSubtitle,
+      ),
       MasterDrawerWaitingForClose() => _StageInfo(
         kind: _StageKind.action,
         icon: PhosphorIcons.lock(),
         title: l10n.masterDrawer_status_waitingCloseTitle,
         subtitle: l10n.masterDrawer_status_waitingCloseSubtitle,
       ),
+      MasterDrawerLidFailed(:final failure, :final detail)
+          when onRetryLid != null || onSkipLid != null || onAcknowledgeLidClosed != null =>
+        _lidFailedInfo(
+          context,
+          failure,
+          detail,
+          onRetryLid: onRetryLid,
+          onSkipLid: onSkipLid,
+          onAcknowledgeLidClosed: onAcknowledgeLidClosed,
+        ),
       MasterDrawerFailed() || MasterDrawerLidFailed() => _StageInfo(
         kind: _StageKind.error,
         icon: PhosphorIcons.warningCircle(),
@@ -170,6 +240,65 @@ class _StageInfo {
         icon: PhosphorIcons.hourglass(),
         title: l10n.masterDrawer_status_openingTitle,
         subtitle: l10n.masterDrawer_status_openingSubtitle,
+      ),
+    };
+  }
+
+  /// Neden → görünüm + buton seti:
+  ///   lidDrawerNotOpen           → action (amber) · Tekrar Dene
+  ///   lidNotOpened               → action (amber) · Bu Gözü Atla + Tekrar Dene
+  ///   lidOpenFailed (ve diğer)   → error (kırmızı) · Bu Gözü Atla + Tekrar Dene
+  ///   lidSensorLost              → error (kırmızı) · Kapağı Kapattım
+  ///     (Tekrar Dene YOK: açma komutunu yeniden göndermek anlamsız; izleme
+  ///     sürdüğü için bağlantı gelirse akış kendiliğinden devam eder.)
+  static _StageInfo _lidFailedInfo(
+    BuildContext context,
+    MasterDrawerFailure failure,
+    String? detail, {
+    VoidCallback? onRetryLid,
+    VoidCallback? onSkipLid,
+    VoidCallback? onAcknowledgeLidClosed,
+  }) {
+    final l10n = context.l10n;
+    final retry = onRetryLid == null
+        ? null
+        : _StageAction(label: l10n.masterDrawer_lid_retryButton, onPressed: onRetryLid);
+    final skip = onSkipLid == null ? null : _StageAction(label: l10n.masterDrawer_lid_skipButton, onPressed: onSkipLid);
+    final acknowledge = onAcknowledgeLidClosed == null
+        ? null
+        : _StageAction(label: l10n.masterDrawer_lid_acknowledgeClosedButton, onPressed: onAcknowledgeLidClosed);
+
+    final message = failure.message(context, detail: detail);
+
+    return switch (failure) {
+      MasterDrawerFailure.lidDrawerNotOpen => _StageInfo(
+        kind: _StageKind.action,
+        icon: PhosphorIcons.arrowsOutLineVertical(),
+        title: l10n.masterDrawer_status_failedTitle,
+        subtitle: message,
+        actions: [if (retry != null) retry],
+      ),
+      MasterDrawerFailure.lidNotOpened => _StageInfo(
+        kind: _StageKind.action,
+        icon: PhosphorIcons.handGrabbing(),
+        title: l10n.masterDrawer_status_failedTitle,
+        subtitle: message,
+        actions: [if (skip != null) skip, if (retry != null) retry],
+      ),
+      MasterDrawerFailure.lidSensorLost => _StageInfo(
+        kind: _StageKind.error,
+        icon: PhosphorIcons.wifiSlash(),
+        title: l10n.masterDrawer_status_failedTitle,
+        subtitle: message,
+        hint: l10n.masterDrawer_lid_sensorLostHint,
+        actions: [if (acknowledge != null) acknowledge],
+      ),
+      _ => _StageInfo(
+        kind: _StageKind.error,
+        icon: PhosphorIcons.warningCircle(),
+        title: l10n.masterDrawer_status_failedTitle,
+        subtitle: message,
+        actions: [if (skip != null) skip, if (retry != null) retry],
       ),
     };
   }
@@ -215,10 +344,29 @@ class _StageCard extends StatelessWidget {
               textAlign: TextAlign.center,
               style: MedTextStyles.bodyMd(color: MedColors.text3),
             ),
+            if (info.hint case final hint?)
+              Text(
+                hint,
+                textAlign: TextAlign.center,
+                style: MedTextStyles.bodySm(color: MedColors.blue),
+              ),
             // Sadece sistem çalışırken — kullanıcı eylemi beklenen adımlarda
             // dönen gösterge "bekle" mesajı verip yanıltırdı.
             if (info.kind == _StageKind.working)
               const Padding(padding: EdgeInsets.only(top: 4), child: MedLoadingIndicator()),
+            if (info.actions.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(
+                  spacing: MedSpacing.lg,
+                  children: [
+                    for (final action in info.actions)
+                      Expanded(
+                        child: MedButton(label: action.label, onPressed: action.onPressed),
+                      ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

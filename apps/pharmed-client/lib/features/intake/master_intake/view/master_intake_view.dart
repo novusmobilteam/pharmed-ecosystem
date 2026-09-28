@@ -20,7 +20,6 @@ import '../widgets/intake_orderless_item_card.dart';
 part 'patient_selection_view.dart';
 part 'master_intake_selection_view.dart';
 part 'master_intake_execution_view.dart';
-part 'intake_qr_code_dialog.dart';
 
 class MasterIntakeView extends ConsumerStatefulWidget {
   const MasterIntakeView({super.key, required this.stationContext});

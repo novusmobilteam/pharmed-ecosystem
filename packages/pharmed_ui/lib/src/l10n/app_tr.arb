@@ -9346,5 +9346,338 @@
 "enumCore_stationTransactionTypeMaterialPurchasing": "Alım",
 "enumCore_stationTransactionTypeRefundInward": "İade Girişi",
 "enumCore_stationTransactionTypeWastage": "Fire",
-"enumCore_stationTransactionTypeUnloading": "Boşaltma"
+"enumCore_stationTransactionTypeUnloading": "Boşaltma",
+"masterDrawer_error_lidDrawerNotOpen": "Kübik kapak açılamadı çünkü çekmece tam açık değil. Çekmeceyi sonuna kadar çekin.",
+"@masterDrawer_error_lidDrawerNotOpen": {
+  "description": "Shown when a cubic lid cannot open because the main drawer is not fully open (hardware interlock)"
+},
+"masterDrawer_error_lidNotOpened": "Kübik kapak açılmadı. Kapağı elle açmayı deneyin.",
+"@masterDrawer_error_lidNotOpened": {
+  "description": "Shown when the cubic lid open command succeeded but the lid was not detected as open within the expected time (stuck lid)"
+},
+"masterDrawer_error_lidSensorLost": "Kübik kapağın durumu okunamıyor. Kapağın kapalı olduğundan emin olun.",
+"@masterDrawer_error_lidSensorLost": {
+  "description": "Shown when cubic lid status polling is lost while waiting for the lid to be closed"
+},
+"masterDrawer_lid_waitingCloseTitle": "Kapağı kapatın",
+"@masterDrawer_lid_waitingCloseTitle": {
+  "description": "Overlay title shown while waiting for the user to physically close the cubic lid after completing the cell"
+},
+"masterDrawer_lid_waitingCloseSubtitle": "Kapak kapandığında işlem tamamlanır ve sıradaki göze geçilir.",
+"@masterDrawer_lid_waitingCloseSubtitle": {
+  "description": "Overlay explanation shown while waiting for the cubic lid to close"
+},
+"masterDrawer_lid_failedTitle": "Kapak işlemi tamamlanamadı",
+"@masterDrawer_lid_failedTitle": {
+  "description": "Overlay title shown when a cubic lid fails to open or its status cannot be read"
+},
+"masterDrawer_lid_retryButton": "Tekrar Dene",
+"@masterDrawer_lid_retryButton": {
+  "description": "Button that resends the open command for the current cubic lid"
+},
+"masterDrawer_lid_skipButton": "Bu Gözü Atla",
+"@masterDrawer_lid_skipButton": {
+  "description": "Button that skips the current cubic cell without saving and moves to the next one"
+},
+"masterDrawer_lid_acknowledgeClosedButton": "Kapağı Kapattım",
+"@masterDrawer_lid_acknowledgeClosedButton": {
+  "description": "Button the user presses to confirm the cubic lid is closed when its sensor status cannot be read"
+},
+"masterDrawer_lid_sensorLostHint": "Bağlantı geri gelirse işlem kendiliğinden devam eder.",
+"@masterDrawer_lid_sensorLostHint": {
+  "description": "Hint below the lid sensor lost message explaining the flow resumes automatically if the connection returns"
+},
+"qrScan_dialogTitle": "Karekod Okutun",
+  "@qrScan_dialogTitle": {
+    "description": "QR scan dialog title"
+  },
+  "qrScan_subtitleSingle": "{operation} · İlacın karekodunu doğrulayın",
+  "@qrScan_subtitleSingle": {
+    "description": "Dialog subtitle for a single box; operation is the screen's operation name",
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_subtitleMulti": "{operation} · Her kutuyu ayrı ayrı okutun",
+  "@qrScan_subtitleMulti": {
+    "description": "Dialog subtitle for multiple boxes; operation is the screen's operation name",
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_operationIntake": "İlaç Alım",
+  "@qrScan_operationIntake": {
+    "description": "Operation name passed to the QR scan dialog from the intake screen"
+  },
+  "qrScan_operationRefund": "İlaç İade",
+  "@qrScan_operationRefund": {
+    "description": "Operation name passed to the QR scan dialog from the return screen"
+  },
+  "qrScan_operationUnscanned": "Okutulmayan Karekodlar",
+  "@qrScan_operationUnscanned": {
+    "description": "Operation name passed to the QR scan dialog from the unscanned QR codes screens"
+  },
+  "qrScan_closeTooltip": "Kapat",
+  "@qrScan_closeTooltip": {
+    "description": "Close button tooltip; closing cancels without processing codes"
+  },
+  "qrScan_scannedCounterLabel": "Okutulan",
+  "@qrScan_scannedCounterLabel": {
+    "description": "Label above the scanned box counter and for the scanned GTIN row"
+  },
+  "qrScan_boxCountSuffix": " / {total} kutu",
+  "@qrScan_boxCountSuffix": {
+    "description": "Suffix after the scanned count, e.g. '2 / 3 boxes'",
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_progressSemantics": "{total} kutudan {scanned} tanesi okutuldu",
+  "@qrScan_progressSemantics": {
+    "description": "Screen reader label for the segmented progress bar",
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_scanPromptTitle": "Kutunun üzerindeki karekodu okuyucuya gösterin",
+  "@qrScan_scanPromptTitle": {
+    "description": "Single-box scan instruction title"
+  },
+  "qrScan_scanPromptBody": "Her kutunun karekodunu ayrı ayrı okutun. Okuma tamamlanınca kod aşağıda görünecek.",
+  "@qrScan_scanPromptBody": {
+    "description": "Single-box scan instruction body"
+  },
+  "qrScan_readerReady": "Okuyucu hazır",
+  "@qrScan_readerReady": {
+    "description": "Reader-ready indicator (large prompt)"
+  },
+  "qrScan_readerReadyShort": "Hazır",
+  "@qrScan_readerReadyShort": {
+    "description": "Reader-ready indicator (compact prompt)"
+  },
+  "qrScan_multiPromptTitle": "{index}. kutunun karekodunu okutun",
+  "@qrScan_multiPromptTitle": {
+    "description": "Multi-box prompt for the next box",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_multiPromptBody": "Her kutunun karekodu farklıdır; aynı kutuyu iki kez okutmayın.",
+  "@qrScan_multiPromptBody": {
+    "description": "Multi-box prompt body"
+  },
+  "qrScan_scannedCodeLabel": "Okutulan Karekod",
+  "@qrScan_scannedCodeLabel": {
+    "description": "Field label for the single scanned code"
+  },
+  "qrScan_scannedCodesLabel": "Okutulan Karekodlar",
+  "@qrScan_scannedCodesLabel": {
+    "description": "List label for scanned codes (multi-box)"
+  },
+  "qrScan_waitingPlaceholder": "Karekod bekleniyor…",
+  "@qrScan_waitingPlaceholder": {
+    "description": "Placeholder while waiting for a scan"
+  },
+  "qrScan_successTitle": "Karekod doğrulandı",
+  "@qrScan_successTitle": {
+    "description": "Single-box success banner title"
+  },
+  "qrScan_successBody": "Okutulan kutu bu ilaçla eşleşiyor. Bilgileri kontrol edip onaylayın.",
+  "@qrScan_successBody": {
+    "description": "Single-box success banner body"
+  },
+  "qrScan_allScannedTitle": "Tüm karekodlar okutuldu",
+  "@qrScan_allScannedTitle": {
+    "description": "Multi-box completion banner title"
+  },
+  "qrScan_allScannedBody": "{count} kutunun karekodu doğrulandı. Listeyi kontrol edip onaylayın.",
+  "@qrScan_allScannedBody": {
+    "description": "Multi-box completion banner body",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_gtinLabel": "GTIN / Barkod",
+  "@qrScan_gtinLabel": {
+    "description": "GS1 field label: GTIN"
+  },
+  "qrScan_serialLabel": "Seri No",
+  "@qrScan_serialLabel": {
+    "description": "GS1 field label: serial number"
+  },
+  "qrScan_expiryLabel": "Son Kullanma",
+  "@qrScan_expiryLabel": {
+    "description": "GS1 field label: expiry date"
+  },
+  "qrScan_lotLabel": "Parti No",
+  "@qrScan_lotLabel": {
+    "description": "GS1 field label: lot number"
+  },
+  "qrScan_serialValue": "SN {serial}",
+  "@qrScan_serialValue": {
+    "description": "Serial number shown in the scanned code list row",
+    "placeholders": {
+      "serial": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_expiryShort": "SKT {date}",
+  "@qrScan_expiryShort": {
+    "description": "Short expiry text in a list row",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_lotShort": "Parti {lot}",
+  "@qrScan_lotShort": {
+    "description": "Short lot text in a list row",
+    "placeholders": {
+      "lot": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_boxLabel": "{index}. kutu",
+  "@qrScan_boxLabel": {
+    "description": "Box ordinal label in the list",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_duplicateRowNote": "Tekrar okutuldu",
+  "@qrScan_duplicateRowNote": {
+    "description": "Note on the list row that was scanned twice"
+  },
+  "qrScan_removeCodeTooltip": "{index}. kutunun karekodunu kaldır",
+  "@qrScan_removeCodeTooltip": {
+    "description": "Tooltip for removing a scanned code",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_mismatchTitle": "Karekod bu ilaçla eşleşmiyor",
+  "@qrScan_mismatchTitle": {
+    "description": "GTIN mismatch banner title"
+  },
+  "qrScan_mismatchBody": "Okutulan kutu başka bir ürüne ait. Lütfen doğru ilacın karekodunu okutun.",
+  "@qrScan_mismatchBody": {
+    "description": "GTIN mismatch banner body"
+  },
+  "qrScan_expectedLabel": "Beklenen",
+  "@qrScan_expectedLabel": {
+    "description": "Expected GTIN row label in the mismatch comparison"
+  },
+  "qrScan_duplicateTitle": "Bu karekod zaten okutuldu",
+  "@qrScan_duplicateTitle": {
+    "description": "Duplicate scan banner title"
+  },
+  "qrScan_duplicateBody": "Seri No {serial} {index}. kutu olarak listede. {next}. kutu için farklı bir kutunun karekodunu okutun.",
+  "@qrScan_duplicateBody": {
+    "description": "Duplicate scan banner body",
+    "placeholders": {
+      "serial": {
+        "type": "String"
+      },
+      "index": {
+        "type": "int"
+      },
+      "next": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_unreadableTitle": "Karekod okunamadı",
+  "@qrScan_unreadableTitle": {
+    "description": "Unreadable / not a medication QR code banner title"
+  },
+  "qrScan_unreadableBody": "Okutulan kod geçerli bir ilaç karekodu değil. Kutunun üzerindeki karekodu tekrar okutun.",
+  "@qrScan_unreadableBody": {
+    "description": "Unreadable banner body"
+  },
+  "qrScan_errorCode": "Hata kodu: {code}",
+  "@qrScan_errorCode": {
+    "description": "Footer error code text; code itself is not translated",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_submitErrorTitle": "Karekodlar gönderilemedi",
+  "@qrScan_submitErrorTitle": {
+    "description": "Banner title when the caller rejects the submitted codes"
+  },
+  "qrScan_resubmitButton": "Tekrar Gönder",
+  "@qrScan_resubmitButton": {
+    "description": "Resends the scanned codes after a failed submission"
+  },
+  "qrScan_manualEntryButton": "Elle Gir",
+  "@qrScan_manualEntryButton": {
+    "description": "Footer button that opens manual code entry"
+  },
+  "qrScan_scannerEntryButton": "Okuyucuya Dön",
+  "@qrScan_scannerEntryButton": {
+    "description": "Footer button that closes manual entry and returns to scanner input"
+  },
+  "qrScan_manualEntryHint": "Karekodu yazın",
+  "@qrScan_manualEntryHint": {
+    "description": "Manual entry field hint"
+  },
+  "qrScan_manualEntryAddButton": "Ekle",
+  "@qrScan_manualEntryAddButton": {
+    "description": "Button that submits the manually entered code"
+  },
+  "qrScan_rescanButton": "Yeniden Okut",
+  "@qrScan_rescanButton": {
+    "description": "Single-box: clears the accepted code to scan again"
+  },
+  "qrScan_retryScanButton": "Tekrar Okut",
+  "@qrScan_retryScanButton": {
+    "description": "Single-box: clears the rejected scan to try again"
+  },
+  "qrScan_cancelButton": "İptal",
+  "@qrScan_cancelButton": {
+    "description": "Default cancel label; closes the dialog without processing codes"
+  },
+  "qrScan_confirmButton": "Onayla",
+  "@qrScan_confirmButton": {
+    "description": "Default confirm label"
+  },
+  "qrScan_confirmProgress": "{label} ({scanned}/{total})",
+  "@qrScan_confirmProgress": {
+    "description": "Confirm button label while boxes remain; label is the confirm text",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

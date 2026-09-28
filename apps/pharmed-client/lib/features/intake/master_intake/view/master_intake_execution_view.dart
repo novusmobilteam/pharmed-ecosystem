@@ -7,14 +7,28 @@ class MasterIntakeExecutionView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final execution = ref.read(masterIntakeExecutionNotifierProvider);
+    final execution = ref.read(masterIntakeExecutionNotifierProvider.notifier);
     final hospitalization = ref.watch(masterIntakeSelectionNotifierProvider.select((n) => n.hospitalization));
 
-    // QR dialog'u — alıma özgü: job tamamlanırken zorunlu kod varsa açılır.
-    ref.listen(masterIntakeExecutionNotifierProvider.select((n) => n.qrCodeJob), (previous, next) {
-      if (previous == null && next != null) {
-        showMedDialog<void>(context: context, barrierDismissible: false, builder: (_) => const IntakeQrCodeDialog());
-      }
+    // QR dialog'u — alıma özgü: karekodlu ilacın hedefi tamamlanınca
+    // (kapak/çekmece kapanıp kayıt atıldıktan sonra) açılır.
+    ref.listen(masterIntakeExecutionNotifierProvider.select((n) => n.qrCodeTarget), (previous, next) async {
+      if (previous != null || next == null) return;
+      final requirement = execution.qrCodeRequirements.firstOrNull;
+      if (requirement == null) return execution.finishQrCodes();
+
+      await showQrScanDialog(
+        context,
+        request: QrScanRequest(
+          operationLabel: context.l10n.qrScan_operationIntake,
+          medicineName: requirement.medicineName,
+          requiredCount: requirement.requiredCount,
+          expectedGtin: requirement.expectedGtin,
+          chips: [if (hospitalization?.patient?.fullName case final name?) QrScanChip(name)],
+        ),
+        onSubmit: execution.submitQrCodes,
+      );
+      await execution.finishQrCodes();
     });
 
     return CabinOperationExecutionView(

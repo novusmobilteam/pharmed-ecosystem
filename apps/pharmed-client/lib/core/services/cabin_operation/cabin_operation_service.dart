@@ -50,8 +50,21 @@ class CabinOperationService implements ICabinOperationService {
   /// Akü voltajı yumuşatma penceresi (LiFePO4 platosunda titremeyi azaltır).
   final _recentVolts = <double>[];
 
+  /// Kübik `S` komutu yanıt kodları.
+  static const String _rawCubicOpen = 'ac';
+  static const String _rawCubicClosed = 'kp';
+
+  /// Master kart slave karttan 250ms içinde yanıt alamadı.
+  static const String _rawCubicSlaveTimeout = 'hz';
+  static const String _rawCubicDrawerNotOpen = 'ht';
+  static const String _rawCubicChecksumError = 'nc';
+  static const String _rawCubicInvalidCommand = 'no';
+
   @override
   void triggerManualClose() {}
+
+  @override
+  void triggerManualLidClose() {}
 
   @override
   Future<ManagementCard?> getOrScanManager({String? targetPort}) async {
@@ -59,6 +72,7 @@ class CabinOperationService implements ICabinOperationService {
     if (_cachedManager != null && _serialService.isConnected) {
       return _cachedManager;
     }
+    print(targetPort);
 
     // Zaten devam eden bir tarama varsa ONU bekle — ikinci bir bağlantı açma.
     // Dashboard'da birden fazla widget (kabin durumu + sensör) aynı anda
@@ -80,6 +94,8 @@ class CabinOperationService implements ICabinOperationService {
   /// Asıl tarama mantığı — tek seferde bir tane çalışır.
   Future<ManagementCard?> _doScan(String? targetPort) async {
     final preferredPort = targetPort ?? await _settingsCache.getComPort();
+
+    print(preferredPort);
 
     if (preferredPort == null) {
       MedLogger.error(unit: 'CabinOps', swreq: 'SWREQ-CABIN-OP-003', message: 'COM port bilinmiyor — cache boş');
@@ -384,8 +400,18 @@ class CabinOperationService implements ICabinOperationService {
     required int lidIndex,
   }) async {
     final command = CommandBuilder.buildCubicCommand(action: DeviceAction.open, port: port, row: lidIndex);
+    final response = await sendRawCommand(manager: manager, targetRow: row, commandPayload: command);
 
-    await sendRawCommand(manager: manager, targetRow: row, commandPayload: command);
+    final failure = _parseCubicOpenFailure(response);
+    if (failure != null) {
+      MedLogger.warn(
+        unit: 'CabinOps',
+        swreq: 'SWREQ-CABIN-OP-003',
+        message: 'Kübik kapak açılamadı',
+        context: {'row': row, 'port': port, 'lidIndex': lidIndex, 'failure': failure.name, 'response': response},
+      );
+      throw CubicLidException(failure, detail: response);
+    }
 
     // Kübik mekanik hareket için bekleme
     await Future.delayed(const Duration(milliseconds: 150));
@@ -516,60 +542,6 @@ class CabinOperationService implements ICabinOperationService {
     return false;
   }
 
-  /// Mobil kabin (serum kartı) yanıt parser.
-  ///
-  /// h3 → açık (fullyOpen)
-  /// h4 → kapatıldı (locked)
-  /// h0 → kilitlendi (locked)
-  DrawerPhysicalStatus _parseMobileDrawerStatus(String? response) {
-    if (response == null) return DrawerPhysicalStatus.unknown;
-    if (response.contains('h3')) return DrawerPhysicalStatus.fullyOpen;
-    if (response.contains('h4')) return DrawerPhysicalStatus.locked;
-    if (response.contains('h0')) return DrawerPhysicalStatus.locked;
-    return DrawerPhysicalStatus.unknown;
-  }
-
-  /// Master kabin standart çekmece yanıt parser.
-  DrawerPhysicalStatus _parseMasterDrawerStatus(String? response) {
-    if (response == null) return DrawerPhysicalStatus.unknown;
-
-    if (response.contains(DeviceConstants.rawFullyOpen) || response.contains(DeviceConstants.rawGeneralOpen)) {
-      return DrawerPhysicalStatus.fullyOpen;
-    }
-    if (response.contains(DeviceConstants.rawLocked) ||
-        response.contains(DeviceConstants.rawClosed) ||
-        response.contains(DeviceConstants.rawGeneralClosed)) {
-      return DrawerPhysicalStatus.locked;
-    }
-    if (response.contains(DeviceConstants.rawUnlockedWaiting)) {
-      return DrawerPhysicalStatus.waitingPull;
-    }
-    if (response.contains(DeviceConstants.rawHalfOpen)) {
-      return DrawerPhysicalStatus.halfOpen;
-    }
-
-    return DrawerPhysicalStatus.unknown;
-  }
-
-  /// Master kabin serum çekmece yanıt parser.
-  ///
-  /// h3 → açık (fullyOpen)
-  /// h4 → kapatıldı (locked)
-  /// h1 → çekilmeyi bekliyor (waitingPull)
-  DrawerPhysicalStatus _parseMasterSerumStatus(String? response) {
-    if (response == null) return DrawerPhysicalStatus.unknown;
-    if (response.contains('h3')) return DrawerPhysicalStatus.fullyOpen;
-    if (response.contains('h4')) return DrawerPhysicalStatus.locked;
-    if (response.contains('h1')) return DrawerPhysicalStatus.waitingPull;
-    if (response.contains(DeviceConstants.rawFullyOpen)) {
-      return DrawerPhysicalStatus.fullyOpen;
-    }
-    if (response.contains(DeviceConstants.rawLocked)) {
-      return DrawerPhysicalStatus.locked;
-    }
-    return DrawerPhysicalStatus.unknown;
-  }
-
   /// Yönetim kartından akü voltajı okur (row 49).
   @override
   Future<double?> readBatteryVoltage({required ManagementCard manager}) async {
@@ -647,5 +619,160 @@ class CabinOperationService implements ICabinOperationService {
 
       await Future.delayed(interval ?? _sensorInterval);
     }
+  }
+
+  @override
+  Future<CubicLidStatus> getMasterCubicLidStatus({
+    required ManagementCard manager,
+    required int row,
+    required int port,
+    required int lidIndex,
+  }) async {
+    final command = CommandBuilder.buildCubicCommand(action: DeviceAction.status, port: port, row: lidIndex);
+
+    try {
+      final response = await sendRawCommand(manager: manager, targetRow: row, commandPayload: command);
+      return _parseMasterCubicLidStatus(response, row: row, port: port, lidIndex: lidIndex);
+    } catch (e) {
+      MedLogger.warn(
+        unit: 'CabinOps',
+        swreq: 'SWREQ-CABIN-OP-003',
+        message: 'Kübik kapak durum sorgusu exception',
+        context: {'row': row, 'port': port, 'lidIndex': lidIndex, 'error': e.toString()},
+      );
+      return CubicLidStatus.unknown;
+    }
+  }
+
+  @override
+  Stream<CubicLidStatus> streamMasterCubicLidStatus({
+    required ManagementCard manager,
+    required int row,
+    required int port,
+    required int lidIndex,
+  }) async* {
+    const maxConsecutiveFailures = 6;
+    int consecutiveFailures = 0;
+
+    while (true) {
+      final status = await getMasterCubicLidStatus(manager: manager, row: row, port: port, lidIndex: lidIndex);
+
+      if (status == CubicLidStatus.unknown) {
+        consecutiveFailures++;
+        if (consecutiveFailures >= maxConsecutiveFailures) {
+          MedLogger.warn(
+            unit: 'CabinOps',
+            swreq: 'SWREQ-CABIN-OP-003',
+            message: 'Kübik kapak durum sorgusu art arda $consecutiveFailures kez basarisiz - timeoutError',
+            context: {'row': row, 'port': port, 'lidIndex': lidIndex},
+          );
+          yield CubicLidStatus.timeoutError;
+          consecutiveFailures = 0;
+        } else {
+          yield CubicLidStatus.unknown;
+        }
+      } else {
+        consecutiveFailures = 0;
+        yield status;
+      }
+
+      await Future.delayed(DeviceConstants.statusPollingInterval);
+    }
+  }
+
+  /// Mobil kabin (serum kartı) yanıt parser.
+  ///
+  /// h3 → açık (fullyOpen)
+  /// h4 → kapatıldı (locked)
+  /// h0 → kilitlendi (locked)
+  DrawerPhysicalStatus _parseMobileDrawerStatus(String? response) {
+    if (response == null) return DrawerPhysicalStatus.unknown;
+    if (response.contains('h3')) return DrawerPhysicalStatus.fullyOpen;
+    if (response.contains('h4')) return DrawerPhysicalStatus.locked;
+    if (response.contains('h0')) return DrawerPhysicalStatus.locked;
+    return DrawerPhysicalStatus.unknown;
+  }
+
+  /// Master kabin standart çekmece yanıt parser.
+  DrawerPhysicalStatus _parseMasterDrawerStatus(String? response) {
+    if (response == null) return DrawerPhysicalStatus.unknown;
+
+    if (response.contains(DeviceConstants.rawFullyOpen) || response.contains(DeviceConstants.rawGeneralOpen)) {
+      return DrawerPhysicalStatus.fullyOpen;
+    }
+    if (response.contains(DeviceConstants.rawLocked) ||
+        response.contains(DeviceConstants.rawClosed) ||
+        response.contains(DeviceConstants.rawGeneralClosed)) {
+      return DrawerPhysicalStatus.locked;
+    }
+    if (response.contains(DeviceConstants.rawUnlockedWaiting)) {
+      return DrawerPhysicalStatus.waitingPull;
+    }
+    if (response.contains(DeviceConstants.rawHalfOpen)) {
+      return DrawerPhysicalStatus.halfOpen;
+    }
+
+    return DrawerPhysicalStatus.unknown;
+  }
+
+  /// Master kabin serum çekmece yanıt parser.
+  ///
+  /// h3 → açık (fullyOpen)
+  /// h4 → kapatıldı (locked)
+  /// h1 → çekilmeyi bekliyor (waitingPull)
+  DrawerPhysicalStatus _parseMasterSerumStatus(String? response) {
+    if (response == null) return DrawerPhysicalStatus.unknown;
+    if (response.contains('h3')) return DrawerPhysicalStatus.fullyOpen;
+    if (response.contains('h4')) return DrawerPhysicalStatus.locked;
+    if (response.contains('h1')) return DrawerPhysicalStatus.waitingPull;
+    if (response.contains(DeviceConstants.rawFullyOpen)) {
+      return DrawerPhysicalStatus.fullyOpen;
+    }
+    if (response.contains(DeviceConstants.rawLocked)) {
+      return DrawerPhysicalStatus.locked;
+    }
+    return DrawerPhysicalStatus.unknown;
+  }
+
+  /// Master kabin kübik kapak yanıt parser.
+  ///
+  /// ac → açık (open)
+  /// kp → kapalı (closed)
+  /// hz → slave kart yanıt vermedi (unknown, ayrıca loglanır)
+  /// nc/no/null → unknown
+  CubicLidStatus _parseMasterCubicLidStatus(
+    String? response, {
+    required int row,
+    required int port,
+    required int lidIndex,
+  }) {
+    if (response == null) return CubicLidStatus.unknown;
+    if (response.contains(_rawCubicOpen)) return CubicLidStatus.open;
+    if (response.contains(_rawCubicClosed)) return CubicLidStatus.closed;
+
+    if (response.contains(_rawCubicSlaveTimeout)) {
+      MedLogger.warn(
+        unit: 'CabinOps',
+        swreq: 'SWREQ-CABIN-OP-003',
+        message: 'Kübik slave kart yanıt vermedi (hz)',
+        context: {'row': row, 'port': port, 'lidIndex': lidIndex},
+      );
+    }
+    return CubicLidStatus.unknown;
+  }
+
+  /// Kübik `O` komutu yanıtını değerlendirir. Başarılıysa null döner.
+  ///
+  /// Sıra önemli: `hz`/`ht` önce kontrol edilir, `ok` en son — hata kodu
+  /// ile birlikte beklenmedik bir 'ok' parçası gelirse başarı sayılmasın.
+  CubicLidFailure? _parseCubicOpenFailure(String? response) {
+    if (response == null) return CubicLidFailure.noResponse;
+    if (response.contains(_rawCubicDrawerNotOpen)) return CubicLidFailure.drawerNotOpen;
+    if (response.contains(_rawCubicSlaveTimeout)) return CubicLidFailure.slaveNoResponse;
+    if (response.contains(_rawCubicChecksumError) || response.contains(_rawCubicInvalidCommand)) {
+      return CubicLidFailure.protocolError;
+    }
+    if (response.contains(DeviceConstants.responseOk)) return null;
+    return CubicLidFailure.protocolError;
   }
 }

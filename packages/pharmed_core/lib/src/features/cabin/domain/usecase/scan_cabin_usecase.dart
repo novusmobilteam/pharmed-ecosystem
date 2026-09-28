@@ -40,7 +40,7 @@ class ScanCabinUseCase {
       onStatusChanged?.call(ScanStatus.connecting, detail: portName);
 
       await _serialService.connectToPort(
-        portName ?? 'COM3',
+        portName ?? 'COM8',
         onStatusChanged: (_) {}, // ScanStatus üzerinden yönetiliyor
       );
 

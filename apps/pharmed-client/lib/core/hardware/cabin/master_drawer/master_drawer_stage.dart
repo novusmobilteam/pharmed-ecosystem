@@ -44,6 +44,17 @@ final class MasterDrawerClosed extends MasterDrawerStage {
   const MasterDrawerClosed();
 }
 
+/// Kübik: kullanıcı gözü onayladı, kapağın fiziksel kapanması bekleniyor.
+final class MasterDrawerWaitingForLidClose extends MasterDrawerStage {
+  const MasterDrawerWaitingForLidClose();
+}
+
+/// Kübik: aktif gözün kapağı fiziksel olarak kapandı (ac → kp). Ana çekmece
+/// hâlâ açık — terminal DEĞİL.
+final class MasterDrawerLidClosed extends MasterDrawerStage {
+  const MasterDrawerLidClosed();
+}
+
 final class MasterDrawerLidFailed extends MasterDrawerStage {
   const MasterDrawerLidFailed({required this.failure, this.detail});
 

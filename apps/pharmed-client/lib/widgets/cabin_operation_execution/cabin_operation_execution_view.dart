@@ -169,6 +169,9 @@ class _CabinOperationExecutionViewState extends State<CabinOperationExecutionVie
         stage: controller.drawerStage,
         isStopping: controller.isStopping,
         isLastJob: controller.currentIndex >= jobs.length - 1,
+        onRetryLid: controller.retryCubicLid,
+        onSkipLid: controller.skipCurrentLid,
+        onAcknowledgeLidClosed: controller.acknowledgeLidClosedManually,
         child: CabinOperationEntryBody(
           job: job,
           target: target,

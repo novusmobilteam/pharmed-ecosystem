@@ -5108,5 +5108,180 @@
 "enumCore_stationTransactionTypeUnloading": "Unloading",
 "@enumCore_stationTransactionTypeUnloading": {
   "description": "StationTransactionType.unloading (10) — drugs unloaded from the cabin"
-}
+},
+"masterDrawer_error_lidDrawerNotOpen": "The cubic lid could not open because the drawer is not fully open. Pull the drawer all the way out.",
+"masterDrawer_error_lidNotOpened": "The cubic lid did not open. Try opening the lid by hand.",
+"masterDrawer_error_lidSensorLost": "The cubic lid status cannot be read. Make sure the lid is closed.",
+"masterDrawer_lid_waitingCloseTitle": "Close the lid",
+"masterDrawer_lid_waitingCloseSubtitle": "Once the lid is closed, the step is completed and the next cell opens.",
+"masterDrawer_lid_failedTitle": "Lid operation could not be completed",
+"masterDrawer_lid_retryButton": "Try Again",
+"masterDrawer_lid_skipButton": "Skip This Cell",
+"masterDrawer_lid_acknowledgeClosedButton": "I Closed the Lid",
+"masterDrawer_lid_sensorLostHint": "If the connection comes back, the process will continue automatically.",
+"qrScan_dialogTitle": "Scan QR Code",
+  "qrScan_subtitleSingle": "{operation} · Verify the medication's QR code",
+  "@qrScan_subtitleSingle": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_subtitleMulti": "{operation} · Scan each box separately",
+  "@qrScan_subtitleMulti": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_operationIntake": "Medication Intake",
+  "qrScan_operationRefund": "Medication Return",
+  "qrScan_operationUnscanned": "Unscanned QR Codes",
+  "qrScan_closeTooltip": "Close",
+  "qrScan_scannedCounterLabel": "Scanned",
+  "qrScan_boxCountSuffix": " / {total} boxes",
+  "@qrScan_boxCountSuffix": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_progressSemantics": "{scanned} of {total} boxes scanned",
+  "@qrScan_progressSemantics": {
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_scanPromptTitle": "Show the QR code on the box to the reader",
+  "qrScan_scanPromptBody": "Scan the QR code of each box separately. The code will appear below once read.",
+  "qrScan_readerReady": "Reader ready",
+  "qrScan_readerReadyShort": "Ready",
+  "qrScan_multiPromptTitle": "Scan the QR code of box {index}",
+  "@qrScan_multiPromptTitle": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_multiPromptBody": "Each box has a unique QR code; do not scan the same box twice.",
+  "qrScan_scannedCodeLabel": "Scanned QR Code",
+  "qrScan_scannedCodesLabel": "Scanned QR Codes",
+  "qrScan_waitingPlaceholder": "Waiting for QR code…",
+  "qrScan_successTitle": "QR code verified",
+  "qrScan_successBody": "The scanned box matches this medication. Check the details and confirm.",
+  "qrScan_allScannedTitle": "All QR codes scanned",
+  "qrScan_allScannedBody": "QR codes of {count} boxes verified. Check the list and confirm.",
+  "@qrScan_allScannedBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_gtinLabel": "GTIN / Barcode",
+  "qrScan_serialLabel": "Serial No",
+  "qrScan_expiryLabel": "Expiry",
+  "qrScan_lotLabel": "Lot No",
+  "qrScan_serialValue": "SN {serial}",
+  "@qrScan_serialValue": {
+    "placeholders": {
+      "serial": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_expiryShort": "EXP {date}",
+  "@qrScan_expiryShort": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_lotShort": "Lot {lot}",
+  "@qrScan_lotShort": {
+    "placeholders": {
+      "lot": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_boxLabel": "Box {index}",
+  "@qrScan_boxLabel": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_duplicateRowNote": "Scanned again",
+  "qrScan_removeCodeTooltip": "Remove the QR code of box {index}",
+  "@qrScan_removeCodeTooltip": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_mismatchTitle": "QR code does not match this medication",
+  "qrScan_mismatchBody": "The scanned box belongs to a different product. Scan the QR code of the correct medication.",
+  "qrScan_expectedLabel": "Expected",
+  "qrScan_duplicateTitle": "This QR code was already scanned",
+  "qrScan_duplicateBody": "Serial No {serial} is already listed as box {index}. Scan a different box for box {next}.",
+  "@qrScan_duplicateBody": {
+    "placeholders": {
+      "serial": {
+        "type": "String"
+      },
+      "index": {
+        "type": "int"
+      },
+      "next": {
+        "type": "int"
+      }
+    }
+  },
+  "qrScan_unreadableTitle": "QR code could not be read",
+  "qrScan_unreadableBody": "The scanned code is not a valid medication QR code. Scan the QR code on the box again.",
+  "qrScan_errorCode": "Error code: {code}",
+  "@qrScan_errorCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "qrScan_submitErrorTitle": "QR codes could not be sent",
+  "qrScan_resubmitButton": "Send Again",
+  "qrScan_manualEntryButton": "Enter Manually",
+  "qrScan_scannerEntryButton": "Back to Reader",
+  "qrScan_manualEntryHint": "Type the QR code",
+  "qrScan_manualEntryAddButton": "Add",
+  "qrScan_rescanButton": "Rescan",
+  "qrScan_retryScanButton": "Scan Again",
+  "qrScan_cancelButton": "Cancel",
+  "qrScan_confirmButton": "Confirm",
+  "qrScan_confirmProgress": "{label} ({scanned}/{total})",
+  "@qrScan_confirmProgress": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

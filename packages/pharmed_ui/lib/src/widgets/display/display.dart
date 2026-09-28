@@ -11,3 +11,5 @@ export 'med_info_row.dart';
 export 'med_settings_modal.dart';
 export 'login_modal.dart';
 export 'med_language_selector.dart';
+export 'qr_scan/qr_scan_controller.dart';
+export 'qr_scan/qr_scan_dialog.dart';

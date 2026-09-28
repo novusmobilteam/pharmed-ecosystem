@@ -421,6 +421,10 @@ final openCubicLidUseCaseProvider = Provider((ref) {
   return OpenCubicLidUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider));
 });
 
+final monitorCubicLidUseCaseProvider = Provider<MonitorCubicLidUseCase>(
+  (ref) => MonitorCubicLidUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider)),
+);
+
 final monitorDrawerClosureUseCaseProvider = Provider((ref) {
   return MonitorDrawerClosureUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider));
 });
