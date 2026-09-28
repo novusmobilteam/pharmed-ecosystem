@@ -13,6 +13,8 @@
 //   streamMobileDrawerStatus  : 2s fullyOpen → triggerManualClose ile locked
 //   openMasterDrawer          : 1s gecikme, başarılı
 //   streamMasterDrawerStatus  : 2s locked → fullyOpen → triggerManualClose ile locked
+//   openMasterCubicDrawer     : 500ms gecikme, kapak açık kaydedilir
+//   streamMasterCubicLidStatus: ~600ms closed → open → triggerManualLidClose ile closed
 //
 // Sınıf: Class B
 
@@ -29,11 +31,31 @@ class MockCabinOperationService implements ICabinOperationService {
 
   bool _masterDrawerIsOpen = false;
 
+  /// Açık kübik kapaklar — anahtar: "row:port:lidIndex", değer: açılma anı.
+  final Map<String, DateTime> _openLids = {};
+
+  /// Açılıştan hemen sonra kapağın hâlâ `closed` okunduğu pencere
+  /// (sahadaki solenoid/mekanik gecikmeyi taklit eder).
+  static const _lidLatchDelay = Duration(milliseconds: 600);
+
+  String _lidKey(int row, int port, int lidIndex) => '$row:$port:$lidIndex';
+
   @override
   void triggerManualClose() {
     _shouldFastForward = true;
     _masterDrawerIsOpen = false;
+    _openLids.clear();
     debugPrint('MOCK: Manuel kapatma tetiklendi.');
+  }
+
+  @override
+  void triggerManualLidClose() {
+    if (_openLids.isEmpty) {
+      debugPrint('MOCK: Manuel kapak kapatma — açık kapak yok.');
+      return;
+    }
+    debugPrint('MOCK: Manuel kapak kapatma tetiklendi → ${_openLids.keys.join(', ')} 🔒');
+    _openLids.clear();
   }
 
   @override
@@ -135,6 +157,7 @@ class MockCabinOperationService implements ICabinOperationService {
   }) async {
     debugPrint('MOCK: Kübik kapak açılıyor (row:$row, port:$port, lid:$lidIndex)...');
     await Future.delayed(const Duration(milliseconds: 500));
+    _openLids[_lidKey(row, port, lidIndex)] = DateTime.now();
     debugPrint('MOCK: ✅ Kübik kapak AÇILDI 🔓');
   }
 
@@ -266,5 +289,42 @@ class MockCabinOperationService implements ICabinOperationService {
 
       yield CabinSensorReading(temperature: temp, humidity: hum, batteryVolts: volt, timestamp: DateTime.now());
     }
+  }
+
+  @override
+  Future<CubicLidStatus> getMasterCubicLidStatus({
+    required ManagementCard manager,
+    required int row,
+    required int port,
+    required int lidIndex,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    return _mockLidStatus(row, port, lidIndex);
+  }
+
+  @override
+  Stream<CubicLidStatus> streamMasterCubicLidStatus({
+    required ManagementCard manager,
+    required int row,
+    required int port,
+    required int lidIndex,
+  }) async* {
+    while (true) {
+      final status = _mockLidStatus(row, port, lidIndex);
+      debugPrint('MOCK SENSOR (Kübik row:$row port:$port lid:$lidIndex): $status');
+      yield status;
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+  }
+
+  CubicLidStatus _mockLidStatus(int row, int port, int lidIndex) {
+    final openedAt = _openLids[_lidKey(row, port, lidIndex)];
+    if (openedAt == null) return CubicLidStatus.closed;
+
+    // Açılış sonrası mekanik gecikme penceresi — hâlâ kapalı okunur
+    if (DateTime.now().difference(openedAt) < _lidLatchDelay) {
+      return CubicLidStatus.closed;
+    }
+    return CubicLidStatus.open;
   }
 }

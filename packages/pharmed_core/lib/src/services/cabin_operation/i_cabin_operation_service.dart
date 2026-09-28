@@ -341,4 +341,24 @@ abstract interface class ICabinOperationService {
 
   /// Isı, nem ve akü değerlerini periyodik yayınlar.
   Stream<CabinSensorReading> streamCabinSensors({required ManagementCard manager, Duration? interval});
+
+  /// Kübik kapağın anlık durumunu tek seferlik okur (`:ZS...` komutu).
+  Future<CubicLidStatus> getMasterCubicLidStatus({
+    required ManagementCard manager,
+    required int row,
+    required int port,
+    required int lidIndex,
+  });
+
+  /// Kübik kapak durumunu periyodik olarak yayınlar. Her poll'da emit eder;
+  /// "açıldı → kapandı" kenar tespiti ÜST KATMANIN sorumluluğudur.
+  Stream<CubicLidStatus> streamMasterCubicLidStatus({
+    required ManagementCard manager,
+    required int row,
+    required int port,
+    required int lidIndex,
+  });
+
+  /// Mock: açık kübik kapakları kapatır. Gerçek implementasyonda no-op.
+  void triggerManualLidClose();
 }

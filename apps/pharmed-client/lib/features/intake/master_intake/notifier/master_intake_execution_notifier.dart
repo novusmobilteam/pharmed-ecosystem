@@ -14,7 +14,12 @@ import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.
 //   - Kayıt, target'ın kaynak kalemine (plan) göre üç yoldan gider:
 //     yönlendirilmiş, muadil, normal.
 //   - Kullanıcının sayımı kayıt anında plan detaylarına aktarılır.
-//   - QR zorunlu ilaçlarda job tamamlanırken kuyruk askıya alınır.
+//   - Hedef, "Tamamla" butonuyla YA DA fiziksel kapanışla tamamlanır:
+//     kübikte gözün kapağı, birim dozda çekmece kapanınca
+//     (completesOnPhysicalClose). Sıradaki kübik kapak, önceki kapak
+//     kapanmadan açılmaz.
+//   - QR zorunlu ilaçta, hedef tamamlanır tamamlanmaz (sıradaki ilaca
+//     geçmeden) kuyruk askıya alınır ve QR dialog'u açılır.
 //
 // Sınıf: Class B
 
@@ -57,6 +62,10 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
   @override
   IMasterDrawerSession get drawerSession => _drawerSession;
 
+  /// Alımda miktar reçeteden gelir — kapanışta otomatik kayıt güvenlidir.
+  @override
+  bool get completesOnPhysicalClose => true;
+
   /// Alımda SKT girilmez (CabinOperationMode.intake.requiresMiad == false)
   /// — alan hiç çizilmediği için değeri anlamsız.
   @override
@@ -76,19 +85,14 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
 
   // ── QR kodu ───────────────────────────────────────────────────────────
 
-  /// Aktif job'ın QR kod zorunluluğu varsa dolu — View bunu görüp dialog açar.
-  CabinOperationDrawerJob? _qrCodeJob;
-  CabinOperationDrawerJob? get qrCodeJob => _qrCodeJob;
-
-  bool _isSubmittingQrCodes = false;
-  bool get isSubmittingQrCodes => _isSubmittingQrCodes;
-
-  Map<int, String> _qrCodeErrors = const {};
-  Map<int, String> get qrCodeErrors => _qrCodeErrors;
+  /// QR okutması beklenen hedef — dolu olduğu sürece kuyruk askıda,
+  /// View bunu görüp dialog açar.
+  CabinOperationTarget? _qrCodeTarget;
+  CabinOperationTarget? get qrCodeTarget => _qrCodeTarget;
 
   List<IntakeQrCodeRequirement> get qrCodeRequirements {
-    final job = _qrCodeJob;
-    return job == null ? const [] : _qrCodeRequirementsOf(job);
+    final target = _qrCodeTarget;
+    return target == null ? const [] : _qrCodeRequirementsOf(target);
   }
 
   @override
@@ -106,14 +110,32 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     _plans = {for (final p in plans) p.item.id: p};
     _intakeType = intakeType;
     _hospitalizationId = hospitalizationId;
+    _qrCodeTarget = null;
     return startQueue(jobs);
   }
 
+  /// "Tamamla" yolu — kayıt hemen atılır, tamamlama fiziksel kapanışta.
   @override
   Future<void> confirmCurrent() async {
     final target = currentTarget;
     if (isStopping || target == null || !target.isValid) return;
     await confirmSingleTarget(saveTarget: _saveTarget);
+  }
+
+  /// "Tamamla"ya basılmadan kapak/çekmece kapandı — kayıt burada atılır.
+  @override
+  Future<bool> saveTargetOnPhysicalClose(CabinOperationTarget target) async {
+    if (!target.isValid) {
+      // Fiziksel kapanış geri alınamaz; geçersiz girdiyle (örn. zorunlu
+      // sayım girilmeden) kayıt atmak yanlış stok üretir. Kullanıcıya kuyruk
+      // hatası olarak gösterilir: devam et (hedef kaydedilmez) / sonlandır.
+      setQueueFailure(
+        const CabinValidationFailure(reason: CabinValidationReason.closedWithInvalidEntry),
+        isQueueError: true,
+      );
+      return false;
+    }
+    return _saveTarget(target);
   }
 
   // ── Kayıt ─────────────────────────────────────────────────────────────
@@ -180,102 +202,69 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
 
   // ── QR kodu akışı ─────────────────────────────────────────────────────
 
-  /// Job tamamlanmaya hazır olduğu an (kübikte her zaman, birim dozda
-  /// SADECE son target kapandığında) QR zorunluluğunu kontrol eder. Zorunlu
-  /// hedef varsa kuyruğu askıya alır — View qrCodeJob'ı görüp dialog açar.
+  /// Hedef tamamlandı (kayıt + kapak/çekmece kapanışı). Karekodlu ilaçsa
+  /// kuyruğu askıya alır — View qrCodeTarget'ı görüp dialog açar.
   @override
-  Future<bool> onBeforeAdvanceAfterClose(CabinOperationTarget? target) async {
-    final job = currentJob;
-    if (job == null) return true;
+  Future<bool> onTargetCompleted(CabinOperationTarget target) async {
+    if (_qrCodeRequirementsOf(target).isEmpty) return true;
 
-    final isJobCompleting = job.staysOpenAcrossTargets || (currentTargetIndex + 1 >= job.targets.length);
-    if (!isJobCompleting) return true;
-
-    if (_qrCodeRequirementsOf(job).isEmpty) return true;
-
-    _qrCodeJob = job;
+    _qrCodeTarget = target;
     notifyListeners();
     return false;
   }
 
-  /// Job'daki QR zorunlu (Drug.isQrCode) kalemleri, kalem bazında gruplanmış
-  /// gereksinim olarak döner. Miktar ADET — her kutu için bir kod.
-  List<IntakeQrCodeRequirement> _qrCodeRequirementsOf(CabinOperationDrawerJob job) {
-    final byItemId = <int, IntakeQrCodeRequirement>{};
+  /// Hedefin QR zorunlu (Drug.isQrCode) kalemi için gereksinim. Miktar ADET
+  /// — her kutu için bir kod.
+  List<IntakeQrCodeRequirement> _qrCodeRequirementsOf(CabinOperationTarget target) {
+    final plan = _planOf(target);
+    if (plan == null) return const [];
 
-    for (final target in job.targets) {
-      final plan = _planOf(target);
-      if (plan == null) continue;
+    final medicine = plan.item.medicine;
+    if (medicine is! Drug || !medicine.isQrCode) return const [];
 
-      final medicine = plan.item.medicine;
-      if (medicine is! Drug || !medicine.isQrCode) continue;
+    final requiredCount = plan.details.fold<double>(0, (sum, d) => sum + d.dosePiece).ceil();
+    if (requiredCount <= 0) return const [];
 
-      final requiredCount = plan.details.fold<double>(0, (sum, d) => sum + d.dosePiece).ceil();
-      if (requiredCount <= 0) continue;
-
-      final existing = byItemId[plan.item.id];
-      byItemId[plan.item.id] = IntakeQrCodeRequirement(
+    return [
+      IntakeQrCodeRequirement(
         prescriptionDetailId: plan.item.id,
-        medicineName: medicine.name ?? existing?.medicineName ?? '—',
-        requiredCount: (existing?.requiredCount ?? 0) + requiredCount,
-      );
-    }
-
-    return byItemId.values.toList();
+        medicineName: medicine.name ?? '—',
+        requiredCount: requiredCount,
+        expectedGtin: medicine.barcode,
+      ),
+    ];
   }
 
-  /// "İşlemi Tamamla" — yalnızca dolu girilen hedefler için istek atar; boş
-  /// bırakılanlar backend'de otomatik "okutulmadı" sayılır. Hata alan hedef
-  /// olsa dahi kuyruk İLERLER — hata yalnızca dialog'da gösterilir.
-  Future<void> submitQrCodesAndContinue(Map<int, List<String>> codesByPrescriptionDetailId) async {
-    if (_qrCodeJob == null) return;
+  /// QrScanDialog'un onSubmit'i — askıdaki hedefin kodlarını gönderir.
+  /// Kuyruğu İLERLETMEZ: hata dönerse dialog açık kalır, kullanıcı tekrar
+  /// gönderebilir ya da iptal edebilir. Devam [finishQrCodes] ile.
+  Future<Result<void>> submitQrCodes(List<Gs1Code> codes) async {
+    // Hedef başına tek ilaç → en fazla bir gereksinim.
+    final requirement = qrCodeRequirements.firstOrNull;
+    if (requirement == null || codes.isEmpty) return const Result.ok(null);
 
-    final toSubmit = qrCodeRequirements
-        .where((r) => (codesByPrescriptionDetailId[r.prescriptionDetailId] ?? const []).isNotEmpty)
-        .toList();
+    final result = await _submitIntakeQrCodes(
+      SubmitIntakeQrCodesParams(
+        details: [
+          IntakeQrCodeDetail(
+            prescriptionDetailId: requirement.prescriptionDetailId,
+            qrCode: [for (final c in codes) c.raw],
+          ),
+        ],
+      ),
+    );
+    return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
+  }
 
-    if (toSubmit.isEmpty) {
-      await _finishQrDialog();
-      return;
-    }
-
-    _isSubmittingQrCodes = true;
+  /// Dialog kapandı (gönderildi ya da iptal edildi) — kuyruk devam eder.
+  /// İptalde kutular backend'de "okutulmadı" sayılır ve Okutulmayan
+  /// Karekodlar ekranından sonradan okutulabilir.
+  Future<void> finishQrCodes() async {
+    if (_qrCodeTarget == null) return;
+    _qrCodeTarget = null;
     notifyListeners();
-
-    final errors = <int, String>{};
-    for (final req in toSubmit) {
-      final codes = codesByPrescriptionDetailId[req.prescriptionDetailId]!;
-      final result = await _submitIntakeQrCodes(
-        SubmitIntakeQrCodesParams(
-          details: [IntakeQrCodeDetail(prescriptionDetailId: req.prescriptionDetailId, qrCode: codes)],
-        ),
-      );
-      result.when(ok: (_) {}, error: (e) => errors[req.prescriptionDetailId] = e.message);
-    }
-
-    if (errors.isEmpty) {
-      await _finishQrDialog();
-    } else {
-      _isSubmittingQrCodes = false;
-      _qrCodeErrors = errors;
-      notifyListeners();
-    }
+    await resumeAfterTargetCompleted();
   }
-
-  /// "Karekod Okutmadan Devam Et" — tüm girdileri yok sayar.
-  Future<void> skipQrCodesAndContinue() => _finishQrDialog();
-
-  Future<void> acknowledgeQrCodeErrorsAndContinue() => skipQrCodesAndContinue();
-
-  Future<void> _finishQrDialog() async {
-    _qrCodeJob = null;
-    _isSubmittingQrCodes = false;
-    _qrCodeErrors = const {};
-    notifyListeners();
-    await resumeAfterBlockedAdvance();
-  }
-
-  // ── Konum rehberi ─────────────────────────────────────────────────────
 
   @override
   List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) => locationItemsUsing(

@@ -12781,6 +12781,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unloading'**
   String get enumCore_stationTransactionTypeUnloading;
+
+  /// No description provided for @masterDrawer_error_lidDrawerNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'The cubic lid could not open because the drawer is not fully open. Pull the drawer all the way out.'**
+  String get masterDrawer_error_lidDrawerNotOpen;
+
+  /// No description provided for @masterDrawer_error_lidNotOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'The cubic lid did not open. Try opening the lid by hand.'**
+  String get masterDrawer_error_lidNotOpened;
+
+  /// No description provided for @masterDrawer_error_lidSensorLost.
+  ///
+  /// In en, this message translates to:
+  /// **'The cubic lid status cannot be read. Make sure the lid is closed.'**
+  String get masterDrawer_error_lidSensorLost;
+
+  /// No description provided for @masterDrawer_lid_waitingCloseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the lid'**
+  String get masterDrawer_lid_waitingCloseTitle;
+
+  /// No description provided for @masterDrawer_lid_waitingCloseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Once the lid is closed, the step is completed and the next cell opens.'**
+  String get masterDrawer_lid_waitingCloseSubtitle;
+
+  /// No description provided for @masterDrawer_lid_failedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lid operation could not be completed'**
+  String get masterDrawer_lid_failedTitle;
+
+  /// No description provided for @masterDrawer_lid_retryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get masterDrawer_lid_retryButton;
+
+  /// No description provided for @masterDrawer_lid_skipButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip This Cell'**
+  String get masterDrawer_lid_skipButton;
+
+  /// No description provided for @masterDrawer_lid_acknowledgeClosedButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I Closed the Lid'**
+  String get masterDrawer_lid_acknowledgeClosedButton;
+
+  /// No description provided for @masterDrawer_lid_sensorLostHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If the connection comes back, the process will continue automatically.'**
+  String get masterDrawer_lid_sensorLostHint;
+
+  /// No description provided for @qrScan_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get qrScan_dialogTitle;
+
+  /// No description provided for @qrScan_subtitleSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'{operation} · Verify the medication\'s QR code'**
+  String qrScan_subtitleSingle(String operation);
+
+  /// No description provided for @qrScan_subtitleMulti.
+  ///
+  /// In en, this message translates to:
+  /// **'{operation} · Scan each box separately'**
+  String qrScan_subtitleMulti(String operation);
+
+  /// No description provided for @qrScan_operationIntake.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Intake'**
+  String get qrScan_operationIntake;
+
+  /// No description provided for @qrScan_operationRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Return'**
+  String get qrScan_operationRefund;
+
+  /// No description provided for @qrScan_operationUnscanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Unscanned QR Codes'**
+  String get qrScan_operationUnscanned;
+
+  /// No description provided for @qrScan_closeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get qrScan_closeTooltip;
+
+  /// No description provided for @qrScan_scannedCounterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned'**
+  String get qrScan_scannedCounterLabel;
+
+  /// No description provided for @qrScan_boxCountSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **' / {total} boxes'**
+  String qrScan_boxCountSuffix(int total);
+
+  /// No description provided for @qrScan_progressSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{scanned} of {total} boxes scanned'**
+  String qrScan_progressSemantics(int scanned, int total);
+
+  /// No description provided for @qrScan_scanPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the QR code on the box to the reader'**
+  String get qrScan_scanPromptTitle;
+
+  /// No description provided for @qrScan_scanPromptBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the QR code of each box separately. The code will appear below once read.'**
+  String get qrScan_scanPromptBody;
+
+  /// No description provided for @qrScan_readerReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Reader ready'**
+  String get qrScan_readerReady;
+
+  /// No description provided for @qrScan_readerReadyShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get qrScan_readerReadyShort;
+
+  /// No description provided for @qrScan_multiPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the QR code of box {index}'**
+  String qrScan_multiPromptTitle(int index);
+
+  /// No description provided for @qrScan_multiPromptBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each box has a unique QR code; do not scan the same box twice.'**
+  String get qrScan_multiPromptBody;
+
+  /// No description provided for @qrScan_scannedCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned QR Code'**
+  String get qrScan_scannedCodeLabel;
+
+  /// No description provided for @qrScan_scannedCodesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned QR Codes'**
+  String get qrScan_scannedCodesLabel;
+
+  /// No description provided for @qrScan_waitingPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for QR code…'**
+  String get qrScan_waitingPlaceholder;
+
+  /// No description provided for @qrScan_successTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code verified'**
+  String get qrScan_successTitle;
+
+  /// No description provided for @qrScan_successBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The scanned box matches this medication. Check the details and confirm.'**
+  String get qrScan_successBody;
+
+  /// No description provided for @qrScan_allScannedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All QR codes scanned'**
+  String get qrScan_allScannedTitle;
+
+  /// No description provided for @qrScan_allScannedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'QR codes of {count} boxes verified. Check the list and confirm.'**
+  String qrScan_allScannedBody(int count);
+
+  /// No description provided for @qrScan_gtinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'GTIN / Barcode'**
+  String get qrScan_gtinLabel;
+
+  /// No description provided for @qrScan_serialLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial No'**
+  String get qrScan_serialLabel;
+
+  /// No description provided for @qrScan_expiryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry'**
+  String get qrScan_expiryLabel;
+
+  /// No description provided for @qrScan_lotLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot No'**
+  String get qrScan_lotLabel;
+
+  /// No description provided for @qrScan_serialValue.
+  ///
+  /// In en, this message translates to:
+  /// **'SN {serial}'**
+  String qrScan_serialValue(String serial);
+
+  /// No description provided for @qrScan_expiryShort.
+  ///
+  /// In en, this message translates to:
+  /// **'EXP {date}'**
+  String qrScan_expiryShort(String date);
+
+  /// No description provided for @qrScan_lotShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot {lot}'**
+  String qrScan_lotShort(String lot);
+
+  /// No description provided for @qrScan_boxLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Box {index}'**
+  String qrScan_boxLabel(int index);
+
+  /// No description provided for @qrScan_duplicateRowNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned again'**
+  String get qrScan_duplicateRowNote;
+
+  /// No description provided for @qrScan_removeCodeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the QR code of box {index}'**
+  String qrScan_removeCodeTooltip(int index);
+
+  /// No description provided for @qrScan_mismatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code does not match this medication'**
+  String get qrScan_mismatchTitle;
+
+  /// No description provided for @qrScan_mismatchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The scanned box belongs to a different product. Scan the QR code of the correct medication.'**
+  String get qrScan_mismatchBody;
+
+  /// No description provided for @qrScan_expectedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected'**
+  String get qrScan_expectedLabel;
+
+  /// No description provided for @qrScan_duplicateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code was already scanned'**
+  String get qrScan_duplicateTitle;
+
+  /// No description provided for @qrScan_duplicateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial No {serial} is already listed as box {index}. Scan a different box for box {next}.'**
+  String qrScan_duplicateBody(String serial, int index, int next);
+
+  /// No description provided for @qrScan_unreadableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code could not be read'**
+  String get qrScan_unreadableTitle;
+
+  /// No description provided for @qrScan_unreadableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The scanned code is not a valid medication QR code. Scan the QR code on the box again.'**
+  String get qrScan_unreadableBody;
+
+  /// No description provided for @qrScan_errorCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Error code: {code}'**
+  String qrScan_errorCode(String code);
+
+  /// No description provided for @qrScan_submitErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QR codes could not be sent'**
+  String get qrScan_submitErrorTitle;
+
+  /// No description provided for @qrScan_resubmitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Again'**
+  String get qrScan_resubmitButton;
+
+  /// No description provided for @qrScan_manualEntryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Manually'**
+  String get qrScan_manualEntryButton;
+
+  /// No description provided for @qrScan_scannerEntryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Reader'**
+  String get qrScan_scannerEntryButton;
+
+  /// No description provided for @qrScan_manualEntryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the QR code'**
+  String get qrScan_manualEntryHint;
+
+  /// No description provided for @qrScan_manualEntryAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get qrScan_manualEntryAddButton;
+
+  /// No description provided for @qrScan_rescanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescan'**
+  String get qrScan_rescanButton;
+
+  /// No description provided for @qrScan_retryScanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Again'**
+  String get qrScan_retryScanButton;
+
+  /// No description provided for @qrScan_cancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get qrScan_cancelButton;
+
+  /// No description provided for @qrScan_confirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get qrScan_confirmButton;
+
+  /// No description provided for @qrScan_confirmProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} ({scanned}/{total})'**
+  String qrScan_confirmProgress(String label, int scanned, int total);
 }
 
 class _AppLocalizationsDelegate

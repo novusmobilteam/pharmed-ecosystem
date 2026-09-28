@@ -222,6 +222,9 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
         fetchCabinVisualizerDataKey,
         operation: () => _getCabinVisualizer.call(deviceMode: mode, cabin: cabin, forceRefresh: forceRefresh),
         onData: (data) {
+          if (data.cabin.comPort != null) {
+            _settings.saveComPort(data.cabin.comPort!.label);
+          }
           _cabinVisualizerDataByCabin = {..._cabinVisualizerDataByCabin, cabin: data};
           notifyListeners();
         },

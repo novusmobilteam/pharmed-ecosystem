@@ -7194,4 +7194,229 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get enumCore_stationTransactionTypeUnloading => 'Boşaltma';
+
+  @override
+  String get masterDrawer_error_lidDrawerNotOpen =>
+      'Kübik kapak açılamadı çünkü çekmece tam açık değil. Çekmeceyi sonuna kadar çekin.';
+
+  @override
+  String get masterDrawer_error_lidNotOpened =>
+      'Kübik kapak açılmadı. Kapağı elle açmayı deneyin.';
+
+  @override
+  String get masterDrawer_error_lidSensorLost =>
+      'Kübik kapağın durumu okunamıyor. Kapağın kapalı olduğundan emin olun.';
+
+  @override
+  String get masterDrawer_lid_waitingCloseTitle => 'Kapağı kapatın';
+
+  @override
+  String get masterDrawer_lid_waitingCloseSubtitle =>
+      'Kapak kapandığında işlem tamamlanır ve sıradaki göze geçilir.';
+
+  @override
+  String get masterDrawer_lid_failedTitle => 'Kapak işlemi tamamlanamadı';
+
+  @override
+  String get masterDrawer_lid_retryButton => 'Tekrar Dene';
+
+  @override
+  String get masterDrawer_lid_skipButton => 'Bu Gözü Atla';
+
+  @override
+  String get masterDrawer_lid_acknowledgeClosedButton => 'Kapağı Kapattım';
+
+  @override
+  String get masterDrawer_lid_sensorLostHint =>
+      'Bağlantı geri gelirse işlem kendiliğinden devam eder.';
+
+  @override
+  String get qrScan_dialogTitle => 'Karekod Okutun';
+
+  @override
+  String qrScan_subtitleSingle(String operation) {
+    return '$operation · İlacın karekodunu doğrulayın';
+  }
+
+  @override
+  String qrScan_subtitleMulti(String operation) {
+    return '$operation · Her kutuyu ayrı ayrı okutun';
+  }
+
+  @override
+  String get qrScan_operationIntake => 'İlaç Alım';
+
+  @override
+  String get qrScan_operationRefund => 'İlaç İade';
+
+  @override
+  String get qrScan_operationUnscanned => 'Okutulmayan Karekodlar';
+
+  @override
+  String get qrScan_closeTooltip => 'Kapat';
+
+  @override
+  String get qrScan_scannedCounterLabel => 'Okutulan';
+
+  @override
+  String qrScan_boxCountSuffix(int total) {
+    return ' / $total kutu';
+  }
+
+  @override
+  String qrScan_progressSemantics(int scanned, int total) {
+    return '$total kutudan $scanned tanesi okutuldu';
+  }
+
+  @override
+  String get qrScan_scanPromptTitle =>
+      'Kutunun üzerindeki karekodu okuyucuya gösterin';
+
+  @override
+  String get qrScan_scanPromptBody =>
+      'Her kutunun karekodunu ayrı ayrı okutun. Okuma tamamlanınca kod aşağıda görünecek.';
+
+  @override
+  String get qrScan_readerReady => 'Okuyucu hazır';
+
+  @override
+  String get qrScan_readerReadyShort => 'Hazır';
+
+  @override
+  String qrScan_multiPromptTitle(int index) {
+    return '$index. kutunun karekodunu okutun';
+  }
+
+  @override
+  String get qrScan_multiPromptBody =>
+      'Her kutunun karekodu farklıdır; aynı kutuyu iki kez okutmayın.';
+
+  @override
+  String get qrScan_scannedCodeLabel => 'Okutulan Karekod';
+
+  @override
+  String get qrScan_scannedCodesLabel => 'Okutulan Karekodlar';
+
+  @override
+  String get qrScan_waitingPlaceholder => 'Karekod bekleniyor…';
+
+  @override
+  String get qrScan_successTitle => 'Karekod doğrulandı';
+
+  @override
+  String get qrScan_successBody =>
+      'Okutulan kutu bu ilaçla eşleşiyor. Bilgileri kontrol edip onaylayın.';
+
+  @override
+  String get qrScan_allScannedTitle => 'Tüm karekodlar okutuldu';
+
+  @override
+  String qrScan_allScannedBody(int count) {
+    return '$count kutunun karekodu doğrulandı. Listeyi kontrol edip onaylayın.';
+  }
+
+  @override
+  String get qrScan_gtinLabel => 'GTIN / Barkod';
+
+  @override
+  String get qrScan_serialLabel => 'Seri No';
+
+  @override
+  String get qrScan_expiryLabel => 'Son Kullanma';
+
+  @override
+  String get qrScan_lotLabel => 'Parti No';
+
+  @override
+  String qrScan_serialValue(String serial) {
+    return 'SN $serial';
+  }
+
+  @override
+  String qrScan_expiryShort(String date) {
+    return 'SKT $date';
+  }
+
+  @override
+  String qrScan_lotShort(String lot) {
+    return 'Parti $lot';
+  }
+
+  @override
+  String qrScan_boxLabel(int index) {
+    return '$index. kutu';
+  }
+
+  @override
+  String get qrScan_duplicateRowNote => 'Tekrar okutuldu';
+
+  @override
+  String qrScan_removeCodeTooltip(int index) {
+    return '$index. kutunun karekodunu kaldır';
+  }
+
+  @override
+  String get qrScan_mismatchTitle => 'Karekod bu ilaçla eşleşmiyor';
+
+  @override
+  String get qrScan_mismatchBody =>
+      'Okutulan kutu başka bir ürüne ait. Lütfen doğru ilacın karekodunu okutun.';
+
+  @override
+  String get qrScan_expectedLabel => 'Beklenen';
+
+  @override
+  String get qrScan_duplicateTitle => 'Bu karekod zaten okutuldu';
+
+  @override
+  String qrScan_duplicateBody(String serial, int index, int next) {
+    return 'Seri No $serial $index. kutu olarak listede. $next. kutu için farklı bir kutunun karekodunu okutun.';
+  }
+
+  @override
+  String get qrScan_unreadableTitle => 'Karekod okunamadı';
+
+  @override
+  String get qrScan_unreadableBody =>
+      'Okutulan kod geçerli bir ilaç karekodu değil. Kutunun üzerindeki karekodu tekrar okutun.';
+
+  @override
+  String qrScan_errorCode(String code) {
+    return 'Hata kodu: $code';
+  }
+
+  @override
+  String get qrScan_submitErrorTitle => 'Karekodlar gönderilemedi';
+
+  @override
+  String get qrScan_resubmitButton => 'Tekrar Gönder';
+
+  @override
+  String get qrScan_manualEntryButton => 'Elle Gir';
+
+  @override
+  String get qrScan_scannerEntryButton => 'Okuyucuya Dön';
+
+  @override
+  String get qrScan_manualEntryHint => 'Karekodu yazın';
+
+  @override
+  String get qrScan_manualEntryAddButton => 'Ekle';
+
+  @override
+  String get qrScan_rescanButton => 'Yeniden Okut';
+
+  @override
+  String get qrScan_retryScanButton => 'Tekrar Okut';
+
+  @override
+  String get qrScan_cancelButton => 'İptal';
+
+  @override
+  String get qrScan_confirmButton => 'Onayla';
+
+  @override
+  String qrScan_confirmProgress(String label, int scanned, int total) {
+    return '$label ($scanned/$total)';
+  }
 }

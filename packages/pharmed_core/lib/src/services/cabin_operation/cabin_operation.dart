@@ -6,6 +6,7 @@ export 'usecase/start_mobile_drawer_session_usecase.dart';
 export 'usecase/start_master_drawer_session_usecase.dart';
 export 'usecase/open_cubic_lid_usecase.dart';
 export 'usecase/monitor_drawer_closure_usecase.dart';
+export 'usecase/monitor_cubic_lid_usecase.dart';
 
 export 'entity/battery_level_convertor.dart';
 export 'entity/cabin_sensor_parser.dart';

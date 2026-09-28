@@ -7430,4 +7430,233 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get enumCore_stationTransactionTypeUnloading => 'Déchargement';
+
+  @override
+  String get masterDrawer_error_lidDrawerNotOpen =>
+      'Le couvercle cubique n\'a pas pu s\'ouvrir car le tiroir n\'est pas complètement ouvert. Tirez le tiroir jusqu\'au bout.';
+
+  @override
+  String get masterDrawer_error_lidNotOpened =>
+      'Le couvercle cubique ne s\'est pas ouvert. Essayez de l\'ouvrir à la main.';
+
+  @override
+  String get masterDrawer_error_lidSensorLost =>
+      'L\'état du couvercle cubique ne peut pas être lu. Assurez-vous que le couvercle est fermé.';
+
+  @override
+  String get masterDrawer_lid_waitingCloseTitle => 'Fermez le couvercle';
+
+  @override
+  String get masterDrawer_lid_waitingCloseSubtitle =>
+      'Une fois le couvercle fermé, l\'étape est terminée et la case suivante s\'ouvre.';
+
+  @override
+  String get masterDrawer_lid_failedTitle =>
+      'L\'opération du couvercle n\'a pas pu être terminée';
+
+  @override
+  String get masterDrawer_lid_retryButton => 'Réessayer';
+
+  @override
+  String get masterDrawer_lid_skipButton => 'Ignorer cette case';
+
+  @override
+  String get masterDrawer_lid_acknowledgeClosedButton =>
+      'J\'ai fermé le couvercle';
+
+  @override
+  String get masterDrawer_lid_sensorLostHint =>
+      'Si la connexion revient, l\'opération reprendra automatiquement.';
+
+  @override
+  String get qrScan_dialogTitle => 'Scanner le code QR';
+
+  @override
+  String qrScan_subtitleSingle(String operation) {
+    return '$operation · Vérifiez le code QR du médicament';
+  }
+
+  @override
+  String qrScan_subtitleMulti(String operation) {
+    return '$operation · Scannez chaque boîte séparément';
+  }
+
+  @override
+  String get qrScan_operationIntake => 'Prise de médicament';
+
+  @override
+  String get qrScan_operationRefund => 'Retour de médicament';
+
+  @override
+  String get qrScan_operationUnscanned => 'Codes QR non scannés';
+
+  @override
+  String get qrScan_closeTooltip => 'Fermer';
+
+  @override
+  String get qrScan_scannedCounterLabel => 'Scannés';
+
+  @override
+  String qrScan_boxCountSuffix(int total) {
+    return ' / $total boîtes';
+  }
+
+  @override
+  String qrScan_progressSemantics(int scanned, int total) {
+    return '$scanned boîtes scannées sur $total';
+  }
+
+  @override
+  String get qrScan_scanPromptTitle =>
+      'Présentez le code QR de la boîte au lecteur';
+
+  @override
+  String get qrScan_scanPromptBody =>
+      'Scannez le code QR de chaque boîte séparément. Le code apparaîtra ci-dessous une fois lu.';
+
+  @override
+  String get qrScan_readerReady => 'Lecteur prêt';
+
+  @override
+  String get qrScan_readerReadyShort => 'Prêt';
+
+  @override
+  String qrScan_multiPromptTitle(int index) {
+    return 'Scannez le code QR de la boîte $index';
+  }
+
+  @override
+  String get qrScan_multiPromptBody =>
+      'Chaque boîte a un code QR unique ; ne scannez pas deux fois la même boîte.';
+
+  @override
+  String get qrScan_scannedCodeLabel => 'Code QR scanné';
+
+  @override
+  String get qrScan_scannedCodesLabel => 'Codes QR scannés';
+
+  @override
+  String get qrScan_waitingPlaceholder => 'En attente du code QR…';
+
+  @override
+  String get qrScan_successTitle => 'Code QR vérifié';
+
+  @override
+  String get qrScan_successBody =>
+      'La boîte scannée correspond à ce médicament. Vérifiez les informations et confirmez.';
+
+  @override
+  String get qrScan_allScannedTitle => 'Tous les codes QR ont été scannés';
+
+  @override
+  String qrScan_allScannedBody(int count) {
+    return 'Les codes QR de $count boîtes ont été vérifiés. Vérifiez la liste et confirmez.';
+  }
+
+  @override
+  String get qrScan_gtinLabel => 'GTIN / Code-barres';
+
+  @override
+  String get qrScan_serialLabel => 'N° de série';
+
+  @override
+  String get qrScan_expiryLabel => 'Péremption';
+
+  @override
+  String get qrScan_lotLabel => 'N° de lot';
+
+  @override
+  String qrScan_serialValue(String serial) {
+    return 'SN $serial';
+  }
+
+  @override
+  String qrScan_expiryShort(String date) {
+    return 'EXP $date';
+  }
+
+  @override
+  String qrScan_lotShort(String lot) {
+    return 'Lot $lot';
+  }
+
+  @override
+  String qrScan_boxLabel(int index) {
+    return 'Boîte $index';
+  }
+
+  @override
+  String get qrScan_duplicateRowNote => 'Scanné à nouveau';
+
+  @override
+  String qrScan_removeCodeTooltip(int index) {
+    return 'Retirer le code QR de la boîte $index';
+  }
+
+  @override
+  String get qrScan_mismatchTitle =>
+      'Le code QR ne correspond pas à ce médicament';
+
+  @override
+  String get qrScan_mismatchBody =>
+      'La boîte scannée appartient à un autre produit. Scannez le code QR du bon médicament.';
+
+  @override
+  String get qrScan_expectedLabel => 'Attendu';
+
+  @override
+  String get qrScan_duplicateTitle => 'Ce code QR a déjà été scanné';
+
+  @override
+  String qrScan_duplicateBody(String serial, int index, int next) {
+    return 'Le n° de série $serial figure déjà comme boîte $index. Scannez une autre boîte pour la boîte $next.';
+  }
+
+  @override
+  String get qrScan_unreadableTitle => 'Le code QR n\'a pas pu être lu';
+
+  @override
+  String get qrScan_unreadableBody =>
+      'Le code scanné n\'est pas un code QR de médicament valide. Scannez à nouveau le code QR de la boîte.';
+
+  @override
+  String qrScan_errorCode(String code) {
+    return 'Code d\'erreur : $code';
+  }
+
+  @override
+  String get qrScan_submitErrorTitle =>
+      'Les codes QR n\'ont pas pu être envoyés';
+
+  @override
+  String get qrScan_resubmitButton => 'Renvoyer';
+
+  @override
+  String get qrScan_manualEntryButton => 'Saisir manuellement';
+
+  @override
+  String get qrScan_scannerEntryButton => 'Revenir au lecteur';
+
+  @override
+  String get qrScan_manualEntryHint => 'Saisissez le code QR';
+
+  @override
+  String get qrScan_manualEntryAddButton => 'Ajouter';
+
+  @override
+  String get qrScan_rescanButton => 'Rescanner';
+
+  @override
+  String get qrScan_retryScanButton => 'Scanner à nouveau';
+
+  @override
+  String get qrScan_cancelButton => 'Annuler';
+
+  @override
+  String get qrScan_confirmButton => 'Confirmer';
+
+  @override
+  String qrScan_confirmProgress(String label, int scanned, int total) {
+    return '$label ($scanned/$total)';
+  }
 }
