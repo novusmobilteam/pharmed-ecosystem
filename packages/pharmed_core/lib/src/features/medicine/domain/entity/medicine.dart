@@ -252,4 +252,20 @@ extension MedicineDoseConfig on Medicine {
     }
     return true;
   }
+
+  // ---------------------------------------------------------------------------
+  // Kutu adedi
+  // ---------------------------------------------------------------------------
+
+  /// Backend miktarını (ölçü birimli ilaçta ml, diğerlerinde adet) fiziksel
+  /// KUTU adedine çevirir — örn. karekod okutulacak kutu sayısı.
+  ///
+  /// Örnek: dose = 100ml, amount = 400 → 4 kutu. Ölçü birimsiz ilaçta ve
+  /// sarfta fillingMultiplier = 1 olduğundan amount aynen döner.
+  /// Kısmi kutu yukarı yuvarlanır (350ml → 4); kayan nokta artığı
+  /// (400.0000001 → 5) epsilon ile engellenir.
+  int boxCountOf(num amount) {
+    final boxes = amount.toDouble() / fillingMultiplier;
+    return (boxes - 1e-6).ceil().clamp(0, 1 << 31);
+  }
 }

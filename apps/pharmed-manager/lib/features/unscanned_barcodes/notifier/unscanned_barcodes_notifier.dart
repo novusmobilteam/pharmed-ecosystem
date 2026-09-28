@@ -9,7 +9,7 @@ class UnscannedBarcodesNotifier extends ChangeNotifier with ApiRequestMixin, Pag
   final GetScannedBarcodesUseCase _getScannedBarcodesUseCase;
   final GetDeletedBarcodesUseCase _getDeletedBarcodesUseCase;
   final DeleteUnscannedBarcodeUseCase _deleteUnscannedBarcodeUseCase;
-  final ScanBarcodeUseCase _scanBarcodeUseCase;
+  final ScanQrCodeUseCase _scanQrCodeUseCase;
   final ToggleBarcodeWarningUseCase _toggleBarcodeWarningUseCase;
 
   UnscannedBarcodesNotifier({
@@ -19,14 +19,14 @@ class UnscannedBarcodesNotifier extends ChangeNotifier with ApiRequestMixin, Pag
     required GetDeletedBarcodesUseCase getDeletedBarcodesUseCase,
     required DeleteUnscannedBarcodeUseCase deleteUnscannedBarcodeUseCase,
 
-    required ScanBarcodeUseCase scanBarcodeUseCase,
+    required ScanQrCodeUseCase scanQrCodeUseCase,
     required ToggleBarcodeWarningUseCase toggleBarcodeWarningUseCase,
   }) : _deleteUnscannedBarcodeUseCase = deleteUnscannedBarcodeUseCase,
        _getStationsUseCase = getStationsUseCase,
        _getUnscannedBarcodesUseCase = getUnscannedBarcodesUseCase,
        _getScannedBarcodesUseCase = getScannedBarcodesUseCase,
        _getDeletedBarcodesUseCase = getDeletedBarcodesUseCase,
-       _scanBarcodeUseCase = scanBarcodeUseCase,
+       _scanQrCodeUseCase = scanQrCodeUseCase,
        _toggleBarcodeWarningUseCase = toggleBarcodeWarningUseCase;
 
   BarcodeListMode _mode = BarcodeListMode.unscanned;
@@ -68,6 +68,19 @@ class UnscannedBarcodesNotifier extends ChangeNotifier with ApiRequestMixin, Pag
 
   String get selectedCategoryId => _selectedStation?.id.toString() ?? '-1';
   int get activeIndex => !stations.contains(_selectedStation) ? 0 : stations.indexOf(_selectedStation!);
+
+  /// Kalemin okutulması gereken kutu adedi — dialog'daki okutma alanı sayısı.
+  int requiredQrCountOf(PrescriptionItem item) {
+    final count = item.medicine?.boxCountOf(item.dosePiece ?? 0) ?? 0;
+    return count < 1 ? 1 : count;
+  }
+
+  /// İlacın barkodu — farklı ilacın karekodunu reddetmek için. İlaç değilse
+  /// (sarf malzeme vb.) GTIN kontrolü yapılmaz.
+  String? expectedGtinOf(PrescriptionItem item) => switch (item.medicine) {
+    Drug(:final barcode) => barcode,
+    _ => null,
+  };
 
   set selectedItem(PrescriptionItem? value) {
     _selectedItem = value;
@@ -172,21 +185,22 @@ class UnscannedBarcodesNotifier extends ChangeNotifier with ApiRequestMixin, Pag
     }
   }
 
-  Future<void> scanBarcode(PrescriptionItem item, {Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
-    final id = item.id ?? 0;
-    await executeVoid(
-      scanOp,
-      operation: () => _scanBarcodeUseCase.call(id, _barcode ?? ''),
-      onFailed: (error) => onFailed?.call(error.message),
-      onSuccess: () {
-        _mode = BarcodeListMode.unscanned;
-        fetch();
-        onSuccess?.call();
-      },
+  /// QrScanDialog'un onSubmit'i. Hata dönerse dialog açık kalır; kullanıcı
+  /// tekrar gönderebilir ya da iptal edebilir.
+  Future<Result<void>> scanQrCode(PrescriptionItem item, List<Gs1Code> codes) async {
+    if (codes.isEmpty) return const Result.ok(null);
+
+    final result = await _scanQrCodeUseCase.call(
+      ScanQrCodeParams(
+        details: [
+          QrCodeDetail(prescriptionDetailId: item.id ?? 0, qrCode: [for (final c in codes) c.raw]),
+        ],
+      ),
     );
+    return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
   }
 
-  Future<void> deleteBarcode(PrescriptionItem item, {Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
+  Future<void> deleteQrCode(PrescriptionItem item, {Function(String? msg)? onFailed, VoidCallback? onSuccess}) async {
     final id = item.id ?? 0;
     await executeVoid(
       deleteOp,
@@ -209,6 +223,7 @@ class UnscannedBarcodesNotifier extends ChangeNotifier with ApiRequestMixin, Pag
       onSuccess: () {
         fetch();
         onSuccess?.call('İşleminiz başarıyla tamamlandı..');
+        _selectedItem = null;
       },
     );
   }

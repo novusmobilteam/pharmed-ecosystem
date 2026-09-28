@@ -1,35 +1,44 @@
 part of 'unscanned_barcodes_screen.dart';
 
-class TableView extends StatelessWidget {
-  const TableView({super.key, required this.items, required this.isLoading, required this.notifier});
-
-  final UnscannedBarcodesNotifier notifier;
-  final List<PrescriptionItem> items;
-  final bool isLoading;
+class TableView extends ConsumerWidget {
+  const TableView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(unscannedBarcodesNotifierProvider);
+    final notifier = ref.read(unscannedBarcodesNotifierProvider);
+
     return MedTable<PrescriptionItem>(
-      data: items,
-      isLoading: isLoading,
+      data: notifier.items,
+      isLoading: notifier.isLoading(notifier.fetchOp),
       emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
       enableDateFilter: false,
       enablePagination: true,
       pageSize: notifier.pageSize,
       currentPage: notifier.currentPage,
       serverTotalCount: notifier.totalCount,
-      onPageChanged: (page) => notifier.goToPage(page),
-      onDateRangeChanged: (range) => notifier.onDateRangeChanged(range?.start, range?.end),
+      onPageChanged: (page) => notifier.setPage(page),
+      onDateRangeChanged: (range) => notifier.setDateRange(range),
 
       columnDefs: _buildColumnDefs(context),
       actions: [
         TableActionItem(
           icon: PhosphorIcons.qrCode(),
-          tooltip: 'Karekod Okut',
-          onPressed: (item) => showDialog(
-            context: context,
-            builder: (_) => ScanBarcodeDialog(prescriptionItemId: item.id ?? 0),
-          ),
+          tooltip: context.l10n.qrScan_dialogTitle,
+          onPressed: (item) async {
+            final outcome = await showQrScanDialog(
+              context,
+              request: QrScanRequest(
+                operationLabel: context.l10n.qrScan_operationUnscanned,
+                medicineName: item.medicine?.name ?? '—',
+                requiredCount: notifier.requiredQrCountOf(item),
+                expectedGtin: notifier.expectedGtinOf(item),
+                allowPartialSubmit: true,
+              ),
+              onSubmit: (codes) => notifier.submit(item, codes),
+            );
+            if (outcome == QrScanOutcome.submitted) await notifier.fetch();
+          },
         ),
       ],
     );

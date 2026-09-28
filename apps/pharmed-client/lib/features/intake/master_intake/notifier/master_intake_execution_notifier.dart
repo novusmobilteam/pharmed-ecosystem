@@ -222,7 +222,8 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     final medicine = plan.item.medicine;
     if (medicine is! Drug || !medicine.isQrCode) return const [];
 
-    final requiredCount = plan.details.fold<double>(0, (sum, d) => sum + d.dosePiece).ceil();
+    final totalAmount = plan.details.fold<double>(0, (sum, d) => sum + d.dosePiece);
+    final requiredCount = medicine.boxCountOf(totalAmount);
     if (requiredCount <= 0) return const [];
 
     return [

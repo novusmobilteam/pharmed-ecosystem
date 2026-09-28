@@ -301,4 +301,12 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.listParser(PrescriptionItemMovementDto.fromJson),
     );
   }
+
+  Future<Result<void>> scanQrCodes(Map<String, dynamic> body) {
+    return postRequest(
+      path: '/Prescription/detail/collectQrCodes',
+      body: body,
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+  }
 }

@@ -85,7 +85,7 @@ class DashboardRouteContent extends ConsumerWidget {
             'daily-job-list' =>
               cabinRouteContext != null ? JobListScreen(cabinRouteContext: cabinRouteContext) : const SizedBox.shrink(),
             'expiring-materials' => ExpiringItemsScreen(),
-            'unscanned-barcodes' => UnscannedBarcodesScreen(),
+            'unscanned-barcodes' => UnscannedBarcodesScreen(menu: activeMenu!),
             'cabin-design' => _CabinDesignRouteHandler(notifier: notifier),
             'return-box-unload' =>
               cabinRouteContext != null

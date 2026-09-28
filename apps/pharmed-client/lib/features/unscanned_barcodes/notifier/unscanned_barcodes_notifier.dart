@@ -1,86 +1,65 @@
-import 'package:pharmed_core/pharmed_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_client/core/mixins/mixins.dart';
+import 'package:pharmed_client/core/providers/providers.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 
-import '../../../core/providers/providers.dart';
-import 'unscanned_barcodes_state.dart';
+final unscannedBarcodesNotifierProvider = ChangeNotifierProvider.autoDispose<UnscannedBarcodesNotifier>((ref) {
+  return UnscannedBarcodesNotifier(
+    getUnscannedBarcodesUseCase: ref.read(getUnscannedBarcodesUseCaseProvider),
+    scanQrCodeUseCase: ref.read(scanQrCodeUseCaseProvider),
+  );
+});
 
-final unscannedBarcodesNotifierProvider = NotifierProvider<UnscannedBarcodesNotifier, UnscannedBarcodesState>(
-  UnscannedBarcodesNotifier.new,
-);
+class UnscannedBarcodesNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<PrescriptionItem> {
+  final GetUnscannedBarcodesUseCase _getUnscannedBarcodesUseCase;
+  final ScanQrCodeUseCase _scanQrCodeUseCase;
 
-class UnscannedBarcodesNotifier extends Notifier<UnscannedBarcodesState> {
-  GetUnscannedBarcodesUseCase get _getUnscannedBarcodes => ref.read(getUnscannedBarcodesUseCaseProvider);
+  UnscannedBarcodesNotifier({
+    required GetUnscannedBarcodesUseCase getUnscannedBarcodesUseCase,
+    required ScanQrCodeUseCase scanQrCodeUseCase,
+  }) : _getUnscannedBarcodesUseCase = getUnscannedBarcodesUseCase,
+       _scanQrCodeUseCase = scanQrCodeUseCase {
+    fetch();
+  }
 
-  DateTime? _startDate;
-  DateTime? get startDate => _startDate;
+  final OperationKey fetchOp = OperationKey.fetch();
+  final OperationKey scanOp = OperationKey.custom('scan-qr');
 
-  DateTime? _endDate;
-  DateTime? get endDate => _endDate;
+  /// Kalemin okutulması gereken kutu adedi — dialog'daki okutma alanı sayısı.
+  int requiredQrCountOf(PrescriptionItem item) {
+    final count = item.medicine?.boxCountOf(item.dosePiece ?? 0) ?? 0;
+    return count < 1 ? 1 : count;
+  }
 
-  int _currentPage = 1;
-  int get currentPage => _currentPage;
-
-  final int _pageSize = 15;
-  int get pageSize => _pageSize;
-
-  int _totalCount = 0;
-  int get totalCount => _totalCount;
-
-  int get totalPages => (_totalCount / _pageSize).ceil();
-
-  bool get canGoNext => _currentPage < totalPages;
-  bool get canGoPrev => _currentPage > 1;
+  /// İlacın barkodu — farklı ilacın karekodunu reddetmek için. İlaç değilse
+  /// (sarf malzeme vb.) GTIN kontrolü yapılmaz.
+  String? expectedGtinOf(PrescriptionItem item) => switch (item.medicine) {
+    Drug(:final barcode) => barcode,
+    _ => null,
+  };
 
   @override
-  UnscannedBarcodesState build() {
-    _load();
-    return const UnscannedBarcodesLoading();
-  }
-
-  void _enterLoading() {
-    final current = state;
-    state = current is UnscannedBarcodesLoaded ? current.copyWith(isLoading: true) : const UnscannedBarcodesLoading();
-  }
-
-  Future<void> _load() async {
-    final skip = (_currentPage - 1) * _pageSize;
-    final result = await _getUnscannedBarcodes.call(
-      params: PagedQueryParams(skip: skip, take: _pageSize, startDate: _startDate, endDate: _endDate),
-    );
-    result.when(
-      ok: (response) {
-        _totalCount = response?.totalCount ?? 0;
-        state = UnscannedBarcodesLoaded(items: response?.data ?? []); // isLoading: false (default)
-      },
-      error: (e) => state = UnscannedBarcodesError(message: e.message),
+  Future<void> fetch() async {
+    await fetchPagedData(
+      fetchMethod: (skip, take) => _getUnscannedBarcodesUseCase.call(
+        params: PagedQueryParams(searchQuery: searchQuery, skip: skip, take: take),
+      ),
     );
   }
 
-  Future<void> refresh() async {
-    _enterLoading();
-    await _load();
-  }
+  /// QrScanDialog'un onSubmit'i. Hata dönerse dialog açık kalır; kullanıcı
+  /// tekrar gönderebilir ya da iptal edebilir.
+  Future<Result<void>> submit(PrescriptionItem item, List<Gs1Code> codes) async {
+    if (codes.isEmpty) return const Result.ok(null);
 
-  Future<void> onDateRangeChanged(DateTime? start, DateTime? end) async {
-    _startDate = start ?? _startDate;
-    _endDate = end ?? _endDate;
-    _currentPage = 1;
-    _enterLoading();
-    await _load();
-  }
-
-  Future<void> goToPage(int page) async {
-    if (page < 1 || (totalPages > 0 && page > totalPages)) return;
-    _currentPage = page;
-    _enterLoading();
-    await _load();
-  }
-
-  Future<void> nextPage() async {
-    if (canGoNext) await goToPage(_currentPage + 1);
-  }
-
-  Future<void> previousPage() async {
-    if (canGoPrev) await goToPage(_currentPage - 1);
+    final result = await _scanQrCodeUseCase.call(
+      ScanQrCodeParams(
+        details: [
+          QrCodeDetail(prescriptionDetailId: item.id ?? 0, qrCode: [for (final c in codes) c.raw]),
+        ],
+      ),
+    );
+    return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
   }
 }
