@@ -5466,6 +5466,12 @@ abstract class AppLocalizations {
   /// **'Can Create Emergency Patient?'**
   String get user_emergencyAccessLabel;
 
+  /// No description provided for @user_overdueIntakeAccessLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Can Take Overdue Medications?'**
+  String get user_overdueIntakeAccessLabel;
+
   /// No description provided for @user_badgeCardHint.
   ///
   /// In en, this message translates to:
@@ -13159,6 +13165,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There is a cabin operation in progress. Complete or stop it first.'**
   String get dashboard_navigationLockedWarning;
+
+  /// Count-independent unit label for measure-unit drugs, e.g. 'Piece × 100 ml'. Shared across assignment/refill/census/unload screens via MedicineAssignment.unitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Piece × {dose} {unit}'**
+  String common_unitWithMeasure(String dose, String unit);
+
+  /// No description provided for @intake_hint_overdueNotPermitted.
+  ///
+  /// In en, this message translates to:
+  /// **'No permission to take overdue medication'**
+  String get intake_hint_overdueNotPermitted;
+
+  /// No description provided for @intake_overdue_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue Medication Intake'**
+  String get intake_overdue_dialogTitle;
+
+  /// No description provided for @intake_overdue_dialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The administration time of {count} selected medications has passed. A reason must be entered for each to continue.'**
+  String intake_overdue_dialogSubtitle(int count);
+
+  /// No description provided for @intake_overdue_authorizedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'AUTHORIZED'**
+  String get intake_overdue_authorizedBadge;
+
+  /// No description provided for @intake_overdue_modeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description method'**
+  String get intake_overdue_modeLabel;
+
+  /// No description provided for @intake_overdue_modeSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Same reason for all'**
+  String get intake_overdue_modeSame;
+
+  /// No description provided for @intake_overdue_modeEach.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate reason for each'**
+  String get intake_overdue_modeEach;
+
+  /// No description provided for @intake_overdue_itemsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Medications to take ({count})'**
+  String intake_overdue_itemsLabel(int count);
+
+  /// No description provided for @intake_overdue_statusShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared:'**
+  String get intake_overdue_statusShared;
+
+  /// No description provided for @intake_overdue_statusEntered.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered:'**
+  String get intake_overdue_statusEntered;
+
+  /// No description provided for @intake_overdue_statusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason pending'**
+  String get intake_overdue_statusPending;
+
+  /// No description provided for @intake_overdue_tapToCustomizeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a medication to enter a different reason for it.'**
+  String get intake_overdue_tapToCustomizeHint;
+
+  /// No description provided for @intake_overdue_sharedEditorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared reason for all medications'**
+  String get intake_overdue_sharedEditorTitle;
+
+  /// No description provided for @intake_overdue_sharedEditorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected reason applies to all {count} medications.'**
+  String intake_overdue_sharedEditorSubtitle(int count);
+
+  /// No description provided for @intake_overdue_scheduledAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled: {time}'**
+  String intake_overdue_scheduledAt(String time);
+
+  /// No description provided for @intake_overdue_overdueBy.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min overdue'**
+  String intake_overdue_overdueBy(int hours, int minutes);
+
+  /// No description provided for @intake_overdue_applyToRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to remaining'**
+  String get intake_overdue_applyToRemaining;
+
+  /// No description provided for @intake_overdue_presetsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Predefined reasons'**
+  String get intake_overdue_presetsLabel;
+
+  /// No description provided for @intake_overdue_presetsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No predefined reasons yet.'**
+  String get intake_overdue_presetsEmpty;
+
+  /// No description provided for @intake_overdue_newBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'NEW'**
+  String get intake_overdue_newBadge;
+
+  /// No description provided for @intake_overdue_orWriteNew.
+  ///
+  /// In en, this message translates to:
+  /// **'or write a new reason'**
+  String get intake_overdue_orWriteNew;
+
+  /// No description provided for @intake_overdue_descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get intake_overdue_descriptionLabel;
+
+  /// No description provided for @intake_overdue_descriptionPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. Patient was away for an examination, administered on return…'**
+  String get intake_overdue_descriptionPlaceholder;
+
+  /// No description provided for @intake_overdue_hintPresetSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'A predefined reason is selected. Typing will clear the selection.'**
+  String get intake_overdue_hintPresetSelected;
+
+  /// No description provided for @intake_overdue_hintMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least {min} characters.'**
+  String intake_overdue_hintMinLength(int min);
+
+  /// No description provided for @intake_overdue_hintAlreadyPreset.
+  ///
+  /// In en, this message translates to:
+  /// **'This reason is already in the predefined list.'**
+  String get intake_overdue_hintAlreadyPreset;
+
+  /// No description provided for @intake_overdue_hintCanSave.
+  ///
+  /// In en, this message translates to:
+  /// **'If you use it often, you can add it to predefined reasons.'**
+  String get intake_overdue_hintCanSave;
+
+  /// No description provided for @intake_overdue_hintDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick from the list or write a reason of at least {min} characters.'**
+  String intake_overdue_hintDefault(int min);
+
+  /// No description provided for @intake_overdue_addPreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to predefined'**
+  String get intake_overdue_addPreset;
+
+  /// No description provided for @intake_overdue_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason entered for {done} / {total} medications'**
+  String intake_overdue_progress(int done, int total);
+
+  /// No description provided for @intake_overdue_progressComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Reasons entered for all medications'**
+  String get intake_overdue_progressComplete;
+
+  /// No description provided for @intake_overdue_auditNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reasons are recorded with user and time information.'**
+  String get intake_overdue_auditNote;
+
+  /// No description provided for @intake_overdue_cancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get intake_overdue_cancelButton;
+
+  /// No description provided for @intake_overdue_confirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and Continue'**
+  String get intake_overdue_confirmButton;
+
+  /// No description provided for @intake_overdue_descriptionRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'A reason is required for overdue medications.'**
+  String get intake_overdue_descriptionRequiredError;
 }
 
 class _AppLocalizationsDelegate

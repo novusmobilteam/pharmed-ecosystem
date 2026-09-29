@@ -32,6 +32,7 @@ class MasterIntakeSelectionView extends StatelessWidget {
                   onPatientSelected: (hosp) => intakeSelectionNotifier.onPatientSelected(hosp),
                   onUrgentPatientCreated: (hosp, type) => intakeSelectionNotifier.onUrgentPatientCreated(hosp, type),
                   onDeleteUrgentPatient: () => intakeSelectionNotifier.onUrgentPatientDeleted(),
+                  onFilterTypeChanged: (value) => intakeSelectionNotifier.setPatientFilter(value),
                 ),
               ),
               Expanded(
@@ -118,20 +119,7 @@ class RightPanel extends StatelessWidget {
               label: context.l10n.intake_action_start,
               suffixIcon: Icon(PhosphorIcons.arrowRight()),
               onPressed: intakeSelectionNotifier.canStart
-                  ? () => showMedDialog<void>(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (_) => IntakeCheckDialog(
-                        onQueueReady: (jobs, plans) {
-                          executionNotifier.start(
-                            jobs,
-                            plans: plans,
-                            intakeType: intakeSelectionNotifier.intakeType,
-                            hospitalizationId: intakeSelectionNotifier.hospitalization?.id,
-                          );
-                        },
-                      ),
-                    )
+                  ? () => _onStartIntakePressed(context, intakeSelectionNotifier, executionNotifier)
                   : null,
             ),
           ),
@@ -306,6 +294,39 @@ void openIntakeWitnessDialog(BuildContext context, MasterIntakeSelectionNotifier
       selectedWitness: witnessContext.witness,
       subtitle: item.medicine?.name,
       onWitnessLoggedIn: (user) => notifier.addWitness(item.id, user),
+    ),
+  );
+}
+
+Future<void> _onStartIntakePressed(
+  BuildContext context,
+  MasterIntakeSelectionNotifier selection,
+  MasterIntakeExecutionNotifier execution,
+) async {
+  // Yetkili kullanıcı zamanı geçmiş kalemleri alıyorsa önce açıklama topla.
+  if (selection.requiresOverdueDescription) {
+    final descriptions = await showOverdueDescriptionDialog(
+      context,
+      items: selection.selectedItems,
+      hospitalization: selection.hospitalization,
+    );
+    if (descriptions == null || !context.mounted) return; // iptal
+    selection.setOverdueDescriptions(descriptions);
+  }
+
+  await showMedDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => IntakeCheckDialog(
+      onQueueReady: (jobs, plans) {
+        execution.start(
+          jobs,
+          plans: plans,
+          intakeType: selection.intakeType,
+          hospitalizationId: selection.hospitalization?.id,
+          overdueDescriptions: selection.overdueDescriptions,
+        );
+      },
     ),
   );
 }

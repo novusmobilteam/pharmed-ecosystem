@@ -2935,6 +2935,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get user_emergencyAccessLabel => 'Acil Hasta Oluşturabilir mi?';
 
   @override
+  String get user_overdueIntakeAccessLabel =>
+      'Zamanı Geçmiş Alım Yapabilir mi?';
+
+  @override
   String get user_badgeCardHint => 'Kartı okutun';
 
   @override
@@ -7423,4 +7427,140 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get dashboard_navigationLockedWarning =>
       'Devam eden bir kabin işlemi var. Önce işlemi tamamlayın veya durdurun.';
+
+  @override
+  String common_unitWithMeasure(String dose, String unit) {
+    return 'Adet  × $dose $unit';
+  }
+
+  @override
+  String get intake_hint_overdueNotPermitted =>
+      'Zamanı geçmiş ilaç alma yetkiniz yok';
+
+  @override
+  String get intake_overdue_dialogTitle => 'Uygulama Saati Geçmiş İlaç Alımı';
+
+  @override
+  String intake_overdue_dialogSubtitle(int count) {
+    return 'Seçilen $count ilacın uygulama saati geçmiş. Devam etmek için her ilaç için bir açıklama girilmelidir.';
+  }
+
+  @override
+  String get intake_overdue_authorizedBadge => 'YETKİLİ';
+
+  @override
+  String get intake_overdue_modeLabel => 'Açıklama yöntemi';
+
+  @override
+  String get intake_overdue_modeSame => 'Tüm ilaçlar için aynı açıklama';
+
+  @override
+  String get intake_overdue_modeEach => 'Her ilaç için ayrı açıklama';
+
+  @override
+  String intake_overdue_itemsLabel(int count) {
+    return 'Alınacak ilaçlar ($count)';
+  }
+
+  @override
+  String get intake_overdue_statusShared => 'Ortak:';
+
+  @override
+  String get intake_overdue_statusEntered => 'Girildi:';
+
+  @override
+  String get intake_overdue_statusPending => 'Açıklama bekleniyor';
+
+  @override
+  String get intake_overdue_tapToCustomizeHint =>
+      'Bir ilaca dokunarak o ilaç için farklı açıklama girebilirsiniz.';
+
+  @override
+  String get intake_overdue_sharedEditorTitle =>
+      'Tüm ilaçlar için ortak açıklama';
+
+  @override
+  String intake_overdue_sharedEditorSubtitle(int count) {
+    return 'Seçilen açıklama $count ilacın tamamına uygulanır.';
+  }
+
+  @override
+  String intake_overdue_scheduledAt(String time) {
+    return 'Uygulama: $time';
+  }
+
+  @override
+  String intake_overdue_overdueBy(int hours, int minutes) {
+    return '$hours sa $minutes dk gecikme';
+  }
+
+  @override
+  String get intake_overdue_applyToRemaining => 'Kalan ilaçlara uygula';
+
+  @override
+  String get intake_overdue_presetsLabel => 'Ön tanımlı açıklamalar';
+
+  @override
+  String get intake_overdue_presetsEmpty => 'Henüz ön tanımlı açıklama yok.';
+
+  @override
+  String get intake_overdue_newBadge => 'YENİ';
+
+  @override
+  String get intake_overdue_orWriteNew => 'veya yeni açıklama yazın';
+
+  @override
+  String get intake_overdue_descriptionLabel => 'Açıklama';
+
+  @override
+  String get intake_overdue_descriptionPlaceholder =>
+      'Örn. Hasta tetkikteydi, servise dönüşünde uygulandı…';
+
+  @override
+  String get intake_overdue_hintPresetSelected =>
+      'Ön tanımlı açıklama seçildi. Yazmaya başlarsanız seçim kaldırılır.';
+
+  @override
+  String intake_overdue_hintMinLength(int min) {
+    return 'En az $min karakter girin.';
+  }
+
+  @override
+  String get intake_overdue_hintAlreadyPreset =>
+      'Bu açıklama zaten ön tanımlı listede.';
+
+  @override
+  String get intake_overdue_hintCanSave =>
+      'Sık kullanacaksanız ön tanımlı açıklamalara ekleyebilirsiniz.';
+
+  @override
+  String intake_overdue_hintDefault(int min) {
+    return 'Listeden seçin ya da en az $min karakterlik bir açıklama yazın.';
+  }
+
+  @override
+  String get intake_overdue_addPreset => 'Ön tanımlılara ekle';
+
+  @override
+  String intake_overdue_progress(int done, int total) {
+    return '$done / $total ilaç için açıklama girildi';
+  }
+
+  @override
+  String get intake_overdue_progressComplete =>
+      'Tüm ilaçlar için açıklama girildi';
+
+  @override
+  String get intake_overdue_auditNote =>
+      'Açıklamalar kullanıcı ve zaman bilgisiyle kayda geçer.';
+
+  @override
+  String get intake_overdue_cancelButton => 'İptal';
+
+  @override
+  String get intake_overdue_confirmButton => 'Onayla ve Devam Et';
+
+  @override
+  String get intake_overdue_descriptionRequiredError =>
+      'Zamanı geçmiş ilaçlar için açıklama girilmelidir.';
 }

@@ -57,9 +57,6 @@ class MasterRefundSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   final Map<int, RefundCheckStatus> _itemStatuses = {};
   Map<int, RefundCheckStatus> get itemStatuses => _itemStatuses;
 
-  String _searchQuery = '';
-  String get searchQuery => _searchQuery;
-
   bool get isError => isFailed(fetchRefundablesOp);
 
   bool get isStartingRefund => isLoading(startRefundOp);

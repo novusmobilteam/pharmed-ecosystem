@@ -83,6 +83,9 @@ class MedicineAssignment {
     return contextlessL10n().common_quantityRatioPieces(current, max);
   }
 
+  /// Sayıdan bağımsız birim: "Adet" ya da "Adet × 100 ml".
+  String get unitLabel => medicine?.pieceUnitLabel ?? contextlessL10n().common_defaultUnitFallback;
+
   MedicineAssignment copyWith({
     int? id,
     int? cabinDrawerId,

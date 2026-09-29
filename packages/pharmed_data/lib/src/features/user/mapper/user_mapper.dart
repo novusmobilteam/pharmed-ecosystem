@@ -29,6 +29,7 @@ class UserMapper {
     isAdmin: dto.isAdmin,
     rfidCardData: dto.rfidCardData,
     canCreateEmergencyPatient: dto.canCreateEmergencyPatient,
+    canCollectOverdueMedication: dto.canCollectOverdueMedication,
   );
 
   User? toEntityOrNull(UserDto? dto) => dto == null ? null : toEntity(dto);
@@ -56,6 +57,7 @@ class UserMapper {
     stationIds: entity.stationIds,
     rfidCardData: entity.rfidCardData,
     canCreateEmergencyPatient: entity.canCreateEmergencyPatient,
+    canCollectOverdueMedication: entity.canCollectOverdueMedication,
   );
 
   User fromAppUser(AppUser appUser) => User(
@@ -79,6 +81,8 @@ class UserMapper {
     isNotOrdered: user.isNotOrdered,
     isAdmin: user.isAdmin ?? false,
     roleId: user.role?.id ?? 0,
+    canCreateEmergencyPatient: user.canCreateEmergencyPatient,
+    canCollectOverdueMedication: user.canCollectOverdueMedication,
   );
 
   AppUser? fromUserOrNull(User? user) => user == null ? null : fromUser(user);

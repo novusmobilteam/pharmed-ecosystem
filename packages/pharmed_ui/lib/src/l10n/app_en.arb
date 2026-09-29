@@ -1886,6 +1886,7 @@
   "user_badgeCardLabel": "Badge Card",
   "@user_badgeCardLabel": {},
   "user_emergencyAccessLabel": "Can Create Emergency Patient?",
+  "user_overdueIntakeAccessLabel": "Can Take Overdue Medications?",
   "user_badgeCardHint": "Scan card",
   "@user_badgeCardHint": {},
   "user_authorizedStationsLabel": "Authorized Stations",
@@ -5284,5 +5285,110 @@
       }
     }
   },
-  "dashboard_navigationLockedWarning": "There is a cabin operation in progress. Complete or stop it first."
+  "dashboard_navigationLockedWarning": "There is a cabin operation in progress. Complete or stop it first.",
+  "common_unitWithMeasure": "Piece × {dose} {unit}",
+  "@common_unitWithMeasure": {
+  "description": "Count-independent unit label for measure-unit drugs, e.g. 'Piece × 100 ml'. Shared across assignment/refill/census/unload screens via MedicineAssignment.unitLabel.",
+  "placeholders": {
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"intake_hint_overdueNotPermitted": "No permission to take overdue medication",
+  "intake_overdue_dialogTitle": "Overdue Medication Intake",
+  "intake_overdue_dialogSubtitle": "The administration time of {count} selected medications has passed. A reason must be entered for each to continue.",
+  "@intake_overdue_dialogSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_authorizedBadge": "AUTHORIZED",
+  "intake_overdue_modeLabel": "Description method",
+  "intake_overdue_modeSame": "Same reason for all",
+  "intake_overdue_modeEach": "Separate reason for each",
+  "intake_overdue_itemsLabel": "Medications to take ({count})",
+  "@intake_overdue_itemsLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_statusShared": "Shared:",
+  "intake_overdue_statusEntered": "Entered:",
+  "intake_overdue_statusPending": "Reason pending",
+  "intake_overdue_tapToCustomizeHint": "Tap a medication to enter a different reason for it.",
+  "intake_overdue_sharedEditorTitle": "Shared reason for all medications",
+  "intake_overdue_sharedEditorSubtitle": "The selected reason applies to all {count} medications.",
+  "@intake_overdue_sharedEditorSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_scheduledAt": "Scheduled: {time}",
+  "@intake_overdue_scheduledAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "intake_overdue_overdueBy": "{hours} h {minutes} min overdue",
+  "@intake_overdue_overdueBy": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_applyToRemaining": "Apply to remaining",
+  "intake_overdue_presetsLabel": "Predefined reasons",
+  "intake_overdue_presetsEmpty": "No predefined reasons yet.",
+  "intake_overdue_newBadge": "NEW",
+  "intake_overdue_orWriteNew": "or write a new reason",
+  "intake_overdue_descriptionLabel": "Reason",
+  "intake_overdue_descriptionPlaceholder": "E.g. Patient was away for an examination, administered on return…",
+  "intake_overdue_hintPresetSelected": "A predefined reason is selected. Typing will clear the selection.",
+  "intake_overdue_hintMinLength": "Enter at least {min} characters.",
+  "@intake_overdue_hintMinLength": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_hintAlreadyPreset": "This reason is already in the predefined list.",
+  "intake_overdue_hintCanSave": "If you use it often, you can add it to predefined reasons.",
+  "intake_overdue_hintDefault": "Pick from the list or write a reason of at least {min} characters.",
+  "@intake_overdue_hintDefault": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_addPreset": "Add to predefined",
+  "intake_overdue_progress": "Reason entered for {done} / {total} medications",
+  "@intake_overdue_progress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_progressComplete": "Reasons entered for all medications",
+  "intake_overdue_auditNote": "Reasons are recorded with user and time information.",
+  "intake_overdue_cancelButton": "Cancel",
+  "intake_overdue_confirmButton": "Confirm and Continue",
+  "intake_overdue_descriptionRequiredError": "A reason is required for overdue medications."
 }

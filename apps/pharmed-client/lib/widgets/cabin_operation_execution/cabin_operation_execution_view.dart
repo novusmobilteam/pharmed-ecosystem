@@ -18,7 +18,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/hardware/hardware.dart';
 import '../../core/router/navigation_lock_notifier.dart';
 import '../../features/dashboard/dashboard.dart';
-import '../cabin_shell_widgets/cabin_shell_widgets.dart';
 import 'cabin_operation_execution.dart';
 
 class CabinOperationExecutionView extends ConsumerStatefulWidget {
@@ -189,7 +188,7 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
 
     return CabinExecutionPanel(
       header: CabinExecutionHeader(
-        medicineName: target.assignment.medicine?.name ?? '-',
+        medicine: target.assignment.medicine,
         values: widget.headerValues?.call(context, target) ?? const [],
         trailing: widget.headerTrailing?.call(context, target),
       ),

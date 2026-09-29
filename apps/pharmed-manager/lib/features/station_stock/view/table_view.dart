@@ -26,16 +26,14 @@ List<TableColumnDef<StationStock>> _buildColumnDefs(BuildContext context) => [
   TableColumnDef(title: context.l10n.medicine_fieldName, displayValue: (item) => item.medicine?.name),
   TableColumnDef(
     title: context.l10n.stationStock_table_maxQuantityColumn,
-    displayValue: (item) => '${item.maxQuantity?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${item.maxQuantity?.formatFractional} ${item.medicine?.pieceUnitLabel}',
   ),
   TableColumnDef(
     title: context.l10n.stationStock_table_currentQuantityColumn,
-    displayValue: (item) =>
-        '${item.currentQuantity?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${item.currentQuantity?.formatFractional} ${item.medicine?.pieceUnitLabel}',
   ),
   TableColumnDef(
     title: context.l10n.stationStock_table_reservedColumn,
-    displayValue: (item) =>
-        '${item.reservedQuantity?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${item.reservedQuantity?.formatFractional} ${item.medicine?.pieceUnitLabel}',
   ),
 ];

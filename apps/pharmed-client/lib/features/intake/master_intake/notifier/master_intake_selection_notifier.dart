@@ -155,6 +155,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
   /// Aktif oturum kullanıcısı.
   AppUser? get _currentUser => _authNotifier.currentUser;
+  AppUser? get currentUser => _currentUser;
 
   /// Görünüm modu — dışarıya salt-okunur.
   OrderStatus get orderStatus => _viewOrderStatus;
@@ -199,7 +200,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   bool get hasMissingWitness => selectedItems.any((it) => needsWitness(it) && witnessContextOf(it).witness == null);
 
   /// "Alıma Başla" butonu aktif olsun mu — en az bir kalem seçili olmalı.
-  bool get canStart => _selectedItemIds.isNotEmpty && !hasMissingWitness;
+  bool get canStart => _selectedItemIds.isNotEmpty && !hasMissingWitness && !isOverdueSelectionLocked;
 
   /// Bir kalem şu an seçili mi.
   bool isSelected(int itemId) => _selectedItemIds.contains(itemId);
@@ -248,9 +249,32 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   List<IntakePlan> _pendingPlans = const [];
   List<IntakePlan> get pendingPlans => _pendingPlans;
 
+  /// Hasta panelinde seçili reçete/hasta filtresi. Alım kalemleri bu filtreyle
+  /// çekilir (yalnızca ordered alımda — bkz. `_fetchPrescriptionItems`).
+  PatientFilterType _patientFilter = PatientFilterType.ordersDue;
+  PatientFilterType get patientFilter => _patientFilter;
+
+  /// Kullanıcının uygulama saati geçmiş ilaçları alma yetkisi var mı.
+  bool get canCollectOverdue => _currentUser?.canCollectOverdueMedication ?? false;
+
+  /// Ordered alımda filtre "Order Saati Gelenler" dışındaysa ve kullanıcının
+  /// yetkisi yoksa kalemler listelenir ama SEÇİLEMEZ.
+  bool get isOverdueSelectionLocked =>
+      _intakeType == IntakeType.ordered && _patientFilter != PatientFilterType.ordersDue && !canCollectOverdue;
+
   /// İstasyondaki kabin sırası — alım birden fazla kabine yayılabilir, kuyruk
   /// kabin kabin ilerler.
   List<int> _cabinOrder = const [];
+
+  /// Zamanı geçmiş kalemler için alım öncesi girilen açıklamalar (itemId → metin).
+  /// Kalemler yeniden çekildiğinde sıfırlanır.
+  Map<int, String> _overdueDescriptions = const {};
+  Map<int, String> get overdueDescriptions => _overdueDescriptions;
+
+  /// Yetkili kullanıcı zamanı geçmiş kalemleri alıyorsa, alıma başlamadan
+  /// önce açıklama dialogu gösterilmeli.
+  bool get requiresOverdueDescription =>
+      _intakeType == IntakeType.ordered && _patientFilter != PatientFilterType.ordersDue && canCollectOverdue;
 
   /// Ekran mount olduğunda bir kez çağrılır — istasyonu ve buna bağlı
   /// varsayılan ordered/orderless görünümünü set eder.
@@ -286,6 +310,20 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     _getIntakeItems();
   }
 
+  /// Hasta panelindeki filtre değiştiğinde çağrılır. Seçili hasta varsa
+  /// kalemler yeni filtreyle yeniden çekilir (seçimler `_applyFetchedItems`
+  /// içinde sıfırlanır).
+  void setPatientFilter(PatientFilterType filter) {
+    if (_patientFilter == filter) return;
+    _patientFilter = filter;
+    notifyListeners();
+    _getIntakeItems();
+  }
+
+  void setOverdueDescriptions(Map<int, String> descriptions) {
+    _overdueDescriptions = Map.unmodifiable(descriptions);
+  }
+
   /// Sol paneldeki hasta listesinden bir hasta seçildiğinde/seçim
   /// kaldırıldığında çağrılır. `null` gelmesi seçimin kaldırıldığı anlamına
   /// gelir — bu durumda hastaya bağlı TÜM state (kalemler, seçimler, muadil/
@@ -299,6 +337,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       _equivalentOptions.clear();
       _otherStationOptions.clear();
       _redirectedTo.clear();
+      _overdueDescriptions = const {};
       notifyListeners();
       return;
     }
@@ -353,7 +392,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
           type: _intakeType,
           refreshAssignments: false,
           hospitalizationId: _hospitalization?.id,
-          filter: PatientFilterType.ordersDue,
+          filter: _intakeType == IntakeType.ordered ? _patientFilter : PatientFilterType.ordersDue,
         ),
       ),
       onData: (items) => _applyFetchedItems(items, autoSelectAll: _intakeType == IntakeType.ordered),
@@ -384,7 +423,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     _selectedItemIds
       ..clear()
       ..addAll(
-        autoSelectAll
+        autoSelectAll && !isOverdueSelectionLocked
             ? _intakeItems.where((it) => !it.hasNoStock && !it.isRedirected && !it.inCaseOfNecessity).map((it) => it.id)
             : const <int>{},
       );
@@ -392,9 +431,10 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     notifyListeners();
   }
 
-  /// Bir kalemi seçer/seçimden çıkarır. Stoksuz, yönlendirilmiş veya şahit
-  /// gerekip henüz şahidi olmayan kalemler seçilemez. İlk seçimde dozu boş/0
-  /// olan kaleme 1 adet atanır.
+  /// Bir kalemi seçer/seçimden çıkarır. Stoksuz, yönlendirilmiş kalemler ve
+  /// zamanı geçmiş kilidi aktifken kalemler seçilemez. Şahidi eksik kalem
+  /// seçilebilir; alıma başlamak `canStart` (hasMissingWitness) ile engellenir.
+  /// İlk seçimde dozu boş/0 olan kaleme 1 adet atanır.
   void selectItem(int itemId) {
     if (_selectedItemIds.contains(itemId)) {
       _selectedItemIds.remove(itemId);
@@ -402,10 +442,10 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       return;
     }
 
+    if (isOverdueSelectionLocked) return;
     final item = _intakeItems.firstWhereOrNull((i) => i.id == itemId);
     if (item == null || item.isRedirected) return;
     if (item.hasNoStock && !item.isEquivalentIntake) return;
-    if (needsWitness(item) && witnessContextOf(item).witness == null) return;
 
     if (item.dosePiece == null || item.dosePiece == 0) {
       _intakeItems = _intakeItems.map((it) => it.id == itemId ? it.copyWith(dosePiece: 1.0) : it).toList();
@@ -489,6 +529,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   void updateDose(int itemId, double dose) {
     final item = _intakeItems.firstWhereOrNull((i) => i.id == itemId);
     if (item == null) return;
+    if (isOverdueSelectionLocked) return;
     if (item.hasNoStock && !item.isEquivalentIntake) return;
     if (needsWitness(item) && witnessContextOf(item).witness == null) return;
 
@@ -584,6 +625,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   /// (oturumdaki uygun bir şahit varsa otomatik atanır), dozu muadilin satın
   /// alma miktarına güncellenir, kalem otomatik seçilir.
   void toggleEquivalentSelection(int itemId, EquivalentMedicine equivalent) {
+    if (isOverdueSelectionLocked) return;
     final item = _intakeItems.firstWhereOrNull((i) => i.id == itemId);
     if (item == null) return;
 
@@ -611,10 +653,16 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     required void Function(List<CabinOperationDrawerJob> jobs, List<IntakePlan> plans) onQueueReady,
     void Function(String message)? onFailed,
   }) async {
-    if (!canStart || isStartingIntake) return;
+    if (!canStart || isStartingIntake || isOverdueSelectionLocked) return;
 
     if (hasMissingWitness) {
       onFailed?.call(contextlessL10n().intake_error_witnessRequired);
+      return;
+    }
+
+    if (requiresOverdueDescription &&
+        selectedItems.any((it) => (_overdueDescriptions[it.id]?.trim().isEmpty ?? true))) {
+      onFailed?.call(contextlessL10n().intake_overdue_descriptionRequiredError);
       return;
     }
 
@@ -678,6 +726,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       userId: _currentUser?.id ?? 0,
       hospitalizationId: _hospitalization?.id,
       items: items,
+      overdueDescriptions: _overdueDescriptions,
       onItemStatusChanged: (itemId, status) => switch (status) {
         CheckLoading() => setLoading(checkItemOpFor(itemId)),
         CheckSuccess() => setSuccess(checkItemOpFor(itemId)),

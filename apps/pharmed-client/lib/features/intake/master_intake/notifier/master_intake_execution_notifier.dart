@@ -90,6 +90,10 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
   CabinOperationTarget? _qrCodeTarget;
   CabinOperationTarget? get qrCodeTarget => _qrCodeTarget;
 
+  /// Zamanı geçmiş kalemler için alım öncesi girilen açıklamalar (itemId → metin).
+  /// Kalemler yeniden çekildiğinde sıfırlanır.
+  Map<int, String> _overdueDescriptions = const {};
+
   List<IntakeQrCodeRequirement> get qrCodeRequirements {
     final target = _qrCodeTarget;
     return target == null ? const [] : _qrCodeRequirementsOf(target);
@@ -106,10 +110,12 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     required List<IntakePlan> plans,
     required IntakeType intakeType,
     required int? hospitalizationId,
+    Map<int, String> overdueDescriptions = const {},
   }) {
     _plans = {for (final p in plans) p.item.id: p};
     _intakeType = intakeType;
     _hospitalizationId = hospitalizationId;
+    _overdueDescriptions = Map.unmodifiable(overdueDescriptions);
     _qrCodeTarget = null;
     return startQueue(jobs);
   }
@@ -170,6 +176,7 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
               hospitalizationId: _hospitalizationId,
               userId: item.activeWitnessContext.witness?.id,
               details: details,
+              overdueDescription: _overdueDescriptions[item.id],
             ),
           );
 

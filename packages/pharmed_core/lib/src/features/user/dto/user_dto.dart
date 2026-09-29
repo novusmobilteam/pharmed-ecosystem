@@ -18,6 +18,7 @@ class UserDto {
   final bool? isAdmin;
   final String? rfidCardData;
   final bool canCreateEmergencyPatient;
+  final bool canCollectOverdueMedication;
 
   const UserDto({
     this.id,
@@ -39,6 +40,7 @@ class UserDto {
     this.isAdmin,
     this.rfidCardData,
     this.canCreateEmergencyPatient = false,
+    this.canCollectOverdueMedication = false,
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,9 @@ class UserDto {
       canCreateEmergencyPatient: json['canCreateEmergencyPatient'] is bool
           ? json['canCreateEmergencyPatient'] as bool
           : false,
+      canCollectOverdueMedication: json['canCollectOverdueMedication'] is bool
+          ? json['canCollectOverdueMedication'] as bool
+          : false,
     );
   }
 
@@ -85,5 +90,6 @@ class UserDto {
     'stationIds': stationIds,
     'managerCard': rfidCardData,
     'canCreateEmergencyPatient': canCreateEmergencyPatient,
+    'canCollectOverdueMedication': canCollectOverdueMedication,
   };
 }

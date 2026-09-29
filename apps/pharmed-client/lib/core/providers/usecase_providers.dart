@@ -540,3 +540,11 @@ final getRefillListFillDetailUseCaseProvider = Provider((ref) {
 final refillListRefillUseCaseProvider = Provider((ref) {
   return RefillListRefillUseCase(ref.read(refillListRepositoryProvider));
 });
+
+final getOverdueDescriptionsUseCaseProvider = Provider<GetOverdueDescriptionsUseCase>(
+  (ref) => GetOverdueDescriptionsUseCase(ref.read(overdueDescriptionRepositoryProvider)),
+);
+
+final createOverdueDescriptionUseCaseProvider = Provider<CreateOverdueDescriptionUseCase>(
+  (ref) => CreateOverdueDescriptionUseCase(ref.read(overdueDescriptionRepositoryProvider)),
+);

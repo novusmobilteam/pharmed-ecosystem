@@ -1,4 +1,3 @@
-// widgets/cabin_shell_widgets/execution/cabin_entry_common.dart
 import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
