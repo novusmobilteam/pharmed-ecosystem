@@ -462,6 +462,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     required int? Function(TJob job, int targetIndex) stockIdAt,
     List<int> Function(TJob job, int targetIndex)? stockIdsAt,
     bool Function(TJob job)? isReturnDrawerTargetOf,
+    Set<int> Function(TJob job, int targetIndex)? activeStepsAt,
   }) => buildCabinExecutionLocationItems(
     allGroups: allGroups,
     jobs: _jobs,
@@ -474,6 +475,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     stockIdAt: stockIdAt,
     stockIdsAt: stockIdsAt,
     isReturnDrawerTargetOf: isReturnDrawerTargetOf ?? (_) => false,
+    activeStepsAt: activeStepsAt,
   );
 
   /// Kuyruk bittiğinde (son job tamamlandığında YA DA stopQueue/

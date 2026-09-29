@@ -51,6 +51,18 @@ class RefillListSelectionNotifier extends ChangeNotifier with ApiRequestMixin {
 
   List<RefillListDetail> _details = [];
   List<RefillListDetail> get details => _details;
+  List<RefillListDetail> get visibleDetails {
+    final q = _searchQuery.trim().toLowerCase();
+    if (q.isEmpty) return _details;
+    return _details.where((a) {
+      final name = a.medicine?.name?.toLowerCase() ?? '';
+      final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
+      return name.contains(q) || barcode.contains(q);
+    }).toList();
+  }
+
+  String _searchQuery = '';
+  String get searchQuery => _searchQuery;
 
   final Set<int> _selectedDetailIds = {};
   List<RefillListDetail> get selectedItems => _details.where((d) => _selectedDetailIds.contains(d.id)).toList();
@@ -222,5 +234,10 @@ class RefillListSelectionNotifier extends ChangeNotifier with ApiRequestMixin {
     }
 
     onQueueReady(result.jobs, listId, result.skipped.length);
+  }
+
+  void onSearchChanged(String value) {
+    _searchQuery = value;
+    notifyListeners();
   }
 }

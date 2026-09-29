@@ -123,6 +123,16 @@ class CabinOperationTarget implements DrawerJobTarget {
   @override
   int? get explicitTargetStep => openUntilStep;
 
+  /// Girdi olan aktif gözlerin fiziksel numaraları (1 tabanlı, panelin
+  /// beklediği stepNo). Dolumda konulacak, boşaltmada çıkarılacak miktar
+  /// girilmiş gözler. Kübikte boş.
+  Set<int> get enteredStepNos => isKubik
+      ? const {}
+      : {
+          for (final i in _activeIndexes)
+            if (hasEntryAt(i)) i + 1,
+        };
+
   bool isStepActive(int index) => activeStepIndexes?.contains(index) ?? true;
 
   Iterable<int> get _activeIndexes sync* {

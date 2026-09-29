@@ -32,7 +32,7 @@ enum CabinOperationMode {
   fault(),
 
   /// İlaç Boşaltma — yalnızca çıkarılacak miktar.
-  unload(usesEntryTarget: true, hasSecondaryField: true),
+  unload(hasCountField: true, usesEntryTarget: true, hasSecondaryField: true),
 
   /// İlaç İmha — yalnızca imha edilecek miktar. Boşaltmayla aynı alan yapısı.
   destruction(usesEntryTarget: true, hasSecondaryField: true, removesFromStock: true);
