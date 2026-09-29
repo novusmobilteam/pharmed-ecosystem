@@ -13153,6 +13153,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{label} ({scanned}/{total})'**
   String qrScan_confirmProgress(String label, int scanned, int total);
+
+  /// No description provided for @dashboard_navigationLockedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'There is a cabin operation in progress. Complete or stop it first.'**
+  String get dashboard_navigationLockedWarning;
 }
 
 class _AppLocalizationsDelegate

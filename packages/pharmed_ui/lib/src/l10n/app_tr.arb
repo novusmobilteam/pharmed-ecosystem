@@ -9679,5 +9679,9 @@
         "type": "int"
       }
     }
-  }
+  },
+  "dashboard_navigationLockedWarning": "Devam eden bir kabin işlemi var. Önce işlemi tamamlayın veya durdurun.",
+"@dashboard_navigationLockedWarning": {
+  "description": "Snackbar shown when a locked app bar item is tapped while a cabin operation is in progress"
+}
 }

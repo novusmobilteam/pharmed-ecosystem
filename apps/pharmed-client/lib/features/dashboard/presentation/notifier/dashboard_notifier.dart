@@ -4,12 +4,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart' show MedLogger;
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../../core/cache/app_settings_cache.dart';
 import '../../../../core/hardware/hardware.dart';
 import '../../../../core/mixins/api_request_mixin.dart';
 import '../../../../core/providers/providers.dart';
+import '../../../../core/router/navigation_lock_notifier.dart';
 import '../../../auth/auth.dart';
 
 final dashboardNotifierProvider = ChangeNotifierProvider<DashboardNotifier>((ref) {
@@ -23,6 +25,7 @@ final dashboardNotifierProvider = ChangeNotifierProvider<DashboardNotifier>((ref
     settings: ref.read(appSettingsCacheProvider),
     authNotifier: ref.read(authNotifierProvider.notifier),
     cabinConnectionNotifier: ref.read(cabinConnectionProvider.notifier),
+    navigationLock: ref.read(navigationLockProvider),
   );
 });
 
@@ -37,6 +40,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     required AppSettingsCache settings,
     required AuthNotifier authNotifier,
     required CabinConnectionNotifier cabinConnectionNotifier,
+    required NavigationLockNotifier navigationLock,
   }) : _getFilteredMenus = getFilteredMenus,
        _getUpcomingTreatments = getUpcomingTreatments,
        _getDrugActivities = getDrugActivities,
@@ -45,7 +49,8 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
        _getCabinVisualizer = getCabinVisualizer,
        _settings = settings,
        _authNotifier = authNotifier,
-       _cabinConnectionNotifier = cabinConnectionNotifier;
+       _cabinConnectionNotifier = cabinConnectionNotifier,
+       _navigationLock = navigationLock;
 
   final GetFilteredMenusUseCase _getFilteredMenus;
   final GetUpcomingTreatmentsUseCase _getUpcomingTreatments;
@@ -56,6 +61,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
   final AuthNotifier _authNotifier;
   final AppSettingsCache _settings;
   final CabinConnectionNotifier _cabinConnectionNotifier;
+  final NavigationLockNotifier _navigationLock;
 
   Timer? _secondaryDataRefreshTimer;
 
@@ -289,7 +295,28 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     return CabinType.values.firstWhereOrNull((t) => t.name == raw || 'CabinType.${t.name}' == raw);
   }
 
-  void navigateTo(dynamic destination) {
+  /// [SWREQ-UI-NAV-001] Kabin işlemi sürerken navigasyon reddedilir.
+  /// UI zaten kilitli menüleri pasifleştiriyor; bu kontrol UI dışından
+  /// (ör. ileride eklenecek kısayollar) tetiklenen geçişlere karşı ikinci
+  /// savunma katmanıdır.
+  ///
+  /// [force] yalnızca oturum sonlanması gibi sistem kaynaklı zorunlu
+  /// geçişler içindir — kullanıcı aksiyonlarından ASLA true verilmez.
+  bool _isNavigationBlocked(String action, {bool force = false}) {
+    if (force || !_navigationLock.isLocked) return false;
+
+    MedLogger.warn(
+      unit: 'SW-UNIT-UI',
+      swreq: 'SWREQ-UI-NAV-001',
+      message: 'Kabin işlemi sürerken navigasyon reddedildi',
+      context: {'action': action, 'activeRoute': _activeRoute},
+    );
+    return true;
+  }
+
+  void navigateTo(dynamic destination, {bool force = false}) {
+    if (_isNavigationBlocked('navigateTo:$destination', force: force)) return;
+
     final route = switch (destination) {
       int id => _flattenedMenus?.firstWhereOrNull((m) => m.id == id)?.slug ?? 'dashboard',
       String path => path,
@@ -346,6 +373,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
   /// Operasyon ekranı içinden "kabin değiştir" tetiklenince — aynı hedef
   /// route için seçim ekranına geri döner.
   void changeCabin() {
+    if (_isNavigationBlocked('changeCabin')) return;
     if (_deviceMode == CabinType.mobile) return;
     if (!_cabinScopedRoutes.contains(_activeRoute)) return;
 

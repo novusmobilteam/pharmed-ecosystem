@@ -1,6 +1,8 @@
-// [SWREQ-UI-TOP-001] [IEC 62304 §5.5]
+// [SWREQ-UI-TOP-001] [SWREQ-UI-NAV-001] [IEC 62304 §5.5]
 // Dashboard üst çubuğu — appbar + navigasyon tek widget'ta.
 // Giriş yapılmamışsa menüler disabled, giriş yap butonu gösterilir.
+// Kabin işlemi sürerken (isNavigationLocked) menüler, logo, ayarlar ve çıkış
+// kilitli görünür; dokunuşlar yalnızca onLockedTap'e gider.
 // Sınıf: Class A
 
 import 'package:flutter/material.dart';
@@ -14,6 +16,9 @@ import '../../../../core/cache/app_settings_cache.dart';
 
 part 'dashboard_navbar_menu.dart';
 
+/// Kabin işlemi kilidindeki görünüm — design system `.locked` (opacity 0.45).
+const double _kLockedOpacity = 0.45;
+
 class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   const DashboardAppBar({
     super.key,
@@ -21,6 +26,7 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.flattenedMenus,
     required this.currentRoute,
     required this.isLoggedIn,
+    this.isNavigationLocked = false,
     this.user,
     this.onHomeTap,
     this.onLoginTap,
@@ -28,12 +34,16 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onUserTap,
     this.onSettingsTap,
     this.onMenuItemTap,
+    this.onLockedTap,
   });
 
   final List<MenuItem> menuTree;
   final List<MenuItem> flattenedMenus;
   final String currentRoute;
   final bool isLoggedIn;
+
+  /// true → kabin işlemi sürüyor; navigasyon aksiyonları pasif.
+  final bool isNavigationLocked;
   final AppUser? user;
 
   final VoidCallback? onHomeTap;
@@ -42,6 +52,10 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onUserTap;
   final VoidCallback? onSettingsTap;
   final void Function(int id)? onMenuItemTap;
+
+  /// Kilitliyken herhangi bir navigasyon aksiyonuna dokunulduğunda çağrılır
+  /// (kullanıcıya neden çalışmadığını göstermek için).
+  final VoidCallback? onLockedTap;
 
   @override
   Size get preferredSize => const Size.fromHeight(62);
@@ -57,6 +71,8 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
   OverlayEntry? _overlay;
   int? _openMenuId;
 
+  bool get _isLocked => widget.isNavigationLocked;
+
   @override
   void initState() {
     super.initState();
@@ -65,13 +81,33 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
   }
 
   @override
+  void didUpdateWidget(covariant DashboardAppBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Kilit, bir alt menü açıkken devreye girerse açık menü kapatılır —
+    // ardından build zaten çalışacağı için setState gerekmez.
+    if (!oldWidget.isNavigationLocked && widget.isNavigationLocked && _overlay != null) {
+      _overlay?.remove();
+      _overlay = null;
+      _openMenuId = null;
+    }
+  }
+
+  @override
   void dispose() {
     _overlay?.remove();
     super.dispose();
   }
 
+  /// Kilitliyken [action] yerine onLockedTap çalışır.
+  VoidCallback? _lockAware(VoidCallback? action) => _isLocked ? widget.onLockedTap : action;
+
   void _toggleMenu(int id) {
     if (!widget.isLoggedIn) return;
+
+    if (_isLocked) {
+      widget.onLockedTap?.call();
+      return;
+    }
 
     final item = widget.menuTree.firstWhereOrNull((m) => m.id == id);
 
@@ -144,13 +180,15 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final actionOpacity = _isLocked ? _kLockedOpacity : 1.0;
+
     return Container(
       height: 62,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(color: MedColors.surface, borderRadius: MedRadius.lgAll, boxShadow: MedShadows.md),
       child: Row(
         children: [
-          _AppLogo(onTap: widget.onHomeTap),
+          _AppLogo(onTap: _lockAware(widget.onHomeTap)),
           ...widget.menuTree.map((item) {
             final id = item.id ?? 0;
             final key = _itemKeys.putIfAbsent(id, () => GlobalKey());
@@ -161,6 +199,7 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
                 isActive: _isMenuOrChildActive(item),
                 isMenuOpen: _openMenuId == id,
                 isLoggedIn: widget.isLoggedIn,
+                isLocked: _isLocked,
                 onTap: () => _toggleMenu(id),
               ),
             );
@@ -187,22 +226,28 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
           const SizedBox(width: 16),
 
           if (widget.isLoggedIn) ...[
-            MedRectangleIconButton(
-              iconData: PhosphorIcons.gearSix(),
-              tooltip: context.l10n.settings_title,
-              onPressed: widget.onSettingsTap,
-              borderColor: MedColors.border,
-              size: 40,
+            Opacity(
+              opacity: actionOpacity,
+              child: MedRectangleIconButton(
+                iconData: PhosphorIcons.gearSix(),
+                tooltip: context.l10n.settings_title,
+                onPressed: _lockAware(widget.onSettingsTap),
+                borderColor: MedColors.border,
+                size: 40,
+              ),
             ),
             const SizedBox(width: 10),
-            MedRectangleIconButton(
-              tooltip: context.l10n.dashboard_logoutTooltip,
-              borderColor: MedColors.red,
-              iconData: PhosphorIcons.signOut(),
-              color: MedColors.red,
-              iconColor: Colors.white,
-              onPressed: widget.onLogoutTap,
-              size: 40,
+            Opacity(
+              opacity: actionOpacity,
+              child: MedRectangleIconButton(
+                tooltip: context.l10n.dashboard_logoutTooltip,
+                borderColor: MedColors.red,
+                iconData: PhosphorIcons.signOut(),
+                color: MedColors.red,
+                iconColor: Colors.white,
+                onPressed: _lockAware(widget.onLogoutTap),
+                size: 40,
+              ),
             ),
           ],
         ],
@@ -262,6 +307,7 @@ class _NavItem extends StatelessWidget {
     required this.isActive,
     required this.isMenuOpen,
     required this.isLoggedIn,
+    required this.isLocked,
     this.onTap,
   });
 
@@ -269,6 +315,10 @@ class _NavItem extends StatelessWidget {
   final bool isActive;
   final bool isMenuOpen;
   final bool isLoggedIn;
+
+  /// Kabin işlemi kilidi — oturum kilidinden (isLoggedIn) ayrı. Dokunuş
+  /// yine onTap'e gider; kilit mesajını üst widget gösterir.
+  final bool isLocked;
   final VoidCallback? onTap;
 
   @override
@@ -276,9 +326,16 @@ class _NavItem extends StatelessWidget {
     final bool highlight = isActive || isMenuOpen;
     final locale = Localizations.localeOf(context);
     final localizedName = item.localizedName(locale);
+    final showLockIcon = !isLoggedIn || isLocked;
+
+    final double opacity = switch ((isLoggedIn, isLocked)) {
+      (false, _) => 0.3,
+      (true, true) => _kLockedOpacity,
+      (true, false) => 1.0,
+    };
 
     return Opacity(
-      opacity: isLoggedIn ? 1.0 : 0.3,
+      opacity: opacity,
       child: GestureDetector(
         onTap: isLoggedIn ? onTap : null,
         child: Container(
@@ -296,7 +353,7 @@ class _NavItem extends StatelessWidget {
                   color: highlight ? MedColors.blue : MedColors.text3,
                 ),
               ),
-              if (!isLoggedIn) ...[
+              if (showLockIcon) ...[
                 const SizedBox(width: 4),
                 Icon(Icons.lock_outline_rounded, size: 10, color: MedColors.text3),
               ],
