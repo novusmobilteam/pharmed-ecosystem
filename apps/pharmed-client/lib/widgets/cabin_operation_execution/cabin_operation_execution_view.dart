@@ -1,23 +1,27 @@
-// [SWREQ-CLI-CABINEXEC-001]
+// [SWREQ-CLI-CABINEXEC-001] [SWREQ-UI-NAV-001]
 // Dolum, dolum listesi, sayım ve boşaltmanın ortak yürütme ekranı. Sol:
 // kabin şeridi + kabin yerleşimi. Sağ: (kübikte) çekmece yerleşimi + başlık/
 // gövde/footer. Kuyruk hatası dialog'unu da kendisi yönetir. Ekrana özgü
 // tek şey başlıktaki bilgilerdir (headerValues / headerTrailing).
 //
+// Kuyruk yürütülürken (controller.isExecuting) ana navigasyonu kilitler.
+//
 // Sınıf: Class B
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../core/hardware/hardware.dart';
+import '../../core/router/navigation_lock_notifier.dart';
 import '../../features/dashboard/dashboard.dart';
 import '../cabin_shell_widgets/cabin_shell_widgets.dart';
 import 'cabin_operation_execution.dart';
 
-class CabinOperationExecutionView extends StatefulWidget {
+class CabinOperationExecutionView extends ConsumerStatefulWidget {
   const CabinOperationExecutionView({
     super.key,
     required this.controller,
@@ -33,17 +37,22 @@ class CabinOperationExecutionView extends StatefulWidget {
   final Widget? Function(BuildContext context, CabinOperationTarget target)? headerTrailing;
 
   @override
-  State<CabinOperationExecutionView> createState() => _CabinOperationExecutionViewState();
+  ConsumerState<CabinOperationExecutionView> createState() => _CabinOperationExecutionViewState();
 }
 
-class _CabinOperationExecutionViewState extends State<CabinOperationExecutionView> {
+class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExecutionView> {
   CabinOperationFailure? _lastFailure;
+
+  // dispose'da ref kullanılamadığı için referans saklanır.
+  late final NavigationLockNotifier _navigationLock;
 
   @override
   void initState() {
     super.initState();
+    _navigationLock = ref.read(navigationLockProvider);
     _lastFailure = widget.controller.failure;
     widget.controller.addListener(_onControllerChanged);
+    _syncNavigationLock();
   }
 
   @override
@@ -52,17 +61,36 @@ class _CabinOperationExecutionViewState extends State<CabinOperationExecutionVie
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller.removeListener(_onControllerChanged);
       widget.controller.addListener(_onControllerChanged);
+      _syncNavigationLock();
     }
   }
 
   @override
   void dispose() {
     widget.controller.removeListener(_onControllerChanged);
+    _navigationLock.release(this);
     super.dispose();
   }
 
-  /// Yalnızca YENİ hata anında dialog/snackbar — her notify'da değil.
+  /// [SWREQ-UI-NAV-001] Kilit, widget'ın ağaçta olmasına değil kuyruğun
+  /// yürütülüyor olmasına bağlı — view Offstage ile seçim fazında da ağaçta
+  /// durabildiği için. acquire/release idempotent, her notify'da güvenle
+  /// çağrılabilir.
+  void _syncNavigationLock() {
+    if (widget.controller.isExecuting) {
+      _navigationLock.acquire(this);
+    } else {
+      _navigationLock.release(this);
+    }
+  }
+
   void _onControllerChanged() {
+    _syncNavigationLock();
+    _handleFailure();
+  }
+
+  /// Yalnızca YENİ hata anında dialog/snackbar — her notify'da değil.
+  void _handleFailure() {
     final failure = widget.controller.failure;
     final isNew = failure != null && _lastFailure == null;
     _lastFailure = failure;

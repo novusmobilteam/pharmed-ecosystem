@@ -18,6 +18,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/hardware/hardware.dart';
+import '../../../../core/router/navigation_lock_notifier.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../auth/auth.dart';
 import '../../../census/census.dart';
@@ -71,6 +72,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final currentUser = ref.watch(authNotifierProvider.select((s) => s is AuthLoggedIn ? s.user : null));
     final isLoggedIn = currentUser != null;
 
+    // [SWREQ-UI-NAV-001] Kabin işlemi yürütülürken app bar kilitli.
+    final isNavigationLocked = ref.watch(navigationLockProvider.select((l) => l.isLocked));
+
     final menuTree = notifier.menuTree ?? const <MenuItem>[];
     final flattenedMenus = notifier.flattenedMenus ?? const <MenuItem>[];
     final currentRoute = notifier.activeRoute;
@@ -79,9 +83,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       final dashboard = ref.read(dashboardNotifierProvider.notifier);
 
       // Oturum kapandı (manuel, timeout, 401) — açık ekran ve içindeki
-      // hasta verisi kilitli dashboard'da kalmasın.
+      // hasta verisi kilitli dashboard'da kalmasın. Sistem kaynaklı zorunlu
+      // geçiş olduğu için navigasyon kilidi bypass edilir (force).
       if (previousUserId != null && nextUserId == null) {
-        dashboard.navigateTo('dashboard');
+        dashboard.navigateTo('dashboard', force: true);
         return;
       }
 
@@ -93,6 +98,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     if (notifier.isMainDataLoading) {
       return const Scaffold(body: Center(child: MedLoadingIndicator()));
+    }
+
+    /// Kilitliyken aksiyonu çalıştırmaz, kullanıcıya nedenini söyler.
+    void guarded(VoidCallback action) {
+      if (isNavigationLocked) {
+        _showNavigationLockedWarning(context);
+        return;
+      }
+      action();
     }
 
     return Scaffold(
@@ -121,15 +135,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       flattenedMenus: flattenedMenus,
                       currentRoute: currentRoute,
                       isLoggedIn: isLoggedIn,
+                      isNavigationLocked: isNavigationLocked,
                       user: currentUser,
-                      onHomeTap: () {
+                      onHomeTap: () => guarded(() {
                         notifier.navigateTo('dashboard');
                         notifier.refresh(forceRefresh: false);
-                      },
+                      }),
                       onLoginTap: () => _showLoginModal(context, ref),
-                      onLogoutTap: authNotif.logout,
-                      onSettingsTap: () => _showSettingsPopup(context),
-                      onMenuItemTap: (id) => isLoggedIn ? notifier.navigateTo(id) : null,
+                      onLockedTap: () => _showNavigationLockedWarning(context),
+                      onLogoutTap: () => guarded(authNotif.logout),
+                      onSettingsTap: () => guarded(() => _showSettingsPopup(context)),
+                      onMenuItemTap: (id) {
+                        if (!isLoggedIn) return;
+                        guarded(() => notifier.navigateTo(id));
+                      },
                     ),
                   ),
                   Expanded(
@@ -149,6 +168,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
       ),
     );
+  }
+
+  void _showNavigationLockedWarning(BuildContext context) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(context.l10n.dashboard_navigationLockedWarning),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
   }
 
   void _showLoginModal(BuildContext context, WidgetRef ref) {

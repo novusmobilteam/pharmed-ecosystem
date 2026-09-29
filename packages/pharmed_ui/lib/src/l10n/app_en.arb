@@ -5283,5 +5283,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "dashboard_navigationLockedWarning": "There is a cabin operation in progress. Complete or stop it first."
 }

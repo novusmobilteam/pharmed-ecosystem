@@ -1802,6 +1802,7 @@
     "qrScan_retryScanButton",
     "qrScan_cancelButton",
     "qrScan_confirmButton",
-    "qrScan_confirmProgress"
+    "qrScan_confirmProgress",
+    "dashboard_navigationLockedWarning"
   ]
 }

@@ -4651,5 +4651,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "dashboard_navigationLockedWarning": "Une opération de cabine est en cours. Terminez-la ou arrêtez-la d'abord."
 }

@@ -7419,4 +7419,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String qrScan_confirmProgress(String label, int scanned, int total) {
     return '$label ($scanned/$total)';
   }
+
+  @override
+  String get dashboard_navigationLockedWarning =>
+      'Devam eden bir kabin işlemi var. Önce işlemi tamamlayın veya durdurun.';
 }
