@@ -16,6 +16,7 @@ import '../notifier/patient_selection_notifier.dart';
 import '../widgets/intake_check_dialog.dart';
 import '../widgets/intake_ordered_item_card.dart';
 import '../widgets/intake_orderless_item_card.dart';
+import 'overdue_description_dialog.dart';
 
 part 'patient_selection_view.dart';
 part 'master_intake_selection_view.dart';

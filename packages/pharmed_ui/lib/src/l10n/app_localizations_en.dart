@@ -2942,6 +2942,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get user_emergencyAccessLabel => 'Can Create Emergency Patient?';
 
   @override
+  String get user_overdueIntakeAccessLabel => 'Can Take Overdue Medications?';
+
+  @override
   String get user_badgeCardHint => 'Scan card';
 
   @override
@@ -7483,4 +7486,140 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dashboard_navigationLockedWarning =>
       'There is a cabin operation in progress. Complete or stop it first.';
+
+  @override
+  String common_unitWithMeasure(String dose, String unit) {
+    return 'Piece × $dose $unit';
+  }
+
+  @override
+  String get intake_hint_overdueNotPermitted =>
+      'No permission to take overdue medication';
+
+  @override
+  String get intake_overdue_dialogTitle => 'Overdue Medication Intake';
+
+  @override
+  String intake_overdue_dialogSubtitle(int count) {
+    return 'The administration time of $count selected medications has passed. A reason must be entered for each to continue.';
+  }
+
+  @override
+  String get intake_overdue_authorizedBadge => 'AUTHORIZED';
+
+  @override
+  String get intake_overdue_modeLabel => 'Description method';
+
+  @override
+  String get intake_overdue_modeSame => 'Same reason for all';
+
+  @override
+  String get intake_overdue_modeEach => 'Separate reason for each';
+
+  @override
+  String intake_overdue_itemsLabel(int count) {
+    return 'Medications to take ($count)';
+  }
+
+  @override
+  String get intake_overdue_statusShared => 'Shared:';
+
+  @override
+  String get intake_overdue_statusEntered => 'Entered:';
+
+  @override
+  String get intake_overdue_statusPending => 'Reason pending';
+
+  @override
+  String get intake_overdue_tapToCustomizeHint =>
+      'Tap a medication to enter a different reason for it.';
+
+  @override
+  String get intake_overdue_sharedEditorTitle =>
+      'Shared reason for all medications';
+
+  @override
+  String intake_overdue_sharedEditorSubtitle(int count) {
+    return 'The selected reason applies to all $count medications.';
+  }
+
+  @override
+  String intake_overdue_scheduledAt(String time) {
+    return 'Scheduled: $time';
+  }
+
+  @override
+  String intake_overdue_overdueBy(int hours, int minutes) {
+    return '$hours h $minutes min overdue';
+  }
+
+  @override
+  String get intake_overdue_applyToRemaining => 'Apply to remaining';
+
+  @override
+  String get intake_overdue_presetsLabel => 'Predefined reasons';
+
+  @override
+  String get intake_overdue_presetsEmpty => 'No predefined reasons yet.';
+
+  @override
+  String get intake_overdue_newBadge => 'NEW';
+
+  @override
+  String get intake_overdue_orWriteNew => 'or write a new reason';
+
+  @override
+  String get intake_overdue_descriptionLabel => 'Reason';
+
+  @override
+  String get intake_overdue_descriptionPlaceholder =>
+      'E.g. Patient was away for an examination, administered on return…';
+
+  @override
+  String get intake_overdue_hintPresetSelected =>
+      'A predefined reason is selected. Typing will clear the selection.';
+
+  @override
+  String intake_overdue_hintMinLength(int min) {
+    return 'Enter at least $min characters.';
+  }
+
+  @override
+  String get intake_overdue_hintAlreadyPreset =>
+      'This reason is already in the predefined list.';
+
+  @override
+  String get intake_overdue_hintCanSave =>
+      'If you use it often, you can add it to predefined reasons.';
+
+  @override
+  String intake_overdue_hintDefault(int min) {
+    return 'Pick from the list or write a reason of at least $min characters.';
+  }
+
+  @override
+  String get intake_overdue_addPreset => 'Add to predefined';
+
+  @override
+  String intake_overdue_progress(int done, int total) {
+    return 'Reason entered for $done / $total medications';
+  }
+
+  @override
+  String get intake_overdue_progressComplete =>
+      'Reasons entered for all medications';
+
+  @override
+  String get intake_overdue_auditNote =>
+      'Reasons are recorded with user and time information.';
+
+  @override
+  String get intake_overdue_cancelButton => 'Cancel';
+
+  @override
+  String get intake_overdue_confirmButton => 'Confirm and Continue';
+
+  @override
+  String get intake_overdue_descriptionRequiredError =>
+      'A reason is required for overdue medications.';
 }

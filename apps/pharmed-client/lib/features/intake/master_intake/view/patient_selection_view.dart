@@ -6,6 +6,7 @@ class PatientSelectionView extends ConsumerStatefulWidget {
     this.onPatientSelected,
     this.onUrgentPatientCreated,
     this.onDeleteUrgentPatient,
+    this.onFilterTypeChanged,
   });
 
   final ValueChanged<Hospitalization?>? onPatientSelected;
@@ -16,6 +17,7 @@ class PatientSelectionView extends ConsumerStatefulWidget {
   final void Function(Hospitalization patient, IntakeType type)? onUrgentPatientCreated;
 
   final VoidCallback? onDeleteUrgentPatient;
+  final ValueChanged<PatientFilterType>? onFilterTypeChanged;
 
   @override
   ConsumerState<PatientSelectionView> createState() => _PatientSelectionViewState();
@@ -66,7 +68,11 @@ class _PatientSelectionViewState extends ConsumerState<PatientSelectionView> {
               onDelete: () => notifier.deleteUrgentPatient(),
             );
           } else {
-            return _HospitalizationListView(notifier: notifier, onPatientSelected: widget.onPatientSelected);
+            return _HospitalizationListView(
+              notifier: notifier,
+              onPatientSelected: widget.onPatientSelected,
+              onFilterTypeChanged: widget.onFilterTypeChanged,
+            );
           }
         },
       ),
@@ -114,10 +120,11 @@ class _UrgentPatientCreatedCard extends StatelessWidget {
 }
 
 class _HospitalizationListView extends StatelessWidget {
-  const _HospitalizationListView({required this.notifier, this.onPatientSelected});
+  const _HospitalizationListView({required this.notifier, this.onPatientSelected, this.onFilterTypeChanged});
 
   final PatientSelectionNotifier2 notifier;
   final ValueChanged<Hospitalization?>? onPatientSelected;
+  final ValueChanged<PatientFilterType>? onFilterTypeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +169,11 @@ class _HospitalizationListView extends StatelessWidget {
           child: MedDropdownInputField(
             options: PatientFilterType.values,
             initialValue: notifier.patientFilterType,
-            onChanged: (type) => notifier.selectFilterType(type),
+            onChanged: (type) {
+              if (type == null) return;
+              notifier.selectFilterType(type);
+              onFilterTypeChanged?.call(type);
+            },
             labelBuilder: (type) => type?.label,
           ),
         ),

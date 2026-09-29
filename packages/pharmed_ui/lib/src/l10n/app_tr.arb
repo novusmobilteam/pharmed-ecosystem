@@ -3597,6 +3597,10 @@
   "@user_emergencyAccessLabel": {
     "description": "Kullanıcı/rol formunda, kullanıcının acil hasta oluşturma yetkisine sahip olup olmadığını gösteren alan etiketi"
   },
+  "user_overdueIntakeAccessLabel": "Zamanı Geçmiş Alım Yapabilir mi?",
+  "@user_overdueIntakeAccessLabel": {
+    "description": "Field label in the user/role form indicating whether the user is allowed to take medicines whose administration time has passed"
+  },
   "user_badgeCardHint": "Kartı okutun",
   "@user_badgeCardHint": {
     "description": "Placeholder shown in the user form badge card field before a card is scanned"
@@ -9683,5 +9687,199 @@
   "dashboard_navigationLockedWarning": "Devam eden bir kabin işlemi var. Önce işlemi tamamlayın veya durdurun.",
 "@dashboard_navigationLockedWarning": {
   "description": "Snackbar shown when a locked app bar item is tapped while a cabin operation is in progress"
-}
+},
+  "common_unitWithMeasure": "Adet  × {dose} {unit}",
+  "@common_unitWithMeasure": {
+  "description": "Count-independent unit label for measure-unit drugs, e.g. 'Piece × 100 ml'. Shared across assignment/refill/census/unload screens via MedicineAssignment.unitLabel.",
+  "placeholders": {
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"intake_hint_overdueNotPermitted": "Zamanı geçmiş ilaç alma yetkiniz yok",
+"@intake_hint_overdueNotPermitted": {
+  "description": "Chip shown on an ordered intake item card when the patient filter is not 'orders due' and the user lacks the overdue-medication permission; the item cannot be selected"
+},
+  "intake_overdue_dialogTitle": "Uygulama Saati Geçmiş İlaç Alımı",
+  "@intake_overdue_dialogTitle": {
+    "description": "Title of the dialog shown before starting an intake that contains overdue ordered items"
+  },
+  "intake_overdue_dialogSubtitle": "Seçilen {count} ilacın uygulama saati geçmiş. Devam etmek için her ilaç için bir açıklama girilmelidir.",
+  "@intake_overdue_dialogSubtitle": {
+    "description": "Subtitle of the overdue intake description dialog",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_authorizedBadge": "YETKİLİ",
+  "@intake_overdue_authorizedBadge": {
+    "description": "Badge next to the user name in the overdue description dialog header, indicating the overdue-medication permission"
+  },
+  "intake_overdue_modeLabel": "Açıklama yöntemi",
+  "@intake_overdue_modeLabel": {
+    "description": "Label for the same/each description mode switch in the overdue description dialog"
+  },
+  "intake_overdue_modeSame": "Tüm ilaçlar için aynı açıklama",
+  "@intake_overdue_modeSame": {
+    "description": "Segment: one shared description for all overdue items"
+  },
+  "intake_overdue_modeEach": "Her ilaç için ayrı açıklama",
+  "@intake_overdue_modeEach": {
+    "description": "Segment: a separate description per overdue item"
+  },
+  "intake_overdue_itemsLabel": "Alınacak ilaçlar ({count})",
+  "@intake_overdue_itemsLabel": {
+    "description": "Header of the item list in the overdue description dialog",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_statusShared": "Ortak:",
+  "@intake_overdue_statusShared": {
+    "description": "Item status prefix when the shared description applies (followed by the description)"
+  },
+  "intake_overdue_statusEntered": "Girildi:",
+  "@intake_overdue_statusEntered": {
+    "description": "Item status prefix when an item-specific description is entered"
+  },
+  "intake_overdue_statusPending": "Açıklama bekleniyor",
+  "@intake_overdue_statusPending": {
+    "description": "Item status when no valid description is entered yet"
+  },
+  "intake_overdue_tapToCustomizeHint": "Bir ilaca dokunarak o ilaç için farklı açıklama girebilirsiniz.",
+  "@intake_overdue_tapToCustomizeHint": {
+    "description": "Hint under the item list in shared mode"
+  },
+  "intake_overdue_sharedEditorTitle": "Tüm ilaçlar için ortak açıklama",
+  "@intake_overdue_sharedEditorTitle": {
+    "description": "Editor title in shared mode"
+  },
+  "intake_overdue_sharedEditorSubtitle": "Seçilen açıklama {count} ilacın tamamına uygulanır.",
+  "@intake_overdue_sharedEditorSubtitle": {
+    "description": "Editor subtitle in shared mode",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_scheduledAt": "Uygulama: {time}",
+  "@intake_overdue_scheduledAt": {
+    "description": "Scheduled administration time of an overdue item",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "intake_overdue_overdueBy": "{hours} sa {minutes} dk gecikme",
+  "@intake_overdue_overdueBy": {
+    "description": "How long an item is overdue",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_applyToRemaining": "Kalan ilaçlara uygula",
+  "@intake_overdue_applyToRemaining": {
+    "description": "Button copying the current item's description to all items"
+  },
+  "intake_overdue_presetsLabel": "Ön tanımlı açıklamalar",
+  "@intake_overdue_presetsLabel": {
+    "description": "Section label for predefined overdue descriptions"
+  },
+  "intake_overdue_presetsEmpty": "Henüz ön tanımlı açıklama yok.",
+  "@intake_overdue_presetsEmpty": {
+    "description": "Shown when there are no predefined overdue descriptions"
+  },
+  "intake_overdue_newBadge": "YENİ",
+  "@intake_overdue_newBadge": {
+    "description": "Badge on a predefined description added during this dialog session"
+  },
+  "intake_overdue_orWriteNew": "veya yeni açıklama yazın",
+  "@intake_overdue_orWriteNew": {
+    "description": "Divider label between predefined reasons and the free-text field"
+  },
+  "intake_overdue_descriptionLabel": "Açıklama",
+  "@intake_overdue_descriptionLabel": {
+    "description": "Label of the free-text description field"
+  },
+  "intake_overdue_descriptionPlaceholder": "Örn. Hasta tetkikteydi, servise dönüşünde uygulandı…",
+  "@intake_overdue_descriptionPlaceholder": {
+    "description": "Placeholder of the free-text description field"
+  },
+  "intake_overdue_hintPresetSelected": "Ön tanımlı açıklama seçildi. Yazmaya başlarsanız seçim kaldırılır.",
+  "@intake_overdue_hintPresetSelected": {
+    "description": "Hint when a predefined description is selected"
+  },
+  "intake_overdue_hintMinLength": "En az {min} karakter girin.",
+  "@intake_overdue_hintMinLength": {
+    "description": "Warning when the free-text description is too short",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_hintAlreadyPreset": "Bu açıklama zaten ön tanımlı listede.",
+  "@intake_overdue_hintAlreadyPreset": {
+    "description": "Hint when typed text matches an existing predefined description"
+  },
+  "intake_overdue_hintCanSave": "Sık kullanacaksanız ön tanımlı açıklamalara ekleyebilirsiniz.",
+  "@intake_overdue_hintCanSave": {
+    "description": "Hint suggesting saving a valid free-text description as predefined"
+  },
+  "intake_overdue_hintDefault": "Listeden seçin ya da en az {min} karakterlik bir açıklama yazın.",
+  "@intake_overdue_hintDefault": {
+    "description": "Default hint when nothing is entered",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_addPreset": "Ön tanımlılara ekle",
+  "@intake_overdue_addPreset": {
+    "description": "Button saving the typed description as a predefined overdue description"
+  },
+  "intake_overdue_progress": "{done} / {total} ilaç için açıklama girildi",
+  "@intake_overdue_progress": {
+    "description": "Footer progress of the overdue description dialog",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_progressComplete": "Tüm ilaçlar için açıklama girildi",
+  "@intake_overdue_progressComplete": {
+    "description": "Footer progress when all items have a valid description"
+  },
+  "intake_overdue_auditNote": "Açıklamalar kullanıcı ve zaman bilgisiyle kayda geçer.",
+  "@intake_overdue_auditNote": {
+    "description": "Footer note about audit recording of descriptions"
+  },
+  "intake_overdue_cancelButton": "İptal",
+  "@intake_overdue_cancelButton": {
+    "description": "Cancel button of the overdue description dialog"
+  },
+  "intake_overdue_confirmButton": "Onayla ve Devam Et",
+  "@intake_overdue_confirmButton": {
+    "description": "Confirm button of the overdue description dialog; continues to intake checks"
+  },
+  "intake_overdue_descriptionRequiredError": "Zamanı geçmiş ilaçlar için açıklama girilmelidir.",
+  "@intake_overdue_descriptionRequiredError": {
+    "description": "Error when intake starts without descriptions for overdue items"
+  }
 }

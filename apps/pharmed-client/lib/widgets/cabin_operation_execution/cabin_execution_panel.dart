@@ -6,6 +6,7 @@
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// Header, body ve footer'ı standart aralıkla dizer.
@@ -41,9 +42,9 @@ class CabinExecutionInfoValue {
 }
 
 class CabinExecutionHeader extends StatelessWidget {
-  const CabinExecutionHeader({super.key, required this.medicineName, this.values = const [], this.trailing});
+  const CabinExecutionHeader({super.key, this.medicine, this.values = const [], this.trailing});
 
-  final String medicineName;
+  final Medicine? medicine;
 
   /// İşleme özgü bilgiler — dolumda hedef/doldurulan, sayımda mevcut miktar vb.
   /// Boş liste geçilebilir (örn. miktarı gösterilmeyen sayım tipleri).
@@ -61,9 +62,16 @@ class CabinExecutionHeader extends StatelessWidget {
       child: Row(
         spacing: 24.0,
         children: [
-          Expanded(
-            child: Text(medicineName, maxLines: 1, overflow: TextOverflow.ellipsis, style: MedTextStyles.titleLg()),
-          ),
+          if (medicine != null)
+            Expanded(
+              child: Text(
+                '${medicine!.name ?? ''} (${medicine!.pieceUnitLabel})',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: MedTextStyles.titleLg(),
+              ),
+            ),
+
           for (final v in values) _InfoValueView(value: v),
           ?trailing,
         ],

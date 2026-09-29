@@ -316,3 +316,16 @@ final refillListRepositoryProvider = Provider<IRefillListRepository>((ref) {
     ),
   };
 });
+
+final overdueDescriptionRepositoryProvider = Provider<IOverdueDescriptionRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => OverdueDescriptionRepositoryImpl(
+      dataSource: ref.read(overdueDescriptionDataSourceProvider),
+      mapper: OverdueDescriptionMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => OverdueDescriptionRepositoryImpl(
+      dataSource: ref.read(overdueDescriptionDataSourceProvider),
+      mapper: OverdueDescriptionMapper(),
+    ),
+  };
+});

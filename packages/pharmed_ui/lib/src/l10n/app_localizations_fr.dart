@@ -3028,6 +3028,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get user_emergencyAccessLabel => 'Peut créer un patient d\'urgence ?';
 
   @override
+  String get user_overdueIntakeAccessLabel =>
+      'Peut effectuer un retrait hors délai ?';
+
+  @override
   String get user_badgeCardHint => 'Scannez la carte';
 
   @override
@@ -7663,4 +7667,141 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get dashboard_navigationLockedWarning =>
       'Une opération de cabine est en cours. Terminez-la ou arrêtez-la d\'abord.';
+
+  @override
+  String common_unitWithMeasure(String dose, String unit) {
+    return 'Unité   × $dose $unit';
+  }
+
+  @override
+  String get intake_hint_overdueNotPermitted =>
+      'Aucune autorisation pour les médicaments en retard';
+
+  @override
+  String get intake_overdue_dialogTitle => 'Prise de médicaments en retard';
+
+  @override
+  String intake_overdue_dialogSubtitle(int count) {
+    return 'L\'heure d\'administration de $count médicaments sélectionnés est dépassée. Un motif doit être saisi pour chacun afin de continuer.';
+  }
+
+  @override
+  String get intake_overdue_authorizedBadge => 'AUTORISÉ';
+
+  @override
+  String get intake_overdue_modeLabel => 'Méthode de saisie';
+
+  @override
+  String get intake_overdue_modeSame => 'Même motif pour tous';
+
+  @override
+  String get intake_overdue_modeEach => 'Motif par médicament';
+
+  @override
+  String intake_overdue_itemsLabel(int count) {
+    return 'Médicaments à prendre ($count)';
+  }
+
+  @override
+  String get intake_overdue_statusShared => 'Commun :';
+
+  @override
+  String get intake_overdue_statusEntered => 'Saisi :';
+
+  @override
+  String get intake_overdue_statusPending => 'Motif en attente';
+
+  @override
+  String get intake_overdue_tapToCustomizeHint =>
+      'Touchez un médicament pour saisir un motif différent.';
+
+  @override
+  String get intake_overdue_sharedEditorTitle =>
+      'Motif commun pour tous les médicaments';
+
+  @override
+  String intake_overdue_sharedEditorSubtitle(int count) {
+    return 'Le motif choisi s\'applique aux $count médicaments.';
+  }
+
+  @override
+  String intake_overdue_scheduledAt(String time) {
+    return 'Prévu : $time';
+  }
+
+  @override
+  String intake_overdue_overdueBy(int hours, int minutes) {
+    return '$hours h $minutes min de retard';
+  }
+
+  @override
+  String get intake_overdue_applyToRemaining => 'Appliquer aux autres';
+
+  @override
+  String get intake_overdue_presetsLabel => 'Motifs prédéfinis';
+
+  @override
+  String get intake_overdue_presetsEmpty =>
+      'Aucun motif prédéfini pour le moment.';
+
+  @override
+  String get intake_overdue_newBadge => 'NOUVEAU';
+
+  @override
+  String get intake_overdue_orWriteNew => 'ou saisissez un nouveau motif';
+
+  @override
+  String get intake_overdue_descriptionLabel => 'Motif';
+
+  @override
+  String get intake_overdue_descriptionPlaceholder =>
+      'Ex. : Patient en examen, administré à son retour…';
+
+  @override
+  String get intake_overdue_hintPresetSelected =>
+      'Un motif prédéfini est sélectionné. La saisie annulera la sélection.';
+
+  @override
+  String intake_overdue_hintMinLength(int min) {
+    return 'Saisissez au moins $min caractères.';
+  }
+
+  @override
+  String get intake_overdue_hintAlreadyPreset =>
+      'Ce motif figure déjà dans la liste prédéfinie.';
+
+  @override
+  String get intake_overdue_hintCanSave =>
+      'Si vous l\'utilisez souvent, ajoutez-le aux motifs prédéfinis.';
+
+  @override
+  String intake_overdue_hintDefault(int min) {
+    return 'Choisissez dans la liste ou saisissez un motif d\'au moins $min caractères.';
+  }
+
+  @override
+  String get intake_overdue_addPreset => 'Ajouter aux prédéfinis';
+
+  @override
+  String intake_overdue_progress(int done, int total) {
+    return 'Motif saisi pour $done / $total médicaments';
+  }
+
+  @override
+  String get intake_overdue_progressComplete =>
+      'Motifs saisis pour tous les médicaments';
+
+  @override
+  String get intake_overdue_auditNote =>
+      'Les motifs sont enregistrés avec l\'utilisateur et l\'heure.';
+
+  @override
+  String get intake_overdue_cancelButton => 'Annuler';
+
+  @override
+  String get intake_overdue_confirmButton => 'Confirmer et continuer';
+
+  @override
+  String get intake_overdue_descriptionRequiredError =>
+      'Un motif est requis pour les médicaments en retard.';
 }

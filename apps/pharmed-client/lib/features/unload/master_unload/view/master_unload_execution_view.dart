@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.dart';
-import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
 import '../notifier/master_unload_execution_notifier.dart';
 
@@ -22,7 +21,7 @@ class MasterUnloadExecutionView extends ConsumerWidget {
       headerValues: (context, target) => [
         CabinExecutionInfoValue(
           label: context.l10n.cabinExecution_recordedQuantity,
-          value: formatEntryQuantity(target.currentQuantity),
+          value: target.assignment.quantityLabel(target.currentQuantity),
         ),
       ],
     );

@@ -17,12 +17,12 @@ class IntakeOrderedItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSelected = notifier.isSelected(item.id);
     final hasNoStock = item.hasNoStock;
+    final overdueLocked = notifier.isOverdueSelectionLocked;
     final witnessContext = notifier.witnessContextOf(item);
     final needsWitness = notifier.needsWitness(item);
     final missingWitness = needsWitness && witnessContext.witness == null;
-    final canInteract = !hasNoStock && !missingWitness;
+    final canInteract = !hasNoStock && !overdueLocked;
     final foreground = isSelected ? Colors.white : MedColors.text;
-
     // Muadil sorgusu başlatıldıysa (idle değilse) alt bölüm açılır.
     final equivalentCheckStarted = hasNoStock && notifier.equivalentOptionsFor(item.id) != null;
 
@@ -34,7 +34,7 @@ class IntakeOrderedItemCard extends StatelessWidget {
           Row(
             children: [
               Opacity(
-                opacity: hasNoStock ? 0.6 : 1.0,
+                opacity: (hasNoStock || overdueLocked) ? 0.6 : 1.0,
                 child: Row(
                   spacing: 12.0,
                   children: [
@@ -140,6 +140,15 @@ class IntakeOrderedItemCard extends StatelessWidget {
                   shape: MedChipShape.pill,
                   background: MedColors.purple,
                   foreground: Colors.white,
+                  showBorder: false,
+                )
+              else if (overdueLocked)
+                MedChip(
+                  icon: PhosphorIcons.lockSimple(),
+                  label: context.l10n.intake_hint_overdueNotPermitted,
+                  shape: MedChipShape.pill,
+                  background: MedColors.amberLight,
+                  foreground: MedColors.amber,
                   showBorder: false,
                 )
               else if (hasNoStock && !item.isEquivalentIntake && !equivalentCheckStarted)

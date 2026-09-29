@@ -18,6 +18,7 @@ class User extends Selectable {
   final bool? isAdmin;
   final String? rfidCardData;
   final bool canCreateEmergencyPatient;
+  final bool canCollectOverdueMedication;
 
   User({
     super.id,
@@ -38,6 +39,7 @@ class User extends Selectable {
     this.isAdmin,
     this.rfidCardData,
     this.canCreateEmergencyPatient = false,
+    this.canCollectOverdueMedication = false,
   }) : super(title: '$name $surname', subtitle: email);
 
   /// id ve "Ad Soyad" stringinden güvenli şekilde User üretir.
@@ -85,6 +87,7 @@ class User extends Selectable {
     List<int>? stationIds,
     String? rfidCardData,
     bool? canCreateEmergencyPatient,
+    bool? canCollectOverdueMedication,
   }) {
     return User(
       id: id ?? this.id,
@@ -104,9 +107,10 @@ class User extends Selectable {
       stationIds: stationIds ?? this.stationIds,
       rfidCardData: rfidCardData ?? this.rfidCardData,
       canCreateEmergencyPatient: canCreateEmergencyPatient ?? this.canCreateEmergencyPatient,
+      canCollectOverdueMedication: canCollectOverdueMedication ?? this.canCollectOverdueMedication,
     );
   }
 
   @override
-  String toString() => '{name: $name, isNotOrdered: $isNotOrdered}';
+  String toString() => '{name: $name, isNotOrdered: $isNotOrdered, overdue: $canCollectOverdueMedication}';
 }

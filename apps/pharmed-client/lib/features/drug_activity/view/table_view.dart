@@ -55,8 +55,7 @@ List<TableColumnDef<PrescriptionItemMovement>> _buildColumnDefs(BuildContext con
   ),
   TableColumnDef(
     title: context.l10n.drugActivity_table_quantityColumn,
-    displayValue: (item) =>
-        '${item.quantity.formatFractional} ${item.prescriptionItem?.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${item.quantity.formatFractional} ${item.prescriptionItem?.medicine?.pieceUnitLabel}',
   ),
   TableColumnDef(
     title: context.l10n.drugActivity_table_movementColumn,

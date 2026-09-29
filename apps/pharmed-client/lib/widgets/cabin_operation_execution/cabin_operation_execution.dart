@@ -7,3 +7,4 @@ export 'cabin_unit_dose_entry_table.dart';
 export 'cabin_entry_common.dart';
 export 'cabin_drawer_stage_overlay.dart';
 export 'cabin_intake_entry_list.dart';
+export 'cabin_execution_panel.dart';

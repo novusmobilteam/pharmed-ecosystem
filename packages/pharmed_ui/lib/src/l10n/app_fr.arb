@@ -1659,6 +1659,7 @@
   "user_badgeCardLabel": "Badge",
    "@user_badgeCardLabel": {},
   "user_emergencyAccessLabel": "Peut créer un patient d'urgence ?",
+  "user_overdueIntakeAccessLabel": "Peut effectuer un retrait hors délai ?",
   "user_badgeCardHint": "Scannez la carte",
   "@user_badgeCardHint": {},
   "user_authorizedStationsLabel": "Stations autorisées",
@@ -4652,5 +4653,110 @@
       }
     }
   },
-  "dashboard_navigationLockedWarning": "Une opération de cabine est en cours. Terminez-la ou arrêtez-la d'abord."
+  "dashboard_navigationLockedWarning": "Une opération de cabine est en cours. Terminez-la ou arrêtez-la d'abord.",
+    "common_unitWithMeasure": "Unité   × {dose} {unit}",
+  "@common_unitWithMeasure": {
+  "description": "Count-independent unit label for measure-unit drugs, e.g. 'Piece × 100 ml'. Shared across assignment/refill/census/unload screens via MedicineAssignment.unitLabel.",
+  "placeholders": {
+    "dose": { "type": "String" },
+    "unit": { "type": "String" }
+  }
+},
+"intake_hint_overdueNotPermitted": "Aucune autorisation pour les médicaments en retard",
+  "intake_overdue_dialogTitle": "Prise de médicaments en retard",
+  "intake_overdue_dialogSubtitle": "L'heure d'administration de {count} médicaments sélectionnés est dépassée. Un motif doit être saisi pour chacun afin de continuer.",
+  "@intake_overdue_dialogSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_authorizedBadge": "AUTORISÉ",
+  "intake_overdue_modeLabel": "Méthode de saisie",
+  "intake_overdue_modeSame": "Même motif pour tous",
+  "intake_overdue_modeEach": "Motif par médicament",
+  "intake_overdue_itemsLabel": "Médicaments à prendre ({count})",
+  "@intake_overdue_itemsLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_statusShared": "Commun :",
+  "intake_overdue_statusEntered": "Saisi :",
+  "intake_overdue_statusPending": "Motif en attente",
+  "intake_overdue_tapToCustomizeHint": "Touchez un médicament pour saisir un motif différent.",
+  "intake_overdue_sharedEditorTitle": "Motif commun pour tous les médicaments",
+  "intake_overdue_sharedEditorSubtitle": "Le motif choisi s'applique aux {count} médicaments.",
+  "@intake_overdue_sharedEditorSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_scheduledAt": "Prévu : {time}",
+  "@intake_overdue_scheduledAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "intake_overdue_overdueBy": "{hours} h {minutes} min de retard",
+  "@intake_overdue_overdueBy": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_applyToRemaining": "Appliquer aux autres",
+  "intake_overdue_presetsLabel": "Motifs prédéfinis",
+  "intake_overdue_presetsEmpty": "Aucun motif prédéfini pour le moment.",
+  "intake_overdue_newBadge": "NOUVEAU",
+  "intake_overdue_orWriteNew": "ou saisissez un nouveau motif",
+  "intake_overdue_descriptionLabel": "Motif",
+  "intake_overdue_descriptionPlaceholder": "Ex. : Patient en examen, administré à son retour…",
+  "intake_overdue_hintPresetSelected": "Un motif prédéfini est sélectionné. La saisie annulera la sélection.",
+  "intake_overdue_hintMinLength": "Saisissez au moins {min} caractères.",
+  "@intake_overdue_hintMinLength": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_hintAlreadyPreset": "Ce motif figure déjà dans la liste prédéfinie.",
+  "intake_overdue_hintCanSave": "Si vous l'utilisez souvent, ajoutez-le aux motifs prédéfinis.",
+  "intake_overdue_hintDefault": "Choisissez dans la liste ou saisissez un motif d'au moins {min} caractères.",
+  "@intake_overdue_hintDefault": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_addPreset": "Ajouter aux prédéfinis",
+  "intake_overdue_progress": "Motif saisi pour {done} / {total} médicaments",
+  "@intake_overdue_progress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "intake_overdue_progressComplete": "Motifs saisis pour tous les médicaments",
+  "intake_overdue_auditNote": "Les motifs sont enregistrés avec l'utilisateur et l'heure.",
+  "intake_overdue_cancelButton": "Annuler",
+  "intake_overdue_confirmButton": "Confirmer et continuer",
+  "intake_overdue_descriptionRequiredError": "Un motif est requis pour les médicaments en retard."
 }

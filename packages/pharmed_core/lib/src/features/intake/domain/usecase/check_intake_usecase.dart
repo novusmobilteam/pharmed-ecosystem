@@ -35,6 +35,7 @@ class CheckIntakeParams {
     required this.assignment,
     this.resolvedStock,
     required this.dosePiece,
+    this.overdueDescription,
   });
 
   final IntakeType type;
@@ -49,6 +50,7 @@ class CheckIntakeParams {
 
   /// Alınacak miktar (adet).
   final double dosePiece;
+  final String? overdueDescription;
 }
 
 class IntakeBatchCheckResult {
@@ -80,6 +82,7 @@ class CheckIntakeUseCase {
       prescriptionDetailId: params.prescriptionDetailId,
       hospitalizationId: params.hospitalizationId,
       userId: params.userId,
+      overdueDescription: params.overdueDescription,
     );
 
     final result = switch (params.type) {
@@ -103,6 +106,7 @@ class CheckIntakeUseCase {
     required int userId,
     int? hospitalizationId,
     required List<IntakeItem> items,
+    Map<int, String> overdueDescriptions = const {},
     void Function(int itemId, IntakeCheckState status)? onItemStatusChanged,
   }) async {
     final plans = <IntakePlan>[];
@@ -134,6 +138,7 @@ class CheckIntakeUseCase {
           assignment: assignment ?? MedicineAssignment(),
           resolvedStock: item.stock,
           dosePiece: item.dosePiece ?? 0,
+          overdueDescription: overdueDescriptions[item.id],
         ),
       );
 

@@ -268,4 +268,21 @@ extension MedicineDoseConfig on Medicine {
     final boxes = amount.toDouble() / fillingMultiplier;
     return (boxes - 1e-6).ceil().clamp(0, 1 << 31);
   }
+
+  /// Ölçü birimli ilaçta 1 adetin hacmi (örn. 100 ml) tanımlıysa true.
+  /// Tüm "Adet × 100 ml" gösterimleri bu koşulu kullanır.
+  bool get hasPieceMeasure {
+    final self = this;
+    return self is Drug && self.isMeasureUnit && fillingMultiplier > 1;
+  }
+
+  /// Sayıdan bağımsız birim etiketi.
+  /// Ölçü birimli ilaçta "Adet × 100 ml", diğerlerinde "Adet".
+  String get pieceUnitLabel {
+    final self = this;
+    if (self is Drug && hasPieceMeasure) {
+      return contextlessL10n().common_unitWithMeasure(fillingMultiplier.formatFractional, self.doseUnit?.name ?? 'ml');
+    }
+    return contextlessL10n().common_defaultUnitFallback;
+  }
 }

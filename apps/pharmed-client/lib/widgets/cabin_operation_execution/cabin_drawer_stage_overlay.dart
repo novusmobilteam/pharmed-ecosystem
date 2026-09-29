@@ -276,14 +276,14 @@ class _StageInfo {
         icon: PhosphorIcons.arrowsOutLineVertical(),
         title: l10n.masterDrawer_status_failedTitle,
         subtitle: message,
-        actions: [if (retry != null) retry],
+        actions: [?retry],
       ),
       MasterDrawerFailure.lidNotOpened => _StageInfo(
         kind: _StageKind.action,
         icon: PhosphorIcons.handGrabbing(),
         title: l10n.masterDrawer_status_failedTitle,
         subtitle: message,
-        actions: [if (skip != null) skip, if (retry != null) retry],
+        actions: [?skip, ?retry],
       ),
       MasterDrawerFailure.lidSensorLost => _StageInfo(
         kind: _StageKind.error,
@@ -291,14 +291,14 @@ class _StageInfo {
         title: l10n.masterDrawer_status_failedTitle,
         subtitle: message,
         hint: l10n.masterDrawer_lid_sensorLostHint,
-        actions: [if (acknowledge != null) acknowledge],
+        actions: [?acknowledge],
       ),
       _ => _StageInfo(
         kind: _StageKind.error,
         icon: PhosphorIcons.warningCircle(),
         title: l10n.masterDrawer_status_failedTitle,
         subtitle: message,
-        actions: [if (skip != null) skip, if (retry != null) retry],
+        actions: [?skip, ?retry],
       ),
     };
   }

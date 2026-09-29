@@ -185,17 +185,23 @@ class _Header extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         spacing: _Cols.gap,
         children: [
           SizedBox(width: _Cols.cell, child: label(context.l10n.inconsistency_compartmentLabel)),
-          Expanded(child: label(context.l10n.cabinAssignmentList_medicineColumn, align: TextAlign.start)),
-          if (countLabel case final text?) SizedBox(width: _Cols.stepper, child: label(text)),
-          if (secondaryLabel case final text?)
-            SizedBox(
-              width: _Cols.stepper,
-              child: label(text, color: MedColors.blue),
-            ),
-          if (showMiad) SizedBox(width: _Cols.miad, child: label(context.l10n.refill_label_expiryDate)),
+          //Expanded(child: label(context.l10n.cabinAssignmentList_medicineColumn, align: TextAlign.start)),
+          Row(
+            spacing: _Cols.gap,
+            children: [
+              if (countLabel case final text?) SizedBox(width: _Cols.stepper, child: label(text)),
+              if (secondaryLabel case final text?)
+                SizedBox(
+                  width: _Cols.stepper,
+                  child: label(text, color: MedColors.blue),
+                ),
+              if (showMiad) SizedBox(width: _Cols.miad, child: label(context.l10n.refill_label_expiryDate)),
+            ],
+          ),
         ],
       ),
     );
@@ -222,7 +228,7 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unit = medicine?.fillingUnitLocalized(context);
+    //final unit = medicine?.fillingUnitLocalized(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -232,6 +238,7 @@ class _Row extends StatelessWidget {
         border: Border.all(color: hasError ? MedColors.red : MedColors.border),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         spacing: _Cols.gap,
         children: [
           SizedBox(
@@ -246,25 +253,30 @@ class _Row extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: medicine?.name ?? '-', style: MedTextStyles.titleSm()),
-                  if (unit != null)
-                    TextSpan(
-                      text: '  $unit',
-                      style: MedTextStyles.bodySm(color: MedColors.text3),
-                    ),
-                ],
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+          // Expanded(
+          //   child: Text.rich(
+          //     TextSpan(
+          //       children: [
+          //         TextSpan(text: medicine?.name ?? '-', style: MedTextStyles.titleSm()),
+          //         if (unit != null)
+          //           TextSpan(
+          //             text: '  $unit',
+          //             style: MedTextStyles.bodySm(color: MedColors.text3),
+          //           ),
+          //       ],
+          //     ),
+          //     maxLines: 1,
+          //     overflow: TextOverflow.ellipsis,
+          //   ),
+          // ),
+          Row(
+            spacing: _Cols.gap,
+            children: [
+              if (count != null) SizedBox(width: _Cols.stepper, child: count),
+              if (secondary != null) SizedBox(width: _Cols.stepper, child: secondary),
+              if (miad != null) SizedBox(width: _Cols.miad, child: miad),
+            ],
           ),
-          if (count != null) SizedBox(width: _Cols.stepper, child: count),
-          if (secondary != null) SizedBox(width: _Cols.stepper, child: secondary),
-          if (miad != null) SizedBox(width: _Cols.miad, child: miad),
         ],
       ),
     );

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../../../widgets/widgets.dart';
 import '../../../widgets/cabin_operation_execution/cabin_operation_execution.dart';
 import '../../dashboard/dashboard.dart';
 import '../notifier/master_destruction_execution_notifier.dart';

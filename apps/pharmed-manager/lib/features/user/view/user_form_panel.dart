@@ -27,8 +27,10 @@ class UserFormPanel extends StatelessWidget {
               if (formKey.currentState!.validate()) {
                 await notifier.submit(
                   onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                  onSuccess: (msg) =>
-                      MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage),
+                  onSuccess: (msg) {
+                    userNotifier.fetch();
+                    MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
+                  },
                 );
               }
             },
@@ -80,6 +82,7 @@ class UserFormPanel extends StatelessWidget {
                     if (notifier.isCreate) _PasswordField(),
                     _RfidCardField(),
                     _EmergenyAccessField(),
+                    _OverdueCollectField(),
                   ],
                 ),
               ),
@@ -395,6 +398,23 @@ class _EmergenyAccessField extends StatelessWidget {
           label: context.l10n.user_emergencyAccessLabel,
           value: notifier.user.canCreateEmergencyPatient,
           onChanged: (value) => notifier.toggleEmergencyAccess(value),
+        );
+      },
+    );
+  }
+}
+
+class _OverdueCollectField extends StatelessWidget {
+  const _OverdueCollectField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserFormNotifier>(
+      builder: (context, notifier, _) {
+        return MedToggleField(
+          label: context.l10n.user_overdueIntakeAccessLabel,
+          value: notifier.user.canCollectOverdueMedication,
+          onChanged: (value) => notifier.toggleOverdueCollect(value),
         );
       },
     );

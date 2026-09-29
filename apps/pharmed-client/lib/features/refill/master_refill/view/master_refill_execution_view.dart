@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.dart';
-import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
 
 import '../notifier/master_refill_execution_notifier.dart';
@@ -23,20 +22,20 @@ class MasterRefillExecutionView extends ConsumerWidget {
       stationContext: stationContext,
       headerValues: (context, target) => [
         CabinExecutionInfoValue(
-          label: context.l10n.cabinExecution_recordedQuantity,
-          value: target.assignment.quantityLabel(target.currentQuantity),
+          label: context.l10n.inconsistency_quantityLabel,
+          value: formatEntryQuantity(target.currentQuantity),
         ),
         CabinExecutionInfoValue(
           label: context.l10n.enumCore_fillingTypeMinimum,
-          value: target.assignment.minQuantityLabel,
+          value: formatEntryQuantity(target.assignment.minQuantity.toDouble()),
         ),
         CabinExecutionInfoValue(
           label: context.l10n.enumCore_fillingTypeCritical,
-          value: target.assignment.critQuantityLabel,
+          value: formatEntryQuantity(target.assignment.criticalQuantity.toDouble()),
         ),
         CabinExecutionInfoValue(
           label: context.l10n.enumCore_fillingTypeMaximum,
-          value: target.assignment.maxQuantityLabel,
+          value: formatEntryQuantity(target.assignment.maxQuantity.toDouble()),
         ),
       ],
     );
