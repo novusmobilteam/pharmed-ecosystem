@@ -76,6 +76,10 @@ class MasterUnloadExecutionNotifier extends ChangeNotifier
   }
 
   @override
-  List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) =>
-      locationItemsUsing(allGroups: allGroups, cabinDrawerIdOf: (job) => job.cabinDrawerId, stockIdAt: (_, _) => null);
+  List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) => locationItemsUsing(
+    allGroups: allGroups,
+    cabinDrawerIdOf: (job) => job.cabinDrawerId,
+    stockIdAt: (_, _) => null,
+    activeStepsAt: (job, i) => job.targets[i].enteredStepNos,
+  );
 }

@@ -128,6 +128,12 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
   required int Function(TJob job) targetCountOf,
   required MedicineAssignment? Function(TJob job, int targetIndex) assignmentAt,
 
+  /// YENİ, opsiyonel. Target'ın işleme dahil gözleri (1 tabanlı stepNo) —
+  /// stok kaydına bağlı DEĞİL, boş gözler de dahil (örn. dolumda miktar
+  /// yazılan boş göz). Verilirse [stockIdsAt]/[stockIdAt]'ın önüne geçer.
+  /// Aktif target'ta boş set → tüm sütun aktif (fallback).
+  Set<int> Function(TJob job, int targetIndex)? activeStepsAt,
+
   /// YENİ, opsiyonel. Verilirse derinlik (step) bazlı hassas grid hesaplanır
   /// — verilmezse eski davranış (sütun bazlı, step'siz) korunur, hiçbir
   /// çağıran kırılmaz.
@@ -202,6 +208,25 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
     int? activeStepNo;
 
     if (isActive) {
+      // Bir target'ın hücreleri — öncelik: activeStepsAt (girdiye dayalı,
+      // boş göz dahil), sonra stockIdsAt (çoklu stok), sonra stockIdAt.
+      // null → bu target için hassas veri yok.
+      Set<(int, int)>? preciseCellsFor(int t, int unitIdx) {
+        if (activeStepsAt != null) {
+          return {for (final step in activeStepsAt(job, t)) (unitIdx, step)};
+        }
+        final stockIds = stockIdsAt?.call(job, t) ?? const <int>[];
+        if (stockIds.isNotEmpty) {
+          final assignment = assignmentAt(job, t);
+          return {
+            for (final stockId in stockIds)
+              if (stepNoForStock(assignment, stockId) case final step?) (unitIdx, step),
+          };
+        }
+        final step = stepNoFor(job, t);
+        return step != null ? {(unitIdx, step)} : null;
+      }
+
       for (int t = 0; t < currentTargetIndex; t++) {
         final unitId = assignmentAt(job, t)?.drawerUnit?.id;
         if (unitId == null) continue;
@@ -209,41 +234,37 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
         if (idx < 0) continue;
         completedIndexes.add(idx);
 
-        // Geçmiş target'lar da birden fazla stockId taşıyabilir — hepsini
-        // tamamlanmış hücre olarak işaretle (verilmezse eski tek-stockId
-        // davranışı).
-        final stockIds = stockIdsAt?.call(job, t) ?? const <int>[];
-        if (stockIds.isNotEmpty) {
-          final assignment = assignmentAt(job, t);
-          for (final stockId in stockIds) {
-            final step = stepNoForStock(assignment, stockId);
-            if (step != null) completedCells.add((idx, step));
+        final cells = preciseCellsFor(t, idx);
+        if (cells == null) continue;
+
+        // activeStepsAt kullanan ekranda girdisiz tamamlanmış target: panel
+        // hasPreciseData'yı çekmece bazında hesapladığı için sütun fallback'i
+        // devreye girmez — tüm sütunu tamamlanmış işaretle.
+        if (cells.isEmpty && activeStepsAt != null && !group.isKubik) {
+          final steps = group.slot.drawerConfig?.numberOfSteps ?? 0;
+          for (var s = 1; s <= steps; s++) {
+            completedCells.add((idx, s));
           }
         } else {
-          final step = stepNoFor(job, t);
-          if (step != null) completedCells.add((idx, step));
+          completedCells.addAll(cells);
         }
       }
 
       final targetCount = targetCountOf(job);
       if (currentTargetIndex >= 0 && currentTargetIndex < targetCount) {
-        final assignment = assignmentAt(job, currentTargetIndex);
-        final activeId = assignment?.drawerUnit?.id;
+        final activeId = assignmentAt(job, currentTargetIndex)?.drawerUnit?.id;
         if (activeId != null) {
           final idx = group.units.indexWhere((u) => u.id == activeId);
           if (idx >= 0) {
             activeUnitIndex = idx;
 
-            final stockIds = stockIdsAt?.call(job, currentTargetIndex) ?? const <int>[];
-            if (stockIds.isNotEmpty) {
-              for (final stockId in stockIds) {
-                final step = stepNoForStock(assignment, stockId);
-                if (step != null) activeCells.add((idx, step));
-              }
-              // Geriye dönük uyumluluk: activeStepNo'yu ilk hücreye eşitle.
+            final cells = preciseCellsFor(currentTargetIndex, idx);
+            if (cells != null && (activeStepsAt != null || stockIdsAt != null)) {
+              // Boşsa panel tüm sütunu aktif gösterir (girdi yok varsayılanı).
+              activeCells.addAll(cells);
               activeStepNo = activeCells.isNotEmpty ? activeCells.first.$2 : null;
             } else {
-              activeStepNo = stepNoFor(job, currentTargetIndex);
+              activeStepNo = cells?.firstOrNull?.$2;
             }
           }
         }

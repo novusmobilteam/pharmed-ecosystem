@@ -119,9 +119,14 @@ class _RightPanel extends StatelessWidget {
         return Column(
           children: [
             _RefillListHeaderView(key: Key('header'), item: item),
+            CabinOperationSearchField(
+              onChanged: selectionNotifier.onSearchChanged,
+              hintText: context.l10n.unload_hint_searchMedicine,
+            ),
+            SizedBox(height: 6.0),
             Expanded(
               child: RefillListTableView(
-                items: selectionNotifier.details,
+                items: selectionNotifier.visibleDetails,
                 selectedItems: selectionNotifier.selectedItems,
                 onToggle: (value) {
                   selectionNotifier.selectItem(value);
