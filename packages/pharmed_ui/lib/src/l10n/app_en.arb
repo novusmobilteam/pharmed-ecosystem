@@ -5436,5 +5436,25 @@
   }
 },
 "qrScan_operationRefund": "Medicine Refund",
-"@qrScan_operationRefund": {}
+"@qrScan_operationRefund": {},
+"movement_range_todaySegment": "Today",
+  "movement_range_last7DaysSegment": "Last 7 Days",
+  "movement_range_last30DaysSegment": "Last 30 Days",
+  "movement_range_customSegment": "Custom",
+  "movement_refreshTooltip": "Refresh",
+  "movement_filter_clearButton": "Clear Filters",
+  "movement_kpi_totalLabel": "Total Movements",
+  "movement_chart_timelineTitle": "Movements Over Time",
+  "movement_chart_typeDistributionTitle": "Distribution by Type",
+  "movement_chart_topMaterialsTitle": "Most Active Materials",
+  "movement_chart_cabinDistributionTitle": "Movements by Cabin",
+  "movement_chart_tooltipTotal": "Total: {count}",
+  "@movement_chart_tooltipTotal": { "placeholders": { "count": { "type": "int" } } },
+  "movement_chart_movementCount": "{count, plural, one{{count} movement} other{{count} movements}}",
+  "@movement_chart_movementCount": { "placeholders": { "count": { "type": "int" } } },
+  "movement_emptyTitle": "No Movements Found",
+  "movement_emptyDescription": "There are no stock movements for the selected range and filters.",
+  "movement_truncatedWarning": "Showing the first {count} records. Narrow the date range for complete results.",
+  "@movement_truncatedWarning": { "placeholders": { "count": { "type": "int" } } },
+  "movement_loadErrorMessage": "Stock movements could not be loaded."
 }

@@ -94,3 +94,7 @@ final refillListDataSourceProvider = Provider((ref) {
 final overdueDescriptionDataSourceProvider = Provider((ref) {
   return OverdueDescriptionRemoteDataSource(apiManager: ref.read(apiManagerProvider));
 });
+
+final reportDataSourceProvider = Provider((ref) {
+  return ReportRemoteDataSource(apiManager: ref.read(apiManagerProvider));
+});

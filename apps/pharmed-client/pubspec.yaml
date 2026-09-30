@@ -43,6 +43,7 @@ dependencies:
   phosphor_flutter: ^2.1.0
   collection: ^1.19.1
   window_manager: ^0.5.2
+  fl_chart: ^1.2.0
   
 
 dev_dependencies:

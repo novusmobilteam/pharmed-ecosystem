@@ -13433,6 +13433,108 @@ abstract class AppLocalizations {
     int required,
     int available,
   );
+
+  /// No description provided for @movement_range_todaySegment.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get movement_range_todaySegment;
+
+  /// No description provided for @movement_range_last7DaysSegment.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 Days'**
+  String get movement_range_last7DaysSegment;
+
+  /// No description provided for @movement_range_last30DaysSegment.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 Days'**
+  String get movement_range_last30DaysSegment;
+
+  /// No description provided for @movement_range_customSegment.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get movement_range_customSegment;
+
+  /// No description provided for @movement_refreshTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get movement_refreshTooltip;
+
+  /// No description provided for @movement_filter_clearButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filters'**
+  String get movement_filter_clearButton;
+
+  /// No description provided for @movement_kpi_totalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Movements'**
+  String get movement_kpi_totalLabel;
+
+  /// No description provided for @movement_chart_timelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Movements Over Time'**
+  String get movement_chart_timelineTitle;
+
+  /// No description provided for @movement_chart_typeDistributionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Distribution by Type'**
+  String get movement_chart_typeDistributionTitle;
+
+  /// No description provided for @movement_chart_topMaterialsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Active Materials'**
+  String get movement_chart_topMaterialsTitle;
+
+  /// No description provided for @movement_chart_cabinDistributionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Movements by Cabin'**
+  String get movement_chart_cabinDistributionTitle;
+
+  /// No description provided for @movement_chart_tooltipTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {count}'**
+  String movement_chart_tooltipTotal(int count);
+
+  /// No description provided for @movement_chart_movementCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} movement} other{{count} movements}}'**
+  String movement_chart_movementCount(int count);
+
+  /// No description provided for @movement_emptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Movements Found'**
+  String get movement_emptyTitle;
+
+  /// No description provided for @movement_emptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no stock movements for the selected range and filters.'**
+  String get movement_emptyDescription;
+
+  /// No description provided for @movement_truncatedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing the first {count} records. Narrow the date range for complete results.'**
+  String movement_truncatedWarning(int count);
+
+  /// No description provided for @movement_loadErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock movements could not be loaded.'**
+  String get movement_loadErrorMessage;
 }
 
 class _AppLocalizationsDelegate

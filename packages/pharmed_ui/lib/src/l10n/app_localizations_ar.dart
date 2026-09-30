@@ -7666,4 +7666,69 @@ class AppLocalizationsAr extends AppLocalizations {
   ) {
     return '$medicine: $required boxes are being refunded but only $available were scanned at intake. Reduce the refund quantity.';
   }
+
+  @override
+  String get movement_range_todaySegment => 'Today';
+
+  @override
+  String get movement_range_last7DaysSegment => 'Last 7 Days';
+
+  @override
+  String get movement_range_last30DaysSegment => 'Last 30 Days';
+
+  @override
+  String get movement_range_customSegment => 'Custom';
+
+  @override
+  String get movement_refreshTooltip => 'Refresh';
+
+  @override
+  String get movement_filter_clearButton => 'Clear Filters';
+
+  @override
+  String get movement_kpi_totalLabel => 'Total Movements';
+
+  @override
+  String get movement_chart_timelineTitle => 'Movements Over Time';
+
+  @override
+  String get movement_chart_typeDistributionTitle => 'Distribution by Type';
+
+  @override
+  String get movement_chart_topMaterialsTitle => 'Most Active Materials';
+
+  @override
+  String get movement_chart_cabinDistributionTitle => 'Movements by Cabin';
+
+  @override
+  String movement_chart_tooltipTotal(int count) {
+    return 'Total: $count';
+  }
+
+  @override
+  String movement_chart_movementCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count movements',
+      one: '$count movement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get movement_emptyTitle => 'No Movements Found';
+
+  @override
+  String get movement_emptyDescription =>
+      'There are no stock movements for the selected range and filters.';
+
+  @override
+  String movement_truncatedWarning(int count) {
+    return 'Showing the first $count records. Narrow the date range for complete results.';
+  }
+
+  @override
+  String get movement_loadErrorMessage =>
+      'Stock movements could not be loaded.';
 }

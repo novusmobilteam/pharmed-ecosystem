@@ -4804,5 +4804,25 @@
   }
 },
 "qrScan_operationRefund": "Retour de médicament",
-"@qrScan_operationRefund": {}
+"@qrScan_operationRefund": {},
+"movement_range_todaySegment": "Aujourd'hui",
+  "movement_range_last7DaysSegment": "7 derniers jours",
+  "movement_range_last30DaysSegment": "30 derniers jours",
+  "movement_range_customSegment": "Personnalisé",
+  "movement_refreshTooltip": "Actualiser",
+  "movement_filter_clearButton": "Effacer les filtres",
+  "movement_kpi_totalLabel": "Total des mouvements",
+  "movement_chart_timelineTitle": "Mouvements dans le temps",
+  "movement_chart_typeDistributionTitle": "Répartition par type",
+  "movement_chart_topMaterialsTitle": "Matériels les plus mouvementés",
+  "movement_chart_cabinDistributionTitle": "Mouvements par cabine",
+  "movement_chart_tooltipTotal": "Total : {count}",
+  "@movement_chart_tooltipTotal": { "placeholders": { "count": { "type": "int" } } },
+  "movement_chart_movementCount": "{count, plural, one{{count} mouvement} other{{count} mouvements}}",
+  "@movement_chart_movementCount": { "placeholders": { "count": { "type": "int" } } },
+  "movement_emptyTitle": "Aucun mouvement trouvé",
+  "movement_emptyDescription": "Aucun mouvement de stock pour la période et les filtres sélectionnés.",
+  "movement_truncatedWarning": "Affichage des {count} premiers enregistrements. Réduisez la période pour des résultats complets.",
+  "@movement_truncatedWarning": { "placeholders": { "count": { "type": "int" } } },
+  "movement_loadErrorMessage": "Impossible de charger les mouvements de stock."
 }

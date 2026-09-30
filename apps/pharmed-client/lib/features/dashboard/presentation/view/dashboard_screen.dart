@@ -9,6 +9,7 @@ import 'package:pharmed_client/features/job_list/view/job_list_screen.dart';
 import 'package:pharmed_client/features/my_patients/view/my_patients_screen.dart';
 import 'package:pharmed_client/features/refill/refill_view.dart';
 import 'package:pharmed_client/features/refund/refund_view.dart';
+import 'package:pharmed_client/features/stock_movement/view/stock_movement_screen.dart';
 import 'package:pharmed_client/features/unapplied_prescription/unapplied_prescription.dart';
 import 'package:pharmed_client/features/unload/unload_view.dart';
 import 'package:pharmed_client/features/unscanned_barcodes/view/unscanned_barcodes_screen.dart';
