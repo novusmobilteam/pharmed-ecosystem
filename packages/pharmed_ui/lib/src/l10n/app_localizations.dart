@@ -12875,7 +12875,7 @@ abstract class AppLocalizations {
   /// No description provided for @qrScan_operationRefund.
   ///
   /// In en, this message translates to:
-  /// **'Medication Return'**
+  /// **'Medicine Refund'**
   String get qrScan_operationRefund;
 
   /// No description provided for @qrScan_operationUnscanned.
@@ -13381,6 +13381,58 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A reason is required for overdue medications.'**
   String get intake_overdue_descriptionRequiredError;
+
+  /// No description provided for @refund_error_drawerNotResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Drawer could not be resolved for {count} item} other{Drawer could not be resolved for {count} items}}; refund was not started.'**
+  String refund_error_drawerNotResolved(int count);
+
+  /// No description provided for @enumCore_cabinOpModeRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get enumCore_cabinOpModeRefund;
+
+  /// No description provided for @cabinOperation_noEntryInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Place the items in the highlighted cell, then press Complete or close the drawer.'**
+  String get cabinOperation_noEntryInstruction;
+
+  /// No description provided for @refund_action_starting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting...'**
+  String get refund_action_starting;
+
+  /// No description provided for @refund_qr_confirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed to Refund'**
+  String get refund_qr_confirmButton;
+
+  /// No description provided for @refund_qr_progressChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine {current}/{total}'**
+  String refund_qr_progressChip(int current, int total);
+
+  /// No description provided for @refund_qr_notFromIntake.
+  ///
+  /// In en, this message translates to:
+  /// **'The box with serial number {serial} was not scanned when this medicine was taken. Remove the row and scan the correct box.'**
+  String refund_qr_notFromIntake(String serial);
+
+  /// No description provided for @refund_qr_insufficientIntakeCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'{medicine}: {required} boxes are being refunded but only {available} were scanned at intake. Reduce the refund quantity.'**
+  String refund_qr_insufficientIntakeCodes(
+    String medicine,
+    int required,
+    int available,
+  );
 }
 
 class _AppLocalizationsDelegate

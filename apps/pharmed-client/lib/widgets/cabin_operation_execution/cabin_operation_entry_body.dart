@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../core/mixins/mixins.dart';
 import 'cabin_operation_execution.dart';
 
 /// Kübik / birim doz ayrımını, göz etiketini ve SKT kurallarını tek yerde
 /// toplar. Ekranlar yalnızca işleme özgü olanı (etiketler, SKT modu) verir.
+///
+/// SKT alanı hem kübikte hem birim dozda [CabinOperationMode.requiresMiad]'e
+/// bağlıdır — SKT istemeyen işlemlerde (alım, boşaltma, imha, iade) çizilmez.
+///
+/// Kübik / birim doz ayrımı job'dan değil TARGET'tan yapılır: iade
+/// çekmecesi job'ı kübik tipte tanımlı olsa bile kapak bazında açılmadığı
+/// için job.isKubik false döner, ama target'ın girdisi kübik alanlarında
+/// (cubicSecondary) durur. Diğer işlemlerde ikisi her zaman aynıdır.
 class CabinOperationEntryBody extends StatelessWidget {
   const CabinOperationEntryBody({
     super.key,
@@ -34,7 +44,9 @@ class CabinOperationEntryBody extends StatelessWidget {
       return CabinIntakeEntryList(target: target, handlers: handlers, drawerGroup: drawerGroup, enabled: enabled);
     }
 
-    if (job.isKubik) {
+    if (!target.hasEditableEntry) return const _NoEntryHint();
+
+    if (target.isKubik) {
       final units = drawerGroup?.units ?? const [];
       final visualUnits = kubikUnitsInVisualOrder(units, columnCount: 4);
       final unitIndex = visualUnits.indexWhere((u) => u.id == target.assignment.drawerUnit?.id);
@@ -48,8 +60,9 @@ class CabinOperationEntryBody extends StatelessWidget {
         onCountChanged: countLabel != null ? handlers.onCubicCountChanged : null,
         secondaryLabel: secondaryLabel,
         onSecondaryChanged: secondaryLabel != null ? handlers.onCubicSecondaryChanged : null,
+        showMiad: mode.requiresMiad,
         onMiadChanged: handlers.onCubicMiadChanged,
-        miadRequired: target.hasEntry,
+        miadRequired: mode.requiresMiad && target.hasEntry,
       );
     }
 
@@ -65,6 +78,28 @@ class CabinOperationEntryBody extends StatelessWidget {
       onSecondaryChanged: secondaryLabel != null ? handlers.onStepSecondaryChanged : null,
       onCellMiadChanged: handlers.onStepMiadChanged,
       onSharedMiadChanged: handlers.onSingleMiadChanged,
+    );
+  }
+}
+
+class _NoEntryHint extends StatelessWidget {
+  const _NoEntryHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: MedSpacing.lg,
+        children: [
+          Icon(PhosphorIcons.handGrabbing(), size: 40, color: MedColors.text3),
+          Text(
+            context.l10n.cabinOperation_noEntryInstruction,
+            textAlign: TextAlign.center,
+            style: MedTextStyles.bodyMd(color: MedColors.text2),
+          ),
+        ],
+      ),
     );
   }
 }

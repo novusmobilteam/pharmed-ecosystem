@@ -14,6 +14,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 /// türetilir ("4 adet × 100 ml").
 ///
 /// DİKKAT: Değerlerin sırası değiştirilmemeli — index'e bağlı kullanımlar olabilir.
+/// Yeni değerler SONA eklenir.
 enum CabinOperationMode {
   /// İlaç Atama — gözlere ilaç veya hasta atanır, [CabinAssignment] oluşturulur.
   assign(),
@@ -26,7 +27,13 @@ enum CabinOperationMode {
 
   /// İlaç Alım — sayım (ilacın sayım tipine göre) + alınacak miktar (plandan,
   /// salt okunur). Stoktan çıkaran işlem: SKT girilmez.
-  intake(usesEntryTarget: true, hasCountField: true, hasSecondaryField: true, removesFromStock: true),
+  intake(
+    usesEntryTarget: true,
+    hasCountField: true,
+    hasSecondaryField: true,
+    removesFromStock: true,
+    isSecondaryReadOnly: true,
+  ),
 
   /// Çekmece Arıza — arıza/bakım kaydı oluşturulur, göz kilitlenir.
   fault(),
@@ -35,7 +42,12 @@ enum CabinOperationMode {
   unload(hasCountField: true, usesEntryTarget: true, hasSecondaryField: true),
 
   /// İlaç İmha — yalnızca imha edilecek miktar. Boşaltmayla aynı alan yapısı.
-  destruction(usesEntryTarget: true, hasSecondaryField: true, removesFromStock: true);
+  destruction(usesEntryTarget: true, hasSecondaryField: true, removesFromStock: true),
+
+  /// İlaç İade — yalnızca iade edilecek miktar (seçim ekranında belirlenir,
+  /// salt okunur). Sayım ve SKT yok; kayıt target girdisinden değil iade
+  /// kalemlerinden yapılır.
+  refund(usesEntryTarget: true, hasSecondaryField: true, isSecondaryReadOnly: true);
 
   /// Bu mod CabinOperationTarget ile mi çalışır.
   final bool usesEntryTarget;
@@ -54,12 +66,17 @@ enum CabinOperationMode {
   /// İkincil miktar stoktan düşülür; gözdeki mevcut miktarı aşamaz.
   final bool removesFromStock;
 
+  /// İkincil miktar önceki fazda belirlendi (alım: plan, iade: seçim) —
+  /// yürütmede gösterilir ama değiştirilemez.
+  final bool isSecondaryReadOnly;
+
   const CabinOperationMode({
     this.usesEntryTarget = false,
     this.hasCountField = false,
     this.hasSecondaryField = false,
     this.requiresMiad = false,
     this.removesFromStock = false,
+    this.isSecondaryReadOnly = false,
   });
 }
 
@@ -72,6 +89,7 @@ extension CabinOperationModeX on CabinOperationMode {
     CabinOperationMode.fault => contextlessL10n().enumCore_cabinOpModeFault,
     CabinOperationMode.unload => contextlessL10n().enumCore_cabinOpModeUnload,
     CabinOperationMode.destruction => contextlessL10n().enumCore_cabinInventoryTypeDisposalTitle,
+    CabinOperationMode.refund => contextlessL10n().enumCore_cabinOpModeRefund,
   };
 
   /// Mod'a özgü vurgu rengi — hover, banner, chip rengi için
@@ -83,6 +101,7 @@ extension CabinOperationModeX on CabinOperationMode {
     CabinOperationMode.fault => MedColors.red,
     CabinOperationMode.unload => MedColors.shadowDark,
     CabinOperationMode.destruction => MedColors.red,
+    CabinOperationMode.refund => MedColors.purple,
   };
 
   /// İşlem sonrası gözde olacak miktar (adet). Sayımda ve target
@@ -90,6 +109,8 @@ extension CabinOperationModeX on CabinOperationMode {
   double? resultQuantity({required double count, required double secondary, required double recorded}) =>
       switch (this) {
         CabinOperationMode.refill => count + secondary,
+        // İadede sayım yok — sonuç kayıttaki stoğun üzerine eklenir.
+        CabinOperationMode.refund => recorded + secondary,
         CabinOperationMode.unload || CabinOperationMode.destruction => recorded - secondary,
         _ => null,
       };

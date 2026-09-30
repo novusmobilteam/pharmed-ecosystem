@@ -7310,7 +7310,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qrScan_operationIntake => 'Medication Intake';
 
   @override
-  String get qrScan_operationRefund => 'Medication Return';
+  String get qrScan_operationRefund => 'Medicine Refund';
 
   @override
   String get qrScan_operationUnscanned => 'Unscanned QR Codes';
@@ -7622,4 +7622,47 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get intake_overdue_descriptionRequiredError =>
       'A reason is required for overdue medications.';
+
+  @override
+  String refund_error_drawerNotResolved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Drawer could not be resolved for $count items',
+      one: 'Drawer could not be resolved for $count item',
+    );
+    return '$_temp0; refund was not started.';
+  }
+
+  @override
+  String get enumCore_cabinOpModeRefund => 'Refund';
+
+  @override
+  String get cabinOperation_noEntryInstruction =>
+      'Place the items in the highlighted cell, then press Complete or close the drawer.';
+
+  @override
+  String get refund_action_starting => 'Starting...';
+
+  @override
+  String get refund_qr_confirmButton => 'Proceed to Refund';
+
+  @override
+  String refund_qr_progressChip(int current, int total) {
+    return 'Medicine $current/$total';
+  }
+
+  @override
+  String refund_qr_notFromIntake(String serial) {
+    return 'The box with serial number $serial was not scanned when this medicine was taken. Remove the row and scan the correct box.';
+  }
+
+  @override
+  String refund_qr_insufficientIntakeCodes(
+    String medicine,
+    int required,
+    int available,
+  ) {
+    return '$medicine: $required boxes are being refunded but only $available were scanned at intake. Reduce the refund quantity.';
+  }
 }

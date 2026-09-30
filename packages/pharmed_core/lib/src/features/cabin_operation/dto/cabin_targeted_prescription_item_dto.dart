@@ -1,5 +1,3 @@
-// [SWREQ-CORE-CABIN-ITEM-001-DTO] [IEC 62304 §5.5]
-//
 // PrescriptionDetail servis kaydının, CabinTargetedPrescriptionItem'ın
 // ihtiyaç duyduğu alt kümesi — servis JSON'unu (alım/iade endpoint'leri)
 // birebir yansıtır. Tüm alanlar nullable: servis eksik/null dönebilir,
@@ -31,6 +29,7 @@ class CabinTargetedPrescriptionItemDto {
     this.collectStationId,
     this.collectStationName,
     this.isCollectedAtCurrentStation = false,
+    this.qrCode,
   });
 
   final int? id;
@@ -59,6 +58,10 @@ class CabinTargetedPrescriptionItemDto {
   final String? collectStationName;
   final bool isCollectedAtCurrentStation;
 
+  /// Alımda okutulan karekodlar, virgülle ayrılmış ham hâliyle. Ayrıştırma
+  /// mapper'da yapılır (RefundQrCodeMatcher.parseList).
+  final String? qrCode;
+
   factory CabinTargetedPrescriptionItemDto.fromJson(Map<String, dynamic> json) {
     return CabinTargetedPrescriptionItemDto(
       id: json['id'] as int?,
@@ -84,6 +87,7 @@ class CabinTargetedPrescriptionItemDto {
       collectStationId: json['collectionStationId'] as int?,
       collectStationName: json['collectionStationName'] as String?,
       isCollectedAtCurrentStation: json['isCollectedAtCurrentStation'] as bool? ?? false,
+      qrCode: json['qrCode'] as String?,
     );
   }
 
@@ -100,6 +104,7 @@ class CabinTargetedPrescriptionItemDto {
       'material': medicine?.toJson(),
       'cabinDrawrQuantity': cabinAssignment?.toJson(),
       'cabinDrawrStock': cabinDrawerStock?.toJson(),
+      'qrCode': qrCode,
     };
   }
 }

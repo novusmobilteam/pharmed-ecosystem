@@ -9881,5 +9881,71 @@
   "intake_overdue_descriptionRequiredError": "Zamanı geçmiş ilaçlar için açıklama girilmelidir.",
   "@intake_overdue_descriptionRequiredError": {
     "description": "Error when intake starts without descriptions for overdue items"
+  },
+  "refund_error_drawerNotResolved": "{count} kalemin çekmecesi bulunamadı, iade başlatılmadı.",
+"@refund_error_drawerNotResolved": {
+  "description": "Snackbar shown when the refund queue is not started because the physical drawer of some checked items could not be resolved",
+  "placeholders": {
+    "count": { "type": "int" }
   }
+},
+"enumCore_cabinOpModeRefund": "İade",
+"@enumCore_cabinOpModeRefund": {
+  "description": "Label of the refund value of CabinOperationMode"
+},
+"cabinOperation_noEntryInstruction": "İlaçları işaretli göze yerleştirin, ardından Tamamla'ya basın ya da çekmeceyi kapatın.",
+"@cabinOperation_noEntryInstruction": {
+  "description": "Shown in the execution panel instead of the entry form when the operation has no editable fields (e.g. refund); the user only places items and completes"
+},
+"refund_action_start": "İadeyi Başlat",
+"@refund_action_start": {
+  "description": "Footer button on the refund selection screen that runs checks for the selected hardware refund items and starts the drawer queue"
+},
+"refund_action_starting": "Başlatılıyor...",
+"@refund_action_starting": {
+  "description": "Label of the refund start button while checks for the selected items are running"
+},
+"refund_error_drawerNotResolved": "{count} kalemin çekmecesi bulunamadı, iade başlatılmadı.",
+"@refund_error_drawerNotResolved": {
+  "description": "Snackbar shown when the refund queue is not started because the physical drawer of some checked items could not be resolved",
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+"enumCore_cabinOpModeRefund": "İade",
+"@enumCore_cabinOpModeRefund": {
+  "description": "Label of the refund value of CabinOperationMode"
+},
+"refund_qr_confirmButton": "İadeye Geç",
+"@refund_qr_confirmButton": {
+  "description": "Confirm button of the QR scan dialog for the last medicine before a hardware refund; confirming starts the drawer queue"
+},
+"refund_qr_progressChip": "{current}/{total}. ilaç",
+"@refund_qr_progressChip": {
+  "description": "Chip in the QR scan dialog showing which medicine is being scanned when several refund items require QR codes",
+  "placeholders": {
+    "current": { "type": "int" },
+    "total": { "type": "int" }
+  }
+},
+"refund_qr_notFromIntake": "{serial} seri numaralı kutu bu ilacın alımında okutulmamış. Satırı silip doğru kutuyu okutun.",
+"@refund_qr_notFromIntake": {
+  "description": "Submit error in the refund QR scan dialog when a scanned box was not among the QR codes scanned at intake",
+  "placeholders": {
+    "serial": { "type": "String" }
+  }
+},
+"refund_qr_insufficientIntakeCodes": "{medicine}: {required} kutu iade edilmek isteniyor ancak alımda {available} kutu okutulmuş. İade miktarını düşürün.",
+"@refund_qr_insufficientIntakeCodes": {
+  "description": "Error when the refund quantity requires more boxes than were QR-scanned at intake, so the QR gate cannot be satisfied",
+  "placeholders": {
+    "medicine": { "type": "String" },
+    "required": { "type": "int" },
+    "available": { "type": "int" }
+  }
+},
+"qrScan_operationRefund": "İlaç İade",
+"@qrScan_operationRefund": {
+  "description": "Operation name shown in the QR scan dialog subtitle for the refund screen"
+}
 }

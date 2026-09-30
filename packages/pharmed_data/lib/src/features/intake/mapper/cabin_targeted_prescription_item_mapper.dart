@@ -24,6 +24,7 @@ class CabinTargetedRxItemMapper {
       collectStationId: dto.collectStationId,
       collectStationName: dto.collectStationName,
       isCollectedAtCurrentStation: dto.isCollectedAtCurrentStation,
+      intakeQrCodes: RefundQrCodeMatcher.parseList(dto.qrCode),
     );
   }
 

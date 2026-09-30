@@ -174,6 +174,18 @@ final class _ModeConfig {
       badgeBg: MedColors.blueLight,
     ),
 
-    CabinOperationMode.destruction => throw UnimplementedError(),
+    CabinOperationMode.destruction => _ModeConfig(
+      title: context.l10n.operationPanel_title_unload,
+      badge: context.l10n.operationPanel_badge_unload,
+      accentColor: MedColors.blueDark,
+      badgeBg: MedColors.blueLight,
+    ),
+
+    CabinOperationMode.refund => _ModeConfig(
+      title: context.l10n.operationPanel_title_unload,
+      badge: context.l10n.operationPanel_badge_unload,
+      accentColor: MedColors.blueDark,
+      badgeBg: MedColors.blueLight,
+    ),
   };
 }

@@ -5390,5 +5390,51 @@
   "intake_overdue_auditNote": "Reasons are recorded with user and time information.",
   "intake_overdue_cancelButton": "Cancel",
   "intake_overdue_confirmButton": "Confirm and Continue",
-  "intake_overdue_descriptionRequiredError": "A reason is required for overdue medications."
+  "intake_overdue_descriptionRequiredError": "A reason is required for overdue medications.",
+  "refund_error_drawerNotResolved": "{count, plural, one{Drawer could not be resolved for {count} item} other{Drawer could not be resolved for {count} items}}; refund was not started.",
+"@refund_error_drawerNotResolved": {
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+"enumCore_cabinOpModeRefund": "Refund",
+"@enumCore_cabinOpModeRefund": {},
+"cabinOperation_noEntryInstruction": "Place the items in the highlighted cell, then press Complete or close the drawer.",
+"refund_action_start": "Start Refund",
+"@refund_action_start": {},
+"refund_action_starting": "Starting...",
+"@refund_action_starting": {},
+"refund_error_drawerNotResolved": "{count, plural, one{Drawer could not be resolved for {count} item} other{Drawer could not be resolved for {count} items}}; refund was not started.",
+"@refund_error_drawerNotResolved": {
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+"enumCore_cabinOpModeRefund": "Refund",
+"@enumCore_cabinOpModeRefund": {},
+"refund_qr_confirmButton": "Proceed to Refund",
+"@refund_qr_confirmButton": {},
+"refund_qr_progressChip": "Medicine {current}/{total}",
+"@refund_qr_progressChip": {
+  "placeholders": {
+    "current": { "type": "int" },
+    "total": { "type": "int" }
+  }
+},
+"refund_qr_notFromIntake": "The box with serial number {serial} was not scanned when this medicine was taken. Remove the row and scan the correct box.",
+"@refund_qr_notFromIntake": {
+  "placeholders": {
+    "serial": { "type": "String" }
+  }
+},
+"refund_qr_insufficientIntakeCodes": "{medicine}: {required} boxes are being refunded but only {available} were scanned at intake. Reduce the refund quantity.",
+"@refund_qr_insufficientIntakeCodes": {
+  "placeholders": {
+    "medicine": { "type": "String" },
+    "required": { "type": "int" },
+    "available": { "type": "int" }
+  }
+},
+"qrScan_operationRefund": "Medicine Refund",
+"@qrScan_operationRefund": {}
 }

@@ -143,6 +143,10 @@ class CabinOperationTarget implements DrawerJobTarget {
 
   bool get showsCount => mode.hasCountField && countType != CountType.noCount;
 
+  /// Kullanıcının bu hedefte girebileceği bir alan var mı (sayım, düzenlenebilir
+  /// ikincil miktar ya da SKT). Yoksa giriş gövdesi çizilmez — iade.
+  bool get hasEditableEntry => showsCount || (mode.hasSecondaryField && !mode.isSecondaryReadOnly) || mode.requiresMiad;
+
   factory CabinOperationTarget.fromAssignment(
     MedicineAssignment assignment,
     CabinOperationMode mode, {

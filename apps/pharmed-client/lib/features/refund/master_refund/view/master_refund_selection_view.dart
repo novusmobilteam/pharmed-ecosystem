@@ -1,25 +1,33 @@
 part of 'master_refund_view.dart';
 
 class MasterRefundSelectionView extends StatelessWidget {
-  const MasterRefundSelectionView({super.key, required this.notifier, required this.menu, required this.onStartRefund});
+  const MasterRefundSelectionView({
+    super.key,
+    required this.stationContext,
+    required this.notifier,
+    required this.onStartRefund,
+  });
 
-  final MenuItem menu;
+  final StationCabinsContext stationContext;
   final MasterRefundSelectionNotifier notifier;
   final VoidCallback onStartRefund;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 16.0,
+      spacing: MedSpacing.xl,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ScreenTitle(menu: menu),
+        ScreenTitle(menu: stationContext.menu),
         Expanded(
           child: Row(
-            spacing: 12.0,
+            spacing: MedSpacing.lg,
             children: [
-              Expanded(flex: 2, child: _LeftPanel(notifier: notifier)),
-              Expanded(flex: 7, child: _RightPanel(notifier, onStartRefund)),
+              Expanded(flex: 2, child: _RefundPatientPanel(notifier: notifier)),
+              Expanded(
+                flex: 7,
+                child: _RefundRightPanel(notifier: notifier, onStartRefund: onStartRefund),
+              ),
             ],
           ),
         ),
@@ -28,260 +36,126 @@ class MasterRefundSelectionView extends StatelessWidget {
   }
 }
 
-class _LeftPanel extends StatelessWidget {
-  const _LeftPanel({required this.notifier});
+/// Sol panel. Şimdilik mevcut HospitalizationPanel ile devam ediyor —
+/// alımdaki PatientSelectionView'a geçiş ayrı bir adım.
+class _RefundPatientPanel extends StatelessWidget {
+  const _RefundPatientPanel({required this.notifier});
 
   final MasterRefundSelectionNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    // final myIds = notifier.myPatientHospitalizationIds;
-    return HospitalizationPanel(
-      cellBuilder: (hosp) {
-        final hospId = hosp.id;
-        bool isSelected = notifier.selectedHospitalization?.id == hospId;
-        return PatientSelectionCard(
+    return IgnorePointer(
+      ignoring: notifier.isStartingRefund,
+      child: HospitalizationPanel(
+        cellBuilder: (hosp) => PatientSelectionCard(
           hospitalization: hosp,
           onTap: () => notifier.selectHospitalization(hosp),
           showChevron: false,
-          isSelected: isSelected,
-        );
-      },
-      onTypeChanged: () => notifier.clearSelection(),
+          isSelected: notifier.selectedHospitalization?.id == hosp.id,
+        ),
+        onTypeChanged: notifier.clearSelection,
+      ),
     );
   }
 }
 
-class _RightPanel extends StatelessWidget {
-  const _RightPanel(this.notifier, this.onStartRefund);
+class _RefundRightPanel extends StatelessWidget {
+  const _RefundRightPanel({required this.notifier, required this.onStartRefund});
 
   final MasterRefundSelectionNotifier notifier;
   final VoidCallback onStartRefund;
 
   @override
   Widget build(BuildContext context) {
-    final title = notifier.selectedHospitalization != null
-        ? notifier.selectedHospitalization?.patient?.fullName ?? '-'
-        : 'Hasta Seçilmedi';
-    return Container(
-      alignment: Alignment.center,
-      decoration: MedDecoration.panelDecoration,
-      child: Builder(
-        builder: (context) {
-          if (notifier.isLoading(notifier.fetchRefundablesOp)) return Center(child: MedLoadingIndicator());
-          if (notifier.selectedHospitalization == null) {
-            return Center(
-              child: EmptySelectionView(
-                title: context.l10n.common_noPatientSelectedEmptyTitle,
-                description: context.l10n.refund_selectionEmptyDescription,
-              ),
-            );
-          }
-          if (notifier.selectedHospitalization != null && notifier.refundables.isEmpty) {
-            return Center(
-              child: NoDataView(
-                title: context.l10n.refund_noRefundableDrugs,
-                subtitle: context.l10n.refund_selectPatient,
-                iconData: PhosphorIcons.arrowUUpLeft(),
-              ),
-            );
-          }
+    final hosp = notifier.selectedHospitalization;
 
-          return Column(
-            spacing: 4.0,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: MedSpacing.insetXl,
-                child: Text(title, style: MedTextStyles.titleSm()),
-              ),
-              Divider(height: 0),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (hosp != null) HospitalizationInfoCard(key: ValueKey(hosp.id), hospitalization: hosp),
 
-              Expanded(child: _RefundablesListView(notifier)),
-              // Footer
-              if (notifier.refundables.isNotEmpty)
-                Container(
-                  alignment: Alignment.centerRight,
-                  height: 60,
-                  decoration: BoxDecoration(color: MedColors.surface2),
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: MedButton(
-                      label: notifier.isStartingRefund ? 'Başlatılıyor...' : 'İadeyi Başlat',
-                      size: MedButtonSize.sm,
-                      suffixIcon: Icon(PhosphorIcons.arrowRight()),
-                      isLoading: notifier.isStartingRefund,
-                      onPressed: notifier.selectedItems.isEmpty || notifier.isStartingRefund
-                          ? null
-                          : () => onStartRefund(),
-                    ),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
+        Expanded(
+          child: Container(
+            padding: MedSpacing.insetLg,
+            decoration: MedDecoration.panelDecoration,
+            child: _RefundablesContent(notifier: notifier),
+          ),
+        ),
+
+        // Footer yalnızca seçim varken görünür; başlatma sürerken de görünür
+        // kalır (buton loading gösterir), alımdaki gibi kaybolmaz.
+        if (notifier.hasSelection) ...[
+          const SizedBox(height: MedSpacing.sm),
+          Container(
+            padding: MedSpacing.insetLg,
+            alignment: Alignment.centerRight,
+            decoration: MedDecoration.panelDecoration,
+            child: MedButton(
+              label: notifier.isStartingRefund ? context.l10n.refund_action_start : context.l10n.refund_action_start,
+              suffixIcon: Icon(PhosphorIcons.arrowRight()),
+              isLoading: notifier.isStartingRefund,
+              onPressed: notifier.canStart ? onStartRefund : null,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
 
-class _RefundablesListView extends StatelessWidget {
-  const _RefundablesListView(this.notifier);
+class _RefundablesContent extends StatelessWidget {
+  const _RefundablesContent({required this.notifier});
 
   final MasterRefundSelectionNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      shrinkWrap: true,
-      itemCount: notifier.refundables.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return Divider(height: 1, color: MedColors.border);
-      },
-      itemBuilder: (BuildContext context, int index) {
-        final item = notifier.refundables.elementAt(index);
-        final bool isSelected = notifier.selectedItems.contains(item);
-        final foreground = isSelected ? Colors.white : MedColors.text;
-        final refundType = item.medicine?.returnType;
-        final bool showCheckbox =
-            (refundType?.requiresCabinHardware ?? false) && (item.medicine?.canRefundable ?? false);
+    if (notifier.selectedHospitalization == null) {
+      return EmptySelectionView(
+        title: context.l10n.common_noPatientSelectedEmptyTitle,
+        description: context.l10n.refund_selectionEmptyDescription,
+      );
+    }
 
-        final currentAmount = notifier.amountFor(item.id);
-        final maxAmount = notifier.maxAmountFor(item.id);
-        final directStatus = notifier.itemStatuses[item.id];
-        final isDirectLoading = directStatus is RefundCheckLoading;
+    if (notifier.isFetchingRefundables) {
+      return Center(child: MedLoadingIndicator());
+    }
 
-        final bool isRefundable = (item.medicine?.canRefundable ?? false) && item.isCollectedAtCurrentStation;
-        final displayReturnType = isRefundable ? refundType : ReturnType.nonRefundable;
-
-        return GestureDetector(
-          onTap: () => notifier.selectRefundableItem(item),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              spacing: 12.0,
-              children: [
-                if (isRefundable && showCheckbox)
-                  MedCheckbox(value: isSelected, onChanged: (_) {}, size: MedCheckboxSize.md)
-                else if (isRefundable && !showCheckbox)
-                  MedRectangleIconButton(
-                    iconData: PhosphorIcons.lightning(),
-                    size: 22,
-                    color: MedColors.greenLight,
-                    iconColor: MedColors.green,
-                  ),
-
-                // Doz
-                Container(
-                  height: 45,
-                  width: 45,
-                  //padding: MedSpacing.insetLg,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: isSelected ? MedColors.blue : MedColors.surface2,
-                    borderRadius: MedRadius.lgAll,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(item.dosePiece.formatFractional.toString(), style: MedTextStyles.titleMd(color: foreground)),
-                      Text(
-                        item.medicine?.operationUnitLocalized(context) ?? '',
-                        style: MedTextStyles.bodySm(color: foreground),
-                      ),
-                    ],
-                  ),
-                ),
-                // İlaç Bilgileri
-                Column(
-                  spacing: 4.0,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(item.medicineName, style: MedTextStyles.titleSm()),
-                    Row(
-                      spacing: 6.0,
-                      children: [
-                        Text(item.medicineBarcode, style: MedTextStyles.monoSm()),
-                        Text('-', style: MedTextStyles.monoSm()),
-                        Text(
-                          context.l10n.refund_appliedDateLabel(item.time.formattedDateTime),
-                          style: MedTextStyles.monoSm(),
-                        ),
-
-                        Text('-', style: MedTextStyles.monoSm()),
-                        Text(
-                          context.l10n.refund_performedByLabel(item.lastMovement?.performedBy?.fullName ?? ''),
-                          style: MedTextStyles.monoSm(),
-                        ),
-                      ],
-                    ),
-
-                    Row(
-                      spacing: 6.0,
-                      children: [
-                        MedChip(
-                          label: displayReturnType?.label ?? '-',
-                          background: displayReturnType?.bakcgroundColor,
-                          foreground: displayReturnType?.foregroundColor,
-                          showBorder: false,
-                          shape: MedChipShape.pill,
-                        ),
-                        if (item.collectStationName != null)
-                          MedChip(
-                            label: item.collectStationName!,
-                            background: MedColors.purple,
-                            foreground: Colors.white,
-                            showBorder: false,
-                            shape: MedChipShape.pill,
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-                Spacer(),
-                if (isRefundable)
-                  SizedBox(
-                    width: 130,
-                    child: MedDoseStepper(
-                      type: DoseStepperType.compact,
-                      value: currentAmount.toDouble(),
-                      min: 0.01,
-                      max: maxAmount.toDouble(),
-                      onChanged: (v) => notifier.updateAmount(
-                        item.id,
-                        v,
-                        onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                      ),
-                      unit: item.medicine?.operationUnitLocalized(context) ?? '',
-                    ),
-                  ),
-
-                if (!showCheckbox && isRefundable)
-                  MedButton(
-                    label: isDirectLoading
-                        ? context.l10n.refund_directReturnSendingLabel
-                        : context.l10n.refund_directReturnButton,
-                    size: MedButtonSize.sm,
-                    variant: MedButtonVariant.success,
-                    prefixIcon: Icon(PhosphorIcons.arrowUUpLeft()),
-                    isLoading: isDirectLoading,
-                    onPressed: isDirectLoading
-                        ? null
-                        : () async {
-                            notifier.completeDirectRefund(
-                              item.id,
-                              onSuccess: () => MessageUtils.showSuccessSnackbar(
-                                context,
-                                context.l10n.common_operationSuccessMessage,
-                              ),
-                              onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
-                            );
-                          },
-                  ),
-              ],
+    // Hata artık tüm ekranı değil yalnızca bu paneli kaplar — hasta listesi
+    // erişilebilir kalır, kullanıcı tekrar deneyebilir ya da başka hasta seçebilir.
+    if (notifier.isFetchFailed) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: MedSpacing.lg,
+          children: [
+            EmptyStateWidget(variant: EmptyStateVariant.networkError),
+            MedButton(
+              label: context.l10n.common_retryButton,
+              size: MedButtonSize.sm,
+              prefixIcon: Icon(PhosphorIcons.arrowClockwise()),
+              onPressed: notifier.retryFetch,
             ),
-          ),
-        );
+          ],
+        ),
+      );
+    }
+
+    if (notifier.refundables.isEmpty) {
+      return NoDataView(
+        title: context.l10n.refund_noRefundableDrugs,
+        subtitle: context.l10n.refund_selectPatient,
+        iconData: PhosphorIcons.arrowUUpLeft(),
+      );
+    }
+
+    return ListView.separated(
+      itemCount: notifier.refundables.length,
+      separatorBuilder: (_, __) => Divider(height: 1, color: MedColors.border),
+      itemBuilder: (_, index) {
+        final item = notifier.refundables[index];
+        return RefundableItemCard(key: ValueKey(item.id), notifier: notifier, item: item);
       },
     );
   }

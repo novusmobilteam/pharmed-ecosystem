@@ -654,6 +654,8 @@ class _MasterCabinCell extends StatelessWidget {
     CabinOperationMode.census || CabinOperationMode.refill => stock != null ? _stockFillContent() : _assignContent(),
     CabinOperationMode.fault => const SizedBox.shrink(),
     CabinOperationMode.destruction => const SizedBox.shrink(),
+
+    CabinOperationMode.refund => const SizedBox.shrink(),
   };
 
   Widget _assignContent() {
@@ -780,6 +782,8 @@ class _MasterCellLegend extends StatelessWidget {
     ],
     // TODO: Handle this case.
     CabinOperationMode.destruction => throw UnimplementedError(),
+    // TODO: Handle this case.
+    CabinOperationMode.refund => throw UnimplementedError(),
   };
 }
 
