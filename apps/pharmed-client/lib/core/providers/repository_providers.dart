@@ -329,3 +329,32 @@ final overdueDescriptionRepositoryProvider = Provider<IOverdueDescriptionReposit
     ),
   };
 });
+
+final reportRepositoryProvider = Provider<IReportRepository>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock => ReportRepositoryImpl(
+      dataSource: ref.read(reportDataSourceProvider),
+      cabinStockMapper: CabinStockMapper(),
+      stockTransactionMapper: StockTransactionMapper(),
+      hospitalStockMapper: HospitalStockMapper(),
+      prescriptionItemMapper: PrescriptionItemMapper(),
+      summaryMapper: UserAuthorizationSummaryMapper(),
+      authorizationDetailMapper: UserAuthorizationDetailMapper(),
+      cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
+      stationTransactionMapper: StationTransactionMapper(),
+      stepMapper: StationTransactionStepMapper(),
+    ),
+    AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
+      dataSource: ref.read(reportDataSourceProvider),
+      cabinStockMapper: CabinStockMapper(),
+      stockTransactionMapper: StockTransactionMapper(),
+      hospitalStockMapper: HospitalStockMapper(),
+      prescriptionItemMapper: PrescriptionItemMapper(),
+      summaryMapper: UserAuthorizationSummaryMapper(),
+      authorizationDetailMapper: UserAuthorizationDetailMapper(),
+      cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
+      stationTransactionMapper: StationTransactionMapper(),
+      stepMapper: StationTransactionStepMapper(),
+    ),
+  };
+});

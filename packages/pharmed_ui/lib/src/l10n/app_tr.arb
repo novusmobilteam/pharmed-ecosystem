@@ -9947,5 +9947,48 @@
 "qrScan_operationRefund": "İlaç İade",
 "@qrScan_operationRefund": {
   "description": "Operation name shown in the QR scan dialog subtitle for the refund screen"
-}
+},
+"movement_range_todaySegment": "Bugün",
+  "@movement_range_todaySegment": { "description": "Stock movements screen: date range segment for today" },
+  "movement_range_last7DaysSegment": "Son 7 Gün",
+  "@movement_range_last7DaysSegment": { "description": "Stock movements screen: date range segment for the last 7 days" },
+  "movement_range_last30DaysSegment": "Son 30 Gün",
+  "@movement_range_last30DaysSegment": { "description": "Stock movements screen: date range segment for the last 30 days" },
+  "movement_range_customSegment": "Özel",
+  "@movement_range_customSegment": { "description": "Stock movements screen: date range segment that opens a custom range picker" },
+  "movement_refreshTooltip": "Yenile",
+  "@movement_refreshTooltip": { "description": "Stock movements screen: tooltip of the refresh button in the toolbar" },
+  "movement_filter_clearButton": "Filtreleri Temizle",
+  "@movement_filter_clearButton": { "description": "Stock movements screen: clears movement type and cabin filter chips" },
+  "movement_kpi_totalLabel": "Toplam Hareket",
+  "@movement_kpi_totalLabel": { "description": "Stock movements screen: label of the total movement count (KPI card and donut center)" },
+  "movement_chart_timelineTitle": "Zaman İçinde Hareketler",
+  "@movement_chart_timelineTitle": { "description": "Stock movements screen: title of the stacked bar chart over time" },
+  "movement_chart_typeDistributionTitle": "Tipe Göre Dağılım",
+  "@movement_chart_typeDistributionTitle": { "description": "Stock movements screen: title of the donut chart by movement type" },
+  "movement_chart_topMaterialsTitle": "En Çok Hareket Gören Malzemeler",
+  "@movement_chart_topMaterialsTitle": { "description": "Stock movements screen: title of the ranked list of materials with the most movements" },
+  "movement_chart_cabinDistributionTitle": "Kabine Göre Hareketler",
+  "@movement_chart_cabinDistributionTitle": { "description": "Stock movements screen: title of the ranked list of movements per cabin; rows are tappable to filter" },
+  "movement_chart_tooltipTotal": "Toplam: {count}",
+  "@movement_chart_tooltipTotal": {
+    "description": "Stock movements screen: total line in the timeline chart tooltip",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "movement_chart_movementCount": "{count, plural, other{{count} hareket}}",
+  "@movement_chart_movementCount": {
+    "description": "Stock movements screen: movement count shown at the end of a ranked material row",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "movement_emptyTitle": "Hareket Bulunamadı",
+  "@movement_emptyTitle": { "description": "Stock movements screen: empty state title when the range has no movements" },
+  "movement_emptyDescription": "Seçilen aralık ve filtrelerde stok hareketi yok.",
+  "@movement_emptyDescription": { "description": "Stock movements screen: empty state description, also shown inside empty chart cards" },
+  "movement_truncatedWarning": "İlk {count} kayıt gösteriliyor. Tüm sonuçlar için tarih aralığını daraltın.",
+  "@movement_truncatedWarning": {
+    "description": "Stock movements screen: banner shown when the fetch hit the client-side record cap",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "movement_loadErrorMessage": "Stok hareketleri yüklenemedi.",
+  "@movement_loadErrorMessage": { "description": "Stock movements screen: fallback error message when loading fails" }
 }

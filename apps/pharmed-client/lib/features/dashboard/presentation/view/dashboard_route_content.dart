@@ -101,6 +101,7 @@ class DashboardRouteContent extends ConsumerWidget {
               stationCabinsContext != null
                   ? RefillListView(stationContext: stationCabinsContext)
                   : const SizedBox.shrink(),
+            'stock-movements' => StockMovementScreen(),
             _ => Center(child: Text(context.l10n.common_pageNotFound)),
           },
         ),

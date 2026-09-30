@@ -1848,6 +1848,23 @@
     "refund_qr_confirmButton",
     "refund_qr_progressChip",
     "refund_qr_notFromIntake",
-    "refund_qr_insufficientIntakeCodes"
+    "refund_qr_insufficientIntakeCodes",
+    "movement_range_todaySegment",
+    "movement_range_last7DaysSegment",
+    "movement_range_last30DaysSegment",
+    "movement_range_customSegment",
+    "movement_refreshTooltip",
+    "movement_filter_clearButton",
+    "movement_kpi_totalLabel",
+    "movement_chart_timelineTitle",
+    "movement_chart_typeDistributionTitle",
+    "movement_chart_topMaterialsTitle",
+    "movement_chart_cabinDistributionTitle",
+    "movement_chart_tooltipTotal",
+    "movement_chart_movementCount",
+    "movement_emptyTitle",
+    "movement_emptyDescription",
+    "movement_truncatedWarning",
+    "movement_loadErrorMessage"
   ]
 }

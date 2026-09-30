@@ -7600,4 +7600,68 @@ class AppLocalizationsTr extends AppLocalizations {
   ) {
     return '$medicine: $required kutu iade edilmek isteniyor ancak alımda $available kutu okutulmuş. İade miktarını düşürün.';
   }
+
+  @override
+  String get movement_range_todaySegment => 'Bugün';
+
+  @override
+  String get movement_range_last7DaysSegment => 'Son 7 Gün';
+
+  @override
+  String get movement_range_last30DaysSegment => 'Son 30 Gün';
+
+  @override
+  String get movement_range_customSegment => 'Özel';
+
+  @override
+  String get movement_refreshTooltip => 'Yenile';
+
+  @override
+  String get movement_filter_clearButton => 'Filtreleri Temizle';
+
+  @override
+  String get movement_kpi_totalLabel => 'Toplam Hareket';
+
+  @override
+  String get movement_chart_timelineTitle => 'Zaman İçinde Hareketler';
+
+  @override
+  String get movement_chart_typeDistributionTitle => 'Tipe Göre Dağılım';
+
+  @override
+  String get movement_chart_topMaterialsTitle =>
+      'En Çok Hareket Gören Malzemeler';
+
+  @override
+  String get movement_chart_cabinDistributionTitle => 'Kabine Göre Hareketler';
+
+  @override
+  String movement_chart_tooltipTotal(int count) {
+    return 'Toplam: $count';
+  }
+
+  @override
+  String movement_chart_movementCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hareket',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get movement_emptyTitle => 'Hareket Bulunamadı';
+
+  @override
+  String get movement_emptyDescription =>
+      'Seçilen aralık ve filtrelerde stok hareketi yok.';
+
+  @override
+  String movement_truncatedWarning(int count) {
+    return 'İlk $count kayıt gösteriliyor. Tüm sonuçlar için tarih aralığını daraltın.';
+  }
+
+  @override
+  String get movement_loadErrorMessage => 'Stok hareketleri yüklenemedi.';
 }
