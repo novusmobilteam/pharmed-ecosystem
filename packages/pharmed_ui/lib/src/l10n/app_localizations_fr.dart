@@ -7804,4 +7804,47 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get intake_overdue_descriptionRequiredError =>
       'Un motif est requis pour les médicaments en retard.';
+
+  @override
+  String refund_error_drawerNotResolved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Tiroir introuvable pour $count articles',
+      one: 'Tiroir introuvable pour $count article',
+    );
+    return '$_temp0 ; le retour n\'a pas été démarré.';
+  }
+
+  @override
+  String get enumCore_cabinOpModeRefund => 'Retour';
+
+  @override
+  String get cabinOperation_noEntryInstruction =>
+      'Placez les articles dans le compartiment indiqué, puis appuyez sur Terminer ou fermez le tiroir.';
+
+  @override
+  String get refund_action_starting => 'Démarrage...';
+
+  @override
+  String get refund_qr_confirmButton => 'Passer au retour';
+
+  @override
+  String refund_qr_progressChip(int current, int total) {
+    return 'Médicament $current/$total';
+  }
+
+  @override
+  String refund_qr_notFromIntake(String serial) {
+    return 'La boîte portant le numéro de série $serial n\'a pas été scannée lors de la prise de ce médicament. Supprimez la ligne et scannez la bonne boîte.';
+  }
+
+  @override
+  String refund_qr_insufficientIntakeCodes(
+    String medicine,
+    int required,
+    int available,
+  ) {
+    return '$medicine : $required boîtes à retourner, mais seulement $available scannées lors de la prise. Réduisez la quantité retournée.';
+  }
 }

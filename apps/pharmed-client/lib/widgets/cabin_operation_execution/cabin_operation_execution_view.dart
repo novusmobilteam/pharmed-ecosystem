@@ -136,6 +136,7 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
     final drawerGroup = allGroups.firstWhereOrNull((g) => g.slot.id == job.cabinDrawerId);
     final locationItems = controller.toLocationItems(allGroups);
     final activeItem = locationItems.firstWhereOrNull((i) => i.cabinDrawerId == job.cabinDrawerId);
+    print(job.isKubik);
 
     return Row(
       spacing: 12.0,
@@ -160,9 +161,10 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
               if (activeItem != null)
                 Expanded(
                   child: Column(
+                    spacing: 24.0,
                     children: [
-                      Expanded(child: DrawerLayoutOverviewPanel(item: activeItem)),
-                      if (job.isKubik) const Expanded(child: SizedBox()), // bilinçli: panel tüm yüksekliği almasın
+                      if (job.isKubik || job.isReturnDrawer) SizedBox(height: 220),
+                      Expanded(flex: 3, child: DrawerLayoutOverviewPanel(item: activeItem)),
                     ],
                   ),
                 ),

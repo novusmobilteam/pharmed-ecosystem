@@ -1,13 +1,28 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/hardware/cabin/master_drawer/master_drawer_session.dart';
-import 'package:pharmed_client/core/mixins/master_drawer_execution_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/hardware/hardware.dart';
-import '../../../../core/mixins/cabin_drawer_queue_mixin.dart';
+import '../../../../core/mixins/mixins.dart';
 import '../../../../core/providers/providers.dart';
+import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.dart';
+
+// [SWREQ-CLI-MREFUND-EXEC-001] [IEC 62304 §5.5]
+// Master kabin iadesinin donanım yürütme fazı. Kuyruk, durdurma, hata
+// kurtarma ve kapak akışı ortak mixin'lerden gelir. İadeye özgü:
+//   - Target'lar fiziksel birim bazında gruplanır (RefundJobMapper); bir
+//     target birden fazla iade kalemi taşıyabilir.
+//   - Kayıt target girdisinden DEĞİL, kalemlerden yapılır: her kalem için
+//     ayrı CompleteRefund isteği, kalemin kendi miktarıyla.
+//   - Tamamlanan kalemler işaretlenir — aynı target'ın kaydı tekrar
+//     tetiklense bile (ör. kısmi başarıdan sonra) bir kalem İKİNCİ KEZ
+//     iade edilmez.
+//   - Hedef "Tamamla" butonuyla YA DA fiziksel kapanışla tamamlanır
+//     (completesOnPhysicalClose) — alımla aynı davranış.
+//
+// Sınıf: Class B
 
 final masterRefundExecutionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterRefundExecutionNotifier>((ref) {
   return MasterRefundExecutionNotifier(
@@ -17,10 +32,11 @@ final masterRefundExecutionNotifierProvider = ChangeNotifierProvider.autoDispose
 });
 
 class MasterRefundExecutionNotifier extends ChangeNotifier
-    with MasterDrawerExecutionMixin, CabinDrawerQueueMixin<RefundDrawerJob, RefundTarget> {
-  final IMasterDrawerSession _drawerSession;
-  final CompleteRefundUseCase _completeRefund;
-
+    with
+        MasterDrawerExecutionMixin,
+        CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
+        CabinOperationEntryMixin
+    implements CabinOperationExecutionController {
   MasterRefundExecutionNotifier({
     required IMasterDrawerSession drawerSession,
     required CompleteRefundUseCase completeRefund,
@@ -29,8 +45,35 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
     attachDrawerSession();
   }
 
+  final IMasterDrawerSession _drawerSession;
+  final CompleteRefundUseCase _completeRefund;
+
   @override
   IMasterDrawerSession get drawerSession => _drawerSession;
+
+  /// İadede miktar seçim ekranında belirlenir — kapanışta otomatik kayıt
+  /// güvenlidir (alımla aynı).
+  @override
+  bool get completesOnPhysicalClose => true;
+
+  /// İadede SKT girilmez (CabinOperationMode.refund.requiresMiad == false)
+  /// — alan hiç çizilmediği için değeri anlamsız.
+  @override
+  bool get isPerCellMiadEnabled => true;
+
+  /// target.sourceId → o target'ta kaydedilecek kalemler.
+  Map<int, List<RefundableItem>> _itemsBySourceId = const {};
+
+  /// Bu kuyrukta başarıyla iade edilmiş kalemler (RefundableItem.id).
+  Set<int> _completedItemIds = {};
+
+  List<RefundableItem> itemsOf(CabinOperationTarget target) {
+    final id = target.sourceId;
+    return id == null ? const [] : (_itemsBySourceId[id] ?? const []);
+  }
+
+  double refundQuantityOf(CabinOperationTarget target) =>
+      itemsOf(target).fold(0, (sum, item) => sum + RefundJobMapper.quantityOf(item));
 
   @override
   void dispose() {
@@ -38,98 +81,74 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
     super.dispose();
   }
 
-  Future<void> start(List<RefundTarget> targets) => startQueue(RefundQueueBuilder.build(targets));
+  /// Kuyruğu başlatır. Fiziksel çekmecesi çözülemeyen kalem varsa kuyruk
+  /// HİÇ başlatılmaz ve o kalemler döner — kısmi bir iade listesiyle
+  /// yürütmeye geçilmez.
+  Future<List<RefundableItem>> start(List<RefundableItem> items) async {
+    final plan = RefundJobMapper.build(items);
 
-  Future<void> confirmCurrent() async {
-    final job = currentJob;
-    if (job == null || isSaving) return;
-
-    if (job.isReturnDrawer) {
-      isSaving = true;
-      for (final target in job.targets) {
-        final ok = await _completeTarget(target);
-        if (!ok) return;
-      }
-      isSaving = false;
-      confirmDrawerClose();
-      return;
+    if (plan.skipped.isNotEmpty) {
+      MedLogger.warn(
+        unit: 'MasterRefundExecution',
+        swreq: 'SWREQ-CLI-MREFUND-EXEC-001',
+        message: 'İade kuyruğu başlatılmadı — fiziksel çekmecesi çözülemeyen kalem var',
+        context: {
+          'skippedItemIds': [for (final i in plan.skipped) i.id],
+        },
+      );
+      return plan.skipped;
     }
 
-    final target = currentTarget;
-    if (target == null) return;
-
-    if (job.isKubik) {
-      isSaving = true;
-      final ok = await _completeCurrentCellTargets();
-      if (!ok) return;
-      await _advanceWithinOpenDrawer();
-    } else {
-      isSaving = true;
-      final ok = await _completeTarget(target);
-      if (!ok) return;
-      isSaving = false;
-      confirmDrawerClose();
-    }
+    _itemsBySourceId = plan.itemsBySourceId;
+    _completedItemIds = {};
+    await startQueue(plan.jobs);
+    return const [];
   }
 
-  Future<bool> _completeCurrentCellTargets() async {
-    final job = currentJob;
-    if (job == null) return false;
+  /// "Tamamla" yolu — kayıt hemen atılır, tamamlama fiziksel kapanışta.
+  @override
+  Future<void> confirmCurrent() async {
+    if (isStopping || currentTarget == null) return;
+    await confirmSingleTarget(saveTarget: _saveTarget);
+  }
 
-    var index = currentTargetIndex;
-    final cellId = job.targets[index].assignment.drawerUnit?.id;
+  /// "Tamamla"ya basılmadan kapak/çekmece kapandı — kayıt burada atılır.
+  @override
+  Future<bool> saveTargetOnPhysicalClose(CabinOperationTarget target) => _saveTarget(target);
 
-    while (true) {
-      final ok = await _completeTarget(job.targets[index]);
-      if (!ok) return false;
+  // ── Kayıt ─────────────────────────────────────────────────────────────
 
-      final nextIndex = index + 1;
-      final sameCell = nextIndex < job.targets.length && job.targets[nextIndex].assignment.drawerUnit?.id == cellId;
-      if (!sameCell) break;
-
-      index = nextIndex;
-      _setCurrentTargetIndex(index);
+  Future<bool> _saveTarget(CabinOperationTarget target) async {
+    final items = itemsOf(target);
+    if (items.isEmpty) {
+      // Kalemi olmayan target kuyruğa girmemeliydi — sessizce geçmek iadeyi
+      // kaydetmeden çekmeceyi kapatırdı.
+      setQueueFailure(const CabinValidationFailure(reason: CabinValidationReason.noValidTargets), isQueueError: true);
+      return false;
     }
 
+    for (final item in items) {
+      if (_completedItemIds.contains(item.id)) continue;
+
+      final ok = await _completeItem(item);
+      if (!ok) return false;
+      _completedItemIds.add(item.id);
+    }
     return true;
   }
 
-  /// Aynı gözdeyken ardışık target ilerletmek Katman 2'nin normal
-  /// _openJobAt/_advanceAfterClose akışının DIŞINDA — donanıma hiç yeni
-  /// komut gitmiyor, sadece hangi target'ın "aktif" göründüğü değişiyor.
-  /// Bu yüzden CabinDrawerQueueMixin'e `currentTargetIndex` için protected
-  /// bir setter eklememiz gerekiyor (bkz. not).
-  void _setCurrentTargetIndex(int index) => setCurrentTargetIndexForSameCell(index);
-
-  Future<void> _advanceWithinOpenDrawer() async {
-    final job = currentJob;
-    if (job == null) return;
-
-    final nextIndex = currentTargetIndex + 1;
-    if (nextIndex < job.targets.length) {
-      final currentCellId = job.targets[currentTargetIndex].assignment.drawerUnit?.id;
-      final nextCellId = job.targets[nextIndex].assignment.drawerUnit?.id;
-      final sameCellAsCurrent = currentCellId != null && currentCellId == nextCellId;
-
-      _setCurrentTargetIndex(nextIndex);
-      isSaving = false;
-
-      if (job.isKubik && !sameCellAsCurrent) {
-        await openCubicLid(job.targets[nextIndex].assignment);
-      }
-    } else {
-      isSaving = false;
-      confirmDrawerClose();
+  Future<bool> _completeItem(RefundableItem item) async {
+    final returnType = item.returnType;
+    if (returnType == null) {
+      setQueueFailure(const CabinValidationFailure(reason: CabinValidationReason.noValidTargets), isQueueError: true);
+      return false;
     }
-  }
 
-  Future<bool> _completeTarget(RefundTarget target) async {
-    final item = target.item;
     final result = await _completeRefund.call(
       CompleteRefundParams(
-        type: item.returnType!,
+        type: returnType,
         id: item.id,
-        quantity: (item.returnQuantity ?? item.appliedQuantity).toDouble(),
+        quantity: RefundJobMapper.quantityOf(item),
         cabinDrawerDetailId: item.source.stock?.cabinDrawerDetailId,
       ),
     );
@@ -137,26 +156,25 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
     return result.when(
       ok: (_) => true,
       error: (e) {
-        setQueueFailure(CabinApiFailure(message: e.message));
+        // Eskiden isQueueError verilmiyordu — yalnızca snackbar çıkıyor,
+        // kullanıcıya devam/sonlandır seçeneği sunulmuyordu.
+        setQueueFailure(CabinApiFailure(message: e.message), isQueueError: true);
         return false;
       },
     );
   }
 
-  @override
-  void onLidRejected(MasterDrawerFailure failure, String? detail) {
-    MedLogger.warn(
-      unit: 'MasterRefundExecution',
-      swreq: 'SWREQ-CLI-MREFUND-EXEC-001',
-      message: 'Kübik kapak açma reddedildi',
-      context: {'failure': failure.name, 'detail': detail},
-    );
-  }
+  // ── Konum rehberi ─────────────────────────────────────────────────────
 
+  @override
   List<DrawerQueueItem> toLocationItems(List<DrawerGroup> allGroups) => locationItemsUsing(
     allGroups: allGroups,
     cabinDrawerIdOf: (job) => job.cabinDrawerId,
-    stockIdAt: (job, i) => job.targets[i].item.source.stock?.id,
+    // İade çekmecesine giden kalemin kaynak gözü bu çekmecede değil —
+    // vurgulanacak yer iade bölmesinin kendisi (isReturnDrawerTargetOf).
+    stockIdAt: (job, i) => job.isReturnDrawer ? null : itemsOf(job.targets[i]).firstOrNull?.source.stock?.id,
+    stockIdsAt: (job, i) =>
+        job.isReturnDrawer ? const [] : [for (final item in itemsOf(job.targets[i])) ?item.source.stock?.id],
     isReturnDrawerTargetOf: (job) => job.isReturnDrawer,
   );
 }

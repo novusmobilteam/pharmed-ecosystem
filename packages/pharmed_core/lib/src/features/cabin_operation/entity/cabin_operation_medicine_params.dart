@@ -103,19 +103,22 @@ abstract final class CabinOperationParamsMapper {
     );
 
     if (target.isKubik) {
-      if (!target.hasEntry) return const [];
+      if (!target.showsCount && !target.hasEntry) return const [];
+
+      final count = target.cubicCount ?? 0;
+      final isEmpty = count == 0 && target.cubicSecondary == 0;
       return [
         row(
           assignment.cabinDrawerDetail?.firstOrNull?.id ?? 0,
           unit?.orderNo ?? 1,
           unit?.compartmentNo ?? 0,
-          target.cubicCount ?? 0,
+          count,
           target.cubicSecondary,
-          target.cubicMiad,
+          // Birim dozla aynı kural: backend SKT'yi zorunlu tutuyor.
+          isEmpty ? kEmptyCellMiad : target.cubicMiad,
         ),
       ];
     }
-
     final cells = assignment.cabinDrawerDetail ?? const <DrawerCell>[];
     return [
       for (var i = 0; i < target.steps.length; i++)

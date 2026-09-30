@@ -23,9 +23,7 @@ class RoomField extends StatelessWidget {
             ),
             const Spacer(),
             if (entries.isNotEmpty)
-              _SummaryChip(
-                label: context.l10n.stationSetup_roomsBedsSummary(entries.length, notifier.totalBedCount),
-              ),
+              _SummaryChip(label: context.l10n.stationSetup_roomsBedsSummary(entries.length, notifier.totalBedCount)),
           ],
         ),
 
@@ -224,7 +222,7 @@ class _BedChipState extends State<_BedChip> {
 
     return Container(
       height: 38,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: _editing ? MedColors.blueLight : MedColors.surface2,
         borderRadius: BorderRadius.circular(6),
@@ -237,17 +235,13 @@ class _BedChipState extends State<_BedChip> {
           IntrinsicWidth(
             child: TextField(
               controller: _ctrl,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: _editing ? MedColors.blue : MedColors.text,
-              ),
+              style: MedTextStyles.bodyMd(),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 isDense: true,
-                contentPadding: EdgeInsets.zero,
+
                 fillColor: Colors.transparent,
               ),
               onTap: () => setState(() => _editing = true),

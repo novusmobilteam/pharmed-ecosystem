@@ -11,6 +11,11 @@
 // drawerType'ı paylaşır, representativeAssignment her zaman dolu olduğu için
 // targets boşken bile güvenilir sonuç verir.
 //
+// İade kutusu job'ı ([isReturnDrawer]): iade çekmecesi tanımlı kübik
+// çekmecenin son sütunu (bkz. resolveDrawerGroupLayout) kapaksız tek bir
+// bölmedir — çekmece tamamen açılır, kapak komutu gönderilmez. Aynı fiziksel
+// çekmecenin normal gözleri ayrı, kübik bir job'dadır.
+//
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
@@ -24,6 +29,7 @@ class CabinOperationDrawerJob implements DrawerJob<CabinOperationTarget> {
     required this.targets,
     this.cabinId,
     this.status = CabinOperationJobStatus.pending,
+    this.isReturnDrawer = false,
   });
 
   final int cabinDrawerId;
@@ -35,11 +41,15 @@ class CabinOperationDrawerJob implements DrawerJob<CabinOperationTarget> {
   final CabinOperationJobStatus status;
   final int? cabinId;
 
-  @override
-  bool get isKubik => representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false;
+  /// Yalnızca iade: kalemlerin iade kutusuna bırakıldığı job.
+  final bool isReturnDrawer;
 
-  /// Census/Refill/Unload'da kübik dışında hiçbir job "aynı açık çekmecede
-  /// kalma" ihtiyacı duymuyor — birim doz her zaman target başına aç/kapa.
+  @override
+  bool get isKubik =>
+      !isReturnDrawer && (representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false);
+
+  /// Kübik dışında hiçbir job "aynı açık çekmecede kalma" ihtiyacı duymuyor —
+  /// birim doz (ve iade çekmecesi) her zaman target başına aç/kapa.
   @override
   bool get staysOpenAcrossTargets => isKubik;
 
@@ -50,6 +60,7 @@ class CabinOperationDrawerJob implements DrawerJob<CabinOperationTarget> {
       targets: targets ?? this.targets,
       status: status ?? this.status,
       cabinId: cabinId,
+      isReturnDrawer: isReturnDrawer,
     );
   }
 

@@ -151,9 +151,20 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
   /// göz hem birleşik kutu hedefi olabiliyor" ekranlarda verilir.
   bool Function(TJob job)? isReturnDrawerTargetOf,
 }) {
-  final jobBySlotId = <int, (int index, TJob job)>{};
+  // Bir fiziksel çekmecede birden fazla job olabilir (iade: normal gözler +
+  // iade kutusu). Gösterilecek olan: aktifse aktif job, değilse sırası henüz
+  // gelmemiş ilk job, hepsi bittiyse sonuncusu.
+  final jobsBySlotId = <int, List<(int index, TJob job)>>{};
   for (int i = 0; i < jobs.length; i++) {
-    jobBySlotId[cabinDrawerIdOf(jobs[i])] = (i, jobs[i]);
+    jobsBySlotId.putIfAbsent(cabinDrawerIdOf(jobs[i]), () => []).add((i, jobs[i]));
+  }
+
+  (int, TJob)? entryFor(int slotId) {
+    final entries = jobsBySlotId[slotId];
+    if (entries == null || entries.isEmpty) return null;
+    return entries.firstWhereOrNull((e) => e.$1 == currentIndex) ??
+        entries.firstWhereOrNull((e) => statusOf(e.$2) == CabinOperationJobStatus.pending) ??
+        entries.last;
   }
 
   int? stepNoForStock(MedicineAssignment? assignment, int? stockId) {
@@ -185,7 +196,7 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
 
   return allGroups.map((group) {
     final slotId = group.slot.id;
-    final entry = slotId != null ? jobBySlotId[slotId] : null;
+    final entry = slotId != null ? entryFor(slotId) : null;
 
     if (entry == null) {
       return DrawerQueueItem(group: group, status: DrawerQueueStatus.notInQueue);
@@ -193,6 +204,12 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
 
     final (jobIndex, job) = entry;
     final isActive = jobIndex == currentIndex;
+
+    // İade kutusu hedefinde bireysel göz yok — çekmece tek sanal kutu olarak
+    // vurgulanır (isReturnDrawerTarget). Target'ın drawerUnit'i yalnızca
+    // çekmeceyi adreslemek içindir; ondan aktif/tamamlanmış göz türetilirse
+    // kutunun ilk gözü yanlışlıkla "aktif göz" gösterilir.
+    final isReturnDrawerTarget = isReturnDrawerTargetOf?.call(job) ?? false;
 
     final status = switch (statusOf(job)) {
       CabinOperationJobStatus.completed => DrawerQueueStatus.completed,
@@ -207,7 +224,7 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
     int? activeUnitIndex;
     int? activeStepNo;
 
-    if (isActive) {
+    if (isActive && !isReturnDrawerTarget) {
       // Bir target'ın hücreleri — öncelik: activeStepsAt (girdiye dayalı,
       // boş göz dahil), sonra stockIdsAt (çoklu stok), sonra stockIdAt.
       // null → bu target için hassas veri yok.

@@ -1,18 +1,10 @@
 // widgets/cabin_shell_widgets/execution/cabin_cubic_entry_card.dart
 //
-// [SWREQ-CLI-RFLIST-001]
-// Kübik çekmecenin TEK bir gözü için giriş kartı (sayım / ikincil miktar /
-// SKT). Notifier'dan bağımsızdır; göz etiketi ve konumu çağırandan gelir
-// (sol paneldeki DrawerLayoutOverviewPanel ile aynı sıralamadan türetilmeli).
-//
-// Sınıf: Class B
-
-// widgets/cabin_shell_widgets/execution/cabin_cubic_entry_card.dart
-//
 // [SWREQ-CLI-CABINEXEC-001]
 // Kübik çekmecenin TEK bir gözü için giriş kartı (sayım / ikincil miktar /
-// SKT). Hangi kutuların çizileceği çağıranın verdiği callback'lerden gelir
-// (boşaltmada sayım yok, sayımda ikincil miktar yok). Göz etiketi ve konumu
+// SKT). Hangi kutuların çizileceği çağırandan gelir: sayım ve ikincil miktar
+// callback'lere göre (boşaltmada sayım yok, sayımda ikincil miktar yok), SKT
+// [showMiad]'e göre (SKT istemeyen işlemlerde yok). Göz etiketi ve konumu
 // sol paneldeki DrawerLayoutOverviewPanel ile aynı sıralamadan türetilmeli.
 //
 // Sınıf: Class B
@@ -35,6 +27,7 @@ class CabinCubicEntryCard extends StatelessWidget {
     this.onCountChanged,
     this.secondaryLabel,
     this.onSecondaryChanged,
+    this.showMiad = true,
     this.miadRequired = false,
     this.enabled = true,
     this.datePicker,
@@ -61,9 +54,12 @@ class CabinCubicEntryCard extends StatelessWidget {
   final String? secondaryLabel;
   final ValueChanged<double>? onSecondaryChanged;
 
+  /// SKT bölümü çizilsin mi — SKT istemeyen işlemlerde false.
+  final bool showMiad;
+
   final ValueChanged<DateTime?> onMiadChanged;
 
-  /// true → SKT boşsa hata (girdi olan gözde).
+  /// true → SKT boşsa hata (girdi olan gözde). [showMiad] false iken anlamsız.
   final bool miadRequired;
 
   final bool enabled;
@@ -106,12 +102,13 @@ class CabinCubicEntryCard extends StatelessWidget {
                   ],
                 ),
               ),
-              _MiadSection(
-                miad: target.cubicMiad,
-                required: miadRequired,
-                picker: datePicker ?? defaultCabinDatePicker,
-                onChanged: onMiadChanged,
-              ),
+              if (showMiad)
+                _MiadSection(
+                  miad: target.cubicMiad,
+                  required: miadRequired,
+                  picker: datePicker ?? defaultCabinDatePicker,
+                  onChanged: onMiadChanged,
+                ),
             ],
           ),
         ),

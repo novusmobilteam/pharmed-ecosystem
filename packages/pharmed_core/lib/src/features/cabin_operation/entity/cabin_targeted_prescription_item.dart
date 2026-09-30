@@ -33,6 +33,7 @@ class CabinTargetedPrescriptionItem {
     this.collectStationId,
     this.collectStationName,
     this.isCollectedAtCurrentStation = false,
+    this.intakeQrCodes = const [],
   });
 
   final int id;
@@ -56,6 +57,14 @@ class CabinTargetedPrescriptionItem {
   final int? collectStationId;
   final String? collectStationName;
   final bool isCollectedAtCurrentStation;
+
+  /// Bu satırın alımında okutulan karekodlar (GS1, ör.
+  /// "(01)...(21)...(17)...(10)..."). Boşsa alımda karekod okutulmamıştır.
+  final List<String> intakeQrCodes;
+
+  /// Alımda karekod okutulduysa iadede de okutulması zorunludur
+  /// (yalnızca donanımlı iadelerde — donanımsız iade şimdilik kapsam dışı).
+  bool get requiresQrOnRefund => intakeQrCodes.isNotEmpty;
 
   /// medicine null gelirse (ör. malzeme silinmiş) kullanıcıya gösterilecek
   /// güvenli varsayılan — medicine ile her zaman senkron, ayrı bir alan

@@ -1840,6 +1840,14 @@
     "intake_overdue_auditNote",
     "intake_overdue_cancelButton",
     "intake_overdue_confirmButton",
-    "intake_overdue_descriptionRequiredError"
+    "intake_overdue_descriptionRequiredError",
+    "refund_error_drawerNotResolved",
+    "enumCore_cabinOpModeRefund",
+    "cabinOperation_noEntryInstruction",
+    "refund_action_starting",
+    "refund_qr_confirmButton",
+    "refund_qr_progressChip",
+    "refund_qr_notFromIntake",
+    "refund_qr_insufficientIntakeCodes"
   ]
 }

@@ -4758,5 +4758,51 @@
   "intake_overdue_auditNote": "Les motifs sont enregistrés avec l'utilisateur et l'heure.",
   "intake_overdue_cancelButton": "Annuler",
   "intake_overdue_confirmButton": "Confirmer et continuer",
-  "intake_overdue_descriptionRequiredError": "Un motif est requis pour les médicaments en retard."
+  "intake_overdue_descriptionRequiredError": "Un motif est requis pour les médicaments en retard.",
+  "refund_error_drawerNotResolved": "{count, plural, one{Tiroir introuvable pour {count} article} other{Tiroir introuvable pour {count} articles}} ; le retour n'a pas été démarré.",
+"@refund_error_drawerNotResolved": {
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+"enumCore_cabinOpModeRefund": "Retour",
+"@enumCore_cabinOpModeRefund": {},
+"cabinOperation_noEntryInstruction": "Placez les articles dans le compartiment indiqué, puis appuyez sur Terminer ou fermez le tiroir.",
+"refund_action_start": "Démarrer le retour",
+"@refund_action_start": {},
+"refund_action_starting": "Démarrage...",
+"@refund_action_starting": {},
+"refund_error_drawerNotResolved": "{count, plural, one{Tiroir introuvable pour {count} article} other{Tiroir introuvable pour {count} articles}} ; le retour n'a pas été démarré.",
+"@refund_error_drawerNotResolved": {
+  "placeholders": {
+    "count": { "type": "int" }
+  }
+},
+"enumCore_cabinOpModeRefund": "Retour",
+"@enumCore_cabinOpModeRefund": {},
+"refund_qr_confirmButton": "Passer au retour",
+"@refund_qr_confirmButton": {},
+"refund_qr_progressChip": "Médicament {current}/{total}",
+"@refund_qr_progressChip": {
+  "placeholders": {
+    "current": { "type": "int" },
+    "total": { "type": "int" }
+  }
+},
+"refund_qr_notFromIntake": "La boîte portant le numéro de série {serial} n'a pas été scannée lors de la prise de ce médicament. Supprimez la ligne et scannez la bonne boîte.",
+"@refund_qr_notFromIntake": {
+  "placeholders": {
+    "serial": { "type": "String" }
+  }
+},
+"refund_qr_insufficientIntakeCodes": "{medicine} : {required} boîtes à retourner, mais seulement {available} scannées lors de la prise. Réduisez la quantité retournée.",
+"@refund_qr_insufficientIntakeCodes": {
+  "placeholders": {
+    "medicine": { "type": "String" },
+    "required": { "type": "int" },
+    "available": { "type": "int" }
+  }
+},
+"qrScan_operationRefund": "Retour de médicament",
+"@qrScan_operationRefund": {}
 }

@@ -7563,4 +7563,41 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get intake_overdue_descriptionRequiredError =>
       'Zamanı geçmiş ilaçlar için açıklama girilmelidir.';
+
+  @override
+  String refund_error_drawerNotResolved(int count) {
+    return '$count kalemin çekmecesi bulunamadı, iade başlatılmadı.';
+  }
+
+  @override
+  String get enumCore_cabinOpModeRefund => 'İade';
+
+  @override
+  String get cabinOperation_noEntryInstruction =>
+      'İlaçları işaretli göze yerleştirin, ardından Tamamla\'ya basın ya da çekmeceyi kapatın.';
+
+  @override
+  String get refund_action_starting => 'Başlatılıyor...';
+
+  @override
+  String get refund_qr_confirmButton => 'İadeye Geç';
+
+  @override
+  String refund_qr_progressChip(int current, int total) {
+    return '$current/$total. ilaç';
+  }
+
+  @override
+  String refund_qr_notFromIntake(String serial) {
+    return '$serial seri numaralı kutu bu ilacın alımında okutulmamış. Satırı silip doğru kutuyu okutun.';
+  }
+
+  @override
+  String refund_qr_insufficientIntakeCodes(
+    String medicine,
+    int required,
+    int available,
+  ) {
+    return '$medicine: $required kutu iade edilmek isteniyor ancak alımda $available kutu okutulmuş. İade miktarını düşürün.';
+  }
 }
