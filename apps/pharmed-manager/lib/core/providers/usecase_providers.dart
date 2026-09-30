@@ -241,6 +241,7 @@ class UsecaseProviders {
       Provider(create: (context) => CreateMedicineAssignmentUseCase(context.read())),
       Provider(create: (context) => UpdateMedicineAssignmentUseCase(context.read())),
       Provider(create: (context) => DeleteMedicineAssignmentUseCase(context.read())),
+      Provider(create: (context) => GetCabinAssignmentsWithCabinUseCase(context.read())),
 
       /// Reports
       Provider(create: (context) => GetExpiredStocksUseCase(context.read())),

@@ -4824,5 +4824,10 @@
   "movement_emptyDescription": "Aucun mouvement de stock pour la période et les filtres sélectionnés.",
   "movement_truncatedWarning": "Affichage des {count} premiers enregistrements. Réduisez la période pour des résultats complets.",
   "@movement_truncatedWarning": { "placeholders": { "count": { "type": "int" } } },
-  "movement_loadErrorMessage": "Impossible de charger les mouvements de stock."
+  "movement_loadErrorMessage": "Impossible de charger les mouvements de stock.","stationStock_drugColumn": "Médicament",
+"stationStock_stockColumn": "Stock",
+"stationStock_fillRateColumn": "Taux de remplissage",
+"stationStock_minColumn": "Min",
+"stationStock_criticalColumn": "Critique",
+"stationStock_maxColumn": "Max"
 }

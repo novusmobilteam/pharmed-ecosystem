@@ -11,6 +11,7 @@ import 'package:pharmed_manager/features/reports/expired_items/view/expired_item
 import 'package:pharmed_manager/features/reports/station_transaction/view/station_transaction_report_screen.dart';
 import 'package:pharmed_manager/features/role/view/role_screen.dart';
 import 'package:pharmed_manager/features/settings/view/settings_view.dart';
+import 'package:pharmed_manager/features/station_stock_data/view/station_stock_data_screen.dart';
 import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,7 @@ import '../../reports/material_usage/view/material_usage_report_screen.dart';
 import '../../reports/patient_inventory/view/patient_inventory_report_screen.dart';
 import '../../settings/notifier/settings_notifier.dart';
 import '../../station_setup/view/station_screen.dart';
-import '../../station_stock/view/station_stock_screen.dart';
+import '../../station_stock_list/view/station_stock_list_screen.dart';
 import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
 import '../../unscanned_barcodes/view/unscanned_barcodes_screen.dart';
 import '../../user/view/user_screen.dart';
@@ -213,11 +214,12 @@ class _HomeContent extends StatelessWidget {
       'authorization-list' => AuthSummaryReportScreen(menu: menu!),
       'heatControl' => CabinTemperatureScreen(menu: menu!),
       'station-temperature-list' => CabinTemperatureReportScreen(menu: menu!),
-      'stationStock' => StationStockScreen(menu: menu!),
+      'stationStock' => StationStockListScreen(menu: menu!),
       'refill' => RefillListScreen(menu: menu!),
       'refundDrawer' => DrawerRefundScreen(menu: menu!),
       'unReadQrCode' => UnscannedBarcodesScreen(menu: menu!),
       'mailPreference' => MailPreferenceScreen(menu: menu!),
+      'station-stock-data' => StationStockDataScreen(menu: menu!),
 
       _ => const _NotFoundView(),
     };

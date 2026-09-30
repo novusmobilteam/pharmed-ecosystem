@@ -5456,5 +5456,11 @@
   "movement_emptyDescription": "There are no stock movements for the selected range and filters.",
   "movement_truncatedWarning": "Showing the first {count} records. Narrow the date range for complete results.",
   "@movement_truncatedWarning": { "placeholders": { "count": { "type": "int" } } },
-  "movement_loadErrorMessage": "Stock movements could not be loaded."
+  "movement_loadErrorMessage": "Stock movements could not be loaded.",
+  "stationStock_drugColumn": "Medicine",
+"stationStock_stockColumn": "Stock",
+"stationStock_fillRateColumn": "Fill Rate",
+"stationStock_minColumn": "Min",
+"stationStock_criticalColumn": "Critical",
+"stationStock_maxColumn": "Max"
 }

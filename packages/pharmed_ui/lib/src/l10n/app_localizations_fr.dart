@@ -7913,4 +7913,22 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get movement_loadErrorMessage =>
       'Impossible de charger les mouvements de stock.';
+
+  @override
+  String get stationStock_drugColumn => 'Médicament';
+
+  @override
+  String get stationStock_stockColumn => 'Stock';
+
+  @override
+  String get stationStock_fillRateColumn => 'Taux de remplissage';
+
+  @override
+  String get stationStock_minColumn => 'Min';
+
+  @override
+  String get stationStock_criticalColumn => 'Critique';
+
+  @override
+  String get stationStock_maxColumn => 'Max';
 }

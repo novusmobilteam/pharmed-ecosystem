@@ -7731,4 +7731,22 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get movement_loadErrorMessage =>
       'Stock movements could not be loaded.';
+
+  @override
+  String get stationStock_drugColumn => 'Medicine';
+
+  @override
+  String get stationStock_stockColumn => 'Stock';
+
+  @override
+  String get stationStock_fillRateColumn => 'Fill Rate';
+
+  @override
+  String get stationStock_minColumn => 'Min';
+
+  @override
+  String get stationStock_criticalColumn => 'Critical';
+
+  @override
+  String get stationStock_maxColumn => 'Max';
 }

@@ -1865,6 +1865,12 @@
     "movement_emptyTitle",
     "movement_emptyDescription",
     "movement_truncatedWarning",
-    "movement_loadErrorMessage"
+    "movement_loadErrorMessage",
+    "stationStock_drugColumn",
+    "stationStock_stockColumn",
+    "stationStock_fillRateColumn",
+    "stationStock_minColumn",
+    "stationStock_criticalColumn",
+    "stationStock_maxColumn"
   ]
 }

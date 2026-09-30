@@ -2,11 +2,11 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/core.dart';
 
-class StationStockNotifier extends ChangeNotifier with ApiRequestMixin {
+class StationStockListNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetStationsUseCase _getStationsUseCase;
   final GetStationStocksUseCase _getStationStockUseCase;
 
-  StationStockNotifier({
+  StationStockListNotifier({
     required GetStationsUseCase getStationsUseCase,
     required GetStationStocksUseCase getStationStockUseCase,
   }) : _getStationsUseCase = getStationsUseCase,
