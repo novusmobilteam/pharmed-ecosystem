@@ -1,9 +1,9 @@
-part of 'station_stock_screen.dart';
+part of 'station_stock_list_screen.dart';
 
 class TableView extends StatelessWidget {
   const TableView({super.key, required this.notifier});
 
-  final StationStockNotifier notifier;
+  final StationStockListNotifier notifier;
 
   @override
   Widget build(BuildContext context) {

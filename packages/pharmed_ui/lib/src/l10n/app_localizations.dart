@@ -13535,6 +13535,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stock movements could not be loaded.'**
   String get movement_loadErrorMessage;
+
+  /// No description provided for @stationStock_drugColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get stationStock_drugColumn;
+
+  /// No description provided for @stationStock_stockColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock'**
+  String get stationStock_stockColumn;
+
+  /// No description provided for @stationStock_fillRateColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill Rate'**
+  String get stationStock_fillRateColumn;
+
+  /// No description provided for @stationStock_minColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get stationStock_minColumn;
+
+  /// No description provided for @stationStock_criticalColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get stationStock_criticalColumn;
+
+  /// No description provided for @stationStock_maxColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get stationStock_maxColumn;
 }
 
 class _AppLocalizationsDelegate

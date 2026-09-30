@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/core.dart';
-import '../notifier/station_stock_notifier.dart';
+import '../notifier/station_stock_list_notifier.dart';
 
 part 'table_view.dart';
 
-class StationStockScreen extends StatelessWidget {
-  const StationStockScreen({super.key, required this.menu});
+class StationStockListScreen extends StatelessWidget {
+  const StationStockListScreen({super.key, required this.menu});
 
   final MenuItem menu;
 
@@ -15,9 +15,9 @@ class StationStockScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) =>
-          StationStockNotifier(getStationsUseCase: context.read(), getStationStockUseCase: context.read())
+          StationStockListNotifier(getStationsUseCase: context.read(), getStationStockUseCase: context.read())
             ..getStations(),
-      child: Consumer<StationStockNotifier>(
+      child: Consumer<StationStockListNotifier>(
         builder: (context, notifier, _) {
           return MedResponsiveLayout(
             mobile: MedMobileLayout(),

@@ -7664,4 +7664,22 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get movement_loadErrorMessage => 'Stok hareketleri yüklenemedi.';
+
+  @override
+  String get stationStock_drugColumn => 'İlaç';
+
+  @override
+  String get stationStock_stockColumn => 'Stok';
+
+  @override
+  String get stationStock_fillRateColumn => 'Doluluk';
+
+  @override
+  String get stationStock_minColumn => 'Min';
+
+  @override
+  String get stationStock_criticalColumn => 'Kritik';
+
+  @override
+  String get stationStock_maxColumn => 'Maks';
 }

@@ -9990,5 +9990,29 @@
     "placeholders": { "count": { "type": "int" } }
   },
   "movement_loadErrorMessage": "Stok hareketleri yüklenemedi.",
-  "@movement_loadErrorMessage": { "description": "Stock movements screen: fallback error message when loading fails" }
+  "@movement_loadErrorMessage": { "description": "Stock movements screen: fallback error message when loading fails" },
+  "stationStock_drugColumn": "İlaç",
+"@stationStock_drugColumn": {
+  "description": "Station stock table column header for the medicine name"
+},
+"stationStock_stockColumn": "Stok",
+"@stationStock_stockColumn": {
+  "description": "Station stock table column header for the current stock quantity of the medicine in the selected cabin"
+},
+"stationStock_fillRateColumn": "Doluluk",
+"@stationStock_fillRateColumn": {
+  "description": "Station stock table column header for the fill rate, shown as current stock divided by the maximum quantity in percent"
+},
+"stationStock_minColumn": "Min",
+"@stationStock_minColumn": {
+  "description": "Station stock table column header for the minimum quantity threshold"
+},
+"stationStock_criticalColumn": "Kritik",
+"@stationStock_criticalColumn": {
+  "description": "Station stock table column header for the critical quantity threshold"
+},
+"stationStock_maxColumn": "Maks",
+"@stationStock_maxColumn": {
+  "description": "Station stock table column header for the maximum quantity threshold"
+}
 }
