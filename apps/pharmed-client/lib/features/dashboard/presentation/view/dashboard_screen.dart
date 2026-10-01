@@ -41,11 +41,12 @@ import '../../../waste/waste.dart';
 import '../../dashboard.dart';
 import '../notifier/dashboard_notifier.dart';
 import '../widgets/dashboard_app_bar.dart';
-import 'cabin_selection_view.dart';
 
 part 'dashboard_route_content.dart';
-part 'cabin_telemetry_panel.dart';
-part 'upcoming_treatment_panel.dart';
+part '../widgets/cabin_telemetry_panel.dart';
+part '../widgets/upcoming_treatment_panel.dart';
+part '../widgets/drug_activity_panel.dart';
+part '../widgets/cabin_selection_view.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -250,11 +251,17 @@ class _DashboardBody extends ConsumerWidget {
         children: [
           Expanded(
             flex: 3,
-            child: UpcomingTreatmentPanel(section: DashboardSection(data: notifier.upcomingTreatments)),
+            child: UpcomingTreatmentPanel(
+              section: DashboardSection(data: notifier.upcomingTreatments),
+              maskPatientData: !isLoggedIn,
+            ),
           ),
           Expanded(
             flex: 2,
-            child: DrugActivityPanel(section: DashboardSection(data: notifier.drugActivities)),
+            child: DrugActivityPanel(
+              section: DashboardSection(data: notifier.drugActivities),
+              maskPatientData: !isLoggedIn,
+            ),
           ),
           Expanded(
             child: Column(
@@ -274,26 +281,5 @@ class _DashboardBody extends ConsumerWidget {
     }
 
     return DashboardRouteContent();
-  }
-}
-
-class DrugActivityPanel extends StatelessWidget {
-  const DrugActivityPanel({super.key, required this.section});
-
-  final DashboardSection<List<PrescriptionItemMovement>?> section;
-
-  @override
-  Widget build(BuildContext context) {
-    final movements = section.data ?? const <PrescriptionItemMovement>[];
-
-    return MedDashboardPanel(
-      title: context.l10n.dashboard_drugActivityPanelTitle.toUpperCase(),
-      section: section,
-      itemCount: movements.length,
-      itemBuilder: (BuildContext context, int index) {
-        final movement = movements[index];
-        return MedDrugActivityCard(movement: movement);
-      },
-    );
   }
 }

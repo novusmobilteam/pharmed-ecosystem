@@ -4,9 +4,12 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 class MedDrugActivityCard extends StatelessWidget {
-  const MedDrugActivityCard({super.key, required this.movement});
+  const MedDrugActivityCard({super.key, required this.movement, this.maskPatient = false});
 
   final PrescriptionItemMovement movement;
+
+  /// true ise hasta adı maskelenir.
+  final bool maskPatient;
 
   String _doseText(BuildContext context) {
     final piece = movement.quantity?.formatFractional ?? '-';
@@ -16,10 +19,14 @@ class MedDrugActivityCard extends StatelessWidget {
   }
 
   String get _medicine => movement.prescriptionItem?.medicine?.name ?? '-';
-  String get _patient => movement.prescriptionItem?.prescription?.hospitalization?.patient?.fullName ?? '-';
   String get _performedBy => movement.performedBy?.fullName ?? '-';
   String get _dateTime => movement.createdAt?.formattedDateTime ?? '-';
   PrescriptionMovementType get _type => movement.type;
+
+  String get _patient {
+    final name = movement.prescriptionItem?.prescription?.hospitalization?.patient?.fullName;
+    return maskPatient ? name.maskedPersonName() : (name ?? '-');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +69,6 @@ class MedDrugActivityCard extends StatelessWidget {
           const Divider(height: 1, color: MedColors.border2),
           const SizedBox(height: 12),
 
-          // Bilgi satırları
-          MedInfoRow(label: context.l10n.assignment_patientLabel, value: '').runtimeType == Null
-              ? const SizedBox()
-              : const SizedBox(), // placeholder kaldırılacak
           MedInfoRow(label: context.l10n.assignment_patientLabel, value: _patient),
           const SizedBox(height: 6),
           MedInfoRow(label: context.l10n.movement_performedBy, value: _performedBy),
