@@ -8,11 +8,7 @@
 // "Devam Et" onaylayana kadar hiçbir şey notifier'a bildirilmez.
 // Sınıf: Class B
 
-import 'package:flutter/material.dart';
-import 'package:pharmed_core/pharmed_core.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
-
-import '../../../../widgets/widgets.dart';
+part of '../view/dashboard_screen.dart';
 
 class CabinSelectionView extends StatefulWidget {
   const CabinSelectionView({

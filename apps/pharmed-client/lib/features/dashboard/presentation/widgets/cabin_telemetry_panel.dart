@@ -1,4 +1,4 @@
-part of 'dashboard_screen.dart';
+part of '../view/dashboard_screen.dart';
 
 class CabinTelemetryPanel extends ConsumerWidget {
   const CabinTelemetryPanel({super.key});

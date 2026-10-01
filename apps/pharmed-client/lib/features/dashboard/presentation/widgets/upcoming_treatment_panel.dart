@@ -1,4 +1,4 @@
-part of 'dashboard_screen.dart';
+part of '../view/dashboard_screen.dart';
 
 enum UpcomingTreatmentUrgency { delayed, dueSoon, upcoming }
 
@@ -61,9 +61,10 @@ class UpcomingTreatmentGroups {
 }
 
 class UpcomingTreatmentPanel extends StatelessWidget {
-  const UpcomingTreatmentPanel({super.key, required this.section});
+  const UpcomingTreatmentPanel({super.key, required this.section, required this.maskPatientData});
 
   final DashboardSection<List<UpcomingTreatment>?> section;
+  final bool maskPatientData;
 
   @override
   Widget build(BuildContext context) {
@@ -173,6 +174,7 @@ class UpcomingTreatmentPanel extends StatelessWidget {
                       color: MedColors.red,
                       background: MedColors.redLight,
                       items: groups.delayed,
+                      maskPatientData: maskPatientData,
                     ),
                   if (groups.dueSoon.isNotEmpty)
                     _UrgencySection(
@@ -180,6 +182,7 @@ class UpcomingTreatmentPanel extends StatelessWidget {
                       color: MedColors.amber,
                       background: MedColors.amberLight,
                       items: groups.dueSoon,
+                      maskPatientData: maskPatientData,
                     ),
                   if (groups.upcoming.isNotEmpty)
                     _UrgencySection(
@@ -187,6 +190,7 @@ class UpcomingTreatmentPanel extends StatelessWidget {
                       color: MedColors.text3,
                       background: MedColors.surface2,
                       items: groups.upcoming,
+                      maskPatientData: maskPatientData,
                     ),
                 ],
               ),
@@ -198,12 +202,19 @@ class UpcomingTreatmentPanel extends StatelessWidget {
 }
 
 class _UrgencySection extends StatelessWidget {
-  const _UrgencySection({required this.title, required this.color, required this.items, required this.background});
+  const _UrgencySection({
+    required this.title,
+    required this.color,
+    required this.items,
+    required this.background,
+    required this.maskPatientData,
+  });
 
   final String title;
   final Color color;
   final Color background;
   final List<UpcomingTreatment> items;
+  final bool maskPatientData;
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +241,14 @@ class _UrgencySection extends StatelessWidget {
               ],
             ),
           ),
-          ...items.map((item) => _TreatmentPatientTile(item: item, color: color, background: background)),
+          ...items.map(
+            (item) => _TreatmentPatientTile(
+              item: item,
+              color: color,
+              background: background,
+              maskPatientData: maskPatientData,
+            ),
+          ),
         ],
       ),
     );
@@ -238,11 +256,17 @@ class _UrgencySection extends StatelessWidget {
 }
 
 class _TreatmentPatientTile extends StatefulWidget {
-  const _TreatmentPatientTile({required this.item, required this.color, required this.background});
+  const _TreatmentPatientTile({
+    required this.item,
+    required this.color,
+    required this.background,
+    required this.maskPatientData,
+  });
 
   final UpcomingTreatment item;
   final Color color;
   final Color background;
+  final bool maskPatientData;
 
   @override
   State<_TreatmentPatientTile> createState() => _TreatmentPatientTileState();
@@ -258,6 +282,8 @@ class _TreatmentPatientTileState extends State<_TreatmentPatientTile> {
     final treatments = item.details ?? [];
     final hasTreatments = treatments.isNotEmpty;
     final desc = '${item.serviceName} / ${item.roomName} - ${item.bedName}';
+
+    final patientName = widget.maskPatientData ? item.patientFullName.maskedPersonName() : (item.patientFullName ?? '');
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12.0),
@@ -301,7 +327,7 @@ class _TreatmentPatientTileState extends State<_TreatmentPatientTile> {
                   spacing: 4.0,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.patientFullName ?? '', style: MedTextStyles.titleMd()),
+                    Text(patientName, style: MedTextStyles.titleMd()),
                     Text(desc, style: MedTextStyles.monoMd(color: MedColors.text3)),
                   ],
                 ),
