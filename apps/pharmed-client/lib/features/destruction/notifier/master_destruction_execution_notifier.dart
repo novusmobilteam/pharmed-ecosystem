@@ -19,6 +19,7 @@ final masterDestructionExecutionNotifierProvider =
     ChangeNotifierProvider.autoDispose<MasterDestructionExecutionNotifier>((ref) {
       return MasterDestructionExecutionNotifier(
         drawerSession: ref.read(drawerExecutionSessionProvider),
+        recordingCoordinator: ref.read(operationRecordingCoordinatorProvider),
         completeDispose: ref.read(masterDisposeMaterialUseCaseProvider),
       );
     });
@@ -27,21 +28,31 @@ class MasterDestructionExecutionNotifier extends ChangeNotifier
     with
         MasterDrawerExecutionMixin,
         CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
-        CabinOperationEntryMixin
+        CabinOperationEntryMixin,
+        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>
     implements CabinOperationExecutionController {
   MasterDestructionExecutionNotifier({
     required IMasterDrawerSession drawerSession,
+    required OperationRecordingCoordinator recordingCoordinator,
     required MasterDisposeMaterialUseCase completeDispose,
   }) : _drawerSession = drawerSession,
+       _recordingCoordinator = recordingCoordinator,
        _completeDispose = completeDispose {
     attachDrawerSession();
   }
 
   final IMasterDrawerSession _drawerSession;
+  final OperationRecordingCoordinator _recordingCoordinator;
   final MasterDisposeMaterialUseCase _completeDispose;
 
   @override
   IMasterDrawerSession get drawerSession => _drawerSession;
+
+  @override
+  OperationRecordingCoordinator get recordingCoordinator => _recordingCoordinator;
+
+  @override
+  RecordedOperationType get recordedOperationType => RecordedOperationType.waste;
 
   /// İmhada SKT girilmez (CabinOperationMode.destruction.requiresMiad == false)
   /// — alan hiç çizilmediği için değeri anlamsız.

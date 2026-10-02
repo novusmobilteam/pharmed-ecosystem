@@ -2750,6 +2750,8 @@
   "appException_custom": "An unknown error occurred. Please try again later.",
   "@appException_custom": {},
   "dataError_emptyResponse": "The server returned an empty response",
+  "appException_cameraRecording": "Camera recording could not be performed.",
+  "@appException_cameraRecording": {},
   "@dataError_emptyResponse": {},
   "dataError_malformedResponse": "The response could not be processed",
   "@dataError_malformedResponse": {},
@@ -5462,5 +5464,272 @@
 "stationStock_fillRateColumn": "Fill Rate",
 "stationStock_minColumn": "Min",
 "stationStock_criticalColumn": "Critical",
-"stationStock_maxColumn": "Max"
+"stationStock_maxColumn": "Max",
+"cabinDesign_load_stationNotFoundError": "Station information could not be retrieved.",
+"@cabinDesign_load_stationNotFoundError": {
+  "description": "Cabin design dialog: shown when the current station cannot be loaded on open"
+},
+"cabinDesign_load_noCabinsError": "No cabins are defined for this station.",
+"@cabinDesign_load_noCabinsError": {
+  "description": "Cabin design dialog: shown when the station has no cabins to display"
+},
+"cabinDesign_load_cabinIdMissingError": "The selected cabin has no identifier.",
+"@cabinDesign_load_cabinIdMissingError": {
+  "description": "Cabin design dialog: shown when a cabin without an id is selected and cannot be loaded"
+},
+"cabinDesign_newCabin_typeLabel": "Cabin Type",
+"@cabinDesign_newCabin_typeLabel": {
+  "description": "New cabin form: label above the cabin type options"
+},
+  "cabinDesign_cameraList_sectionTitle": "Cameras",
+  "@cabinDesign_cameraList_sectionTitle": {
+    "description": "Sidebar: cameras section title"
+  },
+  "cabinDesign_cameraList_addCameraButton": "Add Camera",
+  "@cabinDesign_cameraList_addCameraButton": {
+    "description": "Button to open the new camera form"
+  },
+  "cabinDesign_cameraList_emptyHint": "No cameras defined yet.",
+  "@cabinDesign_cameraList_emptyHint": {
+    "description": "Sidebar: shown when the station has no cameras"
+  },
+  "cabinDesign_cameraList_cabinCount": "{count, plural, =1{1 cabin} other{{count} cabins}}",
+  "@cabinDesign_cameraList_cabinCount": {
+    "description": "Sidebar camera item: number of cabins the camera serves",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cabinDesign_cameraList_disabledBadge": "Disabled",
+  "@cabinDesign_cameraList_disabledBadge": {
+    "description": "Sidebar camera item: badge when recording is disabled"
+  },
+  "cabinDesign_basicSettings_cameraNone": "No camera assigned",
+  "@cabinDesign_basicSettings_cameraNone": {
+    "description": "Cabin settings: this cabin has no camera"
+  },
+  "cabinDesign_basicSettings_cameraAssigned": "Camera: {name}",
+  "@cabinDesign_basicSettings_cameraAssigned": {
+    "description": "Cabin settings: camera serving this cabin",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_basicSettings_cameraOpenButton": "Camera Settings",
+  "@cabinDesign_basicSettings_cameraOpenButton": {
+    "description": "Cabin settings: opens the assigned camera's form"
+  },
+  "cabinDesign_camera_newTitle": "New Camera",
+  "@cabinDesign_camera_newTitle": {
+    "description": "Camera form title (create)"
+  },
+  "cabinDesign_camera_editTitle": "Edit Camera",
+  "@cabinDesign_camera_editTitle": {
+    "description": "Camera form title (edit)"
+  },
+  "cabinDesign_camera_nameLabel": "Camera Name",
+  "@cabinDesign_camera_nameLabel": {
+    "description": "Camera form: name field"
+  },
+  "cabinDesign_camera_hostLabel": "IP Address",
+  "@cabinDesign_camera_hostLabel": {
+    "description": "Camera form: IP address / hostname field"
+  },
+  "cabinDesign_camera_portLabel": "RTSP Port",
+  "@cabinDesign_camera_portLabel": {
+    "description": "Camera form: RTSP port field"
+  },
+  "cabinDesign_camera_usernameLabel": "Username",
+  "@cabinDesign_camera_usernameLabel": {
+    "description": "Camera form: camera username"
+  },
+  "cabinDesign_camera_passwordLabel": "Password",
+  "@cabinDesign_camera_passwordLabel": {
+    "description": "Camera form: camera password"
+  },
+  "cabinDesign_camera_passwordKeepHint": "Leave empty to keep current password",
+  "@cabinDesign_camera_passwordKeepHint": {
+    "description": "Camera form (edit): hint on the password field"
+  },
+  "cabinDesign_camera_streamLabel": "Recording Stream",
+  "@cabinDesign_camera_streamLabel": {
+    "description": "Camera form: main/sub stream selection label"
+  },
+  "cabinDesign_camera_streamMain": "Main stream (high quality)",
+  "@cabinDesign_camera_streamMain": {
+    "description": "Camera form: main stream option"
+  },
+  "cabinDesign_camera_streamSub": "Sub stream (low size)",
+  "@cabinDesign_camera_streamSub": {
+    "description": "Camera form: sub stream option"
+  },
+  "cabinDesign_camera_cabinsLabel": "Cabins This Camera Serves",
+  "@cabinDesign_camera_cabinsLabel": {
+    "description": "Camera form: cabin selection label"
+  },
+  "cabinDesign_camera_cabinAssignedTo": "Assigned to {name}",
+  "@cabinDesign_camera_cabinAssignedTo": {
+    "description": "Camera form: cabin already served by another camera",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_camera_enabledLabel": "Record operations",
+  "@cabinDesign_camera_enabledLabel": {
+    "description": "Camera form: enable/disable recording toggle"
+  },
+  "cabinDesign_camera_enabledHint": "When off, the camera stays defined but does not record.",
+  "@cabinDesign_camera_enabledHint": {
+    "description": "Camera form: hint under the enable toggle"
+  },
+  "cabinDesign_camera_testButton": "Test Connection",
+  "@cabinDesign_camera_testButton": {
+    "description": "Camera form: opens the test capture dialog"
+  },
+  "cabinDesign_camera_testRequiredHint": "Run a connection test before saving.",
+  "@cabinDesign_camera_testRequiredHint": {
+    "description": "Camera form: no successful test yet"
+  },
+  "cabinDesign_camera_testStale": "Connection settings changed. Test again before saving.",
+  "@cabinDesign_camera_testStale": {
+    "description": "Camera form: test result no longer matches the form"
+  },
+  "cabinDesign_camera_testValid": "Test passed · connected in {connectMs} ms · ~{mbPerMinute} MB/min",
+  "@cabinDesign_camera_testValid": {
+    "description": "Camera form: successful test summary",
+    "placeholders": {
+      "connectMs": {
+        "type": "int"
+      },
+      "mbPerMinute": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_camera_deleteButton": "Delete Camera",
+  "@cabinDesign_camera_deleteButton": {
+    "description": "Camera form: delete button"
+  },
+  "cabinDesign_camera_deleteConfirmTitle": "Delete camera?",
+  "@cabinDesign_camera_deleteConfirmTitle": {
+    "description": "Delete confirmation title"
+  },
+  "cabinDesign_camera_deleteConfirmMessage": "\"{name}\" will be removed and its cabins will no longer be recorded. Existing recordings are kept.",
+  "@cabinDesign_camera_deleteConfirmMessage": {
+    "description": "Delete confirmation message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_camera_testDialogTitle": "Camera Test",
+  "@cabinDesign_camera_testDialogTitle": {
+    "description": "Test dialog title"
+  },
+  "cabinDesign_camera_testInProgress": "Connecting to the camera and taking a test recording…",
+  "@cabinDesign_camera_testInProgress": {
+    "description": "Test dialog: in progress"
+  },
+  "cabinDesign_camera_testConnectLabel": "CONNECTION",
+  "@cabinDesign_camera_testConnectLabel": {
+    "description": "Test dialog: connection time label"
+  },
+  "cabinDesign_camera_testBitrateLabel": "BITRATE",
+  "@cabinDesign_camera_testBitrateLabel": {
+    "description": "Test dialog: bitrate label"
+  },
+  "cabinDesign_camera_testStorageLabel": "STORAGE",
+  "@cabinDesign_camera_testStorageLabel": {
+    "description": "Test dialog: estimated storage per minute label"
+  },
+  "cabinDesign_camera_testStorageValue": "~{mb} MB/min",
+  "@cabinDesign_camera_testStorageValue": {
+    "description": "Test dialog: estimated storage per minute value",
+    "placeholders": {
+      "mb": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_camera_testRefreshButton": "Refresh Image",
+  "@cabinDesign_camera_testRefreshButton": {
+    "description": "Test dialog: take a new snapshot"
+  },
+  "cabinDesign_camera_testRetryButton": "Try Again",
+  "@cabinDesign_camera_testRetryButton": {
+    "description": "Test dialog: retry after failure"
+  },
+  "cabinDesign_camera_testAuthFailedError": "The camera rejected the username or password.",
+  "@cabinDesign_camera_testAuthFailedError": {
+    "description": "Test error: RTSP 401"
+  },
+  "cabinDesign_camera_testUnreachableError": "Could not reach the camera. Check the IP address, port and network connection.",
+  "@cabinDesign_camera_testUnreachableError": {
+    "description": "Test error: camera unreachable"
+  },
+  "cabinDesign_camera_testTimeoutError": "The camera did not respond in time.",
+  "@cabinDesign_camera_testTimeoutError": {
+    "description": "Test error: timeout"
+  },
+  "cabinDesign_camera_testFfmpegMissingError": "Recording component (ffmpeg) not found on this device.",
+  "@cabinDesign_camera_testFfmpegMissingError": {
+    "description": "Test error: ffmpeg missing"
+  },
+  "cabinDesign_camera_passwordRequiredError": "Enter the camera password.",
+  "@cabinDesign_camera_passwordRequiredError": {
+    "description": "Camera form: password missing"
+  },
+  "cabinDesign_camera_nameRequiredError": "Enter a camera name.",
+  "@cabinDesign_camera_nameRequiredError": {
+    "description": "Validation: name empty"
+  },
+  "cabinDesign_camera_invalidHostError": "Enter a valid IP address.",
+  "@cabinDesign_camera_invalidHostError": {
+    "description": "Validation: invalid IP/host"
+  },
+  "cabinDesign_camera_duplicateHostError": "This address is already used by camera \"{name}\".",
+  "@cabinDesign_camera_duplicateHostError": {
+    "description": "Validation: same IP+channel as another camera",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_camera_invalidPortError": "Port must be between 1 and 65535.",
+  "@cabinDesign_camera_invalidPortError": {
+    "description": "Validation: invalid port"
+  },
+  "cabinDesign_camera_usernameRequiredError": "Enter the camera username.",
+  "@cabinDesign_camera_usernameRequiredError": {
+    "description": "Validation: username empty"
+  },
+  "cabinDesign_camera_noCabinSelectedError": "Select at least one cabin.",
+  "@cabinDesign_camera_noCabinSelectedError": {
+    "description": "Validation: no cabin selected"
+  },
+  "cabinDesign_camera_cabinAlreadyAssignedError": "Some selected cabins are already assigned to camera \"{name}\".",
+  "@cabinDesign_camera_cabinAlreadyAssignedError": {
+    "description": "Validation: cabin served by another camera",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_camera_saveFailedError": "The camera could not be saved.",
+  "@cabinDesign_camera_saveFailedError": {
+    "description": "Camera form: generic save failure"
+  },
+  "common_closeButton": "Close",
+  "@common_closeButton": {
+    "description": "Generic close button (add only if missing)"
+  }
 }

@@ -1,14 +1,16 @@
 part of 'cabin_design_dialog.dart';
 
 class CabinSettingsView extends StatelessWidget {
-  const CabinSettingsView({super.key, this.ready, required this.notifier});
+  const CabinSettingsView({super.key, required this.notifier});
 
-  final CabinDesignReady? ready;
   final CabinDesignNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    if (ready == null) return SizedBox.shrink();
+    final cabin = notifier.selectedCabin;
+    if (cabin == null) return const SizedBox.shrink();
+
+    final group = notifier.selectedGroup;
 
     return Container(
       padding: MedSpacing.insetXl * 2,
@@ -17,11 +19,11 @@ class CabinSettingsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (ready?.selectedGroup?.isSerum != true) ...[_BasicSettingsPanel(notifier: notifier, ready: ready!)],
-          switch (ready?.selectedGroup) {
+          if (group?.isSerum != true) _BasicSettingsPanel(notifier: notifier, cabin: cabin),
+          switch (group) {
             null => Text(context.l10n.cabinDesign_noSelectionHint, style: MedTextStyles.bodySm(color: MedColors.text4)),
             final g when g.isSerum => _SerumManualLayoutPanel(group: g),
-            final g => _DrawerDetailPanel(group: g, ready: ready!, cabin: ready!.cabin, notifier: notifier),
+            final g => _DrawerDetailPanel(group: g, cabin: cabin, notifier: notifier),
           },
         ],
       ),

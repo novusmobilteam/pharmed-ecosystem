@@ -136,7 +136,6 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
     final drawerGroup = allGroups.firstWhereOrNull((g) => g.slot.id == job.cabinDrawerId);
     final locationItems = controller.toLocationItems(allGroups);
     final activeItem = locationItems.firstWhereOrNull((i) => i.cabinDrawerId == job.cabinDrawerId);
-    print(job.isKubik);
 
     return Row(
       spacing: 12.0,

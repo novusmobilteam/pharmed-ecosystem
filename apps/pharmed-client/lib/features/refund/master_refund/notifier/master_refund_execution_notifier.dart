@@ -28,6 +28,7 @@ final masterRefundExecutionNotifierProvider = ChangeNotifierProvider.autoDispose
   return MasterRefundExecutionNotifier(
     drawerSession: ref.read(drawerExecutionSessionProvider),
     completeRefund: ref.read(completeRefundUseCaseProvider),
+    recordingCoordinator: ref.read(operationRecordingCoordinatorProvider),
   );
 });
 
@@ -35,17 +36,21 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
     with
         MasterDrawerExecutionMixin,
         CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
-        CabinOperationEntryMixin
+        CabinOperationEntryMixin,
+        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>
     implements CabinOperationExecutionController {
   MasterRefundExecutionNotifier({
     required IMasterDrawerSession drawerSession,
+    required OperationRecordingCoordinator recordingCoordinator,
     required CompleteRefundUseCase completeRefund,
   }) : _drawerSession = drawerSession,
+       _recordingCoordinator = recordingCoordinator,
        _completeRefund = completeRefund {
     attachDrawerSession();
   }
 
   final IMasterDrawerSession _drawerSession;
+  final OperationRecordingCoordinator _recordingCoordinator;
   final CompleteRefundUseCase _completeRefund;
 
   @override
@@ -60,6 +65,12 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
   /// — alan hiç çizilmediği için değeri anlamsız.
   @override
   bool get isPerCellMiadEnabled => true;
+
+  @override
+  OperationRecordingCoordinator get recordingCoordinator => _recordingCoordinator;
+
+  @override
+  RecordedOperationType get recordedOperationType => RecordedOperationType.refund;
 
   /// target.sourceId → o target'ta kaydedilecek kalemler.
   Map<int, List<RefundableItem>> _itemsBySourceId = const {};

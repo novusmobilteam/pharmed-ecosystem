@@ -3905,6 +3905,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dataError_emptyResponse => 'Sunucu boş yanıt döndürdü';
 
   @override
+  String get appException_cameraRecording => 'Kamera kaydı yapılamadı.';
+
+  @override
   String get dataError_malformedResponse => 'Yanıt işlenemedi';
 
   @override
@@ -7682,4 +7685,209 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get stationStock_maxColumn => 'Maks';
+
+  @override
+  String get cabinDesign_load_stationNotFoundError =>
+      'İstasyon bilgisi alınamadı.';
+
+  @override
+  String get cabinDesign_load_noCabinsError =>
+      'Bu istasyona tanımlı kabin yok.';
+
+  @override
+  String get cabinDesign_load_cabinIdMissingError =>
+      'Seçilen kabinin kimliği yok.';
+
+  @override
+  String get cabinDesign_cameraList_sectionTitle => 'Kameralar';
+
+  @override
+  String get cabinDesign_cameraList_addCameraButton => 'Kamera Ekle';
+
+  @override
+  String get cabinDesign_cameraList_emptyHint => 'Henüz kamera tanımlanmadı.';
+
+  @override
+  String cabinDesign_cameraList_cabinCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kabin',
+      one: '1 kabin',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cabinDesign_cameraList_disabledBadge => 'Kapalı';
+
+  @override
+  String get cabinDesign_basicSettings_cameraNone => 'Kamera atanmamış';
+
+  @override
+  String cabinDesign_basicSettings_cameraAssigned(String name) {
+    return 'Kamera: $name';
+  }
+
+  @override
+  String get cabinDesign_basicSettings_cameraOpenButton => 'Kamera Ayarları';
+
+  @override
+  String get cabinDesign_camera_newTitle => 'Yeni Kamera';
+
+  @override
+  String get cabinDesign_camera_editTitle => 'Kamerayı Düzenle';
+
+  @override
+  String get cabinDesign_camera_nameLabel => 'Kamera Adı';
+
+  @override
+  String get cabinDesign_camera_hostLabel => 'IP Adresi';
+
+  @override
+  String get cabinDesign_camera_portLabel => 'RTSP Portu';
+
+  @override
+  String get cabinDesign_camera_usernameLabel => 'Kullanıcı Adı';
+
+  @override
+  String get cabinDesign_camera_passwordLabel => 'Şifre';
+
+  @override
+  String get cabinDesign_camera_passwordKeepHint =>
+      'Mevcut şifreyi korumak için boş bırakın';
+
+  @override
+  String get cabinDesign_camera_streamLabel => 'Kayıt Akışı';
+
+  @override
+  String get cabinDesign_camera_streamMain => 'Ana akış (yüksek kalite)';
+
+  @override
+  String get cabinDesign_camera_streamSub => 'Alt akış (düşük boyut)';
+
+  @override
+  String get cabinDesign_camera_cabinsLabel =>
+      'Kameranın Hizmet Verdiği Kabinler';
+
+  @override
+  String cabinDesign_camera_cabinAssignedTo(String name) {
+    return '$name kamerasına atanmış';
+  }
+
+  @override
+  String get cabinDesign_camera_enabledLabel => 'İşlemleri kaydet';
+
+  @override
+  String get cabinDesign_camera_enabledHint =>
+      'Kapalıyken kamera tanımlı kalır ama kayıt almaz.';
+
+  @override
+  String get cabinDesign_camera_testButton => 'Bağlantıyı Test Et';
+
+  @override
+  String get cabinDesign_camera_testRequiredHint =>
+      'Kaydetmeden önce bağlantı testi yapın.';
+
+  @override
+  String get cabinDesign_camera_testStale =>
+      'Bağlantı bilgileri değişti. Kaydetmeden önce tekrar test edin.';
+
+  @override
+  String cabinDesign_camera_testValid(int connectMs, String mbPerMinute) {
+    return 'Test başarılı · $connectMs ms\'de bağlandı · ~$mbPerMinute MB/dk';
+  }
+
+  @override
+  String get cabinDesign_camera_deleteButton => 'Kamerayı Sil';
+
+  @override
+  String get cabinDesign_camera_deleteConfirmTitle => 'Kamera silinsin mi?';
+
+  @override
+  String cabinDesign_camera_deleteConfirmMessage(String name) {
+    return '\"$name\" silinecek ve atandığı kabinler artık kaydedilmeyecek. Mevcut kayıtlar korunur.';
+  }
+
+  @override
+  String get cabinDesign_camera_testDialogTitle => 'Kamera Testi';
+
+  @override
+  String get cabinDesign_camera_testInProgress =>
+      'Kameraya bağlanılıyor ve deneme kaydı alınıyor…';
+
+  @override
+  String get cabinDesign_camera_testConnectLabel => 'BAĞLANTI';
+
+  @override
+  String get cabinDesign_camera_testBitrateLabel => 'BİT HIZI';
+
+  @override
+  String get cabinDesign_camera_testStorageLabel => 'DEPOLAMA';
+
+  @override
+  String cabinDesign_camera_testStorageValue(String mb) {
+    return '~$mb MB/dk';
+  }
+
+  @override
+  String get cabinDesign_camera_testRefreshButton => 'Görüntüyü Yenile';
+
+  @override
+  String get cabinDesign_camera_testRetryButton => 'Tekrar Dene';
+
+  @override
+  String get cabinDesign_camera_testAuthFailedError =>
+      'Kamera kullanıcı adını veya şifreyi kabul etmedi.';
+
+  @override
+  String get cabinDesign_camera_testUnreachableError =>
+      'Kameraya ulaşılamadı. IP adresini, portu ve ağ bağlantısını kontrol edin.';
+
+  @override
+  String get cabinDesign_camera_testTimeoutError =>
+      'Kamera zamanında yanıt vermedi.';
+
+  @override
+  String get cabinDesign_camera_testFfmpegMissingError =>
+      'Kayıt bileşeni (ffmpeg) bu cihazda bulunamadı.';
+
+  @override
+  String get cabinDesign_camera_passwordRequiredError =>
+      'Kamera şifresini girin.';
+
+  @override
+  String get cabinDesign_camera_nameRequiredError => 'Kamera adı girin.';
+
+  @override
+  String get cabinDesign_camera_invalidHostError =>
+      'Geçerli bir IP adresi girin.';
+
+  @override
+  String cabinDesign_camera_duplicateHostError(String name) {
+    return 'Bu adres \"$name\" kamerası tarafından kullanılıyor.';
+  }
+
+  @override
+  String get cabinDesign_camera_invalidPortError =>
+      'Port 1 ile 65535 arasında olmalı.';
+
+  @override
+  String get cabinDesign_camera_usernameRequiredError =>
+      'Kamera kullanıcı adını girin.';
+
+  @override
+  String get cabinDesign_camera_noCabinSelectedError =>
+      'En az bir kabin seçin.';
+
+  @override
+  String cabinDesign_camera_cabinAlreadyAssignedError(String name) {
+    return 'Seçilen kabinlerden bazıları \"$name\" kamerasına atanmış.';
+  }
+
+  @override
+  String get cabinDesign_camera_saveFailedError => 'Kamera kaydedilemedi.';
+
+  @override
+  String get common_closeButton => 'Kapat';
 }

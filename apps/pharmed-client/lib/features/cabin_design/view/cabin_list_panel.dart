@@ -1,71 +1,106 @@
 part of 'cabin_design_dialog.dart';
 
-class _CabinListPanel extends StatelessWidget {
-  const _CabinListPanel({
-    required this.cabins,
-    required this.selectedCabinId,
-    required this.onCabinTap,
-    required this.onAddCabinTap,
-  });
+/// Sol panel: istasyonun kabinleri ve kameraları.
+class _StationSidebar extends StatelessWidget {
+  const _StationSidebar({required this.notifier});
 
-  final List<Cabin> cabins;
-  final int? selectedCabinId;
-  final ValueChanged<int> onCabinTap;
-  final VoidCallback onAddCabinTap;
+  final CabinDesignNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
+    final selection = notifier.selection;
+    final selectedCabinId = selection is SelectedCabin ? selection.cabinId : null;
+    final selectedCameraId = selection is CameraSelection ? selection.cameraId : null;
+    final cabins = notifier.stationCabins;
+    final cameras = notifier.cameras;
+    final horizontal = MedSpacing.insetXl.left * 1.5;
+
     return Container(
       color: MedColors.surface,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: MedSpacing.lg),
+              children: [
+                _SectionHeader(
+                  title: context.l10n.cabinDesign_cabinList_sectionTitle,
+                  badge: context.l10n.cabinDesign_cabinList_countBadge(cabins.length),
+                ),
+                for (final cabin in cabins) ...[
+                  _CabinListItem(
+                    cabin: cabin,
+                    isSelected: cabin.id != null && cabin.id == selectedCabinId,
+                    onTap: cabin.id != null ? () => notifier.selectCabin(cabin.id!) : null,
+                  ),
+                  const SizedBox(height: MedSpacing.xs),
+                ],
+                const SizedBox(height: MedSpacing.xl),
+                _SectionHeader(title: context.l10n.cabinDesign_cameraList_sectionTitle, badge: '${cameras.length}'),
+                if (cameras.isEmpty)
+                  Text(
+                    context.l10n.cabinDesign_cameraList_emptyHint,
+                    style: MedTextStyles.bodySm(color: MedColors.text4),
+                  )
+                else
+                  for (final camera in cameras) ...[
+                    _CameraListItem(
+                      camera: camera,
+                      isSelected: camera.id == selectedCameraId,
+                      onTap: () => notifier.selectCamera(camera.id),
+                    ),
+                    const SizedBox(height: MedSpacing.xs),
+                  ],
+              ],
+            ),
+          ),
           Padding(
             padding: MedSpacing.insetXl * 1.5,
-            child: Row(
+            child: Column(
+              spacing: MedSpacing.sm,
               children: [
-                Text(
-                  context.l10n.cabinDesign_cabinList_sectionTitle,
-                  style: MedTextStyles.titleSm(color: MedColors.text3),
+                MedButton(
+                  fullWidth: true,
+                  label: context.l10n.cabinDesign_cabinList_addCabinButton,
+                  prefixIcon: Icon(PhosphorIcons.plus()),
+                  onPressed: notifier.startAddCabin,
+                  variant: MedButtonVariant.secondary,
                 ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(color: MedColors.surface3, borderRadius: MedRadius.smAll),
-                  child: Text(
-                    context.l10n.cabinDesign_cabinList_countBadge(cabins.length),
-                    style: MedTextStyles.monoSm(),
-                  ),
+                MedButton(
+                  fullWidth: true,
+                  label: context.l10n.cabinDesign_cameraList_addCameraButton,
+                  prefixIcon: Icon(PhosphorIcons.videoCamera()),
+                  onPressed: () => notifier.startAddCamera(),
+                  variant: MedButtonVariant.secondary,
                 ),
               ],
             ),
           ),
-          Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: MedSpacing.insetXl.left * 1.5),
-              itemCount: cabins.length,
-              separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.xs),
-              itemBuilder: (_, i) {
-                final cabin = cabins[i];
-                final id = cabin.id;
-                return _CabinListItem(
-                  cabin: cabin,
-                  isSelected: id != null && id == selectedCabinId,
-                  onTap: id != null ? () => onCabinTap(id) : null,
-                );
-              },
-            ),
-          ),
+        ],
+      ),
+    );
+  }
+}
 
-          Padding(
-            padding: MedSpacing.insetXl * 1.5,
-            child: MedButton(
-              fullWidth: true,
-              label: context.l10n.cabinDesign_cabinList_addCabinButton,
-              prefixIcon: Icon(PhosphorIcons.plus()),
-              onPressed: onAddCabinTap,
-              variant: MedButtonVariant.secondary,
-            ),
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, required this.badge});
+
+  final String title;
+  final String badge;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: MedSpacing.md),
+      child: Row(
+        children: [
+          Text(title, style: MedTextStyles.titleSm(color: MedColors.text3)),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(color: MedColors.surface3, borderRadius: MedRadius.smAll),
+            child: Text(badge, style: MedTextStyles.monoSm()),
           ),
         ],
       ),
@@ -84,6 +119,64 @@ class _CabinListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _SidebarTile(
+      isSelected: isSelected,
+      onTap: onTap,
+      leading: Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          // TODO: canlı bağlantı durumu henüz bağlanmadı — şimdilik pasif/aktif.
+          color: _isPassive ? MedColors.text4 : MedColors.green,
+        ),
+      ),
+      title: cabin.name ?? '—',
+      subtitle: cabin.type?.label,
+      badge: _isPassive ? context.l10n.cabinDesign_cabinList_passiveBadge : null,
+    );
+  }
+}
+
+class _CameraListItem extends StatelessWidget {
+  const _CameraListItem({required this.camera, required this.isSelected, required this.onTap});
+
+  final CameraDevice camera;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return _SidebarTile(
+      isSelected: isSelected,
+      onTap: onTap,
+      leading: Icon(PhosphorIcons.videoCamera(), size: 16, color: camera.enabled ? MedColors.blue : MedColors.text4),
+      title: camera.name,
+      subtitle: '${camera.host} · ${context.l10n.cabinDesign_cameraList_cabinCount(camera.cabinIds.length)}',
+      badge: camera.enabled ? null : context.l10n.cabinDesign_cameraList_disabledBadge,
+    );
+  }
+}
+
+class _SidebarTile extends StatelessWidget {
+  const _SidebarTile({
+    required this.isSelected,
+    required this.onTap,
+    required this.leading,
+    required this.title,
+    this.subtitle,
+    this.badge,
+  });
+
+  final bool isSelected;
+  final VoidCallback? onTap;
+  final Widget leading;
+  final String title;
+  final String? subtitle;
+  final String? badge;
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -95,49 +188,40 @@ class _CabinListItem extends StatelessWidget {
         ),
         child: Row(
           spacing: 12.0,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                // TODO: canlı bağlantı durumu henüz bağlanmadı (donanım probu
-                // gerektiriyor — "Cihazı Tara" akışıyla birlikte ele alınacak).
-                // Şimdilik sadece pasif/aktif ayrımı gösteriliyor.
-                color: _isPassive ? MedColors.text4 : MedColors.green,
-              ),
-            ),
-
+            leading,
             Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                          cabin.name ?? '—',
+                          title,
                           style: MedTextStyles.bodyLg(color: MedColors.text).copyWith(fontWeight: FontWeight.w600),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (_isPassive) ...[
+                      if (badge != null) ...[
                         const SizedBox(width: MedSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(color: MedColors.text4, borderRadius: MedRadius.smAll),
                           child: Text(
-                            context.l10n.cabinDesign_cabinList_passiveBadge.toUpperCase(),
+                            badge!.toUpperCase(),
                             style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: Colors.white),
                           ),
                         ),
                       ],
                     ],
                   ),
-                  if (cabin.type != null) Text(cabin.type!.label, style: MedTextStyles.bodyMd(color: MedColors.text3)),
+                  if (subtitle != null)
+                    Text(
+                      subtitle!,
+                      style: MedTextStyles.bodyMd(color: MedColors.text3),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                 ],
               ),
             ),

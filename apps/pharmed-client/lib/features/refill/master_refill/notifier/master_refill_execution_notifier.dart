@@ -19,6 +19,7 @@ import '../../../settings/notifier/settings_notifier.dart';
 final masterRefillExecutionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterRefillExecutionNotifier>((ref) {
   return MasterRefillExecutionNotifier(
     drawerSession: ref.read(drawerExecutionSessionProvider),
+    recordingCoordinator: ref.read(operationRecordingCoordinatorProvider),
     refillCabin: ref.read(refillMasterCabinUseCaseProvider),
     isPerCellMiadEnabled: ref.read(isPerCellMiadEnabledProvider),
   );
@@ -28,18 +29,22 @@ class MasterRefillExecutionNotifier extends ChangeNotifier
     with
         MasterDrawerExecutionMixin,
         CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
-        CabinOperationEntryMixin
+        CabinOperationEntryMixin,
+        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>
     implements CabinOperationExecutionController {
   MasterRefillExecutionNotifier({
     required IMasterDrawerSession drawerSession,
+    required OperationRecordingCoordinator recordingCoordinator,
     required RefillMasterCabinUseCase refillCabin,
     required this.isPerCellMiadEnabled,
   }) : _drawerSession = drawerSession,
+       _recordingCoordinator = recordingCoordinator,
        _refillCabin = refillCabin {
     attachDrawerSession();
   }
 
   final IMasterDrawerSession _drawerSession;
+  final OperationRecordingCoordinator _recordingCoordinator;
   final RefillMasterCabinUseCase _refillCabin;
 
   @override
@@ -48,6 +53,12 @@ class MasterRefillExecutionNotifier extends ChangeNotifier
   /// SKT modu — ekran açıldığı anın ayarı, kuyruk boyunca sabit.
   @override
   final bool isPerCellMiadEnabled;
+
+  @override
+  OperationRecordingCoordinator get recordingCoordinator => _recordingCoordinator; // drawerSession gibi enjekte
+
+  @override
+  RecordedOperationType get recordedOperationType => RecordedOperationType.refill;
 
   @override
   void dispose() {

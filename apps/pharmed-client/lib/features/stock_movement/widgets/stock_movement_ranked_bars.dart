@@ -18,7 +18,7 @@ class StockMovementRankedBars extends StatelessWidget {
 
     return ListView.separated(
       itemCount: rows.length,
-      separatorBuilder: (_, __) => const SizedBox(height: MedSpacing.sm),
+      separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.sm),
       itemBuilder: (context, i) {
         final row = rows[i];
         final ratio = max == 0 ? 0.0 : row.value / max;

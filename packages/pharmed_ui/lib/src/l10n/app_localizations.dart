@@ -6953,6 +6953,12 @@ abstract class AppLocalizations {
   /// **'The server returned an empty response'**
   String get dataError_emptyResponse;
 
+  /// No description provided for @appException_cameraRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera recording could not be performed.'**
+  String get appException_cameraRecording;
+
   /// No description provided for @dataError_malformedResponse.
   ///
   /// In en, this message translates to:
@@ -11535,10 +11541,10 @@ abstract class AppLocalizations {
   /// **'Inactive'**
   String get cabinDesign_cabinList_passiveBadge;
 
-  /// No description provided for @cabinDesign_newCabin_typeLabel.
+  /// New cabin form: label above the cabin type options
   ///
   /// In en, this message translates to:
-  /// **'Cabinet Type'**
+  /// **'Cabin Type'**
   String get cabinDesign_newCabin_typeLabel;
 
   /// No description provided for @cabinDesign_newCabin_addressLabel.
@@ -13571,6 +13577,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Max'**
   String get stationStock_maxColumn;
+
+  /// Cabin design dialog: shown when the current station cannot be loaded on open
+  ///
+  /// In en, this message translates to:
+  /// **'Station information could not be retrieved.'**
+  String get cabinDesign_load_stationNotFoundError;
+
+  /// Cabin design dialog: shown when the station has no cabins to display
+  ///
+  /// In en, this message translates to:
+  /// **'No cabins are defined for this station.'**
+  String get cabinDesign_load_noCabinsError;
+
+  /// Cabin design dialog: shown when a cabin without an id is selected and cannot be loaded
+  ///
+  /// In en, this message translates to:
+  /// **'The selected cabin has no identifier.'**
+  String get cabinDesign_load_cabinIdMissingError;
+
+  /// Sidebar: cameras section title
+  ///
+  /// In en, this message translates to:
+  /// **'Cameras'**
+  String get cabinDesign_cameraList_sectionTitle;
+
+  /// Button to open the new camera form
+  ///
+  /// In en, this message translates to:
+  /// **'Add Camera'**
+  String get cabinDesign_cameraList_addCameraButton;
+
+  /// Sidebar: shown when the station has no cameras
+  ///
+  /// In en, this message translates to:
+  /// **'No cameras defined yet.'**
+  String get cabinDesign_cameraList_emptyHint;
+
+  /// Sidebar camera item: number of cabins the camera serves
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 cabin} other{{count} cabins}}'**
+  String cabinDesign_cameraList_cabinCount(int count);
+
+  /// Sidebar camera item: badge when recording is disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get cabinDesign_cameraList_disabledBadge;
+
+  /// Cabin settings: this cabin has no camera
+  ///
+  /// In en, this message translates to:
+  /// **'No camera assigned'**
+  String get cabinDesign_basicSettings_cameraNone;
+
+  /// Cabin settings: camera serving this cabin
+  ///
+  /// In en, this message translates to:
+  /// **'Camera: {name}'**
+  String cabinDesign_basicSettings_cameraAssigned(String name);
+
+  /// Cabin settings: opens the assigned camera's form
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Settings'**
+  String get cabinDesign_basicSettings_cameraOpenButton;
+
+  /// Camera form title (create)
+  ///
+  /// In en, this message translates to:
+  /// **'New Camera'**
+  String get cabinDesign_camera_newTitle;
+
+  /// Camera form title (edit)
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Camera'**
+  String get cabinDesign_camera_editTitle;
+
+  /// Camera form: name field
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Name'**
+  String get cabinDesign_camera_nameLabel;
+
+  /// Camera form: IP address / hostname field
+  ///
+  /// In en, this message translates to:
+  /// **'IP Address'**
+  String get cabinDesign_camera_hostLabel;
+
+  /// Camera form: RTSP port field
+  ///
+  /// In en, this message translates to:
+  /// **'RTSP Port'**
+  String get cabinDesign_camera_portLabel;
+
+  /// Camera form: camera username
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get cabinDesign_camera_usernameLabel;
+
+  /// Camera form: camera password
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get cabinDesign_camera_passwordLabel;
+
+  /// Camera form (edit): hint on the password field
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty to keep current password'**
+  String get cabinDesign_camera_passwordKeepHint;
+
+  /// Camera form: main/sub stream selection label
+  ///
+  /// In en, this message translates to:
+  /// **'Recording Stream'**
+  String get cabinDesign_camera_streamLabel;
+
+  /// Camera form: main stream option
+  ///
+  /// In en, this message translates to:
+  /// **'Main stream (high quality)'**
+  String get cabinDesign_camera_streamMain;
+
+  /// Camera form: sub stream option
+  ///
+  /// In en, this message translates to:
+  /// **'Sub stream (low size)'**
+  String get cabinDesign_camera_streamSub;
+
+  /// Camera form: cabin selection label
+  ///
+  /// In en, this message translates to:
+  /// **'Cabins This Camera Serves'**
+  String get cabinDesign_camera_cabinsLabel;
+
+  /// Camera form: cabin already served by another camera
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to {name}'**
+  String cabinDesign_camera_cabinAssignedTo(String name);
+
+  /// Camera form: enable/disable recording toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Record operations'**
+  String get cabinDesign_camera_enabledLabel;
+
+  /// Camera form: hint under the enable toggle
+  ///
+  /// In en, this message translates to:
+  /// **'When off, the camera stays defined but does not record.'**
+  String get cabinDesign_camera_enabledHint;
+
+  /// Camera form: opens the test capture dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Test Connection'**
+  String get cabinDesign_camera_testButton;
+
+  /// Camera form: no successful test yet
+  ///
+  /// In en, this message translates to:
+  /// **'Run a connection test before saving.'**
+  String get cabinDesign_camera_testRequiredHint;
+
+  /// Camera form: test result no longer matches the form
+  ///
+  /// In en, this message translates to:
+  /// **'Connection settings changed. Test again before saving.'**
+  String get cabinDesign_camera_testStale;
+
+  /// Camera form: successful test summary
+  ///
+  /// In en, this message translates to:
+  /// **'Test passed · connected in {connectMs} ms · ~{mbPerMinute} MB/min'**
+  String cabinDesign_camera_testValid(int connectMs, String mbPerMinute);
+
+  /// Camera form: delete button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Camera'**
+  String get cabinDesign_camera_deleteButton;
+
+  /// Delete confirmation title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete camera?'**
+  String get cabinDesign_camera_deleteConfirmTitle;
+
+  /// Delete confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" will be removed and its cabins will no longer be recorded. Existing recordings are kept.'**
+  String cabinDesign_camera_deleteConfirmMessage(String name);
+
+  /// Test dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Test'**
+  String get cabinDesign_camera_testDialogTitle;
+
+  /// Test dialog: in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to the camera and taking a test recording…'**
+  String get cabinDesign_camera_testInProgress;
+
+  /// Test dialog: connection time label
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECTION'**
+  String get cabinDesign_camera_testConnectLabel;
+
+  /// Test dialog: bitrate label
+  ///
+  /// In en, this message translates to:
+  /// **'BITRATE'**
+  String get cabinDesign_camera_testBitrateLabel;
+
+  /// Test dialog: estimated storage per minute label
+  ///
+  /// In en, this message translates to:
+  /// **'STORAGE'**
+  String get cabinDesign_camera_testStorageLabel;
+
+  /// Test dialog: estimated storage per minute value
+  ///
+  /// In en, this message translates to:
+  /// **'~{mb} MB/min'**
+  String cabinDesign_camera_testStorageValue(String mb);
+
+  /// Test dialog: take a new snapshot
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Image'**
+  String get cabinDesign_camera_testRefreshButton;
+
+  /// Test dialog: retry after failure
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get cabinDesign_camera_testRetryButton;
+
+  /// Test error: RTSP 401
+  ///
+  /// In en, this message translates to:
+  /// **'The camera rejected the username or password.'**
+  String get cabinDesign_camera_testAuthFailedError;
+
+  /// Test error: camera unreachable
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the camera. Check the IP address, port and network connection.'**
+  String get cabinDesign_camera_testUnreachableError;
+
+  /// Test error: timeout
+  ///
+  /// In en, this message translates to:
+  /// **'The camera did not respond in time.'**
+  String get cabinDesign_camera_testTimeoutError;
+
+  /// Test error: ffmpeg missing
+  ///
+  /// In en, this message translates to:
+  /// **'Recording component (ffmpeg) not found on this device.'**
+  String get cabinDesign_camera_testFfmpegMissingError;
+
+  /// Camera form: password missing
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the camera password.'**
+  String get cabinDesign_camera_passwordRequiredError;
+
+  /// Validation: name empty
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a camera name.'**
+  String get cabinDesign_camera_nameRequiredError;
+
+  /// Validation: invalid IP/host
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid IP address.'**
+  String get cabinDesign_camera_invalidHostError;
+
+  /// Validation: same IP+channel as another camera
+  ///
+  /// In en, this message translates to:
+  /// **'This address is already used by camera \"{name}\".'**
+  String cabinDesign_camera_duplicateHostError(String name);
+
+  /// Validation: invalid port
+  ///
+  /// In en, this message translates to:
+  /// **'Port must be between 1 and 65535.'**
+  String get cabinDesign_camera_invalidPortError;
+
+  /// Validation: username empty
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the camera username.'**
+  String get cabinDesign_camera_usernameRequiredError;
+
+  /// Validation: no cabin selected
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one cabin.'**
+  String get cabinDesign_camera_noCabinSelectedError;
+
+  /// Validation: cabin served by another camera
+  ///
+  /// In en, this message translates to:
+  /// **'Some selected cabins are already assigned to camera \"{name}\".'**
+  String cabinDesign_camera_cabinAlreadyAssignedError(String name);
+
+  /// Camera form: generic save failure
+  ///
+  /// In en, this message translates to:
+  /// **'The camera could not be saved.'**
+  String get cabinDesign_camera_saveFailedError;
+
+  /// Generic close button (add only if missing)
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get common_closeButton;
 }
 
 class _AppLocalizationsDelegate

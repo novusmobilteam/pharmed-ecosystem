@@ -44,6 +44,11 @@ dependencies:
   collection: ^1.19.1
   window_manager: ^0.5.2
   fl_chart: ^1.2.0
+  crypto: ^3.0.7
+  path: ^1.9.1
+  ffi: ^2.2.0
+  win32: ^5.15.0
+  flutter_secure_storage: ^10.3.4
   
 
 dev_dependencies:

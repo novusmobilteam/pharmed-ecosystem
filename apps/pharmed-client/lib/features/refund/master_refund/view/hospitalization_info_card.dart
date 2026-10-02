@@ -48,7 +48,7 @@ class HospitalizationInfoCard extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing case final trailing?) trailing,
+          ?trailing,
         ],
       ),
     );

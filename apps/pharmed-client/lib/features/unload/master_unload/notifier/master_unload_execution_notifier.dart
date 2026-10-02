@@ -18,6 +18,7 @@ import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.
 final masterUnloadExecutionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterUnloadExecutionNotifier>((ref) {
   return MasterUnloadExecutionNotifier(
     drawerSession: ref.read(drawerExecutionSessionProvider),
+    recordingCoordinator: ref.read(operationRecordingCoordinatorProvider),
     completeUnload: ref.read(completeMasterUnloadUseCaseProvider),
   );
 });
@@ -26,17 +27,21 @@ class MasterUnloadExecutionNotifier extends ChangeNotifier
     with
         MasterDrawerExecutionMixin,
         CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
-        CabinOperationEntryMixin
+        CabinOperationEntryMixin,
+        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>
     implements CabinOperationExecutionController {
   MasterUnloadExecutionNotifier({
     required IMasterDrawerSession drawerSession,
+    required OperationRecordingCoordinator recordingCoordinator,
     required CompleteMasterUnloadUseCase completeUnload,
   }) : _drawerSession = drawerSession,
+       _recordingCoordinator = recordingCoordinator,
        _completeUnload = completeUnload {
     attachDrawerSession();
   }
 
   final IMasterDrawerSession _drawerSession;
+  final OperationRecordingCoordinator _recordingCoordinator;
   final CompleteMasterUnloadUseCase _completeUnload;
 
   @override
@@ -46,6 +51,12 @@ class MasterUnloadExecutionNotifier extends ChangeNotifier
   /// — alan hiç çizilmediği için değeri anlamsız.
   @override
   bool get isPerCellMiadEnabled => true;
+
+  @override
+  OperationRecordingCoordinator get recordingCoordinator => _recordingCoordinator;
+
+  @override
+  RecordedOperationType get recordedOperationType => RecordedOperationType.unload;
 
   @override
   void dispose() {

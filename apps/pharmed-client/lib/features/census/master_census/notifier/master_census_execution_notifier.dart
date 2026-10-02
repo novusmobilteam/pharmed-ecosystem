@@ -19,6 +19,7 @@ import '../../../settings/notifier/settings_notifier.dart';
 final masterCensusExecutionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterCensusExecutionNotifier>((ref) {
   return MasterCensusExecutionNotifier(
     drawerSession: ref.read(drawerExecutionSessionProvider),
+    recordingCoordinator: ref.read(operationRecordingCoordinatorProvider),
     completeCensus: ref.read(completeMasterCensusUseCaseProvider),
     isPerCellMiadEnabled: ref.read(isPerCellMiadEnabledProvider),
   );
@@ -28,18 +29,22 @@ class MasterCensusExecutionNotifier extends ChangeNotifier
     with
         MasterDrawerExecutionMixin,
         CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
-        CabinOperationEntryMixin
+        CabinOperationEntryMixin,
+        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>
     implements CabinOperationExecutionController {
   MasterCensusExecutionNotifier({
     required IMasterDrawerSession drawerSession,
+    required OperationRecordingCoordinator recordingCoordinator,
     required CompleteMasterCensusUseCase completeCensus,
     required this.isPerCellMiadEnabled,
   }) : _drawerSession = drawerSession,
+       _recordingCoordinator = recordingCoordinator,
        _completeCensus = completeCensus {
     attachDrawerSession();
   }
 
   final IMasterDrawerSession _drawerSession;
+  final OperationRecordingCoordinator _recordingCoordinator;
   final CompleteMasterCensusUseCase _completeCensus;
 
   @override
@@ -48,6 +53,12 @@ class MasterCensusExecutionNotifier extends ChangeNotifier
   /// SKT modu — ekran açıldığı anın ayarı, kuyruk boyunca sabit.
   @override
   final bool isPerCellMiadEnabled;
+
+  @override
+  OperationRecordingCoordinator get recordingCoordinator => _recordingCoordinator;
+
+  @override
+  RecordedOperationType get recordedOperationType => RecordedOperationType.census;
 
   @override
   void dispose() {

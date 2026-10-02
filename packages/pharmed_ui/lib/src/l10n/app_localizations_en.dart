@@ -3939,6 +3939,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataError_emptyResponse => 'The server returned an empty response';
 
   @override
+  String get appException_cameraRecording =>
+      'Camera recording could not be performed.';
+
+  @override
   String get dataError_malformedResponse =>
       'The response could not be processed';
 
@@ -6535,7 +6539,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinDesign_cabinList_passiveBadge => 'Inactive';
 
   @override
-  String get cabinDesign_newCabin_typeLabel => 'Cabinet Type';
+  String get cabinDesign_newCabin_typeLabel => 'Cabin Type';
 
   @override
   String get cabinDesign_newCabin_addressLabel => 'Address';
@@ -7748,4 +7752,208 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stationStock_maxColumn => 'Max';
+
+  @override
+  String get cabinDesign_load_stationNotFoundError =>
+      'Station information could not be retrieved.';
+
+  @override
+  String get cabinDesign_load_noCabinsError =>
+      'No cabins are defined for this station.';
+
+  @override
+  String get cabinDesign_load_cabinIdMissingError =>
+      'The selected cabin has no identifier.';
+
+  @override
+  String get cabinDesign_cameraList_sectionTitle => 'Cameras';
+
+  @override
+  String get cabinDesign_cameraList_addCameraButton => 'Add Camera';
+
+  @override
+  String get cabinDesign_cameraList_emptyHint => 'No cameras defined yet.';
+
+  @override
+  String cabinDesign_cameraList_cabinCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cabins',
+      one: '1 cabin',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cabinDesign_cameraList_disabledBadge => 'Disabled';
+
+  @override
+  String get cabinDesign_basicSettings_cameraNone => 'No camera assigned';
+
+  @override
+  String cabinDesign_basicSettings_cameraAssigned(String name) {
+    return 'Camera: $name';
+  }
+
+  @override
+  String get cabinDesign_basicSettings_cameraOpenButton => 'Camera Settings';
+
+  @override
+  String get cabinDesign_camera_newTitle => 'New Camera';
+
+  @override
+  String get cabinDesign_camera_editTitle => 'Edit Camera';
+
+  @override
+  String get cabinDesign_camera_nameLabel => 'Camera Name';
+
+  @override
+  String get cabinDesign_camera_hostLabel => 'IP Address';
+
+  @override
+  String get cabinDesign_camera_portLabel => 'RTSP Port';
+
+  @override
+  String get cabinDesign_camera_usernameLabel => 'Username';
+
+  @override
+  String get cabinDesign_camera_passwordLabel => 'Password';
+
+  @override
+  String get cabinDesign_camera_passwordKeepHint =>
+      'Leave empty to keep current password';
+
+  @override
+  String get cabinDesign_camera_streamLabel => 'Recording Stream';
+
+  @override
+  String get cabinDesign_camera_streamMain => 'Main stream (high quality)';
+
+  @override
+  String get cabinDesign_camera_streamSub => 'Sub stream (low size)';
+
+  @override
+  String get cabinDesign_camera_cabinsLabel => 'Cabins This Camera Serves';
+
+  @override
+  String cabinDesign_camera_cabinAssignedTo(String name) {
+    return 'Assigned to $name';
+  }
+
+  @override
+  String get cabinDesign_camera_enabledLabel => 'Record operations';
+
+  @override
+  String get cabinDesign_camera_enabledHint =>
+      'When off, the camera stays defined but does not record.';
+
+  @override
+  String get cabinDesign_camera_testButton => 'Test Connection';
+
+  @override
+  String get cabinDesign_camera_testRequiredHint =>
+      'Run a connection test before saving.';
+
+  @override
+  String get cabinDesign_camera_testStale =>
+      'Connection settings changed. Test again before saving.';
+
+  @override
+  String cabinDesign_camera_testValid(int connectMs, String mbPerMinute) {
+    return 'Test passed · connected in $connectMs ms · ~$mbPerMinute MB/min';
+  }
+
+  @override
+  String get cabinDesign_camera_deleteButton => 'Delete Camera';
+
+  @override
+  String get cabinDesign_camera_deleteConfirmTitle => 'Delete camera?';
+
+  @override
+  String cabinDesign_camera_deleteConfirmMessage(String name) {
+    return '\"$name\" will be removed and its cabins will no longer be recorded. Existing recordings are kept.';
+  }
+
+  @override
+  String get cabinDesign_camera_testDialogTitle => 'Camera Test';
+
+  @override
+  String get cabinDesign_camera_testInProgress =>
+      'Connecting to the camera and taking a test recording…';
+
+  @override
+  String get cabinDesign_camera_testConnectLabel => 'CONNECTION';
+
+  @override
+  String get cabinDesign_camera_testBitrateLabel => 'BITRATE';
+
+  @override
+  String get cabinDesign_camera_testStorageLabel => 'STORAGE';
+
+  @override
+  String cabinDesign_camera_testStorageValue(String mb) {
+    return '~$mb MB/min';
+  }
+
+  @override
+  String get cabinDesign_camera_testRefreshButton => 'Refresh Image';
+
+  @override
+  String get cabinDesign_camera_testRetryButton => 'Try Again';
+
+  @override
+  String get cabinDesign_camera_testAuthFailedError =>
+      'The camera rejected the username or password.';
+
+  @override
+  String get cabinDesign_camera_testUnreachableError =>
+      'Could not reach the camera. Check the IP address, port and network connection.';
+
+  @override
+  String get cabinDesign_camera_testTimeoutError =>
+      'The camera did not respond in time.';
+
+  @override
+  String get cabinDesign_camera_testFfmpegMissingError =>
+      'Recording component (ffmpeg) not found on this device.';
+
+  @override
+  String get cabinDesign_camera_passwordRequiredError =>
+      'Enter the camera password.';
+
+  @override
+  String get cabinDesign_camera_nameRequiredError => 'Enter a camera name.';
+
+  @override
+  String get cabinDesign_camera_invalidHostError => 'Enter a valid IP address.';
+
+  @override
+  String cabinDesign_camera_duplicateHostError(String name) {
+    return 'This address is already used by camera \"$name\".';
+  }
+
+  @override
+  String get cabinDesign_camera_invalidPortError =>
+      'Port must be between 1 and 65535.';
+
+  @override
+  String get cabinDesign_camera_usernameRequiredError =>
+      'Enter the camera username.';
+
+  @override
+  String get cabinDesign_camera_noCabinSelectedError =>
+      'Select at least one cabin.';
+
+  @override
+  String cabinDesign_camera_cabinAlreadyAssignedError(String name) {
+    return 'Some selected cabins are already assigned to camera \"$name\".';
+  }
+
+  @override
+  String get cabinDesign_camera_saveFailedError =>
+      'The camera could not be saved.';
+
+  @override
+  String get common_closeButton => 'Close';
 }

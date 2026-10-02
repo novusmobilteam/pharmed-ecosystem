@@ -3,6 +3,7 @@
 // Tüm exception'lar AppException'dan türer.
 // Her exception MedLogger ile loglanmalıdır.
 
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────
@@ -154,6 +155,21 @@ final class CheckException extends AppException {
   const CheckException({required super.message, super.cause});
 }
 
+class CameraRecordingException extends AppException {
+  const CameraRecordingException({
+    required super.message,
+    required this.reason,
+    this.diagnostics = const [],
+    super.cause,
+  });
+
+  final CameraRecordingFailureReason reason;
+
+  /// ffmpeg stderr'in son satırları (kimlik bilgileri maskelenmiş).
+  /// Yalnızca log/teşhis içindir, kullanıcıya gösterilmez.
+  final List<String> diagnostics;
+}
+
 // ─────────────────────────────────────────────────────────────────
 // Exception'dan kullanıcıya gösterilecek mesaj türet
 // UI katmanı bu metodu kullanır, exception string'ini değil
@@ -184,6 +200,7 @@ extension AppExceptionUiMessage on AppException {
       SerialPortException() => contextlessL10n().appException_serialPort,
       CustomException() => contextlessL10n().appException_custom,
       CheckException(:final message) => message,
+      CameraRecordingException() => contextlessL10n().appException_cameraRecording,
     };
   }
 
