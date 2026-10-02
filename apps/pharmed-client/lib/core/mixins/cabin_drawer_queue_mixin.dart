@@ -26,10 +26,14 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../hardware/hardware.dart';
 
+enum QueueFinishReason { completed, stoppedByUser, abortedAfterError }
+
 mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends DrawerJobTarget>
     on ChangeNotifier, MasterDrawerExecutionMixin {
   List<TJob> _jobs = const [];
   List<TJob> get jobs => _jobs;
+
+  bool _disposed = false;
 
   int _currentIndex = 0;
   int get currentIndex => _currentIndex;
@@ -72,6 +76,18 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _isSaving = false;
     notifyListeners();
   }
+
+  // onQueueStarting sürüyor (ör. kamera bağlanıyor) — çekmece henüz açılmadı.
+  bool _isPreparing = false;
+  bool get isPreparing => _isPreparing;
+
+  /// Kuyruk kurulduktan sonra, ilk çekmece açılmadan HEMEN önce await edilir.
+  @protected
+  Future<void> onQueueStarting() async {}
+
+  /// Kuyruk sonlanırken, state temizlenmeden ÖNCE çağrılır.
+  @protected
+  void onQueueFinishing(QueueFinishReason reason) {}
 
   /// Kuyruktaki ilerleme oranı (0.0–1.0). currentIndex henüz tamamlanmamış
   /// job'u gösterdiği için +1 YOK — orijinal MasterRefundExecuting.progress
@@ -156,12 +172,18 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _skippedTargets = const {};
     _blockedResume = null;
     notifyListeners();
+    await onQueueStarting();
+    if (_disposed) return;
+    _isPreparing = false;
+    // Hazırlık sırasında durduruldu.
+    if (!isExecuting) return;
+    notifyListeners();
     await _openJobAt(jobIndex: 0, targetIndex: 0);
   }
 
   Future<void> _openJobAt({required int jobIndex, required int targetIndex}) async {
     if (jobIndex < 0 || jobIndex >= _jobs.length) {
-      _finishQueue();
+      _finishQueue(reason: QueueFinishReason.abortedAfterError);
       return;
     }
     final job = _jobs[jobIndex];
@@ -256,7 +278,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
 
     final nextIndex = _currentIndex + 1;
     if (nextIndex >= _jobs.length) {
-      _finishQueue();
+      _finishQueue(reason: QueueFinishReason.abortedAfterError);
       return;
     }
     await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
@@ -413,7 +435,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
 
     final nextIndex = _currentIndex + 1;
     if (nextIndex >= _jobs.length) {
-      _finishQueue();
+      _finishQueue(reason: QueueFinishReason.abortedAfterError);
       return;
     }
     _currentIndex = nextIndex;
@@ -423,14 +445,14 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
   }
 
-  Future<void> stopQueue() => _stopDrawerThenFinish(reason: 'stopQueue');
+  Future<void> stopQueue() => _stopDrawerThenFinish(reason: QueueFinishReason.stoppedByUser);
 
-  Future<void> abortAfterError() => _stopDrawerThenFinish(reason: 'abortAfterError');
+  Future<void> abortAfterError() => _stopDrawerThenFinish(reason: QueueFinishReason.abortedAfterError);
 
   /// Donanım durdurma başarısız olsa ya da hata fırlatsa bile kuyruk
   /// SONLANDIRILIR — kullanıcının durdurma kararı donanımın cevabına bağlı
   /// kalmamalı. Hata loglanır; oturum bir sonraki işlemde yeniden başlatılır.
-  Future<void> _stopDrawerThenFinish({required String reason}) async {
+  Future<void> _stopDrawerThenFinish({required QueueFinishReason reason}) async {
     try {
       await stopDrawer();
     } catch (e) {
@@ -441,7 +463,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
         context: {'reason': reason, 'error': e.toString(), 'stage': drawerStage.toString()},
       );
     } finally {
-      _finishQueue();
+      _finishQueue(reason: QueueFinishReason.abortedAfterError);
     }
   }
 
@@ -484,7 +506,9 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   /// gerek bırakmaz. View initState'te atar, dispose'ta temizler.
   VoidCallback? onQueueFinished;
 
-  void _finishQueue() {
+  void _finishQueue({required QueueFinishReason reason}) {
+    onQueueFinishing(reason);
+    _isPreparing = false;
     _stopRequested = false;
     _closeRequestedForStop = false;
     _jobs = const [];
@@ -571,5 +595,11 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   void onDrawerFailed(MasterDrawerFailure failure, String? detail) {
     if (!isExecuting || _stopRequested) return; // durdururken hata dialog'u açılmasın
     setQueueFailure(CabinMasterDrawerFailure(failure: failure, detail: detail), isQueueError: true);
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }

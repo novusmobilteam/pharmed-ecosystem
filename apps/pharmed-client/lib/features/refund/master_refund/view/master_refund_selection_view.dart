@@ -152,7 +152,7 @@ class _RefundablesContent extends StatelessWidget {
 
     return ListView.separated(
       itemCount: notifier.refundables.length,
-      separatorBuilder: (_, __) => Divider(height: 1, color: MedColors.border),
+      separatorBuilder: (_, _) => Divider(height: 1, color: MedColors.border),
       itemBuilder: (_, index) {
         final item = notifier.refundables[index];
         return RefundableItemCard(key: ValueKey(item.id), notifier: notifier, item: item);

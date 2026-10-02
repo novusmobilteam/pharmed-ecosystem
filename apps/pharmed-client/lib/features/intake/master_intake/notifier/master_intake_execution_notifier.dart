@@ -26,6 +26,7 @@ import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.
 final masterIntakeExecutionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterIntakeExecutionNotifier>((ref) {
   return MasterIntakeExecutionNotifier(
     drawerSession: ref.read(drawerExecutionSessionProvider),
+    recordingCoordinator: ref.read(operationRecordingCoordinatorProvider),
     completeIntake: ref.read(completeIntakeUseCaseProvider),
     completeEquivalentIntake: ref.read(completeEquivalentIntakeUseCaseProvider),
     completeRedirectedIntake: ref.read(completeRedirectedIntakeUseCaseProvider),
@@ -37,16 +38,19 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     with
         MasterDrawerExecutionMixin,
         CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
-        CabinOperationEntryMixin
+        CabinOperationEntryMixin,
+        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>
     implements CabinOperationExecutionController {
   MasterIntakeExecutionNotifier({
     required IMasterDrawerSession drawerSession,
+    required OperationRecordingCoordinator recordingCoordinator,
     required CompleteIntakeUseCase completeIntake,
     required CompleteEquivalentIntakeUseCase completeEquivalentIntake,
     required CompleteRedirectedIntakeUseCase completeRedirectedIntake,
     required SubmitIntakeQrCodesUseCase submitIntakeQrCodes,
   }) : _drawerSession = drawerSession,
        _completeIntake = completeIntake,
+       _recordingCoordinator = recordingCoordinator,
        _completeEquivalentIntake = completeEquivalentIntake,
        _completeRedirectedIntake = completeRedirectedIntake,
        _submitIntakeQrCodes = submitIntakeQrCodes {
@@ -54,6 +58,7 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
   }
 
   final IMasterDrawerSession _drawerSession;
+  final OperationRecordingCoordinator _recordingCoordinator;
   final CompleteIntakeUseCase _completeIntake;
   final CompleteEquivalentIntakeUseCase _completeEquivalentIntake;
   final CompleteRedirectedIntakeUseCase _completeRedirectedIntake;
@@ -70,6 +75,12 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
   /// — alan hiç çizilmediği için değeri anlamsız.
   @override
   bool get isPerCellMiadEnabled => true;
+
+  @override
+  OperationRecordingCoordinator get recordingCoordinator => _recordingCoordinator;
+
+  @override
+  RecordedOperationType get recordedOperationType => RecordedOperationType.intake;
 
   /// start() ile selection'dan devralınır — IntakeParams'ta gerekiyor.
   IntakeType _intakeType = IntakeType.ordered;

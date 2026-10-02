@@ -1,14 +1,15 @@
 part of 'cabin_design_dialog.dart';
 
 class _NewCabinPanel extends StatelessWidget {
-  const _NewCabinPanel({required this.creating, required this.notifier});
+  const _NewCabinPanel({required this.draft, required this.notifier});
 
-  final CabinDesignCreating creating;
+  final NewCabinDraft draft;
   final CabinDesignNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    final errorText = creating.error?.userMessage;
+    final errorText = notifier.newCabinError;
+    final addresses = notifier.availableAddressCharsForNew;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: MedSpacing.insetXl.top * 2, horizontal: MedSpacing.insetXl.left * 6),
@@ -18,23 +19,21 @@ class _NewCabinPanel extends StatelessWidget {
         children: [
           Text(context.l10n.cabinDesign_cabinList_addCabinButton, style: MedTextStyles.titleMd()),
           MedTextInputField(
-            onChanged: (value) => notifier.updateNewCabinName(value),
+            onChanged: notifier.updateNewCabinName,
             label: context.l10n.cabinDesign_basicSettings_nameLabel,
           ),
           Text(
-            'Kabin Tipi',
+            context.l10n.cabinDesign_newCabin_typeLabel,
             style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
           ),
           Wrap(
             spacing: 6.0,
             runSpacing: 6.0,
-            direction: Axis.horizontal,
-            alignment: WrapAlignment.start,
             children: [
               for (final type in CabinType.creatableTypes)
                 _CabinTypeContainer(
                   type: type,
-                  isSelected: type == creating.selectedType,
+                  isSelected: type == draft.type,
                   onTap: () => notifier.selectNewCabinType(type),
                 ),
             ],
@@ -43,7 +42,7 @@ class _NewCabinPanel extends StatelessWidget {
             context.l10n.cabinDesign_newCabin_addressLabel,
             style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
           ),
-          if (creating.availableAddressChars.isEmpty)
+          if (addresses.isEmpty)
             Text(
               context.l10n.cabinDesign_newCabin_noAddressAvailableWarning,
               style: MedTextStyles.bodySm(color: MedColors.red),
@@ -52,18 +51,15 @@ class _NewCabinPanel extends StatelessWidget {
             Wrap(
               spacing: 6.0,
               runSpacing: 6.0,
-              direction: Axis.horizontal,
-              alignment: WrapAlignment.start,
               children: [
-                for (final address in creating.availableAddressChars)
+                for (final address in addresses)
                   _CabinAddressContainer(
                     address: address,
-                    isSelected: address == creating.selectedAddressChar,
+                    isSelected: address == draft.addressChar,
                     onTap: () => notifier.selectNewCabinAddress(address),
                   ),
               ],
             ),
-
           if (errorText != null)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,11 +72,20 @@ class _NewCabinPanel extends StatelessWidget {
               ],
             ),
           const SizedBox(height: MedSpacing.sm),
-          MedButton(
-            label: context.l10n.cabinDesign_newCabin_saveAndScanButton,
-            prefixIcon: Icon(PhosphorIcons.arrowsClockwise()),
-            isLoading: creating.isSaving,
-            onPressed: creating.canSave ? notifier.saveNewCabin : null,
+          Row(
+            children: [
+              TextButton(
+                onPressed: draft.isSaving ? null : notifier.cancelAddCabin,
+                child: Text(context.l10n.common_cancelButton),
+              ),
+              const SizedBox(width: MedSpacing.sm),
+              MedButton(
+                label: context.l10n.cabinDesign_newCabin_saveAndScanButton,
+                prefixIcon: Icon(PhosphorIcons.arrowsClockwise()),
+                isLoading: draft.isSaving,
+                onPressed: notifier.canSaveNewCabin ? notifier.saveNewCabin : null,
+              ),
+            ],
           ),
         ],
       ),

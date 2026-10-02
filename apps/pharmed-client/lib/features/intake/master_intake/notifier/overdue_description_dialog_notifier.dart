@@ -243,10 +243,7 @@ class OverdueDescriptionDialogNotifier extends ChangeNotifier with ApiRequestMix
   }
 
   /// Onay sonrası dönen sonuç — yalnızca [isComplete] iken anlamlı.
-  Map<int, String> buildResult() => {
-    for (final item in _items)
-      if (valueOf(entryFor(item)) case final value?) item.id: value,
-  };
+  Map<int, String> buildResult() => {for (final item in _items) item.id: ?valueOf(entryFor(item))};
 
   // ── Yardımcılar ───────────────────────────────────────────────────────
 

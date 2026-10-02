@@ -1,13 +1,12 @@
 // [SWREQ-UI-CABIN-DESIGN-001] [IEC 62304 §5.5]
-// Kabin dizaynı ekranı — dialog olarak açılır. Bu turun kapsamı:
-//   - Sol: CabinDesignVisual (çekmece seçimi)
-//   - Sağ üst: Temel Ayarlar (SALT-OKUNUR — UpdateCabinUseCase henüz
-//     bağlanmadı, bkz. dizayn notu)
-//   - Sağ alt: seçili çekmeceye göre ÇekmeceDetayı+İadeToggle YA DA
-//     serum ise manuel iç dizayn paneli (görsel-only, henüz kaydedilmiyor)
-//   - Alt bar: "Cihazı Tara" GÖRÜNÜR ama PASİF (kapsam dışı)
+// Kabin dizaynı ekranı — dialog olarak açılır.
+//   - Sol: istasyon kabin listesi (+ ileride kameralar)
+//   - Sağ: seçime göre kabin görseli + ayarlar YA DA yeni kabin formu
+//   - Alt bar: Kaydet (seçili kabinin bekleyen değişiklikleri)
 //
 // Sınıf: Class B
+
+import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +18,11 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/enums/tray_size.dart';
+import '../../../core/providers/operation_recording_providers.dart';
 import '../../../widgets/widgets.dart';
+import '../notifier/cabin_design_models.dart';
 import '../notifier/cabin_design_notifier.dart';
-import '../notifier/cabin_design_state.dart';
+import '../notifier/camera_form_notifier.dart';
 
 part 'basic_settings_panel.dart';
 part 'drawer_detail_panel.dart';
@@ -29,12 +30,14 @@ part 'serum_layout_panel.dart';
 part 'cabin_list_panel.dart';
 part 'new_cabin_panel.dart';
 part 'cabin_settings_view.dart';
+part 'camera_form_panel.dart';
+part 'camera_test_dialog.dart';
 
 class CabinDesignDialog extends ConsumerStatefulWidget {
   const CabinDesignDialog({super.key});
 
   static Future<void> show(BuildContext context) {
-    return showDialog<void>(context: context, builder: (_) => CabinDesignDialog());
+    return showDialog<void>(context: context, builder: (_) => const CabinDesignDialog());
   }
 
   @override
@@ -45,38 +48,26 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(cabinDesignNotifierProvider.notifier).init();
-    });
+    final notifier = ref.read(cabinDesignNotifierProvider);
+
+    // Yükleme / kabin değiştirme hataları snackbar ile; kaydet/tara/durum
+    // hataları panelde satır içi gösterilir (notifier.inlineError).
+    void showError(String? message) {
+      if (mounted && message != null) MessageUtils.showErrorSnackbar(context, message);
+    }
+
+    notifier.setCallbacks(key: CabinDesignNotifier.loadOp, onError: showError);
+    notifier.setCallbacks(key: CabinDesignNotifier.switchCabinOp, onError: showError);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => notifier.init());
   }
 
   @override
   Widget build(BuildContext context) {
     final authNotif = ref.read(authNotifierProvider.notifier);
-    final state = ref.watch(cabinDesignNotifierProvider);
-    final notifier = ref.read(cabinDesignNotifierProvider.notifier);
+    final notifier = ref.watch(cabinDesignNotifierProvider);
 
-    ref.listen(cabinDesignNotifierProvider, (_, next) {
-      if (next is CabinDesignError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
-        notifier.dismissError();
-      }
-    });
-
-    final ready = switch (state) {
-      CabinDesignReady s => s,
-      CabinDesignError(previousState: CabinDesignReady s) => s,
-      _ => null,
-    };
-
-    final creating = switch (state) {
-      CabinDesignCreating s => s,
-      CabinDesignError(previousState: CabinDesignCreating s) => s,
-      _ => null,
-    };
-
-    final sidebarCabins = ready?.stationCabins ?? creating?.stationCabins ?? const <Cabin>[];
-    final selectedCabinId = creating != null ? null : ready?.cabin.id;
+    final selection = notifier.selection;
 
     return GestureDetector(
       onTap: authNotif.onUserActivity,
@@ -88,39 +79,42 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _Header(cabin: ready?.cabin),
+              _Header(cabin: notifier.selectedCabin),
               const Divider(height: 1, color: MedColors.border2),
               Expanded(
-                child: ready == null && creating == null
-                    ? const Center(child: MedLoadingIndicator())
-                    : Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: _CabinListPanel(
-                              cabins: sidebarCabins,
-                              selectedCabinId: selectedCabinId,
-                              onCabinTap: notifier.selectCabin,
-                              onAddCabinTap: notifier.startAddCabin,
-                            ),
+                child: switch ((notifier.hasStation, notifier.isLoading(CabinDesignNotifier.loadOp))) {
+                  (_, true) => const Center(child: MedLoadingIndicator()),
+                  (false, false) => _LoadFailedView(message: notifier.message(CabinDesignNotifier.loadOp)),
+                  (true, false) => Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(flex: 2, child: _StationSidebar(notifier: notifier)),
+                      const VerticalDivider(width: 1),
+                      Expanded(
+                        flex: 6,
+                        child: switch (selection) {
+                          NewCabinDraft draft => _NewCabinPanel(draft: draft, notifier: notifier),
+                          // Key: başka kameraya/yeni kameraya geçişte form sıfırdan kurulsun.
+                          CameraSelection camera => _CameraFormPanel(
+                            key: ValueKey('camera-${camera.cameraId ?? 'new'}'),
+                            selection: camera,
+                            design: notifier,
                           ),
-                          VerticalDivider(width: 1),
-                          Expanded(
-                            flex: 6,
-                            child: creating != null
-                                ? _NewCabinPanel(creating: creating, notifier: notifier)
-                                : ready!.isSwitchingCabin
-                                ? Center(child: MedLoadingIndicator())
-                                : _Body(ready: ready, notifier: notifier),
+                          SelectedCabin() when notifier.isSwitchingCabin || notifier.cabin == null => const Center(
+                            child: MedLoadingIndicator(),
                           ),
-                        ],
+                          SelectedCabin() => _Body(notifier: notifier),
+                          null => const Center(child: MedLoadingIndicator()),
+                        },
                       ),
+                    ],
+                  ),
+                },
               ),
               const Divider(height: 1, color: MedColors.border2),
               Padding(
                 padding: MedSpacing.insetXl,
-                child: _BottomBar(ready: ready, notifier: notifier),
+                child: _BottomBar(notifier: notifier),
               ),
             ],
           ),
@@ -164,7 +158,28 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
-          CloseButton(),
+          const CloseButton(),
+        ],
+      ),
+    );
+  }
+}
+
+/// İstasyon/kabin hiç yüklenemediyse — eskiden sonsuz spinner'da kalıyordu.
+class _LoadFailedView extends StatelessWidget {
+  const _LoadFailedView({required this.message});
+
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.error_outline_rounded, size: 18, color: MedColors.red),
+          const SizedBox(width: MedSpacing.sm),
+          Text(message ?? '—', style: MedTextStyles.bodyMd(color: MedColors.text2)),
         ],
       ),
     );
@@ -172,14 +187,12 @@ class _Header extends StatelessWidget {
 }
 
 class _Body extends StatelessWidget {
-  const _Body({required this.ready, required this.notifier});
+  const _Body({required this.notifier});
 
-  final CabinDesignReady ready;
   final CabinDesignNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
-    final isMaster = ready.cabin.type == CabinType.master;
     return Container(
       color: MedColors.surface2,
       child: Row(
@@ -191,9 +204,9 @@ class _Body extends StatelessWidget {
               child: SingleChildScrollView(
                 padding: MedSpacing.insetXl * 3,
                 child: MasterCabinDeviceVisual(
-                  groups: ready.pendingScanGroups ?? ready.groups,
-                  selectedSlotId: ready.selectedSlotId,
-                  isMaster: isMaster,
+                  groups: notifier.displayedGroups,
+                  selectedSlotId: notifier.selectedSlotId,
+                  isMaster: notifier.isMaster,
                   onSlotTap: (g) {
                     final id = g.slot.id;
                     if (id != null) notifier.selectSlot(id);
@@ -202,11 +215,8 @@ class _Body extends StatelessWidget {
               ),
             ),
           ),
-          VerticalDivider(width: 1),
-          Expanded(
-            flex: 5,
-            child: CabinSettingsView(notifier: notifier, ready: ready),
-          ),
+          const VerticalDivider(width: 1),
+          Expanded(flex: 5, child: CabinSettingsView(notifier: notifier)),
         ],
       ),
     );
@@ -214,9 +224,8 @@ class _Body extends StatelessWidget {
 }
 
 class _BottomBar extends StatelessWidget {
-  const _BottomBar({this.ready, required this.notifier});
+  const _BottomBar({required this.notifier});
 
-  final CabinDesignReady? ready;
   final CabinDesignNotifier notifier;
 
   @override
@@ -228,8 +237,8 @@ class _BottomBar extends StatelessWidget {
         const SizedBox(width: MedSpacing.sm),
         MedButton(
           label: context.l10n.common_saveButton,
-          isLoading: ready?.isSaving ?? false,
-          onPressed: (ready?.canSave ?? false) ? () => notifier.save() : null,
+          isLoading: notifier.isSaving,
+          onPressed: notifier.canSave ? notifier.save : null,
         ),
       ],
     );

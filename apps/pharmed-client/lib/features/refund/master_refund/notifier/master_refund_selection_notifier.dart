@@ -330,10 +330,7 @@ class MasterRefundSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
         return;
       }
 
-      final requirements = [
-        for (final item in checked)
-          if (_qrRequirementOf(item) case final r?) r,
-      ];
+      final requirements = [for (final item in checked) ?_qrRequirementOf(item)];
       final unsatisfiable = requirements.firstWhereOrNull((r) => !r.isSatisfiable);
       if (unsatisfiable != null) {
         _rejectStart(

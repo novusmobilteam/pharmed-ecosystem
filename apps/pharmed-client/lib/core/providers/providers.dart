@@ -5,3 +5,5 @@ export 'network_providers.dart';
 export 'datasource_providers.dart';
 export 'repository_providers.dart';
 export 'usecase_providers.dart';
+export 'operation_recording_providers.dart';
+export 'camera_providers.dart';

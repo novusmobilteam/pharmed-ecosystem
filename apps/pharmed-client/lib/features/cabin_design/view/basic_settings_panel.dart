@@ -1,16 +1,17 @@
 part of 'cabin_design_dialog.dart';
 
 class _BasicSettingsPanel extends StatelessWidget {
-  const _BasicSettingsPanel({required this.ready, required this.notifier});
+  const _BasicSettingsPanel({required this.notifier, required this.cabin});
 
-  final CabinDesignReady ready;
   final CabinDesignNotifier notifier;
+  final Cabin cabin;
 
   @override
   Widget build(BuildContext context) {
-    final cabin = ready.cabin;
     final isMaster = cabin.type == CabinType.master;
-    final errorText = ready.error?.userMessage;
+    final errorText = notifier.inlineError;
+    final isRescanning = notifier.isRescanning;
+    final isTogglingStatus = notifier.isTogglingStatus;
 
     return Column(
       key: ValueKey(cabin.id),
@@ -22,24 +23,24 @@ class _BasicSettingsPanel extends StatelessWidget {
               context.l10n.cabinDesign_basicSettings_sectionTitle,
               style: MedTextStyles.titleSm(color: MedColors.text3),
             ),
-            Spacer(),
-            if (ready.hasPendingConnectionChange && ready.selectedGroup?.isSerum != true) ...[
+            const Spacer(),
+            if (notifier.pending.hasConnectionChange) ...[
               MedButton(
                 label: context.l10n.cabinDesign_basicSettings_rescanButton,
-                onPressed: ready.isScanning ? null : notifier.rescanCabin,
-                isLoading: ready.isScanning,
+                onPressed: isRescanning ? null : notifier.rescanCabin,
+                isLoading: isRescanning,
                 size: MedButtonSize.sm,
                 variant: MedButtonVariant.secondary,
               ),
-              SizedBox(width: 4.0),
+              const SizedBox(width: 4.0),
             ],
             if (!isMaster)
               MedButton(
-                label: ready.cabin.status == Status.passive
+                label: cabin.status == Status.passive
                     ? context.l10n.cabinDesign_basicSettings_activateButton
                     : context.l10n.cabinDesign_basicSettings_deactivateButton,
-                onPressed: ready.isTogglingStatus ? null : notifier.toggleCabinActiveStatus,
-                isLoading: ready.isTogglingStatus,
+                onPressed: isTogglingStatus ? null : notifier.toggleCabinActiveStatus,
+                isLoading: isTogglingStatus,
                 size: MedButtonSize.sm,
                 variant: MedButtonVariant.ghost,
               ),
@@ -60,38 +61,87 @@ class _BasicSettingsPanel extends StatelessWidget {
             ),
           ),
         ],
-
         const SizedBox(height: MedSpacing.lg),
         MedTextInputField(
-          onChanged: (value) => notifier.updatePendingName(value),
+          onChanged: notifier.updatePendingName,
           initialValue: cabin.name,
           label: context.l10n.cabinDesign_basicSettings_nameLabel,
         ),
         const SizedBox(height: MedSpacing.sm),
-        if (isMaster) ...[
+        if (isMaster)
           MedDropdownInputField(
             onChanged: (value) {
               if (value != null) notifier.updatePendingComPort(value);
             },
-            initialValue: ready.pendingComPort?.label ?? cabin.comPort?.label,
+            initialValue: notifier.effectiveComPortLabel,
             label: context.l10n.cabinDesign_basicSettings_comPortLabel,
             options: SerialPort.availablePorts,
             labelBuilder: (port) => port,
-          ),
-        ] else ...[
+          )
+        else
           MedDropdownInputField(
             onChanged: (address) {
-              if (address != null && !ready.isScanning) notifier.updatePendingAddressChar(address);
+              if (address != null) notifier.updatePendingAddressChar(address);
             },
-            initialValue: ready.pendingAddressChar ?? cabin.no?.toUpperCase(),
+            initialValue: notifier.effectiveAddressChar,
             label: context.l10n.cabinDesign_newCabin_addressLabel,
-            options: ready.availableAddressCharsForEdit,
+            options: notifier.availableAddressCharsForEdit,
             labelBuilder: (address) => address,
           ),
-        ],
-
+        const SizedBox(height: MedSpacing.sm),
+        _CabinCameraRow(notifier: notifier, cabin: cabin),
         const SizedBox(height: MedSpacing.xl),
       ],
+    );
+  }
+}
+
+/// "Bu kabine hangi kamera bakıyor?" — kamera tarafındaki atamanın kabin
+/// tarafından görünümü. Atama kamera formundan yapılır.
+class _CabinCameraRow extends StatelessWidget {
+  const _CabinCameraRow({required this.notifier, required this.cabin});
+
+  final CabinDesignNotifier notifier;
+  final Cabin cabin;
+
+  @override
+  Widget build(BuildContext context) {
+    final camera = notifier.cameraForCabin(cabin.id);
+    return Container(
+      padding: MedSpacing.insetMd,
+      decoration: BoxDecoration(
+        color: MedColors.surface2,
+        border: Border.all(color: MedColors.border2),
+        borderRadius: MedRadius.smAll,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            PhosphorIcons.videoCamera(),
+            size: 16,
+            color: camera?.enabled == true ? MedColors.blue : MedColors.text4,
+          ),
+          const SizedBox(width: MedSpacing.sm),
+          Expanded(
+            child: Text(
+              camera == null
+                  ? context.l10n.cabinDesign_basicSettings_cameraNone
+                  : context.l10n.cabinDesign_basicSettings_cameraAssigned(camera.name),
+              style: MedTextStyles.bodyMd(color: camera == null ? MedColors.text4 : MedColors.text),
+            ),
+          ),
+          MedButton(
+            label: camera == null
+                ? context.l10n.cabinDesign_cameraList_addCameraButton
+                : context.l10n.cabinDesign_basicSettings_cameraOpenButton,
+            size: MedButtonSize.sm,
+            variant: MedButtonVariant.ghost,
+            onPressed: camera == null
+                ? () => notifier.startAddCamera(forCabinId: cabin.id)
+                : () => notifier.selectCamera(camera.id),
+          ),
+        ],
+      ),
     );
   }
 }
