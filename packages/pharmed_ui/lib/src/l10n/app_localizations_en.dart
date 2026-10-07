@@ -3946,6 +3946,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appException_fingerprint => 'The fingerprint could not be read.';
 
   @override
+  String get appException_printer => 'The receipt could not be printed.';
+
+  @override
   String get dataError_malformedResponse =>
       'The response could not be processed';
 
@@ -7964,6 +7967,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsView_fingerprintNav => 'Fingerprint';
 
   @override
+  String get settingsView_printerNav => 'Printer';
+
+  @override
   String get fingerprint_settings_title => 'Fingerprint login';
 
   @override
@@ -7998,6 +8004,149 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get fingerprint_settings_simulatedNotice =>
       'The fingerprint service is not ready yet. Enrolment runs in test mode; no data is sent to the server.';
+
+  @override
+  String get printer_settings_title => 'Receipt printer';
+
+  @override
+  String get printer_settings_description => 'Set up the thermal printer that prints a receipt after medication intake, return and waste/destruction operations. This setting applies to this kiosk only.';
+
+  @override
+  String get printer_settings_connectionLabel => 'Connection type';
+
+  @override
+  String get printer_settings_connectionSerial => 'Serial port';
+
+  @override
+  String get printer_settings_connectionSpooler => 'Windows printer';
+
+  @override
+  String get printer_settings_portLabel => 'Port';
+
+  @override
+  String get printer_settings_printerLabel => 'Printer';
+
+  @override
+  String get printer_settings_baudLabel => 'Baud rate';
+
+  @override
+  String get printer_settings_selectPlaceholder => 'Select';
+
+  @override
+  String get printer_settings_noPortsWarning => 'No serial port found. Check that the converter is plugged in and refresh the list.';
+
+  @override
+  String get printer_settings_noPrintersWarning => 'No installed Windows printer found.';
+
+  @override
+  String get printer_settings_refreshTooltip => 'Refresh list';
+
+  @override
+  String get printer_settings_saveButton => 'Save';
+
+  @override
+  String get printer_settings_testButton => 'Print test receipt';
+
+  @override
+  String get printer_settings_removeButton => 'Remove printer';
+
+  @override
+  String get printer_settings_savedMessage => 'Printer setting saved.';
+
+  @override
+  String get printer_settings_removedMessage => 'Printer removed.';
+
+  @override
+  String get printer_settings_testSuccessMessage => 'Test receipt sent to the printer.';
+
+  @override
+  String get printer_settings_notConfiguredNotice => 'No printer is set up on this kiosk. Receipts will not be printed after operations.';
+
+  @override
+  String get printer_settings_unsavedNotice => 'There are unsaved changes. The test receipt uses the selected setting.';
+
+  @override
+  String printer_settings_mockNotice(String path) {
+    return 'Development mode: receipts are not sent to a printer; they are saved as PNG files in $path.';
+  }
+
+  @override
+  String get printer_error_notConfigured => 'No printer is set up. Select the connection under Settings › Printer.';
+
+  @override
+  String get printer_error_connectionFailed => 'Could not connect to the printer. Check the cable and the selected port.';
+
+  @override
+  String get printer_error_writeFailed => 'The receipt could not be sent to the printer.';
+
+  @override
+  String get printer_error_timeout => 'The printer did not respond in time.';
+
+  @override
+  String get printer_error_renderFailed => 'The receipt could not be prepared.';
+
+  @override
+  String get printer_error_invalidDocument => 'There is nothing to print.';
+
+  @override
+  String get printer_error_unexpected => 'An unexpected error occurred while printing the receipt.';
+
+  @override
+  String get printer_testReceipt_title => 'Printer Test';
+
+  @override
+  String get printer_testReceipt_charsetLabel => 'Character test';
+
+  @override
+  String get printer_testReceipt_barcodeLabel => 'Barcode test';
+
+
+  @override
+  String get printer_receipt_intakeTitle => 'MEDICATION INTAKE RECEIPT';
+
+  @override
+  String get printer_receipt_refundTitle => 'MEDICATION RETURN RECEIPT';
+
+  @override
+  String get printer_receipt_wastageTitle => 'WASTAGE RECEIPT';
+
+  @override
+  String get printer_receipt_destructionTitle => 'DESTRUCTION RECEIPT';
+
+  @override
+  String get printer_receipt_serviceLabel => 'Service';
+
+  @override
+  String get printer_receipt_roomBedLabel => 'Room / Bed';
+
+
+  @override
+  String get printer_receipt_operatorLabel => 'Performed by';
+
+  @override
+  String get printer_receipt_medicineListTitle => 'MEDICATION LIST';
+
+  @override
+  String get printer_receipt_returnDrawerLocation => 'Return drawer';
+
+  @override
+  String get printer_receipt_itemCountLabel => 'Total items';
+
+  @override
+  String get printer_receipt_inventoryTitle => 'STATION INVENTORY LIST';
+
+  @override
+  String get printer_receipt_cabinStockTitle => 'CABIN STOCK LIST';
+
+  @override
+  String get printer_receipt_cabinLabel => 'Cabin';
+
+  @override
+  String get printer_printButton => 'Print';
+
+  @override
+  String get printer_sentMessage => 'Sent to the printer.';
+
 
   @override
   String get fingerprint_enroll_screenTitle => 'Fingerprint Enrolment';

@@ -1,17 +1,16 @@
 part of 'inventory_screen.dart';
 
-class TableView extends StatelessWidget {
-  const TableView({super.key, required this.items, required this.isLoading, required this.notifier});
-
-  final InventoryNotifier notifier;
-  final List<MedicineAssignment> items;
-  final bool isLoading;
+class TableView extends ConsumerWidget {
+  const TableView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(inventoryNotifierProvider);
+    final notifier = ref.read(inventoryNotifierProvider.notifier);
+
     return MedTable<MedicineAssignment>(
-      data: items,
-      isLoading: isLoading,
+      data: notifier.items,
+      isLoading: notifier.isFetchingItems,
       emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
       enableDateFilter: false,
       enablePagination: false,

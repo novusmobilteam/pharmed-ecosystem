@@ -6,8 +6,10 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../../../widgets/widgets.dart';
 
 import '../../../dashboard/dashboard.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+import '../../../auth/notifier/auth_notifier.dart';
 import '../notifier/master_cabin_stock_notifier.dart';
-import '../notifier/master_cabin_stock_state.dart';
+import '../receipts/cabin_stock_receipt.dart';
 
 class MasterCabinStockScreen extends ConsumerStatefulWidget {
   const MasterCabinStockScreen({super.key, required this.cabinRouteContext});
@@ -32,8 +34,7 @@ class MasterCabinStockScreenState extends ConsumerState<MasterCabinStockScreen> 
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(masterCabinStockNotifierProvider);
-    final isLoading = state is MasterCabinStockLoading;
+    final isLoading = ref.watch(masterCabinStockNotifierProvider.select((n) => n.isFetchingStocks));
     final cabinData = widget.cabinRouteContext.cabinData;
 
     if (cabinData == null) {
@@ -55,30 +56,22 @@ class MasterCabinStockIdleView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(masterCabinStockNotifierProvider);
-    final notifier = ref.read(masterCabinStockNotifierProvider.notifier);
+    final notifier = ref.watch(masterCabinStockNotifierProvider);
     final cabin = cabinContext.cabin;
     final groups = cabinContext.cabinData?.groups;
     final menu = cabinContext.menu;
-
-    final idle = switch (state) {
-      MasterCabinStockIdle s => s,
-      MasterCabinStockError(previousState: MasterCabinStockIdle s) => s,
-      _ => null,
-    };
-
-    if (idle == null) return const SizedBox.shrink();
+    final visibleStocks = notifier.visibleStocks;
 
     return CabinOperationSelectionLayout(
-      isLoading: state is MasterCabinStockLoading,
+      isLoading: notifier.isFetchingStocks,
       left: Column(
         children: [
           Expanded(
             child: CabinOverviewSelectionPanel(
               cabin: cabin,
-              //onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+              onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
               groups: groups ?? [],
-              assignments: idle.stocks,
+              assignments: notifier.stocks,
               selectedUnitIds: {},
               onDrawerTap: null,
               onCellTap: null,
@@ -89,14 +82,23 @@ class MasterCabinStockIdleView extends ConsumerWidget {
 
       right: CabinSelectionContentShell(
         menu: menu,
-        searchQuery: idle.search,
+        // [SWREQ-PRN-102] Kabindeki tüm atamalar — arama uygulanmadan.
+        menuTrailing: ReceiptPrintButton(
+          enabled: !notifier.isFetchingStocks && notifier.stocks.isNotEmpty,
+          buildReceipt: () => buildCabinStockReceipt(
+            cabinName: cabin?.name,
+            stocks: notifier.stocks,
+            operatorName: ref.read(authNotifierProvider.notifier).currentUser?.fullName,
+          ),
+        ),
+        searchQuery: notifier.search,
         onSearchQueryChanged: notifier.onSearchChanged,
-        isEmpty: idle.visibleStocks.isEmpty,
+        isEmpty: visibleStocks.isEmpty,
         searchHint: context.l10n.intake_hint_searchMedicine,
         emptyMessage: context.l10n.refill_hint_noMedicines,
-        content: idle.visibleStocks.isEmpty
+        content: visibleStocks.isEmpty
             ? null
-            : CabinAssignmentListView(items: idle.visibleStocks, selectedItemIds: {}, onToggle: null),
+            : CabinAssignmentListView(items: visibleStocks, selectedItemIds: {}, onToggle: null),
       ),
     );
   }

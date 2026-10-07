@@ -43,3 +43,4 @@ export 'app_language.dart';
 export 'station_transaction_type.dart';
 export 'camera_recording_failure_reason.dart';
 export 'fingerprint_failure_reason.dart';
+export 'printer_failure_reason.dart';

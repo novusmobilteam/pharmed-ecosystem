@@ -8,6 +8,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.dart';
 import '../../../../widgets/empty_widgets/no_data_view.dart';
+import '../../../../core/hardware/printer/printer.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
 import '../notifier/master_intake_execution_notifier.dart';
@@ -49,11 +50,17 @@ class _MasterIntakeView2State extends ConsumerState<MasterIntakeView> {
       if (!mounted) return;
       ref.read(masterIntakeSelectionNotifierProvider.notifier).refreshAfterQueue();
     };
+    // [SWREQ-PRN-093] Fiş arka planda basılır; hata alımı etkilemez, yalnızca bildirilir.
+    _executionNotifier!.onReceiptFailed = (reason) {
+      if (!mounted) return;
+      MessageUtils.showErrorSnackbar(context, reason.message(context));
+    };
   }
 
   @override
   void dispose() {
     _executionNotifier?.onQueueFinished = null;
+    _executionNotifier?.onReceiptFailed = null;
     _patientSelectionNotifier?.clearSelections();
     super.dispose();
   }

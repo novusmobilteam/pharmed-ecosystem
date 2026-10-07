@@ -40,6 +40,9 @@ class AppSettingsCache {
   static const _keyLanguage = 'language';
   static const _keyComPort = 'com_port';
   static const _keyManualRts = 'manual_rts';
+  static const _keyPrinterConnection = 'printer_connection';
+  static const _keyPrinterTarget = 'printer_target';
+  static const _keyPrinterBaud = 'printer_baud';
 
   Box? _box;
 
@@ -126,6 +129,36 @@ class AppSettingsCache {
     await _open();
     // Varsayılan: false (Waveshare otomatik-yön converter, saha standardı)
     return _box!.get(_keyManualRts, defaultValue: false) as bool;
+  }
+
+  /// [SWREQ-PRN-050] Termal yazıcı bağlantı ayarı. null → yazıcı tanımlanmamış.
+  Future<PrinterConfig?> getPrinterConfig() async {
+    await _open();
+    final target = _box!.get(_keyPrinterTarget) as String?;
+    if (target == null || target.trim().isEmpty) return null;
+    final rawConnection = _box!.get(_keyPrinterConnection) as String?;
+    final connection = PrinterConnectionType.values.firstWhereOrNull((t) => t.name == rawConnection);
+    return PrinterConfig(
+      connectionType: connection ?? PrinterConnectionType.serial,
+      target: target,
+      baudRate: _box!.get(_keyPrinterBaud, defaultValue: PrinterConfig.defaultBaudRate) as int,
+    );
+  }
+
+  /// [SWREQ-PRN-050] Termal yazıcı bağlantı ayarını kaydeder.
+  Future<void> savePrinterConfig(PrinterConfig config) async {
+    await _open();
+    await _box!.put(_keyPrinterConnection, config.connectionType.name);
+    await _box!.put(_keyPrinterTarget, config.target.trim());
+    await _box!.put(_keyPrinterBaud, config.baudRate);
+  }
+
+  /// [SWREQ-PRN-050] Yazıcı tanımını kaldırır (kioskta yazıcı yok).
+  Future<void> clearPrinterConfig() async {
+    await _open();
+    await _box!.delete(_keyPrinterConnection);
+    await _box!.delete(_keyPrinterTarget);
+    await _box!.delete(_keyPrinterBaud);
   }
 }
 

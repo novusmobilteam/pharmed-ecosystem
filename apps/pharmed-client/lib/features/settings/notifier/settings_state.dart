@@ -4,7 +4,7 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-enum SettingsSection { general, appearance, fingerprint, debug }
+enum SettingsSection { general, appearance, fingerprint, printer, debug }
 
 class SettingsState {
   const SettingsState({

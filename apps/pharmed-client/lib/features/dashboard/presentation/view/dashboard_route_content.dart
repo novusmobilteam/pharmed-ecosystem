@@ -91,7 +91,7 @@ class DashboardRouteContent extends ConsumerWidget {
               cabinRouteContext != null
                   ? UnloadDrawerScreen(cabinRouteContext: cabinRouteContext)
                   : const SizedBox.shrink(),
-            'station-inventory' => InventoryScreen(),
+            'station-inventory' => InventoryScreen(menu: activeMenu!),
             'directed-orders' => RedirectedOrdersScreen(),
             'emergency-patient-end' =>
               stationCabinsContext != null

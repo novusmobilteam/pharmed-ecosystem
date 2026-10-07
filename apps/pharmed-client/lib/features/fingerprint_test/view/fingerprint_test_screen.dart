@@ -265,7 +265,8 @@ class _ScannerCard extends StatelessWidget {
           'altında görünmeli; görünmüyorsa üreticinin sürücüsü kurulu değildir '
           '(SecuGen: WinDriver_u10, Suprema: Sup_Fingerprint_Driver). Üreticinin demo '
           'uygulaması da okuyucuyu görmüyorsa sorun uygulamada değil sürücü/kablodadır.',
-    FingerprintFailureReason.busy => 'Okuyucuyu başka bir uygulama (ör. SDK demosu) kullanıyor olabilir; kapatıp tekrar deneyin.',
+    FingerprintFailureReason.busy =>
+      'Okuyucuyu başka bir uygulama (ör. SDK demosu) kullanıyor olabilir; kapatıp tekrar deneyin.',
     _ => 'Ayrıntı için logdaki SW-UNIT-FP kayıtlarına bakın.',
   };
 }
@@ -557,23 +558,38 @@ class _HistoryCard extends StatelessWidget {
       expand: true,
       trailing: n.attempts.isEmpty
           ? null
-          : MedButton(label: 'Temizle', size: MedButtonSize.sm, variant: MedButtonVariant.ghost, onPressed: n.clearHistory),
+          : MedButton(
+              label: 'Temizle',
+              size: MedButtonSize.sm,
+              variant: MedButtonVariant.ghost,
+              onPressed: n.clearHistory,
+            ),
       children: [
         Row(
           children: [
-            Expanded(child: _MiniStat(label: 'BAŞARILI', value: '${n.successCount}', color: MedColors.green)),
+            Expanded(
+              child: _MiniStat(label: 'BAŞARILI', value: '${n.successCount}', color: MedColors.green),
+            ),
             const SizedBox(width: MedSpacing.md),
-            Expanded(child: _MiniStat(label: 'HATALI', value: '${n.failureCount}', color: MedColors.red)),
+            Expanded(
+              child: _MiniStat(label: 'HATALI', value: '${n.failureCount}', color: MedColors.red),
+            ),
           ],
         ),
         const SizedBox(height: MedSpacing.md),
         Row(
           children: [
-            Expanded(child: _MiniStat(label: 'ORT. KALİTE', value: _fmt(n.averageQuality))),
+            Expanded(
+              child: _MiniStat(label: 'ORT. KALİTE', value: _fmt(n.averageQuality)),
+            ),
             const SizedBox(width: MedSpacing.md),
-            Expanded(child: _MiniStat(label: 'ORT. LFD', value: _fmt(n.averageLfdScore))),
+            Expanded(
+              child: _MiniStat(label: 'ORT. LFD', value: _fmt(n.averageLfdScore)),
+            ),
             const SizedBox(width: MedSpacing.md),
-            Expanded(child: _MiniStat(label: 'ORT. MS', value: _fmt(n.averageCaptureMs))),
+            Expanded(
+              child: _MiniStat(label: 'ORT. MS', value: _fmt(n.averageCaptureMs)),
+            ),
           ],
         ),
         if (failures.isNotEmpty) ...[
@@ -583,14 +599,21 @@ class _HistoryCard extends StatelessWidget {
             runSpacing: MedSpacing.sm,
             children: [
               for (final f in failures)
-                MedChip(label: fingerprintFailureLabel(f.key), count: f.value, style: MedChipStyle.danger, size: MedChipSize.sm),
+                MedChip(
+                  label: fingerprintFailureLabel(f.key),
+                  count: f.value,
+                  style: MedChipStyle.danger,
+                  size: MedChipSize.sm,
+                ),
             ],
           ),
         ],
         const Divider(height: 24, color: MedColors.border2),
         Expanded(
           child: n.attempts.isEmpty
-              ? Center(child: Text('Henüz okuma yok', style: MedTextStyles.bodySm(color: MedColors.text3)))
+              ? Center(
+                  child: Text('Henüz okuma yok', style: MedTextStyles.bodySm(color: MedColors.text3)),
+                )
               : ListView.separated(
                   itemCount: n.attempts.length,
                   separatorBuilder: (_, _) => const Divider(height: 1, color: MedColors.border2),
@@ -714,7 +737,9 @@ class _Card extends StatelessWidget {
           Container(
             constraints: const BoxConstraints(minHeight: 50),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: MedColors.border2))),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: MedColors.border2)),
+            ),
             child: Row(
               children: [
                 MedStatusDot(color: dotColor),
@@ -725,7 +750,7 @@ class _Card extends StatelessWidget {
                     style: MedTextStyles.titleSm(color: MedColors.text2).copyWith(letterSpacing: 0.8),
                   ),
                 ),
-                if (trailing != null) trailing!,
+                ?trailing,
               ],
             ),
           ),
@@ -871,7 +896,10 @@ class _Banner extends StatelessWidget {
         border: Border.all(color: color.withAlpha(60)),
         borderRadius: MedRadius.mdAll,
       ),
-      child: Text(text, style: MedTextStyles.bodySm(color: color, weight: FontWeight.w600)),
+      child: Text(
+        text,
+        style: MedTextStyles.bodySm(color: color, weight: FontWeight.w600),
+      ),
     );
   }
 }
@@ -903,7 +931,9 @@ class _CounterRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Expanded(child: _LabelBlock(label: label, description: description)),
+          Expanded(
+            child: _LabelBlock(label: label, description: description),
+          ),
           const SizedBox(width: MedSpacing.md),
           Opacity(
             opacity: enabled ? 1 : 0.4,
@@ -941,7 +971,9 @@ class _SwitchRow extends StatelessWidget {
         onTap: enabled ? () => onChanged!(!value) : null,
         child: Row(
           children: [
-            Expanded(child: _LabelBlock(label: label, description: description)),
+            Expanded(
+              child: _LabelBlock(label: label, description: description),
+            ),
             const SizedBox(width: MedSpacing.md),
             Opacity(
               opacity: enabled ? 1 : 0.4,
@@ -983,7 +1015,10 @@ class _LabelBlock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600)),
+        Text(
+          label,
+          style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
+        ),
         const SizedBox(height: 2),
         Text(description, style: MedTextStyles.bodySm(color: MedColors.text3)),
       ],

@@ -1,37 +1,35 @@
+import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/mixins/mixins.dart';
 import '../../../core/providers/providers.dart';
-import 'inventory_state.dart';
 
-final inventoryNotifierProvider = NotifierProvider<InventoryNotifier, InventoryState>(InventoryNotifier.new);
+final inventoryNotifierProvider = ChangeNotifierProvider.autoDispose<InventoryNotifier>((ref) {
+  return InventoryNotifier(getAssignments: ref.read(getStationAssignmentsUseCaseProvider));
+});
 
-class InventoryNotifier extends Notifier<InventoryState> {
-  GetStationAssignmentsUseCase get _getAssignments => ref.read(getStationAssignmentsUseCaseProvider);
+class InventoryNotifier extends ChangeNotifier with ApiRequestMixin {
+  final GetStationAssignmentsUseCase _getAssignments;
 
-  @override
-  InventoryState build() {
-    _load();
-    return const InventoryLoading();
+  InventoryNotifier({required GetStationAssignmentsUseCase getAssignments}) : _getAssignments = getAssignments {
+    _fetchItems();
   }
 
-  void _enterLoading() {
-    final current = state;
-    state = current is InventoryLoaded ? current.copyWith(isLoading: true) : const InventoryLoading();
-  }
+  final OperationKey _getItemsOp = const OperationKey.custom('fetch-items');
+  bool get isFetchingItems => isLoading(_getItemsOp);
 
-  Future<void> _load() async {
-    final result = await _getAssignments.call();
-    result.when(
-      ok: (items) {
-        state = InventoryLoaded(items: items);
+  List<MedicineAssignment> _items = [];
+  List<MedicineAssignment> get items => _items;
+
+  Future<void> _fetchItems() async {
+    await execute(
+      _getItemsOp,
+      operation: () => _getAssignments(),
+      onData: (data) {
+        _items = data;
+        notifyListeners();
       },
-      error: (e) => state = InventoryError(message: e.message),
     );
-  }
-
-  Future<void> refresh() async {
-    _enterLoading();
-    await _load();
   }
 }

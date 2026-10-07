@@ -4051,6 +4051,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'L\'empreinte digitale n\'a pas pu être lue.';
 
   @override
+  String get appException_printer => 'Le reçu n\'a pas pu être imprimé.';
+
+  @override
   String get dataError_malformedResponse =>
       'La réponse n\'a pas pu être traitée';
 
@@ -8151,6 +8154,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsView_fingerprintNav => 'Empreinte digitale';
 
   @override
+  String get settingsView_printerNav => 'Imprimante';
+
+  @override
   String get fingerprint_settings_title => 'Connexion par empreinte digitale';
 
   @override
@@ -8185,6 +8191,149 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get fingerprint_settings_simulatedNotice =>
       'Le service d\'empreintes n\'est pas encore prêt. L\'enregistrement fonctionne en mode test ; aucune donnée n\'est envoyée au serveur.';
+
+  @override
+  String get printer_settings_title => 'Imprimante de reçus';
+
+  @override
+  String get printer_settings_description => 'Configurez l\'imprimante thermique qui imprime un reçu après les opérations de retrait, de retour et de perte/destruction de médicaments. Ce réglage ne s\'applique qu\'à ce kiosque.';
+
+  @override
+  String get printer_settings_connectionLabel => 'Type de connexion';
+
+  @override
+  String get printer_settings_connectionSerial => 'Port série';
+
+  @override
+  String get printer_settings_connectionSpooler => 'Imprimante Windows';
+
+  @override
+  String get printer_settings_portLabel => 'Port';
+
+  @override
+  String get printer_settings_printerLabel => 'Imprimante';
+
+  @override
+  String get printer_settings_baudLabel => 'Débit en bauds';
+
+  @override
+  String get printer_settings_selectPlaceholder => 'Sélectionner';
+
+  @override
+  String get printer_settings_noPortsWarning => 'Aucun port série trouvé. Vérifiez que le convertisseur est branché puis actualisez la liste.';
+
+  @override
+  String get printer_settings_noPrintersWarning => 'Aucune imprimante Windows installée.';
+
+  @override
+  String get printer_settings_refreshTooltip => 'Actualiser la liste';
+
+  @override
+  String get printer_settings_saveButton => 'Enregistrer';
+
+  @override
+  String get printer_settings_testButton => 'Imprimer un reçu de test';
+
+  @override
+  String get printer_settings_removeButton => 'Retirer l\'imprimante';
+
+  @override
+  String get printer_settings_savedMessage => 'Réglage de l\'imprimante enregistré.';
+
+  @override
+  String get printer_settings_removedMessage => 'Imprimante retirée.';
+
+  @override
+  String get printer_settings_testSuccessMessage => 'Reçu de test envoyé à l\'imprimante.';
+
+  @override
+  String get printer_settings_notConfiguredNotice => 'Aucune imprimante n\'est configurée sur ce kiosque. Les reçus ne seront pas imprimés après les opérations.';
+
+  @override
+  String get printer_settings_unsavedNotice => 'Des modifications ne sont pas enregistrées. Le reçu de test utilise le réglage sélectionné.';
+
+  @override
+  String printer_settings_mockNotice(String path) {
+    return 'Mode développement : les reçus ne sont pas envoyés à l\'imprimante ; ils sont enregistrés en PNG dans $path.';
+  }
+
+  @override
+  String get printer_error_notConfigured => 'Aucune imprimante n\'est configurée. Choisissez la connexion dans Réglages › Imprimante.';
+
+  @override
+  String get printer_error_connectionFailed => 'Impossible de se connecter à l\'imprimante. Vérifiez le câble et le port sélectionné.';
+
+  @override
+  String get printer_error_writeFailed => 'Le reçu n\'a pas pu être envoyé à l\'imprimante.';
+
+  @override
+  String get printer_error_timeout => 'L\'imprimante n\'a pas répondu à temps.';
+
+  @override
+  String get printer_error_renderFailed => 'Le reçu n\'a pas pu être préparé.';
+
+  @override
+  String get printer_error_invalidDocument => 'Il n\'y a rien à imprimer.';
+
+  @override
+  String get printer_error_unexpected => 'Une erreur inattendue s\'est produite lors de l\'impression du reçu.';
+
+  @override
+  String get printer_testReceipt_title => 'Test d\'imprimante';
+
+  @override
+  String get printer_testReceipt_charsetLabel => 'Test des caractères';
+
+  @override
+  String get printer_testReceipt_barcodeLabel => 'Test des codes-barres';
+
+
+  @override
+  String get printer_receipt_intakeTitle => 'REÇU DE RETRAIT DE MÉDICAMENTS';
+
+  @override
+  String get printer_receipt_refundTitle => 'REÇU DE RETOUR DE MÉDICAMENTS';
+
+  @override
+  String get printer_receipt_wastageTitle => 'REÇU DE PERTE';
+
+  @override
+  String get printer_receipt_destructionTitle => 'REÇU DE DESTRUCTION';
+
+  @override
+  String get printer_receipt_serviceLabel => 'Service';
+
+  @override
+  String get printer_receipt_roomBedLabel => 'Chambre / Lit';
+
+
+  @override
+  String get printer_receipt_operatorLabel => 'Effectué par';
+
+  @override
+  String get printer_receipt_medicineListTitle => 'LISTE DES MÉDICAMENTS';
+
+  @override
+  String get printer_receipt_returnDrawerLocation => 'Tiroir de retour';
+
+  @override
+  String get printer_receipt_itemCountLabel => 'Total des articles';
+
+  @override
+  String get printer_receipt_inventoryTitle => 'LISTE D\'INVENTAIRE DE LA STATION';
+
+  @override
+  String get printer_receipt_cabinStockTitle => 'LISTE DU STOCK DE L\'ARMOIRE';
+
+  @override
+  String get printer_receipt_cabinLabel => 'Armoire';
+
+  @override
+  String get printer_printButton => 'Imprimer';
+
+  @override
+  String get printer_sentMessage => 'Envoyé à l\'imprimante.';
+
 
   @override
   String get fingerprint_enroll_screenTitle => 'Enregistrement des empreintes';

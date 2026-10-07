@@ -3,9 +3,12 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 class ScreenTitle extends StatelessWidget {
-  const ScreenTitle({super.key, required this.menu});
+  const ScreenTitle({super.key, required this.menu, this.trailing});
 
   final MenuItem menu;
+
+  /// Başlık satırının en sağında gösterilen widget (ör. Yazdır butonu).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,7 @@ class ScreenTitle extends StatelessWidget {
             ],
           ),
         ),
+        if (trailing != null) ...[const Spacer(), trailing!],
       ],
     );
   }

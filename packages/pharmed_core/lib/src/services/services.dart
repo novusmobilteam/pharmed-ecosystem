@@ -4,3 +4,4 @@ export 'rfid/rfid.dart';
 export 'serial_communication/i_serial_communication_service.dart';
 export 'camera/camera.dart';
 export 'fingerprint/fingerprint.dart';
+export 'printer/printer.dart';

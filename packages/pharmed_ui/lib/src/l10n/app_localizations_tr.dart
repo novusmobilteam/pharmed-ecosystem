@@ -3911,6 +3911,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get appException_fingerprint => 'Parmak izi okunamadı.';
 
   @override
+  String get appException_printer => 'Fiş yazdırılamadı.';
+
+  @override
   String get dataError_malformedResponse => 'Yanıt işlenemedi';
 
   @override
@@ -7898,6 +7901,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsView_fingerprintNav => 'Parmak İzi';
 
   @override
+  String get settingsView_printerNav => 'Yazıcı';
+
+  @override
   String get fingerprint_settings_title => 'Parmak izi ile giriş';
 
   @override
@@ -7932,6 +7938,149 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get fingerprint_settings_simulatedNotice =>
       'Parmak izi servisi henüz hazır değil. Tanıtma akışı test amaçlı çalışır; veriler sunucuya gönderilmez.';
+
+  @override
+  String get printer_settings_title => 'Fiş yazıcısı';
+
+  @override
+  String get printer_settings_description => 'İlaç alım, iade ve fire/imha işlemlerinden sonra fiş basan termal yazıcının bağlantısını ayarlayın. Bu ayar yalnızca bu kiosk için geçerlidir.';
+
+  @override
+  String get printer_settings_connectionLabel => 'Bağlantı türü';
+
+  @override
+  String get printer_settings_connectionSerial => 'Seri port';
+
+  @override
+  String get printer_settings_connectionSpooler => 'Windows yazıcısı';
+
+  @override
+  String get printer_settings_portLabel => 'Port';
+
+  @override
+  String get printer_settings_printerLabel => 'Yazıcı';
+
+  @override
+  String get printer_settings_baudLabel => 'Baud hızı';
+
+  @override
+  String get printer_settings_selectPlaceholder => 'Seçiniz';
+
+  @override
+  String get printer_settings_noPortsWarning => 'Sistemde seri port bulunamadı. Dönüştürücünün takılı olduğunu kontrol edip listeyi yenileyin.';
+
+  @override
+  String get printer_settings_noPrintersWarning => 'Kurulu Windows yazıcısı bulunamadı.';
+
+  @override
+  String get printer_settings_refreshTooltip => 'Listeyi yenile';
+
+  @override
+  String get printer_settings_saveButton => 'Kaydet';
+
+  @override
+  String get printer_settings_testButton => 'Test fişi yazdır';
+
+  @override
+  String get printer_settings_removeButton => 'Yazıcıyı kaldır';
+
+  @override
+  String get printer_settings_savedMessage => 'Yazıcı ayarı kaydedildi.';
+
+  @override
+  String get printer_settings_removedMessage => 'Yazıcı tanımı kaldırıldı.';
+
+  @override
+  String get printer_settings_testSuccessMessage => 'Test fişi yazıcıya gönderildi.';
+
+  @override
+  String get printer_settings_notConfiguredNotice => 'Bu kioskta yazıcı tanımlı değil. İşlem sonrası fişler basılmaz.';
+
+  @override
+  String get printer_settings_unsavedNotice => 'Kaydedilmemiş değişiklik var. Test fişi seçili ayarla basılır.';
+
+  @override
+  String printer_settings_mockNotice(String path) {
+    return 'Geliştirme modu: fişler yazıcıya gönderilmez, $path klasörüne PNG olarak kaydedilir.';
+  }
+
+  @override
+  String get printer_error_notConfigured => 'Yazıcı tanımlı değil. Ayarlar › Yazıcı bölümünden bağlantıyı seçin.';
+
+  @override
+  String get printer_error_connectionFailed => 'Yazıcıya bağlanılamadı. Kabloyu ve port seçimini kontrol edin.';
+
+  @override
+  String get printer_error_writeFailed => 'Fiş yazıcıya gönderilemedi.';
+
+  @override
+  String get printer_error_timeout => 'Yazıcı zamanında yanıt vermedi.';
+
+  @override
+  String get printer_error_renderFailed => 'Fiş hazırlanamadı.';
+
+  @override
+  String get printer_error_invalidDocument => 'Yazdırılacak içerik yok.';
+
+  @override
+  String get printer_error_unexpected => 'Fiş yazdırılırken beklenmeyen bir hata oluştu.';
+
+  @override
+  String get printer_testReceipt_title => 'Yazıcı Testi';
+
+  @override
+  String get printer_testReceipt_charsetLabel => 'Karakter testi';
+
+  @override
+  String get printer_testReceipt_barcodeLabel => 'Barkod testi';
+
+
+  @override
+  String get printer_receipt_intakeTitle => 'İLAÇ ALIM FİŞİ';
+
+  @override
+  String get printer_receipt_refundTitle => 'İLAÇ İADE FİŞİ';
+
+  @override
+  String get printer_receipt_wastageTitle => 'FİRE FİŞİ';
+
+  @override
+  String get printer_receipt_destructionTitle => 'İMHA FİŞİ';
+
+  @override
+  String get printer_receipt_serviceLabel => 'Servis';
+
+  @override
+  String get printer_receipt_roomBedLabel => 'Oda / Yatak';
+
+
+  @override
+  String get printer_receipt_operatorLabel => 'İşlem yapan';
+
+  @override
+  String get printer_receipt_medicineListTitle => 'İLAÇ LİSTESİ';
+
+  @override
+  String get printer_receipt_returnDrawerLocation => 'İade çekmecesi';
+
+  @override
+  String get printer_receipt_itemCountLabel => 'Toplam kalem';
+
+  @override
+  String get printer_receipt_inventoryTitle => 'İSTASYON ENVANTER LİSTESİ';
+
+  @override
+  String get printer_receipt_cabinStockTitle => 'KABİN STOK LİSTESİ';
+
+  @override
+  String get printer_receipt_cabinLabel => 'Kabin';
+
+  @override
+  String get printer_printButton => 'Yazdır';
+
+  @override
+  String get printer_sentMessage => 'Yazıcıya gönderildi.';
+
 
   @override
   String get fingerprint_enroll_screenTitle => 'Parmak İzi Tanıtma';

@@ -4907,6 +4907,10 @@
   "@appException_fingerprint": {
     "description": "User-facing message for FingerprintException (fingerprint scanner could not be opened, or could not capture or process a fingerprint)"
   },
+  "appException_printer": "Fiş yazdırılamadı.",
+  "@appException_printer": {
+    "description": "User-facing message for PrinterException (thermal receipt printer is not configured, could not be reached, or the receipt could not be sent)"
+  },
   "dataError_emptyResponse": "Sunucu boş yanıt döndürdü",
   "@dataError_emptyResponse": {
     "description": "APIManager error message when an API call returns 2xx with an empty body"
@@ -10083,6 +10087,10 @@
   "@settingsView_fingerprintNav": {
     "description": "Settings side navigation: fingerprint section"
   },
+  "settingsView_printerNav": "Yazıcı",
+  "@settingsView_printerNav": {
+    "description": "Settings side navigation: receipt printer section"
+  },
   "fingerprint_settings_title": "Parmak izi ile giriş",
   "@fingerprint_settings_title": {
     "description": "Settings > Fingerprint: section title"
@@ -10119,6 +10127,195 @@
   "fingerprint_settings_simulatedNotice": "Parmak izi servisi henüz hazır değil. Tanıtma akışı test amaçlı çalışır; veriler sunucuya gönderilmez.",
   "@fingerprint_settings_simulatedNotice": {
     "description": "Settings > Fingerprint: notice shown while the backend service is simulated"
+  },
+  "printer_settings_title": "Fiş yazıcısı",
+  "@printer_settings_title": {
+    "description": "Settings > Printer: section title"
+  },
+  "printer_settings_description": "İlaç alım, iade ve fire/imha işlemlerinden sonra fiş basan termal yazıcının bağlantısını ayarlayın. Bu ayar yalnızca bu kiosk için geçerlidir.",
+  "@printer_settings_description": {
+    "description": "Settings > Printer: explanation of the section"
+  },
+  "printer_settings_connectionLabel": "Bağlantı türü",
+  "@printer_settings_connectionLabel": {
+    "description": "Settings > Printer: label above the serial port / Windows printer selector"
+  },
+  "printer_settings_connectionSerial": "Seri port",
+  "@printer_settings_connectionSerial": {
+    "description": "Settings > Printer: connection type option for a serial (COM) port"
+  },
+  "printer_settings_connectionSpooler": "Windows yazıcısı",
+  "@printer_settings_connectionSpooler": {
+    "description": "Settings > Printer: connection type option for an installed Windows printer queue (raw printing)"
+  },
+  "printer_settings_portLabel": "Port",
+  "@printer_settings_portLabel": {
+    "description": "Settings > Printer: serial port dropdown label"
+  },
+  "printer_settings_printerLabel": "Yazıcı",
+  "@printer_settings_printerLabel": {
+    "description": "Settings > Printer: Windows printer dropdown label"
+  },
+  "printer_settings_baudLabel": "Baud hızı",
+  "@printer_settings_baudLabel": {
+    "description": "Settings > Printer: serial baud rate dropdown label"
+  },
+  "printer_settings_selectPlaceholder": "Seçiniz",
+  "@printer_settings_selectPlaceholder": {
+    "description": "Settings > Printer: placeholder of the port / printer dropdown"
+  },
+  "printer_settings_noPortsWarning": "Sistemde seri port bulunamadı. Dönüştürücünün takılı olduğunu kontrol edip listeyi yenileyin.",
+  "@printer_settings_noPortsWarning": {
+    "description": "Settings > Printer: shown when no serial port is available"
+  },
+  "printer_settings_noPrintersWarning": "Kurulu Windows yazıcısı bulunamadı.",
+  "@printer_settings_noPrintersWarning": {
+    "description": "Settings > Printer: shown when no Windows printer queue is installed"
+  },
+  "printer_settings_refreshTooltip": "Listeyi yenile",
+  "@printer_settings_refreshTooltip": {
+    "description": "Settings > Printer: tooltip of the button that reloads ports / printers"
+  },
+  "printer_settings_saveButton": "Kaydet",
+  "@printer_settings_saveButton": {
+    "description": "Settings > Printer: saves the printer connection for this kiosk"
+  },
+  "printer_settings_testButton": "Test fişi yazdır",
+  "@printer_settings_testButton": {
+    "description": "Settings > Printer: prints a test receipt with the selected (even unsaved) connection"
+  },
+  "printer_settings_removeButton": "Yazıcıyı kaldır",
+  "@printer_settings_removeButton": {
+    "description": "Settings > Printer: removes the saved printer connection from this kiosk"
+  },
+  "printer_settings_savedMessage": "Yazıcı ayarı kaydedildi.",
+  "@printer_settings_savedMessage": {
+    "description": "Settings > Printer: shown after saving"
+  },
+  "printer_settings_removedMessage": "Yazıcı tanımı kaldırıldı.",
+  "@printer_settings_removedMessage": {
+    "description": "Settings > Printer: shown after removing the printer"
+  },
+  "printer_settings_testSuccessMessage": "Test fişi yazıcıya gönderildi.",
+  "@printer_settings_testSuccessMessage": {
+    "description": "Settings > Printer: shown after the test receipt was sent successfully"
+  },
+  "printer_settings_notConfiguredNotice": "Bu kioskta yazıcı tanımlı değil. İşlem sonrası fişler basılmaz.",
+  "@printer_settings_notConfiguredNotice": {
+    "description": "Settings > Printer: notice when no printer connection is saved"
+  },
+  "printer_settings_unsavedNotice": "Kaydedilmemiş değişiklik var. Test fişi seçili ayarla basılır.",
+  "@printer_settings_unsavedNotice": {
+    "description": "Settings > Printer: notice when the form differs from the saved setting"
+  },
+  "printer_settings_mockNotice": "Geliştirme modu: fişler yazıcıya gönderilmez, {path} klasörüne PNG olarak kaydedilir.",
+  "@printer_settings_mockNotice": {
+    "description": "Settings > Printer: notice in mock mode, path is the folder where receipt previews are saved",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "printer_error_notConfigured": "Yazıcı tanımlı değil. Ayarlar › Yazıcı bölümünden bağlantıyı seçin.",
+  "@printer_error_notConfigured": {
+    "description": "Printer error: no printer connection saved on this kiosk (PrinterFailureReason.notConfigured)"
+  },
+  "printer_error_connectionFailed": "Yazıcıya bağlanılamadı. Kabloyu ve port seçimini kontrol edin.",
+  "@printer_error_connectionFailed": {
+    "description": "Printer error: port / printer queue could not be opened (PrinterFailureReason.connectionFailed)"
+  },
+  "printer_error_writeFailed": "Fiş yazıcıya gönderilemedi.",
+  "@printer_error_writeFailed": {
+    "description": "Printer error: data could not be written (PrinterFailureReason.writeFailed)"
+  },
+  "printer_error_timeout": "Yazıcı zamanında yanıt vermedi.",
+  "@printer_error_timeout": {
+    "description": "Printer error: sending did not finish in time (PrinterFailureReason.timeout)"
+  },
+  "printer_error_renderFailed": "Fiş hazırlanamadı.",
+  "@printer_error_renderFailed": {
+    "description": "Printer error: receipt could not be rendered to an image (PrinterFailureReason.renderFailed)"
+  },
+  "printer_error_invalidDocument": "Yazdırılacak içerik yok.",
+  "@printer_error_invalidDocument": {
+    "description": "Printer error: empty receipt (PrinterFailureReason.invalidDocument)"
+  },
+  "printer_error_unexpected": "Fiş yazdırılırken beklenmeyen bir hata oluştu.",
+  "@printer_error_unexpected": {
+    "description": "Printer error: unexpected failure (PrinterFailureReason.unexpected)"
+  },
+  "printer_testReceipt_title": "Yazıcı Testi",
+  "@printer_testReceipt_title": {
+    "description": "Printed test receipt: heading under the PharMed logo"
+  },
+  "printer_testReceipt_charsetLabel": "Karakter testi",
+  "@printer_testReceipt_charsetLabel": {
+    "description": "Printed test receipt: heading of the special character sample line"
+  },
+  "printer_testReceipt_barcodeLabel": "Barkod testi",
+  "@printer_testReceipt_barcodeLabel": {
+    "description": "Printed test receipt: heading of the sample barcodes"
+  },
+  "printer_receipt_intakeTitle": "İLAÇ ALIM FİŞİ",
+  "@printer_receipt_intakeTitle": {
+    "description": "Printed operation receipt: heading for a medication intake"
+  },
+  "printer_receipt_refundTitle": "İLAÇ İADE FİŞİ",
+  "@printer_receipt_refundTitle": {
+    "description": "Printed operation receipt: heading for a medication return"
+  },
+  "printer_receipt_wastageTitle": "FİRE FİŞİ",
+  "@printer_receipt_wastageTitle": {
+    "description": "Printed operation receipt: heading for a wastage operation"
+  },
+  "printer_receipt_destructionTitle": "İMHA FİŞİ",
+  "@printer_receipt_destructionTitle": {
+    "description": "Printed operation receipt: heading for a destruction operation"
+  },
+  "printer_receipt_serviceLabel": "Servis",
+  "@printer_receipt_serviceLabel": {
+    "description": "Printed operation receipt: label of the patient's hospital service"
+  },
+  "printer_receipt_roomBedLabel": "Oda / Yatak",
+  "@printer_receipt_roomBedLabel": {
+    "description": "Printed operation receipt: label of the patient's room and bed"
+  },
+  "printer_receipt_operatorLabel": "İşlem yapan",
+  "@printer_receipt_operatorLabel": {
+    "description": "Printed operation receipt: label of the logged-in user who performed the operation"
+  },
+  "printer_receipt_medicineListTitle": "İLAÇ LİSTESİ",
+  "@printer_receipt_medicineListTitle": {
+    "description": "Printed operation receipt: heading of the medication list"
+  },
+  "printer_receipt_returnDrawerLocation": "İade çekmecesi",
+  "@printer_receipt_returnDrawerLocation": {
+    "description": "Printed operation receipt: location shown for items placed into the return drawer"
+  },
+  "printer_receipt_itemCountLabel": "Toplam kalem",
+  "@printer_receipt_itemCountLabel": {
+    "description": "Printed operation receipt: label of the total number of printed items"
+  },
+  "printer_receipt_inventoryTitle": "İSTASYON ENVANTER LİSTESİ",
+  "@printer_receipt_inventoryTitle": {
+    "description": "Printed receipt: heading of the station inventory list printout"
+  },
+  "printer_receipt_cabinStockTitle": "KABİN STOK LİSTESİ",
+  "@printer_receipt_cabinStockTitle": {
+    "description": "Printed receipt: heading of the cabin stock list printout"
+  },
+  "printer_receipt_cabinLabel": "Kabin",
+  "@printer_receipt_cabinLabel": {
+    "description": "Printed receipt: label of the cabin name on the cabin stock printout"
+  },
+  "printer_printButton": "Yazdır",
+  "@printer_printButton": {
+    "description": "Print button shown on list screens (station inventory, cabin stock, temperature/humidity) that sends the visible data to the receipt printer"
+  },
+  "printer_sentMessage": "Yazıcıya gönderildi.",
+  "@printer_sentMessage": {
+    "description": "Shown after a user-initiated printout was sent to the receipt printer successfully"
   },
   "fingerprint_enroll_screenTitle": "Parmak İzi Tanıtma",
   "@fingerprint_enroll_screenTitle": {

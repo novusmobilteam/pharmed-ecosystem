@@ -24,3 +24,5 @@ export 'shared/cabin_validation_reason_extension.dart';
 export 'camera/camera.dart';
 
 export 'fingerprint/fingerprint.dart';
+
+export 'printer/printer.dart';

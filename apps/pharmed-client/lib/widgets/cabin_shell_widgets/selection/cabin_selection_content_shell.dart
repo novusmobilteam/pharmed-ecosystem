@@ -23,6 +23,7 @@ class CabinSelectionContentShell extends StatelessWidget {
     this.loadingMessage,
     this.emptyMessage,
     this.menu,
+    this.menuTrailing,
     this.showSearch = true,
   }) : assert(isLoading || isEmpty || content != null, 'content is required unless isLoading or isEmpty is true');
 
@@ -54,6 +55,9 @@ class CabinSelectionContentShell extends StatelessWidget {
   final bool showSearch;
   final MenuItem? menu;
 
+  /// [menu] başlığının en sağında gösterilen widget (ör. Yazdır butonu).
+  final Widget? menuTrailing;
+
   Widget _buildBody(BuildContext context) {
     if (isLoading) {
       return Center(child: MedLoadingIndicator());
@@ -84,8 +88,20 @@ class CabinSelectionContentShell extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(menu!.name ?? '-', style: MedTextStyles.titleLg()),
-                  Text(menu!.description ?? '-', style: MedTextStyles.bodyMd()),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(menu!.name ?? '-', style: MedTextStyles.titleLg()),
+                            Text(menu!.description ?? '-', style: MedTextStyles.bodyMd()),
+                          ],
+                        ),
+                      ),
+                      ?menuTrailing,
+                    ],
+                  ),
                   SizedBox(height: 4.0),
                   Divider(thickness: 1),
                 ],

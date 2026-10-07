@@ -5,3 +5,4 @@ export 'master_drawer_execution_mixin.dart';
 export 'pagination_mixin.dart';
 export 'witness_mixin.dart';
 export 'cabin_operation_recording_mixin.dart';
+export 'cabin_operation_receipt_mixin.dart';
