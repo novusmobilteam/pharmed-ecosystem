@@ -31,6 +31,7 @@ final masterIntakeExecutionNotifierProvider = ChangeNotifierProvider.autoDispose
     completeEquivalentIntake: ref.read(completeEquivalentIntakeUseCaseProvider),
     completeRedirectedIntake: ref.read(completeRedirectedIntakeUseCaseProvider),
     submitIntakeQrCodes: ref.read(submitIntakeQrCodesUseCaseProvider),
+    receiptService: ref.read(operationReceiptServiceProvider),
   );
 });
 
@@ -39,7 +40,8 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
         MasterDrawerExecutionMixin,
         CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
         CabinOperationEntryMixin,
-        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>
+        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>,
+        CabinOperationReceiptMixin<CabinOperationDrawerJob, CabinOperationTarget>
     implements CabinOperationExecutionController {
   MasterIntakeExecutionNotifier({
     required IMasterDrawerSession drawerSession,
@@ -48,7 +50,9 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     required CompleteEquivalentIntakeUseCase completeEquivalentIntake,
     required CompleteRedirectedIntakeUseCase completeRedirectedIntake,
     required SubmitIntakeQrCodesUseCase submitIntakeQrCodes,
+    required OperationReceiptService receiptService,
   }) : _drawerSession = drawerSession,
+       _receiptService = receiptService,
        _completeIntake = completeIntake,
        _recordingCoordinator = recordingCoordinator,
        _completeEquivalentIntake = completeEquivalentIntake,
@@ -63,6 +67,7 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
   final CompleteEquivalentIntakeUseCase _completeEquivalentIntake;
   final CompleteRedirectedIntakeUseCase _completeRedirectedIntake;
   final SubmitIntakeQrCodesUseCase _submitIntakeQrCodes;
+  final OperationReceiptService _receiptService;
 
   @override
   IMasterDrawerSession get drawerSession => _drawerSession;
@@ -81,6 +86,37 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
 
   @override
   RecordedOperationType get recordedOperationType => RecordedOperationType.intake;
+
+  // ── Fiş [SWREQ-PRN-093] ───────────────────────────────────────────────
+
+  @override
+  OperationReceiptService get receiptService => _receiptService;
+
+  @override
+  OperationReceiptKind get receiptKind => OperationReceiptKind.intake;
+
+  /// Fişte basılan hasta — start() ile selection'dan devralınır.
+  Hospitalization? _hospitalization;
+
+  /// Alınan ilaç gözdeki atamadan okunur (muadil alımda da fiziksel olarak
+  /// alınan ilaç budur); miktar plandaki dozların toplamıdır.
+  @override
+  List<OperationReceiptLine> receiptLinesOf(CabinOperationTarget target) {
+    final plan = _planOf(target);
+    if (plan == null) return const [];
+    final assignment = target.assignment;
+    final medicine = assignment.medicine ?? plan.item.medicine;
+    final quantity = plan.details.fold<double>(0, (sum, d) => sum + d.dosePiece);
+    return [
+      OperationReceiptLine(
+        medicineName: medicine?.name ?? '—',
+        quantityLabel: assignment.quantityLabel(quantity),
+        hospitalization: _hospitalization,
+        location: receiptLocationOf(assignment),
+        barcode: medicine?.barcode,
+      ),
+    ];
+  }
 
   /// start() ile selection'dan devralınır — IntakeParams'ta gerekiyor.
   IntakeType _intakeType = IntakeType.ordered;
@@ -121,11 +157,13 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     required List<IntakePlan> plans,
     required IntakeType intakeType,
     required int? hospitalizationId,
+    Hospitalization? hospitalization,
     Map<int, String> overdueDescriptions = const {},
   }) {
     _plans = {for (final p in plans) p.item.id: p};
     _intakeType = intakeType;
     _hospitalizationId = hospitalizationId;
+    _hospitalization = hospitalization;
     _overdueDescriptions = Map.unmodifiable(overdueDescriptions);
     _qrCodeTarget = null;
     return startQueue(jobs);

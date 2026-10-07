@@ -6965,6 +6965,12 @@ abstract class AppLocalizations {
   /// **'The fingerprint could not be read.'**
   String get appException_fingerprint;
 
+  /// No description provided for @appException_printer.
+  ///
+  /// In en, this message translates to:
+  /// **'The receipt could not be printed.'**
+  String get appException_printer;
+
   /// No description provided for @dataError_malformedResponse.
   ///
   /// In en, this message translates to:
@@ -13920,6 +13926,12 @@ abstract class AppLocalizations {
   /// **'Fingerprint'**
   String get settingsView_fingerprintNav;
 
+  /// No description provided for @settingsView_printerNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Printer'**
+  String get settingsView_printerNav;
+
   /// No description provided for @fingerprint_settings_title.
   ///
   /// In en, this message translates to:
@@ -13967,6 +13979,285 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The fingerprint service is not ready yet. Enrolment runs in test mode; no data is sent to the server.'**
   String get fingerprint_settings_simulatedNotice;
+
+  /// No description provided for @printer_settings_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt printer'**
+  String get printer_settings_title;
+
+  /// No description provided for @printer_settings_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up the thermal printer that prints a receipt after medication intake, return and waste/destruction operations. This setting applies to this kiosk only.'**
+  String get printer_settings_description;
+
+  /// No description provided for @printer_settings_connectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection type'**
+  String get printer_settings_connectionLabel;
+
+  /// No description provided for @printer_settings_connectionSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial port'**
+  String get printer_settings_connectionSerial;
+
+  /// No description provided for @printer_settings_connectionSpooler.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows printer'**
+  String get printer_settings_connectionSpooler;
+
+  /// No description provided for @printer_settings_portLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get printer_settings_portLabel;
+
+  /// No description provided for @printer_settings_printerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Printer'**
+  String get printer_settings_printerLabel;
+
+  /// No description provided for @printer_settings_baudLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Baud rate'**
+  String get printer_settings_baudLabel;
+
+  /// No description provided for @printer_settings_selectPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get printer_settings_selectPlaceholder;
+
+  /// No description provided for @printer_settings_noPortsWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'No serial port found. Check that the converter is plugged in and refresh the list.'**
+  String get printer_settings_noPortsWarning;
+
+  /// No description provided for @printer_settings_noPrintersWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'No installed Windows printer found.'**
+  String get printer_settings_noPrintersWarning;
+
+  /// No description provided for @printer_settings_refreshTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh list'**
+  String get printer_settings_refreshTooltip;
+
+  /// No description provided for @printer_settings_saveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get printer_settings_saveButton;
+
+  /// No description provided for @printer_settings_testButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Print test receipt'**
+  String get printer_settings_testButton;
+
+  /// No description provided for @printer_settings_removeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove printer'**
+  String get printer_settings_removeButton;
+
+  /// No description provided for @printer_settings_savedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Printer setting saved.'**
+  String get printer_settings_savedMessage;
+
+  /// No description provided for @printer_settings_removedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Printer removed.'**
+  String get printer_settings_removedMessage;
+
+  /// No description provided for @printer_settings_testSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Test receipt sent to the printer.'**
+  String get printer_settings_testSuccessMessage;
+
+  /// No description provided for @printer_settings_notConfiguredNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'No printer is set up on this kiosk. Receipts will not be printed after operations.'**
+  String get printer_settings_notConfiguredNotice;
+
+  /// No description provided for @printer_settings_unsavedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'There are unsaved changes. The test receipt uses the selected setting.'**
+  String get printer_settings_unsavedNotice;
+
+  /// No description provided for @printer_settings_mockNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Development mode: receipts are not sent to a printer; they are saved as PNG files in {path}.'**
+  String printer_settings_mockNotice(String path);
+
+  /// No description provided for @printer_error_notConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'No printer is set up. Select the connection under Settings › Printer.'**
+  String get printer_error_notConfigured;
+
+  /// No description provided for @printer_error_connectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the printer. Check the cable and the selected port.'**
+  String get printer_error_connectionFailed;
+
+  /// No description provided for @printer_error_writeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The receipt could not be sent to the printer.'**
+  String get printer_error_writeFailed;
+
+  /// No description provided for @printer_error_timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The printer did not respond in time.'**
+  String get printer_error_timeout;
+
+  /// No description provided for @printer_error_renderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The receipt could not be prepared.'**
+  String get printer_error_renderFailed;
+
+  /// No description provided for @printer_error_invalidDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'There is nothing to print.'**
+  String get printer_error_invalidDocument;
+
+  /// No description provided for @printer_error_unexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred while printing the receipt.'**
+  String get printer_error_unexpected;
+
+  /// No description provided for @printer_testReceipt_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Printer Test'**
+  String get printer_testReceipt_title;
+
+  /// No description provided for @printer_testReceipt_charsetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Character test'**
+  String get printer_testReceipt_charsetLabel;
+
+  /// No description provided for @printer_testReceipt_barcodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode test'**
+  String get printer_testReceipt_barcodeLabel;
+
+
+  /// No description provided for @printer_receipt_intakeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MEDICATION INTAKE RECEIPT'**
+  String get printer_receipt_intakeTitle;
+
+  /// No description provided for @printer_receipt_refundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MEDICATION RETURN RECEIPT'**
+  String get printer_receipt_refundTitle;
+
+  /// No description provided for @printer_receipt_wastageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'WASTAGE RECEIPT'**
+  String get printer_receipt_wastageTitle;
+
+  /// No description provided for @printer_receipt_destructionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'DESTRUCTION RECEIPT'**
+  String get printer_receipt_destructionTitle;
+
+  /// No description provided for @printer_receipt_serviceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get printer_receipt_serviceLabel;
+
+  /// No description provided for @printer_receipt_roomBedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Room / Bed'**
+  String get printer_receipt_roomBedLabel;
+
+
+  /// No description provided for @printer_receipt_operatorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Performed by'**
+  String get printer_receipt_operatorLabel;
+
+  /// No description provided for @printer_receipt_medicineListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MEDICATION LIST'**
+  String get printer_receipt_medicineListTitle;
+
+  /// No description provided for @printer_receipt_returnDrawerLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Return drawer'**
+  String get printer_receipt_returnDrawerLocation;
+
+  /// No description provided for @printer_receipt_itemCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total items'**
+  String get printer_receipt_itemCountLabel;
+
+  /// No description provided for @printer_receipt_inventoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'STATION INVENTORY LIST'**
+  String get printer_receipt_inventoryTitle;
+
+  /// No description provided for @printer_receipt_cabinStockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'CABIN STOCK LIST'**
+  String get printer_receipt_cabinStockTitle;
+
+  /// No description provided for @printer_receipt_cabinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin'**
+  String get printer_receipt_cabinLabel;
+
+  /// No description provided for @printer_printButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get printer_printButton;
+
+  /// No description provided for @printer_sentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to the printer.'**
+  String get printer_sentMessage;
+
 
   /// No description provided for @fingerprint_enroll_screenTitle.
   ///

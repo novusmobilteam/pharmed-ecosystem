@@ -29,6 +29,7 @@ final masterRefundExecutionNotifierProvider = ChangeNotifierProvider.autoDispose
     drawerSession: ref.read(drawerExecutionSessionProvider),
     completeRefund: ref.read(completeRefundUseCaseProvider),
     recordingCoordinator: ref.read(operationRecordingCoordinatorProvider),
+    receiptService: ref.read(operationReceiptServiceProvider),
   );
 });
 
@@ -37,13 +38,16 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
         MasterDrawerExecutionMixin,
         CabinDrawerQueueMixin<CabinOperationDrawerJob, CabinOperationTarget>,
         CabinOperationEntryMixin,
-        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>
+        CabinOperationRecordingMixin<CabinOperationDrawerJob, CabinOperationTarget>,
+        CabinOperationReceiptMixin<CabinOperationDrawerJob, CabinOperationTarget>
     implements CabinOperationExecutionController {
   MasterRefundExecutionNotifier({
     required IMasterDrawerSession drawerSession,
     required OperationRecordingCoordinator recordingCoordinator,
     required CompleteRefundUseCase completeRefund,
+    required OperationReceiptService receiptService,
   }) : _drawerSession = drawerSession,
+       _receiptService = receiptService,
        _recordingCoordinator = recordingCoordinator,
        _completeRefund = completeRefund {
     attachDrawerSession();
@@ -52,6 +56,7 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
   final IMasterDrawerSession _drawerSession;
   final OperationRecordingCoordinator _recordingCoordinator;
   final CompleteRefundUseCase _completeRefund;
+  final OperationReceiptService _receiptService;
 
   @override
   IMasterDrawerSession get drawerSession => _drawerSession;
@@ -71,6 +76,34 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
 
   @override
   RecordedOperationType get recordedOperationType => RecordedOperationType.refund;
+
+  // ── Fiş [SWREQ-PRN-094] ───────────────────────────────────────────────
+
+  @override
+  OperationReceiptService get receiptService => _receiptService;
+
+  @override
+  OperationReceiptKind get receiptKind => OperationReceiptKind.refund;
+
+  /// İadede bir hedefin birden fazla kalemi olabilir ve kalemler tek tek
+  /// kaydedilir (hata sonrası devamda kayıtlı kalem atlanır). Fiş kalemleri
+  /// bu yüzden hedef bazında değil, kalem kaydı başarılı olunca eklenir.
+  @override
+  List<OperationReceiptLine> receiptLinesOf(CabinOperationTarget target) => const [];
+
+  OperationReceiptLine _receiptLineOf(RefundableItem item, CabinOperationTarget target) {
+    final medicine = item.medicine ?? target.assignment.medicine;
+    final location = currentJob?.isReturnDrawer == true
+        ? contextlessL10n().printer_receipt_returnDrawerLocation
+        : receiptLocationOf(item.resolvedTarget ?? target.assignment);
+    return OperationReceiptLine(
+      medicineName: medicine?.name ?? '—',
+      quantityLabel: target.assignment.quantityLabel(RefundJobMapper.quantityOf(item)),
+      hospitalization: item.hospitalization,
+      location: location,
+      barcode: medicine?.barcode,
+    );
+  }
 
   /// target.sourceId → o target'ta kaydedilecek kalemler.
   Map<int, List<RefundableItem>> _itemsBySourceId = const {};
@@ -144,6 +177,7 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
       final ok = await _completeItem(item);
       if (!ok) return false;
       _completedItemIds.add(item.id);
+      addReceiptLines([_receiptLineOf(item, target)]);
     }
     return true;
   }

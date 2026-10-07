@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/cache/witness_session_store.dart';
+import '../../../../core/hardware/printer/printer.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../auth/auth.dart';
 import '../../../dashboard/dashboard.dart';
@@ -40,6 +43,7 @@ final masterWasteSelectionNotifierProvider = ChangeNotifierProvider<MasterWasteN
     getStation: ref.read(getCurrentStationUseCaseProvider),
     wastage: ref.read(masterWastageUseCaseProvider),
     destruction: ref.read(masterDestructionUseCaseProvider),
+    receiptService: ref.read(operationReceiptServiceProvider),
   );
 });
 
@@ -51,16 +55,19 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMi
     required GetCurrentStationUseCase getStation,
     required MasterWastageUseCase wastage,
     required MasterDestructionUseCase destruction,
+    required OperationReceiptService receiptService,
   }) : _authNotifier = authNotifier,
        _witnessStore = witnessStore,
        _getDisposables = getDisposables,
        _wastage = wastage,
-       _destruction = destruction;
+       _destruction = destruction,
+       _receiptService = receiptService;
 
   final AuthNotifier _authNotifier;
   final GetMasterDisposablesUseCase _getDisposables;
   final MasterWastageUseCase _wastage;
   final MasterDestructionUseCase _destruction;
+  final OperationReceiptService _receiptService;
   final WitnessSessionStore _witnessStore;
 
   final OperationKey fetchDisposablesOp = OperationKey.custom('fetch-disposables');
@@ -171,6 +178,7 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMi
     DisposeType type, {
     VoidCallback? onSuccess,
     void Function(String message)? onFailed,
+    void Function(PrinterFailureReason reason)? onReceiptFailed,
   }) async {
     if (isSubmitting) return;
 
@@ -183,9 +191,13 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMi
 
     var successCount = 0;
     String? failureMessage;
+    // [SWREQ-PRN-095] Fişe yalnızca kaydı başarılı kalemler girer.
+    final receiptLines = <OperationReceiptLine>[];
 
     for (final item in selected) {
       var succeeded = false;
+      // Başarıda miktar listeden silindiği için kayıttan ÖNCE okunur.
+      final quantity = amountFor(item.id);
 
       await _submitOne(
         item,
@@ -200,6 +212,14 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMi
 
       if (succeeded) {
         successCount++;
+        receiptLines.add(
+          OperationReceiptLine(
+            medicineName: item.medicine?.name ?? '—',
+            quantityLabel: receiptQuantityLabel(item.medicine, quantity),
+            hospitalization: item.hospitalization,
+            barcode: item.medicine?.barcode,
+          ),
+        );
       } else {
         break; // İlk hatada kuyruğu durdur — kalan seçili item'lara dokunma.
       }
@@ -208,6 +228,12 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMi
     _submittingGroupName = null;
     _submittingType = null;
     notifyListeners();
+
+    if (receiptLines.isNotEmpty) {
+      unawaited(
+        _printReceipt(type, receiptLines, onReceiptFailed: onReceiptFailed),
+      );
+    }
 
     // En az bir başarılı gönderim olduysa liste artık sunucuyla senkron değildir —
     // item başına DEĞİL, döngü bitince TEK seferde yeniden çekilir.
@@ -220,6 +246,22 @@ class MasterWasteNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMi
     } else {
       onSuccess?.call();
     }
+  }
+
+  /// Best-effort: yazdırma hatası fire/imha kaydını etkilemez, yalnızca bildirilir.
+  Future<void> _printReceipt(
+    DisposeType type,
+    List<OperationReceiptLine> lines, {
+    void Function(PrinterFailureReason reason)? onReceiptFailed,
+  }) async {
+    final result = await _receiptService.printOperation(
+      kind: switch (type) {
+        DisposeType.wastage => OperationReceiptKind.wastage,
+        DisposeType.destruction => OperationReceiptKind.destruction,
+      },
+      lines: lines,
+    );
+    result.when(ok: (_) {}, error: (e) => onReceiptFailed?.call(printerFailureReasonOf(e)));
   }
 
   Future<void> _submitOne(

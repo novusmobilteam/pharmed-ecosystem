@@ -217,7 +217,14 @@ class _MedicineGroupCardState extends State<_MedicineGroupCard> {
                   isLoading: isWastageSubmitting,
                   onPressed: (!hasSelection || isLocked)
                       ? null
-                      : () => notifier.disposeGroup(group, DisposeType.wastage),
+                      : () => notifier.disposeGroup(
+                          group,
+                          DisposeType.wastage,
+                          // [SWREQ-PRN-095] Fiş hatası fire/imha kaydını etkilemez, yalnızca bildirilir.
+                          onReceiptFailed: (reason) {
+                            if (context.mounted) MessageUtils.showErrorSnackbar(context, reason.message(context));
+                          },
+                        ),
                 ),
                 MedButton(
                   label: isDestructionSubmitting
@@ -229,7 +236,14 @@ class _MedicineGroupCardState extends State<_MedicineGroupCard> {
                   prefixIcon: Icon(PhosphorIcons.trash()),
                   onPressed: (!hasSelection || isLocked)
                       ? null
-                      : () => notifier.disposeGroup(group, DisposeType.destruction),
+                      : () => notifier.disposeGroup(
+                          group,
+                          DisposeType.destruction,
+                          // [SWREQ-PRN-095] Fiş hatası fire/imha kaydını etkilemez, yalnızca bildirilir.
+                          onReceiptFailed: (reason) {
+                            if (context.mounted) MessageUtils.showErrorSnackbar(context, reason.message(context));
+                          },
+                        ),
                 ),
               ],
             ],

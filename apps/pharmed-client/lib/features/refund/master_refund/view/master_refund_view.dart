@@ -9,6 +9,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.dart';
 import '../../../../widgets/empty_widgets/empty_selection_view.dart';
 import '../../../../widgets/hospitalization_panel/hospitalization_panel.dart';
+import '../../../../core/hardware/printer/printer.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
 import '../notifier/master_refund_execution_notifier.dart';
@@ -45,11 +46,17 @@ class _MasterRefundViewState extends ConsumerState<MasterRefundView> {
       if (!mounted) return;
       ref.read(masterRefundSelectionNotifierProvider).refreshAfterExecution();
     };
+    // [SWREQ-PRN-094] Fiş arka planda basılır; hata iadeyi etkilemez, yalnızca bildirilir.
+    execution.onReceiptFailed = (reason) {
+      if (!mounted) return;
+      MessageUtils.showErrorSnackbar(context, reason.message(context));
+    };
   }
 
   @override
   void dispose() {
     _execution?.onQueueFinished = null;
+    _execution?.onReceiptFailed = null;
     super.dispose();
   }
 

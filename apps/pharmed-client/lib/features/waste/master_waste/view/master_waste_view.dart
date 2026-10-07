@@ -9,6 +9,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/empty_widgets/empty_selection_view.dart';
 import '../../../../widgets/hospitalization_panel/hospitalization_panel.dart';
+import '../../../../core/hardware/printer/printer.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
 import '../notifier/master_waste_selection_notifier.dart';

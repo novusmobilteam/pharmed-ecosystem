@@ -135,6 +135,13 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   @protected
   Future<bool> onTargetCompleted(TTarget target) async => true;
 
+  /// [SWREQ-PRN-092] Hedefin kaydı (API) BAŞARIYLA yapıldığında, her hedef için
+  /// tam bir kez çağrılır — "Tamamla" (A) ve fiziksel kapanış (B) yolları ortak.
+  /// Kayıt başarısızsa çağrılmaz. Fiş gibi "yapılan işlemi raporlayan"
+  /// katmanlar bunu dinler; kuyruk akışını etkilememelidir.
+  @protected
+  void onTargetSaved(TTarget target) {}
+
   /// [onTargetCompleted] false döndüğünde, engel kalkınca kuyruğu devam
   /// ettirir. Hook TEKRAR çağrılmaz.
   Future<void> resumeAfterTargetCompleted() async {
@@ -294,6 +301,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
       final ok = await saveTargetOnPhysicalClose(target);
       if (!isExecuting || !ok) return false; // hata saveTargetOnPhysicalClose içinde set edildi
       _currentTargetSaved = true;
+      onTargetSaved(target);
       isSaving = false;
     }
 
@@ -317,6 +325,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     isSaving = true;
     final ok = await saveTarget(target); // hata olursa saveTarget kendi setQueueFailure'ını çağırır
     if (!isExecuting || !ok) return;
+    onTargetSaved(target);
 
     await advanceAfterTargetSaved();
   }

@@ -181,6 +181,14 @@ final class FingerprintException extends AppException {
   final int? sdkStatus;
 }
 
+/// Termal yazıcı hatası. [SWREQ-PRN-003]
+/// UI, kullanıcıya gösterilecek mesajı [reason]'a göre seçer.
+final class PrinterException extends AppException {
+  const PrinterException({required super.message, required this.reason, super.cause});
+
+  final PrinterFailureReason reason;
+}
+
 // ─────────────────────────────────────────────────────────────────
 // Exception'dan kullanıcıya gösterilecek mesaj türet
 // UI katmanı bu metodu kullanır, exception string'ini değil
@@ -213,6 +221,7 @@ extension AppExceptionUiMessage on AppException {
       CheckException(:final message) => message,
       CameraRecordingException() => contextlessL10n().appException_cameraRecording,
       FingerprintException() => contextlessL10n().appException_fingerprint,
+      PrinterException() => contextlessL10n().appException_printer,
     };
   }
 

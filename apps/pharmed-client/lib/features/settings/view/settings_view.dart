@@ -7,6 +7,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../fingerprint_enrollment/fingerprint_enrollment.dart';
 import '../../fingerprint_test/fingerprint_test.dart';
+import '../../printer_settings/printer_settings.dart';
 import '../notifier/settings_notifier.dart';
 import '../notifier/settings_state.dart';
 
@@ -47,6 +48,11 @@ class _SettingsModalBody extends ConsumerWidget {
             label: context.l10n.settingsView_fingerprintNav,
             icon: PhosphorIcons.fingerprint(),
           ),
+          MedSettingsNavItem(
+            id: SettingsSection.printer.name,
+            label: context.l10n.settingsView_printerNav,
+            icon: PhosphorIcons.printer(),
+          ),
         ],
       ),
       MedSettingsNavGroup(
@@ -80,6 +86,7 @@ class _SettingsModalBody extends ConsumerWidget {
       SettingsSection.general => const GeneralSettingsView(),
       SettingsSection.appearance => const AppearanceSettingsView(),
       SettingsSection.fingerprint => const FingerprintSettingsView(),
+      SettingsSection.printer => const PrinterSettingsView(),
       SettingsSection.debug => const DebugSettingsView(),
     };
   }

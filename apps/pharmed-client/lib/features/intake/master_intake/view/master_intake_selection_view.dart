@@ -324,6 +324,7 @@ Future<void> _onStartIntakePressed(
           plans: plans,
           intakeType: selection.intakeType,
           hospitalizationId: selection.hospitalization?.id,
+          hospitalization: selection.hospitalization,
           overdueDescriptions: selection.overdueDescriptions,
         );
       },

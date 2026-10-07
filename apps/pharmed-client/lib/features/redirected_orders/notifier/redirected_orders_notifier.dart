@@ -5,7 +5,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import '../../../core/providers/providers.dart';
 
-final redirectedOrdersNotifierProvider = ChangeNotifierProvider<RedirectedOrdersNotifier>((ref) {
+final redirectedOrdersNotifierProvider = ChangeNotifierProvider.autoDispose<RedirectedOrdersNotifier>((ref) {
   return RedirectedOrdersNotifier(
     getOrders: ref.read(getRedirectedOrdersUseCaseProvider),
     cancelOrder: ref.read(cancelRedirectedOrderUseCaseProvider),
