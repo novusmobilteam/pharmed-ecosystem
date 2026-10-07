@@ -49,7 +49,7 @@ class DrugDTO extends MedicineDto {
   final num countTypeId;
   final String? countType;
 
-  final num? atcCode;
+  final String? atcCode;
   final String? equivalentCode;
 
   final bool isActive;
@@ -180,7 +180,7 @@ class DrugDTO extends MedicineDto {
       dosageFormUnit: json['dosageFormUnit'] as String?,
       countTypeId: json['countTypeId'] as num? ?? 1,
       countType: json['countType'] as String?,
-      atcCode: json['atcCode'] as num?,
+      atcCode: json['atcCode'] as String?,
       isActive: json['isActive'] as bool? ?? true,
       isMultiplePatientAccess: json['isMultiplePatientAccess'] as bool? ?? false,
       isSinglePatientAccess: json['isSinglePatientAccess'] as bool? ?? true,
@@ -324,7 +324,7 @@ class DrugDTO extends MedicineDto {
       isOrderlessStation: isOrderlessStation,
       dosageForm: DosageForm(id: dosageFormUnitId?.toInt(), name: dosageFormUnit),
       countType: CountType.fromId(countTypeId.toInt()),
-      atcCode: atcCode?.toInt(),
+      atcCode: atcCode?.toString(),
       isActive: isActive,
       isMultiplePatientAccess: isMultiplePatientAccess,
       isSinglePatientAccess: isSinglePatientAccess,

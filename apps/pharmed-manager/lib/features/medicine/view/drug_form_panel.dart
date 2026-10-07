@@ -551,7 +551,7 @@ Widget _atcCodeField() {
       return MedTextInputField(
         label: context.l10n.medicine_fieldAtcCode,
         onChanged: vm.updateAtcCode,
-        initialValue: vm.drug.atcCode.toCustomString(),
+        initialValue: vm.drug.atcCode,
         validator: Validators.cannotBlankValidator,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       );

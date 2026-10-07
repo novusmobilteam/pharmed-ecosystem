@@ -84,6 +84,15 @@ class AuthMockRepository implements IAuthRepository {
   @override
   Future<String?> getStoredToken() async => null;
 
+  /// Mock flavor'da da servis yok gibi davranır (use case zaten buraya gelmeden 501 döner).
+  @override
+  Future<Result<AuthToken>> loginWithFingerprint(FingerprintLoginRequest request) async {
+    await Future.delayed(_delay);
+    return Result.error(
+      ServiceException(message: contextlessL10n().fingerprint_login_serviceUnavailable, statusCode: 501),
+    );
+  }
+
   @override
   Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress}) async {
     return Result.ok(

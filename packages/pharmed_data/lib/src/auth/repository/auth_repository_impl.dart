@@ -144,6 +144,51 @@ class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
+  Future<Result<AuthToken>> loginWithFingerprint(FingerprintLoginRequest request) async {
+    try {
+      final token = await _remote.loginWithFingerprint(const FingerprintMapper().toLoginDto(request));
+      return await _completeLogin(token);
+    } on DioException catch (e) {
+      return Result.error(ServiceException(message: _parseDioError(e), statusCode: e.response?.statusCode ?? 0));
+    } catch (e) {
+      return Result.error(ServiceException(message: e.toString(), statusCode: 0));
+    }
+  }
+
+  /// Token alındıktan sonraki ortak adımlar (bkz. dosya başındaki akış 2–6).
+  Future<Result<AuthToken>> _completeLogin(String token) async {
+    await _cache.saveToken(token);
+    _tokenHolder.setToken(token);
+
+    final userResult = await _user.getCurrentUser();
+    if (userResult.isError) {
+      await _cache.clear();
+      return Result.error(ServiceException(message: contextlessL10n().authError_userInfoFetchFailed, statusCode: 0));
+    }
+    final userDto = userResult.data;
+    if (userDto == null) {
+      await _cache.clear();
+      return Result.error(ServiceException(message: contextlessL10n().authError_userInfoEmpty, statusCode: 404));
+    }
+
+    final appUser = AppUser(
+      id: userDto.id ?? 0,
+      email: userDto.email ?? '',
+      name: userDto.name ?? '',
+      surname: userDto.surname ?? '',
+      fullName: [userDto.name, userDto.surname].whereType<String>().join(' ').trim(),
+      roleName: userDto.role?.name ?? '',
+      isAdmin: userDto.isAdmin ?? false,
+      isNotOrdered: userDto.isNotOrdered,
+      roleId: userDto.role?.id ?? 0,
+      canCreateEmergencyPatient: userDto.canCreateEmergencyPatient,
+      canCollectOverdueMedication: userDto.canCollectOverdueMedication,
+    );
+    await _cache.saveUser(appUser);
+    return Result.ok(AuthToken(accessToken: token, user: appUser));
+  }
+
+  @override
   Future<Result<void>> logout() async {
     try {
       await _cache.clear();

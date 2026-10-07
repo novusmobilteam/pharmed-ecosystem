@@ -7,3 +7,4 @@ export 'repository_providers.dart';
 export 'usecase_providers.dart';
 export 'operation_recording_providers.dart';
 export 'camera_providers.dart';
+export 'fingerprint_providers.dart';

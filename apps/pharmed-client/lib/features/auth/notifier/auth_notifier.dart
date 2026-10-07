@@ -25,6 +25,7 @@ class AuthNotifier extends Notifier<AuthState> {
   AuthConfig get _config => ref.read(authConfigProvider);
   LoginUseCase get _loginUseCase => ref.read(loginUseCaseProvider);
   LoginWithBadgeUseCase get _loginWithBadge => ref.read(loginWithBadgeUseCaseProvider);
+  LoginWithFingerprintUseCase get _loginWithFingerprint => ref.read(loginWithFingerprintUseCaseProvider);
   LogoutUseCase get _logoutUseCase => ref.read(logoutUseCaseProvider);
   AuthCacheDataSource get _cache => ref.read(authCacheProvider);
   TokenHolder get _tokenHolder => ref.read(tokenHolderProvider);
@@ -118,6 +119,45 @@ class AuthNotifier extends Notifier<AuthState> {
         final msg = rawMsg ?? contextlessL10n().auth_genericError;
         state = AuthError(message: msg, showLockedDashboard: locked);
         onError(msg);
+      },
+    );
+  }
+
+  /// [SWREQ-FP-103] Parmak iziyle giriş. Eşleştirme sunucuda yapılır.
+  /// Başarılıysa true; değilse false döner ve mesaj [onError]'a verilir.
+  Future<bool> loginWithFingerprint({
+    required FingerprintCapture capture,
+    required FingerprintScannerInfo scanner,
+    required ValueChanged<String> onError,
+  }) async {
+    if (state is AuthLoggedIn || state is AuthLoading) return false;
+    final locked = _isLockedContext;
+    state = AuthLoading(showLockedDashboard: locked);
+
+    final macAddress = await DeviceInfo.getMacAddress();
+    final debugStationId = kDebugMode ? await ref.read(appSettingsCacheProvider).getCurrentStationId() : null;
+
+    final result = await _loginWithFingerprint(
+      FingerprintLoginRequest(
+        sample: FingerprintSample.fromCapture(capture),
+        source: FingerprintSource.fromScanner(scanner, capture.format),
+        macAddress: macAddress,
+        stationId: debugStationId,
+      ),
+    );
+
+    return result.when(
+      ok: (authToken) {
+        _tokenHolder.setToken(authToken.accessToken);
+        _setLoggedIn(authToken.user);
+        _markDashboardAccessed();
+        return true;
+      },
+      error: (failure) {
+        final msg = failure is ServiceException ? failure.message : failure.userMessage;
+        state = AuthError(message: msg, showLockedDashboard: locked);
+        onError(msg);
+        return false;
       },
     );
   }

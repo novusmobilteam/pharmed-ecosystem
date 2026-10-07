@@ -4047,6 +4047,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'L\'enregistrement de la caméra n\'a pas pu être effectué.';
 
   @override
+  String get appException_fingerprint =>
+      'L\'empreinte digitale n\'a pas pu être lue.';
+
+  @override
   String get dataError_malformedResponse =>
       'La réponse n\'a pas pu être traitée';
 
@@ -8142,4 +8146,296 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get common_closeButton => 'Fermer';
+
+  @override
+  String get settingsView_fingerprintNav => 'Empreinte digitale';
+
+  @override
+  String get fingerprint_settings_title => 'Connexion par empreinte digitale';
+
+  @override
+  String get fingerprint_settings_description =>
+      'Enregistrez vos empreintes sur votre compte pour vous connecter à l\'armoire sans saisir de mot de passe. Enregistrez les doigts de votre choix ; un seul doigt suffit.';
+
+  @override
+  String fingerprint_settings_enrolledCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count doigts enregistrés',
+      one: '$count doigt enregistré',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get fingerprint_settings_noneEnrolled =>
+      'Vous n\'avez encore aucune empreinte enregistrée';
+
+  @override
+  String get fingerprint_settings_enrollButton => 'Enregistrer des empreintes';
+
+  @override
+  String get fingerprint_settings_manageButton => 'Gérer les empreintes';
+
+  @override
+  String get fingerprint_settings_loginRequired =>
+      'Connectez-vous d\'abord pour enregistrer des empreintes.';
+
+  @override
+  String get fingerprint_settings_simulatedNotice =>
+      'Le service d\'empreintes n\'est pas encore prêt. L\'enregistrement fonctionne en mode test ; aucune donnée n\'est envoyée au serveur.';
+
+  @override
+  String get fingerprint_enroll_screenTitle => 'Enregistrement des empreintes';
+
+  @override
+  String get fingerprint_enroll_passwordTitle => 'Vérifiez votre identité';
+
+  @override
+  String fingerprint_enroll_passwordDescription(String name) {
+    return '$name, saisissez votre mot de passe pour continuer.';
+  }
+
+  @override
+  String get fingerprint_enroll_passwordLabel => 'Mot de passe';
+
+  @override
+  String get fingerprint_enroll_passwordRequired =>
+      'Le mot de passe ne peut pas être vide';
+
+  @override
+  String get fingerprint_enroll_verifyButton => 'Vérifier';
+
+  @override
+  String get fingerprint_enroll_passwordWrong =>
+      'Le mot de passe n\'a pas pu être vérifié';
+
+  @override
+  String get fingerprint_enroll_consentTitle =>
+      'Information sur les données biométriques';
+
+  @override
+  String get fingerprint_enroll_consentBody =>
+      'Votre empreinte sera traitée uniquement pour vérifier votre identité dans ce système. L\'image du lecteur n\'est pas conservée ; un gabarit extrait de celle-ci est envoyé au serveur via une connexion chiffrée et associé à votre compte. Vous pouvez supprimer vos doigts enregistrés à tout moment ou demander à votre administrateur de supprimer toutes vos données biométriques. L\'enregistrement est facultatif ; la connexion par mot de passe et par badge reste toujours disponible.';
+
+  @override
+  String get fingerprint_enroll_consentCheckbox =>
+      'J\'ai lu ce texte et je consens explicitement au traitement de mon empreinte à cette fin.';
+
+  @override
+  String get fingerprint_enroll_continueButton => 'Continuer';
+
+  @override
+  String get fingerprint_enroll_leftHand => 'Main gauche';
+
+  @override
+  String get fingerprint_enroll_rightHand => 'Main droite';
+
+  @override
+  String get fingerprint_enroll_statusEnrolled => 'Enregistré';
+
+  @override
+  String get fingerprint_enroll_statusReady => 'Prêt à enregistrer';
+
+  @override
+  String get fingerprint_enroll_statusNotEnrolled => 'Non enregistré';
+
+  @override
+  String get fingerprint_enroll_selectFingerHint =>
+      'Sélectionnez le doigt à enregistrer';
+
+  @override
+  String fingerprint_enroll_sampleProgress(int current, int total) {
+    return 'Lecture $current sur $total';
+  }
+
+  @override
+  String get fingerprint_enroll_placeFinger =>
+      'Posez votre doigt sur le lecteur';
+
+  @override
+  String get fingerprint_enroll_liftFinger => 'Retirez votre doigt';
+
+  @override
+  String get fingerprint_enroll_fingerReady =>
+      'Lectures terminées. N\'oubliez pas d\'enregistrer.';
+
+  @override
+  String get fingerprint_enroll_startButton => 'Démarrer la lecture';
+
+  @override
+  String get fingerprint_enroll_retakeButton => 'Relire';
+
+  @override
+  String get fingerprint_enroll_cancelButton => 'Annuler';
+
+  @override
+  String get fingerprint_enroll_discardDraftButton => 'Supprimer les lectures';
+
+  @override
+  String get fingerprint_enroll_deleteButton => 'Supprimer l\'enregistrement';
+
+  @override
+  String fingerprint_enroll_enrolledAt(String date) {
+    return 'Enregistré le $date';
+  }
+
+  @override
+  String fingerprint_enroll_qualityLabel(int quality) {
+    return 'Qualité : $quality';
+  }
+
+  @override
+  String get fingerprint_enroll_saveButton => 'Enregistrer';
+
+  @override
+  String fingerprint_enroll_pendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count doigts en attente d\'enregistrement',
+      one: '$count doigt en attente d\'enregistrement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get fingerprint_enroll_saveSuccess =>
+      'Vos empreintes ont été enregistrées';
+
+  @override
+  String get fingerprint_enroll_livenessOffWarning =>
+      'Ce lecteur ne détecte pas les faux doigts.';
+
+  @override
+  String get fingerprint_enroll_scannerRetryButton => 'Réessayer';
+
+  @override
+  String get fingerprint_finger_rightThumb => 'Pouce droit';
+
+  @override
+  String get fingerprint_finger_rightIndex => 'Index droit';
+
+  @override
+  String get fingerprint_finger_rightMiddle => 'Majeur droit';
+
+  @override
+  String get fingerprint_finger_rightRing => 'Annulaire droit';
+
+  @override
+  String get fingerprint_finger_rightLittle => 'Auriculaire droit';
+
+  @override
+  String get fingerprint_finger_leftThumb => 'Pouce gauche';
+
+  @override
+  String get fingerprint_finger_leftIndex => 'Index gauche';
+
+  @override
+  String get fingerprint_finger_leftMiddle => 'Majeur gauche';
+
+  @override
+  String get fingerprint_finger_leftRing => 'Annulaire gauche';
+
+  @override
+  String get fingerprint_finger_leftLittle => 'Auriculaire gauche';
+
+  @override
+  String get fingerprint_finger_thumbShort => 'Pouce';
+
+  @override
+  String get fingerprint_finger_indexShort => 'Index';
+
+  @override
+  String get fingerprint_finger_middleShort => 'Majeur';
+
+  @override
+  String get fingerprint_finger_ringShort => 'Annulaire';
+
+  @override
+  String get fingerprint_finger_littleShort => 'Auriculaire';
+
+  @override
+  String get fingerprint_error_libraryNotFound =>
+      'Logiciel du lecteur introuvable';
+
+  @override
+  String get fingerprint_error_deviceNotFound =>
+      'Lecteur d\'empreintes introuvable';
+
+  @override
+  String get fingerprint_error_deviceDisconnected =>
+      'Le lecteur a été déconnecté';
+
+  @override
+  String get fingerprint_error_notOpen => 'Le lecteur n\'est pas prêt';
+
+  @override
+  String get fingerprint_error_busy => 'Le lecteur est occupé';
+
+  @override
+  String get fingerprint_error_timeout => 'Aucun doigt détecté';
+
+  @override
+  String get fingerprint_error_cancelled => 'Lecture annulée';
+
+  @override
+  String get fingerprint_error_fingerOnSensor =>
+      'Retirez votre doigt puis reposez-le';
+
+  @override
+  String get fingerprint_error_fakeFinger =>
+      'Le doigt n\'a pas pu être vérifié, réessayez';
+
+  @override
+  String get fingerprint_error_lowQuality =>
+      'Qualité insuffisante : centrez votre doigt et appuyez légèrement';
+
+  @override
+  String get fingerprint_error_extractionFailed =>
+      'L\'empreinte n\'a pas pu être traitée, réessayez';
+
+  @override
+  String get fingerprint_error_sensorDirty => 'Nettoyez la surface du lecteur';
+
+  @override
+  String get fingerprint_error_unexpected =>
+      'Une erreur inattendue du lecteur est survenue';
+
+  @override
+  String get fingerprint_login_divider => 'ou empreinte';
+
+  @override
+  String get fingerprint_login_opening =>
+      'Préparation du lecteur d\'empreintes…';
+
+  @override
+  String get fingerprint_login_hint =>
+      'Posez votre doigt sur le lecteur pour vous connecter';
+
+  @override
+  String get fingerprint_login_checking => 'Vérification de l\'empreinte…';
+
+  @override
+  String get fingerprint_login_success => 'Connexion réussie';
+
+  @override
+  String get fingerprint_login_serviceUnavailable =>
+      'Le service de connexion par empreinte n\'est pas encore prêt';
+
+  @override
+  String get fingerprint_login_scannerUnavailable =>
+      'Lecteur d\'empreintes indisponible';
+
+  @override
+  String fingerprint_login_cooldown(int seconds) {
+    return 'Trop de tentatives échouées. Réessayez dans $seconds s.';
+  }
+
+  @override
+  String get fingerprint_login_idle => 'Lecteur d\'empreintes en pause';
+
+  @override
+  String get fingerprint_login_resumeButton => 'Écouter';
 }

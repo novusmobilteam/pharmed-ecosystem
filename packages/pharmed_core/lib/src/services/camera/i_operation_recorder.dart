@@ -1,8 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
-import 'camera_recorder_status.dart';
-import 'recording_file.dart';
-
 /// Kabin operasyonu süresince kamera kaydı alan bileşen.
 ///
 /// Aynı anda yalnızca TEK aktif kayıt olabilir (kiosk başına tek kamera).

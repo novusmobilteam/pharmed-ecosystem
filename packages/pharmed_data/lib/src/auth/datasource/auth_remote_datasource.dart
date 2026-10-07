@@ -15,6 +15,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 abstract interface class IAuthRemoteDataSource {
   Future<String> login({required String email, required String password, String? macAddress, int? stationId});
   Future<String> loginWithBadge({required String cardData, String? macAddress});
+  Future<String> loginWithFingerprint(FingerprintLoginRequestDTO request);
 }
 
 class AuthRemoteDataSource implements IAuthRemoteDataSource {
@@ -51,6 +52,22 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
       '/Login/loginManageCard/$cardData',
       data: {'manageCardValue': cardData, if (macAddress != null) 'macAddress': macAddress},
     );
+
+    final body = response.data!;
+    final data = body['data'];
+
+    if (data is! String || data.isEmpty) {
+      throw ServiceException(message: contextlessL10n().authError_invalidTokenResponse, statusCode: 500);
+    }
+
+    return data;
+  }
+
+  /// [SWREQ-FP-103] POST /Login/loginFingerprint — eşleşen kullanıcının token'ı.
+  /// Eşleşme yoksa sunucu 401 döner (bkz. API dokümanı).
+  @override
+  Future<String> loginWithFingerprint(FingerprintLoginRequestDTO request) async {
+    final response = await _dio.post<Map<String, dynamic>>('/Login/loginFingerprint', data: request.toJson());
 
     final body = response.data!;
     final data = body['data'];

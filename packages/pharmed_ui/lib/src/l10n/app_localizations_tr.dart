@@ -3908,6 +3908,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get appException_cameraRecording => 'Kamera kaydı yapılamadı.';
 
   @override
+  String get appException_fingerprint => 'Parmak izi okunamadı.';
+
+  @override
   String get dataError_malformedResponse => 'Yanıt işlenemedi';
 
   @override
@@ -7890,4 +7893,291 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get common_closeButton => 'Kapat';
+
+  @override
+  String get settingsView_fingerprintNav => 'Parmak İzi';
+
+  @override
+  String get fingerprint_settings_title => 'Parmak izi ile giriş';
+
+  @override
+  String get fingerprint_settings_description =>
+      'Parmak izlerinizi hesabınıza tanıtarak kabine şifre yazmadan giriş yapabilirsiniz. İstediğiniz parmakları tanıtabilirsiniz; tek bir parmak yeterlidir.';
+
+  @override
+  String fingerprint_settings_enrolledCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count parmak kayıtlı',
+      one: '$count parmak kayıtlı',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get fingerprint_settings_noneEnrolled =>
+      'Henüz kayıtlı parmak iziniz yok';
+
+  @override
+  String get fingerprint_settings_enrollButton => 'Parmak izi tanıt';
+
+  @override
+  String get fingerprint_settings_manageButton => 'Parmak izlerini yönet';
+
+  @override
+  String get fingerprint_settings_loginRequired =>
+      'Parmak izi tanıtmak için önce giriş yapın.';
+
+  @override
+  String get fingerprint_settings_simulatedNotice =>
+      'Parmak izi servisi henüz hazır değil. Tanıtma akışı test amaçlı çalışır; veriler sunucuya gönderilmez.';
+
+  @override
+  String get fingerprint_enroll_screenTitle => 'Parmak İzi Tanıtma';
+
+  @override
+  String get fingerprint_enroll_passwordTitle => 'Kimliğinizi doğrulayın';
+
+  @override
+  String fingerprint_enroll_passwordDescription(String name) {
+    return '$name, devam etmek için şifrenizi girin.';
+  }
+
+  @override
+  String get fingerprint_enroll_passwordLabel => 'Şifre';
+
+  @override
+  String get fingerprint_enroll_passwordRequired => 'Şifre boş bırakılamaz';
+
+  @override
+  String get fingerprint_enroll_verifyButton => 'Doğrula';
+
+  @override
+  String get fingerprint_enroll_passwordWrong => 'Şifre doğrulanamadı';
+
+  @override
+  String get fingerprint_enroll_consentTitle =>
+      'Biyometrik veri aydınlatma metni';
+
+  @override
+  String get fingerprint_enroll_consentBody =>
+      'Parmak iziniz, yalnızca bu sistemde kimliğinizi doğrulamak amacıyla işlenecektir. Okuyucudan alınan görüntü saklanmaz; görüntüden çıkarılan şablon şifreli bağlantıyla sunucuya gönderilir ve hesabınızla ilişkilendirilir. Kayıtlı parmaklarınızı istediğiniz zaman silebilir ya da yöneticinizden tüm biyometrik verilerinizin silinmesini isteyebilirsiniz. Parmak izi tanıtmak isteğe bağlıdır; şifre ve kartla giriş her zaman kullanılabilir.';
+
+  @override
+  String get fingerprint_enroll_consentCheckbox =>
+      'Okudum, parmak izimin bu amaçla işlenmesine açık rıza veriyorum.';
+
+  @override
+  String get fingerprint_enroll_continueButton => 'Devam';
+
+  @override
+  String get fingerprint_enroll_leftHand => 'Sol el';
+
+  @override
+  String get fingerprint_enroll_rightHand => 'Sağ el';
+
+  @override
+  String get fingerprint_enroll_statusEnrolled => 'Kayıtlı';
+
+  @override
+  String get fingerprint_enroll_statusReady => 'Kaydedilmeyi bekliyor';
+
+  @override
+  String get fingerprint_enroll_statusNotEnrolled => 'Tanıtılmadı';
+
+  @override
+  String get fingerprint_enroll_selectFingerHint =>
+      'Tanıtmak istediğiniz parmağı seçin';
+
+  @override
+  String fingerprint_enroll_sampleProgress(int current, int total) {
+    return 'Okuma $current / $total';
+  }
+
+  @override
+  String get fingerprint_enroll_placeFinger =>
+      'Parmağınızı okuyucuya yerleştirin';
+
+  @override
+  String get fingerprint_enroll_liftFinger => 'Parmağınızı kaldırın';
+
+  @override
+  String get fingerprint_enroll_fingerReady =>
+      'Okumalar tamamlandı. Kaydetmeyi unutmayın.';
+
+  @override
+  String get fingerprint_enroll_startButton => 'Okumayı başlat';
+
+  @override
+  String get fingerprint_enroll_retakeButton => 'Yeniden oku';
+
+  @override
+  String get fingerprint_enroll_cancelButton => 'İptal';
+
+  @override
+  String get fingerprint_enroll_discardDraftButton => 'Okumaları sil';
+
+  @override
+  String get fingerprint_enroll_deleteButton => 'Kaydı sil';
+
+  @override
+  String fingerprint_enroll_enrolledAt(String date) {
+    return 'Kayıt tarihi: $date';
+  }
+
+  @override
+  String fingerprint_enroll_qualityLabel(int quality) {
+    return 'Kalite: $quality';
+  }
+
+  @override
+  String get fingerprint_enroll_saveButton => 'Kaydet';
+
+  @override
+  String fingerprint_enroll_pendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count parmak kaydedilmeyi bekliyor',
+      one: '$count parmak kaydedilmeyi bekliyor',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get fingerprint_enroll_saveSuccess => 'Parmak izleriniz kaydedildi';
+
+  @override
+  String get fingerprint_enroll_livenessOffWarning =>
+      'Bu okuyucuda sahte parmak algılama yok.';
+
+  @override
+  String get fingerprint_enroll_scannerRetryButton => 'Tekrar dene';
+
+  @override
+  String get fingerprint_finger_rightThumb => 'Sağ başparmak';
+
+  @override
+  String get fingerprint_finger_rightIndex => 'Sağ işaret parmağı';
+
+  @override
+  String get fingerprint_finger_rightMiddle => 'Sağ orta parmak';
+
+  @override
+  String get fingerprint_finger_rightRing => 'Sağ yüzük parmağı';
+
+  @override
+  String get fingerprint_finger_rightLittle => 'Sağ serçe parmak';
+
+  @override
+  String get fingerprint_finger_leftThumb => 'Sol başparmak';
+
+  @override
+  String get fingerprint_finger_leftIndex => 'Sol işaret parmağı';
+
+  @override
+  String get fingerprint_finger_leftMiddle => 'Sol orta parmak';
+
+  @override
+  String get fingerprint_finger_leftRing => 'Sol yüzük parmağı';
+
+  @override
+  String get fingerprint_finger_leftLittle => 'Sol serçe parmak';
+
+  @override
+  String get fingerprint_finger_thumbShort => 'Başparmak';
+
+  @override
+  String get fingerprint_finger_indexShort => 'İşaret';
+
+  @override
+  String get fingerprint_finger_middleShort => 'Orta';
+
+  @override
+  String get fingerprint_finger_ringShort => 'Yüzük';
+
+  @override
+  String get fingerprint_finger_littleShort => 'Serçe';
+
+  @override
+  String get fingerprint_error_libraryNotFound => 'Okuyucu yazılımı bulunamadı';
+
+  @override
+  String get fingerprint_error_deviceNotFound =>
+      'Parmak izi okuyucu bulunamadı';
+
+  @override
+  String get fingerprint_error_deviceDisconnected =>
+      'Okuyucunun bağlantısı kesildi';
+
+  @override
+  String get fingerprint_error_notOpen => 'Okuyucu hazır değil';
+
+  @override
+  String get fingerprint_error_busy => 'Okuyucu meşgul';
+
+  @override
+  String get fingerprint_error_timeout => 'Parmak algılanmadı';
+
+  @override
+  String get fingerprint_error_cancelled => 'Okuma iptal edildi';
+
+  @override
+  String get fingerprint_error_fingerOnSensor =>
+      'Parmağınızı kaldırıp yeniden yerleştirin';
+
+  @override
+  String get fingerprint_error_fakeFinger =>
+      'Parmak doğrulanamadı, yeniden deneyin';
+
+  @override
+  String get fingerprint_error_lowQuality =>
+      'Okuma kalitesi düşük, parmağınızı ortalayıp hafifçe bastırın';
+
+  @override
+  String get fingerprint_error_extractionFailed =>
+      'Parmak izi işlenemedi, yeniden deneyin';
+
+  @override
+  String get fingerprint_error_sensorDirty => 'Okuyucu yüzeyini temizleyin';
+
+  @override
+  String get fingerprint_error_unexpected =>
+      'Beklenmeyen bir okuyucu hatası oluştu';
+
+  @override
+  String get fingerprint_login_divider => 'veya parmak izi';
+
+  @override
+  String get fingerprint_login_opening => 'Parmak izi okuyucu hazırlanıyor…';
+
+  @override
+  String get fingerprint_login_hint =>
+      'Giriş için parmağınızı okuyucuya yerleştirin';
+
+  @override
+  String get fingerprint_login_checking => 'Parmak izi doğrulanıyor…';
+
+  @override
+  String get fingerprint_login_success => 'Giriş başarılı';
+
+  @override
+  String get fingerprint_login_serviceUnavailable =>
+      'Parmak iziyle giriş servisi henüz hazır değil';
+
+  @override
+  String get fingerprint_login_scannerUnavailable =>
+      'Parmak izi okuyucu kullanılamıyor';
+
+  @override
+  String fingerprint_login_cooldown(int seconds) {
+    return 'Çok fazla başarısız deneme. $seconds sn sonra tekrar deneyin.';
+  }
+
+  @override
+  String get fingerprint_login_idle => 'Parmak izi okuyucu beklemede';
+
+  @override
+  String get fingerprint_login_resumeButton => 'Dinle';
 }

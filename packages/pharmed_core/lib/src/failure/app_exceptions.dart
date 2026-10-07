@@ -170,6 +170,17 @@ class CameraRecordingException extends AppException {
   final List<String> diagnostics;
 }
 
+/// Parmak izi okuyucu hatası. [SWREQ-FP-001]
+/// UI, kullanıcıya gösterilecek mesajı [reason]'a göre seçer.
+final class FingerprintException extends AppException {
+  const FingerprintException({required super.message, required this.reason, this.sdkStatus, super.cause});
+
+  final FingerprintFailureReason reason;
+
+  /// Üretici SDK'sının döndürdüğü ham durum kodu (UFS_STATUS). Yalnızca log/teşhis için.
+  final int? sdkStatus;
+}
+
 // ─────────────────────────────────────────────────────────────────
 // Exception'dan kullanıcıya gösterilecek mesaj türet
 // UI katmanı bu metodu kullanır, exception string'ini değil
@@ -201,6 +212,7 @@ extension AppExceptionUiMessage on AppException {
       CustomException() => contextlessL10n().appException_custom,
       CheckException(:final message) => message,
       CameraRecordingException() => contextlessL10n().appException_cameraRecording,
+      FingerprintException() => contextlessL10n().appException_fingerprint,
     };
   }
 

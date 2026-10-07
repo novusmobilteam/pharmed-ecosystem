@@ -59,6 +59,11 @@ final loginWithBadgeUseCaseProvider = Provider<LoginWithBadgeUseCase>((ref) {
   return LoginWithBadgeUseCase(ref.read(authRepositoryProvider));
 });
 
+/// [SWREQ-FP-103] FingerprintApi.isAvailable = false iken sunucuya gitmeden "servis hazır değil" döner.
+final loginWithFingerprintUseCaseProvider = Provider<LoginWithFingerprintUseCase>((ref) {
+  return LoginWithFingerprintUseCase(ref.read(authRepositoryProvider));
+});
+
 final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
   return LogoutUseCase(ref.read(authRepositoryProvider));
 });

@@ -50,3 +50,4 @@ export 'src/features/settings/settings.dart';
 export 'src/features/mail_preference/mail_preference.dart';
 export 'src/features/overdue_description/overdue_description.dart';
 export 'src/features/record/record.dart';
+export 'src/features/fingerprint/fingerprint.dart';
