@@ -2752,6 +2752,8 @@
   "dataError_emptyResponse": "The server returned an empty response",
   "appException_cameraRecording": "Camera recording could not be performed.",
   "@appException_cameraRecording": {},
+  "appException_fingerprint": "The fingerprint could not be read.",
+  "@appException_fingerprint": {},
   "@dataError_emptyResponse": {},
   "dataError_malformedResponse": "The response could not be processed",
   "@dataError_malformedResponse": {},
@@ -5731,5 +5733,210 @@
   "common_closeButton": "Close",
   "@common_closeButton": {
     "description": "Generic close button (add only if missing)"
-  }
+  },
+  "settingsView_fingerprintNav": "Fingerprint",
+  "@settingsView_fingerprintNav": {},
+  "fingerprint_settings_title": "Fingerprint login",
+  "@fingerprint_settings_title": {},
+  "fingerprint_settings_description": "Enrol your fingerprints to your account to log in to the cabinet without typing a password. Enrol any fingers you like; a single finger is enough.",
+  "@fingerprint_settings_description": {},
+  "fingerprint_settings_enrolledCount": "{count, plural, one{{count} finger enrolled} other{{count} fingers enrolled}}",
+  "@fingerprint_settings_enrolledCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_settings_noneEnrolled": "You have no enrolled fingerprints yet",
+  "@fingerprint_settings_noneEnrolled": {},
+  "fingerprint_settings_enrollButton": "Enrol fingerprints",
+  "@fingerprint_settings_enrollButton": {},
+  "fingerprint_settings_manageButton": "Manage fingerprints",
+  "@fingerprint_settings_manageButton": {},
+  "fingerprint_settings_loginRequired": "Log in first to enrol fingerprints.",
+  "@fingerprint_settings_loginRequired": {},
+  "fingerprint_settings_simulatedNotice": "The fingerprint service is not ready yet. Enrolment runs in test mode; no data is sent to the server.",
+  "@fingerprint_settings_simulatedNotice": {},
+  "fingerprint_enroll_screenTitle": "Fingerprint Enrolment",
+  "@fingerprint_enroll_screenTitle": {},
+  "fingerprint_enroll_passwordTitle": "Verify your identity",
+  "@fingerprint_enroll_passwordTitle": {},
+  "fingerprint_enroll_passwordDescription": "{name}, enter your password to continue.",
+  "@fingerprint_enroll_passwordDescription": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fingerprint_enroll_passwordLabel": "Password",
+  "@fingerprint_enroll_passwordLabel": {},
+  "fingerprint_enroll_passwordRequired": "Password cannot be empty",
+  "@fingerprint_enroll_passwordRequired": {},
+  "fingerprint_enroll_verifyButton": "Verify",
+  "@fingerprint_enroll_verifyButton": {},
+  "fingerprint_enroll_passwordWrong": "Password could not be verified",
+  "@fingerprint_enroll_passwordWrong": {},
+  "fingerprint_enroll_consentTitle": "Biometric data notice",
+  "@fingerprint_enroll_consentTitle": {},
+  "fingerprint_enroll_consentBody": "Your fingerprint will be processed only to verify your identity in this system. The scanner image is not stored; a template extracted from it is sent to the server over an encrypted connection and linked to your account. You can delete your enrolled fingers at any time, or ask your administrator to delete all of your biometric data. Enrolling is optional; password and badge login always remain available.",
+  "@fingerprint_enroll_consentBody": {},
+  "fingerprint_enroll_consentCheckbox": "I have read this and give explicit consent to my fingerprint being processed for this purpose.",
+  "@fingerprint_enroll_consentCheckbox": {},
+  "fingerprint_enroll_continueButton": "Continue",
+  "@fingerprint_enroll_continueButton": {},
+  "fingerprint_enroll_leftHand": "Left hand",
+  "@fingerprint_enroll_leftHand": {},
+  "fingerprint_enroll_rightHand": "Right hand",
+  "@fingerprint_enroll_rightHand": {},
+  "fingerprint_enroll_statusEnrolled": "Enrolled",
+  "@fingerprint_enroll_statusEnrolled": {},
+  "fingerprint_enroll_statusReady": "Ready to save",
+  "@fingerprint_enroll_statusReady": {},
+  "fingerprint_enroll_statusNotEnrolled": "Not enrolled",
+  "@fingerprint_enroll_statusNotEnrolled": {},
+  "fingerprint_enroll_selectFingerHint": "Select the finger you want to enrol",
+  "@fingerprint_enroll_selectFingerHint": {},
+  "fingerprint_enroll_sampleProgress": "Scan {current} of {total}",
+  "@fingerprint_enroll_sampleProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_placeFinger": "Place your finger on the scanner",
+  "@fingerprint_enroll_placeFinger": {},
+  "fingerprint_enroll_liftFinger": "Lift your finger",
+  "@fingerprint_enroll_liftFinger": {},
+  "fingerprint_enroll_fingerReady": "Scans complete. Remember to save.",
+  "@fingerprint_enroll_fingerReady": {},
+  "fingerprint_enroll_startButton": "Start scanning",
+  "@fingerprint_enroll_startButton": {},
+  "fingerprint_enroll_retakeButton": "Scan again",
+  "@fingerprint_enroll_retakeButton": {},
+  "fingerprint_enroll_cancelButton": "Cancel",
+  "@fingerprint_enroll_cancelButton": {},
+  "fingerprint_enroll_discardDraftButton": "Discard scans",
+  "@fingerprint_enroll_discardDraftButton": {},
+  "fingerprint_enroll_deleteButton": "Delete enrolment",
+  "@fingerprint_enroll_deleteButton": {},
+  "fingerprint_enroll_enrolledAt": "Enrolled on {date}",
+  "@fingerprint_enroll_enrolledAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fingerprint_enroll_qualityLabel": "Quality: {quality}",
+  "@fingerprint_enroll_qualityLabel": {
+    "placeholders": {
+      "quality": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_saveButton": "Save",
+  "@fingerprint_enroll_saveButton": {},
+  "fingerprint_enroll_pendingCount": "{count, plural, one{{count} finger waiting to be saved} other{{count} fingers waiting to be saved}}",
+  "@fingerprint_enroll_pendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_saveSuccess": "Your fingerprints have been saved",
+  "@fingerprint_enroll_saveSuccess": {},
+  "fingerprint_enroll_livenessOffWarning": "This scanner has no fake-finger detection.",
+  "@fingerprint_enroll_livenessOffWarning": {},
+  "fingerprint_enroll_scannerRetryButton": "Try again",
+  "@fingerprint_enroll_scannerRetryButton": {},
+  "fingerprint_finger_rightThumb": "Right thumb",
+  "@fingerprint_finger_rightThumb": {},
+  "fingerprint_finger_rightIndex": "Right index finger",
+  "@fingerprint_finger_rightIndex": {},
+  "fingerprint_finger_rightMiddle": "Right middle finger",
+  "@fingerprint_finger_rightMiddle": {},
+  "fingerprint_finger_rightRing": "Right ring finger",
+  "@fingerprint_finger_rightRing": {},
+  "fingerprint_finger_rightLittle": "Right little finger",
+  "@fingerprint_finger_rightLittle": {},
+  "fingerprint_finger_leftThumb": "Left thumb",
+  "@fingerprint_finger_leftThumb": {},
+  "fingerprint_finger_leftIndex": "Left index finger",
+  "@fingerprint_finger_leftIndex": {},
+  "fingerprint_finger_leftMiddle": "Left middle finger",
+  "@fingerprint_finger_leftMiddle": {},
+  "fingerprint_finger_leftRing": "Left ring finger",
+  "@fingerprint_finger_leftRing": {},
+  "fingerprint_finger_leftLittle": "Left little finger",
+  "@fingerprint_finger_leftLittle": {},
+  "fingerprint_finger_thumbShort": "Thumb",
+  "@fingerprint_finger_thumbShort": {},
+  "fingerprint_finger_indexShort": "Index",
+  "@fingerprint_finger_indexShort": {},
+  "fingerprint_finger_middleShort": "Middle",
+  "@fingerprint_finger_middleShort": {},
+  "fingerprint_finger_ringShort": "Ring",
+  "@fingerprint_finger_ringShort": {},
+  "fingerprint_finger_littleShort": "Little",
+  "@fingerprint_finger_littleShort": {},
+  "fingerprint_error_libraryNotFound": "Scanner software not found",
+  "@fingerprint_error_libraryNotFound": {},
+  "fingerprint_error_deviceNotFound": "Fingerprint scanner not found",
+  "@fingerprint_error_deviceNotFound": {},
+  "fingerprint_error_deviceDisconnected": "The scanner was disconnected",
+  "@fingerprint_error_deviceDisconnected": {},
+  "fingerprint_error_notOpen": "The scanner is not ready",
+  "@fingerprint_error_notOpen": {},
+  "fingerprint_error_busy": "The scanner is busy",
+  "@fingerprint_error_busy": {},
+  "fingerprint_error_timeout": "No finger detected",
+  "@fingerprint_error_timeout": {},
+  "fingerprint_error_cancelled": "Scan cancelled",
+  "@fingerprint_error_cancelled": {},
+  "fingerprint_error_fingerOnSensor": "Lift your finger and place it again",
+  "@fingerprint_error_fingerOnSensor": {},
+  "fingerprint_error_fakeFinger": "The finger could not be verified, try again",
+  "@fingerprint_error_fakeFinger": {},
+  "fingerprint_error_lowQuality": "Low scan quality: centre your finger and press lightly",
+  "@fingerprint_error_lowQuality": {},
+  "fingerprint_error_extractionFailed": "The fingerprint could not be processed, try again",
+  "@fingerprint_error_extractionFailed": {},
+  "fingerprint_error_sensorDirty": "Clean the scanner surface",
+  "@fingerprint_error_sensorDirty": {},
+  "fingerprint_error_unexpected": "An unexpected scanner error occurred",
+  "@fingerprint_error_unexpected": {},
+  "fingerprint_login_divider": "or fingerprint",
+  "@fingerprint_login_divider": {},
+  "fingerprint_login_opening": "Preparing the fingerprint scanner…",
+  "@fingerprint_login_opening": {},
+  "fingerprint_login_hint": "Place your finger on the scanner to log in",
+  "@fingerprint_login_hint": {},
+  "fingerprint_login_checking": "Verifying fingerprint…",
+  "@fingerprint_login_checking": {},
+  "fingerprint_login_success": "Logged in",
+  "@fingerprint_login_success": {},
+  "fingerprint_login_serviceUnavailable": "Fingerprint login service is not ready yet",
+  "@fingerprint_login_serviceUnavailable": {},
+  "fingerprint_login_scannerUnavailable": "Fingerprint scanner unavailable",
+  "@fingerprint_login_scannerUnavailable": {},
+  "fingerprint_login_cooldown": "Too many failed attempts. Try again in {seconds} s.",
+  "@fingerprint_login_cooldown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_login_idle": "Fingerprint scanner paused",
+  "@fingerprint_login_idle": {},
+  "fingerprint_login_resumeButton": "Listen",
+  "@fingerprint_login_resumeButton": {}
 }

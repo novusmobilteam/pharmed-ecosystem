@@ -31,7 +31,7 @@ class DrugMapper {
       isOrderlessStation: dto.isOrderlessStation,
       dosageForm: DosageForm(id: dto.dosageFormUnitId?.toInt(), name: dto.dosageFormUnit),
       countType: CountType.fromId(dto.countTypeId.toInt()),
-      atcCode: dto.atcCode?.toInt(),
+      atcCode: dto.atcCode,
       isActive: dto.isActive,
       isMultiplePatientAccess: dto.isMultiplePatientAccess,
       isSinglePatientAccess: dto.isSinglePatientAccess,

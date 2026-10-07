@@ -1,0 +1,4 @@
+Windows Registry Editor Version 5.00
+ 
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USB\VID_16D1&PID_0421\0\Device Parameters]
+"EnhancedPowerManagementEnabled"=dword:00000000

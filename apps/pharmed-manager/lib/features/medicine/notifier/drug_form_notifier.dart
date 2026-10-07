@@ -81,9 +81,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
         return result;
       },
       onSuccess: () {
-        final msg = isCreate
-            ? contextlessL10n().medicine_successCreated
-            : contextlessL10n().medicine_successUpdated;
+        final msg = isCreate ? contextlessL10n().medicine_successCreated : contextlessL10n().medicine_successUpdated;
         onSuccess?.call(msg);
       },
       onFailed: (error) => onFailed?.call(error.message),
@@ -203,7 +201,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   void updateAtcCode(String? value) {
-    _drug = _drug.copyWith(atcCode: int.tryParse(value ?? ''));
+    _drug = _drug.copyWith(atcCode: value);
     notifyListeners();
   }
 

@@ -4903,6 +4903,10 @@
   "@appException_cameraRecording": {
     "description": "User-facing message for CameraRecordingException (operation camera recording failed to start, stop or produce a file)"
   },
+  "appException_fingerprint": "Parmak izi okunamadı.",
+  "@appException_fingerprint": {
+    "description": "User-facing message for FingerprintException (fingerprint scanner could not be opened, or could not capture or process a fingerprint)"
+  },
   "dataError_emptyResponse": "Sunucu boş yanıt döndürdü",
   "@dataError_emptyResponse": {
     "description": "APIManager error message when an API call returns 2xx with an empty body"
@@ -10074,5 +10078,363 @@
   "cabinDesign_camera_noCabinSelectedError": "En az bir kabin seçin.",
   "cabinDesign_camera_cabinAlreadyAssignedError": "Seçilen kabinlerden bazıları \"{name}\" kamerasına atanmış.",
   "cabinDesign_camera_saveFailedError": "Kamera kaydedilemedi.",
-  "common_closeButton": "Kapat"
+  "common_closeButton": "Kapat",
+  "settingsView_fingerprintNav": "Parmak İzi",
+  "@settingsView_fingerprintNav": {
+    "description": "Settings side navigation: fingerprint section"
+  },
+  "fingerprint_settings_title": "Parmak izi ile giriş",
+  "@fingerprint_settings_title": {
+    "description": "Settings > Fingerprint: section title"
+  },
+  "fingerprint_settings_description": "Parmak izlerinizi hesabınıza tanıtarak kabine şifre yazmadan giriş yapabilirsiniz. İstediğiniz parmakları tanıtabilirsiniz; tek bir parmak yeterlidir.",
+  "@fingerprint_settings_description": {
+    "description": "Settings > Fingerprint: explanation of the feature"
+  },
+  "fingerprint_settings_enrolledCount": "{count, plural, one{{count} parmak kayıtlı} other{{count} parmak kayıtlı}}",
+  "@fingerprint_settings_enrolledCount": {
+    "description": "Settings > Fingerprint: number of enrolled fingers",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_settings_noneEnrolled": "Henüz kayıtlı parmak iziniz yok",
+  "@fingerprint_settings_noneEnrolled": {
+    "description": "Settings > Fingerprint: empty state"
+  },
+  "fingerprint_settings_enrollButton": "Parmak izi tanıt",
+  "@fingerprint_settings_enrollButton": {
+    "description": "Settings > Fingerprint: button when nothing is enrolled"
+  },
+  "fingerprint_settings_manageButton": "Parmak izlerini yönet",
+  "@fingerprint_settings_manageButton": {
+    "description": "Settings > Fingerprint: button when fingers are already enrolled"
+  },
+  "fingerprint_settings_loginRequired": "Parmak izi tanıtmak için önce giriş yapın.",
+  "@fingerprint_settings_loginRequired": {
+    "description": "Settings > Fingerprint: shown when no user is logged in"
+  },
+  "fingerprint_settings_simulatedNotice": "Parmak izi servisi henüz hazır değil. Tanıtma akışı test amaçlı çalışır; veriler sunucuya gönderilmez.",
+  "@fingerprint_settings_simulatedNotice": {
+    "description": "Settings > Fingerprint: notice shown while the backend service is simulated"
+  },
+  "fingerprint_enroll_screenTitle": "Parmak İzi Tanıtma",
+  "@fingerprint_enroll_screenTitle": {
+    "description": "Enrolment screen title"
+  },
+  "fingerprint_enroll_passwordTitle": "Kimliğinizi doğrulayın",
+  "@fingerprint_enroll_passwordTitle": {
+    "description": "Enrolment step 1 title"
+  },
+  "fingerprint_enroll_passwordDescription": "{name}, devam etmek için şifrenizi girin.",
+  "@fingerprint_enroll_passwordDescription": {
+    "description": "Enrolment step 1: password prompt with the user name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fingerprint_enroll_passwordLabel": "Şifre",
+  "@fingerprint_enroll_passwordLabel": {
+    "description": "Enrolment step 1: password field label"
+  },
+  "fingerprint_enroll_passwordRequired": "Şifre boş bırakılamaz",
+  "@fingerprint_enroll_passwordRequired": {
+    "description": "Enrolment step 1: validation message"
+  },
+  "fingerprint_enroll_verifyButton": "Doğrula",
+  "@fingerprint_enroll_verifyButton": {
+    "description": "Enrolment step 1: verify button"
+  },
+  "fingerprint_enroll_passwordWrong": "Şifre doğrulanamadı",
+  "@fingerprint_enroll_passwordWrong": {
+    "description": "Enrolment step 1: wrong password"
+  },
+  "fingerprint_enroll_consentTitle": "Biyometrik veri aydınlatma metni",
+  "@fingerprint_enroll_consentTitle": {
+    "description": "Enrolment step 2 title (KVKK consent)"
+  },
+  "fingerprint_enroll_consentBody": "Parmak iziniz, yalnızca bu sistemde kimliğinizi doğrulamak amacıyla işlenecektir. Okuyucudan alınan görüntü saklanmaz; görüntüden çıkarılan şablon şifreli bağlantıyla sunucuya gönderilir ve hesabınızla ilişkilendirilir. Kayıtlı parmaklarınızı istediğiniz zaman silebilir ya da yöneticinizden tüm biyometrik verilerinizin silinmesini isteyebilirsiniz. Parmak izi tanıtmak isteğe bağlıdır; şifre ve kartla giriş her zaman kullanılabilir.",
+  "@fingerprint_enroll_consentBody": {
+    "description": "Enrolment step 2: biometric data processing notice (KVKK). Legal text, review with the legal team"
+  },
+  "fingerprint_enroll_consentCheckbox": "Okudum, parmak izimin bu amaçla işlenmesine açık rıza veriyorum.",
+  "@fingerprint_enroll_consentCheckbox": {
+    "description": "Enrolment step 2: consent checkbox"
+  },
+  "fingerprint_enroll_continueButton": "Devam",
+  "@fingerprint_enroll_continueButton": {
+    "description": "Enrolment step 2: continue button"
+  },
+  "fingerprint_enroll_leftHand": "Sol el",
+  "@fingerprint_enroll_leftHand": {
+    "description": "Enrolment: left hand card title"
+  },
+  "fingerprint_enroll_rightHand": "Sağ el",
+  "@fingerprint_enroll_rightHand": {
+    "description": "Enrolment: right hand card title"
+  },
+  "fingerprint_enroll_statusEnrolled": "Kayıtlı",
+  "@fingerprint_enroll_statusEnrolled": {
+    "description": "Enrolment: finger status - saved on the server"
+  },
+  "fingerprint_enroll_statusReady": "Kaydedilmeyi bekliyor",
+  "@fingerprint_enroll_statusReady": {
+    "description": "Enrolment: finger status - captured, not yet saved"
+  },
+  "fingerprint_enroll_statusNotEnrolled": "Tanıtılmadı",
+  "@fingerprint_enroll_statusNotEnrolled": {
+    "description": "Enrolment: finger status - not enrolled"
+  },
+  "fingerprint_enroll_selectFingerHint": "Tanıtmak istediğiniz parmağı seçin",
+  "@fingerprint_enroll_selectFingerHint": {
+    "description": "Enrolment: capture panel placeholder"
+  },
+  "fingerprint_enroll_sampleProgress": "Okuma {current} / {total}",
+  "@fingerprint_enroll_sampleProgress": {
+    "description": "Enrolment: current sample index",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_placeFinger": "Parmağınızı okuyucuya yerleştirin",
+  "@fingerprint_enroll_placeFinger": {
+    "description": "Fingerprint prompt: place finger"
+  },
+  "fingerprint_enroll_liftFinger": "Parmağınızı kaldırın",
+  "@fingerprint_enroll_liftFinger": {
+    "description": "Fingerprint prompt: lift finger"
+  },
+  "fingerprint_enroll_fingerReady": "Okumalar tamamlandı. Kaydetmeyi unutmayın.",
+  "@fingerprint_enroll_fingerReady": {
+    "description": "Enrolment: all samples captured for the finger"
+  },
+  "fingerprint_enroll_startButton": "Okumayı başlat",
+  "@fingerprint_enroll_startButton": {
+    "description": "Enrolment: start capture button"
+  },
+  "fingerprint_enroll_retakeButton": "Yeniden oku",
+  "@fingerprint_enroll_retakeButton": {
+    "description": "Enrolment: retake button"
+  },
+  "fingerprint_enroll_cancelButton": "İptal",
+  "@fingerprint_enroll_cancelButton": {
+    "description": "Enrolment: cancel capture button"
+  },
+  "fingerprint_enroll_discardDraftButton": "Okumaları sil",
+  "@fingerprint_enroll_discardDraftButton": {
+    "description": "Enrolment: discard unsaved samples for the finger"
+  },
+  "fingerprint_enroll_deleteButton": "Kaydı sil",
+  "@fingerprint_enroll_deleteButton": {
+    "description": "Enrolment: delete an enrolled finger from the server"
+  },
+  "fingerprint_enroll_enrolledAt": "Kayıt tarihi: {date}",
+  "@fingerprint_enroll_enrolledAt": {
+    "description": "Enrolment: date the finger was enrolled",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fingerprint_enroll_qualityLabel": "Kalite: {quality}",
+  "@fingerprint_enroll_qualityLabel": {
+    "description": "Fingerprint image quality score (0-100)",
+    "placeholders": {
+      "quality": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_saveButton": "Kaydet",
+  "@fingerprint_enroll_saveButton": {
+    "description": "Enrolment: save button"
+  },
+  "fingerprint_enroll_pendingCount": "{count, plural, one{{count} parmak kaydedilmeyi bekliyor} other{{count} parmak kaydedilmeyi bekliyor}}",
+  "@fingerprint_enroll_pendingCount": {
+    "description": "Enrolment: number of captured but unsaved fingers",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_saveSuccess": "Parmak izleriniz kaydedildi",
+  "@fingerprint_enroll_saveSuccess": {
+    "description": "Enrolment: save success snackbar"
+  },
+  "fingerprint_enroll_livenessOffWarning": "Bu okuyucuda sahte parmak algılama yok.",
+  "@fingerprint_enroll_livenessOffWarning": {
+    "description": "Enrolment: warning when the scanner does not support liveness detection"
+  },
+  "fingerprint_enroll_scannerRetryButton": "Tekrar dene",
+  "@fingerprint_enroll_scannerRetryButton": {
+    "description": "Fingerprint: retry opening the scanner"
+  },
+  "fingerprint_finger_rightThumb": "Sağ başparmak",
+  "@fingerprint_finger_rightThumb": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_rightIndex": "Sağ işaret parmağı",
+  "@fingerprint_finger_rightIndex": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_rightMiddle": "Sağ orta parmak",
+  "@fingerprint_finger_rightMiddle": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_rightRing": "Sağ yüzük parmağı",
+  "@fingerprint_finger_rightRing": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_rightLittle": "Sağ serçe parmak",
+  "@fingerprint_finger_rightLittle": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_leftThumb": "Sol başparmak",
+  "@fingerprint_finger_leftThumb": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_leftIndex": "Sol işaret parmağı",
+  "@fingerprint_finger_leftIndex": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_leftMiddle": "Sol orta parmak",
+  "@fingerprint_finger_leftMiddle": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_leftRing": "Sol yüzük parmağı",
+  "@fingerprint_finger_leftRing": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_leftLittle": "Sol serçe parmak",
+  "@fingerprint_finger_leftLittle": {
+    "description": "Finger name (ISO finger position)"
+  },
+  "fingerprint_finger_thumbShort": "Başparmak",
+  "@fingerprint_finger_thumbShort": {
+    "description": "Short finger name shown under a hand title"
+  },
+  "fingerprint_finger_indexShort": "İşaret",
+  "@fingerprint_finger_indexShort": {
+    "description": "Short finger name shown under a hand title"
+  },
+  "fingerprint_finger_middleShort": "Orta",
+  "@fingerprint_finger_middleShort": {
+    "description": "Short finger name shown under a hand title"
+  },
+  "fingerprint_finger_ringShort": "Yüzük",
+  "@fingerprint_finger_ringShort": {
+    "description": "Short finger name shown under a hand title"
+  },
+  "fingerprint_finger_littleShort": "Serçe",
+  "@fingerprint_finger_littleShort": {
+    "description": "Short finger name shown under a hand title"
+  },
+  "fingerprint_error_libraryNotFound": "Okuyucu yazılımı bulunamadı",
+  "@fingerprint_error_libraryNotFound": {
+    "description": "Fingerprint scanner failure reason: libraryNotFound"
+  },
+  "fingerprint_error_deviceNotFound": "Parmak izi okuyucu bulunamadı",
+  "@fingerprint_error_deviceNotFound": {
+    "description": "Fingerprint scanner failure reason: deviceNotFound"
+  },
+  "fingerprint_error_deviceDisconnected": "Okuyucunun bağlantısı kesildi",
+  "@fingerprint_error_deviceDisconnected": {
+    "description": "Fingerprint scanner failure reason: deviceDisconnected"
+  },
+  "fingerprint_error_notOpen": "Okuyucu hazır değil",
+  "@fingerprint_error_notOpen": {
+    "description": "Fingerprint scanner failure reason: notOpen"
+  },
+  "fingerprint_error_busy": "Okuyucu meşgul",
+  "@fingerprint_error_busy": {
+    "description": "Fingerprint scanner failure reason: busy"
+  },
+  "fingerprint_error_timeout": "Parmak algılanmadı",
+  "@fingerprint_error_timeout": {
+    "description": "Fingerprint scanner failure reason: timeout"
+  },
+  "fingerprint_error_cancelled": "Okuma iptal edildi",
+  "@fingerprint_error_cancelled": {
+    "description": "Fingerprint scanner failure reason: cancelled"
+  },
+  "fingerprint_error_fingerOnSensor": "Parmağınızı kaldırıp yeniden yerleştirin",
+  "@fingerprint_error_fingerOnSensor": {
+    "description": "Fingerprint scanner failure reason: fingerOnSensor"
+  },
+  "fingerprint_error_fakeFinger": "Parmak doğrulanamadı, yeniden deneyin",
+  "@fingerprint_error_fakeFinger": {
+    "description": "Fingerprint scanner failure reason: fakeFinger"
+  },
+  "fingerprint_error_lowQuality": "Okuma kalitesi düşük, parmağınızı ortalayıp hafifçe bastırın",
+  "@fingerprint_error_lowQuality": {
+    "description": "Fingerprint scanner failure reason: lowQuality"
+  },
+  "fingerprint_error_extractionFailed": "Parmak izi işlenemedi, yeniden deneyin",
+  "@fingerprint_error_extractionFailed": {
+    "description": "Fingerprint scanner failure reason: extractionFailed"
+  },
+  "fingerprint_error_sensorDirty": "Okuyucu yüzeyini temizleyin",
+  "@fingerprint_error_sensorDirty": {
+    "description": "Fingerprint scanner failure reason: sensorDirty"
+  },
+  "fingerprint_error_unexpected": "Beklenmeyen bir okuyucu hatası oluştu",
+  "@fingerprint_error_unexpected": {
+    "description": "Fingerprint scanner failure reason: unexpected"
+  },
+  "fingerprint_login_divider": "veya parmak izi",
+  "@fingerprint_login_divider": {
+    "description": "Login dialog: separator above the fingerprint panel"
+  },
+  "fingerprint_login_opening": "Parmak izi okuyucu hazırlanıyor…",
+  "@fingerprint_login_opening": {
+    "description": "Login: scanner opening"
+  },
+  "fingerprint_login_hint": "Giriş için parmağınızı okuyucuya yerleştirin",
+  "@fingerprint_login_hint": {
+    "description": "Login: waiting for a finger"
+  },
+  "fingerprint_login_checking": "Parmak izi doğrulanıyor…",
+  "@fingerprint_login_checking": {
+    "description": "Login: template is being matched on the server"
+  },
+  "fingerprint_login_success": "Giriş başarılı",
+  "@fingerprint_login_success": {
+    "description": "Login: success"
+  },
+  "fingerprint_login_serviceUnavailable": "Parmak iziyle giriş servisi henüz hazır değil",
+  "@fingerprint_login_serviceUnavailable": {
+    "description": "Login: backend endpoint not available (501)"
+  },
+  "fingerprint_login_scannerUnavailable": "Parmak izi okuyucu kullanılamıyor",
+  "@fingerprint_login_scannerUnavailable": {
+    "description": "Login: scanner could not be opened"
+  },
+  "fingerprint_login_cooldown": "Çok fazla başarısız deneme. {seconds} sn sonra tekrar deneyin.",
+  "@fingerprint_login_cooldown": {
+    "description": "Login: lockout countdown after repeated failures",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_login_idle": "Parmak izi okuyucu beklemede",
+  "@fingerprint_login_idle": {
+    "description": "Login: listening stopped after inactivity"
+  },
+  "fingerprint_login_resumeButton": "Dinle",
+  "@fingerprint_login_resumeButton": {
+    "description": "Login: restart listening on the scanner"
+  }
 }

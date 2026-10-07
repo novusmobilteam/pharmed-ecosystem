@@ -2524,6 +2524,8 @@
   "@appException_custom": {},
   "appException_cameraRecording": "L'enregistrement de la caméra n'a pas pu être effectué.", 
   "@appException_cameraRecording": {},
+  "appException_fingerprint": "L'empreinte digitale n'a pas pu être lue.",
+  "@appException_fingerprint": {},
   "dataError_emptyResponse": "Le serveur a renvoyé une réponse vide",
   "@dataError_emptyResponse": {},
   "dataError_malformedResponse": "La réponse n'a pas pu être traitée",
@@ -4887,5 +4889,210 @@
   "cabinDesign_camera_noCabinSelectedError": "Sélectionnez au moins une cabine.",
   "cabinDesign_camera_cabinAlreadyAssignedError": "Certaines cabines sélectionnées sont déjà attribuées à la caméra « {name} ».",
   "cabinDesign_camera_saveFailedError": "La caméra n'a pas pu être enregistrée.",
-  "common_closeButton": "Fermer"
+  "common_closeButton": "Fermer",
+  "settingsView_fingerprintNav": "Empreinte digitale",
+  "@settingsView_fingerprintNav": {},
+  "fingerprint_settings_title": "Connexion par empreinte digitale",
+  "@fingerprint_settings_title": {},
+  "fingerprint_settings_description": "Enregistrez vos empreintes sur votre compte pour vous connecter à l'armoire sans saisir de mot de passe. Enregistrez les doigts de votre choix ; un seul doigt suffit.",
+  "@fingerprint_settings_description": {},
+  "fingerprint_settings_enrolledCount": "{count, plural, one{{count} doigt enregistré} other{{count} doigts enregistrés}}",
+  "@fingerprint_settings_enrolledCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_settings_noneEnrolled": "Vous n'avez encore aucune empreinte enregistrée",
+  "@fingerprint_settings_noneEnrolled": {},
+  "fingerprint_settings_enrollButton": "Enregistrer des empreintes",
+  "@fingerprint_settings_enrollButton": {},
+  "fingerprint_settings_manageButton": "Gérer les empreintes",
+  "@fingerprint_settings_manageButton": {},
+  "fingerprint_settings_loginRequired": "Connectez-vous d'abord pour enregistrer des empreintes.",
+  "@fingerprint_settings_loginRequired": {},
+  "fingerprint_settings_simulatedNotice": "Le service d'empreintes n'est pas encore prêt. L'enregistrement fonctionne en mode test ; aucune donnée n'est envoyée au serveur.",
+  "@fingerprint_settings_simulatedNotice": {},
+  "fingerprint_enroll_screenTitle": "Enregistrement des empreintes",
+  "@fingerprint_enroll_screenTitle": {},
+  "fingerprint_enroll_passwordTitle": "Vérifiez votre identité",
+  "@fingerprint_enroll_passwordTitle": {},
+  "fingerprint_enroll_passwordDescription": "{name}, saisissez votre mot de passe pour continuer.",
+  "@fingerprint_enroll_passwordDescription": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fingerprint_enroll_passwordLabel": "Mot de passe",
+  "@fingerprint_enroll_passwordLabel": {},
+  "fingerprint_enroll_passwordRequired": "Le mot de passe ne peut pas être vide",
+  "@fingerprint_enroll_passwordRequired": {},
+  "fingerprint_enroll_verifyButton": "Vérifier",
+  "@fingerprint_enroll_verifyButton": {},
+  "fingerprint_enroll_passwordWrong": "Le mot de passe n'a pas pu être vérifié",
+  "@fingerprint_enroll_passwordWrong": {},
+  "fingerprint_enroll_consentTitle": "Information sur les données biométriques",
+  "@fingerprint_enroll_consentTitle": {},
+  "fingerprint_enroll_consentBody": "Votre empreinte sera traitée uniquement pour vérifier votre identité dans ce système. L'image du lecteur n'est pas conservée ; un gabarit extrait de celle-ci est envoyé au serveur via une connexion chiffrée et associé à votre compte. Vous pouvez supprimer vos doigts enregistrés à tout moment ou demander à votre administrateur de supprimer toutes vos données biométriques. L'enregistrement est facultatif ; la connexion par mot de passe et par badge reste toujours disponible.",
+  "@fingerprint_enroll_consentBody": {},
+  "fingerprint_enroll_consentCheckbox": "J'ai lu ce texte et je consens explicitement au traitement de mon empreinte à cette fin.",
+  "@fingerprint_enroll_consentCheckbox": {},
+  "fingerprint_enroll_continueButton": "Continuer",
+  "@fingerprint_enroll_continueButton": {},
+  "fingerprint_enroll_leftHand": "Main gauche",
+  "@fingerprint_enroll_leftHand": {},
+  "fingerprint_enroll_rightHand": "Main droite",
+  "@fingerprint_enroll_rightHand": {},
+  "fingerprint_enroll_statusEnrolled": "Enregistré",
+  "@fingerprint_enroll_statusEnrolled": {},
+  "fingerprint_enroll_statusReady": "Prêt à enregistrer",
+  "@fingerprint_enroll_statusReady": {},
+  "fingerprint_enroll_statusNotEnrolled": "Non enregistré",
+  "@fingerprint_enroll_statusNotEnrolled": {},
+  "fingerprint_enroll_selectFingerHint": "Sélectionnez le doigt à enregistrer",
+  "@fingerprint_enroll_selectFingerHint": {},
+  "fingerprint_enroll_sampleProgress": "Lecture {current} sur {total}",
+  "@fingerprint_enroll_sampleProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_placeFinger": "Posez votre doigt sur le lecteur",
+  "@fingerprint_enroll_placeFinger": {},
+  "fingerprint_enroll_liftFinger": "Retirez votre doigt",
+  "@fingerprint_enroll_liftFinger": {},
+  "fingerprint_enroll_fingerReady": "Lectures terminées. N'oubliez pas d'enregistrer.",
+  "@fingerprint_enroll_fingerReady": {},
+  "fingerprint_enroll_startButton": "Démarrer la lecture",
+  "@fingerprint_enroll_startButton": {},
+  "fingerprint_enroll_retakeButton": "Relire",
+  "@fingerprint_enroll_retakeButton": {},
+  "fingerprint_enroll_cancelButton": "Annuler",
+  "@fingerprint_enroll_cancelButton": {},
+  "fingerprint_enroll_discardDraftButton": "Supprimer les lectures",
+  "@fingerprint_enroll_discardDraftButton": {},
+  "fingerprint_enroll_deleteButton": "Supprimer l'enregistrement",
+  "@fingerprint_enroll_deleteButton": {},
+  "fingerprint_enroll_enrolledAt": "Enregistré le {date}",
+  "@fingerprint_enroll_enrolledAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fingerprint_enroll_qualityLabel": "Qualité : {quality}",
+  "@fingerprint_enroll_qualityLabel": {
+    "placeholders": {
+      "quality": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_saveButton": "Enregistrer",
+  "@fingerprint_enroll_saveButton": {},
+  "fingerprint_enroll_pendingCount": "{count, plural, one{{count} doigt en attente d'enregistrement} other{{count} doigts en attente d'enregistrement}}",
+  "@fingerprint_enroll_pendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_enroll_saveSuccess": "Vos empreintes ont été enregistrées",
+  "@fingerprint_enroll_saveSuccess": {},
+  "fingerprint_enroll_livenessOffWarning": "Ce lecteur ne détecte pas les faux doigts.",
+  "@fingerprint_enroll_livenessOffWarning": {},
+  "fingerprint_enroll_scannerRetryButton": "Réessayer",
+  "@fingerprint_enroll_scannerRetryButton": {},
+  "fingerprint_finger_rightThumb": "Pouce droit",
+  "@fingerprint_finger_rightThumb": {},
+  "fingerprint_finger_rightIndex": "Index droit",
+  "@fingerprint_finger_rightIndex": {},
+  "fingerprint_finger_rightMiddle": "Majeur droit",
+  "@fingerprint_finger_rightMiddle": {},
+  "fingerprint_finger_rightRing": "Annulaire droit",
+  "@fingerprint_finger_rightRing": {},
+  "fingerprint_finger_rightLittle": "Auriculaire droit",
+  "@fingerprint_finger_rightLittle": {},
+  "fingerprint_finger_leftThumb": "Pouce gauche",
+  "@fingerprint_finger_leftThumb": {},
+  "fingerprint_finger_leftIndex": "Index gauche",
+  "@fingerprint_finger_leftIndex": {},
+  "fingerprint_finger_leftMiddle": "Majeur gauche",
+  "@fingerprint_finger_leftMiddle": {},
+  "fingerprint_finger_leftRing": "Annulaire gauche",
+  "@fingerprint_finger_leftRing": {},
+  "fingerprint_finger_leftLittle": "Auriculaire gauche",
+  "@fingerprint_finger_leftLittle": {},
+  "fingerprint_finger_thumbShort": "Pouce",
+  "@fingerprint_finger_thumbShort": {},
+  "fingerprint_finger_indexShort": "Index",
+  "@fingerprint_finger_indexShort": {},
+  "fingerprint_finger_middleShort": "Majeur",
+  "@fingerprint_finger_middleShort": {},
+  "fingerprint_finger_ringShort": "Annulaire",
+  "@fingerprint_finger_ringShort": {},
+  "fingerprint_finger_littleShort": "Auriculaire",
+  "@fingerprint_finger_littleShort": {},
+  "fingerprint_error_libraryNotFound": "Logiciel du lecteur introuvable",
+  "@fingerprint_error_libraryNotFound": {},
+  "fingerprint_error_deviceNotFound": "Lecteur d'empreintes introuvable",
+  "@fingerprint_error_deviceNotFound": {},
+  "fingerprint_error_deviceDisconnected": "Le lecteur a été déconnecté",
+  "@fingerprint_error_deviceDisconnected": {},
+  "fingerprint_error_notOpen": "Le lecteur n'est pas prêt",
+  "@fingerprint_error_notOpen": {},
+  "fingerprint_error_busy": "Le lecteur est occupé",
+  "@fingerprint_error_busy": {},
+  "fingerprint_error_timeout": "Aucun doigt détecté",
+  "@fingerprint_error_timeout": {},
+  "fingerprint_error_cancelled": "Lecture annulée",
+  "@fingerprint_error_cancelled": {},
+  "fingerprint_error_fingerOnSensor": "Retirez votre doigt puis reposez-le",
+  "@fingerprint_error_fingerOnSensor": {},
+  "fingerprint_error_fakeFinger": "Le doigt n'a pas pu être vérifié, réessayez",
+  "@fingerprint_error_fakeFinger": {},
+  "fingerprint_error_lowQuality": "Qualité insuffisante : centrez votre doigt et appuyez légèrement",
+  "@fingerprint_error_lowQuality": {},
+  "fingerprint_error_extractionFailed": "L'empreinte n'a pas pu être traitée, réessayez",
+  "@fingerprint_error_extractionFailed": {},
+  "fingerprint_error_sensorDirty": "Nettoyez la surface du lecteur",
+  "@fingerprint_error_sensorDirty": {},
+  "fingerprint_error_unexpected": "Une erreur inattendue du lecteur est survenue",
+  "@fingerprint_error_unexpected": {},
+  "fingerprint_login_divider": "ou empreinte",
+  "@fingerprint_login_divider": {},
+  "fingerprint_login_opening": "Préparation du lecteur d'empreintes…",
+  "@fingerprint_login_opening": {},
+  "fingerprint_login_hint": "Posez votre doigt sur le lecteur pour vous connecter",
+  "@fingerprint_login_hint": {},
+  "fingerprint_login_checking": "Vérification de l'empreinte…",
+  "@fingerprint_login_checking": {},
+  "fingerprint_login_success": "Connexion réussie",
+  "@fingerprint_login_success": {},
+  "fingerprint_login_serviceUnavailable": "Le service de connexion par empreinte n'est pas encore prêt",
+  "@fingerprint_login_serviceUnavailable": {},
+  "fingerprint_login_scannerUnavailable": "Lecteur d'empreintes indisponible",
+  "@fingerprint_login_scannerUnavailable": {},
+  "fingerprint_login_cooldown": "Trop de tentatives échouées. Réessayez dans {seconds} s.",
+  "@fingerprint_login_cooldown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "fingerprint_login_idle": "Lecteur d'empreintes en pause",
+  "@fingerprint_login_idle": {},
+  "fingerprint_login_resumeButton": "Écouter",
+  "@fingerprint_login_resumeButton": {}
 }

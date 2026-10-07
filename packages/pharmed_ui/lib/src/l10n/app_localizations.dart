@@ -6959,6 +6959,12 @@ abstract class AppLocalizations {
   /// **'Camera recording could not be performed.'**
   String get appException_cameraRecording;
 
+  /// No description provided for @appException_fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'The fingerprint could not be read.'**
+  String get appException_fingerprint;
+
   /// No description provided for @dataError_malformedResponse.
   ///
   /// In en, this message translates to:
@@ -13907,6 +13913,486 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get common_closeButton;
+
+  /// No description provided for @settingsView_fingerprintNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint'**
+  String get settingsView_fingerprintNav;
+
+  /// No description provided for @fingerprint_settings_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint login'**
+  String get fingerprint_settings_title;
+
+  /// No description provided for @fingerprint_settings_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrol your fingerprints to your account to log in to the cabinet without typing a password. Enrol any fingers you like; a single finger is enough.'**
+  String get fingerprint_settings_description;
+
+  /// No description provided for @fingerprint_settings_enrolledCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} finger enrolled} other{{count} fingers enrolled}}'**
+  String fingerprint_settings_enrolledCount(int count);
+
+  /// No description provided for @fingerprint_settings_noneEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no enrolled fingerprints yet'**
+  String get fingerprint_settings_noneEnrolled;
+
+  /// No description provided for @fingerprint_settings_enrollButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrol fingerprints'**
+  String get fingerprint_settings_enrollButton;
+
+  /// No description provided for @fingerprint_settings_manageButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage fingerprints'**
+  String get fingerprint_settings_manageButton;
+
+  /// No description provided for @fingerprint_settings_loginRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in first to enrol fingerprints.'**
+  String get fingerprint_settings_loginRequired;
+
+  /// No description provided for @fingerprint_settings_simulatedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The fingerprint service is not ready yet. Enrolment runs in test mode; no data is sent to the server.'**
+  String get fingerprint_settings_simulatedNotice;
+
+  /// No description provided for @fingerprint_enroll_screenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint Enrolment'**
+  String get fingerprint_enroll_screenTitle;
+
+  /// No description provided for @fingerprint_enroll_passwordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your identity'**
+  String get fingerprint_enroll_passwordTitle;
+
+  /// No description provided for @fingerprint_enroll_passwordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, enter your password to continue.'**
+  String fingerprint_enroll_passwordDescription(String name);
+
+  /// No description provided for @fingerprint_enroll_passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get fingerprint_enroll_passwordLabel;
+
+  /// No description provided for @fingerprint_enroll_passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password cannot be empty'**
+  String get fingerprint_enroll_passwordRequired;
+
+  /// No description provided for @fingerprint_enroll_verifyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get fingerprint_enroll_verifyButton;
+
+  /// No description provided for @fingerprint_enroll_passwordWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Password could not be verified'**
+  String get fingerprint_enroll_passwordWrong;
+
+  /// No description provided for @fingerprint_enroll_consentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric data notice'**
+  String get fingerprint_enroll_consentTitle;
+
+  /// No description provided for @fingerprint_enroll_consentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your fingerprint will be processed only to verify your identity in this system. The scanner image is not stored; a template extracted from it is sent to the server over an encrypted connection and linked to your account. You can delete your enrolled fingers at any time, or ask your administrator to delete all of your biometric data. Enrolling is optional; password and badge login always remain available.'**
+  String get fingerprint_enroll_consentBody;
+
+  /// No description provided for @fingerprint_enroll_consentCheckbox.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read this and give explicit consent to my fingerprint being processed for this purpose.'**
+  String get fingerprint_enroll_consentCheckbox;
+
+  /// No description provided for @fingerprint_enroll_continueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get fingerprint_enroll_continueButton;
+
+  /// No description provided for @fingerprint_enroll_leftHand.
+  ///
+  /// In en, this message translates to:
+  /// **'Left hand'**
+  String get fingerprint_enroll_leftHand;
+
+  /// No description provided for @fingerprint_enroll_rightHand.
+  ///
+  /// In en, this message translates to:
+  /// **'Right hand'**
+  String get fingerprint_enroll_rightHand;
+
+  /// No description provided for @fingerprint_enroll_statusEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled'**
+  String get fingerprint_enroll_statusEnrolled;
+
+  /// No description provided for @fingerprint_enroll_statusReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to save'**
+  String get fingerprint_enroll_statusReady;
+
+  /// No description provided for @fingerprint_enroll_statusNotEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enrolled'**
+  String get fingerprint_enroll_statusNotEnrolled;
+
+  /// No description provided for @fingerprint_enroll_selectFingerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the finger you want to enrol'**
+  String get fingerprint_enroll_selectFingerHint;
+
+  /// No description provided for @fingerprint_enroll_sampleProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan {current} of {total}'**
+  String fingerprint_enroll_sampleProgress(int current, int total);
+
+  /// No description provided for @fingerprint_enroll_placeFinger.
+  ///
+  /// In en, this message translates to:
+  /// **'Place your finger on the scanner'**
+  String get fingerprint_enroll_placeFinger;
+
+  /// No description provided for @fingerprint_enroll_liftFinger.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift your finger'**
+  String get fingerprint_enroll_liftFinger;
+
+  /// No description provided for @fingerprint_enroll_fingerReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Scans complete. Remember to save.'**
+  String get fingerprint_enroll_fingerReady;
+
+  /// No description provided for @fingerprint_enroll_startButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start scanning'**
+  String get fingerprint_enroll_startButton;
+
+  /// No description provided for @fingerprint_enroll_retakeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan again'**
+  String get fingerprint_enroll_retakeButton;
+
+  /// No description provided for @fingerprint_enroll_cancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get fingerprint_enroll_cancelButton;
+
+  /// No description provided for @fingerprint_enroll_discardDraftButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard scans'**
+  String get fingerprint_enroll_discardDraftButton;
+
+  /// No description provided for @fingerprint_enroll_deleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete enrolment'**
+  String get fingerprint_enroll_deleteButton;
+
+  /// No description provided for @fingerprint_enroll_enrolledAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled on {date}'**
+  String fingerprint_enroll_enrolledAt(String date);
+
+  /// No description provided for @fingerprint_enroll_qualityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality: {quality}'**
+  String fingerprint_enroll_qualityLabel(int quality);
+
+  /// No description provided for @fingerprint_enroll_saveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get fingerprint_enroll_saveButton;
+
+  /// No description provided for @fingerprint_enroll_pendingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} finger waiting to be saved} other{{count} fingers waiting to be saved}}'**
+  String fingerprint_enroll_pendingCount(int count);
+
+  /// No description provided for @fingerprint_enroll_saveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your fingerprints have been saved'**
+  String get fingerprint_enroll_saveSuccess;
+
+  /// No description provided for @fingerprint_enroll_livenessOffWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This scanner has no fake-finger detection.'**
+  String get fingerprint_enroll_livenessOffWarning;
+
+  /// No description provided for @fingerprint_enroll_scannerRetryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get fingerprint_enroll_scannerRetryButton;
+
+  /// No description provided for @fingerprint_finger_rightThumb.
+  ///
+  /// In en, this message translates to:
+  /// **'Right thumb'**
+  String get fingerprint_finger_rightThumb;
+
+  /// No description provided for @fingerprint_finger_rightIndex.
+  ///
+  /// In en, this message translates to:
+  /// **'Right index finger'**
+  String get fingerprint_finger_rightIndex;
+
+  /// No description provided for @fingerprint_finger_rightMiddle.
+  ///
+  /// In en, this message translates to:
+  /// **'Right middle finger'**
+  String get fingerprint_finger_rightMiddle;
+
+  /// No description provided for @fingerprint_finger_rightRing.
+  ///
+  /// In en, this message translates to:
+  /// **'Right ring finger'**
+  String get fingerprint_finger_rightRing;
+
+  /// No description provided for @fingerprint_finger_rightLittle.
+  ///
+  /// In en, this message translates to:
+  /// **'Right little finger'**
+  String get fingerprint_finger_rightLittle;
+
+  /// No description provided for @fingerprint_finger_leftThumb.
+  ///
+  /// In en, this message translates to:
+  /// **'Left thumb'**
+  String get fingerprint_finger_leftThumb;
+
+  /// No description provided for @fingerprint_finger_leftIndex.
+  ///
+  /// In en, this message translates to:
+  /// **'Left index finger'**
+  String get fingerprint_finger_leftIndex;
+
+  /// No description provided for @fingerprint_finger_leftMiddle.
+  ///
+  /// In en, this message translates to:
+  /// **'Left middle finger'**
+  String get fingerprint_finger_leftMiddle;
+
+  /// No description provided for @fingerprint_finger_leftRing.
+  ///
+  /// In en, this message translates to:
+  /// **'Left ring finger'**
+  String get fingerprint_finger_leftRing;
+
+  /// No description provided for @fingerprint_finger_leftLittle.
+  ///
+  /// In en, this message translates to:
+  /// **'Left little finger'**
+  String get fingerprint_finger_leftLittle;
+
+  /// No description provided for @fingerprint_finger_thumbShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Thumb'**
+  String get fingerprint_finger_thumbShort;
+
+  /// No description provided for @fingerprint_finger_indexShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Index'**
+  String get fingerprint_finger_indexShort;
+
+  /// No description provided for @fingerprint_finger_middleShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Middle'**
+  String get fingerprint_finger_middleShort;
+
+  /// No description provided for @fingerprint_finger_ringShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Ring'**
+  String get fingerprint_finger_ringShort;
+
+  /// No description provided for @fingerprint_finger_littleShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Little'**
+  String get fingerprint_finger_littleShort;
+
+  /// No description provided for @fingerprint_error_libraryNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanner software not found'**
+  String get fingerprint_error_libraryNotFound;
+
+  /// No description provided for @fingerprint_error_deviceNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint scanner not found'**
+  String get fingerprint_error_deviceNotFound;
+
+  /// No description provided for @fingerprint_error_deviceDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'The scanner was disconnected'**
+  String get fingerprint_error_deviceDisconnected;
+
+  /// No description provided for @fingerprint_error_notOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'The scanner is not ready'**
+  String get fingerprint_error_notOpen;
+
+  /// No description provided for @fingerprint_error_busy.
+  ///
+  /// In en, this message translates to:
+  /// **'The scanner is busy'**
+  String get fingerprint_error_busy;
+
+  /// No description provided for @fingerprint_error_timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'No finger detected'**
+  String get fingerprint_error_timeout;
+
+  /// No description provided for @fingerprint_error_cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan cancelled'**
+  String get fingerprint_error_cancelled;
+
+  /// No description provided for @fingerprint_error_fingerOnSensor.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift your finger and place it again'**
+  String get fingerprint_error_fingerOnSensor;
+
+  /// No description provided for @fingerprint_error_fakeFinger.
+  ///
+  /// In en, this message translates to:
+  /// **'The finger could not be verified, try again'**
+  String get fingerprint_error_fakeFinger;
+
+  /// No description provided for @fingerprint_error_lowQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Low scan quality: centre your finger and press lightly'**
+  String get fingerprint_error_lowQuality;
+
+  /// No description provided for @fingerprint_error_extractionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The fingerprint could not be processed, try again'**
+  String get fingerprint_error_extractionFailed;
+
+  /// No description provided for @fingerprint_error_sensorDirty.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean the scanner surface'**
+  String get fingerprint_error_sensorDirty;
+
+  /// No description provided for @fingerprint_error_unexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected scanner error occurred'**
+  String get fingerprint_error_unexpected;
+
+  /// No description provided for @fingerprint_login_divider.
+  ///
+  /// In en, this message translates to:
+  /// **'or fingerprint'**
+  String get fingerprint_login_divider;
+
+  /// No description provided for @fingerprint_login_opening.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing the fingerprint scanner…'**
+  String get fingerprint_login_opening;
+
+  /// No description provided for @fingerprint_login_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Place your finger on the scanner to log in'**
+  String get fingerprint_login_hint;
+
+  /// No description provided for @fingerprint_login_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying fingerprint…'**
+  String get fingerprint_login_checking;
+
+  /// No description provided for @fingerprint_login_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged in'**
+  String get fingerprint_login_success;
+
+  /// No description provided for @fingerprint_login_serviceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint login service is not ready yet'**
+  String get fingerprint_login_serviceUnavailable;
+
+  /// No description provided for @fingerprint_login_scannerUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint scanner unavailable'**
+  String get fingerprint_login_scannerUnavailable;
+
+  /// No description provided for @fingerprint_login_cooldown.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many failed attempts. Try again in {seconds} s.'**
+  String fingerprint_login_cooldown(int seconds);
+
+  /// No description provided for @fingerprint_login_idle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint scanner paused'**
+  String get fingerprint_login_idle;
+
+  /// No description provided for @fingerprint_login_resumeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen'**
+  String get fingerprint_login_resumeButton;
 }
 
 class _AppLocalizationsDelegate

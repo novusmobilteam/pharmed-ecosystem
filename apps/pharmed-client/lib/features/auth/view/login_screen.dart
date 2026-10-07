@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../fingerprint_login/fingerprint_login.dart';
 import '../../settings/notifier/settings_notifier.dart';
 import '../notifier/auth_notifier.dart';
 import '../notifier/auth_state.dart';
@@ -26,6 +27,8 @@ class LoginScreen extends ConsumerWidget {
           },
           currentLanguage: ref.watch(settingsNotifierProvider.select((s) => s.language)),
           onLanguageChanged: (lang) => ref.read(settingsNotifierProvider.notifier).setLanguage(lang),
+          // [SWREQ-FP-103] Başarılı girişte yönlendirme auth durumuna göre router'da yapılır.
+          footer: const FingerprintLoginPanel(),
         ),
       ),
     );

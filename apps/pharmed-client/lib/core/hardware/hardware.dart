@@ -22,3 +22,5 @@ export 'shared/cabin_operation_failure.dart';
 export 'shared/cabin_validation_reason_extension.dart';
 
 export 'camera/camera.dart';
+
+export 'fingerprint/fingerprint.dart';

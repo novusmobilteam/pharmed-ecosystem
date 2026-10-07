@@ -15,6 +15,10 @@ abstract interface class IAuthRepository {
 
   Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress});
 
+  /// [SWREQ-FP-103] Parmak iziyle giriş. Eşleştirme sunucuda yapılır; başarılıysa
+  /// token ve kullanıcı login() ile aynı şekilde önbelleğe yazılır.
+  Future<Result<AuthToken>> loginWithFingerprint(FingerprintLoginRequest request);
+
   /// Cache'i temizler.
   Future<Result<void>> logout();
 

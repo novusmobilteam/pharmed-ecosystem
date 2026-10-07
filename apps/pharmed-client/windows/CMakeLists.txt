@@ -87,6 +87,30 @@ if(PLUGIN_BUNDLED_LIBRARIES)
     COMPONENT Runtime)
 endif()
 
+# BioMini (Suprema/Xperix) parmak izi SDK'si — dart:ffi ile calisma aninda yuklenir.
+# SDK 3.10.0, x64 surumu. UFScanner.dll MFC'yi statik icerir, yalnizca Windows sistem
+# DLL'lerine baglidir; VC++ redist gerekmez. Ayrinti: third_party/biomini/README.md
+set(BIOMINI_DLL "${CMAKE_CURRENT_SOURCE_DIR}/third_party/biomini/UFScanner.dll")
+if(EXISTS "${BIOMINI_DLL}")
+  install(FILES "${BIOMINI_DLL}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+    COMPONENT Runtime)
+else()
+  message(WARNING "BioMini UFScanner.dll bulunamadi: ${BIOMINI_DLL} - parmak izi okuyucu calismayacak.")
+endif()
+
+# SecuGen FDx SDK Pro 4.3.1 (x64) - dart:ffi ile calisma aninda yuklenir.
+# sgfplib.dll, sgfpamx.dll (algoritma) ve sgwsqlib.dll'i kendi klasorunden yukler;
+# ucu de exe'nin yanina kopyalanir. Ayrinti: third_party/secugen/README.md
+set(SECUGEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/secugen")
+foreach(SECUGEN_DLL sgfplib.dll sgfpamx.dll sgwsqlib.dll)
+  if(EXISTS "${SECUGEN_DIR}/${SECUGEN_DLL}")
+    install(FILES "${SECUGEN_DIR}/${SECUGEN_DLL}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+      COMPONENT Runtime)
+  else()
+    message(WARNING "SecuGen ${SECUGEN_DLL} bulunamadi: ${SECUGEN_DIR} - SecuGen okuyucu calismayacak.")
+  endif()
+endforeach()
+
 # Copy the native assets provided by the build.dart from all packages.
 set(NATIVE_ASSETS_DIR "${PROJECT_BUILD_DIR}native_assets/windows/")
 install(DIRECTORY "${NATIVE_ASSETS_DIR}"

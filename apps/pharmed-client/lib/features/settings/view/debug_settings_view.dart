@@ -56,6 +56,19 @@ class _DebugSettingsViewState extends ConsumerState<DebugSettingsView> {
             ),
           ),
 
+          // ── Donanım testleri ────────────────────────────────
+          _SettingRow(
+            label: 'Parmak izi okuyucu',
+            description: 'Okuyucuyu aç, okuma yap; kalite, canlılık skoru ve süreyi gör',
+            trailing: MedButton(
+              label: 'Test ekranını aç',
+              size: MedButtonSize.sm,
+              variant: MedButtonVariant.secondary,
+              prefixIcon: const Icon(Icons.fingerprint),
+              onPressed: () => FingerprintTestScreen.show(context),
+            ),
+          ),
+
           // ── Placeholder'lar ─────────────────────────────────
           _SettingRow(
             label: 'Mock veri modu',

@@ -3944,6 +3944,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'Camera recording could not be performed.';
 
   @override
+  String get appException_fingerprint => 'The fingerprint could not be read.';
+
+  @override
   String get dataError_malformedResponse =>
       'The response could not be processed';
 
@@ -7957,4 +7960,292 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get common_closeButton => 'Close';
+
+  @override
+  String get settingsView_fingerprintNav => 'Fingerprint';
+
+  @override
+  String get fingerprint_settings_title => 'Fingerprint login';
+
+  @override
+  String get fingerprint_settings_description =>
+      'Enrol your fingerprints to your account to log in to the cabinet without typing a password. Enrol any fingers you like; a single finger is enough.';
+
+  @override
+  String fingerprint_settings_enrolledCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fingers enrolled',
+      one: '$count finger enrolled',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get fingerprint_settings_noneEnrolled =>
+      'You have no enrolled fingerprints yet';
+
+  @override
+  String get fingerprint_settings_enrollButton => 'Enrol fingerprints';
+
+  @override
+  String get fingerprint_settings_manageButton => 'Manage fingerprints';
+
+  @override
+  String get fingerprint_settings_loginRequired =>
+      'Log in first to enrol fingerprints.';
+
+  @override
+  String get fingerprint_settings_simulatedNotice =>
+      'The fingerprint service is not ready yet. Enrolment runs in test mode; no data is sent to the server.';
+
+  @override
+  String get fingerprint_enroll_screenTitle => 'Fingerprint Enrolment';
+
+  @override
+  String get fingerprint_enroll_passwordTitle => 'Verify your identity';
+
+  @override
+  String fingerprint_enroll_passwordDescription(String name) {
+    return '$name, enter your password to continue.';
+  }
+
+  @override
+  String get fingerprint_enroll_passwordLabel => 'Password';
+
+  @override
+  String get fingerprint_enroll_passwordRequired => 'Password cannot be empty';
+
+  @override
+  String get fingerprint_enroll_verifyButton => 'Verify';
+
+  @override
+  String get fingerprint_enroll_passwordWrong =>
+      'Password could not be verified';
+
+  @override
+  String get fingerprint_enroll_consentTitle => 'Biometric data notice';
+
+  @override
+  String get fingerprint_enroll_consentBody =>
+      'Your fingerprint will be processed only to verify your identity in this system. The scanner image is not stored; a template extracted from it is sent to the server over an encrypted connection and linked to your account. You can delete your enrolled fingers at any time, or ask your administrator to delete all of your biometric data. Enrolling is optional; password and badge login always remain available.';
+
+  @override
+  String get fingerprint_enroll_consentCheckbox =>
+      'I have read this and give explicit consent to my fingerprint being processed for this purpose.';
+
+  @override
+  String get fingerprint_enroll_continueButton => 'Continue';
+
+  @override
+  String get fingerprint_enroll_leftHand => 'Left hand';
+
+  @override
+  String get fingerprint_enroll_rightHand => 'Right hand';
+
+  @override
+  String get fingerprint_enroll_statusEnrolled => 'Enrolled';
+
+  @override
+  String get fingerprint_enroll_statusReady => 'Ready to save';
+
+  @override
+  String get fingerprint_enroll_statusNotEnrolled => 'Not enrolled';
+
+  @override
+  String get fingerprint_enroll_selectFingerHint =>
+      'Select the finger you want to enrol';
+
+  @override
+  String fingerprint_enroll_sampleProgress(int current, int total) {
+    return 'Scan $current of $total';
+  }
+
+  @override
+  String get fingerprint_enroll_placeFinger =>
+      'Place your finger on the scanner';
+
+  @override
+  String get fingerprint_enroll_liftFinger => 'Lift your finger';
+
+  @override
+  String get fingerprint_enroll_fingerReady =>
+      'Scans complete. Remember to save.';
+
+  @override
+  String get fingerprint_enroll_startButton => 'Start scanning';
+
+  @override
+  String get fingerprint_enroll_retakeButton => 'Scan again';
+
+  @override
+  String get fingerprint_enroll_cancelButton => 'Cancel';
+
+  @override
+  String get fingerprint_enroll_discardDraftButton => 'Discard scans';
+
+  @override
+  String get fingerprint_enroll_deleteButton => 'Delete enrolment';
+
+  @override
+  String fingerprint_enroll_enrolledAt(String date) {
+    return 'Enrolled on $date';
+  }
+
+  @override
+  String fingerprint_enroll_qualityLabel(int quality) {
+    return 'Quality: $quality';
+  }
+
+  @override
+  String get fingerprint_enroll_saveButton => 'Save';
+
+  @override
+  String fingerprint_enroll_pendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fingers waiting to be saved',
+      one: '$count finger waiting to be saved',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get fingerprint_enroll_saveSuccess =>
+      'Your fingerprints have been saved';
+
+  @override
+  String get fingerprint_enroll_livenessOffWarning =>
+      'This scanner has no fake-finger detection.';
+
+  @override
+  String get fingerprint_enroll_scannerRetryButton => 'Try again';
+
+  @override
+  String get fingerprint_finger_rightThumb => 'Right thumb';
+
+  @override
+  String get fingerprint_finger_rightIndex => 'Right index finger';
+
+  @override
+  String get fingerprint_finger_rightMiddle => 'Right middle finger';
+
+  @override
+  String get fingerprint_finger_rightRing => 'Right ring finger';
+
+  @override
+  String get fingerprint_finger_rightLittle => 'Right little finger';
+
+  @override
+  String get fingerprint_finger_leftThumb => 'Left thumb';
+
+  @override
+  String get fingerprint_finger_leftIndex => 'Left index finger';
+
+  @override
+  String get fingerprint_finger_leftMiddle => 'Left middle finger';
+
+  @override
+  String get fingerprint_finger_leftRing => 'Left ring finger';
+
+  @override
+  String get fingerprint_finger_leftLittle => 'Left little finger';
+
+  @override
+  String get fingerprint_finger_thumbShort => 'Thumb';
+
+  @override
+  String get fingerprint_finger_indexShort => 'Index';
+
+  @override
+  String get fingerprint_finger_middleShort => 'Middle';
+
+  @override
+  String get fingerprint_finger_ringShort => 'Ring';
+
+  @override
+  String get fingerprint_finger_littleShort => 'Little';
+
+  @override
+  String get fingerprint_error_libraryNotFound => 'Scanner software not found';
+
+  @override
+  String get fingerprint_error_deviceNotFound =>
+      'Fingerprint scanner not found';
+
+  @override
+  String get fingerprint_error_deviceDisconnected =>
+      'The scanner was disconnected';
+
+  @override
+  String get fingerprint_error_notOpen => 'The scanner is not ready';
+
+  @override
+  String get fingerprint_error_busy => 'The scanner is busy';
+
+  @override
+  String get fingerprint_error_timeout => 'No finger detected';
+
+  @override
+  String get fingerprint_error_cancelled => 'Scan cancelled';
+
+  @override
+  String get fingerprint_error_fingerOnSensor =>
+      'Lift your finger and place it again';
+
+  @override
+  String get fingerprint_error_fakeFinger =>
+      'The finger could not be verified, try again';
+
+  @override
+  String get fingerprint_error_lowQuality =>
+      'Low scan quality: centre your finger and press lightly';
+
+  @override
+  String get fingerprint_error_extractionFailed =>
+      'The fingerprint could not be processed, try again';
+
+  @override
+  String get fingerprint_error_sensorDirty => 'Clean the scanner surface';
+
+  @override
+  String get fingerprint_error_unexpected =>
+      'An unexpected scanner error occurred';
+
+  @override
+  String get fingerprint_login_divider => 'or fingerprint';
+
+  @override
+  String get fingerprint_login_opening => 'Preparing the fingerprint scanner…';
+
+  @override
+  String get fingerprint_login_hint =>
+      'Place your finger on the scanner to log in';
+
+  @override
+  String get fingerprint_login_checking => 'Verifying fingerprint…';
+
+  @override
+  String get fingerprint_login_success => 'Logged in';
+
+  @override
+  String get fingerprint_login_serviceUnavailable =>
+      'Fingerprint login service is not ready yet';
+
+  @override
+  String get fingerprint_login_scannerUnavailable =>
+      'Fingerprint scanner unavailable';
+
+  @override
+  String fingerprint_login_cooldown(int seconds) {
+    return 'Too many failed attempts. Try again in $seconds s.';
+  }
+
+  @override
+  String get fingerprint_login_idle => 'Fingerprint scanner paused';
+
+  @override
+  String get fingerprint_login_resumeButton => 'Listen';
 }

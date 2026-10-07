@@ -5,6 +5,8 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../fingerprint_enrollment/fingerprint_enrollment.dart';
+import '../../fingerprint_test/fingerprint_test.dart';
 import '../notifier/settings_notifier.dart';
 import '../notifier/settings_state.dart';
 
@@ -40,6 +42,11 @@ class _SettingsModalBody extends ConsumerWidget {
             label: context.l10n.settingsView_appearanceNav,
             icon: PhosphorIcons.slidersHorizontal(),
           ),
+          MedSettingsNavItem(
+            id: SettingsSection.fingerprint.name,
+            label: context.l10n.settingsView_fingerprintNav,
+            icon: PhosphorIcons.fingerprint(),
+          ),
         ],
       ),
       MedSettingsNavGroup(
@@ -72,6 +79,7 @@ class _SettingsModalBody extends ConsumerWidget {
     return switch (section) {
       SettingsSection.general => const GeneralSettingsView(),
       SettingsSection.appearance => const AppearanceSettingsView(),
+      SettingsSection.fingerprint => const FingerprintSettingsView(),
       SettingsSection.debug => const DebugSettingsView(),
     };
   }

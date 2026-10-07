@@ -12,6 +12,7 @@ class LoginModal extends StatefulWidget {
     this.onLoginWithBadge,
     this.currentLanguage,
     this.onLanguageChanged,
+    this.footer,
   });
 
   final Future<void> Function(String username, String password, ValueChanged<String> onError) onLogin;
@@ -23,6 +24,9 @@ class LoginModal extends StatefulWidget {
 
   /// Kullanıcı dil seçtiğinde tetiklenir. null ise dil seçici gösterilmez.
   final ValueChanged<AppLanguage>? onLanguageChanged;
+
+  /// Formun altında gösterilen ek giriş yöntemi (örn. parmak izi paneli). null ise gösterilmez.
+  final Widget? footer;
 
   bool get _showLanguageBar => currentLanguage != null && onLanguageChanged != null;
 
@@ -92,6 +96,8 @@ class _LoginModalState extends State<LoginModal> {
                 padding: const EdgeInsets.all(22),
                 child: loginWithUsername ? _loginWithUsernameView() : _loginWithBadge(),
               ),
+              if (widget.footer != null)
+                Padding(padding: const EdgeInsets.fromLTRB(22, 0, 22, 22), child: widget.footer),
             ],
           ),
         ),

@@ -39,7 +39,7 @@ class Drug extends Medicine {
 
   final bool isOrderlessStation;
 
-  final int? atcCode;
+  final String? atcCode;
   final String? equivalentCode;
   final bool isActive;
   final bool isMultiplePatientAccess;
@@ -159,7 +159,7 @@ class Drug extends Medicine {
     bool? isOrderlessStation,
     DosageForm? dosageForm,
     CountType? countType,
-    int? atcCode,
+    String? atcCode,
     bool? isActive,
     bool? isMultiplePatientAccess,
     bool? isSinglePatientAccess,

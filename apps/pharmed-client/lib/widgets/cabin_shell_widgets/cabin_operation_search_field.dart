@@ -24,6 +24,7 @@ class CabinOperationSearchField extends StatelessWidget {
           Icon(PhosphorIcons.magnifyingGlass(), color: MedColors.text3, size: 18),
           Expanded(
             child: TextFormField(
+              autofocus: true,
               style: MedTextStyles.titleSm().copyWith(fontWeight: FontWeight.normal, color: MedColors.text4),
               decoration: InputDecoration(
                 filled: false,

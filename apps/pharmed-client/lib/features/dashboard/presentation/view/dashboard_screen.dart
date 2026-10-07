@@ -26,6 +26,7 @@ import '../../../census/census.dart';
 import '../../../destruction/view/destruction_view.dart';
 import '../../../drug_activity/drug_activity.dart';
 import '../../../expiring_items/view/expiring_items_screen.dart';
+import '../../../fingerprint_login/fingerprint_login.dart';
 import '../../../intake/intake.dart';
 import '../../../inventory/view/inventory_screen.dart';
 import '../../../prescription/view/prescription_screen.dart';
@@ -213,6 +214,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             },
             currentLanguage: ref.watch(settingsNotifierProvider.select((s) => s.language)),
             onLanguageChanged: (lang) => ref.read(settingsNotifierProvider.notifier).setLanguage(lang),
+            // [SWREQ-FP-103]
+            footer: FingerprintLoginPanel(
+              onLoggedIn: () {
+                if (ctx.mounted) Navigator.of(ctx).pop();
+              },
+            ),
           );
         },
       ),
