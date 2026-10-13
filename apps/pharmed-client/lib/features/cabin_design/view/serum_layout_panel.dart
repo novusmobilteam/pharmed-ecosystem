@@ -1,44 +1,26 @@
 part of 'cabin_design_dialog.dart';
 
-/// Tek bir rafın (DrawerSlot karşılığı) tasarım anındaki taslak durumu.
-/// [trays] eklenme sırasıyla tutulur — SAĞDAN SOLA yerleşim mantığına göre
-/// ilk eklenen avadanlık en sağdaki alanı kaplar (port ataması bu sıraya
-/// göre backend tarafında otomatik yapılır, burada port bilgisi tutulmaz).
-class _SerumShelfConfig {
-  const _SerumShelfConfig({required this.index, this.isLocked = false, this.trays = const []});
+/// Serum kabininin 3 rafının yapılandırma paneli.
+///
+/// Durum notifier'dadır ([CabinDesignNotifier.serumShelvesFor]); değişiklikler
+/// bekleyen değişiklik olarak tutulur ve alt bardaki "Kaydet" ile gönderilir.
+class _SerumManualLayoutPanel extends StatelessWidget {
+  const _SerumManualLayoutPanel({required this.group, required this.notifier});
 
-  final int index; // 0..2 → Raf 1..3
-  final bool isLocked;
-  final List<TraySize> trays;
-
-  static const int totalArea = 8;
-
-  int get usedArea => trays.fold(0, (sum, t) => sum + t.areaSize);
-  int get remainingArea => totalArea - usedArea;
-
-  bool canAdd(TraySize size) => remainingArea >= size.areaSize;
-
-  _SerumShelfConfig copyWith({bool? isLocked, List<TraySize>? trays}) =>
-      _SerumShelfConfig(index: index, isLocked: isLocked ?? this.isLocked, trays: trays ?? this.trays);
-}
-
-class _SerumManualLayoutPanel extends StatefulWidget {
-  const _SerumManualLayoutPanel({required this.group});
   final DrawerGroup group;
-
-  @override
-  State<_SerumManualLayoutPanel> createState() => _SerumManualLayoutPanelState();
-}
-
-class _SerumManualLayoutPanelState extends State<_SerumManualLayoutPanel> {
-  static const int _shelfCount = 3;
-
-  late final List<_SerumShelfConfig> _shelves = List.generate(_shelfCount, (i) => _SerumShelfConfig(index: i));
-
-  void _updateShelf(int index, _SerumShelfConfig updated) => setState(() => _shelves[index] = updated);
+  final CabinDesignNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
+    final slotId = group.slot.id;
+    if (slotId == null) return const SizedBox.shrink();
+
+    final shelves = notifier.serumShelvesFor(slotId);
+    final errorText = notifier.inlineError;
+    final loadError = notifier.serumLoadError;
+    final isLoading = notifier.isLoadingSerumLayout;
+    final enabled = notifier.canEditSerumLayout(slotId);
+
     return Expanded(
       child: SingleChildScrollView(
         child: Column(
@@ -85,19 +67,42 @@ class _SerumManualLayoutPanelState extends State<_SerumManualLayoutPanel> {
                 ],
               ),
             ),
-            const SizedBox(height: MedSpacing.xl2),
-            for (final shelf in _shelves)
-              ExpandableIndexedConfigCard(
-                index: shelf.index,
-                title: context.l10n.cabinDesign_serum_shelfCardTitle(shelf.index + 1),
-                summary: context.l10n.cabinDesign_serum_shelfCardSummary(
-                  shelf.usedArea,
-                  _SerumShelfConfig.totalArea,
-                  shelf.trays.length,
-                ),
-                initiallyExpanded: shelf.index == 0,
-                body: _SerumShelfBody(shelf: shelf, onChanged: (updated) => _updateShelf(shelf.index, updated)),
+            if (errorText != null) ...[
+              const SizedBox(height: MedSpacing.md),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.error_outline_rounded, size: 14, color: MedColors.red),
+                  const SizedBox(width: 6),
+                  Expanded(child: Text(errorText, style: MedTextStyles.bodySm(color: MedColors.red))),
+                ],
               ),
+            ],
+            const SizedBox(height: MedSpacing.xl2),
+            if (isLoading)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: MedSpacing.xl3),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (loadError != null)
+              _SerumLoadErrorBox(message: loadError, onRetry: () => notifier.loadSerumLayout(slotId))
+            else
+              for (final shelf in shelves)
+                ExpandableIndexedConfigCard(
+                  index: shelf.orderNo - 1,
+                  title: context.l10n.cabinDesign_serum_shelfCardTitle(shelf.orderNo),
+                  summary: context.l10n.cabinDesign_serum_shelfCardSummary(
+                    shelf.usedArea,
+                    SerumShelfLayout.totalArea,
+                    shelf.trays.length,
+                  ),
+                  initiallyExpanded: shelf.orderNo == 1,
+                  body: _SerumShelfBody(
+                    shelf: shelf,
+                    enabled: enabled,
+                    onChanged: (updated) => notifier.updateSerumShelf(slotId, updated),
+                  ),
+                ),
           ],
         ),
       ),
@@ -106,17 +111,19 @@ class _SerumManualLayoutPanelState extends State<_SerumManualLayoutPanel> {
 }
 
 class _SerumShelfBody extends StatelessWidget {
-  const _SerumShelfBody({required this.shelf, required this.onChanged});
+  const _SerumShelfBody({required this.shelf, required this.enabled, required this.onChanged});
 
-  final _SerumShelfConfig shelf;
-  final ValueChanged<_SerumShelfConfig> onChanged;
+  final SerumShelfLayout shelf;
+  final bool enabled;
+  final ValueChanged<SerumShelfLayout> onChanged;
 
-  void _addTray(TraySize size) {
-    if (!shelf.canAdd(size)) return;
-    onChanged(shelf.copyWith(trays: [...shelf.trays, size]));
+  void _addTray(SerumTraySize size) {
+    if (!enabled || !shelf.canAdd(size)) return;
+    onChanged(shelf.copyWith(trays: [...shelf.trays, SerumTray(size: size)]));
   }
 
   void _removeTrayAt(int index) {
+    if (!enabled) return;
     final updated = [...shelf.trays]..removeAt(index);
     onChanged(shelf.copyWith(trays: updated));
   }
@@ -137,7 +144,11 @@ class _SerumShelfBody extends StatelessWidget {
             ),
             _MedToggleSwitch(
               value: shelf.isLocked,
-              onChanged: (v) => onChanged(shelf.copyWith(isLocked: v)),
+              onChanged: enabled
+                  ? (v) => onChanged(
+                      shelf.copyWith(lockType: v ? SerumShelfLockType.locked : SerumShelfLockType.unlocked),
+                    )
+                  : null,
             ),
           ],
         ),
@@ -153,17 +164,17 @@ class _SerumShelfBody extends StatelessWidget {
             _ActionChip(
               icon: Icons.add_rounded,
               label: context.l10n.cabinDesign_serum_addSmallButton,
-              onTap: shelf.canAdd(TraySize.small) ? () => _addTray(TraySize.small) : null,
+              onTap: enabled && shelf.canAdd(SerumTraySize.small) ? () => _addTray(SerumTraySize.small) : null,
             ),
             _ActionChip(
               icon: Icons.add_rounded,
               label: context.l10n.cabinDesign_serum_addMediumButton,
-              onTap: shelf.canAdd(TraySize.medium) ? () => _addTray(TraySize.medium) : null,
+              onTap: enabled && shelf.canAdd(SerumTraySize.medium) ? () => _addTray(SerumTraySize.medium) : null,
             ),
             _ActionChip(
               icon: Icons.add_rounded,
               label: context.l10n.cabinDesign_serum_addLargeButton,
-              onTap: shelf.canAdd(TraySize.large) ? () => _addTray(TraySize.large) : null,
+              onTap: enabled && shelf.canAdd(SerumTraySize.large) ? () => _addTray(SerumTraySize.large) : null,
             ),
           ],
         ),
@@ -206,7 +217,7 @@ class _SerumShelfBody extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    context.l10n.cabinDesign_serum_areaUsedLabel(shelf.usedArea, _SerumShelfConfig.totalArea),
+                    context.l10n.cabinDesign_serum_areaUsedLabel(shelf.usedArea, SerumShelfLayout.totalArea),
                     style: TextStyle(fontFamily: MedFonts.mono, fontSize: 10, color: MedColors.text4),
                   ),
                 ],
@@ -224,10 +235,10 @@ class _SerumShelfBody extends StatelessWidget {
                     // sağdan sola: ilk eklenen en sağda → reversed render
                     for (final tray in shelf.trays.reversed)
                       Expanded(
-                        flex: tray.areaSize,
+                        flex: tray.size.areaSize,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 3),
-                          child: _TrayBlock(size: tray),
+                          child: _TrayBlock(size: tray.size),
                         ),
                       ),
                   ],
@@ -262,7 +273,7 @@ class _SerumShelfBody extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        context.l10n.cabinDesign_serum_trayListItemLabel(i + 1, shelf.trays[i].label(context)),
+                        context.l10n.cabinDesign_serum_trayListItemLabel(i + 1, shelf.trays[i].size.label(context)),
                         style: MedTextStyles.bodySm(color: MedColors.text2),
                       ),
                     ),
@@ -280,9 +291,39 @@ class _SerumShelfBody extends StatelessWidget {
   }
 }
 
+/// Kayıtlı yerleşim okunamadı — düzenleme kapalı, tekrar denenebilir.
+class _SerumLoadErrorBox extends StatelessWidget {
+  const _SerumLoadErrorBox({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: MedSpacing.insetMd,
+      decoration: BoxDecoration(
+        color: MedColors.redLight,
+        border: Border.all(color: MedColors.border2),
+        borderRadius: MedRadius.mdAll,
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline_rounded, size: 16, color: MedColors.red),
+          const SizedBox(width: 8),
+          Expanded(child: Text(message, style: MedTextStyles.bodySm(color: MedColors.text2))),
+          const SizedBox(width: 8),
+          _ActionChip(icon: Icons.refresh_rounded, label: context.l10n.common_retryButton, onTap: onRetry),
+        ],
+      ),
+    );
+  }
+}
+
 class _TrayBlock extends StatelessWidget {
   const _TrayBlock({required this.size});
-  final TraySize size;
+  final SerumTraySize size;
 
   @override
   Widget build(BuildContext context) {
@@ -316,12 +357,13 @@ class _EmptyAreaBlock extends StatelessWidget {
 class _MedToggleSwitch extends StatelessWidget {
   const _MedToggleSwitch({required this.value, required this.onChanged});
   final bool value;
-  final ValueChanged<bool> onChanged;
+  final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {
+    final onChanged = this.onChanged;
     return GestureDetector(
-      onTap: () => onChanged(!value),
+      onTap: onChanged == null ? null : () => onChanged(!value),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,

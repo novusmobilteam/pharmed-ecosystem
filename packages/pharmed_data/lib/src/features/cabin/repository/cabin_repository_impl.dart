@@ -293,6 +293,28 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
+  Future<Result<List<SerumShelfLayout>>> getSerumLayout(int slotId) async {
+    final result = await _remote.getSerumLayout(slotId);
+    return result.when(ok: (dto) => Result.ok(const SerumLayoutMapper().toShelves(dto)), error: Result.error);
+  }
+
+  @override
+  Future<Result<void>> saveSerumLayout({required int slotId, required List<SerumShelfLayout> shelves}) async {
+    final dto = const SerumLayoutMapper().toDto(slotId: slotId, shelves: shelves);
+    final isUpdate = shelves.any((s) => s.isPersisted);
+    final result = isUpdate ? await _remote.updateSerumLayout(dto) : await _remote.createSerumLayout(dto);
+    return result.when(
+      ok: (_) async {
+        // Raflar bu slot'un DrawerUnit'leri — unit cache'i bayatladı.
+        await _local.clearUnits(slotId);
+        _unitsCache.remove(slotId);
+        return const Result.ok(null);
+      },
+      error: Result.error,
+    );
+  }
+
+  @override
   Future<Result<List<DrawerSlot>>> getSerumSlots() async {
     final result = await _remote.getSerumCabins();
     return result.when(ok: (dtos) => Result.ok(_drawerSlotMapper.toEntityList(dtos)), error: Result.error);

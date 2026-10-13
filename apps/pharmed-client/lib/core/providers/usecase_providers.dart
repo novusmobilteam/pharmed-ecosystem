@@ -164,6 +164,14 @@ final saveMobileCabinDesignUseCaseProvider = Provider((ref) {
   );
 });
 
+final getSerumLayoutUseCaseProvider = Provider((ref) {
+  return GetSerumLayoutUseCase(cabinRepository: ref.read(cabinRepositoryProvider));
+});
+
+final saveSerumLayoutUseCaseProvider = Provider((ref) {
+  return SaveSerumLayoutUseCase(cabinRepository: ref.read(cabinRepositoryProvider));
+});
+
 final finishCabinSetupUseCaseProvider = Provider((ref) {
   return FinishCabinSetupUseCase(
     createCabin: ref.read(createCabinUseCaseProvider),

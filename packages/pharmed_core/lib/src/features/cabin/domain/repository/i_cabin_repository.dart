@@ -48,6 +48,14 @@ abstract interface class ICabinRepository {
   /// Sadece serum tanımlanabilen yuvaları getirir. Gerçek zamanlı — cache'lenmez.
   Future<Result<List<DrawerSlot>>> getSerumSlots();
 
+  /// Serum kabininin kayıtlı raf/avadanlık yerleşimi. Her zaman 3 raf döner;
+  /// hiç kayıt yoksa raflar boş ve id'sizdir. Gerçek zamanlı — cache'lenmez.
+  Future<Result<List<SerumShelfLayout>>> getSerumLayout(int slotId);
+
+  /// Serum yerleşimini kaydeder: raflar kayıtlıysa (id'li) PUT, değilse POST
+  /// (/CabinDrawr/serum). İlgili slot'un unit cache'i invalidate edilir.
+  Future<Result<void>> saveSerumLayout({required int slotId, required List<SerumShelfLayout> shelves});
+
   // ==================== KONFİGÜRASYON & TİP (META VERİLER) ====================
 
   Future<Result<List<DrawerType>>> getDrawerTypes({bool forceRefresh = false});

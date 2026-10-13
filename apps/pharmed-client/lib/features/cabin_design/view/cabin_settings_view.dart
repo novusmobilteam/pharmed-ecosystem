@@ -22,7 +22,7 @@ class CabinSettingsView extends StatelessWidget {
           if (group?.isSerum != true) _BasicSettingsPanel(notifier: notifier, cabin: cabin),
           switch (group) {
             null => Text(context.l10n.cabinDesign_noSelectionHint, style: MedTextStyles.bodySm(color: MedColors.text4)),
-            final g when g.isSerum => _SerumManualLayoutPanel(group: g),
+            final g when g.isSerum => _SerumManualLayoutPanel(group: g, notifier: notifier),
             final g => _DrawerDetailPanel(group: g, cabin: cabin, notifier: notifier),
           },
         ],

@@ -121,6 +121,7 @@ class _CameraFormPanelState extends ConsumerState<_CameraFormPanel> {
                     Expanded(
                       child: MedTextInputField(
                         label: context.l10n.cabinDesign_camera_usernameLabel,
+                        hint: '',
                         initialValue: f.username,
                         onChanged: f.setUsername,
                       ),
@@ -130,7 +131,6 @@ class _CameraFormPanelState extends ConsumerState<_CameraFormPanel> {
                         label: context.l10n.cabinDesign_camera_passwordLabel,
                         hint: f.isEditing ? context.l10n.cabinDesign_camera_passwordKeepHint : null,
                         onChanged: f.setPassword,
-                        // NOT: gizli giriş parametresinin adını doğrulayın.
                         obscureText: true,
                       ),
                     ),
